@@ -41,12 +41,28 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
     public interface IRegistrationWorkflowService
     {
         /// <summary>
-        /// Search for patients
+        /// Search for registration worklist item
         /// </summary>
         /// <param name="request"><see cref="SearchRequest"/></param>
         /// <returns><see cref="SearchResponse"/></returns>
         [OperationContract]
         SearchResponse Search(SearchRequest request);
+
+        /// <summary>
+        /// Search for Patient
+        /// </summary>
+        /// <param name="request"><see cref="SearchPatientRequest"/></param>
+        /// <returns><see cref="SearchPatientResponse"/></returns>
+        [OperationContract]
+        SearchPatientResponse SearchPatient(SearchPatientRequest request);
+
+        /// <summary>
+        /// Load data required for the patient search
+        /// </summary>
+        /// <param name="request"><see cref="LoadSearchPatientFormDataRequest"/></param>
+        /// <returns><see cref="LoadSearchPatientFormDataResponse"/></returns>
+        [OperationContract]
+        LoadSearchPatientFormDataResponse LoadSearchPatientFormData(LoadSearchPatientFormDataRequest request);
 
         [OperationContract]
         ListWorklistsResponse ListWorklists(ListWorklistsRequest request);

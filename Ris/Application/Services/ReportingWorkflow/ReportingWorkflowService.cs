@@ -65,7 +65,6 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             
             IList<WorklistItem> result = PersistenceContext.GetBroker<IReportingWorklistBroker>().Search(
                 request.SearchData.MrnID,
-                request.SearchData.MrnAssigningAuthority,
                 request.SearchData.HealthcardID,
                 request.SearchData.FamilyName,
                 request.SearchData.GivenName,

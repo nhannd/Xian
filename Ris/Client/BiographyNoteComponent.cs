@@ -30,37 +30,65 @@
 #endregion
 
 using System.Collections.Generic;
-using ClearCanvas.Enterprise.Core;
-using ClearCanvas.Healthcare.Workflow.Reporting;
+using ClearCanvas.Common;
+using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.Tables;
+using ClearCanvas.Ris.Application.Common;
 
-namespace ClearCanvas.Healthcare.Brokers
+namespace ClearCanvas.Ris.Client
 {
-    public interface IReportingWorklistBroker : IPersistenceBroker
+    /// <summary>
+    /// Extension point for views onto <see cref="BiographyNoteComponent"/>
+    /// </summary>
+    [ExtensionPoint]
+    public class BiographyNoteComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
     {
-        IList<WorklistItem> GetToBeReportedWorklist();
-        IList<WorklistItem> GetToBeReportedWorklist(ReportingToBeReportedWorklist worklist);
-        IList<WorklistItem> GetDraftWorklist(Staff performingStaff);
-        IList<WorklistItem> GetInTranscriptionWorklist(Staff performingStaff);
-        IList<WorklistItem> GetToBeVerifiedWorklist(Staff performingStaff);
-        IList<WorklistItem> GetResidentToBeVerifiedWorklist(Staff performingStaff);
-        IList<WorklistItem> GetVerifiedWorklist(Staff performingStaff);
+    }
 
-        int GetToBeReportedWorklistCount();
-        int GetToBeReportedWorklistCount(ReportingToBeReportedWorklist worklist);
-        int GetDraftWorklistCount(Staff performingStaff);
-        int GetInTranscriptionWorklistCount(Staff performingStaff);
-        int GetToBeVerifiedWorklistCount(Staff performingStaff);
-        int GetResidentToBeVerifiedWorklistCount(Staff performingStaff);
-        int GetVerifiedWorklistCount(Staff performingStaff);
+    /// <summary>
+    /// BiographyNoteComponent class
+    /// </summary>
+    [AssociateView(typeof(BiographyNoteComponentViewExtensionPoint))]
+    public class BiographyNoteComponent : ApplicationComponent
+    {
+        private readonly List<NoteDetail> _noteList;
+        private readonly BiographyNoteTable _noteTable;
+        private NoteDetail _selectedNote;
 
-        IList<Report> GetPriorReport(Patient patient);
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public BiographyNoteComponent(List<NoteDetail> notes)
+        {
+            _noteTable = new BiographyNoteTable();
+            _noteList = notes;
+        }
 
-        IList<WorklistItem> Search(
-            string mrnID,
-            string healthcardID,
-            string familyName,
-            string givenName,
-            string accessionNumber,
-            bool showActiveOnly);
+        public override void Start()
+        {
+            base.Start();
+
+            _noteTable.Items.AddRange(_noteList);
+        }
+
+        public ITable Notes
+        {
+            get { return _noteTable; }
+        }
+
+        public ISelection SelectedNote
+        {
+            get { return new Selection(_selectedNote); }
+            set
+            {
+                _selectedNote = (NoteDetail)value.Item;
+                NoteSelectionChanged();
+            }
+        }
+
+        private void NoteSelectionChanged()
+        {
+            NotifyAllPropertiesChanged();
+        }
     }
 }

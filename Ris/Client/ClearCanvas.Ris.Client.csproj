@@ -51,6 +51,14 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>AddressesSummaryComponentSettings.settings</DependentUpon>
     </Compile>
+    <Compile Include="BiographyDemographicComponent.cs" />
+    <Compile Include="BiographyDocumentComponent.cs" />
+    <Compile Include="BiographyDocumentTable.cs" />
+    <Compile Include="BiographyFeedbackComponent.cs" />
+    <Compile Include="BiographyFeedbackTable.cs" />
+    <Compile Include="BiographyNoteComponent.cs" />
+    <Compile Include="BiographyNoteTable.cs" />
+    <Compile Include="BiographyOrderHistoryComponent.cs" />
     <Compile Include="ContactPersonEditorComponentSettings.cs" />
     <Compile Include="ContactPersonEditorComponentSettings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -73,6 +81,9 @@
       <DependentUpon>EmailAddressEditorComponentSettings.settings</DependentUpon>
     </Compile>
     <Compile Include="ExceptionPolicies.cs" />
+    <Compile Include="OrderSummaryTable.cs" />
+    <Compile Include="PatientOverviewComponent.cs" />
+    <Compile Include="PatientOverviewDocument.cs" />
     <Compile Include="SearchComponent.cs" />
     <Compile Include="WorkflowFolderFactory.cs" />
     <Compile Include="Formatting\AddressFormat.cs" />

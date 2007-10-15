@@ -259,7 +259,6 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         public IList<WorklistItem> Search(
             string mrnID,
-            string mrnAssigningAuthority,
             string healthcardID,
             string familyName,
             string givenName,
@@ -304,14 +303,6 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
                 hqlQuery.Append(conditionPrefix);
                 hqlQuery.Append(" pp.Mrn.Id = :mrnID");
                 parameters.Add(new QueryParameter("mrnID", mrnID));
-                conditionPrefix = " and";
-            }
-
-            if (!String.IsNullOrEmpty(mrnAssigningAuthority))
-            {
-                hqlQuery.Append(conditionPrefix);
-                hqlQuery.Append(" pp.Mrn.AssigningAuthority = :mrnAssigningAuthority");
-                parameters.Add(new QueryParameter("mrnAssigningAuthority", mrnAssigningAuthority));
                 conditionPrefix = " and";
             }
 

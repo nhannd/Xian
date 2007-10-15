@@ -29,38 +29,45 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
-using ClearCanvas.Enterprise.Core;
-using ClearCanvas.Healthcare.Workflow.Reporting;
+using System.Text;
 
-namespace ClearCanvas.Healthcare.Brokers
+using ClearCanvas.Common;
+using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.View.WinForms;
+
+namespace ClearCanvas.Ris.Client.View.WinForms
 {
-    public interface IReportingWorklistBroker : IPersistenceBroker
+    /// <summary>
+    /// Provides a Windows Forms view onto <see cref="PatientOverviewComponent"/>
+    /// </summary>
+    [ExtensionOf(typeof(PatientOverviewComponentViewExtensionPoint))]
+    public class PatientOverviewComponentView : WinFormsView, IApplicationComponentView
     {
-        IList<WorklistItem> GetToBeReportedWorklist();
-        IList<WorklistItem> GetToBeReportedWorklist(ReportingToBeReportedWorklist worklist);
-        IList<WorklistItem> GetDraftWorklist(Staff performingStaff);
-        IList<WorklistItem> GetInTranscriptionWorklist(Staff performingStaff);
-        IList<WorklistItem> GetToBeVerifiedWorklist(Staff performingStaff);
-        IList<WorklistItem> GetResidentToBeVerifiedWorklist(Staff performingStaff);
-        IList<WorklistItem> GetVerifiedWorklist(Staff performingStaff);
+        private PatientOverviewComponent _component;
+        private PatientOverviewComponentControl _control;
 
-        int GetToBeReportedWorklistCount();
-        int GetToBeReportedWorklistCount(ReportingToBeReportedWorklist worklist);
-        int GetDraftWorklistCount(Staff performingStaff);
-        int GetInTranscriptionWorklistCount(Staff performingStaff);
-        int GetToBeVerifiedWorklistCount(Staff performingStaff);
-        int GetResidentToBeVerifiedWorklistCount(Staff performingStaff);
-        int GetVerifiedWorklistCount(Staff performingStaff);
 
-        IList<Report> GetPriorReport(Patient patient);
+        #region IApplicationComponentView Members
 
-        IList<WorklistItem> Search(
-            string mrnID,
-            string healthcardID,
-            string familyName,
-            string givenName,
-            string accessionNumber,
-            bool showActiveOnly);
+        public void SetComponent(IApplicationComponent component)
+        {
+            _component = (PatientOverviewComponent)component;
+        }
+
+        #endregion
+
+        public override object GuiElement
+        {
+            get
+            {
+                if (_control == null)
+                {
+                    _control = new PatientOverviewComponentControl(_component);
+                }
+                return _control;
+            }
+        }
     }
 }

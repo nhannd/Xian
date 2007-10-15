@@ -29,38 +29,34 @@
 
 #endregion
 
-using System.Collections.Generic;
-using ClearCanvas.Enterprise.Core;
-using ClearCanvas.Healthcare.Workflow.Reporting;
+using System.Windows.Forms;
+using ClearCanvas.Desktop.View.WinForms;
 
-namespace ClearCanvas.Healthcare.Brokers
+namespace ClearCanvas.Ris.Client.View.WinForms
 {
-    public interface IReportingWorklistBroker : IPersistenceBroker
+    /// <summary>
+    /// Provides a Windows Forms user-interface for <see cref="BiographyFeedbackComponent"/>
+    /// </summary>
+    public partial class BiographyFeedbackComponentControl : ApplicationComponentUserControl
     {
-        IList<WorklistItem> GetToBeReportedWorklist();
-        IList<WorklistItem> GetToBeReportedWorklist(ReportingToBeReportedWorklist worklist);
-        IList<WorklistItem> GetDraftWorklist(Staff performingStaff);
-        IList<WorklistItem> GetInTranscriptionWorklist(Staff performingStaff);
-        IList<WorklistItem> GetToBeVerifiedWorklist(Staff performingStaff);
-        IList<WorklistItem> GetResidentToBeVerifiedWorklist(Staff performingStaff);
-        IList<WorklistItem> GetVerifiedWorklist(Staff performingStaff);
+        private readonly BiographyFeedbackComponent _component;
 
-        int GetToBeReportedWorklistCount();
-        int GetToBeReportedWorklistCount(ReportingToBeReportedWorklist worklist);
-        int GetDraftWorklistCount(Staff performingStaff);
-        int GetInTranscriptionWorklistCount(Staff performingStaff);
-        int GetToBeVerifiedWorklistCount(Staff performingStaff);
-        int GetResidentToBeVerifiedWorklistCount(Staff performingStaff);
-        int GetVerifiedWorklistCount(Staff performingStaff);
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public BiographyFeedbackComponentControl(BiographyFeedbackComponent component)
+            :base(component)
+        {
+            InitializeComponent();
+            _component = component;
 
-        IList<Report> GetPriorReport(Patient patient);
+            this.Dock = DockStyle.Fill;
 
-        IList<WorklistItem> Search(
-            string mrnID,
-            string healthcardID,
-            string familyName,
-            string givenName,
-            string accessionNumber,
-            bool showActiveOnly);
+            _feedbackTable.Table = _component.Feedbacks;
+            _feedbackTable.DataBindings.Add("Selection", _component, "SelectedFeedback", true, DataSourceUpdateMode.OnPropertyChanged);
+
+            _subject.DataBindings.Add("Value", _component, "Subject", true, DataSourceUpdateMode.OnPropertyChanged);
+            _comments.DataBindings.Add("Value", _component, "Comments", true, DataSourceUpdateMode.OnPropertyChanged);
+        }
     }
 }

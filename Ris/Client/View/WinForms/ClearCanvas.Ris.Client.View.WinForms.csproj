@@ -49,6 +49,41 @@
     <Compile Include="AddressesSummaryControl.designer.cs">
       <DependentUpon>AddressesSummaryControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="BiographyDemographicComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="BiographyDemographicComponentControl.designer.cs">
+      <DependentUpon>BiographyDemographicComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="BiographyDemographicComponentView.cs" />
+    <Compile Include="BiographyDocumentComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="BiographyDocumentComponentControl.designer.cs">
+      <DependentUpon>BiographyDocumentComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="BiographyDocumentComponentView.cs" />
+    <Compile Include="BiographyFeedbackComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="BiographyFeedbackComponentControl.designer.cs">
+      <DependentUpon>BiographyFeedbackComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="BiographyFeedbackComponentView.cs" />
+    <Compile Include="BiographyNoteComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="BiographyNoteComponentControl.designer.cs">
+      <DependentUpon>BiographyNoteComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="BiographyNoteComponentView.cs" />
+    <Compile Include="BiographyOrderHistoryComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="BiographyOrderHistoryComponentControl.designer.cs">
+      <DependentUpon>BiographyOrderHistoryComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="BiographyOrderHistoryComponentView.cs" />
     <Compile Include="ContactPersonEditorComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -119,6 +154,13 @@
       <DependentUpon>NoteSummaryComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="NoteSummaryComponentView.cs" />
+    <Compile Include="PatientOverviewComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PatientOverviewComponentControl.designer.cs">
+      <DependentUpon>PatientOverviewComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PatientOverviewComponentView.cs" />
     <Compile Include="PhoneNumberEditorComponentView.cs" />
     <Compile Include="PhoneNumberEditorControl.cs">
       <SubType>UserControl</SubType>
@@ -191,6 +233,26 @@
       <DependentUpon>AddressesSummaryControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="BiographyDemographicComponentControl.resx">
+      <DependentUpon>BiographyDemographicComponentControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="BiographyDocumentComponentControl.resx">
+      <DependentUpon>BiographyDocumentComponentControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="BiographyFeedbackComponentControl.resx">
+      <DependentUpon>BiographyFeedbackComponentControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="BiographyNoteComponentControl.resx">
+      <DependentUpon>BiographyNoteComponentControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="BiographyOrderHistoryComponentControl.resx">
+      <DependentUpon>BiographyOrderHistoryComponentControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="ContactPersonEditorComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>ContactPersonEditorComponentControl.cs</DependentUpon>
@@ -233,6 +295,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="NoteSummaryComponentControl.resx">
       <DependentUpon>NoteSummaryComponentControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PatientOverviewComponentControl.resx">
+      <DependentUpon>PatientOverviewComponentControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="PhoneNumberEditorControl.resx">

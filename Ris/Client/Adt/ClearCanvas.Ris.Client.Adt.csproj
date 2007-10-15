@@ -42,17 +42,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BiographyDemographicComponent.cs" />
-    <Compile Include="BiographyDocumentComponent.cs" />
-    <Compile Include="BiographyFeedbackComponent.cs" />
-    <Compile Include="BiographyNoteComponent.cs" />
     <Compile Include="CancelOrderComponent.cs" />
-    <Compile Include="BiographyOrderHistoryComponent.cs" />
-    <Compile Include="BiographyDocumentTable.cs" />
-    <Compile Include="BiographyNoteTable.cs" />
-    <Compile Include="BiographyFeedbackTable.cs" />
     <Compile Include="CheckInOrderComponent.cs" />
     <Compile Include="CheckInOrderTable.cs" />
+    <Compile Include="FolderSearchTool.cs" />
+    <Compile Include="PatientSearchTool.cs" />
     <Compile Include="ExamDetailsComponent.cs" />
     <Compile Include="Folders\RefreshTool.cs" />
     <Compile Include="Folders\RegistrationContainerFolders.cs" />
@@ -66,12 +60,16 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>OrderEntryComponentSettings.settings</DependentUpon>
     </Compile>
+    <Compile Include="PatientOverviewTool.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="PatientProfileDetailsEditorComponentSettings.cs" />
     <Compile Include="PatientProfileDetailsEditorComponentSettings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>PatientProfileDetailsEditorComponentSettings.settings</DependentUpon>
     </Compile>
+    <Compile Include="PatientSearchComponent.cs" />
     <Compile Include="PerformedProcedureComponent.cs" />
     <Compile Include="PerformedProcedureComponentSettings.cs" />
     <Compile Include="PerformedProcedureComponentSettings.Designer.cs">
@@ -79,7 +77,6 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>PerformedProcedureComponentSettings.settings</DependentUpon>
     </Compile>
-    <Compile Include="OrderSummaryTable.cs" />
     <Compile Include="CancelOrderTable.cs" />
     <Compile Include="Folders\FolderOptionComponent.cs" />
     <Compile Include="Folders\RegistrationWorkflowFolders.cs" />
@@ -99,12 +96,9 @@
     <Compile Include="JscriptComponent.cs" />
     <Compile Include="JscriptTool.cs" />
     <Compile Include="PatientAddTool.cs" />
-    <Compile Include="PatientOverviewComponent.cs" />
     <Compile Include="PatientProfileDetailsEditorComponent.cs" />
-    <Compile Include="PatientOverviewTool.cs" />
     <Compile Include="PatientProfileEditorComponent.cs" />
     <Compile Include="PatientProfileTable.cs" />
-    <Compile Include="PatientOverviewDocument.cs" />
     <Compile Include="ReconciliationComponent.cs" />
     <Compile Include="PatientReconcileTool.cs" />
     <Compile Include="HomeTool.cs" />
@@ -121,7 +115,6 @@
     <Compile Include="RegistrationWorkflowTool.cs" />
     <Compile Include="RegistrationWorklistTable.cs" />
     <Compile Include="RICTable.cs" />
-    <Compile Include="SearchTool.cs" />
     <Compile Include="TechnologistDocumentationComponent.cs" />
     <Compile Include="TechnologistDocumentationComponentSettings.cs" />
     <Compile Include="TechnologistDocumentationComponentSettings.Designer.cs">

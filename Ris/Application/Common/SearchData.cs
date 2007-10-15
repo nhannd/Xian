@@ -41,9 +41,6 @@ namespace ClearCanvas.Ris.Application.Common
         public string MrnID;
 
         [DataMember]
-        public string MrnAssigningAuthority;
-
-        [DataMember]
         public string HealthcardID;
 
         [DataMember]

@@ -339,18 +339,6 @@
   <data name="ExceptionTechnologistWorkflowSuspendTool" xml:space="preserve">
     <value>Cannot suspend procedure</value>
   </data>
-  <data name="MessageAlertHighSeverityNote" xml:space="preserve">
-    <value>{0} has high severity notes: {1}</value>
-  </data>
-  <data name="MessageAlertIncompleteDemographicData" xml:space="preserve">
-    <value>{0} has incomplete demographic data: {1}</value>
-  </data>
-  <data name="MessageAlertLanguageNotEnglish" xml:space="preserve">
-    <value>{0} speaks: {1}</value>
-  </data>
-  <data name="MessageAlertUnreconciledRecords" xml:space="preserve">
-    <value>{0} has unreconciled records</value>
-  </data>
   <data name="MessageDeleteSelectedVisit" xml:space="preserve">
     <value>Are you sure you want to delete this visit?</value>
   </data>
@@ -399,17 +387,11 @@
   <data name="TitleContactPersons" xml:space="preserve">
     <value>Contact Persons</value>
   </data>
-  <data name="TitleDemographic" xml:space="preserve">
-    <value>Demographic</value>
-  </data>
   <data name="TitleDetail" xml:space="preserve">
     <value>Detail</value>
   </data>
   <data name="TitleDiscontinueMpps" xml:space="preserve">
     <value>Discontinue</value>
-  </data>
-  <data name="TitleDocuments" xml:space="preserve">
-    <value>Documents</value>
   </data>
   <data name="TitleEditPatient" xml:space="preserve">
     <value>Edit Patient</value>
@@ -444,17 +426,11 @@
   <data name="TitleNewPatient" xml:space="preserve">
     <value>New Patient</value>
   </data>
-  <data name="TitleNotes" xml:space="preserve">
-    <value>Notes</value>
-  </data>
   <data name="TitleOrders" xml:space="preserve">
     <value>Orders</value>
   </data>
   <data name="TitlePatientComponent" xml:space="preserve">
     <value>Patient - {0} {1}</value>
-  </data>
-  <data name="TitlePatientFeedbacks" xml:space="preserve">
-    <value>Patient Feedbacks</value>
   </data>
   <data name="TitlePatientProfile" xml:space="preserve">
     <value>Patient Profile</value>
@@ -479,6 +455,9 @@
   </data>
   <data name="TitleResults" xml:space="preserve">
     <value>Results</value>
+  </data>
+  <data name="TitleSearchPatients" xml:space="preserve">
+    <value>Search Patients</value>
   </data>
   <data name="TitleStopMpps" xml:space="preserve">
     <value>Stop</value>

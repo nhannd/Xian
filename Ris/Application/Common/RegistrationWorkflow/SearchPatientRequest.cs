@@ -29,38 +29,52 @@
 
 #endregion
 
-using System.Collections.Generic;
-using ClearCanvas.Enterprise.Core;
-using ClearCanvas.Healthcare.Workflow.Reporting;
+using System;
+using System.Runtime.Serialization;
+using ClearCanvas.Enterprise.Common;
 
-namespace ClearCanvas.Healthcare.Brokers
+namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
 {
-    public interface IReportingWorklistBroker : IPersistenceBroker
+    [DataContract]
+    public class SearchPatientRequest : DataContractBase
     {
-        IList<WorklistItem> GetToBeReportedWorklist();
-        IList<WorklistItem> GetToBeReportedWorklist(ReportingToBeReportedWorklist worklist);
-        IList<WorklistItem> GetDraftWorklist(Staff performingStaff);
-        IList<WorklistItem> GetInTranscriptionWorklist(Staff performingStaff);
-        IList<WorklistItem> GetToBeVerifiedWorklist(Staff performingStaff);
-        IList<WorklistItem> GetResidentToBeVerifiedWorklist(Staff performingStaff);
-        IList<WorklistItem> GetVerifiedWorklist(Staff performingStaff);
-
-        int GetToBeReportedWorklistCount();
-        int GetToBeReportedWorklistCount(ReportingToBeReportedWorklist worklist);
-        int GetDraftWorklistCount(Staff performingStaff);
-        int GetInTranscriptionWorklistCount(Staff performingStaff);
-        int GetToBeVerifiedWorklistCount(Staff performingStaff);
-        int GetResidentToBeVerifiedWorklistCount(Staff performingStaff);
-        int GetVerifiedWorklistCount(Staff performingStaff);
-
-        IList<Report> GetPriorReport(Patient patient);
-
-        IList<WorklistItem> Search(
+        public SearchPatientRequest(
             string mrnID,
+            string mrnAssigningAuthority,
             string healthcardID,
             string familyName,
             string givenName,
-            string accessionNumber,
-            bool showActiveOnly);
+            EnumValueInfo sex,
+            DateTime? dateOfBirth)
+        {
+            this.MrnID = mrnID;
+            this.MrnAssigningAuthority = mrnAssigningAuthority;
+            this.HealthcardID = healthcardID;
+            this.FamilyName = familyName;
+            this.GivenName = givenName;
+            this.Sex = sex;
+            this.DateOfBirth = dateOfBirth;
+        }
+
+        [DataMember]
+        public string MrnID;
+
+        [DataMember]
+        public string MrnAssigningAuthority;
+
+        [DataMember]
+        public string HealthcardID;
+
+        [DataMember]
+        public string FamilyName;
+
+        [DataMember]
+        public string GivenName;
+
+        [DataMember]
+        public EnumValueInfo Sex;
+
+        [DataMember]
+        public DateTime? DateOfBirth;
     }
 }

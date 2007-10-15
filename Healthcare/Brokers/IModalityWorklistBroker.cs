@@ -65,7 +65,6 @@ namespace ClearCanvas.Healthcare.Brokers
 
         IList<WorklistItem> Search(
             string mrnID,
-            string mrnAssigningAuthority,
             string healthcardID,
             string familyName,
             string givenName,

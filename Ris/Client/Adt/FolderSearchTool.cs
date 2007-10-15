@@ -29,38 +29,35 @@
 
 #endregion
 
-using System.Collections.Generic;
-using ClearCanvas.Enterprise.Core;
-using ClearCanvas.Healthcare.Workflow.Reporting;
+using ClearCanvas.Common;
+using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.Tools;
+using ClearCanvas.Desktop.Actions;
 
-namespace ClearCanvas.Healthcare.Brokers
+namespace ClearCanvas.Ris.Client.Adt
 {
-    public interface IReportingWorklistBroker : IPersistenceBroker
+    [ButtonAction("search", "folderexplorer-folders-toolbar/Search")]
+    [ButtonAction("search", "folders-toolbar/Search")]
+    [Tooltip("search", "Search")]
+	[IconSet("search", IconScheme.Colour, "Icons.SearchToolSmall.png", "Icons.SearchToolMedium.png", "Icons.SearchToolLarge.png")]
+    [ClickHandler("search", "Search")]
+
+    [ExtensionOf(typeof(RegistrationWorkflowFolderToolExtensionPoint))]
+    [ExtensionOf(typeof(TechnologistWorkflowFolderToolExtensionPoint))]
+    public class FolderSearchTool : Tool<IToolContext>
     {
-        IList<WorklistItem> GetToBeReportedWorklist();
-        IList<WorklistItem> GetToBeReportedWorklist(ReportingToBeReportedWorklist worklist);
-        IList<WorklistItem> GetDraftWorklist(Staff performingStaff);
-        IList<WorklistItem> GetInTranscriptionWorklist(Staff performingStaff);
-        IList<WorklistItem> GetToBeVerifiedWorklist(Staff performingStaff);
-        IList<WorklistItem> GetResidentToBeVerifiedWorklist(Staff performingStaff);
-        IList<WorklistItem> GetVerifiedWorklist(Staff performingStaff);
-
-        int GetToBeReportedWorklistCount();
-        int GetToBeReportedWorklistCount(ReportingToBeReportedWorklist worklist);
-        int GetDraftWorklistCount(Staff performingStaff);
-        int GetInTranscriptionWorklistCount(Staff performingStaff);
-        int GetToBeVerifiedWorklistCount(Staff performingStaff);
-        int GetResidentToBeVerifiedWorklistCount(Staff performingStaff);
-        int GetVerifiedWorklistCount(Staff performingStaff);
-
-        IList<Report> GetPriorReport(Patient patient);
-
-        IList<WorklistItem> Search(
-            string mrnID,
-            string healthcardID,
-            string familyName,
-            string givenName,
-            string accessionNumber,
-            bool showActiveOnly);
+        public void Search()
+        {
+            if (this.ContextBase is IRegistrationWorkflowFolderToolContext)
+            {
+                IRegistrationWorkflowFolderToolContext context = (IRegistrationWorkflowFolderToolContext)this.ContextBase;
+                SearchComponent.Launch(context.DesktopWindow);
+            }
+            else if (this.ContextBase is ITechnologistWorkflowFolderToolContext)
+            {
+                ITechnologistWorkflowFolderToolContext context = (ITechnologistWorkflowFolderToolContext)this.ContextBase;
+                SearchComponent.Launch(context.DesktopWindow);
+            }
+        }
     }
 }

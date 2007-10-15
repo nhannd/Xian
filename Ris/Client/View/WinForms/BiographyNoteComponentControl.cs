@@ -29,38 +29,30 @@
 
 #endregion
 
-using System.Collections.Generic;
-using ClearCanvas.Enterprise.Core;
-using ClearCanvas.Healthcare.Workflow.Reporting;
+using System.Windows.Forms;
+using ClearCanvas.Desktop.View.WinForms;
 
-namespace ClearCanvas.Healthcare.Brokers
+namespace ClearCanvas.Ris.Client.View.WinForms
 {
-    public interface IReportingWorklistBroker : IPersistenceBroker
+    /// <summary>
+    /// Provides a Windows Forms user-interface for <see cref="BiographyNoteComponent"/>
+    /// </summary>
+    public partial class BiographyNoteComponentControl : ApplicationComponentUserControl
     {
-        IList<WorklistItem> GetToBeReportedWorklist();
-        IList<WorklistItem> GetToBeReportedWorklist(ReportingToBeReportedWorklist worklist);
-        IList<WorklistItem> GetDraftWorklist(Staff performingStaff);
-        IList<WorklistItem> GetInTranscriptionWorklist(Staff performingStaff);
-        IList<WorklistItem> GetToBeVerifiedWorklist(Staff performingStaff);
-        IList<WorklistItem> GetResidentToBeVerifiedWorklist(Staff performingStaff);
-        IList<WorklistItem> GetVerifiedWorklist(Staff performingStaff);
+        private readonly BiographyNoteComponent _component;
 
-        int GetToBeReportedWorklistCount();
-        int GetToBeReportedWorklistCount(ReportingToBeReportedWorklist worklist);
-        int GetDraftWorklistCount(Staff performingStaff);
-        int GetInTranscriptionWorklistCount(Staff performingStaff);
-        int GetToBeVerifiedWorklistCount(Staff performingStaff);
-        int GetResidentToBeVerifiedWorklistCount(Staff performingStaff);
-        int GetVerifiedWorklistCount(Staff performingStaff);
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public BiographyNoteComponentControl(BiographyNoteComponent component)
+        {
+            InitializeComponent();
+            _component = component;
 
-        IList<Report> GetPriorReport(Patient patient);
+            this.Dock = DockStyle.Fill;
 
-        IList<WorklistItem> Search(
-            string mrnID,
-            string healthcardID,
-            string familyName,
-            string givenName,
-            string accessionNumber,
-            bool showActiveOnly);
+            _noteTable.Table = _component.Notes;
+            _noteTable.DataBindings.Add("Selection", _component, "SelectedNote", true, DataSourceUpdateMode.OnPropertyChanged);
+        }
     }
 }

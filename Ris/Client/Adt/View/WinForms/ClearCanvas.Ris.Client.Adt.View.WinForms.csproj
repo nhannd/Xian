@@ -40,34 +40,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BiographyDemographicComponentControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="BiographyDemographicComponentControl.Designer.cs">
-      <DependentUpon>BiographyDemographicComponentControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="BiographyDemographicComponentView.cs" />
-    <Compile Include="BiographyDocumentComponentControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="BiographyDocumentComponentControl.Designer.cs">
-      <DependentUpon>BiographyDocumentComponentControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="BiographyDocumentComponentView.cs" />
-    <Compile Include="BiographyFeedbackComponentControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="BiographyFeedbackComponentControl.Designer.cs">
-      <DependentUpon>BiographyFeedbackComponentControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="BiographyFeedbackComponentView.cs" />
-    <Compile Include="BiographyNoteComponentControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="BiographyNoteComponentControl.Designer.cs">
-      <DependentUpon>BiographyNoteComponentControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="BiographyNoteComponentView.cs" />
     <Compile Include="CancelOrderComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -75,13 +47,6 @@
       <DependentUpon>CancelOrderComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="CancelOrderComponentView.cs" />
-    <Compile Include="BiographyOrderHistoryComponentControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="BiographyOrderHistoryComponentControl.Designer.cs">
-      <DependentUpon>BiographyOrderHistoryComponentControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="BiographyOrderHistoryComponentView.cs" />
     <Compile Include="CheckInOrderComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -89,13 +54,6 @@
       <DependentUpon>CheckInOrderComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="CheckInOrderComponentView.cs" />
-    <Compile Include="PatientOverviewComponentControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="PatientOverviewComponentControl.Designer.cs">
-      <DependentUpon>PatientOverviewComponentControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="PatientOverviewComponentView.cs" />
     <Compile Include="OrderEntryComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -125,6 +83,13 @@
     </Compile>
     <Compile Include="PatientProfileAdditionalInfoEditorComponentView.cs" />
     <Compile Include="PatientProfileDiffComponentView.cs" />
+    <Compile Include="PatientSearchComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PatientSearchComponentControl.Designer.cs">
+      <DependentUpon>PatientSearchComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PatientSearchComponentView.cs" />
     <Compile Include="PerformedProcedureComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -245,14 +210,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="BiographyDocumentComponentControl.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>BiographyDocumentComponentControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="BiographyNoteComponentControl.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>BiographyNoteComponentControl.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="CancelOrderComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>CancelOrderComponentControl.cs</DependentUpon>
@@ -272,14 +229,6 @@
     <EmbeddedResource Include="OrderListComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>OrderListComponentControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="BiographyOrderHistoryComponentControl.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>BiographyOrderHistoryComponentControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="PatientOverviewComponentControl.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>PatientOverviewComponentControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="PatientProfileAdditionalInfoEditorComponentControl.resx">
       <SubType>Designer</SubType>
@@ -329,13 +278,9 @@
     <EmbeddedResource Include="Resources\NextSmall.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="BiographyDemographicComponentControl.resx">
+    <EmbeddedResource Include="PatientSearchComponentControl.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>BiographyDemographicComponentControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="BiographyFeedbackComponentControl.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>BiographyFeedbackComponentControl.cs</DependentUpon>
+      <DependentUpon>PatientSearchComponentControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="PerformedProcedureComponentControl.resx">
       <SubType>Designer</SubType>

@@ -213,7 +213,8 @@ namespace ClearCanvas.Ris.Client.Adt
                 return SearchField.Mrn |
                        SearchField.Healthcard |
                        SearchField.FamilyName |
-                       SearchField.GivenName;
+                       SearchField.GivenName |
+                       SearchField.AccessionNumber;
             }
         }
 
