@@ -29,20 +29,22 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
+using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.Healthcare.Alert
 {
+    [ExtensionPoint]
+    public class PatientProfileAlertExtensionPoint : ExtensionPoint<IPatientProfileAlert>
+    {
+    }
+
+    public interface IPatientProfileAlert : IAlert<PatientProfile>
+    {
+    }
+
     public abstract class PatientProfileAlertBase : IPatientProfileAlert
     {
-        protected PatientProfileAlertBase()
-        {
-        }
-
         #region IPatientProfileAlert Members
 
         public string Name
@@ -50,45 +52,17 @@ namespace ClearCanvas.Healthcare.Alert
             get { return "PatientProfileAlert"; }
         }
 
+        /// <summary>
+        /// Test the patient profile for any alert conditions.  This method must be thread-safe
+        /// </summary>
+        /// <param name="profile"></param>
+        /// <param name="context"></param>
+        /// <returns>NULL if the test does not trigger an alert </returns>
         public virtual IAlertNotification Test(PatientProfile profile, IPersistenceContext context)
         {
             return null;
         }
 
         #endregion
-    }
-
-    public class PatientProfileAlertHelper
-    {
-        private static PatientProfileAlertHelper _instance;
-        private IList<IPatientProfileAlert> _patientProfileAlertTests;
-
-        public static PatientProfileAlertHelper Instance
-        {
-            get
-            {
-                if (_instance == null)
-                    _instance = new PatientProfileAlertHelper();
-
-                return _instance;
-            }
-        }
-
-        private PatientProfileAlertHelper()
-        {
-            PatientProfileAlertExtensionPoint xp = new PatientProfileAlertExtensionPoint();
-            object[] tests = xp.CreateExtensions();
-
-            _patientProfileAlertTests = new List<IPatientProfileAlert>();
-            foreach (object o in tests)
-            {
-                _patientProfileAlertTests.Add((IPatientProfileAlert)o);
-            }
-        }
-
-        public IList<IPatientProfileAlert> GetAlertTests()
-        {
-            return _patientProfileAlertTests;
-        }
     }
 }

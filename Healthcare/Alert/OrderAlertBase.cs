@@ -29,17 +29,22 @@
 
 #endregion
 
-using System.Collections.Generic;
+using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.Healthcare.Alert
 {
+    [ExtensionPoint]
+    public class OrderAlertExtensionPoint : ExtensionPoint<IOrderAlert>
+    {
+    }
+
+    public interface IOrderAlert : IAlert<Order>
+    {
+    }
+
     public abstract class OrderAlertBase : IOrderAlert
     {
-        protected OrderAlertBase()
-        {
-        }
-
         #region IOrderAlert Members
 
         public string Name
@@ -47,45 +52,17 @@ namespace ClearCanvas.Healthcare.Alert
             get { return "OrderAlert"; }
         }
 
+        /// <summary>
+        /// Test the order for any alert conditions.  This method must be thread-safe
+        /// </summary>
+        /// <param name="order"></param>
+        /// <param name="context"></param>
+        /// <returns>NULL if the test does not trigger an alert </returns>
         public virtual IAlertNotification Test(Order order, IPersistenceContext context)
         {
             return null;
         }
 
         #endregion
-    }
-
-    public class OrderAlertHelper
-    {
-        private static OrderAlertHelper _instance;
-        private readonly IList<IOrderAlert> _orderAlertTests;
-
-        public static OrderAlertHelper Instance
-        {
-            get
-            {
-                if (_instance == null)
-                    _instance = new OrderAlertHelper();
-
-                return _instance;
-            }
-        }
-
-        private OrderAlertHelper()
-        {
-            OrderAlertExtensionPoint xp = new OrderAlertExtensionPoint();
-            object[] tests = xp.CreateExtensions();
-
-            _orderAlertTests = new List<IOrderAlert>();
-            foreach (object o in tests)
-            {
-                _orderAlertTests.Add((IOrderAlert)o);
-            }
-        }
-
-        public IList<IOrderAlert> GetAlertTests()
-        {
-            return _orderAlertTests;
-        }
     }
 }

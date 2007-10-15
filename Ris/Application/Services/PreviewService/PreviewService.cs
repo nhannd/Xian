@@ -32,13 +32,14 @@
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
+using ClearCanvas.Healthcare.Alert;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.PreviewService;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
-using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Services.PreviewService
 {
@@ -209,20 +210,29 @@ namespace ClearCanvas.Ris.Application.Services.PreviewService
 
         private GetAlertsResponse GetAlerts(GetAlertsRequest request, EntityRef patientProfileRef, EntityRef orderRef)
         {
-            List<AlertNotificationDetail> alertNotifications = new List<AlertNotificationDetail>();
+            List<IAlertNotification> alerts = new List<IAlertNotification>();
 
             if (patientProfileRef != null)
             {
                 PatientProfile profile = PersistenceContext.Load<PatientProfile>(patientProfileRef);
-                alertNotifications.AddRange(GetAlertNotifications(profile.Patient, this.PersistenceContext));
-                alertNotifications.AddRange(GetAlertNotifications(profile, this.PersistenceContext));
+
+                alerts.AddRange(AlertHelper.Instance.Test(profile.Patient, this.PersistenceContext));
+                alerts.AddRange(AlertHelper.Instance.Test(profile, this.PersistenceContext));
             }
 
             if (orderRef != null)
             {
                 Order order = PersistenceContext.Load<Order>(orderRef);
-                alertNotifications.AddRange(GetAlertNotifications(order, this.PersistenceContext));
+                alerts.AddRange(AlertHelper.Instance.Test(order, this.PersistenceContext));
             }
+
+            AlertAssembler alertAssembler = new AlertAssembler();
+            List<AlertNotificationDetail> alertNotifications =
+                CollectionUtils.Map<IAlertNotification, AlertNotificationDetail>(alerts,
+                delegate(IAlertNotification alert)
+                {
+                    return alertAssembler.CreateAlertNotification(alert);
+                });
 
             return new GetAlertsResponse(alertNotifications);
         }

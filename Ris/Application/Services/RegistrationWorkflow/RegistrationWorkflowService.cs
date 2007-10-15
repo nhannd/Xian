@@ -36,6 +36,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
+using ClearCanvas.Healthcare.Alert;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Healthcare.Workflow.Registration;
 using ClearCanvas.Ris.Application.Common;
@@ -121,10 +122,18 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             PatientProfile profile = PersistenceContext.Load<PatientProfile>(request.WorklistItem.PatientProfileRef);
             Order order = PersistenceContext.Load<Order>(request.WorklistItem.OrderRef);
 
-            List<AlertNotificationDetail> alertNotifications = new List<AlertNotificationDetail>();            
-            alertNotifications.AddRange(GetAlertNotifications(profile.Patient, this.PersistenceContext));
-            alertNotifications.AddRange(GetAlertNotifications(profile, this.PersistenceContext));
-            alertNotifications.AddRange(GetAlertNotifications(order, this.PersistenceContext));
+            List<IAlertNotification> alerts = new List<IAlertNotification>();
+            alerts.AddRange(AlertHelper.Instance.Test(profile.Patient, this.PersistenceContext));
+            alerts.AddRange(AlertHelper.Instance.Test(profile, this.PersistenceContext));
+            alerts.AddRange(AlertHelper.Instance.Test(order, this.PersistenceContext));
+
+            AlertAssembler alertAssembler = new AlertAssembler();
+            List<AlertNotificationDetail> alertNotifications =
+                CollectionUtils.Map<IAlertNotification, AlertNotificationDetail>(alerts,
+                delegate(IAlertNotification alert)
+                {
+                    return alertAssembler.CreateAlertNotification(alert);
+                });
 
             RegistrationWorkflowAssembler assembler = new RegistrationWorkflowAssembler();
             return new LoadWorklistPreviewResponse(assembler.CreateRegistrationWorklistPreview(

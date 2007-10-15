@@ -34,6 +34,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
+using ClearCanvas.Healthcare.Alert;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.PatientBiography;
@@ -102,9 +103,17 @@ namespace ClearCanvas.Ris.Application.Services.PatientBiography
             PatientProfile profile = broker.Load(request.PatientProfileRef);
             PatientProfileAssembler assembler = new PatientProfileAssembler();
 
-            List<AlertNotificationDetail> alertNotifications = new List<AlertNotificationDetail>();
-            alertNotifications.AddRange(GetAlertNotifications(profile.Patient, this.PersistenceContext));
-            alertNotifications.AddRange(GetAlertNotifications(profile, this.PersistenceContext));
+            List<IAlertNotification> alerts = new List<IAlertNotification>();
+            alerts.AddRange(AlertHelper.Instance.Test(profile.Patient, this.PersistenceContext));
+            alerts.AddRange(AlertHelper.Instance.Test(profile, this.PersistenceContext));
+
+            AlertAssembler alertAssembler = new AlertAssembler();
+            List<AlertNotificationDetail> alertNotifications = 
+                CollectionUtils.Map<IAlertNotification, AlertNotificationDetail>(alerts,
+                delegate(IAlertNotification alert)
+                    {
+                        return alertAssembler.CreateAlertNotification(alert);
+                    });
 
             return new LoadPatientProfileResponse(
                 profile.Patient.GetRef(), 
