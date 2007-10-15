@@ -30,15 +30,12 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Data.SqlClient;
 using System.Configuration;
-
+using System.Data.SqlClient;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 
-namespace ClearCanvas.ImageServer.Database.SqlServer2005
+namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
 {
     /// <summary>
     /// SQL Server implementation of <see cref="IPersistentStore"/>.

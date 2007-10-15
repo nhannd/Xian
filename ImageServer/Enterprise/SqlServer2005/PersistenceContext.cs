@@ -30,16 +30,12 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Reflection;
 using System.Data.SqlClient;
-
 using ClearCanvas.Common;
-using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Enterprise.Core;
 
-namespace ClearCanvas.ImageServer.Database.SqlServer2005
+namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
 {
     /// <summary>
     /// Defines the extension point for all NHibernate broker classes.

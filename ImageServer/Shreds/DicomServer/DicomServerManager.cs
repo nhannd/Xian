@@ -29,22 +29,15 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
 using System.Net;
-using System.Text;
-
 using ClearCanvas.Common;
-using ClearCanvas.Dicom.Network;
-using ClearCanvas.Enterprise.Core;
 using ClearCanvas.DicomServices;
 using ClearCanvas.DicomServices.ImageServer;
+using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
-using ClearCanvas.ImageServer.Database;
-using ClearCanvas.ImageServer.Model.Parameters;
-
 
 namespace ClearCanvas.ImageServer.Shreds.DicomServer
 {

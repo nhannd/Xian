@@ -34,13 +34,10 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Text;
-
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
-using ClearCanvas.Enterprise.Common;
-using ClearCanvas.ImageServer.Database;
 
-namespace ClearCanvas.ImageServer.Database.SqlServer2005
+namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
 {
     /// <summary>
     /// Provides base implementation of <see cref="ISelectBroker{TInput,TOutput}"/>.

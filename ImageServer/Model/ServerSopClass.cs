@@ -31,11 +31,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-
-using ClearCanvas.ImageServer.Database;
 using ClearCanvas.Enterprise.Core;
-using ClearCanvas.Enterprise.Common;
+using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model.Brokers;
 
 namespace ClearCanvas.ImageServer.Model

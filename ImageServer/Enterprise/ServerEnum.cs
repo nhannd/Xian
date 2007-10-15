@@ -30,10 +30,8 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace ClearCanvas.ImageServer.Database
+namespace ClearCanvas.ImageServer.Enterprise
 {
     public abstract class ServerEnum : ServerEntity
     {

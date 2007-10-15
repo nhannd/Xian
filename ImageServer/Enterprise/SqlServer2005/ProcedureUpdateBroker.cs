@@ -30,80 +30,67 @@
 #endregion
 
 using System;
+using System.Data;
 using System.Data.SqlClient;
-
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 
-namespace ClearCanvas.ImageServer.Database.SqlServer2005
+namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
 {
     /// <summary>
-    /// Baseline implementation of <see cref="IUpdateContext"/> for use with ADO.NET and SQL server.
+    /// Provides base implementation of <see cref="IProcedureUpdateBroker{TInput}"/>
     /// </summary>
-    /// <remarks>
-    /// This mechanism uses transaction wrappers in ADO.NET.  The transaction is started when the update
-    /// context is created.
-    /// </remarks>
-    public class UpdateContext : PersistenceContext,IUpdateContext,IDisposable
+    /// <typeparam name="TInput"></typeparam>
+    public abstract class ProcedureUpdateBroker<TInput> : Broker, IProcedureUpdateBroker<TInput>
+        where TInput : ProcedureParameters
     {
-        private SqlTransaction _transaction;
-        private UpdateContextSyncMode _mode;
+        private String _procedureName;
 
-        internal UpdateContext(SqlConnection connection, ITransactionNotifier transactionNotifier, UpdateContextSyncMode mode)
-            : base (connection, transactionNotifier)
+        protected ProcedureUpdateBroker(String procedureName)
         {
-            _transaction = connection.BeginTransaction();
-            _mode = mode;
+            _procedureName = procedureName;
         }
 
-        #region PersistenceContext Overrides
-        public override void Suspend()
+        #region IProcedureUpdateBroker<TInput> Members
+
+        public bool Execute(TInput criteria)
         {
-        }
+            SqlDataReader myReader = null;
+            SqlCommand command = null;
 
-        public override void Resume()
-        { 
-        }
-        #endregion
-
-        #region IUpdateContext Members
-
-        void IUpdateContext.Commit()
-        {
-            _transaction.Commit();
-        }
-
-        #endregion
-
-        #region IDisposable Members
-
-        /// <summary>
-        /// Commits the transaction (does not flush anything to the database)
-        /// </summary>
-        /// <param name="disposing"></param>
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
+            try
             {
-                if (_transaction != null)
+                command = new SqlCommand(_procedureName, Context.Connection);
+                command.CommandType = CommandType.StoredProcedure;
+
+                // Set parameters
+                SetParameters(command, criteria);
+
+                int rows = command.ExecuteNonQuery();
+
+            }
+            catch (Exception e)
+            {
+                Platform.Log(LogLevel.Error, e, "Unexpected exception when calling stored procedure: {0}", _procedureName);
+
+                throw new PersistenceException(String.Format("Unexpected error with stored procedure: {0}", _procedureName), e);
+            }
+            finally
+            {
+                // Cleanup the reader/command, or else we won't be able to do anything with the
+                // connection the next time here.
+                if (myReader != null)
                 {
-                    try
-                    {
-                        _transaction.Commit();
-                    }
-                    catch (SqlException e)
-                    {
-                        Platform.Log(LogLevel.Error, e);
-                    }
+                    myReader.Close();
+                    myReader.Dispose();
                 }
-                // end the transaction
+                if (command != null)
+                    command.Dispose();
             }
 
-            // important to call base class to close the session, etc.
-            base.Dispose(disposing);
+            return true;
         }
 
         #endregion
-
     }
 }

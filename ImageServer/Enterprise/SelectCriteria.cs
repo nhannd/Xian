@@ -29,18 +29,18 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Enterprise.Core;
 
-namespace ClearCanvas.ImageServer.Database
+namespace ClearCanvas.ImageServer.Enterprise
 {
-    public class ProcedureParameters : SearchCriteria
+    public class SelectCriteria : SearchCriteria
     {
-        public ProcedureParameters(string key)
-            : base(key)
+        public SelectCriteria(string key)
+            :base(key)
+        {
+        }
+
+        public SelectCriteria()
         {
         }
     }

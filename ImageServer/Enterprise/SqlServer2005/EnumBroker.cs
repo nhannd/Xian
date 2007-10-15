@@ -30,66 +30,38 @@
 #endregion
 
 using System;
-using System.Data;
-using System.Reflection;
-using System.ComponentModel;
 using System.Collections.Generic;
-using System.Text;
+using System.Data;
 using System.Data.SqlClient;
-using System.Data.SqlTypes;
-using System.Data.Sql;
-
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
-using ClearCanvas.Enterprise.Common;
-using ClearCanvas.ImageServer.Database;
 
-namespace ClearCanvas.ImageServer.Database.SqlServer2005
-{
-    /// <summary>
-    /// Provides base implementation of <see cref="IProcedureReadBroker{TOutput}"/>
-    /// </summary>
-    /// <typeparam name="TOutput"></typeparam>
-    public abstract class ProcedureReadBroker<TOutput> : Broker, IProcedureReadBroker<TOutput>
-        where TOutput : ServerEntity, new()
+namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
+{    
+    public abstract class EnumBroker<TOutput> : Broker, IEnumBroker<TOutput>
+        where TOutput : ServerEnum, new()
     {
-        private String _procedureName;
+        #region IEnumBroker<TOutput> Members
 
-        protected ProcedureReadBroker(String procedureName)
-        {
-            _procedureName = procedureName;
-        }
-
-        #region IProcedureReadBroker<TOutput> Members
-
-        public IList<TOutput> Execute()
+        IList<TOutput> IEnumBroker<TOutput>.Execute() 
         {
             IList<TOutput> list = new List<TOutput>();
+            TOutput tempValue = new TOutput();
 
-            Execute(delegate(TOutput row)
-            {
-                list.Add(row);
-            });
-
-            return list;
-        }
-
-        public void Execute(ProcedureReadCallback<TOutput> callback)
-        {
             SqlDataReader myReader = null;
             SqlCommand command = null;
 
             try
-            {
-                command = new SqlCommand(_procedureName, Context.Connection);
-                command.CommandType = CommandType.StoredProcedure;
+            {               
+                command = new SqlCommand(String.Format("SELECT * FROM {0}",tempValue.Name), Context.Connection);
+                command.CommandType = CommandType.Text;
 
                 myReader = command.ExecuteReader();
                 if (myReader == null)
                 {
-                    Platform.Log(LogLevel.Error, "Unable to execute stored procedure '{0}'", _procedureName);
+                    Platform.Log(LogLevel.Error, "Unable to select contents of '{0}'", tempValue.Name);
                     command.Dispose();
-                    return;
+                    return list;
                 }
                 else
                 {
@@ -101,16 +73,16 @@ namespace ClearCanvas.ImageServer.Database.SqlServer2005
 
                             PopulateEntity(myReader, row, typeof(TOutput));
 
-                            callback(row);
+                            list.Add(row);
                         }
                     }
                 }
             }
             catch (Exception e)
             {
-                Platform.Log(LogLevel.Error, e, "Unexpected exception when calling stored procedure: {0}", _procedureName);
+                Platform.Log(LogLevel.Error, e, "Unexpected exception when retrieving enumerated value: {0}", tempValue.Name);
 
-                throw new PersistenceException(String.Format("Unexpected problem with stored procedure: {0}: {1}", _procedureName, e.Message), e);
+                throw new PersistenceException(String.Format("Unexpected problem when retrieving enumerated value: {0}: {1}", tempValue.Name, e.Message), e);
             }
             finally
             {
@@ -124,7 +96,7 @@ namespace ClearCanvas.ImageServer.Database.SqlServer2005
                 if (command != null)
                     command.Dispose();
             }
-          
+            return list;
         }
 
         #endregion

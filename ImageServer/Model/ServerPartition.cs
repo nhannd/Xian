@@ -31,9 +31,8 @@
 
 using System;
 using ClearCanvas.Enterprise.Core;
-using ClearCanvas.ImageServer.Database;
+using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model.SelectBrokers;
-using System.ComponentModel;
 
 namespace ClearCanvas.ImageServer.Model
 {

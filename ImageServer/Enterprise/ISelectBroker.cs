@@ -29,57 +29,40 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Enterprise.Core;
-using ClearCanvas.Enterprise.Common;
-using System.ComponentModel;
 
-namespace ClearCanvas.ImageServer.Database
+namespace ClearCanvas.ImageServer.Enterprise
 {
+    public delegate void SelectCallback<T>(T row);
 
-    [Serializable] // TH (Oct 5, 2007): All entity objects should be serializable to use in ASP.NET app
-    public abstract class ServerEntity : Entity
+    public interface ISelectBroker<TInput, TOutput> : IPersistenceBroker
+        where TInput : SelectCriteria
+        where TOutput : ServerEntity, new()
     {
-        private ServerEntityKey _key;
-        private String _name;
-
-        public ServerEntity(String name)
-            : base()
-        {
-            _name = name;
-        }
-
-
-        public String Name
-        {
-            get { return _name; }
-        }
-
-
-
-        public void SetKey(ServerEntityKey key)
-        {
-            _key = key;
-        }
-
-        public ServerEntityKey GetKey()
-        {
-            if (_key == null)
-                throw new InvalidOperationException("Cannot generate entity ref on transient entity");
-
-            return _key;
-        }
+        /// <summary>
+        /// Loads the entity referred to by the specified entity reference.
+        /// </summary>
+        /// <param name="entityRef"></param>
+        /// <returns></returns>
+        TOutput Load(ServerEntityKey entityRef);
 
         /// <summary>
-        /// Not supported by ServerEntity objects
+        /// Retrieves all entities matching the specified criteria.
+        /// Caution: this method may return an arbitrarily large result set.
         /// </summary>
+        /// <param name="criteria"></param>
         /// <returns></returns>
-        public override EntityRef GetRef()
-        {
-            throw new InvalidOperationException("Not supported by ServerEntity");
-        }
+        IList<TOutput> Find(TInput criteria);
+
+        /// <summary>
+        /// Retrieves all entities matching the specified criteria.
+        /// Caution: this method may return an arbitrarily large result set.
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <param name="callback"></param>
+        /// <returns></returns>
+        void Find(TInput criteria, SelectCallback<TOutput> callback);
+
     }
 }

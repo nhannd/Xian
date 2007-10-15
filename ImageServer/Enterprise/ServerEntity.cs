@@ -30,33 +30,52 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-
-using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Enterprise.Core;
 
-namespace ClearCanvas.ImageServer.Database
+namespace ClearCanvas.ImageServer.Enterprise
 {
-    public delegate void ProcedureReadCallback<T>(T row);
 
-    public interface IProcedureReadBroker<TOutput> : IPersistenceBroker
-        where TOutput : ServerEntity, new()
+    [Serializable] // TH (Oct 5, 2007): All entity objects should be serializable to use in ASP.NET app
+    public abstract class ServerEntity : Entity
     {
-        /// <summary>
-        /// Retrieves all entities matching the specified criteria.
-        /// Caution: this method may return an arbitrarily large result set.
-        /// </summary>
-        /// <param name="criteria"></param>
-        /// <returns></returns>
-        IList<TOutput> Execute();
+        private ServerEntityKey _key;
+        private String _name;
+
+        public ServerEntity(String name)
+            : base()
+        {
+            _name = name;
+        }
+
+
+        public String Name
+        {
+            get { return _name; }
+        }
+
+
+
+        public void SetKey(ServerEntityKey key)
+        {
+            _key = key;
+        }
+
+        public ServerEntityKey GetKey()
+        {
+            if (_key == null)
+                throw new InvalidOperationException("Cannot generate entity ref on transient entity");
+
+            return _key;
+        }
 
         /// <summary>
-        /// Retrieves all entities matching the specified criteria,
-        /// constrained by the specified page constraint.
+        /// Not supported by ServerEntity objects
         /// </summary>
-        /// <param name="criteria"></param>
         /// <returns></returns>
-        void Execute(ProcedureReadCallback<TOutput> callback);
+        public override EntityRef GetRef()
+        {
+            throw new InvalidOperationException("Not supported by ServerEntity");
+        }
     }
 }

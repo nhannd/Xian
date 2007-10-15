@@ -30,7 +30,7 @@
 #endregion
 
 using ClearCanvas.Enterprise.Core;
-using ClearCanvas.ImageServer.Database;
+using ClearCanvas.ImageServer.Enterprise;
 
 namespace ClearCanvas.ImageServer.Model.Criteria
 {

@@ -29,26 +29,38 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Enterprise.Core;
-using ClearCanvas.Enterprise.Common;
 
-namespace ClearCanvas.ImageServer.Database
+namespace ClearCanvas.ImageServer.Enterprise
 {
+    public delegate void ProcedureQueryCallback<T>(T row);
+
     /// <summary>
-    /// Interface for retrieving enumerated values from the database.
+    /// Interface used to define stored procedures that that input parameters and return resultant rows.
     /// </summary>
-    /// <typeparam name="TOutput"></typeparam>
-    public interface IEnumBroker<TOutput> : IPersistenceBroker
-        where TOutput : ServerEnum, new()
+    /// <typeparam name="TInput">Input parameters</typeparam>
+    /// <typeparam name="TOutput">The return type</typeparam>
+    public interface IProcedureQueryBroker<TInput, TOutput> : IPersistenceBroker
+        where TInput : ProcedureParameters
+        where TOutput : ServerEntity, new()
     {
         /// <summary>
-        /// Retrieves all enums.
+        /// Retrieves all entities matching the specified criteria.
+        /// Caution: this method may return an arbitrarily large result set.
         /// </summary>
+        /// <param name="criteria"></param>
         /// <returns></returns>
-        IList<TOutput> Execute();
+        IList<TOutput> Execute(TInput criteria);
+
+        /// <summary>
+        /// Retrieves all entities matching the specified criteria,
+        /// constrained by the specified page constraint.
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <param name="callback"></param>
+        /// <returns></returns>
+        void Execute(TInput criteria, SelectCallback<TOutput> callback);
+
     }
 }

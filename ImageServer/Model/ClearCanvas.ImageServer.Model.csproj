@@ -127,9 +127,9 @@
       <Project>{431E9444-9915-4D49-B92D-9B7EC086622A}</Project>
       <Name>ClearCanvas.Enterprise.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Database\ClearCanvas.ImageServer.Database.csproj">
-      <Project>{86CA6EDB-DE59-45E9-8BD8-832FBB3F8009}</Project>
-      <Name>ClearCanvas.ImageServer.Database</Name>
+    <ProjectReference Include="..\Enterprise\ClearCanvas.ImageServer.Enterprise.csproj">
+      <Project>{7E7A1DF8-CD27-4E41-A105-BE7DCB1256CE}</Project>
+      <Name>ClearCanvas.ImageServer.Enterprise</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

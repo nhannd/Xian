@@ -30,21 +30,37 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-
+using System.Data.SqlClient;
 using ClearCanvas.Enterprise.Core;
 
-namespace ClearCanvas.ImageServer.Database
+namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
 {
-    public interface IProcedureUpdateBroker<TInput> : IPersistenceBroker
-        where TInput : ProcedureParameters
+    /// <summary>
+    /// Provides implementation of <see cref="IReadContext"/> for use with ADO.NET and Sql Server.
+    /// </summary>
+    public class ReadContext : PersistenceContext,IReadContext,IDisposable
     {
+        internal ReadContext(SqlConnection connection, ITransactionNotifier transactionNotifier)
+            : base(connection, transactionNotifier)
+        { }
+
+        #region IDisposable Members
+
         /// <summary>
-        /// Retrieves all entities matching the specified criteria.
+        /// Commits the transaction (does not flush anything to the database)
         /// </summary>
-        /// <param name="criteria"></param>
-        /// <returns></returns>
-        bool Execute(TInput criteria);
+        /// <param name="disposing"></param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                    // end the transaction
+            }
+
+            // important to call base class to close the session, etc.
+            base.Dispose(disposing);
+        }
+
+        #endregion
     }
 }

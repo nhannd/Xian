@@ -29,31 +29,18 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Enterprise.Core;
 
-namespace ClearCanvas.ImageServer.Database
+namespace ClearCanvas.ImageServer.Enterprise
 {
-    /// <summary>
-    /// Used to represent a specific parameter to a stored procedure.
-    /// </summary>
-    /// <typeparam name="T">The type associated with the parameter.</typeparam>
-    public class ProcedureParameter<T> : SearchCriteria
+    public interface IProcedureUpdateBroker<TInput> : IPersistenceBroker
+        where TInput : ProcedureParameters
     {
-        private T _value;
-
-        public ProcedureParameter(String key, T value)
-            : base(key)
-        {
-            _value = value;
-        }
-
-        public T Value
-        {
-            get { return _value; }
-        }
+        /// <summary>
+        /// Retrieves all entities matching the specified criteria.
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        bool Execute(TInput criteria);
     }
 }

@@ -30,7 +30,7 @@
 #endregion
 
 using ClearCanvas.Common;
-using ClearCanvas.ImageServer.Database.SqlServer2005;
+using ClearCanvas.ImageServer.Enterprise.SqlServer2005;
 using ClearCanvas.ImageServer.Model.Criteria;
 using ClearCanvas.ImageServer.Model.SelectBrokers;
 

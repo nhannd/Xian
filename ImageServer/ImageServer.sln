@@ -1,12 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual Studio 2005
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageServer.Database.SqlServer2005", "Database\SqlServer2005\ClearCanvas.ImageServer.Database.SqlServer2005.csproj", "{221FC797-CCE8-406B-94AB-0EB290A387A6}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageServer.Model", "Model\ClearCanvas.ImageServer.Model.csproj", "{2C9126D3-5B73-4539-BBC9-D56E6097D335}"
 	ProjectSection(WebsiteProperties) = preProject
 		Debug.AspNetCompiler.Debug = "True"
@@ -99,12 +93,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Enterprise.Core
 		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageServer.Database", "Database\ClearCanvas.ImageServer.Database.csproj", "{86CA6EDB-DE59-45E9-8BD8-832FBB3F8009}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageServer.Streaming", "Streaming\ClearCanvas.ImageServer.Streaming.csproj", "{DF8F531F-5AE4-4AC1-A086-B50FB799EEF1}"
 	ProjectSection(WebsiteProperties) = preProject
 		Debug.AspNetCompiler.Debug = "True"
@@ -129,16 +117,24 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Common", "..\Co
 		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageServer.Enterprise", "Enterprise\ClearCanvas.ImageServer.Enterprise.csproj", "{86CA6EDB-DE59-45E9-8BD8-832FBB3F8009}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageServer.Enterprise.SqlServer2005", "Enterprise\SqlServer2005\ClearCanvas.ImageServer.Enterprise.SqlServer2005.csproj", "{221FC797-CCE8-406B-94AB-0EB290A387A6}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{221FC797-CCE8-406B-94AB-0EB290A387A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{221FC797-CCE8-406B-94AB-0EB290A387A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{221FC797-CCE8-406B-94AB-0EB290A387A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{221FC797-CCE8-406B-94AB-0EB290A387A6}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2C9126D3-5B73-4539-BBC9-D56E6097D335}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2C9126D3-5B73-4539-BBC9-D56E6097D335}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2C9126D3-5B73-4539-BBC9-D56E6097D335}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -195,10 +191,6 @@ Global
 		{431E9444-9915-4D49-B92D-9B7EC086622A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{431E9444-9915-4D49-B92D-9B7EC086622A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{431E9444-9915-4D49-B92D-9B7EC086622A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{86CA6EDB-DE59-45E9-8BD8-832FBB3F8009}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{86CA6EDB-DE59-45E9-8BD8-832FBB3F8009}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{86CA6EDB-DE59-45E9-8BD8-832FBB3F8009}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{86CA6EDB-DE59-45E9-8BD8-832FBB3F8009}.Release|Any CPU.Build.0 = Release|Any CPU
 		{DF8F531F-5AE4-4AC1-A086-B50FB799EEF1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{DF8F531F-5AE4-4AC1-A086-B50FB799EEF1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DF8F531F-5AE4-4AC1-A086-B50FB799EEF1}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -215,6 +207,14 @@ Global
 		{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}.Release|Any CPU.Build.0 = Release|Any CPU
+		{86CA6EDB-DE59-45E9-8BD8-832FBB3F8009}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{86CA6EDB-DE59-45E9-8BD8-832FBB3F8009}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{86CA6EDB-DE59-45E9-8BD8-832FBB3F8009}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{86CA6EDB-DE59-45E9-8BD8-832FBB3F8009}.Release|Any CPU.Build.0 = Release|Any CPU
+		{221FC797-CCE8-406B-94AB-0EB290A387A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{221FC797-CCE8-406B-94AB-0EB290A387A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{221FC797-CCE8-406B-94AB-0EB290A387A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{221FC797-CCE8-406B-94AB-0EB290A387A6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

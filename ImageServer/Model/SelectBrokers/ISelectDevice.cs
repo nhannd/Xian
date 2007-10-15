@@ -29,10 +29,7 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.ImageServer.Database;
+using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model.Criteria;
 
 namespace ClearCanvas.ImageServer.Model.SelectBrokers

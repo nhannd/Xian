@@ -30,21 +30,14 @@
 #endregion
 
 using System;
-using System.Data;
-using System.Reflection;
 using System.ComponentModel;
-using System.Collections.Generic;
-using System.Text;
 using System.Data.SqlClient;
 using System.Data.SqlTypes;
-using System.Data.Sql;
+using System.Reflection;
 using System.Xml;
-
-using ClearCanvas.ImageServer.Database;
 using ClearCanvas.Enterprise.Core;
-using ClearCanvas.Enterprise.Common;
 
-namespace ClearCanvas.ImageServer.Database.SqlServer2005
+namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
 {
     public abstract class Broker : IPersistenceBroker
     {

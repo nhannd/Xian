@@ -30,12 +30,8 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.IO;
-
-using ClearCanvas.ImageServer.Database;
-using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Enterprise;
 
 namespace ClearCanvas.ImageServer.Model
 {

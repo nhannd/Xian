@@ -30,22 +30,27 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Enterprise.Core;
 
-namespace ClearCanvas.ImageServer.Database
+namespace ClearCanvas.ImageServer.Enterprise
 {
-    public class SelectCriteria : SearchCriteria
+    /// <summary>
+    /// Used to represent a specific parameter to a stored procedure.
+    /// </summary>
+    /// <typeparam name="T">The type associated with the parameter.</typeparam>
+    public class ProcedureParameter<T> : SearchCriteria
     {
-        public SelectCriteria(string key)
-            :base(key)
+        private T _value;
+
+        public ProcedureParameter(String key, T value)
+            : base(key)
         {
+            _value = value;
         }
 
-        public SelectCriteria()
+        public T Value
         {
+            get { return _value; }
         }
     }
 }
