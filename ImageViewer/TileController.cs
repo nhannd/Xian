@@ -145,6 +145,9 @@ namespace ClearCanvas.ImageViewer
 				CaptureChangingEventArgs args = new CaptureChangingEventArgs(value, _captureHandler);
 				_captureHandler = value;
 				EventsHelper.Fire(_captureChangingEvent, this, args);
+
+				if (_tile.ImageViewer != null)
+					_tile.ImageViewer.EventBroker.OnCaptureChanging(args);
 			}
 		}
 

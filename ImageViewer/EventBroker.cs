@@ -32,6 +32,7 @@
 using System;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Graphics;
+using ClearCanvas.ImageViewer.InputManagement;
 using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer
@@ -53,6 +54,8 @@ namespace ClearCanvas.ImageViewer
 
 		private event EventHandler<StudyEventArgs> _studyLoadedEvent;
 		private event EventHandler<SopEventArgs> _imageLoadedEvent;
+
+		private event EventHandler<CaptureChangingEventArgs> _captureChangingEvent;
 
 		#endregion
 
@@ -176,6 +179,17 @@ namespace ClearCanvas.ImageViewer
 		internal void OnImageLoaded(SopEventArgs sopEventArgs)
 		{
 			EventsHelper.Fire(_imageLoadedEvent, this, sopEventArgs);
+		}
+
+		public event EventHandler<CaptureChangingEventArgs> CaptureChanging
+		{
+			add { _captureChangingEvent += value; }
+			remove { _captureChangingEvent -= value; }
+		}
+
+		internal void OnCaptureChanging(CaptureChangingEventArgs captureChangingArgs)
+		{
+			EventsHelper.Fire(_captureChangingEvent, this, captureChangingArgs);
 		}
 	}
 }
