@@ -52,6 +52,9 @@ namespace ClearCanvas.Desktop.Configuration.View.WinForms
 
             _component = component;
 
+        	base.AcceptButton = _okButton;
+        	base.CancelButton = _cancelButton;
+
             _defaultValue.DataBindings.Add("Value", _component, "DefaultValue", true, DataSourceUpdateMode.Never);
             _editableValue.DataBindings.Add("Value", _component, "CurrentValue", true, DataSourceUpdateMode.OnPropertyChanged);
             _okButton.DataBindings.Add("Enabled", _component, "Modified", true, DataSourceUpdateMode.Never);
