@@ -56,6 +56,7 @@ namespace ClearCanvas.ImageServer.Model
         private bool _enabled;
         private bool _readOnly;
         private bool _writeOnly;
+        private FilesystemTierEnum _filesystemTierEnum;
         #endregion
 
         #region Public Properties
@@ -113,6 +114,11 @@ namespace ClearCanvas.ImageServer.Model
         {
             get { return _writeOnly; }
             set { _writeOnly = value; }
+        }
+        public FilesystemTierEnum FilesystemTierEnum
+        {
+            get { return _filesystemTierEnum; }
+            set { _filesystemTierEnum = value; }
         }
         #endregion
 

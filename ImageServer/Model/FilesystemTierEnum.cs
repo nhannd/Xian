@@ -36,53 +36,53 @@ using ClearCanvas.ImageServer.Model.EnumBrokers;
 
 namespace ClearCanvas.ImageServer.Model
 {
-    public class TypeEnum : ServerEnum
+    public class FilesystemTierEnum : ServerEnum
     {
-        private static Dictionary<short, TypeEnum> _dict = new Dictionary<short, TypeEnum>();
+        private static Dictionary<short, FilesystemTierEnum> _dict = new Dictionary<short, FilesystemTierEnum>();
 
+        #region Constructors
         /// <summary>
         /// One-time load from the database of type enumerated value.
         /// </summary>
-        static TypeEnum()
+        static FilesystemTierEnum()
         {
             IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext();
-            IEnumBroker<TypeEnum> broker = read.GetBroker<ITypeEnum>();
-            IList<TypeEnum> list = broker.Execute();
+            IEnumBroker<FilesystemTierEnum> broker = read.GetBroker<IFilesystemTierEnum>();
+            IList<FilesystemTierEnum> list = broker.Execute();
             read.Dispose();
 
-            foreach (TypeEnum type in list)
+            foreach (FilesystemTierEnum type in list)
             {
                 _dict.Add(type.Enum, type);
             }
         }
 
-        #region Constructors
-        public TypeEnum()
-            : base("TypeEnum")
+        public FilesystemTierEnum()
+            : base("FilesystemTierEnum")
         {
         }
         #endregion
 
         public override void SetEnum(short val)
         {
-            TypeEnum typeEnum;
-            if (false == _dict.TryGetValue(val, out typeEnum))
-                throw new PersistenceException("Unknown TypeEnum value: " + val,null);
+            FilesystemTierEnum tierEnum;
+            if (false == _dict.TryGetValue(val, out tierEnum))
+                throw new PersistenceException("Unknown FilesystemTierEnum value: " + val, null);
 
-            Enum = typeEnum.Enum;
-            Lookup = typeEnum.Lookup;
-            Description = typeEnum.Description;
-            LongDescription = typeEnum.LongDescription;
+            Enum = tierEnum.Enum;
+            Lookup = tierEnum.Lookup;
+            Description = tierEnum.Description;
+            LongDescription = tierEnum.LongDescription;
         }
 
-        public static TypeEnum GetEnum(string lookup)
+        public static FilesystemTierEnum GetEnum(string lookup)
         {
-            foreach (TypeEnum type in _dict.Values)
+            foreach (FilesystemTierEnum type in _dict.Values)
             {
                 if (type.Lookup.Equals(lookup))
                     return type;
             }
-            throw new PersistenceException("Unknown TypeEnum: " + lookup, null);
+            throw new PersistenceException("Unknown FilesystemTierEnum: " + lookup, null);
         }
     }
 }

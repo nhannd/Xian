@@ -51,7 +51,7 @@ namespace ClearCanvas.ImageServer.Model
         private bool _readOnly;
         private bool _writeOnly;
         private String _description;
-        private ServerEntityKey _fileSystemTierKey;
+        private FilesystemTierEnum _fileSystemTierEnum;
         #endregion
 
         #region Public Properties
@@ -82,10 +82,10 @@ namespace ClearCanvas.ImageServer.Model
             set { _description = value; }
         }
 
-        public ServerEntityKey FilesystemTierKey
+        public FilesystemTierEnum FilesystemTierEnum
         {
-            get { return _fileSystemTierKey; }
-            set { _fileSystemTierKey = value; }
+            get { return _fileSystemTierEnum; }
+            set { _fileSystemTierEnum = value; }
         }
         #endregion
 

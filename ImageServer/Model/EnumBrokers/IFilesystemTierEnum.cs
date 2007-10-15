@@ -29,36 +29,15 @@
 
 #endregion
 
-using System;
 using ClearCanvas.ImageServer.Enterprise;
+using ClearCanvas.ImageServer.Model;
 
-namespace ClearCanvas.ImageServer.Model
+namespace ClearCanvas.ImageServer.Model.EnumBrokers
 {
-    public class FilesystemTier : ServerEntity
+    /// <summary>
+    /// Broker for accessing <see cref="FilesystemTierEnum"/> values.
+    /// </summary>
+    public interface IFilesystemTierEnum : IEnumBroker<FilesystemTierEnum>
     {
-        #region Constructors
-        public FilesystemTier()
-            : base("FilesystemTier")
-        {
-        }
-        #endregion
-
-        #region Private Members
-        private String _description;
-        private int _tierId;
-        #endregion
-
-        #region Public Properties
-        public String Description
-        {
-            get { return _description; }
-            set { _description = value; }
-        }
-        public int TierId
-        {
-            get { return _tierId; }
-            set { _tierId = value; }
-        }
-        #endregion
     }
 }

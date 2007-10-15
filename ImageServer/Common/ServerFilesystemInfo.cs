@@ -41,7 +41,6 @@ namespace ClearCanvas.ImageServer.Common
     {
         #region Private Members
         private readonly Filesystem _filesystem;
-        private readonly FilesystemTier _tier;
         private object _lock = new object();
         private float _freeBytes;
         private float _totalBytes;
@@ -53,11 +52,6 @@ namespace ClearCanvas.ImageServer.Common
         public Filesystem Filesystem
         {
             get { return _filesystem; }
-        }
-
-        public FilesystemTier FilesystemTier
-        {
-            get { return _tier; }
         }
 
         public bool Online
@@ -102,10 +96,9 @@ namespace ClearCanvas.ImageServer.Common
 
         #endregion
 
-        internal ServerFilesystemInfo(Filesystem filesystem, FilesystemTier tier)
+        internal ServerFilesystemInfo(Filesystem filesystem)
         {
             _filesystem = filesystem;
-            _tier = tier;
             _online = true;
             LoadFreeSpace();
         }

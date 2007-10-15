@@ -36,7 +36,6 @@
     <Compile Include="Brokers\DeleteWorkQueueUid.cs" />
     <Compile Include="Brokers\QueryDevicePreferredTransferSyntaxes.cs" />
     <Compile Include="Brokers\GetFilesystems.cs" />
-    <Compile Include="Brokers\GetFilesystemTiers.cs" />
     <Compile Include="Brokers\GetServerPartitions.cs" />
     <Compile Include="Brokers\GetServerSopClasses.cs" />
     <Compile Include="Brokers\GetServerTransferSyntaxes.cs" />
@@ -47,6 +46,7 @@
     <Compile Include="Brokers\InsertStudyStorage.cs" />
     <Compile Include="Brokers\InsertWorkQueueStudyProcess.cs" />
     <Compile Include="Brokers\QueryDevice.cs" />
+    <Compile Include="EnumBrokers\FilesystemTierBroker.cs" />
     <Compile Include="SelectBrokers\SelectDevice.cs" />
     <Compile Include="SelectBrokers\SelectFilesystem.cs" />
     <Compile Include="SelectBrokers\SelectPatient.cs" />
@@ -59,8 +59,8 @@
     <Compile Include="Brokers\QueryStudyStorageLocation.cs" />
     <Compile Include="Brokers\QueryWorkQueue.cs" />
     <Compile Include="Brokers\QueryWorkQueueUids.cs" />
-    <Compile Include="Brokers\StatusEnumBroker.cs" />
-    <Compile Include="Brokers\TypeEnumBroker.cs" />
+    <Compile Include="EnumBrokers\StatusEnumBroker.cs" />
+    <Compile Include="EnumBrokers\TypeEnumBroker.cs" />
     <Compile Include="Brokers\UpdateWorkQueue.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SelectBrokers\SelectWorkQueue.cs" />

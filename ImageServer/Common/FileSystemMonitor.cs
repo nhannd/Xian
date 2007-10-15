@@ -118,23 +118,12 @@ namespace ClearCanvas.ImageServer.Common
 
             IList<Filesystem> filesystemList = filesystemQuery.Execute();
 
-            IGetFilesystemTiers filesystemTierQuery = read.GetBroker<IGetFilesystemTiers>();
-
-            IList<FilesystemTier> tierList = filesystemTierQuery.Execute();
-
             read.Dispose();
 
             foreach (Filesystem filesystem in filesystemList)
             {
-                foreach (FilesystemTier tier in tierList)
-                {
-                    if (tier.GetKey().Equals(filesystem.FilesystemTierKey))
-                    {
-                        ServerFilesystemInfo info = new ServerFilesystemInfo(filesystem, tier);
-                        _filesystemList.Add(info);
-                        break;
-                    }
-                }
+                ServerFilesystemInfo info = new ServerFilesystemInfo(filesystem);
+                _filesystemList.Add(info);
             }
 
             StartThread();

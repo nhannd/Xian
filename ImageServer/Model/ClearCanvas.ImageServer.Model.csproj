@@ -36,8 +36,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Brokers\IDeleteWorkQueueUid.cs" />
+    <Compile Include="Brokers\IInsertFilesystem.cs" />
+    <Compile Include="EnumBrokers\IFilesystemTierEnum.cs" />
     <Compile Include="Brokers\IGetFilesystems.cs" />
-    <Compile Include="Brokers\IGetFilesystemTiers.cs" />
     <Compile Include="Brokers\IGetServerPartitions.cs" />
     <Compile Include="Brokers\IGetServerTransferSyntaxes.cs" />
     <Compile Include="Brokers\IInsertDevice.cs" />
@@ -56,6 +57,7 @@
     <Compile Include="Criteria\ServerPartitionSelectCriteria.cs" />
     <Compile Include="Criteria\WorkQueueSelectCriteria.cs" />
     <Compile Include="Parameters\DeviceUpdateParameters.cs" />
+    <Compile Include="Parameters\FilesystemInsertParameters.cs" />
     <Compile Include="SelectBrokers\ISelectDevice.cs" />
     <Compile Include="SelectBrokers\ISelectFilesystem.cs" />
     <Compile Include="SelectBrokers\ISelectServerPartition.cs" />
@@ -66,14 +68,14 @@
     <Compile Include="SelectBrokers\ISelectStudy.cs" />
     <Compile Include="Brokers\IQueryStudyStorageLocation.cs" />
     <Compile Include="Brokers\IQueryWorkQueueUids.cs" />
-    <Compile Include="Brokers\IStatusEnum.cs" />
-    <Compile Include="Brokers\ITypeEnum.cs" />
+    <Compile Include="EnumBrokers\IStatusEnum.cs" />
+    <Compile Include="EnumBrokers\ITypeEnum.cs" />
     <Compile Include="Brokers\IUpdateWorkQueue.cs" />
     <Compile Include="Criteria\PatientSelectCriteria.cs" />
     <Compile Include="Device.cs" />
     <Compile Include="DevicePreferredTransferSyntax.cs" />
     <Compile Include="Filesystem.cs" />
-    <Compile Include="FilesystemTier.cs" />
+    <Compile Include="FilesystemTierEnum.cs" />
     <Compile Include="Brokers\IQueryWorkQueue.cs" />
     <Compile Include="InstanceKeys.cs" />
     <Compile Include="Parameters\DeviceInsertParameters.cs" />

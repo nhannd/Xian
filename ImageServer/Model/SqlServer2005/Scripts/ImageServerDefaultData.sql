@@ -31,6 +31,22 @@ INSERT INTO [ImageServer].[dbo].[StatusEnum]
      VALUES
            (newid(),203,'Failed','Failed','The Queue entry has failed.')
 
+-- FilesystemTierEnum
+INSERT INTO [ImageServer].[dbo].[FilesystemTierEnum]
+           ([GUID],[FilesystemTierEnum],[Lookup],[Description],[LongDescription])
+     VALUES
+           (newid(),101,'Tier1','Tier 1','Filesystem Tier 1')
+
+INSERT INTO [ImageServer].[dbo].[FilesystemTierEnum]
+           ([GUID],[FilesystemTierEnum],[Lookup],[Description],[LongDescription])
+     VALUES
+           (newid(),102,'Tier2','Tier 2','Filesystem Tier 2')
+
+INSERT INTO [ImageServer].[dbo].[FilesystemTierEnum]
+           ([GUID],[FilesystemTierEnum],[Lookup],[Description],[LongDescription])
+     VALUES
+           (newid(),103,'Tier3','Tier 3','Filesystem Tier 3')
+
 
 -- ServerSopClass inserts
 INSERT INTO [ImageServer].[dbo].[ServerSopClass] ([GUID],[SopClassUid],[Description],[NonImage])

@@ -86,5 +86,29 @@ namespace ClearCanvas.ImageServer.Enterprise
 
         public abstract void SetEnum(short val);
 
+        /// <summary>
+        /// Equality operator.
+        /// </summary>
+        public static bool operator ==(ServerEnum t1, ServerEnum t2)
+        {
+            if ((object)t1 == null && (object)t2 == null)
+                return true;
+            if ((object)t1 == null || (object)t2 == null)
+                return false;
+            return t1.Enum == t2.Enum;
+        }
+
+        /// <summary>
+        /// Inequality operator.
+        /// </summary>
+        public static bool operator !=(ServerEnum t1, ServerEnum t2)
+        {
+            if ((object)t1 == null && (object)t2 == null)
+                return false;
+            if ((object)t1 == null || (object)t2 == null)
+                return true;
+            return t1.Enum != t2.Enum;
+        }
+
     }
 }

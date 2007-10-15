@@ -29,11 +29,18 @@
 
 #endregion
 
-using ClearCanvas.ImageServer.Enterprise;
+using ClearCanvas.Common;
+using ClearCanvas.ImageServer.Enterprise.SqlServer2005;
+using ClearCanvas.ImageServer.Model.EnumBrokers;
 
-namespace ClearCanvas.ImageServer.Model.Brokers
+namespace ClearCanvas.ImageServer.Model.SqlServer2005.EnumBrokers
 {
-    public interface IGetFilesystemTiers : IProcedureReadBroker<FilesystemTier>
+    [ExtensionOf(typeof(BrokerExtensionPoint))]
+    public class TypeEnumBroker : EnumBroker<TypeEnum>, ITypeEnum 
     {
+        public TypeEnumBroker()
+            : base()
+        {
+        }
     }
 }
