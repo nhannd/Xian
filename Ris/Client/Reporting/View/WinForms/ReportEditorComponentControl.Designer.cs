@@ -60,7 +60,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
         private void InitializeComponent()
         {
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.panel1 = new System.Windows.Forms.Panel();
+            this._patientPanel = new System.Windows.Forms.Panel();
             this._visitNumber = new ClearCanvas.Desktop.View.WinForms.TextField();
             this._performedDate = new ClearCanvas.Desktop.View.WinForms.TextField();
             this._dateOfBirth = new ClearCanvas.Desktop.View.WinForms.TextField();
@@ -74,33 +74,35 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this._browserSplitContainer = new System.Windows.Forms.SplitContainer();
             this._editorBrowser = new System.Windows.Forms.WebBrowser();
             this._previewBrowser = new System.Windows.Forms.WebBrowser();
-            this.panel3 = new System.Windows.Forms.Panel();
-            this._verifyButton = new System.Windows.Forms.Button();
-            this._sendToVerifyButton = new System.Windows.Forms.Button();
-            this._sendToTranscriptionButton = new System.Windows.Forms.Button();
-            this._saveButton = new System.Windows.Forms.Button();
             this._cancelButton = new System.Windows.Forms.Button();
             this._residentPanel = new System.Windows.Forms.Panel();
             this._dictateFor = new ClearCanvas.Desktop.View.WinForms.TextField();
             this._chooseRadiologistButton = new System.Windows.Forms.Button();
+            this._buttonPanel = new System.Windows.Forms.FlowLayoutPanel();
+            this._verifyButton = new System.Windows.Forms.Button();
+            this._sendToVerifyButton = new System.Windows.Forms.Button();
+            this._sendToTranscriptionButton = new System.Windows.Forms.Button();
+            this._saveButton = new System.Windows.Forms.Button();
             this.tableLayoutPanel1.SuspendLayout();
-            this.panel1.SuspendLayout();
+            this._patientPanel.SuspendLayout();
             this._browserPanel.SuspendLayout();
             this._browserSplitContainer.Panel1.SuspendLayout();
             this._browserSplitContainer.Panel2.SuspendLayout();
             this._browserSplitContainer.SuspendLayout();
-            this.panel3.SuspendLayout();
             this._residentPanel.SuspendLayout();
+            this._buttonPanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // tableLayoutPanel1
             // 
-            this.tableLayoutPanel1.ColumnCount = 1;
+            this.tableLayoutPanel1.ColumnCount = 2;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.Controls.Add(this.panel1, 0, 0);
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel1.Controls.Add(this._patientPanel, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this._browserPanel, 0, 1);
-            this.tableLayoutPanel1.Controls.Add(this.panel3, 0, 3);
             this.tableLayoutPanel1.Controls.Add(this._residentPanel, 0, 2);
+            this.tableLayoutPanel1.Controls.Add(this._cancelButton, 1, 3);
+            this.tableLayoutPanel1.Controls.Add(this._buttonPanel, 0, 3);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -112,22 +114,23 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this.tableLayoutPanel1.Size = new System.Drawing.Size(661, 606);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
-            // panel1
+            // _patientPanel
             // 
-            this.panel1.Controls.Add(this._visitNumber);
-            this.panel1.Controls.Add(this._performedDate);
-            this.panel1.Controls.Add(this._dateOfBirth);
-            this.panel1.Controls.Add(this._accessionNumber);
-            this.panel1.Controls.Add(this._mrn);
-            this.panel1.Controls.Add(this._performedLocation);
-            this.panel1.Controls.Add(this._requestedProcedure);
-            this.panel1.Controls.Add(this._patientName);
-            this.panel1.Controls.Add(this._diagnosticService);
-            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel1.Location = new System.Drawing.Point(3, 3);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(655, 144);
-            this.panel1.TabIndex = 0;
+            this.tableLayoutPanel1.SetColumnSpan(this._patientPanel, 2);
+            this._patientPanel.Controls.Add(this._visitNumber);
+            this._patientPanel.Controls.Add(this._performedDate);
+            this._patientPanel.Controls.Add(this._dateOfBirth);
+            this._patientPanel.Controls.Add(this._accessionNumber);
+            this._patientPanel.Controls.Add(this._mrn);
+            this._patientPanel.Controls.Add(this._performedLocation);
+            this._patientPanel.Controls.Add(this._requestedProcedure);
+            this._patientPanel.Controls.Add(this._patientName);
+            this._patientPanel.Controls.Add(this._diagnosticService);
+            this._patientPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._patientPanel.Location = new System.Drawing.Point(3, 3);
+            this._patientPanel.Name = "_patientPanel";
+            this._patientPanel.Size = new System.Drawing.Size(655, 144);
+            this._patientPanel.TabIndex = 0;
             // 
             // _visitNumber
             // 
@@ -243,6 +246,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             // 
             // _browserPanel
             // 
+            this.tableLayoutPanel1.SetColumnSpan(this._browserPanel, 2);
             this._browserPanel.Controls.Add(this._browserSplitContainer);
             this._browserPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this._browserPanel.Location = new System.Drawing.Point(3, 153);
@@ -286,63 +290,10 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this._previewBrowser.Size = new System.Drawing.Size(655, 259);
             this._previewBrowser.TabIndex = 0;
             // 
-            // panel3
-            // 
-            this.panel3.Controls.Add(this._verifyButton);
-            this.panel3.Controls.Add(this._sendToVerifyButton);
-            this.panel3.Controls.Add(this._sendToTranscriptionButton);
-            this.panel3.Controls.Add(this._saveButton);
-            this.panel3.Controls.Add(this._cancelButton);
-            this.panel3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel3.Location = new System.Drawing.Point(3, 559);
-            this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(655, 44);
-            this.panel3.TabIndex = 1;
-            // 
-            // _verifyButton
-            // 
-            this._verifyButton.Location = new System.Drawing.Point(3, 3);
-            this._verifyButton.Name = "_verifyButton";
-            this._verifyButton.Size = new System.Drawing.Size(84, 37);
-            this._verifyButton.TabIndex = 0;
-            this._verifyButton.Text = "Verify";
-            this._verifyButton.UseVisualStyleBackColor = true;
-            this._verifyButton.Click += new System.EventHandler(this._verifyButton_Click);
-            // 
-            // _sendToVerifyButton
-            // 
-            this._sendToVerifyButton.Location = new System.Drawing.Point(93, 3);
-            this._sendToVerifyButton.Name = "_sendToVerifyButton";
-            this._sendToVerifyButton.Size = new System.Drawing.Size(84, 37);
-            this._sendToVerifyButton.TabIndex = 1;
-            this._sendToVerifyButton.Text = "To be Verified";
-            this._sendToVerifyButton.UseVisualStyleBackColor = true;
-            this._sendToVerifyButton.Click += new System.EventHandler(this._sendToVerifyButton_Click);
-            // 
-            // _sendToTranscriptionButton
-            // 
-            this._sendToTranscriptionButton.Location = new System.Drawing.Point(183, 3);
-            this._sendToTranscriptionButton.Name = "_sendToTranscriptionButton";
-            this._sendToTranscriptionButton.Size = new System.Drawing.Size(84, 37);
-            this._sendToTranscriptionButton.TabIndex = 2;
-            this._sendToTranscriptionButton.Text = "Send to Transcription";
-            this._sendToTranscriptionButton.UseVisualStyleBackColor = true;
-            this._sendToTranscriptionButton.Click += new System.EventHandler(this._sendToTranscriptionButton_Click);
-            // 
-            // _saveButton
-            // 
-            this._saveButton.Location = new System.Drawing.Point(273, 3);
-            this._saveButton.Name = "_saveButton";
-            this._saveButton.Size = new System.Drawing.Size(84, 37);
-            this._saveButton.TabIndex = 3;
-            this._saveButton.Text = "Save";
-            this._saveButton.UseVisualStyleBackColor = true;
-            this._saveButton.Click += new System.EventHandler(this._saveButton_Click);
-            // 
             // _cancelButton
             // 
             this._cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this._cancelButton.Location = new System.Drawing.Point(568, 3);
+            this._cancelButton.Location = new System.Drawing.Point(574, 559);
             this._cancelButton.Name = "_cancelButton";
             this._cancelButton.Size = new System.Drawing.Size(84, 37);
             this._cancelButton.TabIndex = 4;
@@ -352,6 +303,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             // 
             // _residentPanel
             // 
+            this.tableLayoutPanel1.SetColumnSpan(this._residentPanel, 2);
             this._residentPanel.Controls.Add(this._dictateFor);
             this._residentPanel.Controls.Add(this._chooseRadiologistButton);
             this._residentPanel.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -382,6 +334,54 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this._chooseRadiologistButton.UseVisualStyleBackColor = true;
             this._chooseRadiologistButton.Click += new System.EventHandler(this._chooseRadiologistButton_Click);
             // 
+            // _buttonPanel
+            // 
+            this._buttonPanel.Controls.Add(this._verifyButton);
+            this._buttonPanel.Controls.Add(this._sendToVerifyButton);
+            this._buttonPanel.Controls.Add(this._sendToTranscriptionButton);
+            this._buttonPanel.Controls.Add(this._saveButton);
+            this._buttonPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._buttonPanel.Location = new System.Drawing.Point(3, 559);
+            this._buttonPanel.Name = "_buttonPanel";
+            this._buttonPanel.Size = new System.Drawing.Size(565, 44);
+            this._buttonPanel.TabIndex = 5;
+            // 
+            // _verifyButton
+            // 
+            this._verifyButton.Location = new System.Drawing.Point(3, 3);
+            this._verifyButton.Name = "_verifyButton";
+            this._verifyButton.Size = new System.Drawing.Size(84, 37);
+            this._verifyButton.TabIndex = 4;
+            this._verifyButton.Text = "Verify";
+            this._verifyButton.UseVisualStyleBackColor = true;
+            // 
+            // _sendToVerifyButton
+            // 
+            this._sendToVerifyButton.Location = new System.Drawing.Point(93, 3);
+            this._sendToVerifyButton.Name = "_sendToVerifyButton";
+            this._sendToVerifyButton.Size = new System.Drawing.Size(84, 37);
+            this._sendToVerifyButton.TabIndex = 5;
+            this._sendToVerifyButton.Text = "To be Verified";
+            this._sendToVerifyButton.UseVisualStyleBackColor = true;
+            // 
+            // _sendToTranscriptionButton
+            // 
+            this._sendToTranscriptionButton.Location = new System.Drawing.Point(183, 3);
+            this._sendToTranscriptionButton.Name = "_sendToTranscriptionButton";
+            this._sendToTranscriptionButton.Size = new System.Drawing.Size(84, 37);
+            this._sendToTranscriptionButton.TabIndex = 6;
+            this._sendToTranscriptionButton.Text = "Send to Transcription";
+            this._sendToTranscriptionButton.UseVisualStyleBackColor = true;
+            // 
+            // _saveButton
+            // 
+            this._saveButton.Location = new System.Drawing.Point(273, 3);
+            this._saveButton.Name = "_saveButton";
+            this._saveButton.Size = new System.Drawing.Size(84, 37);
+            this._saveButton.TabIndex = 7;
+            this._saveButton.Text = "Save";
+            this._saveButton.UseVisualStyleBackColor = true;
+            // 
             // ReportEditorComponentControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -391,14 +391,14 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this.Name = "ReportEditorComponentControl";
             this.Size = new System.Drawing.Size(661, 606);
             this.tableLayoutPanel1.ResumeLayout(false);
-            this.panel1.ResumeLayout(false);
-            this.panel1.PerformLayout();
+            this._patientPanel.ResumeLayout(false);
+            this._patientPanel.PerformLayout();
             this._browserPanel.ResumeLayout(false);
             this._browserSplitContainer.Panel1.ResumeLayout(false);
             this._browserSplitContainer.Panel2.ResumeLayout(false);
             this._browserSplitContainer.ResumeLayout(false);
-            this.panel3.ResumeLayout(false);
             this._residentPanel.ResumeLayout(false);
+            this._buttonPanel.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -406,7 +406,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
         #endregion
 
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
-        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Panel _patientPanel;
         private ClearCanvas.Desktop.View.WinForms.TextField _accessionNumber;
         private ClearCanvas.Desktop.View.WinForms.TextField _mrn;
         private ClearCanvas.Desktop.View.WinForms.TextField _performedLocation;
@@ -414,11 +414,6 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
         private System.Windows.Forms.Label _patientName;
         private ClearCanvas.Desktop.View.WinForms.TextField _diagnosticService;
         private System.Windows.Forms.Panel _browserPanel;
-        private System.Windows.Forms.Panel panel3;
-        private System.Windows.Forms.Button _verifyButton;
-        private System.Windows.Forms.Button _sendToVerifyButton;
-        private System.Windows.Forms.Button _sendToTranscriptionButton;
-        private System.Windows.Forms.Button _saveButton;
         private System.Windows.Forms.Button _cancelButton;
         private System.Windows.Forms.SplitContainer _browserSplitContainer;
         private System.Windows.Forms.WebBrowser _editorBrowser;
@@ -429,6 +424,11 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
         private System.Windows.Forms.Panel _residentPanel;
         private ClearCanvas.Desktop.View.WinForms.TextField _dictateFor;
         private System.Windows.Forms.Button _chooseRadiologistButton;
+        private System.Windows.Forms.FlowLayoutPanel _buttonPanel;
+        private System.Windows.Forms.Button _verifyButton;
+        private System.Windows.Forms.Button _sendToVerifyButton;
+        private System.Windows.Forms.Button _sendToTranscriptionButton;
+        private System.Windows.Forms.Button _saveButton;
 
     }
 }

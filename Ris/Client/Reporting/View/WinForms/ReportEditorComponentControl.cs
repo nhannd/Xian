@@ -74,6 +74,8 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             _chooseRadiologistButton.DataBindings.Add("Visible", _component, "SupervisorSelectionVisible", false, DataSourceUpdateMode.OnPropertyChanged);
 
             _verifyButton.DataBindings.Add("Enabled", _component, "VerifyEnabled", false, DataSourceUpdateMode.OnPropertyChanged);
+            _verifyButton.DataBindings.Add("Visible", _component, "VerifyEnabled", false, DataSourceUpdateMode.OnPropertyChanged);
+
             _sendToVerifyButton.DataBindings.Add("Enabled", _component, "SendToVerifyEnabled", false, DataSourceUpdateMode.OnPropertyChanged);
             _sendToTranscriptionButton.DataBindings.Add("Enabled", _component, "SendToTranscriptionEnabled", false, DataSourceUpdateMode.OnPropertyChanged);
 

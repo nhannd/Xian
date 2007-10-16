@@ -66,6 +66,17 @@ namespace ClearCanvas.Ris.Client.Reporting
                 remove { this.Context.SelectedItemsChanged -= value; }
             }
 
+            public virtual bool Visible
+            {
+                get { return true; }
+            }
+
+            public virtual event EventHandler VisibleChanged
+            {
+                add { this.Context.SelectedItemsChanged += value; }
+                remove { this.Context.SelectedItemsChanged -= value; }
+            }
+
             public virtual void Apply()
             {
                 ReportingWorklistItem item = CollectionUtils.FirstElement<ReportingWorklistItem>(this.Context.SelectedItems);
@@ -388,6 +399,7 @@ namespace ClearCanvas.Ris.Client.Reporting
         [ClickHandler("apply", "Apply")]
         [IconSet("apply", IconScheme.Colour, "Icons.CompleteToolSmall.png", "Icons.CompleteToolMedium.png", "Icons.CompleteToolLarge.png")]
         [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
+        [VisibleStateObserver("apply", "Visible", "VisibleChanged")]
         [ExtensionOf(typeof(ReportingWorkflowItemToolExtensionPoint))]
         [ExtensionOf(typeof(Folders.VerifiedFolder.DropHandlerExtensionPoint))]
         public class VerifyTool : WorkflowItemTool
@@ -398,6 +410,15 @@ namespace ClearCanvas.Ris.Client.Reporting
             }
 
             public override bool Enabled
+            {
+                get
+                {
+                    return this.Context.GetWorkflowOperationEnablement("CompleteInterpretationAndVerify") ||
+                        this.Context.GetWorkflowOperationEnablement("CompleteVerification");
+                }
+            }
+
+            public override bool Visible
             {
                 get
                 {
