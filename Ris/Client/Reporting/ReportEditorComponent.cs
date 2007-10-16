@@ -271,9 +271,9 @@ namespace ClearCanvas.Ris.Client.Reporting
             get { return _canCompleteInterpretationForTranscription; }
         }
 
-        public bool SupervisorSelectionVisible
+        public bool CanVerifyReport
         {
-            get { return Thread.CurrentPrincipal.IsInRole(AuthorityTokens.VerifyReport) == false; }
+            get { return Thread.CurrentPrincipal.IsInRole(AuthorityTokens.VerifyReport); }
         }
 
         public string SupervisorName
