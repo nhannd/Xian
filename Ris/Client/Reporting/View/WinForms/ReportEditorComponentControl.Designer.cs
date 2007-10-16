@@ -74,10 +74,10 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this._browserSplitContainer = new System.Windows.Forms.SplitContainer();
             this._editorBrowser = new System.Windows.Forms.WebBrowser();
             this._previewBrowser = new System.Windows.Forms.WebBrowser();
-            this._cancelButton = new System.Windows.Forms.Button();
             this._residentPanel = new System.Windows.Forms.Panel();
             this._dictateFor = new ClearCanvas.Desktop.View.WinForms.TextField();
             this._chooseRadiologistButton = new System.Windows.Forms.Button();
+            this._cancelButton = new System.Windows.Forms.Button();
             this._buttonPanel = new System.Windows.Forms.FlowLayoutPanel();
             this._verifyButton = new System.Windows.Forms.Button();
             this._sendToVerifyButton = new System.Windows.Forms.Button();
@@ -290,17 +290,6 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this._previewBrowser.Size = new System.Drawing.Size(655, 259);
             this._previewBrowser.TabIndex = 0;
             // 
-            // _cancelButton
-            // 
-            this._cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this._cancelButton.Location = new System.Drawing.Point(574, 559);
-            this._cancelButton.Name = "_cancelButton";
-            this._cancelButton.Size = new System.Drawing.Size(84, 37);
-            this._cancelButton.TabIndex = 4;
-            this._cancelButton.Text = "Cancel";
-            this._cancelButton.UseVisualStyleBackColor = true;
-            this._cancelButton.Click += new System.EventHandler(this._cancelButton_Click);
-            // 
             // _residentPanel
             // 
             this.tableLayoutPanel1.SetColumnSpan(this._residentPanel, 2);
@@ -334,6 +323,17 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this._chooseRadiologistButton.UseVisualStyleBackColor = true;
             this._chooseRadiologistButton.Click += new System.EventHandler(this._chooseRadiologistButton_Click);
             // 
+            // _cancelButton
+            // 
+            this._cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this._cancelButton.Location = new System.Drawing.Point(574, 559);
+            this._cancelButton.Name = "_cancelButton";
+            this._cancelButton.Size = new System.Drawing.Size(84, 37);
+            this._cancelButton.TabIndex = 4;
+            this._cancelButton.Text = "Cancel";
+            this._cancelButton.UseVisualStyleBackColor = true;
+            this._cancelButton.Click += new System.EventHandler(this._cancelButton_Click);
+            // 
             // _buttonPanel
             // 
             this._buttonPanel.Controls.Add(this._verifyButton);
@@ -354,6 +354,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this._verifyButton.TabIndex = 4;
             this._verifyButton.Text = "Verify";
             this._verifyButton.UseVisualStyleBackColor = true;
+            this._verifyButton.Click += new System.EventHandler(this._verifyButton_Click);
             // 
             // _sendToVerifyButton
             // 
@@ -363,6 +364,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this._sendToVerifyButton.TabIndex = 5;
             this._sendToVerifyButton.Text = "To be Verified";
             this._sendToVerifyButton.UseVisualStyleBackColor = true;
+            this._sendToVerifyButton.Click += new System.EventHandler(this._sendToVerifyButton_Click);
             // 
             // _sendToTranscriptionButton
             // 
@@ -372,6 +374,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this._sendToTranscriptionButton.TabIndex = 6;
             this._sendToTranscriptionButton.Text = "Send to Transcription";
             this._sendToTranscriptionButton.UseVisualStyleBackColor = true;
+            this._sendToTranscriptionButton.Click += new System.EventHandler(this._sendToTranscriptionButton_Click);
             // 
             // _saveButton
             // 
@@ -381,6 +384,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this._saveButton.TabIndex = 7;
             this._saveButton.Text = "Save";
             this._saveButton.UseVisualStyleBackColor = true;
+            this._saveButton.Click += new System.EventHandler(this._saveButton_Click);
             // 
             // ReportEditorComponentControl
             // 
