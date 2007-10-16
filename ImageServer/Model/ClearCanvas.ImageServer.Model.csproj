@@ -130,7 +130,7 @@
       <Name>ClearCanvas.Enterprise.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\Enterprise\ClearCanvas.ImageServer.Enterprise.csproj">
-      <Project>{7E7A1DF8-CD27-4E41-A105-BE7DCB1256CE}</Project>
+      <Project>{86CA6EDB-DE59-45E9-8BD8-832FBB3F8009}</Project>
       <Name>ClearCanvas.ImageServer.Enterprise</Name>
     </ProjectReference>
   </ItemGroup>

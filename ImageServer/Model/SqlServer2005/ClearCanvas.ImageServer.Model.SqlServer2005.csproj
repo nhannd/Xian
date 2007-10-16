@@ -79,11 +79,11 @@
       <Name>ClearCanvas.Enterprise.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Enterprise\ClearCanvas.ImageServer.Enterprise.csproj">
-      <Project>{7E7A1DF8-CD27-4E41-A105-BE7DCB1256CE}</Project>
+      <Project>{86CA6EDB-DE59-45E9-8BD8-832FBB3F8009}</Project>
       <Name>ClearCanvas.ImageServer.Enterprise</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Enterprise\SqlServer2005\ClearCanvas.ImageServer.Enterprise.SqlServer2005.csproj">
-      <Project>{0FCFC584-18BD-44C0-B894-5291F54F909B}</Project>
+      <Project>{221FC797-CCE8-406B-94AB-0EB290A387A6}</Project>
       <Name>ClearCanvas.ImageServer.Enterprise.SqlServer2005</Name>
     </ProjectReference>
     <ProjectReference Include="..\ClearCanvas.ImageServer.Model.csproj">
