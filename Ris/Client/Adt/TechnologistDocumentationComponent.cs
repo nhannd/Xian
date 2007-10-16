@@ -273,6 +273,7 @@ namespace ClearCanvas.Ris.Client.Adt
                             StartModalityProcedureStepsResponse response = service.StartModalityProcedureSteps(request);
 
                             RefreshProcedurePlanSummary(response.ProcedurePlanSummary);
+                            UpdateActionEnablement();
 
                             _ppsComponent.AddPerformedProcedureStep(response.StartedMpps);
                         });
@@ -301,6 +302,7 @@ namespace ClearCanvas.Ris.Client.Adt
                             DiscontinueModalityProcedureStepsResponse response = service.DiscontinueModalityProcedureSteps(request);
 
                             RefreshProcedurePlanSummary(response.ProcedurePlanSummary);
+                            UpdateActionEnablement();
                         });
                 }
             }

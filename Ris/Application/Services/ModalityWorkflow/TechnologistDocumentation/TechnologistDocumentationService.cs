@@ -195,19 +195,6 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
                 if (order == null) order = mps.RequestedProcedure.Order;
             }
 
-            //foreach (RequestedProcedureDetail rpDetail in request.RequestedProcedures)
-            //{
-            //    RequestedProcedure rp = this.PersistenceContext.Load<RequestedProcedure>(rpDetail.RequestedProcedureRef);
-                
-            //    //This logic should not be here -> need CancelOrDiscontinueOperation
-            //    if (rp.Status == RequestedProcedureStatus.SC) 
-            //        rp.Cancel();
-            //    else 
-            //        rp.Discontinue();
-
-            //    if (order == null) order = rp.Order;
-            //}
-
             this.PersistenceContext.SynchState();
 
             DiscontinueModalityProcedureStepsResponse response = new DiscontinueModalityProcedureStepsResponse();
@@ -274,6 +261,27 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
             ModalityPerformedProcedureStep mpps = this.PersistenceContext.Load<ModalityPerformedProcedureStep>(request.MppsRef);
 
             mpps.Discontinue();
+
+            foreach (ModalityProcedureStep mps in mpps.Activities)
+            {
+                // Any MPS can have multiple MPPS's, so discontinue the MPS only if all MPPS's are discontinued
+                if(mps.PerformedSteps.Count > 1)
+                {
+                    bool allMppsDiscontinued = CollectionUtils.TrueForAll<PerformedProcedureStep>(
+                        mps.PerformedSteps,
+                        delegate(PerformedProcedureStep pps)
+                        {
+                            return pps.State == PerformedStepStatus.DC;
+                        });
+
+                    if (allMppsDiscontinued) mps.Discontinue();
+                }
+                // In practice, most MPS only have a single MPPS
+                else if(mps.PerformedSteps.Count == 1)
+                {
+                    mps.Discontinue();
+                }
+            }
 
             // Drill back to order so we can refresh procedure plan
             ModalityProcedureStep oneMps = CollectionUtils.FirstElement<ModalityProcedureStep>(mpps.Activities);
