@@ -29,8 +29,9 @@
 
 #endregion
 
-using ClearCanvas.Enterprise.Common;
 using System.Runtime.Serialization;
+using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Ris.Application.Common.Admin;
 
 namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
 {
@@ -48,5 +49,14 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
 
         [DataMember]
         public EnumValueInfo Status;
+
+        [DataMember]
+        public StaffSummary InterpretedBy;
+
+        [DataMember]
+        public StaffSummary TranscribedBy;
+
+        [DataMember]
+        public StaffSummary VerifiedBy;
     }
 }

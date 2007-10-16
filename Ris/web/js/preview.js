@@ -216,6 +216,9 @@ function formatReport(report)
                 
                 formattedReport += isAddendumDraft == true ? "<font color='red'>Draft: " : "";
                 formattedReport += addendumContent;
+
+				formattedReport += formatReportPerformer(addendumPart);
+
                 formattedReport += isAddendumDraft == true ? "</font>" : "";
                 formattedReport += "<br><br>";
             }
@@ -238,10 +241,32 @@ function formatReport(report)
 	    formattedReport += "</h3>";
 	    formattedReport += "<B>Impression:</B> " + mainReport.Impression + "<br>";    
 	    formattedReport += "<B>Finding:</B> " + mainReport.Finding + "<br>";
+
+		formattedReport += formatReportPerformer(report.Parts[0]);
+
 	    formattedReport += isDraft == true ? "</font>" : ""; 
 	}
 	
     return formattedReport;
+}
+
+function formatReportPerformer(reportPart)
+{
+    if (reportPart == null)
+        return "";
+        
+    var formattedReport = "";
+	
+	if (reportPart.InterpretedBy)
+		formattedReport += "<br> Interpreted By: " + Ris.formatPersonName(reportPart.InterpretedBy.Name);
+
+	if (reportPart.TranscribedBy)
+		formattedReport += "<br> Transcribed By: " + Ris.formatPersonName(reportPart.TranscribedBy.Name);
+
+	if (reportPart.VerifiedBy)
+		formattedReport += "<br> Verified By: " + Ris.formatPersonName(reportPart.VerifiedBy.Name);
+
+	return formattedReport;
 }
 
 /*

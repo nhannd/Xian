@@ -32,6 +32,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.Healthcare
 {
@@ -51,5 +52,17 @@ namespace ClearCanvas.Healthcare
 			:base(key)
 		{
 		}
-   }
+
+        public ISearchCondition<ClearCanvas.Healthcare.ReportPart> ReportPart
+        {
+	  		get
+	  		{
+                if (!this.SubCriteria.ContainsKey("ReportPart"))
+	  			{
+                    this.SubCriteria["ReportPart"] = new SearchCondition<ClearCanvas.Healthcare.ReportPart>("ReportPart");
+	  			}
+                return (ISearchCondition<ClearCanvas.Healthcare.ReportPart>)this.SubCriteria["ReportPart"];
+	  		}
+        }
+    }
 }

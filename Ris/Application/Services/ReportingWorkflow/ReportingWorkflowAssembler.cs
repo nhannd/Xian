@@ -30,12 +30,13 @@
 #endregion
 
 using System.Collections.Generic;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
+using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Healthcare.Workflow.Reporting;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Ris.Application.Services.Admin;
 
 namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
@@ -145,6 +146,46 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             summary.Index = reportPart.Index;
             summary.Content = reportPart.Content;
             summary.Status = EnumUtils.GetEnumValueInfo(reportPart.Status, context);
+
+            StaffAssembler staffAssembler = new StaffAssembler();
+
+            try
+            {
+                InterpretationStepSearchCriteria interpretationStepCriteria = new InterpretationStepSearchCriteria();
+                interpretationStepCriteria.ReportPart.EqualTo(reportPart);
+                InterpretationStep interpretationStep = context.GetBroker<IInterpretationStepBroker>().FindOne(interpretationStepCriteria);
+                summary.InterpretedBy = staffAssembler.CreateStaffSummary(interpretationStep.PerformingStaff, context);
+            }
+            catch (EntityNotFoundException)
+            {
+                // did not find interpretation performer
+            }
+
+            try
+            {
+                TranscriptionStepSearchCriteria transcriptionStepSearchCriteria = new TranscriptionStepSearchCriteria();
+                transcriptionStepSearchCriteria.ReportPart.EqualTo(reportPart);
+                TranscriptionStep transcriptionStep = context.GetBroker<ITranscriptionStepBroker>().FindOne(transcriptionStepSearchCriteria);
+                summary.TranscribedBy = staffAssembler.CreateStaffSummary(transcriptionStep.PerformingStaff, context);
+            }
+            catch (EntityNotFoundException)
+            {
+                // did not find transcription performer
+            }
+
+            try
+            {
+                VerificationStepSearchCriteria verificationStepCriteria = new VerificationStepSearchCriteria();
+                verificationStepCriteria.ReportPart.EqualTo(reportPart);
+                VerificationStep verificationStep = context.GetBroker<IVerificationStepBroker>().FindOne(verificationStepCriteria);
+                summary.VerifiedBy = staffAssembler.CreateStaffSummary(verificationStep.PerformingStaff, context);
+            }
+            catch (EntityNotFoundException)
+            {
+                // did not find verification performer
+            }
+            
+            
             return summary;
         }
     }
