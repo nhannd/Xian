@@ -251,6 +251,22 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         }
 
         [UpdateOperation]
+        [OperationEnablement("CanReviseReport")]
+        public ReviseReportResponse ReviseReport(ReviseReportRequest request)
+        {
+            VerificationStep step = PersistenceContext.Load<VerificationStep>(request.VerificationStepRef, EntityLoadFlags.CheckVersion);
+
+            Operations.ReviseReport op = new Operations.ReviseReport();
+            InterpretationStep interpretation = op.Execute(step, this.CurrentUserStaff, new PersistentWorkflow(this.PersistenceContext));
+
+            PersistenceContext.SynchState();
+            ReviseReportResponse response = new ReviseReportResponse();
+            response.VerificationStepRef = step.GetRef();
+            response.InterpretationStepRef = interpretation == null ? null : interpretation.GetRef();
+            return response;
+        }
+
+        [UpdateOperation]
         [OperationEnablement("CanStartVerification")]
         [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.VerifyReport)]
         public StartVerificationResponse StartVerification(StartVerificationRequest request)
@@ -411,6 +427,15 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         public bool CanCancelReportingStep(IWorklistItemKey itemKey)
         {
             return CanExecuteOperation(new Operations.CancelReportingStep(), itemKey);
+        }
+
+        public bool CanReviseReport(IWorklistItemKey itemKey)
+        {
+            // Radiologist with VerifyReport role can edit report normally, no need to revise report
+            if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.VerifyReport))
+                return false;
+
+            return CanExecuteOperation(new Operations.ReviseReport(), itemKey);
         }
 
         public bool CanStartVerification(IWorklistItemKey itemKey)

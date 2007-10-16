@@ -428,6 +428,8 @@
     <Compile Include="ReportingWorkflow\LoadWorklistPreviewResponse.cs" />
     <Compile Include="ReportingWorkflow\ReportPartSummary.cs" />
     <Compile Include="ReportingWorkflow\ReportSummary.cs" />
+    <Compile Include="ReportingWorkflow\ReviseReportRequest.cs" />
+    <Compile Include="ReportingWorkflow\ReviseReportResponse.cs" />
     <Compile Include="ReportingWorkflow\SaveReportRequest.cs" />
     <Compile Include="ReportingWorkflow\SaveReportResponse.cs" />
     <Compile Include="ReportingWorkflow\SearchRequest.cs" />

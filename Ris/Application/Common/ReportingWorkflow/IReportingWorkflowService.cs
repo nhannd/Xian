@@ -141,6 +141,16 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
         CancelReportingStepResponse CancelReportingStep(CancelReportingStepRequest request);
 
         /// <summary>
+        /// Cancel a verification step and create a new interpretation step with the same report part.
+        /// This is used by the resident to revise the report that is currently waiting to be verified by radiologist
+        /// </summary>
+        /// <param name="request"><see cref="ReviseReportRequest"/></param>
+        /// <returns><see cref="ReviseReportResponse"/></returns>
+        [OperationContract]
+        [FaultContract(typeof(ConcurrentModificationException))]
+        ReviseReportResponse ReviseReport(ReviseReportRequest request);
+
+        /// <summary>
         /// Start an verification step
         /// </summary>
         /// <param name="request"><see cref="StartVerificationRequest"/></param>

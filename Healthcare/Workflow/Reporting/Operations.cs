@@ -229,6 +229,42 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
             }
         }
 
+        /// <summary>
+        /// Resident are not allow to operate on Verification Step, hence they are not allowed to "Edit" a report after it has been sent "ToBeVerified"
+        /// This operation cancels the existing verification step and creates a new interpretation step for resident to edit
+        /// </summary>
+        public class ReviseReport : ReportingOperation
+        {
+            public InterpretationStep Execute(VerificationStep step, Staff currentUserStaff, IWorkflow workflow)
+            {
+                step.Discontinue();
+
+                InterpretationStep interpretation = new InterpretationStep(step.RequestedProcedure);
+
+                interpretation.Assign(currentUserStaff);
+                interpretation.Start(currentUserStaff);
+
+                workflow.AddActivity(interpretation);
+                return interpretation;
+            }
+
+            public override bool CanExecute(ReportingProcedureStep step, Staff currentUserStaff)
+            {
+                if (step.Is<VerificationStep>() == false)
+                    return false;
+
+                // step already completed or cancelled
+                if (step.State == ActivityStatus.CM || step.State == ActivityStatus.DC)
+                    return false;
+
+                // cannot revise a report that is read by someone else
+                if (Equals(step.AssignedStaff, currentUserStaff) == false)
+                    return false;
+
+                return true;
+            }
+        }
+
         public class StartVerification : ReportingOperation
         {
             public void Execute(VerificationStep step, Staff currentUserStaff, IWorkflow workflow)
@@ -252,10 +288,6 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 
                 // step is completed/cancelled
                 if (step.State != ActivityStatus.SC && step.State != ActivityStatus.IP)
-                    return false;
-
-                // step is assigned to someone else
-                if (Equals(step.AssignedStaff, currentUserStaff) == false)
                     return false;
 
                 return true;

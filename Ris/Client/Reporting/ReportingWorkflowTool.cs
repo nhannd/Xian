@@ -37,6 +37,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 
 namespace ClearCanvas.Ris.Client.Reporting
@@ -163,7 +164,9 @@ namespace ClearCanvas.Ris.Client.Reporting
             {
                 get
                 {
-                    if (this.Context.GetWorkflowOperationEnablement("SaveReport") &&
+                    if (this.Context.GetWorkflowOperationEnablement("ReviseReport"))
+                        return SR.TitleReviseReport;
+                    else if (this.Context.GetWorkflowOperationEnablement("SaveReport") &&
                         (this.Context.GetWorkflowOperationEnablement("StartInterpretation") ||
                         this.Context.GetWorkflowOperationEnablement("StartVerification")))
                         return SR.TitleEditReport;
@@ -182,7 +185,8 @@ namespace ClearCanvas.Ris.Client.Reporting
             {
                 get
                 {
-                    return this.Context.GetWorkflowOperationEnablement("ClaimInterpretation") ||
+                    return this.Context.GetWorkflowOperationEnablement("ReviseReport") ||
+                        this.Context.GetWorkflowOperationEnablement("ClaimInterpretation") ||
                         this.Context.GetWorkflowOperationEnablement("StartInterpretation") ||
                         this.Context.GetWorkflowOperationEnablement("StartVerification");
                 }
@@ -210,6 +214,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                 {
                     try
                     {
+                        EntityRef stepToOpenReport = null;
                         if (item.StepType == "Interpretation")
                         {
                             Platform.GetService<IReportingWorkflowService>(
@@ -217,17 +222,31 @@ namespace ClearCanvas.Ris.Client.Reporting
                                 {
                                     StartInterpretationResponse response = service.StartInterpretation(new StartInterpretationRequest(item.ProcedureStepRef));
                                     item.ProcedureStepRef = response.InterpretationStepRef;
+                                    stepToOpenReport = response.InterpretationStepRef;
                                 });
                         }
                         else if (item.StepType == "Verification")
                         {
-                            Platform.GetService<IReportingWorkflowService>(
-                                delegate(IReportingWorkflowService service)
-                                {
-                                    StartVerificationResponse response = service.StartVerification(new StartVerificationRequest(item.ProcedureStepRef));
-                                    item.ProcedureStepRef = response.VerificationStepRef;
-                                });
-
+                            if (this.Context.GetWorkflowOperationEnablement("ReviseReport"))
+                            {
+                                Platform.GetService<IReportingWorkflowService>(
+                                    delegate(IReportingWorkflowService service)
+                                    {
+                                        ReviseReportResponse response = service.ReviseReport(new ReviseReportRequest(item.ProcedureStepRef));
+                                        item.ProcedureStepRef = response.VerificationStepRef;
+                                        stepToOpenReport = response.InterpretationStepRef;
+                                    });
+                            }
+                            else
+                            {
+                                Platform.GetService<IReportingWorkflowService>(
+                                    delegate(IReportingWorkflowService service)
+                                    {
+                                        StartVerificationResponse response = service.StartVerification(new StartVerificationRequest(item.ProcedureStepRef));
+                                        item.ProcedureStepRef = response.VerificationStepRef;
+                                        stepToOpenReport = response.VerificationStepRef;
+                                    });
+                            }
                         }
                         else // (item.StepType == "Transcription")
                         {
@@ -237,8 +256,8 @@ namespace ClearCanvas.Ris.Client.Reporting
                         //bool readOnly = selectedFolder is Folders.InTranscriptionFolder ||
                         //    selectedFolder is Folders.VerifiedFolder;
 
-                        doc = new ReportDocument(item.ProcedureStepRef, item.PersonNameDetail, folders, desktopWindow);
-                        doc.Closed += delegate(object sender, EventArgs e)
+                        doc = new ReportDocument(stepToOpenReport, item.PersonNameDetail, folders, desktopWindow);
+                        doc.Closed += delegate
                         {
                             if (selectedFolder.IsOpen)
                                 selectedFolder.Refresh();

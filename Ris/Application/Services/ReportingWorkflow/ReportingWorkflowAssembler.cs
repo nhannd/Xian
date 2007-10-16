@@ -38,6 +38,7 @@ using ClearCanvas.Healthcare.Workflow.Reporting;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 using ClearCanvas.Ris.Application.Services.Admin;
+using ClearCanvas.Workflow;
 
 namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 {
@@ -153,6 +154,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             {
                 InterpretationStepSearchCriteria interpretationStepCriteria = new InterpretationStepSearchCriteria();
                 interpretationStepCriteria.ReportPart.EqualTo(reportPart);
+                interpretationStepCriteria.State.EqualTo(ActivityStatus.CM);
                 InterpretationStep interpretationStep = context.GetBroker<IInterpretationStepBroker>().FindOne(interpretationStepCriteria);
                 summary.InterpretedBy = staffAssembler.CreateStaffSummary(interpretationStep.PerformingStaff, context);
             }
@@ -165,6 +167,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             {
                 TranscriptionStepSearchCriteria transcriptionStepSearchCriteria = new TranscriptionStepSearchCriteria();
                 transcriptionStepSearchCriteria.ReportPart.EqualTo(reportPart);
+                transcriptionStepSearchCriteria.State.EqualTo(ActivityStatus.CM);
                 TranscriptionStep transcriptionStep = context.GetBroker<ITranscriptionStepBroker>().FindOne(transcriptionStepSearchCriteria);
                 summary.TranscribedBy = staffAssembler.CreateStaffSummary(transcriptionStep.PerformingStaff, context);
             }
@@ -177,6 +180,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             {
                 VerificationStepSearchCriteria verificationStepCriteria = new VerificationStepSearchCriteria();
                 verificationStepCriteria.ReportPart.EqualTo(reportPart);
+                verificationStepCriteria.State.EqualTo(ActivityStatus.CM);
                 VerificationStep verificationStep = context.GetBroker<IVerificationStepBroker>().FindOne(verificationStepCriteria);
                 summary.VerifiedBy = staffAssembler.CreateStaffSummary(verificationStep.PerformingStaff, context);
             }

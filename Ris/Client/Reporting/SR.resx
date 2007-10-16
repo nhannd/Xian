@@ -147,4 +147,7 @@
   <data name="TitleRadiologistHome" xml:space="preserve">
     <value>Radiologist Home</value>
   </data>
+  <data name="TitleReviseReport" xml:space="preserve">
+    <value>Revise Report</value>
+  </data>
 </root>
