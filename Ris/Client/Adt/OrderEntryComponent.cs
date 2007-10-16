@@ -272,7 +272,6 @@ namespace ClearCanvas.Ris.Client.Adt
                     else
                     {
                         // Pre-populate the order entry page with details
-                        _selectedCancelReason = _cancelReasonChoices[0];
 
                         _selectedVisit = CollectionUtils.SelectFirst<VisitSummary>(response.Visits,
                             delegate(VisitSummary summary)
@@ -399,7 +398,12 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public List<string> CancelReasonChoices
         {
-            get { return EnumValueUtils.GetDisplayValues(_cancelReasonChoices); }
+            get
+            {
+                List<string> displayValue = EnumValueUtils.GetDisplayValues(_cancelReasonChoices);
+                displayValue.Insert(0, "");
+                return displayValue;
+            }
         }
 
         public string SelectedCancelReason
@@ -532,6 +536,12 @@ namespace ClearCanvas.Ris.Client.Adt
             if (this.HasValidationErrors)
             {
                 this.ShowValidation(true);
+                return;
+            }
+
+            if (_reOrderDetail != null && _selectedCancelReason == null)
+            {
+                this.Host.DesktopWindow.ShowMessageBox(SR.MessageMissingCancellationReason, MessageBoxActions.Ok);
                 return;
             }
 

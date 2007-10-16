@@ -342,6 +342,9 @@
   <data name="MessageDeleteSelectedVisit" xml:space="preserve">
     <value>Are you sure you want to delete this visit?</value>
   </data>
+  <data name="MessageMissingCancellationReason" xml:space="preserve">
+    <value>A cancellation reason is required to replace an order.</value>
+  </data>
   <data name="MessageNoReconciliationCandidate" xml:space="preserve">
     <value>There are no reconciliation candidates for this patient.</value>
   </data>
