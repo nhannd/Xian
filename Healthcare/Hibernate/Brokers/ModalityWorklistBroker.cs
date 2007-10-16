@@ -57,7 +57,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         }
 
         private const string _hqlSelectWorklist = 
-            "select mps, pp.Mrn, pp.Name, o.AccessionNumber, o.Priority, rpt, spst, m" +
+            "select mps, pp, o.AccessionNumber, o.Priority, rpt, spst, m" +
             " from ModalityProcedureStep mps";
 
         private const string _hqlSelectCount = 
@@ -268,17 +268,8 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             StringBuilder hqlQuery = new StringBuilder();
             List<QueryParameter> parameters = new List<QueryParameter>();
 
-            hqlQuery.Append("select mps, pp.Mrn, pp.Name, o.AccessionNumber, o.Priority, rpt, spst, m");
-            hqlQuery.Append(" from ModalityProcedureStep mps");
-            hqlQuery.Append(" join mps.Type spst" +
-                            " join mps.Modality m" +
-                            " join mps.RequestedProcedure rp" +
-                            " join rp.Type rpt" +
-                            " join rp.Order o" +
-                            " join o.DiagnosticService ds" +
-                            " join o.Visit v" +
-                            " join o.Patient p" +
-                            " join p.Profiles pp");
+            hqlQuery.Append(_hqlSelectWorklist);
+            hqlQuery.Append(_hqlJoin);
 
             string conditionPrefix = " where"; 
             if (showActiveOnly)

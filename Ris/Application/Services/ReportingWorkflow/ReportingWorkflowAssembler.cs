@@ -29,17 +29,12 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
-using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Healthcare.Workflow.Reporting;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
-using ClearCanvas.Workflow;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Ris.Application.Services.Admin;
 
@@ -85,6 +80,8 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             ReportingWorklistItem item = new ReportingWorklistItem();
 
             item.ProcedureStepRef = domainItem.ProcedureStepRef;
+
+            item.PatientProfileRef = domainItem.PatientProfileRef;
             item.Mrn = new MrnDetail(domainItem.Mrn.Id, domainItem.Mrn.AssigningAuthority);
 
             PersonNameAssembler assembler = new PersonNameAssembler();

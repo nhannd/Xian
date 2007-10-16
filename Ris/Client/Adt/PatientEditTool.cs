@@ -30,9 +30,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
@@ -41,28 +38,25 @@ using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Client;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
-using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
-    [MenuAction("edit1", "global-menus/Patient/Edit Patient")]
-    [ButtonAction("edit1", "global-toolbars/Patient/EditPatient")]
-    [ClickHandler("edit1", "Apply")]
-    [EnabledStateObserver("edit1", "Enabled", "EnabledChanged")]
-    [Tooltip("edit1", "Edit Patient Information")]
-	[IconSet("edit1", IconScheme.Colour, "Icons.EditPatientToolSmall.png", "Icons.EditPatientToolMedium.png", "Icons.EditPatientToolLarge.png")]
-    [ActionPermission("edit1", ClearCanvas.Ris.Application.Common.AuthorityTokens.PatientProfileAdmin)]
+    [MenuAction("edit", "global-menus/Patient/Edit Patient")]
+    [ButtonAction("edit", "global-toolbars/Patient/EditPatient")]
+    [ButtonAction("edit", "folderexplorer-items-toolbar/Edit")]
+    [MenuAction("edit", "folderexplorer-items-contextmenu/Edit")]
+    [ButtonAction("edit", "patientsearch-items-toolbar/Edit")]
+    [MenuAction("edit", "patientsearch-items-contextmenu/Edit")]
 
-    [ButtonAction("edit3", "folderexplorer-items-toolbar/Edit")]
-    [MenuAction("edit3", "folderexplorer-items-contextmenu/Edit")]
-    [ClickHandler("edit3", "Apply")]
-    [EnabledStateObserver("edit3", "Enabled", "EnabledChanged")]
-    [Tooltip("edit3", "Edit Patient Information")]
-    [IconSet("edit3", IconScheme.Colour, "Icons.EditPatientToolSmall.png", "Icons.EditPatientToolMedium.png", "Icons.EditPatientToolLarge.png")]
-    [ActionPermission("edit3", ClearCanvas.Ris.Application.Common.AuthorityTokens.PatientProfileAdmin)]
+    [ClickHandler("edit", "Apply")]
+    [EnabledStateObserver("edit", "Enabled", "EnabledChanged")]
+    [Tooltip("edit", "Edit Patient Information")]
+    [IconSet("edit", IconScheme.Colour, "Icons.EditPatientToolSmall.png", "Icons.EditPatientToolMedium.png", "Icons.EditPatientToolLarge.png")]
+    [ActionPermission("edit", ClearCanvas.Ris.Application.Common.AuthorityTokens.PatientProfileAdmin)]
 
-    [ExtensionOf(typeof(PatientOverviewToolExtensionPoint))]
+    [ExtensionOf(typeof(PatientBiographyToolExtensionPoint))]
     [ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]
+    [ExtensionOf(typeof(PatientSearchToolExtensionPoint))]
     public class PatientEditTool : ToolBase
     {
         private bool _enabled;
@@ -71,18 +65,27 @@ namespace ClearCanvas.Ris.Client.Adt
         public override void Initialize()
         {
             base.Initialize();
+            _enabled = false;   // disable by default
+
             if (this.ContextBase is IRegistrationWorkflowItemToolContext)
             {
-                _enabled = false;   // disable by default
-                ((IRegistrationWorkflowItemToolContext)this.ContextBase).SelectedItemsChanged += delegate(object sender, EventArgs args)
+                ((IRegistrationWorkflowItemToolContext)this.ContextBase).SelectedItemsChanged += delegate
                 {
                     this.Enabled = (((IRegistrationWorkflowItemToolContext)this.ContextBase).SelectedItems != null
-                        && ((IRegistrationWorkflowItemToolContext)this.ContextBase).SelectedItems.Count == 1);
+                    && ((IRegistrationWorkflowItemToolContext)this.ContextBase).SelectedItems.Count == 1);
                 };
             }
-            else
+            else if (this.ContextBase is IPatientSearchToolContext)
             {
-                _enabled = true;
+                ((IPatientSearchToolContext)this.ContextBase).SelectedProfileChanged += delegate
+                {
+                    IPatientSearchToolContext context = (IPatientSearchToolContext)this.ContextBase;
+                    this.Enabled = (context.SelectedProfile != null && context.SelectedProfile.ProfileRef != null);
+                };
+            }
+            else if (this.ContextBase is IPatientBiographyToolContext)
+            {
+                this.Enabled = true;
             }
         }
 
@@ -116,9 +119,14 @@ namespace ClearCanvas.Ris.Client.Adt
                     context.SelectedFolder.Refresh();
                 }
             }
-            else
+            else if (this.ContextBase is IPatientSearchToolContext)
             {
-                IPatientOverviewToolContext context = (IPatientOverviewToolContext)this.ContextBase;
+                IPatientSearchToolContext context = (IPatientSearchToolContext)this.ContextBase;
+                Edit(context.SelectedProfile.ProfileRef, context.DesktopWindow);
+            }
+            else if (this.ContextBase is IPatientBiographyToolContext)
+            {
+                IPatientBiographyToolContext context = (IPatientBiographyToolContext)this.ContextBase;
                 Edit(context.PatientProfile, context.DesktopWindow);
             }
         }

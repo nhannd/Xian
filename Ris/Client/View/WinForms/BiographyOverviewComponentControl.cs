@@ -35,16 +35,16 @@ using ClearCanvas.Desktop.View.WinForms;
 namespace ClearCanvas.Ris.Client.View.WinForms
 {
     /// <summary>
-    /// Provides a Windows Forms user-interface for <see cref="PatientOverviewComponent"/>
+    /// Provides a Windows Forms user-interface for <see cref="BiographyOverviewComponent"/>
     /// </summary>
-    public partial class PatientOverviewComponentControl : ApplicationComponentUserControl
+    public partial class BiographyOverviewComponentControl : ApplicationComponentUserControl
     {
-        private readonly PatientOverviewComponent _component;
+        private readonly BiographyOverviewComponent _component;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public PatientOverviewComponentControl(PatientOverviewComponent component)
+        public BiographyOverviewComponentControl(BiographyOverviewComponent component)
             : base(component)
         {
             InitializeComponent();

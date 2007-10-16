@@ -40,12 +40,12 @@ using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client
 {
-    public class PatientOverviewDocument : Document
+    public class PatientBiographyDocument : Document
     {
         private EntityRef _profileRef;
         private PatientProfileDetail _patientProfile;
 
-        public PatientOverviewDocument(EntityRef profileRef, IDesktopWindow window)
+        public PatientBiographyDocument(EntityRef profileRef, IDesktopWindow window)
             :base(profileRef, window)
         {
             _profileRef = profileRef;
@@ -96,7 +96,7 @@ namespace ClearCanvas.Ris.Client
 
             // Construct the Patient Biography page
             return new SplitComponentContainer(
-                new SplitPane("", new PatientOverviewComponent(_profileRef, _patientProfile, alertNotifications), true),
+                new SplitPane("", new BiographyOverviewComponent(_profileRef, _patientProfile, alertNotifications), true),
                 new SplitPane("", tabGroupContainer, 0.8f),
                 SplitOrientation.Horizontal);
         }

@@ -28,18 +28,18 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-            ClearCanvas.Desktop.Selection selection3 = new ClearCanvas.Desktop.Selection();
+            ClearCanvas.Desktop.Selection selection1 = new ClearCanvas.Desktop.Selection();
             this._mrn = new ClearCanvas.Desktop.View.WinForms.TextField();
             this._healthcard = new ClearCanvas.Desktop.View.WinForms.TextField();
             this._familyName = new ClearCanvas.Desktop.View.WinForms.TextField();
             this._givenName = new ClearCanvas.Desktop.View.WinForms.TextField();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this._searchResults = new ClearCanvas.Desktop.View.WinForms.TableView();
-            this._searchButton = new System.Windows.Forms.Button();
-            this._site = new ClearCanvas.Desktop.View.WinForms.TextField();
-            this._sex = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
-            this._dateOfBirth = new ClearCanvas.Desktop.View.WinForms.DateTimeField();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this._site = new ClearCanvas.Desktop.View.WinForms.TextField();
+            this._dateOfBirth = new ClearCanvas.Desktop.View.WinForms.DateTimeField();
+            this._sex = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
+            this._searchButton = new System.Windows.Forms.Button();
+            this._searchResults = new ClearCanvas.Desktop.View.WinForms.TableView();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
@@ -116,75 +116,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.splitContainer1.SplitterDistance = 305;
             this.splitContainer1.TabIndex = 13;
             // 
-            // _searchResults
-            // 
-            this._searchResults.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._searchResults.Location = new System.Drawing.Point(0, 0);
-            this._searchResults.MenuModel = null;
-            this._searchResults.Name = "_searchResults";
-            this._searchResults.ReadOnly = false;
-            this._searchResults.Selection = selection3;
-            this._searchResults.Size = new System.Drawing.Size(308, 320);
-            this._searchResults.TabIndex = 0;
-            this._searchResults.Table = null;
-            this._searchResults.ToolbarModel = null;
-            this._searchResults.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this._searchResults.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.No;
-            // 
-            // _searchButton
-            // 
-            this._searchButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this._searchButton.Location = new System.Drawing.Point(246, 272);
-            this._searchButton.Margin = new System.Windows.Forms.Padding(2);
-            this._searchButton.Name = "_searchButton";
-            this._searchButton.Size = new System.Drawing.Size(60, 27);
-            this._searchButton.TabIndex = 12;
-            this._searchButton.Text = "Search";
-            this._searchButton.UseVisualStyleBackColor = true;
-            this._searchButton.Click += new System.EventHandler(this._searchButton_Click);
-            // 
-            // _site
-            // 
-            this.tableLayoutPanel1.SetColumnSpan(this._site, 2);
-            this._site.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._site.LabelText = "Site";
-            this._site.Location = new System.Drawing.Point(2, 47);
-            this._site.Margin = new System.Windows.Forms.Padding(2);
-            this._site.Mask = "";
-            this._site.Name = "_site";
-            this._site.Size = new System.Drawing.Size(304, 41);
-            this._site.TabIndex = 14;
-            this._site.Value = null;
-            // 
-            // _sex
-            // 
-            this._sex.DataSource = null;
-            this._sex.DisplayMember = "";
-            this._sex.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._sex.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this._sex.LabelText = "Sex";
-            this._sex.Location = new System.Drawing.Point(2, 227);
-            this._sex.Margin = new System.Windows.Forms.Padding(2);
-            this._sex.Name = "_sex";
-            this._sex.Size = new System.Drawing.Size(150, 41);
-            this._sex.TabIndex = 15;
-            this._sex.Value = null;
-            // 
-            // _dateOfBirth
-            // 
-            this._dateOfBirth.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._dateOfBirth.LabelText = "Date Of Birth";
-            this._dateOfBirth.Location = new System.Drawing.Point(156, 227);
-            this._dateOfBirth.Margin = new System.Windows.Forms.Padding(2);
-            this._dateOfBirth.Maximum = new System.DateTime(9998, 12, 31, 0, 0, 0, 0);
-            this._dateOfBirth.Minimum = new System.DateTime(1753, 1, 1, 0, 0, 0, 0);
-            this._dateOfBirth.Name = "_dateOfBirth";
-            this._dateOfBirth.Nullable = true;
-            this._dateOfBirth.ShowTime = false;
-            this._dateOfBirth.Size = new System.Drawing.Size(150, 41);
-            this._dateOfBirth.TabIndex = 16;
-            this._dateOfBirth.Value = null;
-            // 
             // tableLayoutPanel1
             // 
             this.tableLayoutPanel1.ColumnCount = 2;
@@ -212,6 +143,75 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(308, 305);
             this.tableLayoutPanel1.TabIndex = 17;
+            // 
+            // _site
+            // 
+            this.tableLayoutPanel1.SetColumnSpan(this._site, 2);
+            this._site.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._site.LabelText = "Site";
+            this._site.Location = new System.Drawing.Point(2, 47);
+            this._site.Margin = new System.Windows.Forms.Padding(2);
+            this._site.Mask = "";
+            this._site.Name = "_site";
+            this._site.Size = new System.Drawing.Size(304, 41);
+            this._site.TabIndex = 14;
+            this._site.Value = null;
+            // 
+            // _dateOfBirth
+            // 
+            this._dateOfBirth.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._dateOfBirth.LabelText = "Date Of Birth";
+            this._dateOfBirth.Location = new System.Drawing.Point(156, 227);
+            this._dateOfBirth.Margin = new System.Windows.Forms.Padding(2);
+            this._dateOfBirth.Maximum = new System.DateTime(9998, 12, 31, 0, 0, 0, 0);
+            this._dateOfBirth.Minimum = new System.DateTime(1753, 1, 1, 0, 0, 0, 0);
+            this._dateOfBirth.Name = "_dateOfBirth";
+            this._dateOfBirth.Nullable = true;
+            this._dateOfBirth.ShowTime = false;
+            this._dateOfBirth.Size = new System.Drawing.Size(150, 41);
+            this._dateOfBirth.TabIndex = 16;
+            this._dateOfBirth.Value = null;
+            // 
+            // _sex
+            // 
+            this._sex.DataSource = null;
+            this._sex.DisplayMember = "";
+            this._sex.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._sex.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this._sex.LabelText = "Sex";
+            this._sex.Location = new System.Drawing.Point(2, 227);
+            this._sex.Margin = new System.Windows.Forms.Padding(2);
+            this._sex.Name = "_sex";
+            this._sex.Size = new System.Drawing.Size(150, 41);
+            this._sex.TabIndex = 15;
+            this._sex.Value = null;
+            // 
+            // _searchButton
+            // 
+            this._searchButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this._searchButton.Location = new System.Drawing.Point(246, 272);
+            this._searchButton.Margin = new System.Windows.Forms.Padding(2);
+            this._searchButton.Name = "_searchButton";
+            this._searchButton.Size = new System.Drawing.Size(60, 27);
+            this._searchButton.TabIndex = 12;
+            this._searchButton.Text = "Search";
+            this._searchButton.UseVisualStyleBackColor = true;
+            this._searchButton.Click += new System.EventHandler(this._searchButton_Click);
+            // 
+            // _searchResults
+            // 
+            this._searchResults.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._searchResults.Location = new System.Drawing.Point(0, 0);
+            this._searchResults.MenuModel = null;
+            this._searchResults.Name = "_searchResults";
+            this._searchResults.ReadOnly = false;
+            this._searchResults.Selection = selection1;
+            this._searchResults.Size = new System.Drawing.Size(308, 320);
+            this._searchResults.TabIndex = 0;
+            this._searchResults.Table = null;
+            this._searchResults.ToolbarModel = null;
+            this._searchResults.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.ImageAndText;
+            this._searchResults.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.No;
             // 
             // PatientSearchComponentControl
             // 

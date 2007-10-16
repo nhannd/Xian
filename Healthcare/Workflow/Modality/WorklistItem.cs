@@ -56,6 +56,7 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
 
     public class WorklistItem : WorklistItemBase
     {
+        private EntityRef _profileRef;
         private CompositeIdentifier _mrn;
         private PersonName _patientName;
         private string _accessionNumber;
@@ -66,8 +67,7 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
 
         public WorklistItem(
             ModalityProcedureStep modalityProcedureStep,
-            CompositeIdentifier mrn,
-            PersonName patientName,
+            PatientProfile profile,
             string accessionNumber,
             OrderPriority priority,
             RequestedProcedureType requestedProcedureType,
@@ -75,8 +75,9 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
             ClearCanvas.Healthcare.Modality modality)
             : base(new WorklistItemKey(modalityProcedureStep.GetRef()))
         {
-            _mrn = mrn;
-            _patientName = patientName;
+            _profileRef = profile.GetRef();
+            _mrn = profile.Mrn;
+            _patientName = profile.Name;
             _accessionNumber = accessionNumber;
             _priority = priority;
             _requestedProcedureType = requestedProcedureType;
@@ -88,6 +89,11 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
         public EntityRef ModalityProcedureStepRef
         {
             get { return (this.Key as WorklistItemKey).ModalityProcedureStep; }
+        }
+
+        public EntityRef PatientProfileRef
+        {
+            get { return _profileRef; }
         }
 
         public CompositeIdentifier Mrn

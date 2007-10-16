@@ -53,11 +53,14 @@ namespace ClearCanvas.Ris.Client.Adt
     [ButtonAction("neworder", "folderexplorer-items-toolbar/New Order")]
     [MenuAction("neworder", "RegistrationPreview-menu/NewOrders")]
     [MenuAction("neworder", "global-menus/Orders/New")]
-	[IconSet("neworder", IconScheme.Colour, "AddToolSmall.png", "AddToolMedium.png", "AddToolLarge.png")]
+    [ButtonAction("neworder", "patientsearch-items-toolbar/New Order")]
+    [MenuAction("neworder", "patientsearch-items-contextmenu/New Order")]
+    [IconSet("neworder", IconScheme.Colour, "AddToolSmall.png", "AddToolMedium.png", "AddToolLarge.png")]
 	[EnabledStateObserver("neworder", "Enabled", "EnabledChanged")]
     [ClickHandler("neworder", "NewOrder")]
     [ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]
     [ExtensionOf(typeof(RegistrationPreviewToolExtensionPoint))]
+    [ExtensionOf(typeof(PatientSearchToolExtensionPoint))]
     public class OrderEntryTool : Tool<IToolContext>
     {
         private bool _enabled;
@@ -73,8 +76,20 @@ namespace ClearCanvas.Ris.Client.Adt
                 ((IRegistrationWorkflowItemToolContext)this.ContextBase).SelectedItemsChanged += delegate
                 {
                     this.Enabled = (((IRegistrationWorkflowItemToolContext)this.ContextBase).SelectedItems != null
-                        && ((IRegistrationWorkflowItemToolContext)this.ContextBase).SelectedItems.Count == 1);
+                    && ((IRegistrationWorkflowItemToolContext)this.ContextBase).SelectedItems.Count == 1);
                 };
+            }
+            else if (this.ContextBase is IPatientSearchToolContext)
+            {
+                ((IPatientSearchToolContext)this.ContextBase).SelectedProfileChanged += delegate
+                {
+                    IPatientSearchToolContext context = (IPatientSearchToolContext)this.ContextBase;
+                    this.Enabled = (context.SelectedProfile != null && context.SelectedProfile.ProfileRef != null);
+                };
+            }
+            else if (this.ContextBase is IPatientBiographyToolContext)
+            {
+                this.Enabled = true;
             }
         }
 
@@ -103,18 +118,30 @@ namespace ClearCanvas.Ris.Client.Adt
             {
                 IRegistrationWorkflowItemToolContext context = (IRegistrationWorkflowItemToolContext)this.ContextBase;
                 RegistrationWorklistItem item = CollectionUtils.FirstElement<RegistrationWorklistItem>(context.SelectedItems);
-                NewOrder(item, context);
+                string title = string.Format(SR.TitleNewOrder, PersonNameFormat.Format(item.Name), MrnFormat.Format(item.Mrn));
+                NewOrder(item.PatientProfileRef, title, context.DesktopWindow);
+            }
+            else if (this.ContextBase is IPatientSearchToolContext)
+            {
+                IPatientSearchToolContext context = (IPatientSearchToolContext)this.ContextBase;
+                string title = string.Format(SR.TitleNewOrder, PersonNameFormat.Format(context.SelectedProfile.Name), MrnFormat.Format(context.SelectedProfile.Mrn));
+                NewOrder(context.SelectedProfile.ProfileRef, title, context.DesktopWindow);
+            }
+            else if (this.ContextBase is IPatientBiographyToolContext)
+            {
+                IPatientBiographyToolContext context = (IPatientBiographyToolContext)this.ContextBase;
+                NewOrder(context.PatientProfile, "New Order", context.DesktopWindow);
             }
         }
 
-        private static void NewOrder(RegistrationWorklistItem worklistItem, IRegistrationWorkflowItemToolContext context)
+        private void NewOrder(EntityRef profileRef, string title, IDesktopWindow desktopWindow)
         {
             try
             {
                 ApplicationComponent.LaunchAsWorkspace(
-                    context.DesktopWindow,
-                    new OrderEntryComponent(worklistItem.PatientProfileRef),
-                    string.Format(SR.TitleNewOrder, PersonNameFormat.Format(worklistItem.Name), MrnFormat.Format(worklistItem.Mrn)),
+                    desktopWindow,
+                    new OrderEntryComponent(profileRef),
+                    title,
                     delegate(IApplicationComponent c)
                     {
                         if (c.ExitCode == ApplicationComponentExitCode.Normal)
@@ -127,20 +154,25 @@ namespace ClearCanvas.Ris.Client.Adt
                                     service.PlaceOrder(component.PlaceOrderRequest);
                                 });
 
-                            // Refresh the schedule folder is a new folder is placed
-                            IFolder scheduledFolder = CollectionUtils.SelectFirst<IFolder>(context.Folders,
-                                delegate(IFolder f) { return f is Folders.ScheduledFolder; });
+                            if (this.ContextBase is IRegistrationWorkflowItemToolContext)
+                            {
+                                IRegistrationWorkflowItemToolContext context = (IRegistrationWorkflowItemToolContext)this.ContextBase;
 
-                            if (scheduledFolder.IsOpen)
-                                scheduledFolder.Refresh();
-                            else
-                                scheduledFolder.RefreshCount();
+                                // Refresh the schedule folder is a new folder is placed
+                                IFolder scheduledFolder = CollectionUtils.SelectFirst<IFolder>(context.Folders,
+                                    delegate(IFolder f) { return f is Folders.ScheduledFolder; });
+
+                                if (scheduledFolder.IsOpen)
+                                    scheduledFolder.Refresh();
+                                else
+                                    scheduledFolder.RefreshCount();
+                            }
                         }
                     });
             }
             catch (Exception e)
             {
-                ExceptionHandler.Report(e, SR.ExceptionCannotPlaceOrder, context.DesktopWindow);
+                ExceptionHandler.Report(e, SR.ExceptionCannotPlaceOrder, desktopWindow);
             }
         }
     }
@@ -281,11 +313,6 @@ namespace ClearCanvas.Ris.Client.Adt
             _scheduleOrder = true;
 
             base.Start();
-        }
-
-        public override void Stop()
-        {
-            base.Stop();
         }
 
         #region Presentation Model

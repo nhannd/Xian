@@ -48,7 +48,7 @@ namespace ClearCanvas.Ris.Client.Adt
     [ClickHandler("apply", "ShowVisits")]
     [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
 
-    [ExtensionOf(typeof(PatientOverviewToolExtensionPoint))]
+    [ExtensionOf(typeof(PatientBiographyToolExtensionPoint))]
     [ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]
     public class VisitSummaryTool : ToolBase
     {
@@ -106,7 +106,7 @@ namespace ClearCanvas.Ris.Client.Adt
             }
             else
             {
-                IPatientOverviewToolContext context = (IPatientOverviewToolContext)this.ContextBase;
+                IPatientBiographyToolContext context = (IPatientBiographyToolContext)this.ContextBase;
                 ShowVisitSummaryDialog(context.PatientProfile, context.DesktopWindow);
             }
         }

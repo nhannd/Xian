@@ -17,9 +17,8 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             InitializeComponent();
             _component = component;
 
-            _searchResults.ToolbarModel = _component.ProfileActionModel;
-            _searchResults.MenuModel = _component.ProfileActionModel;
-
+            _searchResults.ToolbarModel = _component.ItemsToolbarModel;
+            _searchResults.MenuModel = _component.ItemsContextMenuModel;
             _searchResults.Table = _component.Profiles;
             _searchResults.DataBindings.Add("Selection", _component, "SelectedProfile", true, DataSourceUpdateMode.OnPropertyChanged);
 
@@ -32,6 +31,8 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             _givenName.DataBindings.Add("Value", _component, "GivenName", true, DataSourceUpdateMode.OnPropertyChanged);
             _sex.DataBindings.Add("Value", _component, "Sex", true, DataSourceUpdateMode.OnPropertyChanged);
             _dateOfBirth.DataBindings.Add("Value", _component, "DateOfBirth", true, DataSourceUpdateMode.OnPropertyChanged);
+
+            _searchButton.DataBindings.Add("Enabled", _component, "SearchEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
         }
 
         private void _searchButton_Click(object sender, EventArgs e)

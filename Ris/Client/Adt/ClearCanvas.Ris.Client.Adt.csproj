@@ -46,6 +46,7 @@
     <Compile Include="CheckInOrderComponent.cs" />
     <Compile Include="CheckInOrderTable.cs" />
     <Compile Include="FolderSearchTool.cs" />
+    <Compile Include="PatientBiographyTool.cs" />
     <Compile Include="PatientSearchTool.cs" />
     <Compile Include="ExamDetailsComponent.cs" />
     <Compile Include="Folders\RefreshTool.cs" />
@@ -59,9 +60,6 @@
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>OrderEntryComponentSettings.settings</DependentUpon>
-    </Compile>
-    <Compile Include="PatientOverviewTool.cs">
-      <SubType>Code</SubType>
     </Compile>
     <Compile Include="PatientProfileDetailsEditorComponentSettings.cs" />
     <Compile Include="PatientProfileDetailsEditorComponentSettings.Designer.cs">
@@ -207,8 +205,6 @@
     <EmbeddedResource Include="Icons\RefreshToolLarge.png" />
     <EmbeddedResource Include="Icons\RefreshToolMedium.png" />
     <EmbeddedResource Include="Icons\RefreshToolSmall.png" />
-    <EmbeddedResource Include="Icons\AlertGeneral.png" />
-    <EmbeddedResource Include="Icons\AlertIncompleteData.png" />
     <EmbeddedResource Include="Icons\ProcessMessageToolLarge.png" />
     <EmbeddedResource Include="Icons\ProcessMessageToolMedium.png" />
     <EmbeddedResource Include="Icons\ProcessMessageToolSmall.png" />
@@ -261,10 +257,6 @@
     <EmbeddedResource Include="Icons\AddToolSmall.png" />
     <EmbeddedResource Include="Icons\DeleteToolSmall.png" />
     <EmbeddedResource Include="Icons\CheckSmall.png" />
-    <EmbeddedResource Include="Icons\AlertClock.png" />
-    <EmbeddedResource Include="Icons\AlertMessenger.png" />
-    <EmbeddedResource Include="Icons\AlertPen.png" />
-    <EmbeddedResource Include="Icons\AlertWorld.png" />
     <EmbeddedResource Include="Icons\NoteTestToolLarge.png" />
     <EmbeddedResource Include="Icons\NoteTestToolMedium.png" />
     <EmbeddedResource Include="Icons\NoteTestToolSmall.png" />

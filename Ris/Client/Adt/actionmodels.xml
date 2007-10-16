@@ -9,6 +9,7 @@
     <action id="ClearCanvas.Ris.Client.Adt.PatientEditFromWorklistTool:edit1" path="global-menus/Patient/Edit Patient..." />
     <action id="ClearCanvas.Ris.Client.Adt.PatientOpenFromWorklistTool:view1" path="global-menus/Patient/View Details..." />
     <action id="ClearCanvas.Ris.Client.Adt.PatientReconcileFromWorklistTool:apply" path="global-menus/Patient/Reconcile..." />
+    <action id="ClearCanvas.Ris.Client.Adt.PatientSearchTool:launch" path="global-menus/Patient/Search Patient" />
     <action id="ClearCanvas.Ris.Client.Adt.HL7QueuePreviewTool:show" path="global-menus/Admin/HL7/Queue" />
     <action id="ClearCanvas.Desktop.Configuration.MenuOptions:show" path="global-menus/MenuTools/MenuOptions" />
     <action id="ClearCanvas.Ris.Client.Adt.JscriptTool:apply" path="global-menus/MenuTools/JScript" />
@@ -20,6 +21,7 @@
     <action id="ClearCanvas.Ris.Client.Adt.PatientEditFromWorklistTool:edit1" path="global-toolbars/Patient/EditPatient" />
     <action id="ClearCanvas.Ris.Client.Adt.PatientOpenFromWorklistTool:view1" path="global-toolbars/Patient/ViewPatient" />
     <action id="ClearCanvas.Ris.Client.Adt.PatientReconcileFromWorklistTool:apply" path="global-toolbars/Patient/Reconcile" />
+    <action id="ClearCanvas.Ris.Client.Adt.PatientSearchTool:launch" path="global-toolbars/Patient/Search Patient" />
   </action-model>
   <action-model id="ClearCanvas.Ris.Client.Adt.FoldersComponent:folders-toolbar">
     <action id="ClearCanvas.Ris.Client.Adt.SearchTool:search" path="folders-toolbar/Search" />

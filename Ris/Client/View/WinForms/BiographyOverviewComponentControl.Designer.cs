@@ -32,7 +32,7 @@
 using System.Windows.Forms;
 namespace ClearCanvas.Ris.Client.View.WinForms
 {
-    partial class PatientOverviewComponentControl
+    partial class BiographyOverviewComponentControl
     {
         /// <summary> 
         /// Required designer variable.
@@ -61,7 +61,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PatientOverviewComponentControl));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(BiographyOverviewComponentControl));
             this._alertList = new System.Windows.Forms.ListView();
             this._alertIcons = new System.Windows.Forms.ImageList(this.components);
             this._picture = new System.Windows.Forms.PictureBox();
@@ -226,7 +226,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this._name.TabIndex = 1;
             this._name.Text = "Patient name";
             // 
-            // PatientOverviewComponentControl
+            // BiographyOverviewComponentControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -234,7 +234,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this.Margin = new System.Windows.Forms.Padding(0);
             this.MaximumSize = new System.Drawing.Size(0, 76);
             this.MinimumSize = new System.Drawing.Size(1000, 76);
-            this.Name = "PatientOverviewComponentControl";
+            this.Name = "BiographyOverviewComponentControl";
             this.Size = new System.Drawing.Size(1000, 76);
             ((System.ComponentModel.ISupportInitialize)(this._picture)).EndInit();
             this.tableLayoutPanel1.ResumeLayout(false);

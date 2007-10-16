@@ -56,20 +56,23 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             public object Value;
         }
 
-        private const string _hqlToBeReportedWorklist = 
-            "select rps, pp.Mrn, pp.Name, o.AccessionNumber, o.Priority, rpt.Name, ds.Name, rps.State from InterpretationStep rps";
-        private const string _hqlToBeReportedCount = 
-            "select count(*) from InterpretationStep rps";
+        private const string _hqlSelectCount = "select count(*)";
+        private const string _hqlSelectWorklist =
+            "select rps, pp, o.AccessionNumber, o.Priority, rpt.Name, ds.Name, rps.State";
 
-        private const string _hqlSelectTranscriptionWorklist =
-            "select rps, pp.Mrn, pp.Name, o.AccessionNumber, o.Priority, rpt.Name, ds.Name, rps.State from TranscriptionStep rps";
-        private const string _hqlSelectTranscriptionCount =
-            "select count(*) from TranscriptionStep rps";
+        private const string _hqlFromReportingStep = " from ReportingProcedureStep rps";
+        private const string _hqlFromInterpretationStep = " from InterpretationStep rps";
+        private const string _hqlFromTranscriptionStep = " from TranscriptionStep rps";
+        private const string _hqlFromVerificationStep = " from VerificationStep rps";
 
-        private const string _hqlSelectVerificationWorklist =
-            "select rps, pp.Mrn, pp.Name, o.AccessionNumber, o.Priority, rpt.Name, ds.Name, rps.State from VerificationStep rps";
-        private const string _hqlSelectVerificationCount =
-            "select count(*) from VerificationStep rps";
+        private const string _hqlToBeReportedWorklist = _hqlSelectWorklist + _hqlFromInterpretationStep;
+        private const string _hqlToBeReportedCount = _hqlSelectCount + _hqlFromInterpretationStep;
+
+        private const string _hqlSelectTranscriptionWorklist = _hqlSelectWorklist + _hqlFromTranscriptionStep;
+        private const string _hqlSelectTranscriptionCount = _hqlSelectCount + _hqlFromTranscriptionStep;
+
+        private const string _hqlSelectVerificationWorklist = _hqlSelectWorklist + _hqlFromVerificationStep;
+        private const string _hqlSelectVerificationCount = _hqlSelectCount + _hqlFromVerificationStep;
 
         private const string _hqlJoin =
             " join rps.RequestedProcedure rp" +
@@ -345,15 +348,9 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             StringBuilder hqlQuery = new StringBuilder();
             List<QueryParameter> parameters = new List<QueryParameter>();
 
-            hqlQuery.Append("select rps, pp.Mrn, pp.Name, o.AccessionNumber, o.Priority, rpt.Name, ds.Name, rps.State");
-
-            hqlQuery.Append(" from ReportingProcedureStep rps");
-            hqlQuery.Append(" join rps.RequestedProcedure rp" +
-                            " join rp.Type rpt" +
-                            " join rp.Order o" +
-                            " join o.DiagnosticService ds" +
-                            " join o.Patient p" +
-                            " join p.Profiles pp");
+            hqlQuery.Append(_hqlSelectWorklist);
+            hqlQuery.Append(_hqlFromReportingStep);
+            hqlQuery.Append(_hqlJoin);
 
             if (showActiveOnly)
             {

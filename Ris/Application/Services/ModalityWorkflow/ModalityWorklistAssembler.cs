@@ -55,6 +55,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
             item.ProcedureStepRef = domainItem.ModalityProcedureStepRef;
 
             PersonNameAssembler assembler = new PersonNameAssembler();
+            item.PatientProfileRef = domainItem.PatientProfileRef;
             item.PersonNameDetail = assembler.CreatePersonNameDetail(domainItem.PatientName);
             item.Mrn = new MrnDetail(domainItem.Mrn.Id, domainItem.Mrn.AssigningAuthority);
             item.AccessionNumber = domainItem.AccessionNumber;

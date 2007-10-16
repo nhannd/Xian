@@ -44,6 +44,9 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
         public EntityRef ProcedureStepRef;
 
         [DataMember]
+        public EntityRef PatientProfileRef;
+
+        [DataMember]
         public MrnDetail Mrn;
 
         [DataMember]

@@ -108,7 +108,7 @@ namespace ClearCanvas.Ris.Client.Adt
                         Document doc = DocumentManager.Get(response.PatientProfileRef);
                         if (doc == null)
                         {
-                            doc = new PatientOverviewDocument(response.PatientProfileRef, window);
+                            doc = new PatientBiographyDocument(response.PatientProfileRef, window);
                             doc.Open();
                         }
                         else

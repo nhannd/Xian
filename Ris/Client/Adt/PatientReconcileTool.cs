@@ -54,7 +54,7 @@ namespace ClearCanvas.Ris.Client.Adt
     [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
     [ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.ReconcilePatients)]
 
-    [ExtensionOf(typeof(PatientOverviewToolExtensionPoint))]
+    [ExtensionOf(typeof(PatientBiographyToolExtensionPoint))]
     [ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]
     public class PatientReconcileTool : ToolBase
     {
@@ -111,7 +111,7 @@ namespace ClearCanvas.Ris.Client.Adt
             }
             else
             {
-                IPatientOverviewToolContext context = (IPatientOverviewToolContext)this.ContextBase;
+                IPatientBiographyToolContext context = (IPatientBiographyToolContext)this.ContextBase;
                 ShowReconciliationDialog(context.PatientProfile, context.DesktopWindow);
             }
         }

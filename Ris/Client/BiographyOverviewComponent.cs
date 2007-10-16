@@ -43,19 +43,19 @@ using ClearCanvas.Ris.Client.Formatting;
 namespace ClearCanvas.Ris.Client
 {
     /// <summary>
-    /// Extension point for views onto <see cref="PatientOverviewComponent"/>
+    /// Extension point for views onto <see cref="BiographyOverviewComponent"/>
     /// </summary>
     [ExtensionPoint]
-    public class PatientOverviewComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+    public class BiographyOverviewComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
     {
     }
 
     [ExtensionPoint]
-    public class PatientOverviewToolExtensionPoint : ExtensionPoint<ITool>
+    public class PatientBiographyToolExtensionPoint : ExtensionPoint<ITool>
     {
     }
 
-    public interface IPatientOverviewToolContext : IToolContext
+    public interface IPatientBiographyToolContext : IToolContext
     {
         EntityRef PatientProfile { get; }
         IDesktopWindow DesktopWindow { get; }
@@ -78,14 +78,14 @@ namespace ClearCanvas.Ris.Client
     /// <summary>
     /// PatientComponent class
     /// </summary>
-    [AssociateView(typeof(PatientOverviewComponentViewExtensionPoint))]
-    public class PatientOverviewComponent : ApplicationComponent
+    [AssociateView(typeof(BiographyOverviewComponentViewExtensionPoint))]
+    public class BiographyOverviewComponent : ApplicationComponent
     {
-        class PatientOverviewToolContext : ToolContext, IPatientOverviewToolContext
+        class PatientBiographyToolContext : ToolContext, IPatientBiographyToolContext
         {
-            private readonly PatientOverviewComponent _component;
+            private readonly BiographyOverviewComponent _component;
 
-            internal PatientOverviewToolContext(PatientOverviewComponent component)
+            internal PatientBiographyToolContext(BiographyOverviewComponent component)
             {
                 _component = component;
             }
@@ -111,7 +111,7 @@ namespace ClearCanvas.Ris.Client
         /// <summary>
         /// Constructor
         /// </summary>
-        public PatientOverviewComponent(
+        public BiographyOverviewComponent(
             EntityRef profileRef, 
             PatientProfileDetail patientProfile, 
             List<AlertNotificationDetail> alertNotifications)
@@ -125,7 +125,7 @@ namespace ClearCanvas.Ris.Client
 
         public override void Start()
         {
-            _toolSet = new ToolSet(new PatientOverviewToolExtensionPoint(), new PatientOverviewToolContext(this));
+            _toolSet = new ToolSet(new PatientBiographyToolExtensionPoint(), new PatientBiographyToolContext(this));
 
             base.Start();
         }

@@ -59,6 +59,7 @@
     <Compile Include="BiographyNoteComponent.cs" />
     <Compile Include="BiographyNoteTable.cs" />
     <Compile Include="BiographyOrderHistoryComponent.cs" />
+    <Compile Include="BiographyOverviewComponent.cs" />
     <Compile Include="ContactPersonEditorComponentSettings.cs" />
     <Compile Include="ContactPersonEditorComponentSettings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -82,8 +83,7 @@
     </Compile>
     <Compile Include="ExceptionPolicies.cs" />
     <Compile Include="OrderSummaryTable.cs" />
-    <Compile Include="PatientOverviewComponent.cs" />
-    <Compile Include="PatientOverviewDocument.cs" />
+    <Compile Include="PatientBiographyDocument.cs" />
     <Compile Include="SearchComponent.cs" />
     <Compile Include="WorkflowFolderFactory.cs" />
     <Compile Include="Formatting\AddressFormat.cs" />
@@ -247,6 +247,14 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\ContainerFolderOpenMedium.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\AlertClock.png" />
+    <EmbeddedResource Include="Icons\AlertGeneral.png" />
+    <EmbeddedResource Include="Icons\AlertIncompleteData.png" />
+    <EmbeddedResource Include="Icons\AlertMessenger.png" />
+    <EmbeddedResource Include="Icons\AlertPen.png" />
+    <EmbeddedResource Include="Icons\AlertWorld.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

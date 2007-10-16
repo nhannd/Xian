@@ -253,7 +253,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         private void SelectedItemDoubleClickedEventHandler(object sender, EventArgs e)
         {
-            PatientOverviewTool tool = new PatientOverviewTool();
+            PatientBiographyTool tool = new PatientBiographyTool();
             tool.SetContext(new RegistrationWorkflowItemToolContext(this));
             if (tool.Enabled)
                 tool.View();

@@ -7,6 +7,7 @@ using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 using System.Collections.Generic;
+using ClearCanvas.Desktop.Tools;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -18,12 +19,50 @@ namespace ClearCanvas.Ris.Client.Adt
     {
     }
 
+    [ExtensionPoint]
+    public class PatientSearchToolExtensionPoint : ExtensionPoint<ITool>
+    {
+    }
+
+    public interface IPatientSearchToolContext : IToolContext
+    {
+        event EventHandler SelectedProfileChanged;
+        PatientProfileSummary SelectedProfile { get; }
+        IDesktopWindow DesktopWindow { get; }
+    }
+
     /// <summary>
     /// PatientSearchComponent class
     /// </summary>
     [AssociateView(typeof(PatientSearchComponentViewExtensionPoint))]
     public class PatientSearchComponent : ApplicationComponent
     {
+        class PatientSearchToolContext : ToolContext, IPatientSearchToolContext
+        {
+            private readonly PatientSearchComponent _component;
+
+            public PatientSearchToolContext(PatientSearchComponent component)
+            {
+                _component = component;
+            }
+
+            public event EventHandler SelectedProfileChanged
+            {
+                add { _component.SelectedProfileChanged += value; }
+                remove { _component.SelectedProfileChanged -= value; }
+            }
+
+            public PatientProfileSummary SelectedProfile
+            {
+                get { return (PatientProfileSummary)_component.SelectedProfile.Item; }
+            }
+
+            public IDesktopWindow DesktopWindow
+            {
+                get { return _component.Host.DesktopWindow; }
+            }
+        }
+
         private string _mrnID;
         private string _mrnAssigningAuthority;
         private string _healthcard;
@@ -38,14 +77,12 @@ namespace ClearCanvas.Ris.Client.Adt
         private PatientProfileSummary _selectedProfile;
         private event EventHandler _selectedProfileChanged;
 
-        private SimpleActionModel _profileActionHandler;
+        private ToolSet _toolSet;
 
         public override void Start()
         {
             _profileTable = new PatientProfileTable();
-
-            _profileActionHandler = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));
-
+            _toolSet = new ToolSet(new PatientSearchToolExtensionPoint(), new PatientSearchToolContext(this));
 
             try
             {
@@ -62,6 +99,13 @@ namespace ClearCanvas.Ris.Client.Adt
             }
 
             base.Start();
+        }
+
+        public override void Stop()
+        {
+            _toolSet.Dispose();
+
+            base.Stop();
         }
 
         #region Presentation Model
@@ -116,6 +160,20 @@ namespace ClearCanvas.Ris.Client.Adt
             set { _dateOfBirth = value; }
         }
 
+        public bool SearchEnabled
+        {
+            get
+            {
+                return !String.IsNullOrEmpty(_mrnID) ||
+                       !String.IsNullOrEmpty(_mrnAssigningAuthority) ||
+                       !String.IsNullOrEmpty(_healthcard) ||
+                       !String.IsNullOrEmpty(_familyName) ||
+                       !String.IsNullOrEmpty(_givenName) ||
+                       _sex != null ||
+                       _dateOfBirth != null;
+            }
+        }
+
         public List<string> SexChoices
         {
             get
@@ -131,9 +189,25 @@ namespace ClearCanvas.Ris.Client.Adt
             get { return _profileTable; }
         }
 
-        public ActionModelNode ProfileActionModel
+        public ActionModelRoot ItemsContextMenuModel
         {
-            get { return _profileActionHandler; }
+            get
+            {
+                return ActionModelRoot.CreateModel(this.GetType().FullName, "patientsearch-items-contextmenu", _toolSet.Actions);
+            }
+        }
+
+        public ActionModelNode ItemsToolbarModel
+        {
+            get
+            {
+                return ActionModelRoot.CreateModel(this.GetType().FullName, "patientsearch-items-toolbar", _toolSet.Actions);
+            }
+        }
+
+        public override IActionSet ExportedActions
+        {
+            get { return _toolSet.Actions; }
         }
 
         public ISelection SelectedProfile
@@ -174,6 +248,7 @@ namespace ClearCanvas.Ris.Client.Adt
                         _profileTable.Items.AddRange(response.Profiles);
                     });
 
+                this.SelectedProfile = new Selection(_profileTable.Items.Count > 0 ? _profileTable.Items[0] : null);
             }
             catch (Exception e)
             {

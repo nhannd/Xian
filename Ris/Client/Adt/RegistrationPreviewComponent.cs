@@ -29,19 +29,11 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
-using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Ris.Application.Common.PreviewService;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
-using ClearCanvas.Ris.Application.Common.Jsml;
-using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -60,7 +52,8 @@ namespace ClearCanvas.Ris.Client.Adt
     {
         class RegistrationPreviewToolContext : ToolContext, IRegistrationPreviewToolContext
         {
-            private RegistrationPreviewComponent _component;
+            private readonly RegistrationPreviewComponent _component;
+
             public RegistrationPreviewToolContext(RegistrationPreviewComponent component)
             {
                 _component = component;

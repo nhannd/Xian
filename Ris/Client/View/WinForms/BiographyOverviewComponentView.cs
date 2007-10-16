@@ -40,20 +40,20 @@ using ClearCanvas.Desktop.View.WinForms;
 namespace ClearCanvas.Ris.Client.View.WinForms
 {
     /// <summary>
-    /// Provides a Windows Forms view onto <see cref="PatientOverviewComponent"/>
+    /// Provides a Windows Forms view onto <see cref="BiographyOverviewComponent"/>
     /// </summary>
-    [ExtensionOf(typeof(PatientOverviewComponentViewExtensionPoint))]
-    public class PatientOverviewComponentView : WinFormsView, IApplicationComponentView
+    [ExtensionOf(typeof(BiographyOverviewComponentViewExtensionPoint))]
+    public class BiographyOverviewComponentView : WinFormsView, IApplicationComponentView
     {
-        private PatientOverviewComponent _component;
-        private PatientOverviewComponentControl _control;
+        private BiographyOverviewComponent _component;
+        private BiographyOverviewComponentControl _control;
 
 
         #region IApplicationComponentView Members
 
         public void SetComponent(IApplicationComponent component)
         {
-            _component = (PatientOverviewComponent)component;
+            _component = (BiographyOverviewComponent)component;
         }
 
         #endregion
@@ -64,7 +64,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             {
                 if (_control == null)
                 {
-                    _control = new PatientOverviewComponentControl(_component);
+                    _control = new BiographyOverviewComponentControl(_component);
                 }
                 return _control;
             }

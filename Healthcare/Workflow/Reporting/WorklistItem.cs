@@ -60,6 +60,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 
     public class WorklistItem : WorklistItemBase
     {
+        private EntityRef _profileRef;
         private CompositeIdentifier _mrn;
         private PersonName _patientName;
         private string _accessionNumber;
@@ -71,8 +72,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 
         public WorklistItem(
             ReportingProcedureStep reportingProcedureStep,
-            CompositeIdentifier mrn,
-            PersonName patientName,
+            PatientProfile profile,
             string accessionNumber,
             OrderPriority priority,
             string requestedProcedureName,
@@ -80,8 +80,9 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
             ActivityStatus activityStatus)
             : base(new WorklistItemKey(reportingProcedureStep.GetRef()))
         {
-            _mrn = mrn;
-            _patientName = patientName;
+            _profileRef = profile.GetRef();
+            _mrn = profile.Mrn;
+            _patientName = profile.Name;
             _accessionNumber = accessionNumber;
             _priority = priority;
             _requestedProcedureName = requestedProcedureName;
@@ -95,6 +96,11 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
         public EntityRef ProcedureStepRef
         {
             get { return ((WorklistItemKey)this.Key).ReportingProcedureStep; }
+        }
+
+        public EntityRef PatientProfileRef
+        {
+            get { return _profileRef; }
         }
 
         public CompositeIdentifier Mrn

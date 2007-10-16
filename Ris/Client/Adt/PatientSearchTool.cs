@@ -38,10 +38,10 @@ using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
-    [MenuAction("launch", "global-menus/Tools/PatientSearch")]
-    [ButtonAction("launch", "global-toolbars/Tools/PatientSearch")]
-    [Tooltip("launch", "Patient Search")]
-	[IconSet("launch", IconScheme.Colour, "Icons.RegistrationHomeToolSmall.png", "Icons.RegistrationHomeToolMedium.png", "Icons.RegistrationHomeToolLarge.png")]
+    [MenuAction("launch", "global-menus/Patient/Search Patient")]
+    [ButtonAction("launch", "global-toolbars/Patient/Search Patient")]
+    [Tooltip("launch", "Search Patient")]
+    [IconSet("launch", IconScheme.Colour, "Icons.SearchToolSmall.png", "Icons.SearchToolMedium.png", "Icons.SearchToolLarge.png")]
     [ClickHandler("launch", "Launch")]
     [ExtensionOf(typeof(DesktopToolExtensionPoint))]
     public class PatientSearchTool : Tool<IDesktopToolContext>
@@ -72,18 +72,19 @@ namespace ClearCanvas.Ris.Client.Adt
             searchComponent.SelectedProfileChanged += delegate
             {
                 PatientProfileSummary summary = (PatientProfileSummary) searchComponent.SelectedProfile.Item;
-                RegistrationWorklistItem item = new RegistrationWorklistItem(
-                    summary.ProfileRef,
-                    null,
-                    summary.Mrn.Id,
-                    summary.Mrn.AssigningAuthority,
-                    summary.Name,
-                    summary.Healthcard,
-                    summary.DateOfBirth,
-                    summary.Sex,
-                    null, null, null, null);
-
-                previewComponent.WorklistItem = item;
+                if (summary == null)
+                    previewComponent.WorklistItem = null;
+                else
+                    previewComponent.WorklistItem = new RegistrationWorklistItem(
+                        summary.ProfileRef,
+                        null,
+                        summary.Mrn.Id,
+                        summary.Mrn.AssigningAuthority,
+                        summary.Name,
+                        summary.Healthcard,
+                        summary.DateOfBirth,
+                        summary.Sex,
+                        null, null, null, null);
             };
 
             SplitComponentContainer splitComponent = new SplitComponentContainer(SplitOrientation.Vertical);

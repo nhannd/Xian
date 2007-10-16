@@ -38,6 +38,7 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
     public class ModalityWorklistItem : DataContractBase
     {
         public ModalityWorklistItem(EntityRef procedureStepRef,
+            EntityRef profileRef,
             MrnDetail mrn,
             PersonNameDetail personNameDetail,
             string accessionNumber,
@@ -46,6 +47,7 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
             EnumValueInfo priority)
         {
             this.ProcedureStepRef = procedureStepRef;
+            this.PatientProfileRef = profileRef;
             this.Mrn = mrn;
             this.PersonNameDetail = personNameDetail;
             this.AccessionNumber = accessionNumber;
@@ -60,6 +62,9 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
 
         [DataMember]
         public EntityRef ProcedureStepRef;
+
+        [DataMember]
+        public EntityRef PatientProfileRef;
 
         [DataMember]
         public MrnDetail Mrn;
