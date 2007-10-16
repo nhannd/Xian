@@ -1,0 +1,105 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+   <head>
+      <title>Angio/Interventional Details</title>
+      <link href="../../css/default.css" rel="stylesheet" type="text/css" />
+      <link href="../../js/calendar/calendar-system.css" rel="stylesheet" type="text/css" />
+      <script type="text/javascript" src="../../js/calendar/calendar.js"></script>
+      <script type="text/javascript" src="../../js/calendar/lang/calendar-en.js"></script>
+      <script type="text/javascript" src="../../js/jsx.js"></script>
+      <script type="text/javascript" src="../../js/jsml.js"></script>
+      <script type="text/javascript" src="../../js/ui.js"></script>
+      <script type="text/javascript" src="../../js/ris.js"></script>
+      <script type="text/javascript" src="../../js/preview.js"></script>
+      <script type="text/javascript" >
+         var data = {};
+         var errorProvider = new ErrorProvider();
+
+         function onBodyLoad()
+         {
+            try
+            {
+               var startTime;
+               var stopTime;
+            
+               if(Ris)
+               {
+                  data = JSML.parse(Ris.getData("Documentation")) || {};
+                  startTime = Ris.getData("StartTime") || "Not Started";
+                  stopTime = Ris.getData("StopTime") || (startTime == "Not Started" ? "Not Started" : "In Progress");
+               }
+
+               data.acquisition = data.acquisition || {};
+               data.acquisition.startTime = startTime;
+               data.acquisition.stopTime = stopTime;
+
+               initAcquisitionTable();
+            }
+            catch(e)
+            {
+               var message = "Failed to load details page.  An exception occurred in the script. Error name: " + e.name + ". Error message: " + e.message;
+               Field.setValue($("myForm"), message);
+            }
+         }
+         
+         function initAcquisitionTable()
+         {
+           var table = Table.createTable($("acquisitionTable"), { editInPlace: true, flow: true, checkBoxes: false },
+             [
+               {  label: "Start Date/Time",
+                  cellType: "readonly",
+                  getValue: function(item) { return item.startTime; }
+               },
+               {  label: "Stop Date/Time",
+                  cellType: "readonly",
+                  getValue: function(item) { return item.stopTime; }
+               },
+               {  label: "Equipment/Device ID/Location",
+                  cellType: "text",
+                  size: 30,
+                  getValue: function(item) { return item.equipment; },
+                  setValue: function(item, value) { item.equipment = value; },
+                  getError: function(item) { return item.equipment ? null : "Equipment/device ID/location required"; }
+               },
+               {  label: "Radiation Dose",
+                  cellType: "text",
+                  size: 10,
+                  getValue: function(item) { return item.dose; },
+                  setValue: function(item, value) { item.dose = value; },
+                  getError: function(item) { return item.dose ? null : "Dose required"; }
+               }
+             ]);
+                
+           table.errorProvider = errorProvider;   // share errorProvider with the rest of the form
+           table.bindItems([data.acquisition]);
+         }
+         
+         //////////////////////////////////////////////////////////////////////////
+         // RIS integration API
+         function hasValidationErrors()
+         {
+            return errorProvider.hasErrors();
+         }
+
+         function showValidation(show)
+         {
+            errorProvider.setVisible(show);
+         }
+
+         function saveData()
+         {
+            return Ris.setData("Documentation", JSML.create(data, "data"));
+         }
+         //////////////////////////////////////////////////////////////////////////
+      </script>
+   </head>
+   <body onload="javascript: onBodyLoad()">
+      <form id="myForm">
+         <p class="sectionheading">Exam Acquisition/Mpps</p>
+         <p>&nbsp;</b>
+         <table id="acquisitionTable" width="100%">
+         </table>
+      </form>         
+   </body>
+</html>
+       
