@@ -69,7 +69,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			if (this.Context.SelectedStudy == null)
 				return;
 
-			AENavigatorComponent aeNavigator = new AENavigatorComponent(false, false, false);
+			AENavigatorComponent aeNavigator = new AENavigatorComponent(false, false, false, true);
 			DialogContent content = new DialogContent(aeNavigator);
 			DialogComponentContainer dialogContainer = new DialogComponentContainer(content);
 
