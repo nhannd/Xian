@@ -29,17 +29,15 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
+using System.Runtime.InteropServices;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
-using System.Runtime.InteropServices;
 using ClearCanvas.Ris.Application.Common.Jsml;
+using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client.Reporting
 {
@@ -64,7 +62,7 @@ namespace ClearCanvas.Ris.Client.Reporting
         [ComVisible(true)]
         public class ScriptCallback
         {
-            private PriorReportComponent _component;
+            private readonly PriorReportComponent _component;
 
             public ScriptCallback(PriorReportComponent component)
             {
@@ -81,13 +79,19 @@ namespace ClearCanvas.Ris.Client.Reporting
                 string temp = _component.GetData(tag);
                 return temp;
             }
+
+            public string FormatPersonName(string jsml)
+            {
+                PersonNameDetail detail = JsmlSerializer.Deserialize<PersonNameDetail>(jsml);
+                return detail == null ? "" : PersonNameFormat.Format(detail);
+            }
         }
 
-        private ScriptCallback _scriptCallback;
+        private readonly ScriptCallback _scriptCallback;
 
-        private EntityRef _reportingStepRef;
+        private readonly EntityRef _reportingStepRef;
 
-        private ReportSummaryTable _reportList;
+        private readonly ReportSummaryTable _reportList;
         private ReportSummary _selectedReport;
 
         /// <summary>
@@ -111,13 +115,6 @@ namespace ClearCanvas.Ris.Client.Reporting
                 });
 
             base.Start();
-        }
-
-        public override void Stop()
-        {
-            // TODO prepare the component to exit the live phase
-            // This is a good place to do any clean up
-            base.Stop();
         }
 
         public ITable Reports

@@ -37,6 +37,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Jsml;
 using ClearCanvas.Ris.Application.Common.Admin;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
@@ -87,11 +88,17 @@ namespace ClearCanvas.Ris.Client.Reporting
             {
                 _component.SetData(tag, data);
             }
+
+            public string FormatPersonName(string jsml)
+            {
+                PersonNameDetail detail = JsmlSerializer.Deserialize<PersonNameDetail>(jsml);
+                return detail == null ? "" : PersonNameFormat.Format(detail);
+            }
         }
 
-        private ScriptCallback _scriptCallback;
+        private readonly ScriptCallback _scriptCallback;
 
-        private EntityRef _reportingStepRef;
+        private readonly EntityRef _reportingStepRef;
         private int _reportPartIndex;
         private ReportSummary _report;
 
