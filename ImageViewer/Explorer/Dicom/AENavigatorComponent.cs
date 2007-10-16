@@ -30,22 +30,11 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Windows.Forms;
-using System.Threading;
-using ClearCanvas.Desktop;
 using ClearCanvas.Common;
-using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Desktop.Explorer;
-using ClearCanvas.Desktop.Tools;
-using ClearCanvas.Dicom.OffisNetwork;
-using ClearCanvas.Dicom;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.ImageViewer.Services.DicomServer;
+using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Desktop.Tools;
 using ClearCanvas.ImageViewer.Configuration;
 using ClearCanvas.ImageViewer.Services.ServerTree;
 
@@ -211,7 +200,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			{
 				_selectedServers.Servers.Add(_serverTree.CurrentNode);
 				_selectedServers.Name = _serverTree.CurrentNode.Name;
-				_selectedServers.GroupID = _serverTree.CurrentNode.ParentPath + "/" + _selectedServers.Name;
+				_selectedServers.GroupID = _serverTree.CurrentNode.Path;
 			}
 		}
 
@@ -240,57 +229,43 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         public bool NodeMoved(IServerTreeNode destinationNode, IServerTreeNode movingDataNode)
         {
-            if (destinationNode.IsServer || IsMovingInvalid(destinationNode as ServerGroup, movingDataNode))
+			if (!CanMoveOrAdd(destinationNode, movingDataNode))
                 return false;
 
             if (movingDataNode.IsServer)
             {
-                Server movingServer = movingDataNode as Server;
+                Server movingServer = (Server)movingDataNode;
                 _serverTree.CurrentNode = movingDataNode;
                 _serverTree.DeleteDicomServer();
 
-                movingServer.ChangeParentPath(destinationNode.Path);
-                (destinationNode as ServerGroup).AddChild(movingDataNode);
+                ((ServerGroup)destinationNode).AddChild(movingDataNode);
                 SetSelection(movingDataNode);
             }
             else if (movingDataNode.IsServerGroup)
             {
-                ServerGroup movingGroup = movingDataNode as ServerGroup;
+                ServerGroup movingGroup = (ServerGroup)movingDataNode;
                 _serverTree.CurrentNode = movingGroup;
                 _serverTree.DeleteServerGroup();
 
-                movingGroup.ChangeParentPath(destinationNode.Path);
-                (destinationNode as ServerGroup).AddChild(movingGroup);
+                ((ServerGroup)destinationNode).AddChild(movingGroup);
                 SetSelection(movingGroup);
             }
-            _serverTree.SaveDicomServers();
+            _serverTree.Save();
             return true;
         }
 
-        public event EventHandler SelectedServerChanged
+		public bool CanMoveOrAdd(IServerTreeNode destinationNode, IServerTreeNode movingDataNode)
+		{
+			if (IsReadOnly)
+				return false;
+
+			return _serverTree.CanMoveOrAdd(destinationNode, movingDataNode);
+		}
+		
+		public event EventHandler SelectedServerChanged
         {
             add { _selectedServerChanged += value; }
             remove { _selectedServerChanged -= value; }
-        }
-
-        private bool IsMovingInvalid(IServerTreeNode destinationNode, IServerTreeNode movingDataNode)
-        {
-			if (IsReadOnly)
-				return true;
-
-            if (movingDataNode.Name.Equals(_serverTree.MyServersTitle) || movingDataNode.Name.Equals(_serverTree.MyDatastoreTitle) || movingDataNode.Path.Equals(destinationNode.Path))
-                return true;
-
-            foreach (Server server in (destinationNode as ServerGroup).ChildServers)
-            {
-                if (server.Name.Equals(movingDataNode.Name))
-                    return true;
-            }
-
-            if (!movingDataNode.IsServer && destinationNode.Path.StartsWith(movingDataNode.Path))
-                return true;
-
-            return false;
         }
 
         private void FireSelectedServerChangedEvent()

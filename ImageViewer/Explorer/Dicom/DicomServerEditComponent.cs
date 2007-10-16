@@ -62,7 +62,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             {
 				Server server = _serverTree.CurrentNode as Server;
 				_serverName = server.Name;
-				_serverParentPath = server.ParentPath;
 				_serverLocation = server.Location;
 				_serverAE = server.AETitle;
 				_serverHost = server.Host;
@@ -71,7 +70,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             else
             {
                 _serverName = "";
-				_serverParentPath = _serverTree.CurrentNode.Path;
                 _serverLocation = "";
                 _serverAE = "";
                 _serverHost = "";
@@ -84,7 +82,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             if (!IsServerPropertyValid() || !this.Modified)
                 return;
 
-            Server newServer = new Server(_serverName, _serverLocation, _serverParentPath, _serverHost, _serverAE, int.Parse(_serverPort));
+            Server newServer = new Server(_serverName, _serverLocation, _serverHost, _serverAE, int.Parse(_serverPort));
 
             // edit current server
             if (_serverTree.CurrentNode.IsServer)
@@ -94,13 +92,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             // add new server
             else if (_serverTree.CurrentNode.IsServerGroup)
             {
-                (_serverTree.CurrentNode as ServerGroup).AddChild(newServer);
-            }
+                ((ServerGroup)_serverTree.CurrentNode).AddChild(newServer);
+				_serverTree.CurrentNode = newServer;
+				_serverTree.Save();
+				_serverTree.FireServerTreeUpdatedEvent();
+			}
 
-            _serverTree.CurrentNode = newServer;
-            _serverTree.SaveDicomServers();
-            _serverTree.FireServerTreeUpdatedEvent();
-            
             this.ExitCode = ApplicationComponentExitCode.Normal;
             Host.Exit();
 
@@ -132,9 +129,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                 port = int.Parse(_serverPort);
                 if (_serverTree.CurrentNode.IsServer
                         && _serverName.Equals(_serverTree.CurrentNode.Name)
-                        && _serverAE.Equals((_serverTree.CurrentNode as Server).AETitle)
-                        && _serverHost.Equals((_serverTree.CurrentNode as Server).Host)
-                        && port == (_serverTree.CurrentNode as Server).Port)
+                        && _serverAE.Equals(((Server)_serverTree.CurrentNode).AETitle)
+						&& _serverHost.Equals(((Server)_serverTree.CurrentNode).Host)
+						&& port == ((Server)_serverTree.CurrentNode).Port)
                     return true;
             }
             catch
@@ -151,14 +148,18 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				throw new DicomServerException(SR.MessageServerPortMustBePositiveInteger);
             }
 
+        	bool isConflicted;
             string conflictingServerPath;
-            bool isConflicted = _serverTree.IsDuplicateServerInGroup(_serverTree.CurrentNode, _serverName, _serverAE, _serverHost, int.Parse(_serverPort), out conflictingServerPath);
+        	if (_serverTree.CurrentNode.IsServer)
+				isConflicted = _serverTree.CanEditCurrentServer(_serverName, _serverAE, _serverHost, int.Parse(_serverPort), out conflictingServerPath);
+			else
+				isConflicted = _serverTree.CanAddServerToCurrentGroup(_serverName, _serverAE, _serverHost, int.Parse(_serverPort), out conflictingServerPath);
 
-            if (isConflicted)
+        	if (isConflicted)
             {
                 this.Modified = false;
                 StringBuilder msgText = new StringBuilder();
-				msgText.AppendFormat(SR.FormatServerNameConflict, _serverName, conflictingServerPath);
+				msgText.AppendFormat(SR.FormatServerConflict, conflictingServerPath);
                 throw new DicomServerException(msgText.ToString());
             }
 
@@ -205,7 +206,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         private string _serverAE = "";
         private string _serverHost = "";
         private string _serverPort = "";
-        private string _serverParentPath = "";
 
 		public string ServerName
 		{

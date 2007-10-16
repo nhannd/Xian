@@ -159,13 +159,13 @@
   <data name="ExceptionServerObjectIsNotQueryable" xml:space="preserve">
     <value>The specified server object is not queryable.</value>
   </data>
-  <data name="FormatServerGroupNameConflict" xml:space="preserve">
-    <value>The Server Group Name ({0}) conflicts with {1}.
-Please choose another Server Group Name.</value>
+  <data name="FormatServerConflict" xml:space="preserve">
+    <value>The server properties conflict with an existing entry ({0}).
+Each server must have a unique Name and cannot have the same AE Title, Host and Port as another server.</value>
   </data>
-  <data name="FormatServerNameConflict" xml:space="preserve">
-    <value>The Server Name ({0}) conflicts with {1}.
-Please choose another Server Name.</value>
+  <data name="FormatServerGroupConflict" xml:space="preserve">
+    <value>The Server Group '{0}' conflicts with '{1}'.
+Please choose another Server Group Name.</value>
   </data>
   <data name="FormatStudiesFound" xml:space="preserve">
     <value>{0} studies found on {1}</value>

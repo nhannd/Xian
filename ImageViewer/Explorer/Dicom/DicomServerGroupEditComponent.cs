@@ -78,22 +78,17 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
             if (!_isNewServerGroup)
             {
-                ServerGroup serverGroup = _serverTree.CurrentNode as ServerGroup;
+                ServerGroup serverGroup = (ServerGroup)_serverTree.CurrentNode;
                 serverGroup.NameOfGroup = _serverGroupName;
-
-                // this doesn't alter our own parent path, but is used to
-                // pass down our new name so that children nodes can 
-                // properly update their parent path
-                serverGroup.ChangeParentPath(serverGroup.ParentPath);
             }
             else
             {
-                ServerGroup serverGroup = new ServerGroup(_serverGroupName, _serverTree.CurrentNode.Path);
+                ServerGroup serverGroup = new ServerGroup(_serverGroupName);
                 ((ServerGroup)_serverTree.CurrentNode).AddChild(serverGroup);
                 _serverTree.CurrentNode = serverGroup;
             }
 
-			_serverTree.SaveDicomServers();
+			_serverTree.Save();
             _serverTree.FireServerTreeUpdatedEvent();
             this.ExitCode = ApplicationComponentExitCode.Normal;
             Host.Exit();
@@ -130,16 +125,22 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         private bool IsServerGroupNameValid()
         {
-            string conflictingPath;
+            string conflictingPath = "";
+        	bool valid = true;
+			if (_isNewServerGroup && _serverTree.CanAddGroupToCurrentGroup(_serverGroupName, out conflictingPath))
+				valid = false;
+			else if (!_isNewServerGroup && _serverTree.CanEditCurrentGroup(_serverGroupName, out conflictingPath))
+				valid = false;
 
-            if (_serverTree.IsDuplicateServerGroupInGroup(_serverGroupName, out conflictingPath))
-            {
-                this.Modified = false;
-                StringBuilder msgText = new StringBuilder();
-				msgText.AppendFormat(SR.FormatServerGroupNameConflict, _serverGroupName, conflictingPath);
-                throw new DicomServerException(msgText.ToString());
-            }
-            return true;
+			if (!valid)
+			{
+				this.Modified = false;
+				StringBuilder msgText = new StringBuilder();
+				msgText.AppendFormat(SR.FormatServerGroupConflict, _serverGroupName, conflictingPath);
+				throw new DicomServerException(msgText.ToString());
+			}
+
+			return true;
         }
 
         public override void Start()

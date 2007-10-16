@@ -58,8 +58,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			_aeTreeView.AllowDrop = !_component.IsReadOnly;
 
 			ClearCanvasStyle.SetTitleBarStyle(_titleBar);
-			
-			ServerTreeUpdated += new EventHandler(OnServerTreeUpdated);
+
+			_component.ServerTree.ServerTreeUpdated += new EventHandler(OnServerTreeUpdated);
             this._aeTreeView.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.TreeViewItemDrag);
             this._aeTreeView.DragEnter += new System.Windows.Forms.DragEventHandler(this.TreeViewDragEnter);
             this._aeTreeView.DragOver += new System.Windows.Forms.DragEventHandler(this.TreeViewDragOver);
@@ -128,12 +128,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			set { _toolStripItemDisplayStyle = value; }
 		}
 
-		private event EventHandler ServerTreeUpdated
-		{
-			add { _component.ServerTree.ServerTreeUpdated += value; }
-			remove { _component.ServerTree.ServerTreeUpdated -= value; }
-		}
-
 		//It is *very* important to keep the SelectedNode of the TreeView and _lastClickNode synchronized,
 		//and not only that, but _lastClickedNode must be set first, otherwise some odd behaviour can occur.
 		//Please use this method to set the SelectedNode in order to avoid these issues.  Because of the 
@@ -185,11 +179,22 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
                 IServerTreeNode dataNode = _component.ServerTree.CurrentNode;
                 _lastClickedNode.Text = dataNode.Name;
                 _lastClickedNode.Tag = dataNode;
-                _lastClickedNode.ToolTipText = dataNode.ToString();
+            	SynchronizeChildTooltips(_lastClickedNode);
             }
 
             _component.SetSelection(_lastClickedNode.Tag as IServerTreeNode);
         }
+
+		private void SynchronizeChildTooltips(TreeNode startNode)
+		{
+			foreach (TreeNode node in startNode.Nodes)
+			{
+				node.ToolTipText = node.Tag.ToString();
+				
+				if (node.Nodes.Count > 0)
+					SynchronizeChildTooltips(node);
+			}
+		}
 
 		private void AETreeViewClick(object sender, EventArgs e)
 		{
@@ -204,8 +209,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
         /// <summary>
         /// Builds the root and first-level of the tree
         /// </summary>
-        /// <param name="treeView"></param>
-        /// <param name="dataRoot"></param>
         private void BuildServerTreeView(TreeView treeView, ServerTree dicomServerTree)
         {
             treeView.Nodes.Clear();
@@ -318,7 +321,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 
             // highlight node only if the target node is a potential place
             // for us to drop a node for moving
-            if (underPointerDataNode.CanAddAsChild(lastClickedDataNode))
+			if (_component.CanMoveOrAdd(underPointerDataNode, lastClickedDataNode))
             {
                 underPointerNode.BackColor = Color.DarkBlue;
                 underPointerNode.ForeColor = Color.White;
@@ -350,12 +353,10 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
                 //    !destinationDataNode.IsServerGroup ||
                 //    draggingDataNode.Path.IndexOf(destinationDataNode.Path) == -1)  // don't allow dropping a node into one of its own children
 
-                if (!destinationDataNode.CanAddAsChild(draggingDataNode))
-                {
+				if (!_component.CanMoveOrAdd(destinationDataNode, draggingDataNode))
                     return;
-                }
-                
-                if (!_component.NodeMoved(destinationNode.Tag as IServerTreeNode, draggingNode.Tag as IServerTreeNode))
+
+				if (!_component.NodeMoved(destinationDataNode, draggingDataNode))
                     return;
 
 				SelectNode(destinationNode);
