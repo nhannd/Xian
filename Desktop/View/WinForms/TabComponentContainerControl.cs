@@ -90,7 +90,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             }
 
             // ensure the correct tab is selected (in case the current page was changed programatically)
-            tab.Select();
+            tab.Selected = true;
         }
 
     }

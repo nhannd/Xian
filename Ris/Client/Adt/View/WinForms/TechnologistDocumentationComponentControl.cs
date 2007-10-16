@@ -60,27 +60,21 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             documentationTabs.Dock = DockStyle.Fill;
             _splitContainerRoot.Panel2.Controls.Add(documentationTabs);
 
-            _treeProcedurePlan.Tree = _component.ProcedurePlanTree;
-            _treeProcedurePlan.MenuModel = _component.ProcedurePlanTreeActionModel;
-            _treeProcedurePlan.ToolbarModel = _component.ProcedurePlanTreeActionModel;
-            _component.ProcedurePlanTreeChanged += OnProcedurePlanChanged;
+            _procedurePlanSummary.Table = _component.ProcedurePlanSummaryTable;
+            _procedurePlanSummary.MenuModel = _component.ProcedurePlanTreeActionModel;
+            _procedurePlanSummary.ToolbarModel = _component.ProcedurePlanTreeActionModel;
+
+            _component.ProcedurePlanChanged += OnProcedurePlanChanged;
         }
 
         ~TechnologistDocumentationComponentControl()
         {
-            _component.ProcedurePlanTreeChanged -= OnProcedurePlanChanged;
-        }
-
-        private void TechnologistDocumentationComponentControl_Load(object sender, EventArgs e)
-        {
-            _treeProcedurePlan.ExpandAll();
-            //tabControlDetails.SelectTab(tabPageDocumentationDetails);
+            _component.ProcedurePlanChanged -= OnProcedurePlanChanged;
         }
 
         private void OnProcedurePlanChanged(object sender, EventArgs e)
         {
-            _treeProcedurePlan.Tree = _component.ProcedurePlanTree;
-            _treeProcedurePlan.ExpandAll();
+            _procedurePlanSummary.Table = _component.ProcedurePlanSummaryTable;
         }
 
         private void _btnSave_Click(object sender, EventArgs e)

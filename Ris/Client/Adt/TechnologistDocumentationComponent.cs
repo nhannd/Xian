@@ -30,14 +30,13 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Desktop.Tools;
-using ClearCanvas.Desktop.Trees;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow.TechnologistDocumentation;
@@ -49,7 +48,6 @@ namespace ClearCanvas.Ris.Client.Adt
         void Initialize(ITechnologistDocumentationContext context);
         void SaveData();
     }
-
 
     [ExtensionPoint]
     public class TechnologistDocumentationModuleExtensionPoint : ExtensionPoint<ITechnologistDocumentationModule>
@@ -63,8 +61,7 @@ namespace ClearCanvas.Ris.Client.Adt
         void InsertPage(IDocumentationPage page, int position);
         ProcedurePlanSummary ProcedurePlan { get; }
         event EventHandler ProcedurePlanChanged;
-   }
-
+    }
 
     /// <summary>
     /// Extension point for views onto <see cref="TechnologistDocumentationComponent"/>
@@ -109,7 +106,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         class TechnologistDocumentationContext : ToolContext, ITechnologistDocumentationContext
         {
-            private TechnologistDocumentationComponent _owner;
+            private readonly TechnologistDocumentationComponent _owner;
 
             public TechnologistDocumentationContext(TechnologistDocumentationComponent owner)
             {
@@ -155,12 +152,13 @@ namespace ClearCanvas.Ris.Client.Adt
         private readonly ModalityWorklistItem _worklistItem;
         private EntityRef _orderRef;
         private Dictionary<string, string> _orderExtendedProperties;
+
         private ProcedurePlanSummary _procedurePlan;
+        private ProcedurePlanSummaryTable _procedurePlanSummaryTable;
         private event EventHandler _procedurePlanChanged;
 
-        private Tree<RequestedProcedureDetail> _procedurePlanTree;
-        private event EventHandler _procedurePlanTreeChanged;
-        private readonly List<Checkable<ModalityProcedureStepDetail>> _allCheckableModalityProcedureSteps;
+        //private event EventHandler _procedurePlanTreeChanged;
+
         private SimpleActionModel _procedurePlanActionHandler;
         private ClickAction _startAction;
         private ClickAction _discontinueAction;
@@ -169,7 +167,7 @@ namespace ClearCanvas.Ris.Client.Adt
         private ChildComponentHost _documentationHost;
         private TabComponentContainer _documentationTabContainer;
 
-        private List<ITechnologistDocumentationModule> _documentationModules = new List<ITechnologistDocumentationModule>();
+        private readonly List<ITechnologistDocumentationModule> _documentationModules = new List<ITechnologistDocumentationModule>();
 
         private ExamDetailsComponent _preExamComponent;
         private ExamDetailsComponent _postExamComponent;
@@ -180,60 +178,14 @@ namespace ClearCanvas.Ris.Client.Adt
         public TechnologistDocumentationComponent(ModalityWorklistItem item)
         {
             _worklistItem = item;
-            _allCheckableModalityProcedureSteps = new List<Checkable<ModalityProcedureStepDetail>>();
         }
 
         #region ApplicationComponent overrides
 
         public override void Start()
         {
-            Platform.GetService<ITechnologistDocumentationService>(
-                delegate(ITechnologistDocumentationService service)
-                {
-                    GetProcedurePlanForWorklistItemRequest procedurePlanRequest = new GetProcedurePlanForWorklistItemRequest(_worklistItem.ProcedureStepRef);
-                    GetProcedurePlanForWorklistItemResponse procedurePlanResponse = service.GetProcedurePlanForWorklistItem(procedurePlanRequest);
-                    _procedurePlan = procedurePlanResponse.ProcedurePlanSummary;
-                    _orderExtendedProperties = procedurePlanResponse.OrderExtendedProperties;
-                });
-
-            RefreshProcedurePlanTree(_procedurePlan);
-
-            ResourceResolver resolver = new ResourceResolver(this.GetType().Assembly);
-            _procedurePlanActionHandler = new SimpleActionModel(resolver);
-            _startAction = _procedurePlanActionHandler.AddAction("start", "START", "Icons.StartToolSmall.png", "START", StartModalityProcedureSteps);
-            _discontinueAction = _procedurePlanActionHandler.AddAction("discontinue", "DISCONTINUE", "Icons.DeleteToolSmall.png", "START", DiscontinueModalityProcedureSteps);
-            UpdateActionEnablement();
-
-            _orderSummaryComponentHost = new ChildComponentHost(this.Host, new OrderSummaryComponent(this));
-            _orderSummaryComponentHost.StartComponent();
-
-            _documentationTabContainer = new TabComponentContainer();
-
-            _preExamComponent = new ExamDetailsComponent("Pre-exam",
-                TechnologistDocumentationComponentSettings.Default.PreExamDetailsPageUrlSelectorScript,
-                _procedurePlan, _orderExtendedProperties);
-            InsertDocumentationPage(_preExamComponent, 0);
-
-            _ppsComponent = new PerformedProcedureComponent("Exam", _orderRef);
-            _ppsComponent.ProcedurePlanChanged += ProcedurePlanChangedEventHandler;
-            InsertDocumentationPage(_ppsComponent, 1);
-
-            _postExamComponent = new ExamDetailsComponent("Post-exam",
-                TechnologistDocumentationComponentSettings.Default.PostExamDetailsPageUrlSelectorScript,
-                _procedurePlan, _orderExtendedProperties);
-            InsertDocumentationPage(_postExamComponent, 2);
-
-            // create extension modules, which may add documentation pages to the tab container
-            TechnologistDocumentationContext context = new TechnologistDocumentationContext(this);
-            foreach (ITechnologistDocumentationModule module in (new TechnologistDocumentationModuleExtensionPoint()).CreateExtensions())
-            {
-                module.Initialize(context);
-                _documentationModules.Add(module);
-            }
-
-            _documentationHost = new ChildComponentHost(this.Host, _documentationTabContainer);
-            _documentationHost.StartComponent();
-
+            InitializeProcedurePlanSummary();
+            InitializeDocumentationTabPages();
 
             base.Start();
         }
@@ -259,15 +211,15 @@ namespace ClearCanvas.Ris.Client.Adt
             get { return _documentationHost; }
         }
 
-        public ITree ProcedurePlanTree
+        public ITable ProcedurePlanSummaryTable
         {
-            get { return _procedurePlanTree; }
+            get { return _procedurePlanSummaryTable; }
         }
 
-        public event EventHandler ProcedurePlanTreeChanged
+        public event EventHandler ProcedurePlanChanged
         {
-            add { _procedurePlanTreeChanged += value; }
-            remove { _procedurePlanTreeChanged -= value; }
+            add { _procedurePlanChanged += value; }
+            remove { _procedurePlanChanged -= value; }
         }
 
         public ActionModelNode ProcedurePlanTreeActionModel
@@ -308,14 +260,11 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             try
             {
-                List<ModalityProcedureStepDetail> checkedMps = GetCheckedMps();
-                List<EntityRef> checkedMpsRefs = CollectionUtils.Map<ModalityProcedureStepDetail, EntityRef, List<EntityRef>>(checkedMps,
-                    delegate(ModalityProcedureStepDetail detail)
-                    {
-                        return detail.ModalityProcedureStepRef;
-                    });
+                List<EntityRef> checkedMpsRefs = CollectionUtils.Map<ProcedurePlanSummaryTableItem, EntityRef, List<EntityRef>>(
+                    ListCheckedSummmaryTableItems(),
+                    delegate(ProcedurePlanSummaryTableItem item) { return item.mpsDetail.ModalityProcedureStepRef; });
 
-                if (checkedMps.Count > 0)
+                if (checkedMpsRefs.Count > 0)
                 {
                     Platform.GetService<ITechnologistDocumentationService>(
                         delegate(ITechnologistDocumentationService service)
@@ -323,7 +272,7 @@ namespace ClearCanvas.Ris.Client.Adt
                             StartModalityProcedureStepsRequest request = new StartModalityProcedureStepsRequest(checkedMpsRefs);
                             StartModalityProcedureStepsResponse response = service.StartModalityProcedureSteps(request);
 
-                            RefreshProcedurePlanTree(response.ProcedurePlanSummary);
+                            RefreshProcedurePlanSummary(response.ProcedurePlanSummary);
 
                             _ppsComponent.AddPerformedProcedureStep(response.StartedMpps);
                         });
@@ -339,14 +288,11 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             try
             {
-                List<ModalityProcedureStepDetail> checkedMps = GetCheckedMps();
-                List<EntityRef> checkedMpsRefs = CollectionUtils.Map<ModalityProcedureStepDetail, EntityRef, List<EntityRef>>(checkedMps,
-                    delegate(ModalityProcedureStepDetail detail)
-                    {
-                        return detail.ModalityProcedureStepRef;
-                    });
+                List<EntityRef> checkedMpsRefs = CollectionUtils.Map<ProcedurePlanSummaryTableItem, EntityRef, List<EntityRef>>(
+                    ListCheckedSummmaryTableItems(),
+                    delegate(ProcedurePlanSummaryTableItem item) { return item.mpsDetail.ModalityProcedureStepRef; });
 
-                if (checkedMps.Count > 0)
+                if (checkedMpsRefs.Count > 0)
                 {
                     Platform.GetService<ITechnologistDocumentationService>(
                         delegate(ITechnologistDocumentationService service)
@@ -354,7 +300,7 @@ namespace ClearCanvas.Ris.Client.Adt
                             DiscontinueModalityProcedureStepsRequest request = new DiscontinueModalityProcedureStepsRequest(checkedMpsRefs);
                             DiscontinueModalityProcedureStepsResponse response = service.DiscontinueModalityProcedureSteps(request);
 
-                            RefreshProcedurePlanTree(response.ProcedurePlanSummary);
+                            RefreshProcedurePlanSummary(response.ProcedurePlanSummary);
                         });
                 }
             }
@@ -386,80 +332,130 @@ namespace ClearCanvas.Ris.Client.Adt
                 });
         }
 
+        private void InitializeProcedurePlanSummary()
+        {
+            _procedurePlanSummaryTable = new ProcedurePlanSummaryTable();
+            _procedurePlanSummaryTable.CheckedRowsChanged += delegate(object sender, EventArgs args) { UpdateActionEnablement(); };
+
+            Platform.GetService<ITechnologistDocumentationService>(
+                delegate(ITechnologistDocumentationService service)
+                {
+                    GetProcedurePlanForWorklistItemRequest procedurePlanRequest = new GetProcedurePlanForWorklistItemRequest(_worklistItem.ProcedureStepRef);
+                    GetProcedurePlanForWorklistItemResponse procedurePlanResponse = service.GetProcedurePlanForWorklistItem(procedurePlanRequest);
+                    _procedurePlan = procedurePlanResponse.ProcedurePlanSummary;
+                    _orderExtendedProperties = procedurePlanResponse.OrderExtendedProperties;
+                });
+
+            RefreshProcedurePlanSummary(_procedurePlan);
+
+            InitializeProcedurePlanSummaryActionHandlers();
+        }
+
+        private void InitializeProcedurePlanSummaryActionHandlers()
+        {
+            _procedurePlanActionHandler = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));
+            _startAction = _procedurePlanActionHandler.AddAction("start", SR.TitleStartMps, "Icons.StartToolSmall.png", SR.TitleStartMps, StartModalityProcedureSteps);
+            _discontinueAction = _procedurePlanActionHandler.AddAction("discontinue", SR.TitleDiscontinueMps, "Icons.DeleteToolSmall.png", SR.TitleDiscontinueMps, DiscontinueModalityProcedureSteps);
+            UpdateActionEnablement();
+        }
+
+        private void InitializeDocumentationTabPages()
+        {
+            _orderSummaryComponentHost = new ChildComponentHost(this.Host, new OrderSummaryComponent(this));
+            _orderSummaryComponentHost.StartComponent();
+
+            _documentationTabContainer = new TabComponentContainer();
+
+            _preExamComponent = new ExamDetailsComponent("Pre-exam",
+                                                         TechnologistDocumentationComponentSettings.Default.PreExamDetailsPageUrlSelectorScript,
+                                                         _procedurePlan, _orderExtendedProperties);
+            InsertDocumentationPage(_preExamComponent, 0);
+
+            _ppsComponent = new PerformedProcedureComponent("Exam", _orderRef);
+            _ppsComponent.ProcedurePlanChanged += delegate(object sender, ProcedurePlanChangedEventArgs e) { RefreshProcedurePlanSummary(e.ProcedurePlanSummary); };
+            InsertDocumentationPage(_ppsComponent, 1);
+
+            // create extension modules, which may add documentation pages to the tab container
+            TechnologistDocumentationContext context = new TechnologistDocumentationContext(this);
+            foreach (ITechnologistDocumentationModule module in (new TechnologistDocumentationModuleExtensionPoint()).CreateExtensions())
+            {
+                module.Initialize(context);
+                _documentationModules.Add(module);
+            }
+
+            _postExamComponent = new ExamDetailsComponent("Post-exam",
+                                                          TechnologistDocumentationComponentSettings.Default.PostExamDetailsPageUrlSelectorScript,
+                                                          _procedurePlan, _orderExtendedProperties);
+            InsertDocumentationPage(_postExamComponent, _documentationTabContainer.Pages.Count);
+
+            _documentationHost = new ChildComponentHost(this.Host, _documentationTabContainer);
+            _documentationHost.StartComponent();
+
+            SetInitialDocumentationTabPage();
+        }
+
+        private void SetInitialDocumentationTabPage()
+        {
+            // TODO add a setting for initial page
+            string requestedTabPageName = "Exam";
+
+            TabPage requestedTabPage = CollectionUtils.SelectFirst<TabPage>(
+                _documentationTabContainer.Pages,
+                delegate(TabPage tabPage) { return string.Compare(tabPage.Name, requestedTabPageName, true) == 0; });
+
+            if (requestedTabPage != null)
+                _documentationTabContainer.CurrentPage = requestedTabPage;
+        }
+
         private void InsertDocumentationPage(IDocumentationPage page, int position)
         {
             _documentationTabContainer.Pages.Insert(position, new TabPage(page.Title, page.Component));
         }
 
-        private List<ModalityProcedureStepDetail> GetCheckedMps()
+        private List<ProcedurePlanSummaryTableItem> ListCheckedSummmaryTableItems()
         {
-            return CollectionUtils.Map<Checkable<ModalityProcedureStepDetail>, ModalityProcedureStepDetail>(
-                CollectionUtils.Select<Checkable<ModalityProcedureStepDetail>>(
-                    _allCheckableModalityProcedureSteps,
-                    delegate(Checkable<ModalityProcedureStepDetail> checkable) { return checkable.IsChecked; }),
-                delegate(Checkable<ModalityProcedureStepDetail> checkable) { return checkable.Item; });
+            return CollectionUtils.Map<Checkable<ProcedurePlanSummaryTableItem>, ProcedurePlanSummaryTableItem>(
+                CollectionUtils.Select<Checkable<ProcedurePlanSummaryTableItem>>(
+                    _procedurePlanSummaryTable.Items,
+                    delegate(Checkable<ProcedurePlanSummaryTableItem> checkable) { return checkable.IsChecked; }),
+                delegate(Checkable<ProcedurePlanSummaryTableItem> checkable) { return checkable.Item; });
         }
 
         private void UpdateActionEnablement()
         {
-            IList<ModalityProcedureStepDetail> checkedMps = GetCheckedMps();
-            if (checkedMps.Count == 0)
+            IList<ProcedurePlanSummaryTableItem> checkedSummaryTableItems = ListCheckedSummmaryTableItems();
+            if (checkedSummaryTableItems.Count == 0)
             {
                 _startAction.Enabled = _discontinueAction.Enabled = false;
             }
             else
             {
                 // TODO: defer enablement to server
-                _startAction.Enabled = CollectionUtils.TrueForAll<ModalityProcedureStepDetail>(checkedMps,
-                    delegate(ModalityProcedureStepDetail mps) { return mps.Status.Code == "SC"; });
+                _startAction.Enabled = CollectionUtils.TrueForAll<ProcedurePlanSummaryTableItem>(checkedSummaryTableItems,
+                    delegate(ProcedurePlanSummaryTableItem item) { return item.mpsDetail.Status.Code == "SC"; });
 
-                _discontinueAction.Enabled = CollectionUtils.TrueForAll<ModalityProcedureStepDetail>(checkedMps,
-                    delegate(ModalityProcedureStepDetail mps) { return mps.Status.Code == "SC"; });
+                _discontinueAction.Enabled = CollectionUtils.TrueForAll<ProcedurePlanSummaryTableItem>(checkedSummaryTableItems,
+                    delegate(ProcedurePlanSummaryTableItem item) { return item.mpsDetail.Status.Code == "SC"; });
             }
         }
 
-        private void ProcedurePlanChangedEventHandler(object sender, ProcedurePlanChangedEventArgs e)
-        {
-            RefreshProcedurePlanTree(e.ProcedurePlanSummary);
-            EventsHelper.Fire(_procedurePlanChanged, this, EventArgs.Empty);
-        }
-
-        private void RefreshProcedurePlanTree(ProcedurePlanSummary procedurePlanSummary)
+        private void RefreshProcedurePlanSummary(ProcedurePlanSummary procedurePlanSummary)
         {
             _orderRef = procedurePlanSummary.OrderRef;
 
-            _allCheckableModalityProcedureSteps.Clear();
+            _procedurePlanSummaryTable.Items.Clear();
+            foreach(RequestedProcedureDetail rp in procedurePlanSummary.RequestedProcedures)
+            {
+                foreach(ModalityProcedureStepDetail mps in rp.ModalityProcedureSteps)
+                {
+                    _procedurePlanSummaryTable.Items.Add(
+                        new Checkable<ProcedurePlanSummaryTableItem>(
+                            new ProcedurePlanSummaryTableItem(rp, mps)));
+                }
+            }
+            _procedurePlanSummaryTable.Sort();
 
-            TreeItemBinding<RequestedProcedureDetail> rpBinding = new TreeItemBinding<RequestedProcedureDetail>(delegate(RequestedProcedureDetail rp) { return rp.Name + " - " + rp.Status.Value; });
-            rpBinding.SubTreeProvider = delegate(RequestedProcedureDetail rp)
-                    {
-                        TreeItemBinding<Checkable<ModalityProcedureStepDetail>> binding = new TreeItemBinding<Checkable<ModalityProcedureStepDetail>>(
-                            delegate(Checkable<ModalityProcedureStepDetail> checkable) { return checkable.Item.Name + " - " + checkable.Item.Status.Value; });
-                        binding.CanHaveSubTreeHandler = delegate { return false; };
-                        binding.IconSetProvider = delegate { return null; };
-                        binding.IsCheckedGetter = delegate(Checkable<ModalityProcedureStepDetail> mps) { return mps.IsChecked; };
-                        binding.IsCheckedSetter = delegate(Checkable<ModalityProcedureStepDetail> mps, bool isChecked)
-                              {
-                                  mps.IsChecked = isChecked;
-                                  UpdateActionEnablement();
-                              };
-
-                        List<Checkable<ModalityProcedureStepDetail>> checkableMpsList =
-                            CollectionUtils.Map<ModalityProcedureStepDetail, Checkable<ModalityProcedureStepDetail>>(
-                                rp.ModalityProcedureSteps,
-                                delegate(ModalityProcedureStepDetail mps)
-                                    {
-                                        return new Checkable<ModalityProcedureStepDetail>(mps);
-                                    });
-
-                        _allCheckableModalityProcedureSteps.AddRange(checkableMpsList);
-
-                        return new Tree<Checkable<ModalityProcedureStepDetail>>(binding, checkableMpsList);
-                    };
-
-            _procedurePlanTree = new Tree<RequestedProcedureDetail>(rpBinding, procedurePlanSummary.RequestedProcedures);
-
-            EventsHelper.Fire(_procedurePlanTreeChanged, this, EventArgs.Empty);
+            EventsHelper.Fire(_procedurePlanChanged, this, EventArgs.Empty);
         }
 
         #endregion

@@ -91,6 +91,7 @@
     <Compile Include="PatientProfileAdditionalInfoEditorComponent.cs" />
     <Compile Include="PatientProfileDiffComponent.cs" />
     <Compile Include="PatientReconciliation.cs" />
+    <Compile Include="ProcedurePlanSummaryTable.cs" />
     <Compile Include="RandomOrderTool.cs" />
     <Compile Include="ReconciliationConfirmComponent.cs" />
     <Compile Include="JscriptComponent.cs" />

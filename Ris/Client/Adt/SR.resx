@@ -393,6 +393,9 @@
   <data name="TitleDiscontinueMpps" xml:space="preserve">
     <value>Discontinue</value>
   </data>
+  <data name="TitleDiscontinueMps" xml:space="preserve">
+    <value>Discontinue</value>
+  </data>
   <data name="TitleEditPatient" xml:space="preserve">
     <value>Edit Patient</value>
   </data>
@@ -458,6 +461,9 @@
   </data>
   <data name="TitleSearchPatients" xml:space="preserve">
     <value>Search Patients</value>
+  </data>
+  <data name="TitleStartMps" xml:space="preserve">
+    <value>Start</value>
   </data>
   <data name="TitleStopMpps" xml:space="preserve">
     <value>Stop</value>
