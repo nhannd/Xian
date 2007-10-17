@@ -130,7 +130,7 @@
                   size: 30,
                   getValue: function(item) { return item.equipment; },
                   setValue: function(item, value) { item.equipment = value; },
-                  getError: function(item) { return item.equipment ? null : "Equipment/device ID/location required"; }
+                  getError: function(item) { return null; }
                }
              ]);
                 
@@ -148,48 +148,48 @@
                        choices: [ { group: "Radiopharmaceuticals", choices: radioPharms }, { group: "Drugs", choices: drugs }],
                        getValue: function(item) { return item.injection; },
                        setValue: function(item, value) { item.injection = value; },
-                       getError: function(item) { return item.injection ? null : "Injection name required"; }
+                       getError: function(item) { return null; }
                    },
                    {   label: "Activity",
                        cellType: "text",
                        size: 4,
                        getValue: function(item) { return item.activity; },
                        setValue: function(item, value) { item.activity = parseFloat(value); },
-                       getError: function(item) { return (parseFloat(item.activity) > 0) ? null : "Activity required"; }
+                       getError: function(item) { return null; }
                    },
                    {   label: "Units",
                        cellType: "choice",
                        choices: ["capsule(s)", "GBq", "kBq", "MBq", "vial"],
                        getValue: function(item) { return item.units; },
                        setValue: function(item, value) { item.units = value; },
-                       getError: function(item) { return item.units ? null : "Units required"; }
+                       getError: function(item) { return null; }
                    },
                    {   label: "Site",
                        cellType: "choice",
                        choices: ["Antecubital Fossa", "Buttocks", "Deltoid", "Foot", "Forearm", "Hand", "Wrist"],
                        getValue: function(item) { return item.bodySite; },
                        setValue: function(item, value) { item.bodySite = value; },
-                       getError: function(item) { return item.bodySite ? null : "Site required"; }
+                       getError: function(item) { return null; }
                    },
                    {   label: "Side",
                        cellType: "choice",
                        choices: ["Left", "Right"],
                        getValue: function(item) { return item.side; },
                        setValue: function(item, value) { item.side = value; },
-                       getError: function(item) { return item.side ? null : "Side required"; }
+                       getError: function(item) { return null; }
                    },
                    {   label: "Admin By",
                        cellType: "lookup",
                        lookup: function(query) { return Ris.resolveStaffName(query); },
                        getValue: function(item) { return item.staff; },
                        setValue: function(item, value) { item.staff = value; },
-                       getError: function(item) { return item.staff ? null : "Staff required"; }
+                       getError: function(item) { return null; }
                    },
                    {   label: "Time",
                        cellType: "datetime",
                        getValue: function(item) { return item.time; },
                        setValue: function(item, value) { item.time = value; },
-                       getError: function(item) { return item.time ? null : "Time required"; }
+                       getError: function(item) { return null; }
                    }
                ]);
 

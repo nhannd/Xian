@@ -105,14 +105,14 @@
                   size: 30,
                   getValue: function(item) { return item.equipment; },
                   setValue: function(item, value) { item.equipment = value; },
-                  getError: function(item) { return item.equipment ? null : "Equipment/device ID/location required"; }
+                  getError: function(item) { return null; }
                },
                {  label: "Radiation Dose",
                   cellType: "text",
                   size: 10,
                   getValue: function(item) { return item.dose; },
                   setValue: function(item, value) { item.dose = value; },
-                  getError: function(item) { return item.dose ? null : "Dose required"; }
+                  getError: function(item) { return null; }
                }
              ]);
                 
@@ -129,7 +129,7 @@
                      choices: ["Head and Neck", "Whole Body"],
                      getValue: function(item) { return item.type; },
                      setValue: function(item, value) { item.type = value; },
-                     getError: function(item) { return item.type ? null : "Type required"; }
+                     getError: function(item) { return null; }
                   },
                   {  label: "Zero on Tattoo",
                      cellType: "choice",
@@ -137,7 +137,7 @@
                      getValue: function(item) { return item.zeroOnTattoo; },
                      getVisible: function(item) { return item.type == "Head and Neck"; },
                      setValue: function(item, value) { item.zeroOnTattoo = value; },
-                     getError: function(item) { return item.zeroOnTattoo ? null : "Zero on tattoo required"; }
+                     getError: function(item) { return null; }
                   },
                   {  label: "Zero on SSN",
                      cellType: "choice",
@@ -145,35 +145,35 @@
                      getValue: function(item) { return item.zeroOnSSN; },
                      getVisible: function(item) { return item.type == "Whole Body"; },
                      setValue: function(item, value) { item.zeroOnSSN = value; },
-                     getError: function(item) { return item.zeroOnSSN ? null : "Zero on SSN required"; }
+                     getError: function(item) { return null; }
                   },
                   {  label: "SOR Start Position (SPI)",
                      cellType: "text",
                      size: 10,
                      getValue: function(item) { return item.spi; },
                      setValue: function(item, value) { item.spi = value; },
-                     getError: function(item) { return item.spi ? null : "Start position required"; }
+                     getError: function(item) { return null; }
                   },
                   {  label: "# Bed Positions",
                      cellType: "text",
                      size: 10,
                      getValue: function(item) { return item.bedPositions; },
                      setValue: function(item, value) { item.bedPositions = value; },
-                     getError: function(item) { return item.bedPositions ? null : "Number of bed positions required"; }
+                     getError: function(item) { return null; }
                   },
                   {  label: "Time/Position",
                      cellType: "text",
                      size: 10,
                      getValue: function(item) { return item.time; },
                      setValue: function(item, value) { item.time = value; },
-                     getError: function(item) { return item.time ? null : "Time/position required"; }
+                     getError: function(item) { return null; }
                   },
                   {  label: "Couch Height",
                      cellType: "text",
                      size: 10,
                      getValue: function(item) { return item.couchHeight; },
                      setValue: function(item, value) { item.couchHeight = value; },
-                     getError: function(item) { return item.couchHeight ? null : "Couch height required"; }
+                     getError: function(item) { return null; }
                   }
                ]);
                   
@@ -190,28 +190,28 @@
                      choices: oralTypes,
                      getValue: function(item) { return item.type; },
                      setValue: function(item, value) { item.type = value; },
-                     getError: function(item) { return item.type ? null : "Type required"; }
+                     getError: function(item) { return null; }
                   },
                   {  label: "Amount",
                      cellType: "text",
                      size: 10,
                      getValue: function(item) { return item.amount; },
                      setValue: function(item, value) { item.amount = value; },
-                     getError: function(item) { return item.amount ? null : "Amount required"; }
+                     getError: function(item) { return null; }
                   },
                   {  label: "Measurement",
                      cellType: "text",
                      size: 10,
                      getValue: function(item) { return item.measurement; },
                      setValue: function(item, value) { item.measurement = value; },
-                     getError: function(item) { return item.measurement ? null : "Measurement required"; }
+                     getError: function(item) { return null; }
                   },
                   {  label: "Admin By",
                      cellType: "lookup",
                      lookup: function(query) { return Ris.resolveStaffName(query); },
                      getValue: function(item) { return item.staff; },
                      setValue: function(item, value) { item.staff = value; },
-                     getError: function(item) { return item.staff ? null : "Staff required"; }
+                     getError: function(item) { return null; }
                   }
                ]);
                   
@@ -255,28 +255,28 @@
                      choices: ["New", "Existing"],
                      getValue: function(item) { return item.type; },
                      setValue: function(item, value) { item.type = value; },
-                     getError: function(item) { return item.type ? null : "Type required"; }
+                     getError: function(item) { return null; }
                   },
                   {  label: "Side",
                      cellType: "choice",
                      choices: ["Right", "Left"],
                      getValue: function(item) { return item.side; },
                      setValue: function(item, value) { item.side = value; },
-                     getError: function(item) { return item.side ? null : "Side required"; }
+                     getError: function(item) { return null; }
                   },
                   {  label: "Site",
                      cellType: "choice",
                      choices: ["Antecubital Fossa", "Forearm", "Hand", "Wrist"],
                      getValue: function(item) { return item.bodySite; },
                      setValue: function(item, value) { item.bodySite = value; },
-                     getError: function(item) { return item.bodySite ? null : "Site required"; }
+                     getError: function(item) { return null; }
                   },
                   {  label: "Accessed By",
                      cellType: "lookup",
                      lookup: function(query) { return Ris.resolveStaffName(query); },
                      getValue: function(item) { return item.staff; },
                      setValue: function(item, value) { item.staff = value; },
-                     getError: function(item) { return item.staff ? null : "Staff required"; }
+                     getError: function(item) { return null; }
                   }
                ]);
             
@@ -320,28 +320,28 @@
                      choices: ivContrastTypes,
                      getValue: function(item) { return item.type; },
                      setValue: function(item, value) { item.type = value; },
-                     getError: function(item) { return item.type ? null : "Type required"; }
+                     getError: function(item) { return null; }
                   },
                   {  label: "Amount",
                      cellType: "text",
                      size: 10,
                      getValue: function(item) { return item.amount; },
                      setValue: function(item, value) { item.amount = value; },
-                     getError: function(item) { return item.amount ? null : "Amount required"; }
+                     getError: function(item) { return null; }
                   },
                   {  label: "Measurement",
                      cellType: "text",
                      size: 10,
                      getValue: function(item) { return item.measurement; },
                      setValue: function(item, value) { item.measurement = value; },
-                     getError: function(item) { return item.measurement ? null : "Measurement required"; }
+                     getError: function(item) { return null; }
                   },
                   {  label: "Pump/Rate",
                      cellType: "choice",
                      choices: ["Yes", "No"],
                      getValue: function(item) { return item.pumprate; },
                      setValue: function(item, value) { item.pumprate = value; },
-                     getError: function(item) { return item.pumprate ? null : "Pump/Rate required"; }
+                     getError: function(item) { return null; }
                   },
                   {  label: "Rate",
                      cellType: "text",
@@ -349,34 +349,34 @@
                      getValue: function(item) { return item.rate; },
                      setValue: function(item, value) { item.rate = value; },
                      getVisible: function(item) { return item.pumprate == "Yes"; },
-                     getError: function(item) { return item.rate ? null : "Rate required"; }
+                     getError: function(item) { return null; }
                   },                    
                   {  label: "Power Injection",
                      cellType: "choice",
                      choices: ["Yes", "No"],
                      getValue: function(item) { return item.powerinjection; },
                      setValue: function(item, value) { item.powerinjection = value; },
-                     getError: function(item) { return item.powerinjection ? null : "Power injection required"; }
+                     getError: function(item) { return null; }
                   },
                   {  label: "Lot #",
                      cellType: "text",
                      size: 10,
                      getValue: function(item) { return item.lot; },
                      setValue: function(item, value) { item.lot = value; },
-                     getError: function(item) { return item.lot ? null : "Lot number required"; }
+                     getError: function(item) { return null; }
                   },
                   {  label: "Admin By",
                      cellType: "lookup",
                      lookup: function(query) { return Ris.resolveStaffName(query); },
                      getValue: function(item) { return item.staff; },
                      setValue: function(item, value) { item.staff = value; },
-                     getError: function(item) { return item.staff ? null : "Staff required"; }
+                     getError: function(item) { return null; }
                   },
                   {  label: "Time",
                      cellType: "datetime",
                      getValue: function(item) { return item.time; },
                      setValue: function(item, value) { item.time = value; },
-                     getError: function(item) { return item.time ? null : "Time required"; }
+                     getError: function(item) { return null; }
                   }
                ]);
             
@@ -420,48 +420,48 @@
                      choices: ["FDG"],
                      getValue: function(item) { return item.name; },
                      setValue: function(item, value) { item.name = value; },
-                     getError: function(item) { return item.name ? null : "Name required"; }
+                     getError: function(item) { return null; }
                   },
                   {  label: "Activity",
                      cellType: "text",
                      size: 10,
                      getValue: function(item) { return item.activity; },
                      setValue: function(item, value) { item.activity = value; },
-                     getError: function(item) { return item.activity ? null : "Activity required"; }
+                     getError: function(item) { return null; }
                   },
                   {  label: "Unit",
                      cellType: "choice",
                      choices: ["GBq", "kBq", "MBq"],
                      getValue: function(item) { return item.unit; },
                      setValue: function(item, value) { item.unit = value; },
-                     getError: function(item) { return item.unit ? null : "Unit required"; }
+                     getError: function(item) { return null; }
                   },
                   {  label: "Site",
                      cellType: "choice",
                      choices: ["Antecubital Fossa", "Buttocks", "Deltoid", "Foot", "Forearm", "Hand", "Wrist", "Mouth"],
                      getValue: function(item) { return item.bodySite; },
                      setValue: function(item, value) { item.bodySite = value; },
-                     getError: function(item) { return item.bodySite ? null : "Site required"; }
+                     getError: function(item) { return null; }
                   },
                   {  label: "Method",
                      cellType: "choice",
                      choices: ["IV", "sublingual"],
                      getValue: function(item) { return item.method; },
                      setValue: function(item, value) { item.method = value; },
-                     getError: function(item) { return item.method ? null : "Method required"; }
+                     getError: function(item) { return null; }
                   },
                   {  label: "Admin By",
                      cellType: "lookup",
                      lookup: function(query) { return Ris.resolveStaffName(query); },
                      getValue: function(item) { return item.staff; },
                      setValue: function(item, value) { item.staff = value; },
-                     getError: function(item) { return item.staff ? null : "Staff required"; }
+                     getError: function(item) { return null; }
                   },
                   {  label: "Time",
                      cellType: "datetime",
                      getValue: function(item) { return item.time; },
                      setValue: function(item, value) { item.time = value; },
-                     getError: function(item) { return item.time ? null : "Time required"; }
+                     getError: function(item) { return null; }
                   }
                ]);
                   
@@ -505,20 +505,20 @@
                      choices: drugNames,
                      getValue: function(item) { return item.name; },
                      setValue: function(item, value) { item.name = value; },
-                     getError: function(item) { return item.name ? null : "Name required"; }
+                     getError: function(item) { return null; }
                   },
                   {  label: "Admin By",
                      cellType: "lookup",
                      lookup: function(query) { return Ris.resolveStaffName(query); },
                      getValue: function(item) { return item.staff; },
                      setValue: function(item, value) { item.staff = value; },
-                     getError: function(item) { return item.staff ? null : "Staff required"; }
+                     getError: function(item) { return null; }
                   },
                   {  label: "Time",
                      cellType: "datetime",
                      getValue: function(item) { return item.time; },
                      setValue: function(item, value) { item.time = value; },
-                     getError: function(item) { return item.time ? null : "Time required"; }
+                     getError: function(item) { return null; }
                   }
                ]);
                   

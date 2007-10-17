@@ -59,14 +59,14 @@
                   size: 30,
                   getValue: function(item) { return item.equipment; },
                   setValue: function(item, value) { item.equipment = value; },
-                  getError: function(item) { return item.equipment ? null : "Equipment/device ID/location required"; }
+                  getError: function(item) { return null; }
                },
                {  label: "Radiation Dose",
                   cellType: "text",
                   size: 10,
                   getValue: function(item) { return item.dose; },
                   setValue: function(item, value) { item.dose = value; },
-                  getError: function(item) { return item.dose ? null : "Dose required"; }
+                  getError: function(item) { return null; }
                }
              ]);
                 

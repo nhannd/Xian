@@ -37,21 +37,21 @@
 		                  size: 50,
 		                  getValue: function(item) { return item.type; },
 		                  setValue: function(item, value) { item.type = value; },
-		                  getError: function(item) { return item.type ? null : "Type required"; }
+		                  getError: function(item) { return null; }
 		               },
 		               {  label: "Amount",
 		                  cellType: "text",
 		                  size: 10,
 		                  getValue: function(item) { return item.amount; },
 		                  setValue: function(item, value) { item.amount = value; },
-		                  getError: function(item) { return item.amount ? null : "Amount required"; }
+		                  getError: function(item) { return null; }
 		               },
 		               {  label: "Admin By",
 		                  cellType: "lookup",
 		                  lookup: function(query) { return Ris.resolveStaffName(query); },
 		                  getValue: function(item) { return item.staff; },
 		                  setValue: function(item, value) { item.staff = value; },
-		                  getError: function(item) { return item.staff ? null : "Staff required"; }
+		                  getError: function(item) { return null; }
 		               }
                   ]);
                   
@@ -66,21 +66,21 @@
 		                  size: 50,
 		                  getValue: function(item) { return item.type; },
 		                  setValue: function(item, value) { item.type = value; },
-		                  getError: function(item) { return item.type ? null : "Type required"; }
+		                  getError: function(item) { return null; }
 		               },
 		               {  label: "Amount",
 		                  cellType: "text",
 		                  size: 10,
 		                  getValue: function(item) { return item.amount; },
 		                  setValue: function(item, value) { item.amount = value; },
-		                  getError: function(item) { return item.amount ? null : "Amount required"; }
+		                  getError: function(item) { return null; }
 		               },
 		               {  label: "Admin By",
 		                  cellType: "lookup",
 		                  lookup: function(query) { return Ris.resolveStaffName(query); },
 		                  getValue: function(item) { return item.staff; },
 		                  setValue: function(item, value) { item.staff = value; },
-		                  getError: function(item) { return item.staff ? null : "Staff required"; }
+		                  getError: function(item) { return null; }
 		               }
                   ]);
                
@@ -95,7 +95,7 @@
 		                  choices: ["Buscopan", "Glucagon", "Other"],
 		                  getValue: function(item) { return item.type; },
 		                  setValue: function(item, value) { item.type = value; },
-		                  getError: function(item) { return item.type ? null : "Type required"; }
+		                  getError: function(item) { return null; }
 		               },
 		               {  label: "Description",
 		                  cellType: "text",
@@ -103,21 +103,21 @@
 		                  getValue: function(item) { return item.otherdescription; },
 		                  setValue: function(item, value) { item.otherdescription = value; },
 		                  getVisible: function(item) { return item.type == "Other"; },
-		                  getError: function(item) { return item.otherdescription ? null : "Description required"; }
+		                  getError: function(item) { return null; }
 		               },                    
 		               {  label: "Amount",
 		                  cellType: "text",
 		                  size: 10,
 		                  getValue: function(item) { return item.amount; },
 		                  setValue: function(item, value) { item.amount = value; },
-		                  getError: function(item) { return item.amount ? null : "Amount required"; }
+		                  getError: function(item) { return null; }
 		               },
                      {  label: "Route",
                         cellType: "choice",
                         choices: ["IV", "IM"],
                         getValue: function(item) { return item.route; },
                         setValue: function(item, value) { item.route = value; },
-                        getError: function(item) { return item.route ? null : "Route required"; }
+                        getError: function(item) { return null; }
                      
                      },
                      {  label: "Side",
@@ -125,14 +125,14 @@
                         choices: ["Right", "Left"],
                         getValue: function(item) { return item.side; },
                         setValue: function(item, value) { item.side = value; },
-                        getError: function(item) { return item.side ? null : "Side required"; }
+                        getError: function(item) { return null; }
                      },
 		               {  label: "Admin By",
 		                  cellType: "lookup",
 		                  lookup: function(query) { return Ris.resolveStaffName(query); },
 		                  getValue: function(item) { return item.staff; },
 		                  setValue: function(item, value) { item.staff = value; },
-		                  getError: function(item) { return item.staff ? null : "Staff required"; }
+		                  getError: function(item) { return null; }
 		               }
                   ]);
                
@@ -147,14 +147,14 @@
 		                  size: 50,
 		                  getValue: function(item) { return item.type; },
 		                  setValue: function(item, value) { item.type = value; },
-		                  getError: function(item) { return item.type ? null : "Type required"; }
+		                  getError: function(item) { return null; }
 		               },
 		               {  label: "Admin By",
 		                  cellType: "lookup",
 		                  lookup: function(query) { return Ris.resolveStaffName(query); },
 		                  getValue: function(item) { return item.staff; },
 		                  setValue: function(item, value) { item.staff = value; },
-		                  getError: function(item) { return item.staff ? null : "Staff required"; }
+		                  getError: function(item) { return null; }
 		               }
                   ]);
                
@@ -169,28 +169,28 @@
 		                  choices: ["New", "Existing"],
 		                  getValue: function(item) { return item.type; },
 		                  setValue: function(item, value) { item.type = value; },
-		                  getError: function(item) { return item.type ? null : "Type required"; }
+		                  getError: function(item) { return null; }
                      },
                      {  label: "Side",
                         cellType: "choice",
                         choices: ["Right", "Left"],
                         getValue: function(item) { return item.side; },
                         setValue: function(item, value) { item.side = value; },
-                        getError: function(item) { return item.side ? null : "Side required"; }
+                        getError: function(item) { return null; }
                      },
                      {  label: "Site",
                         cellType: "choice",
 		                  choices: ["Antecubital Fossa", "Forearm", "Hand", "Wrist"],
 		                  getValue: function(item) { return item.bodySite; },
 		                  setValue: function(item, value) { item.bodySite = value; },
-		                  getError: function(item) { return item.bodySite ? null : "Site required"; }
+		                  getError: function(item) { return null; }
                      },
 		               {  label: "Admin By",
 		                  cellType: "lookup",
 		                  lookup: function(query) { return Ris.resolveStaffName(query); },
 		                  getValue: function(item) { return item.staff; },
 		                  setValue: function(item, value) { item.staff = value; },
-		                  getError: function(item) { return item.staff ? null : "Staff required"; }
+		                  getError: function(item) { return null; }
 		               }
                   ]);
                
@@ -205,21 +205,21 @@
 		                  size: 50,
 		                  getValue: function(item) { return item.type; },
 		                  setValue: function(item, value) { item.type = value; },
-		                  getError: function(item) { return item.type ? null : "Type required"; }
+		                  getError: function(item) { return null; }
 		               },
 		               {  label: "Lot #",
 		                  cellType: "text",
 		                  size: 50,
 		                  getValue: function(item) { return item.lot; },
 		                  setValue: function(item, value) { item.lot = value; },
-		                  getError: function(item) { return item.lot ? null : "Lot number required"; }
+		                  getError: function(item) { return null; }
 		               },
                      {  label: "Pump/Rate",
                         cellType: "choice",
                         choices: ["Yes", "No"],
                         getValue: function(item) { return item.pumprate; },
                         setValue: function(item, value) { item.pumprate = value; },
-                        getError: function(item) { return item.pumprate ? null : "Pump/Rate required"; }
+                        getError: function(item) { return null; }
                      },
 		               {  label: "Rate",
 		                  cellType: "text",
@@ -227,14 +227,14 @@
 		                  getValue: function(item) { return item.rate; },
 		                  setValue: function(item, value) { item.rate = value; },
 		                  getVisible: function(item) { return item.pumprate == "Yes"; },
-		                  getError: function(item) { return item.rate ? null : "Rate required"; }
+		                  getError: function(item) { return null; }
 		               },                    
 		               {  label: "Admin By",
 		                  cellType: "lookup",
 		                  lookup: function(query) { return Ris.resolveStaffName(query); },
 		                  getValue: function(item) { return item.staff; },
 		                  setValue: function(item, value) { item.staff = value; },
-		                  getError: function(item) { return item.staff ? null : "Staff required"; }
+		                  getError: function(item) { return null; }
 		               }
                   ]);
                
