@@ -299,6 +299,7 @@ namespace ClearCanvas.Ris.Client.Reporting
         [ClickHandler("apply", "Apply")]
         [IconSet("apply", IconScheme.Colour, "Icons.CompleteToolSmall.png", "Icons.CompleteToolMedium.png", "Icons.CompleteToolLarge.png")]
         [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
+        [ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.UseTranscriptionWorkflow)]
         [ExtensionOf(typeof(ReportingWorkflowItemToolExtensionPoint))]
         [ExtensionOf(typeof(Folders.InTranscriptionFolder.DropHandlerExtensionPoint))]
         public class CompleteInterpretationForTranscriptionTool : WorkflowItemTool

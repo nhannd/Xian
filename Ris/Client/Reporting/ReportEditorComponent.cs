@@ -271,6 +271,11 @@ namespace ClearCanvas.Ris.Client.Reporting
             get { return _canCompleteInterpretationForTranscription; }
         }
 
+        public bool CanSendToTranscription
+        {
+            get { return Thread.CurrentPrincipal.IsInRole(AuthorityTokens.UseTranscriptionWorkflow); }
+        }
+
         public bool CanVerifyReport
         {
             get { return Thread.CurrentPrincipal.IsInRole(AuthorityTokens.VerifyReport); }

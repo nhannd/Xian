@@ -232,6 +232,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
         /// <summary>
         /// Resident are not allow to operate on Verification Step, hence they are not allowed to "Edit" a report after it has been sent "ToBeVerified"
         /// This operation cancels the existing verification step and creates a new interpretation step for resident to edit
+        /// This operation can also be used by resident/radiologist alike to revise report that hasn't been started by transcriptionist
         /// </summary>
         public class ReviseReport : ReportingOperation
         {

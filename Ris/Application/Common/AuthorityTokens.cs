@@ -88,5 +88,8 @@ namespace ClearCanvas.Ris.Application.Common
 
         [AuthorityToken(Description = "Allow verification of reports")]
         public const string VerifyReport = "VerifyReport";
+
+        [AuthorityToken(Description = "Enable Transcription workflow features")]
+        public const string UseTranscriptionWorkflow = "UseTranscriptionWorkflow";
     }
 }

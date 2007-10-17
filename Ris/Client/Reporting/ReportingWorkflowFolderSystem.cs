@@ -184,7 +184,10 @@ namespace ClearCanvas.Ris.Client.Reporting
 
             this.AddFolder(new Folders.ToBeReportedFolder(this));
             this.AddFolder(new Folders.DraftFolder(this));
-            this.AddFolder(new Folders.InTranscriptionFolder(this));
+
+            if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.UseTranscriptionWorkflow))
+                this.AddFolder(new Folders.InTranscriptionFolder(this));
+
             this.AddFolder(new Folders.ToBeVerifiedFolder(this));
 
             if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.VerifyReport))
