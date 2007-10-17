@@ -86,7 +86,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         {
             BuildToolStrip(kind, parentItemCollection, nodes, new ToolStripBuilderStyle());
         }
-        
+
         public static void BuildToolStrip(ToolStripKind kind, ToolStripItemCollection parentItemCollection, IEnumerable<ActionModelNode> nodes, ToolStripBuilderStyle builderStyle)
         {
             switch (kind)
@@ -135,49 +135,49 @@ namespace ClearCanvas.Desktop.View.WinForms
         {
             foreach (ActionModelNode node in nodes)
             {
-                ToolStripMenuItem menuItem;
+                ToolStripItem toolstripItem;
 
                 if (node.IsLeaf)
                 {
                     // this is a leaf node (terminal menu item)
                     IAction action = (IAction)node.Action;
-                    menuItem = (ToolStripMenuItem)CreateToolStripItemForAction(action, ToolStripKind.Menu);
+                    toolstripItem = CreateToolStripItemForAction(action, ToolStripKind.Menu);
 
-					menuItem.Tag = node;
-					parentItemCollection.Add(menuItem);
+                    toolstripItem.Tag = node;
+                    parentItemCollection.Add(toolstripItem);
 
-					// Determine whether we should check the parent menu items too
-					IClickAction clickAction = node.Action as IClickAction;
+                    // Determine whether we should check the parent menu items too
+                    IClickAction clickAction = node.Action as IClickAction;
 
-					if (clickAction != null && clickAction.CheckParents && clickAction.Checked)
-						CheckParentItems(menuItem);
-				}
+                    if (clickAction != null && clickAction.CheckParents && clickAction.Checked)
+                        CheckParentItems(toolstripItem);
+                }
                 else
                 {
                     // this menu item has a sub menu
-                    menuItem = new ToolStripMenuItem(node.PathSegment.LocalizedText);
-					
-					menuItem.Tag = node;
-					parentItemCollection.Add(menuItem);
-					
-					BuildMenu(menuItem.DropDownItems, node.ChildNodes);
+                    toolstripItem = new ToolStripMenuItem(node.PathSegment.LocalizedText);
+
+                    toolstripItem.Tag = node;
+                    parentItemCollection.Add(toolstripItem);
+
+                    BuildMenu(((ToolStripMenuItem)toolstripItem).DropDownItems, node.ChildNodes);
                 }
             }
         }
 
-		private static void CheckParentItems(ToolStripMenuItem menuItem)
-		{
-			ToolStripMenuItem parentItem = (ToolStripMenuItem) menuItem.OwnerItem;
+        private static void CheckParentItems(ToolStripItem menuItem)
+        {
+            ToolStripMenuItem parentItem = menuItem.OwnerItem as ToolStripMenuItem;
 
-			if (parentItem != null)
-			{
-				parentItem.Checked = true;
-				CheckParentItems(parentItem);
-			}
+            if (parentItem != null)
+            {
+                parentItem.Checked = true;
+                CheckParentItems(parentItem);
+            }
 
-			return;
-		}
-        
+            return;
+        }
+
         public static void Clear(ToolStripItemCollection parentItemCollection)
         {
             // this is kinda dumb, but we can't just Dispose() of the items directly
@@ -207,19 +207,20 @@ namespace ClearCanvas.Desktop.View.WinForms
             // optimization: since most actions will be IClickAction, we can just create the controls
             // directly rather than use the associated view, which is slower
             // however, an AssociateViewAttribute should always take precedence
-            if (action is IClickAction && action.GetType().GetCustomAttributes(typeof(AssociateViewAttribute), true).Length == 0)
+            if (action.GetType().GetCustomAttributes(typeof(AssociateViewAttribute), true).Length == 0)
             {
-                if (kind == ToolStripKind.Menu)
-                    return new ActiveMenuItem((IClickAction)action);
-                else
-                    return new ActiveToolbarButton((IClickAction)action);
+                if (action is IClickAction)
+                {
+                    if (kind == ToolStripKind.Menu)
+                        return new ActiveMenuItem((IClickAction)action);
+                    else
+                        return new ActiveToolbarButton((IClickAction)action);
+                }
             }
-            else
-            {
-                IActionView view = (IActionView)ViewFactory.CreateAssociatedView(action.GetType());
-                view.SetAction(action);
-                return (ToolStripItem)view.GuiElement;
-            }
+
+            IActionView view = (IActionView)ViewFactory.CreateAssociatedView(action.GetType());
+            view.SetAction(action);
+            return (ToolStripItem)view.GuiElement;
         }
 
     }
