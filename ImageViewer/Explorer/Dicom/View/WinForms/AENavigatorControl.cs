@@ -179,21 +179,18 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
                 IServerTreeNode dataNode = _component.ServerTree.CurrentNode;
                 _lastClickedNode.Text = dataNode.Name;
                 _lastClickedNode.Tag = dataNode;
-            	SynchronizeChildTooltips(_lastClickedNode);
+            	SynchronizeTooltips(_lastClickedNode);
             }
 
             _component.SetSelection(_lastClickedNode.Tag as IServerTreeNode);
         }
 
-		private void SynchronizeChildTooltips(TreeNode startNode)
+		private void SynchronizeTooltips(TreeNode startNode)
 		{
+			startNode.ToolTipText = startNode.Tag.ToString();
+
 			foreach (TreeNode node in startNode.Nodes)
-			{
-				node.ToolTipText = node.Tag.ToString();
-				
-				if (node.Nodes.Count > 0)
-					SynchronizeChildTooltips(node);
-			}
+				SynchronizeTooltips(node);
 		}
 
 		private void AETreeViewClick(object sender, EventArgs e)
