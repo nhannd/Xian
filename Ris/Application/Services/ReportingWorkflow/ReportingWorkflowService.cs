@@ -431,10 +431,6 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
         public bool CanReviseReport(IWorklistItemKey itemKey)
         {
-            // Radiologist with VerifyReport role can edit report normally, no need to revise report
-            if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.VerifyReport))
-                return false;
-
             return CanExecuteOperation(new Operations.ReviseReport(), itemKey);
         }
 

@@ -148,46 +148,46 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             summary.Content = reportPart.Content;
             summary.Status = EnumUtils.GetEnumValueInfo(reportPart.Status, context);
 
+            // Look for all reporting steps that has the same report part and are completed
+            // Then select individual type of step from the list
+            ReportingProcedureStepSearchCriteria criteria = new ReportingProcedureStepSearchCriteria();
+            criteria.ReportPart.EqualTo(reportPart);
+            criteria.State.EqualTo(ActivityStatus.CM);
+
+            IList<ReportingProcedureStep> reportingSteps = context.GetBroker<IReportingProcedureStepBroker>().Find(criteria);
+
+            ReportingProcedureStep interpretationStep =
+                CollectionUtils.SelectFirst<ReportingProcedureStep>(reportingSteps,
+                delegate(ReportingProcedureStep step)
+                {
+                    return (step is InterpretationStep);
+                });
+
+            ReportingProcedureStep transcriptionStep =
+                CollectionUtils.SelectFirst<ReportingProcedureStep>(reportingSteps,
+                delegate(ReportingProcedureStep step)
+                {
+                    return step is TranscriptionStep;
+                });
+
+            ReportingProcedureStep verificationStep =
+                CollectionUtils.SelectFirst<ReportingProcedureStep>(reportingSteps,
+                delegate(ReportingProcedureStep step)
+                {
+                    return step is VerificationStep;
+                });
+
+
             StaffAssembler staffAssembler = new StaffAssembler();
 
-            try
-            {
-                InterpretationStepSearchCriteria interpretationStepCriteria = new InterpretationStepSearchCriteria();
-                interpretationStepCriteria.ReportPart.EqualTo(reportPart);
-                interpretationStepCriteria.State.EqualTo(ActivityStatus.CM);
-                InterpretationStep interpretationStep = context.GetBroker<IInterpretationStepBroker>().FindOne(interpretationStepCriteria);
+            if (interpretationStep != null)
                 summary.InterpretedBy = staffAssembler.CreateStaffSummary(interpretationStep.PerformingStaff, context);
-            }
-            catch (EntityNotFoundException)
-            {
-                // did not find interpretation performer
-            }
 
-            try
-            {
-                TranscriptionStepSearchCriteria transcriptionStepSearchCriteria = new TranscriptionStepSearchCriteria();
-                transcriptionStepSearchCriteria.ReportPart.EqualTo(reportPart);
-                transcriptionStepSearchCriteria.State.EqualTo(ActivityStatus.CM);
-                TranscriptionStep transcriptionStep = context.GetBroker<ITranscriptionStepBroker>().FindOne(transcriptionStepSearchCriteria);
+            if (transcriptionStep != null)
                 summary.TranscribedBy = staffAssembler.CreateStaffSummary(transcriptionStep.PerformingStaff, context);
-            }
-            catch (EntityNotFoundException)
-            {
-                // did not find transcription performer
-            }
 
-            try
-            {
-                VerificationStepSearchCriteria verificationStepCriteria = new VerificationStepSearchCriteria();
-                verificationStepCriteria.ReportPart.EqualTo(reportPart);
-                verificationStepCriteria.State.EqualTo(ActivityStatus.CM);
-                VerificationStep verificationStep = context.GetBroker<IVerificationStepBroker>().FindOne(verificationStepCriteria);
+            if (verificationStep != null)
                 summary.VerifiedBy = staffAssembler.CreateStaffSummary(verificationStep.PerformingStaff, context);
-            }
-            catch (EntityNotFoundException)
-            {
-                // did not find verification performer
-            }
             
             
             return summary;

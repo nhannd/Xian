@@ -32,6 +32,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
@@ -164,12 +165,12 @@ namespace ClearCanvas.Ris.Client.Reporting
             {
                 get
                 {
-                    if (this.Context.GetWorkflowOperationEnablement("ReviseReport"))
-                        return SR.TitleReviseReport;
-                    else if (this.Context.GetWorkflowOperationEnablement("SaveReport") &&
+                    if (this.Context.GetWorkflowOperationEnablement("SaveReport") &&
                         (this.Context.GetWorkflowOperationEnablement("StartInterpretation") ||
                         this.Context.GetWorkflowOperationEnablement("StartVerification")))
                         return SR.TitleEditReport;
+                    else if (this.Context.GetWorkflowOperationEnablement("ReviseReport"))
+                        return SR.TitleReviseReport;
                     else
                         return SR.TitleCreateReport;
                 }
@@ -214,7 +215,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                 {
                     try
                     {
-                        EntityRef stepToOpenReport = null;
+                        EntityRef stepForOpeningReport = null;
                         if (item.StepType == "Interpretation")
                         {
                             Platform.GetService<IReportingWorkflowService>(
@@ -222,29 +223,33 @@ namespace ClearCanvas.Ris.Client.Reporting
                                 {
                                     StartInterpretationResponse response = service.StartInterpretation(new StartInterpretationRequest(item.ProcedureStepRef));
                                     item.ProcedureStepRef = response.InterpretationStepRef;
-                                    stepToOpenReport = response.InterpretationStepRef;
+                                    stepForOpeningReport = response.InterpretationStepRef;
                                 });
                         }
                         else if (item.StepType == "Verification")
                         {
-                            if (this.Context.GetWorkflowOperationEnablement("ReviseReport"))
+                            if (Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.VerifyReport))
                             {
-                                Platform.GetService<IReportingWorkflowService>(
-                                    delegate(IReportingWorkflowService service)
-                                    {
-                                        ReviseReportResponse response = service.ReviseReport(new ReviseReportRequest(item.ProcedureStepRef));
-                                        item.ProcedureStepRef = response.VerificationStepRef;
-                                        stepToOpenReport = response.InterpretationStepRef;
-                                    });
-                            }
-                            else
-                            {
+                                // if the staff can verify report, then he can start the verifications step and edit report
+
                                 Platform.GetService<IReportingWorkflowService>(
                                     delegate(IReportingWorkflowService service)
                                     {
                                         StartVerificationResponse response = service.StartVerification(new StartVerificationRequest(item.ProcedureStepRef));
                                         item.ProcedureStepRef = response.VerificationStepRef;
-                                        stepToOpenReport = response.VerificationStepRef;
+                                        stepForOpeningReport = response.VerificationStepRef;
+                                    });
+                            }
+                            else if (this.Context.GetWorkflowOperationEnablement("ReviseReport"))
+                            {
+                                // Otherwise the staff need to have permission to revise report
+
+                                Platform.GetService<IReportingWorkflowService>(
+                                    delegate(IReportingWorkflowService service)
+                                    {
+                                        ReviseReportResponse response = service.ReviseReport(new ReviseReportRequest(item.ProcedureStepRef));
+                                        item.ProcedureStepRef = response.VerificationStepRef;
+                                        stepForOpeningReport = response.InterpretationStepRef;
                                     });
                             }
                         }
@@ -256,7 +261,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                         //bool readOnly = selectedFolder is Folders.InTranscriptionFolder ||
                         //    selectedFolder is Folders.VerifiedFolder;
 
-                        doc = new ReportDocument(stepToOpenReport, item.PersonNameDetail, folders, desktopWindow);
+                        doc = new ReportDocument(stepForOpeningReport, item.PersonNameDetail, folders, desktopWindow);
                         doc.Closed += delegate
                         {
                             if (selectedFolder.IsOpen)

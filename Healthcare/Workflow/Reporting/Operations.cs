@@ -250,11 +250,11 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 
             public override bool CanExecute(ReportingProcedureStep step, Staff currentUserStaff)
             {
-                if (step.Is<VerificationStep>() == false)
+                if (step.Is<VerificationStep>() == false && step.Is<TranscriptionStep>() == false)
                     return false;
 
                 // step already completed or cancelled
-                if (step.State == ActivityStatus.CM || step.State == ActivityStatus.DC)
+                if (step.State != ActivityStatus.SC)
                     return false;
 
                 // cannot revise a report that is read by someone else
