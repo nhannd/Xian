@@ -78,7 +78,7 @@ namespace ClearCanvas.Dicom
         /// <returns></returns>
         public static DicomTag GetPrivateCreatorTag(ushort group, ushort element)
         {
-            return new DicomTag((uint)group << 16 | (uint)(element >> 8), "Private Creator", DicomVr.LOvr, false, 1, 1, false);
+            return new DicomTag((uint)group << 16 | (uint)(element >> 8), "Private Creator", "PrivateCreator", DicomVr.LOvr, false, 1, 1, false);
         }
 
         /// <summary>(fffe,e0dd) VR= Sequence Delimitation Item</summary>
@@ -95,6 +95,7 @@ namespace ClearCanvas.Dicom
         #region Private Members
         private uint _tag;
         private string _name;
+        private string _varName;
         private DicomVr _vr;
         private uint _vmLow;
         private uint _vmHigh;
@@ -108,15 +109,17 @@ namespace ClearCanvas.Dicom
         /// </summary>
         /// <param name="tag"></param>
         /// <param name="name"></param>
+        /// <param name="varName"></param>
         /// <param name="vr"></param>
         /// <param name="isMultiVrTag"></param>
         /// <param name="vmLow"></param>
         /// <param name="vmHigh"></param>
         /// <param name="isRetired"></param>
-        public DicomTag(uint tag, String name, DicomVr vr, bool isMultiVrTag, uint vmLow, uint vmHigh, bool isRetired)
+        public DicomTag(uint tag, String name, String varName, DicomVr vr, bool isMultiVrTag, uint vmLow, uint vmHigh, bool isRetired)
         {
             _tag = tag;
             _name = name;
+            _varName = varName;
             _vr = vr;
             _multiVrTag = isMultiVrTag;
             _vmLow = vmLow;
@@ -160,6 +163,14 @@ namespace ClearCanvas.Dicom
         public String Name
         {
             get { return _name; }
+        }
+
+        /// <summary>
+        /// Gets a text description of the tag with spaces removed and proper .NET casing.
+        /// </summary>
+        public String VariableName
+        {
+            get { return _varName; }
         }
 
         /// <summary>

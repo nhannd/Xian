@@ -39,12 +39,15 @@ using System.Text;
 using System.Windows.Forms;
 
 using ClearCanvas.Common;
+using ClearCanvas.Common.Actions;
+using ClearCanvas.Common.Specifications;
 using ClearCanvas.Dicom;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.Parameters;
+using ClearCanvas.ImageServer.Rules;
 
 namespace ClearCanvas.ImageServer.TestApp
 {
@@ -158,6 +161,26 @@ namespace ClearCanvas.ImageServer.TestApp
                 continue;
             }
 
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            openFileDialog.ShowDialog();
+
+            DicomFile dicomFile = new DicomFile(openFileDialog.FileName);
+
+            dicomFile.Load();
+
+            string script = "<?xml version=\"1.0\" encoding=\"utf-8\" ?><rule id=\"MR\"><condition expressionLanguage=\"dicom\"><equal test=\"$Modality\" refValue=\"MR\"/></condition><action><auto-route device=\"MERGE_STORE_SCP\"/></action></rule>";
+           
+            ServerRule rule = new ServerRule(script);
+
+            XmlSpecificationCompiler specCompiler = new XmlSpecificationCompiler("dicom");
+            XmlActionCompiler actionCompiler = new XmlActionCompiler();
+
+            rule.Compile(specCompiler, actionCompiler);
+
+            rule.Execute(dicomFile.DataSet, null);
         }
     }
 }

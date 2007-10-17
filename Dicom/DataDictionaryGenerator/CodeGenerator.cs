@@ -57,6 +57,37 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
 
         private void WriterHeader(StreamWriter writer)
         {
+            writer.WriteLine("#region License");
+            writer.WriteLine("");
+            writer.WriteLine("// Copyright (c) 2006-2007, ClearCanvas Inc.");
+            writer.WriteLine("// All rights reserved.");
+            writer.WriteLine("//");
+            writer.WriteLine("// Redistribution and use in source and binary forms, with or without modification, ");
+            writer.WriteLine("// are permitted provided that the following conditions are met:");
+            writer.WriteLine("//");
+            writer.WriteLine("//    * Redistributions of source code must retain the above copyright notice, ");
+            writer.WriteLine("//      this list of conditions and the following disclaimer.");
+            writer.WriteLine("//    * Redistributions in binary form must reproduce the above copyright notice, ");
+            writer.WriteLine("//      this list of conditions and the following disclaimer in the documentation ");
+            writer.WriteLine("//      and/or other materials provided with the distribution.");
+            writer.WriteLine("//    * Neither the name of ClearCanvas Inc. nor the names of its contributors ");
+            writer.WriteLine("//      may be used to endorse or promote products derived from this software without ");
+            writer.WriteLine("//      specific prior written permission.");
+            writer.WriteLine("//");
+            writer.WriteLine("// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS \"AS IS\" ");
+            writer.WriteLine("// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, ");
+            writer.WriteLine("// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR ");
+            writer.WriteLine("// PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR ");
+            writer.WriteLine("// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, ");
+            writer.WriteLine("// OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE ");
+            writer.WriteLine("// GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) ");
+            writer.WriteLine("// HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, ");
+            writer.WriteLine("// STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ");
+            writer.WriteLine("// ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY ");
+            writer.WriteLine("// OF SUCH DAMAGE.");
+            writer.WriteLine("");
+            writer.WriteLine("#endregion");
+            writer.WriteLine("");
             writer.WriteLine("using System;");
             writer.WriteLine("using System.Collections;");
             writer.WriteLine("using System.Collections.Generic;");
@@ -129,6 +160,7 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
             writer.WriteLine("    {");
             writer.WriteLine("        // Internal members");
             writer.WriteLine("        private static Dictionary<uint,DicomTag> _tags = new Dictionary<uint,DicomTag>();");
+            writer.WriteLine("        private static Dictionary<string,DicomTag> _tagNames = new Dictionary<string,DicomTag>();");
             writer.WriteLine("");
             writer.WriteLine("        // Static constructor");
             writer.WriteLine("        static DicomTagDictionary()");
@@ -167,6 +199,19 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
             writer.WriteLine("                return null;");
             writer.WriteLine("");
             writer.WriteLine("            return _tags[tag]; ");
+            writer.WriteLine("        }");
+            writer.WriteLine("");
+            writer.WriteLine("        /// <summary>");
+            writer.WriteLine("        /// Method used to retrieve DicomTag instances for specific DICOM attributes.");
+            writer.WriteLine("        /// </summary>");
+            writer.WriteLine("        /// <param name=\"name\">The name of the DICOM tag to retrieve.</param>");
+            writer.WriteLine("        /// <returns>A DicomTag instance, if the tag exists, or null if it doesn't.</returns>");
+            writer.WriteLine("        public static DicomTag GetDicomTag(string name)");
+            writer.WriteLine("        {");
+            writer.WriteLine("            if (!_tagNames.ContainsKey(name))");
+            writer.WriteLine("                return null;");
+            writer.WriteLine("");
+            writer.WriteLine("            return _tagNames[name]; ");
             writer.WriteLine("        }");
             writer.WriteLine("");
             writer.WriteLine("        /// <summary>");
@@ -217,6 +262,7 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
                 writer.WriteLine("                      new DicomTag(");
                 writer.WriteLine("                          DicomTags." + tag.varName + ",");
                 writer.WriteLine("                          \"" + tag.name + "\",");
+                writer.WriteLine("                          \"" + tag.varName + "\",");
                 if (tag.vr.Contains("or"))
                 {
                     if (tag.varName.Equals("PixelData"))
@@ -245,6 +291,8 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
                     writer.WriteLine("                          false // isRetired");
                 writer.WriteLine("                          ));");
 
+                writer.WriteLine("            _tagNames.Add(\"" + tag.varName + "\",");
+                writer.WriteLine("                      _tags[DicomTags." + tag.varName + "]);");
             }
             writer.WriteLine("        }");
 

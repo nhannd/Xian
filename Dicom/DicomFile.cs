@@ -347,7 +347,7 @@ namespace ClearCanvas.Dicom
         {
             DicomTag stopDicomTag = DicomTagDictionary.GetDicomTag(stopTag);
             if (stopDicomTag == null)
-                stopDicomTag = new DicomTag(stopTag, "Bogus Tag", DicomVr.NONE, false, 1, 1, false);
+                stopDicomTag = new DicomTag(stopTag, "Bogus Tag", "BogusTag", DicomVr.NONE, false, 1, 1, false);
             Load(stopDicomTag, options);
         }
 
@@ -425,7 +425,7 @@ namespace ClearCanvas.Dicom
             if (iStream == null) throw new ArgumentNullException("iStream");
 
             if (stopTag == null)
-                stopTag = new DicomTag(0xFFFFFFFF, "Bogus Tag", DicomVr.NONE, false, 1, 1, false);
+                stopTag = new DicomTag(0xFFFFFFFF, "Bogus Tag", "BogusTag", DicomVr.NONE, false, 1, 1, false);
 
             DicomStreamReader dsr;
 
@@ -473,7 +473,7 @@ namespace ClearCanvas.Dicom
 
             dsr.Dataset = _metaInfo;
             DicomReadStatus readStat =
-                dsr.Read(new DicomTag(0x0002FFFF, "Bogus Tag", DicomVr.UNvr, false, 1, 1, false), options);
+                dsr.Read(new DicomTag(0x0002FFFF, "Bogus Tag", "BogusTag", DicomVr.UNvr, false, 1, 1, false), options);
             if (readStat != DicomReadStatus.Success)
             {
                 DicomLogger.LogError("Unexpected error when reading file Meta info for file: {0}", Filename);

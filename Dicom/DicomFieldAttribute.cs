@@ -60,7 +60,7 @@ namespace ClearCanvas.Dicom
         {
             _tag = DicomTagDictionary.GetDicomTag(tag);
             if (_tag == null)
-                _tag = new DicomTag(tag, "Unknown Tag", DicomVr.UNvr, false, 1, uint.MaxValue, false);
+                _tag = new DicomTag(tag, "Unknown Tag", "UnknownTag", DicomVr.UNvr, false, 1, uint.MaxValue, false);
 
             _default = DicomFieldDefault.None;
             _defltOnZL = false;

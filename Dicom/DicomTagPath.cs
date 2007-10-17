@@ -229,7 +229,7 @@ namespace ClearCanvas.Dicom
 		{
 			DicomTag returnTag = DicomTagDictionary.GetDicomTag(tag);
 			if (returnTag == null)
-				returnTag = new DicomTag(tag, "Unknown Tag", DicomVr.UNvr, false, 1, uint.MaxValue, false);
+				returnTag = new DicomTag(tag, "Unknown Tag", "UnknownTag", DicomVr.UNvr, false, 1, uint.MaxValue, false);
 
 			return returnTag;
 		}

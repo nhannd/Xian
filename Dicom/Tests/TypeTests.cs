@@ -190,12 +190,12 @@ namespace ClearCanvas.Dicom.Tests
 
 		private DicomTag NewDicomTag(ushort group, ushort element)
 		{
-			return new DicomTag(DicomTag.GetTagValue(group, element), "Throwaway Tag", DicomVr.UNvr, false, 1, uint.MaxValue, false);
+			return new DicomTag(DicomTag.GetTagValue(group, element), "Throwaway Tag", "ThrowawayTag", DicomVr.UNvr, false, 1, uint.MaxValue, false);
 		}
 
 		private DicomTag NewDicomTag(uint tag)
 		{
-			return new DicomTag(tag, "Throwaway Tag", DicomVr.UNvr, false, 1, uint.MaxValue, false);
+			return new DicomTag(tag, "Throwaway Tag", "ThrowawayTag", DicomVr.UNvr, false, 1, uint.MaxValue, false);
 		}
     }
 }

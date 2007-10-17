@@ -147,7 +147,7 @@ namespace ClearCanvas.Dicom.IO
         public DicomReadStatus Read(DicomTag stopAtTag, DicomReadOptions options)
         {
             if (stopAtTag == null)
-                stopAtTag = new DicomTag(0xFFFFFFFF, "Bogus Tag", DicomVr.UNvr, false, 1, 1, false);
+                stopAtTag = new DicomTag(0xFFFFFFFF, "Bogus Tag", "BogusTag", DicomVr.UNvr, false, 1, 1, false);
 
             // Counters:
             //  _remain - bytes remaining in stream
@@ -196,17 +196,17 @@ namespace ClearCanvas.Dicom.IO
                                 }
                                 _tag = DicomTagDictionary.GetDicomTag(g, e);
                                 if (_tag == null)
-                                    _tag = new DicomTag((uint)g << 16 | e, "Private Tag", DicomVr.UNvr, false, 1, uint.MaxValue, false);
+                                    _tag = new DicomTag((uint)g << 16 | e, "Private Tag", "PrivateTag", DicomVr.UNvr, false, 1, uint.MaxValue, false);
                             }
                             else
                             {
                                 if (e == 0x0000)
-                                    _tag = new DicomTag((uint)g << 16 | e, "Group Length", DicomVr.ULvr, false, 1, 1, false);
+                                    _tag = new DicomTag((uint)g << 16 | e, "Group Length", "GroupLength", DicomVr.ULvr, false, 1, 1, false);
                                 else
                                     _tag = DicomTagDictionary.GetDicomTag(g, e);
 
                                 if (_tag == null)
-                                    _tag = new DicomTag((uint)g << 16 | e, "Private Tag", DicomVr.UNvr, false, 1, uint.MaxValue, false);
+                                    _tag = new DicomTag((uint)g << 16 | e, "Private Tag", "PrivateTag", DicomVr.UNvr, false, 1, uint.MaxValue, false);
                             }
                             _remain -= 4;
                             _bytes += 4;
@@ -242,10 +242,10 @@ namespace ClearCanvas.Dicom.IO
                                     _bytes += 2;
                                     _read += 2;
                                     if (_tag.VR.Equals(DicomVr.UNvr))
-                                        _tag = new DicomTag(_tag.TagValue, "Private Tag", _vr, false, 1, uint.MaxValue, false);
+                                        _tag = new DicomTag(_tag.TagValue, "Private Tag", "PrivateTag", _vr, false, 1, uint.MaxValue, false);
                                     else if (!_tag.VR.Equals(_vr))
                                     {
-                                        DicomTag tag = new DicomTag(_tag.TagValue,_tag.Name,_vr,_tag.MultiVR,_tag.VMLow,_tag.VMHigh,_tag.Retired);
+                                        DicomTag tag = new DicomTag(_tag.TagValue,_tag.Name, _tag.VariableName, _vr,_tag.MultiVR,_tag.VMLow,_tag.VMHigh,_tag.Retired);
                                         _tag = tag;
                                         ; // TODO, log something
                                     }
@@ -268,7 +268,7 @@ namespace ClearCanvas.Dicom.IO
                                 if (_tag.Element <= 0x00ff)
                                 {
                                     // Reset the tag with the right VR and a more descriptive name.
-                                    _tag = new DicomTag(_tag.TagValue, "Private Creator Code", DicomVr.LOvr, false, 1, uint.MaxValue, false);
+                                    _tag = new DicomTag(_tag.TagValue, "Private Creator Code", "PrivateCreatorCode", DicomVr.LOvr, false, 1, uint.MaxValue, false);
 
                                     // private creator id
                                     // Only set the VR to LO for Implicit VR, if we do it for
@@ -480,7 +480,7 @@ namespace ClearCanvas.Dicom.IO
                             // indexer, and allows us to add the tag
                             DicomTag dicomTag = DicomTagDictionary.GetDicomTag(rec._tag);
                             if (dicomTag == null)
-                                dicomTag = new DicomTag(rec._tag, "Unknown SQ Attribute", DicomVr.SQvr, false, 0, uint.MaxValue, false);
+                                dicomTag = new DicomTag(rec._tag, "Unknown SQ Attribute", "UnknownSq", DicomVr.SQvr, false, 0, uint.MaxValue, false);
 
                             rec._parent[dicomTag].AddSequenceItem(ds);
 

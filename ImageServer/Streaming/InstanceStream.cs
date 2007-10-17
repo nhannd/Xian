@@ -107,11 +107,11 @@ namespace ClearCanvas.ImageServer.Streaming
 
                     DicomTag theTag = DicomTagDictionary.GetDicomTag(tagValue);
                     if (theTag == null)
-                        theTag = new DicomTag(tagValue,"Unknown tag",xmlVr,false,1,uint.MaxValue,false);
+                        theTag = new DicomTag(tagValue,"Unknown tag","UnknownTag",xmlVr,false,1,uint.MaxValue,false);
 
                     if (!theTag.VR.Equals(xmlVr))
                     {
-                        theTag = new DicomTag(tagValue, theTag.Name, xmlVr, theTag.MultiVR, theTag.VMLow, theTag.VMHigh, theTag.Retired);
+                        theTag = new DicomTag(tagValue, theTag.Name, theTag.VariableName, xmlVr, theTag.MultiVR, theTag.VMLow, theTag.VMHigh, theTag.Retired);
                     }
                     DicomAttribute attribute = theCollection[theTag];
 

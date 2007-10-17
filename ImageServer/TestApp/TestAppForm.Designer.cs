@@ -62,6 +62,8 @@ namespace ClearCanvas.ImageServer.TestApp
             this.checkBoxLoadTest = new System.Windows.Forms.CheckBox();
             this.buttonSelectDirectory = new System.Windows.Forms.Button();
             this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
+            this.button1 = new System.Windows.Forms.Button();
+            this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.SuspendLayout();
             // 
             // checkBoxLoadTest
@@ -90,11 +92,27 @@ namespace ClearCanvas.ImageServer.TestApp
             this.folderBrowserDialog.Description = "Select Folder for Scanning";
             this.folderBrowserDialog.RootFolder = System.Environment.SpecialFolder.MyComputer;
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(13, 109);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(95, 23);
+            this.button1.TabIndex = 2;
+            this.button1.Text = "CheckRule";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // openFileDialog
+            // 
+            this.openFileDialog.FileName = "openFileDialog";
+            this.openFileDialog.Filter = "DICOM Files|*.dcm|All files|*.*";
+            // 
             // TestAppForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(284, 264);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.buttonSelectDirectory);
             this.Controls.Add(this.checkBoxLoadTest);
             this.Name = "TestAppForm";
@@ -109,6 +127,8 @@ namespace ClearCanvas.ImageServer.TestApp
         private System.Windows.Forms.CheckBox checkBoxLoadTest;
         private System.Windows.Forms.Button buttonSelectDirectory;
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.OpenFileDialog openFileDialog;
     }
 }
 
