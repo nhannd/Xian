@@ -183,9 +183,6 @@
     </Compile>
     <Compile Include="BlockingOperationView.cs" />
     <Compile Include="ClearCanvasStyle.cs" />
-    <Compile Include="DecoratedTableView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="StackTab.cs">
       <SubType>UserControl</SubType>
     </Compile>

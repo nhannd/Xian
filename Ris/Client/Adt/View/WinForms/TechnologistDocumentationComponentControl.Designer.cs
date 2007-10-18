@@ -70,7 +70,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._orderSummaryPanel = new System.Windows.Forms.Panel();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this._tabPageProcedurePlan = new System.Windows.Forms.TabPage();
-            this._procedurePlanSummary = new ClearCanvas.Desktop.View.WinForms.DecoratedTableView();
+            this._procedurePlanSummary = new ClearCanvas.Desktop.View.WinForms.TableView();
             this._tabPageAdditionalDetails = new System.Windows.Forms.TabPage();
             this._panelAdditionalDetails = new System.Windows.Forms.Panel();
             this._browserAdditionalDetails = new System.Windows.Forms.WebBrowser();
@@ -298,6 +298,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         private System.Windows.Forms.WebBrowser _browserAdditionalDetails;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Button _btnSave;
-        private ClearCanvas.Desktop.View.WinForms.DecoratedTableView _procedurePlanSummary;
+        private ClearCanvas.Desktop.View.WinForms.TableView _procedurePlanSummary;
     }
 }

@@ -104,5 +104,10 @@ namespace ClearCanvas.Desktop.Tables
         /// <param name="ascending"></param>
         /// <returns></returns>
         IComparer GetComparer(bool ascending);
+
+        /// <summary>
+        /// Gets the cell row for which this column will be displayed in
+        /// </summary>
+        uint CellRow { get; }
     }
 }

@@ -66,7 +66,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this.splitContainer1 = new System.Windows.Forms.SplitContainer();
 			this._folderTreeView = new ClearCanvas.Desktop.View.WinForms.BindingTreeView();
 			this._folderTreeImageList = new System.Windows.Forms.ImageList(this.components);
-			this._folderContentsTableView = new ClearCanvas.Desktop.View.WinForms.DecoratedTableView();
+			this._folderContentsTableView = new ClearCanvas.Desktop.View.WinForms.TableView();
 			this.splitContainer1.Panel1.SuspendLayout();
 			this.splitContainer1.Panel2.SuspendLayout();
 			this.splitContainer1.SuspendLayout();
@@ -154,7 +154,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 
         private System.Windows.Forms.SplitContainer splitContainer1;
         private ClearCanvas.Desktop.View.WinForms.BindingTreeView _folderTreeView;
-        private ClearCanvas.Desktop.View.WinForms.DecoratedTableView _folderContentsTableView;
+        private ClearCanvas.Desktop.View.WinForms.TableView _folderContentsTableView;
         private System.Windows.Forms.ImageList _folderTreeImageList;
     }
 }

@@ -52,7 +52,7 @@ namespace ClearCanvas.Ris.Client
         public DateTime? CreatedOn;
     }
 
-    public class BiographyFeedbackTable : DecoratedTable<FeedbackDetail>
+    public class BiographyFeedbackTable : Table<FeedbackDetail>
     {
         private static readonly uint NumRows = 2;
         private static readonly uint NoteCommentRow = 1;
@@ -71,7 +71,7 @@ namespace ClearCanvas.Ris.Client
                 delegate(FeedbackDetail f) { return (f.Category == null ? "" : f.Subject); }, 0.4f));
             this.Columns.Add(new TableColumn<FeedbackDetail, string>(SR.ColumnCreatedOn,
                 delegate(FeedbackDetail f) { return Format.Date(f.CreatedOn); }, 0.1f));
-            this.Columns.Add(new DecoratedTableColumn<FeedbackDetail, string>("Comment",
+            this.Columns.Add(new TableColumn<FeedbackDetail, string>("Comment",
                 delegate(FeedbackDetail f) { return (f.Comments != null && f.Comments.Length > 0 ? String.Format("Comment: {0}", f.Comments) : ""); }, 0.1f, NoteCommentRow));
         }
     }

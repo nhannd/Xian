@@ -54,7 +54,7 @@ namespace ClearCanvas.Desktop
     [AssociateView(typeof(CloseHelperComponentViewExtensionPoint))]
     public class CloseHelperComponent : ApplicationComponent
     {
-        private DecoratedTable<Workspace> _workspaces;
+        private Table<Workspace> _workspaces;
         private Workspace _selectedWorkspace;
 
         /// <summary>
@@ -62,9 +62,9 @@ namespace ClearCanvas.Desktop
         /// </summary>
         public CloseHelperComponent()
         {
-            _workspaces = new DecoratedTable<Workspace>(2);
-            _workspaces.Columns.Add(new DecoratedTableColumn<Workspace, string>("Workspace", delegate(Workspace w) { return w.Title; }, 1, 0));
-            _workspaces.Columns.Add(new DecoratedTableColumn<Workspace, string>("Window", delegate(Workspace w) { return w.DesktopWindow.Title; }, 1, 1));
+            _workspaces = new Table<Workspace>(2);
+            _workspaces.Columns.Add(new TableColumn<Workspace, string>("Workspace", delegate(Workspace w) { return w.Title; }, 1, 0));
+            _workspaces.Columns.Add(new TableColumn<Workspace, string>("Window", delegate(Workspace w) { return w.DesktopWindow.Title; }, 1, 1));
         }
 
         public void Refresh(bool thisWindowOnly)

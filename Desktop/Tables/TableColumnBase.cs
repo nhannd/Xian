@@ -70,6 +70,7 @@ namespace ClearCanvas.Desktop.Tables
 		private bool _visible = true;
         private Type _columnType;
         private float _widthFactor;
+        private uint _cellRow;
 
         private Comparison<TItem> _comparison;
 		private event EventHandler _visibilityChangedEvent;
@@ -88,11 +89,33 @@ namespace ClearCanvas.Desktop.Tables
 			Type columnType, 
 			float widthFactor, 
 			Comparison<TItem> comparison)
+            : this(columnName, columnType, widthFactor, comparison, 0)
+        {
+        }
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="columnName">The name of the column</param>
+        /// <param name="columnType">The type of value that the column holds</param>
+        /// <param name="widthFactor">A weighting factor that is applied to the width of the column</param>
+        /// <param name="comparison">A custom comparison operator that is used for sorting based on this column</param>
+        /// <param name="cellRow">The cell row this column will be display in</param>
+        public TableColumnBase(
+            string columnName,
+            Type columnType,
+            float widthFactor,
+            Comparison<TItem> comparison,
+            uint cellRow)
         {
             _name = columnName;
             _widthFactor = widthFactor;
             _columnType = columnType;
             _comparison = comparison;
+            _cellRow = cellRow;
+
+            if (_cellRow > 0)
+                this.Visible = false;
 
             // if no comparison operator was specified, assign a default comparison
             if (_comparison == null)
@@ -194,6 +217,11 @@ namespace ClearCanvas.Desktop.Tables
         public IComparer GetComparer(bool ascending)
         {
             return new SortComparer(_comparison, ascending);
+        }
+
+        public uint CellRow
+        {
+            get { return _cellRow; }
         }
 
         #endregion

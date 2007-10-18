@@ -35,7 +35,7 @@ using ClearCanvas.Desktop.Tables;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
-    public class XTechnologistDocumentationTable : DecoratedTable<XTechnologistDocumentationTableItem>
+    public class XTechnologistDocumentationTable : Table<XTechnologistDocumentationTableItem>
     {
 
         public class ItemCheckedEventArgs : EventArgs

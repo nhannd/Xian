@@ -60,7 +60,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         private void InitializeComponent()
         {
             ClearCanvas.Desktop.Selection selection1 = new ClearCanvas.Desktop.Selection();
-            this._feedbackTable = new ClearCanvas.Desktop.View.WinForms.DecoratedTableView();
+            this._feedbackTable = new ClearCanvas.Desktop.View.WinForms.TableView();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this._comments = new ClearCanvas.Desktop.View.WinForms.TextAreaField();
             this._subject = new ClearCanvas.Desktop.View.WinForms.TextField();
@@ -146,7 +146,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 
         #endregion
 
-        private ClearCanvas.Desktop.View.WinForms.DecoratedTableView _feedbackTable;
+        private ClearCanvas.Desktop.View.WinForms.TableView _feedbackTable;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private ClearCanvas.Desktop.View.WinForms.TextAreaField _comments;
         private ClearCanvas.Desktop.View.WinForms.TextField _subject;

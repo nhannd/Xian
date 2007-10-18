@@ -35,7 +35,7 @@ using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
-    class ModalityWorklistTable : DecoratedTable<ModalityWorklistItem>
+    class ModalityWorklistTable : Table<ModalityWorklistItem>
     {
         private static readonly uint NumRows = 2;
         private static readonly uint ProcedureDescriptionRow = 1;
@@ -66,7 +66,7 @@ namespace ClearCanvas.Ris.Client.Adt
             priorityColumn.Visible = false;
             this.Columns.Add(priorityColumn);
 
-            this.Columns.Add(new DecoratedTableColumn<ModalityWorklistItem, string>("Procedure Description",
+            this.Columns.Add(new TableColumn<ModalityWorklistItem, string>("Procedure Description",
                 delegate(ModalityWorklistItem item) 
                 { 
                     return string.Format("{0} - {1}", item.RequestedProcedureStepName, item.ModalityProcedureStepName); 

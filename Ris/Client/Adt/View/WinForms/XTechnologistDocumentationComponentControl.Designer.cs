@@ -67,7 +67,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._splitter = new System.Windows.Forms.SplitContainer();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this._addProcedureLink = new System.Windows.Forms.LinkLabel();
-            this._procedureStepsTable = new ClearCanvas.Desktop.View.WinForms.DecoratedTableView();
+            this._procedureStepsTable = new ClearCanvas.Desktop.View.WinForms.TableView();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.panel1 = new System.Windows.Forms.Panel();
             this._browser = new System.Windows.Forms.WebBrowser();
@@ -263,7 +263,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         private System.Windows.Forms.SplitContainer _splitter;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
         private System.Windows.Forms.LinkLabel _addProcedureLink;
-        private ClearCanvas.Desktop.View.WinForms.DecoratedTableView _procedureStepsTable;
+        private ClearCanvas.Desktop.View.WinForms.TableView _procedureStepsTable;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.WebBrowser _browser;
         private System.Windows.Forms.GroupBox groupBox1;

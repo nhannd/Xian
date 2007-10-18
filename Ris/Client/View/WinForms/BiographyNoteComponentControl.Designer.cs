@@ -60,7 +60,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         private void InitializeComponent()
         {
             ClearCanvas.Desktop.Selection selection1 = new ClearCanvas.Desktop.Selection();
-            this._noteTable = new ClearCanvas.Desktop.View.WinForms.DecoratedTableView();
+            this._noteTable = new ClearCanvas.Desktop.View.WinForms.TableView();
             this.SuspendLayout();
             // 
             // _noteTable
@@ -91,7 +91,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 
         #endregion
 
-        private ClearCanvas.Desktop.View.WinForms.DecoratedTableView _noteTable;
+        private ClearCanvas.Desktop.View.WinForms.TableView _noteTable;
 
     }
 }

@@ -30,8 +30,7 @@
 #endregion
 
 using System;
-using System.Collections;
-using System.Collections.Generic;
+using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop.Tables
@@ -52,11 +51,27 @@ namespace ClearCanvas.Desktop.Tables
         private TableFilterParams _filterParams;
         private FilteredItemCollection<TItem> _filteredData;
 
+        private readonly uint _cellRowCount;
+        private ColorSelector _backgroundColorSelector;
+        private ColorSelector _outlineColorSelector;
+
         /// <summary>
         /// Constructor
         /// </summary>
         public Table()
+            : this(1)
         {
+        }
+
+        ///<summary>
+        /// Constructor a table column with cellRowCount in each row
+        ///</summary>
+        ///<param name="cellRowCount"></param>
+        public Table(uint cellRowCount)
+        {
+            Platform.CheckArgumentRange((int)cellRowCount, 1, int.MaxValue, "cellRowCount");
+            _cellRowCount = cellRowCount;
+
             _baseColumnWidth = 10;
             _columns = new TableColumnCollection<TItem>();
             _columns.ItemsChanged += delegate(object sender, ItemChangedEventArgs args)
@@ -142,6 +157,23 @@ namespace ClearCanvas.Desktop.Tables
         public void RemoveFilter()
         {
             _isFiltered = false;
+        }
+
+        public uint CellRowCount
+        {
+            get { return _cellRowCount; }
+        }
+
+        public ColorSelector BackgroundColorSelector
+        {
+            get { return _backgroundColorSelector; }
+            set { _backgroundColorSelector = value; }
+        }
+
+        public ColorSelector OutlineColorSelector
+        {
+            get { return _outlineColorSelector; }
+            set { _outlineColorSelector = value; }
         }
 
         #endregion

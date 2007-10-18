@@ -62,7 +62,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             ClearCanvas.Desktop.Selection selection1 = new ClearCanvas.Desktop.Selection();
             this.label1 = new System.Windows.Forms.Label();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this._workspaceTableView = new ClearCanvas.Desktop.View.WinForms.DecoratedTableView();
+            this._workspaceTableView = new ClearCanvas.Desktop.View.WinForms.TableView();
             this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -126,6 +126,6 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
-        private DecoratedTableView _workspaceTableView;
+        private TableView _workspaceTableView;
     }
 }

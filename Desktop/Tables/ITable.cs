@@ -34,6 +34,13 @@ using System;
 namespace ClearCanvas.Desktop.Tables
 {
     /// <summary>
+    /// A delegate for selecting color based on an object
+    /// </summary>
+    /// <param name="o"></param>
+    /// <returns>Name of a predefine color</returns>
+    public delegate string ColorSelector(object o);
+
+    /// <summary>
     /// Defines the interface to a table, which provides a presentation model for viewing data in a tabular form.
     /// </summary>
     public interface ITable
@@ -96,6 +103,21 @@ namespace ClearCanvas.Desktop.Tables
         /// width of one character.
         /// </summary>
         float BaseColumnWidthChars { get; }
+
+        /// <summary>
+        /// Gets the number of cell rows in each row
+        /// </summary>
+        uint CellRowCount { get; }
+
+        /// <summary>
+        /// Gets and sets the background color of a cell row
+        /// </summary>
+        ColorSelector BackgroundColorSelector { get; set; }
+
+        /// <summary>
+        /// Gets and sets the outline color of a cell row
+        /// </summary>
+        ColorSelector OutlineColorSelector { get; set; }
     }
 
     /// <summary>

@@ -36,7 +36,7 @@ using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client
 {
-    public class BiographyNoteTable : DecoratedTable<NoteDetail>
+    public class BiographyNoteTable : Table<NoteDetail>
     {
         private static readonly uint NumRows = 2;
         private static readonly uint NoteCommentRow = 1;
@@ -59,7 +59,7 @@ namespace ClearCanvas.Ris.Client
                 delegate(NoteDetail n) { return String.Format("{0}, {1}", n.CreatedBy.Name.FamilyName, n.CreatedBy.Name.GivenName); }, 0.2f));
             this.Columns.Add(new TableColumn<NoteDetail, string>(SR.ColumnCreatedOn,
                 delegate(NoteDetail n) { return Format.Date(n.TimeStamp); }, 0.1f));
-            this.Columns.Add(new DecoratedTableColumn<NoteDetail, string>("Comment",
+            this.Columns.Add(new TableColumn<NoteDetail, string>("Comment",
                 delegate(NoteDetail n) { return (n.Comment != null && n.Comment.Length > 0 ? String.Format("Comment: {0}", n.Comment) : ""); }, 0.1f, NoteCommentRow));
         }
     }

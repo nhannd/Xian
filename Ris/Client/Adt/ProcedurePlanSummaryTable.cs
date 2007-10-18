@@ -32,7 +32,7 @@ namespace ClearCanvas.Ris.Client.Adt
         #endregion
     }
 
-    public class ProcedurePlanSummaryTable : DecoratedTable<Checkable<ProcedurePlanSummaryTableItem>>
+    public class ProcedurePlanSummaryTable : Table<Checkable<ProcedurePlanSummaryTableItem>>
     {
         private static readonly uint NumRows = 2;
         private static readonly uint ProcedureDescriptionRow = 1;
@@ -67,7 +67,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 delegate(Checkable<ProcedurePlanSummaryTableItem> checkable) { return checkable.Item.mpsDetail.ModalityName; },
                 0.5f));
 
-            ITableColumn sortColumn = new DecoratedTableColumn<Checkable<ProcedurePlanSummaryTableItem>, string>("Procedure Description",
+            ITableColumn sortColumn = new TableColumn<Checkable<ProcedurePlanSummaryTableItem>, string>("Procedure Description",
                 delegate(Checkable<ProcedurePlanSummaryTableItem> checkable)
                 {
                     return string.Format("{0} - {1}", checkable.Item.rpDetail.Name, checkable.Item.mpsDetail.Name);

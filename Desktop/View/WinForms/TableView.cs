@@ -32,6 +32,7 @@
 using System;
 using System.ComponentModel;
 using System.Drawing;
+using System.Text;
 using System.Windows.Forms;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Actions;
@@ -60,7 +61,10 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 	    private bool _isLoaded = false;
 
-		public TableView()
+        private const int CUSTOM_CONTENT_HEIGHT = 20;
+        private readonly int _rowHeight = 0;
+
+        public TableView()
 		{
 			InitializeComponent();
 
@@ -68,6 +72,11 @@ namespace ClearCanvas.Desktop.View.WinForms
             // setting the minimum column width > 100 pixels
             // therefore, turn off the auto-generate and create the columns ourselves
             _dataGridView.AutoGenerateColumns = false;
+
+            _rowHeight = this.DataGridView.RowTemplate.Height;
+            this.DataGridView.RowPrePaint += SetCustomBackground;
+            this.DataGridView.RowPostPaint += DisplayCellSubRows;
+            this.DataGridView.RowPostPaint += OutlineCell;
         }
 
         #region Design Time properties
@@ -210,6 +219,16 @@ namespace ClearCanvas.Desktop.View.WinForms
                     //_bindingSource.DataSource = new TableAdapter(_table);
                     //_dataGridView.DataSource = _bindingSource;
                     _dataGridView.DataSource = new TableAdapter(_table);
+
+                    // Set a cell padding to provide space for the top of the focus 
+                    // rectangle and for the content that spans multiple columns. 
+                    Padding newPadding = new Padding(0, 1, 0,
+                        CUSTOM_CONTENT_HEIGHT * ((int)_table.CellRowCount - 1));
+                    this.DataGridView.RowTemplate.DefaultCellStyle.Padding = newPadding;
+
+                    // Set the row height to accommodate the content that 
+                    // spans multiple columns.
+                    this.DataGridView.RowTemplate.Height = _rowHeight + CUSTOM_CONTENT_HEIGHT * ((int)_table.CellRowCount - 1);
                 }
             }
         }
@@ -363,6 +382,145 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 			return null;
 		}
+
+        // Paints the custom background for each row
+        private void SetCustomBackground(object sender, DataGridViewRowPrePaintEventArgs e)
+        {
+            if ((e.State & DataGridViewElementStates.Selected) ==
+                        DataGridViewElementStates.Selected)
+            {
+                // do nothing?
+                return;
+            }
+
+            if (_table != null && _table.BackgroundColorSelector != null)
+            {
+                Rectangle rowBounds = GetAdjustedRowBounds(e.RowBounds);
+
+                // Color.FromName("Empty") does not return Color.Empty, so need to manually check for Empty
+                string colorName = _table.BackgroundColorSelector(_table.Items[e.RowIndex]);
+                Color backgroundColor = colorName.Equals("Empty") ? Color.Empty : Color.FromName(colorName);
+
+                if (backgroundColor.Equals(Color.Empty))
+                {
+                    backgroundColor = e.InheritedRowStyle.BackColor;
+                }
+
+                // Paint the custom selection background.
+                using (Brush backbrush =
+                    new SolidBrush(backgroundColor))
+                {
+                    e.PaintParts &= ~DataGridViewPaintParts.Background;
+                    e.Graphics.FillRectangle(backbrush, rowBounds);
+                }
+            }
+        }
+
+        // Paints the custom outline for each row
+        private void OutlineCell(object sender, DataGridViewRowPostPaintEventArgs e)
+        {
+            Rectangle rowBounds = GetAdjustedRowBounds(e.RowBounds);
+
+            if (_table != null && _table.OutlineColorSelector != null)
+            {
+                int penWidth = 2;
+                Rectangle outline = new Rectangle(
+                    rowBounds.Left + penWidth / 2,
+                    rowBounds.Top + penWidth / 2 + 1,
+                    rowBounds.Width - penWidth,
+                    rowBounds.Height - penWidth - 2);
+
+                Color outlineColor = Color.FromName(_table.OutlineColorSelector(_table.Items[e.RowIndex]));
+
+                using (Pen outlinePen =
+                    new Pen(outlineColor, penWidth))
+                {
+                    e.Graphics.DrawRectangle(outlinePen, outline);
+                }
+            }
+        }
+
+        // Paints the content that spans multiple columns and the focus rectangle.
+        private void DisplayCellSubRows(object sender, DataGridViewRowPostPaintEventArgs e)
+        {
+            Rectangle rowBounds = GetAdjustedRowBounds(e.RowBounds);
+
+            SolidBrush forebrush = null;
+            try
+            {
+                // Determine the foreground color.
+                if ((e.State & DataGridViewElementStates.Selected) ==
+                    DataGridViewElementStates.Selected)
+                {
+                    forebrush = new SolidBrush(e.InheritedRowStyle.SelectionForeColor);
+                }
+                else
+                {
+                    forebrush = new SolidBrush(e.InheritedRowStyle.ForeColor);
+                }
+
+                StringBuilder sb = new StringBuilder();
+
+                for (int i = 0; i < _table.Columns.Count; i++)
+                {
+                    ITableColumn col = _table.Columns[i] as ITableColumn;
+                    if (col != null && col.CellRow > 0)
+                    {
+                        DataGridViewRow row = this.DataGridView.Rows[e.RowIndex];
+                        object recipe = row.Index != -1 ? row.Cells[i].Value : null;
+
+                        if (recipe != null)
+                        {
+                            sb.Append(recipe + " ");
+                        }
+
+                    }
+                }
+
+                string text = sb.ToString().Trim();
+
+                if (string.IsNullOrEmpty(text) == false)
+                {
+                    // Calculate the bounds for the content that spans multiple 
+                    // columns, adjusting for the horizontal scrolling position 
+                    // and the current row height, and displaying only whole
+                    // lines of text.
+                    Rectangle textArea = rowBounds;
+                    textArea.X -= this.DataGridView.HorizontalScrollingOffset;
+                    textArea.Width += this.DataGridView.HorizontalScrollingOffset;
+                    textArea.Y += rowBounds.Height - e.InheritedRowStyle.Padding.Bottom;
+                    textArea.Height -= rowBounds.Height - e.InheritedRowStyle.Padding.Bottom;
+                    textArea.Height = (textArea.Height / e.InheritedRowStyle.Font.Height) * e.InheritedRowStyle.Font.Height;
+
+                    // Calculate the portion of the text area that needs painting.
+                    RectangleF clip = textArea;
+                    int startX = this.DataGridView.RowHeadersVisible ? this.DataGridView.RowHeadersWidth : 0;
+                    clip.Width -= startX + 1 - clip.X;
+                    clip.X = startX + 1;
+                    RectangleF oldClip = e.Graphics.ClipBounds;
+                    e.Graphics.SetClip(clip);
+
+                    // Draw the content that spans multiple columns.
+                    e.Graphics.DrawString(text, e.InheritedRowStyle.Font, forebrush, textArea);
+
+                    e.Graphics.SetClip(oldClip);
+                }
+            }
+            finally
+            {
+                if (forebrush != null)
+                    forebrush.Dispose();
+            }
+        }
+
+        private Rectangle GetAdjustedRowBounds(Rectangle rowBounds)
+        {
+            return new Rectangle(
+                    (this.DataGridView.RowHeadersVisible ? this.DataGridView.RowHeadersWidth : 0) + rowBounds.Left,
+                    rowBounds.Top,
+                    this.DataGridView.Columns.GetColumnsWidth(DataGridViewElementStates.Visible) - this.DataGridView.HorizontalScrollingOffset,
+                    rowBounds.Height);
+        }
 
         private void _dataGridView_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
