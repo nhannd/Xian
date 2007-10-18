@@ -279,7 +279,13 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 					{
 						lock (_activeJobInformation.SyncRoot)
 						{
-							if (clearFailed || _activeJobInformation.ProgressItem.Cancelled)
+							if (clearFailed)
+							{
+								CheckResumeImports();
+								return;
+							}
+
+							if (_activeJobInformation.ProgressItem.Cancelled)
 								return;
 
 							//don't allow cancellation until after the database has been cleared, otherwise you might get
