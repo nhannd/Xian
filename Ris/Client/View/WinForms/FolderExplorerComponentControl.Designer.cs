@@ -127,7 +127,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this._folderContentsTableView.ReadOnly = false;
             this._folderContentsTableView.Selection = selection2;
             this._folderContentsTableView.Size = new System.Drawing.Size(350, 493);
-            this._folderContentsTableView.SortToolStripVisible = true;
+            this._folderContentsTableView.SortButtonVisible = true;
             this._folderContentsTableView.TabIndex = 0;
             this._folderContentsTableView.Table = null;
             this._folderContentsTableView.ToolbarModel = null;

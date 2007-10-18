@@ -82,10 +82,10 @@ namespace ClearCanvas.Desktop.View.WinForms
         #region Design Time properties
 
 	    [DefaultValue(false)]
-	    public bool SortToolStripVisible
+	    public bool SortButtonVisible
 	    {
-            get { return _sortToolStrip.Visible; }
-            set { _sortToolStrip.Visible = value; }
+            get { return _sortButton.Visible; }
+            set { _sortButton.Visible = value; }
 	    }
 
         [DefaultValue(false)]
@@ -240,8 +240,7 @@ namespace ClearCanvas.Desktop.View.WinForms
                     _table.SortEvent += new EventHandler(_table_SortEvent);
                 }
 
-                // Initialize the column name for the sort toolstrip
-                InitializeSortToolStrip();
+                InitializeSortButton();
             }
         }
 
@@ -729,53 +728,53 @@ namespace ClearCanvas.Desktop.View.WinForms
             _isLoaded = true;
         }
 
-        private void InitializeSortToolStrip()
+        private void InitializeSortButton()
         {
             if (_table == null || _table.Columns.Count == 0)
             {
-                _sortToolStrip.Enabled = false;
+                _sortButton.Enabled = false;
             }
             else
             {
                 // Rebuild dropdown menu
-                _sortToolStrip.Enabled = true;
-                _sortToolStrip.DropDownItems.Clear();
-                _sortToolStrip.DropDownItems.Add(_sortAscendingToolStripMenuItem);
-                _sortToolStrip.DropDownItems.Add(_sortDescendingToolStripMenuItem);
-                _sortToolStrip.DropDownItems.Add(_sortToolStripSeparator);
+                _sortButton.Enabled = true;
+                _sortButton.DropDownItems.Clear();
+                _sortButton.DropDownItems.Add(_sortAscendingButton);
+                _sortButton.DropDownItems.Add(_sortDescendingButton);
+                _sortButton.DropDownItems.Add(_sortSeparator);
 
                 CollectionUtils.ForEach<ITableColumn>(_table.Columns,
                     delegate(ITableColumn column)
                     {
-                        ToolStripItem item = new ToolStripMenuItem(column.Name, null, _sortToolStripMenuItem_Click, column.Name);
-                        if (_sortToolStrip.DropDownItems.ContainsKey(column.Name) == false)
-                            _sortToolStrip.DropDownItems.Add(item);
+                        ToolStripItem item = new ToolStripMenuItem(column.Name, null, _sortButtonDropDownItem_Click, column.Name);
+                        if (_sortButton.DropDownItems.ContainsKey(column.Name) == false)
+                            _sortButton.DropDownItems.Add(item);
                     });
 
-                ResetSortState();
+                ResetSortButtonState();
             }
         }
 
-        private void ResetSortState()
+        private void ResetSortButtonState()
         {
             if (_table == null || _table.SortParams == null)
                 return;
 
-            CollectionUtils.ForEach<ToolStripItem>(_sortToolStrip.DropDownItems,
+            CollectionUtils.ForEach<ToolStripItem>(_sortButton.DropDownItems,
                 delegate(ToolStripItem item)
                 {
-                    if (item == _sortAscendingToolStripMenuItem)
-                        this.SortAscendingToolStripCheck = _table.SortParams.Ascending;
-                    else if (item == _sortDescendingToolStripMenuItem)
-                        this.SortDescendingToolStripCheck = _table.SortParams.Ascending == false;
-                    else if (item == _sortToolStripSeparator)
+                    if (item == _sortAscendingButton)
+                        this.SortAscendingButtonCheck = _table.SortParams.Ascending;
+                    else if (item == _sortDescendingButton)
+                        this.SortDescendingButtonCheck = _table.SortParams.Ascending == false;
+                    else if (item == _sortSeparator)
                         return;
                     else
                     {
                         if (item.Name.Equals(_table.SortParams.Column.Name))
                         {
                             item.Image = SR.CheckSmall;
-                            _sortToolStrip.Text = String.Format("Sort by: {0}", item.Name);
+                            _sortButton.ToolTipText = String.Format("Sort by: {0}", item.Name);
                         }
                         else
                         {
@@ -785,24 +784,24 @@ namespace ClearCanvas.Desktop.View.WinForms
                 });
         }
 
-	    private bool SortAscendingToolStripCheck
+	    private bool SortAscendingButtonCheck
 	    {
-            get { return _sortAscendingToolStripMenuItem.Image != null; }
-            set { _sortAscendingToolStripMenuItem.Image = value ? SR.CheckSmall : null; }
+            get { return _sortAscendingButton.Image != null; }
+            set { _sortAscendingButton.Image = value ? SR.CheckSmall : null; }
 	    }
 
-        private bool SortDescendingToolStripCheck
+        private bool SortDescendingButtonCheck
         {
-            get { return _sortDescendingToolStripMenuItem.Image != null; }
-            set { _sortDescendingToolStripMenuItem.Image = value ? SR.CheckSmall : null; }
+            get { return _sortDescendingButton.Image != null; }
+            set { _sortDescendingButton.Image = value ? SR.CheckSmall : null; }
         }
 
         private void _table_SortEvent(object sender, EventArgs e)
         {
-            ResetSortState();
+            ResetSortButtonState();
         }
 
-        private void sortAscendingToolStripMenuItem_Click(object sender, EventArgs e)
+        private void sortAscendingButton_Click(object sender, EventArgs e)
         {
             if (_table == null || _table.SortParams == null)
                 return;
@@ -811,7 +810,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             _table.Sort(_table.SortParams);
         }
 
-        private void sortDescendingToolStripMenuItem_Click(object sender, EventArgs e)
+        private void sortDescendingButton_Click(object sender, EventArgs e)
         {
             if (_table == null || _table.SortParams == null)
                     return;
@@ -820,7 +819,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             _table.Sort(_table.SortParams);
         }
 
-        private void _sortToolStripMenuItem_Click(object sender, EventArgs e)
+        private void _sortButtonDropDownItem_Click(object sender, EventArgs e)
         {
             ToolStripItem item = sender as ToolStripItem;
 

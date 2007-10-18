@@ -61,20 +61,20 @@ namespace ClearCanvas.Desktop.View.WinForms
 		private void InitializeComponent()
 		{
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TableView));
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this._contextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this._bindingSource = new System.Windows.Forms.BindingSource(this.components);
             this._selectionChangeTimer = new System.Windows.Forms.Timer(this.components);
-            this._dataGridView = new ClearCanvas.Desktop.View.WinForms.DataGridViewWithDragSupport();
             this._toolStrip = new System.Windows.Forms.ToolStrip();
-            this._sortToolStrip = new System.Windows.Forms.ToolStripDropDownButton();
-            this._sortAscendingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this._sortDescendingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this._sortToolStripSeparator = new System.Windows.Forms.ToolStripSeparator();
+            this._sortButton = new System.Windows.Forms.ToolStripDropDownButton();
+            this._sortAscendingButton = new System.Windows.Forms.ToolStripMenuItem();
+            this._sortDescendingButton = new System.Windows.Forms.ToolStripMenuItem();
+            this._sortSeparator = new System.Windows.Forms.ToolStripSeparator();
+            this._dataGridView = new ClearCanvas.Desktop.View.WinForms.DataGridViewWithDragSupport();
             ((System.ComponentModel.ISupportInitialize)(this._bindingSource)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this._dataGridView)).BeginInit();
             this._toolStrip.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this._dataGridView)).BeginInit();
             this.SuspendLayout();
             // 
             // _contextMenu
@@ -91,6 +91,52 @@ namespace ClearCanvas.Desktop.View.WinForms
             // 
             this._selectionChangeTimer.Interval = 50;
             this._selectionChangeTimer.Tick += new System.EventHandler(this._selectionChangeTimer_Tick);
+            // 
+            // _toolStrip
+            // 
+            this._toolStrip.GripMargin = new System.Windows.Forms.Padding(0);
+            this._toolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+            this._toolStrip.ImageScalingSize = new System.Drawing.Size(24, 24);
+            this._toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this._sortButton});
+            this._toolStrip.Location = new System.Drawing.Point(0, 0);
+            this._toolStrip.Name = "_toolStrip";
+            this._toolStrip.Size = new System.Drawing.Size(540, 25);
+            this._toolStrip.TabIndex = 1;
+            this._toolStrip.Text = "toolStrip1";
+            // 
+            // _sortButton
+            // 
+            this._sortButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this._sortButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this._sortAscendingButton,
+            this._sortDescendingButton,
+            this._sortSeparator});
+            this._sortButton.Image = ((System.Drawing.Image)(resources.GetObject("_sortButton.Image")));
+            this._sortButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this._sortButton.Name = "_sortButton";
+            this._sortButton.Size = new System.Drawing.Size(55, 22);
+            this._sortButton.Text = "Sort By";
+            this._sortButton.Visible = false;
+            // 
+            // _sortAscendingButton
+            // 
+            this._sortAscendingButton.Name = "_sortAscendingButton";
+            this._sortAscendingButton.Size = new System.Drawing.Size(152, 22);
+            this._sortAscendingButton.Text = "Sort Ascending";
+            this._sortAscendingButton.Click += new System.EventHandler(this.sortAscendingButton_Click);
+            // 
+            // _sortDescendingButton
+            // 
+            this._sortDescendingButton.Name = "_sortDescendingButton";
+            this._sortDescendingButton.Size = new System.Drawing.Size(152, 22);
+            this._sortDescendingButton.Text = "Sort Descending";
+            this._sortDescendingButton.Click += new System.EventHandler(this.sortDescendingButton_Click);
+            // 
+            // _sortSeparator
+            // 
+            this._sortSeparator.Name = "_sortSeparator";
+            this._sortSeparator.Size = new System.Drawing.Size(149, 6);
             // 
             // _dataGridView
             // 
@@ -119,52 +165,6 @@ namespace ClearCanvas.Desktop.View.WinForms
             this._dataGridView.CurrentCellDirtyStateChanged += new System.EventHandler(this._dataGridView_CurrentCellDirtyStateChanged);
             this._dataGridView.SelectionChanged += new System.EventHandler(this._dataGridView_SelectionChanged);
             // 
-            // _toolStrip
-            // 
-            this._toolStrip.GripMargin = new System.Windows.Forms.Padding(0);
-            this._toolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
-            this._toolStrip.ImageScalingSize = new System.Drawing.Size(24, 24);
-            this._toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this._sortToolStrip});
-            this._toolStrip.Location = new System.Drawing.Point(0, 0);
-            this._toolStrip.Name = "_toolStrip";
-            this._toolStrip.Size = new System.Drawing.Size(540, 25);
-            this._toolStrip.TabIndex = 1;
-            this._toolStrip.Text = "toolStrip1";
-            // 
-            // _sortToolStrip
-            // 
-            this._sortToolStrip.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this._sortToolStrip.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this._sortAscendingToolStripMenuItem,
-            this._sortDescendingToolStripMenuItem,
-            this._sortToolStripSeparator});
-            this._sortToolStrip.Image = ((System.Drawing.Image)(resources.GetObject("_sortToolStrip.Image")));
-            this._sortToolStrip.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this._sortToolStrip.Name = "_sortToolStrip";
-            this._sortToolStrip.Size = new System.Drawing.Size(55, 22);
-            this._sortToolStrip.Text = "Sort By";
-            this._sortToolStrip.Visible = false;
-            // 
-            // _sortAscendingToolStripMenuItem
-            // 
-            this._sortAscendingToolStripMenuItem.Name = "_sortAscendingToolStripMenuItem";
-            this._sortAscendingToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this._sortAscendingToolStripMenuItem.Text = "Sort Ascending";
-            this._sortAscendingToolStripMenuItem.Click += new System.EventHandler(this.sortAscendingToolStripMenuItem_Click);
-            // 
-            // _sortDescendingToolStripMenuItem
-            // 
-            this._sortDescendingToolStripMenuItem.Name = "_sortDescendingToolStripMenuItem";
-            this._sortDescendingToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this._sortDescendingToolStripMenuItem.Text = "Sort Descending";
-            this._sortDescendingToolStripMenuItem.Click += new System.EventHandler(this.sortDescendingToolStripMenuItem_Click);
-            // 
-            // _sortToolStripSeparator
-            // 
-            this._sortToolStripSeparator.Name = "_sortToolStripSeparator";
-            this._sortToolStripSeparator.Size = new System.Drawing.Size(149, 6);
-            // 
             // TableView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -175,9 +175,9 @@ namespace ClearCanvas.Desktop.View.WinForms
             this.Size = new System.Drawing.Size(540, 228);
             this.Load += new System.EventHandler(this.TableView_Load);
             ((System.ComponentModel.ISupportInitialize)(this._bindingSource)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this._dataGridView)).EndInit();
             this._toolStrip.ResumeLayout(false);
             this._toolStrip.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this._dataGridView)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -191,9 +191,9 @@ namespace ClearCanvas.Desktop.View.WinForms
 		private ClearCanvas.Desktop.View.WinForms.DataGridViewWithDragSupport _dataGridView;
         private System.Windows.Forms.Timer _selectionChangeTimer;
         private System.Windows.Forms.ToolStrip _toolStrip;
-        private System.Windows.Forms.ToolStripDropDownButton _sortToolStrip;
-        private System.Windows.Forms.ToolStripMenuItem _sortAscendingToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem _sortDescendingToolStripMenuItem;
-        private System.Windows.Forms.ToolStripSeparator _sortToolStripSeparator;
+        private System.Windows.Forms.ToolStripDropDownButton _sortButton;
+        private System.Windows.Forms.ToolStripMenuItem _sortAscendingButton;
+        private System.Windows.Forms.ToolStripMenuItem _sortDescendingButton;
+        private System.Windows.Forms.ToolStripSeparator _sortSeparator;
 	}
 }
