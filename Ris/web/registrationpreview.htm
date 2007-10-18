@@ -8,12 +8,14 @@
 	    <script type="text/javascript" src="js/ui.js"></script>
 	    <script type="text/javascript" src="js/ris.js"></script>
 	    <script type="text/javascript" src="js/preview.js"></script>
+	    <script type="text/javascript" src="js/layout.js"></script>
 	    <script type="text/javascript" >
 		    var data = {};
 		    var errorProvider = new ErrorProvider();
 
 		    function onBodyLoad()
 		    {		        
+			scaleWidth();
 		        if(!Ris)
 		            return;
 		            
@@ -137,7 +139,7 @@
 		    }
 		</script>
 	</head>
-	<body onload="javascript: onBodyLoad()">
+	<body onload="javascript: onBodyLoad()" onresize="javascript: scaleWidth()">
 		<form id="myForm">
 		    <table width="100%" border="0">
 			    <tr>
@@ -180,9 +182,8 @@
 			    </tr>
 		    </table>
     		
-		    <p>&nbsp;</p>
 	        <table border="0" id="activeOrdersTable">
-	            <tr class="sectionheading"><td colspan="6">Active Requests for Imaging Consultation</td></tr>
+		    <tr><td class="sectionheading" colspan="6">Active Requests for Imaging Consultation</td></tr>
 	            <tr class="tableheading">
 		            <td>Requested Procedures</td>
 		            <td>Scheduled For</td>
@@ -193,7 +194,7 @@
 	            </tr>
 	        </table>
 	        <table border="0" id="pastOrdersTable">
-	            <tr class="sectionheading"><td colspan="6">Past Requests for Imaging Consultation</td></tr>
+	            <tr><td class="sectionheading" colspan="6">Past Requests for Imaging Consultation</td></tr>
 	            <tr class="tableheading">
 		            <td>Requested Procedures</td>
 		            <td>Scheduled For</td>
