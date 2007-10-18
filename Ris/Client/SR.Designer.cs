@@ -601,6 +601,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This order has invalid visit: {0}.
+        /// </summary>
+        internal static string MessageAlertInvalidVisit {
+            get {
+                return ResourceManager.GetString("MessageAlertInvalidVisit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0} speaks: {1}.
         /// </summary>
         internal static string MessageAlertLanguageNotEnglish {

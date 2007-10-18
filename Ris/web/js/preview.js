@@ -20,10 +20,8 @@ function getAlertIcon(alertItem)
 			return "Images/AlertMessenger.png";
 		case "Incomplete Demographic Data Alert":
 			return "Images/AlertIncompleteData.png";
-		case "Visit Date Alert":
+		case "Visit Alert":
 			return "Images/AlertClock.png";
-		case "Visit Status Alert":
-			return "Images/AlertGeneral.png";
 		default:
 			return "Images/AlertGeneral.png";
 	}
@@ -43,8 +41,8 @@ function getAlertTooltip(alertItem, patientName)
 			return patientName + " has unreconciled records";
 		case "Incomplete Demographic Data Alert":
 			return patientName + " has incomplete demographic data: " + reasons;
-		case "Visit Date Alert":
-		case "Visit Status Alert":
+		case "Visit Alert":
+			return "This order has invalid visit: " + reasons;
 		default:
 			return reasons;
 	}

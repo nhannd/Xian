@@ -36,23 +36,45 @@ using ClearCanvas.Enterprise.Core;
 namespace ClearCanvas.Healthcare.Alert
 {
     [ExtensionOf(typeof(OrderAlertExtensionPoint))]
-    public class InvalidVisitStatusAlert : OrderAlertBase
+    public class InvalidVisitAlert : OrderAlertBase
     {
-        private class InvalidVisitStatusAlertNotification : AlertNotification
+        private class InvalidVisitAlertNotification : AlertNotification
         {
-            public InvalidVisitStatusAlertNotification()
-                : base ("Order has invalid visit status", "High", "Visit Status Alert")
+            public InvalidVisitAlertNotification()
+                : base("Order has invalid visit", "High", "Visit Alert")
             {
             }
         }
 
         public override IAlertNotification Test(Order order, IPersistenceContext context)
         {
-            if (order.Visit == null || order.Visit.VisitStatus == VisitStatus.AA)
-                return null;
+            InvalidVisitAlertNotification alertNotification = new InvalidVisitAlertNotification();
 
-            InvalidVisitStatusAlertNotification alertNotification = new InvalidVisitStatusAlertNotification();
-            alertNotification.Reasons.Add("Visit Status is not active");
+            if (order.Visit == null)
+            {
+                // This should never happen in production because an order must have a visit
+                alertNotification.Reasons.Add("This order is missing a visit");
+            }
+            else
+            {
+                // Check Visit status
+                if (order.Visit.VisitStatus != VisitStatus.AA)
+                    alertNotification.Reasons.Add("Visit Status is not active");
+
+                // Check Visit date
+                if (order.Visit.AdmitDateTime == null)
+                {
+                    // This should never happen in production since visit admit date should always be created from HIS
+                    alertNotification.Reasons.Add("Visit date is missing");                    
+                }
+                else if (order.ScheduledStartTime != null)
+                {
+                    if (order.Visit.AdmitDateTime.Value.Date > order.ScheduledStartTime.Value.Date)
+                        alertNotification.Reasons.Add("Visit date is in the future");
+                    else if (order.Visit.AdmitDateTime.Value.Date < order.ScheduledStartTime.Value.Date)
+                        alertNotification.Reasons.Add("Visit date is in the past");
+                }
+            }
 
             return alertNotification;
         }

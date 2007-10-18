@@ -49,8 +49,6 @@
     <Compile Include="*.gen.cs" />
     <Compile Include="Alert\AlertHelper.cs" />
     <Compile Include="Alert\AlertNotification.cs" />
-    <Compile Include="Alert\InvalidVisitDateAlert.cs" />
-    <Compile Include="Alert\InvalidVisitStatusAlert.cs" />
     <Compile Include="Alert\IncompleteDemographicDataAlert.cs" />
     <Compile Include="Alert\IncompleteDemographicDataAlertSettings.cs" />
     <Compile Include="Alert\IncompleteDemographicDataAlertSettings.Designer.cs">
@@ -58,6 +56,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>IncompleteDemographicDataAlertSettings.settings</DependentUpon>
     </Compile>
+    <Compile Include="Alert\InvalidVisitAlert.cs" />
     <Compile Include="Alert\OrderAlertBase.cs">
       <SubType>Code</SubType>
     </Compile>

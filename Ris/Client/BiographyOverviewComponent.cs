@@ -223,11 +223,11 @@ namespace ClearCanvas.Ris.Client
                 case "Reconciliation Alert":
                     icon = "AlertMessenger.png";
                     break;
-                case "Schedule Alert":
-                    icon = "AlertClock.png";
-                    break;
-                case "Incomplete demographic data alert":
+                case "Incomplete Demographic Data Alert":
                     icon = "AlertIncompleteData.png";
+                    break;
+                case "Visit Alert":
+                    icon = "AlertClock.png";
                     break;
                 default:
                     icon = "AlertGeneral.png";
@@ -257,10 +257,14 @@ namespace ClearCanvas.Ris.Client
                 case "Reconciliation Alert":
                     alertTooltip = String.Format(SR.MessageAlertUnreconciledRecords, patientName);
                     break;
-                case "Incomplete demographic data alert":
+                case "Incomplete Demographic Data Alert":
                     alertTooltip = String.Format(SR.MessageAlertIncompleteDemographicData
                         , patientName,
                         StringUtilities.Combine(detail.Reasons, ", "));
+                    break;
+                case "Visit Alert":
+                    alertTooltip = String.Format(SR.MessageAlertInvalidVisit
+                        , StringUtilities.Combine(detail.Reasons, ", "));
                     break;
                 default:
                     alertTooltip = StringUtilities.Combine(detail.Reasons, ", ");

@@ -297,6 +297,9 @@
   <data name="MessageAlertIncompleteDemographicData" xml:space="preserve">
     <value>{0} has incomplete demographic data: {1}</value>
   </data>
+  <data name="MessageAlertInvalidVisit" xml:space="preserve">
+    <value>This order has invalid visit: {0}</value>
+  </data>
   <data name="MessageAlertLanguageNotEnglish" xml:space="preserve">
     <value>{0} speaks: {1}</value>
   </data>
