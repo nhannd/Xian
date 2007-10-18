@@ -67,9 +67,9 @@ namespace ClearCanvas.Enterprise.Hibernate
         /// </summary>
         /// <param name="query">the query to execute</param>
         /// <returns>the result set</returns>
-        public IList ExecuteHql(HqlQuery query)
+        public IList<T> ExecuteHql<T>(HqlQuery query)
         {
-            return ExecuteHql(query.BuildHibernateQueryObject(_ctx));
+            return ExecuteHql<T>(query.BuildHibernateQueryObject(_ctx));
         }
 
         /// <summary>
@@ -78,14 +78,20 @@ namespace ClearCanvas.Enterprise.Hibernate
         /// </summary>
         /// <param name="query"></param>
         /// <returns></returns>
-        public IList ExecuteHql(NHibernate.IQuery query)
+        public IList<T> ExecuteHql<T>(NHibernate.IQuery query)
         {
-            return query.List();
+            return query.List<T>();
         }
 
-        protected IList<T> MakeTypeSafe<T>(IList list)
+        public T ExecuteHqlUnique<T>(HqlQuery query)
         {
-            return new TypeSafeListWrapper<T>(list);
+            return ExecuteHqlUnique<T>(query.BuildHibernateQueryObject(_ctx));
         }
+
+        public T ExecuteHqlUnique<T>(NHibernate.IQuery query)
+        {
+            return query.UniqueResult<T>();
+        }
+
     }
 }

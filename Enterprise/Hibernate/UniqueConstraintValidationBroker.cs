@@ -73,7 +73,7 @@ namespace ClearCanvas.Enterprise.Hibernate
                         query.SetParameter(i++, paramVal);
                 }
 
-                int count = (int)query.UniqueResult();
+                long count = query.UniqueResult<long>();
 
                 // if count == 0, there are no other objects with this particular set of values
                 return count == 0;

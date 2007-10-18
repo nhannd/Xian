@@ -35,6 +35,7 @@ using System.Text;
 using Iesi.Collections;
 using ClearCanvas.Enterprise;
 using ClearCanvas.Common;
+using Iesi.Collections.Generic;
 
 namespace ClearCanvas.Workflow
 {
@@ -47,7 +48,7 @@ namespace ClearCanvas.Workflow
     /// </summary>
     public abstract class PerformedStep : PersistentFsm<PerformedStepStatus>
     {
-        private ISet _activities;
+        private ISet<Activity> _activities;
         private ActivityPerformer _performer;
         private DateTime _startTime;
         private DateTime? _endTime;
@@ -77,7 +78,7 @@ namespace ClearCanvas.Workflow
         protected PerformedStep(ActivityPerformer performer, IFsmTransitionLogic<PerformedStepStatus> transitionLogic)
             : base(PerformedStepStatus.IP, transitionLogic)
         {
-            _activities = new HybridSet();
+            _activities = new HashedSet<Activity>();
             _startTime = Platform.Time;
             _performer = performer;
         }
@@ -87,7 +88,7 @@ namespace ClearCanvas.Workflow
         /// Gets the set of associated activities.  Do not add or remove elements directly from this collection.
         /// Instead use the <see cref="Activity.AddPerformedStep"/> and <see cref="Activity.RemovePerformedStep"/> methods.
         /// </summary>
-        public virtual ISet Activities
+        public virtual ISet<Activity> Activities
         {
             get { return _activities; }
         }

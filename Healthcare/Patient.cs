@@ -83,7 +83,7 @@ namespace ClearCanvas.Healthcare {
         /// collection directly.
         /// </summary>
         /// <param name="profile"></param>
-        public void AddProfile(PatientProfile profile)
+        public virtual void AddProfile(PatientProfile profile)
         {
             if (profile.Patient != null)
             {

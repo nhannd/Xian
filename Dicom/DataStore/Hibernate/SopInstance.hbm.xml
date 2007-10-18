@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<hibernate-mapping xmlns="urn:nhibernate-mapping-2.0" assembly="ClearCanvas.Dicom.DataStore" namespace="ClearCanvas.Dicom.DataStore">
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="ClearCanvas.Dicom.DataStore" namespace="ClearCanvas.Dicom.DataStore">
   <class name="SopInstance" proxy="SopInstance" table="SopInstance_">
     <id name="Oid" column="Oid_" type="Guid">
       <generator class="guid.comb">
@@ -13,27 +13,27 @@
     <component name="LocationUri" class="DicomUri">
       <property name="InternalUri" column="LocationUri_" type="string" length="1024" />
     </component>
-    <many-to-one name="Series" class="ClearCanvas.Dicom.DataStore.Series, ClearCanvas.Dicom.DataStore" column="SeriesOid_" not-null="true" />
-    <joined-subclass name="ImageSopInstance" table="ImageSopInstance_" proxy="ImageSopInstance">
+    <many-to-one name="Series" class="ClearCanvas.Dicom.DataStore.Series, ClearCanvas.Dicom.DataStore" column="SeriesOid_" not-null="true" fetch="select"/>
+    <joined-subclass name="ImageSopInstance" table="ImageSopInstance_" lazy="false" proxy="ImageSopInstance">
       <key column="Oid_" />
-      <property name="SamplesPerPixel" column="SamplesPerPixel_" type="Int16" />
-      <property name="BitsStored" column="BitsStored_" type="Int16" />
+      <property name="SamplesPerPixel" column="SamplesPerPixel_" type="Int32" />
+      <property name="BitsStored" column="BitsStored_" type="Int32" />
       <property name="RescaleSlope" column="RescaleSlope_" type="Double" />
       <property name="Rows" column="Rows_" type="Int32" />
       <property name="Columns" column="Columns_" type="Int32" />
-      <property name="PlanarConfiguration" column="PlanarConfiguration_" type="Int16" />
+      <property name="PlanarConfiguration" column="PlanarConfiguration_" type="Int32" />
       <property name="RescaleIntercept" column="RescaleIntercept_" type="Double" />
-      <property name="PixelRepresentation" column="PixelRepresentation_" type="Int16" />
-      <property name="BitsAllocated" column="BitsAllocated_" type="Int16" />
-      <property name="HighBit" column="HighBit_" type="Int16" />
+      <property name="PixelRepresentation" column="PixelRepresentation_" type="Int32" />
+      <property name="BitsAllocated" column="BitsAllocated_" type="Int32" />
+      <property name="HighBit" column="HighBit_" type="Int32" />
       <property name="PhotometricInterpretation" column="PhotometricInterpretation_" />
       <component name="PixelSpacing" class="ClearCanvas.Dicom.PixelSpacing, ClearCanvas.Dicom">
-        <property name="Row" column="PixelSpacingRow_" />
-        <property name="Column" column="PixelSpacingColumn_" />
+        <property name="Row" column="PixelSpacingRow_" type="Double"/>
+        <property name="Column" column="PixelSpacingColumn_" type="Double"/>
       </component>
       <component name="PixelAspectRatio" class="ClearCanvas.Dicom.PixelAspectRatio, ClearCanvas.Dicom">
-        <property name="Row" column="PixelAspectRatioRow_" />
-        <property name="Column" column="PixelAspectRatioColumn_" />
+        <property name="Row" column="PixelAspectRatioRow_" type="Double"/>
+        <property name="Column" column="PixelAspectRatioColumn_" type="Double"/>
       </component>
       <list name="WindowValues" table="WindowValues_" lazy="false" access="nosetter.camelcase-underscore">
         <key column="Oid_" />

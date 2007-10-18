@@ -51,7 +51,7 @@ namespace ClearCanvas.Healthcare {
 		{
 		}
 
-        public bool IsAddendum
+        public virtual bool IsAddendum
         {
             get { return this.Index > 0; }
         }

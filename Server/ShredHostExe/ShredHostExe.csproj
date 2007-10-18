@@ -85,10 +85,10 @@ copy $(ProjectDir)..\..\Dicom\DataStore\AuxiliaryFiles\sqlce*.dll $(TargetDir)co
 copy $(ProjectDir)..\..\Dicom\DataStore\AuxiliaryFiles\System.Data.SqlServerCe.dll $(TargetDir)common
 
 rem copy referenced assemblies
-copy $(ProjectDir)..\..\ReferencedAssemblies\Iesi.Collections.dll $(TargetDir)common
-copy $(ProjectDir)..\..\ReferencedAssemblies\NHibernate.dll $(TargetDir)common
-copy $(ProjectDir)..\..\ReferencedAssemblies\NHibernate.Caches.SysCache.dll $(TargetDir)common
-copy $(ProjectDir)..\..\ReferencedAssemblies\Castle.DynamicProxy.dll $(TargetDir)common
+copy $(ProjectDir)..\..\ReferencedAssemblies\NHibernate1.2\Iesi.Collections.dll $(TargetDir)common
+copy $(ProjectDir)..\..\ReferencedAssemblies\NHibernate1.2\NHibernate.dll $(TargetDir)common
+copy $(ProjectDir)..\..\ReferencedAssemblies\NHibernate1.2\Castle.DynamicProxy.dll $(TargetDir)common
+rem copy $(ProjectDir)..\..\ReferencedAssemblies\NHibernate1.2\NHibernate.Caches.SysCache.dll $(TargetDir)common
 copy $(ProjectDir)..\..\ReferencedAssemblies\log4net.dll $(TargetDir)common
 copy $(ProjectDir)..\..\ReferencedAssemblies\nunit.framework.dll $(TargetDir)common
 

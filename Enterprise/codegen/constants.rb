@@ -26,9 +26,9 @@ CSHARP_PRIMITIVES = ['string', 'bool', 'int', 'DateTime', 'DateTime?']
 # C# datatype initializers
 CSHARP_INITIALIZERS = 
 {
-	'IDictionary' => 'new Hashtable()',
-	'ISet' => 'new HybridSet()',
-	'IList' => 'new ArrayList()',
+	'IDictionary' => 'new Dictionary',
+	'ISet' => 'new HashedSet',
+	'IList' => 'new List',
 	'DateTime' => 'Platform.Time'
 }
 

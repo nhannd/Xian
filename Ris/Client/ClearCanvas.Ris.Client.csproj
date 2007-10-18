@@ -212,7 +212,6 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>FormatSettings.Designer.cs</LastGenOutput>
     </None>
-    <None Include="RisClient.bat" />
     <None Include="WebResourcesSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>WebResourcesSettings.Designer.cs</LastGenOutput>

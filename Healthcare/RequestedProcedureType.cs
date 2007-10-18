@@ -35,6 +35,7 @@ using System.Text;
 
 using Iesi.Collections;
 using ClearCanvas.Enterprise.Core;
+using Iesi.Collections.Generic;
 
 
 namespace ClearCanvas.Healthcare {
@@ -46,7 +47,7 @@ namespace ClearCanvas.Healthcare {
 	public partial class RequestedProcedureType : Entity
 	{
         public RequestedProcedureType(string id, string name)
-            :this(id, name, new HybridSet())
+            :this(id, name, new HashedSet<ModalityProcedureStepType>())
         {
         }
 

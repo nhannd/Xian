@@ -30,21 +30,15 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common;
 using Iesi.Collections;
-using NHibernate;
-using NHibernate.Collection;
+using Iesi.Collections.Generic;
 
 namespace ClearCanvas.Dicom.DataStore
 {
 	public class Series : PersistentDicomObject, ISeries, IEquatable<Series>
     {
-		public delegate void InitializeAssociatedCollectionCallback(object domainObject, PersistentCollection associatedCollection);
-        public InitializeAssociatedCollectionCallback InitializeAssociatedCollection;
-
 		#region Private Fields
 
     	private Guid _seriesOid;
@@ -55,13 +49,15 @@ namespace ClearCanvas.Dicom.DataStore
     	private string _seriesDescription;
 		private string _specificCharacterSet;
 		private Study _parentStudy;
-		private readonly ISet _internalSopInstances;
-		
+		private ISet<SopInstance> _internalSopInstances;
+
+		private LoadAssociationDelegate _loadAssociationDelegate;
+
 		#endregion
 
-		public Series()
+		protected internal Series()
         {
-            _internalSopInstances = new HybridSet();
+			_internalSopInstances = new HashedSet<SopInstance>();
         }
 
 		#region NHibernate Persistent Properties
@@ -114,19 +110,25 @@ namespace ClearCanvas.Dicom.DataStore
 			set { SetClassMember(ref _parentStudy, value); }
 		}
 
-        protected virtual ISet InternalSopInstances
+        protected virtual ISet<SopInstance> InternalSopInstances
         {
             get { return _internalSopInstances; }
 		}
 
 		#endregion
 
-		public virtual ISet SopInstances
+		internal protected virtual LoadAssociationDelegate LoadAssociationDelegate
+		{
+			get { return _loadAssociationDelegate; }
+			set { _loadAssociationDelegate = value; }
+		}
+
+		public virtual ISet<SopInstance> SopInstances
         {
             get
             {
-                if (null != InitializeAssociatedCollection)
-                    InitializeAssociatedCollection(this, _internalSopInstances as PersistentCollection);
+				if (null != LoadAssociationDelegate)
+					LoadAssociationDelegate(this, _internalSopInstances);
 
                 return _internalSopInstances;
             }
@@ -184,7 +186,7 @@ namespace ClearCanvas.Dicom.DataStore
 
     	public IEnumerable<ISopInstance> GetSopInstances()
         {
-            foreach (ImageSopInstance sop in this.SopInstances)
+            foreach (SopInstance sop in this.SopInstances)
             {
             	yield return sop;
             }
@@ -194,7 +196,7 @@ namespace ClearCanvas.Dicom.DataStore
 
 		#region Helper Methods
 
-		public void Update(DicomAttributeCollection metaInfo, DicomAttributeCollection sopInstanceDataset)
+		protected internal virtual void Update(DicomAttributeCollection metaInfo, DicomAttributeCollection sopInstanceDataset)
 		{
 			DicomAttribute attribute = sopInstanceDataset[DicomTags.SeriesInstanceUid];
 			if (!String.IsNullOrEmpty(SeriesInstanceUid) && SeriesInstanceUid != attribute.ToString())

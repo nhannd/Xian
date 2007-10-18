@@ -36,6 +36,7 @@ using System.Text;
 using Iesi.Collections;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Common.Utilities;
+using Iesi.Collections.Generic;
 
 
 namespace ClearCanvas.Healthcare {
@@ -48,7 +49,7 @@ namespace ClearCanvas.Healthcare {
 	{
 
         public DiagnosticService(string id, string name)
-            :this(id, name, new HybridSet())
+            :this(id, name, new HashedSet<RequestedProcedureType>())
         {
         }
 	

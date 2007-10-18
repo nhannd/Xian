@@ -27,9 +27,6 @@
 		<SharedLibraryFiles Include="$(TrunkDirectory)\Common\bin\$(Configuration)\*.*" />
 		<SharedLibraryFiles Include="$(TrunkDirectory)\ReferencedAssemblies\nunit.framework.dll" /> 
 		<SharedLibraryFiles Include="$(TrunkDirectory)\ReferencedAssemblies\log4net.dll" />
-		<SharedLibraryFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Iesi.Collections.dll" />
-		<SharedLibraryFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Nhibernate.dll" />
-		<SharedLibraryFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Castle.DynamicProxy.dll" />
 	</ItemGroup>	
 
 	<Target Name="Copy files">

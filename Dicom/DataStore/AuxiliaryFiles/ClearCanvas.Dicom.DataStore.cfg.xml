@@ -1,9 +1,10 @@
 <?xml version='1.0' encoding='utf-8' ?>
-<hibernate-configuration xmlns="urn:nhibernate-configuration-2.0">
-	<session-factory>
+<hibernate-configuration xmlns="urn:nhibernate-configuration-2.2">
+    <session-factory>
 		<property name="hibernate.dialect">ClearCanvas.Dicom.DataStore.NHibernateDriver.MsSqlCeDialect, ClearCanvas.Dicom.DataStore.NHibernateDriver</property>
 		<property name="hibernate.connection.provider">NHibernate.Connection.DriverConnectionProvider</property>
 		<property name="hibernate.connection.driver_class">ClearCanvas.Dicom.DataStore.NHibernateDriver.SqlServerCeDriver, ClearCanvas.Dicom.DataStore.NHibernateDriver</property>
 		<property name="hibernate.connection.connection_string">Data Source=C:\dicom_datastore\viewer.sdf</property>
+		<property name="hibernate.connection.release_mode">on_close</property>
 	</session-factory>
 </hibernate-configuration>

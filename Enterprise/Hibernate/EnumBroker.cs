@@ -51,13 +51,13 @@ namespace ClearCanvas.Enterprise.Hibernate
 
         public IList<EnumValue> Load(Type enumValueClass)
         {
-            return MakeTypeSafe<EnumValue>(LoadTable(enumValueClass));
+            return LoadTable<EnumValue>(enumValueClass);
         }
 
         public IList<TEnumValue> Load<TEnumValue>()
             where TEnumValue : EnumValue
         {
-            return MakeTypeSafe<TEnumValue>(LoadTable(typeof(TEnumValue)));
+            return LoadTable<TEnumValue>(typeof(TEnumValue));
         }
 
         public EnumValue Find(Type enumValueClass, string code)
@@ -97,10 +97,10 @@ namespace ClearCanvas.Enterprise.Hibernate
 
         #endregion
 
-        private IList LoadTable(Type enumValueClass)
+        private IList<T> LoadTable<T>(Type enumValueClass)
         {
             HqlQuery q = new HqlQuery(string.Format("from {0}", enumValueClass.FullName));
-            return ExecuteHql(q);
+            return ExecuteHql<T>(q);
         }
 
         private void UpdateValue(EnumValue ev, string code, string value, string description)

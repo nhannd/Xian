@@ -156,8 +156,8 @@
   <data name="ExceptionFailedToStoreStudies" xml:space="preserve">
     <value>Failed to save study(s) to the data store.</value>
   </data>
-  <data name="ExceptionFormatFailedToInitializeAssociatedCollection" xml:space="preserve">
-    <value>Failed to initialize associated collection (Type {0}) for Type {1}.</value>
+  <data name="ExceptionFormatFailedToInitializeAssociation" xml:space="preserve">
+    <value>Failed to initialize association (Type {0}) for Type {1}.</value>
   </data>
   <data name="ExceptionFormatFailedToRetrieveSeries" xml:space="preserve">
     <value>An error occurred while attempting to retrieve the series '{0}' from the datastore.</value>

@@ -85,7 +85,7 @@ namespace ClearCanvas.Ris.Application.Services
             return telephoneNumber;
         }
 
-        public void AddTelephoneNumber(TelephoneDetail telephoneDetail, IList phoneNumbers)
+        public void AddTelephoneNumber(TelephoneDetail telephoneDetail, IList<TelephoneNumber> phoneNumbers)
         {
             //TODO: Check automatic expiration of Telephone functionality
             TelephoneNumber newNumber = CreateTelephoneNumber(telephoneDetail);

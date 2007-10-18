@@ -132,7 +132,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.DiagnosticServiceAdmin
                 data.Add(MakeCsv(fields));
             }
 
-            int totalLeafNodes = broker.Count(where);
+            int totalLeafNodes = (int) broker.Count(where);
             int totalBatches = (int)Math.Ceiling((double)totalLeafNodes / (double)_batchSize);
 
             // remaining batches

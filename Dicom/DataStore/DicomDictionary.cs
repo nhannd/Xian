@@ -32,10 +32,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Text;
-using NHibernate;
-using Iesi.Collections;
 using ClearCanvas.Common;
+using NHibernate;
 using NHibernate.Expression;
 
 namespace ClearCanvas.Dicom.DataStore
@@ -86,7 +84,6 @@ namespace ClearCanvas.Dicom.DataStore
 					{
 						containers = sessionManager.Session.CreateCriteria(typeof(DicomDictionaryContainer))
 							.Add(Expression.Eq("DictionaryName", _dictionaryName))
-							.SetFetchMode("DictionaryEntries_", FetchMode.Eager)
 							.List();
 					}
 					catch (Exception e)

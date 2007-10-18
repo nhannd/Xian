@@ -1,9 +1,9 @@
 // This file is machine generated - changes will be lost.
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Text;
 
-using Iesi.Collections;
+using Iesi.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Enterprise.Core.Modelling;

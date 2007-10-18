@@ -136,17 +136,17 @@ namespace ClearCanvas.Enterprise.Hibernate
         {
             foreach (PersistentClass classMapping in _cfg.ClassMappings)
             {
-                if (classMapping is RootClass && classMapping.Cache == null)
+                if (classMapping is RootClass && string.IsNullOrEmpty(classMapping.CacheConcurrencyStrategy))
                 {
-                    _cfg.SetCacheConcurrencyStrategy(classMapping.MappedClass, new NHibernate.Cache.ReadWriteCache());
+                    _cfg.SetCacheConcurrencyStrategy(classMapping.MappedClass, NHibernate.Cache.CacheFactory.ReadWrite);
                 }
             }
 
             foreach (NHibernate.Mapping.Collection collMapping in _cfg.CollectionMappings)
             {
-                if (collMapping.Cache == null)
+                if (string.IsNullOrEmpty(collMapping.CacheConcurrencyStrategy))
                 {
-                    _cfg.SetCacheConcurrencyStrategy(collMapping.Role, new NHibernate.Cache.ReadWriteCache());
+                    _cfg.SetCacheConcurrencyStrategy(collMapping.Role, NHibernate.Cache.CacheFactory.ReadWrite);
                 }
             }
         }

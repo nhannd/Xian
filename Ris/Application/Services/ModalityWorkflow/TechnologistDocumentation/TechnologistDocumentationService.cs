@@ -40,6 +40,7 @@ using ClearCanvas.Ris.Application.Common.ModalityWorkflow.TechnologistDocumentat
 using ClearCanvas.Workflow;
 using Iesi.Collections;
 using ClearCanvas.Ris.Application.Common;
+using Iesi.Collections.Generic;
 
 namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocumentation
 {
@@ -123,7 +124,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
 
             TechnologistDocumentationAssembler assembler = new TechnologistDocumentationAssembler();
 
-            ISet mppsSet = new HybridSet();
+            ISet<PerformedStep> mppsSet = new HashedSet<PerformedStep>();
             foreach (RequestedProcedure rp in order.RequestedProcedures)
             {
                 foreach (ModalityProcedureStep mps in rp.ModalityProcedureSteps)

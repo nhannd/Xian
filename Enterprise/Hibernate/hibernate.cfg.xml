@@ -1,9 +1,8 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
-<hibernate-configuration xmlns="urn:nhibernate-configuration-2.0">
+<hibernate-configuration xmlns="urn:nhibernate-configuration-2.2">
 
   <!-- an ISessionFactory instance -->
-  <session-factory>
-
+  <session-factory xmlns='urn:nhibernate-configuration-2.2'>
     <!-- common properties -->
     <property name="connection.provider">NHibernate.Connection.DriverConnectionProvider</property>
     <property name="hibernate.connection.isolation">ReadCommitted</property>
@@ -18,6 +17,7 @@
 	  <property name="connection.driver_class">NHibernate.Driver.SqlClientDriver</property>
 	  <property name="connection.connection_string">Data Source=172.16.10.167\SQLEXPRESS;Initial Catalog=Ris3;User Id=risuser;Password=rispass</property>
 	  <property name="hibernate.default_schema">Ris3.dbo</property>
+	<property name="hibernate.use_proxy_validator">false</property>
 
     <!--SQLite-->
     <!--<property name="hibernate.dialect">NHibernate.Dialect.SQLiteDialect</property>

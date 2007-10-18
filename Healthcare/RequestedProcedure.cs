@@ -33,11 +33,11 @@ using System;
 using System.Collections;
 using System.Text;
 
-using Iesi.Collections;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Workflow;
 using System.Collections.Generic;
+using Iesi.Collections.Generic;
 
 
 namespace ClearCanvas.Healthcare {
@@ -56,7 +56,7 @@ namespace ClearCanvas.Healthcare {
             _type = type;
             _index = index;
 
-            _procedureSteps = new HybridSet();
+            _procedureSteps = new HashedSet<ProcedureStep>();
         }
 	
         #region Public Properties
@@ -64,7 +64,7 @@ namespace ClearCanvas.Healthcare {
         /// <summary>
         /// Gets the check-in procedure step.
         /// </summary>
-        public CheckInProcedureStep CheckInProcedureStep
+        public virtual CheckInProcedureStep CheckInProcedureStep
         {
             get
             {
@@ -81,7 +81,7 @@ namespace ClearCanvas.Healthcare {
         /// <summary>
         /// Gets the modality procedure steps.
         /// </summary>
-        public List<ModalityProcedureStep> ModalityProcedureSteps
+        public virtual List<ModalityProcedureStep> ModalityProcedureSteps
         {
             get
             {

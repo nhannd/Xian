@@ -6,8 +6,8 @@
 	</PropertyGroup>
 	<ItemGroup>
 		<DependentAuxiliaryFiles Include="$(ProjectRoot)\ReferencedAssemblies\log4net.dll" />
-		<DependentAuxiliaryFiles Include="$(ProjectRoot)\ReferencedAssemblies\NHibernate.dll" />
-		<DependentAuxiliaryFiles Include="$(ProjectRoot)\ReferencedAssemblies\Iesi.Collections.dll" />
+		<DependentAuxiliaryFiles Include="$(ProjectRoot)\ReferencedAssemblies\NHibernate1.2\NHibernate.dll" />
+		<DependentAuxiliaryFiles Include="$(ProjectRoot)\ReferencedAssemblies\NHibernate1.2\Iesi.Collections.dll" />
 		<DependentAuxiliaryFiles Include="$(ProjectRoot)\Common\bin\$(Configuration)\ClearCanvas.Common.dll" />
 		<DependentAuxiliaryFiles Include="$(ProjectRoot)\Dicom\bin\$(Configuration)\ClearCanvas.Dicom.dll" />
 		<DependentAuxiliaryFiles Include="$(ProjectRoot)\Dicom\DataStore\bin\$(Configuration)\ClearCanvas.Dicom.DataStore.dll" />

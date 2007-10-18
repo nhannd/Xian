@@ -46,7 +46,7 @@ namespace ClearCanvas.Healthcare {
     /// <summary>
     /// ModalityProcedureStep entity
     /// </summary>
-	public partial class ModalityProcedureStep : ProcedureStep
+	public class ModalityProcedureStep : ProcedureStep
 	{
         private ModalityProcedureStepType _type;
         private Modality _modality;
@@ -54,8 +54,8 @@ namespace ClearCanvas.Healthcare {
         public ModalityProcedureStep(RequestedProcedure procedure, ModalityProcedureStepType type, Modality modality)
             :base(procedure)
         {
-            this.Type = type;
-            this.Modality = modality;
+            _type = type;
+            _modality = modality;
         }
 
         /// <summary>
@@ -82,7 +82,7 @@ namespace ClearCanvas.Healthcare {
             set { _modality = value; }
         }
 
-        public void TryCompleteFromPerformedProcedureSteps()
+        public virtual void TryCompleteFromPerformedProcedureSteps()
         {
             if (this.State == ActivityStatus.CM) return;
 

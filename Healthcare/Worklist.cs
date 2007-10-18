@@ -58,7 +58,7 @@ namespace ClearCanvas.Healthcare
             return 0;
         }
 
-        public string Name
+        public virtual string Name
         {
             get { return _name; }
             set { _name = value; }
@@ -66,24 +66,23 @@ namespace ClearCanvas.Healthcare
 
         public abstract string NameSuffix { get; }
 
-        public string DisplayName
+        public virtual string DisplayName
         {
-            //get { return _name + this.NameSuffix; }
             get { return _name; }
         }
 
-        public string Description
+        public virtual string Description
         {
             get { return _description; }
             set { _description = value; }
         }
 
-        public ISet RequestedProcedureTypeGroups
+        public virtual ISet RequestedProcedureTypeGroups
         {
             get { return _requestedProcedureTypeGroups; }
         }
 
-        public ISet Users
+        public virtual ISet Users
         {
             get { return _users; }
         }

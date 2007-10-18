@@ -29,13 +29,8 @@
 
 #endregion
 
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Common;
-using Iesi.Collections;
-
 
 namespace ClearCanvas.Dicom.DataStore
 {
@@ -43,13 +38,12 @@ namespace ClearCanvas.Dicom.DataStore
 	{
 		#region Private Fields
 
-    	private int _bitsAllocated;
-
+		private int _bitsAllocated;
     	private int _bitsStored;
     	private int _highBit;
-    	private int _pixelRepresentation;
-    	private int _samplesPerPixel;
-    	private int _planarConfiguration;
+		private int _pixelRepresentation;
+		private int _samplesPerPixel;
+		private int _planarConfiguration;
     	private PhotometricInterpretation _photometricInterpretation;
     	private int _rows;
     	private int _columns;
@@ -61,7 +55,7 @@ namespace ClearCanvas.Dicom.DataStore
 
 		#endregion
 
-		public ImageSopInstance()
+		protected internal ImageSopInstance()
         {
             _windowValues = new ArrayList();
 		}
@@ -74,31 +68,31 @@ namespace ClearCanvas.Dicom.DataStore
 			set { SetValueTypeMember(ref _bitsAllocated, value); }
     	}
 
-    	public virtual int BitsStored
+		public virtual int BitsStored
     	{
     		get { return _bitsStored; }
 			set { SetValueTypeMember(ref _bitsStored, value); }
     	}
 
-    	public virtual int HighBit
+		public virtual int HighBit
     	{
     		get { return _highBit; }
 			set { SetValueTypeMember(ref _highBit, value); }
     	}
 
-    	public virtual int PixelRepresentation
+		public virtual int PixelRepresentation
     	{
     		get { return _pixelRepresentation; }
 			set { SetValueTypeMember(ref _pixelRepresentation, value); }
     	}
 
-    	public virtual int SamplesPerPixel
+		public virtual int SamplesPerPixel
         {
             get { return _samplesPerPixel; }
 			set { SetValueTypeMember(ref _samplesPerPixel, value); }
         }
 
-    	public virtual int PlanarConfiguration
+		public virtual int PlanarConfiguration
     	{
     		get { return _planarConfiguration; }
 			set { SetValueTypeMember(ref _planarConfiguration, value); }
@@ -165,7 +159,7 @@ namespace ClearCanvas.Dicom.DataStore
 
 		#region Helper Methods
 
-		public override void Update(DicomAttributeCollection metaInfo, DicomAttributeCollection sopInstanceDataset)
+		protected internal override void Update(DicomAttributeCollection metaInfo, DicomAttributeCollection sopInstanceDataset)
 		{
 			base.Update(metaInfo, sopInstanceDataset);
 

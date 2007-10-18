@@ -39,6 +39,7 @@ using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow.TechnologistDocumentation;
 using ClearCanvas.Workflow;
 using Iesi.Collections;
+using Iesi.Collections.Generic;
 
 namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocumentation
 {
@@ -57,7 +58,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
             return detail;
         }
 
-        private PerformedProcedureStepDetail CreatePerformedProcedureStepDetail(ISet steps)
+        private PerformedProcedureStepDetail CreatePerformedProcedureStepDetail(ISet<PerformedStep> steps)
         {
             if (steps == null || steps.IsEmpty) return null;
 

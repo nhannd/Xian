@@ -9,8 +9,18 @@ class CollectionFieldDef < FieldDef
     super(model, fieldNode)
     @dataType = DATATYPE_MAPPINGS[fieldNode.name]
     @isLazy = (fieldNode.attributes['lazy'] == 'true')
-    @elementNode = fieldNode.elements['composite-element'] || fieldNode.elements['one-to-many'] || fieldNode.elements['many-to-many']
-    @elementType = TypeNameUtils.getQualifiedName(@elementNode.attributes['class'], defaultNamespace) if @elementNode
+    
+    # get the element node (must exist)
+    @elementNode = fieldNode.elements['element'] || fieldNode.elements['composite-element'] || fieldNode.elements['one-to-many'] || fieldNode.elements['many-to-many']
+    @elementType = 
+	case 
+	    when @elementNode.attributes['class'] : TypeNameUtils.getQualifiedName(@elementNode.attributes['class'], defaultNamespace)
+	    when @elementNode.attributes['type'] : TypeNameUtils.getShortName(DATATYPE_MAPPINGS[@elementNode.attributes['type']] || @elementNode.attributes['type'])
+	end
+    
+    # check for an index node (may or may not exist depending on collection type)
+    @indexNode = fieldNode.elements['index']
+    @indexType = TypeNameUtils.getShortName(DATATYPE_MAPPINGS[@indexNode.attributes['type']] || @indexNode.attributes['type']) if (@indexNode && @indexNode.attributes['type'])
   end
   
   def kind
@@ -18,19 +28,16 @@ class CollectionFieldDef < FieldDef
   end
 
   def dataType
-    @dataType
+    @dataType == 'IDictionary' ? "#{@dataType}<#{@indexType}, #{@elementType}>" : "#{@dataType}<#{@elementType}>"
   end
   
   def elementType
     @elementType
   end
   
-  def supportDataType
-    "List<"+collectionElementClassDef.supportClassName+">"
-  end
-  
   def initialValue
-    CSHARP_INITIALIZERS[@dataType]
+    baseInitialValue = CSHARP_INITIALIZERS[@dataType]
+    @dataType == 'IDictionary' ? "#{baseInitialValue}<#{@indexType}, #{@elementType}>()" : "#{baseInitialValue}<#{@elementType}>()"
   end
   
   def supportInitialValue

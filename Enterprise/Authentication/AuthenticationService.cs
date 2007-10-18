@@ -54,7 +54,7 @@ namespace ClearCanvas.Enterprise.Authentication
             UserSearchCriteria where = new UserSearchCriteria();
             where.UserName.EqualTo(userName);
 
-            int count = PersistenceContext.GetBroker<IUserBroker>().Count(where);
+            long count = PersistenceContext.GetBroker<IUserBroker>().Count(where);
             return count == 1;
         }
 

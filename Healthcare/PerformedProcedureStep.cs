@@ -34,6 +34,7 @@ using System.Collections;
 using System.Text;
 using ClearCanvas.Workflow;
 using ClearCanvas.Common;
+using System.Collections.Generic;
 
 namespace ClearCanvas.Healthcare
 {
@@ -43,7 +44,7 @@ namespace ClearCanvas.Healthcare
     public abstract class PerformedProcedureStep : PerformedStep
     {
         private string _documentation;
-        private IDictionary _extendedProperties = new Hashtable();
+        private IDictionary<string, string> _extendedProperties = new Dictionary<string, string>();
 
 
         public PerformedProcedureStep(Staff performingStaff)
@@ -64,13 +65,13 @@ namespace ClearCanvas.Healthcare
         /// <summary>
         /// Placeholder for Documentation pending introduction of "tagging"
         /// </summary>
-        public string Documentation
+        public virtual string Documentation
         {
             get { return _documentation; }
             set { _documentation = value; }
         }
 
-        public IDictionary ExtendedProperties
+        public virtual IDictionary<string, string> ExtendedProperties
         {
             get { return _extendedProperties; }
             private set { _extendedProperties = value; }

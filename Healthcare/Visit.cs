@@ -55,7 +55,7 @@ namespace ClearCanvas.Healthcare {
         {
         }
 
-        public void CopyFrom(Visit v)
+        public virtual void CopyFrom(Visit v)
         {
             this.VisitNumber.Id = v.VisitNumber.Id;
             this.VisitNumber.AssigningAuthority = v.VisitNumber.AssigningAuthority;
@@ -91,12 +91,12 @@ namespace ClearCanvas.Healthcare {
             }
         }
 
-        public void Cancel()
+        public virtual void Cancel()
         {
             this.VisitStatus = VisitStatus.CX;
         }
 
-        public void CancelPreAdmit()
+        public virtual void CancelPreAdmit()
         {
             this.VisitStatus = VisitStatus.PC;
         }
@@ -104,13 +104,13 @@ namespace ClearCanvas.Healthcare {
         /// <summary>
         /// Infers VisitStatus from AdmitDateTime and DischargeDateTime.  
         /// </summary>
-        public void InferVisitStatus()
+        public virtual void InferVisitStatus()
         {
             if (this.AdmitDateTime.HasValue) this.VisitStatus = VisitStatus.AA;
             if (this.DischargeDateTime.HasValue) this.VisitStatus = VisitStatus.DC;
         }
 
-        public void Discharge(DateTime dischargeDateTime, string dischargeDispostion)
+        public virtual void Discharge(DateTime dischargeDateTime, string dischargeDispostion)
         {
             if (this.VisitStatus != VisitStatus.DC && this.VisitStatus != VisitStatus.CX)
             {
@@ -120,7 +120,7 @@ namespace ClearCanvas.Healthcare {
             }
         }
 
-        public void PopCurrentLocation()
+        public virtual void PopCurrentLocation()
         {
             DateTime previousCurrentDate = DateTime.MinValue;
             VisitLocation current = null;

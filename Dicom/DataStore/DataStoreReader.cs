@@ -32,12 +32,12 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 using System.Reflection;
+using System.Text;
+using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using NHibernate;
 using NHibernate.Expression;
-using ClearCanvas.Common.Utilities;
-using ClearCanvas.Common;
 
 namespace ClearCanvas.Dicom.DataStore
 {
@@ -53,9 +53,9 @@ namespace ClearCanvas.Dicom.DataStore
 			private static bool StudyExists(ISession session, Uid referenceUid)
 			{
 				string queryString = "select count(study) from Study study where study.StudyInstanceUid = ?";
-				IEnumerable results = session.Enumerable(queryString, referenceUid.ToString(), NHibernateUtil.String);
+				IEnumerable results = session.CreateQuery(queryString).SetString(0, referenceUid.ToString()).Enumerable();
 
-				foreach (int number in results)
+				foreach (long number in results)
 					return number > 0;
 
 				return false;
@@ -64,9 +64,9 @@ namespace ClearCanvas.Dicom.DataStore
 			private static bool SeriesExists(ISession session, Uid referenceUid)
 			{
 				string queryString = "select count(series) from Series series where series.SeriesInstanceUid = ?";
-				IEnumerable results = session.Enumerable(queryString, referenceUid.ToString(), NHibernateUtil.String);
+				IEnumerable results = session.CreateQuery(queryString).SetString(0, referenceUid.ToString()).Enumerable();
 
-				foreach (int number in results)
+				foreach (long number in results)
 					return number > 0;
 
 				return false;
@@ -75,9 +75,9 @@ namespace ClearCanvas.Dicom.DataStore
 			private static bool SopInstanceExists(ISession session, Uid referenceUid)
 			{
 				string queryString = "select count(sop) from SopInstance sop where sop.SopInstanceUid = ?";
-				IEnumerable results = session.Enumerable(queryString, referenceUid.ToString(), NHibernateUtil.String);
+				IEnumerable results = session.CreateQuery(queryString).SetString(0, referenceUid.ToString()).Enumerable();
 
-				foreach (int number in results)
+				foreach (long number in results)
 					return number > 0;
 
 				return false;
@@ -144,16 +144,15 @@ namespace ClearCanvas.Dicom.DataStore
 
 						IList listOfStudies = Session.CreateCriteria(typeof(Study))
 							.Add(Expression.Eq("StudyInstanceUid", referenceUid.ToString()))
-							.SetFetchMode("Series", FetchMode.Eager)
 							.List();
 
 						if (null != listOfStudies && listOfStudies.Count > 0)
 						{
 							Study study = (Study)listOfStudies[0];
-							study.InitializeAssociatedCollection += InitializeAssociatedObject;
+							study.LoadAssociationDelegate = DataAccessLayer.InitializeAssociatedObject;
 
 							foreach (Series series in study.Series)
-								series.InitializeAssociatedCollection += InitializeAssociatedObject;
+								series.LoadAssociationDelegate = DataAccessLayer.InitializeAssociatedObject;
 
 							return study;
 						}
@@ -179,13 +178,12 @@ namespace ClearCanvas.Dicom.DataStore
 
 						IList listOfSeries = Session.CreateCriteria(typeof(Series))
 							.Add(Expression.Eq("SeriesInstanceUid", referenceUid.ToString()))
-							.SetFetchMode("SopInstances", FetchMode.Lazy)
 							.List();
 
 						if (null != listOfSeries && listOfSeries.Count > 0)
 						{
 							Series series = (Series)listOfSeries[0];
-							series.InitializeAssociatedCollection += InitializeAssociatedObject;
+							series.LoadAssociationDelegate = DataAccessLayer.InitializeAssociatedObject;
 							return series;
 						}
 
@@ -210,7 +208,6 @@ namespace ClearCanvas.Dicom.DataStore
 
 						IList listOfSops = Session.CreateCriteria(typeof(SopInstance))
 							.Add(Expression.Eq("SopInstanceUid", referenceUid.ToString()))
-							.SetFetchMode("WindowValues_", FetchMode.Eager)
 							.List();
 
 						if (null != listOfSops && listOfSops.Count > 0)
@@ -254,9 +251,9 @@ namespace ClearCanvas.Dicom.DataStore
 				{
 					foreach (Study study in studiesFound)
 					{
-						study.InitializeAssociatedCollection += InitializeAssociatedObject;
+						study.LoadAssociationDelegate = DataAccessLayer.InitializeAssociatedObject;
 						foreach (Series series in study.Series)
-							series.InitializeAssociatedCollection += InitializeAssociatedObject;
+							series.LoadAssociationDelegate = DataAccessLayer.InitializeAssociatedObject;
 
 						yield return study;
 					}

@@ -86,7 +86,7 @@ namespace ClearCanvas.Ris.Application.Services
             return newAddress;
         }
 
-        public void AddAddress(AddressDetail addressDetail, IList addresses)
+        public void AddAddress(AddressDetail addressDetail, IList<Address> addresses)
         {
             //TODO: Check automatic expiration of Address functionality
             Address newAddress = CreateAddress(addressDetail);

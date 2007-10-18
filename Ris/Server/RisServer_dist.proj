@@ -35,16 +35,17 @@
 		
 		<EnterprisePluginFiles Include="$(EnterpriseDirectory)\Common\bin\$(Configuration)\ClearCanvas.Enterprise.Common.dll" />
 		<EnterprisePluginFiles Include="$(EnterpriseDirectory)\Core\bin\$(Configuration)\ClearCanvas.Enterprise.Core.dll" />
-		<EnterprisePluginFiles Include="$(ReferencedAssembliesDirectory)\Iesi.Collections.dll" />
-		<EnterprisePluginFiles Include="$(ReferencedAssembliesDirectory)\Spring.Core.dll" />
-		<EnterprisePluginFiles Include="$(ReferencedAssembliesDirectory)\Spring.Aop.dll" />
-		
-		<EnterprisePluginFiles Include="$(EnterpriseDirectory)\Hibernate\bin\$(Configuration)\ClearCanvas.Enterprise.Hibernate.dll" />
+		<EnterprisePluginFiles Include="$(ReferencedAssembliesDirectory)\NHibernate1.2\Iesi.Collections.dll" />
+		<EnterprisePluginFiles Include="$(ReferencedAssembliesDirectory)\Spring1.1\Spring.Core.dll" />
+		<EnterprisePluginFiles Include="$(ReferencedAssembliesDirectory)\Spring1.1\Spring.Aop.dll" />
+    <EnterprisePluginFiles Include="$(ReferencedAssembliesDirectory)\Spring1.1\Common.Logging.dll" />
+
+    <EnterprisePluginFiles Include="$(EnterpriseDirectory)\Hibernate\bin\$(Configuration)\ClearCanvas.Enterprise.Hibernate.dll" />
 		<EnterprisePluginFiles Include="$(EnterpriseDirectory)\Hibernate\DdlWriter\bin\$(Configuration)\ClearCanvas.Enterprise.Hibernate.DdlWriter.dll" />
-		<EnterprisePluginFiles Include="$(ReferencedAssembliesDirectory)\Castle.DynamicProxy.dll" />
-		<EnterprisePluginFiles Include="$(ReferencedAssembliesDirectory)\HashCodeProvider.dll" />
-		<EnterprisePluginFiles Include="$(ReferencedAssembliesDirectory)\NHibernate.dll" />
-		<EnterprisePluginFiles Include="$(ReferencedAssembliesDirectory)\NHibernate.Caches.SysCache.dll" />
+    <EnterprisePluginFiles Include="$(ReferencedAssembliesDirectory)\NHibernate1.2\Castle.DynamicProxy.dll" />
+		<!--<EnterprisePluginFiles Include="$(ReferencedAssembliesDirectory)\HashCodeProvider.dll" />-->
+		<EnterprisePluginFiles Include="$(ReferencedAssembliesDirectory)\NHibernate1.2\NHibernate.dll" />
+		<EnterprisePluginFiles Include="$(ReferencedAssembliesDirectory)\NHibernate1.2\NHibernate.Caches.SysCache.dll" />
 		
 		<EnterprisePluginFiles Include="$(EnterpriseDirectory)\Configuration\bin\$(Configuration)\ClearCanvas.Enterprise.Configuration.dll" />
 		<EnterprisePluginFiles Include="$(EnterpriseDirectory)\Configuration\Hibernate\bin\$(Configuration)\ClearCanvas.Enterprise.Configuration.Hibernate.dll" />

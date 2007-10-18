@@ -48,12 +48,10 @@ namespace ClearCanvas.Enterprise.Authentication.Hibernate.Brokers
             HqlQuery query = new HqlQuery("select distinct t.Name from User u join u.AuthorityGroups g join g.AuthorityTokens t");
             query.Conditions.AddRange(HqlCondition.FromSearchCriteria("u", where));
 
-            return CollectionUtils.Map<object, string, List<string>>(
-                this.ExecuteHql(query),
-                delegate(object tokenName)
-                {
-                    return (string)tokenName;
-                }).ToArray();
+            IList<string> tokens = this.ExecuteHql<string>(query);
+            string[] result = new string[tokens.Count];
+            tokens.CopyTo(result, 0);
+            return result;
         }
 
         public bool AssertUserHasToken(string userName, string token)
@@ -70,7 +68,7 @@ namespace ClearCanvas.Enterprise.Authentication.Hibernate.Brokers
             query.Conditions.AddRange(HqlCondition.FromSearchCriteria("t", whereToken));
 
             // expect exactly one integer result
-            return ((int)ExecuteHql(query)[0]) > 0;
+            return ExecuteHqlUnique<long>(query) > 0;
         }
 
     }

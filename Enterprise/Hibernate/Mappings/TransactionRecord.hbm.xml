@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<hibernate-mapping xmlns="urn:nhibernate-mapping-2.0" assembly="ClearCanvas.Enterprise.Core" namespace="ClearCanvas.Enterprise.Core">
-  <class name="TransactionRecord" proxy="TransactionRecord" table="TransactionRecord_">
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="ClearCanvas.Enterprise.Core" namespace="ClearCanvas.Enterprise.Core">
+  <class name="TransactionRecord" lazy="false" table="TransactionRecord_">
     <id name="OID" column="OID_" type="Guid">
       <generator class="guid.comb"/>
     </id>

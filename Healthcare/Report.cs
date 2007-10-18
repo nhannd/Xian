@@ -74,7 +74,7 @@ namespace ClearCanvas.Healthcare {
         /// collection directly.
         /// </summary>
         /// <param name="part"></param>
-        public void AddPart(ReportPart part)
+        public virtual void AddPart(ReportPart part)
         {
             if (part.Report != null)
             {
@@ -86,7 +86,7 @@ namespace ClearCanvas.Healthcare {
             this.Parts.Add(part);
         }
 
-        public ReportPart AddPart(string reportPartContent)
+        public virtual ReportPart AddPart(string reportPartContent)
         {
             ReportPart part = new ReportPart(this.Parts.Count, reportPartContent, ReportPartStatus.P, this);
             this.AddPart(part);

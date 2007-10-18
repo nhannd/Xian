@@ -83,7 +83,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             FacilityAssembler facilityAssembler = new FacilityAssembler();
             ExternalPractitionerAssembler pracAssembler = new ExternalPractitionerAssembler();
 
-            IList topLevelDiagnosticServiceTreeNodes = null;
+            IList<DiagnosticServiceTreeNode> topLevelDiagnosticServiceTreeNodes = null;
             try 
 	        {	        
 		        DiagnosticServiceTreeNodeSearchCriteria rootNodeDiagnosticServiceTreeCriteria = new DiagnosticServiceTreeNodeSearchCriteria();
@@ -94,7 +94,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 	        catch (Exception)
 	        {
                 // no diagnostic service tree - just create an empty list
-                topLevelDiagnosticServiceTreeNodes = new ArrayList();
+                topLevelDiagnosticServiceTreeNodes = new List<DiagnosticServiceTreeNode>();
 	        }
 
             return new GetOrderEntryFormDataResponse(

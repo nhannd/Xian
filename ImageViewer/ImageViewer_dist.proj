@@ -21,7 +21,11 @@
 		<SqlCEFiles Include="$(SolutionDir)\..\Dicom\DataStore\AuxiliaryFiles\sqlcese30.dll" />
 		<SqlCEFiles Include="$(SolutionDir)\..\Dicom\DataStore\AuxiliaryFiles\System.Data.SqlServerCe.dll" />
 	</ItemGroup>
-
+  <ItemGroup>
+    <HibernateFiles Include="$(SolutionDir)\..\ReferencedAssemblies\NHibernate1.2\Iesi.Collections.dll" />
+    <HibernateFiles Include="$(SolutionDir)\..\ReferencedAssemblies\NHibernate1.2\Nhibernate.dll" />
+    <HibernateFiles Include="$(SolutionDir)\..\ReferencedAssemblies\NHibernate1.2\Castle.DynamicProxy.dll" />
+  </ItemGroup>
 	<ItemGroup>
 		<HibernateConfigurationFiles Include="$(SolutionDir)\..\Dicom\DataStore\AuxiliaryFiles\ClearCanvas.Dicom.DataStore.cfg.xml" />
 	</ItemGroup>
@@ -73,13 +77,16 @@
 
 	<Target Name="Copy Rest of Files">
 
-		<!-- Copy Sql CE files -->
-		<Copy SourceFiles="@(SqlCEFiles)" DestinationFolder="$(CommonDirectory)" />
+    <!-- Copy Hibernate files -->
+    <Copy SourceFiles="@(HibernateFiles)" DestinationFolder="$(CommonDirectory)" />
 
-		<!-- Copy Hibernate configuration file -->
-		<Copy SourceFiles="@(HibernateConfigurationFiles)" DestinationFolder="$(DistributionDirectory)" />
+    <!-- Copy Hibernate configuration file -->
+    <Copy SourceFiles="@(HibernateConfigurationFiles)" DestinationFolder="$(DistributionDirectory)" />
 
-		<!-- Copy Dicom assemblies	 -->
+    <!-- Copy Sql CE files -->
+    <Copy SourceFiles="@(SqlCEFiles)" DestinationFolder="$(CommonDirectory)" />
+
+    <!-- Copy Dicom assemblies	 -->
 		<Copy SourceFiles="@(DicomAssemblyFiles)" DestinationFolder="$(CommonDirectory)" />
 
 		<!-- Copy ImageViewer plugins -->

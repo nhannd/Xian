@@ -33,6 +33,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using NHibernate;
+using NHibernate.Engine;
+using NHibernate.UserTypes;
 
 namespace ClearCanvas.Healthcare.Hibernate
 {
@@ -46,6 +48,11 @@ namespace ClearCanvas.Healthcare.Hibernate
         public object Assemble(object cached, NHibernate.Engine.ISessionImplementor session, object owner)
         {
             return DeepCopy(cached);
+        }
+
+        public object Replace(object original, object target, ISessionImplementor session, object owner)
+        {
+            return DeepCopy(original);
         }
 
         public object Disassemble(object value, NHibernate.Engine.ISessionImplementor session)
@@ -70,6 +77,12 @@ namespace ClearCanvas.Healthcare.Hibernate
                 return false;
 
             return x.Equals(y);
+        }
+
+        public int GetHashCode(object x)
+        {
+            DateTimeRange value = (DateTimeRange) x;
+            return value.GetHashCode();
         }
 
         public string[] PropertyNames

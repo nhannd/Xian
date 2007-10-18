@@ -32,10 +32,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Dicom\OffisWrapper\csharp\$(Configuration)\ClearCanvas.Dicom.OffisWrapper.dll</HintPath>
     </Reference>
-    <Reference Include="NHibernate, Version=1.0.3.0, Culture=neutral, PublicKeyToken=154fdcb44c4484fc">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\ReferencedAssemblies\NHibernate.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Data" />
@@ -98,10 +94,6 @@
     <ProjectReference Include="..\..\Dicom\DataStore\ClearCanvas.Dicom.DataStore.csproj">
       <Project>{3930FE1D-74C7-49E0-8E0D-05C0FEE194A8}</Project>
       <Name>ClearCanvas.Dicom.DataStore</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Dicom\DataStore\NHibernateDriver\ClearCanvas.Dicom.DataStore.NHibernateDriver.csproj">
-      <Project>{AFD2273D-4124-466B-A9BA-0623347435EA}</Project>
-      <Name>ClearCanvas.Dicom.DataStore.NHibernateDriver</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Server\ServiceModelEx\ServiceModelEx.csproj">
       <Project>{0858C710-AF53-4049-B98E-CFE3638D1228}</Project>

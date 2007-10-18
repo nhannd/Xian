@@ -35,6 +35,7 @@ using System.Text;
 using Iesi.Collections;
 using ClearCanvas.Enterprise;
 using ClearCanvas.Common;
+using Iesi.Collections.Generic;
 
 namespace ClearCanvas.Workflow
 {
@@ -44,7 +45,7 @@ namespace ClearCanvas.Workflow
     /// </summary>
     public abstract class Activity : PersistentFsm<ActivityStatus>
     {
-        private ISet _performedSteps;
+        private ISet<PerformedStep> _performedSteps;
         private ActivityScheduling _scheduling;
         private ActivityPerformer _performer;
         private DateTime? _startTime;
@@ -61,11 +62,11 @@ namespace ClearCanvas.Workflow
         /// <summary>
         /// Protected constructor that allows for customized FSM logic.  Typically there should be no need to customize the FSM logic.
         /// </summary>
-        /// <param name="transitionLaw"></param>
+        /// <param name="transitionLogic"></param>
         protected Activity(IFsmTransitionLogic<ActivityStatus> transitionLogic)
             : base(ActivityStatus.SC, transitionLogic)
         {
-            _performedSteps = new HybridSet();
+            _performedSteps = new HashedSet<PerformedStep>();
             _scheduling = new ActivityScheduling();
         }
 
@@ -73,7 +74,7 @@ namespace ClearCanvas.Workflow
         /// Gets the set of associated performed steps.  Do not add or remove elements directly from this collection.
         /// Instead use the <see cref="AddPerformedStep"/> and <see cref="RemovePerformedStep"/> methods.
         /// </summary>
-        public virtual ISet PerformedSteps
+        public virtual ISet<PerformedStep> PerformedSteps
         {
             get { return _performedSteps; }
         }

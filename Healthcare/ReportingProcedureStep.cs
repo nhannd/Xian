@@ -56,7 +56,7 @@ namespace ClearCanvas.Healthcare
         {
         }
 
-        public ReportPart ReportPart
+        public virtual ReportPart ReportPart
         {
             get { return _reportPart; }
             set { _reportPart = value; }

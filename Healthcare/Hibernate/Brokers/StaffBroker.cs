@@ -45,10 +45,10 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             HqlQuery query = new HqlQuery("from Staff s");
             query.Conditions.Add(new HqlCondition("s.User.UserName = ?", new object[] { userName }));
 
-            IList results = this.ExecuteHql(query);
+            IList<Staff> results = this.ExecuteHql<Staff>(query);
             if (results.Count > 0)
             {
-                return (Staff)results[0];
+                return results[0];
             }
             else
             {

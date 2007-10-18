@@ -31,10 +31,7 @@
 
 using System;
 using System.Collections.Generic;
-using NHibernate;
-using ClearCanvas.Dicom;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Dicom.DataStore
 {

@@ -86,7 +86,7 @@ namespace ClearCanvas.Enterprise.Hibernate
             if (or.Conditions.Count > 0)
                 query.Conditions.Add(or);
 
-            return MakeTypeSafe<TEntity>(ExecuteHql(query));
+            return ExecuteHql<TEntity>(query);
         }
 
         public IList<TEntity> FindAll()
@@ -109,12 +109,12 @@ namespace ClearCanvas.Enterprise.Hibernate
             return results[0];
         }
 
-        public int Count(TSearchCriteria criteria)
+        public long Count(TSearchCriteria criteria)
         {
             return Count(new TSearchCriteria[] { criteria });
         }
 
-        public int Count(TSearchCriteria[] criteria)
+        public long Count(TSearchCriteria[] criteria)
         {
             HqlQuery query = new HqlQuery(string.Format("select count(*) from {0} x", typeof(TEntity).Name));
 
@@ -131,10 +131,8 @@ namespace ClearCanvas.Enterprise.Hibernate
             if (or.Conditions.Count > 0)
                 query.Conditions.Add(or);
 
-            IList results = ExecuteHql(query);
-
             // expect exactly one integer result
-            return (int)results[0];
+            return ExecuteHqlUnique<long>(query);
         }
 
 

@@ -113,7 +113,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.RequestedProcedureTypeGroup
             }
         }
 
-        private ICollection GetRequestedProcedureTypes(XmlReader reader)
+        private ICollection<RequestedProcedureType> GetRequestedProcedureTypes(XmlReader reader)
         {
             List<RequestedProcedureType> types = new List<RequestedProcedureType>();
 

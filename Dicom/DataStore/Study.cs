@@ -30,22 +30,15 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Text;
-using NHibernate;
-using NHibernate.Collection;
-using Iesi.Collections;
-using System.Collections.ObjectModel;
 using ClearCanvas.Common;
+using Iesi.Collections;
+using Iesi.Collections.Generic;
 
 namespace ClearCanvas.Dicom.DataStore
 {
 	public class Study : PersistentDicomObject, IStudy, IEquatable<Study>
     {
-        public delegate void InitializeAssociatedCollectionCallback(object domainObject, PersistentCollection associatedCollection);
-        public InitializeAssociatedCollectionCallback InitializeAssociatedCollection;
-
 		#region Private Fields
 
 		private Guid _studyOid;
@@ -65,13 +58,15 @@ namespace ClearCanvas.Dicom.DataStore
     	private string _procedureCodeSequenceCodeValue;
     	private string _procedureCodeSequenceCodingSchemeDesignator;
     	private DateTime? _storeTime;
-    	private readonly ISet _internalSeries;
+		private ISet<Series> _internalSeries;
+
+		private LoadAssociationDelegate _loadAssociationDelegate;
 
 		#endregion //Private Fields
-		
-        public Study()
+
+		protected internal Study()
         {
-        	_internalSeries = new HybridSet();
+        	_internalSeries = new HashedSet<Series>();
         }
 
 		#region NHibernate Persistent Properties
@@ -178,19 +173,25 @@ namespace ClearCanvas.Dicom.DataStore
 			set { SetNullableTypeMember(ref _storeTime, value); }
         }
 
-        protected virtual ISet InternalSeries
+        protected virtual ISet<Series> InternalSeries
         {
             get { return _internalSeries; }
 		}
 
 		#endregion
 
-		public virtual ISet Series
+		internal protected virtual LoadAssociationDelegate LoadAssociationDelegate
+		{
+			get { return _loadAssociationDelegate; }
+			set { _loadAssociationDelegate = value; }
+		}
+
+		public virtual ISet<Series> Series
         {
             get
             {
-                if (null != InitializeAssociatedCollection)
-                    InitializeAssociatedCollection(this, _internalSeries as PersistentCollection);
+				if (null != LoadAssociationDelegate)
+					LoadAssociationDelegate(this, _internalSeries);
 
                 return _internalSeries;
             }
@@ -274,7 +275,7 @@ namespace ClearCanvas.Dicom.DataStore
 
 		#region Helper Methods
 
-		public void Update(DicomAttributeCollection metaInfo, DicomAttributeCollection sopInstanceDataset)
+		protected internal virtual void Update(DicomAttributeCollection metaInfo, DicomAttributeCollection sopInstanceDataset)
 		{
 			DicomAttribute attribute = sopInstanceDataset[DicomTags.StudyInstanceUid];
 			if (!String.IsNullOrEmpty(StudyInstanceUid) && StudyInstanceUid != attribute.ToString())

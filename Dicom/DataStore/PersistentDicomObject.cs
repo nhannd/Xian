@@ -42,7 +42,7 @@ namespace ClearCanvas.Dicom.DataStore
 		{
 		}
 
-		internal event EventHandler Changed
+		internal virtual event EventHandler Changed
 		{
 			add { _changed += value; }
 			remove { _changed -= value; }

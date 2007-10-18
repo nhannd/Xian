@@ -34,7 +34,6 @@ using System.Collections.Generic;
 using System.Text;
 
 using Spring.Aop;
-using Spring.Aop.Advice;
 
 namespace ClearCanvas.Enterprise.Core
 {

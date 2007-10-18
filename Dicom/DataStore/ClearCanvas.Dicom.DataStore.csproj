@@ -33,17 +33,17 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\OffisWrapper\csharp\$(Configuration)\ClearCanvas.Dicom.OffisWrapper.dll</HintPath>
     </Reference>
-    <Reference Include="Iesi.Collections, Version=1.0.0.1, Culture=neutral, PublicKeyToken=154fdcb44c4484fc">
+    <Reference Include="Iesi.Collections, Version=1.0.0.3, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\ReferencedAssemblies\Iesi.Collections.dll</HintPath>
+      <HintPath>..\..\ReferencedAssemblies\NHibernate1.2\Iesi.Collections.dll</HintPath>
     </Reference>
     <Reference Include="log4net, Version=1.2.9.0, Culture=neutral, PublicKeyToken=b32731d11ce58905">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\ReferencedAssemblies\log4net.dll</HintPath>
     </Reference>
-    <Reference Include="NHibernate, Version=1.0.2.0, Culture=neutral, PublicKeyToken=154fdcb44c4484fc">
+    <Reference Include="NHibernate, Version=1.2.0.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\ReferencedAssemblies\NHibernate.dll</HintPath>
+      <HintPath>..\..\ReferencedAssemblies\NHibernate1.2\NHibernate.dll</HintPath>
     </Reference>
     <Reference Include="NMock2, Version=1.0.2313.18049, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -73,6 +73,7 @@
     <Compile Include="IDataStoreWriter.cs" />
     <Compile Include="IDicomDictionary.cs" />
     <Compile Include="IDicomPersistentStore.cs" />
+    <Compile Include="LoadAssociationDelegate.cs" />
     <Compile Include="ImageSopInstance.cs" />
     <Compile Include="ISeries.cs" />
     <Compile Include="ISopInstance.cs" />
@@ -81,6 +82,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SessionConsumer.cs" />
     <Compile Include="PersistentDicomObject.cs" />
+    <Compile Include="SessionManager.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -90,6 +92,7 @@
     <Compile Include="SopInstance.cs" />
     <Compile Include="Study.cs" />
     <Compile Include="TagName.cs" />
+    <Compile Include="Transactions.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Hibernate\SopInstance.hbm.xml" />

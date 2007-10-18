@@ -30,11 +30,7 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common;
-using Iesi.Collections;
-using NHibernate;
 
 namespace ClearCanvas.Dicom.DataStore
 {
@@ -49,7 +45,7 @@ namespace ClearCanvas.Dicom.DataStore
     	private DicomUri _locationUri;
     	private Series _parentSeries;
 
-    	protected SopInstance()
+		protected SopInstance()
 		{
 		}
 
@@ -169,7 +165,7 @@ namespace ClearCanvas.Dicom.DataStore
 
 		#region Helper Methods
 
-		public virtual void Update(DicomAttributeCollection metaInfo, DicomAttributeCollection sopInstanceDataset)
+		protected internal virtual void Update(DicomAttributeCollection metaInfo, DicomAttributeCollection sopInstanceDataset)
 		{
 			DicomAttribute attribute = sopInstanceDataset[DicomTags.SopInstanceUid];
 			if (!String.IsNullOrEmpty(SopInstanceUid) && SopInstanceUid != attribute.ToString())

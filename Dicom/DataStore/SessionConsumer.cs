@@ -30,69 +30,70 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-using NHibernate;
 using ClearCanvas.Common;
+using NHibernate;
 
 namespace ClearCanvas.Dicom.DataStore
 {
-	internal abstract class SessionConsumer : IDisposable
+	public sealed partial class DataAccessLayer
 	{
-		private ISessionManager _sessionManager;
-
-		protected SessionConsumer(ISessionManager sessionManager)
+		internal abstract class SessionConsumer : IDisposable
 		{
-			_sessionManager = sessionManager;	
-		}
+			private ISessionManager _sessionManager;
 
-		~SessionConsumer()
-		{
-			try
+			protected SessionConsumer(ISessionManager sessionManager)
 			{
-				Dispose(true);
+				_sessionManager = sessionManager;
 			}
-			catch(Exception e)
+
+			~SessionConsumer()
 			{
-				Platform.Log(LogLevel.Warn, e);
+				try
+				{
+					Dispose(false);
+				}
+				catch (Exception e)
+				{
+					Platform.Log(LogLevel.Warn, e);
+				}
 			}
-		}
 
-		protected ISessionManager SessionManager
-		{
-			get { return _sessionManager; }
-		}
-
-		protected ISession Session
-		{
-			get { return SessionManager.Session; }
-		}
-
-
-		protected virtual void Dispose(bool disposing)
-		{
-			if (_sessionManager != null)
+			protected ISessionManager SessionManager
 			{
-				_sessionManager.Dispose();
-				_sessionManager = null;
+				get { return _sessionManager; }
 			}
-		}
 
-		#region IDisposable Members
-
-		public void Dispose()
-		{
-			try
+			protected ISession Session
 			{
-				Dispose(true);
-				GC.SuppressFinalize(this);
+				get { return SessionManager.Session; }
 			}
-			catch(Exception e)
-			{
-				Platform.Log(LogLevel.Warn, e);
-			}
-		}
 
-		#endregion
+
+			protected virtual void Dispose(bool disposing)
+			{
+				if (_sessionManager != null)
+				{
+					_sessionManager.Dispose();
+					_sessionManager = null;
+				}
+			}
+
+			#region IDisposable Members
+
+			public void Dispose()
+			{
+				try
+				{
+					Dispose(true);
+					GC.SuppressFinalize(this);
+				}
+				catch (Exception e)
+				{
+					Platform.Log(LogLevel.Warn, e);
+				}
+			}
+
+			#endregion
+		}
 	}
 }

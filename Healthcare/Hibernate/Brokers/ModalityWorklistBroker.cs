@@ -342,7 +342,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         private int GetWorklistCount(string hqlQuery, List<QueryParameter> parameters)
         {
             IList list = DoQuery(hqlQuery, parameters);
-            return (int)list[0];
+            return (int)(long)list[0];
         }
 
         private IList DoQuery(string hqlQuery, List<QueryParameter> parameters)

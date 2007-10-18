@@ -65,7 +65,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
                     
                 return new string[]
 				{
-                    string.Format("create table {0} ( {1} {2} );", tableName, COLUMN_NAME, dialect.GetTypeName( NHibernate.SqlTypes.SqlTypeFactory.GetInt64() )),
+                    string.Format("create table {0} ( {1} {2} );", tableName, COLUMN_NAME, dialect.GetTypeName( NHibernate.SqlTypes.SqlTypeFactory.Int64 )),
 					string.Format("insert into {0} values ( {1} )", tableName, INITIAL_VALUE)
 				};
             }

@@ -96,6 +96,7 @@ namespace ClearCanvas.Enterprise.Core
         /// </summary>
         /// <typeparam name="TSubclass"></typeparam>
         /// <returns></returns>
+        // Note this method must not be made virtual or Castle.DynamicProxy will try to proxy it
         public TSubclass Downcast<TSubclass>()
             where TSubclass : Entity
         {
@@ -108,6 +109,7 @@ namespace ClearCanvas.Enterprise.Core
         /// </summary>
         /// <typeparam name="TSubclass"></typeparam>
         /// <returns></returns>
+        // Note this method must not be made virtual or Castle.DynamicProxy will try to proxy it
         public bool Is<TSubclass>()
             where TSubclass : Entity
         {
@@ -118,8 +120,9 @@ namespace ClearCanvas.Enterprise.Core
         /// Subsitute for the C# 'as' operator.  If this object is a proxy, the C# 'as' operator will fail.
         /// Therefore, application code must use this method instead.
         /// </summary>
-        /// <typeparam name="TEntity"></typeparam>
+        /// <typeparam name="TSubclass"></typeparam>
         /// <returns></returns>
+        // Note this method must not be made virtual or Castle.DynamicProxy will try to proxy it
         public TSubclass As<TSubclass>()
             where TSubclass : Entity
         {

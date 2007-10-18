@@ -55,8 +55,6 @@ namespace ClearCanvas.Dicom.DataStore.NHibernateDriver
         {
         }
 
-        private bool prepareSql;
-
         //Only available in NHibernate 1.2
         //public override void Configure(IDictionary settings)
         //{

@@ -31,9 +31,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using NHibernate;
-using ClearCanvas.Common;
 
 namespace ClearCanvas.Dicom.DataStore
 {

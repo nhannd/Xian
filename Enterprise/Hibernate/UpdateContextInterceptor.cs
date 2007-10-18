@@ -96,7 +96,7 @@ namespace ClearCanvas.Enterprise.Hibernate
                 // note: if the property is a collection, don't bother checking, just assume it may be dirty
                 // the reason is that the cost of checking if the collection is dirty may be equal to or even greater than
                 // the cost of re-validating it
-                if (types[i] is NHibernate.Collection.PersistentCollection || !object.Equals(currentState[i], previousState[i]))
+                if (types[i] is NHibernate.Collection.IPersistentCollection || !object.Equals(currentState[i], previousState[i]))
                 {
                     dirtyProperties.Add(propertyNames[i]);
                 }

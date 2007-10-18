@@ -55,14 +55,6 @@ namespace ClearCanvas.Enterprise.Configuration {
 		{
 		}
 
-        /// <summary>
-        /// Clears all stored values
-        /// </summary>
-        public void Clear()
-        {
-            _documentText = null;
-        }
-		
 		#region Object overrides
 		
 		public override bool Equals(object obj)

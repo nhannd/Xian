@@ -96,7 +96,7 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
 
                 foreach (Note note in otherPatient.Notes)
                 {
-                    thisPatient.Notes.Add(note.Clone());
+                    thisPatient.Notes.Add((Note)note.Clone());
                 }
 
                 OrderSearchCriteria orderCriteria = new OrderSearchCriteria();

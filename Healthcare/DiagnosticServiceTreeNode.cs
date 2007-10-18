@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Text;
 
 using ClearCanvas.Enterprise.Core;
@@ -51,7 +52,7 @@ namespace ClearCanvas.Healthcare {
                 parent.AddChild(this);
             }
 
-            _children = new ArrayList();
+            _children = new List<DiagnosticServiceTreeNode>();
 
             CustomInitialize();
         }

@@ -33,6 +33,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Iesi.Collections;
+using Iesi.Collections.Generic;
 
 namespace ClearCanvas.Healthcare.Tests
 {
@@ -42,14 +43,14 @@ namespace ClearCanvas.Healthcare.Tests
         {
             Modality m = new Modality("01", "CT");
 
-            HybridSet mpsTypes1 = new HybridSet();
+            HashedSet<ModalityProcedureStepType> mpsTypes1 = new HashedSet<ModalityProcedureStepType>();
             mpsTypes1.Add(new ModalityProcedureStepType("101", "CT Chest", m));
             mpsTypes1.Add(new ModalityProcedureStepType("102", "CT Abdo/Pelvis", m));
 
-            HybridSet mpsTypes2 = new HybridSet();
+            HashedSet<ModalityProcedureStepType> mpsTypes2 = new HashedSet<ModalityProcedureStepType>();
             mpsTypes2.Add(new ModalityProcedureStepType("103", "MR Head", m));
 
-            HybridSet rpTypes = new HybridSet();
+            HashedSet<RequestedProcedureType> rpTypes = new HashedSet<RequestedProcedureType>();
             rpTypes.Add(new RequestedProcedureType("201", "CT Chest/Abdo/Pelvis"));
             rpTypes.Add(new RequestedProcedureType("202", "MR Head"));
 
@@ -60,10 +61,10 @@ namespace ClearCanvas.Healthcare.Tests
         {
             Modality m = new Modality("01", "CT");
 
-            HybridSet procedures = new HybridSet();
+            HashedSet<RequestedProcedureType> procedures = new HashedSet<RequestedProcedureType>();
             for (int p = 0; p < numReqProcs; p++)
             {
-                HybridSet steps = new HybridSet();
+                HashedSet<ModalityProcedureStepType> steps = new HashedSet<ModalityProcedureStepType>();
                 for(int s = 0; s < numMpsPerReqProc; s++)
                 {
                     steps.Add(new ModalityProcedureStepType("10" + (s + p * numMpsPerReqProc), "MPS 10" + (s + p * numMpsPerReqProc), m));
