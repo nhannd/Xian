@@ -76,7 +76,10 @@ namespace ClearCanvas.Healthcare.Alert
                 }
             }
 
-            return alertNotification;
+            if (alertNotification.Reasons.Count > 0)
+                return alertNotification;
+
+            return null;
         }
     }
 }

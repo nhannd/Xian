@@ -81,6 +81,13 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         #region Design Time properties
 
+	    [DefaultValue(false)]
+	    public bool SortToolStripVisible
+	    {
+            get { return _sortToolStrip.Visible; }
+            set { _sortToolStrip.Visible = value; }
+	    }
+
         [DefaultValue(false)]
         public bool SuppressSelectionChangedEvent
         {
@@ -229,7 +236,12 @@ namespace ClearCanvas.Desktop.View.WinForms
                     // Set the row height to accommodate the content that 
                     // spans multiple columns.
                     this.DataGridView.RowTemplate.Height = _rowHeight + CUSTOM_CONTENT_HEIGHT * ((int)_table.CellRowCount - 1);
+
+                    _table.SortEvent += new EventHandler(_table_SortEvent);
                 }
+
+                // Initialize the column name for the sort toolstrip
+                InitializeSortToolStrip();
             }
         }
 
@@ -355,6 +367,8 @@ namespace ClearCanvas.Desktop.View.WinForms
 			{
 				foreach (ITableColumn column in _table.Columns)
 					column.VisibilityChanged -= OnColumnVisibilityChanged;
+
+			    _table.SortEvent -= _table_SortEvent;
 			}
 		}
 
@@ -714,5 +728,113 @@ namespace ClearCanvas.Desktop.View.WinForms
             InitializeToolStrip();
             _isLoaded = true;
         }
-	}
+
+        private void InitializeSortToolStrip()
+        {
+            if (_table == null || _table.Columns.Count == 0)
+            {
+                _sortToolStrip.Enabled = false;
+            }
+            else
+            {
+                // Rebuild dropdown menu
+                _sortToolStrip.Enabled = true;
+                _sortToolStrip.DropDownItems.Clear();
+                _sortToolStrip.DropDownItems.Add(_sortAscendingToolStripMenuItem);
+                _sortToolStrip.DropDownItems.Add(_sortDescendingToolStripMenuItem);
+                _sortToolStrip.DropDownItems.Add(_sortToolStripSeparator);
+
+                CollectionUtils.ForEach<ITableColumn>(_table.Columns,
+                    delegate(ITableColumn column)
+                    {
+                        ToolStripItem item = new ToolStripMenuItem(column.Name, null, _sortToolStripMenuItem_Click, column.Name);
+                        if (_sortToolStrip.DropDownItems.ContainsKey(column.Name) == false)
+                            _sortToolStrip.DropDownItems.Add(item);
+                    });
+
+                ResetSortState();
+            }
+        }
+
+        private void ResetSortState()
+        {
+            if (_table == null || _table.SortParams == null)
+                return;
+
+            CollectionUtils.ForEach<ToolStripItem>(_sortToolStrip.DropDownItems,
+                delegate(ToolStripItem item)
+                {
+                    if (item == _sortAscendingToolStripMenuItem)
+                        this.SortAscendingToolStripCheck = _table.SortParams.Ascending;
+                    else if (item == _sortDescendingToolStripMenuItem)
+                        this.SortDescendingToolStripCheck = _table.SortParams.Ascending == false;
+                    else if (item == _sortToolStripSeparator)
+                        return;
+                    else
+                    {
+                        if (item.Name.Equals(_table.SortParams.Column.Name))
+                        {
+                            item.Image = SR.CheckSmall;
+                            _sortToolStrip.Text = String.Format("Sort by: {0}", item.Name);
+                        }
+                        else
+                        {
+                            item.Image = null;
+                        }                        
+                    }
+                });
+        }
+
+	    private bool SortAscendingToolStripCheck
+	    {
+            get { return _sortAscendingToolStripMenuItem.Image != null; }
+            set { _sortAscendingToolStripMenuItem.Image = value ? SR.CheckSmall : null; }
+	    }
+
+        private bool SortDescendingToolStripCheck
+        {
+            get { return _sortDescendingToolStripMenuItem.Image != null; }
+            set { _sortDescendingToolStripMenuItem.Image = value ? SR.CheckSmall : null; }
+        }
+
+        private void _table_SortEvent(object sender, EventArgs e)
+        {
+            ResetSortState();
+        }
+
+        private void sortAscendingToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (_table == null || _table.SortParams == null)
+                return;
+
+            _table.SortParams.Ascending = true;
+            _table.Sort(_table.SortParams);
+        }
+
+        private void sortDescendingToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (_table == null || _table.SortParams == null)
+                    return;
+
+            _table.SortParams.Ascending = false;
+            _table.Sort(_table.SortParams);
+        }
+
+        private void _sortToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ToolStripItem item = sender as ToolStripItem;
+
+            ITableColumn sortColumn = CollectionUtils.SelectFirst<ITableColumn>(_table.Columns,
+                delegate(ITableColumn column)
+                {
+                    return column.Name.Equals(item.Name);
+                });
+
+            if (sortColumn != null)
+            {
+                TableSortParams sortParams = new TableSortParams(sortColumn, false);
+                _table.Sort(sortParams);
+            }
+        }
+    }
 }
