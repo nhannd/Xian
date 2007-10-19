@@ -243,7 +243,7 @@ namespace ClearCanvas.Desktop.Tables
 
         private bool AnyColumnMatch(TItem item)
         {
-            string filterValue = _filterParams.Value.ToString();
+            string filterValue = _filterParams.Value.ToString().ToLower();
 
             return CollectionUtils.Contains<TableColumnBase<TItem>>(
                 _columns,

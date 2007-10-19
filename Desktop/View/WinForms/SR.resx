@@ -121,32 +121,29 @@
     <value>Tile &amp;Horizontal</value>
   </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="SplashShadow" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\SplashShadow.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="Stop" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\Stop.gif;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="ExceptionMinimumTooLarge" xml:space="preserve">
     <value>Minimum must be less than maximum.</value>
   </data>
-  <data name="ExceptionHandlerMessagePrefix" xml:space="preserve">
-    <value>Message: </value>
-  </data>
-  <data name="ExceptionMaximumTooSmall" xml:space="preserve">
-    <value>Maximum must be greater than minimum.</value>
+  <data name="CheckSmall" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\CheckSmall.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="ExceptionValueMustNotBeNegative" xml:space="preserve">
     <value>The value must not be negative.</value>
   </data>
-  <data name="MenuWindowCascade" xml:space="preserve">
-    <value>&amp;Cascade</value>
+  <data name="FormatVersion" xml:space="preserve">
+    <value>Version {0}</value>
+  </data>
+  <data name="SplashShadow" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\SplashShadow.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="MenuWindowTileVertical" xml:space="preserve">
     <value>Tile &amp;Vertical</value>
   </data>
-  <data name="ExceptionHandlerInnerExceptionText" xml:space="preserve">
-    <value>************** InnerException Text **************</value>
+  <data name="ExceptionHandlerMessagePrefix" xml:space="preserve">
+    <value>Message: </value>
   </data>
   <data name="MenuBar" xml:space="preserve">
     <value>Main Menu</value>
@@ -154,13 +151,28 @@
   <data name="ExceptionDelayedEventDelegateArgument" xml:space="preserve">
     <value>The delegate must accept two arguments: an object and an instance of type compatible with the System.EventArgs type.</value>
   </data>
+  <data name="MenuWindowCascade" xml:space="preserve">
+    <value>&amp;Cascade</value>
+  </data>
+  <data name="ExceptionHandlerInnerExceptionText" xml:space="preserve">
+    <value>************** InnerException Text **************</value>
+  </data>
   <data name="Splash" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\Splash.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="FormatVersion" xml:space="preserve">
-    <value>Version {0}</value>
+  <data name="ExceptionMaximumTooSmall" xml:space="preserve">
+    <value>Maximum must be greater than minimum.</value>
   </data>
-  <data name="CheckSmall" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\CheckSmall.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="ClearFilterSmall" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\ClearFilterSmall.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="MessageEmptyFilter" xml:space="preserve">
+    <value>Enter text here to filter table</value>
+  </data>
+  <data name="MessageFilterBy" xml:space="preserve">
+    <value>Filter by: {0}</value>
+  </data>
+  <data name="MessageSortBy" xml:space="preserve">
+    <value>Sort by: {0}</value>
   </data>
 </root>

@@ -420,6 +420,7 @@
     <Content Include="FileBrowser\Images\BrowserBack.png" />
     <Content Include="FileBrowser\Images\BrowserForward.png" />
     <Content Include="FileBrowser\Images\BrowserUp.png" />
+    <None Include="Resources\ClearFilterSmall.png" />
     <EmbeddedResource Include="Resources\CheckSmall.png" />
     <EmbeddedResource Include="Resources\SplashShadow.png" />
     <EmbeddedResource Include="Resources\Splash.png" />

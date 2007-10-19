@@ -67,6 +67,13 @@ namespace ClearCanvas.Desktop.View.WinForms {
             }
         }
         
+        internal static System.Drawing.Bitmap ClearFilterSmall {
+            get {
+                object obj = ResourceManager.GetObject("ClearFilterSmall", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         /// <summary>
         ///   Looks up a localized string similar to The delegate must accept two arguments: an object and an instance of type compatible with the System.EventArgs type..
         /// </summary>
@@ -163,6 +170,33 @@ namespace ClearCanvas.Desktop.View.WinForms {
         internal static string MenuWindowTileVertical {
             get {
                 return ResourceManager.GetString("MenuWindowTileVertical", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enter text here to filter table.
+        /// </summary>
+        internal static string MessageEmptyFilter {
+            get {
+                return ResourceManager.GetString("MessageEmptyFilter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Filter by: {0}.
+        /// </summary>
+        internal static string MessageFilterBy {
+            get {
+                return ResourceManager.GetString("MessageFilterBy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sort by: {0}.
+        /// </summary>
+        internal static string MessageSortBy {
+            get {
+                return ResourceManager.GetString("MessageSortBy", resourceCulture);
             }
         }
         

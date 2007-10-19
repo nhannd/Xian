@@ -89,6 +89,24 @@ namespace ClearCanvas.Desktop.View.WinForms
 	    }
 
         [DefaultValue(false)]
+        public bool FilterTextBoxVisible
+        {
+            get { return _filterTextBox.Visible; }
+            set
+            {
+                _filterTextBox.Visible = value;
+                _clearFilterButton.Visible = value;
+            }
+        }
+
+        [DefaultValue(100)]
+        public int FilterTextBoxWidth
+        {
+            get { return _filterTextBox.Width; }
+            set { _filterTextBox.Size = new Size(value, _filterTextBox.Height);; }
+        }
+
+        [DefaultValue(false)]
         public bool SuppressSelectionChangedEvent
         {
             get { return _surpressSelectionChangedEvent; }
@@ -241,6 +259,7 @@ namespace ClearCanvas.Desktop.View.WinForms
                 }
 
                 InitializeSortButton();
+                IntializeFilter();
             }
         }
 
@@ -713,7 +732,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         private void TableView_Load(object sender, EventArgs e)
         {
-            if(this.DesignMode == false)
+            if (this.DesignMode == false)
             {
                 _toolStripItemAlignment = DesktopViewSettings.Default.LocalToolStripItemAlignment;
                 _textImageRelation = DesktopViewSettings.Default.LocalToolStripItemTextImageRelation;
@@ -774,7 +793,7 @@ namespace ClearCanvas.Desktop.View.WinForms
                         if (item.Name.Equals(_table.SortParams.Column.Name))
                         {
                             item.Image = SR.CheckSmall;
-                            _sortButton.ToolTipText = String.Format("Sort by: {0}", item.Name);
+                            _sortButton.ToolTipText = String.Format(SR.MessageSortBy, item.Name);
                         }
                         else
                         {
@@ -834,6 +853,40 @@ namespace ClearCanvas.Desktop.View.WinForms
                 TableSortParams sortParams = new TableSortParams(sortColumn, false);
                 _table.Sort(sortParams);
             }
+        }
+
+        private void IntializeFilter()
+        {
+            _filterTextBox.Enabled = (_table != null);
+        }
+
+        private void _clearFilterButton_Click(object sender, EventArgs e)
+        {
+            _filterTextBox.Text = "";
+        }
+
+        private void _filterText_TextChanged(object sender, EventArgs e)
+        {
+            if (_table == null)
+                return;
+
+
+            if (String.IsNullOrEmpty(_filterTextBox.Text))
+            {
+                _filterTextBox.ToolTipText = SR.MessageEmptyFilter;
+                _clearFilterButton.Enabled = false;
+                _table.RemoveFilter();
+            }
+            else
+            {
+                _filterTextBox.ToolTipText = String.Format(SR.MessageFilterBy, _filterTextBox.Text);
+                _clearFilterButton.Enabled = true;
+                TableFilterParams filterParams = new TableFilterParams(null, _filterTextBox.Text);
+                _table.Filter(filterParams);
+            }
+
+            // Refresh the current table
+            this.Table = _table;
         }
     }
 }
