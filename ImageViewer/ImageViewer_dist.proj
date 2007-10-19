@@ -11,7 +11,6 @@
   </ItemGroup>
 
   <ItemGroup>
-		<SqlCEFiles Include="$(SolutionDir)\..\Dicom\DataStore\NHibernateDriver\bin\$(Configuration)\ClearCanvas.Dicom.DataStore.NHibernateDriver.dll" />
 		<SqlCEFiles Include="$(SolutionDir)\..\Dicom\DataStore\AuxiliaryFiles\sqlceca30.dll" />
 		<SqlCEFiles Include="$(SolutionDir)\..\Dicom\DataStore\AuxiliaryFiles\sqlcecompact30.dll" />
 		<SqlCEFiles Include="$(SolutionDir)\..\Dicom\DataStore\AuxiliaryFiles\sqlceer30EN.dll" />
@@ -24,7 +23,6 @@
   <ItemGroup>
     <HibernateFiles Include="$(SolutionDir)\..\ReferencedAssemblies\NHibernate1.2\Iesi.Collections.dll" />
     <HibernateFiles Include="$(SolutionDir)\..\ReferencedAssemblies\NHibernate1.2\Nhibernate.dll" />
-    <HibernateFiles Include="$(SolutionDir)\..\ReferencedAssemblies\NHibernate1.2\Castle.DynamicProxy.dll" />
   </ItemGroup>
 	<ItemGroup>
 		<HibernateConfigurationFiles Include="$(SolutionDir)\..\Dicom\DataStore\AuxiliaryFiles\ClearCanvas.Dicom.DataStore.cfg.xml" />

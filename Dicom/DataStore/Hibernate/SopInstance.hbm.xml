@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="ClearCanvas.Dicom.DataStore" namespace="ClearCanvas.Dicom.DataStore">
-  <class name="SopInstance" proxy="SopInstance" table="SopInstance_">
+  <class name="SopInstance" table="SopInstance_" lazy="false">
     <id name="Oid" column="Oid_" type="Guid">
       <generator class="guid.comb">
       </generator>
@@ -14,7 +14,7 @@
       <property name="InternalUri" column="LocationUri_" type="string" length="1024" />
     </component>
     <many-to-one name="Series" class="ClearCanvas.Dicom.DataStore.Series, ClearCanvas.Dicom.DataStore" column="SeriesOid_" not-null="true" fetch="select"/>
-    <joined-subclass name="ImageSopInstance" table="ImageSopInstance_" lazy="false" proxy="ImageSopInstance">
+    <joined-subclass name="ImageSopInstance" table="ImageSopInstance_" lazy="false" >
       <key column="Oid_" />
       <property name="SamplesPerPixel" column="SamplesPerPixel_" type="Int32" />
       <property name="BitsStored" column="BitsStored_" type="Int32" />

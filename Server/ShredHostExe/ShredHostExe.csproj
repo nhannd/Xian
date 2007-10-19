@@ -79,7 +79,6 @@ rem copy common assemblies
 copy $(ProjectDir)..\..\Common\$(OutDir)ClearCanvas.Common.dll $(TargetDir)common
 copy $(ProjectDir)..\..\Dicom\$(OutDir)ClearCanvas.Dicom.dll $(TargetDir)common
 copy $(ProjectDir)..\..\Dicom\DataStore\$(OutDir)ClearCanvas.Dicom.DataStore.dll $(TargetDir)common
-copy $(ProjectDir)..\..\Dicom\DataStore\NHibernateDriver\$(OutDir)ClearCanvas.Dicom.DataStore.NHibernateDriver.dll $(TargetDir)common
 copy $(ProjectDir)..\ServiceModelEx\$(Outdir)ServiceModelEx.dll $(TargetDir)common
 copy $(ProjectDir)..\..\Dicom\DataStore\AuxiliaryFiles\sqlce*.dll $(TargetDir)common
 copy $(ProjectDir)..\..\Dicom\DataStore\AuxiliaryFiles\System.Data.SqlServerCe.dll $(TargetDir)common
@@ -87,8 +86,6 @@ copy $(ProjectDir)..\..\Dicom\DataStore\AuxiliaryFiles\System.Data.SqlServerCe.d
 rem copy referenced assemblies
 copy $(ProjectDir)..\..\ReferencedAssemblies\NHibernate1.2\Iesi.Collections.dll $(TargetDir)common
 copy $(ProjectDir)..\..\ReferencedAssemblies\NHibernate1.2\NHibernate.dll $(TargetDir)common
-copy $(ProjectDir)..\..\ReferencedAssemblies\NHibernate1.2\Castle.DynamicProxy.dll $(TargetDir)common
-rem copy $(ProjectDir)..\..\ReferencedAssemblies\NHibernate1.2\NHibernate.Caches.SysCache.dll $(TargetDir)common
 copy $(ProjectDir)..\..\ReferencedAssemblies\log4net.dll $(TargetDir)common
 copy $(ProjectDir)..\..\ReferencedAssemblies\nunit.framework.dll $(TargetDir)common
 
