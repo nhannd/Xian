@@ -78,18 +78,19 @@ namespace ClearCanvas.Dicom.DataStore
 			{
 				IList containers = null;
 
-				using (sessionManager.GetReadTransaction())
+				try
 				{
-					try
-					{
-						containers = sessionManager.Session.CreateCriteria(typeof(DicomDictionaryContainer))
-							.Add(Expression.Eq("DictionaryName", _dictionaryName))
-							.List();
-					}
-					catch (Exception e)
-					{
-						throw new DataStoreException(String.Format(SR.FormatDicomDictionaryFailedToLoad, _dictionaryName));
-					}
+					sessionManager.BeginReadTransaction();
+
+					containers = sessionManager.Session.CreateCriteria(typeof(DicomDictionaryContainer))
+						.Add(Expression.Eq("DictionaryName", _dictionaryName))
+						.List();
+
+					sessionManager.Commit();
+				}
+				catch (Exception e)
+				{
+					throw new DataStoreException(String.Format(SR.FormatDicomDictionaryFailedToLoad, _dictionaryName), e);
 				}
 
 				if (null == containers || containers.Count < 1)

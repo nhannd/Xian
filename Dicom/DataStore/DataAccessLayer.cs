@@ -118,11 +118,9 @@ namespace ClearCanvas.Dicom.DataStore
 					if (sessionManager.Session.Contains(association))
 						return;
 
-					using (sessionManager.GetReadTransaction())
-					{
-						sessionManager.Session.Lock(entity, LockMode.Read);
-						NHibernateUtil.Initialize(association);
-					}
+					sessionManager.BeginReadTransaction();
+					sessionManager.Session.Lock(entity, LockMode.Read);
+					NHibernateUtil.Initialize(association);
 				}
 				catch (Exception e)
 				{

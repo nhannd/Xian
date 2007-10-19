@@ -50,16 +50,13 @@ namespace ClearCanvas.Dicom.DataStore
 			{
 				try
 				{
-					using (IWriteTransaction transaction = SessionManager.GetWriteTransaction())
-					{
-						foreach (SopInstance sop in sops)
-							Session.SaveOrUpdate(sop);
-
-						transaction.Commit();
-					}
+					base.SessionManager.BeginWriteTransaction();
+					foreach (SopInstance sop in sops)
+						Session.SaveOrUpdate(sop);
 				}
 				catch (Exception e)
 				{
+					base.SessionManager.Rollback();
 					throw new DataStoreException(SR.ExceptionFailedToStoreSopInstances, e);
 				}
 			}
@@ -68,16 +65,13 @@ namespace ClearCanvas.Dicom.DataStore
 			{
 				try
 				{
-					using (IWriteTransaction transaction = SessionManager.GetWriteTransaction())
-					{
-						foreach (Series saveSeries in series)
-							Session.SaveOrUpdate(saveSeries);
-
-						transaction.Commit();
-					}
+					base.SessionManager.BeginWriteTransaction();
+					foreach (Series saveSeries in series)
+						Session.SaveOrUpdate(saveSeries);
 				}
 				catch (Exception e)
 				{
+					base.SessionManager.Rollback();
 					throw new DataStoreException(SR.ExceptionFailedToStoreSeries, e);
 				}
 			}
@@ -86,16 +80,13 @@ namespace ClearCanvas.Dicom.DataStore
 			{
 				try
 				{
-					using (IWriteTransaction transaction = SessionManager.GetWriteTransaction())
-					{
-						foreach (Study study in studies)
-							Session.SaveOrUpdate(study);
-
-						transaction.Commit();
-					}
+					base.SessionManager.BeginWriteTransaction();
+					foreach (Study study in studies)
+						Session.SaveOrUpdate(study);
 				}
 				catch (Exception e)
 				{
+					base.SessionManager.Rollback();
 					throw new DataStoreException(SR.ExceptionFailedToStoreStudies, e);
 				}
 			}
@@ -108,14 +99,13 @@ namespace ClearCanvas.Dicom.DataStore
 			{
 				try
 				{
-					using (IWriteTransaction transaction = SessionManager.GetWriteTransaction())
-					{
-						Session.Delete("from Study");
-						transaction.Commit();
-					}
+					base.SessionManager.BeginWriteTransaction();
+					Session.Delete("from Study");
+					base.SessionManager.Commit();
 				}
 				catch (Exception e)
 				{
+					base.SessionManager.Rollback();
 					throw new DataStoreException(SR.ExceptionFailedToClearAllStudies, e);
 				}
 			}
@@ -129,21 +119,26 @@ namespace ClearCanvas.Dicom.DataStore
 			{
 				try
 				{
-					using (IWriteTransaction transaction = SessionManager.GetWriteTransaction())
-					{
-						foreach (Uid uid in studyUids)
-							Session.Delete("from Study where StudyInstanceUid_ = ?", uid.ToString(), NHibernateUtil.String);
+					base.SessionManager.BeginWriteTransaction();
+					foreach (Uid uid in studyUids)
+						Session.Delete("from Study where StudyInstanceUid_ = ?", uid.ToString(), NHibernateUtil.String);
 
-						transaction.Commit();
-					}
+					base.SessionManager.Commit();
 				}
 				catch (Exception e)
 				{
+					base.SessionManager.Rollback();
 					throw new DataStoreException(SR.ExceptionFailedToClearStudies, e);
 				}
 			}
 
 			#endregion
+
+			protected override void Dispose(bool disposing)
+			{
+				base.SessionManager.Commit();
+				base.Dispose(disposing);
+			}
 		}
 	}
 }

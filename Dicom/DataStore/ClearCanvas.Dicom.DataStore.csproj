@@ -88,7 +88,6 @@
     <Compile Include="SopInstance.cs" />
     <Compile Include="Study.cs" />
     <Compile Include="TagName.cs" />
-    <Compile Include="Transactions.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Hibernate\SopInstance.hbm.xml" />

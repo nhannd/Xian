@@ -11,8 +11,12 @@ namespace ClearCanvas.Dicom.DataStore
 		internal interface ISessionManager : IDisposable
 		{
 			ISession Session { get; }
-			IReadTransaction GetReadTransaction();
-			IWriteTransaction GetWriteTransaction();
+			
+			void BeginReadTransaction();
+			void BeginWriteTransaction();
+
+			void Rollback();
+			void Commit();
 		}
 
 		private sealed class SessionManager : ISessionManager
@@ -23,13 +27,14 @@ namespace ClearCanvas.Dicom.DataStore
 			private readonly Thread _thread;
 			private ISession _session;
 			private int _referenceCount;
-			private volatile bool _resetOnNextRead;
+			private ITransaction _transaction;
+			private bool _writeTransaction;
 
 			private SessionManager()
 			{
 				_thread = Thread.CurrentThread;
 				_referenceCount = 0;
-				_resetOnNextRead = false;
+				_writeTransaction = false;
 			}
 
 			private Thread Thread
@@ -54,7 +59,13 @@ namespace ClearCanvas.Dicom.DataStore
 
 			private void DisconnectSession()
 			{
-				_resetOnNextRead = false;
+				_writeTransaction = false;
+
+				if (_transaction != null)
+				{
+					_transaction.Dispose();
+					_transaction = null;
+				}
 
 				if (_session != null)
 				{
@@ -104,18 +115,54 @@ namespace ClearCanvas.Dicom.DataStore
 				}
 			}
 
-			public IReadTransaction GetReadTransaction()
+			public void BeginReadTransaction()
 			{
-				if (_resetOnNextRead)
-					DisconnectSession();
-
-				return new ReadTransaction(Session);
+				if (_writeTransaction)
+				{
+					throw new DataStoreException(SR.ExceptionAllWriteTransactionsMustBeCommittedBeforeReading);
+				}
+				
+				if (_transaction == null)
+				{
+					_transaction = Session.Transaction;
+					Session.Transaction.Begin();
+				}
 			}
 
-			public IWriteTransaction GetWriteTransaction()
+			public void BeginWriteTransaction()
 			{
-				_resetOnNextRead = true;
-				return new WriteTransaction(Session);
+				_writeTransaction = true;
+				if (_transaction == null)
+				{
+					_transaction = Session.Transaction;
+					Session.Transaction.Begin();
+				}
+			}
+
+			public void Rollback()
+			{
+				if (!_writeTransaction)
+					return;
+
+				_writeTransaction = false;
+				if (_transaction != null)
+				{
+					_transaction.Rollback();
+					_transaction = null;
+				}
+			}
+
+			public void Commit()
+			{
+				if (!_writeTransaction)
+					return;
+
+				_writeTransaction = false;
+				if (_transaction != null)
+				{
+					_transaction.Commit();
+					_transaction = null;
+				}
 			}
 
 			#endregion

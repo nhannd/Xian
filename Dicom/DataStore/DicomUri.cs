@@ -138,9 +138,14 @@ namespace ClearCanvas.Dicom.DataStore
             return false;
         }
 
+		public override int GetHashCode()
+		{
+			return _internalUriObject.GetHashCode();
+		}
+
         public override string ToString()
         {
-            return this.InternalUriObject.AbsoluteUri;
+            return InternalUriObject.AbsoluteUri;
         }
 
         /// <summary>

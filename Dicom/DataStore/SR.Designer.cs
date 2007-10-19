@@ -61,6 +61,15 @@ namespace ClearCanvas.Dicom.DataStore {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to All write transactions must be committed before reading..
+        /// </summary>
+        internal static string ExceptionAllWriteTransactionsMustBeCommittedBeforeReading {
+            get {
+                return ResourceManager.GetString("ExceptionAllWriteTransactionsMustBeCommittedBeforeReading", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Can only update an existing series from a Dicom data set with the same SeriesInstanceUid..
         /// </summary>
         internal static string ExceptionCanOnlyUpdateExistingSeriesWithSameSeriesUid {

@@ -89,10 +89,8 @@ namespace ClearCanvas.Dicom.DataStore
 			{
 				try
 				{
-					using (SessionManager.GetReadTransaction())
-					{
-						return StudyExists(Session, referenceUid);
-					}
+					base.SessionManager.BeginReadTransaction();
+					return StudyExists(Session, referenceUid);
 				}
 				catch (Exception e)
 				{
@@ -105,10 +103,8 @@ namespace ClearCanvas.Dicom.DataStore
 			{
 				try
 				{
-					using (SessionManager.GetReadTransaction())
-					{
-						return SeriesExists(Session, referenceUid);
-					}
+					base.SessionManager.BeginReadTransaction();
+					return SeriesExists(Session, referenceUid);
 				}
 				catch (Exception e)
 				{
@@ -121,10 +117,8 @@ namespace ClearCanvas.Dicom.DataStore
 			{
 				try
 				{
-					using (SessionManager.GetReadTransaction())
-					{
-						return SopInstanceExists(Session, referenceUid);
-					}
+					base.SessionManager.BeginReadTransaction();
+					return SopInstanceExists(Session, referenceUid);
 				}
 				catch (Exception e)
 				{
@@ -137,28 +131,26 @@ namespace ClearCanvas.Dicom.DataStore
 			{
 				try
 				{
-					using (SessionManager.GetReadTransaction())
-					{
-						if (!StudyExists(Session, referenceUid))
-							return null;
-
-						IList listOfStudies = Session.CreateCriteria(typeof(Study))
-							.Add(Expression.Eq("StudyInstanceUid", referenceUid.ToString()))
-							.List();
-
-						if (null != listOfStudies && listOfStudies.Count > 0)
-						{
-							Study study = (Study)listOfStudies[0];
-							study.LoadAssociationDelegate = DataAccessLayer.InitializeAssociatedObject;
-
-							foreach (Series series in study.Series)
-								series.LoadAssociationDelegate = DataAccessLayer.InitializeAssociatedObject;
-
-							return study;
-						}
-
+					base.SessionManager.BeginReadTransaction();
+					if (!StudyExists(Session, referenceUid))
 						return null;
+
+					IList listOfStudies = Session.CreateCriteria(typeof(Study))
+						.Add(Expression.Eq("StudyInstanceUid", referenceUid.ToString()))
+						.List();
+
+					if (null != listOfStudies && listOfStudies.Count > 0)
+					{
+						Study study = (Study)listOfStudies[0];
+						study.LoadAssociationDelegate = DataAccessLayer.InitializeAssociatedObject;
+
+						foreach (Series series in study.Series)
+							series.LoadAssociationDelegate = DataAccessLayer.InitializeAssociatedObject;
+
+						return study;
 					}
+
+					return null;
 				}
 				catch (Exception e)
 				{
@@ -171,24 +163,22 @@ namespace ClearCanvas.Dicom.DataStore
 			{
 				try
 				{
-					using (SessionManager.GetReadTransaction())
-					{
-						if (!SeriesExists(Session, referenceUid))
-							return null;
-
-						IList listOfSeries = Session.CreateCriteria(typeof(Series))
-							.Add(Expression.Eq("SeriesInstanceUid", referenceUid.ToString()))
-							.List();
-
-						if (null != listOfSeries && listOfSeries.Count > 0)
-						{
-							Series series = (Series)listOfSeries[0];
-							series.LoadAssociationDelegate = DataAccessLayer.InitializeAssociatedObject;
-							return series;
-						}
-
+					base.SessionManager.BeginReadTransaction();
+					if (!SeriesExists(Session, referenceUid))
 						return null;
+
+					IList listOfSeries = Session.CreateCriteria(typeof(Series))
+						.Add(Expression.Eq("SeriesInstanceUid", referenceUid.ToString()))
+						.List();
+
+					if (null != listOfSeries && listOfSeries.Count > 0)
+					{
+						Series series = (Series)listOfSeries[0];
+						series.LoadAssociationDelegate = DataAccessLayer.InitializeAssociatedObject;
+						return series;
 					}
+
+					return null;
 				}
 				catch (Exception e)
 				{
@@ -201,20 +191,18 @@ namespace ClearCanvas.Dicom.DataStore
 			{
 				try
 				{
-					using (SessionManager.GetReadTransaction())
-					{
-						if (!SopInstanceExists(Session, referenceUid))
-							return null;
-
-						IList listOfSops = Session.CreateCriteria(typeof(SopInstance))
-							.Add(Expression.Eq("SopInstanceUid", referenceUid.ToString()))
-							.List();
-
-						if (null != listOfSops && listOfSops.Count > 0)
-							return (ISopInstance)listOfSops[0];
-
+					base.SessionManager.BeginReadTransaction();
+					if (!SopInstanceExists(Session, referenceUid))
 						return null;
-					}
+
+					IList listOfSops = Session.CreateCriteria(typeof(SopInstance))
+						.Add(Expression.Eq("SopInstanceUid", referenceUid.ToString()))
+						.List();
+
+					if (null != listOfSops && listOfSops.Count > 0)
+						return (ISopInstance)listOfSops[0];
+
+					return null;
 				}
 				catch (Exception e)
 				{
@@ -232,11 +220,9 @@ namespace ClearCanvas.Dicom.DataStore
 
 				try
 				{
-					using (SessionManager.GetReadTransaction())
-					{
-						IQuery query = Session.CreateQuery(selectCommandString.ToString());
-						studiesFound = query.List();
-					}
+					base.SessionManager.BeginReadTransaction();
+					IQuery query = Session.CreateQuery(selectCommandString.ToString());
+					studiesFound = query.List();
 				}
 				catch (Exception e)
 				{
@@ -318,11 +304,9 @@ namespace ClearCanvas.Dicom.DataStore
 				IList studiesFound = null;
 				try
 				{
-					using (IReadTransaction transaction = SessionManager.GetReadTransaction())
-					{
-						IQuery query = Session.CreateQuery(selectCommandString.ToString());
-						studiesFound = query.List();
-					}
+					base.SessionManager.BeginReadTransaction();
+					IQuery query = Session.CreateQuery(selectCommandString.ToString());
+					studiesFound = query.List();
 				}
 				catch (Exception e)
 				{
@@ -435,14 +419,7 @@ namespace ClearCanvas.Dicom.DataStore
 				string fromDate, toDate;
 				bool isRange;
 
-				try
-				{
-					DateRangeHelper.Parse(dateQueryString, out fromDate, out toDate, out isRange);
-				}
-				catch (Exception e)
-				{
-					throw;
-				}
+				DateRangeHelper.Parse(dateQueryString, out fromDate, out toDate, out isRange);
 
 				StringBuilder dateRangeQueryBuilder = new StringBuilder();
 
@@ -513,6 +490,12 @@ namespace ClearCanvas.Dicom.DataStore
 			}
 
 			#endregion
+
+			protected override void Dispose(bool disposing)
+			{
+				base.SessionManager.Commit();
+				base.Dispose(disposing);
+			}
 		}
 	}
 }

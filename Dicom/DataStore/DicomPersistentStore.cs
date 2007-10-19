@@ -257,8 +257,6 @@ namespace ClearCanvas.Dicom.DataStore
 			{
 				try
 				{
-					DisposeReader();
-
 					using (IDataStoreWriter writer = DataAccessLayer.GetIDataStoreWriter())
 					{
 						writer.StoreStudies(this.StudiesToUpdate.Values);
