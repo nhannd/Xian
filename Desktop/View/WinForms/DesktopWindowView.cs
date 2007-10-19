@@ -31,6 +31,7 @@
 
 using System;
 using System.ComponentModel;
+using System.Drawing;
 using System.Windows.Forms;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.Actions;
@@ -61,6 +62,7 @@ namespace ClearCanvas.Desktop.View.WinForms
     {
         private static DesktopWindowView _lastActiveWindow;
 
+    	private DesktopWindow _desktopWindow;
         private DesktopForm _form;
         private OrderedSet<WorkspaceView> _workspaceActivationOrder;
 
@@ -70,6 +72,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         /// <param name="window"></param>
         protected internal DesktopWindowView(DesktopWindow window)
         {
+        	_desktopWindow = window;
             _form = CreateDesktopForm();
             _workspaceActivationOrder = new OrderedSet<WorkspaceView>();
 
@@ -543,7 +546,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         /// </summary>
         public override void Open()
         {
-            _form.LoadWindowSettings();
+            LoadWindowSettings();
             _form.Show();
         }
 
@@ -591,7 +594,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         {
             if (disposing && _form != null)
             {
-                _form.SaveWindowSettings();
+                SaveWindowSettings();
 
                 // this will close the form without firing any events
                 _form.Dispose();
@@ -622,5 +625,50 @@ namespace ClearCanvas.Desktop.View.WinForms
         {
             get { return _form; }
         }
+
+		private void LoadWindowSettings()
+		{
+			Rectangle screenRectangle;
+			FormWindowState windowState;
+			if (!DesktopViewSettings.Default.GetWindowState(_desktopWindow.Name, out screenRectangle, out windowState))
+			{
+				screenRectangle = Screen.PrimaryScreen.Bounds;
+
+				// Make the window size 75% of the primary screen
+				float scale = 0.75f;
+				_form.Width = (int)(screenRectangle.Width * scale);
+				_form.Height = (int)(screenRectangle.Height * scale);
+
+				_form.StartPosition = FormStartPosition.CenterScreen;
+			}
+			else
+			{
+				_form.Location = screenRectangle.Location;
+				_form.Size = screenRectangle.Size;
+				_form.StartPosition = FormStartPosition.Manual;
+
+				// If window was last closed when minimized, don't open it up minimized,
+				// but rather just open it normally
+				if (windowState == FormWindowState.Minimized)
+					_form.WindowState = FormWindowState.Normal;
+				else
+					_form.WindowState = windowState;
+			}
+		}
+
+		private void SaveWindowSettings()
+		{
+			Rectangle windowRectangle;
+			// If the window state is normal, just save its location and size
+			if (_form.WindowState == FormWindowState.Normal)
+				windowRectangle = new Rectangle(_form.Location, _form.Size);
+			// But, if it's minimized or maximized, save the restore bounds instead
+			else
+				windowRectangle = _form.RestoreBounds;
+
+			FormWindowState windowState = _form.WindowState;
+
+			DesktopViewSettings.Default.SaveWindowState(_desktopWindow.Name, windowRectangle, windowState);
+		}
     }
 }

@@ -40,7 +40,7 @@ using Crownwood.DotNetMagic.Forms;
 namespace ClearCanvas.Desktop.View.WinForms
 {
     /// <summary>
-    /// Form used by the <see cref="DesktkopWindowView"/> class.
+	/// Form used by the <see cref="DesktopWindowView"/> class.
     /// </summary>
     /// <remarks>
     /// This class may be subclassed.
@@ -137,66 +137,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         #endregion
 
-        #region Window Settings
-
-        internal void LoadWindowSettings()
-		{
-			Rectangle screenRectangle = Screen.PrimaryScreen.Bounds;
-
-			// If the bounds of the primary screen is different from what was saved
-			// either because there was a screen resolution change or because the app
-			// is being started for the first time, get Windows to properly position the window.
-			if (screenRectangle != Settings.PrimaryScreenRectangle)
-			{
-				// Make the window size 75% of the primary screen
-				float scale = 0.75f;
-				this.Width = (int) (screenRectangle.Width * scale);
-				this.Height = (int) (screenRectangle.Height * scale);
-
-				// Center the window (for some reason, FormStartPosition.CenterScreen doesn't seem
-				// to work.)
-				//int x = (screenRectangle.Width - this.Width) / 2;
-				//int y = (screenRectangle.Height - this.Height) / 2;
-				//this.Location = new Point(x, y);
-                this.StartPosition = FormStartPosition.CenterScreen;
-			}
-			else
-			{
-				this.Location = Settings.WindowRectangle.Location;
-				this.Size = Settings.WindowRectangle.Size;
-                this.StartPosition = FormStartPosition.Manual;
-			}
-
-			// If window was last closed when minimized, don't open it up minimized,
-			// but rather just open it normally
-			if (Settings.WindowState == FormWindowState.Minimized)
-				this.WindowState = FormWindowState.Normal;
-			else
-				this.WindowState = Settings.WindowState;
-		}
-
-		internal void SaveWindowSettings()
-		{
-			// If the window state is normal, just save its location and size
-			if (this.WindowState == FormWindowState.Normal)
-				Settings.WindowRectangle = new Rectangle(this.Location, this.Size);
-			// But, if it's minimized or maximized, save the restore bounds instead
-			else
-				Settings.WindowRectangle = this.RestoreBounds;
-
-			Settings.WindowState = this.WindowState;
-			Settings.PrimaryScreenRectangle = Screen.PrimaryScreen.Bounds;
-			Settings.Save();
-        }
-
-        #endregion
-
         #region Helper methods
-
-        internal DesktopViewSettings Settings
-        {
-            get { return DesktopViewSettings.Default; }
-        }
 
         /// <summary>
         /// Called to initialize a <see cref="Crownwood.DotNetMagic.Controls.TabControl"/>. Override

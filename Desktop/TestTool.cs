@@ -29,6 +29,8 @@
 
 #endregion
 
+#if DEBUG
+
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -55,6 +57,9 @@ namespace ClearCanvas.Desktop
 
     [MenuAction("ws", "global-menus/Test/New Workspace")]
     [ClickHandler("ws", "NewWorkspace")]
+
+	[MenuAction("desktop", "global-menus/Test/New Desktop Window")]
+	[ClickHandler("desktop", "NewDesktopWindow")]
     */
     [ExtensionOf(typeof(DesktopToolExtensionPoint))]
     public class TestTool : Tool<IDesktopToolContext>
@@ -132,5 +137,14 @@ namespace ClearCanvas.Desktop
                 name,
                 null);
         }
+
+		void NewDesktopWindow()
+		{
+			int numberDesktopWindows = Application.DesktopWindows.Count;
+			DesktopWindowCreationArgs args = new DesktopWindowCreationArgs("Test Window", "DesktopWindow" + numberDesktopWindows.ToString());
+			Application.DesktopWindows.AddNew(args);
+		}
     }
 }
+
+#endif
