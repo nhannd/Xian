@@ -25,7 +25,7 @@ namespace ClearCanvas.Dicom.Validation
             if (attribute.ParentCollection != null)
                 key = attribute.ParentCollection.GetHashCode();
             else
-                key = typeof(DAStringValidator).GetHashCode();
+                key = attribute.GetType().GetHashCode();
 
             return key;
         }
