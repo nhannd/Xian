@@ -34,6 +34,7 @@ using System.Collections.Generic;
 using System.Text;
 
 using ClearCanvas.Dicom.IO;
+using ClearCanvas.Dicom.Validation;
 
 namespace ClearCanvas.Dicom
 {
@@ -75,7 +76,7 @@ namespace ClearCanvas.Dicom
         public abstract bool IsEmpty { get; }
         public abstract Object Values { get; set; }
         public abstract DicomAttribute Copy();
-        public abstract void SetStringValue(String stringValue);
+        
         public abstract Type GetValueType();
         public abstract void SetNullValue();
 
@@ -110,30 +111,81 @@ namespace ClearCanvas.Dicom
             return length;
         }
 
+        public virtual void SetStringValue(String stringValue)
+        {
+            throw new DicomException(SR.InvalidType);
+        }
+        public virtual void SetString(int index, string value)
+        {
+            throw new DicomException(SR.InvalidType);
+        }
+        public virtual void SetInt16(int index, Int16 value)
+        {
+            throw new DicomException(SR.InvalidType);
+        }
+        public virtual void SetInt32(int index, Int32 value)
+        {
+            throw new DicomException(SR.InvalidType);
+        }
+        public virtual void SetInt64(int index, Int64 value)
+        {
+            throw new DicomException(SR.InvalidType);
+        }
+        public virtual void SetUInt16(int index, UInt16 value)
+        {
+            throw new DicomException(SR.InvalidType);
+        }
+        public virtual void SetUInt32(int index, UInt32 value)
+        {
+            throw new DicomException(SR.InvalidType);
+        }
+        public virtual void SetUInt64(int index, UInt64 value)
+        {
+            throw new DicomException(SR.InvalidType);
+        }
+        public virtual void SetFloat32(int index, float value)
+        {
+            throw new DicomException(SR.InvalidType);
+        }
+        public virtual void SetFloat64(int index, double value)
+        {
+            throw new DicomException(SR.InvalidType);
+        }
+        public virtual void SetDateTime(int index, DateTime value)
+        {
+            throw new DicomException(SR.InvalidType);
+        }
+        public virtual void SetUid(int index, DicomUid value)
+        {
+            throw new DicomException(SR.InvalidType);
+        }
+
         public virtual bool TryGetUInt16(int i, out ushort value)
         {
             value = 0;
             return false;
         }
-        public virtual ushort GetUInt16(int i, ushort defaultVal)
-        {
-            ushort value;
-            bool ok = TryGetUInt16(i, out value);
-            if (!ok)
-                return defaultVal;
-            return value;
-        }
-        public virtual bool TryGetInt16(int i, out short value)
+        public virtual bool TryGetInt16(int i, out Int16 value)
         {
             value = 0;
             return false;
         }
-        public virtual bool TryGetUInt32(int i, out uint value)
+        public virtual bool TryGetUInt32(int i, out UInt32 value)
         {
             value = 0;
             return false;
         }
-        public virtual bool TryGetInt32(int i, out int value)
+        public virtual bool TryGetInt32(int i, out Int32 value)
+        {
+            value = 0;
+            return false;
+        }
+        public virtual bool TryGetUInt64(int i, out UInt64 value)
+        {
+            value = 0;
+            return false;
+        }
+        public virtual bool TryGetInt64(int i, out Int64 value)
         {
             value = 0;
             return false;
@@ -153,25 +205,17 @@ namespace ClearCanvas.Dicom
             value = "";
             return false;
         }
-        public virtual String GetString(int i, String defaultVal)
+        /// <summary>
+        /// Method to retrieve a <see cref="DateTime"/> attribute for the tag.
+        /// </summary>
+        /// <param name="i">A zero index value to retrieve.</param>
+        /// <param name="value"></param>
+        /// <returns>true on success, false on failure.</returns>
+        public virtual bool TryGetDateTime(int i, out DateTime value)
         {
-            String value;
-            bool ok = TryGetString(i, out value);
-            if (!ok)
-                return defaultVal;
-            return value;
+            value = new DateTime();
+            return false;
         }
-
-        public virtual void AppendInt32(int intValue)
-        {
-            throw new DicomException(SR.InvalidType);
-        }
-
-        public virtual void AppendString(string stringValue)
-        {
-            throw new DicomException(SR.InvalidType);
-        }
-
         /// <summary>
         /// Retrieves a <see cref="DicomUid"/> instance for a value.
         /// </summary>
@@ -184,18 +228,343 @@ namespace ClearCanvas.Dicom
             value = null;
             return false;
         }
-
         /// <summary>
-        /// Method to retrieve a <see cref="DateTime"/> attribute for the tag.
+        /// Append an Int16 value to the tag.
+        /// <remarks>If the value does not fit into or not compatible with the tag VR (eg, append(-1) to an US tag), DicomDataException will be thrown</remarks>
         /// </summary>
-        /// <param name="i">A zero index value to retrieve.</param>
-        /// <param name="value"></param>
-        /// <returns>true on success, false on failure.</returns>
-        public virtual bool TryGetDateTime(int i, out DateTime value)
+        /// <param name="intValue"></param>
+        public virtual void AppendInt16(Int16 intValue)
         {
-            value = new DateTime();
-            return false;
+            throw new DicomException(SR.InvalidType);
         }
+        /// <summary>
+        /// Append an Int32 value to the tag.
+        /// <remarks>If the value does not fit into or not compatible with the tag VR (eg, append(-1) to an US tag), DicomDataException will be thrown</remarks>
+        /// </summary>
+        /// <param name="intValue"></param>
+        public virtual void AppendInt32(Int32 intValue)
+        {
+            throw new DicomException(SR.InvalidType);
+        }
+        /// <summary>
+        /// Append an Int64 value to the tag.
+        /// <remarks>If the value does not fit into or not compatible with the tag VR (eg, append(-1) to an US tag), DicomDataException will be thrown</remarks>
+        /// </summary>
+        /// <param name="intValue"></param>
+        public virtual void AppendInt64(Int64 intValue)
+        {
+            throw new DicomException(SR.InvalidType);
+        }
+        /// <summary>
+        /// Append an UInt16 value to the tag.
+        /// <remarks>If the value does not fit into or not compatible with the tag VR (eg, append(-1) to an US tag), DicomDataException will be thrown</remarks>
+        /// </summary>
+        /// <param name="intValue"></param>
+        public virtual void AppendUInt16(UInt16 intValue)
+        {
+            throw new DicomException(SR.InvalidType);
+        }
+        /// <summary>
+        /// Append an UInt32 value to the tag.
+        /// <remarks>If the value does not fit into or not compatible with the tag VR (eg, append(-1) to an US tag), DicomDataException will be thrown</remarks>
+        /// </summary>
+        /// <param name="intValue"></param>
+        public virtual void AppendUInt32(UInt32 intValue)
+        {
+            throw new DicomException(SR.InvalidType);
+        }
+        /// <summary>
+        /// Append an UInt64 value to the tag.
+        /// <remarks>If the value does not fit into or not compatible with the tag VR (eg, append(-1) to an US tag), DicomDataException will be thrown</remarks>
+        /// </summary>
+        /// <param name="intValue"></param>
+        public virtual void AppendUInt64(UInt64 intValue)
+        {
+            throw new DicomException(SR.InvalidType);
+        }
+        /// <summary>
+        /// Append an float value to the tag.
+        /// <remarks>If the value does not fit into or not compatible with the tag VR (eg, append(-1) to an US tag), DicomDataException will be thrown</remarks>
+        /// </summary>
+        /// <param name="intValue"></param>
+        public virtual void AppendFloat32(float value)
+        {
+            throw new DicomException(SR.InvalidType);
+        }
+        /// <summary>
+        /// Append an double value to the tag.
+        /// <remarks>If the value does not fit into or not compatible with the tag VR (eg, append(-1) to an US tag), DicomDataException will be thrown</remarks>
+        /// </summary>
+        /// <param name="intValue"></param>
+        public virtual void AppendFloat64(double value)
+        {
+            throw new DicomException(SR.InvalidType);
+        }
+        /// <summary>
+        /// Append an DateTime value to the tag.
+        /// <remarks>If the value does not fit into or not compatible with the tag VR (eg, append(-1) to an US tag), DicomDataException will be thrown</remarks>
+        /// </summary>
+        /// <param name="intValue"></param>
+        public virtual void AppendDateTime(DateTime value)
+        {
+            throw new DicomException(SR.InvalidType);
+        }
+        /// <summary>
+        /// Append an string value to the tag.
+        /// <remarks>If the value cannot be converted into the underlying VR (eg, append("ABC") to an US tag), DicomDataException will be thrown</remarks>
+        /// <remarks>If the value does not fit into or not compatible with the tag VR (eg, append(-1) to an US tag), DicomDataException will be thrown</remarks>
+        /// </summary>
+        /// <param name="intValue"></param>
+        public virtual void AppendString(string stringValue)
+        {
+            throw new DicomException(SR.InvalidType);
+        }
+        /// <summary>
+        /// Append an uid to the tag.
+        /// </summary>
+        /// <param name="intValue"></param>
+        public virtual void AppendUid(DicomUid uid)
+        {
+            throw new DicomException(SR.InvalidType);
+        }
+        
+        #region Value retrieval methods
+        /// <summary>
+        /// Retrieve a value as a UInt16.
+        /// If the value doesn't exist or cannot be converted into UInt16, the <i>defaultVal</i> will be returned.
+        /// </summary>
+        /// <param name="i"></param>
+        /// <param name="defaultVal"></param>
+        /// <returns></returns>
+        public virtual UInt16 GetUInt16(int i, UInt16 defaultVal)
+        {
+            UInt16 value;
+            try
+            {
+                bool ok = TryGetUInt16(i, out value);
+                if (!ok)
+                    return defaultVal;
+                return value;
+            }
+            catch (Exception e)
+            {
+                return defaultVal; 
+            }
+        }
+        /// <summary>
+        /// Retrieve a value as a UInt32.
+        /// If the value doesn't exist or cannot be converted into UInt32, the <i>defaultVal</i> will be returned.
+        /// </summary>
+        /// <param name="i"></param>
+        /// <param name="defaultVal"></param>
+        /// <returns></returns>
+        public virtual UInt32 GetUInt32(int i, UInt32 defaultVal)
+        {
+            UInt32 value;
+            try
+            {
+                bool ok = TryGetUInt32(i, out value);
+                if (!ok)
+                    return defaultVal;
+                return value;
+            }
+            catch (Exception e)
+            {
+                return defaultVal;
+            }
+        }
+        /// <summary>
+        /// Retrieve a value as a UInt64.
+        /// If the value doesn't exist or cannot be converted into UInt64, the <i>defaultVal</i> will be returned.
+        /// </summary>
+        /// <param name="i"></param>
+        /// <param name="defaultVal"></param>
+        /// <returns></returns>
+        public virtual UInt64 GetUInt64(int i, UInt64 defaultVal)
+        {
+            UInt64 value;
+            try
+            {
+                bool ok = TryGetUInt64(i, out value);
+                if (!ok)
+                    return defaultVal;
+                return value;
+            }
+            catch (Exception e)
+            {
+                return defaultVal;
+            }
+        }
+        /// <summary>
+        /// Retrieve a value as a Int16.
+        /// If the value doesn't exist or cannot be converted into Int16, the <i>defaultVal</i> will be returned.
+        /// </summary>
+        /// <param name="i"></param>
+        /// <param name="defaultVal"></param>
+        /// <returns></returns>        
+        public virtual Int16 GetInt16(int i, Int16 defaultVal)
+        {
+            Int16 value;
+            try
+            {
+                bool ok = TryGetInt16(i, out value);
+                if (!ok)
+                    return defaultVal;
+            }
+            catch (Exception e)
+            {
+                return defaultVal;
+            }
+            return value;
+        }
+        /// <summary>
+        /// Retrieve a value as a Int32.
+        /// If the value doesn't exist or cannot be converted into Int32, the <i>defaultVal</i> will be returned.
+        /// </summary>
+        /// <param name="i"></param>
+        /// <param name="defaultVal"></param>
+        /// <returns></returns>
+        public virtual Int32 GetInt32(int i, Int32 defaultVal)
+        {
+            Int32 value;
+            try
+            {
+                bool ok = TryGetInt32(i, out value);
+                if (!ok)
+                    return defaultVal;
+                return value;
+            }
+            catch (Exception e)
+            {
+                return defaultVal;
+            }
+        }
+        /// <summary>
+        /// Retrieve a value as an Int64.
+        /// If the value doesn't exist or cannot be converted into Int64, the <i>defaultVal</i> will be returned.
+        /// </summary>
+        /// <param name="i"></param>
+        /// <param name="defaultVal"></param>
+        /// <returns></returns>
+        public virtual Int64 GetInt64(int i, Int64 defaultVal)
+        {
+            Int64 value;
+            try
+            {
+                bool ok = TryGetInt64(i, out value);
+                if (!ok)
+                    return defaultVal;
+                return value;
+            }
+            catch (Exception e)
+            {
+                return defaultVal;
+            }
+        }
+        /// <summary>
+        /// Retrieve a value as a float.
+        /// If the value doesn't exist or cannot be converted into float, the <i>defaultVal</i> will be returned.
+        /// </summary>
+        /// <param name="i"></param>
+        /// <param name="defaultVal"></param>
+        /// <returns></returns>
+        public virtual float GetFloat32(int i, float defaultVal)
+        {
+            float value;
+            try
+            {
+                bool ok = TryGetFloat32(i, out value);
+                if (!ok)
+                    return defaultVal;
+                return value;
+            }
+            catch (Exception e)
+            {
+                return defaultVal;
+            }
+        }
+        /// <summary>
+        /// Retrieve a value as a double.
+        /// If the value doesn't exist or cannot be converted into double, the <i>defaultVal</i> will be returned.
+        /// </summary>
+        /// <param name="i"></param>
+        /// <param name="defaultVal"></param>
+        /// <returns></returns>
+        public virtual double GetFloat64(int i, double defaultVal)
+        {
+            double value;
+            bool ok = TryGetFloat64(i, out value);
+            if (!ok)
+                return defaultVal;
+            return value;
+        }
+        /// <summary>
+        /// Retrieve a value as a string.
+        /// </summary>
+        /// <param name="i"></param>
+        /// <param name="defaultVal"></param>
+        /// <returns></returns>
+        public virtual String GetString(int i, String defaultVal)
+        {
+            String value;
+            try
+            {
+                bool ok = TryGetString(i, out value);
+                if (!ok)
+                    return defaultVal;
+                return value;
+            }
+            catch (Exception e)
+            {
+                return defaultVal;
+            }
+        }
+        /// <summary>
+        /// Retrieve a datetime value.
+        /// If the value cannot be converted into a <see cref="DateTime"/> object, <i>defaultVal</i> will be returned.
+        /// </summary>
+        /// <param name="i"></param>
+        /// <param name="defaultVal"></param>
+        /// <returns></returns>
+        public virtual DateTime GetDateTime(int i, DateTime defaultVal)
+        {
+            DateTime value;
+            try
+            {
+                bool ok = TryGetDateTime(i, out value);
+                if (!ok)
+                    return defaultVal;
+                return value;
+            }
+            catch (Exception e)
+            {
+                return defaultVal;
+            }
+        }
+        /// <summary>
+        /// Retrieve an UID value. 
+        /// 
+        /// <see cref="DicomUid"/> 
+        /// </summary>
+        /// <param name="i"></param>
+        /// <param name="defaultVal"></param>
+        /// <returns></returns>
+        public virtual DicomUid GetUid(int i, DicomUid defaultVal)
+        {
+            DicomUid value;
+            try
+            {
+                bool ok = TryGetUid(i, out value);
+                if (!ok)
+                    return defaultVal;
+                return value;
+            }
+            catch (Exception e)
+            {
+                return defaultVal;
+            }
+        }
+        #endregion
 
         /// <summary>
         /// Method for adding a <see cref="DicomSequenceItem"/> to an attributes value.
@@ -209,6 +578,8 @@ namespace ClearCanvas.Dicom
             throw new DicomException(SR.InvalidType);
         }
 
+
+        
         #endregion
 
         #region Internal Properties
@@ -224,6 +595,7 @@ namespace ClearCanvas.Dicom
             set { _parentCollection = value; }
         }
         #endregion
+
 
         #region Constructors
         /// <summary>

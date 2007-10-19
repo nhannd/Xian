@@ -38,7 +38,8 @@ namespace ClearCanvas.Dicom
 {
 	public static class DateTimeParser
 	{
-		public static readonly string DicomFullDateTimeFormat = "yyyyMMddHHmmss.FFFFFF";
+        public static readonly string DicomFullDateTimeFormatWithTimeZone = "yyyyMMddHHmmss.ffffff&zzzz";
+        public static readonly string DicomFullDateTimeFormat = "yyyyMMddHHmmss.ffffff";
 
 		private static readonly char[] _plusMinus = { '+', '-' };
 
@@ -141,5 +142,24 @@ namespace ClearCanvas.Dicom
 
 			return true;
 		}
+
+        /// <summary>
+        /// Convert a datetime object into a DT string
+        /// </summary>
+        /// <param name="datetime"></param>
+        /// <returns></returns>
+        public static string ToDicomString(DateTime datetime, bool toUTC)
+        {
+            if (toUTC)
+            {
+                DateTime utc = datetime.ToUniversalTime();
+                return utc.ToString(DicomFullDateTimeFormatWithTimeZone);
+            }
+            else
+            {
+                return datetime.ToString(DicomFullDateTimeFormat);
+            }
+            
+        }
 	}
 }

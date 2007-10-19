@@ -77,6 +77,11 @@ namespace ClearCanvas.Dicom
 		/// <returns>true on success, false otherwise</returns>
 		public static bool Parse(string dicomDate, out DateTime date)
 		{
+			// This method is used in DicomAttribute Get/TryGet,
+			// which allow leading/trailing spaces in the string
+			// They are considered valid DICOM date/time.
+            if (dicomDate!=null)
+                dicomDate = dicomDate.Trim();
 #if MONO
 			try
 			{

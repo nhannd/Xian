@@ -46,7 +46,7 @@ namespace ClearCanvas.Dicom.Tests
             theSet[DicomTags.SopClassUid].SetStringValue(SopClass.MrImageStorageUid);
             theSet[DicomTags.SopInstanceUid].SetStringValue("1.1.1.1.1");
             theSet[DicomTags.StudyDate].SetStringValue("20070618");
-            theSet[DicomTags.StudyTime].SetStringValue("1336000");
+            theSet[DicomTags.StudyTime].SetStringValue("133600");
             theSet[DicomTags.SeriesDate].SetStringValue("20070618");
             theSet[DicomTags.SeriesTime].SetStringValue("133700");
             theSet[DicomTags.AccessionNumber].SetStringValue("A1234");
