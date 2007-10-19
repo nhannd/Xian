@@ -47,6 +47,34 @@ INSERT INTO [ImageServer].[dbo].[FilesystemTierEnum]
      VALUES
            (newid(),103,'Tier3','Tier 3','Filesystem Tier 3')
 
+-- ServerRuleTypeEnum inserts
+INSERT INTO [ImageServer].[dbo].[ServerRuleTypeEnum]
+           ([GUID],[ServerRuleTypeEnum],[Lookup],[Description],[LongDescription])
+     VALUES
+           (newid(),100,'AutoRoute','Auto Routing','A DICOM auto-routing rule')
+
+
+-- ServerRuleApplyTimeEnum inserts
+INSERT INTO [ImageServer].[dbo].[ServerRuleApplyTimeEnum]
+           ([GUID],[ServerRuleApplyTimeEnum],[Lookup],[Description],[LongDescription])
+     VALUES
+           (newid(),100,'SopReceived','SOP Received','Apply rule when a SOP Instance has been received')
+
+INSERT INTO [ImageServer].[dbo].[ServerRuleApplyTimeEnum]
+           ([GUID],[ServerRuleApplyTimeEnum],[Lookup],[Description],[LongDescription])
+     VALUES
+           (newid(),101,'SopProcessed','SOP Processed','Apply rule when a SOP Instance has been processed')
+
+INSERT INTO [ImageServer].[dbo].[ServerRuleApplyTimeEnum]
+           ([GUID],[ServerRuleApplyTimeEnum],[Lookup],[Description],[LongDescription])
+     VALUES
+           (newid(),102,'SeriesProcessed','Series Processed','Apply rule when a Series is initially processed')
+
+INSERT INTO [ImageServer].[dbo].[ServerRuleApplyTimeEnum]
+           ([GUID],[ServerRuleApplyTimeEnum],[Lookup],[Description],[LongDescription])
+     VALUES
+           (newid(),103,'StudyProcessed','Study Processed','Apply rule when a Study is initially processed')
+
 
 -- ServerSopClass inserts
 INSERT INTO [ImageServer].[dbo].[ServerSopClass] ([GUID],[SopClassUid],[Description],[NonImage])

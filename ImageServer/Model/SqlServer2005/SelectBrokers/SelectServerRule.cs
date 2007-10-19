@@ -29,36 +29,21 @@
 
 #endregion
 
-using ClearCanvas.Dicom;
-using ClearCanvas.Common.Actions;
+using ClearCanvas.Common;
+using ClearCanvas.ImageServer.Enterprise.SqlServer2005;
+using ClearCanvas.ImageServer.Model.Criteria;
+using ClearCanvas.ImageServer.Model.SelectBrokers;
 
-namespace ClearCanvas.ImageServer.Rules.AutoRouteAction
+namespace ClearCanvas.ImageServer.Model.SqlServer2005.SelectBrokers
 {
-    public class AutoRouteActionItem : IActionItem
+    /// <summary>
+    /// Broker implementation for <see cref="ISelectServerRule"/>
+    /// </summary>
+    [ExtensionOf(typeof(BrokerExtensionPoint))]
+    public class SelectServerRule : SelectBroker<ServerRuleSelectCriteria, ServerRule>, ISelectServerRule
     {
-        private string _failureReason = "Success";
-        private readonly string _device;
-
-        public AutoRouteActionItem(string device)
-        {
-            _device = device;
-        }
-
-        public bool Execute(object obj, object context)
-        {
-            DicomMessageBase msg = obj as DicomMessageBase;
-            DicomAttributeCollection collection = obj as DicomAttributeCollection;
-            if(collection == null && msg == null)
-                throw new XmlActionCompilerException("Unexpected parameter type");
-            Rule rule = context as Rule;
-
-           
-            return true;
-        }
-
-        public string FailureReason
-        {
-            get { return _failureReason; }
-        }
+        public SelectServerRule()
+            : base("ServerRule")
+        { }
     }
 }

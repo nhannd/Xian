@@ -41,6 +41,7 @@ using ClearCanvas.ImageServer.Queue;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Parameters;
 using ClearCanvas.ImageServer.Model.Brokers;
+using ClearCanvas.ImageServer.Rules;
 using ClearCanvas.ImageServer.Streaming;
 
 namespace ClearCanvas.ImageServer.Queue.Work
@@ -53,6 +54,7 @@ namespace ClearCanvas.ImageServer.Queue.Work
         private IReadContext _readContext;
         private StudyStorageLocation _storageLocation;
         private IList<WorkQueueUid> _uidList;
+        private ServerRulesEngine _sopProcessedRulesEngine;
 
         public StudyProcessItemProcessor()
         {
@@ -158,6 +160,8 @@ namespace ClearCanvas.ImageServer.Queue.Work
                 // Insert into the database
                 processor.ExecuteCommand(new InsertInstanceCommand(_readContext,file,_storageLocation));
 
+                _sopProcessedRulesEngine.Execute(file);
+
                 Platform.Log(LogLevel.Info, "Processed SOP: {0} for Patient {1}", file.MediaStorageSopInstanceUid, patientsName);
             }
             catch (Exception e)
@@ -166,6 +170,8 @@ namespace ClearCanvas.ImageServer.Queue.Work
                 processor.Rollback();
                 throw new ApplicationException("Unexpected exception when processing file.",e);
             }
+
+            
         }
 
         private void ProcessUidList(WorkQueue item)
@@ -256,6 +262,10 @@ namespace ClearCanvas.ImageServer.Queue.Work
         /// <param name="item">The item to process.</param>
         public void Process(WorkQueue item)
         {
+            // Load the rules engine
+            _sopProcessedRulesEngine = new ServerRulesEngine(ServerRuleApplyTimeEnum.GetEnum("SopProcessed"));
+            _sopProcessedRulesEngine.Load();
+
             //Load the storage location.
             LoadStorageLocation(item);
 

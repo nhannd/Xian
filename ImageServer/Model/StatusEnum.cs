@@ -38,7 +38,7 @@ namespace ClearCanvas.ImageServer.Model
 {
     public class StatusEnum : ServerEnum
     {
-        private static Dictionary<short, StatusEnum> _dict = new Dictionary<short, StatusEnum>();
+        private static readonly Dictionary<short, StatusEnum> _dict = new Dictionary<short, StatusEnum>();
 
         /// <summary>
         /// One-time load of status values from the database.
@@ -65,14 +65,14 @@ namespace ClearCanvas.ImageServer.Model
 
         public override void SetEnum(short val)
         {
-            StatusEnum statusEnum;
-            if (false == _dict.TryGetValue(val, out statusEnum))
-                throw new PersistenceException("Unknown TypeEnum value: " + val, null);
+            StatusEnum enumValue;
+            if (false == _dict.TryGetValue(val, out enumValue))
+                throw new PersistenceException("Unknown StatusEnum value: " + val, null);
 
-            Enum = statusEnum.Enum;
-            Lookup = statusEnum.Lookup;
-            Description = statusEnum.Description;
-            LongDescription = statusEnum.LongDescription;
+            Enum = enumValue.Enum;
+            Lookup = enumValue.Lookup;
+            Description = enumValue.Description;
+            LongDescription = enumValue.LongDescription;
         }
 
         public static StatusEnum GetEnum(string lookup)

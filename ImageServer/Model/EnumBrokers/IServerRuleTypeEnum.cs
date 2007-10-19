@@ -29,36 +29,15 @@
 
 #endregion
 
-using ClearCanvas.Dicom;
-using ClearCanvas.Common.Actions;
+using ClearCanvas.ImageServer.Enterprise;
+using ClearCanvas.ImageServer.Model;
 
-namespace ClearCanvas.ImageServer.Rules.AutoRouteAction
+namespace ClearCanvas.ImageServer.Model.EnumBrokers
 {
-    public class AutoRouteActionItem : IActionItem
+    /// <summary>
+    /// Broker for loading <see cref="ServerRuleTypeEnum"/> values.
+    /// </summary>
+    public interface IServerRuleTypeEnum : IEnumBroker<ServerRuleTypeEnum>
     {
-        private string _failureReason = "Success";
-        private readonly string _device;
-
-        public AutoRouteActionItem(string device)
-        {
-            _device = device;
-        }
-
-        public bool Execute(object obj, object context)
-        {
-            DicomMessageBase msg = obj as DicomMessageBase;
-            DicomAttributeCollection collection = obj as DicomAttributeCollection;
-            if(collection == null && msg == null)
-                throw new XmlActionCompilerException("Unexpected parameter type");
-            Rule rule = context as Rule;
-
-           
-            return true;
-        }
-
-        public string FailureReason
-        {
-            get { return _failureReason; }
-        }
     }
 }

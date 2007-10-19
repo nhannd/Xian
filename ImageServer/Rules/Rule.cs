@@ -36,29 +36,30 @@ using ClearCanvas.Common.Actions;
 using ClearCanvas.Common.Specifications;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
+using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Rules
 {
-    public class ServerRule
+    public class Rule
     {
         #region Private Members
-        private readonly XmlDocument _doc;
         private ISpecification _conditions;
         private IActionSet _actions;
+        private readonly ServerRule _serverRule;
         #endregion
 
         #region Constructors
-        public ServerRule(string script)
+        public Rule(ServerRule serverRule)
         {
-            _doc = new XmlDocument();
-            _doc.Load(new StringReader(script));
+            _serverRule = serverRule;
         }
+        #endregion
 
-        public ServerRule(XmlDocument doc)
+        #region Public Properties
+        public ServerRule ServerRule
         {
-            _doc = doc;
+            get { return _serverRule; }
         }
-
         #endregion
 
         #region Public Methods
@@ -66,9 +67,9 @@ namespace ClearCanvas.ImageServer.Rules
         public void Compile(XmlSpecificationCompiler specCompiler, XmlActionCompiler actionCompiler)
         {
             XmlNode ruleNode =
-        CollectionUtils.SelectFirst<XmlNode>(_doc.ChildNodes,
-                                             delegate(XmlNode child)
-                                             { return child.Name.Equals("rule"); });
+                CollectionUtils.SelectFirst<XmlNode>(_serverRule.RuleXml.ChildNodes,
+                                                     delegate(XmlNode child)
+                                                         { return child.Name.Equals("rule"); });
 
             XmlNode conditionNode =
                 CollectionUtils.SelectFirst<XmlNode>(ruleNode.ChildNodes,
@@ -86,19 +87,24 @@ namespace ClearCanvas.ImageServer.Rules
             _actions = actionCompiler.Compile(actionNode as XmlElement);
         }
 
-        public void Execute(DicomAttributeCollection collection, object context)
+        public void Execute(DicomMessageBase msg, out bool ruleApplied, out bool ruleSuccess)
         {
-            TestResult result = _conditions.Test(collection);
+            ruleApplied = false;
+            ruleSuccess = true;
 
+            TestResult result = _conditions.Test(msg);
+            
             if (result.Success)
             {
-                TestResult actionResult = _actions.Execute(collection, context);
+                ruleApplied = true;
+                TestResult actionResult = _actions.Execute(msg, this);
                 if (actionResult.Fail)
                 {
                     foreach (TestResultReason reason in actionResult.Reasons)
                     {
                         Platform.Log(LogLevel.Error, "Unexpected error performing action: {0}", reason.Message);
                     }
+                    ruleSuccess = false;
                 }
             }
         }

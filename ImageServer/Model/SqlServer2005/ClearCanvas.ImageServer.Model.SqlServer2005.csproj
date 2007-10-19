@@ -46,7 +46,9 @@
     <Compile Include="Brokers\InsertStudyStorage.cs" />
     <Compile Include="Brokers\InsertWorkQueueStudyProcess.cs" />
     <Compile Include="Brokers\QueryDevice.cs" />
-    <Compile Include="EnumBrokers\FilesystemTierBroker.cs" />
+    <Compile Include="EnumBrokers\FilesystemTierEnumBroker.cs" />
+    <Compile Include="EnumBrokers\ServerRuleApplyTimeEnumBroker.cs" />
+    <Compile Include="EnumBrokers\ServerRuleTypeEnumBroker.cs" />
     <Compile Include="SelectBrokers\SelectDevice.cs" />
     <Compile Include="SelectBrokers\SelectFilesystem.cs" />
     <Compile Include="SelectBrokers\SelectPatient.cs" />
@@ -55,6 +57,7 @@
     <Compile Include="Brokers\QueryRequestAttributes.cs" />
     <Compile Include="SelectBrokers\SelectSeries.cs" />
     <Compile Include="SelectBrokers\SelectServerPartition.cs" />
+    <Compile Include="SelectBrokers\SelectServerRule.cs" />
     <Compile Include="SelectBrokers\SelectStudy.cs" />
     <Compile Include="Brokers\QueryStudyStorageLocation.cs" />
     <Compile Include="Brokers\QueryWorkQueue.cs" />

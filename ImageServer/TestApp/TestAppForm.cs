@@ -48,6 +48,7 @@ using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.Parameters;
 using ClearCanvas.ImageServer.Rules;
+using Rule=ClearCanvas.ImageServer.Rules.Rule;
 
 namespace ClearCanvas.ImageServer.TestApp
 {
@@ -171,16 +172,11 @@ namespace ClearCanvas.ImageServer.TestApp
 
             dicomFile.Load();
 
-            string script = "<?xml version=\"1.0\" encoding=\"utf-8\" ?><rule id=\"MR\"><condition expressionLanguage=\"dicom\"><equal test=\"$Modality\" refValue=\"MR\"/></condition><action><auto-route device=\"MERGE_STORE_SCP\"/></action></rule>";
-           
-            ServerRule rule = new ServerRule(script);
+            ServerRulesEngine engine = new ServerRulesEngine(ServerRuleApplyTimeEnum.GetEnum("SopProcessed"));
+            engine.Load();
 
-            XmlSpecificationCompiler specCompiler = new XmlSpecificationCompiler("dicom");
-            XmlActionCompiler actionCompiler = new XmlActionCompiler();
-
-            rule.Compile(specCompiler, actionCompiler);
-
-            rule.Execute(dicomFile.DataSet, null);
+            engine.Execute(dicomFile);
+            
         }
     }
 }

@@ -37,6 +37,7 @@
   <ItemGroup>
     <Compile Include="Brokers\IDeleteWorkQueueUid.cs" />
     <Compile Include="Brokers\IInsertFilesystem.cs" />
+    <Compile Include="Criteria\ServerRuleSelectCriteria.cs" />
     <Compile Include="EnumBrokers\IFilesystemTierEnum.cs" />
     <Compile Include="Brokers\IGetFilesystems.cs" />
     <Compile Include="Brokers\IGetServerPartitions.cs" />
@@ -56,6 +57,8 @@
     <Compile Include="Criteria\FilesystemSelectCriteria.cs" />
     <Compile Include="Criteria\ServerPartitionSelectCriteria.cs" />
     <Compile Include="Criteria\WorkQueueSelectCriteria.cs" />
+    <Compile Include="EnumBrokers\IServerRuleApplyTimeEnum.cs" />
+    <Compile Include="EnumBrokers\IServerRuleTypeEnum.cs" />
     <Compile Include="Parameters\DeviceUpdateParameters.cs" />
     <Compile Include="Parameters\FilesystemInsertParameters.cs" />
     <Compile Include="SelectBrokers\ISelectDevice.cs" />
@@ -65,6 +68,7 @@
     <Compile Include="Brokers\IQueryRequestAttributes.cs" />
     <Compile Include="SelectBrokers\ISelectSeries.cs" />
     <Compile Include="Brokers\IQueryServerPartitionSopClasses.cs" />
+    <Compile Include="SelectBrokers\ISelectServerRule.cs" />
     <Compile Include="SelectBrokers\ISelectStudy.cs" />
     <Compile Include="Brokers\IQueryStudyStorageLocation.cs" />
     <Compile Include="Brokers\IQueryWorkQueueUids.cs" />
@@ -94,6 +98,9 @@
     <Compile Include="SelectBrokers\ISelectWorkQueue.cs" />
     <Compile Include="Series.cs" />
     <Compile Include="Parameters\ServerPartitionInsertParameters.cs" />
+    <Compile Include="ServerRule.cs" />
+    <Compile Include="ServerRuleApplyTimeEnum.cs" />
+    <Compile Include="ServerRuleTypeEnum.cs" />
     <Compile Include="ServerSopClass.cs" />
     <Compile Include="ServerTransferSyntax.cs" />
     <Compile Include="StatusEnum.cs" />

@@ -36,53 +36,53 @@ using ClearCanvas.ImageServer.Model.EnumBrokers;
 
 namespace ClearCanvas.ImageServer.Model
 {
-    public class TypeEnum : ServerEnum
+    public class ServerRuleApplyTimeEnum : ServerEnum
     {
-        private static readonly Dictionary<short, TypeEnum> _dict = new Dictionary<short, TypeEnum>();
+        private static readonly Dictionary<short, ServerRuleApplyTimeEnum> _dict = new Dictionary<short, ServerRuleApplyTimeEnum>();
 
         /// <summary>
-        /// One-time load from the database of type enumerated value.
+        /// One-time load of status values from the database.
         /// </summary>
-        static TypeEnum()
+        static ServerRuleApplyTimeEnum()
         {
             IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext();
-            IEnumBroker<TypeEnum> broker = read.GetBroker<ITypeEnum>();
-            IList<TypeEnum> list = broker.Execute();
+            IEnumBroker<ServerRuleApplyTimeEnum> broker = read.GetBroker<IServerRuleApplyTimeEnum>();
+            IList<ServerRuleApplyTimeEnum> list = broker.Execute();
             read.Dispose();
 
-            foreach (TypeEnum type in list)
+            foreach (ServerRuleApplyTimeEnum type in list)
             {
                 _dict.Add(type.Enum, type);
             }
         }
 
         #region Constructors
-        public TypeEnum()
-            : base("TypeEnum")
+        public ServerRuleApplyTimeEnum()
+            : base("ServerRuleApplyTimeEnum")
         {
         }
         #endregion
 
         public override void SetEnum(short val)
         {
-            TypeEnum typeEnum;
-            if (false == _dict.TryGetValue(val, out typeEnum))
-                throw new PersistenceException("Unknown TypeEnum value: " + val,null);
+            ServerRuleApplyTimeEnum enumValue;
+            if (false == _dict.TryGetValue(val, out enumValue))
+                throw new PersistenceException("Unknown ServerRuleApplyTimeEnum value: " + val, null);
 
-            Enum = typeEnum.Enum;
-            Lookup = typeEnum.Lookup;
-            Description = typeEnum.Description;
-            LongDescription = typeEnum.LongDescription;
+            Enum = enumValue.Enum;
+            Lookup = enumValue.Lookup;
+            Description = enumValue.Description;
+            LongDescription = enumValue.LongDescription;
         }
 
-        public static TypeEnum GetEnum(string lookup)
+        public static ServerRuleApplyTimeEnum GetEnum(string lookup)
         {
-            foreach (TypeEnum type in _dict.Values)
+            foreach (ServerRuleApplyTimeEnum status in _dict.Values)
             {
-                if (type.Lookup.Equals(lookup))
-                    return type;
+                if (status.Lookup.Equals(lookup))
+                    return status;
             }
-            throw new PersistenceException("Unknown TypeEnum: " + lookup, null);
+            throw new PersistenceException("Unknown ServerRuleApplyTimeEnum: " + lookup, null);
         }
     }
 }
