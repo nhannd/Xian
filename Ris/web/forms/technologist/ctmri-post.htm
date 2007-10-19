@@ -18,25 +18,33 @@
 
 		    function onBodyLoad()
 		    {
-			scaleWidth();
+            try
+            {
+               scaleWidth();
 
-		        if(Ris)
-		        {
-			        data = JSML.parse(Ris.getData("PostExamDetails")) || {};
-			    }
-			    
-			    data.staff = data.staff || [];
-			    data.pacs = data.pacs || {};
-			    data.imageQuality = data.imageQuality || {};
-			    data.patientNotes = data.patientNotes || {};
-			    data.teachingCase = data.teachingCase || {};
-			    
-			    initStaffTable();
-			    initPacsTable();
-			    initPostProcessingTable();
-			    initImageQualityTable();
-			    initPatientNotesTable();
-			    initTeachingCaseTable();
+               if(Ris)
+               {
+                  data = JSML.parse(Ris.getData("PostExamDetails")) || {};
+               }
+
+               data.staff = data.staff || [];
+               data.pacs = data.pacs || {};
+               data.imageQuality = data.imageQuality || {};
+               data.patientNotes = data.patientNotes || {};
+               data.teachingCase = data.teachingCase || {};
+
+               initStaffTable();
+               initPacsTable();
+               initPostProcessingTable();
+               initImageQualityTable();
+               initPatientNotesTable();
+               initTeachingCaseTable();
+            }
+            catch(e)
+            {
+               var message = "Failed to load details page.  An exception occurred in the script. Error name: " + e.name + ". Error message: " + e.message;
+               Field.setValue($("myForm"), message);
+            }
 		    }
 		    
 		    function initStaffTable()
@@ -272,8 +280,7 @@
 		</p>
 		<table id="staffTable" border="1" width="100%">
 		  <tr>
-			<td><input id="staffCheckAllNone" type="checkbox" onclick="javascript: onStaffCheckAllNone()" /></td>
-			<td class="tableheading">Staff</td>
+			<td colspan="2"><input id="staffCheckAllNone" type="checkbox" onclick="javascript: onStaffCheckAllNone()" />Select All/None</td>
 		  </tr>
 		</table>
 		<p class="sectionheading">PACS</p>

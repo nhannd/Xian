@@ -11,6 +11,7 @@
       <script type="text/javascript" src="../../js/ui.js"></script>
       <script type="text/javascript" src="../../js/ris.js"></script>
       <script type="text/javascript" src="../../js/preview.js"></script>
+      <script type="text/javascript" src="../../js/layout.js"></script>
       <script type="text/javascript" >
          var data = {};
          var errorProvider = new ErrorProvider();
@@ -55,12 +56,24 @@
          {		        
             try
             {
+               scaleWidth();
+            
+               var startTime;
+               var stopTime;
+            
                if(Ris)
                {
                   data = JSML.parse(Ris.getData("Documentation")) || {};
-                  //data = {};
+                  startTime = Ris.getData("StartTime") || "Not Started";
+                  stopTime = Ris.getData("StopTime") || (startTime == "Not Started" ? "Not Started" : "In Progress");
                }
 
+               data.acquisition = data.acquisition || {};
+               data.acquisition.startTime = startTime;
+               data.acquisition.stopTime = stopTime;
+
+               initAcquisitionTable();
+               
                data.oral = data.oral || [];
                data.rectal = data.rectal || [];
                data.ivAccess = data.ivAccess || [];
@@ -76,6 +89,38 @@
                var message = "Failed to load details page.  An exception occurred in the script. Error name: " + e.name + ". Error message: " + e.message;
                Field.setValue($("myForm"), message);
             }
+         }
+         
+         function initAcquisitionTable()
+         {
+           var table = Table.createTable($("acquisitionTable"), { editInPlace: true, flow: true, checkBoxes: false },
+             [
+               {  label: "Start Date/Time",
+                  cellType: "readonly",
+                  getValue: function(item) { return item.startTime; }
+               },
+               {  label: "Stop Date/Time",
+                  cellType: "readonly",
+                  getValue: function(item) { return item.stopTime; }
+               },
+               {  label: "Equipment/Device ID/Location",
+                  cellType: "text",
+                  size: 30,
+                  getValue: function(item) { return item.equipment; },
+                  setValue: function(item, value) { item.equipment = value; },
+                  getError: function(item) { return null; }
+               },
+               {  label: "Radiation Dose",
+                  cellType: "text",
+                  size: 10,
+                  getValue: function(item) { return item.dose; },
+                  setValue: function(item, value) { item.dose = value; },
+                  getError: function(item) { return null; }
+               }
+             ]);
+                
+           table.errorProvider = errorProvider;   // share errorProvider with the rest of the form
+           table.bindItems([data.acquisition]);
          }
          
          function initOralTable()
@@ -396,8 +441,12 @@
          //////////////////////////////////////////////////////////////////////////
       </script>
    </head>
-   <body onload="javascript: onBodyLoad()">
+   <body onload="javascript: onBodyLoad()" onresize="javascript: scaleWidth()">
       <form id="myForm">
+         <p class="sectionheading">Exam Acquisition/Mpps</p>
+         <table id="acquisitionTable" width="100%">
+         </table>
+
          <p class="sectionheading">Oral</p>
          <p>
              <input type="button" value="Add" onclick="javascript: onAddOral()" />

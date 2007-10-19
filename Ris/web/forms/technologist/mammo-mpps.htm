@@ -11,6 +11,7 @@
       <script type="text/javascript" src="../../js/ui.js"></script>
       <script type="text/javascript" src="../../js/ris.js"></script>
       <script type="text/javascript" src="../../js/preview.js"></script>
+      <script type="text/javascript" src="../../js/layout.js"></script>
       <script type="text/javascript" >
          var data = {};
          var errorProvider = new ErrorProvider();
@@ -19,6 +20,8 @@
          {
             try
             {
+               scaleWidth();
+               
                var startTime;
                var stopTime;
             
@@ -93,7 +96,7 @@
          //////////////////////////////////////////////////////////////////////////
       </script>
    </head>
-   <body onload="javascript: onBodyLoad()">
+   <body onload="javascript: onBodyLoad()" onresize="javascript: scaleWidth()">
       <form id="myForm">
          <p class="sectionheading">Exam Acquisition/Mpps</p>
          <p>&nbsp;</b>

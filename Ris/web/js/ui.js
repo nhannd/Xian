@@ -212,6 +212,7 @@ var Table = {
 		        var td = tr.insertCell(0);
 		        var checkBox = document.createElement("input");
 		        checkBox.type = "checkbox";
+              td.className = "rowCheckCell";
 		        td.appendChild(checkBox);
 		        this._checkBoxes[index] = checkBox;
 
@@ -334,6 +335,7 @@ var Table = {
 		    if(["readonly"].indexOf(column.cellType) > -1)
 		    {
 		        var field = document.createElement("div");
+              field.className = "readonlyField";
 		        td.appendChild(field);
 		        td._setCellDisplayValue = function(value) { Field.setValue(field, value); }
 		    }

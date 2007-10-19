@@ -155,12 +155,17 @@ a.collapsibleHeading span.plusMinus
    display:none;
 }
 
+.rowCheckCell
+{
+   width:1em;
+}
+
 .divCell, .checkedDivCell
 {
    float: left;
    padding: 0;
    margin: 0;
-   margin-right: 5px;
+   padding-right: 1.5em;
    margin-bottom: 5px;
    height:3.3em;
 }
@@ -175,8 +180,22 @@ a.collapsibleHeading span.plusMinus
    white-space: wrap;
 }
 
+.readonlyField
+{
+   font-style: italic;
+   padding-top:0.3em;
+}
+
 #patientNotesTable .checkedDivCell
 {
+   padding:0;
+   width: 33%;
+   height: auto;
+}
+
+#medicationsTable .checkedDivCell
+{
+   padding:0;
    width: 33%;
    height: auto;
 }

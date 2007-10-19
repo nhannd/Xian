@@ -10,56 +10,58 @@
 	    <script type="text/javascript" src="../../js/jsml.js"></script>
 	    <script type="text/javascript" src="../../js/ui.js"></script>
 	    <script type="text/javascript" src="../../js/ris.js"></script>
+	    <script type="text/javascript" src="../../js/layout.js"></script>
+	    <script type="text/javascript" src="../../js/collapse.js"></script>
 	    <script type="text/javascript" >
 		    var data = {};
 		    var errorProvider = new ErrorProvider();
 	    
-		function scaleWidth()
-		{
-			var optimalLineLength = "70em";
-			var extraAccounting = "24em";
-			var minimumTextHeight = "10px";
-			var windowWidth = document.body.clientWidth;
-			var optimalSize = windowWidth / (parseInt(optimalLineLength) + parseInt(extraAccounting));
-
-			if (optimalSize >= parseInt(minimumTextHeight))
-			{
-				document.body.style.fontSize = optimalSize + "px";
-			}
-			else
-			{
-				document.body.style.fontSize = parseInt(minimumTextHeight) + "px";
-			}
-
-			return true;
-		}
-
 		    function onBodyLoad()
 		    {
-			scaleWidth();
+            try
+            {
+               scaleWidth();
 
-		        if(Ris)
-		        {
-			        data = JSML.parse(Ris.getData("PreExamDetails")) || {};
-			    }
-			    
-			    data.vitals = data.vitals || {};
-			    data.allergies = data.allergies || {};
-			    data.creatinine = data.creatinine || {};
-			    data.renalDisease = data.renalDisease || {};
-			    data.pregnancy = data.pregnancy || {};
-			    data.sedation = data.sedation || {};
-			    data.consents = data.consents || {};
-			    data.translation = data.translation || {};
-			    
-			    initVitalsTable();
-			    initAllergiesTable();
-			    initCreatinineTable();
-			    initRenalDiseaseTable();
-			    initPregnancyTable();
-			    initSedationTable();
-			    initConsentsTable();
-			    initTranslationTable();
+               if(Ris)
+   		      {
+   			      data = JSML.parse(Ris.getData("PreExamDetails")) || {};
+   			   }
+   			    
+   			   data.vitals = data.vitals || {};
+   			   data.allergies = data.allergies || {};
+   			   data.creatinine = data.creatinine || {};
+   			   data.renalDisease = data.renalDisease || {};
+   			   data.pregnancy = data.pregnancy || {};
+   			   data.sedation = data.sedation || {};
+   			   data.consents = data.consents || {};
+   			   data.translation = data.translation || {};
+   			   data.psaResults = data.psaResults || {}; 
+               data.cardiacCondition = data.cardiacCondition || {};
+               data.labResults = data.labResults || {};
+               data.petResearch = data.petResearch || {};
+               data.callback = data.callback || {};
+               data.medications = data.medications || {};
+               
+   			   initVitalsTable();
+   			   initAllergiesTable();
+   			   initCreatinineTable();
+   			   initRenalDiseaseTable();
+   			   initPregnancyTable();
+   			   initSedationTable();
+   			   initConsentsTable();
+   			   initTranslationTable();
+               initPsaResultsTable();
+               initCardiacConditionTable();
+               initLabResultsTable();
+               initPetResearchTable();
+               initCallbackTable();
+               initMedicationsTable();
+            }
+            catch(e)
+            {
+               var message = "Failed to load details page.  An exception occurred in the script. Error name: " + e.name + ". Error message: " + e.message;
+               Field.setValue($("myForm"), message);
+            }
 		    }
 		    
 		    function initVitalsTable()
@@ -183,17 +185,24 @@
 		             [
 		                {   label: "Patient Pregnant",
 		                    cellType: "choice",
-		                    choices: ["no", "yes"],
+		                    choices: ["N/A", "Test Given", "No", "Yes"],
 		                    getValue: function(item) { return item.pregnancyStatus; },
 		                    setValue: function(item, value) { item.pregnancyStatus = value; },
 		                    getError: function(item) { return item.pregnancyStatus ? null : "Value required"; }
+		                },                     
+		                {   label: "Test Result",
+		                    cellType: "text",
+		                    getValue: function(item) { return item.pregnancyTestResult; },
+		                    setValue: function(item, value) { item.pregnancyTestResult = value; },
+                          getVisible: function(item) { return item.pregnancyStatus == "Test Given"; },
+		                    getError: function(item) { return null; }
 		                },
 		                {   label: "Exam Cancelled",
 		                    cellType: "choice",
-		                    choices: ["no", "yes"],
+		                    choices: ["No", "Yes"],
 		                    getValue: function(item) { return item.examCancelled; },
 		                    setValue: function(item, value) { item.examCancelled = value; },
-		                    getVisible: function(item) { return item.pregnancyStatus == "yes"; },
+		                    getVisible: function(item) { return item.pregnancyStatus == "Yes" || item.pregnancyStatus == "Test Given"; },
 		                    getError: function(item) { return item.examCancelled ? null : "Value required"; }
 		                },
 		                {   label: "Consent obtained by",
@@ -201,7 +210,7 @@
 		                    lookup: function(query) { return Ris.resolveStaffName(query); },
 		                    getValue: function(item) { return item.consentObtainedBy; },
 		                    setValue: function(item, value) { item.consentObtainedBy = value; },
-		                    getVisible: function(item) { return item.examCancelled == "no"; },
+		                    getVisible: function(item) { return item.examCancelled == "No"; },
 		                    getError: function(item) { return item.consentObtainedBy ? null : "Value required"; }
 		                }
 		             ]);
@@ -253,6 +262,13 @@
 		    {
 		        var table = Table.createTable($("consentsTable"), { editInPlace: true, flow: true, checkBoxes: false },
 		             [
+		                {   label: "Consent Form Signed",
+		                    cellType: "choice",
+                          choices: ["Yes", "No"],
+		                    getValue: function(item) { return item.consentFormSigned; },
+		                    setValue: function(item, value) { item.consentFormSigned = value; },
+		                    getError: function(item) { return null; }
+		                },
 		                {   label: "Screening Form reviewed by",
 		                    cellType: "lookup",
 		                    lookup: function(query) { return Ris.resolveStaffName(query); },
@@ -285,21 +301,40 @@
 		        var table = Table.createTable($("translationTable"), { editInPlace: true, flow: true, checkBoxes: false },
 		             [
 		                {   label: "Translation Required",
-		                    cellType: "bool",
-		                    getValue: function(item) { return item.translationRequired || false; },
+		                    cellType: "choice",
+                          choices: ["No", "Yes"],
+		                    getValue: function(item) { return item.translationRequired || "No"; },
 		                    setValue: function(item, value) { item.translationRequired = value; },
 		                    getError: function(item) { return null; }
 		                },
-		                {   label: "Translator (relationship to patient)",
+		                {   label: "Translator",
 		                    cellType: "text",
 		                    getValue: function(item) { return item.translator; },
 		                    setValue: function(item, value) { item.translator = value; },
+                          getVisible: function(item) { return item.translationRequired == "Yes"; },
+		                    getError: function(item) { return null; }
+		                },
+		                {   label: "Relationship to patient",
+		                    cellType: "choice",
+                          choices: ["Friend", "Family", "Staff"],
+		                    getValue: function(item) { return item.relationship; },
+		                    setValue: function(item, value) { item.relationship = value; },
+                          getVisible: function(item) { return item.translationRequired == "Yes"; },
 		                    getError: function(item) { return null; }
 		                },
 		                {   label: "Language",
-		                    cellType: "text",
+		                    cellType: "choice",
+                          choices: ["Pig Latin", "Other"],
 		                    getValue: function(item) { return item.language; },
 		                    setValue: function(item, value) { item.language = value; },
+                          getVisible: function(item) { return item.translationRequired == "Yes"; },
+		                    getError: function(item) { return null; }
+		                },
+		                {   label: "Please specify",
+		                    cellType: "text",
+		                    getValue: function(item) { return item.languageOther; },
+		                    setValue: function(item, value) { item.languageOther = value; },
+                          getVisible: function(item) { return item.language == "Other"; },
 		                    getError: function(item) { return null; }
 		                }
 		             ]);
@@ -307,6 +342,185 @@
 		        table.errorProvider = errorProvider;   // share errorProvider with the rest of the form
 		        table.bindItems([data.translation]);
 		    }
+
+         function initPsaResultsTable()
+         {
+            var table = Table.createTable(
+               $("psaResultsTable"), 
+               { editInPlace: true, flow: true, checkBoxes: false },
+               [
+                  {  label: "Level",
+                     cellType: "text",
+                     getValue: function(item) { return item.level; },
+                     setValue: function(item, value) { item.level = value; },
+                     getError: function(item) { return null; }
+                  },
+                  {  label: "Free/Total PSA Ratio",
+                     cellType: "text",
+                     getValue: function(item) { return item.freeTotalRatio; },
+                     setValue: function(item, value) { item.freeTotalRatio = value; },
+                     getError: function(item) { return null; }
+                  },
+                  {  label: "Date",
+                     cellType: "date",
+                     getValue: function(item) { return item.date; },
+                     setValue: function(item, value) { item.foo = date; },
+                     getError: function(item) { return null; }
+                  }
+               ]);
+                
+           table.errorProvider = errorProvider;   // share errorProvider with the rest of the form
+           table.bindItems([data.psaResults]);
+         }
+
+         function initCardiacConditionTable()
+         {
+            var table = Table.createTable(
+               $("cardiacConditionTable"), 
+               { editInPlace: true, flow: true, checkBoxes: false },
+               [
+                  {  label: "Cardiac Condition",
+                     cellType: "choice",
+                     choices: ["Yes", "No"],
+                     getValue: function(item) { return item.cardiacCondition },
+                     setValue: function(item, value) { item.cardiacCondition = value; },
+                     getError: function(item) { return null; }
+                  }
+               ]);
+                
+           table.errorProvider = errorProvider;   // share errorProvider with the rest of the form
+           table.bindItems([data.cardiacCondition]);
+         }
+
+         function initLabResultsTable()
+         {
+            var table = Table.createTable(
+               $("labResultsTable"), 
+               { editInPlace: true, flow: true, checkBoxes: false },
+               [
+                  {  label: "PT",
+                     cellType: "text",
+                     getValue: function(item) { return item.pt; },
+                     setValue: function(item, value) { item.pt = value; },
+                     getError: function(item) { return null; }
+                  },
+                  {  label: "INR",
+                     cellType: "text",
+                     getValue: function(item) { return item.inr; },
+                     setValue: function(item, value) { item.pt = inr; },
+                     getError: function(item) { return null; }
+                  },
+                  {  label: "Platelets",
+                     cellType: "text",
+                     getValue: function(item) { return item.platelets; },
+                     setValue: function(item, value) { item.platelets = value; },
+                     getError: function(item) { return null; }
+                  },
+                  {  label: "Date",
+                     cellType: "date",
+                     getValue: function(item) { return item.date; },
+                     setValue: function(item, value) { item.date = value; },
+                     getError: function(item) { return null; }
+                  }
+               ]);
+                
+           table.errorProvider = errorProvider;   // share errorProvider with the rest of the form
+           table.bindItems([data.labResults]);
+         }
+
+         function initPetResearchTable()
+         {
+            var table = Table.createTable(
+               $("petResearchTable"), 
+               { editInPlace: true, flow: true, checkBoxes: false },
+               [
+                  {  label: "Study Name",
+                     cellType: "text",
+                     getValue: function(item) { return item.studyName; },
+                     setValue: function(item, value) { item.studyName = value; },
+                     getError: function(item) { return null; }
+                  },
+                  {  label: "Coordinator",
+                     cellType: "text",
+                     getValue: function(item) { return item.coordinator; },
+                     setValue: function(item, value) { item.coordinator = value; },
+                     getError: function(item) { return null; }
+                  },
+                  {  label: "Patient Research Number",
+                     cellType: "text",
+                     getValue: function(item) { return item.patientResearchNumber; },
+                     setValue: function(item, value) { item.patientResearchNumber = value; },
+                     getError: function(item) { return null; }
+                  }
+               ]);
+                
+           table.errorProvider = errorProvider;   // share errorProvider with the rest of the form
+           table.bindItems([data.petResearch]);
+         }
+
+         function initCallbackTable()
+         {
+            var table = Table.createTable(
+               $("callbackTable"), 
+               { editInPlace: true, flow: true, checkBoxes: false },
+               [
+                  {  label: "Mammo/US Callback",
+                     cellType: "choice",
+                     choices: ["Yes", "No"],
+                     getValue: function(item) { return item.mammoUltrasoundCallback; },
+                     setValue: function(item, value) { item.mammoUltrasoundCallback = value; },
+                     getError: function(item) { return null; }
+                  },
+                  {  label: "Post-MRI Callback",
+                     cellType: "choice",
+                     choices: ["Yes", "No"],
+                     getValue: function(item) { return item.postMriCallback; },
+                     setValue: function(item, value) { item.postMriCallback = value; },
+                     getError: function(item) { return null; }
+                  }
+               ]);
+                
+           table.errorProvider = errorProvider;   // share errorProvider with the rest of the form
+           table.bindItems([data.callback]);
+         }
+
+         function initMedicationsTable()
+         {
+            var table = Table.createTable(
+               $("medicationsTable"), 
+               { editInPlace: true, flow: true, checkBoxes: false },
+               [
+                  {  label: "Not on ASA or Aspirin x1 week",
+                     cellType: "bool",
+                     getValue: function(item) { return item.noAsaOrAspirint || false; },
+                     setValue: function(item, value) { item.noAsaOrAspirint = value; },
+                     getError: function(item) { return null; }
+                  },
+                  {  label: "Not on Coumadin",
+                     cellType: "bool",
+                     getValue: function(item) { return item.noCoumadin || false; },
+                     setValue: function(item, value) { item.noCoumadin = value; },
+                     getError: function(item) { return null; }
+                  },
+                  {  label: "Not on Arthritis medication",
+                     cellType: "bool",
+                     getValue: function(item) { return item.noArthritisMed || false; },
+                     setValue: function(item, value) { item.noArthritisMed = value; },
+                     getError: function(item) { return null; }
+                  },
+                  {  label: "Other medications",
+                     cellType: "text",
+                     size: 150,
+                     getValue: function(item) { return item.noArthritisMed || false; },
+                     setValue: function(item, value) { item.noArthritisMed = value; },
+                     getError: function(item) { return null; }
+                  }                  
+               ]);
+                
+           table.errorProvider = errorProvider;   // share errorProvider with the rest of the form
+           table.bindItems([data.medications]);
+         }
+
 
 		    //////////////////////////////////////////////////////////////////////////
 		    // RIS integration API
@@ -329,56 +543,132 @@
 		</script>
 	</head>
 	<body onload="javascript: onBodyLoad()" onresize="javascript: scaleWidth()">
-	
-		<form id="myForm">
-		<p class="sectionheading">Vitals</p>
-		<table id="vitalsTable"  width="100%">
-		  <tr>
-			<td class="tableheading"></td>
-		  </tr>
-		</table>
-		<p class="sectionheading">Allergies</p>
-		<table id="allergiesTable" width="100%">
-		  <tr>
-			<td class="tableheading"></td>
-		  </tr>
-		</table>
-		<p class="sectionheading">Creatinine</p>
-		<table id="creatinineTable" width="100%">
-		  <tr>
-			<td class="tableheading"></td>
-		  </tr>
-		</table>
-		<p class="sectionheading">Renal</p>
-		<table id="renalDiseaseTable" width="100%">
-		  <tr>
-			<td class="tableheading"></td>
-		  </tr>
-		</table>
-		<p class="sectionheading">Pregnancy</p>
-		<table id="pregnancyTable" width="100%">
-		  <tr>
-			<td class="tableheading"></td>
-		  </tr>
-		</table>
-		<p class="sectionheading">Sedation (MRI only)</p>
-		<table id="sedationTable" width="100%">
-		  <tr>
-			<td class="tableheading"></td>
-		  </tr>
-		</table>
-		<p class="sectionheading">Consents</p>
-		<table id="consentsTable" width="100%">
-		  <tr>
-			<td class="tableheading"></td>
-		  </tr>
-		</table>
-		<p class="sectionheading">Translation</p>
-		<table id="translationTable" width="100%">
-		  <tr>
-			<td class="tableheading"></td>
-		  </tr>
-		</table>
-		</form>
+      <form id="myForm">
+
+      <p class="sectionheading">Vitals</p>
+      <table id="vitalsTable"  width="100%">
+        <tr><td class="tableheading"></td></tr>
+      </table>
+
+      <p class="sectionheading">Allergies</p>
+      <table id="allergiesTable"  width="100%">
+        <tr><td class="tableheading"></td></tr>
+      </table>
+
+      <p class="sectionheading">Pregnancy</p>
+      <table id="pregnancyTable"  width="100%">
+        <tr><td class="tableheading"></td></tr>
+      </table>
+
+      <p class="sectionheading">Consents</p>
+      <table id="consentsTable"  width="100%">
+        <tr><td class="tableheading"></td></tr>
+      </table>
+
+      <p class="sectionheading">Translation</p>
+      <table id="translationTable"  width="100%">
+        <tr><td class="tableheading"></td></tr>
+      </table>
+
+      <p class="sectionheading">
+         <a href="javascript:void(0)" class="collapsibleHeading" onclick="toggleCollapsed(this)"><span class="plusMinus">+</span> Medications</a>
+      </p>
+      <div class="collapsibleContent">
+         <table id="medicationsTable"  width="100%">
+           <tr>
+            <td class="tableheading"></td>
+           </tr>
+         </table>
+      </div>
+
+      <p class="sectionheading">
+         <a href="javascript:void(0)" class="collapsibleHeading" onclick="toggleCollapsed(this)"><span class="plusMinus">+</span> Callback</a>
+      </p>
+      <div class="collapsibleContent">
+         <table id="callbackTable"  width="100%">
+           <tr>
+            <td class="tableheading"></td>
+           </tr>
+         </table>
+      </div>
+
+      <p class="sectionheading">
+         <a href="javascript:void(0)" class="collapsibleHeading" onclick="toggleCollapsed(this)"><span class="plusMinus">+</span> Lab Results (Angio/Interventional)</a>
+      </p>
+      <div class="collapsibleContent">
+         <table id="labResultsTable"  width="100%">
+           <tr>
+            <td class="tableheading"></td>
+           </tr>
+         </table>
+      </div>
+
+      <p class="sectionheading">
+         <a href="javascript:void(0)" class="collapsibleHeading" onclick="toggleCollapsed(this)"><span class="plusMinus">+</span> Creatinine (CT, MRI, PET)</a>
+      </p>
+      <div class="collapsibleContent">
+         <table id="creatinineTable"  width="100%">
+           <tr>
+            <td class="tableheading"></td>
+           </tr>
+         </table>
+      </div>
+
+      <p class="sectionheading">
+         <a href="javascript:void(0)" class="collapsibleHeading" onclick="toggleCollapsed(this)"><span class="plusMinus">+</span> Renal (CT, MRI, PET)</a>
+      </p>
+      <div class="collapsibleContent">
+         <table id="renalDiseaseTable"  width="100%">
+           <tr>
+            <td class="tableheading"></td>
+           </tr>
+         </table>
+      </div>
+
+      <p class="sectionheading">
+         <a href="javascript:void(0)" class="collapsibleHeading" onclick="toggleCollapsed(this)"><span class="plusMinus">+</span> Sedation (MRI)</a>
+      </p>
+      <div class="collapsibleContent">
+         <table id="sedationTable"  width="100%">
+           <tr>
+            <td class="tableheading"></td>
+           </tr>
+         </table>
+      </div>
+
+      <p class="sectionheading">
+         <a href="javascript:void(0)" class="collapsibleHeading" onclick="toggleCollapsed(this)"><span class="plusMinus">+</span> Research (PET)</a>
+      </p>
+      <div class="collapsibleContent">
+         <table id="petResearchTable"  width="100%">
+           <tr>
+            <td class="tableheading"></td>
+           </tr>
+         </table>
+      </div>
+
+      <p class="sectionheading">
+         <a href="javascript:void(0)" class="collapsibleHeading" onclick="toggleCollapsed(this)"><span class="plusMinus">+</span> PSA Results (Prostate Center)</a>
+      </p>
+      <div class="collapsibleContent">
+         <table id="psaResultsTable"  width="100%">
+           <tr>
+            <td class="tableheading"></td>
+           </tr>
+         </table>
+      </div>
+
+      <p class="sectionheading">
+         <a href="javascript:void(0)" class="collapsibleHeading" onclick="toggleCollapsed(this)"><span class="plusMinus">+</span> Cardiac Condition (Prostate Center)</a>
+      </p>
+      <div class="collapsibleContent">
+         <table id="cardiacConditionTable"  width="100%">
+           <tr>
+            <td class="tableheading"></td>
+           </tr>
+         </table>
+      </div>
+
+      </form>
 	</body>
 </html>
