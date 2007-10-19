@@ -223,39 +223,41 @@ var Table = {
 	        for(var i=0; i < this._columns.length; i++)
 	        {
 	            var cell = null;
-	            if(this._options.flow)
-	            {
+
+               if(this._options.flow)
+               {
                     // add one containerCell to the table, and flow each of the "columns" inside of it
-	                containerCell = containerCell || tr.insertCell(this._getBaseColumnIndex());
-	                
-	                // the cell is not technically a cell in this case, but rather a div
-	                cell = document.createElement("div");
-	                containerCell.appendChild(cell);
-	                cell.style.cssFloat = cell.style.styleFloat = "left";
-	                cell.style.margin = "4px";
-	                cell.innerHTML = this._columns[i].label+"<br>";
-	            }
-	            else
-	            {
-		            // add one cell for each column, offset by 1 if there is a checkbox column
+                   containerCell = containerCell || tr.insertCell(this._getBaseColumnIndex());
+                   containerCell.className = "containerCell";
+                   
+                   // the cell is not technically a cell in this case, but rather a div
+                   cell = document.createElement("div");
+                   containerCell.appendChild(cell);
+                   cell.className = "divCell";
+                   cell.innerHTML = this._columns[i].label + "<br>";
+               }
+               else
+               {
+                  // add one cell for each column, offset by 1 if there is a checkbox column
                     cell = tr.insertCell(i + this._getBaseColumnIndex());
-	            }
-		        
-		        this._renderCell(index, i, cell, obj);
-		        
-		        // set cell error provider if the column has an error function
-		        if(this._columns[i].getError)
-		        {
-		            var errorElement = cell.lastChild;  // the HTML element where the error will be shown
-		            this.errorProvider.setError(errorElement, "");
-		            
-		            // cache the errorElement in an array in the TR, so we can reference it later
-		            tr._errorElements = tr._errorElements || [];
-		            tr._errorElements[i] = errorElement;
-		        }
+               }
+                 
+              this._renderCell(index, i, cell, obj);
+
+              // set cell error provider if the column has an error function
+              if(this._columns[i].getError)
+              {
+                  var errorElement = cell.lastChild;  // the HTML element where the error will be shown
+                  this.errorProvider.setError(errorElement, "");
+                  
+                  // cache the errorElement in an array in the TR, so we can reference it later
+                  tr._errorElements = tr._errorElements || [];
+                  tr._errorElements[i] = errorElement;
+              }
 	        }
 	        
 	        this._validateRow(index);
+           
 	    },
 	
 	    _renderCell: function(row, col, td, obj)
@@ -328,6 +330,7 @@ var Table = {
 	        var column = this._columns[col];
 		    var value = this._getColumnValue(column, obj);
 		    var table = this;
+
 		    if(["readonly"].indexOf(column.cellType) > -1)
 		    {
 		        var field = document.createElement("div");
@@ -477,7 +480,7 @@ var Table = {
                         table._onCellUpdate(row, col);
                     }
                 }
-                
+
                 var findButton = document.createElement("input");
                 findButton.type = "button";
                 findButton.value = "...";
@@ -493,7 +496,8 @@ var Table = {
 		    td._setCellDisplayValue(value);
 		    
 		    // initialize the cell visibility
-		    td.style.visibility = (column.getVisible ? column.getVisible(obj) : true) ? "visible" : "hidden";
+		    //td.style.visibility = (column.getVisible ? column.getVisible(obj) : true) ? "visible" : "hidden";
+          td.style.display = (column.getVisible ? column.getVisible(obj) : true) ? "block" : "none";
     		
 		    // fire custom formatting event, which may itself set the innerHTML property to override default cell content
 		    if(this.renderCell)
@@ -516,17 +520,17 @@ var Table = {
 	            var cell = this._getCell(rowIndex, c);
 	            
 	            // update the cell's visibility
-		        if(column.getVisible)
+              if(column.getVisible)
 		        {
-		            var visible = column.getVisible(item);
+		            visible = column.getVisible(item);
 		            if(visible)
-		                cell.style.visibility = "visible";
+                      cell.style.display = "block";
 		            else
 		            {
 		                // when a cell is hidden, set its value to null
 		                // this is because we don't want any information to exist on the form
 		                // and be hidden from the user
-		                cell.style.visibility = "hidden";
+                      cell.style.display = "none";
 		                column.setValue(item, null);
 		            }
 		        }
@@ -577,17 +581,17 @@ function ErrorProvider(visible)
         {
             provider = { 
                 element: htmlElement,
-                img: document.createElement("img"),
-                hasError: function() { return (this.img.alt && this.img.alt.length); }
+                img:document.createElement("div"),
+                hasError: function() { return (this.img.title && this.img.title.length) ? true : false; },
+                showError: function(visible) { this.img.style.display = (this.hasError() && visible) ? "block" : "none"; } 
                 };
-            //alert("images/errorprovider.gif");
-            provider.img.src = "images/errorprovider.gif";
             this._providers.add( provider );
             
-            htmlElement.parentNode.insertBefore(provider.img, htmlElement.nextSibling);       
+            htmlElement.parentNode.insertBefore(provider.img, htmlElement.parentNode.firstChild);
         }
-        provider.img.alt = message || "";
-        provider.img.style.visibility = (provider.hasError() && this._visible) ? "visible" : "hidden";
+        provider.img.title = message || "";
+        provider.img.className = "errorProvider";
+        provider.showError(this._visible);
     }
     
     this.remove = function(htmlElement)
@@ -605,11 +609,11 @@ function ErrorProvider(visible)
     
     this.setVisible = function(visible)
     {
-        this._visible = visible;
+        this._visible = visible ? true : false;
         this._providers.each(
             function(provider)
             {
-                provider.img.style.visibility = (visible && provider.hasError()) ? "visible" : "hidden";
+               provider.showError(visible);
             });
     }
 }
