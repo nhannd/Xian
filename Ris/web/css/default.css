@@ -155,7 +155,7 @@ a.collapsibleHeading span.plusMinus
    display:none;
 }
 
-div.divCell
+.divCell, .checkedDivCell
 {
    float: left;
    padding: 0;
@@ -163,7 +163,22 @@ div.divCell
    margin-right: 5px;
    margin-bottom: 5px;
    height:3.3em;
+}
+
+.divCell
+{
    white-space: nowrap;
+}
+
+.checkedDivCell
+{
+   white-space: wrap;
+}
+
+#patientNotesTable .checkedDivCell
+{
+   width: 33%;
+   height: auto;
 }
 
 .errorProvider

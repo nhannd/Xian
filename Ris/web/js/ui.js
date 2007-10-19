@@ -436,7 +436,10 @@ var Table = {
 		    {
 		        var input = document.createElement("input");
 		        input.type = "checkbox";
-		        td.appendChild(input);
+		        //td.appendChild(input);
+              td.innerHTML = td.innerHTML.replace("<br>", "");
+              td.insertBefore(input, td.firstChild);
+              td.className = "checkedDivCell";
 		        td._setCellDisplayValue = function(value) { input.checked = value ? true : false; }
 		        if(column.size) input.size = column.size;
 		        
