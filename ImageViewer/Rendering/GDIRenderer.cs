@@ -566,16 +566,14 @@ namespace ClearCanvas.ImageViewer.Rendering
 		protected override void ShowErrorMessage(string message)
 		{
 			Font font = new Font("Arial", 12.0f);
-			SizeF size = Surface.FinalBuffer.Graphics.MeasureString(message, font);
 
-			int centerHeight = Surface.FinalBuffer.Height / 2;
-			int centerWidth = Surface.FinalBuffer.Width / 2;
+			StringFormat format = new StringFormat();
+			format.Trimming = StringTrimming.EllipsisCharacter;
+			format.Alignment = StringAlignment.Center;
+			format.LineAlignment = StringAlignment.Center;
+			format.FormatFlags = StringFormatFlags.NoClip;
 
-			Surface.FinalBuffer.Graphics.DrawString(
-				message,
-				font,
-				_brush,
-				new PointF(centerWidth - size.Width / 2, centerHeight - size.Height / 2));
+			Surface.FinalBuffer.Graphics.DrawString(message, font, _brush, Surface.ClipRectangle, format);
 
 			font.Dispose();
 		}
