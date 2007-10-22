@@ -124,7 +124,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 						int srcBytesPerPixel = imageGraphic.BitsPerPixel / 8;
 						int expectedSize = imageGraphic.Rows*imageGraphic.Columns*srcBytesPerPixel;
 						int actualSize = srcPixelData == null ? 0 : srcPixelData.Length;
-						if (expectedSize != actualSize)
+						if (actualSize < expectedSize)
 							throw new InvalidOperationException(String.Format(SR.ExceptionIncorrectPixelDataSize, expectedSize, actualSize));
 
 						int[] finalLutBuffer = ConstructFinalLut(grayscaleImage.OutputLut, grayscaleImage.ColorMap, grayscaleImage.Invert);
@@ -161,7 +161,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 
 						int expectedSize = imageGraphic.Rows * imageGraphic.Columns * srcBytesPerPixel;
 						int actualSize = srcPixelData == null ? 0 : srcPixelData.Length;
-						if (expectedSize != actualSize)
+						if (actualSize < expectedSize)
 							throw new InvalidOperationException(String.Format(SR.ExceptionIncorrectPixelDataSize, expectedSize, actualSize));
 
 						ImageInterpolatorBilinear.Interpolate(
