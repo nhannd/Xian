@@ -13,7 +13,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Server.ShredHos
 		{8347B928-805E-42E7-B980-08D8AF1A0671} = {8347B928-805E-42E7-B980-08D8AF1A0671}
 		{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343} = {F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}
 		{AD9ECE2B-8268-4115-8DC8-860FBD011FFF} = {AD9ECE2B-8268-4115-8DC8-860FBD011FFF}
-		{AFD2273D-4124-466B-A9BA-0623347435EA} = {AFD2273D-4124-466B-A9BA-0623347435EA}
 		{86463672-CB30-41E7-BF90-36AF6CDA6729} = {86463672-CB30-41E7-BF90-36AF6CDA6729}
 		{2F464B93-3631-4886-96A0-D3F493536997} = {2F464B93-3631-4886-96A0-D3F493536997}
 	EndProjectSection
@@ -43,12 +42,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Dicom", "..\..\
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Dicom.DataStore", "..\..\Dicom\DataStore\ClearCanvas.Dicom.DataStore.csproj", "{3930FE1D-74C7-49E0-8E0D-05C0FEE194A8}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Dicom.DataStore.NHibernateDriver", "..\..\Dicom\DataStore\NHibernateDriver\ClearCanvas.Dicom.DataStore.NHibernateDriver.csproj", "{AFD2273D-4124-466B-A9BA-0623347435EA}"
 	ProjectSection(WebsiteProperties) = preProject
 		Debug.AspNetCompiler.Debug = "True"
 		Release.AspNetCompiler.Debug = "False"
@@ -102,10 +95,6 @@ Global
 		{3930FE1D-74C7-49E0-8E0D-05C0FEE194A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3930FE1D-74C7-49E0-8E0D-05C0FEE194A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3930FE1D-74C7-49E0-8E0D-05C0FEE194A8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AFD2273D-4124-466B-A9BA-0623347435EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AFD2273D-4124-466B-A9BA-0623347435EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AFD2273D-4124-466B-A9BA-0623347435EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AFD2273D-4124-466B-A9BA-0623347435EA}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2F464B93-3631-4886-96A0-D3F493536997}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2F464B93-3631-4886-96A0-D3F493536997}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2F464B93-3631-4886-96A0-D3F493536997}.Release|Any CPU.ActiveCfg = Release|Any CPU
