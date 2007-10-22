@@ -30,44 +30,43 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Windows.Forms;
 
-using ClearCanvas.Common;
-using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.View.WinForms;
-
-namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
+namespace ClearCanvas.Desktop.View.WinForms
 {
-    /// <summary>
-    /// Provides a Windows Forms view onto <see cref="RadiologistSelectionComponent"/>
-    /// </summary>
-    [ExtensionOf(typeof(RadiologistSelectionComponentViewExtensionPoint))]
-    public class RadiologistSelectionComponentView : WinFormsView, IApplicationComponentView
+    public partial class SuggestionTextField : UserControl
     {
-        private RadiologistSelectionComponent _component;
-        private RadiologistSelectionComponentControl _control;
-
-
-        #region IApplicationComponentView Members
-
-        public void SetComponent(IApplicationComponent component)
+        public SuggestionTextField()
         {
-            _component = (RadiologistSelectionComponent)component;
+            InitializeComponent();
         }
 
-        #endregion
-
-        public override object GuiElement
+        public SuggestDelegate SuggestDelegate
         {
-            get
-            {
-                if (_control == null)
-                {
-                    _control = new RadiologistSelectionComponentControl(_component);
-                }
-                return _control;
-            }
+            set { _textBox.SuggestionDelegate = value; }    
+        }
+
+        public string Value
+        {
+            get { return NullIfEmpty(_textBox.Text); }
+            set { _textBox.Text = value; }
+        }
+
+        public event EventHandler ValueChanged
+        {
+            add { _textBox.TextChanged += value; }
+            remove { _textBox.TextChanged -= value; }
+        }
+
+        public string LabelText
+        {
+            get { return _label.Text; }
+            set { _label.Text = value; }
+        }
+
+        private static string NullIfEmpty(string value)
+        {
+            return (value != null && value.Length == 0) ? null : value;
         }
     }
 }

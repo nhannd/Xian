@@ -43,7 +43,6 @@
     <Compile Include="Folders\ReportingWorkflowFolders.cs" />
     <Compile Include="HomeTool.cs" />
     <Compile Include="PatientBiographyTool.cs" />
-    <Compile Include="RadiologistSelectionComponent.cs" />
     <Compile Include="ReportEditorComponentSettings.cs" />
     <Compile Include="ReportEditorComponentSettings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -73,7 +72,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
-    <Compile Include="StaffSummaryTable.cs" />
     <Compile Include="SupervisorSettings.cs" />
     <Compile Include="SupervisorSettings.Designer.cs">
       <AutoGen>True</AutoGen>

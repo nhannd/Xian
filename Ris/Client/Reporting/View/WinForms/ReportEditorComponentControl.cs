@@ -68,6 +68,8 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             _performedLocation.DataBindings.Add("Value", _component, "PerformedLocation", true, DataSourceUpdateMode.OnPropertyChanged);
             _performedDate.DataBindings.Add("Value", _component, "PerformedDate", true, DataSourceUpdateMode.OnPropertyChanged);
             _dictateFor.DataBindings.Add("Value", _component, "SupervisorName", true, DataSourceUpdateMode.OnPropertyChanged);
+            _dictateFor.SuggestDelegate = _component.GetRadiologistSuggestion;
+            _makeDefault.DataBindings.Add("Checked", _component, "MakeDefault", true, DataSourceUpdateMode.OnPropertyChanged);
 
             _verifyButton.DataBindings.Add("Enabled", _component, "VerifyEnabled", false, DataSourceUpdateMode.OnPropertyChanged);
             _sendToVerifyButton.DataBindings.Add("Enabled", _component, "SendToVerifyEnabled", false, DataSourceUpdateMode.OnPropertyChanged);
@@ -77,7 +79,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             {
                 _residentPanel.Visible = false;
                 _dictateFor.Visible = false;
-                _chooseRadiologistButton.Visible = false;
+                _makeDefault.Visible = false;
             }
             else
             {
@@ -120,11 +122,6 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
         private void _cancelButton_Click(object sender, EventArgs e)
         {
             _component.Cancel();
-        }
-
-        private void _chooseRadiologistButton_Click(object sender, EventArgs e)
-        {
-            _component.ChooseRadiologist();
         }
     }
 }

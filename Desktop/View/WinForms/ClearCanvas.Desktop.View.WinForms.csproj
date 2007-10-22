@@ -142,6 +142,15 @@
       <DependentUpon>SplashScreen.cs</DependentUpon>
     </Compile>
     <Compile Include="SplashScreenManager.cs" />
+    <Compile Include="SuggestionTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="SuggestionTextField.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="SuggestionTextField.Designer.cs">
+      <DependentUpon>SuggestionTextField.cs</DependentUpon>
+    </Compile>
     <Compile Include="TestComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -432,6 +441,10 @@
     <EmbeddedResource Include="SplashScreen.resx">
       <DependentUpon>SplashScreen.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SuggestionTextField.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>SuggestionTextField.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="TextAreaField.resx">
       <DependentUpon>TextAreaField.cs</DependentUpon>

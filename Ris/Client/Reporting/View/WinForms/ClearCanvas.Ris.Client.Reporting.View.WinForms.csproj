@@ -42,13 +42,6 @@
       <DependentUpon>PriorReportComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="PriorReportComponentView.cs" />
-    <Compile Include="RadiologistSelectionComponentControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="RadiologistSelectionComponentControl.Designer.cs">
-      <DependentUpon>RadiologistSelectionComponentControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="RadiologistSelectionComponentView.cs" />
     <Compile Include="ReportEditorComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -90,10 +83,6 @@
     <EmbeddedResource Include="PriorReportComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>PriorReportComponentControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="RadiologistSelectionComponentControl.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>RadiologistSelectionComponentControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ReportEditorComponentControl.resx">
       <SubType>Designer</SubType>

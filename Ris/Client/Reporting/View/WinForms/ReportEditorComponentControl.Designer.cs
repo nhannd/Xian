@@ -75,8 +75,8 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this._editorBrowser = new System.Windows.Forms.WebBrowser();
             this._previewBrowser = new System.Windows.Forms.WebBrowser();
             this._residentPanel = new System.Windows.Forms.Panel();
-            this._dictateFor = new ClearCanvas.Desktop.View.WinForms.TextField();
-            this._chooseRadiologistButton = new System.Windows.Forms.Button();
+            this._makeDefault = new System.Windows.Forms.CheckBox();
+            this._dictateFor = new ClearCanvas.Desktop.View.WinForms.SuggestionTextField();
             this._cancelButton = new System.Windows.Forms.Button();
             this._buttonPanel = new System.Windows.Forms.FlowLayoutPanel();
             this._verifyButton = new System.Windows.Forms.Button();
@@ -293,35 +293,34 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             // _residentPanel
             // 
             this.tableLayoutPanel1.SetColumnSpan(this._residentPanel, 2);
+            this._residentPanel.Controls.Add(this._makeDefault);
             this._residentPanel.Controls.Add(this._dictateFor);
-            this._residentPanel.Controls.Add(this._chooseRadiologistButton);
             this._residentPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this._residentPanel.Location = new System.Drawing.Point(3, 509);
             this._residentPanel.Name = "_residentPanel";
             this._residentPanel.Size = new System.Drawing.Size(655, 44);
             this._residentPanel.TabIndex = 2;
             // 
+            // _makeDefault
+            // 
+            this._makeDefault.AutoSize = true;
+            this._makeDefault.Location = new System.Drawing.Point(67, 1);
+            this._makeDefault.Margin = new System.Windows.Forms.Padding(2);
+            this._makeDefault.Name = "_makeDefault";
+            this._makeDefault.Size = new System.Drawing.Size(90, 17);
+            this._makeDefault.TabIndex = 4;
+            this._makeDefault.Text = "Make Default";
+            this._makeDefault.UseVisualStyleBackColor = true;
+            // 
             // _dictateFor
             // 
             this._dictateFor.LabelText = "Dictate for:";
-            this._dictateFor.Location = new System.Drawing.Point(3, 3);
+            this._dictateFor.Location = new System.Drawing.Point(3, 2);
             this._dictateFor.Margin = new System.Windows.Forms.Padding(2);
-            this._dictateFor.Mask = "";
             this._dictateFor.Name = "_dictateFor";
-            this._dictateFor.ReadOnly = true;
             this._dictateFor.Size = new System.Drawing.Size(150, 41);
             this._dictateFor.TabIndex = 3;
             this._dictateFor.Value = null;
-            // 
-            // _chooseRadiologistButton
-            // 
-            this._chooseRadiologistButton.Location = new System.Drawing.Point(158, 18);
-            this._chooseRadiologistButton.Name = "_chooseRadiologistButton";
-            this._chooseRadiologistButton.Size = new System.Drawing.Size(75, 23);
-            this._chooseRadiologistButton.TabIndex = 2;
-            this._chooseRadiologistButton.Text = "Choose...";
-            this._chooseRadiologistButton.UseVisualStyleBackColor = true;
-            this._chooseRadiologistButton.Click += new System.EventHandler(this._chooseRadiologistButton_Click);
             // 
             // _cancelButton
             // 
@@ -402,6 +401,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this._browserSplitContainer.Panel2.ResumeLayout(false);
             this._browserSplitContainer.ResumeLayout(false);
             this._residentPanel.ResumeLayout(false);
+            this._residentPanel.PerformLayout();
             this._buttonPanel.ResumeLayout(false);
             this.ResumeLayout(false);
 
@@ -426,13 +426,13 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
         private ClearCanvas.Desktop.View.WinForms.TextField _performedDate;
         private ClearCanvas.Desktop.View.WinForms.TextField _visitNumber;
         private System.Windows.Forms.Panel _residentPanel;
-        private ClearCanvas.Desktop.View.WinForms.TextField _dictateFor;
-        private System.Windows.Forms.Button _chooseRadiologistButton;
+        private ClearCanvas.Desktop.View.WinForms.SuggestionTextField _dictateFor;
         private System.Windows.Forms.FlowLayoutPanel _buttonPanel;
         private System.Windows.Forms.Button _verifyButton;
         private System.Windows.Forms.Button _sendToVerifyButton;
         private System.Windows.Forms.Button _sendToTranscriptionButton;
         private System.Windows.Forms.Button _saveButton;
+        private System.Windows.Forms.CheckBox _makeDefault;
 
     }
 }

@@ -43,6 +43,7 @@ using ClearCanvas.Ris.Application.Common.Admin;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 using ClearCanvas.Ris.Client.Formatting;
 using AuthorityTokens=ClearCanvas.Ris.Application.Common.AuthorityTokens;
+using System.Collections.Generic;
 
 namespace ClearCanvas.Ris.Client.Reporting
 {
@@ -114,7 +115,10 @@ namespace ClearCanvas.Ris.Client.Reporting
         private event EventHandler _closeComponentEvent;
 
         private string _reportContent;
-        private StaffSummary _supervisor;
+        private string _supervisorName;
+        private List<StaffSummary> _suggestedRadiologists;
+
+        private bool _makeDefault;
 
         public ReportEditorComponent(EntityRef reportingStepRef)
         {
@@ -136,13 +140,14 @@ namespace ClearCanvas.Ris.Client.Reporting
                     LoadReportForEditResponse response = service.LoadReportForEdit(new LoadReportForEditRequest(_reportingStepRef));
                     _reportPartIndex = response.ReportPartIndex;
                     _report = response.Report;
-                    _supervisor = response.Report.Supervisor;
+                    _supervisorName = response.Report.Supervisor == null ? null : PersonNameFormat.Format(response.Report.Supervisor.Name);
 
                     // For resident, look for the default supervisor if it does not already exist
-                    if (_supervisor == null && String.IsNullOrEmpty(SupervisorSettings.Default.SupervisorID) == false)
+                    if (_supervisorName == null && String.IsNullOrEmpty(SupervisorSettings.Default.SupervisorID) == false)
                     {
                         GetRadiologistListResponse getRadListresponse = service.GetRadiologistList(new GetRadiologistListRequest(SupervisorSettings.Default.SupervisorID));
-                        _supervisor = CollectionUtils.FirstElement<StaffSummary>(getRadListresponse.Radiologists);
+                        StaffSummary staff = CollectionUtils.FirstElement<StaffSummary>(getRadListresponse.Radiologists);
+                        _supervisorName = staff == null ? null : PersonNameFormat.Format(staff.Name);
                     }
                 });
 
@@ -283,7 +288,14 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         public string SupervisorName
         {
-            get { return _supervisor == null ? null : PersonNameFormat.Format(_supervisor.Name);  }    
+            get { return _supervisorName; }
+            set { _supervisorName = value; }
+        }
+
+        public bool MakeDefault
+        {
+            get { return _makeDefault; }
+            set { _makeDefault = value; }
         }
 
         public void Verify()
@@ -292,6 +304,11 @@ namespace ClearCanvas.Ris.Client.Reporting
             {
                 if (_canCompleteInterpretationAndVerify)
                 {
+                    StaffSummary supervisor = GetStaff(_supervisorName);
+
+                    if (_makeDefault && supervisor != null)
+                        SupervisorSettings.Default.SupervisorID = supervisor.StaffId;
+
                     Platform.GetService<IReportingWorkflowService>(
                         delegate(IReportingWorkflowService service)
                         {
@@ -299,7 +316,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                                 new CompleteInterpretationAndVerifyRequest(
                                 _reportingStepRef, 
                                 this.ReportContent,
-                                _supervisor == null ? null : _supervisor.StaffRef));
+                                _supervisorName == null ? null : supervisor.StaffRef));
                         });
                 }
                 else if (_canCompleteVerification)
@@ -328,11 +345,16 @@ namespace ClearCanvas.Ris.Client.Reporting
         {
             try
             {
-                if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.VerifyReport) == false && _supervisor == null)
+                if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.VerifyReport) == false && _supervisorName == null)
                 {
                     this.Host.DesktopWindow.ShowMessageBox(SR.MessageChooseRadiologist, MessageBoxActions.Ok);
                     return;
                 }
+
+                StaffSummary supervisor = GetStaff(_supervisorName);
+
+                if (_makeDefault && supervisor != null)
+                    SupervisorSettings.Default.SupervisorID = supervisor.StaffId;
 
                 Platform.GetService<IReportingWorkflowService>(
                     delegate(IReportingWorkflowService service)
@@ -341,7 +363,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                             new CompleteInterpretationForVerificationRequest(
                             _reportingStepRef, 
                             this.ReportContent,
-                            _supervisor == null ? null : _supervisor.StaffRef));
+                            _supervisorName == null ? null : supervisor.StaffRef));
                     });
 
                 EventsHelper.Fire(_sendToVerifyEvent, this, EventArgs.Empty);
@@ -361,6 +383,11 @@ namespace ClearCanvas.Ris.Client.Reporting
         {
             try
             {
+                StaffSummary supervisor = GetStaff(_supervisorName);
+
+                if (_makeDefault && supervisor != null)
+                    SupervisorSettings.Default.SupervisorID = supervisor.StaffId;
+
                 Platform.GetService<IReportingWorkflowService>(
                     delegate(IReportingWorkflowService service)
                     {
@@ -368,7 +395,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                             new CompleteInterpretationForTranscriptionRequest(
                             _reportingStepRef, 
                             this.ReportContent,
-                            _supervisor == null ? null : _supervisor.StaffRef));
+                            _supervisorName == null ? null : supervisor.StaffRef));
                     });
 
                 EventsHelper.Fire(_sendToTranscriptionEvent, this, EventArgs.Empty);
@@ -388,6 +415,11 @@ namespace ClearCanvas.Ris.Client.Reporting
         {
             try
             {
+                StaffSummary supervisor = GetStaff(_supervisorName);
+
+                if (_makeDefault && supervisor != null)
+                    SupervisorSettings.Default.SupervisorID = supervisor.StaffId;
+
                 Platform.GetService<IReportingWorkflowService>(
                     delegate(IReportingWorkflowService service)
                     {
@@ -395,7 +427,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                             new SaveReportRequest(
                             _reportingStepRef, 
                             this.ReportContent,
-                            _supervisor == null ? null : _supervisor.StaffRef));
+                            _supervisorName == null ? null : supervisor.StaffRef));
                     });
 
                 EventsHelper.Fire(_saveEvent, this, EventArgs.Empty);
@@ -417,28 +449,47 @@ namespace ClearCanvas.Ris.Client.Reporting
             EventsHelper.Fire(_closeComponentEvent, this, EventArgs.Empty);
         }
 
-        public void ChooseRadiologist()
+        public string[] GetRadiologistSuggestion(string query)
         {
+            if (!String.IsNullOrEmpty(query) && query.Length < 2)
+                return null;
+
             try
             {
-                RadiologistSelectionComponent editor = new RadiologistSelectionComponent();
-                ApplicationComponentExitCode exitCode = LaunchAsDialog(
-                    this.Host.DesktopWindow, editor, SR.TitleChooseRadiologist);
-
-                if (exitCode == ApplicationComponentExitCode.Normal)
-                {
-                    _supervisor = editor.SelectedRadiologist;
-                    NotifyPropertyChanged("SupervisorName");
-                }
+                Platform.GetService<IReportingWorkflowService>(
+                    delegate(IReportingWorkflowService service)
+                    {
+                        GetRadiologistListResponse response = service.GetRadiologistList(new GetRadiologistListRequest());
+                        _suggestedRadiologists = response.Radiologists;
+                    });
             }
             catch (Exception e)
             {
                 // could not launch editor
                 ExceptionHandler.Report(e, this.Host.DesktopWindow);
             }
+
+            return CollectionUtils.Map<StaffSummary, string, List<string>>(_suggestedRadiologists,
+                delegate(StaffSummary staff)
+                {
+                    return PersonNameFormat.Format(staff.Name);
+                }).ToArray();
         }
 
         #endregion
+
+        private StaffSummary GetStaff(string staffName)
+        {
+            if (String.IsNullOrEmpty(staffName))
+                return null;
+
+            return CollectionUtils.SelectFirst<StaffSummary>(
+                _suggestedRadiologists,
+                delegate(StaffSummary staff)
+                    {
+                        return PersonNameFormat.Format(staff.Name).Equals(staffName);
+                    });    
+        }
 
         public string GetData(string tag)
         {
