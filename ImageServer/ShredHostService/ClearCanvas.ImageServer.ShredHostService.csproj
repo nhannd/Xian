@@ -93,10 +93,11 @@ copy $(ProjectDir)..\..\ImageServer\Queue\Work\$(OutDir)ClearCanvas.ImageServer.
 copy $(ProjectDir)..\..\ImageServer\Rules\$(OutDir)ClearCanvas.ImageServer.Rules.dll $(TargetDir)plugins
 
 rem copy referenced assemblies
-copy $(ProjectDir)..\..\ReferencedAssemblies\Iesi.Collections.dll $(TargetDir)common
+copy $(ProjectDir)..\..\ReferencedAssemblies\NHibernate1.2\Iesi.Collections.dll $(TargetDir)common
 copy $(ProjectDir)..\..\ReferencedAssemblies\log4net.dll $(TargetDir)common
-copy $(ProjectDir)..\..\ReferencedAssemblies\Spring.Aop.dll $(TargetDir)common
-copy $(ProjectDir)..\..\ReferencedAssemblies\Spring.Core.dll $(TargetDir)common
+copy $(ProjectDir)..\..\ReferencedAssemblies\Spring1.1\Spring.Aop.dll $(TargetDir)common
+copy $(ProjectDir)..\..\ReferencedAssemblies\Spring1.1\Spring.Core.dll $(TargetDir)common
+copy $(ProjectDir)..\..\ReferencedAssemblies\Spring1.1\Common.Logging.dll $(TargetDir)common
 copy $(ProjectDir)..\..\ReferencedAssemblies\nunit.framework.dll $(TargetDir)common
 
 rem copy Offis dlls
