@@ -31,7 +31,6 @@
 
 using System;
 using System.Windows.Forms;
-
 using ClearCanvas.Desktop.View.WinForms;
 
 namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
@@ -67,8 +66,9 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             _requestedProcedure.DataBindings.Add("Value", _component, "RequestedProcedure", true, DataSourceUpdateMode.OnPropertyChanged);
             _performedLocation.DataBindings.Add("Value", _component, "PerformedLocation", true, DataSourceUpdateMode.OnPropertyChanged);
             _performedDate.DataBindings.Add("Value", _component, "PerformedDate", true, DataSourceUpdateMode.OnPropertyChanged);
-            _dictateFor.DataBindings.Add("Value", _component, "SupervisorName", true, DataSourceUpdateMode.OnPropertyChanged);
+            _dictateFor.DataBindings.Add("SelectedSuggestion", _component, "Supervisor", true, DataSourceUpdateMode.OnPropertyChanged);
             _dictateFor.SuggestDelegate = _component.GetRadiologistSuggestion;
+            _dictateFor.FormatDelegate = _component.FormatStaff;
             _makeDefault.DataBindings.Add("Checked", _component, "MakeDefault", true, DataSourceUpdateMode.OnPropertyChanged);
 
             _verifyButton.DataBindings.Add("Enabled", _component, "VerifyEnabled", false, DataSourceUpdateMode.OnPropertyChanged);

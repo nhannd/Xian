@@ -46,6 +46,23 @@ namespace ClearCanvas.Desktop.View.WinForms
             set { _textBox.SuggestionDelegate = value; }    
         }
 
+        public FormatDelegate FormatDelegate
+        {
+            set { _textBox.FormatDelegate = value; }
+        }
+
+        public object SelectedSuggestion
+        {
+            get { return _textBox.SelectedSuggestion; }
+            set { _textBox.SelectedSuggestion = value; }
+        }
+
+        public bool StrictTyping
+        {
+            get { return _textBox.StrictTyping; }
+            set { _textBox.StrictTyping = value; }
+        }
+
         public string Value
         {
             get { return NullIfEmpty(_textBox.Text); }
