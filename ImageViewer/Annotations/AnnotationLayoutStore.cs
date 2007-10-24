@@ -102,7 +102,7 @@ namespace ClearCanvas.ImageViewer.Annotations
 			SaveSettings(_document.OuterXml);
 		}
 
-		public IList<StoredAnnotationLayout> GetLayouts(IList<IAnnotationItem> availableAnnotationItems)
+		public IList<StoredAnnotationLayout> GetLayouts(IEnumerable<IAnnotationItem> availableAnnotationItems)
 		{
 			Initialize(false);
 
@@ -132,7 +132,7 @@ namespace ClearCanvas.ImageViewer.Annotations
 			return layouts;
 		}
 
-		public StoredAnnotationLayout GetLayout(string identifier, IList<IAnnotationItem> availableAnnotationItems)
+		public StoredAnnotationLayout GetLayout(string identifier, IEnumerable<IAnnotationItem> availableAnnotationItems)
 		{
 			if (String.IsNullOrEmpty(identifier))
 				return null;
@@ -241,9 +241,9 @@ namespace ClearCanvas.ImageViewer.Annotations
 
 		private class StoredAnnotationLayoutDeserializer
 		{
-			private IList<IAnnotationItem> _availableAnnotationItems;
+			private IEnumerable<IAnnotationItem> _availableAnnotationItems;
 			
-			public StoredAnnotationLayoutDeserializer(IList<IAnnotationItem> availableAnnotationItems)
+			public StoredAnnotationLayoutDeserializer(IEnumerable<IAnnotationItem> availableAnnotationItems)
 			{
 				Platform.CheckForNullReference(availableAnnotationItems, "availableAnnotationItems");
 

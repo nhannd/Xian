@@ -36,6 +36,7 @@ using ClearCanvas.Common;
 using System.Reflection;
 using ClearCanvas.ImageViewer.Annotations;
 using ClearCanvas.Dicom;
+using ClearCanvas.ImageViewer.Annotations.Dicom;
 using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
@@ -46,11 +47,11 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 		private List<IAnnotationItem> _annotationItems;
 
 		public ImagePlaneAnnotationItemProvider()
-			: base("AnnotationItemProviders.Dicom.ImagePlane")
+			: base("AnnotationItemProviders.Dicom.ImagePlane", new AnnotationResourceResolver(typeof(ImagePlaneAnnotationItemProvider).Assembly))
 		{
 		}
 
-		protected override List<IAnnotationItem> AnnotationItems
+		protected override IEnumerable<IAnnotationItem> AnnotationItems
 		{
 			get
 			{
@@ -58,12 +59,14 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 				{
 					_annotationItems = new List<IAnnotationItem>();
 
+					AnnotationResourceResolver resolver = new AnnotationResourceResolver(this);
+
 					_annotationItems.Add
 						(
 							new DicomAnnotationItem<string>
 							(
 								"Dicom.ImagePlane.SliceThickness",
-								this,
+								resolver,
 								delegate(ImageSop imageSop)
 								{
 									return String.Format("{0:F1} mm", imageSop.SliceThickness);
@@ -77,7 +80,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						new DicomAnnotationItem<string>
 							(
 								"Dicom.ImagePlane.SliceLocation",
-								this,
+								resolver,
 								delegate(ImageSop imageSop)
 								{
 									return String.Format("{0:F1} mm", imageSop.SliceLocation);

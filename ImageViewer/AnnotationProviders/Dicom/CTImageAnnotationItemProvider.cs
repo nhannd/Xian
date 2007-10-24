@@ -36,6 +36,7 @@ using ClearCanvas.Common;
 using System.Reflection;
 using ClearCanvas.ImageViewer.Annotations;
 using ClearCanvas.Dicom;
+using ClearCanvas.ImageViewer.Annotations.Dicom;
 using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
@@ -46,11 +47,11 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 		private List<IAnnotationItem> _annotationItems;
 
 		public CTImageAnnotationItemProvider()
-			: base("AnnotationItemProviders.Dicom.CTImage")
+			: base("AnnotationItemProviders.Dicom.CTImage", new AnnotationResourceResolver(typeof(CTImageAnnotationItemProvider).Assembly))
 		{
 		}
 
-		protected override List<IAnnotationItem> AnnotationItems
+		protected override IEnumerable<IAnnotationItem> AnnotationItems
 		{
 			get
 			{
@@ -58,12 +59,14 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 				{
 					_annotationItems = new List<IAnnotationItem>();
 
+					AnnotationResourceResolver resolver = new AnnotationResourceResolver(this);
+
 					_annotationItems.Add
 						(
 							new DicomAnnotationItem<string>
 							(
 								"Dicom.CTImage.KVP",
-								this,
+								resolver,
 								delegate(ImageSop imageSop)
 								{
 									double val = double.NaN;
@@ -81,7 +84,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 							new DicomAnnotationItem<string>
 							(
 								"Dicom.CTImage.XRayTubeCurrent",
-								this,
+								resolver,
 								delegate(ImageSop imageSop)
 								{
 									int val;
@@ -99,7 +102,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 							new DicomAnnotationItem<string>
 							(
 								"Dicom.CTImage.GantryDetectorTilt",
-								this,
+								resolver,
 								delegate(ImageSop imageSop)
 								{
 									double val = double.NaN;
@@ -117,7 +120,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 							new DicomAnnotationItem<string>
 							(
 								"Dicom.CTImage.ExposureTime",
-								this,
+								resolver,
 								delegate(ImageSop imageSop)
 								{
 									int val;
@@ -135,7 +138,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 							new DicomAnnotationItem<string>
 							(
 								"Dicom.CTImage.ConvolutionKernel",
-								this,
+								resolver,
 								delegate(ImageSop imageSop)
 								{
 									string val;

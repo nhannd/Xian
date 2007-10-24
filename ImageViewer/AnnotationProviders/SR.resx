@@ -147,12 +147,6 @@
   <data name="AnnotationItemProviders_Presentation_DisplayName" xml:space="preserve">
     <value>Presentation</value>
   </data>
-  <data name="BoolNo" xml:space="preserve">
-    <value>No</value>
-  </data>
-  <data name="BoolYes" xml:space="preserve">
-    <value>Yes</value>
-  </data>
   <data name="Dicom_CTImage_ConvolutionKernel_DisplayName" xml:space="preserve">
     <value>Convolution Kernel</value>
   </data>
@@ -555,6 +549,9 @@
   <data name="Dicom_PatientStudy_PatientsWeight_Label" xml:space="preserve">
     <value>Weight</value>
   </data>
+  <data name="ExceptionFormatAnnotationItemHasNoDisplayName" xml:space="preserve">
+    <value>AnnotationItem has no display name: {0}.</value>
+  </data>
   <data name="ExceptionTransformedEdgeDoesNotMatch" xml:space="preserve">
     <value>The transformed edge does not have a corresponding value.</value>
   </data>
@@ -608,9 +605,6 @@
   </data>
   <data name="Presentation_Zoom_Label" xml:space="preserve">
     <value>Zoom</value>
-  </data>
-  <data name="Unknown" xml:space="preserve">
-    <value>Unknown</value>
   </data>
   <data name="ValueDirectionalMarkersAnterior" xml:space="preserve">
     <value>A</value>

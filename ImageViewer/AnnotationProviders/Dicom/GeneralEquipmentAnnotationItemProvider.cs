@@ -36,6 +36,7 @@ using ClearCanvas.Common;
 using System.Reflection;
 using ClearCanvas.ImageViewer.Annotations;
 using ClearCanvas.Dicom;
+using ClearCanvas.ImageViewer.Annotations.Dicom;
 using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
@@ -46,11 +47,11 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 		private List<IAnnotationItem> _annotationItems;
 
 		public GeneralEquipmentAnnotationItemProvider()
-			: base("AnnotationItemProviders.Dicom.GeneralEquipment")
+			: base("AnnotationItemProviders.Dicom.GeneralEquipment", new AnnotationResourceResolver(typeof(GeneralEquipmentAnnotationItemProvider).Assembly))
 		{
 		}
 
-		protected override List<IAnnotationItem> AnnotationItems
+		protected override IEnumerable<IAnnotationItem> AnnotationItems
 		{
 			get
 			{
@@ -58,12 +59,14 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 				{
 					_annotationItems = new List<IAnnotationItem>();
 
+					AnnotationResourceResolver resolver = new AnnotationResourceResolver(this);
+
 					_annotationItems.Add
 						(
 							new DicomAnnotationItem<string>
 							(
 								"Dicom.GeneralEquipment.DateOfLastCalibration",
-								this,
+								resolver,
 								new DicomTagAsStringRetriever(DicomTags.DateOfLastCalibration).GetTagValue,
 								DicomBasicResultFormatter.DateFormat
 							)
@@ -74,7 +77,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 							new DicomAnnotationItem<string>
 							(
 								"Dicom.GeneralEquipment.TimeOfLastCalibration",
-								this,
+								resolver,
 								new DicomTagAsStringRetriever(DicomTags.TimeOfLastCalibration).GetTagValue,
 								DicomBasicResultFormatter.TimeFormat
 							)
@@ -85,7 +88,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 							new DicomAnnotationItem<string>
 							(
 								"Dicom.GeneralEquipment.DeviceSerialNumber",
-								this,
+								resolver,
 								new DicomTagAsStringRetriever(DicomTags.DeviceSerialNumber).GetTagValue,
 								DicomBasicResultFormatter.RawStringFormat
 							)
@@ -96,7 +99,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 							new DicomAnnotationItem<string>
 							(
 								"Dicom.GeneralEquipment.InstitutionAddress",
-								this,
+								resolver,
 								new DicomTagAsStringRetriever(DicomTags.InstitutionAddress).GetTagValue,
 								DicomBasicResultFormatter.RawStringFormat
 							)
@@ -108,7 +111,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 							new DicomAnnotationItem<string>
 							(
 								"Dicom.GeneralEquipment.InstitutionalDepartmentName",
-								this,
+								resolver,
 								delegate(ImageSop imageSop) { return imageSop.InstitutionalDepartmentName; },
 								DicomBasicResultFormatter.RawStringFormat
 							)
@@ -119,7 +122,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 							new DicomAnnotationItem<string>
 							(
 								"Dicom.GeneralEquipment.InstitutionName",
-								this,
+								resolver,
 								delegate(ImageSop imageSop) { return imageSop.InstitutionName; },
 								DicomBasicResultFormatter.RawStringFormat
 							)
@@ -130,7 +133,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 							new DicomAnnotationItem<string>
 							(
 								"Dicom.GeneralEquipment.Manufacturer",
-								this,
+								resolver,
 								delegate(ImageSop imageSop) { return imageSop.Manufacturer; },
 								DicomBasicResultFormatter.RawStringFormat
 							)
@@ -141,7 +144,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 							new DicomAnnotationItem<string>
 							(
 								"Dicom.GeneralEquipment.ManufacturersModelName",
-								this,
+								resolver,
 								delegate(ImageSop imageSop) { return imageSop.ManufacturersModelName; },
 								DicomBasicResultFormatter.RawStringFormat
 							)
@@ -152,7 +155,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 							new DicomAnnotationItem<string>
 							(
 								"Dicom.GeneralEquipment.StationName",
-								this,
+								resolver,
 								delegate(ImageSop imageSop) { return imageSop.StationName; },
 								DicomBasicResultFormatter.RawStringFormat
 							)
@@ -163,7 +166,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 							new DicomAnnotationItem<string[]>
 							(
 								"Dicom.GeneralEquipment.SoftwareVersions",
-								this,
+								resolver,
 								new DicomTagAsStringArrayRetriever(DicomTags.SoftwareVersions).GetTagValue,
 								DicomBasicResultFormatter.StringListFormat
 							)

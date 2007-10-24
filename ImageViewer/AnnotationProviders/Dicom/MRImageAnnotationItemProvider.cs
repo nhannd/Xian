@@ -36,6 +36,7 @@ using ClearCanvas.Common;
 using System.Reflection;
 using ClearCanvas.ImageViewer.Annotations;
 using ClearCanvas.Dicom;
+using ClearCanvas.ImageViewer.Annotations.Dicom;
 using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
@@ -46,11 +47,11 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 		private List<IAnnotationItem> _annotationItems;
 
 		public MRImageAnnotationItemProvider()
-			: base("AnnotationItemProviders.Dicom.MRImage")
+			: base("AnnotationItemProviders.Dicom.MRImage", new AnnotationResourceResolver(typeof(MRImageAnnotationItemProvider).Assembly))
 		{
 		}
 
-		protected override List<IAnnotationItem> AnnotationItems
+		protected override IEnumerable<IAnnotationItem> AnnotationItems
 		{
 			get
 			{
@@ -58,12 +59,14 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 				{
 					_annotationItems = new List<IAnnotationItem>();
 
+					AnnotationResourceResolver resolver = new AnnotationResourceResolver(this);
+
 					_annotationItems.Add
 						(
 							new DicomAnnotationItem<string>
 							(
 								"Dicom.MRImage.EchoTime",
-								this,
+								resolver,
 								delegate(ImageSop imageSop)
 								{
 									double val = double.NaN;
@@ -81,7 +84,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 							new DicomAnnotationItem<string>
 							(
 								"Dicom.MRImage.MagneticFieldStrength",
-								this,
+								resolver,
 								delegate(ImageSop imageSop)
 								{
 									double val = double.NaN;
@@ -101,7 +104,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 							new DicomAnnotationItem<string>
 							(
 								"Dicom.MRImage.AcquisitionMatrix",
-								this,
+								resolver,
 								delegate(ImageSop imageSop)
 								{
 									ushort frequencyRows, frequencyColumns, phaseRows, phaseColumns;
@@ -124,7 +127,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 							new DicomAnnotationItem<string>
 							(
 								"Dicom.MRImage.ReceiveCoilName",
-								this,
+								resolver,
 								delegate(ImageSop imageSop)
 								{
 									string val;
@@ -141,7 +144,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 							new DicomAnnotationItem<string>
 							(
 								"Dicom.MRImage.RepetitionTime",
-								this,
+								resolver,
 								delegate(ImageSop imageSop)
 								{
 									double val = double.NaN;
@@ -159,7 +162,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 							new DicomAnnotationItem<string>
 							(
 								"Dicom.MRImage.EchoTrainLength",
-								this,
+								resolver,
 								delegate(ImageSop imageSop)
 								{
 									int val;

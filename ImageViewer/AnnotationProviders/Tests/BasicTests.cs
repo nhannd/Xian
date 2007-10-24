@@ -92,9 +92,6 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Tests
 
 				if (string.IsNullOrEmpty(result))
 					Assert.Fail();
-
-				if (result == SR.Unknown)
-					Assert.Fail();
 			}
 		}
 
@@ -112,9 +109,6 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Tests
 				uniqueDisplayNames.Add(result);
 
 				if (string.IsNullOrEmpty(result))
-					Assert.Fail();
-
-				if (result == SR.Unknown)
 					Assert.Fail();
 			}
 		}
@@ -136,9 +130,6 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Tests
 
 					if (string.IsNullOrEmpty(result))
 						Assert.Fail();
-
-					if (result == SR.Unknown)
-						Assert.Fail();
 				}
 			}
 		}
@@ -159,39 +150,6 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Tests
 					uniqueDisplayNames.Add(result);
 
 					if (string.IsNullOrEmpty(result))
-						Assert.Fail();
-
-					if (result == SR.Unknown)
-						Assert.Fail();
-				}
-			}
-		}
-
-		[Test]
-		public void TestAnnotationItemLabels()
-		{
-			List<string> uniqueLabels = new List<string>();
-
-			foreach (IAnnotationItemProvider provider in _existingProviders)
-			{
-				foreach (IAnnotationItem item in provider.GetAnnotationItems())
-				{
-					string result = item.GetLabel();
-					if (uniqueLabels.Contains(result))
-						Assert.Fail();
-
-					if (item is ResourceResolvingAnnotationItem)
-					{
-						if ((item as ResourceResolvingAnnotationItem)._allowEmptyLabel && String.IsNullOrEmpty(item.GetLabel()))
-							continue;
-					}
-
-					uniqueLabels.Add(result);
-					
-					if (string.IsNullOrEmpty(result))
-						Assert.Fail();
-
-					if (result == SR.Unknown)
 						Assert.Fail();
 				}
 			}

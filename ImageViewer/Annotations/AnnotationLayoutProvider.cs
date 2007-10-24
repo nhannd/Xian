@@ -39,21 +39,20 @@ namespace ClearCanvas.ImageViewer.Annotations
 		{ 
 		}
 
-		protected virtual IList<IAnnotationItemProvider> Providers
+		protected virtual IEnumerable<IAnnotationItemProvider> Providers
 		{
 			get { return AnnotationItemProviderManager.Instance.Providers; }
 		}
 
-		protected virtual IList<IAnnotationItem> AvailableAnnotationItems
+		protected virtual IEnumerable<IAnnotationItem> AvailableAnnotationItems
 		{
 			get
 			{
-				List<IAnnotationItem> completeList = new List<IAnnotationItem>();
-
 				foreach (IAnnotationItemProvider provider in this.Providers)
-					completeList.AddRange(provider.GetAnnotationItems());
-
-				return completeList;
+				{
+					foreach (IAnnotationItem item in provider.GetAnnotationItems())
+						yield return item;
+				}
 			}
 		}
 

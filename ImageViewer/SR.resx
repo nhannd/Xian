@@ -123,6 +123,12 @@
   <data name="ApplicationVersion" xml:space="preserve">
     <value>1.0</value>
   </data>
+  <data name="BoolNo" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="BoolYes" xml:space="preserve">
+    <value>Yes</value>
+  </data>
   <data name="CommandCreateMultilineGraphic" xml:space="preserve">
     <value>Create multiline graphic</value>
   </data>

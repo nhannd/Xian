@@ -79,6 +79,24 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No.
+        /// </summary>
+        public static string BoolNo {
+            get {
+                return ResourceManager.GetString("BoolNo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Yes.
+        /// </summary>
+        public static string BoolYes {
+            get {
+                return ResourceManager.GetString("BoolYes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Create multiline graphic.
         /// </summary>
         public static string CommandCreateMultilineGraphic {

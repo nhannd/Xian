@@ -29,13 +29,11 @@
 
 #endregion
 
-using System;
-
-namespace ClearCanvas.ImageViewer.AnnotationProviders
+namespace ClearCanvas.ImageViewer.Annotations
 {
 	public interface IAnnotationResourceResolver
 	{
 		string ResolveDisplayName(string annotationIdentifier);
-		string ResolveLabel(string annotationIdentifier, bool allowNoResource);
+		string ResolveLabel(string annotationIdentifier);
 	}
 }

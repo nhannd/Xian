@@ -42,24 +42,24 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Presentation
 	public class PresentationAnnotationItemProvider : AnnotationItemProvider
 	{
 		public PresentationAnnotationItemProvider()
-			: base("AnnotationItemProviders.Presentation")
+			: base("AnnotationItemProviders.Presentation", new AnnotationResourceResolver(typeof(PresentationAnnotationItemProvider).Assembly))
 		{
 		}
 
-		protected override List<IAnnotationItem> AnnotationItems
+		protected override IEnumerable<IAnnotationItem> AnnotationItems
 		{
 			get
 			{
 				List<IAnnotationItem> annotationItems = new List<IAnnotationItem>();
 
-				annotationItems.Add((IAnnotationItem)new ZoomAnnotationItem(this));
-				annotationItems.Add((IAnnotationItem)new AppliedLutAnnotationItem(this));
-				//annotationItems.Add((IAnnotationItem)new DFOVAnnotationItem(this));
+				annotationItems.Add((IAnnotationItem)new ZoomAnnotationItem());
+				annotationItems.Add((IAnnotationItem)new AppliedLutAnnotationItem());
+				//annotationItems.Add((IAnnotationItem)new DFOVAnnotationItem());
 
-				annotationItems.Add((IAnnotationItem)new DirectionalMarkerAnnotationItem(this, DirectionalMarkerAnnotationItem.ImageEdge.Left));
-				annotationItems.Add((IAnnotationItem)new DirectionalMarkerAnnotationItem(this, DirectionalMarkerAnnotationItem.ImageEdge.Top));
-				annotationItems.Add((IAnnotationItem)new DirectionalMarkerAnnotationItem(this, DirectionalMarkerAnnotationItem.ImageEdge.Right));
-				annotationItems.Add((IAnnotationItem)new DirectionalMarkerAnnotationItem(this, DirectionalMarkerAnnotationItem.ImageEdge.Bottom));
+				annotationItems.Add((IAnnotationItem)new DirectionalMarkerAnnotationItem(DirectionalMarkerAnnotationItem.ImageEdge.Left));
+				annotationItems.Add((IAnnotationItem)new DirectionalMarkerAnnotationItem(DirectionalMarkerAnnotationItem.ImageEdge.Top));
+				annotationItems.Add((IAnnotationItem)new DirectionalMarkerAnnotationItem(DirectionalMarkerAnnotationItem.ImageEdge.Right));
+				annotationItems.Add((IAnnotationItem)new DirectionalMarkerAnnotationItem(DirectionalMarkerAnnotationItem.ImageEdge.Bottom));
 
 				return annotationItems;
 			}

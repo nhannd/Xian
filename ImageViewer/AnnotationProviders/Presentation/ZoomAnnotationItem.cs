@@ -37,10 +37,10 @@ using ClearCanvas.ImageViewer.Graphics;
 
 namespace ClearCanvas.ImageViewer.AnnotationProviders.Presentation
 {
-	internal sealed class ZoomAnnotationItem : ResourceResolvingAnnotationItem
+	internal sealed class ZoomAnnotationItem : AnnotationItem
 	{
-		public ZoomAnnotationItem(IAnnotationItemProvider ownerProvider)
-			: base("Presentation.Zoom", ownerProvider)
+		public ZoomAnnotationItem()
+			: base("Presentation.Zoom", new AnnotationResourceResolver(typeof(ZoomAnnotationItem).Assembly))
 		{ 
 		
 		}

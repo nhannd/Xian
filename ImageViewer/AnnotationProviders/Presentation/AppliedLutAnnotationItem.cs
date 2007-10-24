@@ -47,10 +47,10 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Presentation
 	/// The user could have changed the W/L, applied a custom Data Lut, or a Lut from a related
 	/// Grayscale Presentation State object could be applied.
 	/// </remarks>
-	internal sealed class AppliedLutAnnotationItem : ResourceResolvingAnnotationItem
+	internal sealed class AppliedLutAnnotationItem : AnnotationItem
 	{
-		public AppliedLutAnnotationItem(IAnnotationItemProvider ownerProvider)
-			: base("Presentation.AppliedLut", ownerProvider)
+		public AppliedLutAnnotationItem()
+			: base("Presentation.AppliedLut", new AnnotationResourceResolver(typeof(AppliedLutAnnotationItem).Assembly))
 		{
 		}
 

@@ -42,21 +42,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AnnotationItemProvider.cs" />
     <Compile Include="AnnotationResourceResolver.cs" />
     <Compile Include="Dicom\ImagePlaneAnnotationItemProvider.cs" />
     <Compile Include="Dicom\MRImageAnnotationItemProvider.cs" />
     <Compile Include="Dicom\CTImageAnnotationItemProvider.cs" />
-    <Compile Include="Dicom\DicomAnnotationItem.cs" />
-    <Compile Include="Dicom\DicomBasicResultFormatter.cs" />
-    <Compile Include="Dicom\DicomTagRetriever.cs" />
     <Compile Include="Dicom\GeneralEquipmentAnnotationItemProvider.cs" />
     <Compile Include="Dicom\GeneralSeriesAnnotationItemProvider.cs" />
     <Compile Include="Dicom\GeneralStudyAnnotationItemProvider.cs" />
     <Compile Include="Dicom\GeneralImageAnnotationItemProvider.cs" />
     <Compile Include="Dicom\PatientStudyAnnotationItemProvider.cs" />
     <Compile Include="Dicom\PatientAnnotationItemProvider.cs" />
-    <Compile Include="IAnnotationResourceResolver.cs" />
     <Compile Include="Presentation\AppliedLutAnnotationItem.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -67,7 +62,6 @@
     <Compile Include="Presentation\PresentationAnnotationItemProvider.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Dicom\Tests\DicomBasicFormatterTests.cs" />
     <Compile Include="Presentation\Tests\DirectionalMarkerTests.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -75,7 +69,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Tests\BasicTests.cs" />
-    <Compile Include="ResourceResolvingAnnotationItem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>

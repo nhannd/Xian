@@ -31,14 +31,10 @@
 
 #if UNIT_TESTS
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using NUnit.Framework;
-using ClearCanvas.ImageViewer.AnnotationProviders.Dicom;
 using ClearCanvas.Dicom;
+using NUnit.Framework;
 
-namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom.Tests
+namespace ClearCanvas.ImageViewer.Annotations.Dicom.Tests
 {
 	[TestFixture]
 	public class DicomBasicFormatterTests

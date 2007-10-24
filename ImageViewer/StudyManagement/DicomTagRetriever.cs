@@ -29,14 +29,11 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Dicom;
 using ClearCanvas.Common;
+using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.StudyManagement;
 
-namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
+namespace ClearCanvas.ImageViewer.StudyManagement
 {
 	public abstract class DicomTagRetriever<T>
 	{
@@ -55,7 +52,6 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 
 		public abstract T GetTagValue(ImageSop imageSop);
 	}
-
 
 	public class DicomTagAsStringRetriever : DicomTagRetriever<string>
 	{
@@ -94,7 +90,6 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 			return value;
 		}
 	}
-
 
 	public class DicomTagAsRawStringArrayRetriever : DicomTagRetriever<string>
 	{

@@ -35,6 +35,7 @@ using System.Text;
 using ClearCanvas.Common;
 using System.Reflection;
 using ClearCanvas.ImageViewer.Annotations;
+using ClearCanvas.ImageViewer.Annotations.Dicom;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Dicom;
 
@@ -46,11 +47,11 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 		private List<IAnnotationItem> _annotationItems;
 
 		public GeneralStudyAnnotationItemProvider()
-			: base("AnnotationItemProviders.Dicom.GeneralStudy")
+			: base("AnnotationItemProviders.Dicom.GeneralStudy", new AnnotationResourceResolver(typeof(GeneralStudyAnnotationItemProvider).Assembly))
 		{
 		}
 
-		protected override List<IAnnotationItem> AnnotationItems
+		protected override IEnumerable<IAnnotationItem> AnnotationItems
 		{
 			get
 			{
@@ -58,12 +59,14 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 				{
 					_annotationItems = new List<IAnnotationItem>();
 
+					AnnotationResourceResolver resolver = new AnnotationResourceResolver(this);
+
 					_annotationItems.Add
 						(
 							new DicomAnnotationItem<string>
 							(
 								"Dicom.GeneralStudy.AccessionNumber",
-								this,
+								resolver, 
 								delegate(ImageSop imageSop) { return imageSop.AccessionNumber; },
 								DicomBasicResultFormatter.RawStringFormat
 							)
@@ -74,7 +77,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 							new DicomAnnotationItem<PersonName>
 							(
 								"Dicom.GeneralStudy.ReferringPhysiciansName",
-								this,
+								resolver, 
 								delegate(ImageSop imageSop) { return imageSop.ReferringPhysiciansName; },
 								DicomBasicResultFormatter.PersonNameFormatter
 							)
@@ -85,7 +88,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 							new DicomAnnotationItem<string>
 							(
 								"Dicom.GeneralStudy.StudyDate",
-								this,
+								resolver, 
 								delegate(ImageSop imageSop) { return imageSop.StudyDate; },
 								DicomBasicResultFormatter.DateFormat
 							)
@@ -96,7 +99,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 							new DicomAnnotationItem<string>
 							(
 								"Dicom.GeneralStudy.StudyTime",
-								this,
+								resolver, 
 								delegate(ImageSop imageSop) { return imageSop.StudyTime; },
 								DicomBasicResultFormatter.TimeFormat
 							)
@@ -107,7 +110,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 							new DicomAnnotationItem<string>
 							(
 								"Dicom.GeneralStudy.StudyDescription",
-								this,
+								resolver, 
 								delegate(ImageSop imageSop) { return imageSop.StudyDescription; },
 								DicomBasicResultFormatter.RawStringFormat
 							)
@@ -118,7 +121,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 							new DicomAnnotationItem<string>
 							(
 								"Dicom.GeneralStudy.StudyId",
-								this,
+								resolver, 
 								new DicomTagAsStringRetriever(DicomTags.StudyId).GetTagValue,
 								DicomBasicResultFormatter.RawStringFormat
 							)

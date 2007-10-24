@@ -35,43 +35,38 @@ namespace ClearCanvas.ImageViewer.Annotations
 {
 	public abstract class AnnotationItem : IAnnotationItem
 	{
-		private string _identifier;
-		private string _displayName;
-		private string _label;
+		private readonly string _identifier;
+		private readonly string _displayName;
+		private readonly string _label;
+
+		protected AnnotationItem(string identifier, IAnnotationResourceResolver resolver)
+			: this(identifier, resolver.ResolveDisplayName(identifier), resolver.ResolveLabel(identifier))
+		{
+		}
 
 		protected AnnotationItem(string identifier, string displayName, string label)
 		{
-			Platform.CheckForEmptyString(identifier, "identifier"); 
-			
+			Platform.CheckForEmptyString(identifier, "identifier");
+			Platform.CheckForEmptyString(displayName, "displayName");
+
 			_identifier = identifier;
 			_displayName = displayName;
-			_label = label;
-		}
-
-		protected AnnotationItem()
-		{ 
+			_label = label ?? "";
 		}
 
 		public string Identifier
 		{
 			get { return _identifier; }
-			protected set
-			{
-				Platform.CheckForEmptyString(value, "value"); 
-				_identifier = value;
-			}
 		}
 
 		public string DisplayName
 		{
 			get { return _displayName; }
-			protected set { _displayName = value; }
 		}
 
 		public string Label
 		{
 			get { return _label; }
-			protected set { _label = value; }
 		}
 
 		#region IAnnotationItem Members

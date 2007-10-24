@@ -56,15 +56,15 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Presentation
 	/// - Once in destination coordinates, the (image) edge that has now effectively moved to the viewport edge
 	///   represented by this object is determined and its marker becomes the new marker for this viewport edge. 
 	/// </summary>
-	internal sealed class DirectionalMarkerAnnotationItem : ResourceResolvingAnnotationItem
+	internal sealed class DirectionalMarkerAnnotationItem : AnnotationItem
 	{
 		public enum ImageEdge { Left = 0, Top = 1, Right = 2, Bottom = 3 };
 		private static readonly PointF[] _edgeVectors = new PointF[] { new PointF(-1, 0), new PointF(0, -1), new PointF(1, 0), new PointF(0, 1) };
 
 		private ImageEdge _viewportEdge;
 		
-		public DirectionalMarkerAnnotationItem(IAnnotationItemProvider ownerProvider, ImageEdge viewportEdge)
-			: base("Presentation.DirectionalMarkers." + viewportEdge.ToString(), ownerProvider, true)
+		public DirectionalMarkerAnnotationItem(ImageEdge viewportEdge)
+			: base("Presentation.DirectionalMarkers." + viewportEdge.ToString(), new AnnotationResourceResolver(typeof(DirectionalMarkerAnnotationItem).Assembly))
 		{
 			_viewportEdge = viewportEdge;
 		}

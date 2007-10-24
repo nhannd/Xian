@@ -42,66 +42,47 @@ namespace ClearCanvas.ImageViewer.Annotations
 	}
 
 	// TODO: Remove this class
-	internal sealed class AnnotationItemProviderManager  : BasicExtensionPointManager<IAnnotationItemProvider>
+	internal sealed class AnnotationItemProviderManager
 	{
-		private static AnnotationItemProviderManager _instance;
-		private bool _isLoaded = false;
+		private static readonly AnnotationItemProviderManager _instance = new AnnotationItemProviderManager();
+		private List<IAnnotationItemProvider> _providers;
 
 		private AnnotationItemProviderManager()
 		{
-		}
-
-		protected override IExtensionPoint GetExtensionPoint()
-		{
-			return new AnnotationItemProviderExtensionPoint();
+			_providers = null;
 		}
 
 		private void Initialize()
 		{
-			if (_isLoaded == false)
+			if (_providers == null)
 			{
-				_isLoaded = true;
+				_providers = new List<IAnnotationItemProvider>();
 
-				try
+				foreach (object extension in new AnnotationItemProviderExtensionPoint().CreateExtensions())
 				{
-					this.LoadExtensions();
+					try
+					{
+						_providers.Add((IAnnotationItemProvider)extension);
+					}
+					catch (Exception e)
+					{
+						Platform.Log(LogLevel.Warn, e);
+					}
 				}
-				catch (Exception e)
-				{
-					Platform.Log(LogLevel.Error, e); //don't throw.
-				}
-			}
-		}
-
-		public IList<IAnnotationItemProvider> Providers
-		{
-			get
-			{
-				Initialize();
-				return this.Extensions.AsReadOnly();
-			}
-		}
-
-		public IList<IAnnotationItem> AnnotationItems
-		{
-			get
-			{
-				List<IAnnotationItem> items = new List<IAnnotationItem>();
-				foreach (IAnnotationItemProvider provider in this.Providers)
-					items.AddRange(provider.GetAnnotationItems());
-
-				return items;
 			}
 		}
 
 		public static AnnotationItemProviderManager Instance
 		{
+			get { return _instance; }
+		}
+
+		public IEnumerable<IAnnotationItemProvider> Providers
+		{
 			get
 			{
-				if (_instance == null)
-					_instance = new AnnotationItemProviderManager();
-
-				return _instance;
+				Initialize();
+				return _providers;
 			}
 		}
 

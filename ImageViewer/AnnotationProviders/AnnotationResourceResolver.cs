@@ -36,6 +36,7 @@ using System.Reflection;
 
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.ImageViewer.Annotations;
 
 namespace ClearCanvas.ImageViewer.AnnotationProviders
 {
@@ -54,37 +55,14 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders
 		{
 		}
 
-		public AnnotationResourceResolver(Assembly[] assemblies)
-			: base(assemblies)
-		{
-		}
-
-		public string ResolveLabel(string annotationIdentifier)
-		{
-			return ResolveLabel(annotationIdentifier, false);
-		}
-
-		#region IAnnotationResourceResolver Members
-
-		public virtual string ResolveLabel(string annotationIdentifier, bool allowNoResource)
+		public virtual string ResolveLabel(string annotationIdentifier)
 		{
 			Platform.CheckForEmptyString(annotationIdentifier, "annotationIdentifier"); 
 			
 			string resourceString = String.Format("{0}{1}{2}", annotationIdentifier, replaceChar, "Label");
 			resourceString = resourceString.Replace(replaceChar, replaceWithChar);
 
-			string label = base.LocalizeString(resourceString);
-
-			if (label == resourceString && !allowNoResource)
-			{
-#if DEBUG
-				throw new NotImplementedException("AnnotationItem has no associated label: " + annotationIdentifier);
-#else
-				label = SR.Unknown;
-#endif
-			}
-
-			return label;
+			return base.LocalizeString(resourceString) ?? "";
 		}
 
 		public virtual string ResolveDisplayName(string annotationIdentifier)
@@ -97,17 +75,9 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders
 			string displayName = base.LocalizeString(resourceString);
 
 			if (displayName == resourceString)
-			{
-#if DEBUG
-				throw new NotImplementedException("AnnotationItem has no display name: " + annotationIdentifier);
-#else
-				displayName = SR.Unknown;
-#endif
-			}
+				throw new InvalidOperationException(String.Format(SR.ExceptionFormatAnnotationItemHasNoDisplayName, annotationIdentifier));
 
 			return displayName;
 		}
-
-		#endregion
 	}
 }

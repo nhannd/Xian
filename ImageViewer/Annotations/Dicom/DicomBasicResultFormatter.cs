@@ -31,12 +31,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Dicom;
-using ClearCanvas.Desktop;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop;
+using ClearCanvas.Dicom;
 
-namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
+namespace ClearCanvas.ImageViewer.Annotations.Dicom
 {
 	public delegate string ResultFormatterDelegate<T>(T input);
 

@@ -29,57 +29,38 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common;
-using ClearCanvas.ImageViewer.Annotations;
 using ClearCanvas.ImageViewer.StudyManagement;
-using ClearCanvas.Common.Utilities;
-using ClearCanvas.ImageViewer.Graphics;
 
-namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
+namespace ClearCanvas.ImageViewer.Annotations.Dicom
 {
 	public delegate T SopDataRetrieverDelegate<T>(ImageSop imageSop);
 
-	public class DicomAnnotationItem <T>: ResourceResolvingAnnotationItem
+	public class DicomAnnotationItem <T>: AnnotationItem
 	{
-		private SopDataRetrieverDelegate<T> _sopDataRetrieverDelegate;
-		private ResultFormatterDelegate<T> _resultFormatterDelegate;
+		private readonly SopDataRetrieverDelegate<T> _sopDataRetrieverDelegate;
+		private readonly ResultFormatterDelegate<T> _resultFormatterDelegate;
 
 		public DicomAnnotationItem
 			(
 				string identifier,
-				IAnnotationItemProvider ownerProvider,
+				IAnnotationResourceResolver resolver,
 				SopDataRetrieverDelegate<T> sopDataRetrieverDelegate,
 				ResultFormatterDelegate<T> resultFormatterDelegate
 			)
-			: this(identifier, ownerProvider, sopDataRetrieverDelegate, resultFormatterDelegate, false)
+			: this(identifier, resolver.ResolveDisplayName(identifier), resolver.ResolveLabel(identifier), sopDataRetrieverDelegate, resultFormatterDelegate)
 		{
 		}
 
 		public DicomAnnotationItem
 			(
 				string identifier,
-				IAnnotationItemProvider ownerProvider,
+				string displayName,
+				string label,
 				SopDataRetrieverDelegate<T> sopDataRetrieverDelegate,
-				ResultFormatterDelegate<T> resultFormatterDelegate,
-				bool allowEmptyLabel
+				ResultFormatterDelegate<T> resultFormatterDelegate
 			)
-			: this(identifier, ownerProvider, sopDataRetrieverDelegate, resultFormatterDelegate, allowEmptyLabel, null)
-		{
-		}
-
-		public DicomAnnotationItem
-			(
-				string identifier,
-				IAnnotationItemProvider ownerProvider,
-				SopDataRetrieverDelegate<T> sopDataRetrieverDelegate,
-				ResultFormatterDelegate<T> resultFormatterDelegate,
-				bool allowEmptyLabel,
-				IAnnotationResourceResolver resolver
-			)
-			: base(identifier, ownerProvider, allowEmptyLabel, resolver)
+			: base(identifier, displayName, label)
 		{
 			Platform.CheckForNullReference(sopDataRetrieverDelegate, "sopDataRetrieverDelegate");
 			Platform.CheckForNullReference(resultFormatterDelegate, "resultFormatterDelegate");

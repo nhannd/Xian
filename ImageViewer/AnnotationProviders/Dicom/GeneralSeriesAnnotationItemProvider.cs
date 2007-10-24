@@ -36,6 +36,7 @@ using ClearCanvas.Common;
 using System.Reflection;
 using ClearCanvas.ImageViewer.Annotations;
 using ClearCanvas.Dicom;
+using ClearCanvas.ImageViewer.Annotations.Dicom;
 using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
@@ -46,11 +47,11 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 		private List<IAnnotationItem> _annotationItems;
 
 		public GeneralSeriesAnnotationItemProvider()
-			: base("AnnotationItemProviders.Dicom.GeneralSeries")
+			: base("AnnotationItemProviders.Dicom.GeneralSeries", new AnnotationResourceResolver(typeof(GeneralSeriesAnnotationItemProvider).Assembly))
 		{
 		}
 
-		protected override List<IAnnotationItem> AnnotationItems
+		protected override IEnumerable<IAnnotationItem> AnnotationItems
 		{
 			get
 			{
@@ -58,12 +59,14 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 				{
 					_annotationItems = new List<IAnnotationItem>();
 
+					AnnotationResourceResolver resolver = new AnnotationResourceResolver(this);
+
 					_annotationItems.Add
 						(
 							new DicomAnnotationItem<string>
 							(
 								"Dicom.GeneralSeries.BodyPartExamined",
-								this,
+								resolver,
 								delegate(ImageSop imageSop) { return imageSop.BodyPartExamined; },
 								DicomBasicResultFormatter.RawStringFormat
 							)
@@ -74,7 +77,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 							new DicomAnnotationItem<string>
 							(
 								"Dicom.GeneralSeries.Laterality",
-								this,
+								resolver,
 								delegate(ImageSop imageSop) { return imageSop.Laterality; },
 								DicomBasicResultFormatter.RawStringFormat
 							)
@@ -85,7 +88,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 							new DicomAnnotationItem<string>
 							(
 								"Dicom.GeneralSeries.Modality",
-								this,
+								resolver,
 								delegate(ImageSop imageSop) { return imageSop.Modality; },
 								DicomBasicResultFormatter.RawStringFormat
 							)
@@ -96,7 +99,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 							new DicomAnnotationItem<PersonName[]>
 							(
 								"Dicom.GeneralSeries.OperatorsName",
-								this,
+								resolver,
 								delegate(ImageSop imageSop) { return imageSop.OperatorsName; },
 								DicomBasicResultFormatter.PersonNameListFormatter
 							)
@@ -107,7 +110,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 							new DicomAnnotationItem<string>
 							(
 								"Dicom.GeneralSeries.PerformedProcedureStepDescription",
-								this,
+								resolver,
 								new DicomTagAsStringRetriever(DicomTags.PerformedProcedureStepDescription).GetTagValue,
 								DicomBasicResultFormatter.RawStringFormat
 							)
@@ -118,7 +121,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 							new DicomAnnotationItem<PersonName[]>
 							(
 								"Dicom.GeneralSeries.PerformingPhysiciansName",
-								this,
+								resolver,
 								delegate(ImageSop imageSop) { return imageSop.PerformingPhysiciansName; },
 								DicomBasicResultFormatter.PersonNameListFormatter
 							)
@@ -129,7 +132,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 							new DicomAnnotationItem<string>
 							(
 								"Dicom.GeneralSeries.ProtocolName",
-								this,
+								resolver,
 								new DicomTagAsStringRetriever(DicomTags.ProtocolName).GetTagValue,
 								DicomBasicResultFormatter.RawStringFormat
 							)
@@ -140,7 +143,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 							new DicomAnnotationItem<string>
 							(
 								"Dicom.GeneralSeries.SeriesDate",
-								this,
+								resolver,
 								delegate(ImageSop imageSop) { return imageSop.SeriesDate; },
 								DicomBasicResultFormatter.DateFormat
 							)
@@ -151,7 +154,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 							new DicomAnnotationItem<string>
 							(
 								"Dicom.GeneralSeries.SeriesTime",
-								this,
+								resolver,
 								delegate(ImageSop imageSop) { return imageSop.SeriesTime; },
 								DicomBasicResultFormatter.TimeFormat
 							)
@@ -162,7 +165,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 							new DicomAnnotationItem<string>
 							(
 								"Dicom.GeneralSeries.SeriesDescription",
-								this,
+								resolver,
 								delegate(ImageSop imageSop) { return imageSop.SeriesDescription; },
 								DicomBasicResultFormatter.RawStringFormat
 							)
@@ -173,7 +176,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 							new DicomAnnotationItem<string>
 							(
 								"Dicom.GeneralSeries.SeriesNumber",
-								this,
+								resolver,
 								delegate(ImageSop imageSop)
 								{
 									string str = String.Format("{0}/{1}",

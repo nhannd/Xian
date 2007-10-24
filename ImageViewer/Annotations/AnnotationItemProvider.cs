@@ -29,35 +29,28 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common;
-using ClearCanvas.ImageViewer.Annotations;
 
-namespace ClearCanvas.ImageViewer.AnnotationProviders
+namespace ClearCanvas.ImageViewer.Annotations
 {
 	public abstract class AnnotationItemProvider : IAnnotationItemProvider
 	{
-		private string _identifier;
-		private string _displayName;
-		private IEnumerable<IAnnotationItem> _annotationItems;
+		private readonly string _identifier;
+		private readonly string _displayName;
 
-		protected AnnotationItemProvider(string identifier)
-			: this(identifier, null)
+		protected AnnotationItemProvider(string identifier, IAnnotationResourceResolver resolver)
+			: this(identifier, resolver.ResolveDisplayName(identifier))
 		{
 		}
 
-		protected AnnotationItemProvider(string identifier, IAnnotationResourceResolver resolver)
+		protected AnnotationItemProvider(string identifier, string displayName)
 		{
 			Platform.CheckForEmptyString(identifier, "identifier");
-
-			if (resolver == null)
-				resolver = new AnnotationResourceResolver(this);
+			Platform.CheckForEmptyString(displayName, "displayName");
 
 			_identifier = identifier;
-			_displayName = resolver.ResolveDisplayName(identifier);
+			_displayName = displayName;
 		}
 
 		public string Identifier
@@ -70,26 +63,23 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders
 			get { return _displayName; }
 		}
 
-		protected abstract List<IAnnotationItem> AnnotationItems { get; }
+		protected abstract IEnumerable<IAnnotationItem> AnnotationItems { get; }
 		
 		#region IAnnotationItemProvider Members
 
 		public string GetIdentifier()
 		{
-			return this.Identifier;
+			return _identifier;
 		}
 
 		public string GetDisplayName()
 		{
-			return this.DisplayName;
+			return _displayName;
 		}
 
 		public IEnumerable<IAnnotationItem> GetAnnotationItems()
 		{
-			if (_annotationItems == null)
-				_annotationItems = this.AnnotationItems.AsReadOnly();
-
-			return _annotationItems;
+			return AnnotationItems;
 		}
 
 		#endregion

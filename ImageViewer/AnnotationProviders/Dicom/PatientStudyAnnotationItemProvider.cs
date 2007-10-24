@@ -36,6 +36,7 @@ using ClearCanvas.Common;
 using System.Reflection;
 using ClearCanvas.ImageViewer.Annotations;
 using ClearCanvas.Dicom;
+using ClearCanvas.ImageViewer.Annotations.Dicom;
 using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
@@ -46,11 +47,11 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 		private List<IAnnotationItem> _annotationItems;
 
 		public PatientStudyAnnotationItemProvider()
-			: base("AnnotationItemProviders.Dicom.PatientStudy")
+			: base("AnnotationItemProviders.Dicom.PatientStudy", new AnnotationResourceResolver(typeof(PatientStudyAnnotationItemProvider).Assembly))
 		{
 		}
 
-		protected override List<IAnnotationItem> AnnotationItems
+		protected override IEnumerable<IAnnotationItem> AnnotationItems
 		{
 			get
 			{
@@ -58,12 +59,14 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 				{
 					_annotationItems = new List<IAnnotationItem>();
 
+					AnnotationResourceResolver resolver = new AnnotationResourceResolver(this);
+
 					_annotationItems.Add
 						(
 							new DicomAnnotationItem<string>
 							(
 								"Dicom.PatientStudy.AdditionalPatientsHistory",
-								this,
+								resolver,
 								delegate(ImageSop imageSop) { return imageSop.AdditionalPatientsHistory; },
 								DicomBasicResultFormatter.RawStringFormat
 							)
@@ -74,7 +77,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 							new DicomAnnotationItem<string>
 							(
 								"Dicom.PatientStudy.Occupation",
-								this,
+								resolver,
 								new DicomTagAsStringRetriever(DicomTags.Occupation).GetTagValue,
 								DicomBasicResultFormatter.RawStringFormat
 							)
@@ -85,7 +88,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 							new DicomAnnotationItem<string>
 							(
 								"Dicom.PatientStudy.PatientsAge",
-								this,
+								resolver,
 								new DicomTagAsStringRetriever(DicomTags.PatientsAge).GetTagValue,
 								DicomBasicResultFormatter.RawStringFormat
 							)
@@ -96,7 +99,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 							new DicomAnnotationItem<double>
 							(
 								"Dicom.PatientStudy.PatientsSize",
-								this,
+								resolver,
 								new DicomTagAsDoubleRetriever(DicomTags.PatientsSize).GetTagValue,
 								delegate(double input)
 								{
@@ -110,7 +113,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 							new DicomAnnotationItem<double>
 							(
 								"Dicom.PatientStudy.PatientsWeight",
-								this,
+								resolver,
 								new DicomTagAsDoubleRetriever(DicomTags.PatientsWeight).GetTagValue,
 								delegate(double input)
 								{
