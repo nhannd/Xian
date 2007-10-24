@@ -75,16 +75,20 @@ namespace ClearCanvas.Desktop.View.WinForms
         {
             if (_strictTyping && _suggestions.Count > 0 && !Char.IsControl(e.KeyChar))
             {
+                // Only check the new char if it's printable (not control char)
+                // if there is currently no suggestions, any character is typeable
+
                 string newText = this.Text + e.KeyChar;
 
-                bool newTextInSuggestion = CollectionUtils.Contains<string>(this.AutoCompleteCustomSource,
+                bool newTextIsInSuggestion = CollectionUtils.Contains<string>(this.AutoCompleteCustomSource,
                     delegate(string suggestion)
                     {
                         return suggestion.StartsWith(newText);
                     });
 
-                if (!newTextInSuggestion)
+                if (!newTextIsInSuggestion)
                 {
+                    // the new text is not part of any suggestion, 'handled' the character so that this.Text will not be updated
                     e.Handled = true;
                     return;
                 }

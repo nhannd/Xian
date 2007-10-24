@@ -304,7 +304,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             // _makeDefault
             // 
             this._makeDefault.AutoSize = true;
-            this._makeDefault.Location = new System.Drawing.Point(67, 1);
+            this._makeDefault.Location = new System.Drawing.Point(139, 2);
             this._makeDefault.Margin = new System.Windows.Forms.Padding(2);
             this._makeDefault.Name = "_makeDefault";
             this._makeDefault.Size = new System.Drawing.Size(90, 17);
@@ -314,12 +314,12 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             // 
             // _dictateFor
             // 
-            this._dictateFor.LabelText = "Dictate for:";
+            this._dictateFor.LabelText = "Supervising Radiologist:";
             this._dictateFor.Location = new System.Drawing.Point(3, 2);
             this._dictateFor.Margin = new System.Windows.Forms.Padding(2);
             this._dictateFor.Name = "_dictateFor";
             this._dictateFor.SelectedSuggestion = null;
-            this._dictateFor.Size = new System.Drawing.Size(150, 41);
+            this._dictateFor.Size = new System.Drawing.Size(226, 41);
             this._dictateFor.StrictTyping = true;
             this._dictateFor.TabIndex = 3;
             this._dictateFor.Value = null;
