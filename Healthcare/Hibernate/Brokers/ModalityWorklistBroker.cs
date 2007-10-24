@@ -38,6 +38,7 @@ using ClearCanvas.Enterprise.Hibernate;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Healthcare.Workflow.Modality;
 using NHibernate;
+using ClearCanvas.Workflow;
 
 namespace ClearCanvas.Healthcare.Hibernate.Brokers
 {
@@ -112,7 +113,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         {
             string hqlQuery = String.Concat(_hqlMpsStateQuery, _hqlScheduledSubCondition);
 
-            List<QueryParameter> parameters = BaseMpsStateParameters("SC");
+            List<QueryParameter> parameters = BaseMpsStateParameters(ActivityStatus.SC.ToString());
             AddSubQueryParameters(parameters);
 
             AddWorklistQueryAndParameters(ref hqlQuery, parameters, worklist);
@@ -129,7 +130,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         {
             string hqlQuery = String.Concat(_hqlMpsStateQuery, _hqlCheckInSubCondition);
 
-            List<QueryParameter> parameters = BaseMpsStateParameters("SC");
+            List<QueryParameter> parameters = BaseMpsStateParameters(ActivityStatus.SC.ToString());
             AddSubQueryParameters(parameters);
 
             AddWorklistQueryAndParameters(ref hqlQuery, parameters, worklist);
@@ -144,7 +145,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         public IList<WorklistItem> GetInProgressWorklist(TechnologistInProgressWorklist worklist)
         {
-            return GetWorklistFromMpsState("IP", worklist);
+            return GetWorklistFromMpsState(ActivityStatus.IP.ToString(), worklist);
         }
 
         public IList<WorklistItem> GetSuspendedWorklist()
@@ -154,7 +155,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         public IList<WorklistItem> GetSuspendedWorklist(TechnologistSuspendedWorklist worklist)
         {
-            return GetWorklistFromMpsState("SU", worklist);
+            return GetWorklistFromMpsState(ActivityStatus.SU.ToString(), worklist);
         }
 
         public IList<WorklistItem> GetCompletedWorklist()
@@ -164,7 +165,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         public IList<WorklistItem> GetCompletedWorklist(TechnologistCompletedWorklist worklist)
         {
-            return GetWorklistFromMpsState("CM", worklist);
+            return GetWorklistFromMpsState(ActivityStatus.CM.ToString(), worklist);
         }
 
         public IList<WorklistItem> GetCancelledWorklist()
@@ -174,7 +175,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         public IList<WorklistItem> GetCancelledWorklist(TechnologistCancelledWorklist worklist)
         {
-            return GetWorklistFromMpsState("DC", worklist);
+            return GetWorklistFromMpsState(ActivityStatus.DC.ToString(), worklist);
         }
 
         #endregion
@@ -276,8 +277,8 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             {
                 hqlQuery.Append(conditionPrefix);
                 hqlQuery.Append(" rp in (select rp from CheckInProcedureStep cps join cps.RequestedProcedure rp where (cps.State != :cpsState1 and cps.State != :cpsState2))");
-                parameters.Add(new QueryParameter("cpsState1", "CM"));
-                parameters.Add(new QueryParameter("cpsState2", "DC"));
+                parameters.Add(new QueryParameter("cpsState1", ActivityStatus.CM.ToString()));
+                parameters.Add(new QueryParameter("cpsState2", ActivityStatus.DC.ToString()));
                 conditionPrefix = " and";
             }
 
@@ -399,7 +400,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         private void AddSubQueryParameters(List<QueryParameter> parameters)
         {
-            parameters.Add(new QueryParameter("cpsState", "IP"));
+            parameters.Add(new QueryParameter("cpsState", ActivityStatus.IP.ToString()));
             parameters.Add(new QueryParameter("cpsStartTimeBegin", Platform.Time.Date));
             parameters.Add(new QueryParameter("cpsStartTimeEnd", Platform.Time.Date.AddDays(1)));
         }

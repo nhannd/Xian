@@ -38,6 +38,7 @@ using ClearCanvas.Enterprise.Hibernate;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Healthcare.Workflow.Reporting;
 using NHibernate;
+using ClearCanvas.Workflow;
 
 namespace ClearCanvas.Healthcare.Hibernate.Brokers
 {
@@ -157,7 +158,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             string hqlQuery = String.Concat(_hqlToBeReportedWorklist, _hqlJoin, _hqlCommunualWorklistCondition);
 
             List<QueryParameter> parameters = new List<QueryParameter>();
-            parameters.Add(new QueryParameter("rpsState", "SC"));
+            parameters.Add(new QueryParameter("rpsState", ActivityStatus.SC.ToString()));
 
             if(worklist != null)
             {
@@ -173,8 +174,8 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             string hqlQuery = String.Concat(_hqlToBeReportedWorklist, _hqlJoin, _hqlMyDualStateCondition);
 
             List<QueryParameter> parameters = new List<QueryParameter>();
-            parameters.Add(new QueryParameter("rpsState", "SC"));
-            parameters.Add(new QueryParameter("rpsState2", "IP"));
+            parameters.Add(new QueryParameter("rpsState", ActivityStatus.SC.ToString()));
+            parameters.Add(new QueryParameter("rpsState2", ActivityStatus.IP.ToString()));
             parameters.Add(new QueryParameter("performingStaff", performingStaff));
 
             return GetWorklist(hqlQuery, parameters);
@@ -185,8 +186,8 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             string hqlQuery = String.Concat(_hqlSelectTranscriptionWorklist, _hqlJoin, _hqlMyDualStateCondition);
 
             List<QueryParameter> parameters = new List<QueryParameter>();
-            parameters.Add(new QueryParameter("rpsState", "SC"));
-            parameters.Add(new QueryParameter("rpsState2", "IP"));
+            parameters.Add(new QueryParameter("rpsState", ActivityStatus.SC.ToString()));
+            parameters.Add(new QueryParameter("rpsState2", ActivityStatus.IP.ToString()));
             parameters.Add(new QueryParameter("performingStaff", performingStaff));
 
             return GetWorklist(hqlQuery, parameters);
@@ -197,8 +198,8 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             string hqlQuery = String.Concat(_hqlSelectVerificationWorklist, _hqlJoin, _hqlMyDualStateCondition);
 
             List<QueryParameter> parameters = new List<QueryParameter>();
-            parameters.Add(new QueryParameter("rpsState", "SC"));
-            parameters.Add(new QueryParameter("rpsState2", "IP"));
+            parameters.Add(new QueryParameter("rpsState", ActivityStatus.SC.ToString()));
+            parameters.Add(new QueryParameter("rpsState2", ActivityStatus.IP.ToString()));
             parameters.Add(new QueryParameter("performingStaff", performingStaff));
 
             return GetWorklist(hqlQuery, parameters);
@@ -209,8 +210,8 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             string hqlQuery = String.Concat(_hqlSelectVerificationWorklist, _hqlJoin, _hqlDualStateCondition, _hqlSupervisorSubQuery);
 
             List<QueryParameter> parameters = new List<QueryParameter>();
-            parameters.Add(new QueryParameter("rpsState", "SC"));
-            parameters.Add(new QueryParameter("rpsState2", "IP"));
+            parameters.Add(new QueryParameter("rpsState", ActivityStatus.SC.ToString()));
+            parameters.Add(new QueryParameter("rpsState2", ActivityStatus.IP.ToString()));
             parameters.Add(new QueryParameter("supervisorStaff", performingStaff));
 
             return GetWorklist(hqlQuery, parameters);
@@ -221,7 +222,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             string hqlQuery = String.Concat(_hqlSelectVerificationWorklist, _hqlJoin, _hqlMySingleStateCondition);
 
             List<QueryParameter> parameters = new List<QueryParameter>();
-            parameters.Add(new QueryParameter("rpsState", "CM"));
+            parameters.Add(new QueryParameter("rpsState", ActivityStatus.CM.ToString()));
             parameters.Add(new QueryParameter("performingStaff", performingStaff));
 
             return GetWorklist(hqlQuery, parameters);
@@ -241,7 +242,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             string hqlQuery = String.Concat(_hqlToBeReportedCount, _hqlJoin, _hqlCommunualWorklistCondition);
 
             List<QueryParameter> parameters = new List<QueryParameter>();
-            parameters.Add(new QueryParameter("rpsState", "SC"));
+            parameters.Add(new QueryParameter("rpsState", ActivityStatus.SC.ToString()));
 
             if (worklist != null)
             {
@@ -257,8 +258,8 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             string hqlQuery = String.Concat(_hqlToBeReportedCount, _hqlJoin, _hqlMyDualStateCondition);
 
             List<QueryParameter> parameters = new List<QueryParameter>();
-            parameters.Add(new QueryParameter("rpsState", "SC"));
-            parameters.Add(new QueryParameter("rpsState2", "IP"));
+            parameters.Add(new QueryParameter("rpsState", ActivityStatus.SC.ToString()));
+            parameters.Add(new QueryParameter("rpsState2", ActivityStatus.IP.ToString()));
             parameters.Add(new QueryParameter("performingStaff", performingStaff));
 
             return GetWorklistCount(hqlQuery, parameters);
@@ -269,8 +270,8 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             string hqlQuery = String.Concat(_hqlSelectTranscriptionCount, _hqlJoin, _hqlMyDualStateCondition);
 
             List<QueryParameter> parameters = new List<QueryParameter>();
-            parameters.Add(new QueryParameter("rpsState", "SC"));
-            parameters.Add(new QueryParameter("rpsState2", "IP"));
+            parameters.Add(new QueryParameter("rpsState", ActivityStatus.SC.ToString()));
+            parameters.Add(new QueryParameter("rpsState2", ActivityStatus.IP.ToString()));
             parameters.Add(new QueryParameter("performingStaff", performingStaff));
 
             return GetWorklistCount(hqlQuery, parameters);
@@ -281,8 +282,8 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             string hqlQuery = String.Concat(_hqlSelectVerificationCount, _hqlJoin, _hqlMyDualStateCondition);
 
             List<QueryParameter> parameters = new List<QueryParameter>();
-            parameters.Add(new QueryParameter("rpsState", "SC"));
-            parameters.Add(new QueryParameter("rpsState2", "IP"));
+            parameters.Add(new QueryParameter("rpsState", ActivityStatus.SC.ToString()));
+            parameters.Add(new QueryParameter("rpsState2", ActivityStatus.IP.ToString()));
             parameters.Add(new QueryParameter("performingStaff", performingStaff));
 
             return GetWorklistCount(hqlQuery, parameters);
@@ -293,8 +294,8 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             string hqlQuery = String.Concat(_hqlSelectVerificationCount, _hqlJoin, _hqlDualStateCondition, _hqlSupervisorSubQuery);
 
             List<QueryParameter> parameters = new List<QueryParameter>();
-            parameters.Add(new QueryParameter("rpsState", "SC"));
-            parameters.Add(new QueryParameter("rpsState2", "IP"));
+            parameters.Add(new QueryParameter("rpsState", ActivityStatus.SC.ToString()));
+            parameters.Add(new QueryParameter("rpsState2", ActivityStatus.IP.ToString()));
             parameters.Add(new QueryParameter("supervisorStaff", performingStaff));
 
             return GetWorklistCount(hqlQuery, parameters);
@@ -305,7 +306,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             string hqlQuery = String.Concat(_hqlSelectVerificationCount, _hqlJoin, _hqlMySingleStateCondition);
 
             List<QueryParameter> parameters = new List<QueryParameter>();
-            parameters.Add(new QueryParameter("rpsState", "CM"));
+            parameters.Add(new QueryParameter("rpsState", ActivityStatus.CM.ToString()));
             parameters.Add(new QueryParameter("performingStaff", performingStaff));
 
             return GetWorklistCount(hqlQuery, parameters);
@@ -316,16 +317,19 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         public IList<Report> GetPriorReport(Patient patient)
         {
             string hqlQuery = "select rep from Report rep" +
-                " join rep.Procedure rp" +
-                " join rp.Type rpt" +
-                " join rp.Order o" +
-                " join o.DiagnosticService ds" +
-                " join o.Patient p" +
-                " where p = :patient";
+                              " join rep.Procedure rp" +
+                              " join rp.Type rpt" +
+                              " join rp.Order o" +
+                              " join o.DiagnosticService ds" +
+                              " join o.Patient p" +
+                              " where p = :patient" +
+                              " and (rep.Status = :reportStatus1 or rep.Status = :reportStatus2)";
 
             List<Report> results = new List<Report>();
             List<QueryParameter> parameters = new List<QueryParameter>();
             parameters.Add(new QueryParameter("patient", patient));
+            parameters.Add(new QueryParameter("reportStatus1", ReportStatus.F.ToString()));
+            parameters.Add(new QueryParameter("reportStatus2", ReportStatus.C.ToString()));
 
             IList list = DoQuery(hqlQuery, parameters);
             foreach (object tuple in list)
@@ -355,8 +359,8 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             if (showActiveOnly)
             {
                 hqlQuery.Append(" where (rps.State != :rpsState1 and rps.State != :rpsState2)");
-                parameters.Add(new QueryParameter("rpsState1", "CM"));
-                parameters.Add(new QueryParameter("rpsState2", "DC"));
+                parameters.Add(new QueryParameter("rpsState1", ActivityStatus.CM.ToString()));
+                parameters.Add(new QueryParameter("rpsState2", ActivityStatus.DC.ToString()));
             }
             else
             {
@@ -366,8 +370,9 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
                 hqlQuery.Append(" or ");
                 hqlQuery.Append("(rps.class = VerificationStep and (rps.State = :rpsState1 or rps.State = :rpsState2))");
                 hqlQuery.Append(")");
-                parameters.Add(new QueryParameter("rpsState1", "CM"));
-                parameters.Add(new QueryParameter("rpsState2", "DC"));
+                parameters.Add(new QueryParameter("rpsState1", ActivityStatus.CM.ToString()));
+                parameters.Add(new QueryParameter("rpsState2", ActivityStatus.DC.ToString()));
+                ReportingProcedureStep rps;
             }
 
             if (!String.IsNullOrEmpty(accessionNumber))

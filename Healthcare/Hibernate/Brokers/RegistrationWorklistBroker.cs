@@ -38,6 +38,7 @@ using ClearCanvas.Enterprise.Hibernate;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Healthcare.Workflow.Registration;
 using NHibernate;
+using ClearCanvas.Workflow;
 
 namespace ClearCanvas.Healthcare.Hibernate.Brokers
 {
@@ -85,7 +86,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         private void AddSubQueryParameters(List<QueryParameter> parameters)
         {
-            parameters.Add(new QueryParameter("mpsState", "SC"));
+            parameters.Add(new QueryParameter("mpsState", ActivityStatus.SC.ToString()));
             parameters.Add(new QueryParameter("mpsSchedulingStartTimeBegin", Platform.Time.Date));
             parameters.Add(new QueryParameter("mpsSchedulingStartTimeEnd", Platform.Time.Date.AddDays(1)));
         }
@@ -146,7 +147,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             string hqlQuery = String.Concat(_hqlSelectWorklist, _hqlJoin, _hqlMainCondition);
 
             List<QueryParameter> parameters = new List<QueryParameter>();
-            parameters.Add(new QueryParameter("cpsState", "SC"));
+            parameters.Add(new QueryParameter("cpsState", ActivityStatus.SC.ToString()));
             AddMainQueryParameters(parameters);
 
             AddWorklistQueryAndParameters(ref hqlQuery, parameters, worklist);
@@ -164,7 +165,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             string hqlQuery = String.Concat(_hqlSelectWorklist, _hqlJoin, _hqlMainCondition, _hqlMPSNotStartedSubQuery);
 
             List<QueryParameter> parameters = new List<QueryParameter>();
-            parameters.Add(new QueryParameter("cpsState", "IP"));
+            parameters.Add(new QueryParameter("cpsState", ActivityStatus.IP.ToString()));
             AddMainQueryParameters(parameters);
             AddSubQueryParameters(parameters);
 
@@ -183,7 +184,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             string hqlQuery = String.Concat(_hqlSelectWorklist, _hqlJoin, _hqlMainCondition, _hqlMPSStartedSubQuery);
 
             List<QueryParameter> parameters = new List<QueryParameter>();
-            parameters.Add(new QueryParameter("cpsState", "IP"));
+            parameters.Add(new QueryParameter("cpsState", ActivityStatus.IP.ToString()));
             AddMainQueryParameters(parameters);
             AddSubQueryParameters(parameters);
 
@@ -202,7 +203,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             string hqlQuery = String.Concat(_hqlSelectWorklist, _hqlJoin, _hqlMainCondition);
 
             List<QueryParameter> parameters = new List<QueryParameter>();
-            parameters.Add(new QueryParameter("cpsState", "CM"));
+            parameters.Add(new QueryParameter("cpsState", ActivityStatus.CM.ToString()));
             AddMainQueryParameters(parameters);
 
             AddWorklistQueryAndParameters(ref hqlQuery, parameters, worklist);
@@ -221,7 +222,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             string hqlQuery = String.Concat(_hqlSelectWorklist, _hqlJoin, _hqlMainCondition);
 
             List<QueryParameter> parameters = new List<QueryParameter>();
-            parameters.Add(new QueryParameter("cpsState", "DC"));
+            parameters.Add(new QueryParameter("cpsState", ActivityStatus.DC.ToString()));
             AddMainQueryParameters(parameters);
 
             AddWorklistQueryAndParameters(ref hqlQuery, parameters, worklist);
@@ -243,7 +244,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             string hqlQuery = String.Concat(_hqlSelectCount, _hqlJoin, _hqlMainCondition);
 
             List<QueryParameter> parameters = new List<QueryParameter>();
-            parameters.Add(new QueryParameter("cpsState", "SC"));
+            parameters.Add(new QueryParameter("cpsState", ActivityStatus.SC.ToString()));
             AddMainQueryParameters(parameters);
 
             AddWorklistQueryAndParameters(ref hqlQuery, parameters, worklist);
@@ -261,7 +262,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             string hqlQuery = String.Concat(_hqlSelectCount, _hqlJoin, _hqlMainCondition, _hqlMPSNotStartedSubQuery);
 
             List<QueryParameter> parameters = new List<QueryParameter>();
-            parameters.Add(new QueryParameter("cpsState", "IP"));
+            parameters.Add(new QueryParameter("cpsState", ActivityStatus.IP.ToString()));
             AddMainQueryParameters(parameters);
             AddSubQueryParameters(parameters);
 
@@ -280,7 +281,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             string hqlQuery = String.Concat(_hqlSelectCount, _hqlJoin, _hqlMainCondition, _hqlMPSStartedSubQuery);
 
             List<QueryParameter> parameters = new List<QueryParameter>();
-            parameters.Add(new QueryParameter("cpsState", "IP"));
+            parameters.Add(new QueryParameter("cpsState", ActivityStatus.IP.ToString()));
             AddMainQueryParameters(parameters);
             AddSubQueryParameters(parameters);
 
@@ -299,7 +300,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             string hqlQuery = String.Concat(_hqlSelectCount, _hqlJoin, _hqlMainCondition);
 
             List<QueryParameter> parameters = new List<QueryParameter>();
-            parameters.Add(new QueryParameter("cpsState", "CM"));
+            parameters.Add(new QueryParameter("cpsState", ActivityStatus.CM.ToString()));
             AddMainQueryParameters(parameters);
 
             AddWorklistQueryAndParameters(ref hqlQuery, parameters, worklist);
@@ -317,7 +318,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             string hqlQuery = String.Concat(_hqlSelectCount, _hqlJoin, _hqlMainCondition);
 
             List<QueryParameter> parameters = new List<QueryParameter>();
-            parameters.Add(new QueryParameter("cpsState", "DC"));
+            parameters.Add(new QueryParameter("cpsState", ActivityStatus.DC.ToString()));
             AddMainQueryParameters(parameters);
 
             AddWorklistQueryAndParameters(ref hqlQuery, parameters, worklist);
@@ -340,7 +341,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
                         " and p = :patient";
 
             List<QueryParameter> parameters = new List<QueryParameter>();
-            parameters.Add(new QueryParameter("cpsState", "SC"));
+            parameters.Add(new QueryParameter("cpsState", ActivityStatus.SC.ToString()));
             parameters.Add(new QueryParameter("patient", patient));
             AddMainQueryParameters(parameters);
 
@@ -364,7 +365,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
                         " and p = :patient";
 
             List<QueryParameter> parameters = new List<QueryParameter>();
-            parameters.Add(new QueryParameter("cpsState", "SC"));
+            parameters.Add(new QueryParameter("cpsState", ActivityStatus.SC.ToString()));
             parameters.Add(new QueryParameter("patient", patient));
             AddMainQueryParameters(parameters);
 
@@ -385,8 +386,8 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
                         _hqlMPSNotStartedSubQuery;
 
             List<QueryParameter> parameters = new List<QueryParameter>();
-            parameters.Add(new QueryParameter("cpsState1", "SC"));
-            parameters.Add(new QueryParameter("cpsState2", "IP"));
+            parameters.Add(new QueryParameter("cpsState1", ActivityStatus.SC.ToString()));
+            parameters.Add(new QueryParameter("cpsState2", ActivityStatus.IP.ToString()));
             parameters.Add(new QueryParameter("patient", patient));
             AddMainQueryParameters(parameters);
             AddSubQueryParameters(parameters);
@@ -413,8 +414,8 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
                         _hqlMPSNotStartedSubQuery;
 
             List<QueryParameter> parameters = new List<QueryParameter>();
-            parameters.Add(new QueryParameter("cpsState1", "SC"));
-            parameters.Add(new QueryParameter("cpsState2", "IP"));
+            parameters.Add(new QueryParameter("cpsState1", ActivityStatus.SC.ToString()));
+            parameters.Add(new QueryParameter("cpsState2", ActivityStatus.IP.ToString()));
             parameters.Add(new QueryParameter("patient", patient));
             AddMainQueryParameters(parameters);
             AddSubQueryParameters(parameters);
@@ -475,8 +476,8 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             {
                 hqlQuery.Append(conditionPrefix);
                 hqlQuery.Append(" (o.Status = :orderStatus1 or o.Status = :orderStatus2)");
-                parameters.Add(new QueryParameter("orderStatus1", "SC"));
-                parameters.Add(new QueryParameter("orderStatus2", "IP"));
+                parameters.Add(new QueryParameter("orderStatus1", OrderStatus.SC.ToString()));
+                parameters.Add(new QueryParameter("orderStatus2", OrderStatus.IP.ToString()));
                 conditionPrefix = " and";
             }
 
