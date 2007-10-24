@@ -105,17 +105,17 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="PresetVoiLuts\Applicators\AutoPresetVoiLutApplicatorComponent.cs" />
-    <Compile Include="PresetVoiLuts\Applicators\DefaultPresetVoiLutApplicatorComponent.cs" />
-    <Compile Include="PresetVoiLuts\Applicators\PresetVoiLutApplicatorComponentContainer.cs" />
-    <Compile Include="PresetVoiLuts\Applicators\LinearPresetVoiLutApplicatorFactory.cs" />
-    <Compile Include="PresetVoiLuts\Applicators\MinMaxAlgorithmPresetVoiLutApplicatorComponent.cs" />
-    <Compile Include="PresetVoiLuts\Applicators\MinMaxAlgorithmPresetVoiLutApplicatorFactory.cs" />
+    <Compile Include="PresetVoiLuts\Operations\AutoPresetVoiLutOperationComponent.cs" />
+    <Compile Include="PresetVoiLuts\Operations\DefaultPresetVoiLutOperationComponent.cs" />
+    <Compile Include="PresetVoiLuts\Operations\PresetVoiLutOperationsComponentContainer.cs" />
+    <Compile Include="PresetVoiLuts\Operations\LinearPresetVoiLutOperationFactory.cs" />
+    <Compile Include="PresetVoiLuts\Operations\MinMaxAlgorithmPresetVoiLutOperationComponent.cs" />
+    <Compile Include="PresetVoiLuts\Operations\MinMaxAlgorithmPresetVoiLutOperationFactory.cs" />
     <Compile Include="PresetVoiLuts\KeyStrokeDescriptor.cs" />
     <Compile Include="LocateOnDiskTool.cs" />
-    <Compile Include="PresetVoiLuts\Applicators\LinearPresetVoiLutApplicatorComponent.cs" />
-    <Compile Include="PresetVoiLuts\Applicators\AutoPresetVoiLutApplicatorFactory.cs" />
-    <Compile Include="PresetVoiLuts\Applicators\AutoPresetVoiLutApplicatorHelper.cs" />
+    <Compile Include="PresetVoiLuts\Operations\LinearPresetVoiLutOperationComponent.cs" />
+    <Compile Include="PresetVoiLuts\Operations\AutoPresetVoiLutOperationFactory.cs" />
+    <Compile Include="PresetVoiLuts\Operations\AutoPresetVoiLutOperationHelper.cs" />
     <Compile Include="PresetVoiLuts\Luts\AutoVoiLutLinear.cs" />
     <Compile Include="PresetVoiLuts\AvailablePresetVoiLutKeyStrokeSettings.cs" />
     <Compile Include="PresetVoiLuts\AvailablePresetVoiLutKeyStrokeSettings.Designer.cs">
@@ -123,14 +123,14 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>AvailablePresetVoiLutKeyStrokeSettings.settings</DependentUpon>
     </Compile>
-    <Compile Include="PresetVoiLuts\Applicators\PresetVoiLutApplicatorComponent.cs" />
-    <Compile Include="PresetVoiLuts\Applicators\InitialVoiLutProvider.cs" />
-    <Compile Include="PresetVoiLuts\Applicators\AllowMultiplePresetVoiLutApplicatorsAttribute.cs" />
-    <Compile Include="PresetVoiLuts\Applicators\PresetVoiLutApplicatorFactory.cs" />
+    <Compile Include="PresetVoiLuts\Operations\PresetVoiLutOperationComponent.cs" />
+    <Compile Include="PresetVoiLuts\Operations\InitialVoiLutProvider.cs" />
+    <Compile Include="PresetVoiLuts\Operations\AllowMultiplePresetVoiLutOperationsAttribute.cs" />
+    <Compile Include="PresetVoiLuts\Operations\PresetVoiLutOperationFactory.cs" />
     <Compile Include="PresetVoiLuts\Luts\PresetVoiLutLinear.cs" />
     <Compile Include="PresetVoiLuts\PresetVoiLut.cs" />
-    <Compile Include="PresetVoiLuts\Applicators\PresetVoiLutApplicatorFactories.cs" />
-    <Compile Include="PresetVoiLuts\Applicators\PresetVoiLutApplicatorFactoryExtensionPoint.cs" />
+    <Compile Include="PresetVoiLuts\Operations\PresetVoiLutOperationFactories.cs" />
+    <Compile Include="PresetVoiLuts\Operations\PresetVoiLutOperationFactoryExtensionPoint.cs" />
     <Compile Include="PresetVoiLuts\PresetVoiLutCollection.cs" />
     <Compile Include="PresetVoiLuts\PresetVoiLutConfiguration.cs" />
     <Compile Include="PresetVoiLuts\PresetVoiLutGroup.cs" />

@@ -30,37 +30,27 @@
 #endregion
 
 using ClearCanvas.Common;
-using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.View.WinForms;
-using ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Applicators;
 
-namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
+namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 {
-	[ExtensionOf(typeof(LinearPresetVoiLutApplicatorComponentViewExtensionPoint))]
-	public class LinearPresetVoiLutApplicatorComponentView : WinFormsView, IApplicationComponentView
+	//TODO: Later, we can uncomment this and allow 'Auto' to be an extension.
+	//[ExtensionOf(typeof(PresetVoiLutOperationFactoryExtensionPoint))]
+	public sealed class AutoPresetVoiLutOperationFactory : PresetVoiLutOperationFactory<AutoPresetVoiLutOperationComponent>
 	{
-		private LinearPresetVoiLutApplicatorComponent _component;
-		private LinearPresetVoiLutApplicatorComponentControl _control;
+		internal static readonly string FactoryName = "Auto";
 
-		#region IApplicationComponentView Members
-
-		public void SetComponent(IApplicationComponent component)
+		public AutoPresetVoiLutOperationFactory()
 		{
-			_component = (LinearPresetVoiLutApplicatorComponent)component;
 		}
 
-		#endregion
-
-		public override object GuiElement
+		public override string Name
 		{
-			get
-			{
-				if (_control == null)
-				{
-					_control = new LinearPresetVoiLutApplicatorComponentControl(_component);
-				}
-				return _control;
-			}
+			get { return FactoryName; }
+		}
+
+		public override string Description
+		{
+			get { return SR.AutoPresetVoiLutOperationFactoryDescription; }
 		}
 	}
 }

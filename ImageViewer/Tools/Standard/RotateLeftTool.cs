@@ -51,36 +51,35 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[GroupHint("activate", "Tools.Image.Manipulation.Orientation.Rotate.Left")]
 
     [ClearCanvas.Common.ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
-    public class RotateLeftTool : ImageViewerTool
+	public class RotateLeftTool : ImageViewerTool
 	{
+		private readonly SpatialTransformImageOperation _operation;
+		
 		public RotateLeftTool()
 		{
+			_operation = new SpatialTransformImageOperation(Apply);
 		}
 
 		public void Activate()
 		{
-			if (this.SelectedPresentationImage == null ||
-				this.SelectedSpatialTransformProvider == null)
+			if (!_operation.AppliesTo(this.SelectedPresentationImage))
 				return;
 
-			SpatialTransformApplicator applicator = new SpatialTransformApplicator(this.SelectedPresentationImage);
+			ImageOperationApplicator applicator = new ImageOperationApplicator(this.SelectedPresentationImage, _operation);
 			UndoableCommand command = new UndoableCommand(applicator);
 			command.Name = SR.CommandRotateLeft;
 			command.BeginState = applicator.CreateMemento();
 
-			applicator.ApplyToAllImages(
-				delegate(IPresentationImage image)
-				{
-					ISpatialTransformProvider provider = image as ISpatialTransformProvider;
-					if (provider == null)
-						return;
-
-					provider.SpatialTransform.RotationXY -= 90;
-				});
+			applicator.ApplyToAllImages();
 
 			command.EndState = applicator.CreateMemento();
+			this.Context.Viewer.CommandHistory.AddCommand(command);
+		}
 
-            this.Context.Viewer.CommandHistory.AddCommand(command);
+		public void Apply(IPresentationImage image)
+		{
+			ISpatialTransform transform = (ISpatialTransform)_operation.GetOriginator(image);
+			transform.RotationXY -= 90;
 		}
 	}
 }

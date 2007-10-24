@@ -29,21 +29,49 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer
 {
-	internal class ImageOperationApplicatorMemento : IMemento
+	internal class ImageOriginatorMemento
 	{
-		private IList<ImageOriginatorMemento> _imageOriginatorMementos;
+		private readonly IPresentationImage _presentationImage;
+		private readonly IMemorable _originator;
+		private readonly IMemento _memento;
 
-		public ImageOperationApplicatorMemento(
-			IList<ImageOriginatorMemento> imageOriginatorMementos)
+		public ImageOriginatorMemento(IPresentationImage presentationImage, IMemorable originator, IMemento memento)
+		{
+			_presentationImage = presentationImage;
+			_originator = originator;
+			_memento = memento;
+		}
+
+		public IPresentationImage PresentationImage
+		{
+			get { return _presentationImage; }
+		}
+
+		public IMemorable Originator
+		{
+			get { return _originator; }
+		}
+
+		public IMemento Memento
+		{
+			get { return _memento; }
+		}
+	}
+
+	internal class ImageOperationApplicatorMemento : IMemento, IEquatable<ImageOperationApplicatorMemento>
+	{
+		private readonly IList<ImageOriginatorMemento> _imageOriginatorMementos;
+
+		public ImageOperationApplicatorMemento(IList<ImageOriginatorMemento> imageOriginatorMementos)
 		{
 			Platform.CheckForNullReference(imageOriginatorMementos, "imageOriginatorMementos");
-
 			_imageOriginatorMementos = imageOriginatorMementos;
 		}
 
@@ -54,24 +82,32 @@ namespace ClearCanvas.ImageViewer
 
 		public override bool Equals(object obj)
 		{
-			Platform.CheckForNullReference(obj, "obj");
-			ImageOperationApplicatorMemento imageOperationApplicatorMemento = obj as ImageOperationApplicatorMemento;
-			Platform.CheckForInvalidCast(imageOperationApplicatorMemento, "obj", "ImageOperationApplicatorMemento");
+			if (obj == this)
+				return true;
 
-			if (this.ImageOriginatorMementos.Count !=
-				imageOperationApplicatorMemento.ImageOriginatorMementos.Count)
+			if (obj is ImageOperationApplicatorMemento)
+				return this.Equals((ImageOperationApplicatorMemento) obj);
+
+			return false;
+		}
+		#region IEquatable<ImageOperationApplicatorMemento> Members
+
+		public bool Equals(ImageOperationApplicatorMemento other)
+		{
+			if (this.ImageOriginatorMementos.Count != other.ImageOriginatorMementos.Count)
 				return false;
 
 			for (int i = 0; i < this.ImageOriginatorMementos.Count; i++)
 			{
-				if (!this.ImageOriginatorMementos[i].Memento.Equals(
-					imageOperationApplicatorMemento.ImageOriginatorMementos[i].Memento))
+				if (!this.ImageOriginatorMementos[i].Memento.Equals(other.ImageOriginatorMementos[i].Memento))
 					return false;
 			}
 
 			return true;
 		}
 
+		#endregion
+		
 		public override int GetHashCode()
 		{
 			// Normally, you would calculate a hash code dependent on immutable
@@ -81,5 +117,5 @@ namespace ClearCanvas.ImageViewer
 			// were ever put in a hashtable.  We are in fact interested in the instance.
 			return base.GetHashCode();
 		}
-	}
+	}	
 }

@@ -29,35 +29,27 @@
 
 #endregion
 
-namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Applicators
+using ClearCanvas.Common;
+
+namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 {
-	public sealed class AutoPresetVoiLutApplicatorComponent : DefaultPresetVoiLutApplicatorComponent
+	[ExtensionOf(typeof(PresetVoiLutOperationFactoryExtensionPoint))]
+	public sealed class MinMaxAlgorithmPresetVoiLutOperationFactory : PresetVoiLutOperationFactory<MinMaxAlgorithmPresetVoiLutOperationComponent>
 	{
-		public AutoPresetVoiLutApplicatorComponent()
+		internal static readonly string FactoryName = "Min/Max Algorithm";
+
+		public MinMaxAlgorithmPresetVoiLutOperationFactory()
 		{
 		}
 
 		public override string Name
 		{
-			get { return SR.AutoPresetVoiLutApplicatorName; }
+			get { return FactoryName; }
 		}
 
 		public override string Description
 		{
-			get { return SR.AutoPresetVoiLutApplicatorDescription; }
-		}
-
-		public override bool AppliesTo(IPresentationImage presentationImage)
-		{
-			return AutoPresetVoiLutApplicatorHelper.AppliesTo(presentationImage);
-		}
-
-		public override void Apply(IPresentationImage presentationImage)
-		{
-			// TODO: Later, when we've enabled all the factories, we need to change this functionality so it 
-			// is purely 'auto'; no min/max algorithm, as it is currently.
-
-			AutoPresetVoiLutApplicatorHelper.AutoApplyLut(presentationImage);
+			get { return SR.MinMaxAlgorithmPresetVoiLutOperationFactoryDescription; }
 		}
 	}
 }

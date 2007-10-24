@@ -31,7 +31,7 @@
 
 namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 {
-	partial class LinearPresetVoiLutApplicatorComponentControl
+	partial class LinearPresetVoiLutOperationComponentControl
 	{
 		/// <summary> 
 		/// Required designer variable.
@@ -149,7 +149,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
             0,
             0});
 			// 
-			// LinearPresetVoiLutApplicatorComponentControl
+			// LinearPresetVoiLutOperationComponentControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -158,7 +158,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 			this.Controls.Add(this._windowCenter);
 			this.Controls.Add(this._windowWidth);
 			this.Controls.Add(this._nameField);
-			this.Name = "LinearPresetVoiLutApplicatorComponentControl";
+			this.Name = "LinearPresetVoiLutOperationComponentControl";
 			this.Size = new System.Drawing.Size(240, 107);
 			((System.ComponentModel.ISupportInitialize)(this._windowCenter)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this._windowWidth)).EndInit();

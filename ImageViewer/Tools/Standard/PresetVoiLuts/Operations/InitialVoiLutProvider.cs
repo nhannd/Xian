@@ -29,43 +29,31 @@
 
 #endregion
 
-using System;
-using ClearCanvas.Desktop;
+using ClearCanvas.Common;
+using ClearCanvas.ImageViewer.Imaging;
 
-namespace ClearCanvas.ImageViewer.Imaging
+namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 {
-	/// <summary>
-	/// An <see cref="ImageOperationApplicator"/> for Voi Luts.  The Originator 
-	/// for this class (returned by <see cref="GetOriginator"/> is the <see cref="IPresentationImage"/>'s 
-	/// <see cref="IVoiLutManager"/>, if applicable.
-	/// </summary>
-	public class VoiLutOperationApplicator : ImageOperationApplicator
+	[ExtensionOf(typeof(InitialVoiLutProviderExtensionPoint))]
+	public sealed class InitialVoiLutProvider : IInitialVoiLutProvider
 	{
-		/// <summary>
-		/// Initializes a new instance of <see cref="VoiLutOperationApplicator"/>
-		/// with the specified <see cref="IPresentationImage"/>.
-		/// </summary>
-		/// <param name="image">an image</param>
-		public VoiLutOperationApplicator(IPresentationImage image)
-			: base(image)
-		{ 
-		}
-
-		/// <summary>
-		/// Gets the <see cref="IVoiLutManager"/> which should be the originator for <b>all</b> Voi Lut undoable operations.
-		/// </summary>
-		/// <remarks>
-		/// The <see cref="IPresentationImage"/> must implement <see cref="IVoiLutProvider"/> or an exception is thrown.
-		/// </remarks>
-		/// <param name="image">The image the memento is associated with</param>
-		/// <returns>the <see cref="IVoiLutManager"/> which should be the originator for <b>all</b> Voi Lut undoable operation.</returns>
-		protected override IMemorable GetOriginator(IPresentationImage image)
+		public InitialVoiLutProvider()
 		{
-			IVoiLutProvider provider = image as IVoiLutProvider;
-			if (provider == null)
-				throw new Exception("Presentation image does not support IVoiLutProvider");
-
-			return provider.VoiLutManager;
 		}
+
+		#region IInitialVoiLutProvider Members
+
+		public IComposableLut GetLut(IPresentationImage presentationImage)
+		{
+			// TODO: Eventually, this should use the IPresetVoiLutOperationFactory extensions and simply
+			// try to apply each one that matches in order until one works.  The 'Auto' lut operation would
+			// be implemented as an operation (with a corresponding factory) and treated just like the rest of the presets.
+			// However, right now we don't want to add new functionality to 1.0, so the 'Initial Lut Provider' and the
+			// 'Auto Lut Operation' do basically the same thing.
+
+			return AutoPresetVoiLutOperationHelper.GetInitialLut(presentationImage);
+		}
+
+		#endregion
 	}
 }

@@ -44,38 +44,39 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 {
     public abstract class ZoomFixedTool : ImageViewerTool
     {
+    	private readonly SpatialTransformImageOperation _operation;
+		private float _selectedScale;
+
         public ZoomFixedTool()
 		{
+			_operation = new SpatialTransformImageOperation(Apply);
 		}
 
 		public abstract void Activate();
 
         protected void ApplyZoom(float scale)
         {
-			if (this.SelectedPresentationImage == null ||
-				this.SelectedSpatialTransformProvider == null)
+			if (!_operation.AppliesTo(this.SelectedPresentationImage))
 				return;
 
-			SpatialTransformApplicator applicator = new SpatialTransformApplicator(this.SelectedPresentationImage);
+        	_selectedScale = scale;
+
+			ImageOperationApplicator applicator = new ImageOperationApplicator(this.SelectedPresentationImage, _operation);
             UndoableCommand command = new UndoableCommand(applicator);
             command.Name = SR.CommandZoom;
             command.BeginState = applicator.CreateMemento();
 
-			applicator.ApplyToAllImages
-				(
-					delegate(IPresentationImage image)
-					{
-						ISpatialTransformProvider provider = image as ISpatialTransformProvider;
-						if (provider == null)
-							return;
-
-						provider.SpatialTransform.Scale = scale;
-					}
-				);
+        	applicator.ApplyToAllImages();
 
 			command.EndState = applicator.CreateMemento();
-
-            this.Context.Viewer.CommandHistory.AddCommand(command);
+			if (!command.EndState.Equals(command.BeginState))
+				this.Context.Viewer.CommandHistory.AddCommand(command);
         }
+
+		public void Apply(IPresentationImage image)
+		{
+			ISpatialTransform transform = (ISpatialTransform)_operation.GetOriginator(image);
+			transform.Scale = _selectedScale;
+		}
    }
 }

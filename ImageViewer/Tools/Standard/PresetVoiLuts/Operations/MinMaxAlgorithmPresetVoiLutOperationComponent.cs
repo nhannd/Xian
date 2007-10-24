@@ -29,29 +29,53 @@
 
 #endregion
 
-using ClearCanvas.Common;
-using ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Applicators;
+using System;
+using ClearCanvas.ImageViewer.Imaging;
+using ClearCanvas.ImageViewer.Graphics;
 
-namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Applicators
+namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 {
-	[AllowMultiplePresetVoiLutApplicators]
-	[ExtensionOf(typeof(PresetVoiLutApplicatorFactoryExtensionPoint))]
-	public sealed class LinearPresetVoiLutApplicatorFactory : PresetVoiLutApplicatorFactory<LinearPresetVoiLutApplicatorComponent>
+	public sealed class MinMaxAlgorithmPresetVoiLutOperationComponent : DefaultPresetVoiLutOperationComponent
 	{
-		internal static readonly string FactoryName = "Linear Preset";
-
-		public LinearPresetVoiLutApplicatorFactory()
+		public MinMaxAlgorithmPresetVoiLutOperationComponent()
 		{
 		}
 
 		public override string Name
 		{
-			get { return FactoryName; }
+			get { return SR.MinMaxAlgorithmPresetVoiLutOperationComponentName; }
 		}
 
 		public override string Description
 		{
-			get { return SR.LinearPresetVoiLutApplicatorFactoryDescription; }
+			get { return SR.MinMaxAlgorithmPresetVoiLutOperationComponentDescription; }
+		}
+
+		public override bool AppliesTo(IPresentationImage presentationImage)
+		{
+			return (base.AppliesTo(presentationImage) &&
+			        presentationImage is IImageGraphicProvider &&
+			        ((IImageGraphicProvider) presentationImage).ImageGraphic.PixelData is IndexedPixelData);
+		}
+
+		public override void Apply(IPresentationImage presentationImage)
+		{
+			if (!AppliesTo(presentationImage))
+				throw new InvalidOperationException(SR.ExceptionInputPresentationImageNotSupported);
+
+			IVoiLutManager manager = ((IVoiLutProvider)presentationImage).VoiLutManager;
+			IComposableLut currentLut = manager.GetLut();
+
+			if (currentLut is MinMaxPixelCalculatedLinearLut)
+				return;
+
+			IndexedPixelData pixelData = (IndexedPixelData)((IImageGraphicProvider) presentationImage).ImageGraphic.PixelData;
+
+			IModalityLutProvider modalityLutProvider = presentationImage as IModalityLutProvider;
+			if (modalityLutProvider != null)
+				manager.InstallLut(new MinMaxPixelCalculatedLinearLut(pixelData, modalityLutProvider.ModalityLut));
+			else
+				manager.InstallLut(new MinMaxPixelCalculatedLinearLut(pixelData));
 		}
 	}
 }

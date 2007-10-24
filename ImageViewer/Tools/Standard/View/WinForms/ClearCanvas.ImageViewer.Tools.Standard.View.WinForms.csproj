@@ -35,20 +35,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="PresetVoiLutApplicatorComponentContainerControl.cs">
+    <Compile Include="PresetVoiLutOperationComponentContainerControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="PresetVoiLutApplicatorComponentContainerControl.Designer.cs">
-      <DependentUpon>PresetVoiLutApplicatorComponentContainerControl.cs</DependentUpon>
+    <Compile Include="PresetVoiLutOperationComponentContainerControl.Designer.cs">
+      <DependentUpon>PresetVoiLutOperationComponentContainerControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="PresetVoiLutApplicatorComponentContainerView.cs" />
-    <Compile Include="LinearPresetVoiLutApplicatorComponentControl.cs">
+    <Compile Include="PresetVoiLutOperationComponentContainerView.cs" />
+    <Compile Include="LinearPresetVoiLutOperationComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="LinearPresetVoiLutApplicatorComponentControl.Designer.cs">
-      <DependentUpon>LinearPresetVoiLutApplicatorComponentControl.cs</DependentUpon>
+    <Compile Include="LinearPresetVoiLutOperationComponentControl.Designer.cs">
+      <DependentUpon>LinearPresetVoiLutOperationComponentControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="LinearPresetVoiLutApplicatorComponentView.cs" />
+    <Compile Include="LinearPresetVoiLutOperationComponentView.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PresetVoiLutConfigurationComponentControl.cs">
       <SubType>UserControl</SubType>
@@ -90,13 +90,13 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="PresetVoiLutApplicatorComponentContainerControl.resx">
+    <EmbeddedResource Include="PresetVoiLutOperationComponentContainerControl.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>PresetVoiLutApplicatorComponentContainerControl.cs</DependentUpon>
+      <DependentUpon>PresetVoiLutOperationComponentContainerControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="LinearPresetVoiLutApplicatorComponentControl.resx">
+    <EmbeddedResource Include="LinearPresetVoiLutOperationComponentControl.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>LinearPresetVoiLutApplicatorComponentControl.cs</DependentUpon>
+      <DependentUpon>LinearPresetVoiLutOperationComponentControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="PresetVoiLutConfigurationComponentControl.resx">
       <SubType>Designer</SubType>

@@ -37,10 +37,9 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer;
 using ClearCanvas.ImageViewer.BaseTools;
-using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts;
-using ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Applicators;
+using ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
@@ -58,11 +57,11 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 				_ownerTool = ownerTool;
 				_preset = preset;
 
-				string actionId = String.Format("apply{0}", _preset.Applicator.Name);
+				string actionId = String.Format("apply{0}", _preset.Operation.Name);
 				ActionPath actionPath = new ActionPath(String.Format("imageviewer-contextmenu/PresetVoiLuts/presetLut{0}", index), _ownerTool._resolver);
 				_action = new MenuAction(actionId, actionPath, ClickActionFlags.None, _ownerTool._resolver);
 				_action.GroupHint = new GroupHint("Tools.Image.Manipulation.Lut.VoiLuts");
-				_action.Label = _preset.Applicator.Name;
+				_action.Label = _preset.Operation.Name;
 				_action.KeyStroke = _preset.KeyStroke;
 				_action.SetClickHandler(this.Apply);
 			}
@@ -74,18 +73,12 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 			private void Apply()
 			{
-				VoiLutOperationApplicator applicator = new VoiLutOperationApplicator(_ownerTool.SelectedPresentationImage);
+				ImageOperationApplicator applicator = new ImageOperationApplicator(_ownerTool.SelectedPresentationImage, _preset.Operation);
 				UndoableCommand command = new UndoableCommand(applicator);
 				command.BeginState = applicator.CreateMemento();
 
-				ImageOperationApplicator.Apply del =
-					delegate(IPresentationImage image)
-					{
-						if (_preset.Applicator.AppliesTo(image))
-							_preset.Applicator.Apply(image);
-					};
+				applicator.ApplyToAllImages();
 
-				applicator.ApplyToAllImages(del);
 				command.EndState = applicator.CreateMemento();
 				if (!command.EndState.Equals(command.BeginState))
 					_ownerTool.Context.Viewer.CommandHistory.AddCommand(command);
@@ -115,7 +108,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			List<PresetVoiLut> presets = new List<PresetVoiLut>();
 
 			//Only temporary until we enable the full functionality in the presets.
-			PresetVoiLut autoPreset = new PresetVoiLut(new AutoPresetVoiLutApplicatorComponent());
+			PresetVoiLut autoPreset = new PresetVoiLut(new AutoPresetVoiLutOperationComponent());
 			autoPreset.KeyStroke = XKeys.F2;
 			presets.Add(autoPreset);
 			
@@ -127,7 +120,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			{
 				foreach (PresetVoiLut preset in group.Clone().Presets)
 				{
-					if (preset.Applicator.AppliesTo(this.SelectedPresentationImage))
+					if (preset.Operation.AppliesTo(this.SelectedPresentationImage))
 						presets.Add(preset);
 				}
 			}

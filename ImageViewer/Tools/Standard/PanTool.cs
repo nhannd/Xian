@@ -63,18 +63,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class PanTool : MouseImageViewerTool
 	{
+		private readonly SpatialTransformImageOperation _operation;
 		private UndoableCommand _command;
-		private SpatialTransformApplicator _applicator;
+		private ImageOperationApplicator _applicator;
 
 		public PanTool()
 			: base(SR.TooltipPan)
 		{
 			this.CursorToken = new CursorToken("Icons.PanToolSmall.png", this.GetType().Assembly);
-		}
-
-		public override string Tooltip
-		{
-			get { return base.Tooltip; }
+			_operation = new SpatialTransformImageOperation(Apply);
 		}
 
 		public override event EventHandler TooltipChanged
@@ -83,13 +80,17 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			remove { base.TooltipChanged -= value; }
 		}
 
+		private bool CanPan()
+		{
+			return _operation.GetOriginator(this.SelectedPresentationImage) is SpatialTransform;
+		}
+
 		private void CaptureBeginState()
 		{
-			if (this.SelectedPresentationImage == null ||
-				this.SelectedSpatialTransformProvider == null)
+			if (!CanPan())
 				return;
 
-			_applicator = new SpatialTransformApplicator(this.SelectedPresentationImage);
+			_applicator = new ImageOperationApplicator(this.SelectedPresentationImage, _operation);
 			_command = new UndoableCommand(_applicator);
 			_command.Name = SR.CommandPan;
 			_command.BeginState = _applicator.CreateMemento();
@@ -97,33 +98,17 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		private void CaptureEndState()
 		{
-			if (this.SelectedPresentationImage == null ||
-				this.SelectedSpatialTransformProvider == null)
+			if (!CanPan() || _command == null)
 				return;
 
-			if (_command == null)
-				return;
-
-			_applicator.ApplyToLinkedImages(delegate(IPresentationImage presentationImage)
-				{
-					ISpatialTransformProvider image = presentationImage as ISpatialTransformProvider;
-					if (image == null)
-						return;
-
-					image.SpatialTransform.TranslationX = this.SelectedSpatialTransformProvider.SpatialTransform.TranslationX;
-					image.SpatialTransform.TranslationY = this.SelectedSpatialTransformProvider.SpatialTransform.TranslationY;
-				});
+			_applicator.ApplyToLinkedImages();
 
 			_command.EndState = _applicator.CreateMemento();
 
-			// If the state hasn't changed since MouseDown just return
-			if (_command.EndState.Equals(_command.BeginState))
-			{
-				_command = null;
-				return;
-			}
+			if (!_command.EndState.Equals(_command.BeginState))
+				this.Context.Viewer.CommandHistory.AddCommand(_command);
 
-			this.Context.Viewer.CommandHistory.AddCommand(_command);
+			_command = null;
 		}
 
 		private void PanLeft()
@@ -148,8 +133,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		private void IncrementPanWithUndo(int xIncrement, int yIncrement)
 		{
-			if (this.SelectedPresentationImage == null ||
-				this.SelectedSpatialTransformProvider == null)
+			if (!CanPan())
 				return;
 
 			this.CaptureBeginState();
@@ -159,11 +143,10 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		private void IncrementPan(int xIncrement, int yIncrement)
 		{
-			if (this.SelectedPresentationImage == null ||
-				this.SelectedSpatialTransformProvider == null)
+			if (!CanPan())
 				return;
 
-			SpatialTransform transform = this.SelectedSpatialTransformProvider.SpatialTransform as SpatialTransform;
+			SpatialTransform transform = (SpatialTransform)_operation.GetOriginator(this.SelectedPresentationImage);
 
 			// Because the pan increment is in destination coordinates, we have to convert
 			// them to source coordinates, since the transform translation is in source coordinates.
@@ -174,7 +157,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			transform.TranslationX += pt[0].X;
 			transform.TranslationY += pt[0].Y;
 
-			this.SelectedSpatialTransformProvider.Draw();
+			this.SelectedPresentationImage.Draw();
 		}
 
 		public override bool Start(IMouseInformation mouseInformation)
@@ -207,6 +190,13 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		public override void Cancel()
 		{
 			this.CaptureEndState();
+		}
+
+		public void Apply(IPresentationImage image)
+		{
+			ISpatialTransform transform = (ISpatialTransform)_operation.GetOriginator(image);
+			transform.TranslationX = this.SelectedSpatialTransformProvider.SpatialTransform.TranslationX;
+			transform.TranslationY = this.SelectedSpatialTransformProvider.SpatialTransform.TranslationY;
 		}
 	}
 }

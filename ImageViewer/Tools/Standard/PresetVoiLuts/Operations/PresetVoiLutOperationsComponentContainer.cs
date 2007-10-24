@@ -34,21 +34,21 @@ using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 
-namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Applicators
+namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 {
 	[ExtensionPoint]
-	public sealed class PresetVoiLutApplicatorComponentContainerViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+	public sealed class PresetVoiLutOperationComponentContainerViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
 	{
 	}
 
-	[AssociateView(typeof(PresetVoiLutApplicatorComponentContainerViewExtensionPoint))]
-	public sealed class PresetVoiLutApplicatorComponentContainer : ApplicationComponentContainer
+	[AssociateView(typeof(PresetVoiLutOperationComponentContainerViewExtensionPoint))]
+	public sealed class PresetVoiLutOperationsComponentContainer : ApplicationComponentContainer
 	{
-		public sealed class PresetVoiLutApplicatorComponentHost : ApplicationComponentHost
+		public sealed class PresetVoiLutOperationComponentHost : ApplicationComponentHost
 		{
-			private readonly PresetVoiLutApplicatorComponentContainer _owner;
+			private readonly PresetVoiLutOperationsComponentContainer _owner;
 
-			internal PresetVoiLutApplicatorComponentHost(PresetVoiLutApplicatorComponentContainer owner, IPresetVoiLutApplicatorComponent hostedComponent)
+			internal PresetVoiLutOperationComponentHost(PresetVoiLutOperationsComponentContainer owner, IPresetVoiLutOperationComponent hostedComponent)
 				:base(hostedComponent)
 			{
 				Platform.CheckForNullReference(owner, "owner"); 
@@ -62,9 +62,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Applicators
 				get { return base.Component.GetType().IsDefined(typeof(AssociateViewAttribute), false); }
 			}
 
-			public new IPresetVoiLutApplicatorComponent Component
+			public new IPresetVoiLutOperationComponent Component
 			{
-				get { return (IPresetVoiLutApplicatorComponent)base.Component; }
+				get { return (IPresetVoiLutOperationComponent)base.Component; }
 			}
 
 			public override DesktopWindow DesktopWindow
@@ -73,11 +73,11 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Applicators
 			}
 		}
 
-		private readonly PresetVoiLutApplicatorComponentHost _componentHost;
+		private readonly PresetVoiLutOperationComponentHost _componentHost;
 		private readonly List<KeyStrokeDescriptor> _availableKeyStrokes;
 		private KeyStrokeDescriptor _selectedKeyStroke;
 
-		public PresetVoiLutApplicatorComponentContainer(IEnumerable<XKeys> availableKeyStrokes, IPresetVoiLutApplicatorComponent component)
+		public PresetVoiLutOperationsComponentContainer(IEnumerable<XKeys> availableKeyStrokes, IPresetVoiLutOperationComponent component)
 		{
 			Platform.CheckForNullReference(availableKeyStrokes, "availableKeyStrokes");
 			Platform.CheckForNullReference(component, "component");
@@ -89,10 +89,10 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Applicators
 			Platform.CheckPositive(_availableKeyStrokes.Count, "_availableKeyStrokes.Count");
 			_selectedKeyStroke = _availableKeyStrokes[0];
 
-			_componentHost = new PresetVoiLutApplicatorComponentHost(this, component);
+			_componentHost = new PresetVoiLutOperationComponentHost(this, component);
 		}
 
-		public PresetVoiLutApplicatorComponentHost ComponentHost
+		public PresetVoiLutOperationComponentHost ComponentHost
 		{
 			get { return _componentHost; }
 		}
@@ -151,7 +151,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Applicators
 
 		internal PresetVoiLut GetPresetVoiLut()
 		{
-			PresetVoiLut preset = new PresetVoiLut(ComponentHost.Component.GetApplicator());
+			PresetVoiLut preset = new PresetVoiLut(ComponentHost.Component.GetOperation());
 			preset.KeyStroke = _selectedKeyStroke.KeyStroke;
 			return preset;
 		}

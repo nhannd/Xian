@@ -29,54 +29,26 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using ClearCanvas.Common;
+using System.Windows.Forms;
+using ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations;
 
-namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Applicators
+namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 {
-	internal static class PresetVoiLutApplicatorFactories
+	public partial class LinearPresetVoiLutOperationComponentControl : ClearCanvas.Desktop.View.WinForms.ApplicationComponentUserControl
 	{
-		private static List<IPresetVoiLutApplicatorFactory> _applicatorFactories;
+		private readonly LinearPresetVoiLutOperationComponent _component;
 
-		private static List<IPresetVoiLutApplicatorFactory> InternalFactories
+		public LinearPresetVoiLutOperationComponentControl(LinearPresetVoiLutOperationComponent component)
 		{
-			get
-			{
-				if (_applicatorFactories == null)
-				{
-					_applicatorFactories = new List<IPresetVoiLutApplicatorFactory>();
+			_component = component;
+			InitializeComponent();
 
-					PresetVoiLutApplicatorFactoryExtensionPoint xp = new PresetVoiLutApplicatorFactoryExtensionPoint();
-					
-					object[] factories = xp.CreateExtensions();
-					foreach (object factory in factories)
-					{
-						if (factory is IPresetVoiLutApplicatorFactory)
-						{
-							IPresetVoiLutApplicatorFactory newFactory = (IPresetVoiLutApplicatorFactory)factory;
-							if (!String.IsNullOrEmpty(newFactory.Name))
-								_applicatorFactories.Add(newFactory);
-							else
-								Platform.Log(LogLevel.Warn, SR.MessageFormatFactoryHasNoName, factory.GetType().FullName);
-						}
-						else
-							Platform.Log(LogLevel.Warn, SR.MessageFormatFactoryDoesNotImplementRequiredInterface, factory.GetType().FullName, typeof(IPresetVoiLutApplicatorFactory).Name);
-					}
-				}
+			BindingSource source = new BindingSource();
+			source.DataSource = _component;
 
-				return _applicatorFactories;
-			}
-		}
-
-		public static IEnumerable<IPresetVoiLutApplicatorFactory> Factories
-		{
-			get { return InternalFactories; }
-		}
-
-		public static IPresetVoiLutApplicatorFactory GetFactory(string factoryName)
-		{
-			return InternalFactories.Find(delegate(IPresetVoiLutApplicatorFactory factory) { return factory.Name == factoryName; });
+			_nameField.DataBindings.Add("Value", source, "PresetName", true, DataSourceUpdateMode.OnPropertyChanged);
+			_windowWidth.DataBindings.Add("Value", source, "WindowWidth", true, DataSourceUpdateMode.OnPropertyChanged);
+			_windowCenter.DataBindings.Add("Value", source, "WindowCenter", true, DataSourceUpdateMode.OnPropertyChanged);
 		}
 	}
 }

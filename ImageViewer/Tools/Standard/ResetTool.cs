@@ -52,43 +52,40 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[ClearCanvas.Common.ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class ResetTool : ImageViewerTool
     {
+		private readonly ImageSpatialTransformImageOperation _operation;
+		
 		public ResetTool()
 		{
+			_operation = new ImageSpatialTransformImageOperation(Apply);
 		}
 
 		public void Activate()
 		{
-			if (this.SelectedPresentationImage == null ||
-				this.SelectedSpatialTransformProvider == null)
+			if (!_operation.AppliesTo(this.SelectedPresentationImage))
 				return;
 
-			SpatialTransformApplicator applicator = new SpatialTransformApplicator(this.SelectedPresentationImage);
+			ImageOperationApplicator applicator = new ImageOperationApplicator(this.SelectedPresentationImage, _operation);
 			UndoableCommand command = new UndoableCommand(applicator);
 			command.Name = SR.CommandReset;
 			command.BeginState = applicator.CreateMemento();
 
-			applicator.ApplyToAllImages(delegate(IPresentationImage presentationImage)
-			{
-				ISpatialTransformProvider image = presentationImage as ISpatialTransformProvider;
-				if (image == null)
-					return;
-
-				IImageSpatialTransform transform = image.SpatialTransform as IImageSpatialTransform;
-				if (transform == null)
-					return;
-
-				transform.Scale = 1.0f;
-				transform.TranslationX = 0.0f;
-				transform.TranslationY = 0.0f;
-				transform.FlipY = false;
-				transform.FlipX = false;
-				transform.RotationXY = 0;
-				transform.ScaleToFit = true;
-			});
+			applicator.ApplyToAllImages();
 
 			command.EndState = applicator.CreateMemento();
+			if (!command.EndState.Equals(command.BeginState))
+				this.Context.Viewer.CommandHistory.AddCommand(command);
+		}
 
-            this.Context.Viewer.CommandHistory.AddCommand(command);
+		public void Apply(IPresentationImage image)
+		{
+			IImageSpatialTransform transform = (IImageSpatialTransform)_operation.GetOriginator(image);
+			transform.Scale = 1.0f;
+			transform.TranslationX = 0.0f;
+			transform.TranslationY = 0.0f;
+			transform.FlipY = false;
+			transform.FlipX = false;
+			transform.RotationXY = 0;
+			transform.ScaleToFit = true;
 		}
 	}
 }

@@ -29,31 +29,32 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
-using System;
+using ClearCanvas.ImageViewer.Imaging;
 
-namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Applicators
+namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 {
 	[Serializable]
-	public sealed class PresetVoiLutApplicatorValidationException : Exception
+	public sealed class PresetVoiLutOperationValidationException : Exception
 	{
-		internal PresetVoiLutApplicatorValidationException(string message)
+		internal PresetVoiLutOperationValidationException(string message)
 			: base(message)
 		{
 		}
 	}
 
-	public abstract class PresetVoiLutApplicatorComponent : ApplicationComponent, IPresetVoiLutApplicator, IPresetVoiLutApplicatorComponent
+	public abstract class PresetVoiLutOperationComponent : ApplicationComponent, IPresetVoiLutOperation, IPresetVoiLutOperationComponent
 	{
-		private IPresetVoiLutApplicatorFactory _sourceFactory;
+		private IPresetVoiLutOperationFactory _sourceFactory;
 		private EditContext _editContext;
 		private bool _valid;
 
-		protected PresetVoiLutApplicatorComponent()
+		protected PresetVoiLutOperationComponent()
 		{
 			_valid = false;
 		}
@@ -70,12 +71,12 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Applicators
 
 		#endregion
 
-		#region IPresetVoiLutApplicator Members
+		#region IPresetVoiLutOperation Members
 
 		public abstract string Name { get; }
 		public abstract string Description { get; }
 
-		public IPresetVoiLutApplicatorFactory SourceFactory
+		public IPresetVoiLutOperationFactory SourceFactory
 		{
 			get { return _sourceFactory; }
 			internal set
@@ -84,10 +85,24 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Applicators
 				_sourceFactory = value;
 			}
 		}
+		#region IImageOperation Members
 
-		public abstract bool AppliesTo(IPresentationImage presentationImage);
+		public IMemorable GetOriginator(IPresentationImage image)
+		{
+			if (image is IVoiLutProvider)
+				return ((IVoiLutProvider) image).VoiLutManager;
+
+			return null;
+		}
+
+		public virtual bool AppliesTo(IPresentationImage presentationImage)
+		{
+			return GetOriginator(presentationImage) != null;
+		}
 
 		public abstract void Apply(IPresentationImage image);
+
+		#endregion
 
 		public PresetVoiLutConfiguration GetConfiguration()
 		{
@@ -104,7 +119,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Applicators
 
 		#region IEditPresetVoiLutApplicationComponent Members
 
-		public IPresetVoiLutApplicator GetApplicator()
+		public IPresetVoiLutOperation GetOperation()
 		{
 			Validate();
 			return this;
@@ -144,9 +159,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Applicators
 			NotifyPropertyChanged(propertyName);
 		}
 
-		protected static PresetVoiLutApplicatorValidationException CreateValidationException(string message)
+		protected static PresetVoiLutOperationValidationException CreateValidationException(string message)
 		{
-			return new PresetVoiLutApplicatorValidationException(message);
+			return new PresetVoiLutOperationValidationException(message);
 		}
 	}
 }

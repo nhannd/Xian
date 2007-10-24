@@ -53,40 +53,40 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
     [ClearCanvas.Common.ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
     public class FlipVerticalTool : ImageViewerTool
 	{
+		private readonly SpatialTransformImageOperation _operation;
+
 		public FlipVerticalTool()
 		{
+			_operation = new SpatialTransformImageOperation(Apply);
 		}
 
 		public void Activate()
 		{
-			if (this.SelectedPresentationImage == null ||
-				this.SelectedSpatialTransformProvider == null)
+			if (!_operation.AppliesTo(this.SelectedPresentationImage))
 				return;
 
 			// Save the old state
-			SpatialTransformApplicator applicator = new SpatialTransformApplicator(this.SelectedPresentationImage);
+			ImageOperationApplicator applicator = new ImageOperationApplicator(this.SelectedPresentationImage, _operation);
 			UndoableCommand command = new UndoableCommand(applicator);
 			command.Name = SR.CommandFlipVertical;
 			command.BeginState = applicator.CreateMemento();
 
-			applicator.ApplyToAllImages(delegate(IPresentationImage presentationImage)
-			{
-				ISpatialTransformProvider image = presentationImage as ISpatialTransformProvider;
-				if (image == null)
-					return;
-
-				// Do the transform
-				if (image.SpatialTransform.RotationXY == 0 || image.SpatialTransform.RotationXY == 180)
-					image.SpatialTransform.FlipX = !image.SpatialTransform.FlipX;
-				// If image is rotated 90 or 270, then a vertical flip is really a horizontal flip
-				else
-					image.SpatialTransform.FlipY = !image.SpatialTransform.FlipY;
-			});
+			applicator.ApplyToAllImages();
 
 			// Save the new state
 			command.EndState = applicator.CreateMemento();
+			this.Context.Viewer.CommandHistory.AddCommand(command);
+		}
 
-            this.Context.Viewer.CommandHistory.AddCommand(command);
+		public void Apply(IPresentationImage image)
+		{
+			ISpatialTransform transform = (ISpatialTransform)_operation.GetOriginator(image);
+			// Do the transform
+			if (transform.RotationXY == 0 || transform.RotationXY == 180)
+				transform.FlipX = !transform.FlipX;
+			// If image is rotated 90 or 270, then a vertical flip is really a horizontal flip
+			else
+				transform.FlipY = !transform.FlipY;
 		}
 	}
 }

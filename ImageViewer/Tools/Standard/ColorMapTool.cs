@@ -31,16 +31,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.ImageViewer;
 using ClearCanvas.ImageViewer.BaseTools;
-using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Imaging;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
@@ -48,7 +42,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class ColorMapTool : ImageViewerTool
 	{
-		private class ColorMapActionContainer
+		private class ColorMapActionContainer : ImageOperation
 		{
 			private readonly ColorMapTool _ownerTool;
 			private readonly MenuAction _action;
@@ -74,22 +68,28 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 			private void Apply()
 			{
-				ColorMapOperationApplicator applicator = new ColorMapOperationApplicator(_ownerTool.SelectedPresentationImage);
+				ImageOperationApplicator applicator = new ImageOperationApplicator(_ownerTool.SelectedPresentationImage, this);
 				UndoableCommand command = new UndoableCommand(applicator);
 				command.BeginState = applicator.CreateMemento();
 
-				ImageOperationApplicator.Apply del =
-					delegate(IPresentationImage image)
-						{
-							if (image is IColorMapProvider)
-								((IColorMapProvider)image).ColorMapManager.InstallColorMap(_descriptor);
-						};
-
-				applicator.ApplyToAllImages(del);
+				applicator.ApplyToAllImages();
 
 				command.EndState = applicator.CreateMemento();
 				if (!command.EndState.Equals(command.BeginState))
 					_ownerTool.Context.Viewer.CommandHistory.AddCommand(command);
+			}
+
+			public override IMemorable GetOriginator(IPresentationImage image)
+			{
+				if (image is IColorMapProvider)
+					return ((IColorMapProvider) image).ColorMapManager;
+
+				return null;
+			}
+
+			public override void Apply(IPresentationImage image)
+			{
+				((IColorMapManager)GetOriginator(image)).InstallColorMap(_descriptor);
 			}
 		}
 

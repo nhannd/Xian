@@ -33,16 +33,16 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using ClearCanvas.Common;
-using ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Applicators;
+using ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 {
 	public sealed class PresetVoiLutConfiguration : IEnumerable<KeyValuePair<string, string>>
 	{
-		private readonly IPresetVoiLutApplicatorFactory _factory;
+		private readonly IPresetVoiLutOperationFactory _factory;
 		private readonly Dictionary<string, string> _configurationValues;
 
-		private PresetVoiLutConfiguration(IPresetVoiLutApplicatorFactory factory)
+		private PresetVoiLutConfiguration(IPresetVoiLutOperationFactory factory)
 		{
 			_factory = factory;
 			_configurationValues = new Dictionary<string, string>();
@@ -53,7 +53,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 			get { return _factory.Name; }
 		}
 
-		public static PresetVoiLutConfiguration FromFactory(IPresetVoiLutApplicatorFactory factory)
+		public static PresetVoiLutConfiguration FromFactory(IPresetVoiLutOperationFactory factory)
 		{
 			Platform.CheckForNullReference(factory, "factory");
 			Platform.CheckForEmptyString(factory.Name, "factory.Name");

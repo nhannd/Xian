@@ -29,14 +29,38 @@
 
 #endregion
 
-using System;
+using ClearCanvas.Common;
+using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.View.WinForms;
+using ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations;
 
-namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Applicators
+namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 {
-	public class AllowMultiplePresetVoiLutApplicatorsAttribute : Attribute
-	{
-		public AllowMultiplePresetVoiLutApplicatorsAttribute()
-		{
-		}
-	}
+	[ExtensionOf(typeof(PresetVoiLutOperationComponentContainerViewExtensionPoint))]
+	public class PresetVoiLutOperationComponentContainerView : WinFormsView, IApplicationComponentView
+    {
+        private PresetVoiLutOperationsComponentContainer _component;
+        private PresetVoiLutOperationComponentContainerControl _control;
+
+        #region IApplicationComponentView Members
+
+        public void SetComponent(IApplicationComponent component)
+        {
+            _component = (PresetVoiLutOperationsComponentContainer)component;
+        }
+
+        #endregion
+
+        public override object GuiElement
+        {
+            get
+            {
+                if (_control == null)
+                {
+                    _control = new PresetVoiLutOperationComponentContainerControl(_component);
+                }
+                return _control;
+            }
+        }
+    }
 }

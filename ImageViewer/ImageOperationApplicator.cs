@@ -35,38 +35,7 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer
 {
-	internal class ImageOriginatorMemento
-	{
-		private IPresentationImage _presentationImage;
-		private IMemorable _originator;
-		private IMemento _memento;
 
-		public ImageOriginatorMemento(
-			IPresentationImage presentationImage, 
-			IMemorable originator,
-			IMemento memento)
-		{
-			_presentationImage = presentationImage;
-			_originator = originator;
-			_memento = memento;
-		}
-
-		public IPresentationImage PresentationImage
-		{
-			get { return _presentationImage; }
-		}
-
-		public IMemorable Originator
-		{
-			get { return _originator; }
-		}
-
-		public IMemento Memento
-		{
-			get { return _memento; }
-		}
-	}
-	
 	/// <summary>
 	/// Encapsulates the creating and restoring of mementos across all
 	/// linked <see cref="IPresentationImage"/> objects.
@@ -81,172 +50,172 @@ namespace ClearCanvas.ImageViewer
 	/// so that the plugin developer doesn't have to deal with such details.
 	/// </para>
 	/// <para>
-	/// This class is abstract, so it is up to the developer to subclass it and implement
-	/// the <see cref="GetOriginator"/> method.
-	/// </para>
-	/// <para>
-	/// By default, the Framework provides two subclasses of 
-	/// <see cref="ImageOperationApplicator"/> called 
-	/// <see cref="ClearCanvas.ImageViewer.Imaging.VoiLutOperationApplicator"/>
-	/// and <see cref="ClearCanvas.ImageViewer.Graphics.SpatialTransformApplicator"/> 
-	/// which allow Voi Lut installation/manipulation and 
-	/// zoom/pan/etc. respectively to be applied across all linked images.  If you wish
-	/// to write your own subclass of <see cref="ImageOperationApplicator"/>, it is
-	/// recommended that you model it after those two subclasses.
-	/// </para>
 	/// </remarks>
-	public abstract class ImageOperationApplicator : IMemorable
+	public class ImageOperationApplicator : IMemorable
 	{
+		private delegate IEnumerable<IPresentationImage> GetImagesDelegate();
+
+		private readonly IPresentationImage _presentationImage;
+		private readonly IImageOperation _operation;
+
 		/// <summary>
-		/// Delegate used by <see cref="ImageOperationApplicator"/> to apply an operation to presentation images (<see cref="IPresentationImage"/>).
+		/// Constructor.
 		/// </summary>
-		/// <param name="image"></param>
-		public delegate void Apply(IPresentationImage image);
-
-		private IPresentationImage _presentationImage;
-
-		protected ImageOperationApplicator(IPresentationImage presentationImage)
+		/// <param name="presentationImage">The 'current' <see cref="IPresentationImage"/>.</param>
+		/// <param name="operation">The operation to be performed on the current <see cref="IPresentationImage"/> and/or its linked images.</param>
+		public ImageOperationApplicator(IPresentationImage presentationImage, IImageOperation operation)
 		{
 			Platform.CheckForNullReference(presentationImage, "presentationImage");
+			Platform.CheckForNullReference(operation, "operation");
+
 			_presentationImage = presentationImage;
+			_operation = operation;
 		}
 
 		#region IMemorable Members
 
 		/// <summary>
-		/// Captures the state of <see cref="ImageOperationApplicator"/>.
+		/// Captures the state of all image originators that will be affected by the <see cref="IImageOperation"/>.
 		/// </summary>
-		/// <returns>An <see cref="IMemento"/>.</returns>
+		/// <remarks>
+		/// Only those originators for which <see cref="IImageOperation.AppliesTo"/> returns true <b>and</b>
+		/// <see cref="IImageOperation.GetOriginator"/> returns a non-null value will have their states 
+		/// captured.
+		/// </remarks>
 		public IMemento CreateMemento()
 		{
 			List<ImageOriginatorMemento> imageOriginatorMementos = new List<ImageOriginatorMemento>();
-
-			ApplyToAllImages(
-				delegate(IPresentationImage image)
+			foreach (IPresentationImage image in GetAllImages())
+			{
+				IMemorable originator = GetOriginator(image);
+				if (originator != null)
 				{
-					IMemorable originator = GetOriginator(image);
+					IMemento memento = originator.CreateMemento();
+					imageOriginatorMementos.Add(new ImageOriginatorMemento(image, originator, memento));
+				}
+			}
 
-					if (originator != null)
-					{
-						ImageOriginatorMemento obj = new ImageOriginatorMemento(
-							image,
-							originator,
-							originator.CreateMemento());
-
-						imageOriginatorMementos.Add(obj);
-					}
-				}, false);
-
-			IMemento applicatorMemento = new ImageOperationApplicatorMemento(imageOriginatorMementos);
-			return applicatorMemento;
+			return new ImageOperationApplicatorMemento(imageOriginatorMementos);
 		}
 
 		/// <summary>
-		/// Restores the state of <see cref="ImageOperationApplicator"/>.
+		/// Restores the state of all image originators that were affected by the <see cref="IImageOperation"/>.
 		/// </summary>
-		/// <param name="memento"></param>
 		public void SetMemento(IMemento memento)
 		{
 			Platform.CheckForNullReference(memento, "memento");
 			ImageOperationApplicatorMemento applicatorMemento = memento as ImageOperationApplicatorMemento;
-			Platform.CheckForInvalidCast(applicatorMemento, "memento", "ImageOperationApplicatorMemento");
+			Platform.CheckForInvalidCast(applicatorMemento, "memento", typeof(ImageOperationApplicatorMemento).FullName);
 
 			// Apply memento to all originators of linked images
 			foreach (ImageOriginatorMemento imageOriginatorMemento in applicatorMemento.ImageOriginatorMementos)
 			{
-				if (imageOriginatorMemento.Originator != null)
-				{
-					imageOriginatorMemento.Originator.SetMemento(imageOriginatorMemento.Memento);
-					imageOriginatorMemento.PresentationImage.Draw();
-				}
+				imageOriginatorMemento.Originator.SetMemento(imageOriginatorMemento.Memento);
+				imageOriginatorMemento.PresentationImage.Draw();
 			}
 		}
 
 		#endregion
 
 		/// <summary>
-		/// Gets the object whose state is to be captured or restored.
+		/// Applies the same <see cref="IImageOperation"/> to the current image as well as all its linked images.
 		/// </summary>
-		/// <param name="image">A <see cref="IPresentationImage"/> that contains
-		/// the object whose state is to be captured or restored.</param>
-		/// <returns>The object whose state is to be captured or restored.</returns>
 		/// <remarks>
 		/// <para>
-		/// Typically, operations are applied to some aspect of the presentation image,
-		/// such as zoom, pan, window/level, etc. That aspect will usually be 
-		/// encapsulated as an object that is owned by the
-		/// by <see cref="PresentationImage"/>.  <see cref="GetOriginator"/> allows
-		/// the plugin developer to define what that object is.
+		/// <see cref="IImageOperation.Apply"/> will be called only for images where 
+		/// <see cref="IImageOperation.AppliesTo"/> has returned true <b>and</b> <see cref="IImageOperation.GetOriginator"/> 
+		/// has returned a non-null value.
 		/// </para>
 		/// <para>
-		/// By default, the Framework provides two subclasses of 
-		/// <see cref="ImageOperationApplicator"/> called 
-		/// <see cref="ClearCanvas.ImageViewer.Imaging.VoiLutOperationApplicator"/>
-		/// and <see cref="ClearCanvas.ImageViewer.Graphics.SpatialTransformApplicator"/> 
-		/// which allow Voi Lut installation/manipulation and 
-		/// zoom/pan/etc. respectively to be applied across all linked images.  If you wish
-		/// to write your own subclass of <see cref="ImageOperationApplicator"/>, it is
-		/// recommended that you model it after those two subclasses.
+		/// Each affected image is drawn automatically by this method.
 		/// </para>
 		/// </remarks>
-		protected abstract IMemorable GetOriginator(IPresentationImage image);
-
-		/// <summary>
-		/// Applies the same operation to the current image as well as all its linked images.
-		/// Each image is drawn automatically by this method.
-		/// </summary>
-		/// <param name="apply">The operation to perform on each image.</param>
-		public void ApplyToAllImages(Apply apply)
+		public void ApplyToAllImages()
 		{
-			ApplyToLinkedImages(apply, false, true);
+			Apply(GetAllImages);
 		}
 
 		/// <summary>
-		/// Applies the same operation to all images linked to the current image, but not the current image itself.
-		/// Each image is drawn automatically by this method.
+		/// Applies the same <see cref="IImageOperation"/> to all linked images, but not the current image itself.
 		/// </summary>
-		/// <param name="apply">The operation to perform on each image.</param>
-		public void ApplyToLinkedImages(Apply apply)
+		/// <remarks>
+		/// <para>
+		/// <see cref="IImageOperation.Apply"/> will be called only for images where 
+		/// <see cref="IImageOperation.AppliesTo"/> has returned true <b>and</b> <see cref="IImageOperation.GetOriginator"/> 
+		/// has returned a non-null value.
+		/// </para>
+		/// <para>
+		/// Each affected image is drawn automatically by this method.
+		/// </para>
+		/// </remarks>
+		public void ApplyToLinkedImages()
 		{
-			ApplyToLinkedImages(apply, true, true);
+			Apply(GetAllLinkedImages);
 		}
 
-		private void ApplyToAllImages(Apply apply, bool draw)
+		private void Apply(GetImagesDelegate getImages)
 		{
-			ApplyToLinkedImages(apply, false, draw);
+			foreach (IPresentationImage image in getImages())
+			{
+				if (AppliesTo(image))
+				{
+					_operation.Apply(image);
+					image.Draw();
+				}
+			}
 		}
 
-		private void ApplyToLinkedImages(Apply apply, bool skipThisImage, bool draw)
+		private IEnumerable<IPresentationImage> GetAllImages()
 		{
-			IDisplaySet displaySet = _presentationImage.ParentDisplaySet;
-			IImageSet imageSet = displaySet.ParentImageSet;
+			yield return _presentationImage;
+
+			foreach (IPresentationImage image in this.GetAllLinkedImages())
+				yield return image;
+		}
+
+		private IEnumerable<IPresentationImage> GetAllLinkedImages()
+		{
+			IDisplaySet parentDisplaySet = _presentationImage.ParentDisplaySet;
+			IImageSet parentImageSet = parentDisplaySet.ParentImageSet;
 
 			// If display set is linked and selected, then iterate through all the linked images
 			// from the other linked display sets
-			if (displaySet.Linked)
+			if (parentDisplaySet.Linked)
 			{
-				foreach (IDisplaySet currentDisplaySet in imageSet.LinkedDisplaySets)
-					ApplyToLinkedImages(currentDisplaySet, apply, skipThisImage, draw);
+				foreach (IDisplaySet currentDisplaySet in parentImageSet.LinkedDisplaySets)
+				{
+					foreach (IPresentationImage image in GetAllLinkedImages(currentDisplaySet))
+						yield return image;
+				}
 			}
 			// If display set is just selected, then iterate through all the linked images
-			// in that display set
+			// in that display set.
 			else
 			{
-				ApplyToLinkedImages(displaySet, apply, skipThisImage, draw);
+				foreach (IPresentationImage image in GetAllLinkedImages(parentDisplaySet))
+					yield return image;
 			}
 		}
 
-		private void ApplyToLinkedImages(IDisplaySet displaySet, Apply apply, bool skipThisImage, bool draw)
+		private IEnumerable<IPresentationImage> GetAllLinkedImages(IDisplaySet displaySet)
 		{
 			foreach (IPresentationImage image in displaySet.LinkedPresentationImages)
 			{
-				if (image == _presentationImage && skipThisImage)
-					continue;
-
-				apply(image);
-				if (draw)
-					image.Draw();
+				if (image != _presentationImage)
+					yield return image;
 			}
+		}
+
+		private bool AppliesTo(IPresentationImage image)
+		{
+			return GetOriginator(image) != null;
+		}
+
+		private IMemorable GetOriginator(IPresentationImage image)
+		{
+			IMemorable originator = _operation.GetOriginator(image);
+			bool applies = _operation.AppliesTo(image);
+			return applies ? originator : null;
 		}
 	}
 }

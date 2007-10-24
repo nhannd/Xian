@@ -112,7 +112,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 			// Capture state after stack
 			_command.EndState = _currentImageBox.CreateMemento();
-			this.Context.Viewer.CommandHistory.AddCommand(_command);
+			if (!_command.EndState.Equals(_command.BeginState)) 
+				this.Context.Viewer.CommandHistory.AddCommand(_command);
 
 			_command = null;
 			_currentImageBox = null;

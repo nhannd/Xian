@@ -29,27 +29,48 @@
 
 #endregion
 
+using System.ComponentModel;
 using ClearCanvas.Common;
+using ClearCanvas.Desktop;
 
-namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Applicators
+namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 {
-	[ExtensionOf(typeof(PresetVoiLutApplicatorFactoryExtensionPoint))]
-	public sealed class MinMaxAlgorithmPresetVoiLutApplicatorFactory : PresetVoiLutApplicatorFactory<MinMaxAlgorithmPresetVoiLutApplicatorComponent>
+	public enum EditContext
 	{
-		internal static readonly string FactoryName = "Min/Max Algorithm";
+		Add = 0,
+		Edit
+	}
 
-		public MinMaxAlgorithmPresetVoiLutApplicatorFactory()
-		{
-		}
+	public interface IPresetVoiLutOperationComponent : IApplicationComponent, INotifyPropertyChanged, IDataErrorInfo
+	{
+		IPresetVoiLutOperation GetOperation();
 
-		public override string Name
-		{
-			get { return FactoryName; }
-		}
+		EditContext EditContext { get; set; }
+		bool Valid { get; }
+	}
 
-		public override string Description
-		{
-			get { return SR.MinMaxAlgorithmPresetVoiLutApplicatorFactoryDescription; }
-		}
+	public interface IPresetVoiLutOperation : IImageOperation
+	{
+		string Name { get; }
+		string Description { get; }
+
+		IPresetVoiLutOperationFactory SourceFactory { get; }
+
+		PresetVoiLutConfiguration GetConfiguration();
+	}
+	
+	public interface IPresetVoiLutOperationFactory
+	{
+		string Name { get; }
+		string Description { get; }
+		
+		bool CanCreateMultiple { get; }
+
+		IPresetVoiLutOperation Create(PresetVoiLutConfiguration configuration);
+		IPresetVoiLutOperationComponent GetEditComponent(PresetVoiLutConfiguration configuration);
+	}
+
+	public sealed class PresetVoiLutOperationFactoryExtensionPoint : ExtensionPoint<IPresetVoiLutOperationFactory>
+	{
 	}
 }

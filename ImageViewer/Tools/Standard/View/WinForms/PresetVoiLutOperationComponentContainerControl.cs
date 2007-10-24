@@ -29,38 +29,53 @@
 
 #endregion
 
-using ClearCanvas.Common;
+using System.Drawing;
+using System.Windows.Forms;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.View.WinForms;
-using ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Applicators;
+using ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 {
-	[ExtensionOf(typeof(PresetVoiLutApplicatorComponentContainerViewExtensionPoint))]
-	public class PresetVoiLutApplicatorComponentContainerView : WinFormsView, IApplicationComponentView
+    public partial class PresetVoiLutOperationComponentContainerControl : ApplicationComponentUserControl
     {
-        private PresetVoiLutApplicatorComponentContainer _component;
-        private PresetVoiLutApplicatorComponentContainerControl _control;
+        private readonly PresetVoiLutOperationsComponentContainer _component;
 
-        #region IApplicationComponentView Members
-
-        public void SetComponent(IApplicationComponent component)
+		/// <summary>
+        /// Constructor
+        /// </summary>
+        public PresetVoiLutOperationComponentContainerControl(PresetVoiLutOperationsComponentContainer component)
+            :base(component)
         {
-            _component = (PresetVoiLutApplicatorComponentContainer)component;
-        }
+			_component = component;
+			InitializeComponent();
 
-        #endregion
+			BindingSource source = new BindingSource();
+			source.DataSource = _component;
 
-        public override object GuiElement
-        {
-            get
-            {
-                if (_control == null)
-                {
-                    _control = new PresetVoiLutApplicatorComponentContainerControl(_component);
-                }
-                return _control;
-            }
+			_keyStrokeComboBox.DataSource = _component.AvailableKeyStrokes;
+			_keyStrokeComboBox.DataBindings.Add("Value", source, "SelectedKeyStroke", true, DataSourceUpdateMode.OnPropertyChanged);
+
+			_okButton.DataBindings.Add("Enabled", source, "AcceptEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
+
+			if (_component.ComponentHost.HasAssociatedView)
+			{
+				IApplicationComponentView customEditView = _component.ComponentHost.ComponentView;
+				Size sizeBefore = _tableLayoutPanel.Size;
+
+				_tableLayoutPanel.Controls.Add(customEditView.GuiElement as Control);
+				_tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+
+				Size sizeAfter = _tableLayoutPanel.Size;
+
+				this.Size += (sizeAfter - sizeBefore);
+			}
+
+			base.AcceptButton = _okButton;
+			base.CancelButton = _cancelButton;
+
+			_cancelButton.Click += delegate { _component.Cancel(); };
+			_okButton.Click += delegate { _component.OK(); };
         }
     }
 }

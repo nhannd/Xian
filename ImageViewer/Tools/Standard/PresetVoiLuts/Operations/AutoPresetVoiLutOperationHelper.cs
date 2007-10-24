@@ -35,9 +35,9 @@ using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts;
 
-namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Applicators
+namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 {
-	internal static class AutoPresetVoiLutApplicatorHelper
+	internal static class AutoPresetVoiLutOperationHelper
 	{
 		public static bool AppliesTo(IPresentationImage presentationImage)
 		{

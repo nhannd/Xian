@@ -38,7 +38,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Desktop.Configuration;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Applicators;
+using ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 {
@@ -52,9 +52,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 	{
 		public sealed class PresetFactoryDescriptor : IEquatable<PresetFactoryDescriptor>, IComparable<PresetFactoryDescriptor>
 		{
-			internal readonly IPresetVoiLutApplicatorFactory Factory;
+			internal readonly IPresetVoiLutOperationFactory Factory;
 
-			internal PresetFactoryDescriptor(IPresetVoiLutApplicatorFactory factory)
+			internal PresetFactoryDescriptor(IPresetVoiLutOperationFactory factory)
 			{
 				Platform.CheckForNullReference(factory, "factory");
 				Factory = factory;
@@ -260,21 +260,21 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 			}
 		}
 
-		private IPresetVoiLutApplicator SelectedPresetApplicator
+		private IPresetVoiLutOperation SelectedPresetOperation
 		{
 			get
 			{
 				if (this.SelectedPresetVoiLut == null)
 					return null;
 
-				return this.SelectedPresetVoiLut.Applicator;
+				return this.SelectedPresetVoiLut.Operation;
 			}
 		}
 
 		public override void Start()
 		{
 			InitializeAddFactories();
-			_selectedAddFactory = new PresetFactoryDescriptor(PresetVoiLutApplicatorFactories.GetFactory(LinearPresetVoiLutApplicatorFactory.FactoryName));
+			_selectedAddFactory = new PresetFactoryDescriptor(PresetVoiLutOperationFactories.GetFactory(LinearPresetVoiLutOperationFactory.FactoryName));
 
 			_voiLutPresets = new Table<PresetVoiLut>();
 
@@ -309,11 +309,11 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 
 			try
 			{
-				IPresetVoiLutApplicatorComponent addComponent = SelectedAddFactory.Factory.GetEditComponent(null);
+				IPresetVoiLutOperationComponent addComponent = SelectedAddFactory.Factory.GetEditComponent(null);
 				addComponent.EditContext = EditContext.Add;
 
-				PresetVoiLutApplicatorComponentContainer container = 
-					new PresetVoiLutApplicatorComponentContainer(GetUnusedKeyStrokes(null), addComponent);
+				PresetVoiLutOperationsComponentContainer container = 
+					new PresetVoiLutOperationsComponentContainer(GetUnusedKeyStrokes(null), addComponent);
 
 				if (ApplicationComponentExitCode.Normal != ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, container, SR.TitleAddPreset))
 					return;
@@ -355,10 +355,10 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 
 			try
 			{
-				PresetVoiLutConfiguration configuration = this.SelectedPresetApplicator.GetConfiguration();
-				IPresetVoiLutApplicatorComponent editComponent = this.SelectedPresetApplicator.SourceFactory.GetEditComponent(configuration);
+				PresetVoiLutConfiguration configuration = this.SelectedPresetOperation.GetConfiguration();
+				IPresetVoiLutOperationComponent editComponent = this.SelectedPresetOperation.SourceFactory.GetEditComponent(configuration);
 				editComponent.EditContext = EditContext.Edit;
-				PresetVoiLutApplicatorComponentContainer container = new PresetVoiLutApplicatorComponentContainer(GetUnusedKeyStrokes(this.SelectedPresetVoiLut), editComponent);
+				PresetVoiLutOperationsComponentContainer container = new PresetVoiLutOperationsComponentContainer(GetUnusedKeyStrokes(this.SelectedPresetVoiLut), editComponent);
 				container.SelectedKeyStroke = this.SelectedPresetVoiLut.KeyStroke;
 
 				if (ApplicationComponentExitCode.Normal != ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, container, SR.TitleEditPreset))
@@ -455,10 +455,10 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 			column = new TableColumn<PresetVoiLut, string>("Key", delegate(PresetVoiLut item) { return item.KeyStrokeDescriptor.ToString(); }, 0.2f);
 			_voiLutPresets.Columns.Add(column);
 	
-			column = new TableColumn<PresetVoiLut, string>("Name", delegate(PresetVoiLut item) { return item.Applicator.Name; }, 0.2f);
+			column = new TableColumn<PresetVoiLut, string>("Name", delegate(PresetVoiLut item) { return item.Operation.Name; }, 0.2f);
 			_voiLutPresets.Columns.Add(column);
 
-			column = new TableColumn<PresetVoiLut, string>("Description", delegate(PresetVoiLut item) { return item.Applicator.Description; }, 0.6f);
+			column = new TableColumn<PresetVoiLut, string>("Description", delegate(PresetVoiLut item) { return item.Operation.Description; }, 0.6f);
 			_voiLutPresets.Columns.Add(column);
 		}
 
@@ -498,7 +498,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 			if (_availableAddFactories == null)
 				_availableAddFactories = new List<PresetFactoryDescriptor>();
 
-			foreach (IPresetVoiLutApplicatorFactory factory in PresetVoiLutApplicatorFactories.Factories)
+			foreach (IPresetVoiLutOperationFactory factory in PresetVoiLutOperationFactories.Factories)
 				_availableAddFactories.Add(new PresetFactoryDescriptor(factory));
 
 			_availableAddFactories.Sort();
@@ -516,7 +516,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 			{
 				foreach (PresetVoiLut preset in _voiLutPresets.Items)
 				{
-					if (preset.Applicator.SourceFactory == _selectedAddFactory.Factory)
+					if (preset.Operation.SourceFactory == _selectedAddFactory.Factory)
 					{
 						addEnabled = false;
 						break;

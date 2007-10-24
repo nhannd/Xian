@@ -35,23 +35,24 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts;
+using ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations;
 
-namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Applicators
+namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 {
 	[ExtensionPoint]
-	public sealed class LinearPresetVoiLutApplicatorComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+	public sealed class LinearPresetVoiLutOperationComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
 	{
 	}
 
-	[AllowMultiplePresetVoiLutApplicators]
-	[AssociateView(typeof(LinearPresetVoiLutApplicatorComponentViewExtensionPoint))]
-	public sealed class LinearPresetVoiLutApplicatorComponent : PresetVoiLutApplicatorComponent
+	[AllowMultiplePresetVoiLutOperations]
+	[AssociateView(typeof(LinearPresetVoiLutOperationComponentViewExtensionPoint))]
+	public sealed class LinearPresetVoiLutOperationComponent : PresetVoiLutOperationComponent
 	{
 		private string _name;
 		private double _windowWidth;
 		private double _windowCenter;
 
-		public LinearPresetVoiLutApplicatorComponent()
+		public LinearPresetVoiLutOperationComponent()
 		{
 			_name = "";
 			_windowWidth = double.NaN;
@@ -110,17 +111,12 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Applicators
 			}
 		}
 
-		public override bool AppliesTo(IPresentationImage presentationImage)
-		{
-			return (presentationImage is IVoiLutProvider);
-		}
-
 		public override void Apply(IPresentationImage presentationImage)
 		{
 			if (!AppliesTo(presentationImage))
 				throw new InvalidOperationException(String.Format(SR.ExceptionFormatInputPresentationImageMustImplement, typeof(IVoiLutProvider).Name));
 
-			IVoiLutManager manager = ((IVoiLutProvider)presentationImage).VoiLutManager;
+			IVoiLutManager manager = (IVoiLutManager)GetOriginator(presentationImage);
 
 			PresetVoiLutLinear.PresetVoiLutLinearParameters parameters = new PresetVoiLutLinear.PresetVoiLutLinearParameters(this.Name, this.WindowWidth, this.WindowCenter);
 

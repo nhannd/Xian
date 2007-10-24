@@ -29,57 +29,28 @@
 
 #endregion
 
-using System;
+using ClearCanvas.Common;
 
-namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Applicators
+namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 {
-	public abstract class DefaultPresetVoiLutApplicatorComponent : PresetVoiLutApplicatorComponent
+	[AllowMultiplePresetVoiLutOperations]
+	[ExtensionOf(typeof(PresetVoiLutOperationFactoryExtensionPoint))]
+	public sealed class LinearPresetVoiLutOperationFactory : PresetVoiLutOperationFactory<LinearPresetVoiLutOperationComponent>
 	{
-		protected DefaultPresetVoiLutApplicatorComponent()
-		{
-			this.Valid = true;
-		}
+		internal static readonly string FactoryName = "Linear Preset";
 
-		#region Sealed Off Application Component functionality
-
-		public sealed override bool Modified
-		{
-			get
-			{
-				return false;
-			}
-			protected set
-			{
-				throw new InvalidOperationException(SR.ExceptionThePropertyCannotBeModified);
-			}
-		}
-
-		public sealed override bool HasValidationErrors
-		{
-			get
-			{
-				return false;
-			}
-		}
-
-		public sealed override void ShowValidation(bool show)
+		public LinearPresetVoiLutOperationFactory()
 		{
 		}
 
-		public sealed override void Start()
+		public override string Name
 		{
-			base.Start();
+			get { return FactoryName; }
 		}
 
-		public sealed override void Stop()
+		public override string Description
 		{
-			base.Stop();
-		}
-
-		#endregion
-
-		public sealed override void Validate()
-		{
+			get { return SR.LinearPresetVoiLutOperationFactoryDescription; }
 		}
 	}
 }

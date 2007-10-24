@@ -344,28 +344,28 @@ Please ensure that the name/keystroke combination is unique.</value>
   <data name="Added" xml:space="preserve">
     <value>added</value>
   </data>
-  <data name="AutoPresetVoiLutApplicatorDescription" xml:space="preserve">
+  <data name="AutoPresetVoiLutOperationDescription" xml:space="preserve">
     <value>Automatically applies window/level</value>
   </data>
-  <data name="AutoPresetVoiLutApplicatorFactoryDescription" xml:space="preserve">
+  <data name="AutoPresetVoiLutOperationFactoryDescription" xml:space="preserve">
     <value>Auto</value>
   </data>
-  <data name="AutoPresetVoiLutApplicatorName" xml:space="preserve">
+  <data name="AutoPresetVoiLutOperationName" xml:space="preserve">
     <value>Auto</value>
   </data>
   <data name="CommandFlipHorizontal" xml:space="preserve">
     <value>Flip Horizontal</value>
   </data>
-  <data name="LinearPresetVoiLutApplicatorFactoryDescription" xml:space="preserve">
+  <data name="LinearPresetVoiLutOperationFactoryDescription" xml:space="preserve">
     <value>Linear Window/Level Preset</value>
   </data>
-  <data name="MinMaxAlgorithmPresetVoiLutApplicatorComponentDescription" xml:space="preserve">
+  <data name="MinMaxAlgorithmPresetVoiLutOperationComponentDescription" xml:space="preserve">
     <value>Calculates Window/Level from the minimum and maximum pixel values</value>
   </data>
-  <data name="MinMaxAlgorithmPresetVoiLutApplicatorComponentName" xml:space="preserve">
+  <data name="MinMaxAlgorithmPresetVoiLutOperationComponentName" xml:space="preserve">
     <value>Min/Max Algorithm</value>
   </data>
-  <data name="MinMaxAlgorithmPresetVoiLutApplicatorFactoryDescription" xml:space="preserve">
+  <data name="MinMaxAlgorithmPresetVoiLutOperationFactoryDescription" xml:space="preserve">
     <value>Min/Max Algorithm</value>
   </data>
   <data name="ExceptionAnEquivalentPresetAlreadyExists" xml:space="preserve">

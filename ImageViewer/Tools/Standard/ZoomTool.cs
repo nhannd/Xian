@@ -62,18 +62,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class ZoomTool : MouseImageViewerTool
 	{
+		private readonly ImageSpatialTransformImageOperation _operation; 
 		private UndoableCommand _command;
-		private SpatialTransformApplicator _applicator;
+		private ImageOperationApplicator _applicator;
 
 		public ZoomTool()
 			: base(SR.TooltipZoom)
 		{
 			this.CursorToken = new CursorToken("Icons.ZoomToolSmall.png", this.GetType().Assembly);
-		}
-
-		public override string Tooltip
-		{
-			get { return base.Tooltip; }
+			_operation = new ImageSpatialTransformImageOperation(Apply);
 		}
 
 		public override event EventHandler TooltipChanged
@@ -84,11 +81,10 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		private void CaptureBeginState()
 		{
-			if (this.SelectedPresentationImage == null ||
-				this.SelectedSpatialTransformProvider == null)
+			if (!_operation.AppliesTo(this.SelectedPresentationImage))
 				return;
 
-			_applicator = new SpatialTransformApplicator(this.SelectedPresentationImage);
+			_applicator = new ImageOperationApplicator(this.SelectedPresentationImage, _operation);
 			_command = new UndoableCommand(_applicator);
 			_command.Name = SR.CommandZoom;
 			_command.BeginState = _applicator.CreateMemento();
@@ -96,39 +92,18 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		private void CaptureEndState()
 		{
-			if (this.SelectedPresentationImage == null ||
-				this.SelectedSpatialTransformProvider == null)
+			if (!_operation.AppliesTo(this.SelectedPresentationImage) || _command == null)
 				return;
 
-			if (_command == null)
-				return;
-
-			IImageSpatialTransform selectedTransform = this.SelectedSpatialTransformProvider.SpatialTransform as IImageSpatialTransform;
-
-			_applicator.ApplyToAllImages(delegate(IPresentationImage presentationImage)
-			{
-				ISpatialTransformProvider image = presentationImage as ISpatialTransformProvider;
-				if (image == null)
-					return;
-
-				IImageSpatialTransform transform = image.SpatialTransform as IImageSpatialTransform;
-				if (transform == null)
-					return;
-
-				transform.ScaleToFit = false;
-				transform.Scale = selectedTransform.Scale;
-			});
+			_applicator.ApplyToLinkedImages();
 
 			_command.EndState = _applicator.CreateMemento();
 
 			// If the state hasn't changed since MouseDown just return
-			if (_command.EndState.Equals(_command.BeginState))
-			{
-				_command = null;
-				return;
-			}
+			if (!_command.EndState.Equals(_command.BeginState))
+				this.Context.Viewer.CommandHistory.AddCommand(_command);
 
-			this.Context.Viewer.CommandHistory.AddCommand(_command);
+			_command = null;
 		}
 
 		private void ZoomIn()
@@ -153,14 +128,10 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		private void IncrementZoom(float scaleIncrement)
 		{
-			if (this.SelectedPresentationImage == null ||
-				this.SelectedSpatialTransformProvider == null)
+			if (!_operation.AppliesTo(this.SelectedPresentationImage))
 				return;
 
-			IImageSpatialTransform transform = this.SelectedSpatialTransformProvider.SpatialTransform as IImageSpatialTransform;
-			if (transform == null)
-				return;
-
+			IImageSpatialTransform transform = (IImageSpatialTransform)this.SelectedSpatialTransformProvider.SpatialTransform;
 			transform.ScaleToFit = false;
 			transform.Scale += scaleIncrement;
 
@@ -219,6 +190,13 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		{
 			float increment = -0.1F * this.SelectedSpatialTransformProvider.SpatialTransform.Scale;
 			IncrementZoom(increment);
+		}
+
+		public void Apply(IPresentationImage image)
+		{
+			IImageSpatialTransform transform = (IImageSpatialTransform)_operation.GetOriginator(image);
+			transform.ScaleToFit = false;
+			transform.Scale = this.SelectedSpatialTransformProvider.SpatialTransform.Scale;
 		}
 	}
 }

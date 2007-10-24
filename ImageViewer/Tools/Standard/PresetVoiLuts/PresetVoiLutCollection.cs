@@ -59,7 +59,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 			}
 			else if (x.KeyStroke == y.KeyStroke)
 			{
-				int nameCompare = x.Applicator.Name.CompareTo(y.Applicator.Name);
+				int nameCompare = x.Operation.Name.CompareTo(y.Operation.Name);
 				if (nameCompare < 0)
 					return -1;
 				else if (nameCompare == 0)

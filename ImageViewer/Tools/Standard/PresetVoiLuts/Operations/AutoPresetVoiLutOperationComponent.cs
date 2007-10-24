@@ -29,40 +29,35 @@
 
 #endregion
 
-using System;
-using ClearCanvas.Desktop;
-
-namespace ClearCanvas.ImageViewer.Graphics
+namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 {
-	/// <summary>
-	/// Creates and restores spatial transform mementos across all linked images.
-	/// </summary>
-	public class SpatialTransformApplicator : ImageOperationApplicator
+	public sealed class AutoPresetVoiLutOperationComponent : DefaultPresetVoiLutOperationComponent
 	{
-		/// <summary>
-		/// Initializes a new instance of <see cref="SpatialTransformApplicator"/>
-		/// with the specified <see cref="IPresentationImage"/>.
-		/// </summary>
-		/// <param name="image"></param>
-		public SpatialTransformApplicator(IPresentationImage image)
-			: base(image)
+		public AutoPresetVoiLutOperationComponent()
 		{
-
 		}
 
-		/// <summary>
-		/// Gets the <see cref="ISpatialTransform"/> from which the memento came.
-		/// </summary>
-		/// <param name="image"></param>
-		/// <returns></returns>
-		protected override IMemorable GetOriginator(IPresentationImage image)
+		public override string Name
 		{
-			ISpatialTransformProvider spatialTransformProvider = image as ISpatialTransformProvider;
+			get { return SR.AutoPresetVoiLutOperationName; }
+		}
 
-			if (spatialTransformProvider == null)
-				throw new Exception("PresentationImage does not support ISpatialTransformProvider");
+		public override string Description
+		{
+			get { return SR.AutoPresetVoiLutOperationDescription; }
+		}
 
-			return spatialTransformProvider.SpatialTransform as IMemorable;
+		public override bool AppliesTo(IPresentationImage presentationImage)
+		{
+			return base.AppliesTo(presentationImage) && AutoPresetVoiLutOperationHelper.AppliesTo(presentationImage);
+		}
+
+		public override void Apply(IPresentationImage presentationImage)
+		{
+			// TODO: Later, when we've enabled all the factories, we need to change this functionality so it 
+			// is purely 'auto'; no min/max algorithm, as it is currently.
+
+			AutoPresetVoiLutOperationHelper.AutoApplyLut(presentationImage);
 		}
 	}
 }

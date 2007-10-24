@@ -29,28 +29,54 @@
 
 #endregion
 
+using System;
+using System.Collections.Generic;
 using ClearCanvas.Common;
 
-namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Applicators
+namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 {
-	//TODO: Later, we can uncomment this and allow 'Auto' to be an extension.
-	//[ExtensionOf(typeof(PresetVoiLutApplicatorFactoryExtensionPoint))]
-	public sealed class AutoPresetVoiLutApplicatorFactory : PresetVoiLutApplicatorFactory<AutoPresetVoiLutApplicatorComponent>
+	internal static class PresetVoiLutOperationFactories
 	{
-		internal static readonly string FactoryName = "Auto";
+		private static List<IPresetVoiLutOperationFactory> _factories;
 
-		public AutoPresetVoiLutApplicatorFactory()
+		private static List<IPresetVoiLutOperationFactory> InternalFactories
 		{
+			get
+			{
+				if (_factories == null)
+				{
+					_factories = new List<IPresetVoiLutOperationFactory>();
+
+					PresetVoiLutOperationFactoryExtensionPoint xp = new PresetVoiLutOperationFactoryExtensionPoint();
+					
+					object[] factories = xp.CreateExtensions();
+					foreach (object factory in factories)
+					{
+						if (factory is IPresetVoiLutOperationFactory)
+						{
+							IPresetVoiLutOperationFactory newFactory = (IPresetVoiLutOperationFactory)factory;
+							if (!String.IsNullOrEmpty(newFactory.Name))
+								_factories.Add(newFactory);
+							else
+								Platform.Log(LogLevel.Warn, SR.MessageFormatFactoryHasNoName, factory.GetType().FullName);
+						}
+						else
+							Platform.Log(LogLevel.Warn, SR.MessageFormatFactoryDoesNotImplementRequiredInterface, factory.GetType().FullName, typeof(IPresetVoiLutOperationFactory).Name);
+					}
+				}
+
+				return _factories;
+			}
 		}
 
-		public override string Name
+		public static IEnumerable<IPresetVoiLutOperationFactory> Factories
 		{
-			get { return FactoryName; }
+			get { return InternalFactories; }
 		}
 
-		public override string Description
+		public static IPresetVoiLutOperationFactory GetFactory(string factoryName)
 		{
-			get { return SR.AutoPresetVoiLutApplicatorFactoryDescription; }
+			return InternalFactories.Find(delegate(IPresetVoiLutOperationFactory factory) { return factory.Name == factoryName; });
 		}
 	}
 }

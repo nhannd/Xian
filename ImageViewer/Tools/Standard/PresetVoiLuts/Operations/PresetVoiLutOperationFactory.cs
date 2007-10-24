@@ -33,23 +33,24 @@ using System;
 using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Common;
+using ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations;
 
-namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Applicators
+namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 {
-	public abstract class PresetVoiLutApplicatorFactory<PresetVoiLutApplicatorComponentType> : IPresetVoiLutApplicatorFactory
-		where PresetVoiLutApplicatorComponentType : PresetVoiLutApplicatorComponent, new()
+	public abstract class PresetVoiLutOperationFactory<PresetVoiLutOperationComponentType> : IPresetVoiLutOperationFactory
+		where PresetVoiLutOperationComponentType : PresetVoiLutOperationComponent, new()
 	{
-		#region IPresetVoiLutApplicatorFactory Members
+		#region IPresetVoiLutOperationFactory Members
 
 		public abstract string Name { get; }
 		public abstract string Description { get; }
 
 		public bool CanCreateMultiple
 		{
-			get { return typeof (PresetVoiLutApplicatorComponentType).IsDefined(typeof(AllowMultiplePresetVoiLutApplicatorsAttribute), false); }
+			get { return typeof (PresetVoiLutOperationComponentType).IsDefined(typeof(AllowMultiplePresetVoiLutOperationsAttribute), false); }
 		}
 
-		public IPresetVoiLutApplicator Create(PresetVoiLutConfiguration configuration)
+		public IPresetVoiLutOperation Create(PresetVoiLutConfiguration configuration)
 		{
 			Platform.CheckForNullReference(configuration, "configuration");
 
@@ -58,16 +59,16 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Applicators
 			Dictionary<string, string> dictionary = new Dictionary<string, string>();
 			configuration.CopyTo(dictionary);
 
-			PresetVoiLutApplicatorComponentType component = new PresetVoiLutApplicatorComponentType();
+			PresetVoiLutOperationComponentType component = new PresetVoiLutOperationComponentType();
 			component.SourceFactory = this;
 			SimpleSerializer.Serialize(component, dictionary);
 			component.Validate();
 			return component;
 		}
 
-		public IPresetVoiLutApplicatorComponent GetEditComponent(PresetVoiLutConfiguration configuration)
+		public IPresetVoiLutOperationComponent GetEditComponent(PresetVoiLutConfiguration configuration)
 		{
-			PresetVoiLutApplicatorComponentType component = new PresetVoiLutApplicatorComponentType();
+			PresetVoiLutOperationComponentType component = new PresetVoiLutOperationComponentType();
 			component.SourceFactory = this;
 
 			if (configuration != null)

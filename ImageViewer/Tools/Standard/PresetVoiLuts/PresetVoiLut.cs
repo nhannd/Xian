@@ -32,19 +32,19 @@
 using System;
 using ClearCanvas.Desktop;
 using ClearCanvas.Common;
-using ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Applicators;
+using ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 {
 	internal sealed class PresetVoiLut : IEquatable<PresetVoiLut>
 	{
 		private KeyStrokeDescriptor _keyStrokeDescriptor;
-		private readonly IPresetVoiLutApplicator _applicator;
+		private readonly IPresetVoiLutOperation _operation;
 
-		public PresetVoiLut(IPresetVoiLutApplicator applicator)
+		public PresetVoiLut(IPresetVoiLutOperation operation)
 		{
-			Platform.CheckForNullReference(applicator, "applicator");
-			this._applicator = applicator;
+			Platform.CheckForNullReference(operation, "operation");
+			this._operation = operation;
 			_keyStrokeDescriptor = XKeys.None;
 		}
 
@@ -59,9 +59,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 			set { _keyStrokeDescriptor = value; }
 		}
 
-		public IPresetVoiLutApplicator Applicator
+		public IPresetVoiLutOperation Operation
 		{
-			get { return _applicator; }
+			get { return _operation; }
 		}
 
 		public override bool Equals(object obj)
@@ -79,14 +79,14 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 
 		public bool Equals(PresetVoiLut other)
 		{
-			return (String.Compare(this.Applicator.Name, other.Applicator.Name, true) == 0 || (KeyStroke != XKeys.None && KeyStroke == other.KeyStroke));
+			return (String.Compare(this.Operation.Name, other.Operation.Name, true) == 0 || (KeyStroke != XKeys.None && KeyStroke == other.KeyStroke));
 		}
 
 		#endregion
 
 		public PresetVoiLut Clone()
 		{
-			PresetVoiLut clone = new PresetVoiLut(_applicator);
+			PresetVoiLut clone = new PresetVoiLut(_operation);
 			clone.KeyStroke = this.KeyStroke;
 			return clone;
 		}

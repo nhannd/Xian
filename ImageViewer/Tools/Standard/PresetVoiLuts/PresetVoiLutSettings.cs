@@ -37,7 +37,7 @@ using System.ComponentModel;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Configuration;
 using ClearCanvas.Desktop;
-using ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Applicators;
+using ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 {
@@ -100,7 +100,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 
 				string factoryName = presetNode.GetAttribute("factory");
 
-				IPresetVoiLutApplicatorFactory factory = PresetVoiLutApplicatorFactories.GetFactory(factoryName);
+				IPresetVoiLutOperationFactory factory = PresetVoiLutOperationFactories.GetFactory(factoryName);
 				if (factory == null)
 					continue;
 
@@ -112,8 +112,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 
 				try 
 				{
-					IPresetVoiLutApplicator applicator = factory.Create(configuration);
-					PresetVoiLut preset = new PresetVoiLut(applicator);
+					IPresetVoiLutOperation operation = factory.Create(configuration);
+					PresetVoiLut preset = new PresetVoiLut(operation);
 					preset.KeyStroke = keyStroke;
 					presets.Add(preset);
 				}
@@ -155,7 +155,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 						if (preset.KeyStroke != XKeys.None)
 							presetElement.SetAttribute("keystroke", preset.KeyStroke.ToString());
 
-						PresetVoiLutConfiguration configuration = preset.Applicator.GetConfiguration();
+						PresetVoiLutConfiguration configuration = preset.Operation.GetConfiguration();
 
 						presetElement.SetAttribute("factory", configuration.FactoryName);
 

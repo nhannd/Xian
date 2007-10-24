@@ -29,26 +29,57 @@
 
 #endregion
 
-using System.Windows.Forms;
-using ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Applicators;
+using System;
 
-namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
+namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 {
-	public partial class LinearPresetVoiLutApplicatorComponentControl : ClearCanvas.Desktop.View.WinForms.ApplicationComponentUserControl
+	public abstract class DefaultPresetVoiLutOperationComponent : PresetVoiLutOperationComponent
 	{
-		private readonly LinearPresetVoiLutApplicatorComponent _component;
-
-		public LinearPresetVoiLutApplicatorComponentControl(LinearPresetVoiLutApplicatorComponent component)
+		protected DefaultPresetVoiLutOperationComponent()
 		{
-			_component = component;
-			InitializeComponent();
+			this.Valid = true;
+		}
 
-			BindingSource source = new BindingSource();
-			source.DataSource = _component;
+		#region Sealed Off Application Component functionality
 
-			_nameField.DataBindings.Add("Value", source, "PresetName", true, DataSourceUpdateMode.OnPropertyChanged);
-			_windowWidth.DataBindings.Add("Value", source, "WindowWidth", true, DataSourceUpdateMode.OnPropertyChanged);
-			_windowCenter.DataBindings.Add("Value", source, "WindowCenter", true, DataSourceUpdateMode.OnPropertyChanged);
+		public sealed override bool Modified
+		{
+			get
+			{
+				return false;
+			}
+			protected set
+			{
+				throw new InvalidOperationException(SR.ExceptionThePropertyCannotBeModified);
+			}
+		}
+
+		public sealed override bool HasValidationErrors
+		{
+			get
+			{
+				return false;
+			}
+		}
+
+		public sealed override void ShowValidation(bool show)
+		{
+		}
+
+		public sealed override void Start()
+		{
+			base.Start();
+		}
+
+		public sealed override void Stop()
+		{
+			base.Stop();
+		}
+
+		#endregion
+
+		public sealed override void Validate()
+		{
 		}
 	}
 }
