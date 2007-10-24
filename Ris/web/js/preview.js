@@ -60,8 +60,17 @@ function getDescriptiveTime(dateTime)
 
 	if (Date.compare(dateTime, yesterday) < 0)
 	{
-		var dateDiff = new Date(Date.parse(today) - Date.parse(dateTime));
-		return dateDiff.getDate() + " days ago";
+		var dayDiff = Math.ceil((Date.parse(today) - Date.parse(dateTime))/(1000*60*60*24));
+
+		if (dayDiff < 31)
+		{
+			return dayDiff + " days ago";
+		}
+		else 
+		{
+			return Ris.formatDate(dateTime);
+		}
+		
 	}
 	else if (Date.compare(dateTime, yesterday) >= 0 && Date.compare(dateTime, today) < 0)
 	{
@@ -150,7 +159,7 @@ function createDiagnosticServiceBreakdownTable(htmlTable)
 
 function orderDataComparison(data1, data2)
 {
-	return Date.compareMoreRecent(data1.EarliestScheduledMPSDateTime, data2.EarliestScheduledMPSDateTime);
+	return Date.compareMoreRecent(data1.OrderScheduledStartTime, data2.OrderScheduledStartTime);
 }
 
 // group patientOrderData by AccessionNumber
