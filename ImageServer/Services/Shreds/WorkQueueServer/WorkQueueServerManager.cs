@@ -29,13 +29,9 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.ImageServer.Services.Shreds;
 using ClearCanvas.ImageServer.Services.WorkQueue;
 
-namespace ClearCanvas.ImageServer.Shreds.WorkQueueServer
+namespace ClearCanvas.ImageServer.Services.Shreds.WorkQueueServer
 {
     /// <summary>
     /// Shreds namespace manager of processing threads for the WorkQueue.

@@ -1,5 +1,5 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
-<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ClearCanvas.DicomServices.ImageServer" GeneratedClassName="DicomServicesImageServerSettings">
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ClearCanvas.ImageServer.Services.Dicom" GeneratedClassName="ImageServerServicesDicomSettings">
   <Profiles />
   <Settings>
     <Setting Name="DefaultRemotePort" Type="System.Int32" Scope="Application">

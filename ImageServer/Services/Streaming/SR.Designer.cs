@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.ImageServer.Services.Shreds {
+namespace ClearCanvas.ImageServer.Services.Streaming {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace ClearCanvas.ImageServer.Services.Shreds {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ClearCanvas.ImageServer.Services.Shreds.SR", typeof(SR).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ClearCanvas.ImageServer.Services.Streaming.SR", typeof(SR).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

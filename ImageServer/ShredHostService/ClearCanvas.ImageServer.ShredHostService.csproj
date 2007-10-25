@@ -70,7 +70,7 @@ rem copy ShredHost assembly
 copy $(ProjectDir)..\..\Server\ShredHost\$(OutDir)ClearCanvas.Server.ShredHost.dll $(TargetDir)common
 
 rem copy shred assemblies
-copy $(ProjectDir)..\..\ImageServer\Shreds\$(Outdir)ClearCanvas.ImageServer.Shreds.dll $(TargetDir)plugins
+copy $(ProjectDir)..\..\ImageServer\Services\Shreds\$(Outdir)ClearCanvas.ImageServer.Services.Shreds.dll $(TargetDir)plugins
 
 rem copy common assemblies
 copy $(ProjectDir)..\..\Common\$(OutDir)ClearCanvas.Common.dll $(TargetDir)common
@@ -80,16 +80,15 @@ copy $(ProjectDir)..\..\ImageServer\Enterprise\$(OutDir)ClearCanvas.ImageServer.
 copy $(ProjectDir)..\..\Dicom\$(OutDir)ClearCanvas.Dicom.dll $(TargetDir)common
 copy $(ProjectDir)..\..\DicomServices\$(OutDir)ClearCanvas.DicomServices.dll $(TargetDir)common
 copy $(ProjectDir)..\..\Server\ServiceModelEx\$(Outdir)ServiceModelEx.dll $(TargetDir)common
-copy $(ProjectDir)..\..\ImageServer\Queue\$(OutDir)ClearCanvas.ImageServer.Queue.dll $(TargetDir)common
-copy $(ProjectDir)..\..\ImageServer\Streaming\$(OutDir)ClearCanvas.ImageServer.Streaming.dll $(TargetDir)common
 
 rem copy plugins
 copy $(ProjectDir)..\..\Enterprise\Core\$(OutDir)ClearCanvas.Enterprise.Core.dll $(TargetDir)plugins
 copy $(ProjectDir)..\..\Enterprise\Common\$(OutDir)ClearCanvas.Enterprise.Common.dll $(TargetDir)plugins
 copy $(ProjectDir)..\..\ImageServer\Enterprise\SqlServer2005\$(OutDir)ClearCanvas.ImageServer.Enterprise.SqlServer2005.dll $(TargetDir)plugins
 copy $(ProjectDir)..\..\ImageServer\Model\SqlServer2005\$(OutDir)ClearCanvas.ImageServer.Model.SqlServer2005.dll $(TargetDir)plugins
-copy $(ProjectDir)..\..\DicomServices\ImageServer\$(OutDir)ClearCanvas.DicomServices.ImageServer.dll $(TargetDir)plugins
-copy $(ProjectDir)..\..\ImageServer\Queue\Work\$(OutDir)ClearCanvas.ImageServer.Queue.Work.dll $(TargetDir)plugins
+copy $(ProjectDir)..\..\ImageServer\Services\Dicom\$(OutDir)ClearCanvas.ImageServer.Services.Dicom.dll $(TargetDir)plugins
+copy $(ProjectDir)..\..\ImageServer\Services\WorkQueue\$(OutDir)ClearCanvas.ImageServer.Services.WorkQueue.dll $(TargetDir)plugins
+copy $(ProjectDir)..\..\ImageServer\Services\Streaming\$(OutDir)ClearCanvas.ImageServer.Services.Streaming.dll $(TargetDir)plugins
 copy $(ProjectDir)..\..\ImageServer\Rules\$(OutDir)ClearCanvas.ImageServer.Rules.dll $(TargetDir)plugins
 
 rem copy referenced assemblies

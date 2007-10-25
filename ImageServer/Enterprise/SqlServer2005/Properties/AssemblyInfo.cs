@@ -38,8 +38,8 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("ClearCanvas.ImageServer.Database.SqlServer2005")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("ClearCanvas.ImageServer.Enterprise.SqlServer2005")]
+[assembly: AssemblyDescription("ImageServer SQL Server 2005 interface plugin")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("ClearCanvas Inc.")]
 [assembly: AssemblyProduct("ImageServer")]

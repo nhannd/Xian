@@ -11,7 +11,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("ClearCanvas Inc.")]
-[assembly: AssemblyProduct("ClearCanvas.ImageServer.Rules")]
+[assembly: AssemblyProduct("ImageServer")]
 [assembly: AssemblyCopyright("Copyright ©  2007")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

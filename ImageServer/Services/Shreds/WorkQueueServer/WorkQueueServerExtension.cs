@@ -30,12 +30,8 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.ImageServer.Shreds.WorkQueueServer;
-using ClearCanvas.Server.ShredHost;
 using ClearCanvas.Common;
-using ClearCanvas.ImageServer.Model;
+using ClearCanvas.Server.ShredHost;
 
 namespace ClearCanvas.ImageServer.Services.Shreds.WorkQueueServer
 {

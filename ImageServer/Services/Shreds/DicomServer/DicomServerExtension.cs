@@ -30,16 +30,8 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-
-using ClearCanvas.Enterprise.Core;
-using ClearCanvas.ImageServer.Services.Shreds.DicomServer;
-using ClearCanvas.Server.ShredHost;
 using ClearCanvas.Common;
-using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Model.Brokers;
-using ClearCanvas.ImageServer.Enterprise;
+using ClearCanvas.Server.ShredHost;
 
 namespace ClearCanvas.ImageServer.Services.Shreds.DicomServer
 {

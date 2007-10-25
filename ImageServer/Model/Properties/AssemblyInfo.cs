@@ -37,7 +37,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("ClearCanvas.ImageServer.Model")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("ImageServer Domain Objects")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("ClearCanvas Inc.")]
 [assembly: AssemblyProduct("ImageServer")]

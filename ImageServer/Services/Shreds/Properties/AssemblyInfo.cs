@@ -38,11 +38,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("ClearCanvas.ImageServer.Shreds")]
+[assembly: AssemblyTitle("ClearCanvas.ImageServer.Services.Shreds")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("ClearCanvas Inc.")]
-[assembly: AssemblyProduct("ClearCanvas.ImageServer.Shreds")]
+[assembly: AssemblyProduct("ImageServer")]
 [assembly: AssemblyCopyright("Copyright ©  2007")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

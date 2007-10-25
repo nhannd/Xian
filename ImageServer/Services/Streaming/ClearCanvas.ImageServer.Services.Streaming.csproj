@@ -4,18 +4,18 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.50727</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{95FEA63F-7E51-4829-923E-8CD02C8DEAE2}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
+    <ProjectGuid>{DF8F531F-5AE4-4AC1-A086-B50FB799EEF1}</ProjectGuid>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ClearCanvas.DicomServices.XmlGenerator</RootNamespace>
-    <AssemblyName>ClearCanvas.DicomServices.XmlGenerator</AssemblyName>
+    <RootNamespace>ClearCanvas.ImageServer.Services.Streaming</RootNamespace>
+    <AssemblyName>ClearCanvas.ImageServer.Services.Streaming</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;UNIT_TESTS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -26,63 +26,40 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <CodeAnalysisRules>
-    </CodeAnalysisRules>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="nunit.framework, Version=2.2.7.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\ReferencedAssemblies\nunit.framework.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Deployment" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MainDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="MainDialog.Designer.cs">
-      <DependentUpon>MainDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="MainDialog.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>MainDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <Compile Include="Properties\Resources.Designer.cs">
+    <Compile Include="SR.Designer.cs">
+      <DependentUpon>SR.resx</DependentUpon>
       <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
-    </Compile>
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\DicomServices\ClearCanvas.DicomServices.csproj">
-      <Project>{734E6EA2-DC6B-4387-B671-EED0A603D73E}</Project>
-      <Name>ClearCanvas.DicomServices</Name>
+    <ProjectReference Include="..\..\..\Common\ClearCanvas.Common.csproj">
+      <Project>{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}</Project>
+      <Name>ClearCanvas.Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\Dicom\ClearCanvas.Dicom.csproj">
       <Project>{AD9ECE2B-8268-4115-8DC8-860FBD011FFF}</Project>
       <Name>ClearCanvas.Dicom</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ClearCanvas.ImageServer.Services.Streaming.csproj">
-      <Project>{DF8F531F-5AE4-4AC1-A086-B50FB799EEF1}</Project>
-      <Name>ClearCanvas.ImageServer.Services.Streaming</Name>
-    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="SR.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>SR.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
