@@ -31,6 +31,7 @@
 
 using System;
 using System.Windows.Forms;
+using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.View.WinForms;
 
 namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
@@ -66,10 +67,11 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             _requestedProcedure.DataBindings.Add("Value", _component, "RequestedProcedure", true, DataSourceUpdateMode.OnPropertyChanged);
             _performedLocation.DataBindings.Add("Value", _component, "PerformedLocation", true, DataSourceUpdateMode.OnPropertyChanged);
             _performedDate.DataBindings.Add("Value", _component, "PerformedDate", true, DataSourceUpdateMode.OnPropertyChanged);
-            _dictateFor.DataBindings.Add("SelectedSuggestion", _component, "Supervisor", true, DataSourceUpdateMode.OnPropertyChanged);
-            _dictateFor.SuggestDelegate = _component.GetRadiologistSuggestion;
-            _dictateFor.FormatDelegate = _component.FormatStaff;
             _makeDefault.DataBindings.Add("Checked", _component, "MakeDefault", true, DataSourceUpdateMode.OnPropertyChanged);
+            _supervisor.DataBindings.Add("Value", _component, "Supervisor", true, DataSourceUpdateMode.OnPropertyChanged);
+
+            SuggestionOptimizer optimizer = new SuggestionOptimizer();
+            _supervisor.SuggestionProvider = optimizer.GetOptimizedProvider(_component.GetRadiologistSuggestion);
 
             _verifyButton.DataBindings.Add("Enabled", _component, "VerifyEnabled", false, DataSourceUpdateMode.OnPropertyChanged);
             _sendToVerifyButton.DataBindings.Add("Enabled", _component, "SendToVerifyEnabled", false, DataSourceUpdateMode.OnPropertyChanged);
@@ -78,7 +80,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             if (_component.CanVerifyReport)
             {
                 _residentPanel.Visible = false;
-                _dictateFor.Visible = false;
+                _supervisor.Visible = false;
                 _makeDefault.Visible = false;
             }
             else

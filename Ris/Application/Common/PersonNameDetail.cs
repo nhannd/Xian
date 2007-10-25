@@ -72,6 +72,11 @@ namespace ClearCanvas.Ris.Application.Common
         [DataMember]
         public string Degree;
 
+        public override string ToString()
+        {
+            return string.Format("{0}, {1}", this.FamilyName, this.GivenName);
+        }
+
         #region ICloneable Members
 
         public object Clone()

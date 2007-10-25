@@ -76,7 +76,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this._previewBrowser = new System.Windows.Forms.WebBrowser();
             this._residentPanel = new System.Windows.Forms.Panel();
             this._makeDefault = new System.Windows.Forms.CheckBox();
-            this._dictateFor = new ClearCanvas.Desktop.View.WinForms.SuggestionTextField();
+            this._supervisor = new ClearCanvas.Desktop.View.WinForms.SuggestComboField();
             this._cancelButton = new System.Windows.Forms.Button();
             this._buttonPanel = new System.Windows.Forms.FlowLayoutPanel();
             this._verifyButton = new System.Windows.Forms.Button();
@@ -294,7 +294,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             // 
             this.tableLayoutPanel1.SetColumnSpan(this._residentPanel, 2);
             this._residentPanel.Controls.Add(this._makeDefault);
-            this._residentPanel.Controls.Add(this._dictateFor);
+            this._residentPanel.Controls.Add(this._supervisor);
             this._residentPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this._residentPanel.Location = new System.Drawing.Point(3, 509);
             this._residentPanel.Name = "_residentPanel";
@@ -304,7 +304,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             // _makeDefault
             // 
             this._makeDefault.AutoSize = true;
-            this._makeDefault.Location = new System.Drawing.Point(139, 2);
+            this._makeDefault.Location = new System.Drawing.Point(139, -1);
             this._makeDefault.Margin = new System.Windows.Forms.Padding(2);
             this._makeDefault.Name = "_makeDefault";
             this._makeDefault.Size = new System.Drawing.Size(90, 17);
@@ -312,17 +312,18 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this._makeDefault.Text = "Make Default";
             this._makeDefault.UseVisualStyleBackColor = true;
             // 
-            // _dictateFor
+            // _supervisor
             // 
-            this._dictateFor.LabelText = "Supervising Radiologist:";
-            this._dictateFor.Location = new System.Drawing.Point(3, 2);
-            this._dictateFor.Margin = new System.Windows.Forms.Padding(2);
-            this._dictateFor.Name = "_dictateFor";
-            this._dictateFor.SelectedSuggestion = null;
-            this._dictateFor.Size = new System.Drawing.Size(226, 41);
-            this._dictateFor.StrictTyping = true;
-            this._dictateFor.TabIndex = 3;
-            this._dictateFor.Value = null;
+            this._supervisor.DataSource = null;
+            this._supervisor.DisplayMember = "";
+            this._supervisor.LabelText = "Supervising Radiologist:";
+            this._supervisor.Location = new System.Drawing.Point(3, 0);
+            this._supervisor.Margin = new System.Windows.Forms.Padding(2);
+            this._supervisor.Name = "_supervisor";
+            this._supervisor.Size = new System.Drawing.Size(237, 41);
+            this._supervisor.SuggestionProvider = null;
+            this._supervisor.TabIndex = 5;
+            this._supervisor.Value = null;
             // 
             // _cancelButton
             // 
@@ -428,7 +429,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
         private ClearCanvas.Desktop.View.WinForms.TextField _performedDate;
         private ClearCanvas.Desktop.View.WinForms.TextField _visitNumber;
         private System.Windows.Forms.Panel _residentPanel;
-        private ClearCanvas.Desktop.View.WinForms.SuggestionTextField _dictateFor;
+        private ClearCanvas.Desktop.View.WinForms.SuggestComboField _supervisor;
         private System.Windows.Forms.FlowLayoutPanel _buttonPanel;
         private System.Windows.Forms.Button _verifyButton;
         private System.Windows.Forms.Button _sendToVerifyButton;

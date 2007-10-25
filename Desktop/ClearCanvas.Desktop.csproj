@@ -89,6 +89,7 @@
     <Compile Include="IDesktopObjectView.cs" />
     <Compile Include="IGuiToolkit.cs" />
     <Compile Include="ISessionManager.cs" />
+    <Compile Include="SuggestionOptimizer.cs" />
     <Compile Include="Tables\FilteredItemCollection.cs" />
     <Compile Include="Tables\TableFilterParams.cs" />
     <Compile Include="UserInteraction.cs" />

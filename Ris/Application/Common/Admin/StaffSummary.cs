@@ -64,6 +64,11 @@ namespace ClearCanvas.Ris.Application.Common.Admin
         [DataMember]
         public PersonNameDetail Name;
 
+        public override string ToString()
+        {
+            return this.Name.ToString();
+        }
+
         #region ICloneable Members
 
         public object Clone()

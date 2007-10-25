@@ -64,6 +64,12 @@
     <Compile Include="ComboBoxField.Designer.cs">
       <DependentUpon>ComboBoxField.cs</DependentUpon>
     </Compile>
+    <Compile Include="SuggestComboField.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="SuggestComboField.Designer.cs">
+      <DependentUpon>SuggestComboField.cs</DependentUpon>
+    </Compile>
     <Compile Include="CursorManager.cs" />
     <Compile Include="DateTimeField.cs">
       <SubType>UserControl</SubType>
@@ -142,14 +148,8 @@
       <DependentUpon>SplashScreen.cs</DependentUpon>
     </Compile>
     <Compile Include="SplashScreenManager.cs" />
-    <Compile Include="SuggestionTextBox.cs">
+    <Compile Include="SuggestComboBox.cs">
       <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="SuggestionTextField.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="SuggestionTextField.Designer.cs">
-      <DependentUpon>SuggestionTextField.cs</DependentUpon>
     </Compile>
     <Compile Include="TestComponentControl.cs">
       <SubType>UserControl</SubType>
@@ -430,6 +430,10 @@
     <Content Include="FileBrowser\Images\BrowserForward.png" />
     <Content Include="FileBrowser\Images\BrowserUp.png" />
     <None Include="Resources\ClearFilterSmall.png" />
+    <EmbeddedResource Include="SuggestComboField.resx">
+      <DependentUpon>SuggestComboField.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Resources\CheckSmall.png" />
     <EmbeddedResource Include="Resources\SplashShadow.png" />
     <EmbeddedResource Include="Resources\Splash.png" />
@@ -441,10 +445,6 @@
     <EmbeddedResource Include="SplashScreen.resx">
       <DependentUpon>SplashScreen.cs</DependentUpon>
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="SuggestionTextField.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>SuggestionTextField.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="TextAreaField.resx">
       <DependentUpon>TextAreaField.cs</DependentUpon>

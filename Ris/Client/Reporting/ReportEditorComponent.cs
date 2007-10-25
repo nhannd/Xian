@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.Runtime.InteropServices;
 using System.Threading;
 
@@ -43,7 +44,6 @@ using ClearCanvas.Ris.Application.Common.Admin;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 using ClearCanvas.Ris.Client.Formatting;
 using AuthorityTokens=ClearCanvas.Ris.Application.Common.AuthorityTokens;
-using System.Collections.Generic;
 
 namespace ClearCanvas.Ris.Client.Reporting
 {
@@ -116,7 +116,6 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         private string _reportContent;
         private StaffSummary _supervisor;
-        private List<StaffSummary> _suggestedRadiologists;
 
         private bool _makeDefault;
 
@@ -440,18 +439,16 @@ namespace ClearCanvas.Ris.Client.Reporting
             EventsHelper.Fire(_closeComponentEvent, this, EventArgs.Empty);
         }
 
-        public object[] GetRadiologistSuggestion(string query)
+        public IList GetRadiologistSuggestion(string query)
         {
-            if (!String.IsNullOrEmpty(query) && query.Length < 2)
-                return null;
-
+            ArrayList suggestions = new ArrayList();
             try
             {
                 Platform.GetService<IReportingWorkflowService>(
                     delegate(IReportingWorkflowService service)
                     {
                         GetRadiologistListResponse response = service.GetRadiologistList(new GetRadiologistListRequest());
-                        _suggestedRadiologists = response.Radiologists;
+                        suggestions.AddRange(response.Radiologists);
                     });
             }
             catch (Exception e)
@@ -460,13 +457,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                 ExceptionHandler.Report(e, this.Host.DesktopWindow);
             }
 
-            return _suggestedRadiologists.ToArray();
-        }
-
-        public string FormatStaff(object obj)
-        {
-            StaffSummary staff = (StaffSummary) obj;
-            return PersonNameFormat.Format(staff.Name);
+            return suggestions;
         }
 
         #endregion
