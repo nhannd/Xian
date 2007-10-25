@@ -58,10 +58,10 @@ namespace ClearCanvas.ImageViewer.Annotations
 	/// </remarks>
 	/// <seealso cref="IAnnotationResourceResolver"/>
 	/// <seealso cref="ResourceResolver"/>
-	public class AnnotationResourceResolver : ResourceResolver, IAnnotationResourceResolver
+	public sealed class AnnotationResourceResolver : ResourceResolver, IAnnotationResourceResolver
 	{
-		protected char replaceChar = '.';
-		protected char replaceWithChar = '_';
+		private readonly char replaceChar = '.';
+		private readonly char replaceWithChar = '_';
 
 		/// <summary>
 		/// Constructor.
@@ -86,7 +86,7 @@ namespace ClearCanvas.ImageViewer.Annotations
 		/// <summary>
 		/// Resolves the <see cref="IAnnotationItem"/>'s label (see <see cref="IAnnotationItem.GetLabel()"/>).
 		/// </summary>
-		public virtual string ResolveLabel(string annotationIdentifier)
+		public string ResolveLabel(string annotationIdentifier)
 		{
 			Platform.CheckForEmptyString(annotationIdentifier, "annotationIdentifier"); 
 			
@@ -101,7 +101,7 @@ namespace ClearCanvas.ImageViewer.Annotations
 		/// (see <see cref="IAnnotationItem.GetDisplayName"/> and <see cref="IAnnotationItemProvider.GetDisplayName"/>).
 		/// </summary>
 		/// <exception cref="InvalidOperationException">Thrown when the display name cannot be resolved.</exception>
-		public virtual string ResolveDisplayName(string annotationIdentifier)
+		public string ResolveDisplayName(string annotationIdentifier)
 		{
 			Platform.CheckForEmptyString(annotationIdentifier, "annotationIdentifier"); 
 			

@@ -35,7 +35,7 @@ using ClearCanvas.Common;
 namespace ClearCanvas.ImageViewer.Imaging
 {
 	/// <summary>
-	/// Abstract class.  This class provides all the base functionality for a Linear Lut where the 
+	/// This class provides all the base functionality for a Linear Lut where the 
 	/// <see cref="WindowWidth"/> and <see cref="WindowCenter"/> are calculated via some algorithm
 	/// on (an image's) <see cref="IndexedPixelData"/>.
 	/// </summary>
@@ -53,10 +53,10 @@ namespace ClearCanvas.ImageViewer.Imaging
 		private double _windowCenter;
 
 		/// <summary>
-		/// Constructor.  The input modalityLut object can be null.
+		/// Constructor.
 		/// </summary>
-		/// <param name="pixelData">The pixel data the algorithm will be run on</param>
-		/// <param name="modalityLut">The modality lut to use for calculating <see cref="WindowWidth"/> and <see cref="WindowCenter"/>, if applicable</param>
+		/// <param name="pixelData">The pixel data the algorithm will be run on.</param>
+		/// <param name="modalityLut">The modality lut to use for calculating <see cref="WindowWidth"/> and <see cref="WindowCenter"/>, if applicable.</param>
 		protected AlgorithmCalculatedVoiLutLinear(IndexedPixelData pixelData, IModalityLut modalityLut)
 		{
 			Platform.CheckForNullReference(pixelData, "pixelData");
@@ -69,9 +69,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 		}
 
 		/// <summary>
-		/// Constructor
+		/// Constructor.
 		/// </summary>
-		/// <param name="pixelData">The pixel data the algorithm will be run on</param>
+		/// <param name="pixelData">The pixel data the algorithm will be run on.</param>
 		protected AlgorithmCalculatedVoiLutLinear(IndexedPixelData pixelData)
 			: this(pixelData, null)
 		{
@@ -94,14 +94,15 @@ namespace ClearCanvas.ImageViewer.Imaging
 		}
 
 		/// <summary>
-		/// Called by the base class (<see cref="AlgorithmCalculatedVoiLutLinear"/>) when either of <see cref="WindowWidth"/>
-		/// or <see cref="WindowCenter"/> are first accessed.  Inheritors must implement this method and return the 
-		/// windowStart and windowEnd value range that will be used to calculate the <see cref="WindowWidth"/>
-		/// and <see cref="WindowCenter"/>.
+		/// Called when either of <see cref="WindowWidth"/> or <see cref="WindowCenter"/> are first accessed.
 		/// </summary>
-		/// <param name="pixelData">The pixel data that is to be used to calculate windowStart and windowEnd</param>
-		/// <param name="windowStart">returns the beginning value in the window range</param>
-		/// <param name="windowEnd">returns the end value in the window range</param>
+		/// <remarks>
+		/// Inheritors must implement this method and return the windowStart and windowEnd value range 
+		/// that will be used to calculate the <see cref="WindowWidth"/> and <see cref="WindowCenter"/>.
+		/// </remarks>
+		/// <param name="pixelData">The pixel data that is to be used to calculate <paramref name="windowStart"/> and <paramref name="windowEnd"/>.</param>
+		/// <param name="windowStart">returns the beginning value in the window range.</param>
+		/// <param name="windowEnd">returns the end value in the window range.</param>
 		protected abstract void CalculateWindowRange(IndexedPixelData pixelData, out int windowStart, out int windowEnd);
 
 		#region IVoiLutLinear Members

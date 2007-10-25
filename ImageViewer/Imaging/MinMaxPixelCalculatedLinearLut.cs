@@ -45,9 +45,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <remarks>
 		/// The input <see cref="IModalityLut"/> object can be null.
 		/// </remarks>
-		/// <param name="pixelData">The pixel data the algorithm will be run on</param>
+		/// <param name="pixelData">The pixel data the algorithm will be run on.</param>
 		/// <param name="modalityLut">The modality lut to use for calculating <see cref="AlgorithmCalculatedVoiLutLinear.WindowWidth"/> 
-		/// and <see cref="AlgorithmCalculatedVoiLutLinear.WindowCenter"/>, if applicable</param>
+		/// and <see cref="AlgorithmCalculatedVoiLutLinear.WindowCenter"/>, if applicable.</param>
 		public MinMaxPixelCalculatedLinearLut(IndexedPixelData pixelData, IModalityLut modalityLut)
 			: base(pixelData, modalityLut)
 		{
@@ -56,18 +56,18 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		/// <param name="pixelData">The pixel data the algorithm will be run on</param>
+		/// <param name="pixelData">The pixel data the algorithm will be run on.</param>
 		public MinMaxPixelCalculatedLinearLut(IndexedPixelData pixelData)
 			: base(pixelData)
 		{
 		}
 
 		/// <summary>
-		/// Calculates and returns the minimum and maximum pixel values in the input <see cref="IndexedPixelData"/>.
+		/// Calculates and returns the minimum and maximum pixel values in the input <paramref name="pixelData"/>.
 		/// </summary>
-		/// <param name="pixelData">The input pixel data</param>
-		/// <param name="windowStart">returns the minimum pixel value</param>
-		/// <param name="windowEnd">returns the maximum pixel value</param>
+		/// <param name="pixelData">The input pixel data.</param>
+		/// <param name="windowStart">Returns the minimum pixel value.</param>
+		/// <param name="windowEnd">Returns the maximum pixel value.</param>
 		protected override void CalculateWindowRange(IndexedPixelData pixelData, out int windowStart, out int windowEnd)
 		{
 			pixelData.CalculateMinMaxPixelValue(out windowStart, out windowEnd);

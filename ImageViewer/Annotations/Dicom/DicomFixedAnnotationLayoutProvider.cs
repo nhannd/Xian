@@ -94,7 +94,7 @@ namespace ClearCanvas.ImageViewer.Annotations.Dicom
 		{
 		}
 
-		protected StoredAnnotationLayout GetLayout()
+		private StoredAnnotationLayout GetLayout()
 		{
 			StoredAnnotationLayout layout = new StoredAnnotationLayout(_layoutIdentifier);
 

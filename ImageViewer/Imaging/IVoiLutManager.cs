@@ -45,13 +45,13 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Gets the currently installed Voi Lut.
 		/// </summary>
-		/// <returns>the Voi Lut as an <see cref="IComposableLut"/></returns>
+		/// <returns>The Voi Lut as an <see cref="IComposableLut"/>.</returns>
 		IComposableLut GetLut();
 
 		/// <summary>
 		/// Installs a new Voi Lut.
 		/// </summary>
-		/// <param name="lut">the lut to be installed</param>
+		/// <param name="lut">The lut to be installed.</param>
 		void InstallLut(IComposableLut lut);
 	}
 }

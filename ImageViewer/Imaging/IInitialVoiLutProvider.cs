@@ -36,6 +36,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// <summary>
 	/// An extension point for custom <see cref="IInitialVoiLutProvider"/>s.
 	/// </summary>
+	/// <seealso cref="IInitialVoiLutProvider"/>
 	public sealed class InitialVoiLutProviderExtensionPoint : ExtensionPoint<IInitialVoiLutProvider>
 	{
 		/// <summary>
@@ -47,16 +48,20 @@ namespace ClearCanvas.ImageViewer.Imaging
 	}
 
 	/// <summary>
-	/// A provider of an image's Initial Voi Lut.  Implementors can apply logic based on the input
-	/// <see cref="IPresentationImage"/> to decide what type of Lut to return.
+	/// A provider of an image's Initial Voi Lut.
 	/// </summary>
+	/// <remarks>
+	/// Implementors can apply logic based on the input <see cref="IPresentationImage"/> 
+	/// to decide what type of Lut to return.
+	/// </remarks>
+	/// <seealso cref="InitialVoiLutProviderExtensionPoint"/>
 	public interface IInitialVoiLutProvider
 	{
 		/// <summary>
 		/// Determines and returns the initial Voi Lut that should be applied to the input <see cref="IPresentationImage"/>.
 		/// </summary>
 		/// <param name="presentationImage">The <see cref="IPresentationImage"/> whose intial Lut is to be determined.</param>
-		/// <returns>the Voi Lut as an <see cref="IComposableLut"/></returns>
+		/// <returns>The Voi Lut as an <see cref="IComposableLut"/>.</returns>
 		IComposableLut GetLut(IPresentationImage presentationImage);
 	}
 }

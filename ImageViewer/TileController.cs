@@ -40,8 +40,14 @@ using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer
 {
+	/// <summary>
+	/// This class is for internal framework use only.
+	/// </summary>
 	public sealed class TileController : IInputController, IMouseInformation
 	{
+
+#pragma warning disable 1591
+
 		private delegate bool CallHandlerMethodDelegate(IMouseButtonHandler handler);
 
 		#region Private Fields

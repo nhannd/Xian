@@ -35,18 +35,24 @@ using ClearCanvas.Desktop;
 namespace ClearCanvas.ImageViewer.Imaging
 {
 	/// <summary>
-	/// Defines a Lut that can be added to a <see cref="LutCollection"/>
+	/// Defines a Lut that can be added to a <see cref="LutCollection"/>.
 	/// </summary>
 	public interface IComposableLut : ILut, IMemorable
 	{
 		/// <summary>
-		/// Gets or sets the minimum input value.  This value will be set internally by the framework.
+		/// Gets or sets the minimum input value.
 		/// </summary>
+		/// <remarks>
+		/// This value should not be modified by your code.  It will be set internally by the framework.
+		/// </remarks>
 		new int MinInputValue { get; set; }
 
 		/// <summary>
-		/// Gets the maximum input value.  This value will be set internally by the framework.
+		/// Gets the maximum input value.
 		/// </summary>
+		/// <remarks>
+		/// This value should not be modified by your code.  It will be set internally by the framework.
+		/// </remarks>
 		new int MaxInputValue { get; set; }
 
 		/// <summary>

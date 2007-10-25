@@ -169,7 +169,7 @@
     <Compile Include="Imaging\ComposableLutMemento.cs" />
     <Compile Include="Imaging\ColorMapDescriptor.cs" />
     <Compile Include="Imaging\ColorMapFactoryBase.cs" />
-    <Compile Include="Imaging\ColorMapFactoryExtensionPoint.cs" />
+    <Compile Include="Imaging\IColorMapFactory.cs" />
     <Compile Include="Imaging\MinMaxPixelCalculatedLinearLut.cs" />
     <Compile Include="Imaging\IGeneratedDataLut.cs" />
     <Compile Include="Imaging\IModalityLut.cs" />

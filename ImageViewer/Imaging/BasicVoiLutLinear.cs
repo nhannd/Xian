@@ -36,8 +36,7 @@ using ClearCanvas.Desktop;
 namespace ClearCanvas.ImageViewer.Imaging
 {
 	/// <summary>
-	/// The most basic of Linear Luts.  The <see cref="WindowWidth"/> and <see cref="WindowCenter"/> can be
-	/// directly set/manipulated.
+	/// The most basic of Linear Luts where the <see cref="WindowWidth"/> and <see cref="WindowCenter"/> can be directly set/manipulated.
 	/// </summary>
 	public sealed class BasicVoiLutLinear : VoiLutLinearBase, IBasicVoiLutLinear
 	{
@@ -82,8 +81,8 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <remarks>
 		/// Allows the initial Window Width and Window Center to be set.
 		/// </remarks>
-		/// <param name="windowWidth">the initial Window Width</param>
-		/// <param name="windowCenter">the initial Window Center</param>
+		/// <param name="windowWidth">the initial Window Width.</param>
+		/// <param name="windowCenter">the initial Window Center.</param>
 		public BasicVoiLutLinear(double windowWidth, double windowCenter)
 			: base()
 		{
@@ -156,7 +155,6 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Gets an abbreviated description of the Lut.
 		/// </summary>
-		/// <returns>a string briefly describing the Lut</returns>
 		public override string GetDescription()
 		{
 			return String.Format(SR.FormatDescriptionBasicLinearLut, WindowWidth, WindowCenter);
@@ -165,7 +163,6 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Creates a memento, through which the Lut's state can be restored.
 		/// </summary>
-		/// <returns>an <see cref="IMemento"/></returns>
 		public override IMemento CreateMemento()
 		{
 			return new WindowLevelMemento(this.WindowWidth, this.WindowCenter);

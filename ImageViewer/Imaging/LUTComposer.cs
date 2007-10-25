@@ -38,8 +38,7 @@ using ClearCanvas.Common.Utilities;
 namespace ClearCanvas.ImageViewer.Imaging
 {
 	/// <summary>
-	/// Allows <see cref="IComposableLut"/> objects
-	/// be composed together in a pipeline.
+	/// Allows <see cref="IComposableLut"/> objects to be composed together in a pipeline.
 	/// </summary>
 	internal class LutComposer : IComposedLut, IDisposable
 	{
@@ -270,6 +269,13 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		#region IComposedLut Members
 
+		/// <summary>
+		/// Gets the lut's data.
+		/// </summary>
+		/// <remarks>
+		/// This property should be considered readonly and is only 
+		/// provided for fast (unsafe) iteration over the array.
+		/// </remarks>
 		public int[] Data
 		{
 			get
@@ -282,26 +288,41 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		#region ILut Members
 
+		/// <summary>
+		/// Gets the minimum input value.
+		/// </summary>
 		public int MinInputValue
 		{
 			get { return FirstLut.MinInputValue; }
 		}
 
+		/// <summary>
+		/// Gets the maximum input value.
+		/// </summary>
 		public int MaxInputValue
 		{
 			get { return FirstLut.MaxInputValue; }
 		}
 
+		/// <summary>
+		/// Gets the minimum output value.
+		/// </summary>
 		public int MinOutputValue
 		{
 			get { return LastLut.MinOutputValue; }
 		}
 
+		/// <summary>
+		/// Gets the maximum output value.
+		/// </summary>
 		public int MaxOutputValue
 		{
 			get { return LastLut.MaxOutputValue; }
 		}
 
+		/// <summary>
+		/// Gets the output value of the lut at a given input index.
+		/// </summary>
 		public int this[int index]
 		{
 			get
@@ -319,6 +340,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		#region IDisposable Members
 
+		/// <summary>
+		/// Implementation of the <see cref="IDisposable"/> pattern.
+		/// </summary>
 		public void Dispose()
 		{
 			try
@@ -336,9 +360,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 		#endregion
 
 		/// <summary>
-		/// Implementation of the <see cref="IDisposable"/> pattern
+		/// Implementation of the <see cref="IDisposable"/> pattern.
 		/// </summary>
-		/// <param name="disposing">True if this object is being disposed, false if it is being finalized</param>
+		/// <param name="disposing">True if this object is being disposed, false if it is being finalized.</param>
 		protected virtual void Dispose(bool disposing)
 		{
 			if (disposing)

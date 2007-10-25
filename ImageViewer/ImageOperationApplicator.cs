@@ -49,7 +49,6 @@ namespace ClearCanvas.ImageViewer
 	/// it is undone on all of those images.  This class encapsulates that functionality
 	/// so that the plugin developer doesn't have to deal with such details.
 	/// </para>
-	/// <para>
 	/// </remarks>
 	public class ImageOperationApplicator : IMemorable
 	{

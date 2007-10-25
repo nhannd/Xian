@@ -137,7 +137,7 @@ namespace ClearCanvas.ImageViewer.Annotations
 		/// <summary>
 		/// Constructor that initializes the <see cref="NormalizedRectangle"/> and <see cref="AnnotationItem"/> properties.
 		/// </summary>
-		/// <exception cref="ArgumentException">Thrown when the input <b>normalizedRectangle</b> is not normalized.</exception>
+		/// <exception cref="ArgumentException">Thrown when the input <paramref name="normalizedRectangle"/> is not normalized.</exception>
 		public AnnotationBox(RectangleF normalizedRectangle, IAnnotationItem annotationItem)
 		{
 			RectangleUtilities.VerifyNormalizedRectangle(normalizedRectangle); 
@@ -146,8 +146,9 @@ namespace ClearCanvas.ImageViewer.Annotations
 		}
 
 		/// <summary>
-		/// Gets the text to be rendered into the area defined by <see cref="NormalizedRectangle"/> for the input <see cref="IPresentationImage"/>.
+		/// Gets the text to be rendered into the area defined by <see cref="NormalizedRectangle"/> for the input <paramref name="presentationImage"/>.
 		/// </summary>
+		/// <param name="presentationImage">The presentation image.</param>
 		public string GetAnnotationText(IPresentationImage presentationImage)
 		{
 			if (_annotationItem == null)

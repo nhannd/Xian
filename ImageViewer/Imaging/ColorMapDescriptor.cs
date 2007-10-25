@@ -41,11 +41,6 @@ namespace ClearCanvas.ImageViewer.Imaging
 		private readonly string _name;
 		private readonly string _description;
 
-		/// <summary>
-		/// Constructor.
-		/// </summary>
-		/// <param name="name">the name of the factory</param>
-		/// <param name="description">the factory description</param>
 		private ColorMapDescriptor(string name, string description)
 		{
 			_name = name;
@@ -71,7 +66,6 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Creates a <see cref="ColorMapDescriptor"/> given an input <see cref="IColorMapFactory"/>.
 		/// </summary>
-		/// <param name="factory">the factory</param>
 		public static ColorMapDescriptor FromFactory(IColorMapFactory factory)
 		{
 			Platform.CheckForNullReference(factory, "factory");

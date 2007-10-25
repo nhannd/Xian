@@ -32,7 +32,6 @@
 using System;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
-using ClearCanvas.ImageViewer.Graphics;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
@@ -57,13 +56,31 @@ namespace ClearCanvas.ImageViewer.Imaging
 	{
 		#region Private fields
 
+		/// <summary>
+		/// The number of rows in the pixel data.
+		/// </summary>
 		protected int _rows;
+		/// <summary>
+		/// The number of columns in the pixel data.
+		/// </summary>
 		protected int _columns;
+		/// <summary>
+		/// The number of bits allocated the pixel data.
+		/// </summary>
 		protected int _bitsAllocated;
+		/// <summary>
+		/// The pixel data.
+		/// </summary>
 		protected byte[] _pixelData;
+		/// <summary>
+		/// A delegate used to retrieve the pixel data.
+		/// </summary>
 		protected PixelDataGetter _pixelDataGetter;
-
+		/// <summary>
+		/// The number of bytes per pixel the pixel data.
+		/// </summary>
 		protected int _bytesPerPixel;
+
 		private int _stride;
 
 		#endregion
@@ -71,12 +88,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 		#region Protected constructor
 
 		/// <summary>
-		/// Initializes a new instance of <see cref="PixelData"/> with the
-		/// specified image parameters.
+		/// Initializes a new instance of <see cref="PixelData"/> with the specified image parameters.
 		/// </summary>
-		/// <param name="rows"></param>
-		/// <param name="columns"></param>
-		/// <param name="bitsAllocated"></param>
+		/// <param name="rows">The number of rows.</param>
+		/// <param name="columns">The number of columns.</param>
+		/// <param name="bitsAllocated">The number of bits allocated in the <paramref name="pixelData"/>.</param>
 		/// <param name="pixelData">The pixel data to be wrapped.</param>
 		protected PixelData(
 			int rows,
@@ -91,12 +107,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 		}
 
 		/// <summary>
-		/// Initializes a new instance of <see cref="PixelData"/> with the
-		/// specified image parameters.
+		/// Initializes a new instance of <see cref="PixelData"/> with the specified image parameters.
 		/// </summary>
-		/// <param name="rows"></param>
-		/// <param name="columns"></param>
-		/// <param name="bitsAllocated"></param>
+		/// <param name="rows">The number of rows.</param>
+		/// <param name="columns">The number of columns.</param>
+		/// <param name="bitsAllocated">The number of bits allocated in the pixel data returned by <paramref name="pixelDataGetter"/>.</param>
 		/// <param name="pixelDataGetter">A delegate that returns the pixel data.</param>
 		protected PixelData(
 			int rows,
@@ -110,18 +125,6 @@ namespace ClearCanvas.ImageViewer.Imaging
 			Initialize(rows, columns, bitsAllocated);
 		}
 
-		private void Initialize(int rows, int columns, int bitsAllocated)
-		{
-			DicomValidator.ValidateRows(rows);
-			DicomValidator.ValidateColumns(columns);
-			_rows = rows;
-			_columns = columns;
-			_bitsAllocated = bitsAllocated;
-
-			_bytesPerPixel = bitsAllocated / 8;
-			_stride = _columns * _bytesPerPixel;
-		}
-		
 		#endregion
 
 		#region Public properties
@@ -135,7 +138,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// </para>
 		/// <para>
 		/// In general, you should avoid storing the byte array if at all possible.
-		/// By storing it for say, the lifetime of the <see cref="ImageGraphic"/>, 
+		/// By storing it for say, the lifetime of an <see cref="ClearCanvas.ImageViewer.Graphics.ImageGraphic"/>, 
 		/// future memory management schemes will be unable to release it, since
 		/// a reference will have been created to it that such schemes may not
 		/// be able to reach.  If you do need to store the byte array for some reason,
@@ -167,12 +170,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Gets the pixel value at the specified location.
 		/// </summary>
-		/// <param name="x"></param>
-		/// <param name="y"></param>
+		/// <param name="x">The x coordinate.</param>
+		/// <param name="y">The y coordinate.</param>
 		/// <returns>
 		/// The value of the pixel.  If the pixel data is colour,
-		/// an ARGB value is returned, where A is the 
-		/// most significant byte.
+		/// an ARGB value is returned, where A is the most significant byte.
 		/// </returns>
 		/// <exception cref="ArgumentException"><paramref name="x"/> and/or
 		/// <paramref name="y"/> are out of bounds.</exception>
@@ -185,8 +187,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Gets the pixel value at the specific pixel index.
 		/// </summary>
-		/// <param name="pixelIndex"></param>
-		/// <returns></returns>
+		/// <param name="pixelIndex">The index.</param>
 		/// <remarks>
 		/// If the pixel data is treated as a one-dimensional array
 		/// where each row of pixels is concatenated, <paramref name="pixelIndex"/>
@@ -204,15 +205,14 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Sets the pixel value at the specified location.
 		/// </summary>
-		/// <param name="x"></param>
-		/// <param name="y"></param>
+		/// <param name="x">The x coordinate.</param>
+		/// <param name="y">The y coordinate.</param>
 		/// <param name="value">The value of the pixel.  If the pixel
 		/// data is colour, the value is in ARGB form, where A is the 
 		/// most significant byte.</param>
 		/// <exception cref="ArgumentException"><paramref name="x"/> and/or
 		/// <paramref name="y"/> are out of bounds, or <paramref name="value"/>
 		/// is out of range.</exception>
-
 		public void SetPixel(int x, int y, int value)
 		{
 			int i = GetIndex(x, y);
@@ -222,7 +222,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Sets the pixel value at the specified pixel index.
 		/// </summary>
-		/// <param name="pixelIndex"></param>
+		/// <param name="pixelIndex">The pixel index.</param>
 		/// <param name="value">The value of the pixel.  If the pixel
 		/// data is colour, the value is in ARGB form, where A is the 
 		/// most significant byte.</param>
@@ -276,11 +276,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Iterates through all the pixels in a rectangular region of the image.
 		/// </summary>
-		/// <param name="left"></param>
-		/// <param name="top"></param>
-		/// <param name="right"></param>
-		/// <param name="bottom"></param>
-		/// <param name="processor"></param>
+		/// <param name="left">The left edge of the rectangular region.</param>
+		/// <param name="top">The top edge of the rectangular region.</param>
+		/// <param name="right">The right edge of the rectangular region.</param>
+		/// <param name="bottom">The bottom edge of the rectangular region.</param>
+		/// <param name="processor">The <see cref="PixelProcessor"/> delegate to call.</param>
 		/// <remarks>
 		/// It is often desirable to iterate through all the pixels in a rectangular
 		/// region of an image. This method encapsulates all the boilerplate code 
@@ -335,21 +335,16 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Gets the pixel value at the specified index.
 		/// </summary>
-		/// <param name="i"></param>
-		/// <returns></returns>
 		protected abstract int GetPixelInternal(int i);
 
 		/// <summary>
 		/// Sets the pixel at a specified index.
 		/// </summary>
-		/// <param name="i"></param>
-		/// <param name="value"></param>
 		protected abstract void SetPixelInternal(int i, int value);
 
 		/// <summary>
 		/// Gets the raw pixel data.
 		/// </summary>
-		/// <returns></returns>
 		protected byte[] GetPixelData()
 		{
 			if (_pixelData != null)
@@ -361,6 +356,18 @@ namespace ClearCanvas.ImageViewer.Imaging
 		#endregion
 
 		#region Private methods
+
+		private void Initialize(int rows, int columns, int bitsAllocated)
+		{
+			DicomValidator.ValidateRows(rows);
+			DicomValidator.ValidateColumns(columns);
+			_rows = rows;
+			_columns = columns;
+			_bitsAllocated = bitsAllocated;
+
+			_bytesPerPixel = bitsAllocated / 8;
+			_stride = _columns * _bytesPerPixel;
+		}
 
 		/// <summary>
 		/// Gets the index in the pixel data array given the x and y

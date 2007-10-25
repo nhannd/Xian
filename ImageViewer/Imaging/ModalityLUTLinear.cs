@@ -50,13 +50,12 @@ namespace ClearCanvas.ImageViewer.Imaging
 		private double _rescaleIntercept;
 
 		/// <summary>
-		/// Initializes a new instance of ModalityLUTLinear with
-		/// the specified parameters.
+		/// Initializes a new instance of ModalityLUTLinear with the specified parameters.
 		/// </summary>
-		/// <param name="bitsStored"></param>
-		/// <param name="isSigned"></param>
-		/// <param name="rescaleSlope"></param>
-		/// <param name="rescaleIntercept"></param>
+		/// <param name="bitsStored">Indicates the number of bits stored of the associated pixel data.</param>
+		/// <param name="isSigned">Indicates whether or not the associated pixel data is signed.</param>
+		/// <param name="rescaleSlope">The rescale slope.</param>
+		/// <param name="rescaleIntercept">The rescale intercept.</param>
 		public ModalityLutLinear(
 			int bitsStored,
 			bool isSigned, 

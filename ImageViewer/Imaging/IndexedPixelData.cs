@@ -66,12 +66,12 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// Initializes a new instance of <see cref="IndexedPixelData"/> with the
 		/// specified image parameters.
 		/// </summary>
-		/// <param name="rows"></param>
-		/// <param name="columns"></param>
-		/// <param name="bitsAllocated"></param>
-		/// <param name="bitsStored"></param>
-		/// <param name="highBit"></param>
-		/// <param name="isSigned"></param>
+		/// <param name="rows">The number of rows.</param>
+		/// <param name="columns">The number of columns.</param>
+		/// <param name="bitsAllocated">The number of bits allocated in the <paramref name="pixelData"/>.</param>
+		/// <param name="bitsStored">The number of bits stored in the <paramref name="pixelData"/>.</param>
+		/// <param name="highBit">The high bit of the <paramref name="pixelData"/>.</param>
+		/// <param name="isSigned">Indicates whether or not <paramref name="pixelData"/> contains signed data.</param>
 		/// <param name="pixelData">The pixel data to be wrapped.</param>
 		public IndexedPixelData(
 			int rows,
@@ -90,12 +90,12 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// Initializes a new instance of <see cref="IndexedPixelData"/> with the
 		/// specified image parameters.
 		/// </summary>
-		/// <param name="rows"></param>
-		/// <param name="columns"></param>
-		/// <param name="bitsAllocated"></param>
-		/// <param name="bitsStored"></param>
-		/// <param name="highBit"></param>
-		/// <param name="isSigned"></param>
+		/// <param name="rows">The number of rows.</param>
+		/// <param name="columns">The number of columns.</param>
+		/// <param name="bitsAllocated">The number of bits allocated in the pixel data returned by <paramref name="pixelDataGetter"/>.</param>
+		/// <param name="bitsStored">The number of bits stored in the pixel data returned by <paramref name="pixelDataGetter"/>.</param>
+		/// <param name="highBit">The high bit of the pixel data returned by <paramref name="pixelDataGetter"/>.</param>
+		/// <param name="isSigned">Indicates whether or not the pixel data returned by <paramref name="pixelDataGetter"/> contains signed data.</param>
 		/// <param name="pixelDataGetter">A delegate that returns the pixel data.</param>
 		public IndexedPixelData(
 			int rows,
@@ -108,18 +108,6 @@ namespace ClearCanvas.ImageViewer.Imaging
 			: base(rows, columns, bitsAllocated, pixelDataGetter)
 		{
 			Initialize(bitsStored, highBit, isSigned);
-		}
-
-		private void Initialize(int bitsStored, int highBit, bool isSigned)
-		{
-			DicomValidator.ValidateBitsStored(bitsStored);
-			DicomValidator.ValidateHighBit(highBit);
-
-			_bitsStored = bitsStored;
-			_highBit = highBit;
-			_isSigned = isSigned;
-
-			CalculateAbsolutePixelValueRange();
 		}
 
 		#endregion
@@ -158,8 +146,8 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Calculates the Minimum and Maximum pixel values from the pixel data efficiently, using unsafe code.
 		/// </summary>
-		/// <param name="minPixelValue">returns the minimum pixel value</param>
-		/// <param name="maxPixelValue">returns the maximum pixel value</param>
+		/// <param name="minPixelValue">Returns the minimum pixel value.</param>
+		/// <param name="maxPixelValue">Returns the maximum pixel value.</param>
 		unsafe public void CalculateMinMaxPixelValue(out int minPixelValue, out int maxPixelValue)
 		{
 			byte[] pixelData = GetPixelData();
@@ -312,9 +300,8 @@ namespace ClearCanvas.ImageViewer.Imaging
 		#region Overrides
 
 		/// <summary>
-		/// This method overrides <see cref="PixelData.CloneInternal"/>
+		/// This method overrides <see cref="PixelData.CloneInternal"/>.
 		/// </summary>
-		/// <returns></returns>
 		protected override PixelData CloneInternal()
 		{
 			return new IndexedPixelData(
@@ -328,10 +315,8 @@ namespace ClearCanvas.ImageViewer.Imaging
 		}
 
 		/// <summary>
-		/// This method overrides <see cref="PixelData.GetPixelInternal"/>
+		/// This method overrides <see cref="PixelData.GetPixelInternal"/>.
 		/// </summary>
-		/// <param name="i"></param>
-		/// <returns></returns>
 		protected override int GetPixelInternal(int i)
 		{
 			if (_bytesPerPixel == 1) // 8 bit
@@ -353,8 +338,6 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// This method overrides <see cref="PixelData.SetPixelInternal"/>
 		/// </summary>
-		/// <param name="i"></param>
-		/// <param name="value"></param>
 		protected override void SetPixelInternal(int i, int value)
 		{
 			if (_bytesPerPixel == 1)
@@ -534,6 +517,18 @@ namespace ClearCanvas.ImageViewer.Imaging
 		#endregion
 
 		#region Other private methods
+
+		private void Initialize(int bitsStored, int highBit, bool isSigned)
+		{
+			DicomValidator.ValidateBitsStored(bitsStored);
+			DicomValidator.ValidateHighBit(highBit);
+
+			_bitsStored = bitsStored;
+			_highBit = highBit;
+			_isSigned = isSigned;
+
+			CalculateAbsolutePixelValueRange();
+		}
 
 		private void CalculateAbsolutePixelValueRange()
 		{

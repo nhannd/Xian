@@ -36,18 +36,17 @@ using ClearCanvas.Desktop;
 namespace ClearCanvas.ImageViewer.Imaging
 {
 	/// <summary>
-	/// Abstract class providing base implementation for a Lut that can be added to a <see cref="LutCollection"/>
+	/// Abstract class providing base implementation for a Lut that can be added to a <see cref="LutCollection"/>.
 	/// </summary>
-	public abstract class ComposableLut : ILut
+	public abstract class ComposableLut : IComposableLut
 	{
 		private event EventHandler _lutChanged;
 
 		/// <summary>
-		/// Creates a new instance of <see cref="ComposedLut"/>.
+		/// Default constructor.
 		/// </summary>
 		protected ComposableLut()
 		{
-				
 		}
 
 		/// <summary>
@@ -61,16 +60,22 @@ namespace ClearCanvas.ImageViewer.Imaging
 			EventsHelper.Fire(_lutChanged, this, EventArgs.Empty);
 		}
 
-		#region ILUT Members
+		#region IComposableLut Members
 
 		/// <summary>
-		/// Gets or sets the minimum input value.  This value will be set internally by the framework.
+		/// Gets or sets the minimum input value.
 		/// </summary>
+		/// <remarks>
+		/// This value should not be modified by your code.  It will be set internally by the framework.
+		/// </remarks>
 		public abstract int MinInputValue { get; set; }
 
 		/// <summary>
-		/// Gets the maximum input value.  This value will be set internally by the framework.
+		/// Gets the maximum input value.
 		/// </summary>
+		/// <remarks>
+		/// This value should not be modified by your code.  It will be set internally by the framework.
+		/// </remarks>
 		public abstract int MaxInputValue { get; set; }
 
 		/// <summary>
@@ -137,7 +142,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// If you override <see cref="CreateMemento"/> to capture the Lut's state, you must also override this method
 		/// to allow the state to be restored.
 		/// </remarks>
-		/// <exception cref="InvalidOperationException">throw if the input <see cref="IMemento"/> is <B>not</B> null, 
+		/// <exception cref="InvalidOperationException">throw if <paramref name="memento"/> is <B>not</B> null, 
 		/// which would indicate that <see cref="CreateMemento"/> has been overridden, but <see cref="SetMemento"/> has not.</exception>
 		/// <param name="memento">the <see cref="IMemento"/> from which to restore the Lut's state.</param>
 		public virtual void SetMemento(IMemento memento)

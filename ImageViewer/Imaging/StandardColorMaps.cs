@@ -251,6 +251,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Default constructor.
 		/// </summary>
+		/// <remarks>
+		/// This class should not be instantiated directly, but through the corresponding factory.
+		/// </remarks>
 		public GreenColorMap()
 			: base()
 		{
@@ -329,6 +332,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// <summary>
 	/// A blue Color Map.
 	/// </summary>
+	/// <remarks>
+	/// This class should not be instantiated directly, but through the corresponding factory.
+	/// </remarks>
 	public sealed class BlueColorMap : ColorMap
 	{
 		/// <summary>

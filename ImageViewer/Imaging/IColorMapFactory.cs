@@ -34,15 +34,24 @@ using ClearCanvas.Common;
 namespace ClearCanvas.ImageViewer.Imaging
 {
 	/// <summary>
+	/// An extension point for <see cref="IColorMapFactory"/>s.
+	/// </summary>
+	/// <seealso cref="IColorMapFactory"/>
+	public sealed class ColorMapFactoryExtensionPoint : ExtensionPoint<IColorMapFactory>
+	{
+	}
+
+	/// <summary>
 	/// A factory for <see cref="IColorMap"/>s.
 	/// </summary>
+	/// <seealso cref="ColorMapFactoryExtensionPoint"/>
 	public interface IColorMapFactory
 	{
 		/// <summary>
 		/// Gets a name that should be unique when compared to other <see cref="IColorMapFactory"/>s.
 		/// </summary>
 		/// <remarks>
-		/// This name should not be a resource string, as it should be constant for all languages.
+		/// This name should not be a resource string, as it should be language-independent.
 		/// </remarks>
 		string Name { get; }
 
@@ -55,12 +64,5 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// Creates an <see cref="IColorMap"/>.
 		/// </summary>
 		IColorMap Create();
-	}
-
-	/// <summary>
-	/// An extension point for <see cref="IColorMapFactory"/>s.
-	/// </summary>
-	public sealed class ColorMapFactoryExtensionPoint : ExtensionPoint<IColorMapFactory>
-	{
 	}
 }

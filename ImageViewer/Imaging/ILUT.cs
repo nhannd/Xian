@@ -60,8 +60,6 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Gets the output value of the lut at a given input index.
 		/// </summary>
-		/// <param name="index">the index into the Lut</param>
-		/// <returns>the value at the given index</returns>
 		int this[int index] { get; }
 	}
 }

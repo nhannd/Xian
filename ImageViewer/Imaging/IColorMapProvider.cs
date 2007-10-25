@@ -48,6 +48,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Gets the <see cref="IColorMapManager"/> associated with the provider.
 		/// </summary>
+		/// <remarks>
+		/// This property should never return null.
+		/// </remarks>
 		IColorMapManager ColorMapManager { get; }
 	}
 }

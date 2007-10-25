@@ -38,7 +38,7 @@ using ClearCanvas.Dicom;
 namespace ClearCanvas.ImageViewer.Annotations.Dicom
 {
 	/// <summary>
-	/// A delegate used to format data of type <see cref="T"/> as a string.
+	/// A delegate used to format data of type <typeparamref name="T"/> as a string.
 	/// </summary>
 	public delegate string ResultFormatterDelegate<T>(T input);
 

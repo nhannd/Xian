@@ -53,13 +53,12 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Gets the currently installed <see cref="IColorMap"/>.
 		/// </summary>
-		/// <returns></returns>
 		IColorMap GetColorMap();
 
 		/// <summary>
 		/// Installs an <see cref="IColorMap"/> by name.
 		/// </summary>
-		/// <param name="name">the name of the <see cref="IColorMap"/></param> to install.
+		/// <param name="name">the name of the <see cref="IColorMap"/>to install.</param>
 		void InstallColorMap(string name);
 
 		/// <summary>
@@ -69,7 +68,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		void InstallColorMap(ColorMapDescriptor descriptor);
 
 		/// <summary>
-		/// Returns all available Color Maps in the form of <see cref="ColorMapDescriptor"/>s.
+		/// Gets all available Color Maps in the form of <see cref="ColorMapDescriptor"/>s.
 		/// </summary>
 		IEnumerable<ColorMapDescriptor> AvailableColorMaps { get; }
 	}

@@ -71,10 +71,8 @@ namespace ClearCanvas.ImageViewer.Imaging
 		protected abstract double GetWindowCenter();
 
 		/// <summary>
-		/// Gets the output value of the lut at a given input index.
+		/// Gets the output value of the lut at a given input <paramref name="index"/>.
 		/// </summary>
-		/// <param name="index">the index into the Lut</param>
-		/// <returns>the value at the given index</returns>
 		public sealed override int this[int index]
 		{
 			get
@@ -106,8 +104,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 		}
 
 		/// <summary>
-		/// Gets or sets the minimum input value.  This value will be set internally by the framework.
+		/// Gets or sets the minimum input value.
 		/// </summary>
+		/// <remarks>
+		/// This value should not be modified by your code.  It will be set internally by the framework.
+		/// </remarks>
 		public sealed override int MinInputValue
 		{
 			get { return _minInputValue; }
@@ -122,8 +123,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 		}
 
 		/// <summary>
-		/// Gets the maximum input value.  This value will be set internally by the framework.
+		/// Gets the maximum input value.
 		/// </summary>
+		/// <remarks>
+		/// This value should not be modified by your code.  It will be set internally by the framework.
+		/// </remarks>
 		public sealed override int MaxInputValue
 		{
 			get { return _maxInputValue; }
@@ -140,6 +144,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Gets the minimum output value.
 		/// </summary>
+		/// <exception cref="InvalidOperationException">Thrown on any attempt to set the value.</exception>
 		public sealed override int MinOutputValue
 		{
 			get { return _minInputValue; }
@@ -149,6 +154,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Gets the maximum output value.
 		/// </summary>
+		/// <exception cref="InvalidOperationException">Thrown on any attempt to set the value.</exception>
 		public sealed override int MaxOutputValue
 		{
 			get { return _maxInputValue; }

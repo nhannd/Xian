@@ -36,7 +36,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// A provider of an <see cref="IModalityLut"/>.
 	/// </summary>
 	/// <remarks>
-	/// Implementors should not return null for the <see cref="ModalityLut"/> property.
+	/// Implementors should not return null from the <see cref="ModalityLut"/> property.
 	/// </remarks>
 	public interface IModalityLutProvider
 	{

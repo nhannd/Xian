@@ -38,7 +38,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 	public interface IGeneratedDataLut : IDataLut
 	{
 		/// <summary>
-		/// Called by the framework to release any data held by the lut.  The Lut should be capable
+		/// Called by the framework to release any data held by the lut; the Lut should be capable
 		/// of recreating the data when it is needed.
 		/// </summary>
 		void Clear();

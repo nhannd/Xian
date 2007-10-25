@@ -36,7 +36,7 @@ using ClearCanvas.ImageViewer.StudyManagement;
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
 	/// <summary>
-	/// A delegate used to retrieve data of a particular type <see cref="T"/> from an <see cref="ImageSop"/>.
+	/// A delegate used to retrieve data of a particular type <typeparamref name="T"/> from an <see cref="ImageSop"/>.
 	/// </summary>
 	public delegate T SopDataRetrieverDelegate<T>(ImageSop imageSop);
 
@@ -67,7 +67,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		}
 
 		/// <summary>
-		/// Gets the value of <see cref="DicomTag"/> as type <see cref="T"/>.
+		/// Gets the value of <see cref="DicomTag"/> as type <typeparamref name="T"/>.
 		/// </summary>
 		/// <param name="imageSop">The <see cref="ImageSop"/> from which to get <see cref="DicomTag"/>'s value.</param>
 		public abstract T GetTagValue(ImageSop imageSop);

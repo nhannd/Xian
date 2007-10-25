@@ -49,11 +49,10 @@ namespace ClearCanvas.ImageViewer.Imaging
 	public class ColorPixelData : PixelData
 	{
 		/// <summary>
-		/// Initializes a new instance of <see cref="ColorPixelData"/>
-		/// with the specified image parameters.
+		/// Initializes a new instance of <see cref="ColorPixelData"/> with the specified image parameters.
 		/// </summary>
-		/// <param name="rows"></param>
-		/// <param name="columns"></param>
+		/// <param name="rows">The number of rows.</param>
+		/// <param name="columns">The number of columns.</param>
 		/// <param name="pixelData">The pixel data to be wrapped.</param>
 		public ColorPixelData(
 			int rows,
@@ -64,11 +63,10 @@ namespace ClearCanvas.ImageViewer.Imaging
 		}
 
 		/// <summary>
-		/// Initializes a new instance of <see cref="ColorPixelData"/>
-		/// with the specified image parameters.
+		/// Initializes a new instance of <see cref="ColorPixelData"/> with the specified image parameters.
 		/// </summary>
-		/// <param name="rows"></param>
-		/// <param name="columns"></param>
+		/// <param name="rows">The number of rows.</param>
+		/// <param name="columns">The number of columns.</param>
 		/// <param name="pixelDataGetter">A delegate that returns the pixel data.</param>
 		public ColorPixelData(
 			int rows,
@@ -83,7 +81,6 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Returns a copy of the object, including the pixel data.
 		/// </summary>
-		/// <returns></returns>
 		public new ColorPixelData Clone()
 		{
 			return base.Clone() as ColorPixelData;
@@ -92,11 +89,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Gets the ARGB pixel value at the specified location.
 		/// </summary>
-		/// <param name="x"></param>
-		/// <param name="y"></param>
-		/// <returns></returns>
-		/// <exception cref="ArgumentException"><paramref name="x"/> and/or
-		/// <paramref name="y"/> are out of bounds.</exception>
+		/// <param name="x">The x coordinate.</param>
+		/// <param name="y">The y coordinate.</param>
+		/// <exception cref="ArgumentException">Thrown when <paramref name="x"/> and/or <paramref name="y"/> are out of bounds.</exception>
 		public Color GetPixelAsColor(int x, int y)
 		{
 			return Color.FromArgb(GetPixel(x, y));
@@ -105,11 +100,10 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Sets the ARGB pixel value at the specified location.
 		/// </summary>
-		/// <param name="x"></param>
-		/// <param name="y"></param>
-		/// <param name="color"></param>
-		/// <exception cref="ArgumentException"><paramref name="x"/> and/or
-		/// <paramref name="y"/> are out of bounds.</exception>
+		/// <param name="x">The x coordinate.</param>
+		/// <param name="y">The y coordinate.</param>
+		/// <param name="color">The color to set.</param>
+		/// <exception cref="ArgumentException">Thrown when <paramref name="x"/> and/or <paramref name="y"/> are out of bounds.</exception>
 		public void SetPixel(int x, int y, Color color)
 		{
 			SetPixel(x, y, color.A, color.R, color.G, color.B);
@@ -118,8 +112,8 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Sets the ARGB pixel value at a specific pixel index.
 		/// </summary>
-		/// <param name="pixelIndex"></param>
-		/// <param name="color"></param>
+		/// <param name="pixelIndex">The pixel index.</param>
+		/// <param name="color">The color to set.</param>
 		/// <remarks>
 		/// If the pixel data is treated as a one-dimensional array
 		/// where each row of pixels is concatenated, <paramref name="pixelIndex"/>
@@ -136,14 +130,13 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Sets the ARGB pixel value at the specified location.
 		/// </summary>
-		/// <param name="x"></param>
-		/// <param name="y"></param>
-		/// <param name="a">Alpha</param>
-		/// <param name="r">Red</param>
-		/// <param name="g">Green</param>
-		/// <param name="b">Blue</param>
-		/// <exception cref="ArgumentException"><paramref name="x"/> and/or
-		/// <paramref name="y"/> are out of bounds.</exception>
+		/// <param name="x">The x coordinate.</param>
+		/// <param name="y">The y coordinate.</param>
+		/// <param name="a">The alpha component.</param>
+		/// <param name="r">The red component.</param>
+		/// <param name="g">The green component.</param>
+		/// <param name="b">The blue component.</param>
+		/// <exception cref="ArgumentException">Thrown when <paramref name="x"/> and/or <paramref name="y"/> are out of bounds.</exception>
 		public void SetPixel(int x, int y, byte a, byte r, byte g, byte b)
 		{
 			int i = GetIndex(x, y);
@@ -153,11 +146,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Sets the ARGB pixel value at a particular pixel index.
 		/// </summary>
-		/// <param name="pixelIndex"></param>
-		/// <param name="a">Alpha</param>
-		/// <param name="r">Red</param>
-		/// <param name="g">Green</param>
-		/// <param name="b">Blue</param>
+		/// <param name="pixelIndex">The pixel index</param>
+		/// <param name="a">The alpha component.</param>
+		/// <param name="r">The red component.</param>
+		/// <param name="g">The green component.</param>
+		/// <param name="b">The blue component.</param>
 		/// <remarks>
 		/// If the pixel data is treated as a one-dimensional array
 		/// where each row of pixels is concatenated, <paramref name="pixelIndex"/>
@@ -177,19 +170,16 @@ namespace ClearCanvas.ImageViewer.Imaging
 		#region Overrides
 
 		/// <summary>
-		/// This method overrides <see cref="PixelData.CloneInternal"/>
+		/// This method overrides <see cref="PixelData.CloneInternal"/>.
 		/// </summary>
-		/// <returns></returns>
 		protected override PixelData CloneInternal()
 		{
 			return new ColorPixelData(_rows, _columns, (byte[])GetPixelData().Clone());
 		}
 
 		/// <summary>
-		/// This method overrides <see cref="PixelData.GetPixelInternal"/>
+		/// This method overrides <see cref="PixelData.GetPixelInternal"/>.
 		/// </summary>
-		/// <param name="i"></param>
-		/// <returns></returns>
 		protected override int GetPixelInternal(int i)
 		{
 			byte[] pixelData = GetPixelData();
@@ -204,10 +194,8 @@ namespace ClearCanvas.ImageViewer.Imaging
 		}
 
 		/// <summary>
-		/// This method overrides <see cref="PixelData.SetPixelInternal"/>
+		/// This method overrides <see cref="PixelData.SetPixelInternal"/>.
 		/// </summary>
-		/// <param name="i"></param>
-		/// <param name="value"></param>
 		protected override void SetPixelInternal(int i, int value)
 		{
 			byte[] pixelData = GetPixelData();

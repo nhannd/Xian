@@ -291,6 +291,9 @@ namespace ClearCanvas.ImageViewer
 			get { return _clientRectangle; }
 		}
 
+		/// <summary>
+		/// Gets or sets this <see cref="Tile"/>'s <see cref="InformationBox"/>.
+		/// </summary>
 		public InformationBox InformationBox
 		{
 			get { return _informationBox; }

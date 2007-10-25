@@ -38,6 +38,8 @@ using NUnit.Framework;
 
 namespace ClearCanvas.ImageViewer.Annotations.Dicom.Tests
 {
+#pragma warning disable 1591
+
 	[TestFixture]
 	public class DicomFilteredAnnotationLayoutStoreTests
 	{

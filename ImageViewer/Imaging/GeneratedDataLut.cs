@@ -90,8 +90,6 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Looks up and returns a value at a particular index in the Lut.
 		/// </summary>
-		/// <param name="index">the index</param>
-		/// <returns>the value at the given index</returns>
 		public override int this[int index]
 		{
 			get
@@ -127,8 +125,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 		}
 
 		/// <summary>
-		/// Gets or sets the minimum input value.  This value will be set internally by the framework.
+		/// Gets or sets the minimum input value.
 		/// </summary>
+		/// <remarks>
+		/// This value should not be modified by your code.  It will be set internally by the framework.
+		/// </remarks>
 		public sealed override int MinInputValue
 		{
 			get { return _minimumInputValue; }
@@ -144,8 +145,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 		}
 
 		/// <summary>
-		/// Gets the maximum input value.  This value will be set internally by the framework.
+		/// Gets the maximum input value.
 		/// </summary>
+		/// <remarks>
+		/// This value should not be modified by your code.  It will be set internally by the framework.
+		/// </remarks>
 		public sealed override int MaxInputValue
 		{
 			get { return _maximimInputValue; }
@@ -200,7 +204,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		#region IDataLut Members
 
 		/// <summary>
-		/// Clears the data in the Lut.  The Lut can be recreated at will by calling <see cref="Create"/>.
+		/// Clears the data in the Lut; the Lut can be recreated at will by calling <see cref="Create"/>.
 		/// </summary>
 		public void Clear()
 		{

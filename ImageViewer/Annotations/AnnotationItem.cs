@@ -99,7 +99,7 @@ namespace ClearCanvas.ImageViewer.Annotations
 		}
 
 		/// <summary>
-		/// Gets the annotation text for display on the overlay.
+		/// Gets the annotation text to display on the overlay for <paramref name="presentationImage"/>.
 		/// </summary>
 		public abstract string GetAnnotationText(IPresentationImage presentationImage);
 

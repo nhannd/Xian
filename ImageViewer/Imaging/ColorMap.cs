@@ -31,7 +31,6 @@
 
 using System;
 using ClearCanvas.Desktop;
-using ClearCanvas.ImageViewer.Rendering;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
@@ -40,7 +39,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// </summary>
 	/// <remarks>
 	/// The values in the LUT represent ARGB values that are used 
-	/// by the <see cref="IRenderer"/> to display the image.
+	/// by an <see cref="ClearCanvas.ImageViewer.Rendering.IRenderer"/> to display the image.
 	/// </remarks>
 	public abstract class ColorMap : GeneratedDataLut, IColorMap
 	{
@@ -54,6 +53,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Not applicable.
 		/// </summary>
+		/// <exception cref="MemberAccessException">Thrown always.</exception>
 		public sealed override int MinOutputValue
 		{
 			get
@@ -69,6 +69,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Not applicable.
 		/// </summary>
+		/// <exception cref="MemberAccessException">Thrown always.</exception>
 		public sealed override int MaxOutputValue
 		{
 			get
@@ -83,6 +84,13 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		#region IColorMap Members
 
+		/// <summary>
+		/// Gets the map's data.
+		/// </summary>
+		/// <remarks>
+		/// This property should be considered readonly and is only 
+		/// provided for fast (unsafe) iteration over the array.
+		/// </remarks>
 		public new int[] Data
 		{
 			get
@@ -99,7 +107,6 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Gets the element at the specified index.
 		/// </summary>
-		/// <param name="index"></param>
 		/// <returns>A 32-bit ARGB value.</returns>
 		public sealed override int this[int index]
 		{
@@ -126,7 +133,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// an image's <see cref="IComposedLut"/> can be more efficiently determined.
 		/// </summary>
 		/// <remarks>
-		/// This method is not to be confused with *equality*, since some Luts can be
+		/// This method is not to be confused with <b>equality</b>, since some Luts can be
 		/// dependent upon the actual image to which it belongs.  The method should simply 
 		/// be used to determine if a lut in the <see cref="ComposedLutPool"/> is the same 
 		/// as an existing one.
@@ -139,11 +146,17 @@ namespace ClearCanvas.ImageViewer.Imaging
 				this.GetType().ToString());
 		}
 
+		/// <summary>
+		/// Returns null.
+		/// </summary>
 		public sealed override IMemento CreateMemento()
 		{
 			return base.CreateMemento();
 		}
 
+		/// <summary>
+		/// Not applicable.
+		/// </summary>
 		public sealed override void SetMemento(IMemento memento)
 		{
 			base.SetMemento(memento);
@@ -151,6 +164,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		#region IEquatable<IColorMap> Members
 
+		///<summary>
+		///Indicates whether this <see cref="IColorMap"/> is equal to another <see cref="IColorMap"/>.
+		///</summary>
 		public bool Equals(IColorMap other)
 		{
 			return this.MinInputValue == other.MinInputValue && 

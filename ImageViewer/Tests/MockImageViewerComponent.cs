@@ -31,7 +31,7 @@
 
 namespace ClearCanvas.ImageViewer.Tests
 {
-	public class MockImageViewerComponent : ImageViewerComponent
+	internal class MockImageViewerComponent : ImageViewerComponent
 	{
 		public MockImageViewerComponent()
 		{

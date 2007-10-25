@@ -51,6 +51,7 @@ namespace ClearCanvas.ImageViewer.Annotations
 	/// <seealso cref="AnnotationItemConfigurationOptions"/>
 	/// <seealso cref="IAnnotationLayout"/>
 	/// <seealso cref="IAnnotationLayoutProvider"/>
+	/// <seealso cref="AnnotationItemProviderExtensionPoint"/>
 	public interface IAnnotationItemProvider
 	{
 		/// <summary>

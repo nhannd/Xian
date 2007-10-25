@@ -39,7 +39,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 	internal sealed class LutCollection : ObservableList<IComposableLut, LutEventArgs>
 	{
 		/// <summary>
-		/// Initializes a new instance of <see cref="LutCollection"/>.
+		/// Default constructor.
 		/// </summary>
 		public LutCollection()
 		{

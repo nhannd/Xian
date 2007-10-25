@@ -37,7 +37,6 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
-	// LUT flyweight factory
 	internal sealed class LutFactory : IReferenceCountable, IDisposable
 	{
 		#region ColorMap Proxy Class
@@ -356,10 +355,6 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		#endregion
 
-		/// <summary>
-		/// Implementation of the <see cref="IDisposable"/> pattern
-		/// </summary>
-		/// <param name="disposing">True if this object is being disposed, false if it is being finalized</param>
 		private void Dispose(bool disposing)
 		{
 			if (disposing)

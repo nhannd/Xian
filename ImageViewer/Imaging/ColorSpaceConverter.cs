@@ -46,9 +46,6 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Converts a YBR_FULL value to RGB.
 		/// </summary>
-		/// <param name="y"></param>
-		/// <param name="b"></param>
-		/// <param name="r"></param>
 		/// <returns>A 32-bit ARGB value.</returns>
 		public static int YbrFullToRgb(int y, int b, int r)
 		{
@@ -69,9 +66,6 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Converts a YBR_FULL422 value to RGB.
 		/// </summary>
-		/// <param name="y"></param>
-		/// <param name="b"></param>
-		/// <param name="r"></param>
 		/// <returns>A 32-bit ARGB value.</returns>
 		public static int YbrFull422ToRgb(int y, int b, int r)
 		{
@@ -81,9 +75,6 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Converts a YBR_PARTIAL422 value to RGB.
 		/// </summary>
-		/// <param name="y"></param>
-		/// <param name="b"></param>
-		/// <param name="r"></param>
 		/// <returns>A 32-bit ARGB value.</returns>
 		public static int YbrPartial422ToRgb(int y, int b, int r)
 		{
@@ -104,9 +95,6 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Converts a YBR_ICT value to RGB.
 		/// </summary>
-		/// <param name="y"></param>
-		/// <param name="b"></param>
-		/// <param name="r"></param>
 		/// <returns>A 32-bit ARGB value.</returns>
 		public static int YbrIctToRgb(int y, int b, int r)
 		{
@@ -127,9 +115,6 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Converts a YBR_RCT value to RGB.
 		/// </summary>
-		/// <param name="y"></param>
-		/// <param name="b"></param>
-		/// <param name="r"></param>
 		/// <returns>A 32-bit ARGB value.</returns>
 		public static int YbrRctToRgb(int y, int b, int r)
 		{
@@ -147,8 +132,8 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// Converts pixel data of a particular photometric interpretation
 		/// to ARGB.
 		/// </summary>
-		/// <param name="photometricInterpretation"></param>
-		/// <param name="planarConfiguration"></param>
+		/// <param name="photometricInterpretation">The <see cref="PhotometricInterpretation"/> of <paramref name="srcPixelData"/>.</param>
+		/// <param name="planarConfiguration">The planar configuration of <paramref name="srcPixelData"/>.</param>
 		/// <param name="srcPixelData">The input pixel data to be converted.</param>
 		/// <param name="argbPixelData">The converted output pixel data in ARGB format.</param>
 		public static void ToArgb(
