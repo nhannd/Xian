@@ -34,16 +34,32 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Annotations
 {
+	/// <summary>
+	/// Base implementation of <see cref="IAnnotationItemProvider"/>.
+	/// </summary>
+	/// <seealso cref="IAnnotationItemProvider"/>
 	public abstract class AnnotationItemProvider : IAnnotationItemProvider
 	{
 		private readonly string _identifier;
 		private readonly string _displayName;
 
+		/// <summary>
+		/// A constructor that uses the <see cref="AnnotationItemProvider"/>'s unique identifier to determine
+		/// the display name using an <see cref="IAnnotationResourceResolver"/>.
+		/// </summary>
+		/// <param name="identifier">The unique identifier of the <see cref="AnnotationItemProvider"/>.</param>
+		/// <param name="resolver">The object that will resolve the display name from 
+		/// the <see cref="AnnotationItemProvider"/>'s unique identifier.</param>
 		protected AnnotationItemProvider(string identifier, IAnnotationResourceResolver resolver)
 			: this(identifier, resolver.ResolveDisplayName(identifier))
 		{
 		}
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="identifier">The unique identifier of the <see cref="AnnotationItemProvider"/>.</param>
+		/// <param name="displayName">The <see cref="AnnotationItemProvider"/>'s display name.</param>
 		protected AnnotationItemProvider(string identifier, string displayName)
 		{
 			Platform.CheckForEmptyString(identifier, "identifier");
@@ -53,34 +69,28 @@ namespace ClearCanvas.ImageViewer.Annotations
 			_displayName = displayName;
 		}
 
-		public string Identifier
-		{
-			get { return _identifier; }
-		}
-
-		public string DisplayName
-		{
-			get { return _displayName; }
-		}
-
-		protected abstract IEnumerable<IAnnotationItem> AnnotationItems { get; }
-		
 		#region IAnnotationItemProvider Members
 
+		/// <summary>
+		/// Gets a unique identifier.
+		/// </summary>
 		public string GetIdentifier()
 		{
 			return _identifier;
 		}
 
+		/// <summary>
+		/// Gets a user friendly display name.
+		/// </summary>
 		public string GetDisplayName()
 		{
 			return _displayName;
 		}
 
-		public IEnumerable<IAnnotationItem> GetAnnotationItems()
-		{
-			return AnnotationItems;
-		}
+		/// <summary>
+		/// Gets the logical group of <see cref="IAnnotationItem"/>s.
+		/// </summary>
+		public abstract IEnumerable<IAnnotationItem> GetAnnotationItems();
 
 		#endregion
 	}

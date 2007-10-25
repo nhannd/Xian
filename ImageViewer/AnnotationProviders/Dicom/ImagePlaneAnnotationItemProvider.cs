@@ -51,48 +51,45 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 		{
 		}
 
-		protected override IEnumerable<IAnnotationItem> AnnotationItems
+		public override IEnumerable<IAnnotationItem> GetAnnotationItems()
 		{
-			get
+			if (_annotationItems == null)
 			{
-				if (_annotationItems == null)
-				{
-					_annotationItems = new List<IAnnotationItem>();
+				_annotationItems = new List<IAnnotationItem>();
 
-					AnnotationResourceResolver resolver = new AnnotationResourceResolver(this);
+				AnnotationResourceResolver resolver = new AnnotationResourceResolver(this);
 
-					_annotationItems.Add
-						(
-							new DicomAnnotationItem<string>
-							(
-								"Dicom.ImagePlane.SliceThickness",
-								resolver,
-								delegate(ImageSop imageSop)
-								{
-									return String.Format("{0:F1} mm", imageSop.SliceThickness);
-								},
-								DicomBasicResultFormatter.RawStringFormat
-							)
-						);
-
-					_annotationItems.Add
+				_annotationItems.Add
 					(
 						new DicomAnnotationItem<string>
-							(
-								"Dicom.ImagePlane.SliceLocation",
-								resolver,
-								delegate(ImageSop imageSop)
-								{
-									return String.Format("{0:F1} mm", imageSop.SliceLocation);
-								},
-								DicomBasicResultFormatter.RawStringFormat
-							)
-						);
+						(
+							"Dicom.ImagePlane.SliceThickness",
+							resolver,
+							delegate(ImageSop imageSop)
+							{
+								return String.Format("{0:F1} mm", imageSop.SliceThickness);
+							},
+							DicomDataFormatHelper.RawStringFormat
+						)
+					);
 
-				}
+				_annotationItems.Add
+				(
+					new DicomAnnotationItem<string>
+						(
+							"Dicom.ImagePlane.SliceLocation",
+							resolver,
+							delegate(ImageSop imageSop)
+							{
+								return String.Format("{0:F1} mm", imageSop.SliceLocation);
+							},
+							DicomDataFormatHelper.RawStringFormat
+						)
+					);
 
-				return _annotationItems;
 			}
+
+			return _annotationItems;
 		}
 	}
 }

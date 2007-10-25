@@ -32,15 +32,9 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Annotations
 {
-	[ExtensionPoint()]
-	public class AnnotationItemProviderExtensionPoint : ExtensionPoint<IAnnotationItemProvider>
-	{ 
-	}
-
 	// TODO: Remove this class
 	internal sealed class AnnotationItemProviderManager
 	{

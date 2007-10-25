@@ -51,85 +51,82 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 		{
 		}
 
-		protected override IEnumerable<IAnnotationItem> AnnotationItems
+		public override IEnumerable<IAnnotationItem> GetAnnotationItems()
 		{
-			get
+			if (_annotationItems == null)
 			{
-				if (_annotationItems == null)
-				{
-					_annotationItems = new List<IAnnotationItem>();
+				_annotationItems = new List<IAnnotationItem>();
 
-					AnnotationResourceResolver resolver = new AnnotationResourceResolver(this);
+				AnnotationResourceResolver resolver = new AnnotationResourceResolver(this);
 
-					_annotationItems.Add
+				_annotationItems.Add
+					(
+						new DicomAnnotationItem<string>
 						(
-							new DicomAnnotationItem<string>
-							(
-								"Dicom.GeneralStudy.AccessionNumber",
-								resolver, 
-								delegate(ImageSop imageSop) { return imageSop.AccessionNumber; },
-								DicomBasicResultFormatter.RawStringFormat
-							)
-						);
+							"Dicom.GeneralStudy.AccessionNumber",
+							resolver, 
+							delegate(ImageSop imageSop) { return imageSop.AccessionNumber; },
+							DicomDataFormatHelper.RawStringFormat
+						)
+					);
 
-					_annotationItems.Add
+				_annotationItems.Add
+					(
+						new DicomAnnotationItem<PersonName>
 						(
-							new DicomAnnotationItem<PersonName>
-							(
-								"Dicom.GeneralStudy.ReferringPhysiciansName",
-								resolver, 
-								delegate(ImageSop imageSop) { return imageSop.ReferringPhysiciansName; },
-								DicomBasicResultFormatter.PersonNameFormatter
-							)
-						);
+							"Dicom.GeneralStudy.ReferringPhysiciansName",
+							resolver, 
+							delegate(ImageSop imageSop) { return imageSop.ReferringPhysiciansName; },
+							DicomDataFormatHelper.PersonNameFormatter
+						)
+					);
 
-					_annotationItems.Add
+				_annotationItems.Add
+					(
+						new DicomAnnotationItem<string>
 						(
-							new DicomAnnotationItem<string>
-							(
-								"Dicom.GeneralStudy.StudyDate",
-								resolver, 
-								delegate(ImageSop imageSop) { return imageSop.StudyDate; },
-								DicomBasicResultFormatter.DateFormat
-							)
-						);
+							"Dicom.GeneralStudy.StudyDate",
+							resolver, 
+							delegate(ImageSop imageSop) { return imageSop.StudyDate; },
+							DicomDataFormatHelper.DateFormat
+						)
+					);
 
-					_annotationItems.Add
+				_annotationItems.Add
+					(
+						new DicomAnnotationItem<string>
 						(
-							new DicomAnnotationItem<string>
-							(
-								"Dicom.GeneralStudy.StudyTime",
-								resolver, 
-								delegate(ImageSop imageSop) { return imageSop.StudyTime; },
-								DicomBasicResultFormatter.TimeFormat
-							)
-						);
+							"Dicom.GeneralStudy.StudyTime",
+							resolver, 
+							delegate(ImageSop imageSop) { return imageSop.StudyTime; },
+							DicomDataFormatHelper.TimeFormat
+						)
+					);
 
-					_annotationItems.Add
+				_annotationItems.Add
+					(
+						new DicomAnnotationItem<string>
 						(
-							new DicomAnnotationItem<string>
-							(
-								"Dicom.GeneralStudy.StudyDescription",
-								resolver, 
-								delegate(ImageSop imageSop) { return imageSop.StudyDescription; },
-								DicomBasicResultFormatter.RawStringFormat
-							)
-						);
+							"Dicom.GeneralStudy.StudyDescription",
+							resolver, 
+							delegate(ImageSop imageSop) { return imageSop.StudyDescription; },
+							DicomDataFormatHelper.RawStringFormat
+						)
+					);
 
-					_annotationItems.Add
+				_annotationItems.Add
+					(
+						new DicomAnnotationItem<string>
 						(
-							new DicomAnnotationItem<string>
-							(
-								"Dicom.GeneralStudy.StudyId",
-								resolver, 
-								new DicomTagAsStringRetriever(DicomTags.StudyId).GetTagValue,
-								DicomBasicResultFormatter.RawStringFormat
-							)
-						);
-				}
-
-				return _annotationItems;
+							"Dicom.GeneralStudy.StudyId",
+							resolver, 
+							new DicomTagAsStringRetriever(DicomTags.StudyId).GetTagValue,
+							DicomDataFormatHelper.RawStringFormat
+						)
+					);
 			}
+
+			return _annotationItems;
 		}
 	}
 }

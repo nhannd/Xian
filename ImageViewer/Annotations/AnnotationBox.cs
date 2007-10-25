@@ -36,11 +36,72 @@ using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.Annotations
 {
+	/// <summary>
+	/// An <see cref="AnnotationBox"/> is rendered to the screen by an <see cref="ClearCanvas.ImageViewer.Rendering.IRenderer"/>.
+	/// </summary>
+	/// <seealso cref="AnnotationItemConfigurationOptions"/>
+	/// <seealso cref="IAnnotationItem"/>
 	public sealed class AnnotationBox
 	{
-		public enum TruncationBehaviour { Truncate, Ellipsis };
-		public enum JustificationBehaviour { Near, Center, Far };
-		public enum VerticalAlignmentBehaviour { Top, Center, Bottom };
+		/// <summary>
+		/// Defines the available truncation behaviours for strings that will extend beyond <see cref="AnnotationBox.NormalizedRectangle"/>.
+		/// </summary>
+		public enum TruncationBehaviour
+		{
+			/// <summary>
+			/// Specifies that the string should just be cut off at the edge of the <see cref="AnnotationBox.NormalizedRectangle"/>.
+			/// </summary>
+			Truncate, 
+			
+			/// <summary>
+			/// Specifies that the string should have an ellipses (...) at the edge of the <see cref="AnnotationBox.NormalizedRectangle"/>.
+			/// </summary>
+			Ellipsis
+		};
+
+		/// <summary>
+		/// Defines the available horizontal justifications.
+		/// </summary>
+		public enum JustificationBehaviour
+		{
+			/// <summary>
+			/// Specifies that the string should be left-justified in the <see cref="AnnotationBox.NormalizedRectangle"/>.
+			/// </summary>
+			Left, 
+
+			/// <summary>
+			/// Specifies that the string should be centred horizontally in the <see cref="AnnotationBox.NormalizedRectangle"/>.
+			/// </summary>
+			Center, 
+			
+			/// <summary>
+			/// Specifies that the string should be right-justified in the <see cref="AnnotationBox.NormalizedRectangle"/>.
+			/// </summary>
+			Right
+		};
+
+		/// <summary>
+		/// Defines the available vertical alignments.
+		/// </summary>
+		public enum VerticalAlignmentBehaviour
+		{
+			/// <summary>
+			/// Specifies that the string should be aligned along the top of the <see cref="AnnotationBox.NormalizedRectangle"/>.
+			/// </summary>
+			Top,
+
+			/// <summary>
+			/// Specifies that the string should be centered in the <see cref="AnnotationBox.NormalizedRectangle"/>.
+			/// </summary>
+			Center,
+
+			/// <summary>
+			/// Specifies that the string should be aligned along the bottom of the <see cref="AnnotationBox.NormalizedRectangle"/>.
+			/// </summary>
+			Bottom
+		};
+
+		#region Private Fields
 
 		private IAnnotationItem _annotationItem;
 		private AnnotationItemConfigurationOptions _annotationItemConfigurationOptions;
@@ -60,20 +121,33 @@ namespace ClearCanvas.ImageViewer.Annotations
 		private bool _fitWidth = false;
 
 		private TruncationBehaviour _truncation = TruncationBehaviour.Ellipsis;
-		private JustificationBehaviour _justification = JustificationBehaviour.Near;
+		private JustificationBehaviour _justification = JustificationBehaviour.Left;
 		private VerticalAlignmentBehaviour _verticalAlignment = VerticalAlignmentBehaviour.Center;
 
+		#endregion
+
+		/// <summary>
+		/// Default constructor.
+		/// </summary>
 		public AnnotationBox()
 		{
 			this.NormalizedRectangle = new RectangleF();
 		}
 
+		/// <summary>
+		/// Constructor that initializes the <see cref="NormalizedRectangle"/> and <see cref="AnnotationItem"/> properties.
+		/// </summary>
+		/// <exception cref="ArgumentException">Thrown when the input <b>normalizedRectangle</b> is not normalized.</exception>
 		public AnnotationBox(RectangleF normalizedRectangle, IAnnotationItem annotationItem)
 		{
+			RectangleUtilities.VerifyNormalizedRectangle(normalizedRectangle); 
 			this.NormalizedRectangle = normalizedRectangle;
 			_annotationItem = annotationItem;
 		}
 
+		/// <summary>
+		/// Gets the text to be rendered into the area defined by <see cref="NormalizedRectangle"/> for the input <see cref="IPresentationImage"/>.
+		/// </summary>
 		public string GetAnnotationText(IPresentationImage presentationImage)
 		{
 			if (_annotationItem == null)
@@ -95,12 +169,22 @@ namespace ClearCanvas.ImageViewer.Annotations
 			return annotationText;
 		}
 
+		/// <summary>
+		/// Gets the associated <see cref="IAnnotationItem"/> that provides the annotation text.
+		/// </summary>
+		/// <remarks>
+		/// It is permissible for this value to be null.  A value of "" will always be returned from <see cref="GetAnnotationText"/>.
+		/// </remarks>
 		public IAnnotationItem AnnotationItem
 		{
 			get { return _annotationItem; }
 			set { _annotationItem = value; }
 		}
 
+		/// <summary>
+		/// Defines the normalized rectangle in which the <see cref="ClearCanvas.ImageViewer.Rendering.IRenderer"/> should render the text.
+		/// </summary>
+		/// <exception cref="ArgumentException">Thrown when setting the property if the value is not normalized.</exception>
 		public RectangleF NormalizedRectangle
 		{
 			get { return _normalizedRectangle; }
@@ -111,6 +195,9 @@ namespace ClearCanvas.ImageViewer.Annotations
 			}
 		}
 
+		/// <summary>
+		/// Defines configuration options for how <see cref="GetAnnotationText"/> should format its return value.
+		/// </summary>
 		public AnnotationItemConfigurationOptions ConfigurationOptions
 		{
 			get
@@ -123,16 +210,28 @@ namespace ClearCanvas.ImageViewer.Annotations
 			set { _annotationItemConfigurationOptions = value; }
 		}
 
+		/// <summary>
+		/// Gets the default font ("Arial") by name.
+		/// </summary>
 		public static string DefaultFont
 		{
 			get { return _defaultFont; }
 		}
 
+		/// <summary>
+		/// Gets the default color ("WhiteSmoke") by name.
+		/// </summary>
 		public static string DefaultColor
 		{
 			get { return _defaultColor; }
 		}
 
+		/// <summary>
+		/// Gets or sets the font (by name) that should be used to render the text.
+		/// </summary>
+		/// <remarks>
+		/// The default value is "Arial".
+		/// </remarks>
 		public string Font
 		{
 			get { return _font; }
@@ -143,6 +242,12 @@ namespace ClearCanvas.ImageViewer.Annotations
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the color (by name) that should be used to render the text.
+		/// </summary>
+		/// <remarks>
+		/// The default value is "WhiteSmoke".
+		/// </remarks>
 		public string Color
 		{
 			get { return _color; }
@@ -153,18 +258,36 @@ namespace ClearCanvas.ImageViewer.Annotations
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets whether the text should be in italics.
+		/// </summary>
+		/// <remarks>
+		/// The default value is false.
+		/// </remarks>
 		public bool Italics
 		{
 			get { return _italics; }
 			set { _italics = value; }
 		}
-	
+
+		/// <summary>
+		/// Gets or sets whether the text should be in bold.
+		/// </summary>
+		/// <remarks>
+		/// The default value is false.
+		/// </remarks>
 		public bool Bold
 		{
 			get { return _bold; }
 			set { _bold = value; }
 		}
 
+		/// <summary>
+		/// Gets or sets the number of lines of to render.
+		/// </summary>
+		/// <remarks>
+		/// The default value is 1.
+		/// </remarks>
 		public byte NumberOfLines
 		{
 			get { return _numberOfLines; }
@@ -178,6 +301,12 @@ namespace ClearCanvas.ImageViewer.Annotations
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets whether the text should be fit to the width of the <see cref="NormalizedRectangle"/>.
+		/// </summary>
+		/// <remarks>
+		/// The default value is false.
+		/// </remarks>
 		public bool FitWidth
 		{
 			get { return _fitWidth; }
@@ -191,24 +320,45 @@ namespace ClearCanvas.ImageViewer.Annotations
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the <see cref="TruncationBehaviour"/>.
+		/// </summary>
+		/// <remarks>
+		/// The default value is <see cref="TruncationBehaviour.Ellipsis"/>.
+		/// </remarks>
 		public TruncationBehaviour Truncation
 		{
 			get { return _truncation; }
 			set { _truncation = value; }
 		}
 
+		/// <summary>
+		/// Gets or sets the <see cref="JustificationBehaviour"/>.
+		/// </summary>
+		/// <remarks>
+		/// The default value is <see cref="JustificationBehaviour.Left"/>.
+		/// </remarks>
 		public JustificationBehaviour Justification
 		{
 			get { return _justification; }
 			set { _justification = value; }
 		}
 
+		/// <summary>
+		/// Gets or sets the <see cref="VerticalAlignmentBehaviour"/>.
+		/// </summary>
+		/// <remarks>
+		/// The default value is <see cref="VerticalAlignmentBehaviour.Center"/>.
+		/// </remarks>
 		public VerticalAlignmentBehaviour VerticalAlignment
 		{
 			get { return _verticalAlignment; }
 			set { _verticalAlignment = value; }
 		}
 
+		/// <summary>
+		/// Clones the <see cref="AnnotationBox"/>.
+		/// </summary>
 		public AnnotationBox Clone()
 		{
 			AnnotationBox newBox = new AnnotationBox(this.NormalizedRectangle, this.AnnotationItem);

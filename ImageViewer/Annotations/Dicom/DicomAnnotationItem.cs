@@ -34,13 +34,24 @@ using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Annotations.Dicom
 {
-	public delegate T SopDataRetrieverDelegate<T>(ImageSop imageSop);
-
-	public class DicomAnnotationItem <T>: AnnotationItem
+	/// <summary>
+	/// A specialization of <see cref="AnnotationItem"/> for showing dicom tag data on the overlay.
+	/// </summary>
+	/// <seealso cref="AnnotationItem"/>
+	public class DicomAnnotationItem<T>: AnnotationItem
 	{
 		private readonly SopDataRetrieverDelegate<T> _sopDataRetrieverDelegate;
 		private readonly ResultFormatterDelegate<T> _resultFormatterDelegate;
 
+		/// <summary>
+		/// A constructor that uses the <see cref="DicomAnnotationItem{T}"/>'s unique identifier to determine
+		/// the display name and label using an <see cref="IAnnotationResourceResolver"/>.
+		/// </summary>
+		/// <param name="identifier">The unique identifier of the <see cref="DicomAnnotationItem{T}"/>.</param>
+		/// <param name="resolver">The object that will resolve the display name and label 
+		/// from the <see cref="DicomAnnotationItem{T}"/>'s unique identifier.</param>
+		/// <param name="sopDataRetrieverDelegate">A delegate used to retrieve the Dicom tag data.</param>
+		/// <param name="resultFormatterDelegate">A delegate that will format the Dicom tag data as a string.</param>
 		public DicomAnnotationItem
 			(
 				string identifier,
@@ -52,6 +63,14 @@ namespace ClearCanvas.ImageViewer.Annotations.Dicom
 		{
 		}
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="identifier">The unique identifier of the <see cref="DicomAnnotationItem{T}"/>.</param>
+		/// <param name="displayName">The <see cref="DicomAnnotationItem{T}"/>'s display name.</param>
+		/// <param name="label">The <see cref="DicomAnnotationItem{T}"/>'s label.</param>
+		/// <param name="sopDataRetrieverDelegate">A delegate used to retrieve the Dicom tag data.</param>
+		/// <param name="resultFormatterDelegate">A delegate that will format the Dicom tag data as a string.</param>
 		public DicomAnnotationItem
 			(
 				string identifier,
@@ -69,6 +88,13 @@ namespace ClearCanvas.ImageViewer.Annotations.Dicom
 			_resultFormatterDelegate = resultFormatterDelegate;
 		}
 
+		/// <summary>
+		/// Gets the annotation text for display on the overlay.
+		/// </summary>
+		/// <remarks>
+		/// The input <see cref="IPresentationImage"/> must implement <see cref="IImageSopProvider"/> in 
+		/// order for a non-empty string to be returned.
+		/// </remarks>
 		public override string GetAnnotationText(IPresentationImage presentationImage)
 		{
 			IImageSopProvider associatedDicom = presentationImage as IImageSopProvider;

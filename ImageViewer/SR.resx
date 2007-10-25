@@ -168,6 +168,9 @@
   <data name="ExceptionColorMapDataCannotBeAltered" xml:space="preserve">
     <value>The Color Map data cannot be altered.</value>
   </data>
+  <data name="ExceptionFormatAnnotationItemHasNoDisplayName" xml:space="preserve">
+    <value>AnnotationItem has no display name: {0}.</value>
+  </data>
   <data name="ExceptionFormatNoColorMapFactoryExistWithName" xml:space="preserve">
     <value>No Color Map factory extension exists with the name {0}.</value>
   </data>

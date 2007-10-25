@@ -35,31 +35,62 @@ using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
+	/// <summary>
+	/// A delegate used to retrieve data of a particular type <see cref="T"/> from an <see cref="ImageSop"/>.
+	/// </summary>
+	public delegate T SopDataRetrieverDelegate<T>(ImageSop imageSop);
+
+	/// <summary>
+	/// A Generic abstract class that defines how to get arbitrary types of data from an <see cref="ImageSop"/>.
+	/// </summary>
+	/// <seealso cref="ImageSop"/>
 	public abstract class DicomTagRetriever<T>
 	{
 		private uint _dicomTag;
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="dicomTag">The dicom tag whose value is to be retrieved by <see cref="GetTagValue"/>.</param>
 		public DicomTagRetriever(uint dicomTag)
 		{
 			Platform.CheckForNullReference(dicomTag, "dicomTag");
 			_dicomTag = dicomTag;
 		}
 
+		/// <summary>
+		/// Gets the dicom tag whose value is to be retrieved.
+		/// </summary>
 		public uint DicomTag
 		{
 			get { return _dicomTag; }
 		}
 
+		/// <summary>
+		/// Gets the value of <see cref="DicomTag"/> as type <see cref="T"/>.
+		/// </summary>
+		/// <param name="imageSop">The <see cref="ImageSop"/> from which to get <see cref="DicomTag"/>'s value.</param>
 		public abstract T GetTagValue(ImageSop imageSop);
 	}
 
+	/// <summary>
+	/// A <see cref="DicomTagRetriever{T}"/> that gets the tag value as a string.
+	/// </summary>
 	public class DicomTagAsStringRetriever : DicomTagRetriever<string>
 	{
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="dicomTag">The dicom tag whose value is to be retrieved by <see cref="GetTagValue"/>.</param>
 		public DicomTagAsStringRetriever(uint dicomTag)
 			: base(dicomTag)
 		{
 		}
 
+		/// <summary>
+		/// Gets the value of <see cref="DicomTagRetriever{T}.DicomTag"/> as a string.
+		/// </summary>
+		/// <param name="imageSop">The <see cref="ImageSop"/> from which to get <see cref="DicomTagRetriever{T}.DicomTag"/>'s value.</param>
 		public override string GetTagValue(ImageSop imageSop)
 		{
 			string value;
@@ -72,13 +103,24 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		}
 	}
 
+	/// <summary>
+	/// A <see cref="DicomTagRetriever{T}"/> that gets the tag value as a double.
+	/// </summary>
 	public class DicomTagAsDoubleRetriever : DicomTagRetriever<double>
 	{
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="dicomTag">The dicom tag whose value is to be retrieved by <see cref="GetTagValue"/>.</param>
 		public DicomTagAsDoubleRetriever(uint dicomTag)
 			: base(dicomTag)
 		{
 		}
 
+		/// <summary>
+		/// Gets the value of <see cref="DicomTagRetriever{T}.DicomTag"/> as a double.
+		/// </summary>
+		/// <param name="imageSop">The <see cref="ImageSop"/> from which to get <see cref="DicomTagRetriever{T}.DicomTag"/>'s value.</param>
 		public override double GetTagValue(ImageSop imageSop)
 		{
 			double value;
@@ -91,13 +133,24 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		}
 	}
 
+	/// <summary>
+	/// A <see cref="DicomTagRetriever{T}"/> that gets the tag value as a string array (e.g. as in Dicom "1\2\3").
+	/// </summary>
 	public class DicomTagAsRawStringArrayRetriever : DicomTagRetriever<string>
 	{
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="dicomTag">The dicom tag whose value is to be retrieved by <see cref="GetTagValue"/>.</param>
 		public DicomTagAsRawStringArrayRetriever(uint dicomTag)
 			: base(dicomTag)
 		{
 		}
 
+		/// <summary>
+		/// Gets the value of <see cref="DicomTagRetriever{T}.DicomTag"/> as a string array (e.g. as in Dicom "1\2\3").
+		/// </summary>
+		/// <param name="imageSop">The <see cref="ImageSop"/> from which to get <see cref="DicomTagRetriever{T}.DicomTag"/>'s value.</param>
 		public override string GetTagValue(ImageSop imageSop)
 		{
 			string value;
@@ -110,13 +163,24 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		}
 	}
 
+	/// <summary>
+	/// A <see cref="DicomTagRetriever{T}"/> that gets the tag value as a string[].
+	/// </summary>
 	public class DicomTagAsStringArrayRetriever : DicomTagRetriever<string[]>
 	{
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="dicomTag">The dicom tag whose value is to be retrieved by <see cref="GetTagValue"/>.</param>
 		public DicomTagAsStringArrayRetriever(uint dicomTag)
 			: base(dicomTag)
 		{
 		}
 
+		/// <summary>
+		/// Gets the value of <see cref="DicomTagRetriever{T}.DicomTag"/> as a string[].
+		/// </summary>
+		/// <param name="imageSop">The <see cref="ImageSop"/> from which to get <see cref="DicomTagRetriever{T}.DicomTag"/>'s value.</param>
 		public override string[] GetTagValue(ImageSop imageSop)
 		{
 			string value;
@@ -129,13 +193,24 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		}
 	}
 
+	/// <summary>
+	/// A <see cref="DicomTagRetriever{T}"/> that gets the tag value as a double[].
+	/// </summary>
 	public class DicomTagAsDoubleArrayRetriever : DicomTagRetriever<double[]>
 	{
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="dicomTag">The dicom tag whose value is to be retrieved by <see cref="GetTagValue"/>.</param>
 		public DicomTagAsDoubleArrayRetriever(uint dicomTag)
 			: base(dicomTag)
 		{
 		}
 
+		/// <summary>
+		/// Gets the value of <see cref="DicomTagRetriever{T}.DicomTag"/> as a double[].
+		/// </summary>
+		/// <param name="imageSop">The <see cref="ImageSop"/> from which to get <see cref="DicomTagRetriever{T}.DicomTag"/>'s value.</param>
 		public override double[] GetTagValue(ImageSop imageSop)
 		{
 			string value;

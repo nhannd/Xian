@@ -46,39 +46,39 @@ namespace ClearCanvas.ImageViewer.Annotations.Dicom.Tests
 		public void TestListFormatters()
 		{
 			string input = @"The\brown\dog\\jumped";
-			string result = DicomBasicResultFormatter.StringListFormat(DicomStringHelper.GetStringArray(input));
+			string result = DicomDataFormatHelper.StringListFormat(DicomStringHelper.GetStringArray(input));
 			Assert.AreEqual(result, "The,\nbrown,\ndog,\njumped");
 
 			input = @"Doe^John^^^";
-			result = DicomBasicResultFormatter.PersonNameFormatter(new PersonName(input));
+			result = DicomDataFormatHelper.PersonNameFormatter(new PersonName(input));
 			Assert.AreEqual(result, "Doe, John");
 
 			input = @"^John^^^";
-			result = DicomBasicResultFormatter.PersonNameFormatter(new PersonName(input));
+			result = DicomDataFormatHelper.PersonNameFormatter(new PersonName(input));
 			Assert.AreEqual(result, "John");
 
 			input = @"Doe^^^^";
-			result = DicomBasicResultFormatter.PersonNameFormatter(new PersonName(input));
+			result = DicomDataFormatHelper.PersonNameFormatter(new PersonName(input));
 			Assert.AreEqual(result, "Doe");
 
 			input = @"Doe^John^^^\Doe^Jane^^^";
-			result = DicomBasicResultFormatter.PersonNameListFormatter(DicomStringHelper.GetPersonNameArray(input));
+			result = DicomDataFormatHelper.PersonNameListFormatter(DicomStringHelper.GetPersonNameArray(input));
 			Assert.AreEqual(result, "Doe, John,\nDoe, Jane");
 
 			input = @"^John^^^\Doe^Jane^^^";
-			result = DicomBasicResultFormatter.PersonNameListFormatter(DicomStringHelper.GetPersonNameArray(input));
+			result = DicomDataFormatHelper.PersonNameListFormatter(DicomStringHelper.GetPersonNameArray(input));
 			Assert.AreEqual(result, "John,\nDoe, Jane");
 
 			input = @"^John^^^\Doe^^^^";
-			result = DicomBasicResultFormatter.PersonNameListFormatter(DicomStringHelper.GetPersonNameArray(input));
+			result = DicomDataFormatHelper.PersonNameListFormatter(DicomStringHelper.GetPersonNameArray(input));
 			Assert.AreEqual(result, "John,\nDoe");
 
 			input = @"^^^^\Doe^^^^";
-			result = DicomBasicResultFormatter.PersonNameListFormatter(DicomStringHelper.GetPersonNameArray(input));
+			result = DicomDataFormatHelper.PersonNameListFormatter(DicomStringHelper.GetPersonNameArray(input));
 			Assert.AreEqual(result, "Doe");
 
 			input = @"^^^^\^^^^";
-			result = DicomBasicResultFormatter.PersonNameListFormatter(DicomStringHelper.GetPersonNameArray(input));
+			result = DicomDataFormatHelper.PersonNameListFormatter(DicomStringHelper.GetPersonNameArray(input));
 			Assert.AreEqual(result, "");
 		}
 	}

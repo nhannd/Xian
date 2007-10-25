@@ -30,31 +30,62 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Reflection;
-
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.ImageViewer.Annotations;
 
-namespace ClearCanvas.ImageViewer.AnnotationProviders
+namespace ClearCanvas.ImageViewer.Annotations
 {
+	/// <summary>
+	/// Base implementation of <see cref="IAnnotationResourceResolver"/>.
+	/// </summary>
+	/// <remarks>
+	/// <para>
+	/// Uses assembly resources to look up the display name and label 
+	/// for an <see cref="IAnnotationItem"/> (and <see cref="IAnnotationItemProvider"/>) based on it's 
+	/// unique identifier.
+	/// </para>
+	/// <para>
+	/// The algorithm used is quite simple; all '.' characters in the unique identifier are replaced with '_' because
+	/// the resource editor doesn't like '.'s, and one of the keywords "_DisplayName" or "_Label" is appended, giving
+	/// the resource identifier to lookup.
+	/// </para>
+	/// <para>
+	/// An example would be a unique identifier of "Dicom.GeneralSeries.SeriesDescription".  The resource identifiers
+	/// to lookup would be "Dicom_GeneralSeries_SeriesDescription_DisplayName" and "Dicom_GeneralSeries_SeriesDescription_Label", 
+	/// respectively.
+	/// </para>
+	/// </remarks>
+	/// <seealso cref="IAnnotationResourceResolver"/>
+	/// <seealso cref="ResourceResolver"/>
 	public class AnnotationResourceResolver : ResourceResolver, IAnnotationResourceResolver
 	{
 		protected char replaceChar = '.';
 		protected char replaceWithChar = '_';
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="target">The target object from which to determine the <see cref="Assembly"/> 
+		/// whose resources are to be used to lookup the display name and label.</param>
 		public AnnotationResourceResolver(object target)
-			: base(new Assembly[] { target.GetType().Assembly, typeof(AnnotationResourceResolver).Assembly })
+			: base(new Assembly[] { target.GetType().Assembly })
 		{
 		}
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="assembly">The <see cref="Assembly"/> whose resources 
+		/// are to be used to lookup the display name and label.</param>
 		public AnnotationResourceResolver(Assembly assembly)
 			: base(assembly)
 		{
 		}
 
+		/// <summary>
+		/// Resolves the <see cref="IAnnotationItem"/>'s label (see <see cref="IAnnotationItem.GetLabel()"/>).
+		/// </summary>
 		public virtual string ResolveLabel(string annotationIdentifier)
 		{
 			Platform.CheckForEmptyString(annotationIdentifier, "annotationIdentifier"); 
@@ -65,6 +96,11 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders
 			return base.LocalizeString(resourceString) ?? "";
 		}
 
+		/// <summary>
+		/// Resolves the <see cref="IAnnotationItem"/>'s (or <see cref="IAnnotationItemProvider"/>'s) display name 
+		/// (see <see cref="IAnnotationItem.GetDisplayName"/> and <see cref="IAnnotationItemProvider.GetDisplayName"/>).
+		/// </summary>
+		/// <exception cref="InvalidOperationException">Thrown when the display name cannot be resolved.</exception>
 		public virtual string ResolveDisplayName(string annotationIdentifier)
 		{
 			Platform.CheckForEmptyString(annotationIdentifier, "annotationIdentifier"); 

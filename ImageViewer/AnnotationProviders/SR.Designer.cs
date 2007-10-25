@@ -1357,15 +1357,6 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to AnnotationItem has no display name: {0}..
-        /// </summary>
-        internal static string ExceptionFormatAnnotationItemHasNoDisplayName {
-            get {
-                return ResourceManager.GetString("ExceptionFormatAnnotationItemHasNoDisplayName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to The transformed edge does not have a corresponding value..
         /// </summary>
         internal static string ExceptionTransformedEdgeDoesNotMatch {

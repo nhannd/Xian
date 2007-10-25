@@ -51,146 +51,143 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 		{
 		}
 
-		protected override IEnumerable<IAnnotationItem> AnnotationItems
+		public override IEnumerable<IAnnotationItem> GetAnnotationItems()
 		{
-			get
+			if (_annotationItems == null)
 			{
-				if (_annotationItems == null)
-				{
-					_annotationItems = new List<IAnnotationItem>();
+				_annotationItems = new List<IAnnotationItem>();
 
-					AnnotationResourceResolver resolver = new AnnotationResourceResolver(this);
+				AnnotationResourceResolver resolver = new AnnotationResourceResolver(this);
 
-					_annotationItems.Add
+				_annotationItems.Add
+					(
+						new DicomAnnotationItem<string>
 						(
-							new DicomAnnotationItem<string>
-							(
-								"Dicom.GeneralSeries.BodyPartExamined",
-								resolver,
-								delegate(ImageSop imageSop) { return imageSop.BodyPartExamined; },
-								DicomBasicResultFormatter.RawStringFormat
-							)
-						);
+							"Dicom.GeneralSeries.BodyPartExamined",
+							resolver,
+							delegate(ImageSop imageSop) { return imageSop.BodyPartExamined; },
+							DicomDataFormatHelper.RawStringFormat
+						)
+					);
 
-					_annotationItems.Add
+				_annotationItems.Add
+					(
+						new DicomAnnotationItem<string>
 						(
-							new DicomAnnotationItem<string>
-							(
-								"Dicom.GeneralSeries.Laterality",
-								resolver,
-								delegate(ImageSop imageSop) { return imageSop.Laterality; },
-								DicomBasicResultFormatter.RawStringFormat
-							)
-						);
+							"Dicom.GeneralSeries.Laterality",
+							resolver,
+							delegate(ImageSop imageSop) { return imageSop.Laterality; },
+							DicomDataFormatHelper.RawStringFormat
+						)
+					);
 
-					_annotationItems.Add
+				_annotationItems.Add
+					(
+						new DicomAnnotationItem<string>
 						(
-							new DicomAnnotationItem<string>
-							(
-								"Dicom.GeneralSeries.Modality",
-								resolver,
-								delegate(ImageSop imageSop) { return imageSop.Modality; },
-								DicomBasicResultFormatter.RawStringFormat
-							)
-						);
+							"Dicom.GeneralSeries.Modality",
+							resolver,
+							delegate(ImageSop imageSop) { return imageSop.Modality; },
+							DicomDataFormatHelper.RawStringFormat
+						)
+					);
 
-					_annotationItems.Add
+				_annotationItems.Add
+					(
+						new DicomAnnotationItem<PersonName[]>
 						(
-							new DicomAnnotationItem<PersonName[]>
-							(
-								"Dicom.GeneralSeries.OperatorsName",
-								resolver,
-								delegate(ImageSop imageSop) { return imageSop.OperatorsName; },
-								DicomBasicResultFormatter.PersonNameListFormatter
-							)
-						);
+							"Dicom.GeneralSeries.OperatorsName",
+							resolver,
+							delegate(ImageSop imageSop) { return imageSop.OperatorsName; },
+							DicomDataFormatHelper.PersonNameListFormatter
+						)
+					);
 
-					_annotationItems.Add
+				_annotationItems.Add
+					(
+						new DicomAnnotationItem<string>
 						(
-							new DicomAnnotationItem<string>
-							(
-								"Dicom.GeneralSeries.PerformedProcedureStepDescription",
-								resolver,
-								new DicomTagAsStringRetriever(DicomTags.PerformedProcedureStepDescription).GetTagValue,
-								DicomBasicResultFormatter.RawStringFormat
-							)
-						);
+							"Dicom.GeneralSeries.PerformedProcedureStepDescription",
+							resolver,
+							new DicomTagAsStringRetriever(DicomTags.PerformedProcedureStepDescription).GetTagValue,
+							DicomDataFormatHelper.RawStringFormat
+						)
+					);
 
-					_annotationItems.Add
+				_annotationItems.Add
+					(
+						new DicomAnnotationItem<PersonName[]>
 						(
-							new DicomAnnotationItem<PersonName[]>
-							(
-								"Dicom.GeneralSeries.PerformingPhysiciansName",
-								resolver,
-								delegate(ImageSop imageSop) { return imageSop.PerformingPhysiciansName; },
-								DicomBasicResultFormatter.PersonNameListFormatter
-							)
-						);
+							"Dicom.GeneralSeries.PerformingPhysiciansName",
+							resolver,
+							delegate(ImageSop imageSop) { return imageSop.PerformingPhysiciansName; },
+							DicomDataFormatHelper.PersonNameListFormatter
+						)
+					);
 
-					_annotationItems.Add
+				_annotationItems.Add
+					(
+						new DicomAnnotationItem<string>
 						(
-							new DicomAnnotationItem<string>
-							(
-								"Dicom.GeneralSeries.ProtocolName",
-								resolver,
-								new DicomTagAsStringRetriever(DicomTags.ProtocolName).GetTagValue,
-								DicomBasicResultFormatter.RawStringFormat
-							)
-						);
+							"Dicom.GeneralSeries.ProtocolName",
+							resolver,
+							new DicomTagAsStringRetriever(DicomTags.ProtocolName).GetTagValue,
+							DicomDataFormatHelper.RawStringFormat
+						)
+					);
 
-					_annotationItems.Add
+				_annotationItems.Add
+					(
+						new DicomAnnotationItem<string>
 						(
-							new DicomAnnotationItem<string>
-							(
-								"Dicom.GeneralSeries.SeriesDate",
-								resolver,
-								delegate(ImageSop imageSop) { return imageSop.SeriesDate; },
-								DicomBasicResultFormatter.DateFormat
-							)
-						);
+							"Dicom.GeneralSeries.SeriesDate",
+							resolver,
+							delegate(ImageSop imageSop) { return imageSop.SeriesDate; },
+							DicomDataFormatHelper.DateFormat
+						)
+					);
 
-					_annotationItems.Add
+				_annotationItems.Add
+					(
+						new DicomAnnotationItem<string>
 						(
-							new DicomAnnotationItem<string>
-							(
-								"Dicom.GeneralSeries.SeriesTime",
-								resolver,
-								delegate(ImageSop imageSop) { return imageSop.SeriesTime; },
-								DicomBasicResultFormatter.TimeFormat
-							)
-						);
+							"Dicom.GeneralSeries.SeriesTime",
+							resolver,
+							delegate(ImageSop imageSop) { return imageSop.SeriesTime; },
+							DicomDataFormatHelper.TimeFormat
+						)
+					);
 
-					_annotationItems.Add
+				_annotationItems.Add
+					(
+						new DicomAnnotationItem<string>
 						(
-							new DicomAnnotationItem<string>
-							(
-								"Dicom.GeneralSeries.SeriesDescription",
-								resolver,
-								delegate(ImageSop imageSop) { return imageSop.SeriesDescription; },
-								DicomBasicResultFormatter.RawStringFormat
-							)
-						);
+							"Dicom.GeneralSeries.SeriesDescription",
+							resolver,
+							delegate(ImageSop imageSop) { return imageSop.SeriesDescription; },
+							DicomDataFormatHelper.RawStringFormat
+						)
+					);
 
-					_annotationItems.Add
+				_annotationItems.Add
+					(
+						new DicomAnnotationItem<string>
 						(
-							new DicomAnnotationItem<string>
-							(
-								"Dicom.GeneralSeries.SeriesNumber",
-								resolver,
-								delegate(ImageSop imageSop)
-								{
-									string str = String.Format("{0}/{1}",
-										imageSop.SeriesNumber,
-										imageSop.ParentSeries.ParentStudy.Series.Count);
-									return str;
-								},
-								DicomBasicResultFormatter.RawStringFormat
-							)
-						);
-				}
-
-				return _annotationItems;
+							"Dicom.GeneralSeries.SeriesNumber",
+							resolver,
+							delegate(ImageSop imageSop)
+							{
+								string str = String.Format("{0}/{1}",
+									imageSop.SeriesNumber,
+									imageSop.ParentSeries.ParentStudy.Series.Count);
+								return str;
+							},
+							DicomDataFormatHelper.RawStringFormat
+						)
+					);
 			}
+
+			return _annotationItems;
 		}
 	}
 }

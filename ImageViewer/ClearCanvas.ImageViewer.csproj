@@ -99,8 +99,9 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>AnnotationLayoutStoreSettings.settings</DependentUpon>
     </Compile>
+    <Compile Include="Annotations\AnnotationResourceResolver.cs" />
     <Compile Include="Annotations\Dicom\DicomAnnotationItem.cs" />
-    <Compile Include="Annotations\Dicom\DicomBasicResultFormatter.cs" />
+    <Compile Include="Annotations\Dicom\DicomDataFormatHelper.cs" />
     <Compile Include="Annotations\Dicom\DicomFilteredAnnotationLayoutProvider.cs" />
     <Compile Include="Annotations\Dicom\DicomFilteredAnnotationLayoutStoreSettings.cs" />
     <Compile Include="Annotations\Dicom\DicomFilteredAnnotationLayoutStoreSettings.Designer.cs">
@@ -108,9 +109,9 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>DicomFilteredAnnotationLayoutStoreSettings.settings</DependentUpon>
     </Compile>
-    <Compile Include="Annotations\Dicom\DicomFixedAnnotationLayoutProvider.cs" />
     <Compile Include="Annotations\Dicom\DicomFilteredAnnotationLayout.cs" />
     <Compile Include="Annotations\Dicom\DicomFilteredAnnotationLayoutStore.cs" />
+    <Compile Include="Annotations\Dicom\DicomFixedAnnotationLayoutProvider.cs" />
     <Compile Include="Annotations\IAnnotationResourceResolver.cs" />
     <Compile Include="StudyManagement\DicomTagRetriever.cs" />
     <Compile Include="Annotations\Dicom\Tests\DicomBasicFormatterTests.cs" />

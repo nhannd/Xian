@@ -24,7 +24,7 @@
           </annotation-boxes>
         </annotation-box-group>
         <annotation-box-group id="TopRightQuadrant">
-          <default-box-settings font="Century Gothic"  justification="Far" />
+          <default-box-settings font="Century Gothic"  justification="Right" />
           <annotation-boxes>
             <annotation-box normalized-rectangle="0.600000\0.000000\1.000000\0.025000" annotation-item-id="Dicom.GeneralSeries.SeriesDescription" />
             <annotation-box normalized-rectangle="0.500000\0.025000\1.000000\0.050000" annotation-item-id="Dicom.GeneralStudy.AccessionNumber" />
@@ -72,7 +72,7 @@
           </annotation-boxes>
         </annotation-box-group>
         <annotation-box-group id="BottomRightQuadrant">
-          <default-box-settings font="Century Gothic"  justification="Far" />
+          <default-box-settings font="Century Gothic"  justification="Right" />
           <annotation-boxes>
             <annotation-box normalized-rectangle="0.500000\0.625000\1.000000\0.650000" annotation-item-id="" />
             <annotation-box normalized-rectangle="0.500000\0.650000\1.000000\0.675000" annotation-item-id="" />
@@ -117,7 +117,7 @@
           </annotation-boxes>
         </annotation-box-group>
         <annotation-box-group id="TopRightQuadrant">
-          <default-box-settings font="Century Gothic"  justification="Far" />
+          <default-box-settings font="Century Gothic"  justification="Right" />
           <annotation-boxes>
             <annotation-box normalized-rectangle="0.600000\0.000000\1.000000\0.025000" annotation-item-id="Dicom.GeneralSeries.SeriesDescription" />
             <annotation-box normalized-rectangle="0.500000\0.025000\1.000000\0.050000" annotation-item-id="Dicom.GeneralStudy.AccessionNumber" />
@@ -169,7 +169,7 @@
           </annotation-boxes>
         </annotation-box-group>
         <annotation-box-group id="BottomRightQuadrant">
-          <default-box-settings font="Century Gothic"  justification="Far" />
+          <default-box-settings font="Century Gothic"  justification="Right" />
           <annotation-boxes>
             <annotation-box normalized-rectangle="0.500000\0.625000\1.000000\0.650000" annotation-item-id="" />
             <annotation-box normalized-rectangle="0.500000\0.650000\1.000000\0.675000" annotation-item-id="" />
@@ -214,7 +214,7 @@
           </annotation-boxes>
         </annotation-box-group>
         <annotation-box-group id="TopRightQuadrant">
-          <default-box-settings font="Century Gothic"  justification="Far" />
+          <default-box-settings font="Century Gothic"  justification="Right" />
           <annotation-boxes>
             <annotation-box normalized-rectangle="0.600000\0.000000\1.000000\0.025000" annotation-item-id="Dicom.GeneralSeries.SeriesDescription" />
             <annotation-box normalized-rectangle="0.500000\0.025000\1.000000\0.050000" annotation-item-id="Dicom.GeneralStudy.AccessionNumber" />
@@ -266,7 +266,7 @@
           </annotation-boxes>
         </annotation-box-group>
         <annotation-box-group id="BottomRightQuadrant">
-          <default-box-settings font="Century Gothic"  justification="Far" />
+          <default-box-settings font="Century Gothic"  justification="Right" />
           <annotation-boxes>
             <annotation-box normalized-rectangle="0.500000\0.625000\1.000000\0.650000" annotation-item-id="" />
             <annotation-box normalized-rectangle="0.500000\0.650000\1.000000\0.675000" annotation-item-id="" />
@@ -311,7 +311,7 @@
           </annotation-boxes>
         </annotation-box-group>
         <annotation-box-group id="TopRightQuadrant">
-          <default-box-settings font="Century Gothic"  justification="Far" />
+          <default-box-settings font="Century Gothic"  justification="Right" />
           <annotation-boxes>
             <annotation-box normalized-rectangle="0.600000\0.000000\1.000000\0.025000" annotation-item-id="Dicom.GeneralSeries.SeriesDescription" />
             <annotation-box normalized-rectangle="0.500000\0.025000\1.000000\0.050000" annotation-item-id="Dicom.GeneralStudy.AccessionNumber" />
@@ -363,7 +363,7 @@
           </annotation-boxes>
         </annotation-box-group>
         <annotation-box-group id="BottomRightQuadrant">
-          <default-box-settings font="Century Gothic"  justification="Far" />
+          <default-box-settings font="Century Gothic"  justification="Right" />
           <annotation-boxes>
             <annotation-box normalized-rectangle="0.500000\0.625000\1.000000\0.650000" annotation-item-id="" />
             <annotation-box normalized-rectangle="0.500000\0.650000\1.000000\0.675000" annotation-item-id="" />
@@ -408,7 +408,7 @@
           </annotation-boxes>
         </annotation-box-group>
         <annotation-box-group id="TopRightQuadrant">
-          <default-box-settings font="Century Gothic"  justification="Far" />
+          <default-box-settings font="Century Gothic"  justification="Right" />
           <annotation-boxes>
             <annotation-box normalized-rectangle="0.600000\0.000000\1.000000\0.025000" annotation-item-id="Dicom.GeneralSeries.SeriesDescription" />
             <annotation-box normalized-rectangle="0.500000\0.025000\1.000000\0.050000" annotation-item-id="Dicom.GeneralStudy.AccessionNumber" />
@@ -469,7 +469,7 @@
           </annotation-boxes>
         </annotation-box-group>
         <annotation-box-group id="BottomRightQuadrant">
-          <default-box-settings font="Century Gothic"  justification="Far" />
+          <default-box-settings font="Century Gothic"  justification="Right" />
           <annotation-boxes>
             <annotation-box normalized-rectangle="0.500000\0.625000\1.000000\0.650000" annotation-item-id="" />
             <annotation-box normalized-rectangle="0.500000\0.650000\1.000000\0.675000" annotation-item-id="" />
@@ -493,7 +493,7 @@
           <annotation-boxes>
             <annotation-box normalized-rectangle="0.000000\0.487500\0.100000\0.512500" annotation-item-id="Presentation.DirectionalMarkers.Left" />
             <annotation-box normalized-rectangle="0.900000\0.487500\1.000000\0.512500" annotation-item-id="Presentation.DirectionalMarkers.Right">
-              <box-settings justification="Far" />
+              <box-settings justification="Right" />
             </annotation-box>
             <annotation-box normalized-rectangle="0.450000\0.000000\0.550000\0.025000" annotation-item-id="Presentation.DirectionalMarkers.Top">
               <box-settings justification="Center" />
@@ -529,7 +529,7 @@
           </annotation-boxes>
         </annotation-box-group>
         <annotation-box-group id="TopRightQuadrant">
-          <default-box-settings font="Century Gothic"  justification="Far" />
+          <default-box-settings font="Century Gothic"  justification="Right" />
           <annotation-boxes>
             <annotation-box normalized-rectangle="0.600000\0.000000\1.000000\0.025000" annotation-item-id="Dicom.GeneralSeries.SeriesDescription" />
             <annotation-box normalized-rectangle="0.500000\0.025000\1.000000\0.050000" annotation-item-id="Dicom.GeneralStudy.AccessionNumber" />
@@ -602,7 +602,7 @@
           </annotation-boxes>
         </annotation-box-group>
         <annotation-box-group id="BottomRightQuadrant">
-          <default-box-settings font="Century Gothic"  justification="Far" />
+          <default-box-settings font="Century Gothic"  justification="Right" />
           <annotation-boxes>
             <annotation-box normalized-rectangle="0.500000\0.625000\1.000000\0.650000" annotation-item-id="" />
             <annotation-box normalized-rectangle="0.500000\0.650000\1.000000\0.675000" annotation-item-id="" />
@@ -626,7 +626,7 @@
           <annotation-boxes>
             <annotation-box normalized-rectangle="0.000000\0.487500\0.100000\0.512500" annotation-item-id="Presentation.DirectionalMarkers.Left" />
             <annotation-box normalized-rectangle="0.900000\0.487500\1.000000\0.512500" annotation-item-id="Presentation.DirectionalMarkers.Right">
-              <box-settings justification="Far" />
+              <box-settings justification="Right" />
             </annotation-box>
             <annotation-box normalized-rectangle="0.450000\0.000000\0.550000\0.025000" annotation-item-id="Presentation.DirectionalMarkers.Top">
               <box-settings justification="Center" />
@@ -662,7 +662,7 @@
           </annotation-boxes>
         </annotation-box-group>
         <annotation-box-group id="TopRightQuadrant">
-          <default-box-settings font="Century Gothic"  justification="Far" />
+          <default-box-settings font="Century Gothic"  justification="Right" />
           <annotation-boxes>
             <annotation-box normalized-rectangle="0.600000\0.000000\1.000000\0.025000" annotation-item-id="Dicom.GeneralSeries.SeriesDescription" />
             <annotation-box normalized-rectangle="0.500000\0.025000\1.000000\0.050000" annotation-item-id="Dicom.GeneralStudy.AccessionNumber" />
@@ -711,7 +711,7 @@
           </annotation-boxes>
         </annotation-box-group>
         <annotation-box-group id="BottomRightQuadrant">
-          <default-box-settings font="Century Gothic"  justification="Far" />
+          <default-box-settings font="Century Gothic"  justification="Right" />
           <annotation-boxes>
             <annotation-box normalized-rectangle="0.500000\0.625000\1.000000\0.650000" annotation-item-id="" />
             <annotation-box normalized-rectangle="0.500000\0.650000\1.000000\0.675000" annotation-item-id="" />
@@ -735,7 +735,7 @@
           <annotation-boxes>
             <annotation-box normalized-rectangle="0.000000\0.484375\0.100000\0.515625" annotation-item-id="Presentation.DirectionalMarkers.Left" />
             <annotation-box normalized-rectangle="0.900000\0.484375\1.000000\0.515625" annotation-item-id="Presentation.DirectionalMarkers.Right">
-              <box-settings justification="Far" />
+              <box-settings justification="Right" />
             </annotation-box>
             <annotation-box normalized-rectangle="0.450000\0.000000\0.550000\0.031250" annotation-item-id="Presentation.DirectionalMarkers.Top">
               <box-settings justification="Center" />
@@ -771,7 +771,7 @@
           </annotation-boxes>
         </annotation-box-group>
         <annotation-box-group id="TopRightQuadrant">
-          <default-box-settings font="Century Gothic" justification="Far" />
+          <default-box-settings font="Century Gothic" justification="Right" />
           <annotation-boxes>
             <annotation-box normalized-rectangle="0.600000\0.000000\1.000000\0.025000" annotation-item-id="Dicom.GeneralSeries.SeriesDescription" />
             <annotation-box normalized-rectangle="0.500000\0.025000\1.000000\0.050000" annotation-item-id="Dicom.GeneralStudy.AccessionNumber" />
@@ -824,7 +824,7 @@
           </annotation-boxes>
         </annotation-box-group>
         <annotation-box-group id="BottomRightQuadrant">
-          <default-box-settings font="Century Gothic"  justification="Far" />
+          <default-box-settings font="Century Gothic"  justification="Right" />
           <annotation-boxes>
             <annotation-box normalized-rectangle="0.500000\0.625000\1.000000\0.650000" annotation-item-id="" />
             <annotation-box normalized-rectangle="0.500000\0.650000\1.000000\0.675000" annotation-item-id="" />

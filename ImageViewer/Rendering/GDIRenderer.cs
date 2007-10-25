@@ -474,7 +474,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 			if (annotationBox.FitWidth)
 				format.Trimming = StringTrimming.None;
 
-			if (annotationBox.Justification == AnnotationBox.JustificationBehaviour.Far)
+			if (annotationBox.Justification == AnnotationBox.JustificationBehaviour.Right)
 				format.Alignment = StringAlignment.Far;
 			else if (annotationBox.Justification == AnnotationBox.JustificationBehaviour.Center)
 				format.Alignment = StringAlignment.Center;

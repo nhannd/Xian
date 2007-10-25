@@ -31,11 +31,36 @@
 
 namespace ClearCanvas.ImageViewer.Annotations
 {
+	/// <summary>
+	/// Provides text to be rendered to the overlay by an <see cref="ClearCanvas.ImageViewer.Rendering.IRenderer"/>.
+	/// </summary>
+	/// <seealso cref="AnnotationBox"/>
+	/// <seealso cref="AnnotationItemConfigurationOptions"/>
+	/// <seealso cref="IAnnotationItemProvider"/>
+	/// <seealso cref="IAnnotationLayout"/>
+	/// <seealso cref="IAnnotationLayoutProvider"/>
 	public interface IAnnotationItem
 	{
+
+		/// <summary>
+		/// Gets a unique identifier.
+		/// </summary>
 		string GetIdentifier();
+
+		/// <summary>
+		/// Gets a user friendly display name.
+		/// </summary>
 		string GetDisplayName();
+
+		/// <summary>
+		/// Gets the label that can be shown on the overlay depending on the <see cref="AnnotationBox"/>'s 
+		/// configuration (<see cref="AnnotationItemConfigurationOptions"/>).
+		/// </summary>
 		string GetLabel();
+
+		/// <summary>
+		/// Gets the annotation text for display on the overlay.
+		/// </summary>
 		string GetAnnotationText(IPresentationImage presentationImage);
 	}
 }

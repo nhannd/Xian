@@ -31,23 +31,38 @@
 
 namespace ClearCanvas.ImageViewer.Annotations
 {
+	/// <summary>
+	/// Configures how the <see cref="IAnnotationItem"/> text should be formatted/shown 
+	/// in an <see cref="AnnotationBox"/>.
+	/// </summary>
+	/// <seealso cref="IAnnotationItem"/>
 	public sealed class AnnotationItemConfigurationOptions
 	{
 		private bool _showLabel = false;
 		private bool _showLabelIfValueEmpty = false;
 
+		/// <summary>
+		/// Gets or sets whether or not to show the label (<see cref="IAnnotationItem.GetLabel"/>).
+		/// </summary>
 		public bool ShowLabel
 		{
 			get { return _showLabel; }
 			set { _showLabel = value; }
 		}
 
+		/// <summary>
+		/// Gets or sets whether or not to show the label (<see cref="IAnnotationItem.GetLabel"/>) even
+		/// if the overlay text (<see cref="IAnnotationItem.GetAnnotationText"/>) is empty.
+		/// </summary>
 		public bool ShowLabelIfValueEmpty
 		{
 			get { return _showLabelIfValueEmpty; }
 			set { _showLabelIfValueEmpty = value; }
 		}
 
+		/// <summary>
+		/// Clones the <see cref="AnnotationItemConfigurationOptions"/>.
+		/// </summary>
 		public AnnotationItemConfigurationOptions Clone()
 		{
 			AnnotationItemConfigurationOptions newItem = new AnnotationItemConfigurationOptions();

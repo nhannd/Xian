@@ -46,23 +46,20 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Presentation
 		{
 		}
 
-		protected override IEnumerable<IAnnotationItem> AnnotationItems
+		public override IEnumerable<IAnnotationItem> GetAnnotationItems()
 		{
-			get
-			{
-				List<IAnnotationItem> annotationItems = new List<IAnnotationItem>();
+			List<IAnnotationItem> annotationItems = new List<IAnnotationItem>();
 
-				annotationItems.Add((IAnnotationItem)new ZoomAnnotationItem());
-				annotationItems.Add((IAnnotationItem)new AppliedLutAnnotationItem());
-				//annotationItems.Add((IAnnotationItem)new DFOVAnnotationItem());
+			annotationItems.Add((IAnnotationItem)new ZoomAnnotationItem());
+			annotationItems.Add((IAnnotationItem)new AppliedLutAnnotationItem());
+			//annotationItems.Add((IAnnotationItem)new DFOVAnnotationItem());
 
-				annotationItems.Add((IAnnotationItem)new DirectionalMarkerAnnotationItem(DirectionalMarkerAnnotationItem.ImageEdge.Left));
-				annotationItems.Add((IAnnotationItem)new DirectionalMarkerAnnotationItem(DirectionalMarkerAnnotationItem.ImageEdge.Top));
-				annotationItems.Add((IAnnotationItem)new DirectionalMarkerAnnotationItem(DirectionalMarkerAnnotationItem.ImageEdge.Right));
-				annotationItems.Add((IAnnotationItem)new DirectionalMarkerAnnotationItem(DirectionalMarkerAnnotationItem.ImageEdge.Bottom));
+			annotationItems.Add((IAnnotationItem)new DirectionalMarkerAnnotationItem(DirectionalMarkerAnnotationItem.ImageEdge.Left));
+			annotationItems.Add((IAnnotationItem)new DirectionalMarkerAnnotationItem(DirectionalMarkerAnnotationItem.ImageEdge.Top));
+			annotationItems.Add((IAnnotationItem)new DirectionalMarkerAnnotationItem(DirectionalMarkerAnnotationItem.ImageEdge.Right));
+			annotationItems.Add((IAnnotationItem)new DirectionalMarkerAnnotationItem(DirectionalMarkerAnnotationItem.ImageEdge.Bottom));
 
-				return annotationItems;
-			}
+			return annotationItems;
 		}
 	}
 }

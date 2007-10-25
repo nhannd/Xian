@@ -36,21 +36,19 @@ namespace ClearCanvas.ImageViewer.Annotations.Dicom
 {
 	internal sealed class DicomFilteredAnnotationLayoutProvider : StoredAnnotatationLayoutProvider
 	{
-		private IImageSopProvider _image;
+		private IImageSopProvider _provider;
 
-		public DicomFilteredAnnotationLayoutProvider(IImageSopProvider image)
+		public DicomFilteredAnnotationLayoutProvider(IImageSopProvider provider)
 		{
-			Platform.CheckForNullReference(image, "image");
-			_image = image;
+			Platform.CheckForNullReference(provider, "provider");
+			_provider = provider;
 		}
 
 		protected override string StoredLayoutId
 		{
 			get 
 			{
-				string layoutId = DicomFilteredAnnotationLayoutStore.Instance.GetMatchingStoredLayoutId(_image);
-				//Trace.WriteLine(String.Format("Layout Id: {0}", layoutId));
-				return layoutId;
+				return DicomFilteredAnnotationLayoutStore.Instance.GetMatchingStoredLayoutId(_provider);
 			}
 		}
 	}

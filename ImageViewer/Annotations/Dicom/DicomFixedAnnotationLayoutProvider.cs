@@ -125,7 +125,7 @@ namespace ClearCanvas.ImageViewer.Annotations.Dicom
 			layout.AnnotationBoxGroups.Add(group);
 			group.DefaultBoxSettings.Color = "OrangeRed";
 			group.DefaultBoxSettings.Font = "Century Gothic";
-			group.DefaultBoxSettings.Justification = AnnotationBox.JustificationBehaviour.Far;
+			group.DefaultBoxSettings.Justification = AnnotationBox.JustificationBehaviour.Right;
 			y = 0.0F;
 			//TR
 			for (int i = 0; i < numberOfBoxesPerQuadrant; ++i)
@@ -173,7 +173,7 @@ namespace ClearCanvas.ImageViewer.Annotations.Dicom
 			group.DefaultBoxSettings.Color = "Yellow";
 			group.DefaultBoxSettings.Font = "Century Gothic";
 			//group.DefaultBoxSettings.NumberOfLines = 2;
-			group.DefaultBoxSettings.Justification = AnnotationBox.JustificationBehaviour.Far;
+			group.DefaultBoxSettings.Justification = AnnotationBox.JustificationBehaviour.Right;
 
 			y = 1.0F - boxheight;
 			//BR
@@ -200,8 +200,8 @@ namespace ClearCanvas.ImageViewer.Annotations.Dicom
 			group.DefaultBoxSettings.Font = "Century Gothic";
 			group.DefaultBoxSettings.NumberOfLines = 1;
 
-			CreateDirectionalMarkerBox(0.00F, (1F - boxheight) / 2F, 0.1F, boxheight, AnnotationBox.JustificationBehaviour.Near, "Presentation.DirectionalMarkers.Left", group);
-			CreateDirectionalMarkerBox(0.90F, (1F - boxheight) / 2F, 0.1F, boxheight, AnnotationBox.JustificationBehaviour.Far, "Presentation.DirectionalMarkers.Right", group);
+			CreateDirectionalMarkerBox(0.00F, (1F - boxheight) / 2F, 0.1F, boxheight, AnnotationBox.JustificationBehaviour.Left, "Presentation.DirectionalMarkers.Left", group);
+			CreateDirectionalMarkerBox(0.90F, (1F - boxheight) / 2F, 0.1F, boxheight, AnnotationBox.JustificationBehaviour.Right, "Presentation.DirectionalMarkers.Right", group);
 			CreateDirectionalMarkerBox(0.45F, 0F, 0.1F, boxheight, AnnotationBox.JustificationBehaviour.Center, "Presentation.DirectionalMarkers.Top", group);
 			CreateDirectionalMarkerBox(0.45F, 1F - boxheight, 0.1F, boxheight, AnnotationBox.JustificationBehaviour.Center, "Presentation.DirectionalMarkers.Bottom", group);
 

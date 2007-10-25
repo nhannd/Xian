@@ -214,6 +214,15 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to AnnotationItem has no display name: {0}..
+        /// </summary>
+        public static string ExceptionFormatAnnotationItemHasNoDisplayName {
+            get {
+                return ResourceManager.GetString("ExceptionFormatAnnotationItemHasNoDisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No Color Map factory extension exists with the name {0}..
         /// </summary>
         public static string ExceptionFormatNoColorMapFactoryExistWithName {

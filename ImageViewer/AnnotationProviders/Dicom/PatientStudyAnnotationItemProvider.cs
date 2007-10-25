@@ -51,80 +51,77 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 		{
 		}
 
-		protected override IEnumerable<IAnnotationItem> AnnotationItems
+		public override IEnumerable<IAnnotationItem> GetAnnotationItems()
 		{
-			get
+			if (_annotationItems == null)
 			{
-				if (_annotationItems == null)
-				{
-					_annotationItems = new List<IAnnotationItem>();
+				_annotationItems = new List<IAnnotationItem>();
 
-					AnnotationResourceResolver resolver = new AnnotationResourceResolver(this);
+				AnnotationResourceResolver resolver = new AnnotationResourceResolver(this);
 
-					_annotationItems.Add
+				_annotationItems.Add
+					(
+						new DicomAnnotationItem<string>
 						(
-							new DicomAnnotationItem<string>
-							(
-								"Dicom.PatientStudy.AdditionalPatientsHistory",
-								resolver,
-								delegate(ImageSop imageSop) { return imageSop.AdditionalPatientsHistory; },
-								DicomBasicResultFormatter.RawStringFormat
-							)
-						);
+							"Dicom.PatientStudy.AdditionalPatientsHistory",
+							resolver,
+							delegate(ImageSop imageSop) { return imageSop.AdditionalPatientsHistory; },
+							DicomDataFormatHelper.RawStringFormat
+						)
+					);
 
-					_annotationItems.Add
+				_annotationItems.Add
+					(
+						new DicomAnnotationItem<string>
 						(
-							new DicomAnnotationItem<string>
-							(
-								"Dicom.PatientStudy.Occupation",
-								resolver,
-								new DicomTagAsStringRetriever(DicomTags.Occupation).GetTagValue,
-								DicomBasicResultFormatter.RawStringFormat
-							)
-						);
+							"Dicom.PatientStudy.Occupation",
+							resolver,
+							new DicomTagAsStringRetriever(DicomTags.Occupation).GetTagValue,
+							DicomDataFormatHelper.RawStringFormat
+						)
+					);
 
-					_annotationItems.Add
+				_annotationItems.Add
+					(
+						new DicomAnnotationItem<string>
 						(
-							new DicomAnnotationItem<string>
-							(
-								"Dicom.PatientStudy.PatientsAge",
-								resolver,
-								new DicomTagAsStringRetriever(DicomTags.PatientsAge).GetTagValue,
-								DicomBasicResultFormatter.RawStringFormat
-							)
-						);
+							"Dicom.PatientStudy.PatientsAge",
+							resolver,
+							new DicomTagAsStringRetriever(DicomTags.PatientsAge).GetTagValue,
+							DicomDataFormatHelper.RawStringFormat
+						)
+					);
 
-					_annotationItems.Add
+				_annotationItems.Add
+					(
+						new DicomAnnotationItem<double>
 						(
-							new DicomAnnotationItem<double>
-							(
-								"Dicom.PatientStudy.PatientsSize",
-								resolver,
-								new DicomTagAsDoubleRetriever(DicomTags.PatientsSize).GetTagValue,
-								delegate(double input)
-								{
-									return String.Format("{0} {1}", input.ToString("F2"), SR.Label_metres);
-								}
-							)
-						);
+							"Dicom.PatientStudy.PatientsSize",
+							resolver,
+							new DicomTagAsDoubleRetriever(DicomTags.PatientsSize).GetTagValue,
+							delegate(double input)
+							{
+								return String.Format("{0} {1}", input.ToString("F2"), SR.Label_metres);
+							}
+						)
+					);
 
-					_annotationItems.Add
+				_annotationItems.Add
+					(
+						new DicomAnnotationItem<double>
 						(
-							new DicomAnnotationItem<double>
-							(
-								"Dicom.PatientStudy.PatientsWeight",
-								resolver,
-								new DicomTagAsDoubleRetriever(DicomTags.PatientsWeight).GetTagValue,
-								delegate(double input)
-								{
-									return String.Format("{0} {1}", input.ToString("F2"), SR.Label_kilograms);
-								}
-							)
-						);
-				}
-
-				return _annotationItems;
+							"Dicom.PatientStudy.PatientsWeight",
+							resolver,
+							new DicomTagAsDoubleRetriever(DicomTags.PatientsWeight).GetTagValue,
+							delegate(double input)
+							{
+								return String.Format("{0} {1}", input.ToString("F2"), SR.Label_kilograms);
+							}
+						)
+					);
 			}
+
+			return _annotationItems;
 		}
 	}
 }

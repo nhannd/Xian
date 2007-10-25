@@ -36,6 +36,7 @@ using System.Drawing;
 using System.IO;
 using System.Xml;
 using ClearCanvas.Common;
+using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.Annotations
 {
@@ -414,7 +415,7 @@ namespace ClearCanvas.ImageViewer.Annotations
 					return false;
 
 				normalizedRectangle = RectangleF.FromLTRB(left, top, right, bottom);
-				return true;
+				return RectangleUtilities.IsRectangleNormalized(normalizedRectangle);
 			}
 		}
 

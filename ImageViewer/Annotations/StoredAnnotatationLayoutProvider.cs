@@ -30,7 +30,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using ClearCanvas.Common;
 
@@ -67,7 +66,7 @@ namespace ClearCanvas.ImageViewer.Annotations
 					AnnotationBox box = new AnnotationBox(new RectangleF(0.5F,0.90F, 0.5F, 0.10F), item);
 					box.Bold = true;
 					box.Color = "Red";
-					box.Justification = AnnotationBox.JustificationBehaviour.Far;
+					box.Justification = AnnotationBox.JustificationBehaviour.Right;
 					box.NumberOfLines = 5;
 					box.VerticalAlignment = AnnotationBox.VerticalAlignmentBehaviour.Bottom;
 

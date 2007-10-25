@@ -51,130 +51,127 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 		{
 		}
 
-		protected override IEnumerable<IAnnotationItem> AnnotationItems
+		public override IEnumerable<IAnnotationItem> GetAnnotationItems()
 		{
-			get
+			if (_annotationItems == null)
 			{
-				if (_annotationItems == null)
-				{
-					_annotationItems = new List<IAnnotationItem>();
+				_annotationItems = new List<IAnnotationItem>();
 
-					AnnotationResourceResolver resolver = new AnnotationResourceResolver(this);
+				AnnotationResourceResolver resolver = new AnnotationResourceResolver(this);
 
-					_annotationItems.Add
+				_annotationItems.Add
+					(
+						new DicomAnnotationItem<string>
 						(
-							new DicomAnnotationItem<string>
-							(
-								"Dicom.GeneralEquipment.DateOfLastCalibration",
-								resolver,
-								new DicomTagAsStringRetriever(DicomTags.DateOfLastCalibration).GetTagValue,
-								DicomBasicResultFormatter.DateFormat
-							)
-						);
+							"Dicom.GeneralEquipment.DateOfLastCalibration",
+							resolver,
+							new DicomTagAsStringRetriever(DicomTags.DateOfLastCalibration).GetTagValue,
+							DicomDataFormatHelper.DateFormat
+						)
+					);
 
-					_annotationItems.Add
+				_annotationItems.Add
+					(
+						new DicomAnnotationItem<string>
 						(
-							new DicomAnnotationItem<string>
-							(
-								"Dicom.GeneralEquipment.TimeOfLastCalibration",
-								resolver,
-								new DicomTagAsStringRetriever(DicomTags.TimeOfLastCalibration).GetTagValue,
-								DicomBasicResultFormatter.TimeFormat
-							)
-						);
+							"Dicom.GeneralEquipment.TimeOfLastCalibration",
+							resolver,
+							new DicomTagAsStringRetriever(DicomTags.TimeOfLastCalibration).GetTagValue,
+							DicomDataFormatHelper.TimeFormat
+						)
+					);
 
-					_annotationItems.Add
+				_annotationItems.Add
+					(
+						new DicomAnnotationItem<string>
 						(
-							new DicomAnnotationItem<string>
-							(
-								"Dicom.GeneralEquipment.DeviceSerialNumber",
-								resolver,
-								new DicomTagAsStringRetriever(DicomTags.DeviceSerialNumber).GetTagValue,
-								DicomBasicResultFormatter.RawStringFormat
-							)
-						);
+							"Dicom.GeneralEquipment.DeviceSerialNumber",
+							resolver,
+							new DicomTagAsStringRetriever(DicomTags.DeviceSerialNumber).GetTagValue,
+							DicomDataFormatHelper.RawStringFormat
+						)
+					);
 
-					_annotationItems.Add
+				_annotationItems.Add
+					(
+						new DicomAnnotationItem<string>
 						(
-							new DicomAnnotationItem<string>
-							(
-								"Dicom.GeneralEquipment.InstitutionAddress",
-								resolver,
-								new DicomTagAsStringRetriever(DicomTags.InstitutionAddress).GetTagValue,
-								DicomBasicResultFormatter.RawStringFormat
-							)
-						);
+							"Dicom.GeneralEquipment.InstitutionAddress",
+							resolver,
+							new DicomTagAsStringRetriever(DicomTags.InstitutionAddress).GetTagValue,
+							DicomDataFormatHelper.RawStringFormat
+						)
+					);
 
 
-					_annotationItems.Add
+				_annotationItems.Add
+					(
+						new DicomAnnotationItem<string>
 						(
-							new DicomAnnotationItem<string>
-							(
-								"Dicom.GeneralEquipment.InstitutionalDepartmentName",
-								resolver,
-								delegate(ImageSop imageSop) { return imageSop.InstitutionalDepartmentName; },
-								DicomBasicResultFormatter.RawStringFormat
-							)
-						);
+							"Dicom.GeneralEquipment.InstitutionalDepartmentName",
+							resolver,
+							delegate(ImageSop imageSop) { return imageSop.InstitutionalDepartmentName; },
+							DicomDataFormatHelper.RawStringFormat
+						)
+					);
 
-					_annotationItems.Add
+				_annotationItems.Add
+					(
+						new DicomAnnotationItem<string>
 						(
-							new DicomAnnotationItem<string>
-							(
-								"Dicom.GeneralEquipment.InstitutionName",
-								resolver,
-								delegate(ImageSop imageSop) { return imageSop.InstitutionName; },
-								DicomBasicResultFormatter.RawStringFormat
-							)
-						);
+							"Dicom.GeneralEquipment.InstitutionName",
+							resolver,
+							delegate(ImageSop imageSop) { return imageSop.InstitutionName; },
+							DicomDataFormatHelper.RawStringFormat
+						)
+					);
 
-					_annotationItems.Add
+				_annotationItems.Add
+					(
+						new DicomAnnotationItem<string>
 						(
-							new DicomAnnotationItem<string>
-							(
-								"Dicom.GeneralEquipment.Manufacturer",
-								resolver,
-								delegate(ImageSop imageSop) { return imageSop.Manufacturer; },
-								DicomBasicResultFormatter.RawStringFormat
-							)
-						);
+							"Dicom.GeneralEquipment.Manufacturer",
+							resolver,
+							delegate(ImageSop imageSop) { return imageSop.Manufacturer; },
+							DicomDataFormatHelper.RawStringFormat
+						)
+					);
 
-					_annotationItems.Add
+				_annotationItems.Add
+					(
+						new DicomAnnotationItem<string>
 						(
-							new DicomAnnotationItem<string>
-							(
-								"Dicom.GeneralEquipment.ManufacturersModelName",
-								resolver,
-								delegate(ImageSop imageSop) { return imageSop.ManufacturersModelName; },
-								DicomBasicResultFormatter.RawStringFormat
-							)
-						);
+							"Dicom.GeneralEquipment.ManufacturersModelName",
+							resolver,
+							delegate(ImageSop imageSop) { return imageSop.ManufacturersModelName; },
+							DicomDataFormatHelper.RawStringFormat
+						)
+					);
 
-					_annotationItems.Add
+				_annotationItems.Add
+					(
+						new DicomAnnotationItem<string>
 						(
-							new DicomAnnotationItem<string>
-							(
-								"Dicom.GeneralEquipment.StationName",
-								resolver,
-								delegate(ImageSop imageSop) { return imageSop.StationName; },
-								DicomBasicResultFormatter.RawStringFormat
-							)
-						);
+							"Dicom.GeneralEquipment.StationName",
+							resolver,
+							delegate(ImageSop imageSop) { return imageSop.StationName; },
+							DicomDataFormatHelper.RawStringFormat
+						)
+					);
 
-					_annotationItems.Add
+				_annotationItems.Add
+					(
+						new DicomAnnotationItem<string[]>
 						(
-							new DicomAnnotationItem<string[]>
-							(
-								"Dicom.GeneralEquipment.SoftwareVersions",
-								resolver,
-								new DicomTagAsStringArrayRetriever(DicomTags.SoftwareVersions).GetTagValue,
-								DicomBasicResultFormatter.StringListFormat
-							)
-						);
-				}
-				
-				return _annotationItems;
+							"Dicom.GeneralEquipment.SoftwareVersions",
+							resolver,
+							new DicomTagAsStringArrayRetriever(DicomTags.SoftwareVersions).GetTagValue,
+							DicomDataFormatHelper.StringListFormat
+						)
+					);
 			}
+			
+			return _annotationItems;
 		}
 	}
 }

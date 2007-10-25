@@ -51,133 +51,130 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 		{
 		}
 
-		protected override IEnumerable<IAnnotationItem> AnnotationItems
+		public override IEnumerable<IAnnotationItem> GetAnnotationItems()
 		{
-			get
+			if (_annotationItems == null)
 			{
-				if (_annotationItems == null)
-				{
-					_annotationItems = new List<IAnnotationItem>();
+				_annotationItems = new List<IAnnotationItem>();
 
-					AnnotationResourceResolver resolver = new AnnotationResourceResolver(this);
+				AnnotationResourceResolver resolver = new AnnotationResourceResolver(this);
 
-					_annotationItems.Add
+				_annotationItems.Add
+					(
+						new DicomAnnotationItem<string>
 						(
-							new DicomAnnotationItem<string>
-							(
-								"Dicom.MRImage.EchoTime",
-								resolver,
-								delegate(ImageSop imageSop)
-								{
-									double val = double.NaN;
-									bool tagExists;
-									imageSop.GetTag(DicomTags.EchoTime, out val, out tagExists);
-									string str = String.Format("{0:F2} ms", val);
-									return str;
-								},
-								DicomBasicResultFormatter.RawStringFormat
-							)
-						);
+							"Dicom.MRImage.EchoTime",
+							resolver,
+							delegate(ImageSop imageSop)
+							{
+								double val = double.NaN;
+								bool tagExists;
+								imageSop.GetTag(DicomTags.EchoTime, out val, out tagExists);
+								string str = String.Format("{0:F2} ms", val);
+								return str;
+							},
+							DicomDataFormatHelper.RawStringFormat
+						)
+					);
 
-					_annotationItems.Add
+				_annotationItems.Add
+					(
+						new DicomAnnotationItem<string>
 						(
-							new DicomAnnotationItem<string>
-							(
-								"Dicom.MRImage.MagneticFieldStrength",
-								resolver,
-								delegate(ImageSop imageSop)
-								{
-									double val = double.NaN;
-									bool tagExists;
-									imageSop.GetTag(DicomTags.MagneticFieldStrength, out val, out tagExists);
+							"Dicom.MRImage.MagneticFieldStrength",
+							resolver,
+							delegate(ImageSop imageSop)
+							{
+								double val = double.NaN;
+								bool tagExists;
+								imageSop.GetTag(DicomTags.MagneticFieldStrength, out val, out tagExists);
 
-									double strengthInTeslas = val / 10000;
-									string str = String.Format("{0:F1}T", strengthInTeslas);
-									return str;
-								},
-								DicomBasicResultFormatter.RawStringFormat
-							)
-						);
+								double strengthInTeslas = val / 10000;
+								string str = String.Format("{0:F1}T", strengthInTeslas);
+								return str;
+							},
+							DicomDataFormatHelper.RawStringFormat
+						)
+					);
 
-					_annotationItems.Add
+				_annotationItems.Add
+					(
+						new DicomAnnotationItem<string>
 						(
-							new DicomAnnotationItem<string>
-							(
-								"Dicom.MRImage.AcquisitionMatrix",
-								resolver,
-								delegate(ImageSop imageSop)
-								{
-									ushort frequencyRows, frequencyColumns, phaseRows, phaseColumns;
-									bool tagExists;
-									imageSop.GetTag(DicomTags.AcquisitionMatrix, out frequencyRows, 0, out tagExists);
-									imageSop.GetTag(DicomTags.AcquisitionMatrix, out frequencyColumns, 1, out tagExists);
-									imageSop.GetTag(DicomTags.AcquisitionMatrix, out phaseRows, 2, out tagExists);
-									imageSop.GetTag(DicomTags.AcquisitionMatrix, out phaseColumns, 3, out tagExists);
+							"Dicom.MRImage.AcquisitionMatrix",
+							resolver,
+							delegate(ImageSop imageSop)
+							{
+								ushort frequencyRows, frequencyColumns, phaseRows, phaseColumns;
+								bool tagExists;
+								imageSop.GetTag(DicomTags.AcquisitionMatrix, out frequencyRows, 0, out tagExists);
+								imageSop.GetTag(DicomTags.AcquisitionMatrix, out frequencyColumns, 1, out tagExists);
+								imageSop.GetTag(DicomTags.AcquisitionMatrix, out phaseRows, 2, out tagExists);
+								imageSop.GetTag(DicomTags.AcquisitionMatrix, out phaseColumns, 3, out tagExists);
 
-									// Just include freq for now
-									string str = String.Format("{0} x {1}", frequencyColumns, phaseRows);
-									return str;
-								},
-								DicomBasicResultFormatter.RawStringFormat
-							)
-						);
+								// Just include freq for now
+								string str = String.Format("{0} x {1}", frequencyColumns, phaseRows);
+								return str;
+							},
+							DicomDataFormatHelper.RawStringFormat
+						)
+					);
 
-					_annotationItems.Add
+				_annotationItems.Add
+					(
+						new DicomAnnotationItem<string>
 						(
-							new DicomAnnotationItem<string>
-							(
-								"Dicom.MRImage.ReceiveCoilName",
-								resolver,
-								delegate(ImageSop imageSop)
-								{
-									string val;
-									bool tagExists;
-									imageSop.GetTag(DicomTags.ReceiveCoilName, out val, out tagExists);
-									return val;
-								},
-								DicomBasicResultFormatter.RawStringFormat
-							)
-						);
+							"Dicom.MRImage.ReceiveCoilName",
+							resolver,
+							delegate(ImageSop imageSop)
+							{
+								string val;
+								bool tagExists;
+								imageSop.GetTag(DicomTags.ReceiveCoilName, out val, out tagExists);
+								return val;
+							},
+							DicomDataFormatHelper.RawStringFormat
+						)
+					);
 
-					_annotationItems.Add
+				_annotationItems.Add
+					(
+						new DicomAnnotationItem<string>
 						(
-							new DicomAnnotationItem<string>
-							(
-								"Dicom.MRImage.RepetitionTime",
-								resolver,
-								delegate(ImageSop imageSop)
-								{
-									double val = double.NaN;
-									bool tagExists;
-									imageSop.GetTag(DicomTags.RepetitionTime, out val, out tagExists);
-									string str = String.Format("{0:F2} ms", val);
-									return str;
-								},
-								DicomBasicResultFormatter.RawStringFormat
-							)
-						);
+							"Dicom.MRImage.RepetitionTime",
+							resolver,
+							delegate(ImageSop imageSop)
+							{
+								double val = double.NaN;
+								bool tagExists;
+								imageSop.GetTag(DicomTags.RepetitionTime, out val, out tagExists);
+								string str = String.Format("{0:F2} ms", val);
+								return str;
+							},
+							DicomDataFormatHelper.RawStringFormat
+						)
+					);
 
-					_annotationItems.Add
+				_annotationItems.Add
+					(
+						new DicomAnnotationItem<string>
 						(
-							new DicomAnnotationItem<string>
-							(
-								"Dicom.MRImage.EchoTrainLength",
-								resolver,
-								delegate(ImageSop imageSop)
-								{
-									int val;
-									bool tagExists;
-									imageSop.GetTag(DicomTags.EchoTrainLength, out val, out tagExists);
-									string str = String.Format("{0}", val);
-									return str;
-								},
-								DicomBasicResultFormatter.RawStringFormat
-							)
-						);
-				}
-
-				return _annotationItems;
+							"Dicom.MRImage.EchoTrainLength",
+							resolver,
+							delegate(ImageSop imageSop)
+							{
+								int val;
+								bool tagExists;
+								imageSop.GetTag(DicomTags.EchoTrainLength, out val, out tagExists);
+								string str = String.Format("{0}", val);
+								return str;
+							},
+							DicomDataFormatHelper.RawStringFormat
+						)
+					);
 			}
+
+			return _annotationItems;
 		}
 	}
 }

@@ -42,7 +42,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AnnotationResourceResolver.cs" />
     <Compile Include="Dicom\ImagePlaneAnnotationItemProvider.cs" />
     <Compile Include="Dicom\MRImageAnnotationItemProvider.cs" />
     <Compile Include="Dicom\CTImageAnnotationItemProvider.cs" />

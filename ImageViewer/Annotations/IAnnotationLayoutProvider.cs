@@ -50,6 +50,7 @@ namespace ClearCanvas.ImageViewer.Annotations
 	/// any type of <see cref="PresentationImage"/> that implements the provider interface.
 	/// </para>
 	/// </remarks>
+	/// <seealso cref="IAnnotationLayout"/>
 	public interface IAnnotationLayoutProvider
 	{
 		/// <summary>

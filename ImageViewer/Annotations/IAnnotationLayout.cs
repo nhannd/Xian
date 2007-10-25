@@ -33,8 +33,16 @@ using System.Collections.Generic;
 
 namespace ClearCanvas.ImageViewer.Annotations
 {
+	/// <summary>
+	/// Defines an entire layout of <see cref="AnnotationBox"/>es to be rendered to
+	/// the overlay by an <see cref="ClearCanvas.ImageViewer.Rendering.IRenderer"/>.
+	/// </summary>
+	/// <seealso cref="AnnotationBox"/>
 	public interface IAnnotationLayout
 	{
+		/// <summary>
+		/// Gets the entire set of <see cref="AnnotationBox"/>es.
+		/// </summary>
 		IEnumerable<AnnotationBox> AnnotationBoxes { get; }
 	}
 }
