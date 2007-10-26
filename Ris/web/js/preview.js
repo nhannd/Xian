@@ -220,20 +220,28 @@ function formatReport(report)
             if (addendumContent)
             {
                 var isAddendumDraft = new Boolean(addendumPart.Status.Code == 'P');
-                
-                formattedReport += isAddendumDraft == true ? "<font color='red'>Draft: " : "";
-                formattedReport += addendumContent;
+                var isCancelled = new Boolean(addendumPart.Status.Code == 'X');
 
+				if (isAddendumDraft == true)
+					formattedReport += "<font color='red'><b>Addendum " + i + " (Draft): </b><br>";
+				else if (isCancelled == true)
+					formattedReport += "<b>Addendum " + i + " (cancelled): </b><br>";
+				else
+					formattedReport += "<b>Addendum " + i + ": </b><br>";
+
+                formattedReport += addendumContent;
+			
 				formattedReport += formatReportPerformer(addendumPart);
 
-                formattedReport += isAddendumDraft == true ? "</font>" : "";
-                formattedReport += "<br><br>";
+				if (isAddendumDraft == true)
+					formattedReport += "</font>";
+
+				formattedReport += "<br><br>";
             }
         }
 
         if (formattedReport)
             formattedReport = "<h3>Addendum:</h3>" + formattedReport;
-
     }
         
     var mainReport = JSML.parse(report.Parts[0].Content);

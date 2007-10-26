@@ -83,31 +83,36 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             " join o.Patient p" +
             " join p.Profiles pp";
 
+        private const string _hqlJoinReportPart =
+            " join rps.ReportPart rpp";
+
         private const string _hqlSingleStateCondition =
             " where rps.State = :rpsState";
-
-        private const string _hqlCommunualWorklistCondition = 
-            _hqlSingleStateCondition +
-            " and rps.Scheduling.Performer is NULL";
-
-        private const string _hqlMySingleStateCondition =
-            _hqlSingleStateCondition +
-            " and rps.Scheduling.Performer = :performingStaff";
 
         private const string _hqlDualStateCondition =
             " where (rps.State = :rpsState or rps.State = :rpsState2)";
 
-        private const string _hqlMyDualStateCondition = 
-            _hqlDualStateCondition + 
-            " and rps.Scheduling.Performer = :performingStaff";
+        private const string _hqlCommunualWorklistCondition = 
+            " and rps.Scheduling.Performer is NULL";
+
+        private const string _hqlScheduledCondition = 
+            " and rps.Scheduling.Performer = :scheduledPerformingStaff";
+
+        private const string _hqlPerformerCondition =
+            " and rps.Performer = :performingStaff";
 
         private const string _hqlWorklistSubQuery = 
             " and rp.Type in" +
             " (select distinct rpt from Worklist w join w.RequestedProcedureTypeGroups rptg join rptg.RequestedProcedureTypes rpt where w = :worklist)";
 
-        private const string _hqlSupervisorSubQuery = 
-            " and rp in" +
-            " (select report.Procedure from Report report where report.Supervisor = :supervisorStaff)";
+        private const string _hqlReportPartInterpretorCondition =
+            " and rpp.Interpretor = :interpretorStaff";
+
+        private const string _hqlSupervisorSubQuery =
+            " and rpp.Supervisor = :supervisorStaff";
+
+        private const string _hqlNoSupervisorSubQuery =
+            " and rpp.Supervisor is NULL";
 
         #region Query helpers
 
@@ -155,7 +160,9 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         public IList<WorklistItem> GetToBeReportedWorklist(ReportingToBeReportedWorklist worklist)
         {
-            string hqlQuery = String.Concat(_hqlToBeReportedWorklist, _hqlJoin, _hqlCommunualWorklistCondition);
+            string hqlQuery = String.Concat(_hqlToBeReportedWorklist, 
+                _hqlJoin, 
+                _hqlSingleStateCondition, _hqlCommunualWorklistCondition);
 
             List<QueryParameter> parameters = new List<QueryParameter>();
             parameters.Add(new QueryParameter("rpsState", ActivityStatus.SC.ToString()));
@@ -169,61 +176,99 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             return GetWorklist(hqlQuery, parameters);
         }
 
-        public IList<WorklistItem> GetDraftWorklist(Staff performingStaff)
+        public IList<WorklistItem> GetDraftWorklist(Staff currentStaff)
         {
-            string hqlQuery = String.Concat(_hqlToBeReportedWorklist, _hqlJoin, _hqlMyDualStateCondition);
+            string hqlQuery = String.Concat(_hqlToBeReportedWorklist, 
+                _hqlJoin, 
+                _hqlDualStateCondition, _hqlScheduledCondition);
 
             List<QueryParameter> parameters = new List<QueryParameter>();
             parameters.Add(new QueryParameter("rpsState", ActivityStatus.SC.ToString()));
             parameters.Add(new QueryParameter("rpsState2", ActivityStatus.IP.ToString()));
-            parameters.Add(new QueryParameter("performingStaff", performingStaff));
+            parameters.Add(new QueryParameter("scheduledPerformingStaff", currentStaff));
 
             return GetWorklist(hqlQuery, parameters);
         }
 
-        public IList<WorklistItem> GetInTranscriptionWorklist(Staff performingStaff)
+        public IList<WorklistItem> GetInTranscriptionWorklist(Staff currentStaff)
         {
-            string hqlQuery = String.Concat(_hqlSelectTranscriptionWorklist, _hqlJoin, _hqlMyDualStateCondition);
+            string hqlQuery = String.Concat(_hqlSelectTranscriptionWorklist, 
+                _hqlJoin, 
+                _hqlDualStateCondition, _hqlScheduledCondition);
 
             List<QueryParameter> parameters = new List<QueryParameter>();
             parameters.Add(new QueryParameter("rpsState", ActivityStatus.SC.ToString()));
             parameters.Add(new QueryParameter("rpsState2", ActivityStatus.IP.ToString()));
-            parameters.Add(new QueryParameter("performingStaff", performingStaff));
+            parameters.Add(new QueryParameter("scheduledPerformingStaff", currentStaff));
 
             return GetWorklist(hqlQuery, parameters);
         }
 
-        public IList<WorklistItem> GetToBeVerifiedWorklist(Staff performingStaff)
+        public IList<WorklistItem> GetToBeVerifiedWorklist(Staff currentStaff)
         {
-            string hqlQuery = String.Concat(_hqlSelectVerificationWorklist, _hqlJoin, _hqlMyDualStateCondition);
+            string hqlQuery = String.Concat(_hqlSelectVerificationWorklist, 
+                _hqlJoin, _hqlJoinReportPart, 
+                _hqlDualStateCondition, _hqlScheduledCondition, _hqlReportPartInterpretorCondition, _hqlNoSupervisorSubQuery);
 
             List<QueryParameter> parameters = new List<QueryParameter>();
             parameters.Add(new QueryParameter("rpsState", ActivityStatus.SC.ToString()));
             parameters.Add(new QueryParameter("rpsState2", ActivityStatus.IP.ToString()));
-            parameters.Add(new QueryParameter("performingStaff", performingStaff));
+            parameters.Add(new QueryParameter("scheduledPerformingStaff", currentStaff));
+            parameters.Add(new QueryParameter("interpretorStaff", currentStaff));
 
             return GetWorklist(hqlQuery, parameters);
         }
 
-        public IList<WorklistItem> GetResidentToBeVerifiedWorklist(Staff performingStaff)
+        public IList<WorklistItem> GetVerifiedWorklist(Staff currentStaff)
         {
-            string hqlQuery = String.Concat(_hqlSelectVerificationWorklist, _hqlJoin, _hqlDualStateCondition, _hqlSupervisorSubQuery);
-
-            List<QueryParameter> parameters = new List<QueryParameter>();
-            parameters.Add(new QueryParameter("rpsState", ActivityStatus.SC.ToString()));
-            parameters.Add(new QueryParameter("rpsState2", ActivityStatus.IP.ToString()));
-            parameters.Add(new QueryParameter("supervisorStaff", performingStaff));
-
-            return GetWorklist(hqlQuery, parameters);
-        }
-
-        public IList<WorklistItem> GetVerifiedWorklist(Staff performingStaff)
-        {
-            string hqlQuery = String.Concat(_hqlSelectVerificationWorklist, _hqlJoin, _hqlMySingleStateCondition);
+            string hqlQuery = String.Concat(_hqlSelectVerificationWorklist, 
+                _hqlJoin, 
+                _hqlSingleStateCondition, _hqlPerformerCondition);
 
             List<QueryParameter> parameters = new List<QueryParameter>();
             parameters.Add(new QueryParameter("rpsState", ActivityStatus.CM.ToString()));
-            parameters.Add(new QueryParameter("performingStaff", performingStaff));
+            parameters.Add(new QueryParameter("performingStaff", currentStaff));
+
+            return GetWorklist(hqlQuery, parameters);
+        }
+
+        public IList<WorklistItem> GetResidentToBeVerifiedWorklist(Staff currentStaff)
+        {
+            string hqlQuery = String.Concat(_hqlSelectVerificationWorklist, 
+                _hqlJoin, _hqlJoinReportPart, 
+                _hqlDualStateCondition, _hqlReportPartInterpretorCondition);
+
+            List<QueryParameter> parameters = new List<QueryParameter>();
+            parameters.Add(new QueryParameter("rpsState", ActivityStatus.SC.ToString()));
+            parameters.Add(new QueryParameter("rpsState2", ActivityStatus.IP.ToString()));
+            parameters.Add(new QueryParameter("interpretorStaff", currentStaff));
+
+            return GetWorklist(hqlQuery, parameters);
+        }
+
+        public IList<WorklistItem> GetResidentVerifiedWorklist(Staff currentStaff)
+        {
+            string hqlQuery = String.Concat(_hqlSelectVerificationWorklist, 
+                _hqlJoin, _hqlJoinReportPart, 
+                _hqlSingleStateCondition, _hqlReportPartInterpretorCondition);
+
+            List<QueryParameter> parameters = new List<QueryParameter>();
+            parameters.Add(new QueryParameter("rpsState", ActivityStatus.CM.ToString()));
+            parameters.Add(new QueryParameter("interpretorStaff", currentStaff));
+
+            return GetWorklist(hqlQuery, parameters);
+        }
+
+        public IList<WorklistItem> GetMyResidentToBeVerifiedWorklist(Staff currentStaff)
+        {
+            string hqlQuery = String.Concat(_hqlSelectVerificationWorklist, 
+                _hqlJoin, _hqlJoinReportPart, 
+                _hqlDualStateCondition, _hqlSupervisorSubQuery);
+
+            List<QueryParameter> parameters = new List<QueryParameter>();
+            parameters.Add(new QueryParameter("rpsState", ActivityStatus.SC.ToString()));
+            parameters.Add(new QueryParameter("rpsState2", ActivityStatus.IP.ToString()));
+            parameters.Add(new QueryParameter("supervisorStaff", currentStaff));
 
             return GetWorklist(hqlQuery, parameters);
         }
@@ -239,7 +284,9 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         public int GetToBeReportedWorklistCount(ReportingToBeReportedWorklist worklist)
         {
-            string hqlQuery = String.Concat(_hqlToBeReportedCount, _hqlJoin, _hqlCommunualWorklistCondition);
+            string hqlQuery = String.Concat(_hqlToBeReportedCount, 
+                _hqlJoin, 
+                _hqlCommunualWorklistCondition);
 
             List<QueryParameter> parameters = new List<QueryParameter>();
             parameters.Add(new QueryParameter("rpsState", ActivityStatus.SC.ToString()));
@@ -253,61 +300,99 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             return GetWorklistCount(hqlQuery, parameters);
         }
 
-        public int GetDraftWorklistCount(Staff performingStaff)
+        public int GetDraftWorklistCount(Staff currentStaff)
         {
-            string hqlQuery = String.Concat(_hqlToBeReportedCount, _hqlJoin, _hqlMyDualStateCondition);
+            string hqlQuery = String.Concat(_hqlToBeReportedCount, 
+                _hqlJoin, 
+                _hqlDualStateCondition, _hqlScheduledCondition);
 
             List<QueryParameter> parameters = new List<QueryParameter>();
             parameters.Add(new QueryParameter("rpsState", ActivityStatus.SC.ToString()));
             parameters.Add(new QueryParameter("rpsState2", ActivityStatus.IP.ToString()));
-            parameters.Add(new QueryParameter("performingStaff", performingStaff));
+            parameters.Add(new QueryParameter("scheduledPerformingStaff", currentStaff));
 
             return GetWorklistCount(hqlQuery, parameters);
         }
 
-        public int GetInTranscriptionWorklistCount(Staff performingStaff)
+        public int GetInTranscriptionWorklistCount(Staff currentStaff)
         {
-            string hqlQuery = String.Concat(_hqlSelectTranscriptionCount, _hqlJoin, _hqlMyDualStateCondition);
+            string hqlQuery = String.Concat(_hqlSelectTranscriptionCount, 
+                _hqlJoin, 
+                _hqlDualStateCondition, _hqlScheduledCondition);
 
             List<QueryParameter> parameters = new List<QueryParameter>();
             parameters.Add(new QueryParameter("rpsState", ActivityStatus.SC.ToString()));
             parameters.Add(new QueryParameter("rpsState2", ActivityStatus.IP.ToString()));
-            parameters.Add(new QueryParameter("performingStaff", performingStaff));
+            parameters.Add(new QueryParameter("scheduledPerformingStaff", currentStaff));
 
             return GetWorklistCount(hqlQuery, parameters);
         }
 
-        public int GetToBeVerifiedWorklistCount(Staff performingStaff)
+        public int GetToBeVerifiedWorklistCount(Staff currentStaff)
         {
-            string hqlQuery = String.Concat(_hqlSelectVerificationCount, _hqlJoin, _hqlMyDualStateCondition);
+            string hqlQuery = String.Concat(_hqlSelectVerificationCount, 
+                _hqlJoin, _hqlJoinReportPart,
+                _hqlDualStateCondition, _hqlScheduledCondition, _hqlReportPartInterpretorCondition, _hqlNoSupervisorSubQuery);
 
             List<QueryParameter> parameters = new List<QueryParameter>();
             parameters.Add(new QueryParameter("rpsState", ActivityStatus.SC.ToString()));
             parameters.Add(new QueryParameter("rpsState2", ActivityStatus.IP.ToString()));
-            parameters.Add(new QueryParameter("performingStaff", performingStaff));
+            parameters.Add(new QueryParameter("scheduledPerformingStaff", currentStaff));
+            parameters.Add(new QueryParameter("interpretorStaff", currentStaff));
 
             return GetWorklistCount(hqlQuery, parameters);
         }
 
-        public int GetResidentToBeVerifiedWorklistCount(Staff performingStaff)
+        public int GetVerifiedWorklistCount(Staff currentStaff)
         {
-            string hqlQuery = String.Concat(_hqlSelectVerificationCount, _hqlJoin, _hqlDualStateCondition, _hqlSupervisorSubQuery);
-
-            List<QueryParameter> parameters = new List<QueryParameter>();
-            parameters.Add(new QueryParameter("rpsState", ActivityStatus.SC.ToString()));
-            parameters.Add(new QueryParameter("rpsState2", ActivityStatus.IP.ToString()));
-            parameters.Add(new QueryParameter("supervisorStaff", performingStaff));
-
-            return GetWorklistCount(hqlQuery, parameters);
-        }
-
-        public int GetVerifiedWorklistCount(Staff performingStaff)
-        {
-            string hqlQuery = String.Concat(_hqlSelectVerificationCount, _hqlJoin, _hqlMySingleStateCondition);
+            string hqlQuery = String.Concat(_hqlSelectVerificationCount, 
+                _hqlJoin, 
+                _hqlSingleStateCondition, _hqlPerformerCondition);
 
             List<QueryParameter> parameters = new List<QueryParameter>();
             parameters.Add(new QueryParameter("rpsState", ActivityStatus.CM.ToString()));
-            parameters.Add(new QueryParameter("performingStaff", performingStaff));
+            parameters.Add(new QueryParameter("performingStaff", currentStaff));
+
+            return GetWorklistCount(hqlQuery, parameters);
+        }
+
+        public int GetResidentToBeVerifiedWorklistCount(Staff currentStaff)
+        {
+            string hqlQuery = String.Concat(_hqlSelectVerificationCount, 
+                _hqlJoin, _hqlJoinReportPart, 
+                _hqlDualStateCondition, _hqlReportPartInterpretorCondition);
+
+            List<QueryParameter> parameters = new List<QueryParameter>();
+            parameters.Add(new QueryParameter("rpsState", ActivityStatus.SC.ToString()));
+            parameters.Add(new QueryParameter("rpsState2", ActivityStatus.IP.ToString()));
+            parameters.Add(new QueryParameter("interpretorStaff", currentStaff));
+
+            return GetWorklistCount(hqlQuery, parameters);
+        }
+
+        public int GetResidentVerifiedWorklistCount(Staff currentStaff)
+        {
+            string hqlQuery = String.Concat(_hqlSelectVerificationCount, 
+                _hqlJoin, _hqlJoinReportPart, 
+                _hqlSingleStateCondition, _hqlReportPartInterpretorCondition);
+
+            List<QueryParameter> parameters = new List<QueryParameter>();
+            parameters.Add(new QueryParameter("rpsState", ActivityStatus.CM.ToString()));
+            parameters.Add(new QueryParameter("interpretorStaff", currentStaff));
+
+            return GetWorklistCount(hqlQuery, parameters);
+        }
+
+        public int GetMyResidentToBeVerifiedWorklistCount(Staff currentStaff)
+        {
+            string hqlQuery = String.Concat(_hqlSelectVerificationCount, 
+                _hqlJoin, _hqlJoinReportPart, 
+                _hqlDualStateCondition, _hqlSupervisorSubQuery);
+
+            List<QueryParameter> parameters = new List<QueryParameter>();
+            parameters.Add(new QueryParameter("rpsState", ActivityStatus.SC.ToString()));
+            parameters.Add(new QueryParameter("rpsState2", ActivityStatus.IP.ToString()));
+            parameters.Add(new QueryParameter("supervisorStaff", currentStaff));
 
             return GetWorklistCount(hqlQuery, parameters);
         }
@@ -372,7 +457,6 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
                 hqlQuery.Append(")");
                 parameters.Add(new QueryParameter("rpsState1", ActivityStatus.CM.ToString()));
                 parameters.Add(new QueryParameter("rpsState2", ActivityStatus.DC.ToString()));
-                ReportingProcedureStep rps;
             }
 
             if (!String.IsNullOrEmpty(accessionNumber))

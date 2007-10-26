@@ -139,7 +139,9 @@ namespace ClearCanvas.Ris.Client.Reporting
                     LoadReportForEditResponse response = service.LoadReportForEdit(new LoadReportForEditRequest(_reportingStepRef));
                     _reportPartIndex = response.ReportPartIndex;
                     _report = response.Report;
-                    _supervisor = response.Report.Supervisor;
+                    ReportPartSummary part = _report.GetPart(_reportPartIndex);
+                    if (part != null)
+                        _supervisor = part.Supervisor;
 
                     // For resident, look for the default supervisor if it does not already exist
                     if (_supervisor == null && String.IsNullOrEmpty(SupervisorSettings.Default.SupervisorID) == false)

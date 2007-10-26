@@ -47,9 +47,6 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
         public EnumValueInfo ReportStatus;
 
         [DataMember]
-        public StaffSummary Supervisor;
-
-        [DataMember]
         public List<ReportPartSummary> Parts;
 
         [DataMember]
@@ -84,7 +81,7 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
 
         public ReportPartSummary GetPart(int index)
         {
-            if (this.Parts == null)
+            if (this.Parts == null || index < 0)
                 return null;
 
             return this.Parts[index];

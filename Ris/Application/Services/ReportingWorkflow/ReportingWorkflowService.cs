@@ -37,6 +37,7 @@ using System.Security.Permissions;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Healthcare.Workflow.Reporting;
@@ -44,6 +45,7 @@ using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 using ClearCanvas.Ris.Application.Common.Admin;
 using ClearCanvas.Ris.Application.Services.Admin;
+using AuthorityTokens = ClearCanvas.Ris.Application.Common.AuthorityTokens;
 
 namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 {
@@ -164,7 +166,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         public CompleteInterpretationForTranscriptionResponse CompleteInterpretationForTranscription(CompleteInterpretationForTranscriptionRequest request)
         {
             InterpretationStep interpretation = PersistenceContext.Load<InterpretationStep>(request.InterpretationStepRef, EntityLoadFlags.CheckVersion);
-            Staff supervisor = request.SupervisorRef == null ? null : PersistenceContext.Load<Staff>(request.SupervisorRef, EntityLoadFlags.Proxy);
+            Staff supervisor = GetSupervisor(interpretation, request.SupervisorRef);
 
             if (String.IsNullOrEmpty(request.ReportContent) == false)
             {
@@ -187,7 +189,8 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         public CompleteInterpretationForVerificationResponse CompleteInterpretationForVerification(CompleteInterpretationForVerificationRequest request)
         {
             InterpretationStep interpretation = PersistenceContext.Load<InterpretationStep>(request.InterpretationStepRef, EntityLoadFlags.CheckVersion);
-            Staff supervisor = request.SupervisorRef == null ? null : PersistenceContext.Load<Staff>(request.SupervisorRef, EntityLoadFlags.Proxy);
+            Staff supervisor = GetSupervisor(interpretation, request.SupervisorRef);
+
             if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.VerifyReport) == false && supervisor == null)
                 throw new RequestValidationException(SR.ExceptionResidentReportMissingSupervisor);
 
@@ -213,7 +216,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         public CompleteInterpretationAndVerifyResponse CompleteInterpretationAndVerify(CompleteInterpretationAndVerifyRequest request)
         {
             InterpretationStep interpretation = PersistenceContext.Load<InterpretationStep>(request.InterpretationStepRef, EntityLoadFlags.CheckVersion);
-            Staff supervisor = request.SupervisorRef == null ? null : PersistenceContext.Load<Staff>(request.SupervisorRef, EntityLoadFlags.Proxy);
+            Staff supervisor = GetSupervisor(interpretation, request.SupervisorRef);
 
             if (String.IsNullOrEmpty(request.ReportContent) == false)
             {
@@ -329,7 +332,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             if (step.ReportPart == null)
             {
                 response.Report = assembler.CreateReportSummary(step.RequestedProcedure, null, this.PersistenceContext);
-                response.ReportPartIndex = 0;
+                response.ReportPartIndex = -1;
             }
             else
             {
@@ -345,7 +348,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         public SaveReportResponse SaveReport(SaveReportRequest request)
         {
             ReportingProcedureStep step = PersistenceContext.Load<ReportingProcedureStep>(request.ReportingStepRef, EntityLoadFlags.CheckVersion);
-            Staff supervisor = request.SupervisorRef == null ? null : PersistenceContext.Load<Staff>(request.SupervisorRef, EntityLoadFlags.Proxy);
+            Staff supervisor = GetSupervisor(step, request.SupervisorRef);
 
             Operations.SaveReport op = new Operations.SaveReport();
             op.Execute(step, request.ReportContent, supervisor, this.PersistenceContext);
@@ -475,5 +478,14 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
         #endregion
 
+        private Staff GetSupervisor(ReportingProcedureStep step, EntityRef newSupervisorRef)
+        {
+            Staff supervisor = newSupervisorRef == null ? null : PersistenceContext.Load<Staff>(newSupervisorRef, EntityLoadFlags.Proxy);
+
+            if (supervisor == null && step.ReportPart != null)
+                supervisor = step.ReportPart.Supervisor;
+
+            return supervisor;
+        }
     }
 }

@@ -49,16 +49,18 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
                 if (step.ReportPart != null)
                 {
                     step.ReportPart.Content = reportContent;
-                    step.ReportPart.Report.Supervisor = supervisor;
+                    step.ReportPart.Supervisor = supervisor;
                 }
                 else
                 {
                     Report report = new Report();
-                    report.Supervisor = supervisor;
                     report.Procedure = step.RequestedProcedure;
-                    step.ReportPart = report.AddPart(reportContent);
+                    ReportPart part = report.AddPart(reportContent);
+                    part.Supervisor = supervisor;
 
                     context.Lock(report, DirtyState.New);
+
+                    step.ReportPart = part;
                 }
             }
 
@@ -132,7 +134,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
         {
             public virtual void Execute(InterpretationStep step, Staff currentUserStaff, IWorkflow workflow)
             {
-                step.Complete();
+                step.Complete(currentUserStaff);
             }
 
             public override bool CanExecute(ReportingProcedureStep step, Staff currentUserStaff)
@@ -171,7 +173,11 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
                 base.Execute(step, currentUserStaff, workflow);
 
                 VerificationStep verification = new VerificationStep(step);
-                verification.Assign(step.PerformingStaff);
+                if (step.ReportPart.Supervisor == null)
+                    verification.Assign(currentUserStaff);
+                else
+                    verification.Assign(step.ReportPart.Supervisor);
+
                 workflow.AddActivity(verification);
                 return verification;
             }
@@ -184,8 +190,8 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
                 base.Execute(step, currentUserStaff, workflow);
 
                 VerificationStep verification = new VerificationStep(step);
-                verification.Assign(step.PerformingStaff);
-                verification.Complete(step.PerformingStaff);
+                verification.Assign(currentUserStaff);
+                verification.Complete(currentUserStaff);
                 workflow.AddActivity(verification);
                 return verification;
             }
@@ -321,8 +327,8 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
             public InterpretationStep Execute(VerificationStep step, Staff currentUserStaff, IWorkflow workflow)
             {
                 InterpretationStep interpretation = new InterpretationStep(step.RequestedProcedure);
-                interpretation.Assign(step.PerformingStaff);
-                interpretation.Start(step.PerformingStaff);
+                interpretation.Assign(currentUserStaff);
+                interpretation.Start(currentUserStaff);
                 interpretation.ReportPart = step.ReportPart.Report.AddPart("");
                 workflow.AddActivity(interpretation);
                 return interpretation;

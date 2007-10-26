@@ -35,6 +35,7 @@ using System.Text;
 
 using Iesi.Collections;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Workflow;
 
 
 namespace ClearCanvas.Healthcare {
@@ -66,9 +67,11 @@ namespace ClearCanvas.Healthcare {
 
         public override void Complete()
         {
-            if (this.ReportPart != null)
-                this.ReportPart.Finalized();
+            if (this.ReportPart == null)
+                throw new WorkflowException("ReportPart must be assigned");
 
+            this.ReportPart.Verifier = this.PerformingStaff;
+            this.ReportPart.Finalized();
             base.Complete();
         }
 		

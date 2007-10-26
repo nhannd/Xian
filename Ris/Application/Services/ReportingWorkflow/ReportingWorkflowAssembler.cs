@@ -33,12 +33,10 @@ using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
-using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Healthcare.Workflow.Reporting;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 using ClearCanvas.Ris.Application.Services.Admin;
-using ClearCanvas.Workflow;
 
 namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 {
@@ -105,11 +103,8 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
             if (report != null)
             {
-                StaffAssembler staffAssembler = new StaffAssembler();
-
                 summary.ReportRef = report.GetRef();
                 summary.ReportStatus = EnumUtils.GetEnumValueInfo(report.Status, context);
-                summary.Supervisor = staffAssembler.CreateStaffSummary(report.Supervisor, context);
                 summary.Parts = CollectionUtils.Map<ReportPart, ReportPartSummary, List<ReportPartSummary>>(report.Parts,
                     delegate(ReportPart part)
                     {
@@ -148,46 +143,19 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             summary.Content = reportPart.Content;
             summary.Status = EnumUtils.GetEnumValueInfo(reportPart.Status, context);
 
-            // Look for all reporting steps that has the same report part and are completed
-            // Then select individual type of step from the list
-            ReportingProcedureStepSearchCriteria criteria = new ReportingProcedureStepSearchCriteria();
-            criteria.ReportPart.EqualTo(reportPart);
-            criteria.State.EqualTo(ActivityStatus.CM);
-
-            IList<ReportingProcedureStep> reportingSteps = context.GetBroker<IReportingProcedureStepBroker>().Find(criteria);
-
-            ReportingProcedureStep interpretationStep =
-                CollectionUtils.SelectFirst<ReportingProcedureStep>(reportingSteps,
-                delegate(ReportingProcedureStep step)
-                {
-                    return (step is InterpretationStep);
-                });
-
-            ReportingProcedureStep transcriptionStep =
-                CollectionUtils.SelectFirst<ReportingProcedureStep>(reportingSteps,
-                delegate(ReportingProcedureStep step)
-                {
-                    return step is TranscriptionStep;
-                });
-
-            ReportingProcedureStep verificationStep =
-                CollectionUtils.SelectFirst<ReportingProcedureStep>(reportingSteps,
-                delegate(ReportingProcedureStep step)
-                {
-                    return step is VerificationStep;
-                });
-
-
             StaffAssembler staffAssembler = new StaffAssembler();
 
-            if (interpretationStep != null)
-                summary.InterpretedBy = staffAssembler.CreateStaffSummary(interpretationStep.PerformingStaff, context);
+            if (reportPart.Supervisor != null)
+                summary.Supervisor = staffAssembler.CreateStaffSummary(reportPart.Supervisor, context);
 
-            if (transcriptionStep != null)
-                summary.TranscribedBy = staffAssembler.CreateStaffSummary(transcriptionStep.PerformingStaff, context);
+            if (reportPart.Interpretor != null)
+                summary.InterpretedBy = staffAssembler.CreateStaffSummary(reportPart.Interpretor, context);
 
-            if (verificationStep != null)
-                summary.VerifiedBy = staffAssembler.CreateStaffSummary(verificationStep.PerformingStaff, context);
+            if (reportPart.Transcriber != null)
+                summary.TranscribedBy = staffAssembler.CreateStaffSummary(reportPart.Transcriber, context);
+
+            if (reportPart.Verifier != null)
+                summary.VerifiedBy = staffAssembler.CreateStaffSummary(reportPart.Verifier, context);
             
             
             return summary;

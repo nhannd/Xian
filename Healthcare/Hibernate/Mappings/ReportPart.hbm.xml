@@ -11,6 +11,11 @@
 
     <property name="Status" column="Status_" type="ClearCanvas.Healthcare.Hibernate.ReportPartStatusEnumHbm, ClearCanvas.Healthcare.Hibernate" not-null="true"/>
 
+    <many-to-one name="Supervisor" class="Staff" column="SupervisorOID_"/>
+    <many-to-one name="Interpretor" class="Staff" column="InterpretorOID_"/>
+    <many-to-one name="Transcriber" class="Staff" column="TranscriberOID_"/>
+    <many-to-one name="Verifier" class="Staff" column="VerifierOID_"/>
+
     <many-to-one name="Report" class="Report" column="ReportOID_" not-null="true" fetch="join"/>
   </class>
 </hibernate-mapping>

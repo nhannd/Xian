@@ -51,6 +51,9 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
         public EnumValueInfo Status;
 
         [DataMember]
+        public StaffSummary Supervisor;
+
+        [DataMember]
         public StaffSummary InterpretedBy;
 
         [DataMember]

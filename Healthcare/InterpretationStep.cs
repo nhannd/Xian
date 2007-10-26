@@ -35,6 +35,7 @@ using System.Text;
 
 using Iesi.Collections;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Workflow;
 
 
 namespace ClearCanvas.Healthcare {
@@ -66,6 +67,15 @@ namespace ClearCanvas.Healthcare {
         public override string Name
         {
             get { return "Interpretation"; }
+        }
+
+        public override void Complete()
+        {
+            if (this.ReportPart == null)
+                throw new WorkflowException("ReportPart must be assigned");
+
+            this.ReportPart.Interpretor = this.PerformingStaff;
+            base.Complete();
         }
 		
 		#region Object overrides

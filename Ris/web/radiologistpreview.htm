@@ -8,15 +8,17 @@
 	    <script type="text/javascript" src="js/ui.js"></script>
 	    <script type="text/javascript" src="js/ris.js"></script>
 	    <script type="text/javascript" src="js/preview.js"></script>
+	    <script type="text/javascript" src="js/layout.js"></script>
 	    <script type="text/javascript" >
 		    var data = {};
 		    var errorProvider = new ErrorProvider();
 
 		    function onBodyLoad()
 		    {		        
+			scaleWidth();
 		        if(!Ris)
 		            return;
-		        
+		            
 	            try
 	            {
 					var worklistItem = Ris.getWorklistItem();

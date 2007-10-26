@@ -90,26 +90,18 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
         {
             public override IList GetWorklist(Staff currentUserStaff, IPersistenceContext context)
             {
-                return (IList)GetBroker(context).GetToBeVerifiedWorklist(currentUserStaff);
+                if (currentUserStaff.Type == StaffType.PRAR)
+                    return (IList)GetBroker(context).GetResidentToBeVerifiedWorklist(currentUserStaff);
+                else
+                    return (IList)GetBroker(context).GetToBeVerifiedWorklist(currentUserStaff);
             }
 
             public override int GetWorklistCount(Staff currentUserStaff, IPersistenceContext context)
             {
-                return GetBroker(context).GetToBeVerifiedWorklistCount(currentUserStaff);
-            }
-        }
-
-        [ExtensionOf(typeof(ReportingWorklistExtensionPoint))]
-        public class ResidentToBeVerified : WorklistBase<IReportingWorklistBroker>
-        {
-            public override IList GetWorklist(Staff currentUserStaff, IPersistenceContext context)
-            {
-                return (IList)GetBroker(context).GetResidentToBeVerifiedWorklist(currentUserStaff);
-            }
-
-            public override int GetWorklistCount(Staff currentUserStaff, IPersistenceContext context)
-            {
-                return GetBroker(context).GetResidentToBeVerifiedWorklistCount(currentUserStaff);
+                if (currentUserStaff.Type == StaffType.PRAR)
+                    return GetBroker(context).GetResidentToBeVerifiedWorklistCount(currentUserStaff);
+                else
+                    return GetBroker(context).GetToBeVerifiedWorklistCount(currentUserStaff);
             }
         }
 
@@ -118,12 +110,32 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
         {
             public override IList GetWorklist(Staff currentUserStaff, IPersistenceContext context)
             {
-                return (IList)GetBroker(context).GetVerifiedWorklist(currentUserStaff);
+                if (currentUserStaff.Type == StaffType.PRAR)
+                    return (IList)GetBroker(context).GetResidentVerifiedWorklist(currentUserStaff);
+                else
+                    return (IList)GetBroker(context).GetVerifiedWorklist(currentUserStaff);
             }
 
             public override int GetWorklistCount(Staff currentUserStaff, IPersistenceContext context)
             {
-                return GetBroker(context).GetVerifiedWorklistCount(currentUserStaff);
+                if (currentUserStaff.Type == StaffType.PRAR)
+                    return GetBroker(context).GetResidentVerifiedWorklistCount(currentUserStaff);
+                else
+                    return GetBroker(context).GetVerifiedWorklistCount(currentUserStaff);
+            }
+        }
+
+        [ExtensionOf(typeof(ReportingWorklistExtensionPoint))]
+        public class MyResidentToBeVerified : WorklistBase<IReportingWorklistBroker>
+        {
+            public override IList GetWorklist(Staff currentUserStaff, IPersistenceContext context)
+            {
+                return (IList)GetBroker(context).GetMyResidentToBeVerifiedWorklist(currentUserStaff);
+            }
+
+            public override int GetWorklistCount(Staff currentUserStaff, IPersistenceContext context)
+            {
+                return GetBroker(context).GetMyResidentToBeVerifiedWorklistCount(currentUserStaff);
             }
         }
 

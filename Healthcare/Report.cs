@@ -88,7 +88,7 @@ namespace ClearCanvas.Healthcare {
 
         public virtual ReportPart AddPart(string reportPartContent)
         {
-            ReportPart part = new ReportPart(this.Parts.Count, reportPartContent, ReportPartStatus.P, this);
+            ReportPart part = new ReportPart(this.Parts.Count, reportPartContent, ReportPartStatus.P, null, null, null, null, this);
             this.AddPart(part);
             return part;
         }

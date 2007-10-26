@@ -10,8 +10,6 @@
     
     <many-to-one name="Procedure" class="RequestedProcedure" column="ProcedureOID_" not-null="true"/>
 
-    <many-to-one name="Supervisor" class="Staff" column="SupervisorOID_"/>
-    
     <list name="Parts" lazy="true" inverse="true" cascade="all-delete-orphan" access="nosetter.camelcase-underscore">
       <key column="ReportOID_"/>
       <index column="Index_"/>
