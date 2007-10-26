@@ -45,6 +45,7 @@ namespace ClearCanvas.Dicom.Network
     /// </summary>
     public sealed class DicomServer : NetworkBase
     {
+
         #region Static Public Methods
         /// <summary>
         /// Start listening for incoming associations.
@@ -86,6 +87,7 @@ namespace ClearCanvas.Dicom.Network
 		private bool _closedOnError = false;
         IDicomServerHandler _handler;
         private Dictionary<String, ListenerInfo> _appList;
+
 		#endregion
 
         #region Public Properties
@@ -175,6 +177,9 @@ namespace ClearCanvas.Dicom.Network
             {
                 return false;
             }
+
+            
+
             return true;
         }
 
@@ -348,6 +353,7 @@ namespace ClearCanvas.Dicom.Network
             try
             {
                 _handler.OnReceiveReleaseRequest(this, this._assoc as ServerAssociationParameters);
+                
             }
             catch (Exception e)
             {
@@ -356,6 +362,18 @@ namespace ClearCanvas.Dicom.Network
             }
             SendReleaseResponse();
         }
+
+        protected override void OnAssociationReleased(AssociationParameters association)
+        {
+            _handler.OnAssociationReleased(this, this._assoc as ServerAssociationParameters);
+        }
+
+        protected override void OnAssociationAborted(AssociationParameters association, DicomAbortReason reason)
+        {
+            _handler.OnAssociationAborted(this, this._assoc as ServerAssociationParameters, reason);
+        }
+
+
         protected override void OnReceiveDimseRequest(byte pcid, DicomMessage msg)
         {
             try
@@ -382,6 +400,7 @@ namespace ClearCanvas.Dicom.Network
             return;
 
         }
+
         #endregion
     }
 }

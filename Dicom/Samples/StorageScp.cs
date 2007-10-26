@@ -38,6 +38,7 @@ using System.IO;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Network;
 
+
 namespace ClearCanvas.Dicom.Samples
 {
     /// <summary>
@@ -240,6 +241,10 @@ namespace ClearCanvas.Dicom.Samples
 
         #region IDicomServerHandler Members
 
+        void IDicomServerHandler.OnAssociationAborted(DicomServer server, ServerAssociationParameters association, DicomAbortReason reason)
+        {
+        }
+
         void IDicomServerHandler.OnReceiveAssociateRequest(DicomServer server, ServerAssociationParameters association)
         {
             server.SendAssociateAccept(association);
@@ -327,7 +332,18 @@ namespace ClearCanvas.Dicom.Samples
         {
             DicomLogger.LogInfo("Received DIMSE Timeout, continuing listening for messages");
         }
+        void IDicomServerHandler.OnAssociationReleased(DicomServer server, ServerAssociationParameters association)
+        {
+            DicomLogger.LogInfo("Association from {0} to {1} has been released.", association.CallingAE, association.CalledAE);
 
+            // Log Statistics
+            LogAssociationStatistics(association);
+        }
+
+        protected void LogAssociationStatistics(ServerAssociationParameters association)
+        {
+
+        }
         #endregion
     }
 }

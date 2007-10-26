@@ -34,6 +34,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using ClearCanvas.Dicom.IO;
+using System.Collections;
+using System.Text;
+
 
 namespace ClearCanvas.Dicom.Network
 {
@@ -123,9 +126,13 @@ namespace ClearCanvas.Dicom.Network
         public DcmDimseInfo()
         {
             Stats = new TransferMonitor();
+
+            
             IsNewDimse = true;
         }
     }
+
+
 
     /// <summary>
     /// Class used for DICOM network communications.
@@ -144,9 +151,19 @@ namespace ClearCanvas.Dicom.Network
         private bool _stop;
         private DicomAssociationState _state = DicomAssociationState.Sta1_Idle;
         private int _timeout = 30;
-
+        
         internal Queue<RawPDU> _pduQueue = new Queue<RawPDU>();
         #endregion
+
+        #region Public members
+        public AssociationParameters AssociationParams
+        {
+            get { return _assoc; }
+        }
+
+        
+        #endregion
+
 
         #region Public Constructors
         public NetworkBase()
@@ -286,6 +303,22 @@ namespace ClearCanvas.Dicom.Network
             throw new Exception("The method or operation is not implemented.");
         }
 
+        /// <summary>
+        /// Called after the association has been released
+        /// </summary>
+        protected virtual void OnAssociationReleased(AssociationParameters association)
+        {
+
+        }
+        /// <summary>
+        /// Called after the association has been aborted
+        /// </summary>
+        protected virtual void OnAssociationAborted(AssociationParameters association, DicomAbortReason reason)
+        {
+
+        }
+
+
 
         protected virtual void OnReceiveDimseBegin(byte pcid, DicomAttributeCollection command, DicomAttributeCollection dataset, TransferMonitor stats)
         {
@@ -356,6 +389,8 @@ namespace ClearCanvas.Dicom.Network
         protected virtual void OnSendDimse(byte pcid, DicomAttributeCollection command, DicomAttributeCollection dataset)
         {
         }
+
+        
         #endregion
 
         #region Public Methods
@@ -394,6 +429,8 @@ namespace ClearCanvas.Dicom.Network
                 
                 EnqueuePDU(pdu.Write());
                 _state = DicomAssociationState.Sta13_AwaitingTransportConnectionClose;
+
+                OnAssociationAborted(_assoc, reason);
             }
             else
             {
@@ -473,6 +510,8 @@ namespace ClearCanvas.Dicom.Network
             
             EnqueuePDU(pdu.Write());
             _state = DicomAssociationState.Sta13_AwaitingTransportConnectionClose;
+
+            OnAssociationReleased(_assoc);
         }
 
         /// <summary>
@@ -584,6 +623,7 @@ namespace ClearCanvas.Dicom.Network
             msg.DataSetType = 0x0101;
             msg.Status = status;
 
+            
             SendDimse(presentationID, msg.CommandSet, null);
         }
 
@@ -812,6 +852,7 @@ namespace ClearCanvas.Dicom.Network
                 if (_dimse == null)
                 {
                     _dimse = new DcmDimseInfo();
+                    _assoc.TotalDimseReceived++;
                 }
             }
 
@@ -827,7 +868,7 @@ namespace ClearCanvas.Dicom.Network
                             AAssociateRQ pdu = new AAssociateRQ(_assoc);
                             pdu.Read(raw);
                             _state = DicomAssociationState.Sta3_AwaitingLocalAAssociationResponsePrimative;
-                            OnReceiveAssociateRequest(_assoc as ServerAssociationParameters);
+ 							OnReceiveAssociateRequest(_assoc as ServerAssociationParameters);
 
                             if (_state != DicomAssociationState.Sta13_AwaitingTransportConnectionClose &&
                                 _state != DicomAssociationState.Sta6_AssociationEstablished)
@@ -848,7 +889,7 @@ namespace ClearCanvas.Dicom.Network
                     case 0x03:
                         {
                             AAssociateRJ pdu = new AAssociateRJ();
-                            pdu.Read(raw);
+							pdu.Read(raw);
                             _state = DicomAssociationState.Sta13_AwaitingTransportConnectionClose;
                             OnReceiveAssociateReject(pdu.Result, pdu.Source, pdu.Reason);
                             return true;
@@ -865,7 +906,7 @@ namespace ClearCanvas.Dicom.Network
                             pdu.Read(raw);
                             _state = DicomAssociationState.Sta8_AwaitingAReleaseRPLocalUser;
                             OnReceiveReleaseRequest();
-                            return true;
+							return true;
                         }
                     case 0x06:
                         {
@@ -873,7 +914,7 @@ namespace ClearCanvas.Dicom.Network
                             pdu.Read(raw);
                             _state = DicomAssociationState.Sta13_AwaitingTransportConnectionClose;
                             OnReceiveReleaseResponse();
-                            return true;
+							return true;
                         }
                     case 0x07:
                         {
@@ -939,6 +980,8 @@ namespace ClearCanvas.Dicom.Network
                         bytes += pdv.Value.Length;
                         total = (int)_dimse.CommandReader.BytesEstimated;
 
+                        _assoc.TotalBytesRead += (UInt64) bytes;
+                        
                         if (pdv.IsLastFragment)
                         {
                             if (stat == DicomReadStatus.NeedMoreData)
@@ -957,11 +1000,16 @@ namespace ClearCanvas.Dicom.Network
                             }
                             if (isLast)
                             {
-                                _dimse.Stats.Tick(bytes, total);
+								_dimse.Stats.Tick(bytes, total);
                                 if (_dimse.IsNewDimse)
-                                    OnReceiveDimseBegin(pcid, _dimse.Command, _dimse.Dataset, _dimse.Stats);
+                                {
+                                     OnReceiveDimseBegin(pcid, _dimse.Command, _dimse.Dataset, _dimse.Stats);
+                                }
                                 OnReceiveDimseProgress(pcid, _dimse.Command, _dimse.Dataset, _dimse.Stats);
                                 bool ret = OnReceiveDimse(pcid, _dimse.Command, _dimse.Dataset);
+
+                                _assoc.TotalBytesRead += (UInt64)total;
+                         
                                 _dimse = null;
                                 return ret;
                             }
@@ -996,7 +1044,8 @@ namespace ClearCanvas.Dicom.Network
 
                         bytes += pdv.Value.Length;
                         total = (int)_dimse.DatasetReader.BytesEstimated;
-
+                        _assoc.TotalBytesRead += (UInt64)bytes; 
+                           
                         if (pdv.IsLastFragment)
                         {
                             if (stat == DicomReadStatus.NeedMoreData)
@@ -1007,11 +1056,15 @@ namespace ClearCanvas.Dicom.Network
                             _dimse.CommandData = null;
                             _dimse.CommandReader = null;
 
-                            _dimse.Stats.Tick(bytes, total);
+							_dimse.Stats.Tick(bytes, total);
                             if (_dimse.IsNewDimse)
+                            {
                                 OnReceiveDimseBegin(pcid, _dimse.Command, _dimse.Dataset, _dimse.Stats);
+                            }
                             OnReceiveDimseProgress(pcid, _dimse.Command, _dimse.Dataset, _dimse.Stats);
                             bool ret = OnReceiveDimse(pcid, _dimse.Command, _dimse.Dataset);
+                         
+                         
                             _dimse = null;
                             return ret;
                         }
@@ -1028,6 +1081,7 @@ namespace ClearCanvas.Dicom.Network
                 else
                 {
                     OnReceiveDimseProgress(pcid, _dimse.Command, _dimse.Dataset, _dimse.Stats);
+
                 }
 
                 return true;
@@ -1080,7 +1134,6 @@ namespace ClearCanvas.Dicom.Network
                 {
                     OnSendDimseProgress(pcid, command, dataset, stats);
                 };
-
                 OnSendDimseBegin(pcid, command, dataset, pdustream.Stats);
 
                 DicomStreamWriter dsw = new DicomStreamWriter(pdustream);

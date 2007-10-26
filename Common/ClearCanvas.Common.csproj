@@ -129,6 +129,7 @@
     <Compile Include="Auditing\Auditor.cs" />
     <Compile Include="Auditing\IAuditor.cs" />
     <Compile Include="ITimeProvider.cs" />
+    <Compile Include="Performance\Statistics.cs" />
     <Compile Include="PluginLoadedEventArgs.cs" />
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>

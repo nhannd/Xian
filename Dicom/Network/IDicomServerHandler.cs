@@ -44,5 +44,7 @@ namespace ClearCanvas.Dicom.Network
         void OnReceiveAbort(DicomServer server, ServerAssociationParameters association, DicomAbortSource source, DicomAbortReason reason);
         void OnNetworkError(DicomServer server, ServerAssociationParameters association, Exception e);
         void OnDimseTimeout(DicomServer server, ServerAssociationParameters association);
+        void OnAssociationReleased(DicomServer server, ServerAssociationParameters association);
+        void OnAssociationAborted(DicomServer server, ServerAssociationParameters association, DicomAbortReason reason);
     }
 }

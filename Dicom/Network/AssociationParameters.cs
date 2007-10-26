@@ -211,6 +211,11 @@ namespace ClearCanvas.Dicom.Network
         private int _writeTimeout = 30 * 1000; // 30 seconds
         private ushort _maxOperationsInvoked = 1;
         private ushort _maxOperationsPerformed = 1;
+
+        // Performance stuff
+        ulong _totalBytesRead = 0;
+        int _totalDimseReceived = 0;
+        
         #endregion
 
 		#region Constructors
@@ -226,6 +231,9 @@ namespace ClearCanvas.Dicom.Network
 
             _localEndPoint = localEndPoint;
             _remoteEndPoint = remoteEndPoint;
+
+            _totalBytesRead = 0;
+            _totalDimseReceived = 0;
 		}
 
         protected AssociationParameters(AssociationParameters parameters)
@@ -260,6 +268,18 @@ namespace ClearCanvas.Dicom.Network
 		#endregion
 
 		#region Public Properties
+
+        public ulong TotalBytesRead
+        {
+            set { _totalBytesRead = value; }
+            get { return _totalBytesRead; }
+        }
+        public int TotalDimseReceived
+        {
+            get { return _totalDimseReceived; }
+            set { _totalDimseReceived = value; }
+        }
+
         /// <summary>
         /// The Maximum operations invoked negotiated for the association.
         /// </summary>
@@ -344,7 +364,7 @@ namespace ClearCanvas.Dicom.Network
 		/// Gets or sets the Application Context Name.
 		/// </summary>
 		/// <seealso cref="DicomUid"/>
-		public DicomUid ApplicationContextName {
+        public DicomUid ApplicationContextName {
 			get { return _appCtxNm; }
 			set { _appCtxNm = value; }
 		}
@@ -352,7 +372,7 @@ namespace ClearCanvas.Dicom.Network
 		/// <summary>
 		/// Gets or sets the Implementation Class UID.
 		/// </summary>
-		public DicomUid ImplementationClass {
+        public DicomUid ImplementationClass {
 			get { return _implClass; }
 			set { _implClass = value; }
 		}
@@ -377,6 +397,7 @@ namespace ClearCanvas.Dicom.Network
         /// <summary>
         /// The local end point of the association.
         /// </summary>
+        /// 
         public IPEndPoint LocalEndPoint
         {
             get { return _localEndPoint; }

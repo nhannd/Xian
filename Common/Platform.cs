@@ -43,6 +43,8 @@ using ClearCanvas.Common.Auditing;
 using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
 using System.Diagnostics;
+using ClearCanvas.Common.Statistics;
+using System.ComponentModel;
 
 // Configure log4net using the .log4net file
 [assembly: log4net.Config.XmlConfigurator(ConfigFile = "Logging.config", Watch = true)]
@@ -562,6 +564,24 @@ namespace ClearCanvas.Common
                     _log.Fatal(sb.ToString());
                     break;
             }
+        }
+
+
+        /// <summary>
+        /// Logs the statistics at the specified <see cref="LogLevel"/>.
+        /// </summary>
+        /// <remarks>This method is thread-safe.</remarks>
+        /// <param name="category"></param>
+        /// <param name="stats">The statistics to log</param>
+        public static void LogStatistics(LogLevel category, IStatistics stats)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            TypeConverter converter = TypeDescriptor.GetConverter(stats);
+
+            if (converter.CanConvertTo(typeof(string)))
+                Log(category, converter.ConvertTo(stats, typeof(string)));
+            
         }
 
         /// <summary>
