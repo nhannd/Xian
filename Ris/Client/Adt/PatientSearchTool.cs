@@ -76,8 +76,9 @@ namespace ClearCanvas.Ris.Client.Adt
                     previewComponent.WorklistItem = null;
                 else
                     previewComponent.WorklistItem = new RegistrationWorklistItem(
-                        summary.ProfileRef,
                         null,
+                        summary.ProfileRef,
+                        summary.PatientRef,
                         summary.Mrn.Id,
                         summary.Mrn.AssigningAuthority,
                         summary.Name,

@@ -56,6 +56,10 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
             this.DateOfBirth = dateOfBirth;
         }
 
+        public SearchPatientRequest()
+        {
+        }
+
         [DataMember]
         public string MrnID;
 

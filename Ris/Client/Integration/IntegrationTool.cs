@@ -105,10 +105,11 @@ namespace ClearCanvas.Ris.Client.Integration
                     context.ReportProgress(new BackgroundTaskProgress(CalculatePercentage(step++, totalStep), commonMessage + "Generate an anonymized patient in Ris database..."));
                     PatientProfileDetail profileDetail = GeneratePatientProfile();
 
-                    EntityRef patientRef = AddPatientProfile(profileDetail);
+                    EntityRef patientRef, profileRef;
+                    AddPatientProfile(profileDetail, out patientRef, out profileRef);
 
                     context.ReportProgress(new BackgroundTaskProgress(CalculatePercentage(step++, totalStep), commonMessage + "Generate a visit..."));
-                    VisitSummary visit = GenerateVisit(patientRef, profileDetail.Mrn.AssigningAuthority);
+                    VisitSummary visit = RandomUtils.RandomVisit(patientRef, profileRef, profileDetail.Mrn.AssigningAuthority);
 
                     context.ReportProgress(new BackgroundTaskProgress(CalculatePercentage(step++, totalStep), commonMessage + "Generate an order..."));
                     OrderDetail newOrder = GenerateRandomOrder(diagnosticServiceName, visit);
@@ -211,7 +212,7 @@ namespace ClearCanvas.Ris.Client.Integration
                     DateTime now = Platform.Time;
 
                     profile = new PatientProfileDetail();
-                    profile.Mrn = new MrnDetail(DateTimeFormat.Format(now, "YYYYMMDDhhmmssxxx"),
+                    profile.Mrn = new MrnDetail(RandomUtils.FormatDateTime(now, null),
                         RandomUtils.ChooseRandom(response.MrnAssigningAuthorityChoices));
                     profile.Healthcard = new HealthcardDetail(
                         RandomUtils.GenerateRandomIntegerString(10),
@@ -241,7 +242,7 @@ namespace ClearCanvas.Ris.Client.Integration
             return profile;
         }
 
-        private static EntityRef AddPatientProfile(PatientProfileDetail profileDetail)
+        private static void AddPatientProfile(PatientProfileDetail profileDetail, out EntityRef patientRef, out EntityRef profileRef)
         {
             AdminAddPatientProfileResponse response = null;
 
@@ -251,82 +252,13 @@ namespace ClearCanvas.Ris.Client.Integration
                     response = service.AdminAddPatientProfile(new AdminAddPatientProfileRequest(profileDetail));
                 });
 
-            return response.PatientRef;
-        }
-
-        private static VisitSummary GenerateVisit(EntityRef patientRef, string assigningAuthority)
-        {
-            VisitSummary visit = null;
-
-            // Generate an active visit with randomize properties
-            Platform.GetService<IVisitAdminService>(
-                delegate(IVisitAdminService service)
-                {
-                    LoadVisitEditorFormDataResponse visitFormResponse = service.LoadVisitEditorFormData(new LoadVisitEditorFormDataRequest());
-
-                    DateTime now = Platform.Time;
-
-                    VisitDetail visitDetail = new VisitDetail();
-                    visitDetail.Patient = patientRef;
-                    visitDetail.VisitNumberId = DateTimeFormat.Format(now, "YYYYMMDDmmssxxx");
-                    visitDetail.VisitNumberAssigningAuthority = assigningAuthority;
-                    visitDetail.PatientClass = RandomUtils.ChooseRandom(visitFormResponse.PatientClassChoices);
-                    visitDetail.PatientType = RandomUtils.ChooseRandom(visitFormResponse.PatientTypeChoices);
-                    visitDetail.AdmissionType = RandomUtils.ChooseRandom(visitFormResponse.AdmissionTypeChoices);
-                    visitDetail.Status = CollectionUtils.SelectFirst<EnumValueInfo>(visitFormResponse.VisitStatusChoices,
-                        delegate(EnumValueInfo enumValue)
-                        {
-                            return enumValue.Code == "AA";
-                        });
-                    visitDetail.AdmitDateTime = now;
-                    visitDetail.Facility = RandomUtils.ChooseRandom(visitFormResponse.FacilityChoices);
-
-                    AdminAddVisitResponse addVisitResponse = service.AdminAddVisit(new AdminAddVisitRequest(visitDetail));
-                    visit = addVisitResponse.AddedVisit;
-                });
-
-            return visit;
+            patientRef = response.PatientRef;
+            profileRef = response.PatientProfileRef;
         }
 
         private static OrderDetail GenerateRandomOrder(string diagnosticServiceName, VisitSummary visit)
         {
-            OrderDetail orderDetail = null;
-
-            // Generate an order with randomize properties
-            Platform.GetService<IOrderEntryService>(
-                delegate(IOrderEntryService service)
-                {
-                    GetOrderEntryFormDataResponse formChoicesResponse = service.GetOrderEntryFormData(new GetOrderEntryFormDataRequest());
-
-                    DiagnosticServiceSummary mappedDS = CollectionUtils.SelectFirst<DiagnosticServiceSummary>(
-                        formChoicesResponse.DiagnosticServiceChoices,
-                        delegate(DiagnosticServiceSummary ds)
-                        {
-                            return ds.Name == diagnosticServiceName;
-                        });
-
-                    if (mappedDS == null)
-                        throw new Exception(String.Format("Cannot find diagnostic service with name {0}", diagnosticServiceName));
-
-                    FacilitySummary randomFacility = RandomUtils.ChooseRandom(formChoicesResponse.OrderingFacilityChoices);
-                    ExternalPractitionerSummary randomPhysician = RandomUtils.ChooseRandom(formChoicesResponse.OrderingPhysicianChoices);
-                    EnumValueInfo randomPriority = RandomUtils.ChooseRandom(formChoicesResponse.OrderPriorityChoices);
-
-                    PlaceOrderResponse response = service.PlaceOrder(new PlaceOrderRequest(
-                        visit.Patient,
-                        visit.entityRef,
-                        mappedDS.DiagnosticServiceRef,
-                        randomPriority,
-                        randomPhysician.PractitionerRef,
-                        randomFacility.FacilityRef,
-                        true,
-                        Platform.Time));
-
-
-                    LoadOrderDetailResponse loadOrderResponse = service.LoadOrderDetail(new LoadOrderDetailRequest(response.OrderRef));
-                    orderDetail = loadOrderResponse.OrderDetail;
-                });
-
+            OrderDetail orderDetail = RandomUtils.RandomOrder(visit, diagnosticServiceName);
 
             // Look for the modality procedure steps of the new order
             List<ModalityWorklistItem> listItem = null;
@@ -421,7 +353,7 @@ namespace ClearCanvas.Ris.Client.Integration
                     dicomFile.DataSet[DicomTags.PatientId].SetStringValue(String.Format("{0}{1}", profile.Mrn.AssigningAuthority, profile.Mrn.Id));
                     dicomFile.DataSet[DicomTags.PatientsSex].SetStringValue(profile.Sex.Code);
                     dicomFile.DataSet[DicomTags.AccessionNumber].SetStringValue(order.AccessionNumber);
-                    dicomFile.DataSet[DicomTags.PatientsBirthDate].SetStringValue(DateTimeFormat.Format(profile.DateOfBirth.Value, "YYYYMMDD"));
+                    dicomFile.DataSet[DicomTags.PatientsBirthDate].SetStringValue(RandomUtils.FormatDateTime(profile.DateOfBirth.Value, "YYYYMMDD"));
                     dicomFile.Filename = String.Format("{0}\\{1}.dcm", Directory.GetCurrentDirectory(), newSopInstanceUid);
                     dicomFile.Save(DicomWriteOptions.Default);
 

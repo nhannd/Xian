@@ -38,8 +38,9 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
     [DataContract]
     public class RegistrationWorklistItem : DataContractBase
     {
-        public RegistrationWorklistItem(EntityRef profileRef,
-            EntityRef orderRef,
+        public RegistrationWorklistItem(EntityRef orderRef, 
+            EntityRef profileRef,
+            EntityRef patientRef,
             string mrnID,
             string mrnAssigningAuthority,
             PersonNameDetail name,
@@ -65,10 +66,13 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
         }
 
         [DataMember]
-        public EntityRef PatientProfileRef;
+        public EntityRef OrderRef;
 
         [DataMember]
-        public EntityRef OrderRef;
+        public EntityRef PatientRef;
+
+        [DataMember]
+        public EntityRef PatientProfileRef;
 
         [DataMember]
         public MrnDetail Mrn;
@@ -101,16 +105,14 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
         {
             RegistrationWorklistItem that = obj as RegistrationWorklistItem;
             if (that != null)
-                return this.PatientProfileRef.Equals(that.PatientProfileRef)
-                    && (this.OrderRef == null ? true : this.OrderRef.Equals(that.OrderRef));
+                return this.OrderRef.Equals(that.OrderRef);
 
             return false;
         }
 
         public override int GetHashCode()
         {
-            return this.PatientProfileRef.GetHashCode()
-                + (this.OrderRef == null ? 0 : this.OrderRef.GetHashCode());
+            return this.OrderRef.GetHashCode();
         }
     }
 }

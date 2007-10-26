@@ -30,17 +30,14 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Ris.Application.Common.Admin;
 using ClearCanvas.Ris.Application.Common.Admin.VisitAdmin;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
-using ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -57,12 +54,10 @@ namespace ClearCanvas.Ris.Client.Adt
     {
         private bool _enabled;
         private event EventHandler _enabledChanged;
-        private readonly Random _randomizer;
 
         public RandomOrderTool()
         {
             _enabled = true;
-            _randomizer = new Random(Platform.Time.Millisecond);
         }
 
         public bool Enabled
@@ -84,88 +79,58 @@ namespace ClearCanvas.Ris.Client.Adt
             remove { _enabledChanged -= value; }
         }
 
-        private TItem ChooseRandom<TItem>(IList<TItem> target)
-        {
-            int randomIndex = _randomizer.Next(target.Count);
-            return target[randomIndex];
-        }
-
-        private RegistrationWorklistItem GetRandomPatient()
-        {
-            int retryCount = 0;
-            List<RegistrationWorklistItem> worklistItems = new List<RegistrationWorklistItem>();
-            while (worklistItems.Count == 0 && retryCount < 10)
-            {
-                char ch = Convert.ToChar(Convert.ToInt32(Math.Floor(26 * _randomizer.NextDouble() + 65)));
-
-                SearchData searchData = new SearchData();
-                searchData.GivenName = ch.ToString();
-
-                Platform.GetService<IRegistrationWorkflowService>(
-                    delegate(IRegistrationWorkflowService service)
-                    {
-                        SearchResponse response = service.Search(new SearchRequest(searchData));
-                        worklistItems = response.WorklistItems;
-                    });
-
-                retryCount++;
-            }
-               
-            return ChooseRandom(worklistItems);
-        }
-
         public void RandomOrder()
         {
             IRegistrationWorkflowItemToolContext context = (IRegistrationWorkflowItemToolContext)this.ContextBase;
 
             try
             {
+                VisitSummary randomVisit;
                 RegistrationWorklistItem item = CollectionUtils.FirstElement<RegistrationWorklistItem>(context.SelectedItems);
                 if (item == null)
-                    item = GetRandomPatient();
-
-                Platform.GetService<IOrderEntryService>(
-                    delegate(IOrderEntryService service)
-                    {
-                        ListActiveVisitsForPatientRequest request = new ListActiveVisitsForPatientRequest();
-                        request.PatientProfileRef = item.PatientProfileRef;
-
-                        ListActiveVisitsForPatientResponse visitResponse = service.ListActiveVisitsForPatient(request);
-                        GetOrderEntryFormDataResponse formChoicesResponse = service.GetOrderEntryFormData(new GetOrderEntryFormDataRequest());
-
-                        VisitSummary randomVisit = ChooseRandom(visitResponse.Visits);
-                        DiagnosticServiceSummary randomDS = ChooseRandom(formChoicesResponse.DiagnosticServiceChoices);
-                        FacilitySummary randomFacility = ChooseRandom(formChoicesResponse.OrderingFacilityChoices);
-                        ExternalPractitionerSummary randomPhysician = ChooseRandom(formChoicesResponse.OrderingPhysicianChoices);
-                        EnumValueInfo randomPriority = ChooseRandom(formChoicesResponse.OrderPriorityChoices);
-
-                        service.PlaceOrder(new PlaceOrderRequest(
-                            randomVisit.Patient,
-                            randomVisit.entityRef,
-                            randomDS.DiagnosticServiceRef,
-                            randomPriority,
-                            randomPhysician.PractitionerRef,
-                            randomFacility.FacilityRef,
-                            true,
-                            Platform.Time));
-                    });
-
-                // Refresh the schedule folder is a new folder is placed
-                IFolder scheduledFolder = CollectionUtils.SelectFirst<IFolder>(context.Folders,
-                    delegate(IFolder f) { return f is Folders.ScheduledFolder; });
-
-                if (scheduledFolder != null)
                 {
-                    if (scheduledFolder.IsOpen)
-                        scheduledFolder.Refresh();
-                    else
-                        scheduledFolder.RefreshCount();
+                    PatientProfileSummary profile = GetRandomPatient();
+                    randomVisit = RandomUtils.RandomVisit(profile.PatientRef, profile.ProfileRef, profile.Mrn.AssigningAuthority);
                 }
+                else
+                {
+                    randomVisit = RandomUtils.RandomVisit(item.PatientRef, item.PatientRef, item.Mrn.AssigningAuthority);
+                }
+
+                RandomUtils.RandomOrder(randomVisit, null);
             }
             catch (Exception e)
             {
                 ExceptionHandler.Report(e, context.DesktopWindow);
             }
         }
+
+        private static PatientProfileSummary GetRandomPatient()
+        {
+            char randomChar = RandomUtils.RandomAlphabet;
+
+            PatientProfileSummary randomProfile = null;
+
+            Platform.GetService<IRegistrationWorkflowService>(
+                delegate(IRegistrationWorkflowService service)
+                {
+                    SearchPatientRequest request = new SearchPatientRequest();
+                    request.GivenName = randomChar.ToString();
+                    SearchPatientResponse response = service.SearchPatient(request);
+                    randomProfile = RandomUtils.ChooseRandom(response.Profiles);
+
+                    if (randomProfile == null)
+                    {
+                        // Search for all patient, slow but works
+                        request = new SearchPatientRequest();
+                        request.Sex = new EnumValueInfo("M", "Male");
+                        response = service.SearchPatient(request);
+                        randomProfile = RandomUtils.ChooseRandom(response.Profiles);
+                    }
+                });
+
+            return randomProfile;
+        }
+
     }
 }

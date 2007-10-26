@@ -194,7 +194,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         [ReadOperation]
         public GetOperationEnablementResponse GetOperationEnablement(GetOperationEnablementRequest request)
         {
-            return new GetOperationEnablementResponse(GetOperationEnablement(new WorklistItemKey(request.PatientProfileRef, request.OrderRef)));
+            return new GetOperationEnablementResponse(GetOperationEnablement(new WorklistItemKey(request.OrderRef, request.PatientProfileRef)));
         }
 
         [ReadOperation]

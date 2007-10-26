@@ -42,7 +42,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DateTimeFormat.cs" />
     <Compile Include="IntegrationSettings.cs" />
     <Compile Include="IntegrationSettings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -50,7 +49,6 @@
       <DependentUpon>IntegrationSettings.settings</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RandomUtils.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
