@@ -117,19 +117,20 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                         }
                     }
                 }
-
-                if (list[0].Active == false)
+                else
                 {
-                    Platform.Log(LogLevel.Error,
-                                 "Rejecting association from {0} to {1}.  Device is disabled.",
-                                 assocParms.CallingAE, assocParms.CalledAE);
-                    reason = DicomRejectReason.CallingAENotRecognized;
-                    result = DicomRejectResult.Permanent;
-                    read.Dispose();
-                    return false;
-
+                    if (list[0].Active == false)
+                    {
+                        Platform.Log(LogLevel.Error,
+                                     "Rejecting association from {0} to {1}.  Device is disabled.",
+                                     assocParms.CallingAE, assocParms.CalledAE);
+                        reason = DicomRejectReason.CallingAENotRecognized;
+                        result = DicomRejectResult.Permanent;
+                        read.Dispose();
+                        return false;
+                    }
                 }
-                
+
                 read.Dispose();
             }
             catch (Exception e)
