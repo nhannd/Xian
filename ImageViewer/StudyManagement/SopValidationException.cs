@@ -33,6 +33,9 @@ using System;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
+	/// <summary>
+	/// An exception that is thrown when Sop validation fails.
+	/// </summary>
 	public class SopValidationException : ApplicationException
 	{
 		/// <summary>

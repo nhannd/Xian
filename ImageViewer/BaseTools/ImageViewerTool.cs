@@ -51,6 +51,9 @@ namespace ClearCanvas.ImageViewer.BaseTools
 		private MouseWheelShortcut _mouseWheelShortcut;
 		private event EventHandler _mouseWheelShortcutChanged;
 
+		/// <summary>
+		/// Initializes the <see cref="ImageViewerTool"/>.
+		/// </summary>
 		public override void Initialize()
 		{
 			this.Context.Viewer.EventBroker.TileSelected += new EventHandler<TileSelectedEventArgs>(OnTileSelected);
@@ -207,6 +210,9 @@ namespace ClearCanvas.ImageViewer.BaseTools
 			}
 		}
 
+		/// <summary>
+		/// Event Handler for <see cref="EventBroker.TileSelected"/>.
+		/// </summary>
 		protected virtual void OnTileSelected(object sender, TileSelectedEventArgs e)
 		{
 			if (e.SelectedTile.PresentationImage == null)
@@ -215,6 +221,11 @@ namespace ClearCanvas.ImageViewer.BaseTools
 				this.Enabled = true;
 		}
 
+		/// <summary>
+		/// Event Handler for <see cref="EventBroker.PresentationImageSelected"/>.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		protected virtual void OnPresentationImageSelected(object sender, PresentationImageSelectedEventArgs e)
 		{
 			if (e.SelectedPresentationImage == null)
@@ -239,6 +250,9 @@ namespace ClearCanvas.ImageViewer.BaseTools
 			}
 		}
 
+		/// <summary>
+		/// Fired when the <see cref="MouseWheelShortcut"/> property has changed.
+		/// </summary>
 		public event EventHandler MouseWheelShortcutChanged
 		{
 			add { _mouseWheelShortcutChanged += value; }
@@ -264,10 +278,22 @@ namespace ClearCanvas.ImageViewer.BaseTools
 
 		#endregion
 
+		/// <summary>
+		/// Called by the framework when mouse wheel activity starts.
+		/// </summary>
+		/// <remarks>
+		/// This method does nothing unless overridden.
+		/// </remarks>
 		protected virtual void StartWheel()
 		{
 		}
 
+		/// <summary>
+		/// Called by the framework each time the mouse wheel is moved.
+		/// </summary>
+		/// <remarks>
+		/// Unless overridden, this method simply calls <see cref="WheelUp"/> and <see cref="WheelDown"/>.
+		/// </remarks>
 		protected virtual void Wheel(int wheelDelta)
 		{
 			if (wheelDelta > 0)
@@ -276,14 +302,33 @@ namespace ClearCanvas.ImageViewer.BaseTools
 				WheelDown();
 		}
 
+		/// <summary>
+		/// Called when the mouse wheel has moved up.
+		/// </summary>
+		/// <remarks>
+		/// This method does nothing unless overridden.
+		/// </remarks>
 		protected virtual void WheelUp()
 		{
 		}
 
+		/// <summary>
+		/// Called when the mouse wheel has moved down.
+		/// </summary>
+		/// <remarks>
+		/// This method does nothing unless overridden.
+		/// </remarks>
 		protected virtual void WheelDown()
 		{
 		}
 
+		/// <summary>
+		/// Called by the framework to indicate that mouse wheel activity has stopped 
+		/// (a short period of time has elapsed without any activity).
+		/// </summary>
+		/// <remarks>
+		/// This method does nothing unless overridden.
+		/// </remarks>
 		protected virtual void StopWheel()
 		{
 		}

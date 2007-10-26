@@ -158,6 +158,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 			#endregion
 
+			public override int GetHashCode()
+			{
+				return base.GetHashCode();
+			}
+			
 			public override bool Equals(object obj)
 			{
 				if (this == obj)

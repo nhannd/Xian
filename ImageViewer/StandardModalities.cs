@@ -33,8 +33,18 @@ using System.Collections.Generic;
 
 namespace ClearCanvas.ImageViewer
 {
+	/// <summary>
+	/// Class that provides a list of standard modalities.
+	/// </summary>
+	/// <remarks>
+	/// For reasons of consistency, the provided modality list should be used throughout the 
+	/// application wherever a list of modalities is used/shown.
+	/// </remarks>
 	public static class StandardModalities
 	{
+		/// <summary>
+		/// Gets a list of standard modalities.
+		/// </summary>
 		public static ICollection<string> Modalities
 		{
 			get { return StandardModalitySettings.Default.ModalitiesAsArray; }

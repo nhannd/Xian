@@ -83,6 +83,10 @@ namespace ClearCanvas.ImageViewer.BaseTools
 		
 		#endregion
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="tooltipPrefix">The tooltip prefix, which usually describes the tool's function.</param>
 		protected MouseImageViewerTool(string tooltipPrefix)
 			: base()
 		{
@@ -93,11 +97,13 @@ namespace ClearCanvas.ImageViewer.BaseTools
 			_active = false;
 		}
 
+		/// <summary>
+		/// Gets or sets the tooltip prefix, which is usually a string describing the tool's function.
+		/// </summary>
 		protected MouseImageViewerTool()
 			: this(SR.LabelUnknown)
 		{
 		}
-
 		protected virtual string TooltipPrefix
 		{
 			get { return _tooltipPrefix; }
@@ -155,9 +161,12 @@ namespace ClearCanvas.ImageViewer.BaseTools
 		}
 
 		/// <summary>
-		/// Gets the tooltip associated with this tool.  For mouse tools, this is a combination of 
-		/// <see cref="TooltipPrefix"/> and <see cref="MouseButton"/> in the form "Prefix (button)".
+		/// Gets the tooltip associated with this tool.
 		/// </summary>
+		/// <remarks>
+		/// For mouse tools, this is a combination of <see cref="TooltipPrefix"/> 
+		/// and <see cref="MouseButton"/> in the form "Prefix (button)".
+		/// </remarks>
 		public virtual string Tooltip
 		{
 			get
@@ -205,15 +214,8 @@ namespace ClearCanvas.ImageViewer.BaseTools
 		}
 
 		/// <summary>
-		/// Overrides <see cref="ToolBase.Initialize"/>.  Initialization of the <see cref="MouseButton"/> member
-		/// is done here using the <see cref="MouseImageViewerToolInitializer.Initialize"/> method.
+		/// Overrides <see cref="ToolBase.Initialize"/>.
 		/// </summary>
-		/// <remarks>
-		/// Initializing the tool this way (via <see cref="MouseImageViewerToolInitializer.Initialize"/>)allows 
-		/// us to defer runtime value checking, of the <see cref="MouseButton"/> attribute in particular, 
-		/// to tool initialization time rather than at construction time.  This way, we can explicitly disallow
-		/// assignments like 'None' and the tool will never appear in the toolbar.
-		/// </remarks>
 		public override void Initialize()
 		{
 			base.Initialize();

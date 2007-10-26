@@ -72,7 +72,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	/// <item>
 	/// <description>
 	/// 4) <b>GetTag</b> methods should make no assumptions about return values.  If a return value cannot be determined, the default value for the
-	///    return type should be returned.  These are: "" for strings, 0 for any numeric type.  See <see cref="GetTag"/> for more details.
+	///    return type should be returned.  These are: "" for strings, 0 for any numeric type.  See the <b>GetTag</b> methods for more details.
 	/// </description>
 	/// </item>
 	/// <item>
@@ -100,6 +100,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	/// <description>
 	/// 8) If the existence or 'true value' of a tag is important to your implementation, use one of the <b>GetTag</b> methods, rather than the
 	///    existing property (or adding a property, for that matter).
+	/// </description>
+	/// </item>
 	/// </list>
 	/// </para>
 	/// </remarks>

@@ -63,6 +63,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 			get { return _innerMemento; }	
 		}
 
+		public override int GetHashCode()
+		{
+			return base.GetHashCode();
+		}	
+
 		public override bool Equals(object obj)
 		{
 			if (obj == this)

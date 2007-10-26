@@ -35,6 +35,12 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer
 {
+	/// <summary>
+	/// A <see cref="Tile"/> can show a textual information box at a given point
+	/// in it's client rectangle when one has been supplied.
+	/// </summary>
+	/// <seealso cref="Tile"/>
+	/// <seealso cref="Tile.InformationBox"/>
 	public class InformationBox
 	{
 		private string _data;
@@ -43,17 +49,26 @@ namespace ClearCanvas.ImageViewer
 
 		private event EventHandler _updated;
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
 		public InformationBox()
 		{
 			_visible = false;
 		}
 
+		/// <summary>
+		/// Fires when the <see cref="Data"/> property has changed.
+		/// </summary>
 		public event EventHandler Updated
 		{
 			add { _updated += value; }
 			remove { _updated -= value; }
 		}
 
+		/// <summary>
+		/// Gets or set the text data that is to be displayed to the user.
+		/// </summary>
 		public string Data
 		{
 			get { return _data; }
@@ -68,6 +83,9 @@ namespace ClearCanvas.ImageViewer
 			}
 		}
 
+		/// <summary>
+		/// The point at which the <see cref="InformationBox"/> should be displayed.
+		/// </summary>
 		public Point DestinationPoint
 		{
 			get { return _destinationPoint; }
@@ -82,6 +100,9 @@ namespace ClearCanvas.ImageViewer
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets whether or not the <see cref="InformationBox"/> should be visible.
+		/// </summary>
 		public bool Visible
 		{
 			get
@@ -97,6 +118,9 @@ namespace ClearCanvas.ImageViewer
 			}
 		}
 
+		/// <summary>
+		/// Updates both the <see cref="Data"/> and <see cref="DestinationPoint"/> properties simultaneously.
+		/// </summary>
 		public void Update(string data, Point destinationPoint)
 		{
 			bool changed = false;

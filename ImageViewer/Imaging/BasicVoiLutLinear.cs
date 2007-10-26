@@ -54,6 +54,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 				WindowCenter = windowCenter;
 			}
 
+			public override int GetHashCode()
+			{
+				return base.GetHashCode();
+			}	
+		
 			public override bool Equals(object obj)
 			{
 				if (obj == this)

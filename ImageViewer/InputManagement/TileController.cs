@@ -48,20 +48,36 @@ namespace ClearCanvas.ImageViewer.InputManagement
 	/// </summary>
 	/// <remarks>
 	/// <para>
-	/// The <see cref="TileController"/> receives messages from the view layer, interprets them, and allows the appropriate domain objects to handle
+	/// - The <see cref="TileController"/> receives messages from the view layer, interprets them, and allows the appropriate domain objects to handle
 	/// the messages in a prescribed manner.  Here is a (highly simplified) description of how it works:
-	/// </para>
-	/// <para>
-	///   - When the mouse moves without any buttons down, all <see cref="ClearCanvas.ImageViewer.Graphics.IGraphic"/>s 
-	///     that implement <see cref="IMouseButtonHandler"/> have their <see cref="IMouseButtonHandler.Track"/> method called.
-	///   - When a mouse button is clicked, an <see cref="ClearCanvas.ImageViewer.Graphics.IGraphic"/> is searched for at the current mouse position
-	///     that implements <see cref="IMouseButtonHandler"/>.  If one is found, it is given 'capture' until it releases capture or capture is canceled by the framework.
-	///     If no <see cref="ClearCanvas.ImageViewer.Graphics.IGraphic"/> is found, then all of the current <see cref="IPresentationImage"/>'s 
-	///     <see cref="ClearCanvas.Desktop.Tools.ITool"/>s are searched for an <see cref="IMouseButtonHandler"/> and the same rules are applied.
-	///   - When the right mouse button is clicked, the same thing occurs as for the left mouse button, but when it is released, a context menu is shown
-	///     provided the mouse didn't move more than a couple of pixels.
-	///   - When the mouse wheel is used, a similar approach is taken as mentioned above for <see cref="IMouseButtonHandler"/>s, but for <see cref="IMouseWheelHandler"/>s.  
-	///     However, only <see cref="ClearCanvas.Desktop.Tools.ITool"/>s are given the opportunity to handle the mouse wheel, not <see cref="ClearCanvas.ImageViewer.Graphics.IGraphic"/>s.
+	/// <list>
+	/// <item>
+	/// <description>
+	/// - When the mouse moves without any buttons down, all <see cref="ClearCanvas.ImageViewer.Graphics.IGraphic"/>s 
+	/// that implement <see cref="IMouseButtonHandler"/> have their <see cref="IMouseButtonHandler.Track"/> method called.
+	/// </description>
+	/// </item>
+	/// <item>
+	/// <description>
+	/// - When a mouse button is clicked, an <see cref="ClearCanvas.ImageViewer.Graphics.IGraphic"/> is searched for at the current mouse position
+	/// that implements <see cref="IMouseButtonHandler"/>.  If one is found, it is given 'capture' until it releases capture or capture is canceled by the framework.
+	/// If no <see cref="ClearCanvas.ImageViewer.Graphics.IGraphic"/> is found, then all of the current <see cref="IPresentationImage"/>'s 
+	/// <see cref="ClearCanvas.Desktop.Tools.ITool"/>s are searched for an <see cref="IMouseButtonHandler"/> and the same rules are applied.
+	/// </description>
+	/// </item>
+	/// <item>
+	/// <description>
+	/// - When the right mouse button is clicked, the same thing occurs as for the left mouse button, but when it is released, a context menu is shown
+	/// provided the mouse didn't move more than a couple of pixels.
+	/// </description>
+	/// </item>
+	/// <item>
+	/// <description>
+	/// When the mouse wheel is used, a similar approach is taken as mentioned above for <see cref="IMouseButtonHandler"/>s, but for <see cref="IMouseWheelHandler"/>s.  
+	/// However, only <see cref="ClearCanvas.Desktop.Tools.ITool"/>s are given the opportunity to handle the mouse wheel, not <see cref="ClearCanvas.ImageViewer.Graphics.IGraphic"/>s.
+	/// </description>
+	/// </item>
+	/// </list>
 	/// </para>
 	/// <para>
 	/// Note that this object is instantiated from within the view layer and cannot be accessed from application or domain level code.  

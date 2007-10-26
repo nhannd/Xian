@@ -181,6 +181,9 @@ namespace ClearCanvas.ImageViewer
 			EventsHelper.Fire(_imageLoadedEvent, this, sopEventArgs);
 		}
 
+		/// <summary>
+		/// Occurs when an <see cref="IMouseButtonHandler"/> is losing or gaining capture.
+		/// </summary>
 		public event EventHandler<CaptureChangingEventArgs> CaptureChanging
 		{
 			add { _captureChangingEvent += value; }
