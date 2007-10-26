@@ -33,7 +33,7 @@
 namespace ClearCanvas.ImageViewer.Imaging
 {
 	/// <summary>
-	/// A composed Lut is one that has been created by combining multiple Luts together.
+	/// A Composed Lut is one that has been created by combining multiple Luts together.
 	/// </summary>
 	/// <remarks>
 	/// The <see cref="Data"/> property should be considered readonly and is only provided
@@ -41,6 +41,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// be data Luts, which is important because the overall efficiency of the Lut pipeline is improved 
 	/// substantially.
 	/// </remarks>
+	/// <seealso cref="ILut"/>
 	public interface IComposedLut : ILut
 	{
 		/// <summary>

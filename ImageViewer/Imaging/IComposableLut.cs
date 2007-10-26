@@ -37,6 +37,8 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// <summary>
 	/// Defines a Lut that can be added to a <see cref="LutCollection"/>.
 	/// </summary>
+	/// <seealso cref="ILut"/>
+	/// <seealso cref="IMemorable"/>
 	public interface IComposableLut : ILut, IMemorable
 	{
 		/// <summary>

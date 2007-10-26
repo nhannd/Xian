@@ -41,14 +41,38 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// The values in the LUT represent ARGB values that are used 
 	/// by an <see cref="ClearCanvas.ImageViewer.Rendering.IRenderer"/> to display the image.
 	/// </remarks>
+	/// <seealso cref="GeneratedDataLut"/>
+	/// <seealso cref="IColorMap"/>
 	public abstract class ColorMap : GeneratedDataLut, IColorMap
 	{
+		#region Protected Constructor
+
 		/// <summary>
-		/// Initializes a new instance of <see cref="ColorMap"/>.
+		/// Default constructor.
 		/// </summary>
 		protected ColorMap()
 		{
 		}
+
+		#endregion
+
+		#region Protected Methods
+		#region Overrides
+
+		/// <summary>
+		/// Should be called by implementors when the Lut has changed.
+		/// </summary>
+		protected sealed override void OnLutChanged()
+		{
+			base.OnLutChanged();
+		}
+
+		#endregion
+		#endregion
+
+		#region Public Members
+		#region Properties
+		#region Overrides
 
 		/// <summary>
 		/// Not applicable.
@@ -82,6 +106,24 @@ namespace ClearCanvas.ImageViewer.Imaging
 			}
 		}
 
+		/// <summary>
+		/// Gets the element at the specified index.
+		/// </summary>
+		/// <returns>A 32-bit ARGB value.</returns>
+		public sealed override int this[int index]
+		{
+			get
+			{
+				return base[index];
+			}
+			protected  set
+			{
+				base[index] = value;
+			}
+		}
+
+		#endregion
+
 		#region IColorMap Members
 
 		/// <summary>
@@ -103,30 +145,10 @@ namespace ClearCanvas.ImageViewer.Imaging
 		}
 
 		#endregion
+		#endregion
 
-		/// <summary>
-		/// Gets the element at the specified index.
-		/// </summary>
-		/// <returns>A 32-bit ARGB value.</returns>
-		public sealed override int this[int index]
-		{
-			get
-			{
-				return base[index];
-			}
-			protected  set
-			{
-				base[index] = value;
-			}
-		}
-
-		/// <summary>
-		/// Should be called by implementors when the Lut has changed.
-		/// </summary>
-		protected sealed override void OnLutChanged()
-		{
-			base.OnLutChanged();
-		}
+		#region Methods
+		#region Overrides
 
 		/// <summary>
 		/// Gets a string key that identifies this particular LUT's characteristics, so that 
@@ -155,12 +177,14 @@ namespace ClearCanvas.ImageViewer.Imaging
 		}
 
 		/// <summary>
-		/// Not applicable.
+		/// Not applicable; does nothing.
 		/// </summary>
 		public sealed override void SetMemento(IMemento memento)
 		{
 			base.SetMemento(memento);
 		}
+		
+		#endregion
 
 		#region IEquatable<IColorMap> Members
 
@@ -174,6 +198,8 @@ namespace ClearCanvas.ImageViewer.Imaging
 				this.GetType() == other.GetType();
 		}
 
+		#endregion
+		#endregion
 		#endregion
 	}
 }

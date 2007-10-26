@@ -44,10 +44,14 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// </remarks>
 	internal sealed class ModalityLutLinear : GeneratedDataLut, IModalityLut, IEquatable<ModalityLutLinear>
 	{
+		#region Private Fields
+
 		private readonly int _bitsStored;
 		private readonly bool _isSigned;
 		private double _rescaleSlope;
 		private double _rescaleIntercept;
+
+		#endregion
 
 		/// <summary>
 		/// Initializes a new instance of ModalityLUTLinear with the specified parameters.
@@ -73,25 +77,8 @@ namespace ClearCanvas.ImageViewer.Imaging
 			Initialize();
 		}
 
-		private void Initialize()
-		{
-			if (this.IsSigned)
-			{
-				base.MinInputValue = -(1 << (this.BitsStored - 1));
-				base.MaxInputValue = (1 << (this.BitsStored - 1)) - 1;
-			}
-			else
-			{
-				base.MinInputValue = 0;
-				base.MaxInputValue = (1 << this.BitsStored) - 1;
-			}
-
-			int minMax1 = (int)(this.RescaleSlope*this.MinInputValue + this.RescaleIntercept);
-			int minMax2 = (int) (this.RescaleSlope*this.MaxInputValue + this.RescaleIntercept);
-
-			base.MinOutputValue = (int)Math.Min(minMax1, minMax2);
-			base.MaxOutputValue = (int)Math.Max(minMax1, minMax2);
-		}
+		#region Private Members
+		#region Properties
 
 		private int BitsStored
 		{
@@ -127,6 +114,12 @@ namespace ClearCanvas.ImageViewer.Imaging
 			}
 		}
 
+		#endregion
+		#endregion
+
+		#region Methods
+		#region Overrides
+
 		protected override void Create()
 		{
 			for (int i = this.MinInputValue; i <= this.MaxInputValue; i++)
@@ -148,6 +141,30 @@ namespace ClearCanvas.ImageViewer.Imaging
 		{
 			return String.Format(SR.FormatDescriptionModalityLutLinear, _rescaleSlope, _rescaleIntercept);
 		}
+
+		#endregion
+
+		private void Initialize()
+		{
+			if (this.IsSigned)
+			{
+				base.MinInputValue = -(1 << (this.BitsStored - 1));
+				base.MaxInputValue = (1 << (this.BitsStored - 1)) - 1;
+			}
+			else
+			{
+				base.MinInputValue = 0;
+				base.MaxInputValue = (1 << this.BitsStored) - 1;
+			}
+
+			int minMax1 = (int)(this.RescaleSlope * this.MinInputValue + this.RescaleIntercept);
+			int minMax2 = (int)(this.RescaleSlope * this.MaxInputValue + this.RescaleIntercept);
+
+			base.MinOutputValue = (int)Math.Min(minMax1, minMax2);
+			base.MaxOutputValue = (int)Math.Max(minMax1, minMax2);
+		}
+
+		#endregion
 
 		#region IEquatable<IModalityLut> Members
 

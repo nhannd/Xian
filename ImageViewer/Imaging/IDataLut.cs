@@ -34,6 +34,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// <summary>
 	/// A Data Lut.
 	/// </summary>
+	/// <seealso cref="IComposableLut"/>
 	public interface IDataLut : IComposableLut
 	{
 		/// <summary>

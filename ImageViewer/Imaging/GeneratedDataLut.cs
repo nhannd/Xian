@@ -41,14 +41,20 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// Often, Linear Luts are created by deriving from this class to improve performance so that
 	/// the calculation is only performed once.  For an example, see <see cref="ModalityLutLinear"/>.
 	/// </remarks>
+	/// <seealso cref="ComposableLut"/>
+	/// <seealso cref="IGeneratedDataLut"/>
 	public abstract class GeneratedDataLut : ComposableLut, IGeneratedDataLut
 	{
+		#region Private Fields
+
 		private int _minimumInputValue;
 		private int _maximimInputValue;
 		private int _minimumOutputValue;
 		private int _maximumOutputValue;
 
 		private int[] _data;
+
+		#endregion
 
 		/// <summary>
 		/// Default constructor.
@@ -61,6 +67,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 			_minimumOutputValue = int.MinValue;
 			_maximumOutputValue = int.MaxValue;
 		}
+
+		#region Protected Members
+		#region Properties
 
 		/// <summary>
 		/// Gets whether or not the underlying <see cref="Data"/> has been allocated yet.
@@ -115,6 +124,17 @@ namespace ClearCanvas.ImageViewer.Imaging
 				this.Data[index - this.MinInputValue] = value;
 			}
 		}
+		#endregion
+
+		/// <summary>
+		/// Inheritors must implement this method and create the Lut using their particular algorithm.
+		/// </summary>
+		protected abstract void Create();
+		
+		#endregion
+
+		#region Public Members
+		#region Properties
 
 		/// <summary>
 		/// Returns the length of the Lut.
@@ -123,6 +143,8 @@ namespace ClearCanvas.ImageViewer.Imaging
 		{
 			get { return (uint)(this.MaxInputValue - this.MinInputValue + 1); }
 		}
+
+		#region Overrides
 
 		/// <summary>
 		/// Gets or sets the minimum input value.
@@ -196,10 +218,8 @@ namespace ClearCanvas.ImageViewer.Imaging
 			}
 		}
 
-		/// <summary>
-		/// Inheritors must implement this method and create the Lut using their particular algorithm.
-		/// </summary>
-		protected abstract void Create();
+		#endregion
+		#endregion
 
 		#region IDataLut Members
 
@@ -211,6 +231,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 			_data = null;
 		}
 
+		#endregion
 		#endregion
 	}
 }

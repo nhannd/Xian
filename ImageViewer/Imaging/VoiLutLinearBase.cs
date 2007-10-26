@@ -42,13 +42,21 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// are provided that cover most, if not all, Linear Voi Lut use cases.  You should not need
 	/// to derive directly from this class.
 	/// </remarks>
+	/// <seealso cref="ComposableLut"/>
+	/// <seealso cref="IComposableLut"/>
 	public abstract class VoiLutLinearBase : ComposableLut
 	{
+		#region Private Fields
+
 		private int _minInputValue;
 		private int _maxInputValue;
 		private double _windowRegionStart;
 		private double _windowRegionEnd;
 		private bool _recalculate;
+
+		#endregion
+
+		#region Protected Constructor
 
 		/// <summary>
 		/// Default constructor.
@@ -60,6 +68,10 @@ namespace ClearCanvas.ImageViewer.Imaging
 			_maxInputValue = int.MaxValue;
 		}
 
+		#endregion
+
+		#region Protected Methods
+
 		/// <summary>
 		/// Gets the Window Width.
 		/// </summary>
@@ -70,8 +82,13 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// </summary>
 		protected abstract double GetWindowCenter();
 
+		#endregion
+
+		#region Overrides
+		#region Public Properties
+
 		/// <summary>
-		/// Gets the output value of the lut at a given input <paramref name="index"/>.
+		/// Gets the output value of the Lut at a given input <paramref name="index"/>.
 		/// </summary>
 		public sealed override int this[int index]
 		{
@@ -99,7 +116,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 			}
 			protected set
 			{
-				throw new Exception("The method or operation is not implemented.");
+				throw new MemberAccessException(SR.ExceptionLinearLutDataCannotBeSet);
 			}
 		}
 
@@ -144,22 +161,26 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Gets the minimum output value.
 		/// </summary>
-		/// <exception cref="InvalidOperationException">Thrown on any attempt to set the value.</exception>
+		/// <exception cref="MemberAccessException">Thrown on any attempt to set the value.</exception>
 		public sealed override int MinOutputValue
 		{
 			get { return _minInputValue; }
-			protected set { throw new InvalidOperationException(SR.ExceptionMinimumOutputValueIsNotSettable); }
+			protected set { throw new MemberAccessException(SR.ExceptionMinimumOutputValueIsNotSettable); }
 		}
 
 		/// <summary>
 		/// Gets the maximum output value.
 		/// </summary>
-		/// <exception cref="InvalidOperationException">Thrown on any attempt to set the value.</exception>
+		/// <exception cref="MemberAccessException">Thrown on any attempt to set the value.</exception>
 		public sealed override int MaxOutputValue
 		{
 			get { return _maxInputValue; }
-			protected set { throw new InvalidOperationException(SR.ExceptionMaximumOutputValueIsNotSettable); }
+			protected set { throw new MemberAccessException(SR.ExceptionMaximumOutputValueIsNotSettable); }
 		}
+
+		#endregion
+
+		#region Methods
 
 		/// <summary>
 		/// Gets a string key that identifies this particular LUT's characteristics, so that 
@@ -189,11 +210,18 @@ namespace ClearCanvas.ImageViewer.Imaging
 			base.OnLutChanged();
 		}
 
+		#endregion
+		#endregion
+
+		#region Private Methods
+
 		private void Calculate()
 		{
 			double halfWindow = (this.GetWindowWidth() - 1) / 2;
 			_windowRegionStart = this.GetWindowCenter() - 0.5 - halfWindow;
 			_windowRegionEnd = this.GetWindowCenter() - 0.5 + halfWindow;
 		}
+		
+		#endregion
 	}
 }

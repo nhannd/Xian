@@ -38,8 +38,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// <summary>
 	/// The most basic of Linear Luts where the <see cref="WindowWidth"/> and <see cref="WindowCenter"/> can be directly set/manipulated.
 	/// </summary>
+	/// <seealso cref="IBasicVoiLutLinear"/>
 	public sealed class BasicVoiLutLinear : VoiLutLinearBase, IBasicVoiLutLinear
 	{
+		#region Window/Level Memento class
+
 		private class WindowLevelMemento : IMemento, IEquatable<WindowLevelMemento>
 		{
 			public readonly double WindowWidth;
@@ -72,17 +75,25 @@ namespace ClearCanvas.ImageViewer.Imaging
 			#endregion
 		}
 
+		#endregion
+
+		#region Private Fields
+
 		private double _windowWidth;
 		private double _windowCenter;
+
+		#endregion
+
+		#region Public Constructors
 
 		/// <summary>
 		/// Constructor.  
 		/// </summary>
 		/// <remarks>
-		/// Allows the initial Window Width and Window Center to be set.
+		/// Allows the initial <see cref="WindowWidth"/> and <see cref="WindowCenter"/> to be set.
 		/// </remarks>
-		/// <param name="windowWidth">the initial Window Width.</param>
-		/// <param name="windowCenter">the initial Window Center.</param>
+		/// <param name="windowWidth">The initial Window Width.</param>
+		/// <param name="windowCenter">The initial Window Center.</param>
 		public BasicVoiLutLinear(double windowWidth, double windowCenter)
 			: base()
 		{
@@ -94,15 +105,20 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// Default Constructor.
 		/// </summary>
 		/// <remarks>
-		/// The initial Window Width and Window Center are 1 and 0, respectively.
+		/// The initial <see cref="WindowWidth"/> and <see cref="WindowCenter"/> are 1 and 0, respectively.
 		/// </remarks>
 		public BasicVoiLutLinear()
 			: this(1, 0)
 		{
 		}
 
+		#endregion
+
+		#region Protected Methods
+		#region Overrides
+
 		/// <summary>
-		/// Gets the Window Width.
+		/// Gets the <see cref="WindowWidth"/>.
 		/// </summary>
 		protected override double GetWindowWidth()
 		{
@@ -110,12 +126,18 @@ namespace ClearCanvas.ImageViewer.Imaging
 		}
 
 		/// <summary>
-		/// Gets the Window Center.
+		/// Gets the <see cref="WindowCenter"/>.
 		/// </summary>
 		protected override double GetWindowCenter()
 		{
 			return this.WindowCenter;
 		}
+
+		#endregion
+		#endregion
+
+		#region Public Members
+		#region Properties
 
 		/// <summary>
 		/// Gets or sets the Window Width.
@@ -152,6 +174,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 			}
 		}
 
+		#endregion
+
+		#region Methods
+		#region Overrides
+
 		/// <summary>
 		/// Gets an abbreviated description of the Lut.
 		/// </summary>
@@ -171,7 +198,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Sets the Lut's state from the input <see cref="IMemento"/>.
 		/// </summary>
-		/// <exception cref="InvalidCastException">thrown when the memento is unrecognized.  This should never happen.</exception>
+		/// <exception cref="InvalidCastException">Thrown when the memento is unrecognized, which should never happen.</exception>
 		/// <param name="memento">The memento to use to restore a previous state.</param>
 		public override void SetMemento(IMemento memento)
 		{
@@ -181,5 +208,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 			this.WindowWidth = windowLevelMemento.WindowWidth;
 			this.WindowCenter = windowLevelMemento.WindowCenter;
 		}
+
+		#endregion
+		#endregion
+		#endregion
 	}
 }

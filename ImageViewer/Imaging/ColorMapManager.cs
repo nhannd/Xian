@@ -38,7 +38,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 {
 	internal sealed class ColorMapManager : IColorMapManager
 	{
+		#region Private Fields
+
 		private GrayscaleImageGraphic _grayscaleImageGraphic;
+		
+		#endregion
 
 		public ColorMapManager(GrayscaleImageGraphic grayscaleImageGraphic)
 		{

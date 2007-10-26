@@ -35,6 +35,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// <summary>
 	/// A read-only Linear Voi Lut, where the <see cref="WindowWidth"/> and <see cref="WindowCenter"/> cannot be set.
 	/// </summary>
+	/// <seealso cref="IComposableLut"/>
 	public interface IVoiLutLinear : IComposableLut
 	{
 		/// <summary>

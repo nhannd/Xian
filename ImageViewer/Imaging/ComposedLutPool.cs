@@ -38,6 +38,8 @@ namespace ClearCanvas.ImageViewer.Imaging
 {
 	internal sealed class ComposedLutPool : IReferenceCountable, IDisposable
 	{
+		#region Private Fields
+
 		private static volatile ComposedLutPool _instance;
 		private static object _syncRoot = new Object();
 
@@ -46,10 +48,14 @@ namespace ClearCanvas.ImageViewer.Imaging
 		private int _lutPoolSize = 4;
 		private int _referenceCount = 0;
 
+		#endregion
+
 		private ComposedLutPool()
 		{
 
 		}
+
+		#region Public Members
 
 		public static ComposedLutPool NewInstance
 		{
@@ -67,28 +73,6 @@ namespace ClearCanvas.ImageViewer.Imaging
 				_instance.IncrementReferenceCount();
 
 				return _instance;
-			}
-		}
-
-		private ReferenceCountedObjectCache LutCache
-		{
-			get
-			{
-				if (_lutCache == null)
-					_lutCache = new ReferenceCountedObjectCache();
-
-				return _lutCache;
-			}
-		}
-
-		private List<ComposedLut> Pool
-		{
-			get
-			{
-				if (_pool == null)
-					_pool = new List<ComposedLut>();
-
-				return _pool;
 			}
 		}
 
@@ -134,25 +118,6 @@ namespace ClearCanvas.ImageViewer.Imaging
 			}
 		}
 
-		private ComposedLut RetrieveFromPool(int lutSize)
-		{
-			// Find a LUT in the pool that's the same size as what's
-			// being requested
-			foreach (ComposedLut lut in this.Pool)
-			{
-				// If we've found one, take it out of the pool and return it
-				if (lut.Data.Length == lutSize)
-				{
-					this.Pool.Remove(lut);
-					return lut;
-				}
-			}
-
-			// If we couldn't find one, create a new one and return it.  It'll
-			// be returned to the pool later when Return is called.
-			return new ComposedLut(lutSize);
-		}
-
 		#region IReferenceCountable Members
 
 		public void IncrementReferenceCount()
@@ -177,7 +142,52 @@ namespace ClearCanvas.ImageViewer.Imaging
 		}
 
 		#endregion
+		#endregion
 
+		#region Private Members
+
+		private ReferenceCountedObjectCache LutCache
+		{
+			get
+			{
+				if (_lutCache == null)
+					_lutCache = new ReferenceCountedObjectCache();
+
+				return _lutCache;
+			}
+		}
+
+		private List<ComposedLut> Pool
+		{
+			get
+			{
+				if (_pool == null)
+					_pool = new List<ComposedLut>();
+
+				return _pool;
+			}
+		}
+
+		private ComposedLut RetrieveFromPool(int lutSize)
+		{
+			// Find a LUT in the pool that's the same size as what's
+			// being requested
+			foreach (ComposedLut lut in this.Pool)
+			{
+				// If we've found one, take it out of the pool and return it
+				if (lut.Data.Length == lutSize)
+				{
+					this.Pool.Remove(lut);
+					return lut;
+				}
+			}
+
+			// If we couldn't find one, create a new one and return it.  It'll
+			// be returned to the pool later when Return is called.
+			return new ComposedLut(lutSize);
+		}
+
+		#endregion
 
 		#region Disposal
 

@@ -48,6 +48,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// Implementors must not return null from the <see cref="GetColorMap"/> method.
 	/// </para>
 	/// </remarks>
+	/// <seealso cref="IColorMap"/>
 	public interface IColorMapManager : IMemorable
 	{
 		/// <summary>

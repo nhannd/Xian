@@ -37,8 +37,12 @@ namespace ClearCanvas.ImageViewer.Imaging
 {
 	internal sealed class ComposableLutMemento : IMemento, IEquatable<ComposableLutMemento>
 	{
+		#region Private Fields
+
 		private readonly IComposableLut _originatingLut;
 		private readonly IMemento _innerMemento;
+
+		#endregion
 
 		public ComposableLutMemento(IComposableLut originatingLut)
 		{
@@ -46,6 +50,8 @@ namespace ClearCanvas.ImageViewer.Imaging
 			_originatingLut = originatingLut;
 			_innerMemento = originatingLut.CreateMemento();
 		}
+
+		#region Public Members
 
 		public IComposableLut OriginatingLut
 		{
@@ -78,6 +84,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 			return this._originatingLut.Equals(other._originatingLut);
 		}
 
+		#endregion
 		#endregion
 	}
 }

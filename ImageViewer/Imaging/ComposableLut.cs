@@ -38,9 +38,16 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// <summary>
 	/// Abstract class providing base implementation for a Lut that can be added to a <see cref="LutCollection"/>.
 	/// </summary>
+	/// <seealso cref="IComposableLut"/>
 	public abstract class ComposableLut : IComposableLut
 	{
+		#region Private Fields
+
 		private event EventHandler _lutChanged;
+		
+		#endregion
+
+		#region Protected Constructor
 
 		/// <summary>
 		/// Default constructor.
@@ -49,16 +56,22 @@ namespace ClearCanvas.ImageViewer.Imaging
 		{
 		}
 
+		#endregion
+
+		#region Protected Methods
+
 		/// <summary>
 		/// Fires the <see cref="LutChanged"/> event.
 		/// </summary>
 		/// <remarks>
-		/// Inheritors should call this method when any property of the lut has changed.
+		/// Inheritors should call this method when any property of the Lut has changed.
 		/// </remarks>
 		protected virtual void OnLutChanged()
 		{
 			EventsHelper.Fire(_lutChanged, this, EventArgs.Empty);
 		}
+
+		#endregion
 
 		#region IComposableLut Members
 
@@ -142,9 +155,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// If you override <see cref="CreateMemento"/> to capture the Lut's state, you must also override this method
 		/// to allow the state to be restored.
 		/// </remarks>
-		/// <exception cref="InvalidOperationException">throw if <paramref name="memento"/> is <B>not</B> null, 
+		/// <param name="memento">The <see cref="IMemento"/> from which to restore the Lut's state.</param>
+		/// <exception cref="InvalidOperationException">Thrown if <paramref name="memento"/> is <B>not</B> null, 
 		/// which would indicate that <see cref="CreateMemento"/> has been overridden, but <see cref="SetMemento"/> has not.</exception>
-		/// <param name="memento">the <see cref="IMemento"/> from which to restore the Lut's state.</param>
 		public virtual void SetMemento(IMemento memento)
 		{
 			if (memento != null)

@@ -36,9 +36,13 @@ namespace ClearCanvas.ImageViewer.Imaging
 {
 	internal sealed class InitialVoiLutProvider : IInitialVoiLutProvider
 	{
+		#region Private Fields
+
 		private static InitialVoiLutProvider _instance;
 
 		private readonly IInitialVoiLutProvider _extensionProvider;
+
+		#endregion
 
 		private InitialVoiLutProvider()
 		{
@@ -51,6 +55,8 @@ namespace ClearCanvas.ImageViewer.Imaging
 				Platform.Log(LogLevel.Warn, e);
 			}
 		}
+
+		#region Public Members
 
 		public static InitialVoiLutProvider Instance
 		{
@@ -74,6 +80,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 			return lut;
 		}
 
+		#endregion
 		#endregion
 	}
 }

@@ -36,9 +36,22 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// A base implementation for Color Map factories.
 	/// </summary>
 	/// <typeparam name="T">Must be derived from <see cref="ColorMap"/> and have a parameterless default constructor.</typeparam>
+	/// <seealso cref="IColorMapFactory"/>
+	/// <seealso cref="ColorMap"/>
 	public abstract class ColorMapFactoryBase<T> : IColorMapFactory
 		where T : ColorMap, new()
 	{
+		#region Protected Constructor
+
+		/// <summary>
+		/// Default constructor.
+		/// </summary>
+		protected ColorMapFactoryBase()
+		{
+		}
+
+		#endregion
+
 		#region IColorMapFactory Members
 
 		/// <summary>

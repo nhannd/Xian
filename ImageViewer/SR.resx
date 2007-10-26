@@ -219,6 +219,9 @@
   <data name="ExceptionLayoutIsNotRectangular" xml:space="preserve">
     <value>The layout of the physical workspace is either non-rectangular or has not been set.</value>
   </data>
+  <data name="ExceptionLinearLutDataCannotBeSet" xml:space="preserve">
+    <value>Linear Luts have no settable data.</value>
+  </data>
   <data name="ExceptionLoadCompleteFailure" xml:space="preserve">
     <value>ClearCanvas was unable to load any of the images you requested.  Please contact your PACS administrator, or check the log.</value>
   </data>

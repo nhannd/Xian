@@ -48,6 +48,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// good performance.  Instead, use the <see cref="PixelData.Raw"/> property 
 	/// to get the raw byte array, then use unsafe code to do your processing.
 	/// </remarks>
+	/// <seealso cref="PixelData"/>
 	public class IndexedPixelData : PixelData
 	{
 		#region Private fields

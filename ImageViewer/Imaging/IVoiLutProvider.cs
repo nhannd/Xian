@@ -43,6 +43,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// Implementors should not return null for the <see cref="VoiLutManager"/> property.
 	/// </para>
 	/// </remarks>
+	/// <seealso cref="IVoiLutManager"/>
 	public interface IVoiLutProvider : IDrawable
 	{
 

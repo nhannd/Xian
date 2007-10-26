@@ -44,13 +44,20 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// their calculation.  <see cref="CalculateWindowRange"/> will only be called once, after which
 	/// the <see cref="WindowWidth"/> and <see cref="WindowCenter"/> values will be cached.
 	/// </remarks>
+	/// <seealso cref="CalculatedVoiLutLinear"/>
 	public abstract class AlgorithmCalculatedVoiLutLinear : CalculatedVoiLutLinear
 	{
+		#region Private Fields
+
 		private readonly IndexedPixelData _pixelData;
 		private readonly IModalityLut _modalityLut;
 
 		private double _windowWidth;
 		private double _windowCenter;
+
+		#endregion
+
+		#region Protected Constructors
 
 		/// <summary>
 		/// Constructor.
@@ -77,6 +84,10 @@ namespace ClearCanvas.ImageViewer.Imaging
 		{
 		}
 
+		#endregion
+
+		#region Private Methods
+
 		private void Calculate()
 		{
 			int windowStart, windowEnd;
@@ -92,20 +103,26 @@ namespace ClearCanvas.ImageViewer.Imaging
 			_windowWidth = Math.Max(_windowWidth, 1);
 			_windowCenter = _windowWidth / 2;
 		}
+		
+		#endregion
+
+		#region Protected Methods
 
 		/// <summary>
 		/// Called when either of <see cref="WindowWidth"/> or <see cref="WindowCenter"/> are first accessed.
 		/// </summary>
 		/// <remarks>
-		/// Inheritors must implement this method and return the windowStart and windowEnd value range 
-		/// that will be used to calculate the <see cref="WindowWidth"/> and <see cref="WindowCenter"/>.
+		/// Inheritors must implement this method and return the <paramref name="windowStart"/> and <paramref name="windowEnd"/> 
+		/// value range that will be used to calculate the <see cref="WindowWidth"/> and <see cref="WindowCenter"/>.
 		/// </remarks>
 		/// <param name="pixelData">The pixel data that is to be used to calculate <paramref name="windowStart"/> and <paramref name="windowEnd"/>.</param>
-		/// <param name="windowStart">returns the beginning value in the window range.</param>
+		/// <param name="windowStart">returns the start value in the window range.</param>
 		/// <param name="windowEnd">returns the end value in the window range.</param>
 		protected abstract void CalculateWindowRange(IndexedPixelData pixelData, out int windowStart, out int windowEnd);
 
-		#region IVoiLutLinear Members
+		#endregion
+
+		#region Overrides
 
 		/// <summary>
 		/// Gets the Window Width.

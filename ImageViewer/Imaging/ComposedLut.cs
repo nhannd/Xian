@@ -35,13 +35,19 @@ namespace ClearCanvas.ImageViewer.Imaging
 {
 	internal class ComposedLut : IReferenceCountable
 	{
+		#region Private Fields
+
 		private int _referenceCount = 0;
 		private readonly int[] _data;
+
+		#endregion
 
 		public ComposedLut(int numEntries)
 		{
 			_data = new int[numEntries];
 		}
+
+		#region Public Members
 
 		public int[] Data
 		{
@@ -71,6 +77,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 			get { return _referenceCount; }
 		}
 
+		#endregion
 		#endregion
 	}
 }

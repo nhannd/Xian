@@ -35,10 +35,24 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// Abstract class providing the base functionality for Luts where the <see cref="WindowWidth"/>
 	/// and <see cref="WindowCenter"/> are calculated and/or retrieved from an external source.
 	/// </summary>
+	/// <seealso cref="IVoiLutLinear"/>
 	public abstract class CalculatedVoiLutLinear : VoiLutLinearBase, IVoiLutLinear
 	{
+		#region Protected Constructor
+
 		/// <summary>
-		/// Gets the Window Width.
+		/// Default constructor.
+		/// </summary>
+		protected CalculatedVoiLutLinear()
+		{
+		}
+
+		#endregion
+
+		#region Overrides
+
+		/// <summary>
+		/// Gets the <see cref="WindowWidth"/>.
 		/// </summary>
 		protected sealed override double GetWindowWidth()
 		{
@@ -46,13 +60,15 @@ namespace ClearCanvas.ImageViewer.Imaging
 		}
 
 		/// <summary>
-		/// Gets the Window Center.
+		/// Gets the <see cref="WindowCenter"/>.
 		/// </summary>
 		protected sealed override double GetWindowCenter()
 		{
 			return this.WindowCenter;
 		}
-		
+
+		#endregion
+
 		#region IVoiLutLinear Members
 
 		/// <summary>

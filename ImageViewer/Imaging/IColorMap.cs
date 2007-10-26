@@ -49,6 +49,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// be compared with those already stored and discarded if an equivalent one already exists.
 	/// </para>
 	/// </remarks>
+	/// <seealso cref="IComposableLut"/>
 	public interface IColorMap : IComposableLut, IEquatable<IColorMap>
 	{
 		/// <summary>

@@ -36,6 +36,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// The most basic of Linear Luts where the <see cref="WindowWidth"/> and <see cref="WindowCenter"/>
 	/// can be set/manipulated.
 	/// </summary>
+	/// <seealso cref="IVoiLutLinear"/>
 	public interface IBasicVoiLutLinear : IVoiLutLinear
 	{
 		/// <summary>

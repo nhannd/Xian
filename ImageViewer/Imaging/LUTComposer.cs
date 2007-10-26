@@ -42,6 +42,8 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// </summary>
 	internal class LutComposer : IComposedLut, IDisposable
 	{
+		#region Private Fields
+
 		private LutCollection _lutCollection;
 		private ComposedLut _composedLut;
 		private bool _recalculate = true;
@@ -49,6 +51,8 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		private ComposedLutPool _lutPool;
 		private string _key = String.Empty;
+
+		#endregion
 
 		/// <summary>
 		/// Initializes a new instance of <see cref="LutComposer"/>.
@@ -78,7 +82,8 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		#endregion
 
-		#region Private Methods
+		#region Private Members
+		#region Methods
 
 		private unsafe void Compose()
 		{
@@ -194,10 +199,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 		}
 
 		#endregion
-
 		#endregion
 
-		#region Private Properties
+		#region Properties
 
 		private ComposedLutPool LutPool
 		{
@@ -265,6 +269,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 			}
 		}
 
+		#endregion
 		#endregion
 
 		#region IComposedLut Members
@@ -378,7 +383,6 @@ namespace ClearCanvas.ImageViewer.Imaging
 		}
 
 		#endregion
-
 		#endregion
 	}
 }

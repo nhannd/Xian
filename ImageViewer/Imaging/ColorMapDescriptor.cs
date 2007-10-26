@@ -36,16 +36,28 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// <summary>
 	/// Provides a description of an <see cref="IColorMap"/>.
 	/// </summary>
+	/// <seealso cref="IColorMap"/>
+	/// <seealso cref="IColorMapFactory"/>
 	public sealed class ColorMapDescriptor
 	{
+		#region Private Fields
+
 		private readonly string _name;
 		private readonly string _description;
+
+		#endregion
+
+		#region Private Constructor
 
 		private ColorMapDescriptor(string name, string description)
 		{
 			_name = name;
 			_description = description;
 		}
+
+		#endregion
+
+		#region Public Properties
 
 		/// <summary>
 		/// Gets the name of the factory.
@@ -63,6 +75,10 @@ namespace ClearCanvas.ImageViewer.Imaging
 			get { return _description; }
 		}
 
+		#endregion
+
+		#region Public Methods
+
 		/// <summary>
 		/// Creates a <see cref="ColorMapDescriptor"/> given an input <see cref="IColorMapFactory"/>.
 		/// </summary>
@@ -71,5 +87,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 			Platform.CheckForNullReference(factory, "factory");
 			return new ColorMapDescriptor(factory.Name, factory.Description);
 		}
+
+		#endregion
 	}
 }

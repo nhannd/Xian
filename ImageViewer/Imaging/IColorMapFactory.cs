@@ -45,13 +45,14 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// A factory for <see cref="IColorMap"/>s.
 	/// </summary>
 	/// <seealso cref="ColorMapFactoryExtensionPoint"/>
+	/// <seealso cref="IColorMap"/>
 	public interface IColorMapFactory
 	{
 		/// <summary>
 		/// Gets a name that should be unique when compared to other <see cref="IColorMapFactory"/>s.
 		/// </summary>
 		/// <remarks>
-		/// This name should not be a resource string, as it should be language-independent.
+		/// This name should <b>not</b> be a resource string, as it should be language-independent.
 		/// </remarks>
 		string Name { get; }
 

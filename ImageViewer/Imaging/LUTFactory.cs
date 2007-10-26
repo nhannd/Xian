@@ -55,6 +55,20 @@ namespace ClearCanvas.ImageViewer.Imaging
 				_realLut = null;
 			}
 
+			private IColorMap RealLut
+			{
+				get
+				{
+					if (_realLut == null)
+					{
+						LutFactory factory = NewInstance;
+						_realLut = factory.GetRealColorMap(_factoryName, _minInputValue, _maxInputValue);
+						factory.Dispose();
+					}
+
+					return _realLut;
+				}
+			}
 			public override int MinInputValue
 			{
 				get
@@ -91,14 +105,14 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 			public override int MinOutputValue
 			{
-				get { throw new InvalidOperationException(SR.ExceptionColorMapCannotHaveMinimumOutputValue); }
-				protected set { throw new InvalidOperationException(SR.ExceptionColorMapCannotHaveMinimumOutputValue); }
+				get { throw new MemberAccessException(SR.ExceptionColorMapCannotHaveMinimumOutputValue); }
+				protected set { throw new MemberAccessException(SR.ExceptionColorMapCannotHaveMinimumOutputValue); }
 			}
 
 			public override int MaxOutputValue
 			{
-				get { throw new InvalidOperationException(SR.ExceptionColorMapCannotHaveMaximumOutputValue); }
-				protected set { throw new InvalidOperationException(SR.ExceptionColorMapCannotHaveMaximumOutputValue); }
+				get { throw new MemberAccessException(SR.ExceptionColorMapCannotHaveMaximumOutputValue); }
+				protected set { throw new MemberAccessException(SR.ExceptionColorMapCannotHaveMaximumOutputValue); }
 			}
 
 			public override int this[int index]
@@ -109,7 +123,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 				}
 				protected set
 				{
-					throw new InvalidOperationException(SR.ExceptionColorMapDataCannotBeAltered);
+					throw new MemberAccessException(SR.ExceptionColorMapDataCannotBeAltered);
 				}
 			}
 
@@ -132,21 +146,6 @@ namespace ClearCanvas.ImageViewer.Imaging
 			}
 
 			#endregion
-
-			private IColorMap RealLut
-			{
-				get
-				{
-					if (_realLut == null)
-					{
-						LutFactory factory = NewInstance;
-						_realLut = factory.GetRealColorMap(_factoryName, _minInputValue, _maxInputValue);
-						factory.Dispose();
-					}
-
-					return _realLut;
-				}
-			}
 
 			#region IMemorable Members
 
@@ -193,6 +192,8 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		#endregion
 
+		#region Private Fields
+
 		private static volatile LutFactory _instance;
 
 		private List<ModalityLutLinear> _modalityLUTs;
@@ -202,10 +203,14 @@ namespace ClearCanvas.ImageViewer.Imaging
 		
 		private int _referenceCount = 0;
 
+		#endregion
+
 		private LutFactory()
 		{
 
 		}
+
+		#region Public Properties
 
 		public static LutFactory NewInstance
 		{
@@ -218,6 +223,10 @@ namespace ClearCanvas.ImageViewer.Imaging
 				return _instance;
 			}
 		}
+
+		#endregion
+
+		#region Private Properties
 
 		private List<ModalityLutLinear> ModalityLuts
 		{
@@ -272,6 +281,10 @@ namespace ClearCanvas.ImageViewer.Imaging
 			}
 		}
 
+		#endregion
+
+		#region Internal Methods
+
 		internal ModalityLutLinear GetModalityLutLinear(int bitsStored, bool isSigned, double rescaleSlope, double rescaleIntercept)
 		{
 			ModalityLutLinear modalityLut = new ModalityLutLinear(bitsStored, isSigned, rescaleSlope, rescaleIntercept);
@@ -292,6 +305,10 @@ namespace ClearCanvas.ImageViewer.Imaging
 			return new ColorMapProxy(name);
 		}
 
+		#endregion
+
+		#region Private Methods
+
 		private IColorMap GetRealColorMap(string factoryName, int minInputValue, int maxInputValue)
 		{
 			IColorMapFactory factory =
@@ -308,6 +325,8 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 			return existingLut;
 		}
+
+		#endregion
 
 		#region IReferenceCountable Members
 
@@ -333,8 +352,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		}
 
 		#endregion
-
-
+		
 		#region Disposal
 
 		#region IDisposable Members

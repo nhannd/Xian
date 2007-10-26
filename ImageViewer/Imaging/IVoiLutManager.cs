@@ -40,6 +40,8 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// <remarks>
 	/// Implementors must not return null from the <see cref="GetLut"/> method.
 	/// </remarks>
+	/// <seealso cref="IVoiLutProvider"/>
+	/// <see cref="IComposableLut"/>
 	public interface IVoiLutManager : IMemorable
 	{
 		/// <summary>
@@ -51,7 +53,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Installs a new Voi Lut.
 		/// </summary>
-		/// <param name="lut">The lut to be installed.</param>
+		/// <param name="lut">The Lut to be installed.</param>
 		void InstallLut(IComposableLut lut);
 	}
 }

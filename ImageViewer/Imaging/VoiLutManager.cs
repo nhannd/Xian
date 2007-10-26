@@ -37,7 +37,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 {
 	internal sealed class VoiLutManager : IVoiLutManager
 	{
+		#region Private Fields
+		
 		private GrayscaleImageGraphic _grayscaleImageGraphic;
+		
+		#endregion
 
 		public VoiLutManager(GrayscaleImageGraphic grayscaleImageGraphic)
 		{

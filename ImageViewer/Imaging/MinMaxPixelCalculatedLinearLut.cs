@@ -37,8 +37,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// A Linear Lut whose <see cref="AlgorithmCalculatedVoiLutLinear.WindowWidth"/> and <see cref="AlgorithmCalculatedVoiLutLinear.WindowCenter"/> 
 	/// are calculated based on the minimum and maximum pixel value in the pixel data.
 	/// </summary>
+	/// <seealso cref="AlgorithmCalculatedVoiLutLinear"/>
 	public sealed class MinMaxPixelCalculatedLinearLut : AlgorithmCalculatedVoiLutLinear
 	{
+		#region Public Constructors
+
 		/// <summary>
 		/// Constructor.
 		/// </summary>
@@ -62,6 +65,10 @@ namespace ClearCanvas.ImageViewer.Imaging
 		{
 		}
 
+		#endregion
+
+		#region Overrides
+
 		/// <summary>
 		/// Calculates and returns the minimum and maximum pixel values in the input <paramref name="pixelData"/>.
 		/// </summary>
@@ -80,5 +87,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		{
 			return String.Format(SR.FormatDescriptionMinMaxCalculatedLinearLut, WindowWidth, WindowCenter);
 		}
+
+		#endregion
 	}
 }

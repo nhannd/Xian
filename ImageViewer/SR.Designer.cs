@@ -367,6 +367,15 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Linear Luts have no settable data..
+        /// </summary>
+        public static string ExceptionLinearLutDataCannotBeSet {
+            get {
+                return ResourceManager.GetString("ExceptionLinearLutDataCannotBeSet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to ClearCanvas was unable to load any of the images you requested.  Please contact your PACS administrator, or check the log..
         /// </summary>
         public static string ExceptionLoadCompleteFailure {
