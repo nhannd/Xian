@@ -31,8 +31,19 @@
 
 namespace ClearCanvas.ImageViewer.InputManagement
 {
-	public class ReleaseCaptureMessage : IInputMessage
+	/// <summary>
+	/// A message object created by the view layer to notify a controlling object 
+	/// (e.g. <see cref="TileController"/>) that capture should be released.
+	/// </summary>
+	/// <remarks>
+	/// This class is intended for internal framework use only.
+	/// </remarks>
+	/// <seealso cref="TileController"/>
+	public class ReleaseCaptureMessage
 	{
+		/// <summary>
+		/// Constructor.
+		/// </summary>
 		public ReleaseCaptureMessage()
 		{ 
 		}

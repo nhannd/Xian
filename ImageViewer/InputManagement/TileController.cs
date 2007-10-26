@@ -35,24 +35,56 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.ImageViewer;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.InputManagement;
 
-namespace ClearCanvas.ImageViewer
+namespace ClearCanvas.ImageViewer.InputManagement
 {
 	/// <summary>
-	/// This class is for internal framework use only.
+	/// This class controls the behaviour of objects in the <see cref="ITile"/>, namely the <see cref="ClearCanvas.ImageViewer.Graphics.IGraphic"/>s 
+	/// in the current <see cref="IPresentationImage"/>'s SceneGraph (<see cref="PresentationImage.SceneGraph"/>) and <see cref="ClearCanvas.Desktop.Tools.ITool"/>s 
+	/// belonging to the current <see cref="IPresentationImage"/>, specifically those that implement <see cref="IMouseButtonHandler"/> and/or <see cref="IMouseWheelHandler"/>.
 	/// </summary>
-	public sealed class TileController : IInputController, IMouseInformation
+	/// <remarks>
+	/// <para>
+	/// The <see cref="TileController"/> receives messages from the view layer, interprets them, and allows the appropriate domain objects to handle
+	/// the messages in a prescribed manner.  Here is a (highly simplified) description of how it works:
+	/// </para>
+	/// <para>
+	///   - When the mouse moves without any buttons down, all <see cref="ClearCanvas.ImageViewer.Graphics.IGraphic"/>s 
+	///     that implement <see cref="IMouseButtonHandler"/> have their <see cref="IMouseButtonHandler.Track"/> method called.
+	///   - When a mouse button is clicked, an <see cref="ClearCanvas.ImageViewer.Graphics.IGraphic"/> is searched for at the current mouse position
+	///     that implements <see cref="IMouseButtonHandler"/>.  If one is found, it is given 'capture' until it releases capture or capture is canceled by the framework.
+	///     If no <see cref="ClearCanvas.ImageViewer.Graphics.IGraphic"/> is found, then all of the current <see cref="IPresentationImage"/>'s 
+	///     <see cref="ClearCanvas.Desktop.Tools.ITool"/>s are searched for an <see cref="IMouseButtonHandler"/> and the same rules are applied.
+	///   - When the right mouse button is clicked, the same thing occurs as for the left mouse button, but when it is released, a context menu is shown
+	///     provided the mouse didn't move more than a couple of pixels.
+	///   - When the mouse wheel is used, a similar approach is taken as mentioned above for <see cref="IMouseButtonHandler"/>s, but for <see cref="IMouseWheelHandler"/>s.  
+	///     However, only <see cref="ClearCanvas.Desktop.Tools.ITool"/>s are given the opportunity to handle the mouse wheel, not <see cref="ClearCanvas.ImageViewer.Graphics.IGraphic"/>s.
+	/// </para>
+	/// <para>
+	/// Note that this object is instantiated from within the view layer and cannot be accessed from application or domain level code.  
+	/// This is deliberate as it is intended for internal framework use only.
+	/// </para>
+	/// </remarks>
+	/// <seealso cref="IMouseButtonHandler"/>
+	/// <seealso cref="IMouseWheelHandler"/>
+	/// <seealso cref="IMouseInformation"/>
+	/// <seealso cref="ITile"/>
+	/// <seealso cref="IPresentationImage"/>
+	/// <seealso cref="PresentationImage"/>
+	/// <seealso cref="PresentationImage.SceneGraph"/>
+	/// <seealso cref="ClearCanvas.Desktop.Tools.ITool"/>
+	/// <seealso cref="ClearCanvas.ImageViewer.BaseTools.ImageViewerTool"/>
+	/// <seealso cref="ClearCanvas.ImageViewer.BaseTools.MouseImageViewerTool"/>
+	public sealed partial class TileController : IMouseInformation
 	{
-
-#pragma warning disable 1591
-
 		private delegate bool CallHandlerMethodDelegate(IMouseButtonHandler handler);
 
 		#region Private Fields
 
-		private Tile _tile;
+		private readonly Tile _tile;
 		private Point _startMousePoint;
 		private Point _currentMousePoint;
 		private Rectangle _tileClientRectangle;
@@ -63,6 +95,7 @@ namespace ClearCanvas.ImageViewer
 		private static IMouseWheelHandler _captureMouseWheelHandler;
 		private static Timer _wheelHandlerTimer;
 		private static DateTime _timeOfLastWheel;
+		private static readonly uint WheelStopDelayMilliseconds = 500;
 
 		private CursorToken _cursorToken;
 		
@@ -75,10 +108,13 @@ namespace ClearCanvas.ImageViewer
 		private XMouseButtons _activeButton;
 		private uint _clickCount;
 
-		private IViewerShortcutManager _shortcutManager;
+		private readonly IViewerShortcutManager _shortcutManager;
 
 		#endregion
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
 		public TileController(Tile tile, IViewerShortcutManager shortcutManager)
 		{
 			Platform.CheckForNullReference(tile, "tile");
@@ -88,57 +124,7 @@ namespace ClearCanvas.ImageViewer
 			_shortcutManager = shortcutManager;
 		}
 
-		private TileController()
-		{
-		}
-
-		#region Public Properties
-
-		public Rectangle TileClientRectangle
-		{
-			get { return _tileClientRectangle; }
-			set { _tileClientRectangle = value; }
-		}
-
-		public bool ContextMenuEnabled
-		{
-			get { return _contextMenuEnabled; }
-		}
-
-		public IContextMenuProvider ContextMenuProvider
-		{
-			get
-			{
-				if (_contextMenuProvider == null)
-					_contextMenuProvider = _tile.ImageViewer as IContextMenuProvider;
-
-				return _contextMenuProvider;
-			}
-			set
-			{
-				_contextMenuProvider = value;
-			}
-		}
-
-		public CursorToken CursorToken
-		{
-			get
-			{
-				return _cursorToken;
-			}
-			set
-			{
-				if (_cursorToken == value)
-					return;
-
-				_cursorToken = value;
-				EventsHelper.Fire(_cursorTokenChanged, this, new EventArgs());
-			}
-		}
-
-		#endregion
-
-		#region Capture Handler Properties
+		#region Private Properties
 
 		private IMouseButtonHandler CaptureHandler
 		{
@@ -187,35 +173,19 @@ namespace ClearCanvas.ImageViewer
 			}
 		}
 
+		#endregion
+
+		#region Private Methods
+
 		private void OnTimer(object nothing)
 		{
 			if (_captureMouseWheelHandler == null)
 				return;
 
 			TimeSpan elapsed = Platform.Time.Subtract(_timeOfLastWheel);
-			if (elapsed.Milliseconds >= _captureMouseWheelHandler.StopDelayMilliseconds)
+			if (elapsed.Milliseconds >= WheelStopDelayMilliseconds)
 				this.CaptureMouseWheelHandler = null;
 		}
-
-		#endregion
-
-		#region Public Events
-
-		public event EventHandler CursorTokenChanged
-		{
-			add { _cursorTokenChanged += value; }
-			remove { _cursorTokenChanged -= value; }
-		}
-
-		public event EventHandler<CaptureChangingEventArgs> CaptureChanging
-		{
-			add { _captureChangingEvent += value; }
-			remove { _captureChangingEvent -= value; }
-		}
-
-		#endregion
-
-		#region Private Methods
 
 		private void SetCursorToken(IMouseButtonHandler handler, Point location)
 		{
@@ -386,7 +356,7 @@ namespace ClearCanvas.ImageViewer
 			this.Location = trackMessage.Location;
 						
 			if (Math.Abs(_startMousePoint.X - this.Location.X) > 2 ||
-				Math.Abs(_startMousePoint.Y - this.Location.Y) > 2)
+			    Math.Abs(_startMousePoint.Y - this.Location.Y) > 2)
 				_contextMenuEnabled = false;
 
 			if (this.CaptureHandler != null)
@@ -464,9 +434,70 @@ namespace ClearCanvas.ImageViewer
 
 		#endregion
 
-		#region IController Members
+		#region Public Properties
 
-		public bool ProcessMessage(IInputMessage message)
+		/// <summary>
+		/// Used by the view layer to tell this object what the <see cref="Tile"/>'s client rectangle is.
+		/// </summary>
+		public Rectangle TileClientRectangle
+		{
+			get { return _tileClientRectangle; }
+			set { _tileClientRectangle = value; }
+		}
+
+		/// <summary>
+		/// Used by the view layer to decide whether or not to show the context menu.
+		/// </summary>
+		public bool ContextMenuEnabled
+		{
+			get { return _contextMenuEnabled; }
+		}
+
+		/// <summary>
+		/// Used by the view layer to retrieve the <see cref="ActionModelNode"/> in order to show a context menu.
+		/// </summary>
+		public IContextMenuProvider ContextMenuProvider
+		{
+			get
+			{
+				if (_contextMenuProvider == null)
+					_contextMenuProvider = _tile.ImageViewer as IContextMenuProvider;
+
+				return _contextMenuProvider;
+			}
+			set
+			{
+				_contextMenuProvider = value;
+			}
+		}
+
+		/// <summary>
+		/// Used by the view layer to determine the <see cref="CursorToken"/> to show.
+		/// </summary>
+		public CursorToken CursorToken
+		{
+			get
+			{
+				return _cursorToken;
+			}
+			set
+			{
+				if (_cursorToken == value)
+					return;
+
+				_cursorToken = value;
+				EventsHelper.Fire(_cursorTokenChanged, this, new EventArgs());
+			}
+		}
+
+		#endregion
+
+		#region Public Methods
+
+		/// <summary>
+		/// Called by the view layer so that the <see cref="TileController"/> can process the <paramref name="message"/>.
+		/// </summary>
+		public bool ProcessMessage(object message)
 		{
 			if (message is KeyboardButtonDownPreview)
 			{
@@ -517,27 +548,74 @@ namespace ClearCanvas.ImageViewer
 
 			return false;
 		}
-		
+
+		#endregion
+
+		#region Public Events
+
+		/// <summary>
+		/// For use by the view layer, so it can detect when the <see cref="CursorToken"/> has changed.
+		/// </summary>
+		public event EventHandler CursorTokenChanged
+		{
+			add { _cursorTokenChanged += value; }
+			remove { _cursorTokenChanged -= value; }
+		}
+
+		/// <summary>
+		/// For use by the view layer, so it can detect when capture is changing.
+		/// </summary>
+		/// <seealso cref="CaptureChangingEventArgs"/>
+		public event EventHandler<CaptureChangingEventArgs> CaptureChanging
+		{
+			add { _captureChangingEvent += value; }
+			remove { _captureChangingEvent -= value; }
+		}
+
 		#endregion
 
 		#region IMouseInformation Members
 
+		/// <summary>
+		/// The <see cref="ITile"/> that is controlled by this <see cref="TileController"/>.
+		/// </summary>
+		/// <remarks>
+		/// For use by consumers of <see cref="IMouseInformation"/>.
+		/// </remarks>
 		public ITile Tile
 		{
 			get { return _tile; }
 		}
 
+		/// <summary>
+		/// The current mouse location, set by the view layer.
+		/// </summary>
+		/// <remarks>
+		/// For use by consumers of <see cref="IMouseInformation"/>.
+		/// </remarks>
 		public Point Location
 		{
 			get { return _currentMousePoint; }
 			private set { _currentMousePoint = value; }
 		}
 
+		/// <summary>
+		/// Gets the currently depressed (<see cref="XMouseButtons"/>) mouse button, set internally by this class.
+		/// </summary>
+		/// <remarks>
+		/// For use by consumers of <see cref="IMouseInformation"/>.
+		/// </remarks>
 		public XMouseButtons ActiveButton
 		{
 			get { return _activeButton; }
 		}
 
+		/// <summary>
+		/// Gets the current click count.
+		/// </summary>
+		/// <remarks>
+		/// For use by consumers of <see cref="IMouseInformation"/>.
+		/// </remarks>
 		public uint ClickCount
 		{
 			get { return _clickCount; }

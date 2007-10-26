@@ -42,11 +42,19 @@ namespace ClearCanvas.ImageViewer.BaseTools
 	/// Extends the <see cref="ImageViewerTool"/> class to provide functionality that is common to mouse tools.
     /// </summary>
     /// <remarks>
+    /// <para>
     /// A mouse tool is a tool that, when activated, is assigned to a specific mouse button 
-    /// and is given the opportunity to respond to mouse events for that button.  Developers 
-    /// implementing mouse tools should subclass this class.
-    /// </remarks>
-
+    /// (see <see cref="MouseToolButtonAttribute"/>) and is given the opportunity to respond to 
+    /// mouse events for that button.  Developers implementing mouse tools should subclass this class.
+	/// </para>
+	/// <para>
+	/// A mouse tool can also have an additional modified mouse button shortcut specified 
+	/// (see <see cref="ModifiedMouseToolButtonAttribute"/>) that does not require the mouse 
+	/// tool to be activated in order to use it.
+	/// </para>
+	/// </remarks>
+	/// <seealso cref="MouseToolButtonAttribute"/>
+	/// <seealso cref="ModifiedMouseToolButtonAttribute"/>
 	public abstract class MouseImageViewerTool :
 		ImageViewerTool,
 		IMouseButtonHandler,

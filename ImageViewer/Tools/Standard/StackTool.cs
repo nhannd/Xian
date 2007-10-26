@@ -50,7 +50,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[IconSet("activate", IconScheme.Colour, "Icons.StackToolSmall.png", "Icons.StackToolMedium.png", "Icons.StackToolLarge.png")]
 	[GroupHint("activate", "Tools.Image.Manipulation.Stacking.Standard")]
 
-	[MouseWheelHandler(StopDelayMilliseconds = 500)]
+	[MouseWheelHandler(ModifierFlags.None)]
 	[MouseToolButton(XMouseButtons.Left, true)]
 
 	[KeyboardAction("stackup", "imageviewer-keyboard/ToolsStandardStack/StackUp", "StackUp", KeyStroke = XKeys.PageUp)]

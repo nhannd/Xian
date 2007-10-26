@@ -236,12 +236,10 @@
     <Compile Include="InputManagement\ICursorTokenProvider.cs" />
     <Compile Include="InputManagement\IMouseButtonHandler.cs" />
     <Compile Include="InputManagement\CaptureChangingEventArgs.cs" />
-    <Compile Include="InputManagement\IInputMessage.cs" />
     <Compile Include="InputManagement\IMouseWheelHandler.cs" />
     <Compile Include="InputManagement\IViewerShortcutManager.cs" />
     <Compile Include="InputManagement\KeyboardButtonShortcut.cs" />
     <Compile Include="InputManagement\Modifiers.cs" />
-    <Compile Include="InputManagement\IInputController.cs" />
     <Compile Include="Comparers\InstanceNumberComparer.cs" />
     <Compile Include="InputManagement\MouseButtonShortcut.cs" />
     <Compile Include="InputManagement\KeyboardButtonMessage.cs" />
@@ -424,7 +422,7 @@
     <Compile Include="StudyManagement\StudyTree.cs" />
     <Compile Include="Tile.cs" />
     <Compile Include="TileCollection.cs" />
-    <Compile Include="TileController.cs" />
+    <Compile Include="InputManagement\TileController.cs" />
     <Compile Include="TileEventArgs.cs" />
     <Compile Include="TileMemento.cs" />
     <Compile Include="TileSelectedEventArgs.cs" />

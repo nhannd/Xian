@@ -295,7 +295,7 @@ namespace ClearCanvas.ImageViewer
 		/// Gets the <see cref="IViewerShortcutManager"/>.
 		/// </summary>
 		/// <remarks>
-		/// It is unlikely you will ever need to use this property.
+		/// This property is intended for internal framework use only.
 		/// </remarks>
 		public IViewerShortcutManager ShortcutManager
 		{

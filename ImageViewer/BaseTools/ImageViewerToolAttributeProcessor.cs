@@ -48,8 +48,6 @@ namespace ClearCanvas.ImageViewer.BaseTools
 				return;
 
 			MouseWheelHandlerAttribute attribute = (MouseWheelHandlerAttribute)attributes[0];
-
-			tool.MouseWheelStopDelayMilliseconds = attribute.StopDelayMilliseconds;
 			tool.MouseWheelShortcut = attribute.Shortcut;
 		}
 	}

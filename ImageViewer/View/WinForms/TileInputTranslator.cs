@@ -101,32 +101,32 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			return false;
 		}
 
-		public IInputMessage OnMouseLeave()
+		public object OnMouseLeave()
 		{
 			return new MouseLeaveMessage();
 		}
 
-		public IInputMessage OnMouseMove(MouseEventArgs e)
+		public object OnMouseMove(MouseEventArgs e)
 		{
 			return new TrackMousePositionMessage(e.Location);
 		}
 
-		public IInputMessage OnMouseDown(MouseEventArgs e)
+		public object OnMouseDown(MouseEventArgs e)
 		{
 			return new MouseButtonMessage(e.Location, (XMouseButtons)e.Button, MouseButtonMessage.ButtonActions.Down, (uint)e.Clicks, this.Control, this.Alt, this.Shift);
 		}
 
-		public IInputMessage OnMouseUp(MouseEventArgs e)
+		public object OnMouseUp(MouseEventArgs e)
 		{
 			return new MouseButtonMessage(e.Location, (XMouseButtons)e.Button, MouseButtonMessage.ButtonActions.Up, 0, this.Control, this.Alt, this.Shift);
 		}
 
-		public IInputMessage OnMouseWheel(MouseEventArgs e)
+		public object OnMouseWheel(MouseEventArgs e)
 		{
 			return new MouseWheelMessage(e.Delta, this.Control, this.Alt, this.Shift);
 		}
 
-		public IInputMessage OnKeyDown(KeyEventArgs e)
+		public object OnKeyDown(KeyEventArgs e)
 		{
 			if (ConsumeKeyStroke(e.KeyCode))
 				return null;
@@ -134,7 +134,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			return new KeyboardButtonMessage((XKeys)e.KeyData, KeyboardButtonMessage.ButtonActions.Down);
 		}
 
-		public IInputMessage OnKeyUp(KeyEventArgs e)
+		public object OnKeyUp(KeyEventArgs e)
 		{
 			if (ConsumeKeyStroke(e.KeyCode))
 				return null;
@@ -142,7 +142,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			return new KeyboardButtonMessage((XKeys)e.KeyData, KeyboardButtonMessage.ButtonActions.Up);
 		}
 
-		public IInputMessage PostProcessMessage(Message msg, bool alreadyHandled)
+		public object PostProcessMessage(Message msg, bool alreadyHandled)
 		{
 			if (msg.Msg == 0x100 && alreadyHandled)
 			{
@@ -157,7 +157,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			return null;
 		}
 
-		public IInputMessage PreProcessMessage(Message msg)
+		public object PreProcessMessage(Message msg)
 		{
 			if (msg.Msg == 0x100)
 			{

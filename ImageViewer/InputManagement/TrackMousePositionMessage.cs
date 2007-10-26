@@ -33,19 +33,32 @@ using System.Drawing;
 
 namespace ClearCanvas.ImageViewer.InputManagement
 {
-	public sealed class TrackMousePositionMessage : IInputMessage
+	/// <summary>
+	/// A message object created by the view layer to allow a controlling object 
+	/// (e.g. <see cref="TileController"/>) to handle mouse move messages.
+	/// </summary>
+	/// <remarks>
+	/// This class is intended for internal framework use only.
+	/// </remarks>
+	/// <seealso cref="TileController"/>
+	public sealed class TrackMousePositionMessage
 	{
-		private Point _location;
+		private readonly Point _location;
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
 		public TrackMousePositionMessage(Point location)
 		{
 			_location = location;
 		}
 
+		/// <summary>
+		/// Gets the mouse location.
+		/// </summary>
 		public Point Location
 		{
 			get { return _location; }
-			set { _location = value; }
 		}
 	}
 }

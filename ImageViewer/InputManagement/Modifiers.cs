@@ -33,10 +33,19 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.InputManagement
 {
+	/// <summary>
+	/// An object representing modifier keys (e.g. Control, Alt, Shift).
+	/// </summary>
+	/// <remarks>
+	/// This class is intended for internal framework use only.
+	/// </remarks>
 	public sealed class Modifiers
 	{
-		private ModifierFlags _modifierFlags;
+		private readonly ModifierFlags _modifierFlags;
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
 		public Modifiers(bool control, bool alt, bool shift)
 		{
 			_modifierFlags = ModifierFlags.None;
@@ -46,31 +55,49 @@ namespace ClearCanvas.ImageViewer.InputManagement
 			_modifierFlags |= (shift) ? ModifierFlags.Shift : ModifierFlags.None;
 		}
 
+		/// <summary>
+		/// Constructor that takes a <see cref="ModifierFlags"/> as input.
+		/// </summary>
 		public Modifiers(ModifierFlags modifierFlags)
 		{
 			_modifierFlags = modifierFlags;
 		}
 
+		/// <summary>
+		/// Gets whether or not the Control key is down.
+		/// </summary>
 		public bool Control
 		{
 			get { return ((_modifierFlags & ModifierFlags.Control) == ModifierFlags.Control); } 
 		}
-		
+
+		/// <summary>
+		/// Gets whether or not the Alt key is down.
+		/// </summary>
 		public bool Alt
 		{
 			get { return ((_modifierFlags & ModifierFlags.Alt) == ModifierFlags.Alt); }
 		}
 
+		/// <summary>
+		/// Gets whether or not the Shift key is down.
+		/// </summary>
 		public bool Shift
 		{
 			get { return ((_modifierFlags & ModifierFlags.Shift) == ModifierFlags.Shift); } 
 		}
 
+		/// <summary>
+		/// Gets the state of all modifiers via a <see cref="ModifierFlags"/> enum.
+		/// </summary>
 		public ModifierFlags ModifierFlags
 		{
 			get { return _modifierFlags; }
 		}
 
+		/// <summary>
+		/// Determines whether another object is equal to this object.
+		/// </summary>
 		public override bool Equals(object obj)
 		{
 			if (obj is Modifiers)
@@ -82,11 +109,17 @@ namespace ClearCanvas.ImageViewer.InputManagement
 			return false;
 		}
 
+		/// <summary>
+		/// Gets a hashcode for this object instance. 
+		/// </summary>
 		public override int GetHashCode()
 		{
 			return _modifierFlags.GetHashCode();
 		}
 
+		/// <summary>
+		/// Gets a string describing the object instance.
+		/// </summary>
 		public override string ToString()
 		{
 			return _modifierFlags.ToString();

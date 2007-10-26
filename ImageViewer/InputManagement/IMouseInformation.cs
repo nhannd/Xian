@@ -34,11 +34,29 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.InputManagement
 {
+	/// <summary>
+	/// Used by the framework to relay information about the mouse to domain objects.
+	/// </summary>
 	public interface IMouseInformation
 	{
+		/// <summary>
+		/// Gets the <see cref="ITile"/> the mouse is currently in.
+		/// </summary>
 		ITile Tile { get; }
+
+		/// <summary>
+		/// Gets the mouse's current location, in terms of the <see cref="ITile"/>'s client rectangle coordinates.
+		/// </summary>
 		Point Location { get; }
+
+		/// <summary>
+		/// Gets the currently depressed mouse button, if any.
+		/// </summary>
 		XMouseButtons ActiveButton { get; }
+
+		/// <summary>
+		/// Gets the current mouse button click count.
+		/// </summary>
 		uint ClickCount { get; }
 	}
 }

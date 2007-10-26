@@ -34,17 +34,27 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.InputManagement
 {
+	/// <summary>
+	/// Represents the current message object's (e.g. <see cref="MouseButtonMessage"/>) state.
+	/// </summary>
+	/// <seealso cref="MouseButtonMessage"/>
 	public sealed class MouseButtonShortcut
 	{
-		private XMouseButtons _mouseButton;
-		private Modifiers _modifiers;
-		private string _description;
+		private readonly XMouseButtons _mouseButton;
+		private readonly Modifiers _modifiers;
+		private readonly string _description;
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
 		public MouseButtonShortcut(XMouseButtons mouseButton, ModifierFlags modifierFlags)
 			: this(mouseButton, new Modifiers(modifierFlags))
 		{
 		}
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
 		public MouseButtonShortcut(XMouseButtons mouseButton, Modifiers modifiers)
 		{
 			_mouseButton = mouseButton;
@@ -52,31 +62,49 @@ namespace ClearCanvas.ImageViewer.InputManagement
 			_description = String.Format(SR.FormatMouseButtonShortcutDescription, _mouseButton.ToString(), _modifiers.ToString());
 		}
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
 		public MouseButtonShortcut(XMouseButtons mouseButton, bool control, bool alt, bool shift)
 			: this(mouseButton, new Modifiers(control, alt, shift))
 		{
 		}
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
 		public MouseButtonShortcut(XMouseButtons mouseButton)
 			: this(mouseButton, false, false, false)
 		{
 		}
 		
+		/// <summary>
+		/// Gets the currently depressed mouse button, if any.
+		/// </summary>
 		public XMouseButtons MouseButton
 		{
 			get { return _mouseButton; }
 		}
 
+		/// <summary>
+		/// Gets the current state of the modifier keys as a <see cref="Modifiers"/> object.
+		/// </summary>
 		public Modifiers Modifiers
 		{
 			get { return _modifiers; }
 		}
 
+		/// <summary>
+		/// Returns whether or not the shortcut is modified (any modifier keys pressed).
+		/// </summary>
 		public bool IsModified
 		{
 			get { return _modifiers.ModifierFlags != ModifierFlags.None; }
 		}
 
+		/// <summary>
+		/// Determines if this object instance is equal to another.
+		/// </summary>
 		public override bool Equals(object obj)
 		{
 			if (obj is MouseButtonShortcut)
@@ -88,6 +116,9 @@ namespace ClearCanvas.ImageViewer.InputManagement
 			return false;
 		}
 
+		/// <summary>
+		/// Gets a hash code for this object instance.
+		/// </summary>
 		public override int GetHashCode()
 		{
 			int returnvalue = 7;
@@ -96,6 +127,9 @@ namespace ClearCanvas.ImageViewer.InputManagement
 			return returnvalue;
 		}
 
+		/// <summary>
+		/// Gets a string describing this object instance.
+		/// </summary>
 		public override string ToString()
 		{
 			return _description;

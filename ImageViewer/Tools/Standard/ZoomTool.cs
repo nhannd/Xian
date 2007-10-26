@@ -56,7 +56,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[KeyboardAction("zoomin", "imageviewer-keyboard/ToolsStandardZoom/ZoomIn", "ZoomIn", KeyStroke = XKeys.OemPeriod)]
 	[KeyboardAction("zoomout", "imageviewer-keyboard/ToolsStandardZoom/ZoomOut", "ZoomOut", KeyStroke = XKeys.Oemcomma)]
 
-	[MouseWheelHandler(ModifierFlags.Control, StopDelayMilliseconds = 500)]
+	[MouseWheelHandler(ModifierFlags.Control)]
 	[MouseToolButton(XMouseButtons.Right, false)]
 
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]

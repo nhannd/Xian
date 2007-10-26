@@ -34,37 +34,59 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.InputManagement
 {
+	/// <summary>
+	/// Represents the current message object's (e.g. <see cref="MouseWheelMessage"/>) state.
+	/// </summary>
+	/// <seealso cref="MouseWheelMessage"/>
 	public sealed class MouseWheelShortcut
 	{
-		private Modifiers _modifiers;
-		private string _description;
+		private readonly Modifiers _modifiers;
+		private readonly string _description;
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
 		public MouseWheelShortcut()
 			: this(false, false, false)
 		{
 		}
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
 		public MouseWheelShortcut(Modifiers modifiers)
 		{
 			_modifiers = modifiers;
 			_description = String.Format(SR.FormatMouseWheelShortcutDescription, _modifiers.ToString());
 		}
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
 		public MouseWheelShortcut(ModifierFlags modifierFlags)
 			: this(new Modifiers(modifierFlags))
 		{
 		}
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
 		public MouseWheelShortcut(bool control, bool alt, bool shift)
 			: this(new Modifiers(control, alt, shift))
 		{
 		}
 
+		/// <summary>
+		/// Gets the state of the modifier keys as a <see cref="ModifierFlags"/>.
+		/// </summary>
 		public Modifiers Modifiers
 		{
 			get { return _modifiers; }
 		}
 
+		/// <summary>
+		/// Determines if another object instance is equal to this one.
+		/// </summary>
 		public override bool Equals(object obj)
 		{
 			if (obj is MouseWheelShortcut)
@@ -76,11 +98,17 @@ namespace ClearCanvas.ImageViewer.InputManagement
 			return false;
 		}
 
+		/// <summary>
+		/// Gets a hash code for this object instance.
+		/// </summary>
 		public override int GetHashCode()
 		{
 			return _modifiers.GetHashCode();
 		}
 
+		/// <summary>
+		/// Gets a string describing this object instance.
+		/// </summary>
 		public override string ToString()
 		{
 			return _description;

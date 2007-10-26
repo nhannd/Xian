@@ -41,7 +41,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// Implementors must not return null from the <see cref="GetLut"/> method.
 	/// </remarks>
 	/// <seealso cref="IVoiLutProvider"/>
-	/// <see cref="IComposableLut"/>
+	/// <seealso cref="IComposableLut"/>
 	public interface IVoiLutManager : IMemorable
 	{
 		/// <summary>

@@ -35,20 +35,28 @@ using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.BaseTools
 {
+	/// <summary>
+	/// An attribute used by <see cref="MouseImageViewerTool"/> to specify it's modified <see cref="MouseButtonShortcut"/>.
+	/// </summary>
+	/// <seealso cref="MouseButtonShortcut"/>
+	/// <seealso cref="MouseImageViewerTool"/>
+	/// <seealso cref="IViewerShortcutManager"/>
 	[AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
 	public sealed class ModifiedMouseToolButtonAttribute : Attribute
 	{
-		private MouseButtonShortcut _shortcut;
+		private readonly MouseButtonShortcut _shortcut;
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
 		public ModifiedMouseToolButtonAttribute(XMouseButtons mouseButton, ModifierFlags modifierFlags)
 		{
 			_shortcut = new MouseButtonShortcut(mouseButton, modifierFlags);
 		}
 
-		private ModifiedMouseToolButtonAttribute()
-		{
-		}
-
+		/// <summary>
+		/// Gets the associated <see cref="MouseButtonShortcut"/>.
+		/// </summary>
 		public MouseButtonShortcut Shortcut
 		{
 			get { return _shortcut; }

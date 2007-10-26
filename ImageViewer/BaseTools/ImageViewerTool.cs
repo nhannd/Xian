@@ -50,7 +50,6 @@ namespace ClearCanvas.ImageViewer.BaseTools
 
 		private MouseWheelShortcut _mouseWheelShortcut;
 		private event EventHandler _mouseWheelShortcutChanged;
-		private uint _mouseWheelStopDelayMilliseconds;
 
 		public override void Initialize()
 		{
@@ -263,11 +262,6 @@ namespace ClearCanvas.ImageViewer.BaseTools
 			this.StopWheel();
 		}
 
-		uint IMouseWheelHandler.StopDelayMilliseconds
-		{
-			get { return _mouseWheelStopDelayMilliseconds; }
-		}
-
 		#endregion
 
 		protected virtual void StartWheel()
@@ -292,11 +286,6 @@ namespace ClearCanvas.ImageViewer.BaseTools
 
 		protected virtual void StopWheel()
 		{
-		}
-
-		internal uint MouseWheelStopDelayMilliseconds
-		{
-			set { _mouseWheelStopDelayMilliseconds = value; }
 		}
 	}
 }

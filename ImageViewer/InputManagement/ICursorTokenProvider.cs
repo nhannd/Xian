@@ -34,8 +34,26 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.InputManagement
 {
+	/// <summary>
+	/// A provider of a <see cref="CursorToken"/> that is returned based on the current mouse position within an <see cref="ITile"/>.
+	/// </summary>
+	/// <remarks>
+	/// The framework will look for this interface on graphic objects (<see cref="ClearCanvas.ImageViewer.Graphics.IGraphic"/>) 
+	/// in the current <see cref="IPresentationImage"/>'s SceneGraph (see <see cref="PresentationImage.SceneGraph"/>) when the
+	/// mouse has moved within the current <see cref="ITile"/>.  If the object returns a <see cref="CursorToken"/>, then the
+	/// corresponding cursor will be shown at the current mouse position.
+	/// </remarks>
+	/// <seealso cref="CursorToken"/>
+	/// <seealso cref="ITile"/>
+	/// <seealso cref="IPresentationImage"/>
+	/// <seealso cref="PresentationImage.SceneGraph"/>
+	/// <seealso cref="ClearCanvas.ImageViewer.Graphics.IGraphic"/>
+	/// <seealso cref="ClearCanvas.ImageViewer.Graphics.Graphic"/>
 	public interface ICursorTokenProvider
 	{
+		/// <summary>
+		/// Gets the cursor token to be shown at the current mouse position.
+		/// </summary>
 		CursorToken GetCursorToken(Point point);
 	}
 }

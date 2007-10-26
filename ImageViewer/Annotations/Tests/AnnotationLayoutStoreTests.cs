@@ -39,8 +39,8 @@ using NUnit.Framework;
 
 namespace ClearCanvas.ImageViewer.Annotations.Tests
 {
-#pragma warning disable 1591
-	
+#pragma warning disable 1591,0419,1574,1587
+
 	[TestFixture]
 	public class AnnotationLayoutStoreTests
 	{

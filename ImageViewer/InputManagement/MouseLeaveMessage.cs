@@ -31,8 +31,19 @@
 
 namespace ClearCanvas.ImageViewer.InputManagement
 {
-	public sealed class MouseLeaveMessage : IInputMessage
+	/// <summary>
+	/// A message object created by the view layer to notify a controlling object 
+	/// (e.g. <see cref="TileController"/>) that the mouse has left the current <see cref="ITile"/>'s 
+	/// client rectangle.
+	/// </summary>
+	/// <remarks>
+	/// This class is intended for internal framework use only.
+	/// </remarks>
+	public sealed class MouseLeaveMessage
 	{
+		/// <summary>
+		/// Constructor.
+		/// </summary>
 		public MouseLeaveMessage()
 		{ 
 		}

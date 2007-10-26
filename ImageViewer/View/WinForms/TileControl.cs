@@ -244,7 +244,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 		{
 			base.OnMouseLeave(e);
 
-			IInputMessage message = _inputTranslator.OnMouseLeave();
+			object message = _inputTranslator.OnMouseLeave();
 			if (message == null)
 				return;
 
@@ -255,7 +255,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 		{
 			this.Focus();
 
-			IInputMessage message = _inputTranslator.OnMouseDown(e);
+			object message = _inputTranslator.OnMouseDown(e);
 			if (message == null)
 				return;
 
@@ -264,7 +264,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 		protected override void OnMouseMove(MouseEventArgs e)
 		{
-			IInputMessage message = _inputTranslator.OnMouseMove(e);
+			object message = _inputTranslator.OnMouseMove(e);
 			if (message == null)
 				return;
 
@@ -273,7 +273,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 		protected override void OnMouseUp(MouseEventArgs e)
 		{
-			IInputMessage message = _inputTranslator.OnMouseUp(e);
+			object message = _inputTranslator.OnMouseUp(e);
 			if (message == null)
 				return;
 
@@ -282,7 +282,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 		protected override void OnMouseWheel(MouseEventArgs e)
 		{
-			IInputMessage message = _inputTranslator.OnMouseWheel(e);
+			object message = _inputTranslator.OnMouseWheel(e);
 			if (message == null)
 				return;
 
@@ -291,7 +291,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 		protected override void OnKeyDown(KeyEventArgs e)
 		{
-			IInputMessage message = _inputTranslator.OnKeyDown(e);
+			object message = _inputTranslator.OnKeyDown(e);
 			if (message == null)
 				return;
 
@@ -303,7 +303,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 		protected override void OnKeyUp(KeyEventArgs e)
 		{
-			IInputMessage message = _inputTranslator.OnKeyUp(e);
+			object message = _inputTranslator.OnKeyUp(e);
 			if (message == null)
 				return;
 
@@ -321,7 +321,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 		public override bool PreProcessMessage(ref Message msg)
 		{
-			IInputMessage message = _inputTranslator.PreProcessMessage(msg);
+			object message = _inputTranslator.PreProcessMessage(msg);
 			if (message != null)
 				_tileController.ProcessMessage(message);
 

@@ -35,32 +35,29 @@ using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.BaseTools
 {
+	/// <summary>
+	/// Specifies a <see cref="ImageViewerTool"/>'s default <see cref="MouseWheelShortcut"/>.
+	/// </summary>
 	[AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
 	public sealed class MouseWheelHandlerAttribute : Attribute
 	{
-		private MouseWheelShortcut _shortcut;
-		private uint _stopDelayMilliseconds;
+		private readonly MouseWheelShortcut _shortcut;
 
-		public MouseWheelHandlerAttribute()
-			: this(ModifierFlags.None)
-		{
-		}
-
+		/// <summary>
+		/// Constructor that accepts <see cref="ModifierFlags"/> as input.
+		/// </summary>
+		/// <param name="modifiers"></param>
 		public MouseWheelHandlerAttribute(ModifierFlags modifiers)
 		{
 			_shortcut = new MouseWheelShortcut(modifiers);
-			_stopDelayMilliseconds = 0;
 		}
 
+		/// <summary>
+		/// Gets the <see cref="ImageViewerTool"/>'s <see cref="MouseWheelShortcut"/>.
+		/// </summary>
 		public MouseWheelShortcut Shortcut
 		{
 			get { return _shortcut; }
-		}
-
-		public uint StopDelayMilliseconds
-		{
-			get { return _stopDelayMilliseconds; }
-			set { _stopDelayMilliseconds = value; }
 		}
 	}
 }

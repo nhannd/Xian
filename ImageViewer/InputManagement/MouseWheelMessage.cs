@@ -31,27 +31,48 @@
 
 namespace ClearCanvas.ImageViewer.InputManagement
 {
-	public sealed class MouseWheelMessage : IInputMessage
+	/// <summary>
+	/// A message object created by the view layer to allow a controlling object 
+	/// (e.g. <see cref="TileController"/>) to handle mouse wheel messages.
+	/// </summary>
+	/// <remarks>
+	/// This class is intended for internal framework use only.
+	/// </remarks>
+	/// <seealso cref="MouseWheelShortcut"/>
+	/// <seealso cref="TileController"/>
+	public sealed class MouseWheelMessage
 	{
-		private int _wheelDelta;
-		private MouseWheelShortcut _wheelShortcut;
+		private readonly int _wheelDelta;
+		private readonly MouseWheelShortcut _wheelShortcut;
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
 		public MouseWheelMessage(int wheelDelta, bool control, bool alt, bool shift)
 		{
 			_wheelDelta = wheelDelta;
 			_wheelShortcut = new MouseWheelShortcut(control, alt, shift);
 		}
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
 		public MouseWheelMessage(int wheelDelta)
 			: this(wheelDelta, false, false, false)
 		{
 		}
 
+		/// <summary>
+		/// Gets the wheel delta.
+		/// </summary>
 		public int WheelDelta
 		{
 			get { return _wheelDelta; }
 		}
 
+		/// <summary>
+		/// Gets the associated <see cref="MouseWheelShortcut"/>.
+		/// </summary>
 		public MouseWheelShortcut Shortcut
 		{
 			get { return _wheelShortcut; }
