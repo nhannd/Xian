@@ -58,7 +58,7 @@ namespace ClearCanvas.ImageViewer
 		}
 
 		/// <summary>
-		/// Fires when the <see cref="Data"/> property has changed.
+		/// Fires when any of the following properties changes: <see cref="Data"/>, <see cref="Visible"/>, <see cref="DestinationPoint"/>.
 		/// </summary>
 		public event EventHandler Updated
 		{
