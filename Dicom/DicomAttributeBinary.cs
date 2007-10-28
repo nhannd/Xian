@@ -43,21 +43,21 @@ namespace ClearCanvas.Dicom
     /// <see cref="DicomAttribute"/> derived class used to represent tags with binary values.
     /// </summary>
     /// <typeparam name="T">The type that the attribute is storing.</typeparam>
-    
+
     public abstract class DicomAttributeBinary<T> : DicomAttribute
     {
         protected T[] _values = new T[0];
         protected NumberStyles _numberStyle = NumberStyles.Any;
 
         #region Constructors
-        internal DicomAttributeBinary(uint tag) 
+        internal DicomAttributeBinary(uint tag)
             : base(tag)
-        {            
+        {
         }
 
         internal DicomAttributeBinary(DicomTag tag)
             : base(tag)
-        {   
+        {
         }
 
         internal DicomAttributeBinary(DicomTag tag, ByteBuffer item)
@@ -92,102 +92,50 @@ namespace ClearCanvas.Dicom
             set { _numberStyle = value; }
         }
 
+        public T this[int index]
+        {
+            get
+            {
+                return (T)_values[index];
+            }
+        }
+
         #endregion
 
         #region private Methods
-        private object ParseNumber(string val)
-        {
-            if (typeof (T) == typeof (byte))
-            {
-                byte parseVal;
-                if (false == byte.TryParse(val, NumberStyle, null, out parseVal))
-                    throw new DicomDataException(
-                        String.Format("Invalid byte format value for tag {0}: {1}", Tag.ToString(), val));
-                return parseVal;
-            }
-            if (typeof (T) == typeof (sbyte))
-            {
-                sbyte parseVal;
-                if (false == sbyte.TryParse(val, NumberStyle, null, out parseVal))
-                    throw new DicomDataException(
-                        String.Format("Invalid sbyte format value for tag {0}: {1}", Tag.ToString(), val));
-                return parseVal;
-            }
-            if (typeof (T) == typeof (short))
-            {
-                short parseVal;
-                if (false == short.TryParse(val, NumberStyle, null, out parseVal))
-                    throw new DicomDataException(
-                        String.Format("Invalid short format value for tag {0}: {1}", Tag.ToString(), val));
-                return parseVal;
-            }
-            if (typeof (T) == typeof (ushort))
-            {
-                ushort parseVal;
-                if (false == ushort.TryParse(val, NumberStyle, null, out parseVal))
-                    throw new DicomDataException(
-                        String.Format("Invalid ushort format value for tag {0}: {1}", Tag.ToString(), val));
-                return parseVal;
-            }
-            if (typeof (T) == typeof (int))
-            {
-                int parseVal;
-                if (false == int.TryParse(val, NumberStyle, null, out parseVal))
-                    throw new DicomDataException(
-                        String.Format("Invalid int format value for tag {0}: {1}", Tag.ToString(), val));
-                return parseVal;
-            }
-            if (typeof (T) == typeof (uint))
-            {
-                uint parseVal;
-                if (false == uint.TryParse(val, NumberStyle, null, out parseVal))
-                    throw new DicomDataException(
-                        String.Format("Invalid uint format value for tag {0}: {1}", Tag.ToString(), val));
-                return parseVal;
-            }
-            if (typeof (T) == typeof (long))
-            {
-                long parseVal;
-                if (false == long.TryParse(val, NumberStyle, null, out parseVal))
-                    throw new DicomDataException(
-                        String.Format("Invalid long format value for tag {0}: {1}", Tag.ToString(), val));
-                return parseVal;
-            }
-            if (typeof (T) == typeof (ulong))
-            {
-                ulong parseVal;
-                if (false == ulong.TryParse(val, NumberStyle, null, out parseVal))
-                    throw new DicomDataException(
-                        String.Format("Invalid ulong format value for tag {0}: {1}", Tag.ToString(), val));
-                return parseVal;
-            }
-            if (typeof (T) == typeof (float))
-            {
-                float parseVal;
-                if (false == float.TryParse(val, NumberStyle, null, out parseVal))
-                    throw new DicomDataException(
-                        String.Format("Invalid float format value for tag {0}: {1}", Tag.ToString(), val));
-                return parseVal;
-            }
-            if (typeof (T) == typeof (double))
-            {
-                double parseVal;
-                if (false == double.TryParse(val, NumberStyle, null, out parseVal))
-                    throw new DicomDataException(
-                        String.Format("Invalid double format value for tag {0}: {1}", Tag.ToString(), val));
-                return parseVal;
-            }
 
-            return null;
-        }
+        
         protected virtual void SetStreamLength()
         {
-            Count = _values.Length;
-            StreamLength = (uint) (_values.Length*Tag.VR.UnitSize);
+            if (_values == null)
+            {
+                Count = 0;
+                StreamLength = 0;
+            }
+            else
+            {
+                Count = _values.Length;
+                StreamLength = (uint) (_values.Length*Tag.VR.UnitSize);
+            }
         }
+
+        protected void AppendValue(T val)
+        {
+            T[] temp = new T[Count + 1];
+            if (_values != null && _values.Length > 0)
+                Array.Copy(_values, temp, Count);
+
+            temp[Count++] = val;
+            _values = temp;
+            SetStreamLength();
+        }
+
         #endregion
 
         #region Abstract Methods
+
+        protected abstract T ParseNumber(string val);
+
 
         public override void SetNullValue()
         {
@@ -196,13 +144,13 @@ namespace ClearCanvas.Dicom
         }
 
         internal override ByteBuffer GetByteBuffer(TransferSyntax syntax, String specificCharacterSet)
-        {    
+        {
             int len = _values.Length * Tag.VR.UnitSize;
             byte[] byteVal = new byte[len];
 
             Buffer.BlockCopy(_values, 0, byteVal, 0, len);
 
-            ByteBuffer bb = new ByteBuffer(byteVal,syntax.Endian);
+            ByteBuffer bb = new ByteBuffer(byteVal, syntax.Endian);
             if (syntax.Endian != ByteBuffer.LocalMachineEndian)
             {
                 bb.Swap(Tag.VR.UnitSize);
@@ -226,8 +174,8 @@ namespace ClearCanvas.Dicom
             if (array.Length != _values.Length)
                 return false;
 
-            for (int i = 0; i < a.Count; i++)
-                if (!array[i].Equals(_values[i]))
+            for (int index = 0; index < a.Count; index++)
+                if (!array[index].Equals(_values[index]))
                     return false;
 
             return true;
@@ -240,9 +188,9 @@ namespace ClearCanvas.Dicom
             else
             {
                 int hash = 0;
-                for (int i = 0; i < _values.Length; i++)
+                for (int index = 0; index < _values.Length; index++)
                 {
-                    hash += (i + 1) * _values[i].GetHashCode();
+                    hash += (index + 1) * _values[index].GetHashCode();
                 }
                 return hash;
             }
@@ -257,62 +205,57 @@ namespace ClearCanvas.Dicom
             return typeof(T);
         }
 
-        protected virtual void ValidateStringValue(string value)
-        {
-        }
 
         /// <summary>
-        /// Retrieve a value as a string.
+        /// Retrieves a value as a string.
         /// 
         /// </summary>
-        /// <param name="i"></param>
+        /// <param name="index"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        public override bool TryGetString(int i, out String value)
+        public override bool TryGetString(int index, out String value)
         {
-            if (_values == null || _values.Length <= i)
+            if (_values == null || _values.Length <= index)
             {
                 value = "";
                 return false;
             }
 
-            value = _values[i].ToString();
+            value = _values[index].ToString();
 
             return true;
         }
 
         /// <summary>
-        /// Set the tag value(s) from a string
+        /// Sets the tag value(s) from a string
         /// If the string cannot be converted into tag's VR, DicomDataException will be thrown
         /// </summary>
         /// <param name="stringValue"></param>
         public override void SetStringValue(String stringValue)
         {
-            if (stringValue == null || stringValue.Length == 0)
+            if (stringValue == null || stringValue=="")
             {
-                Count = 0; // SetStringValue(null) should be interpreted as "Clear"
-                StreamLength = 0;
                 _values = new T[0];
+                SetStreamLength();
                 return;
             }
 
             String[] stringValues = stringValue.Split(new char[] { '\\' });
-
             _values = new T[stringValues.Length];
-
-            for (int i = 0; i < stringValues.Length; i++)
+            for (int index = 0; index < stringValues.Length; index++)
             {
-                _values[i] = (T)ParseNumber(stringValues[i]);
+                _values[index] = ParseNumber(stringValues[index]);
             }
 
             SetStreamLength();
         }
 
+        
         /// <summary>
-        /// Set the value from a string
+        /// Sets the value from a string
         /// If the string cannot be converted into tag's VR, DicomDataException will be thrown
-        /// If <i>index</i> equals to <seealso cref="Count"/>, this method behaves the same as <seealso cref="AppendString"/>.
-        /// If <i>index</i> is less than 0 or greater than <see cref="Count"/>, IndexOutofBoundException will be thrown.
+        /// If <paramref name="index"/> equals to <seealso cref="Count"/>, this method behaves the same as <seealso cref="AppendString"/>.
+        /// If <paramref name="index"/> is less than 0 or greater than <see cref="Count"/>, IndexOutofBoundException will be thrown.
         /// </summary>
         /// <param name="index"></param>
         /// <param name="value"></param>
@@ -322,30 +265,45 @@ namespace ClearCanvas.Dicom
                 AppendString(value);
             else
             {
-                _values[index] = (T)ParseNumber(value);
+                _values[index] = ParseNumber(value);
+                SetStreamLength();
+            }
+
+        }
+
+        /// <summary>
+        /// Appends an element from a string
+        /// 
+        /// </summary>
+        /// <param name="value"></param>
+        /// <exception cref="DicomDataException">If <paramref name="value"/> cannot be converted into tag VR</exception>
+        public override void AppendString(string value)
+        {
+            T v = ParseNumber(value);
+
+            AppendValue(v);
+        }
+
+        /// <summary>
+        /// Sets an attribute value
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="value"></param>
+        /// <exception cref="DicomDataException">If <paramref name="value"/> exceeds the range of the VR or cannot convert into the VR</exception>
+        /// <exception cref="IndexOutofBoundException">if <paramref name="index"/> is negative or greater than <seealso cref="Count"/></exception>
+        /// 
+        public void SetValue(int index, T value)
+        {
+            if (index == Count)
+                AppendValue(value);
+            else
+            {
+                _values[index] = value;
                 SetStreamLength();
             }
             
         }
 
-        /// <summary>
-        /// Append an element from a string
-        /// If the string cannot be converted into tag's VR, DicomDataException will be thrown
-        /// </summary>
-        /// <param name="index"></param>
-        /// <param name="value"></param>
-        public override void AppendString(string value)
-        {
-            T v = (T)ParseNumber(value);
-
-            T[] temp = new T[Count + 1];
-            if (_values != null && _values.Length > 0)
-                _values.CopyTo(temp, 0);
-
-            _values = temp;
-            _values[Count++] = v;
-            SetStreamLength();
-        }
 
         public override string ToString()
         {
@@ -353,12 +311,12 @@ namespace ClearCanvas.Dicom
                 return "";
 
             StringBuilder val = null;
-            foreach (T i in _values)
+            foreach (T index in _values)
             {
                 if (val == null)
-                    val = new StringBuilder(i.ToString());
+                    val = new StringBuilder(index.ToString());
                 else
-                    val.AppendFormat("\\{0}", i.ToString());
+                    val.AppendFormat("\\{0}", index);
             }
 
             if (val == null)
@@ -436,13 +394,7 @@ namespace ClearCanvas.Dicom
 
         #region Operators
 
-        public uint this[int val]
-        {
-            get
-            {
-                return _values[val];
-            }
-        }
+        
 
         #endregion
 
@@ -480,455 +432,381 @@ namespace ClearCanvas.Dicom
             return new DicomAttributeAT(this);
         }
 
-
-
-        /// <summary>
-        /// Set AT value(s) from a string. Each AT element is a hexadecimal string representing
-        /// a tag (ggggeeee) and separated by "\"
-        /// </summary>
-        /// 
-        /// <remarks>
-        /// If the string cannot be converted into AT VR, DicomDataException will be thrown
-        /// If <i>index</i> equals to <seealso cref="Count"/>, this method behaves the same as <seealso cref="AppendString"/>.
-        /// If <i>index</i> is less than 0 or greater than <see cref="Count"/>, IndexOutofBoundException will be thrown.
-        /// </remarks>
-        /// 
-        /// <param name="stringValue"></param>
-        /// <exception cref="IndexOutofBoundException"/>
-        /// <exception cref="DicomDataException"/>
-        public override void SetStringValue(String stringValue)
+        protected override uint ParseNumber(string val)
         {
-            if (stringValue == null || stringValue.Length == 0)
-            {
-                Count = 0;
-                StreamLength = 0;
-                _values = new uint[0];
-                return;
-            }
+            if (val == null)
+                throw new DicomDataException("Null values invalid for AT VR");
 
-            String[] stringValues = stringValue.Split(new char[] { '\\' });
-
-            _values = new uint[stringValues.Length];
-
-            for (int i = 0; i < stringValues.Length; i++)
-            {
-                _values[i] = uint.Parse(stringValues[i].Trim(), System.Globalization.NumberStyles.AllowHexSpecifier);
-            }
-
-            SetStreamLength();
+            uint parseVal;
+            if (false == uint.TryParse(val.Trim(), NumberStyles.AllowHexSpecifier, null, out parseVal))
+                throw new DicomDataException(
+                    String.Format("Invalid uint format value for tag {0}: {1}", Tag, val));
+            return parseVal;
         }
 
+
         /// <summary>
-        /// Method to retrieve an Int16 value from an AT attribute.
-        /// 
+        /// Retrieves an Int16 value from an AT attribute.
         /// </summary>
-        /// <param name="i"></param>
+        /// <param name="index"></param>
         /// <param name="value"></param>
-        /// <returns><i>true</i>if value can be retrieved. <i>false</i> otherwise (see remarks)</returns>
+        /// <returns><b>true</b>if value can be retrieved. <b>false</b> otherwise (see remarks)</returns>
         /// <remarks>
-        /// This method returns <i>false</i> if
-        ///     If the value doesn't exist
-        ///     The value cannot be converted into Int16 (eg, floating-point number 1.102 cannot be converted into Int16)
-        ///     The value is an integer but too big or too small to fit into an Int16 (eg, 100000)
-        /// 
-        /// If the method returns false, the returned <i>value</i> should not be trusted.
-        /// 
+        /// This method returns <b>false</b> if
+        /// <list type="bullet">
+        /// <item>If the value doesn't exist</item>
+        /// <item>The value exceeds Int16 range.</item>
+        /// </list>
+        ///     
+        /// If the method returns false, the returned <paramref name="value"/> is not reliable..
         /// </remarks>
         /// 
-        public override bool TryGetInt16(int i, out Int16 value)
+        public override bool TryGetInt16(int index, out Int16 value)
         {
-            if (_values == null || _values.Length <= i)
+            if (_values == null || _values.Length <= index)
             {
                 value = 0;
                 return false;
             }
 
-            
-            value = (Int16) _values[i];
+
+            value = (Int16)_values[index];
 
             // If the value cannot fit into the destination, return false
-            if (_values[i] < Int16.MinValue || _values[i] > Int16.MaxValue)
+            if (_values[index] > Int16.MaxValue)
                 return false;
             else
                 return true;
         }
+
         /// <summary>
-        /// Method to retrieve an Int32 value from an AT attribute.
-        /// 
+        /// Retrieves an Int32 value from an AT attribute.
         /// </summary>
-        /// <param name="i"></param>
+        /// <param name="index"></param>
         /// <param name="value"></param>
-        /// <returns><i>true</i>if value can be retrieved. <i>false</i> otherwise (see remarks)</returns>
+        /// <returns><b>true</b>if value can be retrieved. <b>false</b> otherwise (see remarks)</returns>
         /// <remarks>
-        /// This method returns <i>false</i> if
-        ///     If the value doesn't exist
-        ///     The value cannot be converted into Int32 (eg, floating-point number 1.102 cannot be converted into Int32)
-        ///     The value is an integer but too big or too small to fit into an Int16 (eg, 100000)
-        /// 
-        /// If the method returns false, the returned <i>value</i> should not be trusted.
-        /// 
+        /// <list type="bullet">
+        /// <item>If the value doesn't exist</item>
+        /// <item>The value cannot be converted into Int32</item>
+        /// <item>The value is an integer but too big or too small to fit into an Int32</item>
+        /// </list>
+        /// If the method returns false, the returned <paramref name="index"/> is not reliable..
         /// </remarks>
-        /// 
-        public override bool TryGetInt32(int i, out Int32 value)
+        public override bool TryGetInt32(int index, out Int32 value)
         {
-            if (_values == null || _values.Length <= i)
+            if (_values == null || _values.Length <= index)
             {
                 value = 0;
                 return false;
             }
 
 
-            value = (Int32)_values[i];
+            value = (Int32)_values[index];
 
             // If the value cannot fit into the destination, return false
-            if (_values[i] < Int32.MinValue || _values[i] > Int32.MaxValue)
+            if (_values[index] > Int32.MaxValue)
                 return false;
             else
                 return true;
         }
+
         /// <summary>
-        /// Method to retrieve an Int64 value from an AT attribute.
-        /// 
+        /// Retrieves an Int64 value from an AT attribute.
         /// </summary>
-        /// <param name="i"></param>
+        /// <param name="index"></param>
         /// <param name="value"></param>
-        /// <returns><i>true</i>if value can be retrieved. <i>false</i> otherwise (see remarks)</returns>
+        /// <returns><b>true</b>if value can be retrieved. <b>false</b> otherwise (see remarks)</returns>
         /// <remarks>
-        /// This method returns <i>false</i> if
-        ///     If the value doesn't exist
-        ///     The value cannot be converted into Int64 (eg, floating-point number 1.102 cannot be converted into Int64)
-        ///     The value is an integer but too big or too small to fit into an Int16 (eg, 100000)
+        /// This method returns <b>false</b> if
+        /// <list type="bullet">
+        /// <item>If the value doesn't exist</item>
+        /// </list>
         /// 
-        /// If the method returns false, the returned <i>value</i> should not be trusted.
-        /// 
+        /// If the method returns false, the returned <paramref name="value"/> is not reliable..
         /// </remarks>
-        /// 
-        public override bool TryGetInt64(int i, out Int64 value)
+        public override bool TryGetInt64(int index, out Int64 value)
         {
-            if (_values == null || _values.Length <= i)
+            if (_values == null || _values.Length <= index)
             {
                 value = 0;
                 return false;
             }
 
-            value = _values[i];
+            value = _values[index];
             return true;
         }
 
         /// <summary>
-        /// Method to retrieve an UInt16 value from an AT attribute.
-        /// 
-        /// </summary>
-        /// <param name="i"></param>
-        /// <param name="value"></param>
-        /// <returns><i>true</i>if value can be retrieved. <i>false</i> otherwise (see remarks)</returns>
-        /// <remarks>
-        /// This method returns <i>false</i> if
-        ///     If the value doesn't exist
-        ///     The value cannot be converted into UInt16 (eg, floating-point number 1.102 cannot be converted into UInt16)
-        ///     The value is an integer but too big or too small to fit into an UInt16 (eg, -100)
-        /// 
-        /// If the method returns false, the returned <i>value</i> should not be trusted.
-        /// 
-        /// </remarks>
-        /// 
-        public override bool TryGetUInt16(int i, out UInt16 value)
-        {
-            if (_values == null || _values.Length <= i)
-            {
-                value = 0;
-                return false;
-            }
-
-            value = (UInt16)_values[i];
-            
-            // If the value cannot fit into the destination, return false
-            if (_values[i] < UInt16.MinValue || _values[i] > UInt16.MaxValue)
-                return false;
-            else
-                return true;
-        }
-        /// <summary>
-        /// Method to retrieve an UInt32 value from an AT attribute.
-        /// 
-        /// </summary>
-        /// <param name="i"></param>
-        /// <param name="value"></param>
-        /// <returns><i>true</i>if value can be retrieved. <i>false</i> otherwise (see remarks)</returns>
-        /// <remarks>
-        /// This method returns <i>false</i> if
-        ///     If the value doesn't exist
-        ///     The value cannot be converted into UInt32 (eg, floating-point number 1.102 cannot be converted into UInt32)
-        ///     The value is an integer but too big or too small to fit into an UInt32 (eg, -100)
-        /// 
-        /// If the method returns false, the returned <i>value</i> should not be trusted.
-        /// 
-        /// </remarks>
-        /// 
-        public override bool TryGetUInt32(int i, out UInt32 value)
-        {
-            if (_values == null || _values.Length <= i)
-            {
-                value = 0;
-                return false;
-            }
-
-            value = _values[i];
-            return true;
-        }
-        /// <summary>
-        /// Method to retrieve an UInt64 value from an AT attribute.
-        /// 
-        /// </summary>
-        /// <param name="i"></param>
-        /// <param name="value"></param>
-        /// <returns><i>true</i>if value can be retrieved. <i>false</i> otherwise (see remarks)</returns>
-        /// <remarks>
-        /// This method returns <i>false</i> if
-        ///     If the value doesn't exist
-        ///     The value cannot be converted into UInt64 (eg, floating-point number 1.102 cannot be converted into UInt64)
-        ///     The value is an integer but too big or too small to fit into an UInt64 (eg, -100)
-        /// 
-        /// If the method returns false, the returned <i>value</i> should not be trusted.
-        /// 
-        /// </remarks>
-        /// 
-        public override bool TryGetUInt64(int i, out UInt64 value)
-        {
-            if (_values == null || _values.Length <= i)
-            {
-                value = 0;
-                return false;
-            }
-
-            value = _values[i];
-            return true;
-        }
-        
-        /// <summary>
-        /// Return string representation of the AT elements, separated by "\". Each element is a tag in hexadecimal format (ggggeeee)
-        /// </summary>
-        /// <param name="i"></param>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        public override bool TryGetString(int i, out string value)
-        {
-            if (_values == null || _values.Length <= i)
-            {
-                value = "";
-                return false;
-            }
-
-            value = _values[i].ToString("X8"); // Convert to HEX
-            return true;
-        }
-
-        /// <summary>
-        /// Set an AT value.
+        /// Retrieves an UInt16 value from an AT attribute.
         /// 
         /// </summary>
         /// <param name="index"></param>
         /// <param name="value"></param>
-        /// <exception cref="DicomDataException">If <i>value</i> cannot be fit into 16-bit unsigned int</exception>
-        /// <exception cref="IndexOutofBoundException">if <i>index</i> is negative or greater than <seealso cref="Count"/></exception>
+        /// <returns><b>true</b>if value can be retrieved. <b>false</b> otherwise (see remarks)</returns>
+        /// <remarks>
+        /// This method returns <b>false</b> if
+        /// <list type="bullet">
+        /// <item>The value doesn't exist</item>
+        /// <item>The value exceeds UInt16 range.</item>
+        /// </list>
+        ///     
+        /// If the method returns false, the returned <paramref name="value"/> is not reliable..
+        /// </remarks>
+        public override bool TryGetUInt16(int index, out UInt16 value)
+        {
+            if (_values == null || _values.Length <= index)
+            {
+                value = 0;
+                return false;
+            }
+
+            value = (UInt16)_values[index];
+
+            // If the value cannot fit into the destination, return false
+            if (_values[index] < UInt16.MinValue || _values[index] > UInt16.MaxValue)
+                return false;
+            else
+                return true;
+        }
+
+        /// <summary>
+        /// Retrieves an UInt32 value from an AT attribute.
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="value"></param>
+        /// <returns><b>true</b>if value can be retrieved. <b>false</b> otherwise (see remarks)</returns>
+        /// <remarks>
+        /// This method returns <b>false</b> if
+        /// <list>
+        /// <item>If the value doesn't exist.</item>
+        /// </list>
         /// 
+        /// If the method returns false, the returned <paramref name="value"/> is not reliable..
+        /// </remarks>
+        public override bool TryGetUInt32(int index, out UInt32 value)
+        {
+            if (_values == null || _values.Length <= index)
+            {
+                value = 0;
+                return false;
+            }
+
+            value = _values[index];
+            return true;
+        }
+        /// <summary>
+        /// Retrieves an UInt64 value from an AT attribute.
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="value"></param>
+        /// <returns><b>true</b>if value can be retrieved. <b>false</b> otherwise (see remarks)</returns>
+        /// <remarks>
+        /// This method returns <b>false</b> if
+        /// <list>
+        /// <item>If the value doesn't exist.</item>
+        /// </list>
+        /// 
+        /// If the method returns false, the returned <paramref name="value"/> is not reliable..
+        /// </remarks>
+        /// 
+        public override bool TryGetUInt64(int index, out UInt64 value)
+        {
+            if (_values == null || _values.Length <= index)
+            {
+                value = 0;
+                return false;
+            }
+
+            value = _values[index];
+            return true;
+        }
+
+        /// <summary>
+        /// Retrieves the string representation of an AT value in hexadecimal format.
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public override bool TryGetString(int index, out string value)
+        {
+            if (_values == null || _values.Length <= index)
+            {
+                value = String.Empty;
+                return false;
+            }
+
+            value = _values[index].ToString("X8"); // Convert to HEX
+            return true;
+        }
+
+        /// <summary>
+        /// Sets an AT value.
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="value"></param>
+        /// <exception cref="DicomDataException">If <paramref name="value"/> cannot be fit into 16-bit unsigned int</exception>
+        /// <exception cref="IndexOutofBoundException">if <paramref name="index"/> is negative or greater than <seealso cref="Count"/></exception>
         public override void SetUInt16(int index, UInt16 value)
         {
             // If the source value cannot fit into the destination throw exception
-            if (value < UInt32.MinValue || value > UInt32.MaxValue)
-                throw new DicomDataException(string.Format("Invalid value {0} for tag {1}.", value, Tag.ToString()));
+            if (value < UInt32.MinValue)
+                throw new DicomDataException(String.Format("Invalid AT value {0} for tag {1}.", value, Tag));
 
-            SetUInt32(index, (UInt32)value);
+            SetValue(index, value);
         }
+
         /// <summary>
-        /// Set an AT value.
-        /// 
+        /// Sets an AT value.
         /// </summary>
         /// <param name="index"></param>
         /// <param name="value"></param>
-        /// <exception cref="DicomDataException">If <i>value</i> cannot be fit into 16-bit unsigned int</exception>
-        /// <exception cref="IndexOutofBoundException">if <i>index</i> is negative or greater than <seealso cref="Count"/></exception>
-        /// 
+        /// <exception cref="IndexOutofBoundException">if <paramref name="index"/> is negative or greater than <seealso cref="Count"/></exception>
         public override void SetUInt32(int index, UInt32 value)
         {
-
-            if (index == Count)
-            {
-                AppendUInt32(value);
-            }
-            else // replace
-            {
-                _values[index] = value;
-                SetStreamLength();
-            }
+            SetValue(index, value);
         }
+
         /// <summary>
-        /// Set an AT value.
-        /// 
+        /// Sets an AT value.
         /// </summary>
         /// <param name="index"></param>
         /// <param name="value"></param>
-        /// <exception cref="DicomDataException">If <i>value</i> cannot be fit into 16-bit unsigned int</exception>
-        /// <exception cref="IndexOutofBoundException">if <i>index</i> is negative or greater than <seealso cref="Count"/></exception>
-        /// 
+        /// <exception cref="DicomDataException">If <paramref name="value"/> cannot be fit into 16-bit unsigned int</exception>
+        /// <exception cref="IndexOutofBoundException">if <paramref name="index"/> is negative or greater than <seealso cref="Count"/></exception>
         public override void SetUInt64(int index, UInt64 value)
         {
             // If the source value cannot fit into the destination throw exception
             if (value < UInt32.MinValue || value > UInt32.MaxValue)
-                throw new DicomDataException(string.Format("Invalid value {0} for tag {1}.", value, Tag.ToString()));
+                throw new DicomDataException(String.Format("Invalid AT value {0} for tag {1}.", value, Tag));
 
-            SetUInt32(index, (UInt32)value);
+            SetValue(index,(uint) value);
         }
+
         /// <summary>
-        /// Set an AT value.
-        /// 
+        /// Sets an AT value.
         /// </summary>
         /// <param name="index"></param>
         /// <param name="value"></param>
-        /// <exception cref="DicomDataException">If <i>value</i> cannot be fit into 16-bit unsigned int</exception>
-        /// <exception cref="IndexOutofBoundException">if <i>index</i> is negative or greater than <seealso cref="Count"/></exception>
-        /// 
+        /// <exception cref="DicomDataException">If <paramref name="value"/> cannot be fit into 16-bit unsigned int</exception>
+        /// <exception cref="IndexOutofBoundException">if <paramref name="index"/> is negative or greater than <seealso cref="Count"/></exception>
         public override void SetInt16(int index, Int16 value)
         {
             // If the source value cannot fit into the destination throw exception
-            if (value < UInt32.MinValue || value > UInt32.MaxValue)
-                throw new DicomDataException(string.Format("Invalid value {0} for tag {1}.", value, Tag.ToString()));
+            if (value < UInt32.MinValue)
+                throw new DicomDataException(String.Format("Invalid AT value {0} for tag {1}.", value, Tag));
 
-            SetInt32(index, (Int32)value);
+            SetValue(index, (uint) value);
         }
+
         /// <summary>
-        /// Set an AT value.
-        /// 
+        /// Sets an AT value.
         /// </summary>
         /// <param name="index"></param>
         /// <param name="value"></param>
-        /// <exception cref="DicomDataException">If <i>value</i> cannot be fit into 16-bit unsigned int</exception>
-        /// <exception cref="IndexOutofBoundException">if <i>index</i> is negative or greater than <seealso cref="Count"/></exception>
-        /// 
-        /// 
+        /// <exception cref="DicomDataException">If <paramref name="value"/> cannot be fit into 16-bit unsigned int</exception>
+        /// <exception cref="IndexOutofBoundException">if <paramref name="index"/> is negative or greater than <seealso cref="Count"/></exception>
         public override void SetInt32(int index, Int32 value)
         {
             // If the source value cannot fit into the destination throw exception
-            if (value < UInt32.MinValue || value > UInt32.MaxValue)
-                throw new DicomDataException(string.Format("Invalid value {0} for tag {1}.", value, Tag.ToString()));
+            if (value < UInt32.MinValue)
+                throw new DicomDataException(String.Format("Invalid AT value {0} for tag {1}.", value, Tag));
 
-            SetUInt32(index, (UInt32)value);
+            SetValue(index,  (uint) value);
         }
         /// <summary>
-        /// Set an AT value.
-        /// 
+        /// Sets an AT value.
         /// </summary>
         /// <param name="index"></param>
         /// <param name="value"></param>
-        /// <exception cref="DicomDataException">If <i>value</i> cannot be fit into 16-bit unsigned int</exception>
-        /// <exception cref="IndexOutofBoundException">if <i>index</i> is negative or greater than <seealso cref="Count"/></exception>
-        /// 
+        /// <exception cref="DicomDataException">If <paramref name="value"/> cannot be fit into 16-bit unsigned int</exception>
+        /// <exception cref="IndexOutofBoundException">if <paramref name="index"/> is negative or greater than <seealso cref="Count"/></exception>
         public override void SetInt64(int index, Int64 value)
         {
             // If the source value cannot fit into the destination throw exception
             if (value < UInt32.MinValue || value > UInt32.MaxValue)
-                throw new DicomDataException(string.Format("Invalid value {0} for tag {1}.", value, Tag.ToString()));
+                throw new DicomDataException(String.Format("Invalid AT value {0} for tag {1}.", value, Tag));
 
-            SetInt32(index, (Int32)value);
+            SetValue(index, (uint) value);
         }
 
         /// <summary>
-        /// Append an AT value.
-        /// 
+        /// Appends an AT value.
         /// </summary>
-        /// <param name="index"></param>
-        /// <param name="intValue"></param>
-        /// <exception cref="DicomDataException">If <i>intValue</i> cannot be fit into 16-bit unsigned int</exception>
-        /// 
-        public override void AppendUInt16(UInt16 intValue)
+        /// <param name="value"></param>
+        /// <exception cref="DicomDataException">If <paramref name="value"/> cannot be fit into 16-bit unsigned int</exception>
+        public override void AppendUInt16(UInt16 value)
         {
-            AppendUInt32((UInt32)intValue);
+            AppendValue(value);
         }
         /// <summary>
-        /// Append an AT value.
-        /// 
+        /// Appends an AT value.
         /// </summary>
-        /// <param name="index"></param>
-        /// <param name="intValue"></param>
-        /// 
-        public override void AppendUInt32(UInt32 intValue)
+        /// <param name="value"></param>
+        public override void AppendUInt32(UInt32 value)
         {
             // If the source value cannot fit into the destination throw exception
-            if (intValue < uint.MinValue || intValue > uint.MaxValue)
-                throw new DicomDataException(string.Format("Invalid value {0} for tag {1}.", intValue, Tag.ToString()));
+            if (value < uint.MinValue || value > uint.MaxValue)
+                throw new DicomDataException(String.Format("Invalid AT value {0} for tag {1}.", value, Tag));
 
-
-            uint[] temp = new uint[Count + 1];
-            if (_values != null && _values.Length > 0)
-                Array.Copy(_values, temp, Count);
-
-            temp[Count++] = (uint)intValue;
-            _values = temp;
-            SetStreamLength();
+            AppendValue(value);
         }
 
         /// <summary>
-        /// Append an AT value.
-        /// 
+        /// Appends an AT value.
         /// </summary>
-        /// <param name="index"></param>
-        /// <param name="intValue"></param>
-        /// <exception cref="DicomDataException">If <i>intValue</i> cannot be fit into 16-bit unsigned int</exception>
-        ///
-        public override void AppendUInt64(UInt64 intValue)
+        /// <param name="value"></param>
+        /// <exception cref="DicomDataException">If <paramref name="value"/> cannot be fit into 16-bit unsigned int</exception>
+        public override void AppendUInt64(UInt64 value)
         {
             // If the source value cannot fit into the destination throw exception
-            if (intValue < UInt32.MinValue || intValue > UInt32.MaxValue)
-                throw new DicomDataException(string.Format("Invalid value {0} for tag {1}.", intValue, Tag.ToString()));
-            AppendUInt32((UInt32) intValue);
+            if (value < UInt32.MinValue || value > UInt32.MaxValue)
+                throw new DicomDataException(String.Format("Invalid AT value {0} for tag {1}.", value, Tag));
+
+            AppendValue((UInt32)value);
         }
 
         /// <summary>
-        /// Append an AT value.
+        /// Appends an AT value.
         /// 
         /// </summary>
-        /// <param name="index"></param>
-        /// <param name="intValue"></param>
-        /// <exception cref="DicomDataException">If <i>intValue</i> cannot be fit into 16-bit unsigned int</exception>
-        /// 
-        public override void AppendInt16(Int16 intValue)
+        /// <param name="value"></param>
+        /// <exception cref="DicomDataException">If <paramref name="value"/> cannot be fit into 16-bit unsigned int</exception>
+        public override void AppendInt16(Int16 value)
         {
-            AppendInt32((Int32)intValue);
+            if (value < UInt32.MinValue)
+                throw new DicomDataException(String.Format("Invalid AT value {0} for tag {1}.", value, Tag));
+ 
+            AppendValue((UInt32)value);
         }
 
         /// <summary>
-        /// Append an AT value.
+        /// Appends an AT value.
         /// 
         /// </summary>
-        /// <param name="index"></param>
-        /// <param name="intValue"></param>
-        /// <exception cref="DicomDataException">If <i>intValue</i> cannot be fit into 16-bit unsigned int</exception>
-        ///
-        public override void AppendInt32(Int32 intValue)
-        {
-            // If the source value cannot fit into the destination throw exception
-            if (intValue < UInt32.MinValue || intValue > UInt32.MaxValue)
-                throw new DicomDataException(string.Format("Invalid value {0} for tag {1}.", intValue, Tag.ToString()));
-
-            AppendUInt32((UInt32)intValue);
-        }
-
-        /// <summary>
-        /// Append an AT value.
-        /// 
-        /// </summary>
-        /// <param name="index"></param>
-        /// <param name="intValue"></param>
-        /// <exception cref="DicomDataException">If <i>intValue</i> cannot be fit into 16-bit unsigned int</exception>
-        ///
-        public override void AppendInt64(Int64 intValue)
+        /// <param name="value"></param>
+        /// <exception cref="DicomDataException">If <paramref name="value"/> cannot be fit into 16-bit unsigned int</exception>
+        public override void AppendInt32(Int32 value)
         {
             // If the source value cannot fit into the destination throw exception
-            if (intValue < UInt32.MinValue || intValue > UInt32.MaxValue)
-                throw new DicomDataException(string.Format("Invalid value {0} for tag {1}.", intValue, Tag.ToString()));
-            AppendInt32((Int32) intValue);
+            if (value < UInt32.MinValue)
+                throw new DicomDataException(String.Format("Invalid value {0} for tag {1}.", value, Tag));
+
+            AppendValue((UInt32)value);
         }
 
+        /// <summary>
+        /// Appends an AT value.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <exception cref="DicomDataException">If <paramref name="value"/> cannot be fit into 16-bit unsigned int</exception>
+        public override void AppendInt64(Int64 value)
+        {
+            // If the source value cannot fit into the destination throw exception
+            if (value < UInt32.MinValue || value > UInt32.MaxValue)
+                throw new DicomDataException(String.Format("Invalid value {0} for tag {1}.", value, Tag));
+            AppendValue((UInt32)value);
+        }
 
         #endregion
 
@@ -939,7 +817,6 @@ namespace ClearCanvas.Dicom
     /// <summary>
     /// <see cref="DicomAttributeBinary"/> derived class for storing FD value representation tags.
     /// </summary>
-    /// 
     public class DicomAttributeFD : DicomAttributeBinary<double>
     {
         #region Constructors
@@ -971,13 +848,6 @@ namespace ClearCanvas.Dicom
 
         #region Operators
 
-        public double this[int val]
-        {
-            get
-            {
-                return _values[val];
-            }
-        }
 
         #endregion
 
@@ -1012,110 +882,104 @@ namespace ClearCanvas.Dicom
         {
             return new DicomAttributeFD(this);
         }
+
+        protected override double ParseNumber(string val)
+        {
+            if (val == null)
+                throw new DicomDataException("Null values invalid for FD VR");
+
+            double parseVal;
+            if (false == double.TryParse(val.Trim(), NumberStyle, null, out parseVal))
+                throw new DicomDataException(
+                    String.Format("Invalid double format value for tag {0}: {1}", Tag, val));
+            return parseVal;
+        }
+
         
-        
+
         /// <summary>
-        /// Set an FD value.
+        /// Sets an FD value.
         /// 
         /// </summary>
         /// <param name="index"></param>
         /// <param name="value"></param>
-        /// <exception cref="DicomDataException">If <i>value</i> cannot be fit into 32-bit floating-point</exception>
-        /// <exception cref="IndexOutofBoundException">if <i>index</i> is negative or greater than <seealso cref="Count"/></exception>
+        /// <exception cref="DicomDataException">If <paramref name="value"/> cannot be fit into 32-bit floating-point</exception>
+        /// <exception cref="IndexOutofBoundException">if <paramref name="index"/> is negative or greater than <seealso cref="Count"/></exception>
         /// 
         public override void SetFloat32(int index, float value)
         {
-            if (index == Count)
-                AppendFloat32(value);
-            else
-            {
-                _values[index] = value;
-                SetStreamLength();
-            }
+            SetValue(index, value);
+
         }
+
         /// <summary>
-        /// Set an FD value.
+        /// Sets an FD value.
         /// 
         /// </summary>
         /// <param name="index"></param>
         /// <param name="value"></param>
-        /// <exception cref="DicomDataException">If <i>value</i> is null or  cannot be fit into 32-bit floating-point</exception>
-        /// <exception cref="IndexOutofBoundException">if <i>index</i> is negative or greater than <seealso cref="Count"/></exception>
+        /// <exception cref="DicomDataException">If <paramref name="value"/> is null or  cannot be fit into 32-bit floating-point</exception>
+        /// <exception cref="IndexOutofBoundException">if <paramref name="index"/> is negative or greater than <seealso cref="Count"/></exception>
         /// 
         public override void SetFloat64(int index, double value)
         {
-            if (index == Count)
-                AppendFloat64(value);
-            else
-            {
-                _values[index] = value;
-                SetStreamLength();
-            }
-
+            SetValue(index, value);
         }
         /// <summary>
-        /// Set an FD value.
+        /// Sets an FD value.
         /// 
         /// </summary>
-        /// <param name="index"></param>
         /// <param name="value"></param>
-        /// <exception cref="DicomDataException">If <i>value</i> is null or  cannot be fit into 32-bit floating-point</exception>
-        /// <exception cref="IndexOutofBoundException">if <i>index</i> is negative or greater than <seealso cref="Count"/></exception>
+        /// <exception cref="DicomDataException">If <paramref name="value"/> is null or  cannot be fit into 32-bit floating-point</exception>
+        /// <exception cref="IndexOutofBoundException">if <paramref name="index"/> is negative or greater than <seealso cref="Count"/></exception>
         /// 
         public override void AppendFloat32(float value)
         {
-            AppendFloat64(value);
-
+            AppendValue(value);
         }
         /// <summary>
-        /// Set an FD value.
+        /// Sets an FD value.
+        /// 
+        /// </summary>
+        /// <param name="value"></param>
+        /// <exception cref="DicomDataException">If <paramref name="value"/> is null or  cannot be fit into 32-bit floating-point</exception>
+        /// <exception cref="IndexOutofBoundException">if <paramref name="index"/> is negative or greater than <seealso cref="Count"/></exception>
+        /// 
+        public override void AppendFloat64(double value)
+        {
+            AppendValue(value);
+        }
+
+
+        #endregion
+
+        /// <summary>
+        /// Retrieves a float value from an FD attribute.
         /// 
         /// </summary>
         /// <param name="index"></param>
         /// <param name="value"></param>
-        /// <exception cref="DicomDataException">If <i>value</i> is null or  cannot be fit into 32-bit floating-point</exception>
-        /// <exception cref="IndexOutofBoundException">if <i>index</i> is negative or greater than <seealso cref="Count"/></exception>
-        /// 
-        public override void AppendFloat64(double value)
-        {
-            double[] temp = new double[Count + 1];
-            if (_values != null && _values.Length > 0)
-                Array.Copy(_values, temp, _values.Length);
-            _values = temp;
-            _values[Count++] = value;
-            SetStreamLength();
-        }
-        
-        
-        #endregion
-
-        /// <summary>
-        /// Method to retrieve a float value from an FD attribute.
-        /// 
-        /// </summary>
-        /// <param name="i"></param>
-        /// <param name="value"></param>
-        /// <returns><i>true</i>if value can be retrieved. <i>false</i> otherwise (see remarks)</returns>
+        /// <returns><b>true</b>if value can be retrieved. <b>false</b> otherwise (see remarks)</returns>
         /// <remarks>
-        /// This method returns <i>false</i> if
-        ///     If the value doesn't exist
-        ///     The value is too big or too small to fit into a float (eg, 1E+100)
-        /// 
-        /// If the method returns false, the returned <i>value</i> should not be trusted.
-        /// 
+        /// This method returns <b>false</b> if
+        /// <list type="bullet">
+        /// <item>If the value doesn't exist</item>
+        /// <item>The value is too big or too small to fit into a float (eg, 1E+100)</item>
+        /// </list>
+        /// If the method returns <b>false</b>, the returned <paramref name="value"/> is not reliable.
         /// </remarks>
         /// 
-        public override bool TryGetFloat32(int i, out float value)
+        public override bool TryGetFloat32(int index,  out float value)
         {
-            if (i < 0 || i >= Count)
+            if (index < 0 || index >= Count)
             {
                 value = 0.0f;
                 return false;
             }
 
-            value =(float) _values[i];
-            
-            if (_values[i] < float.MinValue || _values[i] > float.MaxValue)
+            value = (float)_values[index];
+
+            if (_values[index] < float.MinValue || _values[index] > float.MaxValue)
             {
                 return false;
             }
@@ -1124,31 +988,33 @@ namespace ClearCanvas.Dicom
         }
 
         /// <summary>
-        /// Method to retrieve a double value from an FD attribute.
+        /// Retrieves a double value from an FD attribute.
         /// 
         /// </summary>
-        /// <param name="i"></param>
+        /// <param name="index"></param>
         /// <param name="value"></param>
-        /// <returns><i>true</i>if value can be retrieved. <i>false</i> otherwise (see remarks)</returns>
+        /// <returns><b>true</b>if value can be retrieved. <b>false</b> otherwise (see remarks)</returns>
         /// <remarks>
-        /// This method returns <i>false</i> if
-        ///     If the value doesn't exist
-        /// 
-        /// If the method returns false, the returned <i>value</i> should not be trusted.
+        /// This method returns <b>false</b> if
+        /// <list type="bullet">
+        /// <item>If the value doesn't exist</item>
+        /// </list>
+        ///  
+        /// If the method returns <b>false</b>, the returned <paramref name="value"/> is not reliable.
         /// 
         /// </remarks>
         /// 
-        public override bool TryGetFloat64(int i, out double value)
+        public override bool TryGetFloat64(int index,  out double value)
         {
-            if (i < 0 || i >= Count)
+            if (index < 0 || index >= Count)
             {
                 value = 0.0f;
                 return false;
             }
 
-            value = _values[i];
+            value = _values[index];
 
-            if (_values[i] < double.MinValue || _values[i] > double.MaxValue)
+            if (_values[index] < double.MinValue || _values[index] > double.MaxValue)
             {
                 return false;
             }
@@ -1193,14 +1059,6 @@ namespace ClearCanvas.Dicom
 
         #region Operators
 
-        public float this[int val]
-        {
-            get
-            {
-                return _values[val];
-            }
-        }
-
         #endregion
 
         #region Abstract Method Implementation
@@ -1237,62 +1095,77 @@ namespace ClearCanvas.Dicom
             return new DicomAttributeFL(this);
         }
 
+        protected override float ParseNumber(string val)
+        {
+            if (val == null)
+                throw new DicomDataException("Null values invalid for FL VR");
+            float parseVal;
+            if (false == float.TryParse(val.Trim(), NumberStyle, null, out parseVal))
+                throw new DicomDataException(
+                    String.Format("Invalid float format value for tag {0}: {1}", Tag, val));
+            return parseVal;
+        }
+
 
 
         /// <summary>
-        /// Method to retrieve a float value from an FL attribute.
+        /// Retrieves a float value from an FL attribute.
         /// 
         /// </summary>
-        /// <param name="i"></param>
+        /// <param name="index"></param>
         /// <param name="value"></param>
-        /// <returns><i>true</i>if value can be retrieved. <i>false</i> otherwise (see remarks)</returns>
+        /// <returns><b>true</b>if value can be retrieved. <b>false</b> otherwise (see remarks)</returns>
         /// <remarks>
-        /// This method returns <i>false</i> if
-        ///     If the value doesn't exist
-        ///     The value is infinite
-        /// 
-        /// If the method returns false, the returned <i>value</i> should not be trusted.
+        /// This method returns <b>false</b> if
+        /// <list>
+        /// <item>If the value doesn't exist</item>
+        /// <item>The value is infinite</item>
+        /// </list>
+        ///     
+        /// If the method returns false, the returned <paramref name="value"/> is not reliable.
         /// 
         /// </remarks>
         /// 
-        public override bool TryGetFloat32(int i, out float value)
+        public override bool TryGetFloat32(int index,  out float value)
         {
-            if (_values == null || _values.Length <= i)
+            if (_values == null || _values.Length <= index)
             {
                 value = 0.0f;
                 return false;
             }
 
-            value = _values[i];
+            value = _values[index];
+
             if (float.IsInfinity(value))
                 return false;
             else
                 return true;
         }
         /// <summary>
-        /// Method to retrieve a double value from an FL attribute.
+        /// Retrieves a double value from an FL attribute.
         /// 
         /// </summary>
-        /// <param name="i"></param>
+        /// <param name="index"></param>
         /// <param name="value"></param>
-        /// <returns><i>true</i>if value can be retrieved. <i>false</i> otherwise (see remarks)</returns>
+        /// <returns><b>true</b>if value can be retrieved. <b>false</b> otherwise (see remarks)</returns>
         /// <remarks>
-        /// This method returns <i>false</i> if
-        ///     If the value doesn't exist
+        /// <list>
+        /// <item>If the value doesn't exist</item>
+        /// </list>
         /// 
-        /// If the method returns false, the returned <i>value</i> should not be trusted.
+        /// If the method returns false, the returned <paramref name="value"/> is not reliable.
         /// 
         /// </remarks>
         /// 
-        public override bool TryGetFloat64(int i, out double value)
+        public override bool TryGetFloat64(int index,  out double value)
         {
-            if (_values == null || _values.Length <= i)
+            if (_values == null || _values.Length <= index)
             {
                 value = 0.0f;
                 return false;
             }
 
-            value = (double) (decimal)_values[i]; // casting to decimal then double seems to prevent precision loss
+            value = (double)(decimal)_values[index]; // casting to decimal then double seems to prevent precision loss
             if (double.IsInfinity(value))
                 return false;
             else
@@ -1301,78 +1174,67 @@ namespace ClearCanvas.Dicom
 
 
         /// <summary>
-        /// Set an FL value.
+        /// Sets an FL value.
         /// 
         /// </summary>
         /// <param name="index"></param>
         /// <param name="value"></param>
-        /// <exception cref="DicomDataException">If <i>value</i> cannot be fit into 32-bit floating-point</exception>
-        /// <exception cref="IndexOutofBoundException">if <i>index</i> is negative or greater than <seealso cref="Count"/></exception>
+        /// <exception cref="DicomDataException">If <paramref name="value"/> cannot be fit into 32-bit floating-point</exception>
+        /// <exception cref="IndexOutofBoundException">if <paramref name="index"/> is negative or greater than <seealso cref="Count"/></exception>
         /// 
         public override void SetFloat32(int index, float value)
         {
-            if (value < float.MinValue || value > float.MaxValue)
-                throw new DicomDataException(string.Format("Invalid value {0} for FL tag {1}.", value, Tag.ToString()));
-
-            if (index == Count)
-                AppendFloat32(value);
-            else
-            {
-                _values[index] = value;
-                SetStreamLength();
-            }
+            SetValue(index, value);
         }
+
         /// <summary>
-        /// Set an FL value.
+        /// Sets an FL value.
         /// 
         /// </summary>
         /// <param name="index"></param>
         /// <param name="value"></param>
-        /// <exception cref="DicomDataException">If <i>value</i> cannot be fit into 32-bit floating-point</exception>
-        /// <exception cref="IndexOutofBoundException">if <i>index</i> is negative or greater than <seealso cref="Count"/></exception>
+        /// <exception cref="DicomDataException">If <paramref name="value"/> cannot be fit into 32-bit floating-point</exception>
+        /// <exception cref="IndexOutofBoundException">if <paramref name="index"/> is negative or greater than <seealso cref="Count"/></exception>
         /// 
         public override void SetFloat64(int index, double value)
         {
-            SetFloat32(index, (float)value);
+            if (value <float.MinValue || value > float.MaxValue)
+                throw new DicomDataException(String.Format("Invalid FL value {0} for tag {1}", value, Tag));
+
+            SetValue(index, (float) value);
         }
         /// <summary>
-        /// Append an FL value.
+        /// Appendss an FL value.
         /// 
         /// </summary>
-        /// <param name="index"></param>
         /// <param name="value"></param>
-        /// <exception cref="DicomDataException">If <i>value</i> cannot be fit into 32-bit floating-point</exception>
-        /// <exception cref="IndexOutofBoundException">if <i>index</i> is negative or greater than <seealso cref="Count"/></exception>
+        /// <exception cref="DicomDataException">If <paramref name="value"/> cannot be fit into 32-bit floating-point</exception>
+        /// <exception cref="IndexOutofBoundException">if <paramref name="index"/> is negative or greater than <seealso cref="Count"/></exception>
         /// 
         public override void AppendFloat32(float value)
         {
-            if (value < float.MinValue || value > float.MaxValue)
-                throw new DicomDataException(string.Format("Invalid value {0} for FL tag {1}.", value, Tag.ToString()));
-            
-            float[] temp = new float[Count + 1];
-            if (_values != null && _values.Length > 0)
-                Array.Copy(_values, temp, _values.Length);
-            _values = temp;
-            _values[Count++] = value;
-            SetStreamLength();
+            AppendValue(value);
         }
+
         /// <summary>
-        /// Append an FL value.
+        /// Appends an FL value.
         /// 
         /// </summary>
         /// <param name="index"></param>
         /// <param name="value"></param>
-        /// <exception cref="DicomDataException">If <i>value</i> is null or  cannot be fit into 32-bit floating-point</exception>
-        /// <exception cref="IndexOutofBoundException">if <i>index</i> is negative or greater than <seealso cref="Count"/></exception>
+        /// <exception cref="DicomDataException">If <paramref name="value"/> is null or  cannot be fit into 32-bit floating-point</exception>
+        /// <exception cref="IndexOutofBoundException">if <paramref name="index"/> is negative or greater than <seealso cref="Count"/></exception>
         /// 
         public override void AppendFloat64(double value)
         {
+            if (value < float.MinValue || value > float.MaxValue)
+                throw new DicomDataException(String.Format("Invalid FL value {0} for tag {1}", value, Tag));
 
-            AppendFloat32((float)value);
+            AppendValue((float)value);
         }
 
 
-        
+
         #endregion
     }
     #endregion
@@ -1445,6 +1307,18 @@ namespace ClearCanvas.Dicom
         internal override DicomAttribute Copy(bool copyBinary)
         {
             return new DicomAttributeOB(this);
+        }
+
+        protected override byte ParseNumber(string val)
+        {
+            if (val == null)
+                throw new DicomDataException("Null values invalid for OB VR");
+
+            byte parseVal;
+            if (false == byte.TryParse(val.Trim(), NumberStyle, null, out parseVal))
+                throw new DicomDataException(
+                    String.Format("Invalid byte format value for tag {0}: {1}", Tag, val));
+            return parseVal;
         }
 
         #endregion
@@ -1529,10 +1403,9 @@ namespace ClearCanvas.Dicom
             return length;
         }
 
-        
+
     }
     #endregion
-
 
     #region DicomAttributeOF
     /// <summary>
@@ -1601,6 +1474,18 @@ namespace ClearCanvas.Dicom
             return new DicomAttributeOF(this);
         }
 
+        protected override float ParseNumber(string val)
+        {
+            if (val == null)
+                throw new DicomDataException("Null values invalid for OF VR");
+
+            float parseVal;
+            if (false == float.TryParse(val.Trim(), NumberStyle, null, out parseVal))
+                throw new DicomDataException(
+                    String.Format("Invalid float format value for tag {0}: {1}", Tag, val));
+            return parseVal;
+        }
+
         #endregion
     }
     #endregion
@@ -1627,7 +1512,7 @@ namespace ClearCanvas.Dicom
         internal DicomAttributeOW(DicomTag tag, ByteBuffer item)
             : base(tag)
         {
-            
+
             if (ByteBuffer.LocalMachineEndian != item.Endian)
                 item.Swap(tag.VR.UnitSize);
 
@@ -1648,7 +1533,7 @@ namespace ClearCanvas.Dicom
         protected override void SetStreamLength()
         {
             Count = _values.Length;
-            StreamLength = (uint) (_values.Length);
+            StreamLength = (uint)(_values.Length);
         }
 
         public override string ToString()
@@ -1691,6 +1576,18 @@ namespace ClearCanvas.Dicom
         internal override DicomAttribute Copy(bool copyBinary)
         {
             return new DicomAttributeOW(this);
+        }
+
+        protected override byte ParseNumber(string val)
+        {
+            if (val == null)
+                throw new DicomDataException("Null values invalid for OW VR");
+
+            byte parseVal;
+            if (false == byte.TryParse(val.Trim(), NumberStyle, null, out parseVal))
+                throw new DicomDataException(
+                    String.Format("Invalid byte format value for tag {0}: {1}", Tag, val));
+            return parseVal;
         }
 
         internal override ByteBuffer GetByteBuffer(TransferSyntax syntax, String specificCharacterSet)
@@ -1784,430 +1681,402 @@ namespace ClearCanvas.Dicom
         {
             return new DicomAttributeSL(this);
         }
+        protected override int ParseNumber(string val)
+        {
+            if (val == null)
+                throw new DicomDataException("Null values invalid for SL VR");
 
-        
+            int parseVal;
+            if (false == int.TryParse(val.Trim(), NumberStyle, null, out parseVal))
+                throw new DicomDataException(
+                    String.Format("Invalid int format value for tag {0}: {1}", Tag, val));
+            return parseVal;
+        }
+
+
+
         /// <summary>
-        /// Set an SL value.
+        /// Sets an SL value.
         /// 
         /// </summary>
         /// <param name="index"></param>
         /// <param name="value"></param>
-        /// <exception cref="DicomDataException">If <i>value</i> cannot be fit into 32-bit signed int</exception>
-        /// <exception cref="IndexOutofBoundException">if <i>index</i> is negative or greater than <seealso cref="Count"/></exception>
+        /// <exception cref="IndexOutofBoundException">if <paramref name="index"/> is negative or greater than <seealso cref="Count"/></exception>
         /// 
         public override void SetInt16(int index, Int16 value)
         {
-            if (value < int.MinValue || value > int.MaxValue)
-                throw new DicomDataException(string.Format("Invalid value '{0}' for SL VR {1}.", value, Tag.ToString()));
-            
-            SetInt32(index, (int)value);
+            SetValue(index, value);
         }
+
         /// <summary>
-        /// Set an SL value.
+        /// Sets an SL value.
         /// 
         /// </summary>
         /// <param name="index"></param>
         /// <param name="value"></param>
-        /// <exception cref="DicomDataException">If <i>value</i> cannot be fit into 32-bit signed int</exception>
-        /// <exception cref="IndexOutofBoundException">if <i>index</i> is negative or greater than <seealso cref="Count"/></exception>
+        /// <exception cref="IndexOutofBoundException">if <paramref name="index"/> is negative or greater than <seealso cref="Count"/></exception>
         /// 
         public override void SetUInt16(int index, UInt16 value)
         {
-            if (value < int.MinValue || value > int.MaxValue)
-                throw new DicomDataException(string.Format("Invalid SL value '{0}' for {1}.", value, Tag.ToString()));
-            
-            SetInt32(index, (Int32)value);
+            SetValue(index, value);
         }
+
         /// <summary>
-        /// Set an SL value.
+        /// Sets an SL value.
         /// 
         /// </summary>
         /// <param name="index"></param>
         /// <param name="value"></param>
-        /// <exception cref="DicomDataException">If <i>value</i> cannot be fit into 32-bit signed int</exception>
-        /// <exception cref="IndexOutofBoundException">if <i>index</i> is negative or greater than <seealso cref="Count"/></exception>
+        /// <exception cref="IndexOutofBoundException">if <paramref name="index"/> is negative or greater than <seealso cref="Count"/></exception>
         /// 
         public override void SetInt32(int index, int value)
         {
-            if (value < int.MinValue || value > int.MaxValue)
-                throw new DicomDataException(string.Format("Invalid SL value '{0}' for {1}.", value, Tag.ToString()));
-
-            if (index == Count)
-                AppendInt32(value);
-            else
-            {
-                _values[index] = value;
-                SetStreamLength();
-            }
+            SetValue(index, value);
         }
+
         /// <summary>
-        /// Set an SL value.
+        /// Sets an SL value.
         /// 
         /// </summary>
         /// <param name="index"></param>
         /// <param name="value"></param>
-        /// <exception cref="DicomDataException">If <i>value</i> cannot be fit into 32-bit signed int</exception>
-        /// <exception cref="IndexOutofBoundException">if <i>index</i> is negative or greater than <seealso cref="Count"/></exception>
+        /// <exception cref="DicomDataException">If <paramref name="value"/> cannot be fit into 32-bit signed int</exception>
+        /// <exception cref="IndexOutofBoundException">if <paramref name="index"/> is negative or greater than <seealso cref="Count"/></exception>
         /// 
         public override void SetUInt32(int index, UInt32 value)
         {
-            if (value < int.MinValue || value > int.MaxValue)
-                throw new DicomDataException(string.Format("Invalid SL value '{0}' for {1}.", value, Tag.ToString()));
-
-            if (index == Count)
-                AppendUInt32(value);
-            else
-            {
-                _values[index] = (Int32) value;
-                SetStreamLength();
-            }
+            if (value > int.MaxValue)
+                throw new DicomDataException(String.Format("Invalid SL value '{0}' for {1}.", value, Tag));
+            SetValue(index, (int) value);    
         }
+
         /// <summary>
-        /// Set an SL value.
+        /// Sets an SL value.
         /// 
         /// </summary>
         /// <param name="index"></param>
         /// <param name="value"></param>
-        /// <exception cref="DicomDataException">If <i>value</i> cannot be fit into 32-bit signed int</exception>
-        /// <exception cref="IndexOutofBoundException">if <i>index</i> is negative or greater than <seealso cref="Count"/></exception>
+        /// <exception cref="DicomDataException">If <paramref name="value"/> cannot be fit into 32-bit signed int</exception>
+        /// <exception cref="IndexOutofBoundException">if <paramref name="index"/> is negative or greater than <seealso cref="Count"/></exception>
         /// 
         public override void SetInt64(int index, Int64 value)
         {
             if (value < int.MinValue || value > int.MaxValue)
-                throw new DicomDataException(string.Format("Invalid SL value '{0}' for {1}.", value, Tag.ToString()));
+                throw new DicomDataException(String.Format("Invalid SL value '{0}' for {1}.", value, Tag));
 
-            SetInt32(index,(Int32)value);
+            SetValue(index, (int)value);    
         }
         /// <summary>
-        /// Set an SL value.
+        /// Sets an SL value.
         /// 
         /// </summary>
         /// <param name="index"></param>
         /// <param name="value"></param>
-        /// <exception cref="DicomDataException">If <i>value</i> cannot be fit into 32-bit signed int</exception>
-        /// <exception cref="IndexOutofBoundException">if <i>index</i> is negative or greater than <seealso cref="Count"/></exception>
+        /// <exception cref="DicomDataException">If <paramref name="value"/> cannot be fit into 32-bit signed int</exception>
+        /// <exception cref="IndexOutofBoundException">if <paramref name="index"/> is negative or greater than <seealso cref="Count"/></exception>
         /// 
         public override void SetUInt64(int index, UInt64 value)
         {
-            if (value>Int32.MaxValue )
-                throw new DicomDataException(string.Format("Invalid SL value '{0}' for {1}.", value, Tag.ToString()));
+            if (value > int.MaxValue)
+                throw new DicomDataException(String.Format("Invalid SL value '{0}' for {1}.", value, Tag));
 
-            SetUInt32(index, (UInt32)value);
+            SetValue(index, (int)value);    
         }
 
         /// <summary>
-        /// Append an SL value.
+        /// Appends an SL value.
         /// 
         /// </summary>
-        /// <param name="index"></param>
         /// <param name="value"></param>
-        /// <exception cref="DicomDataException">If <i>value</i> cannot be fit into 32-bit signed int</exception>
         /// 
         public override void AppendInt16(Int16 value)
         {
-            if (value < int.MinValue || value > int.MaxValue)
-                throw new DicomDataException(string.Format("Invalid SL value '{0}' for {1}.", value, Tag.ToString()));
-            
-            AppendInt32((int)value);
+            AppendValue(value);
         }
         /// <summary>
-        /// Append an SL value.
+        /// Appends an SL value.
         /// 
         /// </summary>
-        /// <param name="index"></param>
         /// <param name="value"></param>
-        /// <exception cref="DicomDataException">If <i>value</i> cannot be fit into 32-bit signed int</exception>
+        /// <exception cref="DicomDataException">If <paramref name="value"/> cannot be fit into 32-bit signed int</exception>
         ///
-        public override void AppendInt32(int intValue)
+        public override void AppendInt32(int value)
         {
-            if (intValue < int.MinValue || intValue > int.MaxValue)
-                throw new DicomDataException(string.Format("Invalid value '{0}' for tSL VRag {1}.", intValue, Tag.ToString()));
-            
-            int[] temp = new int[Count + 1];
-            if (_values != null && _values.Length > 0)
-                _values.CopyTo(temp, 0);
-
-            _values = temp;
-            _values[Count++] = intValue;
-            SetStreamLength();
+            AppendValue(value);
         }
         /// <summary>
-        /// Append an SL value.
+        /// Appends an SL value.
         /// 
         /// </summary>
-        /// <param name="index"></param>
         /// <param name="value"></param>
-        /// <exception cref="DicomDataException">If <i>value</i> cannot be fit into 32-bit signed int</exception>
+        /// <exception cref="DicomDataException">If <paramref name="value"/> cannot be fit into 32-bit signed int</exception>
         ///
-        public override void AppendInt64(Int64 intValue)
+        public override void AppendInt64(Int64 value)
         {
-            if (intValue < Int32.MinValue || intValue > Int32.MaxValue)
-                throw new DicomDataException(string.Format("Invalid value '{0}' for tSL VRag {1}.", intValue, Tag.ToString()));
+            if (value < Int32.MinValue || value > Int32.MaxValue)
+                throw new DicomDataException(String.Format("Invalid SL value '{0}' tag {1}.", value, Tag));
 
-            AppendInt32((Int32)intValue);
+            AppendValue( (int) value);
         }
         /// <summary>
-        /// Append an SL value.
+        /// Appends an SL value.
         /// 
         /// </summary>
-        /// <param name="index"></param>
         /// <param name="value"></param>
-        /// <exception cref="DicomDataException">If <i>value</i> cannot be fit into 32-bit signed int</exception>
         ///
         public override void AppendUInt16(UInt16 value)
         {
-            if (value < int.MinValue || value > int.MaxValue)
-                throw new DicomDataException(string.Format("Invalid SL value '{0}' for {1}.", value, Tag.ToString()));
-
-            AppendInt32((Int32)value);
+            AppendValue(value);
         }
         /// <summary>
-        /// Append an SL value.
+        /// Appends an SL value.
         /// 
         /// </summary>
         /// <param name="index"></param>
         /// <param name="value"></param>
-        /// <exception cref="DicomDataException">If <i>value</i> cannot be fit into 32-bit signed int</exception>
+        /// <exception cref="DicomDataException">If <paramref name="value"/> cannot be fit into 32-bit signed int</exception>
         ///
         public override void AppendUInt32(UInt32 value)
         {
-            if (value < int.MinValue || value > int.MaxValue)
-                throw new DicomDataException(string.Format("Invalid SL value '{0}' for {1}.", value, Tag.ToString()));
+            if (value > int.MaxValue)
+                throw new DicomDataException(String.Format("Invalid SL value '{0}' for {1}.", value, Tag));
 
-            AppendInt32((Int32)value);
+            AppendValue( (int) value);
         }
+
         /// <summary>
-        /// Append an SL value.
+        /// Appends an SL value.
+        /// 
+        /// </summary>
+        /// <param name="value"></param>
+        /// <exception cref="DicomDataException">If <paramref name="value"/> cannot be fit into 32-bit signed int</exception>
+        ///
+        public override void AppendUInt64(UInt64 value)
+        {
+            if (value > Int32.MaxValue)
+                throw new DicomDataException(String.Format("Invalid SL value '{0}' for {1}.", value, Tag));
+
+            AppendValue((int)value);
+        }
+
+
+        /// <summary>
+        /// Retrieves an Int16 value from an SL attribute.
         /// 
         /// </summary>
         /// <param name="index"></param>
         /// <param name="value"></param>
-        /// <exception cref="DicomDataException">If <i>value</i> cannot be fit into 32-bit signed int</exception>
-        ///
-        public override void AppendUInt64(UInt64 value)
-        {
-            if ( value > Int32.MaxValue)
-                throw new DicomDataException(string.Format("Invalid SL value '{0}' for {1}.", value, Tag.ToString()));
-
-            AppendUInt32((UInt32)value);
-        }
-
-
-        /// <summary>
-        /// Method to retrieve an Int16 value from an SL attribute.
-        /// 
-        /// </summary>
-        /// <param name="i"></param>
-        /// <param name="value"></param>
-        /// <returns><i>true</i>if value can be retrieved. <i>false</i> otherwise (see remarks)</returns>
+        /// <returns><b>true</b>if value can be retrieved. <b>false</b> otherwise (see remarks)</returns>
         /// <remarks>
-        /// This method returns <i>false</i> if
+        /// This method returns <b>false</b> if
         ///     If the value doesn't exist
         ///     The value cannot be converted into Int16 (eg, floating-point number 1.102 cannot be converted into Int16)
         ///     The value is an integer but too big or too small to fit into an Int16 (eg, 100000)
         /// 
-        /// If the method returns false, the returned <i>value</i> should not be trusted.
+        /// If the method returns false, the returned <paramref name="value"/> is not reliable.
         /// 
         /// </remarks>
         /// 
-        public override bool TryGetInt16(int i, out Int16 value)
+        public override bool TryGetInt16(int index,  out Int16 value)
         {
-            if (i < 0 || i >= Count)
+            if (index < 0 || index >= Count)
             {
                 value = 0;
                 return false;
             }
 
-            
-            if (_values[i] < Int16.MinValue || _values[i] > Int16.MaxValue)
+
+            if (_values[index] < Int16.MinValue || _values[index] > Int16.MaxValue)
             {
                 value = 0;
                 return false;
             }
             else
             {
-                value = (Int16)_values[i];
+                value = (Int16)_values[index];
                 return true;
             }
         }
         /// <summary>
-        /// Method to retrieve an Int32 value from an SL attribute.
+        /// Retrieves an Int32 value from an SL attribute.
         /// 
         /// </summary>
-        /// <param name="i"></param>
+        /// <param name="index"></param>
         /// <param name="value"></param>
-        /// <returns><i>true</i>if value can be retrieved. <i>false</i> otherwise (see remarks)</returns>
+        /// <returns><b>true</b>if value can be retrieved. <b>false</b> otherwise (see remarks)</returns>
         /// <remarks>
-        /// This method returns <i>false</i> if
+        /// This method returns <b>false</b> if
         ///     If the value doesn't exist
         ///     The value cannot be converted into Int32 (eg, floating-point number 1.102 cannot be converted into Int32)
         ///     The value is an integer but too big or too small to fit into an Int16 (eg, 100000)
         /// 
-        /// If the method returns false, the returned <i>value</i> should not be trusted.
+        /// If the method returns false, the returned <paramref name="value"/> is not reliable.
         /// 
         /// </remarks>
         /// 
-        public override bool TryGetInt32(int i, out Int32 value)
+        public override bool TryGetInt32(int index,  out Int32 value)
         {
-            if (i < 0 || i >= Count)
+            if (index < 0 || index >= Count)
             {
                 value = 0;
                 return false;
             }
 
-            value = _values[i];
+            value = _values[index];
+
+
             return true;
         }
         /// <summary>
-        /// Method to retrieve an Int64 value from an SL attribute.
+        /// Retrieves an Int64 value from an SL attribute.
         /// 
         /// </summary>
-        /// <param name="i"></param>
+        /// <param name="index"></param>
         /// <param name="value"></param>
-        /// <returns><i>true</i>if value can be retrieved. <i>false</i> otherwise (see remarks)</returns>
+        /// <returns><b>true</b>if value can be retrieved. <b>false</b> otherwise (see remarks)</returns>
         /// <remarks>
-        /// This method returns <i>false</i> if
+        /// This method returns <b>false</b> if
         ///     If the value doesn't exist
         ///     The value cannot be converted into Int64 (eg, floating-point number 1.102 cannot be converted into Int64)
         ///     The value is an integer but too big or too small to fit into an Int16 (eg, 100000)
         /// 
-        /// If the method returns false, the returned <i>value</i> should not be trusted.
+        /// If the method returns false, the returned <paramref name="value"/> is not reliable.
         /// 
         /// </remarks>
         /// 
-        public override bool TryGetInt64(int i, out Int64 value)
+        public override bool TryGetInt64(int index,  out Int64 value)
         {
-            if (i < 0 || i >= Count)
+            if (index < 0 || index >= Count)
             {
                 value = 0;
                 return false;
             }
 
 
-            if (_values[i] < Int64.MinValue || _values[i] > Int64.MaxValue)
+            if (_values[index] < Int64.MinValue || _values[index] > Int64.MaxValue)
             {
                 value = 0;
                 return false;
             }
             else
             {
-                value = (Int64)_values[i];
+                value = _values[index];
                 return true;
             }
         }
         /// <summary>
-        /// Method to retrieve an UInt16 value from an SL attribute.
+        /// Retrieves an UInt16 value from an SL attribute.
         /// 
         /// </summary>
-        /// <param name="i"></param>
+        /// <param name="index"></param>
         /// <param name="value"></param>
-        /// <returns><i>true</i>if value can be retrieved. <i>false</i> otherwise (see remarks)</returns>
+        /// <returns><b>true</b>if value can be retrieved. <b>false</b> otherwise (see remarks)</returns>
         /// <remarks>
-        /// This method returns <i>false</i> if
+        /// This method returns <b>false</b> if
         ///     If the value doesn't exist
         ///     The value cannot be converted into UInt16 (eg, floating-point number 1.102 cannot be converted into UInt16)
         ///     The value is an integer but too big or too small to fit into an UInt16 (eg, -100)
         /// 
-        /// If the method returns false, the returned <i>value</i> should not be trusted.
+        /// If the method returns false, the returned <paramref name="value"/> is not reliable.
         /// 
         /// </remarks>
         /// 
-        public override bool TryGetUInt16(int i, out UInt16 value)
+        public override bool TryGetUInt16(int index,  out UInt16 value)
         {
-            if (i < 0 || i >= Count)
+            if (index < 0 || index >= Count)
             {
                 value = 0;
                 return false;
             }
 
 
-            if (_values[i] < UInt16.MinValue || _values[i] > UInt16.MaxValue)
+            if (_values[index] < UInt16.MinValue || _values[index] > UInt16.MaxValue)
             {
                 value = 0;
                 return false;
             }
             else
             {
-                value = (UInt16)_values[i];
+                value = (UInt16)_values[index];
                 return true;
             }
         }
         /// <summary>
-        /// Method to retrieve an UInt32 value from an SL attribute.
+        /// Retrieves an UInt32 value from an SL attribute.
         /// 
         /// </summary>
-        /// <param name="i"></param>
+        /// <param name="index"></param>
         /// <param name="value"></param>
-        /// <returns><i>true</i>if value can be retrieved. <i>false</i> otherwise (see remarks)</returns>
+        /// <returns><b>true</b>if value can be retrieved. <b>false</b> otherwise (see remarks)</returns>
         /// <remarks>
-        /// This method returns <i>false</i> if
+        /// This method returns <b>false</b> if
         ///     If the value doesn't exist
         ///     The value cannot be converted into UInt32 (eg, floating-point number 1.102 cannot be converted into UInt32)
         ///     The value is an integer but too big or too small to fit into an UInt32 (eg, -100)
         /// 
-        /// If the method returns false, the returned <i>value</i> should not be trusted.
+        /// If the method returns false, the returned <paramref name="value"/> is not reliable.
         /// 
         /// </remarks>
         /// 
-        public override bool TryGetUInt32(int i, out UInt32 value)
+        public override bool TryGetUInt32(int index,  out UInt32 value)
         {
-            if (i < 0 || i >= Count)
+            if (index < 0 || index >= Count)
             {
                 value = 0;
                 return false;
             }
 
 
-            if (_values[i] < UInt32.MinValue || _values[i] > UInt32.MaxValue)
+            if (_values[index] < UInt32.MinValue || _values[index] > UInt32.MaxValue)
             {
                 value = 0;
                 return false;
             }
             else
             {
-                value = (UInt32)_values[i];
+                value = (UInt32)_values[index];
                 return true;
             }
         }
         /// <summary>
-        /// Method to retrieve an UInt64 value from a SL attribute.
+        /// Retrieves an UInt64 value from a SL attribute.
         /// 
         /// </summary>
-        /// <param name="i"></param>
+        /// <param name="index"></param>
         /// <param name="value"></param>
-        /// <returns><i>true</i>if value can be retrieved. <i>false</i> otherwise (see remarks)</returns>
+        /// <returns><b>true</b>if value can be retrieved. <b>false</b> otherwise (see remarks)</returns>
         /// <remarks>
-        /// This method returns <i>false</i> if
+        /// This method returns <b>false</b> if
         ///     If the value doesn't exist
         ///     The value cannot be converted into UInt64 (eg, floating-point number 1.102 cannot be converted into UInt64)
         ///     The value is an integer but too big or too small to fit into an UInt64 (eg, -100)
         /// 
-        /// If the method returns false, the returned <i>value</i> should not be trusted.
+        /// If the method returns false, the returned <paramref name="value"/> is not reliable.
         /// 
         /// </remarks>
         /// 
-        public override bool TryGetUInt64(int i, out UInt64 value)
+        public override bool TryGetUInt64(int index,  out UInt64 value)
         {
-            if (i < 0 || i >= Count)
+            if (index < 0 || index >= Count)
             {
                 value = 0;
                 return false;
             }
 
 
-            if (_values[i] < 0 )
+            if (_values[index] < 0)
             {
                 value = 0;
                 return false;
             }
             else
             {
-                value = (UInt16)_values[i];
+                value = (UInt16)_values[index];
                 return true;
             }
         }
-        
-       
+
+
         #endregion
     }
     #endregion
@@ -2249,19 +2118,11 @@ namespace ClearCanvas.Dicom
 
         #region Operators
 
-        public short this[int val]
-        {
-            get
-            {
-                return _values[val];
-            }
-        }
-
         #endregion
 
         #region Abstract Method Implementation
 
-        
+
         public override Object Values
         {
             get { return _values; }
@@ -2299,434 +2160,399 @@ namespace ClearCanvas.Dicom
             return new DicomAttributeSS(this);
         }
 
-        
-        
+        protected override short ParseNumber(string val)
+        {
+            if (val == null)
+                throw new DicomDataException("Null values invalid for SS VR");
+
+            short parseVal;
+            if (false == short.TryParse(val.Trim(), NumberStyle, null, out parseVal))
+                throw new DicomDataException(
+                    String.Format("Invalid short format value for tag {0}: {1}", Tag, val));
+            return parseVal;
+        }
+
+
         /// <summary>
-        /// Append an SL value.
+        /// Appends an SS value.
         /// 
         /// </summary>
-        /// <param name="index"></param>
         /// <param name="value"></param>
-        /// <exception cref="DicomDataException">If <i>intValue</i> cannot be fit into 16-bit signed int</exception>
+        /// <exception cref="DicomDataException">If <paramref name="value"/> cannot be fit into 16-bit signed int</exception>
         /// 
-        public override void AppendInt16(Int16 intValue)
+        public override void AppendInt16(Int16 value)
         {
-            int newArrayLength = 1;
-            int oldArrayLength = 0;
+            AppendValue(value);
+        }
 
-            if (_values != null)
-            {
-                newArrayLength = _values.Length + 1;
-                oldArrayLength = _values.Length;
-            }
+        /// <summary>
+        /// Appends an SS value.
+        /// 
+        /// </summary>
+        /// <param name="value"></param>
+        /// <exception cref="DicomDataException">If <paramref name="value"/> cannot be fit into 16-bit signed int</exception>
+        /// 
+        public override void AppendInt32(Int32 value)
+        {
+            if (value < Int16.MinValue || value > Int16.MaxValue)
+                throw new DicomDataException(String.Format("Invalid SS value {0} for tag {1}.", value, Tag));
 
-            short[] newArray = new short[newArrayLength];
-            if (oldArrayLength > 0)
-                _values.CopyTo(newArray, 0);
-            newArray[newArrayLength - 1] = (short)intValue;
-            _values = newArray;
-            SetStreamLength();
+            AppendValue( (short) value);
         }
         /// <summary>
-        /// Append an SL value.
+        /// Appends an SS value.
         /// 
         /// </summary>
-        /// <param name="index"></param>
         /// <param name="value"></param>
-        /// <exception cref="DicomDataException">If <i>intValue</i> cannot be fit into 16-bit signed int</exception>
+        /// <exception cref="DicomDataException">If <paramref name="value"/> cannot be fit into 16-bit signed int</exception>
         /// 
-        public override void AppendInt32(Int32 intValue)
+        public override void AppendInt64(Int64 value)
         {
-            if (intValue < Int16.MinValue || intValue > Int16.MaxValue)
-                throw new DicomDataException(string.Format("Invalid value {0} for tag {1}.", intValue, Tag.ToString()));
+            if (value < Int16.MinValue || value > Int16.MaxValue)
+                throw new DicomDataException(String.Format("Invalid SS value {0} for tag {1}.", value, Tag));
 
-            AppendInt16((Int16)intValue);
+            AppendValue((short)value);
         }
         /// <summary>
-        /// Append an SL value.
+        /// Appends an SS value.
         /// 
         /// </summary>
         /// <param name="index"></param>
         /// <param name="value"></param>
-        /// <exception cref="DicomDataException">If <i>intValue</i> cannot be fit into 16-bit signed int</exception>
+        /// <exception cref="DicomDataException">If <paramref name="value"/> cannot be fit into 16-bit signed int</exception>
         /// 
-        public override void AppendInt64(Int64 intValue)
+        public override void AppendUInt16(UInt16 value)
         {
-            if (intValue < Int16.MinValue || intValue > Int16.MaxValue)
-                throw new DicomDataException(string.Format("Invalid value {0} for tag {1}.", intValue, Tag.ToString()));
+            if (value > Int16.MaxValue)
+                throw new DicomDataException(String.Format("Invalid SS value {0} for tag {1}.", value, Tag));
 
-            AppendInt32((Int32)intValue);
+            AppendValue((short)value);
         }
         /// <summary>
-        /// Append an SL value.
+        /// Appends an SS value.
         /// 
         /// </summary>
-        /// <param name="index"></param>
         /// <param name="value"></param>
-        /// <exception cref="DicomDataException">If <i>intValue</i> cannot be fit into 16-bit signed int</exception>
-        /// 
-        public override void AppendUInt16(UInt16 intValue)
-        {
-            if (intValue < Int16.MinValue || intValue > Int16.MaxValue)
-                throw new DicomDataException(string.Format("Invalid value {0} for tag {1}.", intValue, Tag.ToString()));
-
-            AppendInt16((Int16)intValue);
-        }
-        /// <summary>
-        /// Append an SL value.
-        /// 
-        /// </summary>
-        /// <param name="index"></param>
-        /// <param name="value"></param>
-        /// <exception cref="DicomDataException">If <i>intValue</i> cannot be fit into 16-bit signed int</exception>
+        /// <exception cref="DicomDataException">If <paramref name="value"/> cannot be fit into 16-bit signed int</exception>
         /// 
         public override void AppendUInt32(UInt32 value)
         {
-            if (value < Int16.MinValue || value > Int16.MaxValue)
-                throw new DicomDataException(string.Format("Invalid value {0} for tag {1}.", value, Tag.ToString()));
+            if (value > Int16.MaxValue)
+                throw new DicomDataException(String.Format("Invalid SS value {0} for tag {1}.", value, Tag));
 
-            AppendUInt16((UInt16)value);
+            AppendValue((short)value);
         }
         /// <summary>
-        /// Append an SL value.
+        /// Appends an SL value.
         /// 
         /// </summary>
-        /// <param name="index"></param>
         /// <param name="value"></param>
-        /// <exception cref="DicomDataException">If <i>intValue</i> cannot be fit into 16-bit signed int</exception>
+        /// <exception cref="DicomDataException">If <paramref name="value"/> cannot be fit into 16-bit signed int</exception>
         /// 
         public override void AppendUInt64(UInt64 value)
         {
-            if (value > (UInt64) Int16.MaxValue)
-                throw new DicomDataException(string.Format("Invalid value {0} for tag {1}.", value, Tag.ToString()));
+            if (value > (UInt64)Int16.MaxValue)
+                throw new DicomDataException(String.Format("Invalid SS value {0} for tag {1}.", value, Tag));
 
-            AppendUInt32((UInt32)value);
+            AppendValue((short)value);
         }
 
         /// <summary>
-        /// Method to retrieve an Int16 value from an SS attribute.
-        /// 
-        /// </summary>
-        /// <param name="i"></param>
-        /// <param name="value"></param>
-        /// <returns><i>true</i>if value can be retrieved. <i>false</i> otherwise (see remarks)</returns>
-        /// <remarks>
-        /// This method returns <i>false</i> if
-        ///     If the value doesn't exist
-        ///     The value cannot be converted into Int16 (eg, floating-point number 1.102 cannot be converted into Int16)
-        ///     The value is an integer but too big or too small to fit into an Int16 (eg, 100000)
-        /// 
-        /// If the method returns false, the returned <i>value</i> should not be trusted.
-        /// 
-        /// </remarks>
-        /// 
-        public override bool TryGetInt16(int i, out Int16 value)
-        {
-            if (_values == null || _values.Length <= i)
-            {
-                value = 0;
-                return false;
-            }
-
-            if (_values[i] < Int16.MinValue || _values[i] > Int16.MaxValue)
-            {
-                value = 0;
-                return false;
-            }
-            else
-            {
-
-                value = _values[i];
-                return true;
-            }
-        }
-        /// <summary>
-        /// Method to retrieve an Int32 value from an SS attribute.
-        /// 
-        /// </summary>
-        /// <param name="i"></param>
-        /// <param name="value"></param>
-        /// <returns><i>true</i>if value can be retrieved. <i>false</i> otherwise (see remarks)</returns>
-        /// <remarks>
-        /// This method returns <i>false</i> if
-        ///     If the value doesn't exist
-        ///     The value cannot be converted into Int32 (eg, floating-point number 1.102 cannot be converted into Int32)
-        ///     The value is an integer but too big or too small to fit into an Int16 (eg, 100000)
-        /// 
-        /// If the method returns false, the returned <i>value</i> should not be trusted.
-        /// 
-        /// </remarks>
-        /// 
-        public override bool TryGetInt32(int i, out Int32 value)
-        {
-            if (_values == null || _values.Length <= i)
-            {
-                value = 0;
-                return false;
-            }
-
-            if (_values[i] < Int32.MinValue || _values[i] > Int32.MaxValue)
-            {
-                value = 0;
-                return false;
-            }
-            else
-            {
-
-                value = _values[i];
-                return true;
-            }
-        }
-        /// <summary>
-        /// Method to retrieve an Int64 value from an SS attribute.
-        /// 
-        /// </summary>
-        /// <param name="i"></param>
-        /// <param name="value"></param>
-        /// <returns><i>true</i>if value can be retrieved. <i>false</i> otherwise (see remarks)</returns>
-        /// <remarks>
-        /// This method returns <i>false</i> if
-        ///     If the value doesn't exist
-        ///     The value cannot be converted into Int64 (eg, floating-point number 1.102 cannot be converted into Int64)
-        ///     The value is an integer but too big or too small to fit into an Int16 (eg, 100000)
-        /// 
-        /// If the method returns false, the returned <i>value</i> should not be trusted.
-        /// 
-        /// </remarks>
-        /// 
-        public override bool TryGetInt64(int i, out Int64 value)
-        {
-            if (_values == null || _values.Length <= i)
-            {
-                value = 0;
-                return false;
-            }
-
-            if (_values[i] < Int64.MinValue || _values[i] > Int64.MaxValue)
-            {
-                value = 0;
-                return false;
-            }
-            else
-            {
-
-                value = _values[i];
-                return true;
-            }
-        }
-        /// <summary>
-        /// Method to retrieve an UInt16 value from an SS attribute.
-        /// 
-        /// </summary>
-        /// <param name="i"></param>
-        /// <param name="value"></param>
-        /// <returns><i>true</i>if value can be retrieved. <i>false</i> otherwise (see remarks)</returns>
-        /// <remarks>
-        /// This method returns <i>false</i> if
-        ///     If the value doesn't exist
-        ///     The value cannot be converted into UInt16 (eg, floating-point number 1.102 cannot be converted into UInt16)
-        ///     The value is an integer but too big or too small to fit into an UInt16 (eg, -100)
-        /// 
-        /// If the method returns false, the returned <i>value</i> should not be trusted.
-        /// 
-        /// </remarks>
-        /// 
-        public override bool TryGetUInt16(int i, out UInt16 value)
-        {
-            if (_values == null || _values.Length <= i)
-            {
-                value = 0;
-                return false;
-            }
-
-            if (_values[i] < UInt16.MinValue || _values[i] > UInt16.MaxValue)
-            {
-                value = 0;
-                return false;
-            }
-            else
-            {
-
-                value = (UInt16)_values[i];
-                return true;
-            }
-        }
-        /// <summary>
-        /// Method to retrieve an UInt32 value from an SS attribute.
-        /// 
-        /// </summary>
-        /// <param name="i"></param>
-        /// <param name="value"></param>
-        /// <returns><i>true</i>if value can be retrieved. <i>false</i> otherwise (see remarks)</returns>
-        /// <remarks>
-        /// This method returns <i>false</i> if
-        ///     If the value doesn't exist
-        ///     The value cannot be converted into UInt32 (eg, floating-point number 1.102 cannot be converted into UInt32)
-        ///     The value is an integer but too big or too small to fit into an UInt32 (eg, -100)
-        /// 
-        /// If the method returns false, the returned <i>value</i> should not be trusted.
-        /// 
-        /// </remarks>
-        /// 
-        public override bool TryGetUInt32(int i, out UInt32 value)
-        {
-            if (_values == null || _values.Length <= i)
-            {
-                value = 0;
-                return false;
-            }
-
-            if (_values[i] < UInt32.MinValue || _values[i] > UInt32.MaxValue)
-            {
-                value = 0;
-                return false;
-            }
-            else
-            {
-
-                value = (UInt32)_values[i];
-                return true;
-            }
-        }
-        /// <summary>
-        /// Method to retrieve an UInt64 value from an SS attribute.
-        /// 
-        /// </summary>
-        /// <param name="i"></param>
-        /// <param name="value"></param>
-        /// <returns><i>true</i>if value can be retrieved. <i>false</i> otherwise (see remarks)</returns>
-        /// <remarks>
-        /// This method returns <i>false</i> if
-        ///     If the value doesn't exist
-        ///     The value cannot be converted into UInt64 (eg, floating-point number 1.102 cannot be converted into UInt64)
-        ///     The value is an integer but too big or too small to fit into an UInt64 (eg, -100)
-        /// 
-        /// If the method returns false, the returned <i>value</i> should not be trusted.
-        /// 
-        /// </remarks>
-        /// 
-        public override bool TryGetUInt64(int i, out UInt64 value)
-        {
-            if (_values == null || _values.Length <= i)
-            {
-                value = 0;
-                return false;
-            }
-
-            if ((UInt64)_values[i] < UInt64.MinValue || (UInt64)_values[i] > UInt64.MaxValue)
-            {
-                value = 0;
-                return false;
-            }
-            else
-            {
-
-                value = (UInt64)_values[i];
-                return true;
-            }
-        }
-        
-        /// <summary>
-        /// Set an SL value.
+        /// Retrieves an Int16 value from an SS attribute.
         /// 
         /// </summary>
         /// <param name="index"></param>
         /// <param name="value"></param>
-        /// <exception cref="DicomDataException">If <i>value</i> cannot be fit into 16-bit signed int</exception>
-        /// <exception cref="IndexOutofBoundException">if <i>index</i> is negative or greater than <seealso cref="Count"/></exception>
+        /// <returns><b>true</b>if value can be retrieved. <b>false</b> otherwise (see remarks)</returns>
+        /// <remarks>
+        /// This method returns <b>false</b> if
+        /// <list type="bullet">
+        /// <item>The value doesn't exist</item>
+        /// </list>
+        ///     
+        /// If the method returns false, the returned <paramref name="value"/> is not reliable.
+        /// 
+        /// </remarks>
+        /// 
+        public override bool TryGetInt16(int index,  out Int16 value)
+        {
+            if (_values == null || _values.Length <= index)
+            {
+                value = 0;
+                return false;
+            }
+
+            value = _values[index];
+            return true;
+            
+        }
+        /// <summary>
+        /// Retrieves an Int32 value from an SS attribute.
+        /// 
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="value"></param>
+        /// <returns><b>true</b>if value can be retrieved. <b>false</b> otherwise (see remarks)</returns>
+        /// <remarks>
+        /// This method returns <b>false</b> if
+        /// <list type="bullet">
+        /// <item>The value doesn't exist.</item>
+        /// </list>
+        ///     
+        /// If the method returns false, the returned <paramref name="value"/> is not reliable.
+        /// 
+        /// </remarks>
+        /// 
+        public override bool TryGetInt32(int index,  out Int32 value)
+        {
+            if (_values == null || _values.Length <= index)
+            {
+                value = 0;
+                return false;
+            }
+
+            value = _values[index];
+            return true;
+        }
+        /// <summary>
+        /// Retrieves an Int64 value from an SS attribute.
+        /// 
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="value"></param>
+        /// <returns><b>true</b>if value can be retrieved. <b>false</b> otherwise (see remarks)</returns>
+        /// <remarks>
+        /// This method returns <b>false</b> if
+        /// <list type="bullet">
+        /// <item>The value doesn't exist.</item>
+        /// </list>
+        /// 
+        /// If the method returns false, the returned <paramref name="value"/> is not reliable.
+        /// 
+        /// </remarks>
+        /// 
+        public override bool TryGetInt64(int index,  out Int64 value)
+        {
+            if (_values == null || _values.Length <= index)
+            {
+                value = 0;
+                return false;
+            }
+
+            value = _values[index];
+            return true;
+            
+        }
+        /// <summary>
+        /// Retrieves an UInt16 value from an SS attribute.
+        /// 
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="value"></param>
+        /// <returns><b>true</b>if value can be retrieved. <b>false</b> otherwise (see remarks)</returns>
+        /// <remarks>
+        /// This method returns <b>false</b> if
+        /// <list type="bullet">
+        /// <item>The value doesn't exist.</item>
+        /// <item>The value exceeds the UInt16 range.</item>
+        /// </list>
+        /// 
+        /// If the method returns false, the returned <paramref name="value"/> is not reliable.
+        /// 
+        /// </remarks>
+        /// 
+        public override bool TryGetUInt16(int index,  out UInt16 value)
+        {
+            if (_values == null || _values.Length <= index)
+            {
+                value = 0;
+                return false;
+            }
+
+            if (_values[index] < UInt16.MinValue)
+            {
+                value = 0;
+                return false;
+            }
+            else
+            {
+
+                value = (UInt16)_values[index];
+                return true;
+            }
+        }
+        /// <summary>
+        /// Retrieves an UInt32 value from an SS attribute.
+        /// 
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="value"></param>
+        /// <returns><b>true</b>if value can be retrieved. <b>false</b> otherwise (see remarks)</returns>
+        /// <remarks>
+        /// This method returns <b>false</b> if
+        /// <list type="bullet">
+        /// <item>The value doesn't exist.</item>
+        /// <item>The value exceeds the UInt32 range.</item>
+        /// </list>
+        /// 
+        /// If the method returns false, the returned <paramref name="value"/> is not reliable.
+        /// 
+        /// </remarks>
+        /// 
+        public override bool TryGetUInt32(int index,  out UInt32 value)
+        {
+            if (_values == null || _values.Length <= index)
+            {
+                value = 0;
+                return false;
+            }
+
+            if (_values[index] < UInt32.MinValue)
+            {
+                value = 0;
+                return false;
+            }
+            else
+            {
+
+                value = (UInt32)_values[index];
+                return true;
+            }
+        }
+        /// <summary>
+        /// Retrieves an UInt64 value from an SS attribute.
+        /// 
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="value"></param>
+        /// <returns><b>true</b>if value can be retrieved. <b>false</b> otherwise (see remarks)</returns>
+        /// <remarks>
+        /// This method returns <b>false</b> if
+        /// <list type="bullet">
+        /// <item>The value doesn't exist.</item>
+        /// <item>The value exceeds the UInt64 range.</item>
+        /// </list>
+        /// 
+        /// If the method returns false, the returned <paramref name="value"/> is not reliable.
+        /// 
+        /// </remarks>
+        /// 
+        public override bool TryGetUInt64(int index,  out UInt64 value)
+        {
+            if (_values == null || _values.Length <= index)
+            {
+                value = 0;
+                return false;
+            }
+
+            if ((UInt64)_values[index] < UInt64.MinValue)
+            {
+                value = 0;
+                return false;
+            }
+            else
+            {
+
+                value = (UInt64)_values[index];
+                return true;
+            }
+        }
+
+        /// <summary>
+        /// Sets an SS value.
+        /// 
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="value"></param>
+        /// <exception cref="IndexOutofBoundException">if <paramref name="index"/> is negative or greater than <seealso cref="Count"/></exception>
         /// 
         public override void SetInt16(int index, Int16 value)
         {
-            if (index == Count)
-                AppendInt16(value);
-            else
-            {
-                _values[index] = value;
-                SetStreamLength();
-            }
+            SetValue(index, value);
         }
         /// <summary>
-        /// Set an SL value.
+        /// Sets an SS value.
         /// 
         /// </summary>
         /// <param name="index"></param>
         /// <param name="value"></param>
-        /// <exception cref="DicomDataException">If <i>value</i> cannot be fit into 16-bit signed int</exception>
-        /// <exception cref="IndexOutofBoundException">if <i>index</i> is negative or greater than <seealso cref="Count"/></exception>
+        /// <exception cref="DicomDataException">If <paramref name="value"/> cannot be fit into 16-bit signed int</exception>
+        /// <exception cref="IndexOutofBoundException">if <paramref name="index"/> is negative or greater than <seealso cref="Count"/></exception>
         /// 
         public override void SetInt32(int index, Int32 value)
         {
-            if (value<Int16.MinValue || value>Int16.MaxValue)
-                throw new DicomDataException(string.Format("Invalid value {0} for tag {1}.", value, Tag.ToString()));
-            
-            SetInt16(index, (Int16) value);
+            if (value < Int16.MinValue || value > Int16.MaxValue)
+                throw new DicomDataException(String.Format("Invalid SS value {0} for tag {1}.", value, Tag));
+
+            SetValue(index, (short) value);
         }
         /// <summary>
-        /// Set an SL value.
+        /// Sets an SS value.
         /// 
         /// </summary>
         /// <param name="index"></param>
         /// <param name="value"></param>
-        /// <exception cref="DicomDataException">If <i>value</i> cannot be fit into 16-bit signed int</exception>
-        /// <exception cref="IndexOutofBoundException">if <i>index</i> is negative or greater than <seealso cref="Count"/></exception>
+        /// <exception cref="DicomDataException">If <paramref name="value"/> cannot be fit into 16-bit signed int</exception>
+        /// <exception cref="IndexOutofBoundException">if <paramref name="index"/> is negative or greater than <seealso cref="Count"/></exception>
         /// 
         public override void SetInt64(int index, Int64 value)
         {
             if (value < Int16.MinValue || value > Int16.MaxValue)
-                throw new DicomDataException(string.Format("Invalid value {0} for tag {1}.", value, Tag.ToString()));
+                throw new DicomDataException(String.Format("Invalid SS value {0} for tag {1}.", value, Tag));
 
-            SetInt32(index, (Int32)value);
+            SetValue(index, (short)value);
         }
 
         /// <summary>
-        /// Set an SL value.
+        /// Sets an SS value.
         /// 
         /// </summary>
         /// <param name="index"></param>
         /// <param name="value"></param>
-        /// <exception cref="DicomDataException">If <i>value</i> cannot be fit into 16-bit signed int</exception>
-        /// <exception cref="IndexOutofBoundException">if <i>index</i> is negative or greater than <seealso cref="Count"/></exception>
+        /// <exception cref="DicomDataException">If <paramref name="value"/> cannot be fit into 16-bit signed int</exception>
+        /// <exception cref="IndexOutofBoundException">if <paramref name="index"/> is negative or greater than <seealso cref="Count"/></exception>
         /// 
         public override void SetUInt16(int index, UInt16 value)
         {
-            if (value < Int16.MinValue || value > Int16.MaxValue)
-                throw new DicomDataException(string.Format("Invalid value {0} for tag {1}.", value, Tag.ToString()));
+            if (value > Int16.MaxValue)
+                throw new DicomDataException(String.Format("Invalid SS value {0} for tag {1}.", value, Tag));
 
-            SetInt16(index, (Int16)value);
+            SetValue(index, (short)value);
         }
         /// <summary>
-        /// Set an SL value.
+        /// Sets an SS value.
         /// 
         /// </summary>
         /// <param name="index"></param>
         /// <param name="value"></param>
-        /// <exception cref="DicomDataException">If <i>value</i> cannot be fit into 16-bit signed int</exception>
-        /// <exception cref="IndexOutofBoundException">if <i>index</i> is negative or greater than <seealso cref="Count"/></exception>
+        /// <exception cref="DicomDataException">If <paramref name="value"/> cannot be fit into 16-bit signed int</exception>
+        /// <exception cref="IndexOutofBoundException">if <paramref name="index"/> is negative or greater than <seealso cref="Count"/></exception>
         /// 
         public override void SetUInt32(int index, UInt32 value)
         {
-            if (value < Int16.MinValue || value > Int16.MaxValue)
-                throw new DicomDataException(string.Format("Invalid value {0} for tag {1}.", value, Tag.ToString()));
+            if (value > Int16.MaxValue)
+                throw new DicomDataException(String.Format("Invalid SS value {0} for tag {1}.", value, Tag));
 
-            SetUInt16(index, (UInt16)value);
+            SetValue(index, (short) value);
         }
+
         /// <summary>
-        /// Set an SL value.
+        /// Sets an SS value.
         /// 
         /// </summary>
         /// <param name="index"></param>
         /// <param name="value"></param>
-        /// <exception cref="DicomDataException">If <i>value</i> cannot be fit into 16-bit signed int</exception>
-        /// <exception cref="IndexOutofBoundException">if <i>index</i> is negative or greater than <seealso cref="Count"/></exception>
+        /// <exception cref="DicomDataException">If <paramref name="value"/> cannot be fit into 16-bit signed int</exception>
+        /// <exception cref="IndexOutofBoundException">if <paramref name="index"/> is negative or greater than <seealso cref="Count"/></exception>
         /// 
         public override void SetUInt64(int index, UInt64 value)
         {
             if (value > (UInt64)Int16.MaxValue)
-                throw new DicomDataException(string.Format("Invalid value {0} for tag {1}.", value, Tag.ToString()));
+                throw new DicomDataException(String.Format("Invalid SS value {0} for tag {1}.", value, Tag));
 
-            SetUInt32(index, (UInt32)value);
+            SetValue(index, (short)value);
         }
-        
+
         #endregion
     }
     #endregion
@@ -2768,13 +2594,6 @@ namespace ClearCanvas.Dicom
 
         #region Operators
 
-        public uint this[int val]
-        {
-            get
-            {
-                return _values[val];
-            }
-        }
 
         #endregion
 
@@ -2788,6 +2607,18 @@ namespace ClearCanvas.Dicom
         internal override DicomAttribute Copy(bool copyBinary)
         {
             return new DicomAttributeUL(this);
+        }
+
+        protected override uint ParseNumber(string val)
+        {
+            if (val == null)
+                throw new DicomDataException("Null values invalid for UL VR");
+
+            uint parseVal;
+            if (false == uint.TryParse(val.Trim(), NumberStyle, null, out parseVal))
+                throw new DicomDataException(
+                    String.Format("Invalid uint format value for tag {0}: {1}", Tag, val));
+            return parseVal;
         }
 
         public override Object Values
@@ -2817,430 +2648,373 @@ namespace ClearCanvas.Dicom
             }
         }
         /// <summary>
-        /// Append an UL value.
+        /// Appends an UL value.
         /// 
         /// </summary>
-        /// <param name="index"></param>
         /// <param name="value"></param>
-        /// <exception cref="DicomDataException">If <i>intValue</i> cannot be fit into 32-bit unsigned int</exception>
+        /// <exception cref="DicomDataException">If <paramref name="value"/> cannot be fit into 32-bit unsigned int</exception>
         /// 
-        public override void AppendInt16(Int16 intValue)
+        public override void AppendInt16(Int16 value)
         {
-            AppendInt32((Int32)intValue);
+            if (value < uint.MinValue)
+                throw new DicomDataException(String.Format("Invalid UL value '{0}' for {1}.", value, Tag));
+            AppendValue((uint)value);
         }
         /// <summary>
-        /// Append an UL value.
+        /// Appends an UL value.
         /// 
         /// </summary>
-        /// <param name="index"></param>
         /// <param name="value"></param>
-        /// <exception cref="DicomDataException">If <i>intValue</i> cannot be fit into 32-bit unsigned int</exception>
+        /// <exception cref="DicomDataException">If <paramref name="value"/> cannot be fit into 32-bit unsigned int</exception>
         /// 
-        public override void AppendInt32(Int32 intValue)
+        public override void AppendInt32(Int32 value)
         {
-            if (intValue < uint.MinValue || intValue > uint.MaxValue)
-                throw new DicomDataException(string.Format("Invalid UL value '{0}' for {1}.", intValue, Tag.ToString()));
+            if (value > uint.MaxValue)
+                throw new DicomDataException(String.Format("Invalid UL value '{0}' for {1}.", value, Tag));
+            AppendValue((uint)value);
+        }
+        /// <summary>
+        /// Appends an UL value.
+        /// 
+        /// </summary>
+        /// <param name="value"></param>
+        /// <exception cref="DicomDataException">If <paramref name="value"/> cannot be fit into 32-bit unsigned int</exception>
+        /// 
+        public override void AppendInt64(Int64 value)
+        {
+            if (value < uint.MinValue || value > uint.MaxValue)
+                throw new DicomDataException(String.Format("Invalid UL value '{0}' for {1}.", value, Tag));
 
-            UInt32[] newArray = new UInt32[Count + 1];
-            if (_values != null && _values.Length > 0)
-                _values.CopyTo(newArray, 0);
-            newArray[Count++] = (UInt32)intValue;
-            _values = newArray;
-            SetStreamLength();
+            AppendValue((uint)value);
         }
         /// <summary>
-        /// Append an UL value.
+        /// Appends an UL value.
         /// 
         /// </summary>
-        /// <param name="index"></param>
         /// <param name="value"></param>
-        /// <exception cref="DicomDataException">If <i>intValue</i> cannot be fit into 32-bit unsigned int</exception>
         /// 
-        public override void AppendInt64(Int64 intValue)
+        public override void AppendUInt16(UInt16 value)
         {
-            if (intValue < uint.MinValue || intValue > uint.MaxValue)
-                throw new DicomDataException(string.Format("Invalid UL value '{0}' for {1}.", intValue, Tag.ToString()));
+            AppendValue(value);
+        }
+        /// <summary>
+        /// Appends an UL value.
+        /// 
+        /// </summary>
+        /// <param name="value"></param>
+        /// 
+        public override void AppendUInt32(UInt32 value)
+        {
+            AppendValue(value);
+        }
+        /// <summary>
+        /// Appends an UL value.
+        /// 
+        /// </summary>
+        /// <param name="value"></param>
+        /// <exception cref="DicomDataException">If <paramref name="value"/> cannot be fit into 32-bit unsigned int</exception>
+        /// 
+        public override void AppendUInt64(UInt64 value)
+        {
+            if (value < uint.MinValue || value > uint.MaxValue)
+                throw new DicomDataException(String.Format("Invalid UL value '{0}' for {1}.", value, Tag));
 
-            AppendInt32((Int32)intValue);
-        }
-        /// <summary>
-        /// Append an UL value.
-        /// 
-        /// </summary>
-        /// <param name="index"></param>
-        /// <param name="value"></param>
-        /// <exception cref="DicomDataException">If <i>intValue</i> cannot be fit into 32-bit unsigned int</exception>
-        /// 
-        public override void AppendUInt16(UInt16 intValue)
-        {
-            AppendUInt32((UInt32)intValue);
-        }
-        /// <summary>
-        /// Append an UL value.
-        /// 
-        /// </summary>
-        /// <param name="index"></param>
-        /// <param name="value"></param>
-        /// <exception cref="DicomDataException">If <i>intValue</i> cannot be fit into 32-bit unsigned int</exception>
-        /// 
-        public override void AppendUInt32(UInt32 intValue)
-        {
-            if (intValue < uint.MinValue || intValue > uint.MaxValue)
-                throw new DicomDataException(string.Format("Invalid UL value '{0}' for {1}.", intValue, Tag.ToString()));
-
-            UInt32[] newArray = new UInt32[Count + 1];
-            if (_values!=null && _values.Length > 0)
-                _values.CopyTo(newArray, 0);
-            newArray[Count++] = (UInt32)intValue;
-            _values = newArray;
-            SetStreamLength();
-        }
-        /// <summary>
-        /// Append an UL value.
-        /// 
-        /// </summary>
-        /// <param name="index"></param>
-        /// <param name="value"></param>
-        /// <exception cref="DicomDataException">If <i>intValue</i> cannot be fit into 32-bit unsigned int</exception>
-        /// 
-        public override void AppendUInt64(UInt64 intValue)
-        {
-            if (intValue < uint.MinValue || intValue > uint.MaxValue)
-                throw new DicomDataException(string.Format("Invalid UL value '{0}' for {1}.", intValue, Tag.ToString()));
-
-            AppendUInt32((UInt32)intValue);
+            AppendValue((uint)value);
         }
 
         /// <summary>
-        /// Set an UL value.
+        /// Sets an UL value.
         /// 
         /// </summary>
         /// <param name="index"></param>
         /// <param name="value"></param>
-        /// <exception cref="DicomDataException">If <i>value</i> cannot be fit into 32-bit unsigned int</exception>
-        /// <exception cref="IndexOutofBoundException">if <i>index</i> is negative or greater than <seealso cref="Count"/></exception>
+        /// <exception cref="DicomDataException">If <paramref name="value"/> cannot be fit into 32-bit unsigned int</exception>
+        /// <exception cref="IndexOutofBoundException">if <paramref name="index"/> is negative or greater than <seealso cref="Count"/></exception>
         /// 
         public override void SetInt16(int index, Int16 value)
         {
-            SetInt32(index, (Int32)value);
+            if (value < uint.MinValue)
+                throw new DicomDataException(String.Format("Invalid UL value '{0}' for {1}.", value, Tag));
+
+            SetValue(index, (uint) value);
         }
         /// <summary>
-        /// Set an UL value.
+        /// Sets an UL value.
         /// 
         /// </summary>
         /// <param name="index"></param>
         /// <param name="value"></param>
-        /// <exception cref="DicomDataException">If <i>value</i> cannot be fit into 32-bit unsigned int</exception>
-        /// <exception cref="IndexOutofBoundException">if <i>index</i> is negative or greater than <seealso cref="Count"/></exception>
+        /// <exception cref="DicomDataException">If <paramref name="value"/> cannot be fit into 32-bit unsigned int</exception>
+        /// <exception cref="IndexOutofBoundException">if <paramref name="index"/> is negative or greater than <seealso cref="Count"/></exception>
         /// 
         public override void SetInt32(int index, Int32 value)
         {
-            if (value < uint.MinValue || value > uint.MaxValue)
-                throw new DicomDataException(string.Format("Invalid UL value '{0}' for {1}.", value, Tag.ToString()));
+            if (value < uint.MinValue)
+                throw new DicomDataException(String.Format("Invalid UL value '{0}' for {1}.", value, Tag));
 
-            if (index == Count)
-                AppendInt32(value);
-            else
-            {
-                _values[index] = (UInt32) value;
-                SetStreamLength();
-            }
+            SetValue(index, (uint)value);
         }
         /// <summary>
-        /// Set an UL value.
+        /// Sets an UL value.
         /// 
         /// </summary>
         /// <param name="index"></param>
         /// <param name="value"></param>
-        /// <exception cref="DicomDataException">If <i>value</i> cannot be fit into 32-bit unsigned int</exception>
-        /// <exception cref="IndexOutofBoundException">if <i>index</i> is negative or greater than <seealso cref="Count"/></exception>
+        /// <exception cref="DicomDataException">If <paramref name="value"/> cannot be fit into 32-bit unsigned int</exception>
+        /// <exception cref="IndexOutofBoundException">if <paramref name="index"/> is negative or greater than <seealso cref="Count"/></exception>
         /// 
         public override void SetInt64(int index, Int64 value)
         {
             if (value < uint.MinValue || value > uint.MaxValue)
-                throw new DicomDataException(string.Format("Invalid UL value '{0}' for {1}.", value, Tag.ToString()));
-            SetInt32(index, (Int32)value);
+                throw new DicomDataException(String.Format("Invalid UL value '{0}' for {1}.", value, Tag));
+            SetValue(index, (uint)value);
         }
 
         /// <summary>
-        /// Set an UL value.
+        /// Sets an UL value.
         /// 
         /// </summary>
         /// <param name="index"></param>
         /// <param name="value"></param>
-        /// <exception cref="DicomDataException">If <i>value</i> cannot be fit into 32-bit unsigned int</exception>
-        /// <exception cref="IndexOutofBoundException">if <i>index</i> is negative or greater than <seealso cref="Count"/></exception>
+        /// <exception cref="IndexOutofBoundException">if <paramref name="index"/> is negative or greater than <seealso cref="Count"/></exception>
         /// 
         public override void SetUInt16(int index, UInt16 value)
         {
-            SetUInt32(index, (UInt32)value);
+            SetValue(index,value);
         }
         /// <summary>
-        /// Set an UL value.
+        /// Sets an UL value.
         /// 
         /// </summary>
         /// <param name="index"></param>
         /// <param name="value"></param>
-        /// <exception cref="DicomDataException">If <i>value</i> cannot be fit into 32-bit unsigned int</exception>
-        /// <exception cref="IndexOutofBoundException">if <i>index</i> is negative or greater than <seealso cref="Count"/></exception>
+        /// <exception cref="IndexOutofBoundException">if <paramref name="index"/> is negative or greater than <seealso cref="Count"/></exception>
         /// 
         public override void SetUInt32(int index, UInt32 value)
         {
-            if (index == Count)
-                AppendUInt32(value);
-            else
-            {
-                _values[index] = value;
-                SetStreamLength();
-            }
+            SetValue(index,value);
         }
         /// <summary>
-        /// Set an UL value.
+        /// Sets an UL value.
         /// 
         /// </summary>
         /// <param name="index"></param>
         /// <param name="value"></param>
-        /// <exception cref="DicomDataException">If <i>value</i> cannot be fit into 32-bit unsigned int</exception>
-        /// <exception cref="IndexOutofBoundException">if <i>index</i> is negative or greater than <seealso cref="Count"/></exception>
+        /// <exception cref="DicomDataException">If <paramref name="value"/> cannot be fit into 32-bit unsigned int</exception>
+        /// <exception cref="IndexOutofBoundException">if <paramref name="index"/> is negative or greater than <seealso cref="Count"/></exception>
         /// 
         public override void SetUInt64(int index, UInt64 value)
         {
-            if (value < uint.MinValue || value > uint.MaxValue)
-                throw new DicomDataException(string.Format("Invalid UL value '{0}' for {1}.", value, Tag.ToString()));
-            SetUInt32(index, (UInt32)value);
+            if (value > uint.MaxValue)
+                throw new DicomDataException(String.Format("Invalid UL value '{0}' for {1}.", value, Tag));
+            SetValue(index, (uint)value);
         }
 
         /// <summary>
-        /// Method to retrieve an Int16 value from an UL attribute.
-        /// 
-        /// </summary>
-        /// <param name="i"></param>
-        /// <param name="value"></param>
-        /// <returns><i>true</i>if value can be retrieved. <i>false</i> otherwise (see remarks)</returns>
-        /// <remarks>
-        /// This method returns <i>false</i> if
-        ///     If the value doesn't exist
-        ///     The value cannot be converted into Int16 (eg, floating-point number 1.102 cannot be converted into Int16)
-        ///     The value is an integer but too big or too small to fit into an Int16 (eg, 100000)
-        /// 
-        /// If the method returns false, the returned <i>value</i> should not be trusted.
-        /// 
-        /// </remarks>
-        /// 
-        public override bool TryGetInt16(int i, out Int16 value)
-        {
-            if (_values == null || _values.Length <= i)
-            {
-                value = 0;
-                return false;
-            }
-
-            if (_values[i] > (UInt32)Int16.MaxValue)
-            {
-                value = 0;
-                return false;
-            }
-            else
-            {
-                value = (Int16)_values[i];
-                return true;
-            }
-            
-        }
-        /// <summary>
-        /// Method to retrieve an Int32 value from an UL attribute.
-        /// 
-        /// </summary>
-        /// <param name="i"></param>
-        /// <param name="value"></param>
-        /// <returns><i>true</i>if value can be retrieved. <i>false</i> otherwise (see remarks)</returns>
-        /// <remarks>
-        /// This method returns <i>false</i> if
-        ///     If the value doesn't exist
-        ///     The value cannot be converted into Int32 (eg, floating-point number 1.102 cannot be converted into Int32)
-        ///     The value is an integer but too big or too small to fit into an Int16 (eg, 100000)
-        /// 
-        /// If the method returns false, the returned <i>value</i> should not be trusted.
-        /// 
-        /// </remarks>
-        /// 
-        public override bool TryGetInt32(int i, out Int32 value)
-        {
-            if (_values == null || _values.Length <= i)
-            {
-                value = 0;
-                return false;
-            }
-
-            if (_values[i] < Int32.MinValue || _values[i] > Int32.MaxValue)
-            {
-                value = 0;
-                return false;
-            }
-            else
-            {
-                value = (Int32)_values[i];
-                return true;
-            }
-
-        }
-        /// <summary>
-        /// Method to retrieve an Int64 value from an UL attribute.
-        /// 
-        /// </summary>
-        /// <param name="i"></param>
-        /// <param name="value"></param>
-        /// <returns><i>true</i>if value can be retrieved. <i>false</i> otherwise (see remarks)</returns>
-        /// <remarks>
-        /// This method returns <i>false</i> if
-        ///     If the value doesn't exist
-        ///     The value cannot be converted into Int64 (eg, floating-point number 1.102 cannot be converted into Int64)
-        ///     The value is an integer but too big or too small to fit into an Int16 (eg, 100000)
-        /// 
-        /// If the method returns false, the returned <i>value</i> should not be trusted.
-        /// 
-        /// </remarks>
-        /// 
-        public override bool TryGetInt64(int i, out Int64 value)
-        {
-            if (_values == null || _values.Length <= i)
-            {
-                value = 0;
-                return false;
-            }
-
-            if (_values[i] < Int64.MinValue || _values[i] > Int64.MaxValue)
-            {
-                value = 0;
-                return false;
-            }
-            else
-            {
-                value = (Int64)_values[i];
-                return true;
-            }
-
-        }
-        /// <summary>
-        /// Set an AT value.
+        /// Retrieves an Int16 value from an UL attribute.
         /// 
         /// </summary>
         /// <param name="index"></param>
         /// <param name="value"></param>
-        /// <exception cref="DicomDataException">If <i>value</i> cannot be fit into 16-bit unsigned int</exception>
-        /// <exception cref="IndexOutofBoundException">if <i>index</i> is negative or greater than <seealso cref="Count"/></exception>
-        /// 
-        
-        /// <summary>
-        /// Method to retrieve an UInt16 value from an UL attribute.
-        /// 
-        /// </summary>
-        /// <param name="i"></param>
-        /// <param name="value"></param>
-        /// <returns><i>true</i>if value can be retrieved. <i>false</i> otherwise (see remarks)</returns>
+        /// <returns><b>true</b>if value can be retrieved. <b>false</b> otherwise (see remarks)</returns>
         /// <remarks>
-        /// This method returns <i>false</i> if
-        ///     If the value doesn't exist
-        ///     The value cannot be converted into UInt16 (eg, floating-point number 1.102 cannot be converted into UInt16)
-        ///     The value is an integer but too big or too small to fit into an UInt16 (eg, -100)
+        /// This method returns <b>false</b> if
+        /// <list type="bullet">
+        /// <item>The value doesn't exist.</item>
+        /// <item>The value exceeds the Int16 range</item>
+        /// </list>
         /// 
-        /// If the method returns false, the returned <i>value</i> should not be trusted.
+        /// If the method returns false, the returned <paramref name="value"/> is not reliable.
         /// 
         /// </remarks>
         /// 
-        public override bool TryGetUInt16(int i, out UInt16 value)
+        public override bool TryGetInt16(int index,  out Int16 value)
         {
-            if (_values == null || _values.Length <= i)
+            if (_values == null || _values.Length <= index)
             {
                 value = 0;
                 return false;
             }
 
-            if (_values[i] < UInt16.MinValue || _values[i] > UInt16.MaxValue)
+            if (_values[index] > (UInt32)Int16.MaxValue)
             {
                 value = 0;
                 return false;
             }
             else
             {
-                value = (UInt16)_values[i];
+                value = (Int16)_values[index];
                 return true;
             }
 
         }
         /// <summary>
-        /// Method to retrieve an UInt32 value from an UL attribute.
+        /// Retrieves an Int32 value from an UL attribute.
         /// 
         /// </summary>
-        /// <param name="i"></param>
+        /// <param name="index"></param>
         /// <param name="value"></param>
-        /// <returns><i>true</i>if value can be retrieved. <i>false</i> otherwise (see remarks)</returns>
+        /// <returns><b>true</b>if value can be retrieved. <b>false</b> otherwise (see remarks)</returns>
         /// <remarks>
-        /// This method returns <i>false</i> if
-        ///     If the value doesn't exist
-        ///     The value cannot be converted into UInt32 (eg, floating-point number 1.102 cannot be converted into UInt32)
-        ///     The value is an integer but too big or too small to fit into an UInt32 (eg, -100)
+        /// This method returns <b>false</b> if
+        /// <list type="bullet">
+        /// <item>The value doesn't exist.</item>
+        /// <item>The value exceeds the Int32 range</item>
+        /// </list>
         /// 
-        /// If the method returns false, the returned <i>value</i> should not be trusted.
+        /// If the method returns false, the returned <paramref name="value"/> is not reliable.
         /// 
         /// </remarks>
         /// 
-        public override bool TryGetUInt32(int i, out UInt32 value)
+        public override bool TryGetInt32(int index,  out Int32 value)
         {
-            if (_values == null || _values.Length <= i)
+            if (_values == null || _values.Length <= index)
             {
                 value = 0;
                 return false;
             }
 
-            value = _values[i];
+            if ( _values[index] > Int32.MaxValue)
+            {
+                value = 0;
+                return false;
+            }
+            else
+            {
+                value = (Int32)_values[index];
+                return true;
+            }
+
+        }
+        /// <summary>
+        /// Retrieves an Int64 value from an UL attribute.
+        /// 
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="value"></param>
+        /// <returns><b>true</b>if value can be retrieved. <b>false</b> otherwise (see remarks)</returns>
+        /// <remarks>
+        /// This method returns <b>false</b> if
+        /// <list type="bullet">
+        /// <item>The value doesn't exist.</item>
+        /// </list>
+        /// 
+        /// If the method returns false, the returned <paramref name="value"/> is not reliable.
+        /// 
+        /// </remarks>
+        /// 
+        public override bool TryGetInt64(int index,  out Int64 value)
+        {
+            if (_values == null || _values.Length <= index)
+            {
+                value = 0;
+                return false;
+            }
+
+           value = _values[index];
+           return true;
+           
+
+        }
+
+        /// <summary>
+        /// Retrieves an UInt16 value from an UL attribute.
+        /// 
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="value"></param>
+        /// <returns><b>true</b>if value can be retrieved. <b>false</b> otherwise (see remarks)</returns>
+        /// <remarks>
+        /// This method returns <b>false</b> if
+        /// <list type="bullet">
+        /// <item>The value doesn't exist.</item>
+        /// </list>
+        /// If the method returns false, the returned <paramref name="value"/> is not reliable.
+        /// 
+        /// </remarks>
+        /// 
+        public override bool TryGetUInt16(int index,  out UInt16 value)
+        {
+            if (_values == null || _values.Length <= index)
+            {
+                value = 0;
+                return false;
+            }
+
+            value = (UInt16)_values[index];
+            
+            if (_values[index] > UInt16.MaxValue)
+            {
+                return false;
+            }
+            else
+                return true;
+            
+
+        }
+        /// <summary>
+        /// Retrieves an UInt32 value from an UL attribute.
+        /// 
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="value"></param>
+        /// <returns><b>true</b>if value can be retrieved. <b>false</b> otherwise (see remarks)</returns>
+        /// <remarks>
+        /// This method returns <b>false</b> if
+        /// <list type="bullet">
+        /// <item>The value doesn't exist.</item>
+        /// </list>
+        /// 
+        /// If the method returns false, the returned <paramref name="value"/> is not reliable.
+        /// 
+        /// </remarks>
+        /// 
+        public override bool TryGetUInt32(int index,  out UInt32 value)
+        {
+            if (_values == null || _values.Length <= index)
+            {
+                value = 0;
+                return false;
+            }
+
+            value = _values[index];
+
             return true;
         }
         /// <summary>
-        /// Method to retrieve an UInt64 value from an UL attribute.
+        /// Retrieves an UInt64 value from an UL attribute.
         /// 
         /// </summary>
-        /// <param name="i"></param>
+        /// <param name="index"></param>
         /// <param name="value"></param>
-        /// <returns><i>true</i>if value can be retrieved. <i>false</i> otherwise (see remarks)</returns>
+        /// <returns><b>true</b>if value can be retrieved. <b>false</b> otherwise (see remarks)</returns>
         /// <remarks>
-        /// This method returns <i>false</i> if
-        ///     If the value doesn't exist
-        ///     The value cannot be converted into UInt64 (eg, floating-point number 1.102 cannot be converted into UInt64)
-        ///     The value is an integer but too big or too small to fit into an UInt64 (eg, -100)
+        /// This method returns <b>false</b> if
+        /// <list type="bullet">
+        /// <item>The value doesn't exist.</item>
+        /// </list>
         /// 
-        /// If the method returns false, the returned <i>value</i> should not be trusted.
+        /// If the method returns false, the returned <paramref name="value"/> is not reliable.
         /// 
         /// </remarks>
         /// 
-        public override bool TryGetUInt64(int i, out UInt64 value)
+        public override bool TryGetUInt64(int index,  out UInt64 value)
         {
-            if (_values == null || _values.Length <= i)
+            if (_values == null || _values.Length <= index)
             {
                 value = 0;
                 return false;
             }
 
-            if (_values[i] < UInt64.MinValue || (UInt64)_values[i] > UInt64.MaxValue)
-            {
-                value = 0;
-                return false;
-            }
-            else
-            {
-                value = (UInt64)_values[i];
-                return true;
-            }
+            value = (UInt64)_values[index];
+            return true;
+            
 
         }
-        
-        
-
-       
 
         #endregion
     }
-    #endregion 
+    #endregion
 
     #region DicomAttributeUN
     /// <summary>
@@ -3280,7 +3054,7 @@ namespace ClearCanvas.Dicom
 
         public override string ToString()
         {
-            return Tag.ToString(); // TODO
+            return Tag; // TODO
         }
 
         public override bool Equals(object obj)
@@ -3345,6 +3119,11 @@ namespace ClearCanvas.Dicom
             return new DicomAttributeUN(this);
         }
 
+        protected override byte ParseNumber(string val)
+        {
+            throw new Exception("The method or operation is not implemented.");
+        }
+
         internal override ByteBuffer GetByteBuffer(TransferSyntax syntax, String specificCharacterSet)
         {
             ByteBuffer bb = new ByteBuffer(syntax.Endian);
@@ -3400,14 +3179,6 @@ namespace ClearCanvas.Dicom
 
         #region Operators
 
-        public ushort this[int val]
-        {
-            get
-            {
-                return _values[val];
-            }
-        }
-
         #endregion
 
         #region Abstract Method Implementation
@@ -3432,9 +3203,7 @@ namespace ClearCanvas.Dicom
 
                 if (value is ushort)
                 {
-                    _values = new ushort[1];
-                    _values[0] = (ushort)value;
-                    SetStreamLength();
+                    SetUInt16(0, (ushort)value);
                 }
                 else
                 {
@@ -3453,401 +3222,326 @@ namespace ClearCanvas.Dicom
             return new DicomAttributeUS(this);
         }
 
+        protected override ushort ParseNumber(string val)
+        {
+            if (val == null)
+                throw new DicomDataException("Null values invalid for US VR");
 
+            ushort parseVal;
+            if (false == ushort.TryParse(val.Trim(), NumberStyle, null, out parseVal))
+                throw new DicomDataException(
+                    String.Format("Invalid ushort format value for tag {0}: {1}", Tag, val));
+            return parseVal;
+        }
 
         /// <summary>
-        /// Set an US value.
-        /// 
+        /// Sets an US value.
         /// </summary>
         /// <param name="index"></param>
         /// <param name="value"></param>
-        /// <exception cref="DicomDataException">If <i>value</i> cannot be fit into 16-bit unsigned int</exception>
-        /// <exception cref="IndexOutofBoundException">if <i>index</i> is negative or greater than <seealso cref="Count"/></exception>
-        /// 
+        /// <exception cref="DicomDataException">If <paramref name="value"/> cannot be fit into 16-bit unsigned int</exception>
+        /// <exception cref="IndexOutofBoundException">if <paramref name="index"/> is negative or greater than <seealso cref="Count"/></exception>
         public override void SetInt16(int index, short value)
         {
-            if (value < UInt16.MinValue || value > UInt16.MaxValue)
-                throw new DicomDataException(string.Format("Invalid US value '{0}' for  VR {1}.", value, Tag.ToString()));
-            SetUInt16(index, (UInt16)value);
+            if (value < UInt16.MinValue)
+                throw new DicomDataException(String.Format("Invalid US value '{0}' for tag {1}.", value, Tag));
+            SetValue(index, (ushort) value);
         }
+
         /// <summary>
-        /// Set an US value.
-        /// 
+        /// Sets an US value.
         /// </summary>
         /// <param name="index"></param>
         /// <param name="value"></param>
-        /// <exception cref="DicomDataException">If <i>value</i> cannot be fit into 16-bit unsigned int</exception>
-        /// <exception cref="IndexOutofBoundException">if <i>index</i> is negative or greater than <seealso cref="Count"/></exception>
-        /// 
+        /// <exception cref="DicomDataException">If <paramref name="value"/> cannot be fit into 16-bit unsigned int</exception>
+        /// <exception cref="IndexOutofBoundException">if <paramref name="index"/> is negative or greater than <seealso cref="Count"/></exception>
         public override void SetInt32(int index, int value)
         {
             if (value < UInt16.MinValue || value > UInt16.MaxValue)
-                throw new DicomDataException(string.Format("Invalid US value '{0}' for  VR {1}.", value, Tag.ToString()));
-            SetInt16(index, (Int16)value);
+                throw new DicomDataException(String.Format("Invalid US value '{0}' for tag {1}.", value, Tag));
+            SetValue(index, (ushort)value);
         }
+
         /// <summary>
-        /// Set an US value.
+        /// Sets an US value.
         /// 
         /// </summary>
         /// <param name="index"></param>
         /// <param name="value"></param>
-        /// <exception cref="DicomDataException">If <i>value</i> cannot be fit into 16-bit unsigned int</exception>
-        /// <exception cref="IndexOutofBoundException">if <i>index</i> is negative or greater than <seealso cref="Count"/></exception>
+        /// <exception cref="DicomDataException">If <paramref name="value"/> cannot be fit into 16-bit unsigned int</exception>
+        /// <exception cref="IndexOutofBoundException">if <paramref name="index"/> is negative or greater than <seealso cref="Count"/></exception>
         /// 
         public override void SetInt64(int index, Int64 value)
         {
             if (value < UInt16.MinValue || value > UInt16.MaxValue)
-                throw new DicomDataException(string.Format("Invalid US value '{0}' for  VR {1}.", value, Tag.ToString()));
-            SetInt32(index, (Int32)value);
+                throw new DicomDataException(String.Format("Invalid US value '{0}' for tag {1}.", value, Tag));
+            SetValue(index, (ushort)value);
         }
         /// <summary>
-        /// Set an US value.
-        /// 
+        /// Sets an US value.
         /// </summary>
         /// <param name="index"></param>
         /// <param name="value"></param>
-        /// <exception cref="DicomDataException">If <i>value</i> cannot be fit into 16-bit unsigned int</exception>
-        /// <exception cref="IndexOutofBoundException">if <i>index</i> is negative or greater than <seealso cref="Count"/></exception>
-        /// 
+        /// <exception cref="IndexOutofBoundException">if <paramref name="index"/> is negative or greater than <seealso cref="Count"/></exception>
         public override void SetUInt16(int index, UInt16 value)
         {
-            if (value < UInt16.MinValue || value > UInt16.MaxValue)
-                throw new DicomDataException(string.Format("Invalid US value '{0}' for  VR {1}.", value, Tag.ToString()));
-           
-            if (index == Count)
-                AppendUInt16( value);
-            else
-            {
-                _values[index] = (UInt16)value;
-                SetStreamLength();
-            }
-            
+            SetValue(index, (ushort)value);
         }
         /// <summary>
-        /// Set an US value.
-        /// 
+        /// Sets an US value.
         /// </summary>
         /// <param name="index"></param>
         /// <param name="value"></param>
-        /// <exception cref="DicomDataException">If <i>value</i> cannot be fit into 16-bit unsigned int</exception>
-        /// <exception cref="IndexOutofBoundException">if <i>index</i> is negative or greater than <seealso cref="Count"/></exception>
-        /// 
+        /// <exception cref="DicomDataException">If <paramref name="value"/> cannot be fit into 16-bit unsigned int</exception>
+        /// <exception cref="IndexOutofBoundException">if <paramref name="index"/> is negative or greater than <seealso cref="Count"/></exception>
         public override void SetUInt32(int index, uint value)
         {
             if (value < UInt16.MinValue || value > UInt16.MaxValue)
-                throw new DicomDataException(string.Format("Invalid US value '{0}' for  VR {1}.", value, Tag.ToString()));
-            SetUInt16(index,(UInt16)value);
+                throw new DicomDataException(String.Format("Invalid US value '{0}' for tag {1}.", value, Tag));
+            SetValue(index, (ushort)value);
         }
         /// <summary>
-        /// Set an US value.
-        /// 
+        /// Sets an US value.
         /// </summary>
         /// <param name="index"></param>
         /// <param name="value"></param>
-        /// <exception cref="DicomDataException">If <i>value</i> cannot be fit into 16-bit unsigned int</exception>
-        /// <exception cref="IndexOutofBoundException">if <i>index</i> is negative or greater than <seealso cref="Count"/></exception>
-        /// 
+        /// <exception cref="DicomDataException">If <paramref name="value"/> cannot be fit into 16-bit unsigned int</exception>
+        /// <exception cref="IndexOutofBoundException">if <paramref name="index"/> is negative or greater than <seealso cref="Count"/></exception>
         public override void SetUInt64(int index, UInt64 value)
         {
             if (value < UInt16.MinValue || value > UInt16.MaxValue)
-                throw new DicomDataException(string.Format("Invalid US value '{0}' for  VR {1}.", value, Tag.ToString()));
-            SetUInt32(index, (UInt32)value);
+                throw new DicomDataException(String.Format("Invalid US value '{0}' for tag {1}.", value, Tag));
+            SetValue(index, (ushort)value);
         }
 
         /// <summary>
-        /// Append an US value.
-        /// 
+        /// Appends an US value.
         /// </summary>
-        /// <param name="index"></param>
-        /// <param name="intValue"></param>
-        /// <exception cref="DicomDataException">If <i>intValue</i> cannot be fit into 16-bit unsigned int</exception>
-        /// 
-        public override void AppendInt16(Int16 intValue)
-        {
-            if (intValue < UInt16.MinValue || intValue > UInt16.MaxValue)
-                throw new DicomDataException(string.Format("Invalid US value '{0}' for  VR {1}.", intValue, Tag.ToString()));
-            AppendUInt16((UInt16)intValue);
-        }
-        /// <summary>
-        /// Append an US value.
-        /// 
-        /// </summary>
-        /// <param name="index"></param>
-        /// <param name="intValue"></param>
-        /// <exception cref="DicomDataException">If <i>intValue</i> cannot be fit into 16-bit unsigned int</exception>
-        /// 
-        public override void AppendInt32(Int32 intValue)
-        {
-            if (intValue < UInt16.MinValue || intValue > UInt16.MaxValue)
-                throw new DicomDataException(string.Format("Invalid US value '{0}' for  VR {1}.", intValue, Tag.ToString()));
-            
-            AppendInt16((Int16)intValue);
-        }
-        /// <summary>
-        /// Append an US value.
-        /// 
-        /// </summary>
-        /// <param name="index"></param>
-        /// <param name="intValue"></param>
-        /// <exception cref="DicomDataException">If <i>intValue</i> cannot be fit into 16-bit unsigned int</exception>
-        /// 
-        public override void AppendInt64(Int64 intValue)
-        {
-            if (intValue < UInt16.MinValue || intValue > UInt16.MaxValue)
-                throw new DicomDataException(string.Format("Invalid US value '{0}' for  VR {1}.", intValue, Tag.ToString()));
-
-            AppendInt32((Int32)intValue);
-        }
-        /// <summary>
-        /// Append an US value.
-        /// 
-        /// </summary>
-        /// <param name="index"></param>
-        /// <param name="intValue"></param>
-        /// <exception cref="DicomDataException">If <i>intValue</i> cannot be fit into 16-bit unsigned int</exception>
-        /// 
-        public override void AppendUInt16(UInt16 intValue)
-        {
-            if (intValue < UInt16.MinValue || intValue > UInt16.MaxValue)
-                throw new DicomDataException(string.Format("Invalid US value '{0}' for  VR {1}.", intValue, Tag.ToString()));
-
-            UInt16[] temp = new UInt16[Count + 1];
-            if (_values != null && _values.Length > 0)
-                _values.CopyTo(temp, 0);
-
-            _values = temp;
-            _values[Count++] = intValue;
-            SetStreamLength();
-
-        }
-        /// <summary>
-        /// Append an US value.
-        /// 
-        /// </summary>
-        /// <param name="index"></param>
-        /// <param name="intValue"></param>
-        /// <exception cref="DicomDataException">If <i>intValue</i> cannot be fit into 16-bit unsigned int</exception>
-        /// 
-        public override void AppendUInt32(UInt32 intValue)
-        {
-            if (intValue < UInt16.MinValue || intValue > UInt16.MaxValue)
-                throw new DicomDataException(string.Format("Invalid US value '{0}' for  VR {1}.", intValue, Tag.ToString()));
-            AppendUInt16((UInt16)intValue);
-
-        }
-        /// <summary>
-        /// Append an US value.
-        /// 
-        /// </summary>
-        /// <param name="index"></param>
-        /// <param name="intValue"></param>
-        /// <exception cref="DicomDataException">If <i>intValue</i> cannot be fit into 16-bit unsigned int</exception>
-        /// 
-        public override void AppendUInt64(UInt64 intValue)
-        {
-            if (intValue < UInt16.MinValue || intValue > UInt16.MaxValue)
-                throw new DicomDataException(string.Format("Invalid US value '{0}' for  VR {1}.", intValue, Tag.ToString()));
-            AppendUInt32((UInt32)intValue);
-
-        }
-        
-        /// <summary>
-        /// Method to retrieve an Int16 value from an US attribute.
-        /// 
-        /// </summary>
-        /// <param name="i"></param>
         /// <param name="value"></param>
-        /// <returns><i>true</i>if value can be retrieved. <i>false</i> otherwise (see remarks)</returns>
-        /// <remarks>
-        /// This method returns <i>false</i> if
-        ///     If the value doesn't exist
-        ///     The value cannot be converted into Int16 (eg, floating-point number 1.102 cannot be converted into Int16)
-        ///     The value is an integer but too big or too small to fit into an Int16 (eg, 100000)
-        /// 
-        /// If the method returns false, the returned <i>value</i> should not be trusted.
-        /// 
-        /// </remarks>
-        /// 
-        public override bool TryGetInt16(int i, out short value)
+        /// <exception cref="DicomDataException">If <paramref name="value"/> cannot be fit into 16-bit unsigned int</exception>
+        public override void AppendInt16(Int16 value)
         {
-            if (_values == null || _values.Length <= i)
+            if (value < UInt16.MinValue)
+                throw new DicomDataException(String.Format("Invalid US value '{0}' for tag {1}.", value, Tag));
+            AppendValue((UInt16)value);
+        }
+        /// <summary>
+        /// Appends an US value.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <exception cref="DicomDataException">If <paramref name="value"/> cannot be fit into 16-bit unsigned int</exception>
+        public override void AppendInt32(Int32 value)
+        {
+            if (value < UInt16.MinValue || value > UInt16.MaxValue)
+                throw new DicomDataException(String.Format("Invalid US value '{0}' for tag {1}.", value, Tag));
+
+            AppendValue((UInt16)value);
+        }
+        /// <summary>
+        /// Appends an US value.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <exception cref="DicomDataException">If <paramref name="value"/> cannot be fit into 16-bit unsigned int</exception>
+        public override void AppendInt64(Int64 value)
+        {
+            if (value < UInt16.MinValue || value > UInt16.MaxValue)
+                throw new DicomDataException(String.Format("Invalid US value '{0}' for tag {1}.", value, Tag));
+            AppendValue((UInt16)value);
+        }
+        /// <summary>
+        /// Appends an US value.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <exception cref="DicomDataException">If <paramref name="value"/> cannot be fit into 16-bit unsigned int</exception>
+        public override void AppendUInt16(UInt16 value)
+        {
+            if (value < UInt16.MinValue || value > UInt16.MaxValue)
+                throw new DicomDataException(String.Format("Invalid US value '{0}' for tag {1}.", value, Tag));
+            AppendValue(value);
+        }
+        /// <summary>
+        /// Appends an US value.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <exception cref="DicomDataException">If <paramref name="value"/> cannot be fit into 16-bit unsigned int</exception>
+        public override void AppendUInt32(UInt32 value)
+        {
+            if (value < UInt16.MinValue || value > UInt16.MaxValue)
+                throw new DicomDataException(String.Format("Invalid US value '{0}' for tag {1}.", value, Tag));
+            AppendValue((UInt16)value);
+
+        }
+        /// <summary>
+        /// Appends an US value.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <exception cref="DicomDataException">If <paramref name="value"/> cannot be fit into 16-bit unsigned int</exception>
+        public override void AppendUInt64(UInt64 value)
+        {
+            if (value < UInt16.MinValue || value > UInt16.MaxValue)
+                throw new DicomDataException(String.Format("Invalid US value '{0}' for tag {1}.", value, Tag));
+            AppendValue((UInt16)value);
+
+        }
+
+        /// <summary>
+        /// Retrieves an Int16 value from an US attribute.
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="value"></param>
+        /// <returns><b>true</b>if value can be retrieved. <b>false</b> otherwise (see remarks)</returns>
+        /// <remarks>
+        /// <list type="bullet">
+        /// <item>The value doesn't exist.</item>
+        /// <item>The value exceeds the Int16 range</item>
+        /// </list>
+        /// 
+        /// If the method returns false, the returned <paramref name="value"/> is not reliable.
+        /// </remarks>
+        public override bool TryGetInt16(int index,  out short value)
+        {
+            if (_values == null || _values.Length <= index)
             {
                 value = 0;
                 return false;
             }
 
-            value = (Int16)_values[i];
-            if (_values[i] < Int16.MinValue || _values[i] > Int16.MaxValue)
+            value = (Int16)_values[index];
+            if (_values[index] > Int16.MaxValue)
                 return false;
             else
                 return true;
         }
         /// <summary>
-        /// Method to retrieve an Int32 value from an US attribute.
-        /// 
+        /// Retrieves an Int32 value from an US attribute.
         /// </summary>
-        /// <param name="i"></param>
+        /// <param name="index"></param>
         /// <param name="value"></param>
-        /// <returns><i>true</i>if value can be retrieved. <i>false</i> otherwise (see remarks)</returns>
+        /// <returns><b>true</b>if value can be retrieved. <b>false</b> otherwise (see remarks)</returns>
         /// <remarks>
-        /// This method returns <i>false</i> if
-        ///     If the value doesn't exist
-        ///     The value cannot be converted into Int32 (eg, floating-point number 1.102 cannot be converted into Int32)
-        ///     The value is an integer but too big or too small to fit into an Int16 (eg, 100000)
+        /// This method returns <b>false</b> if
+        /// <list type="bullet">
+        /// <item>The value doesn't exist.</item>
+        /// </list>
         /// 
-        /// If the method returns false, the returned <i>value</i> should not be trusted.
-        /// 
+        /// If the method returns false, the returned <paramref name="value"/> is not reliable.
         /// </remarks>
-        /// 
-        public override bool TryGetInt32(int i, out Int32 value)
+        public override bool TryGetInt32(int index,  out Int32 value)
         {
-            if (_values == null || _values.Length <= i)
+            if (_values == null || _values.Length <= index)
             {
                 value = 0;
                 return false;
             }
 
-            value = (Int32)_values[i];
-            if (_values[i] < Int32.MinValue || _values[i] > Int32.MaxValue)
-                return false;
-            else
-                return true;
+            value = (Int32)_values[index];
             return true;
         }
         /// <summary>
-        /// Method to retrieve an Int64 value from an US attribute.
-        /// 
+        /// Retrieves an Int64 value from an US attribute.
         /// </summary>
-        /// <param name="i"></param>
+        /// <param name="index"></param>
         /// <param name="value"></param>
-        /// <returns><i>true</i>if value can be retrieved. <i>false</i> otherwise (see remarks)</returns>
+        /// <returns><b>true</b>if value can be retrieved. <b>false</b> otherwise (see remarks)</returns>
         /// <remarks>
-        /// This method returns <i>false</i> if
-        ///     If the value doesn't exist
-        ///     The value cannot be converted into Int64 (eg, floating-point number 1.102 cannot be converted into Int64)
-        ///     The value is an integer but too big or too small to fit into an Int16 (eg, 100000)
+        /// This method returns <b>false</b> if
+        /// <list type="bullet">
+        /// <item>The value doesn't exist.</item>
+        /// </list>
         /// 
-        /// If the method returns false, the returned <i>value</i> should not be trusted.
-        /// 
+        /// If the method returns false, the returned <paramref name="value"/> is not reliable.
         /// </remarks>
-        /// 
-        public override bool TryGetInt64(int i, out Int64 value)
+        public override bool TryGetInt64(int index,  out Int64 value)
         {
-            if (_values == null || _values.Length <= i)
+            if (_values == null || _values.Length <= index)
             {
                 value = 0;
                 return false;
             }
 
-            value = (Int64)_values[i];
-            if (_values[i] < Int64.MinValue || _values[i] > Int64.MaxValue)
-                return false;
-            else
-                return true;
+            value = (Int64)_values[index];
             return true;
         }
-        
+
         /// <summary>
-        /// Method to retrieve an UInt16 value from an US attribute.
-        /// 
+        /// Retrieves an UInt16 value from an US attribute.
         /// </summary>
-        /// <param name="i"></param>
+        /// <param name="index"></param>
         /// <param name="value"></param>
-        /// <returns><i>true</i>if value can be retrieved. <i>false</i> otherwise (see remarks)</returns>
+        /// <returns><b>true</b>if value can be retrieved. <b>false</b> otherwise (see remarks)</returns>
         /// <remarks>
-        /// This method returns <i>false</i> if
-        ///     If the value doesn't exist
-        ///     The value cannot be converted into UInt16 (eg, floating-point number 1.102 cannot be converted into UInt16)
-        ///     The value is an integer but too big or too small to fit into an UInt16 (eg, -100)
+        /// This method returns <b>false</b> if
+        /// <list type="bullet">
+        /// <item>The value doesn't exist.</item>
+        /// </list>
         /// 
-        /// If the method returns false, the returned <i>value</i> should not be trusted.
-        /// 
+        /// If the method returns false, the returned <paramref name="value"/> is not reliable.
         /// </remarks>
-        /// 
-        public override bool TryGetUInt16(int i, out ushort value)
+        public override bool TryGetUInt16(int index,  out ushort value)
         {
-            if (_values == null || _values.Length <= i)
+            if (_values == null || _values.Length <= index)
             {
                 value = 0;
                 return false;
             }
 
-            value = _values[i];
-            if (_values[i] < UInt16.MinValue || _values[i] > UInt16.MaxValue)
-                return false;
-            else
-                return true;
+            value = _values[index];
             return true;
         }
         /// <summary>
-        /// Method to retrieve an UInt32 value from an US attribute.
-        /// 
+        /// Retrieves an UInt32 value from an US attribute.
         /// </summary>
-        /// <param name="i"></param>
+        /// <param name="index"></param>
         /// <param name="value"></param>
-        /// <returns><i>true</i>if value can be retrieved. <i>false</i> otherwise (see remarks)</returns>
+        /// <returns><b>true</b>if value can be retrieved. <b>false</b> otherwise (see remarks)</returns>
         /// <remarks>
-        /// This method returns <i>false</i> if
-        ///     If the value doesn't exist
-        ///     The value cannot be converted into UInt32 (eg, floating-point number 1.102 cannot be converted into UInt32)
-        ///     The value is an integer but too big or too small to fit into an UInt32 (eg, -100)
+        /// This method returns <b>false</b> if
+        /// <list type="bullet">
+        /// <item>The value doesn't exist.</item>
+        /// </list>
         /// 
-        /// If the method returns false, the returned <i>value</i> should not be trusted.
-        /// 
+        /// If the method returns false, the returned <paramref name="value"/> is not reliable.
         /// </remarks>
-        /// 
-        public override bool TryGetUInt32(int i, out UInt32 value)
+        public override bool TryGetUInt32(int index,  out UInt32 value)
         {
-            if (_values == null || _values.Length <= i)
+            if (_values == null || _values.Length <= index)
             {
                 value = 0;
                 return false;
             }
 
-            value = _values[i];
-            if (_values[i] < UInt32.MinValue || _values[i] > UInt32.MaxValue)
-                return false;
-            else
-                return true;
+            value = _values[index];
             return true;
         }
         /// <summary>
-        /// Method to retrieve an UInt64 value from an US attribute.
-        /// 
+        /// Retrieves an UInt64 value from an US attribute.
         /// </summary>
-        /// <param name="i"></param>
+        /// <param name="index"></param>
         /// <param name="value"></param>
-        /// <returns><i>true</i>if value can be retrieved. <i>false</i> otherwise (see remarks)</returns>
+        /// <returns><b>true</b>if value can be retrieved. <b>false</b> otherwise (see remarks)</returns>
         /// <remarks>
-        /// This method returns <i>false</i> if
-        ///     If the value doesn't exist
-        ///     The value cannot be converted into UInt64 (eg, floating-point number 1.102 cannot be converted into UInt64)
-        ///     The value is an integer but too big or too small to fit into an UInt64 (eg, -100)
+        /// This method returns <b>false</b> if
+        /// <list type="bullet">
+        /// <item>The value doesn't exist.</item>
+        /// </list>
         /// 
-        /// If the method returns false, the returned <i>value</i> should not be trusted.
-        /// 
+        /// If the method returns false, the returned <paramref name="value"/> is not reliable.
         /// </remarks>
-        /// 
-        public override bool TryGetUInt64(int i, out UInt64 value)
+        public override bool TryGetUInt64(int index,  out UInt64 value)
         {
-            if (_values == null || _values.Length <= i)
+            if (_values == null || _values.Length <= index)
             {
                 value = 0;
                 return false;
             }
 
-            value = _values[i];
-            if (_values[i] < UInt64.MinValue || _values[i] > UInt64.MaxValue)
-                return false;
-            else
-                return true;
+            value = _values[index];
             return true;
         }
-        
-        
 
         #endregion
     }
     #endregion
 
 }
+
