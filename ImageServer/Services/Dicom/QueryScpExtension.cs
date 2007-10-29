@@ -36,6 +36,7 @@ using System.Text.RegularExpressions;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Network;
+using ClearCanvas.DicomServices;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
@@ -46,16 +47,16 @@ using ClearCanvas.ImageServer.Model.SelectBrokers;
 using ClearCanvas.DicomServices.Xml;
 using ClearCanvas.ImageServer.Services.Dicom;
 
-namespace ClearCanvas.DicomServices.ImageServer
+namespace ClearCanvas.ImageServer.Services.Dicom
 {
     ///<summary>
-    /// Plugin for handling DICOM Query Requests implementing the <see cref="IDicomScp"/> interface.
+    /// Plugin for handling DICOM Query Requests implementing the <see cref="IDicomScp{DicomScpParameters}"/> interface.
     ///</summary>
-    [ExtensionOf(typeof(DicomScpExtensionPoint))]
-    public class QueryScpExtension : BaseScp, IDicomScp
+    [ExtensionOf(typeof(DicomScpExtensionPoint<DicomScpContext>))]
+    public class QueryScpExtension : BaseScp, IDicomScp<DicomScpContext>
     {
         #region Private members
-        private List<SupportedSop> _list = new List<SupportedSop>();
+        private readonly List<SupportedSop> _list = new List<SupportedSop>();
         #endregion
 
         #region Contructors
@@ -500,12 +501,12 @@ namespace ClearCanvas.DicomServices.ImageServer
             try
             {
                 find.Find(criteria, delegate(Patient row)
-                                     {
-                                         DicomMessage response = new DicomMessage();
-                                         PopulatePatient(subRead, response, tagList, row);
-                                         server.SendCFindResponse(presentationID, message.MessageId, response,
-                                                                  DicomStatuses.Pending);
-                                     });
+                                        {
+                                            DicomMessage response = new DicomMessage();
+                                            PopulatePatient(subRead, response, tagList, row);
+                                            server.SendCFindResponse(presentationID, message.MessageId, response,
+                                                                     DicomStatuses.Pending);
+                                        });
             }
             catch (Exception e)
             {
@@ -551,50 +552,50 @@ namespace ClearCanvas.DicomServices.ImageServer
             {
                 tagList.Add(attrib.Tag.TagValue);
                 if (!attrib.IsNull)
-                switch (attrib.Tag.TagValue)
-                {
-                    case DicomTags.StudyInstanceUid:
-                        SetStringArrayCondition(criteria.StudyInstanceUid, (string[])data[DicomTags.StudyInstanceUid].Values);
-                        break;
-                    case DicomTags.PatientsName:
-                        SetStringCondition(criteria.PatientName, data[DicomTags.PatientsName].GetString(0, ""));
-                        break;
-                    case DicomTags.PatientId:
-                        SetStringCondition(criteria.PatientId, data[DicomTags.PatientId].GetString(0, ""));
-                        break;
-                    case DicomTags.PatientsBirthDate:
-                        SetRangeCondition(criteria.PatientsBirthDate, data[DicomTags.PatientsBirthDate].GetString(0, ""));
-                        break;
-                    case DicomTags.PatientsSex:
-                        SetStringCondition(criteria.PatientsSex, data[DicomTags.PatientsSex].GetString(0, ""));
-                        break;
-                    case DicomTags.StudyDate:
-                        SetRangeCondition(criteria.StudyDate, data[DicomTags.StudyDate].GetString(0, ""));
-                        break;
-                    case DicomTags.StudyTime:
-                        SetRangeCondition(criteria.StudyTime, data[DicomTags.StudyTime].GetString(0, ""));
-                        break;
-                    case DicomTags.AccessionNumber:
-                        SetStringCondition(criteria.AccessionNumber, data[DicomTags.AccessionNumber].GetString(0, ""));
-                        break;
-                    case DicomTags.StudyId:
-                        SetStringCondition(criteria.StudyId, data[DicomTags.StudyId].GetString(0, ""));
-                        break;
-                    case DicomTags.StudyDescription:
-                        SetStringCondition(criteria.StudyDescription, data[DicomTags.StudyDescription].GetString(0, ""));
-                        break;
-                    case DicomTags.ReferringPhysiciansName:
-                        SetStringCondition(criteria.ReferringPhysiciansName, data[DicomTags.ReferringPhysiciansName].GetString(0, ""));
-                        break;
-                    case DicomTags.ModalitiesInStudy:// todo
-                        // Specify a subselect on Modality in series
-                        SeriesSelectCriteria seriesSelect = new SeriesSelectCriteria();
-                        SetStringArrayCondition(seriesSelect.Modality,(string[])data[DicomTags.ModalitiesInStudy].Values);
-                        criteria.SeriesRelatedEntityCondition.Exists(seriesSelect);
-                        break;
-                    default:
-                        break;
-                }
+                    switch (attrib.Tag.TagValue)
+                    {
+                        case DicomTags.StudyInstanceUid:
+                            SetStringArrayCondition(criteria.StudyInstanceUid, (string[])data[DicomTags.StudyInstanceUid].Values);
+                            break;
+                        case DicomTags.PatientsName:
+                            SetStringCondition(criteria.PatientName, data[DicomTags.PatientsName].GetString(0, ""));
+                            break;
+                        case DicomTags.PatientId:
+                            SetStringCondition(criteria.PatientId, data[DicomTags.PatientId].GetString(0, ""));
+                            break;
+                        case DicomTags.PatientsBirthDate:
+                            SetRangeCondition(criteria.PatientsBirthDate, data[DicomTags.PatientsBirthDate].GetString(0, ""));
+                            break;
+                        case DicomTags.PatientsSex:
+                            SetStringCondition(criteria.PatientsSex, data[DicomTags.PatientsSex].GetString(0, ""));
+                            break;
+                        case DicomTags.StudyDate:
+                            SetRangeCondition(criteria.StudyDate, data[DicomTags.StudyDate].GetString(0, ""));
+                            break;
+                        case DicomTags.StudyTime:
+                            SetRangeCondition(criteria.StudyTime, data[DicomTags.StudyTime].GetString(0, ""));
+                            break;
+                        case DicomTags.AccessionNumber:
+                            SetStringCondition(criteria.AccessionNumber, data[DicomTags.AccessionNumber].GetString(0, ""));
+                            break;
+                        case DicomTags.StudyId:
+                            SetStringCondition(criteria.StudyId, data[DicomTags.StudyId].GetString(0, ""));
+                            break;
+                        case DicomTags.StudyDescription:
+                            SetStringCondition(criteria.StudyDescription, data[DicomTags.StudyDescription].GetString(0, ""));
+                            break;
+                        case DicomTags.ReferringPhysiciansName:
+                            SetStringCondition(criteria.ReferringPhysiciansName, data[DicomTags.ReferringPhysiciansName].GetString(0, ""));
+                            break;
+                        case DicomTags.ModalitiesInStudy:// todo
+                            // Specify a subselect on Modality in series
+                            SeriesSelectCriteria seriesSelect = new SeriesSelectCriteria();
+                            SetStringArrayCondition(seriesSelect.Modality,(string[])data[DicomTags.ModalitiesInStudy].Values);
+                            criteria.SeriesRelatedEntityCondition.Exists(seriesSelect);
+                            break;
+                        default:
+                            break;
+                    }
             }
 
             // Open another read context, in case additional queries are required.
@@ -603,12 +604,12 @@ namespace ClearCanvas.DicomServices.ImageServer
             try
             {
                 find.Find(criteria, delegate(Study row)
-                                     {
-                                         DicomMessage response = new DicomMessage();
-                                         PopulateStudy(subRead, response, tagList, row);
-                                         server.SendCFindResponse(presentationID, message.MessageId, response,
-                                                                  DicomStatuses.Pending);
-                                     });
+                                        {
+                                            DicomMessage response = new DicomMessage();
+                                            PopulateStudy(subRead, response, tagList, row);
+                                            server.SendCFindResponse(presentationID, message.MessageId, response,
+                                                                     DicomStatuses.Pending);
+                                        });
             }
             catch (Exception e)
             {
@@ -693,12 +694,12 @@ namespace ClearCanvas.DicomServices.ImageServer
             try
             {
                 find.Find(criteria, delegate(Series row)
-                                     {
-                                         DicomMessage response = new DicomMessage();
-                                         PopulateSeries(subRead, message, response, tagList, row);
-                                         server.SendCFindResponse(presentationID, message.MessageId, response,
-                                                                  DicomStatuses.Pending);
-                                     });
+                                        {
+                                            DicomMessage response = new DicomMessage();
+                                            PopulateSeries(subRead, message, response, tagList, row);
+                                            server.SendCFindResponse(presentationID, message.MessageId, response,
+                                                                     DicomStatuses.Pending);
+                                        });
             }
             catch (Exception e)
             {
@@ -872,7 +873,7 @@ namespace ClearCanvas.DicomServices.ImageServer
 
             // Not supported message type, send a failure status.
             server.SendCFindResponse(presentationID, message.MessageId, new DicomMessage(),
-                                         DicomStatuses.QueryRetrieveIdentifierDoesNotMatchSOPClass);           
+                                     DicomStatuses.QueryRetrieveIdentifierDoesNotMatchSOPClass);           
             return true;
         }
 

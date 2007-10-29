@@ -31,7 +31,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom.Network;
 using ClearCanvas.Enterprise.Core;
@@ -53,23 +52,15 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// This method primarily checks the remote AE title to see if it is a valid device that can 
         /// connect to the partition.
         /// </remarks>
-        /// <param name="userParms">Generic parameter passed in, is a DicomScpParameters instance.</param>
+        /// <param name="parms">Generic parameter passed in, is a DicomScpParameters instance.</param>
         /// <param name="assocParms">The association parameters.</param>
         /// <param name="result">Output parameter with the DicomRejectResult for rejecting the association.</param>
         /// <param name="reason">Output parameter with the DicomRejectReason for rejecting the association.</param>
         /// <returns>true if the association should be accepted, false if it should be rejected.</returns>
-        public static bool Verify(object userParms, ServerAssociationParameters assocParms, out DicomRejectResult result, out DicomRejectReason reason)
+        public static bool Verify(DicomScpContext parms, ServerAssociationParameters assocParms, out DicomRejectResult result, out DicomRejectReason reason)
         {
             try
             {
-                DicomScpParameters parms = userParms as DicomScpParameters;
-                if (parms == null)
-                {
-                    Platform.Log(LogLevel.Error, "Unexpected error with parameters when verifying association, invalid type: {0}", userParms.GetType());
-                    reason = DicomRejectReason.NoReasonGiven;
-                    result = DicomRejectResult.Permanent;
-                    return false;
-                }
 
                 IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext();
 

@@ -47,7 +47,7 @@ namespace ClearCanvas.ImageServer.Services.Shreds.DicomServer
     public class DicomServerManager
     {
         #region Private Members
-        private List<DicomScp> _listenerList = new List<DicomScp>();
+        private readonly List<DicomScp<DicomScpContext>> _listenerList = new List<DicomScp<DicomScpContext>>();
         private static DicomServerManager _instance;
         #endregion
 
@@ -87,7 +87,7 @@ namespace ClearCanvas.ImageServer.Services.Shreds.DicomServer
         /// </summary>
         /// <remarks>
         /// <para>
-        /// The method starts a <see cref="DicomScp"/> instance for each server partition configured in
+        /// The method starts a <see cref="DicomScp{DicomScpParameters}"/> instance for each server partition configured in
         /// the database.  It assumes that the combination of the configured AE Title and Port for the 
         /// partition is unique.  
         /// </para>
@@ -109,12 +109,12 @@ namespace ClearCanvas.ImageServer.Services.Shreds.DicomServer
             {
                 if (part.Enabled)
                 {
-                    DicomScpParameters parms =
-                        new DicomScpParameters(part, monitor, new FilesystemSelector(monitor));
+                    DicomScpContext parms =
+                        new DicomScpContext(part, monitor, new FilesystemSelector(monitor));
 
                     if (ImageServerServicesShredSettings.Default.ListenIPV4)
                     {
-                        DicomScp ipV4Scp = new DicomScp(parms, AssociationVerifier.Verify);
+                        DicomScp<DicomScpContext> ipV4Scp = new DicomScp<DicomScpContext>(parms, AssociationVerifier.Verify);
 
                         ipV4Scp.ListenPort = part.Port;
                         ipV4Scp.AeTitle = part.AeTitle;
@@ -133,7 +133,7 @@ namespace ClearCanvas.ImageServer.Services.Shreds.DicomServer
 
                     if (ImageServerServicesShredSettings.Default.ListenIPV6)
                     {
-                        DicomScp ipV6Scp = new DicomScp(parms, AssociationVerifier.Verify);
+                        DicomScp<DicomScpContext> ipV6Scp = new DicomScp<DicomScpContext>(parms, AssociationVerifier.Verify);
 
                         ipV6Scp.ListenPort = part.Port;
                         ipV6Scp.AeTitle = part.AeTitle;
@@ -158,7 +158,7 @@ namespace ClearCanvas.ImageServer.Services.Shreds.DicomServer
         /// </summary>
         public void Stop()
         {
-            foreach (DicomScp scp in _listenerList)
+            foreach (DicomScp<DicomScpContext> scp in _listenerList)
             {
                 scp.Stop();
             }

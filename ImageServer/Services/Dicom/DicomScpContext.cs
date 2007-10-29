@@ -29,10 +29,6 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Model;
 
@@ -41,10 +37,10 @@ namespace ClearCanvas.ImageServer.Services.Dicom
     /// <summary>
     /// Class used to pass parameters to the ImageServer SCP extensions.
     /// </summary>
-    public class DicomScpParameters
+    public class DicomScpContext
     {
         #region Constructors
-        public DicomScpParameters(ServerPartition partition, FilesystemMonitor monitor, FilesystemSelector selector)
+        public DicomScpContext(ServerPartition partition, FilesystemMonitor monitor, FilesystemSelector selector)
         {
             _partition = partition;
             _montor = monitor;
@@ -53,9 +49,9 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         #endregion
 
         #region Private Members
-        private ServerPartition _partition;
-        private FilesystemMonitor _montor;
-        private FilesystemSelector _selector;
+        private readonly ServerPartition _partition;
+        private readonly FilesystemMonitor _montor;
+        private readonly FilesystemSelector _selector;
         #endregion
 
         #region Properties

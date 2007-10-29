@@ -45,7 +45,7 @@ using ClearCanvas.ImageServer.Services.Dicom;
 
 namespace ClearCanvas.ImageServer.Services.Dicom
 {
-    [ExtensionOf(typeof(DicomScpExtensionPoint))]
+    [ExtensionOf(typeof(DicomScpExtensionPoint<DicomScpContext>))]
     public class UncompressedStorageScpExtension : StorageScp
     {
         #region Private Members

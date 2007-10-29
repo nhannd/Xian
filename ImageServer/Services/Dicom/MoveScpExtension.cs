@@ -48,13 +48,13 @@ using ClearCanvas.ImageServer.Services.Dicom;
 namespace ClearCanvas.ImageServer.Services.Dicom
 {
     ///<summary>
-    /// Plugin for handling DICOM Retrieve Requests implementing the <see cref="IDicomScp"/> interface.
+    /// Plugin for handling DICOM Retrieve Requests implementing the <see cref="IDicomScp{DicomScpParameters}"/> interface.
     ///</summary>
-    [ExtensionOf(typeof(DicomScpExtensionPoint))]
-    public class MoveScpExtension : BaseScp, IDicomScp
+    [ExtensionOf(typeof(DicomScpExtensionPoint<DicomScpContext>))]
+    public class MoveScpExtension : BaseScp, IDicomScp<DicomScpContext>
     {
         #region Private members
-        private List<SupportedSop> _list = new List<SupportedSop>();
+        private readonly List<SupportedSop> _list = new List<SupportedSop>();
         private StorageScu _theScu;
         #endregion
 
@@ -303,7 +303,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         #region IDicomScp Members
 
         /// <summary>
-        /// Main routine for processing C-MOVE-RQ messages.  Called by the <see cref="DicomScp"/> component.
+        /// Main routine for processing C-MOVE-RQ messages.  Called by the <see cref="DicomScp{DicomScpParameters}"/> component.
         /// </summary>
         /// <param name="server"></param>
         /// <param name="association"></param>

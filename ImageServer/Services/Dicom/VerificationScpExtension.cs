@@ -41,8 +41,8 @@ namespace ClearCanvas.ImageServer.Services.Dicom
     /// <summary>
     /// Plugin for handling DICOM Verification (C-ECHO) requests.
     /// </summary>
-    [ExtensionOf(typeof(DicomScpExtensionPoint))]
-    public class VerificationScpExtension : BaseScp, IDicomScp
+    [ExtensionOf(typeof(DicomScpExtensionPoint<DicomScpContext>))]
+    public class VerificationScpExtension : BaseScp, IDicomScp<DicomScpContext>
     {
         #region Private members
         private List<SupportedSop> _list = new List<SupportedSop>();

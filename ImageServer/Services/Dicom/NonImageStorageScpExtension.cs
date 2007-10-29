@@ -49,7 +49,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
     /// </summary>
     /// <remarks>
     /// <para>
-    /// This routine is a plugin implemeting the <see cref="IDicomScp"/> interface for handling 
+    /// This routine is a plugin implemeting the <see cref="IDicomScp{DicomScpParameters}"/> interface for handling 
     /// Non-Image DICOM C-STORE-RQ messages.
     /// </para>
     /// <para>
@@ -57,7 +57,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
     /// it should support.  It also only implements the default DICOM transfer syntaxes.
     /// </para>
     /// </remarks>
-    [ExtensionOf(typeof(DicomScpExtensionPoint))]
+    [ExtensionOf(typeof(DicomScpExtensionPoint<DicomScpContext>))]
     public class NonImageStorageScpExtension : StorageScp
     {
         #region Private Members

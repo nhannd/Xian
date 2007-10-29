@@ -49,7 +49,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
     /// <summary>
     /// Base class for all DicomScpExtensions for the ImageServer.
     /// </summary>
-    public class BaseScp : IDicomScp
+    public class BaseScp : IDicomScp<DicomScpContext>
     {
         #region Protected Members
         protected IPersistentStore _store = PersistentStoreRegistry.GetDefaultStore();
@@ -185,19 +185,14 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 
         #region IDicomScp Members
 
-        public void SetUserParameters(object parms)
+        public void SetContext(DicomScpContext parms)
         {
-            DicomScpParameters scpParms = parms as DicomScpParameters;
-
-            if (scpParms==null)
-                throw new ApplicationException("Incorrect parameter type to SCP component");
-
-            _partition = scpParms.Partition;
-            _fsMonitor = scpParms.FilesystemMonitor;
-            _selector = scpParms.FilesystemSelector;
+            _partition = parms.Partition;
+            _fsMonitor = parms.FilesystemMonitor;
+            _selector = parms.FilesystemSelector;
         }
 
-        public virtual bool OnReceiveRequest(DicomServer server, ServerAssociationParameters association, byte presentationID, ClearCanvas.Dicom.DicomMessage message)
+        public virtual bool OnReceiveRequest(DicomServer server, ServerAssociationParameters association, byte presentationID, DicomMessage message)
         {
             throw new Exception("The method or operation is not implemented.  The method must be overriden.");
         }
