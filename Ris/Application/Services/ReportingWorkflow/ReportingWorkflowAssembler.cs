@@ -45,7 +45,11 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         public ReportingWorklistPreview CreateReportingWorklistPreview(ReportingWorklistItem item, IPersistenceContext context)
         {
             ReportingProcedureStep step = context.Load<ReportingProcedureStep>(item.ProcedureStepRef);
-            PatientProfile profile = CollectionUtils.SelectFirst<PatientProfile>(step.RequestedProcedure.Order.Patient.Profiles,
+
+            //TODO: choose the profile based on some location instead of visit assigning authority
+            PatientProfile profile = step.RequestedProcedure.Order.Patient.Profiles.Count == 1 ?
+                CollectionUtils.FirstElement<PatientProfile>(step.RequestedProcedure.Order.Patient.Profiles) :                
+                CollectionUtils.SelectFirst<PatientProfile>(step.RequestedProcedure.Order.Patient.Profiles,
                 delegate(PatientProfile thisProfile)
                 {
                     if (thisProfile.Mrn.AssigningAuthority == step.RequestedProcedure.Order.Visit.VisitNumber.AssigningAuthority)
@@ -113,7 +117,10 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             }
 
             Order order = rp.Order;
-            PatientProfile profile = CollectionUtils.SelectFirst<PatientProfile>(order.Patient.Profiles,
+            //TODO: choose the profile based on some location instead of visit assigning authority
+            PatientProfile profile = order.Patient.Profiles.Count == 1 ?
+                CollectionUtils.FirstElement<PatientProfile>(order.Patient.Profiles) :                
+                CollectionUtils.SelectFirst<PatientProfile>(order.Patient.Profiles,
                 delegate(PatientProfile thisProfile)
                 {
                     return thisProfile.Mrn.AssigningAuthority == order.Visit.VisitNumber.AssigningAuthority;

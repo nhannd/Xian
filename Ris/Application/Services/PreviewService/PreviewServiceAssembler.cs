@@ -60,7 +60,10 @@ namespace ClearCanvas.Ris.Application.Services.PreviewService
         {
             PatientOrderData data = new PatientOrderData();
 
-            PatientProfile profile = CollectionUtils.SelectFirst<PatientProfile>(rp.Order.Patient.Profiles,
+            //TODO: choose the profile based on some location instead of visit assigning authority
+            PatientProfile profile = rp.Order.Patient.Profiles.Count == 1 ?
+                CollectionUtils.FirstElement<PatientProfile>(rp.Order.Patient.Profiles) :                
+                CollectionUtils.SelectFirst<PatientProfile>(rp.Order.Patient.Profiles,
                 delegate(PatientProfile thisProfile)
                 {
                     return thisProfile.Mrn.AssigningAuthority == rp.Order.Visit.VisitNumber.AssigningAuthority;
@@ -78,7 +81,10 @@ namespace ClearCanvas.Ris.Application.Services.PreviewService
         {
             PatientOrderData data = new PatientOrderData();
 
-            PatientProfile profile = CollectionUtils.SelectFirst<PatientProfile>(ps.RequestedProcedure.Order.Patient.Profiles,
+            //TODO: choose the profile based on some location instead of visit assigning authority
+            PatientProfile profile = ps.RequestedProcedure.Order.Patient.Profiles.Count == 1 ?
+                CollectionUtils.FirstElement<PatientProfile>(ps.RequestedProcedure.Order.Patient.Profiles) :                
+                CollectionUtils.SelectFirst<PatientProfile>(ps.RequestedProcedure.Order.Patient.Profiles,
                 delegate(PatientProfile thisProfile)
                 {
                     return thisProfile.Mrn.AssigningAuthority == ps.RequestedProcedure.Order.Visit.VisitNumber.AssigningAuthority;

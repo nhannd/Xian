@@ -89,17 +89,14 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
         public WorklistItem(Order order)
             : base(new WorklistItemKey(order.GetRef(), null))
         {
-            Entity firstEntity = CollectionUtils.SelectFirst<Entity>(order.Patient.Profiles,
-                delegate(Entity entity)
+            //TODO: choose the profile based on some location instead of visit assigning authority
+            PatientProfile profile = order.Patient.Profiles.Count == 1 ?
+                CollectionUtils.FirstElement<PatientProfile>(order.Patient.Profiles) :
+                CollectionUtils.SelectFirst<PatientProfile>(order.Patient.Profiles,
+                delegate(PatientProfile pp)
                 {
-                    PatientProfile pp = entity.As<PatientProfile>();
-                    if (pp.Mrn.AssigningAuthority == order.Visit.VisitNumber.AssigningAuthority)
-                        return true;
-
-                    return false;
+                    return pp.Mrn.AssigningAuthority == order.Visit.VisitNumber.AssigningAuthority;
                 });
-
-            PatientProfile profile = (firstEntity == null ? null : firstEntity.Downcast<PatientProfile>());
 
             WorklistItemKey thisKey = (WorklistItemKey)this.Key;
             thisKey.ProfileRef = profile.GetRef();
