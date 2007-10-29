@@ -44,6 +44,7 @@ using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Rules;
 using ClearCanvas.ImageServer.Services.WorkQueue;
 using ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess;
+using System.Threading;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 {
@@ -56,7 +57,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         private StudyStorageLocation _storageLocation;
         private IList<WorkQueueUid> _uidList;
         private ServerRulesEngine _sopProcessedRulesEngine;
-
+        
         public StudyProcessItemProcessor()
         {
             _readContext = PersistentStoreRegistry.GetDefaultStore().OpenReadContext();
@@ -67,6 +68,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             if (_readContext != null)
                 _readContext.Dispose();
         }
+
 
         /// <summary>
         /// Load the storage location for the WorkQueue item.
@@ -222,6 +224,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             WorkQueueUpdateParameters parms = new WorkQueueUpdateParameters();
             parms.WorkQueueKey = item.GetKey();
             parms.StudyStorageKey = item.StudyStorageKey;
+            parms.ProcessorID = ProcessorID;
 
             if (successfulProcessCount == 0)
             {
@@ -233,6 +236,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                     parms.StatusEnum = StatusEnum.GetEnum("Failed");
                     parms.ScheduledTime = Platform.Time;
                     parms.ExpirationTime = Platform.Time;
+
                 }
                 else
                 {
@@ -256,6 +260,19 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             }
         }
 
+        
+
+        #region public members
+
+        private string _processorID;
+        public string ProcessorID
+        {
+            set { _processorID = value; }
+            get { return _processorID; }
+        }
+        #endregion
+
+
         #region IWorkQueueItemProcessor Members
 
         /// <summary>
@@ -264,6 +281,15 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         /// <param name="item">The item to process.</param>
         public void Process(Model.WorkQueue item)
         {
+
+#if DEBUG
+        // Simulate slow processing so that we can stop the service
+        // and test that it reset workqueue item when restarted
+            Console.WriteLine("WorkQueue Item has been locked for processing... Press <Ctrl-C> to stop the service now");
+            Thread.Sleep(10000);
+            Console.WriteLine("WorkQueue Item is being processed");
+#endif
+
             // Load the rules engine
             _sopProcessedRulesEngine = new ServerRulesEngine(ServerRuleApplyTimeEnum.GetEnum("SopProcessed"));
             _sopProcessedRulesEngine.Load();
@@ -278,6 +304,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             {
                 IUpdateWorkQueue update = _readContext.GetBroker<IUpdateWorkQueue>();
                 WorkQueueUpdateParameters parms = new WorkQueueUpdateParameters();
+                parms.ProcessorID = ProcessorID;
 
                 if (item.ExpirationTime < Platform.Time)
                 {
@@ -294,6 +321,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                     parms.ScheduledTime = Platform.Time.AddSeconds(90.0); // 60 second delay to recheck
                     parms.ExpirationTime = item.ExpirationTime; // Keep the same
                     parms.FailureCount = item.FailureCount;
+                    
                 }
 
                 if (false == update.Execute(parms))
@@ -303,6 +331,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             }
             else
                 ProcessUidList(item);
+
+
+            
+            
+
         }
 
         #endregion
@@ -315,6 +348,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                 _readContext.Dispose();
                 _readContext = null;
             }
+
         }
         #endregion
     }

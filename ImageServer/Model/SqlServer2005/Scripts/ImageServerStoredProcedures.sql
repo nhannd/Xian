@@ -607,20 +607,24 @@ END
 ' 
 END
 GO
-/****** Object:  StoredProcedure [dbo].[UpdateWorkQueue]    Script Date: 10/19/2007 09:50:31 ******/
+/****** Object:  StoredProcedure [dbo].[UpdateWorkQueue]    Script Date: 10/29/2007 16:50:31 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[UpdateWorkQueue]') AND type in (N'P', N'PC'))
 BEGIN
-EXEC dbo.sp_executesql @statement = N'-- =============================================
+EXEC dbo.sp_executesql @statement = N'
+-- =============================================
 -- Author:		Steve Wranovsky
 -- Create date: August 20, 2007
 -- Description:	Procedure for updating WorkQueue entries
+-- History
+--	Oct 29, 2007: Add @ProcessorID
 -- =============================================
 CREATE PROCEDURE [dbo].[UpdateWorkQueue] 
 	-- Add the parameters for the stored procedure here
+	@ProcessorID varchar(256),
 	@WorkQueueGUID uniqueidentifier, 
 	@StudyStorageGUID uniqueidentifier,
 	@StatusEnum smallint,
@@ -629,6 +633,13 @@ CREATE PROCEDURE [dbo].[UpdateWorkQueue]
 	@ScheduledTime datetime = null
 AS
 BEGIN
+
+	if (@ProcessorID is NULL)
+	begin
+		RAISERROR (N''Calling [dbo.[UpdateWorkQueue]] with @ProcessorID = NULL'', 18 /* severity.. >=20 means fatal but needs sysadmin role*/, 1 /*state*/)
+		RETURN 50000
+	end
+
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
@@ -659,7 +670,8 @@ BEGIN
 
 		UPDATE WorkQueue
 		SET StatusEnum = @StatusEnum, ExpirationTime = @ExpirationTime, ScheduledTime = @ScheduledTime,
-			FailureCount = @FailureCount
+			FailureCount = @FailureCount,
+			ProcessorID = @ProcessorID
 		WHERE GUID = @WorkQueueGUID
 	END
 	ELSE
@@ -673,7 +685,7 @@ BEGIN
 
 		UPDATE WorkQueue
 		SET StatusEnum = @StatusEnum, ExpirationTime = @ExpirationTime, ScheduledTime = @ScheduledTime,
-			FailureCount = @FailureCount
+			FailureCount = @FailureCount, ProcessorID = @ProcessorID
 		WHERE GUID = @WorkQueueGUID
 	END
 
@@ -683,26 +695,40 @@ END
 ' 
 END
 GO
-/****** Object:  StoredProcedure [dbo].[QueryWorkQueue]    Script Date: 10/19/2007 09:50:30 ******/
+/****** Object:  StoredProcedure [dbo].[QueryWorkQueue]    Script Date: 10/29/2007 16:50:30 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[QueryWorkQueue]') AND type in (N'P', N'PC'))
 BEGIN
-EXEC dbo.sp_executesql @statement = N'-- =============================================
+EXEC dbo.sp_executesql @statement = N'
+-- =============================================
 -- Author:		Steve Wranovsky
 -- Create date: August 16, 2007
 -- Description:	Select WorkQueue entries
+-- History:
+--		Oct 29, 2007:	Add @ProcessorID
+--				
 -- =============================================
 CREATE PROCEDURE [dbo].[QueryWorkQueue] 
 	-- Add the parameters for the stored procedure here
+	@ProcessorID varchar(256), 
 	@TypeEnum smallint = 0
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
+	
+	if (@ProcessorID is NULL)
+	begin
+		RAISERROR (N''Calling [dbo.QueryWorkQueue] with @ProcessorID = NULL'', 18 /* severity.. >=20 means fatal but needs sysadmin role*/, 1 /*state*/)
+		RETURN 50000
+	end
+
+
 	SET NOCOUNT ON;
+
 
 	declare @StudyStorageGUID uniqueidentifier
 	declare @WorkQueueGUID uniqueidentifier
@@ -721,7 +747,7 @@ BEGIN
 			StudyStorage ON StudyStorage.GUID = WorkQueue.StudyStorageGUID AND StudyStorage.Lock = 0
 		WHERE
 			ScheduledTime < getdate() 
-			AND WorkQueue.StatusEnum = @PendingStatusEnum
+			AND (  WorkQueue.StatusEnum = @PendingStatusEnum )
 	END
 	ELSE
 	BEGIN
@@ -746,7 +772,8 @@ BEGIN
 	if (@@ROWCOUNT = 1)
 	BEGIN
 		UPDATE WorkQueue
-			SET StatusEnum = @InProgressStatusEnum
+			SET StatusEnum  = @InProgressStatusEnum,
+				ProcessorID = @ProcessorID
 		WHERE 
 			GUID = @WorkQueueGUID
 	END
@@ -755,8 +782,126 @@ BEGIN
 	SELECT * 
 	FROM WorkQueue
 	WHERE StatusEnum = @InProgressStatusEnum
-		AND GUID = @WorkQueueGUID		
+		AND GUID = @WorkQueueGUID
 END
+' 
+END
+GO
+
+/****** Object:  StoredProcedure [dbo].[ResetWorkQueue]    Script Date: 10/29/2007 16:50:30 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[ResetWorkQueue]') AND type in (N'P', N'PC'))
+BEGIN
+EXEC dbo.sp_executesql @statement = N'
+
+-- =============================================
+-- Author:		Thanh Huynh
+-- Create date: Oct 29, 2007
+-- Description:	Cleanup work queue. 
+--				Reset all "in progress" items to "Pending" or "Failed" depending on their retry counts
+--
+-- =============================================
+CREATE PROCEDURE [dbo].[ResetWorkQueue]
+	@ProcessorID varchar(256),
+	@MaxFailureCount int,
+	@RescheduleTime datetime,
+	@FailedExpirationTime datetime,
+	@RetryExpirationTime datetime
+	
+AS
+BEGIN
+	
+	if (@ProcessorID is NULL)
+	begin
+		RAISERROR (N''Calling [dbo.ResetWorkQueueItems] with @ProcessorID = NULL'', 18 /* severity.. >=20 means fatal but needs sysadmin role*/, 1 /*state*/)
+		RETURN 50000
+	end
+
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+	BEGIN TRANSACTION
+
+		declare @PendingStatusEnum as int
+		declare @InProgressStatusEnum as int
+		declare @FailedStatusEnum as int
+		declare @WorkQueueGUID uniqueidentifier
+		
+
+		select @PendingStatusEnum = StatusEnum from StatusEnum where Lookup = ''Pending''
+		select @InProgressStatusEnum = StatusEnum from StatusEnum where Lookup = ''In Progress''
+		select @FailedStatusEnum = StatusEnum from StatusEnum where Lookup = ''Failed''
+
+
+		/* All entries that are in progress and failure count = MaxFailureCount should be failed */
+
+		/* Temporary tables to hold all items that will be reset */
+		CREATE TABLE #FailedList(WorkQueueGuid uniqueidentifier, StudyStorageGUID uniqueidentifier)
+		CREATE TABLE #RetryList(WorkQueueGuid uniqueidentifier, StudyStorageGUID uniqueidentifier)
+		
+		/* fill the tables */
+		INSERT INTO #FailedList (WorkQueueGuid, StudyStorageGUID)
+		SELECT dbo.WorkQueue.GUID, dbo.StudyStorage.GUID
+		FROM dbo.WorkQueue 
+		LEFT JOIN	dbo.StudyStorage ON dbo.WorkQueue.StudyStorageGUID=dbo.StudyStorage.GUID
+		WHERE ProcessorID=@ProcessorID 
+				AND WorkQueue.StatusEnum=@InProgressStatusEnum 
+				AND WorkQueue.FailureCount+1 >= @MaxFailureCount 
+
+
+		INSERT INTO #RetryList (WorkQueueGuid, StudyStorageGUID)
+		SELECT dbo.WorkQueue.GUID, dbo.StudyStorage.GUID
+		FROM dbo.WorkQueue 
+		LEFT JOIN	dbo.StudyStorage ON dbo.WorkQueue.StudyStorageGUID=dbo.StudyStorage.GUID
+		WHERE ProcessorID=@ProcessorID 
+				AND WorkQueue.StatusEnum=@InProgressStatusEnum 
+				AND WorkQueue.FailureCount+1 < @MaxFailureCount
+
+		/* unlock all studies in the "failed" list */
+		/* and then fail those entries */
+		UPDATE dbo.StudyStorage
+		SET Lock = 0
+		WHERE GUID IN (SELECT StudyStorageGUID FROM #FailedList)
+		
+		UPDATE dbo.WorkQueue
+		SET StatusEnum = @FailedStatusEnum,	/* Status=FAILED */
+			FailureCount = FailureCount+1,
+			ExpirationTime = @FailedExpirationTime
+		WHERE	GUID IN (SELECT WorkQueueGuid FROM #FailedList)
+
+		/* unlock all studies in the "retry" list */
+		/* and then reschedule those entries */
+		UPDATE dbo.StudyStorage
+		SET Lock = 0
+		WHERE GUID IN (SELECT StudyStorageGUID FROM #RetryList)
+			
+		UPDATE dbo.WorkQueue 
+		SET StatusEnum = @PendingStatusEnum,	/* Status=PENDING */
+			ProcessorID=NULL,					/* may be picked up by another processor */
+			FailureCount = FailureCount+1,		/* has failed once. This is needed to prevent endless reset later on*/
+			ScheduledTime = @RescheduleTime,
+			ExpirationTime = @RetryExpirationTime
+		WHERE	GUID IN (SELECT WorkQueueGuid FROM #RetryList)
+
+
+	COMMIT TRANSACTION
+
+	/* Return the list of modified entries */
+	SELECT * 
+	FROM WorkQueue
+	WHERE ( GUID IN (SELECT WorkQueueGuid FROM #RetryList) OR 
+			GUID IN (SELECT WorkQueueGuid FROM #FailedList))
+
+
+	DROP TABLE #RetryList
+	DROP TABLE #FailedList
+
+END
+
 ' 
 END
 GO

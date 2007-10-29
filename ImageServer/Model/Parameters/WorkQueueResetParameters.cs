@@ -29,25 +29,41 @@
 
 #endregion
 
+using System;
 using ClearCanvas.ImageServer.Enterprise;
 
 namespace ClearCanvas.ImageServer.Model.Parameters
 {
-    public class WorkQueueQueryParameters : ProcedureParameters
+    public class WorkQueueResetParameters : ProcedureParameters
     {
-        public WorkQueueQueryParameters()
-            : base("QueryWorkQueue")
+        public WorkQueueResetParameters()
+            : base("ResetWorkQueue") // name of the stored procedure
         { }
-
-        public TypeEnum TypeEnum
-        {
-            set { this.SubCriteria["TypeEnum"] = new ProcedureParameter<ServerEnum>("TypeEnum", value); }
-        }
 
         public string ProcessorID
         {
             set { this.SubCriteria["ProcessorID"] = new ProcedureParameter<string>("ProcessorID", value); }
         }
 
+        public int MaxFailureCount
+        {
+            set { this.SubCriteria["MaxFailureCount"] = new ProcedureParameter<int>("MaxFailureCount", value); }
+        }
+
+        public DateTime RescheduleTime
+        {
+            set { this.SubCriteria["RescheduleTime"] = new ProcedureParameter<DateTime>("RescheduleTime", value); }
+        }
+        public DateTime FailedExpirationTime
+        {
+            set { this.SubCriteria["FailedExpirationTime"] = new ProcedureParameter<DateTime>("FailedExpirationTime", value); }
+        }
+
+        public DateTime RetryExpirationTime
+        {
+            set { this.SubCriteria["RetryExpirationTime"] = new ProcedureParameter<DateTime>("RetryExpirationTime", value); }
+        }
+    
+        
     }
 }

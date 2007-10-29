@@ -33,6 +33,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Brokers\ResetWorkQueue.cs" />
     <Compile Include="Brokers\DeleteWorkQueueUid.cs" />
     <Compile Include="Brokers\QueryDevicePreferredTransferSyntaxes.cs" />
     <Compile Include="Brokers\GetFilesystems.cs" />

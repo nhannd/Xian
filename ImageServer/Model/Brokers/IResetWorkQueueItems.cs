@@ -30,24 +30,11 @@
 #endregion
 
 using ClearCanvas.ImageServer.Enterprise;
+using ClearCanvas.ImageServer.Model.Parameters;
 
-namespace ClearCanvas.ImageServer.Model.Parameters
+namespace ClearCanvas.ImageServer.Model.Brokers
 {
-    public class WorkQueueQueryParameters : ProcedureParameters
+    public interface IWorkQueueReset : IProcedureQueryBroker<WorkQueueResetParameters, WorkQueue>
     {
-        public WorkQueueQueryParameters()
-            : base("QueryWorkQueue")
-        { }
-
-        public TypeEnum TypeEnum
-        {
-            set { this.SubCriteria["TypeEnum"] = new ProcedureParameter<ServerEnum>("TypeEnum", value); }
-        }
-
-        public string ProcessorID
-        {
-            set { this.SubCriteria["ProcessorID"] = new ProcedureParameter<string>("ProcessorID", value); }
-        }
-
     }
 }

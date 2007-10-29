@@ -37,11 +37,19 @@ using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue
 {
+    
     /// <summary>
     /// Interface for processors of WorkQueue items
     /// </summary>
     public interface IWorkQueueItemProcessor : IDisposable
     {
+        // A string used to identify the processor
+        string ProcessorID
+        {
+            get;
+            set;
+        }
+
         void Process(Model.WorkQueue item);
     }
 }

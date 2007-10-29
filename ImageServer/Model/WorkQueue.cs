@@ -58,6 +58,7 @@ namespace ClearCanvas.ImageServer.Model
         private DateTime _insertTime;
         private int _failureCount;
         private XmlDocument _data;
+        private string _processor;
         #endregion
 
         #region Public Properties
@@ -100,6 +101,12 @@ namespace ClearCanvas.ImageServer.Model
         {
             get { return _data; }
             set { _data = value; }
+        }
+
+        public string ProcessorID
+        {
+            get { return _processor; }
+            set { _processor = value; }
         }
         #endregion
 

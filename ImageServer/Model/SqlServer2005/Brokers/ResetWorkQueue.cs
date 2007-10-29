@@ -29,25 +29,19 @@
 
 #endregion
 
-using ClearCanvas.ImageServer.Enterprise;
+using ClearCanvas.Common;
+using ClearCanvas.ImageServer.Enterprise.SqlServer2005;
+using ClearCanvas.ImageServer.Model.Brokers;
+using ClearCanvas.ImageServer.Model.Parameters;
 
-namespace ClearCanvas.ImageServer.Model.Parameters
+namespace ClearCanvas.ImageServer.Model.SqlServer2005.Brokers
 {
-    public class WorkQueueQueryParameters : ProcedureParameters
+    [ExtensionOf(typeof(BrokerExtensionPoint))]
+    public class ResetWorkQueue : ProcedureQueryBroker<WorkQueueResetParameters, WorkQueue>, IWorkQueueReset
     {
-        public WorkQueueQueryParameters()
-            : base("QueryWorkQueue")
-        { }
-
-        public TypeEnum TypeEnum
+        public ResetWorkQueue()
+            : base("ResetWorkQueue")
         {
-            set { this.SubCriteria["TypeEnum"] = new ProcedureParameter<ServerEnum>("TypeEnum", value); }
         }
-
-        public string ProcessorID
-        {
-            set { this.SubCriteria["ProcessorID"] = new ProcedureParameter<string>("ProcessorID", value); }
-        }
-
     }
 }

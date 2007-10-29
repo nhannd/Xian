@@ -284,7 +284,7 @@ CREATE NONCLUSTERED INDEX [IX_Series_Modality] ON [dbo].[Series]
 	[Modality] ASC
 )WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [INDEXES]
 GO
-/****** Object:  Table [dbo].[WorkQueue]    Script Date: 10/19/2007 09:46:11 ******/
+/****** Object:  Table [dbo].[WorkQueue]    Script Date: 10/29/2007 16:46:11 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -301,6 +301,7 @@ CREATE TABLE [dbo].[WorkQueue](
 	[InsertTime] [datetime] NOT NULL CONSTRAINT [DF_WorkQueue_InsertTime]  DEFAULT (getdate()),
 	[FailureCount] [int] NOT NULL CONSTRAINT [DF_WorkQueue_FailureCount]  DEFAULT ((0)),
 	[Data] [xml] NULL,
+	[ProcessorID] [varchar](256) NULL,
  CONSTRAINT [PK_WorkQueue] PRIMARY KEY NONCLUSTERED 
 (
 	[GUID] ASC

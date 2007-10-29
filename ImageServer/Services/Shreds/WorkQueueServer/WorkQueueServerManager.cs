@@ -44,7 +44,10 @@ namespace ClearCanvas.ImageServer.Services.Shreds.WorkQueueServer
         #endregion
 
         #region Constructors
-        public WorkQueueServerManager()
+        /// <summary>
+        /// **** For internal use only***
+        /// </summary>
+        private WorkQueueServerManager()
         { }
         #endregion
 

@@ -39,6 +39,7 @@ using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.Parameters;
 using ClearCanvas.ImageServer.Services.WorkQueue;
+using System.Net;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue
 {
@@ -55,6 +56,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         private IPersistentStore _store = PersistentStoreRegistry.GetDefaultStore();
         private Dictionary<TypeEnum, IWorkQueueProcessorFactory> _extensions = new Dictionary<TypeEnum, IWorkQueueProcessorFactory>();
         private SimpleBlockingThreadPool _threadPool;
+        private string _processorID = null;
         #endregion
 
         #region Constructor
@@ -65,6 +67,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 
             WorkQueueFactoryExtensionPoint ep = new WorkQueueFactoryExtensionPoint();
             object[] factories = ep.CreateExtensions();
+
+            if (factories == null || factories.Length == 0)
+            {
+                // No extension for the workqueue processor. 
+                Platform.Log(LogLevel.Warn, "No WorkQueueFactory Extension found.");
+            }
+
             foreach (object obj in factories)
             {
                 IWorkQueueProcessorFactory factory = obj as IWorkQueueProcessorFactory;
@@ -75,6 +84,61 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                 }
                 else 
                     Platform.Log(LogLevel.Error,"Unexpected incorrect type loaded for extension: {0}",obj.GetType());
+            }
+
+        }
+        #endregion
+
+        #region public members
+        /// <summary>
+        /// A string representing the ID of the work queue processor.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// This ID is used to reset the work queue items.
+        /// </para>
+        /// <para>
+        /// For the time being, the machine ID is tied to the IP address. Assumimg the server
+        /// will be installed on a machine with DHCP disabled or if the DNS server always assign
+        /// the same IP for the machine, this will work fine.
+        /// </para>
+        /// <para>
+        /// Because of this implemenation, all instances of WorkQueueProcessor will have the same ID.
+        /// </para>
+        /// </remarks>
+        protected string ProcessorID
+        {
+            get { 
+
+                if (_processorID==null)
+                {
+                    try
+                    {
+                        String strHostName = Dns.GetHostName();
+                        
+                        // Find host by name
+                        IPHostEntry iphostentry = Dns.GetHostEntry(strHostName);
+
+                        // Enumerate IP addresses
+                        foreach (IPAddress ipaddress in iphostentry.AddressList)
+                        {
+                            _processorID = ipaddress.ToString();
+                            break;
+                        } 
+                    }catch(Exception e)
+                    {
+                        Platform.Log(LogLevel.Error, "Cannot resolve hostname into IP address");
+                    }
+                }
+
+                if (_processorID == null)
+                {
+                    Platform.Log(LogLevel.Warn, "Could not determine hostname or IP address of the local machine. Work Queue Processor ID is set to Unknown");
+                    _processorID = "Unknown";
+
+                }
+
+                return _processorID;
             }
         }
         #endregion
@@ -118,13 +182,17 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
             IReadContext read = _store.OpenReadContext();
             IUpdateWorkQueue update = read.GetBroker<IUpdateWorkQueue>();
             WorkQueueUpdateParameters parms = new WorkQueueUpdateParameters();
+            parms.ProcessorID = ProcessorID;
 
             parms.StatusEnum = StatusEnum.GetEnum("Failed");
             parms.WorkQueueKey = item.GetKey();
-            parms.StudyStorageKey = item.StudyStorageKey;
-            parms.ScheduledTime = Platform.Time;
-            parms.ExpirationTime = Platform.Time.AddDays(1);
             parms.FailureCount = item.FailureCount + 1;
+            parms.StudyStorageKey = item.StudyStorageKey;
+
+            // change the expiration time so that 
+            // the item stays in the queue for a while before somebody clean it up
+            parms.ScheduledTime = Platform.Time; // note: we probably don't need to change the scheduled time. Or do we?
+            parms.ExpirationTime = Platform.Time.AddDays(1);
             
             if (false == update.Execute(parms))
             {
@@ -135,6 +203,63 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         }
 
         /// <summary>
+        /// Reset queue items that were unadvertly left in "in progress" state by previous run. 
+        /// </summary>
+        public void ResetFailedItems()
+        {
+            ImageServerServicesWorkQueueSettings settings = ImageServerServicesWorkQueueSettings.Default;
+
+            StatusEnum Pending = StatusEnum.GetEnum("Pending");
+            StatusEnum Failed = StatusEnum.GetEnum("Failed");
+
+            using (IReadContext ctx = _store.OpenReadContext())
+            {
+                IWorkQueueReset reset = ctx.GetBroker<IWorkQueueReset>();
+                WorkQueueResetParameters parms = new WorkQueueResetParameters();
+                parms.ProcessorID = ProcessorID;
+
+                // reschedule X mins from now
+                parms.RescheduleTime = Platform.Time.AddMinutes(settings.WorkQueueFailureDelayMinutes);
+                parms.RetryExpirationTime = Platform.Time.AddMinutes(settings.WorkQueueMaxFailureCount * settings.WorkQueueFailureDelayMinutes);
+
+                // if an entry has been retried more than WorkQueueMaxFailureCount, it should be failed
+                parms.MaxFailureCount = settings.WorkQueueMaxFailureCount;
+                parms.FailedExpirationTime = Platform.Time.AddMinutes(settings.WorkQueueMaxFailureCount * settings.WorkQueueFailureDelayMinutes);
+
+                IList<Model.WorkQueue> modifiedList = reset.Execute(parms);
+
+                if (modifiedList != null)
+                {
+                    // output the list of items that have been reset
+                    foreach (Model.WorkQueue queueItem in modifiedList)
+                    {
+                        if (queueItem.StatusEnum.Equals(Pending))
+                            Platform.Log(LogLevel.Info, "Cleanup: Reset Queue Item : {0} --> Status={1} Scheduled={2} ExpirationTime={3}",
+                                            queueItem.GetKey().Key, 
+                                            queueItem.StatusEnum.Description, 
+                                            queueItem.ScheduledTime, 
+                                            queueItem.ExpirationTime);
+                    }
+
+                    // output the list of items that have been failed because it exceeds the max retry count
+                    foreach (Model.WorkQueue queueItem in modifiedList)
+                    {
+                        if (queueItem.StatusEnum.Equals(Failed))
+                            Platform.Log(LogLevel.Info, "Cleanup: Fail Queue Item  : {0} : FailureCount={1} ExpirationTime={2}",
+                                            queueItem.GetKey().Key,
+                                            queueItem.FailureCount,
+                                            queueItem.ExpirationTime);
+                    }
+                    
+                }
+                
+            }
+
+
+        }
+
+
+        /// <summary>
         /// The processing thread.
         /// </summary>
         /// <remarks>
@@ -143,6 +268,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         /// </remarks>
         private void Process()
         {
+            ResetFailedItems();
+
             while (true)
             {
                 bool foundResult = false;
@@ -152,8 +279,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                     IReadContext read = _store.OpenReadContext();
                     IQueryWorkQueue select = read.GetBroker<IQueryWorkQueue>();
                     WorkQueueQueryParameters parms = new WorkQueueQueryParameters();
+                    parms.ProcessorID = ProcessorID;
+
                     IList<Model.WorkQueue> list = select.Execute(parms);
                     read.Dispose();
+                    
 
                     if (list.Count > 0)
                         foundResult = true;
@@ -173,6 +303,16 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                             IWorkQueueProcessorFactory factory = _extensions[queueItem.TypeEnum];
                             
                             IWorkQueueItemProcessor processor = factory.GetItemProcessor();
+
+                            // Assign the id to the processor. All sub processors have the same ID as the parent
+                            // Note: 
+                            // This approach should be sufficient to work queue reset mechanism. The assumptions are:
+                            //      1. only one instance of the WorkQueueProcessor will exist on the same machine at one time.
+                            //      2. The only time that the sub-processor dies and leaves the item in "In Progress" state
+                            //          is when users stop the service. All other general failures will be handled cleanly by the general
+                            //          exception handler.
+                            //  
+                            processor.ProcessorID = ProcessorID;
 
                             // Enqueue the actual processing of the item to the 
                             // thread pool.  
