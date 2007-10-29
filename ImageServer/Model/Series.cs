@@ -131,11 +131,12 @@ namespace ClearCanvas.ImageServer.Model
         #region Static Methods
         static public Series Load(ServerEntityKey key)
         {
-            IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext();
-            ISelectSeries broker = read.GetBroker<ISelectSeries>();
-            Series theSeries = broker.Load(key);
-            read.Dispose();
-            return theSeries;
+            using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+            {
+                ISelectSeries broker = read.GetBroker<ISelectSeries>();
+                Series theSeries = broker.Load(key);
+                return theSeries;
+            }
         }
         #endregion
     }

@@ -46,14 +46,14 @@ namespace ClearCanvas.ImageServer.Model
         /// </summary>
         static FilesystemTierEnum()
         {
-            IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext();
-            IEnumBroker<FilesystemTierEnum> broker = read.GetBroker<IFilesystemTierEnum>();
-            IList<FilesystemTierEnum> list = broker.Execute();
-            read.Dispose();
-
-            foreach (FilesystemTierEnum type in list)
+            using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
             {
-                _dict.Add(type.Enum, type);
+                IEnumBroker<FilesystemTierEnum> broker = read.GetBroker<IFilesystemTierEnum>();
+                IList<FilesystemTierEnum> list = broker.Execute();
+                foreach (FilesystemTierEnum type in list)
+                {
+                    _dict.Add(type.Enum, type);
+                }
             }
         }
 

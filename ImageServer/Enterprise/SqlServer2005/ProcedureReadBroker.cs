@@ -75,6 +75,9 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
             {
                 command = new SqlCommand(_procedureName, Context.Connection);
                 command.CommandType = CommandType.StoredProcedure;
+                UpdateContext update = Context as UpdateContext;
+                if (update != null)
+                    command.Transaction = update.Transaction;
 
                 myReader = command.ExecuteReader();
                 if (myReader == null)

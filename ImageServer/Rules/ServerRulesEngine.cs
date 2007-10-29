@@ -67,41 +67,40 @@ namespace ClearCanvas.ImageServer.Rules
             // Clearout the current type list.
             _typeList.Clear();
 
-            IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext();
-
-            ISelectServerRule broker = read.GetBroker<ISelectServerRule>();
- 
-            ServerRuleSelectCriteria critera = new ServerRuleSelectCriteria();
-            critera.Active.EqualTo(true);
-            critera.ServerRuleApplyTimeEnum.EqualTo(_applyTime);
-
-            IList<ServerRule> list = broker.Find(critera);
-
-            read.Dispose();
-
-            // Create the specification and action compilers
-            // We'll compile the rules right away
-            XmlSpecificationCompiler specCompiler = new XmlSpecificationCompiler("dicom");
-            XmlActionCompiler<ServerActionContext> actionCompiler = new XmlActionCompiler<ServerActionContext>();
-
-            foreach (ServerRule serverRule in list)
+            using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
             {
-                Rule theRule = new Rule(serverRule);
-                theRule.Compile(specCompiler, actionCompiler);
+                ISelectServerRule broker = read.GetBroker<ISelectServerRule>();
 
-                RuleTypeCollection typeCollection;
+                ServerRuleSelectCriteria critera = new ServerRuleSelectCriteria();
+                critera.Active.EqualTo(true);
+                critera.ServerRuleApplyTimeEnum.EqualTo(_applyTime);
 
-                if (!_typeList.ContainsKey(serverRule.ServerRuleTypeEnum))
+                IList<ServerRule> list = broker.Find(critera);
+
+                // Create the specification and action compilers
+                // We'll compile the rules right away
+                XmlSpecificationCompiler specCompiler = new XmlSpecificationCompiler("dicom");
+                XmlActionCompiler<ServerActionContext> actionCompiler = new XmlActionCompiler<ServerActionContext>();
+
+                foreach (ServerRule serverRule in list)
                 {
-                    typeCollection = new RuleTypeCollection(serverRule.ServerRuleTypeEnum);
-                    _typeList.Add(serverRule.ServerRuleTypeEnum, typeCollection);
-                }
-                else
-                {
-                    typeCollection = _typeList[serverRule.ServerRuleTypeEnum];
-                }
+                    Rule theRule = new Rule(serverRule);
+                    theRule.Compile(specCompiler, actionCompiler);
 
-                typeCollection.AddRule(theRule);
+                    RuleTypeCollection typeCollection;
+
+                    if (!_typeList.ContainsKey(serverRule.ServerRuleTypeEnum))
+                    {
+                        typeCollection = new RuleTypeCollection(serverRule.ServerRuleTypeEnum);
+                        _typeList.Add(serverRule.ServerRuleTypeEnum, typeCollection);
+                    }
+                    else
+                    {
+                        typeCollection = _typeList[serverRule.ServerRuleTypeEnum];
+                    }
+
+                    typeCollection.AddRule(theRule);
+                }
             }
         }
 

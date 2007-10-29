@@ -178,11 +178,12 @@ namespace ClearCanvas.ImageServer.Model
         #region Static Methods
         static public Study Load(ServerEntityKey key)
         {
-            IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext();
-            ISelectStudy broker = read.GetBroker<ISelectStudy>();
-            Study theStudy = broker.Load(key);
-            read.Dispose();
-            return theStudy;
+            using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+            {
+                ISelectStudy broker = read.GetBroker<ISelectStudy>();
+                Study theStudy = broker.Load(key);
+                return theStudy;
+            }
         }
         #endregion
     }

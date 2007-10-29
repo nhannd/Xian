@@ -95,15 +95,15 @@ namespace ClearCanvas.ImageServer.Services.Shreds.DicomServer
         public void Start()
         {
             IPersistentStore store = PersistentStoreRegistry.GetDefaultStore();
-            IReadContext read = store.OpenReadContext();
+            IList<ServerPartition> partitions;
+            using (IReadContext read = store.OpenReadContext())
+            {
+                IGetServerPartitions broker = read.GetBroker<IGetServerPartitions>();
+                partitions = broker.Execute();
+            }
 
-            IGetServerPartitions broker = read.GetBroker<IGetServerPartitions>();
-            IList<ServerPartition> partitions = broker.Execute();
             FilesystemMonitor monitor = new FilesystemMonitor();
-            
             monitor.Load();
-
-            read.Dispose();
             
             foreach (ServerPartition part in partitions)
             {

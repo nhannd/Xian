@@ -52,77 +52,74 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// This method primarily checks the remote AE title to see if it is a valid device that can 
         /// connect to the partition.
         /// </remarks>
-        /// <param name="parms">Generic parameter passed in, is a DicomScpParameters instance.</param>
+        /// <param name="context">Generic parameter passed in, is a DicomScpParameters instance.</param>
         /// <param name="assocParms">The association parameters.</param>
         /// <param name="result">Output parameter with the DicomRejectResult for rejecting the association.</param>
         /// <param name="reason">Output parameter with the DicomRejectReason for rejecting the association.</param>
         /// <returns>true if the association should be accepted, false if it should be rejected.</returns>
-        public static bool Verify(DicomScpContext parms, ServerAssociationParameters assocParms, out DicomRejectResult result, out DicomRejectReason reason)
+        public static bool Verify(DicomScpContext context, ServerAssociationParameters assocParms, out DicomRejectResult result, out DicomRejectReason reason)
         {
             try
             {
-
-                IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext();
-
-                IQueryDevice select = read.GetBroker<IQueryDevice>();
-
-                // Setup the select parameters.
-                DeviceQueryParameters selectParms = new DeviceQueryParameters();
-                selectParms.AeTitle = assocParms.CallingAE;
-                selectParms.ServerPartitionKey = parms.Partition.GetKey();
-
-                IList<Device> list = select.Execute(selectParms);
-                if (list.Count == 0)
+                using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
                 {
-                    if (!ImageServerServicesDicomSettings.Default.AcceptAnyDevice)
+                    IQueryDevice queryDevice = updateContext.GetBroker<IQueryDevice>();
+
+                    // Setup the select parameters.
+                    DeviceQueryParameters queryParameters = new DeviceQueryParameters();
+                    queryParameters.AeTitle = assocParms.CallingAE;
+                    queryParameters.ServerPartitionKey = context.Partition.GetKey();
+
+                    IList<Device> list = queryDevice.Execute(queryParameters);
+                    if (list.Count == 0)
                     {
-                        reason = DicomRejectReason.CallingAENotRecognized;
-                        result = DicomRejectResult.Permanent;
-                        return false;
+                        if (!ImageServerServicesDicomSettings.Default.AcceptAnyDevice)
+                        {
+                            reason = DicomRejectReason.CallingAENotRecognized;
+                            result = DicomRejectResult.Permanent;
+                            return false;
+                        }
+
+                        if (ImageServerServicesDicomSettings.Default.AutoInsertDevices)
+                        {
+                            // Auto-insert a new entry in the table.
+                            DeviceInsertParameters insertParms = new DeviceInsertParameters();
+
+                            insertParms.AeTitle = assocParms.CallingAE;
+                            insertParms.Active = true;
+                            insertParms.Description = String.Format("AE: {0}",assocParms.CallingAE);
+                            insertParms.Dhcp = false;
+                            insertParms.IpAddress = assocParms.RemoteEndPoint.Address.ToString();
+                            insertParms.ServerPartitionKey = context.Partition.GetKey();
+                            insertParms.Port = ImageServerServicesDicomSettings.Default.DefaultRemotePort;
+
+                            IInsertDevice insert = updateContext.GetBroker<IInsertDevice>();
+
+                            if (false == insert.Execute(insertParms))
+                            {
+                                Platform.Log(LogLevel.Error,
+                                             "Unexpected failure inserting device into the database, rejecting association from {0} to {1}",
+                                             assocParms.CallingAE, assocParms.CalledAE);
+                                reason = DicomRejectReason.NoReasonGiven;
+                                result = DicomRejectResult.Permanent;
+                                return false;
+                            }
+                            updateContext.Commit();
+                        }
                     }
-
-                    if (ImageServerServicesDicomSettings.Default.AutoInsertDevices)
+                    else
                     {
-                        // Auto-insert a new entry in the table.
-                        DeviceInsertParameters insertParms = new DeviceInsertParameters();
-
-                        insertParms.AeTitle = assocParms.CallingAE;
-                        insertParms.Active = true;
-                        insertParms.Description = "";
-                        insertParms.Dhcp = false;
-                        insertParms.IpAddress = assocParms.RemoteEndPoint.Address.ToString();
-                        insertParms.ServerPartitionKey = parms.Partition.GetKey();
-                        insertParms.Port = ImageServerServicesDicomSettings.Default.DefaultRemotePort;
-
-                        IInsertDevice insert = read.GetBroker<IInsertDevice>();
-
-                        if (false == insert.Execute(insertParms))
+                        if (list[0].Active == false)
                         {
                             Platform.Log(LogLevel.Error,
-                                         "Unexpected failure inserting device into the database, rejecting association from {0} to {1}",
+                                         "Rejecting association from {0} to {1}.  Device is disabled.",
                                          assocParms.CallingAE, assocParms.CalledAE);
-                            reason = DicomRejectReason.NoReasonGiven;
+                            reason = DicomRejectReason.CallingAENotRecognized;
                             result = DicomRejectResult.Permanent;
-                            read.Dispose();
                             return false;
                         }
                     }
                 }
-                else
-                {
-                    if (list[0].Active == false)
-                    {
-                        Platform.Log(LogLevel.Error,
-                                     "Rejecting association from {0} to {1}.  Device is disabled.",
-                                     assocParms.CallingAE, assocParms.CalledAE);
-                        reason = DicomRejectReason.CallingAENotRecognized;
-                        result = DicomRejectResult.Permanent;
-                        read.Dispose();
-                        return false;
-                    }
-                }
-
-                read.Dispose();
             }
             catch (Exception e)
             {

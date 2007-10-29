@@ -295,6 +295,10 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                 command = new SqlCommand(String.Format("SELECT * FROM {0} WHERE GUID = @GUID", 
                     _entityName), Context.Connection);
                 command.CommandType = CommandType.Text;
+                UpdateContext update = Context as UpdateContext;
+                if (update != null)
+                    command.Transaction = update.Transaction;
+
                 command.Parameters.AddWithValue("@GUID", entityRef.Key);
 
                 myReader = command.ExecuteReader();
@@ -361,6 +365,9 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                 command = new SqlCommand();
                 command.Connection = Context.Connection;
                 command.CommandType = CommandType.Text;
+                UpdateContext update = Context as UpdateContext;
+                if (update != null)
+                    command.Transaction = update.Transaction;
 
                 command.CommandText = sql = GetSql(_entityName, command, criteria, null);
 

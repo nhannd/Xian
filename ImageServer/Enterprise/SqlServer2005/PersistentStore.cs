@@ -90,6 +90,8 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
             {
                 SqlConnection connection = new SqlConnection(_connectionString);
 
+                connection.Open();
+
                 return new UpdateContext(connection, _transactionNotifier, mode);
             }
             catch (Exception e)

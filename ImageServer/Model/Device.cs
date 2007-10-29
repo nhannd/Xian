@@ -114,11 +114,12 @@ namespace ClearCanvas.ImageServer.Model
         #region Static Methods
         static public Device Load(ServerEntityKey key)
         {
-            IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext();
-            ISelectDevice broker = read.GetBroker<ISelectDevice>();
-            Device theDevice = broker.Load(key);
-            read.Dispose();
-            return theDevice;
+            using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+            {
+                ISelectDevice broker = read.GetBroker<ISelectDevice>();
+                Device theDevice = broker.Load(key);
+                return theDevice;
+            }
         }
         #endregion
     }

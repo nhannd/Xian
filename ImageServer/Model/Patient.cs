@@ -110,11 +110,12 @@ namespace ClearCanvas.ImageServer.Model
         #region Static Methods
         static public Patient Load(ServerEntityKey key)
         {
-            IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext();
-            ISelectPatient broker = read.GetBroker<ISelectPatient>();
-            Patient thePatient = broker.Load(key);
-            read.Dispose();
-            return thePatient;
+            using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+            {
+                ISelectPatient broker = read.GetBroker<ISelectPatient>();
+                Patient thePatient = broker.Load(key);
+                return thePatient;
+            }
         }
         #endregion
 

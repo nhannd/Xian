@@ -151,24 +151,26 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                 inputParms.ServerPartitionKey = Partition.GetKey();
 
                 // Do the query
-                IReadContext read = _store.OpenReadContext();
-                IQueryServerPartitionSopClasses broker = read.GetBroker<IQueryServerPartitionSopClasses>();
-                IList<PartitionSopClass> sopClasses = broker.Execute(inputParms);
-                read.Dispose();
-
-                // Now process the SOP Class list
-                foreach (PartitionSopClass partitionSopClass in sopClasses)
+                using (IReadContext read = _store.OpenReadContext())
                 {
-                    if (partitionSopClass.Enabled
-                        && partitionSopClass.NonImage)
+                    IQueryServerPartitionSopClasses broker = read.GetBroker<IQueryServerPartitionSopClasses>();
+                    IList<PartitionSopClass> sopClasses = broker.Execute(inputParms);
+                    read.Dispose();
+
+                    // Now process the SOP Class list
+                    foreach (PartitionSopClass partitionSopClass in sopClasses)
                     {
-                        SupportedSop sop = new SupportedSop();
+                        if (partitionSopClass.Enabled
+                            && partitionSopClass.NonImage)
+                        {
+                            SupportedSop sop = new SupportedSop();
 
-                        sop.SopClass = SopClass.GetSopClass(partitionSopClass.SopClassUid);
-                        sop.SyntaxList.Add(TransferSyntax.ExplicitVrLittleEndian);
-                        sop.SyntaxList.Add(TransferSyntax.ImplicitVrLittleEndian);
+                            sop.SopClass = SopClass.GetSopClass(partitionSopClass.SopClassUid);
+                            sop.SyntaxList.Add(TransferSyntax.ExplicitVrLittleEndian);
+                            sop.SyntaxList.Add(TransferSyntax.ImplicitVrLittleEndian);
 
-                        _list.Add(sop);
+                            _list.Add(sop);
+                        }
                     }
                 }
             }

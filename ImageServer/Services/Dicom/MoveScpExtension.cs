@@ -312,7 +312,6 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// <returns></returns>
         public override bool OnReceiveRequest(DicomServer server, ServerAssociationParameters association, byte presentationID, DicomMessage message)
         {
-            IReadContext read = null;
             bool finalResponseSent = false;
 
             try
@@ -334,148 +333,148 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                 string localAe = Partition.AeTitle;
 
                 // Open a DB Connection
-                read = _store.OpenReadContext();
-
-                // Load remote device information fromt he database.
-                Device device = LoadRemoteHost(read, Partition, remoteAe);
-                if (device == null)
+                using (IReadContext read = _store.OpenReadContext())
                 {
-                    Platform.Log(LogLevel.Error, "Unknown move destination \"{0}\", failing C-MOVE-RQ from {1} to {2}",
-                                 remoteAe, association.CallingAE, association.CalledAE);
+                    // Load remote device information fromt he database.
+                    Device device = LoadRemoteHost(read, Partition, remoteAe);
+                    if (device == null)
+                    {
+                        Platform.Log(LogLevel.Error,
+                                     "Unknown move destination \"{0}\", failing C-MOVE-RQ from {1} to {2}",
+                                     remoteAe, association.CallingAE, association.CalledAE);
 
-                    server.SendCMoveResponse(presentationID, message.MessageId, new DicomMessage(),
-                                             DicomStatuses.QueryRetrieveMoveDestinationUnknown);
-                    finalResponseSent = true;
-                    read.Dispose();
-                    read = null;
-                    return true;
-                }
+                        server.SendCMoveResponse(presentationID, message.MessageId, new DicomMessage(),
+                                                 DicomStatuses.QueryRetrieveMoveDestinationUnknown);
+                        finalResponseSent = true;
+                        return true;
+                    }
 
-                // If the remote node is a DHCP node, use its IP address from the connection information, else
-                // use what is configured.  Always use the configured port.
-                string remoteIp = device.IpAddress;
-                if (device.Dhcp)
-                    remoteIp = association.RemoteEndPoint.Address.ToString();
+                    // If the remote node is a DHCP node, use its IP address from the connection information, else
+                    // use what is configured.  Always use the configured port.
+                    string remoteIp = device.IpAddress;
+                    if (device.Dhcp)
+                        remoteIp = association.RemoteEndPoint.Address.ToString();
 
-                // Get the list of preferred SOP Classes & Transfer syntaxes from the database.
-                IList<SupportedSop> preferredSyntaxList = LoadPreferredSyntaxes(read, device);
+                    // Get the list of preferred SOP Classes & Transfer syntaxes from the database.
+                    IList<SupportedSop> preferredSyntaxList = LoadPreferredSyntaxes(read, device);
 
-                // Now create the list of SOPs to send
-                List<StorageInstance> fileList;
-                bool bOnline;
+                    // Now create the list of SOPs to send
+                    List<StorageInstance> fileList;
+                    bool bOnline;
 
-                if (level.Equals("PATIENT"))
-                {
-                    bOnline = GetSopListForPatient(read, message, out fileList);
-                }
-                else if (level.Equals("STUDY"))
-                {
-                    bOnline = GetSopListForStudy(message, out fileList);
-                }
-                else if (level.Equals("SERIES"))
-                {
-                    bOnline = GetSopListForSeries(message, out fileList);
-                }
-                else if (level.Equals("IMAGE"))
-                {
-                    bOnline = GetSopListForSop(message, out fileList);
-                }
-                else
-                {
-                    Platform.Log(LogLevel.Error, "Unexpected Study Root Move Query/Retrieve level: {0}", level);
+                    if (level.Equals("PATIENT"))
+                    {
+                        bOnline = GetSopListForPatient(read, message, out fileList);
+                    }
+                    else if (level.Equals("STUDY"))
+                    {
+                        bOnline = GetSopListForStudy(message, out fileList);
+                    }
+                    else if (level.Equals("SERIES"))
+                    {
+                        bOnline = GetSopListForSeries(message, out fileList);
+                    }
+                    else if (level.Equals("IMAGE"))
+                    {
+                        bOnline = GetSopListForSop(message, out fileList);
+                    }
+                    else
+                    {
+                        Platform.Log(LogLevel.Error, "Unexpected Study Root Move Query/Retrieve level: {0}", level);
 
-                    server.SendCMoveResponse(presentationID, message.MessageId, new DicomMessage(),
-                                             DicomStatuses.QueryRetrieveIdentifierDoesNotMatchSOPClass);
-                    finalResponseSent = true;
-                    read.Dispose();
-                    return true;
-                }
+                        server.SendCMoveResponse(presentationID, message.MessageId, new DicomMessage(),
+                                                 DicomStatuses.QueryRetrieveIdentifierDoesNotMatchSOPClass);
+                        finalResponseSent = true;
+                        return true;
+                    }
 
-                // Could not find an online/readable location for the requested objects to move.
-                if (!bOnline)
-                {
-                    Platform.Log(LogLevel.Error, "Unable to find online storage location for C-MOVE-RQ");
+                    // Could not find an online/readable location for the requested objects to move.
+                    if (!bOnline)
+                    {
+                        Platform.Log(LogLevel.Error, "Unable to find online storage location for C-MOVE-RQ");
 
-                    server.SendCMoveResponse(presentationID, message.MessageId, new DicomMessage(),
-                                             DicomStatuses.QueryRetrieveUnableToProcess);
-                    finalResponseSent = true;
-                    read.Dispose();
-                    return true;
-                }
+                        server.SendCMoveResponse(presentationID, message.MessageId, new DicomMessage(),
+                                                 DicomStatuses.QueryRetrieveUnableToProcess);
+                        finalResponseSent = true;
+                        return true;
+                    }
 
-                // No files were eligible for transfer, just send success and return
-                if (fileList.Count == 0)
-                {
-                    server.SendCMoveResponse(presentationID, message.MessageId, new DicomMessage(),
-                                             DicomStatuses.Success,
-                                             0, 0, 0, 0);
-                    finalResponseSent = true;
-                    _theScu = null;
-                    read.Dispose();
-                    return true;
-                }
+                    // No files were eligible for transfer, just send success and return
+                    if (fileList.Count == 0)
+                    {
+                        server.SendCMoveResponse(presentationID, message.MessageId, new DicomMessage(),
+                                                 DicomStatuses.Success,
+                                                 0, 0, 0, 0);
+                        finalResponseSent = true;
+                        _theScu = null;
+                        return true;
+                    }
 
-                // Now setup the StorageSCU component, and do the actual transfer.
-                _theScu = new StorageScu(localAe, remoteAe, remoteIp, device.Port,
-                                         association.CallingAE, message.MessageId);
+                    // Now setup the StorageSCU component, and do the actual transfer.
+                    _theScu = new StorageScu(localAe, remoteAe, remoteIp, device.Port,
+                                             association.CallingAE, message.MessageId);
 
-                // set the preferred syntax lists
-                _theScu.SetPreferredSyntaxList(preferredSyntaxList);
+                    // set the preferred syntax lists
+                    _theScu.SetPreferredSyntaxList(preferredSyntaxList);
 
-                // set the list of files to transfer
-                _theScu.AddStorageInstanceList(fileList);
-                
-                _theScu.ImageStoreCompleted += delegate(Object sender, StorageInstance instance)
-                                                   {
-                                                       StorageScu scu = (StorageScu)sender;
-                                                       DicomMessage msg = new DicomMessage();
-                                                       DicomStatus status;
+                    // set the list of files to transfer
+                    _theScu.AddStorageInstanceList(fileList);
 
-                                                       if (scu.RemainingSubOperations == 0)
+                    _theScu.ImageStoreCompleted += delegate(Object sender, StorageInstance instance)
                                                        {
-                                                           foreach (StorageInstance sop in fileList)
+                                                           StorageScu scu = (StorageScu) sender;
+                                                           DicomMessage msg = new DicomMessage();
+                                                           DicomStatus status;
+
+                                                           if (scu.RemainingSubOperations == 0)
                                                            {
-                                                               if ((sop.SendStatus.Status != DicomState.Success)
-                                                                   && (sop.SendStatus.Status != DicomState.Warning))
-                                                                   msg.DataSet[DicomTags.FailedSopInstanceUidList].AppendString(
-                                                                       sop.SopInstanceUid);
+                                                               foreach (StorageInstance sop in fileList)
+                                                               {
+                                                                   if ((sop.SendStatus.Status != DicomState.Success)
+                                                                       && (sop.SendStatus.Status != DicomState.Warning))
+                                                                       msg.DataSet[DicomTags.FailedSopInstanceUidList].
+                                                                           AppendString(
+                                                                           sop.SopInstanceUid);
+                                                               }
+                                                               if (scu.Status == ScuOperationStatus.Canceled)
+                                                                   status = DicomStatuses.Cancel;
+                                                               else if (scu.FailureSubOperations > 0)
+                                                                   status =
+                                                                       DicomStatuses.
+                                                                           QueryRetrieveSubOpsOneOrMoreFailures;
+                                                               else
+                                                                   status = DicomStatuses.Success;
+
+                                                               _theScu = null;
                                                            }
-                                                           if (scu.Status == ScuOperationStatus.Canceled)
-                                                               status = DicomStatuses.Cancel;
-                                                           else if (scu.FailureSubOperations > 0)
-                                                               status = DicomStatuses.QueryRetrieveSubOpsOneOrMoreFailures;
                                                            else
-                                                               status = DicomStatuses.Success;
+                                                           {
+                                                               status = DicomStatuses.Pending;
 
-                                                           _theScu = null;
-                                                       }
-                                                       else
-                                                       {
-                                                           status = DicomStatuses.Pending;
+                                                               if ((scu.RemainingSubOperations%5) != 0)
+                                                                   return;
+                                                                       // Only send a RSP every 5 to reduce network load
+                                                           }
+                                                           server.SendCMoveResponse(presentationID, message.MessageId,
+                                                                                    msg, status,
+                                                                                    (ushort) scu.SuccessSubOperations,
+                                                                                    (ushort) scu.RemainingSubOperations,
+                                                                                    (ushort) scu.FailureSubOperations,
+                                                                                    (ushort) scu.WarningSubOperations);
+                                                           if (scu.RemainingSubOperations == 0)
+                                                               finalResponseSent = true;
+                                                       };
 
-                                                           if ((scu.RemainingSubOperations%5) != 0)
-                                                               return; // Only send a RSP every 5 to reduce network load
-                                                       }
-                                                       server.SendCMoveResponse(presentationID, message.MessageId, msg, status,
-                                                                                (ushort) scu.SuccessSubOperations,
-                                                                                (ushort) scu.RemainingSubOperations,
-                                                                                (ushort) scu.FailureSubOperations,
-                                                                                (ushort) scu.WarningSubOperations);
-                                                       if (scu.RemainingSubOperations == 0)
-                                                           finalResponseSent = true;
-                                                   };
-
-                _theScu.BeginSend(
-                    delegate(IAsyncResult result)
-                        {
-                            //NOOP
-                        },
-                    _theScu);
+                    _theScu.BeginSend(
+                        delegate(IAsyncResult result)
+                            {
+                                //NOOP
+                            },
+                        _theScu);
 
 
-                read.Dispose();
-                read = null;
-                return true;
+                    return true;
+                } // end using()
             } 
             catch (Exception e)
             {
@@ -494,11 +493,6 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                                      association.CallingAE, association.CalledAE);
                     }
                 }
-            }
-            finally
-            {
-                if (read != null)
-                    read.Dispose();
             }
             return false;
         }

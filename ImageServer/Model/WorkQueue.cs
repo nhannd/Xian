@@ -102,7 +102,6 @@ namespace ClearCanvas.ImageServer.Model
             get { return _data; }
             set { _data = value; }
         }
-
         public string ProcessorID
         {
             get { return _processor; }
@@ -113,11 +112,12 @@ namespace ClearCanvas.ImageServer.Model
         #region Static Methods
         static public WorkQueue Load(ServerEntityKey key)
         {
-            IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext();
-            ISelectWorkQueue broker = read.GetBroker<ISelectWorkQueue>();
-            WorkQueue theItem = broker.Load(key);
-            read.Dispose();
-            return theItem;
+            using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+            {
+                ISelectWorkQueue broker = read.GetBroker<ISelectWorkQueue>();
+                WorkQueue theItem = broker.Load(key);
+                return theItem;
+            }            
         }
         #endregion
     }

@@ -45,14 +45,14 @@ namespace ClearCanvas.ImageServer.Model
         /// </summary>
         static ServerRuleTypeEnum()
         {
-            IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext();
-            IEnumBroker<ServerRuleTypeEnum> broker = read.GetBroker<IServerRuleTypeEnum>();
-            IList<ServerRuleTypeEnum> list = broker.Execute();
-            read.Dispose();
-
-            foreach (ServerRuleTypeEnum type in list)
+            using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
             {
-                _dict.Add(type.Enum, type);
+                IEnumBroker<ServerRuleTypeEnum> broker = read.GetBroker<IServerRuleTypeEnum>();
+                IList<ServerRuleTypeEnum> list = broker.Execute();
+                foreach (ServerRuleTypeEnum type in list)
+                {
+                    _dict.Add(type.Enum, type);
+                }
             }
         }
 

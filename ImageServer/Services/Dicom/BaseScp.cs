@@ -109,24 +109,25 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// <returns>true if a location was found, false otherwise.</returns>
         public bool GetStudyStorageLocation( string studyInstanceUid, out StudyStorageLocation location)
         {
-            IReadContext read = _store.OpenReadContext();
-            IQueryStudyStorageLocation procedure = read.GetBroker<IQueryStudyStorageLocation>();
-            StudyStorageLocationQueryParameters parms = new StudyStorageLocationQueryParameters();
-            parms.ServerPartitionKey = Partition.GetKey();
-            parms.StudyInstanceUid = studyInstanceUid;
-            IList<StudyStorageLocation> locationList = procedure.Execute(parms);
-            read.Dispose();
-
-            foreach (StudyStorageLocation studyLocation in locationList)
+            using (IReadContext read = _store.OpenReadContext())
             {
-                if (Monitor.CheckFilesystemReadable(studyLocation.FilesystemKey))
+                IQueryStudyStorageLocation procedure = read.GetBroker<IQueryStudyStorageLocation>();
+                StudyStorageLocationQueryParameters parms = new StudyStorageLocationQueryParameters();
+                parms.ServerPartitionKey = Partition.GetKey();
+                parms.StudyInstanceUid = studyInstanceUid;
+                IList<StudyStorageLocation> locationList = procedure.Execute(parms);
+
+                foreach (StudyStorageLocation studyLocation in locationList)
                 {
-                    location = studyLocation;
-                    return true;
+                    if (Monitor.CheckFilesystemReadable(studyLocation.FilesystemKey))
+                    {
+                        location = studyLocation;
+                        return true;
+                    }
                 }
+                location = null;
+                return false;
             }
-            location = null;
-            return false;
         }
 
         /// <summary>
@@ -140,46 +141,49 @@ namespace ClearCanvas.ImageServer.Services.Dicom
             String studyInstanceUid = message.DataSet[DicomTags.StudyInstanceUid].GetString(0, "");
             String studyDate = message.DataSet[DicomTags.StudyDate].GetString(0, Platform.Time.ToString("yyyyMMdd"));
 
-            IReadContext read = _store.OpenReadContext();
-            IQueryStudyStorageLocation locQuery = read.GetBroker<IQueryStudyStorageLocation>();
-            StudyStorageLocationQueryParameters locParms = new StudyStorageLocationQueryParameters();
-            locParms.StudyInstanceUid = studyInstanceUid;
-            locParms.ServerPartitionKey = Partition.GetKey();
-            IList<StudyStorageLocation> studyLocationList = locQuery.Execute(locParms);
-            read.Dispose();
-
-            if (studyLocationList.Count == 0)
+            using (IUpdateContext updateContext = _store.OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
-                IInsertStudyStorage locInsert = _store.OpenReadContext().GetBroker<IInsertStudyStorage>();
-                StudyStorageInsertParameters insertParms = new StudyStorageInsertParameters();
-                insertParms.ServerPartitionKey = Partition.GetKey();
-                insertParms.StudyInstanceUid = studyInstanceUid;
-                insertParms.Folder = studyDate;
+                IQueryStudyStorageLocation locQuery = updateContext.GetBroker<IQueryStudyStorageLocation>();
+                StudyStorageLocationQueryParameters locParms = new StudyStorageLocationQueryParameters();
+                locParms.StudyInstanceUid = studyInstanceUid;
+                locParms.ServerPartitionKey = Partition.GetKey();
+                IList<StudyStorageLocation> studyLocationList = locQuery.Execute(locParms);
 
-                Filesystem filesystem = Selector.SelectFilesystem(message);
-                if (filesystem == null)
+                if (studyLocationList.Count == 0)
                 {
-                    Platform.Log(LogLevel.Error, "Unable to select location for storing study.");
-                    return null;
+                    IInsertStudyStorage locInsert = _store.OpenReadContext().GetBroker<IInsertStudyStorage>();
+                    StudyStorageInsertParameters insertParms = new StudyStorageInsertParameters();
+                    insertParms.ServerPartitionKey = Partition.GetKey();
+                    insertParms.StudyInstanceUid = studyInstanceUid;
+                    insertParms.Folder = studyDate;
+
+                    Filesystem filesystem = Selector.SelectFilesystem(message);
+                    if (filesystem == null)
+                    {
+                        Platform.Log(LogLevel.Error, "Unable to select location for storing study.");
+                        return null;
+                    }
+
+                    insertParms.FilesystemKey = filesystem.GetKey();
+
+                    studyLocationList = locInsert.Execute(insertParms);
+
+                    updateContext.Commit();
+                }
+                else
+                {
+                    if (!Monitor.CheckFilesystemWriteable(studyLocationList[0].FilesystemKey))
+                    {
+                        Platform.Log(LogLevel.Warn, "Unable to find writable filesystem for study {0} on Partition {1}",
+                                     studyInstanceUid, _partition.Description);
+                        return null;
+                    }
                 }
 
-                insertParms.FilesystemKey = filesystem.GetKey();
-
-                studyLocationList = locInsert.Execute(insertParms);
+                //TODO:  Do we need to do something to identify a primary storage location?
+                // Also, should the above check for writeable location check the other availab
+                return studyLocationList[0];
             }
-
-            else
-            {
-                if (!Monitor.CheckFilesystemWriteable(studyLocationList[0].FilesystemKey))
-                {
-                    Platform.Log(LogLevel.Warn, "Unable to find writable filesystem for study {0} on Partition {1}", studyInstanceUid, _partition.Description);
-                    return null;
-                }
-            }
-
-            //TODO:  Do we need to do something to identify a primary storage location?
-            // Also, should the above check for writeable location check the other availab
-            return studyLocationList[0];
         }
         #endregion
 

@@ -69,24 +69,24 @@ namespace ClearCanvas.ImageServer.TestApp
 
                 monitor.Load();
 
-
                 TypeEnum t = new TypeEnum();
                 t.SetEnum(200);
 
-                IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext();
+                using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+                {
+                    IInsertStudyStorage insert = read.GetBroker<IInsertStudyStorage>();
 
-                IInsertStudyStorage insert = read.GetBroker<IInsertStudyStorage>();
+                    StudyStorageInsertParameters criteria = new StudyStorageInsertParameters();
 
-                StudyStorageInsertParameters criteria = new StudyStorageInsertParameters();
+                    criteria.StudyInstanceUid = "1.2.3.4";
+                    criteria.FilesystemKey = monitor.Filesystems[0].Filesystem.GetKey();
+                    criteria.Folder = "20070101";
+                    criteria.ServerPartitionKey = monitor.Partitions[0].GetKey();
 
-                criteria.StudyInstanceUid = "1.2.3.4";
-                criteria.FilesystemKey = monitor.Filesystems[0].Filesystem.GetKey();
-                criteria.Folder = "20070101";
-                criteria.ServerPartitionKey = monitor.Partitions[0].GetKey();
+                    IList<StudyStorageLocation> storage = insert.Execute(criteria);
 
-                IList<StudyStorageLocation> storage = insert.Execute(criteria);
-
-                StudyStorageLocation storageEntry = storage[0];
+                    StudyStorageLocation storageEntry = storage[0];
+                }
             }
             catch (Exception x)
             {

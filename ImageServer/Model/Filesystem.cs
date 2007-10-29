@@ -92,11 +92,12 @@ namespace ClearCanvas.ImageServer.Model
         #region Static Methods
         static public Filesystem Load(ServerEntityKey key)
         {
-            IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext();
-            ISelectFilesystem broker = read.GetBroker<ISelectFilesystem>();
-            Filesystem theFilesystem = broker.Load(key);
-            read.Dispose();
-            return theFilesystem;
+            using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+            {
+                ISelectFilesystem broker = read.GetBroker<ISelectFilesystem>();
+                Filesystem theFilesystem = broker.Load(key);
+                return theFilesystem;
+            }
         }
         #endregion
 

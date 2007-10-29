@@ -99,11 +99,12 @@ namespace ClearCanvas.ImageServer.Model
         #region Static Methods
         static public ServerRule Load(ServerEntityKey key)
         {
-            IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext();
-            ISelectServerRule broker = read.GetBroker<ISelectServerRule>();
-            ServerRule theItem = broker.Load(key);
-            read.Dispose();
-            return theItem;
+            using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+            {
+                ISelectServerRule broker = read.GetBroker<ISelectServerRule>();
+                ServerRule theItem = broker.Load(key);
+                return theItem;
+            }
         }
         #endregion
     }

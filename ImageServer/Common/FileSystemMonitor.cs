@@ -107,23 +107,21 @@ namespace ClearCanvas.ImageServer.Common
         }
         public void Load()
         {
-            
-            IReadContext read = _store.OpenReadContext();
-
-            IGetServerPartitions partitionsQuery = read.GetBroker<IGetServerPartitions>();
-
-            _partitionList = partitionsQuery.Execute();
-
-            IGetFilesystems filesystemQuery = read.GetBroker<IGetFilesystems>();
-
-            IList<Filesystem> filesystemList = filesystemQuery.Execute();
-
-            read.Dispose();
-
-            foreach (Filesystem filesystem in filesystemList)
+            using (IReadContext read = _store.OpenReadContext())
             {
-                ServerFilesystemInfo info = new ServerFilesystemInfo(filesystem);
-                _filesystemList.Add(info);
+                IGetServerPartitions partitionsQuery = read.GetBroker<IGetServerPartitions>();
+
+                _partitionList = partitionsQuery.Execute();
+
+                IGetFilesystems filesystemQuery = read.GetBroker<IGetFilesystems>();
+
+                IList<Filesystem> filesystemList = filesystemQuery.Execute();
+
+                foreach (Filesystem filesystem in filesystemList)
+                {
+                    ServerFilesystemInfo info = new ServerFilesystemInfo(filesystem);
+                    _filesystemList.Add(info);
+                }
             }
 
             StartThread();

@@ -467,60 +467,57 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         {
             List<uint> tagList = new List<uint>();
 
-            IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext();
-
-            ISelectPatient find = read.GetBroker<ISelectPatient>();
-
-            PatientSelectCriteria criteria = new PatientSelectCriteria();
-            criteria.ServerPartitionKey.EqualTo(Partition.GetKey());
-
-            DicomAttributeCollection data = message.DataSet;
-            foreach (DicomAttribute attrib in message.DataSet)
+            using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
             {
-                tagList.Add(attrib.Tag.TagValue);
-                if (!attrib.IsNull)
-                    switch (attrib.Tag.TagValue)
+                ISelectPatient find = read.GetBroker<ISelectPatient>();
+
+                PatientSelectCriteria criteria = new PatientSelectCriteria();
+                criteria.ServerPartitionKey.EqualTo(Partition.GetKey());
+
+                DicomAttributeCollection data = message.DataSet;
+                foreach (DicomAttribute attrib in message.DataSet)
+                {
+                    tagList.Add(attrib.Tag.TagValue);
+                    if (!attrib.IsNull)
+                        switch (attrib.Tag.TagValue)
+                        {
+                            case DicomTags.PatientsName:
+                                SetStringCondition(criteria.PatientName, data[DicomTags.PatientsName].GetString(0, ""));
+                                break;
+                            case DicomTags.PatientId:
+                                SetStringCondition(criteria.PatientId, data[DicomTags.PatientId].GetString(0, ""));
+                                break;
+                            case DicomTags.IssuerOfPatientId:
+                                SetStringCondition(criteria.IssuerOfPatientId,
+                                                   data[DicomTags.IssuerOfPatientId].GetString(0, ""));
+                                break;
+                            default:
+                                break;
+                        }
+                }
+
+                try
+                {
+                    using (IReadContext subRead = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
                     {
-                        case DicomTags.PatientsName:
-                            SetStringCondition(criteria.PatientName, data[DicomTags.PatientsName].GetString(0, ""));
-                            break;
-                        case DicomTags.PatientId:
-                            SetStringCondition(criteria.PatientId, data[DicomTags.PatientId].GetString(0, ""));
-                            break;
-                        case DicomTags.IssuerOfPatientId:
-                            SetStringCondition(criteria.IssuerOfPatientId, data[DicomTags.IssuerOfPatientId].GetString(0, ""));
-                            break;
-                        default:
-                            break;
+                        find.Find(criteria, delegate(Patient row)
+                                                {
+                                                    DicomMessage response = new DicomMessage();
+                                                    PopulatePatient(subRead, response, tagList, row);
+                                                    server.SendCFindResponse(presentationID, message.MessageId, response,
+                                                                             DicomStatuses.Pending);
+                                                });
                     }
+                }
+                catch (Exception e)
+                {
+                    Platform.Log(LogLevel.Error, e, "Unexpected exception when processing FIND request.");
+                    DicomMessage errorResponse = new DicomMessage();
+                    server.SendCFindResponse(presentationID, message.MessageId, errorResponse,
+                                             DicomStatuses.ProcessingFailure);
+                    return true;
+                }
             }
-
-
-            IReadContext subRead = PersistentStoreRegistry.GetDefaultStore().OpenReadContext();
-
-            try
-            {
-                find.Find(criteria, delegate(Patient row)
-                                        {
-                                            DicomMessage response = new DicomMessage();
-                                            PopulatePatient(subRead, response, tagList, row);
-                                            server.SendCFindResponse(presentationID, message.MessageId, response,
-                                                                     DicomStatuses.Pending);
-                                        });
-            }
-            catch (Exception e)
-            {
-                Platform.Log(LogLevel.Error, e, "Unexpected exception when processing FIND request.");
-                DicomMessage errorResponse = new DicomMessage();
-                server.SendCFindResponse(presentationID, message.MessageId, errorResponse,
-                                         DicomStatuses.ProcessingFailure);
-                subRead.Dispose();
-                read.Dispose();
-                return true;
-            }
-
-            read.Dispose();
-            subRead.Dispose();
 
             DicomMessage finalResponse = new DicomMessage();
             server.SendCFindResponse(presentationID, message.MessageId, finalResponse, DicomStatuses.Success);
@@ -540,94 +537,97 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         {
             List<uint> tagList = new List<uint>();
 
-            IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext();
-
-            ISelectStudy find = read.GetBroker<ISelectStudy>();
-
-            StudySelectCriteria criteria = new StudySelectCriteria();
-            criteria.ServerPartitionKey.EqualTo(Partition.GetKey());
-
-            DicomAttributeCollection data = message.DataSet;
-            foreach (DicomAttribute attrib in message.DataSet)
+            using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
             {
-                tagList.Add(attrib.Tag.TagValue);
-                if (!attrib.IsNull)
-                    switch (attrib.Tag.TagValue)
+                ISelectStudy find = read.GetBroker<ISelectStudy>();
+
+                StudySelectCriteria criteria = new StudySelectCriteria();
+                criteria.ServerPartitionKey.EqualTo(Partition.GetKey());
+
+                DicomAttributeCollection data = message.DataSet;
+                foreach (DicomAttribute attrib in message.DataSet)
+                {
+                    tagList.Add(attrib.Tag.TagValue);
+                    if (!attrib.IsNull)
+                        switch (attrib.Tag.TagValue)
+                        {
+                            case DicomTags.StudyInstanceUid:
+                                SetStringArrayCondition(criteria.StudyInstanceUid,
+                                                        (string[]) data[DicomTags.StudyInstanceUid].Values);
+                                break;
+                            case DicomTags.PatientsName:
+                                SetStringCondition(criteria.PatientName, data[DicomTags.PatientsName].GetString(0, ""));
+                                break;
+                            case DicomTags.PatientId:
+                                SetStringCondition(criteria.PatientId, data[DicomTags.PatientId].GetString(0, ""));
+                                break;
+                            case DicomTags.PatientsBirthDate:
+                                SetRangeCondition(criteria.PatientsBirthDate,
+                                                  data[DicomTags.PatientsBirthDate].GetString(0, ""));
+                                break;
+                            case DicomTags.PatientsSex:
+                                SetStringCondition(criteria.PatientsSex, data[DicomTags.PatientsSex].GetString(0, ""));
+                                break;
+                            case DicomTags.StudyDate:
+                                SetRangeCondition(criteria.StudyDate, data[DicomTags.StudyDate].GetString(0, ""));
+                                break;
+                            case DicomTags.StudyTime:
+                                SetRangeCondition(criteria.StudyTime, data[DicomTags.StudyTime].GetString(0, ""));
+                                break;
+                            case DicomTags.AccessionNumber:
+                                SetStringCondition(criteria.AccessionNumber,
+                                                   data[DicomTags.AccessionNumber].GetString(0, ""));
+                                break;
+                            case DicomTags.StudyId:
+                                SetStringCondition(criteria.StudyId, data[DicomTags.StudyId].GetString(0, ""));
+                                break;
+                            case DicomTags.StudyDescription:
+                                SetStringCondition(criteria.StudyDescription,
+                                                   data[DicomTags.StudyDescription].GetString(0, ""));
+                                break;
+                            case DicomTags.ReferringPhysiciansName:
+                                SetStringCondition(criteria.ReferringPhysiciansName,
+                                                   data[DicomTags.ReferringPhysiciansName].GetString(0, ""));
+                                break;
+                            case DicomTags.ModalitiesInStudy: // todo
+                                // Specify a subselect on Modality in series
+                                SeriesSelectCriteria seriesSelect = new SeriesSelectCriteria();
+                                SetStringArrayCondition(seriesSelect.Modality,
+                                                        (string[]) data[DicomTags.ModalitiesInStudy].Values);
+                                criteria.SeriesRelatedEntityCondition.Exists(seriesSelect);
+                                break;
+                            default:
+                                break;
+                        }
+                }
+
+                try
+                {
+                    // Open another read context, in case additional queries are required.
+                    using (IReadContext subRead = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
                     {
-                        case DicomTags.StudyInstanceUid:
-                            SetStringArrayCondition(criteria.StudyInstanceUid, (string[])data[DicomTags.StudyInstanceUid].Values);
-                            break;
-                        case DicomTags.PatientsName:
-                            SetStringCondition(criteria.PatientName, data[DicomTags.PatientsName].GetString(0, ""));
-                            break;
-                        case DicomTags.PatientId:
-                            SetStringCondition(criteria.PatientId, data[DicomTags.PatientId].GetString(0, ""));
-                            break;
-                        case DicomTags.PatientsBirthDate:
-                            SetRangeCondition(criteria.PatientsBirthDate, data[DicomTags.PatientsBirthDate].GetString(0, ""));
-                            break;
-                        case DicomTags.PatientsSex:
-                            SetStringCondition(criteria.PatientsSex, data[DicomTags.PatientsSex].GetString(0, ""));
-                            break;
-                        case DicomTags.StudyDate:
-                            SetRangeCondition(criteria.StudyDate, data[DicomTags.StudyDate].GetString(0, ""));
-                            break;
-                        case DicomTags.StudyTime:
-                            SetRangeCondition(criteria.StudyTime, data[DicomTags.StudyTime].GetString(0, ""));
-                            break;
-                        case DicomTags.AccessionNumber:
-                            SetStringCondition(criteria.AccessionNumber, data[DicomTags.AccessionNumber].GetString(0, ""));
-                            break;
-                        case DicomTags.StudyId:
-                            SetStringCondition(criteria.StudyId, data[DicomTags.StudyId].GetString(0, ""));
-                            break;
-                        case DicomTags.StudyDescription:
-                            SetStringCondition(criteria.StudyDescription, data[DicomTags.StudyDescription].GetString(0, ""));
-                            break;
-                        case DicomTags.ReferringPhysiciansName:
-                            SetStringCondition(criteria.ReferringPhysiciansName, data[DicomTags.ReferringPhysiciansName].GetString(0, ""));
-                            break;
-                        case DicomTags.ModalitiesInStudy:// todo
-                            // Specify a subselect on Modality in series
-                            SeriesSelectCriteria seriesSelect = new SeriesSelectCriteria();
-                            SetStringArrayCondition(seriesSelect.Modality,(string[])data[DicomTags.ModalitiesInStudy].Values);
-                            criteria.SeriesRelatedEntityCondition.Exists(seriesSelect);
-                            break;
-                        default:
-                            break;
+                        find.Find(criteria, delegate(Study row)
+                                                {
+                                                    DicomMessage response = new DicomMessage();
+                                                    PopulateStudy(subRead, response, tagList, row);
+                                                    server.SendCFindResponse(presentationID, message.MessageId, response,
+                                                                             DicomStatuses.Pending);
+                                                });
                     }
+                }
+                catch (Exception e)
+                {
+                    Platform.Log(LogLevel.Error, e, "Unexpected exception when processing FIND request.");
+                    DicomMessage errorResponse = new DicomMessage();
+                    server.SendCFindResponse(presentationID, message.MessageId, errorResponse,
+                                             DicomStatuses.ProcessingFailure);
+                    return true;
+                }
             }
-
-            // Open another read context, in case additional queries are required.
-            IReadContext subRead = PersistentStoreRegistry.GetDefaultStore().OpenReadContext();
-
-            try
-            {
-                find.Find(criteria, delegate(Study row)
-                                        {
-                                            DicomMessage response = new DicomMessage();
-                                            PopulateStudy(subRead, response, tagList, row);
-                                            server.SendCFindResponse(presentationID, message.MessageId, response,
-                                                                     DicomStatuses.Pending);
-                                        });
-            }
-            catch (Exception e)
-            {
-                Platform.Log(LogLevel.Error, e, "Unexpected exception when processing FIND request.");
-                DicomMessage errorResponse = new DicomMessage();
-                server.SendCFindResponse(presentationID, message.MessageId, errorResponse,
-                                         DicomStatuses.ProcessingFailure);
-                subRead.Dispose();
-                read.Dispose();
-                return true;
-            }
-
-            read.Dispose();
-            subRead.Dispose();
 
             DicomMessage finalResponse = new DicomMessage();
             server.SendCFindResponse(presentationID, message.MessageId, finalResponse, DicomStatuses.Success);
-                             
+
             return true;
         }
 
@@ -641,84 +641,86 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// <returns></returns>
         private bool OnReceiveSeriesLevelQuery(DicomServer server, ServerAssociationParameters association, byte presentationID, DicomMessage message)
         {
-            List<uint> tagList = new List<uint>();
-
             //Read context for the query.
-            IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext();
-
-            ISelectSeries find = read.GetBroker<ISelectSeries>();
-
-            SeriesSelectCriteria criteria = new SeriesSelectCriteria();
-            criteria.ServerPartitionKey.EqualTo(Partition.GetKey());
-
-            DicomAttributeCollection data = message.DataSet;
-            foreach (DicomAttribute attrib in message.DataSet)
+            using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
             {
-                tagList.Add(attrib.Tag.TagValue);
-                if (!attrib.IsNull)
-                    switch (attrib.Tag.TagValue)
+                List<uint> tagList = new List<uint>();
+
+                ISelectSeries selectSeries = read.GetBroker<ISelectSeries>();
+
+                SeriesSelectCriteria criteria = new SeriesSelectCriteria();
+                criteria.ServerPartitionKey.EqualTo(Partition.GetKey());
+
+                DicomAttributeCollection data = message.DataSet;
+                foreach (DicomAttribute attrib in message.DataSet)
+                {
+                    tagList.Add(attrib.Tag.TagValue);
+                    if (!attrib.IsNull)
+                        switch (attrib.Tag.TagValue)
+                        {
+                            case DicomTags.StudyInstanceUid:
+                                List<ServerEntityKey> list =
+                                    LoadStudyKey(read, (string[]) data[DicomTags.StudyInstanceUid].Values);
+                                SetKeyCondition(criteria.StudyKey, list.ToArray());
+                                break;
+                            case DicomTags.SeriesInstanceUid:
+                                SetStringArrayCondition(criteria.SeriesInstanceUid,
+                                                        (string[]) data[DicomTags.SeriesInstanceUid].Values);
+                                break;
+                            case DicomTags.Modality:
+                                SetStringCondition(criteria.Modality, data[DicomTags.Modality].GetString(0, ""));
+                                break;
+                            case DicomTags.SeriesNumber:
+                                SetStringCondition(criteria.SeriesNumber, data[DicomTags.SeriesNumber].GetString(0, ""));
+                                break;
+                            case DicomTags.SeriesDescription:
+                                SetStringCondition(criteria.SeriesDescription,
+                                                   data[DicomTags.SeriesDescription].GetString(0, ""));
+                                break;
+                            case DicomTags.PerformedProcedureStepStartDate:
+                                SetRangeCondition(criteria.PerformedProcedureStepStartDate,
+                                                  data[DicomTags.PerformedProcedureStepStartDate].GetString(0, ""));
+                                break;
+                            case DicomTags.PerformedProcedureStepStartTime:
+                                SetRangeCondition(criteria.PerformedProcedureStepStartTime,
+                                                  data[DicomTags.PerformedProcedureStepStartTime].GetString(0, ""));
+                                break;
+                            case DicomTags.RequestAttributesSequence: // todo
+                                break;
+                            default:
+                                break;
+                        }
+                }
+
+                try
+                {
+                    // Open a second read context, in case other queries are required.
+                    using (IReadContext subRead = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
                     {
-                        case DicomTags.StudyInstanceUid: 
-                            List<ServerEntityKey> list =
-                                LoadStudyKey(read, (string[]) data[DicomTags.StudyInstanceUid].Values);
-                            SetKeyCondition(criteria.StudyKey,list.ToArray());
-                            break;
-                        case DicomTags.SeriesInstanceUid:
-                            SetStringArrayCondition(criteria.SeriesInstanceUid, (string[])data[DicomTags.SeriesInstanceUid].Values);
-                            break;
-                        case DicomTags.Modality:
-                            SetStringCondition(criteria.Modality, data[DicomTags.Modality].GetString(0, ""));
-                            break;
-                        case DicomTags.SeriesNumber:
-                            SetStringCondition(criteria.SeriesNumber, data[DicomTags.SeriesNumber].GetString(0, ""));
-                            break;
-                        case DicomTags.SeriesDescription:
-                            SetStringCondition(criteria.SeriesDescription, data[DicomTags.SeriesDescription].GetString(0, ""));
-                            break;
-                        case DicomTags.PerformedProcedureStepStartDate:
-                            SetRangeCondition(criteria.PerformedProcedureStepStartDate, data[DicomTags.PerformedProcedureStepStartDate].GetString(0, ""));
-                            break;
-                        case DicomTags.PerformedProcedureStepStartTime:
-                            SetRangeCondition(criteria.PerformedProcedureStepStartTime, data[DicomTags.PerformedProcedureStepStartTime].GetString(0, ""));
-                            break;
-                        case DicomTags.RequestAttributesSequence:// todo
-                            break;
-                        default:
-                            break;
+                        selectSeries.Find(criteria, delegate(Series row)
+                                                        {
+                                                            DicomMessage response = new DicomMessage();
+                                                            PopulateSeries(subRead, message, response, tagList, row);
+                                                            server.SendCFindResponse(presentationID, message.MessageId,
+                                                                                     response,
+                                                                                     DicomStatuses.Pending);
+                                                        });
                     }
-            }
+                }
+                catch (Exception e)
+                {
+                    Platform.Log(LogLevel.Error, e, "Unexpected exception when processing FIND request.");
+                    DicomMessage errorResponse = new DicomMessage();
+                    server.SendCFindResponse(presentationID, message.MessageId, errorResponse,
+                                             DicomStatuses.ProcessingFailure);
+                    return true;
+                }
 
-            // Open a second read context, in case other queries are required.
-            IReadContext subRead = PersistentStoreRegistry.GetDefaultStore().OpenReadContext();
+                DicomMessage finalResponse = new DicomMessage();
+                server.SendCFindResponse(presentationID, message.MessageId, finalResponse, DicomStatuses.Success);
 
-            try
-            {
-                find.Find(criteria, delegate(Series row)
-                                        {
-                                            DicomMessage response = new DicomMessage();
-                                            PopulateSeries(subRead, message, response, tagList, row);
-                                            server.SendCFindResponse(presentationID, message.MessageId, response,
-                                                                     DicomStatuses.Pending);
-                                        });
-            }
-            catch (Exception e)
-            {
-                Platform.Log(LogLevel.Error, e, "Unexpected exception when processing FIND request.");
-                DicomMessage errorResponse = new DicomMessage();
-                server.SendCFindResponse(presentationID, message.MessageId, errorResponse,
-                                         DicomStatuses.ProcessingFailure);
-                subRead.Dispose();
-                read.Dispose();
                 return true;
             }
-
-            read.Dispose();
-            subRead.Dispose();
-
-            DicomMessage finalResponse = new DicomMessage();
-            server.SendCFindResponse(presentationID, message.MessageId, finalResponse, DicomStatuses.Success);
-
-            return true;
         }
 
         private bool CompareInstanceMatch(DicomMessage queryMessage, List<uint> matchTagList, InstanceXml instanceStream)

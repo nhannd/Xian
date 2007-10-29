@@ -92,11 +92,12 @@ namespace ClearCanvas.ImageServer.Model
         #region Static Methods
         static public ServerPartition Load(ServerEntityKey key)
         {
-            IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext();
-            ISelectServerPartition broker = read.GetBroker<ISelectServerPartition>();
-            ServerPartition entity = broker.Load(key);
-            read.Dispose();
-            return entity;
+            using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+            {
+                ISelectServerPartition broker = read.GetBroker<ISelectServerPartition>();
+                ServerPartition entity = broker.Load(key);
+                return entity;
+            }
         }
         #endregion
 

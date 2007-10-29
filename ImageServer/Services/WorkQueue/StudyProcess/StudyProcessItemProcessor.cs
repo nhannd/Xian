@@ -53,11 +53,15 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
     /// </summary>
     public class StudyProcessItemProcessor : IWorkQueueItemProcessor
     {
+        #region Private Members
         private IReadContext _readContext;
         private StudyStorageLocation _storageLocation;
         private IList<WorkQueueUid> _uidList;
         private ServerRulesEngine _sopProcessedRulesEngine;
-        
+        private string _processorID;
+        #endregion
+
+        #region Contructors
         public StudyProcessItemProcessor()
         {
             _readContext = PersistentStoreRegistry.GetDefaultStore().OpenReadContext();
@@ -68,8 +72,17 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             if (_readContext != null)
                 _readContext.Dispose();
         }
+        #endregion
 
+        #region Public Properties
+        public string ProcessorID
+        {
+            set { _processorID = value; }
+            get { return _processorID; }
+        }
+        #endregion
 
+        #region Private Methods
         /// <summary>
         /// Load the storage location for the WorkQueue item.
         /// </summary>
@@ -109,17 +122,22 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         }
 
         /// <summary>
-        /// Delete an entry in the WorkQueueUid table.
+        /// Delete an entry in the <see cref="WorkQueueUid"/> table.
         /// </summary>
-        /// <param name="sop">The WorkQueueUid entry to delete.</param>
-        private void DeleteWorkQueueUid(WorkQueueUid sop)
+        /// <param name="sop">The <see cref="WorkQueueUid"/> entry to delete.</param>
+        private static void DeleteWorkQueueUid(WorkQueueUid sop)
         {
-            IDeleteWorkQueueUid delete = _readContext.GetBroker<IDeleteWorkQueueUid>();
+            using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            {
+                IDeleteWorkQueueUid delete = updateContext.GetBroker<IDeleteWorkQueueUid>();
 
-            WorkQueueUidDeleteParameters parms = new WorkQueueUidDeleteParameters();
-            parms.WorkQueueUidKey = sop.GetKey();
+                WorkQueueUidDeleteParameters parms = new WorkQueueUidDeleteParameters();
+                parms.WorkQueueUidKey = sop.GetKey();
 
-            delete.Execute(parms);
+                delete.Execute(parms);
+
+                updateContext.Commit();
+            }
         }
 
         private StudyXml LoadStudyStream(string streamFile)
@@ -142,9 +160,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             return theStream;
         }
 
-
-
-        private void ProcessFile(Model.WorkQueue item, string path, StudyXml stream, string studyStreamFile)
+        private void ProcessFile(string path, StudyXml stream, string studyStreamFile)
         {
             // Use the command processor for rollback capabilities.
             ServerCommandProcessor processor = new ServerCommandProcessor("Processing WorkQueue DICOM File");
@@ -161,7 +177,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                 processor.ExecuteCommand(new InsertStreamCommand(file, stream, studyStreamFile));
 
                 // Insert into the database
-                processor.ExecuteCommand(new InsertInstanceCommand(_readContext,file,_storageLocation));
+                processor.ExecuteCommand(new InsertInstanceCommand(file,_storageLocation));
 
                 ServerActionContext context = new ServerActionContext(file);
                 _sopProcessedRulesEngine.Execute(context);
@@ -173,9 +189,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                 Platform.Log(LogLevel.Error, e, "Unexpected exception when {0}.  Rolling back operation.", processor.Description);
                 processor.Rollback();
                 throw new ApplicationException("Unexpected exception when processing file.",e);
-            }
-
-            
+            }            
         }
 
         private void ProcessUidList(Model.WorkQueue item)
@@ -204,7 +218,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                 path = Path.Combine(path, sop.SopInstanceUid + ".dcm");
                 try
                 {
-                    ProcessFile(item, path,stream, studyStreamPath);
+                    ProcessFile(path,stream, studyStreamPath);
                 }
                 catch (Exception e)
                 {
@@ -218,60 +232,59 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                 DeleteWorkQueueUid(sop);                
             }
 
-            // Update the WorkQueue item status and times.
-            IUpdateWorkQueue update = _readContext.GetBroker<IUpdateWorkQueue>();
-            
-            WorkQueueUpdateParameters parms = new WorkQueueUpdateParameters();
-            parms.WorkQueueKey = item.GetKey();
-            parms.StudyStorageKey = item.StudyStorageKey;
-            parms.ProcessorID = ProcessorID;
-
-            if (successfulProcessCount == 0)
+            using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
-                parms.FailureCount = item.FailureCount + 1;
-                ImageServerServicesWorkQueueSettings settings = ImageServerServicesWorkQueueSettings.Default;
-                if ((item.FailureCount + 1) > settings.WorkQueueMaxFailureCount)
-                {
-                    Platform.Log(LogLevel.Error,"Failing StudyProcess WorkQueue entry ({0}), reached max retry count of {1}",item.GetKey(),item.FailureCount + 1);
-                    parms.StatusEnum = StatusEnum.GetEnum("Failed");
-                    parms.ScheduledTime = Platform.Time;
-                    parms.ExpirationTime = Platform.Time;
+                // Update the WorkQueue item status and times.
+                IUpdateWorkQueue update = updateContext.GetBroker<IUpdateWorkQueue>();
 
+                WorkQueueUpdateParameters parms = new WorkQueueUpdateParameters();
+                parms.WorkQueueKey = item.GetKey();
+                parms.StudyStorageKey = item.StudyStorageKey;
+                parms.ProcessorID = ProcessorID;
+
+                if (successfulProcessCount == 0)
+                {
+                    parms.FailureCount = item.FailureCount + 1;
+                    ImageServerServicesWorkQueueSettings settings = ImageServerServicesWorkQueueSettings.Default;
+                    if ((item.FailureCount + 1) > settings.WorkQueueMaxFailureCount)
+                    {
+                        Platform.Log(LogLevel.Error,
+                                     "Failing StudyProcess WorkQueue entry ({0}), reached max retry count of {1}",
+                                     item.GetKey(), item.FailureCount + 1);
+                        parms.StatusEnum = StatusEnum.GetEnum("Failed");
+                        parms.ScheduledTime = Platform.Time;
+                        parms.ExpirationTime = Platform.Time;
+                    }
+                    else
+                    {
+                        Platform.Log(LogLevel.Error,
+                                     "Resetting StudyProcess WorkQueue entry ({0}) to Pending, current retry count {1}",
+                                     item.GetKey(), item.FailureCount + 1);
+                        parms.StatusEnum = StatusEnum.GetEnum("Pending");
+                        parms.ScheduledTime = Platform.Time.AddMinutes(settings.WorkQueueFailureDelayMinutes);
+                        parms.ExpirationTime =
+                            Platform.Time.AddMinutes(settings.WorkQueueMaxFailureCount*
+                                                     settings.WorkQueueFailureDelayMinutes);
+                    }
                 }
                 else
                 {
-                    Platform.Log(LogLevel.Error, "Resetting StudyProcess WorkQueue entry ({0}) to Pending, current retry count {1}", item.GetKey(), item.FailureCount + 1);
                     parms.StatusEnum = StatusEnum.GetEnum("Pending");
-                    parms.ScheduledTime = Platform.Time.AddMinutes(settings.WorkQueueFailureDelayMinutes);
-                    parms.ExpirationTime = Platform.Time.AddMinutes(settings.WorkQueueMaxFailureCount * settings.WorkQueueFailureDelayMinutes);
+                    parms.FailureCount = item.FailureCount;
+                    parms.ScheduledTime = Platform.Time.AddSeconds(15.0);
+                    parms.ExpirationTime = Platform.Time.AddMinutes(5.0);
                 }
+
+                if (false == update.Execute(parms))
+                {
+                    Platform.Log(LogLevel.Error, "Unable to update StudyProcess WorkQueue GUID Status: {0}",
+                                 item.GetKey().ToString());
+                }
+
+                updateContext.Commit();
             }
-            else
-            {
-                parms.StatusEnum = StatusEnum.GetEnum("Pending");
-                parms.FailureCount = item.FailureCount;
-                parms.ScheduledTime = Platform.Time.AddSeconds(15.0);
-                parms.ExpirationTime = Platform.Time.AddMinutes(5.0);
-            }
-
-            if (false == update.Execute(parms))
-            {
-                Platform.Log(LogLevel.Error, "Unable to update StudyProcess WorkQueue GUID Status: {0}", item.GetKey().ToString()); 
-            }
-        }
-
-        
-
-        #region public members
-
-        private string _processorID;
-        public string ProcessorID
-        {
-            set { _processorID = value; }
-            get { return _processorID; }
         }
         #endregion
-
 
         #region IWorkQueueItemProcessor Members
 
@@ -290,54 +303,54 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             Console.WriteLine("WorkQueue Item is being processed");
 #endif
 
-            // Load the rules engine
-            _sopProcessedRulesEngine = new ServerRulesEngine(ServerRuleApplyTimeEnum.GetEnum("SopProcessed"));
-            _sopProcessedRulesEngine.Load();
-
-            //Load the storage location.
-            LoadStorageLocation(item);
 
             //Load the specific UIDs that need to be processed.
             LoadUids(item);
 
             if (_uidList.Count == 0)
             {
-                IUpdateWorkQueue update = _readContext.GetBroker<IUpdateWorkQueue>();
-                WorkQueueUpdateParameters parms = new WorkQueueUpdateParameters();
-                parms.ProcessorID = ProcessorID;
+                using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+                {
+                    IUpdateWorkQueue update = updateContext.GetBroker<IUpdateWorkQueue>();
+                    WorkQueueUpdateParameters parms = new WorkQueueUpdateParameters();
+                    parms.ProcessorID = ProcessorID;
 
-                if (item.ExpirationTime < Platform.Time)
-                {
-                    parms.StatusEnum = StatusEnum.GetEnum("Completed");
-                    parms.WorkQueueKey = item.GetKey();
-                    parms.StudyStorageKey = item.StudyStorageKey;
-                    parms.FailureCount = item.FailureCount;
-                }
-                else
-                {
-                    parms.StatusEnum = StatusEnum.GetEnum("Pending");
-                    parms.WorkQueueKey = item.GetKey();
-                    parms.StudyStorageKey = item.StudyStorageKey;
-                    parms.ScheduledTime = Platform.Time.AddSeconds(90.0); // 60 second delay to recheck
-                    parms.ExpirationTime = item.ExpirationTime; // Keep the same
-                    parms.FailureCount = item.FailureCount;
-                    
-                }
+                    if (item.ExpirationTime < Platform.Time)
+                    {
+                        parms.StatusEnum = StatusEnum.GetEnum("Completed");
+                        parms.WorkQueueKey = item.GetKey();
+                        parms.StudyStorageKey = item.StudyStorageKey;
+                        parms.FailureCount = item.FailureCount;
+                    }
+                    else
+                    {
+                        parms.StatusEnum = StatusEnum.GetEnum("Pending");
+                        parms.WorkQueueKey = item.GetKey();
+                        parms.StudyStorageKey = item.StudyStorageKey;
+                        parms.ScheduledTime = Platform.Time.AddSeconds(90.0); // 60 second delay to recheck
+                        parms.ExpirationTime = item.ExpirationTime; // Keep the same
+                        parms.FailureCount = item.FailureCount;
+                    }
 
-                if (false == update.Execute(parms))
-                {
-                    Platform.Log(LogLevel.Error, "Unable to update StudyProcess WorkQueue GUID: {0}", item.GetKey().ToString());
+                    if (false == update.Execute(parms))
+                    {
+                        Platform.Log(LogLevel.Error, "Unable to update StudyProcess WorkQueue GUID: {0}",
+                                     item.GetKey().ToString());
+                    }
                 }
             }
             else
+            {
+                // Load the rules engine
+                _sopProcessedRulesEngine = new ServerRulesEngine(ServerRuleApplyTimeEnum.GetEnum("SopProcessed"));
+                _sopProcessedRulesEngine.Load();
+
+                //Load the storage location.
+                LoadStorageLocation(item);
+
                 ProcessUidList(item);
-
-
-            
-            
-
+            }
         }
-
         #endregion
 
         #region IDisposable Members

@@ -79,16 +79,18 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// <param name="studyLocation"></param>
         public void UpdateWorkQueue(DicomMessage message, StudyStorageLocation studyLocation)
         {
-            IReadContext read = _store.OpenReadContext();
-            IInsertWorkQueueStudyProcess insert = read.GetBroker<IInsertWorkQueueStudyProcess>();
-            WorkQueueStudyProcessInsertParameters parms = new WorkQueueStudyProcessInsertParameters();
-            parms.StudyStorageKey = studyLocation.GetKey();
-            parms.SeriesInstanceUid = message.DataSet[DicomTags.SeriesInstanceUid].GetString(0, "");
-            parms.SopInstanceUid = message.DataSet[DicomTags.SopInstanceUid].GetString(0, "");
-            parms.ScheduledTime = Platform.Time;
-            parms.ExpirationTime = Platform.Time.AddMinutes(5.0);
-            insert.Execute(parms);
-            read.Dispose();
+            using (IUpdateContext updateContext = _store.OpenUpdateContext(UpdateContextSyncMode.Flush))
+            {
+                IInsertWorkQueueStudyProcess insert = updateContext.GetBroker<IInsertWorkQueueStudyProcess>();
+                WorkQueueStudyProcessInsertParameters parms = new WorkQueueStudyProcessInsertParameters();
+                parms.StudyStorageKey = studyLocation.GetKey();
+                parms.SeriesInstanceUid = message.DataSet[DicomTags.SeriesInstanceUid].GetString(0, "");
+                parms.SopInstanceUid = message.DataSet[DicomTags.SopInstanceUid].GetString(0, "");
+                parms.ScheduledTime = Platform.Time;
+                parms.ExpirationTime = Platform.Time.AddMinutes(5.0);
+                insert.Execute(parms);
+                updateContext.Commit();
+            }
         }
 
         #endregion

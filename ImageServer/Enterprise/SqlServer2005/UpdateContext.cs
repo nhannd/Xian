@@ -45,15 +45,26 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
     /// </remarks>
     public class UpdateContext : PersistenceContext,IUpdateContext,IDisposable
     {
+        #region Private Members
         private SqlTransaction _transaction;
         private UpdateContextSyncMode _mode;
+        #endregion
 
+        #region Constructors
         internal UpdateContext(SqlConnection connection, ITransactionNotifier transactionNotifier, UpdateContextSyncMode mode)
             : base (connection, transactionNotifier)
         {
             _transaction = connection.BeginTransaction();
             _mode = mode;
         }
+        #endregion
+
+        #region Public Members
+        public SqlTransaction Transaction
+        {
+            get { return _transaction; }
+        }
+        #endregion
 
         #region PersistenceContext Overrides
         public override void Suspend()
@@ -70,6 +81,8 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
         void IUpdateContext.Commit()
         {
             _transaction.Commit();
+            _transaction.Dispose();
+            _transaction = null;
         }
 
         #endregion

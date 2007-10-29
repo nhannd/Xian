@@ -46,14 +46,14 @@ namespace ClearCanvas.ImageServer.Model
         /// </summary>
         static ServerTransferSyntax()
         {
-            IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext();
-            IGetServerTransferSyntaxes broker = read.GetBroker<IGetServerTransferSyntaxes>();
-            IList<ServerTransferSyntax> list = broker.Execute();
-            read.Dispose();
-
-            foreach (ServerTransferSyntax syntax in list)
+            using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
             {
-                _dict.Add(syntax.GetKey(), syntax);
+                IGetServerTransferSyntaxes broker = read.GetBroker<IGetServerTransferSyntaxes>();
+                IList<ServerTransferSyntax> list = broker.Execute();
+                foreach (ServerTransferSyntax syntax in list)
+                {
+                    _dict.Add(syntax.GetKey(), syntax);
+                }
             }
         }
 

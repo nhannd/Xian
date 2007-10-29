@@ -45,14 +45,14 @@ namespace ClearCanvas.ImageServer.Model
         /// </summary>
         static TypeEnum()
         {
-            IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext();
-            IEnumBroker<TypeEnum> broker = read.GetBroker<ITypeEnum>();
-            IList<TypeEnum> list = broker.Execute();
-            read.Dispose();
-
-            foreach (TypeEnum type in list)
+            using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
             {
-                _dict.Add(type.Enum, type);
+                IEnumBroker<TypeEnum> broker = read.GetBroker<ITypeEnum>();
+                IList<TypeEnum> list = broker.Execute();
+                foreach (TypeEnum type in list)
+                {
+                    _dict.Add(type.Enum, type);
+                }
             }
         }
 

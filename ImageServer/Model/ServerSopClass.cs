@@ -46,14 +46,14 @@ namespace ClearCanvas.ImageServer.Model
         /// </summary>
         static ServerSopClass()
         {
-            IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext();
-            IGetServerSopClasses broker = read.GetBroker<IGetServerSopClasses>();
-            IList<ServerSopClass> list = broker.Execute();
-            read.Dispose();
-
-            foreach (ServerSopClass sop in list)
+            using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
             {
-                _dict.Add(sop.GetKey(), sop);
+                IGetServerSopClasses broker = read.GetBroker<IGetServerSopClasses>();
+                IList<ServerSopClass> list = broker.Execute();
+                foreach (ServerSopClass sop in list)
+                {
+                    _dict.Add(sop.GetKey(), sop);
+                }
             }
         }
 
