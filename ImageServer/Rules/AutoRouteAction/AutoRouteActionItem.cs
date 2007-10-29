@@ -34,7 +34,7 @@ using ClearCanvas.Common.Actions;
 
 namespace ClearCanvas.ImageServer.Rules.AutoRouteAction
 {
-    public class AutoRouteActionItem : IActionItem
+    public class AutoRouteActionItem : IActionItem<ServerActionContext>
     {
         private string _failureReason = "Success";
         private readonly string _device;
@@ -44,14 +44,9 @@ namespace ClearCanvas.ImageServer.Rules.AutoRouteAction
             _device = device;
         }
 
-        public bool Execute(object obj, object context)
+        public bool Execute(ServerActionContext context)
         {
-            DicomMessageBase msg = obj as DicomMessageBase;
-            DicomAttributeCollection collection = obj as DicomAttributeCollection;
-            if(collection == null && msg == null)
-                throw new XmlActionCompilerException("Unexpected parameter type");
-            Rule rule = context as Rule;
-
+            
            
             return true;
         }

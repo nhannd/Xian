@@ -175,7 +175,8 @@ namespace ClearCanvas.ImageServer.TestApp
             ServerRulesEngine engine = new ServerRulesEngine(ServerRuleApplyTimeEnum.GetEnum("SopProcessed"));
             engine.Load();
 
-            engine.Execute(dicomFile);
+            ServerActionContext context = new ServerActionContext(dicomFile);
+            engine.Execute(context);
             
         }
     }

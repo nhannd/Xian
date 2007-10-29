@@ -44,7 +44,7 @@ namespace ClearCanvas.ImageServer.Rules
     {
         #region Private Members
         private ISpecification _conditions;
-        private IActionSet _actions;
+        private IActionSet<ServerActionContext> _actions;
         private readonly ServerRule _serverRule;
         #endregion
 
@@ -64,7 +64,7 @@ namespace ClearCanvas.ImageServer.Rules
 
         #region Public Methods
 
-        public void Compile(XmlSpecificationCompiler specCompiler, XmlActionCompiler actionCompiler)
+        public void Compile(XmlSpecificationCompiler specCompiler, XmlActionCompiler<ServerActionContext> actionCompiler)
         {
             XmlNode ruleNode =
                 CollectionUtils.SelectFirst<XmlNode>(_serverRule.RuleXml.ChildNodes,
@@ -87,17 +87,17 @@ namespace ClearCanvas.ImageServer.Rules
             _actions = actionCompiler.Compile(actionNode as XmlElement);
         }
 
-        public void Execute(DicomMessageBase msg, out bool ruleApplied, out bool ruleSuccess)
+        public void Execute(ServerActionContext context, out bool ruleApplied, out bool ruleSuccess)
         {
             ruleApplied = false;
             ruleSuccess = true;
 
-            TestResult result = _conditions.Test(msg);
+            TestResult result = _conditions.Test(context.Message);
             
             if (result.Success)
             {
                 ruleApplied = true;
-                TestResult actionResult = _actions.Execute(msg, this);
+                TestResult actionResult = _actions.Execute(context);
                 if (actionResult.Fail)
                 {
                     foreach (TestResultReason reason in actionResult.Reasons)

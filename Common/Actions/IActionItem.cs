@@ -34,15 +34,14 @@ namespace ClearCanvas.Common.Actions
     /// <summary>
     /// An interface for performing an action.
     /// </summary>
-    public interface IActionItem
+    public interface IActionItem<T>
     {
         /// <summary>
         /// Method called when executing the action.
         /// </summary>
-        /// <param name="obj">The object the action is applied against.</param>
         /// <param name="context">An implementation specific context for the action.</param>
         /// <returns>true on success, false on failure.</returns>
-        bool Execute(object obj, object context);
+        bool Execute(T context);
 
         /// <summary>
         /// A descriptive reason for a failure of the action.  This property is populated when <see cref="IActionItem.Execute"/> returns false.

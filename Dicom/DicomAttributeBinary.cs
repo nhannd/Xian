@@ -329,7 +329,7 @@ namespace ClearCanvas.Dicom
         {
             get
             {
-                if ((Count == 1) && (_values != null) && (_values.Length == 0))
+                if ((_values != null) && (_values.Length == 0))
                     return true;
                 return false;
             }

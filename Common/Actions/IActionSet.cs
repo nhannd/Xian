@@ -36,8 +36,13 @@ namespace ClearCanvas.Common.Actions
     /// <summary>
     /// Interface representing a compiled set of actions returned by <see cref="XmlActionCompiler"/>.
     /// </summary>
-    public interface IActionSet
+    public interface IActionSet<T>
     {
-        TestResult Execute(object obj, object context);
+        /// <summary>
+        /// Execute a set of actions.
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        TestResult Execute(T context);
     }
 }

@@ -39,11 +39,11 @@ namespace ClearCanvas.Common.Actions
 {
     /// <summary>
     /// <see cref="ExtensionPoint"/> for defining types of actions that can be parsed by the 
-    /// <see cref="XmlActionCompiler"/>.
+    /// <see cref="XmlActionCompiler{T}"/>.
     /// </summary>
-    /// <seealso cref="IXmlActionCompilerOperator"/>
+    /// <seealso cref="IXmlActionCompilerOperator{T}"/>
     [ExtensionPoint]
-    public class XmlActionCompilerOperatorExtensionPoint : ExtensionPoint<IXmlActionCompilerOperator>
+    public class XmlActionCompilerOperatorExtensionPoint<T> : ExtensionPoint<IXmlActionCompilerOperator<T>>
     {
     }
 
@@ -52,20 +52,20 @@ namespace ClearCanvas.Common.Actions
     /// </summary>
     /// <remarks>
     /// <para>
-    /// The <see cref="XmlActionCompiler"/> can be used to compile a set of actions to perform
-    /// from XML.  The <see cref="XmlActionCompiler.Compile"/> method can be called to create the
+    /// The <see cref="XmlActionCompiler{T}"/> can be used to compile a set of actions to perform
+    /// from XML.  The <see cref="XmlActionCompiler{T}.Compile"/> method can be called to create the
     /// set of actions to be performed.  These actions can then be executed based on input data.
     /// </para>
     /// <para>
-    /// Actions are defined by the <see cref="XmlActionCompilerOperatorExtensionPoint"/> extension
+    /// Actions are defined by the <see cref="XmlActionCompilerOperatorExtensionPoint{T}"/> extension
     /// point.  The compiler does not contain any predefined actions.  The compiler makes no assumptions
     /// about the attributes of the <see cref="XmlElement"/> for the action.  Any attributes can be defined
     /// for the action are are interpreted by the operation defined for the action type.
     /// </para>
     /// </remarks>
-    public class XmlActionCompiler
+    public class XmlActionCompiler<T>
     {
-        private Dictionary<string, IXmlActionCompilerOperator> _operatorMap = new Dictionary<string, IXmlActionCompilerOperator>();
+        private readonly Dictionary<string, IXmlActionCompilerOperator<T>> _operatorMap = new Dictionary<string, IXmlActionCompilerOperator<T>>();
 
         /// <summary>
         /// Constructor.
@@ -73,8 +73,8 @@ namespace ClearCanvas.Common.Actions
         public XmlActionCompiler()
         {
             // add extension operators
-            XmlActionCompilerOperatorExtensionPoint xp = new XmlActionCompilerOperatorExtensionPoint();
-            foreach (IXmlActionCompilerOperator compilerOperator in xp.CreateExtensions())
+            XmlActionCompilerOperatorExtensionPoint<T> xp = new XmlActionCompilerOperatorExtensionPoint<T>();
+            foreach (IXmlActionCompilerOperator<T> compilerOperator in xp.CreateExtensions())
             {
                 AddOperator(compilerOperator);
             }
@@ -86,22 +86,22 @@ namespace ClearCanvas.Common.Actions
         /// <remarks>
         /// <para>
         /// This method will parse the child <see cref="XmlElement"/>s of <paramref name="containingNode"/>.
-        /// Based on the name of the element, the the compiler will look for an <see cref="XmlActionCompilerOperatorExtensionPoint"/>
+        /// Based on the name of the element, the the compiler will look for an <see cref="XmlActionCompilerOperatorExtensionPoint{T}"/>
         /// extension that handles the element type.  A list is constructed of all actions to perform, and a class implementing the 
-        /// <see cref="IActionSet"/> interface is returned which can be called to exectute the actions based on input data.
+        /// <see cref="IActionSet{T}"/> interface is returned which can be called to exectute the actions based on input data.
         /// </para>
         /// </remarks>
         /// <param name="containingNode">The input XML to perform</param>
-        /// <returns>A class instance that implements the <see cref="IActionSet"/> interface.</returns>
-        public IActionSet Compile(XmlElement containingNode)
+        /// <returns>A class instance that implements the <see cref="IActionSet{T}"/> interface.</returns>
+        public IActionSet<T> Compile(XmlElement containingNode)
         {
-            List<IActionItem> actions = new List<IActionItem>();
+            List<IActionItem<T>> actions = new List<IActionItem<T>>();
             ICollection<XmlNode> nodes = GetChildElements(containingNode);
             foreach(XmlNode node in nodes)
             {
                 if (_operatorMap.ContainsKey(node.Name))
                 {
-                    IXmlActionCompilerOperator op = _operatorMap[node.Name];
+                    IXmlActionCompilerOperator<T> op = _operatorMap[node.Name];
                     actions.Add(op.Compile(node as XmlElement));
                 }
                 else
@@ -109,10 +109,10 @@ namespace ClearCanvas.Common.Actions
                     throw new XmlActionCompilerException(string.Format("Unable to find matching action for {0} node in script.  Unable to perform action.", node.Name));
                 }
             }
-            return new ActionSet(actions);
+            return new ActionSet<T>(actions);
         }
 
-        private void AddOperator(IXmlActionCompilerOperator op)
+        private void AddOperator(IXmlActionCompilerOperator<T> op)
         {
             _operatorMap.Add(op.OperatorTag, op);
         }

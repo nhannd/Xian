@@ -38,24 +38,24 @@ namespace ClearCanvas.Common.Actions
     /// <summary>
     /// Used for executing a set of actions.
     /// </summary>
-    internal class ActionSet : IActionSet
+    internal class ActionSet<T> : IActionSet<T>
     {
-        private readonly IList<IActionItem> _actionList; 
+        private readonly IList<IActionItem<T>> _actionList;
 
-        public ActionSet(IList<IActionItem> list)
+        public ActionSet(IList<IActionItem<T>> list)
         {
             _actionList = list;
         }
 
-        public TestResult Execute(object obj, object context)
+        public TestResult Execute(T context)
         {
             List<TestResultReason> resultList = new List<TestResultReason>();
 
-            foreach (IActionItem item in _actionList)
+            foreach (IActionItem<T> item in _actionList)
             {
                 try
                 {
-                    bool tempResult = item.Execute(obj, context);
+                    bool tempResult = item.Execute(context);
 
                     if (!tempResult)
                         resultList.Add(new TestResultReason(item.FailureReason));

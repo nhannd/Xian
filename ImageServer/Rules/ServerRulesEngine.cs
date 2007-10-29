@@ -82,7 +82,7 @@ namespace ClearCanvas.ImageServer.Rules
             // Create the specification and action compilers
             // We'll compile the rules right away
             XmlSpecificationCompiler specCompiler = new XmlSpecificationCompiler("dicom");
-            XmlActionCompiler actionCompiler = new XmlActionCompiler();
+            XmlActionCompiler<ServerActionContext> actionCompiler = new XmlActionCompiler<ServerActionContext>();
 
             foreach (ServerRule serverRule in list)
             {
@@ -105,11 +105,11 @@ namespace ClearCanvas.ImageServer.Rules
             }
         }
 
-        public void Execute(DicomMessageBase msg)
+        public void Execute(ServerActionContext context)
         {
             foreach (RuleTypeCollection typeCollection in _typeList.Values)
             {
-                typeCollection.Execute(msg);
+                typeCollection.Execute(context);
             }
         }
 

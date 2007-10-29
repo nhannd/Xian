@@ -38,15 +38,15 @@ using ClearCanvas.Common.Actions;
 
 namespace ClearCanvas.ImageServer.Rules.AutoRouteAction
 {
-    [ExtensionOf(typeof(XmlActionCompilerOperatorExtensionPoint))]
-    public class AutoRouteActionOperator : IXmlActionCompilerOperator
+    [ExtensionOf(typeof(XmlActionCompilerOperatorExtensionPoint<ServerActionContext>))]
+    public class AutoRouteActionOperator : IXmlActionCompilerOperator<ServerActionContext>
     {
         public string OperatorTag
         {
             get { return "auto-route"; }
         }
 
-        public IActionItem Compile(XmlElement xmlNode)
+        public IActionItem<ServerActionContext> Compile(XmlElement xmlNode)
         {
             if (xmlNode.Attributes["device"] == null)
                 throw new XmlActionCompilerException("Unexpected missing device attribute for auto-route action");

@@ -83,7 +83,7 @@ namespace ClearCanvas.ImageServer.Rules
                 _ruleList.Add(rule);
         }
 
-        public void Execute(DicomMessageBase msg)
+        public void Execute(ServerActionContext context)
         {
             bool doDefault = true;
 
@@ -92,7 +92,7 @@ namespace ClearCanvas.ImageServer.Rules
                 bool ruleApplied;
                 bool ruleSuccess;
 
-                theRule.Execute(msg, out ruleApplied, out ruleSuccess);
+                theRule.Execute(context, out ruleApplied, out ruleSuccess);
 
                 if (ruleApplied && ruleSuccess)
                     doDefault = false;
@@ -103,7 +103,7 @@ namespace ClearCanvas.ImageServer.Rules
                 bool ruleApplied;
                 bool ruleSuccess;
 
-                DefaultRule.Execute(msg, out ruleApplied, out ruleSuccess);   
+                DefaultRule.Execute(context, out ruleApplied, out ruleSuccess);   
              
                 if (!ruleSuccess)
                 {

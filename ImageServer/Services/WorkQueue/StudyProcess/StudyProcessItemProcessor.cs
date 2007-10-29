@@ -161,7 +161,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                 // Insert into the database
                 processor.ExecuteCommand(new InsertInstanceCommand(_readContext,file,_storageLocation));
 
-                _sopProcessedRulesEngine.Execute(file);
+                ServerActionContext context = new ServerActionContext(file);
+                _sopProcessedRulesEngine.Execute(context);
 
                 Platform.Log(LogLevel.Info, "Processed SOP: {0} for Patient {1}", file.MediaStorageSopInstanceUid, patientsName);
             }
