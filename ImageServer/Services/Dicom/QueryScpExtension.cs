@@ -31,6 +31,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
+
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Network;
@@ -731,8 +733,20 @@ namespace ClearCanvas.DicomServices.ImageServer
                 if (sourceAttrib.Tag.VR.Equals(DicomVr.SQvr))
                     continue; // TODO
 
-                if (!sourceAttrib.Equals(matchAttrib))
-                    return false;
+                if (sourceAttrib.IsNull)
+                    continue;
+
+                string sourceString = sourceAttrib.ToString();
+                if (sourceString.Contains("*") || sourceString.Contains("?"))
+                {
+                    sourceString = sourceString.Replace("*", "[\x21-\x7E]");
+                    sourceString = sourceString.Replace("?", ".");
+                    if (!Regex.IsMatch(matchAttrib.ToString(), sourceString))
+                        return false;                    
+                }
+                else
+                    if (!sourceAttrib.Equals(matchAttrib))
+                        return false;
             }
 
             return true;    
