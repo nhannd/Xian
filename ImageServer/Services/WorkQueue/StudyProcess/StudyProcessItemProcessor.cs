@@ -298,9 +298,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 #if DEBUG
         // Simulate slow processing so that we can stop the service
         // and test that it reset workqueue item when restarted
-            Console.WriteLine("WorkQueue Item has been locked for processing... Press <Ctrl-C> to stop the service now");
+            Console.WriteLine("WorkQueue Item has been locked for processing...");
+            Console.WriteLine("Press <Ctrl-C> to stop the service now\n");
             Thread.Sleep(10000);
-            Console.WriteLine("WorkQueue Item is being processed");
+            Console.WriteLine("WorkQueue Item is being processed...");
 #endif
 
 

@@ -216,19 +216,21 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
             StatusEnum pending = StatusEnum.GetEnum("Pending");
             StatusEnum failed = StatusEnum.GetEnum("Failed");
 
-            using (IReadContext ctx = _store.OpenReadContext())
+            using (IUpdateContext ctx = _store.OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
                 IWorkQueueReset reset = ctx.GetBroker<IWorkQueueReset>();
                 WorkQueueResetParameters parms = new WorkQueueResetParameters();
                 parms.ProcessorID = ProcessorID;
 
-                // reschedule X mins from now
-                parms.RescheduleTime = Platform.Time.AddMinutes(settings.WorkQueueFailureDelayMinutes);
+                // reschedule to start again now
+                parms.RescheduleTime = Platform.Time;
+                // retry will expire X minutes from now (so other process MAY NOT remove them)
                 parms.RetryExpirationTime = Platform.Time.AddMinutes(settings.WorkQueueMaxFailureCount * settings.WorkQueueFailureDelayMinutes);
 
                 // if an entry has been retried more than WorkQueueMaxFailureCount, it should be failed
                 parms.MaxFailureCount = settings.WorkQueueMaxFailureCount;
-                parms.FailedExpirationTime = Platform.Time.AddMinutes(settings.WorkQueueMaxFailureCount * settings.WorkQueueFailureDelayMinutes);
+                // failed item expires now (so other process can remove them if desired)
+                parms.FailedExpirationTime = Platform.Time;
 
                 IList<Model.WorkQueue> modifiedList = reset.Execute(parms);
 
@@ -254,7 +256,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                                             queueItem.FailureCount,
                                             queueItem.ExpirationTime);
                     }                    
-                }                
+                }     
+           
+                ctx.Commit();
             }
         }
 
