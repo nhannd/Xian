@@ -72,11 +72,9 @@ namespace ClearCanvas.Enterprise.Hibernate
 
             // add each assembly to the hibernate configuration
             // this tells NHibernate to look for .hbm.xml embedded resources in these assemblies
-            foreach (PluginInfo plugin in Platform.PluginManager.Plugins)
-            {
-                _cfg.AddAssembly(plugin.Assembly);
-            }
-
+            AssembliesHbmOrderer orderer = new AssembliesHbmOrderer(Platform.PluginManager.Plugins);
+            orderer.AddToConfiguration(_cfg);
+ 
             // if a second-level cache has been specified
             if (_cfg.Properties.Contains("hibernate.cache.provider_class"))
             {
