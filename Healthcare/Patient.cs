@@ -78,7 +78,7 @@ namespace ClearCanvas.Healthcare {
         }
 
         /// <summary>
-        /// Adds a profile to this patient, setting the profile's <see cref="PatientPrrofile.Patient"/> property
+        /// Adds a profile to this patient, setting the profile's <see cref="PatientProfile.Patient"/> property
         /// to refer to this object.  Use this method rather than referring to the <see cref="Patient.Profiles"/>
         /// collection directly.
         /// </summary>
@@ -94,5 +94,24 @@ namespace ClearCanvas.Healthcare {
             profile.Patient = this;
             this.Profiles.Add(profile);
         }
+
+        /// <summary>
+        /// Adds an attachment to this patient, setting the profile's <see cref="PatientAttachment.Patient"/> property
+        /// to refer to this object.  Use this method rather than referring to the <see cref="Patient.Attachments"/>
+        /// collection directly.
+        /// </summary>
+        /// <param name="attachment"></param>
+        public virtual void AddAttachment(PatientAttachment attachment)
+        {
+            if (attachment.Patient != null)
+            {
+                //NB: technically we should remove the attachment from the other patient's collection, but there
+                //seems to be a bug with NHibernate where it deletes the document if we do this
+                //attachment.Patient.Attachments.Remove(attachment);
+            }
+            attachment.Patient = this;
+            this.Attachments.Add(attachment);
+        }
+
 	}
 }

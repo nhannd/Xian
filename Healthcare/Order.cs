@@ -135,6 +135,24 @@ namespace ClearCanvas.Healthcare {
         #region Public operations
 
         /// <summary>
+        /// Adds a document to this order, setting the order's <see cref="OrderAttachment.Order"/> property
+        /// to refer to this object.  Use this method rather than referring to the <see cref="Order.Attachments"/>
+        /// collection directly.
+        /// </summary>
+        /// <param name="attachment"></param>
+        public virtual void AddAttachment(OrderAttachment attachment)
+        {
+            if (attachment.Order != null)
+            {
+                //NB: technically we should remove the attachment from the other order's collection, but there
+                //seems to be a bug with NHibernate where it deletes the document if we do this
+                //attachment.Order.Attachments.Remove(attachment);
+            }
+            attachment.Order = this;
+            this.Attachments.Add(attachment);
+        }
+
+        /// <summary>
         /// Cancels the order.
         /// </summary>
         /// <param name="reason"></param>

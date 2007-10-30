@@ -77,6 +77,10 @@
     <Compile Include="Alert\LanguageAlert.cs" />
     <Compile Include="Alert\NoteAlert.cs" />
     <Compile Include="ExternalPractitioner.cs" />
+    <Compile Include="MimeDocument.cs" />
+    <Compile Include="MimeDocumentData.cs" />
+    <Compile Include="OrderAttachment.cs" />
+    <Compile Include="PatientAttachment.cs" />
     <Compile Include="ReportPartStatus.cs" />
     <Compile Include="ReportStatus.cs" />
     <Compile Include="DiagnosticServiceTreeNode.cs" />
@@ -242,6 +246,8 @@
     <EmbeddedResource Include="PatientTypeEnum.enum.xml" />
     <EmbeddedResource Include="ReligionEnum.enum.xml" />
     <EmbeddedResource Include="SpokenLanguageEnum.enum.xml" />
+    <EmbeddedResource Include="PatientAttachmentCategoryEnum.enum.xml" />
+    <EmbeddedResource Include="OrderAttachmentCategoryEnum.enum.xml" />
     <EmbeddedResource Include="SR.resx">
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>

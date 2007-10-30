@@ -17,6 +17,8 @@
 		<RisApplicationDirectory>$(SolutionDir)..\Application</RisApplicationDirectory>
     <UhnModelDirectory>$(SolutionDir)..\..\Healthcare\Uhn</UhnModelDirectory>
     <UhnApplicationDirectory>$(SolutionDir)..\Application\Uhn</UhnApplicationDirectory>
+    <FaxModelDirectory>$(SolutionDir)..\..\Healthcare\Fax</FaxModelDirectory>
+    <FaxApplicationDirectory>$(SolutionDir)..\Application\Fax</FaxApplicationDirectory>
   </PropertyGroup>
 	
 	<ItemGroup>
@@ -64,6 +66,8 @@
 		<ModelFiles Include="$(ReferencedAssembliesDirectory)\NHapi.*" />
     <ModelFiles Include="$(UhnModelDirectory)\bin\$(Configuration)\ClearCanvas.Healthcare.Uhn.dll" />
     <ModelFiles Include="$(UhnModelDirectory)\Hibernate\bin\$(Configuration)\ClearCanvas.Healthcare.Uhn.Hibernate.dll" />
+    <ModelFiles Include="$(FaxModelDirectory)\bin\$(Configuration)\ClearCanvas.Healthcare.Fax.dll" />
+    <ModelFiles Include="$(FaxModelDirectory)\Hibernate\bin\$(Configuration)\ClearCanvas.Healthcare.Fax.Hibernate.dll" />
   </ItemGroup>
 	
 	<ItemGroup>
@@ -72,6 +76,8 @@
 		<RisFiles Include="$(SolutionDir)bin\$(Configuration)\ClearCanvas.Ris.Server.dll" />
     <RisFiles Include="$(UhnApplicationDirectory)\Common\bin\$(Configuration)\ClearCanvas.Ris.Application.Uhn.Common.dll" />
     <RisFiles Include="$(UhnApplicationDirectory)\Services\bin\$(Configuration)\ClearCanvas.Ris.Application.Uhn.Services.dll" />
+    <RisFiles Include="$(FaxApplicationDirectory)\Common\bin\$(Configuration)\ClearCanvas.Ris.Application.Fax.Common.dll" />
+    <RisFiles Include="$(FaxApplicationDirectory)\Services\bin\$(Configuration)\ClearCanvas.Ris.Application.Fax.Services.dll" />
   </ItemGroup>
 	
 	<Target Name="CopyServerFiles">

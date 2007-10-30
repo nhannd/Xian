@@ -19,7 +19,8 @@
 		<SharedLibraryFiles Include="$(TrunkDirectory)\Enterprise\Common\bin\$(Configuration)\ClearCanvas.Enterprise.Common.dll" />
 		<SharedLibraryFiles Include="$(TrunkDirectory)\Ris\Application\Common\bin\$(Configuration)\ClearCanvas.Ris.Application.Common.dll" />
 		<SharedLibraryFiles Include="$(TrunkDirectory)\Ris\Application\Uhn\Common\bin\$(Configuration)\ClearCanvas.Ris.Application.Uhn.Common.dll" />
-	</ItemGroup>	
+    <SharedLibraryFiles Include="$(TrunkDirectory)\Ris\Application\Fax\Common\bin\$(Configuration)\ClearCanvas.Ris.Application.Fax.Common.dll" />
+  </ItemGroup>	
 	
 	<ItemGroup>
 		<ClientModuleFiles Include="$(SolutionDir)\bin\$(Configuration)\ClearCanvas.Ris.Client.dll" />
@@ -32,7 +33,9 @@
 		<ClientModuleFiles Include="$(SolutionDir)\Reporting\View\WinForms\bin\$(Configuration)\ClearCanvas.Ris.Client.Reporting.View.WinForms.dll" />
 		<ClientModuleFiles Include="$(SolutionDir)\Uhn\bin\$(Configuration)\ClearCanvas.Ris.Client.Uhn.dll" />
 		<ClientModuleFiles Include="$(SolutionDir)\Uhn\View\WinForms\bin\$(Configuration)\ClearCanvas.Ris.Client.Uhn.View.WinForms.dll" />
-	</ItemGroup>
+    <ClientModuleFiles Include="$(SolutionDir)\Fax\bin\$(Configuration)\ClearCanvas.Ris.Client.Fax.dll" />
+    <ClientModuleFiles Include="$(SolutionDir)\Fax\View\WinForms\bin\$(Configuration)\ClearCanvas.Ris.Client.Fax.View.WinForms.dll" />
+  </ItemGroup>
 
   <ItemGroup>
     <JscriptFiles Include="$(JscriptDirectory)\ClearCanvas.Jscript.dll" />

@@ -32,6 +32,11 @@
       <many-to-many column="PractitionerOID_" class="ExternalPractitioner" fetch="join"/>
     </set>
 
+    <set name="Attachments" lazy="true" inverse="true" cascade="all-delete-orphan" access="nosetter.camelcase-underscore">
+      <key column="OrderAttachmentOID_"/>
+      <one-to-many class="OrderAttachment"/>
+    </set>
+
     <!-- Indications.... may need to be a coded-value, not sure yet -->
     <property name="ReasonForStudy" column="ReasonForStudy_" type="String" length="200"/>
     <property name="Priority" column="Priority_" type="ClearCanvas.Healthcare.Hibernate.OrderPriorityEnumHbm, ClearCanvas.Healthcare.Hibernate" not-null="true"/>

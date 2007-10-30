@@ -180,6 +180,12 @@
     <EmbeddedResource Include="Mappings\ReportStatusEnum.hbm.xml" />
     <EmbeddedResource Include="Mappings\ReportPartStatusEnum.hbm.xml" />
     <EmbeddedResource Include="Mappings\RequestedProcedureStatusEnum.hbm.xml" />
+    <EmbeddedResource Include="Mappings\MimeDocument.hbm.xml" />
+    <EmbeddedResource Include="Mappings\MimeDocumentData.hbm.xml" />
+    <EmbeddedResource Include="Mappings\PatientAttachment.hbm.xml" />
+    <EmbeddedResource Include="Mappings\PatientAttachmentCategoryEnum.hbm.xml" />
+    <EmbeddedResource Include="Mappings\OrderAttachment.hbm.xml" />
+    <EmbeddedResource Include="Mappings\OrderAttachmentCategoryEnum.hbm.xml" />
     <Content Include="Mappings\WorklistQueryBase.hrq.xml" />
     <EmbeddedResource Include="Mappings\NoteCategory.hbm.xml" />
     <EmbeddedResource Include="Mappings\NoteSeverityEnum.hbm.xml" />
