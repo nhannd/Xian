@@ -124,7 +124,7 @@ namespace ClearCanvas.Dicom.IO
 
         public long BytesEstimated
         {
-            get { return _bytes + _need; }
+            get { return _bytes; }
         }
 
         public long BytesRead

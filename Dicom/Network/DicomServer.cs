@@ -39,7 +39,7 @@ using System.IO;
 
 namespace ClearCanvas.Dicom.Network
 {
-    public delegate IDicomServerHandler StartAssociation(ServerAssociationParameters assoc);
+    public delegate IDicomServerHandler StartAssociation(DicomServer server, ServerAssociationParameters assoc);
     /// <summary>
     /// Class used by DICOM server applications for network related activites.
     /// </summary>
@@ -312,7 +312,7 @@ namespace ClearCanvas.Dicom.Network
 
             try
             {
-                _handler = info.StartDelegate(association);
+                _handler = info.StartDelegate(this, association);
                 _handler.OnReceiveAssociateRequest(this, association);
             }
             catch (Exception e)
@@ -363,15 +363,6 @@ namespace ClearCanvas.Dicom.Network
             SendReleaseResponse();
         }
 
-        protected override void OnAssociationReleased(AssociationParameters association)
-        {
-            _handler.OnAssociationReleased(this, this._assoc as ServerAssociationParameters);
-        }
-
-        protected override void OnAssociationAborted(AssociationParameters association, DicomAbortReason reason)
-        {
-            _handler.OnAssociationAborted(this, this._assoc as ServerAssociationParameters, reason);
-        }
 
 
         protected override void OnReceiveDimseRequest(byte pcid, DicomMessage msg)

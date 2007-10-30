@@ -220,7 +220,8 @@ namespace ClearCanvas.Dicom.Samples
 
             AddPresentationContexts(_staticAssocParameters);
 
-            DicomServer.StartListening(_staticAssocParameters, delegate(ServerAssociationParameters assoc) 
+            DicomServer.StartListening(_staticAssocParameters,
+                delegate(DicomServer server, ServerAssociationParameters assoc) 
                 {
                     return new StorageScp(assoc);
                 } );
@@ -241,10 +242,7 @@ namespace ClearCanvas.Dicom.Samples
 
         #region IDicomServerHandler Members
 
-        void IDicomServerHandler.OnAssociationAborted(DicomServer server, ServerAssociationParameters association, DicomAbortReason reason)
-        {
-        }
-
+       
         void IDicomServerHandler.OnReceiveAssociateRequest(DicomServer server, ServerAssociationParameters association)
         {
             server.SendAssociateAccept(association);
@@ -313,6 +311,8 @@ namespace ClearCanvas.Dicom.Samples
             server.SendAssociateAbort(DicomAbortSource.ServiceUser, DicomAbortReason.UnrecognizedPDU);
         }
 
+
+
         void IDicomServerHandler.OnReceiveReleaseRequest(DicomServer server, ServerAssociationParameters association)
         {
             DicomLogger.LogInfo("Received association release request from  {0}.", association.CallingAE);
@@ -332,13 +332,7 @@ namespace ClearCanvas.Dicom.Samples
         {
             DicomLogger.LogInfo("Received DIMSE Timeout, continuing listening for messages");
         }
-        void IDicomServerHandler.OnAssociationReleased(DicomServer server, ServerAssociationParameters association)
-        {
-            DicomLogger.LogInfo("Association from {0} to {1} has been released.", association.CallingAE, association.CalledAE);
-
-            // Log Statistics
-            LogAssociationStatistics(association);
-        }
+        
 
         protected void LogAssociationStatistics(ServerAssociationParameters association)
         {

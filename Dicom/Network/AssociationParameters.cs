@@ -214,6 +214,7 @@ namespace ClearCanvas.Dicom.Network
 
         // Performance stuff
         ulong _totalBytesRead = 0;
+        ulong _totalBytesSent = 0;
         int _totalDimseReceived = 0;
         
         #endregion
@@ -273,6 +274,12 @@ namespace ClearCanvas.Dicom.Network
         {
             set { _totalBytesRead = value; }
             get { return _totalBytesRead; }
+        }
+
+        public ulong TotalBytesSent
+        {
+            set { _totalBytesSent = value; }
+            get { return _totalBytesSent; }
         }
         public int TotalDimseReceived
         {
@@ -423,6 +430,10 @@ namespace ClearCanvas.Dicom.Network
         }
 
 		#endregion
+
+        #region Events
+
+        #endregion
 
         #region Internal Properties
         internal SortedList<byte, DicomPresContext> PresentationContexts

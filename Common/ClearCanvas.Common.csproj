@@ -129,7 +129,7 @@
     <Compile Include="Auditing\Auditor.cs" />
     <Compile Include="Auditing\IAuditor.cs" />
     <Compile Include="ITimeProvider.cs" />
-    <Compile Include="Performance\Statistics.cs" />
+    <Compile Include="Statistics\BaseStatistics.cs" />
     <Compile Include="PluginLoadedEventArgs.cs" />
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
@@ -189,6 +189,9 @@
     <Compile Include="Specifications\UndefinedSpecificationException.cs" />
     <Compile Include="Specifications\XmlSpecificationCompiler.cs" />
     <Compile Include="Specifications\XmlSpecificationCompilerException.cs" />
+    <Compile Include="Statistics\BaseStatisticsConverter.cs" />
+    <Compile Include="Statistics\TimeSpanStatistics.cs" />
+    <Compile Include="Statistics\TransmissionStatistics.cs" />
     <Compile Include="Tests\FileProcessorTest.cs" />
     <Compile Include="TypeExtensionFilter.cs" />
     <Compile Include="Platform.cs">
