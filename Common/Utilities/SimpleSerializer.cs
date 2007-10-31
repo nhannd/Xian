@@ -44,11 +44,24 @@ namespace ClearCanvas.Common.Utilities
 	[AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
 	public sealed class SimpleSerializedAttribute : Attribute
 	{
+		private bool _useInvariantCulture;
+	
 		/// <summary>
 		/// Default Constructor.
 		/// </summary>
 		public SimpleSerializedAttribute()
+			: this(false)
 		{
+		}
+
+		public SimpleSerializedAttribute(bool useInvariantCulture)
+		{
+			_useInvariantCulture = useInvariantCulture;
+		}
+
+		public bool UseInvariantCulture
+		{
+			get { return _useInvariantCulture; }
 		}
 	}
 
@@ -96,6 +109,8 @@ namespace ClearCanvas.Common.Utilities
 					if (!property.IsDefined(typeof(SimpleSerializedAttribute), false))
 						continue;
 
+					SimpleSerializedAttribute attribute = (SimpleSerializedAttribute)(property.GetCustomAttributes(typeof (SimpleSerializedAttribute), false)[0]);
+
 					Type propertyType = property.PropertyType;
 					if (sourceValues.ContainsKey(property.Name))
 					{
@@ -103,7 +118,12 @@ namespace ClearCanvas.Common.Utilities
 
 						TypeConverter converter = TypeDescriptor.GetConverter(propertyType);
 						if (converter.CanConvertFrom(typeof(string)))
-							property.SetValue(destinationObject, converter.ConvertFromString(value), null);
+						{
+							if (attribute.UseInvariantCulture)
+								property.SetValue(destinationObject, converter.ConvertFromString(null, System.Globalization.CultureInfo.InvariantCulture, value), null);
+							else 
+								property.SetValue(destinationObject, converter.ConvertFromString(value), null);
+						}
 						else
 							throw new InvalidOperationException(String.Format(SR.ExceptionFormatCannotConvertFromStringToType, propertyType.FullName));
 					}
@@ -136,6 +156,8 @@ namespace ClearCanvas.Common.Utilities
 					if (!property.IsDefined(typeof(SimpleSerializedAttribute), false))
 						continue;
 
+					SimpleSerializedAttribute attribute = (SimpleSerializedAttribute)(property.GetCustomAttributes(typeof(SimpleSerializedAttribute), false)[0]);
+
 					Type propertyType = property.PropertyType;
 					object value = property.GetValue(sourceObject, null);
 
@@ -145,7 +167,12 @@ namespace ClearCanvas.Common.Utilities
 					TypeConverter converter = TypeDescriptor.GetConverter(propertyType);
 					if (converter.CanConvertTo((typeof(string))))
 					{
-						string stringValue = converter.ConvertToString(value);
+						string stringValue = null;
+						if (attribute.UseInvariantCulture)
+							stringValue = converter.ConvertToString(null, System.Globalization.CultureInfo.InvariantCulture, value);
+						else
+							stringValue = converter.ConvertToString(value);
+
 						if (!String.IsNullOrEmpty(stringValue))
 							dictionary[property.Name] = stringValue;
 					}

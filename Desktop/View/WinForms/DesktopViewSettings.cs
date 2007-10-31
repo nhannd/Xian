@@ -65,10 +65,10 @@ namespace ClearCanvas.Desktop.View.WinForms
 				string windowName = element.GetAttribute("name") ?? "";
 
 				TypeConverter converter = TypeDescriptor.GetConverter(typeof (Rectangle));
-				Rectangle windowRegion = (Rectangle)converter.ConvertFromString(element.GetAttribute("region"));
+				Rectangle windowRegion = (Rectangle)converter.ConvertFromString(null, System.Globalization.CultureInfo.InvariantCulture, element.GetAttribute("region"));
 
 				converter = TypeDescriptor.GetConverter(typeof(FormWindowState));
-				FormWindowState windowState = (FormWindowState)converter.ConvertFromString(element.GetAttribute("state"));
+				FormWindowState windowState = (FormWindowState)converter.ConvertFromString(null, System.Globalization.CultureInfo.InvariantCulture, element.GetAttribute("state"));
 
 				return new DesktopWindowState(windowName, windowRegion, windowState);
 			}
@@ -78,10 +78,10 @@ namespace ClearCanvas.Desktop.View.WinForms
 				element.SetAttribute("name", WindowName);
 
 				TypeConverter converter = TypeDescriptor.GetConverter(typeof(Rectangle));
-				element.SetAttribute("region", converter.ConvertToString(WindowRegion));
+				element.SetAttribute("region", converter.ConvertToString(null, System.Globalization.CultureInfo.InvariantCulture, WindowRegion));
 
 				converter = TypeDescriptor.GetConverter(typeof(FormWindowState));
-				element.SetAttribute("state", converter.ConvertToString(WindowState));
+				element.SetAttribute("state", converter.ConvertToString(null, System.Globalization.CultureInfo.InvariantCulture, WindowState));
 			}
 
 			public override bool Equals(object obj)
@@ -120,7 +120,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			public static ScreenConfiguration FromXmlElement(XmlElement element)
 			{
 				TypeConverter converter = TypeDescriptor.GetConverter(typeof(Rectangle));
-				Rectangle region = (Rectangle)converter.ConvertFromString(element.GetAttribute("region"));
+				Rectangle region = (Rectangle)converter.ConvertFromString(null, System.Globalization.CultureInfo.InvariantCulture, element.GetAttribute("region"));
 
 				return new ScreenConfiguration(region);
 			}
@@ -128,7 +128,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			public void UpdateXmlElement(XmlElement element)
 			{
 				TypeConverter converter = TypeDescriptor.GetConverter(typeof(Rectangle));
-				element.SetAttribute("region", converter.ConvertToString(ScreenRegion));
+				element.SetAttribute("region", converter.ConvertToString(null, System.Globalization.CultureInfo.InvariantCulture, ScreenRegion));
 			}
 
 			public static ScreenConfiguration[] Get()
@@ -186,7 +186,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			public static DesktopWindowSetting FromXmlElement(XmlElement element)
 			{
 				TypeConverter converter = TypeDescriptor.GetConverter(typeof (Rectangle));
-				Rectangle virtualScreenRectangle = (Rectangle)converter.ConvertFromString(element.GetAttribute("virtual-screen-rectangle"));
+				Rectangle virtualScreenRectangle = (Rectangle)converter.ConvertFromString(null, System.Globalization.CultureInfo.InvariantCulture, element.GetAttribute("virtual-screen-rectangle"));
 
 				List<ScreenConfiguration> screenConfigurations = new List<ScreenConfiguration>();
 				foreach (XmlElement screenConfigurationElement in element.SelectNodes("screen-configurations/screen-configuration"))
@@ -202,7 +202,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			public void UpdateXmlElement(XmlElement element)
 			{
 				TypeConverter converter = TypeDescriptor.GetConverter(typeof(Rectangle));
-				element.SetAttribute("virtual-screen-rectangle", converter.ConvertToString(VirtualScreenRectangle));
+				element.SetAttribute("virtual-screen-rectangle", converter.ConvertToString(null, System.Globalization.CultureInfo.InvariantCulture, VirtualScreenRectangle));
 
 				XmlElement screenConfigurationsElement = element.OwnerDocument.CreateElement("screen-configurations");
 				element.AppendChild(screenConfigurationsElement);
