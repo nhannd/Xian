@@ -255,7 +255,8 @@ namespace ClearCanvas.Dicom.Network
         /// Method called on a network error.
         /// </summary>
         /// <param name="e">The exception that caused the network error</param>
-        protected override void OnNetworkError(Exception e)
+        /// <param name="closeConnection">Flag telling if the connection should be closed</param>
+        protected override void OnNetworkError(Exception e, bool closeConnection)
         {
             try
             {
@@ -268,7 +269,8 @@ namespace ClearCanvas.Dicom.Network
             }
 
             _closedOnError = true;
-            CloseNetwork();
+            if (closeConnection)
+                CloseNetwork();
         }
 
         /// <summary>

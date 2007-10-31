@@ -29,26 +29,34 @@
 
 #endregion
 
-using System.Xml;
-using ClearCanvas.Common.Actions;
+using ClearCanvas.Common;
+using ClearCanvas.ImageServer.Model;
 
-namespace ClearCanvas.Common.Actions
+namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
 {
     /// <summary>
-    /// Interface for extensions implementing <see cref="XmlActionCompilerOperatorExtensionPoint{T}"/>.
+    /// Plugin for processing 'AutoRoute' WorkQueue items.
     /// </summary>
-    public interface IXmlActionCompilerOperator<T>
+    [ExtensionOf(typeof(WorkQueueFactoryExtensionPoint))]
+    public class AutoRouteFactoryExtension : IWorkQueueProcessorFactory
     {
-        /// <summary>
-        /// The name of the action implemented.  This is typically the name of the <see cref="XmlElement"/> describing the action.
-        /// </summary>
-        string OperatorTag { get; }
+        #region Constructors
+        public AutoRouteFactoryExtension()
+        { }
+        #endregion
 
-        /// <summary>
-        /// Method used to compile the action.  
-        /// </summary>
-        /// <param name="xmlNode">Input <see cref="XmlElement"/> describing the action to perform.</param>
-        /// <returns>A class implementing the <see cref="IActionItem{T}"/> interface which can perform the action.</returns>
-        IActionItem<T> Compile(XmlElement xmlNode);
+        #region IWorkQueueProcessorFactory Members
+
+        public TypeEnum GetWorkQueueType()
+        {
+            return TypeEnum.GetEnum("AutoRoute");
+        }
+
+        public IWorkQueueItemProcessor GetItemProcessor()
+        {
+            return new AutoRouteItemProcessor();
+        }
+
+        #endregion
     }
 }

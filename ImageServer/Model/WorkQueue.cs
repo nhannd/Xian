@@ -50,7 +50,9 @@ namespace ClearCanvas.ImageServer.Model
         #endregion
 
         #region Private Members
+        private ServerEntityKey _serverPartitionKey;
         private ServerEntityKey _studyStorageKey;
+        private ServerEntityKey _deviceKey; 
         private TypeEnum _typeEnum;
         private StatusEnum _statusEnum;
         private DateTime _expirationTime;
@@ -66,6 +68,16 @@ namespace ClearCanvas.ImageServer.Model
         {
             get { return _studyStorageKey; }
             set { _studyStorageKey = value; }
+        }
+        public ServerEntityKey ServerPartitionKey
+        {
+            get { return _serverPartitionKey; }
+            set { _serverPartitionKey = value; }
+        }
+        public ServerEntityKey DeviceKey
+        {
+            get { return _deviceKey; }
+            set { _deviceKey = value; }
         }
         public TypeEnum TypeEnum
         {

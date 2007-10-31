@@ -2,7 +2,12 @@
 INSERT INTO [ImageServer].[dbo].[TypeEnum]
            ([GUID],[TypeEnum],[Lookup],[Description],[LongDescription])
      VALUES
-           (newid(),100,'StudyProcess','StudyProcess','Processing of a new incoming study.');
+           (newid(),100,'StudyProcess','Process Study','Processing of a new incoming study.');
+
+INSERT INTO [ImageServer].[dbo].[TypeEnum]
+           ([GUID],[TypeEnum],[Lookup],[Description],[LongDescription])
+     VALUES
+           (newid(),101,'AutoRoute','Auto Route','DICOM Auto-route request.');
 
 
 -- StatusEnum inserts

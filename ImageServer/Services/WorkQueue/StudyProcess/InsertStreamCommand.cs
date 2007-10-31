@@ -48,8 +48,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         private string _studyStreamPath;
         #endregion
 
+        #region Constructors
         public InsertStreamCommand( DicomFile file, StudyXml stream, string studyStreamPath)
-            : base("Insert Instance into Database")
+            : base("Insert Instance into Database", true)
         {
             Platform.CheckForNullReference(file, "Dicom File object");
             Platform.CheckForNullReference(stream, "StudyStream object");
@@ -58,8 +59,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             _file = file;
             _stream = stream;
             _studyStreamPath = studyStreamPath;
-            
+
         }
+        #endregion
 
         public override void Execute()
         {

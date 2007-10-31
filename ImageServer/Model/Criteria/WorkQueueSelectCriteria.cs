@@ -52,7 +52,6 @@ namespace ClearCanvas.ImageServer.Model.Criteria
                 return (ISearchCondition<ServerEntityKey>)SubCriteria["Key"];
             }
         }
-
         public ISearchCondition<ServerEntityKey> StudyStorageKey
         {
             get
@@ -62,6 +61,28 @@ namespace ClearCanvas.ImageServer.Model.Criteria
                     SubCriteria["StudyStorageKey"] = new SearchCondition<ServerEntityKey>("StudyStorageKey");
                 }
                 return (ISearchCondition<ServerEntityKey>)SubCriteria["StudyStorageKey"];
+            }
+        }
+        public ISearchCondition<ServerEntityKey> ServerPartitionKey
+        {
+            get
+            {
+                if (!SubCriteria.ContainsKey("ServerPartitionKey"))
+                {
+                    SubCriteria["ServerPartitionKey"] = new SearchCondition<ServerEntityKey>("ServerPartitionKey");
+                }
+                return (ISearchCondition<ServerEntityKey>)SubCriteria["ServerPartitionKey"];
+            }
+        }
+        public ISearchCondition<ServerEntityKey> DeviceKey
+        {
+            get
+            {
+                if (!SubCriteria.ContainsKey("DeviceKey"))
+                {
+                    SubCriteria["DeviceKey"] = new SearchCondition<ServerEntityKey>("DeviceKey");
+                }
+                return (ISearchCondition<ServerEntityKey>)SubCriteria["DeviceKey"];
             }
         }
         public ISearchCondition<TypeEnum> TypeEnum

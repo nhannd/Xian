@@ -77,7 +77,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         {
             // Use the command processor for rollback capabilities.
             ServerCommandProcessor processor = new ServerCommandProcessor("Processing NonImage C-STORE-RQ");
-            DicomStatus returnStatus;
+            DicomStatus returnStatus = DicomStatuses.Success;
             try
             {
                 String seriesInstanceUid = message.DataSet[DicomTags.SeriesInstanceUid].GetString(0,"");
@@ -86,47 +86,58 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                 StudyStorageLocation studyLocation = GetStudyStorageLocation(message);
                 if (studyLocation == null)
                 {
+                    returnStatus = DicomStatuses.ResourceLimitation;
                     Platform.Log(LogLevel.Error, "Unable to process image, no writeable storage location: {0}", sopInstanceUid);
                     throw new ApplicationException("No writeable storage location.");
                 }
 
                 String path = studyLocation.FilesystemPath;
-                processor.ExecuteCommand(new CreateDirectoryCommand(path));
+                processor.AddCommand(new CreateDirectoryCommand(path));
 
                 path = Path.Combine(path, studyLocation.PartitionFolder);
-                processor.ExecuteCommand(new CreateDirectoryCommand(path));
+                processor.AddCommand(new CreateDirectoryCommand(path));
 
                 path = Path.Combine(path, studyLocation.StudyFolder);
-                processor.ExecuteCommand(new CreateDirectoryCommand(path));
+                processor.AddCommand(new CreateDirectoryCommand(path));
 
                 path = Path.Combine(path, studyLocation.StudyInstanceUid);
-                processor.ExecuteCommand(new CreateDirectoryCommand(path));
+                processor.AddCommand(new CreateDirectoryCommand(path));
 
                 path = Path.Combine(path, seriesInstanceUid);
-                processor.ExecuteCommand(new CreateDirectoryCommand(path));
+                processor.AddCommand(new CreateDirectoryCommand(path));
 
                 path = Path.Combine(path, sopInstanceUid + ".dcm");
                 if (File.Exists(path))
                 {
+                    returnStatus = DicomStatuses.DuplicateSOPInstance;
                     Platform.Log(LogLevel.Info, "Duplicate SOP Instance received, rejecting {0}", sopInstanceUid);
                     throw new ApplicationException("Duplicate SOP Instance received.");
                 }
 
                 DicomFile file = ConvertToDicomFile(message, path, association);
-                processor.ExecuteCommand(new SaveDicomFileCommand(path, file));
+                processor.AddCommand(new SaveDicomFileCommand(path, file));
 
-                UpdateWorkQueue(message, studyLocation);
+                processor.AddCommand(new UpdateWorkQueueCommand(file, studyLocation));
 
-                Platform.Log(LogLevel.Info, "Received SOP Instance {0} from {1} to {2}", sopInstanceUid, association.CallingAE, association.CalledAE);
-                
-                returnStatus = DicomStatuses.Success;
+                if (processor.Execute())
+                {
+                    Platform.Log(LogLevel.Info, "Received SOP Instance {0} from {1} to {2}", sopInstanceUid,
+                                 association.CallingAE, association.CalledAE);
+                    returnStatus = DicomStatuses.Success;
+                }
+                else
+                {
+                    Platform.Log(LogLevel.Error, "Failure processing message, sending failure status.");
+
+                    returnStatus = DicomStatuses.ProcessingFailure;
+                }
             }
             catch (Exception e)
             {
                 Platform.Log(LogLevel.Error, e, "Unexpected exception when {0}.  Rolling back operation.", processor.Description);
                 processor.Rollback();
-
-                returnStatus =  DicomStatuses.ProcessingFailure;
+                if (returnStatus == DicomStatuses.Success)
+                    returnStatus =  DicomStatuses.ProcessingFailure;
             }
 
             // Send the response message

@@ -55,7 +55,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
     {
         #region Private members
         private readonly List<SupportedSop> _list = new List<SupportedSop>();
-        private StorageScu _theScu;
+        private ImageServerStorageScu _theScu;
         #endregion
 
         #region Contructors
@@ -81,52 +81,15 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 
         #endregion
 
-        /// <summary>
-        /// Load all of the images in a given series directory into a list that can be used by the <see cref="StorageScu"/> component.
-        /// </summary>
-        /// <param name="list"></param>
-        /// <param name="seriesStream"></param>
-        /// <param name="seriesPath"></param>
-        private static void LoadSeriesFromStream(List<StorageInstance> list, string seriesPath, SeriesXml seriesStream)
-        {
-            foreach (InstanceXml instanceStream in seriesStream)
-            {
-                string instancePath = Path.Combine(seriesPath, instanceStream.SopInstanceUid + ".dcm");
-                StorageInstance instance = new StorageInstance(instancePath);
-                list.Add(instance);
-
-                instance.SopClass = instanceStream.SopClass;
-                instance.TransferSyntax = instanceStream.TransferSyntax;
-            }
-        }
-
-        /// <summary>
-        /// Load all of the images in a given directory into a list that can be used by the <see cref="StorageScu"/> component.
-        /// </summary>
-        /// <param name="list"></param>
-        /// <param name="studyStream"></param>
-        /// <param name="studyPath"></param>
-        private static void LoadStudyFromStream(List<StorageInstance> list, string studyPath, StudyXml studyStream)
-        {
-            foreach (SeriesXml seriesStream in studyStream)
-            {
-                string seriesPath = Path.Combine(studyPath, seriesStream.SeriesInstanceUid);
-
-                LoadSeriesFromStream(list, seriesPath, seriesStream);
-            }
-        }
 
         /// <summary>
         /// Create a list of SOP Instances to move based on a Patient level C-MOVE-RQ.
         /// </summary>
         /// <param name="read"></param>
         /// <param name="msg"></param>
-        /// <param name="fileList"></param>
         /// <returns></returns>
-        private bool GetSopListForPatient(IReadContext read, DicomMessage msg, out List<StorageInstance> fileList)
+        private bool GetSopListForPatient(IReadContext read, DicomMessage msg)
         {
-            List<StorageInstance> list = new List<StorageInstance>();
-            fileList = list;
 
             string patientId = msg.DataSet[DicomTags.PatientId].GetString(0, "");
 
@@ -147,10 +110,9 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 
                 StudyXml theStream = LoadStudyStream(location);
 
-                LoadStudyFromStream(list, location.GetStudyPath(), theStream);
+                _theScu.LoadStudyFromStudyXml(location.GetStudyPath(), theStream);
             }
 
-            fileList = list;
             return true;
         }
 
@@ -158,12 +120,9 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// Create a list of DICOM SOP Instances to move based on a Study level C-MOVE-RQ.
         /// </summary>
         /// <param name="msg"></param>
-        /// <param name="fileList"></param>
-        /// <returns></returns>
-        private bool GetSopListForStudy(DicomMessage msg, out List<StorageInstance> fileList)
+       /// <returns></returns>
+        private bool GetSopListForStudy(DicomMessage msg)
         {
-            List<StorageInstance> list = new List<StorageInstance>();
-            fileList = list;
             string[] studyList = (string[]) msg.DataSet[DicomTags.StudyInstanceUid].Values;
 
             // Now get the storage location
@@ -176,10 +135,9 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 
                 StudyXml theStream = LoadStudyStream(location);
 
-                LoadStudyFromStream(list, location.GetStudyPath(), theStream);
+                _theScu.LoadStudyFromStudyXml(location.GetStudyPath(), theStream);
             }
 
-            fileList = list;
             return true;
         }
 
@@ -187,12 +145,9 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// Create a list of DICOM SOP Instances to move based on a Series level C-MOVE-RQ
         /// </summary>
         /// <param name="msg"></param>
-        /// <param name="fileList"></param>
         /// <returns></returns>
-        private bool GetSopListForSeries(DicomMessage msg, out List<StorageInstance> fileList)
+        private bool GetSopListForSeries(DicomMessage msg)
         {
-            List<StorageInstance> list = new List<StorageInstance>();
-            fileList = list;
 
             string studyInstanceUid = msg.DataSet[DicomTags.StudyInstanceUid].GetString(0, "");
             string[] seriesList = (string[])msg.DataSet[DicomTags.SeriesInstanceUid].Values;
@@ -207,10 +162,9 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 
             foreach (string seriesInstanceUid in seriesList)
             {
-                LoadSeriesFromStream(list, Path.Combine(location.GetStudyPath(), seriesInstanceUid), studyStream[seriesInstanceUid]);
+                _theScu.LoadSeriesFromSeriesXml(Path.Combine(location.GetStudyPath(), seriesInstanceUid), studyStream[seriesInstanceUid]);
             }
 
-            fileList = list;
             return true;
         }
 
@@ -218,13 +172,9 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// Create a list of DICOM SOP Instances to move based on an Image level C-MOVE-RQ.
         /// </summary>
         /// <param name="msg"></param>
-        /// <param name="fileList"></param>
         /// <returns></returns>
-        private bool GetSopListForSop(DicomMessage msg, out List<StorageInstance> fileList)
+        private bool GetSopListForSop(DicomMessage msg)
         {
-            List<StorageInstance> list = new List<StorageInstance>();
-            fileList = list;
-
             string studyInstanceUid = msg.DataSet[DicomTags.StudyInstanceUid].GetString(0, "");
             string seriesInstanceUid = msg.DataSet[DicomTags.SeriesInstanceUid].GetString(0, "");
             string[] sopInstanceUidArray = (string[])msg.DataSet[DicomTags.SopInstanceUid].Values;
@@ -240,7 +190,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
             {
                 string path = Path.Combine(location.GetStudyPath(), seriesInstanceUid);
                 path = Path.Combine(path, sopInstanceUid + ".dcm");
-                list.Add(new StorageInstance(path));
+                _theScu.AddStorageInstance(new StorageInstance(path));
             }
 
             return true;
@@ -270,35 +220,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
             return list[0];
         }
 
-        /// <summary>
-        /// Load a list of preferred SOP Classes and Transfer Syntaxes for a Device.
-        /// </summary>
-        /// <param name="read"></param>
-        /// <param name="device"></param>
-        /// <returns></returns>
-        private static IList<SupportedSop> LoadPreferredSyntaxes(IReadContext read, Device device)
-        {
-            IQueryDevicePreferredTransferSyntax select = read.GetBroker<IQueryDevicePreferredTransferSyntax>();
 
-            // Setup the select parameters.
-            DevicePreferredTransferSyntaxQueryParameters selectParms = new DevicePreferredTransferSyntaxQueryParameters();
-            selectParms.DeviceKey = device.GetKey();
-
-            IList<DevicePreferredTransferSyntax> list = select.Execute(selectParms);
-            
-            // Translate the list returned into the database into a list that is supported by the Storage SCU Component
-            List<SupportedSop> sopList = new List<SupportedSop>();
-            foreach (DevicePreferredTransferSyntax preferred in list)
-            {
-                SupportedSop sop = new SupportedSop();
-                sop.SopClass = SopClass.GetSopClass(preferred.GetServerSopClass().SopClassUid);
-                sop.AddSyntax(TransferSyntax.GetTransferSyntax(preferred.GetServerTransferSyntax().Uid));
-
-                sopList.Add(sop);
-            }
-
-            return sopList;
-        }
 
         #region IDicomScp Members
 
@@ -355,28 +277,29 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                     if (device.Dhcp)
                         remoteIp = association.RemoteEndPoint.Address.ToString();
 
-                    // Get the list of preferred SOP Classes & Transfer syntaxes from the database.
-                    IList<SupportedSop> preferredSyntaxList = LoadPreferredSyntaxes(read, device);
+                    // Now setup the StorageSCU component
+                    _theScu = new ImageServerStorageScu(localAe, remoteAe, remoteIp, device.Port,
+                                             association.CallingAE, message.MessageId);
+
 
                     // Now create the list of SOPs to send
-                    List<StorageInstance> fileList;
                     bool bOnline;
 
                     if (level.Equals("PATIENT"))
                     {
-                        bOnline = GetSopListForPatient(read, message, out fileList);
+                        bOnline = GetSopListForPatient(read, message);
                     }
                     else if (level.Equals("STUDY"))
                     {
-                        bOnline = GetSopListForStudy(message, out fileList);
+                        bOnline = GetSopListForStudy(message);
                     }
                     else if (level.Equals("SERIES"))
                     {
-                        bOnline = GetSopListForSeries(message, out fileList);
+                        bOnline = GetSopListForSeries(message);
                     }
                     else if (level.Equals("IMAGE"))
                     {
-                        bOnline = GetSopListForSop(message, out fileList);
+                        bOnline = GetSopListForSop(message);
                     }
                     else
                     {
@@ -396,11 +319,12 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                         server.SendCMoveResponse(presentationID, message.MessageId, new DicomMessage(),
                                                  DicomStatuses.QueryRetrieveUnableToProcess);
                         finalResponseSent = true;
+                        _theScu = null;
                         return true;
                     }
 
                     // No files were eligible for transfer, just send success and return
-                    if (fileList.Count == 0)
+                    if (_theScu.StorageInstanceList.Count == 0)
                     {
                         server.SendCMoveResponse(presentationID, message.MessageId, new DicomMessage(),
                                                  DicomStatuses.Success,
@@ -410,15 +334,8 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                         return true;
                     }
 
-                    // Now setup the StorageSCU component, and do the actual transfer.
-                    _theScu = new StorageScu(localAe, remoteAe, remoteIp, device.Port,
-                                             association.CallingAE, message.MessageId);
-
                     // set the preferred syntax lists
-                    _theScu.SetPreferredSyntaxList(preferredSyntaxList);
-
-                    // set the list of files to transfer
-                    _theScu.AddStorageInstanceList(fileList);
+                    _theScu.LoadPreferredSyntaxes(read, device);
 
                     _theScu.ImageStoreCompleted += delegate(Object sender, StorageInstance instance)
                                                        {
@@ -428,7 +345,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 
                                                            if (scu.RemainingSubOperations == 0)
                                                            {
-                                                               foreach (StorageInstance sop in fileList)
+                                                               foreach (StorageInstance sop in _theScu.StorageInstanceList)
                                                                {
                                                                    if ((sop.SendStatus.Status != DicomState.Success)
                                                                        && (sop.SendStatus.Status != DicomState.Warning))

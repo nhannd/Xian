@@ -47,12 +47,14 @@ namespace ClearCanvas.ImageServer.Common
     {
         #region Private Members
         private string _name;
+        private readonly bool _requiresRollback;
         #endregion
 
         #region Constructor
-        public ServerCommand(string name)
+        public ServerCommand(string name, bool requiresRollback)
         {
             _name = name;
+            _requiresRollback = requiresRollback;
         }
         #endregion
 
@@ -61,6 +63,10 @@ namespace ClearCanvas.ImageServer.Common
         {
             get { return _name; }
             set { _name = value; }
+        }
+        public bool RequiresRollback
+        {
+            get { return _requiresRollback; }
         }
         #endregion
 

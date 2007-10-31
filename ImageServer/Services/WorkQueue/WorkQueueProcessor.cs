@@ -108,26 +108,39 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         /// </remarks>
         protected string ProcessorID
         {
-            get { 
+            get
+            {
 
-                if (_processorID==null)
+                if (_processorID == null)
                 {
                     try
                     {
                         String strHostName = Dns.GetHostName();
-                        
+
                         // Find host by name
                         IPHostEntry iphostentry = Dns.GetHostEntry(strHostName);
 
-                        // Enumerate IP addresses
+                        // Enumerate IP addresses, pick an IPv4 address first
                         foreach (IPAddress ipaddress in iphostentry.AddressList)
                         {
-                            _processorID = ipaddress.ToString();
-                            break;
-                        } 
-                    }catch(Exception e)
+                            if (ipaddress.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+                            {
+                                _processorID = ipaddress.ToString();
+                                break;
+                            }
+                        }
+                        if (_processorID == null)
+                        {
+                            foreach (IPAddress ipaddress in iphostentry.AddressList)
+                            {
+                                _processorID = ipaddress.ToString();
+                                break;
+                            }
+                        }
+                    }
+                    catch (Exception e)
                     {
-                        Platform.Log(LogLevel.Error, "Cannot resolve hostname into IP address");
+                        Platform.Log(LogLevel.Error, e, "Cannot resolve hostname into IP address");
                     }
                 }
 

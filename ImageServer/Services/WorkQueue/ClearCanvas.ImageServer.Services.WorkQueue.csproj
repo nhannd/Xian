@@ -33,6 +33,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AutoRoute\AutoRouteFactoryExtension.cs" />
+    <Compile Include="AutoRoute\AutoRouteItemProcessor.cs" />
+    <Compile Include="BaseItemProcessor.cs" />
     <Compile Include="ImageServerServicesWorkQueueSettings.cs" />
     <Compile Include="ImageServerServicesWorkQueueSettings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -85,6 +88,10 @@
     <ProjectReference Include="..\..\Rules\ClearCanvas.ImageServer.Rules.csproj">
       <Project>{523EDDC1-7C6E-404D-A8ED-5F043F5E6BE3}</Project>
       <Name>ClearCanvas.ImageServer.Rules</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Dicom\ClearCanvas.ImageServer.Services.Dicom.csproj">
+      <Project>{316C730A-492A-4201-87CD-3C2F3260571C}</Project>
+      <Name>ClearCanvas.ImageServer.Services.Dicom</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

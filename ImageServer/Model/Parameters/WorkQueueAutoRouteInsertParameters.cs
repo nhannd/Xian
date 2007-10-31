@@ -29,26 +29,52 @@
 
 #endregion
 
-using System.Xml;
-using ClearCanvas.Common.Actions;
+using System;
+using System.Collections.Generic;
+using System.Text;
+using ClearCanvas.ImageServer.Enterprise;
 
-namespace ClearCanvas.Common.Actions
+namespace ClearCanvas.ImageServer.Model.Parameters
 {
-    /// <summary>
-    /// Interface for extensions implementing <see cref="XmlActionCompilerOperatorExtensionPoint{T}"/>.
-    /// </summary>
-    public interface IXmlActionCompilerOperator<T>
+    public class WorkQueueAutoRouteInsertParameters : ProcedureParameters
     {
-        /// <summary>
-        /// The name of the action implemented.  This is typically the name of the <see cref="XmlElement"/> describing the action.
-        /// </summary>
-        string OperatorTag { get; }
+        public WorkQueueAutoRouteInsertParameters()
+            : base("InsertWorkQueueAutoRoute")
+        { }
 
-        /// <summary>
-        /// Method used to compile the action.  
-        /// </summary>
-        /// <param name="xmlNode">Input <see cref="XmlElement"/> describing the action to perform.</param>
-        /// <returns>A class implementing the <see cref="IActionItem{T}"/> interface which can perform the action.</returns>
-        IActionItem<T> Compile(XmlElement xmlNode);
+        public ServerEntityKey ServerPartitionKey
+        {
+            set { this.SubCriteria["ServerPartitionKey"] = new ProcedureParameter<ServerEntityKey>("ServerPartitionKey", value); }
+        }
+
+        public ServerEntityKey StudyStorageKey
+        {
+            set { this.SubCriteria["StudyStorageKey"] = new ProcedureParameter<ServerEntityKey>("StudyStorageKey", value); }
+        }
+
+        public ServerEntityKey DeviceKey
+        {
+            set { this.SubCriteria["DeviceKey"] = new ProcedureParameter<ServerEntityKey>("DeviceKey", value); }
+        }
+
+        public DateTime ExpirationTime
+        {
+            set { this.SubCriteria["ExpirationTime"] = new ProcedureParameter<DateTime>("ExpirationTime", value); }
+        }
+
+        public DateTime ScheduledTime
+        {
+            set { this.SubCriteria["ScheduledTime"] = new ProcedureParameter<DateTime>("ScheduledTime", value); }
+        }
+
+        public string SeriesInstanceUid
+        {
+            set { this.SubCriteria["SeriesInstanceUid"] = new ProcedureParameter<string>("SeriesInstanceUid", value); }
+        }
+
+        public string SopInstanceUid
+        {
+            set { this.SubCriteria["SopInstanceUid"] = new ProcedureParameter<string>("SopInstanceUid", value); }
+        }
     }
 }

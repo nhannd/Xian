@@ -29,15 +29,9 @@
 
 #endregion
 
-using ClearCanvas.DicomServices;
-using ClearCanvas.Enterprise.Core;
-using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Network;
-using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Model.Brokers;
-using ClearCanvas.ImageServer.Model.Parameters;
-using ClearCanvas.ImageServer.Services.Dicom;
+using ClearCanvas.DicomServices;
 
 namespace ClearCanvas.ImageServer.Services.Dicom
 {
@@ -47,7 +41,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
     /// <remarks>
     /// <para>This class is an abstract base class for ImageServer plugins that process DICOM C-STORE
     /// request messages.  The class implements a number of common methods needed for SCP handlers.
-    /// The class also implements the <see cref="IDicomScp"/> interface.</para>
+    /// The class also implements the <see cref="IDicomScp{TContext}"/> interface.</para>
     /// </remarks>
     public abstract class StorageScp : BaseScp
     {
@@ -70,27 +64,6 @@ namespace ClearCanvas.ImageServer.Services.Dicom
             file.TransferSyntax = TransferSyntax.ExplicitVrLittleEndian;
 
             return file;
-        }
-
-        /// <summary>
-        /// Insert into the WorkQueue table in the database a record for an incoming study to be processed.
-        /// </summary>
-        /// <param name="message"></param>
-        /// <param name="studyLocation"></param>
-        public void UpdateWorkQueue(DicomMessage message, StudyStorageLocation studyLocation)
-        {
-            using (IUpdateContext updateContext = _store.OpenUpdateContext(UpdateContextSyncMode.Flush))
-            {
-                IInsertWorkQueueStudyProcess insert = updateContext.GetBroker<IInsertWorkQueueStudyProcess>();
-                WorkQueueStudyProcessInsertParameters parms = new WorkQueueStudyProcessInsertParameters();
-                parms.StudyStorageKey = studyLocation.GetKey();
-                parms.SeriesInstanceUid = message.DataSet[DicomTags.SeriesInstanceUid].GetString(0, "");
-                parms.SopInstanceUid = message.DataSet[DicomTags.SopInstanceUid].GetString(0, "");
-                parms.ScheduledTime = Platform.Time;
-                parms.ExpirationTime = Platform.Time.AddMinutes(5.0);
-                insert.Execute(parms);
-                updateContext.Commit();
-            }
         }
 
         #endregion

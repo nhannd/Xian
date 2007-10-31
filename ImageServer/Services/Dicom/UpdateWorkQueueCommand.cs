@@ -32,48 +32,53 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using System.IO;
-
 using ClearCanvas.Common;
+using ClearCanvas.Dicom;
+using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Common;
+using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Model.Brokers;
+using ClearCanvas.ImageServer.Model.Parameters;
 
-namespace ClearCanvas.ImageServer.Common
+namespace ClearCanvas.ImageServer.Services.Dicom
 {
-    /// <summary>
-    /// A ServerCommand derived class for creating a directory.
-    /// </summary>
-    public class CreateDirectoryCommand : ServerCommand
+    public class UpdateWorkQueueCommand : ServerCommand
     {
         #region Private Members
-        private string _directory;
-        private bool _created = false;
+        private readonly DicomMessageBase _message;
+        private readonly StudyStorageLocation _storageLocation;
         #endregion
 
-        public CreateDirectoryCommand(string directory)
-            : base("Create Directory", true)
+        public UpdateWorkQueueCommand(DicomMessageBase message, StudyStorageLocation location)
+            : base("Update/Insert a WorkQueue Entry", true)
         {
-            Platform.CheckForNullReference(directory, "Directory name");
+            Platform.CheckForNullReference(message, "Dicom Message object");
+            Platform.CheckForNullReference(location, "Study Storage Location");
 
-            _directory = directory;
+            _message = message;
+            _storageLocation = location;
         }
 
         public override void Execute()
         {
-            if (Directory.Exists(_directory))
+            using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
-                _created = false;
-                return;
-            }
-            DirectoryInfo info = Directory.CreateDirectory(_directory);
-            _created = true;
+                IInsertWorkQueueStudyProcess insert = updateContext.GetBroker<IInsertWorkQueueStudyProcess>();
+                WorkQueueStudyProcessInsertParameters parms = new WorkQueueStudyProcessInsertParameters();
+                parms.StudyStorageKey = _storageLocation.GetKey();
+                parms.ServerPartitionKey = _storageLocation.ServerPartitionKey;
+                parms.SeriesInstanceUid = _message.DataSet[DicomTags.SeriesInstanceUid].GetString(0, "");
+                parms.SopInstanceUid = _message.DataSet[DicomTags.SopInstanceUid].GetString(0, "");
+                parms.ScheduledTime = Platform.Time;
+                parms.ExpirationTime = Platform.Time.AddMinutes(5.0);
+                insert.Execute(parms);
+                updateContext.Commit();
+            }           
         }
 
         public override void Undo()
         {
-            if (_created)
-            {
-                Directory.Delete(_directory);
-                _created = false;
-            }
+
         }
     }
 }

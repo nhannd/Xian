@@ -82,7 +82,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// </summary>
         /// <param name="location"></param>
         /// <returns></returns>
-        public StudyXml LoadStudyStream(StudyStorageLocation location)
+        public static StudyXml LoadStudyStream(StudyStorageLocation location)
         {
             String streamFile = Path.Combine(location.GetStudyPath(), location.StudyInstanceUid + ".xml");
 

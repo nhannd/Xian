@@ -35,6 +35,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Brokers\IInsertWorkQueueAutoRoute.cs" />
     <Compile Include="Brokers\IResetWorkQueueItems.cs" />
     <Compile Include="Brokers\IDeleteWorkQueueUid.cs" />
     <Compile Include="Brokers\IInsertFilesystem.cs" />
@@ -60,6 +61,7 @@
     <Compile Include="Criteria\WorkQueueSelectCriteria.cs" />
     <Compile Include="EnumBrokers\IServerRuleApplyTimeEnum.cs" />
     <Compile Include="EnumBrokers\IServerRuleTypeEnum.cs" />
+    <Compile Include="Parameters\WorkQueueAutoRouteInsertParameters.cs" />
     <Compile Include="Parameters\WorkQueueResetParameters.cs" />
     <Compile Include="Parameters\DeviceUpdateParameters.cs" />
     <Compile Include="Parameters\FilesystemInsertParameters.cs" />

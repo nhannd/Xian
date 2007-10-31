@@ -29,69 +29,66 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
+using System.Text;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
+using ClearCanvas.ImageServer.Model.Criteria;
 using ClearCanvas.ImageServer.Model.Parameters;
+using ClearCanvas.ImageServer.Model.SelectBrokers;
 
-namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
+namespace ClearCanvas.ImageServer.Rules.AutoRouteAction
 {
-    public class InsertInstanceCommand : ServerCommand
+    public class InsertAutoRouteCommand : ServerCommand
     {
         #region Private Members
-
-        private readonly DicomFile _file;
-        private readonly StudyStorageLocation _storageLocation;
+        private readonly ServerActionContext _context;
+        private readonly string _deviceAe;
         #endregion
 
-        public InsertInstanceCommand(DicomFile file, StudyStorageLocation location)
-            : base("Insert Instance into Database", true)
+        public InsertAutoRouteCommand(ServerActionContext context, string device)
+            : base("Update/Insert a WorkQueue Entry", false)
         {
-            Platform.CheckForNullReference(file, "Dicom File object");
-            Platform.CheckForNullReference(location, "Study Storage Location");
+            Platform.CheckForNullReference(context, "ServerActionContext");
 
-            _file = file;
-            _storageLocation = location;
+            _context = context;
+            _deviceAe = device;
         }
 
         public override void Execute()
         {
             using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
-                // Setup the insert parameters
-                InstanceInsertParameters parms = new InstanceInsertParameters();
-                _file.DataSet.LoadDicomFields(parms);
-                parms.ServerPartitionKey = _storageLocation.ServerPartitionKey;
-                parms.StatusEnum = StatusEnum.GetEnum("Online");
+                DeviceSelectCriteria deviceSelectCriteria = new DeviceSelectCriteria();
+                deviceSelectCriteria.AeTitle.EqualTo(_deviceAe);
+                deviceSelectCriteria.ServerPartitionKey.EqualTo(_context.ServerPartitionKey);
 
-                // Get the Insert Instance broker and do the insert
-                IInsertInstance insert = updateContext.GetBroker<IInsertInstance>();
-                IList<InstanceKeys> keys = insert.Execute(parms);
+                ISelectDevice selectDevice = updateContext.GetBroker<ISelectDevice>();
 
-                // If the Request Attributes Sequence is in the dataset, do an insert.
-                if (_file.DataSet.Contains(DicomTags.RequestAttributesSequence))
-                {
-                    DicomAttributeSQ attribute = _file.DataSet[DicomTags.RequestAttributesSequence] as DicomAttributeSQ;
-                    if (!attribute.IsEmpty)
-                    {
-                        foreach (DicomSequenceItem sequenceItem in (DicomSequenceItem[]) attribute.Values)
-                        {
-                            RequestAttributesInsertParameters requestParms = new RequestAttributesInsertParameters();
-                            sequenceItem.LoadDicomFields(requestParms);
-                            requestParms.SeriesKey = keys[0].SeriesKey;
+                Device dev = CollectionUtils.FirstElement<Device>(selectDevice.Find(deviceSelectCriteria));
 
-                            IInsertRequestAttributes insertRequest = updateContext.GetBroker<IInsertRequestAttributes>();
-                            insertRequest.Execute(requestParms);
-                        }
-                    }
-                }
+                WorkQueueAutoRouteInsertParameters parms = new WorkQueueAutoRouteInsertParameters();
+
+                parms.ScheduledTime = Platform.Time.AddSeconds(60);
+                parms.ExpirationTime = Platform.Time.AddMinutes(5);
+                parms.StudyStorageKey = _context.StudyLocationKey;
+                parms.ServerPartitionKey = _context.ServerPartitionKey;
+                parms.DeviceKey = dev.GetKey();
+                parms.SeriesInstanceUid = _context.Message.DataSet[DicomTags.SeriesInstanceUid].GetString(0, "");
+                parms.SopInstanceUid = _context.Message.DataSet[DicomTags.SopInstanceUid].GetString(0, "");
+
+                IInsertWorkQueueAutoRoute broker = updateContext.GetBroker<IInsertWorkQueueAutoRoute>();
+
+                broker.Execute(parms);
 
                 updateContext.Commit();
-            }
+            }           
         }
 
         public override void Undo()

@@ -29,26 +29,19 @@
 
 #endregion
 
-using System.Xml;
-using ClearCanvas.Common.Actions;
+using ClearCanvas.Common;
+using ClearCanvas.ImageServer.Enterprise.SqlServer2005;
+using ClearCanvas.ImageServer.Model.Brokers;
+using ClearCanvas.ImageServer.Model.Parameters;
 
-namespace ClearCanvas.Common.Actions
+namespace ClearCanvas.ImageServer.Model.SqlServer2005.Brokers
 {
-    /// <summary>
-    /// Interface for extensions implementing <see cref="XmlActionCompilerOperatorExtensionPoint{T}"/>.
-    /// </summary>
-    public interface IXmlActionCompilerOperator<T>
+    [ExtensionOf(typeof(BrokerExtensionPoint))]
+    public class InsertWorkQueueAutoRoute : ProcedureUpdateBroker<WorkQueueAutoRouteInsertParameters>, IInsertWorkQueueAutoRoute
     {
-        /// <summary>
-        /// The name of the action implemented.  This is typically the name of the <see cref="XmlElement"/> describing the action.
-        /// </summary>
-        string OperatorTag { get; }
-
-        /// <summary>
-        /// Method used to compile the action.  
-        /// </summary>
-        /// <param name="xmlNode">Input <see cref="XmlElement"/> describing the action to perform.</param>
-        /// <returns>A class implementing the <see cref="IActionItem{T}"/> interface which can perform the action.</returns>
-        IActionItem<T> Compile(XmlElement xmlNode);
+        public InsertWorkQueueAutoRoute()
+            : base("InsertWorkQueueAutoRoute")
+        {
+        }
     }
 }

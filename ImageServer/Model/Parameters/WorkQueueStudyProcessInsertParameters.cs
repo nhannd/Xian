@@ -40,6 +40,11 @@ namespace ClearCanvas.ImageServer.Model.Parameters
             : base("InsertWorkQueueStudyProcess")
         { }
 
+        public ServerEntityKey ServerPartitionKey
+        {
+            set { this.SubCriteria["ServerPartitionKey"] = new ProcedureParameter<ServerEntityKey>("ServerPartitionKey", value); }
+        }
+
         public ServerEntityKey StudyStorageKey
         {
             set { this.SubCriteria["StudyStorageKey"] = new ProcedureParameter<ServerEntityKey>("StudyStorageKey", value); }

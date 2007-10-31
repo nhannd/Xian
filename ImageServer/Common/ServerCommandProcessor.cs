@@ -54,6 +54,8 @@ namespace ClearCanvas.ImageServer.Common
         #region Private Members
         private string _description;
         private Stack<ServerCommand> _stack = new Stack<ServerCommand>();
+        private Queue<ServerCommand> _queue = new Queue<ServerCommand>();
+        private string _failureReason;
         #endregion
 
         #region Constructors
@@ -68,13 +70,48 @@ namespace ClearCanvas.ImageServer.Common
         {
             get { return _description; }
         }
+
+        public string FailureReason
+        {
+            get { return _failureReason; }
+        }
         #endregion
 
         #region Public Methods
-        public void ExecuteCommand(ServerCommand command)
+        public void AddCommand(ServerCommand command)
         {
-            _stack.Push(command);
-            command.Execute();
+            _queue.Enqueue(command);
+        }
+
+        public bool Execute()
+        {
+            while (_queue.Count > 0)
+            {
+                ServerCommand command = _queue.Dequeue();
+
+                _stack.Push(command);
+                try
+                {
+                    command.Execute();
+                } 
+                catch (Exception e)
+                {
+                    if (command.RequiresRollback)
+                    {
+                        _failureReason = e.Message;
+                        Platform.Log(LogLevel.Error, e, "Unexpeceted error when executing command: {0}", Description);
+                        Rollback();
+                        return false;
+                    }
+                    else
+                    {
+                        Platform.Log(LogLevel.Warn, e,
+                                     "Unexpected exception on command {0} that doesn't require rollback", command.Name);
+                        _stack.Pop(); // Pop it off the stack, since it failed.
+                    }
+                }
+            }
+            return true;
         }
 
         public void Rollback()

@@ -30,48 +30,26 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.DicomServices.Xml;
-using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Model.Parameters;
-using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Rules;
-using ClearCanvas.ImageServer.Services.WorkQueue;
-using ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess;
-using System.Threading;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 {
     /// <summary>
     /// Processor for 'StudyProcess' WorkQueue entries.
     /// </summary>
-    public class StudyProcessItemProcessor : IWorkQueueItemProcessor
+    public class StudyProcessItemProcessor : BaseItemProcessor, IWorkQueueItemProcessor
     {
         #region Private Members
-        private IReadContext _readContext;
-        private StudyStorageLocation _storageLocation;
-        private IList<WorkQueueUid> _uidList;
         private ServerRulesEngine _sopProcessedRulesEngine;
         private string _processorID;
-        #endregion
-
-        #region Contructors
-        public StudyProcessItemProcessor()
-        {
-            _readContext = PersistentStoreRegistry.GetDefaultStore().OpenReadContext();
-        }
-
-        ~StudyProcessItemProcessor()
-        {
-            if (_readContext != null)
-                _readContext.Dispose();
-        }
         #endregion
 
         #region Public Properties
@@ -83,62 +61,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         #endregion
 
         #region Private Methods
-        /// <summary>
-        /// Load the storage location for the WorkQueue item.
-        /// </summary>
-        /// <param name="item">The item to load the location for.</param>
-        private void LoadStorageLocation(Model.WorkQueue item)
-        {
-            IQueryStudyStorageLocation select = _readContext.GetBroker<IQueryStudyStorageLocation>();
 
-            StudyStorageLocationQueryParameters parms = new StudyStorageLocationQueryParameters();
-            parms.StudyStorageKey = item.StudyStorageKey;
-
-            IList<StudyStorageLocation> list = select.Execute(parms);
-
-            if (list.Count == 0)
-            {
-                Platform.Log(LogLevel.Error, "Unable to find storage location for WorkQueue item: {0}", item.GetKey().ToString());
-                throw new ApplicationException("Unable to find storage location for WorkQueue item.");
-            }
-
-            _storageLocation = list[0];
-        }
-
-        /// <summary>
-        /// Load the specific SOP Instance Uids in the database for the WorkQueue item.
-        /// </summary>
-        /// <param name="item">The WorkQueue item.</param>
-        private void LoadUids(Model.WorkQueue item)
-        {
-            IQueryWorkQueueUids select = _readContext.GetBroker<IQueryWorkQueueUids>();
-
-            WorkQueueUidQueryParameters parms = new WorkQueueUidQueryParameters();
-
-            parms.WorkQueueKey = item.GetKey();
-
-            _uidList = select.Execute(parms);
-
-        }
-
-        /// <summary>
-        /// Delete an entry in the <see cref="WorkQueueUid"/> table.
-        /// </summary>
-        /// <param name="sop">The <see cref="WorkQueueUid"/> entry to delete.</param>
-        private static void DeleteWorkQueueUid(WorkQueueUid sop)
-        {
-            using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
-            {
-                IDeleteWorkQueueUid delete = updateContext.GetBroker<IDeleteWorkQueueUid>();
-
-                WorkQueueUidDeleteParameters parms = new WorkQueueUidDeleteParameters();
-                parms.WorkQueueUidKey = sop.GetKey();
-
-                delete.Execute(parms);
-
-                updateContext.Commit();
-            }
-        }
 
         private StudyXml LoadStudyStream(string streamFile)
         {
@@ -160,7 +83,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             return theStream;
         }
 
-        private void ProcessFile(string path, StudyXml stream, string studyStreamFile)
+        private void ProcessFile(Model.WorkQueue item, string path, StudyXml stream, string studyStreamFile)
         {
             // Use the command processor for rollback capabilities.
             ServerCommandProcessor processor = new ServerCommandProcessor("Processing WorkQueue DICOM File");
@@ -174,15 +97,22 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                 String patientsName = file.DataSet[DicomTags.PatientsName].GetString(0, "");
 
                 // Update the StudyStream object
-                processor.ExecuteCommand(new InsertStreamCommand(file, stream, studyStreamFile));
+                processor.AddCommand(new InsertStreamCommand(file, stream, studyStreamFile));
 
                 // Insert into the database
-                processor.ExecuteCommand(new InsertInstanceCommand(file,_storageLocation));
+                processor.AddCommand(new InsertInstanceCommand(file,_storageLocation));
 
-                ServerActionContext context = new ServerActionContext(file);
+                ServerActionContext context = new ServerActionContext(file, item.ServerPartitionKey, item.StudyStorageKey);
+                context.CommandProcessor = processor;
+
                 _sopProcessedRulesEngine.Execute(context);
 
-                Platform.Log(LogLevel.Info, "Processed SOP: {0} for Patient {1}", file.MediaStorageSopInstanceUid, patientsName);
+                if (!processor.Execute())
+                {
+                    Platform.Log(LogLevel.Error,"Failure processing command: {0}", processor.Description);
+                }
+                else
+                    Platform.Log(LogLevel.Info, "Processed SOP: {0} for Patient {1}", file.MediaStorageSopInstanceUid, patientsName);
             }
             catch (Exception e)
             {
@@ -218,7 +148,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                 path = Path.Combine(path, sop.SopInstanceUid + ".dcm");
                 try
                 {
-                    ProcessFile(path,stream, studyStreamPath);
+                    ProcessFile(item, path,stream, studyStreamPath);
                 }
                 catch (Exception e)
                 {
@@ -232,57 +162,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                 DeleteWorkQueueUid(sop);                
             }
 
-            using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
-            {
-                // Update the WorkQueue item status and times.
-                IUpdateWorkQueue update = updateContext.GetBroker<IUpdateWorkQueue>();
+            if (successfulProcessCount == 0)
+                SetWorkQueueItemPending(item, true); // set failure status if retries expired
+            else
+                SetWorkQueueItemPending(item, false); // set success status
 
-                WorkQueueUpdateParameters parms = new WorkQueueUpdateParameters();
-                parms.WorkQueueKey = item.GetKey();
-                parms.StudyStorageKey = item.StudyStorageKey;
-                parms.ProcessorID = ProcessorID;
-
-                if (successfulProcessCount == 0)
-                {
-                    parms.FailureCount = item.FailureCount + 1;
-                    ImageServerServicesWorkQueueSettings settings = ImageServerServicesWorkQueueSettings.Default;
-                    if ((item.FailureCount + 1) > settings.WorkQueueMaxFailureCount)
-                    {
-                        Platform.Log(LogLevel.Error,
-                                     "Failing StudyProcess WorkQueue entry ({0}), reached max retry count of {1}",
-                                     item.GetKey(), item.FailureCount + 1);
-                        parms.StatusEnum = StatusEnum.GetEnum("Failed");
-                        parms.ScheduledTime = Platform.Time;
-                        parms.ExpirationTime = Platform.Time;
-                    }
-                    else
-                    {
-                        Platform.Log(LogLevel.Error,
-                                     "Resetting StudyProcess WorkQueue entry ({0}) to Pending, current retry count {1}",
-                                     item.GetKey(), item.FailureCount + 1);
-                        parms.StatusEnum = StatusEnum.GetEnum("Pending");
-                        parms.ScheduledTime = Platform.Time.AddMinutes(settings.WorkQueueFailureDelayMinutes);
-                        parms.ExpirationTime =
-                            Platform.Time.AddMinutes(settings.WorkQueueMaxFailureCount*
-                                                     settings.WorkQueueFailureDelayMinutes);
-                    }
-                }
-                else
-                {
-                    parms.StatusEnum = StatusEnum.GetEnum("Pending");
-                    parms.FailureCount = item.FailureCount;
-                    parms.ScheduledTime = Platform.Time.AddSeconds(15.0);
-                    parms.ExpirationTime = Platform.Time.AddMinutes(5.0);
-                }
-
-                if (false == update.Execute(parms))
-                {
-                    Platform.Log(LogLevel.Error, "Unable to update StudyProcess WorkQueue GUID Status: {0}",
-                                 item.GetKey().ToString());
-                }
-
-                updateContext.Commit();
-            }
         }
         #endregion
 
@@ -304,41 +188,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             Console.WriteLine("WorkQueue Item is being processed...");
 #endif
 
-
             //Load the specific UIDs that need to be processed.
             LoadUids(item);
 
             if (_uidList.Count == 0)
             {
-                using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
-                {
-                    IUpdateWorkQueue update = updateContext.GetBroker<IUpdateWorkQueue>();
-                    WorkQueueUpdateParameters parms = new WorkQueueUpdateParameters();
-                    parms.ProcessorID = ProcessorID;
-
-                    if (item.ExpirationTime < Platform.Time)
-                    {
-                        parms.StatusEnum = StatusEnum.GetEnum("Completed");
-                        parms.WorkQueueKey = item.GetKey();
-                        parms.StudyStorageKey = item.StudyStorageKey;
-                        parms.FailureCount = item.FailureCount;
-                    }
-                    else
-                    {
-                        parms.StatusEnum = StatusEnum.GetEnum("Pending");
-                        parms.WorkQueueKey = item.GetKey();
-                        parms.StudyStorageKey = item.StudyStorageKey;
-                        parms.ScheduledTime = Platform.Time.AddSeconds(90.0); // 60 second delay to recheck
-                        parms.ExpirationTime = item.ExpirationTime; // Keep the same
-                        parms.FailureCount = item.FailureCount;
-                    }
-
-                    if (false == update.Execute(parms))
-                    {
-                        Platform.Log(LogLevel.Error, "Unable to update StudyProcess WorkQueue GUID: {0}",
-                                     item.GetKey().ToString());
-                    }
-                }
+                SetWorkQueueItemComplete(item);
             }
             else
             {
@@ -354,16 +209,5 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         }
         #endregion
 
-        #region IDisposable Members
-        public void Dispose()
-        {
-            if (_readContext != null)
-            {
-                _readContext.Dispose();
-                _readContext = null;
-            }
-
-        }
-        #endregion
     }
 }

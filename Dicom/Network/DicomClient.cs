@@ -309,7 +309,8 @@ namespace ClearCanvas.Dicom.Network
             return false;
 		}
 
-		protected override void OnNetworkError(Exception e) {
+        protected override void OnNetworkError(Exception e, bool closeConnection)
+        {
             try
             {
                 _handler.OnNetworkError(this, _assoc as ClientAssociationParameters, e);
@@ -320,7 +321,8 @@ namespace ClearCanvas.Dicom.Network
             }
 
 			_closedOnError = true;
-			CloseNetwork();
+            if (closeConnection)
+                CloseNetwork();
 		}
 
 		protected override void OnDimseTimeout() {

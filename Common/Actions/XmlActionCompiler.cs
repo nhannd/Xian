@@ -38,7 +38,7 @@ using ClearCanvas.Common.Utilities;
 namespace ClearCanvas.Common.Actions
 {
     /// <summary>
-    /// <see cref="ExtensionPoint"/> for defining types of actions that can be parsed by the 
+    /// Defines an extension point for types of actions that can be parsed by the 
     /// <see cref="XmlActionCompiler{T}"/>.
     /// </summary>
     /// <seealso cref="IXmlActionCompilerOperator{T}"/>

@@ -47,7 +47,7 @@ namespace ClearCanvas.ImageServer.Common
         #endregion
 
         public SaveDicomFileCommand(string path, DicomFile file )
-            : base("Save DICOM Message")
+            : base("Save DICOM Message", true)
         {
             Platform.CheckForNullReference(path, "File name");
             Platform.CheckForNullReference(file, "Dicom File object");

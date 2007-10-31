@@ -29,31 +29,61 @@
 
 #endregion
 
-using ClearCanvas.Dicom;
+using System;
+using ClearCanvas.Common;
 using ClearCanvas.Common.Actions;
 
 namespace ClearCanvas.ImageServer.Rules.AutoRouteAction
 {
+    /// <summary>
+    /// Class for implementing auto-route action as specified by <see cref="IActionItem{ServerActionContext}"/>
+    /// </summary>
     public class AutoRouteActionItem : IActionItem<ServerActionContext>
     {
+
+        #region Private Members
         private string _failureReason = "Success";
         private readonly string _device;
+        #endregion
 
+        #region Constructors
         public AutoRouteActionItem(string device)
         {
             _device = device;
         }
+        #endregion
 
-        public bool Execute(ServerActionContext context)
-        {
-            
-           
-            return true;
-        }
-
+        #region Public Properties
         public string FailureReason
         {
             get { return _failureReason; }
         }
+        #endregion
+
+        #region Public Methods
+        public bool Execute(ServerActionContext context)
+        {
+            InsertAutoRouteCommand command = new InsertAutoRouteCommand(context, _device);
+
+            if (context.CommandProcessor != null)
+                context.CommandProcessor.AddCommand(command);
+            else
+            {
+                try
+                {
+                    command.Execute();
+                }
+                catch (Exception e)
+                {
+                    Platform.Log(LogLevel.Error, e, "Unexpected exception when inserting auto-route request");
+                    _failureReason = e.Message;
+                    return false;
+                }
+            }
+           
+            return true;
+        }
+
+        #endregion
     }
 }

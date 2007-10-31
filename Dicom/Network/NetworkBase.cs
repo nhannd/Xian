@@ -239,31 +239,40 @@ namespace ClearCanvas.Dicom.Network
             switch (_state)
             {
                 case DicomAssociationState.Sta2_TransportConnectionOpen:
+                    OnNetworkError(e, true);
                     break;
                 case DicomAssociationState.Sta3_AwaitingLocalAAssociationResponsePrimative:
+                    OnNetworkError(e, true);
                     break;
                 case DicomAssociationState.Sta4_AwaitingTransportConnectionOpeningToComplete:
+                    OnNetworkError(e, true);
                     break;
                 case DicomAssociationState.Sta5_AwaitingAAssociationACOrReject:
+                    OnNetworkError(e, true);
                     break;
                 case DicomAssociationState.Sta6_AssociationEstablished:
                     DicomLogger.LogError("Aborting association from {0} to {1}", _assoc.CallingAE, _assoc.CalledAE);
                     SendAssociateAbort(DicomAbortSource.ServiceProvider, DicomAbortReason.NotSpecified);
+                    OnNetworkError(e, false);
                     break;
                 case DicomAssociationState.Sta7_AwaitingAReleaseRP:
+                    OnNetworkError(e, true);
                     break;
                 case DicomAssociationState.Sta8_AwaitingAReleaseRPLocalUser:
+                    OnNetworkError(e, true);
                     break;
                 default:
+                    OnNetworkError(e, true);
                     break;
             }
+            
         }
 
         /// <summary>
         /// Callback called on a network error.
         /// </summary>
         /// <param name="e"></param>
-        protected virtual void OnNetworkError(Exception e)
+        protected virtual void OnNetworkError(Exception e, bool closeConnection)
         {            
         }
 
@@ -1022,7 +1031,7 @@ namespace ClearCanvas.Dicom.Network
             }
             catch (Exception e)
             {
-                OnNetworkError(e);
+                OnNetworkError(e, true);
 
                 if (NetworkError!=null)
                     NetworkError(e);
@@ -1156,7 +1165,7 @@ namespace ClearCanvas.Dicom.Network
             }
             catch (Exception e)
             {
-                OnNetworkError(e);
+                OnNetworkError(e, true);
 
                 if (NetworkError != null)
                     NetworkError(e);
@@ -1389,7 +1398,7 @@ namespace ClearCanvas.Dicom.Network
             }
             catch (Exception e)
             {
-                OnNetworkError(e);
+                OnNetworkError(e, true);
 
                 // TODO
                 // Should we throw another exception here?  Should the user know there's an error?  They'll get
