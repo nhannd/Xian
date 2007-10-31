@@ -271,7 +271,7 @@ namespace ClearCanvas.Dicom
 				{
 					String temp = this[DicomTags.NumberOfStudyRelatedInstances];
                     uint output;
-                    if (uint.TryParse(temp, out output))
+                    if (uint.TryParse(temp, System.Globalization.NumberStyles.Integer, System.Globalization.CultureInfo.InvariantCulture, out output))
                         return output;
 				}
 
@@ -290,7 +290,7 @@ namespace ClearCanvas.Dicom
 				{
 					String temp = this[DicomTags.NumberOfSeriesRelatedInstances];
                     uint output;
-                    if (uint.TryParse(temp, out output))
+					if (uint.TryParse(temp, System.Globalization.NumberStyles.Integer, System.Globalization.CultureInfo.InvariantCulture, out output))
                         return output;
 				}
 

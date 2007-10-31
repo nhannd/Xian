@@ -338,7 +338,7 @@ namespace ClearCanvas.ImageViewer.Annotations
 				if (!String.IsNullOrEmpty(numberOfLines))
 				{
 					byte result;
-					if (!byte.TryParse(numberOfLines, out result))
+					if (!byte.TryParse(numberOfLines, System.Globalization.NumberStyles.Integer, System.Globalization.CultureInfo.InvariantCulture, out result))
 						result = 1;
 
 					boxSettings.NumberOfLines = result;
@@ -392,13 +392,13 @@ namespace ClearCanvas.ImageViewer.Annotations
 					return false;
 
 				float left, right, top, bottom;
-				if (!float.TryParse(rectangleComponents[0], out left))
+				if (!float.TryParse(rectangleComponents[0], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out left))
 					return false;
-				if (!float.TryParse(rectangleComponents[1], out top))
+				if (!float.TryParse(rectangleComponents[1], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out top))
 					return false;
-				if (!float.TryParse(rectangleComponents[2], out right))
+				if (!float.TryParse(rectangleComponents[2], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out right))
 					return false;
-				if (!float.TryParse(rectangleComponents[3], out bottom))
+				if (!float.TryParse(rectangleComponents[3], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out bottom))
 					return false;
 
 				if (left >= right)
@@ -508,7 +508,7 @@ namespace ClearCanvas.ImageViewer.Annotations
 				if (annotationBox.Color != defaultSettings.Color)
 					boxSettingsNode.SetAttribute("color", annotationBox.Color);
 				if (annotationBox.NumberOfLines != defaultSettings.NumberOfLines)
-					boxSettingsNode.SetAttribute("number-of-lines", annotationBox.NumberOfLines.ToString());
+					boxSettingsNode.SetAttribute("number-of-lines", annotationBox.NumberOfLines.ToString(System.Globalization.CultureInfo.InvariantCulture));
 				if (annotationBox.Truncation != defaultSettings.Truncation)
 					boxSettingsNode.SetAttribute("truncation", annotationBox.Truncation.ToString());
 				if (annotationBox.Justification != defaultSettings.Justification)

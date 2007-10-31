@@ -81,10 +81,10 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 				{
 					StoredLayoutConfiguration newConfiguration = ConstructDefaultConfiguration(layoutConfigurationNode.GetAttribute("modality"));
 
-					newConfiguration.ImageBoxRows = Convert.ToInt32(layoutConfigurationNode.GetAttribute("image-box-rows"));
-					newConfiguration.ImageBoxColumns = Convert.ToInt32(layoutConfigurationNode.GetAttribute("image-box-columns"));
-					newConfiguration.TileRows = Convert.ToInt32(layoutConfigurationNode.GetAttribute("tile-rows"));
-					newConfiguration.TileColumns = Convert.ToInt32(layoutConfigurationNode.GetAttribute("tile-columns"));
+					newConfiguration.ImageBoxRows = Convert.ToInt32(layoutConfigurationNode.GetAttribute("image-box-rows"), System.Globalization.CultureInfo.InvariantCulture);
+					newConfiguration.ImageBoxColumns = Convert.ToInt32(layoutConfigurationNode.GetAttribute("image-box-columns"), System.Globalization.CultureInfo.InvariantCulture);
+					newConfiguration.TileRows = Convert.ToInt32(layoutConfigurationNode.GetAttribute("tile-rows"), System.Globalization.CultureInfo.InvariantCulture);
+					newConfiguration.TileColumns = Convert.ToInt32(layoutConfigurationNode.GetAttribute("tile-columns"), System.Globalization.CultureInfo.InvariantCulture);
 
 					//push the default to the end.
 					if (newConfiguration.IsDefault)
@@ -118,10 +118,10 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 						XmlElement newLayoutConfigurationNode = document.CreateElement("layout");
 						
 						newLayoutConfigurationNode.SetAttribute("modality", configuration.Modality);
-						newLayoutConfigurationNode.SetAttribute("image-box-rows", configuration.ImageBoxRows.ToString());
-						newLayoutConfigurationNode.SetAttribute("image-box-columns", configuration.ImageBoxColumns.ToString());
-						newLayoutConfigurationNode.SetAttribute("tile-rows", configuration.TileRows.ToString());
-						newLayoutConfigurationNode.SetAttribute("tile-columns", configuration.TileColumns.ToString());
+						newLayoutConfigurationNode.SetAttribute("image-box-rows", configuration.ImageBoxRows.ToString(System.Globalization.CultureInfo.InvariantCulture));
+						newLayoutConfigurationNode.SetAttribute("image-box-columns", configuration.ImageBoxColumns.ToString(System.Globalization.CultureInfo.InvariantCulture));
+						newLayoutConfigurationNode.SetAttribute("tile-rows", configuration.TileRows.ToString(System.Globalization.CultureInfo.InvariantCulture));
+						newLayoutConfigurationNode.SetAttribute("tile-columns", configuration.TileColumns.ToString(System.Globalization.CultureInfo.InvariantCulture));
 
 						layoutConfigurationsNode.AppendChild(newLayoutConfigurationNode);
 					}

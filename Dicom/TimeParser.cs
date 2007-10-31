@@ -30,9 +30,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Globalization;
 
 namespace ClearCanvas.Dicom
 {
@@ -80,101 +77,13 @@ namespace ClearCanvas.Dicom
 			// They are considered valid DICOM date/time.
             if (timeString!=null)
                     timeString = timeString.Trim();
-#if MONO
-			try
-			{
-				time = DateTime.ParseExact(timeString, _timeFormats, new CultureInfo(""), DateTimeStyles.None);
-				time = new DateTime(time.TimeOfDay.Ticks);
-				return true;
-			}
-			catch
-			{
-				time = new DateTime();
-				return false;
-			}
-#else
-			if (!DateTime.TryParseExact(timeString, _timeFormats, new CultureInfo(""), DateTimeStyles.None, out time))
+
+				if (!DateTime.TryParseExact(timeString, _timeFormats, System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out time))
 				return false;
 
 			//exclude the date.
 			time = new DateTime(time.TimeOfDay.Ticks);
 			return true;
-#endif
 		}
-
-		//*** This code also works, but the TryParseExact function works just fine.
-
-		//public static DateTime Parse(string dicomString, out bool success)
-		//{
-		//    success = false;
-
-		//    int hour, minute, second;
-		//    double fraction;
-		//    if (!Parse(dicomString, out hour, out minute, out second, out fraction))
-		//        return new DateTime();
-
-		//    success = true; 
-		//    DateTime time = new DateTime(1, 1, 1, hour, minute, second);
-		//    fraction *= 10000000; //ticks are in 100 nano-second units (100 * 1e-9 = 1e-7)
-		//    time = time.AddTicks((long)fraction);
-
-		//    return time;
-		//}
-		
-		//public static bool Parse(string timeString, out int hour, out int minute, out int second, out double fraction)
-		//{
-		//    hour = 0;
-		//    minute = 0;
-		//    second = 0;
-		//    fraction = 0;
-
-		//    int stringLength = timeString.Length; 
-			
-		//    if (stringLength >= 2)
-		//    {
-		//        if (!Int32.TryParse(timeString.Substring(0, 2), out hour))
-		//            return false;
-
-		//        if (stringLength >= 4)
-		//        {
-		//            if (!Int32.TryParse(timeString.Substring(2, 2), out minute))
-		//                return false;
-
-		//            if (stringLength >= 6)
-		//            {
-		//                if (!Int32.TryParse(timeString.Substring(4, 2), out second))
-		//                    return false;
-
-		//                if (stringLength >= 8)
-		//                {
-		//                    if (!double.TryParse(timeString.Substring(6), out fraction))
-		//                        return false;
-		//                }
-		//            }
-		//        }
-
-		//        if (ValidateTime(hour, minute, second, fraction))
-		//            return true;
-		//    }
-
-		//    return false;
-		//}
-
-		//public static bool ValidateTime(int hour, int minute, int second, double fraction)
-		//{
-		//    if (hour < 0 || hour > 23)
-		//        return false;
-
-		//    if (minute < 0 || minute > 59)
-		//        return false;
-
-		//    if (second < 0 || second > 59)
-		//        return false;
-
-		//    if (fraction < 0 || fraction > 0.999999)
-		//        return false;
-
-		//    return true;
-		//}
 	}
 }

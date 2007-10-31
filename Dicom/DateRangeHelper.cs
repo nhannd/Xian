@@ -71,19 +71,20 @@ namespace ClearCanvas.Dicom
 			}
 			else if (fromDate == toDate)
 			{
-				return ((DateTime)fromDate).ToString("yyyyMMdd");
+				return ((DateTime)fromDate).ToString("yyyyMMdd", System.Globalization.CultureInfo.InvariantCulture);
 			}
 			else if (null != fromDate && null == toDate)
 			{
-				return ((DateTime)fromDate).ToString("yyyyMMdd-");
+				return ((DateTime)fromDate).ToString("yyyyMMdd-", System.Globalization.CultureInfo.InvariantCulture);
 			}
 			else if (null != fromDate && null != toDate)
 			{
-				return ((DateTime)fromDate).ToString("yyyyMMdd-") + ((DateTime)toDate).ToString("yyyyMMdd");
+				return ((DateTime)fromDate).ToString("yyyyMMdd-", System.Globalization.CultureInfo.InvariantCulture)
+					+ ((DateTime)toDate).ToString("yyyyMMdd", System.Globalization.CultureInfo.InvariantCulture);
 			}
 			else if (null == fromDate && null != toDate)
 			{
-				return ((DateTime)toDate).ToString("-yyyyMMdd");
+				return ((DateTime)toDate).ToString("-yyyyMMdd", System.Globalization.CultureInfo.InvariantCulture);
 			}
 
 			return "";
@@ -187,7 +188,7 @@ namespace ClearCanvas.Dicom
 			else
 			{
 				//the string is guaranteed to be formatted like "yyyyMMdd", so this is safe.
-				fromDate = Convert.ToInt32(fromDateString);
+				fromDate = Convert.ToInt32(fromDateString, System.Globalization.CultureInfo.InvariantCulture);
 			}
 
 			if (toDateString == "")
@@ -197,7 +198,7 @@ namespace ClearCanvas.Dicom
 			else
 			{
 				//the string is guaranteed to be formatted like "yyyyMMdd", so this is safe.
-				toDate = Convert.ToInt32(toDateString);
+				toDate = Convert.ToInt32(toDateString, System.Globalization.CultureInfo.InvariantCulture);
 			}
 		}
 
@@ -216,8 +217,8 @@ namespace ClearCanvas.Dicom
 			DateTime? from, to;
 			Parse(dateRange, out from, out to, out isRange);
 
-			fromDate = (from != null) ? ((DateTime)from).ToString(DateParser.DicomDateFormat) : "";
-			toDate = (to != null) ? ((DateTime)to).ToString(DateParser.DicomDateFormat) : "";
+			fromDate = (from != null) ? ((DateTime)from).ToString(DateParser.DicomDateFormat, System.Globalization.CultureInfo.InvariantCulture) : "";
+			toDate = (to != null) ? ((DateTime)to).ToString(DateParser.DicomDateFormat, System.Globalization.CultureInfo.InvariantCulture) : "";
 		}
 	}
 }

@@ -31,7 +31,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Dicom
@@ -146,7 +145,7 @@ namespace ClearCanvas.Dicom
 
 			List<double> doubleValues = new List<double>();
 			foreach(string value in stringValues)
-				doubleValues.Add(double.Parse(value));
+				doubleValues.Add(double.Parse(value, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture));
 
 			return doubleValues.ToArray();
 		}
@@ -166,7 +165,7 @@ namespace ClearCanvas.Dicom
 			foreach (string value in stringValues)
 			{
 				double outValue;
-				if (!double.TryParse(value, out outValue))
+				if (!double.TryParse(value, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out outValue))
 				{
 					returnValues = doubleValues.ToArray();
 					return false;
@@ -191,7 +190,7 @@ namespace ClearCanvas.Dicom
 
 			List<float> floatValues = new List<float>();
 			foreach (string value in stringValues)
-				floatValues.Add(float.Parse(value));
+				floatValues.Add(float.Parse(value, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture));
 
 			return floatValues.ToArray();
 		}
@@ -211,7 +210,7 @@ namespace ClearCanvas.Dicom
 			foreach (string value in stringValues)
 			{
 				float outValue;
-				if (!float.TryParse(value, out outValue))
+				if (!float.TryParse(value, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out outValue))
 				{
 					returnValues = floatValues.ToArray();
 					return false;
@@ -236,7 +235,7 @@ namespace ClearCanvas.Dicom
 
 			List<int> intValues = new List<int>();
 			foreach (string value in stringValues)
-				intValues.Add(int.Parse(value));
+				intValues.Add(int.Parse(value, System.Globalization.NumberStyles.Integer, System.Globalization.CultureInfo.InvariantCulture));
 
 			return intValues.ToArray();
 		}
@@ -256,7 +255,7 @@ namespace ClearCanvas.Dicom
 			foreach (string value in stringValues)
 			{
 				int outValue;
-				if (!int.TryParse(value, out outValue))
+				if (!int.TryParse(value, System.Globalization.NumberStyles.Integer, System.Globalization.CultureInfo.InvariantCulture, out outValue))
 				{
 					returnValues = intValues.ToArray();
 					return false;

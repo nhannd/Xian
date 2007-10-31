@@ -86,39 +86,16 @@ namespace ClearCanvas.Dicom
 			{
 				if (offsetString.Length > 3)
 				{
-#if MONO
-					try
-					{
-						minuteOffset = Int32.Parse(offsetString.Substring(3));
-						hourOffset = Int32.Parse(offsetString.Remove(3));
-					}
-					catch
-					{
-						return false;
-					}
-#else
-					if (!Int32.TryParse(offsetString.Substring(3), out minuteOffset))
+					if (!Int32.TryParse(offsetString.Substring(3), NumberStyles.Integer, CultureInfo.InvariantCulture, out minuteOffset))
 						return false;
 
-					if (!Int32.TryParse(offsetString.Remove(3), out hourOffset))
+					if (!Int32.TryParse(offsetString.Remove(3), NumberStyles.Integer, CultureInfo.InvariantCulture, out hourOffset))
 						return false;
-#endif
 				}
 				else
 				{
-#if MONO
-					try
-					{
-						hourOffset = Int32.Parse(offsetString);
-					}
-					catch
-					{
+					if (!Int32.TryParse(offsetString, NumberStyles.Integer, CultureInfo.InvariantCulture, out hourOffset))
 						return false;
-					}
-#else
-					if (!Int32.TryParse(offsetString, out hourOffset))
-						return false;
-#endif
 				}
 
 				minuteOffset *= Math.Sign(hourOffset);
@@ -153,11 +130,11 @@ namespace ClearCanvas.Dicom
             if (toUTC)
             {
                 DateTime utc = datetime.ToUniversalTime();
-                return utc.ToString(DicomFullDateTimeFormatWithTimeZone);
+				return utc.ToString(DicomFullDateTimeFormatWithTimeZone, System.Globalization.CultureInfo.InvariantCulture);
             }
             else
             {
-                return datetime.ToString(DicomFullDateTimeFormat);
+				return datetime.ToString(DicomFullDateTimeFormat, System.Globalization.CultureInfo.InvariantCulture);
             }
             
         }

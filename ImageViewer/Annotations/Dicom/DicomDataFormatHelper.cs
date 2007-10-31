@@ -122,21 +122,14 @@ namespace ClearCanvas.ImageViewer.Annotations.Dicom
 			if (String.IsNullOrEmpty(input))
 				return String.Empty;
 
-#if MONO
-			if (Convert.ToByte(input) == 0)
-				return SR.BoolNo;
-			else
-				return SR.BoolYes;
-#else
 			byte value;
-			if (!byte.TryParse(input, out value))
+			if (!byte.TryParse(input, System.Globalization.NumberStyles.Integer, System.Globalization.CultureInfo.InvariantCulture, out value))
 				return input;
 
 			if (value == 0)
 				return SR.BoolNo;
 			else
 				return SR.BoolYes;
-#endif
 		}
 
 		#endregion
