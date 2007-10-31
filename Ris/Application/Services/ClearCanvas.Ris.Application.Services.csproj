@@ -91,6 +91,7 @@
     <Compile Include="Admin\WorklistAdmin\WorklistAdminAssembler.cs" />
     <Compile Include="Admin\WorklistAdmin\WorklistExporter.cs" />
     <Compile Include="Admin\WorklistAdmin\WorklistImporter.cs" />
+    <Compile Include="MimeDocumentAssembler.cs" />
     <Compile Include="EnumUtils.cs" />
     <Compile Include="InProcessApplicationServiceProvider.cs" />
     <Compile Include="Jsml\JsmlShimService.cs" />

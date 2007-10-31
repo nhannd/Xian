@@ -223,6 +223,7 @@
     <Compile Include="Admin\WorklistAdmin\WorklistAdminDetail.cs" />
     <Compile Include="CompositeIdentifierDetail.cs" />
     <Compile Include="DefaultAuthorityGroups.cs" />
+    <Compile Include="MimeDocumentSummary.cs" />
     <Compile Include="Jsml\GetOperationNamesRequest.cs" />
     <Compile Include="Jsml\GetOperationNamesResponse.cs" />
     <Compile Include="Jsml\IJsmlShimService.cs" />
