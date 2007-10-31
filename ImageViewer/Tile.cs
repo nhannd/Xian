@@ -425,8 +425,9 @@ namespace ClearCanvas.ImageViewer
 				Platform.CheckMemberIsSet(this.ImageViewer, "Tile.ImageViewer");
 
 				this.Selected = true;
-				this.ImageViewer.EventBroker.OnTileSelected(new TileSelectedEventArgs(this));
 				_parentImageBox.SelectedTile = this;
+
+				this.ImageViewer.EventBroker.OnTileSelected(new TileSelectedEventArgs(this));
 
 				if (_presentationImage != null)
 					_presentationImage.Selected = true;

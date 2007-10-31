@@ -65,8 +65,8 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
         /// <summary>
         /// Constructor
         /// </summary>
-        public LayoutComponent(IImageViewerToolContext imageViewerToolContext)
-			: base(imageViewerToolContext)
+        public LayoutComponent(IDesktopWindow desktopWindow)
+			: base(desktopWindow)
         {
         }
 

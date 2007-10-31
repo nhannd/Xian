@@ -30,9 +30,9 @@
 #endregion
 
 using System;
+using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
-using ClearCanvas.ImageViewer.BaseTools;
 
 namespace ClearCanvas.ImageViewer
 {
@@ -51,19 +51,26 @@ namespace ClearCanvas.ImageViewer
 	/// </remarks>
 	public abstract class ImageViewerToolComponent : ApplicationComponent
 	{
-		private IImageViewerToolContext _imageViewerToolContext;
+		private IDesktopWindow _desktopWindow;
 		private IImageViewer _imageViewer;
 		private event EventHandler _subjectChangedEvent;
 
 		/// <summary>
 		/// Initializes a new instance of <see cref="ImageViewerToolComponent"/>.
 		/// </summary>
-		/// <param name="imageViewerToolContext"></param>
-		protected ImageViewerToolComponent(IImageViewerToolContext imageViewerToolContext)
+		protected ImageViewerToolComponent(IDesktopWindow desktopWindow)
 		{
-			_imageViewerToolContext = imageViewerToolContext;
-			this.ImageViewer = imageViewerToolContext.Viewer;
-			ImageViewerToolContext.DesktopWindow.Workspaces.ItemActivationChanged += OnWorkspaceActivated;
+			Platform.CheckForNullReference(desktopWindow, "desktopWindow");
+			_desktopWindow = desktopWindow;
+			ImageViewer = ImageViewerComponent.GetAsImageViewer(_desktopWindow.ActiveWorkspace);
+		}
+
+		/// <summary>
+		/// Gets the <see cref="IDesktopWindow"/> associated with this object.
+		/// </summary>
+		public IDesktopWindow DesktopWindow
+		{
+			get { return _desktopWindow; }	
 		}
 
 		/// <summary>
@@ -91,14 +98,6 @@ namespace ClearCanvas.ImageViewer
 						oldImageViewer));
 				}
 			}
-		}
-
-		/// <summary>
-		/// Gets the <see cref="IImageViewerToolContext"/>.
-		/// </summary>
-		public IImageViewerToolContext ImageViewerToolContext
-		{
-			get { return _imageViewerToolContext; }
 		}
 
 		/// <summary>
@@ -133,6 +132,8 @@ namespace ClearCanvas.ImageViewer
 		{
 			base.Start();
 
+			_desktopWindow.Workspaces.ItemActivationChanged += OnWorkspaceActivated;
+
 			OnSubjectChanged();
 		}
 
@@ -144,6 +145,8 @@ namespace ClearCanvas.ImageViewer
 		/// </remarks>
 		public override void Stop()
 		{
+			_desktopWindow.Workspaces.ItemActivationChanged -= OnWorkspaceActivated;
+
 			base.Stop();
 		}
 
@@ -151,7 +154,7 @@ namespace ClearCanvas.ImageViewer
 
 		private void OnWorkspaceActivated(object sender, ItemEventArgs<Workspace> e)
 		{
-			Workspace activeWorkspace = ImageViewerToolContext.DesktopWindow.ActiveWorkspace;
+			Workspace activeWorkspace = _desktopWindow.ActiveWorkspace;
 
 			if (activeWorkspace == null)
 			{

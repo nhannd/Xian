@@ -106,6 +106,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cine.
+        /// </summary>
+        internal static string CommandCine {
+            get {
+                return ResourceManager.GetString("CommandCine", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Flip Horizontal.
         /// </summary>
         internal static string CommandFlipHorizontal {
@@ -385,6 +394,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A valid synchronization context must exist on the current UI thread..
+        /// </summary>
+        internal static string ExceptionValidSynchronizationContextMustExist {
+            get {
+                return ResourceManager.GetString("ExceptionValidSynchronizationContextMustExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The Window Center value is invalid..
         /// </summary>
         internal static string ExceptionWindowCenterInvalid {
@@ -527,6 +545,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         internal static string LinearPresetVoiLutOperationFactoryDescription {
             get {
                 return ResourceManager.GetString("LinearPresetVoiLutOperationFactoryDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cine.
+        /// </summary>
+        internal static string MenuCine {
+            get {
+                return ResourceManager.GetString("MenuCine", resourceCulture);
             }
         }
         
@@ -819,6 +846,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cine.
+        /// </summary>
+        internal static string TitleCine {
+            get {
+                return ResourceManager.GetString("TitleCine", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Edit Preset.
         /// </summary>
         internal static string TitleEditPreset {
@@ -842,6 +878,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         internal static string TitleWindowAndLevel {
             get {
                 return ResourceManager.GetString("TitleWindowAndLevel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cine.
+        /// </summary>
+        internal static string ToolbarCine {
+            get {
+                return ResourceManager.GetString("ToolbarCine", resourceCulture);
             }
         }
         
@@ -941,6 +986,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         internal static string ToolsPresets {
             get {
                 return ResourceManager.GetString("ToolsPresets", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cine.
+        /// </summary>
+        internal static string TooltipCine {
+            get {
+                return ResourceManager.GetString("TooltipCine", resourceCulture);
             }
         }
         

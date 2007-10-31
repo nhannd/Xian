@@ -30,48 +30,44 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
+using System.Text;
 
-namespace ClearCanvas.ImageViewer.InputManagement
+using ClearCanvas.Common;
+using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.View.WinForms;
+
+namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 {
-	/// <summary>
-	/// Event data for when an <see cref="IMouseButtonHandler"/> is losing or gaining capture.
-	/// </summary>
-	/// <remarks>
-	/// This class is used internally by the framework to notify, via the <see cref="ClearCanvas.ImageViewer.EventBroker"/>,
-	/// when an <see cref="IMouseButtonHandler"/> is losing (or gaining) capture.
-	/// </remarks>
-	/// <seealso cref="ClearCanvas.ImageViewer.EventBroker"/>
-	/// <seealso cref="ClearCanvas.ImageViewer.EventBroker.CaptureChanging"/>
-	public class CaptureChangingEventArgs : EventArgs
-	{
-		private readonly IMouseButtonHandler _gainingCapture;
-		private readonly IMouseButtonHandler _losingCapture;
+    /// <summary>
+    /// Provides a Windows Forms view onto <see cref="CineApplicationComponent"/>
+    /// </summary>
+    [ExtensionOf(typeof(CineApplicationComponentViewExtensionPoint))]
+    public class CineApplicationComponentView : WinFormsView, IApplicationComponentView
+    {
+        private CineApplicationComponent _component;
+        private CineApplicationComponentControl _control;
 
-		/// <summary>
-		/// Constructor.
-		/// </summary>
-		/// <param name="gainingCapture">The <see cref="IMouseButtonHandler"/> that is gaining capture.</param>
-		/// <param name="losingCapture">The <see cref="IMouseButtonHandler"/> that is losing capture.</param>
-		internal CaptureChangingEventArgs(IMouseButtonHandler gainingCapture, IMouseButtonHandler losingCapture)
-		{
-			_gainingCapture = gainingCapture;
-			_losingCapture = losingCapture;
-		}
 
-		/// <summary>
-		/// Gets the <see cref="IMouseButtonHandler"/> that is gaining capture.
-		/// </summary>
-		public IMouseButtonHandler GainingCapture
-		{
-			get { return _gainingCapture; }
-		}
+        #region IApplicationComponentView Members
 
-		/// <summary>
-		/// Gets the <see cref="IMouseButtonHandler"/> that is losing capture.
-		/// </summary>
-		public IMouseButtonHandler LosingCapture
-		{
-			get { return _losingCapture; }
-		}
-	}
+        public void SetComponent(IApplicationComponent component)
+        {
+            _component = (CineApplicationComponent)component;
+        }
+
+        #endregion
+
+        public override object GuiElement
+        {
+            get
+            {
+                if (_control == null)
+                {
+                    _control = new CineApplicationComponentControl(_component);
+                }
+                return _control;
+            }
+        }
+    }
 }

@@ -638,8 +638,8 @@ namespace ClearCanvas.ImageViewer
 				Platform.CheckMemberIsSet(this.ImageViewer, "ImageBox.ImageViewer");
 
 				this.Selected = true;
-				this.ImageViewer.EventBroker.OnImageBoxSelected(new ImageBoxSelectedEventArgs(this));
 				_parentPhysicalWorkspace.SelectedImageBox = this;
+				this.ImageViewer.EventBroker.OnImageBoxSelected(new ImageBoxSelectedEventArgs(this));
 
 				if (_displaySet != null)
 					_displaySet.Selected = true;

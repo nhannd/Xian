@@ -113,6 +113,7 @@
     <Compile Include="Annotations\Dicom\DicomFilteredAnnotationLayoutStore.cs" />
     <Compile Include="Annotations\Dicom\DicomFixedAnnotationLayoutProvider.cs" />
     <Compile Include="Annotations\IAnnotationResourceResolver.cs" />
+    <Compile Include="InputManagement\FocusChangedMessage.cs" />
     <Compile Include="StudyManagement\DicomTagRetriever.cs" />
     <Compile Include="Annotations\Dicom\Tests\DicomBasicFormatterTests.cs" />
     <Compile Include="Annotations\Dicom\Tests\DicomFilteredAnnotationLayoutStoreTests.cs" />
@@ -235,7 +236,6 @@
     <Compile Include="InputManagement\IContextMenuProvider.cs" />
     <Compile Include="InputManagement\ICursorTokenProvider.cs" />
     <Compile Include="InputManagement\IMouseButtonHandler.cs" />
-    <Compile Include="InputManagement\CaptureChangingEventArgs.cs" />
     <Compile Include="InputManagement\IMouseWheelHandler.cs" />
     <Compile Include="InputManagement\IViewerShortcutManager.cs" />
     <Compile Include="InputManagement\KeyboardButtonShortcut.cs" />

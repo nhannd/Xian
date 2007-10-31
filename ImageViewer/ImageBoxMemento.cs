@@ -29,13 +29,14 @@
 
 #endregion
 
+using System;
 using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer
 {
-	internal class ImageBoxMemento : IMemento
+	internal class ImageBoxMemento : IMemento, IEquatable<ImageBoxMemento>
 	{
 		private IDisplaySet _displaySet;
 		private int _rows;
@@ -95,5 +96,30 @@ namespace ClearCanvas.ImageViewer
 		{
 			get { return _indexOfSelectedTile; }
 		}
+
+		public override bool Equals(object obj)
+		{
+			if (obj == this)
+				return false;
+
+			if (obj is ImageBoxMemento)
+				return this.Equals((ImageBoxMemento) obj);
+
+			return false;
+		}
+
+		#region IEquatable<ImageBoxMemento> Members
+
+		public bool Equals(ImageBoxMemento other)
+		{
+			return DisplaySet == other.DisplaySet &&
+			       Rows == other.Rows &&
+			       Columns == other.Columns &&
+			       TopLeftPresentationImageIndex == other.TopLeftPresentationImageIndex &&
+			       IndexOfSelectedTile == other.IndexOfSelectedTile &&
+			       NormalizedRectangle.Equals(other.NormalizedRectangle);
+		}
+
+		#endregion
 	}
 }

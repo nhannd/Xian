@@ -18,6 +18,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <NoWarn>1591, 0419, 1574, 1587</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -35,6 +36,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CineApplicationComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="CineApplicationComponentControl.Designer.cs">
+      <DependentUpon>CineApplicationComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CineApplicationComponentView.cs" />
     <Compile Include="PresetVoiLutOperationComponentContainerControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -90,6 +98,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="CineApplicationComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>CineApplicationComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="PresetVoiLutOperationComponentContainerControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>PresetVoiLutOperationComponentContainerControl.cs</DependentUpon>

@@ -443,4 +443,22 @@ Please ensure that the name/keystroke combination is unique.</value>
   <data name="TitleWindowAndLevel" xml:space="preserve">
     <value>Window &amp; Level</value>
   </data>
+  <data name="MenuCine" xml:space="preserve">
+    <value>Cine</value>
+  </data>
+  <data name="TitleCine" xml:space="preserve">
+    <value>Cine</value>
+  </data>
+  <data name="ToolbarCine" xml:space="preserve">
+    <value>Cine</value>
+  </data>
+  <data name="TooltipCine" xml:space="preserve">
+    <value>Cine</value>
+  </data>
+  <data name="CommandCine" xml:space="preserve">
+    <value>Cine</value>
+  </data>
+  <data name="ExceptionValidSynchronizationContextMustExist" xml:space="preserve">
+    <value>A valid synchronization context must exist on the current UI thread.</value>
+  </data>
 </root>

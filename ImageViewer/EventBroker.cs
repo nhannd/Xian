@@ -55,7 +55,9 @@ namespace ClearCanvas.ImageViewer
 		private event EventHandler<StudyEventArgs> _studyLoadedEvent;
 		private event EventHandler<SopEventArgs> _imageLoadedEvent;
 
-		private event EventHandler<CaptureChangingEventArgs> _captureChangingEvent;
+		private event EventHandler<ItemEventArgs<IMouseButtonHandler>> _activeMouseButtonHandlerChanged;
+		private event EventHandler<ItemEventArgs<IMouseWheelHandler>> _activeMouseWheelHandlerChanged;
+
 
 		#endregion
 
@@ -182,17 +184,31 @@ namespace ClearCanvas.ImageViewer
 		}
 
 		/// <summary>
-		/// Occurs when an <see cref="IMouseButtonHandler"/> is losing or gaining capture.
+		/// Occurs when the active <see cref="IMouseButtonHandler"/> has changed.
 		/// </summary>
-		public event EventHandler<CaptureChangingEventArgs> CaptureChanging
+		public event EventHandler<ItemEventArgs<IMouseButtonHandler>> ActiveMouseButtonHandlerChanged
 		{
-			add { _captureChangingEvent += value; }
-			remove { _captureChangingEvent -= value; }
+			add { _activeMouseButtonHandlerChanged += value; }
+			remove { _activeMouseButtonHandlerChanged -= value; }
 		}
 
-		internal void OnCaptureChanging(CaptureChangingEventArgs captureChangingArgs)
+		internal void OnActiveMouseButtonHandlerChanged(IMouseButtonHandler handler)
 		{
-			EventsHelper.Fire(_captureChangingEvent, this, captureChangingArgs);
+			EventsHelper.Fire(_activeMouseButtonHandlerChanged, this, new ItemEventArgs<IMouseButtonHandler>(handler));
+		}
+
+		/// <summary>
+		/// Occurs when the active <see cref="IMouseWheelHandler"/> has changed.
+		/// </summary>
+		public event EventHandler<ItemEventArgs<IMouseWheelHandler>> ActiveMouseWheelHandlerChanged
+		{
+			add { _activeMouseWheelHandlerChanged += value; }
+			remove { _activeMouseWheelHandlerChanged -= value; }
+		}
+
+		internal void OnActiveMouseWheelHandlerChanged(IMouseWheelHandler handler)
+		{
+			EventsHelper.Fire(_activeMouseWheelHandlerChanged, this, new ItemEventArgs<IMouseWheelHandler>(handler));
 		}
 	}
 }

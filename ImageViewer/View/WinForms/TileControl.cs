@@ -86,7 +86,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			_contextMenuStrip.Opening += new CancelEventHandler(OnContextMenuStripOpening);
 
 			_tileController.CursorTokenChanged += new EventHandler(OnCursorTokenChanged);
-			_tileController.CaptureChanging += new EventHandler<CaptureChangingEventArgs>(OnCaptureChanging);
+			_tileController.CaptureChanging += new EventHandler<ItemEventArgs<IMouseButtonHandler>>(OnCaptureChanging);
 		}
 
 		public Tile Tile
@@ -240,6 +240,28 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			Draw();
 		}
 
+		protected override void OnEnter(EventArgs e)
+		{
+			base.OnEnter(e);
+
+			object message = _inputTranslator.OnEnter();
+			if (message == null)
+				return;
+
+			_tileController.ProcessMessage(message);
+		}
+
+		protected override void OnLeave(EventArgs e)
+		{
+			base.OnLeave(e);
+
+			object message = _inputTranslator.OnLeave();
+			if (message == null)
+				return;
+
+			_tileController.ProcessMessage(message);
+		}
+
 		protected override void OnMouseLeave(EventArgs e)
 		{
 			base.OnMouseLeave(e);
@@ -346,7 +368,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			// turns Capture back off although it has been turned on explicitly.
 			if (this._currentMouseButtonHandler != null)
 				this.Capture = true;
-		}
+			}
 
 		protected override void OnHandleDestroyed(EventArgs e)
 		{
@@ -359,12 +381,12 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			base.OnHandleDestroyed(e);
 		}
 
-		private void OnCaptureChanging(object sender, CaptureChangingEventArgs e)
+		private void OnCaptureChanging(object sender, ItemEventArgs<IMouseButtonHandler> e)
 		{
-			if (_currentMouseButtonHandler == e.GainingCapture)
+			if (_currentMouseButtonHandler == e.Item)
 				return;
 
-			_currentMouseButtonHandler = e.GainingCapture;
+			_currentMouseButtonHandler = e.Item;
 			this.Capture = (_currentMouseButtonHandler != null);
 		}
 

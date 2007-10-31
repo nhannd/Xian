@@ -82,7 +82,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			else
             {
                 // create and initialize the layout component
-				LayoutComponent layoutComponent = new LayoutComponent(this.Context);
+				LayoutComponent layoutComponent = new LayoutComponent(this.Context.DesktopWindow);
 
                 // launch the layout component in a shelf
                 // note that the component is thrown away when the shelf is closed by the user

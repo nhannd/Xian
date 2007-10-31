@@ -44,6 +44,7 @@ namespace ClearCanvas.Desktop
 		private int _currentCommandIndex = -1;
 		private int _lastCommandIndex = -1;
 
+		private event EventHandler _currentCommandChangingEvent;
 		private event EventHandler _currentCommandChangedEvent;
 
 		// Constructor
@@ -87,23 +88,25 @@ namespace ClearCanvas.Desktop
 			}
 		}
 
+		public event EventHandler CurrentCommandChanging
+		{
+			add { _currentCommandChangingEvent += value; }	
+			remove { _currentCommandChangingEvent -= value; }	
+		}
+
 		// Event accessors
 		public event EventHandler CurrentCommandChanged
 		{
-			add
-			{
-				_currentCommandChangedEvent += value;
-			}
-			remove
-			{
-				_currentCommandChangedEvent -= value;
-			}
+			add { _currentCommandChangedEvent += value; }
+			remove { _currentCommandChangedEvent -= value; }
 		}
 
 		// Public methods
 		public void AddCommand(UndoableCommand command)
 		{
 			Platform.CheckForNullReference(command, "command");
+
+			EventsHelper.Fire(_currentCommandChangingEvent, this, EventArgs.Empty);
 
 			if (_currentCommandIndex < _lastCommandIndex)
 			{
@@ -135,6 +138,8 @@ namespace ClearCanvas.Desktop
 			if (NumCommands == 0)
 				return;
 
+			EventsHelper.Fire(_currentCommandChangingEvent, this, EventArgs.Empty);
+
 			if (_currentCommandIndex == _lastCommandIndex)
 				return;
 
@@ -160,6 +165,8 @@ namespace ClearCanvas.Desktop
 
 			if (_currentCommandIndex == -1)
 				return;
+
+			EventsHelper.Fire(_currentCommandChangingEvent, this, EventArgs.Empty);
 
 			UndoableCommand cmd = _history[_currentCommandIndex];
 

@@ -31,6 +31,7 @@
 
 using System;
 using ClearCanvas.ImageViewer.InputManagement;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.View.WinForms
 {
@@ -60,7 +61,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 					_tile.RendererChanged -= new EventHandler(OnRendererChanged);
 					_tile.InformationBoxChanged -= new EventHandler<InformationBoxChangedEventArgs>(OnInformationBoxChanged);
 					_tileController.CursorTokenChanged -= new EventHandler(OnCursorTokenChanged);
-					_tileController.CaptureChanging -= new EventHandler<CaptureChangingEventArgs>(OnCaptureChanging);
+					_tileController.CaptureChanging -= new EventHandler<ItemEventArgs<IMouseButtonHandler>>(OnCaptureChanging);
 
 					_tile = null;
 				}

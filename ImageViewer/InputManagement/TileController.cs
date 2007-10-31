@@ -101,6 +101,7 @@ namespace ClearCanvas.ImageViewer.InputManagement
 		#region Private Fields
 
 		private readonly Tile _tile;
+		private bool _tileLostFocus;
 		private Point _startMousePoint;
 		private Point _currentMousePoint;
 		private Rectangle _tileClientRectangle;
@@ -119,7 +120,7 @@ namespace ClearCanvas.ImageViewer.InputManagement
 		private IContextMenuProvider _contextMenuProvider;
 
 		private event EventHandler _cursorTokenChanged;
-		private event EventHandler<CaptureChangingEventArgs> _captureChangingEvent;
+		private event EventHandler<ItemEventArgs<IMouseButtonHandler>> _captureChangingEvent;
 
 		private XMouseButtons _activeButton;
 		private uint _clickCount;
@@ -137,6 +138,7 @@ namespace ClearCanvas.ImageViewer.InputManagement
 			Platform.CheckForNullReference(shortcutManager, "shortcutManager");
 
 			_tile = tile;
+			_tileLostFocus = true;
 			_shortcutManager = shortcutManager;
 		}
 
@@ -150,12 +152,13 @@ namespace ClearCanvas.ImageViewer.InputManagement
 				if (_captureHandler == value)
 					return;
 
-				CaptureChangingEventArgs args = new CaptureChangingEventArgs(value, _captureHandler);
 				_captureHandler = value;
-				EventsHelper.Fire(_captureChangingEvent, this, args);
+				//fire our own event first, so the view can release 'real' capture 
+				// before other notifications go out through the event broker.
+				EventsHelper.Fire(_captureChangingEvent, this, new ItemEventArgs<IMouseButtonHandler>(_captureHandler));
 
 				if (_tile.ImageViewer != null)
-					_tile.ImageViewer.EventBroker.OnCaptureChanging(args);
+					_tile.ImageViewer.EventBroker.OnActiveMouseButtonHandlerChanged(_captureHandler);
 			}
 		}
 
@@ -174,7 +177,9 @@ namespace ClearCanvas.ImageViewer.InputManagement
 				}
 
 				_captureMouseWheelHandler = value;
-				
+				if (_tile.ImageViewer != null)
+					_tile.ImageViewer.EventBroker.OnActiveMouseWheelHandlerChanged(_captureMouseWheelHandler);
+
 				if (_captureMouseWheelHandler != null)
 				{
 					if (_wheelHandlerTimer == null)
@@ -287,8 +292,15 @@ namespace ClearCanvas.ImageViewer.InputManagement
 				return true;
 			}
 
+			bool selectOnly = _tileLostFocus & !_tile.Selected;
+			_tileLostFocus = false;
+
 			_tile.Select();
 			_contextMenuEnabled = (buttonMessage.Shortcut.MouseButton == XMouseButtons.Right);
+
+			if (selectOnly)
+				return true;
+
 			_startMousePoint = buttonMessage.Location;
 			
 			if (_tile.PresentationImage == null)
@@ -515,6 +527,11 @@ namespace ClearCanvas.ImageViewer.InputManagement
 		/// </summary>
 		public bool ProcessMessage(object message)
 		{
+			if (message is FocusChangedMessage)
+			{
+				if (((FocusChangedMessage)message).Lost)
+					_tileLostFocus = true;
+			}
 			if (message is KeyboardButtonDownPreview)
 			{
 				//Right now, we can't determine what these keystrokes are going to do, so we just release mouse wheel capture.
@@ -525,12 +542,11 @@ namespace ClearCanvas.ImageViewer.InputManagement
 				return false;
 			}
 			
-			if (message is MouseButtonMessage)
+			else if (message is MouseButtonMessage)
 			{
 				return ProcessMouseButtonMessage(message as MouseButtonMessage);
 			}
-			
-			if (message is TrackMousePositionMessage)
+			else if (message is TrackMousePositionMessage)
 			{
 				return ProcessTrackMessage(message as TrackMousePositionMessage);
 			}
@@ -543,22 +559,19 @@ namespace ClearCanvas.ImageViewer.InputManagement
 					TrackCurrentPosition();
 					return returnValue;
 				}
-
-				if (message is KeyboardButtonMessage)
+				else if (message is KeyboardButtonMessage)
 				{
 					bool returnValue = ProcessKeyboardMessage(message as KeyboardButtonMessage);
 					TrackCurrentPosition();
 					return returnValue;
 				}
-
-				if (message is ReleaseCaptureMessage)
+				else if (message is ReleaseCaptureMessage)
 				{
 					ReleaseCapture(true);
 					TrackCurrentPosition();
 					return true;
 				}
-
-				if (message is MouseLeaveMessage)
+				else if (message is MouseLeaveMessage)
 					_tile.PresentationImage.FocussedGraphic = null;
 			}
 
@@ -581,8 +594,7 @@ namespace ClearCanvas.ImageViewer.InputManagement
 		/// <summary>
 		/// For use by the view layer, so it can detect when capture is changing.
 		/// </summary>
-		/// <seealso cref="CaptureChangingEventArgs"/>
-		public event EventHandler<CaptureChangingEventArgs> CaptureChanging
+		public event EventHandler<ItemEventArgs<IMouseButtonHandler>> CaptureChanging
 		{
 			add { _captureChangingEvent += value; }
 			remove { _captureChangingEvent -= value; }
