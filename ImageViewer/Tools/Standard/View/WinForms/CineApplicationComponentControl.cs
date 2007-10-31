@@ -62,13 +62,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
         	source.DataSource = _component;
 
         	_stopButton.DataBindings.Add("Enabled", source, "Running", true, DataSourceUpdateMode.OnPropertyChanged);
-
-			Binding binding = new Binding("Enabled", source, "Running", true, DataSourceUpdateMode.OnPropertyChanged);
-			binding.Format += new ConvertEventHandler(OnFormatStartButtonBinding);
-        	_startButton.DataBindings.Add(binding);
-
-        	_checkBoxReverse.DataBindings.Add("Checked", source, "Reverse", true, DataSourceUpdateMode.OnPropertyChanged);
-
 			_cineSpeed.DataBindings.Add("Minimum", source, "MinimumScale", true, DataSourceUpdateMode.OnPropertyChanged);
 			_cineSpeed.DataBindings.Add("Maximum", source, "MaximumScale", true, DataSourceUpdateMode.OnPropertyChanged);
 			_cineSpeed.DataBindings.Add("Value", source, "CurrentScaleValue", true, DataSourceUpdateMode.OnPropertyChanged);
@@ -79,14 +72,21 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 			e.Value = !(bool)e.Value && _component.Enabled;
 		}
 
-		private void StartButtonClicked(object sender, EventArgs e)
+		private void StartReverseButtonClicked(object sender, EventArgs e)
 		{
+			_component.Reverse = true;
 			_component.StartCine();
 		}
 
 		private void StopButtonClicked(object sender, EventArgs e)
 		{
 			_component.StopCine();
+		}
+
+		private void StartForwardButtonClicked(object sender, EventArgs e)
+		{
+			_component.Reverse = false;
+			_component.StartCine();
 		}
     }
 }

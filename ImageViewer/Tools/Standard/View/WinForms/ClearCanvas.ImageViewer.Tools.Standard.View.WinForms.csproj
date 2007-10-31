@@ -65,6 +65,11 @@
       <DependentUpon>PresetVoiLutConfigurationComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="PresetVoiLutConfigurationComponentView.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Service Include="{94E38DFF-614B-4cbd-B67C-F211BB35CE8B}" />
   </ItemGroup>
   <ItemGroup>
@@ -114,6 +119,18 @@
       <SubType>Designer</SubType>
       <DependentUpon>PresetVoiLutConfigurationComponentControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\PlayReverse.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Play.png" />
+    <None Include="Icons\Stop.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
