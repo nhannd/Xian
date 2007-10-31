@@ -436,12 +436,13 @@ var Table = {
 		    else
 		    if(["check","checkbox","bool","boolean"].indexOf(column.cellType) > -1)
 		    {
-		        var input = document.createElement("input");
+               var input = document.createElement("input");
 		        input.type = "checkbox";
 		        //td.appendChild(input);
               td.innerHTML = td.innerHTML.replace("<br>", "");
               td.insertBefore(input, td.firstChild);
               td.className = "checkedDivCell";
+              td.innerHTML = "<label>" + td.innerHTML + "</label>";
 		        td._setCellDisplayValue = function(value) { input.checked = value ? true : false; }
 		        if(column.size) input.size = column.size;
 		        
@@ -518,10 +519,10 @@ var Table = {
 	    
 	    _onEditComplete: function(rowIndex, colIndex)
 	    {
-	        var item = this.items[rowIndex-1];
-	        for(var c=0; c < this._columns.length; c++)
+          var item = this.items[rowIndex-1];
+	       for(var c=0; c < this._columns.length; c++)
 		    {
-		        var column = this._columns[c];
+		         var column = this._columns[c];
 	            var cell = this._getCell(rowIndex, c);
 	            
 	            // update the cell's visibility

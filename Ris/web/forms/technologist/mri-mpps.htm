@@ -3,6 +3,9 @@
    <head>
       <title>MRI Documentation</title>
       <link href="../../css/default.css" rel="stylesheet" type="text/css" />
+      <link href="../../js/calendar/calendar-system.css" rel="stylesheet" type="text/css" />
+      <script type="text/javascript" src="../../js/calendar/calendar.js"></script>
+      <script type="text/javascript" src="../../js/calendar/lang/calendar-en.js"></script>
       <script type="text/javascript" src="../../js/jsx.js"></script>
       <script type="text/javascript" src="../../js/jsml.js"></script>
       <script type="text/javascript" src="../../js/ui.js"></script>
@@ -25,13 +28,15 @@
                if(Ris)
                {
                   data = JSML.parse(Ris.getData("Documentation")) || {};
-                  startTime = Ris.getData("StartTime") || "Not Started";
-                  stopTime = Ris.getData("StopTime") || (startTime == "Not Started" ? "Not Started" : "In Progress");
+                  startTime = Ris.getData("StartTime");
+                  startTime = (startTime && startTime.length > 0) ? DateInput.parse(startTime) : null;
+                  stopTime = Ris.getData("StopTime")
+                  stopTime = (stopTime && stopTime.length > 0) ? DateInput.parse(stopTime) : null;
                }
 
                data.acquisition = data.acquisition || {};
-               data.acquisition.startTime = startTime;
-               data.acquisition.stopTime = stopTime;
+               data.acquisition.startTime = data.acquisition.startTime || startTime;
+               data.acquisition.stopTime = data.acquisition.stopTime || stopTime;
 
                initAcquisitionTable();
                
@@ -266,12 +271,16 @@
            var table = Table.createTable($("acquisitionTable"), { editInPlace: true, flow: true, checkBoxes: false },
              [
                {  label: "Start Date/Time",
-                  cellType: "readonly",
-                  getValue: function(item) { return item.startTime; }
+                  cellType: "datetime",
+                  getValue: function(item) { return item.startTime; },
+                  setValue: function(item, value) { item.startTime = value; },
+                  getError: function(item) { return null; }
                },
                {  label: "Stop Date/Time",
-                  cellType: "readonly",
-                  getValue: function(item) { return item.stopTime; }
+                  cellType: "datetime",
+                  getValue: function(item) { return item.stopTime; },
+                  setValue: function(item, value) { item.stopTime = value; },
+                  getError: function(item) { return null; }
                },
                {  label: "Equipment/Device ID/Location",
                   cellType: "text",
@@ -477,6 +486,7 @@
    <body onload="javascript: onBodyLoad()" onresize="javascript: scaleWidth()">
       <form id="myForm">
          <p class="sectionheading">Exam Acquisition/Mpps</p>
+           <tr><td class="tableheading"></td></tr>
          <table id="acquisitionTable" width="100%">
          </table>
 

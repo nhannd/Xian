@@ -95,13 +95,16 @@
                if(Ris)
                {
                   data = JSML.parse(Ris.getData("Documentation")) || {};
-                  startTime = Ris.getData("StartTime") || "Not Started";
-                  stopTime = Ris.getData("StopTime") || (startTime == "Not Started" ? "Not Started" : "In Progress");
+
+                  startTime = Ris.getData("StartTime");
+                  startTime = (startTime && startTime.length > 0) ? DateInput.parse(startTime) : null;
+                  stopTime = Ris.getData("StopTime")
+                  stopTime = (stopTime && stopTime.length > 0) ? DateInput.parse(stopTime) : null;
                }
 
                data.acquisition = data.acquisition || {};
-               data.acquisition.startTime = startTime;
-               data.acquisition.stopTime = stopTime;
+               data.acquisition.startTime = data.acquisition.startTime || startTime;
+               data.acquisition.stopTime = data.acquisition.stopTime || stopTime;
 
                data.injections = data.injections || [];
                
@@ -121,12 +124,16 @@
            var table = Table.createTable($("acquisitionTable"), { editInPlace: true, flow: true, checkBoxes: false },
              [
                {  label: "Start Date/Time",
-                  cellType: "readonly",
-                  getValue: function(item) { return item.startTime; }
+                  cellType: "datetime",
+                  getValue: function(item) { return item.startTime; },
+                  setValue: function(item, value) { item.startTime = value; },
+                  getError: function(item) { return null; }
                },
                {  label: "Stop Date/Time",
-                  cellType: "readonly",
-                  getValue: function(item) { return item.stopTime; }
+                  cellType: "datetime",
+                  getValue: function(item) { return item.stopTime; },
+                  setValue: function(item, value) { item.stopTime = value; },
+                  getError: function(item) { return null; }
                },
                {  label: "Equipment/Device ID/Location",
                   cellType: "text",
@@ -251,6 +258,7 @@
          <p class="sectionheading">Exam Acquisition/Mpps</p>
          <p>&nbsp;</b>
          <table id="acquisitionTable" width="100%">
+           <tr><td class="tableheading"></td></tr>
          </table>
          <p class="sectionheading">Injections</p>
          <p>
