@@ -64,6 +64,11 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts
 				this.WindowCenter = windowCenter;
 			}
 
+			public override int GetHashCode()
+			{
+				return base.GetHashCode();
+			}
+
 			public override bool Equals(object obj)
 			{
 				if (obj == this)

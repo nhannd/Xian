@@ -191,7 +191,7 @@ namespace ClearCanvas.ImageViewer
 		}
 
 		/// <summary>
-		/// Gets or sets a value indicating whether this <see cref="ImageBox"/> is
+		/// Gets or sets a value indicating whether this <see cref="ClearCanvas.ImageViewer.ImageBox"/> is
 		/// linked.
 		/// </summary>
 		/// <value><b>true</b> if linked; <b>false</b> otherwise.</value>

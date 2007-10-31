@@ -62,6 +62,11 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 			return sop.Modality == _modality;
 		}
 
+		public override int GetHashCode()
+		{
+			return base.GetHashCode();
+		}
+
 		public override bool Equals(object obj)
 		{
 			if (obj == this)
