@@ -163,12 +163,16 @@ namespace ClearCanvas.Dicom.IO
                     if (_inGroup2 && _read >= _endGroup2)
                     {
                         _inGroup2 = false;
-                        Dicom.TransferSyntax group2syntax =
-                            TransferSyntax.GetTransferSyntax(
-                                _dataset[DicomTags.TransferSyntaxUid].GetString(0, String.Empty));
-                        if (group2syntax == null)
-                            throw new DicomException("Unsupported transfer syntax in group 2 elements");
-                        this.TransferSyntax = group2syntax;
+                        // Only change if we're still reading the meta info
+                        if (_dataset.StartTagValue < DicomTags.TransferSyntaxUid)
+                        {
+                            Dicom.TransferSyntax group2syntax =
+                                TransferSyntax.GetTransferSyntax(
+                                    _dataset[DicomTags.TransferSyntaxUid].GetString(0, String.Empty));
+                            if (group2syntax == null)
+                                throw new DicomException("Unsupported transfer syntax in group 2 elements");
+                            this.TransferSyntax = group2syntax;
+                        }
                     }
                     uint tagValue;
                     if (_tag == null)

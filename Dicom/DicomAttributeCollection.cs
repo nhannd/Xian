@@ -55,8 +55,8 @@ namespace ClearCanvas.Dicom
         #region Member Variables
         private SortedDictionary<uint, DicomAttribute> _attributeList = new SortedDictionary<uint, DicomAttribute>();
         private String _specificCharacterSet = String.Empty;
-        private uint _startTag = 0x00000000;
-        private uint _stopTag = 0xFFFFFFFF;       
+        private readonly uint _startTag = 0x00000000;
+        private readonly uint _endTag = 0xFFFFFFFF;       
         #endregion
 
         #region Constructors
@@ -75,7 +75,7 @@ namespace ClearCanvas.Dicom
         /// <para>
         /// This constructor is used to set a range of valid tags for the collection.
         /// All tags must be greater than or equal to <paramref name="startTag"/>
-        /// ad less than or equal to <paramref name="stopTag"/>.  
+        /// ad less than or equal to <paramref name="endTag"/>.  
         /// </para>
         /// <para>
         /// The <see cref="DicomMessage"/> and <see cref="DicomFile"/> classes use 
@@ -83,11 +83,11 @@ namespace ClearCanvas.Dicom
         /// <see cref="DicomAttributeCollection"/> instances.</para>
         /// </remarks>
         /// <param name="startTag">The valid start tag for attributes in the collection.</param>
-        /// <param name="stopTag">The value stop tag for attributes in the collection.</param>
-        public DicomAttributeCollection(uint startTag, uint stopTag)
+        /// <param name="endTag">The value stop tag for attributes in the collection.</param>
+        public DicomAttributeCollection(uint startTag, uint endTag)
         {
             _startTag = startTag;
-            _stopTag = stopTag;
+            _endTag = endTag;
         }
 
         /// <summary>
@@ -135,6 +135,22 @@ namespace ClearCanvas.Dicom
         public int Count
         { 
             get { return _attributeList.Count; } 
+        }
+
+        /// <summary>
+        /// The first valid tag for attributes in the collection.
+        /// </summary>
+        public uint StartTagValue
+        {
+            get { return _startTag; }
+        }
+
+        /// <summary>
+        /// The last valid tag for attributes in the collection.
+        /// </summary>
+        public uint EndTagValue
+        {
+            get { return _endTag; }
         }
         #endregion
 
@@ -198,7 +214,7 @@ namespace ClearCanvas.Dicom
 
                 if (!_attributeList.ContainsKey(tag))
                 {
-                    if ((tag < _startTag) || (tag > _stopTag))
+                    if ((tag < _startTag) || (tag > _endTag))
                         throw new DicomException("Tag is out of range for collection: " + tag.ToString());
 
                     DicomTag dicomTag = DicomTagDictionary.GetDicomTag(tag);
@@ -231,7 +247,7 @@ namespace ClearCanvas.Dicom
                 }
                 else
                 {
-                    if ((tag < _startTag) || (tag > _stopTag))
+                    if ((tag < _startTag) || (tag > _endTag))
                         throw new DicomException("Tag is out of range for collection: " + tag);
 
                     if (value.Tag.TagValue != tag)
@@ -261,7 +277,7 @@ namespace ClearCanvas.Dicom
 
                 if (!_attributeList.ContainsKey(tag.TagValue))
                 {
-                    if ((tag.TagValue < _startTag) || (tag.TagValue > _stopTag))
+                    if ((tag.TagValue < _startTag) || (tag.TagValue > _endTag))
                         throw new DicomException("Tag is out of range for collection: " + tag.ToString());
 
                     attr = tag.CreateDicomAttribute();
@@ -293,7 +309,7 @@ namespace ClearCanvas.Dicom
                     if (value.Tag.TagValue != tag.TagValue)
                         throw new DicomException("Tag being set does not match tag in DicomAttribute");
 
-                    if ((tag.TagValue < _startTag) || (tag.TagValue > _stopTag))
+                    if ((tag.TagValue < _startTag) || (tag.TagValue > _endTag))
                         throw new DicomException("Tag is out of range for collection: " + tag);
 
                     _attributeList[tag.TagValue] = value;
