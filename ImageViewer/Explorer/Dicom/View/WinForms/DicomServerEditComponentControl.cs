@@ -85,14 +85,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 
         private void OnAcceptClicked(object sender, EventArgs e)
         {
-            try
-            {
-                _component.Accept();
-            }
-            catch (DicomServerException dse)
-            {
-                Platform.ShowMessageBox(dse.Message.ToString(), MessageBoxActions.Ok);
-            }
+			_component.Accept();
         }
 
         private void OnCancelClicked(object sender, EventArgs e)

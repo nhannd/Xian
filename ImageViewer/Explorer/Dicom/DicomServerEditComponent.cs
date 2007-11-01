@@ -79,29 +79,27 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         public void Accept()
         {
-            if (!IsServerPropertyValid() || !this.Modified)
-                return;
+			if (!IsServerPropertyValid() || !this.Modified)
+				return;
 
-            Server newServer = new Server(_serverName, _serverLocation, _serverHost, _serverAE, int.Parse(_serverPort));
+			Server newServer = new Server(_serverName, _serverLocation, _serverHost, _serverAE, int.Parse(_serverPort));
 
-            // edit current server
-            if (_serverTree.CurrentNode.IsServer)
-            {
-                _serverTree.ReplaceDicomServerInCurrentGroup(newServer);
-            }
-            // add new server
-            else if (_serverTree.CurrentNode.IsServerGroup)
-            {
+			// edit current server
+			if (_serverTree.CurrentNode.IsServer)
+			{
+				_serverTree.ReplaceDicomServerInCurrentGroup(newServer);
+			}
+				// add new server
+			else if (_serverTree.CurrentNode.IsServerGroup)
+			{
                 ((ServerGroup)_serverTree.CurrentNode).AddChild(newServer);
 				_serverTree.CurrentNode = newServer;
 				_serverTree.Save();
 				_serverTree.FireServerTreeUpdatedEvent();
 			}
 
-            this.ExitCode = ApplicationComponentExitCode.Normal;
-            Host.Exit();
-
-            return;
+			this.ExitCode = ApplicationComponentExitCode.Normal;
+			Host.Exit();
         }
 
         public void Cancel()

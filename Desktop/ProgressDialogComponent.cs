@@ -134,7 +134,7 @@ namespace ClearCanvas.Desktop
             {
                 if (_task.SupportsCancel && interactive == UserInteraction.Allowed)
                 {
-                    if (Platform.ShowMessageBox(SR.MessageConfirmCancelTask, MessageBoxActions.OkCancel) == DialogBoxAction.Ok)
+                    if (this.Host.DesktopWindow.ShowMessageBox(SR.MessageConfirmCancelTask, MessageBoxActions.OkCancel) == DialogBoxAction.Ok)
                     {
                         _task.RequestCancel();
                         _autoClose = true;

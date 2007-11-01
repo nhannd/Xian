@@ -209,7 +209,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 		public void Cancel()
 		{
-			if (Platform.ShowMessageBox(SR.MessageConfirmCancelReindex, MessageBoxActions.YesNo) == DialogBoxAction.No)
+			if (this.Host.DesktopWindow.ShowMessageBox(SR.MessageConfirmCancelReindex, MessageBoxActions.YesNo) == DialogBoxAction.No)
 				return;
 
 			List<Guid> progressIdentifiers = new List<Guid>();

@@ -100,7 +100,7 @@ namespace ClearCanvas.Utilities.DicomEditor.Tools
         /// </summary>
         public void Save()
         {
-			if (Platform.ShowMessageBox(SR.MessageConfirmSaveAllFiles, MessageBoxActions.YesNo) == DialogBoxAction.Yes)
+			if (this.Context.DesktopWindow.ShowMessageBox(SR.MessageConfirmSaveAllFiles, MessageBoxActions.YesNo) == DialogBoxAction.Yes)
             {
                 this.Context.DumpManagement.SaveAll();
                 this.Context.UpdateDisplay();

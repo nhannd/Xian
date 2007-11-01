@@ -68,7 +68,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			if (this.NoServersSelected())
 			{
 				//should never get here because the verify button should be disabled.
-				Platform.ShowMessageBox(SR.MessageNoServersSelected, MessageBoxActions.Ok);
+				this.Context.DesktopWindow.ShowMessageBox(SR.MessageNoServersSelected, MessageBoxActions.Ok);
 				return;
 			}
 
@@ -110,7 +110,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				}
 			}
 			msgText.AppendFormat("\r\n");
-			Platform.ShowMessageBox(msgText.ToString(), MessageBoxActions.Ok);
+			this.Context.DesktopWindow.ShowMessageBox(msgText.ToString(), MessageBoxActions.Ok);
 		}
 
         protected override void OnSelectedServerChanged(object sender, EventArgs e)

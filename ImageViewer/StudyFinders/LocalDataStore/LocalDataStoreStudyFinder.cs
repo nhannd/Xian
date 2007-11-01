@@ -97,19 +97,10 @@ namespace ClearCanvas.ImageViewer.StudyFinders.LocalDataStore
 
         protected ReadOnlyQueryResultCollection Query(QueryKey queryKey)
         {
-            try
-            {
-				using (IDataStoreReader reader = DataAccessLayer.GetIDataStoreReader())
-				{
-					return reader.StudyQuery(queryKey);
-				}
-            }
-            catch (System.Data.SqlClient.SqlException e)
-            {
-                // TODO
-                Platform.ShowMessageBox(String.Format(SR.MessageUnableToConnectToDataStore, e.ToString()));
-                return null;
-            }
+			using (IDataStoreReader reader = DataAccessLayer.GetIDataStoreReader())
+			{
+				return reader.StudyQuery(queryKey);
+			}
         }       
     }
 }

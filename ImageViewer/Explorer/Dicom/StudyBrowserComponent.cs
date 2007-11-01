@@ -374,7 +374,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			bool isQueryingMyDataStore = (_selectedServerGroup.Servers.Count == 1 && _selectedServerGroup.Servers[0].Name == SR.TitleMyDataStore);
 			if (isQueryingMyDataStore == false && isOpenSearchQuery)
 			{
-				if (Platform.ShowMessageBox(SR.MessageConfirmContinueOpenSearch, MessageBoxActions.YesNo) == DialogBoxAction.No)
+				if (this.Host.DesktopWindow.ShowMessageBox(SR.MessageConfirmContinueOpenSearch, MessageBoxActions.YesNo) == DialogBoxAction.No)
 					return;
 			}
 

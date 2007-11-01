@@ -89,7 +89,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			catch (EndpointNotFoundException)
 			{
 				client.Abort();
-				Platform.ShowMessageBox(SR.MessageImportLocalDataStoreServiceNotRunning);
+				this.Context.DesktopWindow.ShowMessageBox(SR.MessageImportLocalDataStoreServiceNotRunning, MessageBoxActions.Ok);
 			}
 			catch (Exception e)
 			{

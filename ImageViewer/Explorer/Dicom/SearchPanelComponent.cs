@@ -240,7 +240,14 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			if (!ValidateDateRange())
 				return;
 
-			BlockingOperation.Run(_studyBrowserComponent.Search);
+			try
+			{
+				BlockingOperation.Run(_studyBrowserComponent.Search);
+			}
+			catch(Exception e)
+			{
+				ExceptionHandler.Report(e, this.Host.DesktopWindow);
+			}
 		}
 
 		public void SearchToday()
@@ -296,7 +303,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				if (dateFrom <= dateTo)
 					return true;
 
-				Platform.ShowMessageBox(SR.MessageFromDateIsGreaterThanToDate);
+				this.Host.DesktopWindow.ShowMessageBox(SR.MessageFromDateIsGreaterThanToDate, MessageBoxActions.Ok);
 				return false;
 			}
 

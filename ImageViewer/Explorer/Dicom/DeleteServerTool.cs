@@ -57,7 +57,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             ServerTree serverTree = this.Context.ServerTree;
             if (serverTree.CurrentNode.IsServer)
             {
-                if (Platform.ShowMessageBox(SR.MessageConfirmDeleteServer, MessageBoxActions.YesNo) != DialogBoxAction.Yes)
+                if (this.Context.DesktopWindow.ShowMessageBox(SR.MessageConfirmDeleteServer, MessageBoxActions.YesNo) != DialogBoxAction.Yes)
                     return;
 
                 this.Context.UpdateType = (int)ServerUpdateType.Delete;
@@ -66,7 +66,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             }
             else if (serverTree.CurrentNode.IsServerGroup)
             {
-                if (Platform.ShowMessageBox(SR.MessageConfirmDeleteServerGroup, MessageBoxActions.YesNo) != DialogBoxAction.Yes)
+                if (this.Context.DesktopWindow.ShowMessageBox(SR.MessageConfirmDeleteServerGroup, MessageBoxActions.YesNo) != DialogBoxAction.Yes)
                     return;
 
                 this.Context.UpdateType = (int)ServerUpdateType.Delete;

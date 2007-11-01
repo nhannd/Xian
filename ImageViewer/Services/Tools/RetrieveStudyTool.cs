@@ -115,7 +115,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			catch (EndpointNotFoundException)
 			{
 				client.Abort();
-				Platform.ShowMessageBox(SR.MessageRetrieveDicomServerServiceNotRunning);
+				this.Context.DesktopWindow.ShowMessageBox(SR.MessageRetrieveDicomServerServiceNotRunning, MessageBoxActions.Ok);
 			}
 			catch (Exception e)
 			{

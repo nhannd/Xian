@@ -96,7 +96,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			}
 			catch (EndpointNotFoundException)
 			{
-				Platform.ShowMessageBox(SR.MessageDeleteLocalDataStoreServiceNotRunning);
+				this.Context.DesktopWindow.ShowMessageBox(SR.MessageDeleteLocalDataStoreServiceNotRunning, MessageBoxActions.Ok);
 			}
 			catch (LocalDataStoreDeletionHelper.ConnectionLostException e)
 			{

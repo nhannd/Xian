@@ -84,13 +84,13 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 			if (aeNavigator.SelectedServers == null || aeNavigator.SelectedServers.Servers == null || aeNavigator.SelectedServers.Servers.Count == 0)
 			{
-				Platform.ShowMessageBox(SR.MessageSelectDestination);
+				this.Context.DesktopWindow.ShowMessageBox(SR.MessageSelectDestination, MessageBoxActions.Ok);
 				return;
 			}
 
 			if (aeNavigator.SelectedServers.Servers.Count > 1)
 			{
-				if (Platform.ShowMessageBox(SR.MessageConfirmSendToMultipleServers, MessageBoxActions.YesNo) == DialogBoxAction.No)
+				if (this.Context.DesktopWindow.ShowMessageBox(SR.MessageConfirmSendToMultipleServers, MessageBoxActions.YesNo) == DialogBoxAction.No)
 					return;
 			}
 
@@ -121,7 +121,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			catch (EndpointNotFoundException)
 			{
 				client.Abort();
-				Platform.ShowMessageBox(SR.MessageSendDicomServerServiceNotRunning);
+				this.Context.DesktopWindow.ShowMessageBox(SR.MessageSendDicomServerServiceNotRunning, MessageBoxActions.Ok);
 			}
 			catch (Exception e)
 			{
