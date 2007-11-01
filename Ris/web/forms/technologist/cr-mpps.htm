@@ -39,7 +39,7 @@
                data.acquisition.startTime = data.acquisition.startTime || startTime;
                data.acquisition.stopTime = data.acquisition.stopTime || stopTime;
 
-               initAcquisitionTable();
+               initAcquisitionTable();         
             }
             catch(e)
             {
@@ -54,6 +54,13 @@
                $("acquisitionTable"), 
                { editInPlace: true, flow: true, checkBoxes: false },
                [
+                  {  label: "Valid",
+                     cellType: "choice",
+                     choices: ["Yes", "No"],
+                     getValue: function(item) { return item.valid; },
+                     setValue: function(item, value) { item.valid = value; },
+                     getError: function(item) { return item.valid == "Yes" ? null : "Invalid"; }
+                  },
                   {  label: "Start Date/Time",
                      cellType: "datetime",
                      getValue: function(item) { return item.startTime; },
