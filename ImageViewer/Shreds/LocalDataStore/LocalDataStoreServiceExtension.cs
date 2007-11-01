@@ -41,59 +41,114 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 	[ExtensionOf(typeof(ShredExtensionPoint))]
 	public class LocalDataStoreServiceExtension : WcfShred
 	{
-		private readonly string _className;
+		private bool _localDataStoreWCFInitialized;
 		private readonly string _localDataStoreEndpointName;
+
+		private bool _localDataStoreActivityMonitorWCFInitialized;
 		private readonly string _localDataStoreActivityMonitorEndpointName;
 
 		public LocalDataStoreServiceExtension()
 		{
-			_className = this.GetType().ToString();
+			_localDataStoreWCFInitialized = false;
+			_localDataStoreActivityMonitorWCFInitialized = false;
+
 			_localDataStoreEndpointName = "LocalDataStore";
 			_localDataStoreActivityMonitorEndpointName = "LocalDataStoreActivityMonitor";
 		}
 
 		public override void Start()
 		{
-			Platform.Log(LogLevel.Info, _className + "[" + AppDomain.CurrentDomain.FriendlyName + "]: Start invoked");
-
 			try
 			{
 				LocalDataStoreService.Instance.Start();
+				string message = String.Format(SR.FormatServiceStartedSuccessfully, SR.LocalDataStore);
+				Platform.Log(LogLevel.Info, message);
+				Console.WriteLine(message);
 			}
 			catch (Exception e)
 			{
 				Platform.Log(LogLevel.Error, e);
+				Console.WriteLine(String.Format(SR.FormatServiceFailedToStart, SR.LocalDataStore));
+				return;
 			}
 
-			StartNetPipeHost<LocalDataStoreServiceType, ILocalDataStoreService>(_localDataStoreEndpointName, SR.LocalDataStoreService);
-			StartNetPipeHost<LocalDataStoreActivityMonitorServiceType, ILocalDataStoreActivityMonitorService>(_localDataStoreActivityMonitorEndpointName, SR.LocalDataStoreActivityMonitorService);
+			try
+			{
+				StartNetPipeHost<LocalDataStoreServiceType, ILocalDataStoreService>(_localDataStoreEndpointName, SR.LocalDataStore);
+				_localDataStoreWCFInitialized = true;
+				string message = String.Format(SR.FormatWCFServiceStartedSuccessfully, SR.LocalDataStore);
+				Platform.Log(LogLevel.Info, message);
+				Console.WriteLine(message);
+			}
+			catch (Exception e)
+			{
+				Platform.Log(LogLevel.Error, e);
+				Console.WriteLine(String.Format(SR.FormatWCFServiceFailedToStart, SR.LocalDataStore));
+			}
+
+			try
+			{
+				StartNetPipeHost<LocalDataStoreActivityMonitorServiceType, ILocalDataStoreActivityMonitorService>(
+					_localDataStoreActivityMonitorEndpointName, SR.LocalDataStoreActivityMonitor);
+				_localDataStoreActivityMonitorWCFInitialized = true;
+				string message = String.Format(SR.FormatWCFServiceStartedSuccessfully, SR.LocalDataStoreActivityMonitor);
+				Platform.Log(LogLevel.Info, message);
+				Console.WriteLine(message);
+			}
+			catch (Exception e)
+			{
+				Platform.Log(LogLevel.Error, e);
+				Console.WriteLine(String.Format(SR.FormatWCFServiceFailedToStart, SR.LocalDataStoreActivityMonitor));
+			}
 		}
 
 		public override void Stop()
 		{
-			StopHost(_localDataStoreEndpointName);
-			StopHost(_localDataStoreActivityMonitorEndpointName);
+			if (_localDataStoreWCFInitialized)
+			{
+				try
+				{
+					StopHost(_localDataStoreEndpointName);
+					Platform.Log(LogLevel.Info, String.Format(SR.FormatWCFServiceStoppedSuccessfully, SR.LocalDataStore));
+				}
+				catch (Exception e)
+				{
+					Platform.Log(LogLevel.Error, e);
+				}
+			}
+
+			if (_localDataStoreActivityMonitorWCFInitialized)
+			{
+				try
+				{
+					StopHost(_localDataStoreActivityMonitorEndpointName);
+					Platform.Log(LogLevel.Info, String.Format(SR.FormatWCFServiceStoppedSuccessfully, SR.LocalDataStoreActivityMonitor));
+				}
+				catch (Exception e)
+				{
+					Platform.Log(LogLevel.Error, e);
+				}
+			}
 
 			try
 			{
 				LocalDataStoreService.Instance.Stop();
+				Platform.Log(LogLevel.Info, String.Format(SR.FormatServiceStoppedSuccessfully, SR.LocalDataStore));
 			}
 			catch (Exception e)
 			{
 				Platform.Log(LogLevel.Error, e);
 			}
-
-			Platform.Log(LogLevel.Info, _className + "[" + AppDomain.CurrentDomain.FriendlyName + "]: Stop invoked");
 		}
 
 		public override string GetDisplayName()
 		{
-			return SR.LocalDataStoreServices;
+			return SR.LocalDataStore;
 		}
 
 		public override string GetDescription()
 		{
-			return SR.LocalDataStoreServiceDescription;
+			return SR.LocalDataStoreDescription;
 		}
 	}
 }

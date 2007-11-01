@@ -41,7 +41,15 @@ namespace ClearCanvas.Server.ShredHost
 {
     public static class ShredHost
     {
-        /// <summary>
+		#region Private Members
+		private static ShredControllerList _shredInfoList;
+		private static ServiceEndpointDescription _sed;
+		private static RunningState _runningState;
+		private static object _lockObject = new object();
+    	private static bool _shredHostWCFInitialized = false;
+		#endregion
+
+		/// <summary>
         /// Starts the ShredHost routine.
         /// </summary>
         /// <returns>true - if the ShredHost is currently running, false - if ShredHost is stopped.</returns>
@@ -80,14 +88,27 @@ namespace ClearCanvas.Server.ShredHost
             // for scanning for all Extensions that are shreds
 			//AppDomain.Unload(stagingDomain);
 
-			_sed = WcfHelper.StartHttpHost<ShredHostServiceType, IShredHost>("ShredHost", "Host program of multiple indepdent service-like subprograms", ShredHostServiceSettings.Instance.ShredHostHttpPort);
-            Platform.Log(LogLevel.Info, "ShredHost WCF Service started on port " + ShredHostServiceSettings.Instance.ShredHostHttpPort.ToString());
-            lock (_lockObject)
-            {
-                _runningState = RunningState.Running;
-            }
+			try
+			{
+				_sed = WcfHelper.StartHttpHost<ShredHostServiceType, IShredHost>(
+					"ShredHost", "Host program of multiple independent service-like sub-programs", ShredHostServiceSettings.Instance.ShredHostHttpPort);
+				_shredHostWCFInitialized = true;
+				string message = String.Format("The ShredHost WCF service has started on port {0}.", ShredHostServiceSettings.Instance.ShredHostHttpPort);
+				Platform.Log(LogLevel.Info, message);
+				Console.WriteLine(message);
+			}
+			catch(Exception	e)
+			{
+				Platform.Log(LogLevel.Error, e);
+				Console.WriteLine("The ShredHost WCF service has failed to start.  Please check the log for more details.");
+			}
 
-            return (RunningState.Running == _runningState);
+        	lock (_lockObject)
+			{
+				_runningState = RunningState.Running;
+			}
+			
+			return (RunningState.Running == _runningState);
         }
 
         /// <summary>
@@ -106,12 +127,22 @@ namespace ClearCanvas.Server.ShredHost
 
             // correct sequence should be to stop the WCF host so that we don't
             // receive any more incoming requests
-            Platform.Log(LogLevel.Info, "Shred Host stop request received");
-            WcfHelper.StopHost(_sed);
-            Platform.Log(LogLevel.Info, "ShredHost WCF Service stopped");
-            StopShreds();
-            Platform.Log(LogLevel.Info, "Completing Shred Host stop");
 
+			if (_shredHostWCFInitialized)
+			{
+				try
+				{
+					WcfHelper.StopHost(_sed);
+					Platform.Log(LogLevel.Info, "The ShredHost WCF service has stopped.");
+				}
+				catch(Exception e)
+				{
+					Platform.Log(LogLevel.Error, e);
+				}
+			}
+
+        	StopShreds();
+            Platform.Log(LogLevel.Info, "Completing Shred Host stop.");
 
             _shredInfoList.Clear();
             lock (_lockObject)
@@ -206,13 +237,6 @@ namespace ClearCanvas.Server.ShredHost
                 Console.WriteLine("-> Version: {0}", a.GetName().Version);
             }
         }
-        #endregion
-
-        #region Private Members
-        private static ShredControllerList _shredInfoList;
-        private static ServiceEndpointDescription _sed;
-        private static RunningState _runningState;
-        private static object _lockObject = new object();
         #endregion
 
         internal static ShredControllerList ShredControllerList

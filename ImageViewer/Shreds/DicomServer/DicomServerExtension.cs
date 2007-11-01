@@ -30,17 +30,7 @@
 #endregion
 
 using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading;
-using System.Configuration;
-
 using ClearCanvas.Common;
-using ClearCanvas.Dicom;
-using ClearCanvas.Dicom.DataStore;
-using ClearCanvas.Dicom.OffisNetwork;
-using ClearCanvas.Dicom.OffisWrapper;
 using ClearCanvas.Server.ShredHost;
 using ClearCanvas.ImageViewer.Services.DicomServer;
 
@@ -49,32 +39,71 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
     [ExtensionOf(typeof(ShredExtensionPoint))]
     public class DicomServerExtension : WcfShred
     {
-        private readonly string _className;
-        private readonly string _dicomServerEndpointName;
+		private bool _wcfInitialized;
+		private readonly string _endpointName;
 
         public DicomServerExtension()
         {
-            _className = this.GetType().ToString();
-            _dicomServerEndpointName = "DicomServer";
+        	_wcfInitialized = false;
+            _endpointName = "DicomServer";
         }
 
         public override void Start()
         {
-            Platform.Log(LogLevel.Info, _className + "[" + AppDomain.CurrentDomain.FriendlyName + "]: Start invoked");
+			try
+			{
+				DicomServerManager.Instance.Start();
+				string message = String.Format(SR.FormatServiceStartedSuccessfully, SR.DicomServer);
+				Platform.Log(LogLevel.Info, message);
+				Console.WriteLine(message);
+			}
+			catch(Exception e)
+			{
+				Platform.Log(LogLevel.Error, e);
+				Console.WriteLine(String.Format(SR.FormatServiceFailedToStart, SR.DicomServer));
+				return;
+			}
 
-			DicomServerManager.Instance.Start();
-
-			StartNetPipeHost<DicomServerServiceType, IDicomServerService>(_dicomServerEndpointName, "DicomServer");
+			try
+			{
+				StartNetPipeHost<DicomServerServiceType, IDicomServerService>(_endpointName, SR.DicomServer);
+				_wcfInitialized = true;
+				string message = String.Format(SR.FormatWCFServiceStartedSuccessfully, SR.DicomServer);
+				Platform.Log(LogLevel.Info, message);
+				Console.WriteLine(message);
+			}
+			catch (Exception e)
+			{
+				Platform.Log(LogLevel.Error, e);
+				Console.WriteLine(String.Format(SR.FormatWCFServiceFailedToStart, SR.DicomServer));
+			}
         }
 
         public override void Stop()
         {
-			StopHost(_dicomServerEndpointName);
+        	if (_wcfInitialized)
+        	{
+        		try
+        		{
+        			StopHost(_endpointName);
+					Platform.Log(LogLevel.Info, String.Format(SR.FormatWCFServiceStoppedSuccessfully, SR.DicomServer));
+        		}
+        		catch (Exception e)
+        		{
+        			Platform.Log(LogLevel.Error, e);
+        		}
+        	}
 
-			DicomServerManager.Instance.Stop();
-			
-			Platform.Log(LogLevel.Info, _className + "[" + AppDomain.CurrentDomain.FriendlyName + "]: Stop invoked");
-        }
+			try
+			{
+				DicomServerManager.Instance.Stop();
+				Platform.Log(LogLevel.Info, String.Format(SR.FormatServiceStoppedSuccessfully, SR.DicomServer));
+			}
+			catch(Exception e)
+			{
+				Platform.Log(LogLevel.Error, e);
+			}
+		}
 
         public override string GetDisplayName()
         {

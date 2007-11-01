@@ -136,8 +136,6 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			{
 				_dicomServer.Stop();
 				_dicomServer = null;
-
-				Platform.Log(LogLevel.Info, "DICOM Server stopped");
 			}
 		}
 
@@ -157,15 +155,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
                 _dicomServer = new ClearCanvas.Dicom.OffisNetwork.DicomServer(myApplicationEntity, DicomServerSettings.Instance.InterimStorageDirectory);
 			}
 
-			try
-			{
-				_dicomServer.Start();
-				Platform.Log(LogLevel.Info, "DICOM Server started");
-			}
-			catch (Exception e)
-			{
-				Platform.Log(LogLevel.Error, new Exception("Failed to start Dicom Server", e));
-			}
+			_dicomServer.Start();
 		}
 
 		#region Properties
@@ -933,7 +923,15 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				{
 					if (_restartingServer)
 					{
-						StartServer();
+						try
+						{
+							StartServer();
+						}
+						catch(Exception e)
+						{
+							Platform.Log(LogLevel.Error, new Exception("Failed to restart Dicom Server", e));
+						}
+						
 						_restartingServer = false;
 					}
 				}

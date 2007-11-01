@@ -30,12 +30,6 @@
 #endregion
 
 using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading;
-using System.Configuration;
-
 using ClearCanvas.Common;
 using ClearCanvas.Server.ShredHost;
 using ClearCanvas.ImageViewer.Services.DiskspaceManager;
@@ -45,31 +39,70 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
     [ExtensionOf(typeof(ShredExtensionPoint))]
     public class DiskspaceManagerExtension : WcfShred
     {
-        private readonly string _className;
-        private readonly string _diskspaceManagerEndpointName;
+		private bool _wcfInitialized;
+		private readonly string _endpointName;
 
         public DiskspaceManagerExtension()
         {
-            _className = this.GetType().ToString();
-            _diskspaceManagerEndpointName = "DiskspaceManager";
+        	_wcfInitialized = false;
+            _endpointName = "DiskspaceManager";
         }
 
         public override void Start()
         {
-			Platform.Log(LogLevel.Info, _className + "[" + AppDomain.CurrentDomain.FriendlyName + "]: Start invoked");
+			try
+			{
+				DiskspaceManagerProcessor.Instance.StartProcessor();
+				string message = String.Format(SR.FormatServiceStartedSuccessfully, SR.DiskspaceManager);
+				Platform.Log(LogLevel.Info, message);
+				Console.WriteLine(message);
+			}
+			catch (Exception e)
+			{
+				Platform.Log(LogLevel.Error, e);
+				Console.WriteLine(String.Format(SR.FormatServiceFailedToStart, SR.DiskspaceManager));
+				return;
+			}
 
-			DiskspaceManagerProcessor.Instance.StartProcessor();
-
-			StartNetPipeHost<DiskspaceManagerServiceType, IDiskspaceManagerService>(_diskspaceManagerEndpointName, "DiskspaceManager");
-        }
+			try
+			{
+				StartNetPipeHost<DiskspaceManagerServiceType, IDiskspaceManagerService>(_endpointName, SR.DiskspaceManager);
+				_wcfInitialized = true;
+				string message = String.Format(SR.FormatWCFServiceStartedSuccessfully, SR.DiskspaceManager);
+				Platform.Log(LogLevel.Info, message);
+				Console.WriteLine(message);
+			}
+			catch (Exception e)
+			{
+				Platform.Log(LogLevel.Error, e);
+				Console.WriteLine(String.Format(SR.FormatWCFServiceFailedToStart, SR.DiskspaceManager));
+			}
+		}
 
         public override void Stop()
         {
-			StopHost(_diskspaceManagerEndpointName);
-			
-			DiskspaceManagerProcessor.Instance.StopProcessor();
+			if (_wcfInitialized)
+			{
+				try
+				{
+					StopHost(_endpointName);
+					Platform.Log(LogLevel.Info, String.Format(SR.FormatWCFServiceStoppedSuccessfully, SR.DiskspaceManager));
+				}
+				catch (Exception e)
+				{
+					Platform.Log(LogLevel.Error, e);
+				}
+			}
 
-			Platform.Log(LogLevel.Info, _className + "[" + AppDomain.CurrentDomain.FriendlyName + "]: Stop invoked");
+			try
+			{
+				DiskspaceManagerProcessor.Instance.StopProcessor();
+				Platform.Log(LogLevel.Info, String.Format(SR.FormatServiceStoppedSuccessfully, SR.DiskspaceManager));
+			}
+			catch(Exception e)
+			{
+				Platform.Log(LogLevel.Error, e);
+			}
         }
 
         public override string GetDisplayName()

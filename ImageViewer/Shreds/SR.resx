@@ -121,7 +121,7 @@
     <value>Dicom Server</value>
   </data>
   <data name="DicomServerDescription" xml:space="preserve">
-    <value>This shred hosts the Dicom Server and the WCF Dicom Request service</value>
+    <value>This shred hosts the Dicom Server and the WCF Dicom Server service</value>
   </data>
   <data name="DiskspaceManager" xml:space="preserve">
     <value>Diskspace Manager</value>
@@ -277,23 +277,38 @@
     <value>total errors: {0}, last error: {1}
 Please check the service logs for more details.</value>
   </data>
+  <data name="FormatServiceFailedToStart" xml:space="preserve">
+    <value>The {0} service has failed to start.  Please check the log for more details.</value>
+  </data>
+  <data name="FormatServiceStartedSuccessfully" xml:space="preserve">
+    <value>The {0} service has started successfully.</value>
+  </data>
+  <data name="FormatServiceStoppedSuccessfully" xml:space="preserve">
+    <value>The {0} service has stopped successfully.</value>
+  </data>
   <data name="FormatTooltipServerDetails" xml:space="preserve">
     <value>Dicom Server Shred (Name: {0} AE: {1} Host: {2} Port: {3} Location: {4})</value>
   </data>
   <data name="FormatUnableToParseFile" xml:space="preserve">
     <value>Unable to parse the file ({0}); the sent file information may not be accurate for this study.</value>
   </data>
-  <data name="LocalDataStoreActivityMonitorService" xml:space="preserve">
-    <value>Local Data Store Activity Monitor Service</value>
+  <data name="FormatWCFServiceFailedToStart" xml:space="preserve">
+    <value>The {0} WCF service has failed to start.  Please check the log for more details.</value>
   </data>
-  <data name="LocalDataStoreService" xml:space="preserve">
-    <value>Local Data Store Service</value>
+  <data name="FormatWCFServiceStartedSuccessfully" xml:space="preserve">
+    <value>The {0} WCF service has started successfully.</value>
   </data>
-  <data name="LocalDataStoreServiceDescription" xml:space="preserve">
+  <data name="FormatWCFServiceStoppedSuccessfully" xml:space="preserve">
+    <value>The {0} WCF service has stopped successfully.</value>
+  </data>
+  <data name="LocalDataStore" xml:space="preserve">
+    <value>Local Data Store</value>
+  </data>
+  <data name="LocalDataStoreActivityMonitor" xml:space="preserve">
+    <value>Local Data Store Activity Monitor</value>
+  </data>
+  <data name="LocalDataStoreDescription" xml:space="preserve">
     <value>Hosts the Local Data Store and Activity Monitor Services</value>
-  </data>
-  <data name="LocalDataStoreServices" xml:space="preserve">
-    <value>Local Data Store Services</value>
   </data>
   <data name="MessageBeginDeleting" xml:space="preserve">
     <value>High Watermark reached; begin removing studies</value>
