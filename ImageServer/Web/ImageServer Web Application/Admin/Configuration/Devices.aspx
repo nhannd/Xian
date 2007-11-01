@@ -16,7 +16,7 @@
                                 <table>
                                     <tr>
                                         <td style="font-weight: bold; height: 50px" class="WindowTitleBar">
-                                            DEVICE MANAGEMENTx</td>
+                                            DEVICE MANAGEMENT</td>
                                     </tr>
                                     <tr>
                                         <td>

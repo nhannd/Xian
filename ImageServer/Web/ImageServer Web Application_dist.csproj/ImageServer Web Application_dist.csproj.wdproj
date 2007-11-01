@@ -39,6 +39,7 @@
     <ExcludeFromBuild Include="$(SourceWebPhysicalPath)\**\obj\" />
     <ExcludeFromBuild Include="$(SourceWebPhysicalPath)\*.csproj.*" />
     <ExcludeFromBuild Include="$(SourceWebPhysicalPath)\Old_App_Code" />
+	<ExcludeFromBuild Include="$(SourceWebPhysicalPath)\Builds\**\*.*" />
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <WebConfigReplacementFiles Include="ConnectionStrings.config">
@@ -50,8 +51,6 @@
        Other similar extension points exist, see Microsoft.WebDeployment.targets.
   -->
   <Target Name="BeforeBuild">
-    <Message Text="Resetting IIS... (required if re-deploying after unsuccessful build)" />
-    <Exec Command="iisreset" />
   </Target>
   <Target Name="BeforeMerge">
   </Target>
@@ -59,6 +58,6 @@
   </Target>
   <Target Name="AfterBuild">
     <Message Text="Cleaning up deploy folder...." />
-    <RemoveDir Directories="$(OutputPath)\obj;$(OutputPath)\Old_App_Code;$(OutputPath)\Properties" />
+    <RemoveDir Directories="$(OutputPath)\obj;$(OutputPath)\Builds;$(OutputPath)\Old_App_Code;$(OutputPath)\Properties" />
   </Target>
 </Project>

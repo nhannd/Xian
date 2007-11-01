@@ -1,0 +1,16 @@
+<Project DefaultTargets="CopyPlugins" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+	<ItemGroup>
+		<PluginFiles Include="$(ProjectDir)\..\..\Enterprise\SqlServer2005\bin\$(Configuration)\ClearCanvas.ImageServer.Enterprise.SqlServer2005.dll"/>
+		<PluginFiles Include="$(ProjectDir)\..\..\Model\SqlServer2005\bin\$(Configuration)\ClearCanvas.ImageServer.Model.SqlServer2005.dll"/>
+
+	</ItemGroup>
+	
+    <Target Name="CopyPlugins">
+		<Message Text="Copying plugin assemblies into plugins folder (ASP.NET Development Server must not be running)"/>
+		<Message Text="$(ProjectDir)"/>
+		<Message Text="@(PluginFiles)"/>
+
+		<Copy SkipUnchangedFiles="true" SourceFiles="@(PluginFiles)" DestinationFolder="$(ProjectDir)\plugins"/>
+    </Target> 
+</Project> 

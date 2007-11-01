@@ -192,10 +192,10 @@
     </VisualStudio>
   </ProjectExtensions>
   <PropertyGroup>
-    <PreBuildEvent>rem copy plugin assembly
-echo Y | copy  "$(SolutionDir)..\Enterprise\SqlServer2005\$(OutDir)$(ConfigurationName)\ClearCanvas.ImageServer.Enterprise.SqlServer2005.dll"  "$(ProjectDir)plugins"
+    <PreBuildEvent>
+    </PreBuildEvent>
+    <PostBuildEvent>REM Run PostBuild msbuild project
 
-echo Y | copy "$(SolutionDir)..\Model\SqlServer2005\$(OutDir)$(ConfigurationName)\ClearCanvas.ImageServer.Model.SqlServer2005.dll"  "$(ProjectDir)plugins"
-</PreBuildEvent>
+c:\WINDOWS\Microsoft.NET\Framework\v2.0.50727\MSBuild.exe  "$(ProjectDir)Builds\PostBuild.proj" "/property:ProjectDir=$(ProjectDir);Configuration=$(ConfigurationName)"</PostBuildEvent>
   </PropertyGroup>
 </Project>
