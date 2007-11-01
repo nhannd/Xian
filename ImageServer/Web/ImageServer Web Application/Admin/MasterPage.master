@@ -1,0 +1,89 @@
+<%@ Master Language="C#" AutoEventWireup="true" Inherits="Admin_MasterPage" Codebehind="MasterPage.master.cs" %>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<head runat="server">
+    <title>Untitled Page</title>
+    <link href="./StyleSheet.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+    <form id="form1" runat="server">
+<div >
+            <asp:ScriptManager ID="ScriptManager1" runat="server">
+            </asp:ScriptManager>
+            <asp:UpdatePanel ID="UpdatePanel2" runat="server">
+                <ContentTemplate>
+                    <table style="width: 100%">
+                        <tr>
+                            <td colspan="2" valign="top">
+                                <table width="100%">
+                                    <tr>
+                                        <td>
+                                <asp:Image ID="Image1" runat="server" ImageUrl="~/images/LogoSmall.png" /></td>
+                                        <td style="vertical-align: top; text-align: right">
+                                            <asp:Label ID="VersionLabel" runat="server" Font-Size="8pt" ForeColor="Silver" Text="Version 1.0.0.0.0.0.0"></asp:Label></td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr  align="left" >
+                            <td style="width: 24px" valign="top">
+                                <asp:Panel ID="Panel1" runat="server" Width="370px" Height="423px">
+                                    <table width="100%" class="Window">
+                                        <tr>
+                                            <td style="font-weight: bold; height: 50px;" class="WindowTitleBar">
+                                                &nbsp;Administration</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="WindowBody" style="padding-left: 20px; vertical-align: top;">
+                                                <asp:TreeView ID="TreeView1" runat="server" DataSourceID="SiteMapDataSource1" ExpandDepth="0"
+                                                    ImageSet="Msdn" PopulateNodesFromClient="False">
+                                                    <ParentNodeStyle Font-Bold="False" />
+                                                    <LevelStyles>
+                                                        <asp:TreeNodeStyle Font-Underline="False" />
+                                                    </LevelStyles>
+                                                    <HoverNodeStyle Font-Underline="False" Font-Bold="True" ForeColor="#FFC0C0" />
+                                                    <SelectedNodeStyle BorderColor="#888888" BorderStyle="Solid" BorderWidth="1px" Font-Underline="False"
+                                                        HorizontalPadding="20px" VerticalPadding="1px" ForeColor="DeepSkyBlue" />
+                                                    <NodeStyle Font-Names="Verdana" Font-Size="Small" HorizontalPadding="5px" NodeSpacing="1px"
+                                                        VerticalPadding="2px" />
+                                                </asp:TreeView>
+                                                <asp:SiteMapDataSource ID="SiteMapDataSource1" runat="server" />
+                                                <br />
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="height: 89px">
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </asp:Panel>
+                                &nbsp;&nbsp;
+                            </td>
+                            <td valign="top" align="left">
+                                <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
+                                </asp:ContentPlaceHolder>
+                            </td>
+                        </tr>
+                    </table>
+                    
+                </ContentTemplate>
+            </asp:UpdatePanel>
+       
+            <asp:Panel ID="Panel2" runat="server" Height="50px" Style="z-index: 100; left: 864px;
+                position: absolute; top: 473px" Width="125px">
+                                <asp:UpdateProgress ID="UpdateProgress1" runat="server">
+                                    <ProgressTemplate>
+                                        <asp:Panel ID="Panel3" runat="server" BackColor="#FFE0C0" Height="50px" HorizontalAlign="Center"
+                                            Width="100%">
+                                            <br />
+                                        Please wait...<br />
+                                        </asp:Panel>
+                                    </ProgressTemplate>
+                                </asp:UpdateProgress>
+            </asp:Panel>
+        </div>
+        </form>
+</body>
+</html>
