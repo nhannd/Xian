@@ -46,8 +46,7 @@ using ClearCanvas.Desktop.Trees;
 
 namespace ClearCanvas.Desktop.Configuration
 {
-	[MenuAction("activate", "global-menus/MenuTools/MenuUtilities/MenuConfigureSettings")]
-	[ClickHandler("activate", "Activate")]
+	[MenuAction("activate", "global-menus/MenuTools/MenuUtilities/MenuConfigureSettings", "Activate")]
     [ExtensionOf(typeof(DesktopToolExtensionPoint))]
     public class SettingsManagementLaunchTool : Tool<IDesktopToolContext>
     {

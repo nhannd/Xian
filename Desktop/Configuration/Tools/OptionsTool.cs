@@ -43,10 +43,9 @@ using ClearCanvas.Desktop.Tools;
 
 namespace ClearCanvas.Desktop.Configuration.Tools
 {
-	[MenuAction("show", "global-menus/MenuTools/MenuOptions", KeyStroke = XKeys.Control | XKeys.O)]
+	[MenuAction("show", "global-menus/MenuTools/MenuOptions", "Show", KeyStroke = XKeys.Control | XKeys.O)]
 	[Tooltip("show", "MenuOptions")]
 	[IconSet("show", IconScheme.Colour, "Icons.OptionsToolSmall.png", "Icons.OptionsToolMedium.png", "Icons.OptionsToolLarge.png")]
-	[ClickHandler("show", "Show")]
 	[EnabledStateObserver("show", "Enabled", "EnabledChanged")]
 	[GroupHint("show", "Application.Options")]
 

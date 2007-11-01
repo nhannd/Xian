@@ -107,7 +107,6 @@ namespace ClearCanvas.Desktop.View.WinForms
             this._workspaceTableView.Table = null;
             this._workspaceTableView.ToolbarModel = null;
             this._workspaceTableView.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this._workspaceTableView.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.No;
             // 
             // CloseHelperComponentControl
             // 

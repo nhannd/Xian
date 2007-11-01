@@ -101,7 +101,6 @@ namespace ClearCanvas.Desktop.View.WinForms
             this._windows.Table = null;
             this._windows.ToolbarModel = null;
             this._windows.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this._windows.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.No;
             // 
             // _openWindow
             // 
@@ -227,7 +226,6 @@ namespace ClearCanvas.Desktop.View.WinForms
             this._shelves.Table = null;
             this._shelves.ToolbarModel = null;
             this._shelves.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this._shelves.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.No;
             // 
             // label2
             // 
@@ -282,7 +280,6 @@ namespace ClearCanvas.Desktop.View.WinForms
             this._workspaces.Table = null;
             this._workspaces.ToolbarModel = null;
             this._workspaces.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this._workspaces.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.No;
             // 
             // label1
             // 
@@ -317,7 +314,6 @@ namespace ClearCanvas.Desktop.View.WinForms
             this._events.Table = null;
             this._events.ToolbarModel = null;
             this._events.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this._events.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.No;
             // 
             // DesktopMonitorComponentControl
             // 

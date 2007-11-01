@@ -79,7 +79,6 @@ namespace ClearCanvas.Utilities.DicomEditor.View.WinForms
 			this._dicomTagTable.Table = null;
 			this._dicomTagTable.ToolbarModel = null;
 			this._dicomTagTable.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.ImageAndText;
-			this._dicomTagTable.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.No;
 			// 
 			// _dicomEditorTitleBar
 			// 

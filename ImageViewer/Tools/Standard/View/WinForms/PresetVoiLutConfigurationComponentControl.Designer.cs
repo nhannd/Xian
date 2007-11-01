@@ -83,7 +83,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 			this._presetVoiLuts.Table = null;
 			this._presetVoiLuts.ToolbarModel = null;
 			this._presetVoiLuts.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this._presetVoiLuts.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.No;
 			// 
 			// _comboModality
 			// 

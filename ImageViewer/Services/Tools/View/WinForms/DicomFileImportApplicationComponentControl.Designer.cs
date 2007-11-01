@@ -78,7 +78,6 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 			this._importTable.Table = null;
 			this._importTable.ToolbarModel = null;
 			this._importTable.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this._importTable.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.No;
 			// 
 			// _importProgressControl
 			// 

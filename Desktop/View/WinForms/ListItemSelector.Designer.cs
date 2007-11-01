@@ -132,7 +132,6 @@ namespace ClearCanvas.Desktop.View.WinForms
             this._availableItems.Table = null;
             this._availableItems.ToolbarModel = null;
             this._availableItems.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this._availableItems.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.No;
             this._availableItems.ItemDoubleClicked += new System.EventHandler(this.AddSelection);
             // 
             // _selectedItems
@@ -152,7 +151,6 @@ namespace ClearCanvas.Desktop.View.WinForms
             this._selectedItems.Table = null;
             this._selectedItems.ToolbarModel = null;
             this._selectedItems.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this._selectedItems.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.No;
             this._selectedItems.ItemDoubleClicked += new System.EventHandler(this.RemoveSelection);
             // 
             // label2

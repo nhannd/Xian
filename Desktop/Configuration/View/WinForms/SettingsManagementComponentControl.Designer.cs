@@ -83,7 +83,6 @@ namespace ClearCanvas.Desktop.Configuration.View.WinForms
             this._valueTableView.Table = null;
             this._valueTableView.ToolbarModel = null;
             this._valueTableView.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.ImageAndText;
-            this._valueTableView.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // _settingsGroupTableView
             // 
@@ -100,7 +99,6 @@ namespace ClearCanvas.Desktop.Configuration.View.WinForms
             this._settingsGroupTableView.Table = null;
             this._settingsGroupTableView.ToolbarModel = null;
             this._settingsGroupTableView.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this._settingsGroupTableView.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.No;
             // 
             // splitContainer1
             // 
