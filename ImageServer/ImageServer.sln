@@ -2,132 +2,87 @@
 Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual Studio 2005
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageServer.Model", "Model\ClearCanvas.ImageServer.Model.csproj", "{2C9126D3-5B73-4539-BBC9-D56E6097D335}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageServer.TestApp", "TestApp\ClearCanvas.ImageServer.TestApp.csproj", "{7462F6BA-5634-4ED5-A4E1-707F3F43D113}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
 		{7C4EDB0A-B94C-4078-846A-DEA974348B2B} = {7C4EDB0A-B94C-4078-846A-DEA974348B2B}
 		{221FC797-CCE8-406B-94AB-0EB290A387A6} = {221FC797-CCE8-406B-94AB-0EB290A387A6}
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageServer.Model.SqlServer2005", "Model\SqlServer2005\ClearCanvas.ImageServer.Model.SqlServer2005.csproj", "{7C4EDB0A-B94C-4078-846A-DEA974348B2B}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Server.ShredHost", "..\Server\ShredHost\ClearCanvas.Server.ShredHost.csproj", "{8347B928-805E-42E7-B980-08D8AF1A0671}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.DicomServices", "..\DicomServices\ClearCanvas.DicomServices.csproj", "{734E6EA2-DC6B-4387-B671-EED0A603D73E}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Dicom", "..\Dicom\ClearCanvas.Dicom.csproj", "{AD9ECE2B-8268-4115-8DC8-860FBD011FFF}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageServer.ShredHostExe", "ShredHostExe\ClearCanvas.ImageServer.ShredHostExe.csproj", "{9B38E701-F797-4517-9B33-025794A7CC32}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
-		{7C4EDB0A-B94C-4078-846A-DEA974348B2B} = {7C4EDB0A-B94C-4078-846A-DEA974348B2B}
+		{86CA6EDB-DE59-45E9-8BD8-832FBB3F8009} = {86CA6EDB-DE59-45E9-8BD8-832FBB3F8009}
+		{B5EBFFD7-6641-4932-91C9-4C4322B41868} = {B5EBFFD7-6641-4932-91C9-4C4322B41868}
+		{2C9126D3-5B73-4539-BBC9-D56E6097D335} = {2C9126D3-5B73-4539-BBC9-D56E6097D335}
+		{523EDDC1-7C6E-404D-A8ED-5F043F5E6BE3} = {523EDDC1-7C6E-404D-A8ED-5F043F5E6BE3}
+		{6EABFD8A-B727-4B9C-800D-ADCBDE339639} = {6EABFD8A-B727-4B9C-800D-ADCBDE339639}
+		{7462F6BA-5634-4ED5-A4E1-707F3F43D113} = {7462F6BA-5634-4ED5-A4E1-707F3F43D113}
+		{734E6EA2-DC6B-4387-B671-EED0A603D73E} = {734E6EA2-DC6B-4387-B671-EED0A603D73E}
 		{221FC797-CCE8-406B-94AB-0EB290A387A6} = {221FC797-CCE8-406B-94AB-0EB290A387A6}
+		{65B9B08C-EAE4-4EE2-B164-905B03134443} = {65B9B08C-EAE4-4EE2-B164-905B03134443}
+		{9CE68574-CA73-43A3-9B33-8E26CECBC527} = {9CE68574-CA73-43A3-9B33-8E26CECBC527}
+		{431E9444-9915-4D49-B92D-9B7EC086622A} = {431E9444-9915-4D49-B92D-9B7EC086622A}
+		{95FEA63F-7E51-4829-923E-8CD02C8DEAE2} = {95FEA63F-7E51-4829-923E-8CD02C8DEAE2}
+		{AD9ECE2B-8268-4115-8DC8-860FBD011FFF} = {AD9ECE2B-8268-4115-8DC8-860FBD011FFF}
+		{DDFB1D25-75AE-43A6-A7A5-33D173EFFD04} = {DDFB1D25-75AE-43A6-A7A5-33D173EFFD04}
+		{DF8F531F-5AE4-4AC1-A086-B50FB799EEF1} = {DF8F531F-5AE4-4AC1-A086-B50FB799EEF1}
+		{7C4EDB0A-B94C-4078-846A-DEA974348B2B} = {7C4EDB0A-B94C-4078-846A-DEA974348B2B}
+		{316C730A-492A-4201-87CD-3C2F3260571C} = {316C730A-492A-4201-87CD-3C2F3260571C}
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageServer.ShredHostService", "ShredHostService\ClearCanvas.ImageServer.ShredHostService.csproj", "{6EABFD8A-B727-4B9C-800D-ADCBDE339639}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
+	ProjectSection(ProjectDependencies) = postProject
+		{316C730A-492A-4201-87CD-3C2F3260571C} = {316C730A-492A-4201-87CD-3C2F3260571C}
+		{7C4EDB0A-B94C-4078-846A-DEA974348B2B} = {7C4EDB0A-B94C-4078-846A-DEA974348B2B}
+		{DF8F531F-5AE4-4AC1-A086-B50FB799EEF1} = {DF8F531F-5AE4-4AC1-A086-B50FB799EEF1}
+		{DDFB1D25-75AE-43A6-A7A5-33D173EFFD04} = {DDFB1D25-75AE-43A6-A7A5-33D173EFFD04}
+		{8347B928-805E-42E7-B980-08D8AF1A0671} = {8347B928-805E-42E7-B980-08D8AF1A0671}
+		{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343} = {F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}
+		{AD9ECE2B-8268-4115-8DC8-860FBD011FFF} = {AD9ECE2B-8268-4115-8DC8-860FBD011FFF}
+		{95FEA63F-7E51-4829-923E-8CD02C8DEAE2} = {95FEA63F-7E51-4829-923E-8CD02C8DEAE2}
+		{431E9444-9915-4D49-B92D-9B7EC086622A} = {431E9444-9915-4D49-B92D-9B7EC086622A}
+		{9CE68574-CA73-43A3-9B33-8E26CECBC527} = {9CE68574-CA73-43A3-9B33-8E26CECBC527}
+		{65B9B08C-EAE4-4EE2-B164-905B03134443} = {65B9B08C-EAE4-4EE2-B164-905B03134443}
+		{221FC797-CCE8-406B-94AB-0EB290A387A6} = {221FC797-CCE8-406B-94AB-0EB290A387A6}
+		{734E6EA2-DC6B-4387-B671-EED0A603D73E} = {734E6EA2-DC6B-4387-B671-EED0A603D73E}
+		{7462F6BA-5634-4ED5-A4E1-707F3F43D113} = {7462F6BA-5634-4ED5-A4E1-707F3F43D113}
+		{523EDDC1-7C6E-404D-A8ED-5F043F5E6BE3} = {523EDDC1-7C6E-404D-A8ED-5F043F5E6BE3}
+		{2C9126D3-5B73-4539-BBC9-D56E6097D335} = {2C9126D3-5B73-4539-BBC9-D56E6097D335}
+		{B5EBFFD7-6641-4932-91C9-4C4322B41868} = {B5EBFFD7-6641-4932-91C9-4C4322B41868}
+		{86CA6EDB-DE59-45E9-8BD8-832FBB3F8009} = {86CA6EDB-DE59-45E9-8BD8-832FBB3F8009}
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Enterprise.Common", "..\Enterprise\Common\ClearCanvas.Enterprise.Common.csproj", "{B5EBFFD7-6641-4932-91C9-4C4322B41868}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Enterprise.Core", "..\Enterprise\Core\ClearCanvas.Enterprise.Core.csproj", "{431E9444-9915-4D49-B92D-9B7EC086622A}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageServer.Common", "Common\ClearCanvas.ImageServer.Common.csproj", "{DDFB1D25-75AE-43A6-A7A5-33D173EFFD04}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Common", "..\Common\ClearCanvas.Common.csproj", "{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageServer.Enterprise", "Enterprise\ClearCanvas.ImageServer.Enterprise.csproj", "{86CA6EDB-DE59-45E9-8BD8-832FBB3F8009}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageServer.Enterprise.SqlServer2005", "Enterprise\SqlServer2005\ClearCanvas.ImageServer.Enterprise.SqlServer2005.csproj", "{221FC797-CCE8-406B-94AB-0EB290A387A6}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageServer.Rules", "Rules\ClearCanvas.ImageServer.Rules.csproj", "{523EDDC1-7C6E-404D-A8ED-5F043F5E6BE3}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.DicomServices.XmlGenerator", "..\DicomServices\XmlGenerator\ClearCanvas.DicomServices.XmlGenerator.csproj", "{95FEA63F-7E51-4829-923E-8CD02C8DEAE2}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageServer.Services.Dicom", "Services\Dicom\ClearCanvas.ImageServer.Services.Dicom.csproj", "{316C730A-492A-4201-87CD-3C2F3260571C}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageServer.Services.Shreds", "Services\Shreds\ClearCanvas.ImageServer.Services.Shreds.csproj", "{9CE68574-CA73-43A3-9B33-8E26CECBC527}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageServer.Services.Streaming", "Services\Streaming\ClearCanvas.ImageServer.Services.Streaming.csproj", "{DF8F531F-5AE4-4AC1-A086-B50FB799EEF1}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageServer.Services.WorkQueue", "Services\WorkQueue\ClearCanvas.ImageServer.Services.WorkQueue.csproj", "{65B9B08C-EAE4-4EE2-B164-905B03134443}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
