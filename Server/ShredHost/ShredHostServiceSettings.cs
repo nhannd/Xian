@@ -38,9 +38,9 @@ namespace ClearCanvas.Server.ShredHost
 {
 	public class ShredHostServiceSettings : ShredConfigSection
 	{
-		public const int DefaultShredHostHttpPort = 50120;
-		public const int DefaultSharedHttpPort = 50121;
-		public const int DefaultSharedTcpPort = 50122;
+		public const int DefaultShredHostHttpPort = 51121;
+		public const int DefaultSharedHttpPort = 51122;
+		public const int DefaultSharedTcpPort = 50123;
 
 		private static ShredHostServiceSettings _instance;
 
