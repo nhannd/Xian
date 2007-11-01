@@ -29,24 +29,33 @@
 
 #endregion
 
-using System.Collections.Generic;
 using System.IO;
+using System.Collections.Generic;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.Dicom.DataStore
 {
-    public sealed class FileRemover
+    public class FileRemover
     {
-        public static void DeleteFilesInStudy(IStudy studyToRemove)
+    	private readonly string _topLevelDirectory;
+
+		public FileRemover(string topLevelDirectory)
+		{
+			Platform.CheckForEmptyString(topLevelDirectory, "topLevelDirectory");
+			_topLevelDirectory = System.IO.Path.GetDirectoryName(topLevelDirectory);
+		}
+
+    	public void DeleteFilesInStudy(IStudy studyToRemove)
         {
             DeleteSopInstanceFiles(studyToRemove.GetSopInstances());
         }
 
-        public static void DeleteFilesInSeries(ISeries seriesToRemove)
+        public void DeleteFilesInSeries(ISeries seriesToRemove)
         {
             DeleteSopInstanceFiles(seriesToRemove.GetSopInstances());
         }
 
-        public static void DeleteFileForSopInstance(ISopInstance sopIntanceToDelete)
+        public void DeleteFileForSopInstance(ISopInstance sopIntanceToDelete)
         {
             if (sopIntanceToDelete.GetLocationUri().IsFile == false)
                 return;
@@ -56,7 +65,7 @@ namespace ClearCanvas.Dicom.DataStore
                 File.Delete(fileName);
         }
 
-        private static void DeleteSopInstanceFiles(IEnumerable<ISopInstance> sopInstancesToDelete)
+        private void DeleteSopInstanceFiles(IEnumerable<ISopInstance> sopInstancesToDelete)
         {
             List<string> directoriesToDelete = new List<string>();
             foreach (ISopInstance sop in sopInstancesToDelete)
@@ -72,7 +81,7 @@ namespace ClearCanvas.Dicom.DataStore
             DeleteEmptyDirectories(directoriesToDelete);
         }
 
-        private static void DeleteEmptyDirectories(List<string> directoriesToDelete)
+        private void DeleteEmptyDirectories(List<string> directoriesToDelete)
         {
             if (directoriesToDelete.Count == 0)
                 return;
@@ -88,12 +97,14 @@ namespace ClearCanvas.Dicom.DataStore
                 if (Directory.Exists(directoryName))
                 {
                     DirectoryInfo directoryInfo = new DirectoryInfo(directoryName);
-                    if (directoryInfo.GetFiles("*", SearchOption.AllDirectories).Length <= 0)
-                    {
-                        Directory.Delete(directoryName, true);
-
-                        parentDirectoriesToDelete.Add(directoryInfo.Parent.FullName);
-                    }
+					if (directoryInfo.GetFiles("*", SearchOption.AllDirectories).Length <= 0)
+					{
+						if (directoryInfo.FullName != _topLevelDirectory)
+						{
+							Directory.Delete(directoryName, true);
+							parentDirectoriesToDelete.Add(directoryInfo.Parent.FullName);
+						}
+					}
                 }
             }
 

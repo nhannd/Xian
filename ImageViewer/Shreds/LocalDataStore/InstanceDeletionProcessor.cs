@@ -217,7 +217,9 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 							try
 							{
-								FileRemover.DeleteFilesInStudy(study);
+								FileRemover remover = new FileRemover(LocalDataStoreService.Instance.StorageDirectory);
+								remover.DeleteFilesInStudy(study);
+
 								using (IDataStoreStudyRemover studyRemover = DataAccessLayer.GetIDataStoreStudyRemover())
 								{
 									studyRemover.RemoveStudy(study.GetStudyInstanceUid());
