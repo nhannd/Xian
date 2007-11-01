@@ -235,6 +235,8 @@
     <Compile Include="ModalityWorkflow\ReplaceOrderResponse.cs" />
     <Compile Include="ModalityWorkflow\SearchRequest.cs" />
     <Compile Include="ModalityWorkflow\SearchResponse.cs" />
+    <Compile Include="ModalityWorkflow\TechnologistDocumentation\CompleteOrderDocumentationRequest.cs" />
+    <Compile Include="ModalityWorkflow\TechnologistDocumentation\CompleteOrderDocumentationResponse.cs" />
     <Compile Include="ModalityWorkflow\TechnologistDocumentation\CompleteModalityProcedureStepsRequest.cs" />
     <Compile Include="ModalityWorkflow\TechnologistDocumentation\CompleteModalityProcedureStepsResponse.cs" />
     <Compile Include="ModalityWorkflow\TechnologistDocumentation\DiscontinueModalityPerformedProcedureStepRequest.cs" />

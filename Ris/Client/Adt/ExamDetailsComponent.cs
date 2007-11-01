@@ -29,28 +29,21 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Ris.Application.Common.ModalityWorkflow.TechnologistDocumentation;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
     public class ExamDetailsComponent : DHtmlComponent, IDocumentationPage
     {
-        private ProcedurePlanSummary _procedurePlanSummary;
-        private HtmlFormSelector _detailsFormSelector;
-        private string _title;
-        private Dictionary<string, string> _orderExtendedProperties;
+        private readonly string _title;
+        private readonly Dictionary<string, string> _orderExtendedProperties;
 
-        public ExamDetailsComponent(string title, string urlSelectorScript, ProcedurePlanSummary procedurePlanSummary, Dictionary<string, string> orderExtendedProperties)
+        public ExamDetailsComponent(string title, string url, Dictionary<string, string> orderExtendedProperties)
         {
             _title = title;
-            _procedurePlanSummary = procedurePlanSummary;
             _orderExtendedProperties = orderExtendedProperties;
 
-            _detailsFormSelector = new HtmlFormSelector(urlSelectorScript, new string[] {"procedurePlan"});
-            SetUrl(_detailsFormSelector.SelectForm(_procedurePlanSummary));
+            SetUrl(url);
         }
 
         protected override string GetTagData(string tag)

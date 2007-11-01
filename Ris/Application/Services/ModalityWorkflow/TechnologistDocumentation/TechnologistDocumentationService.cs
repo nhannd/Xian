@@ -48,54 +48,6 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
     [ServiceImplementsContract(typeof(ITechnologistDocumentationService))]
     class TechnologistDocumentationService : ApplicationServiceBase, ITechnologistDocumentationService
     {
-        #region Old Tech Documentation page services
-
-        [ReadOperation]
-        public GetProcedureStepsForWorklistItemResponse GetProcedureStepsForWorklistItem(
-            GetProcedureStepsForWorklistItemRequest request)
-        {
-            ProcedureStep mps = PersistenceContext.Load<ProcedureStep>(request.WorklistItem.ProcedureStepRef);
-            TechnologistDocumentationAssembler assembler = new TechnologistDocumentationAssembler();
-
-            IList<ProcedureStep> documentableProcedureSteps =
-                CollectionUtils.Select<ProcedureStep, List<ProcedureStep>>(
-                    mps.RequestedProcedure.ProcedureSteps,
-                    delegate(ProcedureStep ps)
-                        {
-                            return ps.Is<ModalityProcedureStep>();
-                        });
-
-            return new GetProcedureStepsForWorklistItemResponse(
-                CollectionUtils.Map<ProcedureStep, ProcedureStepDetail, List<ProcedureStepDetail>>(
-                    documentableProcedureSteps,
-                    delegate (ProcedureStep ps)
-                        {
-                            return assembler.CreateProcedureStepDetail(ps, PersistenceContext);
-                        }));
-        }
-
-        [UpdateOperation]
-        public DocumentProceduresResponse DocumentProcedures(DocumentProceduresRequest request)
-        {
-            IList<ProcedureStepDetail> dirtyProcedureStepDetails =
-                CollectionUtils.Select<ProcedureStepDetail, List<ProcedureStepDetail>>(
-                    request.ProcedureSteps,
-                    delegate(ProcedureStepDetail detail) { return detail.Dirty; });
-
-            IDictionary<int, EntityRef> ppsDictionary = new Dictionary<int, EntityRef>(); 
-
-            TechnologistDocumentationAssembler assembler = new TechnologistDocumentationAssembler();
-            foreach (ProcedureStepDetail detail in dirtyProcedureStepDetails)
-            {
-                ProcedureStep procedureStep = PersistenceContext.Load<ProcedureStep>(detail.EntityRef);
-                assembler.UpdateProcedureStep(procedureStep, detail, this.CurrentUserStaff, ppsDictionary, PersistenceContext);
-            }
-
-            return new DocumentProceduresResponse();
-        }
-
-        #endregion
-
         #region ITechnologistDocumentationService Members
 
         [ReadOperation]
@@ -170,6 +122,16 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
             {
                 mps.Start(this.CurrentUserStaff);
                 mps.AddPerformedStep(mpps);
+            }
+
+            // Create the Documentation Steps
+            if (modalitySteps[0].RequestedProcedure.DocumentationProcedureStep == null)
+            {
+                foreach (RequestedProcedure orderRp in modalitySteps[0].RequestedProcedure.Order.RequestedProcedures)
+                {
+                    orderRp.AddProcedureStep(new DocumentationProcedureStep(orderRp));
+                    orderRp.DocumentationProcedureStep.Start(this.CurrentUserStaff);
+                }
             }
 
             this.PersistenceContext.SynchState();
@@ -301,12 +263,41 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
         public SaveDataResponse SaveData(SaveDataRequest request)
         {
             Order order = PersistenceContext.Load<Order>(request.OrderRef);
+
             foreach (KeyValuePair<string, string> pair in request.OrderExtendedProperties)
             {
                 order.ExtendedProperties[pair.Key] = pair.Value;
             }
 
-            return new SaveDataResponse();
+            this.PersistenceContext.SynchState();
+
+            SaveDataResponse response = new SaveDataResponse();
+            TechnologistDocumentationAssembler assembler = new TechnologistDocumentationAssembler();
+            response.ProcedurePlanSummary = assembler.CreateProcedurePlanSummary(order, this.PersistenceContext);
+
+            return response;
+        }
+
+        [UpdateOperation]
+        public CompleteOrderDocumentationResponse CompleteOrderDocumentation(CompleteOrderDocumentationRequest request)
+        {
+            Order order = this.PersistenceContext.Load<Order>(request.OrderRef);
+
+            foreach (RequestedProcedure requestedProcedure in order.RequestedProcedures)
+            {
+                if(requestedProcedure.DocumentationProcedureStep != null && requestedProcedure.DocumentationProcedureStep.State != ActivityStatus.CM)
+                {
+                    requestedProcedure.DocumentationProcedureStep.Complete();
+                }
+            }
+
+            this.PersistenceContext.SynchState();
+
+            CompleteOrderDocumentationResponse response = new CompleteOrderDocumentationResponse();
+            TechnologistDocumentationAssembler assembler = new TechnologistDocumentationAssembler();
+            response.ProcedurePlanSummary = assembler.CreateProcedurePlanSummary(order, this.PersistenceContext);
+
+            return response;
         }
 
         #endregion

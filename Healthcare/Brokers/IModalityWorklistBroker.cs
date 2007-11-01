@@ -29,6 +29,7 @@
 
 #endregion
 
+using System.Collections;
 using System.Collections.Generic;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare.Workflow.Modality;
@@ -49,6 +50,8 @@ namespace ClearCanvas.Healthcare.Brokers
         IList<WorklistItem> GetCompletedWorklist(TechnologistCompletedWorklist worklist);
         IList<WorklistItem> GetCancelledWorklist();
         IList<WorklistItem> GetCancelledWorklist(TechnologistCancelledWorklist worklist);
+        IList<WorklistItem> GetUndocumentedWorklist();
+        IList<WorklistItem> GetUndocumentedWorklist(TechnologistUndocumentedWorklist worklist);
 
         int GetScheduledWorklistCount();
         int GetScheduledWorklistCount(TechnologistScheduledWorklist worklist);
@@ -62,6 +65,8 @@ namespace ClearCanvas.Healthcare.Brokers
         int GetCompletedWorklistCount(TechnologistCompletedWorklist worklist);
         int GetCancelledWorklistCount();
         int GetCancelledWorklistCount(TechnologistCancelledWorklist worklist);
+        int GetUndocumentedWorklistCount();
+        int GetUndocumentedWorklistCount(TechnologistUndocumentedWorklist worklist);
 
         IList<WorklistItem> Search(
             string mrnID,

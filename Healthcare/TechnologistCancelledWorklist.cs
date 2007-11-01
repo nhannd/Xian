@@ -64,7 +64,7 @@ namespace ClearCanvas.Healthcare
 
         public override string NameSuffix
         {
-            get { return " - Cancelled In"; }
+            get { return " - Cancelled"; }
         }
 
         #endregion

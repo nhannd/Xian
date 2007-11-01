@@ -139,13 +139,6 @@
       <DependentUpon>TechnologistDocumentationComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="TechnologistDocumentationComponentView.cs" />
-    <Compile Include="XTechnologistDocumentationComponentControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="XTechnologistDocumentationComponentControl.Designer.cs">
-      <DependentUpon>XTechnologistDocumentationComponentControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="XTechnologistDocumentationComponentView.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -294,10 +287,6 @@
     <EmbeddedResource Include="TechnologistDocumentationComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>TechnologistDocumentationComponentControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="XTechnologistDocumentationComponentControl.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>XTechnologistDocumentationComponentControl.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

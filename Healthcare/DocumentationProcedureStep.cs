@@ -29,42 +29,46 @@
 
 #endregion
 
-using System;
-using ClearCanvas.Common;
-using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Desktop.Tools;
-
-namespace ClearCanvas.Ris.Client.Adt
+namespace ClearCanvas.Healthcare
 {
-    [MenuAction("apply", "global-menus/MenuTools/Technologist Documentation")]
-    [ClickHandler("apply", "Apply")]
-    [ExtensionOf(typeof(ClearCanvas.Desktop.DesktopToolExtensionPoint))]
-    public class XTechnologistDocumentationTestTool : Tool<ClearCanvas.Desktop.IDesktopToolContext>
+    public partial class DocumentationProcedureStep : ProcedureStep
     {
-        private IWorkspace _workspace;
-
-        public void Apply()
+        public DocumentationProcedureStep(RequestedProcedure procedure)
+            : base(procedure)
         {
-            try
-            {
-                if (_workspace == null)
-                {
-                    _workspace = ApplicationComponent.LaunchAsWorkspace(
-                        this.Context.DesktopWindow,
-                        new XTechnologistDocumentationComponent(),
-                        "Technologist Documentation",
-                        delegate(IApplicationComponent c) { _workspace = null;  });
-                }
-                else
-                {
-                    _workspace.Activate();
-                }
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, this.Context.DesktopWindow);
-            }
         }
+
+        /// <summary>
+        /// Default no-args constructor required by nHibernate
+        /// </summary>
+        public DocumentationProcedureStep()
+        {
+        }
+
+        public override string Name
+        {
+            get { return "Documentation"; }
+        }
+
+        #region Object overrides
+
+        public bool Equals(DocumentationProcedureStep documentationProcedureStep)
+        {
+            if (documentationProcedureStep == null) return false;
+            return true;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(this, obj)) return true;
+            return Equals(obj as DocumentationProcedureStep);
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
+
+        #endregion
     }
 }

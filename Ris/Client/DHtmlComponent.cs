@@ -30,21 +30,15 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using System.Text;
-
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin;
-using ClearCanvas.Ris.Application.Common.PreviewService;
-using ClearCanvas.Ris.Client.Formatting;
 using ClearCanvas.Ris.Application.Common.Jsml;
-using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Common.Utilities;
+using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -248,11 +242,9 @@ namespace ClearCanvas.Ris.Client
             get { return _htmlPageUrl; }
             protected set
             {
-                if (!object.Equals(_htmlPageUrl, value))
-                {
-                    _htmlPageUrl = value;
-                    NotifyPropertyChanged("HtmlPageUrl");
-                }
+                // Do not assume same url implies page should not be reloaded
+                _htmlPageUrl = value;
+                NotifyPropertyChanged("HtmlPageUrl");
             }
         }
 

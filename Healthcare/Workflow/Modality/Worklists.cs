@@ -126,5 +126,19 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
                 return GetBroker(context).GetCompletedWorklistCount();
             }
         }
+
+        [ExtensionOf(typeof(ModalityWorklistExtensionPoint))]
+        public class Undocumented : WorklistBase<IModalityWorklistBroker>
+        {
+            public override IList GetWorklist(Staff currentUserStaff, IPersistenceContext context)
+            {
+                return (IList)GetBroker(context).GetUndocumentedWorklist();
+            }
+
+            public override int GetWorklistCount(Staff currentUserStaff, IPersistenceContext context)
+            {
+                return GetBroker(context).GetUndocumentedWorklistCount();
+            }
+        }
     }
 }

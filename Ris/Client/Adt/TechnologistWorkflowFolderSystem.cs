@@ -181,6 +181,7 @@ namespace ClearCanvas.Ris.Client.Adt
             this.AddFolder(new Folders.ScheduledTechnologistWorkflowFolder(this));
             this.AddFolder(new Folders.CheckedInTechnologistWorkflowFolder(this));
             this.AddFolder(new Folders.InProgressTechnologistWorkflowFolder(this));
+            this.AddFolder(new Folders.UndocumentedTechnologistWorkflowFolder(this));
             //this.AddFolder(new Folders.SuspendedTechnologistWorkflowFolder(this));
             this.AddFolder(new Folders.CancelledTechnologistWorkflowFolder(this));
             this.AddFolder(new Folders.CompletedTechnologistWorkflowFolder(this));

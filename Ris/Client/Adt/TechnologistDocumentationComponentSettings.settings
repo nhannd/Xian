@@ -5,11 +5,11 @@
     <Setting Name="OrderSummaryUrl" Type="System.String" Scope="Application">
       <Value Profile="(Default)">http://localhost/RIS/technologistdocumentation-ordersummary.htm</Value>
     </Setting>
-    <Setting Name="PreExamDetailsPageUrlSelectorScript" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">PreExamDetailsPageUrlSelectorScript.js</Value>
+    <Setting Name="PreExamDetailsPageUrl" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">http://localhost/RIS/forms/technologist/pre-exam.htm</Value>
     </Setting>
-    <Setting Name="PostExamDetailsPageUrlSelectorScript" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">PostExamDetailsPageUrlSelectorScript.js</Value>
+    <Setting Name="PostExamDetailsPageUrl" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">http://localhost/RIS/forms/technologist/post-exam.htm</Value>
     </Setting>
   </Settings>
 </SettingsFile>

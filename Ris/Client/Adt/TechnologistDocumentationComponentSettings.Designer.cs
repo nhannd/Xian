@@ -34,19 +34,19 @@ namespace ClearCanvas.Ris.Client.Adt {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("PreExamDetailsPageUrlSelectorScript.js")]
-        public string PreExamDetailsPageUrlSelectorScript {
+        [global::System.Configuration.DefaultSettingValueAttribute("http://localhost/RIS/forms/technologist/pre-exam.htm")]
+        public string PreExamDetailsPageUrl {
             get {
-                return ((string)(this["PreExamDetailsPageUrlSelectorScript"]));
+                return ((string)(this["PreExamDetailsPageUrl"]));
             }
         }
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("PostExamDetailsPageUrlSelectorScript.js")]
-        public string PostExamDetailsPageUrlSelectorScript {
+        [global::System.Configuration.DefaultSettingValueAttribute("http://localhost/RIS/forms/technologist/post-exam.htm")]
+        public string PostExamDetailsPageUrl {
             get {
-                return ((string)(this["PostExamDetailsPageUrlSelectorScript"]));
+                return ((string)(this["PostExamDetailsPageUrl"]));
             }
         }
     }

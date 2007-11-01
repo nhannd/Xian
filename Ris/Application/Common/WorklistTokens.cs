@@ -29,7 +29,6 @@
 
 #endregion
 
-using System;
 using ClearCanvas.Common;
 
 namespace ClearCanvas.Ris.Application.Common
@@ -80,7 +79,10 @@ namespace ClearCanvas.Ris.Application.Common
 
         [WorklistToken(Description = "Technologist - Suspended")]
         public const string TechnologistSuspendedWorklist = "TechnologistSuspendedWorklist";
-        
+
+        [WorklistToken(Description = "Technologist - Undocumented")]
+        public const string TechnologistUndocumentedWorklist = "TechnologistUndocumentedWorklist";
+
         #endregion
 
         #region Reporting Worklist Tokens

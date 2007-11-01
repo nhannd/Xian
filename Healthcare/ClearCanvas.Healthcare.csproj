@@ -76,6 +76,8 @@
     <Compile Include="Alert\IAlert.cs" />
     <Compile Include="Alert\LanguageAlert.cs" />
     <Compile Include="Alert\NoteAlert.cs" />
+    <Compile Include="DocumentationProcedureStep.cs" />
+    <Compile Include="DocumentationProcedureStepSearchCriteria.cs" />
     <Compile Include="ExternalPractitioner.cs" />
     <Compile Include="MimeDocument.cs" />
     <Compile Include="MimeDocumentData.cs" />
@@ -120,6 +122,7 @@
     <Compile Include="TechnologistInProgressWorklist.cs" />
     <Compile Include="TechnologistScheduledWorklist.cs" />
     <Compile Include="TechnologistSuspendedWorklist.cs" />
+    <Compile Include="TechnologistUndocumentedWorklist.cs" />
     <Compile Include="Tests\TestDiagnosticServiceFactory.cs" />
     <Compile Include="Tests\TestVisitFactory.cs" />
     <Compile Include="Tests\TestPatientFactory.cs" />

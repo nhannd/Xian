@@ -186,6 +186,7 @@
     <EmbeddedResource Include="Mappings\PatientAttachmentCategoryEnum.hbm.xml" />
     <EmbeddedResource Include="Mappings\OrderAttachment.hbm.xml" />
     <EmbeddedResource Include="Mappings\OrderAttachmentCategoryEnum.hbm.xml" />
+    <EmbeddedResource Include="Mappings\DocumentationProcedureStep.hbm.xml" />
     <Content Include="Mappings\WorklistQueryBase.hrq.xml" />
     <EmbeddedResource Include="Mappings\NoteCategory.hbm.xml" />
     <EmbeddedResource Include="Mappings\NoteSeverityEnum.hbm.xml" />

@@ -6,4 +6,5 @@
   <subclass name="TechnologistSuspendedWorklist" proxy="TechnologistSuspendedWorklist" extends="Worklist" discriminator-value="TECH_SU"/>
   <subclass name="TechnologistCancelledWorklist" proxy="TechnologistCancelledWorklist" extends="Worklist" discriminator-value="TECH_CA"/>
   <subclass name="TechnologistCompletedWorklist" proxy="TechnologistCompletedWorklist" extends="Worklist" discriminator-value="TECH_CM"/>
+  <subclass name="TechnologistUndocumentedWorklist" proxy="TechnologistUndocumentedWorklist" extends="Worklist" discriminator-value="TECH_UD"/>
 </hibernate-mapping>

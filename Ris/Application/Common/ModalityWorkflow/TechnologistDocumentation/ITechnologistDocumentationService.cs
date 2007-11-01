@@ -37,23 +37,6 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow.TechnologistDocume
     public interface ITechnologistDocumentationService
     {
         /// <summary>
-        /// OBSOLETE - part of first pass documentation page
-        /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
-        [OperationContract]
-        GetProcedureStepsForWorklistItemResponse GetProcedureStepsForWorklistItem(GetProcedureStepsForWorklistItemRequest request);
-
-        /// <summary>
-        /// OBSOLETE - part of first pass documentation page
-        /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
-        [OperationContract]
-        [FaultContract(typeof(RequestValidationException))]
-        DocumentProceduresResponse DocumentProcedures(DocumentProceduresRequest request);
-
-        /// <summary>
         /// Returns a summary of the procedure plan for a specified modality procedure step
         /// </summary>
         /// <param name="request"><see cref="GetProcedurePlanForWorklistItemRequest"/></param>
@@ -107,5 +90,9 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow.TechnologistDocume
 
         [OperationContract]
         SaveDataResponse SaveData(SaveDataRequest request);
+
+        [OperationContract]
+        [FaultContract(typeof(RequestValidationException))]
+        CompleteOrderDocumentationResponse CompleteOrderDocumentation(CompleteOrderDocumentationRequest request);
     }
 }

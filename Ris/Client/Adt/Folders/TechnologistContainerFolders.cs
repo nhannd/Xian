@@ -80,4 +80,11 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         public TechnologistCancelledContainerFolder() 
             : base("Cancelled", typeof(CancelledTechnologistWorkflowFolder)) { }
     }
+
+    [ExtensionOf(typeof(TechnologistContainerFolderExtensionPoint))]
+    public class TechnologistUndocumentedContainerFolder : ContainerFolder
+    {
+        public TechnologistUndocumentedContainerFolder()
+            : base("Undocumented", typeof(UndocumentedTechnologistWorkflowFolder)) { }
+    }
 }

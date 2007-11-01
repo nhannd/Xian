@@ -31,7 +31,9 @@
 
 using System.Collections.Generic;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
 using ClearCanvas.Ris.Application.Common;
@@ -134,6 +136,41 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         public CompletedTechnologistWorkflowFolder()
             : this(null)
         {
+        }
+    }
+
+    [ExtensionOf(typeof(WorkflowFolderExtensionPoint))]
+    [FolderForWorklistType(WorklistTokens.TechnologistUndocumentedWorklist)]
+    public class UndocumentedTechnologistWorkflowFolder : TechnologistWorkflowFolder
+    {
+        public UndocumentedTechnologistWorkflowFolder(TechnologistWorkflowFolderSystem folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
+            : base(folderSystem, folderDisplayName, folderDescription, worklistRef)
+        {
+            this.MenuModel = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));
+            ((SimpleActionModel)this.MenuModel).AddAction("ScheduledOption", "Option", "EditToolSmall.png", "Option",
+                delegate() { DisplayOption(folderSystem.DesktopWindow); });
+
+            this.RefreshTime = 0;
+            this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Modality.Worklists+Undocumented";
+        }
+
+        public UndocumentedTechnologistWorkflowFolder(TechnologistWorkflowFolderSystem folderSystem)
+            : this(folderSystem, "Undocumented", null, null)
+        {
+        }
+
+        public UndocumentedTechnologistWorkflowFolder()
+            : this(null)
+        {
+        }
+
+        private void DisplayOption(IDesktopWindow desktopWindow)
+        {
+            FolderOptionComponent optionComponent = new FolderOptionComponent(this.RefreshTime);
+            if (ApplicationComponent.LaunchAsDialog(desktopWindow, optionComponent, "Option") == ApplicationComponentExitCode.Normal)
+            {
+                this.RefreshTime = optionComponent.RefreshTime;
+            }
         }
     }
 

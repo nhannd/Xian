@@ -29,44 +29,19 @@
 
 #endregion
 
-using ClearCanvas.Ris.Application.Common.ModalityWorkflow.TechnologistDocumentation;
+using ClearCanvas.Enterprise.Common;
 
-namespace ClearCanvas.Ris.Client.Adt
+namespace ClearCanvas.Healthcare
 {
-    /// <summary>
-    /// Wraps a domain object for presentation and selection in a table
-    /// </summary>
-    public class XTechnologistDocumentationTableItem
+    public partial class DocumentationProcedureStepSearchCriteria : ProcedureStepSearchCriteria
     {
-        private bool _selected = false;
-        private bool _canSelect = true;
-        private readonly ProcedureStepDetail _procedureStep;
-
-        public XTechnologistDocumentationTableItem()
-            :this(new ProcedureStepDetail())
-        {                  
+        public DocumentationProcedureStepSearchCriteria()
+        {
         }
 
-        public XTechnologistDocumentationTableItem (ProcedureStepDetail procedureStepDocumentationItem)
+        public DocumentationProcedureStepSearchCriteria(EntityRef entityRef)
+            : base(entityRef)
         {
-            _procedureStep = procedureStepDocumentationItem ?? new ProcedureStepDetail();
-        }
-
-        public bool Selected
-        {
-            get { return _selected; }
-            set { _selected = value; }
-        }
-
-        public bool CanSelect
-        {
-            get { return _canSelect; }
-            set { _canSelect = value; }
-        }
-
-        public ProcedureStepDetail ProcedureStep
-        {
-            get { return _procedureStep; }
         }
     }
 }

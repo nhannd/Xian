@@ -71,7 +71,18 @@ namespace ClearCanvas.Ris.Client.Adt
             protected override string GetTagData(string tag)
             {
                 string value;
-                _owner._selectedMpps.ExtendedProperties.TryGetValue(tag, out value);
+                if(string.Equals(tag, "StartTime"))
+                {
+                    value = Format.DateTime(_owner._selectedMpps.StartTime);
+                }
+                else if(string.Equals(tag, "StopTime"))
+                {
+                    value = Format.DateTime(_owner._selectedMpps.EndTime);
+                }
+                else
+                {
+                    _owner._selectedMpps.ExtendedProperties.TryGetValue(tag, out value);
+                }
                 return value;
             }
 
@@ -105,7 +116,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         private ChildComponentHost _mppsDetailsComponentHost;
         private MppsDetailsComponent _detailsComponent;
-        private string _title;
+        private readonly string _title;
 
         private event EventHandler<ProcedurePlanChangedEventArgs> _procedurePlanChanged;
 
@@ -134,7 +145,6 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             _detailsComponent.SaveData();
         }
-
 
         #region ApplicationComponent overrides
 
@@ -200,9 +210,13 @@ namespace ClearCanvas.Ris.Client.Adt
             get { return new Selection(_selectedMpps); }
             set
             {
-                _selectedMpps = (ModalityPerformedProcedureStepSummary)value.Item;
-                UpdateActionEnablement();
-                _detailsComponent.SelectedMppsChanged();
+                ModalityPerformedProcedureStepSummary selectedMpps = (ModalityPerformedProcedureStepSummary)value.Item;
+                if (selectedMpps != _selectedMpps)
+                {
+                    _selectedMpps = selectedMpps;
+                    UpdateActionEnablement();
+                    _detailsComponent.SelectedMppsChanged();
+                }
             }
         }
 
@@ -228,35 +242,47 @@ namespace ClearCanvas.Ris.Client.Adt
 
         private void StopPerformedProcedureStep()
         {
+            if (this.HasValidationErrors || _detailsComponent.HasValidationErrors)
+            {
+                ShowValidation(true);
+                _detailsComponent.ShowValidation(true);
+                return;
+            }
+
+            //this.Host.DesktopWindow.ShowMessageBox("Valid", MessageBoxActions.Ok);
+            //return;
+
+            if(_selectedMpps == null)
+            {
+                return;
+            }
+
             try
             {
-                if (_selectedMpps != null)
-                {
-                    _detailsComponent.SaveData();
+                _detailsComponent.SaveData();
 
-                    Platform.GetService<ITechnologistDocumentationService>(
-                        delegate(ITechnologistDocumentationService service)
-                        {
-                            StopModalityPerformedProcedureStepRequest request = new StopModalityPerformedProcedureStepRequest(
+                Platform.GetService<ITechnologistDocumentationService>(
+                    delegate(ITechnologistDocumentationService service)
+                    {
+                        StopModalityPerformedProcedureStepRequest request = new StopModalityPerformedProcedureStepRequest(
                                 _selectedMpps.ModalityPerformendProcedureStepRef,
                                 _selectedMpps.ExtendedProperties);
-                            StopModalityPerformedProcedureStepResponse response = service.StopModalityPerformedProcedureStep(request);
+                        StopModalityPerformedProcedureStepResponse response = service.StopModalityPerformedProcedureStep(request);
 
-                            RefreshProcedurePlanTree(response.ProcedurePlanSummary);
+                        RefreshProcedurePlanTree(response.ProcedurePlanSummary);
 
-                            _mppsTable.Items.Replace(
-                                delegate(ModalityPerformedProcedureStepSummary mppsSummary)
-                                {
-                                    return mppsSummary.ModalityPerformendProcedureStepRef == _selectedMpps.ModalityPerformendProcedureStepRef;
-                                },
-                                response.StoppedMpps);
+                        _mppsTable.Items.Replace(
+                            delegate(ModalityPerformedProcedureStepSummary mppsSummary)
+                            {
+                                return mppsSummary.ModalityPerformendProcedureStepRef == _selectedMpps.ModalityPerformendProcedureStepRef;
+                            },
+                            response.StoppedMpps);
 
-                            // Refresh selection
-                            _selectedMpps = response.StoppedMpps;
-                            UpdateActionEnablement();
-                            _mppsTable.Sort();
-                        });
-                }
+                        // Refresh selection
+                        _selectedMpps = response.StoppedMpps;
+                        UpdateActionEnablement();
+                        _mppsTable.Sort();
+                    });
             }
             catch (Exception e)
             {

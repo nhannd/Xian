@@ -120,11 +120,6 @@
     <Compile Include="TechnologistDocumentationDocument.cs" />
     <Compile Include="TechnologistDocumentationMppsSummaryTable.cs" />
     <Compile Include="TechnologistDocumentationTool.cs" />
-    <Compile Include="XTechnologistDocumentationComponent.cs" />
-    <Compile Include="XTechnologistDocumentationTable.cs" />
-    <Compile Include="XTechnologistDocumentationTableItem.cs" />
-    <Compile Include="XTechnologistDocumentationTestTool.cs" />
-    <Compile Include="XTechnologistDocumentationTool.cs" />
     <Compile Include="TechnologistHomeTool.cs" />
     <Compile Include="TechnologistPreviewComponent.cs" />
     <Compile Include="TechnologistPreviewComponentSettings.cs" />

@@ -96,6 +96,11 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             " (select rp from CheckInProcedureStep cps join cps.RequestedProcedure rp where" +
             " (cps.State = :cpsState and cps.StartTime between :cpsStartTimeBegin and :cpsStartTimeEnd))";
 
+        private const string _hqlUndocumentedSubCondition =
+            " and rp in" +
+            " (select rp from DocumentationProcedureStep dps join dps.RequestedProcedure rp where" +
+            " (dps.State = :dpsState and dps.StartTime between :dpsStartTimeBegin and :dpsStartTimeEnd))";
+
         private const string _hqlWorklistSubQuery = 
             " and rp.Type in" +
             " (select distinct rpt from Worklist w join w.RequestedProcedureTypeGroups rptg join rptg.RequestedProcedureTypes rpt where w = :worklist)";
@@ -132,6 +137,30 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
             List<QueryParameter> parameters = BaseMpsStateParameters(ActivityStatus.SC.ToString());
             AddSubQueryParameters(parameters);
+
+            AddWorklistQueryAndParameters(ref hqlQuery, parameters, worklist);
+
+            return GetWorklist(hqlQuery, parameters);
+        }
+
+        public IList<WorklistItem> GetUndocumentedWorklist()
+        {
+            return GetUndocumentedWorklist(null);
+        }
+
+        public IList<WorklistItem> GetUndocumentedWorklist(TechnologistUndocumentedWorklist worklist)
+        {
+            string hqlMpsStatelessQuery = _hqlSelectWorklist + _hqlJoin + 
+                " where (mps.Scheduling.StartTime between :mpsSchedulingStartTimeBegin and :mpsSchedulingStartTimeEnd)";
+
+            string hqlQuery = String.Concat(hqlMpsStatelessQuery, _hqlUndocumentedSubCondition);
+
+            List<QueryParameter> parameters = new List<QueryParameter>();
+            AddMpsDateRangeQueryParameters(parameters);
+
+            parameters.Add(new QueryParameter("dpsState", ActivityStatus.IP.ToString()));
+            parameters.Add(new QueryParameter("dpsStartTimeBegin", Platform.Time.Date));
+            parameters.Add(new QueryParameter("dpsStartTimeEnd", Platform.Time.Date.AddDays(1)));
 
             AddWorklistQueryAndParameters(ref hqlQuery, parameters, worklist);
 
@@ -210,6 +239,31 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
             List<QueryParameter> parameters = BaseMpsStateParameters("SC");
             AddSubQueryParameters(parameters);
+
+            AddWorklistQueryAndParameters(ref hqlQuery, parameters, worklist);
+
+            return GetWorklistCount(hqlQuery, parameters);
+        }
+
+        public int GetUndocumentedWorklistCount()
+        {
+            return GetUndocumentedWorklistCount(null);
+        }
+
+        public int GetUndocumentedWorklistCount(TechnologistUndocumentedWorklist worklist)
+        {
+            string hqlMpsStatelessQuery = _hqlSelectCount + _hqlJoin +
+                " where (mps.Scheduling.StartTime between :mpsSchedulingStartTimeBegin and :mpsSchedulingStartTimeEnd)";
+
+            string hqlQuery = String.Concat(hqlMpsStatelessQuery, _hqlUndocumentedSubCondition);
+
+            //List<QueryParameter> parameters = BaseMpsStateParameters(ActivityStatus.IP.ToString());
+            List<QueryParameter> parameters = new List<QueryParameter>();
+            AddMpsDateRangeQueryParameters(parameters);
+
+            parameters.Add(new QueryParameter("dpsState", ActivityStatus.IP.ToString()));
+            parameters.Add(new QueryParameter("dpsStartTimeBegin", Platform.Time.Date));
+            parameters.Add(new QueryParameter("dpsStartTimeEnd", Platform.Time.Date.AddDays(1)));
 
             AddWorklistQueryAndParameters(ref hqlQuery, parameters, worklist);
 

@@ -150,14 +150,11 @@ namespace ClearCanvas.Ris.Client.Adt
         #region Private Members
 
         private readonly ModalityWorklistItem _worklistItem;
-        private EntityRef _orderRef;
         private Dictionary<string, string> _orderExtendedProperties;
 
         private ProcedurePlanSummary _procedurePlan;
         private ProcedurePlanSummaryTable _procedurePlanSummaryTable;
         private event EventHandler _procedurePlanChanged;
-
-        //private event EventHandler _procedurePlanTreeChanged;
 
         private SimpleActionModel _procedurePlanActionHandler;
         private ClickAction _startAction;
@@ -231,7 +228,7 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             try
             {
-                Save();
+                Save(false);
             }
             catch (Exception e)
             {
@@ -244,7 +241,7 @@ namespace ClearCanvas.Ris.Client.Adt
             try
             {
                 // validate first
-                Save();
+                Save(true);
             }
             catch (Exception e)
             {
@@ -316,7 +313,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         #region Private methods
 
-        private void Save()
+        private void Save(bool completeDocumentation)
         {
             _preExamComponent.SaveData();
             _postExamComponent.SaveData();
@@ -326,11 +323,23 @@ namespace ClearCanvas.Ris.Client.Adt
                 module.SaveData();
             }
 
-            SaveDataRequest request = new SaveDataRequest(_procedurePlan.OrderRef, _orderExtendedProperties);
             Platform.GetService<ITechnologistDocumentationService>(
                 delegate(ITechnologistDocumentationService service)
                 {
-                    service.SaveData(request);
+                    SaveDataRequest saveRequest = new SaveDataRequest(_procedurePlan.OrderRef, _orderExtendedProperties);
+                    SaveDataResponse saveResponse = service.SaveData(saveRequest);
+
+                    if (completeDocumentation)
+                    {
+                        CompleteOrderDocumentationRequest completeRequest = new CompleteOrderDocumentationRequest(saveResponse.ProcedurePlanSummary.OrderRef);
+                        CompleteOrderDocumentationResponse completeResponse = service.CompleteOrderDocumentation(completeRequest);
+
+                        RefreshProcedurePlanSummary(completeResponse.ProcedurePlanSummary);
+                    }
+                    else
+                    {
+                        RefreshProcedurePlanSummary(saveResponse.ProcedurePlanSummary);
+                    }
                 });
         }
 
@@ -369,11 +378,11 @@ namespace ClearCanvas.Ris.Client.Adt
             _documentationTabContainer = new TabComponentContainer();
 
             _preExamComponent = new ExamDetailsComponent("Pre-exam",
-                                                         TechnologistDocumentationComponentSettings.Default.PreExamDetailsPageUrlSelectorScript,
-                                                         _procedurePlan, _orderExtendedProperties);
+                                                         TechnologistDocumentationComponentSettings.Default.PreExamDetailsPageUrl,
+                                                         _orderExtendedProperties);
             InsertDocumentationPage(_preExamComponent, 0);
 
-            _ppsComponent = new PerformedProcedureComponent("Exam", _orderRef);
+            _ppsComponent = new PerformedProcedureComponent("Exam", _procedurePlan.OrderRef);
             _ppsComponent.ProcedurePlanChanged += delegate(object sender, ProcedurePlanChangedEventArgs e) { RefreshProcedurePlanSummary(e.ProcedurePlanSummary); };
             InsertDocumentationPage(_ppsComponent, 1);
 
@@ -386,8 +395,8 @@ namespace ClearCanvas.Ris.Client.Adt
             }
 
             _postExamComponent = new ExamDetailsComponent("Post-exam",
-                                                          TechnologistDocumentationComponentSettings.Default.PostExamDetailsPageUrlSelectorScript,
-                                                          _procedurePlan, _orderExtendedProperties);
+                                                          TechnologistDocumentationComponentSettings.Default.PostExamDetailsPageUrl,
+                                                          _orderExtendedProperties);
             InsertDocumentationPage(_postExamComponent, _documentationTabContainer.Pages.Count);
 
             _documentationHost = new ChildComponentHost(this.Host, _documentationTabContainer);
@@ -443,7 +452,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         private void RefreshProcedurePlanSummary(ProcedurePlanSummary procedurePlanSummary)
         {
-            _orderRef = procedurePlanSummary.OrderRef;
+            _procedurePlan = procedurePlanSummary;
 
             _procedurePlanSummaryTable.Items.Clear();
             foreach(RequestedProcedureDetail rp in procedurePlanSummary.RequestedProcedures)

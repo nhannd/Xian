@@ -105,6 +105,20 @@ namespace ClearCanvas.Healthcare {
             }
         }
 
+        public virtual DocumentationProcedureStep DocumentationProcedureStep
+        {
+            get
+            {
+                ProcedureStep step = CollectionUtils.SelectFirst<ProcedureStep>(this.ProcedureSteps,
+                    delegate(ProcedureStep ps)
+                    {
+                        return ps.Is<DocumentationProcedureStep>();
+                    });
+
+                return step == null ? null : step.Downcast<DocumentationProcedureStep>();
+            }
+        }
+
         #endregion
 
         #region Public Operations
