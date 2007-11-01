@@ -288,6 +288,25 @@ struct T_ASC_Network
 			}
 		}
 
+		DIC_AE calledTitle;
+		ASC_getAPTitles(assoc->params, NULL, calledTitle, NULL);
+		if (0 != strcmp(calledTitle, ownAETitle))
+		{
+			T_ASC_RejectParameters rej =
+			{
+				ASC_RESULT_REJECTEDPERMANENT,
+				ASC_SOURCE_SERVICEUSER,
+				ASC_REASON_SU_CALLEDAETITLENOTRECOGNIZED
+			};
+
+			OFCondition	cond = ASC_rejectAssociation(assoc, &rej);
+			
+			ASC_dropSCPAssociation(assoc);
+			ASC_destroyAssociation(&assoc);
+
+			return NULL;
+		}
+
 		if (currentNumberOfAssociations >= maximumNumberOfAssociations)
 		{
 			T_ASC_RejectParameters rej =
@@ -304,7 +323,7 @@ struct T_ASC_Network
 
 			return NULL;
 		}
-
+		
 		// at this point an association has been received
 		// We prefer explicit transfer syntaxes.
 		// If we are running on a Little Endian machine we prefer
@@ -385,13 +404,6 @@ struct T_ASC_Network
 			}
 		}
 
-		// store calling and called aetitle in global variables to enable
-		// the --exec options using them. Enclose in quotation marks because
-		// aetitles may contain space characters.
-		DIC_AE callingTitle;
-		DIC_AE calledTitle;
-		ASC_getAPTitles(assoc->params, callingTitle, calledTitle, NULL);
-		
 		return assoc;
 	}
 }
