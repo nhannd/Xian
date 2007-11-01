@@ -113,12 +113,20 @@ namespace ClearCanvas.Server.ShredHost
         {
             ShredController shredController = threadData as ShredController;
             IWcfShred wcfShred = shredController.Shred as IWcfShred;
-            if (wcfShred != null)
+            try
             {
-                wcfShred.SharedHttpPort = ShredHostServiceSettings.Instance.SharedHttpPort;
-                wcfShred.SharedTcpPort = ShredHostServiceSettings.Instance.SharedTcpPort;
+                if (wcfShred != null)
+                {
+                    wcfShred.SharedHttpPort = ShredHostServiceSettings.Instance.SharedHttpPort;
+                    wcfShred.SharedTcpPort = ShredHostServiceSettings.Instance.SharedTcpPort;
+                }
+                shredController.Shred.Start();
             }
-            shredController.Shred.Start();
+            catch (Exception e)
+            {
+                Platform.Log(LogLevel.Error, e, "Unexpected exception when starting up Shred {0}",
+                             shredController.Shred.GetDescription());
+            }
         }
 
         private class ShredCacheObject : IShred
