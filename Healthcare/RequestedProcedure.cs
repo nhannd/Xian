@@ -218,7 +218,7 @@ namespace ClearCanvas.Healthcare {
             _scheduledStartTime = CollectionUtils.Min<DateTime?>(
                 CollectionUtils.Select<DateTime?>(
                     CollectionUtils.Map<ProcedureStep, DateTime?>(this.ProcedureSteps,
-                        delegate(ProcedureStep step) { return step.Scheduling.StartTime; }),
+                    delegate(ProcedureStep step) { return step.Scheduling == null ? null : step.Scheduling.StartTime; }),
                             delegate(DateTime? startTime) { return startTime != null; }), null);
 
             _order.UpdateScheduling();
