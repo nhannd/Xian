@@ -64,6 +64,7 @@ namespace ClearCanvas.Ris.Client
                 
                 // allow individual string content to be same size as entire message
                 binding.ReaderQuotas.MaxStringContentLength = OneMegaByte;
+                binding.ReaderQuotas.MaxArrayLength = OneMegaByte;
 
                 //binding.ReceiveTimeout = new TimeSpan(0, 0 , 20);
                 //binding.SendTimeout = new TimeSpan(0, 0, 10);

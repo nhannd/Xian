@@ -6,7 +6,7 @@
     </id>
     <version name="Version" column="Version_"/>
 
-    <property name="BinaryData" column="BinaryData_" type="Byte[]"  not-null="true"/>
+    <property name="BinaryData" column="BinaryData_" type="BinaryBlob" not-null="true"/>
 
   </class>
 </hibernate-mapping>

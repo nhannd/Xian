@@ -17,6 +17,9 @@ namespace ClearCanvas.Ris.Application.Common
         public string MimeType;
 
         [DataMember]
+        public string FileExtension;
+
+        [DataMember]
         public EntityRef BinaryDataRef;
     }
 }

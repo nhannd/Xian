@@ -17,7 +17,8 @@ DATATYPE_MAPPINGS =
 	'Boolean' => 'bool',
 	'bag' => 'IList',
 	'list' => 'IList',
-	'StringClob' => 'string'
+	'StringClob' => 'string',
+	'BinaryBlob' => 'Byte[]'
 }
 
 # C# primitive datatypes

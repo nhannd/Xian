@@ -50,6 +50,7 @@ namespace ClearCanvas.Ris.Application.Services
             summary.DocumentRef = doc.GetRef();
             summary.CreationTime = doc.CreationTime;
             summary.MimeType = doc.MimeType;
+            summary.FileExtension = doc.FileExtension;
             summary.BinaryDataRef = doc.Data.GetRef();
         }
     }

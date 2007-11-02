@@ -90,6 +90,7 @@ namespace ClearCanvas.Ris.Server
             binding.Security.Message.ClientCredentialType = MessageCredentialType.UserName;
             binding.MaxReceivedMessageSize = OneMegaByte;
             binding.ReaderQuotas.MaxStringContentLength = OneMegaByte;
+            binding.ReaderQuotas.MaxArrayLength = OneMegaByte;
 
 
             IServiceFactory serviceFactory = new ServiceFactory(serviceLayer);
