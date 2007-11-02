@@ -213,57 +213,36 @@ namespace ClearCanvas.Ris.Client.Adt
     public class TechnologistReplaceOrderTool : TechnologistWorkflowTool
     {
         public TechnologistReplaceOrderTool()
-            : base("ReplaceOrder", SR.ExceptionTechnologistWorkflowReplaceOrderTool)
+            : base("", SR.ExceptionTechnologistWorkflowReplaceOrderTool)
         {
+        }
+
+        public override bool Enabled
+        {
+            get
+            {
+                //TODO: this is a hack, since this tool isn't really a workflow tool it doesn't have a corresponding operation name
+                return this.Context.SelectedItems.Count > 0;
+            }
         }
 
         protected override void Execute(ModalityWorklistItem item, IEnumerable folders)
         {
-            OrderDetail existingOrder = null;
-
-            try
-            {
-                Platform.GetService<IOrderEntryService>(
-                    delegate(IOrderEntryService service)
-                        {
-                            LoadOrderDetailResponse response = service.LoadOrderDetail(new LoadOrderDetailRequest(item.AccessionNumber));
-                            existingOrder = response.OrderDetail;
-                        });
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, this.Context.DesktopWindow);
-            }
-
             if (this.Context.DesktopWindow.ShowMessageBox(SR.MessageReplaceOrder, MessageBoxActions.OkCancel) == DialogBoxAction.Ok)
             {
                 ApplicationComponent.LaunchAsWorkspace(
                     this.Context.DesktopWindow,
-                    new OrderEntryComponent(existingOrder),
+                    new OrderEntryComponent(item.PatientRef, item.OrderRef, OrderEntryComponent.Mode.ReplaceOrder),
                     string.Format(SR.TitleNewOrder, PersonNameFormat.Format(item.PersonNameDetail), MrnFormat.Format(item.Mrn)),
-                    delegate(IApplicationComponent c)
+                    delegate
                     {
-                        if (c.ExitCode == ApplicationComponentExitCode.Normal)
-                        {
-                            try
-                            {
-                                OrderEntryComponent component = (OrderEntryComponent)c;
+                        IFolder folder = CollectionUtils.SelectFirst<IFolder>(folders,
+                            delegate(IFolder f) { return f is Folders.CancelledTechnologistWorkflowFolder; });
+                        folder.RefreshCount();
 
-                                Platform.GetService<IModalityWorkflowService>(
-                                    delegate(IModalityWorkflowService service)
-                                    {
-                                        service.ReplaceOrder(new ReplaceOrderRequest(component.PlaceOrderRequest, component.CancelOrderRequest));
-                                    });
-
-                                IFolder folder = CollectionUtils.SelectFirst<IFolder>(folders,
-                                    delegate(IFolder f) { return f is Folders.CancelledTechnologistWorkflowFolder; });
-                                folder.RefreshCount();
-                            }
-                            catch (Exception e)
-                            {
-                                ExceptionHandler.Report(e, SR.ExceptionCannotReplaceOrder, this.Context.DesktopWindow);
-                            }
-                        }
+                        folder = CollectionUtils.SelectFirst<IFolder>(folders,
+                            delegate(IFolder f) { return f is Folders.ScheduledTechnologistWorkflowFolder; });
+                        folder.RefreshCount();
                     });
             }
         }

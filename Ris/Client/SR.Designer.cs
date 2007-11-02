@@ -529,6 +529,24 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Unable to retrieve diagnostic service tree.
+        /// </summary>
+        internal static string ExceptionCannotExpandDiagnositicServiceTree {
+            get {
+                return ResourceManager.GetString("ExceptionCannotExpandDiagnositicServiceTree", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unable to retrieve diagnostic service breakdown.
+        /// </summary>
+        internal static string ExceptionCannotUpdateDiagnosticServiceBreakdown {
+            get {
+                return ResourceManager.GetString("ExceptionCannotUpdateDiagnosticServiceBreakdown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to An error occured while attempting to save changes to this item.
         /// </summary>
         internal static string ExceptionFailedToSave {
@@ -831,6 +849,15 @@ namespace ClearCanvas.Ris.Client {
         internal static string TitleDemographic {
             get {
                 return ResourceManager.GetString("TitleDemographic", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Diagnostic Services.
+        /// </summary>
+        internal static string TitleDiagnosticServices {
+            get {
+                return ResourceManager.GetString("TitleDiagnosticServices", resourceCulture);
             }
         }
         

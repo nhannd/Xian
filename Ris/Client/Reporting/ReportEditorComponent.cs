@@ -119,6 +119,8 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         private bool _makeDefault;
 
+        private ILookupHandler _supervisorLookupHandler;
+
         public ReportEditorComponent(EntityRef reportingStepRef)
         {
             _scriptCallback = new ScriptCallback(this);
@@ -150,6 +152,8 @@ namespace ClearCanvas.Ris.Client.Reporting
                         _supervisor = CollectionUtils.FirstElement<StaffSummary>(getRadListresponse.Radiologists);
                     }
                 });
+
+            _supervisorLookupHandler = new StaffLookupHandler(this.Host.DesktopWindow, new string[] { "PRAD" });
 
             base.Start();
         }
@@ -439,6 +443,11 @@ namespace ClearCanvas.Ris.Client.Reporting
         {
             this.ExitCode = ApplicationComponentExitCode.Cancelled;
             EventsHelper.Fire(_closeComponentEvent, this, EventArgs.Empty);
+        }
+
+        public ILookupHandler SupervisorLookupHandler
+        {
+            get { return _supervisorLookupHandler; }
         }
 
         public IList GetRadiologistSuggestion(string query)

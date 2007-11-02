@@ -169,28 +169,6 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
             return new CancelProcedureResponse();
         }
 
-        [UpdateOperation]
-        [OperationEnablement("CanReplaceOrder")]
-        public ReplaceOrderResponse ReplaceOrder(ReplaceOrderRequest request)
-        {
-            PlaceOrderResponse placeOrderResponse = Platform.GetService<IOrderEntryService>().PlaceOrder(request.PlaceOrderRequest);
-
-            // cancel order here    
-            IOrderBroker broker = PersistenceContext.GetBroker<IOrderBroker>();
-            OrderCancelReasonEnum reason = EnumUtils.GetEnumValue<OrderCancelReasonEnum>(request.CancelOrderRequest.CancelReason, PersistenceContext);
-
-            foreach (EntityRef orderRef in request.CancelOrderRequest.CancelledOrders)
-            {
-                Order order = broker.Load(orderRef, EntityLoadFlags.CheckVersion);
-                if (order.Status == OrderStatus.SC)
-                    order.Cancel(reason);
-                else if (order.Status == OrderStatus.IP)
-                    order.Discontinue(reason);
-            }
-
-            return new ReplaceOrderResponse(placeOrderResponse.OrderRef);
-        }
-
         public bool CanStartProcedure(IWorklistItemKey itemKey)
         {
             return CanExecuteOperation(new StartModalityProcedureStepOperation(this.CurrentUserStaff), itemKey);

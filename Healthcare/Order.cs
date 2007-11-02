@@ -30,7 +30,7 @@
 #endregion
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Text;
 
 using Iesi.Collections;
@@ -47,30 +47,58 @@ namespace ClearCanvas.Healthcare {
     /// Order entity
     /// </summary>
 	public partial class Order : Entity
-	{
+    {
+        #region Static Factory methods
+
         /// <summary>
-        /// Static method to create a fully initialized new order.
+        /// Factory method to create a fully initialized new order for the default set of requested procedures
+        /// for the specified diagnostic service.
         /// </summary>
-        /// <param name="accessionNumber"></param>
-        /// <param name="patient"></param>
-        /// <param name="visit"></param>
-        /// <param name="diagnosticService"></param>
-        /// <param name="schedulingRequestDateTime"></param>
-        /// <param name="orderingPhysician"></param>
-        /// <param name="orderingFacility"></param>
-        /// <param name="priority"></param>
-        /// <param name="scheduleOrder"></param>
-        /// <returns></returns>
         public static Order NewOrder(
             string accessionNumber,
             Patient patient,
             Visit visit,
             DiagnosticService diagnosticService,
-            DateTime schedulingRequestDateTime,
-            ExternalPractitioner orderingPhysician,
-            Facility orderingFacility,
+            string reasonForStudy,
             OrderPriority priority,
-            bool scheduleOrder)
+            Facility orderingFacility,
+            Facility performingFacility,
+            DateTime? schedulingRequestTime,
+            DateTime? scheduledStartTime,
+            ExternalPractitioner orderingPractitioner,
+            IList<ExternalPractitioner> copiesToPractitioners)
+        {
+            // create requested procedures according to the diagnostic service breakdown
+            IList<RequestedProcedure> procedures = CollectionUtils.Map<RequestedProcedureType, RequestedProcedure>(diagnosticService.RequestedProcedureTypes,
+                delegate(RequestedProcedureType type)
+                {
+                    // each procedure is automatically added to order
+                    RequestedProcedure rp = type.CreateProcedure(scheduledStartTime);
+                    rp.PerformingFacility = performingFacility;
+                    return rp;
+                });
+
+            return NewOrder(accessionNumber, patient, visit, diagnosticService, reasonForStudy,
+                priority, orderingFacility, schedulingRequestTime, orderingPractitioner, copiesToPractitioners,
+                procedures);
+        }
+
+
+        /// <summary>
+        /// Factory method to create a fully initialized new order for the specified requested procedures.
+        /// </summary>
+        public static Order NewOrder(
+            string accessionNumber,
+            Patient patient,
+            Visit visit,
+            DiagnosticService diagnosticService,
+            string reasonForStudy,
+            OrderPriority priority,
+            Facility orderingFacility,
+            DateTime? schedulingRequestTime,
+            ExternalPractitioner orderingPractitioner,
+            IList<ExternalPractitioner> copiesToPractitioners,
+            IList<RequestedProcedure> procedures)
         {
             // create the basic order
             Order order = new Order();
@@ -79,41 +107,24 @@ namespace ClearCanvas.Healthcare {
             order.Visit = visit;
             order.AccessionNumber = accessionNumber;
             order.DiagnosticService = diagnosticService;
-            order.EnteredDateTime = Platform.Time;
-            order.SchedulingRequestDateTime = schedulingRequestDateTime;
-            order.OrderingPractitioner = orderingPhysician;
-            order.OrderingFacility = orderingFacility;
+            order.ReasonForStudy = reasonForStudy;
             order.Priority = priority;
+            order.OrderingFacility = orderingFacility;
+            order.EnteredDateTime = Platform.Time;
+            order.SchedulingRequestDateTime = schedulingRequestTime;
+            order.OrderingPractitioner = orderingPractitioner;
+            order.ResultCopiesToPractitioners.AddAll(copiesToPractitioners);
 
-            // add requested procedures according to the diagnostic service breakdown
-            int rpIndex = 0;
-            foreach (RequestedProcedureType rpt in diagnosticService.RequestedProcedureTypes)
+            // associate all procedures with the order
+            foreach (RequestedProcedure rp in procedures)
             {
-                // create a new requested procedure, added to this order
-                RequestedProcedure rp = new RequestedProcedure(order, rpt, string.Format("{0}", ++rpIndex));
-
-                // Create a check-in step for each RP, each RP only ever has one check-in step
-                rp.AddProcedureStep(new CheckInProcedureStep());
-
-                // add scheduled procedure steps according to the diagnostic service breakdown
-                foreach (ModalityProcedureStepType spt in rpt.ModalityProcedureStepTypes)
-                {
-                    // sps is automatically added to rp.ProcedureSteps collection
-                    ModalityProcedureStep sps = new ModalityProcedureStep(rp, spt, spt.DefaultModality);
-                }
-
-                // if the order is to be scheduled, then schedule each procedure step for the requested time
-                if (scheduleOrder)
-                {
-                    foreach (ProcedureStep ps in rp.ProcedureSteps)
-                    {
-                        ps.Schedule(schedulingRequestDateTime);
-                    }
-                }
+                order.AddRequestedProcedure(rp);
             }
 
             return order;
         }
+
+        #endregion
 
         #region Public properties
 
@@ -135,21 +146,44 @@ namespace ClearCanvas.Healthcare {
         #region Public operations
 
         /// <summary>
-        /// Adds a document to this order, setting the order's <see cref="OrderAttachment.Order"/> property
-        /// to refer to this object.  Use this method rather than referring to the <see cref="Order.Attachments"/>
-        /// collection directly.
+        /// Adds the specified procedure to this order.
         /// </summary>
-        /// <param name="attachment"></param>
-        public virtual void AddAttachment(OrderAttachment attachment)
+        /// <param name="rp"></param>
+        public virtual void AddRequestedProcedure(RequestedProcedure rp)
         {
-            if (attachment.Order != null)
-            {
-                //NB: technically we should remove the attachment from the other order's collection, but there
-                //seems to be a bug with NHibernate where it deletes the document if we do this
-                //attachment.Order.Attachments.Remove(attachment);
-            }
-            attachment.Order = this;
-            this.Attachments.Add(attachment);
+            if (rp.Order != null || rp.Status != RequestedProcedureStatus.SC)
+                throw new ArgumentException("Only new RequestedProcedure objects may be added to an order.");
+            if (this.IsTerminated)
+                throw new WorkflowException(string.Format("Cannot add procedure to order with status {0}.", _status));
+
+            rp.Order = this;
+
+            // generate an index for the procedure
+            int highestIndex = CollectionUtils.Max<int>(
+                CollectionUtils.Map<RequestedProcedure, int>(_requestedProcedures,
+                delegate(RequestedProcedure p) { return int.Parse(p.Index); }), 0);
+            rp.Index = (highestIndex + 1).ToString();
+
+            // add to collection
+            _requestedProcedures.Add(rp);
+
+            // update scheduling information
+            UpdateScheduling();
+        }
+
+        /// <summary>
+        /// Removes the specified procedure from this order.
+        /// </summary>
+        /// <param name="rp"></param>
+        public virtual void RemoveRequestedProcedure(RequestedProcedure rp)
+        {
+            if(!_requestedProcedures.Contains(rp))
+                throw new ArgumentException("Specified requested procedure does not exist for this order.");
+            if(rp.Status != RequestedProcedureStatus.SC)
+                throw new WorkflowException("Only procedures in the SC status can be removed from an order.");
+
+            _requestedProcedures.Remove(rp);
+            rp.Order = null;
         }
 
         /// <summary>
@@ -195,6 +229,24 @@ namespace ClearCanvas.Healthcare {
                 if (rp.Status == RequestedProcedureStatus.SC)
                     rp.Cancel();
             }
+        }
+
+        /// <summary>
+        /// Adds a document to this order, setting the order's <see cref="OrderAttachment.Order"/> property
+        /// to refer to this object.  Use this method rather than referring to the <see cref="Order.Attachments"/>
+        /// collection directly.
+        /// </summary>
+        /// <param name="attachment"></param>
+        public virtual void AddAttachment(OrderAttachment attachment)
+        {
+            if (attachment.Order != null)
+            {
+                //NB: technically we should remove the attachment from the other order's collection, but there
+                //seems to be a bug with NHibernate where it deletes the document if we do this
+                //attachment.Order.Attachments.Remove(attachment);
+            }
+            attachment.Order = this;
+            this.Attachments.Add(attachment);
         }
 
         #endregion

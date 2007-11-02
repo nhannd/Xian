@@ -38,8 +38,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Tables;
-
-using ClearCanvas.Ris.Application.Common.Admin;
+using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.StaffAdmin;
 
 namespace ClearCanvas.Ris.Client
@@ -107,6 +106,7 @@ namespace ClearCanvas.Ris.Client
         private ListStaffRequest _listRequest;
         private string _firstName;
         private string _lastName;
+        private string[] _staffTypesFilter;
 
         private bool _dialogMode;
 
@@ -123,8 +123,20 @@ namespace ClearCanvas.Ris.Client
         /// </summary>
         /// <param name="dialogMode">Indicates whether the component will be shown in a dialog box or not</param>
         public StaffSummaryComponent(bool dialogMode)
+            :this(dialogMode, new string[]{})
+        {
+                
+        }
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="dialogMode">Indicates whether the component will be shown in a dialog box or not</param>
+        /// <param name="staffTypesFilter">Filters the staff list according to the specified staff types.</param>
+        public StaffSummaryComponent(bool dialogMode, string[] staffTypesFilter)
         {
             _dialogMode = dialogMode;
+            _staffTypesFilter = staffTypesFilter;
         }
 
         public override void Start()
@@ -161,6 +173,7 @@ namespace ClearCanvas.Ris.Client
                         {
                             _listRequest.PageRequest.FirstRow = firstRow;
                             _listRequest.PageRequest.MaxRows = maxRows;
+                            _listRequest.StaffTypesFilter = _staffTypesFilter;
 
                             listResponse = service.ListStaff(_listRequest);
                         });

@@ -50,21 +50,19 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
     {
         public ModalityWorklistItem CreateModalityWorklistItem(WorklistItem domainItem, IPersistenceContext context)
         {
-            ModalityWorklistItem item = new ModalityWorklistItem();
-
-            item.ProcedureStepRef = domainItem.ModalityProcedureStepRef;
-
             PersonNameAssembler assembler = new PersonNameAssembler();
-            item.PatientProfileRef = domainItem.PatientProfileRef;
-            item.PersonNameDetail = assembler.CreatePersonNameDetail(domainItem.PatientName);
-            item.Mrn = new MrnDetail(domainItem.Mrn.Id, domainItem.Mrn.AssigningAuthority);
-            item.AccessionNumber = domainItem.AccessionNumber;
-            item.ModalityProcedureStepName = domainItem.ModalityProcedureStepType.Name;
-            item.RequestedProcedureStepName = domainItem.RequestedProcedureType.Name;
-            item.ModalityName = domainItem.Modality.Name;
-
-            item.Priority = EnumUtils.GetEnumValueInfo<OrderPriority>(domainItem.Priority, context);
-            return item;
+            return new ModalityWorklistItem(
+                null,
+                domainItem.PatientProfileRef,
+                null,
+                domainItem.ModalityProcedureStepRef,
+                new MrnDetail(domainItem.Mrn.Id, domainItem.Mrn.AssigningAuthority),
+                assembler.CreatePersonNameDetail(domainItem.PatientName),
+                domainItem.AccessionNumber,
+                EnumUtils.GetEnumValueInfo(domainItem.Priority, context),
+                domainItem.RequestedProcedureType.Name,
+                domainItem.ModalityProcedureStepType.Name,
+                domainItem.Modality.Name);
         }
 
         public ModalityWorklistPreview CreateWorklistPreview(ModalityProcedureStep mps, string patientProfileAuthority, IPersistenceContext context)

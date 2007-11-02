@@ -38,13 +38,22 @@ namespace ClearCanvas.Ris.Application.Common.Admin.StaffAdmin
     /// Provides operations to administer staffs
     /// </summary>
     [ServiceContract]
+    [ServiceKnownType(typeof(StaffTextQueryRequest))]
     public interface IStaffAdminService
     {
         /// <summary>
+        /// Returns a list of staff based on a textual query.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [OperationContract]
+        TextQueryResponse<StaffSummary> TextQuery(StaffTextQueryRequest request);
+
+        /// <summary>
         /// Summary list of all staffs
         /// </summary>
-        /// <param name="request"><see cref="ListAllStaffsRequest"/></param>
-        /// <returns><see cref="ListAllStaffsResponse"/></returns>
+        /// <param name="request"><see cref="ListStaff"/></param>
+        /// <returns><see cref="ListStaff"/></returns>
         [OperationContract]
         ListStaffResponse ListStaff(ListStaffRequest request);
 

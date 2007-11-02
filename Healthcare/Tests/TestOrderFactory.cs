@@ -39,12 +39,13 @@ namespace ClearCanvas.Healthcare.Tests
     {
         internal static Order CreateOrder(int numRequestedProcedures, int numMpsPerRequestedProcedure, bool scheduleOrder)
         {
-            DateTime scheduleTime = DateTime.Now;
+            DateTime? scheduleTime = DateTime.Now;
 
             Patient patient = TestPatientFactory.CreatePatient();
             Visit visit = TestVisitFactory.CreateVisit(patient);
             DiagnosticService ds = TestDiagnosticServiceFactory.CreateDiagnosticService(numRequestedProcedures, numMpsPerRequestedProcedure);
             string accession = "10000001";
+            string reasonForStudy = "Test";
             ExternalPractitioner orderingPrac = TestExternalPractitionerFactory.CreatePractitioner();
             Facility facility = TestFacilityFactory.CreateFacility();
 
@@ -53,11 +54,14 @@ namespace ClearCanvas.Healthcare.Tests
                 patient,
                 visit,
                 ds,
-                scheduleTime,
-                orderingPrac,
-                facility,
+                reasonForStudy,
                 OrderPriority.R,
-                scheduleOrder);
+                facility,
+                facility,
+                scheduleTime,
+                scheduleOrder ? scheduleTime : null,
+                orderingPrac,
+                new List<ExternalPractitioner>());
         }
     }
 }

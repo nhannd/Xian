@@ -90,7 +90,7 @@ namespace ClearCanvas.Enterprise.Core
         /// Specifies that the condition variable be contained in the specified set of values.
         /// </summary>
         /// <param name="values"></param>
-        void In(T[] values);
+        void In(IEnumerable<T> values);
 
         /// <summary>
         /// Specifies that the condition variable be less than the specified value.

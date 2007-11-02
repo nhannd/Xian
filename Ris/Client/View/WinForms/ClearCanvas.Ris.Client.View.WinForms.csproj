@@ -105,6 +105,13 @@
       <DependentUpon>ContactPersonsSummaryComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="ContactPersonsSummaryComponentView.cs" />
+    <Compile Include="DiagnosticServiceTreeComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DiagnosticServiceTreeComponentControl.Designer.cs">
+      <DependentUpon>DiagnosticServiceTreeComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DiagnosticServiceTreeComponentView.cs" />
     <Compile Include="ExternalPractitionerSummaryComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -146,6 +153,12 @@
     </Compile>
     <Compile Include="LoginForm.Designer.cs">
       <DependentUpon>LoginForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LookupField.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="LookupField.Designer.cs">
+      <DependentUpon>LookupField.cs</DependentUpon>
     </Compile>
     <Compile Include="NoteEditorComponentControl.cs">
       <SubType>UserControl</SubType>
@@ -195,6 +208,12 @@
       <DependentUpon>SearchComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="SearchComponentView.cs" />
+    <Compile Include="SmartTimeField.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="SmartTimeField.Designer.cs">
+      <DependentUpon>SmartTimeField.cs</DependentUpon>
+    </Compile>
     <Compile Include="StaffDetailsEditorComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -270,6 +289,10 @@
       <SubType>Designer</SubType>
       <DependentUpon>ContactPersonsSummaryComponentControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="DiagnosticServiceTreeComponentControl.resx">
+      <DependentUpon>DiagnosticServiceTreeComponentControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="ExternalPractitionerSummaryComponentControl.resx">
       <DependentUpon>ExternalPractitionerSummaryComponentControl.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -298,6 +321,10 @@
       <SubType>Designer</SubType>
       <DependentUpon>LoginForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="LookupField.resx">
+      <DependentUpon>LookupField.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="NoteEditorComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>NoteEditorComponentControl.cs</DependentUpon>
@@ -322,6 +349,10 @@
     <EmbeddedResource Include="SearchComponentControl.resx">
       <DependentUpon>SearchComponentControl.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SmartTimeField.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>SmartTimeField.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="StaffDetailsEditorComponentControl.resx">
       <DependentUpon>StaffDetailsEditorComponentControl.cs</DependentUpon>

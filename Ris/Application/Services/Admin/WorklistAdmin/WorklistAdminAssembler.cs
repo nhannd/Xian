@@ -34,7 +34,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Authentication;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
-using ClearCanvas.Ris.Application.Common.Admin;
+using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.AuthenticationAdmin;
 using ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin;
 using ClearCanvas.Ris.Application.Services.Admin.AuthenticationAdmin;

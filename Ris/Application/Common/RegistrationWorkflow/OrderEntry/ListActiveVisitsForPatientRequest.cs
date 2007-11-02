@@ -39,10 +39,12 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
     [DataContract]
     public class ListActiveVisitsForPatientRequest : DataContractBase
     {
-        [DataMember]
-        public EntityRef PatientRef;
+        public ListActiveVisitsForPatientRequest(EntityRef patientRef)
+        {
+            this.PatientRef = patientRef;
+        }
 
         [DataMember]
-        public EntityRef PatientProfileRef;
+        public EntityRef PatientRef;
     }
 }

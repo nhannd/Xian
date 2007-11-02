@@ -48,14 +48,9 @@ namespace ClearCanvas.Healthcare {
     /// </summary>
 	public partial class RequestedProcedure : Entity
 	{
-        public RequestedProcedure(Order order, RequestedProcedureType type, string index)
+        public RequestedProcedure(RequestedProcedureType type)
         {
-            _order = order;
-            _order.RequestedProcedures.Add(this);
-
             _type = type;
-            _index = index;
-
             _procedureSteps = new HashedSet<ProcedureStep>();
         }
 	
@@ -130,13 +125,30 @@ namespace ClearCanvas.Healthcare {
         /// <param name="step"></param>
         public virtual void AddProcedureStep(ProcedureStep step)
         {
-            if (step.RequestedProcedure != null)
-            {
-                step.RequestedProcedure.ProcedureSteps.Remove(step);
-            }
+            if (step.RequestedProcedure != null || step.State != ActivityStatus.SC)
+                throw new ArgumentException("Only new ProcedureStep objects may be added to an order.");
 
             step.RequestedProcedure = this;
             this.ProcedureSteps.Add(step);
+        }
+
+        /// <summary>
+        /// Schedules or re-schedules all procedure steps to start at the specified time.
+        /// Applicable only if this object is in the SC status.
+        /// </summary>
+        /// <param name="startTime"></param>
+        public virtual void Schedule(DateTime? startTime)
+        {
+            if(_status != RequestedProcedureStatus.SC)
+                throw new WorkflowException("Only procedures in the SC status may be scheduled or re-scheduled.");
+
+            // if we had more detailed scheduling information available in the procedure plan,
+            // then we could schedule each step in a more fine-grained manner
+            // but since we don't have this information, just schedule each procedure step for the same time
+            foreach (ProcedureStep ps in _procedureSteps)
+            {
+                ps.Schedule(startTime);
+            }
         }
 
         /// <summary>
@@ -221,7 +233,9 @@ namespace ClearCanvas.Healthcare {
                     delegate(ProcedureStep step) { return step.Scheduling == null ? null : step.Scheduling.StartTime; }),
                             delegate(DateTime? startTime) { return startTime != null; }), null);
 
-            _order.UpdateScheduling();
+            // the order should never be null, unless this is a brand new instance that has not yet been assigned an order
+            if(_order != null)
+                _order.UpdateScheduling();
         }
 
         /// <summary>
@@ -269,7 +283,9 @@ namespace ClearCanvas.Healthcare {
         {
             _status = status;
 
-            _order.UpdateStatus();
+            // the order should never be null, unless this is a brand new instance that has not yet been assigned an order
+            if (_order != null)
+                _order.UpdateStatus();
         }
 
         /// <summary>

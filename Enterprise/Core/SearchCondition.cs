@@ -32,6 +32,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Enterprise.Core
 {
@@ -76,11 +77,10 @@ namespace ClearCanvas.Enterprise.Core
             SetCondition(SearchConditionTest.Between, lower, upper);
         }
 
-        public void In(T[] values)
+        public void In(IEnumerable<T> values)
         {
             // copy to an array of object
-            object[] vals = new object[values.Length];
-            values.CopyTo(vals, 0);
+            object[] vals = CollectionUtils.Map<T, object>(values, delegate(T val) { return val; }).ToArray();
 
             SetCondition(SearchConditionTest.In, vals);
         }

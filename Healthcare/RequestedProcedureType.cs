@@ -44,11 +44,43 @@ namespace ClearCanvas.Healthcare {
     /// <summary>
     /// RequestedProcedureType entity
     /// </summary>
-	public partial class RequestedProcedureType : Entity
+	public partial class RequestedProcedureType
 	{
         public RequestedProcedureType(string id, string name)
             :this(id, name, new HashedSet<ModalityProcedureStepType>())
         {
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="RequestedProcedure"/> of this type, scheduled for the specified time.
+        /// </summary>
+        /// <returns></returns>
+        public virtual RequestedProcedure CreateProcedure(DateTime? scheduledStartTime)
+        {
+            RequestedProcedure rp = new RequestedProcedure(this);
+
+            // Create a check-in step - each RP only ever has one check-in step
+            rp.AddProcedureStep(new CheckInProcedureStep());
+
+            // add modality procedure steps
+            foreach (ModalityProcedureStepType spt in this.ModalityProcedureStepTypes)
+            {
+                // sps is automatically added to rp.ProcedureSteps collection
+                ModalityProcedureStep mps = new ModalityProcedureStep(rp, spt, spt.DefaultModality);
+            }
+
+            rp.Schedule(scheduledStartTime);
+
+            return rp;
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="RequestedProcedure"/> of this type, does not schedule.
+        /// </summary>
+        /// <returns></returns>
+        public virtual RequestedProcedure CreateProcedure()
+        {
+            return CreateProcedure(null);
         }
 
 		/// <summary>

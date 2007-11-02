@@ -30,7 +30,7 @@
 #endregion
 
 using ClearCanvas.Desktop.Tables;
-using ClearCanvas.Ris.Application.Common.Admin;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client
 {

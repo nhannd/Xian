@@ -66,6 +66,8 @@
     <Compile Include="Admin\AuthenticationAdmin\UpdateAuthorityGroupResponse.cs" />
     <Compile Include="Admin\AuthenticationAdmin\UpdateUserRequest.cs" />
     <Compile Include="Admin\AuthenticationAdmin\UpdateUserResponse.cs" />
+    <Compile Include="Admin\DiagnosticServiceAdmin\ListDiagnosticServicesRequest.cs" />
+    <Compile Include="Admin\DiagnosticServiceAdmin\ListDiagnosticServicesResponse.cs" />
     <Compile Include="Admin\ExternalPractitionerAdmin\AddExternalPractitionerRequest.cs" />
     <Compile Include="Admin\ExternalPractitionerAdmin\AddExternalPractitionerResponse.cs" />
     <Compile Include="Admin\ExternalPractitionerAdmin\IExternalPractitionerAdminService.cs" />
@@ -77,8 +79,8 @@
     <Compile Include="Admin\ExternalPractitionerAdmin\LoadExternalPractitionerForEditResponse.cs" />
     <Compile Include="Admin\ExternalPractitionerAdmin\UpdateExternalPractitionerRequest.cs" />
     <Compile Include="Admin\ExternalPractitionerAdmin\UpdateExternalPractitionerResponse.cs" />
-    <Compile Include="Admin\ExternalPractitionerDetail.cs" />
-    <Compile Include="Admin\ExternalPractitionerSummary.cs" />
+    <Compile Include="ExternalPractitionerDetail.cs" />
+    <Compile Include="ExternalPractitionerSummary.cs" />
     <Compile Include="Admin\DiagnosticServiceAdmin\IDiagnosticServiceAdminService.cs" />
     <Compile Include="Admin\EnumerationAdmin\AddValueRequest.cs" />
     <Compile Include="Admin\EnumerationAdmin\AddValueResponse.cs" />
@@ -92,8 +94,8 @@
     <Compile Include="Admin\EnumerationAdmin\ListEnumerationValuesResponse.cs" />
     <Compile Include="Admin\EnumerationAdmin\RemoveValueRequest.cs" />
     <Compile Include="Admin\EnumerationAdmin\RemoveValueResponse.cs" />
-    <Compile Include="Admin\FacilityDetail.cs" />
-    <Compile Include="Admin\FacilitySummary.cs" />
+    <Compile Include="FacilityDetail.cs" />
+    <Compile Include="FacilitySummary.cs" />
     <Compile Include="Admin\FacilityAdmin\AddFacilityRequest.cs" />
     <Compile Include="Admin\FacilityAdmin\AddFacilityResponse.cs" />
     <Compile Include="Admin\FacilityAdmin\ListAllFacilitiesRequest.cs" />
@@ -135,8 +137,8 @@
     <Compile Include="Admin\PatientAdmin\AdminAddPatientProfileRequest.cs" />
     <Compile Include="Admin\PatientAdmin\AdminAddPatientProfileResponse.cs" />
     <Compile Include="Admin\PatientAdmin\IPatientAdminService.cs" />
-    <Compile Include="Admin\LocationDetail.cs" />
-    <Compile Include="Admin\LocationSummary.cs" />
+    <Compile Include="LocationDetail.cs" />
+    <Compile Include="LocationSummary.cs" />
     <Compile Include="Admin\LocationAdmin\AddLocationRequest.cs" />
     <Compile Include="Admin\LocationAdmin\AddLocationResponse.cs" />
     <Compile Include="Admin\LocationAdmin\ListAllLocationsRequest.cs" />
@@ -157,8 +159,8 @@
     <Compile Include="Admin\ModalityAdmin\LoadModalityForEditResponse.cs" />
     <Compile Include="Admin\ModalityAdmin\UpdateModalityRequest.cs" />
     <Compile Include="Admin\ModalityAdmin\UpdateModalityResponse.cs" />
-    <Compile Include="Admin\ModalityDetail.cs" />
-    <Compile Include="Admin\ModalitySummary.cs" />
+    <Compile Include="ModalityDetail.cs" />
+    <Compile Include="ModalitySummary.cs" />
     <Compile Include="Admin\PatientAdmin\LoadPatientProfileForAdminEditRequest.cs" />
     <Compile Include="Admin\PatientAdmin\LoadPatientProfileForAdminEditResponse.cs" />
     <Compile Include="Admin\PatientAdmin\LoadPatientProfileEditorFormDataRequest.cs" />
@@ -178,8 +180,17 @@
     <Compile Include="Admin\RequestedProcedureTypeGroupAdmin\LoadRequestedProcedureTypeGroupForEditRequest.cs" />
     <Compile Include="Admin\RequestedProcedureTypeGroupAdmin\LoadRequestedProcedureTypeGroupForEditResponse.cs" />
     <Compile Include="Admin\RequestedProcedureTypeGroupAdmin\RequestedProcedureTypeGroupDetail.cs" />
-    <Compile Include="Admin\RequestedProcedureTypeGroupSummary.cs" />
-    <Compile Include="Admin\RequestedProcedureTypeGroupAdmin\RequestedProcedureTypeSummary.cs" />
+    <Compile Include="RegistrationWorkflow\OrderEntry\GetOrderRequisitionForEditRequest.cs" />
+    <Compile Include="RegistrationWorkflow\OrderEntry\GetOrderRequisitionForEditResponse.cs" />
+    <Compile Include="RegistrationWorkflow\OrderEntry\ModifyOrderRequest.cs" />
+    <Compile Include="RegistrationWorkflow\OrderEntry\ModifyOrderResponse.cs" />
+    <Compile Include="RegistrationWorkflow\OrderEntry\OrderRequisition.cs" />
+    <Compile Include="RegistrationWorkflow\ProcedureRequisition.cs" />
+    <Compile Include="RequestedProcedureTypeGroupSummary.cs" />
+    <Compile Include="Admin\StaffAdmin\StaffTextQueryRequest.cs" />
+    <Compile Include="RegistrationWorkflow\OrderEntry\ListOrderableProcedureTypesRequest.cs" />
+    <Compile Include="RegistrationWorkflow\OrderEntry\ListOrderableProcedureTypesResponse.cs" />
+    <Compile Include="RequestedProcedureTypeSummary.cs" />
     <Compile Include="Admin\RequestedProcedureTypeGroupAdmin\UpdateRequestedProcedureTypeGroupRequest.cs" />
     <Compile Include="Admin\RequestedProcedureTypeGroupAdmin\UpdateRequestedProcedureTypeGroupResponse.cs" />
     <Compile Include="Admin\StaffAdmin\AddStaffRequest.cs" />
@@ -193,8 +204,8 @@
     <Compile Include="Admin\StaffAdmin\LoadStaffForEditResponse.cs" />
     <Compile Include="Admin\StaffAdmin\UpdateStaffRequest.cs" />
     <Compile Include="Admin\StaffAdmin\UpdateStaffResponse.cs" />
-    <Compile Include="Admin\StaffDetail.cs" />
-    <Compile Include="Admin\StaffSummary.cs" />
+    <Compile Include="StaffDetail.cs" />
+    <Compile Include="StaffSummary.cs" />
     <Compile Include="Admin\VisitAdmin\AdminAddVisitRequest.cs" />
     <Compile Include="Admin\VisitAdmin\AdminAddVisitResponse.cs" />
     <Compile Include="Admin\VisitAdmin\IVisitAdminService.cs" />
@@ -206,10 +217,10 @@
     <Compile Include="Admin\VisitAdmin\LoadVisitForAdminEditResponse.cs" />
     <Compile Include="Admin\VisitAdmin\SaveAdminEditsForVisitRequest.cs" />
     <Compile Include="Admin\VisitAdmin\SaveAdminEditsForVisitResponse.cs" />
-    <Compile Include="Admin\VisitAdmin\VisitDetail.cs" />
-    <Compile Include="Admin\VisitAdmin\VisitLocationDetail.cs" />
-    <Compile Include="Admin\VisitAdmin\VisitPractitionerDetail.cs" />
-    <Compile Include="Admin\VisitAdmin\VisitSummary.cs" />
+    <Compile Include="VisitDetail.cs" />
+    <Compile Include="VisitLocationDetail.cs" />
+    <Compile Include="VisitPractitionerDetail.cs" />
+    <Compile Include="VisitSummary.cs" />
     <Compile Include="Admin\WorklistAdmin\AddWorklistRequest.cs" />
     <Compile Include="Admin\WorklistAdmin\AddWorklistResponse.cs" />
     <Compile Include="Admin\WorklistAdmin\GetWorklistEditFormDataRequest.cs" />
@@ -283,8 +294,8 @@
     <Compile Include="ProtocollingWorkflow\SuspendProtocolResponse.cs" />
     <Compile Include="RegistrationWorkflow\LoadSearchPatientFormDataRequest.cs" />
     <Compile Include="RegistrationWorkflow\LoadSearchPatientFormDataResponse.cs" />
-    <Compile Include="RegistrationWorkflow\ReplaceOrderRequest.cs" />
-    <Compile Include="RegistrationWorkflow\ReplaceOrderResponse.cs" />
+    <Compile Include="RegistrationWorkflow\OrderEntry\ReplaceOrderRequest.cs" />
+    <Compile Include="RegistrationWorkflow\OrderEntry\ReplaceOrderResponse.cs" />
     <Compile Include="RegistrationWorkflow\SearchPatientRequest.cs" />
     <Compile Include="RegistrationWorkflow\SearchPatientResponse.cs" />
     <Compile Include="RegistrationWorkflow\SearchRequest.cs" />
@@ -311,8 +322,8 @@
     <Compile Include="MrnDetail.cs" />
     <Compile Include="ConcurrentModificationException.cs" />
     <Compile Include="ContactPersonDetail.cs" />
-    <Compile Include="Admin\NoteCategoryDetail.cs" />
-    <Compile Include="Admin\NoteCategorySummary.cs" />
+    <Compile Include="NoteCategoryDetail.cs" />
+    <Compile Include="NoteCategorySummary.cs" />
     <Compile Include="EnablementMethodNotFoundException.cs" />
     <Compile Include="EmailAddressDetail.cs" />
     <Compile Include="EnumValueInfo.cs" />
@@ -413,8 +424,6 @@
     <Compile Include="RegistrationWorkflow\OrderEntry\DiagnosticServiceTreeItem.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\GetDiagnosticServiceSubTreeRequest.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\GetDiagnosticServiceSubTreeResponse.cs" />
-    <Compile Include="RegistrationWorkflow\OrderEntry\LoadOrderDetailRequest.cs" />
-    <Compile Include="RegistrationWorkflow\OrderEntry\LoadOrderDetailResponse.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\ListOrdersForPatientRequest.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\ListOrdersForPatientResponse.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\ListActiveVisitsForPatientRequest.cs" />
@@ -428,8 +437,6 @@
     <Compile Include="RegistrationWorkflow\OrderEntry\LoadDiagnosticServiceBreakdownResponse.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\PlaceOrderRequest.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\PlaceOrderResponse.cs" />
-    <Compile Include="RegistrationWorkflow\OrderEntry\GetOrdersWorkListRequest.cs" />
-    <Compile Include="RegistrationWorkflow\OrderEntry\GetOrdersWorkListResponse.cs" />
     <Compile Include="RegistrationWorkflow\RICSummary.cs" />
     <Compile Include="ReportingWorkflow\CancelReportingStepRequest.cs" />
     <Compile Include="ReportingWorkflow\ClaimInterpretationRequest.cs" />
@@ -476,6 +483,8 @@
     <Compile Include="RequestedProcedureSummary.cs" />
     <Compile Include="RequestedProcedureTypeDetail.cs" />
     <Compile Include="RequestValidationException.cs" />
+    <Compile Include="TextQueryRequest.cs" />
+    <Compile Include="TextQueryResponse.cs" />
     <Compile Include="SearchData.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>

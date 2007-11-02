@@ -43,6 +43,7 @@ using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry;
 using System;
+using ClearCanvas.Healthcare.Workflow;
 
 namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 {
@@ -276,7 +277,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             IOrderBroker broker = PersistenceContext.GetBroker<IOrderBroker>();
             OrderCancelReasonEnum reason = EnumUtils.GetEnumValue<OrderCancelReasonEnum>(request.CancelReason, PersistenceContext);
 
-            Operations.Cancel op = new Operations.Cancel();
+            CancelOrderOperation op = new CancelOrderOperation();
             foreach (EntityRef orderRef in request.CancelledOrders)
             {
                 Order order = broker.Load(orderRef, EntityLoadFlags.CheckVersion);
@@ -284,15 +285,6 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             }
 
             return new CancelOrderResponse();
-        }
-
-        [UpdateOperation]
-        [OperationEnablement("CanCancelOrder")]
-        public ReplaceOrderResponse ReplaceOrder(ReplaceOrderRequest request)
-        {
-            PlaceOrderResponse placeOrderResponse = Platform.GetService<IOrderEntryService>().PlaceOrder(request.PlaceOrderRequest);
-            CancelOrder(request.CancelOrderRequest);
-            return new ReplaceOrderResponse(placeOrderResponse.OrderRef);
         }
 
         #endregion

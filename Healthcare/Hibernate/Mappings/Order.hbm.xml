@@ -19,7 +19,7 @@
     <property name="EnteredDateTime" column="EnteredDateTime_" type="DateTime" not-null="true"/>
 
     <!-- Time that the order should ideally be scheduled at -->
-    <property name="SchedulingRequestDateTime" column="SchedulingRequestDateTime_" type="DateTime" not-null="true"/>
+    <property name="SchedulingRequestDateTime" column="SchedulingRequestDateTime_" type="DateTime" not-null="false"/>
 
     <!-- Time the order is scheduled to start, if known -->
     <property name="ScheduledStartTime" column="ScheduledStartTime_" type="DateTime" not-null="false"/>

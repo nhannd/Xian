@@ -55,7 +55,7 @@
     <Compile Include="Admin\AuthenticationAdmin\AuthorityTokenAssembler.cs" />
     <Compile Include="Admin\AuthenticationAdmin\UserAssembler.cs" />
     <Compile Include="Admin\ExternalPractitionerAdmin\ExternalPractitionerAdminService.cs" />
-    <Compile Include="Admin\ExternalPractitionerAssembler.cs" />
+    <Compile Include="ExternalPractitionerAssembler.cs" />
     <Compile Include="Admin\DataExporterBase.cs" />
     <Compile Include="Admin\DataImporterBase.cs" />
     <Compile Include="Admin\DiagnosticServiceAdmin\DiagnosticServiceTreeExporter.cs" />
@@ -68,25 +68,28 @@
     <Compile Include="Admin\IDataImporter.cs" />
     <Compile Include="Admin\Import\ImportService.cs" />
     <Compile Include="Admin\ModalityAdmin\ModalityImporter.cs" />
-    <Compile Include="Admin\ModalityAssembler.cs" />
+    <Compile Include="ModalityAssembler.cs" />
     <Compile Include="Admin\NoteCategoryAdmin\NoteCategoryAdminService.cs" />
     <Compile Include="Admin\DiagnosticServiceAdmin\DiagnosticServiceAdminService.cs" />
-    <Compile Include="Admin\FacilityAssembler.cs" />
+    <Compile Include="FacilityAssembler.cs" />
     <Compile Include="Admin\FacilityAdmin\FacilityAdminService.cs" />
     <Compile Include="Admin\HL7Admin\HL7QueueService.cs" />
-    <Compile Include="Admin\LocationAssembler.cs" />
+    <Compile Include="LocationAssembler.cs" />
     <Compile Include="Admin\LocationAdmin\LocationAdminService.cs" />
     <Compile Include="Admin\ModalityAdmin\ModalityAdminService.cs" />
     <Compile Include="Admin\PatientAdmin\PatientAdminService.cs" />
-    <Compile Include="Admin\RequestedProcedureTypeGroupAdmin\RequestedProcedureTypeAssembler.cs" />
+    <Compile Include="DiagnosticServiceAssembler.cs" />
+    <Compile Include="OrderAssembler.cs" />
+    <Compile Include="TextQueryHelper.cs" />
+    <Compile Include="RequestedProcedureTypeAssembler.cs" />
     <Compile Include="Admin\RequestedProcedureTypeGroupAdmin\RequestedProcedureTypeGroupAdminService.cs" />
     <Compile Include="Admin\RequestedProcedureTypeGroupAdmin\RequestedProcedureTypeGroupExporter.cs" />
     <Compile Include="Admin\RequestedProcedureTypeGroupAdmin\RequestedProcedureTypeGroupImporter.cs" />
-    <Compile Include="Admin\RequestedProcedureTypeGroupAssembler.cs" />
+    <Compile Include="RequestedProcedureTypeGroupAssembler.cs" />
     <Compile Include="Admin\StaffAdmin\StaffAdminService.cs" />
     <Compile Include="Admin\StaffAdmin\StaffUserImporter.cs" />
     <Compile Include="Admin\VisitAdmin\VisitAdminService.cs" />
-    <Compile Include="Admin\VisitAssembler.cs" />
+    <Compile Include="VisitAssembler.cs" />
     <Compile Include="Admin\WorklistAdmin\WorklistAdminService.cs" />
     <Compile Include="Admin\WorklistAdmin\WorklistAdminAssembler.cs" />
     <Compile Include="Admin\WorklistAdmin\WorklistExporter.cs" />
@@ -101,7 +104,7 @@
     <Compile Include="ApplicationServiceExtensionPoint.cs" />
     <Compile Include="Admin\HL7QueueItemAssembler.cs" />
     <Compile Include="ContactPersonAssembler.cs" />
-    <Compile Include="Admin\NoteCategoryAssembler.cs" />
+    <Compile Include="NoteCategoryAssembler.cs" />
     <Compile Include="Login\LoginService.cs" />
     <Compile Include="ModalityWorkflow\TechnologistDocumentation\TechnologistDocumentationAssembler.cs" />
     <Compile Include="ModalityWorkflow\TechnologistDocumentation\TechnologistDocumentationService.cs" />
@@ -133,7 +136,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
-    <Compile Include="Admin\StaffAssembler.cs" />
+    <Compile Include="StaffAssembler.cs" />
     <Compile Include="TelephoneNumberAssembler.cs" />
     <Compile Include="WorkflowServiceBase.cs" />
   </ItemGroup>

@@ -68,10 +68,9 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             _performedLocation.DataBindings.Add("Value", _component, "PerformedLocation", true, DataSourceUpdateMode.OnPropertyChanged);
             _performedDate.DataBindings.Add("Value", _component, "PerformedDate", true, DataSourceUpdateMode.OnPropertyChanged);
             _makeDefault.DataBindings.Add("Checked", _component, "MakeDefault", true, DataSourceUpdateMode.OnPropertyChanged);
-            _supervisor.DataBindings.Add("Value", _component, "Supervisor", true, DataSourceUpdateMode.OnPropertyChanged);
 
-            SuggestionOptimizer optimizer = new SuggestionOptimizer();
-            _supervisor.SuggestionProvider = optimizer.GetOptimizedProvider(_component.GetRadiologistSuggestion);
+            _supervisor.LookupHandler = _component.SupervisorLookupHandler;
+            _supervisor.DataBindings.Add("Value", _component, "Supervisor", true, DataSourceUpdateMode.OnPropertyChanged);
 
             _verifyButton.DataBindings.Add("Enabled", _component, "VerifyEnabled", false, DataSourceUpdateMode.OnPropertyChanged);
             _sendToVerifyButton.DataBindings.Add("Enabled", _component, "SendToVerifyEnabled", false, DataSourceUpdateMode.OnPropertyChanged);

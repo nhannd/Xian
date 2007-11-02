@@ -58,54 +58,73 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 
             _component = component;
 
-            _visitTable.Table = _component.VisitTable;
-            _visitTable.DataBindings.Add("Selection", _component, "SelectedVisit", true, DataSourceUpdateMode.OnPropertyChanged);
-            this.ErrorProvider.SetIconAlignment(_visitTable, ErrorIconAlignment.TopRight);
+            _diagnosticService.LookupHandler = _component.DiagnosticServiceLookupHandler;
+            _diagnosticService.DataBindings.Add("Value", _component, "SelectedDiagnosticService", true,
+                                                DataSourceUpdateMode.OnPropertyChanged);
 
-            _diagnosticServiceTree.Tree = _component.DiagnosticServiceTree;
-            _diagnosticServiceTree.DataBindings.Add("Selection", _component, "SelectedDiagnosticServiceTreeItem", true, DataSourceUpdateMode.OnPropertyChanged);
-            _selectedDiagnosticService.DataBindings.Add("Text", _component, "SelectedDiagnosticService", true, DataSourceUpdateMode.OnPropertyChanged);
+            _indication.DataBindings.Add("Value", _component, "Indication", true, DataSourceUpdateMode.OnPropertyChanged);
 
-            _component.DiagnosticServiceChanged += new EventHandler(DiagnosticServiceChangedEventHandler);
+            _proceduresTableView.Table = _component.Procedures;
+            _proceduresTableView.MenuModel = _component.ProceduresActionModel;
+            _proceduresTableView.ToolbarModel = _component.ProceduresActionModel;
+            _proceduresTableView.DataBindings.Add("Selection", _component, "SelectedProcedure", true, DataSourceUpdateMode.OnPropertyChanged);
 
-            _diagnosticServiceBreakdown.DataBindings.Add("Selection", _component, "SelectedDiagnosticServiceBreakdownItem", true, DataSourceUpdateMode.OnPropertyChanged);
+            _consultantsTableView.Table = _component.Consultants;
+            _consultantsTableView.MenuModel = _component.ConsultantsActionModel;
+            _consultantsTableView.ToolbarModel = _component.ConsultantsActionModel;
+            _consultantsTableView.DataBindings.Add("Selection", _component, "SelectedConsultant", true, DataSourceUpdateMode.OnPropertyChanged);
+            _addConsultantButton.DataBindings.Add("Enabled", _component.ConsultantsActionModel.Add, "Enabled");
+
+            _consultantLookup.LookupHandler = _component.ConsultantsLookupHandler;
+            _consultantLookup.DataBindings.Add("Value", _component, "ConsultantToAdd", true, DataSourceUpdateMode.OnPropertyChanged);
+
+            _visit.DataSource = _component.ActiveVisits;
+            _visit.DataBindings.Add("Value", _component, "SelectedVisit", true, DataSourceUpdateMode.OnPropertyChanged);
+            _visit.Format += delegate(object source, ListControlConvertEventArgs e) { e.Value = _component.FormatVisit(e.ListItem); };
 
             _priority.DataSource = _component.PriorityChoices;
             _priority.DataBindings.Add("Value", _component, "SelectedPriority", true, DataSourceUpdateMode.OnPropertyChanged);
 
             _orderingFacility.DataSource = _component.FacilityChoices;
             _orderingFacility.DataBindings.Add("Value", _component, "SelectedFacility", true, DataSourceUpdateMode.OnPropertyChanged);
+            _orderingFacility.Format += delegate(object source, ListControlConvertEventArgs e) { e.Value = _component.FormatFacility(e.ListItem); };
 
-            _orderingPhysician.DataSource = _component.OrderingPhysicianChoices;
-            _orderingPhysician.DataBindings.Add("Value", _component, "SelectedOrderingPhysician", true, DataSourceUpdateMode.OnPropertyChanged);
+            _orderingPractitioner.LookupHandler = _component.OrderingPractitionerLookupHandler;
+            _orderingPractitioner.DataBindings.Add("Value", _component, "SelectedOrderingPractitioner", true, DataSourceUpdateMode.OnPropertyChanged);
 
-            _scheduleOrder.DataBindings.Add("Checked", _component, "ScheduleOrder", true, DataSourceUpdateMode.OnPropertyChanged);
-            _schedulingRequestDateTime.DataBindings.Add("Value", _component, "SchedulingRequestDateTime", true, DataSourceUpdateMode.OnPropertyChanged);
+            // bind date and time to same property
+            _schedulingRequestDate.DataBindings.Add("Value", _component, "SchedulingRequestTime", true, DataSourceUpdateMode.OnPropertyChanged);
+            _schedulingRequestTime.DataBindings.Add("Value", _component, "SchedulingRequestTime", true, DataSourceUpdateMode.OnPropertyChanged);
+
+            // bind date and time to same property
+            _scheduledDate.DataBindings.Add("Value", _component, "ScheduledTime", true, DataSourceUpdateMode.OnPropertyChanged);
+            _scheduledTime.DataBindings.Add("Value", _component, "ScheduledTime", true, DataSourceUpdateMode.OnPropertyChanged);
 
             _reorderReason.DataSource = _component.CancelReasonChoices;
             _reorderReason.DataBindings.Add("Value", _component, "SelectedCancelReason", true, DataSourceUpdateMode.OnPropertyChanged);
-            _reorderReason.Visible = _component.IsReOrdering;
-
+            _reorderReason.DataBindings.Add("Visible", _component, "IsReplaceOrder");
         }
 
         private void DiagnosticServiceChangedEventHandler(object sender, EventArgs e)
         {
-            _diagnosticServiceBreakdown.ResetText();
-            _diagnosticServiceBreakdown.Tree = _component.DiagnosticServiceBreakdown;
-            _diagnosticServiceBreakdown.ExpandAll();
         }
 
         private void _placeOrderButton_Click(object sender, EventArgs e)
         {
             using (new CursorManager(Cursors.WaitCursor))
             {
-                _component.PlaceOrder();
+                _component.Accept();
             }
         }
 
         private void _cancelButton_Click(object sender, EventArgs e)
         {
             _component.Cancel();
+        }
+
+        private void _addConsultantButton_Click(object sender, EventArgs e)
+        {
+            _component.AddConsultant();
         }
     }
 }

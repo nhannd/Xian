@@ -36,6 +36,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Client;
 using ClearCanvas.Ris.Application.Common.Admin.VisitAdmin;
 using ClearCanvas.Ris.Application.Common.Admin.PatientAdmin;
@@ -167,7 +168,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
             try
             {
-                VisitEditorComponent editor = new VisitEditorComponent(_patientRef, _currentVisitSelection.entityRef);
+                VisitEditorComponent editor = new VisitEditorComponent(_patientRef, _currentVisitSelection.VisitRef);
                 ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleUpdateVisit);
                 if (exitCode == ApplicationComponentExitCode.Normal)
                 {

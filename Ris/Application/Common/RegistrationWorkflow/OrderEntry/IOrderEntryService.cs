@@ -39,13 +39,13 @@ using ClearCanvas.Enterprise.Common;
 namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
 {
     /// <summary>
-    /// Provides data loading/saving for the <see cref="OrderListComponent"/> and <see cref="OrderEntryComponent"/>
+    /// Provides services for entering orders into the system, and modifying existing orders.
     /// </summary>
     [ServiceContract]
     public interface IOrderEntryService
     {
         /// <summary>
-        /// Search for all active visits for a patient
+        /// List active visits for the specified patient.  Orders can be placed on active visits.
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
@@ -61,7 +61,15 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
         GetOrderEntryFormDataResponse GetOrderEntryFormData(GetOrderEntryFormDataRequest request);
 
         /// <summary>
-        /// Loads data for the Diagnostic Service breakdown for the <see cref="OrderEntryComponent"/>
+        /// Loads order requisition so that the order editing form can be populated.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [OperationContract]
+        GetOrderRequisitionForEditResponse GetOrderRequisitionForEdit(GetOrderRequisitionForEditRequest request);
+
+        /// <summary>
+        /// Gets the details of a diagnostic service plan.
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
@@ -69,7 +77,24 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
         LoadDiagnosticServiceBreakdownResponse LoadDiagnosticServiceBreakdown(LoadDiagnosticServiceBreakdownRequest request);
 
         /// <summary>
-        /// Place a new order via the information provided by the <see cref="OrderEntryComponent"/>
+        /// Obtains one level of the diagnostic services tree.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [OperationContract]
+        GetDiagnosticServiceSubTreeResponse GetDiagnosticServiceSubTree(GetDiagnosticServiceSubTreeRequest request);
+
+        /// <summary>
+        /// List procedure types that can be ordered based on the procedure types that have already been added to
+        /// an order.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [OperationContract]
+        ListOrderableProcedureTypesResponse ListOrderableProcedureTypes(ListOrderableProcedureTypesRequest request);
+
+        /// <summary>
+        /// Places a new order based on the specified information.
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
@@ -78,33 +103,25 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
         PlaceOrderResponse PlaceOrder(PlaceOrderRequest request);
 
         /// <summary>
-        /// List all the orders based on the Assigning Authority for the <see cref="OrderListComponent"/>
+        /// Modifies an existing order based on the specified information.
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
         [OperationContract]
         [FaultContract(typeof(RequestValidationException))]
-        GetOrdersWorkListResponse GetOrdersWorkList(GetOrdersWorkListRequest request);
+        [FaultContract(typeof(ConcurrentModificationException))]
+        ModifyOrderResponse ModifyOrder(ModifyOrderRequest request);
 
         /// <summary>
-        /// Get all the orders for a patient
+        /// Cancels an existing order and places a new order as a single transaction.
         /// </summary>
-        /// <param name="request"><see cref="ListOrderForPatientRequest"/></param>
-        /// <returns><see cref="ListOrderForPatientResponse"/></returns>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [OperationContract]
         [FaultContract(typeof(RequestValidationException))]
-        ListOrdersForPatientResponse ListOrdersForPatient(ListOrdersForPatientRequest request);
+        [FaultContract(typeof(ConcurrentModificationException))]
+        ReplaceOrderResponse ReplaceOrder(ReplaceOrderRequest request);
 
-        /// <summary>
-        /// Get all the orders for a patient
-        /// </summary>
-        /// <param name="request"><see cref="LoadOrderDetailRequest"/></param>
-        /// <returns><see cref="LoadOrderDetailResponse"/></returns>
-        [OperationContract]
-        [FaultContract(typeof(RequestValidationException))]
-        LoadOrderDetailResponse LoadOrderDetail(LoadOrderDetailRequest request);
 
-        [OperationContract]
-        GetDiagnosticServiceSubTreeResponse GetDiagnosticServiceSubTree(GetDiagnosticServiceSubTreeRequest request);
     }
 }

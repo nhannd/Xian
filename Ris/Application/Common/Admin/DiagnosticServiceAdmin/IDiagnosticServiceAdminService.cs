@@ -34,11 +34,21 @@ using System.ServiceModel;
 
 namespace ClearCanvas.Ris.Application.Common.Admin.DiagnosticServiceAdmin
 {
-    /// <summary>
-    /// Importing a batch of services for the <see cref="ImportDiagnosticServicesComponent"/>
-    /// </summary>
     [ServiceContract]
     public interface IDiagnosticServiceAdminService
     {
+        /// <summary>
+        /// Returns a list of diagnostic services based on a textual query.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [OperationContract]
+        TextQueryResponse<DiagnosticServiceSummary> TextQuery(TextQueryRequest request);
+
+        /// <summary>
+        /// Summary list of all practitioners
+        /// </summary>
+        [OperationContract]
+        ListDiagnosticServicesResponse ListDiagnosticServices(ListDiagnosticServicesRequest request);
     }
 }

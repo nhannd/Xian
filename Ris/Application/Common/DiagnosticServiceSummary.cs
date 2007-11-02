@@ -39,7 +39,7 @@ using ClearCanvas.Enterprise.Common;
 namespace ClearCanvas.Ris.Application.Common
 {
     [DataContract]
-    public class DiagnosticServiceSummary : DataContractBase
+    public class DiagnosticServiceSummary : DataContractBase, IEquatable<DiagnosticServiceSummary>
     {
         public DiagnosticServiceSummary(EntityRef diagnosticServiceRef, string id, string name)
         {
@@ -56,5 +56,22 @@ namespace ClearCanvas.Ris.Application.Common
 
         [DataMember]
         public string Name;
+
+        public bool Equals(DiagnosticServiceSummary diagnosticServiceSummary)
+        {
+            if (diagnosticServiceSummary == null) return false;
+            return Equals(DiagnosticServiceRef, diagnosticServiceSummary.DiagnosticServiceRef);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(this, obj)) return true;
+            return Equals(obj as DiagnosticServiceSummary);
+        }
+
+        public override int GetHashCode()
+        {
+            return DiagnosticServiceRef.GetHashCode();
+        }
     }
 }

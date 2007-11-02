@@ -32,9 +32,18 @@
 using System;
 using System.Windows.Forms;
 using System.ComponentModel;
+using ClearCanvas.Desktop;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
+    /// <summary>
+    /// A type of field that allows the user to select an item from a list of suggested items
+    /// that is provided dynamically from a <see cref="ISuggestionProvider"/>.
+    /// </summary>
+    /// <remarks>
+    /// The <see cref="SuggestionProvider"/> property must be set.  Also, the <see cref="Format"/> event
+    /// should be handled to correctly format items for display.
+    /// </remarks>
     public partial class SuggestComboField : UserControl
     {
         public SuggestComboField()
@@ -42,72 +51,63 @@ namespace ClearCanvas.Desktop.View.WinForms
             InitializeComponent();
         }
 
+        #region Design-time properties and events
+
+        /// <summary>
+        /// Gets or sets the associated label text.
+        /// </summary>
         public string LabelText
         {
             get { return _label.Text; }
             set { _label.Text = value; }
         }
 
+        /// <summary>
+        /// Occurs to allow formatting of the item for display in the user-interface.
+        /// </summary>
+        public event ListControlConvertEventHandler Format
+        {
+            add { _comboBox.Format += value; }
+            remove { _comboBox.Format -= value; }
+        }
+
+        #endregion
+
+        [Browsable(false)]
         public object Value
         {
-            get { return _comboBox.SelectedItem; }
-            set { _comboBox.SelectedItem = value; }
+            get { return _comboBox.Value; }
+            set { _comboBox.Value = value; }
         }
 
-        [DefaultValue(ComboBoxStyle.DropDown)]
-        public ComboBoxStyle DropDownStyle
-        {
-            get { return _comboBox.DropDownStyle; }
-            set { _comboBox.DropDownStyle = value; }
-        }
-
+        [Browsable(false)]
         public event EventHandler ValueChanged
         {
             // use pass through event subscription
-            add { _comboBox.SelectedIndexChanged += value; }
-            remove { _comboBox.SelectedIndexChanged -= value; }
+            add { _comboBox.ValueChanged += value; }
+            remove { _comboBox.ValueChanged -= value; }
         }
-
-        public object DataSource
-        {
-            get { return _comboBox.DataSource; }
-            set { _comboBox.DataSource = value; }
-        }
-
-		public string DisplayMember
-		{
-			get { return _comboBox.DisplayMember; }
-			set { _comboBox.DisplayMember = value; }
-		}
 
         /// <summary>
-        /// Sets the delegate that takes the query string and return a list of suggestions
+        /// Gets the current query text (the text that is in the edit portion of the control).
         /// </summary>
-        public SuggestionProvider SuggestionProvider
+        [Browsable(false)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public string QueryText
+        {
+            get { return _comboBox.Text; }
+        }
+
+        /// <summary>
+        /// Gets or sets the <see cref="ISuggestionProvider"/>.
+        /// </summary>
+        [Browsable(false)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public ISuggestionProvider SuggestionProvider
         {
             get { return _comboBox.SuggestionProvider; }
             set { _comboBox.SuggestionProvider = value; }
         }
 
-        /// <summary>
-        /// Gets or sets the option for strict typing.  StrictTyping restrict input to match text in the suggestions, if the suggestions exist.
-        /// </summary>
-        [DefaultValue(true)]
-        public bool StrictTyping
-        {
-            get { return _comboBox.StrictTyping; }
-            set { _comboBox.StrictTyping = value; }
-        }
-
-        /// <summary>
-        /// By deafult, the control will start with the first item in the data source.  
-        /// This property gets or sets the the option to start the control with null selection.
-        /// </summary>
-        [DefaultValue(true)]
-        public bool StartWithNullSelection
-        {
-            get { return _comboBox.StartWithNullSelection; }
-            set { _comboBox.StartWithNullSelection = value; }
-        }
     }
 }

@@ -583,15 +583,6 @@ namespace ClearCanvas.Ris.Client.Adt {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Unable to retrieve diagnostic service tree.
-        /// </summary>
-        internal static string ExceptionCannotExpandDiagnositicServiceTree {
-            get {
-                return ResourceManager.GetString("ExceptionCannotExpandDiagnositicServiceTree", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Unable to place order.
         /// </summary>
         internal static string ExceptionCannotPlaceOrder {
@@ -606,15 +597,6 @@ namespace ClearCanvas.Ris.Client.Adt {
         internal static string ExceptionCannotReplaceOrder {
             get {
                 return ResourceManager.GetString("ExceptionCannotReplaceOrder", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Unable to retrieve diagnostic service breakdown.
-        /// </summary>
-        internal static string ExceptionCannotUpdateDiagnosticServiceBreakdown {
-            get {
-                return ResourceManager.GetString("ExceptionCannotUpdateDiagnosticServiceBreakdown", resourceCulture);
             }
         }
         

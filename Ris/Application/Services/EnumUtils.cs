@@ -124,7 +124,8 @@ namespace ClearCanvas.Ris.Application.Services
         }
 
         /// <summary>
-        /// Converts a <see cref="EnumValueInfo"/> to a C# enum value.
+        /// Converts a <see cref="EnumValueInfo"/> to a C# enum value.  If info is null,
+        /// the default (0) value for the enum is returned.
         /// </summary>
         /// <typeparam name="TEnum"></typeparam>
         /// <param name="info"></param>
@@ -132,7 +133,8 @@ namespace ClearCanvas.Ris.Application.Services
         public static TEnum GetEnumValue<TEnum>(EnumValueInfo info)
             where TEnum : struct
         {
-            return (TEnum)Enum.Parse(typeof(TEnum), info.Code);
+            string code = info != null ? info.Code : Enum.GetName(typeof(TEnum), 0);
+            return (TEnum)Enum.Parse(typeof(TEnum), code);
         }
     }
 }

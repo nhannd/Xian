@@ -34,6 +34,7 @@ using System.Collections;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
@@ -42,6 +43,8 @@ using ClearCanvas.Ris.Application.Common.Admin;
 using ClearCanvas.Ris.Application.Common.Admin.VisitAdmin;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry;
 using ClearCanvas.Ris.Application.Services.Admin;
+using ClearCanvas.Healthcare.Workflow;
+using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 
 namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 {
@@ -49,22 +52,20 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
     [ServiceImplementsContract(typeof(IOrderEntryService))]
     public class OrderEntryService : ApplicationServiceBase, IOrderEntryService
     {
+        #region IOrderEntryService Members
+
+
         [ReadOperation]
         public ListActiveVisitsForPatientResponse ListActiveVisitsForPatient(ListActiveVisitsForPatientRequest request)
         {
+            Platform.CheckForNullReference(request, "request");
+            Platform.CheckMemberIsSet(request.PatientRef, "PatientRef");
+
+            Patient patient = PersistenceContext.GetBroker<IPatientBroker>().Load(request.PatientRef, EntityLoadFlags.Proxy);
+
             VisitSearchCriteria criteria = new VisitSearchCriteria();
             criteria.VisitStatus.NotEqualTo(VisitStatus.DC);
-
-            if (request.PatientRef != null)
-            {
-                Patient patient = PersistenceContext.GetBroker<IPatientBroker>().Load(request.PatientRef, EntityLoadFlags.Proxy);
-                criteria.Patient.EqualTo(patient);
-            }
-            else if (request.PatientProfileRef != null)
-            {
-                PatientProfile profile = PersistenceContext.GetBroker<IPatientProfileBroker>().Load(request.PatientProfileRef, EntityLoadFlags.Proxy);
-                criteria.Patient.EqualTo(profile.Patient);
-            }
+            criteria.Patient.EqualTo(patient);
 
             VisitAssembler assembler = new VisitAssembler();
             return new ListActiveVisitsForPatientResponse(
@@ -79,51 +80,17 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         [ReadOperation]
         public GetOrderEntryFormDataResponse GetOrderEntryFormData(GetOrderEntryFormDataRequest request)
         {
-            OrderEntryAssembler orderEntryAssembler = new OrderEntryAssembler();
             FacilityAssembler facilityAssembler = new FacilityAssembler();
-            ExternalPractitionerAssembler pracAssembler = new ExternalPractitionerAssembler();
-
-            IList<DiagnosticServiceTreeNode> topLevelDiagnosticServiceTreeNodes = null;
-            try 
-	        {	        
-		        DiagnosticServiceTreeNodeSearchCriteria rootNodeDiagnosticServiceTreeCriteria = new DiagnosticServiceTreeNodeSearchCriteria();
-                rootNodeDiagnosticServiceTreeCriteria.Parent.IsNull();
-                DiagnosticServiceTreeNode rootNode = PersistenceContext.GetBroker<IDiagnosticServiceTreeNodeBroker>().FindOne(rootNodeDiagnosticServiceTreeCriteria);
-                topLevelDiagnosticServiceTreeNodes = rootNode.Children;
-            }
-	        catch (Exception)
-	        {
-                // no diagnostic service tree - just create an empty list
-                topLevelDiagnosticServiceTreeNodes = new List<DiagnosticServiceTreeNode>();
-	        }
-
             return new GetOrderEntryFormDataResponse(
-                CollectionUtils.Map<DiagnosticService, DiagnosticServiceSummary, List<DiagnosticServiceSummary>>(
-                    PersistenceContext.GetBroker<IDiagnosticServiceBroker>().FindAll(),
-                    delegate(DiagnosticService ds)
-                    {
-                        return orderEntryAssembler.CreateDiagnosticServiceSummary(ds);
-                    }),
                 CollectionUtils.Map<Facility, FacilitySummary, List<FacilitySummary>>(
                     PersistenceContext.GetBroker<IFacilityBroker>().FindAll(),
                     delegate(Facility f)
                     {
                         return facilityAssembler.CreateFacilitySummary(f);
                     }),
-                CollectionUtils.Map<ExternalPractitioner, ExternalPractitionerSummary, List<ExternalPractitionerSummary>>(
-                    PersistenceContext.GetBroker<IExternalPractitionerBroker>().FindAll(),
-                    delegate(ExternalPractitioner p)
-                    {
-                        return pracAssembler.CreateExternalPractitionerSummary(p, PersistenceContext);
-                    }),
                 EnumUtils.GetEnumValueList<OrderPriorityEnum>(PersistenceContext),
                 EnumUtils.GetEnumValueList<OrderCancelReasonEnum>(PersistenceContext),
-                CollectionUtils.Map<DiagnosticServiceTreeNode, DiagnosticServiceTreeItem, List<DiagnosticServiceTreeItem>>(
-                    topLevelDiagnosticServiceTreeNodes,
-                    delegate(DiagnosticServiceTreeNode n)
-                    {
-                        return orderEntryAssembler.CreateDiagnosticServiceTreeItem(n);
-                    })
+                EnumUtils.GetEnumValueList<LateralityEnum>(PersistenceContext)
                 );
         }
 
@@ -134,65 +101,94 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
             DiagnosticService diagnosticService = dsBroker.Load(request.DiagnosticServiceRef);
 
-            OrderEntryAssembler assembler = new OrderEntryAssembler();
+            DiagnosticServiceAssembler assembler = new DiagnosticServiceAssembler();
             return new LoadDiagnosticServiceBreakdownResponse(assembler.CreateDiagnosticServiceDetail(diagnosticService));
         }
 
-
         [ReadOperation]
-        public GetOrdersWorkListResponse GetOrdersWorkList(GetOrdersWorkListRequest request)
+        public GetDiagnosticServiceSubTreeResponse GetDiagnosticServiceSubTree(GetDiagnosticServiceSubTreeRequest request)
         {
-            //TODO: remove this after adding the criteria into GetOrdersWorkListRequest
-            //TODO: add validation to criteria that can throw a RequestValidationException
-            //ModalityProcedureStepSearchCriteria criteria = new ModalityProcedureStepSearchCriteria();
-            
+            IList<DiagnosticServiceTreeNode> children = null;
+            if (request.NodeRef == null)
+            {
+                try
+                {
+                    DiagnosticServiceTreeNodeSearchCriteria rootNodeDiagnosticServiceTreeCriteria = new DiagnosticServiceTreeNodeSearchCriteria();
+                    rootNodeDiagnosticServiceTreeCriteria.Parent.IsNull();
+                    DiagnosticServiceTreeNode rootNode = PersistenceContext.GetBroker<IDiagnosticServiceTreeNodeBroker>().FindOne(rootNodeDiagnosticServiceTreeCriteria);
+                    children = rootNode.Children;
+                }
+                catch (Exception)
+                {
+                    // no diagnostic service tree - just create an empty list
+                    children = new List<DiagnosticServiceTreeNode>();
+                }
+
+            }
+            else
+            {
+                DiagnosticServiceTreeNode node =
+                    PersistenceContext.Load<DiagnosticServiceTreeNode>(request.NodeRef, EntityLoadFlags.Proxy);
+                children = node.Children;
+
+            }
+
             OrderEntryAssembler assembler = new OrderEntryAssembler();
-            return new GetOrdersWorkListResponse(
-                CollectionUtils.Map<Order, OrderSummary, List<OrderSummary>>(
-                    PersistenceContext.GetBroker<IOrderBroker>().FindAll(),
-                    delegate(Order order)
+            return new GetDiagnosticServiceSubTreeResponse(
+                CollectionUtils.Map<DiagnosticServiceTreeNode, DiagnosticServiceTreeItem, List<DiagnosticServiceTreeItem>>(
+                    children,
+                    delegate(DiagnosticServiceTreeNode n)
                     {
-                        return assembler.CreateOrderSummary(order, this.PersistenceContext);
+                        return assembler.CreateDiagnosticServiceTreeItem(n);
                     }));
         }
 
-/*
-        [UpdateOperation(PersistenceScopeOption = PersistenceScopeOption.RequiresNew)]
-        public string GenerateNewAccessionNumber()
+        [ReadOperation]
+        public ListOrderableProcedureTypesResponse ListOrderableProcedureTypes(ListOrderableProcedureTypesRequest request)
         {
-            // note that we have declared this method as requiring a new persistence context
-            // it is safer to generate accession numbers in a separate transaction always
-            // if an accession number were generated in a shared transaction, and that transaction was rolled-back,
-            // the accession sequence would rollback as well, leaving the application with the possibility of a
-            // duplicate accession number
-            IAccessionNumberBroker broker = this.CurrentContext.GetBroker<IAccessionNumberBroker>();
-            return broker.GetNextAccessionNumber();
+            // TODO: we need to build a list of orderable procedure types, based on what has already been ordered
+            // for now, just return everything
+            IRequestedProcedureTypeBroker broker = PersistenceContext.GetBroker<IRequestedProcedureTypeBroker>();
+            IList<RequestedProcedureType> rpTypes = broker.FindAll();
+
+            RequestedProcedureTypeAssembler rptAssembler = new RequestedProcedureTypeAssembler();
+            List<RequestedProcedureTypeSummary> summaries = CollectionUtils.Map<RequestedProcedureType, RequestedProcedureTypeSummary>(rpTypes,
+                   delegate(RequestedProcedureType rpt)
+                       {
+                           return rptAssembler.GetRequestedProcedureTypeSummary(rpt);
+                       });
+            
+            // remove types that have already been ordered
+            summaries = CollectionUtils.Reject<RequestedProcedureTypeSummary>(summaries,
+                      delegate(RequestedProcedureTypeSummary s)
+                          {
+                              return request.OrderedProcedureTypes.Contains(s.EntityRef);
+                          });
+
+
+            return new ListOrderableProcedureTypesResponse(summaries);
         }
-*/
+
+        [ReadOperation]
+        public GetOrderRequisitionForEditResponse GetOrderRequisitionForEdit(GetOrderRequisitionForEditRequest request)
+        {
+            Platform.CheckForNullReference(request, "request");
+            Platform.CheckMemberIsSet(request.OrderRef, "OrderRef");
+
+            OrderEntryAssembler assembler = new OrderEntryAssembler();
+
+            Order order = PersistenceContext.GetBroker<IOrderBroker>().Load(request.OrderRef);
+
+            return new GetOrderRequisitionForEditResponse(order.GetRef(), assembler.CreateOrderRequisition(order, this.PersistenceContext));
+        }
+
         [UpdateOperation]
         public PlaceOrderResponse PlaceOrder(PlaceOrderRequest request)
         {
-            Patient patient = PersistenceContext.GetBroker<IPatientBroker>().Load(request.Patient, EntityLoadFlags.Proxy);
-            Visit visit = PersistenceContext.GetBroker<IVisitBroker>().Load(request.Visit, EntityLoadFlags.Proxy);
-            ExternalPractitioner orderingPhysician = PersistenceContext.GetBroker<IExternalPractitionerBroker>().Load(request.OrderingPhysician, EntityLoadFlags.Proxy);
-            Facility orderingFacility = PersistenceContext.GetBroker<IFacilityBroker>().Load(request.OrderingFacility, EntityLoadFlags.Proxy);
-            DiagnosticService diagnosticService = PersistenceContext.GetBroker<IDiagnosticServiceBroker>().Load(request.DiagnosticService);
+            Platform.CheckForNullReference(request, "request");
+            Platform.CheckMemberIsSet(request.Requisition, "Requisition");
 
-            IAccessionNumberBroker broker = PersistenceContext.GetBroker<IAccessionNumberBroker>();
-            string accNum = broker.GetNextAccessionNumber();
-
-            // TODO: add validation and throw RequestValidationException if necessary
-
-            Order order = Order.NewOrder(
-                    accNum, 
-                    patient, 
-                    visit, 
-                    diagnosticService, 
-                    request.SchedulingRequestTime, 
-                    orderingPhysician, 
-                    orderingFacility, 
-                    EnumUtils.GetEnumValue<OrderPriority>(request.OrderPriority),
-                    request.ScheduleOrder);
+            Order order = PlaceOrderHelper(request.Requisition);
 
             PersistenceContext.Lock(order, DirtyState.New);
 
@@ -202,58 +198,139 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             return new PlaceOrderResponse(order.GetRef());
         }
 
-        [ReadOperation]
-        public ListOrdersForPatientResponse ListOrdersForPatient(ListOrdersForPatientRequest request)
+        [UpdateOperation]
+        public ModifyOrderResponse ModifyOrder(ModifyOrderRequest request)
         {
-            OrderSearchCriteria criteria = new OrderSearchCriteria();
+            Platform.CheckForNullReference(request, "request");
+            Platform.CheckMemberIsSet(request.OrderRef, "OrderRef");
+            Platform.CheckMemberIsSet(request.Requisition, "Requisition");
 
-            PatientProfile profile = PersistenceContext.Load<PatientProfile>(request.PatientProfileRef);
-            criteria.Patient.EqualTo(profile.Patient);
+            Order order = PersistenceContext.Load<Order>(request.OrderRef);
             
             OrderEntryAssembler assembler = new OrderEntryAssembler();
-            return new ListOrdersForPatientResponse(
-                CollectionUtils.Map<Order, OrderSummary, List<OrderSummary>>(
-                    PersistenceContext.GetBroker<IOrderBroker>().Find(criteria),
-                    delegate(Order order)
-                    {
-                        return assembler.CreateOrderSummary(order, this.PersistenceContext);
-                    }));
+            assembler.UpdateOrderFromRequisition(order, request.Requisition, PersistenceContext);
+
+            UpdateProceduresHelper(order, request.Requisition.RequestedProcedures);
+
+            PersistenceContext.SynchState();
+
+            return new ModifyOrderResponse(order.GetRef());
         }
 
-        [ReadOperation]
-        public LoadOrderDetailResponse LoadOrderDetail(LoadOrderDetailRequest request)
+        [UpdateOperation]
+        public ReplaceOrderResponse ReplaceOrder(ReplaceOrderRequest request)
+        {
+            Platform.CheckForNullReference(request, "request");
+            Platform.CheckMemberIsSet(request.OrderRef, "OrderRef");
+            Platform.CheckMemberIsSet(request.CancelReason, "CancelReason");
+            Platform.CheckMemberIsSet(request.Requisition, "Requisition");
+
+            OrderCancelReasonEnum reason = EnumUtils.GetEnumValue<OrderCancelReasonEnum>(request.CancelReason, PersistenceContext);
+
+            // cancel existing order
+            CancelOrderOperation op = new CancelOrderOperation();
+            Order cancelledOrder = PersistenceContext.Load<Order>(request.OrderRef);
+            op.Execute(cancelledOrder, reason);
+
+            // place new order
+            Order newOrder = PlaceOrderHelper(request.Requisition);
+            PersistenceContext.Lock(newOrder, DirtyState.New);
+
+            PersistenceContext.SynchState();
+
+            return new ReplaceOrderResponse(newOrder.GetRef());
+        }
+
+        #endregion
+
+        private Order PlaceOrderHelper(OrderRequisition requisition)
+        {
+            Patient patient = PersistenceContext.Load<Patient>(requisition.Patient, EntityLoadFlags.Proxy);
+            Visit visit = PersistenceContext.Load<Visit>(requisition.Visit.VisitRef, EntityLoadFlags.Proxy);
+            ExternalPractitioner orderingPhysician = PersistenceContext.Load<ExternalPractitioner>(requisition.OrderingPractitioner.PractitionerRef, EntityLoadFlags.Proxy);
+            DiagnosticService diagnosticService = PersistenceContext.Load<DiagnosticService>(requisition.DiagnosticService.DiagnosticServiceRef);
+            OrderPriority priority = EnumUtils.GetEnumValue<OrderPriority>(requisition.Priority);
+            
+            Facility orderingFacility = PersistenceContext.Load<Facility>(requisition.OrderingFacility.FacilityRef, EntityLoadFlags.Proxy);
+
+            List<ExternalPractitioner> consultingPractitioners = CollectionUtils.Map<ExternalPractitionerSummary, ExternalPractitioner>(
+                requisition.CopiesToPractitioners,
+                delegate (ExternalPractitionerSummary p)
+                    {
+                        return PersistenceContext.Load<ExternalPractitioner>(p.PractitionerRef, EntityLoadFlags.Proxy);
+                    });
+
+            // generate set of procedures
+            List<RequestedProcedure> procedures = CollectionUtils.Map<ProcedureRequisition, RequestedProcedure>(
+                requisition.RequestedProcedures,
+                delegate (ProcedureRequisition req)
+                    {
+                        RequestedProcedureType rpt = PersistenceContext.Load<RequestedProcedureType>(req.ProcedureType.EntityRef);
+                        RequestedProcedure rp = rpt.CreateProcedure();
+                        rp.Schedule(req.ScheduledTime);
+                        return rp;
+                    });
+
+            // obtain a new acc number
+            IAccessionNumberBroker broker = PersistenceContext.GetBroker<IAccessionNumberBroker>();
+            string accNum = broker.GetNextAccessionNumber();
+
+            // generate a new order with the default set of requested procedures
+            Order order = Order.NewOrder(
+                    accNum,
+                    patient,
+                    visit,
+                    diagnosticService,
+                    requisition.ReasonForStudy,
+                    priority,
+                    orderingFacility,
+                    requisition.SchedulingRequestTime,
+                    orderingPhysician,
+                    consultingPractitioners,
+                    procedures);
+
+            return order;
+        }
+
+        private void UpdateProceduresHelper(Order order, List<ProcedureRequisition> procedureReqs)
         {
             OrderEntryAssembler assembler = new OrderEntryAssembler();
 
-            Order order = null;
-            if (request.OrderRef != null)
+            // deletions - remove any procedure not in the requisition
+            List<RequestedProcedure> proceduresCopy = new List<RequestedProcedure>(order.RequestedProcedures);
+            foreach (RequestedProcedure rp in proceduresCopy)
             {
-                order = PersistenceContext.GetBroker<IOrderBroker>().Load(request.OrderRef);
-            }
-            else if (String.IsNullOrEmpty(request.AccessionNumber) == false)
-            {
-                OrderSearchCriteria criteria = new OrderSearchCriteria();
-                criteria.AccessionNumber.EqualTo(request.AccessionNumber);
-                order = PersistenceContext.GetBroker<IOrderBroker>().FindOne(criteria);
+                bool shouldDelete = !procedureReqs.Exists(delegate(ProcedureRequisition req) { return req.ProcedureIndex == rp.Index; });
+                if(shouldDelete)
+                    order.RemoveRequestedProcedure(rp);
             }
 
-            return new LoadOrderDetailResponse(assembler.CreateOrderDetail(order, this.PersistenceContext));
+            // insertions and updates
+            foreach (ProcedureRequisition req in procedureReqs)
+            {
+                RequestedProcedureType requestedType = PersistenceContext.Load<RequestedProcedureType>(req.ProcedureType.EntityRef);
+
+                RequestedProcedure rp = CollectionUtils.SelectFirst<RequestedProcedure>(order.RequestedProcedures,
+                    delegate(RequestedProcedure x) { return req.ProcedureIndex == x.Index; });
+
+                if(rp == null)
+                {
+                    // create a new procedure for this requisition
+                    rp = requestedType.CreateProcedure();
+                }
+                else
+                {
+                    // validate that the type has not changed
+                    if(!rp.Type.Equals(requestedType))
+                        throw new RequestValidationException("Order modification must not modify the type of a requested procedure.");
+                }
+                
+                // apply the requisition information to the actual procedure
+                // note that only procedures that have not been started can be updated from a requisition
+                // ignore updates to anything not in the SC status
+                if(rp.Status == RequestedProcedureStatus.SC)
+                    assembler.UpdateProcedureFromRequisition(rp, req, PersistenceContext);
+            }
         }
-
-        [ReadOperation]
-        public GetDiagnosticServiceSubTreeResponse GetDiagnosticServiceSubTree(GetDiagnosticServiceSubTreeRequest request)
-        {
-            DiagnosticServiceTreeNode node = PersistenceContext.Load<DiagnosticServiceTreeNode>(request.NodeRef, EntityLoadFlags.Proxy);
-
-            OrderEntryAssembler assembler = new OrderEntryAssembler();
-            return new GetDiagnosticServiceSubTreeResponse(
-                CollectionUtils.Map<DiagnosticServiceTreeNode, DiagnosticServiceTreeItem, List<DiagnosticServiceTreeItem>>(
-                    node.Children,
-                    delegate(DiagnosticServiceTreeNode n)
-                    {
-                        return assembler.CreateDiagnosticServiceTreeItem(n);
-                    }));
-        }
-
     }
 }

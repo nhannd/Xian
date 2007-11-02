@@ -31,153 +31,22 @@
 
 using System;
 using System.Collections.Generic;
-
+using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tables;
-using ClearCanvas.Desktop.Trees;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry;
-using ClearCanvas.Ris.Application.Common.Admin;
-using ClearCanvas.Ris.Application.Common.Admin.VisitAdmin;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 using ClearCanvas.Ris.Client.Formatting;
+using System.Collections;
+using ClearCanvas.Desktop.Validation;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
-    [MenuAction("neworder", "folderexplorer-items-contextmenu/New Order")]
-    [ButtonAction("neworder", "folderexplorer-items-toolbar/New Order")]
-    [MenuAction("neworder", "RegistrationPreview-menu/NewOrders")]
-    [MenuAction("neworder", "global-menus/Orders/New")]
-    [ButtonAction("neworder", "patientsearch-items-toolbar/New Order")]
-    [MenuAction("neworder", "patientsearch-items-contextmenu/New Order")]
-    [IconSet("neworder", IconScheme.Colour, "AddToolSmall.png", "AddToolMedium.png", "AddToolLarge.png")]
-	[EnabledStateObserver("neworder", "Enabled", "EnabledChanged")]
-    [ClickHandler("neworder", "NewOrder")]
-    [ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]
-    [ExtensionOf(typeof(RegistrationPreviewToolExtensionPoint))]
-    [ExtensionOf(typeof(PatientSearchToolExtensionPoint))]
-    public class OrderEntryTool : Tool<IToolContext>
-    {
-        private bool _enabled;
-        private event EventHandler _enabledChanged;
-
-        public override void Initialize()
-        {
-            base.Initialize();
-            _enabled = false;   // disable by default
-
-            if (this.ContextBase is IRegistrationWorkflowItemToolContext)
-            {
-                ((IRegistrationWorkflowItemToolContext)this.ContextBase).SelectedItemsChanged += delegate
-                {
-                    this.Enabled = (((IRegistrationWorkflowItemToolContext)this.ContextBase).SelectedItems != null
-                    && ((IRegistrationWorkflowItemToolContext)this.ContextBase).SelectedItems.Count == 1);
-                };
-            }
-            else if (this.ContextBase is IPatientSearchToolContext)
-            {
-                ((IPatientSearchToolContext)this.ContextBase).SelectedProfileChanged += delegate
-                {
-                    IPatientSearchToolContext context = (IPatientSearchToolContext)this.ContextBase;
-                    this.Enabled = (context.SelectedProfile != null && context.SelectedProfile.ProfileRef != null);
-                };
-            }
-            else if (this.ContextBase is IPatientBiographyToolContext)
-            {
-                this.Enabled = true;
-            }
-        }
-
-        public bool Enabled
-        {
-            get { return _enabled; }
-            set
-            {
-                if (_enabled != value)
-                {
-                    _enabled = value;
-                    EventsHelper.Fire(_enabledChanged, this, EventArgs.Empty);
-                }
-            }
-        }
-
-        public event EventHandler EnabledChanged
-        {
-            add { _enabledChanged += value; }
-            remove { _enabledChanged -= value; }
-        }
-
-        public void NewOrder()
-        {
-            if (this.ContextBase is IRegistrationWorkflowItemToolContext)
-            {
-                IRegistrationWorkflowItemToolContext context = (IRegistrationWorkflowItemToolContext)this.ContextBase;
-                RegistrationWorklistItem item = CollectionUtils.FirstElement<RegistrationWorklistItem>(context.SelectedItems);
-                string title = string.Format(SR.TitleNewOrder, PersonNameFormat.Format(item.Name), MrnFormat.Format(item.Mrn));
-                NewOrder(item.PatientProfileRef, title, context.DesktopWindow);
-            }
-            else if (this.ContextBase is IPatientSearchToolContext)
-            {
-                IPatientSearchToolContext context = (IPatientSearchToolContext)this.ContextBase;
-                string title = string.Format(SR.TitleNewOrder, PersonNameFormat.Format(context.SelectedProfile.Name), MrnFormat.Format(context.SelectedProfile.Mrn));
-                NewOrder(context.SelectedProfile.ProfileRef, title, context.DesktopWindow);
-            }
-            else if (this.ContextBase is IPatientBiographyToolContext)
-            {
-                IPatientBiographyToolContext context = (IPatientBiographyToolContext)this.ContextBase;
-                NewOrder(context.PatientProfile, "New Order", context.DesktopWindow);
-            }
-        }
-
-        private void NewOrder(EntityRef profileRef, string title, IDesktopWindow desktopWindow)
-        {
-            try
-            {
-                ApplicationComponent.LaunchAsWorkspace(
-                    desktopWindow,
-                    new OrderEntryComponent(profileRef),
-                    title,
-                    delegate(IApplicationComponent c)
-                    {
-                        if (c.ExitCode == ApplicationComponentExitCode.Normal)
-                        {
-                            OrderEntryComponent component = (OrderEntryComponent) c;
-
-                            Platform.GetService<IOrderEntryService>(
-                                delegate(IOrderEntryService service)
-                                {
-                                    service.PlaceOrder(component.PlaceOrderRequest);
-                                });
-
-                            if (this.ContextBase is IRegistrationWorkflowItemToolContext)
-                            {
-                                IRegistrationWorkflowItemToolContext context = (IRegistrationWorkflowItemToolContext)this.ContextBase;
-
-                                // Refresh the schedule folder is a new folder is placed
-                                IFolder scheduledFolder = CollectionUtils.SelectFirst<IFolder>(context.Folders,
-                                    delegate(IFolder f) { return f is Folders.ScheduledFolder; });
-
-                                if (scheduledFolder.IsOpen)
-                                    scheduledFolder.Refresh();
-                                else
-                                    scheduledFolder.RefreshCount();
-                            }
-                        }
-                    });
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, SR.ExceptionCannotPlaceOrder, desktopWindow);
-            }
-        }
-    }
-
-
     /// <summary>
     /// Extension point for views onto <see cref="OrderEntryComponent"/>
     /// </summary>
@@ -192,447 +61,597 @@ namespace ClearCanvas.Ris.Client.Adt
     [AssociateView(typeof(OrderEntryComponentViewExtensionPoint))]
     public class OrderEntryComponent : ApplicationComponent
     {
-        private readonly EntityRef _patientProfileRef;
-        private readonly OrderDetail _reOrderDetail;
+        public enum Mode
+        {
+            NewOrder,
+            ModifyOrder,
+            ReplaceOrder
+        }
 
-        private VisitSummaryTable _visitTable;
-        private List<DiagnosticServiceSummary> _diagnosticServiceChoices;
+        private readonly Mode _mode;
+        private EntityRef _patientRef;
+        private EntityRef _orderRef;
+
+        private List<VisitSummary> _activeVisits;
+        private VisitSummary _selectedVisit;
+
+        private DiagnosticServiceLookupHandler _diagnosticServiceLookupHandler;
+
         private List<FacilitySummary> _facilityChoices;
-        private List<ExternalPractitionerSummary> _orderingPhysicianChoices;
         private List<EnumValueInfo> _priorityChoices;
         private List<EnumValueInfo> _cancelReasonChoices;
 
-        private VisitSummary _selectedVisit;
-        //private DiagnosticServiceSummary _selectedDiagnosticService;
         private FacilitySummary _selectedFacility;
-        private ExternalPractitionerSummary _selectedOrderingPhysician;
+
+        private ExternalPractitionerLookupHandler _orderingPractitionerLookupHandler;
+        private ExternalPractitionerSummary _selectedOrderingPractitioner;
+
         private EnumValueInfo _selectedPriority;
         private EnumValueInfo _selectedCancelReason;
 
-        private event EventHandler _diagnosticServiceChanged;
-        private Tree<RequestedProcedureTypeDetail> _diagnosticServiceBreakdown;
-        private object _selectedDiagnosticServiceBreakdownItem;
+        private DiagnosticServiceSummary _selectedDiagnosticService;
 
-        private Tree<DiagnosticServiceTreeItem> _diagnosticServiceTree;
-        private DiagnosticServiceTreeItem _selectedDiagnosticServiceTreeItem;
+        private DateTime? _schedulingRequestTime;
+        private DateTime? _scheduledTime;
 
-        private bool _scheduleOrder;
-        private DateTime _schedulingRequestDateTime;
+        private readonly Table<ProcedureRequisition> _proceduresTable;
+        private readonly CrudActionModel _proceduresActionModel;
+        private ProcedureRequisition _selectedProcedure;
+
+        private readonly Table<ExternalPractitionerSummary> _consultantsTable;
+        private readonly CrudActionModel _consultantsActionModel;
+        private ExternalPractitionerSummary _selectedConsultant;
+        private ExternalPractitionerLookupHandler _consultantLookupHandler;
+        private ExternalPractitionerSummary _consultantToAdd;
+
+        private string _indication;
+        private List<EnumValueInfo> _lateralityChoices;
+
 
         /// <summary>
-        /// Constructor
+        /// Constructor for creating a new order.
         /// </summary>
-        public OrderEntryComponent(EntityRef patientProfileRef)
+        public OrderEntryComponent(EntityRef patientRef)
+            : this(patientRef, null, Mode.NewOrder)
         {
-            this.Validation.Add(OrderEntryComponentSettings.Default.ValidationRules);
-
-            _patientProfileRef = patientProfileRef;
         }
 
-        public OrderEntryComponent(OrderDetail orderDetail)
+        /// <summary>
+        /// Constructor for modifying or replacing an order.
+        /// </summary>
+        /// <param name="patientRef"></param>
+        /// <param name="orderRef"></param>
+        /// <param name="mode"></param>
+        public OrderEntryComponent(EntityRef patientRef, EntityRef orderRef, Mode mode)
         {
-            this.Validation.Add(OrderEntryComponentSettings.Default.ValidationRules);
+            Platform.CheckForNullReference(patientRef, "patientRef");
 
-            _reOrderDetail = orderDetail;
+            _mode = mode;
+            if(mode == Mode.ModifyOrder || mode == Mode.ReplaceOrder)
+                Platform.CheckForNullReference(orderRef, "orderRef");
+
+            _patientRef = patientRef;
+            _orderRef = orderRef;
+
+            _proceduresTable = new Table<ProcedureRequisition>();
+            _proceduresTable.Columns.Add(new TableColumn<ProcedureRequisition, string>("Name",
+                                      delegate(ProcedureRequisition item) { return item.ProcedureType.Name; }));
+            _proceduresTable.Columns.Add(new TableColumn<ProcedureRequisition, string>("Code",
+                                      delegate(ProcedureRequisition item) { return item.ProcedureType.Id; }));
+            _proceduresTable.Columns.Add(new TableColumn<ProcedureRequisition, string>("Facility",
+                                      delegate(ProcedureRequisition item)
+                                          {
+                                               return item.PerformingFacility == null ? "" : item.PerformingFacility.Code;
+                                          }));
+            _proceduresTable.Columns.Add(new TableColumn<ProcedureRequisition, string>("Lat.",
+                                      delegate(ProcedureRequisition item)
+                                          {
+                                                  return (item.Laterality == null || item.Laterality.Code == "N")
+                                                      ? "" : item.Laterality.Code;
+                                          }));
+            _proceduresTable.Columns.Add(new TableColumn<ProcedureRequisition, string>("Scheduled Time",
+                                      delegate(ProcedureRequisition item)
+                                          {
+                                              if (item.Status == null)
+                                                  return "";
+                                              else if (item.Status.Code == "SC")
+                                                  return Format.DateTime(item.ScheduledTime);
+                                              else
+                                                  return item.Status.Value;
+                                          }));
+
+            _proceduresActionModel = new CrudActionModel();
+            _proceduresActionModel.Add.SetClickHandler(AddProcedure);
+            _proceduresActionModel.Edit.SetClickHandler(EditSelectedProcedure);
+            _proceduresActionModel.Delete.SetClickHandler(RemoveSelectedProcedure);
+            UpdateProcedureActionModel();
+
+            _consultantsTable = new Table<ExternalPractitionerSummary>();
+            _consultantsTable.Columns.Add(new TableColumn<ExternalPractitionerSummary, string>("Name",
+                                      delegate(ExternalPractitionerSummary item) { return PersonNameFormat.Format(item.Name); }));
+
+            _consultantsActionModel = new CrudActionModel(true, false, true);
+            _consultantsActionModel.Add.SetClickHandler(AddConsultant);
+            _consultantsActionModel.Add.Visible = false;    // hide this action on the menu/toolbar - we'll use a special button instead
+            _consultantsActionModel.Delete.SetClickHandler(RemoveSelectedConsultant);
+            UpdateConsultantActionModel();
+
+
+            this.Validation.Add(OrderEntryComponentSettings.Default.ValidationRules);
+            //this.Validation.Add(new ValidationRule("SelectedCancelReason",
+            //    delegate
+            //        {
+            //            // if replacing the order, ensure cancel reason selected
+            //            return new ValidationResult(_mode != Mode.ReplaceOrder || _selectedCancelReason != null,
+            //                SR.MessageMissingCancellationReason);
+            //        }));
         }
 
         public override void Start()
         {
-            _visitTable = new VisitSummaryTable();
+            _consultantLookupHandler = new ExternalPractitionerLookupHandler(this.Host.DesktopWindow);
+            _diagnosticServiceLookupHandler = new DiagnosticServiceLookupHandler(this.Host.DesktopWindow);
+            _orderingPractitionerLookupHandler = new ExternalPractitionerLookupHandler(this.Host.DesktopWindow);
 
             Platform.GetService<IOrderEntryService>(
                 delegate(IOrderEntryService service)
                 {
-                    ListActiveVisitsForPatientRequest request = new ListActiveVisitsForPatientRequest();
-                    if (_patientProfileRef != null)
-                        request.PatientProfileRef = _patientProfileRef;
-                    else if (_reOrderDetail != null)
-                        request.PatientRef = _reOrderDetail.PatientRef;
-
-                    ListActiveVisitsForPatientResponse response = service.ListActiveVisitsForPatient(request);
-                    _visitTable.Items.AddRange(response.Visits);
-
+                    ListActiveVisitsForPatientResponse response = service.ListActiveVisitsForPatient(new ListActiveVisitsForPatientRequest(_patientRef));
+                    _activeVisits = response.Visits;
+ 
                     GetOrderEntryFormDataResponse formChoicesResponse = service.GetOrderEntryFormData(new GetOrderEntryFormDataRequest());
-                    _diagnosticServiceChoices = formChoicesResponse.DiagnosticServiceChoices;
-                    _facilityChoices = formChoicesResponse.OrderingFacilityChoices;
-                    _orderingPhysicianChoices = formChoicesResponse.OrderingPhysicianChoices;
+                    _facilityChoices = formChoicesResponse.FacilityChoices;
                     _priorityChoices = formChoicesResponse.OrderPriorityChoices;
                     _cancelReasonChoices = formChoicesResponse.CancelReasonChoices;
-
-                    TreeItemBinding<DiagnosticServiceTreeItem> binding = new TreeItemBinding<DiagnosticServiceTreeItem>(
-                            delegate(DiagnosticServiceTreeItem ds) { return ds.Description; },
-                            ExpandDiagnosticServiceTree);
-                    binding.CanHaveSubTreeHandler = delegate(DiagnosticServiceTreeItem ds) { return ds.DiagnosticService == null; };
-                    _diagnosticServiceTree = new Tree<DiagnosticServiceTreeItem>(binding, formChoicesResponse.TopLevelDiagnosticServiceTree);
-
-                    if (_reOrderDetail == null)
-                    {
-                        _selectedPriority = _priorityChoices[0];
-                    }
-                    else
-                    {
-                        // Pre-populate the order entry page with details
-
-                        _selectedVisit = CollectionUtils.SelectFirst<VisitSummary>(response.Visits,
-                            delegate(VisitSummary summary)
-                                {
-                                    return Equals(summary.VisitNumberId, _reOrderDetail.Visit.VisitNumberId)
-                                        && Equals(summary.VisitNumberAssigningAuthority, _reOrderDetail.Visit.VisitNumberAssigningAuthority);
-                                });
-
-                        _selectedFacility = CollectionUtils.SelectFirst<FacilitySummary>(_facilityChoices,
-                            delegate(FacilitySummary summary)
-                                {
-                                    return summary.Code == _reOrderDetail.OrderingFacility.Code;
-                                });
-
-                        _selectedOrderingPhysician = CollectionUtils.SelectFirst<ExternalPractitionerSummary>(_orderingPhysicianChoices,
-                            delegate(ExternalPractitionerSummary summary)
-                                {
-                                    return Equals(summary.LicenseNumber.Id, _reOrderDetail.OrderingPractitioner.LicenseNumber.Id)
-                                     && Equals(summary.LicenseNumber.AssigningAuthority, _reOrderDetail.OrderingPractitioner.LicenseNumber.AssigningAuthority);
-                                });
-
-                        _selectedPriority = CollectionUtils.SelectFirst<EnumValueInfo>(_priorityChoices,
-                            delegate(EnumValueInfo summary)
-                                {
-                                    return Equals(summary.Code, _reOrderDetail.OrderPriority.Code);
-                                });
-
-                        _selectedPriority = CollectionUtils.SelectFirst<EnumValueInfo>(_priorityChoices,
-                            delegate(EnumValueInfo summary)
-                            {
-                                return Equals(summary.Code, _reOrderDetail.OrderPriority.Code);
-                            });
-                    }
+                    _lateralityChoices = formChoicesResponse.LateralityChoices;
 
                 });
 
-            _schedulingRequestDateTime = Platform.Time;
-            _scheduleOrder = true;
+            if (_mode == Mode.NewOrder)
+            {
+                _selectedVisit = _activeVisits.Count > 0 ? _activeVisits[0] : null;
+                _selectedPriority = _priorityChoices.Count > 0 ? _priorityChoices[0] : null;
+                _selectedFacility = _facilityChoices.Count > 0 ? _facilityChoices[0] : null;
+                _schedulingRequestTime = Platform.Time;
+            }
+            else
+            {
+                // Pre-populate the order entry page with details
+                Platform.GetService<IOrderEntryService>(
+                    delegate(IOrderEntryService service)
+                    {
+                        GetOrderRequisitionForEditResponse response = service.GetOrderRequisitionForEdit(new GetOrderRequisitionForEditRequest(_orderRef));
+                        
+                        // update order ref so we have the latest version
+                        _orderRef = response.OrderRef;
+
+                        // update form
+                        UpdateFromRequisition(response.Requisition);
+                    });
+            }
 
             base.Start();
         }
 
         #region Presentation Model
 
-        public bool IsReOrdering
+        public bool IsReplaceOrder
         {
-            get { return _reOrderDetail != null; }    
+            get { return _mode == Mode.ReplaceOrder; }
         }
 
-        public ITable VisitTable
+        public bool IsModifyOrder
         {
-            get { return _visitTable; }
+            get { return _mode == Mode.ModifyOrder; }
         }
 
-        public ISelection SelectedVisit
+        public IList ActiveVisits
         {
-            get { return _selectedVisit == null ? Selection.Empty : new Selection(_selectedVisit); }
-            set { _selectedVisit = (VisitSummary)value.Item; }
+            get { return _activeVisits; }
         }
 
-        public List<string> DiagnosticServiceChoices
+        [ValidateNotNull]
+        public VisitSummary SelectedVisit
         {
-            get
-            {
-                List<string> dsStrings = new List<string>();
-                dsStrings.Add("");
-                dsStrings.AddRange(
-                    CollectionUtils.Map<DiagnosticServiceSummary, string>(
-                        _diagnosticServiceChoices, delegate(DiagnosticServiceSummary ds) { return ds.Name; }));
-
-                return dsStrings;
-            }
-        }
-
-        public object SelectedDiagnosticService
-        {
-            get
-            {
-                return _selectedDiagnosticServiceTreeItem == null
-                    ? null
-                    : _selectedDiagnosticServiceTreeItem.DiagnosticService == null 
-                        ? null
-                        : _selectedDiagnosticServiceTreeItem.DiagnosticService.Name;
-            }
-        }
-
-        public ISelection SelectedDiagnosticServiceTreeItem
-        {
-            get { return _selectedDiagnosticServiceTreeItem == null ? Selection.Empty : new Selection(_selectedDiagnosticServiceTreeItem); }
+            get { return _selectedVisit; }
             set
             {
-                _selectedDiagnosticServiceTreeItem = value.Item as DiagnosticServiceTreeItem;
-                UpdateDiagnosticServiceBreakdown();
-                
-                //DiagnosticServiceSummary diagnosticService = _selectedDiagnosticServiceTreeItem == null ? null : _selectedDiagnosticServiceTreeItem.DiagnosticService;
-
-                //if (diagnosticService != null && diagnosticService.Equals(_selectedDiagnosticService))
-                //{
-                //    // Do nothing
-                //}
-                //else
-                //{
-                //    _selectedDiagnosticService = diagnosticService;
-                //    UpdateDiagnosticServiceBreakdown();
-                //}
+                if(!object.Equals(value, _selectedVisit))
+                {
+                    _selectedVisit = value;
+                    NotifyPropertyChanged("SelectedVisit");
+                }
             }
         }
 
-        public List<string> PriorityChoices
+        public string FormatVisit(object visit)
         {
-            get { return EnumValueUtils.GetDisplayValues(_priorityChoices); }
+            // TODO this is kind of temporary - not sure what information should be presented
+            // in the dropdown
+            VisitSummary v = (VisitSummary)visit;
+
+            StringBuilder visitType = new StringBuilder();
+            visitType.Append(v.PatientClass);
+            if (!string.IsNullOrEmpty(v.PatientType))
+            {
+                visitType.Append(" - ");
+                visitType.Append(v.PatientType);
+            }
+            if (!string.IsNullOrEmpty(v.AdmissionType))
+            {
+                visitType.Append(" - ");
+                visitType.Append(v.AdmissionType);
+            }
+
+            return string.Format("{0} {1} {2} {3}",
+                v.VisitNumberAssigningAuthority,
+                v.VisitNumberId,
+                visitType,
+                Format.DateTime(v.AdmitDateTime)
+                );
         }
 
-        public string SelectedPriority
+        public ILookupHandler DiagnosticServiceLookupHandler
         {
-            get { return _selectedPriority == null ? "" : _selectedPriority.Value; }
+            get { return _diagnosticServiceLookupHandler; }
+        }
+
+        [ValidateNotNull]
+        public DiagnosticServiceSummary SelectedDiagnosticService
+        {
+            get { return _selectedDiagnosticService; }
             set
             {
-                _selectedPriority = (value == "") ? null : 
-                    CollectionUtils.SelectFirst<EnumValueInfo>(_priorityChoices,
-                        delegate(EnumValueInfo info) { return info.Value == value; });
+                if(value != this.SelectedDiagnosticService)
+                {
+                    UpdateDiagnosticService(value);
+                }
             }
         }
 
-        public List<string> CancelReasonChoices
+        public string FormatDiagnosticService(object item)
         {
-            get
-            {
-                List<string> displayValue = EnumValueUtils.GetDisplayValues(_cancelReasonChoices);
-                displayValue.Insert(0, "");
-                return displayValue;
-            }
+            return ((DiagnosticServiceSummary)item).Name;
         }
 
-        public string SelectedCancelReason
+        public ITable Procedures
         {
-            get { return _selectedCancelReason == null ? "" : _selectedCancelReason.Value; }
+            get { return _proceduresTable; }
+        }
+
+        public ActionModelNode ProceduresActionModel
+        {
+            get { return _proceduresActionModel; }
+        }
+
+        public ISelection SelectedProcedure
+        {
+            get { return new Selection(_selectedProcedure); }
             set
             {
-                _selectedCancelReason = (value == "") ? null :
-                    CollectionUtils.SelectFirst<EnumValueInfo>(_cancelReasonChoices,
-                        delegate(EnumValueInfo reason) { return reason.Value == value; });
+                if(value.Item != _selectedProcedure)
+                {
+                    _selectedProcedure = (ProcedureRequisition)value.Item;
+                    UpdateProcedureActionModel();
+                }
             }
         }
 
-        public List<string> FacilityChoices
+        public IList PriorityChoices
         {
-            get
-            {
-                List<string> facilityStrings = new List<string>();
-                facilityStrings.Add("");
-                facilityStrings.AddRange(
-                    CollectionUtils.Map<FacilitySummary, string>(_facilityChoices,
-                            delegate(FacilitySummary f) { return f.Name; }));
-
-                return facilityStrings;
-            }
+            get { return _priorityChoices; }
         }
 
-        public string SelectedFacility
+        [ValidateNotNull]
+        public EnumValueInfo SelectedPriority
         {
-            get { return _selectedFacility == null ? "" : _selectedFacility.Name; }
+            get { return _selectedPriority; }
+            set { _selectedPriority = value; }
+        }
+
+        public IList CancelReasonChoices
+        {
+            get { return _cancelReasonChoices; }
+        }
+
+        public EnumValueInfo SelectedCancelReason
+        {
+            get { return _selectedCancelReason; }
+            set { _selectedCancelReason = value; }
+        }
+
+        public IList FacilityChoices
+        {
+            get { return _facilityChoices;  }
+        }
+
+        [ValidateNotNull]
+        public FacilitySummary SelectedFacility
+        {
+            get { return _selectedFacility; }
+            set { _selectedFacility = value; }
+        }
+
+        public string FormatFacility(object facility)
+        {
+            return (facility as FacilitySummary).Name;
+        }
+
+        public ILookupHandler OrderingPractitionerLookupHandler
+        {
+            get { return _orderingPractitionerLookupHandler; }
+        }
+
+        [ValidateNotNull]
+        public ExternalPractitionerSummary SelectedOrderingPractitioner
+        {
+            get { return _selectedOrderingPractitioner; }
             set
             {
-                _selectedFacility = (value == "") ? null : 
-                    CollectionUtils.SelectFirst<FacilitySummary>(_facilityChoices,
-                        delegate(FacilitySummary f) { return f.Name == value; });
+                if(_selectedOrderingPractitioner != value)
+                {
+                    _selectedOrderingPractitioner = value;
+                    NotifyPropertyChanged("SelectedOrderingPractitioner");
+                }
             }
         }
 
-        public List<string> OrderingPhysicianChoices
+        public ITable Consultants
         {
-            get
-            {
-                List<string> physicianStrings = new List<string>();
-                physicianStrings.Add("");
-                physicianStrings.AddRange(
-                    CollectionUtils.Map<ExternalPractitionerSummary, string, List<string>>(_orderingPhysicianChoices,
-                            delegate(ExternalPractitionerSummary p) { return PersonNameFormat.Format(p.Name); }));
-
-                return physicianStrings;
-            }
+            get { return _consultantsTable; }
         }
 
-        public string SelectedOrderingPhysician
+        public CrudActionModel ConsultantsActionModel
         {
-            get { return _selectedOrderingPhysician == null ? "" : PersonNameFormat.Format(_selectedOrderingPhysician.Name); }
+            get { return _consultantsActionModel; }
+        }
+
+        public ISelection SelectedConsultant
+        {
+            get { return new Selection(_selectedConsultant); }
             set
             {
-                _selectedOrderingPhysician = (value == "") ? null :
-                   CollectionUtils.SelectFirst<ExternalPractitionerSummary>(_orderingPhysicianChoices,
-                       delegate(ExternalPractitionerSummary p) { return PersonNameFormat.Format(p.Name) == value; });
+                if(!object.Equals(value, _selectedConsultant))
+                {
+                    _selectedConsultant = (ExternalPractitionerSummary)value.Item;
+                    UpdateConsultantActionModel();
+                    NotifyPropertyChanged("SelectedConsultant");
+                }
             }
         }
 
-
-        public event EventHandler DiagnosticServiceChanged
+        public ILookupHandler ConsultantsLookupHandler
         {
-            add { _diagnosticServiceChanged += value; }
-            remove { _diagnosticServiceChanged -= value; }
+            get { return _consultantLookupHandler; }
         }
 
-        public ITree DiagnosticServiceBreakdown
+        public ExternalPractitionerSummary ConsultantToAdd
         {
-            get { return _diagnosticServiceBreakdown; }
+            get { return _consultantToAdd; }
+            set { _consultantToAdd = value; }
         }
 
-        public ITree DiagnosticServiceTree
+        [ValidateNotNull]
+        public string Indication
         {
-            get { return _diagnosticServiceTree; }
+            get { return _indication; }
+            set { _indication = value; }
         }
 
-        public ISelection SelectedDiagnosticServiceBreakdownItem
+        public DateTime? SchedulingRequestTime
         {
-            get { return _selectedDiagnosticServiceBreakdownItem == null ? Selection.Empty : new Selection(_selectedDiagnosticServiceBreakdownItem); }
-            set
+            get { return _schedulingRequestTime; }
+            set { _schedulingRequestTime = value; }
+        }
+
+        public DateTime? ScheduledTime
+        {
+            get { return _scheduledTime; }
+            set { _scheduledTime = value; }
+        }
+
+        public void AddProcedure()
+        {
+            try
             {
-                _selectedDiagnosticServiceBreakdownItem = value.Item;
+                List<RequestedProcedureTypeSummary> orderableProcedureTypes = null;
+                Platform.GetService<IOrderEntryService>(
+                    delegate(IOrderEntryService service)
+                    {
+                        ListOrderableProcedureTypesRequest request = new ListOrderableProcedureTypesRequest(
+                            CollectionUtils.Map<ProcedureRequisition, EntityRef>(_proceduresTable.Items,
+                                delegate(ProcedureRequisition req) { return req.ProcedureType.EntityRef; }));
+
+                        orderableProcedureTypes = service.ListOrderableProcedureTypes(request).OrderableProcedureTypes;
+
+                    });
+
+                ProcedureRequisition procReq = new ProcedureRequisition(null, _selectedFacility);
+                RequestedProcedureEditorComponent procedureEditor = new RequestedProcedureEditorComponent(procReq, _facilityChoices, _lateralityChoices, orderableProcedureTypes);
+                if(ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, procedureEditor, "Add Procedure")
+                    == ApplicationComponentExitCode.Normal)
+                {
+                    _proceduresTable.Items.Add(procReq);
+                }
+
             }
-        }
-
-        public DateTime SchedulingRequestDateTime
-        {
-            get { return _schedulingRequestDateTime; }
-            set { _schedulingRequestDateTime = value; }
-        }
-
-        public bool ScheduleOrder
-        {
-            get { return _scheduleOrder; }
-            set { _scheduleOrder = value; }
-        }
-
-        public PlaceOrderRequest PlaceOrderRequest
-        {
-            get
+            catch (Exception e)
             {
-                return new PlaceOrderRequest(
-                                _selectedVisit.Patient,
-                                _selectedVisit.entityRef,
-                                //_selectedDiagnosticService.DiagnosticServiceRef,
-                                _selectedDiagnosticServiceTreeItem.DiagnosticService.DiagnosticServiceRef,
-                                _selectedPriority,
-                                _selectedOrderingPhysician.PractitionerRef,
-                                _selectedFacility.FacilityRef,
-                                _scheduleOrder,
-                                _schedulingRequestDateTime);
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
             }
         }
 
-        public CancelOrderRequest CancelOrderRequest
+        public void EditSelectedProcedure()
         {
-            get
-            {
+            if(_selectedProcedure == null || !_selectedProcedure.CanModify)
+                return;
 
-                return new CancelOrderRequest(_reOrderDetail.OrderRef, _selectedCancelReason);
+            try
+            {
+                RequestedProcedureEditorComponent procedureEditor = new RequestedProcedureEditorComponent(_selectedProcedure, _facilityChoices, _lateralityChoices);
+                if (ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, procedureEditor, "Modify Procedure")
+                    == ApplicationComponentExitCode.Normal)
+                {
+                    _proceduresTable.Items.NotifyItemUpdated(_selectedProcedure);
+                }
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
             }
         }
 
-        public void PlaceOrder()
+        public void RemoveSelectedProcedure()
+        {
+            _proceduresTable.Items.Remove(_selectedProcedure);
+            _selectedProcedure = null;
+            NotifyPropertyChanged("SelectedProcedure");
+        }
+
+        public void UpdateProcedureActionModel()
+        {
+            _proceduresActionModel.Add.Enabled = true;
+            _proceduresActionModel.Edit.Enabled = (_selectedProcedure != null && _selectedProcedure.CanModify);
+            _proceduresActionModel.Delete.Enabled = (_selectedProcedure != null);
+        }
+
+        public void AddConsultant()
+        {
+            if(_consultantToAdd != null)
+            {
+                _consultantsTable.Items.Add(_consultantToAdd);
+            }
+        }
+
+        public void RemoveSelectedConsultant()
+        {
+            _consultantsTable.Items.Remove(_selectedConsultant);
+            _selectedConsultant = null;
+            NotifyPropertyChanged("SelectedConsultant");
+        }
+
+        public void UpdateConsultantActionModel()
+        {
+            _consultantsActionModel.Add.Enabled = (_consultantToAdd != null);
+            _consultantsActionModel.Delete.Enabled = (_selectedConsultant != null);
+        }
+        
+        public void Accept()
         {
             if (this.HasValidationErrors)
             {
+                this.Host.ShowMessageBox(this.Validation.GetErrorsString(this), MessageBoxActions.Ok);
                 this.ShowValidation(true);
                 return;
             }
 
-            if (_reOrderDetail != null && _selectedCancelReason == null)
+            if(SubmitOrder())
             {
-                this.Host.DesktopWindow.ShowMessageBox(SR.MessageMissingCancellationReason, MessageBoxActions.Ok);
-                return;
+                this.Exit(ApplicationComponentExitCode.Normal);
             }
-
-            this.ExitCode = ApplicationComponentExitCode.Normal;
-            this.Host.Exit();
         }
 
         public void Cancel()
         {
-            this.ExitCode = ApplicationComponentExitCode.Cancelled;
-            this.Host.Exit();
+            this.Exit(ApplicationComponentExitCode.Cancelled);
         }
 
         #endregion
 
-        private void UpdateDiagnosticServiceBreakdown()
+        private void UpdateDiagnosticService(DiagnosticServiceSummary summary)
         {
-            //if (_selectedDiagnosticService == null)
-            if(_selectedDiagnosticServiceTreeItem == null || _selectedDiagnosticServiceTreeItem.DiagnosticService == null)
-            {
-                //_diagnosticServiceBreakdown = null;
-                _diagnosticServiceBreakdown = new Tree<RequestedProcedureTypeDetail>(new TreeItemBinding<RequestedProcedureTypeDetail>());
-            }
-            else
-            {
-                try
-                {
-                    DiagnosticServiceDetail diagnosticServiceDetail;
+            _selectedDiagnosticService = summary;
 
-                    Platform.GetService<IOrderEntryService>(
-                        delegate(IOrderEntryService service)
-                        {
-                            //LoadDiagnosticServiceBreakdownResponse response = service.LoadDiagnosticServiceBreakdown(new LoadDiagnosticServiceBreakdownRequest(_selectedDiagnosticService.DiagnosticServiceRef));
-                            LoadDiagnosticServiceBreakdownResponse response = service.LoadDiagnosticServiceBreakdown(new LoadDiagnosticServiceBreakdownRequest(_selectedDiagnosticServiceTreeItem.DiagnosticService.DiagnosticServiceRef));
-                            diagnosticServiceDetail = response.DiagnosticServiceDetail;
-
-                            _diagnosticServiceBreakdown = new Tree<RequestedProcedureTypeDetail>(
-                                new TreeItemBinding<RequestedProcedureTypeDetail>(
-                                    delegate(RequestedProcedureTypeDetail rpt) { return rpt.Name; },
-                                    delegate(RequestedProcedureTypeDetail rpt)
-                                    {
-                                        return new Tree<ModalityProcedureStepTypeDetail>(
-                                            new TreeItemBinding<ModalityProcedureStepTypeDetail>(
-                                                delegate(ModalityProcedureStepTypeDetail spt) { return spt.Name; }),
-                                                rpt.ModalityProcedureStepTypes);
-                                    }), diagnosticServiceDetail.RequestedProcedureTypes);
-                        });
-                }
-                catch (Exception e)
-                {
-                    ExceptionHandler.Report(e, SR.ExceptionCannotUpdateDiagnosticServiceBreakdown, this.Host.DesktopWindow,
-                        delegate
-                        {
-                            this.ExitCode = ApplicationComponentExitCode.Error;
-                            this.Host.Exit();
-                        });
-                }
+            // update the table of procedures
+            //TODO: need to warn user if there are already procedures in this table
+            _proceduresTable.Items.Clear();
+            if (_selectedDiagnosticService != null)
+            {
+                Platform.GetService<IOrderEntryService>(
+                    delegate(IOrderEntryService service)
+                    {
+                        LoadDiagnosticServiceBreakdownResponse response = service.LoadDiagnosticServiceBreakdown(
+                            new LoadDiagnosticServiceBreakdownRequest(summary.DiagnosticServiceRef));
+                        _proceduresTable.Items.AddRange(
+                           CollectionUtils.Map<RequestedProcedureTypeDetail, ProcedureRequisition>(
+                               response.DiagnosticServiceDetail.RequestedProcedureTypes,
+                               delegate(RequestedProcedureTypeDetail rpt)
+                               {
+                                   return new ProcedureRequisition(rpt.GetSummary(), _selectedFacility);
+                               }));
+                    });
             }
 
-            EventsHelper.Fire(_diagnosticServiceChanged, this, EventArgs.Empty);
+            NotifyPropertyChanged("SelectedDiagnosticService");
         }
 
-        private ITree ExpandDiagnosticServiceTree(DiagnosticServiceTreeItem item)
+        private OrderRequisition BuildOrderRequisition()
         {
-            ITree subtree = null;
+            OrderRequisition requisition = new OrderRequisition();
+            requisition.Patient = _selectedVisit.PatientRef;
+            requisition.Visit = _selectedVisit;
+            requisition.DiagnosticService = _selectedDiagnosticService;
+            requisition.ReasonForStudy = _indication;
+            requisition.Priority = _selectedPriority;
+            requisition.OrderingFacility = _selectedFacility;
+            requisition.SchedulingRequestTime = _schedulingRequestTime;
+            requisition.OrderingPractitioner = _selectedOrderingPractitioner;
+            requisition.RequestedProcedures = new List<ProcedureRequisition>(_proceduresTable.Items);
+            requisition.CopiesToPractitioners = new List<ExternalPractitionerSummary>(_consultantsTable.Items);
+
+            return requisition;
+        }
+
+        private void UpdateFromRequisition(OrderRequisition existingOrder)
+        {
+            _patientRef = existingOrder.Patient;
+            _selectedVisit = existingOrder.Visit;
+            _selectedDiagnosticService = existingOrder.DiagnosticService;
+            _indication = existingOrder.ReasonForStudy;
+            _selectedPriority = existingOrder.Priority;
+            _selectedFacility = existingOrder.OrderingFacility;
+            _schedulingRequestTime = existingOrder.SchedulingRequestTime;
+            _selectedOrderingPractitioner = existingOrder.OrderingPractitioner;
+
+            _proceduresTable.Items.Clear();
+            _proceduresTable.Items.AddRange(existingOrder.RequestedProcedures);
+        }
+
+        private bool SubmitOrder()
+        {
+            OrderRequisition requisition = BuildOrderRequisition();
 
             try
             {
                 Platform.GetService<IOrderEntryService>(
                     delegate(IOrderEntryService service)
                     {
-                        GetDiagnosticServiceSubTreeResponse response = service.GetDiagnosticServiceSubTree(new GetDiagnosticServiceSubTreeRequest(item.NodeRef));
-
-                        TreeItemBinding<DiagnosticServiceTreeItem> binding = new TreeItemBinding<DiagnosticServiceTreeItem>(
-                                delegate(DiagnosticServiceTreeItem ds) { return ds.Description; },
-                                ExpandDiagnosticServiceTree);
-                        binding.CanHaveSubTreeHandler = delegate(DiagnosticServiceTreeItem ds) { return ds.DiagnosticService == null; };
-                        subtree = new Tree<DiagnosticServiceTreeItem>(binding, response.DiagnosticServiceSubTree);
+                        if (_mode == Mode.NewOrder)
+                        {
+                            service.PlaceOrder(new PlaceOrderRequest(requisition));
+                        }
+                        else if (_mode == Mode.ModifyOrder)
+                        {
+                            service.ModifyOrder(new ModifyOrderRequest(_orderRef, requisition));
+                        }
+                        else if (_mode == Mode.ReplaceOrder)
+                        {
+                            ReplaceOrderRequest request = new ReplaceOrderRequest(_orderRef, _selectedCancelReason, requisition);
+                            service.ReplaceOrder(request);
+                        }
                     });
+
+                return true;
             }
             catch (Exception e)
             {
-                ExceptionHandler.Report(e, SR.ExceptionCannotExpandDiagnositicServiceTree, this.Host.DesktopWindow, 
+                ExceptionHandler.Report(e, "", this.Host.DesktopWindow, 
                     delegate
-                    {
-                        this.ExitCode = ApplicationComponentExitCode.Error;
-                        this.Host.Exit();
-                    });
+                        {
+                            this.Exit(ApplicationComponentExitCode.Error);
+                        });
+                return false;
             }
-
-            return subtree;
         }
     }
 }

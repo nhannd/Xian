@@ -112,7 +112,7 @@ namespace ClearCanvas.Ris.Client.Adt
             else
             {
                 IPatientBiographyToolContext context = (IPatientBiographyToolContext)this.ContextBase;
-                ShowReconciliationDialog(context.PatientProfile, context.DesktopWindow);
+                ShowReconciliationDialog(context.PatientProfileRef, context.DesktopWindow);
             }
         }
 

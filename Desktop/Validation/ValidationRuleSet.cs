@@ -90,6 +90,20 @@ namespace ClearCanvas.Desktop.Validation
             return GetResults(component, _rules.FindAll(delegate(IValidationRule v) { return v.PropertyName == propertyName; }));
         }
 
+        public string GetErrorsString(IApplicationComponent component)
+        {
+            List<IValidationRule> brokenRules = _rules.FindAll(
+                delegate(IValidationRule r) { return r.GetResult(component).Success == false; });
+
+            return StringUtilities.Combine(brokenRules, "\n",
+                delegate(IValidationRule r)
+                    {
+                        return string.Format("{0}: {1}",
+                            r.PropertyName,
+                            StringUtilities.Combine(r.GetResult(component).Messages, ", "));
+                    });
+        }
+
         #endregion
 
         private List<ValidationResult> GetResults(IApplicationComponent component, List<IValidationRule> validators)

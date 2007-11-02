@@ -190,6 +190,7 @@
     <EmbeddedResource Include="Mappings\Protocol.hbm.xml" />
     <EmbeddedResource Include="Mappings\ProtocolCode.hbm.xml" />
     <EmbeddedResource Include="Mappings\ProtocolProcedureStep.hbm.xml" />
+    <EmbeddedResource Include="Mappings\LateralityEnum.hbm.xml" />
     <Content Include="Mappings\WorklistQueryBase.hrq.xml" />
     <EmbeddedResource Include="Mappings\NoteCategory.hbm.xml" />
     <EmbeddedResource Include="Mappings\NoteSeverityEnum.hbm.xml" />

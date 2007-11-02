@@ -37,27 +37,31 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
     [DataContract]
     public class ModalityWorklistItem : DataContractBase
     {
-        public ModalityWorklistItem(EntityRef procedureStepRef,
+        public ModalityWorklistItem(
+            EntityRef patientRef,
             EntityRef profileRef,
+            EntityRef orderRef,
+            EntityRef procedureStepRef,
             MrnDetail mrn,
-            PersonNameDetail personNameDetail,
+            PersonNameDetail name,
             string accessionNumber,
+            EnumValueInfo priority,
+            string requestedProcedureName,
             string modalityProcedureStepName,
-            string modalityName,
-            EnumValueInfo priority)
+            string modalityName
+            )
         {
             this.ProcedureStepRef = procedureStepRef;
             this.PatientProfileRef = profileRef;
+            this.PatientRef = patientRef;
+            this.OrderRef = orderRef;
             this.Mrn = mrn;
-            this.PersonNameDetail = personNameDetail;
+            this.PersonNameDetail = name;
             this.AccessionNumber = accessionNumber;
+            this.RequestedProcedureTypeName = requestedProcedureName;
             this.ModalityProcedureStepName = modalityProcedureStepName;
             this.ModalityName = modalityName;
             this.Priority = priority;
-        }
-
-        public ModalityWorklistItem()
-        {
         }
 
         [DataMember]
@@ -65,6 +69,12 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
 
         [DataMember]
         public EntityRef PatientProfileRef;
+
+        [DataMember]
+        public EntityRef PatientRef;
+
+        [DataMember]
+        public EntityRef OrderRef;
 
         [DataMember]
         public MrnDetail Mrn;
@@ -79,7 +89,7 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
         public string ModalityProcedureStepName;
 
         [DataMember]
-        public string RequestedProcedureStepName;
+        public string RequestedProcedureTypeName;
 
         [DataMember]
         public string ModalityName;
@@ -91,7 +101,7 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
         {
             ModalityWorklistItem that = obj as ModalityWorklistItem;
             if (that != null)
-                return this.ProcedureStepRef.Equals(that.ProcedureStepRef);
+                return Equals(this.ProcedureStepRef, that.ProcedureStepRef);
 
             return false;
         }

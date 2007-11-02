@@ -59,212 +59,173 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            ClearCanvas.Desktop.Selection selection4 = new ClearCanvas.Desktop.Selection();
-            ClearCanvas.Desktop.Selection selection5 = new ClearCanvas.Desktop.Selection();
+            ClearCanvas.Desktop.Selection selection1 = new ClearCanvas.Desktop.Selection();
             ClearCanvas.Desktop.Selection selection2 = new ClearCanvas.Desktop.Selection();
-            this._visitTable = new ClearCanvas.Desktop.View.WinForms.TableView();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this._orderingPhysician = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
+            ClearCanvas.Desktop.Selection selection3 = new ClearCanvas.Desktop.Selection();
+            ClearCanvas.Desktop.Selection selection4 = new ClearCanvas.Desktop.Selection();
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this._scheduledTime = new ClearCanvas.Desktop.View.WinForms.DateTimeField();
+            this._schedulingRequestTime = new ClearCanvas.Desktop.View.WinForms.DateTimeField();
+            this._scheduledDate = new ClearCanvas.Desktop.View.WinForms.DateTimeField();
+            this._schedulingRequestDate = new ClearCanvas.Desktop.View.WinForms.DateTimeField();
+            this._visit = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
+            this._indication = new ClearCanvas.Desktop.View.WinForms.TextField();
             this._orderingFacility = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
-            this._priority = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
-            this._diagnosticServiceBreakdown = new ClearCanvas.Desktop.View.WinForms.BindingTreeView();
-            this._placeOrderButton = new System.Windows.Forms.Button();
-            this._cancelButton = new System.Windows.Forms.Button();
-            this._schedulingRequestDateTime = new ClearCanvas.Desktop.View.WinForms.DateTimeField();
-            this._scheduleOrder = new System.Windows.Forms.CheckBox();
-            this._diagnosticServiceTree = new ClearCanvas.Desktop.View.WinForms.BindingTreeView();
-            this._selectedDiagnosticService = new System.Windows.Forms.TextBox();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.panel1 = new System.Windows.Forms.Panel();
             this._reorderReason = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
-            this.groupBox1.SuspendLayout();
+            this._priority = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
+            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this._proceduresTableView = new ClearCanvas.Desktop.View.WinForms.TableView();
+            this.tabPage3 = new System.Windows.Forms.TabPage();
+            this._notesTableView = new ClearCanvas.Desktop.View.WinForms.TableView();
+            this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this._consultantsTableView = new ClearCanvas.Desktop.View.WinForms.TableView();
+            this.panel2 = new System.Windows.Forms.Panel();
+            this._addConsultantButton = new System.Windows.Forms.Button();
+            this.tabControl2 = new System.Windows.Forms.TabControl();
+            this.tabPage4 = new System.Windows.Forms.TabPage();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.webBrowser1 = new System.Windows.Forms.WebBrowser();
+            this.tableView2 = new ClearCanvas.Desktop.View.WinForms.TableView();
+            this._cancelButton = new System.Windows.Forms.Button();
+            this._placeOrderButton = new System.Windows.Forms.Button();
+            this._orderingPractitioner = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
+            this._diagnosticService = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
+            this._consultantLookup = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
+            this.splitContainer1.Panel1.SuspendLayout();
+            this.splitContainer1.Panel2.SuspendLayout();
+            this.splitContainer1.SuspendLayout();
+            this.tabControl1.SuspendLayout();
+            this.tabPage1.SuspendLayout();
+            this.tabPage3.SuspendLayout();
+            this.tabPage2.SuspendLayout();
+            this.tableLayoutPanel1.SuspendLayout();
+            this.panel2.SuspendLayout();
+            this.tabControl2.SuspendLayout();
+            this.tabPage4.SuspendLayout();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
-            // _visitTable
+            // splitContainer1
             // 
-            this._visitTable.Location = new System.Drawing.Point(413, 33);
-            this._visitTable.MenuModel = null;
-            this._visitTable.MultiSelect = false;
-            this._visitTable.Name = "_visitTable";
-            this._visitTable.ReadOnly = false;
-            this._visitTable.Selection = selection4;
-            this._visitTable.Size = new System.Drawing.Size(416, 127);
-            this._visitTable.TabIndex = 0;
-            this._visitTable.Table = null;
-            this._visitTable.ToolbarModel = null;
-            this._visitTable.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this._visitTable.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.splitContainer1.Location = new System.Drawing.Point(3, 3);
+            this.splitContainer1.Name = "splitContainer1";
             // 
-            // label1
+            // splitContainer1.Panel1
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(413, 13);
-            this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(59, 13);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "Select Visit";
+            this.splitContainer1.Panel1.Controls.Add(this._scheduledTime);
+            this.splitContainer1.Panel1.Controls.Add(this._schedulingRequestTime);
+            this.splitContainer1.Panel1.Controls.Add(this._scheduledDate);
+            this.splitContainer1.Panel1.Controls.Add(this._schedulingRequestDate);
+            this.splitContainer1.Panel1.Controls.Add(this._visit);
+            this.splitContainer1.Panel1.Controls.Add(this._orderingPractitioner);
+            this.splitContainer1.Panel1.Controls.Add(this._indication);
+            this.splitContainer1.Panel1.Controls.Add(this._orderingFacility);
+            this.splitContainer1.Panel1.Controls.Add(this._reorderReason);
+            this.splitContainer1.Panel1.Controls.Add(this._priority);
+            this.splitContainer1.Panel1.Controls.Add(this._diagnosticService);
+            this.splitContainer1.Panel1.Controls.Add(this.tabControl1);
             // 
-            // label2
+            // splitContainer1.Panel2
             // 
-            this.label2.Location = new System.Drawing.Point(3, 6);
-            this.label2.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(168, 13);
-            this.label2.TabIndex = 4;
-            this.label2.Text = "Diagnostic Service Breakdown";
+            this.splitContainer1.Panel2.Controls.Add(this.tabControl2);
+            this.splitContainer1.Size = new System.Drawing.Size(1005, 608);
+            this.splitContainer1.SplitterDistance = 506;
+            this.splitContainer1.TabIndex = 26;
             // 
-            // _orderingPhysician
+            // _scheduledTime
             // 
-            this._orderingPhysician.DataSource = null;
-            this._orderingPhysician.DisplayMember = "";
-            this._orderingPhysician.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this._orderingPhysician.LabelText = "Ordering Physician";
-            this._orderingPhysician.Location = new System.Drawing.Point(854, 74);
-            this._orderingPhysician.Margin = new System.Windows.Forms.Padding(2);
-            this._orderingPhysician.Name = "_orderingPhysician";
-            this._orderingPhysician.Size = new System.Drawing.Size(150, 41);
-            this._orderingPhysician.TabIndex = 5;
-            this._orderingPhysician.Value = null;
+            this._scheduledTime.LabelText = "Scheduled Time";
+            this._scheduledTime.Location = new System.Drawing.Point(214, 320);
+            this._scheduledTime.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this._scheduledTime.Maximum = new System.DateTime(9998, 12, 31, 0, 0, 0, 0);
+            this._scheduledTime.Minimum = new System.DateTime(1753, 1, 1, 0, 0, 0, 0);
+            this._scheduledTime.Name = "_scheduledTime";
+            this._scheduledTime.Nullable = true;
+            this._scheduledTime.ShowDate = false;
+            this._scheduledTime.ShowTime = true;
+            this._scheduledTime.Size = new System.Drawing.Size(183, 50);
+            this._scheduledTime.TabIndex = 10;
+            this._scheduledTime.Value = null;
+            // 
+            // _schedulingRequestTime
+            // 
+            this._schedulingRequestTime.LabelText = "Requested Schedule Time";
+            this._schedulingRequestTime.Location = new System.Drawing.Point(214, 266);
+            this._schedulingRequestTime.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this._schedulingRequestTime.Maximum = new System.DateTime(9998, 12, 31, 0, 0, 0, 0);
+            this._schedulingRequestTime.Minimum = new System.DateTime(1753, 1, 1, 0, 0, 0, 0);
+            this._schedulingRequestTime.Name = "_schedulingRequestTime";
+            this._schedulingRequestTime.Nullable = true;
+            this._schedulingRequestTime.ShowDate = false;
+            this._schedulingRequestTime.ShowTime = true;
+            this._schedulingRequestTime.Size = new System.Drawing.Size(183, 50);
+            this._schedulingRequestTime.TabIndex = 8;
+            this._schedulingRequestTime.Value = null;
+            // 
+            // _scheduledDate
+            // 
+            this._scheduledDate.LabelText = "Scheduled Date";
+            this._scheduledDate.Location = new System.Drawing.Point(11, 320);
+            this._scheduledDate.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this._scheduledDate.Maximum = new System.DateTime(9998, 12, 31, 0, 0, 0, 0);
+            this._scheduledDate.Minimum = new System.DateTime(1753, 1, 1, 0, 0, 0, 0);
+            this._scheduledDate.Name = "_scheduledDate";
+            this._scheduledDate.Nullable = true;
+            this._scheduledDate.Size = new System.Drawing.Size(197, 50);
+            this._scheduledDate.TabIndex = 9;
+            this._scheduledDate.Value = null;
+            // 
+            // _schedulingRequestDate
+            // 
+            this._schedulingRequestDate.LabelText = "Requested Schedule Date";
+            this._schedulingRequestDate.Location = new System.Drawing.Point(11, 266);
+            this._schedulingRequestDate.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this._schedulingRequestDate.Maximum = new System.DateTime(9998, 12, 31, 0, 0, 0, 0);
+            this._schedulingRequestDate.Minimum = new System.DateTime(1753, 1, 1, 0, 0, 0, 0);
+            this._schedulingRequestDate.Name = "_schedulingRequestDate";
+            this._schedulingRequestDate.Nullable = true;
+            this._schedulingRequestDate.Size = new System.Drawing.Size(197, 50);
+            this._schedulingRequestDate.TabIndex = 7;
+            this._schedulingRequestDate.Value = null;
+            // 
+            // _visit
+            // 
+            this._visit.DataSource = null;
+            this._visit.DisplayMember = "";
+            this._visit.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this._visit.LabelText = "Visit";
+            this._visit.Location = new System.Drawing.Point(6, 215);
+            this._visit.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this._visit.Name = "_visit";
+            this._visit.Size = new System.Drawing.Size(486, 50);
+            this._visit.TabIndex = 6;
+            this._visit.Value = null;
+            // 
+            // _indication
+            // 
+            this._indication.LabelText = "Indication";
+            this._indication.Location = new System.Drawing.Point(6, 112);
+            this._indication.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this._indication.Mask = "";
+            this._indication.Name = "_indication";
+            this._indication.Size = new System.Drawing.Size(487, 50);
+            this._indication.TabIndex = 3;
+            this._indication.Value = null;
             // 
             // _orderingFacility
             // 
             this._orderingFacility.DataSource = null;
             this._orderingFacility.DisplayMember = "";
             this._orderingFacility.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this._orderingFacility.LabelText = "Ordering Facility";
-            this._orderingFacility.Location = new System.Drawing.Point(854, 142);
-            this._orderingFacility.Margin = new System.Windows.Forms.Padding(2);
+            this._orderingFacility.LabelText = "Ordering Facility (temporary)";
+            this._orderingFacility.Location = new System.Drawing.Point(6, 166);
+            this._orderingFacility.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this._orderingFacility.Name = "_orderingFacility";
-            this._orderingFacility.Size = new System.Drawing.Size(150, 41);
-            this._orderingFacility.TabIndex = 6;
+            this._orderingFacility.Size = new System.Drawing.Size(228, 50);
+            this._orderingFacility.TabIndex = 4;
             this._orderingFacility.Value = null;
-            // 
-            // _priority
-            // 
-            this._priority.DataSource = null;
-            this._priority.DisplayMember = "";
-            this._priority.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this._priority.LabelText = "Priority";
-            this._priority.Location = new System.Drawing.Point(854, 13);
-            this._priority.Margin = new System.Windows.Forms.Padding(2);
-            this._priority.Name = "_priority";
-            this._priority.Size = new System.Drawing.Size(150, 41);
-            this._priority.TabIndex = 7;
-            this._priority.Value = null;
-            // 
-            // _diagnosticServiceBreakdown
-            // 
-            this._diagnosticServiceBreakdown.AllowDrop = true;
-            this._diagnosticServiceBreakdown.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this._diagnosticServiceBreakdown.AutoSize = true;
-            this._diagnosticServiceBreakdown.Location = new System.Drawing.Point(2, 21);
-            this._diagnosticServiceBreakdown.Margin = new System.Windows.Forms.Padding(2);
-            this._diagnosticServiceBreakdown.MenuModel = null;
-            this._diagnosticServiceBreakdown.Name = "_diagnosticServiceBreakdown";
-            this._diagnosticServiceBreakdown.Selection = selection5;
-            this._diagnosticServiceBreakdown.ShowToolbar = false;
-            this._diagnosticServiceBreakdown.Size = new System.Drawing.Size(412, 122);
-            this._diagnosticServiceBreakdown.TabIndex = 8;
-            this._diagnosticServiceBreakdown.ToolbarModel = null;
-            this._diagnosticServiceBreakdown.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this._diagnosticServiceBreakdown.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.No;
-            this._diagnosticServiceBreakdown.Tree = null;
-            // 
-            // _placeOrderButton
-            // 
-            this._placeOrderButton.Location = new System.Drawing.Point(866, 419);
-            this._placeOrderButton.Margin = new System.Windows.Forms.Padding(2);
-            this._placeOrderButton.Name = "_placeOrderButton";
-            this._placeOrderButton.Size = new System.Drawing.Size(79, 19);
-            this._placeOrderButton.TabIndex = 9;
-            this._placeOrderButton.Text = "Place Order";
-            this._placeOrderButton.UseVisualStyleBackColor = true;
-            this._placeOrderButton.Click += new System.EventHandler(this._placeOrderButton_Click);
-            // 
-            // _cancelButton
-            // 
-            this._cancelButton.Location = new System.Drawing.Point(949, 419);
-            this._cancelButton.Margin = new System.Windows.Forms.Padding(2);
-            this._cancelButton.Name = "_cancelButton";
-            this._cancelButton.Size = new System.Drawing.Size(56, 19);
-            this._cancelButton.TabIndex = 10;
-            this._cancelButton.Text = "Cancel";
-            this._cancelButton.UseVisualStyleBackColor = true;
-            this._cancelButton.Click += new System.EventHandler(this._cancelButton_Click);
-            // 
-            // _schedulingRequestDateTime
-            // 
-            this._schedulingRequestDateTime.LabelText = "Requested Schedule Time";
-            this._schedulingRequestDateTime.Location = new System.Drawing.Point(854, 217);
-            this._schedulingRequestDateTime.Margin = new System.Windows.Forms.Padding(2);
-            this._schedulingRequestDateTime.Maximum = new System.DateTime(9998, 12, 31, 0, 0, 0, 0);
-            this._schedulingRequestDateTime.Minimum = new System.DateTime(1753, 1, 1, 0, 0, 0, 0);
-            this._schedulingRequestDateTime.Name = "_schedulingRequestDateTime";
-            this._schedulingRequestDateTime.Nullable = false;
-            this._schedulingRequestDateTime.ShowTime = true;
-            this._schedulingRequestDateTime.Size = new System.Drawing.Size(150, 41);
-            this._schedulingRequestDateTime.TabIndex = 11;
-            this._schedulingRequestDateTime.Value = null;
-            // 
-            // _scheduleOrder
-            // 
-            this._scheduleOrder.AutoSize = true;
-            this._scheduleOrder.Location = new System.Drawing.Point(854, 195);
-            this._scheduleOrder.Name = "_scheduleOrder";
-            this._scheduleOrder.Size = new System.Drawing.Size(100, 17);
-            this._scheduleOrder.TabIndex = 12;
-            this._scheduleOrder.Text = "Schedule Order";
-            this._scheduleOrder.UseVisualStyleBackColor = true;
-            // 
-            // _diagnosticServiceTree
-            // 
-            this._diagnosticServiceTree.AllowDrop = true;
-            this._diagnosticServiceTree.Location = new System.Drawing.Point(3, 18);
-            this._diagnosticServiceTree.Margin = new System.Windows.Forms.Padding(2);
-            this._diagnosticServiceTree.MenuModel = null;
-            this._diagnosticServiceTree.Name = "_diagnosticServiceTree";
-            this._diagnosticServiceTree.Selection = selection2;
-            this._diagnosticServiceTree.ShowToolbar = false;
-            this._diagnosticServiceTree.Size = new System.Drawing.Size(385, 351);
-            this._diagnosticServiceTree.TabIndex = 13;
-            this._diagnosticServiceTree.ToolbarModel = null;
-            this._diagnosticServiceTree.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this._diagnosticServiceTree.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.No;
-            this._diagnosticServiceTree.Tree = null;
-            // 
-            // _selectedDiagnosticService
-            // 
-            this._selectedDiagnosticService.Location = new System.Drawing.Point(5, 368);
-            this._selectedDiagnosticService.Name = "_selectedDiagnosticService";
-            this._selectedDiagnosticService.ReadOnly = true;
-            this._selectedDiagnosticService.Size = new System.Drawing.Size(381, 20);
-            this._selectedDiagnosticService.TabIndex = 14;
-            // 
-            // groupBox1
-            // 
-            this.groupBox1.Controls.Add(this._diagnosticServiceTree);
-            this.groupBox1.Controls.Add(this._selectedDiagnosticService);
-            this.groupBox1.Location = new System.Drawing.Point(5, 13);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(390, 395);
-            this.groupBox1.TabIndex = 15;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Diagnositc Service";
-            // 
-            // panel1
-            // 
-            this.panel1.Controls.Add(this._diagnosticServiceBreakdown);
-            this.panel1.Controls.Add(this.label2);
-            this.panel1.Location = new System.Drawing.Point(413, 166);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(416, 145);
-            this.panel1.TabIndex = 16;
             // 
             // _reorderReason
             // 
@@ -272,58 +233,320 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._reorderReason.DisplayMember = "";
             this._reorderReason.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this._reorderReason.LabelText = "Re-order Reason";
-            this._reorderReason.Location = new System.Drawing.Point(854, 270);
-            this._reorderReason.Margin = new System.Windows.Forms.Padding(2);
+            this._reorderReason.Location = new System.Drawing.Point(242, 166);
+            this._reorderReason.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this._reorderReason.Name = "_reorderReason";
-            this._reorderReason.Size = new System.Drawing.Size(150, 41);
-            this._reorderReason.TabIndex = 17;
+            this._reorderReason.Size = new System.Drawing.Size(251, 50);
+            this._reorderReason.TabIndex = 5;
             this._reorderReason.Value = null;
+            // 
+            // _priority
+            // 
+            this._priority.DataSource = null;
+            this._priority.DisplayMember = "";
+            this._priority.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this._priority.LabelText = "Priority";
+            this._priority.Location = new System.Drawing.Point(7, 61);
+            this._priority.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this._priority.Name = "_priority";
+            this._priority.Size = new System.Drawing.Size(175, 50);
+            this._priority.TabIndex = 1;
+            this._priority.Value = null;
+            // 
+            // tabControl1
+            // 
+            this.tabControl1.Controls.Add(this.tabPage1);
+            this.tabControl1.Controls.Add(this.tabPage3);
+            this.tabControl1.Controls.Add(this.tabPage2);
+            this.tabControl1.Location = new System.Drawing.Point(4, 375);
+            this.tabControl1.Name = "tabControl1";
+            this.tabControl1.SelectedIndex = 0;
+            this.tabControl1.Size = new System.Drawing.Size(499, 229);
+            this.tabControl1.TabIndex = 35;
+            // 
+            // tabPage1
+            // 
+            this.tabPage1.Controls.Add(this._proceduresTableView);
+            this.tabPage1.Location = new System.Drawing.Point(4, 25);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage1.Size = new System.Drawing.Size(491, 200);
+            this.tabPage1.TabIndex = 0;
+            this.tabPage1.Text = "Procedures";
+            this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // _proceduresTableView
+            // 
+            this._proceduresTableView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._proceduresTableView.Location = new System.Drawing.Point(3, 3);
+            this._proceduresTableView.Margin = new System.Windows.Forms.Padding(5);
+            this._proceduresTableView.MenuModel = null;
+            this._proceduresTableView.MultiSelect = false;
+            this._proceduresTableView.Name = "_proceduresTableView";
+            this._proceduresTableView.ReadOnly = false;
+            this._proceduresTableView.Selection = selection1;
+            this._proceduresTableView.Size = new System.Drawing.Size(485, 194);
+            this._proceduresTableView.TabIndex = 36;
+            this._proceduresTableView.Table = null;
+            this._proceduresTableView.ToolbarModel = null;
+            this._proceduresTableView.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this._proceduresTableView.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.No;
+            // 
+            // tabPage3
+            // 
+            this.tabPage3.Controls.Add(this._notesTableView);
+            this.tabPage3.Location = new System.Drawing.Point(4, 25);
+            this.tabPage3.Name = "tabPage3";
+            this.tabPage3.Size = new System.Drawing.Size(491, 200);
+            this.tabPage3.TabIndex = 2;
+            this.tabPage3.Text = "Notes";
+            this.tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // _notesTableView
+            // 
+            this._notesTableView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._notesTableView.Location = new System.Drawing.Point(0, 0);
+            this._notesTableView.Margin = new System.Windows.Forms.Padding(5);
+            this._notesTableView.MenuModel = null;
+            this._notesTableView.MultiLine = true;
+            this._notesTableView.MultiSelect = false;
+            this._notesTableView.Name = "_notesTableView";
+            this._notesTableView.ReadOnly = false;
+            this._notesTableView.Selection = selection2;
+            this._notesTableView.ShowToolbar = false;
+            this._notesTableView.Size = new System.Drawing.Size(491, 200);
+            this._notesTableView.TabIndex = 1;
+            this._notesTableView.Table = null;
+            this._notesTableView.ToolbarModel = null;
+            this._notesTableView.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this._notesTableView.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.No;
+            // 
+            // tabPage2
+            // 
+            this.tabPage2.Controls.Add(this.tableLayoutPanel1);
+            this.tabPage2.Location = new System.Drawing.Point(4, 25);
+            this.tabPage2.Name = "tabPage2";
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage2.Size = new System.Drawing.Size(491, 200);
+            this.tabPage2.TabIndex = 1;
+            this.tabPage2.Text = "Copies To";
+            this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // tableLayoutPanel1
+            // 
+            this.tableLayoutPanel1.ColumnCount = 1;
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel1.Controls.Add(this._consultantsTableView, 0, 1);
+            this.tableLayoutPanel1.Controls.Add(this.panel2, 0, 0);
+            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(3, 3);
+            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+            this.tableLayoutPanel1.RowCount = 2;
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(485, 194);
+            this.tableLayoutPanel1.TabIndex = 0;
+            // 
+            // _consultantsTableView
+            // 
+            this._consultantsTableView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._consultantsTableView.Location = new System.Drawing.Point(5, 83);
+            this._consultantsTableView.Margin = new System.Windows.Forms.Padding(5);
+            this._consultantsTableView.MenuModel = null;
+            this._consultantsTableView.MultiSelect = false;
+            this._consultantsTableView.Name = "_consultantsTableView";
+            this._consultantsTableView.ReadOnly = false;
+            this._consultantsTableView.Selection = selection3;
+            this._consultantsTableView.ShowToolbar = false;
+            this._consultantsTableView.Size = new System.Drawing.Size(475, 106);
+            this._consultantsTableView.TabIndex = 2;
+            this._consultantsTableView.Table = null;
+            this._consultantsTableView.ToolbarModel = null;
+            this._consultantsTableView.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this._consultantsTableView.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.No;
+            // 
+            // panel2
+            // 
+            this.panel2.Controls.Add(this._consultantLookup);
+            this.panel2.Controls.Add(this._addConsultantButton);
+            this.panel2.Location = new System.Drawing.Point(3, 3);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(452, 72);
+            this.panel2.TabIndex = 0;
+            // 
+            // _addConsultantButton
+            // 
+            this._addConsultantButton.Location = new System.Drawing.Point(368, 33);
+            this._addConsultantButton.Name = "_addConsultantButton";
+            this._addConsultantButton.Size = new System.Drawing.Size(75, 23);
+            this._addConsultantButton.TabIndex = 5;
+            this._addConsultantButton.Text = "Add";
+            this._addConsultantButton.UseVisualStyleBackColor = true;
+            this._addConsultantButton.Click += new System.EventHandler(this._addConsultantButton_Click);
+            // 
+            // tabControl2
+            // 
+            this.tabControl2.Controls.Add(this.tabPage4);
+            this.tabControl2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tabControl2.Location = new System.Drawing.Point(0, 0);
+            this.tabControl2.Name = "tabControl2";
+            this.tabControl2.SelectedIndex = 0;
+            this.tabControl2.Size = new System.Drawing.Size(495, 608);
+            this.tabControl2.TabIndex = 0;
+            // 
+            // tabPage4
+            // 
+            this.tabPage4.Controls.Add(this.panel1);
+            this.tabPage4.Controls.Add(this.tableView2);
+            this.tabPage4.Location = new System.Drawing.Point(4, 25);
+            this.tabPage4.Name = "tabPage4";
+            this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage4.Size = new System.Drawing.Size(487, 579);
+            this.tabPage4.TabIndex = 0;
+            this.tabPage4.Text = "Documents";
+            this.tabPage4.UseVisualStyleBackColor = true;
+            // 
+            // panel1
+            // 
+            this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.panel1.Controls.Add(this.webBrowser1);
+            this.panel1.Location = new System.Drawing.Point(8, 107);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(471, 469);
+            this.panel1.TabIndex = 38;
+            // 
+            // webBrowser1
+            // 
+            this.webBrowser1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.webBrowser1.Location = new System.Drawing.Point(0, 0);
+            this.webBrowser1.MinimumSize = new System.Drawing.Size(20, 20);
+            this.webBrowser1.Name = "webBrowser1";
+            this.webBrowser1.Size = new System.Drawing.Size(467, 465);
+            this.webBrowser1.TabIndex = 0;
+            // 
+            // tableView2
+            // 
+            this.tableView2.Location = new System.Drawing.Point(8, 16);
+            this.tableView2.Margin = new System.Windows.Forms.Padding(5);
+            this.tableView2.MenuModel = null;
+            this.tableView2.MultiSelect = false;
+            this.tableView2.Name = "tableView2";
+            this.tableView2.ReadOnly = false;
+            this.tableView2.Selection = selection4;
+            this.tableView2.Size = new System.Drawing.Size(471, 83);
+            this.tableView2.TabIndex = 37;
+            this.tableView2.Table = null;
+            this.tableView2.ToolbarModel = null;
+            this.tableView2.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tableView2.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.No;
+            // 
+            // _cancelButton
+            // 
+            this._cancelButton.Location = new System.Drawing.Point(916, 616);
+            this._cancelButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this._cancelButton.Name = "_cancelButton";
+            this._cancelButton.Size = new System.Drawing.Size(75, 23);
+            this._cancelButton.TabIndex = 29;
+            this._cancelButton.Text = "Cancel";
+            this._cancelButton.UseVisualStyleBackColor = true;
+            this._cancelButton.Click += new System.EventHandler(this._cancelButton_Click);
+            // 
+            // _placeOrderButton
+            // 
+            this._placeOrderButton.Location = new System.Drawing.Point(805, 616);
+            this._placeOrderButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this._placeOrderButton.Name = "_placeOrderButton";
+            this._placeOrderButton.Size = new System.Drawing.Size(105, 23);
+            this._placeOrderButton.TabIndex = 28;
+            this._placeOrderButton.Text = "Place Order";
+            this._placeOrderButton.UseVisualStyleBackColor = true;
+            this._placeOrderButton.Click += new System.EventHandler(this._placeOrderButton_Click);
+            // 
+            // _orderingPractitioner
+            // 
+            this._orderingPractitioner.LabelText = "Ordering Practitioner";
+            this._orderingPractitioner.Location = new System.Drawing.Point(201, 57);
+            this._orderingPractitioner.Name = "_orderingPractitioner";
+            this._orderingPractitioner.Size = new System.Drawing.Size(292, 59);
+            this._orderingPractitioner.TabIndex = 2;
+            this._orderingPractitioner.Value = null;
+            // 
+            // _diagnosticService
+            // 
+            this._diagnosticService.LabelText = "Diagnostic Service";
+            this._diagnosticService.Location = new System.Drawing.Point(0, 3);
+            this._diagnosticService.Name = "_diagnosticService";
+            this._diagnosticService.Size = new System.Drawing.Size(492, 59);
+            this._diagnosticService.TabIndex = 0;
+            this._diagnosticService.Value = null;
+            // 
+            // _consultantLookup
+            // 
+            this._consultantLookup.LabelText = "Find Practitioner";
+            this._consultantLookup.Location = new System.Drawing.Point(1, 6);
+            this._consultantLookup.Name = "_consultantLookup";
+            this._consultantLookup.Size = new System.Drawing.Size(348, 59);
+            this._consultantLookup.TabIndex = 4;
+            this._consultantLookup.Value = null;
             // 
             // OrderEntryComponentControl
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this._reorderReason);
-            this.Controls.Add(this.panel1);
-            this.Controls.Add(this.groupBox1);
-            this.Controls.Add(this._scheduleOrder);
-            this.Controls.Add(this._schedulingRequestDateTime);
             this.Controls.Add(this._cancelButton);
+            this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this._placeOrderButton);
-            this.Controls.Add(this._priority);
-            this.Controls.Add(this._orderingFacility);
-            this.Controls.Add(this._orderingPhysician);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this._visitTable);
-            this.Margin = new System.Windows.Forms.Padding(2);
+            this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.Name = "OrderEntryComponentControl";
-            this.Size = new System.Drawing.Size(1020, 449);
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
+            this.Size = new System.Drawing.Size(1011, 646);
+            this.splitContainer1.Panel1.ResumeLayout(false);
+            this.splitContainer1.Panel2.ResumeLayout(false);
+            this.splitContainer1.ResumeLayout(false);
+            this.tabControl1.ResumeLayout(false);
+            this.tabPage1.ResumeLayout(false);
+            this.tabPage3.ResumeLayout(false);
+            this.tabPage2.ResumeLayout(false);
+            this.tableLayoutPanel1.ResumeLayout(false);
+            this.panel2.ResumeLayout(false);
+            this.tabControl2.ResumeLayout(false);
+            this.tabPage4.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
-            this.panel1.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
         #endregion
 
-        private ClearCanvas.Desktop.View.WinForms.TableView _visitTable;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label2;
-        private ClearCanvas.Desktop.View.WinForms.ComboBoxField _orderingPhysician;
-        private ClearCanvas.Desktop.View.WinForms.ComboBoxField _orderingFacility;
-        private ClearCanvas.Desktop.View.WinForms.ComboBoxField _priority;
-        private ClearCanvas.Desktop.View.WinForms.BindingTreeView _diagnosticServiceBreakdown;
-        private System.Windows.Forms.Button _placeOrderButton;
+        private System.Windows.Forms.SplitContainer splitContainer1;
+        private ClearCanvas.Desktop.View.WinForms.TableView _proceduresTableView;
+        private System.Windows.Forms.TabControl tabControl1;
+        private System.Windows.Forms.TabPage tabPage1;
+        private System.Windows.Forms.TabPage tabPage3;
+        private ClearCanvas.Desktop.View.WinForms.TableView _notesTableView;
+        private System.Windows.Forms.TabPage tabPage2;
+        private ClearCanvas.Desktop.View.WinForms.TableView _consultantsTableView;
         private System.Windows.Forms.Button _cancelButton;
-        private ClearCanvas.Desktop.View.WinForms.DateTimeField _schedulingRequestDateTime;
-        private System.Windows.Forms.CheckBox _scheduleOrder;
-        private ClearCanvas.Desktop.View.WinForms.BindingTreeView _diagnosticServiceTree;
-        private System.Windows.Forms.TextBox _selectedDiagnosticService;
-        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.Button _placeOrderButton;
+        private System.Windows.Forms.TabControl tabControl2;
+        private System.Windows.Forms.TabPage tabPage4;
+        private ClearCanvas.Desktop.View.WinForms.TableView tableView2;
         private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.WebBrowser webBrowser1;
+        private ClearCanvas.Ris.Client.View.WinForms.LookupField _diagnosticService;
+        private System.Windows.Forms.Button _addConsultantButton;
+        private ClearCanvas.Ris.Client.View.WinForms.LookupField _consultantLookup;
+        private ClearCanvas.Desktop.View.WinForms.ComboBoxField _visit;
+        private ClearCanvas.Ris.Client.View.WinForms.LookupField _orderingPractitioner;
+        private ClearCanvas.Desktop.View.WinForms.TextField _indication;
+        private ClearCanvas.Desktop.View.WinForms.ComboBoxField _orderingFacility;
         private ClearCanvas.Desktop.View.WinForms.ComboBoxField _reorderReason;
+        private ClearCanvas.Desktop.View.WinForms.ComboBoxField _priority;
+        private ClearCanvas.Desktop.View.WinForms.DateTimeField _scheduledTime;
+        private ClearCanvas.Desktop.View.WinForms.DateTimeField _schedulingRequestTime;
+        private ClearCanvas.Desktop.View.WinForms.DateTimeField _scheduledDate;
+        private ClearCanvas.Desktop.View.WinForms.DateTimeField _schedulingRequestDate;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+        private System.Windows.Forms.Panel panel2;
+
     }
 }

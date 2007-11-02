@@ -76,6 +76,7 @@ namespace ClearCanvas.Ris.Application.Common
 
         public bool Equals(EnumValueInfo enumValueInfo)
         {
+            if (ReferenceEquals(this, enumValueInfo)) return true;
             if (enumValueInfo == null) return false;
             if (!Equals(Code, enumValueInfo.Code)) return false;
             if (!Equals(Value, enumValueInfo.Value)) return false;
@@ -83,18 +84,30 @@ namespace ClearCanvas.Ris.Application.Common
             return true;
         }
 
+        #endregion
+
+        #region Object overrides
+
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(this, obj)) return true;
             return Equals(obj as EnumValueInfo);
         }
 
         public override int GetHashCode()
         {
             int result = Code.GetHashCode();
-            result = 29*result + Value.GetHashCode();
-            result = 29*result + (Description != null ? Description.GetHashCode() : 0);
+            result = 29 * result + Value.GetHashCode();
+            result = 29 * result + (Description != null ? Description.GetHashCode() : 0);
             return result;
+        }
+
+        /// <summary>
+        /// Return the display value
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return Value;
         }
 
         #endregion

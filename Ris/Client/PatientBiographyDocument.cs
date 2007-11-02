@@ -43,6 +43,7 @@ namespace ClearCanvas.Ris.Client
     public class PatientBiographyDocument : Document
     {
         private EntityRef _profileRef;
+        private EntityRef _patientRef;
         private PatientProfileDetail _patientProfile;
 
         public PatientBiographyDocument(EntityRef profileRef, IDesktopWindow window)
@@ -71,6 +72,7 @@ namespace ClearCanvas.Ris.Client
                 delegate(IPatientBiographyService service)
                 {
                     LoadPatientProfileResponse response = service.LoadPatientProfile(new LoadPatientProfileRequest(_profileRef));
+                    _patientRef = response.PatientRef;
                     _profileRef = response.PatientProfileRef;
                     _patientProfile = response.PatientDetail;
                     alertNotifications = response.AlertNotifications;
@@ -96,7 +98,7 @@ namespace ClearCanvas.Ris.Client
 
             // Construct the Patient Biography page
             return new SplitComponentContainer(
-                new SplitPane("", new BiographyOverviewComponent(_profileRef, _patientProfile, alertNotifications), true),
+                new SplitPane("", new BiographyOverviewComponent(_patientRef, _profileRef, _patientProfile, alertNotifications), true),
                 new SplitPane("", tabGroupContainer, 0.8f),
                 SplitOrientation.Horizontal);
         }

@@ -45,9 +45,70 @@ using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Application.Services.Admin.DiagnosticServiceAdmin
 {
-    //[ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
-    //[ServiceImplementsContract(typeof(IDiagnosticServiceAdminService))]
+    [ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
+    [ServiceImplementsContract(typeof(IDiagnosticServiceAdminService))]
     public class DiagnosticServiceAdminService : ApplicationServiceBase, IDiagnosticServiceAdminService
     {
+        #region IDiagnosticServiceAdminService Members
+
+        [ReadOperation]
+        public TextQueryResponse<DiagnosticServiceSummary> TextQuery(TextQueryRequest request)
+        {
+            DiagnosticServiceAssembler assembler = new DiagnosticServiceAssembler();
+
+            TextQueryHelper<DiagnosticService, DiagnosticServiceSearchCriteria, DiagnosticServiceSummary> helper
+                = new TextQueryHelper<DiagnosticService, DiagnosticServiceSearchCriteria, DiagnosticServiceSummary>(
+                    delegate(string rawQuery, List<string> terms)
+                    {
+                        List<DiagnosticServiceSearchCriteria> criteria = new List<DiagnosticServiceSearchCriteria>();
+
+                        // allow matching on name (assume entire query is a name which may contain spaces)
+                        DiagnosticServiceSearchCriteria nameCriteria = new DiagnosticServiceSearchCriteria();
+                        nameCriteria.Name.StartsWith(rawQuery);
+                        criteria.Add(nameCriteria);
+
+                        // allow matching of any term against ID
+                        criteria.AddRange(CollectionUtils.Map<string, DiagnosticServiceSearchCriteria>(terms,
+                                     delegate(string term)
+                                     {
+                                         DiagnosticServiceSearchCriteria c = new DiagnosticServiceSearchCriteria();
+                                         c.Id.StartsWith(term);
+                                         return c;
+                                     }));
+
+                        return criteria.ToArray();
+                    },
+                    delegate(DiagnosticService ds)
+                    {
+                        return assembler.CreateDiagnosticServiceSummary(ds);
+                    });
+
+            IDiagnosticServiceBroker broker = PersistenceContext.GetBroker<IDiagnosticServiceBroker>();
+            return helper.Query(request, broker);
+        }
+
+        [ReadOperation]
+        public ListDiagnosticServicesResponse ListDiagnosticServices(ListDiagnosticServicesRequest request)
+        {
+            SearchResultPage page = new SearchResultPage(request.PageRequest.FirstRow, request.PageRequest.MaxRows);
+
+            DiagnosticServiceAssembler assembler = new DiagnosticServiceAssembler();
+
+            DiagnosticServiceSearchCriteria criteria = new DiagnosticServiceSearchCriteria();
+            if (!string.IsNullOrEmpty(request.DiagnosticServiceName))
+                criteria.Name.StartsWith(request.DiagnosticServiceName);
+            if (!string.IsNullOrEmpty(request.DiagnosticServiceId))
+                criteria.Id.StartsWith(request.DiagnosticServiceId);
+
+            return new ListDiagnosticServicesResponse(
+                CollectionUtils.Map<DiagnosticService, DiagnosticServiceSummary>(
+                    PersistenceContext.GetBroker<IDiagnosticServiceBroker>().Find(criteria, page),
+                    delegate(DiagnosticService s)
+                    {
+                        return assembler.CreateDiagnosticServiceSummary(s);
+                    }));
+        }
+
+        #endregion
     }
 }

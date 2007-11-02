@@ -66,8 +66,5 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
 
         [OperationContract]
         CancelProcedureResponse CancelProcedure(CancelProcedureRequest request);
-
-        [OperationContract]
-        ReplaceOrderResponse ReplaceOrder(ReplaceOrderRequest request);
     }
 }

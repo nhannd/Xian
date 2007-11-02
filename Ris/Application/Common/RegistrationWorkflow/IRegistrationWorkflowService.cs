@@ -133,15 +133,5 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
         [FaultContract(typeof(ConcurrentModificationException))]
         [FaultContract(typeof(RequestValidationException))]
         CancelOrderResponse CancelOrder(CancelOrderRequest request);
-
-        /// <summary>
-        /// Replace an order with a cancellation reason for a patient
-        /// </summary>
-        /// <param name="request"><see cref="CancelOrderRequest"/></param>
-        /// <returns><see cref="CancelOrderResponse"/></returns>
-        [OperationContract]
-        [FaultContract(typeof(ConcurrentModificationException))]
-        [FaultContract(typeof(RequestValidationException))]
-        ReplaceOrderResponse ReplaceOrder(ReplaceOrderRequest request);
     }
 }

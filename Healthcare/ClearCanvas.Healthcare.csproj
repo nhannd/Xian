@@ -88,6 +88,7 @@
     <Compile Include="ProtocolNote.cs" />
     <Compile Include="ProtocolProcedureStep.cs" />
     <Compile Include="ReportingToBeProtocolledWorklist.cs" />
+    <Compile Include="Laterality.cs" />
     <Compile Include="ReportPartStatus.cs" />
     <Compile Include="ReportStatus.cs" />
     <Compile Include="DiagnosticServiceTreeNode.cs" />
@@ -136,6 +137,7 @@
     <Compile Include="Tests\TestOrderFactory.cs" />
     <Compile Include="Tests\ScheduledWorkflowTests.cs" />
     <Compile Include="Tests\TestStaffFactory.cs" />
+    <Compile Include="Workflow\CancelOrderOperation.cs" />
     <Compile Include="Workflow\Modality\WorklistItem.cs" />
     <Compile Include="Workflow\Modality\Worklists.cs" />
     <Compile Include="Brokers\*.gen.cs" />

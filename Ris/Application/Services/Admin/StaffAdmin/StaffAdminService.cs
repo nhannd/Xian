@@ -42,6 +42,7 @@ using ClearCanvas.Ris.Application.Common.Admin;
 using ClearCanvas.Ris.Application.Common.Admin.StaffAdmin;
 using ClearCanvas.Ris.Application.Common;
 using System.Security.Permissions;
+using System.ServiceModel;
 
 namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
 {
@@ -66,6 +67,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
                 criteria.Name.GivenName.StartsWith(request.FirstName);
             if (!string.IsNullOrEmpty(request.LastName))
                 criteria.Name.FamilyName.StartsWith(request.LastName);
+
+            ApplyStaffTypesFilter(request.StaffTypesFilter, new StaffSearchCriteria[] { criteria });
 
             return new ListStaffResponse(
                 CollectionUtils.Map<Staff, StaffSummary, List<StaffSummary>>(
@@ -137,6 +140,68 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
             return new UpdateStaffResponse(assembler.CreateStaffSummary(staff, PersistenceContext));
         }
 
+        [ReadOperation]
+        public TextQueryResponse<StaffSummary> TextQuery(StaffTextQueryRequest request)
+        {
+            StaffAssembler assembler = new StaffAssembler();
+
+            TextQueryHelper<Staff, StaffSearchCriteria, StaffSummary> helper
+                = new TextQueryHelper<Staff, StaffSearchCriteria, StaffSummary>(
+                    delegate(string rawQuery, List<string> terms)
+                    {
+                        // allow matching on name (assume format: lastname, firstname)
+                        List<StaffSearchCriteria> criteria = new List<StaffSearchCriteria>();
+                        StaffSearchCriteria nameCriteria = new StaffSearchCriteria();
+                        TextQueryHelper.SetPersonNameCriteria(nameCriteria.Name, terms);
+                        criteria.Add(nameCriteria);
+
+                        // allow matching of any word against ID
+                        criteria.AddRange(CollectionUtils.Map<string, StaffSearchCriteria>(terms,
+                                     delegate(string word)
+                                     {
+                                         StaffSearchCriteria c = new StaffSearchCriteria();
+                                         c.Id.StartsWith(word);
+                                         return c;
+                                     }));
+
+
+                        ApplyStaffTypesFilter(request.StaffTypesFilter, criteria);
+
+                        return criteria.ToArray();
+                    },
+                    delegate(Staff staff)
+                    {
+                        return assembler.CreateStaffSummary(staff, PersistenceContext);
+                    });
+
+            IStaffBroker broker = PersistenceContext.GetBroker<IStaffBroker>();
+            return helper.Query(request, broker);
+        }
+
         #endregion
+
+        /// <summary>
+        /// Applies the specified staff types filter to the specified set of criteria objects.
+        /// </summary>
+        /// <param name="staffTypesFilter"></param>
+        /// <param name="criteria"></param>
+        private void ApplyStaffTypesFilter(IEnumerable<string> staffTypesFilter, IEnumerable<StaffSearchCriteria> criteria)
+        {
+            if (staffTypesFilter != null)
+            {
+                // parse strings into StaffType 
+                List<StaffType> typeFilters = CollectionUtils.Map<string, StaffType>(staffTypesFilter,
+                       delegate(string t) { return (StaffType)Enum.Parse(typeof(StaffType), t); });
+
+                if (typeFilters.Count > 0)
+                {
+                    // apply type filter to each criteria object
+                    foreach (StaffSearchCriteria criterion in criteria)
+                    {
+                        criterion.Type.In(typeFilters);
+                    }
+                }
+            }
+        }
     }
 }

@@ -34,6 +34,7 @@ using System;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.VisitAdmin;
 
 namespace ClearCanvas.Ris.Client.Adt
@@ -95,7 +96,7 @@ namespace ClearCanvas.Ris.Client.Adt
                     if (_isNew)
                     {
                         _visit = new VisitDetail();
-                        _visit.Patient = _patientRef;
+                        _visit.PatientRef = _patientRef;
                         _visit.VisitNumberAssigningAuthority = response.VisitNumberAssigningAuthorityChoices[0];
                         _visit.PatientClass = response.PatientClassChoices[0];
                         _visit.PatientType = response.PatientTypeChoices[0];
@@ -135,14 +136,14 @@ namespace ClearCanvas.Ris.Client.Adt
                         if (_isNew)
                         {
                             AdminAddVisitResponse response = service.AdminAddVisit(new AdminAddVisitRequest(_visit));
-                            _patientRef = response.AddedVisit.Patient;
-                            _visitRef = response.AddedVisit.entityRef;
+                            _patientRef = response.AddedVisit.PatientRef;
+                            _visitRef = response.AddedVisit.VisitRef;
                         }
                         else
                         {
                             SaveAdminEditsForVisitResponse response = service.SaveAdminEditsForVisit(new SaveAdminEditsForVisitRequest(_visitRef, _visit));
-                            _patientRef = response.AddedVisit.Patient;
-                            _visitRef = response.AddedVisit.entityRef;
+                            _patientRef = response.AddedVisit.PatientRef;
+                            _visitRef = response.AddedVisit.VisitRef;
                         }
                     });
                 this.Host.Exit();

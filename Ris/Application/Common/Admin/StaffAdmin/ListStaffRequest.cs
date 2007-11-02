@@ -44,15 +44,15 @@ namespace ClearCanvas.Ris.Application.Common.Admin.StaffAdmin
         {
         }
 
-        public ListStaffRequest(string surname, string givenname, bool listOnlyPractitioners)
+        public ListStaffRequest(string surname, string givenname, string[] staffTypesFilter)
         {
             this.LastName = surname;
             this.FirstName = givenname;
-            this.ListOnlyPractitioners = listOnlyPractitioners;
+            this.StaffTypesFilter = staffTypesFilter;
         }
 
-        public ListStaffRequest(string surname, string givenname, bool listOnlyPractitioners, PageRequestDetail page)
-            : this(surname, givenname, listOnlyPractitioners)
+        public ListStaffRequest(string surname, string givenname, string[] staffTypesFilter, PageRequestDetail page)
+            : this(surname, givenname, staffTypesFilter)
         {
             this.PageRequest = page;
         }
@@ -64,6 +64,6 @@ namespace ClearCanvas.Ris.Application.Common.Admin.StaffAdmin
         public string LastName;
 
         [DataMember]
-        public bool ListOnlyPractitioners;
+        public string[] StaffTypesFilter;
     }
 }

@@ -85,7 +85,7 @@ namespace ClearCanvas.Ris.Application.Services.PatientBiography
             PatientProfile profile = PersistenceContext.Load<PatientProfile>(request.PatientProfileRef);
             criteria.Patient.EqualTo(profile.Patient);
 
-            OrderEntryAssembler assembler = new OrderEntryAssembler();
+            OrderAssembler assembler = new OrderAssembler();
             return new ListOrdersForPatientResponse(
                 CollectionUtils.Map<Order, OrderSummary, List<OrderSummary>>(
                     PersistenceContext.GetBroker<IOrderBroker>().Find(criteria),
@@ -125,7 +125,7 @@ namespace ClearCanvas.Ris.Application.Services.PatientBiography
         [ReadOperation]
         public LoadOrderDetailResponse LoadOrderDetail(LoadOrderDetailRequest request)
         {
-            OrderEntryAssembler assembler = new OrderEntryAssembler();
+            OrderAssembler assembler = new OrderAssembler();
 
             Order order = PersistenceContext.GetBroker<IOrderBroker>().Load(request.OrderRef);
 

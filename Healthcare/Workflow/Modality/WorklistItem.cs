@@ -57,6 +57,9 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
     public class WorklistItem : WorklistItemBase
     {
         private EntityRef _profileRef;
+        private EntityRef _patientRef;
+        private EntityRef _orderRef;
+
         private CompositeIdentifier _mrn;
         private PersonName _patientName;
         private string _accessionNumber;
@@ -67,6 +70,8 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
 
         public WorklistItem(
             ModalityProcedureStep modalityProcedureStep,
+            Order order,
+            Patient patient,
             PatientProfile profile,
             string accessionNumber,
             OrderPriority priority,
@@ -75,6 +80,8 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
             ClearCanvas.Healthcare.Modality modality)
             : base(new WorklistItemKey(modalityProcedureStep.GetRef()))
         {
+            _orderRef = order.GetRef();
+            _patientRef = patient.GetRef();
             _profileRef = profile.GetRef();
             _mrn = profile.Mrn;
             _patientName = profile.Name;

@@ -38,23 +38,25 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
     [DataContract]
     public class RegistrationWorklistItem : DataContractBase
     {
-        public RegistrationWorklistItem(EntityRef orderRef, 
-            EntityRef profileRef,
+        public RegistrationWorklistItem(
             EntityRef patientRef,
-            string mrnID,
-            string mrnAssigningAuthority,
+            EntityRef profileRef,
+            EntityRef orderRef,
+            MrnDetail mrn,
             PersonNameDetail name,
+            string accessionNumber,
+            EnumValueInfo orderPriority,
             HealthcardDetail healthcard,
             DateTime? dateOfBirth,
             EnumValueInfo sex,
             DateTime? earliestScheduledTime,
-            EnumValueInfo orderPriority,
-            string patientClass,
-            string accessionNumber)
+            string patientClass
+            )
         {
             this.PatientProfileRef = profileRef;
+            this.PatientRef = patientRef;
             this.OrderRef = orderRef;
-            this.Mrn = new MrnDetail(mrnID, mrnAssigningAuthority);
+            this.Mrn = mrn;
             this.Name = name;
             this.Healthcard = healthcard;
             this.DateOfBirth = dateOfBirth;
@@ -105,7 +107,7 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
         {
             RegistrationWorklistItem that = obj as RegistrationWorklistItem;
             if (that != null)
-                return this.OrderRef.Equals(that.OrderRef);
+                return Equals(this.OrderRef, that.OrderRef);
 
             return false;
         }

@@ -57,7 +57,8 @@ namespace ClearCanvas.Ris.Client
 
     public interface IPatientBiographyToolContext : IToolContext
     {
-        EntityRef PatientProfile { get; }
+        EntityRef PatientRef { get; }
+        EntityRef PatientProfileRef { get; }
         IDesktopWindow DesktopWindow { get; }
     }
 
@@ -90,7 +91,12 @@ namespace ClearCanvas.Ris.Client
                 _component = component;
             }
 
-            public EntityRef PatientProfile
+            public EntityRef PatientRef
+            {
+                get { return _component._patientRef; }
+            }
+
+            public EntityRef PatientProfileRef
             {
                 get { return _component._profileRef; }
             }
@@ -101,6 +107,7 @@ namespace ClearCanvas.Ris.Client
             }
         }
 
+        private readonly EntityRef _patientRef;
         private readonly EntityRef _profileRef;
         private readonly PatientProfileDetail _patientProfile;
         private readonly List<AlertNotificationDetail> _alertNotifications;
@@ -112,10 +119,12 @@ namespace ClearCanvas.Ris.Client
         /// Constructor
         /// </summary>
         public BiographyOverviewComponent(
+            EntityRef patientRef,
             EntityRef profileRef, 
             PatientProfileDetail patientProfile, 
             List<AlertNotificationDetail> alertNotifications)
         {
+            _patientRef = patientRef;
             _profileRef = profileRef;
             _patientProfile = patientProfile;
             _alertNotifications = alertNotifications;

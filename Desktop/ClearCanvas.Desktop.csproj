@@ -74,6 +74,7 @@
     <Compile Include="ClosedEventArgs.cs" />
     <Compile Include="CloseHelperComponent.cs" />
     <Compile Include="CloseHelperTool.cs" />
+    <Compile Include="DefaultSuggestionProvider.cs" />
     <Compile Include="DesktopMonitorComponent.cs" />
     <Compile Include="DesktopObjectCreationArgs.cs" />
     <Compile Include="DesktopObjectState.cs" />
@@ -89,7 +90,7 @@
     <Compile Include="IDesktopObjectView.cs" />
     <Compile Include="IGuiToolkit.cs" />
     <Compile Include="ISessionManager.cs" />
-    <Compile Include="SuggestionOptimizer.cs" />
+    <Compile Include="ISuggestionProvider.cs" />
     <Compile Include="Tables\FilteredItemCollection.cs" />
     <Compile Include="Tables\TableFilterParams.cs" />
     <Compile Include="UserInteraction.cs" />

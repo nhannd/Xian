@@ -36,154 +36,107 @@ using ClearCanvas.Healthcare;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry;
 using ClearCanvas.Ris.Application.Services.Admin;
+using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
+using Iesi.Collections;
+using Iesi.Collections.Generic;
 
 namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 {
     public class OrderEntryAssembler
     {
-        public OrderDetail CreateOrderDetail(Order order, IPersistenceContext context)
+        public OrderRequisition CreateOrderRequisition(Order order, IPersistenceContext context)
         {
-            OrderDetail detail = new OrderDetail();
-
             VisitAssembler visitAssembler = new VisitAssembler();
             ExternalPractitionerAssembler pracAssembler = new ExternalPractitionerAssembler();
             FacilityAssembler facilityAssembler = new FacilityAssembler();
+            DiagnosticServiceAssembler dsAssembler = new DiagnosticServiceAssembler();
 
-            detail.OrderRef = order.GetRef();
-            detail.PatientRef = order.Patient.GetRef();
-            detail.Visit = visitAssembler.CreateVisitDetail(order.Visit, context);
-            detail.PlacerNumber = order.PlacerNumber;
-            detail.AccessionNumber = order.AccessionNumber;
-            detail.DiagnosticService = this.CreateDiagnosticServiceDetail(order.DiagnosticService);
-            detail.EnteredDateTime = order.EnteredDateTime;
-            detail.SchedulingRequestDateTime = order.SchedulingRequestDateTime;
-            detail.OrderingPractitioner = pracAssembler.CreateExternalPractitionerDetail(order.OrderingPractitioner, context);
-            detail.OrderingFacility = facilityAssembler.CreateFacilityDetail(order.OrderingFacility);
-            detail.ReasonForStudy = order.ReasonForStudy;
-            detail.OrderPriority = EnumUtils.GetEnumValueInfo(order.Priority, context);
-            detail.CancelReason = EnumUtils.GetEnumValueInfo(order.CancelReason);
+            OrderRequisition requisition = new OrderRequisition();
+            requisition.Patient = order.Patient.GetRef();
+            requisition.Visit = visitAssembler.CreateVisitSummary(order.Visit, context);
+            requisition.DiagnosticService = dsAssembler.CreateDiagnosticServiceSummary(order.DiagnosticService);
+            requisition.SchedulingRequestTime = order.SchedulingRequestDateTime;
+            requisition.OrderingPractitioner = pracAssembler.CreateExternalPractitionerSummary(order.OrderingPractitioner, context);
+            //TODO requisition.PerformingFacility = facilityAssembler.CreateFacilitySummary(order.PerformingFacility);
+            requisition.OrderingFacility = facilityAssembler.CreateFacilitySummary(order.OrderingFacility);
+            requisition.ReasonForStudy = order.ReasonForStudy;
+            requisition.Priority = EnumUtils.GetEnumValueInfo(order.Priority, context);
+            requisition.CopiesToPractitioners = CollectionUtils.Map<ExternalPractitioner, ExternalPractitionerSummary>(
+                order.ResultCopiesToPractitioners,
+                delegate(ExternalPractitioner p)
+                {
+                    return pracAssembler.CreateExternalPractitionerSummary(p, context);
+                });
 
-            foreach (RequestedProcedure rp in order.RequestedProcedures)
-            {
-                detail.RequestedProcedures.Add(this.CreateRequestedProcedureSummary(rp, context));
-            }
+            requisition.RequestedProcedures = CollectionUtils.Map<RequestedProcedure, ProcedureRequisition>(
+                order.RequestedProcedures,
+                delegate(RequestedProcedure rp)
+                {
+                    return CreateProcedureRequisition(rp, context);
+                });
 
-            return detail;
+            return requisition;
         }
 
-        public OrderSummary CreateOrderSummary(Order order, IPersistenceContext context)
+        public void UpdateOrderFromRequisition(Order order, OrderRequisition requisition, IPersistenceContext context)
         {
-            ExternalPractitionerAssembler pracAssembler = new ExternalPractitionerAssembler();
+            // only certain properties of an order may be updated from a requisition
+            // Patient cannot not be updated
+            // DiagnosticService cannot be updated
+            // OrderingFacility cannot be updated - or can it ???
 
-            OrderSummary summary = new OrderSummary();
+            // do not update the individual requested procedures, as this is done separately - see UpdateProcedureFromRequisition
 
-            summary.OrderRef = order.GetRef();
-            summary.AccessionNumber = order.AccessionNumber;
-            summary.DiagnosticServiceName = order.DiagnosticService.Name;
-            summary.EnteredDateTime = order.EnteredDateTime;
-            summary.SchedulingRequestDateTime = order.SchedulingRequestDateTime;
-            summary.OrderingPractitioner = pracAssembler.CreateExternalPractitionerDetail(order.OrderingPractitioner, context);
-            summary.OrderingFacility = order.OrderingFacility.Name;
-            summary.ReasonForStudy = order.ReasonForStudy;
-            summary.OrderPriority = EnumUtils.GetEnumValueInfo(order.Priority, context);
 
-            return summary;
+            order.Visit = context.Load<Visit>(requisition.Visit.VisitRef, EntityLoadFlags.Proxy);
+            order.SchedulingRequestDateTime = requisition.SchedulingRequestTime;
+            order.OrderingPractitioner = context.Load<ExternalPractitioner>(requisition.OrderingPractitioner.PractitionerRef, EntityLoadFlags.Proxy);
+            //TODO order.PerformingFacility = context.Load<Facility>(requisition.PerformingFacility.FacilityRef, EntityLoadFlags.Proxy);
+            order.ReasonForStudy = requisition.ReasonForStudy;
+            order.Priority = EnumUtils.GetEnumValue<OrderPriority>(requisition.Priority);
+
+            // wipe out and reset the copies to practitioners
+            order.ResultCopiesToPractitioners.Clear();
+            order.ResultCopiesToPractitioners.AddAll(CollectionUtils.Map<ExternalPractitionerSummary, ExternalPractitioner>(
+                requisition.CopiesToPractitioners,
+                delegate(ExternalPractitionerSummary s)
+                {
+                    return context.Load<ExternalPractitioner>(s.PractitionerRef, EntityLoadFlags.Proxy);
+                }));
         }
 
-        public DiagnosticServiceSummary CreateDiagnosticServiceSummary(DiagnosticService diagnosticService)
+        public ProcedureRequisition CreateProcedureRequisition(RequestedProcedure rp, IPersistenceContext context)
         {
-            return new DiagnosticServiceSummary(
-                diagnosticService.GetRef(),
-                diagnosticService.Id,
-                diagnosticService.Name);
+            RequestedProcedureTypeAssembler rptAssembler = new RequestedProcedureTypeAssembler();
+            FacilityAssembler facilityAssembler = new FacilityAssembler();
+
+            // create requisition - canModify is true iff the procedure is in SC status
+            return new ProcedureRequisition(
+                rptAssembler.GetRequestedProcedureTypeSummary(rp.Type),
+                rp.Index,
+                rp.ScheduledStartTime,
+                facilityAssembler.CreateFacilitySummary(rp.PerformingFacility),
+                EnumUtils.GetEnumValueInfo(rp.Laterality, context),
+                false, //TODO portable modality
+                EnumUtils.GetEnumValueInfo(rp.Status, context),
+                rp.Status == RequestedProcedureStatus.SC);
         }
 
-        public DiagnosticServiceDetail CreateDiagnosticServiceDetail(DiagnosticService diagnosticService)
+        public void UpdateProcedureFromRequisition(RequestedProcedure rp, ProcedureRequisition requisition, IPersistenceContext context)
         {
-            return new DiagnosticServiceDetail(
-                diagnosticService.Id,
-                diagnosticService.Name,
-                CollectionUtils.Map<RequestedProcedureType, RequestedProcedureTypeDetail, List<RequestedProcedureTypeDetail>>(
-                    diagnosticService.RequestedProcedureTypes,
-                    delegate(RequestedProcedureType rpType)
-                    {
-                        return CreateRequestedProcedureTypeDetail(rpType);
-                    }));
+            rp.Schedule(requisition.ScheduledTime);
+            rp.PerformingFacility = context.Load<Facility>(requisition.PerformingFacility.FacilityRef, EntityLoadFlags.Proxy);
+            rp.Laterality = EnumUtils.GetEnumValue<Laterality>(requisition.Laterality);
+            //TODO portable
         }
 
         public DiagnosticServiceTreeItem CreateDiagnosticServiceTreeItem(DiagnosticServiceTreeNode node)
         {
+            DiagnosticServiceAssembler dsAssembler = new DiagnosticServiceAssembler();
             return new DiagnosticServiceTreeItem(
                 node.GetRef(),
                 node.Description,
-                node.DiagnosticService == null ? null : CreateDiagnosticServiceSummary(node.DiagnosticService));
-        }
-
-        public RequestedProcedureSummary CreateRequestedProcedureSummary(RequestedProcedure rp, IPersistenceContext context)
-        {
-            RequestedProcedureSummary detail = new RequestedProcedureSummary();
-
-            detail.OrderRef = rp.Order.GetRef();
-            detail.Index = rp.Index;
-            detail.Type = this.CreateRequestedProcedureTypeDetail(rp.Type);
-
-            foreach (ProcedureStep step in rp.ProcedureSteps)
-            {
-                //TODO: include other ProcedureStep in RequestedProcedureSummary
-                if (step.Is<ModalityProcedureStep>())
-                {
-                    detail.ProcedureSteps.Add(this.CreateModalityProcedureStepSummary(step.Downcast<ModalityProcedureStep>(), context));
-                }
-            }
-
-            return detail;
-        }
-
-        public ModalityProcedureStepSummary CreateModalityProcedureStepSummary(ModalityProcedureStep mps, IPersistenceContext context)
-        {
-            StaffAssembler staffAssembler = new StaffAssembler();
-
-            ModalityProcedureStepSummary summary = new ModalityProcedureStepSummary();
-            
-            summary.Type = this.CreateModalityProcedureStepTypeDetail(mps.Type);
-
-            summary.State = EnumUtils.GetEnumValueInfo(mps.State, context);
-
-            summary.PerformerStaff = staffAssembler.CreateStaffSummary(mps.PerformingStaff, context);
-            summary.StartTime = mps.StartTime;
-            summary.EndTime = mps.EndTime;
-
-            if (mps.Scheduling != null)
-            {
-                //TODO ScheduledPerformerStaff for ModalityProcedureStepSummary
-                //summary.ScheduledPerformerStaff = staffAssembler.CreateStaffSummary(mps.Scheduling.Performer);
-                summary.ScheduledStartTime = mps.Scheduling.StartTime;
-                summary.ScheduledEndTime = mps.Scheduling.EndTime;
-            }
-
-            return summary;
-        }
-
-        public RequestedProcedureTypeDetail CreateRequestedProcedureTypeDetail(RequestedProcedureType requestedProcedureType)
-        {
-            return new RequestedProcedureTypeDetail(
-                requestedProcedureType.Id,
-                requestedProcedureType.Name,
-                CollectionUtils.Map<ModalityProcedureStepType, ModalityProcedureStepTypeDetail, List<ModalityProcedureStepTypeDetail>>(
-                    requestedProcedureType.ModalityProcedureStepTypes,
-                    delegate(ModalityProcedureStepType mpsType)
-                    {
-                        return CreateModalityProcedureStepTypeDetail(mpsType);
-                    }));
-        }
-
-        public ModalityProcedureStepTypeDetail CreateModalityProcedureStepTypeDetail(ModalityProcedureStepType modalityProcedureStepType)
-        {
-            ModalityAssembler assembler = new ModalityAssembler();
-            return new ModalityProcedureStepTypeDetail(
-                modalityProcedureStepType.Id,
-                modalityProcedureStepType.Name,
-                assembler.CreateModalityDetail(modalityProcedureStepType.DefaultModality));
+                node.DiagnosticService == null ? null : dsAssembler.CreateDiagnosticServiceSummary(node.DiagnosticService));
         }
     }
 }

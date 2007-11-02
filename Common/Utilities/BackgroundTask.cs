@@ -64,11 +64,11 @@ namespace ClearCanvas.Common.Utilities
         void ReportProgress(BackgroundTaskProgress progress);
 
         /// <summary>
-        /// Allows the <see cref="BackgroundTaskMethod"/> to inform that it has completed successfully, and return the result object
+        /// Allows the <see cref="BackgroundTaskMethod"/> to inform that it has completed successfully, and return the result objects
         /// to the foreground thread.  After calling this method, the <see cref="BackgroundTaskMethod"/> should simply exit.
         /// </summary>
-        /// <param name="result"></param>
-        void Complete(object result);
+        /// <param name="results"></param>
+        void Complete(params object[] results);
 
         /// <summary>
         /// Allows the <see cref="BackgroundTaskMethod"/> to inform that it has successfully cancelled,
@@ -202,14 +202,14 @@ namespace ClearCanvas.Common.Utilities
     {
         private object _userState;
         private BackgroundTaskTerminatedReason _reason;
-        private object _result;
+        private object[] _results;
         private Exception _exception;
 
-        public BackgroundTaskTerminatedEventArgs(object userState, BackgroundTaskTerminatedReason reason, object result, Exception ex)
+        public BackgroundTaskTerminatedEventArgs(object userState, BackgroundTaskTerminatedReason reason, object[] results, Exception ex)
         {
             _userState = userState;
             _reason = reason;
-            _result = result;
+            _results = results;
             _exception = ex;
         }
 
@@ -219,9 +219,14 @@ namespace ClearCanvas.Common.Utilities
         public BackgroundTaskTerminatedReason Reason { get { return _reason; } }
 
         /// <summary>
-        /// Gets the result of the background task
+        /// Gets the result of the background task, assuming it returned exactly one result.  Otherwise null is returned.
         /// </summary>
-        public object Result { get { return _result; } }
+        public object Result { get { return _results.Length > 0 ? _results[0] : null; } }
+
+        /// <summary>
+        /// Gets the results of the background task.
+        /// </summary>
+        public object[] Results { get { return _results; } }
 
         /// <summary>
         /// Gets the exception that occured, if <see cref="Reason"/> is <see cref="BackgroundTaskTerminatedReason.Exception"/>
@@ -260,9 +265,9 @@ namespace ClearCanvas.Common.Utilities
                 get { return _owner.CancelRequestPending; }
             }
 
-            public void Complete(object result)
+            public void Complete(params object[] results)
             {
-                _doWorkArgs.Result = result;
+                _doWorkArgs.Result = results;
             }
 
             public void Cancel()
@@ -449,10 +454,10 @@ namespace ClearCanvas.Common.Utilities
                 : (e.Cancelled ? BackgroundTaskTerminatedReason.Cancelled : BackgroundTaskTerminatedReason.Completed);
 
             // the e.Result object is an exception for e.Cancelled status, we don't want that
-            Object obj = (e.Cancelled ? null : e.Result);
+            object[] results = (e.Cancelled ? null : (object[])e.Result);
 
             EventsHelper.Fire(_terminated, this,
-                new BackgroundTaskTerminatedEventArgs(_userState, reason, obj, _error));
+                new BackgroundTaskTerminatedEventArgs(_userState, reason, results, _error));
         }
 
     }

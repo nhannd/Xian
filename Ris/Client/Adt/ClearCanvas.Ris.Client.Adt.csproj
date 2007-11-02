@@ -42,6 +42,8 @@
     <Compile Include="CheckInOrderComponent.cs" />
     <Compile Include="CheckInOrderTable.cs" />
     <Compile Include="FolderSearchTool.cs" />
+    <Compile Include="ModifyOrderTool.cs" />
+    <Compile Include="NewOrderTool.cs" />
     <Compile Include="PatientBiographyTool.cs" />
     <Compile Include="PatientSearchTool.cs" />
     <Compile Include="ExamDetailsComponent.cs" />
@@ -109,6 +111,7 @@
     <Compile Include="RegistrationWorkflowFolderSystemTool.cs" />
     <Compile Include="RegistrationWorkflowTool.cs" />
     <Compile Include="RegistrationWorklistTable.cs" />
+    <Compile Include="RequestedProcedureEditorComponent.cs" />
     <Compile Include="RICTable.cs" />
     <Compile Include="TechnologistDocumentationComponent.cs" />
     <Compile Include="TechnologistDocumentationComponentSettings.cs" />

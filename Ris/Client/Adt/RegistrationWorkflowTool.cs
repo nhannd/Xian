@@ -221,58 +221,35 @@ namespace ClearCanvas.Ris.Client.Adt
         public class RegistrationReplaceOrderTool : WorkflowItemTool
         {
             public RegistrationReplaceOrderTool()
-                : base("ReplaceOrder")
+                : base("")
             {
+            }
+
+            public override bool Enabled
+            {
+                get
+                {
+                    //TODO: this is a hack, since this tool isn't really a workflow tool it doesn't have a corresponding operation name
+                    return this.Context.SelectedItems.Count > 0;
+                }
             }
 
             protected override bool Execute(RegistrationWorklistItem item, IDesktopWindow desktopWindow, IEnumerable folders)
             {
-                OrderDetail existingOrder = null;
-
-                try
-                {
-                    Platform.GetService<IOrderEntryService>(
-                        delegate(IOrderEntryService service)
-                            {
-                                LoadOrderDetailResponse response = service.LoadOrderDetail(new LoadOrderDetailRequest(item.AccessionNumber));
-                                existingOrder = response.OrderDetail;
-                            });
-                }
-                catch (Exception e)
-                {
-                    ExceptionHandler.Report(e, desktopWindow);
-                    return false;
-                }
-
                 if (desktopWindow.ShowMessageBox(SR.MessageReplaceOrder, MessageBoxActions.OkCancel) == DialogBoxAction.Ok)
                 {
                     ApplicationComponent.LaunchAsWorkspace(
                         desktopWindow,
-                        new OrderEntryComponent(existingOrder),
+                        new OrderEntryComponent(item.OrderRef),
                         string.Format(SR.TitleNewOrder, PersonNameFormat.Format(item.Name), MrnFormat.Format(item.Mrn)),
                         delegate(IApplicationComponent c)
                         {
                             if (c.ExitCode == ApplicationComponentExitCode.Normal)
                             {
-                                try
-                                {
-                                    OrderEntryComponent component = (OrderEntryComponent)c;
+                                IFolder cancelledFolder = CollectionUtils.SelectFirst<IFolder>(folders,
+                                   delegate(IFolder f) { return f is Folders.CancelledFolder; });
 
-                                    Platform.GetService<IRegistrationWorkflowService>(
-                                        delegate(IRegistrationWorkflowService service)
-                                        {
-                                            service.ReplaceOrder(new ReplaceOrderRequest(component.PlaceOrderRequest, component.CancelOrderRequest));
-                                        });
-
-                                    IFolder cancelledFolder = CollectionUtils.SelectFirst<IFolder>(folders,
-                                       delegate(IFolder f) { return f is Folders.CancelledFolder; });
-
-                                    cancelledFolder.RefreshCount();
-                                }
-                                catch (Exception e)
-                                {
-                                    ExceptionHandler.Report(e, SR.ExceptionCannotReplaceOrder, this.Context.DesktopWindow);
-                                }
+                                cancelledFolder.RefreshCount();
                             }
                         });
                 }

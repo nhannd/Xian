@@ -273,6 +273,12 @@
   <data name="ColumnWorkPhone" xml:space="preserve">
     <value>Work Phone</value>
   </data>
+  <data name="ExceptionCannotExpandDiagnositicServiceTree" xml:space="preserve">
+    <value>Unable to retrieve diagnostic service tree</value>
+  </data>
+  <data name="ExceptionCannotUpdateDiagnosticServiceBreakdown" xml:space="preserve">
+    <value>Unable to retrieve diagnostic service breakdown</value>
+  </data>
   <data name="ExceptionFailedToSave" xml:space="preserve">
     <value>An error occured while attempting to save changes to this item</value>
   </data>
@@ -374,6 +380,9 @@
   </data>
   <data name="TitleDemographic" xml:space="preserve">
     <value>Demographic</value>
+  </data>
+  <data name="TitleDiagnosticServices" xml:space="preserve">
+    <value>Diagnostic Services</value>
   </data>
   <data name="TitleDocuments" xml:space="preserve">
     <value>Documents</value>

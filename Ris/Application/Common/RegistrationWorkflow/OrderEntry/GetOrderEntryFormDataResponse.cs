@@ -40,29 +40,19 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
     public class GetOrderEntryFormDataResponse : DataContractBase
     {
         public GetOrderEntryFormDataResponse(
-            List<DiagnosticServiceSummary> diagnosticServiceChoices,
             List<FacilitySummary> orderingFacilityChoices,
-            List<ExternalPractitionerSummary> orderingPhysicianChoices,
             List<EnumValueInfo> orderPriorityChoices,
             List<EnumValueInfo> cancelReasonChoices,
-            List<DiagnosticServiceTreeItem> topLevelDiagnosticServiceTree)
+            List<EnumValueInfo> lateralityChoices)
         {
-            this.DiagnosticServiceChoices = diagnosticServiceChoices;
-            this.OrderingFacilityChoices = orderingFacilityChoices;
-            this.OrderingPhysicianChoices = orderingPhysicianChoices;
+            this.FacilityChoices = orderingFacilityChoices;
             this.OrderPriorityChoices = orderPriorityChoices;
             this.CancelReasonChoices = cancelReasonChoices;
-            this.TopLevelDiagnosticServiceTree = topLevelDiagnosticServiceTree;
+            this.LateralityChoices = lateralityChoices;
         }
 
         [DataMember]
-        public List<DiagnosticServiceSummary> DiagnosticServiceChoices;
-
-        [DataMember]
-        public List<FacilitySummary> OrderingFacilityChoices;
-
-        [DataMember]
-        public List<ExternalPractitionerSummary> OrderingPhysicianChoices;
+        public List<FacilitySummary> FacilityChoices;
 
         [DataMember]
         public List<EnumValueInfo> OrderPriorityChoices;
@@ -71,6 +61,6 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
         public List<EnumValueInfo> CancelReasonChoices;
 
         [DataMember]
-        public List<DiagnosticServiceTreeItem> TopLevelDiagnosticServiceTree;
+        public List<EnumValueInfo> LateralityChoices;
     }
 }

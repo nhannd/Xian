@@ -123,19 +123,18 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             HealthcardAssembler healthcardAssembler = new HealthcardAssembler();
 
             return new RegistrationWorklistItem(
-                domainItem.OrderRef,
-                domainItem.ProfileRef,
                 domainItem.PatientRef,
-                domainItem.Mrn.Id,
-                domainItem.Mrn.AssigningAuthority,
+                domainItem.ProfileRef,
+                domainItem.OrderRef,
+                new MrnDetail(domainItem.Mrn.Id, domainItem.Mrn.AssigningAuthority),
                 nameAssembler.CreatePersonNameDetail(domainItem.PatientName),
+                domainItem.AccessionNumber,
+                EnumUtils.GetEnumValueInfo(domainItem.OrderPriority, context),
                 healthcardAssembler.CreateHealthcardDetail(domainItem.HealthcardNumber),
                 domainItem.DateOfBirth,
                 EnumUtils.GetEnumValueInfo(domainItem.Sex, context),
                 domainItem.ScheduledStartTime,
-                EnumUtils.GetEnumValueInfo(domainItem.OrderPriority, context),
-                EnumUtils.GetDisplayValue(domainItem.PatientClass),
-                domainItem.AccessionNumber);
+                EnumUtils.GetDisplayValue(domainItem.PatientClass));
         }
 
         private string GetRICStatus(Order order, IPersistenceContext context)

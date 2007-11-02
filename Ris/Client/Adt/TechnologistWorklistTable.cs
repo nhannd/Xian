@@ -69,7 +69,7 @@ namespace ClearCanvas.Ris.Client.Adt
             this.Columns.Add(new TableColumn<ModalityWorklistItem, string>("Procedure Description",
                 delegate(ModalityWorklistItem item) 
                 { 
-                    return string.Format("{0} - {1}", item.RequestedProcedureStepName, item.ModalityProcedureStepName); 
+                    return string.Format("{0} - {1}", item.RequestedProcedureTypeName, item.ModalityProcedureStepName); 
                 },
                 0.5f,
                 ProcedureDescriptionRow));

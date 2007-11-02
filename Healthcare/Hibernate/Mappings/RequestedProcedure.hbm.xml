@@ -16,6 +16,7 @@
     
     <property name="ScheduledStartTime" column="ScheduledStartTime_" type="DateTime" not-null="false"/>
     <property name="Status" column="Status_" type="ClearCanvas.Healthcare.Hibernate.RequestedProcedureStatusEnumHbm, ClearCanvas.Healthcare.Hibernate" not-null="true"/>
-
+    <many-to-one name="PerformingFacility" class="Facility" column="PerformingFacilityOID_"/>
+    <property name="Laterality" column="Laterality_" type="ClearCanvas.Healthcare.Hibernate.LateralityEnumHbm, ClearCanvas.Healthcare.Hibernate" not-null="true"/>
   </class>
 </hibernate-mapping>

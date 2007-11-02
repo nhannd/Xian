@@ -94,8 +94,8 @@ namespace ClearCanvas.Ris.Client.Adt
                 Platform.GetService<IOrderEntryService>(
                     delegate(IOrderEntryService service)
                     {
-                        GetOrdersWorkListResponse response = service.GetOrdersWorkList(new GetOrdersWorkListRequest("UHN"));
-                        _orderList.Items.AddRange(response.Orders);
+//                        GetOrdersWorkListResponse response = service.GetOrdersWorkList(new GetOrdersWorkListRequest("UHN"));
+//                        _orderList.Items.AddRange(response.Orders);
                     });
             }
             catch (Exception e)

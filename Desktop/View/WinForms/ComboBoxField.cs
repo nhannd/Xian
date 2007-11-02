@@ -41,6 +41,12 @@ namespace ClearCanvas.Desktop.View.WinForms
             InitializeComponent();
         }
 
+        public event ListControlConvertEventHandler Format
+        {
+            add { _comboBox.Format += value; }
+            remove { _comboBox.Format -= value; }
+        }
+
         public string LabelText
         {
             get { return _label.Text; }

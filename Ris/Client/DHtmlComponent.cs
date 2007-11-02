@@ -39,6 +39,7 @@ using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin;
 using ClearCanvas.Ris.Application.Common.Jsml;
 using ClearCanvas.Ris.Client.Formatting;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -193,11 +194,13 @@ namespace ClearCanvas.Ris.Client
             public string ResolveStaffName(string search)
             {
                 StaffSummary staff = null;
-                if (StaffFinder.ResolveNameInteractive(search, _component.Host.DesktopWindow, out staff))
+                StaffLookupHandler lookupHandler = new StaffLookupHandler(_component.Host.DesktopWindow);
+                bool resolved = lookupHandler.ResolveName(search, out staff);
+                if(!resolved)
                 {
-                    return JsmlSerializer.Serialize(staff, "staff");
+                    resolved = lookupHandler.ResolveNameInteractive(search, out staff);
                 }
-                return null;
+                return resolved ? JsmlSerializer.Serialize(staff, "staff") : null;
             }
         }
 

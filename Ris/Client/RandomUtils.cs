@@ -40,6 +40,8 @@ using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.VisitAdmin;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry;
 using ClearCanvas.Ris.Application.Common.Admin;
+using ClearCanvas.Ris.Application.Common.Admin.DiagnosticServiceAdmin;
+using ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -131,8 +133,7 @@ namespace ClearCanvas.Ris.Client
             Platform.GetService<IOrderEntryService>(
                 delegate(IOrderEntryService service)
                     {
-                        ListActiveVisitsForPatientRequest request = new ListActiveVisitsForPatientRequest();
-                        request.PatientProfileRef = profileRef;
+                        ListActiveVisitsForPatientRequest request = new ListActiveVisitsForPatientRequest(patientRef);
 
                         ListActiveVisitsForPatientResponse visitResponse = service.ListActiveVisitsForPatient(request);
                         visit = ChooseRandom(visitResponse.Visits);
@@ -150,7 +151,7 @@ namespace ClearCanvas.Ris.Client
                     DateTime now = Platform.Time;
 
                     VisitDetail visitDetail = new VisitDetail();
-                    visitDetail.Patient = patientRef;
+                    visitDetail.PatientRef = patientRef;
                     visitDetail.VisitNumberId = FormatDateTime(now, null);
                     visitDetail.VisitNumberAssigningAuthority = assigningAuthority;
                     visitDetail.PatientClass = ChooseRandom(visitFormResponse.PatientClassChoices);
@@ -171,54 +172,71 @@ namespace ClearCanvas.Ris.Client
             return visit;
         }
 
-        public static OrderDetail RandomOrder(VisitSummary visit, string diagnosticServiceName)
+        public static void RandomOrder(VisitSummary visit, string diagnosticServiceName)
         {
-            OrderDetail orderDetail = null;
+            List<DiagnosticServiceSummary> diagnosticServiceChoices = null;
+            Platform.GetService<IDiagnosticServiceAdminService>(
+                delegate(IDiagnosticServiceAdminService service)
+                {
+                    // get the diagnostic service by name, or if name is null, just load the first 100
+                    // so that we can choose a random one
+                    ListDiagnosticServicesRequest request = new ListDiagnosticServicesRequest(diagnosticServiceName, null);
+                    request.PageRequest.FirstRow = 0;
+                    request.PageRequest.MaxRows = 100;
+                    diagnosticServiceChoices = service.ListDiagnosticServices(request).DiagnosticServices;
+                });
+
+            List<ExternalPractitionerSummary> practitionerChoices = null;
+            Platform.GetService<IExternalPractitionerAdminService>(
+                delegate(IExternalPractitionerAdminService service)
+                {
+                    ListExternalPractitionersRequest request = new ListExternalPractitionersRequest();
+                    request.PageRequest.FirstRow = 0;
+                    request.PageRequest.MaxRows = 100;
+                    practitionerChoices = service.ListExternalPractitioners(request).Practitioners;
+                });
+
 
             Platform.GetService<IOrderEntryService>(
                 delegate(IOrderEntryService service)
                 {
                     GetOrderEntryFormDataResponse formChoicesResponse = service.GetOrderEntryFormData(new GetOrderEntryFormDataRequest());
 
-                    EntityRef diagnosticServiceRef;
+                    DiagnosticServiceSummary diagnosticService;
                     if (String.IsNullOrEmpty(diagnosticServiceName))
                     {
-                        diagnosticServiceRef = ChooseRandom(formChoicesResponse.DiagnosticServiceChoices).DiagnosticServiceRef;                        
+                        diagnosticService = ChooseRandom(diagnosticServiceChoices);                        
                     }
                     else
                     {
-                        DiagnosticServiceSummary mappedDS = CollectionUtils.SelectFirst<DiagnosticServiceSummary>(
-                            formChoicesResponse.DiagnosticServiceChoices,
+                        diagnosticService = CollectionUtils.SelectFirst<DiagnosticServiceSummary>(
+                            diagnosticServiceChoices,
                             delegate(DiagnosticServiceSummary ds)
                             {
                                 return ds.Name == diagnosticServiceName;
                             });
 
-                        if (mappedDS == null)
+                        if (diagnosticService == null)
                             throw new Exception(String.Format("Cannot find diagnostic service with name {0}", diagnosticServiceName));
-
-                        diagnosticServiceRef = mappedDS.DiagnosticServiceRef;
                     }
 
-                    FacilitySummary randomFacility = ChooseRandom(formChoicesResponse.OrderingFacilityChoices);
-                    ExternalPractitionerSummary randomPhysician = ChooseRandom(formChoicesResponse.OrderingPhysicianChoices);
+                    FacilitySummary randomFacility = ChooseRandom(formChoicesResponse.FacilityChoices);
+                    ExternalPractitionerSummary randomPhysician = ChooseRandom(practitionerChoices);
                     EnumValueInfo randomPriority = ChooseRandom(formChoicesResponse.OrderPriorityChoices);
 
-                    PlaceOrderResponse response = service.PlaceOrder(new PlaceOrderRequest(
-                        visit.Patient,
-                        visit.entityRef,
-                        diagnosticServiceRef,
-                        randomPriority,
-                        randomPhysician.PractitionerRef,
-                        randomFacility.FacilityRef,
-                        true,
-                        Platform.Time));
+                    OrderRequisition requisition = new OrderRequisition();
+                    requisition.Patient = visit.PatientRef;
+                    requisition.Visit = visit;
+                    requisition.DiagnosticService = diagnosticService;
+                    requisition.OrderingPractitioner = randomPhysician;
+                    requisition.OrderingFacility = randomFacility;
+                    requisition.Priority = randomPriority;
+                    requisition.ReasonForStudy = "Randomly generated test order";
+                    requisition.SchedulingRequestTime = Platform.Time;
 
-                    LoadOrderDetailResponse loadOrderResponse = service.LoadOrderDetail(new LoadOrderDetailRequest(response.OrderRef));
-                    orderDetail = loadOrderResponse.OrderDetail;
+                    PlaceOrderResponse response = service.PlaceOrder(new PlaceOrderRequest(requisition));
+
                 });
-
-            return orderDetail;
         }
     }
 }

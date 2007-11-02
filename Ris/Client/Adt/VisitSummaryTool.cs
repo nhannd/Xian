@@ -107,7 +107,7 @@ namespace ClearCanvas.Ris.Client.Adt
             else
             {
                 IPatientBiographyToolContext context = (IPatientBiographyToolContext)this.ContextBase;
-                ShowVisitSummaryDialog(context.PatientProfile, context.DesktopWindow);
+                ShowVisitSummaryDialog(context.PatientProfileRef, context.DesktopWindow);
             }
         }
 

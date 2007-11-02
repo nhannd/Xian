@@ -134,6 +134,42 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
             return new UpdateExternalPractitionerResponse(assembler.CreateExternalPractitionerSummary(prac, PersistenceContext));
         }
 
+        [ReadOperation]
+        public TextQueryResponse<ExternalPractitionerSummary> TextQuery(TextQueryRequest request)
+        {
+            ExternalPractitionerAssembler assembler = new ExternalPractitionerAssembler();
+
+            TextQueryHelper<ExternalPractitioner, ExternalPractitionerSearchCriteria, ExternalPractitionerSummary> helper
+                = new TextQueryHelper<ExternalPractitioner, ExternalPractitionerSearchCriteria, ExternalPractitionerSummary>(
+                    delegate(string rawQuery, List<string> terms)
+                    {
+                        // allow matching on name (assume format: lastname, firstname)
+                        List<ExternalPractitionerSearchCriteria> criteria = new List<ExternalPractitionerSearchCriteria>();
+                        ExternalPractitionerSearchCriteria nameCriteria = new ExternalPractitionerSearchCriteria();
+                        TextQueryHelper.SetPersonNameCriteria(nameCriteria.Name, terms);
+                        criteria.Add(nameCriteria);
+
+                        // allow matching of any word against license #
+                        criteria.AddRange(CollectionUtils.Map<string, ExternalPractitionerSearchCriteria>(terms,
+                                     delegate(string word)
+                                     {
+                                         ExternalPractitionerSearchCriteria c = new ExternalPractitionerSearchCriteria();
+                                         c.LicenseNumber.Id.StartsWith(word);
+                                         return c;
+                                     }));
+
+                        return criteria.ToArray();
+                    },
+                    delegate(ExternalPractitioner prac)
+                    {
+                        return assembler.CreateExternalPractitionerSummary(prac, PersistenceContext);
+                    });
+
+            IExternalPractitionerBroker broker = PersistenceContext.GetBroker<IExternalPractitionerBroker>();
+            return helper.Query(request, broker);
+        }
+
         #endregion
+
     }
 }

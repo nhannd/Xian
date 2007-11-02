@@ -30,21 +30,22 @@
 #endregion
 
 using System;
+using System.ComponentModel;
 using System.Windows.Forms;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
     public partial class DateTimeField : UserControl
     {
-        private bool _nullable = false;
         private bool _showTime = false;
+        private bool _showDate = true;
         private event EventHandler _valueChanged;
 
         public DateTimeField()
         {
             InitializeComponent();
 
-            _checkBox.CheckedChanged += new EventHandler(CheckBoxCheckedChangedEventHandler);
             _dateTimePicker.ValueChanged += new EventHandler(DateTimePickerValueChangedEventHandler);
         }
 
@@ -53,64 +54,68 @@ namespace ClearCanvas.Desktop.View.WinForms
             FireValueChanged();
         }
 
-        private void CheckBoxCheckedChangedEventHandler(object sender, EventArgs e)
-        {
-            _dateTimePicker.Enabled = _checkBox.Checked;
-            FireValueChanged();
-        }
-
         private void FireValueChanged()
         {
-            if(_valueChanged != null)
-            {
-                _valueChanged(this, new EventArgs());
-            }
+            EventsHelper.Fire(_valueChanged, this, EventArgs.Empty);
         }
 
+        [DefaultValue(false)]
         public bool Nullable
         {
-            get { return _nullable; }
+            get { return _dateTimePicker.ShowCheckBox; }
             set
             {
-                _nullable = value;
-                _label.Visible = !_nullable;
-                _checkBox.Visible = _nullable;
-                _dateTimePicker.Enabled = _checkBox.Checked;
+                _dateTimePicker.ShowCheckBox = value;
             }
         }
 
+        [DefaultValue(true)]
+        public bool ShowDate
+        {
+            get { return _showDate; }
+            set
+            {
+                _showDate = value;
+                UpdateFormat();
+            }
+        }
+
+        [DefaultValue(false)]
         public bool ShowTime
         {
             get { return _showTime; }
             set 
             { 
                 _showTime = value;
-                if (!this.DesignMode)
-                {
-                    _dateTimePicker.Format = DateTimePickerFormat.Custom;
-                    _dateTimePicker.CustomFormat = _showTime == true ? Format.DateTimeFormat : Format.DateFormat;
-                }
+                UpdateFormat();
             }
         }
 
         public string LabelText
         {
             get { return _label.Text; }
-            set { _label.Text = _checkBox.Text = value; }
+            set { _label.Text = value; }
         }
 
         public DateTime? Value
         {
             get
             {
-                return _checkBox.Checked ? (DateTime?)_dateTimePicker.Value : null;
+                return _dateTimePicker.Checked ? (DateTime?)_dateTimePicker.Value : null;
             }
             set
             {
-                if (!TestNull(value))
+                bool isNull = TestNull(value);
+                if (!isNull)
+                {
                     _dateTimePicker.Value = (DateTime)value;
+                }
+                else
+                {
+                    // can't set the value (will get an exception)
+                }
 
-                _checkBox.Checked = !TestNull(value);
+                _dateTimePicker.Checked = !isNull;
             }
         }
 
@@ -142,8 +147,28 @@ namespace ClearCanvas.Desktop.View.WinForms
             if (this.DesignMode)
                 return;
 
-            _dateTimePicker.Format = DateTimePickerFormat.Custom;
-            _dateTimePicker.CustomFormat = Format.DateFormat;
+            UpdateFormat();
         }
+
+        private void UpdateFormat()
+        {
+            // if this is only a time control, use a spin control
+            _dateTimePicker.ShowUpDown = (_showTime && !_showDate);
+
+            if (this.DesignMode)
+                return;
+
+            // set the display format
+            _dateTimePicker.Format = DateTimePickerFormat.Custom;
+            if (_showDate && _showTime)
+                _dateTimePicker.CustomFormat = Format.DateTimeFormat;
+            else if (_showDate)
+                _dateTimePicker.CustomFormat = Format.DateFormat;
+            else if (_showTime)
+                _dateTimePicker.CustomFormat = Format.TimeFormat;
+            else
+                _dateTimePicker.CustomFormat = "";
+        }
+
     }
 }

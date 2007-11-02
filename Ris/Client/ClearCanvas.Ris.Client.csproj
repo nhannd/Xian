@@ -67,11 +67,15 @@
       <DependentUpon>ContactPersonEditorComponentSettings.settings</DependentUpon>
     </Compile>
     <Compile Include="ContainerFolder.cs" />
+    <Compile Include="DiagnosticServiceLookupHandler.cs" />
+    <Compile Include="DiagnosticServiceTreeComponent.cs" />
     <Compile Include="ExternalPractitionerDetailsEditorComponent.cs" />
     <Compile Include="ExternalPractitionerEditorComponent.cs" />
+    <Compile Include="ExternalPractitionerLookupHandler.cs" />
     <Compile Include="ExternalPractitionerSummaryComponent.cs" />
     <Compile Include="Formatting\CompositeIdentifierFormat.cs" />
     <Compile Include="HomePageContainer.cs" />
+    <Compile Include="ILookupHandler.cs" />
     <Compile Include="IViewerIntegration.cs" />
     <Compile Include="Document.cs" />
     <Compile Include="DocumentManager.cs" />
@@ -82,10 +86,12 @@
       <DependentUpon>EmailAddressEditorComponentSettings.settings</DependentUpon>
     </Compile>
     <Compile Include="ExceptionPolicies.cs" />
+    <Compile Include="LookupHandler.cs" />
     <Compile Include="OrderSummaryTable.cs" />
     <Compile Include="PatientBiographyDocument.cs" />
     <Compile Include="RandomUtils.cs" />
     <Compile Include="SearchComponent.cs" />
+    <Compile Include="RemoteSuggestionProvider.cs" />
     <Compile Include="WorkflowFolderFactory.cs" />
     <Compile Include="Formatting\AddressFormat.cs" />
     <Compile Include="AddressEditorComponentSettings.cs" />
@@ -132,7 +138,7 @@
     <Compile Include="Formatting\TelephoneFormat.cs" />
     <Compile Include="StaffDetailsEditorComponent.cs" />
     <Compile Include="StaffEditorComponent.cs" />
-    <Compile Include="StaffFinder.cs" />
+    <Compile Include="StaffLookupHandler.cs" />
     <Compile Include="StaffSummaryComponent.cs" />
     <Compile Include="StaffTable.cs" />
     <Compile Include="WebResourcesSettings.cs" />

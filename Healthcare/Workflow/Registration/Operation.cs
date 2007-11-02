@@ -59,14 +59,6 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
             }
         }
 
-        public class Cancel : RegistrationOperation
-        {
-            public void Execute(Order order, OrderCancelReasonEnum reason)
-            {
-                order.Cancel(reason);
-            }
-        }
-
         public class ReconcilePatient : RegistrationOperation
         {
             public void Execute(List<Patient> patientsToReconcile, IPersistenceContext context)

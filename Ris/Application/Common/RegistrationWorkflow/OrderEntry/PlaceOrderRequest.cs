@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 using ClearCanvas.Enterprise.Common;
@@ -41,48 +42,19 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
     [DataContract]
     public class PlaceOrderRequest : DataContractBase
     {
-        public PlaceOrderRequest(
-            EntityRef patient, 
-            EntityRef visit,
-            EntityRef diagnosticService,
-            EnumValueInfo orderPriority,
-            EntityRef orderingPhysician,
-            EntityRef orderingFacility,
-            bool scheduleOrder,
-            DateTime schedulingRequestTime)
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="requisition"></param>
+        public PlaceOrderRequest(OrderRequisition requisition)
         {
-            this.Patient = patient;
-            this.Visit = visit;
-            this.DiagnosticService = diagnosticService;
-            this.OrderPriority = orderPriority;
-            this.OrderingPhysician = orderingPhysician;
-            this.OrderingFacility = orderingFacility;
-            this.ScheduleOrder = scheduleOrder;
-            this.SchedulingRequestTime = schedulingRequestTime;
+            this.Requisition = requisition;
         }
 
+        /// <summary>
+        /// Requisition specifying details of the order to place.
+        /// </summary>
         [DataMember]
-        public EntityRef Patient;
-
-        [DataMember]
-        public EntityRef Visit;
-
-        [DataMember]
-        public EntityRef DiagnosticService;
-
-        [DataMember]
-        public EnumValueInfo OrderPriority;
-
-        [DataMember]
-        public EntityRef OrderingPhysician;
-
-        [DataMember]
-        public EntityRef OrderingFacility;
-
-        [DataMember]
-        public bool ScheduleOrder;
-
-        [DataMember]
-        public DateTime SchedulingRequestTime;
+        public OrderRequisition Requisition;
     }
 }

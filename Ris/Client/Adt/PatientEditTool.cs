@@ -127,7 +127,7 @@ namespace ClearCanvas.Ris.Client.Adt
             else if (this.ContextBase is IPatientBiographyToolContext)
             {
                 IPatientBiographyToolContext context = (IPatientBiographyToolContext)this.ContextBase;
-                Edit(context.PatientProfile, context.DesktopWindow);
+                Edit(context.PatientProfileRef, context.DesktopWindow);
             }
         }
 
