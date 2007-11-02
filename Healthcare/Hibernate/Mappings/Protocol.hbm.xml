@@ -7,12 +7,12 @@
     <version name="Version" column="Version_"/>
 
     <many-to-one name="Author" class="Staff" column="AuthorOID_"/>
-    <property name="ApprovalRequired" column="ApprovalRequired_" type="bool"/>
+    <property name="ApprovalRequired" column="ApprovalRequired_" type="Boolean"/>
 
     <list name="Notes" table="ProtocolNotes_" lazy="true" access="nosetter.camelcase-underscore">
       <key column="ProtocolOID_"/>
       <index column="Index_"/>
-      <composite-element class="Note">
+      <composite-element class="ProtocolNote">
         <property name="Text" column="Text_" type="String" length ="1024"/>
         <property name="TimeStamp" column="TimeStamp_" type="DateTime" not-null="true"/>
         <many-to-one name="Author" class="Staff" column="CreatedBy_" not-null="true" fetch="join"/>

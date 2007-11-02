@@ -85,6 +85,7 @@
     <Compile Include="PatientAttachment.cs" />
     <Compile Include="Protocol.cs" />
     <Compile Include="ProtocolCode.cs" />
+    <Compile Include="ProtocolNote.cs" />
     <Compile Include="ProtocolProcedureStep.cs" />
     <Compile Include="ReportingToBeProtocolledWorklist.cs" />
     <Compile Include="ReportPartStatus.cs" />
