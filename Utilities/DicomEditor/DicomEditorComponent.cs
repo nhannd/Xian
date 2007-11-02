@@ -280,6 +280,8 @@ namespace ClearCanvas.Utilities.DicomEditor
                     {
                         _loadedFiles[_position].DataSet[tag].SetStringValue(value);
                     }
+                    _dirtyFlags[_position] = true;
+                    EventsHelper.Fire(_tagEdittedEvent, this, EventArgs.Empty);
                 }
                 else
                 {
@@ -287,12 +289,14 @@ namespace ClearCanvas.Utilities.DicomEditor
                     {
                         if (this.IsMetainfoTag(tag))
                         {
-                            _loadedFiles[_position].MetaInfo[tag].SetStringValue(value);
+                            _loadedFiles[i].MetaInfo[tag].SetStringValue(value);
                         }
                         else
                         {
                             _loadedFiles[i].DataSet[tag].SetStringValue(value);
                         }
+                        _dirtyFlags[i] = true;
+                        EventsHelper.Fire(_tagEdittedEvent, this, EventArgs.Empty);
                     }
                 }
         }
