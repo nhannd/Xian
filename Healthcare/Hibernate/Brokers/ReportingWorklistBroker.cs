@@ -176,6 +176,17 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             return GetWorklist(hqlQuery, parameters);
         }
 
+        public IList<WorklistItem> GetToBeProtocolledWorklist()
+        {
+            return GetToBeProtocolledWorklist(null);
+        }
+
+        public IList<WorklistItem> GetToBeProtocolledWorklist(ReportingToBeProtocolledWorklist worklist)
+        {
+            // TODO 
+            return new List<WorklistItem>();
+        }
+
         public IList<WorklistItem> GetDraftWorklist(Staff currentStaff)
         {
             string hqlQuery = String.Concat(_hqlToBeReportedWorklist, 
@@ -298,6 +309,17 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             }
 
             return GetWorklistCount(hqlQuery, parameters);
+        }
+
+        public int GetToBeProtocolledWorklistCount()
+        {
+            return GetToBeProtocolledWorklistCount(null);
+        }
+
+        public int GetToBeProtocolledWorklistCount(ReportingToBeProtocolledWorklist worklist)
+        {
+            // TODO 
+            return 0;
         }
 
         public int GetDraftWorklistCount(Staff currentStaff)

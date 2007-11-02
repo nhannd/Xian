@@ -83,6 +83,10 @@
     <Compile Include="MimeDocumentData.cs" />
     <Compile Include="OrderAttachment.cs" />
     <Compile Include="PatientAttachment.cs" />
+    <Compile Include="Protocol.cs" />
+    <Compile Include="ProtocolCode.cs" />
+    <Compile Include="ProtocolProcedureStep.cs" />
+    <Compile Include="ReportingToBeProtocolledWorklist.cs" />
     <Compile Include="ReportPartStatus.cs" />
     <Compile Include="ReportStatus.cs" />
     <Compile Include="DiagnosticServiceTreeNode.cs" />

@@ -187,6 +187,9 @@
     <EmbeddedResource Include="Mappings\OrderAttachment.hbm.xml" />
     <EmbeddedResource Include="Mappings\OrderAttachmentCategoryEnum.hbm.xml" />
     <EmbeddedResource Include="Mappings\DocumentationProcedureStep.hbm.xml" />
+    <EmbeddedResource Include="Mappings\Protocol.hbm.xml" />
+    <EmbeddedResource Include="Mappings\ProtocolCode.hbm.xml" />
+    <EmbeddedResource Include="Mappings\ProtocolProcedureStep.hbm.xml" />
     <Content Include="Mappings\WorklistQueryBase.hrq.xml" />
     <EmbeddedResource Include="Mappings\NoteCategory.hbm.xml" />
     <EmbeddedResource Include="Mappings\NoteSeverityEnum.hbm.xml" />
