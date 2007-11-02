@@ -80,6 +80,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         }
         #endregion
 
+        #region Private Methods
         /// <summary>
         /// Load the values for the tag <see cref="DicomTags.ModalitiesInStudy"/> into a response
         /// message for a specific <see cref="Study"/>.
@@ -87,7 +88,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// <param name="read">The connection to use to read the values.</param>
         /// <param name="response">The message to add the value into.</param>
         /// <param name="row">The <see cref="Study"/> entity to find the values for.</param>
-        public void LoadModalitiesInStudy(IReadContext read, DicomMessage response, Study row)
+        private void LoadModalitiesInStudy(IReadContext read, DicomMessage response, Study row)
         {
             IQueryModalitiesInStudy select = read.GetBroker<IQueryModalitiesInStudy>();
 
@@ -115,7 +116,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// <param name="read">The connection to use to read the values.</param>
         /// <param name="response">The message to add the values into.</param>
         /// <param name="row">The <see cref="Series"/> entity to load the related <see cref="RequestAttributes"/> entity for.</param>
-        public void LoadRequestAttributes(IReadContext read, DicomMessage response, Series row)
+        private void LoadRequestAttributes(IReadContext read, DicomMessage response, Series row)
         {
             IQueryRequestAttributes select = read.GetBroker<IQueryRequestAttributes>();
 
@@ -147,7 +148,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// <param name="read"></param>
         /// <param name="studyInstanceUid"></param>
         /// <returns></returns>
-        public List<ServerEntityKey> LoadStudyKey(IReadContext read, string[] studyInstanceUid)
+        private List<ServerEntityKey> LoadStudyKey(IReadContext read, string[] studyInstanceUid)
         {
             ISelectStudy find = read.GetBroker<ISelectStudy>();
 
@@ -166,7 +167,6 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                 serverList.Add(row.GetKey());
 
             return serverList;
-
         }
 
         /// <summary>
@@ -176,7 +176,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// <param name="response"></param>
         /// <param name="tagList"></param>
         /// <param name="row"></param>
-        public void PopulatePatient(IReadContext read, DicomMessage response, IList<uint> tagList, Patient row)
+        private void PopulatePatient(IReadContext read, DicomMessage response, IList<uint> tagList, Patient row)
         {
             DicomAttributeCollection dataSet = response.DataSet;
     
@@ -222,7 +222,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// <param name="response"></param>
         /// <param name="tagList"></param>
         /// <param name="row"></param>
-        public void PopulateStudy(IReadContext read, DicomMessage response, IList<uint> tagList, Study row)
+        private void PopulateStudy(IReadContext read, DicomMessage response, IList<uint> tagList, Study row)
         {
             DicomAttributeCollection dataSet = response.DataSet;
 
@@ -293,7 +293,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// <param name="response"></param>
         /// <param name="tagList"></param>
         /// <param name="row"></param>
-        public void PopulateSeries(IReadContext read, DicomMessage request, DicomMessage response, IList<uint> tagList, Series row)
+        private void PopulateSeries(IReadContext read, DicomMessage request, DicomMessage response, IList<uint> tagList, Series row)
         {
             DicomAttributeCollection dataSet = response.DataSet;
 
@@ -344,6 +344,13 @@ namespace ClearCanvas.ImageServer.Services.Dicom
             }
         }
 
+        /// <summary>
+        /// Populate at the IMAGE level a response message.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="response"></param>
+        /// <param name="tagList"></param>
+        /// <param name="theInstanceStream"></param>
         private void PopulateInstance(DicomMessage request, DicomMessage response, List<uint> tagList, InstanceXml theInstanceStream)
         {
             DicomAttributeCollection dataSet = response.DataSet;
@@ -723,6 +730,13 @@ namespace ClearCanvas.ImageServer.Services.Dicom
             }
         }
 
+        /// <summary>
+        /// Compare at the IMAGE level if a query matches the data in an <see cref="InstanceXml"/> file.
+        /// </summary>
+        /// <param name="queryMessage"></param>
+        /// <param name="matchTagList"></param>
+        /// <param name="instanceStream"></param>
+        /// <returns></returns>
         private bool CompareInstanceMatch(DicomMessage queryMessage, List<uint> matchTagList, InstanceXml instanceStream)
         {
             foreach (uint tag in matchTagList)
@@ -775,12 +789,15 @@ namespace ClearCanvas.ImageServer.Services.Dicom
             StudyStorageLocation location;
             if (false == GetStudyStorageLocation(studyInstanceUid,out location))
             {
-                
+                Platform.Log(LogLevel.Error, "Unable to load storage location for study: {0}", studyInstanceUid);
+                DicomMessage failureResponse = new DicomMessage();
+                server.SendCFindResponse(presentationID, message.MessageId, failureResponse, DicomStatuses.QueryRetrieveUnableToProcess);
+                return true;
             }
 
-            StudyXml theStream = LoadStudyStream(location);
+            StudyXml studyXml = LoadStudyXml(location);
 
-            SeriesXml theSeriesStream = theStream[seriesInstanceUid];
+            SeriesXml seriesXml = studyXml[seriesInstanceUid];
 
             foreach (DicomAttribute attrib in message.DataSet)
             {
@@ -789,7 +806,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                     matchingTagList.Add(attrib.Tag.TagValue);
             }
 
-            foreach (InstanceXml theInstanceStream in theSeriesStream)
+            foreach (InstanceXml theInstanceStream in seriesXml)
             {
                 if (CompareInstanceMatch(message,matchingTagList, theInstanceStream))
                 {
@@ -798,7 +815,6 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                     server.SendCFindResponse(presentationID, message.MessageId, response,
                                              DicomStatuses.Pending);
                 }
-
             }
            
             DicomMessage finalResponse = new DicomMessage();
@@ -806,6 +822,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 
             return true;
         }
+        #endregion
 
         #region IDicomScp Members
 

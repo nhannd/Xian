@@ -36,6 +36,9 @@ using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageServer.Rules.Specifications
 {
+    /// <summary>
+    /// Expression factory for evaluating expressions that reference attributes within a <see cref="DicomMessageBase"/>.
+    /// </summary>
     [ExtensionOf(typeof(ExpressionFactoryExtensionPoint))]
     [LanguageSupport("dicom")]
     public class DicomExpressionFactory : IExpressionFactory
@@ -59,7 +62,6 @@ namespace ClearCanvas.ImageServer.Rules.Specifications
     /// This expression filter will evaluate input text with a leading $ as the name of a DICOM Tag.
     /// It will lookup the name of the tag, and retrieve the value of the tag and return it.  if there is no
     /// leading $, the value will be passed through.
-    ///
     /// </para>
     /// </remarks>
     public class DicomExpression : Expression
@@ -69,6 +71,11 @@ namespace ClearCanvas.ImageServer.Rules.Specifications
         {
         }
 
+        /// <summary>
+        /// Evaluate 
+        /// </summary>
+        /// <param name="arg"></param>
+        /// <returns></returns>
         public override object Evaluate(object arg)
         {
             if (string.IsNullOrEmpty(Text))

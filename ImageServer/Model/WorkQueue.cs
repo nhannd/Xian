@@ -126,10 +126,14 @@ namespace ClearCanvas.ImageServer.Model
         {
             using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
             {
-                ISelectWorkQueue broker = read.GetBroker<ISelectWorkQueue>();
-                WorkQueue theItem = broker.Load(key);
-                return theItem;
+                return Load(read, key);
             }            
+        }
+        static public WorkQueue Load(IReadContext read, ServerEntityKey key)
+        {
+            ISelectWorkQueue broker = read.GetBroker<ISelectWorkQueue>();
+            WorkQueue theItem = broker.Load(key);
+            return theItem;
         }
         #endregion
     }

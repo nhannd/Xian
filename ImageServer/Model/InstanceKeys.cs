@@ -47,6 +47,9 @@ namespace ClearCanvas.ImageServer.Model
         private ServerEntityKey _patientKey;
         private ServerEntityKey _studyKey;
         private ServerEntityKey _seriesKey;
+        private bool _insertPatient;
+        private bool _insertStudy;
+        private bool _insertSeries;
         #endregion
 
         #region Public Properties
@@ -69,6 +72,21 @@ namespace ClearCanvas.ImageServer.Model
         {
             get { return _seriesKey; }
             set { _seriesKey = value; }
+        }
+        public bool InsertPatient
+        {
+            get { return _insertPatient; }
+            set { _insertPatient = value; }
+        }
+        public bool InsertStudy
+        {
+            get { return _insertStudy; }
+            set { _insertStudy = value; }
+        }
+        public bool InsertSeries
+        {
+            get { return _insertSeries; }
+            set { _insertSeries = value; }
         }
         #endregion
     }

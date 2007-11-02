@@ -29,9 +29,6 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
@@ -45,6 +42,9 @@ using ClearCanvas.ImageServer.Model.SelectBrokers;
 
 namespace ClearCanvas.ImageServer.Rules.AutoRouteAction
 {
+    /// <summary>
+    /// <see cref="ServerCommand"/> derived class for use with <see cref="ServerCommandProcessor"/> for inserting AutoRoute WorkQueue entries into the Persistent Store.
+    /// </summary>
     public class InsertAutoRouteCommand : ServerCommand
     {
         #region Private Members
@@ -52,6 +52,11 @@ namespace ClearCanvas.ImageServer.Rules.AutoRouteAction
         private readonly string _deviceAe;
         #endregion
 
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="context">A contentxt in which to apply the AutoRoute request.</param>
+        /// <param name="device">The AE Title of the device to AutoRoute to.</param>
         public InsertAutoRouteCommand(ServerActionContext context, string device)
             : base("Update/Insert a WorkQueue Entry", false)
         {
@@ -61,6 +66,9 @@ namespace ClearCanvas.ImageServer.Rules.AutoRouteAction
             _deviceAe = device;
         }
 
+        /// <summary>
+        /// Do the insertion of the AutoRoute.
+        /// </summary>
         public override void Execute()
         {
             using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))

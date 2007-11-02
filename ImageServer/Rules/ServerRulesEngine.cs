@@ -32,7 +32,6 @@
 using System.Collections.Generic;
 using ClearCanvas.Common.Actions;
 using ClearCanvas.Common.Specifications;
-using ClearCanvas.Dicom;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Criteria;
@@ -40,6 +39,29 @@ using ClearCanvas.ImageServer.Model.SelectBrokers;
 
 namespace ClearCanvas.ImageServer.Rules
 {
+    /// <summary>
+    /// Rules engine for applying rules against DICOM files and performing actions.
+    /// </summary>
+    /// <remarks>
+    /// The ServerRulesEngine encapsulates code to apply rules against DICOM file 
+    /// objects.  It will load the rules from the persistent store, maintain them by type,
+    /// and then can apply them against specific files.
+    /// </remarks>
+    /// <seealso cref="ServerActionContext"/>
+    /// <example>
+    /// Here is an example rule for routing all images with Modality set to CT to an AE
+    /// Title CLEARCANVAS.
+    /// <code>
+    /// <rule id="CT Rule">
+    ///   <condition expressionLanguage="dicom">
+    ///     <equal test="$Modality" refValue="CT"/>
+    ///   </condition>
+    ///   <action>
+    ///     <auto-route device="CLEARCANVAS"/>
+    ///   </action>
+    /// </rule
+    /// </code>
+    /// </example>
     public class ServerRulesEngine
     {
         #region Private Members
@@ -48,6 +70,14 @@ namespace ClearCanvas.ImageServer.Rules
         #endregion
 
         #region Constructors
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <remarks>
+        /// A rules engine will only load rules that apply at a specific time.  The
+        /// apply time is specified by the <paramref name="applyTime"/> parameter.
+        /// </remarks>
+        /// <param name="applyTime">An enumerater value as to when the rules shall apply.</param>
         public ServerRulesEngine(ServerRuleApplyTimeEnum applyTime)
         {
             _applyTime = applyTime;
@@ -55,6 +85,9 @@ namespace ClearCanvas.ImageServer.Rules
         #endregion
 
         #region Properties
+        /// <summary>
+        /// Gets the <see cref="ServerRuleApplyTimeEnum"/> for the rules engine.
+        /// </summary>
         public ServerRuleApplyTimeEnum RuleApplyTime
         {
             get { return _applyTime; }
@@ -62,6 +95,9 @@ namespace ClearCanvas.ImageServer.Rules
         #endregion
 
         #region Public Methods
+        /// <summary>
+        /// Load the rules engine from the Persistent Store and compile the conditions and actions.
+        /// </summary>
         public void Load()
         {
             // Clearout the current type list.
@@ -104,6 +140,10 @@ namespace ClearCanvas.ImageServer.Rules
             }
         }
 
+        /// <summary>
+        /// Execute the rules against the context for the rules.
+        /// </summary>
+        /// <param name="context">A class containing the context for applying the rules.</param>
         public void Execute(ServerActionContext context)
         {
             foreach (RuleTypeCollection typeCollection in _typeList.Values)

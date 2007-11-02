@@ -49,14 +49,14 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
     public class WorkQueueProcessor
     {
         #region Members
-        private string _name;
-        private ManualResetEvent _threadStop; 
+        private readonly string _name;
+        private readonly IPersistentStore _store = PersistentStoreRegistry.GetDefaultStore();
+        private readonly Dictionary<TypeEnum, IWorkQueueProcessorFactory> _extensions = new Dictionary<TypeEnum, IWorkQueueProcessorFactory>();
+        private readonly SimpleBlockingThreadPool _threadPool;
+        private string _processorID = null;
+        private ManualResetEvent _threadStop;
         private Thread _theThread = null;
         private bool _stop = false;
-        private IPersistentStore _store = PersistentStoreRegistry.GetDefaultStore();
-        private Dictionary<TypeEnum, IWorkQueueProcessorFactory> _extensions = new Dictionary<TypeEnum, IWorkQueueProcessorFactory>();
-        private SimpleBlockingThreadPool _threadPool;
-        private string _processorID = null;
         #endregion
 
         #region Constructor
@@ -73,19 +73,21 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                 // No extension for the workqueue processor. 
                 Platform.Log(LogLevel.Warn, "No WorkQueueFactory Extension found.");
             }
-
-            foreach (object obj in factories)
+            else
             {
-                IWorkQueueProcessorFactory factory = obj as IWorkQueueProcessorFactory;
-                if (factory != null)
+                foreach (object obj in factories)
                 {
-                    TypeEnum type = factory.GetWorkQueueType();
-                    _extensions.Add(type, factory);
+                    IWorkQueueProcessorFactory factory = obj as IWorkQueueProcessorFactory;
+                    if (factory != null)
+                    {
+                        TypeEnum type = factory.GetWorkQueueType();
+                        _extensions.Add(type, factory);
+                    }
+                    else
+                        Platform.Log(LogLevel.Error, "Unexpected incorrect type loaded for extension: {0}",
+                                     obj.GetType());
                 }
-                else 
-                    Platform.Log(LogLevel.Error,"Unexpected incorrect type loaded for extension: {0}",obj.GetType());
             }
-
         }
         #endregion
 
@@ -198,16 +200,31 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                 WorkQueueUpdateParameters parms = new WorkQueueUpdateParameters();
                 parms.ProcessorID = ProcessorID;
 
-                parms.StatusEnum = StatusEnum.GetEnum("Failed");
                 parms.WorkQueueKey = item.GetKey();
-                parms.FailureCount = item.FailureCount + 1;
                 parms.StudyStorageKey = item.StudyStorageKey;
+                parms.FailureCount = item.FailureCount + 1;
 
-                // change the expiration time so that 
-                // the item stays in the queue for a while before somebody clean it up
-                parms.ScheduledTime = Platform.Time;
-                    // note: we probably don't need to change the scheduled time. Or do we?
-                parms.ExpirationTime = Platform.Time.AddDays(1);
+                WorkQueueSettings settings = WorkQueueSettings.Default;
+                if ((item.FailureCount + 1) > settings.WorkQueueMaxFailureCount)
+                {
+                    Platform.Log(LogLevel.Error,
+                                 "Failing {0} WorkQueue entry ({1}), reached max retry count of {2}",
+                                 item.TypeEnum.Description, item.GetKey(), item.FailureCount + 1);
+                    parms.StatusEnum = StatusEnum.GetEnum("Failed");
+                    parms.ScheduledTime = Platform.Time;
+                    parms.ExpirationTime = Platform.Time.AddDays(1);
+                }
+                else
+                {
+                    Platform.Log(LogLevel.Error,
+                                 "Resetting {0} WorkQueue entry ({1}) to Pending, current retry count {2}",
+                                 item.TypeEnum.Description, item.GetKey(), item.FailureCount + 1);
+                    parms.StatusEnum = StatusEnum.GetEnum("Pending");
+                    parms.ScheduledTime = Platform.Time.AddMinutes(settings.WorkQueueFailureDelayMinutes);
+                    parms.ExpirationTime =
+                        Platform.Time.AddMinutes((settings.WorkQueueMaxFailureCount - item.FailureCount) *
+                                                 settings.WorkQueueFailureDelayMinutes);
+                }
 
                 if (false == update.Execute(parms))
                 {
@@ -224,7 +241,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         /// </summary>
         public void ResetFailedItems()
         {
-            ImageServerServicesWorkQueueSettings settings = ImageServerServicesWorkQueueSettings.Default;
+            WorkQueueSettings settings = WorkQueueSettings.Default;
 
             StatusEnum pending = StatusEnum.GetEnum("Pending");
             StatusEnum failed = StatusEnum.GetEnum("Failed");
@@ -285,6 +302,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         /// </remarks>
         private void Process()
         {
+            // Reset any queue items related to this system that are in a "In Progress" state.
             ResetFailedItems();
 
             while (true)
@@ -314,51 +332,60 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 
                                 //Just fail the WorkQueue item, not much else we can do
                                 FailQueueItem(queueItem);
+                                continue;
                             }
-                            else
+
+                            IWorkQueueProcessorFactory factory = _extensions[queueItem.TypeEnum];
+
+                            IWorkQueueItemProcessor processor;
+                            try
                             {
-                                IWorkQueueProcessorFactory factory = _extensions[queueItem.TypeEnum];
-
-                                IWorkQueueItemProcessor processor = factory.GetItemProcessor();
-
-                                // Assign the id to the processor. All sub processors have the same ID as the parent
-                                // Note: 
-                                // This approach should be sufficient to work queue reset mechanism. The assumptions are:
-                                //      1. only one instance of the WorkQueueProcessor will exist on the same machine at one time.
-                                //      2. The only time that the sub-processor dies and leaves the item in "In Progress" state
-                                //          is when users stop the service. All other general failures will be handled cleanly by the general
-                                //          exception handler.
-                                //  
-                                processor.ProcessorID = ProcessorID;
-
-                                // Enqueue the actual processing of the item to the 
-                                // thread pool.  
-                                _threadPool.Enqueue(delegate
-                                                        {
-                                                            try
-                                                            {
-                                                                processor.Process(queueItem);
-                                                            }
-                                                            catch (Exception e)
-                                                            {
-                                                                Platform.Log(LogLevel.Error, e,
-                                                                             "Unexpected exception when processing WorkQueue item of type {0}.  Failing Queue item. (GUID: {1})",
-                                                                             queueItem.TypeEnum.Description,
-                                                                             queueItem.GetKey());
-
-                                                                FailQueueItem(queueItem);
-                                                            }
-
-                                                            // Cleanup the processor
-                                                            processor.Dispose();
-                                                        });
+                                processor = factory.GetItemProcessor();
                             }
+                            catch (Exception e)
+                            {
+                                Platform.Log(LogLevel.Error, e, "Unexpected exception creating WorkQueue processor.");
+                                FailQueueItem(queueItem);
+                                continue;
+                            }
+
+                            // Assign the id to the processor. All sub processors have the same ID as the parent
+                            // Note: 
+                            // This approach should be sufficient to work queue reset mechanism. The assumptions are:
+                            //      1. only one instance of the WorkQueueProcessor will exist on the same machine at one time.
+                            //      2. The only time that the sub-processor dies and leaves the item in "In Progress" state
+                            //          is when users stop the service. All other general failures will be handled cleanly by the general
+                            //          exception handler.
+                            //  
+                            processor.ProcessorID = ProcessorID;
+
+                            // Enqueue the actual processing of the item to the 
+                            // thread pool.  
+                            _threadPool.Enqueue(delegate
+                                                    {
+                                                        try
+                                                        {
+                                                            processor.Process(queueItem);
+                                                        }
+                                                        catch (Exception e)
+                                                        {
+                                                            Platform.Log(LogLevel.Error, e,
+                                                                         "Unexpected exception when processing WorkQueue item of type {0}.  Failing Queue item. (GUID: {1})",
+                                                                         queueItem.TypeEnum.Description,
+                                                                         queueItem.GetKey());
+
+                                                            FailQueueItem(queueItem);
+                                                        }
+
+                                                        // Cleanup the processor
+                                                        processor.Dispose();
+                                                    });
                         }
                     }
 
                     if (!foundResult)
                     {
-                        _threadStop.WaitOne(ImageServerServicesWorkQueueSettings.Default.WorkQueueQueryDelay, false);
+                        _threadStop.WaitOne(WorkQueueSettings.Default.WorkQueueQueryDelay, false);
                         _threadStop.Reset();
                     }
                 }

@@ -29,9 +29,6 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Xml;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Enterprise;
@@ -101,11 +98,16 @@ namespace ClearCanvas.ImageServer.Model
         {
             using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
             {
-                ISelectServerRule broker = read.GetBroker<ISelectServerRule>();
-                ServerRule theItem = broker.Load(key);
-                return theItem;
+                return Load(read, key);
             }
         }
+        static public ServerRule Load(IReadContext read, ServerEntityKey key)
+        {
+            ISelectServerRule broker = read.GetBroker<ISelectServerRule>();
+            ServerRule theItem = broker.Load(key);
+            return theItem;
+        }
+
         #endregion
     }
 }

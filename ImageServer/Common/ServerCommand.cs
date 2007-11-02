@@ -29,10 +29,6 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace ClearCanvas.ImageServer.Common
 {
     /// <summary>
@@ -46,24 +42,36 @@ namespace ClearCanvas.ImageServer.Common
     public abstract class ServerCommand
     {
         #region Private Members
-        private string _name;
+        private string _description;
         private readonly bool _requiresRollback;
         #endregion
 
         #region Constructor
-        public ServerCommand(string name, bool requiresRollback)
+        /// <summary>
+        /// Constructor for a ServerCommand.
+        /// </summary>
+        /// <param name="description">A description of the command</param>
+        /// <param name="requiresRollback">bool telling if the command requires a rollback of the operation if it fails</param>
+        public ServerCommand(string description, bool requiresRollback)
         {
-            _name = name;
+            _description = description;
             _requiresRollback = requiresRollback;
         }
         #endregion
 
         #region Properties
-        public string Name
+        /// <summary>
+        /// Gets and sets a value describing what the command is doing.
+        /// </summary>
+        public string Description
         {
-            get { return _name; }
-            set { _name = value; }
+            get { return _description; }
+            set { _description = value; }
         }
+
+        /// <summary>
+        /// Gets a value describing if the ServerCommand requires a rollback of the operation its included in if it fails during execution.
+        /// </summary>
         public bool RequiresRollback
         {
             get { return _requiresRollback; }
@@ -71,7 +79,13 @@ namespace ClearCanvas.ImageServer.Common
         #endregion
 
         #region Abstract Methods
+        /// <summary>
+        /// Execute the ServerCommand.
+        /// </summary>
         public abstract void Execute();
+        /// <summary>
+        /// Undo the operation done by <see cref="Execute"/>.
+        /// </summary>
         public abstract void Undo();
         #endregion
     }

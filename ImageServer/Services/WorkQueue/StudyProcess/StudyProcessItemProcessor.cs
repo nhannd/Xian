@@ -31,8 +31,6 @@
 
 using System;
 using System.IO;
-using System.Threading;
-using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.DicomServices.Xml;
@@ -43,12 +41,14 @@ using ClearCanvas.ImageServer.Rules;
 namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 {
     /// <summary>
-    /// Processor for 'StudyProcess' WorkQueue entries.
+    /// Processor for 'StudyProcess' <see cref="WorkQueue"/> entries.
     /// </summary>
     public class StudyProcessItemProcessor : BaseItemProcessor, IWorkQueueItemProcessor
     {
         #region Private Members
         private ServerRulesEngine _sopProcessedRulesEngine;
+        private ServerRulesEngine _studyProcessedRulesEngine;
+        private ServerRulesEngine _seriesProcessedRulesEngine;
         private string _processorID;
         #endregion
 
@@ -61,35 +61,56 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         #endregion
 
         #region Private Methods
-
-
-        private StudyXml LoadStudyStream(string streamFile)
+        /// <summary>
+        /// Method for applying rules when a new study has been inserted.
+        /// </summary>
+        /// <param name="item">The <see cref="WorkQueue"/> item being processed.</param>
+        /// <param name="file">The DICOM file being processed.</param>
+        private void ProcessStudyRules(Model.WorkQueue item, DicomFile file)
         {
-            StudyXml theStream = new StudyXml();
-
-            if (File.Exists(streamFile))
+            if (_studyProcessedRulesEngine == null)
             {
-                Stream fileStream = new FileStream(streamFile, FileMode.Open);
-
-                XmlDocument theDoc = new XmlDocument();
-
-                StudyXmlIo.Read(theDoc, fileStream);
-
-                fileStream.Close();
-
-                theStream.SetMemento(theDoc);
+                _studyProcessedRulesEngine = new ServerRulesEngine(ServerRuleApplyTimeEnum.GetEnum("StudyProcessed"));
+                _studyProcessedRulesEngine.Load();
             }
+            ServerActionContext context = new ServerActionContext(file,item.ServerPartitionKey,item.StudyStorageKey);
 
-            return theStream;
+            _studyProcessedRulesEngine.Execute(context);
         }
 
-        private void ProcessFile(Model.WorkQueue item, string path, StudyXml stream, string studyStreamFile)
+        /// <summary>
+        /// Method for applying rules when a new series has been inserted.
+        /// </summary>
+        /// <param name="item">The <see cref="WorkQueue"/> item being processed.</param>
+        /// <param name="file">The DICOM file being processed.</param>
+        private void ProcessSeriesRules(Model.WorkQueue item, DicomFile file)
         {
+            if (_seriesProcessedRulesEngine == null)
+            {
+                _seriesProcessedRulesEngine = new ServerRulesEngine(ServerRuleApplyTimeEnum.GetEnum("SeriesProcessed"));
+                _seriesProcessedRulesEngine.Load();
+            }
+            ServerActionContext context = new ServerActionContext(file, item.ServerPartitionKey, item.StudyStorageKey);
+
+            _seriesProcessedRulesEngine.Execute(context);
+        }
+
+        /// <summary>
+        /// Process a specific DICOM file related to a <see cref="WorkQueue"/> request.
+        /// </summary>
+        /// <param name="item">The WorkQueue item to process</param>
+        /// <param name="path">The path of the file to process.</param>
+        /// <param name="stream">The <see cref="StudyXml"/> file to update with information from the file.</param>
+        private void ProcessFile(Model.WorkQueue item, string path, StudyXml stream)
+        {
+            InstanceKeys keys;
+            DicomFile file;
+
             // Use the command processor for rollback capabilities.
             ServerCommandProcessor processor = new ServerCommandProcessor("Processing WorkQueue DICOM File");
             try
             {
-                DicomFile file = new DicomFile(path);
+                file = new DicomFile(path);
 
                 file.Load();
 
@@ -97,58 +118,77 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                 String patientsName = file.DataSet[DicomTags.PatientsName].GetString(0, "");
 
                 // Update the StudyStream object
-                processor.AddCommand(new InsertStreamCommand(file, stream, studyStreamFile));
+                processor.AddCommand(new InsertStreamCommand(file, stream, StorageLocation));
 
                 // Insert into the database
-                processor.AddCommand(new InsertInstanceCommand(file,_storageLocation));
+                InsertInstanceCommand insertInstanceCommand = new InsertInstanceCommand(file, StorageLocation);
+                processor.AddCommand(insertInstanceCommand);
 
-                ServerActionContext context = new ServerActionContext(file, item.ServerPartitionKey, item.StudyStorageKey);
+                // Create a context for applying actions from the rules engine
+                ServerActionContext context =
+                    new ServerActionContext(file, item.ServerPartitionKey, item.StudyStorageKey);
                 context.CommandProcessor = processor;
 
+                // Run the rules engine against the object.
                 _sopProcessedRulesEngine.Execute(context);
 
+                // Do the actual processing
                 if (!processor.Execute())
                 {
-                    Platform.Log(LogLevel.Error,"Failure processing command: {0}", processor.Description);
+                    Platform.Log(LogLevel.Error, "Failure processing command: {0}", processor.Description);
+                    keys = null;
                 }
                 else
-                    Platform.Log(LogLevel.Info, "Processed SOP: {0} for Patient {1}", file.MediaStorageSopInstanceUid, patientsName);
+                {
+                    Platform.Log(LogLevel.Info, "Processed SOP: {0} for Patient {1}", file.MediaStorageSopInstanceUid,
+                                 patientsName);
+                    keys = insertInstanceCommand.InsertKeys;
+                }
             }
             catch (Exception e)
             {
-                Platform.Log(LogLevel.Error, e, "Unexpected exception when {0}.  Rolling back operation.", processor.Description);
+                Platform.Log(LogLevel.Error, e, "Unexpected exception when {0}.  Rolling back operation.",
+                             processor.Description);
                 processor.Rollback();
-                throw new ApplicationException("Unexpected exception when processing file.",e);
-            }            
+                throw new ApplicationException("Unexpected exception when processing file.", e);
+            }
+
+            if (keys != null)
+            {
+                // We've inserted a new Study, process Study Rules
+                if (keys.InsertStudy)
+                {
+                    ProcessStudyRules(item, file);
+                }
+
+                // We've inserted a new Series, process Series Rules
+                if (keys.InsertSeries)
+                {
+                    ProcessSeriesRules(item, file);
+                }
+            }
         }
 
+        /// <summary>
+        /// Process all of the SOP Instances associated with a <see cref="WorkQueue"/> item.
+        /// </summary>
+        /// <param name="item">The <see cref="WorkQueue"/> item.</param>
         private void ProcessUidList(Model.WorkQueue item)
-        {
-            string studyStreamPath =
-                Path.Combine(_storageLocation.GetStudyPath(), _storageLocation.StudyInstanceUid + ".xml");
-            
-            StudyXml stream;
+        {            
+            StudyXml studyXml;
 
-            try
-            {
-                stream = LoadStudyStream(studyStreamPath);
-            }
-            catch (Exception e)
-            {
-                Platform.Log(LogLevel.Error, e,
-                             "Unexpected exception when loading study stream to process StudyProcess WorkQueue item for Study Instance UID: {0} File: {1}", _storageLocation.StudyInstanceUid, studyStreamPath);
-                throw new ApplicationException("Unexpected exception when loading study stream", e);
-            }
+            studyXml = LoadStudyXml(StorageLocation);
 
             int successfulProcessCount = 0;
 
-            foreach (WorkQueueUid sop in _uidList)
+            foreach (WorkQueueUid sop in WorkQueueUidList)
             {
-                string path = Path.Combine(_storageLocation.GetStudyPath(), sop.SeriesInstanceUid);
+                string path = Path.Combine(StorageLocation.GetStudyPath(), sop.SeriesInstanceUid);
                 path = Path.Combine(path, sop.SopInstanceUid + ".dcm");
+
                 try
                 {
-                    ProcessFile(item, path,stream, studyStreamPath);
+                    ProcessFile(item, path,studyXml);
                 }
                 catch (Exception e)
                 {
@@ -159,11 +199,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                 successfulProcessCount++;
 
                 // Delete it out of the queue
-                DeleteWorkQueueUid(sop);                
+                DeleteWorkQueueUid(sop);
             }
 
             if (successfulProcessCount == 0)
-                SetWorkQueueItemPending(item, true); // set failure status if retries expired
+                SetWorkQueueItemPending(item, true); // set failure status, retries will be attempted if necessary
             else
                 SetWorkQueueItemPending(item, false); // set success status
 
@@ -179,7 +219,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         public void Process(Model.WorkQueue item)
         {
 
-#if DEBUG
+#if DEBUG_TEST
         // Simulate slow processing so that we can stop the service
         // and test that it reset workqueue item when restarted
             Console.WriteLine("WorkQueue Item has been locked for processing...");
@@ -191,9 +231,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             //Load the specific UIDs that need to be processed.
             LoadUids(item);
 
-            if (_uidList.Count == 0)
+            if (WorkQueueUidList.Count == 0)
             {
-                SetWorkQueueItemComplete(item);
+                // No UIDs associated with the WorkQueue item.  Set the status back to pending.
+                SetWorkQueueItemCompleteIfExpired(item);
             }
             else
             {
@@ -204,6 +245,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                 //Load the storage location.
                 LoadStorageLocation(item);
 
+                // Process the images in the list
                 ProcessUidList(item);
             }
         }

@@ -29,8 +29,8 @@
 
 #endregion
 
-using System.Collections.Generic;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
@@ -40,12 +40,23 @@ using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 {
+    /// <summary>
+    /// ServerCommand for inserting a DICOM File into the persistent store.
+    /// </summary>
     public class InsertInstanceCommand : ServerCommand
     {
         #region Private Members
 
         private readonly DicomFile _file;
         private readonly StudyStorageLocation _storageLocation;
+        private InstanceKeys _insertKey;
+        #endregion
+
+        #region Public Properties
+        public InstanceKeys InsertKeys
+        {
+            get { return _insertKey; }
+        }
         #endregion
 
         public InsertInstanceCommand(DicomFile file, StudyStorageLocation location)
@@ -70,7 +81,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
                 // Get the Insert Instance broker and do the insert
                 IInsertInstance insert = updateContext.GetBroker<IInsertInstance>();
-                IList<InstanceKeys> keys = insert.Execute(parms);
+                _insertKey = CollectionUtils.FirstElement<InstanceKeys>(insert.Execute(parms));
 
                 // If the Request Attributes Sequence is in the dataset, do an insert.
                 if (_file.DataSet.Contains(DicomTags.RequestAttributesSequence))
@@ -82,7 +93,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                         {
                             RequestAttributesInsertParameters requestParms = new RequestAttributesInsertParameters();
                             sequenceItem.LoadDicomFields(requestParms);
-                            requestParms.SeriesKey = keys[0].SeriesKey;
+                            requestParms.SeriesKey = _insertKey.SeriesKey;
 
                             IInsertRequestAttributes insertRequest = updateContext.GetBroker<IInsertRequestAttributes>();
                             insertRequest.Execute(requestParms);

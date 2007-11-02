@@ -36,11 +36,11 @@
     <Compile Include="AutoRoute\AutoRouteFactoryExtension.cs" />
     <Compile Include="AutoRoute\AutoRouteItemProcessor.cs" />
     <Compile Include="BaseItemProcessor.cs" />
-    <Compile Include="ImageServerServicesWorkQueueSettings.cs" />
-    <Compile Include="ImageServerServicesWorkQueueSettings.Designer.cs">
+    <Compile Include="WorkQueueSettings.cs" />
+    <Compile Include="WorkQueueSettings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>ImageServerServicesWorkQueueSettings.settings</DependentUpon>
+      <DependentUpon>WorkQueueSettings.settings</DependentUpon>
     </Compile>
     <Compile Include="IWorkQueueItemProcessor.cs" />
     <Compile Include="IWorkQueueProcessorFactory.cs" />
@@ -96,9 +96,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="ImageServerServicesWorkQueueSettings.settings">
+    <None Include="WorkQueueSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>ImageServerServicesWorkQueueSettings.Designer.cs</LastGenOutput>
+      <LastGenOutput>WorkQueueSettings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

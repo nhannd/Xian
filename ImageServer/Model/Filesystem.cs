@@ -94,10 +94,14 @@ namespace ClearCanvas.ImageServer.Model
         {
             using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
             {
-                ISelectFilesystem broker = read.GetBroker<ISelectFilesystem>();
-                Filesystem theFilesystem = broker.Load(key);
-                return theFilesystem;
+                return Load(read, key);
             }
+        }
+        static public Filesystem Load(IReadContext read, ServerEntityKey key)
+        {
+            ISelectFilesystem broker = read.GetBroker<ISelectFilesystem>();
+            Filesystem theFilesystem = broker.Load(key);
+            return theFilesystem;
         }
         #endregion
 

@@ -36,29 +36,33 @@ using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.DicomServices.Xml;
+using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 {
+    /// <summary>
+    /// Insert DICOM file into a <see cref="StudyXml"/> file and save to disk.
+    /// </summary>
     public class InsertStreamCommand : ServerCommand
     {
         #region Private Members
 
-        private DicomFile _file;
-        private StudyXml _stream;
-        private string _studyStreamPath;
+        private readonly DicomFile _file;
+        private readonly StudyXml _stream;
+        private readonly StudyStorageLocation _studyStorageLocation;
         #endregion
 
         #region Constructors
-        public InsertStreamCommand( DicomFile file, StudyXml stream, string studyStreamPath)
+        public InsertStreamCommand( DicomFile file, StudyXml stream, StudyStorageLocation storageLocation)
             : base("Insert Instance into Database", true)
         {
             Platform.CheckForNullReference(file, "Dicom File object");
             Platform.CheckForNullReference(stream, "StudyStream object");
-            Platform.CheckForNullReference(studyStreamPath, "Path to Stream XML file");
+            Platform.CheckForNullReference(storageLocation, "Study Storage Location");
 
             _file = file;
             _stream = stream;
-            _studyStreamPath = studyStreamPath;
+            _studyStorageLocation = storageLocation;
 
         }
         #endregion
@@ -73,14 +77,14 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             }
             // Write it back out.  We flush it out with every added image so that if a failure happens,
             // we can recover properly.
-            WriteStudyStream(_studyStreamPath, _stream);
+            WriteStudyStream(Path.Combine(_studyStorageLocation.GetStudyPath(),_studyStorageLocation.StudyInstanceUid + ".xml"), _stream);
         }
 
         public override void Undo()
         {
             _stream.RemoveFile(_file);
 
-            WriteStudyStream(_studyStreamPath, _stream);
+            WriteStudyStream(Path.Combine(_studyStorageLocation.GetStudyPath(), _studyStorageLocation.StudyInstanceUid + ".xml"), _stream);
         }
 
         private static void WriteStudyStream(string streamFile, StudyXml theStream)

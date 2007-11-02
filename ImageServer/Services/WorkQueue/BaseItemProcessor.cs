@@ -31,7 +31,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Xml;
 using ClearCanvas.Common;
+using ClearCanvas.DicomServices.Xml;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
@@ -45,9 +48,24 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
     public abstract class BaseItemProcessor : IDisposable
     {
         #region Private Members
-        protected StudyStorageLocation _storageLocation;
-        protected IReadContext _readContext;
-        protected IList<WorkQueueUid> _uidList;
+        private StudyStorageLocation _storageLocation;
+        private IReadContext _readContext;
+        private IList<WorkQueueUid> _uidList;
+        #endregion
+
+        #region Protected Properties
+        protected IReadContext ReadContext
+        {
+            get { return _readContext; }
+        }
+        protected StudyStorageLocation StorageLocation
+        {
+            get { return _storageLocation; }
+        }
+        protected IList<WorkQueueUid> WorkQueueUidList
+        {
+            get { return _uidList; }
+        }
         #endregion
 
         #region Contructors
@@ -93,8 +111,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
             parms.WorkQueueKey = item.GetKey();
 
             _uidList = select.Execute(parms);
-
         }
+
+        /// <summary>
+        /// Set a <see cref="WorkQueue"/> entry to pending.
+        /// </summary>
+        /// <param name="item">The <see cref="WorkQueue"/> entry to set.</param>
+        /// <param name="failed">If true, the item failed and the failure retry count should be incremented.</param>
         protected static void SetWorkQueueItemPending(Model.WorkQueue item, bool failed)
         {
             using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
@@ -107,10 +130,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                 parms.StudyStorageKey = item.StudyStorageKey;
                 parms.ProcessorID = item.ProcessorID;
 
+                WorkQueueSettings settings = WorkQueueSettings.Default;
+                    
                 if (failed)
                 {
                     parms.FailureCount = item.FailureCount + 1;
-                    ImageServerServicesWorkQueueSettings settings = ImageServerServicesWorkQueueSettings.Default;
                     if ((item.FailureCount + 1) > settings.WorkQueueMaxFailureCount)
                     {
                         Platform.Log(LogLevel.Error,
@@ -128,7 +152,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                         parms.StatusEnum = StatusEnum.GetEnum("Pending");
                         parms.ScheduledTime = Platform.Time.AddMinutes(settings.WorkQueueFailureDelayMinutes);
                         parms.ExpirationTime =
-                            Platform.Time.AddMinutes(settings.WorkQueueMaxFailureCount *
+                            Platform.Time.AddMinutes((settings.WorkQueueMaxFailureCount-item.FailureCount) *
                                                      settings.WorkQueueFailureDelayMinutes);
                     }
                 }
@@ -137,7 +161,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                     parms.StatusEnum = StatusEnum.GetEnum("Pending");
                     parms.FailureCount = item.FailureCount;
                     parms.ScheduledTime = Platform.Time.AddSeconds(15.0);
-                    parms.ExpirationTime = Platform.Time.AddMinutes(5.0);
+                    parms.ExpirationTime = Platform.Time.AddSeconds(settings.WorkQueueExpireDelaySeconds);
                 }
 
                 if (false == update.Execute(parms))
@@ -150,7 +174,19 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
             }
         }
 
-        protected static void SetWorkQueueItemComplete(Model.WorkQueue item)
+        /// <summary>
+        /// Set a <see cref="WorkQueue"/> item to complete.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// This routine will set <paramref name="item"/> to Completed if 
+        /// the current time is after the <see cref="WorkQueue.ExpirationTime"/>.
+        /// If it is not after the <see cref="WorkQueue.ExpirationTime"/>, the 
+        /// <paramref name="item"/> is set to Pending.
+        /// </para>
+        /// </remarks>
+        /// <param name="item">The <see cref="WorkQueue"/> item to set.</param>
+        protected static void SetWorkQueueItemCompleteIfExpired(Model.WorkQueue item)
         {
             using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
@@ -164,13 +200,21 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                     parms.WorkQueueKey = item.GetKey();
                     parms.StudyStorageKey = item.StudyStorageKey;
                     parms.FailureCount = item.FailureCount;
+                    parms.ScheduledTime = item.ScheduledTime;
+                    parms.ExpirationTime = item.ExpirationTime; // Keep the same
                 }
                 else
                 {
+                    WorkQueueSettings settings = WorkQueueSettings.Default;
+
+                    DateTime scheduledTime = Platform.Time.AddSeconds(settings.WorkQueueProcessDelaySeconds);
+                    if (scheduledTime > item.ExpirationTime)
+                        scheduledTime = item.ExpirationTime;
+
                     parms.StatusEnum = StatusEnum.GetEnum("Pending");
                     parms.WorkQueueKey = item.GetKey();
                     parms.StudyStorageKey = item.StudyStorageKey;
-                    parms.ScheduledTime = Platform.Time.AddSeconds(90.0); // 60 second delay to recheck
+                    parms.ScheduledTime = scheduledTime; 
                     parms.ExpirationTime = item.ExpirationTime; // Keep the same
                     parms.FailureCount = item.FailureCount;
                 }
@@ -200,6 +244,34 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 
                 updateContext.Commit();
             }
+        }
+
+        /// <summary>
+        /// Load a <see cref="StudyXml"/> file for a given <see cref="StudyStorageLocation"/>
+        /// </summary>
+        /// <param name="location">The location a study is stored.</param>
+        /// <returns>The <see cref="StudyXml"/> instance for <paramref name="location"/></returns>
+        protected static StudyXml LoadStudyXml(StudyStorageLocation location)
+        {
+            String streamFile = Path.Combine(location.GetStudyPath(), location.StudyInstanceUid + ".xml");
+
+            StudyXml theXml = new StudyXml();
+
+            if (File.Exists(streamFile))
+            {
+                using (Stream fileStream = new FileStream(streamFile, FileMode.Open))
+                {
+                    XmlDocument theDoc = new XmlDocument();
+
+                    StudyXmlIo.Read(theDoc, fileStream);
+
+                    theXml.SetMemento(theDoc);
+
+                    fileStream.Close();
+                }
+            }
+
+            return theXml;
         }
         #endregion
 

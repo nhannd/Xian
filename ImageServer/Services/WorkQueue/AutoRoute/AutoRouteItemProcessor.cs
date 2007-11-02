@@ -39,6 +39,9 @@ using ClearCanvas.ImageServer.Services.Dicom;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
 {
+    /// <summary>
+    /// Processor for 'AutoRoute <see cref="WorkQueue"/> entries
+    /// </summary>
     public class AutoRouteItemProcessor : BaseItemProcessor, IWorkQueueItemProcessor
     {
         private string _processorId;
@@ -48,31 +51,46 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
             set { _processorId = value; }
         }
 
-        public void ProcessWorkQueueUids(Model.WorkQueue item, ImageServerStorageScu _theScu)
+        #region Private Methods
+        /// <summary>
+        /// Add the UIDs scheduled to be transfered to the SCU
+        /// </summary>
+        /// <param name="item">The <see cref="WorkQueue"/> item being processed</param>
+        /// <param name="scu">The Storage SCU component doing an autoroute.</param>
+        private void AddWorkQueueUidsToSendList(Model.WorkQueue item, ImageServerStorageScu scu)
         {
             LoadStorageLocation(item);
-            string studyPath = _storageLocation.GetStudyPath();
+            string studyPath = StorageLocation.GetStudyPath();
 
-            StudyXml studyXml = BaseScp.LoadStudyStream(_storageLocation);
-            
-            foreach (WorkQueueUid uid in _uidList)
+            StudyXml studyXml = LoadStudyXml(StorageLocation);
+
+            foreach (WorkQueueUid uid in WorkQueueUidList)
             {
-                _theScu.LoadInstanceFromStudyXml(studyPath, uid.SeriesInstanceUid, uid.SopInstanceUid, studyXml);
+                scu.LoadInstanceFromStudyXml(studyPath, uid.SeriesInstanceUid, uid.SopInstanceUid, studyXml);
             }
         }
+        #endregion
 
+        #region Public Methods
+        /// <summary>
+        /// Process a <see cref="WorkQueue"/> item of type AutoRoute.
+        /// </summary>
+        /// <param name="item"></param>
         public void Process(Model.WorkQueue item)
         {
+            // Load related rows form the WorkQueueUid table
             LoadUids(item);
 
-            if(_uidList.Count == 0)
+            // Intercept entries that don't have any UIDs associated with them, and just
+            // set them back to pending.
+            if (WorkQueueUidList.Count == 0)
             {
-                SetWorkQueueItemPending(item, false);
+                SetWorkQueueItemCompleteIfExpired(item);
                 return;
             }
 
             // Load remote device information fromt he database.
-            Device device = Device.Load(item.DeviceKey);
+            Device device = Device.Load(ReadContext, item.DeviceKey);
             if (device == null)
             {
                 Platform.Log(LogLevel.Error,
@@ -82,25 +100,26 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
                 return ;
             }
 
-            ServerPartition partition = ServerPartition.Load(item.ServerPartitionKey);
+            ServerPartition partition = ServerPartition.Load(ReadContext, item.ServerPartitionKey);
 
             // Now setup the StorageSCU component
-            ImageServerStorageScu scu = new ImageServerStorageScu(partition.AeTitle, device.AeTitle,
-                                                                  device.IpAddress, device.Port);
+            ImageServerStorageScu scu = new ImageServerStorageScu(partition, device);
 
             // set the preferred syntax lists
-            scu.LoadPreferredSyntaxes(_readContext,device);
+            scu.LoadPreferredSyntaxes(ReadContext);
 
             // Load the Instances to Send into the SCU component
-            ProcessWorkQueueUids(item, scu);
+            AddWorkQueueUidsToSendList(item, scu);
 
+            // Set an event to be called when each image is transferred
             scu.ImageStoreCompleted += delegate(Object sender, StorageInstance instance)
                                     {
                                         if (instance.SendStatus.Status == DicomState.Success
-                                            || instance.SendStatus.Status == DicomState.Warning)
+                                            || instance.SendStatus.Status == DicomState.Warning
+                                            || instance.SendStatus.Equals(DicomStatuses.SOPClassNotSupported))
                                         {
                                             WorkQueueUid foundUid = null;
-                                            foreach (WorkQueueUid uid in _uidList)
+                                            foreach (WorkQueueUid uid in WorkQueueUidList)
                                             {
                                                 if (uid.SopInstanceUid.Equals(instance.SopInstanceUid))
                                                 {
@@ -111,7 +130,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
                                             if (foundUid != null)
                                             {
                                                 DeleteWorkQueueUid(foundUid);
-                                                _uidList.Remove(foundUid);
+                                                WorkQueueUidList.Remove(foundUid);
+                                            }
+                                            if (instance.SendStatus.Equals(DicomStatuses.SOPClassNotSupported))
+                                            {
+                                                Platform.Log(LogLevel.Warn,
+                                                             "Unable to transfer SOP Instance, SOP Class is not supported by remote device: {0}",
+                                                             instance.SopClass.Name);
                                             }
                                         }
                                     };
@@ -119,13 +144,15 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
             // Block until send is complete
             scu.Send();
 
+            // Join for the thread to exit
             scu.Join();
 
-            if (_uidList.Count > 0)
+            // Reset the WorkQueue entry status
+            if (WorkQueueUidList.Count > 0)
                 SetWorkQueueItemPending(item, true); // failures occurred
             else
                 SetWorkQueueItemPending(item, false); // no failures
         }
-
+        #endregion
     }
 }

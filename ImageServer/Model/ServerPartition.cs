@@ -94,10 +94,14 @@ namespace ClearCanvas.ImageServer.Model
         {
             using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
             {
-                ISelectServerPartition broker = read.GetBroker<ISelectServerPartition>();
-                ServerPartition entity = broker.Load(key);
-                return entity;
+                return Load(read, key);
             }
+        }
+        static public ServerPartition Load(IReadContext read, ServerEntityKey key)
+        {
+            ISelectServerPartition broker = read.GetBroker<ISelectServerPartition>();
+            ServerPartition entity = broker.Load(key);
+            return entity;
         }
         #endregion
 

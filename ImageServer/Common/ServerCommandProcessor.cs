@@ -31,8 +31,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageServer.Common
@@ -42,19 +40,17 @@ namespace ClearCanvas.ImageServer.Common
     /// </summary>
     /// <remarks>
     /// <para>
-    /// The command pattern is used in the ImageServer whenever there are interactions with processing a DICOM file and
-    /// in some cases when accessing the databsae. The pattern allows undoing of operations if a failure occurs.
-    /// </para>
-    /// <para>
-    /// This class is utilized for 
+    /// The command pattern is used in the ImageServer whenever there are interactions while processing
+    /// DICOM files.  The pattern allows undoing of the operations as files are being modified and
+    /// data inserted into the database.  
     /// </para>
     /// </remarks>
     public class ServerCommandProcessor
     {
         #region Private Members
-        private string _description;
-        private Stack<ServerCommand> _stack = new Stack<ServerCommand>();
-        private Queue<ServerCommand> _queue = new Queue<ServerCommand>();
+        private readonly string _description;
+        private readonly Stack<ServerCommand> _stack = new Stack<ServerCommand>();
+        private readonly Queue<ServerCommand> _queue = new Queue<ServerCommand>();
         private string _failureReason;
         #endregion
 
@@ -66,11 +62,17 @@ namespace ClearCanvas.ImageServer.Common
         #endregion
 
         #region Public Properties
+        /// <summary>
+        /// Description for the processor.
+        /// </summary>
         public string Description
         {
             get { return _description; }
         }
 
+        /// <summary>
+        /// Reason for a failure, if it occurs.
+        /// </summary>
         public string FailureReason
         {
             get { return _failureReason; }
@@ -78,11 +80,19 @@ namespace ClearCanvas.ImageServer.Common
         #endregion
 
         #region Public Methods
+        /// <summary>
+        /// Add a command to the processor.
+        /// </summary>
+        /// <param name="command">The command to add.</param>
         public void AddCommand(ServerCommand command)
         {
             _queue.Enqueue(command);
         }
-
+        
+        /// <summary>
+        /// Execute the commands passed to the processor.
+        /// </summary>
+        /// <returns>false on failure, true on success</returns>
         public bool Execute()
         {
             while (_queue.Count > 0)
@@ -99,14 +109,14 @@ namespace ClearCanvas.ImageServer.Common
                     if (command.RequiresRollback)
                     {
                         _failureReason = e.Message;
-                        Platform.Log(LogLevel.Error, e, "Unexpeceted error when executing command: {0}", Description);
+                        Platform.Log(LogLevel.Error, e, "Unexpeceted error when executing command: {0}", command.Description);
                         Rollback();
                         return false;
                     }
                     else
                     {
                         Platform.Log(LogLevel.Warn, e,
-                                     "Unexpected exception on command {0} that doesn't require rollback", command.Name);
+                                     "Unexpected exception on command {0} that doesn't require rollback", command.Description);
                         _stack.Pop(); // Pop it off the stack, since it failed.
                     }
                 }
@@ -114,6 +124,9 @@ namespace ClearCanvas.ImageServer.Common
             return true;
         }
 
+        /// <summary>
+        /// Rollback the commands that have been executed already.
+        /// </summary>
         public void Rollback()
         {
             while (_stack.Count > 0)
@@ -125,7 +138,7 @@ namespace ClearCanvas.ImageServer.Common
                 }
                 catch (Exception e)
                 {
-                    Platform.Log(LogLevel.Error, e, "Unexpected exception rolling back command {0}", command.Name);
+                    Platform.Log(LogLevel.Error, e, "Unexpected exception rolling back command {0}", command.Description);
                 }
             }
         }

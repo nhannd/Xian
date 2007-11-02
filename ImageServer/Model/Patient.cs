@@ -112,10 +112,14 @@ namespace ClearCanvas.ImageServer.Model
         {
             using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
             {
-                ISelectPatient broker = read.GetBroker<ISelectPatient>();
-                Patient thePatient = broker.Load(key);
-                return thePatient;
+                return Load(read, key);
             }
+        }
+        static public Patient Load(IReadContext read, ServerEntityKey key)
+        {
+            ISelectPatient broker = read.GetBroker<ISelectPatient>();
+            Patient thePatient = broker.Load(key);
+            return thePatient;
         }
         #endregion
 

@@ -78,27 +78,31 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         #region Public Methods
 
         /// <summary>
-        /// Helper method to load a StudyStream instance for a given study location.
+        /// Helper method to load a <see cref="StudyXml"/> instance for a given study location.
         /// </summary>
         /// <param name="location"></param>
         /// <returns></returns>
-        public static StudyXml LoadStudyStream(StudyStorageLocation location)
+        public static StudyXml LoadStudyXml(StudyStorageLocation location)
         {
             String streamFile = Path.Combine(location.GetStudyPath(), location.StudyInstanceUid + ".xml");
 
-            Stream fileStream = new FileStream(streamFile, FileMode.Open);
+            StudyXml theXml = new StudyXml();
 
-            XmlDocument theDoc = new XmlDocument();
+            if (File.Exists(streamFile))
+            {
+                using (Stream fileStream = new FileStream(streamFile, FileMode.Open))
+                {
+                    XmlDocument theDoc = new XmlDocument();
 
-            StudyXmlIo.Read(theDoc, fileStream);
+                    StudyXmlIo.Read(theDoc, fileStream);
 
-            fileStream.Close();
+                    theXml.SetMemento(theDoc);
 
-            StudyXml theStream = new StudyXml(location.StudyInstanceUid);
+                    fileStream.Close();
+                }
+            }
 
-            theStream.SetMemento(theDoc);
-
-            return theStream;
+            return theXml;
         }
 
         /// <summary>

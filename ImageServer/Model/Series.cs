@@ -133,10 +133,14 @@ namespace ClearCanvas.ImageServer.Model
         {
             using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
             {
-                ISelectSeries broker = read.GetBroker<ISelectSeries>();
-                Series theSeries = broker.Load(key);
-                return theSeries;
+                return Load(read, key);
             }
+        }
+        static public Series Load(IReadContext read, ServerEntityKey key)
+        {
+            ISelectSeries broker = read.GetBroker<ISelectSeries>();
+            Series theSeries = broker.Load(key);
+            return theSeries;
         }
         #endregion
     }

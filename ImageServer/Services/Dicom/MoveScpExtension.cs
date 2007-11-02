@@ -81,14 +81,14 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 
         #endregion
 
-
+        #region Private Methods
         /// <summary>
         /// Create a list of SOP Instances to move based on a Patient level C-MOVE-RQ.
         /// </summary>
         /// <param name="read"></param>
         /// <param name="msg"></param>
         /// <returns></returns>
-        private bool GetSopListForPatient(IReadContext read, DicomMessage msg)
+        private bool GetSopListForPatient(IPersistenceContext read, DicomMessageBase msg)
         {
 
             string patientId = msg.DataSet[DicomTags.PatientId].GetString(0, "");
@@ -108,7 +108,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                 if (false == GetStudyStorageLocation(study.StudyInstanceUid, out location))
                     return false;
 
-                StudyXml theStream = LoadStudyStream(location);
+                StudyXml theStream = LoadStudyXml(location);
 
                 _theScu.LoadStudyFromStudyXml(location.GetStudyPath(), theStream);
             }
@@ -121,7 +121,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// </summary>
         /// <param name="msg"></param>
        /// <returns></returns>
-        private bool GetSopListForStudy(DicomMessage msg)
+        private bool GetSopListForStudy(DicomMessageBase msg)
         {
             string[] studyList = (string[]) msg.DataSet[DicomTags.StudyInstanceUid].Values;
 
@@ -133,7 +133,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                 if (false == GetStudyStorageLocation(studyInstanceUid, out location))
                     return false;
 
-                StudyXml theStream = LoadStudyStream(location);
+                StudyXml theStream = LoadStudyXml(location);
 
                 _theScu.LoadStudyFromStudyXml(location.GetStudyPath(), theStream);
             }
@@ -146,7 +146,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// </summary>
         /// <param name="msg"></param>
         /// <returns></returns>
-        private bool GetSopListForSeries(DicomMessage msg)
+        private bool GetSopListForSeries(DicomMessageBase msg)
         {
 
             string studyInstanceUid = msg.DataSet[DicomTags.StudyInstanceUid].GetString(0, "");
@@ -158,7 +158,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
             if (false == GetStudyStorageLocation(studyInstanceUid, out location))
                 return false;
 
-            StudyXml studyStream = LoadStudyStream(location);
+            StudyXml studyStream = LoadStudyXml(location);
 
             foreach (string seriesInstanceUid in seriesList)
             {
@@ -173,7 +173,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// </summary>
         /// <param name="msg"></param>
         /// <returns></returns>
-        private bool GetSopListForSop(DicomMessage msg)
+        private bool GetSopListForSop(DicomMessageBase msg)
         {
             string studyInstanceUid = msg.DataSet[DicomTags.StudyInstanceUid].GetString(0, "");
             string seriesInstanceUid = msg.DataSet[DicomTags.SeriesInstanceUid].GetString(0, "");
@@ -203,7 +203,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// <param name="partition"></param>
         /// <param name="remoteAe"></param>
         /// <returns></returns>
-        private static Device LoadRemoteHost(IReadContext read, ServerPartition partition, string remoteAe)
+        private static Device LoadRemoteHost(IPersistenceContext read, ServerPartition partition, string remoteAe)
         {
             IQueryDevice select = read.GetBroker<IQueryDevice>();
 
@@ -219,11 +219,9 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 
             return list[0];
         }
-
-
+        #endregion
 
         #region IDicomScp Members
-
         /// <summary>
         /// Main routine for processing C-MOVE-RQ messages.  Called by the <see cref="DicomScp{DicomScpParameters}"/> component.
         /// </summary>
@@ -238,6 +236,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 
             try
             {
+                // Check for a Cancel message, and cancel the SCU.
                 if (message.CommandField == DicomCommandField.CCancelRequest)
                 {
                     if (_theScu != null)
@@ -252,7 +251,6 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 
                 // Trim the remote AE, see extra spaces at the end before which has caused problems
                 string remoteAe = message.MoveDestination.Trim();
-                string localAe = Partition.AeTitle;
 
                 // Open a DB Connection
                 using (IReadContext read = _store.OpenReadContext())
@@ -273,12 +271,11 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 
                     // If the remote node is a DHCP node, use its IP address from the connection information, else
                     // use what is configured.  Always use the configured port.
-                    string remoteIp = device.IpAddress;
                     if (device.Dhcp)
-                        remoteIp = association.RemoteEndPoint.Address.ToString();
+                        device.IpAddress = association.RemoteEndPoint.Address.ToString();
 
                     // Now setup the StorageSCU component
-                    _theScu = new ImageServerStorageScu(localAe, remoteAe, remoteIp, device.Port,
+                    _theScu = new ImageServerStorageScu(Partition, device,
                                              association.CallingAE, message.MessageId);
 
 
@@ -335,7 +332,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                     }
 
                     // set the preferred syntax lists
-                    _theScu.LoadPreferredSyntaxes(read, device);
+                    _theScu.LoadPreferredSyntaxes(read);
 
                     _theScu.ImageStoreCompleted += delegate(Object sender, StorageInstance instance)
                                                        {

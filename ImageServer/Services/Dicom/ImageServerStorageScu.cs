@@ -41,48 +41,53 @@ using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Services.Dicom
 {
+    /// <summary>
+    /// An ImageServer specific customization of the <see cref="StorageScu"/> component.
+    /// </summary>
     public class ImageServerStorageScu : StorageScu
     {
+        #region Private Members
+        private readonly Device _remoteDevice;
+        private readonly ServerPartition _partition;
+        #endregion
+
         #region Constructors...
         /// <summary>
         /// Constructor for Storage SCU Component.
         /// </summary>
-        /// <param name="localAe">The local AE title.</param>
-        /// <param name="remoteAe">The remote AE title being connected to.</param>
-        /// <param name="remoteHost">The hostname or IP address of the remote AE.</param>
-        /// <param name="remotePort">The listen port of the remote AE.</param>
-        public ImageServerStorageScu(string localAe, string remoteAe, string remoteHost, int remotePort)
-            :base(localAe,remoteAe,remoteHost,remotePort)
+        public ImageServerStorageScu(ServerPartition partition, Device remoteDevice)
+            :base(partition.AeTitle,remoteDevice.AeTitle,remoteDevice.IpAddress,remoteDevice.Port)
         {
+            _remoteDevice = remoteDevice;
+            _partition = partition;
         }
 
         /// <summary>
         /// Constructor for Storage SCU Component.
         /// </summary>
-        /// <param name="localAe">The local AE title.</param>
-        /// <param name="remoteAe">The remote AE title being connected to.</param>
-        /// <param name="remoteHost">The hostname or IP address of the remote AE.</param>
-        /// <param name="remotePort">The listen port of the remote AE.</param>
+        /// <param name="partition">The <see cref="ServerPartition"/> instagating the association.</param>
+        /// <param name="remoteDevice">The <see cref="Device"/> being connected to.</param>
         /// <param name="moveOriginatorAe">The Application Entity Title of the application that orginated this C-STORE association.</param>
         /// <param name="moveOrginatorMessageId">The Message ID of the C-MOVE-RQ message that orginated this C-STORE association.</param>
-        public ImageServerStorageScu(string localAe, string remoteAe, string remoteHost, int remotePort, string moveOriginatorAe, ushort moveOrginatorMessageId)
-            : base(localAe, remoteAe, remoteHost, remotePort, moveOriginatorAe, moveOrginatorMessageId)
+        public ImageServerStorageScu(ServerPartition partition, Device remoteDevice, string moveOriginatorAe, ushort moveOrginatorMessageId)
+            : base(partition.AeTitle, remoteDevice.AeTitle, remoteDevice.IpAddress, remoteDevice.Port, moveOriginatorAe, moveOrginatorMessageId)
         {
+            _partition = partition;
+            _remoteDevice = remoteDevice;
         }
         #endregion
 
         /// <summary>
         /// Load a list of preferred SOP Classes and Transfer Syntaxes for a Device.
         /// </summary>
-        /// <param name="read"></param>
-        /// <param name="device"></param>
-        public void LoadPreferredSyntaxes(IReadContext read, Device device)
+        /// <param name="read">A read context to read from the database.</param>
+        public void LoadPreferredSyntaxes(IReadContext read)
         {
             IQueryDevicePreferredTransferSyntax select = read.GetBroker<IQueryDevicePreferredTransferSyntax>();
 
             // Setup the select parameters.
             DevicePreferredTransferSyntaxQueryParameters selectParms = new DevicePreferredTransferSyntaxQueryParameters();
-            selectParms.DeviceKey = device.GetKey();
+            selectParms.DeviceKey = _remoteDevice.GetKey();
 
             IList<DevicePreferredTransferSyntax> list = select.Execute(selectParms);
 
@@ -99,15 +104,15 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 
             SetPreferredSyntaxList(sopList);
         }
+
         /// <summary>
         /// Load a list of preferred SOP Classes and Transfer Syntaxes for a Device.
         /// </summary>
-        /// <param name="device"></param>
-        public void LoadPreferredSyntaxes(Device device)
+        public void LoadPreferredSyntaxes()
         {
             using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
             {
-                LoadPreferredSyntaxes(read, device);
+                LoadPreferredSyntaxes(read);
             }
         }
 
@@ -133,8 +138,8 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// <summary>
         /// Load all of the instances in a given <see cref="StudyXml"/> file into the component for sending.
         /// </summary>
-        /// <param name="studyXml"></param>
         /// <param name="studyPath"></param>
+        /// <param name="studyXml">The <see cref="StudyXml"/> file to load from</param>
         public void LoadStudyFromStudyXml(string studyPath, StudyXml studyXml)
         {
             foreach (SeriesXml seriesXml in studyXml)

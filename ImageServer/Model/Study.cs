@@ -180,10 +180,14 @@ namespace ClearCanvas.ImageServer.Model
         {
             using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
             {
-                ISelectStudy broker = read.GetBroker<ISelectStudy>();
-                Study theStudy = broker.Load(key);
-                return theStudy;
+                return Load(read, key);
             }
+        }
+        static public Study Load(IReadContext read, ServerEntityKey key)
+        {
+            ISelectStudy broker = read.GetBroker<ISelectStudy>();
+            Study theStudy = broker.Load(key);
+            return theStudy;
         }
         #endregion
     }

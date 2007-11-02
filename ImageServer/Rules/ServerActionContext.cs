@@ -35,10 +35,18 @@ using ClearCanvas.ImageServer.Enterprise;
 
 namespace ClearCanvas.ImageServer.Rules
 {
+    /// <summary>
+    /// A context used when applying rules and actions within the ImageServer.
+    /// </summary>
+    /// <remarks>
+    /// This class is used to pass information to rules and to the action procesor
+    /// when applying rules within the ImageServer.  It should contain enough
+    /// information to apply a given Action for a rule.
+    /// </remarks>
+    /// <seealso cref="ServerRulesEngine"/>
     public class ServerActionContext
     {
         #region Private Members
-
         private readonly DicomMessageBase _msg;
         private ServerCommandProcessor _commandProcessor;
         private readonly ServerEntityKey _serverPartitionKey;
