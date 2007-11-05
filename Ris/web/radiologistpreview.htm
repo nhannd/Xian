@@ -15,22 +15,23 @@
 
 		    function onBodyLoad()
 		    {		        
-			scaleWidth();
-		        if(!Ris)
+               scaleWidth();
+               
+		         if(!Ris)
 		            return;
 		            
 	            try
 	            {
-					var worklistItem = Ris.getWorklistItem();
-					if (worklistItem == null)
-					{
-                        Field.setValue($("myForm"), "");
-                        return;
-					}
+                  var worklistItem = Ris.getWorklistItem();
+                  if (worklistItem == null)
+                  {
+                           Field.setValue($("myForm"), "");
+                           return;
+                  }
 					
                     var request = {
                         ProcedureStepRef: worklistItem.ProcedureStepRef,
-                        GetReportingProcedureStepRequest: {},
+                        GetReportingProcedureStepRequest: worklistItem.StepType != "Protocol" ? {} : null,
                         GetPatientProfileRequest:         {},
                         GetAlertsRequest:                 {}
                     };
@@ -97,10 +98,10 @@
 	</head>
 	<body onload="javascript: onBodyLoad()">
 		<form id="myForm">
-		    <table width="640" border="0">
+		    <table width="100%" border="0">
 			    <tr>
-				    <td width="422" class="pageheading"><div id="name"/></td>
-				    <td width="202" rowspan="2"><div id="alerts"/></td>
+				    <td class="pageheading"><div id="name"/></td>
+				    <td rowspan="2" align="right"><div id="alerts"/></td>
 			    </tr>
 			    <tr>
 				    <td class="pageheading2"><div id="mrn"/></td>
@@ -108,7 +109,7 @@
 		    </table>
     		
 		    <p>&nbsp;</p>
-		    <table width="640" border="0">
+		    <table width="100%" border="0">
 			    <tr>
 				    <td width="120" class="propertyname">Date of Birth</td>
 				    <td width="200"><div id="dateOfBirth"/></td>
@@ -124,7 +125,7 @@
 		    </table>
 		    
             <p>&nbsp;</p>
-            <table width="640" border="0">
+            <table width="100%" border="0">
                 <tr class="sectionheading">
                     <td colspan="4">Imaging Consultation Overview</td>
                 </tr>
