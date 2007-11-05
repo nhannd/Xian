@@ -30,13 +30,12 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common;
-using ClearCanvas.Desktop.Tools;
-using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Desktop.Tools;
+using ClearCanvas.ImageViewer;
+using ClearCanvas.ImageViewer.BaseTools;
 
 namespace ClearCanvas.Desktop.Edit
 {
@@ -54,8 +53,8 @@ namespace ClearCanvas.Desktop.Edit
     [Tooltip("redo", "TooltipRedo")]
 	[GroupHint("redo", "Application.Edit.Redo")]
 
-    [ExtensionOf(typeof(DesktopToolExtensionPoint))]
-    public class EditHistoryTool : Tool<IDesktopToolContext>
+	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
+	public class EditHistoryTool : ImageViewerTool
     {
         private bool _undoEnabled;
         private event EventHandler _undoEnabledChangedEvent;

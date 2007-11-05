@@ -47,7 +47,6 @@
 		<ImageViewerPluginFiles Include="$(SolutionDir)\..\ImageViewer\Tools\Measurement\bin\$(Configuration)\ClearCanvas.ImageViewer.Tools.Measurement.dll" />
 		<ImageViewerPluginFiles Include="$(SolutionDir)\..\ImageViewer\Tools\Standard\bin\$(Configuration)\ClearCanvas.ImageViewer.Tools.Standard.dll" />
 		<ImageViewerPluginFiles Include="$(SolutionDir)\..\ImageViewer\Tools\Standard\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Tools.Standard.View.WinForms.dll" />
-		<ImageViewerPluginFiles Include="$(SolutionDir)\..\Desktop\Edit\bin\$(Configuration)\ClearCanvas.Desktop.Edit.dll" />
 		<ImageViewerPluginFiles Include="$(SolutionDir)\..\ImageViewer\Explorer\Local\bin\$(Configuration)\ClearCanvas.ImageViewer.Explorer.Local.dll" />
 		<ImageViewerPluginFiles Include="$(SolutionDir)\..\ImageViewer\Explorer\Local\Tools\bin\$(Configuration)\ClearCanvas.ImageViewer.Explorer.Local.Tools.dll" />
 		<ImageViewerPluginFiles Include="$(SolutionDir)\..\ImageViewer\Explorer\Local\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Explorer.Local.View.WinForms.dll" />
