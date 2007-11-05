@@ -79,7 +79,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             this.DataGridView.RowPostPaint += OutlineCell;
         }
 
-        #region Design Time properties
+        #region Design Time properties and Events
 
 	    [DefaultValue(false)]
 	    public bool SortButtonVisible
@@ -104,13 +104,6 @@ namespace ClearCanvas.Desktop.View.WinForms
         {
             get { return _filterTextBox.Width; }
             set { _filterTextBox.Size = new Size(value, _filterTextBox.Height);; }
-        }
-
-        [DefaultValue(false)]
-        public bool SuppressSelectionChangedEvent
-        {
-            get { return _surpressSelectionChangedEvent; }
-            set { _surpressSelectionChangedEvent = value; }
         }
 
         [DefaultValue(true)]
@@ -148,13 +141,6 @@ namespace ClearCanvas.Desktop.View.WinForms
             }
         }
 
-        [Obsolete("Do not use.  Toolstrip item alignment is now controlled by application setting")]
-        public RightToLeft ToolStripRightToLeft
-        {
-            get { return RightToLeft.No; }
-            set { }
-        }
-
         public ToolStripItemDisplayStyle ToolStripItemDisplayStyle
         {
             get { return _toolStripItemDisplayStyle; }
@@ -168,18 +154,44 @@ namespace ClearCanvas.Desktop.View.WinForms
             set { _toolStrip.Visible = value; }
         }
 
-		protected ToolStrip ToolStrip
-		{
-			get { return _toolStrip; }
-		}
+        public event EventHandler SelectionChanged
+        {
+            add { _selectionChanged += value; }
+            remove { _selectionChanged -= value; }
+        }
 
-		protected new ContextMenuStrip ContextMenuStrip
-		{
-			get { return _contextMenu; }
-		}
+        public event EventHandler ItemDoubleClicked
+        {
+            add { _itemDoubleClicked += value; }
+            remove { _itemDoubleClicked -= value; }
+        }
+
+        public event EventHandler<ItemDragEventArgs> ItemDrag
+        {
+            add { _itemDrag += value; }
+            remove { _itemDrag -= value; }
+        }
 
         #endregion
 
+        #region Public Properties and Events
+
+        [Obsolete("Do not use.  Toolstrip item alignment is now controlled by application setting")]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public RightToLeft ToolStripRightToLeft
+        {
+            get { return RightToLeft.No; }
+            set { }
+        }
+
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public bool SuppressSelectionChangedEvent
+        {
+            get { return _surpressSelectionChangedEvent; }
+            set { _surpressSelectionChangedEvent = value; }
+        }
+
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public ActionModelNode ToolbarModel
         {
             get { return _toolbarModel;  }
@@ -193,24 +205,9 @@ namespace ClearCanvas.Desktop.View.WinForms
             }
         }
 
-	    private void InitializeToolStrip()
-	    {
-	        ToolStripBuilder.Clear(_toolStrip.Items);
-	        if (_toolbarModel != null)
-	        {
-	            if (_toolStripItemAlignment == ToolStripItemAlignment.Right)
-	            {
-	                _toolbarModel.ChildNodes.Reverse();
-	            }
 
-	            ToolStripBuilder.BuildToolbar(
-	                _toolStrip.Items,
-	                _toolbarModel.ChildNodes, 
-	                new ToolStripBuilder.ToolStripBuilderStyle(_toolStripItemDisplayStyle, _toolStripItemAlignment, _textImageRelation));
-	        }
-	    }
-
-	    public ActionModelNode MenuModel
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public ActionModelNode MenuModel
         {
             get { return _menuModel; }
             set
@@ -224,6 +221,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             }
         }
 
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public ITable Table
         {
             get { return _table; }
@@ -266,6 +264,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         /// <summary>
         /// Gets/sets the current selection
         /// </summary>
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public ISelection Selection
         {
             get
@@ -305,24 +304,35 @@ namespace ClearCanvas.Desktop.View.WinForms
             }
         }
 
-        public event EventHandler SelectionChanged
+
+        #endregion
+
+        protected ToolStrip ToolStrip
         {
-            add { _selectionChanged += value; }
-            remove { _selectionChanged -= value; }
+            get { return _toolStrip; }
         }
 
-        public event EventHandler ItemDoubleClicked
+        protected new ContextMenuStrip ContextMenuStrip
         {
-            add { _itemDoubleClicked += value; }
-            remove { _itemDoubleClicked -= value; }
+            get { return _contextMenu; }
         }
 
-        public event EventHandler<ItemDragEventArgs> ItemDrag
+        private void InitializeToolStrip()
         {
-            add { _itemDrag += value; }
-            remove { _itemDrag -= value; }
-        }
+            ToolStripBuilder.Clear(_toolStrip.Items);
+            if (_toolbarModel != null)
+            {
+                if (_toolStripItemAlignment == ToolStripItemAlignment.Right)
+                {
+                    _toolbarModel.ChildNodes.Reverse();
+                }
 
+                ToolStripBuilder.BuildToolbar(
+                    _toolStrip.Items,
+                    _toolbarModel.ChildNodes,
+                    new ToolStripBuilder.ToolStripBuilderStyle(_toolStripItemDisplayStyle, _toolStripItemAlignment, _textImageRelation));
+            }
+        }
         private Selection GetSelectionHelper()
         {
             return new Selection(
