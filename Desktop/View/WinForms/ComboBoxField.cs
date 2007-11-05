@@ -31,11 +31,27 @@
 
 using System;
 using System.Windows.Forms;
+using System.ComponentModel;
+using System.Collections;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
     public partial class ComboBoxField : UserControl
     {
+        class WellBehavedComboBox : ComboBox
+        {
+            protected override void OnCreateControl()
+            {
+                base.OnCreateControl();
+
+                // if the DataSource property was set, the SelectedItem will be
+                // set to the first value in the DataSource list, which means it
+                // may be out of since with the value it is bound to on the app component
+                // we can fix this by setting it to null here
+                this.SelectedItem = null;
+            }
+        }
+
         public ComboBoxField()
         {
             InitializeComponent();
@@ -75,13 +91,16 @@ namespace ClearCanvas.Desktop.View.WinForms
         public object DataSource
         {
             get { return _comboBox.DataSource; }
-            set { _comboBox.DataSource = value; }
+            set
+            {
+                _comboBox.DataSource = value;
+            }
         }
 
 		public string DisplayMember
 		{
 			get { return _comboBox.DisplayMember; }
 			set { _comboBox.DisplayMember = value; }
-		}
+        }
     }
 }

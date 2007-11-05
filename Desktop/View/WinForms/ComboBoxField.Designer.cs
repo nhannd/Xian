@@ -59,7 +59,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-            this._comboBox = new System.Windows.Forms.ComboBox();
+            this._comboBox = new WellBehavedComboBox();
             this._label = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
@@ -101,7 +101,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         #endregion
 
-        private System.Windows.Forms.ComboBox _comboBox;
+        private WellBehavedComboBox _comboBox;
         private System.Windows.Forms.Label _label;
     }
 }
