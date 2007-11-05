@@ -31,11 +31,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
-using System.ComponentModel;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
@@ -104,7 +101,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			get { return _accessionNumber; }
 			set
 			{
-				_accessionNumber = (value == null) ? "" : value;
+				_accessionNumber = value ?? "";
 				NotifyPropertyChanged("AccessionNumber");
 			}
 		}
@@ -114,7 +111,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			get { return _patientID; }
 			set
 			{
-				_patientID = (value == null) ? "" : value;
+				_patientID = value ?? "";
 				NotifyPropertyChanged("PatientID");
 			}
 		}
@@ -124,7 +121,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			get { return _firstName; }
 			set
 			{
-				_firstName = (value == null) ? "" : value;
+				_firstName = value ?? "";
 				NotifyPropertyChanged("FirstName");
 			}
 		}
@@ -139,7 +136,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			get { return _lastName; }
 			set
 			{
-				_lastName = (value == null) ? "" : value;
+				_lastName = value ?? "";
 				NotifyPropertyChanged("LastName");
 			}
 		}
@@ -149,7 +146,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			get { return _studyDescription; }
 			set
 			{
-				_studyDescription = (value == null) ? "" : value;
+				_studyDescription = value ?? "";
 				NotifyPropertyChanged("StudyDescription");
 			}
 		}

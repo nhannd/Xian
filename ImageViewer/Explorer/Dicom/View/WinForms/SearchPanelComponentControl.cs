@@ -69,12 +69,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			_studyDescription.DataBindings.Add("Value", _bindingSource, "StudyDescription", true, DataSourceUpdateMode.OnPropertyChanged);
 			_titleBar.DataBindings.Add("Text", _bindingSource, "Title", true, DataSourceUpdateMode.OnPropertyChanged);
 
-			_studyDateFrom.DataBindings.Add("Value", _bindingSource, "StudyDateFrom", true, DataSourceUpdateMode.OnPropertyChanged);
-			_studyDateTo.DataBindings.Add("Value", _bindingSource, "StudyDateTo", true, DataSourceUpdateMode.OnPropertyChanged);
-
 			_studyDateFrom.DataBindings.Add("Maximum", _bindingSource, "MaximumStudyDateFrom", true, DataSourceUpdateMode.OnPropertyChanged);
 			_studyDateTo.DataBindings.Add("Maximum", _bindingSource, "MaximumStudyDateTo", true, DataSourceUpdateMode.OnPropertyChanged);
 
+			_studyDateFrom.DataBindings.Add("Value", _bindingSource, "StudyDateFrom", true, DataSourceUpdateMode.OnPropertyChanged);
+			_studyDateTo.DataBindings.Add("Value", _bindingSource, "StudyDateTo", true, DataSourceUpdateMode.OnPropertyChanged);
+			
 			_modalityPicker.DataBindings.Add("CheckedModalities", _bindingSource, "SearchModalities", true, DataSourceUpdateMode.OnPropertyChanged);
 		}
 
@@ -118,10 +118,5 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 		{
 			_component.Clear();
 		}
-
-		private void SearchPanelComponentControl_Load(object sender, EventArgs e)
-		{
-
-		}
-    }
+	}
 }
