@@ -49,6 +49,13 @@ namespace ClearCanvas.Healthcare.Brokers
         IList<WorklistItem> GetCancelledWorklist();
         IList<WorklistItem> GetCancelledWorklist(RegistrationCancelledWorklist worklist);
 
+        IList<WorklistItem> GetCompletedProtocolWorklist();
+        IList<WorklistItem> GetCompletedProtocolWorklist(RegistrationCompletedProtocolWorklist worklist);
+        IList<WorklistItem> GetSuspendedProtocolWorklist();
+        IList<WorklistItem> GetSuspendedProtocolWorklist(RegistrationSuspendedProtocolWorklist worklist);
+        IList<WorklistItem> GetPendingProtocolWorklist();
+        IList<WorklistItem> GetPendingProtocolWorklist(RegistrationPendingProtocolWorklist worklist);
+
         int GetScheduledWorklistCount();
         int GetScheduledWorklistCount(RegistrationScheduledWorklist worklist);
         int GetCheckInWorklistCount();
@@ -59,6 +66,13 @@ namespace ClearCanvas.Healthcare.Brokers
         int GetCompletedWorklistCount(RegistrationCompletedWorklist worklist);
         int GetCancelledWorklistCount();
         int GetCancelledWorklistCount(RegistrationCancelledWorklist worklist);
+
+        int GetCompletedProtocolWorklistCount();
+        int GetCompletedProtocolWorklistCount(RegistrationCompletedProtocolWorklist worklist);
+        int GetSuspendedProtocolWorklistCount();
+        int GetSuspendedProtocolWorklistCount(RegistrationSuspendedProtocolWorklist worklist);
+        int GetPendingProtocolWorklistCount();
+        int GetPendingProtocolWorklistCount(RegistrationPendingProtocolWorklist worklist);
 
         IList<Order> GetOrdersForCheckIn(Patient patient);
         int GetOrdersForCheckInCount(Patient patient);

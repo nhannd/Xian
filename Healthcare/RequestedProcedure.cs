@@ -114,6 +114,20 @@ namespace ClearCanvas.Healthcare {
             }
         }
 
+        public virtual ProtocolProcedureStep ProtocolProcedureStep
+        {
+            get
+            {
+                ProcedureStep step = CollectionUtils.SelectFirst<ProcedureStep>(this.ProcedureSteps,
+                    delegate(ProcedureStep ps)
+                    {
+                        return ps.Is<ProtocolProcedureStep>();
+                    });
+
+                return step == null ? null : step.Downcast<ProtocolProcedureStep>();
+            }
+        }
+
         #endregion
 
         #region Public Operations

@@ -58,6 +58,15 @@ namespace ClearCanvas.Ris.Application.Common
         [WorklistToken(Description = "Registration - In Progress")]
         public const string RegistrationInProgressWorklist = "RegistrationInProgressWorklist";
 
+        [WorklistToken(Description = "Registration - Completed Protocol")]
+        public const string RegistrationCompletedProtocolWorklist = "RegistrationCompletedProtocolWorklist";
+
+        [WorklistToken(Description = "Registration - Suspended/Rejected Protocol")]
+        public const string RegistrationSuspendedProtocolWorklist = "RegistrationSuspendedProtocolWorklist";
+
+        [WorklistToken(Description = "Registration - Pending Protocol")]
+        public const string RegistrationPendingProtocolWorklist = "RegistrationPendingProtocolWorklist";
+
         #endregion
 
         #region Technologist Worklist Tokens
@@ -89,6 +98,9 @@ namespace ClearCanvas.Ris.Application.Common
 
         [WorklistToken(Description = "Reporting - To Be Reported")]
         public const string ReportingToBeReportedWorklist = "ReportingToBeReportedWorklist";
+
+        [WorklistToken(Description = "Reporting - To Be Protocolled")]
+        public const string ReportingToBeProtocolledWorklist = "ReportingToBeProtocolledWorklist";
 
         #endregion
     }

@@ -39,8 +39,6 @@ namespace ClearCanvas.Healthcare.Brokers
     {
         IList<WorklistItem> GetToBeReportedWorklist();
         IList<WorklistItem> GetToBeReportedWorklist(ReportingToBeReportedWorklist worklist);
-        IList<WorklistItem> GetToBeProtocolledWorklist();
-        IList<WorklistItem> GetToBeProtocolledWorklist(ReportingToBeProtocolledWorklist worklist);
         IList<WorklistItem> GetDraftWorklist(Staff performingStaff);
         IList<WorklistItem> GetInTranscriptionWorklist(Staff performingStaff);
         IList<WorklistItem> GetToBeVerifiedWorklist(Staff performingStaff);
@@ -49,10 +47,14 @@ namespace ClearCanvas.Healthcare.Brokers
         IList<WorklistItem> GetResidentVerifiedWorklist(Staff currentStaff);
         IList<WorklistItem> GetMyResidentToBeVerifiedWorklist(Staff performingStaff);
 
+        IList<WorklistItem> GetToBeProtocolledWorklist();
+        IList<WorklistItem> GetToBeProtocolledWorklist(ReportingToBeProtocolledWorklist worklist);
+        IList<WorklistItem> GetToBeApprovedWorklist(Staff perfomingStaff);
+        IList<WorklistItem> GetCompletedProtocolWorklist(Staff performingStaff);
+        IList<WorklistItem> GetSuspendedProtocolWorklist(Staff performingStaff);
+
         int GetToBeReportedWorklistCount();
         int GetToBeReportedWorklistCount(ReportingToBeReportedWorklist worklist);
-        int GetToBeProtocolledWorklistCount();
-        int GetToBeProtocolledWorklistCount(ReportingToBeProtocolledWorklist worklist);
         int GetDraftWorklistCount(Staff performingStaff);
         int GetInTranscriptionWorklistCount(Staff performingStaff);
         int GetToBeVerifiedWorklistCount(Staff performingStaff);
@@ -60,6 +62,12 @@ namespace ClearCanvas.Healthcare.Brokers
         int GetResidentToBeVerifiedWorklistCount(Staff currentStaff);
         int GetResidentVerifiedWorklistCount(Staff currentStaff);
         int GetMyResidentToBeVerifiedWorklistCount(Staff performingStaff);
+
+        int GetToBeProtocolledWorklistCount();
+        int GetToBeProtocolledWorklistCount(ReportingToBeProtocolledWorklist worklist);
+        int GetToBeApprovedCount(Staff perfomingStaff);
+        int GetCompletedProtocolCount(Staff performingStaff);
+        int GetSuspendedProtocolCount(Staff performingStaff);
 
         IList<Report> GetPriorReport(Patient patient);
 

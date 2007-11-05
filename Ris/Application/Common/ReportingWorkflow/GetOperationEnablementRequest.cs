@@ -41,11 +41,20 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
     public class GetOperationEnablementRequest : DataContractBase
     {
         public GetOperationEnablementRequest(EntityRef procedureStepRef)
+            : this(procedureStepRef, null)
+        {
+        }
+
+        public GetOperationEnablementRequest(EntityRef procedureStepRef, string stepType)
         {
             this.ProcedureStepRef = procedureStepRef;
+            this.StepType = stepType;
         }
 
         [DataMember]
         public EntityRef ProcedureStepRef;
+
+        [DataMember]
+        public String StepType;
     }
 }

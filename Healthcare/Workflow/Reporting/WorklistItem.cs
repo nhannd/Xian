@@ -29,14 +29,6 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-using Iesi.Collections;
-using ClearCanvas.Common;
-using ClearCanvas.Healthcare;
-using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Workflow;
 
@@ -55,6 +47,22 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
         {
             get { return _reportingProcedureStep; }
             set { _reportingProcedureStep = value; }
+        }
+    }
+
+    public class ProtocollingWorklistItemKey : IWorklistItemKey
+    {
+        private EntityRef _protocollingProcedureStep;
+
+        public ProtocollingWorklistItemKey(EntityRef protocollingProcedureStep)
+        {
+            _protocollingProcedureStep = protocollingProcedureStep;
+        }
+
+        public EntityRef ProtocollingProcedureStep
+        {
+            get { return _protocollingProcedureStep; }
+            set { _protocollingProcedureStep = value; }
         }
     }
 
@@ -91,11 +99,39 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
             _stepType = reportingProcedureStep.Name;
         }
 
+        public WorklistItem(
+            ProtocolProcedureStep protocolProcedureStep,
+            PatientProfile profile,
+            string accessionNumber,
+            OrderPriority priority,
+            string requestedProcedureName,
+            string diagnosticServiceName,
+            ActivityStatus activityStatus)
+            : base(new ProtocollingWorklistItemKey(protocolProcedureStep.GetRef()))
+        {
+            _profileRef = profile.GetRef();
+            _mrn = profile.Mrn;
+            _patientName = profile.Name;
+            _accessionNumber = accessionNumber;
+            _priority = priority;
+            _requestedProcedureName = requestedProcedureName;
+            _diagnosticServiceName = diagnosticServiceName;
+            _activityStatus = activityStatus;
+            _stepType = protocolProcedureStep.Name;
+        }
+
         #region Public Properties
 
         public EntityRef ProcedureStepRef
         {
-            get { return ((WorklistItemKey)this.Key).ReportingProcedureStep; }
+            get
+            {
+                if(this.Key is WorklistItemKey)
+                    return ((WorklistItemKey)this.Key).ReportingProcedureStep;
+                else if(this.Key is ProtocollingWorklistItemKey)
+                    return ((ProtocollingWorklistItemKey)this.Key).ProtocollingProcedureStep;
+                else return null;
+            }
         }
 
         public EntityRef PatientProfileRef

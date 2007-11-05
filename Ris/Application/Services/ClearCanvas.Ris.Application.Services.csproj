@@ -98,6 +98,8 @@
     <Compile Include="EnumUtils.cs" />
     <Compile Include="InProcessApplicationServiceProvider.cs" />
     <Compile Include="Jsml\JsmlShimService.cs" />
+    <Compile Include="ProtocollingWorkflow\ProtocollingWorkflowAssembler.cs" />
+    <Compile Include="ProtocollingWorkflow\ProtocollingWorkflowService.cs" />
     <Compile Include="WorklistAssembler.cs" />
     <Compile Include="WorklistFactory.cs" />
     <Compile Include="ApplicationServiceBase.cs" />

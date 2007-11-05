@@ -62,7 +62,7 @@ namespace ClearCanvas.Ris.Client.Adt
         ProcedurePlanSummary ProcedurePlan { get; }
         event EventHandler ProcedurePlanChanged;
     }
-
+    
     /// <summary>
     /// Extension point for views onto <see cref="TechnologistDocumentationComponent"/>
     /// </summary>

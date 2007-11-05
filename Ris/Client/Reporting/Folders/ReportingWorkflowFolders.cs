@@ -129,6 +129,84 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
         }
     }
 
+    [ExtensionOf(typeof(WorkflowFolderExtensionPoint))]
+    [FolderForWorklistType(WorklistTokens.ReportingToBeProtocolledWorklist)]
+    public class ToBeProtocolledFolder : ReportingWorkflowFolder
+    {
+        public ToBeProtocolledFolder(ReportingWorkflowFolderSystem folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
+            : base(folderSystem, folderDisplayName, folderDescription, worklistRef)
+        {
+            this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Reporting.Worklists+ToBeProtocolled";
+        }
+
+        public ToBeProtocolledFolder(ReportingWorkflowFolderSystem folderSystem)
+            : this(folderSystem, "To be Protocolled", null, null)
+        {
+        }
+
+        public ToBeProtocolledFolder()
+            : this(null)
+        {
+        }
+    }
+
+    public class ToBeApprovedFolder : ReportingWorkflowFolder
+    {
+        public ToBeApprovedFolder(ReportingWorkflowFolderSystem folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
+            : base(folderSystem, folderDisplayName, folderDescription, worklistRef)
+        {
+            this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Reporting.Worklists+ToBeApproved";
+        }
+
+        public ToBeApprovedFolder(ReportingWorkflowFolderSystem folderSystem)
+            : this(folderSystem, "To be Approved", null, null)
+        {
+        }
+
+        public ToBeApprovedFolder()
+            : this(null)
+        {
+        }
+    }
+
+    public class CompletedProtocolFolder : ReportingWorkflowFolder
+    {
+        public CompletedProtocolFolder(ReportingWorkflowFolderSystem folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
+            : base(folderSystem, folderDisplayName, folderDescription, worklistRef)
+        {
+            this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Reporting.Worklists+CompletedProtocol";
+        }
+
+        public CompletedProtocolFolder(ReportingWorkflowFolderSystem folderSystem)
+            : this(folderSystem, "Completed Protocols", null, null)
+        {
+        }
+
+        public CompletedProtocolFolder()
+            : this(null)
+        {
+        }
+    }
+
+    public class SuspendedProtocolFolder : ReportingWorkflowFolder
+    {
+        public SuspendedProtocolFolder(ReportingWorkflowFolderSystem folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
+            : base(folderSystem, folderDisplayName, folderDescription, worklistRef)
+        {
+            this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Reporting.Worklists+SuspendedProtocol";
+        }
+
+        public SuspendedProtocolFolder(ReportingWorkflowFolderSystem folderSystem)
+            : this(folderSystem, "Suspended Protocols", null, null)
+        {
+        }
+
+        public SuspendedProtocolFolder()
+            : this(null)
+        {
+        }
+    }
+
     public class SearchFolder : ReportingWorkflowFolder
     {
         private SearchData _searchData;

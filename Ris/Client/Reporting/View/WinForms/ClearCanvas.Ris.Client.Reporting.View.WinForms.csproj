@@ -42,6 +42,13 @@
       <DependentUpon>PriorReportComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="PriorReportComponentView.cs" />
+    <Compile Include="ProtocolEditorComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ProtocolEditorComponentControl.Designer.cs">
+      <DependentUpon>ProtocolEditorComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ProtocolEditorComponentView.cs" />
     <Compile Include="ReportEditorComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -83,6 +90,10 @@
     <EmbeddedResource Include="PriorReportComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>PriorReportComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ProtocolEditorComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>ProtocolEditorComponentControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ReportEditorComponentControl.resx">
       <SubType>Designer</SubType>

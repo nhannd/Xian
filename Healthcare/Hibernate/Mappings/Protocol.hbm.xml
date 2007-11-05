@@ -6,6 +6,8 @@
     </id>
     <version name="Version" column="Version_"/>
 
+    <many-to-one name="Procedure" class="RequestedProcedure" column="ProcedureOID_" not-null="true" unique="true"/>
+
     <many-to-one name="Author" class="Staff" column="AuthorOID_"/>
     <property name="ApprovalRequired" column="ApprovalRequired_" type="Boolean"/>
 

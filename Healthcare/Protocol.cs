@@ -1,19 +1,16 @@
-using System;
-using System.Collections;
-using System.Text;
-
-using ClearCanvas.Enterprise.Core;
-
-namespace ClearCanvas.Healthcare {
-
-
+namespace ClearCanvas.Healthcare
+{
     /// <summary>
     /// Protocol entity
     /// </summary>
-	public partial class Protocol : ClearCanvas.Enterprise.Core.Entity
-	{
-	
-		/// <summary>
+    public partial class Protocol : ClearCanvas.Enterprise.Core.Entity
+    {
+        public Protocol(RequestedProcedure procedure)
+        {
+            _procedure = procedure;
+        }
+
+        /// <summary>
 		/// This method is called from the constructor.  Use this method to implement any custom
 		/// object initialization.
 		/// </summary>

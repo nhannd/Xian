@@ -31,13 +31,15 @@
 
 namespace ClearCanvas.Healthcare
 {
-    public abstract class ProtocolProcedureStep : ProcedureStep
+    public class ProtocolProcedureStep : ProcedureStep
     {
+        private Protocol _protocol;
+
         #region Constructors
 
-        protected ProtocolProcedureStep(RequestedProcedure procedure)
-            : base(procedure)
+        public ProtocolProcedureStep(Protocol protocol)
         {
+            _protocol = protocol;
         }
 
         /// <summary>
@@ -48,6 +50,12 @@ namespace ClearCanvas.Healthcare
         }
 
         #endregion
+
+        public Protocol Protocol
+        {
+            get { return _protocol; }
+            set { _protocol = value; }
+        }
 
         #region ProcedureStep overrides
 

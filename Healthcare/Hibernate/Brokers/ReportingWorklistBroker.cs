@@ -65,9 +65,13 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         private const string _hqlFromInterpretationStep = " from InterpretationStep rps";
         private const string _hqlFromTranscriptionStep = " from TranscriptionStep rps";
         private const string _hqlFromVerificationStep = " from VerificationStep rps";
+        private const string _hqlFromProtocolStep = " from ProtocolProcedureStep rps";
 
         private const string _hqlToBeReportedWorklist = _hqlSelectWorklist + _hqlFromInterpretationStep;
         private const string _hqlToBeReportedCount = _hqlSelectCount + _hqlFromInterpretationStep;
+
+        private const string _hqlProtocollingWorklist = _hqlSelectWorklist + _hqlFromProtocolStep;
+        private const string _hqlProtocollingCount = _hqlSelectCount + _hqlFromProtocolStep;
 
         private const string _hqlSelectTranscriptionWorklist = _hqlSelectWorklist + _hqlFromTranscriptionStep;
         private const string _hqlSelectTranscriptionCount = _hqlSelectCount + _hqlFromTranscriptionStep;
@@ -86,11 +90,17 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         private const string _hqlJoinReportPart =
             " join rps.ReportPart rpp";
 
+        private const string _hqlJoinProtocol =
+            " join rps.Protocol proto";
+
         private const string _hqlSingleStateCondition =
             " where rps.State = :rpsState";
 
         private const string _hqlDualStateCondition =
             " where (rps.State = :rpsState or rps.State = :rpsState2)";
+
+        private const string _hqlProtocolRequiresApprovalCondition =
+            " where (rps.State = :rpsState and proto.ApprovalRequired = :rpsApprovalRequired)";
 
         private const string _hqlCommunualWorklistCondition = 
             " and rps.Scheduling.Performer is NULL";
@@ -174,17 +184,6 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             }
 
             return GetWorklist(hqlQuery, parameters);
-        }
-
-        public IList<WorklistItem> GetToBeProtocolledWorklist()
-        {
-            return GetToBeProtocolledWorklist(null);
-        }
-
-        public IList<WorklistItem> GetToBeProtocolledWorklist(ReportingToBeProtocolledWorklist worklist)
-        {
-            // TODO 
-            return new List<WorklistItem>();
         }
 
         public IList<WorklistItem> GetDraftWorklist(Staff currentStaff)
@@ -284,6 +283,69 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             return GetWorklist(hqlQuery, parameters);
         }
 
+
+        public IList<WorklistItem> GetToBeProtocolledWorklist()
+        {
+            return GetToBeProtocolledWorklist(null);
+        }
+
+        public IList<WorklistItem> GetToBeProtocolledWorklist(ReportingToBeProtocolledWorklist worklist)
+        {
+            string hqlQuery = String.Concat(_hqlProtocollingWorklist,
+                                            _hqlJoin, _hqlJoinProtocol,
+                                            _hqlDualStateCondition, _hqlCommunualWorklistCondition);
+
+            List<QueryParameter> parameters = new List<QueryParameter>();
+            parameters.Add(new QueryParameter("rpsState", ActivityStatus.SC.ToString()));
+            parameters.Add(new QueryParameter("rpsState2", ActivityStatus.IP.ToString()));
+
+            if (worklist != null)
+            {
+                hqlQuery += _hqlWorklistSubQuery;
+                parameters.Add(new QueryParameter("worklist", worklist));
+            }
+
+            return GetWorklist(hqlQuery, parameters);
+        }
+
+        public IList<WorklistItem> GetToBeApprovedWorklist(Staff perfomingStaff)
+        {
+            string hqlQuery = String.Concat(_hqlProtocollingWorklist,
+                                            _hqlJoin, _hqlJoinProtocol,
+                                            _hqlProtocolRequiresApprovalCondition);
+
+            List<QueryParameter> parameters = new List<QueryParameter>();
+            parameters.Add(new QueryParameter("rpsState", ActivityStatus.IP.ToString()));
+            parameters.Add(new QueryParameter("rpsApprovalRequired", true.ToString()));
+
+            return GetWorklist(hqlQuery, parameters);
+        }
+
+        public IList<WorklistItem> GetCompletedProtocolWorklist(Staff performingStaff)
+        {
+            string hqlQuery = String.Concat(_hqlProtocollingWorklist,
+                                            _hqlJoin, _hqlJoinProtocol,
+                                            _hqlDualStateCondition);
+
+            List<QueryParameter> parameters = new List<QueryParameter>();
+            parameters.Add(new QueryParameter("rpsState", ActivityStatus.CM.ToString()));
+            parameters.Add(new QueryParameter("rpsState2", ActivityStatus.DC.ToString()));
+
+            return GetWorklist(hqlQuery, parameters);
+        }
+
+        public IList<WorklistItem> GetSuspendedProtocolWorklist(Staff performingStaff)
+        {
+            string hqlQuery = String.Concat(_hqlProtocollingWorklist,
+                                            _hqlJoin, _hqlJoinProtocol,
+                                            _hqlSingleStateCondition);
+
+            List<QueryParameter> parameters = new List<QueryParameter>();
+            parameters.Add(new QueryParameter("rpsState", ActivityStatus.SU.ToString()));
+
+            return GetWorklist(hqlQuery, parameters);
+        }
+
         #endregion
 
         #region Worklist Count
@@ -297,7 +359,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         {
             string hqlQuery = String.Concat(_hqlToBeReportedCount, 
                 _hqlJoin, 
-                _hqlCommunualWorklistCondition);
+                _hqlSingleStateCondition, _hqlCommunualWorklistCondition);
 
             List<QueryParameter> parameters = new List<QueryParameter>();
             parameters.Add(new QueryParameter("rpsState", ActivityStatus.SC.ToString()));
@@ -309,17 +371,6 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             }
 
             return GetWorklistCount(hqlQuery, parameters);
-        }
-
-        public int GetToBeProtocolledWorklistCount()
-        {
-            return GetToBeProtocolledWorklistCount(null);
-        }
-
-        public int GetToBeProtocolledWorklistCount(ReportingToBeProtocolledWorklist worklist)
-        {
-            // TODO 
-            return 0;
         }
 
         public int GetDraftWorklistCount(Staff currentStaff)
@@ -415,6 +466,68 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             parameters.Add(new QueryParameter("rpsState", ActivityStatus.SC.ToString()));
             parameters.Add(new QueryParameter("rpsState2", ActivityStatus.IP.ToString()));
             parameters.Add(new QueryParameter("supervisorStaff", currentStaff));
+
+            return GetWorklistCount(hqlQuery, parameters);
+        }
+
+        public int GetToBeProtocolledWorklistCount()
+        {
+            return GetToBeProtocolledWorklistCount(null);
+        }
+
+        public int GetToBeProtocolledWorklistCount(ReportingToBeProtocolledWorklist worklist)
+        {
+            string hqlQuery = String.Concat(_hqlProtocollingCount,
+                                            _hqlJoin, _hqlJoinProtocol,
+                                            _hqlDualStateCondition, _hqlCommunualWorklistCondition);
+
+            List<QueryParameter> parameters = new List<QueryParameter>();
+            parameters.Add(new QueryParameter("rpsState", ActivityStatus.SC.ToString()));
+            parameters.Add(new QueryParameter("rpsState2", ActivityStatus.IP.ToString()));
+
+            if (worklist != null)
+            {
+                hqlQuery += _hqlWorklistSubQuery;
+                parameters.Add(new QueryParameter("worklist", worklist));
+            }
+
+            return GetWorklistCount(hqlQuery, parameters);
+        }
+
+        public int GetToBeApprovedCount(Staff perfomingStaff)
+        {
+            string hqlQuery = String.Concat(_hqlProtocollingCount,
+                                            _hqlJoin, _hqlJoinProtocol,
+                                            _hqlProtocolRequiresApprovalCondition);
+
+            List<QueryParameter> parameters = new List<QueryParameter>();
+            parameters.Add(new QueryParameter("rpsState", ActivityStatus.IP.ToString()));
+            parameters.Add(new QueryParameter("rpsApprovalRequired", true.ToString()));
+
+            return GetWorklistCount(hqlQuery, parameters);
+        }
+
+        public int GetCompletedProtocolCount(Staff performingStaff)
+        {
+            string hqlQuery = String.Concat(_hqlProtocollingCount,
+                                            _hqlJoin, _hqlJoinProtocol,
+                                            _hqlDualStateCondition);
+
+            List<QueryParameter> parameters = new List<QueryParameter>();
+            parameters.Add(new QueryParameter("rpsState", ActivityStatus.CM.ToString()));
+            parameters.Add(new QueryParameter("rpsState2", ActivityStatus.DC.ToString()));
+
+            return GetWorklistCount(hqlQuery, parameters);
+        }
+
+        public int GetSuspendedProtocolCount(Staff performingStaff)
+        {
+            string hqlQuery = String.Concat(_hqlProtocollingCount,
+                                            _hqlJoin, _hqlJoinProtocol,
+                                            _hqlSingleStateCondition);
+
+            List<QueryParameter> parameters = new List<QueryParameter>();
+            parameters.Add(new QueryParameter("rpsState", ActivityStatus.SU.ToString()));
 
             return GetWorklistCount(hqlQuery, parameters);
         }

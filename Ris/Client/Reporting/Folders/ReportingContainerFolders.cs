@@ -30,7 +30,6 @@
 #endregion
 
 using ClearCanvas.Common;
-using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client.Reporting.Folders
 {
@@ -44,5 +43,12 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
     {
         public ReportingToBeReportedContainerFolder() 
             : base("To Be Reported", typeof(ToBeReportedFolder)) { }
+    }
+
+    [ExtensionOf(typeof(ReportingContainerFolderExtensionPoint))]
+    public class ReportingToBeProtocolledContainerFolder : ContainerFolder
+    {
+        public ReportingToBeProtocolledContainerFolder()
+            : base("To Be Protocolled", typeof(ToBeProtocolledFolder)) { }
     }
 }

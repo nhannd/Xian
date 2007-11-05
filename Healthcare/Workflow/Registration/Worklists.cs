@@ -112,5 +112,47 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
                 return GetBroker(context).GetCancelledWorklistCount();
             }
         }
+
+        [ExtensionOf(typeof(RegistrationWorklistExtensionPoint))]
+        public class CompletedProtocol : WorklistBase<IRegistrationWorklistBroker>
+        {
+            public override IList GetWorklist(Staff currentUserStaff, IPersistenceContext context)
+            {
+                return (IList)GetBroker(context).GetCompletedProtocolWorklist();
+            }
+
+            public override int GetWorklistCount(Staff currentUserStaff, IPersistenceContext context)
+            {
+                return GetBroker(context).GetCompletedProtocolWorklistCount();
+            }
+        }
+
+        [ExtensionOf(typeof(RegistrationWorklistExtensionPoint))]
+        public class SuspendedProtocol : WorklistBase<IRegistrationWorklistBroker>
+        {
+            public override IList GetWorklist(Staff currentUserStaff, IPersistenceContext context)
+            {
+                return (IList)GetBroker(context).GetSuspendedProtocolWorklist();
+            }
+
+            public override int GetWorklistCount(Staff currentUserStaff, IPersistenceContext context)
+            {
+                return GetBroker(context).GetSuspendedProtocolWorklistCount();
+            }
+        }
+
+        [ExtensionOf(typeof(RegistrationWorklistExtensionPoint))]
+        public class PendingProtocol : WorklistBase<IRegistrationWorklistBroker>
+        {
+            public override IList GetWorklist(Staff currentUserStaff, IPersistenceContext context)
+            {
+                return (IList)GetBroker(context).GetPendingProtocolWorklist();
+            }
+
+            public override int GetWorklistCount(Staff currentUserStaff, IPersistenceContext context)
+            {
+                return GetBroker(context).GetPendingProtocolWorklistCount();
+            }
+        }
     }
 }

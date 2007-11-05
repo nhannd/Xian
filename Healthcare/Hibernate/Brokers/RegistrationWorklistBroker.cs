@@ -75,6 +75,12 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         private const string _hqlWorklistSubQuery = " and rp.Type in" +
                                                     " (select distinct rpt from Worklist w join w.RequestedProcedureTypeGroups rptg join rptg.RequestedProcedureTypes rpt where w = :worklist)";
 
+        private const string _hqlSelectProtocolWorklist     = "select distinct o from ProtocolProcedureStep cps";
+        private const string _hqlSelectProtocolCount        = "select count(distinct o) from ProtocolProcedureStep cps";
+        private const string _hqlProtocolStateCondition          = " where cps.State = :cpsState";
+        private const string _hqlUnscheduledCondition       = " and o.ScheduledStartTime is null";
+        private const string _hqlDualProtocolStateCondition = " where (cps.State = :cpsState or cps.State = :cpsState2)";
+
 
         #region Query helpers
 
@@ -216,7 +222,6 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             return GetCancelledWorklist(null);
         }
 
-
         public IList<WorklistItem> GetCancelledWorklist(RegistrationCancelledWorklist worklist)
         {
             string hqlQuery = String.Concat(_hqlSelectWorklist, _hqlJoin, _hqlMainCondition);
@@ -224,6 +229,58 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             List<QueryParameter> parameters = new List<QueryParameter>();
             parameters.Add(new QueryParameter("cpsState", ActivityStatus.DC.ToString()));
             AddMainQueryParameters(parameters);
+
+            AddWorklistQueryAndParameters(ref hqlQuery, parameters, worklist);
+
+            return GetWorklist(hqlQuery, parameters);
+        }
+
+        public IList<WorklistItem> GetCompletedProtocolWorklist()
+        {
+            return GetCompletedProtocolWorklist(null);
+        }
+
+        public IList<WorklistItem> GetCompletedProtocolWorklist(RegistrationCompletedProtocolWorklist worklist)
+        {
+            string hqlQuery = String.Concat(_hqlSelectProtocolWorklist, _hqlJoin, _hqlProtocolStateCondition, _hqlUnscheduledCondition);
+
+            List<QueryParameter> parameters = new List<QueryParameter>();
+            parameters.Add(new QueryParameter("cpsState", ActivityStatus.CM.ToString()));
+
+            AddWorklistQueryAndParameters(ref hqlQuery, parameters, worklist);
+
+            return GetWorklist(hqlQuery, parameters);
+        }
+
+        public IList<WorklistItem> GetSuspendedProtocolWorklist()
+        {
+            return GetSuspendedProtocolWorklist(null);
+        }
+
+        public IList<WorklistItem> GetSuspendedProtocolWorklist(RegistrationSuspendedProtocolWorklist worklist)
+        {
+            string hqlQuery = String.Concat(_hqlSelectProtocolWorklist, _hqlJoin, _hqlProtocolStateCondition);
+
+            List<QueryParameter> parameters = new List<QueryParameter>();
+            parameters.Add(new QueryParameter("cpsState", ActivityStatus.SU.ToString()));
+
+            AddWorklistQueryAndParameters(ref hqlQuery, parameters, worklist);
+
+            return GetWorklist(hqlQuery, parameters);
+        }
+
+        public IList<WorklistItem> GetPendingProtocolWorklist()
+        {
+            return GetPendingProtocolWorklist(null);
+        }
+
+        public IList<WorklistItem> GetPendingProtocolWorklist(RegistrationPendingProtocolWorklist worklist)
+        {
+            string hqlQuery = String.Concat(_hqlSelectProtocolWorklist, _hqlJoin, _hqlDualProtocolStateCondition);
+
+            List<QueryParameter> parameters = new List<QueryParameter>();
+            parameters.Add(new QueryParameter("cpsState", ActivityStatus.SC.ToString()));
+            parameters.Add(new QueryParameter("cpsState2", ActivityStatus.IP.ToString()));
 
             AddWorklistQueryAndParameters(ref hqlQuery, parameters, worklist);
 
@@ -320,6 +377,58 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             List<QueryParameter> parameters = new List<QueryParameter>();
             parameters.Add(new QueryParameter("cpsState", ActivityStatus.DC.ToString()));
             AddMainQueryParameters(parameters);
+
+            AddWorklistQueryAndParameters(ref hqlQuery, parameters, worklist);
+
+            return GetWorklistCount(hqlQuery, parameters);
+        }
+
+        public int GetCompletedProtocolWorklistCount()
+        {
+            return GetCompletedProtocolWorklistCount(null);
+        }
+
+        public int GetCompletedProtocolWorklistCount(RegistrationCompletedProtocolWorklist worklist)
+        {
+            string hqlQuery = String.Concat(_hqlSelectProtocolCount, _hqlJoin, _hqlProtocolStateCondition);
+
+            List<QueryParameter> parameters = new List<QueryParameter>();
+            parameters.Add(new QueryParameter("cpsState", ActivityStatus.SU.ToString()));
+
+            AddWorklistQueryAndParameters(ref hqlQuery, parameters, worklist);
+
+            return GetWorklistCount(hqlQuery, parameters);
+        }
+
+        public int GetSuspendedProtocolWorklistCount()
+        {
+            return GetSuspendedProtocolWorklistCount(null);
+        }
+
+        public int GetSuspendedProtocolWorklistCount(RegistrationSuspendedProtocolWorklist worklist)
+        {
+            string hqlQuery = String.Concat(_hqlSelectProtocolCount, _hqlJoin, _hqlProtocolStateCondition);
+
+            List<QueryParameter> parameters = new List<QueryParameter>();
+            parameters.Add(new QueryParameter("cpsState", ActivityStatus.SU.ToString()));
+
+            AddWorklistQueryAndParameters(ref hqlQuery, parameters, worklist);
+
+            return GetWorklistCount(hqlQuery, parameters);
+        }
+
+        public int GetPendingProtocolWorklistCount()
+        {
+            return GetPendingProtocolWorklistCount(null);
+        }
+
+        public int GetPendingProtocolWorklistCount(RegistrationPendingProtocolWorklist worklist)
+        {
+            string hqlQuery = String.Concat(_hqlSelectProtocolCount, _hqlJoin, _hqlDualProtocolStateCondition);
+
+            List<QueryParameter> parameters = new List<QueryParameter>();
+            parameters.Add(new QueryParameter("cpsState", ActivityStatus.SC.ToString()));
+            parameters.Add(new QueryParameter("cpsState2", ActivityStatus.IP.ToString()));
 
             AddWorklistQueryAndParameters(ref hqlQuery, parameters, worklist);
 

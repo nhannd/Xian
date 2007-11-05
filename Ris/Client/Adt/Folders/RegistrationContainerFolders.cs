@@ -74,4 +74,25 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         public RegistrationCancelledContainerFolder() 
             : base("Cancelled", typeof(CancelledFolder)) { }
     }
+
+    [ExtensionOf(typeof(RegistrationContainerFolderExtensionPoint))]
+    public class RegistrationCompletedProtocolContainerFolder : ContainerFolder
+    {
+        public RegistrationCompletedProtocolContainerFolder()
+            : base("Completed Protocol", typeof(CompletedProtocolFolder)) { }
+    }
+
+    [ExtensionOf(typeof(RegistrationContainerFolderExtensionPoint))]
+    public class RegistrationSuspendedProtocolContainerFolder : ContainerFolder
+    {
+        public RegistrationSuspendedProtocolContainerFolder()
+            : base("Suspended Protocol", typeof(SuspendedProtocolFolder)) { }
+    }
+
+    [ExtensionOf(typeof(RegistrationContainerFolderExtensionPoint))]
+    public class RegistrationPendingProtocolContainerFolder : ContainerFolder
+    {
+        public RegistrationPendingProtocolContainerFolder()
+            : base("Pending Protocol", typeof(PendingProtocolFolder)) { }
+    }
 }

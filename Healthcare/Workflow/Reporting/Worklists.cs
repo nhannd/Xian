@@ -139,5 +139,60 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
             }
         }
 
+        [ExtensionOf(typeof(ReportingWorklistExtensionPoint))]
+        public class ToBeProtocolled : WorklistBase<IReportingWorklistBroker>
+        {
+            public override IList GetWorklist(Staff currentUserStaff, IPersistenceContext context)
+            {
+                return (IList)GetBroker(context).GetToBeProtocolledWorklist();
+            }
+
+            public override int GetWorklistCount(Staff currentUserStaff, IPersistenceContext context)
+            {
+                return GetBroker(context).GetToBeProtocolledWorklistCount();
+            }
+        }
+
+        [ExtensionOf(typeof(ReportingWorklistExtensionPoint))]
+        public class ToBeApproved : WorklistBase<IReportingWorklistBroker>
+        {
+            public override IList GetWorklist(Staff currentUserStaff, IPersistenceContext context)
+            {
+                return (IList)GetBroker(context).GetToBeApprovedWorklist(currentUserStaff);
+            }
+
+            public override int GetWorklistCount(Staff currentUserStaff, IPersistenceContext context)
+            {
+                return GetBroker(context).GetToBeApprovedCount(currentUserStaff);
+            }
+        }
+
+        [ExtensionOf(typeof(ReportingWorklistExtensionPoint))]
+        public class CompletedProtocol : WorklistBase<IReportingWorklistBroker>
+        {
+            public override IList GetWorklist(Staff currentUserStaff, IPersistenceContext context)
+            {
+                return (IList)GetBroker(context).GetCompletedProtocolWorklist(currentUserStaff);
+            }
+
+            public override int GetWorklistCount(Staff currentUserStaff, IPersistenceContext context)
+            {
+                return GetBroker(context).GetCompletedProtocolCount(currentUserStaff);
+            }
+        }
+
+        [ExtensionOf(typeof(ReportingWorklistExtensionPoint))]
+        public class SuspendedProtocol : WorklistBase<IReportingWorklistBroker>
+        {
+            public override IList GetWorklist(Staff currentUserStaff, IPersistenceContext context)
+            {
+                return (IList)GetBroker(context).GetSuspendedProtocolWorklist(currentUserStaff);
+            }
+
+            public override int GetWorklistCount(Staff currentUserStaff, IPersistenceContext context)
+            {
+                return GetBroker(context).GetSuspendedProtocolCount(currentUserStaff);
+            }
+        }
     }
 }

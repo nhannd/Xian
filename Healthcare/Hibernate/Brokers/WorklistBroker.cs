@@ -51,7 +51,10 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
                                                            + " or w.class = RegistrationCheckedInWorklist"
                                                            + " or w.class = RegistrationInProgressWorklist"
                                                            + " or w.class = RegistrationCancelledWorklist"
-                                                           + " or w.class = RegistrationCompletedWorklist)";
+                                                           + " or w.class = RegistrationCompletedWorklist"
+                                                           + " or w.class = RegistrationCompletedProtocolWorklist"
+                                                           + " or w.class = RegistrationSuspendedProtocolWorklist"
+                                                           + " or w.class = RegistrationPendingProtocolWorklist)";
 
         private readonly string _technologistWorklistHql = " and (w.class = TechnologistScheduledWorklist"
                                                            + " or w.class = TechnologistCheckedInWorklist"
@@ -59,7 +62,8 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
                                                            + " or w.class = TechnologistCancelledWorklist"
                                                            + " or w.class = TechnologistCompletedWorklist)";
 
-        private readonly string _reportingWorklistHql = " and (w.class = ReportingToBeReportedWorklist)";
+        private readonly string _reportingWorklistHql = " and (w.class = ReportingToBeReportedWorklist"
+                                                        + " or w.class = ReportingToBeProtocolledWorklist)";
 
         #endregion
 

@@ -87,6 +87,9 @@
     <Compile Include="ProtocolCode.cs" />
     <Compile Include="ProtocolNote.cs" />
     <Compile Include="ProtocolProcedureStep.cs" />
+    <Compile Include="RegistrationCompletedProtocolWorklist.cs" />
+    <Compile Include="RegistrationPendingProtocolWorklist.cs" />
+    <Compile Include="RegistrationSuspendedProtocolWorklist.cs" />
     <Compile Include="ReportingToBeProtocolledWorklist.cs" />
     <Compile Include="Laterality.cs" />
     <Compile Include="ReportPartStatus.cs" />
@@ -201,6 +204,7 @@
     <Compile Include="VisitPractitioner.cs" />
     <Compile Include="VisitPractitionerRole.cs" />
     <Compile Include="VisitStatus.cs" />
+    <Compile Include="Workflow\ProtocollingOperations.cs" />
     <Compile Include="Workflow\Registration\Operation.cs" />
     <Compile Include="Workflow\Registration\WorklistItem.cs" />
     <Compile Include="Workflow\Registration\Worklists.cs" />

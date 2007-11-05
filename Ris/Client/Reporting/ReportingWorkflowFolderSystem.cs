@@ -194,6 +194,12 @@ namespace ClearCanvas.Ris.Client.Reporting
                 this.AddFolder(new Folders.MyResidentToBeVerifyFolder(this));
 
             this.AddFolder(new Folders.VerifiedFolder(this));
+
+            this.AddFolder(new Folders.ToBeProtocolledFolder(this));
+            this.AddFolder(new Folders.ToBeApprovedFolder(this));
+            this.AddFolder(new Folders.CompletedProtocolFolder(this));
+            this.AddFolder(new Folders.SuspendedProtocolFolder(this));
+
             this.AddFolder(_searchFolder = new Folders.SearchFolder(this));
 
             _itemToolSet = new ToolSet(new ReportingWorkflowItemToolExtensionPoint(), new ReportingWorkflowItemToolContext(this));
@@ -256,7 +262,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                         Platform.GetService<IReportingWorkflowService>(
                             delegate(IReportingWorkflowService service)
                             {
-                                GetOperationEnablementResponse response = service.GetOperationEnablement(new GetOperationEnablementRequest(selectedItem.ProcedureStepRef));
+                                GetOperationEnablementResponse response = service.GetOperationEnablement(new GetOperationEnablementRequest(selectedItem.ProcedureStepRef, selectedItem.StepType));
                                 _workflowEnablement = response.OperationEnablementDictionary;
                             });
                     });

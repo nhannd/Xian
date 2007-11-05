@@ -53,7 +53,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
         [ReadOperation]
         public GetProcedurePlanForWorklistItemResponse GetProcedurePlanForWorklistItem(GetProcedurePlanForWorklistItemRequest request)
         {
-            ModalityProcedureStep mps = this.PersistenceContext.Load<ModalityProcedureStep>(request.ProcedureStepRef);
+            ProcedureStep mps = this.PersistenceContext.Load<ProcedureStep>(request.ProcedureStepRef);
             Order order = mps.RequestedProcedure.Order;
             TechnologistDocumentationAssembler assembler = new TechnologistDocumentationAssembler();
 

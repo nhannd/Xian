@@ -109,7 +109,7 @@ namespace ClearCanvas.Ris.Application.Services.PreviewService
         {
             GetModalityProcedureStepResponse response = new GetModalityProcedureStepResponse();
             
-            ModalityProcedureStep mps = PersistenceContext.Load<ModalityProcedureStep>(mpsRef);
+            ProcedureStep mps = PersistenceContext.Load<ProcedureStep>(mpsRef);
             PreviewServiceAssembler assembler = new PreviewServiceAssembler();
             response.PatientOrderData = assembler.CreatePatientOrderData(mps, this.PersistenceContext);
 

@@ -225,6 +225,111 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         }
     }
 
+    [ExtensionOf(typeof(WorkflowFolderExtensionPoint))]
+    [FolderForWorklistType(WorklistTokens.RegistrationCompletedProtocolWorklist)]
+    public class CompletedProtocolFolder : RegistrationWorkflowFolder
+    {
+        public CompletedProtocolFolder(RegistrationWorkflowFolderSystem folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
+            : base(folderSystem, folderDisplayName, folderDescription, worklistRef)
+        {
+            this.MenuModel = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));
+            ((SimpleActionModel)this.MenuModel).AddAction("ScheduledOption", "Option", "EditToolSmall.png", "Option",
+                delegate() { DisplayOption(folderSystem.DesktopWindow); });
+
+            this.RefreshTime = 0;
+            this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Registration.Worklists+CompletedProtocol";
+        }
+
+        public CompletedProtocolFolder(RegistrationWorkflowFolderSystem folderSystem)
+            : this(folderSystem, "Completed Protocol", null, null)
+        {
+        }
+
+        public CompletedProtocolFolder()
+            : this(null)
+        {
+        }
+
+        private void DisplayOption(IDesktopWindow desktopWindow)
+        {
+            FolderOptionComponent optionComponent = new FolderOptionComponent(this.RefreshTime);
+            if (ApplicationComponent.LaunchAsDialog(desktopWindow, optionComponent, "Option") == ApplicationComponentExitCode.Normal)
+            {
+                this.RefreshTime = optionComponent.RefreshTime;
+            }
+        }
+    }
+
+    [ExtensionOf(typeof(WorkflowFolderExtensionPoint))]
+    [FolderForWorklistType(WorklistTokens.RegistrationSuspendedProtocolWorklist)]
+    public class SuspendedProtocolFolder : RegistrationWorkflowFolder
+    {
+        public SuspendedProtocolFolder(RegistrationWorkflowFolderSystem folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
+            : base(folderSystem, folderDisplayName, folderDescription, worklistRef)
+        {
+            this.MenuModel = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));
+            ((SimpleActionModel)this.MenuModel).AddAction("ScheduledOption", "Option", "EditToolSmall.png", "Option",
+                delegate() { DisplayOption(folderSystem.DesktopWindow); });
+
+            this.RefreshTime = 0;
+            this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Registration.Worklists+SuspendedProtocol";
+        }
+
+        public SuspendedProtocolFolder(RegistrationWorkflowFolderSystem folderSystem)
+            : this(folderSystem, "Suspended Protocol", null, null)
+        {
+        }
+
+        public SuspendedProtocolFolder()
+            : this(null)
+        {
+        }
+
+        private void DisplayOption(IDesktopWindow desktopWindow)
+        {
+            FolderOptionComponent optionComponent = new FolderOptionComponent(this.RefreshTime);
+            if (ApplicationComponent.LaunchAsDialog(desktopWindow, optionComponent, "Option") == ApplicationComponentExitCode.Normal)
+            {
+                this.RefreshTime = optionComponent.RefreshTime;
+            }
+        }
+    }
+
+    [ExtensionOf(typeof(WorkflowFolderExtensionPoint))]
+    [FolderForWorklistType(WorklistTokens.RegistrationPendingProtocolWorklist)]
+    public class PendingProtocolFolder : RegistrationWorkflowFolder
+    {
+        public PendingProtocolFolder(RegistrationWorkflowFolderSystem folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
+            : base(folderSystem, folderDisplayName, folderDescription, worklistRef)
+        {
+            this.MenuModel = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));
+            ((SimpleActionModel)this.MenuModel).AddAction("ScheduledOption", "Option", "EditToolSmall.png", "Option",
+                delegate() { DisplayOption(folderSystem.DesktopWindow); });
+
+            this.RefreshTime = 0;
+            this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Registration.Worklists+PendingProtocol";
+        }
+
+        public PendingProtocolFolder(RegistrationWorkflowFolderSystem folderSystem)
+            : this(folderSystem, "Pending Protocol", null, null)
+        {
+        }
+
+        public PendingProtocolFolder()
+            : this(null)
+        {
+        }
+
+        private void DisplayOption(IDesktopWindow desktopWindow)
+        {
+            FolderOptionComponent optionComponent = new FolderOptionComponent(this.RefreshTime);
+            if (ApplicationComponent.LaunchAsDialog(desktopWindow, optionComponent, "Option") == ApplicationComponentExitCode.Normal)
+            {
+                this.RefreshTime = optionComponent.RefreshTime;
+            }
+        }
+    }
+
     public class RegistrationSearchFolder : RegistrationWorkflowFolder
     {
         private SearchData _searchData;

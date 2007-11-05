@@ -186,6 +186,9 @@ namespace ClearCanvas.Ris.Client.Adt
             this.AddFolder(new Folders.InProgressFolder(this));
             this.AddFolder(new Folders.CompletedFolder(this));
             this.AddFolder(new Folders.CancelledFolder(this));
+            this.AddFolder(new Folders.CompletedProtocolFolder(this));
+            this.AddFolder(new Folders.SuspendedProtocolFolder(this));
+            this.AddFolder(new Folders.PendingProtocolFolder(this));
             this.AddFolder(_searchFolder = new Folders.RegistrationSearchFolder(this));
 
             _itemToolSet = new ToolSet(new RegistrationWorkflowItemToolExtensionPoint(), new RegistrationWorkflowItemToolContext(this));

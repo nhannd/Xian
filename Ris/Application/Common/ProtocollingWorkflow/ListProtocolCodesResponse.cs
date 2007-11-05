@@ -7,6 +7,11 @@ namespace ClearCanvas.Ris.Application.Common.ProtocollingWorkflow
     [DataContract]
     public class ListProtocolCodesResponse : DataContractBase
     {
+        public ListProtocolCodesResponse(List<ProtocolCodeDetail> codes)
+        {
+            Codes = codes;
+        }
+
         [DataMember]
         public List<ProtocolCodeDetail> Codes;
     }
