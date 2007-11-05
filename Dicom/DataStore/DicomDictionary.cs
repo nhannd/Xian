@@ -40,7 +40,7 @@ namespace ClearCanvas.Dicom.DataStore
 {
 	public sealed partial class DataAccessLayer
 	{
-		internal class DicomDictionary : IDicomDictionary
+		private class DicomDictionary : IDicomDictionary
 		{
 			public static readonly string DefaultDictionaryName = "default-unicode";
 			public static readonly string DefaultQueryDictionaryName = "study-query-unicode";

@@ -325,7 +325,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 				_databaseUpdateFrequencyMilliseconds = LocalDataStoreServiceSettings.Instance.DatabaseUpdateFrequencyMilliseconds;
 
-				_dicomFileImporter = new DicomFileImporter(this);
+				_dicomFileImporter = new DicomFileImporter();
 
 				_sentFileProcessor = new SentFileProcessor(this);
 				_receivedFileProcessor = new ReceivedFileProcessor(this);

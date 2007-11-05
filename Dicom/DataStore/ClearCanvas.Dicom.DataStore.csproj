@@ -61,6 +61,7 @@
     <Compile Include="DicomDictionary.cs" />
     <Compile Include="DicomDictionaryContainer.cs" />
     <Compile Include="DicomPersistentStore.cs" />
+    <Compile Include="DicomPersistentStoreValidator.cs" />
     <Compile Include="DicomUri.cs" />
     <Compile Include="DictionaryEntry.cs" />
     <Compile Include="FileRemover.cs" />
@@ -69,15 +70,17 @@
     <Compile Include="IDataStoreWriter.cs" />
     <Compile Include="IDicomDictionary.cs" />
     <Compile Include="IDicomPersistentStore.cs" />
+    <Compile Include="IDicomPersistentStoreValidator.cs" />
     <Compile Include="LoadAssociationDelegate.cs" />
     <Compile Include="ImageSopInstance.cs" />
     <Compile Include="ISeries.cs" />
     <Compile Include="ISopInstance.cs" />
     <Compile Include="IStudy.cs" />
     <Compile Include="Path.cs" />
+    <Compile Include="PersistenObjectValidator.cs" />
+    <Compile Include="PersistentDicomObject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SessionConsumer.cs" />
-    <Compile Include="PersistentDicomObject.cs" />
     <Compile Include="SessionManager.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -88,6 +91,7 @@
     <Compile Include="SopInstance.cs" />
     <Compile Include="Study.cs" />
     <Compile Include="TagName.cs" />
+    <Compile Include="Tests\ValidationTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Hibernate\SopInstance.hbm.xml" />

@@ -61,6 +61,11 @@ namespace ClearCanvas.Dicom.DataStore
 			_dicomDictionaries = new Dictionary<string, IDicomDictionary>();
 		}
 
+		internal static Configuration HibernateConfiguration
+		{
+			get { return _hibernateConfiguration; }	
+		}
+
 		private static ISessionFactory SessionFactory
 		{
 			get { return _sessionFactory; }
@@ -70,6 +75,11 @@ namespace ClearCanvas.Dicom.DataStore
         {
 			return new DataStoreReader(SessionManager.Get());
         }
+
+		public static IDicomPersistentStoreValidator GetIDicomPersistentStoreValidator()
+		{
+			return new DicomPersistentStoreValidator();
+		}
 
 		public static IDicomPersistentStore GetIDicomPersistentStore()
 		{

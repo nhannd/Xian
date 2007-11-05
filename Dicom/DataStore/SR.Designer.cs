@@ -70,6 +70,15 @@ namespace ClearCanvas.Dicom.DataStore {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Although the file format is recognized, it is not appropriate for insertion into the Data Store (DICOMDIR; MediaStorageSopClass=&apos;1.2.840.10008.1.3.10&apos;)..
+        /// </summary>
+        internal static string ExceptionCannotProcessDicomDirFiles {
+            get {
+                return ResourceManager.GetString("ExceptionCannotProcessDicomDirFiles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Can only update an existing series from a Dicom data set with the same SeriesInstanceUid..
         /// </summary>
         internal static string ExceptionCanOnlyUpdateExistingSeriesWithSameSeriesUid {
@@ -223,29 +232,11 @@ namespace ClearCanvas.Dicom.DataStore {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The SeriesInstanceUid &apos;{0}&apos; already belongs to a different existing study (&apos;{1}&apos;)..
-        /// </summary>
-        internal static string ExceptionFormatSeriesAlreadyBelongsToExistingStudy {
-            get {
-                return ResourceManager.GetString("ExceptionFormatSeriesAlreadyBelongsToExistingStudy", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to An error occurred while attempting to determine whether or not the series &apos;{0}&apos; exists in the datastore..
         /// </summary>
         internal static string ExceptionFormatSeriesExistsFailed {
             get {
                 return ResourceManager.GetString("ExceptionFormatSeriesExistsFailed", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The SopInstanceUid &apos;{0}&apos; already belongs to a different existing series (&apos;{1}&apos;)..
-        /// </summary>
-        internal static string ExceptionFormatSopAlreadyBelongsToExistingSeries {
-            get {
-                return ResourceManager.GetString("ExceptionFormatSopAlreadyBelongsToExistingSeries", resourceCulture);
             }
         }
         
@@ -304,6 +295,24 @@ namespace ClearCanvas.Dicom.DataStore {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Column &apos;{0}&apos; is not nullable; value = &apos;{1}&apos;..
+        /// </summary>
+        internal static string FormatColumnIsNotNullable {
+            get {
+                return ResourceManager.GetString("FormatColumnIsNotNullable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Column &apos;{0}&apos; must be unique; the value &apos;{1}&apos; is unacceptable..
+        /// </summary>
+        internal static string FormatColumnMustBeUnique {
+            get {
+                return ResourceManager.GetString("FormatColumnMustBeUnique", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed to load Dicom dictionary with name &apos;{0}&apos;..
         /// </summary>
         internal static string FormatDicomDictionaryFailedToLoad {
@@ -327,6 +336,15 @@ namespace ClearCanvas.Dicom.DataStore {
         internal static string FormatSpecifiedColumnDoesNotExistForTag {
             get {
                 return ResourceManager.GetString("FormatSpecifiedColumnDoesNotExistForTag", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Value &apos;{0}&apos; exceeds maximum length ({1}) for column &apos;{2}&apos;..
+        /// </summary>
+        internal static string FormatValueExceedsMaximumLength {
+            get {
+                return ResourceManager.GetString("FormatValueExceedsMaximumLength", resourceCulture);
             }
         }
     }

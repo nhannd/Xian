@@ -322,15 +322,6 @@ namespace ClearCanvas.ImageViewer.Shreds {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to An error has occurred while attempting to parse the file..
-        /// </summary>
-        internal static string ExceptionFailedToParseFile {
-            get {
-                return ResourceManager.GetString("ExceptionFailedToParseFile", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Failed to remove subscriber from the Local DataStore Activity Monitor service..
         /// </summary>
         internal static string ExceptionFailedToRemoveSubscriber {
@@ -484,20 +475,11 @@ namespace ClearCanvas.ImageViewer.Shreds {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Although the file format is recognized, it is not appropriate for insertion into the datastore ({0}).
+        ///   Looks up a localized string similar to The file cannot be inserted into the Data Store ({0})..
         /// </summary>
-        internal static string FormatFileFormatNotAppropriateForDatastore {
+        internal static string FormatFileCannotBeInsertedIntoDataStore {
             get {
-                return ResourceManager.GetString("FormatFileFormatNotAppropriateForDatastore", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The file format is not recognized ({0}).
-        /// </summary>
-        internal static string FormatFileFormatNotRecognized {
-            get {
-                return ResourceManager.GetString("FormatFileFormatNotRecognized", resourceCulture);
+                return ResourceManager.GetString("FormatFileCannotBeInsertedIntoDataStore", resourceCulture);
             }
         }
         
@@ -679,6 +661,15 @@ namespace ClearCanvas.ImageViewer.Shreds {
         internal static string MessageFailedToClearDatabase {
             get {
                 return ResourceManager.GetString("MessageFailedToClearDatabase", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Processing of the bad file failed..
+        /// </summary>
+        internal static string MessageFailedToProcessBadFile {
+            get {
+                return ResourceManager.GetString("MessageFailedToProcessBadFile", resourceCulture);
             }
         }
         

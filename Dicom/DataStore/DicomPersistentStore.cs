@@ -37,7 +37,7 @@ namespace ClearCanvas.Dicom.DataStore
 {
 	public sealed partial class DataAccessLayer
 	{
-		internal sealed class DicomPersistentStore : IDicomPersistentStore
+		private sealed class DicomPersistentStore : IDicomPersistentStore
 		{
 			private readonly Dictionary<string, Study> _existingStudyCache = new Dictionary<string, Study>();
 			private readonly Dictionary<string, Series> _existingSeriesCache = new Dictionary<string, Series>();
@@ -47,6 +47,7 @@ namespace ClearCanvas.Dicom.DataStore
 			private readonly Dictionary<string, SopInstance> _sopInstancesToUpdate = new Dictionary<string, SopInstance>();
 
 			private IDataStoreReader _dataStoreReader;
+			private IDicomPersistentStoreValidator _validator;
 
 			public DicomPersistentStore()
 			{
@@ -107,6 +108,14 @@ namespace ClearCanvas.Dicom.DataStore
 				return _dataStoreReader;
 			}
 
+			private IDicomPersistentStoreValidator GetValidator()
+			{
+				if (_validator == null)
+					_validator = GetIDicomPersistentStoreValidator();
+
+				return _validator;
+			}
+
 			private Study GetStudy(string studyInstanceUid)
 			{
 				if (this.ExistingStudyCache.ContainsKey(studyInstanceUid))
@@ -153,6 +162,8 @@ namespace ClearCanvas.Dicom.DataStore
 
 			public void UpdateSopInstance(DicomAttributeCollection metaInfo, DicomAttributeCollection sopInstanceDataset, string fileName)
 			{
+				GetValidator().Validate(metaInfo, sopInstanceDataset);
+
 				string studyInstanceUid = sopInstanceDataset[DicomTags.StudyInstanceUid];
 				string seriesInstanceUid = sopInstanceDataset[DicomTags.SeriesInstanceUid];
 				string sopInstanceUid = sopInstanceDataset[DicomTags.SopInstanceUid];
@@ -186,8 +197,8 @@ namespace ClearCanvas.Dicom.DataStore
 				{
 					if (series.Study != study)
 					{
-						string message = String.Format(SR.ExceptionFormatSeriesAlreadyBelongsToExistingStudy, series.SeriesInstanceUid, study.StudyInstanceUid);
-						throw new InvalidOperationException(message);
+						series.Study = study;
+						seriesDirty = true;
 					}
 				}
 
@@ -201,8 +212,8 @@ namespace ClearCanvas.Dicom.DataStore
 				{
 					if (image.Series != series)
 					{
-						string message = String.Format(SR.ExceptionFormatSopAlreadyBelongsToExistingSeries, series.SeriesInstanceUid, image.SopInstanceUid);
-						throw new InvalidOperationException(message);
+						image.Series = series;
+						sopDirty = true;
 					}
 				}
 
@@ -210,38 +221,30 @@ namespace ClearCanvas.Dicom.DataStore
 				EventHandler seriesDirtyDelegate = delegate { seriesDirty = true; };
 				EventHandler sopDirtyDelegate = delegate { sopDirty = true; };
 
-				if (!newStudy)
-					study.Changed += studyDirtyDelegate;
-				
-				if (!newSeries)
-					series.Changed += seriesDirtyDelegate;
-
-				if (!newSop)
-					image.Changed += sopDirtyDelegate;
+				study.Changed += studyDirtyDelegate;
+				series.Changed += seriesDirtyDelegate;
+				image.Changed += sopDirtyDelegate;
 
 				try
 				{
 					study.Update(metaInfo, sopInstanceDataset);
 					series.Update(metaInfo, sopInstanceDataset);
 					image.Update(metaInfo, sopInstanceDataset);
+
+					if (!System.IO.Path.IsPathRooted(fileName))
+						fileName = System.IO.Path.GetFullPath(fileName);
+
+					UriBuilder uriBuilder = new UriBuilder();
+					uriBuilder.Scheme = "file";
+					uriBuilder.Path = fileName;
+					image.LocationUri = new DicomUri(uriBuilder.Uri);
 				}
 				finally
 				{
-					if (!newStudy)
-						study.Changed -= studyDirtyDelegate;
-					if (!newSeries)
-						series.Changed -= seriesDirtyDelegate;
-					if (!newSop)
-						image.Changed -= sopDirtyDelegate;
+					study.Changed -= studyDirtyDelegate;
+					series.Changed -= seriesDirtyDelegate;
+					image.Changed -= sopDirtyDelegate;
 				}
-
-				if (!System.IO.Path.IsPathRooted(fileName))
-					fileName = System.IO.Path.GetFullPath(fileName);
-
-				UriBuilder uriBuilder = new UriBuilder();
-				uriBuilder.Scheme = "file";
-				uriBuilder.Path = fileName;
-				image.LocationUri = new DicomUri(uriBuilder.Uri);
 
 				if (studyDirty || newStudy)
 					StudiesToUpdate[study.StudyInstanceUid] = study;

@@ -120,6 +120,9 @@
   <data name="ExceptionAllWriteTransactionsMustBeCommittedBeforeReading" xml:space="preserve">
     <value>All write transactions must be committed before reading.</value>
   </data>
+  <data name="ExceptionCannotProcessDicomDirFiles" xml:space="preserve">
+    <value>Although the file format is recognized, it is not appropriate for insertion into the Data Store (DICOMDIR; MediaStorageSopClass='1.2.840.10008.1.3.10').</value>
+  </data>
   <data name="ExceptionCanOnlyUpdateExistingSeriesWithSameSeriesUid" xml:space="preserve">
     <value>Can only update an existing series from a Dicom data set with the same SeriesInstanceUid.</value>
   </data>
@@ -171,14 +174,8 @@
   <data name="ExceptionFormatFailedToRetrieveStudy" xml:space="preserve">
     <value>An error occurred while attempting to retrieve the study '{0}' from the datastore.</value>
   </data>
-  <data name="ExceptionFormatSeriesAlreadyBelongsToExistingStudy" xml:space="preserve">
-    <value>The SeriesInstanceUid '{0}' already belongs to a different existing study ('{1}').</value>
-  </data>
   <data name="ExceptionFormatSeriesExistsFailed" xml:space="preserve">
     <value>An error occurred while attempting to determine whether or not the series '{0}' exists in the datastore.</value>
-  </data>
-  <data name="ExceptionFormatSopAlreadyBelongsToExistingSeries" xml:space="preserve">
-    <value>The SopInstanceUid '{0}' already belongs to a different existing series ('{1}').</value>
   </data>
   <data name="ExceptionFormatSopExistsFailed" xml:space="preserve">
     <value>An error occurred while attempting to determine whether or not the sop instance '{0}' exists in the datastore.</value>
@@ -198,6 +195,12 @@
   <data name="ExceptionUriCannotBeNullOrEmpty" xml:space="preserve">
     <value>The Uri cannot be null or empty.</value>
   </data>
+  <data name="FormatColumnIsNotNullable" xml:space="preserve">
+    <value>Column '{0}' is not nullable; value = '{1}'.</value>
+  </data>
+  <data name="FormatColumnMustBeUnique" xml:space="preserve">
+    <value>Column '{0}' must be unique; the value '{1}' is unacceptable.</value>
+  </data>
   <data name="FormatDicomDictionaryFailedToLoad" xml:space="preserve">
     <value>Failed to load Dicom dictionary with name '{0}'.</value>
   </data>
@@ -206,5 +209,8 @@
   </data>
   <data name="FormatSpecifiedColumnDoesNotExistForTag" xml:space="preserve">
     <value>A corresponding column does not exist in the dictionary for tag '{0}'.</value>
+  </data>
+  <data name="FormatValueExceedsMaximumLength" xml:space="preserve">
+    <value>Value '{0}' exceeds maximum length ({1}) for column '{2}'.</value>
   </data>
 </root>

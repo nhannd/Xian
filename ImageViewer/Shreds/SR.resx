@@ -204,9 +204,6 @@
   <data name="ExceptionFailedToInitiateSend" xml:space="preserve">
     <value>Failed to initiate a send of the specified items.</value>
   </data>
-  <data name="ExceptionFailedToParseFile" xml:space="preserve">
-    <value>An error has occurred while attempting to parse the file.</value>
-  </data>
   <data name="ExceptionFailedToRemoveSubscriber" xml:space="preserve">
     <value>Failed to remove subscriber from the Local DataStore Activity Monitor service.</value>
   </data>
@@ -258,11 +255,8 @@
   <data name="FormatFailedToCommitToDatastore" xml:space="preserve">
     <value>Failed to commit a file to the datastore ({0}); This file will need to be imported manually.</value>
   </data>
-  <data name="FormatFileFormatNotAppropriateForDatastore" xml:space="preserve">
-    <value>Although the file format is recognized, it is not appropriate for insertion into the datastore ({0})</value>
-  </data>
-  <data name="FormatFileFormatNotRecognized" xml:space="preserve">
-    <value>The file format is not recognized ({0})</value>
+  <data name="FormatFileCannotBeInsertedIntoDataStore" xml:space="preserve">
+    <value>The file cannot be inserted into the Data Store ({0}).</value>
   </data>
   <data name="FormatFileHasBeenMoved" xml:space="preserve">
     <value>  The file has been moved to {0}</value>
@@ -324,6 +318,9 @@ Please check the service logs for more details.</value>
   </data>
   <data name="MessageFailedToClearDatabase" xml:space="preserve">
     <value>Failed: unable to clear database prior to reindex operation.</value>
+  </data>
+  <data name="MessageFailedToProcessBadFile" xml:space="preserve">
+    <value>Processing of the bad file failed.</value>
   </data>
   <data name="MessageFileHasBeenDeleted" xml:space="preserve">
     <value>  The file has been deleted.</value>

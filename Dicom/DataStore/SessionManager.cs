@@ -8,7 +8,7 @@ namespace ClearCanvas.Dicom.DataStore
 {
 	public sealed partial class DataAccessLayer
 	{
-		internal interface ISessionManager : IDisposable
+		private interface ISessionManager : IDisposable
 		{
 			ISession Session { get; }
 			

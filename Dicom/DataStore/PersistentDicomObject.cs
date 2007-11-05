@@ -66,7 +66,7 @@ namespace ClearCanvas.Dicom.DataStore
 		protected void SetClassMember<T>(ref T member, T newValue)
 			where T : class
 		{
-			if (Nullable.Equals(member, newValue))
+			if (Equals(member, newValue))
 				return;
 
 			member = newValue;

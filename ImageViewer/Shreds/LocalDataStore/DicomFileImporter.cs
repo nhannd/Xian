@@ -46,6 +46,8 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 	{
 		public sealed class DicomFileImporter
 		{
+			#region Public Enums
+
 			public enum DedicatedImportQueue
 			{
 				None = 0,
@@ -61,6 +63,10 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				CommittedToDataStore
 			}
 
+			#endregion
+
+			#region IFileImportInformation class
+
 			private interface IFileImportInformation
 			{
 				ImportStage CompletedStage { set; }
@@ -71,6 +77,10 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				DicomAttributeCollection MetaInfo { get; set; }
 				DicomAttributeCollection DataSet { get; set; }
 			}
+
+			#endregion
+
+			#region FileImportInformation class
 
 			public class FileImportInformation : IFileImportInformation
 			{
@@ -273,6 +283,8 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				#endregion
 			}
 
+			#endregion
+
 			internal delegate void FileImportJobStatusReportDelegate(FileImportInformation results);
 
 			#region Import Job Information
@@ -313,6 +325,8 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 			#endregion
 
+			#region Thread Pool classes
+
 			private class ParseFileThreadPool : BlockingThreadPool<ImportJobInformation>
 			{
 				readonly DicomFileImporter _parent;
@@ -351,6 +365,10 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				}
 			}
 
+			#endregion
+
+			#region UriLock class
+
 			/// <summary>
 			/// An unsophisticated way to provide a mutually exclusive lock on a file that is about to get
 			/// written to (or deleted or copied over) by any one of the threads in the import thread pool.
@@ -376,7 +394,9 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				public void DecrementLockCount() { --_lockCount; }
 			}
 
-			private LocalDataStoreService _parent;
+			#endregion
+
+			#region Private Fields
 
 			private readonly object _databaseThreadLock = new object();
 			private bool _stopDatabaseThread = false;
@@ -396,10 +416,13 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			private readonly object _uriLocksSync = new object();
 			private readonly List<UriLock> _uriLocks;
 
-			public DicomFileImporter(LocalDataStoreService parent)
+			[ThreadStatic] private IDicomPersistentStoreValidator _persistentStoreValidator;
+
+			#endregion
+
+			public DicomFileImporter()
 				: base()
 			{
-				_parent = parent;
 				_parseFileThreadPool = new ParseFileThreadPool(this);
 
 				_importThreadPools = new Dictionary<DedicatedImportQueue, ImportFileThreadPool>();
@@ -412,8 +435,23 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				_uriLocks = new List<UriLock>();
 			}
 
-			#region Uri Locking
+			#region Private Properties
 			
+			private IDicomPersistentStoreValidator Validator
+			{
+				get
+				{
+					if (_persistentStoreValidator == null)
+						_persistentStoreValidator = DataAccessLayer.GetIDicomPersistentStoreValidator();
+
+					return _persistentStoreValidator;
+				}	
+			}
+
+			#endregion
+
+			#region Uri Locking
+
 			private Uri GetLockUri(string filePath)
 			{
 				lock (_uriLocksSync)
@@ -457,63 +495,37 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 			#region File Parse / Import Methods
 
-			private bool ConfirmProcessableFile(DicomAttributeCollection metaInfo, DicomAttributeCollection dataset)
-			{
-				DicomAttribute attribute = metaInfo[DicomTags.MediaStorageSopClassUid];
-				// we want to skip Media Storage Directory Storage (DICOMDIR directories)
-				if ("1.2.840.10008.1.3.10" == attribute.ToString())
-					return false;
-
-				return true;
-			}
-
 			private void ParseFile(ImportJobInformation jobInformation)
 			{
 				FileImportInformation fileImportInformation = jobInformation.FileImportInformation;
 				FileImportJobStatusReportDelegate fileImportJobStatusReportDelegate = jobInformation.FileImportJobStatusReportDelegate;
-
-				DicomFile dicomFile = new DicomFile(fileImportInformation.SourceFile);
 
 				//use this private interface to set the values as we go along.
 				IFileImportInformation setImportInformation = (IFileImportInformation)fileImportInformation;
 
 				try
 				{
-					Exception exception = null;
-					bool processable = true;
+					DicomFile dicomFile = new DicomFile(fileImportInformation.SourceFile);
+					dicomFile.Load(DicomTags.PixelData, DicomReadOptions.Default);
+
+					Validator.Validate(dicomFile.MetaInfo, dicomFile.DataSet);
+					setImportInformation.MetaInfo = dicomFile.MetaInfo;
+					setImportInformation.DataSet = dicomFile.DataSet;
+					setImportInformation.CompletedStage = ImportStage.FileParsed;
+				}
+				catch (Exception e)
+				{
+					StringBuilder errorString = new StringBuilder(512);
+					errorString.AppendFormat(SR.FormatFileCannotBeInsertedIntoDataStore, fileImportInformation.SourceFile);
 
 					try
 					{
-						dicomFile.Load(DicomTags.PixelData, DicomReadOptions.Default);
-
-						processable = ConfirmProcessableFile(dicomFile.MetaInfo, dicomFile.DataSet);
-
-						if (processable)
-						{
-							//parse the file and create study, series and sop objects for (potential) insertion into the datastore.
-							setImportInformation.MetaInfo = dicomFile.MetaInfo;
-							setImportInformation.DataSet = dicomFile.DataSet;
-							ValidateDicomData(dicomFile.MetaInfo, dicomFile.DataSet);
-						}
-					}
-					catch (Exception e)
-					{
-						exception = e;
-					}
-
-					if (!processable || exception != null)
-					{
-						StringBuilder errorString = new StringBuilder(512);
-						if (!processable)
-							errorString.AppendFormat(SR.FormatFileFormatNotAppropriateForDatastore, fileImportInformation.SourceFile);
-						else
-							errorString.AppendFormat(SR.FormatFileFormatNotRecognized, fileImportInformation.SourceFile);
-
 						if (fileImportInformation.BadFileBehaviour == BadFileBehaviour.Move)
 						{
-							string storedFile = String.Format("{0}{1}", LocalDataStoreService.Instance.BadFileDirectory, System.IO.Path.GetRandomFileName());
+							string storedFile =
+								String.Format("{0}{1}", LocalDataStoreService.Instance.BadFileDirectory, System.IO.Path.GetRandomFileName());
 							System.IO.File.Move(fileImportInformation.SourceFile, storedFile);
-							((IFileImportInformation)fileImportInformation).StoredFile = storedFile;
+							((IFileImportInformation) fileImportInformation).StoredFile = storedFile;
 
 							errorString.AppendFormat(SR.FormatFileHasBeenMoved, storedFile);
 						}
@@ -524,36 +536,19 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 							errorString.AppendFormat(SR.MessageFileHasBeenDeleted);
 						}
 
-						if (exception == null)
-							setImportInformation.Error = new Exception(errorString.ToString());
-						else
-							setImportInformation.Error = new Exception(errorString.ToString(), exception);
-
-						setImportInformation.BadFile = true;
-						fileImportJobStatusReportDelegate(fileImportInformation);
-						return;
+						setImportInformation.Error = new Exception(errorString.ToString(), e);
 					}
-
-					//report the progress.
-					setImportInformation.CompletedStage = ImportStage.FileParsed;
-					fileImportJobStatusReportDelegate(fileImportInformation);
+					catch(Exception ex)
+					{
+						errorString.Append(SR.MessageFailedToProcessBadFile);
+						setImportInformation.Error = new Exception(errorString.ToString(), ex);
+					}
+					
+					setImportInformation.BadFile = true;
 				}
-				catch (Exception e)
-				{
-					setImportInformation.Error = new Exception(SR.ExceptionFailedToParseFile, e);
-					fileImportJobStatusReportDelegate(fileImportInformation);
-				}
-			}
 
-			private void ValidateDicomData(DicomAttributeCollection metaInfo, DicomAttributeCollection dataSet)
-			{
-				Platform.CheckForNullReference(metaInfo, "metaInfo");
-				Platform.CheckForNullReference(dataSet, "dataSet");
-
-				DicomValidator.ValidateStudyInstanceUID(dataSet[DicomTags.StudyInstanceUid]);
-				DicomValidator.ValidateSeriesInstanceUID(dataSet[DicomTags.SeriesInstanceUid]);
-				DicomValidator.ValidateSOPInstanceUID(dataSet[DicomTags.SopInstanceUid]);
-				DicomValidator.ValidateTransferSyntaxUID(metaInfo[DicomTags.TransferSyntaxUid]);
+				//report the progress.
+				fileImportJobStatusReportDelegate(fileImportInformation);
 			}
 
 			private void MoveFile(ImportJobInformation jobInformation)
@@ -694,8 +689,8 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 						foreach (ImportJobInformation item in items)
 						{
 							IFileImportInformation info = (IFileImportInformation)item.FileImportInformation;
-							store.UpdateSopInstance(info.MetaInfo, info.DataSet, item.FileImportInformation.StoredFile);
-						}
+								store.UpdateSopInstance(info.MetaInfo, info.DataSet, item.FileImportInformation.StoredFile);
+							}
 
 						store.Commit();
 					}
