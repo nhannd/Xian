@@ -14,8 +14,23 @@ namespace ClearCanvas.Ris.Client.Reporting
             this.Columns.Add(sortColumn);
 
             this.Columns.Add(new TableColumn<ProtocolEditorProcedurePlanSummaryTableItem, string>(
-                                 "Status",
-                                 delegate(ProtocolEditorProcedurePlanSummaryTableItem item) { return item.ProtocolStepDetail.Status.Value; },
+                                 "Protocol Status",
+                                 delegate(ProtocolEditorProcedurePlanSummaryTableItem item)
+                                 {
+                                     switch(item.ProtocolStepDetail.Status.Code)
+                                     {
+                                         case "SC":
+                                         case "IP":
+                                             return "Pending";
+                                         case "SU":
+                                             return "Suspended/Rejected";
+                                         case "DC":
+                                             return "Rejected/Cancelled";
+                                         case "CM":
+                                             return "Accepted";
+                                     }
+                                     return item.ProtocolStepDetail.Status.Value;
+                                 },
                                  0.5f));
 
             this.Sort(new TableSortParams(sortColumn, true));

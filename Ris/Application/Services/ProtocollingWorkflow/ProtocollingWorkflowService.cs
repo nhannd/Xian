@@ -32,7 +32,8 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
         public GetProcedureProtocolResponse GetProcedureProtocol(GetProcedureProtocolRequest request)
         {
             RequestedProcedure rp = this.PersistenceContext.Load<RequestedProcedure>(request.RequestedProcedureRef);
-            return new GetProcedureProtocolResponse(new ProtocollingWorkflowAssembler().CreateProtocolDetail(rp.ProtocolProcedureStep.Protocol));
+            ProtocollingWorkflowAssembler assembler = new ProtocollingWorkflowAssembler();
+            return new GetProcedureProtocolResponse(assembler.CreateProtocolDetail(rp.ProtocolProcedureStep.Protocol, this.PersistenceContext));
         }
 
         [ReadOperation]
@@ -67,7 +68,7 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
             this.PersistenceContext.SynchState();
 
             ProtocollingWorkflowAssembler assembler = new ProtocollingWorkflowAssembler();
-            return new AddProtocolResponse(assembler.CreateProtocolDetail(protocol));
+            return new AddProtocolResponse(assembler.CreateProtocolDetail(protocol, this.PersistenceContext));
         }
 
         [UpdateOperation]

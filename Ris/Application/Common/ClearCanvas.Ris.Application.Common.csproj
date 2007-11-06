@@ -187,6 +187,7 @@
     <Compile Include="Admin\RequestedProcedureTypeGroupAdmin\RequestedProcedureTypeGroupDetail.cs" />
     <Compile Include="ProtocollingWorkflow\GetProcedurePlanForProtocollingWorklistItemRequest.cs" />
     <Compile Include="ProtocollingWorkflow\GetProcedurePlanForProtocollingWorklistItemResponse.cs" />
+    <Compile Include="ProtocolNoteDetail.cs" />
     <Compile Include="ProtocolProcedureStepDetail.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\GetOrderRequisitionForEditRequest.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\GetOrderRequisitionForEditResponse.cs" />

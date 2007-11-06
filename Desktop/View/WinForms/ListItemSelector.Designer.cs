@@ -59,15 +59,13 @@ namespace ClearCanvas.Desktop.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-            ClearCanvas.Desktop.Selection selection1 = new ClearCanvas.Desktop.Selection();
-            ClearCanvas.Desktop.Selection selection2 = new ClearCanvas.Desktop.Selection();
             this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
             this._addItemButton = new System.Windows.Forms.Button();
             this._removeItemButton = new System.Windows.Forms.Button();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
             this._availableItems = new ClearCanvas.Desktop.View.WinForms.TableView();
             this._selectedItems = new ClearCanvas.Desktop.View.WinForms.TableView();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
             this.tableLayoutPanel3.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -97,9 +95,11 @@ namespace ClearCanvas.Desktop.View.WinForms
             // _addItemButton
             // 
             this._addItemButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this._addItemButton.Location = new System.Drawing.Point(240, 190);
+            this._addItemButton.AutoSize = true;
+            this._addItemButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this._addItemButton.Location = new System.Drawing.Point(263, 190);
             this._addItemButton.Name = "_addItemButton";
-            this._addItemButton.Size = new System.Drawing.Size(75, 23);
+            this._addItemButton.Size = new System.Drawing.Size(29, 23);
             this._addItemButton.TabIndex = 4;
             this._addItemButton.Text = ">>";
             this._addItemButton.UseVisualStyleBackColor = true;
@@ -107,60 +107,15 @@ namespace ClearCanvas.Desktop.View.WinForms
             // 
             // _removeItemButton
             // 
-            this._removeItemButton.Location = new System.Drawing.Point(240, 219);
+            this._removeItemButton.AutoSize = true;
+            this._removeItemButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this._removeItemButton.Location = new System.Drawing.Point(263, 219);
             this._removeItemButton.Name = "_removeItemButton";
-            this._removeItemButton.Size = new System.Drawing.Size(75, 23);
+            this._removeItemButton.Size = new System.Drawing.Size(29, 23);
             this._removeItemButton.TabIndex = 5;
             this._removeItemButton.Text = "<<";
             this._removeItemButton.UseVisualStyleBackColor = true;
             this._removeItemButton.Click += new System.EventHandler(this.RemoveSelection);
-            // 
-            // _availableItems
-            // 
-            this._availableItems.AutoSize = true;
-            this._availableItems.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this._availableItems.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._availableItems.FilterTextBoxVisible = true;
-            this._availableItems.Location = new System.Drawing.Point(3, 16);
-            this._availableItems.MenuModel = null;
-            this._availableItems.Name = "_availableItems";
-            this._availableItems.ReadOnly = false;
-            this.tableLayoutPanel3.SetRowSpan(this._availableItems, 2);
-            this._availableItems.Selection = selection1;
-            this._availableItems.Size = new System.Drawing.Size(231, 401);
-            this._availableItems.TabIndex = 2;
-            this._availableItems.Table = null;
-            this._availableItems.ToolbarModel = null;
-            this._availableItems.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this._availableItems.ItemDoubleClicked += new System.EventHandler(this.AddSelection);
-            // 
-            // _selectedItems
-            // 
-            this._selectedItems.AutoSize = true;
-            this._selectedItems.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this._selectedItems.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._selectedItems.FilterTextBoxVisible = true;
-            this._selectedItems.Location = new System.Drawing.Point(321, 16);
-            this._selectedItems.MenuModel = null;
-            this._selectedItems.Name = "_selectedItems";
-            this._selectedItems.ReadOnly = false;
-            this.tableLayoutPanel3.SetRowSpan(this._selectedItems, 2);
-            this._selectedItems.Selection = selection2;
-            this._selectedItems.Size = new System.Drawing.Size(231, 401);
-            this._selectedItems.TabIndex = 3;
-            this._selectedItems.Table = null;
-            this._selectedItems.ToolbarModel = null;
-            this._selectedItems.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this._selectedItems.ItemDoubleClicked += new System.EventHandler(this.RemoveSelection);
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(321, 0);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(49, 13);
-            this.label2.TabIndex = 1;
-            this.label2.Text = "Selected";
             // 
             // label1
             // 
@@ -170,6 +125,45 @@ namespace ClearCanvas.Desktop.View.WinForms
             this.label1.Size = new System.Drawing.Size(50, 13);
             this.label1.TabIndex = 0;
             this.label1.Text = "Available";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(298, 0);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(49, 13);
+            this.label2.TabIndex = 1;
+            this.label2.Text = "Selected";
+            // 
+            // _availableItems
+            // 
+            this._availableItems.AutoSize = true;
+            this._availableItems.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this._availableItems.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._availableItems.FilterTextBoxVisible = true;
+            this._availableItems.Location = new System.Drawing.Point(3, 16);
+            this._availableItems.Name = "_availableItems";
+            this._availableItems.ReadOnly = false;
+            this.tableLayoutPanel3.SetRowSpan(this._availableItems, 2);
+            this._availableItems.Size = new System.Drawing.Size(254, 401);
+            this._availableItems.TabIndex = 2;
+            this._availableItems.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this._availableItems.ItemDoubleClicked += new System.EventHandler(this.AddSelection);
+            // 
+            // _selectedItems
+            // 
+            this._selectedItems.AutoSize = true;
+            this._selectedItems.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this._selectedItems.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._selectedItems.FilterTextBoxVisible = true;
+            this._selectedItems.Location = new System.Drawing.Point(298, 16);
+            this._selectedItems.Name = "_selectedItems";
+            this._selectedItems.ReadOnly = false;
+            this.tableLayoutPanel3.SetRowSpan(this._selectedItems, 2);
+            this._selectedItems.Size = new System.Drawing.Size(254, 401);
+            this._selectedItems.TabIndex = 3;
+            this._selectedItems.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this._selectedItems.ItemDoubleClicked += new System.EventHandler(this.RemoveSelection);
             // 
             // ListItemSelector
             // 

@@ -186,6 +186,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="actionmodels.xml" />
+    <EmbeddedResource Include="Icons\EditToolLarge.png" />
+    <EmbeddedResource Include="Icons\EditToolMedium.png" />
     <EmbeddedResource Include="PreExamDetailsPageUrlSelectorScript.js" />
     <EmbeddedResource Include="PostExamDetailsPageUrlSelectorScript.js" />
     <EmbeddedResource Include="PerformedProcedureStepDetailsPageUrlSelectorScript.js" />

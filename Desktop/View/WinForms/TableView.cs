@@ -744,8 +744,8 @@ namespace ClearCanvas.Desktop.View.WinForms
         {
             if (this.DesignMode == false)
             {
-                _toolStripItemAlignment = DesktopViewSettings.Default.LocalToolStripItemAlignment;
-                _textImageRelation = DesktopViewSettings.Default.LocalToolStripItemTextImageRelation;
+                //_toolStripItemAlignment = DesktopViewSettings.Default.LocalToolStripItemAlignment;
+                //_textImageRelation = DesktopViewSettings.Default.LocalToolStripItemTextImageRelation;
             }
             else
             {
