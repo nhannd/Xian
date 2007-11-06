@@ -173,7 +173,16 @@ namespace ClearCanvas.Desktop.View.WinForms
 
             if (actionModel != null)
             {
-                ToolStripBuilder.BuildToolStrip(kind, toolStrip.Items, actionModel.ChildNodes);
+				if (actionModel.ChildNodes.Count > 0)
+				{
+					// Toolstrip should only be visible if there are items on it
+					toolStrip.Visible = true;
+					ToolStripBuilder.BuildToolStrip(kind, toolStrip.Items, actionModel.ChildNodes);
+				}
+				else
+				{
+					toolStrip.Visible = false;
+				}
             }
 
             toolStrip.ResumeLayout();
