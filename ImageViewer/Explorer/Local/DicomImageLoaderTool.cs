@@ -31,18 +31,14 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-
+using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.ImageViewer.StudyManagement;
-using ClearCanvas.ImageViewer.Imaging;
-using System.IO;
+using ClearCanvas.Desktop.Tools;
 
-namespace ClearCanvas.ImageViewer.Explorer.Local.Tools
+namespace ClearCanvas.ImageViewer.Explorer.Local
 {
 	[MenuAction("Open", "explorerlocal-contextmenu/MenuOpenFiles", "Open")]
 	[Tooltip("Open", "OpenDicomFilesVerbose")]
@@ -130,9 +126,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.Tools
 				viewer,
 				viewer.PatientsLoadedLabel,
 				delegate
-				{
-					viewer.Dispose();
-				});
+					{
+						viewer.Dispose();
+					});
 
 			viewer.Layout();
 			viewer.PhysicalWorkspace.SelectDefaultImageBox();
