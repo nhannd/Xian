@@ -1391,14 +1391,28 @@ namespace ClearCanvas.Dicom
             {
                 length += 4; // length
             }
-            length += 4 + 4; // offset tag
-            if (Flags.IsSet(options, DicomWriteOptions.WriteFragmentOffsetTable) && _table != null)
-                length += (uint)(_table.Count * 4);
-            foreach (ByteBuffer bb in _fragments)
+            if ((Tag.TagValue == DicomTags.PixelData) && syntax.Encapsulated)
             {
-                length += 4; // item tag
-                length += 4; // fragment length
-                length += (uint)bb.Length;
+                length += 4 + 4; // offset tag
+                if (Flags.IsSet(options, DicomWriteOptions.WriteFragmentOffsetTable) && _table != null)
+                    length += (uint)(_table.Count * 4);
+                foreach (ByteBuffer bb in _fragments)
+                {
+                    length += 4; // item tag
+                    length += 4; // fragment length
+                    length += (uint)bb.Length;
+                }
+                foreach (ByteBuffer bb in _fragments)
+                {
+                    length += (uint)bb.Length;
+                }
+            }
+            else
+            {
+                if (_values != null)
+                {
+                    length += (uint)_values.Length;
+                }
             }
             return length;
         }
