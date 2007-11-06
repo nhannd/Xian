@@ -28,15 +28,14 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-            ClearCanvas.Desktop.Selection selection1 = new ClearCanvas.Desktop.Selection();
             this._mrn = new ClearCanvas.Desktop.View.WinForms.TextField();
             this._healthcard = new ClearCanvas.Desktop.View.WinForms.TextField();
             this._familyName = new ClearCanvas.Desktop.View.WinForms.TextField();
             this._givenName = new ClearCanvas.Desktop.View.WinForms.TextField();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this._site = new ClearCanvas.Desktop.View.WinForms.TextField();
             this._dateOfBirth = new ClearCanvas.Desktop.View.WinForms.DateTimeField();
+            this._site = new ClearCanvas.Desktop.View.WinForms.TextField();
             this._sex = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
             this._searchButton = new System.Windows.Forms.Button();
             this._searchResults = new ClearCanvas.Desktop.View.WinForms.TableView();
@@ -56,7 +55,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this._mrn.Mask = "";
             this._mrn.Name = "_mrn";
             this._mrn.Size = new System.Drawing.Size(304, 41);
-            this._mrn.TabIndex = 8;
+            this._mrn.TabIndex = 0;
             this._mrn.Value = null;
             // 
             // _healthcard
@@ -69,7 +68,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this._healthcard.Mask = "";
             this._healthcard.Name = "_healthcard";
             this._healthcard.Size = new System.Drawing.Size(304, 41);
-            this._healthcard.TabIndex = 9;
+            this._healthcard.TabIndex = 2;
             this._healthcard.Value = null;
             // 
             // _familyName
@@ -82,7 +81,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this._familyName.Mask = "";
             this._familyName.Name = "_familyName";
             this._familyName.Size = new System.Drawing.Size(304, 41);
-            this._familyName.TabIndex = 10;
+            this._familyName.TabIndex = 3;
             this._familyName.Value = null;
             // 
             // _givenName
@@ -95,7 +94,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this._givenName.Mask = "";
             this._givenName.Name = "_givenName";
             this._givenName.Size = new System.Drawing.Size(304, 41);
-            this._givenName.TabIndex = 11;
+            this._givenName.TabIndex = 4;
             this._givenName.Value = null;
             // 
             // splitContainer1
@@ -144,6 +143,20 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this.tableLayoutPanel1.Size = new System.Drawing.Size(308, 305);
             this.tableLayoutPanel1.TabIndex = 17;
             // 
+            // _dateOfBirth
+            // 
+            this._dateOfBirth.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._dateOfBirth.LabelText = "Date Of Birth";
+            this._dateOfBirth.Location = new System.Drawing.Point(156, 227);
+            this._dateOfBirth.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this._dateOfBirth.Maximum = new System.DateTime(9998, 12, 31, 0, 0, 0, 0);
+            this._dateOfBirth.Minimum = new System.DateTime(1753, 1, 1, 0, 0, 0, 0);
+            this._dateOfBirth.Name = "_dateOfBirth";
+            this._dateOfBirth.Nullable = true;
+            this._dateOfBirth.Size = new System.Drawing.Size(150, 41);
+            this._dateOfBirth.TabIndex = 6;
+            this._dateOfBirth.Value = null;
+            // 
             // _site
             // 
             this.tableLayoutPanel1.SetColumnSpan(this._site, 2);
@@ -154,23 +167,8 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this._site.Mask = "";
             this._site.Name = "_site";
             this._site.Size = new System.Drawing.Size(304, 41);
-            this._site.TabIndex = 14;
+            this._site.TabIndex = 1;
             this._site.Value = null;
-            // 
-            // _dateOfBirth
-            // 
-            this._dateOfBirth.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._dateOfBirth.LabelText = "Date Of Birth";
-            this._dateOfBirth.Location = new System.Drawing.Point(156, 227);
-            this._dateOfBirth.Margin = new System.Windows.Forms.Padding(2);
-            this._dateOfBirth.Maximum = new System.DateTime(9998, 12, 31, 0, 0, 0, 0);
-            this._dateOfBirth.Minimum = new System.DateTime(1753, 1, 1, 0, 0, 0, 0);
-            this._dateOfBirth.Name = "_dateOfBirth";
-            this._dateOfBirth.Nullable = true;
-            this._dateOfBirth.ShowTime = false;
-            this._dateOfBirth.Size = new System.Drawing.Size(150, 41);
-            this._dateOfBirth.TabIndex = 16;
-            this._dateOfBirth.Value = null;
             // 
             // _sex
             // 
@@ -183,7 +181,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this._sex.Margin = new System.Windows.Forms.Padding(2);
             this._sex.Name = "_sex";
             this._sex.Size = new System.Drawing.Size(150, 41);
-            this._sex.TabIndex = 15;
+            this._sex.TabIndex = 5;
             this._sex.Value = null;
             // 
             // _searchButton
@@ -193,7 +191,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this._searchButton.Margin = new System.Windows.Forms.Padding(2);
             this._searchButton.Name = "_searchButton";
             this._searchButton.Size = new System.Drawing.Size(60, 27);
-            this._searchButton.TabIndex = 12;
+            this._searchButton.TabIndex = 7;
             this._searchButton.Text = "Search";
             this._searchButton.UseVisualStyleBackColor = true;
             this._searchButton.Click += new System.EventHandler(this._searchButton_Click);
@@ -202,16 +200,11 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             // 
             this._searchResults.Dock = System.Windows.Forms.DockStyle.Fill;
             this._searchResults.Location = new System.Drawing.Point(0, 0);
-            this._searchResults.MenuModel = null;
             this._searchResults.Name = "_searchResults";
             this._searchResults.ReadOnly = false;
-            this._searchResults.Selection = selection1;
             this._searchResults.Size = new System.Drawing.Size(308, 320);
             this._searchResults.TabIndex = 0;
-            this._searchResults.Table = null;
-            this._searchResults.ToolbarModel = null;
             this._searchResults.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.ImageAndText;
-            this._searchResults.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.No;
             // 
             // PatientSearchComponentControl
             // 

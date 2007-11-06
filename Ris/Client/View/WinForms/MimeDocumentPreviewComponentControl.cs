@@ -1,0 +1,41 @@
+
+using System;
+using ClearCanvas.Desktop.View.WinForms;
+
+namespace ClearCanvas.Ris.Client.View.WinForms
+{
+    /// <summary>
+    /// Provides a Windows Forms user-interface for <see cref="MimeDocumentPreviewComponent"/>
+    /// </summary>
+    public partial class MimeDocumentPreviewComponentControl : ApplicationComponentUserControl
+    {
+        private readonly MimeDocumentPreviewComponent _component;
+
+        public MimeDocumentPreviewComponentControl(MimeDocumentPreviewComponent component)
+            :base(component)
+        {
+            InitializeComponent();
+            _component = component;
+
+            RefreshPreview();
+
+            _component.DataChanged += _component_DataChanged;
+        }
+
+        void _component_DataChanged(object sender, EventArgs e)
+        {
+            RefreshPreview();
+        }
+
+        void RefreshPreview()
+        {
+            if (String.IsNullOrEmpty(_component.TempFileName))
+            {
+                _browser.Url = new Uri("about:blank");
+                return;
+            }
+
+            _browser.Url = new Uri(_component.TempFileName);
+        }
+    }
+}

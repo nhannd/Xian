@@ -147,6 +147,13 @@
       <DependentUpon>DHtmlComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="DHtmlComponentView.cs" />
+    <Compile Include="MimeDocumentPreviewComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MimeDocumentPreviewComponentControl.Designer.cs">
+      <DependentUpon>MimeDocumentPreviewComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MimeDocumentPreviewComponentView.cs" />
     <Compile Include="LoginDialog.cs" />
     <Compile Include="LoginForm.cs">
       <SubType>Form</SubType>
@@ -315,6 +322,10 @@
     <EmbeddedResource Include="EmailAddressesSummaryComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>EmailAddressesSummaryComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MimeDocumentPreviewComponentControl.resx">
+      <DependentUpon>MimeDocumentPreviewComponentControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="FolderExplorerComponentControl.resx">
       <SubType>Designer</SubType>

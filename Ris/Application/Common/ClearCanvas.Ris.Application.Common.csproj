@@ -79,6 +79,11 @@
     <Compile Include="Admin\ExternalPractitionerAdmin\LoadExternalPractitionerForEditResponse.cs" />
     <Compile Include="Admin\ExternalPractitionerAdmin\UpdateExternalPractitionerRequest.cs" />
     <Compile Include="Admin\ExternalPractitionerAdmin\UpdateExternalPractitionerResponse.cs" />
+    <Compile Include="MimeDocumentService\GetAttachFaxFormDataRequest.cs" />
+    <Compile Include="MimeDocumentService\GetAttachFaxFormDataResponse.cs" />
+    <Compile Include="MimeDocumentService\GetFaxDataRequest.cs" />
+    <Compile Include="MimeDocumentService\GetFaxDataResponse.cs" />
+    <Compile Include="MimeDocumentService\IMimeDocumentService.cs" />
     <Compile Include="ExternalPractitionerDetail.cs" />
     <Compile Include="ExternalPractitionerSummary.cs" />
     <Compile Include="Admin\DiagnosticServiceAdmin\IDiagnosticServiceAdminService.cs" />

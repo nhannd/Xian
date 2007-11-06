@@ -273,11 +273,17 @@
   <data name="ColumnWorkPhone" xml:space="preserve">
     <value>Work Phone</value>
   </data>
+  <data name="ExceptioinFailedToDeleteTemporaryFiles" xml:space="preserve">
+    <value>Failed to delete temporary files</value>
+  </data>
   <data name="ExceptionCannotExpandDiagnositicServiceTree" xml:space="preserve">
     <value>Unable to retrieve diagnostic service tree</value>
   </data>
   <data name="ExceptionCannotUpdateDiagnosticServiceBreakdown" xml:space="preserve">
     <value>Unable to retrieve diagnostic service breakdown</value>
+  </data>
+  <data name="ExceptionFailedToDisplayDocument" xml:space="preserve">
+    <value>Failed to display document</value>
   </data>
   <data name="ExceptionFailedToSave" xml:space="preserve">
     <value>An error occured while attempting to save changes to this item</value>

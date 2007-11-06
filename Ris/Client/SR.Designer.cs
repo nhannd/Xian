@@ -529,6 +529,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to delete temporary files.
+        /// </summary>
+        internal static string ExceptioinFailedToDeleteTemporaryFiles {
+            get {
+                return ResourceManager.GetString("ExceptioinFailedToDeleteTemporaryFiles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unable to retrieve diagnostic service tree.
         /// </summary>
         internal static string ExceptionCannotExpandDiagnositicServiceTree {
@@ -543,6 +552,15 @@ namespace ClearCanvas.Ris.Client {
         internal static string ExceptionCannotUpdateDiagnosticServiceBreakdown {
             get {
                 return ResourceManager.GetString("ExceptionCannotUpdateDiagnosticServiceBreakdown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to display document.
+        /// </summary>
+        internal static string ExceptionFailedToDisplayDocument {
+            get {
+                return ResourceManager.GetString("ExceptionFailedToDisplayDocument", resourceCulture);
             }
         }
         

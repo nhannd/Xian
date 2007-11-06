@@ -73,6 +73,7 @@
     <Compile Include="ExternalPractitionerEditorComponent.cs" />
     <Compile Include="ExternalPractitionerLookupHandler.cs" />
     <Compile Include="ExternalPractitionerSummaryComponent.cs" />
+    <Compile Include="MimeDocumentPreviewComponent.cs" />
     <Compile Include="Formatting\CompositeIdentifierFormat.cs" />
     <Compile Include="HomePageContainer.cs" />
     <Compile Include="ILookupHandler.cs" />
