@@ -34,17 +34,14 @@ using System.Collections;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Ris.Application.Common.Admin;
-using ClearCanvas.Ris.Application.Common.Admin.VisitAdmin;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry;
-using ClearCanvas.Ris.Application.Services.Admin;
 using ClearCanvas.Healthcare.Workflow;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
+using ClearCanvas.Workflow;
 
 namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 {
@@ -261,13 +258,14 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                     });
 
             // generate set of procedures
+            OrderEntryAssembler orderAssembler = new OrderEntryAssembler();
             List<RequestedProcedure> procedures = CollectionUtils.Map<ProcedureRequisition, RequestedProcedure>(
                 requisition.RequestedProcedures,
                 delegate (ProcedureRequisition req)
                     {
                         RequestedProcedureType rpt = PersistenceContext.Load<RequestedProcedureType>(req.ProcedureType.EntityRef);
-                        RequestedProcedure rp = rpt.CreateProcedure();
-                        rp.Schedule(req.ScheduledTime);
+                        RequestedProcedure rp = rpt.CreateProcedure(req.ScheduledTime);
+                        orderAssembler.UpdateProcedureFromRequisition(rp, req, PersistenceContext);
                         return rp;
                     });
 
@@ -301,8 +299,19 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             foreach (RequestedProcedure rp in proceduresCopy)
             {
                 bool shouldDelete = !procedureReqs.Exists(delegate(ProcedureRequisition req) { return req.ProcedureIndex == rp.Index; });
-                if(shouldDelete)
-                    order.RemoveRequestedProcedure(rp);
+                if (shouldDelete)
+                {
+                    if (rp.Status == RequestedProcedureStatus.SC)
+                    {
+                        // if RP is still scheduled, just remove it from the order
+                        order.RemoveRequestedProcedure(rp);
+                    }
+                    else if(rp.Status == RequestedProcedureStatus.IP)
+                    {
+                        // if RP in-progress, discontinue it
+                        rp.Discontinue();
+                    }
+                }
             }
 
             // insertions and updates
@@ -317,6 +326,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                 {
                     // create a new procedure for this requisition
                     rp = requestedType.CreateProcedure();
+                    order.AddRequestedProcedure(rp);
                 }
                 else
                 {
@@ -326,10 +336,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                 }
                 
                 // apply the requisition information to the actual procedure
-                // note that only procedures that have not been started can be updated from a requisition
-                // ignore updates to anything not in the SC status
-                if(rp.Status == RequestedProcedureStatus.SC)
-                    assembler.UpdateProcedureFromRequisition(rp, req, PersistenceContext);
+                assembler.UpdateProcedureFromRequisition(rp, req, PersistenceContext);
             }
         }
     }

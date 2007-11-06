@@ -139,7 +139,7 @@ namespace ClearCanvas.Healthcare {
         /// <param name="step"></param>
         public virtual void AddProcedureStep(ProcedureStep step)
         {
-            if (step.RequestedProcedure != null || step.State != ActivityStatus.SC)
+            if ((step.RequestedProcedure != null && step.RequestedProcedure != this) || step.State != ActivityStatus.SC)
                 throw new ArgumentException("Only new ProcedureStep objects may be added to an order.");
 
             step.RequestedProcedure = this;

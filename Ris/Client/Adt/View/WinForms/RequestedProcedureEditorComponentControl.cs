@@ -37,12 +37,21 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 
             _performingFacility.DataSource = _component.FacilityChoices;
             _performingFacility.DataBindings.Add("Value", _component, "SelectedFacility", true, DataSourceUpdateMode.OnPropertyChanged);
+            _performingFacility.DataBindings.Add("Enabled", _component, "IsPerformingFacilityEditable");
+            _performingFacility.Format += delegate(object sender, ListControlConvertEventArgs e)
+                                         {
+                                             e.Value = _component.FormatFacility(e.ListItem);
+                                         };
 
             _laterality.DataSource = _component.LateralityChoices;
             _laterality.DataBindings.Add("Value", _component, "SelectedLaterality", true, DataSourceUpdateMode.OnPropertyChanged);
             
             _scheduledDate.DataBindings.Add("Value", _component, "ScheduledTime", true, DataSourceUpdateMode.OnPropertyChanged);
+            _scheduledDate.DataBindings.Add("Enabled", _component, "IsScheduledTimeEditable");
             _scheduledTime.DataBindings.Add("Value", _component, "ScheduledTime", true, DataSourceUpdateMode.OnPropertyChanged);
+            _scheduledTime.DataBindings.Add("Enabled", _component, "IsScheduledTimeEditable");
+
+            _portable.DataBindings.Add("Checked", _component, "PortableModality", true, DataSourceUpdateMode.OnPropertyChanged);
         }
 
         private void _okButton_Click(object sender, EventArgs e)

@@ -129,8 +129,8 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
             {
                 foreach (RequestedProcedure orderRp in modalitySteps[0].RequestedProcedure.Order.RequestedProcedures)
                 {
-                    orderRp.AddProcedureStep(new DocumentationProcedureStep(orderRp));
-                    orderRp.DocumentationProcedureStep.Start(this.CurrentUserStaff);
+                    ProcedureStep docStep = new DocumentationProcedureStep(orderRp);
+                    docStep.Start(this.CurrentUserStaff);
                 }
             }
 

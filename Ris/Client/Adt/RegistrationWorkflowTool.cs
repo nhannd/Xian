@@ -240,7 +240,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 {
                     ApplicationComponent.LaunchAsWorkspace(
                         desktopWindow,
-                        new OrderEntryComponent(item.OrderRef),
+                        new OrderEntryComponent(item.PatientRef, item.OrderRef, OrderEntryComponent.Mode.ReplaceOrder),
                         string.Format(SR.TitleNewOrder, PersonNameFormat.Format(item.Name), MrnFormat.Format(item.Mrn)),
                         delegate(IApplicationComponent c)
                         {

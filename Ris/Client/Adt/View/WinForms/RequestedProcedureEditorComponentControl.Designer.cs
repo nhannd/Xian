@@ -35,11 +35,12 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._procedureType = new ClearCanvas.Desktop.View.WinForms.SuggestComboField();
             this._performingFacility = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
             this._laterality = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
+            this._portable = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // _okButton
             // 
-            this._okButton.Location = new System.Drawing.Point(264, 252);
+            this._okButton.Location = new System.Drawing.Point(264, 326);
             this._okButton.Name = "_okButton";
             this._okButton.Size = new System.Drawing.Size(75, 23);
             this._okButton.TabIndex = 1;
@@ -49,7 +50,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // 
             // _cancelButton
             // 
-            this._cancelButton.Location = new System.Drawing.Point(345, 252);
+            this._cancelButton.Location = new System.Drawing.Point(345, 326);
             this._cancelButton.Name = "_cancelButton";
             this._cancelButton.Size = new System.Drawing.Size(75, 23);
             this._cancelButton.TabIndex = 2;
@@ -101,10 +102,10 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._performingFacility.DisplayMember = "";
             this._performingFacility.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this._performingFacility.LabelText = "Performing Facility";
-            this._performingFacility.Location = new System.Drawing.Point(20, 180);
+            this._performingFacility.Location = new System.Drawing.Point(20, 176);
             this._performingFacility.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this._performingFacility.Name = "_performingFacility";
-            this._performingFacility.Size = new System.Drawing.Size(200, 50);
+            this._performingFacility.Size = new System.Drawing.Size(400, 50);
             this._performingFacility.TabIndex = 62;
             this._performingFacility.Value = null;
             // 
@@ -114,17 +115,28 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._laterality.DisplayMember = "";
             this._laterality.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this._laterality.LabelText = "Laterality";
-            this._laterality.Location = new System.Drawing.Point(226, 180);
+            this._laterality.Location = new System.Drawing.Point(220, 240);
             this._laterality.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this._laterality.Name = "_laterality";
             this._laterality.Size = new System.Drawing.Size(200, 50);
             this._laterality.TabIndex = 63;
             this._laterality.Value = null;
             // 
+            // _portable
+            // 
+            this._portable.AutoSize = true;
+            this._portable.Location = new System.Drawing.Point(29, 259);
+            this._portable.Name = "_portable";
+            this._portable.Size = new System.Drawing.Size(83, 21);
+            this._portable.TabIndex = 64;
+            this._portable.Text = "Portable";
+            this._portable.UseVisualStyleBackColor = true;
+            // 
             // RequestedProcedureEditorComponentControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this._portable);
             this.Controls.Add(this._laterality);
             this.Controls.Add(this._performingFacility);
             this.Controls.Add(this._procedureType);
@@ -133,8 +145,9 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.Controls.Add(this._cancelButton);
             this.Controls.Add(this._okButton);
             this.Name = "RequestedProcedureEditorComponentControl";
-            this.Size = new System.Drawing.Size(457, 293);
+            this.Size = new System.Drawing.Size(457, 367);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -147,5 +160,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         private ClearCanvas.Desktop.View.WinForms.SuggestComboField _procedureType;
         private ClearCanvas.Desktop.View.WinForms.ComboBoxField _performingFacility;
         private ClearCanvas.Desktop.View.WinForms.ComboBoxField _laterality;
+        private System.Windows.Forms.CheckBox _portable;
     }
 }

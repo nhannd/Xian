@@ -34,6 +34,7 @@ namespace ClearCanvas.Ris.Client.Adt
         private List<EnumValueInfo> _lateralityChoices;
         private FacilitySummary _selectedFacility;
         private EnumValueInfo _selectedLaterality;
+        private bool _portableModality;
 
         /// <summary>
         /// Constructor for add mode.
@@ -71,6 +72,7 @@ namespace ClearCanvas.Ris.Client.Adt
             _scheduledTime = _requisition.ScheduledTime;
             _selectedFacility = _requisition.PerformingFacility;
             _selectedLaterality = _requisition.Laterality;
+            _portableModality = _requisition.PortableModality;
 
             base.Start();
         }
@@ -87,6 +89,16 @@ namespace ClearCanvas.Ris.Client.Adt
         public bool IsProcedureTypeEditable
         {
             get { return _procedureTypeChoices.Count > 0; }
+        }
+
+        public bool IsPerformingFacilityEditable
+        {
+            get { return _requisition.Status == null || _requisition.Status.Code == "SC"; }
+        }
+
+        public bool IsScheduledTimeEditable
+        {
+            get { return _requisition.Status == null || _requisition.Status.Code == "SC"; }
         }
 
         public ISuggestionProvider ProcedureTypeSuggestionProvider
@@ -118,6 +130,11 @@ namespace ClearCanvas.Ris.Client.Adt
             get { return _facilityChoices;  }
         }
 
+        public string FormatFacility(object facility)
+        {
+            return (facility as FacilitySummary).Name;
+        }
+        
         public FacilitySummary SelectedFacility
         {
             get { return _selectedFacility; }
@@ -162,12 +179,26 @@ namespace ClearCanvas.Ris.Client.Adt
             }
         }
 
+        public bool PortableModality
+        {
+            get { return _portableModality; }
+            set
+            {
+                if(value != _portableModality)
+                {
+                    _portableModality = value;
+                    NotifyPropertyChanged("PortableModality");
+                }
+            }
+        }
+
         public void Accept()
         {
             _requisition.ProcedureType = _selectedProcedureType;
             _requisition.ScheduledTime = _scheduledTime;
             _requisition.Laterality = _selectedLaterality;
             _requisition.PerformingFacility = _selectedFacility;
+            _requisition.PortableModality = _portableModality;
 
             this.Exit(ApplicationComponentExitCode.Normal);
         }

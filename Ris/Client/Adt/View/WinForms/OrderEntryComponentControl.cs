@@ -58,9 +58,14 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 
             _component = component;
 
+            // force toolbars to be displayed (VS designer seems to have a bug with this)
+            _proceduresTableView.ShowToolbar = true;
+            _consultantsTableView.ShowToolbar = true;
+            _notesTableView.ShowToolbar = true;
+            
             _diagnosticService.LookupHandler = _component.DiagnosticServiceLookupHandler;
-            _diagnosticService.DataBindings.Add("Value", _component, "SelectedDiagnosticService", true,
-                                                DataSourceUpdateMode.OnPropertyChanged);
+            _diagnosticService.DataBindings.Add("Value", _component, "SelectedDiagnosticService", true, DataSourceUpdateMode.OnPropertyChanged);
+            _diagnosticService.DataBindings.Add("Enabled", _component, "IsDiagnosticServiceEditable");
 
             _indication.DataBindings.Add("Value", _component, "Indication", true, DataSourceUpdateMode.OnPropertyChanged);
 
@@ -88,6 +93,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             _orderingFacility.DataSource = _component.FacilityChoices;
             _orderingFacility.DataBindings.Add("Value", _component, "SelectedFacility", true, DataSourceUpdateMode.OnPropertyChanged);
             _orderingFacility.Format += delegate(object source, ListControlConvertEventArgs e) { e.Value = _component.FormatFacility(e.ListItem); };
+            _orderingFacility.DataBindings.Add("Enabled", _component, "IsOrderingFacilityEditable");
 
             _orderingPractitioner.LookupHandler = _component.OrderingPractitionerLookupHandler;
             _orderingPractitioner.DataBindings.Add("Value", _component, "SelectedOrderingPractitioner", true, DataSourceUpdateMode.OnPropertyChanged);
@@ -96,17 +102,9 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             _schedulingRequestDate.DataBindings.Add("Value", _component, "SchedulingRequestTime", true, DataSourceUpdateMode.OnPropertyChanged);
             _schedulingRequestTime.DataBindings.Add("Value", _component, "SchedulingRequestTime", true, DataSourceUpdateMode.OnPropertyChanged);
 
-            // bind date and time to same property
-            _scheduledDate.DataBindings.Add("Value", _component, "ScheduledTime", true, DataSourceUpdateMode.OnPropertyChanged);
-            _scheduledTime.DataBindings.Add("Value", _component, "ScheduledTime", true, DataSourceUpdateMode.OnPropertyChanged);
-
             _reorderReason.DataSource = _component.CancelReasonChoices;
             _reorderReason.DataBindings.Add("Value", _component, "SelectedCancelReason", true, DataSourceUpdateMode.OnPropertyChanged);
-            _reorderReason.DataBindings.Add("Visible", _component, "IsReplaceOrder");
-        }
-
-        private void DiagnosticServiceChangedEventHandler(object sender, EventArgs e)
-        {
+            _reorderReason.DataBindings.Add("Visible", _component, "IsCancelReasonVisible");
         }
 
         private void _placeOrderButton_Click(object sender, EventArgs e)
@@ -125,6 +123,16 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         private void _addConsultantButton_Click(object sender, EventArgs e)
         {
             _component.AddConsultant();
+        }
+
+        private void _proceduresTableView_ItemDoubleClicked(object sender, EventArgs e)
+        {
+            _component.EditSelectedProcedure();
+        }
+
+        private void _applySchedulingButton_Click(object sender, EventArgs e)
+        {
+            _component.ApplySchedulingToProcedures();
         }
     }
 }

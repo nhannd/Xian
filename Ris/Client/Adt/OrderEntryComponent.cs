@@ -92,7 +92,6 @@ namespace ClearCanvas.Ris.Client.Adt
         private DiagnosticServiceSummary _selectedDiagnosticService;
 
         private DateTime? _schedulingRequestTime;
-        private DateTime? _scheduledTime;
 
         private readonly Table<ProcedureRequisition> _proceduresTable;
         private readonly CrudActionModel _proceduresActionModel;
@@ -136,8 +135,6 @@ namespace ClearCanvas.Ris.Client.Adt
             _proceduresTable = new Table<ProcedureRequisition>();
             _proceduresTable.Columns.Add(new TableColumn<ProcedureRequisition, string>("Name",
                                       delegate(ProcedureRequisition item) { return item.ProcedureType.Name; }));
-            _proceduresTable.Columns.Add(new TableColumn<ProcedureRequisition, string>("Code",
-                                      delegate(ProcedureRequisition item) { return item.ProcedureType.Id; }));
             _proceduresTable.Columns.Add(new TableColumn<ProcedureRequisition, string>("Facility",
                                       delegate(ProcedureRequisition item)
                                           {
@@ -149,12 +146,13 @@ namespace ClearCanvas.Ris.Client.Adt
                                                   return (item.Laterality == null || item.Laterality.Code == "N")
                                                       ? "" : item.Laterality.Code;
                                           }));
+            _proceduresTable.Columns.Add(new TableColumn<ProcedureRequisition, bool>("Port.",
+                                      delegate(ProcedureRequisition item) { return item.PortableModality; }));
             _proceduresTable.Columns.Add(new TableColumn<ProcedureRequisition, string>("Scheduled Time",
                                       delegate(ProcedureRequisition item)
                                           {
-                                              if (item.Status == null)
-                                                  return "";
-                                              else if (item.Status.Code == "SC")
+                                              // if new or scheduled
+                                              if (item.Status == null || item.Status.Code == "SC")
                                                   return Format.DateTime(item.ScheduledTime);
                                               else
                                                   return item.Status.Value;
@@ -235,14 +233,19 @@ namespace ClearCanvas.Ris.Client.Adt
 
         #region Presentation Model
 
-        public bool IsReplaceOrder
+        public bool IsDiagnosticServiceEditable
         {
-            get { return _mode == Mode.ReplaceOrder; }
+            get { return _mode != Mode.ModifyOrder; }
         }
 
-        public bool IsModifyOrder
+        public bool IsOrderingFacilityEditable
         {
-            get { return _mode == Mode.ModifyOrder; }
+            get { return _mode != Mode.ModifyOrder; }
+        }
+
+        public bool IsCancelReasonVisible
+        {
+            get { return _mode == Mode.ReplaceOrder; }
         }
 
         public IList ActiveVisits
@@ -428,7 +431,15 @@ namespace ClearCanvas.Ris.Client.Adt
         public ExternalPractitionerSummary ConsultantToAdd
         {
             get { return _consultantToAdd; }
-            set { _consultantToAdd = value; }
+            set
+            {
+                if (!object.Equals(value, _consultantToAdd))
+                {
+                    _consultantToAdd = value;
+                    UpdateConsultantActionModel();
+                    NotifyPropertyChanged("ConsultantToAdd");
+                }
+            }
         }
 
         [ValidateNotNull]
@@ -444,10 +455,16 @@ namespace ClearCanvas.Ris.Client.Adt
             set { _schedulingRequestTime = value; }
         }
 
-        public DateTime? ScheduledTime
+        public void ApplySchedulingToProcedures()
         {
-            get { return _scheduledTime; }
-            set { _scheduledTime = value; }
+            foreach (ProcedureRequisition item in _proceduresTable.Items)
+            {
+                if (item.CanModify)
+                {
+                    item.ScheduledTime = _schedulingRequestTime;
+                    _proceduresTable.Items.NotifyItemUpdated(item);
+                }
+            }
         }
 
         public void AddProcedure()
@@ -503,6 +520,9 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public void RemoveSelectedProcedure()
         {
+            if (_selectedProcedure == null || !_selectedProcedure.CanModify)
+                return;
+
             _proceduresTable.Items.Remove(_selectedProcedure);
             _selectedProcedure = null;
             NotifyPropertyChanged("SelectedProcedure");
@@ -615,6 +635,9 @@ namespace ClearCanvas.Ris.Client.Adt
 
             _proceduresTable.Items.Clear();
             _proceduresTable.Items.AddRange(existingOrder.RequestedProcedures);
+
+            _consultantsTable.Items.Clear();
+            _consultantsTable.Items.AddRange(existingOrder.CopiesToPractitioners);
         }
 
         private bool SubmitOrder()
@@ -653,5 +676,6 @@ namespace ClearCanvas.Ris.Client.Adt
                 return false;
             }
         }
+
     }
 }

@@ -59,20 +59,16 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-            ClearCanvas.Desktop.Selection selection1 = new ClearCanvas.Desktop.Selection();
-            ClearCanvas.Desktop.Selection selection2 = new ClearCanvas.Desktop.Selection();
-            ClearCanvas.Desktop.Selection selection3 = new ClearCanvas.Desktop.Selection();
-            ClearCanvas.Desktop.Selection selection4 = new ClearCanvas.Desktop.Selection();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this._scheduledTime = new ClearCanvas.Desktop.View.WinForms.DateTimeField();
             this._schedulingRequestTime = new ClearCanvas.Desktop.View.WinForms.DateTimeField();
-            this._scheduledDate = new ClearCanvas.Desktop.View.WinForms.DateTimeField();
             this._schedulingRequestDate = new ClearCanvas.Desktop.View.WinForms.DateTimeField();
             this._visit = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
+            this._orderingPractitioner = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
             this._indication = new ClearCanvas.Desktop.View.WinForms.TextField();
             this._orderingFacility = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
             this._reorderReason = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
             this._priority = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
+            this._diagnosticService = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this._proceduresTableView = new ClearCanvas.Desktop.View.WinForms.TableView();
@@ -82,6 +78,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this._consultantsTableView = new ClearCanvas.Desktop.View.WinForms.TableView();
             this.panel2 = new System.Windows.Forms.Panel();
+            this._consultantLookup = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
             this._addConsultantButton = new System.Windows.Forms.Button();
             this.tabControl2 = new System.Windows.Forms.TabControl();
             this.tabPage4 = new System.Windows.Forms.TabPage();
@@ -90,9 +87,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.tableView2 = new ClearCanvas.Desktop.View.WinForms.TableView();
             this._cancelButton = new System.Windows.Forms.Button();
             this._placeOrderButton = new System.Windows.Forms.Button();
-            this._orderingPractitioner = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
-            this._diagnosticService = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
-            this._consultantLookup = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
+            this._applySchedulingButton = new System.Windows.Forms.Button();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
@@ -114,14 +109,13 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // 
             // splitContainer1.Panel1
             // 
-            this.splitContainer1.Panel1.Controls.Add(this._scheduledTime);
+            this.splitContainer1.Panel1.Controls.Add(this._applySchedulingButton);
             this.splitContainer1.Panel1.Controls.Add(this._schedulingRequestTime);
-            this.splitContainer1.Panel1.Controls.Add(this._scheduledDate);
             this.splitContainer1.Panel1.Controls.Add(this._schedulingRequestDate);
+            this.splitContainer1.Panel1.Controls.Add(this._orderingFacility);
             this.splitContainer1.Panel1.Controls.Add(this._visit);
             this.splitContainer1.Panel1.Controls.Add(this._orderingPractitioner);
             this.splitContainer1.Panel1.Controls.Add(this._indication);
-            this.splitContainer1.Panel1.Controls.Add(this._orderingFacility);
             this.splitContainer1.Panel1.Controls.Add(this._reorderReason);
             this.splitContainer1.Panel1.Controls.Add(this._priority);
             this.splitContainer1.Panel1.Controls.Add(this._diagnosticService);
@@ -134,25 +128,10 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.splitContainer1.SplitterDistance = 506;
             this.splitContainer1.TabIndex = 26;
             // 
-            // _scheduledTime
-            // 
-            this._scheduledTime.LabelText = "Scheduled Time";
-            this._scheduledTime.Location = new System.Drawing.Point(214, 320);
-            this._scheduledTime.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this._scheduledTime.Maximum = new System.DateTime(9998, 12, 31, 0, 0, 0, 0);
-            this._scheduledTime.Minimum = new System.DateTime(1753, 1, 1, 0, 0, 0, 0);
-            this._scheduledTime.Name = "_scheduledTime";
-            this._scheduledTime.Nullable = true;
-            this._scheduledTime.ShowDate = false;
-            this._scheduledTime.ShowTime = true;
-            this._scheduledTime.Size = new System.Drawing.Size(183, 50);
-            this._scheduledTime.TabIndex = 10;
-            this._scheduledTime.Value = null;
-            // 
             // _schedulingRequestTime
             // 
             this._schedulingRequestTime.LabelText = "Requested Schedule Time";
-            this._schedulingRequestTime.Location = new System.Drawing.Point(214, 266);
+            this._schedulingRequestTime.Location = new System.Drawing.Point(214, 315);
             this._schedulingRequestTime.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this._schedulingRequestTime.Maximum = new System.DateTime(9998, 12, 31, 0, 0, 0, 0);
             this._schedulingRequestTime.Minimum = new System.DateTime(1753, 1, 1, 0, 0, 0, 0);
@@ -164,23 +143,10 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._schedulingRequestTime.TabIndex = 8;
             this._schedulingRequestTime.Value = null;
             // 
-            // _scheduledDate
-            // 
-            this._scheduledDate.LabelText = "Scheduled Date";
-            this._scheduledDate.Location = new System.Drawing.Point(11, 320);
-            this._scheduledDate.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this._scheduledDate.Maximum = new System.DateTime(9998, 12, 31, 0, 0, 0, 0);
-            this._scheduledDate.Minimum = new System.DateTime(1753, 1, 1, 0, 0, 0, 0);
-            this._scheduledDate.Name = "_scheduledDate";
-            this._scheduledDate.Nullable = true;
-            this._scheduledDate.Size = new System.Drawing.Size(197, 50);
-            this._scheduledDate.TabIndex = 9;
-            this._scheduledDate.Value = null;
-            // 
             // _schedulingRequestDate
             // 
             this._schedulingRequestDate.LabelText = "Requested Schedule Date";
-            this._schedulingRequestDate.Location = new System.Drawing.Point(11, 266);
+            this._schedulingRequestDate.Location = new System.Drawing.Point(11, 315);
             this._schedulingRequestDate.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this._schedulingRequestDate.Maximum = new System.DateTime(9998, 12, 31, 0, 0, 0, 0);
             this._schedulingRequestDate.Minimum = new System.DateTime(1753, 1, 1, 0, 0, 0, 0);
@@ -196,17 +162,26 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._visit.DisplayMember = "";
             this._visit.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this._visit.LabelText = "Visit";
-            this._visit.Location = new System.Drawing.Point(6, 215);
+            this._visit.Location = new System.Drawing.Point(6, 264);
             this._visit.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this._visit.Name = "_visit";
             this._visit.Size = new System.Drawing.Size(486, 50);
             this._visit.TabIndex = 6;
             this._visit.Value = null;
             // 
+            // _orderingPractitioner
+            // 
+            this._orderingPractitioner.LabelText = "Ordering Practitioner";
+            this._orderingPractitioner.Location = new System.Drawing.Point(201, 154);
+            this._orderingPractitioner.Name = "_orderingPractitioner";
+            this._orderingPractitioner.Size = new System.Drawing.Size(292, 59);
+            this._orderingPractitioner.TabIndex = 2;
+            this._orderingPractitioner.Value = null;
+            // 
             // _indication
             // 
             this._indication.LabelText = "Indication";
-            this._indication.Location = new System.Drawing.Point(6, 112);
+            this._indication.Location = new System.Drawing.Point(6, 209);
             this._indication.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this._indication.Mask = "";
             this._indication.Name = "_indication";
@@ -220,7 +195,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._orderingFacility.DisplayMember = "";
             this._orderingFacility.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this._orderingFacility.LabelText = "Ordering Facility (temporary)";
-            this._orderingFacility.Location = new System.Drawing.Point(6, 166);
+            this._orderingFacility.Location = new System.Drawing.Point(10, 50);
             this._orderingFacility.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this._orderingFacility.Name = "_orderingFacility";
             this._orderingFacility.Size = new System.Drawing.Size(228, 50);
@@ -233,7 +208,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._reorderReason.DisplayMember = "";
             this._reorderReason.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this._reorderReason.LabelText = "Re-order Reason";
-            this._reorderReason.Location = new System.Drawing.Point(242, 166);
+            this._reorderReason.Location = new System.Drawing.Point(241, 50);
             this._reorderReason.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this._reorderReason.Name = "_reorderReason";
             this._reorderReason.Size = new System.Drawing.Size(251, 50);
@@ -246,12 +221,21 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._priority.DisplayMember = "";
             this._priority.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this._priority.LabelText = "Priority";
-            this._priority.Location = new System.Drawing.Point(7, 61);
+            this._priority.Location = new System.Drawing.Point(7, 158);
             this._priority.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this._priority.Name = "_priority";
             this._priority.Size = new System.Drawing.Size(175, 50);
             this._priority.TabIndex = 1;
             this._priority.Value = null;
+            // 
+            // _diagnosticService
+            // 
+            this._diagnosticService.LabelText = "Diagnostic Service";
+            this._diagnosticService.Location = new System.Drawing.Point(6, 100);
+            this._diagnosticService.Name = "_diagnosticService";
+            this._diagnosticService.Size = new System.Drawing.Size(486, 59);
+            this._diagnosticService.TabIndex = 0;
+            this._diagnosticService.Value = null;
             // 
             // tabControl1
             // 
@@ -278,19 +262,16 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // _proceduresTableView
             // 
             this._proceduresTableView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._proceduresTableView.FilterTextBoxWidth = 132;
             this._proceduresTableView.Location = new System.Drawing.Point(3, 3);
             this._proceduresTableView.Margin = new System.Windows.Forms.Padding(5);
-            this._proceduresTableView.MenuModel = null;
             this._proceduresTableView.MultiSelect = false;
             this._proceduresTableView.Name = "_proceduresTableView";
             this._proceduresTableView.ReadOnly = false;
-            this._proceduresTableView.Selection = selection1;
             this._proceduresTableView.Size = new System.Drawing.Size(485, 194);
             this._proceduresTableView.TabIndex = 36;
-            this._proceduresTableView.Table = null;
-            this._proceduresTableView.ToolbarModel = null;
             this._proceduresTableView.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this._proceduresTableView.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.No;
+            this._proceduresTableView.ItemDoubleClicked += new System.EventHandler(this._proceduresTableView_ItemDoubleClicked);
             // 
             // tabPage3
             // 
@@ -305,21 +286,17 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // _notesTableView
             // 
             this._notesTableView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._notesTableView.FilterTextBoxWidth = 132;
             this._notesTableView.Location = new System.Drawing.Point(0, 0);
             this._notesTableView.Margin = new System.Windows.Forms.Padding(5);
-            this._notesTableView.MenuModel = null;
             this._notesTableView.MultiLine = true;
             this._notesTableView.MultiSelect = false;
             this._notesTableView.Name = "_notesTableView";
             this._notesTableView.ReadOnly = false;
-            this._notesTableView.Selection = selection2;
             this._notesTableView.ShowToolbar = false;
             this._notesTableView.Size = new System.Drawing.Size(491, 200);
             this._notesTableView.TabIndex = 1;
-            this._notesTableView.Table = null;
-            this._notesTableView.ToolbarModel = null;
             this._notesTableView.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this._notesTableView.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.No;
             // 
             // tabPage2
             // 
@@ -350,20 +327,16 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // _consultantsTableView
             // 
             this._consultantsTableView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._consultantsTableView.FilterTextBoxWidth = 132;
             this._consultantsTableView.Location = new System.Drawing.Point(5, 83);
             this._consultantsTableView.Margin = new System.Windows.Forms.Padding(5);
-            this._consultantsTableView.MenuModel = null;
             this._consultantsTableView.MultiSelect = false;
             this._consultantsTableView.Name = "_consultantsTableView";
             this._consultantsTableView.ReadOnly = false;
-            this._consultantsTableView.Selection = selection3;
             this._consultantsTableView.ShowToolbar = false;
             this._consultantsTableView.Size = new System.Drawing.Size(475, 106);
             this._consultantsTableView.TabIndex = 2;
-            this._consultantsTableView.Table = null;
-            this._consultantsTableView.ToolbarModel = null;
             this._consultantsTableView.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this._consultantsTableView.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.No;
             // 
             // panel2
             // 
@@ -373,6 +346,15 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(452, 72);
             this.panel2.TabIndex = 0;
+            // 
+            // _consultantLookup
+            // 
+            this._consultantLookup.LabelText = "Find Practitioner";
+            this._consultantLookup.Location = new System.Drawing.Point(1, 6);
+            this._consultantLookup.Name = "_consultantLookup";
+            this._consultantLookup.Size = new System.Drawing.Size(348, 59);
+            this._consultantLookup.TabIndex = 4;
+            this._consultantLookup.Value = null;
             // 
             // _addConsultantButton
             // 
@@ -426,19 +408,15 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // 
             // tableView2
             // 
+            this.tableView2.FilterTextBoxWidth = 132;
             this.tableView2.Location = new System.Drawing.Point(8, 16);
             this.tableView2.Margin = new System.Windows.Forms.Padding(5);
-            this.tableView2.MenuModel = null;
             this.tableView2.MultiSelect = false;
             this.tableView2.Name = "tableView2";
             this.tableView2.ReadOnly = false;
-            this.tableView2.Selection = selection4;
             this.tableView2.Size = new System.Drawing.Size(471, 83);
             this.tableView2.TabIndex = 37;
-            this.tableView2.Table = null;
-            this.tableView2.ToolbarModel = null;
             this.tableView2.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tableView2.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.No;
             // 
             // _cancelButton
             // 
@@ -453,41 +431,24 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // 
             // _placeOrderButton
             // 
-            this._placeOrderButton.Location = new System.Drawing.Point(805, 616);
+            this._placeOrderButton.Location = new System.Drawing.Point(837, 616);
             this._placeOrderButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this._placeOrderButton.Name = "_placeOrderButton";
-            this._placeOrderButton.Size = new System.Drawing.Size(105, 23);
+            this._placeOrderButton.Size = new System.Drawing.Size(73, 23);
             this._placeOrderButton.TabIndex = 28;
-            this._placeOrderButton.Text = "Place Order";
+            this._placeOrderButton.Text = "OK";
             this._placeOrderButton.UseVisualStyleBackColor = true;
             this._placeOrderButton.Click += new System.EventHandler(this._placeOrderButton_Click);
             // 
-            // _orderingPractitioner
+            // _applySchedulingButton
             // 
-            this._orderingPractitioner.LabelText = "Ordering Practitioner";
-            this._orderingPractitioner.Location = new System.Drawing.Point(201, 57);
-            this._orderingPractitioner.Name = "_orderingPractitioner";
-            this._orderingPractitioner.Size = new System.Drawing.Size(292, 59);
-            this._orderingPractitioner.TabIndex = 2;
-            this._orderingPractitioner.Value = null;
-            // 
-            // _diagnosticService
-            // 
-            this._diagnosticService.LabelText = "Diagnostic Service";
-            this._diagnosticService.Location = new System.Drawing.Point(0, 3);
-            this._diagnosticService.Name = "_diagnosticService";
-            this._diagnosticService.Size = new System.Drawing.Size(492, 59);
-            this._diagnosticService.TabIndex = 0;
-            this._diagnosticService.Value = null;
-            // 
-            // _consultantLookup
-            // 
-            this._consultantLookup.LabelText = "Find Practitioner";
-            this._consultantLookup.Location = new System.Drawing.Point(1, 6);
-            this._consultantLookup.Name = "_consultantLookup";
-            this._consultantLookup.Size = new System.Drawing.Size(348, 59);
-            this._consultantLookup.TabIndex = 4;
-            this._consultantLookup.Value = null;
+            this._applySchedulingButton.Location = new System.Drawing.Point(413, 340);
+            this._applySchedulingButton.Name = "_applySchedulingButton";
+            this._applySchedulingButton.Size = new System.Drawing.Size(75, 23);
+            this._applySchedulingButton.TabIndex = 36;
+            this._applySchedulingButton.Text = "Apply";
+            this._applySchedulingButton.UseVisualStyleBackColor = true;
+            this._applySchedulingButton.Click += new System.EventHandler(this._applySchedulingButton_Click);
             // 
             // OrderEntryComponentControl
             // 
@@ -541,12 +502,11 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         private ClearCanvas.Desktop.View.WinForms.ComboBoxField _orderingFacility;
         private ClearCanvas.Desktop.View.WinForms.ComboBoxField _reorderReason;
         private ClearCanvas.Desktop.View.WinForms.ComboBoxField _priority;
-        private ClearCanvas.Desktop.View.WinForms.DateTimeField _scheduledTime;
         private ClearCanvas.Desktop.View.WinForms.DateTimeField _schedulingRequestTime;
-        private ClearCanvas.Desktop.View.WinForms.DateTimeField _scheduledDate;
         private ClearCanvas.Desktop.View.WinForms.DateTimeField _schedulingRequestDate;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.Panel panel2;
+        private System.Windows.Forms.Button _applySchedulingButton;
 
     }
 }

@@ -90,6 +90,7 @@ namespace ClearCanvas.Desktop.View.WinForms
                 //this.DataSource = items;
                 UpdateListItems(items);
                 this.SelectedItem = value;
+                EventsHelper.Fire(_valueChanged, this, EventArgs.Empty);
             }
         }
 

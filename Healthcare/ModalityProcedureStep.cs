@@ -50,7 +50,14 @@ namespace ClearCanvas.Healthcare {
 	{
         private ModalityProcedureStepType _type;
         private Modality _modality;
+        private bool _portable;
 
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="procedure"></param>
+        /// <param name="type"></param>
+        /// <param name="modality"></param>
         public ModalityProcedureStep(RequestedProcedure procedure, ModalityProcedureStepType type, Modality modality)
             :base(procedure)
         {
@@ -76,10 +83,22 @@ namespace ClearCanvas.Healthcare {
             set { _type = value; }
         }
 
+        /// <summary>
+        /// Gets or sets the modality on which this step is to be performed.
+        /// </summary>
         public virtual Modality Modality
         {
             get { return _modality; }
             set { _modality = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether this step is to be performed on a portable modality.
+        /// </summary>
+        public virtual bool Portable
+        {
+            get { return _portable; }
+            set { _portable = value; }
         }
 
         public virtual void TryCompleteFromPerformedProcedureSteps()

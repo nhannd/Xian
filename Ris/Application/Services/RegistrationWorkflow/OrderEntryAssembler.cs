@@ -39,6 +39,7 @@ using ClearCanvas.Ris.Application.Services.Admin;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 using Iesi.Collections;
 using Iesi.Collections.Generic;
+using ClearCanvas.Workflow;
 
 namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 {
@@ -57,7 +58,6 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             requisition.DiagnosticService = dsAssembler.CreateDiagnosticServiceSummary(order.DiagnosticService);
             requisition.SchedulingRequestTime = order.SchedulingRequestDateTime;
             requisition.OrderingPractitioner = pracAssembler.CreateExternalPractitionerSummary(order.OrderingPractitioner, context);
-            //TODO requisition.PerformingFacility = facilityAssembler.CreateFacilitySummary(order.PerformingFacility);
             requisition.OrderingFacility = facilityAssembler.CreateFacilitySummary(order.OrderingFacility);
             requisition.ReasonForStudy = order.ReasonForStudy;
             requisition.Priority = EnumUtils.GetEnumValueInfo(order.Priority, context);
@@ -83,7 +83,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             // only certain properties of an order may be updated from a requisition
             // Patient cannot not be updated
             // DiagnosticService cannot be updated
-            // OrderingFacility cannot be updated - or can it ???
+            // OrderingFacility cannot be updated
 
             // do not update the individual requested procedures, as this is done separately - see UpdateProcedureFromRequisition
 
@@ -91,7 +91,6 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             order.Visit = context.Load<Visit>(requisition.Visit.VisitRef, EntityLoadFlags.Proxy);
             order.SchedulingRequestDateTime = requisition.SchedulingRequestTime;
             order.OrderingPractitioner = context.Load<ExternalPractitioner>(requisition.OrderingPractitioner.PractitionerRef, EntityLoadFlags.Proxy);
-            //TODO order.PerformingFacility = context.Load<Facility>(requisition.PerformingFacility.FacilityRef, EntityLoadFlags.Proxy);
             order.ReasonForStudy = requisition.ReasonForStudy;
             order.Priority = EnumUtils.GetEnumValue<OrderPriority>(requisition.Priority);
 
@@ -110,24 +109,40 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             RequestedProcedureTypeAssembler rptAssembler = new RequestedProcedureTypeAssembler();
             FacilityAssembler facilityAssembler = new FacilityAssembler();
 
-            // create requisition - canModify is true iff the procedure is in SC status
+            // consider it portable if any MPS is portable
+            bool portable = CollectionUtils.Contains<ModalityProcedureStep>(rp.ModalityProcedureSteps,
+                delegate(ModalityProcedureStep mps)
+                {
+                    return mps.Portable;
+                });
+
+            // create requisition
             return new ProcedureRequisition(
                 rptAssembler.GetRequestedProcedureTypeSummary(rp.Type),
                 rp.Index,
                 rp.ScheduledStartTime,
-                facilityAssembler.CreateFacilitySummary(rp.PerformingFacility),
+                rp.PerformingFacility == null ? null : facilityAssembler.CreateFacilitySummary(rp.PerformingFacility),
                 EnumUtils.GetEnumValueInfo(rp.Laterality, context),
-                false, //TODO portable modality
+                portable,
                 EnumUtils.GetEnumValueInfo(rp.Status, context),
-                rp.Status == RequestedProcedureStatus.SC);
+                IsProcedureModifiable(rp));
         }
 
         public void UpdateProcedureFromRequisition(RequestedProcedure rp, ProcedureRequisition requisition, IPersistenceContext context)
         {
-            rp.Schedule(requisition.ScheduledTime);
+            foreach (ProcedureStep step in rp.ProcedureSteps)
+            {
+                // only procedure steps that have not been started are modifiable
+                if (step.State == ActivityStatus.SC)
+                {
+                    step.Schedule(requisition.ScheduledTime);
+                    if (step.Is<ModalityProcedureStep>())
+                        step.As<ModalityProcedureStep>().Portable = requisition.PortableModality;
+                }
+            }
+
             rp.PerformingFacility = context.Load<Facility>(requisition.PerformingFacility.FacilityRef, EntityLoadFlags.Proxy);
             rp.Laterality = EnumUtils.GetEnumValue<Laterality>(requisition.Laterality);
-            //TODO portable
         }
 
         public DiagnosticServiceTreeItem CreateDiagnosticServiceTreeItem(DiagnosticServiceTreeNode node)
@@ -137,6 +152,20 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                 node.GetRef(),
                 node.Description,
                 node.DiagnosticService == null ? null : dsAssembler.CreateDiagnosticServiceSummary(node.DiagnosticService));
+        }
+
+        // arguably this is a business logic decision that shouldn't go here, but there is really no
+        // better place to put it right now
+        // note that the notion of "modifiable" here is specific to the idea of a "requisition"
+        // The "requisition" is no longer modifiable after any MPS has started
+        private bool IsProcedureModifiable(RequestedProcedure rp)
+        {
+            // procedure requisition can be modified only if all MPS are still in the SC state
+            return CollectionUtils.TrueForAll<ModalityProcedureStep>(rp.ModalityProcedureSteps,
+                delegate(ModalityProcedureStep mps)
+                {
+                    return mps.State == ActivityStatus.SC;
+                });
         }
     }
 }
