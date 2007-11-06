@@ -51,5 +51,41 @@ namespace ClearCanvas.Enterprise.Core
         {
             get { return _reasons; }
         }
+
+        public string MessageVerbose
+        {
+            get
+            {
+                List<string> messages = new List<string>();
+                foreach (TestResultReason reason in _reasons)
+                    messages.AddRange(BuildMessageStrings(reason));
+
+                if (messages.Count > 0)
+                {
+                    return this.Message + "\n" + StringUtilities.Combine<string>(messages, "\n");
+                }
+                else
+                    return this.Message;
+            }
+        }
+
+        private static List<string> BuildMessageStrings(TestResultReason reason)
+        {
+            List<string> messages = new List<string>();
+            if (reason.Reasons.Length == 0)
+                messages.Add(reason.Message);
+            else
+            {
+                foreach (TestResultReason subReason in reason.Reasons)
+                {
+                    List<string> subMessages = BuildMessageStrings(subReason);
+                    foreach (string subMessage in subMessages)
+                    {
+                        messages.Add(string.Format("{0} {1}", reason.Message, subMessage));
+                    }
+                }
+            }
+            return messages;
+        }
     }
 }

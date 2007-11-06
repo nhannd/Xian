@@ -37,6 +37,7 @@ using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Enterprise.Core.Modelling;
 
 namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
 {
@@ -72,19 +73,22 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
         ///     9 - Unit
         ///     10 - City
         ///     11 - Province
-        ///     12 -  PostalCode
+        ///     12 - PostalCode
         ///     13 - Country
-        ///     14 - Type
-        ///     15 - ValidFrom
-        ///     16 - ValidUntil
-        ///     17 - CountryCode
-        ///     18 - AreaCode
-        ///     19 - Number
-        ///     20 - Extension
-        ///     21 - Use
-        ///     22 - Equipment
-        ///     23 - ValidFrom
-        ///     24 - ValidUntil
+        ///     14 - ValidFrom
+        ///     15 - ValidUntil
+        ///     16 - Phone CountryCode
+        ///     17 - Phone AreaCode
+        ///     18 - Phone Number
+        ///     19 - Phone Extension
+        ///     20 - ValidFrom
+        ///     21 - ValidUntil
+        ///     22 - Fax CountryCode
+        ///     23 - Fax AreaCode
+        ///     24 - Fax Number
+        ///     25 - Fax Extension
+        ///     26 - ValidFrom
+        ///     27 - ValidUntil
         /// </param>
         /// <param name="context"></param>
         public override void ImportCsv(List<string> rows, IUpdateContext context)
@@ -113,18 +117,23 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
                 string addressProvince = fields[11];
                 string addressPostalCode = fields[12];
                 string addressCountry = fields[13];
-                AddressType addressType = TryParseOrDefault(fields[14], AddressType.B);
-                DateTime? addressValidFrom = ParseDateTime(fields[15]);
-                DateTime? addressValidUntil = ParseDateTime(fields[16]);
 
-                string phoneCountryCode = fields[17];
-                string phoneAreaCode = fields[18];
-                string phoneNumber = fields[19];
-                string phoneExtension = fields[20];
-                TelephoneUse phoneUse = TryParseOrDefault(fields[21], TelephoneUse.WPN);
-                TelephoneEquipment phoneEquipment = TryParseOrDefault(fields[22], TelephoneEquipment.PH);
-                DateTime? phoneValidFrom = ParseDateTime(fields[23]);
-                DateTime? phoneValidUntil = ParseDateTime(fields[24]);
+                DateTime? addressValidFrom = ParseDateTime(fields[14]);
+                DateTime? addressValidUntil = ParseDateTime(fields[15]);
+
+                string phoneCountryCode = fields[16];
+                string phoneAreaCode = fields[17];
+                string phoneNumber = fields[18];
+                string phoneExtension = fields[19];
+                DateTime? phoneValidFrom = ParseDateTime(fields[20]);
+                DateTime? phoneValidUntil = ParseDateTime(fields[21]);
+
+                string faxCountryCode = fields[22];
+                string faxAreaCode = fields[23];
+                string faxNumber = fields[24];
+                string faxExtension = fields[25];
+                DateTime? faxValidFrom = ParseDateTime(fields[26]);
+                DateTime? faxValidUntil = ParseDateTime(fields[27]);
 
                 ExternalPractitioner ep = GetExternalPracitioner(epLicenseId, epLicenseAssigningAuthority, importedEPs);
 
@@ -136,28 +145,56 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
                     ep.LicenseNumber.AssigningAuthority = epLicenseAssigningAuthority;
                     ep.Name = new PersonName(epFamilyName, epGivenName, epMiddlename, epPrefix, epSuffix, epDegree);
 
-                    Address epAddress = new Address(
-                        addressStreet,
-                        addressUnit,
-                        addressCity,
-                        addressProvince,
-                        addressPostalCode,
-                        addressCountry,
-                        addressType,
-                        new DateTimeRange(addressValidFrom, addressValidUntil));
 
-                    ep.Addresses.Add(epAddress);
+                    try
+                    {
+                        Address epAddress = new Address(
+                            addressStreet,
+                            addressUnit,
+                            addressCity,
+                            addressProvince,
+                            addressPostalCode,
+                            addressCountry,
+                            AddressType.B,
+                            new DateTimeRange(addressValidFrom, addressValidUntil));
+                        Validation.Validate(epAddress);
+                        ep.Addresses.Add(epAddress);
+                    }
+                    catch(EntityValidationException) { /* invalid address - ignore */ }
 
-                    TelephoneNumber epTelephone = new TelephoneNumber(
-                        phoneCountryCode,
-                        phoneAreaCode,
-                        phoneNumber,
-                        phoneExtension,
-                        phoneUse,
-                        phoneEquipment,
-                        new DateTimeRange(phoneValidFrom, phoneValidUntil));
 
-                    ep.TelephoneNumbers.Add(epTelephone);
+                    try
+                    {
+                        TelephoneNumber epTelephone = new TelephoneNumber(
+                            phoneCountryCode,
+                            phoneAreaCode,
+                            phoneNumber,
+                            phoneExtension,
+                            TelephoneUse.WPN,
+                            TelephoneEquipment.PH,
+                            new DateTimeRange(phoneValidFrom, phoneValidUntil));
+
+                        Validation.Validate(epTelephone);
+                        ep.TelephoneNumbers.Add(epTelephone);
+                    }
+                    catch (EntityValidationException) { /* invalid phone - ignore */ }
+
+                    try
+                    {
+                        TelephoneNumber epFax = new TelephoneNumber(
+                            faxCountryCode,
+                            faxAreaCode,
+                            faxNumber,
+                            faxExtension,
+                            TelephoneUse.WPN,
+                            TelephoneEquipment.FX,
+                            new DateTimeRange(faxValidFrom, faxValidUntil));
+
+                        Validation.Validate(epFax);
+                        ep.TelephoneNumbers.Add(epFax);
+
+                    }
+                    catch (EntityValidationException) { /* invalid phone - ignore */ }
 
                     _context.Lock(ep, DirtyState.New);
 
@@ -172,6 +209,10 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
 
         private ExternalPractitioner GetExternalPracitioner(string licenseId, string licenseAssigningAuthority, List<ExternalPractitioner> importedEPs)
         {
+            // if licenseId is not supplied, then assume the record does not exist
+            if(string.IsNullOrEmpty(licenseId))
+                return null;
+
             ExternalPractitioner externalPractitioner = null;
 
             externalPractitioner = CollectionUtils.SelectFirst<ExternalPractitioner>(importedEPs,

@@ -115,9 +115,13 @@ namespace ClearCanvas.Ris.Application.Services.Admin
                 }
 
             }
+            catch(EntityValidationException e)
+            {
+                Log(LogLevel.Error, e.MessageVerbose);
+            }
             catch (Exception e)
             {
-                Log(LogLevel.Error, e.Message);
+                Log(LogLevel.Error, e.ToString());
             }
         }
 
