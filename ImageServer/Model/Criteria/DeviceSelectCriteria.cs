@@ -64,6 +64,18 @@ namespace ClearCanvas.ImageServer.Model.Criteria
             } 
         }
 
+        public ISearchCondition<string> IPAddress
+        {
+            get
+            {
+                if (!SubCriteria.ContainsKey("IpAddress"))
+                {
+                    SubCriteria["IpAddress"] = new SearchCondition<string>("IpAddress");
+                }
+                return (ISearchCondition<string>)SubCriteria["IpAddress"];
+            }
+        }
+
         public ISearchCondition<bool> Dhcp
         {
             get

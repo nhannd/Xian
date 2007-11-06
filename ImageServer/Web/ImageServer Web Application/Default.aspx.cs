@@ -15,7 +15,7 @@ namespace ImageServerWebApplication
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            Response.Redirect("~/Admin/Configuration/Devices.aspx");
+            Response.Redirect("~/Admin/Configuration/DevicePage.aspx");
         }
     }
 }

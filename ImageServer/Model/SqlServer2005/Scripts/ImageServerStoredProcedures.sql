@@ -96,6 +96,10 @@ GO
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[QueryStudyStorageLocation]') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[QueryStudyStorageLocation]
 GO
+/****** Object:  StoredProcedure [dbo].[DeleteDevice]    Script Date: 11/05/2007 10:23:16 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[DeleteDevice]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [dbo].[DeleteDevice]
+GO
 /****** Object:  StoredProcedure [dbo].[ReadServerPartitions]    Script Date: 11/02/2007 14:23:17 ******/
 SET ANSI_NULLS ON
 GO
@@ -1325,6 +1329,34 @@ BEGIN
 		@StudyStorageGUID
 		,@ServerPartitionGUID
 		,@StudyInstanceUid
+END
+' 
+END
+GO
+/****** Object:  StoredProcedure [dbo].[DeleteDevice]    Script Date: 11/05/2007 10:23:17 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[DeleteDevice]') AND type in (N'P', N'PC'))
+BEGIN
+EXEC dbo.sp_executesql @statement = N'-- =============================================
+-- Author:		Thanh Huynh
+-- Create date: 11/05/2007
+-- Description:	Called to delete a device.
+-- =============================================
+CREATE PROCEDURE [dbo].[DeleteDevice]
+	-- Add the parameters for the stored procedure here
+	@DeviceGUID uniqueidentifier
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+    -- Do the delete
+	DELETE FROM Device 
+	WHERE GUID = @DeviceGUID
 END
 ' 
 END

@@ -1,7 +1,21 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <siteMap xmlns="http://schemas.microsoft.com/AspNet/SiteMap-File-1.0" >
-	<siteMapNode url="" title="Configuration"  description="System Configuration">
-		<siteMapNode url="~/Admin/Configuration/Devices.aspx" title="Device"  description="Device Configuration"/>
+	<siteMapNode url="" title="Root"  description="">
+		<siteMapNode url="" title="Search"  description="Search">
+			<!--<siteMapNode url="~/Search/WorkQueue.aspx" title="Work Queue"  description="Search Work Queue"/> -->
+		</siteMapNode>
+		<siteMapNode url="" title="Configuration"  description="System Configuration">
+			<siteMapNode url="~/Admin/Configuration/DevicePage.aspx" title="Devices"  description="Device Configuration"/>
+			<!--<siteMapNode url="~/Admin/Configuration/ServerPartitionPage.aspx" title="Server Partitions"  description="Device Configuration"/>
+			<siteMapNode url="~/Admin/Configuration/FileSystemsPage.aspx" title="FileSystems"  description="Device Configuration"/>
+			<siteMapNode url="~/Admin/Configuration/FileSystemsTierPage.aspx" title="FileSystems Tiers"  description="Device Configuration"/>-->
+		</siteMapNode>
+		<siteMapNode url="" title="Rules"  description="System Configuration">
+		<!--	<siteMapNode url="~/Admin/Rules/AutoRouting.aspx" title="Auto-Routing"  description="Configure auto-routing rules"/>
+			<siteMapNode url="~/Admin/Rules/Retention.aspx" title="Retention"  description="Configure retention rules"/>-->
+		</siteMapNode>
 
 	</siteMapNode>
+
+
 </siteMap>

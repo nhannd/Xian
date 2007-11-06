@@ -45,40 +45,50 @@ using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.SelectBrokers;
 using ClearCanvas.ImageServer.Model.Criteria;
 
-/// <summary>
-/// Summary description for ServerPartitionDataAdapter
-/// </summary>
+
 namespace ClearCanvas.ImageServer.Web.Common
 {
+    /// <summary>
+    /// Used to create/update/delete server partition entries in the database.
+    /// </summary>
     public class ServerPartitionDataAdapter
     {
+        #region Private Members
         private IPersistentStore _store = PersistentStoreRegistry.GetDefaultStore();
+        #endregion Private Members
 
+        #region Constructors
         public ServerPartitionDataAdapter()
         {
-            //
-            // TODO: Add constructor logic here
-            //
         }
 
+        #endregion Constructors
+
+
+        #region Public methods
+        /// <summary>
+        /// Gets a list of all server partitions.
+        /// </summary>
+        /// <returns></returns>
         public IList<ServerPartition> GetServerPartitions()
         {
+            IList<ServerPartition> list = null;
+            using (IReadContext ctx = _store.OpenReadContext())
+            {
+                ISelectServerPartition find = ctx.GetBroker<ISelectServerPartition>();
 
-            IReadContext read = _store.OpenReadContext();
-            ISelectServerPartition find = read.GetBroker<ISelectServerPartition>();
+                ServerPartitionSelectCriteria criteria = new ServerPartitionSelectCriteria();
+                list = find.Find(criteria);
+            }
 
-            ServerPartitionSelectCriteria criteria = new ServerPartitionSelectCriteria();
-            IList<ServerPartition> list = find.Find(criteria);
-
-            read.Dispose();
             return list;
 
         }
 
+        #endregion Public methods
+
         public void Update(ServerPartition part)
         {
-
-
             throw new Exception("ServerPartitionDataAdapter.Update() is not implemented yet");
 
         }

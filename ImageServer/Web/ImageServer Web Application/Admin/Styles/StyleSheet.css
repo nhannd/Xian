@@ -1,0 +1,119 @@
+﻿body
+{
+	font-family: 'Arial Unicode MS' , 'Arial Rounded MT Bold';
+	padding-left: 10px;
+}
+
+.PopupWindow
+{
+	background-color: #ffffcc;
+	border-right: 1px outset;
+	border-top: 1px outset;
+	border-left: 1px outset;
+	border-bottom: 1px outset;
+}
+.PopupWindowBody 
+{
+	/*width: 100%;*/
+}
+
+
+
+        
+.PopupWindowTitleBar
+{
+	cursor: move;
+	width: 100%;
+	color: white;
+	height: 30px;
+	background-color: #0099ff;
+	vertical-align: middle;
+	text-align: center;
+	font-weight: bold;
+	font-size: larger;
+	text-transform: capitalize;
+}
+
+.toolBarPanel
+{
+	width: 100%;
+	padding-bottom: 5px;
+	padding-top: 5px;
+}
+.WindowTitleBar
+{
+	border-right: 1px outset;
+	border-top: 1px outset;
+	vertical-align: middle;
+	text-transform: capitalize;
+	border-left: 1px outset;
+	width: 100%;
+	color: white;
+	border-bottom: 1px outset;
+	height: 40px;
+	background-color: #0099ff;
+	text-align: left;
+	text-indent: 20pt;
+	font-weight: bold;
+}
+.WindowBody
+{
+	border-right: 1px outset;
+	border-top: 1px outset;
+	border-left: 1px outset;
+	width: 100%;
+	color: black;
+	border-bottom: 1px outset;
+	height: 50px;
+	padding-right: 10px;
+	padding-left: 10px;
+	padding-bottom: 10px;
+	padding-top: 10px;
+}
+
+.Window
+{
+	border-right: #cccccc 0px outset;
+	border-top: #cccccc 0px outset;
+	border-left: #cccccc 0px outset;
+	border-bottom: #cccccc 0px outset;
+	padding-right: 0px;
+	padding-left: 0px;
+	padding-bottom: 0px;
+	padding-top: 0px;
+}
+
+
+
+.ContentWindow
+{
+	Width:100% ;
+	Height:100%;
+	margin:30px;
+}
+
+/* So the overflow scrolls */
+.GridViewContainer 
+{
+	/*overflow:scroll;*/
+}
+
+.GridHeader
+{
+	/*position: relative;*/
+	top:0;
+	background-color: #cccccc;
+}
+.HeaderColumn
+{
+	position: relative;
+	top: 0;
+	background-color: gray;
+}
+
+.modalBackground 
+{
+   background-color:#000;
+   filter:alpha(opacity=60);
+   opacity:0.6;
+}

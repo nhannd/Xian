@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using ClearCanvas.Enterprise.Core;
@@ -39,53 +40,94 @@ using ClearCanvas.ImageServer.Model.Criteria;
 using ClearCanvas.ImageServer.Model.Parameters;
 using ClearCanvas.ImageServer.Model.SelectBrokers;
 
-/// <summary>
-/// Summary description for DeviceDataAdapter
-/// </summary>
-/// 
+
 namespace ClearCanvas.ImageServer.Web.Common
 {
+    /// <summary>
+    /// Used to create/update/delete device entries in the database.
+    /// </summary>
+    /// 
     public class DeviceDataAdapter
     {
 
+        #region Private Members
         private IPersistentStore _store = PersistentStoreRegistry.GetDefaultStore();
+        #endregion Private Members
 
-
+        #region Constructor
         public DeviceDataAdapter()
         {
+
+        }
+        #endregion Constructor
+
+        /// <summary>
+        /// Retrieve list of devices.
+        /// </summary>
+        /// <returns></returns>
+        public IList<Device> GetDevices()
+        {
+            using (IReadContext ctx= _store.OpenReadContext())
+            {
+                ISelectDevice find = ctx.GetBroker<ISelectDevice>();
+                DeviceSelectCriteria criteria = new DeviceSelectCriteria();
+                IList<Device> list = find.Find(criteria);
+
+                return list;
+            }
+
             
         }
 
-        public IList<Device> GetDevices()
+        /// <summary>
+        /// Delete a device in the database.
+        /// </summary>
+        /// <param name="dev"></param>
+        /// <returns></returns>
+        public bool DeleteDevice(Device dev)
         {
+            bool ok = false;
+            using (IUpdateContext ctx = _store.OpenUpdateContext(UpdateContextSyncMode.Flush))
+            {
+                IDeleteDevice delete = ctx.GetBroker<IDeleteDevice>();
+                DeviceDeleteParameters param = new DeviceDeleteParameters();
+                param.DeviceGUID = dev.GetKey();
 
-            IReadContext read = _store.OpenReadContext();
-            ISelectDevice find = read.GetBroker<ISelectDevice>();
-            DeviceSelectCriteria criteria = new DeviceSelectCriteria();
-            IList<Device> list = find.Find(criteria);
-            read.Dispose();
-            return list;
+                ok = delete.Execute(param);
+                ctx.Commit();
+            }
+
+            return ok;
+            
+
         }
 
-
-        public void Update(Device dev)
+        /// <summary>
+        /// Update a device entry in the database.
+        /// </summary>
+        /// <param name="dev"></param>
+        /// <returns></returns>
+        public bool Update(Device dev)
         {
+            bool ok = false;
 
-            IReadContext ctx = _store.OpenReadContext();
-            IUpdateDevice update = ctx.GetBroker<IUpdateDevice>();
-            DeviceUpdateParameters param = new DeviceUpdateParameters();
-            param.DeviceKey = dev.GetKey();
-            param.ServerPartitionKey = dev.ServerPartitionKey;
-            param.Active = dev.Active;
-            param.AETitle = dev.AeTitle;
-            param.Description = dev.Description;
-            param.DHCP = dev.Dhcp;
-            param.IPAddress = dev.IpAddress;
-            param.Port = dev.Port;
+            using (IUpdateContext ctx = _store.OpenUpdateContext(UpdateContextSyncMode.Flush))
+            {
+                IUpdateDevice update = ctx.GetBroker<IUpdateDevice>();
+                DeviceUpdateParameters param = new DeviceUpdateParameters();
+                param.DeviceKey = dev.GetKey();
+                param.ServerPartitionKey = dev.ServerPartitionKey;
+                param.Active = dev.Active;
+                param.AETitle = dev.AeTitle;
+                param.Description = dev.Description;
+                param.DHCP = dev.Dhcp;
+                param.IPAddress = dev.IpAddress;
+                param.Port = dev.Port;
 
+                ok = update.Execute(param);
+            }
 
-
-            update.Execute(param);
+            return ok;
 
         }
 
@@ -105,48 +147,118 @@ namespace ClearCanvas.ImageServer.Web.Common
             }
         }
 
-        public IList<Device> GetDevices(string AETitle, ServerEntityKey serverPartitionkey)
+        
+        /// <summary>
+        /// Retrieve a list of devices with specified criteria.
+        /// </summary>
+        /// <param name="AETitle"></param>
+        /// <param name="IP"></param>
+        /// <param name="enabledOnly"></param>
+        /// <param name="dhcpOnly"></param>
+        /// <param name="serverPartitionkey"></param>
+        /// <returns></returns>
+        public IList<Device> GetDevices(String AETitle, String IP, bool enabledOnly, bool dhcpOnly, ServerEntityKey serverPartitionkey)
         {
-            IReadContext read = _store.OpenReadContext();
-            ISelectDevice find = read.GetBroker<ISelectDevice>();
-            DeviceSelectCriteria criteria = new DeviceSelectCriteria();
-            criteria.ServerPartitionKey.EqualTo(serverPartitionkey);
-            IList<Device> list = find.Find(criteria);
-            return list;
+            IList<Device> list = null;
+
+            using (IReadContext ctx = _store.OpenReadContext())
+            {
+                ISelectDevice find = ctx.GetBroker<ISelectDevice>();
+                DeviceSelectCriteria criteria = new DeviceSelectCriteria();
+
+                if (!String.IsNullOrEmpty(AETitle))
+                {
+                    AETitle = AETitle + "%";
+                    AETitle.Replace("*", "%");
+                    //AETitle.Replace("?", "?");
+                    criteria.AeTitle.Like(AETitle);
+                }
+
+                if (!String.IsNullOrEmpty(IP))
+                {
+                    IP = IP + "%";
+                    IP.Replace("*", "%");
+                    //IP.Replace("?", "?");
+                    criteria.IPAddress.Like(IP);
+                }
+
+                if (enabledOnly)
+                {
+                    criteria.Active.EqualTo(true);
+                }
+
+                if (dhcpOnly)
+                {
+                    criteria.Dhcp.EqualTo(true);
+                }
+
+                criteria.ServerPartitionKey.EqualTo(serverPartitionkey);
+                list = find.Find(criteria);
+                
+            }
+
+            return list; 
         }
 
-        public void AddDevice(string AETitle, string Description, string IPAddress, int Port, bool Active, bool DHCP, string ServerPartitionGUID)
+        /// <summary>
+        /// Create a device based on specified parameters.
+        /// </summary>
+        /// <param name="AETitle"></param>
+        /// <param name="Description"></param>
+        /// <param name="IPAddress"></param>
+        /// <param name="Port"></param>
+        /// <param name="Active"></param>
+        /// <param name="DHCP"></param>
+        /// <param name="ServerPartitionGUID"></param>
+        /// <returns></returns>
+        public bool AddDevice(string AETitle, string Description, string IPAddress, int Port, bool Active, bool DHCP, string ServerPartitionGUID)
         {
-            IReadContext ctx = _store.OpenReadContext();
+            bool ok = false;
 
-            IInsertDevice insert = ctx.GetBroker<IInsertDevice>();
-            DeviceInsertParameters param = new DeviceInsertParameters();
-            param.ServerPartitionKey = new ServerEntityKey("ServerPartition", ServerPartitionGUID);
-            param.AeTitle = AETitle;
-            param.Description = Description;
-            param.IpAddress = IPAddress;
-            param.Port = Port;
-            param.Active = Active;
-            param.Dhcp = DHCP;
+            using (IUpdateContext ctx = _store.OpenUpdateContext(UpdateContextSyncMode.Flush))
+            {
+                IInsertDevice insert = ctx.GetBroker<IInsertDevice>();
+                DeviceInsertParameters param = new DeviceInsertParameters();
+                param.ServerPartitionKey = new ServerEntityKey("ServerPartition", ServerPartitionGUID);
+                param.AeTitle = AETitle;
+                param.Description = Description;
+                param.IpAddress = IPAddress;
+                param.Port = Port;
+                param.Active = Active;
+                param.Dhcp = DHCP;
 
-            insert.Execute(param);
+                ok = insert.Execute(param);
+
+            }
+
+            return ok;
+            
         }
 
-        public void AddDevice(Device newDev)
+        /// <summary>
+        /// Create a new device.
+        /// </summary>
+        /// <param name="newDev"></param>
+        /// <returns></returns>
+        public bool AddDevice(Device newDev)
         {
-            IReadContext ctx = _store.OpenReadContext();
+            bool ok = false;
+            using(IUpdateContext ctx = _store.OpenUpdateContext(UpdateContextSyncMode.Flush))
+            {
+                IInsertDevice insert = ctx.GetBroker<IInsertDevice>();
+                DeviceInsertParameters param = new DeviceInsertParameters();
+                param.ServerPartitionKey = newDev.ServerPartitionKey;
+                param.AeTitle = newDev.AeTitle;
+                param.Description = newDev.Description;
+                param.IpAddress = newDev.IpAddress;
+                param.Port = newDev.Port;
+                param.Active = newDev.Active;
+                param.Dhcp = newDev.Dhcp;
 
-            IInsertDevice insert = ctx.GetBroker<IInsertDevice>();
-            DeviceInsertParameters param = new DeviceInsertParameters();
-            param.ServerPartitionKey = newDev.ServerPartitionKey;
-            param.AeTitle = newDev.AeTitle;
-            param.Description = newDev.Description;
-            param.IpAddress = newDev.IpAddress;
-            param.Port = newDev.Port;
-            param.Active = newDev.Active;
-            param.Dhcp = newDev.Dhcp;
+                ok = insert.Execute(param);
+            }
 
-            insert.Execute(param);
+            return ok;
         }
 
 

@@ -65,55 +65,74 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Admin\Configuration\AddDeviceControl.ascx" />
-    <Content Include="Admin\Configuration\DeviceFilterControl.ascx" />
-    <Content Include="Admin\Configuration\DeviceGridViewControl.ascx" />
-    <Content Include="Admin\Configuration\Devices.aspx" />
-    <Content Include="Admin\Configuration\DeviceToolBarControl.ascx" />
-    <Content Include="Admin\Configuration\EditDeviceControl.ascx" />
+    <Content Include="Admin\Configuration\AddDeviceDialog.ascx" />
+    <Content Include="Admin\Configuration\DeviceGridView.ascx" />
+    <Content Include="Admin\Configuration\DeviceToolBar.ascx" />
+    <Content Include="Admin\Configuration\EditDeviceDialog.ascx" />
     <Content Include="Admin\Default.aspx" />
-    <Content Include="Admin\StyleSheet.css" />
-    <Compile Include="Admin\Configuration\AddDeviceControl.ascx.cs">
-      <DependentUpon>AddDeviceControl.ascx</DependentUpon>
+    <Content Include="Admin\Styles\StyleSheet.css" />
+    <Compile Include="Admin\Configuration\AddDeviceDialog.ascx.cs">
+      <DependentUpon>AddDeviceDialog.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Admin\Configuration\AddDeviceControl.ascx.designer.cs">
-      <DependentUpon>AddDeviceControl.ascx</DependentUpon>
+    <Compile Include="Admin\Configuration\AddDeviceDialog.ascx.designer.cs">
+      <DependentUpon>AddDeviceDialog.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Admin\Configuration\DeviceFilterControl.ascx.cs">
-      <DependentUpon>DeviceFilterControl.ascx</DependentUpon>
+    <Compile Include="Admin\Configuration\DevicePage.aspx.cs">
+      <DependentUpon>DevicePage.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Admin\Configuration\DeviceFilterControl.ascx.designer.cs">
-      <DependentUpon>DeviceFilterControl.ascx</DependentUpon>
+    <Compile Include="Admin\Configuration\DevicePage.aspx.designer.cs">
+      <DependentUpon>DevicePage.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Admin\Configuration\DeviceGridViewControl.ascx.cs">
-      <DependentUpon>DeviceGridViewControl.ascx</DependentUpon>
+    <Compile Include="Common\ConfirmDialog.ascx.cs">
+      <DependentUpon>ConfirmDialog.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Admin\Configuration\DeviceGridViewControl.ascx.designer.cs">
-      <DependentUpon>DeviceGridViewControl.ascx</DependentUpon>
+    <Compile Include="Common\ConfirmDialog.ascx.designer.cs">
+      <DependentUpon>ConfirmDialog.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Admin\Configuration\Devices.aspx.cs">
-      <DependentUpon>Devices.aspx</DependentUpon>
+    <Compile Include="Admin\Configuration\DeviceFilterPanel.ascx.cs">
+      <DependentUpon>DeviceFilterPanel.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Admin\Configuration\Devices.aspx.designer.cs">
-      <DependentUpon>Devices.aspx</DependentUpon>
+    <Compile Include="Admin\Configuration\DeviceFilterPanel.ascx.designer.cs">
+      <DependentUpon>DeviceFilterPanel.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Admin\Configuration\DeviceToolBarControl.ascx.cs">
-      <DependentUpon>DeviceToolBarControl.ascx</DependentUpon>
+    <Compile Include="Admin\Configuration\DeviceGridView.ascx.cs">
+      <DependentUpon>DeviceGridView.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Admin\Configuration\DeviceToolBarControl.ascx.designer.cs">
-      <DependentUpon>DeviceToolBarControl.ascx</DependentUpon>
+    <Compile Include="Admin\Configuration\DeviceGridView.ascx.designer.cs">
+      <DependentUpon>DeviceGridView.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Admin\Configuration\EditDeviceControl.ascx.cs">
-      <DependentUpon>EditDeviceControl.ascx</DependentUpon>
+    <Compile Include="Admin\Configuration\DevicePanel.ascx.cs">
+      <DependentUpon>DevicePanel.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Admin\Configuration\EditDeviceControl.ascx.designer.cs">
-      <DependentUpon>EditDeviceControl.ascx</DependentUpon>
+    <Compile Include="Admin\Configuration\DevicePanel.ascx.designer.cs">
+      <DependentUpon>DevicePanel.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\Configuration\DeviceToolBar.ascx.cs">
+      <DependentUpon>DeviceToolBar.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\Configuration\DeviceToolBar.ascx.designer.cs">
+      <DependentUpon>DeviceToolBar.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\Configuration\EditDeviceDialog.ascx.cs">
+      <DependentUpon>EditDeviceDialog.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\Configuration\EditDeviceDialog.ascx.designer.cs">
+      <DependentUpon>EditDeviceDialog.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\Configuration\DeviceGridViewPager.ascx.cs">
+      <DependentUpon>DeviceGridViewPager.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\Configuration\DeviceGridViewPager.ascx.designer.cs">
+      <DependentUpon>DeviceGridViewPager.ascx</DependentUpon>
     </Compile>
     <Compile Include="Admin\Default.aspx.cs">
       <DependentUpon>Default.aspx</DependentUpon>
@@ -136,12 +155,44 @@
     <Compile Include="Default.aspx.designer.cs">
       <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Admin\Configuration\DevicePage.aspx" />
+    <Content Include="Admin\Styles\images\icon_warning.gif" />
+    <Content Include="Common\ConfirmDialog.ascx" />
+    <Content Include="Admin\Configuration\DeviceFilterPanel.ascx" />
+    <Content Include="Admin\Configuration\DevicePanel.ascx" />
+    <Content Include="Admin\Configuration\DeviceGridViewPager.ascx" />
     <Content Include="Admin\MasterPage.master" />
-    <Content Include="Global.asax" />
     <None Include="images\Thumbs.db" />
+    <Content Include="Global.asax" />
+    <Content Include="images\add_disabled.gif" />
+    <Content Include="images\checked_tall.gif" />
+    <Content Include="images\delete_disabled.gif" />
+    <Content Include="images\edit_disabled.gif" />
+    <Content Include="images\filter.gif" />
+    <Content Include="images\filter_disabled.gif" />
+    <Content Include="images\icon_warning.gif" />
+    <Content Include="images\next.gif" />
+    <Content Include="images\prev.gif" />
+    <Content Include="images\search.gif" />
+    <Content Include="images\unchecked_tall.gif" />
+    <Content Include="Admin\Styles\images\tab-active-left.gif" />
+    <Content Include="Admin\Styles\images\tab-active-right.gif" />
+    <Content Include="Admin\Styles\images\tab-active.gif" />
+    <Content Include="Admin\Styles\images\tab-hover-left.gif" />
+    <Content Include="Admin\Styles\images\tab-hover-right.gif" />
+    <Content Include="Admin\Styles\images\tab-hover.gif" />
+    <Content Include="Admin\Styles\images\tab-left.gif" />
+    <Content Include="Admin\Styles\images\tab-line.gif" />
+    <Content Include="Admin\Styles\images\tab-right.gif" />
+    <Content Include="Admin\Styles\images\tab.gif" />
+    <Content Include="Admin\Styles\visoft__tab_xpie7.css" />
+    <Content Include="images\Plus.ico" />
     <Content Include="Web.sitemap" />
     <Content Include="Logging.config" />
   </ItemGroup>
@@ -182,7 +233,7 @@
         <WebProjectProperties>
           <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>49573</DevelopmentServerPort>
+          <DevelopmentServerPort>1988</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>
           </IISUrl>
@@ -192,8 +243,9 @@
     </VisualStudio>
   </ProjectExtensions>
   <PropertyGroup>
-    <PreBuildEvent>
-    </PreBuildEvent>
+    <PreBuildEvent>REM Prevent lock up by ASP.NET dev server in debug mode
+
+IF EXIST $(TargetPath).LOCKED (del $(TargetPath).LOCKED) ELSE (IF EXIST $(TargetPath) (move $(TargetPath) $(TargetPath).LOCKED))</PreBuildEvent>
     <PostBuildEvent>REM Run PostBuild msbuild project
 
 c:\WINDOWS\Microsoft.NET\Framework\v2.0.50727\MSBuild.exe  "$(ProjectDir)Builds\PostBuild.proj" "/property:ProjectDir=$(ProjectDir);Configuration=$(ConfigurationName)"</PostBuildEvent>
