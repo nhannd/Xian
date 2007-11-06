@@ -60,12 +60,13 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         private void InitializeComponent()
         {
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this._applySchedulingButton = new System.Windows.Forms.Button();
             this._schedulingRequestTime = new ClearCanvas.Desktop.View.WinForms.DateTimeField();
             this._schedulingRequestDate = new ClearCanvas.Desktop.View.WinForms.DateTimeField();
+            this._orderingFacility = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
             this._visit = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
             this._orderingPractitioner = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
             this._indication = new ClearCanvas.Desktop.View.WinForms.TextField();
-            this._orderingFacility = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
             this._reorderReason = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
             this._priority = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
             this._diagnosticService = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
@@ -87,7 +88,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.tableView2 = new ClearCanvas.Desktop.View.WinForms.TableView();
             this._cancelButton = new System.Windows.Forms.Button();
             this._placeOrderButton = new System.Windows.Forms.Button();
-            this._applySchedulingButton = new System.Windows.Forms.Button();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
@@ -128,6 +128,16 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.splitContainer1.SplitterDistance = 506;
             this.splitContainer1.TabIndex = 26;
             // 
+            // _applySchedulingButton
+            // 
+            this._applySchedulingButton.Location = new System.Drawing.Point(413, 340);
+            this._applySchedulingButton.Name = "_applySchedulingButton";
+            this._applySchedulingButton.Size = new System.Drawing.Size(75, 23);
+            this._applySchedulingButton.TabIndex = 9;
+            this._applySchedulingButton.Text = "Apply";
+            this._applySchedulingButton.UseVisualStyleBackColor = true;
+            this._applySchedulingButton.Click += new System.EventHandler(this._applySchedulingButton_Click);
+            // 
             // _schedulingRequestTime
             // 
             this._schedulingRequestTime.LabelText = "Requested Schedule Time";
@@ -156,6 +166,19 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._schedulingRequestDate.TabIndex = 7;
             this._schedulingRequestDate.Value = null;
             // 
+            // _orderingFacility
+            // 
+            this._orderingFacility.DataSource = null;
+            this._orderingFacility.DisplayMember = "";
+            this._orderingFacility.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this._orderingFacility.LabelText = "Ordering Facility (temporary)";
+            this._orderingFacility.Location = new System.Drawing.Point(10, 50);
+            this._orderingFacility.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this._orderingFacility.Name = "_orderingFacility";
+            this._orderingFacility.Size = new System.Drawing.Size(228, 50);
+            this._orderingFacility.TabIndex = 0;
+            this._orderingFacility.Value = null;
+            // 
             // _visit
             // 
             this._visit.DataSource = null;
@@ -175,7 +198,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._orderingPractitioner.Location = new System.Drawing.Point(201, 154);
             this._orderingPractitioner.Name = "_orderingPractitioner";
             this._orderingPractitioner.Size = new System.Drawing.Size(292, 59);
-            this._orderingPractitioner.TabIndex = 2;
+            this._orderingPractitioner.TabIndex = 4;
             this._orderingPractitioner.Value = null;
             // 
             // _indication
@@ -186,21 +209,8 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._indication.Mask = "";
             this._indication.Name = "_indication";
             this._indication.Size = new System.Drawing.Size(487, 50);
-            this._indication.TabIndex = 3;
+            this._indication.TabIndex = 5;
             this._indication.Value = null;
-            // 
-            // _orderingFacility
-            // 
-            this._orderingFacility.DataSource = null;
-            this._orderingFacility.DisplayMember = "";
-            this._orderingFacility.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this._orderingFacility.LabelText = "Ordering Facility (temporary)";
-            this._orderingFacility.Location = new System.Drawing.Point(10, 50);
-            this._orderingFacility.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this._orderingFacility.Name = "_orderingFacility";
-            this._orderingFacility.Size = new System.Drawing.Size(228, 50);
-            this._orderingFacility.TabIndex = 4;
-            this._orderingFacility.Value = null;
             // 
             // _reorderReason
             // 
@@ -212,7 +222,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._reorderReason.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this._reorderReason.Name = "_reorderReason";
             this._reorderReason.Size = new System.Drawing.Size(251, 50);
-            this._reorderReason.TabIndex = 5;
+            this._reorderReason.TabIndex = 1;
             this._reorderReason.Value = null;
             // 
             // _priority
@@ -225,7 +235,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._priority.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this._priority.Name = "_priority";
             this._priority.Size = new System.Drawing.Size(175, 50);
-            this._priority.TabIndex = 1;
+            this._priority.TabIndex = 3;
             this._priority.Value = null;
             // 
             // _diagnosticService
@@ -234,7 +244,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._diagnosticService.Location = new System.Drawing.Point(6, 100);
             this._diagnosticService.Name = "_diagnosticService";
             this._diagnosticService.Size = new System.Drawing.Size(486, 59);
-            this._diagnosticService.TabIndex = 0;
+            this._diagnosticService.TabIndex = 2;
             this._diagnosticService.Value = null;
             // 
             // tabControl1
@@ -246,7 +256,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.Size = new System.Drawing.Size(499, 229);
-            this.tabControl1.TabIndex = 35;
+            this.tabControl1.TabIndex = 10;
             // 
             // tabPage1
             // 
@@ -269,7 +279,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._proceduresTableView.Name = "_proceduresTableView";
             this._proceduresTableView.ReadOnly = false;
             this._proceduresTableView.Size = new System.Drawing.Size(485, 194);
-            this._proceduresTableView.TabIndex = 36;
+            this._proceduresTableView.TabIndex = 0;
             this._proceduresTableView.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this._proceduresTableView.ItemDoubleClicked += new System.EventHandler(this._proceduresTableView_ItemDoubleClicked);
             // 
@@ -439,16 +449,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._placeOrderButton.Text = "OK";
             this._placeOrderButton.UseVisualStyleBackColor = true;
             this._placeOrderButton.Click += new System.EventHandler(this._placeOrderButton_Click);
-            // 
-            // _applySchedulingButton
-            // 
-            this._applySchedulingButton.Location = new System.Drawing.Point(413, 340);
-            this._applySchedulingButton.Name = "_applySchedulingButton";
-            this._applySchedulingButton.Size = new System.Drawing.Size(75, 23);
-            this._applySchedulingButton.TabIndex = 36;
-            this._applySchedulingButton.Text = "Apply";
-            this._applySchedulingButton.UseVisualStyleBackColor = true;
-            this._applySchedulingButton.Click += new System.EventHandler(this._applySchedulingButton_Click);
             // 
             // OrderEntryComponentControl
             // 

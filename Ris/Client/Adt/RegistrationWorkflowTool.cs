@@ -236,12 +236,12 @@ namespace ClearCanvas.Ris.Client.Adt
 
             protected override bool Execute(RegistrationWorklistItem item, IDesktopWindow desktopWindow, IEnumerable folders)
             {
-                if (desktopWindow.ShowMessageBox(SR.MessageReplaceOrder, MessageBoxActions.OkCancel) == DialogBoxAction.Ok)
+                try
                 {
                     ApplicationComponent.LaunchAsWorkspace(
                         desktopWindow,
                         new OrderEntryComponent(item.PatientRef, item.OrderRef, OrderEntryComponent.Mode.ReplaceOrder),
-                        string.Format(SR.TitleNewOrder, PersonNameFormat.Format(item.Name), MrnFormat.Format(item.Mrn)),
+                        string.Format(SR.TitleReplaceOrder, PersonNameFormat.Format(item.Name), MrnFormat.Format(item.Mrn)),
                         delegate(IApplicationComponent c)
                         {
                             if (c.ExitCode == ApplicationComponentExitCode.Normal)
@@ -253,8 +253,13 @@ namespace ClearCanvas.Ris.Client.Adt
                             }
                         });
                 }
+                catch (Exception e)
+                {
+                    ExceptionHandler.Report(e, this.Context.DesktopWindow);
+                }
 
-                return true;
+                // return false, because we don't need to update the selected folder until the workspace closes
+                return false;
             }
         }
     }

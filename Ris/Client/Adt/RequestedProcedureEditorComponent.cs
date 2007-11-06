@@ -7,6 +7,7 @@ using ClearCanvas.Desktop;
 using System.Collections;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
+using ClearCanvas.Desktop.Validation;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -24,14 +25,14 @@ namespace ClearCanvas.Ris.Client.Adt
     [AssociateView(typeof(RequestedProcedureEditorComponentViewExtensionPoint))]
     public class RequestedProcedureEditorComponent : ApplicationComponent
     {
-        private List<RequestedProcedureTypeSummary> _procedureTypeChoices;
+        private readonly List<RequestedProcedureTypeSummary> _procedureTypeChoices;
         private DefaultSuggestionProvider<RequestedProcedureTypeSummary> _procedureTypeSuggestionProvider;
         private RequestedProcedureTypeSummary _selectedProcedureType;
         private DateTime? _scheduledTime;
 
-        private ProcedureRequisition _requisition;
-        private List<FacilitySummary> _facilityChoices;
-        private List<EnumValueInfo> _lateralityChoices;
+        private readonly ProcedureRequisition _requisition;
+        private readonly List<FacilitySummary> _facilityChoices;
+        private readonly List<EnumValueInfo> _lateralityChoices;
         private FacilitySummary _selectedFacility;
         private EnumValueInfo _selectedLaterality;
         private bool _portableModality;
@@ -112,7 +113,8 @@ namespace ClearCanvas.Ris.Client.Adt
             return string.Format("{0} ({1})", rpt.Name, rpt.Id);
         }
 
-        public RequestedProcedureTypeSummary SelectedProcedure
+        [ValidateNotNull]
+        public RequestedProcedureTypeSummary SelectedProcedureType
         {
             get { return _selectedProcedureType; }
             set
@@ -120,7 +122,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 if (!object.Equals(value, _selectedProcedureType))
                 {
                     _selectedProcedureType = value;
-                    NotifyPropertyChanged("SelectedProcedure");
+                    NotifyPropertyChanged("SelectedProcedureType");
                 }
             }
         }
@@ -134,7 +136,8 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             return (facility as FacilitySummary).Name;
         }
-        
+
+        [ValidateNotNull]
         public FacilitySummary SelectedFacility
         {
             get { return _selectedFacility; }
@@ -194,6 +197,12 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public void Accept()
         {
+            if(this.HasValidationErrors)
+            {
+                this.ShowValidation(true);
+                return;
+            }
+
             _requisition.ProcedureType = _selectedProcedureType;
             _requisition.ScheduledTime = _scheduledTime;
             _requisition.Laterality = _selectedLaterality;

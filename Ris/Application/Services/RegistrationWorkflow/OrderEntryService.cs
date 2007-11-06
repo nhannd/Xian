@@ -198,6 +198,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             OrderEntryAssembler assembler = new OrderEntryAssembler();
 
             Order order = PersistenceContext.GetBroker<IOrderBroker>().Load(request.OrderRef);
+            ValidateOrderModifiable(order);
 
             return new GetOrderRequisitionForEditResponse(order.GetRef(), assembler.CreateOrderRequisition(order, this.PersistenceContext));
         }
@@ -226,6 +227,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             Platform.CheckMemberIsSet(request.Requisition, "Requisition");
 
             Order order = PersistenceContext.Load<Order>(request.OrderRef);
+            ValidateOrderModifiable(order);
             
             OrderEntryAssembler assembler = new OrderEntryAssembler();
             assembler.UpdateOrderFromRequisition(order, request.Requisition, PersistenceContext);
@@ -245,12 +247,14 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             Platform.CheckMemberIsSet(request.CancelReason, "CancelReason");
             Platform.CheckMemberIsSet(request.Requisition, "Requisition");
 
+            Order orderToReplace = PersistenceContext.Load<Order>(request.OrderRef);
+            ValidateOrderModifiable(orderToReplace);
+
             OrderCancelReasonEnum reason = EnumUtils.GetEnumValue<OrderCancelReasonEnum>(request.CancelReason, PersistenceContext);
 
             // cancel existing order
             CancelOrderOperation op = new CancelOrderOperation();
-            Order cancelledOrder = PersistenceContext.Load<Order>(request.OrderRef);
-            op.Execute(cancelledOrder, reason);
+            op.Execute(orderToReplace, reason);
 
             // place new order
             Order newOrder = PlaceOrderHelper(request.Requisition);
@@ -262,6 +266,13 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         }
 
         #endregion
+
+        private void ValidateOrderModifiable(Order order)
+        {
+            if(order.Status != OrderStatus.SC && order.Status != OrderStatus.IP)
+                throw new RequestValidationException(string.Format("Orders with a status of '{0}' cannot be modified or replaced.",
+                    EnumUtils.GetEnumValueInfo(order.Status, PersistenceContext)));
+        }
 
         private Order PlaceOrderHelper(OrderRequisition requisition)
         {

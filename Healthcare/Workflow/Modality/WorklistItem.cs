@@ -103,6 +103,16 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
             get { return _profileRef; }
         }
 
+        public EntityRef PatientRef
+        {
+            get { return _patientRef; }
+        }
+
+        public EntityRef OrderRef
+        {
+            get { return _orderRef; }
+        }
+
         public CompositeIdentifier Mrn
         {
             get { return _mrn; }

@@ -1069,6 +1069,15 @@ namespace ClearCanvas.Ris.Client.Adt {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Replace order for {0} {1}.
+        /// </summary>
+        internal static string TitleReplaceOrder {
+            get {
+                return ResourceManager.GetString("TitleReplaceOrder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Results.
         /// </summary>
         internal static string TitleResults {

@@ -47,16 +47,19 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
         /// <summary>
         /// Order to replace.
         /// </summary>
+        [DataMember]
         public EntityRef OrderRef;
 
         /// <summary>
         /// Reason the order is being cancelled.
         /// </summary>
+        [DataMember]
         public EnumValueInfo CancelReason;
 
         /// <summary>
         /// Requisition for replacement order.
         /// </summary>
+        [DataMember]
         public OrderRequisition Requisition;
 
     }

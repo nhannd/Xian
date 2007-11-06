@@ -52,9 +52,9 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
         {
             PersonNameAssembler assembler = new PersonNameAssembler();
             return new ModalityWorklistItem(
-                null,
+                domainItem.PatientRef,
                 domainItem.PatientProfileRef,
-                null,
+                domainItem.OrderRef,
                 domainItem.ModalityProcedureStepRef,
                 new MrnDetail(domainItem.Mrn.Id, domainItem.Mrn.AssigningAuthority),
                 assembler.CreatePersonNameDetail(domainItem.PatientName),

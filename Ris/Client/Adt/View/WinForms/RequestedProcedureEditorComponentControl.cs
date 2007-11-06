@@ -33,7 +33,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
                                              e.Value = _component.FormatProcedureType(e.ListItem);
                                          };
             _procedureType.DataBindings.Add("Enabled", _component, "IsProcedureTypeEditable");
-            _procedureType.DataBindings.Add("Value", _component, "SelectedProcedure", true, DataSourceUpdateMode.OnPropertyChanged);
+            _procedureType.DataBindings.Add("Value", _component, "SelectedProcedureType", true, DataSourceUpdateMode.OnPropertyChanged);
 
             _performingFacility.DataSource = _component.FacilityChoices;
             _performingFacility.DataBindings.Add("Value", _component, "SelectedFacility", true, DataSourceUpdateMode.OnPropertyChanged);

@@ -70,11 +70,13 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
         GetOrderEntryFormDataResponse GetOrderEntryFormData(GetOrderEntryFormDataRequest request);
 
         /// <summary>
-        /// Loads order requisition so that the order editing form can be populated.
+        /// Loads order requisition so that the order editing form can be populated. This method will
+        /// fail with a RequestValidationException if the order requisition cannot be edited.
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
         [OperationContract]
+        [FaultContract(typeof(RequestValidationException))]
         GetOrderRequisitionForEditResponse GetOrderRequisitionForEdit(GetOrderRequisitionForEditRequest request);
 
         /// <summary>

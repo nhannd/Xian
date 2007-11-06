@@ -453,6 +453,9 @@
   <data name="TitleRegistrationHome" xml:space="preserve">
     <value>Registration Home</value>
   </data>
+  <data name="TitleReplaceOrder" xml:space="preserve">
+    <value>Replace order for {0} {1}</value>
+  </data>
   <data name="TitleResults" xml:space="preserve">
     <value>Results</value>
   </data>

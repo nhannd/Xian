@@ -176,13 +176,13 @@ namespace ClearCanvas.Ris.Client.Adt
 
 
             this.Validation.Add(OrderEntryComponentSettings.Default.ValidationRules);
-            //this.Validation.Add(new ValidationRule("SelectedCancelReason",
-            //    delegate
-            //        {
-            //            // if replacing the order, ensure cancel reason selected
-            //            return new ValidationResult(_mode != Mode.ReplaceOrder || _selectedCancelReason != null,
-            //                SR.MessageMissingCancellationReason);
-            //        }));
+            this.Validation.Add(new ValidationRule("SelectedCancelReason",
+                delegate
+                {
+                    // if replacing the order, ensure cancel reason selected
+                    return new ValidationResult(_mode != Mode.ReplaceOrder || _selectedCancelReason != null,
+                        SR.MessageMissingCancellationReason);
+                }));
         }
 
         public override void Start()
@@ -560,7 +560,7 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             if (this.HasValidationErrors)
             {
-                this.Host.ShowMessageBox(this.Validation.GetErrorsString(this), MessageBoxActions.Ok);
+                //DEBUG: this.Host.ShowMessageBox(this.Validation.GetErrorsString(this), MessageBoxActions.Ok);
                 this.ShowValidation(true);
                 return;
             }
@@ -583,7 +583,7 @@ namespace ClearCanvas.Ris.Client.Adt
             _selectedDiagnosticService = summary;
 
             // update the table of procedures
-            //TODO: need to warn user if there are already procedures in this table
+            //TODO: should warn user if there are already procedures in this table???
             _proceduresTable.Items.Clear();
             if (_selectedDiagnosticService != null)
             {
