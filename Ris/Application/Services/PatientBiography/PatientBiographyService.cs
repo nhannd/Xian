@@ -78,24 +78,6 @@ namespace ClearCanvas.Ris.Application.Services.PatientBiography
         }
 
         [ReadOperation]
-        public ListOrdersForPatientResponse ListOrdersForPatient(ListOrdersForPatientRequest request)
-        {
-            OrderSearchCriteria criteria = new OrderSearchCriteria();
-
-            PatientProfile profile = PersistenceContext.Load<PatientProfile>(request.PatientProfileRef);
-            criteria.Patient.EqualTo(profile.Patient);
-
-            OrderAssembler assembler = new OrderAssembler();
-            return new ListOrdersForPatientResponse(
-                CollectionUtils.Map<Order, OrderSummary, List<OrderSummary>>(
-                    PersistenceContext.GetBroker<IOrderBroker>().Find(criteria),
-                    delegate(Order order)
-                    {
-                        return assembler.CreateOrderSummary(order, this.PersistenceContext);
-                    }));
-        }
-
-        [ReadOperation]
         public LoadPatientProfileResponse LoadPatientProfile(LoadPatientProfileRequest request)
         {
             IPatientProfileBroker broker = PersistenceContext.GetBroker<IPatientProfileBroker>();

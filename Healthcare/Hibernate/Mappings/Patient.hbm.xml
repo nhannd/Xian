@@ -12,7 +12,7 @@
     </set>
 
     <set name="Attachments" lazy="true" inverse="true" cascade="all-delete-orphan" access="nosetter.camelcase-underscore">
-      <key column="PatientAttachmentOID_"/>
+      <key column="PatientOID_"/>
       <one-to-many class="PatientAttachment"/>
     </set>
 

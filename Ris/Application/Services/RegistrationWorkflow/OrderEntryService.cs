@@ -75,6 +75,29 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         }
 
         [ReadOperation]
+        public ListOrdersForPatientResponse ListOrdersForPatient(ListOrdersForPatientRequest request)
+        {
+            OrderSearchCriteria criteria = new OrderSearchCriteria();
+
+            PatientProfile profile = PersistenceContext.Load<PatientProfile>(request.PatientProfileRef);
+            criteria.Patient.EqualTo(profile.Patient);
+            if (request.ActiveOnly)
+            {
+                criteria.Status.EqualTo(OrderStatus.SC);
+                criteria.Status.EqualTo(OrderStatus.IP);
+            }
+
+            OrderAssembler assembler = new OrderAssembler();
+            return new ListOrdersForPatientResponse(
+                CollectionUtils.Map<Order, OrderSummary, List<OrderSummary>>(
+                    PersistenceContext.GetBroker<IOrderBroker>().Find(criteria),
+                    delegate(Order order)
+                    {
+                        return assembler.CreateOrderSummary(order, this.PersistenceContext);
+                    }));
+        }
+
+        [ReadOperation]
         public GetOrderEntryFormDataResponse GetOrderEntryFormData(GetOrderEntryFormDataRequest request)
         {
             FacilityAssembler facilityAssembler = new FacilityAssembler();

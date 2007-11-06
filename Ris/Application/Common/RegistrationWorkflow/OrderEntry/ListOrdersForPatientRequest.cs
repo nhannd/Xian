@@ -29,9 +29,6 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Enterprise.Common;
 using System.Runtime.Serialization;
 
@@ -40,12 +37,22 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
     [DataContract]
     public class ListOrdersForPatientRequest : DataContractBase
     {
+        public ListOrdersForPatientRequest(EntityRef patientProfileRef, bool activeOnly)
+        {
+            this.PatientProfileRef = patientProfileRef;
+            this.ActiveOnly = activeOnly;
+        }
+
         public ListOrdersForPatientRequest(EntityRef patientProfileRef)
         {
             this.PatientProfileRef = patientProfileRef;
+            this.ActiveOnly = false;
         }
 
         [DataMember]
         public EntityRef PatientProfileRef;
+
+        [DataMember]
+        public bool ActiveOnly;
     }
 }

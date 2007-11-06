@@ -65,7 +65,6 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>PatientProfileDetailsEditorComponentSettings.settings</DependentUpon>
     </Compile>
-    <Compile Include="PatientSearchComponent.cs" />
     <Compile Include="PerformedProcedureComponent.cs" />
     <Compile Include="PerformedProcedureComponentSettings.cs" />
     <Compile Include="PerformedProcedureComponentSettings.Designer.cs">
@@ -95,7 +94,6 @@
     <Compile Include="PatientAddTool.cs" />
     <Compile Include="PatientProfileDetailsEditorComponent.cs" />
     <Compile Include="PatientProfileEditorComponent.cs" />
-    <Compile Include="PatientProfileTable.cs" />
     <Compile Include="ReconciliationComponent.cs" />
     <Compile Include="PatientReconcileTool.cs" />
     <Compile Include="HomeTool.cs" />

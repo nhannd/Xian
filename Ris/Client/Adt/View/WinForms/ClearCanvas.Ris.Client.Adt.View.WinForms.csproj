@@ -83,13 +83,6 @@
     </Compile>
     <Compile Include="PatientProfileAdditionalInfoEditorComponentView.cs" />
     <Compile Include="PatientProfileDiffComponentView.cs" />
-    <Compile Include="PatientSearchComponentControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="PatientSearchComponentControl.Designer.cs">
-      <DependentUpon>PatientSearchComponentControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="PatientSearchComponentView.cs" />
     <Compile Include="PerformedProcedureComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -278,10 +271,6 @@
     <EmbeddedResource Include="Resources\NextSmall.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="PatientSearchComponentControl.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>PatientSearchComponentControl.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="PerformedProcedureComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>PerformedProcedureComponentControl.cs</DependentUpon>

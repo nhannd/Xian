@@ -39,6 +39,7 @@ using ClearCanvas.Desktop.Trees;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.PatientBiography;
+using ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -80,8 +81,8 @@ namespace ClearCanvas.Ris.Client
         {
             base.Start();
 
-            Platform.GetService<IPatientBiographyService>(
-                delegate(IPatientBiographyService service)
+            Platform.GetService<IOrderEntryService>(
+                delegate(IOrderEntryService service)
                 {
                     ListOrdersForPatientResponse response = service.ListOrdersForPatient(new ListOrdersForPatientRequest(_patientProfileRef));
                     _orderList.Items.AddRange(response.Orders);

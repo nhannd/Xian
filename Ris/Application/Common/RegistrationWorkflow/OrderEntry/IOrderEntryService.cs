@@ -53,6 +53,15 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
         ListActiveVisitsForPatientResponse ListActiveVisitsForPatient(ListActiveVisitsForPatientRequest request);
 
         /// <summary>
+        /// Get all the orders for a patient
+        /// </summary>
+        /// <param name="request"><see cref="ListOrdersForPatientRequest"/></param>
+        /// <returns><see cref="ListOrdersForPatientResponse"/></returns>
+        [OperationContract]
+        [FaultContract(typeof(RequestValidationException))]
+        ListOrdersForPatientResponse ListOrdersForPatient(ListOrdersForPatientRequest request);
+
+        /// <summary>
         /// Loads all order entry form data for the <see cref="OrderEntryComponent"/>
         /// </summary>
         /// <param name="request"></param>

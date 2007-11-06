@@ -1,4 +1,4 @@
-namespace ClearCanvas.Ris.Client.Adt.View.WinForms
+namespace ClearCanvas.Ris.Client.View.WinForms
 {
     partial class PatientSearchComponentControl
     {

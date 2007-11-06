@@ -9,7 +9,7 @@ using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 using System.Collections.Generic;
 using ClearCanvas.Desktop.Tools;
 
-namespace ClearCanvas.Ris.Client.Adt
+namespace ClearCanvas.Ris.Client
 {
     /// <summary>
     /// Extension point for views onto <see cref="PatientSearchComponent"/>

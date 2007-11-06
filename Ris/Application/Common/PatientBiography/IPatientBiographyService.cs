@@ -65,15 +65,6 @@ namespace ClearCanvas.Ris.Application.Common.PatientBiography
         ListAllProfilesForPatientResponse ListAllProfilesForPatient(ListAllProfilesForPatientRequest request);
 
         /// <summary>
-        /// Get all the orders for a patient
-        /// </summary>
-        /// <param name="request"><see cref="ListOrdersForPatientRequest"/></param>
-        /// <returns><see cref="ListOrdersForPatientResponse"/></returns>
-        [OperationContract]
-        [FaultContract(typeof(RequestValidationException))]
-        ListOrdersForPatientResponse ListOrdersForPatient(ListOrdersForPatientRequest request);
-
-        /// <summary>
         /// Get details for an order
         /// </summary>
         /// <param name="request"><see cref="LoadOrderDetailRequest"/></param>

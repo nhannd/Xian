@@ -90,6 +90,9 @@ namespace ClearCanvas.Ris.Client.Adt
                 if (item == null)
                 {
                     PatientProfileSummary profile = GetRandomPatient();
+                    if (profile == null)
+                        throw new Exception("Failed to find a random patient.  Try creating one first.");
+
                     randomVisit = RandomUtils.RandomVisit(profile.PatientRef, profile.ProfileRef, profile.Mrn.AssigningAuthority);
                 }
                 else

@@ -29,20 +29,14 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Desktop;
-using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Common;
-using ClearCanvas.Ris.Application.Common.PatientReconciliation;
 using ClearCanvas.Ris.Client.Formatting;
 
-namespace ClearCanvas.Ris.Client.Adt
+namespace ClearCanvas.Ris.Client
 {
-    class PatientProfileTable : Table<PatientProfileSummary>
+    public class PatientProfileTable : Table<PatientProfileSummary>
     {
         public PatientProfileTable()
         {

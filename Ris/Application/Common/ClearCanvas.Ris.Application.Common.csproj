@@ -360,8 +360,6 @@
     <Compile Include="PagedDataContractBase.cs" />
     <Compile Include="PageRequestDetail.cs" />
     <Compile Include="PatientBiography\IPatientBiographyService.cs" />
-    <Compile Include="PatientBiography\ListOrdersForPatientRequest.cs" />
-    <Compile Include="PatientBiography\ListOrdersForPatientResponse.cs" />
     <Compile Include="PatientBiography\ListAllProfilesForPatientRequest.cs" />
     <Compile Include="PatientBiography\ListAllProfilesForPatientResponse.cs" />
     <Compile Include="PatientBiography\LoadOrderDetailRequest.cs" />

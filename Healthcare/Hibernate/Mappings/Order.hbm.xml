@@ -33,7 +33,7 @@
     </set>
 
     <set name="Attachments" lazy="true" inverse="true" cascade="all-delete-orphan" access="nosetter.camelcase-underscore">
-      <key column="OrderAttachmentOID_"/>
+      <key column="OrderOID_"/>
       <one-to-many class="OrderAttachment"/>
     </set>
 
