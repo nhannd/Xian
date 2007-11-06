@@ -35,7 +35,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common.Admin;
 
-namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow.TechnologistDocumentation
+namespace ClearCanvas.Ris.Application.Common
 {
     /// <summary>
     /// Dummy PPS object

@@ -31,8 +31,6 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             _procedurePlanSummary.Table = _component.ProcedurePlanSummaryTable;
             //_procedurePlanSummary.MenuModel = _component.ProcedurePlanTreeActionModel;
             //_procedurePlanSummary.ToolbarModel = _component.ProcedurePlanTreeActionModel;
-
-            //_component.ProcedurePlanChanged += OnProcedurePlanChanged;
         }
     }
 }

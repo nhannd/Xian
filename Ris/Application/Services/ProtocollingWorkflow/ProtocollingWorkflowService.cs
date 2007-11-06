@@ -35,6 +35,19 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
             return new GetProcedureProtocolResponse(new ProtocollingWorkflowAssembler().CreateProtocolDetail(rp.ProtocolProcedureStep.Protocol));
         }
 
+        [ReadOperation]
+        public GetProcedurePlanForProtocollingWorklistItemResponse GetProcedurePlanForProtocollingWorklistItem(GetProcedurePlanForProtocollingWorklistItemRequest request)
+        {
+            ProcedureStep mps = this.PersistenceContext.Load<ProcedureStep>(request.ProcedureStepRef);
+            Order order = mps.RequestedProcedure.Order;
+
+            ProcedurePlanAssembler assembler = new ProcedurePlanAssembler();
+            ProcedurePlanSummary procedurePlanSummary =
+                assembler.CreateProcedurePlanSummary(order, this.PersistenceContext);
+
+            return new GetProcedurePlanForProtocollingWorklistItemResponse(procedurePlanSummary);
+        }
+
         [UpdateOperation]
         public AddProtocolResponse AddProtocol(AddProtocolRequest request)
         {

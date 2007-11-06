@@ -29,17 +29,15 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
+using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow.TechnologistDocumentation;
 using ClearCanvas.Workflow;
-using Iesi.Collections;
-using ClearCanvas.Ris.Application.Common;
 using Iesi.Collections.Generic;
 
 namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocumentation
@@ -55,7 +53,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
         {
             ProcedureStep mps = this.PersistenceContext.Load<ProcedureStep>(request.ProcedureStepRef);
             Order order = mps.RequestedProcedure.Order;
-            TechnologistDocumentationAssembler assembler = new TechnologistDocumentationAssembler();
+            ProcedurePlanAssembler assembler = new ProcedurePlanAssembler();
 
             GetProcedurePlanForWorklistItemResponse response = new GetProcedurePlanForWorklistItemResponse();
             response.ProcedurePlanSummary = assembler.CreateProcedurePlanSummary(order, this.PersistenceContext);
@@ -63,7 +61,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
             response.OrderExtendedProperties = new Dictionary<string, string>();
             foreach (string key in order.ExtendedProperties.Keys)
             {
-                response.OrderExtendedProperties[key] = (string)order.ExtendedProperties[key];
+                response.OrderExtendedProperties[key] = order.ExtendedProperties[key];
             }
 
             return response;
@@ -74,7 +72,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
         {
             Order order = this.PersistenceContext.Load<Order>(request.OrderRef);
 
-            TechnologistDocumentationAssembler assembler = new TechnologistDocumentationAssembler();
+            ModalityPerformedProcedureStepAssembler assembler = new ModalityPerformedProcedureStepAssembler();
 
             ISet<PerformedStep> mppsSet = new HashedSet<PerformedStep>();
             foreach (RequestedProcedure rp in order.RequestedProcedures)
@@ -137,10 +135,11 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
             this.PersistenceContext.SynchState();
 
             StartModalityProcedureStepsResponse response = new StartModalityProcedureStepsResponse();
-            TechnologistDocumentationAssembler assembler = new TechnologistDocumentationAssembler();
+            ProcedurePlanAssembler procedurePlanAssembler = new ProcedurePlanAssembler();
+            ModalityPerformedProcedureStepAssembler modalityPerformedProcedureStepAssembler = new ModalityPerformedProcedureStepAssembler();
 
-            response.ProcedurePlanSummary = assembler.CreateProcedurePlanSummary(modalitySteps[0].RequestedProcedure.Order, this.PersistenceContext);
-            response.StartedMpps = assembler.CreateModalityPerformedProcedureStepSummary(mpps, this.PersistenceContext);
+            response.ProcedurePlanSummary = procedurePlanAssembler.CreateProcedurePlanSummary(modalitySteps[0].RequestedProcedure.Order, this.PersistenceContext);
+            response.StartedMpps = modalityPerformedProcedureStepAssembler.CreateModalityPerformedProcedureStepSummary(mpps, this.PersistenceContext);
 
             return response;
         }
@@ -161,7 +160,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
             this.PersistenceContext.SynchState();
 
             DiscontinueModalityProcedureStepsResponse response = new DiscontinueModalityProcedureStepsResponse();
-            TechnologistDocumentationAssembler assembler = new TechnologistDocumentationAssembler();
+            ProcedurePlanAssembler assembler = new ProcedurePlanAssembler();
 
             response.ProcedurePlanSummary = assembler.CreateProcedurePlanSummary(order, this.PersistenceContext);
 
@@ -210,10 +209,11 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
             this.PersistenceContext.SynchState();
 
             StopModalityPerformedProcedureStepResponse response = new StopModalityPerformedProcedureStepResponse();
-            TechnologistDocumentationAssembler assembler = new TechnologistDocumentationAssembler();
+            ProcedurePlanAssembler assembler = new ProcedurePlanAssembler();
+            ModalityPerformedProcedureStepAssembler stepAssembler = new ModalityPerformedProcedureStepAssembler();
 
             response.ProcedurePlanSummary = assembler.CreateProcedurePlanSummary(order, this.PersistenceContext);
-            response.StoppedMpps = assembler.CreateModalityPerformedProcedureStepSummary(mpps, this.PersistenceContext);
+            response.StoppedMpps = stepAssembler.CreateModalityPerformedProcedureStepSummary(mpps, this.PersistenceContext);
 
             return response;
         }
@@ -251,10 +251,11 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
             this.PersistenceContext.SynchState();
 
             DiscontinueModalityPerformedProcedureStepResponse response = new DiscontinueModalityPerformedProcedureStepResponse();
-            TechnologistDocumentationAssembler assembler = new TechnologistDocumentationAssembler();
+            ProcedurePlanAssembler planAssembler = new ProcedurePlanAssembler();
+            ModalityPerformedProcedureStepAssembler stepAssembler = new ModalityPerformedProcedureStepAssembler();
 
-            response.ProcedurePlanSummary = assembler.CreateProcedurePlanSummary(oneMps.RequestedProcedure.Order, this.PersistenceContext);
-            response.DiscontinuedMpps = assembler.CreateModalityPerformedProcedureStepSummary(mpps, this.PersistenceContext);
+            response.ProcedurePlanSummary = planAssembler.CreateProcedurePlanSummary(oneMps.RequestedProcedure.Order, this.PersistenceContext);
+            response.DiscontinuedMpps = stepAssembler.CreateModalityPerformedProcedureStepSummary(mpps, this.PersistenceContext);
 
             return response;
         }
@@ -272,7 +273,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
             this.PersistenceContext.SynchState();
 
             SaveDataResponse response = new SaveDataResponse();
-            TechnologistDocumentationAssembler assembler = new TechnologistDocumentationAssembler();
+            ProcedurePlanAssembler assembler = new ProcedurePlanAssembler();
             response.ProcedurePlanSummary = assembler.CreateProcedurePlanSummary(order, this.PersistenceContext);
 
             return response;
@@ -294,7 +295,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
             this.PersistenceContext.SynchState();
 
             CompleteOrderDocumentationResponse response = new CompleteOrderDocumentationResponse();
-            TechnologistDocumentationAssembler assembler = new TechnologistDocumentationAssembler();
+            ProcedurePlanAssembler assembler = new ProcedurePlanAssembler();
             response.ProcedurePlanSummary = assembler.CreateProcedurePlanSummary(order, this.PersistenceContext);
 
             return response;

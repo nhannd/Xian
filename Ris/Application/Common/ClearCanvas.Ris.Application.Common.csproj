@@ -180,6 +180,9 @@
     <Compile Include="Admin\RequestedProcedureTypeGroupAdmin\LoadRequestedProcedureTypeGroupForEditRequest.cs" />
     <Compile Include="Admin\RequestedProcedureTypeGroupAdmin\LoadRequestedProcedureTypeGroupForEditResponse.cs" />
     <Compile Include="Admin\RequestedProcedureTypeGroupAdmin\RequestedProcedureTypeGroupDetail.cs" />
+    <Compile Include="ProtocollingWorkflow\GetProcedurePlanForProtocollingWorklistItemRequest.cs" />
+    <Compile Include="ProtocollingWorkflow\GetProcedurePlanForProtocollingWorklistItemResponse.cs" />
+    <Compile Include="ProtocolProcedureStepDetail.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\GetOrderRequisitionForEditRequest.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\GetOrderRequisitionForEditResponse.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\ModifyOrderRequest.cs" />
@@ -262,9 +265,9 @@
     <Compile Include="ModalityWorkflow\TechnologistDocumentation\ListPerformedProcedureStepsRequest.cs" />
     <Compile Include="ModalityWorkflow\TechnologistDocumentation\ListPerformedProcedureStepsResponse.cs" />
     <Compile Include="ModalityWorkflow\TechnologistDocumentation\ModalityPerformedProcedureStepSummary.cs" />
-    <Compile Include="ModalityWorkflow\TechnologistDocumentation\ModalityProcedureStepDetail.cs" />
-    <Compile Include="ModalityWorkflow\TechnologistDocumentation\ProcedurePlanSummary.cs" />
-    <Compile Include="ModalityWorkflow\TechnologistDocumentation\RequestedProcedureDetail.cs" />
+    <Compile Include="ModalityProcedureStepDetail.cs" />
+    <Compile Include="ProcedurePlanSummary.cs" />
+    <Compile Include="RequestedProcedureDetail.cs" />
     <Compile Include="ModalityWorkflow\TechnologistDocumentation\StartModalityProcedureStepsRequest.cs" />
     <Compile Include="ModalityWorkflow\TechnologistDocumentation\StartModalityProcedureStepsResponse.cs" />
     <Compile Include="ModalityWorkflow\TechnologistDocumentation\SaveDataRequest.cs" />
@@ -314,11 +317,7 @@
     <Compile Include="ModalityWorkflow\ListWorklistsResponse.cs" />
     <Compile Include="ModalityWorkflow\ResumeProcedureRequest.cs" />
     <Compile Include="ModalityWorkflow\ResumeProcedureResponse.cs" />
-    <Compile Include="ModalityWorkflow\TechnologistDocumentation\DocumentationPageDetail.cs" />
-    <Compile Include="ModalityWorkflow\TechnologistDocumentation\DocumentProceduresRequest.cs" />
-    <Compile Include="ModalityWorkflow\TechnologistDocumentation\DocumentProceduresResponse.cs" />
-    <Compile Include="ModalityWorkflow\TechnologistDocumentation\PerformedProcedureStepDetail.cs" />
-    <Compile Include="ModalityWorkflow\TechnologistDocumentation\ProcedureStepDetail.cs" />
+    <Compile Include="PerformedProcedureStepDetail.cs" />
     <Compile Include="MrnDetail.cs" />
     <Compile Include="ConcurrentModificationException.cs" />
     <Compile Include="ContactPersonDetail.cs" />
@@ -491,8 +490,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
-    <Compile Include="ModalityWorkflow\TechnologistDocumentation\GetProcedureStepsForWorklistItemRequest.cs" />
-    <Compile Include="ModalityWorkflow\TechnologistDocumentation\GetProcedureStepsForWorklistItemResponse.cs" />
     <Compile Include="ModalityWorkflow\TechnologistDocumentation\ITechnologistDocumentationService.cs" />
     <Compile Include="TelephoneDetail.cs" />
     <Compile Include="WorklistTokenAttribute.cs" />

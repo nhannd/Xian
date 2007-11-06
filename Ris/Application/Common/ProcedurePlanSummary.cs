@@ -29,35 +29,22 @@
 
 #endregion
 
-using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
 
-namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow.TechnologistDocumentation
+namespace ClearCanvas.Ris.Application.Common
 {
     [DataContract]
-    public class ModalityProcedureStepDetail : DataContractBase
+    public class ProcedurePlanSummary : DataContractBase
     {
-        [DataMember]
-        public EntityRef ModalityProcedureStepRef;
+        [DataMember] 
+        public EntityRef OrderRef;
 
         [DataMember]
-        public string Name;
+        public DiagnosticServiceSummary DiagnosticServiceSummary;
 
         [DataMember]
-        public EnumValueInfo Status;
-        
-        [DataMember]
-        public DateTime? StartDateTime;
-
-        [DataMember]
-        public DateTime? EndDateTime;
-
-        [DataMember]
-        public string ModalityId;
-
-        [DataMember]
-        public string ModalityName;
-
+        public List<RequestedProcedureDetail> RequestedProcedures;
     }
 }

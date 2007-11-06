@@ -46,6 +46,8 @@
     <Compile Include="ProtocolEditorComponent.cs" />
     <Compile Include="ProtocolEditorComponentDocument.cs" />
     <Compile Include="ProtocolEditorTool.cs" />
+    <Compile Include="ProtocolEditorProcedurePlanSummaryTable.cs" />
+    <Compile Include="ProtocolEditorProcedurePlanSummaryTableItem.cs" />
     <Compile Include="ReportEditorComponentSettings.cs" />
     <Compile Include="ReportEditorComponentSettings.Designer.cs">
       <AutoGen>True</AutoGen>

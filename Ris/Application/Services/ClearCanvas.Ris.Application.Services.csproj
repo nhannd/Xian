@@ -80,7 +80,12 @@
     <Compile Include="Admin\ModalityAdmin\ModalityAdminService.cs" />
     <Compile Include="Admin\PatientAdmin\PatientAdminService.cs" />
     <Compile Include="DiagnosticServiceAssembler.cs" />
+    <Compile Include="ModalityPerformedProcedureStepAssembler.cs" />
+    <Compile Include="ModalityProcedureStepAssembler.cs" />
     <Compile Include="OrderAssembler.cs" />
+    <Compile Include="ProcedurePlanAssembler.cs" />
+    <Compile Include="ProtocolProcedureStepAssembler.cs" />
+    <Compile Include="RequestedProcedureAssembler.cs" />
     <Compile Include="TextQueryHelper.cs" />
     <Compile Include="RequestedProcedureTypeAssembler.cs" />
     <Compile Include="Admin\RequestedProcedureTypeGroupAdmin\RequestedProcedureTypeGroupAdminService.cs" />
@@ -109,7 +114,6 @@
     <Compile Include="ContactPersonAssembler.cs" />
     <Compile Include="NoteCategoryAssembler.cs" />
     <Compile Include="Login\LoginService.cs" />
-    <Compile Include="ModalityWorkflow\TechnologistDocumentation\TechnologistDocumentationAssembler.cs" />
     <Compile Include="ModalityWorkflow\TechnologistDocumentation\TechnologistDocumentationService.cs" />
     <Compile Include="NoteAssembler.cs" />
     <Compile Include="EmailAddressAssembler.cs" />

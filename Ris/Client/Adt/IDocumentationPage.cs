@@ -30,7 +30,7 @@
 #endregion
 
 using System;
-using ClearCanvas.Ris.Application.Common.ModalityWorkflow.TechnologistDocumentation;
+using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Desktop;
 
 namespace ClearCanvas.Ris.Client.Adt

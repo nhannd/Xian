@@ -42,6 +42,9 @@ namespace ClearCanvas.Ris.Application.Common.ProtocollingWorkflow
         [OperationContract]
         GetProcedureProtocolResponse GetProcedureProtocol(GetProcedureProtocolRequest request);
 
+        [OperationContract]
+        GetProcedurePlanForProtocollingWorklistItemResponse GetProcedurePlanForProtocollingWorklistItem(GetProcedurePlanForProtocollingWorklistItemRequest request);
+
         /// <summary>
         /// For test purposes only
         /// </summary>

@@ -3,7 +3,8 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
-using ClearCanvas.Ris.Application.Common.ModalityWorkflow.TechnologistDocumentation;
+using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Ris.Application.Common.ProtocollingWorkflow;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 
 namespace ClearCanvas.Ris.Client.Reporting
@@ -84,11 +85,9 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         #endregion
 
-        private ReportingWorklistItem _worklistItem;
+        private readonly ReportingWorklistItem _worklistItem;
 
-        private ProcedurePlanSummary _procedurePlan;
-        private ProcedurePlanSummaryTable _procedurePlanSummaryTable;
-        private event EventHandler _procedurePlanChanged;
+        private ProtocolEditorProcedurePlanSummaryTable _procedurePlanSummaryTable;
 
         private ChildComponentHost _orderSummaryComponentHost;
         private ChildComponentHost _protocolNoteSummaryComponentHost;
@@ -142,31 +141,29 @@ namespace ClearCanvas.Ris.Client.Reporting
             get { return _procedurePlanSummaryTable; }
         }
 
-        public event EventHandler ProcedurePlanChanged
-        {
-            add { _procedurePlanChanged += value; }
-            remove { _procedurePlanChanged -= value; }
-        }
-
         #endregion
 
         private void InitializeProcedurePlanSummary()
         {
-            _procedurePlanSummaryTable = new ProcedurePlanSummaryTable();
-            //_procedurePlanSummaryTable.CheckedRowsChanged += delegate(object sender, EventArgs args) { UpdateActionEnablement(); };
+            _procedurePlanSummaryTable = new ProtocolEditorProcedurePlanSummaryTable();
 
-            Platform.GetService<ITechnologistDocumentationService>(
-                delegate(ITechnologistDocumentationService service)
+            Platform.GetService<IProtocollingWorkflowService>(
+                delegate(IProtocollingWorkflowService service)
                 {
-                    GetProcedurePlanForWorklistItemRequest procedurePlanRequest = new GetProcedurePlanForWorklistItemRequest(_worklistItem.ProcedureStepRef);
-                    GetProcedurePlanForWorklistItemResponse procedurePlanResponse = service.GetProcedurePlanForWorklistItem(procedurePlanRequest);
-                    _procedurePlan = procedurePlanResponse.ProcedurePlanSummary;
-                    //_orderExtendedProperties = procedurePlanResponse.OrderExtendedProperties;
+                    GetProcedurePlanForProtocollingWorklistItemRequest procedurePlanRequest = new GetProcedurePlanForProtocollingWorklistItemRequest(_worklistItem.ProcedureStepRef);
+                    GetProcedurePlanForProtocollingWorklistItemResponse procedurePlanResponse = service.GetProcedurePlanForProtocollingWorklistItem(procedurePlanRequest);
+
+                    if (procedurePlanResponse.ProcedurePlanSummary != null)
+                    {
+                        _procedurePlanSummaryTable.Items.Clear();
+                        foreach (RequestedProcedureDetail rp in procedurePlanResponse.ProcedurePlanSummary.RequestedProcedures)
+                        {
+                            _procedurePlanSummaryTable.Items.Add(
+                                new ProtocolEditorProcedurePlanSummaryTableItem(rp, rp.ProtocolProcedureStepDetail));
+                        }
+                        _procedurePlanSummaryTable.Sort();
+                    }
                 });
-
-            RefreshProcedurePlanSummary(_procedurePlan);
-
-            //InitializeProcedurePlanSummaryActionHandlers();
         }
 
         //private void InitializeProcedurePlanSummaryActionHandlers()
@@ -176,24 +173,5 @@ namespace ClearCanvas.Ris.Client.Reporting
         //    _discontinueAction = _procedurePlanActionHandler.AddAction("discontinue", SR.TitleDiscontinueMps, "Icons.DeleteToolSmall.png", SR.TitleDiscontinueMps, DiscontinueModalityProcedureSteps);
         //    UpdateActionEnablement();
         //}
-
-        private void RefreshProcedurePlanSummary(ProcedurePlanSummary procedurePlanSummary)
-        {
-            _procedurePlan = procedurePlanSummary;
-
-            _procedurePlanSummaryTable.Items.Clear();
-            foreach (RequestedProcedureDetail rp in procedurePlanSummary.RequestedProcedures)
-            {
-                foreach (ModalityProcedureStepDetail mps in rp.ModalityProcedureSteps)
-                {
-                    _procedurePlanSummaryTable.Items.Add(
-                        new Checkable<ProcedurePlanSummaryTableItem>(
-                            new ProcedurePlanSummaryTableItem(rp, mps)));
-                }
-            }
-            _procedurePlanSummaryTable.Sort();
-
-            EventsHelper.Fire(_procedurePlanChanged, this, EventArgs.Empty);
-        }
     }
 }
