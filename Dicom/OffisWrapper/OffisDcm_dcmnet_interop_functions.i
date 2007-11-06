@@ -307,8 +307,8 @@ static void MoveScpCallback(
 	DcmDataset *requestIdentifiers, int responseCount,
 	/* out */
 	T_DIMSE_C_MoveRSP *response,
-	DcmDataset **responseIdentifiers,
-	DcmDataset **statusDetail)
+	DcmDataset **statusDetail,
+	DcmDataset **responseIdentifiers)
 {
     OFCondition dbcond = EC_Normal;
     MoveCallbackData *context;
@@ -344,7 +344,7 @@ static void MoveScpCallback(
 		}
 		else
 		{
-			response->DimseStatus = STATUS_MOVE_Refused_OutOfResourcesNumberOfMatches;
+			response->DimseStatus = STATUS_MOVE_Failed_UnableToProcess;
 			
 			if (*responseIdentifiers != NULL)
 			{
@@ -400,7 +400,7 @@ static void MoveScpCallback(
 		}
 		else
 		{
-			response->DimseStatus = STATUS_MOVE_Refused_OutOfResourcesNumberOfMatches;
+			response->DimseStatus = STATUS_MOVE_Failed_UnableToProcess;
 			
 			if (*responseIdentifiers != NULL)
 			{

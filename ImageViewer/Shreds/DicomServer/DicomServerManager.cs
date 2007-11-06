@@ -167,18 +167,15 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 		private void OnFindScpEvent(object sender, DicomEventArgs e)
 		{
 			InteropFindScpCallbackInfo info = new InteropFindScpCallbackInfo(e.CallbackInfoPointer, false);
-			if (info == null)
-				return;
 
-			info.Response.DimseStatus = (ushort)QueryDB(info.QueryRetrieveOperationIdentifier, info.RequestIdentifiers);
+			QueryDB(info.QueryRetrieveOperationIdentifier, info.RequestIdentifiers);
+			info.Response.DimseStatus = (ushort)OffisDcm.STATUS_Pending;
 		}
 
 		private void OnFindScpProgressEvent(object sender, DicomEventArgs e)
 		{
 			InteropFindScpCallbackInfo info = new InteropFindScpCallbackInfo(e.CallbackInfoPointer, false);
-			if (info == null)
-				return;
-			
+
 			info.Response.DimseStatus = (ushort)GetNextQueryResult(info.QueryRetrieveOperationIdentifier, info.ResponseIdentifiers);
 		}
 
@@ -189,8 +186,6 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 		private void OnMoveScpBeginEvent(object sender, DicomEventArgs e)
 		{
 			InteropMoveScpCallbackInfo info = new InteropMoveScpCallbackInfo(e.CallbackInfoPointer, false);
-			if (info == null)
-				return;
 
 			lock (_moveSessionLock)
 			{
@@ -202,10 +197,17 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				}
 			}
 
-			// Start the Query
-			info.Response.DimseStatus = (ushort)QueryDB(info.QueryRetrieveOperationIdentifier, info.RequestIdentifiers);
-			if (info.Response.DimseStatus == OffisDcm.STATUS_FIND_Failed_UnableToProcess)
+			DicomQuerySession querySession = QueryDB(info.QueryRetrieveOperationIdentifier, info.RequestIdentifiers);
+			if (querySession.DimseStatus != OffisDcm.STATUS_Pending)
+			{
+				lock(_querySessionLock)
+				{
+					_querySessionDictionary.Remove(info.QueryRetrieveOperationIdentifier);
+				}
+
+				info.Response.DimseStatus = (ushort)OffisDcm.STATUS_MOVE_Failed_UnableToProcess;
 				return;
+			}
 
 			ApplicationEntity destinationAE = null;
 
@@ -230,6 +232,11 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 			if (destinationAE == null)
 			{
+				lock (_querySessionLock)
+				{
+					_querySessionDictionary.Remove(info.QueryRetrieveOperationIdentifier);
+				}
+				
 				info.Response.DimseStatus = (ushort)OffisDcm.STATUS_MOVE_Failed_MoveDestinationUnknown;
 				return;
 			}
@@ -248,11 +255,22 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				OffisDicomHelper.TryFindAndGetOFString(info.RequestIdentifiers, Dcm.StudyInstanceUID, out studyInstanceUID);
 				if (String.IsNullOrEmpty(studyInstanceUID))
 				{
+					lock (_querySessionLock)
+					{
+						_querySessionDictionary.Remove(info.QueryRetrieveOperationIdentifier);
+					}
+
 					info.Response.DimseStatus = (ushort)OffisDcm.STATUS_MOVE_Failed_UnableToProcess;
 					return;
 				}
 
 				sendParcel.Include(new Uid(studyInstanceUID));
+			}
+
+			if (sendParcel.GetToSendObjectCount() == 0)
+			{
+				info.Response.DimseStatus = (ushort)OffisDcm.STATUS_Success;
+				return;
 			}
 
 			BackgroundTask task = new BackgroundTask(delegate(IBackgroundTaskContext context)
@@ -274,13 +292,14 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			}
 
 			info.Response.NumberOfRemainingSubOperations = (ushort)sendParcel.GetToSendObjectCount();
+			uint queryRetrieveOperationIdentifier = info.QueryRetrieveOperationIdentifier;
 
-			EventHandler<BackgroundTaskTerminatedEventArgs> deleteHandler = new EventHandler<BackgroundTaskTerminatedEventArgs>
-				(delegate(object ignore, BackgroundTaskTerminatedEventArgs ignoreArgs)
+			EventHandler<BackgroundTaskTerminatedEventArgs> deleteHandler = new EventHandler<BackgroundTaskTerminatedEventArgs>(
+				delegate
 				{
 					lock (_moveSessionLock)
 					{
-						_moveSessionDictionary.Remove(info.QueryRetrieveOperationIdentifier);
+						_moveSessionDictionary.Remove(queryRetrieveOperationIdentifier);
 						task.Dispose();
 					}
 				});
@@ -294,10 +313,8 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 		private void OnMoveScpProgressEvent(object sender, DicomEventArgs e)
 		{
 			InteropMoveScpCallbackInfo info = new InteropMoveScpCallbackInfo(e.CallbackInfoPointer, false);
-			if (info == null)
-				return;
 
-			info.Response.DimseStatus = (ushort)UpdateMoveProgress(info.QueryRetrieveOperationIdentifier, info.Response);
+			UpdateMoveProgress(info.QueryRetrieveOperationIdentifier, info);
 		}
 
 		#endregion
@@ -307,22 +324,16 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 		private void OnStoreScpBeginEvent(object sender, DicomEventArgs e)
 		{
 			InteropStoreScpCallbackInfo info = new InteropStoreScpCallbackInfo(e.CallbackInfoPointer, false);
-			if (info == null)
-				return;
 		}
 
 		private void OnStoreScpProgressEvent(object sender, DicomEventArgs e)
 		{
 			InteropStoreScpCallbackInfo info = new InteropStoreScpCallbackInfo(e.CallbackInfoPointer, false);
-			if (info == null)
-				return;
 		}
 
 		private void OnStoreScpEndEvent(object sender, DicomEventArgs e)
 		{
 			InteropStoreScpCallbackInfo info = new InteropStoreScpCallbackInfo(e.CallbackInfoPointer, false);
-			if (info == null)
-				return;
 
 			StoreScpReceivedFileInformation storedInformation = new StoreScpReceivedFileInformation();
 
@@ -353,8 +364,6 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 		private void OnStoreScuProgressEvent(object sender, DicomEventArgs e)
 		{
 			InteropStoreScuCallbackInfo info = new InteropStoreScuCallbackInfo(e.CallbackInfoPointer, false);
-			if (info == null)
-				return;
 
 			T_DIMSE_C_StoreRQ request = info.Request;
 			T_DIMSE_StoreProgress progress = info.Progress;
@@ -458,10 +467,11 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			return queryKey;
 		}
 
-		private int QueryDB(uint operationIdentifier, DcmDataset requestIdentifiers)
+		private DicomQuerySession QueryDB(uint operationIdentifier, DcmDataset requestIdentifiers)
 		{
 			QueryKey key = null;
 			ReadOnlyQueryResultCollection queryResults = null;
+			DicomQuerySession querySession = null;
 			ushort status = (ushort)OffisDcm.STATUS_Pending;
 
 			try
@@ -491,11 +501,12 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			// Remember the query results for this session.  The DicomServer will call back to get query results
 			lock (_querySessionLock)
 			{
-				_querySessionDictionary[operationIdentifier] = new DicomQuerySession(key, queryResults);
+				querySession = new DicomQuerySession(key, queryResults);
+				_querySessionDictionary[operationIdentifier] = querySession;
 				_querySessionDictionary[operationIdentifier].DimseStatus = status;
 			}
 
-			return OffisDcm.STATUS_Pending;
+			return querySession;
 		}
 
 		private int GetNextQueryResult(uint operationIdentifier, DcmDataset responseIdentifiers)
@@ -604,15 +615,15 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 		#region MoveScp helper functions
 
-		private int UpdateMoveProgress(uint moveOperationIdentifier, T_DIMSE_C_MoveRSP response)
+		private void UpdateMoveProgress(uint moveOperationIdentifier, InteropMoveScpCallbackInfo info)
 		{
-			int status = OffisDcm.STATUS_Pending;
 			DicomMoveSession session;
 
 			lock (_moveSessionLock)
 			{
+				//the 'begin' event did not succeed.
 				if (_moveSessionDictionary.ContainsKey(moveOperationIdentifier) == false)
-					return OffisDcm.STATUS_MOVE_Failed_UnableToProcess;
+					return;
 
 				session = _moveSessionDictionary[moveOperationIdentifier];
 			}
@@ -631,39 +642,38 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 			session.Progress = currentProgressStep;
 
-			response.NumberOfCompletedSubOperations = (ushort)currentProgressStep;
-			response.NumberOfRemainingSubOperations = (ushort)(totalSteps - currentProgressStep);
+			info.Response.NumberOfCompletedSubOperations = (ushort)currentProgressStep;
+			info.Response.NumberOfRemainingSubOperations = (ushort)(totalSteps - currentProgressStep);
 
 			switch (transferState)
 			{
 				case ParcelTransferState.Completed:
-					response.NumberOfCompletedSubOperations = (ushort)totalSteps;
-					response.NumberOfRemainingSubOperations = 0;
-					status = OffisDcm.STATUS_Success;
+					info.Response.NumberOfCompletedSubOperations = (ushort)totalSteps;
+					info.Response.NumberOfRemainingSubOperations = 0;
+					info.Response.DimseStatus = (ushort)OffisDcm.STATUS_Success;
 					break;
 				case ParcelTransferState.Cancelled:
 				case ParcelTransferState.CancelRequested:
-					response.NumberOfWarningSubOperations++;
-					status = OffisDcm.STATUS_MOVE_Cancel_SubOperationsTerminatedDueToCancelIndication;
+					info.Response.NumberOfWarningSubOperations++;
+					info.Response.DimseStatus = (ushort)OffisDcm.STATUS_MOVE_Cancel_SubOperationsTerminatedDueToCancelIndication;
+					info.ResponseIdentifiers.putAndInsertOFStringArray(new DcmTag(Dcm.FailedSOPInstanceUIDList),
+					                                                   StringUtilities.Combine(session.Parcel.UnsentSopInstances, "\\"));
 					break;
 				case ParcelTransferState.Error:
 				case ParcelTransferState.Unknown:
-					response.NumberOfFailedSubOperations++;
-					status = OffisDcm.STATUS_MOVE_Failed_UnableToProcess;
+					info.Response.NumberOfFailedSubOperations++;
+					info.Response.DimseStatus = (ushort)OffisDcm.STATUS_MOVE_Failed_UnableToProcess;
+					info.ResponseIdentifiers.putAndInsertOFStringArray(new DcmTag(Dcm.FailedSOPInstanceUIDList),
+																	   StringUtilities.Combine(session.Parcel.UnsentSopInstances, "\\"));
 					break;
 				case ParcelTransferState.InProgress:
 				case ParcelTransferState.Paused:
 				case ParcelTransferState.PauseRequested:
 				case ParcelTransferState.Pending:
 				default:
-					status = OffisDcm.STATUS_Pending;
+					info.Response.DimseStatus = (ushort)OffisDcm.STATUS_Pending;
 					break;
 			}
-
-#if DEBUG 
-			Console.WriteLine("MOVE - Completed: {0} Remaining: {1}", response.NumberOfCompletedSubOperations, response.NumberOfRemainingSubOperations);
-#endif
-			return status;
 		}
 
 		#endregion
