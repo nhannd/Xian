@@ -150,7 +150,8 @@ namespace ClearCanvas.Ris.Application.Services.PreviewService
         {
             GetReportingProcedureStepResponse response = new GetReportingProcedureStepResponse();
 
-            ReportingProcedureStep rps = PersistenceContext.Load<ReportingProcedureStep>(rpsRef);
+            //ReportingProcedureStep rps = PersistenceContext.Load<ReportingProcedureStep>(rpsRef);
+            ProcedureStep ps = PersistenceContext.Load<ProcedureStep>(rpsRef);
             PreviewServiceAssembler assembler = new PreviewServiceAssembler();
             response.PatientOrderData = assembler.CreatePatientOrderData(rps, this.PersistenceContext);
 

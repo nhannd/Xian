@@ -4,6 +4,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
+using ClearCanvas.Ris.Application.Common.Admin.ProtocolAdmin;
 using ClearCanvas.Ris.Application.Common.ProtocollingWorkflow;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 
@@ -11,38 +12,9 @@ namespace ClearCanvas.Ris.Client.Adt
 {
     [MenuAction("apply", "folderexplorer-items-contextmenu/Add Protocol (Testing only)", "AddProtocol")]
     [IconSet("apply", IconScheme.Colour, "AddToolSmall.png", "AddToolMedium.png", "AddToolLarge.png")]
-    //[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
     [ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]
     public class ProtocolTestTool : Tool<IRegistrationWorkflowItemToolContext>
     {
-        //private bool _enabled;
-        //private event EventHandler _enabledChanged;
-
-
-        //public ProtocolTestTool()
-        //{
-        //    _enabled = true;
-        //}
-
-        //public bool Enabled
-        //{
-        //    get { return _enabled; }
-        //    protected set
-        //    {
-        //        if (_enabled != value)
-        //        {
-        //            _enabled = value;
-        //            EventsHelper.Fire(_enabledChanged, this, EventArgs.Empty);
-        //        }
-        //    }
-        //}
-
-        //public event EventHandler EnabledChanged
-        //{
-        //    add { _enabledChanged += value; }
-        //    remove { _enabledChanged -= value; }
-        //}
-
         public void AddProtocol()
         {
             RegistrationWorklistItem item = CollectionUtils.FirstElement<RegistrationWorklistItem>(this.Context.SelectedItems);
@@ -62,6 +34,29 @@ namespace ClearCanvas.Ris.Client.Adt
                 }
             }
 
+        }
+
+    }
+
+    [MenuAction("apply", "folderexplorer-items-contextmenu/Add Protocol Code(Testing only)", "AddProtocolCode")]
+    [IconSet("apply", IconScheme.Colour, "AddToolSmall.png", "AddToolMedium.png", "AddToolLarge.png")]
+    [ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]
+    public class ProtocolCodeTestTool : Tool<IRegistrationWorkflowItemToolContext>
+    {
+        public void AddProtocolCode()
+        {
+            try
+            {
+                Platform.GetService<IProtocolAdminService>(
+                    delegate(IProtocolAdminService service)
+                    {
+                        service.AddProtocolCode(new AddProtocolCodeRequest("TestCode" + DateTime.Now.ToShortTimeString(), "Description"));
+                    });
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Report(e, this.Context.DesktopWindow);
+            }
         }
 
     }
