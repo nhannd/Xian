@@ -31,7 +31,8 @@
 					
                     var request = {
                         ProcedureStepRef: worklistItem.ProcedureStepRef,
-                        GetReportingProcedureStepRequest: worklistItem.StepType != "Protocol" ? {} : null,
+                        //GetReportingProcedureStepRequest: worklistItem.StepType != "Protocol" ? {} : null,
+                        GetReportingProcedureStepRequest: {},
                         GetPatientProfileRequest:         {},
                         GetAlertsRequest:                 {}
                     };
