@@ -30,13 +30,10 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.ImageViewer.Configuration;
 using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
@@ -84,6 +81,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		private void OpenSingleStudyWithPriors()
 		{
+			// Okay, the method name is deceptive--it doesn't actually
+			// open priors yet
 			DiagnosticImageViewerComponent imageViewer = new DiagnosticImageViewerComponent();
 			StudyItem item = this.Context.SelectedStudy;
 			string studyInstanceUid = item.StudyInstanceUID;
@@ -91,7 +90,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			try
 			{
 				imageViewer.LoadStudy(studyInstanceUid, "DICOM_LOCAL");
-				LaunchWorkspace(imageViewer);
+				Launch(imageViewer);
 			}
 			catch (OpenStudyException e)
 			{
@@ -131,7 +130,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			if (completelySuccessfulStudies == 0 && successfulImagesInLoadFailure == 0)
 				return;
 
-			LaunchWorkspace(imageViewer);
+			Launch(imageViewer);
 		}
 
 		private void OpenMultipleStudiesInIndividualWorkspaces()
@@ -144,7 +143,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				try
 				{
 					imageViewer.LoadStudy(studyInstanceUid, "DICOM_LOCAL");
-					LaunchWorkspace(imageViewer);
+					Launch(imageViewer);
 				}
 				catch (OpenStudyException e)
 				{
@@ -154,19 +153,16 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			}
 		}
 
-		private void LaunchWorkspace(DiagnosticImageViewerComponent imageViewer)
+		private void Launch(ImageViewerComponent imageViewer)
 		{
-			ApplicationComponent.LaunchAsWorkspace(
-				this.Context.DesktopWindow,
-				imageViewer,
-				imageViewer.PatientsLoadedLabel,
-				delegate
-				{
-					imageViewer.Dispose();
-				});
+			WindowBehaviour windowBehaviour = (WindowBehaviour)MonitorConfigurationSettings.Default.WindowBehaviour;
 
-			imageViewer.Layout();
-			imageViewer.PhysicalWorkspace.SelectDefaultImageBox();
+			// Open the images in a separate window
+			if (windowBehaviour == WindowBehaviour.Separate)
+				ImageViewerComponent.LaunchInSeparateWindow(imageViewer);
+			// Open the images in the same window
+			else
+				ImageViewerComponent.LaunchInActiveWindow(imageViewer);
 		}
 
 		private void SetDoubleClickHandler()

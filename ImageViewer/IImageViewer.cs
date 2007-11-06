@@ -93,6 +93,12 @@ namespace ClearCanvas.ImageViewer
         CommandHistory CommandHistory { get; }
 
 		/// <summary>
+		/// Gets a string containing the patients currently loaded in this
+		/// <see cref="IImageViewer"/>.
+		/// </summary>		
+		string PatientsLoadedLabel { get; }
+
+		/// <summary>
 		/// Loads a study with a specific Study Instance UID from a specific source.
 		/// </summary>
 		/// <param name="studyInstanceUID">The Study Instance UID of the study to be loaded.</param>
@@ -130,5 +136,11 @@ namespace ClearCanvas.ImageViewer
 		/// <exception cref="OpenStudyException">One or more images could not be opened.</exception>
 		/// <exception cref="ArgumentNullException">A parameter is <b>null</b>.</exception>
 		void LoadImages(string[] files, IDesktopWindow desktop, out bool cancelled);
+
+		/// <summary>
+		/// Lays out the images in the <see cref="IImageViewer"/> using
+		/// the current layout manager.
+		/// </summary>
+		void Layout();
     }
 }

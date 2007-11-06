@@ -37,6 +37,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
+using ClearCanvas.ImageViewer.Configuration;
 
 namespace ClearCanvas.ImageViewer.Explorer.Local
 {
@@ -121,17 +122,19 @@ namespace ClearCanvas.ImageViewer.Explorer.Local
 			if (cancelled || (anyFailures && successfulImagesInLoadFailure == 0))
 				return;
 
-			ApplicationComponent.LaunchAsWorkspace(
-				this.Context.DesktopWindow,
-				viewer,
-				viewer.PatientsLoadedLabel,
-				delegate
-					{
-						viewer.Dispose();
-					});
+			Launch(viewer);
+		}
 
-			viewer.Layout();
-			viewer.PhysicalWorkspace.SelectDefaultImageBox();
+		private void Launch(ImageViewerComponent imageViewer)
+		{
+			WindowBehaviour windowBehaviour = (WindowBehaviour)MonitorConfigurationSettings.Default.WindowBehaviour;
+
+			// Open the images in a separate window
+			if (windowBehaviour == WindowBehaviour.Separate)
+				ImageViewerComponent.LaunchInSeparateWindow(imageViewer);
+			// Open the images in the same window
+			else
+				ImageViewerComponent.LaunchInActiveWindow(imageViewer);
 		}
 
 		private string[] BuildFileList()

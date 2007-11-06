@@ -572,6 +572,62 @@ namespace ClearCanvas.ImageViewer
 			return workspace.Component as IImageViewer;
 		}
 
+		/// <summary>
+		/// Launches an <see cref="ImageViewerComponent"/> in the active desktop window.
+		/// </summary>
+		/// <param name="imageViewer"></param>
+		/// <remarks>
+		/// Subsequent <see cref="ImageViewerComponent"/>s will also be launched in workspaces in
+		/// the same window.
+		/// </remarks>
+		public static void LaunchInActiveWindow(ImageViewerComponent imageViewer)
+		{
+			LaunchInWindow(imageViewer, Application.ActiveDesktopWindow);
+		}
+
+		/// <summary>
+		/// Launches an <see cref="ImageViewerComponent"/> in a separate desktop window
+		/// devoted strictly to image display.
+		/// </summary>
+		/// <param name="imageViewer"></param>
+		/// <remarks>
+		/// Subsequent <see cref="ImageViewerComponent"/>s will also be launched in workspaces in
+		/// the same window.
+		/// </remarks>
+		public static void LaunchInSeparateWindow(ImageViewerComponent imageViewer)
+		{
+			IDesktopWindow window;
+
+			// If an image viewer desktop window already exists, use it
+			if (Application.DesktopWindows.Contains("ImageViewer"))
+			{
+				window = Application.DesktopWindows["ImageViewer"];
+			}
+			// If not, create one
+			else
+			{
+				DesktopWindowCreationArgs args = new DesktopWindowCreationArgs("", "ImageViewer");
+				window = Application.DesktopWindows.AddNew(args);
+			}
+
+			LaunchInWindow(imageViewer, window);
+		}
+
+		private static void LaunchInWindow(ImageViewerComponent imageViewer, IDesktopWindow desktopWindow)
+		{
+			ApplicationComponent.LaunchAsWorkspace(
+				desktopWindow,
+				imageViewer,
+				imageViewer.PatientsLoadedLabel,
+				delegate
+				{
+					imageViewer.Dispose();
+				});
+
+			imageViewer.Layout();
+			imageViewer.PhysicalWorkspace.SelectDefaultImageBox();			
+		}
+
 		#endregion
 
 		#region Disposal

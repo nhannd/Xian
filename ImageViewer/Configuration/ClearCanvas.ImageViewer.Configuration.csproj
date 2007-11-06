@@ -48,6 +48,9 @@
     <Compile Include="DicomServerConfigurationHelper.cs" />
     <Compile Include="DiskspaceManagerConfigurationComponent.cs" />
     <Compile Include="DiskspaceManagerConfigurationPageProvider.cs" />
+    <Compile Include="MonitorConfigurationApplicationComponent.cs" />
+    <Compile Include="MonitorConfigurationPageProvider.cs" />
+    <Compile Include="MonitorConfigurationSettings.cs" />
     <Compile Include="PortValidationRule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SR.Designer.cs">

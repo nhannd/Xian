@@ -44,18 +44,18 @@ namespace ClearCanvas.Desktop.Explorer
 	{
 	}
 
-	[MenuAction("show", "global-menus/MenuFile/MenuExplorer", "Show", KeyStroke = XKeys.Control | XKeys.S)]
-	[ButtonAction("show", "global-toolbars/ToolbarStandard/ToolbarExplorer", "Show")]
-	[Tooltip("show", "TooltipExplorer")]
-	[IconSet("show", IconScheme.Colour, "Icons.ExplorerToolSmall.png", "Icons.ExplorerToolMedium.png", "Icons.ExplorerToolLarge.png")]
-	[GroupHint("show", "Application.Browsing.Explorer")]
+	//[MenuAction("show", "global-menus/MenuFile/MenuExplorer", "Show", KeyStroke = XKeys.Control | XKeys.S)]
+	//[ButtonAction("show", "global-toolbars/ToolbarStandard/ToolbarExplorer", "Show")]
+	//[Tooltip("show", "TooltipExplorer")]
+	//[IconSet("show", IconScheme.Colour, "Icons.ExplorerToolSmall.png", "Icons.ExplorerToolMedium.png", "Icons.ExplorerToolLarge.png")]
+	//[GroupHint("show", "Application.Browsing.Explorer")]
 
-    [ClearCanvas.Common.ExtensionOf(typeof(DesktopToolExtensionPoint))]
+    [ExtensionOf(typeof(DesktopToolExtensionPoint))]
     public class ExplorerTool : Tool<IDesktopToolContext>
 	{
 		TabComponentContainer _tabComponentContainer;
 		List<IHealthcareArtifactExplorer> _healthcareArtifactExplorers;
-		IWorkspace _workspace;
+		static IWorkspace _workspace;
 
 		public ExplorerTool()
 		{
@@ -69,47 +69,45 @@ namespace ClearCanvas.Desktop.Explorer
 
 		public void Show()
 		{
-			if (_tabComponentContainer == null)
+			// We only ever want one explorer
+			if (_workspace != null)
+				return;
+
+			_tabComponentContainer = new TabComponentContainer();
+
+			HealthcareArtifactExplorerExtensionPoint xp = new HealthcareArtifactExplorerExtensionPoint();
+			object[] extensions = xp.CreateExtensions();
+
+			if (_healthcareArtifactExplorers == null)
 			{
-				_tabComponentContainer = new TabComponentContainer();
+				_healthcareArtifactExplorers = new List<IHealthcareArtifactExplorer>();
 
-				HealthcareArtifactExplorerExtensionPoint xp = new HealthcareArtifactExplorerExtensionPoint();
-				object[] extensions = xp.CreateExtensions();
-
-				if (_healthcareArtifactExplorers == null)
+				foreach (IHealthcareArtifactExplorer explorer in extensions)
 				{
-					_healthcareArtifactExplorers = new List<IHealthcareArtifactExplorer>();
-
-					foreach (IHealthcareArtifactExplorer explorer in extensions)
-					{
-						_healthcareArtifactExplorers.Add(explorer);
-					}
+					_healthcareArtifactExplorers.Add(explorer);
 				}
-
-				foreach (IHealthcareArtifactExplorer explorer in _healthcareArtifactExplorers)
-				{
-					TabPage tabPage = new TabPage(explorer.Name, explorer.Component);
-					_tabComponentContainer.Pages.Add(tabPage);
-				}
-
-				_workspace = ApplicationComponent.LaunchAsWorkspace(
-					this.Context.DesktopWindow,
-					_tabComponentContainer,
-					SR.TitleExplorer,
-					delegate
-					{
-						_workspace = null;
-						_tabComponentContainer = null;
-						_healthcareArtifactExplorers.Clear();
-						_healthcareArtifactExplorers = null;
-					});
-
 			}
-			else
+
+			foreach (IHealthcareArtifactExplorer explorer in _healthcareArtifactExplorers)
 			{
-				_workspace.Activate();
+				TabPage tabPage = new TabPage(explorer.Name, explorer.Component);
+				_tabComponentContainer.Pages.Add(tabPage);
 			}
+
+			_workspace = ApplicationComponent.LaunchAsWorkspace(
+				this.Context.DesktopWindow,
+				_tabComponentContainer,
+				SR.TitleExplorer,
+				delegate
+				{
+					_workspace = null;
+					_tabComponentContainer = null;
+					_healthcareArtifactExplorers.Clear();
+					_healthcareArtifactExplorers = null;
+					Application.Quit();
+				});
+
+			//_workspace.NeverClose = true;
 		}
-
 	}
 }
