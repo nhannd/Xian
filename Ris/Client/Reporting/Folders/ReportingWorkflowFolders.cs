@@ -109,7 +109,7 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
         }
 
         public MyResidentToBeVerifyFolder(ReportingWorkflowFolderSystem folderSystem)
-            : base(folderSystem, "Resident", new DropHandlerExtensionPoint())
+            : base(folderSystem, "Review Resident Report", new DropHandlerExtensionPoint())
         {
             this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Reporting.Worklists+MyResidentToBeVerified";
         }
