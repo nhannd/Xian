@@ -303,6 +303,9 @@
   <data name="ExceptionConcurrencyVisitNotSaved" xml:space="preserve">
     <value>The visit was modified by another user.  Your changes could not be saved.</value>
   </data>
+  <data name="ExceptionFailedToDisplayDocument" xml:space="preserve">
+    <value>Failed to display document</value>
+  </data>
   <data name="ExceptionFailedToExecuteQuery" xml:space="preserve">
     <value>An error occured while trying to execute the query</value>
   </data>
@@ -392,6 +395,9 @@
   </data>
   <data name="TitleDiscontinueMps" xml:space="preserve">
     <value>Discontinue</value>
+  </data>
+  <data name="TitleDocuments" xml:space="preserve">
+    <value>Documents</value>
   </data>
   <data name="TitleEditPatient" xml:space="preserve">
     <value>Edit Patient</value>

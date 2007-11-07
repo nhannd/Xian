@@ -29,29 +29,26 @@
 
 #endregion
 
-using ClearCanvas.Healthcare;
+using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Ris.Application.Common;
 
-namespace ClearCanvas.Ris.Application.Services
+namespace ClearCanvas.Ris.Client
 {
-    public class MimeDocumentAssembler
+    public class PatientAttachmentTable : Table<PatientAttachmentSummary>
     {
-        public MimeDocumentSummary CreateMimeDocument(MimeDocument doc)
+        public PatientAttachmentTable()
         {
-            MimeDocumentSummary summary = new MimeDocumentSummary();
+            this.Columns.Add(new TableColumn<PatientAttachmentSummary, string>("Date",
+                delegate(PatientAttachmentSummary summary) { return Format.Date(summary.Document.CreationTime); }, 0.2f));
+            this.Columns.Add(new TableColumn<PatientAttachmentSummary, string>("Category",
+                delegate(PatientAttachmentSummary summary) { return summary.Category.Value; }, 0.2f));
 
-            UpdateMimeDocument(doc, summary);
+            // Sort the table by descending date initially
+            int sortColumnIndex = this.Columns.FindIndex(delegate(TableColumnBase<PatientAttachmentSummary> column)
+                { return column.Name.Equals("Date"); });
 
-            return summary;
-        }
-
-        public void UpdateMimeDocument(MimeDocument doc, MimeDocumentSummary summary)
-        {
-            summary.DocumentRef = doc.GetRef();
-            summary.CreationTime = doc.CreationTime;
-            summary.MimeType = doc.MimeType;
-            summary.FileExtension = doc.FileExtension;
-            summary.BinaryDataRef = doc.Data.GetRef();
+            this.Sort(new TableSortParams(this.Columns[sortColumnIndex], false));
         }
     }
 }

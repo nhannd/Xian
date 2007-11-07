@@ -83,11 +83,11 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._addConsultantButton = new System.Windows.Forms.Button();
             this.tabControl2 = new System.Windows.Forms.TabControl();
             this.tabPage4 = new System.Windows.Forms.TabPage();
-            this.webBrowser1 = new System.Windows.Forms.WebBrowser();
-            this.tableView2 = new ClearCanvas.Desktop.View.WinForms.TableView();
+            this._documentSplitContainer = new System.Windows.Forms.SplitContainer();
+            this._documentTableView = new ClearCanvas.Desktop.View.WinForms.TableView();
+            this._documentBrowser = new System.Windows.Forms.WebBrowser();
             this._cancelButton = new System.Windows.Forms.Button();
             this._acceptButton = new System.Windows.Forms.Button();
-            this._documentSplitContainer = new System.Windows.Forms.SplitContainer();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
@@ -201,7 +201,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // 
             this._orderingPractitioner.LabelText = "Ordering Practitioner";
             this._orderingPractitioner.Location = new System.Drawing.Point(220, 178);
-            this._orderingPractitioner.Margin = new System.Windows.Forms.Padding(2);
+            this._orderingPractitioner.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this._orderingPractitioner.Name = "_orderingPractitioner";
             this._orderingPractitioner.Size = new System.Drawing.Size(269, 48);
             this._orderingPractitioner.TabIndex = 4;
@@ -248,7 +248,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // 
             this._diagnosticService.LabelText = "Diagnostic Service";
             this._diagnosticService.Location = new System.Drawing.Point(4, 126);
-            this._diagnosticService.Margin = new System.Windows.Forms.Padding(2);
+            this._diagnosticService.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this._diagnosticService.Name = "_diagnosticService";
             this._diagnosticService.Size = new System.Drawing.Size(485, 48);
             this._diagnosticService.TabIndex = 2;
@@ -375,7 +375,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // 
             this._consultantLookup.LabelText = "Find Practitioner";
             this._consultantLookup.Location = new System.Drawing.Point(1, 5);
-            this._consultantLookup.Margin = new System.Windows.Forms.Padding(2);
+            this._consultantLookup.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this._consultantLookup.Name = "_consultantLookup";
             this._consultantLookup.Size = new System.Drawing.Size(261, 48);
             this._consultantLookup.TabIndex = 4;
@@ -415,28 +415,46 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.tabPage4.Text = "Documents";
             this.tabPage4.UseVisualStyleBackColor = true;
             // 
-            // webBrowser1
+            // _documentSplitContainer
             // 
-            this.webBrowser1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.webBrowser1.Location = new System.Drawing.Point(0, 0);
-            this.webBrowser1.Margin = new System.Windows.Forms.Padding(2);
-            this.webBrowser1.MinimumSize = new System.Drawing.Size(15, 16);
-            this.webBrowser1.Name = "webBrowser1";
-            this.webBrowser1.Size = new System.Drawing.Size(480, 401);
-            this.webBrowser1.TabIndex = 0;
+            this._documentSplitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._documentSplitContainer.Location = new System.Drawing.Point(2, 2);
+            this._documentSplitContainer.Name = "_documentSplitContainer";
+            this._documentSplitContainer.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
-            // tableView2
+            // _documentSplitContainer.Panel1
             // 
-            this.tableView2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableView2.FilterTextBoxWidth = 132;
-            this.tableView2.Location = new System.Drawing.Point(0, 0);
-            this.tableView2.Margin = new System.Windows.Forms.Padding(4);
-            this.tableView2.MultiSelect = false;
-            this.tableView2.Name = "tableView2";
-            this.tableView2.ReadOnly = false;
-            this.tableView2.Size = new System.Drawing.Size(480, 162);
-            this.tableView2.TabIndex = 37;
-            this.tableView2.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this._documentSplitContainer.Panel1.Controls.Add(this._documentTableView);
+            // 
+            // _documentSplitContainer.Panel2
+            // 
+            this._documentSplitContainer.Panel2.Controls.Add(this._documentBrowser);
+            this._documentSplitContainer.Size = new System.Drawing.Size(480, 567);
+            this._documentSplitContainer.SplitterDistance = 162;
+            this._documentSplitContainer.TabIndex = 38;
+            // 
+            // _documentTableView
+            // 
+            this._documentTableView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._documentTableView.FilterTextBoxWidth = 132;
+            this._documentTableView.Location = new System.Drawing.Point(0, 0);
+            this._documentTableView.Margin = new System.Windows.Forms.Padding(4);
+            this._documentTableView.MultiSelect = false;
+            this._documentTableView.Name = "_documentTableView";
+            this._documentTableView.ReadOnly = false;
+            this._documentTableView.Size = new System.Drawing.Size(480, 162);
+            this._documentTableView.TabIndex = 37;
+            this._documentTableView.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            // 
+            // _documentBrowser
+            // 
+            this._documentBrowser.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._documentBrowser.Location = new System.Drawing.Point(0, 0);
+            this._documentBrowser.Margin = new System.Windows.Forms.Padding(2);
+            this._documentBrowser.MinimumSize = new System.Drawing.Size(15, 16);
+            this._documentBrowser.Name = "_documentBrowser";
+            this._documentBrowser.Size = new System.Drawing.Size(480, 401);
+            this._documentBrowser.TabIndex = 0;
             // 
             // _cancelButton
             // 
@@ -459,24 +477,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._acceptButton.Text = "OK";
             this._acceptButton.UseVisualStyleBackColor = true;
             this._acceptButton.Click += new System.EventHandler(this._placeOrderButton_Click);
-            // 
-            // _documentSplitContainer
-            // 
-            this._documentSplitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._documentSplitContainer.Location = new System.Drawing.Point(2, 2);
-            this._documentSplitContainer.Name = "_documentSplitContainer";
-            this._documentSplitContainer.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            // 
-            // _documentSplitContainer.Panel1
-            // 
-            this._documentSplitContainer.Panel1.Controls.Add(this.tableView2);
-            // 
-            // _documentSplitContainer.Panel2
-            // 
-            this._documentSplitContainer.Panel2.Controls.Add(this.webBrowser1);
-            this._documentSplitContainer.Size = new System.Drawing.Size(480, 567);
-            this._documentSplitContainer.SplitterDistance = 162;
-            this._documentSplitContainer.TabIndex = 38;
             // 
             // OrderEntryComponentControl
             // 
@@ -520,8 +520,8 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         private System.Windows.Forms.Button _acceptButton;
         private System.Windows.Forms.TabControl tabControl2;
         private System.Windows.Forms.TabPage tabPage4;
-        private ClearCanvas.Desktop.View.WinForms.TableView tableView2;
-        private System.Windows.Forms.WebBrowser webBrowser1;
+        private ClearCanvas.Desktop.View.WinForms.TableView _documentTableView;
+        private System.Windows.Forms.WebBrowser _documentBrowser;
         private ClearCanvas.Ris.Client.View.WinForms.LookupField _diagnosticService;
         private System.Windows.Forms.Button _addConsultantButton;
         private ClearCanvas.Ris.Client.View.WinForms.LookupField _consultantLookup;

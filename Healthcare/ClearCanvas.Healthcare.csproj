@@ -132,6 +132,8 @@
     <Compile Include="TechnologistScheduledWorklist.cs" />
     <Compile Include="TechnologistSuspendedWorklist.cs" />
     <Compile Include="TechnologistUndocumentedWorklist.cs" />
+    <Compile Include="Tests\TestMimeDocumentFactory.cs" />
+    <Compile Include="Tests\TestOrderAttachmentFactory.cs" />
     <Compile Include="Tests\TestDiagnosticServiceFactory.cs" />
     <Compile Include="Tests\TestVisitFactory.cs" />
     <Compile Include="Tests\TestPatientFactory.cs" />

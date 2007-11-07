@@ -30,7 +30,6 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -41,7 +40,7 @@ using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry;
 using ClearCanvas.Healthcare.Workflow;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
-using ClearCanvas.Workflow;
+using ClearCanvas.Ris.Application.Services.MimeDocumentService;
 
 namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 {
@@ -303,6 +302,16 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                         return rp;
                     });
 
+            List<OrderAttachment> attachments = CollectionUtils.Map<OrderAttachmentSummary, OrderAttachment>(
+                requisition.Attachments,
+                delegate(OrderAttachmentSummary summary)
+                    {
+                        MimeDocument doc = PersistenceContext.Load<MimeDocument>(summary.Document.DocumentRef).As<MimeDocument>();
+                        return new OrderAttachment(
+                            EnumUtils.GetEnumValue<OrderAttachmentCategoryEnum>(summary.Category, this.PersistenceContext),
+                            doc);
+                    });
+
             // obtain a new acc number
             IAccessionNumberBroker broker = PersistenceContext.GetBroker<IAccessionNumberBroker>();
             string accNum = broker.GetNextAccessionNumber();
@@ -319,7 +328,8 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                     requisition.SchedulingRequestTime,
                     orderingPhysician,
                     consultingPractitioners,
-                    procedures);
+                    procedures,
+                    attachments);
 
             return order;
         }

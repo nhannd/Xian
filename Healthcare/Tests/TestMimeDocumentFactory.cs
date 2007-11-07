@@ -29,39 +29,23 @@
 
 #endregion
 
-using System.ServiceModel;
+using System;
+using System.Collections.Generic;
+using System.Text;
 
-namespace ClearCanvas.Ris.Application.Common.MimeDocumentService
+namespace ClearCanvas.Healthcare.Tests
 {
-    [ServiceContract]
-    public interface IMimeDocumentService
+    internal static class TestMimeDocumentFactory
     {
-        [OperationContract]
-        GetAttachDocumentFormDataResponse GetAttachDocumentFormData(GetAttachDocumentFormDataRequest request);
+        internal static MimeDocument CreateMimeDocument()
+        {
+            string testString = "Test Mime Document";
 
-        /// <summary>
-        /// Get the binary data of the document
-        /// </summary>
-        /// <param name="request"><see cref="GetDocumentDataRequest"/></param>
-        /// <returns><see cref="GetDocumentDataResponse"/></returns>
-        [OperationContract]
-        GetDocumentDataResponse GetDocumentData(GetDocumentDataRequest request);
-
-        /// <summary>
-        /// Get a list of documents for a patient
-        /// </summary>
-        /// <param name="request"><see cref="GetAttachmentsForPatientRequest"/></param>
-        /// <returns><see cref="GetAttachmentsForPatientResponse"/></returns>
-        [OperationContract]
-        GetAttachmentsForPatientResponse GetAttachmentsForPatient(GetAttachmentsForPatientRequest request);
-
-        /// <summary>
-        /// Get a list of documents for an order
-        /// </summary>
-        /// <param name="request"><see cref="GetAttachmentsForOrderRequest"/></param>
-        /// <returns><see cref="GetAttachmentsForOrderResponse"/></returns>
-        [OperationContract]
-        GetAttachmentsForOrderResponse GetAttachmentsForOrder(GetAttachmentsForOrderRequest request);
-
+            return new MimeDocument(
+                "txt", 
+                "txt", 
+                DateTime.Now, 
+                new MimeDocumentData(Encoding.ASCII.GetBytes(testString)));
+        }
     }
 }

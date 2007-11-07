@@ -29,6 +29,11 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         private void InitializeComponent()
         {
             this._browser = new System.Windows.Forms.WebBrowser();
+            this._splitContainer = new System.Windows.Forms.SplitContainer();
+            this._attachments = new ClearCanvas.Desktop.View.WinForms.TableView();
+            this._splitContainer.Panel1.SuspendLayout();
+            this._splitContainer.Panel2.SuspendLayout();
+            this._splitContainer.SuspendLayout();
             this.SuspendLayout();
             // 
             // _browser
@@ -37,16 +42,47 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this._browser.Location = new System.Drawing.Point(0, 0);
             this._browser.MinimumSize = new System.Drawing.Size(20, 20);
             this._browser.Name = "_browser";
-            this._browser.Size = new System.Drawing.Size(227, 288);
+            this._browser.Size = new System.Drawing.Size(415, 322);
             this._browser.TabIndex = 0;
+            // 
+            // _splitContainer
+            // 
+            this._splitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._splitContainer.Location = new System.Drawing.Point(0, 0);
+            this._splitContainer.Name = "_splitContainer";
+            this._splitContainer.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // _splitContainer.Panel1
+            // 
+            this._splitContainer.Panel1.Controls.Add(this._attachments);
+            // 
+            // _splitContainer.Panel2
+            // 
+            this._splitContainer.Panel2.Controls.Add(this._browser);
+            this._splitContainer.Size = new System.Drawing.Size(415, 440);
+            this._splitContainer.SplitterDistance = 114;
+            this._splitContainer.TabIndex = 1;
+            // 
+            // _attachments
+            // 
+            this._attachments.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._attachments.Location = new System.Drawing.Point(0, 0);
+            this._attachments.Name = "_attachments";
+            this._attachments.ReadOnly = false;
+            this._attachments.Size = new System.Drawing.Size(415, 114);
+            this._attachments.TabIndex = 0;
+            this._attachments.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             // 
             // MimeDocumentPreviewComponentControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this._browser);
+            this.Controls.Add(this._splitContainer);
             this.Name = "MimeDocumentPreviewComponentControl";
-            this.Size = new System.Drawing.Size(227, 288);
+            this.Size = new System.Drawing.Size(415, 440);
+            this._splitContainer.Panel1.ResumeLayout(false);
+            this._splitContainer.Panel2.ResumeLayout(false);
+            this._splitContainer.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -54,5 +90,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         #endregion
 
         private System.Windows.Forms.WebBrowser _browser;
+        private System.Windows.Forms.SplitContainer _splitContainer;
+        private ClearCanvas.Desktop.View.WinForms.TableView _attachments;
     }
 }

@@ -33,41 +33,24 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-using ClearCanvas.Common;
-using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.View.WinForms;
-
-namespace ClearCanvas.Ris.Client.View.WinForms
+namespace ClearCanvas.Healthcare.Tests
 {
-    /// <summary>
-    /// Provides a Windows Forms view onto <see cref="BiographyDocumentComponent"/>
-    /// </summary>
-    [ExtensionOf(typeof(BiographyDocumentComponentViewExtensionPoint))]
-    public class BiographyDocumentComponentView : WinFormsView, IApplicationComponentView
+    internal static class TestOrderAttachmentFactory
     {
-        private BiographyDocumentComponent _component;
-        private BiographyDocumentComponentControl _control;
-
-
-        #region IApplicationComponentView Members
-
-        public void SetComponent(IApplicationComponent component)
+        internal static IList<OrderAttachment> CreateOrderAttachments()
         {
-            _component = (BiographyDocumentComponent)component;
+            IList<OrderAttachment> attachments = new List<OrderAttachment>();
+
+            attachments.Add(CreateOrderAttachment());
+
+            return attachments;
         }
 
-        #endregion
-
-        public override object GuiElement
+        internal static OrderAttachment CreateOrderAttachment()
         {
-            get
-            {
-                if (_control == null)
-                {
-                    _control = new BiographyDocumentComponentControl(_component);
-                }
-                return _control;
-            }
+            return new OrderAttachment(
+                new OrderAttachmentCategoryEnum("PD", "Pending", null),
+                TestMimeDocumentFactory.CreateMimeDocument());
         }
     }
 }

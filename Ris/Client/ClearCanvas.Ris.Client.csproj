@@ -52,8 +52,8 @@
       <DependentUpon>AddressesSummaryComponentSettings.settings</DependentUpon>
     </Compile>
     <Compile Include="BiographyDemographicComponent.cs" />
-    <Compile Include="BiographyDocumentComponent.cs" />
-    <Compile Include="BiographyDocumentTable.cs" />
+    <Compile Include="OrderAttachmentTable.cs" />
+    <Compile Include="PatientAttachmentTable.cs" />
     <Compile Include="BiographyFeedbackComponent.cs" />
     <Compile Include="BiographyFeedbackTable.cs" />
     <Compile Include="BiographyNoteComponent.cs" />
@@ -96,6 +96,7 @@
     <Compile Include="RandomUtils.cs" />
     <Compile Include="SearchComponent.cs" />
     <Compile Include="RemoteSuggestionProvider.cs" />
+    <Compile Include="TempFileManager.cs" />
     <Compile Include="WorkflowFolderFactory.cs" />
     <Compile Include="Formatting\AddressFormat.cs" />
     <Compile Include="AddressEditorComponentSettings.cs" />

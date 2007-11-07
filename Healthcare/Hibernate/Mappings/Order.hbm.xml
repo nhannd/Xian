@@ -32,10 +32,18 @@
       <many-to-many column="PractitionerOID_" class="ExternalPractitioner" fetch="join"/>
     </set>
 
-    <set name="Attachments" lazy="true" inverse="true" cascade="all-delete-orphan" access="nosetter.camelcase-underscore">
+    <idbag name="Attachments" table="OrderAttachment_" lazy="true" access="nosetter.camelcase-underscore">
+      <collection-id column="OID_" type="Guid">
+        <generator class="guid.comb"/>
+      </collection-id>
       <key column="OrderOID_"/>
-      <one-to-many class="OrderAttachment"/>
-    </set>
+      <composite-element class="OrderAttachment">
+        <many-to-one name="Category" column="Category_" class="OrderAttachmentCategoryEnum"/>
+
+        <!-- this is supposed to be an one-to-one mapping with document, but unique="true is currently not supported with value member"  -->
+        <many-to-one name="Document" column="MimeDocumentOID_" class="MimeDocument" not-null="true" cascade="all" fetch="join"/>
+      </composite-element>
+    </idbag>
 
     <!-- Indications.... may need to be a coded-value, not sure yet -->
     <property name="ReasonForStudy" column="ReasonForStudy_" type="String" length="200"/>

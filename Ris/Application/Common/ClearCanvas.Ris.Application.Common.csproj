@@ -79,10 +79,16 @@
     <Compile Include="Admin\ExternalPractitionerAdmin\LoadExternalPractitionerForEditResponse.cs" />
     <Compile Include="Admin\ExternalPractitionerAdmin\UpdateExternalPractitionerRequest.cs" />
     <Compile Include="Admin\ExternalPractitionerAdmin\UpdateExternalPractitionerResponse.cs" />
+    <Compile Include="PatientAttachmentSummary.cs" />
+    <Compile Include="OrderAttachmentSummary.cs" />
     <Compile Include="MimeDocumentService\GetAttachFaxFormDataRequest.cs" />
     <Compile Include="MimeDocumentService\GetAttachFaxFormDataResponse.cs" />
-    <Compile Include="MimeDocumentService\GetFaxDataRequest.cs" />
-    <Compile Include="MimeDocumentService\GetFaxDataResponse.cs" />
+    <Compile Include="MimeDocumentService\GetAttachmentsForOrderRequest.cs" />
+    <Compile Include="MimeDocumentService\GetAttachmentsForOrderResponse.cs" />
+    <Compile Include="MimeDocumentService\GetAttachmentsForPatientRequest.cs" />
+    <Compile Include="MimeDocumentService\GetAttachmentsForPatientResponse.cs" />
+    <Compile Include="MimeDocumentService\GetDocumentDataRequest.cs" />
+    <Compile Include="MimeDocumentService\GetDocumentDataResponse.cs" />
     <Compile Include="MimeDocumentService\IMimeDocumentService.cs" />
     <Compile Include="ExternalPractitionerDetail.cs" />
     <Compile Include="ExternalPractitionerSummary.cs" />
@@ -504,7 +510,6 @@
     <EmbeddedResource Include="SR.resx">
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>SR.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

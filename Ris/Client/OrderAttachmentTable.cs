@@ -29,39 +29,26 @@
 
 #endregion
 
-using System.ServiceModel;
+using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.Tables;
+using ClearCanvas.Ris.Application.Common;
 
-namespace ClearCanvas.Ris.Application.Common.MimeDocumentService
+namespace ClearCanvas.Ris.Client
 {
-    [ServiceContract]
-    public interface IMimeDocumentService
+    public class OrderAttachmentTable : Table<OrderAttachmentSummary>
     {
-        [OperationContract]
-        GetAttachDocumentFormDataResponse GetAttachDocumentFormData(GetAttachDocumentFormDataRequest request);
+        public OrderAttachmentTable()
+        {
+            this.Columns.Add(new TableColumn<OrderAttachmentSummary, string>("Date",
+                delegate(OrderAttachmentSummary summary) { return Format.Date(summary.Document.CreationTime); }, 0.2f));
+            this.Columns.Add(new TableColumn<OrderAttachmentSummary, string>("Category",
+                delegate(OrderAttachmentSummary summary) { return summary.Category.Value; }, 0.2f));
 
-        /// <summary>
-        /// Get the binary data of the document
-        /// </summary>
-        /// <param name="request"><see cref="GetDocumentDataRequest"/></param>
-        /// <returns><see cref="GetDocumentDataResponse"/></returns>
-        [OperationContract]
-        GetDocumentDataResponse GetDocumentData(GetDocumentDataRequest request);
+            // Sort the table by descending date initially
+            int sortColumnIndex = this.Columns.FindIndex(delegate(TableColumnBase<OrderAttachmentSummary> column)
+                { return column.Name.Equals("Date"); });
 
-        /// <summary>
-        /// Get a list of documents for a patient
-        /// </summary>
-        /// <param name="request"><see cref="GetAttachmentsForPatientRequest"/></param>
-        /// <returns><see cref="GetAttachmentsForPatientResponse"/></returns>
-        [OperationContract]
-        GetAttachmentsForPatientResponse GetAttachmentsForPatient(GetAttachmentsForPatientRequest request);
-
-        /// <summary>
-        /// Get a list of documents for an order
-        /// </summary>
-        /// <param name="request"><see cref="GetAttachmentsForOrderRequest"/></param>
-        /// <returns><see cref="GetAttachmentsForOrderResponse"/></returns>
-        [OperationContract]
-        GetAttachmentsForOrderResponse GetAttachmentsForOrder(GetAttachmentsForOrderRequest request);
-
+            this.Sort(new TableSortParams(this.Columns[sortColumnIndex], false));
+        }
     }
 }

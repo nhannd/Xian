@@ -619,6 +619,15 @@ namespace ClearCanvas.Ris.Client.Adt {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to display document.
+        /// </summary>
+        internal static string ExceptionFailedToDisplayDocument {
+            get {
+                return ResourceManager.GetString("ExceptionFailedToDisplayDocument", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to An error occured while trying to execute the query.
         /// </summary>
         internal static string ExceptionFailedToExecuteQuery {
@@ -885,6 +894,15 @@ namespace ClearCanvas.Ris.Client.Adt {
         internal static string TitleDiscontinueMps {
             get {
                 return ResourceManager.GetString("TitleDiscontinueMps", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Documents.
+        /// </summary>
+        internal static string TitleDocuments {
+            get {
+                return ResourceManager.GetString("TitleDocuments", resourceCulture);
             }
         }
         

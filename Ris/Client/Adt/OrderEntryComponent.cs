@@ -44,6 +44,7 @@ using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 using ClearCanvas.Ris.Client.Formatting;
 using System.Collections;
 using ClearCanvas.Desktop.Validation;
+using ClearCanvas.Ris.Application.Common.MimeDocumentService;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -106,6 +107,10 @@ namespace ClearCanvas.Ris.Client.Adt
         private string _indication;
         private List<EnumValueInfo> _lateralityChoices;
 
+        private readonly OrderAttachmentTable _attachmentTable = new OrderAttachmentTable();
+        private OrderAttachmentSummary _selectedAttachment;
+        private string _tempAttachmentFileName;
+        private event EventHandler _attachmentSelectionChanged;
 
         /// <summary>
         /// Constructor for creating a new order.
@@ -113,6 +118,15 @@ namespace ClearCanvas.Ris.Client.Adt
         public OrderEntryComponent(EntityRef patientRef)
             : this(patientRef, null, Mode.NewOrder)
         {
+        }
+
+        /// <summary>
+        /// Constructor for creating a new order with attachments.
+        /// </summary>
+        public OrderEntryComponent(EntityRef patientRef, IList<OrderAttachmentSummary> attachments)
+            : this(patientRef, null, Mode.NewOrder)
+        {
+            _attachmentTable.Items.AddRange(attachments);
         }
 
         /// <summary>
@@ -174,7 +188,6 @@ namespace ClearCanvas.Ris.Client.Adt
             _consultantsActionModel.Delete.SetClickHandler(RemoveSelectedConsultant);
             UpdateConsultantActionModel();
 
-
             this.Validation.Add(OrderEntryComponentSettings.Default.ValidationRules);
             this.Validation.Add(new ValidationRule("SelectedCancelReason",
                 delegate
@@ -232,6 +245,11 @@ namespace ClearCanvas.Ris.Client.Adt
         }
 
         #region Presentation Model
+
+        public EntityRef OrderRef
+        {
+            get { return _orderRef; }
+        }
 
         public bool IsDiagnosticServiceEditable
         {
@@ -618,6 +636,7 @@ namespace ClearCanvas.Ris.Client.Adt
             requisition.OrderingPractitioner = _selectedOrderingPractitioner;
             requisition.RequestedProcedures = new List<ProcedureRequisition>(_proceduresTable.Items);
             requisition.CopiesToPractitioners = new List<ExternalPractitionerSummary>(_consultantsTable.Items);
+            requisition.Attachments = new List<OrderAttachmentSummary>(_attachmentTable.Items);
 
             return requisition;
         }
@@ -638,6 +657,8 @@ namespace ClearCanvas.Ris.Client.Adt
 
             _consultantsTable.Items.Clear();
             _consultantsTable.Items.AddRange(existingOrder.CopiesToPractitioners);
+
+            _attachmentTable.Items.AddRange(existingOrder.Attachments);
         }
 
         private bool SubmitOrder()
@@ -651,16 +672,19 @@ namespace ClearCanvas.Ris.Client.Adt
                     {
                         if (_mode == Mode.NewOrder)
                         {
-                            service.PlaceOrder(new PlaceOrderRequest(requisition));
+                            PlaceOrderResponse response = service.PlaceOrder(new PlaceOrderRequest(requisition));
+                            _orderRef = response.OrderRef;
                         }
                         else if (_mode == Mode.ModifyOrder)
                         {
-                            service.ModifyOrder(new ModifyOrderRequest(_orderRef, requisition));
+                            ModifyOrderResponse response = service.ModifyOrder(new ModifyOrderRequest(_orderRef, requisition));
+                            _orderRef = response.OrderRef;
                         }
                         else if (_mode == Mode.ReplaceOrder)
                         {
                             ReplaceOrderRequest request = new ReplaceOrderRequest(_orderRef, _selectedCancelReason, requisition);
-                            service.ReplaceOrder(request);
+                            ReplaceOrderResponse response = service.ReplaceOrder(request);
+                            _orderRef = response.OrderRef;
                         }
                     });
 
@@ -677,5 +701,97 @@ namespace ClearCanvas.Ris.Client.Adt
             }
         }
 
+        #region Attachment Methods
+
+        public ITable Attachments
+        {
+            get { return _attachmentTable; }
+        }
+
+        public ISelection SelectedAttachment
+        {
+            get { return new Selection(_selectedAttachment); }
+            set
+            {
+                if (value.Item != _selectedAttachment)
+                {
+                    _selectedAttachment = (OrderAttachmentSummary)value.Item;
+
+                    if (_selectedAttachment == null)
+                        ClearPreviewData();
+                    else 
+                        SetPreviewData(
+                            _selectedAttachment.Document.MimeType,
+                            _selectedAttachment.Document.FileExtension,
+                            _selectedAttachment.Document.BinaryDataRef);                    
+                }
+            }
+        }
+
+        public event EventHandler AttachmentSelectionChanged
+        {
+            add { _attachmentSelectionChanged += value; }
+            remove { _attachmentSelectionChanged -= value; }
+        }
+
+        public string TempFileName
+        {
+            get { return _tempAttachmentFileName; }
+        }
+
+        private void ClearPreviewData()
+        {
+            SetPreviewData(null, null, null);    
+        }
+
+        private void SetPreviewData(string mimeType, string fileExtension, EntityRef dataRef)
+        {
+            if (dataRef == null)
+            {
+                _tempAttachmentFileName = null;                    
+            }
+            else
+            {
+                string tempFile = TempFileManager.Instance.GetTempFile(dataRef);
+                if (String.IsNullOrEmpty(tempFile))
+                {
+                    try
+                    {
+                        Byte[] data = RetrieveAttachmentData(dataRef);
+                        _tempAttachmentFileName = TempFileManager.Instance.CreateTemporaryFile(dataRef, fileExtension, data);
+                    }
+                    catch (Exception e)
+                    {
+                        _tempAttachmentFileName = null;
+                        ExceptionHandler.Report(e, SR.ExceptionFailedToDisplayDocument, this.Host.DesktopWindow);
+                    }
+                }
+                else
+                {
+                    if (Equals(_tempAttachmentFileName, tempFile))
+                        return;  // nothing has changed
+
+                    _tempAttachmentFileName = tempFile;
+                }
+            }
+
+            EventsHelper.Fire(_attachmentSelectionChanged, this, EventArgs.Empty);
+        }
+
+        private static byte[] RetrieveAttachmentData(EntityRef dataRef)
+        {
+            byte[] data = null;
+
+            Platform.GetService<IMimeDocumentService>(
+                delegate(IMimeDocumentService service)
+                    {
+                        GetDocumentDataResponse response = service.GetDocumentData(new GetDocumentDataRequest(dataRef));
+                        data = response.BinaryData;
+                    });
+
+            return data;
+        }
+
+        #endregion
     }
 }

@@ -42,6 +42,7 @@ using ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry;
 using ClearCanvas.Ris.Application.Common.Admin;
 using ClearCanvas.Ris.Application.Common.Admin.DiagnosticServiceAdmin;
 using ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin;
+using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -233,6 +234,23 @@ namespace ClearCanvas.Ris.Client
                     requisition.Priority = randomPriority;
                     requisition.ReasonForStudy = "Randomly generated test order";
                     requisition.SchedulingRequestTime = Platform.Time;
+
+                    LoadDiagnosticServiceBreakdownResponse dsResponse = service.LoadDiagnosticServiceBreakdown(
+                        new LoadDiagnosticServiceBreakdownRequest(diagnosticService.DiagnosticServiceRef));
+
+                    requisition.RequestedProcedures = new List<ProcedureRequisition>();
+                    requisition.RequestedProcedures.AddRange(
+                       CollectionUtils.Map<RequestedProcedureTypeDetail, ProcedureRequisition>(
+                           dsResponse.DiagnosticServiceDetail.RequestedProcedureTypes,
+                           delegate(RequestedProcedureTypeDetail rpt)
+                           {
+                               ProcedureRequisition req = new ProcedureRequisition(rpt.GetSummary(), randomFacility);
+                               req.ScheduledTime = Platform.Time;
+                               return req;
+                           }));
+                   
+                    requisition.CopiesToPractitioners = new List<ExternalPractitionerSummary>();
+                    requisition.Attachments = new List<OrderAttachmentSummary>();
 
                     PlaceOrderResponse response = service.PlaceOrder(new PlaceOrderRequest(requisition));
 

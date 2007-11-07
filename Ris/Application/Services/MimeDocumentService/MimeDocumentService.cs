@@ -29,9 +29,12 @@
 
 #endregion
 
+using System.Collections.Generic;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
+using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.MimeDocumentService;
 using ClearCanvas.Ris.Application.Services;
 
@@ -55,6 +58,43 @@ namespace ClearCanvas.Ris.Application.Services.MimeDocumentService
             MimeDocumentData data = this.PersistenceContext.Load<MimeDocumentData>(request.DocumentDataRef);
 
             return new GetDocumentDataResponse(data.BinaryData);
+        }
+
+        [ReadOperation]
+        public GetAttachmentsForPatientResponse GetAttachmentsForPatient(GetAttachmentsForPatientRequest request)
+        {
+            Patient patient = PersistenceContext.Load<Patient>(request.PatientRef);
+            MimeDocumentAssembler assembler = new MimeDocumentAssembler();
+
+            return new GetAttachmentsForPatientResponse(
+                CollectionUtils.Map<PatientAttachment, PatientAttachmentSummary, List<PatientAttachmentSummary>>(
+                    patient.Attachments,
+                    delegate(PatientAttachment attachment)
+                        {
+                            return new PatientAttachmentSummary(
+                                EnumUtils.GetEnumValueInfo(attachment.Category),
+                                assembler.CreateMimeDocumentSummary(attachment.Document));
+                        }));
+        }
+
+        [ReadOperation]
+        public GetAttachmentsForOrderResponse GetAttachmentsForOrder(GetAttachmentsForOrderRequest request)
+        {
+            if (request.OrderRef == null)
+                return new GetAttachmentsForOrderResponse(new List<OrderAttachmentSummary>());
+
+            Order order = PersistenceContext.Load<Order>(request.OrderRef);
+
+            MimeDocumentAssembler assembler = new MimeDocumentAssembler();
+            return new GetAttachmentsForOrderResponse(
+                CollectionUtils.Map<OrderAttachment, OrderAttachmentSummary, List<OrderAttachmentSummary>>(
+                    order.Attachments,
+                    delegate(OrderAttachment attachment)
+                    {
+                        return new OrderAttachmentSummary(
+                            EnumUtils.GetEnumValueInfo(attachment.Category),
+                            assembler.CreateMimeDocumentSummary(attachment.Document));
+                    }));
         }
     }
 }

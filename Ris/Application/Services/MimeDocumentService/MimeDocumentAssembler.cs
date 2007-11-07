@@ -29,39 +29,29 @@
 
 #endregion
 
-using System.ServiceModel;
+using ClearCanvas.Healthcare;
+using ClearCanvas.Ris.Application.Common;
 
-namespace ClearCanvas.Ris.Application.Common.MimeDocumentService
+namespace ClearCanvas.Ris.Application.Services.MimeDocumentService
 {
-    [ServiceContract]
-    public interface IMimeDocumentService
+    public class MimeDocumentAssembler
     {
-        [OperationContract]
-        GetAttachDocumentFormDataResponse GetAttachDocumentFormData(GetAttachDocumentFormDataRequest request);
+        public MimeDocumentSummary CreateMimeDocumentSummary(MimeDocument doc)
+        {
+            MimeDocumentSummary summary = new MimeDocumentSummary();
+            
+            UpdateMimeDocument(doc, summary);
 
-        /// <summary>
-        /// Get the binary data of the document
-        /// </summary>
-        /// <param name="request"><see cref="GetDocumentDataRequest"/></param>
-        /// <returns><see cref="GetDocumentDataResponse"/></returns>
-        [OperationContract]
-        GetDocumentDataResponse GetDocumentData(GetDocumentDataRequest request);
+            return summary;
+        }
 
-        /// <summary>
-        /// Get a list of documents for a patient
-        /// </summary>
-        /// <param name="request"><see cref="GetAttachmentsForPatientRequest"/></param>
-        /// <returns><see cref="GetAttachmentsForPatientResponse"/></returns>
-        [OperationContract]
-        GetAttachmentsForPatientResponse GetAttachmentsForPatient(GetAttachmentsForPatientRequest request);
-
-        /// <summary>
-        /// Get a list of documents for an order
-        /// </summary>
-        /// <param name="request"><see cref="GetAttachmentsForOrderRequest"/></param>
-        /// <returns><see cref="GetAttachmentsForOrderResponse"/></returns>
-        [OperationContract]
-        GetAttachmentsForOrderResponse GetAttachmentsForOrder(GetAttachmentsForOrderRequest request);
-
+        public void UpdateMimeDocument(MimeDocument doc, MimeDocumentSummary summary)
+        {
+            summary.DocumentRef = doc.GetRef();
+            summary.CreationTime = doc.CreationTime;
+            summary.MimeType = doc.MimeType;
+            summary.FileExtension = doc.FileExtension;
+            summary.BinaryDataRef = doc.Data.GetRef();
+        }
     }
 }

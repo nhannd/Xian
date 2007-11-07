@@ -124,11 +124,19 @@ namespace ClearCanvas.Ris.Client.Adt
 
                     if (randomProfile == null)
                     {
-                        // Search for all patient, slow but works
+                        // Search for all male patient, slow but works
                         request = new SearchPatientRequest();
                         request.Sex = new EnumValueInfo("M", "Male");
                         response = service.SearchPatient(request);
                         randomProfile = RandomUtils.ChooseRandom(response.Profiles);
+
+                        if (randomProfile == null)
+                        {
+                            // Search for all female patient
+                            request.Sex = new EnumValueInfo("F", "Female");
+                            response = service.SearchPatient(request);
+                            randomProfile = RandomUtils.ChooseRandom(response.Profiles);
+                        }
                     }
                 });
 

@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.IO;
 using System.Collections.Generic;
 using ClearCanvas.Common;
@@ -6,6 +7,8 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common.MimeDocumentService;
+using ClearCanvas.Desktop.Tables;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -23,27 +26,147 @@ namespace ClearCanvas.Ris.Client
     [AssociateView(typeof(MimeDocumentPreviewComponentViewExtensionPoint))]
     public class MimeDocumentPreviewComponent : ApplicationComponent
     {
+        public enum Mode
+        {
+            PatientAttachment,
+            OrderAttachment
+        }
+
+        // Summary component members
+        private readonly bool _showSummary;
+        private readonly EntityRef _entityRef;
+        private readonly Mode _mode;
+        private readonly ITable _attachmentTable;
+        private ISelection _selection;
+
+        // Preview members
         private string _tempFileName;
         private event EventHandler _dataChanged;
 
-        private static readonly Dictionary<EntityRef, string> _tempFileDictionary = new Dictionary<EntityRef, string>();
-
-        ~MimeDocumentPreviewComponent()
+        /// <summary>
+        /// Constructor for showing only the preview section
+        /// </summary>
+        public MimeDocumentPreviewComponent()
         {
-            try
+            _showSummary = false;
+        }
+
+        /// <summary>
+        /// Constructors for showing the patient attachments in the summary and preview sections
+        /// </summary>
+        /// <param name="attachments">A list of patient attachments</param>
+        public MimeDocumentPreviewComponent(IList<PatientAttachmentSummary> attachments)
+        {
+            _showSummary = true;
+            _mode = Mode.PatientAttachment;
+
+            _attachmentTable = new PatientAttachmentTable();
+            _attachmentTable.Items.AddRange(attachments);
+        }
+
+        /// <summary>
+        /// Constructors for showing the order attachments in the summary and preview sections
+        /// </summary>
+        /// <param name="attachments">A list of order attachments</param>
+        public MimeDocumentPreviewComponent(IList<OrderAttachmentSummary> attachments)
+        {
+            _showSummary = true;
+            _mode = Mode.OrderAttachment;
+
+            _attachmentTable = new OrderAttachmentTable();
+            _attachmentTable.Items.AddRange(attachments);
+        }
+
+        /// <summary>
+        /// Constructor for showing both the summary and preview sections
+        /// The component will retrieve a list of MimeDocuments
+        /// </summary>
+        /// <param name="entityRef">Patient or Order entity ref</param>
+        /// <param name="mode"></param>
+        public MimeDocumentPreviewComponent(EntityRef entityRef, Mode mode)
+        {
+            _showSummary = true;
+
+            _entityRef = entityRef;
+            _mode = mode;
+
+            if (mode == Mode.PatientAttachment)
+                _attachmentTable = new PatientAttachmentTable();
+            else
+                _attachmentTable = new OrderAttachmentTable();
+        }
+
+        public override void Start()
+        {
+            if (_showSummary && _entityRef != null)
             {
-                // Clean up all temporary files
-                foreach (EntityRef key in _tempFileDictionary.Keys)
+                if (_mode == Mode.PatientAttachment)
                 {
-                    if (File.Exists(_tempFileDictionary[key]))
-                        File.Delete(_tempFileDictionary[key]);
+                    Platform.GetService<IMimeDocumentService>(
+                        delegate(IMimeDocumentService service)
+                            {
+                                GetAttachmentsForPatientResponse response =
+                                    service.GetAttachmentsForPatient(new GetAttachmentsForPatientRequest(_entityRef));
+                                _attachmentTable.Items.AddRange(response.Attachments);
+                            });
+                }
+                else
+                {
+                    Platform.GetService<IMimeDocumentService>(
+                        delegate(IMimeDocumentService service)
+                            {
+                                GetAttachmentsForOrderResponse response =
+                                    service.GetAttachmentsForOrder(new GetAttachmentsForOrderRequest(_entityRef));
+                                _attachmentTable.Items.AddRange(response.Attachments);
+                            });
                 }
             }
-            catch (Exception e)
+            base.Start();
+        }
+
+        #region Summary Methods
+
+        public bool ShowSummary
+        {
+            get { return _showSummary; }
+        }
+
+        public ITable Attachments
+        {
+            get { return _attachmentTable; }
+        }
+
+        public ISelection Selection
+        {
+            get { return _selection; }
+            set
             {
-                Platform.Log(LogLevel.Warn, e, SR.ExceptioinFailedToDeleteTemporaryFiles);
+                if (_selection != value)
+                {
+                    _selection = value;
+
+                    if (_selection == null)
+                        this.ClearPreviewData();
+                    else
+                    {
+                        if (_mode == Mode.PatientAttachment)
+                        {
+                            PatientAttachmentSummary item = _selection.Item as PatientAttachmentSummary;
+                            this.SetPreviewData(item.Document.MimeType, item.Document.FileExtension, item.Document.BinaryDataRef);
+                        }
+                        else
+                        {
+                            OrderAttachmentSummary item = _selection.Item as OrderAttachmentSummary;
+                            this.SetPreviewData(item.Document.MimeType, item.Document.FileExtension, item.Document.BinaryDataRef);
+                        }
+                    }
+                }
             }
         }
+
+        #endregion
+
+        #region Preview Methods
 
         public void ClearPreviewData()
         {
@@ -58,28 +181,26 @@ namespace ClearCanvas.Ris.Client
             }
             else
             {
-                if (_tempFileDictionary.ContainsKey(dataRef) && File.Exists(_tempFileDictionary[dataRef]))
-                {
-                    if (Equals(_tempFileName, _tempFileDictionary[dataRef]))
-                        return;  // nothing has changed
-
-                    _tempFileName = _tempFileDictionary[dataRef];
-                }
-                else
+                string tempFile = TempFileManager.Instance.GetTempFile(dataRef);
+                if (String.IsNullOrEmpty(tempFile))
                 {
                     try
                     {
                         Byte[] data = RetrieveData(dataRef);
-                        _tempFileName = CreateTemporaryFile(fileExtension, data);
-
-                        // Remember the temp file
-                        _tempFileDictionary[dataRef] = _tempFileName;
+                        _tempFileName = TempFileManager.Instance.CreateTemporaryFile(dataRef, fileExtension, data);
                     }
                     catch (Exception e)
                     {
                         _tempFileName = null;
                         ExceptionHandler.Report(e, SR.ExceptionFailedToDisplayDocument, this.Host.DesktopWindow);
                     }
+                }
+                else
+                {
+                    if (Equals(_tempFileName, tempFile))
+                        return;  // nothing has changed
+
+                    _tempFileName = tempFile;
                 }
             }
 
@@ -111,15 +232,6 @@ namespace ClearCanvas.Ris.Client
             return data;
         }
 
-        private static string CreateTemporaryFile(string fileExtension, byte[] data)
-        {
-            string tempFileName = String.Format("{0}.{1}", System.IO.Path.GetTempFileName(), fileExtension);
-            FileStream fs = new FileStream(tempFileName, FileMode.Create);
-            fs.Write(data, 0, data.Length);
-            fs.Close();
-
-            return tempFileName;
-        }
-
+        #endregion
     }
 }

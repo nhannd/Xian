@@ -80,10 +80,10 @@ namespace ClearCanvas.Ris.Client
             
             // Create component for each tab
             BiographyOrderHistoryComponent orderHistoryComponent = new BiographyOrderHistoryComponent(_profileRef);
-            BiographyDocumentComponent documentComponent = new BiographyDocumentComponent();
             BiographyNoteComponent noteComponent = new BiographyNoteComponent(_patientProfile.Notes);
             BiographyFeedbackComponent feedbackComponent = new BiographyFeedbackComponent();
             BiographyDemographicComponent demographicComponent = new BiographyDemographicComponent(_profileRef, _patientProfile);
+            MimeDocumentPreviewComponent documentComponent = new MimeDocumentPreviewComponent(_patientRef, MimeDocumentPreviewComponent.Mode.PatientAttachment);
 
             // Create tab and tab groups
             TabComponentContainer tabContainer = new TabComponentContainer();

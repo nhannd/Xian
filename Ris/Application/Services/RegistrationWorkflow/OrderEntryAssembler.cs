@@ -29,17 +29,14 @@
 
 #endregion
 
-using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry;
-using ClearCanvas.Ris.Application.Services.Admin;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
-using Iesi.Collections;
-using Iesi.Collections.Generic;
 using ClearCanvas.Workflow;
+using ClearCanvas.Ris.Application.Services.MimeDocumentService;
 
 namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 {
@@ -75,6 +72,16 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                     return CreateProcedureRequisition(rp, context);
                 });
 
+            MimeDocumentAssembler mimeDocumentAssembler = new MimeDocumentAssembler();
+            requisition.Attachments = CollectionUtils.Map<OrderAttachment, OrderAttachmentSummary>(
+                order.Attachments,
+                delegate(OrderAttachment attachment)
+                    {
+                        return new OrderAttachmentSummary(
+                            EnumUtils.GetEnumValueInfo(attachment.Category),
+                            mimeDocumentAssembler.CreateMimeDocumentSummary(attachment.Document));
+                    });
+
             return requisition;
         }
 
@@ -102,6 +109,16 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                 {
                     return context.Load<ExternalPractitioner>(s.PractitionerRef, EntityLoadFlags.Proxy);
                 }));
+
+            // wipe out and reset the attachments
+            order.Attachments.Clear();
+            foreach (OrderAttachmentSummary summary in requisition.Attachments)
+            {
+                order.Attachments.Add(new OrderAttachment(
+                    EnumUtils.GetEnumValue<OrderAttachmentCategoryEnum>(summary.Category, context),
+                    context.Load<MimeDocument>(summary.Document.DocumentRef)));
+
+            }
         }
 
         public ProcedureRequisition CreateProcedureRequisition(RequestedProcedure rp, IPersistenceContext context)

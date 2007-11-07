@@ -66,7 +66,8 @@ namespace ClearCanvas.Healthcare {
             DateTime? schedulingRequestTime,
             DateTime? scheduledStartTime,
             ExternalPractitioner orderingPractitioner,
-            IList<ExternalPractitioner> copiesToPractitioners)
+            IList<ExternalPractitioner> copiesToPractitioners,
+            IList<OrderAttachment> attachments)
         {
             // create requested procedures according to the diagnostic service breakdown
             IList<RequestedProcedure> procedures = CollectionUtils.Map<RequestedProcedureType, RequestedProcedure>(diagnosticService.RequestedProcedureTypes,
@@ -80,7 +81,7 @@ namespace ClearCanvas.Healthcare {
 
             return NewOrder(accessionNumber, patient, visit, diagnosticService, reasonForStudy,
                 priority, orderingFacility, schedulingRequestTime, orderingPractitioner, copiesToPractitioners,
-                procedures);
+                procedures, attachments);
         }
 
 
@@ -98,7 +99,8 @@ namespace ClearCanvas.Healthcare {
             DateTime? schedulingRequestTime,
             ExternalPractitioner orderingPractitioner,
             IList<ExternalPractitioner> copiesToPractitioners,
-            IList<RequestedProcedure> procedures)
+            IList<RequestedProcedure> procedures,
+            IList<OrderAttachment> attachments)
         {
             // create the basic order
             Order order = new Order();
@@ -119,6 +121,11 @@ namespace ClearCanvas.Healthcare {
             foreach (RequestedProcedure rp in procedures)
             {
                 order.AddRequestedProcedure(rp);
+            }
+
+            foreach (OrderAttachment attachment in attachments)
+            {
+                order.Attachments.Add(attachment);
             }
 
             return order;
@@ -229,24 +236,6 @@ namespace ClearCanvas.Healthcare {
                 if (rp.Status == RequestedProcedureStatus.SC)
                     rp.Cancel();
             }
-        }
-
-        /// <summary>
-        /// Adds a document to this order, setting the order's <see cref="OrderAttachment.Order"/> property
-        /// to refer to this object.  Use this method rather than referring to the <see cref="Order.Attachments"/>
-        /// collection directly.
-        /// </summary>
-        /// <param name="attachment"></param>
-        public virtual void AddAttachment(OrderAttachment attachment)
-        {
-            if (attachment.Order != null)
-            {
-                //NB: technically we should remove the attachment from the other order's collection, but there
-                //seems to be a bug with NHibernate where it deletes the document if we do this
-                //attachment.Order.Attachments.Remove(attachment);
-            }
-            attachment.Order = this;
-            this.Attachments.Add(attachment);
         }
 
         #endregion

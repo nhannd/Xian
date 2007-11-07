@@ -79,5 +79,11 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
         /// </summary>
         [DataMember]
         public List<ExternalPractitionerSummary> CopiesToPractitioners;
+
+        /// <summary>
+        /// A list of attachments for this order.  Optional.
+        /// </summary>
+        [DataMember]
+        public List<OrderAttachmentSummary> Attachments;
     }
 }
