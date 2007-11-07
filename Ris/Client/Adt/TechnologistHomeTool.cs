@@ -44,7 +44,7 @@ using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
 namespace ClearCanvas.Ris.Client.Adt
 {
     [MenuAction("launch", "global-menus/Go/Technologist Home")]
-    [ButtonAction("launch", "global-toolbars/Go/Technologist Home")]
+    //[ButtonAction("launch", "global-toolbars/Go/Technologist Home")]
     [Tooltip("launch", "Technologist Home")]
 	[IconSet("launch", IconScheme.Colour, "Icons.TechnologistHomeToolSmall.png", "Icons.TechnologistHomeToolMedium.png", "Icons.TechnologistHomeToolLarge.png")]
     [ClickHandler("launch", "Launch")]

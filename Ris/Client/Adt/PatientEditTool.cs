@@ -42,7 +42,7 @@ using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 namespace ClearCanvas.Ris.Client.Adt
 {
     [MenuAction("edit", "global-menus/Patient/Edit Patient")]
-    [ButtonAction("edit", "global-toolbars/Patient/EditPatient")]
+    //[ButtonAction("edit", "global-toolbars/Patient/EditPatient")]
     [ButtonAction("edit", "folderexplorer-items-toolbar/Edit")]
     [MenuAction("edit", "folderexplorer-items-contextmenu/Edit")]
     [ButtonAction("edit", "patientsearch-items-toolbar/Edit")]

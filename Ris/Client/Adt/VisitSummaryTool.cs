@@ -42,7 +42,7 @@ using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 namespace ClearCanvas.Ris.Client.Adt
 {
     [MenuAction("apply", "global-menus/Patient/Visit Summary")]
-    [ButtonAction("apply", "global-toolbars/Patient/Visit Summary")]
+    //[ButtonAction("apply", "global-toolbars/Patient/Visit Summary")]
     [Tooltip("apply", "Visit Summary")]
     [IconSet("apply", IconScheme.Colour, "Icons.VisitSummaryToolSmall.png", "Icons.VisitSummaryToolMedium.png", "Icons.VisitSummaryToolLarge.png")]
     [ClickHandler("apply", "ShowVisits")]

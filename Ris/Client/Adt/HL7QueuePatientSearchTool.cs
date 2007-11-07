@@ -42,7 +42,7 @@ using ClearCanvas.Ris.Application.Common.Admin.HL7Admin;
 namespace ClearCanvas.Ris.Client.Adt
 {
     [MenuAction("view1", "global-menus/Patient/View Details...")]
-    [ButtonAction("view1", "global-toolbars/Patient/ViewPatient")]
+    //[ButtonAction("view1", "global-toolbars/Patient/ViewPatient")]
     [ClickHandler("view1", "View")]
     [EnabledStateObserver("view1", "Enabled", "EnabledChanged")]
     [Tooltip("view1", "Open patient details")]

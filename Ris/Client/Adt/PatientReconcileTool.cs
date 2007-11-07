@@ -45,7 +45,7 @@ using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 namespace ClearCanvas.Ris.Client.Adt
 {
     [MenuAction("apply", "global-menus/Patient/Reconcile")]
-    [ButtonAction("apply", "global-toolbars/Patient/Reconcile")]
+    //[ButtonAction("apply", "global-toolbars/Patient/Reconcile")]
     [MenuAction("apply", "folderexplorer-items-contextmenu/Reconcile")]
     [ButtonAction("apply", "folderexplorer-items-toolbar/Reconcile")]
     [Tooltip("apply", "Reconcile patient profiles")]

@@ -42,7 +42,7 @@ using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
 namespace ClearCanvas.Ris.Client.Adt
 {
     [MenuAction("view", "global-menus/Patient/View Details...")]
-    [ButtonAction("view", "global-toolbars/Patient/ViewPatient")]
+    //[ButtonAction("view", "global-toolbars/Patient/ViewPatient")]
     [ButtonAction("view", "folderexplorer-items-toolbar/Details")]
     [MenuAction("view", "folderexplorer-items-contextmenu/Details")]
     [MenuAction("view", "RegistrationPreview-menu/Details")]

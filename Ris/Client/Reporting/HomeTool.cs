@@ -45,7 +45,7 @@ using ClearCanvas.Ris.Application.Common;
 namespace ClearCanvas.Ris.Client.Reporting
 {
     [MenuAction("launch", "global-menus/Go/Radiologist Home")]
-    [ButtonAction("launch", "global-toolbars/Go/Radiologist Home")]
+    //[ButtonAction("launch", "global-toolbars/Go/Radiologist Home")]
     [Tooltip("launch", "Radiologist Home")]
     [IconSet("launch", IconScheme.Colour, "Icons.RadiologistHomeToolSmall.png", "Icons.RadiologistHomeToolMedium.png", "Icons.RadiologistHomeToolLarge.png")]
     [ClickHandler("launch", "Launch")]

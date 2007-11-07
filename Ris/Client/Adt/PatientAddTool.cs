@@ -43,7 +43,7 @@ using ClearCanvas.Ris.Application.Common;
 namespace ClearCanvas.Ris.Client.Adt
 {
     [MenuAction("apply", "global-menus/Patient/New Patient...")]
-    [ButtonAction("apply", "global-toolbars/Patient/PatientAddTool")]
+    //[ButtonAction("apply", "global-toolbars/Patient/PatientAddTool")]
     [Tooltip("apply", "New Patient")]
 	[IconSet("apply", IconScheme.Colour, "Icons.AddPatientToolSmall.png", "Icons.AddPatientToolMedium.png", "Icons.AddPatientToolLarge.png")]
     [ClickHandler("apply", "Apply")]
