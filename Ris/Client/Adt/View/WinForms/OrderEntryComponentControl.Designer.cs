@@ -83,11 +83,11 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._addConsultantButton = new System.Windows.Forms.Button();
             this.tabControl2 = new System.Windows.Forms.TabControl();
             this.tabPage4 = new System.Windows.Forms.TabPage();
-            this.panel1 = new System.Windows.Forms.Panel();
             this.webBrowser1 = new System.Windows.Forms.WebBrowser();
             this.tableView2 = new ClearCanvas.Desktop.View.WinForms.TableView();
             this._cancelButton = new System.Windows.Forms.Button();
-            this._placeOrderButton = new System.Windows.Forms.Button();
+            this._acceptButton = new System.Windows.Forms.Button();
+            this._documentSplitContainer = new System.Windows.Forms.SplitContainer();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
@@ -99,12 +99,15 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.panel2.SuspendLayout();
             this.tabControl2.SuspendLayout();
             this.tabPage4.SuspendLayout();
-            this.panel1.SuspendLayout();
+            this._documentSplitContainer.Panel1.SuspendLayout();
+            this._documentSplitContainer.Panel2.SuspendLayout();
+            this._documentSplitContainer.SuspendLayout();
             this.SuspendLayout();
             // 
             // splitContainer1
             // 
-            this.splitContainer1.Location = new System.Drawing.Point(3, 3);
+            this.splitContainer1.Location = new System.Drawing.Point(2, 2);
+            this.splitContainer1.Margin = new System.Windows.Forms.Padding(2);
             this.splitContainer1.Name = "splitContainer1";
             // 
             // splitContainer1.Panel1
@@ -124,45 +127,47 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.tabControl2);
-            this.splitContainer1.Size = new System.Drawing.Size(1005, 608);
-            this.splitContainer1.SplitterDistance = 506;
+            this.splitContainer1.Size = new System.Drawing.Size(996, 597);
+            this.splitContainer1.SplitterDistance = 501;
+            this.splitContainer1.SplitterWidth = 3;
             this.splitContainer1.TabIndex = 26;
             // 
             // _applySchedulingButton
             // 
-            this._applySchedulingButton.Location = new System.Drawing.Point(413, 340);
+            this._applySchedulingButton.Location = new System.Drawing.Point(329, 335);
+            this._applySchedulingButton.Margin = new System.Windows.Forms.Padding(2);
             this._applySchedulingButton.Name = "_applySchedulingButton";
-            this._applySchedulingButton.Size = new System.Drawing.Size(75, 23);
+            this._applySchedulingButton.Size = new System.Drawing.Size(68, 23);
             this._applySchedulingButton.TabIndex = 9;
-            this._applySchedulingButton.Text = "Apply";
+            this._applySchedulingButton.Text = "Schedule";
             this._applySchedulingButton.UseVisualStyleBackColor = true;
             this._applySchedulingButton.Click += new System.EventHandler(this._applySchedulingButton_Click);
             // 
             // _schedulingRequestTime
             // 
             this._schedulingRequestTime.LabelText = "Requested Schedule Time";
-            this._schedulingRequestTime.Location = new System.Drawing.Point(214, 315);
-            this._schedulingRequestTime.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this._schedulingRequestTime.Location = new System.Drawing.Point(177, 317);
+            this._schedulingRequestTime.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this._schedulingRequestTime.Maximum = new System.DateTime(9998, 12, 31, 0, 0, 0, 0);
             this._schedulingRequestTime.Minimum = new System.DateTime(1753, 1, 1, 0, 0, 0, 0);
             this._schedulingRequestTime.Name = "_schedulingRequestTime";
             this._schedulingRequestTime.Nullable = true;
             this._schedulingRequestTime.ShowDate = false;
             this._schedulingRequestTime.ShowTime = true;
-            this._schedulingRequestTime.Size = new System.Drawing.Size(183, 50);
+            this._schedulingRequestTime.Size = new System.Drawing.Size(137, 41);
             this._schedulingRequestTime.TabIndex = 8;
             this._schedulingRequestTime.Value = null;
             // 
             // _schedulingRequestDate
             // 
             this._schedulingRequestDate.LabelText = "Requested Schedule Date";
-            this._schedulingRequestDate.Location = new System.Drawing.Point(11, 315);
-            this._schedulingRequestDate.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this._schedulingRequestDate.Location = new System.Drawing.Point(7, 317);
+            this._schedulingRequestDate.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this._schedulingRequestDate.Maximum = new System.DateTime(9998, 12, 31, 0, 0, 0, 0);
             this._schedulingRequestDate.Minimum = new System.DateTime(1753, 1, 1, 0, 0, 0, 0);
             this._schedulingRequestDate.Name = "_schedulingRequestDate";
             this._schedulingRequestDate.Nullable = true;
-            this._schedulingRequestDate.Size = new System.Drawing.Size(197, 50);
+            this._schedulingRequestDate.Size = new System.Drawing.Size(166, 41);
             this._schedulingRequestDate.TabIndex = 7;
             this._schedulingRequestDate.Value = null;
             // 
@@ -172,10 +177,10 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._orderingFacility.DisplayMember = "";
             this._orderingFacility.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this._orderingFacility.LabelText = "Ordering Facility (temporary)";
-            this._orderingFacility.Location = new System.Drawing.Point(10, 50);
-            this._orderingFacility.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this._orderingFacility.Location = new System.Drawing.Point(7, 81);
+            this._orderingFacility.Margin = new System.Windows.Forms.Padding(2);
             this._orderingFacility.Name = "_orderingFacility";
-            this._orderingFacility.Size = new System.Drawing.Size(228, 50);
+            this._orderingFacility.Size = new System.Drawing.Size(171, 41);
             this._orderingFacility.TabIndex = 0;
             this._orderingFacility.Value = null;
             // 
@@ -185,30 +190,31 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._visit.DisplayMember = "";
             this._visit.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this._visit.LabelText = "Visit";
-            this._visit.Location = new System.Drawing.Point(6, 264);
-            this._visit.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this._visit.Location = new System.Drawing.Point(4, 272);
+            this._visit.Margin = new System.Windows.Forms.Padding(2);
             this._visit.Name = "_visit";
-            this._visit.Size = new System.Drawing.Size(486, 50);
+            this._visit.Size = new System.Drawing.Size(489, 41);
             this._visit.TabIndex = 6;
             this._visit.Value = null;
             // 
             // _orderingPractitioner
             // 
             this._orderingPractitioner.LabelText = "Ordering Practitioner";
-            this._orderingPractitioner.Location = new System.Drawing.Point(201, 154);
+            this._orderingPractitioner.Location = new System.Drawing.Point(220, 178);
+            this._orderingPractitioner.Margin = new System.Windows.Forms.Padding(2);
             this._orderingPractitioner.Name = "_orderingPractitioner";
-            this._orderingPractitioner.Size = new System.Drawing.Size(292, 59);
+            this._orderingPractitioner.Size = new System.Drawing.Size(269, 48);
             this._orderingPractitioner.TabIndex = 4;
             this._orderingPractitioner.Value = null;
             // 
             // _indication
             // 
             this._indication.LabelText = "Indication";
-            this._indication.Location = new System.Drawing.Point(6, 209);
-            this._indication.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this._indication.Location = new System.Drawing.Point(4, 227);
+            this._indication.Margin = new System.Windows.Forms.Padding(2);
             this._indication.Mask = "";
             this._indication.Name = "_indication";
-            this._indication.Size = new System.Drawing.Size(487, 50);
+            this._indication.Size = new System.Drawing.Size(485, 41);
             this._indication.TabIndex = 5;
             this._indication.Value = null;
             // 
@@ -218,10 +224,10 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._reorderReason.DisplayMember = "";
             this._reorderReason.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this._reorderReason.LabelText = "Re-order Reason";
-            this._reorderReason.Location = new System.Drawing.Point(241, 50);
-            this._reorderReason.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this._reorderReason.Location = new System.Drawing.Point(182, 81);
+            this._reorderReason.Margin = new System.Windows.Forms.Padding(2);
             this._reorderReason.Name = "_reorderReason";
-            this._reorderReason.Size = new System.Drawing.Size(251, 50);
+            this._reorderReason.Size = new System.Drawing.Size(282, 41);
             this._reorderReason.TabIndex = 1;
             this._reorderReason.Value = null;
             // 
@@ -231,19 +237,20 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._priority.DisplayMember = "";
             this._priority.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this._priority.LabelText = "Priority";
-            this._priority.Location = new System.Drawing.Point(7, 158);
-            this._priority.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this._priority.Location = new System.Drawing.Point(4, 182);
+            this._priority.Margin = new System.Windows.Forms.Padding(2);
             this._priority.Name = "_priority";
-            this._priority.Size = new System.Drawing.Size(175, 50);
+            this._priority.Size = new System.Drawing.Size(201, 41);
             this._priority.TabIndex = 3;
             this._priority.Value = null;
             // 
             // _diagnosticService
             // 
             this._diagnosticService.LabelText = "Diagnostic Service";
-            this._diagnosticService.Location = new System.Drawing.Point(6, 100);
+            this._diagnosticService.Location = new System.Drawing.Point(4, 126);
+            this._diagnosticService.Margin = new System.Windows.Forms.Padding(2);
             this._diagnosticService.Name = "_diagnosticService";
-            this._diagnosticService.Size = new System.Drawing.Size(486, 59);
+            this._diagnosticService.Size = new System.Drawing.Size(485, 48);
             this._diagnosticService.TabIndex = 2;
             this._diagnosticService.Value = null;
             // 
@@ -252,19 +259,21 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage3);
             this.tabControl1.Controls.Add(this.tabPage2);
-            this.tabControl1.Location = new System.Drawing.Point(4, 375);
+            this.tabControl1.Location = new System.Drawing.Point(7, 376);
+            this.tabControl1.Margin = new System.Windows.Forms.Padding(2);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(499, 229);
+            this.tabControl1.Size = new System.Drawing.Size(492, 217);
             this.tabControl1.TabIndex = 10;
             // 
             // tabPage1
             // 
             this.tabPage1.Controls.Add(this._proceduresTableView);
-            this.tabPage1.Location = new System.Drawing.Point(4, 25);
+            this.tabPage1.Location = new System.Drawing.Point(4, 22);
+            this.tabPage1.Margin = new System.Windows.Forms.Padding(2);
             this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(491, 200);
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(2);
+            this.tabPage1.Size = new System.Drawing.Size(484, 191);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Procedures";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -273,12 +282,13 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // 
             this._proceduresTableView.Dock = System.Windows.Forms.DockStyle.Fill;
             this._proceduresTableView.FilterTextBoxWidth = 132;
-            this._proceduresTableView.Location = new System.Drawing.Point(3, 3);
-            this._proceduresTableView.Margin = new System.Windows.Forms.Padding(5);
+            this._proceduresTableView.Location = new System.Drawing.Point(2, 2);
+            this._proceduresTableView.Margin = new System.Windows.Forms.Padding(4);
             this._proceduresTableView.MultiSelect = false;
             this._proceduresTableView.Name = "_proceduresTableView";
             this._proceduresTableView.ReadOnly = false;
-            this._proceduresTableView.Size = new System.Drawing.Size(485, 194);
+            this._proceduresTableView.ShowToolbar = false;
+            this._proceduresTableView.Size = new System.Drawing.Size(480, 187);
             this._proceduresTableView.TabIndex = 0;
             this._proceduresTableView.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this._proceduresTableView.ItemDoubleClicked += new System.EventHandler(this._proceduresTableView_ItemDoubleClicked);
@@ -286,9 +296,10 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // tabPage3
             // 
             this.tabPage3.Controls.Add(this._notesTableView);
-            this.tabPage3.Location = new System.Drawing.Point(4, 25);
+            this.tabPage3.Location = new System.Drawing.Point(4, 22);
+            this.tabPage3.Margin = new System.Windows.Forms.Padding(2);
             this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Size = new System.Drawing.Size(491, 200);
+            this.tabPage3.Size = new System.Drawing.Size(484, 191);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Notes";
             this.tabPage3.UseVisualStyleBackColor = true;
@@ -298,23 +309,24 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._notesTableView.Dock = System.Windows.Forms.DockStyle.Fill;
             this._notesTableView.FilterTextBoxWidth = 132;
             this._notesTableView.Location = new System.Drawing.Point(0, 0);
-            this._notesTableView.Margin = new System.Windows.Forms.Padding(5);
+            this._notesTableView.Margin = new System.Windows.Forms.Padding(4);
             this._notesTableView.MultiLine = true;
             this._notesTableView.MultiSelect = false;
             this._notesTableView.Name = "_notesTableView";
             this._notesTableView.ReadOnly = false;
             this._notesTableView.ShowToolbar = false;
-            this._notesTableView.Size = new System.Drawing.Size(491, 200);
+            this._notesTableView.Size = new System.Drawing.Size(484, 191);
             this._notesTableView.TabIndex = 1;
             this._notesTableView.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             // 
             // tabPage2
             // 
             this.tabPage2.Controls.Add(this.tableLayoutPanel1);
-            this.tabPage2.Location = new System.Drawing.Point(4, 25);
+            this.tabPage2.Location = new System.Drawing.Point(4, 22);
+            this.tabPage2.Margin = new System.Windows.Forms.Padding(2);
             this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(491, 200);
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(2);
+            this.tabPage2.Size = new System.Drawing.Size(484, 191);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Copies To";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -326,25 +338,26 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.tableLayoutPanel1.Controls.Add(this._consultantsTableView, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.panel2, 0, 0);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(3, 3);
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(2, 2);
+            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(2);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 2;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(485, 194);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(480, 187);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
             // _consultantsTableView
             // 
             this._consultantsTableView.Dock = System.Windows.Forms.DockStyle.Fill;
             this._consultantsTableView.FilterTextBoxWidth = 132;
-            this._consultantsTableView.Location = new System.Drawing.Point(5, 83);
-            this._consultantsTableView.Margin = new System.Windows.Forms.Padding(5);
+            this._consultantsTableView.Location = new System.Drawing.Point(4, 66);
+            this._consultantsTableView.Margin = new System.Windows.Forms.Padding(4);
             this._consultantsTableView.MultiSelect = false;
             this._consultantsTableView.Name = "_consultantsTableView";
             this._consultantsTableView.ReadOnly = false;
             this._consultantsTableView.ShowToolbar = false;
-            this._consultantsTableView.Size = new System.Drawing.Size(475, 106);
+            this._consultantsTableView.Size = new System.Drawing.Size(472, 117);
             this._consultantsTableView.TabIndex = 2;
             this._consultantsTableView.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             // 
@@ -352,23 +365,26 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // 
             this.panel2.Controls.Add(this._consultantLookup);
             this.panel2.Controls.Add(this._addConsultantButton);
-            this.panel2.Location = new System.Drawing.Point(3, 3);
+            this.panel2.Location = new System.Drawing.Point(2, 2);
+            this.panel2.Margin = new System.Windows.Forms.Padding(2);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(452, 72);
+            this.panel2.Size = new System.Drawing.Size(362, 58);
             this.panel2.TabIndex = 0;
             // 
             // _consultantLookup
             // 
             this._consultantLookup.LabelText = "Find Practitioner";
-            this._consultantLookup.Location = new System.Drawing.Point(1, 6);
+            this._consultantLookup.Location = new System.Drawing.Point(1, 5);
+            this._consultantLookup.Margin = new System.Windows.Forms.Padding(2);
             this._consultantLookup.Name = "_consultantLookup";
-            this._consultantLookup.Size = new System.Drawing.Size(348, 59);
+            this._consultantLookup.Size = new System.Drawing.Size(261, 48);
             this._consultantLookup.TabIndex = 4;
             this._consultantLookup.Value = null;
             // 
             // _addConsultantButton
             // 
-            this._addConsultantButton.Location = new System.Drawing.Point(368, 33);
+            this._addConsultantButton.Location = new System.Drawing.Point(276, 27);
+            this._addConsultantButton.Margin = new System.Windows.Forms.Padding(2);
             this._addConsultantButton.Name = "_addConsultantButton";
             this._addConsultantButton.Size = new System.Drawing.Size(75, 23);
             this._addConsultantButton.TabIndex = 5;
@@ -381,57 +397,51 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.tabControl2.Controls.Add(this.tabPage4);
             this.tabControl2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl2.Location = new System.Drawing.Point(0, 0);
+            this.tabControl2.Margin = new System.Windows.Forms.Padding(2);
             this.tabControl2.Name = "tabControl2";
             this.tabControl2.SelectedIndex = 0;
-            this.tabControl2.Size = new System.Drawing.Size(495, 608);
+            this.tabControl2.Size = new System.Drawing.Size(492, 597);
             this.tabControl2.TabIndex = 0;
             // 
             // tabPage4
             // 
-            this.tabPage4.Controls.Add(this.panel1);
-            this.tabPage4.Controls.Add(this.tableView2);
-            this.tabPage4.Location = new System.Drawing.Point(4, 25);
+            this.tabPage4.Controls.Add(this._documentSplitContainer);
+            this.tabPage4.Location = new System.Drawing.Point(4, 22);
+            this.tabPage4.Margin = new System.Windows.Forms.Padding(2);
             this.tabPage4.Name = "tabPage4";
-            this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage4.Size = new System.Drawing.Size(487, 579);
+            this.tabPage4.Padding = new System.Windows.Forms.Padding(2);
+            this.tabPage4.Size = new System.Drawing.Size(484, 571);
             this.tabPage4.TabIndex = 0;
             this.tabPage4.Text = "Documents";
             this.tabPage4.UseVisualStyleBackColor = true;
-            // 
-            // panel1
-            // 
-            this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.panel1.Controls.Add(this.webBrowser1);
-            this.panel1.Location = new System.Drawing.Point(8, 107);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(471, 469);
-            this.panel1.TabIndex = 38;
             // 
             // webBrowser1
             // 
             this.webBrowser1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.webBrowser1.Location = new System.Drawing.Point(0, 0);
-            this.webBrowser1.MinimumSize = new System.Drawing.Size(20, 20);
+            this.webBrowser1.Margin = new System.Windows.Forms.Padding(2);
+            this.webBrowser1.MinimumSize = new System.Drawing.Size(15, 16);
             this.webBrowser1.Name = "webBrowser1";
-            this.webBrowser1.Size = new System.Drawing.Size(467, 465);
+            this.webBrowser1.Size = new System.Drawing.Size(480, 401);
             this.webBrowser1.TabIndex = 0;
             // 
             // tableView2
             // 
+            this.tableView2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableView2.FilterTextBoxWidth = 132;
-            this.tableView2.Location = new System.Drawing.Point(8, 16);
-            this.tableView2.Margin = new System.Windows.Forms.Padding(5);
+            this.tableView2.Location = new System.Drawing.Point(0, 0);
+            this.tableView2.Margin = new System.Windows.Forms.Padding(4);
             this.tableView2.MultiSelect = false;
             this.tableView2.Name = "tableView2";
             this.tableView2.ReadOnly = false;
-            this.tableView2.Size = new System.Drawing.Size(471, 83);
+            this.tableView2.Size = new System.Drawing.Size(480, 162);
             this.tableView2.TabIndex = 37;
             this.tableView2.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             // 
             // _cancelButton
             // 
-            this._cancelButton.Location = new System.Drawing.Point(916, 616);
-            this._cancelButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this._cancelButton.Location = new System.Drawing.Point(919, 603);
+            this._cancelButton.Margin = new System.Windows.Forms.Padding(2);
             this._cancelButton.Name = "_cancelButton";
             this._cancelButton.Size = new System.Drawing.Size(75, 23);
             this._cancelButton.TabIndex = 29;
@@ -439,27 +449,45 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._cancelButton.UseVisualStyleBackColor = true;
             this._cancelButton.Click += new System.EventHandler(this._cancelButton_Click);
             // 
-            // _placeOrderButton
+            // _acceptButton
             // 
-            this._placeOrderButton.Location = new System.Drawing.Point(837, 616);
-            this._placeOrderButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this._placeOrderButton.Name = "_placeOrderButton";
-            this._placeOrderButton.Size = new System.Drawing.Size(73, 23);
-            this._placeOrderButton.TabIndex = 28;
-            this._placeOrderButton.Text = "OK";
-            this._placeOrderButton.UseVisualStyleBackColor = true;
-            this._placeOrderButton.Click += new System.EventHandler(this._placeOrderButton_Click);
+            this._acceptButton.Location = new System.Drawing.Point(840, 603);
+            this._acceptButton.Margin = new System.Windows.Forms.Padding(2);
+            this._acceptButton.Name = "_acceptButton";
+            this._acceptButton.Size = new System.Drawing.Size(75, 23);
+            this._acceptButton.TabIndex = 28;
+            this._acceptButton.Text = "OK";
+            this._acceptButton.UseVisualStyleBackColor = true;
+            this._acceptButton.Click += new System.EventHandler(this._placeOrderButton_Click);
+            // 
+            // _documentSplitContainer
+            // 
+            this._documentSplitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._documentSplitContainer.Location = new System.Drawing.Point(2, 2);
+            this._documentSplitContainer.Name = "_documentSplitContainer";
+            this._documentSplitContainer.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // _documentSplitContainer.Panel1
+            // 
+            this._documentSplitContainer.Panel1.Controls.Add(this.tableView2);
+            // 
+            // _documentSplitContainer.Panel2
+            // 
+            this._documentSplitContainer.Panel2.Controls.Add(this.webBrowser1);
+            this._documentSplitContainer.Size = new System.Drawing.Size(480, 567);
+            this._documentSplitContainer.SplitterDistance = 162;
+            this._documentSplitContainer.TabIndex = 38;
             // 
             // OrderEntryComponentControl
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this._cancelButton);
             this.Controls.Add(this.splitContainer1);
-            this.Controls.Add(this._placeOrderButton);
-            this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.Controls.Add(this._acceptButton);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "OrderEntryComponentControl";
-            this.Size = new System.Drawing.Size(1011, 646);
+            this.Size = new System.Drawing.Size(1000, 640);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             this.splitContainer1.ResumeLayout(false);
@@ -471,7 +499,9 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.panel2.ResumeLayout(false);
             this.tabControl2.ResumeLayout(false);
             this.tabPage4.ResumeLayout(false);
-            this.panel1.ResumeLayout(false);
+            this._documentSplitContainer.Panel1.ResumeLayout(false);
+            this._documentSplitContainer.Panel2.ResumeLayout(false);
+            this._documentSplitContainer.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -487,11 +517,10 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         private System.Windows.Forms.TabPage tabPage2;
         private ClearCanvas.Desktop.View.WinForms.TableView _consultantsTableView;
         private System.Windows.Forms.Button _cancelButton;
-        private System.Windows.Forms.Button _placeOrderButton;
+        private System.Windows.Forms.Button _acceptButton;
         private System.Windows.Forms.TabControl tabControl2;
         private System.Windows.Forms.TabPage tabPage4;
         private ClearCanvas.Desktop.View.WinForms.TableView tableView2;
-        private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.WebBrowser webBrowser1;
         private ClearCanvas.Ris.Client.View.WinForms.LookupField _diagnosticService;
         private System.Windows.Forms.Button _addConsultantButton;
@@ -507,6 +536,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Button _applySchedulingButton;
+        private System.Windows.Forms.SplitContainer _documentSplitContainer;
 
     }
 }
