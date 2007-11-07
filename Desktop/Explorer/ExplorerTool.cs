@@ -104,10 +104,33 @@ namespace ClearCanvas.Desktop.Explorer
 					_tabComponentContainer = null;
 					_healthcareArtifactExplorers.Clear();
 					_healthcareArtifactExplorers = null;
-					Application.Quit();
+
+					// The Explorer drives the image viewer, so if it's closing
+					// we assume that any child image viewer windows should close too
+					CloseChildDesktopWindows();
 				});
 
 			//_workspace.NeverClose = true;
+		}
+
+		private void CloseChildDesktopWindows()
+		{
+			List<DesktopWindow> childWindowsToClose = new List<DesktopWindow>();
+
+			// We can't just iterate through the collection and close them,
+			// because closing a window changes the collection.  So instead,
+			// we create a list of the child windows then iterate through
+			// that list and close them.
+			foreach (DesktopWindow window in Application.DesktopWindows)
+			{
+				// Child windows are all those other than the one
+				// this tool is hosted by
+				if (window != this.Context.DesktopWindow)
+					childWindowsToClose.Add(window);
+			}
+
+			foreach (DesktopWindow window in childWindowsToClose)
+				window.Close();
 		}
 	}
 }
