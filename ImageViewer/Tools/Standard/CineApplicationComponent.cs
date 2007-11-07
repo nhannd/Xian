@@ -57,6 +57,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		private bool _reverse;
 
 		private IImageBox _selectedImageBox;
+
 		private UndoableCommand _command;
 
 		private volatile bool _stopThread;
@@ -198,17 +199,21 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			if (e.DeactivatedImageViewer != null)
 			{
 				e.DeactivatedImageViewer.EventBroker.TileSelected -= OnTileSelected;
-				e.DeactivatedImageViewer.CommandHistory.CurrentCommandChanging -= OnCommandChanging;
+				e.DeactivatedImageViewer.EventBroker.BeforeFindMouseButtonHandler -= OnBeforeFindMouseButtonHandler;
+				e.DeactivatedImageViewer.EventBroker.BeforeFindMouseWheelHandler -= OnBeforeFindMouseWheelHandler;
 				e.DeactivatedImageViewer.EventBroker.ActiveMouseButtonHandlerChanged -= OnActiveMouseButtonHandlerChanged;
 				e.DeactivatedImageViewer.EventBroker.ActiveMouseWheelHandlerChanged -= OnActiveMouseWheelHandlerChanged;
+				e.DeactivatedImageViewer.CommandHistory.CurrentCommandChanging -= OnCommandChanging;
 			}
 
 			if (e.ActivatedImageViewer != null)
 			{
 				e.ActivatedImageViewer.EventBroker.TileSelected += OnTileSelected;
-				e.ActivatedImageViewer.CommandHistory.CurrentCommandChanging += OnCommandChanging;
+				e.ActivatedImageViewer.EventBroker.BeforeFindMouseButtonHandler += OnBeforeFindMouseButtonHandler;
+				e.ActivatedImageViewer.EventBroker.BeforeFindMouseWheelHandler += OnBeforeFindMouseWheelHandler;
 				e.ActivatedImageViewer.EventBroker.ActiveMouseButtonHandlerChanged += OnActiveMouseButtonHandlerChanged;
 				e.ActivatedImageViewer.EventBroker.ActiveMouseWheelHandlerChanged += OnActiveMouseWheelHandlerChanged;
+				e.ActivatedImageViewer.CommandHistory.CurrentCommandChanging += OnCommandChanging;
 			}
 
 			Enabled = CanStart();
@@ -240,9 +245,16 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			}
 		}
 
-		private void OnCommandChanging(object sender, EventArgs e)
+		private void OnBeforeFindMouseButtonHandler(object sender, BeforeFindMouseButtonHandlerEventArgs args)
 		{
-			StopCine();
+			if (Running)
+				args.Cancel();
+		}
+
+		void OnBeforeFindMouseWheelHandler(object sender, BeforeFindMouseWheelHandlerEventArgs args)
+		{
+			if (Running)
+				args.Cancel();
 		}
 
 		private void OnActiveMouseWheelHandlerChanged(object sender, ItemEventArgs<IMouseWheelHandler> e)
@@ -255,7 +267,12 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			StopCine();
 		}
 
-		#endregion
+		private void OnCommandChanging(object sender, EventArgs e)
+		{
+			StopCine();
+		}
+
+#endregion
 
 		private bool CanStart()
 		{

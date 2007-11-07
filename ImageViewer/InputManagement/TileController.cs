@@ -94,14 +94,14 @@ namespace ClearCanvas.ImageViewer.InputManagement
 	/// <seealso cref="ClearCanvas.Desktop.Tools.ITool"/>
 	/// <seealso cref="ClearCanvas.ImageViewer.BaseTools.ImageViewerTool"/>
 	/// <seealso cref="ClearCanvas.ImageViewer.BaseTools.MouseImageViewerTool"/>
-	public sealed partial class TileController : IMouseInformation
+	public sealed class TileController : IMouseInformation
 	{
 		private delegate bool CallHandlerMethodDelegate(IMouseButtonHandler handler);
 
 		#region Private Fields
 
 		private readonly Tile _tile;
-		private bool _tileLostFocus;
+		private bool _selectedOnThisClick;
 		private Point _startMousePoint;
 		private Point _currentMousePoint;
 		private Rectangle _tileClientRectangle;
@@ -138,7 +138,7 @@ namespace ClearCanvas.ImageViewer.InputManagement
 			Platform.CheckForNullReference(shortcutManager, "shortcutManager");
 
 			_tile = tile;
-			_tileLostFocus = true;
+			_selectedOnThisClick = false;
 			_shortcutManager = shortcutManager;
 		}
 
@@ -164,7 +164,6 @@ namespace ClearCanvas.ImageViewer.InputManagement
 
 		private IMouseWheelHandler CaptureMouseWheelHandler
 		{
-			get { return _captureMouseWheelHandler; }
 			set 
 			{
 				if (_captureMouseWheelHandler == value)
@@ -197,6 +196,21 @@ namespace ClearCanvas.ImageViewer.InputManagement
 		#endregion
 
 		#region Private Methods
+
+		private static bool SuppressContextMenu(IMouseButtonHandler handler)
+		{
+			return (handler.Behaviour & MouseButtonHandlerBehaviour.SuppressContextMenu) == MouseButtonHandlerBehaviour.SuppressContextMenu;
+		}
+
+		private static bool ConstrainToTile(IMouseButtonHandler handler)
+		{
+			return (handler.Behaviour & MouseButtonHandlerBehaviour.ConstrainToTile) == MouseButtonHandlerBehaviour.ConstrainToTile;
+		}
+
+		private static bool SuppressOnTileActivate(IMouseButtonHandler handler)
+		{
+			return (handler.Behaviour & MouseButtonHandlerBehaviour.SuppressOnTileActivate) == MouseButtonHandlerBehaviour.SuppressOnTileActivate;
+		}
 
 		private void OnTimer(object nothing)
 		{
@@ -253,6 +267,11 @@ namespace ClearCanvas.ImageViewer.InputManagement
 		{
 			ReleaseCapture(true);
 
+			BeforeFindMouseWheelHandlerEventArgs args = new BeforeFindMouseWheelHandlerEventArgs(_tile);
+			_tile.ImageViewer.EventBroker.OnBeforeFindMouseWheelHandler(args);
+			if (args.Cancelled)
+				return true;
+
 			IMouseWheelHandler handler = _shortcutManager.GetMouseWheelHandler(wheelMessage.Shortcut);
 			if (handler != null)
 			{
@@ -282,7 +301,7 @@ namespace ClearCanvas.ImageViewer.InputManagement
 
 			if (this.CaptureHandler != null)
 			{
-				if (this.CaptureHandler.SuppressContextMenu)
+				if (SuppressContextMenu(this.CaptureHandler))
 					_contextMenuEnabled = false;
 
 				StartHandler(this.CaptureHandler);
@@ -292,18 +311,17 @@ namespace ClearCanvas.ImageViewer.InputManagement
 				return true;
 			}
 
-			bool selectOnly = _tileLostFocus & !_tile.Selected;
-			_tileLostFocus = false;
-
 			_tile.Select();
 			_contextMenuEnabled = (buttonMessage.Shortcut.MouseButton == XMouseButtons.Right);
 
-			if (selectOnly)
+			_startMousePoint = buttonMessage.Location;
+
+			if (_tile.PresentationImage == null)
 				return true;
 
-			_startMousePoint = buttonMessage.Location;
-			
-			if (_tile.PresentationImage == null)
+			BeforeFindMouseButtonHandlerEventArgs args = new BeforeFindMouseButtonHandlerEventArgs(_tile);
+			_tile.ImageViewer.EventBroker.OnBeforeFindMouseButtonHandler(args);
+			if (args.Cancelled)
 				return true;
 
 			//give unfocused graphics a chance to focus (in the case of going straight from context menu to a graphic).
@@ -314,7 +332,7 @@ namespace ClearCanvas.ImageViewer.InputManagement
 			{
 				this.CaptureHandler = handler;
 
-				if (handler.SuppressContextMenu)
+				if (SuppressContextMenu(this.CaptureHandler))
 					_contextMenuEnabled = false;
 
 				SetCursorToken(handler, buttonMessage.Location);
@@ -324,19 +342,16 @@ namespace ClearCanvas.ImageViewer.InputManagement
 			}
 
 			handler = _shortcutManager.GetMouseButtonHandler(buttonMessage.Shortcut);
-			if (handler != null)
+			if (handler != null && StartHandler(handler))
 			{
-				if (StartHandler(handler))
-				{
-					this.CaptureHandler = handler;
+				this.CaptureHandler = handler;
 
-					if (handler.SuppressContextMenu)
-						_contextMenuEnabled = false;
+				if (SuppressContextMenu(handler))
+					_contextMenuEnabled = false;
 
-					SetCursorToken(handler, buttonMessage.Location); 
+				SetCursorToken(handler, buttonMessage.Location); 
 
-					return true;
-				}
+				return true;
 			}
 
 			return false;
@@ -366,12 +381,19 @@ namespace ClearCanvas.ImageViewer.InputManagement
 		{
 			this.Location = buttonMessage.Location;
 
+			bool returnValue;
 			if (buttonMessage.ButtonAction == MouseButtonMessage.ButtonActions.Down)
 			{
-				return ProcessMouseButtonDownMessage(buttonMessage);
+				_selectedOnThisClick = !_tile.Selected;
+				returnValue = ProcessMouseButtonDownMessage(buttonMessage);
+				_selectedOnThisClick = false;
+			}
+			else
+			{
+				returnValue = ProcessMouseButtonUpMessage(buttonMessage);
 			}
 
-			return ProcessMouseButtonUpMessage(buttonMessage);
+			return returnValue;
 		}
 
 		private void TrackCurrentPosition()
@@ -389,7 +411,7 @@ namespace ClearCanvas.ImageViewer.InputManagement
 
 			if (this.CaptureHandler != null)
 			{
-				if (this.CaptureHandler.ConstrainToTile && !this.TileClientRectangle.Contains(this.Location))
+				if (ConstrainToTile(this.CaptureHandler) && !this.TileClientRectangle.Contains(this.Location))
 				{
 					SetCursorToken(null, trackMessage.Location);
 					return true;
@@ -402,6 +424,11 @@ namespace ClearCanvas.ImageViewer.InputManagement
 				}
 			}
 
+			BeforeFindMouseButtonHandlerEventArgs args = new BeforeFindMouseButtonHandlerEventArgs(_tile);
+			_tile.ImageViewer.EventBroker.OnBeforeFindMouseButtonHandler(args);
+			if (args.Cancelled)
+				return true;
+
 			IMouseButtonHandler handler = FindHandlingGraphic(TrackHandler);
 			SetCursorToken(handler, trackMessage.Location);
 			return (handler != null);
@@ -409,12 +436,18 @@ namespace ClearCanvas.ImageViewer.InputManagement
 
 		private bool StartHandler(IMouseButtonHandler handler)
 		{
+			if (_selectedOnThisClick && SuppressOnTileActivate(handler))
+				return false;
+
 			return handler.Start(this);
 		}
 
 		private bool TrackHandler(IMouseButtonHandler handler)
 		{
-			if (handler.ConstrainToTile && !this.TileClientRectangle.Contains(this.Location))
+			if (!_tile.Selected && SuppressOnTileActivate(handler))
+				return false;
+
+			if (ConstrainToTile(handler) && !this.TileClientRectangle.Contains(this.Location))
 				return false;
 
 			return handler.Track(this);
@@ -527,11 +560,6 @@ namespace ClearCanvas.ImageViewer.InputManagement
 		/// </summary>
 		public bool ProcessMessage(object message)
 		{
-			if (message is FocusChangedMessage)
-			{
-				if (((FocusChangedMessage)message).Lost)
-					_tileLostFocus = true;
-			}
 			if (message is KeyboardButtonDownPreview)
 			{
 				//Right now, we can't determine what these keystrokes are going to do, so we just release mouse wheel capture.
@@ -541,7 +569,6 @@ namespace ClearCanvas.ImageViewer.InputManagement
 
 				return false;
 			}
-			
 			else if (message is MouseButtonMessage)
 			{
 				return ProcessMouseButtonMessage(message as MouseButtonMessage);

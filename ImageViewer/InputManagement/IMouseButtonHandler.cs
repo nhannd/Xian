@@ -29,8 +29,42 @@
 
 #endregion
 
+using System;
+
 namespace ClearCanvas.ImageViewer.InputManagement
 {
+	/// <summary>
+	/// Defines constants for modifying the behaviour of an <see cref="IMouseButtonHandler"/>.
+	/// </summary>
+	[Flags]
+	public enum MouseButtonHandlerBehaviour
+	{
+		/// <summary>
+		/// Indicates to the framework that the default behaviour should be applied to this <see cref="IMouseButtonHandler"/>.
+		/// </summary>
+		None = 0,
+
+		/// <summary>
+		/// Indicates to the framework that the context menu should be suppressed, usually because this 
+		/// object is going to return true from <see cref="IMouseButtonHandler.Stop"/> and keep capture 
+		/// after the mouse button has been released.
+		/// </summary>
+		SuppressContextMenu = 0x1,
+
+		/// <summary>
+		/// Indicates to the framework that <see cref="IMouseButtonHandler.Track"/> calls should not be 
+		/// made for points outside the <see cref="ITile"/>'s client rectangle.
+		/// </summary>
+		ConstrainToTile = 0x2,
+		
+		/// <summary>
+		/// Indicates to the framework that the <see cref="IMouseButtonHandler"/> should be ignored
+		/// when a tile is first activated.  If this flag is not specified, then the <see cref="IMouseButtonHandler"/>
+		/// will <b>not</b> be ignored on tile activation.
+		/// </summary>
+		SuppressOnTileActivate = 0x4
+	}
+
 	/// <summary>
 	/// An interface for objects that handle mouse button input.
 	/// </summary>
@@ -105,15 +139,8 @@ namespace ClearCanvas.ImageViewer.InputManagement
 		void Cancel();
 
 		/// <summary>
-		/// Indicates to the framework that the context menu should be suppressed, usually because this 
-		/// object is going to return true from <see cref="Stop"/> and keep capture after the mouse button has been released.
+		/// Allows the <see cref="IMouseButtonHandler"/> to override certain default framework behaviour.
 		/// </summary>
-		bool SuppressContextMenu { get; }
-
-		/// <summary>
-		/// Indicates to the framework that <see cref="Track"/> calls should not be 
-		/// made for points outside the <see cref="ITile"/>'s client rectangle.
-		/// </summary>
-		bool ConstrainToTile { get; }
+		MouseButtonHandlerBehaviour Behaviour { get; }
 	}
 }

@@ -240,28 +240,6 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			Draw();
 		}
 
-		protected override void OnEnter(EventArgs e)
-		{
-			base.OnEnter(e);
-
-			object message = _inputTranslator.OnEnter();
-			if (message == null)
-				return;
-
-			_tileController.ProcessMessage(message);
-		}
-
-		protected override void OnLeave(EventArgs e)
-		{
-			base.OnLeave(e);
-
-			object message = _inputTranslator.OnLeave();
-			if (message == null)
-				return;
-
-			_tileController.ProcessMessage(message);
-		}
-
 		protected override void OnMouseLeave(EventArgs e)
 		{
 			base.OnMouseLeave(e);

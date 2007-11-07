@@ -80,6 +80,7 @@ namespace ClearCanvas.ImageViewer.BaseTools
         private event EventHandler _activationChangedEvent;
 
 		private CursorToken _cursorToken;
+		private MouseButtonHandlerBehaviour _mousebuttonBehaviour;
 		
 		#endregion
 
@@ -385,21 +386,13 @@ namespace ClearCanvas.ImageViewer.BaseTools
 		{
 		}
 
-		/// <summary>
-		/// Gets whether or not this tool suppresses the context menu entirely while it is active/has capture.
-		/// </summary>
-		public virtual bool SuppressContextMenu
+    	/// <summary>
+    	/// Allows the <see cref="IMouseButtonHandler"/> to override certain default framework behaviour.
+    	/// </summary>
+    	public MouseButtonHandlerBehaviour Behaviour
 		{
-			get { return false; }
-		}
-
-		/// <summary>
-		/// Gets whether or not the <see cref="Track"/> method should be processed for mouse 
-		/// coordinates outside the view rectange.
-		/// </summary>
-		public virtual bool ConstrainToTile
-		{
-			get { return false; }
+			get { return _mousebuttonBehaviour; }
+			protected set { _mousebuttonBehaviour = value; }
 		}
 
 		#endregion

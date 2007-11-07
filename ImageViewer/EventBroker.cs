@@ -58,6 +58,8 @@ namespace ClearCanvas.ImageViewer
 		private event EventHandler<ItemEventArgs<IMouseButtonHandler>> _activeMouseButtonHandlerChanged;
 		private event EventHandler<ItemEventArgs<IMouseWheelHandler>> _activeMouseWheelHandlerChanged;
 
+		private event EventHandler<BeforeFindMouseButtonHandlerEventArgs> _beforeFindMouseButtonHandler;
+		private event EventHandler<BeforeFindMouseWheelHandlerEventArgs> _beforeFindMouseWheelHandler;
 
 		#endregion
 
@@ -209,6 +211,28 @@ namespace ClearCanvas.ImageViewer
 		internal void OnActiveMouseWheelHandlerChanged(IMouseWheelHandler handler)
 		{
 			EventsHelper.Fire(_activeMouseWheelHandlerChanged, this, new ItemEventArgs<IMouseWheelHandler>(handler));
+		}
+
+		public event EventHandler<BeforeFindMouseButtonHandlerEventArgs> BeforeFindMouseButtonHandler
+		{
+			add { _beforeFindMouseButtonHandler += value; }	
+			remove { _beforeFindMouseButtonHandler -= value; }	
+		}
+
+		internal void OnBeforeFindMouseButtonHandler(BeforeFindMouseButtonHandlerEventArgs args)
+		{
+			EventsHelper.Fire(_beforeFindMouseButtonHandler, this, args);
+		}
+
+		public event EventHandler<BeforeFindMouseWheelHandlerEventArgs> BeforeFindMouseWheelHandler
+		{
+			add { _beforeFindMouseWheelHandler += value; }
+			remove { _beforeFindMouseWheelHandler -= value; }
+		}
+
+		internal void OnBeforeFindMouseWheelHandler(BeforeFindMouseWheelHandlerEventArgs args)
+		{
+			EventsHelper.Fire(_beforeFindMouseWheelHandler, this, args);
 		}
 	}
 }

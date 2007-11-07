@@ -67,6 +67,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			: base(SR.TooltipProbe)
 		{
 			this.CursorToken = new CursorToken("ProbeCursor.png", this.GetType().Assembly);
+			this.Behaviour = MouseButtonHandlerBehaviour.ConstrainToTile;
 		}
 
 		public override event EventHandler TooltipChanged
@@ -127,11 +128,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			_selectedTile.InformationBox.Visible = false;
 			_selectedTile.InformationBox = null;
 			_selectedTile = null;
-		}
-
-		public override bool ConstrainToTile
-		{
-			get { return true; }
 		}
 
 		private void Probe(Point destinationPoint)

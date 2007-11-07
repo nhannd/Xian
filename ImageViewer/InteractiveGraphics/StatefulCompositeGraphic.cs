@@ -87,14 +87,9 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			this.State.Cancel();
 		}
 
-		public virtual bool SuppressContextMenu
+		public MouseButtonHandlerBehaviour Behaviour
 		{
-			get { return false; }
-		}
-
-		public virtual bool ConstrainToTile
-		{
-			get { return false; }
+			get { return this.State.Behaviour; }
 		}
 
 		#endregion

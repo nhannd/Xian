@@ -60,16 +60,12 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 
 			BindingSource source = new BindingSource();
         	source.DataSource = _component;
-
+        	_startForwardButton.DataBindings.Add("Enabled", source, "Enabled", true, DataSourceUpdateMode.OnPropertyChanged);
+			_startReverseButton.DataBindings.Add("Enabled", source, "Enabled", true, DataSourceUpdateMode.OnPropertyChanged);
         	_stopButton.DataBindings.Add("Enabled", source, "Running", true, DataSourceUpdateMode.OnPropertyChanged);
 			_cineSpeed.DataBindings.Add("Minimum", source, "MinimumScale", true, DataSourceUpdateMode.OnPropertyChanged);
 			_cineSpeed.DataBindings.Add("Maximum", source, "MaximumScale", true, DataSourceUpdateMode.OnPropertyChanged);
 			_cineSpeed.DataBindings.Add("Value", source, "CurrentScaleValue", true, DataSourceUpdateMode.OnPropertyChanged);
-		}
-
-		private void OnFormatStartButtonBinding(object sender, ConvertEventArgs e)
-		{
-			e.Value = !(bool)e.Value && _component.Enabled;
 		}
 
 		private void StartReverseButtonClicked(object sender, EventArgs e)

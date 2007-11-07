@@ -64,6 +64,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 		public RulerTool()
 			: base(SR.TooltipRuler)
 		{
+			this.Behaviour = MouseButtonHandlerBehaviour.SuppressContextMenu | MouseButtonHandlerBehaviour.SuppressOnTileActivate;
 		}
 
 		public override string Tooltip
@@ -132,11 +133,6 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 			_createGraphic.ParentPresentationImage.Draw();
 			_createGraphic = null;
-		}
-
-		public override bool SuppressContextMenu
-		{
-			get { return true; }
 		}
 
 		public override CursorToken GetCursorToken(Point point)
