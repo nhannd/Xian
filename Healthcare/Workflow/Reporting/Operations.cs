@@ -265,7 +265,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
                     return false;
 
                 // cannot revise a report that is read by someone else
-                if (Equals(step.AssignedStaff, currentUserStaff) == false)
+                if (Equals(step.ReportPart.Interpretor, currentUserStaff) == false)
                     return false;
 
                 return true;
