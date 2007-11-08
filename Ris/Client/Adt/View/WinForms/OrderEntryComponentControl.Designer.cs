@@ -147,7 +147,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // 
             this._schedulingRequestTime.LabelText = "Requested Schedule Time";
             this._schedulingRequestTime.Location = new System.Drawing.Point(177, 317);
-            this._schedulingRequestTime.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this._schedulingRequestTime.Margin = new System.Windows.Forms.Padding(2);
             this._schedulingRequestTime.Maximum = new System.DateTime(9998, 12, 31, 0, 0, 0, 0);
             this._schedulingRequestTime.Minimum = new System.DateTime(1753, 1, 1, 0, 0, 0, 0);
             this._schedulingRequestTime.Name = "_schedulingRequestTime";
@@ -162,7 +162,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // 
             this._schedulingRequestDate.LabelText = "Requested Schedule Date";
             this._schedulingRequestDate.Location = new System.Drawing.Point(7, 317);
-            this._schedulingRequestDate.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this._schedulingRequestDate.Margin = new System.Windows.Forms.Padding(2);
             this._schedulingRequestDate.Maximum = new System.DateTime(9998, 12, 31, 0, 0, 0, 0);
             this._schedulingRequestDate.Minimum = new System.DateTime(1753, 1, 1, 0, 0, 0, 0);
             this._schedulingRequestDate.Name = "_schedulingRequestDate";
@@ -201,7 +201,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // 
             this._orderingPractitioner.LabelText = "Ordering Practitioner";
             this._orderingPractitioner.Location = new System.Drawing.Point(220, 178);
-            this._orderingPractitioner.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this._orderingPractitioner.Margin = new System.Windows.Forms.Padding(2);
             this._orderingPractitioner.Name = "_orderingPractitioner";
             this._orderingPractitioner.Size = new System.Drawing.Size(269, 48);
             this._orderingPractitioner.TabIndex = 4;
@@ -248,7 +248,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // 
             this._diagnosticService.LabelText = "Diagnostic Service";
             this._diagnosticService.Location = new System.Drawing.Point(4, 126);
-            this._diagnosticService.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this._diagnosticService.Margin = new System.Windows.Forms.Padding(2);
             this._diagnosticService.Name = "_diagnosticService";
             this._diagnosticService.Size = new System.Drawing.Size(485, 48);
             this._diagnosticService.TabIndex = 2;
@@ -375,7 +375,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // 
             this._consultantLookup.LabelText = "Find Practitioner";
             this._consultantLookup.Location = new System.Drawing.Point(1, 5);
-            this._consultantLookup.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this._consultantLookup.Margin = new System.Windows.Forms.Padding(2);
             this._consultantLookup.Name = "_consultantLookup";
             this._consultantLookup.Size = new System.Drawing.Size(261, 48);
             this._consultantLookup.TabIndex = 4;
