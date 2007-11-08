@@ -94,10 +94,16 @@ namespace ClearCanvas.Desktop.Explorer
 				_tabComponentContainer.Pages.Add(tabPage);
 			}
 
+			WorkspaceCreationArgs args = new WorkspaceCreationArgs();
+			args.Component = _tabComponentContainer;
+			args.Title = SR.TitleExplorer;
+			// We don't want this workspace to be closable; the explorer
+			// should be visible at all times.
+			args.UserClosable = false;
+
 			_workspace = ApplicationComponent.LaunchAsWorkspace(
 				this.Context.DesktopWindow,
-				_tabComponentContainer,
-				SR.TitleExplorer,
+				args,
 				delegate
 				{
 					_workspace = null;
@@ -110,7 +116,6 @@ namespace ClearCanvas.Desktop.Explorer
 					CloseChildDesktopWindows();
 				});
 
-			//_workspace.NeverClose = true;
 		}
 
 		private void CloseChildDesktopWindows()
