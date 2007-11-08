@@ -195,6 +195,8 @@
     <Compile Include="ProtocollingWorkflow\GetProtocolOperationEnablementResponse.cs" />
     <Compile Include="ProtocollingWorkflow\GetProtocolRequest.cs" />
     <Compile Include="ProtocollingWorkflow\GetProtocolResponse.cs" />
+    <Compile Include="ProtocollingWorkflow\GetSuspendRejectReasonChoicesRequest.cs" />
+    <Compile Include="ProtocollingWorkflow\GetSuspendRejectReasonChoicesResponse.cs" />
     <Compile Include="ProtocollingWorkflow\SaveProtocolRequest.cs" />
     <Compile Include="ProtocollingWorkflow\SaveProtocolResponse.cs" />
     <Compile Include="ProtocolNoteDetail.cs" />

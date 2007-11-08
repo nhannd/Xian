@@ -189,6 +189,8 @@
     <EmbeddedResource Include="Mappings\ProtocolCode.hbm.xml" />
     <EmbeddedResource Include="Mappings\ProtocolProcedureStep.hbm.xml" />
     <EmbeddedResource Include="Mappings\LateralityEnum.hbm.xml" />
+    <EmbeddedResource Include="Mappings\ProtocolStatusEnum.hbm.xml" />
+    <EmbeddedResource Include="Mappings\ProtocolSuspendRejectReason.hbm.xml" />
     <Content Include="Mappings\WorklistQueryBase.hrq.xml" />
     <EmbeddedResource Include="Mappings\NoteCategory.hbm.xml" />
     <EmbeddedResource Include="Mappings\NoteSeverityEnum.hbm.xml" />

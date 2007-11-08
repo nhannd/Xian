@@ -51,6 +51,9 @@ namespace ClearCanvas.Ris.Application.Common.ProtocollingWorkflow
         [OperationContract]
         GetProtocolOperationEnablementResponse GetProtocolOperationEnablement(GetProtocolOperationEnablementRequest request);
 
+        [OperationContract]
+        GetSuspendRejectReasonChoicesResponse GetSuspendRejectReasonChoices(GetSuspendRejectReasonChoicesRequest request);
+
         /// <summary>
         /// For test purposes only
         /// </summary>

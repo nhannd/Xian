@@ -146,7 +146,7 @@ namespace ClearCanvas.Healthcare {
             }
         }
 
-        public bool CanCompleteDocumentation
+        public virtual bool CanCompleteDocumentation
         {
             get
             {

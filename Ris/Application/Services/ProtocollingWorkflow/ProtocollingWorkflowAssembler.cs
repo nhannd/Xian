@@ -19,7 +19,7 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
             ProtocolDetail detail = new ProtocolDetail();
 
             detail.Author = protocol.Author != null ? new StaffAssembler().CreateStaffSummary(protocol.Author, context) : null;
-            detail.ApprovalRequired = protocol.ApprovalRequired;
+            detail.Status = EnumUtils.GetEnumValueInfo(protocol.Status, context);
 
             detail.Codes = protocol.Codes == null
                 ? new List<ProtocolCodeDetail>()
@@ -44,7 +44,7 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 
         public void UpdateProtocol(Protocol protocol, ProtocolDetail detail, IPersistenceContext context)
         {
-            protocol.ApprovalRequired = detail.ApprovalRequired;
+            //protocol.ApprovalRequired = detail.ApprovalRequired;
 
             if (detail.Author != null && detail.Author.StaffRef != null)
             {

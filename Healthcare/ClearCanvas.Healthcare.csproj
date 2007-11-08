@@ -87,6 +87,7 @@
     <Compile Include="ProtocolCode.cs" />
     <Compile Include="ProtocolNote.cs" />
     <Compile Include="ProtocolProcedureStep.cs" />
+    <Compile Include="ProtocolStatus.cs" />
     <Compile Include="RegistrationCompletedProtocolWorklist.cs" />
     <Compile Include="RegistrationPendingProtocolWorklist.cs" />
     <Compile Include="RegistrationSuspendedProtocolWorklist.cs" />
@@ -269,6 +270,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>SR.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="ProtocolSuspendRejectReasonEnum.enum.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

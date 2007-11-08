@@ -9,7 +9,8 @@
     <many-to-one name="Procedure" class="RequestedProcedure" column="ProcedureOID_" not-null="true" unique="true"/>
 
     <many-to-one name="Author" class="Staff" column="AuthorOID_"/>
-    <property name="ApprovalRequired" column="ApprovalRequired_" type="Boolean"/>
+    <property name="Status" column="Status_" type="ClearCanvas.Healthcare.Hibernate.ProtocolStatusEnumHbm, ClearCanvas.Healthcare.Hibernate" not-null="true"/>
+    <many-to-one name="SuspendRejectReason" class="ProtocolSuspendRejectReasonEnum" column="SuspendRejectReason_"/>
 
     <list name="Notes" table="ProtocolNotes_" lazy="true" access="nosetter.camelcase-underscore">
       <key column="ProtocolOID_"/>

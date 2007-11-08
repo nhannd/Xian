@@ -78,11 +78,17 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
             return response;
         }
 
+        [ReadOperation]
+        public GetSuspendRejectReasonChoicesResponse GetSuspendRejectReasonChoices(GetSuspendRejectReasonChoicesRequest request)
+        {
+            List<EnumValueInfo> choices = EnumUtils.GetEnumValueList<ProtocolSuspendRejectReasonEnum>(this.PersistenceContext);
+            return new GetSuspendRejectReasonChoicesResponse(choices);
+        }
+
         [UpdateOperation]
         public AddOrderProtocolStepsResponse AddOrderProtocolSteps(AddOrderProtocolStepsRequest request)
         {
             Order o = this.PersistenceContext.Load<Order>(request.RequestedProcedureRef);
-
 
             foreach (RequestedProcedure rp in o.RequestedProcedures)
             {
@@ -117,6 +123,8 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
                         rp.ProtocolProcedureStep.Complete();
                     else 
                         rp.ProtocolProcedureStep.Complete(this.CurrentUserStaff);
+
+                    rp.ProtocolProcedureStep.Protocol.Accept();
                 }
             }
 
@@ -133,6 +141,7 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
                 if (rp.ProtocolProcedureStep != null)
                 {
                     rp.ProtocolProcedureStep.Suspend();
+                    rp.ProtocolProcedureStep.Protocol.Reject(EnumUtils.GetEnumValue<ProtocolSuspendRejectReasonEnum>(request.RejectReason, this.PersistenceContext));
                 }
             }
 
@@ -149,6 +158,7 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
                 if (rp.ProtocolProcedureStep != null)
                 {
                     rp.ProtocolProcedureStep.Suspend();
+                    rp.ProtocolProcedureStep.Protocol.Suspend(EnumUtils.GetEnumValue<ProtocolSuspendRejectReasonEnum>(request.SuspendReason, this.PersistenceContext));
                 }
             }
 
@@ -176,6 +186,7 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
                 if (rp.ProtocolProcedureStep != null)
                 {
                     rp.ProtocolProcedureStep.Resume();
+                    rp.ProtocolProcedureStep.Protocol.Resolve();
                 }
             }
 
@@ -187,7 +198,7 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
         {
             Protocol protocol = this.PersistenceContext.Load<Protocol>(request.ProtocolRef);
 
-            protocol.ApprovalRequired = false;
+            protocol.Accept();
 
             this.PersistenceContext.SynchState();
             

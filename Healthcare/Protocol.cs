@@ -34,5 +34,26 @@ namespace ClearCanvas.Healthcare
 		
 		#endregion
 
-	}
+        public virtual void Accept()
+        {
+            _status = ProtocolStatus.PR;
+        }
+
+        public virtual void Reject(ProtocolSuspendRejectReasonEnum reason)
+        {
+            _status = ProtocolStatus.RJ;
+            _suspendRejectReason = reason;
+        }
+
+        public virtual void Suspend(ProtocolSuspendRejectReasonEnum reason)
+        {
+            _status = ProtocolStatus.SU;
+            _suspendRejectReason = reason;
+        }
+
+        public virtual void Resolve()
+        {
+            _status = ProtocolStatus.PN;
+        }
+    }
 }

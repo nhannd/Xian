@@ -17,19 +17,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                                  "Protocol Status",
                                  delegate(ProtocolEditorProcedurePlanSummaryTableItem item)
                                  {
-                                     switch(item.ProtocolStepDetail.Status.Code)
-                                     {
-                                         case "SC":
-                                         case "IP":
-                                             return "Pending";
-                                         case "SU":
-                                             return "Suspended/Rejected";
-                                         case "DC":
-                                             return "Rejected/Cancelled";
-                                         case "CM":
-                                             return "Accepted";
-                                     }
-                                     return item.ProtocolStepDetail.Status.Value;
+                                     return item.ProtocolDetail.Status.Value;
                                  },
                                  0.5f));
 

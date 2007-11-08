@@ -92,7 +92,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             " join rps.ReportPart rpp";
 
         private const string _hqlJoinProtocol =
-            " join rps.Protocol proto";
+            " join rps.Protocol protocol";
 
         private const string _hqlSingleStateCondition =
             " where rps.State = :rpsState";
@@ -100,8 +100,8 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         private const string _hqlDualStateCondition =
             " where (rps.State = :rpsState or rps.State = :rpsState2)";
 
-        private const string _hqlProtocolRequiresApprovalCondition =
-            " where (rps.State = :rpsState and proto.ApprovalRequired = :rpsApprovalRequired)";
+        private const string _hqlProtocolStatusCondition =
+            " and protocol.Status = :protocolStatus";
 
         private const string _hqlCommunualWorklistCondition = 
             " and rps.Scheduling.Performer is NULL";
@@ -313,11 +313,11 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         {
             string hqlQuery = String.Concat(_hqlProtocollingWorklist,
                                             _hqlJoin, _hqlJoinProtocol,
-                                            _hqlProtocolRequiresApprovalCondition);
+                                            _hqlSingleStateCondition, _hqlProtocolStatusCondition);
 
             List<QueryParameter> parameters = new List<QueryParameter>();
             parameters.Add(new QueryParameter("rpsState", ActivityStatus.IP.ToString()));
-            parameters.Add(new QueryParameter("rpsApprovalRequired", true.ToString()));
+            parameters.Add(new QueryParameter("protocolStatus", ProtocolStatus.AA.ToString()));
 
             return GetWorklist(hqlQuery, parameters);
         }
@@ -339,10 +339,11 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         {
             string hqlQuery = String.Concat(_hqlProtocollingWorklist,
                                             _hqlJoin, _hqlJoinProtocol,
-                                            _hqlSingleStateCondition);
+                                            _hqlSingleStateCondition, _hqlProtocolStatusCondition);
 
             List<QueryParameter> parameters = new List<QueryParameter>();
             parameters.Add(new QueryParameter("rpsState", ActivityStatus.SU.ToString()));
+            parameters.Add(new QueryParameter("protocolStatus", ProtocolStatus.SU.ToString()));
 
             return GetWorklist(hqlQuery, parameters);
         }
@@ -499,11 +500,11 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         {
             string hqlQuery = String.Concat(_hqlProtocollingCount,
                                             _hqlJoin, _hqlJoinProtocol,
-                                            _hqlProtocolRequiresApprovalCondition);
+                                            _hqlSingleStateCondition, _hqlProtocolStatusCondition);
 
             List<QueryParameter> parameters = new List<QueryParameter>();
             parameters.Add(new QueryParameter("rpsState", ActivityStatus.IP.ToString()));
-            parameters.Add(new QueryParameter("rpsApprovalRequired", true.ToString()));
+            parameters.Add(new QueryParameter("protocolStatus", ProtocolStatus.AA.ToString()));
 
             return GetWorklistCount(hqlQuery, parameters);
         }
@@ -525,10 +526,11 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         {
             string hqlQuery = String.Concat(_hqlProtocollingCount,
                                             _hqlJoin, _hqlJoinProtocol,
-                                            _hqlSingleStateCondition);
+                                            _hqlSingleStateCondition, _hqlProtocolStatusCondition);
 
             List<QueryParameter> parameters = new List<QueryParameter>();
             parameters.Add(new QueryParameter("rpsState", ActivityStatus.SU.ToString()));
+            parameters.Add(new QueryParameter("protocolStatus", ProtocolStatus.SU.ToString()));
 
             return GetWorklistCount(hqlQuery, parameters);
         }

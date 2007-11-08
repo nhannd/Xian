@@ -17,7 +17,10 @@ namespace ClearCanvas.Ris.Application.Common
         public StaffSummary Author;
 
         [DataMember]
-        public bool ApprovalRequired;
+        public EnumValueInfo Status;
+
+        [DataMember]
+        public EnumValueInfo SuspendRejectReason;
 
         [DataMember]
         public List<ProtocolCodeDetail> Codes;

@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
@@ -240,11 +239,16 @@ namespace ClearCanvas.Ris.Client.Reporting
         {
             try
             {
+                EnumValueInfo reason = GetReason("Reject Reason");
+
+                if (reason == null)
+                    return;
+
                 Platform.GetService<IProtocollingWorkflowService>(
                     delegate(IProtocollingWorkflowService service)
                     {
                         SaveProtocols(service);
-                        service.RejectOrderProtocol(new RejectOrderProtocolRequest(_orderRef));
+                        service.RejectOrderProtocol(new RejectOrderProtocolRequest(_orderRef, reason));
                     });
 
                 EventsHelper.Fire(_protocolRejected, this, EventArgs.Empty);
@@ -253,6 +257,20 @@ namespace ClearCanvas.Ris.Client.Reporting
             {
                 ExceptionHandler.Report(e, this.Host.DesktopWindow);
             }
+        }
+
+        private EnumValueInfo GetReason(string title)
+        {
+            ProtocolReasonComponent component = new ProtocolReasonComponent();
+
+            ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, component, title);
+
+            if (exitCode == ApplicationComponentExitCode.Normal)
+            {
+                return component.Reason;
+            }
+
+            return null;
         }
 
         public bool RejectEnabled
@@ -270,11 +288,16 @@ namespace ClearCanvas.Ris.Client.Reporting
         {
             try
             {
+                EnumValueInfo reason = GetReason("Suspend Reason");
+
+                if(reason == null)
+                    return;
+
                 Platform.GetService<IProtocollingWorkflowService>(
                     delegate(IProtocollingWorkflowService service)
                     {
                         SaveProtocols(service);
-                        service.SuspendOrderProtocol(new SuspendOrderProtocolRequest(_orderRef));
+                        service.SuspendOrderProtocol(new SuspendOrderProtocolRequest(_orderRef, reason));
                     });
 
                 EventsHelper.Fire(_protocolSuspended, this, EventArgs.Empty);

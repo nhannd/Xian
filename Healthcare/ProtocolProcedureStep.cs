@@ -66,27 +66,37 @@ namespace ClearCanvas.Healthcare
             get { return "Protocol"; }
         }
 
-        public bool CanAccept
+        #endregion
+
+        public override void Suspend()
+        {
+            if(this.State == ActivityStatus.SU && this.Protocol.Status == ProtocolStatus.SU)
+            {
+                // Assume Suspended to Rejected transition, which is okay
+                return;
+            }
+            base.Suspend();
+        }
+
+        public virtual bool CanAccept
         {
             get { return this.State == ActivityStatus.SC || this.State == ActivityStatus.IP || this.State == ActivityStatus.SU; }
         }
 
-        public bool CanReject
+        public virtual bool CanReject
         {
-            get { return this.State == ActivityStatus.SC || this.State == ActivityStatus.IP || this.State == ActivityStatus.SU; }
+            get { return this.State == ActivityStatus.SC || this.State == ActivityStatus.IP || (this.State == ActivityStatus.SU && this.Protocol.Status == ProtocolStatus.SU); }
         }
 
-        public bool CanSuspend
+        public virtual bool CanSuspend
         {
             get { return this.State == ActivityStatus.SC || this.State == ActivityStatus.IP; }
         }
 
-        public bool CanSave
+        public virtual bool CanSave
         {
-            get { return this.State == ActivityStatus.SC || this.State == ActivityStatus.IP || this.State == ActivityStatus.SU; }
+            get { return this.State == ActivityStatus.SC || this.State == ActivityStatus.IP || (this.State == ActivityStatus.SU && this.Protocol.Status == ProtocolStatus.SU); }
         }
-
-        #endregion
 
         #region Object overrides
 
