@@ -177,6 +177,7 @@
     <Compile Include="TrackBarUpDown.Designer.cs">
       <DependentUpon>TrackBarUpDown.cs</DependentUpon>
     </Compile>
+    <Compile Include="Win32Constants.cs" />
     <Compile Include="WorkspaceView.cs" />
     <Compile Include="ApplicationComponentUserControl.cs">
       <SubType>UserControl</SubType>

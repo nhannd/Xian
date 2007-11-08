@@ -106,8 +106,26 @@ namespace ClearCanvas.Desktop.View.WinForms
             // cancel the request - don't let winforms close the form
             e.Cancel = true;
 
-            // notify the model that a close request was made
-            RaiseCloseRequested();
+            switch (e.CloseReason)
+            {
+                case System.Windows.Forms.CloseReason.ApplicationExitCall:
+                case System.Windows.Forms.CloseReason.TaskManagerClosing:
+                case System.Windows.Forms.CloseReason.WindowsShutDown:
+                    // windows is trying close the application, not just this window
+                    // rather than propagate the request to close this window, we need
+                    // to ask the entire desktop to quit
+                    Application.Quit();
+                    break;
+                case System.Windows.Forms.CloseReason.UserClosing:
+                case System.Windows.Forms.CloseReason.None:
+
+                    // notify the model that a close request was made
+                    RaiseCloseRequested();
+                    break;
+                default:
+                    // other close reasons are not applicable
+                    break;
+            }
         }
 
         private void FormDeactivateEventHandler(object sender, EventArgs e)

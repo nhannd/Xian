@@ -48,7 +48,7 @@ namespace ClearCanvas.Desktop
         UserInterface,
 
         /// <summary>
-        /// The object is being closed programmatically.
+        /// The application has requested to close the object.
         /// </summary>
         Program,
 
@@ -59,7 +59,9 @@ namespace ClearCanvas.Desktop
         ParentClosing,
 
         /// <summary>
-        /// The <see cref="Application.Quit"/> API was invoked.
+        /// The application has been asked to terminate.
+        /// The <see cref="Application.Quit"/> API may have been invoked, or the request
+        /// may have come from the operating system.
         /// Applicable only to <see cref="DesktopWindow"/> objects.
         /// </summary>
         ApplicationQuit
