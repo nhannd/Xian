@@ -1,10 +1,9 @@
-
-/// I have since rewritten the classes from scratch, but the design idea
-/// is based on Juval Lowy's publish-subscribe framework.
-
 //2006 IDesign Inc. 
 //Questions? Comments? go to 
 //http://www.idesign.net
+
+/// I have since rewritten the classes from scratch, but the design idea
+/// is based on Juval Lowy's publish-subscribe framework.
 
 using System;
 using System.Collections.Generic;
