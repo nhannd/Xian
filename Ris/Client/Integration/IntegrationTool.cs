@@ -55,6 +55,8 @@ using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow.TechnologistDocumentation;
 using GetWorklistRequest = ClearCanvas.Ris.Application.Common.ModalityWorkflow.GetWorklistRequest;
 using GetWorklistResponse = ClearCanvas.Ris.Application.Common.ModalityWorkflow.GetWorklistResponse;
+using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
+using SearchRequest=ClearCanvas.Ris.Application.Common.RegistrationWorkflow.SearchRequest;
 
 namespace ClearCanvas.Ris.Client.Integration
 {
@@ -112,10 +114,10 @@ namespace ClearCanvas.Ris.Client.Integration
                     VisitSummary visit = RandomUtils.RandomVisit(patientRef, profileRef, profileDetail.Mrn.AssigningAuthority);
 
                     context.ReportProgress(new BackgroundTaskProgress(CalculatePercentage(step++, totalStep), commonMessage + "Generate an order..."));
-                    OrderDetail newOrder = GenerateRandomOrder(diagnosticServiceName, visit);
+                    string newOrderAccessionNumber = GenerateRandomOrder(profileDetail, diagnosticServiceName, visit);
 
                     context.ReportProgress(new BackgroundTaskProgress(CalculatePercentage(step++, totalStep), commonMessage + "Duplicating study with anonymized patient data..."));
-                    List<string> filePaths = CreateNewStudy(study, profileDetail, newOrder);
+                    List<string> filePaths = CreateNewStudy(study, profileDetail, newOrderAccessionNumber);
 
                     context.ReportProgress(new BackgroundTaskProgress(CalculatePercentage(step++, totalStep), commonMessage + "Importing new study..."));
                     ImportFiles(filePaths);
@@ -256,9 +258,30 @@ namespace ClearCanvas.Ris.Client.Integration
             profileRef = response.PatientProfileRef;
         }
 
-        private static OrderDetail GenerateRandomOrder(string diagnosticServiceName, VisitSummary visit)
+        private static string GenerateRandomOrder(PatientProfileDetail profileDetail, string diagnosticServiceName, VisitSummary visit)
         {
-            OrderDetail orderDetail = RandomUtils.RandomOrder(visit, diagnosticServiceName);
+            EntityRef orderRef = RandomUtils.RandomOrder(visit, diagnosticServiceName);
+            string accessionNumber = null;
+
+            Platform.GetService<IRegistrationWorkflowService>(
+                delegate(IRegistrationWorkflowService service)
+                    {
+                        SearchData searchData = new SearchData();
+                        searchData.FamilyName = profileDetail.Name.FamilyName;
+                        searchData.GivenName = profileDetail.Name.GivenName;
+                        searchData.MrnID = profileDetail.Mrn.Id;
+                        
+                        ClearCanvas.Ris.Application.Common.RegistrationWorkflow.SearchResponse response = service.Search(new SearchRequest(searchData));
+
+                        RegistrationWorklistItem selectedItem = CollectionUtils.SelectFirst<RegistrationWorklistItem>(response.WorklistItems,
+                            delegate(RegistrationWorklistItem item)
+                                {
+                                    return item.OrderRef == orderRef;
+                                });
+
+                        accessionNumber = selectedItem.AccessionNumber;
+                    });
+
 
             // Look for the modality procedure steps of the new order
             List<ModalityWorklistItem> listItem = null;
@@ -271,7 +294,7 @@ namespace ClearCanvas.Ris.Client.Integration
                             workflowResponse.WorklistItems,
                             delegate(ModalityWorklistItem item)
                             {
-                                return item.AccessionNumber == orderDetail.AccessionNumber;
+                                return item.AccessionNumber == accessionNumber;
                             });
                     });
 
@@ -295,7 +318,7 @@ namespace ClearCanvas.Ris.Client.Integration
 
                 });
 
-            return orderDetail;
+            return accessionNumber;
         }
 
         #endregion
@@ -319,7 +342,7 @@ namespace ClearCanvas.Ris.Client.Integration
             return studyFinder.Query(queryParams, null);
         }
 
-        private static List<string> CreateNewStudy(StudyItem studyItem, PatientProfileDetail profile, OrderDetail order)
+        private static List<string> CreateNewStudy(StudyItem studyItem, PatientProfileDetail profile, string accessionNumber)
         {
             // Code copied from StudyLoader
             List<string> filePaths = new List<string>();
@@ -352,7 +375,7 @@ namespace ClearCanvas.Ris.Client.Integration
                     dicomFile.DataSet[DicomTags.PatientsName].SetStringValue(String.Format("{0}^{1}", profile.Name.FamilyName, profile.Name.GivenName));
                     dicomFile.DataSet[DicomTags.PatientId].SetStringValue(String.Format("{0}{1}", profile.Mrn.AssigningAuthority, profile.Mrn.Id));
                     dicomFile.DataSet[DicomTags.PatientsSex].SetStringValue(profile.Sex.Code);
-                    dicomFile.DataSet[DicomTags.AccessionNumber].SetStringValue(order.AccessionNumber);
+                    dicomFile.DataSet[DicomTags.AccessionNumber].SetStringValue(accessionNumber);
                     dicomFile.DataSet[DicomTags.PatientsBirthDate].SetStringValue(RandomUtils.FormatDateTime(profile.DateOfBirth.Value, "YYYYMMDD"));
                     dicomFile.Filename = String.Format("{0}\\{1}.dcm", Directory.GetCurrentDirectory(), newSopInstanceUid);
                     dicomFile.Save(DicomWriteOptions.Default);

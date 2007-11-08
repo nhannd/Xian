@@ -86,7 +86,6 @@
 
     <ImageViewerPluginFiles Include="$(TrunkDirectory)\ImageViewer\Explorer\Local\bin\$(Configuration)\ClearCanvas.ImageViewer.Explorer.Local.dll" />
     <ImageViewerPluginFiles Include="$(TrunkDirectory)\ImageViewer\Explorer\Local\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Explorer.Local.View.WinForms.dll" />
-    <ImageViewerPluginFiles Include="$(TrunkDirectory)\ImageViewer\Explorer\Local\Tools\bin\$(Configuration)\ClearCanvas.ImageViewer.Explorer.Local.Tools.dll" />
     <ImageViewerPluginFiles Include="$(TrunkDirectory)\Desktop\Explorer\bin\$(Configuration)\ClearCanvas.Desktop.Explorer.dll" />
     <ImageViewerPluginFiles Include="$(TrunkDirectory)\ImageViewer\Services\Tools\bin\$(Configuration)\ClearCanvas.ImageViewer.Services.Tools.dll" />
     <ImageViewerPluginFiles Include="$(TrunkDirectory)\ImageViewer\Services\Tools\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Services.Tools.View.WinForms.dll" />

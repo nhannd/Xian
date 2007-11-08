@@ -173,7 +173,7 @@ namespace ClearCanvas.Ris.Client
             return visit;
         }
 
-        public static void RandomOrder(VisitSummary visit, string diagnosticServiceName)
+        public static EntityRef RandomOrder(VisitSummary visit, string diagnosticServiceName)
         {
             List<DiagnosticServiceSummary> diagnosticServiceChoices = null;
             Platform.GetService<IDiagnosticServiceAdminService>(
@@ -197,7 +197,7 @@ namespace ClearCanvas.Ris.Client
                     practitionerChoices = service.ListExternalPractitioners(request).Practitioners;
                 });
 
-
+            EntityRef orderRef = null;
             Platform.GetService<IOrderEntryService>(
                 delegate(IOrderEntryService service)
                 {
@@ -254,7 +254,10 @@ namespace ClearCanvas.Ris.Client
 
                     PlaceOrderResponse response = service.PlaceOrder(new PlaceOrderRequest(requisition));
 
+                    orderRef = response.OrderRef;
                 });
+
+            return orderRef;
         }
     }
 }
