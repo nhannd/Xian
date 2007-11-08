@@ -25,7 +25,7 @@ namespace ClearCanvas.Ris.Client.Adt
                     Platform.GetService<IProtocollingWorkflowService>(
                         delegate(IProtocollingWorkflowService service)
                             {
-                                service.AddProtocol(new AddProtocolRequest(item.OrderRef));
+                                service.AddOrderProtocolSteps(new AddOrderProtocolStepsRequest(item.OrderRef));
                             });
                 }
                 catch (Exception e)

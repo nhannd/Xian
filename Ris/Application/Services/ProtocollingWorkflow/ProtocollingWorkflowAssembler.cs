@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
@@ -9,7 +10,7 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
     {
         public ProtocolCodeDetail CreateProtocolCodeDetail(ProtocolCode pc)
         {
-            ProtocolCodeDetail detail = new ProtocolCodeDetail(pc.Name, pc.Description);
+            ProtocolCodeDetail detail = new ProtocolCodeDetail(pc.GetRef(), pc.Name, pc.Description);
             return detail;
         }
 
@@ -17,16 +18,19 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
         {
             ProtocolDetail detail = new ProtocolDetail();
 
-            detail.Author = new StaffAssembler().CreateStaffSummary(protocol.Author, context);
+            detail.Author = protocol.Author != null ? new StaffAssembler().CreateStaffSummary(protocol.Author, context) : null;
             detail.ApprovalRequired = protocol.ApprovalRequired;
 
-            detail.Codes = CollectionUtils.Map<ProtocolCode, ProtocolCodeDetail>(
-                protocol.Codes, 
-                delegate(ProtocolCode code) { return CreateProtocolCodeDetail(code); });
+            detail.Codes = protocol.Codes == null
+                ? new List<ProtocolCodeDetail>()
+                : CollectionUtils.Map<ProtocolCode, ProtocolCodeDetail>(protocol.Codes, 
+                    delegate(ProtocolCode code) { return CreateProtocolCodeDetail(code); });
 
-            detail.Notes = CollectionUtils.Map<ProtocolNote, ProtocolNoteDetail>(
-                protocol.Notes,
-                delegate(ProtocolNote note) { return CreateProtocolNoteDetail(note, context); });
+            detail.Notes = protocol.Notes == null
+                ? new List<ProtocolNoteDetail>()
+                : CollectionUtils.Map<ProtocolNote, ProtocolNoteDetail>(
+                    protocol.Notes,
+                    delegate(ProtocolNote note) { return CreateProtocolNoteDetail(note, context); });
 
             return detail;
         }
@@ -36,6 +40,23 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
             StaffSummary author = new StaffAssembler().CreateStaffSummary(note.Author, context);
 
             return new ProtocolNoteDetail(author, note.TimeStamp, note.Text);
+        }
+
+        public void UpdateProtocol(Protocol protocol, ProtocolDetail detail, IPersistenceContext context)
+        {
+            protocol.ApprovalRequired = detail.ApprovalRequired;
+
+            if (detail.Author != null && detail.Author.StaffRef != null)
+            {
+                protocol.Author = context.Load<Staff>(detail.Author.StaffRef);
+            }
+
+            protocol.Codes.Clear();
+            foreach (ProtocolCodeDetail codeDetail in detail.Codes)
+            {
+                ProtocolCode code = context.Load<ProtocolCode>(codeDetail.EntityRef, EntityLoadFlags.Proxy);
+                protocol.Codes.Add(code);
+            }
         }
     }
 }

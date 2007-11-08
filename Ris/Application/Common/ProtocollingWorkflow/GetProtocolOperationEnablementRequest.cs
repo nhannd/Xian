@@ -4,14 +4,14 @@ using ClearCanvas.Enterprise.Common;
 namespace ClearCanvas.Ris.Application.Common.ProtocollingWorkflow
 {
     [DataContract]
-    public class AddProtocolResponse : DataContractBase
+    public class GetProtocolOperationEnablementRequest : DataContractBase
     {
-        public AddProtocolResponse(ProtocolDetail protocolDetail)
+        public GetProtocolOperationEnablementRequest(EntityRef orderRef)
         {
-            ProtocolDetail = protocolDetail;
+            OrderRef = orderRef;
         }
 
         [DataMember]
-        public ProtocolDetail ProtocolDetail;
+        public EntityRef OrderRef;
     }
 }

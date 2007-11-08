@@ -30,7 +30,27 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         protected override IApplicationComponent GetComponent()
         {
-            return new ProtocolEditorComponent(_item);
+            ProtocolEditorComponent component = new ProtocolEditorComponent(_item);
+
+            component.ProtocolAccepted += ProtocolFinished;
+            component.ProtocolCancelled += ProtocolNotFinished;
+            component.ProtocolSaved += ProtocolNotFinished;
+            component.ProtocolSuspended += ProtocolFinished;
+            component.ProtocolRejected += ProtocolFinished;
+
+            return component;
+        }
+
+        private void ProtocolNotFinished(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        private void ProtocolFinished(object sender, EventArgs e)
+        {
+            // Update folder counts
+
+            this.Close();
         }
     }
 }

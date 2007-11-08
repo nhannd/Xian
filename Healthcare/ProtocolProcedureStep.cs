@@ -29,6 +29,8 @@
 
 #endregion
 
+using ClearCanvas.Workflow;
+
 namespace ClearCanvas.Healthcare
 {
     public class ProtocolProcedureStep : ProcedureStep
@@ -62,6 +64,26 @@ namespace ClearCanvas.Healthcare
         public override string Name
         {
             get { return "Protocol"; }
+        }
+
+        public bool CanAccept
+        {
+            get { return this.State == ActivityStatus.SC || this.State == ActivityStatus.IP || this.State == ActivityStatus.SU; }
+        }
+
+        public bool CanReject
+        {
+            get { return this.State == ActivityStatus.SC || this.State == ActivityStatus.IP || this.State == ActivityStatus.SU; }
+        }
+
+        public bool CanSuspend
+        {
+            get { return this.State == ActivityStatus.SC || this.State == ActivityStatus.IP; }
+        }
+
+        public bool CanSave
+        {
+            get { return this.State == ActivityStatus.SC || this.State == ActivityStatus.IP || this.State == ActivityStatus.SU; }
         }
 
         #endregion

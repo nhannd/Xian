@@ -20,7 +20,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ProtocolAdmin
             this.PersistenceContext.Lock(protocolCode, DirtyState.New);
             this.PersistenceContext.SynchState();
 
-            return new AddProtocolCodeResponse(new ProtocolCodeDetail(protocolCode.Name, protocolCode.Description));
+            return new AddProtocolCodeResponse(new ProtocolCodeDetail(protocolCode.GetRef(), protocolCode.Name, protocolCode.Description));
         }
 
         #endregion

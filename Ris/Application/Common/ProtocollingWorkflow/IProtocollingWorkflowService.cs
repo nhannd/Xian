@@ -40,10 +40,16 @@ namespace ClearCanvas.Ris.Application.Common.ProtocollingWorkflow
         ListProtocolCodesResponse ListProtocolCodes(ListProtocolCodesRequest request);
 
         [OperationContract]
+        GetProtocolResponse GetProtocol(GetProtocolRequest request);
+
+        [OperationContract]
         GetProcedureProtocolResponse GetProcedureProtocol(GetProcedureProtocolRequest request);
 
         [OperationContract]
         GetProcedurePlanForProtocollingWorklistItemResponse GetProcedurePlanForProtocollingWorklistItem(GetProcedurePlanForProtocollingWorklistItemRequest request);
+
+        [OperationContract]
+        GetProtocolOperationEnablementResponse GetProtocolOperationEnablement(GetProtocolOperationEnablementRequest request);
 
         /// <summary>
         /// For test purposes only
@@ -53,27 +59,32 @@ namespace ClearCanvas.Ris.Application.Common.ProtocollingWorkflow
         [OperationContract]
         [FaultContract(typeof(RequestValidationException))]
         [FaultContract(typeof(ConcurrentModificationException))]
-        AddProtocolResponse AddProtocol(AddProtocolRequest request);
+        AddOrderProtocolStepsResponse AddOrderProtocolSteps(AddOrderProtocolStepsRequest request);
 
         [OperationContract]
         [FaultContract(typeof(RequestValidationException))]
         [FaultContract(typeof(ConcurrentModificationException))]
-        AcceptProtocolResponse AcceptProtocol(AcceptProtocolRequest request);
+        AcceptOrderProtocolResponse AcceptOrderProtocol(AcceptOrderProtocolRequest request);
 
         [OperationContract]
         [FaultContract(typeof(RequestValidationException))]
         [FaultContract(typeof(ConcurrentModificationException))]
-        RejectProtocolResponse RejectProtocol(RejectProtocolRequest request);
+        RejectOrderProtocolResponse RejectOrderProtocol(RejectOrderProtocolRequest request);
 
         [OperationContract]
         [FaultContract(typeof(RequestValidationException))]
         [FaultContract(typeof(ConcurrentModificationException))]
-        SuspendProtocolResponse SuspendProtocol(SuspendProtocolRequest request);
+        SuspendOrderProtocolResponse SuspendOrderProtocol(SuspendOrderProtocolRequest request);
 
         [OperationContract]
         [FaultContract(typeof(RequestValidationException))]
         [FaultContract(typeof(ConcurrentModificationException))]
-        ResolveProtocolResponse ResolveProtocol(ResolveProtocolRequest request);
+        SaveProtocolResponse SaveProtocol(SaveProtocolRequest request);
+
+        [OperationContract]
+        [FaultContract(typeof(RequestValidationException))]
+        [FaultContract(typeof(ConcurrentModificationException))]
+        ResolveOrderProtocolResponse ResolveOrderProtocol(ResolveOrderProtocolRequest request);
 
         [OperationContract]
         [FaultContract(typeof(RequestValidationException))]

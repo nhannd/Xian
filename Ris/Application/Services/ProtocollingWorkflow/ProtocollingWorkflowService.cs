@@ -7,6 +7,7 @@ using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ProtocollingWorkflow;
+using ClearCanvas.Workflow;
 
 namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 {
@@ -26,6 +27,14 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
                 delegate(ProtocolCode pc) { return assembler.CreateProtocolCodeDetail(pc); });
 
             return new ListProtocolCodesResponse(codes);
+        }
+
+        [ReadOperation]
+        public GetProtocolResponse GetProtocol(GetProtocolRequest request)
+        {
+            Protocol protocol = this.PersistenceContext.Load<Protocol>(request.ProtocolRef);
+            ProtocollingWorkflowAssembler assembler = new ProtocollingWorkflowAssembler();
+            return new GetProtocolResponse(protocol.GetRef(), assembler.CreateProtocolDetail(protocol, this.PersistenceContext));
         }
 
         [ReadOperation]
@@ -49,57 +58,141 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
             return new GetProcedurePlanForProtocollingWorklistItemResponse(procedurePlanSummary);
         }
 
-        [UpdateOperation]
-        public AddProtocolResponse AddProtocol(AddProtocolRequest request)
+        [ReadOperation]
+        public GetProtocolOperationEnablementResponse GetProtocolOperationEnablement(GetProtocolOperationEnablementRequest request)
         {
-            //RequestedProcedure rp = this.PersistenceContext.Load<RequestedProcedure>(request.RequestedProcedureRef);
+            Order order = this.PersistenceContext.Load<Order>(request.OrderRef);
+            RequestedProcedure protocolledRequestedProcedure = CollectionUtils.SelectFirst<RequestedProcedure>(
+                order.RequestedProcedures,
+                delegate(RequestedProcedure rp) { return rp.ProtocolProcedureStep != null; });
+
+            ProtocolProcedureStep protocolStep = protocolledRequestedProcedure.ProtocolProcedureStep;
+
+            GetProtocolOperationEnablementResponse response = new GetProtocolOperationEnablementResponse();
+
+            response.AcceptEnabled = protocolStep.CanAccept;
+            response.RejectEnabled = protocolStep.CanReject;
+            response.SuspendEnabled = protocolStep.CanSuspend;
+            response.SaveEnabled = protocolStep.CanSave;
+
+            return response;
+        }
+
+        [UpdateOperation]
+        public AddOrderProtocolStepsResponse AddOrderProtocolSteps(AddOrderProtocolStepsRequest request)
+        {
             Order o = this.PersistenceContext.Load<Order>(request.RequestedProcedureRef);
-            RequestedProcedure rp = CollectionUtils.FirstElement<RequestedProcedure>(o.RequestedProcedures);
 
-            Protocol protocol = new Protocol(rp);
-            ProtocolProcedureStep protocolStep = new ProtocolProcedureStep(protocol);
-            rp.AddProcedureStep(protocolStep);
 
-            protocolStep.Schedule(DateTime.Now);
+            foreach (RequestedProcedure rp in o.RequestedProcedures)
+            {
+                if(rp.ProtocolProcedureStep != null)
+                    throw new RequestValidationException("Protocol step already exists for one or more requested procedures.  Probably stale data.");
 
-            this.PersistenceContext.Lock(protocol, DirtyState.New);
-            this.PersistenceContext.Lock(protocolStep, DirtyState.New);
+                Protocol protocol = new Protocol(rp);
+                ProtocolProcedureStep protocolStep = new ProtocolProcedureStep(protocol);
+                rp.AddProcedureStep(protocolStep);
+
+                protocolStep.Schedule(DateTime.Now);
+
+                this.PersistenceContext.Lock(protocol, DirtyState.New);
+                this.PersistenceContext.Lock(protocolStep, DirtyState.New);
+            }
             
             this.PersistenceContext.SynchState();
 
+            return new AddOrderProtocolStepsResponse();
+        }
+
+        [UpdateOperation]
+        public AcceptOrderProtocolResponse AcceptOrderProtocol(AcceptOrderProtocolRequest request)
+        {
+            Order order = this.PersistenceContext.Load<Order>(request.OrderRef);
+
+            foreach (RequestedProcedure rp in order.RequestedProcedures)
+            {
+                if(rp.ProtocolProcedureStep != null)
+                {
+                    if(rp.ProtocolProcedureStep.Performer != null)
+                        rp.ProtocolProcedureStep.Complete();
+                    else 
+                        rp.ProtocolProcedureStep.Complete(this.CurrentUserStaff);
+                }
+            }
+
+            return new AcceptOrderProtocolResponse();
+        }
+
+        [UpdateOperation]
+        public RejectOrderProtocolResponse RejectOrderProtocol(RejectOrderProtocolRequest request)
+        {
+            Order order = this.PersistenceContext.Load<Order>(request.OrderRef);
+
+            foreach (RequestedProcedure rp in order.RequestedProcedures)
+            {
+                if (rp.ProtocolProcedureStep != null)
+                {
+                    rp.ProtocolProcedureStep.Suspend();
+                }
+            }
+
+            return new RejectOrderProtocolResponse();
+        }
+
+        [UpdateOperation]
+        public SuspendOrderProtocolResponse SuspendOrderProtocol(SuspendOrderProtocolRequest request)
+        {
+            Order order = this.PersistenceContext.Load<Order>(request.OrderRef);
+
+            foreach (RequestedProcedure rp in order.RequestedProcedures)
+            {
+                if (rp.ProtocolProcedureStep != null)
+                {
+                    rp.ProtocolProcedureStep.Suspend();
+                }
+            }
+
+            return new SuspendOrderProtocolResponse();
+        }
+
+        [UpdateOperation]
+        public SaveProtocolResponse SaveProtocol(SaveProtocolRequest request)
+        {
+            Protocol protocol = this.PersistenceContext.Load<Protocol>(request.ProtocolRef);
             ProtocollingWorkflowAssembler assembler = new ProtocollingWorkflowAssembler();
-            return new AddProtocolResponse(assembler.CreateProtocolDetail(protocol, this.PersistenceContext));
+
+            assembler.UpdateProtocol(protocol, request.ProtocolDetail, this.PersistenceContext);
+
+            return new SaveProtocolResponse();
         }
 
         [UpdateOperation]
-        public AcceptProtocolResponse AcceptProtocol(AcceptProtocolRequest request)
+        public ResolveOrderProtocolResponse ResolveOrderProtocol(ResolveOrderProtocolRequest request)
         {
-            ProtocolProcedureStep protocolStep = this.PersistenceContext.Load<ProtocolProcedureStep>(request.ProtocolRef);
-            throw new System.NotImplementedException();
-        }
+            Order order = this.PersistenceContext.Load<Order>(request.OrderRef);
 
-        [UpdateOperation]
-        public RejectProtocolResponse RejectProtocol(RejectProtocolRequest request)
-        {
-            throw new System.NotImplementedException();
-        }
+            foreach (RequestedProcedure rp in order.RequestedProcedures)
+            {
+                if (rp.ProtocolProcedureStep != null)
+                {
+                    rp.ProtocolProcedureStep.Resume();
+                }
+            }
 
-        [UpdateOperation]
-        public SuspendProtocolResponse SuspendProtocol(SuspendProtocolRequest request)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        [UpdateOperation]
-        public ResolveProtocolResponse ResolveProtocol(ResolveProtocolRequest request)
-        {
-            throw new System.NotImplementedException();
+            return new ResolveOrderProtocolResponse();
         }
 
         [UpdateOperation]
         public ApproveResidentProtocolResponse ApproveResidentProtocol(ApproveResidentProtocolRequest request)
         {
-            throw new System.NotImplementedException();
+            Protocol protocol = this.PersistenceContext.Load<Protocol>(request.ProtocolRef);
+
+            protocol.ApprovalRequired = false;
+
+            this.PersistenceContext.SynchState();
+            
+            ProtocollingWorkflowAssembler assembler = new ProtocollingWorkflowAssembler();
+            return new ApproveResidentProtocolResponse(assembler.CreateProtocolDetail(protocol, this.PersistenceContext));
         }
 
         #endregion

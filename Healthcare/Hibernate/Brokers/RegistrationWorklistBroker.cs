@@ -77,10 +77,9 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         private const string _hqlSelectProtocolWorklist     = "select distinct o from ProtocolProcedureStep cps";
         private const string _hqlSelectProtocolCount        = "select count(distinct o) from ProtocolProcedureStep cps";
-        private const string _hqlProtocolStateCondition          = " where cps.State = :cpsState";
-        private const string _hqlUnscheduledCondition       = " and o.ScheduledStartTime is null";
+        private const string _hqlProtocolStateCondition     = " where cps.State = :cpsState";
+        private const string _hqlUnscheduledCondition       = " and rp.ScheduledStartTime is NULL";
         private const string _hqlDualProtocolStateCondition = " where (cps.State = :cpsState or cps.State = :cpsState2)";
-
 
         #region Query helpers
 
@@ -390,10 +389,10 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         public int GetCompletedProtocolWorklistCount(RegistrationCompletedProtocolWorklist worklist)
         {
-            string hqlQuery = String.Concat(_hqlSelectProtocolCount, _hqlJoin, _hqlProtocolStateCondition);
+            string hqlQuery = String.Concat(_hqlSelectProtocolCount, _hqlJoin, _hqlProtocolStateCondition, _hqlUnscheduledCondition);
 
             List<QueryParameter> parameters = new List<QueryParameter>();
-            parameters.Add(new QueryParameter("cpsState", ActivityStatus.SU.ToString()));
+            parameters.Add(new QueryParameter("cpsState", ActivityStatus.CM.ToString()));
 
             AddWorklistQueryAndParameters(ref hqlQuery, parameters, worklist);
 

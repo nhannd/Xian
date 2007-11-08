@@ -4,6 +4,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ProtocollingWorkflow;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
@@ -89,11 +90,11 @@ namespace ClearCanvas.Ris.Client.Reporting
         #region Private Fields
 
         private readonly ReportingWorklistItem _worklistItem;
+        private EntityRef _orderRef;
 
         private ProtocolEditorProcedurePlanSummaryTable _procedurePlanSummaryTable;
-        private ProtocolEditorProcedurePlanSummaryTableItem _selectedRequestedProcedure;
+        private ProtocolEditorProcedurePlanSummaryTableItem _selectedProcodurePlanSummaryTableItem;
 
-        private ProtocolDetail _selectedProtocolDetail;
         private ProtocolCodeTable _availableProtocolCodes;
         private ProtocolCodeTable _selectedProtocolCodes;
 
@@ -106,6 +107,12 @@ namespace ClearCanvas.Ris.Client.Reporting
         private bool _rejectEnabled;
         private bool _suspendEnabled;
         private bool _saveEnabled;
+
+        private event EventHandler _protocolAccepted;
+        private event EventHandler _protocolRejected;
+        private event EventHandler _protocolSuspended;
+        private event EventHandler _protocolSaved;
+        private event EventHandler _protocolCancelled;
 
         #endregion
 
@@ -125,7 +132,6 @@ namespace ClearCanvas.Ris.Client.Reporting
             _selectedProtocolCodes = new ProtocolCodeTable();
 
             InitializeProcedurePlanSummary();
-            InitializeActionEnablement();
 
             _orderSummaryComponentHost = new ChildComponentHost(this.Host, new OrderSummaryComponent(this));
             _orderSummaryComponentHost.StartComponent();
@@ -174,21 +180,21 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         public ISelection SelectedRequestedProcedure
         {
-            get { return new Selection(_selectedRequestedProcedure); }
+            get { return new Selection(_selectedProcodurePlanSummaryTableItem); }
             set
             {
                 ProtocolEditorProcedurePlanSummaryTableItem item = (ProtocolEditorProcedurePlanSummaryTableItem)value.Item;
                 if(item != null)
                 {
-                    if( item != _selectedRequestedProcedure)
+                    if( item != _selectedProcodurePlanSummaryTableItem)
                     {
-                        _selectedRequestedProcedure = item;
-                        OnSelectionChanged();
+                        OnSelectionChanged(item);
                     }
                 }
                 else
                 {
-                    _selectedRequestedProcedure = null;
+                    SavePreviouslySelectedItemsProtocolCodes();
+                    _selectedProcodurePlanSummaryTableItem = null;
                     ResetDocument();
                 }
             }
@@ -202,7 +208,21 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         public void Accept()
         {
-            throw new NotImplementedException();
+            try
+            {
+                Platform.GetService<IProtocollingWorkflowService>(
+                    delegate(IProtocollingWorkflowService service)
+                        {
+                            SaveProtocols(service);
+                            service.AcceptOrderProtocol(new AcceptOrderProtocolRequest(_orderRef));
+                        });
+
+                EventsHelper.Fire(_protocolAccepted, this, EventArgs.Empty);
+            }
+            catch(Exception e)
+            {
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
+            }
         }
 
         public bool AcceptEnabled
@@ -210,9 +230,29 @@ namespace ClearCanvas.Ris.Client.Reporting
             get { return _acceptEnabled; }
         }
 
+        public event EventHandler ProtocolAccepted
+        {
+            add { _protocolAccepted += value; }
+            remove { _protocolAccepted += value; }
+        }
+
         public void Reject()
         {
-            throw new NotImplementedException();
+            try
+            {
+                Platform.GetService<IProtocollingWorkflowService>(
+                    delegate(IProtocollingWorkflowService service)
+                    {
+                        SaveProtocols(service);
+                        service.RejectOrderProtocol(new RejectOrderProtocolRequest(_orderRef));
+                    });
+
+                EventsHelper.Fire(_protocolRejected, this, EventArgs.Empty);
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
+            }
         }
 
         public bool RejectEnabled
@@ -220,9 +260,29 @@ namespace ClearCanvas.Ris.Client.Reporting
             get { return _rejectEnabled; }
         }
 
+        public event EventHandler ProtocolRejected
+        {
+            add { _protocolRejected += value; }
+            remove { _protocolRejected += value; }
+        }
+
         public void Suspend()
         {
-            throw new NotImplementedException();
+            try
+            {
+                Platform.GetService<IProtocollingWorkflowService>(
+                    delegate(IProtocollingWorkflowService service)
+                    {
+                        SaveProtocols(service);
+                        service.SuspendOrderProtocol(new SuspendOrderProtocolRequest(_orderRef));
+                    });
+
+                EventsHelper.Fire(_protocolSuspended, this, EventArgs.Empty);
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
+            }
         }
 
         public bool SuspendEnabled
@@ -230,9 +290,28 @@ namespace ClearCanvas.Ris.Client.Reporting
             get { return _suspendEnabled;  }
         }
 
+        public event EventHandler ProtocolSuspended
+        {
+            add { _protocolSuspended += value; }
+            remove { _protocolSuspended += value; }
+        }
+
         public void Save()
         {
-            throw new NotImplementedException();
+            try
+            {
+                Platform.GetService<IProtocollingWorkflowService>(
+                    delegate(IProtocollingWorkflowService service)
+                    {
+                        SaveProtocols(service);
+                    });
+
+                EventsHelper.Fire(_protocolSaved, this, EventArgs.Empty);
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
+            }
         }
 
         public bool SaveEnabled
@@ -240,14 +319,26 @@ namespace ClearCanvas.Ris.Client.Reporting
             get { return _saveEnabled; }
         }
 
+        public event EventHandler ProtocolSaved
+        {
+            add { _protocolSaved += value; }
+            remove { _protocolSaved += value; }
+        }
+
         public void Close()
         {
-            throw new NotImplementedException();
+            EventsHelper.Fire(_protocolCancelled, this, EventArgs.Empty);
+        }
+
+        public event EventHandler ProtocolCancelled
+        {
+            add { _protocolCancelled += value; }
+            remove { _protocolCancelled += value; }
         }
 
         public void AddNote()
         {
-            throw new NotImplementedException();
+            
         }
 
         #endregion
@@ -264,30 +355,37 @@ namespace ClearCanvas.Ris.Client.Reporting
 
                     if (procedurePlanResponse.ProcedurePlanSummary != null)
                     {
+                        _orderRef = procedurePlanResponse.ProcedurePlanSummary.OrderRef;
+
                         _procedurePlanSummaryTable.Items.Clear();
+
                         foreach (RequestedProcedureDetail rp in procedurePlanResponse.ProcedurePlanSummary.RequestedProcedures)
                         {
                             if (rp.ProtocolProcedureStepDetail != null)
                             {
-                                _procedurePlanSummaryTable.Items.Add(new ProtocolEditorProcedurePlanSummaryTableItem(rp, rp.ProtocolProcedureStepDetail));
+                                GetProtocolRequest protocolRequest = new GetProtocolRequest(rp.ProtocolProcedureStepDetail.ProtocolRef);
+                                GetProtocolResponse protocolResponse = service.GetProtocol(protocolRequest);
+
+                                _procedurePlanSummaryTable.Items.Add(new ProtocolEditorProcedurePlanSummaryTableItem(rp, rp.ProtocolProcedureStepDetail, protocolResponse.ProtocolDetail));
                             }
                         }
                         _procedurePlanSummaryTable.Sort();
+
+                        GetProtocolOperationEnablementResponse response = service.GetProtocolOperationEnablement(new GetProtocolOperationEnablementRequest(_orderRef));
+
+                        _acceptEnabled = response.AcceptEnabled;
+                        _suspendEnabled = response.SuspendEnabled;
+                        _rejectEnabled = response.RejectEnabled;
+                        _saveEnabled = response.SaveEnabled;
                     }
                 });
         }
 
-        public void InitializeActionEnablement()
-        {
-            _acceptEnabled = false;
-            _suspendEnabled = false;
-            _rejectEnabled = false;
-            _saveEnabled = false;
-        }
-
-        private void OnSelectionChanged()
+        private void OnSelectionChanged(ProtocolEditorProcedurePlanSummaryTableItem item)
         {
             ResetDocument();
+
+            SavePreviouslySelectedItemsProtocolCodes();
 
             //Refresh protocol
             Platform.GetService<IProtocollingWorkflowService>(
@@ -298,35 +396,46 @@ namespace ClearCanvas.Ris.Client.Reporting
 
                     _availableProtocolCodes.Items.AddRange(protocolCodesResponse.Codes);
 
-                    GetProcedureProtocolRequest procedureProtocolRequest = new GetProcedureProtocolRequest(_selectedRequestedProcedure.RequestedProcedureDetail.RequestedProcedureRef);
-                    GetProcedureProtocolResponse procedureProtocolResponse = service.GetProcedureProtocol(procedureProtocolRequest);
+                    // fill out selected item codes
+                    _selectedProtocolCodes.Items.Clear();
+                    _selectedProtocolCodes.Items.AddRange(item.ProtocolDetail.Codes);
 
-                    _selectedProtocolCodes.Items.AddRange(procedureProtocolResponse.ProtocolDetail.Codes);
-                    _selectedProtocolDetail = procedureProtocolResponse.ProtocolDetail;
-
-                    _acceptEnabled = true;
-                    _rejectEnabled = true;
-                    _suspendEnabled = true;
-                    _saveEnabled = true;
+                    foreach (ProtocolCodeDetail code in item.ProtocolDetail.Codes)
+                    {
+                        _availableProtocolCodes.Items.Remove(code);
+                    }
                 });
+
+            _selectedProcodurePlanSummaryTableItem = item;
 
             EventsHelper.Fire(_selectionChanged, this, EventArgs.Empty);
         }
 
         private void ResetDocument()
         {
-            InitializeActionEnablement();
             _availableProtocolCodes.Items.Clear();
             _selectedProtocolCodes.Items.Clear();
         }
 
-        //private void InitializeProcedurePlanSummaryActionHandlers()
-        //{
-        //    _procedurePlanActionHandler = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));
-        //    _startAction = _procedurePlanActionHandler.AddAction("start", SR.TitleStartMps, "Icons.StartToolSmall.png", SR.TitleStartMps, StartModalityProcedureSteps);
-        //    _discontinueAction = _procedurePlanActionHandler.AddAction("discontinue", SR.TitleDiscontinueMps, "Icons.DeleteToolSmall.png", SR.TitleDiscontinueMps, DiscontinueModalityProcedureSteps);
-        //    UpdateActionEnablement();
-        //}
+        private void SaveProtocols(IProtocollingWorkflowService service)
+        {
+            SavePreviouslySelectedItemsProtocolCodes();
+
+            foreach (ProtocolEditorProcedurePlanSummaryTableItem item in _procedurePlanSummaryTable.Items)
+            {
+                service.SaveProtocol(new SaveProtocolRequest(item.ProtocolStepDetail.ProtocolRef, item.ProtocolDetail));
+            }
+        }
+
+        private void SavePreviouslySelectedItemsProtocolCodes()
+        {
+//Save codes to existing 
+            if (_selectedProcodurePlanSummaryTableItem != null)
+            {
+                _selectedProcodurePlanSummaryTableItem.ProtocolDetail.Codes.Clear();
+                _selectedProcodurePlanSummaryTableItem.ProtocolDetail.Codes.AddRange(_selectedProtocolCodes.Items);
+            }
+        }
     }
 
     public class ProtocolCodeTable : Table<ProtocolCodeDetail>

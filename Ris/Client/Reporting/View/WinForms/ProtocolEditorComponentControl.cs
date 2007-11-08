@@ -37,11 +37,12 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 
             protocolCodesSelector.AvailableItemsTable = _component.AvailableProtocolCodesTable;
             protocolCodesSelector.SelectedItemsTable = _component.SelectedProtocolCodesTable;
+            protocolCodesSelector.DataBindings.Add("Enabled", _component, "SaveEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 
             btnAccept.DataBindings.Add("Enabled", _component, "AcceptEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
             btnReject.DataBindings.Add("Enabled", _component, "RejectEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
             btnSuspend.DataBindings.Add("Enabled", _component, "SuspendEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
-            btnSave.DataBindings.Add("Enabled", _component, "SuspendEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
+            btnSave.DataBindings.Add("Enabled", _component, "SaveEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
         }
 
         private void RefreshTables(object sender, EventArgs e)
