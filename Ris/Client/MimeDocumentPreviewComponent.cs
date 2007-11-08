@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.IO;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -33,10 +31,9 @@ namespace ClearCanvas.Ris.Client
         }
 
         // Summary component members
-        private readonly bool _showSummary;
-        private readonly EntityRef _entityRef;
-        private readonly Mode _mode;
-        private readonly ITable _attachmentTable;
+        private readonly bool _hideSummary;
+        private Mode _mode;
+        private ITable _attachmentTable;
         private ISelection _selection;
 
         // Preview members
@@ -44,91 +41,49 @@ namespace ClearCanvas.Ris.Client
         private event EventHandler _dataChanged;
 
         /// <summary>
-        /// Constructor for showing only the preview section
+        /// Default Constructor
         /// </summary>
         public MimeDocumentPreviewComponent()
         {
-            _showSummary = false;
+            _hideSummary = false;
         }
 
         /// <summary>
-        /// Constructors for showing the patient attachments in the summary and preview sections
+        /// Constructor to show/hide the summary section
         /// </summary>
-        /// <param name="attachments">A list of patient attachments</param>
-        public MimeDocumentPreviewComponent(IList<PatientAttachmentSummary> attachments)
+        /// <param name="hideSummary">True to hide the summary section</param>
+        public MimeDocumentPreviewComponent(bool hideSummary)
         {
-            _showSummary = true;
-            _mode = Mode.PatientAttachment;
-
-            _attachmentTable = new PatientAttachmentTable();
-            _attachmentTable.Items.AddRange(attachments);
-        }
-
-        /// <summary>
-        /// Constructors for showing the order attachments in the summary and preview sections
-        /// </summary>
-        /// <param name="attachments">A list of order attachments</param>
-        public MimeDocumentPreviewComponent(IList<OrderAttachmentSummary> attachments)
-        {
-            _showSummary = true;
-            _mode = Mode.OrderAttachment;
-
-            _attachmentTable = new OrderAttachmentTable();
-            _attachmentTable.Items.AddRange(attachments);
-        }
-
-        /// <summary>
-        /// Constructor for showing both the summary and preview sections
-        /// The component will retrieve a list of MimeDocuments
-        /// </summary>
-        /// <param name="entityRef">Patient or Order entity ref</param>
-        /// <param name="mode"></param>
-        public MimeDocumentPreviewComponent(EntityRef entityRef, Mode mode)
-        {
-            _showSummary = true;
-
-            _entityRef = entityRef;
-            _mode = mode;
-
-            if (mode == Mode.PatientAttachment)
-                _attachmentTable = new PatientAttachmentTable();
-            else
-                _attachmentTable = new OrderAttachmentTable();
-        }
-
-        public override void Start()
-        {
-            if (_showSummary && _entityRef != null)
-            {
-                if (_mode == Mode.PatientAttachment)
-                {
-                    Platform.GetService<IMimeDocumentService>(
-                        delegate(IMimeDocumentService service)
-                            {
-                                GetAttachmentsForPatientResponse response =
-                                    service.GetAttachmentsForPatient(new GetAttachmentsForPatientRequest(_entityRef));
-                                _attachmentTable.Items.AddRange(response.Attachments);
-                            });
-                }
-                else
-                {
-                    Platform.GetService<IMimeDocumentService>(
-                        delegate(IMimeDocumentService service)
-                            {
-                                GetAttachmentsForOrderResponse response =
-                                    service.GetAttachmentsForOrder(new GetAttachmentsForOrderRequest(_entityRef));
-                                _attachmentTable.Items.AddRange(response.Attachments);
-                            });
-                }
-            }
-            base.Start();
+            _hideSummary = hideSummary;
         }
 
         #region Summary Methods
 
-        public bool ShowSummary
+        public bool HideSummary
         {
-            get { return _showSummary; }
+            get { return _hideSummary; }
+        }
+
+        public IList<PatientAttachmentSummary> PatientAttachments
+        {
+            get { return _mode != Mode.PatientAttachment ? null : (IList<PatientAttachmentSummary>) _attachmentTable.Items; }
+            set
+            {
+                _mode = Mode.PatientAttachment;
+                _attachmentTable = new PatientAttachmentTable();
+                _attachmentTable.Items.AddRange(value);
+            }
+        }
+            
+        public IList<OrderAttachmentSummary> OrderAttachments
+        {
+            get { return _mode != Mode.OrderAttachment ? null : (IList<OrderAttachmentSummary>)_attachmentTable.Items; }
+            set
+            {
+                _mode = Mode.OrderAttachment;
+                _attachmentTable = new OrderAttachmentTable();
+                _attachmentTable.Items.AddRange(value);
+            }
         }
 
         public ITable Attachments

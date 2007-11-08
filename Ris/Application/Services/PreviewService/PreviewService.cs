@@ -169,7 +169,8 @@ namespace ClearCanvas.Ris.Application.Services.PreviewService
                     request.includeContactPersons,
                     request.includeEmailAddresses,
                     request.includeTelephoneNumbers,
-                    request.includeNotes));
+                    request.includeNotes,
+                    request.includeAttachments));
         }
 
         private ListPatientOrdersResponse ListPatientOrders(ListPatientOrdersRequest request, EntityRef patientProfileRef)

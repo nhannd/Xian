@@ -81,11 +81,12 @@ namespace ClearCanvas.Ris.Client.Adt
                         null,
                         summary.Mrn,
                         summary.Name,
-                        null,
-                        null,
                         summary.Healthcard,
                         summary.DateOfBirth,
                         summary.Sex,
+                        null,
+                        null,
+                        null,
                         null,
                         null);
             };

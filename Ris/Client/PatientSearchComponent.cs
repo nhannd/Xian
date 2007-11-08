@@ -256,6 +256,27 @@ namespace ClearCanvas.Ris.Client
             }
         }
 
+        public void OpenPatient()
+        {
+            try
+            {
+                Document doc = DocumentManager.Get(_selectedProfile.ProfileRef.ToString());
+                if (doc == null)
+                {
+                    doc = new PatientBiographyDocument(_selectedProfile.ProfileRef, this.Host.DesktopWindow);
+                    doc.Open();
+                }
+                else
+                {
+                    doc.Activate();
+                }
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
+            }
+        }
+
         #endregion
     }
 }

@@ -205,6 +205,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this._searchResults.Size = new System.Drawing.Size(308, 320);
             this._searchResults.TabIndex = 0;
             this._searchResults.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.ImageAndText;
+            this._searchResults.ItemDoubleClicked += new System.EventHandler(this._searchResults_ItemDoubleClicked);
             // 
             // PatientSearchComponentControl
             // 

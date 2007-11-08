@@ -39,5 +39,10 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         {
             _component.Search();
         }
+
+        private void _searchResults_ItemDoubleClicked(object sender, EventArgs e)
+        {
+            _component.OpenPatient();
+        }
     }
 }

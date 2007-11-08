@@ -37,6 +37,7 @@ using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Services.Admin;
+using ClearCanvas.Ris.Application.Services.MimeDocumentService;
 
 namespace ClearCanvas.Ris.Application.Services
 {
@@ -61,7 +62,7 @@ namespace ClearCanvas.Ris.Application.Services
 
         public PatientProfileDetail CreatePatientProfileDetail(PatientProfile profile, IPersistenceContext context)
         {
-            return CreatePatientProfileDetail(profile, context, true, true, true, true, true);
+            return CreatePatientProfileDetail(profile, context, true, true, true, true, true, true);
         }
 
         public PatientProfileDetail CreatePatientProfileDetail(PatientProfile profile, 
@@ -70,7 +71,8 @@ namespace ClearCanvas.Ris.Application.Services
             bool includeContactPersons,
             bool includeEmailAddresses,
             bool includeTelephoneNumbers,
-            bool includeNotes)
+            bool includeNotes,
+            bool includeAttachments)
         {
             PatientProfileDetail detail = new PatientProfileDetail();
 
@@ -144,6 +146,18 @@ namespace ClearCanvas.Ris.Application.Services
                 }
             }
 
+            if (includeAttachments)
+            {
+                MimeDocumentAssembler docAssembler = new MimeDocumentAssembler();
+                detail.Attachments = new List<PatientAttachmentSummary>();
+                foreach (PatientAttachment a in profile.Patient.Attachments)
+                {
+                    detail.Attachments.Add(new PatientAttachmentSummary(
+                        EnumUtils.GetEnumValueInfo(a.Category),
+                        docAssembler.CreateMimeDocumentSummary(a.Document)));
+                }
+            }
+
             return detail;
         }
 
@@ -201,6 +215,14 @@ namespace ClearCanvas.Ris.Application.Services
             foreach (NoteDetail n in detail.Notes)
             {
                 profile.Patient.Notes.Add(noteAssembler.CreateNote(n, context));
+            }
+
+            profile.Patient.Attachments.Clear();
+            foreach (PatientAttachmentSummary a in detail.Attachments)
+            {
+                profile.Patient.Attachments.Add(new PatientAttachment(
+                    EnumUtils.GetEnumValue<PatientAttachmentCategoryEnum>(a.Category, context),
+                    context.Load<MimeDocument>(a.Document.DocumentRef)));
             }
         }
     }

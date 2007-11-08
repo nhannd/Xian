@@ -49,6 +49,7 @@ namespace ClearCanvas.Ris.Application.Common
             this.EmailAddresses = new List<EmailAddressDetail>();
             this.TelephoneNumbers = new List<TelephoneDetail>();
             this.Notes = new List<NoteDetail>();
+            this.Attachments = new List<PatientAttachmentSummary>();
             this.Name = new PersonNameDetail();
         }
 
@@ -108,5 +109,8 @@ namespace ClearCanvas.Ris.Application.Common
 
         [DataMember]
         public List<NoteDetail> Notes;
+
+        [DataMember]
+        public List<PatientAttachmentSummary> Attachments;
     }
 }

@@ -56,7 +56,7 @@ namespace ClearCanvas.Ris.Application.Common
         public HealthcardDetail Healthcard;
 
         [DataMember]
-        public DateTime DateOfBirth;
+        public DateTime? DateOfBirth;
 
         [DataMember]
         public EnumValueInfo Sex;

@@ -45,9 +45,11 @@ namespace ClearCanvas.Ris.Client.Adt
 {
     public class PatientProfileEditorComponent : NavigatorComponentContainer
     {
+        private EntityRef _patientRef;
         private EntityRef _profileRef;
         private PatientProfileDetail _profile;
         private bool _isNew;
+        private List<PatientAttachmentSummary> _newAttachments;
 
         private PatientProfileDetailsEditorComponent _patientEditor;
         private AddressesSummaryComponent _addressesSummary;
@@ -56,6 +58,7 @@ namespace ClearCanvas.Ris.Client.Adt
         private ContactPersonsSummaryComponent _contactPersonsSummary;
         private PatientProfileAdditionalInfoEditorComponent _additionalPatientInfoSummary;
         private NoteSummaryComponent _notesSummary;
+        private MimeDocumentPreviewComponent _documentSummary;
 
         /// <summary>
         /// Constructs an editor to edit the specified profile
@@ -75,9 +78,28 @@ namespace ClearCanvas.Ris.Client.Adt
             _isNew = true;
         }
 
-        public EntityRef PatientProfile
+        /// <summary>
+        /// Constructs an editor to edit a new profile with attachments
+        /// </summary>
+        public PatientProfileEditorComponent(List<PatientAttachmentSummary> attachments)
+        {
+            _isNew = true;
+            _newAttachments = attachments;
+        }
+
+        public EntityRef PatientRef
+        {
+            get { return _patientRef; }
+        }
+
+        public EntityRef PatientProfileRef
         {
             get { return _profileRef; }
+        }
+
+        public PatientProfileDetail PatientProfile
+        {
+            get { return _profile; }
         }
 
         public override void Start()
@@ -94,7 +116,7 @@ namespace ClearCanvas.Ris.Client.Adt
                     this.Pages.Add(new NavigatorPage("Patient/Contact Persons", _contactPersonsSummary = new ContactPersonsSummaryComponent(formData.ContactPersonTypeChoices, formData.ContactPersonRelationshipChoices)));
                     this.Pages.Add(new NavigatorPage("Patient/Additional Info", _additionalPatientInfoSummary = new PatientProfileAdditionalInfoEditorComponent(formData.ReligionChoices, formData.PrimaryLanguageChoices)));
                     this.Pages.Add(new NavigatorPage("Patient/Notes", _notesSummary = new NoteSummaryComponent(formData.NoteCategoryChoices)));
-
+                    this.Pages.Add(new NavigatorPage("Patient/Documents", _documentSummary = new MimeDocumentPreviewComponent()));
                     this.ValidationStrategy = new AllNodesContainerValidationStrategy();
 
                     if (_isNew)
@@ -106,6 +128,7 @@ namespace ClearCanvas.Ris.Client.Adt
                         _profile.Religion = formData.ReligionChoices[0];
                         _profile.PrimaryLanguage = formData.PrimaryLanguageChoices[0];
                         _profile.DateOfBirth = Platform.Time.Date;
+                        _profile.Attachments = _newAttachments;
                     }
                     else
                     {
@@ -127,6 +150,7 @@ namespace ClearCanvas.Ris.Client.Adt
             _contactPersonsSummary.Subject = _profile.ContactPersons;
             _additionalPatientInfoSummary.Subject = _profile;
             _notesSummary.Subject = _profile.Notes;
+            _documentSummary.PatientAttachments = _profile.Attachments;
 
             base.Start();
         }
@@ -176,12 +200,16 @@ namespace ClearCanvas.Ris.Client.Adt
                         AdminAddPatientProfileResponse response = service.AdminAddPatientProfile(
                             new AdminAddPatientProfileRequest(_profile));
 
+                        _patientRef = response.PatientRef;
                         _profileRef = response.PatientProfileRef;
                     }
                     else
                     {
-                        service.SaveAdminEditsForPatientProfile(
+                        SaveAdminEditsForPatientProfileResponse response = service.SaveAdminEditsForPatientProfile(
                             new SaveAdminEditsForPatientProfileRequest(_profileRef, _profile));
+
+                        _patientRef = response.PatientRef;
+                        _profileRef = response.ProfileRef;
                     }
                 });
 

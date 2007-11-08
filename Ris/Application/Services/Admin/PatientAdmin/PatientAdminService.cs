@@ -129,7 +129,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.PatientAdmin
             PatientProfileAssembler assembler = new PatientProfileAssembler();
             assembler.UpdatePatientProfile(profile, request.PatientDetail, PersistenceContext);
 
-            return new SaveAdminEditsForPatientProfileResponse();
+            return new SaveAdminEditsForPatientProfileResponse(profile.Patient.GetRef(), profile.GetRef());
         }
 
         [UpdateOperation]

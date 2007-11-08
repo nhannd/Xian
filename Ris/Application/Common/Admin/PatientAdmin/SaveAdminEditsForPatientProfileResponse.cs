@@ -31,7 +31,6 @@
 
 using System;
 using System.Runtime.Serialization;
-
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 
@@ -40,5 +39,16 @@ namespace ClearCanvas.Ris.Application.Common.Admin.PatientAdmin
     [DataContract]
     public class SaveAdminEditsForPatientProfileResponse : DataContractBase
     {
+        public SaveAdminEditsForPatientProfileResponse(EntityRef patientRef, EntityRef profileRef)
+        {
+            this.PatientRef = patientRef;
+            this.ProfileRef = profileRef;
+        }
+
+        [DataMember]
+        public EntityRef PatientRef;
+
+        [DataMember]
+        public EntityRef ProfileRef;
     }
 }

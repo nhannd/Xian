@@ -85,10 +85,6 @@
     <Compile Include="OrderAttachmentSummary.cs" />
     <Compile Include="MimeDocumentService\GetAttachFaxFormDataRequest.cs" />
     <Compile Include="MimeDocumentService\GetAttachFaxFormDataResponse.cs" />
-    <Compile Include="MimeDocumentService\GetAttachmentsForOrderRequest.cs" />
-    <Compile Include="MimeDocumentService\GetAttachmentsForOrderResponse.cs" />
-    <Compile Include="MimeDocumentService\GetAttachmentsForPatientRequest.cs" />
-    <Compile Include="MimeDocumentService\GetAttachmentsForPatientResponse.cs" />
     <Compile Include="MimeDocumentService\GetDocumentDataRequest.cs" />
     <Compile Include="MimeDocumentService\GetDocumentDataResponse.cs" />
     <Compile Include="MimeDocumentService\IMimeDocumentService.cs" />

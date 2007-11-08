@@ -46,22 +46,5 @@ namespace ClearCanvas.Ris.Application.Common.MimeDocumentService
         /// <returns><see cref="GetDocumentDataResponse"/></returns>
         [OperationContract]
         GetDocumentDataResponse GetDocumentData(GetDocumentDataRequest request);
-
-        /// <summary>
-        /// Get a list of documents for a patient
-        /// </summary>
-        /// <param name="request"><see cref="GetAttachmentsForPatientRequest"/></param>
-        /// <returns><see cref="GetAttachmentsForPatientResponse"/></returns>
-        [OperationContract]
-        GetAttachmentsForPatientResponse GetAttachmentsForPatient(GetAttachmentsForPatientRequest request);
-
-        /// <summary>
-        /// Get a list of documents for an order
-        /// </summary>
-        /// <param name="request"><see cref="GetAttachmentsForOrderRequest"/></param>
-        /// <returns><see cref="GetAttachmentsForOrderResponse"/></returns>
-        [OperationContract]
-        GetAttachmentsForOrderResponse GetAttachmentsForOrder(GetAttachmentsForOrderRequest request);
-
     }
 }

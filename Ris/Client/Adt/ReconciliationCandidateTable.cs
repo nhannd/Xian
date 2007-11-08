@@ -64,7 +64,7 @@ namespace ClearCanvas.Ris.Client.Adt
               new TableColumn<ReconciliationCandidateTableEntry, string>(SR.ColumnHealthcardNumber,
                   delegate(ReconciliationCandidateTableEntry item) { return HealthcardFormat.Format(item.ReconciliationCandidate.PatientProfile.Healthcard); }, 1.0f));
             this.Columns.Add(
-              new TableColumn<ReconciliationCandidateTableEntry, DateTime>(SR.ColumnDateOfBirth,
+              new TableColumn<ReconciliationCandidateTableEntry, DateTime?>(SR.ColumnDateOfBirth,
                   delegate(ReconciliationCandidateTableEntry item) { return item.ReconciliationCandidate.PatientProfile.DateOfBirth; }, 1.0f));
             this.Columns.Add(
               new TableColumn<ReconciliationCandidateTableEntry, string>(SR.ColumnSex,

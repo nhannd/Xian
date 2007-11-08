@@ -47,6 +47,7 @@ namespace ClearCanvas.Ris.Application.Common.PreviewService
             includeEmailAddresses = false;
             includeTelephoneNumbers = false;
             includeNotes = false;
+            includeAttachments = false;
         }
 
         [DataMember]
@@ -63,6 +64,9 @@ namespace ClearCanvas.Ris.Application.Common.PreviewService
 
         [DataMember]
         public bool includeNotes;
+
+        [DataMember]
+        public bool includeAttachments;
 
     }
 }

@@ -83,7 +83,8 @@ namespace ClearCanvas.Ris.Client
             BiographyNoteComponent noteComponent = new BiographyNoteComponent(_patientProfile.Notes);
             BiographyFeedbackComponent feedbackComponent = new BiographyFeedbackComponent();
             BiographyDemographicComponent demographicComponent = new BiographyDemographicComponent(_profileRef, _patientProfile);
-            MimeDocumentPreviewComponent documentComponent = new MimeDocumentPreviewComponent(_patientRef, MimeDocumentPreviewComponent.Mode.PatientAttachment);
+            MimeDocumentPreviewComponent documentComponent = new MimeDocumentPreviewComponent();
+            documentComponent.PatientAttachments = _patientProfile.Attachments;
 
             // Create tab and tab groups
             TabComponentContainer tabContainer = new TabComponentContainer();
