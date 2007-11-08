@@ -110,6 +110,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		private int _referenceCount;
 		private Series _parentSeries;
 
+		protected Sop()
+		{
+
+		}
+
 		/// <summary>
 		/// Gets the parent <see cref="Series"/>.
 		/// </summary>
@@ -829,6 +834,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
+		/// <summary>
+		/// Returns the SOP instance UID in string form.
+		/// </summary>
+		/// <returns></returns>
 		public override string ToString()
 		{
 			return this.SopInstanceUID;

@@ -41,7 +41,7 @@ using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
-	// TODO: Remove IObservableList interface; retain other convenience
+	// TODO (Norman): Remove IObservableList interface; retain other convenience
 	// methods like Add, Remove, etc.
 
 	public class PolyLineAnchorPointsGraphic 

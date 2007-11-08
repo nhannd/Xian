@@ -36,7 +36,7 @@ using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
-	public class MoveControlPointGraphicState : StandardGraphicState
+	internal class MoveControlPointGraphicState : StandardGraphicState
 	{
 		private PointF _currentPoint;
 		private PointF _startPoint;

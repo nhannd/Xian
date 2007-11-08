@@ -66,8 +66,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		ReadOnlyCollection<StudyItem> SelectedStudies { get; }
 
-		ReadOnlyCollection<StudyItem> RelatedPriors { get; }
-
 		AEServerGroup SelectedServerGroup { get; }
 
 		event EventHandler SelectedStudyChanged;
@@ -110,14 +108,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				{
 					return _component.SelectedStudies;
 				} 
-			}
-
-			public ReadOnlyCollection<StudyItem> RelatedPriors 
-			{
-				get
-				{
-					return _component.RelatedPriors;
-				}
 			}
 
 			public AEServerGroup SelectedServerGroup
@@ -254,19 +244,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 					selectedStudies.Add(item);
 
 				return selectedStudies.AsReadOnly();
-			}
-		}
-
-		public ReadOnlyCollection<StudyItem> RelatedPriors
-		{
-			get
-			{
-				if (this.SelectedStudies.Count > 1)
-					return null;
-
-				// TODO
-
-				return null;
 			}
 		}
 

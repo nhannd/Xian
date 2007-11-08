@@ -42,6 +42,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	{
 		#region General Image Module
 
+		protected ImageSop()
+		{
+
+		}
+
 		/// <summary>
 		/// Gets the patient orientation.
 		/// </summary>

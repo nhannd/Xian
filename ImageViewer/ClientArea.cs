@@ -34,8 +34,7 @@ using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer
 {
-	// TODO: Get rid of this class
-	public class ClientArea 
+	internal class ClientArea 
 	{
 		// Private attributes
 		private Rectangle _clientRectangle = new Rectangle(0, 0, 0, 0);

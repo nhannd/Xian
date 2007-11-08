@@ -37,7 +37,9 @@ using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
-	// TODO: Support for undo shouldn't be coupled with the state
+	// TODO (Stewart): Support for undo shouldn't be coupled with the state
+	// TODO (Stewart): Get rid of SupportUndo and Command properties
+	// TODO (Stewart): Move undo functionality into TileController
 
 	/// <summary>
 	/// A base class for graphic states.

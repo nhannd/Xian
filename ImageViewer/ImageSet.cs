@@ -108,7 +108,7 @@ namespace ClearCanvas.ImageViewer
 			get { return _displaySets; }
 		}
 
-		// TODO: Use IEnumerable and yield
+		// TODO (Norman): Use IEnumerable and yield
 
 		/// <summary>
 		/// Gets a collection of linked <see cref="IDisplaySet"/> objects.
@@ -127,7 +127,7 @@ namespace ClearCanvas.ImageViewer
 			set { _name = value; }
 		}
 
-		// TODO: This generic string may not be a good idea
+		// TODO (Norman): This generic string may not be a good idea
 		public string PatientInfo
 		{
 			get { return _patientInfo; }

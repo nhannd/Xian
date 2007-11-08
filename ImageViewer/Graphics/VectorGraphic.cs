@@ -35,7 +35,7 @@ using ClearCanvas.Desktop.Tools;
 
 namespace ClearCanvas.ImageViewer.Graphics
 {
-	// TODO: Move this GraphicTool stuff to another file
+	// TODO (Stewart): Move this GraphicTool stuff to another file
 	[ExtensionPoint()]
 	public class GraphicToolExtensionPoint : ExtensionPoint<ITool>
 	{
@@ -118,7 +118,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 			set { _lineStyle = value; }
 		}
 
-		// TODO: move this to Vector
+		// TODO (Stewart): move this to Vector
 		public static SizeF CalcGraphicPositionDelta(PointF lastPoint, PointF currentPoint)
 		{
 			float deltaX = currentPoint.X - lastPoint.X;

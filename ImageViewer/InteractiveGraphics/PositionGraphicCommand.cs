@@ -35,6 +35,10 @@ using ClearCanvas.ImageViewer.Graphics;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
+	// TODO (Stewart): Rename and rewrite so that the command remembers the graphic
+	// that was removed upon undo; upon redo, the graphic is simply 
+	// reinserted into the scene graph.
+
 	public class PositionGraphicCommand : UndoableCommand
 	{
 		public enum CreateOperation { None, Create, Delete };

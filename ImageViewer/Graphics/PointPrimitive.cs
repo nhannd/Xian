@@ -35,7 +35,7 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Graphics
 {
-	// TODO: Implement HitTest and Move
+	// TODO (Norman): Implement HitTest and Move
 	public class PointPrimitive : VectorGraphic
 	{
 		private PointF _point;

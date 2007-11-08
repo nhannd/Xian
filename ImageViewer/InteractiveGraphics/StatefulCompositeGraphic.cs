@@ -38,12 +38,14 @@ using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
+	// TODO (Stewart): Get rid of InstallDefaultCursors; each graphic should install its own
+
 	public abstract class StatefulCompositeGraphic 
 		: CompositeGraphic, IStatefulGraphic, IMouseButtonHandler, ICursorTokenProvider
 	{
 		private GraphicStateManager _graphicStateManager = new GraphicStateManager();
 
-		public StatefulCompositeGraphic()
+		protected StatefulCompositeGraphic()
 		{
 		}
 

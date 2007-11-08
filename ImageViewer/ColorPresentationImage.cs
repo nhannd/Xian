@@ -85,10 +85,10 @@ namespace ClearCanvas.ImageViewer
 
 		}
 
-		// TODO: Rename this method
+		// TODO (Norman): Rename this method 
 		public override IPresentationImage Clone()
 		{
-			// TODO:
+			// TODO (Norman): 
 			return null;
 		}
 

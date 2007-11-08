@@ -37,6 +37,8 @@ using ClearCanvas.ImageViewer.Imaging;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
+	// TODO (Stewart): Merge methods into ImageSop
+
 	/// <summary>
 	/// A collection of image SOP helper methods.
 	/// </summary>

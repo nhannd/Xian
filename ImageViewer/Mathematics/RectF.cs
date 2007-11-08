@@ -35,8 +35,12 @@ using System.Drawing;
 namespace ClearCanvas.ImageViewer.Mathematics
 {
 	/// <summary>
-	/// A rectangle based
+	/// A float based rectangle.
 	/// </summary>
+	/// <remarks>
+	/// This differs from <see cref="RectangleF"/> in that it allows
+	/// for negative widths and heights.
+	/// </remarks>
 	public class RectF
 	{
 		private float _top;
@@ -44,34 +48,52 @@ namespace ClearCanvas.ImageViewer.Mathematics
 		private float _bottom;
 		private float _right;
 
+		/// <summary>
+		/// Initializes a new instance of <see cref="RectF"/>.
+		/// </summary>
 		public RectF()
 		{
 		}
 
+		/// <summary>
+		/// Gets or sets the top coordinate of the rectangle.
+		/// </summary>
 		public float Top
 		{
 			get { return _top; }
 			set { _top = value; }
 		}
 
+		/// <summary>
+		/// Gets or sets the left coordinate of the rectangle.
+		/// </summary>
 		public float Left
 		{
 			get { return _left; }
 			set { _left = value; }
 		}
 
+		/// <summary>
+		/// Gets or sets the bottom coordinate of the rectangle.
+		/// </summary>
 		public float Bottom
 		{
 			get { return _bottom; }
 			set { _bottom = value; }
 		}
 
+		/// <summary>
+		/// Gets or sets the right coordinate of the rectangle.
+		/// </summary>
 		public float Right
 		{
 			get { return _right; }
 			set { _right = value; }
 		}
 
+		/// <summary>
+		/// Gets or sets the top-left coordinate of the rectangle.
+		/// </summary>
 		public PointF TopLeft
 		{
 			get { return new PointF(_top, _left); }
@@ -82,6 +104,9 @@ namespace ClearCanvas.ImageViewer.Mathematics
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the bottom-right coordinate of the rectangle.
+		/// </summary>
 		public PointF BottomRight
 		{
 			get { return new PointF(_bottom, _right); }
@@ -92,23 +117,42 @@ namespace ClearCanvas.ImageViewer.Mathematics
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the width of the rectangle.
+		/// </summary>
 		public float Width
 		{
 			get { return _right - _left; }
 			set { _right = _left + value; }
 		}
 
+		/// <summary>
+		/// Gets or sets the height of the rectangle.
+		/// </summary>
 		public float Height
 		{
 			get { return _bottom - _top; }
 			set { _bottom = _top + value; }
 		}
 
+		/// <summary>
+		/// Returns a value indicating whether a given point
+		/// is within the rectangle.
+		/// </summary>
+		/// <param name="point"></param>
+		/// <returns></returns>
 		public bool Contains(PointF point)
 		{
 			return Contains(point.X, point.Y);
 		}
 
+		/// <summary>
+		/// Returns a value indicating whether a given point
+		/// is within the rectangle.
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <returns></returns>
 		public bool Contains(float x, float y)
 		{
 			bool inXRange = false;
@@ -139,6 +183,10 @@ namespace ClearCanvas.ImageViewer.Mathematics
 			return inXRange && inYRange;
 		}
 
+		/// <summary>
+		/// Returns the rectangle's coordinates in string format.
+		/// </summary>
+		/// <returns></returns>
 		public override string ToString()
 		{
 			return String.Format("{{t={0},l={1},b={2},r={3}}}",

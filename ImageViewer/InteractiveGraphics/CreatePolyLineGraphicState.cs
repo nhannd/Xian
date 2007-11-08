@@ -35,7 +35,7 @@ using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
-	public class CreatePolyLineGraphicState : CreateGraphicState
+	internal class CreatePolyLineGraphicState : CreateGraphicState
 	{
 		private int _controlPointIndex;
 		private int _numberOfPointsAnchored = 0;

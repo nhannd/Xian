@@ -39,25 +39,8 @@ using dbg = System.Diagnostics.Debug;
 
 namespace ClearCanvas.ImageViewer.Mathematics
 {
-	public class FloatComparer : IComparer
+	public class FloatComparer
 	{
-		int IComparer.Compare(object x, object y)
-		{
-			// Handle special cases (nulls, wrong types, etc).
-			if (x == null && y == null) return 0;
-
-			if (x == null)
-				if (y is float) return -1;
-				else throw new ArgumentException(SR.ExceptionObjectMustBeSingleType, "y");
-			if (y == null)
-				if (x is float) return +1;
-				else throw new ArgumentException(SR.ExceptionObjectMustBeSingleType, "x");
-
-			// Compare the floats' distance in units of least-precise bits.
-			const int tolerance = 5; // a pretty robust default
-			return Compare((float)x, (float)y, tolerance);
-		}
-
 		public static int Compare(float x, float y, int tolerance)
 		{
 			int dummy;

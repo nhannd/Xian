@@ -301,7 +301,6 @@
     <Compile Include="Imaging\Tests\LinearLutInstallationTests.cs" />
     <Compile Include="Imaging\Tests\DicomPresentationImageSortTests.cs" />
     <Compile Include="Mathematics\FloatComparer.cs" />
-    <Compile Include="Mathematics\PointUtilities.cs" />
     <Compile Include="Mathematics\RectF.cs" />
     <Compile Include="Mathematics\Tests\FloatComparerTest.cs" />
     <Compile Include="Mathematics\Vector.cs" />

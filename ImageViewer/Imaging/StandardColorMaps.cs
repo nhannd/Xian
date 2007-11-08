@@ -119,7 +119,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 	#endregion
 
-	// TODO: Get rid of all colormaps except grayscale
+	// TODO (Stewart): Get rid of all colormaps except grayscale
 
 	#region Red
 

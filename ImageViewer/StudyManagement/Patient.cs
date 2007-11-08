@@ -35,7 +35,7 @@ using ClearCanvas.Dicom;
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
 	/// <summary>
-	/// A DICOM study.
+	/// A DICOM patient.
 	/// </summary>
 	public class Patient
 	{

@@ -36,7 +36,7 @@ using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
-	public class CreateRoiGraphicState : CreateGraphicState
+	internal class CreateRoiGraphicState : CreateGraphicState
 	{
 		private StatefulCompositeGraphic _childGraphic;
 

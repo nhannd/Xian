@@ -218,6 +218,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
+		/// <summary>
+		/// Returns the series description and series instance UID in string form.
+		/// </summary>
+		/// <returns></returns>
 		public override string ToString()
 		{
 			string str = String.Format("{0} | {1}", this.SeriesDescription, this.SeriesInstanceUID);

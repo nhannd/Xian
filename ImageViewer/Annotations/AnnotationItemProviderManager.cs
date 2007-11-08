@@ -35,7 +35,7 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Annotations
 {
-	// TODO: Remove this class
+	// TODO (Stewart): Remove this class
 	internal sealed class AnnotationItemProviderManager
 	{
 		private static readonly AnnotationItemProviderManager _instance = new AnnotationItemProviderManager();

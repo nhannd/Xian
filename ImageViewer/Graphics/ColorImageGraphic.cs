@@ -39,7 +39,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 	/// </summary>
 	/// <remarks>
 	/// A typical usage of this class is overlaying
-	/// colour regions on a grayscale image to highlight areas of interest.  
+	/// colour regions on a grayscale image to highlight areas of interest.
 	/// Note that you can control not just the colour, but also the 
 	/// opacity (i.e. alpha) of each pixel.
 	/// </remarks>

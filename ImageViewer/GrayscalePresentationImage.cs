@@ -126,7 +126,7 @@ namespace ClearCanvas.ImageViewer
 		/// <returns></returns>
 		public override IPresentationImage Clone()
 		{
-			// TODO:
+			// TODO (Norman):
 
 			//IPresentationImage image = new GrayscalePresentationImage(;
 			//image.Uid = this.Uid;

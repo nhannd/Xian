@@ -62,6 +62,8 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		{
 		}
 
+		// TODO (Stewart): Remove the constructor, since the InstallDefaultCursors parameter
+		// will be removed
 		public RoiGraphic(InteractiveGraphic graphic, bool userCreated, bool installDefaultCursors)
 		{
 			_roiGraphic = graphic;

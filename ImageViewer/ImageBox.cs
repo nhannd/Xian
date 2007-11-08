@@ -37,7 +37,7 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer
 {
-	// TODO: Seal all ExtensionPoint subclasses
+	// TODO (Stewart): Seal all ExtensionPoint subclasses
 
 	/// <summary>
 	/// An extension point for views onto <see cref="ImageBox"/>.
@@ -156,7 +156,7 @@ namespace ClearCanvas.ImageViewer
 			get { return _normalizedRectangle; }
 			set 
 			{
-				// TODO: validate this 
+				// TODO (Stewart): validate this 
 				_normalizedRectangle = value; 
 			}
 		}

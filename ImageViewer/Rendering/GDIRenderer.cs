@@ -43,7 +43,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 	/// <summary>
 	/// A factory for <see cref="GdiRenderer"/>s.
 	/// </summary>
-	public sealed class GdiRendererFactory : RendererFactoryBase
+	internal sealed class GdiRendererFactory : RendererFactoryBase
 	{
 		/// <summary>
 		/// Default constructor.

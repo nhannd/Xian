@@ -422,7 +422,7 @@ namespace ClearCanvas.ImageViewer
 
 		#region Public methods
 
-		// TODO: Should this method even be here, or in a separate class?
+		// TODO (Norman): Should this method even be here, or in a separate class?
 
 		/// <summary>
 		/// Queries for studies matching a specified set of query parameters.
@@ -597,16 +597,17 @@ namespace ClearCanvas.ImageViewer
 		public static void LaunchInSeparateWindow(ImageViewerComponent imageViewer)
 		{
 			IDesktopWindow window;
+			string imageViewerWindow = "ImageViewer";
 
 			// If an image viewer desktop window already exists, use it
-			if (Application.DesktopWindows.Contains("ImageViewer"))
+			if (Application.DesktopWindows.Contains(imageViewerWindow))
 			{
-				window = Application.DesktopWindows["ImageViewer"];
+				window = Application.DesktopWindows[imageViewerWindow];
 			}
 			// If not, create one
 			else
 			{
-				DesktopWindowCreationArgs args = new DesktopWindowCreationArgs("", "ImageViewer");
+				DesktopWindowCreationArgs args = new DesktopWindowCreationArgs("", imageViewerWindow);
 				window = Application.DesktopWindows.AddNew(args);
 			}
 

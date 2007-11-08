@@ -107,7 +107,7 @@ namespace ClearCanvas.ImageViewer
 		/// </summary>
 		string Uid { get; }
 
-		// TODO: Change Clone to some other name
+		// TODO (Norman): Change Clone to some other name
 
 		/// <summary>
 		/// Creates a clone of the <see cref="IDisplaySet"/>.

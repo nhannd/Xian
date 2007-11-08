@@ -33,7 +33,7 @@ using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
-	public class FocussedGraphicState : StandardGraphicState
+	internal class FocussedGraphicState : StandardGraphicState
 	{
 		public FocussedGraphicState(IStandardStatefulGraphic standardStatefulGraphic)
 			: base(standardStatefulGraphic)

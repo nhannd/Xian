@@ -35,6 +35,8 @@ using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
+	// TODO (Stewart): Might consider making this a single static helper class
+
 	/// <summary>
 	/// A delegate used to retrieve data of a particular type <typeparamref name="T"/> from an <see cref="ImageSop"/>.
 	/// </summary>
@@ -52,7 +54,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// Constructor.
 		/// </summary>
 		/// <param name="dicomTag">The dicom tag whose value is to be retrieved by <see cref="GetTagValue"/>.</param>
-		public DicomTagRetriever(uint dicomTag)
+		protected DicomTagRetriever(uint dicomTag)
 		{
 			Platform.CheckForNullReference(dicomTag, "dicomTag");
 			_dicomTag = dicomTag;

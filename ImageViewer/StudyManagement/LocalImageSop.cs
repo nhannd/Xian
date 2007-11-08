@@ -57,10 +57,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			_loaded = false;
 		}
 
-		private LocalImageSop()
-		{
-		}
-
 		protected override void Dispose(bool disposing)
 		{
 			base.Dispose(disposing);
@@ -92,8 +88,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				byte[] pixelData = (byte[])_dicomFile.DataSet[DicomTags.PixelData].Values;
 				_pixelData = ImageSopHelper.DecompressPixelData(this, pixelData);
 
-				// TODO: Is this necessary? Seems like _pixelData and this are
-				// referencing the same thing.
 				//To save on memory, we remove this reference.
 				_dicomFile.DataSet[DicomTags.PixelData] = null;
 
@@ -211,7 +205,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			value = value ?? "";
 		}
 
-		// TODO: Should rename since it's unclear what this tag array is.
+		// TODO (Stewart): Should rename since it's unclear what this tag array is.
 
 		/// <summary>
 		/// This method overrides <see cref="Sop.GetTagArray"/>

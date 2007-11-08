@@ -42,7 +42,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		private GraphicState _newState;
 		private IMouseInformation _mouseInformation;
 
-		// TODO: Initialize through constructor; remove setters
+		// TODO (Stewart): Initialize through constructor; remove setters
 		// on properties
 		public GraphicStateChangedEventArgs()
 		{

@@ -35,7 +35,7 @@ using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
-	public class FocussedSelectedInteractiveGraphicState : FocussedSelectedGraphicState
+	internal class FocussedSelectedInteractiveGraphicState : FocussedSelectedGraphicState
 	{
 		public FocussedSelectedInteractiveGraphicState(InteractiveGraphic interactiveGraphic)
 			: base(interactiveGraphic)

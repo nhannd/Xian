@@ -162,7 +162,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			DateTime studyDate;
 			DateParser.Parse(this.StudyDate, out studyDate);
 
-			return String.Format("{0} � {1} � {2}",
+			return String.Format("{0}; {1}; {2}",
 				this.PatientsName,
 				this.PatientId,
 				studyDate.ToString(Format.DateFormat));

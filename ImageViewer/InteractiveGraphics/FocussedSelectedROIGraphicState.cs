@@ -33,7 +33,7 @@ using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
-	public class FocussedSelectedRoiGraphicState : FocussedSelectedGraphicState
+	internal class FocussedSelectedRoiGraphicState : FocussedSelectedGraphicState
 	{
 		private StatefulCompositeGraphic _currentChildGraphic;
 

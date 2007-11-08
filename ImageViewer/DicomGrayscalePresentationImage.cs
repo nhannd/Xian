@@ -72,7 +72,7 @@ namespace ClearCanvas.ImageViewer
 
 			_imageSop = imageSop;
 
-			// TODO: Consider making this a singleton
+			// TODO (Stewart): Consider making this a singleton
 			this.AnnotationLayoutProvider = new DicomFilteredAnnotationLayoutProvider(this);
 		}
 

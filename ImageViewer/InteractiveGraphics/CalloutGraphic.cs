@@ -372,6 +372,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			SetCalloutLineStart();
 		}
 
+
 		public override void InstallDefaultCursors()
 		{
 			base.InstallDefaultCursors();
