@@ -44,6 +44,6 @@ public partial class Admin : System.Web.UI.Page
 {
     protected void Page_Load(object sender, EventArgs e)
     {
-        Response.Redirect("Configuration/Devices.aspx");
+        Response.Redirect("Configuration/DevicePage.aspx");
     }
 }

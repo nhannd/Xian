@@ -52,7 +52,35 @@ namespace ImageServerWebApplication.Admin.Configuration
     //
     public partial class DeviceGridView : System.Web.UI.UserControl
     {
+        #region private members
+        // server partitions lookup table based on server key
+        private Dictionary<string, ServerPartition> _DictionaryPartitions = new Dictionary<string, ServerPartition>();
+        // list of devices to display
+        private IList<Device> _devices;
+        // list of server partitions
+        private IList<ServerPartition> _partitions;
+        
+        #endregion Private members
+
+        #region protected properties
+
+        protected Dictionary<string, ServerPartition> DictionaryPartitions
+        {
+            get { return _DictionaryPartitions; }
+            set { _DictionaryPartitions = value; }
+        }
+
+        #endregion protected properties
+
         #region public properties
+
+        /// <summary>
+        /// Retrieve reference to the grid control being used to display the devices.
+        /// </summary>
+        public GridView TheGrid
+        {
+            get { return GridView1; }
+        }
 
         /// <summary>
         /// Gets/Sets the current selected device.
@@ -97,28 +125,7 @@ namespace ImageServerWebApplication.Admin.Configuration
             }
         }
 
-        /// <summary>
-        /// Gets/Sets the list of server partitions used by the grid for rendering purpose.
-        /// </summary>
-        public IList<ServerPartition> Partitions
-        {
-            get
-            {
-                return _partitions;
-            }
-            set
-            {
-                _partitions = value;
-
-                DictionaryPartitions.Clear();
-                foreach (ServerPartition p in _partitions)
-                {
-                    DictionaryPartitions.Add(p.GetKey().Key.ToString(), p);
-                }
-
-            }
-        }
-        
+       
         #endregion
 
         #region Events
@@ -139,29 +146,7 @@ namespace ImageServerWebApplication.Admin.Configuration
 
         #endregion // Events
 
-        #region private members
-        // server partitions lookup table based on server key
-        private Dictionary<string, ServerPartition> _DictionaryPartitions = new Dictionary<string, ServerPartition>();
-        // list of devices to display
-        private IList<Device> _devices;
-        // list of server partitions
-        private IList<ServerPartition> _partitions;
         
-
-        #endregion
-
-
-        #region protected properties
-
-        protected Dictionary<string, ServerPartition> DictionaryPartitions
-        {
-            get { return _DictionaryPartitions; }
-            set { _DictionaryPartitions = value; }
-        }
-
-        #endregion protected properties
-
-
         #region protected methods
 
         protected void Page_Load(object sender, EventArgs e)
@@ -180,8 +165,6 @@ namespace ImageServerWebApplication.Admin.Configuration
             GridView1.PagerSettings.Visible = false;
             GridView1.SelectedIndexChanged +=new EventHandler(GridView1_SelectedIndexChanged);
 
-            // set up the custom pager panel
-            PagerPanel.Visible = true;
         }
 
          /// <summary>
@@ -241,35 +224,6 @@ namespace ImageServerWebApplication.Admin.Configuration
             }
             #endregion
 
-            // Enable/Disable "Prev" button
-            if (GridView1.Rows.Count == 0 || GridView1.PageIndex == 0)
-            {
-                PrevImageButton.ImageUrl = "~/images/prev_disabled.gif";
-                PrevImageButton.Enabled = false;
-            }
-            else
-            {
-                PrevImageButton.ImageUrl = "~/images/prev.gif";
-                PrevImageButton.Enabled = true;
-            }
-
-            // Enable/Disable "Next" button
-            if (GridView1.Rows.Count == 0 || GridView1.PageIndex == GridView1.PageCount - 1)
-            {
-                NextImageButton.ImageUrl = "~/images/next_disabled.gif";
-                NextImageButton.Enabled = false;
-            }
-            else
-            {
-                NextImageButton.ImageUrl = "~/images/next.gif";
-                NextImageButton.Enabled = true;
-            }
-
-            // Show number of devices in the list.
-            DeviceListingStatusLabel.Text = string.Format("{0} device(s)", this.Devices.Count);
-
-            // Show the current page index and the number of pages for the list.
-            PageLabel.Text = string.Format("Page {0} of {1}", GridView1.PageIndex + 1, GridView1.PageCount == 0 ? 1 : GridView1.PageCount);
 
         }
 
@@ -355,17 +309,16 @@ namespace ImageServerWebApplication.Admin.Configuration
         {
             
         }
+
         protected void GridView1_DataBound(object sender, EventArgs e)
         {
             UpdatePager();          
         }
 
-        
         protected void GridView1_PageIndexChanged(object sender, EventArgs e)
         {
             DataBind();
         }
-
         
         protected void GridView1_PageIndexChanging(object sender, GridViewPageEventArgs e)
         {
@@ -398,10 +351,9 @@ namespace ImageServerWebApplication.Admin.Configuration
             DataBind();
         }
         
-#endregion
+        #endregion
 
         
-
         #region public methods
         /// <summary>
         /// Binds the list to the control.
@@ -414,7 +366,6 @@ namespace ImageServerWebApplication.Admin.Configuration
             GridView1.DataBind();
 
             GridView1.PagerSettings.Visible = false;
-            PagerPanel.Visible = true;
 
         }
 

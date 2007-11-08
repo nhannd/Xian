@@ -157,42 +157,13 @@ namespace ClearCanvas.ImageServer.Web.Common
         /// <param name="dhcpOnly"></param>
         /// <param name="serverPartitionkey"></param>
         /// <returns></returns>
-        public IList<Device> GetDevices(String AETitle, String IP, bool enabledOnly, bool dhcpOnly, ServerEntityKey serverPartitionkey)
+        public IList<Device> GetDevices(DeviceSelectCriteria criteria)
         {
             IList<Device> list = null;
 
             using (IReadContext ctx = _store.OpenReadContext())
             {
                 ISelectDevice find = ctx.GetBroker<ISelectDevice>();
-                DeviceSelectCriteria criteria = new DeviceSelectCriteria();
-
-                if (!String.IsNullOrEmpty(AETitle))
-                {
-                    AETitle = AETitle + "%";
-                    AETitle.Replace("*", "%");
-                    //AETitle.Replace("?", "?");
-                    criteria.AeTitle.Like(AETitle);
-                }
-
-                if (!String.IsNullOrEmpty(IP))
-                {
-                    IP = IP + "%";
-                    IP.Replace("*", "%");
-                    //IP.Replace("?", "?");
-                    criteria.IPAddress.Like(IP);
-                }
-
-                if (enabledOnly)
-                {
-                    criteria.Active.EqualTo(true);
-                }
-
-                if (dhcpOnly)
-                {
-                    criteria.Dhcp.EqualTo(true);
-                }
-
-                criteria.ServerPartitionKey.EqualTo(serverPartitionkey);
                 list = find.Find(criteria);
                 
             }

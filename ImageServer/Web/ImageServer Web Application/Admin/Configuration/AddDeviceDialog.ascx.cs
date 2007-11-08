@@ -35,11 +35,12 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Web.Common;
 
 namespace ImageServerWebApplication.Admin.Configuration
 {
     //
-    // Dialog for adding new device
+    // Dialog for adding new device.
     //
     public partial class AddDeviceDialog : UserControl
     {
@@ -48,8 +49,7 @@ namespace ImageServerWebApplication.Admin.Configuration
         // This list will be determined by the user level permission.
         private IList<ServerPartition> _partitions = new List<ServerPartition>();
 
-
-
+        
         #endregion
 
         #region public members
@@ -69,27 +69,34 @@ namespace ImageServerWebApplication.Admin.Configuration
             }
         }
 
+
         #endregion // public members
 
-        #region Public delegates
+        #region Events
         /// <summary>
-        /// Defines the action when user clicks "OK".
+        /// Defines the event handler for <seealso cref="OKClicked"/>.
         /// </summary>
-        /// <param name="device"></param>
-        /// 
-        public delegate void AddDeviceDelegate(Device device);
+        /// <param name="device">The device being added.</param>
+        public delegate void OnOKClickedEventHandler(Device device);
+        /// <summary>
+        /// Occurs when users click on "OK".
+        /// </summary>
+        public event OnOKClickedEventHandler OKClicked;
+        #endregion Events
 
-        public AddDeviceDelegate OnAddDevice;
+        #region Public delegates
+
 
         #endregion // public delegates
 
-
+        #region Protected methods
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
 
             // Set up the popup extender
             // These settings could been done in the aspx page as well
+            // but if we are to javascript to display, that won't work.
             ModalPopupExtender1.PopupControlID = DialogPanel.UniqueID;
             ModalPopupExtender1.TargetControlID = DummyPanel.UniqueID;
             ModalPopupExtender1.BehaviorID = ModalPopupExtender1.UniqueID;
@@ -124,6 +131,37 @@ namespace ImageServerWebApplication.Admin.Configuration
 
         }
 
+
+        /// <summary>
+        /// Handles event when user clicks on "OK" button.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        protected void OKButton_Click(object sender, EventArgs e)
+        {
+            Device device = new Device();
+            device.Active = ActiveCheckBox.Checked;
+            device.AeTitle = AETitleTextBox.Text;
+            device.Description = DescriptionTextBox.Text;
+            device.Dhcp = DHCPCheckBox.Checked;
+            device.IpAddress = IPAddressTextBox.Text;
+            device.Port = Int32.Parse(PortTextBox.Text);
+            device.ServerPartitionKey = new ServerEntityKey("Device", ServerPartitionDropDownList.SelectedItem.Value);
+
+            // TODO: Add input validation here
+
+
+            if (OKClicked != null)
+                OKClicked(device);
+
+            Close();
+
+        }
+
+        #endregion Protected methods
+
+
+        #region Public methods
         /// <summary>
         /// Displays the add device dialog box.
         /// </summary>
@@ -143,8 +181,6 @@ namespace ImageServerWebApplication.Admin.Configuration
             //  PortTextBox.Text = "<Port #>";
 
 
-
-
             // update the dropdown list
             ServerPartitionDropDownList.Items.Clear();
             foreach (ServerPartition partition in _partitions)
@@ -152,6 +188,7 @@ namespace ImageServerWebApplication.Admin.Configuration
                 ServerPartitionDropDownList.Items.Add(new ListItem(partition.Description, partition.GetKey().Key.ToString()));
             }
 
+            UpdatePanel.Update();
             ModalPopupExtender1.Show();
         }
 
@@ -180,32 +217,10 @@ namespace ImageServerWebApplication.Admin.Configuration
             ModalPopupExtender1.Hide();
         }
 
-
-        /// <summary>
-        /// Handles event when user clicks on "OK" button.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        protected void OKButton_Click(object sender, EventArgs e)
-        {
-            Device device = new Device();
-            device.Active = ActiveCheckBox.Checked;
-            device.AeTitle = AETitleTextBox.Text;
-            device.Description = DescriptionTextBox.Text;
-            device.Dhcp = DHCPCheckBox.Checked;
-            device.IpAddress = IPAddressTextBox.Text;
-            device.Port = Int32.Parse(PortTextBox.Text);
-            device.ServerPartitionKey = new ServerEntityKey("Device", ServerPartitionDropDownList.SelectedItem.Value);
-
-            // TODO: Add input validation here
+        #endregion Public methods
 
 
-            if (OnAddDevice != null)
-                OnAddDevice(device);
-
-            Close();
-
-        }
+        
     }
  
 }

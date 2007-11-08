@@ -1,6 +1,8 @@
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="ConfirmDialog.ascx.cs" Inherits="ImageServerWebApplication.Common.ConfirmDialog" %>
 <%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="cc1" %>
-<asp:Panel ID="DialogPanel" runat="server" CssClass="PopupWindow" Style="display: none;" Height="187px" Width="327px">
+<asp:UpdatePanel ID="UpdatePanel" runat="server" UpdateMode="Conditional">
+    <ContentTemplate>
+<asp:Panel ID="DialogPanel" runat="server" CssClass="PopupWindow" Style="display: none;" Height="187px" Width="400px">
     <asp:Panel ID="TitleBarPanel" runat="server" CssClass="PopupWindowTitleBar">
         <table style="width: 100%">
             <tr>
@@ -12,7 +14,7 @@
         </table>
     </asp:Panel>
     <br />
-    <div class="PopupWindowBody" style="vertical-align: top; text-align: center; padding-right: 20px; padding-left: 20px; padding-bottom: 10px; padding-top: 10px;">
+    <div class="PopupWindowBody">
         <table id="TABLE1" runat="server" cellspacing="0" cellpadding="0" width="100%">
             <tr>
                 <td colspan="1" style="height: 24px">
@@ -29,15 +31,15 @@
             <tr>
                 <td style="height: 24px">
                 </td>
-                <td style="height: 24px">
+                <td style="height: 24px" align="center">
                     <asp:Button ID="YesButton" runat="server" OnClick="YesButton_Click" Text="Yes" Width="77px" /></td>
-                <td style="height: 24px">
+                <td style="height: 24px" align="center">
                     <asp:Button ID="CancelButton" runat="server" Text="Cancel" /></td>
             </tr>
         </table>
         <br />
-        <asp:Panel ID="DummyPanel" runat="server" Height="1px" Style="z-index: 100; left: 148px;
-            position: absolute; top: 123px" >
+        <asp:Panel ID="DummyPanel" runat="server" Height="1px" Style="z-index: 100; left: 18px;
+            position: absolute; top: 250px" >
         </asp:Panel>
     </div>
 </asp:Panel>
@@ -45,3 +47,5 @@
         Drag="true" DropShadow="true"  PopupDragHandleControlID="TitleLabel" BackgroundCssClass ="modalBackground"
         >
 </cc1:ModalPopupExtender>
+    </ContentTemplate>
+</asp:UpdatePanel>

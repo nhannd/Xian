@@ -1,7 +1,8 @@
 ﻿body
 {
-	font-family: 'Arial Unicode MS' , 'Arial Rounded MT Bold';
-	padding-left: 10px;
+	/*font-family: 'Arial Unicode MS' , 'Arial Rounded MT Bold';*/
+	font-family:verdana,tahoma,helvetica;
+	/*font-size:11px; */
 }
 
 .PopupWindow
@@ -13,9 +14,12 @@
 	border-bottom: 1px outset;
 }
 .PopupWindowBody 
-{
+{ 
 	/*width: 100%;*/
+	
+padding-right: 10px; padding-left: 10px; padding-bottom: 10px; padding-top: 10px; 
 }
+
 
 
 
@@ -42,6 +46,7 @@
 }
 .WindowTitleBar
 {
+	font-size:larger;
 	border-right: 1px outset;
 	border-top: 1px outset;
 	vertical-align: middle;
@@ -50,11 +55,10 @@
 	width: 100%;
 	color: white;
 	border-bottom: 1px outset;
-	height: 40px;
+	height: 30px;
 	background-color: #0099ff;
 	text-align: left;
-	text-indent: 20pt;
-	font-weight: bold;
+	text-indent: 10pt;
 }
 .WindowBody
 {
@@ -87,9 +91,13 @@
 
 .ContentWindow
 {
-	Width:100% ;
 	Height:100%;
-	margin:30px;
+	
+	padding-left: 15px;
+	padding-top: 15px;
+	padding-bottom: 15px;
+	padding-right: 15px;
+	
 }
 
 /* So the overflow scrolls */
@@ -116,4 +124,59 @@
    background-color:#000;
    filter:alpha(opacity=60);
    opacity:0.6;
+}
+
+.PageMenuPanel
+{
+	height:700px;
+	padding-right: 0px;
+	padding-left: 0px;
+	padding-bottom: 0px;
+	padding-top: 0px;
+	border-right: #cccccc 1px solid;
+	border-top: #cccccc 1px solid;
+	border-left: #cccccc 1px solid;
+	border-bottom: #cccccc 1px solid;
+	height:800px;
+	/*width: 800px;*/
+	font-size:smaller;
+}
+	
+.PageMainPanel
+{
+	padding-right: 0px;
+	padding-left: 0px;
+	padding-bottom: 0px;
+	padding-top: 0px;
+	border-right: #cccccc 1px solid;
+	border-top: #cccccc 1px solid;
+	border-left: #cccccc 1px solid;
+	border-bottom: #cccccc 1px solid;
+	height:800px;
+	/*
+	width: 800px;*/
+	font-size:smaller;
+}
+.ChildPanel
+{
+	padding-right: 0px;
+	padding-left: 0px;
+	padding-bottom: 0px;
+	padding-top: 0px;
+}
+
+.GridRowStyle
+{
+	 background-color:#EFF3FB; 
+	 border-style: solid;
+	 border-width: 1px;
+	 border-color: #E0E0E0;
+}
+
+.GridSelectedRowStyle
+{
+	 background-color:Gray; 
+	 font-weight:normal;
+	 color: #333333;
+	 border-color: #0FFFF8;
 }

@@ -20,6 +20,15 @@ namespace ImageServerWebApplication.Admin.Configuration {
     public partial class DevicePanel {
         
         /// <summary>
+        /// UpdatePanel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.UpdatePanel UpdatePanel;
+        
+        /// <summary>
         /// Panel1 control.
         /// </summary>
         /// <remarks>
@@ -56,30 +65,12 @@ namespace ImageServerWebApplication.Admin.Configuration {
         protected global::ImageServerWebApplication.Admin.Configuration.DeviceGridView DeviceGridViewControl1;
         
         /// <summary>
-        /// AddDeviceControl1 control.
+        /// GridPager1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ImageServerWebApplication.Admin.Configuration.AddDeviceDialog AddDeviceControl1;
-        
-        /// <summary>
-        /// EditDeviceControl1 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::ImageServerWebApplication.Admin.Configuration.EditDeviceDialog EditDeviceControl1;
-        
-        /// <summary>
-        /// ConfirmDialog1 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::ImageServerWebApplication.Common.ConfirmDialog ConfirmDialog1;
+        protected global::ImageServerWebApplication.Common.GridPager GridPager1;
     }
 }

@@ -17,10 +17,9 @@ namespace ClearCanvas.ImageServer.Web.Common
     {
         bool AddDevice(Device device);
         bool DeleteDevice(Device device);
-        IList<Device> GetDevices(String AETitle, String IP, bool enabledOnly, bool dhcpOnly, ServerEntityKey serverPartitionkey);
+        IList<Device> GetDevices(DeviceSelectCriteria criteria);
         bool UpdateDevice(Device device);
         IList<ServerPartition> GetServerPartitions();
-        
     }
 
     /// <summary>
@@ -97,9 +96,9 @@ namespace ClearCanvas.ImageServer.Web.Common
         /// <param name="dhcpOnly"></param>
         /// <param name="serverPartitionkey"></param>
         /// <returns></returns>
-        public IList<Device> GetDevices(String AETitle, String IP, bool enabledOnly, bool dhcpOnly, ServerEntityKey serverPartitionkey)
+        public IList<Device> GetDevices(DeviceSelectCriteria criteria)
         {
-            return _adapter.GetDevices(AETitle, IP, enabledOnly, dhcpOnly, serverPartitionkey);
+            return _adapter.GetDevices(criteria);
         }
 
         /// <summary>

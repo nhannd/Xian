@@ -1,6 +1,8 @@
 <%@ Control Language="C#" AutoEventWireup="true"
     Inherits="ImageServerWebApplication.Admin.Configuration.EditDeviceDialog" Codebehind="EditDeviceDialog.ascx.cs" %>
 <%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="cc1" %>
+<asp:UpdatePanel ID="UpdatePanel" runat="server" UpdateMode="Conditional">
+    <ContentTemplate>
             <asp:Panel ID="DialogPanel" runat="server"
                  CssClass="PopupWindow" Width="419px" style="display:none;">
                 <asp:Panel ID="TitleBarPanel" runat="server" CssClass="PopupWindowTitleBar"
@@ -102,11 +104,13 @@
                 </asp:Panel>
                     &nbsp;&nbsp;</div>
             </asp:Panel>
+        <cc1:ToggleButtonExtender ID="ToggleButtonExtender2" runat="server" CheckedImageUrl="~/images/checked_tall.gif"
+            ImageHeight="16" ImageWidth="12" TargetControlID="DHCPCheckBox" UncheckedImageUrl="~/images/unchecked_tall.gif">
+        </cc1:ToggleButtonExtender>
             <cc1:ModalPopupExtender ID="ModalPopupExtender1"  runat="server" Enabled="true" TargetControlID="DummyPanel" PopupControlID="DialogPanel"  BackgroundCssClass ="modalBackground">
             </cc1:ModalPopupExtender>
         <cc1:ToggleButtonExtender ID="ToggleButtonExtender1" runat="server" CheckedImageUrl="~/images/checked_tall.gif"
             ImageHeight="16" ImageWidth="12" TargetControlID="ActiveCheckBox" UncheckedImageUrl="~/images/unchecked_tall.gif">
         </cc1:ToggleButtonExtender>
-        <cc1:ToggleButtonExtender ID="ToggleButtonExtender2" runat="server" CheckedImageUrl="~/images/checked_tall.gif"
-            ImageHeight="16" ImageWidth="12" TargetControlID="DHCPCheckBox" UncheckedImageUrl="~/images/unchecked_tall.gif">
-        </cc1:ToggleButtonExtender>
+    </ContentTemplate>
+</asp:UpdatePanel>

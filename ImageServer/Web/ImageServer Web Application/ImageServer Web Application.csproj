@@ -127,13 +127,6 @@
     <Compile Include="Admin\Configuration\EditDeviceDialog.ascx.designer.cs">
       <DependentUpon>EditDeviceDialog.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Admin\Configuration\DeviceGridViewPager.ascx.cs">
-      <DependentUpon>DeviceGridViewPager.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Admin\Configuration\DeviceGridViewPager.ascx.designer.cs">
-      <DependentUpon>DeviceGridViewPager.ascx</DependentUpon>
-    </Compile>
     <Compile Include="Admin\Default.aspx.cs">
       <DependentUpon>Default.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -147,6 +140,13 @@
     </Compile>
     <Compile Include="Admin\MasterPage.master.designer.cs">
       <DependentUpon>MasterPage.master</DependentUpon>
+    </Compile>
+    <Compile Include="Common\GridPager.ascx.cs">
+      <DependentUpon>GridPager.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Common\GridPager.ascx.designer.cs">
+      <DependentUpon>GridPager.ascx</DependentUpon>
     </Compile>
     <Compile Include="Default.aspx.cs">
       <SubType>ASPXCodeBehind</SubType>
@@ -166,16 +166,18 @@
     <Content Include="Common\ConfirmDialog.ascx" />
     <Content Include="Admin\Configuration\DeviceFilterPanel.ascx" />
     <Content Include="Admin\Configuration\DevicePanel.ascx" />
-    <Content Include="Admin\Configuration\DeviceGridViewPager.ascx" />
     <Content Include="Admin\MasterPage.master" />
     <None Include="images\Thumbs.db" />
+    <Content Include="Common\GridPager.ascx" />
     <Content Include="Global.asax" />
     <Content Include="images\add_disabled.gif" />
+    <Content Include="images\ajax-loader.gif" />
     <Content Include="images\checked_tall.gif" />
     <Content Include="images\delete_disabled.gif" />
     <Content Include="images\edit_disabled.gif" />
     <Content Include="images\filter.gif" />
     <Content Include="images\filter_disabled.gif" />
+    <Content Include="images\filter_on.gif" />
     <Content Include="images\icon_warning.gif" />
     <Content Include="images\next.gif" />
     <Content Include="images\prev.gif" />

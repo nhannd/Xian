@@ -4,9 +4,9 @@
 <%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="cc1" %>
 
 
-<asp:Panel ID="Panel1" runat="server"  Width="99%">
+<asp:Panel ID="Panel1" runat="server"  >
 
-<asp:Panel ID="Panel2" runat="server" Height="547px" Width="100%" BorderColor="Silver" BorderWidth="1px">
+<asp:Panel ID="Panel2" runat="server" Height="547px" BorderColor="Silver" BorderWidth="1px">
 <asp:GridView ID="GridView1" runat="server" AutoGenerateColumns="False" 
                 ForeColor="#333333"
                 OnRowDataBound="GridView1_RowDataBound" 
@@ -60,14 +60,14 @@
                         
                     </asp:TemplateField>
                 </Columns>
-                <RowStyle BackColor="#EFF3FB" BorderStyle="Solid" BorderWidth="1px" BorderColor="#E0E0E0" />
+                <RowStyle CssClass="GridRowStyle"/>
                 <EditRowStyle BackColor="#2461BF" Wrap="True" BorderColor="Yellow" />
-                <SelectedRowStyle BackColor="#FF8080" Font-Bold="False" ForeColor="#333333" BorderColor="#0FFFF8" />
+                <SelectedRowStyle CssClass="GridSelectedRowStyle" />
                 <PagerStyle BackColor="Silver" HorizontalAlign="Center" CssClass="TableHeaderRow" />
                 <HeaderStyle CssClass="GridHeader" />
-                <AlternatingRowStyle BackColor="White" />
+                
     <PagerTemplate>
-        <table width="100%" cellpadding="0" cellspacing="0">
+        <table cellpadding="0" cellspacing="0">
             <tr>
                 <td>
                     <asp:Label ID="PagerDeviceCountLabel" runat="server" Text="Label"></asp:Label></td>
@@ -93,22 +93,5 @@
     </PagerTemplate>
                 
             </asp:GridView>
-</asp:Panel>
-
-<asp:Panel ID="PagerPanel" runat="server" BorderColor="Gray" BackColor="Silver" BorderWidth="1px"
-    Width="100%" BorderStyle="Solid" >
-    <table width="100%" cellpadding="0" cellspacing="0">
-        <tr>
-            <td align="center" style="height: 22px" >
-                <asp:Label ID="DeviceListingStatusLabel" runat="server" Text="Label"></asp:Label></td>
-            <td align="center" style="height: 22px" >
-                <asp:Label ID="PageLabel" runat="server" Text="Label"></asp:Label></td>
-            <td align="right" style="height: 22px" >
-                <asp:ImageButton ID="PrevImageButton" runat="server" CommandArgument="Prev" CommandName="Page"
-                    ImageUrl="~/images/prev.gif" OnCommand="ImageButton_Command" />
-                <asp:ImageButton ID="NextImageButton" runat="server" CommandArgument="Next" CommandName="Page"
-                    ImageUrl="~/images/next.gif" OnCommand="ImageButton_Command" /></td>
-        </tr>
-    </table>
 </asp:Panel>
 </asp:Panel>

@@ -29,6 +29,15 @@ namespace ImageServerWebApplication.Admin.Configuration {
         protected global::System.Web.UI.WebControls.Panel PageContent;
         
         /// <summary>
+        /// UpdatePanel1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.UpdatePanel UpdatePanel1;
+        
+        /// <summary>
         /// TabContainer1 control.
         /// </summary>
         /// <remarks>
@@ -63,5 +72,14 @@ namespace ImageServerWebApplication.Admin.Configuration {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::ImageServerWebApplication.Admin.Configuration.EditDeviceDialog EditDeviceControl1;
+        
+        /// <summary>
+        /// ConfirmDialog1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ImageServerWebApplication.Common.ConfirmDialog ConfirmDialog1;
     }
 }

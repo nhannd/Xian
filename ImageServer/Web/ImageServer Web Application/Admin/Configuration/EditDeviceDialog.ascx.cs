@@ -46,6 +46,7 @@ namespace ImageServerWebApplication.Admin.Configuration
         #region Private members
         // list of assignable partitions
         private IList<ServerPartition> _partitions = new List<ServerPartition>();
+        // device being editted
         private Device _device;
         #endregion
 
@@ -54,6 +55,9 @@ namespace ImageServerWebApplication.Admin.Configuration
         /// <summary>
         /// Sets/Gets the list of partitions that users can assign the device to.
         /// </summary>
+        /// <remarks>
+        /// 
+        /// </remarks>
         public IList<ServerPartition> Partitions
         {
             set {   _partitions = value;
@@ -87,20 +91,21 @@ namespace ImageServerWebApplication.Admin.Configuration
         #endregion //Public Properties
 
 
-        #region Public Delegates
+        #region Events
 
         /// <summary>
-        /// Defines the action when user clicks on "OK" button.
+        /// Defines the event handler for <seealso cref="OKClicked"/>
         /// </summary>
-        /// <param name="device"></param>
-        public delegate void UpdateDeviceDelegate(Device device);
+        /// <param name="device">The device being editted.</param>
+        /// <param name="oldPartition">The previous server partition which the device belonged to.</param>
+        public delegate void OKClickedEventHandler(Device device, ServerPartition oldPartition);
 
         /// <summary>
-        /// Sets/Gets the action when user clicks on "OK" button.
+        /// Occurs when users click on "OK" button.
         /// </summary>
-        public UpdateDeviceDelegate OnUpdateDevice;
+        public event OKClickedEventHandler OKClicked;
 
-        #endregion // public Delegates
+        #endregion Events
 
         #region protected methods
         protected  override void OnInit(EventArgs e)
@@ -125,13 +130,10 @@ namespace ImageServerWebApplication.Admin.Configuration
             if (Page.IsPostBack == false)
             {
                 
-                foreach (ServerPartition part in _partitions)
-                {
-                    ServerPartitionDropDownList.Items.Add(new ListItem(part.Description, part.GetKey().Key.ToString()));
-                }
             }
             else
             {
+                // reload the device information that was editted
                 _device = ViewState["EdittedDevice"] as Device;
             }
 
@@ -151,6 +153,8 @@ namespace ImageServerWebApplication.Admin.Configuration
 
         protected void OKButton_Click(object sender, EventArgs e)
         {
+            ServerPartition oldPartition = Device.ServerPartition;
+
             DeviceDataAdapter adapter = new DeviceDataAdapter();
             Device device = Device;
             device.Active = ActiveCheckBox.Checked;
@@ -161,8 +165,8 @@ namespace ImageServerWebApplication.Admin.Configuration
             device.Port = Int32.Parse(PortTextBox.Text);
             device.ServerPartitionKey = new ServerEntityKey("Device", ServerPartitionDropDownList.SelectedItem.Value);
 
-            if (OnUpdateDevice != null)
-                OnUpdateDevice(device);
+            if (OKClicked != null)
+                OKClicked(device, oldPartition);
 
             Close();
 
@@ -171,6 +175,7 @@ namespace ImageServerWebApplication.Admin.Configuration
         {
 
         }
+        
         #endregion // protected methods
 
 
@@ -181,6 +186,7 @@ namespace ImageServerWebApplication.Admin.Configuration
         public void Show()
         {
             UpdateUIData();
+            UpdatePanel.Update();
             ModalPopupExtender1.Show();
         }
 

@@ -5,19 +5,19 @@
 <table cellpadding="0" cellspacing="0" >
     <tr valign="middle">
         <td  align="right" style="display: block; overflow: visible;">
-            <asp:Label ID="Label1" runat="server" Text="AE Title" Width="86px" style="padding-right: 5px"></asp:Label></td>
-        <td ><asp:TextBox ID="AETitleFilter" runat="server" Width="147px"></asp:TextBox></td>
+            <asp:Label ID="Label1" runat="server" Text="AE Title" Width="68px" style="padding-right: 5px" EnableViewState="False"></asp:Label></td>
+        <td ><asp:TextBox ID="AETitleFilter" runat="server" Width="81px" ToolTip="Filter the list by AE Title"></asp:TextBox></td>
         <td  align="right">
-            <asp:Label ID="Label2" runat="server" Text="IP Address" Width="107px" style="padding-right: 5px"></asp:Label></td>
+            <asp:Label ID="Label2" runat="server" Text="IP Address" Width="80px" style="padding-right: 5px" EnableViewState="False"></asp:Label></td>
         <td  >
-        <asp:TextBox ID="IPAddressFilter" runat="server" Width="147px"></asp:TextBox></td>
+        <asp:TextBox ID="IPAddressFilter" runat="server" Width="92px" ToolTip="Filter the list by IP Address"></asp:TextBox></td>
         <td  align="right" >
             <asp:CheckBox ID="EnabledOnlyFilter" runat="server" Text="Active Only" TextAlign="Left"
-                Width="130px" /></td>
+                Width="105px" style="padding-right: 5px; padding-left: 5px" ToolTip="Show active devices only" /></td>
         <td  align="right" >
-            <asp:CheckBox ID="DHCPOnlyFilter" runat="server" Text="DHCP Only" TextAlign="Left" Width="130px" /></td>
+            <asp:CheckBox ID="DHCPOnlyFilter" runat="server" Text="DHCP Only" TextAlign="Left" Width="108px" style="padding-right: 5px; padding-left: 5px" ToolTip="Show only devices using DHCP" /></td>
         <td style="width: 80px;" align="right">
-            <asp:ImageButton ID="FilterButton" runat="server" ImageUrl="~/images/filter.gif" OnClick="FilterButton_Click" /></td>
+            <asp:ImageButton ID="FilterButton" runat="server" ImageUrl="~/images/filter.gif" OnClick="FilterButton_Click" ToolTip="Filter" /></td>
     </tr>
    
     

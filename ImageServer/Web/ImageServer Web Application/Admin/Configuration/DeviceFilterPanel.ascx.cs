@@ -12,7 +12,7 @@ using System.Web.UI.HtmlControls;
 namespace ImageServerWebApplication.Admin.Configuration
 {
     /// <summary>
-    /// Device Filtering Pannel Control.
+    /// Device Filtering Panel.
     /// </summary>
     public partial class DeviceFilterPanel : System.Web.UI.UserControl
     {
@@ -30,7 +30,7 @@ namespace ImageServerWebApplication.Admin.Configuration
 
             #region public properties
             /// <summary>
-            /// The AE Title prefix
+            /// The AE Title filter
             /// </summary>
             public string AETitle
             {
@@ -38,15 +38,15 @@ namespace ImageServerWebApplication.Admin.Configuration
                 set { _AETitle = value; }
             }
             /// <summary>
-            ///  The IP Address prefix of the devices
+            ///  The IP Address filter
             /// </summary>
-            public string IPAddress
+            public string IPAddress 
             {
                 get { return _IPAddress; }
                 set { _IPAddress = value; }
             }
             /// <summary>
-            /// Device active state.
+            /// Device active filter.
             /// </summary>
             public bool EnabledOnly
             {
@@ -54,7 +54,7 @@ namespace ImageServerWebApplication.Admin.Configuration
                 set { _enabledOnly = value; }
             }
             /// <summary>
-            /// Device DHCP state.
+            /// Device DHCP filter
             /// </summary>
             public bool DhcpOnly
             {
@@ -63,14 +63,69 @@ namespace ImageServerWebApplication.Admin.Configuration
             }
             #endregion
         }
-        
+
+        #region protected methods
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
         }
 
+        protected void Page_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        /// <summary>
+        /// Handle user clicking the "Apply Filter" button
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        protected void FilterButton_Click(object sender, ImageClickEventArgs e)
+        {
+            if (ApplyFiltersClicked != null)
+                ApplyFiltersClicked(Filters);
+        }
+
+        /// <summary>
+        /// Determines if filters are being specified.
+        /// </summary>
+        /// <returns></returns>
+        protected bool HasFilters()
+        {
+            if (AETitleFilter.Text.Length > 0 || IPAddressFilter.Text.Length > 0 || EnabledOnlyFilter.Checked || DHCPOnlyFilter.Checked)
+                return true;
+            else
+                return false;
+        }
+
+        protected override void OnPreRender(EventArgs e)
+        {
+            base.OnPreRender(e);
+            if (Page.IsPostBack)
+            {
+                // Change the image of the "Apply Filter" button based on the filter settings
+                if (HasFilters())
+                    FilterButton.ImageUrl = "~/images/filter_on.gif";
+                else
+                    FilterButton.ImageUrl = "~/images/filter.gif";
+            }
+        }
+        #endregion protected methods
+
+
         #region public members
-        
+
+        /// <summary>
+        /// Remove all filter settings.
+        /// </summary>
+        public void Clear()
+        {
+            AETitleFilter.Text = "";
+            IPAddressFilter.Text = "";
+            EnabledOnlyFilter.Checked = false;
+            DHCPOnlyFilter.Checked = false;
+
+        }
         #endregion
 
         #region public properties
@@ -96,31 +151,23 @@ namespace ImageServerWebApplication.Admin.Configuration
 
         #region Events
         /// <summary>
-        /// Defines the event handler when the filter settings on the panel has been changed.
+        /// Defines the event handler for <seealso cref="ApplyFiltersClicked"/>
         /// </summary>
         /// <param name="filters">The current settings.</param>
         /// <remarks>
         /// </remarks>
-        public delegate void OnFilterChangedEventHandler(FilterSettings filters);
+        public delegate void OnApplyFilterSettingsClickedEventHandler(FilterSettings filters);
         
         /// <summary>
-        /// Occurs when the filter settings on the panel has been changed.
+        /// Occurs when the filter settings users click on "Apply" on the filter panel.
         /// </summary>
         /// <remarks>
         /// This event is fired on the server side.
         /// </remarks>
-        public event OnFilterChangedEventHandler FilterChanged;
+        public event OnApplyFilterSettingsClickedEventHandler ApplyFiltersClicked;
         #endregion // Events
 
-        #region protected methods
-
-        protected void FilterButton_Click(object sender, ImageClickEventArgs e)
-        {
-            if (FilterChanged != null)
-                FilterChanged(Filters);
-        }
-
-        #endregion // protected methods
+       
 
     }
 

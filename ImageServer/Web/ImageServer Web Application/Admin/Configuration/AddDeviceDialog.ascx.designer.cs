@@ -20,6 +20,15 @@ namespace ImageServerWebApplication.Admin.Configuration {
     public partial class AddDeviceDialog {
         
         /// <summary>
+        /// UpdatePanel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.UpdatePanel UpdatePanel;
+        
+        /// <summary>
         /// DialogPanel control.
         /// </summary>
         /// <remarks>
@@ -146,13 +155,13 @@ namespace ImageServerWebApplication.Admin.Configuration {
         protected global::System.Web.UI.WebControls.Panel DummyPanel;
         
         /// <summary>
-        /// ToggleButtonExtender2 control.
+        /// ModalPopupExtender1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::AjaxControlToolkit.ToggleButtonExtender ToggleButtonExtender2;
+        protected global::AjaxControlToolkit.ModalPopupExtender ModalPopupExtender1;
         
         /// <summary>
         /// ToggleButtonExtender1 control.
@@ -164,12 +173,12 @@ namespace ImageServerWebApplication.Admin.Configuration {
         protected global::AjaxControlToolkit.ToggleButtonExtender ToggleButtonExtender1;
         
         /// <summary>
-        /// ModalPopupExtender1 control.
+        /// ToggleButtonExtender2 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::AjaxControlToolkit.ModalPopupExtender ModalPopupExtender1;
+        protected global::AjaxControlToolkit.ToggleButtonExtender ToggleButtonExtender2;
     }
 }

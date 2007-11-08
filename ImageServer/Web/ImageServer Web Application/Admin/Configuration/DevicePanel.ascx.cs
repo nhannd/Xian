@@ -11,163 +11,244 @@ using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Model.Criteria;
 using ClearCanvas.ImageServer.Web.Common;
 using ImageServerWebApplication.Common;
 
 namespace ImageServerWebApplication.Admin.Configuration
 {
-    
+     /// <summary>
+     /// Panel to display list of devices for a particular server partition.
+     /// </summary>
     public partial class DevicePanel : System.Web.UI.UserControl
     {
-            
+        #region Private members
+        // the controller used for interaction with the database.
         private DeviceConfigurationController _theController;
+        // the partition whose information will be displayed in this panel
         private ServerPartition _partition;
-        private DeviceDataAdapter _adapter;
+        #endregion Private members
 
+        #region Public Properties
+        /// <summary>
+        /// Sets/Gets the partition whose information is displayed in this panel.
+        /// </summary>
         public ServerPartition Partition
         {
             get { return _partition; }
             set { _partition = value; }
         }
 
-        public DeviceToolBar DeviceToolBarControl
-        {
-            get { return DeviceToolBarControl1; }
-        }
+        #endregion
 
+        #region Public Delegates
+
+        /// <summary>
+        /// Defines the method which this panel will call to add a new device.
+        /// </summary>
+        /// <param name="controller">The controller used by this panel for database interaction.</param>
+        /// <param name="parition">The partition displayed in this panel.</param>
+        public delegate void AddDeviceMethodDelegate(DeviceConfigurationController controller, ServerPartition parition);
+
+        /// <summary>
+        /// Sets/Retrieves the delegate which this panel will call to add a new device.
+        /// </summary>
+        public AddDeviceMethodDelegate AddDeviceDelegate;
+
+        /// <summary>
+        /// Defines the method which this panel will call to edit a new device.
+        /// </summary>
+        /// <param name="controller">The controller used by this panel for database interaction.</param>
+        /// <param name="partition">The partition displayed in this panel.</param>
+        /// <param name="device">The device to be editted. This device belongs to partition specified in <paramref name="partition"/></param>
+        public delegate void EditDeviceMethodDelegate(DeviceConfigurationController controller, ServerPartition partition, Device device);
+
+        /// <summary>
+        /// Sets/Retrieves the delegate which this panel will call to edit a new device.
+        /// </summary>
+        public EditDeviceMethodDelegate EditDeviceDelegate;
+
+        /// <summary>
+        /// Defines the method which this panel will call to delete a new device.
+        /// </summary>
+        /// <param name="controller">The controller used by this panel for database interaction.</param>
+        /// <param name="partition">The partition displayed in this panel.</param>
+        /// <param name="device">The device is being deleted. This device belongs to partition specified in <paramref name="partition"/></param>
+        public delegate void DeleteDeviceMethodDelegate(DeviceConfigurationController controller, ServerPartition partition, Device device);
+
+        /// <summary>
+        /// Sets/Retrieves the delegate which this panel will call to delete a new device.
+        /// </summary>
+        public DeleteDeviceMethodDelegate DeleteDeviceDelegate;
         
-        protected override void OnInit(EventArgs e)
+        #endregion
+
+        #region protected methods
+        /// <summary>
+        /// Set up event handlers for the child controls.
+        /// </summary>
+        protected void SetUpEventHandlers()
         {
-            base.OnInit(e);
-
-            
-            _theController = new DeviceConfigurationController();
-
-            
-            
-            //DeviceToolBarControl1.Partition = Partition;
-            DeviceToolBarControl1.OnAddDeviceButtonClick += new DeviceToolBar.AddDeviceButtonClick(DeviceToolBarControl1_OnAddDeviceButtonClick);
+            DeviceToolBarControl1.OnAddDeviceButtonClick += delegate
+                                                                {
+                                                                    // Call the add device delegate 
+                                                                    if (AddDeviceDelegate != null)
+                                                                        AddDeviceDelegate(_theController, Partition);
+                                                                };
 
 
-            DeviceToolBarControl1.OnEditDeviceButtonClick += new DeviceToolBar.EditDeviceButtonClick(DeviceToolBarControl1_OnEditDeviceButtonClick);
-            EditDeviceControl1.OnUpdateDevice = delegate(Device device)
-                                                    {
-                                                        _theController.UpdateDevice(device);
-                                                        LoadDevices();
-                                                    };
+            DeviceToolBarControl1.OnEditDeviceButtonClick += delegate
+                                                                 {
+                                                                     // Call the edit device delegate 
+                                                                     if (EditDeviceDelegate != null)
+                                                                     {
+                                                                         Device dev = DeviceGridViewControl1.SelectedDevice;
+                                                                         if (dev != null)
+                                                                         {
+                                                                             EditDeviceDelegate(_theController, Partition, dev);
+                                                                         }
+                                                                     }
+                                                                 };
 
-            DeviceToolBarControl1.OnRefreshButtonClick += new DeviceToolBar.RefreshButtonClick(DeviceToolBarControl1_OnRefreshButtonClick);
-            DeviceToolBarControl1.OnDeleteDeviceButtonClick += new DeviceToolBar.DeleteDeviceButtonClick(DeviceToolBarControl1_OnDeleteDeviceButtonClick);
+            DeviceToolBarControl1.OnRefreshButtonClick += delegate
+                                                              {
+                                                                  // Clear all filters and reload the data
+                                                                  DeviceFilterPanel1.Clear();
+                                                                  LoadDevices();
+                                                              };
 
-            ConfirmDialog1.OnConfirmed = delegate()
-                        {
-                            Device dev = DeviceGridViewControl1.SelectedDevice;
-                            _theController.DeleteDevice(dev);
+            DeviceToolBarControl1.OnDeleteDeviceButtonClick += delegate
+                                                                   {
+                                                                       // Call the delete device delegate 
+                                                                       if (DeleteDeviceDelegate != null)
+                                                                       {
+                                                                           Device dev = DeviceGridViewControl1.SelectedDevice;
+                                                                           if (dev != null)
+                                                                           {
+                                                                               DeleteDeviceDelegate(_theController,Partition, dev);
+                                                                           }
+                                                                       }
+                                                                   };
 
-                            LoadDevices();
-                            
-                        };
 
-            AddDeviceControl1.Partitions = new List<ServerPartition>();
-            AddDeviceControl1.Partitions.Add(_partition);
-            AddDeviceControl1.OnAddDevice = delegate(Device dev)
-                                                {
-                                                    _theController.AddDevice(dev);
-
-                                                    LoadDevices();
-                                                };
-
-            DeviceToolBarControl.GetSelectedDevice = delegate
+            DeviceToolBarControl1.GetSelectedDevice = delegate
                                                          {
                                                              return DeviceGridViewControl1.SelectedDevice;
                                                          };
 
 
-            DeviceFilterPanel1.FilterChanged += delegate(DeviceFilterPanel.FilterSettings filters)
+            DeviceFilterPanel1.ApplyFiltersClicked += delegate(DeviceFilterPanel.FilterSettings filters)
                                                     {
+                                                        // reload the data
                                                         LoadDevices();
                                                     };
 
-        }   
+
+            GridPager1.GetRecordCountMethod = delegate()
+                                                          {
+                                                              return DeviceGridViewControl1.Devices.Count;
+                                                          };
+        }
+
+
+        protected override void OnInit(EventArgs e)
+        {
+            base.OnInit(e);
+
+            // initialize the controller
+            _theController = new DeviceConfigurationController();
+
+
+            // setup child controls
+            GridPager1.ItemName = "Device";
+            GridPager1.PuralItemName = "Devices";
+            GridPager1.Grid = DeviceGridViewControl1.TheGrid;
+            
+
+            // setup event handler for child controls
+            SetUpEventHandlers();
+
+        }
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            // This make sure we have the list to work with. 
+            // the list may be out-dated if the add/update event is fired later
+            // In those cases, the list must be refreshed again.
             LoadDevices();
 
         }
 
+        
 
-        protected override void OnPreRender(EventArgs e)
-        {
-            base.OnPreRender(e);
-        }
-        protected void LoadDevices()
+        #endregion Protected methods
+
+        /// <summary>
+        /// Load the devices for the partition based on the filters specified in the filter panel.
+        /// </summary>
+        /// <remarks>
+        /// This method only reloads and binds the list bind to the internal grid. <seealso cref="UpdateUI()"/> should be called
+        /// to explicit update the list in the grid. 
+        /// <para>
+        /// This is intentionally so that the list can be reloaded so that it is available to other controls during postback.  In
+        /// some cases we may not want to refresh the list if there's no change. Calling <seealso cref="UpdateUI()"/> will
+        /// give performance hit as the data will be transfered back to the browser.
+        ///  
+        /// </para>
+        /// </remarks>
+        public void LoadDevices()
         {
             DeviceFilterPanel.FilterSettings filters = DeviceFilterPanel1.Filters;
+            DeviceSelectCriteria criteria = new DeviceSelectCriteria();
 
-            DeviceGridViewControl1.Devices = _theController.GetDevices(filters.AETitle, filters.IPAddress, filters.EnabledOnly, filters.DhcpOnly, Partition.GetKey());
+            // only query for device in this partition
+            criteria.ServerPartitionKey.EqualTo(Partition.GetKey());
+
+            if (!String.IsNullOrEmpty(filters.AETitle))
+            {
+                string key = filters.AETitle + "%";
+                key.Replace("*", "%");
+                //AETitle.Replace("?", "?");
+                criteria.AeTitle.Like(key);
+            }
+
+            if (!String.IsNullOrEmpty(filters.IPAddress))
+            {
+                string key = filters.IPAddress + "%";
+                key.Replace("*", "%");
+                //IP.Replace("?", "?");
+                criteria.IPAddress.Like(key);
+            }
+
+            if (filters.EnabledOnly)
+            {
+                criteria.Active.EqualTo(true);
+            }
+
+            if (filters.DhcpOnly)
+            {
+                criteria.Dhcp.EqualTo(true);
+            }
+
+            DeviceGridViewControl1.Devices = _theController.GetDevices(criteria);
             DeviceGridViewControl1.DataBind();
         }
 
-        public void OnDeviceAdded(Device device)
+        /// <summary>
+        /// Updates the device list window in the panel.
+        /// </summary>
+        /// <remarks>
+        /// This method should only be called when necessary as the information in the list window needs to be transmitted back to the client.
+        /// If the list is not changed, call <seealso cref="LoadDevices()"/> instead.
+        /// </remarks>
+        public void UpdateUI()
         {
-            if (device.ServerPartition.GetKey().Equals(this._partition.GetKey()))
-            {
-                // Reload data
-                LoadDevices();
-
-                
-            }
-        }
-
-        public void DeviceToolBarControl1_OnRefreshButtonClick(object sender, ImageClickEventArgs ev)
-        {
-            // Reload data
-            LoadDevices();
-        }
-        
-
-        protected void DeviceToolBarControl1_OnAddDeviceButtonClick(object sender, ImageClickEventArgs ev)
-        {
-            AddDeviceControl1.Show();
-            
-        }
-
-        protected void DeviceToolBarControl1_OnEditDeviceButtonClick(object sender, ImageClickEventArgs ev)
-        {
-            Device dev = DeviceGridViewControl1.SelectedDevice;
-            if (dev!=null)
-            {
-                EditDeviceControl1.Partitions = _theController.GetServerPartitions();
-
-                EditDeviceControl1.Device = dev;
-                EditDeviceControl1.Show();
-            }
-            
-        }
-
-        protected void DeviceToolBarControl1_OnDeleteDeviceButtonClick(object sender, ImageClickEventArgs ev)
-        {
-            
-            Device dev = DeviceGridViewControl1.SelectedDevice;
-
-            if (dev!=null)
-            {
-                ConfirmDialog1.Message = string.Format("Are you sure to delete {0}?", dev.AeTitle);
-
-                ConfirmDialog1.MessageType = ConfirmDialog.MessageTypeEnum.WARNING;
-
-                ConfirmDialog1.Show();
-            }
-        }
-
-        
-
-        public void DeviceUpdated(Device device)
-        {
-            // Reload data
             LoadDevices();
 
+            // UpdatePanel UpdateMode must be set to "conditional"
+            // Calling UpdatePanel.Update() will force the client to refresh the screen
+            UpdatePanel.Update();
         }
+        
     }
 }
