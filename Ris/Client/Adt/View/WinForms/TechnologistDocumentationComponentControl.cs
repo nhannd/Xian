@@ -65,6 +65,9 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             _procedurePlanSummary.ToolbarModel = _component.ProcedurePlanTreeActionModel;
 
             _component.ProcedurePlanChanged += OnProcedurePlanChanged;
+
+            _btnComplete.DataBindings.Add("Enabled", _component, "CompleteEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
+            _btnSave.DataBindings.Add("Enabled", _component, "SaveEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
         }
 
         ~TechnologistDocumentationComponentControl()
@@ -81,7 +84,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         {
             using(new CursorManager(Cursors.WaitCursor))
             {
-                _component.SaveData();
+                _component.SaveDocumentation();
             }
         }
 

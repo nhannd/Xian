@@ -146,6 +146,34 @@ namespace ClearCanvas.Healthcare {
             }
         }
 
+        public bool CanCompleteDocumentation
+        {
+            get
+            {
+                // All mps and mpps must be completed or discontinued
+                foreach (RequestedProcedure requestedProcedure in RequestedProcedures)
+                {
+                    foreach (ModalityProcedureStep modalityProcedureStep in requestedProcedure.ModalityProcedureSteps)
+                    {
+                        if(modalityProcedureStep.State != ActivityStatus.CM && modalityProcedureStep.State != ActivityStatus.DC)
+                        {
+                            return false;
+                        }
+
+                        foreach (PerformedStep performedStep in modalityProcedureStep.PerformedSteps)
+                        {
+                            if (performedStep.State == PerformedStepStatus.IP)
+                            {
+                                return false;
+                            }
+                        }
+                    }
+                }
+
+                return true;
+            }
+        }
+
         #endregion
 
 

@@ -30,16 +30,19 @@
 #endregion
 
 using System;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
+using System.Collections;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
     public class TechnologistDocumentationDocument : Document
     {
         private readonly ModalityWorklistItem _item;
+        private readonly IEnumerable _folders;
 
-        public TechnologistDocumentationDocument(string accessionNumber, ModalityWorklistItem item, IDesktopWindow desktopWindow)
+        public TechnologistDocumentationDocument(string accessionNumber, ModalityWorklistItem item, IEnumerable folders, IDesktopWindow desktopWindow)
             : base(accessionNumber, desktopWindow)
         {
             if(string.IsNullOrEmpty(accessionNumber))
@@ -52,6 +55,7 @@ namespace ClearCanvas.Ris.Client.Adt
             }
 
             _item = item;
+            _folders = folders;
         }
 
         protected override string GetTitle()
@@ -61,7 +65,36 @@ namespace ClearCanvas.Ris.Client.Adt
 
         protected override IApplicationComponent GetComponent()
         {
-            return new TechnologistDocumentationComponent(_item);
+            TechnologistDocumentationComponent component = new TechnologistDocumentationComponent(_item);
+
+            component.DocumentSaved += DocumentSaved;
+            component.DocumentCompleted += DocumentCompleted;
+
+            return component;
+        }
+
+        private void DocumentSaved(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        private void DocumentCompleted(object sender, EventArgs e)
+        {
+            IFolder undocumentedFolder = CollectionUtils.SelectFirst<IFolder>(_folders,
+                delegate(IFolder folder)
+                {
+                    return folder is Folders.UndocumentedTechnologistWorkflowFolder;
+                });
+
+            if (undocumentedFolder != null)
+            {
+                if (undocumentedFolder.IsOpen)
+                    undocumentedFolder.Refresh();
+                else
+                    undocumentedFolder.RefreshCount();
+            }
+
+            this.Close();
         }
     }
 }

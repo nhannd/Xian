@@ -92,6 +92,9 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow.TechnologistDocume
         SaveDataResponse SaveData(SaveDataRequest request);
 
         [OperationContract]
+        CanCompleteOrderDocumentationResponse CanCompleteOrderDocumentation(CanCompleteOrderDocumentationRequest request);
+
+        [OperationContract]
         [FaultContract(typeof(RequestValidationException))]
         CompleteOrderDocumentationResponse CompleteOrderDocumentation(CompleteOrderDocumentationRequest request);
     }

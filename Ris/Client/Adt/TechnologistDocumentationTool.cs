@@ -56,7 +56,7 @@ namespace ClearCanvas.Ris.Client.Adt
                     Document doc = DocumentManager.Get(item.AccessionNumber);
                     if (doc == null)
                     {
-                        doc = new TechnologistDocumentationDocument(item.AccessionNumber, item, this.Context.DesktopWindow);
+                        doc = new TechnologistDocumentationDocument(item.AccessionNumber, item, this.Context.Folders, this.Context.DesktopWindow);
                         doc.Open();
                     }
                     else

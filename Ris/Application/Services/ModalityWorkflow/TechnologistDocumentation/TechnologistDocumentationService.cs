@@ -91,6 +91,13 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
             return response;
         }
 
+        [ReadOperation]
+        public CanCompleteOrderDocumentationResponse CanCompleteOrderDocumentation(CanCompleteOrderDocumentationRequest request)
+        {
+            Order order = this.PersistenceContext.Load<Order>(request.OrderRef);
+            return new CanCompleteOrderDocumentationResponse(order.CanCompleteDocumentation);
+        }
+
         [UpdateOperation]
         public StartModalityProcedureStepsResponse StartModalityProcedureSteps(StartModalityProcedureStepsRequest request)
         {
@@ -122,13 +129,14 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
                 mps.AddPerformedStep(mpps);
             }
 
-            // Create the Documentation Steps
-            if (modalitySteps[0].RequestedProcedure.DocumentationProcedureStep == null)
+            // Create Documentation Step for each RP that has an MPS started by this service call
+            foreach (ModalityProcedureStep step in modalitySteps)
             {
-                foreach (RequestedProcedure orderRp in modalitySteps[0].RequestedProcedure.Order.RequestedProcedures)
+                if(step.RequestedProcedure.DocumentationProcedureStep == null)
                 {
-                    ProcedureStep docStep = new DocumentationProcedureStep(orderRp);
+                    ProcedureStep docStep = new DocumentationProcedureStep(step.RequestedProcedure);
                     docStep.Start(this.CurrentUserStaff);
+                    this.PersistenceContext.Lock(docStep, DirtyState.New);
                 }
             }
 

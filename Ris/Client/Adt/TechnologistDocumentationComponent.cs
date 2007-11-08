@@ -171,6 +171,12 @@ namespace ClearCanvas.Ris.Client.Adt
         private ExamDetailsComponent _postExamComponent;
         private PerformedProcedureComponent _ppsComponent;
 
+        private bool _completeEnabled;
+        private bool _saveEnabled = true;
+
+        private event EventHandler _documentCompleted;
+        private event EventHandler _documentSaved;
+
         #endregion
 
         public TechnologistDocumentationComponent(ModalityWorklistItem item)
@@ -225,16 +231,29 @@ namespace ClearCanvas.Ris.Client.Adt
             get { return _procedurePlanActionHandler; }
         }
 
-        public void SaveData()
+        public void SaveDocumentation()
         {
             try
             {
                 Save(false);
+
+                EventsHelper.Fire(_documentSaved, this, EventArgs.Empty);
             }
             catch (Exception e)
             {
                 ExceptionHandler.Report(e, this.Host.DesktopWindow);
             }
+        }
+
+        public bool SaveEnabled
+        {
+            get { return _saveEnabled; }
+        }
+
+        public event EventHandler DocumentSaved
+        {
+            add { _documentSaved += value; }
+            remove { _documentSaved -= value; }
         }
 
         public void CompleteDocumentation()
@@ -243,11 +262,24 @@ namespace ClearCanvas.Ris.Client.Adt
             {
                 // validate first
                 Save(true);
+
+                EventsHelper.Fire(_documentCompleted, this, EventArgs.Empty);
             }
             catch (Exception e)
             {
                 ExceptionHandler.Report(e, this.Host.DesktopWindow);
             }
+        }
+
+        public bool CompleteEnabled
+        {
+            get { return _completeEnabled; }
+        }
+
+        public event EventHandler DocumentCompleted
+        {
+            add { _documentCompleted += value; }
+            remove { _documentCompleted -= value; }
         }
 
         #endregion
@@ -324,24 +356,34 @@ namespace ClearCanvas.Ris.Client.Adt
                 module.SaveData();
             }
 
-            Platform.GetService<ITechnologistDocumentationService>(
-                delegate(ITechnologistDocumentationService service)
-                {
-                    SaveDataRequest saveRequest = new SaveDataRequest(_procedurePlan.OrderRef, _orderExtendedProperties);
-                    SaveDataResponse saveResponse = service.SaveData(saveRequest);
+            try
+            {
+                Platform.GetService<ITechnologistDocumentationService>(
+                    delegate(ITechnologistDocumentationService service)
+                        {
+                            SaveDataRequest saveRequest =
+                                new SaveDataRequest(_procedurePlan.OrderRef, _orderExtendedProperties);
+                            SaveDataResponse saveResponse = service.SaveData(saveRequest);
 
-                    if (completeDocumentation)
-                    {
-                        CompleteOrderDocumentationRequest completeRequest = new CompleteOrderDocumentationRequest(saveResponse.ProcedurePlanSummary.OrderRef);
-                        CompleteOrderDocumentationResponse completeResponse = service.CompleteOrderDocumentation(completeRequest);
+                            if (completeDocumentation)
+                            {
+                                CompleteOrderDocumentationRequest completeRequest =
+                                    new CompleteOrderDocumentationRequest(saveResponse.ProcedurePlanSummary.OrderRef);
+                                CompleteOrderDocumentationResponse completeResponse =
+                                    service.CompleteOrderDocumentation(completeRequest);
 
-                        RefreshProcedurePlanSummary(completeResponse.ProcedurePlanSummary);
-                    }
-                    else
-                    {
-                        RefreshProcedurePlanSummary(saveResponse.ProcedurePlanSummary);
-                    }
-                });
+                                RefreshProcedurePlanSummary(completeResponse.ProcedurePlanSummary);
+                            }
+                            else
+                            {
+                                RefreshProcedurePlanSummary(saveResponse.ProcedurePlanSummary);
+                            }
+                        });
+            }
+            catch(Exception e)
+            {
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
+            }
         }
 
         private void InitializeProcedurePlanSummary()
@@ -454,6 +496,23 @@ namespace ClearCanvas.Ris.Client.Adt
         private void RefreshProcedurePlanSummary(ProcedurePlanSummary procedurePlanSummary)
         {
             _procedurePlan = procedurePlanSummary;
+
+            try
+            {
+                Platform.GetService<ITechnologistDocumentationService>(
+                    delegate(ITechnologistDocumentationService service)
+                        {
+                            CanCompleteOrderDocumentationResponse response = 
+                                service.CanCompleteOrderDocumentation(new CanCompleteOrderDocumentationRequest(_procedurePlan.OrderRef));
+
+                            _completeEnabled = response.CanComplete;
+                            this.NotifyPropertyChanged("CompleteEnabled");
+                        });
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
+            }
 
             _procedurePlanSummaryTable.Items.Clear();
             foreach(RequestedProcedureDetail rp in procedurePlanSummary.RequestedProcedures)

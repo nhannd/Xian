@@ -79,6 +79,8 @@
     <Compile Include="Admin\ExternalPractitionerAdmin\LoadExternalPractitionerForEditResponse.cs" />
     <Compile Include="Admin\ExternalPractitionerAdmin\UpdateExternalPractitionerRequest.cs" />
     <Compile Include="Admin\ExternalPractitionerAdmin\UpdateExternalPractitionerResponse.cs" />
+    <Compile Include="ModalityWorkflow\TechnologistDocumentation\CanCompleteOrderDocumentationRequest.cs" />
+    <Compile Include="ModalityWorkflow\TechnologistDocumentation\CanCompleteOrderDocumentationResponse.cs" />
     <Compile Include="PatientAttachmentSummary.cs" />
     <Compile Include="OrderAttachmentSummary.cs" />
     <Compile Include="MimeDocumentService\GetAttachFaxFormDataRequest.cs" />
