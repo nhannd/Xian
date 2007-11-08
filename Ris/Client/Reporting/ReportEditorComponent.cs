@@ -117,8 +117,6 @@ namespace ClearCanvas.Ris.Client.Reporting
         private string _reportContent;
         private StaffSummary _supervisor;
 
-        private bool _makeDefault;
-
         private ILookupHandler _supervisorLookupHandler;
 
         public ReportEditorComponent(EntityRef reportingStepRef)
@@ -293,13 +291,14 @@ namespace ClearCanvas.Ris.Client.Reporting
         public StaffSummary Supervisor
         {
             get { return _supervisor; }
-            set { _supervisor = value; }
-        }
-
-        public bool MakeDefault
-        {
-            get { return _makeDefault; }
-            set { _makeDefault = value; }
+            set
+            {
+                if (!Equals(value, _supervisor))
+                {
+                    _supervisor = value;
+                    SaveSupervisor();
+                }
+            }
         }
 
         public void Verify()
@@ -308,9 +307,6 @@ namespace ClearCanvas.Ris.Client.Reporting
             {
                 if (_canCompleteInterpretationAndVerify)
                 {
-                    if (_makeDefault && _supervisor != null)
-                        SupervisorSettings.Default.SupervisorID = _supervisor.StaffId;
-
                     Platform.GetService<IReportingWorkflowService>(
                         delegate(IReportingWorkflowService service)
                         {
@@ -353,9 +349,6 @@ namespace ClearCanvas.Ris.Client.Reporting
                     return;
                 }
 
-                if (_makeDefault && _supervisor != null)
-                    SupervisorSettings.Default.SupervisorID = _supervisor.StaffId;
-
                 Platform.GetService<IReportingWorkflowService>(
                     delegate(IReportingWorkflowService service)
                     {
@@ -383,9 +376,6 @@ namespace ClearCanvas.Ris.Client.Reporting
         {
             try
             {
-                if (_makeDefault && _supervisor != null)
-                    SupervisorSettings.Default.SupervisorID = _supervisor.StaffId;
-
                 Platform.GetService<IReportingWorkflowService>(
                     delegate(IReportingWorkflowService service)
                     {
@@ -413,9 +403,6 @@ namespace ClearCanvas.Ris.Client.Reporting
         {
             try
             {
-                if (_makeDefault && _supervisor != null)
-                    SupervisorSettings.Default.SupervisorID = _supervisor.StaffId;
-
                 Platform.GetService<IReportingWorkflowService>(
                     delegate(IReportingWorkflowService service)
                     {
@@ -499,6 +486,15 @@ namespace ClearCanvas.Ris.Client.Reporting
                     break;
                 default:
                     break;
+            }
+        }
+
+        private void SaveSupervisor()
+        {
+            if (_supervisor != null)
+            {
+                SupervisorSettings.Default.SupervisorID = _supervisor.StaffId;
+                SupervisorSettings.Default.Save();
             }
         }
     }

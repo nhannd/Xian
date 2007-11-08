@@ -67,7 +67,6 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             _requestedProcedure.DataBindings.Add("Value", _component, "RequestedProcedure", true, DataSourceUpdateMode.OnPropertyChanged);
             _performedLocation.DataBindings.Add("Value", _component, "PerformedLocation", true, DataSourceUpdateMode.OnPropertyChanged);
             _performedDate.DataBindings.Add("Value", _component, "PerformedDate", true, DataSourceUpdateMode.OnPropertyChanged);
-            _makeDefault.DataBindings.Add("Checked", _component, "MakeDefault", true, DataSourceUpdateMode.OnPropertyChanged);
 
             _supervisor.LookupHandler = _component.SupervisorLookupHandler;
             _supervisor.DataBindings.Add("Value", _component, "Supervisor", true, DataSourceUpdateMode.OnPropertyChanged);
@@ -80,7 +79,6 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             {
                 _residentPanel.Visible = false;
                 _supervisor.Visible = false;
-                _makeDefault.Visible = false;
             }
             else
             {
