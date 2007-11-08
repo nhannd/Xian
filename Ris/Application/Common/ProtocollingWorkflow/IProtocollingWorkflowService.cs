@@ -52,6 +52,9 @@ namespace ClearCanvas.Ris.Application.Common.ProtocollingWorkflow
         GetProtocolOperationEnablementResponse GetProtocolOperationEnablement(GetProtocolOperationEnablementRequest request);
 
         [OperationContract]
+        GetClericalProtocolOperationEnablementResponse GetClericalProtocolOperationEnablement(GetClericalProtocolOperationEnablementRequest request);
+
+        [OperationContract]
         GetSuspendRejectReasonChoicesResponse GetSuspendRejectReasonChoices(GetSuspendRejectReasonChoicesRequest request);
 
         /// <summary>
@@ -87,7 +90,12 @@ namespace ClearCanvas.Ris.Application.Common.ProtocollingWorkflow
         [OperationContract]
         [FaultContract(typeof(RequestValidationException))]
         [FaultContract(typeof(ConcurrentModificationException))]
-        ResolveOrderProtocolResponse ResolveOrderProtocol(ResolveOrderProtocolRequest request);
+        ResubmitProtocolResponse ResubmitProtocol(ResubmitProtocolRequest request);
+
+        [OperationContract]
+        [FaultContract(typeof(RequestValidationException))]
+        [FaultContract(typeof(ConcurrentModificationException))]
+        CancelProtocolAndOrderResponse CancelProtocolAndOrder(CancelProtocolAndOrderRequest request);
 
         [OperationContract]
         [FaultContract(typeof(RequestValidationException))]

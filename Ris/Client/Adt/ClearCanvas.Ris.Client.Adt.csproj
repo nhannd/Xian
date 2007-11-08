@@ -110,6 +110,7 @@
     <Compile Include="RegistrationWorkflowTool.cs" />
     <Compile Include="RegistrationWorklistTable.cs" />
     <Compile Include="RequestedProcedureEditorComponent.cs" />
+    <Compile Include="ResubmitProtocolTool.cs" />
     <Compile Include="RICTable.cs" />
     <Compile Include="TechnologistDocumentationComponent.cs" />
     <Compile Include="TechnologistDocumentationComponentSettings.cs" />

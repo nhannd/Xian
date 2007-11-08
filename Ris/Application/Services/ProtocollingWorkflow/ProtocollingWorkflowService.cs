@@ -79,6 +79,30 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
         }
 
         [ReadOperation]
+        public GetClericalProtocolOperationEnablementResponse GetClericalProtocolOperationEnablement(GetClericalProtocolOperationEnablementRequest request)
+        {
+            Order order = this.PersistenceContext.Load<Order>(request.OrderRef);
+            RequestedProcedure protocolledRequestedProcedure = CollectionUtils.SelectFirst<RequestedProcedure>(
+                order.RequestedProcedures,
+                delegate(RequestedProcedure rp) { return rp.ProtocolProcedureStep != null; });
+
+            GetClericalProtocolOperationEnablementResponse response = new GetClericalProtocolOperationEnablementResponse();
+
+            if (protocolledRequestedProcedure != null)
+            {
+                response.CanResolveByCancel = protocolledRequestedProcedure.ProtocolProcedureStep.IsRejected;
+                response.CanResolveByResubmit = protocolledRequestedProcedure.ProtocolProcedureStep.IsSuspended;
+            }
+            else
+            {
+                response.CanResolveByCancel = false;
+                response.CanResolveByResubmit = false;
+            }
+
+            return response;
+        }
+
+        [ReadOperation]
         public GetSuspendRejectReasonChoicesResponse GetSuspendRejectReasonChoices(GetSuspendRejectReasonChoicesRequest request)
         {
             List<EnumValueInfo> choices = EnumUtils.GetEnumValueList<ProtocolSuspendRejectReasonEnum>(this.PersistenceContext);
@@ -177,7 +201,7 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
         }
 
         [UpdateOperation]
-        public ResolveOrderProtocolResponse ResolveOrderProtocol(ResolveOrderProtocolRequest request)
+        public ResubmitProtocolResponse ResubmitProtocol(ResubmitProtocolRequest request)
         {
             Order order = this.PersistenceContext.Load<Order>(request.OrderRef);
 
@@ -190,7 +214,19 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
                 }
             }
 
-            return new ResolveOrderProtocolResponse();
+            return new ResubmitProtocolResponse();
+        }
+
+        [UpdateOperation]
+        public CancelProtocolAndOrderResponse CancelProtocolAndOrder(CancelProtocolAndOrderRequest request)
+        {
+            Order order = this.PersistenceContext.Load<Order>(request.OrderRef);
+
+            EnumValueInfo reason =
+                CollectionUtils.FirstElement<EnumValueInfo>(EnumUtils.GetEnumValueList<OrderCancelReasonEnum>(this.PersistenceContext));
+            order.Discontinue(EnumUtils.GetEnumValue<OrderCancelReasonEnum>(reason, this.PersistenceContext));
+
+            return new CancelProtocolAndOrderResponse();
         }
 
         [UpdateOperation]

@@ -4,9 +4,9 @@ using ClearCanvas.Enterprise.Common;
 namespace ClearCanvas.Ris.Application.Common.ProtocollingWorkflow
 {
     [DataContract]
-    public class ResolveOrderProtocolRequest : DataContractBase
+    public class ResubmitProtocolRequest : DataContractBase
     {
-        public ResolveOrderProtocolRequest(EntityRef orderRef)
+        public ResubmitProtocolRequest(EntityRef orderRef)
         {
             OrderRef = orderRef;
         }

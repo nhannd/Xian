@@ -189,6 +189,10 @@
     <Compile Include="Admin\RequestedProcedureTypeGroupAdmin\LoadRequestedProcedureTypeGroupForEditRequest.cs" />
     <Compile Include="Admin\RequestedProcedureTypeGroupAdmin\LoadRequestedProcedureTypeGroupForEditResponse.cs" />
     <Compile Include="Admin\RequestedProcedureTypeGroupAdmin\RequestedProcedureTypeGroupDetail.cs" />
+    <Compile Include="ProtocollingWorkflow\CancelProtocolAndOrderRequest.cs" />
+    <Compile Include="ProtocollingWorkflow\CancelProtocolAndOrderResponse.cs" />
+    <Compile Include="ProtocollingWorkflow\GetClericalProtocolOperationEnablementRequest.cs" />
+    <Compile Include="ProtocollingWorkflow\GetClericalProtocolOperationEnablementResponse.cs" />
     <Compile Include="ProtocollingWorkflow\GetProcedurePlanForProtocollingWorklistItemRequest.cs" />
     <Compile Include="ProtocollingWorkflow\GetProcedurePlanForProtocollingWorklistItemResponse.cs" />
     <Compile Include="ProtocollingWorkflow\GetProtocolOperationEnablementRequest.cs" />
@@ -309,8 +313,8 @@
     <Compile Include="ProtocolDetail.cs" />
     <Compile Include="ProtocollingWorkflow\RejectOrderProtocolRequest.cs" />
     <Compile Include="ProtocollingWorkflow\RejectOrderProtocolResponse.cs" />
-    <Compile Include="ProtocollingWorkflow\ResolveOrderProtocolRequest.cs" />
-    <Compile Include="ProtocollingWorkflow\ResolveOrderProtocolResponse.cs" />
+    <Compile Include="ProtocollingWorkflow\ResubmitProtocolRequest.cs" />
+    <Compile Include="ProtocollingWorkflow\ResubmitProtocolResponse.cs" />
     <Compile Include="ProtocollingWorkflow\SuspendOrderProtocolRequest.cs" />
     <Compile Include="ProtocollingWorkflow\SuspendOrderProtocolResponse.cs" />
     <Compile Include="RegistrationWorkflow\LoadSearchPatientFormDataRequest.cs" />

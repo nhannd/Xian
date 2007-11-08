@@ -33,31 +33,29 @@ namespace ClearCanvas.Ris.Client.Adt
                     ExceptionHandler.Report(e, this.Context.DesktopWindow);
                 }
             }
-
         }
-
     }
 
-    [MenuAction("apply", "folderexplorer-items-contextmenu/Add Protocol Code(Testing only)", "AddProtocolCode")]
-    [IconSet("apply", IconScheme.Colour, "AddToolSmall.png", "AddToolMedium.png", "AddToolLarge.png")]
-    [ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]
-    public class ProtocolCodeTestTool : Tool<IRegistrationWorkflowItemToolContext>
-    {
-        public void AddProtocolCode()
-        {
-            try
-            {
-                Platform.GetService<IProtocolAdminService>(
-                    delegate(IProtocolAdminService service)
-                    {
-                        service.AddProtocolCode(new AddProtocolCodeRequest("TestCode" + DateTime.Now.ToShortTimeString(), "Description"));
-                    });
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, this.Context.DesktopWindow);
-            }
-        }
+    //[MenuAction("apply", "folderexplorer-items-contextmenu/Add Protocol Code(Testing only)", "AddProtocolCode")]
+    //[IconSet("apply", IconScheme.Colour, "AddToolSmall.png", "AddToolMedium.png", "AddToolLarge.png")]
+    //[ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]
+    //public class ProtocolCodeTestTool : Tool<IRegistrationWorkflowItemToolContext>
+    //{
+    //    public void AddProtocolCode()
+    //    {
+    //        try
+    //        {
+    //            Platform.GetService<IProtocolAdminService>(
+    //                delegate(IProtocolAdminService service)
+    //                {
+    //                    service.AddProtocolCode(new AddProtocolCodeRequest("TestCode" + DateTime.Now.ToShortTimeString(), "Description"));
+    //                });
+    //        }
+    //        catch (Exception e)
+    //        {
+    //            ExceptionHandler.Report(e, this.Context.DesktopWindow);
+    //        }
+    //    }
 
-    }
+    //}
 }

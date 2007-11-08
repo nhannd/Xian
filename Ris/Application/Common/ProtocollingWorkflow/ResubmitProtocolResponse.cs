@@ -4,7 +4,7 @@ using ClearCanvas.Enterprise.Common;
 namespace ClearCanvas.Ris.Application.Common.ProtocollingWorkflow
 {
     [DataContract]
-    public class ResolveOrderProtocolResponse : DataContractBase
+    public class ResubmitProtocolResponse : DataContractBase
     {
     }
 }

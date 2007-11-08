@@ -80,7 +80,7 @@ namespace ClearCanvas.Healthcare
 
         public virtual bool CanAccept
         {
-            get { return this.State == ActivityStatus.SC || this.State == ActivityStatus.IP || this.State == ActivityStatus.SU; }
+            get { return this.State == ActivityStatus.SC || this.State == ActivityStatus.IP || (this.State == ActivityStatus.SU && this.Protocol.Status == ProtocolStatus.SU); }
         }
 
         public virtual bool CanReject
@@ -96,6 +96,16 @@ namespace ClearCanvas.Healthcare
         public virtual bool CanSave
         {
             get { return this.State == ActivityStatus.SC || this.State == ActivityStatus.IP || (this.State == ActivityStatus.SU && this.Protocol.Status == ProtocolStatus.SU); }
+        }
+
+        public virtual bool IsRejected
+        {
+            get { return this.State == ActivityStatus.SU && this.Protocol.Status == ProtocolStatus.RJ; }
+        }
+
+        public virtual bool IsSuspended
+        {
+            get { return this.State == ActivityStatus.SU && this.Protocol.Status == ProtocolStatus.SU; }
         }
 
         #region Object overrides
