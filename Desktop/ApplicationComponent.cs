@@ -101,17 +101,36 @@ namespace ClearCanvas.Desktop
             Platform.CheckForNullReference(component, "component");
 
             WorkspaceCreationArgs args = new WorkspaceCreationArgs(component, title, name);
-            Workspace workspace = desktopWindow.Workspaces.AddNew(args);
-            if (exitCallback != null)
-            {
-                workspace.Closed += delegate(object sender, ClosedEventArgs e)
-                {
-                    exitCallback(component);
-                };
-            }
-            return workspace;
+
+        	return LaunchAsWorkspace(desktopWindow, args, exitCallback);
         }
 
+		/// <summary>
+		/// Executes the specified application component in a new workspace.  The exit callback will be invoked
+		/// when the workspace is closed.
+		/// </summary>
+		/// <param name="desktopWindow">The desktop window in which the workspace will run.</param>
+		/// <param name="creationArgs">The workspace creation arguments.</param>
+		/// <param name="exitCallback">An optional callback to invoke when the workspace is closed.</param>
+		/// <returns>The workspace that is hosting the component.</returns>
+		public static Workspace LaunchAsWorkspace(
+    		IDesktopWindow desktopWindow, 
+			WorkspaceCreationArgs creationArgs,
+    		ApplicationComponentExitDelegate exitCallback)
+		{
+			Platform.CheckForNullReference(desktopWindow, "desktopWindow");
+			Platform.CheckForNullReference(creationArgs, "creationArgs");
+
+			Workspace workspace = desktopWindow.Workspaces.AddNew(creationArgs);
+			if (exitCallback != null)
+			{
+				workspace.Closed += delegate(object sender, ClosedEventArgs e)
+				{
+					exitCallback(creationArgs.Component);
+				};
+			}
+			return workspace;
+		}
 
         /// <summary>
         /// Executes the specified application component in a new shelf.  The exit callback will be invoked
