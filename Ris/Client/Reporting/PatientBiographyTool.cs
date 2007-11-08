@@ -42,8 +42,8 @@ namespace ClearCanvas.Ris.Client.Reporting
 {
     [MenuAction("view", "global-menus/Patient/View Details...")]
     //[ButtonAction("view", "global-toolbars/Patient/ViewPatient")]
-    [ButtonAction("view", "folderexplorer-items-toolbar/Details")]
-    [MenuAction("view", "folderexplorer-items-contextmenu/Details")]
+    [ButtonAction("view", "folderexplorer-items-toolbar/Patient Details")]
+    [MenuAction("view", "folderexplorer-items-contextmenu/Patient Details")]
     [ClickHandler("view", "View")]
     [EnabledStateObserver("view", "Enabled", "EnabledChanged")]
     [Tooltip("view", "Open patient details")]

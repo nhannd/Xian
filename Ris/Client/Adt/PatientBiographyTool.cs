@@ -43,9 +43,9 @@ namespace ClearCanvas.Ris.Client.Adt
 {
     [MenuAction("view", "global-menus/Patient/View Details...")]
     //[ButtonAction("view", "global-toolbars/Patient/ViewPatient")]
-    [ButtonAction("view", "folderexplorer-items-toolbar/Details")]
-    [MenuAction("view", "folderexplorer-items-contextmenu/Details")]
-    [MenuAction("view", "RegistrationPreview-menu/Details")]
+    [ButtonAction("view", "folderexplorer-items-toolbar/Patient Details")]
+    [MenuAction("view", "folderexplorer-items-contextmenu/Patient Details")]
+    [MenuAction("view", "RegistrationPreview-menu/Details")] // This action is used by the registration preview script object
     [ButtonAction("view", "patientsearch-items-toolbar/Details")]
     [MenuAction("view", "patientsearch-items-contextmenu/Details")]
     [ClickHandler("view", "View")]
