@@ -134,12 +134,11 @@ namespace ClearCanvas.Desktop
         }
 
         /// <summary>
-        /// Gets or sets a value indicating whether this workspace can be closed directly by the user.
+        /// Gets a value indicating whether this workspace can be closed directly by the user.
         /// </summary>
         public bool UserClosable
         {
             get { return _userClosable; }
-            set { _userClosable = value; }
         }
 
         #endregion

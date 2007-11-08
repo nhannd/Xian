@@ -57,8 +57,8 @@ namespace ClearCanvas.Desktop
         CommandHistory CommandHistory { get; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether this workspace can be closed directly by the user.
+        /// Gets a value indicating whether this workspace can be closed directly by the user.
         /// </summary>
-        bool UserClosable { get; set; }
+        bool UserClosable { get; }
     }
 }
