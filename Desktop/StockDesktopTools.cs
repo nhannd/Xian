@@ -32,24 +32,25 @@
 using System;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Desktop.Tools;
 
-namespace ClearCanvas.Desktop.View.WinForms
+namespace ClearCanvas.Desktop
 {
     public class StockDesktopTools
     {
-		[MenuAction("exit", "global-menus/MenuFile/MenuExitApplication", "ExitApp", KeyStroke = XKeys.Alt | XKeys.F4)]
+        [MenuAction("exit", "global-menus/MenuFile/MenuCloseWindow", "CloseWindow", KeyStroke = XKeys.Alt | XKeys.F4)]
 		[GroupHint("exit", "Application.Exit")]
 
 		[ClearCanvas.Common.ExtensionOf(typeof(DesktopToolExtensionPoint))]
-        public class ExitAppTool : StockTool
+        public class CloseWindowTool : Tool<IDesktopToolContext>
         {
-            public ExitAppTool()
+            public CloseWindowTool()
             {
             }
 			
-			public void ExitApp()
+			public void CloseWindow()
 			{
-                Application.Quit();
+                this.Context.DesktopWindow.Close(UserInteraction.Allowed, CloseReason.UserInterface);
 			}
         }
 
@@ -57,7 +58,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         [EnabledStateObserver("closeWorkspace", "Enabled", "EnabledChanged")]
 		[GroupHint("closeWorkspace", "Application.Workspace.Close")]
         [ClearCanvas.Common.ExtensionOf(typeof(DesktopToolExtensionPoint))]
-        public class CloseWorkspaceTool : StockTool
+        public class CloseWorkspaceTool : Tool<IDesktopToolContext>
         {
             private event EventHandler _enabledChanged;
             
@@ -71,6 +72,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 
                 this.Context.DesktopWindow.Workspaces.ItemOpened += Workspaces_Changed;
                 this.Context.DesktopWindow.Workspaces.ItemClosed += Workspaces_Changed;
+                this.Context.DesktopWindow.Workspaces.ItemActivationChanged += Workspaces_Changed;
             }
 
             public void CloseWorkspace()
@@ -87,7 +89,8 @@ namespace ClearCanvas.Desktop.View.WinForms
             {
                 get
                 {
-                    return this.Context.DesktopWindow.Workspaces.Count > 0;
+                    return this.Context.DesktopWindow.Workspaces.Count > 0 
+                        && this.Context.DesktopWindow.ActiveWorkspace.UserClosable;
                 }
             }
 

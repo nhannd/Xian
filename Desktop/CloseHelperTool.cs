@@ -42,8 +42,8 @@ namespace ClearCanvas.Desktop
     /// Provides "Close Assistant" services, which inform the user of workspaces that require attention prior
     /// to a desktop window close or application quit.
     /// </summary>
-    [ExtensionOf(typeof(ApplicationToolExtensionPoint))]
-    class CloseHelperTool : Tool<IApplicationToolContext>
+    [ExtensionOf(typeof(DesktopToolExtensionPoint))]
+    class CloseHelperTool : Tool<IDesktopToolContext>
     {
         private Shelf _closeHelperShelf;
 
@@ -54,20 +54,19 @@ namespace ClearCanvas.Desktop
 
         public override void Initialize()
         {
-            Application.Quitting += new EventHandler<QuittingEventArgs>(Application_Quitting);
-            Application.DesktopWindows.ItemClosing += new EventHandler<ClosingItemEventArgs<DesktopWindow>>(Windows_ItemClosing);
+            this.Context.DesktopWindow.Closing += new EventHandler<ClosingEventArgs>(WindowClosingEventHandler);
 
             base.Initialize();
         }
 
-        void Windows_ItemClosing(object sender, ClosingItemEventArgs<DesktopWindow> e)
+        private void WindowClosingEventHandler(object sender, ClosingEventArgs e)
         {
             // if application is quitting, don't do anything here because it will be handled by the Quitting handler
-            if (e.Interaction != UserInteraction.Allowed || e.Cancel || e.Reason == CloseReason.ApplicationQuit)
+            if (e.Interaction != UserInteraction.Allowed || e.Cancel)
                 return;
 
             // find all the workspaces that can't be closed
-            DesktopWindow window = e.Item;
+            DesktopWindow window = (DesktopWindow)sender;
             bool showHelper = CollectionUtils.Contains<Workspace>(window.Workspaces,
                 delegate(Workspace w) { return !w.QueryCloseReady(); });
 
@@ -78,31 +77,8 @@ namespace ClearCanvas.Desktop
             }
         }
 
-        void Application_Quitting(object sender, QuittingEventArgs e)
-        {
-            if (e.Interaction != UserInteraction.Allowed || e.Cancel)
-                return;
-
-            // check if we need to show the shelf
-            bool showHelper = CollectionUtils.Contains<DesktopWindow>(Application.DesktopWindows,
-                delegate(DesktopWindow w) { return !w.QueryCloseReady(); });
-
-            if (showHelper)
-            {
-                e.Cancel = true;
-                ShowShelf(Application.ActiveDesktopWindow, CloseReason.ApplicationQuit);
-            }
-        }
-
         private void ShowShelf(DesktopWindow window, CloseReason reason)
         {
-            if (_closeHelperShelf != null && _closeHelperShelf.DesktopWindow != window)
-            {
-                // the shelf is in another window, close it
-                _closeHelperShelf.Close();
-                _closeHelperShelf = null;
-            }
-
             // the shelf is not currently open
             if (_closeHelperShelf == null)
             {
@@ -111,9 +87,13 @@ namespace ClearCanvas.Desktop
                 _closeHelperShelf = ApplicationComponent.LaunchAsShelf(window, component, "Close Assistant",
                     ShelfDisplayHint.DockLeft, delegate(IApplicationComponent c) { _closeHelperShelf = null; });
             }
+            else
+            {
+                _closeHelperShelf.Activate();
+            }
 
             CloseHelperComponent helper = (CloseHelperComponent)_closeHelperShelf.Component;
-            helper.Refresh(reason != CloseReason.ApplicationQuit);
+            helper.Refresh();
         }
     }
 }

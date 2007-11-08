@@ -41,6 +41,7 @@ namespace ClearCanvas.Desktop
     public class WorkspaceCreationArgs : DesktopObjectCreationArgs
     {
         private IApplicationComponent _component;
+        private bool _userClosable = true;  // default to true
 
         /// <summary>
         /// Constructor
@@ -70,5 +71,14 @@ namespace ClearCanvas.Desktop
             get { return _component; }
             set { _component = value; }
         }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether this workspace can be closed directly by the user.
+        /// </summary>
+        public bool UserClosable
+        {
+            get { return _userClosable; }
+            set { _userClosable = value; }
+       }
     }
 }

@@ -91,6 +91,7 @@
     <Compile Include="IGuiToolkit.cs" />
     <Compile Include="ISessionManager.cs" />
     <Compile Include="ISuggestionProvider.cs" />
+    <Compile Include="StockDesktopTools.cs" />
     <Compile Include="Tables\FilteredItemCollection.cs" />
     <Compile Include="Tables\TableFilterParams.cs" />
     <Compile Include="UserInteraction.cs" />

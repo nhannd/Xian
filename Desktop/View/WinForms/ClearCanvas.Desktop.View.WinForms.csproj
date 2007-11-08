@@ -292,8 +292,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
-    <Compile Include="StockTool.cs" />
-    <Compile Include="StockDesktopTools.cs" />
     <Compile Include="TableAdapter.cs" />
     <Compile Include="TableView.cs">
       <SubType>UserControl</SubType>

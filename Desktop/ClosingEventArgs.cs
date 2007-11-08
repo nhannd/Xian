@@ -53,7 +53,14 @@ namespace ClearCanvas.Desktop
         Program,
 
         /// <summary>
-        /// The application is exiting.
+        /// The object is being closed because it's parent window is closing.
+        /// Applicable to <see cref="Workspace"/> and <see cref="Shelf"/> objects.
+        /// </summary>
+        ParentClosing,
+
+        /// <summary>
+        /// The <see cref="Application.Quit"/> API was invoked.
+        /// Applicable only to <see cref="DesktopWindow"/> objects.
         /// </summary>
         ApplicationQuit
     }

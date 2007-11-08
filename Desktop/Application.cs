@@ -177,7 +177,7 @@ namespace ClearCanvas.Desktop
         /// Shows a message box using the application name as the title.
         /// </summary>
         /// <remarks>
-        /// It is preferable to use <see cref="ClearCanvas.Desktop.DesktkopWindow.ShowMessageBox"/> if a desktop window
+        /// It is preferable to use <see cref="ClearCanvas.Desktop.DesktopWindow.ShowMessageBox"/> if a desktop window
         /// is available, since that method will ensure that the message box window is associated with
         /// the parent desktop window. This method is provided for situations where a message box needs to 
         /// be displayed prior to the creation of any desktop windows.
@@ -208,21 +208,15 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Occurs when a request has been made for the application to quit.
         /// </summary>
+        /// <remarks>
+        /// This event is raised after all desktop windows have been closed, but prior to termination of
+        /// the <see cref="ISessionManager"/>.
+        /// </remarks>
         public static event EventHandler<QuittingEventArgs> Quitting
         {
             add { _instance._quitting += value; }
             remove { _instance._quitting -= value; }
         }
-
-        /// <summary>
-        /// Occurs when the application has quit, just before the process terminates.
-        /// </summary>
-        public static event EventHandler Quitted
-        {
-            add { _instance._quitted += value; }
-            remove { _instance._quitted -= value; }
-        }
-
 
         #endregion
 
@@ -271,7 +265,7 @@ namespace ClearCanvas.Desktop
         private bool _initialized;  // flag to be set when initialization is complete
 
         private event EventHandler<QuittingEventArgs> _quitting;
-        private event EventHandler _quitted;
+        private bool _inProcessOfQuitting;
 
 
         /// <summary>
@@ -367,15 +361,6 @@ namespace ClearCanvas.Desktop
         }
 
         /// <summary>
-        /// Raises the <see cref="Quitted"/> event.
-        /// </summary>
-        /// <param name="args"></param>
-        protected virtual void OnQuitted(EventArgs args)
-        {
-            EventsHelper.Fire(_quitted, this, args);
-        }
-
-        /// <summary>
         /// Gets the display name for the application. Override this method to provide a custom display name.
         /// </summary>
         /// <returns></returns>
@@ -406,15 +391,18 @@ namespace ClearCanvas.Desktop
         {
             // make a copy of the windows collection for iteration
             List<DesktopWindow> windows = new List<DesktopWindow>(_windows);
-
             foreach (DesktopWindow window in windows)
             {
-                // try to close the window
-                bool closed = window.Close(UserInteraction.Allowed, CloseReason.ApplicationQuit);
+                // if the window is still open, try to close the window
+                // (the check is necessary because there is no guarantee the window is still open)
+                if (window.State == DesktopObjectState.Open)
+                {
+                    bool closed = window.Close(UserInteraction.Allowed, CloseReason.ApplicationQuit);
 
-                // if one fails, abort
-                if (!closed)
-                    return false;
+                    // if one fails, abort
+                    if (!closed)
+                        return false;
+                }
             }
             return true;
         }
@@ -490,14 +478,14 @@ namespace ClearCanvas.Desktop
 
             // init windows collection
             _windows = new DesktopWindowCollection(this);
-            _windows.ItemClosed += delegate(object sender, ClosedItemEventArgs<DesktopWindow> e)
-            {
-                // terminate the app when the window count goes to 0 if the app isn't already quitting
-                if (_windows.Count == 0 && e.Reason != CloseReason.ApplicationQuit)
+            _windows.ItemClosed += delegate
                 {
-                    DoQuit();
-                }
-            };
+                    // terminate the app when the window count goes to 0 if the app isn't already quitting
+                    if (_windows.Count == 0 && !_inProcessOfQuitting)
+                    {
+                        DoQuit();
+                    }
+                };
 
 
             // start message pump - this will block until _guiToolkit.Terminate() is called
@@ -513,15 +501,17 @@ namespace ClearCanvas.Desktop
             if (!_initialized)
                 throw new InvalidOperationException("This method cannot be called until the Application is fully initialized");
 
-            QuittingEventArgs args = new QuittingEventArgs(UserInteraction.Allowed, false);
-            OnQuitting(args);
-            if(args.Cancel)
-                return false;
+            _inProcessOfQuitting = true;
 
             if (!CloseAllWindows())
+            {
+                _inProcessOfQuitting = false;
                 return false;
+            }
 
-            OnQuitted(EventArgs.Empty);
+            // send quitting event
+            QuittingEventArgs args = new QuittingEventArgs();
+            OnQuitting(args);
 
             try
             {

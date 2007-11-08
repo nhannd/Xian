@@ -189,6 +189,9 @@
   <data name="MenuAbout" xml:space="preserve">
     <value>About</value>
   </data>
+  <data name="MenuCloseWindow" xml:space="preserve">
+    <value>Close</value>
+  </data>
   <data name="MenuCloseWorkspace" xml:space="preserve">
     <value>Close Workspace</value>
   </data>
@@ -197,9 +200,6 @@
   </data>
   <data name="MenuEdit" xml:space="preserve">
     <value>&amp;Edit</value>
-  </data>
-  <data name="MenuExitApplication" xml:space="preserve">
-    <value>Exit Application</value>
   </data>
   <data name="MenuFile" xml:space="preserve">
     <value>&amp;File</value>

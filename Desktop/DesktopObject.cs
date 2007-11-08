@@ -488,7 +488,7 @@ namespace ClearCanvas.Desktop
         /// <returns>True if the object was closed, otherwise false.</returns>
         protected internal bool Close(UserInteraction interactive, CloseReason reason)
         {
-            // easy case - bail if interaction is prohibited and we can't close with interacting
+            // easy case - bail if interaction is prohibited and we can't close without interacting
             if (interactive == UserInteraction.NotAllowed && !CanClose(UserInteraction.NotAllowed))
                 return false;
 

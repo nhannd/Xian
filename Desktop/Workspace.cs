@@ -90,6 +90,7 @@ namespace ClearCanvas.Desktop
         private DesktopWindow _desktopWindow;
         private CommandHistory _commandHistory;
         private bool _exitRequestedByComponent;
+        private bool _userClosable;
 
         /// <summary>
         /// Constructor
@@ -101,6 +102,7 @@ namespace ClearCanvas.Desktop
         {
             _commandHistory = new CommandHistory(100);
             _desktopWindow = desktopWindow;
+            _userClosable = args.UserClosable;
 
             _host = new Host(this, args.Component);
         }
@@ -131,6 +133,15 @@ namespace ClearCanvas.Desktop
             get { return _commandHistory; }
         }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether this workspace can be closed directly by the user.
+        /// </summary>
+        public bool UserClosable
+        {
+            get { return _userClosable; }
+            set { _userClosable = value; }
+        }
+
         #endregion
 
         #region Protected overrides
@@ -144,6 +155,24 @@ namespace ClearCanvas.Desktop
         protected internal override bool CanClose(UserInteraction interactive)
         {
             return _exitRequestedByComponent || _host.Component.CanExit(interactive);
+        }
+
+        /// <summary>
+        /// Overridden to prevent closing of workspace if <see cref="UserClosable"/> is false.
+        /// </summary>
+        /// <param name="args"></param>
+        protected override void OnClosing(ClosingEventArgs args)
+        {
+            if(args.Reason == CloseReason.UserInterface && !_userClosable)
+            {
+                // the user is attempting to close this workspace, but it is not user-closable
+                // cancel the close, and do not call the base class (do not fire the event publicly)
+                args.Cancel = true;
+
+                return;
+            }
+
+            base.OnClosing(args);
         }
 
         /// <summary>

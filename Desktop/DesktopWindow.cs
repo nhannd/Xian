@@ -254,16 +254,23 @@ namespace ClearCanvas.Desktop
             List<Workspace> workspaces = new List<Workspace>(_workspaces);
             foreach (Workspace workspace in workspaces)
             {
-                // try to close it
-                if (!workspace.Close(UserInteraction.Allowed, reason))
+                // if the workspace is still open, try to close it
+                // (the check is necessary because there is no guarantee that the workspace is still open)
+                if (workspace.State == DesktopObjectState.Open &&
+                    !workspace.Close(UserInteraction.Allowed, CloseReason.ParentClosing))
                     return false;
             }
 
             List<Shelf> shelves = new List<Shelf>(_shelves);
             foreach (Shelf shelf in shelves)
             {
-                // close it
-                shelf.Close(UserInteraction.Allowed, reason);
+                // if the shelf is still open, close it
+                // (the check is necessary because there is no guarantee that the shelf is still open)
+                // if the shelf fails to close, we don't care
+                // (shelves are not granted the same power as workspaces to block the desktop window from closing)
+                if (shelf.State == DesktopObjectState.Open)
+                    shelf.Close(UserInteraction.Allowed, CloseReason.ParentClosing);
+
             }
 
             return true;
