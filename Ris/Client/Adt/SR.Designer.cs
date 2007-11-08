@@ -151,6 +151,15 @@ namespace ClearCanvas.Ris.Client.Adt {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Description.
+        /// </summary>
+        internal static string ColumnDescription {
+            get {
+                return ResourceManager.GetString("ColumnDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Diagnostic Service.
         /// </summary>
         internal static string ColumnDiagnosticService {

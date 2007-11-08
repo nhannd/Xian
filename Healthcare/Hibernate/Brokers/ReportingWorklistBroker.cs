@@ -59,7 +59,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         private const string _hqlSelectCount = "select count(*)";
         private const string _hqlSelectWorklist =
-            "select rps, pp, o.AccessionNumber, o.Priority, rpt.Name, ds.Name, rps.State";
+            "select rps, pp, o.AccessionNumber, o.Priority, rpt.Name, ds.Name, rps.State, v.PatientClass";
 
         private const string _hqlFromReportingStep = " from ReportingProcedureStep rps";
         private const string _hqlFromInterpretationStep = " from InterpretationStep rps";
@@ -84,6 +84,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             " join rp.Type rpt" +
             " join rp.Order o" +
             " join o.DiagnosticService ds" +
+            " join o.Visit v" +
             " join o.Patient p" +
             " join p.Profiles pp";
 

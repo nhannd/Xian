@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
 
@@ -44,24 +45,29 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
             EntityRef procedureStepRef,
             MrnDetail mrn,
             PersonNameDetail name,
+            EnumValueInfo orderPriority,
+            EnumValueInfo patientClass,
             string accessionNumber,
-            EnumValueInfo priority,
             string requestedProcedureName,
             string modalityProcedureStepName,
-            string modalityName
-            )
+            string modalityName,
+            DateTime? scheduledStartTime,
+            string diagnosticServiceName)
         {
-            this.ProcedureStepRef = procedureStepRef;
-            this.PatientProfileRef = profileRef;
             this.PatientRef = patientRef;
+            this.PatientProfileRef = profileRef;
             this.OrderRef = orderRef;
+            this.ProcedureStepRef = procedureStepRef;
             this.Mrn = mrn;
             this.PersonNameDetail = name;
+            this.OrderPriority = orderPriority;
+            this.PatientClass = patientClass;
             this.AccessionNumber = accessionNumber;
             this.RequestedProcedureTypeName = requestedProcedureName;
             this.ModalityProcedureStepName = modalityProcedureStepName;
             this.ModalityName = modalityName;
-            this.Priority = priority;
+            this.ScheduledStartTime = scheduledStartTime;
+            this.DiagnosticServiceName = diagnosticServiceName;
         }
 
         [DataMember]
@@ -83,6 +89,12 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
         public PersonNameDetail PersonNameDetail;
 
         [DataMember]
+        public EnumValueInfo OrderPriority;
+
+        [DataMember]
+        public EnumValueInfo PatientClass;
+
+        [DataMember]
         public string AccessionNumber;
 
         [DataMember]
@@ -95,7 +107,10 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
         public string ModalityName;
 
         [DataMember]
-        public EnumValueInfo Priority;
+        public DateTime? ScheduledStartTime;
+
+        [DataMember]
+        public string DiagnosticServiceName;
 
         public override bool Equals(object obj)
         {

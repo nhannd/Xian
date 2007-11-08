@@ -29,34 +29,124 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 using ClearCanvas.Ris.Client.Formatting;
+using System;
+using ClearCanvas.Desktop;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client.Reporting
 {
     public class ReportingWorklistTable : Table<ReportingWorklistItem>
     {
+        private static readonly uint NumRows = 2;
+        private static readonly uint DescriptionRow = 1;
+
         public ReportingWorklistTable()
+            : this(NumRows)
         {
-            this.Columns.Add(new TableColumn<ReportingWorklistItem, string>("MRN",
-                delegate(ReportingWorklistItem item) { return MrnFormat.Format(item.Mrn); }));
-            this.Columns.Add(new TableColumn<ReportingWorklistItem, string>("Name",
-                delegate(ReportingWorklistItem item) { return PersonNameFormat.Format(item.PersonNameDetail); }));
-            this.Columns.Add(new TableColumn<ReportingWorklistItem, string>("Accession #",
-                delegate(ReportingWorklistItem item) { return item.AccessionNumber; }));
-            this.Columns.Add(new TableColumn<ReportingWorklistItem, string>("Service",
-                delegate(ReportingWorklistItem item) { return item.DiagnosticServiceName; }));
-            this.Columns.Add(new TableColumn<ReportingWorklistItem, string>("Procedure",
-                delegate(ReportingWorklistItem item) { return item.RequestedProcedureName; }));
-            this.Columns.Add(new TableColumn<ReportingWorklistItem, string>("Priority",
-                delegate(ReportingWorklistItem item) { return item.Priority; }));
-            this.Columns.Add(new TableColumn<ReportingWorklistItem, string>("Status",
-                delegate(ReportingWorklistItem item) { return item.ActivityStatus.Value; }));
+        }
+
+        private ReportingWorklistTable(uint cellRowCount)
+            : base(cellRowCount)
+        {
+            // Visible Columns
+            TableColumn<ReportingWorklistItem, IconSet> priorityColumn =
+                new TableColumn<ReportingWorklistItem, IconSet>(SR.ColumnPriority,
+                delegate(ReportingWorklistItem item) { return GetOrderPriorityIcon(item.OrderPriority.Code); }, 0.3f);
+            priorityColumn.Comparison = delegate(ReportingWorklistItem item1, ReportingWorklistItem item2)
+                { return GetOrderPriorityIndex(item1.OrderPriority.Code) - GetOrderPriorityIndex(item2.OrderPriority.Code); };
+            priorityColumn.ResourceResolver = new ResourceResolver(this.GetType().Assembly);
+
+            TableColumn<ReportingWorklistItem, string> mrnColumn =
+                new TableColumn<ReportingWorklistItem, string>(SR.ColumnMRN,
+                delegate(ReportingWorklistItem item) { return MrnFormat.Format(item.Mrn); }, 1.0f);
+
+            TableColumn<ReportingWorklistItem, string> nameColumn =
+                new TableColumn<ReportingWorklistItem, string>(SR.ColumnName,
+                delegate(ReportingWorklistItem item) { return PersonNameFormat.Format(item.PersonNameDetail); }, 1.5f);
+
+            TableColumn<ReportingWorklistItem, string> patientClassColumn =
+                new TableColumn<ReportingWorklistItem, string>(SR.ColumnPatientClass,
+                delegate(ReportingWorklistItem item) { return item.PatientClass.Value; }, 0.5f);
+
+            TableColumn<ReportingWorklistItem, string> descriptionRow =
+                new TableColumn<ReportingWorklistItem, string>(SR.ColumnDescription,
+                delegate(ReportingWorklistItem item) { return string.Format("{0} {1} - {2} {3}", 
+                    item.AccessionNumber, 
+                    item.DiagnosticServiceName,
+                    item.RequestedProcedureTypeName, 
+                    item.ProcedureEndTime); },
+                1.0f, DescriptionRow);
+
+            // Invisible but sortable columns
+            TableColumn<ReportingWorklistItem, string> accessionNumberColumn =
+                new TableColumn<ReportingWorklistItem, string>(SR.ColumnAccessionNumber,
+                delegate(ReportingWorklistItem item) { return item.AccessionNumber; }, 0.75f);
+            accessionNumberColumn.Visible = false;
+
+            TableColumn<ReportingWorklistItem, string> diagnosticServiceColumn =
+                new TableColumn<ReportingWorklistItem, string>(SR.ColumnDiagnosticService,
+                delegate(ReportingWorklistItem item) { return item.DiagnosticServiceName; }, 1.0f);
+            diagnosticServiceColumn.Visible = false;
+
+            TableColumn<ReportingWorklistItem, string> procedureNameColumn =
+                new TableColumn<ReportingWorklistItem, string>(SR.ColumnProcedure,
+                delegate(ReportingWorklistItem item) { return item.RequestedProcedureTypeName; }, 1.0f);
+            procedureNameColumn.Visible = false;
+
+            // Currently the creation time of the interpretation step
+            TableColumn<ReportingWorklistItem, string> procedureEndTimeColumn =
+                new TableColumn<ReportingWorklistItem, string>(SR.ColumnProcedureEndTime,
+                delegate(ReportingWorklistItem item) { return Format.Time(item.ProcedureEndTime); }, 0.5f);
+            procedureEndTimeColumn.Visible = false;
+
+            // The order of the addition determines the order of SortBy dropdown
+            this.Columns.Add(priorityColumn);
+            this.Columns.Add(mrnColumn);
+            this.Columns.Add(nameColumn);
+            this.Columns.Add(patientClassColumn);
+            this.Columns.Add(accessionNumberColumn);
+            this.Columns.Add(diagnosticServiceColumn);
+            this.Columns.Add(procedureNameColumn);
+            this.Columns.Add(procedureEndTimeColumn);
+            this.Columns.Add(descriptionRow);
+
+            // Sort by Scheduled Time initially
+            int sortColumnIndex = this.Columns.FindIndex(delegate(TableColumnBase<ReportingWorklistItem> column)
+                { return column.Name.Equals(SR.ColumnProcedureEndTime); });
+
+            this.Sort(new TableSortParams(this.Columns[sortColumnIndex], true));
+        }
+
+        private static int GetOrderPriorityIndex(string orderPriorityCode)
+        {
+            if (String.IsNullOrEmpty(orderPriorityCode))
+                return 0;
+
+            switch (orderPriorityCode)
+            {
+                case "S": // Stats
+                    return 2;
+                case "A": // Urgent
+                    return 1;
+                default: // Routine
+                    return 0;
+            }
+        }
+
+        private static IconSet GetOrderPriorityIcon(string orderPriorityCode)
+        {
+            switch (orderPriorityCode)
+            {
+                case "S": // Stats
+                    return new IconSet("DoubleExclamation.png");
+                case "A": // Urgent
+                    return new IconSet("SingleExclamation.png");
+                default:
+                    return null;
+            }
         }
     }
 }

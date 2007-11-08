@@ -117,11 +117,35 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ColumnAccessionNumber" xml:space="preserve">
+    <value>Accession #</value>
+  </data>
+  <data name="ColumnDescription" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="ColumnDiagnosticService" xml:space="preserve">
+    <value>Diagnostic Service</value>
+  </data>
   <data name="ColumnID" xml:space="preserve">
     <value>ID</value>
   </data>
+  <data name="ColumnMRN" xml:space="preserve">
+    <value>Mrn</value>
+  </data>
   <data name="ColumnName" xml:space="preserve">
     <value>Name</value>
+  </data>
+  <data name="ColumnPatientClass" xml:space="preserve">
+    <value>Patient Class</value>
+  </data>
+  <data name="ColumnPriority" xml:space="preserve">
+    <value>Priority</value>
+  </data>
+  <data name="ColumnProcedure" xml:space="preserve">
+    <value>Procedure</value>
+  </data>
+  <data name="ColumnProcedureEndTime" xml:space="preserve">
+    <value>Procedure End Time</value>
   </data>
   <data name="ExceptionFailedToPerformOperation" xml:space="preserve">
     <value>Failed to perform operation</value>

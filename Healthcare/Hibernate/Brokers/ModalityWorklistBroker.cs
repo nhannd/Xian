@@ -57,8 +57,8 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             public object Value;
         }
 
-        private const string _hqlSelectWorklist = 
-            "select mps, o, p, pp, o.AccessionNumber, o.Priority, rpt, spst, m" +
+        private const string _hqlSelectWorklist =
+            "select mps, o, p, pp, o.AccessionNumber, o.Priority, rpt, spst, m, v.PatientClass, ds.Name" +
             " from ModalityProcedureStep mps";
 
         private const string _hqlSelectCount = 

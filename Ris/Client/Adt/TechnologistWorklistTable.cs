@@ -29,16 +29,19 @@
 
 #endregion
 
+using System;
+using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
 using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
-    class ModalityWorklistTable : Table<ModalityWorklistItem>
+    public class ModalityWorklistTable : Table<ModalityWorklistItem>
     {
         private static readonly uint NumRows = 2;
-        private static readonly uint ProcedureDescriptionRow = 1;
+        private static readonly uint DescriptionRow = 1;
 
         public ModalityWorklistTable()
             : this(NumRows)
@@ -48,53 +51,96 @@ namespace ClearCanvas.Ris.Client.Adt
         private ModalityWorklistTable(uint cellRowCount)
             : base(cellRowCount)
         {
-            this.Columns.Add(new TableColumn<ModalityWorklistItem, string>(SR.ColumnMRN,
-                delegate(ModalityWorklistItem item) { return MrnFormat.Format(item.Mrn); }, 
-                0.5f));
+            // Visible Columns
+            TableColumn<ModalityWorklistItem, IconSet> priorityColumn =
+                new TableColumn<ModalityWorklistItem, IconSet>(SR.ColumnPriority,
+                delegate(ModalityWorklistItem item) { return GetOrderPriorityIcon(item.OrderPriority.Code); }, 0.3f);
+            priorityColumn.Comparison = delegate(ModalityWorklistItem item1, ModalityWorklistItem item2)
+                { return GetOrderPriorityIndex(item1.OrderPriority.Code) - GetOrderPriorityIndex(item2.OrderPriority.Code); };
+            priorityColumn.ResourceResolver = new ResourceResolver(this.GetType().Assembly);
 
-            this.Columns.Add(new TableColumn<ModalityWorklistItem, string>(SR.ColumnName,
-                delegate(ModalityWorklistItem item) { return PersonNameFormat.Format(item.PersonNameDetail); },
-                1.5f));
+            TableColumn<ModalityWorklistItem, string> mrnColumn = 
+                new TableColumn<ModalityWorklistItem, string>(SR.ColumnMRN,
+                delegate(ModalityWorklistItem item) { return MrnFormat.Format(item.Mrn); }, 1.0f);
 
-            this.Columns.Add(new TableColumn<ModalityWorklistItem, string>(SR.ColumnAccessionNumber,
-                delegate(ModalityWorklistItem item) { return item.AccessionNumber; },
-                0.5f));
+            TableColumn<ModalityWorklistItem, string> nameColumn = 
+                new TableColumn<ModalityWorklistItem, string>(SR.ColumnName,
+                delegate(ModalityWorklistItem item) { return PersonNameFormat.Format(item.PersonNameDetail); }, 1.5f);
 
-            TableColumn<ModalityWorklistItem, string> priorityColumn = new TableColumn<ModalityWorklistItem, string>(SR.ColumnPriority,
-                delegate(ModalityWorklistItem item) { return item.Priority.Value; },
-                0.5f);
-            priorityColumn.Visible = false;
+            TableColumn<ModalityWorklistItem, string> patientClassColumn = 
+                new TableColumn<ModalityWorklistItem, string>(SR.ColumnPatientClass,
+                delegate(ModalityWorklistItem item) { return item.PatientClass.Value; }, 0.5f);
+
+            TableColumn<ModalityWorklistItem, string> descriptionRow = 
+                new TableColumn<ModalityWorklistItem, string>(SR.ColumnDescription,
+                delegate(ModalityWorklistItem item) { return string.Format("{0} {1} - {2} {3}", 
+                    item.AccessionNumber, 
+                    item.DiagnosticServiceName, 
+                    item.RequestedProcedureTypeName, 
+                    item.ScheduledStartTime); },
+                1.0f, DescriptionRow);
+
+            // Invisible but sortable columns
+            TableColumn<ModalityWorklistItem, string> accessionNumberColumn = 
+                new TableColumn<ModalityWorklistItem, string>(SR.ColumnAccessionNumber,
+                delegate(ModalityWorklistItem item) { return item.AccessionNumber; }, 0.75f);
+            accessionNumberColumn.Visible = false;
+
+            TableColumn<ModalityWorklistItem, string> diagnosticServiceColumn =
+                new TableColumn<ModalityWorklistItem, string>(SR.ColumnDiagnosticService,
+                delegate(ModalityWorklistItem item) { return item.DiagnosticServiceName; }, 1.0f);
+            diagnosticServiceColumn.Visible = false;
+
+            TableColumn<ModalityWorklistItem, string> procedureNameColumn =
+                new TableColumn<ModalityWorklistItem, string>(SR.ColumnProcedure,
+                delegate(ModalityWorklistItem item) { return item.RequestedProcedureTypeName; }, 1.0f);
+            procedureNameColumn.Visible = false;
+
+            TableColumn<ModalityWorklistItem, string> scheduledForColumn = 
+                new TableColumn<ModalityWorklistItem, string>(SR.ColumnScheduledFor,
+                delegate(ModalityWorklistItem item) { return Format.Time(item.ScheduledStartTime); }, 0.5f);
+            scheduledForColumn.Visible = false;
+
+            // The order of the addition determines the order of SortBy dropdown
             this.Columns.Add(priorityColumn);
+            this.Columns.Add(mrnColumn);
+            this.Columns.Add(nameColumn);
+            this.Columns.Add(patientClassColumn);
+            this.Columns.Add(accessionNumberColumn);
+            this.Columns.Add(diagnosticServiceColumn);
+            this.Columns.Add(procedureNameColumn);
+            this.Columns.Add(scheduledForColumn);
+            this.Columns.Add(descriptionRow);
 
-            this.Columns.Add(new TableColumn<ModalityWorklistItem, string>("Procedure Description",
-                delegate(ModalityWorklistItem item) 
-                { 
-                    return string.Format("{0} - {1}", item.RequestedProcedureTypeName, item.ModalityProcedureStepName); 
-                },
-                0.5f,
-                ProcedureDescriptionRow));
+            // Sort by Scheduled Time initially
+            int sortColumnIndex = this.Columns.FindIndex(delegate(TableColumnBase<ModalityWorklistItem> column)
+                { return column.Name.Equals(SR.ColumnScheduledFor); });
 
-            this.OutlineColorSelector = delegate(object o)
-            {
-                ModalityWorklistItem item = o as ModalityWorklistItem;
-                if (item != null)
-                {
-                    switch (item.Priority.Code)
-                    {
-                        case "S":
-                            return "Red";
-                        case "A":
-                            return "Yellow";
-                        case "R":
-                        default:
-                            return "Empty";
-                    }
-                }
-                else
-                {
-                    return "Empty";
-                }
-            };
+            this.Sort(new TableSortParams(this.Columns[sortColumnIndex], true));
+
+            #region Unused OutlineColorSelector
+
+            //this.OutlineColorSelector = delegate(object o)
+            //{
+            //    ModalityWorklistItem item = o as ModalityWorklistItem;
+            //    if (item != null)
+            //    {
+            //        switch (item.Priority.Code)
+            //        {
+            //            case "S":
+            //                return "Red";
+            //            case "A":
+            //                return "Yellow";
+            //            case "R":
+            //            default:
+            //                return "Empty";
+            //        }
+            //    }
+            //    else
+            //    {
+            //        return "Empty";
+            //    }
+            //};
 
             //this.BackgroundColorSelector = delegate(object o)
             //{
@@ -117,6 +163,37 @@ namespace ClearCanvas.Ris.Client.Adt
             //        return "Empty";
             //    }
             //};
+
+            #endregion
+        }
+
+        private static int GetOrderPriorityIndex(string orderPriorityCode)
+        {
+            if (String.IsNullOrEmpty(orderPriorityCode))
+                return 0;
+
+            switch (orderPriorityCode)
+            {
+                case "S": // Stats
+                    return 2;
+                case "A": // Urgent
+                    return 1;
+                default: // Routine
+                    return 0;
+            }
+        }
+
+        private static IconSet GetOrderPriorityIcon(string orderPriorityCode)
+        {
+            switch (orderPriorityCode)
+            {
+                case "S": // Stats
+                    return new IconSet("DoubleExclamation.png");
+                case "A": // Urgent
+                    return new IconSet("SingleExclamation.png");
+                default:
+                    return null;
+            }
         }
     }
 }

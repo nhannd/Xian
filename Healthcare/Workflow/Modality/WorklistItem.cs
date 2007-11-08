@@ -65,9 +65,15 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
         private string _accessionNumber;
         private ModalityProcedureStepType _modalityProcedureStepType;
         private RequestedProcedureType _requestedProcedureType;
-        private OrderPriority _priority;
+        private OrderPriority _orderPriority;
         private ClearCanvas.Healthcare.Modality _modality;
+        private PatientClassEnum _patientClass;
+        private DateTime? _scheduledStartTime;
+        private string _diagnosticServiceName;
 
+        /// <summary>
+        /// Constructor for ModalityWorklistBroker
+        /// </summary>
         public WorklistItem(
             ModalityProcedureStep modalityProcedureStep,
             Order order,
@@ -77,7 +83,9 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
             OrderPriority priority,
             RequestedProcedureType requestedProcedureType,
             ModalityProcedureStepType modalityProcedureStepType,
-            ClearCanvas.Healthcare.Modality modality)
+            ClearCanvas.Healthcare.Modality modality,
+            PatientClassEnum patientClass,
+            string diagnosticServiceName)
             : base(new WorklistItemKey(modalityProcedureStep.GetRef()))
         {
             _orderRef = order.GetRef();
@@ -86,10 +94,15 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
             _mrn = profile.Mrn;
             _patientName = profile.Name;
             _accessionNumber = accessionNumber;
-            _priority = priority;
+            _orderPriority = priority;
             _requestedProcedureType = requestedProcedureType;
             _modalityProcedureStepType = modalityProcedureStepType;
             _modality = modality;
+            _patientClass = patientClass;
+            _diagnosticServiceName = diagnosticServiceName;
+
+            if (modalityProcedureStep.Scheduling != null)
+                _scheduledStartTime = modalityProcedureStep.Scheduling.StartTime;
         }
 
 
@@ -128,9 +141,9 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
             get { return _accessionNumber; }
         }
 
-        public OrderPriority Priority
+        public OrderPriority OrderPriority
         {
-            get { return _priority; }
+            get { return _orderPriority; }
         }
 
         public RequestedProcedureType RequestedProcedureType
@@ -146,6 +159,21 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
         public ClearCanvas.Healthcare.Modality Modality
         {
             get { return _modality; }
+        }
+
+        public PatientClassEnum PatientClass
+        {
+            get { return _patientClass; }
+        }
+
+        public DateTime? ScheduledStartTime
+        {
+            get { return _scheduledStartTime; }
+        }
+
+        public string DiagnosticServiceName
+        {
+            get { return _diagnosticServiceName; }
         }
     }
 }

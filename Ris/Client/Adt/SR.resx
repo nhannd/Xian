@@ -147,6 +147,9 @@
   <data name="ColumnDateOfBirth" xml:space="preserve">
     <value>Date Of Birth</value>
   </data>
+  <data name="ColumnDescription" xml:space="preserve">
+    <value>Description</value>
+  </data>
   <data name="ColumnDiagnosticService" xml:space="preserve">
     <value>Diagnostic Service</value>
   </data>

@@ -128,13 +128,14 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                 domainItem.OrderRef,
                 new MrnDetail(domainItem.Mrn.Id, domainItem.Mrn.AssigningAuthority),
                 nameAssembler.CreatePersonNameDetail(domainItem.PatientName),
-                domainItem.AccessionNumber,
-                EnumUtils.GetEnumValueInfo(domainItem.OrderPriority, context),
                 healthcardAssembler.CreateHealthcardDetail(domainItem.HealthcardNumber),
                 domainItem.DateOfBirth,
                 EnumUtils.GetEnumValueInfo(domainItem.Sex, context),
+                domainItem.AccessionNumber,
+                EnumUtils.GetEnumValueInfo(domainItem.OrderPriority, context),
                 domainItem.ScheduledStartTime,
-                EnumUtils.GetDisplayValue(domainItem.PatientClass));
+                EnumUtils.GetEnumValueInfo(domainItem.PatientClass),
+                domainItem.DiagnosticServiceName);
         }
 
         private string GetRICStatus(Order order, IPersistenceContext context)

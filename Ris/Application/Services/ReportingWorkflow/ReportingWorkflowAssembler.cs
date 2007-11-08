@@ -92,11 +92,13 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             item.PersonNameDetail = assembler.CreatePersonNameDetail(domainItem.PatientName);
 
             item.AccessionNumber = domainItem.AccessionNumber;
-            item.RequestedProcedureName = domainItem.RequestedProcedureName;
+            item.RequestedProcedureTypeName = domainItem.RequestedProcedureName;
             item.DiagnosticServiceName = domainItem.DiagnosticServiceName;
-            item.Priority = EnumUtils.GetValue(domainItem.Priority, context);
+            item.OrderPriority = EnumUtils.GetEnumValueInfo(domainItem.OrderPriority, context);
             item.ActivityStatus = EnumUtils.GetEnumValueInfo(domainItem.ActivityStatus, context);
             item.StepType = domainItem.StepType;
+            item.PatientClass = EnumUtils.GetEnumValueInfo(domainItem.PatientClass);
+            item.ProcedureEndTime = domainItem.ProcedureEndTime;
 
             return item;
         }

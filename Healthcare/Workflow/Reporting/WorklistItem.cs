@@ -31,6 +31,7 @@
 
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Workflow;
+using System;
 
 namespace ClearCanvas.Healthcare.Workflow.Reporting
 {
@@ -72,12 +73,17 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
         private CompositeIdentifier _mrn;
         private PersonName _patientName;
         private string _accessionNumber;
-        private OrderPriority _priority;
+        private OrderPriority _orderPriority;
         private string _requestedProcedureName;
         private string _diagnosticServiceName;
         private ActivityStatus _activityStatus;
         private string _stepType;
+        private PatientClassEnum _patientClass;
+        private DateTime? _procedureEndTime;
 
+        /// <summary>
+        /// Constructor for ReportingWorklistBroker
+        /// </summary>
         public WorklistItem(
             ReportingProcedureStep reportingProcedureStep,
             PatientProfile profile,
@@ -85,18 +91,21 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
             OrderPriority priority,
             string requestedProcedureName,
             string diagnosticServiceName,
-            ActivityStatus activityStatus)
+            ActivityStatus activityStatus,
+            PatientClassEnum patientClass)
             : base(new WorklistItemKey(reportingProcedureStep.GetRef()))
         {
             _profileRef = profile.GetRef();
             _mrn = profile.Mrn;
             _patientName = profile.Name;
             _accessionNumber = accessionNumber;
-            _priority = priority;
+            _orderPriority = priority;
             _requestedProcedureName = requestedProcedureName;
             _diagnosticServiceName = diagnosticServiceName;
             _activityStatus = activityStatus;
             _stepType = reportingProcedureStep.Name;
+            _patientClass = patientClass;
+            // _procedureEndTime = ???
         }
 
         public WorklistItem(
@@ -106,18 +115,21 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
             OrderPriority priority,
             string requestedProcedureName,
             string diagnosticServiceName,
-            ActivityStatus activityStatus)
+            ActivityStatus activityStatus,
+            PatientClassEnum patientClass)
             : base(new ProtocollingWorklistItemKey(protocolProcedureStep.GetRef()))
         {
             _profileRef = profile.GetRef();
             _mrn = profile.Mrn;
             _patientName = profile.Name;
             _accessionNumber = accessionNumber;
-            _priority = priority;
+            _orderPriority = priority;
             _requestedProcedureName = requestedProcedureName;
             _diagnosticServiceName = diagnosticServiceName;
             _activityStatus = activityStatus;
             _stepType = protocolProcedureStep.Name;
+            _patientClass = patientClass;
+            // _procedureEndTime = 
         }
 
         #region Public Properties
@@ -154,9 +166,14 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
             get { return _accessionNumber; }
         }
 
-        public OrderPriority Priority
+        public OrderPriority OrderPriority
         {
-            get { return _priority; }
+            get { return _orderPriority; }
+        }
+
+        public PatientClassEnum PatientClass
+        {
+            get { return _patientClass; }
         }
 
         public string RequestedProcedureName
@@ -172,6 +189,11 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
         public ActivityStatus ActivityStatus
         {
             get { return _activityStatus; }
+        }
+
+        public DateTime? ProcedureEndTime
+        {
+            get { return _procedureEndTime; }
         }
 
         public string StepType

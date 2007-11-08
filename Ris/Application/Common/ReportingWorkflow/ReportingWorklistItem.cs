@@ -56,19 +56,25 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
         public string AccessionNumber;
 
         [DataMember]
-        public string RequestedProcedureName;
+        public string RequestedProcedureTypeName;
 
         [DataMember]
         public string DiagnosticServiceName;
 
         [DataMember]
-        public string Priority;
+        public EnumValueInfo OrderPriority;
+
+        [DataMember]
+        public EnumValueInfo PatientClass;
 
         [DataMember]
         public EnumValueInfo ActivityStatus;
 
         [DataMember]
         public string StepType;
+
+        [DataMember]
+        public DateTime? ProcedureEndTime;
 
         public override bool Equals(object obj)
         {

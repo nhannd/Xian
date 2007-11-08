@@ -79,12 +79,13 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
         private HealthcardNumber _healthcardNumber;
         private DateTime? _dateOfBirth;
         private Sex _sex;
-        private PatientClassEnum _patientClass;
-        private OrderPriority _orderPriority;
-        private string _accessionNumber;
 
         // Order data
         private DateTime? _scheduledStartTime;
+        private PatientClassEnum _patientClass;
+        private OrderPriority _orderPriority;
+        private string _accessionNumber;
+        private string _diagnosticServiceName;
 
         public WorklistItem(Order order)
             : base(new WorklistItemKey(order.GetRef(), null))
@@ -110,8 +111,8 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
             _orderPriority = order.Priority;
             _patientClass = order.Visit.PatientClass;
             _accessionNumber = order.AccessionNumber;
-
             _scheduledStartTime = order.ScheduledStartTime;
+            _diagnosticServiceName = order.DiagnosticService.Name;
         }
 
         #region Public Properties
@@ -169,6 +170,11 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
         public string AccessionNumber
         {
             get { return _accessionNumber; }
+        }
+
+        public string DiagnosticServiceName
+        {
+            get { return _diagnosticServiceName; }    
         }
 
         public PatientClassEnum PatientClass

@@ -40,30 +40,73 @@ namespace ClearCanvas.Ris.Client.Adt
 {
     public class RegistrationWorklistTable : Table<RegistrationWorklistItem>
     {
+        private static readonly uint NumRows = 2;
+        private static readonly uint DescriptionRow = 1;
+
         public RegistrationWorklistTable()
+            : this(NumRows)
         {
-            // Patient related info
-            this.Columns.Add(new TableColumn<RegistrationWorklistItem, string>(SR.ColumnMRN,
-                delegate(RegistrationWorklistItem item) { return MrnFormat.Format(item.Mrn); }, 1.0f));
-            this.Columns.Add(new TableColumn<RegistrationWorklistItem, string>(SR.ColumnName,
-                delegate(RegistrationWorklistItem item) { return PersonNameFormat.Format(item.Name); }, 1.5f));
+        }
 
-            // Order related info
-            this.Columns.Add(new TableColumn<RegistrationWorklistItem, string>(SR.ColumnAccessionNumber,
-                delegate(RegistrationWorklistItem item) { return String.IsNullOrEmpty(item.AccessionNumber) ? "-" : item.AccessionNumber; }, 0.75f));
-            this.Columns.Add(new TableColumn<RegistrationWorklistItem, string>(SR.ColumnPatientClass,
-                delegate(RegistrationWorklistItem item) { return String.IsNullOrEmpty(item.PatientClass) ? "-" : item.PatientClass; }, 0.5f));
-            this.Columns.Add(new TableColumn<RegistrationWorklistItem, string>(SR.ColumnScheduledFor,
-                delegate(RegistrationWorklistItem item) { return item.EarliestScheduledTime == null ? "-" : Format.Time(item.EarliestScheduledTime); }, 0.5f));
-
-            TableColumn<RegistrationWorklistItem, IconSet> priorityColumn = new TableColumn<RegistrationWorklistItem, IconSet>(
-                SR.ColumnPriority, delegate(RegistrationWorklistItem item) { return GetOrderPriorityIcon(item.OrderPriority.Code); }, 0.5f);
+        private RegistrationWorklistTable(uint cellRowCount)
+            : base(cellRowCount)
+        {
+            // Visible Columns
+            TableColumn<RegistrationWorklistItem, IconSet> priorityColumn =
+                new TableColumn<RegistrationWorklistItem, IconSet>(SR.ColumnPriority,
+                delegate(RegistrationWorklistItem item) { return GetOrderPriorityIcon(item.OrderPriority.Code); }, 0.5f);
             priorityColumn.Comparison = delegate(RegistrationWorklistItem item1, RegistrationWorklistItem item2)
                                             {
                                                 return GetOrderPriorityIndex(item1.OrderPriority.Code) - GetOrderPriorityIndex(item2.OrderPriority.Code);
                                             };
             priorityColumn.ResourceResolver = new ResourceResolver(this.GetType().Assembly);
+
+            TableColumn<RegistrationWorklistItem, string> mrnColumn = 
+                new TableColumn<RegistrationWorklistItem, string>(SR.ColumnMRN,
+                delegate(RegistrationWorklistItem item) { return MrnFormat.Format(item.Mrn); }, 1.0f);
+
+            TableColumn<RegistrationWorklistItem, string> nameColumn = 
+                new TableColumn<RegistrationWorklistItem, string>(SR.ColumnName,
+                delegate(RegistrationWorklistItem item) { return PersonNameFormat.Format(item.Name); }, 1.5f);
+
+            TableColumn<RegistrationWorklistItem, string> patientClassColumn = 
+                new TableColumn<RegistrationWorklistItem, string>(SR.ColumnPatientClass,
+                delegate(RegistrationWorklistItem item) { return item.PatientClass.Value; }, 0.5f);
+
+            TableColumn<RegistrationWorklistItem, string> descriptionRow = 
+                new TableColumn<RegistrationWorklistItem, string>(SR.ColumnDescription,
+                delegate(RegistrationWorklistItem item) { return string.Format("{0} {1} - {2}", 
+                    item.AccessionNumber, 
+                    item.DiagnosticServiceName, 
+                    item.EarliestScheduledTime); },
+                1.0f, DescriptionRow);
+            descriptionRow.Comparison = null;
+
+            // Invisible but sortable columns
+            TableColumn<RegistrationWorklistItem, string> accessionNumberColumn = 
+                new TableColumn<RegistrationWorklistItem, string>(SR.ColumnAccessionNumber,
+                delegate(RegistrationWorklistItem item) { return item.AccessionNumber; }, 1.0f);
+            accessionNumberColumn.Visible = false;
+
+            TableColumn<RegistrationWorklistItem, string> diagnosticServiceColumn =
+                new TableColumn<RegistrationWorklistItem, string>(SR.ColumnDiagnosticService,
+                delegate(RegistrationWorklistItem item) { return item.DiagnosticServiceName; }, 1.0f);
+            diagnosticServiceColumn.Visible = false;
+
+            TableColumn<RegistrationWorklistItem, string> scheduledForColumn = 
+                new TableColumn<RegistrationWorklistItem, string>(SR.ColumnScheduledFor,
+                delegate(RegistrationWorklistItem item) { return Format.Time(item.EarliestScheduledTime); }, 1.0f);
+            scheduledForColumn.Visible = false;
+
+            // The order of the addition determines the order of SortBy dropdown
             this.Columns.Add(priorityColumn);
+            this.Columns.Add(mrnColumn);
+            this.Columns.Add(nameColumn);
+            this.Columns.Add(patientClassColumn);
+            this.Columns.Add(diagnosticServiceColumn);
+            this.Columns.Add(accessionNumberColumn);
+            this.Columns.Add(scheduledForColumn);
+            this.Columns.Add(descriptionRow);
 
             // Sort the table by Scheduled Time initially
             int sortColumnIndex = this.Columns.FindIndex(delegate(TableColumnBase<RegistrationWorklistItem> column)

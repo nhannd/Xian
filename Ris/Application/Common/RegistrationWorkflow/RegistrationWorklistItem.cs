@@ -44,17 +44,17 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
             EntityRef orderRef,
             MrnDetail mrn,
             PersonNameDetail name,
-            string accessionNumber,
-            EnumValueInfo orderPriority,
             HealthcardDetail healthcard,
             DateTime? dateOfBirth,
             EnumValueInfo sex,
+            string accessionNumber,
+            EnumValueInfo orderPriority,
             DateTime? earliestScheduledTime,
-            string patientClass
-            )
+            EnumValueInfo patientClass,
+            string diagnosticServiceName)
         {
-            this.PatientProfileRef = profileRef;
             this.PatientRef = patientRef;
+            this.PatientProfileRef = profileRef;
             this.OrderRef = orderRef;
             this.Mrn = mrn;
             this.Name = name;
@@ -65,6 +65,7 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
             this.OrderPriority = orderPriority;
             this.PatientClass = patientClass;
             this.AccessionNumber = accessionNumber;
+            this.DiagnosticServiceName = diagnosticServiceName;
         }
 
         [DataMember]
@@ -98,10 +99,13 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
         public EnumValueInfo OrderPriority;
 
         [DataMember]
-        public string PatientClass;
+        public EnumValueInfo PatientClass;
 
         [DataMember]
         public string AccessionNumber;
+
+        [DataMember]
+        public string DiagnosticServiceName;
 
         public override bool Equals(object obj)
         {

@@ -41,7 +41,6 @@ using ClearCanvas.Healthcare.Workflow.Modality;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
-using ClearCanvas.Ris.Application.Services.Admin;
 using ClearCanvas.Workflow;
 
 namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
@@ -58,11 +57,14 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
                 domainItem.ModalityProcedureStepRef,
                 new MrnDetail(domainItem.Mrn.Id, domainItem.Mrn.AssigningAuthority),
                 assembler.CreatePersonNameDetail(domainItem.PatientName),
+                EnumUtils.GetEnumValueInfo(domainItem.OrderPriority, context),
+                EnumUtils.GetEnumValueInfo(domainItem.PatientClass),
                 domainItem.AccessionNumber,
-                EnumUtils.GetEnumValueInfo(domainItem.Priority, context),
                 domainItem.RequestedProcedureType.Name,
                 domainItem.ModalityProcedureStepType.Name,
-                domainItem.Modality.Name);
+                domainItem.Modality.Name,
+                domainItem.ScheduledStartTime,
+                domainItem.DiagnosticServiceName);
         }
 
         public ModalityWorklistPreview CreateWorklistPreview(ModalityProcedureStep mps, string patientProfileAuthority, IPersistenceContext context)
@@ -155,14 +157,9 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
                         summary.Insurance = "";
                         summary.Status = EnumUtils.GetValue(o.Status, context);
 
-                        summary.RequestedProcedureName = StringUtilities.Combine<string>(
+                        summary.RequestedProcedureName = StringUtilities.Combine(
                             CollectionUtils.Map<RequestedProcedure, string>(o.RequestedProcedures,
-                                delegate(RequestedProcedure rp)
-                                {
-                                    return rp.Type.Name;
-                                }),
-                            "/");
-
+                                delegate(RequestedProcedure rp) { return rp.Type.Name; }), "/");
 
                         List<DateTime?> listScheduledTime = CollectionUtils.Map<RequestedProcedure, DateTime?, List<DateTime?>>(o.RequestedProcedures,
                             delegate(RequestedProcedure rp)

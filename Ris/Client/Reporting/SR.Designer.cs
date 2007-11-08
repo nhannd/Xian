@@ -61,6 +61,33 @@ namespace ClearCanvas.Ris.Client.Reporting {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Accession #.
+        /// </summary>
+        internal static string ColumnAccessionNumber {
+            get {
+                return ResourceManager.GetString("ColumnAccessionNumber", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Description.
+        /// </summary>
+        internal static string ColumnDescription {
+            get {
+                return ResourceManager.GetString("ColumnDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Diagnostic Service.
+        /// </summary>
+        internal static string ColumnDiagnosticService {
+            get {
+                return ResourceManager.GetString("ColumnDiagnosticService", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to ID.
         /// </summary>
         internal static string ColumnID {
@@ -70,11 +97,56 @@ namespace ClearCanvas.Ris.Client.Reporting {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Mrn.
+        /// </summary>
+        internal static string ColumnMRN {
+            get {
+                return ResourceManager.GetString("ColumnMRN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Name.
         /// </summary>
         internal static string ColumnName {
             get {
                 return ResourceManager.GetString("ColumnName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Patient Class.
+        /// </summary>
+        internal static string ColumnPatientClass {
+            get {
+                return ResourceManager.GetString("ColumnPatientClass", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Priority.
+        /// </summary>
+        internal static string ColumnPriority {
+            get {
+                return ResourceManager.GetString("ColumnPriority", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Procedure.
+        /// </summary>
+        internal static string ColumnProcedure {
+            get {
+                return ResourceManager.GetString("ColumnProcedure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Procedure End Time.
+        /// </summary>
+        internal static string ColumnProcedureEndTime {
+            get {
+                return ResourceManager.GetString("ColumnProcedureEndTime", resourceCulture);
             }
         }
         
