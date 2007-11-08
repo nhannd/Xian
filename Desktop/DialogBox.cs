@@ -57,8 +57,9 @@ namespace ClearCanvas.Desktop
             public override void Exit()
             {
                 _owner._exitRequestedByComponent = true;
-                DialogBoxAction action = _owner._component.ExitCode == ApplicationComponentExitCode.Cancelled ? DialogBoxAction.Cancel : DialogBoxAction.Ok;
-                _owner.EndModal(action);
+
+                // close the dialog
+                _owner.Close(UserInteraction.Allowed, CloseReason.Program);
             }
 
             public override DesktopWindow DesktopWindow
@@ -122,15 +123,6 @@ namespace ClearCanvas.Desktop
         }
 
         /// <summary>
-        /// Terminates the modal loop, closing the dialog box.
-        /// </summary>
-        /// <param name="action"></param>
-        private void EndModal(DialogBoxAction action)
-        {
-            this.DialogBoxView.EndModal(action);
-        }
-
-        /// <summary>
         /// Checks if the hosted component can close.
         /// </summary>
         /// <param name="interactive"></param>
@@ -140,6 +132,21 @@ namespace ClearCanvas.Desktop
             return _exitRequestedByComponent || _host.Component.CanExit(interactive);
         }
 
+        /// <summary>
+        /// Overridden to return correct exit code.
+        /// </summary>
+        /// <param name="args"></param>
+        protected override void OnClosing(ClosingEventArgs args)
+        {
+            base.OnClosing(args);
+
+            // bug #1132: if user clicked X button, need to return "cancelled"
+            if (args.Reason == CloseReason.UserInterface)
+            {
+                _component.ExitCode = ApplicationComponentExitCode.Cancelled;
+            }
+        }
+        
         /// <summary>
         /// Disposes of this object.
         /// </summary>

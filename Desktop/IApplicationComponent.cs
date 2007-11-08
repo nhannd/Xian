@@ -174,8 +174,8 @@ namespace ClearCanvas.Desktop
         bool CanExit(UserInteraction allowInteraction);
 
         /// <summary>
-        /// Gets a value indicating the circumstances of the exit.
+        /// Gets or sets the exit code for the component.
         /// </summary>
-        ApplicationComponentExitCode ExitCode { get; }
+        ApplicationComponentExitCode ExitCode { get; set; }
     }
 }

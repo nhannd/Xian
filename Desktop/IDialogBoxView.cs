@@ -47,11 +47,5 @@ namespace ClearCanvas.Desktop
         /// </summary>
         /// <returns>A result representing the action taken by the user</returns>
         DialogBoxAction RunModal();
-
-        /// <summary>
-        /// Terminates the modal loop with the specified action.
-        /// </summary>
-        /// <param name="action"></param>
-        void EndModal(DialogBoxAction action);
     }
 }

@@ -32,11 +32,12 @@
 using System;
 using System.Windows.Forms;
 using Crownwood.DotNetMagic.Forms;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
     /// <summary>
-    /// Form used by the <see cref="DialogView"/> class.
+    /// Form used by the <see cref="DialogBoxView"/> class.
     /// </summary>
     /// <remarks>
     /// This class may be subclassed.
@@ -44,6 +45,7 @@ namespace ClearCanvas.Desktop.View.WinForms
     public partial class DialogBoxForm : DotNetMagicForm
     {
         private Control _content;
+        private DialogBoxAction _closeAction;
 
         /// <summary>
         /// Constructor
@@ -69,9 +71,32 @@ namespace ClearCanvas.Desktop.View.WinForms
             _content.SizeChanged += new EventHandler(OnContentSizeChanged);
         }
 
+        internal void DelayedClose(DialogBoxAction action)
+        {
+            _closeAction = action;
+            _delayedCloseTimer.Enabled = true;
+        }
+
         private void OnContentSizeChanged(object sender, EventArgs e)
         {
             this.ClientSize = _content.Size;
+        }
+
+        private void _delayedCloseTimer_Tick(object sender, EventArgs e)
+        {
+            // disable timer so it doesn't fire again
+            _delayedCloseTimer.Enabled = false;
+
+            // close the form
+            switch(_closeAction)
+            {
+                case DialogBoxAction.Cancel:
+                    this.DialogResult = DialogResult.Cancel;
+                    break;
+                case DialogBoxAction.Ok:
+                    this.DialogResult = DialogResult.OK;
+                    break;
+            }
         }
     }
 }

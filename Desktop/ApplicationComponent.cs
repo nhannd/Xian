@@ -443,7 +443,7 @@ namespace ClearCanvas.Desktop
         public virtual ApplicationComponentExitCode ExitCode
         {
             get { return _exitCode; }
-            protected set { _exitCode = value; }
+            set { _exitCode = value; }
         }
 
         /// <summary>
