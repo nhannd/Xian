@@ -32,13 +32,12 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using ClearCanvas.Dicom.DataStore;
-using ClearCanvas.Dicom;
-using ClearCanvas.ImageViewer.Services.LocalDataStore;
-using ClearCanvas.Common.Utilities;
-using System.Diagnostics;
 using System.Threading;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
+using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.DataStore;
+using ClearCanvas.ImageViewer.Services.LocalDataStore;
 
 namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 {

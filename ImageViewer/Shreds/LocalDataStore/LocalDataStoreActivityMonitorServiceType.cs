@@ -30,20 +30,20 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.ServiceModel;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Services.LocalDataStore;
-using System.Diagnostics;
 
 namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 {
 	[ServiceBehavior(InstanceContextMode = InstanceContextMode.PerSession, ConcurrencyMode = ConcurrencyMode.Multiple)]
-	public class LocalDataStoreActivityMonitorServiceType : ILocalDataStoreActivityMonitorService, IDisposable
+	public sealed class LocalDataStoreActivityMonitorServiceType : ILocalDataStoreActivityMonitorService, IDisposable
 	{
+		private readonly ILocalDataStoreActivityMonitorServiceCallback _callback;
+
 		public LocalDataStoreActivityMonitorServiceType()
 		{
+			_callback = OperationContext.Current.GetCallbackChannel<ILocalDataStoreActivityMonitorServiceCallback>();
 		}
 
 		#region ILocalDataStoreActivityMonitorService Members
@@ -52,7 +52,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 		{
 			try
 			{
-				LocalDataStoreActivityMonitor.Instance.Subscribe(eventName);
+				SubscriptionManager<ILocalDataStoreActivityMonitorServiceCallback>.Subscribe(_callback, eventName);
 			}
 			catch (Exception e)
 			{
@@ -67,7 +67,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 		{
 			try
 			{
-				LocalDataStoreActivityMonitor.Instance.Unsubscribe(eventName);
+				SubscriptionManager<ILocalDataStoreActivityMonitorServiceCallback>.Unsubscribe(_callback, eventName);
 			}
 			catch (Exception e)
 			{
@@ -82,15 +82,14 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 		public void Cancel(CancelProgressItemInformation information)
 		{
 			try
-			{		
-				LocalDataStoreActivityMonitor.Instance.Cancel(information);
+			{
+				LocalDataStoreService.Instance.Cancel(information);
 			}
 			catch (Exception e)
 			{
 				string message = SR.ExceptionCancellationOfAtLeastOneItemFailed;
 				//this is a one-way operation, so you can't throw.
 				Platform.Log(LogLevel.Error, new Exception(message, e));
-
 			}
 		}
 
@@ -98,7 +97,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 		{
 			try
 			{
-				LocalDataStoreActivityMonitor.Instance.ClearInactive();
+				LocalDataStoreService.Instance.ClearInactive();
 			}
 			catch (Exception e)
 			{
@@ -112,7 +111,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 		{
 			try
 			{
-				LocalDataStoreActivityMonitor.Instance.Refresh();
+				LocalDataStoreService.Instance.RepublishAll();
 			}
 			catch (Exception e)
 			{
@@ -128,9 +127,14 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 		public void Dispose()
 		{
-			string message = "Local Data Store Activity Monitor session object disposed";
-			Console.WriteLine(message);
-			Platform.Log(LogLevel.Info, message);
+			try
+			{
+				SubscriptionManager<ILocalDataStoreActivityMonitorServiceCallback>.Unsubscribe(_callback, null);
+			}
+			catch(Exception e)
+			{
+				Platform.Log(LogLevel.Error, e);
+			}
 		}
 
 		#endregion

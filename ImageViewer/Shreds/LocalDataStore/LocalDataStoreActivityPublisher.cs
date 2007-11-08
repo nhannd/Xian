@@ -29,15 +29,11 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.ImageViewer.Services.LocalDataStore;
-using ServiceModelEx;
 
 namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 {
-	internal sealed class LocalDataStoreActivityPublisher : TransientPublishService<ILocalDataStoreActivityMonitorServiceCallback>, ILocalDataStoreActivityMonitorServiceCallback
+	internal sealed class LocalDataStoreActivityPublisher : ILocalDataStoreActivityMonitorServiceCallback
 	{
 		private static LocalDataStoreActivityPublisher _instance;
 
@@ -62,37 +58,37 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 		public void ReceiveProgressChanged(ReceiveProgressItem progressItem)
 		{
-			FireEvent("ReceiveProgressChanged", progressItem);
+			PublishManager<ILocalDataStoreActivityMonitorServiceCallback>.Publish("ReceiveProgressChanged", progressItem);
 		}
 
 		public void SendProgressChanged(SendProgressItem progressItem)
 		{
-			FireEvent("SendProgressChanged", progressItem);
+			PublishManager<ILocalDataStoreActivityMonitorServiceCallback>.Publish("SendProgressChanged", progressItem);
 		}
 
 		public void ImportProgressChanged(ImportProgressItem progressItem)
 		{
-			FireEvent("ImportProgressChanged", progressItem);
+			PublishManager<ILocalDataStoreActivityMonitorServiceCallback>.Publish("ImportProgressChanged", progressItem);
 		}
 
 		public void ReindexProgressChanged(ReindexProgressItem progressItem)
 		{
-			FireEvent("ReindexProgressChanged", progressItem);
+			PublishManager<ILocalDataStoreActivityMonitorServiceCallback>.Publish("ReindexProgressChanged", progressItem);
 		}
 
 		public void SopInstanceImported(ImportedSopInstanceInformation information)
 		{
-			FireEvent("SopInstanceImported", information);
+			PublishManager<ILocalDataStoreActivityMonitorServiceCallback>.Publish("SopInstanceImported", information);
 		}
 
 		public void InstanceDeleted(DeletedInstanceInformation information)
 		{
-			FireEvent("InstanceDeleted", information);
+			PublishManager<ILocalDataStoreActivityMonitorServiceCallback>.Publish("InstanceDeleted", information);
 		}
 
 		public void LocalDataStoreCleared()
 		{
-			FireEvent("LocalDataStoreCleared");
+			PublishManager<ILocalDataStoreActivityMonitorServiceCallback>.Publish("LocalDataStoreCleared");
 		}
 
 		#endregion

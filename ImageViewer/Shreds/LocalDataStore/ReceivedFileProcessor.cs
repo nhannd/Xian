@@ -31,14 +31,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Common.Utilities;
-using System.Threading;
-using ClearCanvas.Dicom.DataStore;
-using ClearCanvas.ImageViewer.Services.LocalDataStore;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.Services;
+using ClearCanvas.ImageViewer.Services.LocalDataStore;
 
 namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 {

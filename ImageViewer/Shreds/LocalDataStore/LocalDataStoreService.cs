@@ -30,13 +30,10 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.ImageViewer.Services.LocalDataStore;
 using System.IO;
 using ClearCanvas.Common;
-using System.Configuration;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.ImageViewer.Services.LocalDataStore;
 
 namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 {
