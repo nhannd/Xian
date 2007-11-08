@@ -244,10 +244,17 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
         {
             public InterpretationStep Execute(VerificationStep step, Staff currentUserStaff, IWorkflow workflow)
             {
+                // Cancel the current step
                 step.Discontinue();
 
-                InterpretationStep interpretation = new InterpretationStep(step.RequestedProcedure);
+                // Create a new interpreatation step that uses the same report part
+                InterpretationStep interpretation = new InterpretationStep(step);
 
+                // Reset the report part status and interpretator
+                interpretation.ReportPart.Interpretor = null;
+                interpretation.ReportPart.Status = ReportPartStatus.P;
+
+                // Assign the new step back to me
                 interpretation.Assign(currentUserStaff);
                 interpretation.Start(currentUserStaff);
 
