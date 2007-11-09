@@ -218,11 +218,14 @@ namespace ClearCanvas.Ris.Application.Services
             }
 
             profile.Patient.Attachments.Clear();
-            foreach (PatientAttachmentSummary a in detail.Attachments)
+            if (detail.Attachments != null)
             {
-                profile.Patient.Attachments.Add(new PatientAttachment(
-                    EnumUtils.GetEnumValue<PatientAttachmentCategoryEnum>(a.Category, context),
-                    context.Load<MimeDocument>(a.Document.DocumentRef)));
+                foreach (PatientAttachmentSummary a in detail.Attachments)
+                {
+                    profile.Patient.Attachments.Add(new PatientAttachment(
+                        EnumUtils.GetEnumValue<PatientAttachmentCategoryEnum>(a.Category, context),
+                        context.Load<MimeDocument>(a.Document.DocumentRef)));
+                }
             }
         }
     }
