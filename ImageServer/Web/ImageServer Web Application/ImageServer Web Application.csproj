@@ -85,6 +85,55 @@
     <Compile Include="Admin\Configuration\DevicePage.aspx.designer.cs">
       <DependentUpon>DevicePage.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Admin\Configuration\ServerPartitions\AddPartitionDialog.ascx.cs">
+      <DependentUpon>AddPartitionDialog.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\Configuration\ServerPartitions\AddPartitionDialog.ascx.designer.cs">
+      <DependentUpon>AddPartitionDialog.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\Configuration\ServerPartitions\EditPartitionDialog.ascx.cs">
+      <DependentUpon>EditPartitionDialog.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\Configuration\ServerPartitions\EditPartitionDialog.ascx.designer.cs">
+      <DependentUpon>EditPartitionDialog.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\Configuration\ServerPartitions\ServerPartitionFilterPanel.ascx.cs">
+      <DependentUpon>ServerPartitionFilterPanel.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\Configuration\ServerPartitions\ServerPartitionFilterPanel.ascx.designer.cs">
+      <DependentUpon>ServerPartitionFilterPanel.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\Configuration\ServerPartitions\ServerPartitionGridPanel.ascx.cs">
+      <DependentUpon>ServerPartitionGridPanel.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\Configuration\ServerPartitions\ServerPartitionGridPanel.ascx.designer.cs">
+      <DependentUpon>ServerPartitionGridPanel.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\Configuration\ServerPartitions\ServerPartitionPage.aspx.cs">
+      <DependentUpon>ServerPartitionPage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\Configuration\ServerPartitions\ServerPartitionPage.aspx.designer.cs">
+      <DependentUpon>ServerPartitionPage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\Configuration\ServerPartitions\ServerPartitionPanel.ascx.cs">
+      <DependentUpon>ServerPartitionPanel.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\Configuration\ServerPartitions\ServerPartitionPanel.ascx.designer.cs">
+      <DependentUpon>ServerPartitionPanel.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\Configuration\ServerPartitions\ServerPartitionToolBarPanel.ascx.cs">
+      <DependentUpon>ServerPartitionToolBarPanel.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\Configuration\ServerPartitions\ServerPartitionToolBarPanel.ascx.designer.cs">
+      <DependentUpon>ServerPartitionToolBarPanel.ascx</DependentUpon>
+    </Compile>
     <Compile Include="Common\ConfirmDialog.ascx.cs">
       <DependentUpon>ConfirmDialog.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -162,6 +211,13 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Admin\Configuration\DevicePage.aspx" />
+    <Content Include="Admin\Configuration\ServerPartitions\AddPartitionDialog.ascx" />
+    <Content Include="Admin\Configuration\ServerPartitions\EditPartitionDialog.ascx" />
+    <Content Include="Admin\Configuration\ServerPartitions\ServerPartitionFilterPanel.ascx" />
+    <Content Include="Admin\Configuration\ServerPartitions\ServerPartitionGridPanel.ascx" />
+    <Content Include="Admin\Configuration\ServerPartitions\ServerPartitionPage.aspx" />
+    <Content Include="Admin\Configuration\ServerPartitions\ServerPartitionPanel.ascx" />
+    <Content Include="Admin\Configuration\ServerPartitions\ServerPartitionToolBarPanel.ascx" />
     <Content Include="Admin\Styles\images\icon_warning.gif" />
     <Content Include="Common\ConfirmDialog.ascx" />
     <Content Include="Admin\Configuration\DeviceFilterPanel.ascx" />

@@ -6,7 +6,8 @@
 		</siteMapNode>
 		<siteMapNode url="" title="Configuration"  description="System Configuration">
 			<siteMapNode url="~/Admin/Configuration/DevicePage.aspx" title="Devices"  description="Device Configuration"/>
-			<!--<siteMapNode url="~/Admin/Configuration/ServerPartitionPage.aspx" title="Server Partitions"  description="Device Configuration"/>
+			<siteMapNode url="~/Admin/Configuration/ServerPartitions/ServerPartitionPage.aspx" title="Server Partitions"  description="Device Configuration"/>
+			<!--
 			<siteMapNode url="~/Admin/Configuration/FileSystemsPage.aspx" title="FileSystems"  description="Device Configuration"/>
 			<siteMapNode url="~/Admin/Configuration/FileSystemsTierPage.aspx" title="FileSystems Tiers"  description="Device Configuration"/>-->
 		</siteMapNode>

@@ -11,7 +11,7 @@
     <ContentTemplate>
 <asp:Panel ID="Panel1" runat="server"  style="padding-right: 20px; padding-left: 20px; padding-bottom: 20px; padding-top: 10px" >
 
-    <table cellpadding="0" cellspacing="0" >
+    <table  >
         <tr class="toolBarPanel">
             <td colspan="1">
                 <uc2:DeviceToolBar ID="DeviceToolBarControl1" runat="server" />

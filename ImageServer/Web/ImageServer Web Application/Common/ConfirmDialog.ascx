@@ -15,11 +15,11 @@
     </asp:Panel>
     <br />
     <div class="PopupWindowBody">
-        <table id="TABLE1" runat="server" cellspacing="0" cellpadding="0" width="100%">
+        <table id="TABLE1" align="center" runat="server" cellspacing="0" cellpadding="0" width="80%">
             <tr>
                 <td colspan="1" style="height: 24px">
                     <asp:Image ID="IconImage" runat="server" /></td>
-                <td colspan="2" style="height: 24px">
+                <td colspan="2" style="height: 24px; padding-right: 10px; padding-left: 10px; padding-bottom: 10px; vertical-align: top; padding-top: 10px; text-align: center;">
                     <asp:Label ID="MessageLabel" runat="server" Style="text-align: center" Text="Message"
                         Width="100%"></asp:Label></td>
             </tr>

@@ -42,6 +42,8 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Model.Brokers;
+using ClearCanvas.ImageServer.Model.Parameters;
 using ClearCanvas.ImageServer.Model.SelectBrokers;
 using ClearCanvas.ImageServer.Model.Criteria;
 
@@ -85,13 +87,76 @@ namespace ClearCanvas.ImageServer.Web.Common
 
         }
 
-        #endregion Public methods
-
-        public void Update(ServerPartition part)
+        public IList<ServerPartition> GetServerPartitions(ServerPartitionSelectCriteria criteria)
         {
-            throw new Exception("ServerPartitionDataAdapter.Update() is not implemented yet");
+            IList<ServerPartition> list = null;
+            using (IReadContext ctx = _store.OpenReadContext())
+            {
+                ISelectServerPartition select = ctx.GetBroker<ISelectServerPartition>();
+                list = select.Find(criteria);
+            }
+
+            return list;
 
         }
+
+
+
+        /// <summary>
+        /// Creats a new server parition.
+        /// </summary>
+        /// <param name="partition"></param>
+        public bool AddServerPartition(ServerPartition partition)
+        {
+            bool result = false;
+            IList<ServerPartition> list = null;
+
+            using (IUpdateContext ctx = _store.OpenUpdateContext(UpdateContextSyncMode.Flush))
+            {
+                IInsertServerPartition insert = ctx.GetBroker<IInsertServerPartition>();
+                ServerPartitionInsertParameters parms = new ServerPartitionInsertParameters();
+                parms.AeTitle = partition.AeTitle;
+                parms.Description = partition.Description;
+                parms.Enabled = partition.Enabled;
+                parms.PartitionFolder = partition.PartitionFolder;
+                parms.Port = partition.Port;
+
+                list = insert.Execute(parms);
+            }
+
+            result = list != null && list.Count > 0;
+
+            return result;
+        }
+
+
+
+        public bool Update(ServerPartition partition)
+        {
+            bool result = false;
+
+            using (IUpdateContext ctx = _store.OpenUpdateContext(UpdateContextSyncMode.Flush))
+            {
+                IUpdateServerPartition update = ctx.GetBroker<IUpdateServerPartition>();
+                ServerPartitionUpdateParameters parms = new ServerPartitionUpdateParameters();
+                parms.ServerPartitionGUID = partition.GetKey();
+                parms.AeTitle = partition.AeTitle;
+                parms.Description = partition.Description;
+                parms.Enabled = partition.Enabled;
+                parms.PartitionFolder = partition.PartitionFolder;
+                parms.Port = partition.Port;
+
+                result = update.Execute(parms);
+            }
+
+            return result;
+
+        }
+
+
+
+        #endregion Public methods
+
     }
 }
 

@@ -38,6 +38,7 @@
     <Compile Include="DeviceDataAdapter.cs" />
     <Compile Include="ErrorModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ServerParitionConfigController.cs" />
     <Compile Include="ServerPartitionDataAdapter.cs" />
   </ItemGroup>
   <ItemGroup>

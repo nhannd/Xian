@@ -6,7 +6,7 @@
 
 <asp:Panel ID="Panel1" runat="server"  >
 
-<asp:Panel ID="Panel2" runat="server" Height="547px" BorderColor="Silver" BorderWidth="1px">
+<asp:Panel ID="Panel2" runat="server" BorderColor="Silver" BorderWidth="1px" Height="400px">
 <asp:GridView ID="GridView1" runat="server" AutoGenerateColumns="False" 
                 ForeColor="#333333"
                 OnRowDataBound="GridView1_RowDataBound" 
@@ -15,7 +15,7 @@
                 OnSelectedIndexChanging="GridView1_SelectedIndexChanging" 
                 EmptyDataText="No devices available (Please check the filter settings!)" 
                 OnPageIndexChanging="GridView1_PageIndexChanging" 
-                PageSize="25" 
+                PageSize="15" 
                 AllowSorting="True" width="100%" CellPadding="2" AllowPaging="True" BackColor="#E0E0E0" CaptionAlign="Top" BorderWidth="1px"
                  >
                 <FooterStyle BackColor="#507CD1" Font-Bold="True" ForeColor="White" />

@@ -23,7 +23,7 @@
                                 <td style="width: 162px">
                                 AE Title</td>
                                 <td colspan="3">
-                                    <asp:TextBox ID="AETitleTextBox" runat="server" Width="100%"></asp:TextBox></td>
+                                    <asp:TextBox ID="AETitleTextBox" runat="server" Width="100%" BorderColor="LightSteelBlue" BorderWidth="1px"></asp:TextBox></td>
                                 <td style="width: 3px">
                                 </td>
                             </tr>
@@ -31,7 +31,7 @@
                                 <td style="width: 162px; height: 29px">
                                 IP Address</td>
                                 <td colspan="3" style="height: 29px">
-                                    <asp:TextBox ID="IPAddressTextBox" runat="server" Width="100%"></asp:TextBox></td>
+                                    <asp:TextBox ID="IPAddressTextBox" runat="server" Width="100%" BorderColor="LightSteelBlue" BorderWidth="1px"></asp:TextBox></td>
                                 <td style="width: 3px; height: 29px">
                                 </td>
                             </tr>
@@ -39,7 +39,7 @@
                                 <td style="width: 162px">
                                 Port</td>
                                 <td colspan="3">
-                                    <asp:TextBox ID="PortTextBox" runat="server" Width="100%"></asp:TextBox></td>
+                                    <asp:TextBox ID="PortTextBox" runat="server" Width="100%" BorderColor="LightSteelBlue" BorderWidth="1px"></asp:TextBox></td>
                                 <td style="width: 3px">
                                 </td>
                             </tr>
@@ -47,7 +47,7 @@
                                 <td style="width: 162px">
                                 Description</td>
                                 <td colspan="3">
-                                    <asp:TextBox ID="DescriptionTextBox" runat="server" Width="100%"></asp:TextBox></td>
+                                    <asp:TextBox ID="DescriptionTextBox" runat="server" Width="100%" BorderColor="LightSteelBlue" BorderWidth="1px"></asp:TextBox></td>
                                 <td style="width: 3px">
                                 </td>
                             </tr>
