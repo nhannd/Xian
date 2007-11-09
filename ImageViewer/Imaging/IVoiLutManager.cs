@@ -55,5 +55,15 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// </summary>
 		/// <param name="lut">The Lut to be installed.</param>
 		void InstallLut(IComposableLut lut);
+
+		/// <summary>
+		/// Gets or sets whether the output of the Voi Lut should be inverted for display.
+		/// </summary>
+		bool Invert { get; set; }
+
+		/// <summary>
+		/// Toggles the state of the <see cref="Invert"/> property.
+		/// </summary>
+		void ToggleInvert();
 	}
 }

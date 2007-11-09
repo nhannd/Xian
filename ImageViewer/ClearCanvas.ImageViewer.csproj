@@ -113,6 +113,7 @@
     <Compile Include="Annotations\Dicom\DicomFilteredAnnotationLayoutStore.cs" />
     <Compile Include="Annotations\Dicom\DicomFixedAnnotationLayoutProvider.cs" />
     <Compile Include="Annotations\IAnnotationResourceResolver.cs" />
+    <Compile Include="Imaging\VoiLutMemento.cs" />
     <Compile Include="InputManagement\BeforeFindMouseButtonHandlerEventArgs.cs" />
     <Compile Include="InputManagement\BeforeFindMouseWheelHandlerEventArgs.cs" />
     <Compile Include="StudyManagement\DicomTagRetriever.cs" />

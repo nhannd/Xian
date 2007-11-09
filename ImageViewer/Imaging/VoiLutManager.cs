@@ -68,25 +68,38 @@ namespace ClearCanvas.ImageViewer.Imaging
 			_grayscaleImageGraphic.InstallVoiLut(lut);
 		}
 
+		public bool Invert
+		{
+			get { return _grayscaleImageGraphic.Invert; }
+			set { _grayscaleImageGraphic.Invert = value; }
+		}
+
+		public void ToggleInvert()
+		{
+			_grayscaleImageGraphic.Invert = !_grayscaleImageGraphic.Invert;
+		}
+
 		#endregion
 
 		#region IMemorable Members
 
 		public IMemento CreateMemento()
 		{
-			return new ComposableLutMemento(_grayscaleImageGraphic.VoiLut);
+			return new VoiLutMemento(_grayscaleImageGraphic.VoiLut, _grayscaleImageGraphic.Invert);
 		}
 
 		public void SetMemento(IMemento memento)
 		{
-			ComposableLutMemento lutMemento = memento as ComposableLutMemento;
-			Platform.CheckForInvalidCast(lutMemento, "memento", typeof(ComposableLutMemento).Name);
+			VoiLutMemento lutMemento = memento as VoiLutMemento;
+			Platform.CheckForInvalidCast(lutMemento, "memento", typeof(VoiLutMemento).Name);
 
-			if (_grayscaleImageGraphic.VoiLut != lutMemento.OriginatingLut)
-				this.InstallLut(lutMemento.OriginatingLut);
+			if (_grayscaleImageGraphic.VoiLut != lutMemento.ComposableLutMemento.OriginatingLut)
+				this.InstallLut(lutMemento.ComposableLutMemento.OriginatingLut);
 
-			if (lutMemento.InnerMemento != null)
-				_grayscaleImageGraphic.VoiLut.SetMemento(lutMemento.InnerMemento);
+			if (lutMemento.ComposableLutMemento.InnerMemento != null)
+				_grayscaleImageGraphic.VoiLut.SetMemento(lutMemento.ComposableLutMemento.InnerMemento);
+
+			_grayscaleImageGraphic.Invert = lutMemento.Invert;
 		}
 
 		#endregion
