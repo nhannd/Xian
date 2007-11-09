@@ -50,6 +50,7 @@
     <Compile Include="Brokers\InsertWorkQueueStudyProcess.cs" />
     <Compile Include="Brokers\QueryDevice.cs" />
     <Compile Include="Brokers\UpdateDevice.cs" />
+    <Compile Include="Brokers\UpdateServerPartition.cs" />
     <Compile Include="EnumBrokers\FilesystemTierEnumBroker.cs" />
     <Compile Include="EnumBrokers\ServerRuleApplyTimeEnumBroker.cs" />
     <Compile Include="EnumBrokers\ServerRuleTypeEnumBroker.cs" />

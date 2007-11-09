@@ -52,5 +52,65 @@ namespace ClearCanvas.ImageServer.Model.Criteria
                 return (ISearchCondition<ServerEntityKey>)SubCriteria["Key"];
             }
         }
+
+        public ISearchCondition<string> AETitle
+        {
+            get
+            {
+                if (!SubCriteria.ContainsKey("AETitle"))
+                {
+                    SubCriteria["AETitle"] = new SearchCondition<string>("AETitle");
+                }
+                return (ISearchCondition<string>)SubCriteria["AETitle"];
+            }
+        }
+
+        public ISearchCondition<string> Description
+        {
+            get
+            {
+                if (!SubCriteria.ContainsKey("Description"))
+                {
+                    SubCriteria["Description"] = new SearchCondition<string>("Description");
+                }
+                return (ISearchCondition<string>)SubCriteria["Description"];
+            }
+        }
+
+        public ISearchCondition<string> PartitionFolder
+        {
+            get
+            {
+                if (!SubCriteria.ContainsKey("PartitionFolder"))
+                {
+                    SubCriteria["PartitionFolder"] = new SearchCondition<string>("PartitionFolder");
+                }
+                return (ISearchCondition<string>)SubCriteria["PartitionFolder"];
+            }
+        }
+
+        public ISearchCondition<int> Port
+        {
+            get
+            {
+                if (!SubCriteria.ContainsKey("Port"))
+                {
+                    SubCriteria["Port"] = new SearchCondition<int>("Port");
+                }
+                return (ISearchCondition<int>)SubCriteria["Port"];
+            }
+        }
+
+        public ISearchCondition<bool> Enabled
+        {
+            get
+            {
+                if (!SubCriteria.ContainsKey("Enabled"))
+                {
+                    SubCriteria["Enabled"] = new SearchCondition<bool>("Enabled");
+                }
+                return (ISearchCondition<bool>)SubCriteria["Enabled"];
+            }
+        }
     }
 }
