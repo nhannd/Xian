@@ -100,6 +100,10 @@ GO
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[DeleteDevice]') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[DeleteDevice]
 GO
+/****** Object:  StoredProcedure [dbo].[UpdateServerPartition]    Script Date: 11/08/2007 23:41:47 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[UpdateServerPartition]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [dbo].[UpdateServerPartition]
+GO
 /****** Object:  StoredProcedure [dbo].[ReadServerPartitions]    Script Date: 11/02/2007 14:23:17 ******/
 SET ANSI_NULLS ON
 GO
@@ -1357,6 +1361,45 @@ BEGIN
     -- Do the delete
 	DELETE FROM Device 
 	WHERE GUID = @DeviceGUID
+END
+' 
+END
+GO
+
+
+/****** Object:  StoredProcedure [dbo].[UpdateServerPartition]    Script Date: 11/08/2007 23:43:05 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[UpdateServerPartition]') AND type in (N'P', N'PC'))
+BEGIN
+EXEC dbo.sp_executesql @statement = N'-- =============================================  
+-- Author:              Thanh Huynh  
+-- Create date: Nov 8, 2007  
+-- Description: Called to update a server partition entry  
+-- =============================================  
+CREATE PROCEDURE [dbo].[UpdateServerPartition]   
+         -- Add the parameters for the stored procedure here  
+         @ServerPartitionGUID uniqueidentifier,  
+         @AETitle varchar(16),  
+         @Port   int,  
+         @Description    nvarchar(256),  
+         @Enabled bit,
+		 @PartitionFolder nvarchar(16)
+AS  
+BEGIN  
+         -- SET NOCOUNT ON added to prevent extra result sets from  
+         -- interfering with SELECT statements.  
+         SET NOCOUNT ON;  
+   
+    UPDATE [ImageServer].[dbo].[ServerPartition]
+    SET [AeTitle] = @AETitle  
+       ,[Port] = @Port  
+       ,[Description] = @Description  
+       ,[Enabled]=@Enabled
+	   ,[PartitionFolder]=@PartitionFolder
+    WHERE GUID = @ServerPartitionGUID  
 END
 ' 
 END
