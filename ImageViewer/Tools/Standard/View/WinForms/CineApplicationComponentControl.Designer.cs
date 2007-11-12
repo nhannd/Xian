@@ -98,8 +98,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 			// 
 			// _startReverseButton
 			// 
-			this._startReverseButton.BackgroundImage = global::ClearCanvas.ImageViewer.Tools.Standard.View.WinForms.Properties.Resources.PlayReverse;
 			this._startReverseButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+			this._startReverseButton.Image = global::ClearCanvas.ImageViewer.Tools.Standard.View.WinForms.Properties.Resources.PlayReverse;
 			this._startReverseButton.Location = new System.Drawing.Point(14, 7);
 			this._startReverseButton.Name = "_startReverseButton";
 			this._startReverseButton.Size = new System.Drawing.Size(44, 31);
@@ -109,8 +109,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 			// 
 			// _startForwardButton
 			// 
-			this._startForwardButton.BackgroundImage = global::ClearCanvas.ImageViewer.Tools.Standard.View.WinForms.Properties.Resources.Play;
 			this._startForwardButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+			this._startForwardButton.Image = global::ClearCanvas.ImageViewer.Tools.Standard.View.WinForms.Properties.Resources.Play;
 			this._startForwardButton.Location = new System.Drawing.Point(140, 7);
 			this._startForwardButton.Name = "_startForwardButton";
 			this._startForwardButton.Size = new System.Drawing.Size(44, 31);
@@ -120,9 +120,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 			// 
 			// _stopButton
 			// 
-			this._stopButton.BackgroundImage = global::ClearCanvas.ImageViewer.Tools.Standard.View.WinForms.Properties.Resources.Stop;
 			this._stopButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
 			this._stopButton.Enabled = false;
+			this._stopButton.Image = global::ClearCanvas.ImageViewer.Tools.Standard.View.WinForms.Properties.Resources.Stop;
 			this._stopButton.Location = new System.Drawing.Point(77, 7);
 			this._stopButton.Name = "_stopButton";
 			this._stopButton.Size = new System.Drawing.Size(44, 31);
