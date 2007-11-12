@@ -41,12 +41,12 @@ using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
-    [MenuAction("edit", "global-menus/Patient/Edit Patient")]
+    [MenuAction("edit", "global-menus/Patient/Edit Patient Info")]
     //[ButtonAction("edit", "global-toolbars/Patient/EditPatient")]
-    [ButtonAction("edit", "folderexplorer-items-toolbar/Edit")]
-    [MenuAction("edit", "folderexplorer-items-contextmenu/Edit")]
-    [ButtonAction("edit", "patientsearch-items-toolbar/Edit")]
-    [MenuAction("edit", "patientsearch-items-contextmenu/Edit")]
+    [ButtonAction("edit", "folderexplorer-items-toolbar/Edit Patient Info")]
+    [MenuAction("edit", "folderexplorer-items-contextmenu/Edit Patient Info")]
+    [ButtonAction("edit", "patientsearch-items-toolbar/Edit Patient Info")]
+    [MenuAction("edit", "patientsearch-items-contextmenu/Edit Patient Info")]
 
     [ClickHandler("edit", "Apply")]
     [EnabledStateObserver("edit", "Enabled", "EnabledChanged")]
