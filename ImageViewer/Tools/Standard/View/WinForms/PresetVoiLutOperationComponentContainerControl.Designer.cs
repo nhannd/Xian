@@ -72,7 +72,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 			// _okButton
 			// 
 			this._okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this._okButton.Location = new System.Drawing.Point(27, 64);
+			this._okButton.Location = new System.Drawing.Point(27, 65);
 			this._okButton.Name = "_okButton";
 			this._okButton.Size = new System.Drawing.Size(75, 23);
 			this._okButton.TabIndex = 2;
@@ -82,7 +82,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 			// _cancelButton
 			// 
 			this._cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this._cancelButton.Location = new System.Drawing.Point(108, 64);
+			this._cancelButton.Location = new System.Drawing.Point(108, 65);
 			this._cancelButton.Name = "_cancelButton";
 			this._cancelButton.Size = new System.Drawing.Size(75, 23);
 			this._cancelButton.TabIndex = 3;
@@ -117,7 +117,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 			this._keyStrokeComboBox.TabIndex = 0;
 			this._keyStrokeComboBox.Value = null;
 			// 
-			// EditPresetVoiLutComponentContainerControl
+			// PresetVoiLutOperationComponentContainerControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -125,8 +125,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 			this.Controls.Add(this._tableLayoutPanel);
 			this.Controls.Add(this._cancelButton);
 			this.Controls.Add(this._okButton);
-			this.Name = "EditPresetVoiLutComponentContainerControl";
-			this.Size = new System.Drawing.Size(187, 90);
+			this.Name = "PresetVoiLutOperationComponentContainerControl";
+			this.Size = new System.Drawing.Size(187, 91);
 			this._tableLayoutPanel.ResumeLayout(false);
 			this.ResumeLayout(false);
 			this.PerformLayout();

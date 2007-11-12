@@ -79,7 +79,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             // 
             // HtmlComponentControl
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this._webBrowser);
             this.Name = "HtmlComponentControl";

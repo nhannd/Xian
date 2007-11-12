@@ -78,7 +78,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 			// 
 			// LocalImageExplorerControl
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this._fileBrowser);
 			this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);

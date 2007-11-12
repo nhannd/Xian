@@ -122,35 +122,33 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			// _studyDateFrom
 			// 
 			this._studyDateFrom.LabelText = "Study Date (From)";
-			this._studyDateFrom.Location = new System.Drawing.Point(19, 91);
+			this._studyDateFrom.Location = new System.Drawing.Point(19, 95);
 			this._studyDateFrom.Margin = new System.Windows.Forms.Padding(2);
 			this._studyDateFrom.Maximum = new System.DateTime(9998, 12, 31, 0, 0, 0, 0);
 			this._studyDateFrom.Minimum = new System.DateTime(1753, 1, 1, 0, 0, 0, 0);
 			this._studyDateFrom.Name = "_studyDateFrom";
 			this._studyDateFrom.Nullable = true;
-			this._studyDateFrom.ShowTime = false;
-			this._studyDateFrom.Size = new System.Drawing.Size(154, 45);
+			this._studyDateFrom.Size = new System.Drawing.Size(156, 41);
 			this._studyDateFrom.TabIndex = 20;
 			this._studyDateFrom.Value = null;
 			// 
 			// _studyDateTo
 			// 
 			this._studyDateTo.LabelText = "Study Date (To)";
-			this._studyDateTo.Location = new System.Drawing.Point(179, 91);
+			this._studyDateTo.Location = new System.Drawing.Point(179, 95);
 			this._studyDateTo.Margin = new System.Windows.Forms.Padding(2);
 			this._studyDateTo.Maximum = new System.DateTime(9998, 12, 31, 0, 0, 0, 0);
 			this._studyDateTo.Minimum = new System.DateTime(1753, 1, 1, 0, 0, 0, 0);
 			this._studyDateTo.Name = "_studyDateTo";
 			this._studyDateTo.Nullable = true;
-			this._studyDateTo.ShowTime = false;
-			this._studyDateTo.Size = new System.Drawing.Size(156, 45);
+			this._studyDateTo.Size = new System.Drawing.Size(156, 41);
 			this._studyDateTo.TabIndex = 25;
 			this._studyDateTo.Value = null;
 			// 
 			// _studyDescription
 			// 
 			this._studyDescription.LabelText = "Study Description";
-			this._studyDescription.Location = new System.Drawing.Point(339, 93);
+			this._studyDescription.Location = new System.Drawing.Point(339, 95);
 			this._studyDescription.Margin = new System.Windows.Forms.Padding(2);
 			this._studyDescription.Mask = "";
 			this._studyDescription.Name = "_studyDescription";
@@ -219,10 +217,10 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			// 
 			this._modalityPicker.AutoSize = true;
 			this._modalityPicker.LabelText = "Modality";
-			this._modalityPicker.Location = new System.Drawing.Point(499, 93);
+			this._modalityPicker.Location = new System.Drawing.Point(499, 95);
 			this._modalityPicker.Margin = new System.Windows.Forms.Padding(2);
 			this._modalityPicker.Name = "_modalityPicker";
-			this._modalityPicker.Size = new System.Drawing.Size(156, 38);
+			this._modalityPicker.Size = new System.Drawing.Size(156, 41);
 			this._modalityPicker.TabIndex = 35;
 			// 
 			// SearchPanelComponentControl

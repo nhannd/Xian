@@ -120,7 +120,7 @@ namespace ClearCanvas.Desktop.Configuration.View.WinForms
             // 
             // SettingsManagementComponentControl
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.splitContainer1);
             this.Name = "SettingsManagementComponentControl";
