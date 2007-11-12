@@ -182,6 +182,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			if (_uiThreadSynchronizationContext == null)
 				throw new ApplicationException(SR.ExceptionValidSynchronizationContextMustExist);
 
+			Enabled = CanStart();
+
 			base.Start();
 		}
 
