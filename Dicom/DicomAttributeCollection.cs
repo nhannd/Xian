@@ -32,7 +32,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Reflection;
 using System.Text;
 
@@ -713,16 +712,22 @@ namespace ClearCanvas.Dicom
                     try
                     {
                         DicomFieldAttribute dfa = (DicomFieldAttribute)field.GetCustomAttributes(typeof(DicomFieldAttribute), true)[0];
-                        if (Contains(dfa.Tag))
+                        if ((dfa.Tag.TagValue >= this.StartTagValue) && (dfa.Tag.TagValue <= this.EndTagValue))
                         {
-                            DicomAttribute elem = this[dfa.Tag];
-                            if ((elem.StreamLength == 0 && dfa.UseDefaultForZeroLength) && dfa.DefaultValue == DicomFieldDefault.None)
+                            if (Contains(dfa.Tag))
                             {
-                                // do nothing
-                            }
-                            else
-                            {
-                                field.SetValue(obj, LoadDicomFieldValue(elem, field.FieldType, dfa.DefaultValue, dfa.UseDefaultForZeroLength));
+                                DicomAttribute elem = this[dfa.Tag];
+                                if ((elem.StreamLength == 0 && dfa.UseDefaultForZeroLength) &&
+                                    dfa.DefaultValue == DicomFieldDefault.None)
+                                {
+                                    // do nothing
+                                }
+                                else
+                                {
+                                    field.SetValue(obj,
+                                                   LoadDicomFieldValue(elem, field.FieldType, dfa.DefaultValue,
+                                                                       dfa.UseDefaultForZeroLength));
+                                }
                             }
                         }
                     }

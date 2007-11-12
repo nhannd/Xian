@@ -60,6 +60,24 @@ namespace ClearCanvas.Dicom
             get { return _dataSet; }
         }
 
+        /// <summary>
+        /// Load the contents of attributes in the message into a structure or class.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// This method will use reflection to look at the contents of the object specified by
+        /// <paramref name="obj"/> and copy the values of attributes within the <see cref="MetaInfo"/>
+        /// and <see cref="DataSet"/> for the message to fields in the object with 
+        /// the <see cref="DicomFieldAttribute"/> attribute set for them.
+        /// </para>
+        /// </remarks>
+        /// <param name="obj"></param>
+        public void LoadDicomFields(object obj)
+        {
+            _metaInfo.LoadDicomFields(obj);
+            _dataSet.LoadDicomFields(obj);
+        }
+
         #region Dump
         /// <summary>
         /// Dump the contents of the message to a StringBuilder.

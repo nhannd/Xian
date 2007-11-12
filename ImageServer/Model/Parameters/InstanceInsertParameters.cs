@@ -158,5 +158,11 @@ namespace ClearCanvas.ImageServer.Model.Parameters
         {
             set { this.SubCriteria["PerformedProcedureStepStartTime"] = new ProcedureParameter<string>("PerformedProcedureStepStartTime", value); }
         }
+
+        [DicomField(DicomTags.SourceApplicationEntityTitle, DefaultValue = DicomFieldDefault.Null)]
+        public string SourceAeTitle
+        {
+            set { this.SubCriteria["SourceAeTitle"] = new ProcedureParameter<string>("SourceAeTitle", value); }
+        }
     }
 }
