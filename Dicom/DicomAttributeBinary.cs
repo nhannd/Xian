@@ -438,7 +438,7 @@ namespace ClearCanvas.Dicom
                 throw new DicomDataException("Null values invalid for AT VR");
 
             uint parseVal;
-            if (false == uint.TryParse(val.Trim(), NumberStyles.AllowHexSpecifier, null, out parseVal))
+            if (false == uint.TryParse(val.Trim(), NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture, out parseVal))
                 throw new DicomDataException(
                     String.Format("Invalid uint format value for tag {0}: {1}", Tag, val));
             return parseVal;

@@ -1040,7 +1040,7 @@ namespace ClearCanvas.Dicom
                 value = 0;
                 return false;
             }
-            if (!Int16.TryParse(_values[i], out value))
+            if (!Int16.TryParse(_values[i], NumberStyles.Integer, CultureInfo.InvariantCulture, out value))
             {
                 value = 0;
                 return false;
@@ -1073,7 +1073,7 @@ namespace ClearCanvas.Dicom
                 value = 0;
                 return false;
             } 
-            if (!Int32.TryParse(_values[i], out value))
+            if (!Int32.TryParse(_values[i], NumberStyles.Integer, CultureInfo.InvariantCulture, out value))
             {
                 value = 0;
                 return false;
@@ -1106,7 +1106,7 @@ namespace ClearCanvas.Dicom
                 value = 0;
                 return false;
             } 
-            if (!Int64.TryParse(_values[i], out value))
+            if (!Int64.TryParse(_values[i], NumberStyles.Integer, CultureInfo.InvariantCulture, out value))
             {
                 value = 0;
                 return false;
@@ -1140,7 +1140,7 @@ namespace ClearCanvas.Dicom
                 value = 0;
                 return false;
             } 
-            if (!UInt16.TryParse(_values[i], out value))
+            if (!UInt16.TryParse(_values[i], NumberStyles.Integer, CultureInfo.InvariantCulture, out value))
             {
                 value = 0;
                 return false;
@@ -1173,7 +1173,7 @@ namespace ClearCanvas.Dicom
                 value = 0;
                 return false;
             } 
-            if (!UInt32.TryParse(_values[i], out value))
+            if (!UInt32.TryParse(_values[i], NumberStyles.Integer, CultureInfo.InvariantCulture, out value))
             {
                 value = 0;
                 return false;
@@ -1206,7 +1206,7 @@ namespace ClearCanvas.Dicom
                 value = 0;
                 return false;
             } 
-            if (!UInt64.TryParse(_values[i], out value))
+            if (!UInt64.TryParse(_values[i], NumberStyles.Integer, CultureInfo.InvariantCulture, out value))
             {
                 value = 0;
                 return false;
@@ -1239,7 +1239,7 @@ namespace ClearCanvas.Dicom
                 value = 0.0f;
                 return false;
             } 
-            if (!float.TryParse(_values[i], out value))
+            if (!float.TryParse(_values[i], NumberStyles.Float, CultureInfo.InvariantCulture, out value))
             {
                 value = 0;
                 return false;
@@ -1269,8 +1269,8 @@ namespace ClearCanvas.Dicom
             {
                 value = 0.0d;
                 return false;
-            } 
-            if (!double.TryParse(_values[i], out value))
+            }
+			if (!double.TryParse(_values[i], NumberStyles.Float, CultureInfo.InvariantCulture, out value))
             {
                 value = 0;
                 return false;
@@ -1475,14 +1475,6 @@ namespace ClearCanvas.Dicom
 
         #endregion
 
-        #region Properties
-        public NumberStyles NumberStyle
-        {
-            get { return _numberStyle; }
-            set { _numberStyle = value; }
-        }
-        #endregion
-
         public override DicomAttribute Copy()
         {
             return new DicomAttributeIS(this);
@@ -1519,7 +1511,7 @@ namespace ClearCanvas.Dicom
                 return false;
             }
 
-            return short.TryParse(_values[i], NumberStyle, CultureInfo.CurrentCulture, out value);
+            return short.TryParse(_values[i], NumberStyles.Integer, CultureInfo.InvariantCulture, out value);
         }
         /// <summary>
         /// Method to retrieve an Int32 value from an IS attribute.
@@ -1546,7 +1538,7 @@ namespace ClearCanvas.Dicom
                 return false;
             }
 
-            return int.TryParse(_values[i], NumberStyle, CultureInfo.CurrentCulture, out value);
+			return int.TryParse(_values[i], NumberStyles.Integer, CultureInfo.InvariantCulture, out value);
         }
         /// <summary>
         /// Method to retrieve an Int64 value from an IS attribute.
@@ -1572,7 +1564,7 @@ namespace ClearCanvas.Dicom
                 return false;
             }
 
-            return Int64.TryParse(_values[i], NumberStyle, CultureInfo.CurrentCulture, out value);
+			return Int64.TryParse(_values[i], NumberStyles.Integer, CultureInfo.InvariantCulture, out value);
         }
 
         /// <summary>
@@ -1599,7 +1591,7 @@ namespace ClearCanvas.Dicom
                 return false;
             }
 
-            return ushort.TryParse(_values[i], NumberStyle, CultureInfo.CurrentCulture, out value);
+			return ushort.TryParse(_values[i], NumberStyles.Integer, CultureInfo.InvariantCulture, out value);
         }
         /// <summary>
         /// Method to retrieve an UInt32 value from an IS attribute.
@@ -1626,7 +1618,7 @@ namespace ClearCanvas.Dicom
                 return false;
             }
 
-            return uint.TryParse(_values[i], NumberStyle, CultureInfo.CurrentCulture, out value);
+			return uint.TryParse(_values[i], NumberStyles.Integer, CultureInfo.InvariantCulture, out value);
         }
         /// <summary>
         /// Method to retrieve an UInt64 value from an IS attribute.
@@ -1653,7 +1645,7 @@ namespace ClearCanvas.Dicom
                 return false;
             }
 
-            return UInt64.TryParse(_values[i], NumberStyle, CultureInfo.CurrentCulture, out value);
+			return UInt64.TryParse(_values[i], NumberStyles.Integer, CultureInfo.InvariantCulture, out value);
         }
 
         /// <summary>
@@ -1680,7 +1672,7 @@ namespace ClearCanvas.Dicom
                 return false;
             }
 
-            return float.TryParse(_values[i], out value);
+            return float.TryParse(_values[i], NumberStyles.Float, CultureInfo.InvariantCulture, out value);
         }
         /// <summary>
         /// Method to retrieve a double value from an IS attribute.
@@ -1705,7 +1697,7 @@ namespace ClearCanvas.Dicom
                 return false;
             }
 
-            return double.TryParse(_values[i], out value);
+			return double.TryParse(_values[i], NumberStyles.Float, CultureInfo.InvariantCulture, out value);
         }
 
         /// <summary>

@@ -118,7 +118,7 @@ namespace ClearCanvas.Dicom.Tests
             Assert.IsTrue(theFields.AccessionNumber.Equals(theSet[DicomTags.AccessionNumber].GetString(0,"")), "Accession Numbers did not match!");
             Assert.IsTrue(theFields.SopClassUid.UID.Equals(theSet[DicomTags.SopClassUid].GetString(0, "")), "SOP Class UIDs did not match!");
             Assert.IsTrue(theFields.SOPInstanceUID.UID.Equals(theSet[DicomTags.SopInstanceUid].GetString(0, "")), "SOP Class UIDs did not match!");
-            Assert.IsTrue(theFields.StudyDate.ToString("yyyyMMdd", CultureInfo.CurrentCulture).Equals(theSet[DicomTags.StudyDate].GetString(0, "")));
+			Assert.IsTrue(theFields.StudyDate.ToString("yyyyMMdd", CultureInfo.InvariantCulture).Equals(theSet[DicomTags.StudyDate].GetString(0, "")));
             Assert.IsTrue(theFields.Modality.Equals(theSet[DicomTags.Modality].GetString(0, "")), "Modality did not match!");
             Assert.IsTrue(theFields.StudyDescription.Equals(theSet[DicomTags.StudyDescription].GetString(0, "")), "Study Description did not match!");
             Assert.IsTrue(theFields.StudyInstanceUID.UID.Equals(theSet[DicomTags.StudyInstanceUid].GetString(0, "")), "Study Instance UIDs did not match!");
@@ -126,7 +126,7 @@ namespace ClearCanvas.Dicom.Tests
             Assert.IsTrue(theFields.StudyID.Equals(theSet[DicomTags.StudyId].GetString(0, "")), "StudyID did not match!");
             Assert.IsTrue(theFields.PatientsName.Equals(theSet[DicomTags.PatientsName].GetString(0, "")), "PatientsName did not match!");
             Assert.IsTrue(theFields.PatientID.Equals(theSet[DicomTags.PatientId].GetString(0, "")), "PatientID did not match!");
-            Assert.IsTrue(theFields.PatientsBirthDate.ToString("yyyyMMdd", CultureInfo.CurrentCulture).Equals(theSet[DicomTags.PatientsBirthDate].GetString(0, "")));
+			Assert.IsTrue(theFields.PatientsBirthDate.ToString("yyyyMMdd", CultureInfo.InvariantCulture).Equals(theSet[DicomTags.PatientsBirthDate].GetString(0, "")));
             Assert.IsTrue(theFields.PatientsSex.Equals(theSet[DicomTags.PatientsSex].GetString(0, "")), "PatientsSex did not match!");
             Assert.IsTrue(theFields.Rows == theSet[DicomTags.Rows].GetUInt16(0,0));
             Assert.IsTrue(theFields.Columns == theSet[DicomTags.Columns].GetUInt16(0,0));

@@ -35,6 +35,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using NUnit.Framework;
+using System.Globalization;
 
 namespace ClearCanvas.Dicom.Tests
 {
@@ -452,12 +453,12 @@ namespace ClearCanvas.Dicom.Tests
 					if (expectedFromDate == "")
 						Assert.AreEqual(fromInt, 0);
 					else
-						Assert.AreEqual(fromInt, Convert.ToInt32(expectedFromDate));
+						Assert.AreEqual(fromInt, Convert.ToInt32(expectedFromDate, CultureInfo.InvariantCulture));
 
 					if (expectedToDate == "")
 						Assert.AreEqual(toInt, 0);
 					else
-						Assert.AreEqual(toInt, Convert.ToInt32(expectedToDate));
+						Assert.AreEqual(toInt, Convert.ToInt32(expectedToDate, CultureInfo.InvariantCulture));
 
 				}
 				catch (Exception e)

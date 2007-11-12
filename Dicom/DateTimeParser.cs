@@ -44,6 +44,21 @@ namespace ClearCanvas.Dicom
 		private static readonly char[] _plusMinus = { '+', '-' };
 
 		/// <summary>
+		/// Attempts to parse the time string exactly, according to accepted Dicom datetime format(s).
+		/// Will *not* throw an exception if the format is invalid (better for when performance is needed).
+		/// </summary>
+		/// <param name="dateTimeString">the dicom datetime string</param>
+		/// <returns>a nullable DateTime</returns>
+		public static DateTime? Parse(string dateTimeString)
+		{
+			DateTime dateTime;
+			if (!Parse(dateTimeString, out dateTime))
+				return null;
+
+			return dateTime;
+		}
+
+		/// <summary>
 		/// Parses a dicom Date/Time string using the DateParser and TimeParser
 		/// (TryParseExact) functions.  The Hour/Minute adjustment factor (as
 		/// specified in Dicom for universal time adjustment) is accounted for 

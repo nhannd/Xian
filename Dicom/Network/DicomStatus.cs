@@ -65,7 +65,7 @@ namespace ClearCanvas.Dicom.Network
         /// <param name="desc">The description of the code.</param>
         public DicomStatus(string code, DicomState status, string desc)
         {
-            Code = ushort.Parse(code.Replace('x', '0'), System.Globalization.NumberStyles.HexNumber);
+            Code = ushort.Parse(code.Replace('x', '0'), System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture);
 
             StringBuilder msb = new StringBuilder();
             msb.Append(code.ToLower());
@@ -75,7 +75,7 @@ namespace ClearCanvas.Dicom.Network
                 .Replace('9', 'F').Replace('a', 'F').Replace('b', 'F')
                 .Replace('c', 'F').Replace('d', 'F').Replace('e', 'F')
                 .Replace('x', '0');
-            Mask = ushort.Parse(msb.ToString(), System.Globalization.NumberStyles.HexNumber);
+			Mask = ushort.Parse(msb.ToString(), System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture);
 
             Status = status;
             Description = desc;
