@@ -40,13 +40,13 @@ using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 
 namespace ClearCanvas.Ris.Client.Reporting
 {
-    [MenuAction("view", "global-menus/Patient/View Details...")]
+    [MenuAction("view", "global-menus/Patient/View Biography...")]
     //[ButtonAction("view", "global-toolbars/Patient/ViewPatient")]
-    [ButtonAction("view", "folderexplorer-items-toolbar/Patient Details")]
-    [MenuAction("view", "folderexplorer-items-contextmenu/Patient Details")]
+    [ButtonAction("view", "folderexplorer-items-toolbar/Patient Biography")]
+    [MenuAction("view", "folderexplorer-items-contextmenu/Patient Biography")]
     [ClickHandler("view", "View")]
     [EnabledStateObserver("view", "Enabled", "EnabledChanged")]
-    [Tooltip("view", "Open patient details")]
+    [Tooltip("view", "Open patient biography")]
 	[IconSet("view", IconScheme.Colour, "PatientDetailsToolSmall.png", "PatientDetailsToolMedium.png", "PatientDetailsToolLarge.png")]
     [ExtensionOf(typeof(ReportingWorkflowItemToolExtensionPoint))]
     public class PatientBiographyTool : Tool<IToolContext>

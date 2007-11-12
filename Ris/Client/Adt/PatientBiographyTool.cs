@@ -41,16 +41,16 @@ using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
-    [MenuAction("view", "global-menus/Patient/View Details...")]
+    [MenuAction("view", "global-menus/Patient/View Biography...")]
     //[ButtonAction("view", "global-toolbars/Patient/ViewPatient")]
-    [ButtonAction("view", "folderexplorer-items-toolbar/Patient Details")]
-    [MenuAction("view", "folderexplorer-items-contextmenu/Patient Details")]
+    [ButtonAction("view", "folderexplorer-items-toolbar/Patient Biography")]
+    [MenuAction("view", "folderexplorer-items-contextmenu/Patient Biography")]
     [MenuAction("view", "RegistrationPreview-menu/Details")] // This action is used by the registration preview script object
-    [ButtonAction("view", "patientsearch-items-toolbar/Details")]
-    [MenuAction("view", "patientsearch-items-contextmenu/Details")]
+    [ButtonAction("view", "patientsearch-items-toolbar/Patient Biography")]
+    [MenuAction("view", "patientsearch-items-contextmenu/Patient Biography")]
     [ClickHandler("view", "View")]
     [EnabledStateObserver("view", "Enabled", "EnabledChanged")]
-    [Tooltip("view", "Open patient details")]
+    [Tooltip("view", "Open patient biography")]
 	[IconSet("view", IconScheme.Colour, "PatientDetailsToolSmall.png", "PatientDetailsToolMedium.png", "PatientDetailsToolLarge.png")]
     [ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]
     [ExtensionOf(typeof(RegistrationPreviewToolExtensionPoint))]
