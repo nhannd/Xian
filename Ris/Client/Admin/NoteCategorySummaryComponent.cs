@@ -184,7 +184,7 @@ namespace ClearCanvas.Ris.Client.Admin
                 NoteCategoryEditorComponent editor = new NoteCategoryEditorComponent();
                 ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
                     this.Host.DesktopWindow, editor, SR.TitleAddNoteCategory);
-                if (exitCode == ApplicationComponentExitCode.Normal)
+                if (exitCode == ApplicationComponentExitCode.Accepted)
                 {
                     _noteCategoryTable.Items.Add(_selectedNoteCategory = editor.NoteCategorySummary);
                     NoteCategorySelectionChanged();
@@ -208,7 +208,7 @@ namespace ClearCanvas.Ris.Client.Admin
                 NoteCategoryEditorComponent editor = new NoteCategoryEditorComponent(_selectedNoteCategory.NoteCategoryRef);
                 ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
                     this.Host.DesktopWindow, editor, SR.TitleUpdateNoteCategory);
-                if (exitCode == ApplicationComponentExitCode.Normal)
+                if (exitCode == ApplicationComponentExitCode.Accepted)
                 {
                     _noteCategoryTable.Items.Replace(
                         delegate(NoteCategorySummary s) { return s.NoteCategoryRef.Equals(editor.NoteCategorySummary.NoteCategoryRef); },

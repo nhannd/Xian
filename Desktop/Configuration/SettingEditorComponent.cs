@@ -93,13 +93,13 @@ namespace ClearCanvas.Desktop.Configuration
 
         public void Accept()
         {
-            this.ExitCode = ApplicationComponentExitCode.Normal;
+            this.ExitCode = ApplicationComponentExitCode.Accepted;
             this.Host.Exit();
         }
 
         public void Cancel()
         {
-            this.ExitCode = ApplicationComponentExitCode.Cancelled;
+            this.ExitCode = ApplicationComponentExitCode.None;
             this.Host.Exit();
         }
 

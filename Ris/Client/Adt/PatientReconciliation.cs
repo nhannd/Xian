@@ -65,7 +65,7 @@ namespace ClearCanvas.Ris.Client.Adt
                     window,
                     component,
                     SR.TitlePatientReconciliation);
-                return exitCode == ApplicationComponentExitCode.Normal;
+                return exitCode == ApplicationComponentExitCode.Accepted;
             }
             else
             {

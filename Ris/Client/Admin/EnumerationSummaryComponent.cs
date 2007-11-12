@@ -238,7 +238,7 @@ namespace ClearCanvas.Ris.Client.Admin
             {
                 EnumerationEditorComponent component = new EnumerationEditorComponent(_selectedEnumeration.AssemblyQualifiedClassName);
                 ApplicationComponentExitCode result = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, component, SR.TitleEnumAddValue);
-                if(result == ApplicationComponentExitCode.Normal)
+                if(result == ApplicationComponentExitCode.Accepted)
                 {
                     _enumValues.Items.Add(component.EnumValue);
                 }
@@ -255,7 +255,7 @@ namespace ClearCanvas.Ris.Client.Admin
             {
                 EnumerationEditorComponent component = new EnumerationEditorComponent(_selectedEnumeration.AssemblyQualifiedClassName, (EnumValueInfo)_selectedEnumValue.Clone());
                 ApplicationComponentExitCode result = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, component, SR.TitleEnumEditValue);
-                if (result == ApplicationComponentExitCode.Normal)
+                if (result == ApplicationComponentExitCode.Accepted)
                 {
                     _selectedEnumValue = component.EnumValue;
                     _enumValues.Items.Replace(delegate(EnumValueInfo v) { return v.Code == _selectedEnumValue.Code; },

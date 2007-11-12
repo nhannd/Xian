@@ -147,7 +147,7 @@ namespace ClearCanvas.Desktop
         /// </summary>
         public virtual void Accept()
         {
-            this.ExitCode = ApplicationComponentExitCode.Normal;
+            this.ExitCode = ApplicationComponentExitCode.Accepted;
             this.Host.Exit();
         }
 
@@ -182,7 +182,7 @@ namespace ClearCanvas.Desktop
         /// </summary>
         public virtual void Cancel()
         {
-            this.ExitCode = ApplicationComponentExitCode.Cancelled;
+            this.ExitCode = ApplicationComponentExitCode.None;
             this.Host.Exit();
         }
 

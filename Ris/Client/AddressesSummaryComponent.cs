@@ -125,7 +125,7 @@ namespace ClearCanvas.Ris.Client
 
             AddressEditorComponent editor = new AddressEditorComponent(address, _addressTypes);
             ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleAddAddress);
-            if (exitCode == ApplicationComponentExitCode.Normal)
+            if (exitCode == ApplicationComponentExitCode.Accepted)
             {
                 _addresses.Items.Add(address);
                 _addressList.Add(address);
@@ -141,7 +141,7 @@ namespace ClearCanvas.Ris.Client
             AddressDetail address = (AddressDetail) _currentAddressSelection.Clone();
             AddressEditorComponent editor = new AddressEditorComponent(address, _addressTypes);
             ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleUpdateAddress);
-            if (exitCode == ApplicationComponentExitCode.Normal)
+            if (exitCode == ApplicationComponentExitCode.Accepted)
             {
                 // delete and re-insert to ensure that TableView updates correctly
                 AddressDetail toBeRemoved = _currentAddressSelection;

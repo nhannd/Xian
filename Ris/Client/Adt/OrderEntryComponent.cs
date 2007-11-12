@@ -504,7 +504,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 ProcedureRequisition procReq = new ProcedureRequisition(null, _selectedFacility);
                 RequestedProcedureEditorComponent procedureEditor = new RequestedProcedureEditorComponent(procReq, _facilityChoices, _lateralityChoices, orderableProcedureTypes);
                 if(ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, procedureEditor, "Add Procedure")
-                    == ApplicationComponentExitCode.Normal)
+                    == ApplicationComponentExitCode.Accepted)
                 {
                     _proceduresTable.Items.Add(procReq);
                 }
@@ -525,7 +525,7 @@ namespace ClearCanvas.Ris.Client.Adt
             {
                 RequestedProcedureEditorComponent procedureEditor = new RequestedProcedureEditorComponent(_selectedProcedure, _facilityChoices, _lateralityChoices);
                 if (ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, procedureEditor, "Modify Procedure")
-                    == ApplicationComponentExitCode.Normal)
+                    == ApplicationComponentExitCode.Accepted)
                 {
                     _proceduresTable.Items.NotifyItemUpdated(_selectedProcedure);
                 }
@@ -585,13 +585,13 @@ namespace ClearCanvas.Ris.Client.Adt
 
             if(SubmitOrder())
             {
-                this.Exit(ApplicationComponentExitCode.Normal);
+                this.Exit(ApplicationComponentExitCode.Accepted);
             }
         }
 
         public void Cancel()
         {
-            this.Exit(ApplicationComponentExitCode.Cancelled);
+            this.Exit(ApplicationComponentExitCode.None);
         }
 
         #endregion

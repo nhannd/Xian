@@ -46,7 +46,7 @@ namespace ClearCanvas.Ris.Client
             ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
                 _desktopWindow, component, SR.TitleExternalPractitioner);
 
-            if (exitCode == ApplicationComponentExitCode.Normal)
+            if (exitCode == ApplicationComponentExitCode.Accepted)
             {
                 result = (ExternalPractitionerSummary)component.SelectedPractitioner.Item;
             }

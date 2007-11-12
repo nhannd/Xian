@@ -134,7 +134,7 @@ namespace ClearCanvas.Ris.Client.Adt
                         checkInComponent, 
                         String.Format("Checking in {0}", PersonNameFormat.Format(item.Name)));
 
-                    if (exitCode == ApplicationComponentExitCode.Normal)
+                    if (exitCode == ApplicationComponentExitCode.Accepted)
                     {
                         Platform.GetService<IRegistrationWorkflowService>(
                             delegate(IRegistrationWorkflowService service)
@@ -185,7 +185,7 @@ namespace ClearCanvas.Ris.Client.Adt
                         cancelOrderComponent, 
                         String.Format(SR.TitleCancelOrder, PersonNameFormat.Format(item.Name)));
 
-                    if (exitCode == ApplicationComponentExitCode.Normal)
+                    if (exitCode == ApplicationComponentExitCode.Accepted)
                     {
                         Platform.GetService<IRegistrationWorkflowService>(
                             delegate(IRegistrationWorkflowService service)
@@ -244,7 +244,7 @@ namespace ClearCanvas.Ris.Client.Adt
                         string.Format(SR.TitleReplaceOrder, PersonNameFormat.Format(item.Name), MrnFormat.Format(item.Mrn)),
                         delegate(IApplicationComponent c)
                         {
-                            if (c.ExitCode == ApplicationComponentExitCode.Normal)
+                            if (c.ExitCode == ApplicationComponentExitCode.Accepted)
                             {
                                 IFolder cancelledFolder = CollectionUtils.SelectFirst<IFolder>(folders,
                                    delegate(IFolder f) { return f is Folders.CancelledFolder; });

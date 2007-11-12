@@ -70,12 +70,12 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         public void Okay()
         {
-            this.Exit(ApplicationComponentExitCode.Normal);
+            this.Exit(ApplicationComponentExitCode.Accepted);
         }
 
         public void Cancel()
         {
-            this.Exit(ApplicationComponentExitCode.Cancelled);
+            this.Exit(ApplicationComponentExitCode.None);
         }
 
         #endregion

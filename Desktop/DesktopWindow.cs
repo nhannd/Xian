@@ -233,15 +233,11 @@ namespace ClearCanvas.Desktop
         /// </summary>
         /// <param name="interactive"></param>
         /// <returns></returns>
-        protected internal override bool CanClose(UserInteraction interactive)
+        protected internal override bool CanClose()
         {
-            // should never be called in this mode
-            if (interactive == UserInteraction.Allowed)
-                throw new InvalidOperationException();
-
             // we can close if all workspaces can close without interacting
             return CollectionUtils.TrueForAll<Workspace>(_workspaces,
-                delegate(Workspace w) { return w.CanClose(UserInteraction.NotAllowed); });
+                delegate(Workspace w) { return w.CanClose(); });
         }
 
         /// <summary>

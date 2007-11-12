@@ -156,7 +156,7 @@ namespace ClearCanvas.Ris.Client.Admin
 
                     });
 
-                Exit(ApplicationComponentExitCode.Normal);
+                Exit(ApplicationComponentExitCode.Accepted);
             }
             catch (Exception e)
             {
@@ -170,7 +170,7 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public void Cancel()
         {
-            Exit(ApplicationComponentExitCode.Cancelled);
+            Exit(ApplicationComponentExitCode.None);
         }
 
         #endregion

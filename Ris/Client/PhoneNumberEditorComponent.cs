@@ -154,13 +154,13 @@ namespace ClearCanvas.Ris.Client
         }
         public void Accept()
         {
-            this.ExitCode = ApplicationComponentExitCode.Normal;
+            this.ExitCode = ApplicationComponentExitCode.Accepted;
             Host.Exit();
         }
 
         public void Cancel()
         {
-            this.ExitCode = ApplicationComponentExitCode.Cancelled;
+            this.ExitCode = ApplicationComponentExitCode.None;
             Host.Exit();
         }
 

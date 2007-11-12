@@ -89,7 +89,7 @@ namespace ClearCanvas.Desktop
 
         public void Cancel()
         {
-            this.ExitCode = ApplicationComponentExitCode.Cancelled;
+            this.ExitCode = ApplicationComponentExitCode.None;
             Host.Exit();
         }
     }

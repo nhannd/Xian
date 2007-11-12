@@ -79,7 +79,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 					dialogContainer,
 					SR.TitleSendStudy);
 
-			if (code == ApplicationComponentExitCode.Cancelled)
+			if (code != ApplicationComponentExitCode.Accepted)
 				return;
 
 			if (aeNavigator.SelectedServers == null || aeNavigator.SelectedServers.Servers == null || aeNavigator.SelectedServers.Servers.Count == 0)

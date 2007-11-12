@@ -47,7 +47,7 @@ namespace ClearCanvas.Ris.Client
             ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
                 _desktopWindow, component, SR.TitleDiagnosticServices);
 
-            if (exitCode == ApplicationComponentExitCode.Normal)
+            if (exitCode == ApplicationComponentExitCode.Accepted)
             {
                 diagnosticService = component.SelectedDiagnosticServiceDetail;
             }

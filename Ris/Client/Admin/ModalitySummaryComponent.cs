@@ -182,7 +182,7 @@ namespace ClearCanvas.Ris.Client.Admin
                 ModalityEditorComponent editor = new ModalityEditorComponent();
                 ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
                     this.Host.DesktopWindow, editor, SR.TitleAddModality);
-                if (exitCode == ApplicationComponentExitCode.Normal)
+                if (exitCode == ApplicationComponentExitCode.Accepted)
                 {
                     _modalityTable.Items.Add(_selectedModality = editor.ModalitySummary);
                     ModalitySelectionChanged();
@@ -206,7 +206,7 @@ namespace ClearCanvas.Ris.Client.Admin
                 ModalityEditorComponent editor = new ModalityEditorComponent(_selectedModality.ModalityRef);
                 ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
                     this.Host.DesktopWindow, editor, SR.TitleUpdateModality);
-                if (exitCode == ApplicationComponentExitCode.Normal)
+                if (exitCode == ApplicationComponentExitCode.Accepted)
                 {
                     _modalityTable.Items.Replace(delegate(ModalitySummary m) { return m.ModalityRef.Equals(editor.ModalitySummary.ModalityRef); }, editor.ModalitySummary);
                 }

@@ -247,7 +247,7 @@ namespace ClearCanvas.Desktop
         /// </summary>
         protected ApplicationComponent()
         {
-            _exitCode = ApplicationComponentExitCode.Normal;    // default exit code
+            _exitCode = ApplicationComponentExitCode.None;    // default exit code
 
             // default resource resolver
             _resourceResolver = new ResourceResolver(this.GetType().Assembly);
@@ -384,41 +384,61 @@ namespace ClearCanvas.Desktop
         }
 
         /// <summary>
-        /// Called by the host to determine if the application component is in a state such that it can be stopped.
+        /// Called by the framework to determine if this component in a state
+        /// such that it can be stopped without user interaction.
         /// </summary>
         /// <remarks>
-        /// <para>
-        /// The default implementation simply check the <see cref="Modified"/> property to see if data has been modified.
-        /// If data has been modified, and <see cref="UserInteraction.NotAllowed"/> is specified, it returns false.
-        /// If data has been modified, and <see cref="UserInteraction.Allowed"/> is specified, it presents a standard
-        /// confirmation dialog asking the user whether the changes should be discarded, or the exit cancelled.
-        /// If the user elects to discard data, the <see cref="ExitCode"/> property is set to <see cref="ApplicationComponentExitCode.Cancelled"/>
-        /// and a value of true is returned.  If the user elects to cancel, a value of false is returned.
-        /// </para>
-        /// <para>
-        /// Override this method to provide custom logic for responding to this query.
-        /// </para>
+        /// The behaviour of the default implementation depends upon the type of host.  If the component is running
+        /// in a <see cref="IShelfHost"/> or an <see cref="IDialogBoxHost"/>, this method always returns true.
+        /// Otherwise, it checks the <see cref="Modified"/> property and returns
+        /// false if data has been modified. Override this method to provide custom logic for responding to this query.
         /// </remarks>
-        public virtual bool CanExit(UserInteraction interactive)
+        public virtual bool CanExit()
         {
             AssertStarted();
 
-            if (interactive == UserInteraction.NotAllowed)
-                return !_modified;
+            if(this.Host is IShelfHost || this.Host is IDialogBoxHost)
+                return true;
 
-            if (_modified &&
-                this.Host.ShowMessageBox(SR.MessageConfirmDiscardChangesBeforeClosing, MessageBoxActions.OkCancel) == DialogBoxAction.Cancel)
+            return !_modified;
+        }
+
+        /// <summary>
+        /// Called by the framework in the case where the host has initiated the exit, rather than the component,
+        /// to give the component a chance to prepare prior to being stopped.
+        /// </summary>
+        /// <remarks>
+        /// The behaviour of the default implementation depends upon the type of host.  If the component is running
+        /// in a <see cref="IShelfHost"/> or an <see cref="IDialogBoxHost"/>, this method always returns true.
+        /// Otherwise, it checks the <see cref="Modified"/> property to see if data has been modified.
+        /// If data has been modified, a standard confirmation dialog is presented, asking the user whether the changes
+        /// should be discarded, or the exit cancelled.
+        /// </remarks>
+        /// <returns>
+        /// True if there are no modifications or the user elects to discard modifications, otherwise false.
+        /// </returns>
+        public virtual bool PrepareExit()
+        {
+            AssertStarted();
+
+            if (this.Host is IShelfHost || this.Host is IDialogBoxHost)
             {
-                // user has cancelled the "close" operation, therefore we can't exit
-                return false;
-            }
-            else
-            {
-                // data was not modified, or the user has chosen to discard the changes
-                // this is equivalent to cancelling
-                this.ExitCode = ApplicationComponentExitCode.Cancelled;
+                // nothing to do
                 return true;
             }
+
+            // if modified, check if the user intended to discard the changes
+            if (_modified)
+            {
+                if(this.Host.ShowMessageBox(SR.MessageConfirmDiscardChangesBeforeClosing, MessageBoxActions.OkCancel) == DialogBoxAction.Cancel)
+                {
+                    // user has cancelled the "close" operation, therefore we can't exit
+                    return false;
+                }
+            }
+
+            // data was not modified, or the user has chosen to discard the changes
+            return true;
         }
 
         /// <summary>

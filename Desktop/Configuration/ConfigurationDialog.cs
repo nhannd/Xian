@@ -103,15 +103,14 @@ namespace ClearCanvas.Desktop.Configuration
 								configurationPage.SaveConfiguration();
 						}
 
-						this.Host.Exit();
+                        this.Exit(ApplicationComponentExitCode.Accepted);
 					}
 					catch (Exception e)
 					{
 						ExceptionHandler.Report(e, SR.ExceptionFailedToSave, this.Host.DesktopWindow,
 							delegate()
 							{
-								this.ExitCode = ApplicationComponentExitCode.Error;
-								this.Host.Exit();
+                                this.Exit(ApplicationComponentExitCode.Error);
 							});
 					}
 				}

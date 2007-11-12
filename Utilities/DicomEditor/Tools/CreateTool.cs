@@ -90,7 +90,7 @@ namespace ClearCanvas.Utilities.DicomEditor.Tools
         {
             DicomEditorCreateToolComponent creator = new DicomEditorCreateToolComponent();
             ApplicationComponentExitCode result = ApplicationComponent.LaunchAsDialog(this.Context.DesktopWindow, creator, SR.TitleCreateTag);
-            if (result == ApplicationComponentExitCode.Normal)
+            if (result == ApplicationComponentExitCode.Accepted)
             {
                 try
                 {

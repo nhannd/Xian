@@ -99,12 +99,12 @@ namespace ClearCanvas.Ris.Client
 
         public void Accept()
         {
-            this.Exit(ApplicationComponentExitCode.Normal);
+            this.Exit(ApplicationComponentExitCode.Accepted);
         }
 
         public void Cancel()
         {
-            this.Exit(ApplicationComponentExitCode.Cancelled);
+            this.Exit(ApplicationComponentExitCode.None);
         }
 
         #endregion

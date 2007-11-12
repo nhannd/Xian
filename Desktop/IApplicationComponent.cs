@@ -46,21 +46,17 @@ namespace ClearCanvas.Desktop
     public enum ApplicationComponentExitCode
     {
         /// <summary>
-        /// The component exited normally.  If the component allows editing,
-        /// this typically means that the user accepted the changes.
+        /// Implies that nothing of significance occured. The component was closed or cancelled.
         /// </summary>
-        Normal,
+        None,
 
         /// <summary>
-        /// The component was cancelled.  If the component allows editing,
-        /// this typically means that the user cancelled the changes.
+        /// For an editable component, implies that data was changed and the user accepted the changes.
         /// </summary>
-        Cancelled,
+        Accepted,
 
         /// <summary>
-        /// The component encountered an error.  If the component allows editing
-        /// and is responsible for committing its own changes, this code typically
-        /// indicates that the changes did not commit.
+        /// An error occured during the component execution.
         /// </summary>
         Error,
     }
@@ -145,33 +141,16 @@ namespace ClearCanvas.Desktop
 
         /// <summary>
         /// Called by the framework to determine if this component in a state
-        /// such that it can be stopped.
+        /// such that it can be stopped without user interaction.
         /// </summary>
-        /// <remarks>
-        /// <para>
-        /// This method is called with <see cref="UserInteraction.NotAllowed"/> to query the component
-        /// to see if it is in a closable state.  In this case, the component must respond without interacting
-        /// with the user.  The component should respond conservatively, e.g.,
-        /// respond false if there is any unsaved data.
-        /// </para>
-        /// <para>
-        /// The method is called with <see cref="UserInteraction.Allowed"/> to allow the component to prepare to exit.
-        /// In this case, the component is free to perform any necessary interaction with the 
-        /// user, such as the display of a confirmation dialog, to determine
-        /// whether it is appropriate to exit.  
-        /// </para>
-        /// <para>
-        /// If the component returns true, it should also be sure to 
-        /// set the value of <see cref="ExitCode"/> before returning.
-        /// </para>
-        /// <para>
-        /// Note that if the component itself requests the exit (by calling
-        /// the <see cref="IApplicationComponentHost.Exit"/> method), then this method
-        /// will not be called, since it is assumed that the component is prepared to be stopped.
-        /// </para>
-        /// </remarks>
-        /// <returns>True if the component is ready to exit.</returns>
-        bool CanExit(UserInteraction allowInteraction);
+        bool CanExit();
+
+        /// <summary>
+        /// Called by the framework in the case where the host has initiated the exit, rather than the component,
+        /// to give the component a chance to prepare prior to being stopped.
+        /// </summary>
+        /// <returns></returns>
+        bool PrepareExit();
 
         /// <summary>
         /// Gets or sets the exit code for the component.

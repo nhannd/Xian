@@ -428,7 +428,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         public void Cancel()
         {
-            this.ExitCode = ApplicationComponentExitCode.Cancelled;
+            this.ExitCode = ApplicationComponentExitCode.None;
             EventsHelper.Fire(_closeComponentEvent, this, EventArgs.Empty);
         }
 

@@ -129,7 +129,7 @@ namespace ClearCanvas.Ris.Client
 
             EmailAddressEditorComponent editor = new EmailAddressEditorComponent(emailAddress);
             ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleAddEmailAddress);
-            if (exitCode == ApplicationComponentExitCode.Normal)
+            if (exitCode == ApplicationComponentExitCode.Accepted)
             {
                 _emailAddresses.Items.Add(emailAddress);
                 _emailAddressList.Add(emailAddress);
@@ -146,7 +146,7 @@ namespace ClearCanvas.Ris.Client
 
             EmailAddressEditorComponent editor = new EmailAddressEditorComponent(emailAddress);
             ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleUpdateEmailAddress);
-            if (exitCode == ApplicationComponentExitCode.Normal)
+            if (exitCode == ApplicationComponentExitCode.Accepted)
             {
                 // delete and re-insert to ensure that TableView updates correctly
                 EmailAddressDetail toBeRemoved = _currentEmailAddressSelection;

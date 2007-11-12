@@ -163,7 +163,7 @@ namespace ClearCanvas.Ris.Client.Admin
                 WorklistEditorComponent editor = new WorklistEditorComponent();
                 ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleAddWorklist);
 
-                if (exitCode == ApplicationComponentExitCode.Normal)
+                if (exitCode == ApplicationComponentExitCode.Accepted)
                 {
                     LoadWorklistTable();
                 }
@@ -183,7 +183,7 @@ namespace ClearCanvas.Ris.Client.Admin
                 WorklistEditorComponent editor = new WorklistEditorComponent(_selectedWorklist.EntityRef);
                 ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleUpdateWorklist);
 
-                if (exitCode == ApplicationComponentExitCode.Normal)
+                if (exitCode == ApplicationComponentExitCode.Accepted)
                 {
                     LoadWorklistTable();
                 }

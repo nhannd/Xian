@@ -158,13 +158,13 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 		
 		public void OK()
 		{
-			this.ExitCode = ApplicationComponentExitCode.Normal;
+			this.ExitCode = ApplicationComponentExitCode.Accepted;
 			this.Host.Exit();
 		}
 
 		public void Cancel()
 		{
-			this.ExitCode = ApplicationComponentExitCode.Cancelled;
+			this.ExitCode = ApplicationComponentExitCode.None;
 			this.Host.Exit();
 		}
 
@@ -175,7 +175,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 			ComponentHost.Component.PropertyChanged += new System.ComponentModel.PropertyChangedEventHandler(ComponentPropertyChanged);
 			ComponentHost.StartComponent();
 
-			this.ExitCode = ApplicationComponentExitCode.Cancelled;
+			this.ExitCode = ApplicationComponentExitCode.None;
 		}
 
 		public override void Stop()
@@ -185,10 +185,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 			base.Stop();
 		}
 
-		public override bool CanExit(UserInteraction interactive)
+		public override bool CanExit()
 		{
-			return (ComponentHost.Component.CanExit(interactive) && base.CanExit(interactive));
+			return (ComponentHost.Component.CanExit() && base.CanExit());
 		}
+
+        public override bool PrepareExit()
+        {
+            return (ComponentHost.Component.PrepareExit() && base.PrepareExit());
+        }
 
 		#region ApplicationComponentContainer overrides
 

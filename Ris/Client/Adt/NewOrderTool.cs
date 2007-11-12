@@ -108,7 +108,7 @@ namespace ClearCanvas.Ris.Client.Adt
                     title,
                     delegate(IApplicationComponent c)
                     {
-                        if (c.ExitCode == ApplicationComponentExitCode.Normal)
+                        if (c.ExitCode == ApplicationComponentExitCode.Accepted)
                         {
                             if (this.ContextBase is IRegistrationWorkflowItemToolContext)
                             {

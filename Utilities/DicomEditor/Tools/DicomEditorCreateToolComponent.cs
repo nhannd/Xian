@@ -145,7 +145,7 @@ namespace ClearCanvas.Utilities.DicomEditor.Tools
         public void Accept()
         {
             //check if exists
-            this.ExitCode = ApplicationComponentExitCode.Normal;
+            this.ExitCode = ApplicationComponentExitCode.Accepted;
             this.Host.Exit();            
         }
 
@@ -157,7 +157,6 @@ namespace ClearCanvas.Utilities.DicomEditor.Tools
 
         public void Cancel()
         {
-            this.ExitCode = ApplicationComponentExitCode.Cancelled;
             this.Host.Exit();
         }
 

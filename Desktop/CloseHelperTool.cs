@@ -61,7 +61,7 @@ namespace ClearCanvas.Desktop
 
         private void WindowClosingEventHandler(object sender, ClosingEventArgs e)
         {
-            // if application is quitting, don't do anything here because it will be handled by the Quitting handler
+            // if interaction not allowed, or already cancelled, don't do anything here
             if (e.Interaction != UserInteraction.Allowed || e.Cancel)
                 return;
 

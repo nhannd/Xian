@@ -93,7 +93,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
             {
                 if (_refreshTime == 0 || _refreshTime > 5000)
                 {
-                    this.ExitCode = ApplicationComponentExitCode.Normal;
+                    this.ExitCode = ApplicationComponentExitCode.Accepted;
                     Host.Exit();
                 }
                 else
@@ -105,7 +105,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
 
         public void Cancel()
         {
-            this.ExitCode = ApplicationComponentExitCode.Cancelled;
+            this.ExitCode = ApplicationComponentExitCode.None;
             Host.Exit();
         }
 

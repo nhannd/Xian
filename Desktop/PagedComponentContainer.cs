@@ -37,7 +37,7 @@ using ClearCanvas.Common.Utilities;
 namespace ClearCanvas.Desktop
 {
     /// <summary>
-    /// Helper class for <see cref="PagedComponentContainer"/>.
+    /// Helper class for <see cref="PagedComponentContainer{TPage}"/>.
     /// </summary>
     public abstract class ContainerPage
     {

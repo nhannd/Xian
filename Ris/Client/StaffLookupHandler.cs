@@ -95,7 +95,7 @@ namespace ClearCanvas.Ris.Client
             ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
                 _desktopWindow, staffComponent, SR.TitleStaff);
 
-            if (exitCode == ApplicationComponentExitCode.Normal)
+            if (exitCode == ApplicationComponentExitCode.Accepted)
             {
                 result = (StaffSummary)staffComponent.SelectedStaff.Item;
             }

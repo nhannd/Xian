@@ -171,7 +171,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 try
                 {
                     SaveChanges();
-                    this.Host.Exit();
+                    this.Exit(ApplicationComponentExitCode.Accepted);
                 }
                 catch (Exception e)
                 {

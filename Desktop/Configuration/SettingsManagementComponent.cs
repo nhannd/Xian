@@ -256,18 +256,16 @@ namespace ClearCanvas.Desktop.Configuration
             base.Stop();
         }
 
-        public override bool CanExit(UserInteraction interactive)
+        public override bool CanExit()
         {
-            if (interactive == UserInteraction.Allowed)
-            {
-                SaveModifiedSettings(true);
-                return true;
-            }
-            else
-            {
-                // return false if anything modified
-                return _selectedSettingsGroup == null || !IsAnyPropertyDirty();
-            }
+            // return false if anything modified
+            return _selectedSettingsGroup == null || !IsAnyPropertyDirty();
+        }
+
+        public override bool PrepareExit()
+        {
+            SaveModifiedSettings(true);
+            return true;
         }
 
         #region Presentation Model
@@ -434,7 +432,7 @@ namespace ClearCanvas.Desktop.Configuration
             {
                 SettingEditorComponent editor = new SettingEditorComponent(property.DefaultValue, property.Value);
                 ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, "Edit Value");
-                if (exitCode == ApplicationComponentExitCode.Normal)
+                if (exitCode == ApplicationComponentExitCode.Accepted)
                 {
                     property.Value = editor.CurrentValue;
 

@@ -138,7 +138,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 new PatientProfileEditorComponent(profileRef),
                 SR.TitleEditPatient);
 
-            return exitCode == ApplicationComponentExitCode.Normal;
+            return exitCode == ApplicationComponentExitCode.Accepted;
         }
     }
 }

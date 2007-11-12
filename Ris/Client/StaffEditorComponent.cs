@@ -150,7 +150,7 @@ namespace ClearCanvas.Ris.Client
                         }
                     });
 
-                this.Host.Exit();
+                this.Exit(ApplicationComponentExitCode.Accepted);
             }
             catch (Exception e)
             {

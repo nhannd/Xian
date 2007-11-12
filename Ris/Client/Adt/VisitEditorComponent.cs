@@ -146,7 +146,7 @@ namespace ClearCanvas.Ris.Client.Adt
                             _visitRef = response.AddedVisit.VisitRef;
                         }
                     });
-                this.Host.Exit();
+                this.Exit(ApplicationComponentExitCode.Accepted);
             }
             catch (Exception e)
             {
@@ -161,7 +161,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public override void Cancel()
         {
-            this.ExitCode = ApplicationComponentExitCode.Cancelled;
+            this.ExitCode = ApplicationComponentExitCode.None;
             this.Host.Exit();
         }
     }

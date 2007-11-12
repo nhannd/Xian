@@ -73,7 +73,7 @@ namespace ClearCanvas.Ris.Client.Adt
                     editor,
                     SR.TitleNewPatient);
 
-                if (result == ApplicationComponentExitCode.Normal)
+                if (result == ApplicationComponentExitCode.Accepted)
                 {
                     // open the patient overview for the newly created patient
                     Document doc = new PatientBiographyDocument(editor.PatientProfileRef, this.Context.DesktopWindow);

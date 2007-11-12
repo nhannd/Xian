@@ -98,13 +98,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				_serverTree.FireServerTreeUpdatedEvent();
 			}
 
-			this.ExitCode = ApplicationComponentExitCode.Normal;
+			this.ExitCode = ApplicationComponentExitCode.Accepted;
 			Host.Exit();
         }
 
         public void Cancel()
         {
-            this.ExitCode = ApplicationComponentExitCode.Cancelled;
             Host.Exit();
         }
 

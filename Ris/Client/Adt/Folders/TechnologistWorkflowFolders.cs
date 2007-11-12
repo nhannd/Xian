@@ -167,7 +167,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         private void DisplayOption(IDesktopWindow desktopWindow)
         {
             FolderOptionComponent optionComponent = new FolderOptionComponent(this.RefreshTime);
-            if (ApplicationComponent.LaunchAsDialog(desktopWindow, optionComponent, "Option") == ApplicationComponentExitCode.Normal)
+            if (ApplicationComponent.LaunchAsDialog(desktopWindow, optionComponent, "Option") == ApplicationComponentExitCode.Accepted)
             {
                 this.RefreshTime = optionComponent.RefreshTime;
             }

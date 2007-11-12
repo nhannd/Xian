@@ -47,7 +47,7 @@ namespace ClearCanvas.Desktop
         #region Host Implementation
 
         // implements the host interface, which is exposed to the hosted application component
-        class Host : ApplicationComponentHost
+        class Host : ApplicationComponentHost, IWorkspaceHost
         {
             private Workspace _workspace;
 
@@ -147,13 +147,24 @@ namespace ClearCanvas.Desktop
 
 
         /// <summary>
-        /// Checks if the hosted component can close.
+        /// Checks if the hosted component can exit.
         /// </summary>
-        /// <param name="interactive"></param>
         /// <returns></returns>
-        protected internal override bool CanClose(UserInteraction interactive)
+        protected internal override bool CanClose()
         {
-            return _exitRequestedByComponent || _host.Component.CanExit(interactive);
+            return _exitRequestedByComponent || _host.Component.CanExit();
+        }
+
+        /// <summary>
+        /// Gives the hosted component a chance to prepare for a forced exit.
+        /// </summary>
+        /// <param name="reason"></param>
+        /// <returns></returns>
+        protected override bool PrepareClose(CloseReason reason)
+        {
+            base.PrepareClose(reason);
+
+            return _host.Component.PrepareExit();
         }
 
         /// <summary>

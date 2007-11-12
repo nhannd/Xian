@@ -120,7 +120,7 @@ namespace ClearCanvas.Ris.Client
 
             PhoneNumberEditorComponent editor = new PhoneNumberEditorComponent(phoneNumber, _phoneTypeChoices);
             ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleAddPhoneNumber);
-            if (exitCode == ApplicationComponentExitCode.Normal)
+            if (exitCode == ApplicationComponentExitCode.Accepted)
             {
                 _phoneNumbers.Items.Add(phoneNumber);
                 _phoneNumberList.Add(phoneNumber);
@@ -137,7 +137,7 @@ namespace ClearCanvas.Ris.Client
 
             PhoneNumberEditorComponent editor = new PhoneNumberEditorComponent(phoneNumber, _phoneTypeChoices);
             ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleUpdatePhoneNumber);
-            if (exitCode == ApplicationComponentExitCode.Normal)
+            if (exitCode == ApplicationComponentExitCode.Accepted)
             {
                 // delete and re-insert to ensure that TableView updates correctly
                 TelephoneDetail toBeRemoved = _currentPhoneNumberSelection;

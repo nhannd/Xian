@@ -149,10 +149,9 @@ namespace ClearCanvas.Ris.Client.Adt
             {
                 VisitEditorComponent editor = new VisitEditorComponent(_patientRef);
                 ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleAddVisit);
-                if (exitCode == ApplicationComponentExitCode.Normal)
+                if (exitCode == ApplicationComponentExitCode.Accepted)
                 {
                     LoadVisitsTable();
-                    this.Modified = true;
                 }
             }
             catch (Exception e)
@@ -170,7 +169,7 @@ namespace ClearCanvas.Ris.Client.Adt
             {
                 VisitEditorComponent editor = new VisitEditorComponent(_patientRef, _currentVisitSelection.VisitRef);
                 ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleUpdateVisit);
-                if (exitCode == ApplicationComponentExitCode.Normal)
+                if (exitCode == ApplicationComponentExitCode.Accepted)
                 {
                     LoadVisitsTable();
                     this.Modified = true;
@@ -188,7 +187,6 @@ namespace ClearCanvas.Ris.Client.Adt
             {
                 //delete the visit
                 LoadVisitsTable();
-                this.Modified = true;
             }
         }
 
@@ -206,7 +204,6 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public void Close()
         {
-            this.ExitCode = ApplicationComponentExitCode.Normal;
             Host.Exit();
         }
     }

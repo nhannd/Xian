@@ -246,7 +246,7 @@ namespace ClearCanvas.Ris.Client
                 StaffEditorComponent editor = new StaffEditorComponent();
                 ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
                     this.Host.DesktopWindow, editor, SR.TitleAddStaff);
-                if (exitCode == ApplicationComponentExitCode.Normal)
+                if (exitCode == ApplicationComponentExitCode.Accepted)
                 {
                     _staffTable.Items.Add(editor.StaffSummary);
                 }
@@ -268,7 +268,7 @@ namespace ClearCanvas.Ris.Client
                 StaffEditorComponent editor = new StaffEditorComponent(_selectedStaff.StaffRef);
                 ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
                     this.Host.DesktopWindow, editor, SR.TitleUpdateStaff);
-                if (exitCode == ApplicationComponentExitCode.Normal)
+                if (exitCode == ApplicationComponentExitCode.Accepted)
                 {
                     _staffTable.Items.Replace(
                         delegate(StaffSummary s) { return s.StaffRef.Equals(editor.StaffSummary.StaffRef); },
@@ -312,13 +312,13 @@ namespace ClearCanvas.Ris.Client
 
         public void Accept()
         {
-            this.ExitCode = ApplicationComponentExitCode.Normal;
+            this.ExitCode = ApplicationComponentExitCode.Accepted;
             this.Host.Exit();
         }
 
         public void Cancel()
         {
-            this.ExitCode = ApplicationComponentExitCode.Cancelled;
+            this.ExitCode = ApplicationComponentExitCode.None;
             this.Host.Exit();
         }
 

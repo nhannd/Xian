@@ -320,7 +320,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 				PresetVoiLutOperationsComponentContainer container = 
 					new PresetVoiLutOperationsComponentContainer(GetUnusedKeyStrokes(null), addComponent);
 
-				if (ApplicationComponentExitCode.Normal != ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, container, SR.TitleAddPreset))
+				if (ApplicationComponentExitCode.Accepted != ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, container, SR.TitleAddPreset))
 					return;
 
 				PresetVoiLut preset = container.GetPresetVoiLut();
@@ -366,7 +366,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 				PresetVoiLutOperationsComponentContainer container = new PresetVoiLutOperationsComponentContainer(GetUnusedKeyStrokes(this.SelectedPresetVoiLut), editComponent);
 				container.SelectedKeyStroke = this.SelectedPresetVoiLut.KeyStroke;
 
-				if (ApplicationComponentExitCode.Normal != ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, container, SR.TitleEditPreset))
+				if (ApplicationComponentExitCode.Accepted != ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, container, SR.TitleEditPreset))
 					return;
 
 				PresetVoiLut preset = container.GetPresetVoiLut();

@@ -126,7 +126,7 @@ namespace ClearCanvas.Ris.Client
 
             NoteEditorComponent editor = new NoteEditorComponent(note, _noteCategoryChoices);
             ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleAddNote);
-            if (exitCode == ApplicationComponentExitCode.Normal)
+            if (exitCode == ApplicationComponentExitCode.Accepted)
             {
                 _noteTable.Items.Add(note);
                 _noteList.Add(note);
@@ -143,7 +143,7 @@ namespace ClearCanvas.Ris.Client
 
             NoteEditorComponent editor = new NoteEditorComponent(note, _noteCategoryChoices);
             ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleUpdateNote);
-            if (exitCode == ApplicationComponentExitCode.Normal)
+            if (exitCode == ApplicationComponentExitCode.Accepted)
             {
                 // delete and re-insert to ensure that TableView updates correctly
                 NoteDetail toBeRemoved = _currentNoteSelection;

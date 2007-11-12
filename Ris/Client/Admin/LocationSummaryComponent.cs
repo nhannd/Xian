@@ -187,7 +187,7 @@ namespace ClearCanvas.Ris.Client.Admin
                 LocationEditorComponent editor = new LocationEditorComponent();
                 ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
                     this.Host.DesktopWindow, editor, SR.TitleAddLocation);
-                if (exitCode == ApplicationComponentExitCode.Normal)
+                if (exitCode == ApplicationComponentExitCode.Accepted)
                 {
                     _locationTable.Items.Add(_selectedLocation = editor.LocationSummary);
                     LocationSelectionChanged();
@@ -210,7 +210,7 @@ namespace ClearCanvas.Ris.Client.Admin
                 LocationEditorComponent editor = new LocationEditorComponent(_selectedLocation.LocationRef);
                 ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
                     this.Host.DesktopWindow, editor, SR.TitleUpdateLocation);
-                if (exitCode == ApplicationComponentExitCode.Normal)
+                if (exitCode == ApplicationComponentExitCode.Accepted)
                 {
                     _locationTable.Items.Replace(delegate(LocationSummary l) { return l.LocationRef.Equals(editor.LocationSummary.LocationRef); }, editor.LocationSummary);
                 }

@@ -90,14 +90,13 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 			_serverTree.Save();
             _serverTree.FireServerTreeUpdatedEvent();
-            this.ExitCode = ApplicationComponentExitCode.Normal;
+            this.ExitCode = ApplicationComponentExitCode.Accepted;
             Host.Exit();
             return;
         }
 
         public void Cancel()
         {
-            this.ExitCode = ApplicationComponentExitCode.Cancelled;
             Host.Exit();
         }
 

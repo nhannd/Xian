@@ -179,7 +179,7 @@ namespace ClearCanvas.Ris.Client.Adt
             try
             {
                 DoReconciliation();
-                this.Host.Exit();
+                this.Exit(ApplicationComponentExitCode.Accepted);
             }
             catch (Exception e)
             {
@@ -194,7 +194,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public void Cancel()
         {
-            this.ExitCode = ApplicationComponentExitCode.Cancelled;
+            this.ExitCode = ApplicationComponentExitCode.None;
             this.Host.Exit();
         }
 
@@ -237,7 +237,7 @@ namespace ClearCanvas.Ris.Client.Adt
                     ApplicationComponentExitCode confirmExitCode = ApplicationComponent.LaunchAsDialog(
                         this.Host.DesktopWindow, confirmComponent, SR.TitleConfirmReconciliation);
 
-                    if (confirmExitCode == ApplicationComponentExitCode.Normal)
+                    if (confirmExitCode == ApplicationComponentExitCode.Accepted)
                     {
                         // add the target patient to the set
                         checkedPatients.Add(_targetProfiles[0].PatientRef);

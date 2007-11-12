@@ -88,9 +88,12 @@
     <Compile Include="IApplicationView.cs" />
     <Compile Include="IDesktopObject.cs" />
     <Compile Include="IDesktopObjectView.cs" />
+    <Compile Include="IDialogBoxHost.cs" />
     <Compile Include="IGuiToolkit.cs" />
     <Compile Include="ISessionManager.cs" />
+    <Compile Include="IShelfHost.cs" />
     <Compile Include="ISuggestionProvider.cs" />
+    <Compile Include="IWorkspaceHost.cs" />
     <Compile Include="StockDesktopTools.cs" />
     <Compile Include="Tables\FilteredItemCollection.cs" />
     <Compile Include="Tables\TableFilterParams.cs" />

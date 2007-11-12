@@ -243,7 +243,7 @@ namespace ClearCanvas.Ris.Client
                 ExternalPractitionerEditorComponent editor = new ExternalPractitionerEditorComponent();
                 ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
                     this.Host.DesktopWindow, editor, SR.TitleAddExternalPractitioner);
-                if (exitCode == ApplicationComponentExitCode.Normal)
+                if (exitCode == ApplicationComponentExitCode.Accepted)
                 {
                     _practitioners.Items.Add(editor.ExternalPractitionerSummary);
                 }
@@ -265,7 +265,7 @@ namespace ClearCanvas.Ris.Client
                 ExternalPractitionerEditorComponent editor = new ExternalPractitionerEditorComponent(_selectedPractitioner.PractitionerRef);
                 ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
                     this.Host.DesktopWindow, editor, SR.TitleUpdateExternalPractitioner);
-                if (exitCode == ApplicationComponentExitCode.Normal)
+                if (exitCode == ApplicationComponentExitCode.Accepted)
                 {
                     _practitioners.Items.Replace(
                         delegate(ExternalPractitionerSummary s) { return s.PractitionerRef.Equals(editor.ExternalPractitionerSummary.PractitionerRef); },
@@ -309,13 +309,13 @@ namespace ClearCanvas.Ris.Client
 
         public void Accept()
         {
-            this.ExitCode = ApplicationComponentExitCode.Normal;
+            this.ExitCode = ApplicationComponentExitCode.Accepted;
             this.Host.Exit();
         }
 
         public void Cancel()
         {
-            this.ExitCode = ApplicationComponentExitCode.Cancelled;
+            this.ExitCode = ApplicationComponentExitCode.None;
             this.Host.Exit();
         }
 

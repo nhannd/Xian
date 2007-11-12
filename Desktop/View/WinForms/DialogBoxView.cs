@@ -157,7 +157,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 
                 // need to call a special DelayedClose method here,
                 // since calling Close directly has no effect here (since we're already in the scope of the FormClosing event)
-                _form.DelayedClose(_component.ExitCode == ApplicationComponentExitCode.Cancelled ? DialogBoxAction.Cancel : DialogBoxAction.Ok);
+                _form.DelayedClose(_component.ExitCode == ApplicationComponentExitCode.Accepted ? DialogBoxAction.Ok : DialogBoxAction.Cancel);
             }
             base.Dispose(disposing);
         }

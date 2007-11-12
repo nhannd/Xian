@@ -150,7 +150,7 @@ namespace ClearCanvas.Ris.Client.Admin
                 try
                 {
                     SaveChanges();
-                    Host.Exit();
+                    this.Exit(ApplicationComponentExitCode.Accepted);
                 }
                 catch (Exception e)
                 {
@@ -166,7 +166,7 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public void Cancel()
         {
-            this.ExitCode = ApplicationComponentExitCode.Cancelled;
+            this.ExitCode = ApplicationComponentExitCode.None;
             Host.Exit();
         }
 

@@ -172,7 +172,7 @@ namespace ClearCanvas.Desktop
         {
             AssertState(new DesktopObjectState[] { DesktopObjectState.Open, DesktopObjectState.Closing });
 
-            return CanClose(UserInteraction.NotAllowed);
+            return CanClose();
         }
 
         /// <summary>
@@ -303,17 +303,15 @@ namespace ClearCanvas.Desktop
         }
 
         /// <summary>
-        /// Asks the object whether it can be closed.
+        /// Asks the object whether it is in a closable state without user intervention.
         /// </summary>
         /// <remarks>
         /// The default implementation just returns true. Override this method to customize the behaviour.
-        /// The interaction policy indicates whether the object may interact with the user in order to determine
-        /// how to respond.  If user interaction is not allowed, the object should respond conservatively
+        /// The object must respond to this method without interacting with the user.  Therefore it should respond conservatively
         /// (e.g. respond with false if there may be unsaved data).
         /// </remarks>
-        /// <param name="interaction"></param>
         /// <returns>True if the object can be closed, otherwise false.</returns>
-        protected internal virtual bool CanClose(UserInteraction interaction)
+        protected internal virtual bool CanClose()
         {
             return true;
         }
@@ -321,20 +319,26 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Gives the object an opportunity to prepare before being closed.
         /// </summary>
+        /// <remarks>
+        /// The object is free to interact with the user in this method, in order to make any preparations
+        /// prior to being closed.  The object may return false if it still cannot close (e.g. there is
+        /// unsaved data, and the user, when prompted, elects to cancel the close operation).
+        /// </remarks>
         /// <param name="reason"></param>
         /// <returns>True if the object is ready to close, or false it the object cannot be closed.</returns>
         protected virtual bool PrepareClose(CloseReason reason)
         {
             // first see if we can close without interacting
             // that way we avoid calling Activate() if not necessary
-            if(CanClose(UserInteraction.NotAllowed))
+            if(CanClose())
                 return true;
 
             // make active, so the user is not confused if it brings up a message box
+            // (this would be done in an override of this method)
             DoActivate();
 
-            // see if we can close with interaction
-            return CanClose(UserInteraction.Allowed);
+            // cannot close
+            return false;
         }
 
         /// <summary>
@@ -489,7 +493,7 @@ namespace ClearCanvas.Desktop
         protected internal bool Close(UserInteraction interactive, CloseReason reason)
         {
             // easy case - bail if interaction is prohibited and we can't close without interacting
-            if (interactive == UserInteraction.NotAllowed && !CanClose(UserInteraction.NotAllowed))
+            if (interactive == UserInteraction.NotAllowed && !CanClose())
                 return false;
 
             // either we can close without interacting, or interaction is allowed, so let's try and close

@@ -43,7 +43,7 @@ namespace ClearCanvas.Desktop
     public class DialogBox : DesktopObject
     {
         // implements the host interface, which is exposed to the hosted application component
-        class Host : ApplicationComponentHost
+        class Host : ApplicationComponentHost, IDialogBoxHost
         {
             private DialogBox _owner;
 
@@ -79,7 +79,6 @@ namespace ClearCanvas.Desktop
         private IApplicationComponent _component;
         private bool _exitRequestedByComponent;
         private Host _host;
-        private string _title;
 
         /// <summary>
         /// Constructor.
@@ -125,28 +124,24 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Checks if the hosted component can close.
         /// </summary>
-        /// <param name="interactive"></param>
         /// <returns></returns>
-        protected internal override bool CanClose(UserInteraction interactive)
+        protected internal override bool CanClose()
         {
-            return _exitRequestedByComponent || _host.Component.CanExit(interactive);
+            return _exitRequestedByComponent || _host.Component.CanExit();
         }
 
         /// <summary>
-        /// Overridden to return correct exit code.
+        /// Gives the hosted component a chance to prepare for a forced exit.
         /// </summary>
-        /// <param name="args"></param>
-        protected override void OnClosing(ClosingEventArgs args)
+        /// <param name="reason"></param>
+        /// <returns></returns>
+        protected override bool PrepareClose(CloseReason reason)
         {
-            base.OnClosing(args);
+            base.PrepareClose(reason);
 
-            // bug #1132: if user clicked X button, need to return "cancelled"
-            if (args.Reason == CloseReason.UserInterface)
-            {
-                _component.ExitCode = ApplicationComponentExitCode.Cancelled;
-            }
+            return _host.Component.PrepareExit();
         }
-        
+
         /// <summary>
         /// Disposes of this object.
         /// </summary>

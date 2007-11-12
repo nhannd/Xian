@@ -127,17 +127,33 @@ namespace ClearCanvas.Desktop
         /// Override implementation of <see cref="IApplicationComponent.CanExit"/>.
         /// This is called when user click on the 'X' button to close the dialog
         /// </summary>
-        public override bool CanExit(UserInteraction interactive)
+        public override bool CanExit()
         {
-            // 
+            return _task == null || !_task.IsRunning;
+        }
+
+        /// <summary>
+        /// Called by the framework in the case where the host has initiated the exit, rather than the component,
+        /// to give the component a chance to prepare prior to being stopped.
+        /// </summary>
+        /// <returns>
+        /// False if the task is still running, otherwise true.
+        /// </returns>
+        public override bool PrepareExit()
+        {
+            // if task is running, the component cannot exit
             if (_task != null && _task.IsRunning)
             {
-                if (_task.SupportsCancel && interactive == UserInteraction.Allowed)
+                if (_task.SupportsCancel)
                 {
                     if (this.Host.DesktopWindow.ShowMessageBox(SR.MessageConfirmCancelTask, MessageBoxActions.OkCancel) == DialogBoxAction.Ok)
                     {
                         _task.RequestCancel();
                         _autoClose = true;
+
+                        // even though the user has cancelled the task, we don't return true
+                        // because we don't want to allow this component to exit until the _task 
+                        // has actually stopped
                     }
                 }
 
@@ -145,7 +161,6 @@ namespace ClearCanvas.Desktop
                 return false;
             }
 
-            this.ExitCode = ApplicationComponentExitCode.Cancelled;
             return true;
         }
 
@@ -209,7 +224,7 @@ namespace ClearCanvas.Desktop
         {
             if (_autoClose && e.Reason != BackgroundTaskTerminatedReason.Exception)
             {
-                this.ExitCode = ApplicationComponentExitCode.Cancelled;
+                this.ExitCode = ApplicationComponentExitCode.None;
                 Host.Exit();
             }
             else
@@ -269,7 +284,7 @@ namespace ClearCanvas.Desktop
             }
             else
             {
-                this.ExitCode = ApplicationComponentExitCode.Cancelled;
+                this.ExitCode = ApplicationComponentExitCode.None;
                 Host.Exit();
             }
         }

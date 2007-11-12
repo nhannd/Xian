@@ -265,7 +265,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 
             ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, component, title);
 
-            if (exitCode == ApplicationComponentExitCode.Normal)
+            if (exitCode == ApplicationComponentExitCode.Accepted)
             {
                 return component.Reason;
             }
