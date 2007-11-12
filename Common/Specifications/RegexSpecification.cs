@@ -29,20 +29,19 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace ClearCanvas.Common.Specifications
 {
     public class RegexSpecification : PrimitiveSpecification
     {
-        private string _pattern;
+        private readonly string _pattern;
+        private readonly bool _ignoreCase;
 
-        public RegexSpecification(string pattern)
+        public RegexSpecification(string pattern, bool ignoreCase)
         {
             _pattern = pattern;
+            _ignoreCase = ignoreCase;
         }
 
         protected override TestResult InnerTest(object exp, object root)
@@ -53,11 +52,14 @@ namespace ClearCanvas.Common.Specifications
 
             if (exp is string)
             {
-                return DefaultTestResult(Regex.Match(exp as string, _pattern).Success);
+                if (_ignoreCase)
+                    return DefaultTestResult(Regex.Match(exp as string, _pattern, RegexOptions.IgnoreCase).Success);
+                else
+                    return DefaultTestResult(Regex.Match(exp as string, _pattern).Success);
             }
             else
             {
-				throw new SpecificationException(SR.ExceptionCastExpressionString);
+                throw new SpecificationException(SR.ExceptionCastExpressionString);
             }
         }
     }

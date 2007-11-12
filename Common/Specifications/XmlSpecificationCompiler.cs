@@ -31,10 +31,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Xml;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Common.Scripting;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Common.Specifications
 {
@@ -233,7 +232,11 @@ namespace ClearCanvas.Common.Specifications
 
         private Specification CreateRegex(XmlElement node)
         {
-            return new RegexSpecification(node.GetAttribute("pattern"));
+            string stringIgnoreCase = node.GetAttribute("ignoreCase");
+
+            bool ignoreCase = !stringIgnoreCase.Equals("false", StringComparison.InvariantCultureIgnoreCase);
+
+            return new RegexSpecification(node.GetAttribute("pattern"), ignoreCase);
         }
 
         private Specification CreateNotNull(XmlElement node)
