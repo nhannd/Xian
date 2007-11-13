@@ -29,6 +29,8 @@
 
 #endregion
 
+using System.Collections.Generic;
+using System.Diagnostics;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
@@ -46,36 +48,46 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class CineTool : ImageViewerTool
 	{
-		private IShelf _componentShelf;
+		private static readonly Dictionary<IDesktopWindow, IShelf> _shelves;
+		private IDesktopWindow _desktopWindow;
+
+		static CineTool()
+		{
+			_shelves = new Dictionary<IDesktopWindow, IShelf>();
+		}
 
 		public CineTool()
 		{
-			_componentShelf = null;
 		}
 
-		protected override void Dispose(bool disposing)
+		public override void Initialize()
 		{
-			if (_componentShelf != null)
-				_componentShelf.Close();
-
-			base.Dispose(disposing);
+			base.Initialize();
+			//when the desktop window is closed, the context is set to null, so we hold a reference to it here.
+			_desktopWindow = this.Context.DesktopWindow;
 		}
 
 		public void Activate()
 		{
-			if (_componentShelf != null)
+			// check if a layout component is already displayed
+			if (_shelves.ContainsKey(_desktopWindow))
 			{
-				_componentShelf.Activate();
+				_shelves[_desktopWindow].Activate();
 			}
 			else
 			{
-				CineApplicationComponent component = new CineApplicationComponent(this.Context.DesktopWindow);
-				_componentShelf = ApplicationComponent.LaunchAsShelf(
-					this.Context.DesktopWindow,
+				CineApplicationComponent component = new CineApplicationComponent(_desktopWindow);
+				IShelf shelf = ApplicationComponent.LaunchAsShelf(
+					_desktopWindow,
 					component, SR.TitleCine, 
 					"Cine", 
 					ShelfDisplayHint.DockFloat,
-					delegate { _componentShelf = null; });
+					delegate
+					{
+						_shelves.Remove(_desktopWindow);
+					});
+
+				_shelves[_desktopWindow] = shelf;
 			}
 		}
 	}
