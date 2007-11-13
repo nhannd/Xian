@@ -68,6 +68,11 @@ namespace ClearCanvas.Desktop.View.WinForms
             get { return _items.Count > 0 ? _items.Last.Value : default(T); }
         }
 
+        public T SecondLastElement
+        {
+            get { return _items.Count > 1 ? _items.Last.Previous.Value : default(T); }
+        }
+
         public int Count
         {
             get { return _items.Count; }

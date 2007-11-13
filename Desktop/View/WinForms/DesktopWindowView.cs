@@ -60,7 +60,7 @@ namespace ClearCanvas.Desktop.View.WinForms
     /// </remarks>
     public class DesktopWindowView : DesktopObjectView, IDesktopWindowView
     {
-        private static DesktopWindowView _lastActiveWindow;
+        private static OrderedSet<DesktopWindowView> _desktopWindowActivationOrder = new OrderedSet<DesktopWindowView>();
 
     	private DesktopWindow _desktopWindow;
         private DesktopForm _form;
@@ -142,16 +142,17 @@ namespace ClearCanvas.Desktop.View.WinForms
         /// <param name="e"></param>
         private void FormActivatedEventHandler(object sender, EventArgs e)
         {
-            if (_lastActiveWindow != this)
+            // de-activate the previous window before activating the new one
+            DesktopWindowView lastActive = _desktopWindowActivationOrder.LastElement;
+            if (lastActive != this)
             {
-                if (_lastActiveWindow != null)
+                if (lastActive != null)
                 {
-                    _lastActiveWindow.SetActiveStatus(false);
+                    lastActive.SetActiveStatus(false);
                 }
 
                 this.SetActiveStatus(true);
-
-                _lastActiveWindow = this;
+                _desktopWindowActivationOrder.Add(this);
             }
         }
 
@@ -635,6 +636,21 @@ namespace ClearCanvas.Desktop.View.WinForms
             if (disposing && _form != null)
             {
                 SaveWindowSettings();
+
+                // bug #1171: if this window is the active window and there are other windows,
+                // select the previously active one before destroying this one
+                if (_desktopWindowActivationOrder.LastElement == this && _desktopWindowActivationOrder.Count > 1)
+                {
+                    _desktopWindowActivationOrder.SecondLastElement.Activate();
+                }
+
+                // remove this window from the activation order
+                _desktopWindowActivationOrder.Remove(this);
+
+
+                // now that we've cleaned up the activation,
+                // we can destroy the form safely without worrying 
+                // about the OS triggering activation events
 
                 // this will close the form without firing any events
                 _form.Dispose();
