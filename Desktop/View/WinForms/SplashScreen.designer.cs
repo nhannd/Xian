@@ -97,11 +97,11 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this.label1.AutoEllipsis = true;
 			this.label1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(61)))), ((int)(((byte)(152)))), ((int)(((byte)(209)))));
 			this.label1.Font = new System.Drawing.Font("Arial", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.label1.Location = new System.Drawing.Point(429, 340);
+			this.label1.Location = new System.Drawing.Point(375, 340);
 			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(233, 23);
+			this.label1.Size = new System.Drawing.Size(287, 23);
 			this.label1.TabIndex = 2;
-			this.label1.Text = "© 2007 ClearCanvas Inc. All rights reserved.";
+			this.label1.Text = "Copyright 2007 ClearCanvas Inc. All rights reserved.";
 			// 
 			// SplashScreen
 			// 
