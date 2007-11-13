@@ -336,5 +336,21 @@ namespace ClearCanvas.ImageViewer.Mathematics
 			if (!IsRectangleNormalized(rectangle))
 				throw new ArgumentException(String.Format(SR.ExceptionInvalidNormalizedRectangle, rectangle.Top.ToString(), rectangle.Left.ToString(), rectangle.Bottom.ToString(), rectangle.Right.ToString()));
 		}
+
+		/// <summary>
+		/// Calculates a sub-rectangle of the <paramref name="parentRectangle"/> given a 
+		/// normalized rectangle (see <paramref name="normalizedRectangle"/>).
+		/// </summary>
+		public static Rectangle CalculateSubRectangle(Rectangle parentRectangle, RectangleF normalizedRectangle)
+		{
+			VerifyNormalizedRectangle(normalizedRectangle);
+
+			int left = parentRectangle.Left + (int)(normalizedRectangle.Left * parentRectangle.Width);
+			int right = parentRectangle.Left + (int)(normalizedRectangle.Right * parentRectangle.Width);
+			int top = parentRectangle.Top + (int)(normalizedRectangle.Top * parentRectangle.Height);
+			int bottom = parentRectangle.Top + (int)(normalizedRectangle.Bottom * parentRectangle.Height);
+
+			return new Rectangle(left, top, right - left, bottom - top);
+		}
 	}
 }

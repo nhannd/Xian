@@ -449,11 +449,8 @@ namespace ClearCanvas.ImageViewer.Rendering
 		/// </summary>
 		protected override void DrawAnnotationBox(string annotationText, AnnotationBox annotationBox)
 		{
-			ClientArea clientArea = new ClientArea();
-			clientArea.ParentRectangle = Surface.ClientRectangle;
-			clientArea.NormalizedRectangle = annotationBox.NormalizedRectangle;
-			Rectangle clientRectangle = clientArea.ClientRectangle;
-
+			Rectangle clientRectangle = ClearCanvas.ImageViewer.Mathematics.RectangleUtilities.CalculateSubRectangle(Surface.ClientRectangle,
+				                                                                                annotationBox.NormalizedRectangle);
 			//Deflate the client rectangle by 4 pixels to allow some space 
 			//between neighbouring rectangles whose borders coincide.
 			Rectangle.Inflate(clientRectangle, -4, -4);

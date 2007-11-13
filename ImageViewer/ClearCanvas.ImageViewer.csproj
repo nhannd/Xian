@@ -278,7 +278,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="StudyManagement\Tests\MockImageSop.cs" />
-    <Compile Include="ClientArea.cs" />
     <Compile Include="IDisplaySet.cs" />
     <Compile Include="IImageBox.cs" />
     <Compile Include="ILogicalWorkspace.cs" />
