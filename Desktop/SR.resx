@@ -228,6 +228,9 @@
   <data name="MessageNoConfigurationPagesExist" xml:space="preserve">
     <value>No configuration pages exist.</value>
   </data>
+  <data name="TitleCloseAssistant" xml:space="preserve">
+    <value>Close Assistant</value>
+  </data>
   <data name="TitleDateFormat" xml:space="preserve">
     <value>Date Format</value>
   </data>

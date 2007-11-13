@@ -394,6 +394,15 @@ namespace ClearCanvas.Desktop {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Close Assistant.
+        /// </summary>
+        public static string TitleCloseAssistant {
+            get {
+                return ResourceManager.GetString("TitleCloseAssistant", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Date Format.
         /// </summary>
         public static string TitleDateFormat {

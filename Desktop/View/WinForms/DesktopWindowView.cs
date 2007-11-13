@@ -281,29 +281,49 @@ namespace ClearCanvas.Desktop.View.WinForms
             Content content = _form.DockingManager.Contents.Add(control, title);
             content.Tag = shelfView;
 
-            // Make sure the window is the size as it's been defined by the tool
+        	// Make sure the window is the size as it's been defined by the tool
             //if ((hint & ShelfDisplayHint.MaximizeOnDock) != 0)
             //    content.DisplaySize = _form.DockingManager.Container.Size;
             //else
-                content.DisplaySize = content.Control.Size;
+				content.DisplaySize = content.Control.Size;
 
-            content.AutoHideSize = content.Control.Size;
-            content.FloatingSize = content.Control.Size;
+			content.AutoHideSize = content.Control.Size;
+			content.FloatingSize = content.Control.Size;
 
             if ((hint & ShelfDisplayHint.DockAutoHide) != 0)
                 _form.DockingManager.Container.SuspendLayout();
 
             // Dock the window on the correct edge
             if ((hint & ShelfDisplayHint.DockTop) != 0)
-                _form.DockingManager.AddContentWithState(content, State.DockTop);
+            {
+            	_form.DockingManager.AddContentWithState(content, State.DockTop);
+            }
             else if ((hint & ShelfDisplayHint.DockBottom) != 0)
-                _form.DockingManager.AddContentWithState(content, State.DockBottom);
-            else if ((hint & ShelfDisplayHint.DockLeft) != 0)
-                _form.DockingManager.AddContentWithState(content, State.DockLeft);
-            else if ((hint & ShelfDisplayHint.DockRight) != 0)
-                _form.DockingManager.AddContentWithState(content, State.DockRight);
-            else
-                _form.DockingManager.AddContentWithState(content, State.Floating);
+            {
+            	_form.DockingManager.AddContentWithState(content, State.DockBottom);
+            }
+			else if ((hint & ShelfDisplayHint.DockLeft) != 0)
+			{
+				_form.DockingManager.AddContentWithState(content, State.DockLeft);
+			}
+			else if ((hint & ShelfDisplayHint.DockRight) != 0)
+			{
+				_form.DockingManager.AddContentWithState(content, State.DockRight);
+			}
+			else
+			{
+				Point displayLocation;
+				Size displaySize;
+				//we can only save/restore the window position when it is floating because DotNetMagic doesn't expose enough docked 
+				//state information without using their Restore object(s).
+				if (shelfView.GetFloatingState(_desktopWindow.Name, out displayLocation, out displaySize))
+				{
+					content.DisplayLocation = displayLocation;
+					content.DisplaySize = displaySize;
+				}
+
+				_form.DockingManager.AddContentWithState(content, State.Floating);
+			}
 
             if ((hint & ShelfDisplayHint.DockAutoHide) != 0)
             {
@@ -404,6 +424,8 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         internal void RemoveShelfView(ShelfView shelfView)
         {
+			shelfView.SaveState(this._desktopWindow.Name);
+
             _form.DockingManager.Contents.Remove(shelfView.Content);
             shelfView.SetVisibleStatus(false);
         }
@@ -648,7 +670,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 		{
 			Rectangle screenRectangle;
 			FormWindowState windowState;
-			if (!DesktopViewSettings.Default.GetWindowState(_desktopWindow.Name, out screenRectangle, out windowState))
+			if (!DesktopViewSettings.Default.GetDesktopWindowState(_desktopWindow.Name, out screenRectangle, out windowState))
 			{
 				screenRectangle = Screen.PrimaryScreen.Bounds;
 
@@ -686,7 +708,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 			FormWindowState windowState = _form.WindowState;
 
-			DesktopViewSettings.Default.SaveWindowState(_desktopWindow.Name, windowRectangle, windowState);
+			DesktopViewSettings.Default.SaveDesktopWindowState(_desktopWindow.Name, windowRectangle, windowState);
 		}
     }
 }

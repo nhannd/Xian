@@ -31,6 +31,7 @@
 
 using System.Windows.Forms;
 using Crownwood.DotNetMagic.Docking;
+using System.Drawing;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
@@ -128,7 +129,31 @@ namespace ClearCanvas.Desktop.View.WinForms
             _desktopView.HideShelfView(this);
         }
 
-        /// <summary>
+		public void SaveState(string desktopWindowName)
+		{
+			// DotNetMagic doesn't allow you to figure out *where* it is docked, so all we can do right now
+			// is save the position of floating shelves.  We could use the Restore objects provided by DotNetMagic
+			// but that's a bit risky so close to a 1.0 release.
+			if ((_shelf.DisplayHint & ShelfDisplayHint.DockFloat) != ShelfDisplayHint.DockFloat)
+				return;
+
+			// because of what was mentioned above, just remember the state when the window is floating.
+			DesktopViewSettings.Default.SaveFloatingShelfState(desktopWindowName, _shelf.Name, _content.DisplayLocation, _content.FloatingSize);
+		}
+
+		public bool GetFloatingState(string desktopWindowName, out Point displayLocation, out Size displaySize)
+		{
+			if ((_shelf.DisplayHint & ShelfDisplayHint.DockFloat) != ShelfDisplayHint.DockFloat)
+			{
+				displayLocation = Point.Empty;
+				displaySize = Size.Empty;
+				return false;
+			}
+
+			return DesktopViewSettings.Default.GetFloatingShelfState(desktopWindowName, _shelf.Name, out displayLocation, out displaySize);
+		}
+
+    	/// <summary>
         /// Disposes of this object.
         /// </summary>
         /// <param name="disposing"></param>

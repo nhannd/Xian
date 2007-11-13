@@ -38,7 +38,6 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
     [ExtensionOf(typeof(LayoutManagerExtensionPoint))]
 	public class LayoutManager : ILayoutManager
 	{
-		private IImageViewer _imageViewer;
 		private bool _physicalWorkspaceLayoutSet = false;
 
 		// Constructor

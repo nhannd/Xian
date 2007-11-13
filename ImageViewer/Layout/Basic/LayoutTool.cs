@@ -51,7 +51,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class LayoutTool : ImageViewerTool
 	{
-		private static IShelf _shelf;
+		private IShelf _shelf;
 
         /// <summary>
         /// Constructor
@@ -59,6 +59,14 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
         public LayoutTool()
 		{
         }
+
+		protected override void Dispose(bool disposing)
+		{
+			if (_shelf != null)
+				_shelf.Close();
+
+			base.Dispose(disposing);
+		}
 
         /// <summary>
         /// Overridden to subscribe to workspace activation events
@@ -90,6 +98,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
                     this.Context.DesktopWindow,
 					layoutComponent,
                     SR.TitleLayoutManager,
+					"Layout",
                     ShelfDisplayHint.DockLeft | ShelfDisplayHint.DockAutoHide,
 					delegate(IApplicationComponent component) { _shelf = null; });
             }

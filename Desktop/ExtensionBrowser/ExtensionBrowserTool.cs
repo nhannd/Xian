@@ -66,6 +66,7 @@ namespace ClearCanvas.Desktop.ExtensionBrowser
                     this.Context.DesktopWindow,
                     browser,
                     SR.TitleExtensionBrowser,
+					"Extension Browser",
                     ShelfDisplayHint.DockLeft | ShelfDisplayHint.DockAutoHide,
                     delegate(IApplicationComponent component) { _shelf = null; });
             }

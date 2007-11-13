@@ -134,6 +134,7 @@ namespace ClearCanvas.Utilities.DicomEditor
                                 context.DesktopWindow,
                                 _component,
                                 SR.TitleDicomEditor,
+								"Dicom Editor",
                                 ShelfDisplayHint.DockRight | ShelfDisplayHint.DockAutoHide,
                                 delegate(IApplicationComponent component)
 								{
@@ -219,6 +220,7 @@ namespace ClearCanvas.Utilities.DicomEditor
 								context.DesktopWindow,
 								_component,
 								SR.TitleDicomEditor,
+								"Dicom Editor",
 								ShelfDisplayHint.DockRight | ShelfDisplayHint.DockAutoHide,
 								delegate(IApplicationComponent component)
 								{

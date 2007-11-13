@@ -46,15 +46,19 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class CineTool : ImageViewerTool
 	{
-		private static IShelf _componentShelf;
+		private IShelf _componentShelf;
 
 		public CineTool()
 		{
 			_componentShelf = null;
 		}
 
-		protected override void OnPresentationImageSelected(object sender, PresentationImageSelectedEventArgs e)
+		protected override void Dispose(bool disposing)
 		{
+			if (_componentShelf != null)
+				_componentShelf.Close();
+
+			base.Dispose(disposing);
 		}
 
 		public void Activate()
@@ -68,7 +72,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 				CineApplicationComponent component = new CineApplicationComponent(this.Context.DesktopWindow);
 				_componentShelf = ApplicationComponent.LaunchAsShelf(
 					this.Context.DesktopWindow,
-					component, SR.TitleCine, "Cine", ShelfDisplayHint.DockFloat,
+					component, SR.TitleCine, 
+					"Cine", 
+					ShelfDisplayHint.DockFloat,
 					delegate { _componentShelf = null; });
 			}
 		}
