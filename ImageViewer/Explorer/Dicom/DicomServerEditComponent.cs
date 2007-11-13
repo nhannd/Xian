@@ -38,61 +38,158 @@ using ClearCanvas.ImageViewer.Services.ServerTree;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
-    /// <summary>
-    /// Extension point for views onto <see cref="DicomServerEditComponent"/>
-    /// </summary>
-    [ExtensionPoint]
-    public class DicomServerEditComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
-    {
-    }
+	/// <summary>
+	/// Extension point for views onto <see cref="DicomServerEditComponent"/>
+	/// </summary>
+	[ExtensionPoint]
+	public class DicomServerEditComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+	{
+	}
 
-    /// <summary>
-    /// DicomServerEditComponent class
-    /// </summary>
-    [AssociateView(typeof(DicomServerEditComponentViewExtensionPoint))]
-    public class DicomServerEditComponent : ApplicationComponent
-    {
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        public DicomServerEditComponent(ServerTree dicomServerTree)
-        {
-            _serverTree = dicomServerTree;
-            if (_serverTree.CurrentNode.IsServer)
-            {
-				Server server = _serverTree.CurrentNode as Server;
+	/// <summary>
+	/// DicomServerEditComponent class
+	/// </summary>
+	[AssociateView(typeof(DicomServerEditComponentViewExtensionPoint))]
+	public class DicomServerEditComponent : ApplicationComponent
+	{
+		public static readonly int MinimumPort = 1;
+		public static readonly int DefaultPort = 104;
+		public static readonly int MaximumPort = 65535;
+
+		#region Private Fields
+
+		private readonly ServerTree _serverTree;
+		private string _serverName;
+		private string _serverLocation;
+		private string _serverAE;
+		private string _serverHost;
+		private int _serverPort;
+
+		#endregion
+
+		public DicomServerEditComponent(ServerTree dicomServerTree)
+		{
+			_serverTree = dicomServerTree;
+			if (_serverTree.CurrentNode.IsServer)
+			{
+				Server server = (Server)_serverTree.CurrentNode;
 				_serverName = server.Name;
 				_serverLocation = server.Location;
 				_serverAE = server.AETitle;
 				_serverHost = server.Host;
-				_serverPort = server.Port.ToString();
-            }
-            else
-            {
-                _serverName = "";
-                _serverLocation = "";
-                _serverAE = "";
-                _serverHost = "";
-                _serverPort = "";
-            }
-        }
+				_serverPort = server.Port;
+			}
+			else
+			{
+				_serverName = "";
+				_serverLocation = "";
+				_serverAE = "";
+				_serverHost = "";
+				_serverPort = DefaultPort;
+			}
+		}
 
-        public void Accept()
-        {
-			if (!IsServerPropertyValid() || !this.Modified)
+		#region Public Properties
+
+		public string ServerName
+		{
+			get { return _serverName; }
+			set
+			{
+				if (_serverName == value)
+					return;
+
+				_serverName = value;
+				UpdateAcceptEnabled();
+				NotifyPropertyChanged("ServerName");
+			}
+		}
+
+		public string ServerLocation
+		{
+			get { return _serverLocation; }
+			set
+			{
+				if (_serverLocation == value)
+					return;
+				
+				_serverLocation = value;
+				UpdateAcceptEnabled();
+				NotifyPropertyChanged("ServerLocation");
+			}
+		}
+
+		public string ServerAE
+		{
+			get { return _serverAE; }
+			set
+			{
+				if (_serverAE == value)
+					return;
+
+				_serverAE = value;
+				UpdateAcceptEnabled();
+				NotifyPropertyChanged("ServerAE");
+			}
+		}
+
+		public string ServerHost
+		{
+			get { return _serverHost; }
+			set
+			{
+				if (_serverHost == value)
+					return;
+				
+				_serverHost = value;
+				UpdateAcceptEnabled();
+				NotifyPropertyChanged("ServerHost");
+			}
+		}
+
+		public int ServerPort
+		{
+			get { return _serverPort; }
+			set
+			{
+				if (_serverPort == value)
+					return;
+				
+				_serverPort = value;
+				UpdateAcceptEnabled();
+				NotifyPropertyChanged("ServerPort");
+			}
+		}
+
+		#endregion
+
+		private void UpdateAcceptEnabled()
+		{
+			if (String.IsNullOrEmpty(_serverHost) || String.IsNullOrEmpty(_serverAE) || String.IsNullOrEmpty(_serverName))
+				this.AcceptEnabled = false;
+			else 
+				this.AcceptEnabled = true;
+		}
+
+		public void Accept()
+		{
+			if (!IsServerPropertyValid())
+			{
+				this.AcceptEnabled = false;
 				return;
+			}
 
-			Server newServer = new Server(_serverName, _serverLocation, _serverHost, _serverAE, int.Parse(_serverPort));
+			Server newServer = new Server(_serverName, _serverLocation, _serverHost, _serverAE, _serverPort);
 
 			// edit current server
 			if (_serverTree.CurrentNode.IsServer)
 			{
 				_serverTree.ReplaceDicomServerInCurrentGroup(newServer);
 			}
-				// add new server
+			// add new server
 			else if (_serverTree.CurrentNode.IsServerGroup)
 			{
-                ((ServerGroup)_serverTree.CurrentNode).AddChild(newServer);
+				((ServerGroup)_serverTree.CurrentNode).AddChild(newServer);
 				_serverTree.CurrentNode = newServer;
 				_serverTree.Save();
 				_serverTree.FireServerTreeUpdatedEvent();
@@ -100,161 +197,68 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 			this.ExitCode = ApplicationComponentExitCode.Accepted;
 			Host.Exit();
-        }
+		}
 
-        public void Cancel()
-        {
-            Host.Exit();
-        }
-
-        private bool IsServerPropertyEmpty()
-        {
-            if (_serverName == null || _serverName.Equals("") || _serverAE == null || _serverAE.Equals("")
-                || _serverHost == null || _serverHost.Equals("") || _serverPort == null || _serverPort.Equals(""))
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        private bool IsServerPropertyValid()
-        {
-            int port = -1;
-            try
-            {
-                port = int.Parse(_serverPort);
-                if (_serverTree.CurrentNode.IsServer
-                        && _serverName.Equals(_serverTree.CurrentNode.Name)
-                        && _serverAE.Equals(((Server)_serverTree.CurrentNode).AETitle)
-						&& _serverHost.Equals(((Server)_serverTree.CurrentNode).Host)
-						&& port == ((Server)_serverTree.CurrentNode).Port)
-                    return true;
-            }
-            catch
-            {
-                this.Modified = false;
-                StringBuilder msgText = new StringBuilder();
-				msgText.AppendFormat(SR.MessageServerPortMustBePositiveInteger);
-                throw new DicomServerException(msgText.ToString());
-            }
-
-            if (port <= 0)
-            {
-                this.Modified = false;
-				throw new DicomServerException(SR.MessageServerPortMustBePositiveInteger);
-            }
-
-        	bool isConflicted;
-            string conflictingServerPath;
-        	if (_serverTree.CurrentNode.IsServer)
-				isConflicted = _serverTree.CanEditCurrentServer(_serverName, _serverAE, _serverHost, int.Parse(_serverPort), out conflictingServerPath);
-			else
-				isConflicted = _serverTree.CanAddServerToCurrentGroup(_serverName, _serverAE, _serverHost, int.Parse(_serverPort), out conflictingServerPath);
-
-        	if (isConflicted)
-            {
-                this.Modified = false;
-                StringBuilder msgText = new StringBuilder();
-				msgText.AppendFormat(SR.FormatServerConflict, conflictingServerPath);
-                throw new DicomServerException(msgText.ToString());
-            }
-
-            return true;
-        }
-
-        public bool AcceptEnabled
-        {
-            get { return this.Modified; }
-        }
-
-        public bool FieldReadonly
-        {
-            get 
-            {
-				return _serverTree.CurrentNode.IsLocalDataStore;
-            }
-        }
-
-        public event EventHandler AcceptEnabledChanged
-        {
-            add { this.ModifiedChanged += value; }
-            remove { this.ModifiedChanged -= value; }
-        }
-
-        public override void Start()
-        {
-            base.Start();
-        }
-
-        public override void Stop()
-        {
-            base.Stop();
-        }
-
-        #region Fields
-
-        private ServerTree _serverTree;
-        private string _serverName = "";
-        private string _serverLocation = "";
-        private string _serverAE = "";
-        private string _serverHost = "";
-        private string _serverPort = "";
-
-		public string ServerName
+		public void Cancel()
 		{
-			get { return _serverName; }
+			Host.Exit();
+		}
+
+		private string VerifyServerProperties()
+		{
+			if (String.IsNullOrEmpty(_serverName))
+				return SR.MessageServerNameCannotBeEmpty;
+			if (String.IsNullOrEmpty(_serverHost))
+				return SR.MessageHostNameCannotBeEmpty;
+			if (String.IsNullOrEmpty(_serverAE) || _serverAE.Length > 16 || _serverAE.Contains(" "))
+				return SR.MessageServerAEInvalid;
+			if (_serverPort < MinimumPort || _serverPort > MaximumPort)
+				return SR.MessagePortInvalid;
+
+			return null;
+		}
+
+		private bool IsServerPropertyValid()
+		{
+			string verifyMessage = VerifyServerProperties();
+			if (verifyMessage != null)
+			{
+				this.Host.DesktopWindow.ShowMessageBox(verifyMessage, MessageBoxActions.Ok);
+				return false;
+			}
+
+			bool isConflicted;
+			string conflictingServerPath;
+			if (_serverTree.CurrentNode.IsServer)
+				isConflicted = _serverTree.CanEditCurrentServer(_serverName, _serverAE, _serverHost, _serverPort, out conflictingServerPath);
+			else
+				isConflicted = _serverTree.CanAddServerToCurrentGroup(_serverName, _serverAE, _serverHost, _serverPort, out conflictingServerPath);
+
+			if (isConflicted)
+			{
+				this.Host.DesktopWindow.ShowMessageBox(String.Format(SR.FormatServerConflict, conflictingServerPath), MessageBoxActions.Ok);
+				return false;
+			}
+
+			return true;
+		}
+
+		public bool AcceptEnabled
+		{
+			get { return this.Modified; }
 			set
 			{
-				_serverName = value;
-				this.Modified = IsServerPropertyEmpty();
+				if (value == this.Modified)
+					return;
+
+				this.Modified = value;
+				NotifyPropertyChanged("AcceptEnabled");
 			}
 		}
-		
-		public string ServerLocation
-        {
-            get { return _serverLocation; }
-            set { 
-                _serverLocation = value;
-                this.Modified = true;
-            }
-        }
 
-        public string ServerAE
-        {
-            get { return _serverAE; }
-            set { 
-                _serverAE = value;
-                this.Modified = IsServerPropertyEmpty();
-            }
-        }
-
-        public string ServerHost
-        {
-            get { return _serverHost; }
-            set { 
-                _serverHost = value;
-                this.Modified = IsServerPropertyEmpty();
-            }
-        }
-
-        public string ServerPort
-        {
-            get { return _serverPort; }
-            set { 
-                _serverPort = value;
-                this.Modified = IsServerPropertyEmpty();
-            }
-        }
-
-        #endregion
-
-    }
-
-    public class DicomServerException : Exception
-    {
-        public DicomServerException(string message) : base(message) { }
-        public DicomServerException(string message, Exception inner) : base(message, inner) { }
-    }
-
+		public bool FieldReadonly
+		{
+			get { return _serverTree.CurrentNode.IsLocalDataStore; }
+		}
+	}
 }

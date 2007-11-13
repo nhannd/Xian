@@ -353,6 +353,15 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The Host Name cannot be empty..
+        /// </summary>
+        internal static string MessageHostNameCannotBeEmpty {
+            get {
+                return ResourceManager.GetString("MessageHostNameCannotBeEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No servers have been selected.  Please select at least one server and try again..
         /// </summary>
         internal static string MessageNoServersSelected {
@@ -362,11 +371,38 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The Port must be a positive integer value.  Please enter a valid Port..
+        ///   Looks up a localized string similar to The Port must be between 1 and 65535..
         /// </summary>
-        internal static string MessageServerPortMustBePositiveInteger {
+        internal static string MessagePortInvalid {
             get {
-                return ResourceManager.GetString("MessageServerPortMustBePositiveInteger", resourceCulture);
+                return ResourceManager.GetString("MessagePortInvalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The AE Title must be between 1 and 16 characters in length and contain no spaces..
+        /// </summary>
+        internal static string MessageServerAEInvalid {
+            get {
+                return ResourceManager.GetString("MessageServerAEInvalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The Server Group Name cannot be empty..
+        /// </summary>
+        internal static string MessageServerGroupNameCannotBeEmpty {
+            get {
+                return ResourceManager.GetString("MessageServerGroupNameCannotBeEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The Server Name cannot be empty..
+        /// </summary>
+        internal static string MessageServerNameCannotBeEmpty {
+            get {
+                return ResourceManager.GetString("MessageServerNameCannotBeEmpty", resourceCulture);
             }
         }
         

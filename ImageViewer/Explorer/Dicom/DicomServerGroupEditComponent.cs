@@ -53,7 +53,15 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
     [AssociateView(typeof(DicomServerGroupEditComponentViewExtensionPoint))]
     public class DicomServerGroupEditComponent : ApplicationComponent
     {
-        /// <summary>
+		#region Private Fields
+
+		private readonly ServerTree _serverTree;
+		private string _serverGroupName;
+		private readonly bool _isNewServerGroup;
+
+		#endregion
+
+		/// <summary>
         /// Constructor
         /// </summary>
         public DicomServerGroupEditComponent(ServerTree dicomServerTree, ServerUpdateType updatedType)
@@ -71,10 +79,44 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         }
 
-        public void Accept()
+		#region Public Properties
+
+		public string ServerGroupName
+		{
+			get { return _serverGroupName; }
+			set
+			{
+				if (_serverGroupName == value)
+					return;
+
+				_serverGroupName = value;
+				this.AcceptEnabled = !String.IsNullOrEmpty(_serverGroupName);
+				NotifyPropertyChanged("ServerGroupName");
+			}
+		}
+
+		public bool AcceptEnabled
+		{
+			get { return this.Modified; }
+			set
+			{
+				if (value == this.Modified)
+					return;
+
+				this.Modified = value;
+				NotifyPropertyChanged("AcceptEnabled");
+			}
+		}
+
+		#endregion
+		
+		public void Accept()
         {
-            if (!IsServerGroupNameValid() || !this.Modified)
-                return;
+            if (!IsServerGroupNameValid())
+            {
+            	this.AcceptEnabled = false;
+            	return;
+            }
 
             if (!_isNewServerGroup)
             {
@@ -100,81 +142,28 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             Host.Exit();
         }
 
-        public bool AcceptEnabled
-        {
-            get { return this.Modified; }
-        }
-
-        public event EventHandler AcceptEnabledChanged
-        {
-            add { this.ModifiedChanged += value; }
-            remove { this.ModifiedChanged -= value; }
-        }
-
-        private bool IsServerGroupNameEmpty()
-        {
-            if (_serverGroupName == null || _serverGroupName.Equals("")
-                || !_isNewServerGroup && _serverGroupName.Equals(_serverTree.CurrentNode.Name))
-            {
-                return false;
-            }
-
-            return true;
-        }
-
         private bool IsServerGroupNameValid()
         {
-            string conflictingPath = "";
-        	bool valid = true;
-			if (_isNewServerGroup && _serverTree.CanAddGroupToCurrentGroup(_serverGroupName, out conflictingPath))
-				valid = false;
-			else if (!_isNewServerGroup && _serverTree.CanEditCurrentGroup(_serverGroupName, out conflictingPath))
-				valid = false;
-
-			if (!valid)
+			bool valid = true;
+			if (String.IsNullOrEmpty(_serverGroupName))
 			{
-				this.Modified = false;
-				StringBuilder msgText = new StringBuilder();
-				msgText.AppendFormat(SR.FormatServerGroupConflict, _serverGroupName, conflictingPath);
-				throw new DicomServerException(msgText.ToString());
+				this.Host.DesktopWindow.ShowMessageBox(SR.MessageServerGroupNameCannotBeEmpty, MessageBoxActions.Ok);
+				valid = false;
+			}
+			else
+			{
+				string conflictingPath = "";
+				if (_isNewServerGroup && _serverTree.CanAddGroupToCurrentGroup(_serverGroupName, out conflictingPath))
+					valid = false;
+				else if (!_isNewServerGroup && _serverTree.CanEditCurrentGroup(_serverGroupName, out conflictingPath))
+					valid = false;
+
+				if (!valid)
+					this.Host.DesktopWindow.ShowMessageBox(
+						String.Format(SR.FormatServerGroupConflict, _serverGroupName, conflictingPath), MessageBoxActions.Ok);
 			}
 
-			return true;
+        	return valid;
         }
-
-        public override void Start()
-        {
-            base.Start();
-        }
-
-        public override void Stop()
-        {
-            base.Stop();
-        }
-
-        #region Fields
-
-        private ServerTree _serverTree;
-        private string _serverGroupName = "";
-        private bool _isNewServerGroup;
-
-        public ServerTree ServerTree
-        {
-            get { return _serverTree; }
-            set { _serverTree = value; }
-        }
-
-        public string ServerGroupName
-        {
-            get { return _serverGroupName; }
-            set
-            {
-                _serverGroupName = value;
-                this.Modified = IsServerGroupNameEmpty();
-            }
-        }
-
-        #endregion
-
     }
 }

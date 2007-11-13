@@ -217,11 +217,23 @@ Are you sure you want to continue?</value>
     <value>The date range you have selected is invalid because the 'from date' is after the 'to date'.
 Please change the dates and try again.</value>
   </data>
+  <data name="MessageHostNameCannotBeEmpty" xml:space="preserve">
+    <value>The Host Name cannot be empty.</value>
+  </data>
   <data name="MessageNoServersSelected" xml:space="preserve">
     <value>No servers have been selected.  Please select at least one server and try again.</value>
   </data>
-  <data name="MessageServerPortMustBePositiveInteger" xml:space="preserve">
-    <value>The Port must be a positive integer value.  Please enter a valid Port.</value>
+  <data name="MessagePortInvalid" xml:space="preserve">
+    <value>The Port must be between 1 and 65535.</value>
+  </data>
+  <data name="MessageServerAEInvalid" xml:space="preserve">
+    <value>The AE Title must be between 1 and 16 characters in length and contain no spaces.</value>
+  </data>
+  <data name="MessageServerGroupNameCannotBeEmpty" xml:space="preserve">
+    <value>The Server Group Name cannot be empty.</value>
+  </data>
+  <data name="MessageServerNameCannotBeEmpty" xml:space="preserve">
+    <value>The Server Name cannot be empty.</value>
   </data>
   <data name="MessageUnableToCreateStorageDirectory" xml:space="preserve">
     <value>Unable to create storage directory; cannot retrieve study.</value>

@@ -65,13 +65,41 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
             this._location.DataBindings.Add("Text", _bindingSource, "ServerLocation", true, DataSourceUpdateMode.OnPropertyChanged);
             this._ae.DataBindings.Add("Text", _bindingSource, "ServerAE", true, DataSourceUpdateMode.OnPropertyChanged);
             this._host.DataBindings.Add("Text", _bindingSource, "ServerHost", true, DataSourceUpdateMode.OnPropertyChanged);
-            this._port.DataBindings.Add("Text", _bindingSource, "ServerPort", true, DataSourceUpdateMode.OnPropertyChanged);
-            _btnAccept.DataBindings.Add("Enabled", _component, "AcceptEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
+			_btnAccept.DataBindings.Add("Enabled", _component, "AcceptEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
+
+			Binding portBinding = new Binding("Text", _bindingSource, "ServerPort", true, DataSourceUpdateMode.OnPropertyChanged);
+			portBinding.Format += new ConvertEventHandler(OnPortBindingFormat);
+			portBinding.Parse += new ConvertEventHandler(OnPortBindingParse);
+        	_port.DataBindings.Add(portBinding);
+
             this._serverName.DataBindings.Add("Readonly", _component, "FieldReadonly", true, DataSourceUpdateMode.OnPropertyChanged);
             this._host.DataBindings.Add("Readonly", _component, "FieldReadonly", true, DataSourceUpdateMode.OnPropertyChanged);
         }
 
-        public event EventHandler AcceptClicked
+		void OnPortBindingFormat(object sender, ConvertEventArgs e)
+		{
+			if (e.DesiredType != typeof(string))
+				return;
+
+			e.Value = e.Value.ToString();
+		}
+
+		void OnPortBindingParse(object sender, ConvertEventArgs e)
+		{
+			if (e.DesiredType != typeof(int))
+				return;
+
+			int value;
+			if (!int.TryParse((string)e.Value, out value))
+			{
+				 value = _component.ServerPort;
+				_port.Text = value.ToString();
+			}
+
+			e.Value = value;
+		}
+
+    	public event EventHandler AcceptClicked
         {
             add { _btnAccept.Click += value; }
             remove { _btnAccept.Click -= value; }
