@@ -173,9 +173,12 @@ namespace ClearCanvas.Desktop
         /// <param name="args"></param>
         protected override void OnClosing(ClosingEventArgs args)
         {
-            if(args.Reason == CloseReason.UserInterface && !_userClosable)
+            bool parentClosing = (args.Reason & CloseReason.ParentClosing) == CloseReason.ParentClosing;
+            bool userClosing = (args.Reason & CloseReason.UserInterface) == CloseReason.UserInterface;
+
+            if (userClosing && !parentClosing && !_userClosable)
             {
-                // the user is attempting to close this workspace, but it is not user-closable
+                // the user is attempting to close this workspace (not the parent window), but it is not user-closable
                 // cancel the close, and do not call the base class (do not fire the event publicly)
                 args.Cancel = true;
 

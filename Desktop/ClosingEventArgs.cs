@@ -40,31 +40,34 @@ namespace ClearCanvas.Desktop
     /// <summary>
     /// Defines possible reasons why a <see cref="DesktopObject"/> might close.
     /// </summary>
+    [Flags]
     public enum CloseReason
     {
         /// <summary>
-        /// The user is closing the object directly via the user-interface.
+        /// The close request was initiated by the user via the user-interface.
         /// </summary>
-        UserInterface,
+        UserInterface = 0x0001,
 
         /// <summary>
-        /// The application has requested to close the object.
+        /// The close request was initiated by the application.
         /// </summary>
-        Program,
+        Program = 0x0002,
+
+        /// <summary>
+        /// The close request is occuring because the application has been asked to terminate.
+        /// The <see cref="Application.Quit"/> API may have been invoked, or the request
+        /// may have come from the operating system.
+        /// </summary>
+        ApplicationQuit = 0x0004,
 
         /// <summary>
         /// The object is being closed because it's parent window is closing.
         /// Applicable to <see cref="Workspace"/> and <see cref="Shelf"/> objects.
+        /// This value is combined with one of <see cref="UserInterface"/>, 
+        /// <see cref="Program"/> or <see cref="ApplicationQuit"/>, indicating why the parent is closing.
         /// </summary>
-        ParentClosing,
+        ParentClosing = 0x0010
 
-        /// <summary>
-        /// The application has been asked to terminate.
-        /// The <see cref="Application.Quit"/> API may have been invoked, or the request
-        /// may have come from the operating system.
-        /// Applicable only to <see cref="DesktopWindow"/> objects.
-        /// </summary>
-        ApplicationQuit
     }
 
     /// <summary>

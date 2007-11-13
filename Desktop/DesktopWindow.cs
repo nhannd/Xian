@@ -253,7 +253,7 @@ namespace ClearCanvas.Desktop
                 // if the workspace is still open, try to close it
                 // (the check is necessary because there is no guarantee that the workspace is still open)
                 if (workspace.State == DesktopObjectState.Open &&
-                    !workspace.Close(UserInteraction.Allowed, CloseReason.ParentClosing))
+                    !workspace.Close(UserInteraction.Allowed, reason|CloseReason.ParentClosing))
                     return false;
             }
 
@@ -265,7 +265,7 @@ namespace ClearCanvas.Desktop
                 // if the shelf fails to close, we don't care
                 // (shelves are not granted the same power as workspaces to block the desktop window from closing)
                 if (shelf.State == DesktopObjectState.Open)
-                    shelf.Close(UserInteraction.Allowed, CloseReason.ParentClosing);
+                    shelf.Close(UserInteraction.Allowed, reason|CloseReason.ParentClosing);
 
             }
 

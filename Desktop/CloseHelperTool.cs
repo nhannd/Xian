@@ -73,11 +73,11 @@ namespace ClearCanvas.Desktop
             if (showHelper)
             {
                 e.Cancel = true;
-                ShowShelf(window, e.Reason);
+                ShowShelf(window);
             }
         }
 
-        private void ShowShelf(DesktopWindow window, CloseReason reason)
+        private void ShowShelf(DesktopWindow window)
         {
             // the shelf is not currently open
             if (_closeHelperShelf == null)
@@ -85,7 +85,7 @@ namespace ClearCanvas.Desktop
                 // launch it
                 CloseHelperComponent component = new CloseHelperComponent();
                 _closeHelperShelf = ApplicationComponent.LaunchAsShelf(window, component, "Close Assistant",
-                    ShelfDisplayHint.DockLeft, delegate(IApplicationComponent c) { _closeHelperShelf = null; });
+                    ShelfDisplayHint.DockLeft, delegate { _closeHelperShelf = null; });
             }
             else
             {
