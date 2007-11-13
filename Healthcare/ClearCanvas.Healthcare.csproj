@@ -88,6 +88,7 @@
     <Compile Include="ProtocolNote.cs" />
     <Compile Include="ProtocolProcedureStep.cs" />
     <Compile Include="ProtocolStatus.cs" />
+    <Compile Include="PublicationStep.cs" />
     <Compile Include="RegistrationCompletedProtocolWorklist.cs" />
     <Compile Include="RegistrationPendingProtocolWorklist.cs" />
     <Compile Include="RegistrationSuspendedProtocolWorklist.cs" />

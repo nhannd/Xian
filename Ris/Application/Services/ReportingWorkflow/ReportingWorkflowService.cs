@@ -43,8 +43,6 @@ using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Healthcare.Workflow.Reporting;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
-using ClearCanvas.Ris.Application.Common.Admin;
-using ClearCanvas.Ris.Application.Services.Admin;
 using AuthorityTokens = ClearCanvas.Ris.Application.Common.AuthorityTokens;
 
 namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
@@ -257,16 +255,16 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         }
 
         [UpdateOperation]
-        [OperationEnablement("CanReviseReport")]
-        public ReviseReportResponse ReviseReport(ReviseReportRequest request)
+        [OperationEnablement("CanReviseResidentReport")]
+        public ReviseResidentReportResponse ReviseResidentReport(ReviseResidentReportRequest request)
         {
             VerificationStep step = PersistenceContext.Load<VerificationStep>(request.VerificationStepRef, EntityLoadFlags.CheckVersion);
 
-            Operations.ReviseReport op = new Operations.ReviseReport();
+            Operations.ReviseResidentReport op = new Operations.ReviseResidentReport();
             InterpretationStep interpretation = op.Execute(step, this.CurrentUserStaff, new PersistentWorkflow(this.PersistenceContext));
 
             PersistenceContext.SynchState();
-            ReviseReportResponse response = new ReviseReportResponse();
+            ReviseResidentReportResponse response = new ReviseResidentReportResponse();
             response.VerificationStepRef = step.GetRef();
             response.InterpretationStepRef = interpretation == null ? null : interpretation.GetRef();
             return response;
@@ -303,26 +301,61 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
                 throw new RequestValidationException(SR.ExceptionVerifyWithNoReport);
 
             Operations.CompleteVerification op = new Operations.CompleteVerification();
-            op.Execute(verification, this.CurrentUserStaff, new PersistentWorkflow(this.PersistenceContext));
+            PublicationStep publication = op.Execute(verification, this.CurrentUserStaff, new PersistentWorkflow(this.PersistenceContext));
 
             PersistenceContext.SynchState();
-            return new CompleteVerificationResponse(verification.GetRef());
+
+            CompleteVerificationResponse response = new CompleteVerificationResponse();
+            response.VerificationStepRef = verification.GetRef();
+            response.PublicationStepRef = publication.GetRef();
+            return response;
         }
 
         [UpdateOperation]
         [OperationEnablement("CanCreateAddendum")]
         public CreateAddendumResponse CreateAddendum(CreateAddendumRequest request)
         {
-            VerificationStep verification = PersistenceContext.Load<VerificationStep>(request.VerificationStepRef, EntityLoadFlags.CheckVersion);
+            PublicationStep publication = PersistenceContext.Load<PublicationStep>(request.PublicationStepRef, EntityLoadFlags.CheckVersion);
 
             Operations.CreateAddendum op = new Operations.CreateAddendum();
-            InterpretationStep interpretation = op.Execute(verification, this.CurrentUserStaff, new PersistentWorkflow(this.PersistenceContext));
+            InterpretationStep interpretation = op.Execute(publication, this.CurrentUserStaff, new PersistentWorkflow(this.PersistenceContext));
 
             PersistenceContext.SynchState();
             CreateAddendumResponse response = new CreateAddendumResponse();
-            response.VerificationStepRef = verification.GetRef();
+            response.PublicationStepRef = publication.GetRef();
             response.InterpretationStepRef = interpretation.GetRef();
             return response;
+        }
+
+        [UpdateOperation]
+        [OperationEnablement("CanReviseUnpublishedReport")]
+        [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.VerifyReport)]
+        public ReviseUnpublishedReportResponse ReviseUnpublishedReport(ReviseUnpublishedReportRequest request)
+        {
+            PublicationStep publication = PersistenceContext.Load<PublicationStep>(request.PublicationStepRef, EntityLoadFlags.CheckVersion);
+
+            Operations.ReviseUnpublishedReport op = new Operations.ReviseUnpublishedReport();
+            VerificationStep verification = op.Execute(publication, this.CurrentUserStaff, new PersistentWorkflow(this.PersistenceContext));
+
+            PersistenceContext.SynchState();
+            ReviseUnpublishedReportResponse response = new ReviseUnpublishedReportResponse();
+            response.PublicationStepRef = publication.GetRef();
+            response.VerificationStepRef = verification.GetRef();
+            return response;
+        }
+
+        [UpdateOperation]
+        [OperationEnablement("CanPublishReport")]
+        [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.VerifyReport)]
+        public PublishReportResponse PublishReport(PublishReportRequest request)
+        {
+            PublicationStep publication = PersistenceContext.Load<PublicationStep>(request.PublicationStepRef, EntityLoadFlags.CheckVersion);
+
+            Operations.PublishReport op = new Operations.PublishReport();
+            op.Execute(publication, this.CurrentUserStaff, new PersistentWorkflow(this.PersistenceContext));
+
+            PersistenceContext.SynchState();
+            return new PublishReportResponse(publication.GetRef());
         }
 
         [ReadOperation]
@@ -435,9 +468,9 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             return CanExecuteOperation(new Operations.CancelReportingStep(), itemKey);
         }
 
-        public bool CanReviseReport(IWorklistItemKey itemKey)
+        public bool CanReviseResidentReport(IWorklistItemKey itemKey)
         {
-            return CanExecuteOperation(new Operations.ReviseReport(), itemKey);
+            return CanExecuteOperation(new Operations.ReviseResidentReport(), itemKey);
         }
 
         public bool CanStartVerification(IWorklistItemKey itemKey)
@@ -458,7 +491,26 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
         public bool CanCreateAddendum(IWorklistItemKey itemKey)
         {
+            if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.VerifyReport))
+                return false;
+
             return CanExecuteOperation(new Operations.CreateAddendum(), itemKey);
+        }
+
+        public bool CanReviseUnpublishedReport(IWorklistItemKey itemKey)
+        {
+            if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.VerifyReport))
+                return false;
+
+            return CanExecuteOperation(new Operations.ReviseUnpublishedReport(), itemKey);
+        }
+
+        public bool CanPublishReport(IWorklistItemKey itemKey)
+        {
+            if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.VerifyReport))
+                return false;
+
+            return CanExecuteOperation(new Operations.PublishReport(), itemKey);
         }
 
         public bool CanSaveReport(IWorklistItemKey itemKey)

@@ -65,6 +65,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         private const string _hqlFromInterpretationStep = " from InterpretationStep rps";
         private const string _hqlFromTranscriptionStep = " from TranscriptionStep rps";
         private const string _hqlFromVerificationStep = " from VerificationStep rps";
+        private const string _hqlFromPublicationStep = " from PublicationStep rps";
         private const string _hqlFromProtocolStep = " from ProtocolProcedureStep rps";
 
         private const string _hqlToBeReportedWorklist = _hqlSelectWorklist + _hqlFromInterpretationStep;
@@ -78,6 +79,9 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         private const string _hqlSelectVerificationWorklist = _hqlSelectWorklist + _hqlFromVerificationStep;
         private const string _hqlSelectVerificationCount = _hqlSelectCount + _hqlFromVerificationStep;
+
+        private const string _hqlSelectPublicationWorklist = _hqlSelectWorklist + _hqlFromPublicationStep;
+        private const string _hqlSelectPublicationCount = _hqlSelectCount + _hqlFromPublicationStep;
 
         private const string _hqlJoin =
             " join rps.RequestedProcedure rp" +
@@ -106,7 +110,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         private const string _hqlCommunualWorklistCondition = 
             " and rps.Scheduling.Performer is NULL";
 
-        private const string _hqlScheduledCondition = 
+        private const string _hqlScheduledPerformerCondition = 
             " and rps.Scheduling.Performer = :scheduledPerformingStaff";
 
         private const string _hqlPerformerCondition =
@@ -118,6 +122,9 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         private const string _hqlReportPartInterpretorCondition =
             " and rpp.Interpretor = :interpretorStaff";
+
+        private const string _hqlReportPartVerifierCondition =
+            " and rpp.Verifier = :verifierStaff";
 
         private const string _hqlSupervisorSubQuery =
             " and rpp.Supervisor = :supervisorStaff";
@@ -191,7 +198,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         {
             string hqlQuery = String.Concat(_hqlToBeReportedWorklist, 
                 _hqlJoin, 
-                _hqlDualStateCondition, _hqlScheduledCondition);
+                _hqlDualStateCondition, _hqlScheduledPerformerCondition);
 
             List<QueryParameter> parameters = new List<QueryParameter>();
             parameters.Add(new QueryParameter("rpsState", ActivityStatus.SC.ToString()));
@@ -205,7 +212,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         {
             string hqlQuery = String.Concat(_hqlSelectTranscriptionWorklist, 
                 _hqlJoin, 
-                _hqlDualStateCondition, _hqlScheduledCondition);
+                _hqlDualStateCondition, _hqlScheduledPerformerCondition);
 
             List<QueryParameter> parameters = new List<QueryParameter>();
             parameters.Add(new QueryParameter("rpsState", ActivityStatus.SC.ToString()));
@@ -219,7 +226,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         {
             string hqlQuery = String.Concat(_hqlSelectVerificationWorklist, 
                 _hqlJoin, _hqlJoinReportPart, 
-                _hqlDualStateCondition, _hqlScheduledCondition, _hqlReportPartInterpretorCondition, _hqlNoSupervisorSubQuery);
+                _hqlDualStateCondition, _hqlScheduledPerformerCondition, _hqlReportPartInterpretorCondition, _hqlNoSupervisorSubQuery);
 
             List<QueryParameter> parameters = new List<QueryParameter>();
             parameters.Add(new QueryParameter("rpsState", ActivityStatus.SC.ToString()));
@@ -232,13 +239,14 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         public IList<WorklistItem> GetVerifiedWorklist(Staff currentStaff)
         {
-            string hqlQuery = String.Concat(_hqlSelectVerificationWorklist, 
-                _hqlJoin, 
-                _hqlSingleStateCondition, _hqlPerformerCondition);
+            string hqlQuery = String.Concat(_hqlSelectPublicationWorklist,
+                _hqlJoin, _hqlJoinReportPart,
+                _hqlDualStateCondition, _hqlReportPartVerifierCondition);
 
             List<QueryParameter> parameters = new List<QueryParameter>();
-            parameters.Add(new QueryParameter("rpsState", ActivityStatus.CM.ToString()));
-            parameters.Add(new QueryParameter("performingStaff", currentStaff));
+            parameters.Add(new QueryParameter("rpsState", ActivityStatus.SC.ToString()));
+            parameters.Add(new QueryParameter("rpsState2", ActivityStatus.CM.ToString()));
+            parameters.Add(new QueryParameter("verifierStaff", currentStaff));
 
             return GetWorklist(hqlQuery, parameters);
         }
@@ -379,7 +387,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         {
             string hqlQuery = String.Concat(_hqlToBeReportedCount, 
                 _hqlJoin, 
-                _hqlDualStateCondition, _hqlScheduledCondition);
+                _hqlDualStateCondition, _hqlScheduledPerformerCondition);
 
             List<QueryParameter> parameters = new List<QueryParameter>();
             parameters.Add(new QueryParameter("rpsState", ActivityStatus.SC.ToString()));
@@ -393,7 +401,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         {
             string hqlQuery = String.Concat(_hqlSelectTranscriptionCount, 
                 _hqlJoin, 
-                _hqlDualStateCondition, _hqlScheduledCondition);
+                _hqlDualStateCondition, _hqlScheduledPerformerCondition);
 
             List<QueryParameter> parameters = new List<QueryParameter>();
             parameters.Add(new QueryParameter("rpsState", ActivityStatus.SC.ToString()));
@@ -407,7 +415,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         {
             string hqlQuery = String.Concat(_hqlSelectVerificationCount, 
                 _hqlJoin, _hqlJoinReportPart,
-                _hqlDualStateCondition, _hqlScheduledCondition, _hqlReportPartInterpretorCondition, _hqlNoSupervisorSubQuery);
+                _hqlDualStateCondition, _hqlScheduledPerformerCondition, _hqlReportPartInterpretorCondition, _hqlNoSupervisorSubQuery);
 
             List<QueryParameter> parameters = new List<QueryParameter>();
             parameters.Add(new QueryParameter("rpsState", ActivityStatus.SC.ToString()));
@@ -420,13 +428,14 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         public int GetVerifiedWorklistCount(Staff currentStaff)
         {
-            string hqlQuery = String.Concat(_hqlSelectVerificationCount, 
-                _hqlJoin, 
-                _hqlSingleStateCondition, _hqlPerformerCondition);
+            string hqlQuery = String.Concat(_hqlSelectPublicationCount,
+                _hqlJoin, _hqlJoinReportPart,
+                _hqlDualStateCondition, _hqlReportPartVerifierCondition);
 
             List<QueryParameter> parameters = new List<QueryParameter>();
-            parameters.Add(new QueryParameter("rpsState", ActivityStatus.CM.ToString()));
-            parameters.Add(new QueryParameter("performingStaff", currentStaff));
+            parameters.Add(new QueryParameter("rpsState", ActivityStatus.SC.ToString()));
+            parameters.Add(new QueryParameter("rpsState2", ActivityStatus.CM.ToString()));
+            parameters.Add(new QueryParameter("verifierStaff", currentStaff));
 
             return GetWorklistCount(hqlQuery, parameters);
         }

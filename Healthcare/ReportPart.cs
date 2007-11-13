@@ -53,31 +53,36 @@ namespace ClearCanvas.Healthcare {
 
         public virtual bool IsAddendum
         {
-            get { return this.Index > 0; }
+            get { return _index > 0; }
         }
 
         public virtual void Finalized()
         {
-            if (this.Status == ReportPartStatus.P)
-            {
-                this.Status = ReportPartStatus.F;
+            SetStatus(ReportPartStatus.F);
+        }
 
-                if (this.IsAddendum)
-                    this.Report.Corrected();
-                else
-                    this.Report.Finalized();
-            }
-            else
-                throw new HealthcareWorkflowException("Only report part in the preliminary status can be finalized");
-
+        public virtual void Revised()
+        {
+            SetStatus(ReportPartStatus.P);
         }
 
         public virtual void Cancelled()
         {
-            this.Status = ReportPartStatus.X;
+            SetStatus(ReportPartStatus.X);
+        }
 
-            if (this.IsAddendum == false)
-                this.Report.Cancelled();
+        /// <summary>
+        /// Helper method to change the status and also notify the parent order to change its status
+        /// if necessary.
+        /// </summary>
+        /// <param name="status"></param>
+        private void SetStatus(ReportPartStatus status)
+        {
+            _status = status;
+
+            // the report should never be null, unless this is a brand new instance that has not yet been assigned an order
+            if (this.Report != null)
+                this.Report.UpdateStatus();
         }
     }
 }

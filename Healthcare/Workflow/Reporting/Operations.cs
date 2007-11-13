@@ -223,12 +223,16 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 
             public override bool CanExecute(ReportingProcedureStep step, Staff currentUserStaff)
             {
-                // step already completed or cancelled
-                if (step.State == ActivityStatus.CM || step.State == ActivityStatus.DC)
+                // Publication step cannot be cancelled
+                if (step.Is<PublicationStep>())
                     return false;
 
                 // cannot cancel an unclaimed interpretation step
                 if (step.Is<InterpretationStep>() && step.AssignedStaff == null)
+                    return false;
+
+                // step already completed or cancelled
+                if (step.State == ActivityStatus.CM || step.State == ActivityStatus.DC)
                     return false;
 
                 return true;
@@ -240,7 +244,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
         /// This operation cancels the existing verification step and creates a new interpretation step for resident to edit
         /// This operation can also be used by resident/radiologist alike to revise report that hasn't been started by transcriptionist
         /// </summary>
-        public class ReviseReport : ReportingOperation
+        public class ReviseResidentReport : ReportingOperation
         {
             public InterpretationStep Execute(VerificationStep step, Staff currentUserStaff, IWorkflow workflow)
             {
@@ -252,7 +256,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 
                 // Reset the report part status and interpretator
                 interpretation.ReportPart.Interpretor = null;
-                interpretation.ReportPart.Status = ReportPartStatus.P;
+                interpretation.ReportPart.Revised();
 
                 // Assign the new step back to me
                 interpretation.Assign(currentUserStaff);
@@ -264,15 +268,15 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 
             public override bool CanExecute(ReportingProcedureStep step, Staff currentUserStaff)
             {
-                if (step.Is<VerificationStep>() == false && step.Is<TranscriptionStep>() == false)
+                if (step.Is<VerificationStep>() == false)
                     return false;
 
                 // step already completed or cancelled
                 if (step.State != ActivityStatus.SC)
                     return false;
 
-                // cannot revise a report that is read by someone else
-                if (Equals(step.ReportPart.Interpretor, currentUserStaff) == false)
+                // cannot revise an empty report or one that was read by someone else
+                if (step.ReportPart == null || Equals(step.ReportPart.Interpretor, currentUserStaff) == false)
                     return false;
 
                 return true;
@@ -310,10 +314,14 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 
         public class CompleteVerification : ReportingOperation
         {
-            public void Execute(VerificationStep step, Staff currentUserStaff, IWorkflow workflow)
+            public PublicationStep Execute(VerificationStep step, Staff currentUserStaff, IWorkflow workflow)
             {
                 // this operation is legal even if the step was never started, therefore need to supply the performer
                 step.Complete(currentUserStaff);
+
+                PublicationStep publication = new PublicationStep(step);
+                workflow.AddActivity(publication);
+                return publication;
             }
 
             public override bool CanExecute(ReportingProcedureStep step, Staff currentUserStaff)
@@ -331,7 +339,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 
         public class CreateAddendum : ReportingOperation
         {
-            public InterpretationStep Execute(VerificationStep step, Staff currentUserStaff, IWorkflow workflow)
+            public InterpretationStep Execute(PublicationStep step, Staff currentUserStaff, IWorkflow workflow)
             {
                 InterpretationStep interpretation = new InterpretationStep(step.RequestedProcedure);
                 interpretation.Assign(currentUserStaff);
@@ -343,11 +351,73 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 
             public override bool CanExecute(ReportingProcedureStep step, Staff currentUserStaff)
             {
-                // can only create an addendum for a completed verification step
-                if (step.Is<VerificationStep>() == false)
+                // can only create an addendum for a completed publication step
+                if (step.Is<PublicationStep>() == false)
                     return false;
 
                 if (step.State != ActivityStatus.CM)
+                    return false;
+
+                return true;
+            }
+        }
+
+        public class ReviseUnpublishedReport : ReportingOperation
+        {
+            public VerificationStep Execute(PublicationStep step, Staff currentUserStaff, IWorkflow workflow)
+            {
+                // Discontinue the publication step
+                step.Discontinue();
+
+                // Create a new verification step that uses the same report part
+                VerificationStep verification = new VerificationStep(step);
+
+                // Reset the report part status and verifier
+                verification.ReportPart.Verifier = null;
+                verification.ReportPart.Revised();
+
+                // Assign the new step back to me
+                verification.Assign(currentUserStaff);
+
+                workflow.AddActivity(verification);
+                return verification;
+            }
+
+            public override bool CanExecute(ReportingProcedureStep step, Staff currentUserStaff)
+            {
+                if (step.Is<PublicationStep>() == false)
+                    return false;
+
+                // step already completed or cancelled
+                if (step.State != ActivityStatus.SC)
+                    return false;
+
+                // cannot revise an empty report or one that was previously verified by someone else
+                if (step.ReportPart == null || Equals(step.ReportPart.Verifier, currentUserStaff) == false)
+                    return false;
+
+                return true;
+            }
+        }
+
+        /// <summary>
+        /// This provide a mean to complete a publication step.  It is meant for testing only. 
+        /// </summary>
+        /// TODO: to be removed
+        public class PublishReport : ReportingOperation
+        {
+            public void Execute(PublicationStep step, Staff currentUserStaff, IWorkflow workflow)
+            {
+                step.Complete(currentUserStaff);
+            }
+
+            public override bool CanExecute(ReportingProcedureStep step, Staff currentUserStaff)
+            {
+                if (step.Is<PublicationStep>() == false)
+                    return false;
+
+                // step already completed or cancelled
+                if (step.State != ActivityStatus.SC)
                     return false;
 
                 return true;

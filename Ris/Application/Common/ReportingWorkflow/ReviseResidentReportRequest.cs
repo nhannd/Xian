@@ -35,9 +35,9 @@ using ClearCanvas.Enterprise.Common;
 namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
 {
     [DataContract]
-    public class ReviseReportRequest : DataContractBase
+    public class ReviseResidentReportRequest : DataContractBase
     {
-        public ReviseReportRequest(EntityRef stepRef)
+        public ReviseResidentReportRequest(EntityRef stepRef)
         {
             this.VerificationStepRef = stepRef;
         }

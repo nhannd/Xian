@@ -169,7 +169,9 @@ namespace ClearCanvas.Ris.Client.Reporting
                         (this.Context.GetWorkflowOperationEnablement("StartInterpretation") ||
                         this.Context.GetWorkflowOperationEnablement("StartVerification")))
                         return SR.TitleEditReport;
-                    else if (this.Context.GetWorkflowOperationEnablement("ReviseReport"))
+                    else if (this.Context.GetWorkflowOperationEnablement("ReviseResidentReport"))
+                        return SR.TitleReviseReport;
+                    else if (this.Context.GetWorkflowOperationEnablement("ReviseUnpublishedReport"))
                         return SR.TitleReviseReport;
                     else
                         return SR.TitleCreateReport;
@@ -186,7 +188,8 @@ namespace ClearCanvas.Ris.Client.Reporting
             {
                 get
                 {
-                    return this.Context.GetWorkflowOperationEnablement("ReviseReport") ||
+                    return this.Context.GetWorkflowOperationEnablement("ReviseResidentReport") ||
+                        this.Context.GetWorkflowOperationEnablement("ReviseUnpublishedReport") ||
                         this.Context.GetWorkflowOperationEnablement("ClaimInterpretation") ||
                         this.Context.GetWorkflowOperationEnablement("StartInterpretation") ||
                         this.Context.GetWorkflowOperationEnablement("StartVerification");
@@ -240,18 +243,29 @@ namespace ClearCanvas.Ris.Client.Reporting
                                         stepForOpeningReport = response.VerificationStepRef;
                                     });
                             }
-                            else if (this.Context.GetWorkflowOperationEnablement("ReviseReport"))
+                            else if (this.Context.GetWorkflowOperationEnablement("ReviseResidentReport"))
                             {
                                 // Otherwise the staff need to have permission to revise report
 
                                 Platform.GetService<IReportingWorkflowService>(
                                     delegate(IReportingWorkflowService service)
                                     {
-                                        ReviseReportResponse response = service.ReviseReport(new ReviseReportRequest(item.ProcedureStepRef));
+                                        ReviseResidentReportResponse response = service.ReviseResidentReport(new ReviseResidentReportRequest(item.ProcedureStepRef));
                                         item.ProcedureStepRef = response.VerificationStepRef;
                                         stepForOpeningReport = response.InterpretationStepRef;
                                     });
                             }
+                        }
+                        else if (item.StepType == "Publication")
+                        {
+                            Platform.GetService<IReportingWorkflowService>(
+                                delegate(IReportingWorkflowService service)
+                                {
+                                    ReviseUnpublishedReportResponse response = service.ReviseUnpublishedReport(
+                                        new ReviseUnpublishedReportRequest(item.ProcedureStepRef));
+                                    item.ProcedureStepRef = response.PublicationStepRef;
+                                    stepForOpeningReport = response.VerificationStepRef;
+                                });
                         }
                         else // (item.StepType == "Transcription")
                         {
@@ -508,7 +522,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                             delegate(IReportingWorkflowService service)
                             {
                                 response = service.CreateAddendum(new CreateAddendumRequest(item.ProcedureStepRef));
-                                item.ProcedureStepRef = response.VerificationStepRef;
+                                item.ProcedureStepRef = response.PublicationStepRef;
                             });
 
                         IFolder myInterpretationFolder = CollectionUtils.SelectFirst<IFolder>(folders,
@@ -529,6 +543,49 @@ namespace ClearCanvas.Ris.Client.Reporting
             }
         }
 
+        [MenuAction("apply", "folderexplorer-items-contextmenu/Publish (testing)")]
+        [ButtonAction("apply", "folderexplorer-items-toolbar/Publish (testing)")]
+        [ClickHandler("apply", "Apply")]
+        [IconSet("apply", IconScheme.Colour, "Icons.AddToolSmall.png", "Icons.AddToolMedium.png", "Icons.AddToolLarge.png")]
+        [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
+        [ExtensionOf(typeof(ReportingWorkflowItemToolExtensionPoint))]
+        public class PublishReportTool : WorkflowItemTool
+        {
+            public PublishReportTool()
+                : base("PublishReport")
+            {
+            }
+
+            protected override bool Execute(ReportingWorklistItem item, IDesktopWindow desktopWindow, IFolder selectedFolder, IEnumerable folders)
+            {
+                Document doc = DocumentManager.Get(item.ProcedureStepRef);
+                if (doc != null)
+                {
+                    doc.Activate();
+                }
+                else
+                {
+                    try
+                    {
+                        PublishReportResponse response = null;
+
+                        Platform.GetService<IReportingWorkflowService>(
+                            delegate(IReportingWorkflowService service)
+                            {
+                                response = service.PublishReport(new PublishReportRequest(item.ProcedureStepRef));
+                                item.ProcedureStepRef = response.PublicationStepRef;
+                            });
+                    }
+                    catch (Exception e)
+                    {
+                        ExceptionHandler.Report(e, desktopWindow);
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+        }
     }
 }
 

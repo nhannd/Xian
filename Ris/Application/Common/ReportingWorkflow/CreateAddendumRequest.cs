@@ -29,9 +29,6 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Enterprise.Common;
 using System.Runtime.Serialization;
 
@@ -40,12 +37,12 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
     [DataContract]
     public class CreateAddendumRequest : DataContractBase
     {
-        public CreateAddendumRequest(EntityRef verificationStepRef)
+        public CreateAddendumRequest(EntityRef publicationStepRef)
         {
-            this.VerificationStepRef = verificationStepRef;
+            this.PublicationStepRef = publicationStepRef;
         }
 
         [DataMember]
-        public EntityRef VerificationStepRef;
+        public EntityRef PublicationStepRef;
     }
 }

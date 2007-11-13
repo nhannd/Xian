@@ -144,11 +144,11 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
         /// Cancel a verification step and create a new interpretation step with the same report part.
         /// This is used by the resident to revise the report that is currently waiting to be verified by radiologist
         /// </summary>
-        /// <param name="request"><see cref="ReviseReportRequest"/></param>
-        /// <returns><see cref="ReviseReportResponse"/></returns>
+        /// <param name="request"><see cref="ReviseResidentReportRequest"/></param>
+        /// <returns><see cref="ReviseResidentReportResponse"/></returns>
         [OperationContract]
         [FaultContract(typeof(ConcurrentModificationException))]
-        ReviseReportResponse ReviseReport(ReviseReportRequest request);
+        ReviseResidentReportResponse ReviseResidentReport(ReviseResidentReportRequest request);
 
         /// <summary>
         /// Start an verification step
@@ -177,6 +177,24 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
         [OperationContract]
         [FaultContract(typeof(ConcurrentModificationException))]
         CreateAddendumResponse CreateAddendum(CreateAddendumRequest request);
+
+        /// <summary>
+        /// Cancel a publication step and create a new verification step with the same report part.
+        /// This is used by the radiologist to revise the report that is still unpublished.
+        /// </summary>
+        /// <param name="request"><see cref="ReviseUnpublishedReportRequest"/></param>
+        /// <returns><see cref="ReviseUnpublishedReportResponse"/></returns>
+        [OperationContract]
+        [FaultContract(typeof(ConcurrentModificationException))]
+        ReviseUnpublishedReportResponse ReviseUnpublishedReport(ReviseUnpublishedReportRequest request);
+
+        /// <summary>
+        /// This provide a mean to complete a publication step.  It is meant for testing only. 
+        /// </summary>
+        /// TODO: to be removed
+        [OperationContract]
+        [FaultContract(typeof(ConcurrentModificationException))]
+        PublishReportResponse PublishReport(PublishReportRequest request);
 
         /// <summary>
         /// Load the report of a given reporting step

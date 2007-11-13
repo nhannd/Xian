@@ -211,6 +211,10 @@
     <Compile Include="RegistrationWorkflow\OrderEntry\ModifyOrderResponse.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\OrderRequisition.cs" />
     <Compile Include="RegistrationWorkflow\ProcedureRequisition.cs" />
+    <Compile Include="ReportingWorkflow\PublishReportRequest.cs" />
+    <Compile Include="ReportingWorkflow\PublishReportResponse.cs" />
+    <Compile Include="ReportingWorkflow\ReviseUnpublishedReportRequest.cs" />
+    <Compile Include="ReportingWorkflow\ReviseUnpublishedReportResponse.cs" />
     <Compile Include="RequestedProcedureTypeGroupSummary.cs" />
     <Compile Include="Admin\StaffAdmin\StaffTextQueryRequest.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\ListOrderableProcedureTypesRequest.cs" />
@@ -479,8 +483,8 @@
     <Compile Include="ReportingWorkflow\LoadWorklistPreviewResponse.cs" />
     <Compile Include="ReportingWorkflow\ReportPartSummary.cs" />
     <Compile Include="ReportingWorkflow\ReportSummary.cs" />
-    <Compile Include="ReportingWorkflow\ReviseReportRequest.cs" />
-    <Compile Include="ReportingWorkflow\ReviseReportResponse.cs" />
+    <Compile Include="ReportingWorkflow\ReviseResidentReportRequest.cs" />
+    <Compile Include="ReportingWorkflow\ReviseResidentReportResponse.cs" />
     <Compile Include="ReportingWorkflow\SaveReportRequest.cs" />
     <Compile Include="ReportingWorkflow\SaveReportResponse.cs" />
     <Compile Include="ReportingWorkflow\SearchRequest.cs" />

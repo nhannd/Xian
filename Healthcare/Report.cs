@@ -34,6 +34,7 @@ using System.Collections;
 using System.Text;
 
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Healthcare {
 
@@ -84,32 +85,47 @@ namespace ClearCanvas.Healthcare {
             }
             part.Report = this;
             this.Parts.Add(part);
+
+            UpdateStatus();
+        }
+
+        public bool HasAddendum
+        {
+            get { return _parts != null && _parts.Count > 0; }
         }
 
         public virtual ReportPart AddPart(string reportPartContent)
         {
-            ReportPart part = new ReportPart(this.Parts.Count, reportPartContent, ReportPartStatus.P, null, null, null, null, this);
+            ReportPart part = new ReportPart(_parts.Count, reportPartContent, ReportPartStatus.P, null, null, null, null, this);
             this.AddPart(part);
             return part;
         }
 
-        public virtual void Finalized()
+        /// <summary>
+        /// Called by this report or by a child report part to tell this report to update its status.
+        /// </summary>
+        protected internal virtual void UpdateStatus()
         {
-            if (this.Status == ReportStatus.P)
-                this.Status = ReportStatus.F;
+            // if all report parts are cancelled, the report is cancelled
+            if (CollectionUtils.TrueForAll<ReportPart>(_parts,
+                delegate(ReportPart part) { return part.Status == ReportPartStatus.X; }))
+            {
+                _status = ReportStatus.X;
+            }
             else
-                throw new HealthcareWorkflowException("Only reports in the preliminary status can be finalized");
-        
-        }
-
-        public virtual void Corrected()
-        {
-            this.Status = ReportStatus.C;
-        }
-
-        public virtual void Cancelled()
-        {
-            this.Status = ReportStatus.X;
+            // if the report contains any report parts that is still preliminary, the report is prelimiinary
+            if (CollectionUtils.Contains<ReportPart>(_parts,
+               delegate(ReportPart part) { return part.Status == ReportPartStatus.P; }))
+            {
+                _status = ReportStatus.P;
+            }
+            else
+            {
+                if (HasAddendum)
+                    _status = ReportStatus.C;
+                else
+                    _status = ReportStatus.F;
+            }
         }
     }
 }
