@@ -352,7 +352,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 				}
 				else
 				{
-					if (_selectedImageBox.TopLeftPresentationImageIndex == _selectedImageBox.DisplaySet.PresentationImages.Count - 1)
+					if (_selectedImageBox.TopLeftPresentationImageIndex == _selectedImageBox.DisplaySet.PresentationImages.Count - _selectedImageBox.Tiles.Count)
 					{
 						_selectedImageBox.TopLeftPresentationImageIndex = 0;
 					}
