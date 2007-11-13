@@ -286,7 +286,7 @@ namespace ClearCanvas.Dicom
         #endregion
     } 
 
-    internal static class DicomUids
+    public static class DicomUids
     {
         public static Dictionary<string, DicomUid> Entries = new Dictionary<string, DicomUid>();
 
