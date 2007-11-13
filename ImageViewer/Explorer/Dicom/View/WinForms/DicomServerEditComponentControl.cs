@@ -81,22 +81,26 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			if (e.DesiredType != typeof(string))
 				return;
 
-			e.Value = e.Value.ToString();
+			if (e.Value == null)
+				e.Value = "";
+			else 
+				e.Value = e.Value.ToString();
 		}
 
 		void OnPortBindingParse(object sender, ConvertEventArgs e)
 		{
-			if (e.DesiredType != typeof(int))
+			if (e.DesiredType != typeof(int?))
 				return;
 
 			int value;
 			if (!int.TryParse((string)e.Value, out value))
 			{
-				 value = _component.ServerPort;
-				_port.Text = value.ToString();
+				e.Value = null;
 			}
-
-			e.Value = value;
+			else
+			{
+				e.Value = value;
+			}
 		}
 
     	public event EventHandler AcceptClicked

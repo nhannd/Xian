@@ -63,7 +63,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		private string _serverLocation;
 		private string _serverAE;
 		private string _serverHost;
-		private int _serverPort;
+		private int? _serverPort;
 
 		#endregion
 
@@ -147,7 +147,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			}
 		}
 
-		public int ServerPort
+		public int? ServerPort
 		{
 			get { return _serverPort; }
 			set
@@ -165,7 +165,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		private void UpdateAcceptEnabled()
 		{
-			if (String.IsNullOrEmpty(_serverHost) || String.IsNullOrEmpty(_serverAE) || String.IsNullOrEmpty(_serverName))
+			if (String.IsNullOrEmpty(_serverHost) || String.IsNullOrEmpty(_serverAE) || String.IsNullOrEmpty(_serverName) || _serverPort == null)
 				this.AcceptEnabled = false;
 			else 
 				this.AcceptEnabled = true;
@@ -179,7 +179,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				return;
 			}
 
-			Server newServer = new Server(_serverName, _serverLocation, _serverHost, _serverAE, _serverPort);
+			Server newServer = new Server(_serverName, _serverLocation, _serverHost, _serverAE, (int)_serverPort);
 
 			// edit current server
 			if (_serverTree.CurrentNode.IsServer)
@@ -212,7 +212,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				return SR.MessageHostNameCannotBeEmpty;
 			if (String.IsNullOrEmpty(_serverAE) || _serverAE.Length > 16 || _serverAE.Contains(" "))
 				return SR.MessageServerAEInvalid;
-			if (_serverPort < MinimumPort || _serverPort > MaximumPort)
+			if (_serverPort == null || (int)_serverPort < MinimumPort || (int)_serverPort > MaximumPort)
 				return SR.MessagePortInvalid;
 
 			return null;
@@ -230,9 +230,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			bool isConflicted;
 			string conflictingServerPath;
 			if (_serverTree.CurrentNode.IsServer)
-				isConflicted = _serverTree.CanEditCurrentServer(_serverName, _serverAE, _serverHost, _serverPort, out conflictingServerPath);
+				isConflicted = _serverTree.CanEditCurrentServer(_serverName, _serverAE, _serverHost, (int)_serverPort, out conflictingServerPath);
 			else
-				isConflicted = _serverTree.CanAddServerToCurrentGroup(_serverName, _serverAE, _serverHost, _serverPort, out conflictingServerPath);
+				isConflicted = _serverTree.CanAddServerToCurrentGroup(_serverName, _serverAE, _serverHost, (int)_serverPort, out conflictingServerPath);
 
 			if (isConflicted)
 			{
