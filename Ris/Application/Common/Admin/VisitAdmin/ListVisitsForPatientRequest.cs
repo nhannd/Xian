@@ -29,9 +29,7 @@
 
 #endregion
 
-using System;
 using System.Runtime.Serialization;
-
 using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common.Admin.VisitAdmin
@@ -39,12 +37,12 @@ namespace ClearCanvas.Ris.Application.Common.Admin.VisitAdmin
     [DataContract]
     public class ListVisitsForPatientRequest : DataContractBase
     {
-        public ListVisitsForPatientRequest(EntityRef patientProfileRef)
+        public ListVisitsForPatientRequest(EntityRef patientRef)
         {
-            this.PatientProfile = patientProfileRef;
+            this.PatientRef = patientRef;
         }
 
         [DataMember]
-        public EntityRef PatientProfile;
+        public EntityRef PatientRef;
     }
 }

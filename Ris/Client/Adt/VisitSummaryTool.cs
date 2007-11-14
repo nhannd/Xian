@@ -38,14 +38,14 @@ using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
+using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
-    [MenuAction("apply", "global-menus/Patient/Visit Summary")]
-    //[ButtonAction("apply", "global-toolbars/Patient/Visit Summary")]
+    [MenuAction("apply", "global-menus/Patient/Visit Summary", "ShowVisits")]
+    //[ButtonAction("apply", "global-toolbars/Patient/Visit Summary", "ShowVisits")]
     [Tooltip("apply", "Visit Summary")]
     [IconSet("apply", IconScheme.Colour, "Icons.VisitSummaryToolSmall.png", "Icons.VisitSummaryToolMedium.png", "Icons.VisitSummaryToolLarge.png")]
-    [ClickHandler("apply", "ShowVisits")]
     [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
 
     [ExtensionOf(typeof(PatientBiographyToolExtensionPoint))]
@@ -61,13 +61,13 @@ namespace ClearCanvas.Ris.Client.Adt
             if (this.ContextBase is IRegistrationWorkflowItemToolContext)
             {
                 _enabled = false;   // disable by default
-                ((IRegistrationWorkflowItemToolContext)this.ContextBase).SelectedItemsChanged += delegate(object sender, EventArgs args)
+                ((IRegistrationWorkflowItemToolContext)this.ContextBase).SelectedItemsChanged += delegate
                 {
                     this.Enabled = (((IRegistrationWorkflowItemToolContext)this.ContextBase).SelectedItems != null
                         && ((IRegistrationWorkflowItemToolContext)this.ContextBase).SelectedItems.Count == 1);
                 };
             }
-            else
+            else if (this.ContextBase is IPatientBiographyToolContext)
             {
                 _enabled = true;    // always enabled
             }
@@ -102,26 +102,30 @@ namespace ClearCanvas.Ris.Client.Adt
             {
                 IRegistrationWorkflowItemToolContext context = (IRegistrationWorkflowItemToolContext)this.ContextBase;
                 RegistrationWorklistItem item = CollectionUtils.FirstElement<RegistrationWorklistItem>(context.SelectedItems);
-                ShowVisitSummaryDialog(item.PatientProfileRef, context.DesktopWindow);
+
+                string title = string.Format(SR.TitleVisitSummaryComponent,
+                    PersonNameFormat.Format(item.Name),
+                    MrnFormat.Format(item.Mrn));
+
+                ShowVisitSummaryDialog(item.PatientProfileRef, title, context.DesktopWindow);
             }
-            else
+            else if (this.ContextBase is IPatientBiographyToolContext)
             {
                 IPatientBiographyToolContext context = (IPatientBiographyToolContext)this.ContextBase;
-                ShowVisitSummaryDialog(context.PatientProfileRef, context.DesktopWindow);
+                ShowVisitSummaryDialog(context.PatientProfileRef, SR.TitlePatientVisits, context.DesktopWindow);
             }
         }
 
-        private void ShowVisitSummaryDialog(EntityRef patientProfileRef, IDesktopWindow desktopWindow)
+        private static void ShowVisitSummaryDialog(EntityRef patientRef, string title, IDesktopWindow desktopWindow)
         {
             try
             {
-                VisitSummaryComponent component = new VisitSummaryComponent(patientProfileRef);
+                VisitSummaryComponent component = new VisitSummaryComponent(patientRef);
                 ApplicationComponent.LaunchAsWorkspace(
                     desktopWindow,
                     component,
-                    SR.TitlePatientVisits,
+                    title,
                     null);
-
             }
             catch (Exception e)
             {

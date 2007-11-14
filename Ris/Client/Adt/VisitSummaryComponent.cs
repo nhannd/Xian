@@ -37,10 +37,8 @@ using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Ris.Client;
 using ClearCanvas.Ris.Application.Common.Admin.VisitAdmin;
-using ClearCanvas.Ris.Application.Common.Admin.PatientAdmin;
-using ClearCanvas.Ris.Client.Formatting;
+using ClearCanvas.Ris.Client;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -58,33 +56,20 @@ namespace ClearCanvas.Ris.Client.Adt
     [AssociateView(typeof(VisitSummaryComponentViewExtensionPoint))]
     public class VisitSummaryComponent : ApplicationComponent
     {
-        private EntityRef _patientRef;
-        private EntityRef _patientProfileRef;
+        private readonly EntityRef _patientRef;
 
         private VisitSummaryTable _visitTable;
         private VisitSummary _currentVisitSelection;
 
         private CrudActionModel _visitActionHandler;
 
-        public VisitSummaryComponent(EntityRef patientProfileRef)
+        public VisitSummaryComponent(EntityRef patientRef)
         {
-            _patientProfileRef = patientProfileRef;
+            _patientRef = patientRef;
         }
 
         public override void Start()
         {
-            Platform.GetService<IPatientAdminService>(
-                delegate(IPatientAdminService service)
-                {
-                    LoadPatientProfileForAdminEditResponse response = service.LoadPatientProfileForAdminEdit(new LoadPatientProfileForAdminEditRequest(_patientProfileRef));
-                    _patientRef = response.PatientRef;
-                    _patientProfileRef = response.PatientProfileRef;
-
-                    this.Host.SetTitle(string.Format(SR.TitleVisitSummaryComponent,
-                        PersonNameFormat.Format(response.PatientDetail.Name), 
-                        MrnFormat.Format(response.PatientDetail.Mrn)));                    
-                });
-
             _visitTable = new VisitSummaryTable();
 
             _visitActionHandler = new CrudActionModel();
@@ -96,11 +81,6 @@ namespace ClearCanvas.Ris.Client.Adt
             LoadVisitsTable();
 
             base.Start();
-        }
-
-        public override void Stop()
-        {
-            base.Stop();
         }
 
         public ITable Visits
@@ -148,7 +128,7 @@ namespace ClearCanvas.Ris.Client.Adt
             try
             {
                 VisitEditorComponent editor = new VisitEditorComponent(_patientRef);
-                ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleAddVisit);
+                ApplicationComponentExitCode exitCode = LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleAddVisit);
                 if (exitCode == ApplicationComponentExitCode.Accepted)
                 {
                     LoadVisitsTable();
@@ -168,7 +148,7 @@ namespace ClearCanvas.Ris.Client.Adt
             try
             {
                 VisitEditorComponent editor = new VisitEditorComponent(_patientRef, _currentVisitSelection.VisitRef);
-                ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleUpdateVisit);
+                ApplicationComponentExitCode exitCode = LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleUpdateVisit);
                 if (exitCode == ApplicationComponentExitCode.Accepted)
                 {
                     LoadVisitsTable();
@@ -197,13 +177,16 @@ namespace ClearCanvas.Ris.Client.Adt
             Platform.GetService<IVisitAdminService>(
                 delegate(IVisitAdminService service)
                 {
-                    ListVisitsForPatientResponse response = service.ListVisitsForPatient(new ListVisitsForPatientRequest(_patientProfileRef));
+                    ListVisitsForPatientResponse response = service.ListVisitsForPatient(new ListVisitsForPatientRequest(_patientRef));
                     _visitTable.Items.AddRange(response.Visits);
                 });
         }
 
         public void Close()
         {
+            if (this.Modified)
+                this.ExitCode = ApplicationComponentExitCode.Accepted;
+
             Host.Exit();
         }
     }

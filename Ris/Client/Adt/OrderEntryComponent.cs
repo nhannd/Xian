@@ -174,7 +174,7 @@ namespace ClearCanvas.Ris.Client.Adt
         /// <summary>
         /// Constructor for creating a new order with attachments.
         /// </summary>
-        public OrderEntryComponent(EntityRef patientRef, IList<OrderAttachmentSummary> attachments)
+        public OrderEntryComponent(EntityRef patientRef, IEnumerable<OrderAttachmentSummary> attachments)
             : this(patientRef, null, Mode.NewOrder)
         {
             _attachmentTable.Items.AddRange(attachments);
@@ -369,6 +369,26 @@ namespace ClearCanvas.Ris.Client.Adt
                 visitType,
                 Format.DateTime(v.AdmitDateTime)
                 );
+        }
+
+        public void ShowVisitSummary()
+        {
+            VisitSummaryComponent component = new VisitSummaryComponent(_patientRef);
+            if (ApplicationComponentExitCode.Accepted == 
+                LaunchAsDialog(
+                    this.Host.DesktopWindow,
+                    component,
+                    SR.TitlePatientVisits))
+            {
+                Platform.GetService<IOrderEntryService>(
+                    delegate(IOrderEntryService service)
+                        {
+                            ListActiveVisitsForPatientResponse response =
+                                service.ListActiveVisitsForPatient(new ListActiveVisitsForPatientRequest(_patientRef));
+                            _activeVisits = response.Visits;
+                        });
+            }
+           
         }
 
         public ILookupHandler DiagnosticServiceLookupHandler

@@ -158,5 +158,10 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         {
             _component.ApplySchedulingToProcedures();
         }
+
+        private void _visitSummaryButton_Click(object sender, EventArgs e)
+        {
+            _component.ShowVisitSummary();
+        }
     }
 }

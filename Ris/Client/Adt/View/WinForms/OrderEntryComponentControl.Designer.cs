@@ -59,7 +59,9 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(OrderEntryComponentControl));
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this._visitSummaryButton = new System.Windows.Forms.Button();
             this._applySchedulingButton = new System.Windows.Forms.Button();
             this._schedulingRequestTime = new ClearCanvas.Desktop.View.WinForms.DateTimeField();
             this._schedulingRequestDate = new ClearCanvas.Desktop.View.WinForms.DateTimeField();
@@ -112,6 +114,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // 
             // splitContainer1.Panel1
             // 
+            this.splitContainer1.Panel1.Controls.Add(this._visitSummaryButton);
             this.splitContainer1.Panel1.Controls.Add(this._applySchedulingButton);
             this.splitContainer1.Panel1.Controls.Add(this._schedulingRequestTime);
             this.splitContainer1.Panel1.Controls.Add(this._schedulingRequestDate);
@@ -131,6 +134,16 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.splitContainer1.SplitterDistance = 501;
             this.splitContainer1.SplitterWidth = 3;
             this.splitContainer1.TabIndex = 26;
+            // 
+            // _visitSearchButton
+            // 
+            this._visitSummaryButton.Image = ((System.Drawing.Image)(resources.GetObject("_visitSearchButton.Image")));
+            this._visitSummaryButton.Location = new System.Drawing.Point(463, 289);
+            this._visitSummaryButton.Name = "_visitSearchButton";
+            this._visitSummaryButton.Size = new System.Drawing.Size(24, 24);
+            this._visitSummaryButton.TabIndex = 11;
+            this._visitSummaryButton.UseVisualStyleBackColor = true;
+            this._visitSummaryButton.Click += new System.EventHandler(this._visitSummaryButton_Click);
             // 
             // _applySchedulingButton
             // 
@@ -193,7 +206,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._visit.Location = new System.Drawing.Point(4, 272);
             this._visit.Margin = new System.Windows.Forms.Padding(2);
             this._visit.Name = "_visit";
-            this._visit.Size = new System.Drawing.Size(489, 41);
+            this._visit.Size = new System.Drawing.Size(460, 41);
             this._visit.TabIndex = 6;
             this._visit.Value = null;
             // 
@@ -537,6 +550,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Button _applySchedulingButton;
         private System.Windows.Forms.SplitContainer _documentSplitContainer;
+        private System.Windows.Forms.Button _visitSummaryButton;
 
     }
 }

@@ -94,8 +94,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.VisitAdmin
         [ReadOperation]
         public ListVisitsForPatientResponse ListVisitsForPatient(ListVisitsForPatientRequest request)
         {
-            PatientProfile profile = PersistenceContext.Load<PatientProfile>(request.PatientProfile);
-            Patient patient = profile.Patient;
+            Patient patient = PersistenceContext.Load<Patient>(request.PatientRef);
 
             VisitSearchCriteria criteria = new VisitSearchCriteria();
             criteria.Patient.EqualTo(patient);
