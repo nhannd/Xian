@@ -135,6 +135,8 @@
 //			                });
 //			            activeOrders = activeOrders.concat(notScheduledOrders);
 
+						var currentAccession = Ris.getWorklistItem().AccessionNumber;
+
                         if (activeOrders.length == 0)
                         {
                             Field.show($("activeOrdersTable"), false);
@@ -142,6 +144,13 @@
                         else
                         {
                             var activeOrdersTable = createOrdersTable($("activeOrdersTable"));
+							
+                            activeOrdersTable.renderRow = function(sender, args)
+                            {
+                                if(args.item.AccessionNumber == currentAccession)
+                                    args.htmlRow.className = "highlight";
+                            };
+
 	                        activeOrdersTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
                             activeOrdersTable.bindItems(activeOrders);
     	                }
@@ -153,6 +162,13 @@
                         else
                         {
                             var pastOrdersTable = createOrdersTable($("pastOrdersTable"));
+							
+                            pastOrdersTable.renderRow = function(sender, args)
+                            {
+                                if(args.item.AccessionNumber == currentAccession)
+                                    args.htmlRow.className = "highlight";
+                            };
+
 	                        pastOrdersTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
                             pastOrdersTable.bindItems(pastOrders);
     	                }
