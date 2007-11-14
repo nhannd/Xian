@@ -28,6 +28,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LookupField));
             this._findButton = new System.Windows.Forms.Button();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this._inputField = new ClearCanvas.Desktop.View.WinForms.SuggestComboField();
@@ -38,12 +39,12 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             // 
             // _findButton
             // 
+            this._findButton.Image = ((System.Drawing.Image)(resources.GetObject("_findButton.Image")));
             this._findButton.Location = new System.Drawing.Point(0, 16);
             this._findButton.Margin = new System.Windows.Forms.Padding(0, 2, 2, 2);
             this._findButton.Name = "_findButton";
-            this._findButton.Size = new System.Drawing.Size(24, 19);
+            this._findButton.Size = new System.Drawing.Size(24, 24);
             this._findButton.TabIndex = 1;
-            this._findButton.Text = "...";
             this._findButton.UseVisualStyleBackColor = true;
             this._findButton.Click += new System.EventHandler(this._findButton_Click);
             // 
@@ -57,7 +58,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this.tableLayoutPanel1.Controls.Add(this._inputField, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.panel1, 1, 0);
             this.tableLayoutPanel1.Location = new System.Drawing.Point(2, 2);
-            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(2);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 1;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
@@ -91,7 +92,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.tableLayoutPanel1);
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "LookupField";
             this.Size = new System.Drawing.Size(176, 48);
             this.tableLayoutPanel1.ResumeLayout(false);
