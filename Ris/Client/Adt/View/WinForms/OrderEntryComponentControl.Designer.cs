@@ -444,7 +444,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._documentTableView.ReadOnly = false;
             this._documentTableView.Size = new System.Drawing.Size(480, 162);
             this._documentTableView.TabIndex = 37;
-            this._documentTableView.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this._documentTableView.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.ImageAndText;
             // 
             // _documentBrowser
             // 

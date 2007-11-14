@@ -17,9 +17,12 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             InitializeComponent();
             _component = component;
 
-            _splitContainer.Panel1Collapsed = _component.HideSummary;
+            _splitContainer.Panel1Collapsed = _component.ShowSummary == false;
+            _attachments.ShowToolbar = _component.ShowToolbar;
 
             _attachments.Table = _component.Attachments;
+            _attachments.MenuModel = _component.AttachmentActionModel;
+            _attachments.ToolbarModel = _component.AttachmentActionModel;
             _attachments.DataBindings.Add("Selection", _component, "Selection", true, DataSourceUpdateMode.OnPropertyChanged);
 
             RefreshPreview();

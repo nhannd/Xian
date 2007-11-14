@@ -31,14 +31,14 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Desktop;
-using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Validation;
-using ClearCanvas.Ris.Client;
+using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.PatientAdmin;
+using ClearCanvas.Ris.Client;
 using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client.Adt
@@ -48,8 +48,8 @@ namespace ClearCanvas.Ris.Client.Adt
         private EntityRef _patientRef;
         private EntityRef _profileRef;
         private PatientProfileDetail _profile;
-        private bool _isNew;
-        private List<PatientAttachmentSummary> _newAttachments;
+        private readonly bool _isNew;
+        private readonly List<PatientAttachmentSummary> _newAttachments;
 
         private PatientProfileDetailsEditorComponent _patientEditor;
         private AddressesSummaryComponent _addressesSummary;
@@ -116,7 +116,7 @@ namespace ClearCanvas.Ris.Client.Adt
                     this.Pages.Add(new NavigatorPage("Patient/Contact Persons", _contactPersonsSummary = new ContactPersonsSummaryComponent(formData.ContactPersonTypeChoices, formData.ContactPersonRelationshipChoices)));
                     this.Pages.Add(new NavigatorPage("Patient/Additional Info", _additionalPatientInfoSummary = new PatientProfileAdditionalInfoEditorComponent(formData.ReligionChoices, formData.PrimaryLanguageChoices)));
                     this.Pages.Add(new NavigatorPage("Patient/Notes", _notesSummary = new NoteSummaryComponent(formData.NoteCategoryChoices)));
-                    this.Pages.Add(new NavigatorPage("Patient/Documents", _documentSummary = new MimeDocumentPreviewComponent()));
+                    this.Pages.Add(new NavigatorPage("Patient/Documents", _documentSummary = new MimeDocumentPreviewComponent(true, true)));
                     this.ValidationStrategy = new AllNodesContainerValidationStrategy();
 
                     if (_isNew)
@@ -138,8 +138,8 @@ namespace ClearCanvas.Ris.Client.Adt
                         _profileRef = response.PatientProfileRef;
                         _profile = response.PatientDetail;
 
-                        this.Host.SetTitle(
-                            string.Format(SR.TitlePatientComponent, PersonNameFormat.Format(_profile.Name), MrnFormat.Format(_profile.Mrn)));
+                        this.Host.Title = 
+                            string.Format(SR.TitlePatientComponent, PersonNameFormat.Format(_profile.Name), MrnFormat.Format(_profile.Mrn));
                     }
                 });
 
@@ -153,11 +153,6 @@ namespace ClearCanvas.Ris.Client.Adt
             _documentSummary.PatientAttachments = _profile.Attachments;
 
             base.Start();
-        }
-
-        public override void Stop()
-        {
-            base.Stop();
         }
 
         public override void Accept()
@@ -176,18 +171,13 @@ namespace ClearCanvas.Ris.Client.Adt
                 catch (Exception e)
                 {
                     ExceptionHandler.Report(e, SR.ExceptionFailedToSave, this.Host.DesktopWindow, 
-                        delegate()
+                        delegate
                         {
                             this.ExitCode = ApplicationComponentExitCode.Error;
                             this.Host.Exit();                            
                         });
                 }
             }
-        }
-
-        public override void Cancel()
-        {
-            base.Cancel();
         }
 
         private void SaveChanges()
@@ -213,6 +203,7 @@ namespace ClearCanvas.Ris.Client.Adt
                     }
                 });
 
+            _documentSummary.SaveChanges();
         }
 
     }

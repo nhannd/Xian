@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Common;
@@ -37,14 +38,14 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tables;
+using ClearCanvas.Desktop.Tools;
+using ClearCanvas.Desktop.Validation;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Ris.Application.Common.MimeDocumentService;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 using ClearCanvas.Ris.Client.Formatting;
-using System.Collections;
-using ClearCanvas.Desktop.Validation;
-using ClearCanvas.Ris.Application.Common.MimeDocumentService;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -53,6 +54,11 @@ namespace ClearCanvas.Ris.Client.Adt
     /// </summary>
     [ExtensionPoint]
     public class OrderEntryComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+    {
+    }
+
+    [ExtensionPoint]
+    public class OrderEntryAttachmentToolExtensionPoint : ExtensionPoint<ITool>
     {
     }
 
@@ -67,6 +73,47 @@ namespace ClearCanvas.Ris.Client.Adt
             NewOrder,
             ModifyOrder,
             ReplaceOrder
+        }
+
+        class OrderEntryAttachmentToolContext : ToolContext, IMimeDocumentToolContext
+        {
+            private readonly OrderEntryComponent _component;
+
+            internal OrderEntryAttachmentToolContext(OrderEntryComponent component)
+            {
+                _component = component;
+            }
+
+            #region IMimeDocumentToolContext Members
+
+            public event EventHandler SelectedDocumentChanged
+            {
+                add { _component.SelectedAttachmentChanged += value; }
+                remove { _component.SelectedAttachmentChanged -= value; }
+            }
+
+            public EntityRef SelectedDocumentRef
+            {
+                get { return ((OrderAttachmentSummary) _component.SelectedAttachment.Item).Document.DocumentRef; }
+            }
+
+            public void RemoveSelectedDocument()
+            {
+                _component.RemoveSelectedAttachment();
+            }
+
+            public event EventHandler ChangeCommitted
+            {
+                add { _component.ChangeCommitted += value; }
+                remove { _component.ChangeCommitted -= value; }
+            }
+
+            public IDesktopWindow DesktopWindow
+            {
+                get { return _component.Host.DesktopWindow; }
+            }
+
+            #endregion
         }
 
         private readonly Mode _mode;
@@ -109,8 +156,12 @@ namespace ClearCanvas.Ris.Client.Adt
 
         private readonly OrderAttachmentTable _attachmentTable = new OrderAttachmentTable();
         private OrderAttachmentSummary _selectedAttachment;
+        private event EventHandler _selectedAttachmentChanged;
         private string _tempAttachmentFileName;
-        private event EventHandler _attachmentSelectionChanged;
+
+        private event EventHandler _changeCommitted;
+
+        private ToolSet _attachmentToolSet;
 
         /// <summary>
         /// Constructor for creating a new order.
@@ -241,7 +292,15 @@ namespace ClearCanvas.Ris.Client.Adt
                     });
             }
 
+            _attachmentToolSet = new ToolSet(new OrderEntryAttachmentToolExtensionPoint(), new OrderEntryAttachmentToolContext(this));
+
             base.Start();
+        }
+
+        public override void Stop()
+        {
+            _attachmentToolSet.Dispose();
+            base.Stop();
         }
 
         #region Presentation Model
@@ -660,7 +719,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
             _attachmentTable.Items.AddRange(existingOrder.Attachments);
         }
-
+        
         private bool SubmitOrder()
         {
             OrderRequisition requisition = BuildOrderRequisition();
@@ -688,6 +747,8 @@ namespace ClearCanvas.Ris.Client.Adt
                         }
                     });
 
+                EventsHelper.Fire(_changeCommitted, this, EventArgs.Empty);
+
                 return true;
             }
             catch (Exception e)
@@ -706,6 +767,16 @@ namespace ClearCanvas.Ris.Client.Adt
         public ITable Attachments
         {
             get { return _attachmentTable; }
+        }
+
+        public ActionModelRoot AttachmentActionModel
+        {
+            get { return ActionModelRoot.CreateModel(this.GetType().FullName, "orderentry-items-tools", _attachmentToolSet.Actions); }
+        }
+
+        public override IActionSet ExportedActions
+        {
+            get { return _attachmentToolSet.Actions; }
         }
 
         public ISelection SelectedAttachment
@@ -728,10 +799,24 @@ namespace ClearCanvas.Ris.Client.Adt
             }
         }
 
-        public event EventHandler AttachmentSelectionChanged
+        public event EventHandler SelectedAttachmentChanged
         {
-            add { _attachmentSelectionChanged += value; }
-            remove { _attachmentSelectionChanged -= value; }
+            add { _selectedAttachmentChanged += value; }
+            remove { _selectedAttachmentChanged -= value; }
+        }
+
+        public event EventHandler ChangeCommitted
+        {
+            add { _changeCommitted += value; }
+            remove { _changeCommitted -= value; }
+        }
+
+        public void RemoveSelectedAttachment()
+        {
+            if (_selectedAttachment == null)
+                return;
+
+            _attachmentTable.Items.Remove(_selectedAttachment);
         }
 
         public string TempFileName
@@ -775,7 +860,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 }
             }
 
-            EventsHelper.Fire(_attachmentSelectionChanged, this, EventArgs.Empty);
+            EventsHelper.Fire(_selectedAttachmentChanged, this, EventArgs.Empty);
         }
 
         private static byte[] RetrieveAttachmentData(EntityRef dataRef)

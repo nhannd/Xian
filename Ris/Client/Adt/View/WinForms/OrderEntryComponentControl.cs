@@ -107,9 +107,11 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             _reorderReason.DataBindings.Add("Visible", _component, "IsCancelReasonVisible");
 
             _documentTableView.Table = _component.Attachments;
+            _documentTableView.MenuModel = _component.AttachmentActionModel;
+            _documentTableView.ToolbarModel = _component.AttachmentActionModel;
             _documentTableView.DataBindings.Add("Selection", _component, "SelectedAttachment", true, DataSourceUpdateMode.OnPropertyChanged);
             RefreshAttachmentPreview();
-            _component.AttachmentSelectionChanged += _component_AttachmentSelectionChanged;
+            _component.SelectedAttachmentChanged += _component_AttachmentSelectionChanged;
  
         }
 
