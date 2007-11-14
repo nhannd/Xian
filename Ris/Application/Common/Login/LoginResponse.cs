@@ -40,10 +40,18 @@ namespace ClearCanvas.Ris.Application.Common.Login
     [DataContract]
     public class LoginResponse : DataContractBase
     {
-        public LoginResponse(string[] userAuthorityTokens)
+        public LoginResponse(string[] userAuthorityTokens, PersonNameDetail fullName)
         {
             this.UserAuthorityTokens = userAuthorityTokens;
+            this.FullName = fullName;
         }
+
+        /// <summary>
+        /// Full name information for the logged-in user. May be null
+        /// if the user is not associated with a RIS staff person.
+        /// </summary>
+        [DataMember]
+        public PersonNameDetail FullName;
 
         /// <summary>
         /// Set of authority tokens granted to the user

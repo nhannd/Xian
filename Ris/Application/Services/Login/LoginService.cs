@@ -32,11 +32,15 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
+using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Ris.Application.Common.Login;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 using System.ServiceModel;
 using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Healthcare;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Application.Services.Login
 {
@@ -49,15 +53,34 @@ namespace ClearCanvas.Ris.Application.Services.Login
         [ReadOperation]
         public LoginResponse Login(LoginRequest request)
         {
-            string[] authorityTokens = null;
+            // if we get to this point, the user's credentials have been validated and login was successful
 
+            // obtain the set of authority tokens for the user
+            string[] authorityTokens = null;
             Platform.GetService<IAuthenticationService>(
                 delegate(IAuthenticationService service)
                 {
                     authorityTokens = service.ListAuthorityTokensForUser(ServiceSecurityContext.Current.PrimaryIdentity.Name);
                 });
 
-            return new LoginResponse(authorityTokens);
+            // obtain full name information for the user
+            PersonNameDetail fullName = null;
+            try 
+	        {	
+                Staff staff = PersistenceContext.GetBroker<IStaffBroker>().FindStaffForUser(Thread.CurrentPrincipal.Identity.Name);
+                if(staff != null)
+                {
+                    PersonNameAssembler nameAssembler = new PersonNameAssembler();
+                    fullName = nameAssembler.CreatePersonNameDetail(staff.Name);
+                }
+
+	        }
+	        catch (EntityNotFoundException)
+	        {
+                // no staff associated to user - can't return full name details to client
+	        }
+
+            return new LoginResponse(authorityTokens, fullName);
         }
 
         #endregion

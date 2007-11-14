@@ -36,6 +36,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Ris.Application.Common.Login;
 using System.Threading;
 using System.Security.Principal;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -67,11 +68,14 @@ namespace ClearCanvas.Ris.Client
                     // the set of authority tokens for this user
                     Thread.CurrentPrincipal = new GenericPrincipal(
                         new GenericIdentity(userName), response.UserAuthorityTokens);
+
+                    _current.FullName = response.FullName;
                 });
         }
 
-        private string _userName;
-        private string _password;
+        private readonly string _userName;
+        private readonly string _password;
+        private PersonNameDetail _fullName;
 
         private LoginSession(string userName, string password)
         {
@@ -88,5 +92,13 @@ namespace ClearCanvas.Ris.Client
         {
             get { return _password; }
         }
+
+        internal PersonNameDetail FullName
+        {
+            get { return _fullName; }
+            private set { _fullName = value; }
+        }
+
+
     }
 }
