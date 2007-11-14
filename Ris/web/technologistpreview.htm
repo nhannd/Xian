@@ -53,9 +53,12 @@
 		                patientName = Ris.formatPersonName(patientProfile.Name);
 		                Field.setValue($("name"), patientName);
 			            Field.setValue($("mrn"), Ris.formatMrn(patientProfile.Mrn));
+						Field.setValue($("age"), getPatientAge(patientProfile.DateOfBirth, patientProfile.DeathIndicator, patientProfile.TimeOfDeath));
 			            Field.setValue($("sex"), patientProfile.Sex.Value);					
 			            Field.setValue($("dateOfBirth"), Ris.formatDate(patientProfile.DateOfBirth));
 			            Field.setValue($("healthcard"), Ris.formatHealthcard(patientProfile.Healthcard));
+			            Field.setValue($("currentHomePhone"), Ris.formatTelephone(patientProfile.CurrentHomePhone));
+			            Field.setValue($("currentHomeAddress"), Ris.formatAddress(patientProfile.CurrentHomeAddress));
 		            }
 
                     // update patient alerts
