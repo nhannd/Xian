@@ -56,6 +56,7 @@ namespace ClearCanvas.ImageViewer
 
 		private readonly IPresentationImage _presentationImage;
 		private readonly IImageOperation _operation;
+		private bool _applyToAllImageSets;
 
 		/// <summary>
 		/// Constructor.
@@ -69,7 +70,31 @@ namespace ClearCanvas.ImageViewer
 
 			_presentationImage = presentationImage;
 			_operation = operation;
+			_applyToAllImageSets = false;
 		}
+
+		/// <summary>
+		/// Gets or sets whether the operation should be applied to all <see cref="IImageSet"/>s.
+		/// </summary>
+		/// <remarks>
+		/// <para>
+		/// When this value is true, the operation will be applied to all <see cref="IImageSet"/>s with linked <see cref="IDisplaySet"/>s.  
+		/// When false, the operation will only be applied to the current <see cref="IImageSet"/>'s linked <see cref="IDisplaySet"/>s 
+		/// (determined from the current <see cref="IPresentationImage"/>).
+		/// </para>
+		/// <para>
+		/// When the current <see cref="IDisplaySet"/> is not linked, the operation is only applied to the current <see cref="IDisplaySet"/>.
+		/// </para>
+		/// <para>
+		/// The default value is false.
+		/// </para>
+		/// </remarks>
+		public bool ApplyToAllImageSets
+		{
+			get { return _applyToAllImageSets; }
+			set { _applyToAllImageSets = value; }
+		}
+
 
 		#region IMemorable Members
 
@@ -181,11 +206,25 @@ namespace ClearCanvas.ImageViewer
 			// from the other linked display sets
 			if (parentDisplaySet.Linked)
 			{
-				foreach (IDisplaySet currentDisplaySet in parentImageSet.LinkedDisplaySets)
+				if (_applyToAllImageSets)
 				{
-					foreach (IPresentationImage image in GetAllLinkedImages(currentDisplaySet))
-						yield return image;
+					foreach (IImageSet imageSet in parentImageSet.ParentLogicalWorkspace.ImageSets)
+					{
+						foreach (IDisplaySet displaySet in imageSet.LinkedDisplaySets)
+						{
+							foreach (IPresentationImage image in GetAllLinkedImages(displaySet))
+								yield return image;
+						}
+					}
 				}
+				else
+				{
+					foreach (IDisplaySet currentDisplaySet in parentImageSet.LinkedDisplaySets)
+					{
+						foreach (IPresentationImage image in GetAllLinkedImages(currentDisplaySet))
+							yield return image;
+					}
+				} 
 			}
 			// If display set is just selected, then iterate through all the linked images
 			// in that display set.

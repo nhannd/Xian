@@ -319,6 +319,9 @@ namespace ClearCanvas.ImageViewer.InputManagement
 			if (_tile.PresentationImage == null)
 				return true;
 
+			if (buttonMessage.Shortcut.Modifiers.Control)
+				_tile.PresentationImage.ParentDisplaySet.Linked = !_tile.PresentationImage.ParentDisplaySet.Linked;
+
 			BeforeFindMouseButtonHandlerEventArgs args = new BeforeFindMouseButtonHandlerEventArgs(_tile);
 			_tile.ImageViewer.EventBroker.OnBeforeFindMouseButtonHandler(args);
 			if (args.Cancelled)
