@@ -44,16 +44,6 @@ namespace ClearCanvas.Ris.Application.Services.Admin.EnumerationAdmin
     [ServiceImplementsContract(typeof(IEnumerationAdminService))]
     public class EnumerationAdminService : ApplicationServiceBase, IEnumerationAdminService
     {
-        private bool IsSoftEnum(Type enumClass)
-        {
-            return !CollectionUtils.Contains<Type>(enumClass.Assembly.GetTypes(),
-                delegate(Type t)
-                {
-                    return t.IsEnum && AttributeUtils.HasAttribute<EnumValueClassAttribute>(t, false,
-                        delegate(EnumValueClassAttribute attr) { return attr.EnumValueClass.Equals(enumClass); });
-                });
-        }
-
         #region IEnumerationAdminService Members
 
         [ReadOperation]
@@ -84,10 +74,18 @@ namespace ClearCanvas.Ris.Application.Services.Admin.EnumerationAdmin
         [UpdateOperation]
         public AddValueResponse AddValue(AddValueRequest request)
         {
+            Platform.CheckForNullReference(request, "request");
+            Platform.CheckMemberIsSet(request.Value, "Value");
+
             Type enumClass = GetEnumClass(request.AssemblyQualifiedClassName);
 
+            // compute a display order for the new value
+            float displayOrder = ComputeDisplayOrderValue(enumClass, request.Value.Code,
+                request.InsertAfter == null ? null : request.InsertAfter.Code);
+
+            // add the new value
             IEnumBroker broker = PersistenceContext.GetBroker<IEnumBroker>();
-            broker.AddValue(enumClass, request.Value.Code, request.Value.Value, request.Value.Description);
+            broker.AddValue(enumClass, request.Value.Code, request.Value.Value, request.Value.Description, displayOrder);
 
             return new AddValueResponse();
         }
@@ -95,10 +93,17 @@ namespace ClearCanvas.Ris.Application.Services.Admin.EnumerationAdmin
         [UpdateOperation]
         public EditValueResponse EditValue(EditValueRequest request)
         {
+            Platform.CheckForNullReference(request, "request");
+            Platform.CheckMemberIsSet(request.Value, "Value");
+
             Type enumClass = GetEnumClass(request.AssemblyQualifiedClassName);
 
+            // compute display order value
+            float displayOrder = ComputeDisplayOrderValue(enumClass, request.Value.Code,
+                request.InsertAfter == null ? null : request.InsertAfter.Code);
+
             IEnumBroker broker = PersistenceContext.GetBroker<IEnumBroker>();
-            broker.UpdateValue(enumClass, request.Value.Code, request.Value.Value, request.Value.Description);
+            broker.UpdateValue(enumClass, request.Value.Code, request.Value.Value, request.Value.Description, displayOrder);
 
             return new EditValueResponse();
         }
@@ -123,6 +128,40 @@ namespace ClearCanvas.Ris.Application.Services.Admin.EnumerationAdmin
                 throw new RequestValidationException("Invalid enumeration name.");
 
             return enumClass;
+        }
+
+        private bool IsSoftEnum(Type enumClass)
+        {
+            return !CollectionUtils.Contains<Type>(enumClass.Assembly.GetTypes(),
+                delegate(Type t)
+                {
+                    return t.IsEnum && AttributeUtils.HasAttribute<EnumValueClassAttribute>(t, false,
+                        delegate(EnumValueClassAttribute attr) { return attr.EnumValueClass.Equals(enumClass); });
+                });
+        }
+
+        private float ComputeDisplayOrderValue(Type enumValueClass, string code, string insertAfterCode)
+        {
+            IEnumBroker broker = PersistenceContext.GetBroker<IEnumBroker>();
+
+            // get insertAfter value, which may be null if the value is to be inserted at the beginning
+            EnumValue insertAfter = insertAfterCode == null ? null : broker.Find(enumValueClass, insertAfterCode);
+            if (insertAfter != null && insertAfter.Code == code)
+                throw new RequestValidationException("Value cannot be inserted after itself.");
+
+            // get the insertBefore value (the value immediately following insertAfter)
+            // this may be null if insertAfter is the last value in the set
+            IList<EnumValue> values = broker.Load(enumValueClass);
+            int insertAfterIndex = insertAfter == null ? -1 : values.IndexOf(insertAfter);
+            EnumValue insertBefore = (insertAfterIndex + 1 == values.Count) ? null : values[insertAfterIndex + 1];
+
+            // if the insertBefore value is the same as the value being edited, then there is no change in displayOrder
+            if (insertBefore != null && insertBefore.Code == code)
+                return insertBefore.DisplayOrder;
+
+            // otherwise compute a new display order value
+            float lower = insertAfter == null ? 0 : insertAfter.DisplayOrder;
+            return insertBefore == null ? lower + 1 : (lower + insertBefore.DisplayOrder) / 2;
         }
     }
 }

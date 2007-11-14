@@ -63,6 +63,13 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             _displayValue.DataBindings.Add("Value", _component, "DisplayValue", true, DataSourceUpdateMode.OnPropertyChanged);
             _description.DataBindings.Add("Value", _component, "Description", true, DataSourceUpdateMode.OnPropertyChanged);
 
+            _insertAfter.DataSource = _component.InsertAfterChoices;
+            _insertAfter.DataBindings.Add("Value", _component, "InsertAfter", true, DataSourceUpdateMode.OnPropertyChanged);
+            _insertAfter.Format += delegate(object sender, ListControlConvertEventArgs e)
+                                       {
+                                           e.Value = _component.FormatInsertAfterChoice(e.ListItem);
+                                       };
+
             _okButton.DataBindings.Add("Enabled", _component, "Modified");
 
         }

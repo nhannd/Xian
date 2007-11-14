@@ -74,16 +74,8 @@ namespace ClearCanvas.Enterprise.Hibernate
             return (TEnumValue)Find(typeof(TEnumValue), code);
         }
 
-        public EnumValue AddValue(Type enumValueClass, string code, string value, string description)
+        public EnumValue AddValue(Type enumValueClass, string code, string value, string description, float displayOrder)
         {
-            // find the insertAfter value so we can determine a value for "display order"
-            // we are inserting after the last value in the set, so use order by desc
-            HqlQuery q = new HqlQuery(string.Format("from {0} order by DisplayOrder desc", enumValueClass.FullName));
-            q.Page = new SearchResultPage(0, 1);    // only need 1 value
-            EnumValue insertAfterValue = CollectionUtils.FirstElement<EnumValue>(ExecuteHql<EnumValue>(q));
-
-            float displayOrder = ComputeDisplayOrderValue(insertAfterValue, null);
-
             EnumValue ev = (EnumValue)Activator.CreateInstance(enumValueClass, true);
             UpdateValue(ev, code, value, description, displayOrder);
 
@@ -92,10 +84,10 @@ namespace ClearCanvas.Enterprise.Hibernate
             return ev;
         }
 
-        public EnumValue UpdateValue(Type enumValueClass, string code, string value, string description)
+        public EnumValue UpdateValue(Type enumValueClass, string code, string value, string description, float displayOrder)
         {
             EnumValue ev = this.Context.LoadEnumValue(enumValueClass, code, false); 
-            UpdateValue(ev, code, value, description, ev.DisplayOrder);
+            UpdateValue(ev, code, value, description, displayOrder);
 
             return ev;
         }
@@ -104,38 +96,6 @@ namespace ClearCanvas.Enterprise.Hibernate
         {
            EnumValue ev = this.Context.LoadEnumValue(enumValueClass, code, true);
            this.Context.Session.Delete(ev);
-        }
-
-        public void MoveValue(Type enumValueClass, string code, string insertAfterCode)
-        {
-            Platform.CheckForNullReference(code, "code");
-
-            // check for no-op
-            if(code.Equals(insertAfterCode))
-                return;
-
-            // load the insertAfter value
-            // null means insert at the beginning
-            EnumValue insertAfterValue = insertAfterCode == null ? null : 
-                this.Context.LoadEnumValue(enumValueClass, insertAfterCode, true);
-
-            // find the insertBefore value (value immediately following the insertAfter value)
-            HqlQuery q = new HqlQuery(string.Format("from {0} order by DisplayOrder asc", enumValueClass.FullName));
-            q.Conditions.Add(new HqlCondition("DisplayOrder > ?",
-                new object[] { insertAfterValue == null ? 0 : insertAfterValue.DisplayOrder }));
-            q.Page = new SearchResultPage(0, 1);    // only need 1 value
-            EnumValue insertBeforeValue = CollectionUtils.FirstElement<EnumValue>(ExecuteHql<EnumValue>(q));
-
-            // load the value to move
-            EnumValue valueToMove = this.Context.LoadEnumValue(enumValueClass, code, true);
-
-            // check for no-op
-            if(valueToMove.Equals(insertBeforeValue))
-                return;
-
-            // assign new displayOrder value
-            float displayOrder = ComputeDisplayOrderValue(insertAfterValue, insertBeforeValue);
-            SetEnumValueProperty(valueToMove, "DisplayOrder", displayOrder);
         }
 
         #endregion
@@ -159,12 +119,6 @@ namespace ClearCanvas.Enterprise.Hibernate
         {
             MethodInfo setter = typeof(EnumValue).GetProperty(property).GetSetMethod(true);
             setter.Invoke(ev, new object[] { value });
-        }
-
-        public float ComputeDisplayOrderValue(EnumValue lower, EnumValue upper)
-        {
-            float l = lower == null ? 0 : lower.DisplayOrder;
-            return upper == null ? l + 1 : (l + upper.DisplayOrder)/2;
         }
     }
 }

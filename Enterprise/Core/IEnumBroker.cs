@@ -74,8 +74,9 @@ namespace ClearCanvas.Enterprise.Core
         /// <param name="code"></param>
         /// <param name="value"></param>
         /// <param name="description"></param>
+        /// <param name="displayOrder"></param>
         /// <returns></returns>
-        EnumValue AddValue(Type enumValueClass, string code, string value, string description);
+        EnumValue AddValue(Type enumValueClass, string code, string value, string description, float displayOrder);
 
         /// <summary>
         /// Updates the value of the specified enumeration class and code, with the supplied arguments.
@@ -84,8 +85,9 @@ namespace ClearCanvas.Enterprise.Core
         /// <param name="code"></param>
         /// <param name="value"></param>
         /// <param name="description"></param>
+        /// <param name="displayOrder"></param>
         /// <returns></returns>
-        EnumValue UpdateValue(Type enumValueClass, string code, string value, string description);
+        EnumValue UpdateValue(Type enumValueClass, string code, string value, string description, float displayOrder);
 
         /// <summary>
         /// Removes the value with the specified code from the specified enumeration class.
@@ -93,14 +95,5 @@ namespace ClearCanvas.Enterprise.Core
         /// <param name="enumValueClass"></param>
         /// <param name="code"></param>
         void RemoveValue(Type enumValueClass, string code);
-
-        /// <summary>
-        /// Moves the value with the specified code so that it immediately follows the value with 
-        /// <b>insertAfterCode</b> in the display order.
-        /// </summary>
-        /// <param name="enumValueClass"></param>
-        /// <param name="code"></param>
-        /// <param name="insertAfterCode"></param>
-        void MoveValue(Type enumValueClass, string code, string insertAfterCode);
-   }
+    }
 }

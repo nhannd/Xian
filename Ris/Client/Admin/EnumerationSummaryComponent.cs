@@ -236,11 +236,14 @@ namespace ClearCanvas.Ris.Client.Admin
         {
             try
             {
-                EnumerationEditorComponent component = new EnumerationEditorComponent(_selectedEnumeration.AssemblyQualifiedClassName);
+                EnumerationEditorComponent component = new EnumerationEditorComponent(
+                    _selectedEnumeration.AssemblyQualifiedClassName,
+                    _enumValues.Items);
                 ApplicationComponentExitCode result = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, component, SR.TitleEnumAddValue);
                 if(result == ApplicationComponentExitCode.Accepted)
                 {
-                    _enumValues.Items.Add(component.EnumValue);
+                    // refresh entire table
+                    LoadEnumerationValues();
                 }
             }
             catch (Exception e)
@@ -253,13 +256,15 @@ namespace ClearCanvas.Ris.Client.Admin
         {
             try
             {
-                EnumerationEditorComponent component = new EnumerationEditorComponent(_selectedEnumeration.AssemblyQualifiedClassName, (EnumValueInfo)_selectedEnumValue.Clone());
+                EnumerationEditorComponent component = new EnumerationEditorComponent(
+                    _selectedEnumeration.AssemblyQualifiedClassName,
+                    (EnumValueInfo)_selectedEnumValue.Clone(),
+                    _enumValues.Items);
                 ApplicationComponentExitCode result = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, component, SR.TitleEnumEditValue);
                 if (result == ApplicationComponentExitCode.Accepted)
                 {
-                    _selectedEnumValue = component.EnumValue;
-                    _enumValues.Items.Replace(delegate(EnumValueInfo v) { return v.Code == _selectedEnumValue.Code; },
-                        _selectedEnumValue);
+                    // refresh entire table
+                    LoadEnumerationValues();
                 }
             }
             catch (Exception e)

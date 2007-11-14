@@ -123,7 +123,13 @@ namespace ClearCanvas.Enterprise.Core
         {
             if (object.ReferenceEquals(obj, this))
                 return true;
-            return (obj.GetType() == this.GetType()) && (obj as EnumValue).Code == this.Code;
+            EnumValue other = obj as EnumValue;
+            if (other == null)
+                return false;
+
+            // must be of same class, in addition to having same code, since codes are not guaranteed
+            // unique across classes
+            return (other.GetClass() == this.GetClass()) && other.Code == this.Code;
         }
 
     }
