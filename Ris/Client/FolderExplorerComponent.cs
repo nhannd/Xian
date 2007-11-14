@@ -189,6 +189,7 @@ namespace ClearCanvas.Ris.Client
         private event EventHandler _selectedFolderChanged;
         private event EventHandler _folderIconChanged;
 
+        private bool _multiSelect;
         private ISelection _selectedItems = Selection.Empty;
         private ISelection _selectedItemsBeforeRefresh = Selection.Empty;
         private event EventHandler _selectedItemDoubleClicked;
@@ -314,6 +315,12 @@ namespace ClearCanvas.Ris.Client
         {
             add { _selectedFolderChanged += value; }
             remove { _selectedFolderChanged -= value; }
+        }
+
+        public bool MultiSelect
+        {
+            get { return _multiSelect; }
+            set { _multiSelect = value; }
         }
 
         public ISelection SelectedItems

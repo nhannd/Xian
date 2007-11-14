@@ -51,6 +51,8 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             InitializeComponent();
             _component = component;
 
+            _folderContentsTableView.MultiSelect = _component.MultiSelect;
+
             _folderTreeView.ImageList.ImageSize = new System.Drawing.Size(24, 24);
             _folderTreeView.ImageList.ColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
 
