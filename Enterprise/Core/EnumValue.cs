@@ -46,6 +46,7 @@ namespace ClearCanvas.Enterprise.Core
         private string _code;
         private string _value;
         private string _description;
+        private float _displayOrder;
 
         protected EnumValue()
         {
@@ -93,6 +94,15 @@ namespace ClearCanvas.Enterprise.Core
         {
             get { return _description; }
             private set { _description = value; }
+        }
+
+        /// <summary>
+        /// Gets a value providing a relative position for sorting the enumeration.
+        /// </summary>
+        public virtual float DisplayOrder
+        {
+            get { return _displayOrder; }
+            private set { _displayOrder = value; }
         }
 
         /// <summary>

@@ -43,6 +43,7 @@ using ClearCanvas.Common;
 using System.IO;
 using System.Xml;
 using NHibernate.Dialect;
+using System.ComponentModel;
 
 namespace ClearCanvas.Enterprise.Hibernate.Ddl
 {
@@ -57,14 +58,16 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
             public string Code;
             public string Value;
             public string Description;
+            public float DisplayOrder;
 
             public string GetCreateScript(Dialect dialect, string defaultSchema)
             {
-                return string.Format("insert into {0} (Code_, Value_, Description_) values ({1}, {2}, {3})",
+                return string.Format("insert into {0} (Code_, Value_, Description_, DisplayOrder_) values ({1}, {2}, {3}, {4})",
                     Table.GetQualifiedName(dialect, defaultSchema),
                     SqlFormat(Code),
                     SqlFormat(Value),
-                    SqlFormat(Description));
+                    SqlFormat(Description),
+                    DisplayOrder);
             }
 
             private string SqlFormat(string str)
@@ -131,6 +134,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
                 {
                     XmlDocument xmlDoc = new XmlDocument();
                     xmlDoc.Load(xmlStream);
+                    int displayOrder = 1;
                     foreach (XmlElement enumValueElement in xmlDoc.GetElementsByTagName("enum-value"))
                     {
                         enumValueElement.GetAttribute("code");
@@ -143,7 +147,9 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
                             insert.Value = valueNode.InnerText;
                         XmlElement descNode = CollectionUtils.FirstElement<XmlElement>(enumValueElement.GetElementsByTagName("description"));
                         if (descNode != null)
-                            insert.Description = valueNode.InnerText;
+                            insert.Description = descNode.InnerText;
+
+                        insert.DisplayOrder = displayOrder++;
 
                         inserts.Add(insert);
                     }
@@ -157,17 +163,26 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 
         private void ProcessHardEnum(Type enumType, Table table, List<Insert> inserts)
         {
-            foreach (FieldInfo fi in enumType.GetFields())
+            int displayOrder = 1;
+
+            // note that we process the enum constants in order of the underlying value assigned
+            // so that the initial displayOrder reflects the natural ordering
+            // (see msdn docs for Enum.GetValues for details)
+            foreach(object value in Enum.GetValues(enumType))
             {
-                // try to get an attribute
-                object[] attrs = fi.GetCustomAttributes(typeof(EnumValueAttribute), false);
-                if (attrs.Length > 0)
+                string code = Enum.GetName(enumType, value);
+                FieldInfo fi = enumType.GetField(code);
+                EnumValueAttribute attr = AttributeUtils.GetAttribute<EnumValueAttribute>(fi);
+                if (attr != null)
                 {
                     Insert insert = new Insert();
                     insert.Table = table;
-                    insert.Code = fi.Name;
-                    insert.Value = ((EnumValueAttribute)attrs[0]).Value;
-                    insert.Description = ((EnumValueAttribute)attrs[0]).Description;
+                    insert.Code = code;
+                    insert.Value = attr.Value;
+                    insert.Description = attr.Description;
+
+                    // add 1 because we want all display order values to initially be greater than 1
+                    insert.DisplayOrder = displayOrder++;
 
                     inserts.Add(insert);
                 }

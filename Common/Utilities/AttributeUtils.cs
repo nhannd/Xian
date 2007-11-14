@@ -104,7 +104,7 @@ namespace ClearCanvas.Common.Utilities
         /// <param name="member">The type/method/property/field to find attributes on.</param>
         /// <param name="inherit">True to include inherited attributes in the search.</param>
         /// <returns>The first matching attribute instance, or null if no matches are found.</returns>
-        public static Attribute GetAttribute<TAttribute>(MemberInfo member, bool inherit)
+        public static TAttribute GetAttribute<TAttribute>(MemberInfo member, bool inherit)
             where TAttribute : Attribute
         {
             return GetAttribute<TAttribute>(member, inherit, NullFilter);
@@ -116,7 +116,7 @@ namespace ClearCanvas.Common.Utilities
         /// <typeparam name="TAttribute">The type of attribute (may also be a base class).</typeparam>
         /// <param name="member">The type/method/property/field to find attributes on.</param>
         /// <returns>The first matching attribute instance, or null if no matches are found.</returns>
-        public static Attribute GetAttribute<TAttribute>(MemberInfo member)
+        public static TAttribute GetAttribute<TAttribute>(MemberInfo member)
             where TAttribute : Attribute
         {
             return GetAttribute<TAttribute>(member, false);
