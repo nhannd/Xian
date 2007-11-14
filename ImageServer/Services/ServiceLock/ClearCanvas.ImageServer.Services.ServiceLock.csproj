@@ -4,11 +4,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.50727</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{DDFB1D25-75AE-43A6-A7A5-33D173EFFD04}</ProjectGuid>
+    <ProjectGuid>{ACB80CF0-35D3-491B-A561-CF66BF7FA2BA}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ClearCanvas.ImageServer.Common</RootNamespace>
-    <AssemblyName>ClearCanvas.ImageServer.Common</AssemblyName>
+    <RootNamespace>ClearCanvas.ImageServer.Services.ServiceLock</RootNamespace>
+    <AssemblyName>ClearCanvas.ImageServer.Services.ServiceLock</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -33,37 +33,44 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CreateDirectoryCommand.cs" />
-    <Compile Include="FileSystemMonitor.cs" />
-    <Compile Include="FilesystemSelector.cs" />
+    <Compile Include="BaseServiceLockItemProcessor.cs" />
+    <Compile Include="FilesystemDelete\FilesystemDeleteFactoryExtension.cs" />
+    <Compile Include="FilesystemDelete\FilesystemDeleteItemProcessor.cs" />
+    <Compile Include="IServiceLockItemProcessor.cs" />
+    <Compile Include="IServiceLockProcessorFactory.cs" />
+    <Compile Include="ServiceLockFactoryExtensionPoint.cs" />
+    <Compile Include="ServiceLockProcessor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SaveDicomFileCommand.cs" />
-    <Compile Include="ServerCommand.cs" />
-    <Compile Include="ServerCommandProcessor.cs" />
-    <Compile Include="ServerFilesystemInfo.cs" />
-    <Compile Include="ServiceTools.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Common\ClearCanvas.Common.csproj">
+    <ProjectReference Include="..\..\..\Common\ClearCanvas.Common.csproj">
       <Project>{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}</Project>
       <Name>ClearCanvas.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Dicom\ClearCanvas.Dicom.csproj">
+    <ProjectReference Include="..\..\..\Dicom\ClearCanvas.Dicom.csproj">
       <Project>{AD9ECE2B-8268-4115-8DC8-860FBD011FFF}</Project>
       <Name>ClearCanvas.Dicom</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Enterprise\Core\ClearCanvas.Enterprise.Core.csproj">
+    <ProjectReference Include="..\..\..\Enterprise\Core\ClearCanvas.Enterprise.Core.csproj">
       <Project>{431E9444-9915-4D49-B92D-9B7EC086622A}</Project>
       <Name>ClearCanvas.Enterprise.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Enterprise\ClearCanvas.ImageServer.Enterprise.csproj">
+    <ProjectReference Include="..\..\Common\ClearCanvas.ImageServer.Common.csproj">
+      <Project>{DDFB1D25-75AE-43A6-A7A5-33D173EFFD04}</Project>
+      <Name>ClearCanvas.ImageServer.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Enterprise\ClearCanvas.ImageServer.Enterprise.csproj">
       <Project>{86CA6EDB-DE59-45E9-8BD8-832FBB3F8009}</Project>
       <Name>ClearCanvas.ImageServer.Enterprise</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Model\ClearCanvas.ImageServer.Model.csproj">
+    <ProjectReference Include="..\..\Model\ClearCanvas.ImageServer.Model.csproj">
       <Project>{2C9126D3-5B73-4539-BBC9-D56E6097D335}</Project>
       <Name>ClearCanvas.ImageServer.Model</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="FilesystemCompress\" />
+    <Folder Include="FilesystemLossyCompress\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -32,41 +32,53 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using ClearCanvas.Dicom;
-using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Enterprise;
 
-namespace ClearCanvas.ImageServer.Common
+namespace ClearCanvas.ImageServer.Model
 {
-    public class FilesystemSelector
+    public class ServiceLock : ServerEntity
     {
-        private FilesystemMonitor _monitor;
-
-        public FilesystemSelector(FilesystemMonitor monitor)
+        #region Constructors
+        public ServiceLock()
+            : base("ServiceLock")
         {
-            _monitor = monitor;    
         }
+        #endregion
 
-        public Filesystem SelectFilesystem(DicomMessageBase msg)
+        #region Private Members
+        private ServiceLockTypeEnum _serviceLockTypeEnum;
+        private string _processorId;
+        private bool _lock;
+        private DateTime _scheduledTime;
+        private ServerEntityKey _filesystemKey;
+        #endregion
+
+        #region Public Properties
+        public ServiceLockTypeEnum ServiceLockTypeEnum
         {
-            ServerFilesystemInfo selectedFilesystem = null;
-            float selectedFreeBytes = 0;
-
-            foreach (ServerFilesystemInfo info in _monitor.Filesystems.Values)
-            {
-                if (info.Online && info.Filesystem.Enabled && !info.Filesystem.ReadOnly)
-                {
-                    if (info.FreeBytes > selectedFreeBytes)
-                    {
-                        selectedFreeBytes = info.FreeBytes;
-                        selectedFilesystem = info;
-                    }
-                }
-            }
-
-            if (selectedFilesystem == null)
-                return null;
-
-            return selectedFilesystem.Filesystem;
+            get { return _serviceLockTypeEnum; }
+            set { _serviceLockTypeEnum = value; }
         }
+        public string ProcessorId
+        {
+            get { return _processorId; }
+            set { _processorId = value; }
+        }
+        public bool Lock
+        {
+            get { return _lock; }
+            set { _lock = value; }
+        }
+        public DateTime ScheduledTime
+        {
+            get { return _scheduledTime; }
+            set { _scheduledTime = value; }
+        }
+        public ServerEntityKey FilesystemKey
+        {
+            get { return _filesystemKey; }
+            set { _filesystemKey = value; }
+        }
+        #endregion
     }
 }

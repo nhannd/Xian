@@ -42,6 +42,8 @@
       <DependentUpon>ImageServerServicesShredSettings.settings</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ServiceLockServer\ServiceLockServerExtension.cs" />
+    <Compile Include="ServiceLockServer\ServiceLockServerManager.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -86,6 +88,10 @@
     <ProjectReference Include="..\Dicom\ClearCanvas.ImageServer.Services.Dicom.csproj">
       <Project>{316C730A-492A-4201-87CD-3C2F3260571C}</Project>
       <Name>ClearCanvas.ImageServer.Services.Dicom</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ServiceLock\ClearCanvas.ImageServer.Services.ServiceLock.csproj">
+      <Project>{ACB80CF0-35D3-491B-A561-CF66BF7FA2BA}</Project>
+      <Name>ClearCanvas.ImageServer.Services.ServiceLock</Name>
     </ProjectReference>
     <ProjectReference Include="..\Streaming\ClearCanvas.ImageServer.Services.Streaming.csproj">
       <Project>{DF8F531F-5AE4-4AC1-A086-B50FB799EEF1}</Project>

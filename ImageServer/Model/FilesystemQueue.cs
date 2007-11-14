@@ -30,43 +30,53 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Dicom;
-using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Enterprise;
 
-namespace ClearCanvas.ImageServer.Common
+namespace ClearCanvas.ImageServer.Model
 {
-    public class FilesystemSelector
+    public class FilesystemQueue : ServerEntity
     {
-        private FilesystemMonitor _monitor;
-
-        public FilesystemSelector(FilesystemMonitor monitor)
+        #region Constructors
+        public FilesystemQueue()
+            : base("FilesystemQueue")
         {
-            _monitor = monitor;    
         }
+        #endregion
 
-        public Filesystem SelectFilesystem(DicomMessageBase msg)
+        #region Private Members
+        private FilesystemQueueTypeEnum _fileSystemQueueTypeEnum;
+        private ServerEntityKey _studyStorageKey;
+        private ServerEntityKey _filesystemKey;
+        private DateTime _scheduledTime;
+        private String _seriesInstanceUid;
+        #endregion
+
+        #region Public Properties
+        public FilesystemQueueTypeEnum FilesystemQueueTypeEnum
         {
-            ServerFilesystemInfo selectedFilesystem = null;
-            float selectedFreeBytes = 0;
-
-            foreach (ServerFilesystemInfo info in _monitor.Filesystems.Values)
-            {
-                if (info.Online && info.Filesystem.Enabled && !info.Filesystem.ReadOnly)
-                {
-                    if (info.FreeBytes > selectedFreeBytes)
-                    {
-                        selectedFreeBytes = info.FreeBytes;
-                        selectedFilesystem = info;
-                    }
-                }
-            }
-
-            if (selectedFilesystem == null)
-                return null;
-
-            return selectedFilesystem.Filesystem;
+            get { return _fileSystemQueueTypeEnum; }
+            set { _fileSystemQueueTypeEnum = value; }
         }
+        public ServerEntityKey StudyStorageKey
+        {
+            get { return _studyStorageKey; }
+            set { _studyStorageKey = value; }
+        }
+        public ServerEntityKey FilesystemKey
+        {
+            get { return _filesystemKey; }
+            set { _filesystemKey = value; }
+        }
+        public DateTime ScheduledTime
+        {
+            get { return _scheduledTime; }
+            set { _scheduledTime = value; }
+        }
+        public String SeriesInstanceUid
+        {
+            get { return _seriesInstanceUid; }
+            set { _seriesInstanceUid = value; }
+        }
+        #endregion
     }
 }

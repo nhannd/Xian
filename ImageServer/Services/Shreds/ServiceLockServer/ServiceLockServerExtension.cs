@@ -30,43 +30,49 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Dicom;
-using ClearCanvas.ImageServer.Model;
+using ClearCanvas.Common;
+using ClearCanvas.Server.ShredHost;
 
-namespace ClearCanvas.ImageServer.Common
+namespace ClearCanvas.ImageServer.Services.Shreds.ServiceLockServer
 {
-    public class FilesystemSelector
+    /// <summary>
+    /// Plugin to handle ServiceLock processing for the ImageServer.
+    /// </summary>
+    [ExtensionOf(typeof(ShredExtensionPoint))]
+    public class ServiceLockServerExtension : WcfShred
     {
-        private FilesystemMonitor _monitor;
+        private readonly string _className;
+        private readonly string _servicesServerEndpointName;
 
-        public FilesystemSelector(FilesystemMonitor monitor)
+        public ServiceLockServerExtension()
         {
-            _monitor = monitor;    
+            _className = this.GetType().ToString();
+            _servicesServerEndpointName = "ServicesServer";
+        }
+        public override void Start()
+        {
+            Platform.Log(LogLevel.Info, "{0}[{1}]: Start invoked", _className, AppDomain.CurrentDomain.FriendlyName);
+
+            ServiceLockServerManager.Instance.Start();
         }
 
-        public Filesystem SelectFilesystem(DicomMessageBase msg)
+        public override void Stop()
         {
-            ServerFilesystemInfo selectedFilesystem = null;
-            float selectedFreeBytes = 0;
+            StopHost(_servicesServerEndpointName);
 
-            foreach (ServerFilesystemInfo info in _monitor.Filesystems.Values)
-            {
-                if (info.Online && info.Filesystem.Enabled && !info.Filesystem.ReadOnly)
-                {
-                    if (info.FreeBytes > selectedFreeBytes)
-                    {
-                        selectedFreeBytes = info.FreeBytes;
-                        selectedFilesystem = info;
-                    }
-                }
-            }
+            ServiceLockServerManager.Instance.Stop();
 
-            if (selectedFilesystem == null)
-                return null;
+            Platform.Log(LogLevel.Info, "{0}[{1}]: Stop invoked", _className, AppDomain.CurrentDomain.FriendlyName);
+        }
 
-            return selectedFilesystem.Filesystem;
+        public override string GetDisplayName()
+        {
+            throw new Exception("The method or operation is not implemented.");
+        }
+
+        public override string GetDescription()
+        {
+            throw new Exception("The method or operation is not implemented.");
         }
     }
 }

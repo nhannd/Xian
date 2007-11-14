@@ -31,24 +31,15 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
-using System.Text;
 using System.Windows.Forms;
-
 using ClearCanvas.Common;
-using ClearCanvas.Common.Actions;
-using ClearCanvas.Common.Specifications;
 using ClearCanvas.Dicom;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.Parameters;
-using ClearCanvas.ImageServer.Rules;
-using Rule=ClearCanvas.ImageServer.Rules.Rule;
 
 namespace ClearCanvas.ImageServer.TestApp
 {
@@ -79,7 +70,7 @@ namespace ClearCanvas.ImageServer.TestApp
                     StudyStorageInsertParameters criteria = new StudyStorageInsertParameters();
 
                     criteria.StudyInstanceUid = "1.2.3.4";
-                    criteria.FilesystemKey = monitor.Filesystems[0].Filesystem.GetKey();
+                    criteria.FilesystemKey = monitor.Filesystems.Values.GetEnumerator().Current.Filesystem.GetKey();
                     criteria.Folder = "20070101";
                     criteria.ServerPartitionKey = monitor.Partitions[0].GetKey();
 
@@ -172,11 +163,15 @@ namespace ClearCanvas.ImageServer.TestApp
 
             dicomFile.Load();
 
-            ServerRulesEngine engine = new ServerRulesEngine(ServerRuleApplyTimeEnum.GetEnum("SopProcessed"));
-            engine.Load();
+            dicomFile.DataSet[DicomTags.StationName].SetStringValue("AE");
 
-            ServerActionContext context = new ServerActionContext(dicomFile,null,null);
-            engine.Execute(context);
+            dicomFile.Save("F:\\MedicalImages\\ClearCanvasDownloadImageSet\\DXStudy\\tmp.dcm");
+
+           // ServerRulesEngine engine = new ServerRulesEngine(ServerRuleApplyTimeEnum.GetEnum("SopProcessed"));
+            //engine.Load();
+
+            //ServerActionContext context = new ServerActionContext(dicomFile,null,null);
+            //engine.Execute(context);
             
         }
     }

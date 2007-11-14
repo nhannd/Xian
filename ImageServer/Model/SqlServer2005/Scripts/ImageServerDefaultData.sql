@@ -9,6 +9,10 @@ INSERT INTO [ImageServer].[dbo].[TypeEnum]
      VALUES
            (newid(),101,'AutoRoute','Auto Route','DICOM Auto-route request.');
 
+INSERT INTO [ImageServer].[dbo].[TypeEnum]
+           ([GUID],[TypeEnum],[Lookup],[Description],[LongDescription])
+     VALUES
+           (newid(),102,'DeleteStudy','Delete Study','Delete a Study.');
 
 -- StatusEnum inserts
 INSERT INTO [ImageServer].[dbo].[StatusEnum]
@@ -79,6 +83,28 @@ INSERT INTO [ImageServer].[dbo].[ServerRuleApplyTimeEnum]
            ([GUID],[ServerRuleApplyTimeEnum],[Lookup],[Description],[LongDescription])
      VALUES
            (newid(),103,'StudyProcessed','Study Processed','Apply rule when a Study is initially processed')
+
+-- FilesystemQueueTypeEnum inserts
+INSERT INTO [ImageServer].[dbo].[FilesystemQueueTypeEnum]
+           ([GUID],[FilesystemQueueTypeEnum],[Lookup],[Description],[LongDescription])
+     VALUES
+           (newid(),100,'DeleteStudy','Delete Study','Delete a Study')
+           
+INSERT INTO [ImageServer].[dbo].[FilesystemQueueTypeEnum]
+           ([GUID],[FilesystemQueueTypeEnum],[Lookup],[Description],[LongDescription])
+     VALUES
+           (newid(),101,'PurgeStudy','Purge Study','Purge an Online Study')
+
+INSERT INTO [ImageServer].[dbo].[FilesystemQueueTypeEnum]
+           ([GUID],[FilesystemQueueTypeEnum],[Lookup],[Description],[LongDescription])
+     VALUES
+           (newid(),102,'TierMigrate','Tier Migrate','Migrate a Study to a Lower Tier')
+
+-- ServiceLockTypeEnum inserts
+INSERT INTO [ImageServer].[dbo].[ServiceLockTypeEnum]
+           ([GUID],[ServiceLockTypeEnum],[Lookup],[Description],[LongDescription])
+     VALUES
+           (newid(),100,'FilesystemDelete','Filesystem Delete','Purge Data from a Filesystem')
 
 
 -- ServerSopClass inserts

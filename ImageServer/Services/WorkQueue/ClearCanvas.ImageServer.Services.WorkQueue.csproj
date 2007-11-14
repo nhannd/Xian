@@ -36,6 +36,8 @@
     <Compile Include="AutoRoute\AutoRouteFactoryExtension.cs" />
     <Compile Include="AutoRoute\AutoRouteItemProcessor.cs" />
     <Compile Include="BaseItemProcessor.cs" />
+    <Compile Include="DeleteStudy\DeleteStudyFactoryExtension.cs" />
+    <Compile Include="DeleteStudy\DeleteStudyItemProcessor.cs" />
     <Compile Include="WorkQueueSettings.cs" />
     <Compile Include="WorkQueueSettings.Designer.cs">
       <AutoGen>True</AutoGen>

@@ -30,43 +30,34 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Dicom;
-using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Enterprise;
 
-namespace ClearCanvas.ImageServer.Common
+namespace ClearCanvas.ImageServer.Model.Parameters
 {
-    public class FilesystemSelector
+    public class ServiceLockUpdateParameters : ProcedureParameters
     {
-        private FilesystemMonitor _monitor;
+        public ServiceLockUpdateParameters()
+            : base("UpdateServiceLock")
+        { }
 
-        public FilesystemSelector(FilesystemMonitor monitor)
+        public ServerEntityKey ServiceLockKey
         {
-            _monitor = monitor;    
+            set { this.SubCriteria["ServiceLockKey"] = new ProcedureParameter<ServerEntityKey>("ServiceLockKey", value); }
         }
 
-        public Filesystem SelectFilesystem(DicomMessageBase msg)
+        public string ProcessorId
         {
-            ServerFilesystemInfo selectedFilesystem = null;
-            float selectedFreeBytes = 0;
+            set { this.SubCriteria["ProcessorId"] = new ProcedureParameter<string>("ProcessorId", value); }
+        }
 
-            foreach (ServerFilesystemInfo info in _monitor.Filesystems.Values)
-            {
-                if (info.Online && info.Filesystem.Enabled && !info.Filesystem.ReadOnly)
-                {
-                    if (info.FreeBytes > selectedFreeBytes)
-                    {
-                        selectedFreeBytes = info.FreeBytes;
-                        selectedFilesystem = info;
-                    }
-                }
-            }
+        public bool Lock
+        {
+            set { this.SubCriteria["Lock"] = new ProcedureParameter<bool>("Lock", value); }
+        }
 
-            if (selectedFilesystem == null)
-                return null;
-
-            return selectedFilesystem.Filesystem;
+        public DateTime ScheduledTime
+        {
+            set { this.SubCriteria["ScheduledTime"] = new ProcedureParameter<DateTime>("ScheduledTime", value); }
         }
     }
 }

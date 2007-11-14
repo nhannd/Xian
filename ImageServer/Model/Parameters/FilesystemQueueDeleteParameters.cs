@@ -29,44 +29,20 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Dicom;
-using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Enterprise;
 
-namespace ClearCanvas.ImageServer.Common
+namespace ClearCanvas.ImageServer.Model.Parameters
 {
-    public class FilesystemSelector
+    public class FilesystemQueueDeleteParameters : ProcedureParameters
     {
-        private FilesystemMonitor _monitor;
-
-        public FilesystemSelector(FilesystemMonitor monitor)
+        public FilesystemQueueDeleteParameters()
+            : base("DeleteFilesystemQueue")
         {
-            _monitor = monitor;    
         }
 
-        public Filesystem SelectFilesystem(DicomMessageBase msg)
+        public ServerEntityKey FilesystemQueueKey
         {
-            ServerFilesystemInfo selectedFilesystem = null;
-            float selectedFreeBytes = 0;
-
-            foreach (ServerFilesystemInfo info in _monitor.Filesystems.Values)
-            {
-                if (info.Online && info.Filesystem.Enabled && !info.Filesystem.ReadOnly)
-                {
-                    if (info.FreeBytes > selectedFreeBytes)
-                    {
-                        selectedFreeBytes = info.FreeBytes;
-                        selectedFilesystem = info;
-                    }
-                }
-            }
-
-            if (selectedFilesystem == null)
-                return null;
-
-            return selectedFilesystem.Filesystem;
+            set { this.SubCriteria["FilesystemQueueKey"] = new ProcedureParameter<ServerEntityKey>("FilesystemQueueKey", value); }
         }
     }
 }

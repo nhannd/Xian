@@ -53,6 +53,8 @@ namespace ClearCanvas.ImageServer.Model
         private bool _writeOnly;
         private String _description;
         private FilesystemTierEnum _fileSystemTierEnum;
+        private Decimal _highWatermark;
+        private Decimal _lowWatermark;
         #endregion
 
         #region Public Properties
@@ -82,12 +84,22 @@ namespace ClearCanvas.ImageServer.Model
             get { return _description; }
             set { _description = value; }
         }
-
         public FilesystemTierEnum FilesystemTierEnum
         {
             get { return _fileSystemTierEnum; }
             set { _fileSystemTierEnum = value; }
         }
+        public Decimal LowWatermark
+        {
+            get { return _lowWatermark; }
+            set { _lowWatermark = value; }
+        }
+        public Decimal HighWatermark
+        {
+            get { return _highWatermark; }
+            set { _highWatermark = value; }
+        }
+
         #endregion
 
         #region Static Methods

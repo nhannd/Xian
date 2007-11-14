@@ -32,41 +32,35 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using ClearCanvas.Dicom;
-using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Enterprise;
 
-namespace ClearCanvas.ImageServer.Common
+namespace ClearCanvas.ImageServer.Model.Parameters
 {
-    public class FilesystemSelector
+    public class FilesystemQueueQueryParameters : ProcedureParameters
     {
-        private FilesystemMonitor _monitor;
-
-        public FilesystemSelector(FilesystemMonitor monitor)
+        public FilesystemQueueQueryParameters()
+            : base("QueryFilesystemQueue")
         {
-            _monitor = monitor;    
         }
 
-        public Filesystem SelectFilesystem(DicomMessageBase msg)
+        public ServerEntityKey FilesystemKey
         {
-            ServerFilesystemInfo selectedFilesystem = null;
-            float selectedFreeBytes = 0;
+            set { SubCriteria["FilesystemKey"] = new ProcedureParameter<ServerEntityKey>("FilesystemKey", value); }
+        }
+        
+        public DateTime ScheduledTime
+        {
+            set { SubCriteria["ScheduledTime"] = new ProcedureParameter<DateTime>("ScheduledTime", value); }
+        }
 
-            foreach (ServerFilesystemInfo info in _monitor.Filesystems.Values)
-            {
-                if (info.Online && info.Filesystem.Enabled && !info.Filesystem.ReadOnly)
-                {
-                    if (info.FreeBytes > selectedFreeBytes)
-                    {
-                        selectedFreeBytes = info.FreeBytes;
-                        selectedFilesystem = info;
-                    }
-                }
-            }
+        public int Results
+        {
+            set { SubCriteria["Results"] = new ProcedureParameter<int>("Results", value); }
+        }
 
-            if (selectedFilesystem == null)
-                return null;
-
-            return selectedFilesystem.Filesystem;
+        public FilesystemQueueTypeEnum FilesystemQueueTypeEnum
+        {
+            set { this.SubCriteria["FilesystemQueueTypeEnum"] = new ProcedureParameter<ServerEnum>("FilesystemQueueTypeEnum", value); }
         }
     }
 }

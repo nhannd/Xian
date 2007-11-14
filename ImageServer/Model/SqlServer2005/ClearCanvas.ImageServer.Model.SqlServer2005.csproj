@@ -34,8 +34,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Brokers\DeleteDevice.cs" />
+    <Compile Include="Brokers\DeleteFilesystemQueue.cs" />
     <Compile Include="Brokers\InsertFilesystem.cs" />
+    <Compile Include="Brokers\InsertFilesystemQueue.cs" />
     <Compile Include="Brokers\InsertWorkQueueAutoRoute.cs" />
+    <Compile Include="Brokers\InsertWorkQueueDeleteStudy.cs" />
+    <Compile Include="Brokers\QueryFilesystemQueue.cs" />
+    <Compile Include="Brokers\QueryServiceLock.cs" />
     <Compile Include="Brokers\ResetWorkQueue.cs" />
     <Compile Include="Brokers\DeleteWorkQueueUid.cs" />
     <Compile Include="Brokers\QueryDevicePreferredTransferSyntaxes.cs" />
@@ -53,9 +58,12 @@
     <Compile Include="Brokers\UpdateDevice.cs" />
     <Compile Include="Brokers\UpdateFilesystem.cs" />
     <Compile Include="Brokers\UpdateServerPartition.cs" />
+    <Compile Include="Brokers\UpdateServiceLock.cs" />
+    <Compile Include="EnumBrokers\FilesystemQueueTypeEnumBroker.cs" />
     <Compile Include="EnumBrokers\FilesystemTierEnumBroker.cs" />
     <Compile Include="EnumBrokers\ServerRuleApplyTimeEnumBroker.cs" />
     <Compile Include="EnumBrokers\ServerRuleTypeEnumBroker.cs" />
+    <Compile Include="EnumBrokers\ServiceLockTypeEnumBroker.cs" />
     <Compile Include="SelectBrokers\SelectDevice.cs" />
     <Compile Include="SelectBrokers\SelectFilesystem.cs" />
     <Compile Include="SelectBrokers\SelectPatient.cs" />

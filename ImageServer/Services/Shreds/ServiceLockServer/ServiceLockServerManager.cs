@@ -29,44 +29,64 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Dicom;
-using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Services.ServiceLock;
 
-namespace ClearCanvas.ImageServer.Common
+namespace ClearCanvas.ImageServer.Services.Shreds.ServiceLockServer
 {
-    public class FilesystemSelector
+    public class ServiceLockServerManager
     {
-        private FilesystemMonitor _monitor;
+        #region Private Members
+        private static ServiceLockServerManager _instance;
+        private ServiceLockProcessor _theProcessor;
+        #endregion
 
-        public FilesystemSelector(FilesystemMonitor monitor)
+        #region Constructors
+        /// <summary>
+        /// **** For internal use only***
+        /// </summary>
+        private ServiceLockServerManager()
+        { }
+        #endregion
+
+        #region Properties
+        /// <summary>
+        /// Singleton instance of the class.
+        /// </summary>
+        public static ServiceLockServerManager Instance
         {
-            _monitor = monitor;    
-        }
-
-        public Filesystem SelectFilesystem(DicomMessageBase msg)
-        {
-            ServerFilesystemInfo selectedFilesystem = null;
-            float selectedFreeBytes = 0;
-
-            foreach (ServerFilesystemInfo info in _monitor.Filesystems.Values)
+            get
             {
-                if (info.Online && info.Filesystem.Enabled && !info.Filesystem.ReadOnly)
-                {
-                    if (info.FreeBytes > selectedFreeBytes)
-                    {
-                        selectedFreeBytes = info.FreeBytes;
-                        selectedFilesystem = info;
-                    }
-                }
+                if (_instance == null)
+                    _instance = new ServiceLockServerManager();
+
+                return _instance;
             }
-
-            if (selectedFilesystem == null)
-                return null;
-
-            return selectedFilesystem.Filesystem;
+            set
+            {
+                _instance = value;
+            }
         }
+        #endregion
+
+        #region Public Methods
+
+        public void Start()
+        {
+            if (_theProcessor == null)
+            {
+                _theProcessor = new ServiceLockProcessor("ServiceLock Processor", 1); // 1 threads for processor
+                _theProcessor.Start();
+            }
+        }
+
+        public void Stop()
+        {
+            if (_theProcessor != null)
+            {
+                _theProcessor.Stop();
+                _theProcessor = null;
+            }
+        }
+        #endregion
     }
 }

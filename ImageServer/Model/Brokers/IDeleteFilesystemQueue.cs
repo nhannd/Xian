@@ -29,44 +29,12 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Dicom;
-using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Enterprise;
+using ClearCanvas.ImageServer.Model.Parameters;
 
-namespace ClearCanvas.ImageServer.Common
+namespace ClearCanvas.ImageServer.Model.Brokers
 {
-    public class FilesystemSelector
+    public interface IDeleteFilesystemQueue : IProcedureUpdateBroker<FilesystemQueueDeleteParameters>
     {
-        private FilesystemMonitor _monitor;
-
-        public FilesystemSelector(FilesystemMonitor monitor)
-        {
-            _monitor = monitor;    
-        }
-
-        public Filesystem SelectFilesystem(DicomMessageBase msg)
-        {
-            ServerFilesystemInfo selectedFilesystem = null;
-            float selectedFreeBytes = 0;
-
-            foreach (ServerFilesystemInfo info in _monitor.Filesystems.Values)
-            {
-                if (info.Online && info.Filesystem.Enabled && !info.Filesystem.ReadOnly)
-                {
-                    if (info.FreeBytes > selectedFreeBytes)
-                    {
-                        selectedFreeBytes = info.FreeBytes;
-                        selectedFilesystem = info;
-                    }
-                }
-            }
-
-            if (selectedFilesystem == null)
-                return null;
-
-            return selectedFilesystem.Filesystem;
-        }
     }
 }

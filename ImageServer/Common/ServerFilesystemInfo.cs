@@ -49,11 +49,17 @@ namespace ClearCanvas.ImageServer.Common
         #endregion
 
         #region Public Properties
+        /// <summary>
+        /// The <see cref="Filesystem"/> domain object.
+        /// </summary>
         public Filesystem Filesystem
         {
             get { return _filesystem; }
         }
 
+        /// <summary>
+        /// Is the filesystem Online?
+        /// </summary>
         public bool Online
         {
             get { return _online; }
@@ -83,17 +89,46 @@ namespace ClearCanvas.ImageServer.Common
         {
             get { return _freeBytes; }
         }
-
         public float TotalBytes
         {
             get { return _totalBytes; }
         }
-
         public float UsedSpacePercentage
         {
             get { return ((_totalBytes - _freeBytes) / _totalBytes) * 100.0F; }
         }
 
+        public float BytesToRemove
+        {
+            get
+            {
+                float desiredUsedBytes = (((float) Filesystem.LowWatermark)/100.0f)*TotalBytes;
+
+                return (TotalBytes - FreeBytes) - desiredUsedBytes;
+            }
+        }
+
+        /// <summary>
+        /// Is the filesystem above the low watermark?
+        /// </summary>
+        public bool AboveLowWatermark
+        {
+            get
+            {
+                return (UsedSpacePercentage > (float)Filesystem.LowWatermark);
+            }
+        }
+
+        /// <summary>
+        /// Is the filesystem above the high watermark?
+        /// </summary>
+        public bool AboveHighWatermark
+        {
+            get
+            {
+                return (UsedSpacePercentage > (float)Filesystem.HighWatermark);
+            }
+        }
         #endregion
 
         internal ServerFilesystemInfo(Filesystem filesystem)

@@ -1,114 +1,134 @@
 USE [ImageServer]
 GO
-/****** Object:  StoredProcedure [dbo].[ReadFilesystems]    Script Date: 11/12/2007 16:45:48 ******/
+/****** Object:  StoredProcedure [dbo].[ReadFilesystems]    Script Date: 11/14/2007 17:02:12 ******/
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[ReadFilesystems]') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[ReadFilesystems]
 GO
-/****** Object:  StoredProcedure [dbo].[QueryModalitiesInStudy]    Script Date: 11/12/2007 16:45:47 ******/
+/****** Object:  StoredProcedure [dbo].[QueryModalitiesInStudy]    Script Date: 11/14/2007 17:02:11 ******/
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[QueryModalitiesInStudy]') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[QueryModalitiesInStudy]
 GO
-/****** Object:  StoredProcedure [dbo].[ReadServerPartitions]    Script Date: 11/12/2007 16:45:48 ******/
+/****** Object:  StoredProcedure [dbo].[ReadServerPartitions]    Script Date: 11/14/2007 17:02:12 ******/
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[ReadServerPartitions]') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[ReadServerPartitions]
 GO
-/****** Object:  StoredProcedure [dbo].[InsertServerPartition]    Script Date: 11/12/2007 16:45:45 ******/
+/****** Object:  StoredProcedure [dbo].[InsertServerPartition]    Script Date: 11/14/2007 17:02:08 ******/
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[InsertServerPartition]') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[InsertServerPartition]
 GO
-/****** Object:  StoredProcedure [dbo].[QueryServerPartitionSopClasses]    Script Date: 11/12/2007 16:45:47 ******/
+/****** Object:  StoredProcedure [dbo].[QueryServerPartitionSopClasses]    Script Date: 11/14/2007 17:02:11 ******/
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[QueryServerPartitionSopClasses]') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[QueryServerPartitionSopClasses]
 GO
-/****** Object:  StoredProcedure [dbo].[ReadSopClasses]    Script Date: 11/12/2007 16:45:48 ******/
+/****** Object:  StoredProcedure [dbo].[ReadSopClasses]    Script Date: 11/14/2007 17:02:13 ******/
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[ReadSopClasses]') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[ReadSopClasses]
 GO
-/****** Object:  StoredProcedure [dbo].[InsertStudyStorage]    Script Date: 11/12/2007 16:45:45 ******/
+/****** Object:  StoredProcedure [dbo].[InsertStudyStorage]    Script Date: 11/14/2007 17:02:08 ******/
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[InsertStudyStorage]') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[InsertStudyStorage]
 GO
-/****** Object:  StoredProcedure [dbo].[InsertWorkQueueAutoRoute]    Script Date: 11/12/2007 16:45:45 ******/
+/****** Object:  StoredProcedure [dbo].[InsertWorkQueueAutoRoute]    Script Date: 11/14/2007 17:02:09 ******/
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[InsertWorkQueueAutoRoute]') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[InsertWorkQueueAutoRoute]
 GO
-/****** Object:  StoredProcedure [dbo].[DeleteDevice]    Script Date: 11/12/2007 16:45:41 ******/
+/****** Object:  StoredProcedure [dbo].[DeleteDevice]    Script Date: 11/14/2007 17:02:04 ******/
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[DeleteDevice]') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[DeleteDevice]
 GO
-/****** Object:  StoredProcedure [dbo].[UpdateServerPartition]    Script Date: 11/12/2007 16:45:50 ******/
+/****** Object:  StoredProcedure [dbo].[UpdateServerPartition]    Script Date: 11/14/2007 17:02:14 ******/
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[UpdateServerPartition]') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[UpdateServerPartition]
 GO
-/****** Object:  StoredProcedure [dbo].[QueryDevice]    Script Date: 11/12/2007 16:45:46 ******/
+/****** Object:  StoredProcedure [dbo].[QueryServiceLock]    Script Date: 11/14/2007 17:02:11 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[QueryServiceLock]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [dbo].[QueryServiceLock]
+GO
+/****** Object:  StoredProcedure [dbo].[UpdateServiceLock]    Script Date: 11/14/2007 17:02:14 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[UpdateServiceLock]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [dbo].[UpdateServiceLock]
+GO
+/****** Object:  StoredProcedure [dbo].[QueryFilesystemQueue]    Script Date: 11/14/2007 17:02:10 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[QueryFilesystemQueue]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [dbo].[QueryFilesystemQueue]
+GO
+/****** Object:  StoredProcedure [dbo].[InsertWorkQueueDeleteStudy]    Script Date: 11/14/2007 17:02:09 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[InsertWorkQueueDeleteStudy]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [dbo].[InsertWorkQueueDeleteStudy]
+GO
+/****** Object:  StoredProcedure [dbo].[InsertFilesystemQueue]    Script Date: 11/14/2007 17:02:06 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[InsertFilesystemQueue]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [dbo].[InsertFilesystemQueue]
+GO
+/****** Object:  StoredProcedure [dbo].[DeleteFilesystemQueue]    Script Date: 11/14/2007 17:02:04 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[DeleteFilesystemQueue]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [dbo].[DeleteFilesystemQueue]
+GO
+/****** Object:  StoredProcedure [dbo].[QueryDevice]    Script Date: 11/14/2007 17:02:10 ******/
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[QueryDevice]') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[QueryDevice]
 GO
-/****** Object:  StoredProcedure [dbo].[InsertRequestAttributes]    Script Date: 11/12/2007 16:45:44 ******/
+/****** Object:  StoredProcedure [dbo].[InsertRequestAttributes]    Script Date: 11/14/2007 17:02:07 ******/
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[InsertRequestAttributes]') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[InsertRequestAttributes]
 GO
-/****** Object:  StoredProcedure [dbo].[QueryRequestAttributes]    Script Date: 11/12/2007 16:45:47 ******/
+/****** Object:  StoredProcedure [dbo].[QueryRequestAttributes]    Script Date: 11/14/2007 17:02:11 ******/
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[QueryRequestAttributes]') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[QueryRequestAttributes]
 GO
-/****** Object:  StoredProcedure [dbo].[QueryWorkQueueUids]    Script Date: 11/12/2007 16:45:48 ******/
+/****** Object:  StoredProcedure [dbo].[QueryWorkQueueUids]    Script Date: 11/14/2007 17:02:12 ******/
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[QueryWorkQueueUids]') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[QueryWorkQueueUids]
 GO
-/****** Object:  StoredProcedure [dbo].[DeleteWorkQueueUid]    Script Date: 11/12/2007 16:45:42 ******/
+/****** Object:  StoredProcedure [dbo].[DeleteWorkQueueUid]    Script Date: 11/14/2007 17:02:05 ******/
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[DeleteWorkQueueUid]') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[DeleteWorkQueueUid]
 GO
-/****** Object:  StoredProcedure [dbo].[InsertWorkQueueStudyProcess]    Script Date: 11/12/2007 16:45:46 ******/
+/****** Object:  StoredProcedure [dbo].[InsertWorkQueueStudyProcess]    Script Date: 11/14/2007 17:02:09 ******/
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[InsertWorkQueueStudyProcess]') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[InsertWorkQueueStudyProcess]
 GO
-/****** Object:  StoredProcedure [dbo].[InsertDevice]    Script Date: 11/12/2007 16:45:42 ******/
+/****** Object:  StoredProcedure [dbo].[InsertDevice]    Script Date: 11/14/2007 17:02:05 ******/
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[InsertDevice]') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[InsertDevice]
 GO
-/****** Object:  StoredProcedure [dbo].[UpdateDevice]    Script Date: 11/12/2007 16:45:49 ******/
+/****** Object:  StoredProcedure [dbo].[UpdateDevice]    Script Date: 11/14/2007 17:02:14 ******/
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[UpdateDevice]') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[UpdateDevice]
 GO
-/****** Object:  StoredProcedure [dbo].[InsertInstance]    Script Date: 11/12/2007 16:45:44 ******/
+/****** Object:  StoredProcedure [dbo].[InsertInstance]    Script Date: 11/14/2007 17:02:07 ******/
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[InsertInstance]') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[InsertInstance]
 GO
-/****** Object:  StoredProcedure [dbo].[ReadServerTransferSyntaxes]    Script Date: 11/12/2007 16:45:48 ******/
+/****** Object:  StoredProcedure [dbo].[ReadServerTransferSyntaxes]    Script Date: 11/14/2007 17:02:12 ******/
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[ReadServerTransferSyntaxes]') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[ReadServerTransferSyntaxes]
 GO
-/****** Object:  StoredProcedure [dbo].[UpdateWorkQueue]    Script Date: 11/12/2007 16:45:50 ******/
+/****** Object:  StoredProcedure [dbo].[UpdateWorkQueue]    Script Date: 11/14/2007 17:02:15 ******/
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[UpdateWorkQueue]') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[UpdateWorkQueue]
 GO
-/****** Object:  StoredProcedure [dbo].[QueryWorkQueue]    Script Date: 11/12/2007 16:45:47 ******/
+/****** Object:  StoredProcedure [dbo].[QueryWorkQueue]    Script Date: 11/14/2007 17:02:12 ******/
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[QueryWorkQueue]') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[QueryWorkQueue]
 GO
-/****** Object:  StoredProcedure [dbo].[ResetWorkQueue]    Script Date: 11/12/2007 16:45:49 ******/
+/****** Object:  StoredProcedure [dbo].[ResetWorkQueue]    Script Date: 11/14/2007 17:02:13 ******/
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[ResetWorkQueue]') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[ResetWorkQueue]
 GO
-/****** Object:  StoredProcedure [dbo].[QueryDevicePreferredTransferSyntaxes]    Script Date: 11/12/2007 16:45:46 ******/
+/****** Object:  StoredProcedure [dbo].[QueryDevicePreferredTransferSyntaxes]    Script Date: 11/14/2007 17:02:10 ******/
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[QueryDevicePreferredTransferSyntaxes]') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[QueryDevicePreferredTransferSyntaxes]
 GO
-/****** Object:  StoredProcedure [dbo].[InsertFilesystem]    Script Date: 11/12/2007 16:45:43 ******/
+/****** Object:  StoredProcedure [dbo].[InsertFilesystem]    Script Date: 11/14/2007 17:02:05 ******/
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[InsertFilesystem]') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[InsertFilesystem]
 GO
-/****** Object:  StoredProcedure [dbo].[QueryStudyStorageLocation]    Script Date: 11/12/2007 16:45:47 ******/
+/****** Object:  StoredProcedure [dbo].[QueryStudyStorageLocation]    Script Date: 11/14/2007 17:02:12 ******/
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[QueryStudyStorageLocation]') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[QueryStudyStorageLocation]
 GO
-/****** Object:  StoredProcedure [dbo].[UpdateFilesystem]    Script Date: 11/13/2007 20:57:44 ******/
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[UpdateFilesystem]') AND type in (N'P', N'PC'))
-DROP PROCEDURE [dbo].[UpdateFilesystem]
-GO
-/****** Object:  StoredProcedure [dbo].[QueryModalitiesInStudy]    Script Date: 11/12/2007 16:45:47 ******/
+/****** Object:  StoredProcedure [dbo].[QueryModalitiesInStudy]    Script Date: 11/14/2007 17:02:11 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -135,7 +155,7 @@ END
 ' 
 END
 GO
-/****** Object:  StoredProcedure [dbo].[UpdateServerPartition]    Script Date: 11/12/2007 16:45:50 ******/
+/****** Object:  StoredProcedure [dbo].[UpdateServerPartition]    Script Date: 11/14/2007 17:02:14 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -171,7 +191,7 @@ BEGIN
 END' 
 END
 GO
-/****** Object:  StoredProcedure [dbo].[ReadServerPartitions]    Script Date: 11/12/2007 16:45:48 ******/
+/****** Object:  StoredProcedure [dbo].[ReadServerPartitions]    Script Date: 11/14/2007 17:02:12 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -197,7 +217,7 @@ END
 ' 
 END
 GO
-/****** Object:  StoredProcedure [dbo].[InsertServerPartition]    Script Date: 11/12/2007 16:45:45 ******/
+/****** Object:  StoredProcedure [dbo].[InsertServerPartition]    Script Date: 11/14/2007 17:02:08 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -263,7 +283,7 @@ END
 ' 
 END
 GO
-/****** Object:  StoredProcedure [dbo].[QueryStudyStorageLocation]    Script Date: 11/12/2007 16:45:47 ******/
+/****** Object:  StoredProcedure [dbo].[QueryStudyStorageLocation]    Script Date: 11/14/2007 17:02:12 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -311,7 +331,285 @@ END
 ' 
 END
 GO
-/****** Object:  StoredProcedure [dbo].[UpdateWorkQueue]    Script Date: 11/12/2007 16:45:50 ******/
+/****** Object:  StoredProcedure [dbo].[InsertWorkQueueStudyProcess]    Script Date: 11/14/2007 17:02:09 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[InsertWorkQueueStudyProcess]') AND type in (N'P', N'PC'))
+BEGIN
+EXEC dbo.sp_executesql @statement = N'
+-- =============================================
+-- Author:		Steve Wranovsky
+-- Create date: August 14, 2007
+-- Description:	
+-- =============================================
+CREATE PROCEDURE [dbo].[InsertWorkQueueStudyProcess] 
+	-- Add the parameters for the stored procedure here
+	@ServerPartitionGUID uniqueidentifier,
+	@StudyStorageGUID uniqueidentifier,
+	@SeriesInstanceUid varchar(64),
+	@SopInstanceUid varchar(64),
+	@ExpirationTime datetime,
+	@ScheduledTime datetime 
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+	declare @WorkQueueGUID as uniqueidentifier
+
+	declare @PendingStatusEnum as int
+	declare @StudyProcessTypeEnum as int
+
+	select @PendingStatusEnum = StatusEnum from StatusEnum where Lookup = ''Pending''
+	select @StudyProcessTypeEnum = TypeEnum from TypeEnum where Lookup = ''StudyProcess''
+
+	BEGIN TRANSACTION
+
+    -- Insert statements for procedure here
+	SELECT @WorkQueueGUID = GUID from WorkQueue 
+		where StudyStorageGUID = @StudyStorageGUID
+		AND TypeEnum = @StudyProcessTypeEnum
+	if @@ROWCOUNT = 0
+	BEGIN
+		set @WorkQueueGUID = NEWID();
+
+		INSERT into WorkQueue (GUID, ServerPartitionGUID, StudyStorageGUID, TypeEnum, StatusEnum, ExpirationTime, ScheduledTime)
+			values  (@WorkQueueGUID, @ServerPartitionGUID, @StudyStorageGUID, @StudyProcessTypeEnum, @PendingStatusEnum, @ExpirationTime, @ScheduledTime)
+	END
+	ELSE
+	BEGIN
+		UPDATE WorkQueue set ExpirationTime = @ExpirationTime
+			where GUID = @WorkQueueGUID
+	END
+
+	INSERT into WorkQueueUid(GUID, WorkQueueGUID, SeriesInstanceUid, SopInstanceUid)
+		values	(newid(), @WorkQueueGUID, @SeriesInstanceUid, @SopInstanceUid)
+
+	COMMIT TRANSACTION
+END
+' 
+END
+GO
+/****** Object:  StoredProcedure [dbo].[InsertWorkQueueDeleteStudy]    Script Date: 11/14/2007 17:02:09 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[InsertWorkQueueDeleteStudy]') AND type in (N'P', N'PC'))
+BEGIN
+EXEC dbo.sp_executesql @statement = N'-- =============================================
+-- Author:		Steve Wranovsky
+-- Create date: November 14, 2007
+-- Description:	Stored procedure for inserting DeleteStudy WorkQueue entries
+-- =============================================
+CREATE PROCEDURE [dbo].[InsertWorkQueueDeleteStudy] 
+	-- Add the parameters for the stored procedure here
+	@StudyStorageGUID uniqueidentifier, 
+	@ServerPartitionGUID uniqueidentifier,
+	@ExpirationTime datetime,
+	@ScheduledTime datetime 
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+	declare @WorkQueueGUID as uniqueidentifier
+
+	declare @PendingStatusEnum as int
+	declare @DeleteStudyTypeEnum as int
+
+	select @PendingStatusEnum = StatusEnum from StatusEnum where Lookup = ''Pending''
+	select @DeleteStudyTypeEnum = TypeEnum from TypeEnum where Lookup = ''DeleteStudy''
+
+	BEGIN TRANSACTION
+
+    -- Insert statements for procedure here
+	SELECT @WorkQueueGUID = GUID from WorkQueue 
+		where StudyStorageGUID = @StudyStorageGUID
+		AND TypeEnum = @DeleteStudyTypeEnum
+	if @@ROWCOUNT = 0
+	BEGIN
+		set @WorkQueueGUID = NEWID();
+
+		INSERT into WorkQueue (GUID, ServerPartitionGUID, StudyStorageGUID, TypeEnum, StatusEnum, ExpirationTime, ScheduledTime)
+			values  (@WorkQueueGUID, @ServerPartitionGUID, @StudyStorageGUID, @DeleteStudyTypeEnum, @PendingStatusEnum, @ExpirationTime, @ScheduledTime)
+	END
+	ELSE
+	BEGIN
+		UPDATE WorkQueue set ExpirationTime = @ExpirationTime
+			where GUID = @WorkQueueGUID
+	END
+
+	COMMIT TRANSACTION
+END
+' 
+END
+GO
+/****** Object:  StoredProcedure [dbo].[InsertWorkQueueAutoRoute]    Script Date: 11/14/2007 17:02:09 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[InsertWorkQueueAutoRoute]') AND type in (N'P', N'PC'))
+BEGIN
+EXEC dbo.sp_executesql @statement = N'-- =============================================
+-- Author:		Steve Wranovsky
+-- Create date: October 30, 2007
+-- Description:	Stored procedure for inserting AutoRoute WorkQueue entries
+-- =============================================
+CREATE PROCEDURE [dbo].[InsertWorkQueueAutoRoute] 
+	-- Add the parameters for the stored procedure here
+	@StudyStorageGUID uniqueidentifier, 
+	@ServerPartitionGUID uniqueidentifier,
+	@DeviceGUID uniqueidentifier,
+	@SeriesInstanceUid varchar(64),
+	@SopInstanceUid varchar(64),
+	@ExpirationTime datetime,
+	@ScheduledTime datetime 
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+	declare @WorkQueueGUID as uniqueidentifier
+
+	declare @PendingStatusEnum as int
+	declare @AutoRouteTypeEnum as int
+
+	select @PendingStatusEnum = StatusEnum from StatusEnum where Lookup = ''Pending''
+	select @AutoRouteTypeEnum = TypeEnum from TypeEnum where Lookup = ''AutoRoute''
+
+	BEGIN TRANSACTION
+
+    -- Insert statements for procedure here
+	SELECT @WorkQueueGUID = GUID from WorkQueue 
+		where StudyStorageGUID = @StudyStorageGUID
+		AND TypeEnum = @AutoRouteTypeEnum
+	if @@ROWCOUNT = 0
+	BEGIN
+		set @WorkQueueGUID = NEWID();
+
+		INSERT into WorkQueue (GUID, ServerPartitionGUID, StudyStorageGUID, DeviceGUID, TypeEnum, StatusEnum, ExpirationTime, ScheduledTime)
+			values  (@WorkQueueGUID, @ServerPartitionGUID, @StudyStorageGUID, @DeviceGUID, @AutoRouteTypeEnum, @PendingStatusEnum, @ExpirationTime, @ScheduledTime)
+	END
+	ELSE
+	BEGIN
+		UPDATE WorkQueue set ExpirationTime = @ExpirationTime
+			where GUID = @WorkQueueGUID
+	END
+
+	INSERT into WorkQueueUid(GUID, WorkQueueGUID, SeriesInstanceUid, SopInstanceUid)
+		values	(newid(), @WorkQueueGUID, @SeriesInstanceUid, @SopInstanceUid)
+
+	COMMIT TRANSACTION
+END
+' 
+END
+GO
+/****** Object:  StoredProcedure [dbo].[QueryWorkQueue]    Script Date: 11/14/2007 17:02:12 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[QueryWorkQueue]') AND type in (N'P', N'PC'))
+BEGIN
+EXEC dbo.sp_executesql @statement = N'
+-- =============================================
+-- Author:		Steve Wranovsky
+-- Create date: August 16, 2007
+-- Description:	Select WorkQueue entries
+-- History:
+--		Oct 29, 2007:	Add @ProcessorID
+--				
+-- =============================================
+CREATE PROCEDURE [dbo].[QueryWorkQueue] 
+	-- Add the parameters for the stored procedure here
+	@ProcessorID varchar(256), 
+	@TypeEnum smallint = 0
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	
+	if (@ProcessorID is NULL)
+	begin
+		RAISERROR (N''Calling [dbo.QueryWorkQueue] with @ProcessorID = NULL'', 18 /* severity.. >=20 means fatal but needs sysadmin role*/, 1 /*state*/)
+		RETURN 50000
+	end
+
+
+	SET NOCOUNT ON;
+
+
+	declare @StudyStorageGUID uniqueidentifier
+	declare @WorkQueueGUID uniqueidentifier
+	declare @PendingStatusEnum as int
+	declare @InProgressStatusEnum as int
+
+	select @PendingStatusEnum = StatusEnum from StatusEnum where Lookup = ''Pending''
+	select @InProgressStatusEnum = StatusEnum from StatusEnum where Lookup = ''In Progress''
+	
+    IF @TypeEnum = 0
+	BEGIN
+		SELECT TOP (1) @StudyStorageGUID = WorkQueue.StudyStorageGUID,
+			@WorkQueueGUID = WorkQueue.GUID 
+		FROM WorkQueue
+		JOIN
+			StudyStorage ON StudyStorage.GUID = WorkQueue.StudyStorageGUID AND StudyStorage.Lock = 0
+		WHERE
+			ScheduledTime < getdate() 
+			AND (  WorkQueue.StatusEnum = @PendingStatusEnum )
+		ORDER BY WorkQueue.ScheduledTime
+	END
+	ELSE
+	BEGIN
+		SELECT TOP (1) @StudyStorageGUID = WorkQueue.StudyStorageGUID,
+			@WorkQueueGUID = WorkQueue.GUID 
+		FROM WorkQueue
+		JOIN
+			StudyStorage ON StudyStorage.GUID = WorkQueue.StudyStorageGUID AND StudyStorage.Lock = 0
+		WHERE
+			ScheduledTime < getdate() 
+			AND WorkQueue.StatusEnum = @PendingStatusEnum
+			AND WorkQueue.TypeEnum = @TypeEnum
+		ORDER BY WorkQueue.ScheduledTime
+	END
+
+	-- We have a record, now do the updates
+	BEGIN TRANSACTION
+
+	UPDATE StudyStorage
+		SET Lock = 1, LastAccessedTime = getdate()
+	WHERE 
+		Lock = 0 
+		AND GUID = @StudyStorageGUID
+
+	if (@@ROWCOUNT = 1)
+	BEGIN
+		UPDATE WorkQueue
+			SET StatusEnum  = @InProgressStatusEnum,
+				ProcessorID = @ProcessorID
+		WHERE 
+			GUID = @WorkQueueGUID
+	END
+
+	COMMIT TRANSACTION
+
+	-- If the first update failed, this should select 0 records
+	SELECT * 
+	FROM WorkQueue
+	WHERE StatusEnum = @InProgressStatusEnum
+		AND GUID = @WorkQueueGUID
+END
+' 
+END
+GO
+/****** Object:  StoredProcedure [dbo].[UpdateWorkQueue]    Script Date: 11/14/2007 17:02:15 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -399,7 +697,7 @@ END
 ' 
 END
 GO
-/****** Object:  StoredProcedure [dbo].[ResetWorkQueue]    Script Date: 11/12/2007 16:45:49 ******/
+/****** Object:  StoredProcedure [dbo].[ResetWorkQueue]    Script Date: 11/14/2007 17:02:13 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -516,229 +814,7 @@ END
 ' 
 END
 GO
-/****** Object:  StoredProcedure [dbo].[QueryWorkQueue]    Script Date: 11/12/2007 16:45:47 ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[QueryWorkQueue]') AND type in (N'P', N'PC'))
-BEGIN
-EXEC dbo.sp_executesql @statement = N'
--- =============================================
--- Author:		Steve Wranovsky
--- Create date: August 16, 2007
--- Description:	Select WorkQueue entries
--- History:
---		Oct 29, 2007:	Add @ProcessorID
---				
--- =============================================
-CREATE PROCEDURE [dbo].[QueryWorkQueue] 
-	-- Add the parameters for the stored procedure here
-	@ProcessorID varchar(256), 
-	@TypeEnum smallint = 0
-AS
-BEGIN
-	-- SET NOCOUNT ON added to prevent extra result sets from
-	-- interfering with SELECT statements.
-	
-	if (@ProcessorID is NULL)
-	begin
-		RAISERROR (N''Calling [dbo.QueryWorkQueue] with @ProcessorID = NULL'', 18 /* severity.. >=20 means fatal but needs sysadmin role*/, 1 /*state*/)
-		RETURN 50000
-	end
-
-
-	SET NOCOUNT ON;
-
-
-	declare @StudyStorageGUID uniqueidentifier
-	declare @WorkQueueGUID uniqueidentifier
-	declare @PendingStatusEnum as int
-	declare @InProgressStatusEnum as int
-
-	select @PendingStatusEnum = StatusEnum from StatusEnum where Lookup = ''Pending''
-	select @InProgressStatusEnum = StatusEnum from StatusEnum where Lookup = ''In Progress''
-	
-    IF @TypeEnum = 0
-	BEGIN
-		SELECT TOP (1) @StudyStorageGUID = WorkQueue.StudyStorageGUID,
-			@WorkQueueGUID = WorkQueue.GUID 
-		FROM WorkQueue
-		JOIN
-			StudyStorage ON StudyStorage.GUID = WorkQueue.StudyStorageGUID AND StudyStorage.Lock = 0
-		WHERE
-			ScheduledTime < getdate() 
-			AND (  WorkQueue.StatusEnum = @PendingStatusEnum )
-		ORDER BY WorkQueue.ScheduledTime
-	END
-	ELSE
-	BEGIN
-		SELECT TOP (1) @StudyStorageGUID = WorkQueue.StudyStorageGUID,
-			@WorkQueueGUID = WorkQueue.GUID 
-		FROM WorkQueue
-		JOIN
-			StudyStorage ON StudyStorage.GUID = WorkQueue.StudyStorageGUID AND StudyStorage.Lock = 0
-		WHERE
-			ScheduledTime < getdate() 
-			AND WorkQueue.StatusEnum = @PendingStatusEnum
-			AND WorkQueue.TypeEnum = @TypeEnum
-		ORDER BY WorkQueue.ScheduledTime
-	END
-
-	-- We have a record, now do the updates
-	BEGIN TRANSACTION
-
-	UPDATE StudyStorage
-		SET Lock = 1, LastAccessedTime = getdate()
-	WHERE 
-		Lock = 0 
-		AND GUID = @StudyStorageGUID
-
-	if (@@ROWCOUNT = 1)
-	BEGIN
-		UPDATE WorkQueue
-			SET StatusEnum  = @InProgressStatusEnum,
-				ProcessorID = @ProcessorID
-		WHERE 
-			GUID = @WorkQueueGUID
-	END
-
-	COMMIT TRANSACTION
-
-	-- If the first update failed, this should select 0 records
-	SELECT * 
-	FROM WorkQueue
-	WHERE StatusEnum = @InProgressStatusEnum
-		AND GUID = @WorkQueueGUID
-END
-' 
-END
-GO
-/****** Object:  StoredProcedure [dbo].[InsertWorkQueueStudyProcess]    Script Date: 11/12/2007 16:45:46 ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[InsertWorkQueueStudyProcess]') AND type in (N'P', N'PC'))
-BEGIN
-EXEC dbo.sp_executesql @statement = N'
--- =============================================
--- Author:		Steve Wranovsky
--- Create date: August 14, 2007
--- Description:	
--- =============================================
-CREATE PROCEDURE [dbo].[InsertWorkQueueStudyProcess] 
-	-- Add the parameters for the stored procedure here
-	@ServerPartitionGUID uniqueidentifier,
-	@StudyStorageGUID uniqueidentifier,
-	@SeriesInstanceUid varchar(64),
-	@SopInstanceUid varchar(64),
-	@ExpirationTime datetime,
-	@ScheduledTime datetime 
-AS
-BEGIN
-	-- SET NOCOUNT ON added to prevent extra result sets from
-	-- interfering with SELECT statements.
-	SET NOCOUNT ON;
-
-	declare @WorkQueueGUID as uniqueidentifier
-
-	declare @PendingStatusEnum as int
-	declare @StudyProcessTypeEnum as int
-
-	select @PendingStatusEnum = StatusEnum from StatusEnum where Lookup = ''Pending''
-	select @StudyProcessTypeEnum = TypeEnum from TypeEnum where Lookup = ''StudyProcess''
-
-	BEGIN TRANSACTION
-
-    -- Insert statements for procedure here
-	SELECT @WorkQueueGUID = GUID from WorkQueue 
-		where StudyStorageGUID = @StudyStorageGUID
-		AND TypeEnum = @StudyProcessTypeEnum
-	if @@ROWCOUNT = 0
-	BEGIN
-		set @WorkQueueGUID = NEWID();
-
-		INSERT into WorkQueue (GUID, ServerPartitionGUID, StudyStorageGUID, TypeEnum, StatusEnum, ExpirationTime, ScheduledTime)
-			values  (@WorkQueueGUID, @ServerPartitionGUID, @StudyStorageGUID, @StudyProcessTypeEnum, @PendingStatusEnum, @ExpirationTime, @ScheduledTime)
-	END
-	ELSE
-	BEGIN
-		UPDATE WorkQueue set ExpirationTime = @ExpirationTime
-			where GUID = @WorkQueueGUID
-	END
-
-	INSERT into WorkQueueUid(GUID, WorkQueueGUID, SeriesInstanceUid, SopInstanceUid)
-		values	(newid(), @WorkQueueGUID, @SeriesInstanceUid, @SopInstanceUid)
-
-	COMMIT TRANSACTION
-END
-' 
-END
-GO
-/****** Object:  StoredProcedure [dbo].[InsertWorkQueueAutoRoute]    Script Date: 11/12/2007 16:45:45 ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[InsertWorkQueueAutoRoute]') AND type in (N'P', N'PC'))
-BEGIN
-EXEC dbo.sp_executesql @statement = N'-- =============================================
--- Author:		Steve Wranovsky
--- Create date: October 30, 2007
--- Description:	Stored procedure for inserting AutoRoute WorkQueue entries
--- =============================================
-CREATE PROCEDURE [dbo].[InsertWorkQueueAutoRoute] 
-	-- Add the parameters for the stored procedure here
-	@StudyStorageGUID uniqueidentifier, 
-	@ServerPartitionGUID uniqueidentifier,
-	@DeviceGUID uniqueidentifier,
-	@SeriesInstanceUid varchar(64),
-	@SopInstanceUid varchar(64),
-	@ExpirationTime datetime,
-	@ScheduledTime datetime 
-AS
-BEGIN
-	-- SET NOCOUNT ON added to prevent extra result sets from
-	-- interfering with SELECT statements.
-	SET NOCOUNT ON;
-
-	declare @WorkQueueGUID as uniqueidentifier
-
-	declare @PendingStatusEnum as int
-	declare @AutoRouteTypeEnum as int
-
-	select @PendingStatusEnum = StatusEnum from StatusEnum where Lookup = ''Pending''
-	select @AutoRouteTypeEnum = TypeEnum from TypeEnum where Lookup = ''AutoRoute''
-
-	BEGIN TRANSACTION
-
-    -- Insert statements for procedure here
-	SELECT @WorkQueueGUID = GUID from WorkQueue 
-		where StudyStorageGUID = @StudyStorageGUID
-		AND TypeEnum = @AutoRouteTypeEnum
-	if @@ROWCOUNT = 0
-	BEGIN
-		set @WorkQueueGUID = NEWID();
-
-		INSERT into WorkQueue (GUID, ServerPartitionGUID, StudyStorageGUID, DeviceGUID, TypeEnum, StatusEnum, ExpirationTime, ScheduledTime)
-			values  (@WorkQueueGUID, @ServerPartitionGUID, @StudyStorageGUID, @DeviceGUID, @AutoRouteTypeEnum, @PendingStatusEnum, @ExpirationTime, @ScheduledTime)
-	END
-	ELSE
-	BEGIN
-		UPDATE WorkQueue set ExpirationTime = @ExpirationTime
-			where GUID = @WorkQueueGUID
-	END
-
-	INSERT into WorkQueueUid(GUID, WorkQueueGUID, SeriesInstanceUid, SopInstanceUid)
-		values	(newid(), @WorkQueueGUID, @SeriesInstanceUid, @SopInstanceUid)
-
-	COMMIT TRANSACTION
-END
-' 
-END
-GO
-/****** Object:  StoredProcedure [dbo].[ReadSopClasses]    Script Date: 11/12/2007 16:45:48 ******/
+/****** Object:  StoredProcedure [dbo].[ReadSopClasses]    Script Date: 11/14/2007 17:02:13 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -763,7 +839,7 @@ END
 ' 
 END
 GO
-/****** Object:  StoredProcedure [dbo].[QueryServerPartitionSopClasses]    Script Date: 11/12/2007 16:45:47 ******/
+/****** Object:  StoredProcedure [dbo].[QueryServerPartitionSopClasses]    Script Date: 11/14/2007 17:02:11 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -799,7 +875,7 @@ END
 ' 
 END
 GO
-/****** Object:  StoredProcedure [dbo].[QueryDevicePreferredTransferSyntaxes]    Script Date: 11/12/2007 16:45:46 ******/
+/****** Object:  StoredProcedure [dbo].[QueryDevicePreferredTransferSyntaxes]    Script Date: 11/14/2007 17:02:10 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -826,7 +902,7 @@ END
 ' 
 END
 GO
-/****** Object:  StoredProcedure [dbo].[InsertInstance]    Script Date: 11/12/2007 16:45:44 ******/
+/****** Object:  StoredProcedure [dbo].[InsertInstance]    Script Date: 11/14/2007 17:02:07 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1003,7 +1079,108 @@ END
 ' 
 END
 GO
-/****** Object:  StoredProcedure [dbo].[QueryWorkQueueUids]    Script Date: 11/12/2007 16:45:48 ******/
+/****** Object:  StoredProcedure [dbo].[InsertFilesystemQueue]    Script Date: 11/14/2007 17:02:06 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[InsertFilesystemQueue]') AND type in (N'P', N'PC'))
+BEGIN
+EXEC dbo.sp_executesql @statement = N'-- =============================================
+-- Author:		Steve Wranovsky
+-- Create date: November 14, 2007
+-- Description:	
+-- =============================================
+CREATE PROCEDURE [dbo].[InsertFilesystemQueue] 
+	-- Add the parameters for the stored procedure here
+	@FilesystemQueueTypeEnum smallint, 
+	@StudyStorageGUID uniqueidentifier,
+	@FilesystemGUID uniqueidentifier,
+	@ScheduledTime datetime,
+	@SeriesInstanceUid varchar(64) = null
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+    -- Insert statements
+	BEGIN TRANSACTION
+
+	INSERT INTO [ImageServer].[dbo].[FilesystemQueue]
+           ([GUID],[FilesystemQueueTypeEnum],[StudyStorageGUID],[FilesystemGUID],[ScheduledTime],[SeriesInstanceUid])
+     VALUES
+           (newid(), @FilesystemQueueTypeEnum, @StudyStorageGUID, @FilesystemGUID, @ScheduledTime, @SeriesInstanceUid)	
+END
+' 
+END
+GO
+/****** Object:  StoredProcedure [dbo].[DeleteFilesystemQueue]    Script Date: 11/14/2007 17:02:04 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[DeleteFilesystemQueue]') AND type in (N'P', N'PC'))
+BEGIN
+EXEC dbo.sp_executesql @statement = N'-- =============================================
+-- Author:		Steve Wranovsky
+-- Create date: November 14, 2007
+-- Description:	Called to delete a FilesystemQueue entry.
+-- =============================================
+CREATE PROCEDURE [dbo].[DeleteFilesystemQueue]
+	-- Add the parameters for the stored procedure here
+	@FilesystemQueueGUID uniqueidentifier
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+    -- Do the delete
+	DELETE FROM FilesystemQueue 
+	WHERE GUID = @FilesystemQueueGUID
+END
+' 
+END
+GO
+/****** Object:  StoredProcedure [dbo].[QueryFilesystemQueue]    Script Date: 11/14/2007 17:02:10 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[QueryFilesystemQueue]') AND type in (N'P', N'PC'))
+BEGIN
+EXEC dbo.sp_executesql @statement = N'-- =============================================
+-- Author:		Steve Wranovsky
+-- Create date: November 14, 2007
+-- Description:	Query for candidates from FilesystemQueue
+-- =============================================
+CREATE PROCEDURE [dbo].[QueryFilesystemQueue] 
+	-- Add the parameters for the stored procedure here
+	@FilesystemGUID uniqueidentifier, 
+	@FilesystemQueueTypeEnum smallint,
+	@ScheduledTime datetime,
+	@Results int		
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+    -- Insert statements for procedure here
+	SELECT TOP (@Results) * 
+	FROM FilesystemQueue
+	WHERE
+		FilesystemGUID = @FilesystemGUID
+		AND FilesystemQueueTypeEnum = @FilesystemQueueTypeEnum
+		AND ScheduledTime < @ScheduledTime
+	ORDER BY ScheduledTime
+
+END
+' 
+END
+GO
+/****** Object:  StoredProcedure [dbo].[QueryWorkQueueUids]    Script Date: 11/14/2007 17:02:12 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1031,7 +1208,7 @@ END
 ' 
 END
 GO
-/****** Object:  StoredProcedure [dbo].[DeleteWorkQueueUid]    Script Date: 11/12/2007 16:45:42 ******/
+/****** Object:  StoredProcedure [dbo].[DeleteWorkQueueUid]    Script Date: 11/14/2007 17:02:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1059,48 +1236,7 @@ END
 ' 
 END
 GO
-/****** Object:  StoredProcedure [dbo].[InsertFilesystem]    Script Date: 11/12/2007 16:45:43 ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[InsertFilesystem]') AND type in (N'P', N'PC'))
-BEGIN
-EXEC dbo.sp_executesql @statement = N'-- =============================================
--- Author:		Steve Wranovsky
--- Create date: September 17, 2007
--- Description:	
--- =============================================
-CREATE PROCEDURE [dbo].[InsertFilesystem] 
-	-- Add the parameters for the stored procedure here
-	@FilesystemTierEnum smallint, 
-	@FilesystemPath nvarchar(256),
-	@Enabled bit = 1,
-	@ReadOnly bit = 0,
-	@WriteOnly bit = 0,
-	@Description nvarchar(128)
-AS
-BEGIN
-	-- SET NOCOUNT ON added to prevent extra result sets from
-	-- interfering with SELECT statements.
-	SET NOCOUNT ON;
-
-    -- Insert statements for procedure here
-	DECLARE @GUID uniqueidentifier
-
-	SET @GUID = newid()
-
-    -- Insert statements for procedure here
-	INSERT INTO [ImageServer].[dbo].Filesystem 
-		([GUID],[FilesystemTierEnum],[FilesystemPath],[Enabled],[ReadOnly],[WriteOnly],[Description])
-	VALUES (@GUID, @FilesystemTierEnum, @FilesystemPath, @Enabled, @ReadOnly, @WriteOnly, @Description)
-
-	SELECT * FROM Filesystem where GUID = @GUID	
-END
-' 
-END
-GO
-/****** Object:  StoredProcedure [dbo].[ReadFilesystems]    Script Date: 11/12/2007 16:45:48 ******/
+/****** Object:  StoredProcedure [dbo].[ReadFilesystems]    Script Date: 11/14/2007 17:02:12 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1127,7 +1263,167 @@ END
 ' 
 END
 GO
-/****** Object:  StoredProcedure [dbo].[InsertRequestAttributes]    Script Date: 11/12/2007 16:45:44 ******/
+/****** Object:  StoredProcedure [dbo].[InsertFilesystem]    Script Date: 11/14/2007 17:02:05 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[InsertFilesystem]') AND type in (N'P', N'PC'))
+BEGIN
+EXEC dbo.sp_executesql @statement = N'-- =============================================
+-- Author:		Steve Wranovsky
+-- Create date: September 17, 2007
+-- Description:	
+-- =============================================
+CREATE PROCEDURE [dbo].[InsertFilesystem] 
+	-- Add the parameters for the stored procedure here
+	@FilesystemTierEnum smallint, 
+	@FilesystemPath nvarchar(256),
+	@Enabled bit = 1,
+	@ReadOnly bit = 0,
+	@WriteOnly bit = 0,
+	@Description nvarchar(128)
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+    -- Variables
+	DECLARE @GUID uniqueidentifier
+	DECLARE @FilesystemDeleteServiceLockTypeEnum smallint
+
+	SET @GUID = newid()
+	SELECT @FilesystemDeleteServiceLockTypeEnum = ServiceLockTypeEnum FROM ServiceLockTypeEnum WHERE [Lookup] = ''FilesystemDelete''
+
+    -- Insert statements
+	BEGIN TRANSACTION
+
+	INSERT INTO [ImageServer].[dbo].Filesystem 
+		([GUID],[FilesystemTierEnum],[FilesystemPath],[Enabled],[ReadOnly],[WriteOnly],[Description])
+	VALUES (@GUID, @FilesystemTierEnum, @FilesystemPath, @Enabled, @ReadOnly, @WriteOnly, @Description)
+
+	INSERT INTO [ImageServer].[dbo].ServiceLock
+		([GUID],[ServiceLockTypeEnum],[Lock],[ScheduledTime],[FilesystemGUID])
+	VALUES (newid(),@FilesystemDeleteServiceLockTypeEnum,0,getdate(),@GUID)
+
+	COMMIT TRANSACTION
+
+	SELECT * FROM Filesystem where GUID = @GUID	
+END
+' 
+END
+GO
+/****** Object:  StoredProcedure [dbo].[UpdateServiceLock]    Script Date: 11/14/2007 17:02:14 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[UpdateServiceLock]') AND type in (N'P', N'PC'))
+BEGIN
+EXEC dbo.sp_executesql @statement = N'-- =============================================
+-- Author:		Steve Wranovsky
+-- Create date: November 14, 2007
+-- Description:	Update the ServiceLock table
+-- =============================================
+CREATE PROCEDURE [dbo].[UpdateServiceLock] 
+	-- Add the parameters for the stored procedure here
+	@ProcessorId varchar(256), 
+	@ServiceLockGUID uniqueidentifier,
+	@Lock bit,
+	@ScheduledTime datetime
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+    -- Insert statements for procedure here
+			UPDATE ServiceLock
+		SET Lock = @Lock, ScheduledTime = @ScheduledTime,
+			ProcessorID = @ProcessorID
+		WHERE GUID = @ServiceLockGUID
+END
+' 
+END
+GO
+/****** Object:  StoredProcedure [dbo].[QueryServiceLock]    Script Date: 11/14/2007 17:02:11 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[QueryServiceLock]') AND type in (N'P', N'PC'))
+BEGIN
+EXEC dbo.sp_executesql @statement = N'-- =============================================
+-- Author:		Steve Wranovsky
+-- Create date: November 14, 2007
+-- Description:	Query for ServiceLock rows
+-- =============================================
+CREATE PROCEDURE [dbo].[QueryServiceLock] 
+	-- Add the parameters for the stored procedure here
+	@ProcessorId varchar(256), 
+	@ServiceLockTypeEnum smallint = 0
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+	if (@ProcessorID is NULL)
+	begin
+		RAISERROR (N''Calling [dbo.QueryServiceLock] with @ProcessorID = NULL'', 18 /* severity.. >=20 means fatal but needs sysadmin role*/, 1 /*state*/)
+		RETURN 50000
+	end
+
+    -- Insert statements for procedure here
+	SELECT @ProcessorId, @ServiceLockTypeEnum
+
+	declare @ServiceLockGUID uniqueidentifier
+	
+    IF @ServiceLockTypeEnum = 0
+	BEGIN
+		SELECT TOP (1) @ServiceLockGUID = ServiceLock.GUID 
+		FROM ServiceLock
+		WHERE
+			ScheduledTime < getdate() 
+			AND (  ServiceLock.Lock = 0 )
+		ORDER BY ServiceLock.ScheduledTime
+	END
+	ELSE
+	BEGIN
+		SELECT TOP (1) @ServiceLockGUID = ServiceLock.GUID 
+		FROM ServiceLock
+		WHERE
+			ScheduledTime < getdate() 
+			AND ServiceLock.ServiceLockTypeEnum = @ServiceLockTypeEnum
+			AND (  ServiceLock.Lock = 0 )
+		ORDER BY ServiceLock.ScheduledTime
+	END
+
+	-- We have a record, now do the updates
+
+	UPDATE ServiceLock
+		SET Lock = 1, ProcessorId = @ProcessorId
+	WHERE 
+		Lock = 0 
+		AND GUID = @ServiceLockGUID
+
+	if (@@ROWCOUNT = 0)
+	BEGIN
+		set @ServiceLockGUID = ''''
+	END
+
+
+	-- If the first update failed, this should select 0 records
+	SELECT * 
+	FROM ServiceLock
+	WHERE 
+		GUID = @ServiceLockGUID
+END
+' 
+END
+GO
+/****** Object:  StoredProcedure [dbo].[InsertRequestAttributes]    Script Date: 11/14/2007 17:02:07 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1168,7 +1464,7 @@ END
 ' 
 END
 GO
-/****** Object:  StoredProcedure [dbo].[QueryRequestAttributes]    Script Date: 11/12/2007 16:45:47 ******/
+/****** Object:  StoredProcedure [dbo].[QueryRequestAttributes]    Script Date: 11/14/2007 17:02:11 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1197,7 +1493,7 @@ END
 ' 
 END
 GO
-/****** Object:  StoredProcedure [dbo].[InsertDevice]    Script Date: 11/12/2007 16:45:42 ******/
+/****** Object:  StoredProcedure [dbo].[InsertDevice]    Script Date: 11/14/2007 17:02:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1231,7 +1527,7 @@ END
 ' 
 END
 GO
-/****** Object:  StoredProcedure [dbo].[UpdateDevice]    Script Date: 11/12/2007 16:45:49 ******/
+/****** Object:  StoredProcedure [dbo].[UpdateDevice]    Script Date: 11/14/2007 17:02:14 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1274,7 +1570,7 @@ END
 ' 
 END
 GO
-/****** Object:  StoredProcedure [dbo].[QueryDevice]    Script Date: 11/12/2007 16:45:46 ******/
+/****** Object:  StoredProcedure [dbo].[QueryDevice]    Script Date: 11/14/2007 17:02:10 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1303,7 +1599,7 @@ END
 ' 
 END
 GO
-/****** Object:  StoredProcedure [dbo].[DeleteDevice]    Script Date: 11/12/2007 16:45:41 ******/
+/****** Object:  StoredProcedure [dbo].[DeleteDevice]    Script Date: 11/14/2007 17:02:04 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1331,7 +1627,7 @@ END
 ' 
 END
 GO
-/****** Object:  StoredProcedure [dbo].[ReadServerTransferSyntaxes]    Script Date: 11/12/2007 16:45:48 ******/
+/****** Object:  StoredProcedure [dbo].[ReadServerTransferSyntaxes]    Script Date: 11/14/2007 17:02:12 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1357,7 +1653,7 @@ END
 ' 
 END
 GO
-/****** Object:  StoredProcedure [dbo].[InsertStudyStorage]    Script Date: 11/12/2007 16:45:45 ******/
+/****** Object:  StoredProcedure [dbo].[InsertStudyStorage]    Script Date: 11/14/2007 17:02:08 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1404,48 +1700,6 @@ BEGIN
 		,@ServerPartitionGUID
 		,@StudyInstanceUid
 END
-' 
-END
-GO
-
-/****** Object:  StoredProcedure [dbo].[UpdateFilesystem]    Script Date: 11/13/2007 20:53:16 ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[UpdateServerPartition]') AND type in (N'P', N'PC'))
-BEGIN
-EXEC dbo.sp_executesql @statement = N'-- =============================================  
--- Author:              Thanh Huynh  
--- Create date: Nov 12, 2007  
--- Description: Called to update a file system record
--- =============================================  
-CREATE PROCEDURE [dbo].[UpdateFilesystem]   
-         -- Add the parameters for the stored procedure here  
-         @GUID uniqueidentifier,  
-         @FilesystemPath nvarchar(256),  
-         @Enabled bit,
-		 @ReadOnly bit,
-		 @WriteOnly bit,
-		 @Description nvarchar(128),
-	     @FilesystemTierEnum smallint
-		 
-AS  
-BEGIN  
-         -- SET NOCOUNT ON added to prevent extra result sets from  
-         -- interfering with SELECT statements.  
-         SET NOCOUNT ON;  
-   
-    UPDATE [ImageServer].[dbo].[Filesystem]  
-    SET FilesystemPath = @FilesystemPath
-		, Enabled = @Enabled
-		, ReadOnly = @ReadOnly
-		, WriteOnly = @WriteOnly
-		, Description = @Description
-		, FilesystemTierEnum = @FilesystemTierEnum
-		
-    WHERE GUID = @GUID
-END  
 ' 
 END
 GO

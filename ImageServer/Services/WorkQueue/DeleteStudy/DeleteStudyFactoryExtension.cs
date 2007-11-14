@@ -29,44 +29,34 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Dicom;
+using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Model;
 
-namespace ClearCanvas.ImageServer.Common
+namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy
 {
-    public class FilesystemSelector
+    /// <summary>
+    /// Plugin for processing 'DeleteStudy' WorkQueue items.
+    /// </summary>
+    [ExtensionOf(typeof(WorkQueueFactoryExtensionPoint))]
+    public class DeleteStudyFactoryExtension : IWorkQueueProcessorFactory
     {
-        private FilesystemMonitor _monitor;
+        #region Constructors
+        public DeleteStudyFactoryExtension()
+        { }
+        #endregion
 
-        public FilesystemSelector(FilesystemMonitor monitor)
+        #region IWorkQueueProcessorFactory Members
+
+        public TypeEnum GetWorkQueueType()
         {
-            _monitor = monitor;    
+            return TypeEnum.GetEnum("DeleteStudy");
         }
 
-        public Filesystem SelectFilesystem(DicomMessageBase msg)
+        public IWorkQueueItemProcessor GetItemProcessor()
         {
-            ServerFilesystemInfo selectedFilesystem = null;
-            float selectedFreeBytes = 0;
-
-            foreach (ServerFilesystemInfo info in _monitor.Filesystems.Values)
-            {
-                if (info.Online && info.Filesystem.Enabled && !info.Filesystem.ReadOnly)
-                {
-                    if (info.FreeBytes > selectedFreeBytes)
-                    {
-                        selectedFreeBytes = info.FreeBytes;
-                        selectedFilesystem = info;
-                    }
-                }
-            }
-
-            if (selectedFilesystem == null)
-                return null;
-
-            return selectedFilesystem.Filesystem;
+            return new DeleteStudyItemProcessor();
         }
+
+        #endregion
     }
 }

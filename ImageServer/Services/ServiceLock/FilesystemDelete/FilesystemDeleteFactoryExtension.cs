@@ -29,44 +29,30 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Dicom;
+using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Model;
 
-namespace ClearCanvas.ImageServer.Common
+namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
 {
-    public class FilesystemSelector
+    /// <summary>
+    /// Plugin for processing 'AutoRoute' WorkQueue items.
+    /// </summary>
+    [ExtensionOf(typeof(ServiceLockFactoryExtensionPoint))]
+    public class FilesystemDeleteFactoryExtension : IServiceLockProcessorFactory
     {
-        private FilesystemMonitor _monitor;
 
-        public FilesystemSelector(FilesystemMonitor monitor)
+        #region IWorkQueueProcessorFactory Members
+
+        public ServiceLockTypeEnum GetServiceLockType()
         {
-            _monitor = monitor;    
+            return ServiceLockTypeEnum.GetEnum("FilesystemDelete");
         }
 
-        public Filesystem SelectFilesystem(DicomMessageBase msg)
+        public IServiceLockItemProcessor GetItemProcessor()
         {
-            ServerFilesystemInfo selectedFilesystem = null;
-            float selectedFreeBytes = 0;
-
-            foreach (ServerFilesystemInfo info in _monitor.Filesystems.Values)
-            {
-                if (info.Online && info.Filesystem.Enabled && !info.Filesystem.ReadOnly)
-                {
-                    if (info.FreeBytes > selectedFreeBytes)
-                    {
-                        selectedFreeBytes = info.FreeBytes;
-                        selectedFilesystem = info;
-                    }
-                }
-            }
-
-            if (selectedFilesystem == null)
-                return null;
-
-            return selectedFilesystem.Filesystem;
+            return new FilesystemDeleteItemProcessor();
         }
+
+        #endregion
     }
 }

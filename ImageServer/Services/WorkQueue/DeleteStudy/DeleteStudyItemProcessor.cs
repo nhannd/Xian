@@ -32,41 +32,30 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using ClearCanvas.Dicom;
-using ClearCanvas.ImageServer.Model;
 
-namespace ClearCanvas.ImageServer.Common
+namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy
 {
-    public class FilesystemSelector
+    public class DeleteStudyItemProcessor : BaseItemProcessor, IWorkQueueItemProcessor
     {
-        private FilesystemMonitor _monitor;
+        #region IWorkQueueItemProcessor Members
 
-        public FilesystemSelector(FilesystemMonitor monitor)
+        public string ProcessorID
         {
-            _monitor = monitor;    
-        }
-
-        public Filesystem SelectFilesystem(DicomMessageBase msg)
-        {
-            ServerFilesystemInfo selectedFilesystem = null;
-            float selectedFreeBytes = 0;
-
-            foreach (ServerFilesystemInfo info in _monitor.Filesystems.Values)
+            get
             {
-                if (info.Online && info.Filesystem.Enabled && !info.Filesystem.ReadOnly)
-                {
-                    if (info.FreeBytes > selectedFreeBytes)
-                    {
-                        selectedFreeBytes = info.FreeBytes;
-                        selectedFilesystem = info;
-                    }
-                }
+                throw new Exception("The method or operation is not implemented.");
             }
-
-            if (selectedFilesystem == null)
-                return null;
-
-            return selectedFilesystem.Filesystem;
+            set
+            {
+                throw new Exception("The method or operation is not implemented.");
+            }
         }
+
+        public void Process(Model.WorkQueue item)
+        {
+            throw new Exception("The method or operation is not implemented.");
+        }
+
+        #endregion
     }
 }

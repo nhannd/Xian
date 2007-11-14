@@ -48,12 +48,12 @@ namespace ClearCanvas.ImageServer.Common
     public class FilesystemMonitor : IDisposable
     {
         #region Private Members
-        private IList<ServerFilesystemInfo> _filesystemList = new List<ServerFilesystemInfo>();
+        private readonly Dictionary<ServerEntityKey, ServerFilesystemInfo> _filesystemList = new Dictionary<ServerEntityKey,ServerFilesystemInfo>();
         private IList<ServerPartition> _partitionList;
-        private IPersistentStore _store;
+        private readonly IPersistentStore _store;
         private Thread _theThread = null;
         private bool _stop = false;
-        private object _lock = new object();
+        private readonly object _lock = new object();
         #endregion
 
         #region Constructors
@@ -64,7 +64,7 @@ namespace ClearCanvas.ImageServer.Common
         #endregion
 
         #region Public Properties
-        public IList<ServerFilesystemInfo> Filesystems
+        public IDictionary<ServerEntityKey,ServerFilesystemInfo> Filesystems
         {
             get { return _filesystemList; }
         }
@@ -75,17 +75,47 @@ namespace ClearCanvas.ImageServer.Common
         #endregion
 
         #region Public Methods
+        public bool CheckFilesystemAboveLowWatermark(ServerEntityKey filesystemKey)
+        {
+            lock (_lock)
+            {
+                if (_filesystemList.ContainsKey(filesystemKey))
+                {
+                    return _filesystemList[filesystemKey].AboveLowWatermark;
+                }
+            }
+            return false;
+        }
+        public bool CheckFilesystemAboveHighWatermark(ServerEntityKey filesystemKey)
+        {
+            lock (_lock)
+            {
+                if (_filesystemList.ContainsKey(filesystemKey))
+                {
+                    return _filesystemList[filesystemKey].AboveHighWatermark;
+                }
+            }
+            return false;
+        }
+        public float CheckFilesystemBytesToRemove(ServerEntityKey filesystemKey)
+        {
+            lock (_lock)
+            {
+                if (_filesystemList.ContainsKey(filesystemKey))
+                {
+                    return _filesystemList[filesystemKey].BytesToRemove;
+                }
+            }
+            return 0.0f;
+        }
 
         public bool CheckFilesystemWriteable(ServerEntityKey filesystemKey)
         {
             lock (_lock)
             {
-                foreach (ServerFilesystemInfo info in _filesystemList)
+                if (_filesystemList.ContainsKey(filesystemKey))
                 {
-                    if (info.Filesystem.GetKey().Equals(filesystemKey))
-                    {
-                        return info.Writeable;
-                    }
+                    return _filesystemList[filesystemKey].Writeable;
                 }
             }
             return false;
@@ -95,12 +125,9 @@ namespace ClearCanvas.ImageServer.Common
         {
             lock (_lock)
             {
-                foreach (ServerFilesystemInfo info in _filesystemList)
+                if (_filesystemList.ContainsKey(filesystemKey))
                 {
-                    if (info.Filesystem.GetKey().Equals(filesystemKey))
-                    {
-                        return info.Readable;
-                    }
+                    return _filesystemList[filesystemKey].Readable;
                 }
             }
             return false;
@@ -120,7 +147,7 @@ namespace ClearCanvas.ImageServer.Common
                 foreach (Filesystem filesystem in filesystemList)
                 {
                     ServerFilesystemInfo info = new ServerFilesystemInfo(filesystem);
-                    _filesystemList.Add(info);
+                    _filesystemList.Add(filesystem.GetKey(),info);
                 }
             }
 
@@ -168,7 +195,7 @@ namespace ClearCanvas.ImageServer.Common
 
                     lock (_lock)
                     {
-                        foreach (ServerFilesystemInfo info in _filesystemList)
+                        foreach (ServerFilesystemInfo info in _filesystemList.Values)
                         {
                             info.LoadFreeSpace();
                         }

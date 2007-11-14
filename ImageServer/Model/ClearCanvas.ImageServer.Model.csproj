@@ -36,13 +36,20 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Brokers\IDeleteDevice.cs" />
+    <Compile Include="Brokers\IDeleteFilesystemQueue.cs" />
+    <Compile Include="Brokers\IInsertFilesystemQueue.cs" />
     <Compile Include="Brokers\IInsertWorkQueueAutoRoute.cs" />
+    <Compile Include="Brokers\IInsertWorkQueueDeleteStudy.cs" />
+    <Compile Include="Brokers\IQueryFilesystemQueue.cs" />
+    <Compile Include="Brokers\IQueryServiceLock.cs" />
     <Compile Include="Brokers\IResetWorkQueueItems.cs" />
     <Compile Include="Brokers\IDeleteWorkQueueUid.cs" />
     <Compile Include="Brokers\IInsertFilesystem.cs" />
     <Compile Include="Brokers\IUpdateFileSystem.cs" />
     <Compile Include="Brokers\IUpdateServerPartition.cs" />
+    <Compile Include="Brokers\IUpdateServiceLock.cs" />
     <Compile Include="Criteria\ServerRuleSelectCriteria.cs" />
+    <Compile Include="EnumBrokers\IFilesystemQueueTypeEnum.cs" />
     <Compile Include="EnumBrokers\IFilesystemTierEnum.cs" />
     <Compile Include="Brokers\IGetFilesystems.cs" />
     <Compile Include="Brokers\IGetServerPartitions.cs" />
@@ -64,13 +71,22 @@
     <Compile Include="Criteria\WorkQueueSelectCriteria.cs" />
     <Compile Include="EnumBrokers\IServerRuleApplyTimeEnum.cs" />
     <Compile Include="EnumBrokers\IServerRuleTypeEnum.cs" />
+    <Compile Include="EnumBrokers\IServiceLockTypeEnum.cs" />
+    <Compile Include="FilesystemQueue.cs" />
+    <Compile Include="FilesystemQueueTypeEnum.cs" />
+    <Compile Include="Parameters\FilesystemQueueDeleteParameters.cs" />
     <Compile Include="Parameters\DeviceDeleteParameters.cs" />
+    <Compile Include="Parameters\FilesystemQueueInsertParameters.cs" />
+    <Compile Include="Parameters\FilesystemQueueQueryParameters.cs" />
     <Compile Include="Parameters\FilesystemUpdateParameters.cs" />
     <Compile Include="Parameters\ServerPartitionUpdateParameters.cs" />
+    <Compile Include="Parameters\ServiceLockQueryParameters.cs" />
+    <Compile Include="Parameters\ServiceLockUpdateParameters.cs" />
     <Compile Include="Parameters\WorkQueueAutoRouteInsertParameters.cs" />
     <Compile Include="Parameters\WorkQueueResetParameters.cs" />
     <Compile Include="Parameters\DeviceUpdateParameters.cs" />
     <Compile Include="Parameters\FilesystemInsertParameters.cs" />
+    <Compile Include="Parameters\WorkQueueDeleteStudyInsertParameters.cs" />
     <Compile Include="SelectBrokers\ISelectDevice.cs" />
     <Compile Include="SelectBrokers\ISelectFilesystem.cs" />
     <Compile Include="SelectBrokers\ISelectServerPartition.cs" />
@@ -113,6 +129,8 @@
     <Compile Include="ServerRuleTypeEnum.cs" />
     <Compile Include="ServerSopClass.cs" />
     <Compile Include="ServerTransferSyntax.cs" />
+    <Compile Include="ServiceLock.cs" />
+    <Compile Include="ServiceLockTypeEnum.cs" />
     <Compile Include="StatusEnum.cs" />
     <Compile Include="Study.cs" />
     <Compile Include="Parameters\StudyStorageInsertParameters.cs" />
