@@ -36,6 +36,7 @@ using ClearCanvas.ImageServer.Model.SelectBrokers;
 
 namespace ClearCanvas.ImageServer.Model
 {
+    [Serializable]
     public class Filesystem : ServerEntity
     {
         #region Constructors

@@ -33,6 +33,7 @@ using System;
 
 namespace ClearCanvas.ImageServer.Enterprise
 {
+    [Serializable]
     public abstract class ServerEnum : ServerEntity
     {
         #region Constructors

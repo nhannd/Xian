@@ -52,6 +52,18 @@ namespace ClearCanvas.ImageServer.Model.Criteria
             }
         }
 
+        public ISearchCondition<string> Description
+        {
+            get
+            {
+                if (!SubCriteria.ContainsKey("Description"))
+                {
+                    SubCriteria["Description"] = new SearchCondition<string>("Description");
+                }
+                return (ISearchCondition<string>)SubCriteria["Description"];
+            }
+        }
+
         public ISearchCondition<bool> Enabled
         {
             get
@@ -61,6 +73,41 @@ namespace ClearCanvas.ImageServer.Model.Criteria
                     SubCriteria["Enabled"] = new SearchCondition<bool>("Enabled");
                 }
                 return (ISearchCondition<bool>)SubCriteria["Enabled"];
+            }
+        }
+
+        public ISearchCondition<bool> Readable
+        {
+            get
+            {
+                if (!SubCriteria.ContainsKey("Readonly"))
+                {
+                    SubCriteria["Readonly"] = new SearchCondition<bool>("Readonly");
+                }
+                return (ISearchCondition<bool>)SubCriteria["Readonly"];
+            }
+        }
+        public ISearchCondition<bool> Writeable
+        {
+            get
+            {
+                if (!SubCriteria.ContainsKey("WriteOnly"))
+                {
+                    SubCriteria["WriteOnly"] = new SearchCondition<bool>("WriteOnly");
+                }
+                return (ISearchCondition<bool>)SubCriteria["WriteOnly"];
+            }
+        }
+
+        public ISearchCondition<FilesystemTierEnum> Tier
+        {
+            get
+            {
+                if (!SubCriteria.ContainsKey("FilesystemTierEnum"))
+                {
+                    SubCriteria["FilesystemTierEnum"] = new SearchCondition<FilesystemTierEnum>("FilesystemTierEnum");
+                }
+                return (ISearchCondition<FilesystemTierEnum>)SubCriteria["FilesystemTierEnum"];
             }
         }
     }

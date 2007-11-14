@@ -43,6 +43,10 @@
     <Reference Include="System.EnterpriseServices" />
     <Reference Include="System.Web.Mobile" />
     <Reference Include="System.Web.Extensions" />
+    <Reference Include="Validators, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\ReferencedAssemblies\AjaxValidators\Validators.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Default.aspx" />
@@ -84,6 +88,48 @@
     </Compile>
     <Compile Include="Admin\Configuration\DevicePage.aspx.designer.cs">
       <DependentUpon>DevicePage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\Configuration\FileSystems\AddEditFileSystemDialog.ascx.cs">
+      <DependentUpon>AddEditFileSystemDialog.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\Configuration\FileSystems\AddEditFileSystemDialog.ascx.designer.cs">
+      <DependentUpon>AddEditFileSystemDialog.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\Configuration\FileSystems\FileSystemsFilterPanel.ascx.cs">
+      <DependentUpon>FileSystemsFilterPanel.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\Configuration\FileSystems\FileSystemsFilterPanel.ascx.designer.cs">
+      <DependentUpon>FileSystemsFilterPanel.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\Configuration\FileSystems\FileSystemsToolBar.ascx.cs">
+      <DependentUpon>FileSystemsToolBar.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\Configuration\FileSystems\FileSystemsToolBar.ascx.designer.cs">
+      <DependentUpon>FileSystemsToolBar.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\Configuration\FileSystems\FileSystemsGridView.ascx.cs">
+      <DependentUpon>FileSystemsGridView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\Configuration\FileSystems\FileSystemsGridView.ascx.designer.cs">
+      <DependentUpon>FileSystemsGridView.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\Configuration\FileSystems\FileSystemsPanel.ascx.cs">
+      <DependentUpon>FileSystemsPanel.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\Configuration\FileSystems\FileSystemsPanel.ascx.designer.cs">
+      <DependentUpon>FileSystemsPanel.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\Configuration\FileSystems\FileSystemsPage.aspx.cs">
+      <DependentUpon>FileSystemsPage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\Configuration\FileSystems\FileSystemsPage.aspx.designer.cs">
+      <DependentUpon>FileSystemsPage.aspx</DependentUpon>
     </Compile>
     <Compile Include="Admin\Configuration\ServerPartitions\AddPartitionDialog.ascx.cs">
       <DependentUpon>AddPartitionDialog.ascx</DependentUpon>
@@ -134,6 +180,7 @@
     <Compile Include="Admin\Configuration\ServerPartitions\ServerPartitionToolBarPanel.ascx.designer.cs">
       <DependentUpon>ServerPartitionToolBarPanel.ascx</DependentUpon>
     </Compile>
+    <Compile Include="Common\AEValidator.cs" />
     <Compile Include="Common\ConfirmDialog.ascx.cs">
       <DependentUpon>ConfirmDialog.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -211,6 +258,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Admin\Configuration\DevicePage.aspx" />
+    <Content Include="Admin\Configuration\FileSystems\AddEditFileSystemDialog.ascx" />
+    <Content Include="Admin\Configuration\FileSystems\FileSystemsFilterPanel.ascx" />
+    <Content Include="Admin\Configuration\FileSystems\FileSystemsToolBar.ascx" />
+    <Content Include="Admin\Configuration\FileSystems\FileSystemsGridView.ascx" />
+    <Content Include="Admin\Configuration\FileSystems\FileSystemsPanel.ascx" />
+    <Content Include="Admin\Configuration\FileSystems\FileSystemsPage.aspx" />
     <Content Include="Admin\Configuration\ServerPartitions\AddPartitionDialog.ascx" />
     <Content Include="Admin\Configuration\ServerPartitions\EditPartitionDialog.ascx" />
     <Content Include="Admin\Configuration\ServerPartitions\ServerPartitionFilterPanel.ascx" />

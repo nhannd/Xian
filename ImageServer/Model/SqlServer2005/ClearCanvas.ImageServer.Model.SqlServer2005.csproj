@@ -34,6 +34,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Brokers\DeleteDevice.cs" />
+    <Compile Include="Brokers\InsertFilesystem.cs" />
     <Compile Include="Brokers\InsertWorkQueueAutoRoute.cs" />
     <Compile Include="Brokers\ResetWorkQueue.cs" />
     <Compile Include="Brokers\DeleteWorkQueueUid.cs" />
@@ -50,6 +51,7 @@
     <Compile Include="Brokers\InsertWorkQueueStudyProcess.cs" />
     <Compile Include="Brokers\QueryDevice.cs" />
     <Compile Include="Brokers\UpdateDevice.cs" />
+    <Compile Include="Brokers\UpdateFilesystem.cs" />
     <Compile Include="Brokers\UpdateServerPartition.cs" />
     <Compile Include="EnumBrokers\FilesystemTierEnumBroker.cs" />
     <Compile Include="EnumBrokers\ServerRuleApplyTimeEnumBroker.cs" />

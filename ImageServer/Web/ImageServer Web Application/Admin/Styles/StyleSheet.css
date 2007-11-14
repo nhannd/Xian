@@ -7,7 +7,7 @@
 
 .PopupWindow
 {
-	background-color: #ffffcc;
+	background-color: white;
 	border-right: 1px outset;
 	border-top: 1px outset;
 	border-left: 1px outset;
@@ -21,21 +21,36 @@
 }
 
 
+.InvalidInputHilight
+{
+	background-color:Yellow;
+}
 
 
+
+.Panel
+{
+	padding-right: 10px;
+	padding-left: 10px;
+	padding-bottom: 10px;
+	padding-top: 10px;
+}
         
 .PopupWindowTitleBar
 {
 	cursor: move;
 	width: 100%;
 	color: white;
-	height: 30px;
-	background-color: #0099ff;
+	height: 30px; /*background-color: #0099ff;*/
+	background-color: #3D98D1;
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#3D98D1, endColorstr=#4486FF);
 	vertical-align: middle;
 	text-align: center;
 	font-weight: bold;
 	font-size: larger;
 	text-transform: capitalize;
+	border-bottom: gray 1px ridge;
+	
 }
 
 .toolBarPanel
@@ -51,12 +66,14 @@
 	border-top: 1px outset;
 	vertical-align: middle;
 	text-transform: capitalize;
+	font-weight:bold;
 	border-left: 1px outset;
 	width: 100%;
 	color: white;
 	border-bottom: 1px outset;
 	height: 30px;
-	background-color: #0099ff;
+	background-color: #3D98D1;
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#3D98D1, endColorstr=#4486FF);
 	text-align: left;
 	text-indent: 10pt;
 }
@@ -154,6 +171,7 @@
 	border-left: #cccccc 1px solid;
 	border-bottom: #cccccc 1px solid;
 	height:630px;
+	width: 700px;
 	font-size:smaller;
 }
 .ChildPanel
@@ -183,6 +201,6 @@
 .WatermarkedText
 {
 	background-color: transparent;
-	color: red;
+	color: #cccc99;
 	font-style: italic;
 }

@@ -6,10 +6,9 @@
 		</siteMapNode>
 		<siteMapNode url="" title="Configuration"  description="System Configuration">
 			<siteMapNode url="~/Admin/Configuration/DevicePage.aspx" title="Devices"  description="Device Configuration"/>
-			<siteMapNode url="~/Admin/Configuration/ServerPartitions/ServerPartitionPage.aspx" title="Server Partitions"  description="Device Configuration"/>
-			<!--
-			<siteMapNode url="~/Admin/Configuration/FileSystemsPage.aspx" title="FileSystems"  description="Device Configuration"/>
-			<siteMapNode url="~/Admin/Configuration/FileSystemsTierPage.aspx" title="FileSystems Tiers"  description="Device Configuration"/>-->
+			<siteMapNode url="~/Admin/Configuration/ServerPartitions/ServerPartitionPage.aspx" title="Server Partitions"  description="Server Partition Configuration"/>
+			<siteMapNode url="~/Admin/Configuration/FileSystems/FileSystemsPage.aspx" title="FileSystems"  description="FileSystems Configuration"/>
+			
 		</siteMapNode>
 		<siteMapNode url="" title="Rules"  description="System Configuration">
 		<!--	<siteMapNode url="~/Admin/Rules/AutoRouting.aspx" title="Auto-Routing"  description="Configure auto-routing rules"/>

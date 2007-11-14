@@ -11,11 +11,13 @@
     <script type="text/javascript" src="../../DHTMLSuite/js/ajax.js"></script>
 	<script type="text/javascript" src="../../DHTMLSuite/js/dhtml-suite-for-applications-without-comments.js"></script>
 	<script type="text/javascript" src="../../DHTMLSuite/Misc/RoundedCorners/js/rounded-corners.js"></script>
-	
+	<style type="text/css">
+	    A:visited { text-decoration:none;color: black;} 
+	</style>
 </head>
 <body>
 
-<form id="form1" runat="server" AutoComplete="off">
+<form id="form1" runat="server" autocomplete="off">
     <table align="center">
     <tr>
     <td>
@@ -58,8 +60,8 @@
                                                         <asp:TreeNodeStyle Font-Underline="False" />
                                                     </LevelStyles>
                                                     <HoverNodeStyle Font-Underline="False" Font-Bold="False" ForeColor="Red" />
-                                                    <SelectedNodeStyle BorderColor="#888888" BorderStyle="Solid" BorderWidth="1px" Font-Underline="False"
-                                                        HorizontalPadding="20px" VerticalPadding="1px" ForeColor="DeepSkyBlue" />
+                                                    <SelectedNodeStyle BorderColor="#888888" BorderStyle="Solid" BorderWidth="0px" Font-Underline="False"
+                                                        HorizontalPadding="5px" VerticalPadding="1px" ForeColor="DeepSkyBlue" Font-Bold="False" />
                                                     <NodeStyle Font-Names="Verdana" Font-Size="Small" HorizontalPadding="5px" NodeSpacing="1px"
                                                         VerticalPadding="2px" />
                                                 </asp:TreeView>

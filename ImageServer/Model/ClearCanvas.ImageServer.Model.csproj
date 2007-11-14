@@ -40,6 +40,7 @@
     <Compile Include="Brokers\IResetWorkQueueItems.cs" />
     <Compile Include="Brokers\IDeleteWorkQueueUid.cs" />
     <Compile Include="Brokers\IInsertFilesystem.cs" />
+    <Compile Include="Brokers\IUpdateFileSystem.cs" />
     <Compile Include="Brokers\IUpdateServerPartition.cs" />
     <Compile Include="Criteria\ServerRuleSelectCriteria.cs" />
     <Compile Include="EnumBrokers\IFilesystemTierEnum.cs" />
@@ -64,6 +65,7 @@
     <Compile Include="EnumBrokers\IServerRuleApplyTimeEnum.cs" />
     <Compile Include="EnumBrokers\IServerRuleTypeEnum.cs" />
     <Compile Include="Parameters\DeviceDeleteParameters.cs" />
+    <Compile Include="Parameters\FilesystemUpdateParameters.cs" />
     <Compile Include="Parameters\ServerPartitionUpdateParameters.cs" />
     <Compile Include="Parameters\WorkQueueAutoRouteInsertParameters.cs" />
     <Compile Include="Parameters\WorkQueueResetParameters.cs" />

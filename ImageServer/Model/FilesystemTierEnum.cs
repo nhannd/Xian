@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Enterprise;
@@ -36,6 +37,7 @@ using ClearCanvas.ImageServer.Model.EnumBrokers;
 
 namespace ClearCanvas.ImageServer.Model
 {
+    [Serializable]
     public class FilesystemTierEnum : ServerEnum
     {
         private static Dictionary<short, FilesystemTierEnum> _dict = new Dictionary<short, FilesystemTierEnum>();
