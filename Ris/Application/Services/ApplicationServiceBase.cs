@@ -41,10 +41,25 @@ using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Application.Services
 {
+    /// <summary>
+    /// Base class for all RIS application services.
+    /// </summary>
+    /// <remarks>
+    /// This class makes several important assumptions:
+    /// 1. Instances are never shared across threads.
+    /// 2. Instances are used on a per-call basis.  That is, an instance services a single request and is then discarded.
+    /// </remarks>
     public abstract class ApplicationServiceBase : IApplicationServiceLayer
     {
-        private static Staff _currentUserStaff;
-        private static User _currentUser;
+        /// <summary>
+        /// Cached current-user Staff object.  Caching is acceptable only if this service instance is never re-used.
+        /// </summary>
+        private Staff _currentUserStaff;
+
+        /// <summary>
+        /// Cached User object.  Caching is acceptable only if this service instance is never re-used.
+        /// </summary>
+        private User _currentUser;
 
         /// <summary>
         /// Obtains the staff associated with the current user.  If no <see cref="Staff"/> is associated with the current user,
@@ -54,13 +69,16 @@ namespace ClearCanvas.Ris.Application.Services
         {
             get
             {
-                try
+                if (_currentUserStaff == null)
                 {
-                    _currentUserStaff = PersistenceContext.GetBroker<IStaffBroker>().FindStaffForUser(Thread.CurrentPrincipal.Identity.Name);
-                }
-                catch (EntityNotFoundException)
-                {
-                    throw new RequestValidationException(SR.ExceptionNoStaffForUser);
+                    try
+                    {
+                        _currentUserStaff = PersistenceContext.GetBroker<IStaffBroker>().FindStaffForUser(Thread.CurrentPrincipal.Identity.Name);
+                    }
+                    catch (EntityNotFoundException)
+                    {
+                        throw new RequestValidationException(SR.ExceptionNoStaffForUser);
+                    }
                 }
 
                 return _currentUserStaff;
@@ -70,26 +88,24 @@ namespace ClearCanvas.Ris.Application.Services
         /// <summary>
         /// Obtains the <see cref="User"/> entity for the current user.
         /// </summary>
-        /// <exception cref="RequestValidationException">Thrown if no <see cref="User"/> is found, though this should not happen.</exception>
         protected User CurrentUser
         {
             get
             {
-                try
+                if(_currentUser == null)
                 {
                     UserSearchCriteria criteria = new UserSearchCriteria();
                     criteria.UserName.EqualTo(Thread.CurrentPrincipal.Identity.Name);
                     _currentUser = this.PersistenceContext.GetBroker<IUserBroker>().FindOne(criteria);
-                }
-                catch (EntityNotFoundException)
-                {
-                    throw new RequestValidationException(SR.ExceptionNoUser);
                 }
 
                 return _currentUser;
             }
         }
 
+        /// <summary>
+        /// Gets the current <see cref="IPersistenceContext"/>.
+        /// </summary>
         protected IPersistenceContext PersistenceContext
         {
             get { return PersistenceScope.Current; }
