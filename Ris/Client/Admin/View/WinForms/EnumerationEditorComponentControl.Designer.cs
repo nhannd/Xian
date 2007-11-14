@@ -71,7 +71,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             // 
             this._code.LabelText = "Code";
             this._code.Location = new System.Drawing.Point(22, 17);
-            this._code.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this._code.Margin = new System.Windows.Forms.Padding(2);
             this._code.Mask = "";
             this._code.Name = "_code";
             this._code.Size = new System.Drawing.Size(262, 41);
@@ -82,7 +82,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             // 
             this._displayValue.LabelText = "Value";
             this._displayValue.Location = new System.Drawing.Point(22, 80);
-            this._displayValue.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this._displayValue.Margin = new System.Windows.Forms.Padding(2);
             this._displayValue.Mask = "";
             this._displayValue.Name = "_displayValue";
             this._displayValue.Size = new System.Drawing.Size(262, 41);
@@ -93,7 +93,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             // 
             this._description.LabelText = "Description";
             this._description.Location = new System.Drawing.Point(22, 145);
-            this._description.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this._description.Margin = new System.Windows.Forms.Padding(2);
             this._description.Name = "_description";
             this._description.Size = new System.Drawing.Size(262, 79);
             this._description.TabIndex = 2;
@@ -102,7 +102,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             // _cancelButton
             // 
             this._cancelButton.Location = new System.Drawing.Point(209, 306);
-            this._cancelButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this._cancelButton.Margin = new System.Windows.Forms.Padding(2);
             this._cancelButton.Name = "_cancelButton";
             this._cancelButton.Size = new System.Drawing.Size(75, 23);
             this._cancelButton.TabIndex = 5;
@@ -113,7 +113,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             // _okButton
             // 
             this._okButton.Location = new System.Drawing.Point(130, 306);
-            this._okButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this._okButton.Margin = new System.Windows.Forms.Padding(2);
             this._okButton.Name = "_okButton";
             this._okButton.Size = new System.Drawing.Size(75, 23);
             this._okButton.TabIndex = 4;
@@ -126,7 +126,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this._insertAfter.DataSource = null;
             this._insertAfter.DisplayMember = "";
             this._insertAfter.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this._insertAfter.LabelText = "Insert After";
+            this._insertAfter.LabelText = "Position After";
             this._insertAfter.Location = new System.Drawing.Point(22, 243);
             this._insertAfter.Margin = new System.Windows.Forms.Padding(2);
             this._insertAfter.Name = "_insertAfter";
@@ -146,7 +146,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this.Controls.Add(this._description);
             this.Controls.Add(this._displayValue);
             this.Controls.Add(this._code);
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "EnumerationEditorComponentControl";
             this.Size = new System.Drawing.Size(314, 349);
             this.ResumeLayout(false);
