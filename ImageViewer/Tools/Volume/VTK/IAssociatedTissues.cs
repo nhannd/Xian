@@ -30,13 +30,14 @@
 #endregion
 
 using System;
-using vtk;
+using System.Collections.Generic;
+using System.Text;
+using ClearCanvas.ImageViewer.Graphics;
 
-namespace ClearCanvas.ImageViewer.Tools.Volume
+namespace ClearCanvas.ImageViewer.Tools.Volume.VTK
 {
-	interface IVtkProp
+	public interface IAssociatedTissues
 	{
-		void ApplySetting(string setting);
-		vtkProp VtkProp { get; }
+		GraphicCollection TissueLayers { get; }
 	}
 }

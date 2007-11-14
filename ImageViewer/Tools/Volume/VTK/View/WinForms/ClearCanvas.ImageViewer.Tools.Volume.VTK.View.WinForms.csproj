@@ -7,8 +7,8 @@
     <ProjectGuid>{85696CBB-7BB6-48D0-BCF1-8377F4799A8A}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ClearCanvas.ImageViewer.Tools.Volume.View.WinForms</RootNamespace>
-    <AssemblyName>ClearCanvas.ImageViewer.Tools.Volume.View.WinForms</AssemblyName>
+    <RootNamespace>ClearCanvas.ImageViewer.Tools.Volume.VTK.View.WinForms</RootNamespace>
+    <AssemblyName>ClearCanvas.ImageViewer.Tools.Volume.VTK.View.WinForms</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -30,7 +30,7 @@
   <ItemGroup>
     <Reference Include="DotNetMagic2005, Version=5.2.0.0, Culture=neutral, PublicKeyToken=6cf6edec59e036ec, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\ReferencedAssemblies\DotNetMagic2005.DLL</HintPath>
+      <HintPath>..\..\..\..\..\..\ReferencedAssemblies\DotNetMagic2005.DLL</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -57,29 +57,25 @@
     <Service Include="{94E38DFF-614B-4cbd-B67C-F211BB35CE8B}" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\Common\ClearCanvas.Common.csproj">
+    <ProjectReference Include="..\..\..\..\..\..\Common\ClearCanvas.Common.csproj">
       <Project>{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}</Project>
       <Name>ClearCanvas.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\..\Controls\WinForms\ClearCanvas.Controls.WinForms.csproj">
-      <Project>{CA91515F-D706-4D15-882B-811F3BDC4956}</Project>
-      <Name>ClearCanvas.Controls.WinForms</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\..\Desktop\ClearCanvas.Desktop.csproj">
+    <ProjectReference Include="..\..\..\..\..\..\Desktop\ClearCanvas.Desktop.csproj">
       <Project>{26E9A01A-64B5-42C5-8252-FBB30DF9CEC7}</Project>
       <Name>ClearCanvas.Desktop</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\..\Desktop\View\WinForms\ClearCanvas.Desktop.View.WinForms.csproj">
+    <ProjectReference Include="..\..\..\..\..\..\Desktop\View\WinForms\ClearCanvas.Desktop.View.WinForms.csproj">
       <Project>{BB434EC3-A580-4744-A635-A2B4029C66DE}</Project>
       <Name>ClearCanvas.Desktop.View.WinForms</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\ClearCanvas.ImageViewer.csproj">
+    <ProjectReference Include="..\..\..\..\..\ClearCanvas.ImageViewer.csproj">
       <Project>{85100D3E-471C-47C9-9687-ABF25F617ED7}</Project>
       <Name>ClearCanvas.ImageViewer</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\ClearCanvas.ImageViewer.Tools.Volume.csproj">
+    <ProjectReference Include="..\..\ClearCanvas.ImageViewer.Tools.Volume.VTK.csproj">
       <Project>{92F4583D-D856-4B71-9D44-4785CDBA5301}</Project>
-      <Name>ClearCanvas.ImageViewer.Tools.Volume</Name>
+      <Name>ClearCanvas.ImageViewer.Tools.Volume.VTK</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

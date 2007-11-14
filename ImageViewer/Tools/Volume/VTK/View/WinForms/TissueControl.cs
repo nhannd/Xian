@@ -38,7 +38,7 @@ using System.Text;
 using System.Windows.Forms;
 using ClearCanvas.ImageViewer.Tools.Volume;
 
-namespace ClearCanvas.ImageViewer.Tools.Volume.View.WinForms
+namespace ClearCanvas.ImageViewer.Tools.Volume.VTK.View.WinForms
 {
 	public partial class TissueControl : UserControl
 	{

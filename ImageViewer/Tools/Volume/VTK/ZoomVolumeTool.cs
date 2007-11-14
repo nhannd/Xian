@@ -41,12 +41,11 @@ using vtk;
 using ClearCanvas.ImageViewer.InputManagement;
 using ClearCanvas.ImageViewer.BaseTools;
 
-namespace ClearCanvas.ImageViewer.Tools.Volume
+namespace ClearCanvas.ImageViewer.Tools.Volume.VTK
 {
 	[MenuAction("activate", "imageviewer-contextmenu/Zoom Volume", Flags = ClickActionFlags.CheckAction)]
-    //[MenuAction("activate", "global-menus/MenuTools/Standard/MenuToolsStandardPan", Flags = ClickActionFlags.CheckAction)]
 	[MouseToolButton(XMouseButtons.Right, false)]
-	[ButtonAction("activate", "global-toolbars/ToolbarStandard/ZoomVolume", Flags = ClickActionFlags.CheckAction)]
+	[ButtonAction("activate", "global-toolbars/ToolbarsVolume/ZoomVolume", Flags = ClickActionFlags.CheckAction)]
     [CheckedStateObserver("activate", "Active", "ActivationChanged")]
     [ClickHandler("activate", "Select")]
     [Tooltip("activate", "Zoom Volume")]

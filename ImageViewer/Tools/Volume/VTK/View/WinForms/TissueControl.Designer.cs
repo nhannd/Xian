@@ -29,7 +29,7 @@
 
 #endregion
 
-namespace ClearCanvas.ImageViewer.Tools.Volume.View.WinForms
+namespace ClearCanvas.ImageViewer.Tools.Volume.VTK.View.WinForms
 {
 	partial class TissueControl
 	{

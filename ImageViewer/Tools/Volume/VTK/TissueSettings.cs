@@ -36,7 +36,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 
-namespace ClearCanvas.ImageViewer.Tools.Volume
+namespace ClearCanvas.ImageViewer.Tools.Volume.VTK
 {
 	public class TissueSettings : INotifyPropertyChanged
 	{

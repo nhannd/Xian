@@ -34,7 +34,7 @@ using System.Collections.Generic;
 using System.Text;
 using vtk;
 
-namespace ClearCanvas.ImageViewer.Tools.Volume
+namespace ClearCanvas.ImageViewer.Tools.Volume.VTK
 {
 	class SurfaceProp : IVtkProp
 	{

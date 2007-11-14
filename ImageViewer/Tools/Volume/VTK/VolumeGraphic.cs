@@ -37,7 +37,7 @@ using System.ComponentModel;
 using System.Drawing;
 using ClearCanvas.ImageViewer.Graphics;
 
-namespace ClearCanvas.ImageViewer.Tools.Volume
+namespace ClearCanvas.ImageViewer.Tools.Volume.VTK
 {
 	public enum RenderingMethod
 	{

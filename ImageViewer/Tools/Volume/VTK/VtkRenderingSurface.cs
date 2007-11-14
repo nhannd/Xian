@@ -31,19 +31,22 @@
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Text;
 using ClearCanvas.ImageViewer.Rendering;
 using vtk;
 using System.Windows.Forms;
 using ClearCanvas.Common;
 
-namespace ClearCanvas.ImageViewer.Tools.Volume
+namespace ClearCanvas.ImageViewer.Tools.Volume.VTK
 {
 	public class VtkRenderingSurface : IRenderingSurface
 	{
 		private IntPtr _windowID;
 		private IntPtr _contextID;
 		private vtkWin32OpenGLRenderWindow _vtkWin32OpenGLRW;
+		private Rectangle _clientRectangle;
+		private Rectangle _clipRectangle;
 
 		public VtkRenderingSurface(IntPtr windowID)
 		{
@@ -80,6 +83,18 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 			set { _contextID = value; }
 		}
 
+		public Rectangle ClientRectangle
+		{
+			get { return _clientRectangle; }
+			set { _clientRectangle = value; }
+		}
+
+		public Rectangle ClipRectangle
+		{
+			get { return _clipRectangle; }
+			set { _clipRectangle = value; }
+		}
+		
 		#endregion
 
 		public vtkWin32OpenGLRenderWindow RenderWindow

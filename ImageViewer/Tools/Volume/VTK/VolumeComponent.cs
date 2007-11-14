@@ -39,7 +39,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.BaseTools;
 
-namespace ClearCanvas.ImageViewer.Tools.Volume
+namespace ClearCanvas.ImageViewer.Tools.Volume.VTK
 {
 	/// <summary>
 	/// Extension point for views onto <see cref="VolumeComponent"/>
@@ -58,8 +58,8 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		public VolumeComponent(IImageViewerToolContext imageViewerToolContext)
-			: base(imageViewerToolContext)
+		public VolumeComponent(IDesktopWindow desktopWindow)
+			: base(desktopWindow)
 		{
 		}
 
@@ -149,8 +149,7 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 
 			AddTissueLayers(image);
 
-			IDisplaySet displaySet = new DisplaySet();
-			displaySet.Name = String.Format("{0} (3D)", selectedDisplaySet.Name);
+			IDisplaySet displaySet = new DisplaySet(String.Format("{0} (3D)", selectedDisplaySet.Name), String.Format("VTK.{0}", Guid.NewGuid().ToString()));
 			displaySet.PresentationImages.Add(image);
 			this.ImageViewer.LogicalWorkspace.ImageSets[0].DisplaySets.Add(displaySet);
 

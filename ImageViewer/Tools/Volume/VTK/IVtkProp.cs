@@ -30,27 +30,13 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
+using vtk;
 
-namespace ClearCanvas.ImageViewer.Tools.Volume
+namespace ClearCanvas.ImageViewer.Tools.Volume.VTK
 {
-	public class TissueSettingsEventArgs : CollectionEventArgs<TissueSettings>
+	interface IVtkProp
 	{
-		public TissueSettingsEventArgs()
-		{
-
-		}
-
-		public TissueSettingsEventArgs(TissueSettings tissueSettings)
-		{
-			Platform.CheckForNullReference(tissueSettings, "tissueSettings");
-
-			base.Item = tissueSettings;
-		}
-
-		public TissueSettings TissueSettings { get { return base.Item; } }
+		void ApplySetting(string setting);
+		vtkProp VtkProp { get; }
 	}
 }

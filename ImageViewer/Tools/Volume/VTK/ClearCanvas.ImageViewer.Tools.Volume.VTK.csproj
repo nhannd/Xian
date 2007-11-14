@@ -7,8 +7,8 @@
     <ProjectGuid>{92F4583D-D856-4B71-9D44-4785CDBA5301}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ClearCanvas.ImageViewer.Tools.Volume</RootNamespace>
-    <AssemblyName>ClearCanvas.ImageViewer.Tools.Volume</AssemblyName>
+    <RootNamespace>ClearCanvas.ImageViewer.Tools.Volume.VTK</RootNamespace>
+    <AssemblyName>ClearCanvas.ImageViewer.Tools.Volume.VTK</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -28,10 +28,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ClearCanvas.Dicom.OffisWrapper, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Dicom\OffisWrapper\csharp\Debug\ClearCanvas.Dicom.OffisWrapper.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -39,47 +35,47 @@
     <Reference Include="System.Xml" />
     <Reference Include="vtkCommonDotNet, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\ReferencedAssemblies\Vtk\vtkCommonDotNet.dll</HintPath>
+      <HintPath>..\..\..\..\ReferencedAssemblies\Vtk\vtkCommonDotNet.dll</HintPath>
     </Reference>
     <Reference Include="vtkFilteringDotNet, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\ReferencedAssemblies\Vtk\vtkFilteringDotNet.dll</HintPath>
+      <HintPath>..\..\..\..\ReferencedAssemblies\Vtk\vtkFilteringDotNet.dll</HintPath>
     </Reference>
     <Reference Include="vtkFormsWindow, Version=1.0.2283.31542, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\ReferencedAssemblies\Vtk\vtkFormsWindow.dll</HintPath>
+      <HintPath>..\..\..\..\ReferencedAssemblies\Vtk\vtkFormsWindow.dll</HintPath>
     </Reference>
     <Reference Include="vtkGenericFilteringDotNet, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\ReferencedAssemblies\Vtk\vtkGenericFilteringDotNet.dll</HintPath>
+      <HintPath>..\..\..\..\ReferencedAssemblies\Vtk\vtkGenericFilteringDotNet.dll</HintPath>
     </Reference>
     <Reference Include="vtkGraphicsDotNet, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\ReferencedAssemblies\Vtk\vtkGraphicsDotNet.dll</HintPath>
+      <HintPath>..\..\..\..\ReferencedAssemblies\Vtk\vtkGraphicsDotNet.dll</HintPath>
     </Reference>
     <Reference Include="vtkHybridDotNet, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\ReferencedAssemblies\Vtk\vtkHybridDotNet.dll</HintPath>
+      <HintPath>..\..\..\..\ReferencedAssemblies\Vtk\vtkHybridDotNet.dll</HintPath>
     </Reference>
     <Reference Include="vtkImagingDotNet, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\ReferencedAssemblies\Vtk\vtkImagingDotNet.dll</HintPath>
+      <HintPath>..\..\..\..\ReferencedAssemblies\Vtk\vtkImagingDotNet.dll</HintPath>
     </Reference>
     <Reference Include="vtkIODotNet, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\ReferencedAssemblies\Vtk\vtkIODotNet.dll</HintPath>
+      <HintPath>..\..\..\..\ReferencedAssemblies\Vtk\vtkIODotNet.dll</HintPath>
     </Reference>
     <Reference Include="vtkRenderingDotNet, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\ReferencedAssemblies\Vtk\vtkRenderingDotNet.dll</HintPath>
+      <HintPath>..\..\..\..\ReferencedAssemblies\Vtk\vtkRenderingDotNet.dll</HintPath>
     </Reference>
     <Reference Include="vtkVolumeRenderingDotNet, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\ReferencedAssemblies\Vtk\vtkVolumeRenderingDotNet.dll</HintPath>
+      <HintPath>..\..\..\..\ReferencedAssemblies\Vtk\vtkVolumeRenderingDotNet.dll</HintPath>
     </Reference>
     <Reference Include="vtkWidgetsDotNet, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\ReferencedAssemblies\Vtk\vtkWidgetsDotNet.dll</HintPath>
+      <HintPath>..\..\..\..\ReferencedAssemblies\Vtk\vtkWidgetsDotNet.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -113,19 +109,19 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Common\ClearCanvas.Common.csproj">
+    <ProjectReference Include="..\..\..\..\Common\ClearCanvas.Common.csproj">
       <Project>{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}</Project>
       <Name>ClearCanvas.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\Desktop\ClearCanvas.Desktop.csproj">
+    <ProjectReference Include="..\..\..\..\Desktop\ClearCanvas.Desktop.csproj">
       <Project>{26E9A01A-64B5-42C5-8252-FBB30DF9CEC7}</Project>
       <Name>ClearCanvas.Desktop</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\Dicom\ClearCanvas.Dicom.csproj">
+    <ProjectReference Include="..\..\..\..\Dicom\ClearCanvas.Dicom.csproj">
       <Project>{AD9ECE2B-8268-4115-8DC8-860FBD011FFF}</Project>
       <Name>ClearCanvas.Dicom</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\ClearCanvas.ImageViewer.csproj">
+    <ProjectReference Include="..\..\..\ClearCanvas.ImageViewer.csproj">
       <Project>{85100D3E-471C-47C9-9687-ABF25F617ED7}</Project>
       <Name>ClearCanvas.ImageViewer</Name>
     </ProjectReference>

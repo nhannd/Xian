@@ -38,7 +38,7 @@ using vtk;
 using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.ImageViewer.Graphics;
 
-namespace ClearCanvas.ImageViewer.Tools.Volume
+namespace ClearCanvas.ImageViewer.Tools.Volume.VTK
 {
 	public class VolumePresentationImageRenderer : IRenderer
 	{
@@ -90,7 +90,7 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 
 		private void AddLayers(DrawArgs args)
 		{
-			IAssociatedTissues volume = args.PresentationImage as IAssociatedTissues;
+			IAssociatedTissues volume = args.SceneGraph.ParentPresentationImage as IAssociatedTissues;
 
 			if (volume == null)
 				return;

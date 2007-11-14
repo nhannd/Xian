@@ -39,7 +39,7 @@ using System.Windows.Forms;
 using ClearCanvas.Desktop.View.WinForms;
 using ClearCanvas.ImageViewer.Graphics;
 
-namespace ClearCanvas.ImageViewer.Tools.Volume.View.WinForms
+namespace ClearCanvas.ImageViewer.Tools.Volume.VTK.View.WinForms
 {
     /// <summary>
     /// Provides a Windows Forms user-interface for <see cref="VolumeComponent"/>
