@@ -333,6 +333,15 @@ namespace ClearCanvas.ImageViewer.Graphics
 				return false;
 		}
 
+		/// <summary>
+		/// Moves the <see cref="ImageGraphic"/> by a specified delta.
+		/// </summary>
+		/// <param name="delta">The distance to move.</param>
+		/// <remarks>
+		/// Depending on the value of <see cref="Graphic.CoordinateSystem"/>,
+		/// <paramref name="delta"/> will be interpreted in either source
+		/// or destination coordinates.
+		/// </remarks>
 		public override void Move(SizeF delta)
 		{
 			//this.SpatialTransform.

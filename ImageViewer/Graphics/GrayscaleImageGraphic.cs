@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Imaging;
@@ -296,7 +297,10 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		#region Disposal
 
-
+		/// <summary>
+		/// Implementation of the <see cref="IDisposable"/> pattern
+		/// </summary>
+		/// <param name="disposing">True if this object is being disposed, false if it is being finalized</param>
 		protected override void Dispose(bool disposing)
 		{
 			if (disposing)

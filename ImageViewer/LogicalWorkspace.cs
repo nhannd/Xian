@@ -71,6 +71,9 @@ namespace ClearCanvas.ImageViewer
 
 		#region IDisposable Members
 
+		/// <summary>
+		/// Releases all resources used by this <see cref="LogicalWorkspace"/>.
+		/// </summary>
 		public void Dispose()
 		{
 			try

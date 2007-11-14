@@ -34,9 +34,19 @@ using ClearCanvas.ImageViewer.Graphics;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
+	/// <summary>
+	/// Defines a graphic that has state.
+	/// </summary>
 	public interface IStatefulGraphic : IGraphic
 	{
+		/// <summary>
+		/// Gets or sets the state of the <see cref="IGraphic"/>.
+		/// </summary>
 		GraphicState State { get; set; }
+
+		/// <summary>
+		/// Occurs when the state of the <see cref="IGraphic"/> has changed.
+		/// </summary>
 		event EventHandler<GraphicStateChangedEventArgs> StateChanged;
 	}
 }

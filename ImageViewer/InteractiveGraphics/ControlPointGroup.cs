@@ -30,35 +30,39 @@
 #endregion
 
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Drawing;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Graphics;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
-	// TODO (Norman): Remove IObservableList interface; retain other convenience
-	// methods like Add, Remove, etc.
-
 	/// <summary>
-	/// A collection of 
+	/// A group of <see cref="ControlPoint"/>s. 
 	/// </summary>
-	public class ControlPointGroup : CompositeGraphic, IObservableList<PointF, ControlPointEventArgs>
+	public class ControlPointGroup : CompositeGraphic
 	{
 		private event EventHandler<ControlPointEventArgs> _controlPointChangedEvent;
 		private Color _color = Color.Yellow;
 
+		/// <summary>
+		/// Initializes a new instance of <see cref="ControlPointGroup"/>.
+		/// </summary>
 		public ControlPointGroup()
 		{
 		}
 
+		/// <summary>
+		/// Occurs when the location of a <see cref="ControlPoint"/> has changed.
+		/// </summary>
 		public event EventHandler<ControlPointEventArgs> ControlPointChangedEvent
 		{
 			add { _controlPointChangedEvent += value; }
 			remove { _controlPointChangedEvent -= value; }
 		}
 
+		/// <summary>
+		/// Gets or sets the colour of the <see cref="ControlPointGroup"/>.
+		/// </summary>
 		public Color Color
 		{
 			get { return _color; }
@@ -71,45 +75,23 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			}
 		}
 
-		#region IObservableCollection<PointF,ControlPointEventArgs> Members
-
-		public event EventHandler<ControlPointEventArgs> ItemAdded
+		/// <summary>
+		/// Returns the number of <see cref="ControlPoint"/>s in the
+		/// <see cref="ControlPointGroup"/>.
+		/// </summary>
+		public int Count
 		{
-			add { throw new NotSupportedException(); }
-			remove { throw new NotSupportedException(); }
+			get
+			{
+				return this.Graphics.Count;
+			}
 		}
 
-		public event EventHandler<ControlPointEventArgs> ItemRemoved
-		{
-			add { throw new NotSupportedException(); }
-			remove { throw new NotSupportedException(); }
-		}
-
-		public event EventHandler<ControlPointEventArgs> ItemChanged
-		{
-			add { throw new NotSupportedException(); }
-			remove { throw new NotSupportedException(); }
-		}
-
-		#endregion
-
-		#region IList<PointF> Members
-
-		public int IndexOf(PointF item)
-		{
-			throw new Exception("The method or operation is not implemented.");
-		}
-
-		public void Insert(int index, PointF item)
-		{
-			throw new Exception("The method or operation is not implemented.");
-		}
-
-		public void RemoveAt(int index)
-		{
-			throw new Exception("The method or operation is not implemented.");
-		}
-
+		/// <summary>
+		/// Gets or sets the location of the specified <see cref="ControlPoint"/>.
+		/// </summary>
+		/// <param name="index">The zero-based index of the <see cref="ControlPoint"/>.</param>
+		/// <returns></returns>
 		public PointF this[int index]
 		{
 			get
@@ -122,10 +104,11 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			}
 		}
 
-		#endregion
-
-		#region ICollection<PointF> Members
-
+		/// <summary>
+		/// Adds a new <see cref="ControlPoint"/> to the
+		/// <see cref="ControlPointGroup"/>.
+		/// </summary>
+		/// <param name="point"></param>
 		public void Add(PointF point)
 		{
 			int controlPointIndex = this.Count;
@@ -136,59 +119,20 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			controlPoint.LocationChanged += new EventHandler<ControlPointEventArgs>(OnControlPointChanged);
 		}
 
+		/// <summary>
+		/// Removes all <see cref="ControlPoint"/>s from the <see cref="ControlPointGroup"/>.
+		/// </summary>
 		public void Clear()
 		{
 			this.Graphics.Clear();
 		}
 
-		public bool Contains(PointF item)
-		{
-			throw new Exception("The method or operation is not implemented.");
-		}
-
-		public void CopyTo(PointF[] array, int arrayIndex)
-		{
-			throw new Exception("The method or operation is not implemented.");
-		}
-
-		public int Count
-		{
-			get
-			{
-				return this.Graphics.Count;
-			}
-		}
-
-		public bool IsReadOnly
-		{
-			get { throw new Exception("The method or operation is not implemented."); }
-		}
-
-		public bool Remove(PointF item)
-		{
-			throw new Exception("The method or operation is not implemented.");
-		}
-
-		#endregion
-
-		#region IEnumerable<PointF> Members
-
-		public IEnumerator<PointF> GetEnumerator()
-		{
-			throw new Exception("The method or operation is not implemented.");
-		}
-
-		#endregion
-
-		#region IEnumerable Members
-
-		IEnumerator IEnumerable.GetEnumerator()
-		{
-			throw new Exception("The method or operation is not implemented.");
-		}
-
-		#endregion
-
+		/// <summary>
+		/// Performs a hit test on the <see cref="ControlPoint"/>s
+		/// in the <see cref="ControlPointGroup"/>.
+		/// </summary>
+		/// <param name="point"></param>
+		/// <returns></returns>
 		public override bool HitTest(Point point)
 		{
 			foreach (ControlPoint controlPoint in this.Graphics)
@@ -201,6 +145,13 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			return false;
 		}
 
+		/// <summary>
+		/// Performs a hit test on each <see cref="ControlPoint"/> and returns
+		/// the index of the <see cref="ControlPoint"/> for which the test is true.
+		/// </summary>
+		/// <param name="point"></param>
+		/// <returns>The index of the <see cref="ControlPoint"/> or
+		/// -1 if the hit test failed for all <see cref="ControlPoint"/>s.</returns>
 		public int HitTestControlPoint(Point point)
 		{
 			int controlPointIndex = 0;
@@ -221,6 +172,5 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		{
 			EventsHelper.Fire(_controlPointChangedEvent, this, e);
 		}
-
 	}
 }

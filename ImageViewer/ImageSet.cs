@@ -165,6 +165,10 @@ namespace ClearCanvas.ImageViewer
 
 		#endregion
 
+		/// <summary>
+		/// Returns the name of the image set.
+		/// </summary>
+		/// <returns></returns>
 		public override string ToString()
 		{
 			return this.Name;

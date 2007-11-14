@@ -38,6 +38,9 @@ using ClearCanvas.ImageViewer.Graphics;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
+	/// <summary>
+	/// A interactive rectangular graphic.
+	/// </summary>
 	public class RectangleInteractiveGraphic : InteractiveGraphic
 	{
 		private const int _topLeft = 0;
@@ -48,61 +51,87 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		private RectanglePrimitive _rectangleGraphic;
 
 		private CursorToken _moveToken;
-		
+
+		/// <summary>
+		/// Initializes a new instance of <see cref="RectangleInteractiveGraphic"/>.
+		/// </summary>
+		/// <param name="userCreated">Indicates whether the graphic was created
+		/// through user interaction.</param>
 		public RectangleInteractiveGraphic(bool userCreated)
 			: base(userCreated)
 		{
 			BuildGraphic();
 		}
 
+		/// <summary>
+		/// Gets or sets the top left corner of the rectangle graphic.
+		/// </summary>
 		public PointF TopLeft
 		{
 			get { return _rectangleGraphic.TopLeft; }
 			set { _rectangleGraphic.TopLeft = value; }
 		}
 
+		/// <summary>
+		/// Gets or sets the bottom right corner of the rectangle graphic.
+		/// </summary>
 		public PointF BottomRight
 		{
 			get { return _rectangleGraphic.BottomRight; }
 			set { _rectangleGraphic.BottomRight = value; }
 		}
 
+		/// <summary>
+		/// Gets the left coordinate of the rectangle graphic.
+		/// </summary>
 		public float Left
 		{
 			get { return this.TopLeft.X; }
 		}
 
+		/// <summary>
+		/// Gets the right coordinate of the rectangle graphic.
+		/// </summary>
 		public float Right
 		{
 			get { return this.BottomRight.X; }
 		}
 
+		/// <summary>
+		/// Gets the top coordinate of the rectangle graphic.
+		/// </summary>
 		public float Top
 		{
 			get { return this.TopLeft.Y; }
 		}
 
+		/// <summary>
+		/// Gets the bottom coordinate of the rectangle graphic.
+		/// </summary>
 		public float Bottom
 		{
 			get { return this.BottomRight.Y; }
 		}
 
+		/// <summary>
+		/// Gets the width of the rectangle graphic.
+		/// </summary>
 		public float Width
 		{
 			get { return this.Right - this.Left; }
 		}
 
+		/// <summary>
+		/// Gets the height of the rectangle graphic.
+		/// </summary>
 		public float Height
 		{
 			get { return this.Bottom - this.Top; }
 		}
 
-		public CursorToken MoveToken
-		{
-			get { return _moveToken; }
-			set { _moveToken = value; }
-		}
-
+		/// <summary>
+		/// Gets or sets the colour of the <see cref="RectangleInteractiveGraphic"/>.
+		/// </summary>
 		public override Color Color
 		{
 			get { return base.Color; }
@@ -113,8 +142,18 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			}
 		}
 
+		private CursorToken MoveToken
+		{
+			get { return _moveToken; }
+			set { _moveToken = value; }
+		}
+
 		#region IMemorable Members
 
+		/// <summary>
+		/// Captures the state of the <see cref="RectangleInteractiveGraphic"/>.
+		/// </summary>
+		/// <returns></returns>
 		public override IMemento CreateMemento()
 		{
 			RectangleMemento memento = new RectangleMemento();
@@ -128,6 +167,10 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			return memento;
 		}
 
+		/// <summary>
+		/// Restores the state of the <see cref="RectangleInteractiveGraphic"/>.
+		/// </summary>
+		/// <param name="memento"></param>
 		public override void SetMemento(IMemento memento)
 		{
 			Platform.CheckForNullReference(memento, "memento");
@@ -142,6 +185,11 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		#endregion
 
+		/// <summary>
+		/// Moves the <see cref="RectangleInteractiveGraphic"/> by the
+		/// specified delta.
+		/// </summary>
+		/// <param name="delta"></param>
 		public override void Move(SizeF delta)
 		{
 #if MONO
@@ -154,16 +202,30 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 #endif
 		}
 
+		/// <summary>
+		/// Creates a creation <see cref="GraphicState"/>.
+		/// </summary>
+		/// <returns></returns>
 		public override GraphicState CreateCreateState()
 		{
 			return new CreateRectangleGraphicState(this);
 		}
 
+		/// <summary>
+		/// Peforms a hit test on the <see cref="RectangleInteractiveGraphic"/>
+		/// </summary>
+		/// <param name="point"></param>
+		/// <returns></returns>
 		public override bool HitTest(Point point)
 		{
 			return _rectangleGraphic.HitTest(point);
 		}
 
+		/// <summary>
+		/// Gets the cursor token to be shown at the current mouse position.
+		/// </summary>
+		/// <param name="point"></param>
+		/// <returns></returns>
 		public override CursorToken GetCursorToken(Point point)
 		{
 			CursorToken token = base.GetCursorToken(point);
@@ -206,10 +268,16 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 				base.ControlPoints.Add(new PointF(0, 0));
 		}
 
-		// This acts as a mediator.  It listens for changes in the anchor points
-		// and make corresponding changes in the position of the control points.
+		/// <summary>
+		/// Executed when the position of the top left corner of the 
+		/// rectangle has changed.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		protected void OnTopLeftChanged(object sender, PointChangedEventArgs e)
 		{
+			// This acts as a mediator.  It listens for changes in the anchor points
+			// and make corresponding changes in the position of the control points.
 			Platform.CheckForNullReference(sender, "sender");
 			Platform.CheckForNullReference(e, "e");
 
@@ -220,6 +288,12 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			base.ControlPoints[_bottomLeft] = new PointF(this.TopLeft.X, this.BottomRight.Y);
 		}
 
+		/// <summary>
+		/// Executed when the position of the bottom right corner of the 
+		/// rectangle has changed.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		protected void OnBottomRightChanged(object sender, PointChangedEventArgs e)
 		{
 			Platform.CheckForNullReference(sender, "sender");
@@ -232,6 +306,11 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			base.ControlPoints[_bottomRight] = e.Point;
 		}
 
+		/// <summary>
+		/// Executed when a the position of a control point has changed.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		protected override void OnControlPointChanged(object sender, ControlPointEventArgs e)
 		{
 			Platform.CheckForNullReference(sender, "sender");

@@ -96,6 +96,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		#endregion
 
+		/// <summary>
+		/// Returns the patient's name and patient ID in string form.
+		/// </summary>
+		/// <returns></returns>
 		public override string ToString()
 		{
 			string str = String.Format("{0} | {1}", this.PatientsName, this.PatientId);

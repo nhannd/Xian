@@ -37,7 +37,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
 	/// <summary>
 	/// Provides data for the
-	/// <see cref="PolyLineAnchorPointsGraphic.AnchorPointChangedEvent"/>.
+	/// <see cref="PolyLineGraphic.AnchorPointChangedEvent"/>.
 	/// </summary>
 	public class AnchorPointEventArgs : CollectionEventArgs<PointF>
 	{

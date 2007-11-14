@@ -125,7 +125,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		}
 
 		/// <summary>
-		/// Gets the underlying native DICOM message.
+		/// Gets the DICOM toolkit representation of this <see cref="Sop"/>.
 		/// </summary>
 		public abstract DicomMessageBase NativeDicomObject { get; }
 

@@ -149,13 +149,13 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 		{
 			RoiGraphic roiGraphic = sender as RoiGraphic;
 			
-			PolyLineInteractiveGraphic multiLineGraphic = roiGraphic.Roi as PolyLineInteractiveGraphic;
+			PolyLineInteractiveGraphic interactiveGraphic = roiGraphic.Roi as PolyLineInteractiveGraphic;
 			IImageSopProvider image = roiGraphic.ParentPresentationImage as IImageSopProvider;
 
-			multiLineGraphic.CoordinateSystem = CoordinateSystem.Source;
-			double widthInPixels = (multiLineGraphic.AnchorPoints[1].X - multiLineGraphic.AnchorPoints[0].X);
-			double heightInPixels = (multiLineGraphic.AnchorPoints[1].Y - multiLineGraphic.AnchorPoints[0].Y);
-			multiLineGraphic.ResetCoordinateSystem();
+			interactiveGraphic.CoordinateSystem = CoordinateSystem.Source;
+			double widthInPixels = (interactiveGraphic.PolyLine[1].X - interactiveGraphic.PolyLine[0].X);
+			double heightInPixels = (interactiveGraphic.PolyLine[1].Y - interactiveGraphic.PolyLine[0].Y);
+			interactiveGraphic.ResetCoordinateSystem();
 
 			double pixelSpacingX;
 			double pixelSpacingY;

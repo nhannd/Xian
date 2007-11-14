@@ -36,6 +36,10 @@ using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
+	/// <summary>
+	/// A base class graphic that has state and a set of control points
+	/// that can be manipulated by the user.
+	/// </summary>
 	public abstract class InteractiveGraphic
 		: StatefulCompositeGraphic, IStandardStatefulGraphic, IMemorable
 	{
@@ -43,6 +47,10 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		private CursorToken _stretchToken;
 		private ICursorTokenProvider _stretchIndicatorProvider;
 
+		/// <summary>
+		/// Initializes a new instance of <see cref="InteractiveGraphic"/>.
+		/// </summary>
+		/// <param name="userCreated"></param>
 		protected InteractiveGraphic(bool userCreated)
 		{
 			Initialize();
@@ -53,6 +61,9 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 				base.State = CreateInactiveState();
 		}
 
+		/// <summary>
+		/// A group of control points.
+		/// </summary>
 		public ControlPointGroup ControlPoints
 		{
 			get 
@@ -64,37 +75,53 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			}
 		}
 
-		public CursorToken StretchToken
-		{
-			get { return _stretchToken; }
-			protected set { _stretchToken = value; }
-		}
-
-		protected ICursorTokenProvider StretchIndicatorProvider
-		{
-			get { return _stretchIndicatorProvider; }
-			set { _stretchIndicatorProvider = value; }
-		}
-
-		protected virtual bool Stretching
-		{
-			get { return (this.State is MoveControlPointGraphicState || this.State is CreateGraphicState); }
-		}
-
+		/// <summary>
+		/// Gets or sets the colour of the <see cref="InteractiveGraphic"/>.
+		/// </summary>
 		public virtual Color Color
 		{
 			get { return _controlPointGroup.Color; }
 			set { _controlPointGroup.Color = value; }
 		}
 
+		private CursorToken StretchToken
+		{
+			get { return _stretchToken; }
+			set { _stretchToken = value; }
+		}
+
+		private ICursorTokenProvider StretchIndicatorProvider
+		{
+			get { return _stretchIndicatorProvider; }
+			set { _stretchIndicatorProvider = value; }
+		}
+
+		private bool Stretching
+		{
+			get { return (this.State is MoveControlPointGraphicState || this.State is CreateGraphicState); }
+		}
+
 		#region IMemorable Members
 
+		/// <summary>
+		/// Captures the state of the <see cref="InteractiveGraphic"/>.
+		/// </summary>
+		/// <returns></returns>
 		public abstract IMemento CreateMemento();
 
+		/// <summary>
+		/// Restores the state of the <see cref="InteractiveGraphic"/>.
+		/// </summary>
+		/// <param name="memento"></param>
 		public abstract void SetMemento(IMemento memento);
 
 		#endregion
 
+		/// <summary>
+		/// Gets the cursor token to be shown at the current mouse position.
+		/// </summary>
+		/// <param name="point"></param>
+		/// <returns></returns>
 		public override CursorToken GetCursorToken(Point point)
 		{
 			CursorToken returnToken = null;
@@ -122,31 +149,56 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			_stretchIndicatorProvider = new CompassStretchIndicatorCursorProvider(_controlPointGroup);
 		}
 
+		/// <summary>
+		/// Invalid operation for <see cref="InteractiveGraphic"/>.
+		/// </summary>
+		/// <returns></returns>
 		public virtual GraphicState CreateCreateState()
 		{
 			throw new InvalidOperationException();
 		}
 
+		/// <summary>
+		/// Creates an inactive <see cref="GraphicState"/>.
+		/// </summary>
+		/// <returns></returns>
 		public virtual GraphicState CreateInactiveState()
 		{
 			return new InactiveGraphicState(this);
 		}
 
+		/// <summary>
+		/// Creates a focussed <see cref="GraphicState"/>.
+		/// </summary>
+		/// <returns></returns>
 		public virtual GraphicState CreateFocussedState()
 		{
 			return new FocussedGraphicState(this);
 		}
 
+		/// <summary>
+		/// Creates a focussed and selected <see cref="GraphicState"/>.
+		/// </summary>
+		/// <returns></returns>
 		public virtual GraphicState CreateFocussedSelectedState()
 		{
 			return new FocussedSelectedInteractiveGraphicState(this);
 		}
 
+		/// <summary>
+		/// Creates a selected <see cref="GraphicState"/>.
+		/// </summary>
+		/// <returns></returns>
 		public virtual GraphicState CreateSelectedState()
 		{
 			return new SelectedGraphicState(this);
 		}
 
+		/// <summary>
+		/// Executed when a the position of a control point has changed.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		protected abstract void OnControlPointChanged(object sender, ControlPointEventArgs e);
 	
 		private void Initialize()

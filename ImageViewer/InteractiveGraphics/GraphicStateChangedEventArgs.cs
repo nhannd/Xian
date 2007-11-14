@@ -35,6 +35,10 @@ using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
+	/// <summary>
+	/// Provides data for the <see cref="StatefulCompositeGraphic.StateChanged"/>
+	/// event.
+	/// </summary>
 	public class GraphicStateChangedEventArgs : EventArgs
 	{
 		private IStatefulGraphic _statefulGraphic;
@@ -42,39 +46,49 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		private GraphicState _newState;
 		private IMouseInformation _mouseInformation;
 
-		// TODO (Stewart): Initialize through constructor; remove setters
-		// on properties
-		public GraphicStateChangedEventArgs()
+		internal GraphicStateChangedEventArgs()
 		{
 
 		}
 
+		/// <summary>
+		/// Gets the <see cref="IStatefulGraphic"/>.
+		/// </summary>
 		public IStatefulGraphic StatefulGraphic
 		{
 			get { return _statefulGraphic; }
-			set { _statefulGraphic = value; }
+			internal set { _statefulGraphic = value; }
 		}
 
+		/// <summary>
+		/// Gets the old <see cref="GraphicState"/>.
+		/// </summary>
 		public GraphicState OldState
 		{
 			get { return _oldState; }
-			set { _oldState = value; }
+			internal set { _oldState = value; }
 		}
 
+		/// <summary>
+		/// Gets the new <see cref="GraphicState"/>.
+		/// </summary>
 		public GraphicState NewState
 		{
 			get { return _newState; }
-			set 
+			internal set 
 			{
 				Platform.CheckForNullReference(value, "NewState");
 				_newState = value; 
 			}
 		}
 
+		/// <summary>
+		/// Gets the <see cref="IMouseInformation"/>.
+		/// </summary>
 		public IMouseInformation MouseInformation
 		{
 			get { return _mouseInformation; }
-			set { _mouseInformation = value; }
+			internal set { _mouseInformation = value; }
 		}
 	}
 }

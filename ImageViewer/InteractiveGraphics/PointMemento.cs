@@ -34,9 +34,12 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
-	public class PointMemento : IMemento
+	/// <summary>
+	/// 
+	/// </summary>
+	internal class PointMemento : IMemento
 	{
-		PointF _point;
+		private PointF _point;
 
 		public PointMemento(PointF point)
 		{

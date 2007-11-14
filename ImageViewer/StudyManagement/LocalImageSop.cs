@@ -57,11 +57,18 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			_loaded = false;
 		}
 
+		/// <summary>
+		/// Implementation of the <see cref="IDisposable"/> pattern
+		/// </summary>
+		/// <param name="disposing">True if this object is being disposed, false if it is being finalized</param>
 		protected override void Dispose(bool disposing)
 		{
 			base.Dispose(disposing);
 		}
 
+		/// <summary>
+		/// Gets the DICOM toolkit representation of this <see cref="LocalImageSop"/>.
+		/// </summary>
         public override DicomMessageBase NativeDicomObject
         {
             get { return _dicomFile; }

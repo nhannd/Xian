@@ -36,37 +36,54 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
+	/// <summary>
+	/// An interactive polyline graphic.
+	/// </summary>
 	public class PolyLineInteractiveGraphic : InteractiveGraphic
 	{
-		private PolyLineAnchorPointsGraphic _anchorPointsGraphic = new PolyLineAnchorPointsGraphic();
+		#region Private fields
+
+		private PolyLineGraphic _anchorPointsGraphic = new PolyLineGraphic();
 		private int _maxAnchorPoints;
 		private CursorToken _moveToken;
 		private Color _color = Color.Yellow;
 
-		public PolyLineInteractiveGraphic(bool userCreated, int numberOfPoints)
+		#endregion
+
+		/// <summary>
+		/// Initializes a new instance of <see cref="PolyLineInteractiveGraphic"/>
+		/// </summary>
+		/// <param name="userCreated">Indicates whether the graphic was created
+		/// through user interaction.</param>
+		/// <param name="maximumAnchorPoints">The maximum number of points in
+		/// the <see cref="PolyLineInteractiveGraphic"/>.
+		/// </param>
+		public PolyLineInteractiveGraphic(bool userCreated, int maximumAnchorPoints)
 			: base(userCreated)
 		{
-			_maxAnchorPoints = numberOfPoints;
+			_maxAnchorPoints = maximumAnchorPoints;
 			BuildGraphic();
 		}
 
+		/// <summary>
+		/// Gets the maximum number of anchor points in the polyline.
+		/// </summary>
 		public int MaximumAnchorPoints
 		{
 			get { return _maxAnchorPoints; }
-			protected set { _maxAnchorPoints = value; }
 		}
 
-		public PolyLineAnchorPointsGraphic AnchorPoints
+		/// <summary>
+		/// Gets the <see cref="PolyLineGraphic"/>.
+		/// </summary>
+		public PolyLineGraphic PolyLine
 		{
 			get { return _anchorPointsGraphic; }
 		}
 
-		public CursorToken MoveToken
-		{
-			get { return _moveToken; }
-			set { _moveToken = value; }
-		}
-
+		/// <summary>
+		/// Gets or sets the colour of the <see cref="PolyLineInteractiveGraphic"/>.
+		/// </summary>
 		public override Color Color
 		{
 			get { return base.Color; }
@@ -77,20 +94,39 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			}
 		}
 
-		#region IMemorable Members
-
-		public override IMemento CreateMemento()
+		private CursorToken MoveToken
 		{
-			return this.AnchorPoints.CreateMemento();
+			get { return _moveToken; }
+			set { _moveToken = value; }
 		}
 
+		#region IMemorable Members
+
+		/// <summary>
+		/// Captures the state of the <see cref="PolyLineInteractiveGraphic"/>.
+		/// </summary>
+		/// <returns></returns>
+		public override IMemento CreateMemento()
+		{
+			return this.PolyLine.CreateMemento();
+		}
+
+		/// <summary>
+		/// Restores the state of the <see cref="PolyLineInteractiveGraphic"/>.
+		/// </summary>
+		/// <param name="memento"></param>
 		public override void SetMemento(IMemento memento)
 		{
-			this.AnchorPoints.SetMemento(memento);
+			this.PolyLine.SetMemento(memento);
 		}
 
 		#endregion
 
+		/// <summary>
+		/// Moves the <see cref="PolyLineInteractiveGraphic"/> by
+		/// the specified delta.
+		/// </summary>
+		/// <param name="delta"></param>
 		public override void Move(SizeF delta)
 		{
 #if MONO
@@ -99,21 +135,35 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			for (int i = 0; i < this.AnchorPoints.Count; i++)
 				this.AnchorPoints[i] += del;
 #else
-			for (int i = 0; i < this.AnchorPoints.Count; i++)
-				this.AnchorPoints[i] += delta;
+			for (int i = 0; i < this.PolyLine.Count; i++)
+				this.PolyLine[i] += delta;
 #endif
 		}
 
+		/// <summary>
+		/// Creates a creation <see cref="GraphicState"/>.
+		/// </summary>
+		/// <returns></returns>
 		public override GraphicState CreateCreateState()
 		{
 			return new CreatePolyLineGraphicState(this);
 		}
 
+		/// <summary>
+		/// Performs a hit test on the <see cref="PolyLineInteractiveGraphic"/>.
+		/// </summary>
+		/// <param name="point"></param>
+		/// <returns></returns>
 		public override bool HitTest(Point point)
 		{
-			return this.AnchorPoints.HitTest(point);
+			return this.PolyLine.HitTest(point);
 		}
 
+		/// <summary>
+		/// Gets the cursor token to be shown at the current mouse position.
+		/// </summary>
+		/// <param name="point"></param>
+		/// <returns></returns>
 		public override CursorToken GetCursorToken(Point point)
 		{
 			CursorToken token = base.GetCursorToken(point);
@@ -134,17 +184,27 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			this.MoveToken = new CursorToken(CursorToken.SystemCursors.SizeAll);
 		}
 
-		// This acts as a mediator.  It listens for changes in the anchor points
-		// and make corresponding changes in the position of the control points.
+		/// <summary>
+		/// Executed when the position of an anchor point has changed.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		protected void OnAnchorPointChanged(object sender, AnchorPointEventArgs e)
 		{
+			// This acts as a mediator.  It listens for changes in the anchor points
+			// and make corresponding changes in the position of the control points.
 			base.ControlPoints[e.AnchorPointIndex] = e.AnchorPoint;
 			Trace.Write(String.Format("OnAnchorPointChanged: {0}, {1}\n", e.AnchorPointIndex, e.AnchorPoint.ToString()));
 		}
 
+		/// <summary>
+		/// Executed when a the position of a control point has changed.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		protected override void OnControlPointChanged(object sender, ControlPointEventArgs e)
 		{
-			this.AnchorPoints[e.ControlPointIndex] = e.ControlPointLocation;
+			this.PolyLine[e.ControlPointIndex] = e.ControlPointLocation;
 			Trace.Write(String.Format("OnControlPointChanged: {0}, {1}\n", e.ControlPointIndex, e.ControlPointLocation.ToString()));
 		}
 
@@ -154,9 +214,9 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			_anchorPointsGraphic.AnchorPointChangedEvent += new EventHandler<AnchorPointEventArgs>(OnAnchorPointChanged);
 
 			// Add two points to begin with
-			this.AnchorPoints.Add(new PointF(0, 0));
+			this.PolyLine.Add(new PointF(0, 0));
 			base.ControlPoints.Add(new PointF(0, 0));
-			this.AnchorPoints.Add(new PointF(0, 0));
+			this.PolyLine.Add(new PointF(0, 0));
 			base.ControlPoints.Add(new PointF(0, 0));
 		}
 	}

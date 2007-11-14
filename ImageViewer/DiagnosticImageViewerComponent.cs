@@ -62,26 +62,6 @@ namespace ClearCanvas.ImageViewer
 		{
 		}
 
-
-		#region IApplicationComponent methods
-
-		public override void Start()
-		{
-			base.Start();
-			
-			// Can add DiagnosticImageViewerComponent specific tools here by calling 
-			// this.ToolSet.AddTool().  We would need to define a 
-			// DiagnosticImageViewerToolContext first.
-
-		}
-
-		public override void Stop()
-		{
-			base.Stop();
-		}
-
-		#endregion
-
 		private static ILayoutManager CreateLayoutManager()
 		{
 			try

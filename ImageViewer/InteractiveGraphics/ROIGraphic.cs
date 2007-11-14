@@ -42,6 +42,9 @@ using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
+	/// <summary>
+	/// 
+	/// </summary>
 	public class RoiGraphic
 		: StatefulCompositeGraphic, 
 		  IStandardStatefulGraphic, 

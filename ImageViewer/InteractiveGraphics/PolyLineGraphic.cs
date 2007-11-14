@@ -30,8 +30,6 @@
 #endregion
 
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -41,28 +39,34 @@ using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
-	// TODO (Norman): Remove IObservableList interface; retain other convenience
-	// methods like Add, Remove, etc.
-
-	public class PolyLineAnchorPointsGraphic 
-		: CompositeGraphic, IObservableList<PointF, AnchorPointEventArgs>, IMemorable
+	/// <summary>
+	/// A polyline graphic.
+	/// </summary>
+	/// <remarks>
+	/// A polyline is specified by a series of <i>n</i> anchor points, which
+	/// are connected with a series of <i>n-1</i> line segments.
+	/// </remarks>
+	public class PolyLineGraphic 
+		: CompositeGraphic, IMemorable
 	{
+		#region Private fields
+
 		private int _numberOfPoints = 0;
-		private event EventHandler<AnchorPointEventArgs> _itemAddedEvent;
-		private event EventHandler<AnchorPointEventArgs> _itemRemovedEvent;
 		private event EventHandler<AnchorPointEventArgs> _anchorPointChangedEvent;
 		private Color _color = Color.Yellow;
 
-		public PolyLineAnchorPointsGraphic()
+		#endregion
+
+		/// <summary>
+		/// Initializes a new instance of <see cref="PolyLineGraphic"/>.
+		/// </summary>
+		public PolyLineGraphic()
 		{
 		}
 
-		public event EventHandler<AnchorPointEventArgs> AnchorPointChangedEvent
-		{
-			add { _anchorPointChangedEvent += value; }
-			remove { _anchorPointChangedEvent -= value; }
-		}
-
+		/// <summary>
+		/// Gets or sets the colour of the <see cref="PolyLineGraphic"/>.
+		/// </summary>
 		public Color Color
 		{
 			get { return _color; }
@@ -75,45 +79,69 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			}
 		}
 
-		#region IObservableCollection<PointF, AnchorPointEventArgs> Members
-
-		public event EventHandler<AnchorPointEventArgs> ItemAdded
+		/// <summary>
+		/// Gets the number of anchor points in the <see cref="PolyLineGraphic"/>.
+		/// </summary>
+		public int Count
 		{
-			add { _itemAddedEvent += value; }
-			remove { _itemAddedEvent -= value; }
+			get { return _numberOfPoints; }
 		}
 
-		public event EventHandler<AnchorPointEventArgs> ItemRemoved
+		/// <summary>
+		/// Occurs when an anchor point has changed.
+		/// </summary>
+		public event EventHandler<AnchorPointEventArgs> AnchorPointChangedEvent
 		{
-			add { _itemRemovedEvent += value; }
-			remove { _itemRemovedEvent -= value; }
+			add { _anchorPointChangedEvent += value; }
+			remove { _anchorPointChangedEvent -= value; }
 		}
 
-		public event EventHandler<AnchorPointEventArgs> ItemChanged
+		/// <summary>
+		/// Adds a new anchor point to the <see cref="PolyLineGraphic"/>.
+		/// </summary>
+		/// <param name="point"></param>
+		public void Add(PointF point)
 		{
-			add { _itemRemovedEvent += value; }
-			remove { _itemRemovedEvent -= value; }
+			_numberOfPoints++;
+
+			if (this.Count == 1)
+			{
+				LinePrimitive line = new LinePrimitive();
+				line.Color = this.Color;
+				this.Graphics.Add(line);
+				line.Pt1 = point;
+			}
+			else if (this.Count == 2)
+			{
+				((LinePrimitive)this.Graphics[0]).Pt2 = point;
+			}
+			else
+			{
+				int previousLineIndex = this.Graphics.Count - 1;
+				LinePrimitive previousLine = ((LinePrimitive)this.Graphics[previousLineIndex]);
+				LinePrimitive newLine = new LinePrimitive();
+				newLine.Color = this.Color;
+				this.Graphics.Add(newLine);
+				newLine.Pt1 = previousLine.Pt2;
+				newLine.Pt2 = point;
+			}
 		}
 
-		#endregion
-
-		#region IList<PointF> Members
-
-		public int IndexOf(PointF item)
-		{
-			throw new Exception("The method or operation is not implemented.");
-		}
-
-		public void Insert(int index, PointF item)
-		{
-			throw new Exception("The method or operation is not implemented.");
-		}
-
+		/// <summary>
+		/// Removes an anchor point from the <see cref="PolyLineGraphic"/>.
+		/// </summary>
+		/// <param name="index">The zero-based index of the anchor point to remove.</param>
 		public void RemoveAt(int index)
 		{
 			this.Graphics.RemoveAt(index);
+			_numberOfPoints--;
 		}
 
+		/// <summary>
+		/// Gets or sets the location of the specified anchor point.
+		/// </summary>
+		/// <param name="index">The zero-based index of the anchor point.</param>
+		/// <returns></returns>
 		public PointF this[int index]
 		{
 			get
@@ -168,90 +196,21 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			}
 		}
 
-		#endregion
-
-		#region ICollection<PointF> Members
-
-		public void Add(PointF point)
-		{
-			_numberOfPoints++;
-
-			if (this.Count == 1)
-			{
-				LinePrimitive line = new LinePrimitive();
-				line.Color = this.Color;
-				this.Graphics.Add(line);
-				line.Pt1 = point;
-			}
-			else if (this.Count == 2)
-			{
-				((LinePrimitive)this.Graphics[0]).Pt2 = point;
-			}
-			else
-			{
-				int previousLineIndex = this.Graphics.Count - 1;
-				LinePrimitive previousLine = ((LinePrimitive)this.Graphics[previousLineIndex]);
-				LinePrimitive newLine = new LinePrimitive();
-				newLine.Color = this.Color;
-				this.Graphics.Add(newLine);
-				newLine.Pt1 = previousLine.Pt2;
-				newLine.Pt2 = point;
-			}
-		}
-
+		/// <summary>
+		/// Removes all anchor points from the <see cref="PolyLineGraphic"/>.
+		/// </summary>
 		public void Clear()
 		{
 			this.Graphics.Clear();
 			_numberOfPoints = 0;
 		}
 
-		public bool Contains(PointF item)
-		{
-			throw new Exception("The method or operation is not implemented.");
-		}
-
-		public void CopyTo(PointF[] array, int arrayIndex)
-		{
-			throw new Exception("The method or operation is not implemented.");
-		}
-
-		public int Count
-		{
-			get { return _numberOfPoints; }
-		}
-
-		public bool IsReadOnly
-		{
-			get { throw new Exception("The method or operation is not implemented."); }
-		}
-
-		public bool Remove(PointF item)
-		{
-			throw new Exception("The method or operation is not implemented.");
-		}
-
-		#endregion
-
-		#region IEnumerable<PointF> Members
-
-		public IEnumerator<PointF> GetEnumerator()
-		{
-			throw new Exception("The method or operation is not implemented.");
-		}
-
-		#endregion
-
-		#region IEnumerable Members
-
-		IEnumerator IEnumerable.GetEnumerator()
-		{
-			throw new Exception("The method or operation is not implemented.");
-		}
-
-		#endregion
-
 		#region IMemorable Members
 
+		/// <summary>
+		/// Captures the state of the polyline.
+		/// </summary>
+		/// <returns></returns>
 		public IMemento CreateMemento()
 		{
 			PointsMemento memento = new PointsMemento();
@@ -267,6 +226,10 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			return memento;
 		}
 
+		/// <summary>
+		/// Restores the state of the polyline.
+		/// </summary>
+		/// <param name="memento"></param>
 		public void SetMemento(IMemento memento)
 		{
 			Platform.CheckForNullReference(memento, "memento");
@@ -288,6 +251,11 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		#endregion
 
+		/// <summary>
+		/// Performs a hit test on the polyline.
+		/// </summary>
+		/// <param name="point"></param>
+		/// <returns></returns>
 		public override bool HitTest(Point point)
 		{
 			foreach (LinePrimitive line in this.Graphics)

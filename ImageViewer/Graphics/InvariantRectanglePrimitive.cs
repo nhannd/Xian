@@ -192,6 +192,12 @@ namespace ClearCanvas.ImageViewer.Graphics
 			}
 		}
 
+		/// <summary>
+		/// Performs a hit test on the <see cref="InvariantRectanglePrimitive"/> 
+		/// at a given point.
+		/// </summary>
+		/// <param name="point"></param>
+		/// <returns></returns>
 		public override bool HitTest(Point point)
 		{
 			// TODO (Stewart): implement this

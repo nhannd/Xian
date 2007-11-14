@@ -290,6 +290,10 @@ namespace ClearCanvas.ImageViewer
 			return displaySet;
 		}
 
+		/// <summary>
+		/// Returns the name of the display set.
+		/// </summary>
+		/// <returns></returns>
 		public override string ToString()
 		{
 			return this.Name;

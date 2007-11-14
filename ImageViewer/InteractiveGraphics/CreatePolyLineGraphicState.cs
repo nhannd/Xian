@@ -83,7 +83,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 				PointF mousePoint = new PointF(mouseInformation.Location.X, mouseInformation.Location.Y);
 
 				this.InteractiveGraphic.CoordinateSystem = CoordinateSystem.Destination;
-				this.InteractiveGraphic.AnchorPoints.Add(mousePoint);
+				this.InteractiveGraphic.PolyLine.Add(mousePoint);
 				this.InteractiveGraphic.ControlPoints.Add(mousePoint);
 				this.InteractiveGraphic.ResetCoordinateSystem();
 

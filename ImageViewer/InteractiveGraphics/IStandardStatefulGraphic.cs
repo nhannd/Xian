@@ -31,12 +31,39 @@
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
+	/// <summary>
+	/// Defines a stateful graphic with a number of standard states.
+	/// </summary>
 	public interface IStandardStatefulGraphic : IStatefulGraphic
 	{
+		/// <summary>
+		/// Creates a creation <see cref="GraphicState"/>.
+		/// </summary>
+		/// <returns></returns>
 		GraphicState CreateCreateState();
+
+		/// <summary>
+		/// Creates a focussed and selected <see cref="GraphicState"/>.
+		/// </summary>
+		/// <returns></returns>
 		GraphicState CreateFocussedSelectedState();
+
+		/// <summary>
+		/// Creates a focussed <see cref="GraphicState"/>.
+		/// </summary>
+		/// <returns></returns>
 		GraphicState CreateFocussedState();
+
+		/// <summary>
+		/// Creates an inactive <see cref="GraphicState"/>.
+		/// </summary>
+		/// <returns></returns>
 		GraphicState CreateInactiveState();
+
+		/// <summary>
+		/// Creates a selected <see cref="GraphicState"/>.
+		/// </summary>
+		/// <returns></returns>
 		GraphicState CreateSelectedState();
 	}
 }

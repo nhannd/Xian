@@ -40,21 +40,33 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
 	// TODO (Stewart): Get rid of InstallDefaultCursors; each graphic should install its own
 
+	/// <summary>
+	/// A <see cref="CompositeGraphic"/> with state.
+	/// </summary>
 	public abstract class StatefulCompositeGraphic 
 		: CompositeGraphic, IStatefulGraphic, IMouseButtonHandler, ICursorTokenProvider
 	{
 		private GraphicStateManager _graphicStateManager = new GraphicStateManager();
 
+		/// <summary>
+		/// Initializes a new instance of <see cref="StatefulCompositeGraphic"/>.
+		/// </summary>
 		protected StatefulCompositeGraphic()
 		{
 		}
 
+		/// <summary>
+		/// Gets or sets the <see cref="GraphicState"/>.
+		/// </summary>
 		public GraphicState State
 		{
 			get { return _graphicStateManager.State; }
 			set { _graphicStateManager.State = value; }
 		}
 
+		/// <summary>
+		/// Occurs when the <see cref="GraphicState"/> has changed.
+		/// </summary>
 		public event EventHandler<GraphicStateChangedEventArgs> StateChanged
 		{
 			add { _graphicStateManager.StateChanged += value; }

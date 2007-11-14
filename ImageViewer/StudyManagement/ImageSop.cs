@@ -42,6 +42,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	{
 		#region General Image Module
 
+		/// <summary>
+		/// Initializes a new instance of <see cref="ImageSop"/>.
+		/// </summary>
 		protected ImageSop()
 		{
 
