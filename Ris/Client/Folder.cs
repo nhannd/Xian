@@ -47,8 +47,8 @@ namespace ClearCanvas.Ris.Client
 
         private ActionModelNode _menuModel;
 
-        private IconSet _iconSet;
-        private IResourceResolver _resourceResolver;
+        protected IconSet _iconSet;
+        protected IResourceResolver _resourceResolver;
         private bool _isOpen;
 
         protected void NotifyTextChanged()
@@ -76,6 +76,11 @@ namespace ClearCanvas.Ris.Client
         {
             _isOpen = true;
             Refresh();
+        }
+
+        public virtual bool StartExpanded
+        {
+            get { return false; }
         }
 
         public virtual void CloseFolder() 

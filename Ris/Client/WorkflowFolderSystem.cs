@@ -70,8 +70,23 @@ namespace ClearCanvas.Ris.Client
             {
                 foreach (IContainerFolder container in containerExtensionPoint.CreateExtensions())
                 {
-                    _containers.Add(container.SubfolderType, container);
-                    _folderExplorer.AddFolder(container);
+                    foreach (Type subfoldderTType in container.SubfolderTypes)
+                    {
+                        _containers.Add(subfoldderTType, container);
+                    }
+
+                    IContainerFolder rootContainer;
+
+                    // Find any containers that exist for this folder type
+                    if (_containers.TryGetValue(container.GetType(), out rootContainer))
+                    {
+                        _folderExplorer.AddFolder(container, rootContainer);
+                    }
+                    else
+                    {
+                        // No container, so add to root
+                        _folderExplorer.AddFolder(container);
+                    }
                 }
             }
         }

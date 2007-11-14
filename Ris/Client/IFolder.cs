@@ -30,14 +30,9 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Drawing;
-
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Desktop.Actions;
-using System.Collections;
 using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tables;
 
 namespace ClearCanvas.Ris.Client
@@ -88,6 +83,11 @@ namespace ClearCanvas.Ris.Client
         /// Gets the open/close state of the current folder
         /// </summary>
         bool IsOpen { get; }
+
+        /// <summary>
+        /// Indicates if the folder should be initially expanded
+        /// </summary>
+        bool StartExpanded { get; }
 
         /// <summary>
         /// Allows the folder to notify when refresh is about to begin

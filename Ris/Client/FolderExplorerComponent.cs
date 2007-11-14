@@ -62,7 +62,7 @@ namespace ClearCanvas.Ris.Client
     }
 
     /// <summary>
-    /// Extension point for views onto <see cref="WorklistExplorerComponent"/>
+    /// Extension point for views onto <see cref="FolderExplorerComponent"/>
     /// </summary>
     [ExtensionPoint]
     public class FolderExplorerComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
@@ -79,7 +79,7 @@ namespace ClearCanvas.Ris.Client
 
         class FolderExplorerToolContext : ToolContext, IFolderExplorerToolContext
         {
-            private FolderExplorerComponent _component;
+            private readonly FolderExplorerComponent _component;
 
             public FolderExplorerToolContext(FolderExplorerComponent component)
             {
@@ -223,6 +223,7 @@ namespace ClearCanvas.Ris.Client
             binding.AcceptDropHandler = FolderAcceptDrop;
 
             binding.CanHaveSubTreeHandler = delegate(IFolder folder) { return folder is IContainerFolder; };
+            binding.ShouldInitiallyExpandSubTreeHandler = delegate(IFolder folder) { return folder.StartExpanded; };
             binding.SubTreeProvider =
                 delegate(IFolder folder)
                 {
@@ -416,8 +417,8 @@ namespace ClearCanvas.Ris.Client
                 _selectedFolder = folder;
                 if (_selectedFolder != null)
                 {
-                    _selectedFolder.RefreshBegin += new EventHandler(OnSelectedFolderRefreshBegin);
-                    _selectedFolder.RefreshFinish += new EventHandler(OnSelectedFolderRefreshFinish);
+                    _selectedFolder.RefreshBegin += OnSelectedFolderRefreshBegin;
+                    _selectedFolder.RefreshFinish += OnSelectedFolderRefreshFinish;
                     _selectedFolder.OpenFolder();
                 }
                 EventsHelper.Fire(_selectedFolderChanged, this, EventArgs.Empty);

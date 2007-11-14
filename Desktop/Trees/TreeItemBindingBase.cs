@@ -29,10 +29,6 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop.Trees
@@ -74,6 +70,11 @@ namespace ClearCanvas.Desktop.Trees
         public virtual bool CanHaveSubTree(object item)
         {
             return true;
+        }
+
+        public virtual bool ShouldInitiallyExpandSubTree(object item)
+        {
+            return false;
         }
 
         public virtual ITree GetSubTree(object item)

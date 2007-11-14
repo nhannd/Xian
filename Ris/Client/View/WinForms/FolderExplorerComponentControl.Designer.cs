@@ -29,6 +29,8 @@
 
 #endregion
 
+using System.Drawing;
+
 namespace ClearCanvas.Ris.Client.View.WinForms
 {
     partial class FolderExplorerComponentControl
@@ -112,10 +114,10 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             // 
             // _folderTreeImageList
             // 
-            this._folderTreeImageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("_folderTreeImageList.ImageStream")));
-            this._folderTreeImageList.TransparentColor = System.Drawing.Color.Transparent;
-            this._folderTreeImageList.Images.SetKeyName(0, "FolderClosedMedium.png");
-            this._folderTreeImageList.Images.SetKeyName(1, "FolderOpenMedium.png");
+            //this._folderTreeImageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("_folderTreeImageList.ImageStream")));
+            //this._folderTreeImageList.TransparentColor = System.Drawing.Color.Transparent;
+//            this._folderTreeImageList.Images.SetKeyName(0, "FolderClosedMedium.png");
+            //this._folderTreeImageList.Images.SetKeyName(1, "FolderOpenMedium.png");
             // 
             // _folderContentsTableView
             // 

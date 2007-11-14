@@ -44,6 +44,7 @@ namespace ClearCanvas.Desktop.Trees
     public delegate IResourceResolver ResourceResolverProviderDelegate<T>(T item);
     public delegate bool CanHaveSubTreeDelegate<T>(T item);
     public delegate ITree TreeProviderDelegate<T>(T item);
+    public delegate bool ShouldExpandSubTreeDelegate<T>(T item);
     public delegate DragDropKind CanAcceptDropDelegate<T>(T item, object dropData, DragDropKind kind);
     public delegate DragDropKind AcceptDropDelegate<T>(T item, object dropData, DragDropKind kind);
 
@@ -60,6 +61,7 @@ namespace ClearCanvas.Desktop.Trees
         private IconSetProviderDelegate<TItem> _iconSetIndexProvider;
         private ResourceResolverProviderDelegate<TItem> _resourceResolverProvider;
         private CanHaveSubTreeDelegate<TItem> _canHaveSubTreeHandler;
+        private ShouldExpandSubTreeDelegate<TItem> _shouldInitiallyExpandSubTreeHandler;
         private TreeProviderDelegate<TItem> _subTreeProvider;
         private CanAcceptDropDelegate<TItem> _canAcceptDropHandler;
         private AcceptDropDelegate<TItem> _acceptDropHandler;
@@ -149,7 +151,15 @@ namespace ClearCanvas.Desktop.Trees
             get { return _canHaveSubTreeHandler; }
             set { _canHaveSubTreeHandler = value; }
         }
-	
+
+        /// <summary>
+        /// Gets or sets the subtree expansion state provider for this binding
+        /// </summary>
+        public ShouldExpandSubTreeDelegate<TItem> ShouldInitiallyExpandSubTreeHandler
+        {
+            get { return _shouldInitiallyExpandSubTreeHandler; }
+            set { _shouldInitiallyExpandSubTreeHandler = value; }
+        }
 
         /// <summary>
         /// Gets or sets the subtree provider for this binding
@@ -200,6 +210,11 @@ namespace ClearCanvas.Desktop.Trees
         public override ITree GetSubTree(object item)
         {
             return _subTreeProvider == null ? base.GetSubTree(item) : _subTreeProvider((TItem)item);
+        }
+
+        public override bool ShouldInitiallyExpandSubTree(object item)
+        {
+             return _shouldInitiallyExpandSubTreeHandler == null ? base.ShouldInitiallyExpandSubTree(item) : _shouldInitiallyExpandSubTreeHandler((TItem)item);
         }
 
         public override string GetTooltipText(object item)

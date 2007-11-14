@@ -39,10 +39,48 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
     }
 
     [ExtensionOf(typeof(ReportingContainerFolderExtensionPoint))]
+    public class ReportingReportingContainerFolder : ContainerFolder
+    {
+        public ReportingReportingContainerFolder()
+            : base("Reporting")
+        {
+            AddSubfolderType(typeof(ReportingToBeReportedContainerFolder));
+            AddSubfolderType(typeof(DraftFolder));
+            AddSubfolderType(typeof(InTranscriptionFolder));
+            AddSubfolderType(typeof(ToBeVerifiedFolder));
+            AddSubfolderType(typeof(MyResidentToBeVerifyFolder));
+            AddSubfolderType(typeof(VerifiedFolder));
+        }
+
+        public override bool StartExpanded
+        {
+            get { return true; }
+        }
+    }
+
+    [ExtensionOf(typeof(ReportingContainerFolderExtensionPoint))]
     public class ReportingToBeReportedContainerFolder : ContainerFolder
     {
         public ReportingToBeReportedContainerFolder() 
             : base("To Be Reported", typeof(ToBeReportedFolder)) { }
+    }
+
+    [ExtensionOf(typeof(ReportingContainerFolderExtensionPoint))]
+    public class ReportingProtocollingContainerFolder : ContainerFolder
+    {
+        public ReportingProtocollingContainerFolder()
+            : base("Protocolling")
+        {
+            AddSubfolderType(typeof(ReportingToBeProtocolledContainerFolder));
+            AddSubfolderType(typeof(ToBeApprovedFolder));
+            AddSubfolderType(typeof(CompletedProtocolFolder));
+            AddSubfolderType(typeof(SuspendedProtocolFolder));
+        }
+
+        public override bool StartExpanded
+        {
+            get { return true; }
+        }
     }
 
     [ExtensionOf(typeof(ReportingContainerFolderExtensionPoint))]

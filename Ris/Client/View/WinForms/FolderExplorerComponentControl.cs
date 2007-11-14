@@ -30,25 +30,18 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Text;
 using System.Windows.Forms;
-
-using ClearCanvas.Desktop.View.WinForms;
-using ClearCanvas.Desktop;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop.View.WinForms;
 
 namespace ClearCanvas.Ris.Client.View.WinForms
 {
     /// <summary>
-    /// Provides a Windows Forms user-interface for <see cref="WorklistExplorerComponent"/>
+    /// Provides a Windows Forms user-interface for <see cref="FolderExplorerComponent"/>
     /// </summary>
     public partial class FolderExplorerComponentControl : CustomUserControl
     {
-        private FolderExplorerComponent _component;
+        private readonly FolderExplorerComponent _component;
 
         /// <summary>
         /// Constructor
@@ -58,14 +51,17 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             InitializeComponent();
             _component = component;
 
+            _folderTreeView.ImageList.ImageSize = new System.Drawing.Size(24, 24);
+            _folderTreeView.ImageList.ColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
+
             _folderTreeView.Tree = _component.FolderTree;
             _folderTreeView.DataBindings.Add("Selection", _component, "SelectedFolder", true, DataSourceUpdateMode.OnPropertyChanged);
             _folderTreeView.MenuModel = _component.FoldersContextMenuModel;
             _folderTreeView.ToolbarModel = _component.FoldersToolbarModel;
 
             _folderContentsTableView.Table = _component.FolderContentsTable;
-            _component.SelectedFolderChanged += new EventHandler(_component_SelectedFolderChanged);
-            _component.SuppressSelectionChanged += new EventHandler(_component_SuppressSelectionChanged);
+            _component.SelectedFolderChanged += _component_SelectedFolderChanged;
+            _component.SuppressSelectionChanged += _component_SuppressSelectionChanged;
 
             //_folderContentsTableView.DataBindings.Add("Table", _component, "FolderContentsTable", true, DataSourceUpdateMode.Never);
             _folderContentsTableView.DataBindings.Add("Selection", _component, "SelectedItems", true, DataSourceUpdateMode.OnPropertyChanged);
@@ -77,7 +73,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         void _component_SuppressSelectionChanged(object sender, EventArgs e)
         {
             ItemEventArgs<bool> ea = (ItemEventArgs<bool>)e;
-            _folderContentsTableView.SuppressSelectionChangedEvent = (bool) ea.Item;
+            _folderContentsTableView.SuppressSelectionChangedEvent = ea.Item;
         }
 
         private void _component_SelectedFolderChanged(object sender, EventArgs e)

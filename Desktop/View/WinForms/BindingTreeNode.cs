@@ -55,6 +55,9 @@ namespace ClearCanvas.Desktop.View.WinForms
             _parentTree = parentTree;
 
             UpdateDisplay();
+
+            if (_parentTree.Binding.ShouldInitiallyExpandSubTree(_item))
+                this.Expand();
         }
 
         /// <summary>
@@ -86,7 +89,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             this.ToolTipText = _parentTree.Binding.GetTooltipText(_item);
 
             this.Checked = _parentTree.Binding.GetIsChecked(_item);
-
+            
             if (this.TreeView != null && this.TreeView.ImageList != null)
             {
                 IResourceResolver resolver = _parentTree.Binding.GetResourceResolver(_item);

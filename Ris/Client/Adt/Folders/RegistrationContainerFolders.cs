@@ -76,6 +76,18 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
     }
 
     [ExtensionOf(typeof(RegistrationContainerFolderExtensionPoint))]
+    public class RegistrationProtocollingContainerFolder : ContainerFolder
+    {
+        public RegistrationProtocollingContainerFolder()
+            : base("Protocolling")
+        {
+            AddSubfolderType(typeof(RegistrationCompletedProtocolContainerFolder));
+            AddSubfolderType(typeof(RegistrationSuspendedProtocolContainerFolder));
+            AddSubfolderType(typeof(RegistrationPendingProtocolContainerFolder));
+        }
+    }
+
+    [ExtensionOf(typeof(RegistrationContainerFolderExtensionPoint))]
     public class RegistrationCompletedProtocolContainerFolder : ContainerFolder
     {
         public RegistrationCompletedProtocolContainerFolder()
