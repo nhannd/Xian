@@ -234,21 +234,21 @@ namespace ClearCanvas.ImageViewer
 			_linkedDisplaySets.Remove(displaySet);
 		}
 
-		private void OnDisplaySetAdded(object sender, DisplaySetEventArgs e)
+		private void OnDisplaySetAdded(object sender, CollectionEventArgs<IDisplaySet> e)
 		{
-			DisplaySet displaySet = e.DisplaySet as DisplaySet;
+			DisplaySet displaySet = (DisplaySet)e.Item;
 
 			displaySet.ParentImageSet = this;
 			displaySet.ImageViewer = this.ImageViewer;
 
-			if (e.DisplaySet.Linked)
-				_linkedDisplaySets.Add(e.DisplaySet);
+			if (e.Item.Linked)
+				_linkedDisplaySets.Add(e.Item);
 		}
 
-		private void OnDisplaySetRemoved(object sender, DisplaySetEventArgs e)
+		private void OnDisplaySetRemoved(object sender, CollectionEventArgs<IDisplaySet> e)
 		{
-			if (e.DisplaySet.Linked)
-				_linkedDisplaySets.Remove(e.DisplaySet);
+			if (e.Item.Linked)
+				_linkedDisplaySets.Remove(e.Item);
 		}
 
 		private void OnDrawing()

@@ -36,7 +36,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 	/// <summary>
 	/// A collection of <see cref="IGraphic"/> objects.
 	/// </summary>
-	public class GraphicCollection : ObservableList<IGraphic, GraphicEventArgs>
+	public class GraphicCollection : ObservableList<IGraphic>
 	{
 		/// <summary>
 		/// Instantiates a new instance of <see cref="GraphicCollection"/>.
@@ -46,12 +46,4 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		}
 	}
-
-	//public class GraphicCollection<T> : GraphicCollection
-	//    where T:IGraphic
-	//{
-		
-	//}
-
-
 }

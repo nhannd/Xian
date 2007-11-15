@@ -36,7 +36,7 @@ namespace ClearCanvas.ImageViewer
 	/// <summary>
 	/// A collection of <see cref="IImageSet"/> objects.
 	/// </summary>
-	public class ImageSetCollection : ObservableList<IImageSet, ImageSetEventArgs>
+	public class ImageSetCollection : ObservableList<IImageSet>
 	{
 		/// <summary>
 		/// Instantiates a new instance of <see cref="ImageSetCollection"/>.

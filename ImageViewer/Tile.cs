@@ -68,7 +68,7 @@ namespace ClearCanvas.ImageViewer
 
 		private event EventHandler _rendererChangedEvent;
 		private event EventHandler _drawingEvent;
-		private event EventHandler<TileEventArgs> _selectionChangedEvent;
+		private event EventHandler<ItemEventArgs<ITile>> _selectionChangedEvent;
 		private event EventHandler<PresentationImageChangedEventArgs> _presentationImageChangedEvent;
 
 		private event EventHandler<InformationBoxChangedEventArgs> _informationBoxChanged;
@@ -209,7 +209,7 @@ namespace ClearCanvas.ImageViewer
 				if (_selected != value)
 				{
 					_selected = value;
-					EventsHelper.Fire(_selectionChangedEvent, this, new TileEventArgs(this));
+					EventsHelper.Fire(_selectionChangedEvent, this, new ItemEventArgs<ITile>(this));
 				}
 			}
 		}
@@ -345,7 +345,7 @@ namespace ClearCanvas.ImageViewer
 		/// <summary>
 		/// Occurs when the <see cref="Selected"/> property has changed.
 		/// </summary>
-		public event EventHandler<TileEventArgs> SelectionChanged
+		public event EventHandler<ItemEventArgs<ITile>> SelectionChanged
 		{
 			add { _selectionChangedEvent += value; }
 			remove { _selectionChangedEvent -= value; }

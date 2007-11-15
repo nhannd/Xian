@@ -35,29 +35,24 @@ using System.Collections.Generic;
 
 namespace ClearCanvas.Common.Utilities
 {
-	public class ObservableList<TItem, TItemEventArgs> 
-		: IObservableList<TItem, TItemEventArgs>
-
-		//JC 2006-07-10 Changes for refactoring split
-		// mono does not like the class constraint on an interface
-		//where TItem : class
-		where TItemEventArgs : CollectionEventArgs<TItem>, new()
+	public class ObservableList<TItem> : IList<TItem>
 	{
-		private List<TItem> _list = new List<TItem>();
+		private readonly List<TItem> _list;
 		
-		private event EventHandler<TItemEventArgs> _itemAddedEvent;
-		private event EventHandler<TItemEventArgs> _itemRemovedEvent;
-		private event EventHandler<TItemEventArgs> _itemChanging; 
-		private event EventHandler<TItemEventArgs> _itemChangedEvent;
+		private event EventHandler<CollectionEventArgs<TItem>> _itemAddedEvent;
+		private event EventHandler<CollectionEventArgs<TItem>> _itemRemovedEvent;
+		private event EventHandler<CollectionEventArgs<TItem>> _itemChanging; 
+		private event EventHandler<CollectionEventArgs<TItem>> _itemChangedEvent;
 
 		public ObservableList()
 		{
-
+			_list = new List<TItem>();
 		}
 
-		public ObservableList(ObservableList<TItem, TItemEventArgs> list)
+		public ObservableList(IEnumerable<TItem> values)
+			: this()
 		{
-			foreach (TItem item in list)
+			foreach (TItem item in values)
 				this.Add(item);
 		}
 
@@ -68,33 +63,29 @@ namespace ClearCanvas.Common.Utilities
 			_list.Sort(sortComparer);
 		}
 
-		#region IObservableList<TItem, TItemEventArgs> Members
-
-		public virtual event EventHandler<TItemEventArgs> ItemAdded
+		public virtual event EventHandler<CollectionEventArgs<TItem>> ItemAdded
 		{
 			add { _itemAddedEvent += value; }
 			remove { _itemAddedEvent -= value;	}
 		}
 
-		public virtual event EventHandler<TItemEventArgs> ItemRemoved
+		public virtual event EventHandler<CollectionEventArgs<TItem>> ItemRemoved
 		{
 			add { _itemRemovedEvent += value; }
 			remove { _itemRemovedEvent -= value; }
 		}
 
-		public virtual event EventHandler<TItemEventArgs> ItemChanged
+		public virtual event EventHandler<CollectionEventArgs<TItem>> ItemChanged
 		{
 			add { _itemChangedEvent += value; }
 			remove { _itemChangedEvent -= value; }
 		}
 
-		public virtual event EventHandler<TItemEventArgs> ItemChanging
+		public virtual event EventHandler<CollectionEventArgs<TItem>> ItemChanging
 		{
 			add { _itemChanging += value; }
 			remove { _itemChanging -= value; }
 		}
-
-		#endregion
 
 		#region IList<T> Members
 
@@ -113,11 +104,7 @@ namespace ClearCanvas.Common.Utilities
 				return;
 
 			_list.Insert(index, item);
-
-			TItemEventArgs args = new TItemEventArgs();
-			args.Item = item;
-			args.Index = index;
-			OnItemAdded(args);
+			OnItemAdded(new CollectionEventArgs<TItem>(item, index));
 		}
 
 		public virtual void RemoveAt(int index)
@@ -127,9 +114,7 @@ namespace ClearCanvas.Common.Utilities
 			TItem itemToRemove = this[index];
 			_list.RemoveAt(index);
 
-			TItemEventArgs args = new TItemEventArgs();
-			args.Item = itemToRemove;
-			OnItemRemoved(args);
+			OnItemRemoved(new CollectionEventArgs<TItem>(itemToRemove, index));
 		}
 
 		public TItem this[int index]
@@ -143,8 +128,7 @@ namespace ClearCanvas.Common.Utilities
 			{
 				Platform.CheckIndexRange(index, 0, this.Count - 1, "index");
 
-				TItemEventArgs args = new TItemEventArgs();
-				args.Item = _list[index];
+				CollectionEventArgs<TItem> args = new CollectionEventArgs<TItem>(_list[index], index);
 				OnItemChanging(args);
 				
 				_list[index] = value;
@@ -164,11 +148,7 @@ namespace ClearCanvas.Common.Utilities
 				return;
 
 			_list.Add(item);
-
-			TItemEventArgs args = new TItemEventArgs();
-			args.Item = item;
-			args.Index = this.Count - 1;
-			OnItemAdded(args);
+			OnItemAdded(new CollectionEventArgs<TItem>(item, this.Count - 1));
 		}
 
 		public virtual void Clear()
@@ -217,17 +197,17 @@ namespace ClearCanvas.Common.Utilities
 		{
 			Platform.CheckForNullReference(item, "item");
 
-			bool result = _list.Remove(item);
+			int index = _list.IndexOf(item);
 
-			// Only raise event if the item was actually removed
-			if (result == true)
+			if (index >= 0)
 			{
-				TItemEventArgs args = new TItemEventArgs();
-				args.Item = item;
-				OnItemRemoved(args);
+				_list.RemoveAt(index);
+				// Only raise event if the item was actually removed
+				OnItemRemoved(new CollectionEventArgs<TItem>(item, index));
+				return true;
 			}
 
-			return result;
+			return false;
 		}
 
 		#endregion
@@ -250,21 +230,21 @@ namespace ClearCanvas.Common.Utilities
 
 		#endregion
 
-		protected virtual void OnItemAdded(TItemEventArgs e)
+		protected virtual void OnItemAdded(CollectionEventArgs<TItem> e)
 		{
 			EventsHelper.Fire(_itemAddedEvent, this, e);
 		}
 
-		protected virtual void OnItemRemoved(TItemEventArgs e)
+		protected virtual void OnItemRemoved(CollectionEventArgs<TItem> e)
 		{
 			EventsHelper.Fire(_itemRemovedEvent, this, e);
 		}
 
-		private void OnItemChanging(TItemEventArgs e)
+		private void OnItemChanging(CollectionEventArgs<TItem> e)
 		{
 			EventsHelper.Fire(_itemChanging, this, e);
 		}
-		protected virtual void OnItemChanged(TItemEventArgs e)
+		protected virtual void OnItemChanged(CollectionEventArgs<TItem> e)
 		{
 			EventsHelper.Fire(_itemChangedEvent, this, e);
 		}

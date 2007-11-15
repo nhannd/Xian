@@ -34,6 +34,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using ClearCanvas.Desktop;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.View.WinForms
 {
@@ -62,7 +63,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			this.Anchor = AnchorStyles.None;
 
 			_imageBox.Drawing += new EventHandler(OnDrawing);
-			_imageBox.SelectionChanged += new EventHandler<ImageBoxEventArgs>(OnImageBoxSelectionChanged);
+			_imageBox.SelectionChanged += new EventHandler<ItemEventArgs<IImageBox>>(OnImageBoxSelectionChanged);
 			_imageBox.LayoutCompleted += new EventHandler(OnLayoutCompleted);
         }
 
@@ -143,13 +144,13 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 		#region Private methods
 
-		private void OnImageBoxSelectionChanged(object sender, ImageBoxEventArgs e)
+		private void OnImageBoxSelectionChanged(object sender, ItemEventArgs<IImageBox> e)
 		{
 			Invalidate();
 			Update();
 		}
 
-		private void OnTileSelectionChanged(object sender, TileEventArgs e)
+		private void OnTileSelectionChanged(object sender, ItemEventArgs<ITile> e)
 		{
 			Invalidate();
 			Update();
@@ -256,7 +257,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			view.ParentImageBoxInsetWidth = ImageBox.InsetWidth;
 
 			TileControl control = view.GuiElement as TileControl;
-			control.Tile.SelectionChanged += new EventHandler<TileEventArgs>(OnTileSelectionChanged);
+			control.Tile.SelectionChanged += new EventHandler<ItemEventArgs<ITile>>(OnTileSelectionChanged);
 
 			control.SuspendLayout();
 			this.Controls.Add(control);

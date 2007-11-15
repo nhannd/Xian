@@ -95,7 +95,7 @@ namespace ClearCanvas.Desktop
             #endregion
         }
 
-        class PageList : ObservableList<TPage, CollectionEventArgs<TPage>>
+        class PageList : ObservableList<TPage>
         {
 			public PageList()
 			{

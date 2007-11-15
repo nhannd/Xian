@@ -33,6 +33,7 @@ using System;
 using System.Drawing;
 using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.InputManagement;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
@@ -199,14 +200,22 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		protected abstract void OnControlPointChanged(object sender, ControlPointEventArgs e);
-	
+		protected abstract void OnControlPointChanged(object sender, CollectionEventArgs<PointF> e);
+
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing)
+				_controlPointGroup.ControlPointChangedEvent -= new EventHandler<CollectionEventArgs<PointF>>(OnControlPointChanged);
+
+			base.Dispose(disposing);
+		}
+
 		private void Initialize()
 		{
 			base.Graphics.Add(this.ControlPoints);
 
 			// Make sure we know when the control points change
-			_controlPointGroup.ControlPointChangedEvent += new EventHandler<ControlPointEventArgs>(OnControlPointChanged);
+			_controlPointGroup.ControlPointChangedEvent += new EventHandler<CollectionEventArgs<PointF>>(OnControlPointChanged);
 		}
 	}
 }

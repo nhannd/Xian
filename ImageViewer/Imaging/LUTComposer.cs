@@ -59,9 +59,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// </summary>
 		public LutComposer()
 		{
-			this.LutCollection.ItemAdded += new EventHandler<LutEventArgs>(OnLutAdded);
-			this.LutCollection.ItemChanging += new EventHandler<LutEventArgs>(OnLutChanging); 
-			this.LutCollection.ItemChanged += new EventHandler<LutEventArgs>(OnLutChanged);
+			this.LutCollection.ItemAdded += new EventHandler<CollectionEventArgs<IComposableLut>>(OnLutAdded);
+			this.LutCollection.ItemChanging += new EventHandler<CollectionEventArgs<IComposableLut>>(OnLutChanging);
+			this.LutCollection.ItemChanged += new EventHandler<CollectionEventArgs<IComposableLut>>(OnLutChanged);
 		}
 
 		#region Public Properties
@@ -173,21 +173,21 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		#region Event Handlers
 
-		private void OnLutChanging(object sender, LutEventArgs e)
+		private void OnLutChanging(object sender, CollectionEventArgs<IComposableLut> e)
 		{
-			e.Lut.LutChanged -= new EventHandler(OnLutValuesChanged);
+			e.Item.LutChanged -= new EventHandler(OnLutValuesChanged);
 		}
 
-		private void OnLutChanged(object sender, LutEventArgs e)
+		private void OnLutChanged(object sender, CollectionEventArgs<IComposableLut> e)
 		{
 			_recalculate = true;
 			SyncMinMaxValues();
 			OnLutAdded(sender, e);
 		}
 
-		private void OnLutAdded(object sender, LutEventArgs e)
+		private void OnLutAdded(object sender, CollectionEventArgs<IComposableLut> e)
 		{
-			e.Lut.LutChanged += new EventHandler(OnLutValuesChanged);
+			e.Item.LutChanged += new EventHandler(OnLutValuesChanged);
 			SyncMinMaxValues();
 			_validated = false;
 		}
@@ -352,6 +352,10 @@ namespace ClearCanvas.ImageViewer.Imaging
 		{
 			try
 			{
+				this.LutCollection.ItemAdded -= new EventHandler<CollectionEventArgs<IComposableLut>>(OnLutAdded);
+				this.LutCollection.ItemChanging -= new EventHandler<CollectionEventArgs<IComposableLut>>(OnLutChanging);
+				this.LutCollection.ItemChanged -= new EventHandler<CollectionEventArgs<IComposableLut>>(OnLutChanged);
+
 				Dispose(true);
 				GC.SuppressFinalize(this);
 			}

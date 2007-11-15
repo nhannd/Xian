@@ -83,8 +83,6 @@
     <Compile Include="IVtkProp.cs" />
     <Compile Include="SurfaceProp.cs" />
     <Compile Include="TissueSettings.cs" />
-    <Compile Include="TissueSettingsCollection.cs" />
-    <Compile Include="TissueSettingsEventArgs.cs" />
     <Compile Include="VolumeComponent.cs" />
     <Compile Include="VolumeGraphic.cs" />
     <Compile Include="VolumeProp.cs" />

@@ -72,10 +72,10 @@ namespace ClearCanvas.ImageViewer
 		private static Color _selectedLinkedColor = Color.Orange;
 
 		private event EventHandler _drawingEvent;
-		private event EventHandler<ImageBoxEventArgs> _selectionChangedEvent;
+		private event EventHandler<ItemEventArgs<IImageBox>> _selectionChangedEvent;
 		private event EventHandler<DisplaySetChangedEventArgs> _displaySetChangedEvent;
-		private event EventHandler<TileEventArgs> _tileAddedEvent;
-		private event EventHandler<TileEventArgs> _tileRemovedEvent;
+		private event EventHandler<ItemEventArgs<ITile>> _tileAddedEvent;
+		private event EventHandler<ItemEventArgs<ITile>> _tileRemovedEvent;
 		private event EventHandler _layoutCompletedEvent;
 
 		#endregion
@@ -241,7 +241,7 @@ namespace ClearCanvas.ImageViewer
 				if (_selected != value)
 				{
 					_selected = value;
-					EventsHelper.Fire(_selectionChangedEvent, this, new ImageBoxEventArgs(this));
+					EventsHelper.Fire(_selectionChangedEvent, this, new ItemEventArgs<IImageBox>(this));
 				}
 			}
 		}
@@ -498,7 +498,7 @@ namespace ClearCanvas.ImageViewer
 		/// <summary>
 		/// Occurs when the <see cref="Selected"/> property has changed.
 		/// </summary>
-		public event EventHandler<ImageBoxEventArgs> SelectionChanged
+		public event EventHandler<ItemEventArgs<IImageBox>> SelectionChanged
 		{
 			add { _selectionChangedEvent += value; }
 			remove { _selectionChangedEvent -= value; }
@@ -516,7 +516,7 @@ namespace ClearCanvas.ImageViewer
 		/// <summary>
 		/// Occurs when an <see cref="ITile"/> has been added.
 		/// </summary>
-		public event EventHandler<TileEventArgs> TileAdded
+		public event EventHandler<ItemEventArgs<ITile>> TileAdded
 		{
 			add { _tileAddedEvent += value; }
 			remove { _tileAddedEvent -= value; }
@@ -525,7 +525,7 @@ namespace ClearCanvas.ImageViewer
 		/// <summary>
 		/// Occurs when an <see cref="ITile"/> has been removed.
 		/// </summary>
-		public event EventHandler<TileEventArgs> TileRemoved
+		public event EventHandler<ItemEventArgs<ITile>> TileRemoved
 		{
 			add { _tileRemovedEvent += value; }
 			remove { _tileRemovedEvent -= value; }
@@ -841,17 +841,17 @@ namespace ClearCanvas.ImageViewer
 			}
 		}
 
-		private void OnTileAdded(object sender, TileEventArgs e)
+		private void OnTileAdded(object sender, CollectionEventArgs<ITile> e)
 		{
-			Tile tile = e.Tile as Tile;
+			Tile tile = (Tile)e.Item;
 			tile.ImageViewer = this.ImageViewer;
 			tile.ParentImageBox = this;
 			EventsHelper.Fire(_tileAddedEvent, this, e);
 		}
 
-		private void OnTileRemoved(object sender, TileEventArgs e)
+		private void OnTileRemoved(object sender, CollectionEventArgs<ITile> e)
 		{
-			if (e.Tile.Selected)
+			if (e.Item.Selected)
 				this.SelectedTile = null;
 
 			EventsHelper.Fire(_tileRemovedEvent, this, e);

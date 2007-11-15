@@ -31,6 +31,7 @@
 
 using System;
 using System.Drawing;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Graphics
 {
@@ -46,7 +47,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// </summary>
 		public CompositeGraphic()
 		{
-			this.Graphics.ItemAdded += new EventHandler<GraphicEventArgs>(OnGraphicAdded);
+			this.Graphics.ItemAdded += new EventHandler<CollectionEventArgs<IGraphic>>(OnGraphicAdded);
 		}
 
 		/// <summary>
@@ -186,14 +187,16 @@ namespace ClearCanvas.ImageViewer.Graphics
 		{
 			if (disposing)
 			{
+				this.Graphics.ItemAdded -= new EventHandler<CollectionEventArgs<IGraphic>>(OnGraphicAdded);
+
 				foreach (Graphic graphic in this.Graphics)
 					graphic.Dispose();
 			}
 		}
 
-		private void OnGraphicAdded(object sender, GraphicEventArgs e)
+		private void OnGraphicAdded(object sender, CollectionEventArgs<IGraphic> e)
 		{
-			Graphic graphic = e.Graphic as Graphic;
+			Graphic graphic = (Graphic)e.Item;
 
 			graphic.SetParentGraphic(this);
 			graphic.SetParentPresentationImage(this.ParentPresentationImage);
@@ -202,21 +205,6 @@ namespace ClearCanvas.ImageViewer.Graphics
 			graphic.CoordinateSystem = this.CoordinateSystem;
 		}
 	}
-
-	//public class CompositeGraphic<T> : CompositeGraphic
-	//where T : IGraphic
-	//{
-	//    public new GraphicCollection Graphics
-	//    {
-	//        get
-	//        {
-	//            if (_graphics == null)
-	//                _graphics = new GraphicCollection<T>();
-
-	//            return _graphics;
-	//        }
-	//    }
-	//}
 }
 
 

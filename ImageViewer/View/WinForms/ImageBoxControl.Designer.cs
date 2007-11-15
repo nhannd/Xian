@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.View.WinForms
 {
@@ -54,7 +55,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 				if (_imageBox != null)
 				{
 					_imageBox.Drawing -= new EventHandler(OnDrawing);
-					_imageBox.SelectionChanged -= new EventHandler<ImageBoxEventArgs>(OnImageBoxSelectionChanged);
+					_imageBox.SelectionChanged -= new EventHandler<ItemEventArgs<IImageBox>>(OnImageBoxSelectionChanged);
 					_imageBox.LayoutCompleted -= new EventHandler(OnLayoutCompleted);
 					_imageBox = null;
 				}

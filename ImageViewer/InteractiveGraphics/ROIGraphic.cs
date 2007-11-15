@@ -264,7 +264,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			_calloutGraphic = new CalloutGraphic();
 			base.Graphics.Add(_calloutGraphic);
 
-			_roiGraphic.ControlPoints.ControlPointChangedEvent += new EventHandler<ControlPointEventArgs>(OnControlPointChanged);
+			_roiGraphic.ControlPoints.ControlPointChangedEvent += new EventHandler<CollectionEventArgs<PointF>>(OnControlPointChanged);
 			_calloutGraphic.LocationChanged += new EventHandler<PointChangedEventArgs>(OnCalloutTopLeftChanged);
 
 			this.StateChanged += new EventHandler<GraphicStateChangedEventArgs>(OnROIGraphicStateChanged);
@@ -355,7 +355,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			Trace.Write("EnterFocusSelectedState\n");
 		}
 
-		private void OnControlPointChanged(object sender, ControlPointEventArgs e)
+		private void OnControlPointChanged(object sender, CollectionEventArgs<PointF> e)
 		{
 			// We're attaching the callout to the ROI, so make sure the two
 			// graphics are in the same coordinate system before we do that.

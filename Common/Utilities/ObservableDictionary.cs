@@ -35,35 +35,56 @@ using System.Text;
 
 namespace ClearCanvas.Common.Utilities
 {
-	public class ObservableDictionary<TKey, TItem, TItemEventArgs> : IDictionary<TKey, TItem>
-		where TItem : class
-		where TItemEventArgs : CollectionEventArgs<TItem>, new()
+	public class ObservableDictionary<TKey, TItem> : IDictionary<TKey, TItem>
 	{
-		private Dictionary<TKey,TItem> _dictionary = new Dictionary<TKey,TItem>();
-		private event EventHandler<TItemEventArgs> _itemAddedEvent;
-		private event EventHandler<TItemEventArgs> _itemRemovedEvent;
+		private readonly Dictionary<TKey, TItem> _dictionary;
+		private event EventHandler<DictionaryEventArgs<TKey, TItem>> _itemAddedEvent;
+		private event EventHandler<DictionaryEventArgs<TKey, TItem>> _itemChanging;
+		private event EventHandler<DictionaryEventArgs<TKey, TItem>> _itemChanged;
+		private event EventHandler<DictionaryEventArgs<TKey, TItem>> _itemRemovedEvent;
 
-		public event EventHandler<TItemEventArgs> ItemAdded
+		public ObservableDictionary()
+		{
+			_dictionary = new Dictionary<TKey, TItem>();
+		}
+
+		public ObservableDictionary(IDictionary<TKey, TItem> dictionary)
+			: this()
+		{
+			foreach (KeyValuePair<TKey, TItem> pair in dictionary)
+				this.Add(pair);
+		}
+
+		public event EventHandler<DictionaryEventArgs<TKey, TItem>> ItemAdded
 		{
 			add { _itemAddedEvent += value; }
 			remove { _itemAddedEvent -= value; }
 		}
 
-		public event EventHandler<TItemEventArgs> ItemRemoved
+		public event EventHandler<DictionaryEventArgs<TKey, TItem>> ItemRemoved
 		{
 			add { _itemRemovedEvent += value; }
 			remove { _itemRemovedEvent -= value; }
 		}
 
+		public event EventHandler<DictionaryEventArgs<TKey, TItem>> ItemChanging
+		{
+			add { _itemChanging += value; }
+			remove { _itemChanging -= value; }
+		}
+
+		public event EventHandler<DictionaryEventArgs<TKey, TItem>> ItemChanged
+		{
+			add { _itemChanged += value; }
+			remove { _itemChanged -= value; }
+		}
+		
 		#region IDictionary<TKey,TItem> Members
 
 		public void Add(TKey key, TItem value)
 		{
 			_dictionary.Add(key, value);
-
-			TItemEventArgs args = new TItemEventArgs();
-			args.Item = value;
-			OnItemAddedEventHandler(args);
+			OnItemAdded(new DictionaryEventArgs<TKey, TItem>(key, value));
 		}
 
 		public bool ContainsKey(TKey key)
@@ -78,16 +99,15 @@ namespace ClearCanvas.Common.Utilities
 
 		public bool Remove(TKey key)
 		{
-			TItemEventArgs args = new TItemEventArgs();
-			args.Item = _dictionary[key];
-
-			bool result = _dictionary.Remove(key);
-
-			// Only raise event if the item was actually removed
-			if (result == true)
-				OnItemRemovedEventHandler(args);
-
-			return result;
+			if (_dictionary.ContainsKey(key))
+			{
+				DictionaryEventArgs<TKey, TItem> args = new DictionaryEventArgs<TKey, TItem>(key, _dictionary[key]);
+				_dictionary.Remove(key);
+				OnItemRemoved(args);
+				return true;
+			}
+			
+			return false;
 		}
 
 		public bool TryGetValue(TKey key, out TItem value)
@@ -108,7 +128,20 @@ namespace ClearCanvas.Common.Utilities
 			}
 			set
 			{
-				_dictionary[key] = value;
+				if (_dictionary.ContainsKey(key))
+				{
+					DictionaryEventArgs<TKey, TItem> args = new DictionaryEventArgs<TKey, TItem>(key, _dictionary[key]);
+					OnItemChanging(args);
+
+					_dictionary[key] = value;
+
+					args.Item = value;
+					OnItemChanged(args);
+				}
+				else
+				{
+					Add(key, value);
+				}
 			}
 		}
 
@@ -119,10 +152,7 @@ namespace ClearCanvas.Common.Utilities
 		public void Add(KeyValuePair<TKey, TItem> item)
 		{
 			(_dictionary as ICollection<KeyValuePair<TKey, TItem>>).Add(item);
-
-			TItemEventArgs args = new TItemEventArgs();
-			args.Item = item.Value;
-			OnItemAddedEventHandler(args);
+			OnItemAdded(new DictionaryEventArgs<TKey, TItem>(item.Key, item.Value));
 		}
 
 		public void Clear()
@@ -176,14 +206,11 @@ namespace ClearCanvas.Common.Utilities
 
 		public bool Remove(KeyValuePair<TKey, TItem> item)
 		{
-			TItemEventArgs args = new TItemEventArgs();
-			args.Item = item.Value;
-
 			bool result = (_dictionary as ICollection<KeyValuePair<TKey, TItem>>).Remove(item);
 
 			// Only raise event if the item was actually removed
 			if (result == true)
-				OnItemRemovedEventHandler(args);
+				OnItemRemoved(new DictionaryEventArgs<TKey, TItem>(item.Key, item.Value));
 
 			return result;
 		}
@@ -208,14 +235,24 @@ namespace ClearCanvas.Common.Utilities
 
 		#endregion
 
-		protected virtual void OnItemAddedEventHandler(TItemEventArgs e)
+		protected virtual void OnItemAdded(DictionaryEventArgs<TKey, TItem> e)
 		{
 			EventsHelper.Fire(_itemAddedEvent, this, e);
 		}
 
-        protected virtual void OnItemRemovedEventHandler(TItemEventArgs e)
+        protected virtual void OnItemRemoved(DictionaryEventArgs<TKey, TItem> e)
 		{
 			EventsHelper.Fire(_itemRemovedEvent, this, e);
+		}
+
+		protected virtual void OnItemChanging(DictionaryEventArgs<TKey, TItem> e)
+		{
+			EventsHelper.Fire(_itemChanging, this, e);
+		}
+
+		protected virtual void OnItemChanged(DictionaryEventArgs<TKey, TItem> e)
+		{
+			EventsHelper.Fire(_itemChanged, this, e);
 		}
 	}
 }

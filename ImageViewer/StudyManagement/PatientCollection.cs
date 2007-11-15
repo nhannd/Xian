@@ -36,7 +36,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	/// <summary>
 	/// A collection of <see cref="Patient"/> objects.
 	/// </summary>
-	public class PatientCollection : ObservableDictionary<string, Patient, PatientEventArgs>
+	public class PatientCollection : ObservableDictionary<string, Patient>
 	{
 		/// <summary>
 		/// Initializes a new instance of <see cref="PatientCollection"/>.

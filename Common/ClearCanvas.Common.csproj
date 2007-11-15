@@ -229,6 +229,7 @@
     <Compile Include="Utilities\CollectionEventArgs.cs" />
     <Compile Include="Utilities\CollectionUtils.cs" />
     <Compile Include="Configuration\StandardSettingsProvider.cs" />
+    <Compile Include="Utilities\DictionaryEventArgs.cs" />
     <Compile Include="Utilities\IReferenceCountable.cs" />
     <Compile Include="Utilities\ItemEventArgs.cs" />
     <Compile Include="Utilities\ObservablePropertyCoupler.cs" />
@@ -250,7 +251,6 @@
     <Compile Include="Utilities\EventsHelper.cs" />
     <Compile Include="Utilities\FileProcessor.cs" />
     <Compile Include="Utilities\InterthreadMarshaler.cs" />
-    <Compile Include="Utilities\IObservableList.cs" />
     <Compile Include="Utilities\IObservablePropertyBinding.cs" />
     <Compile Include="Utilities\IPerformanceCounter.cs" />
     <Compile Include="Utilities\IResourceResolver.cs" />

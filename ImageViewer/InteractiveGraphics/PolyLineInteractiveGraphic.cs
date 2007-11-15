@@ -32,6 +32,7 @@
 using System;
 using System.Diagnostics;
 using System.Drawing;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
@@ -189,12 +190,12 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		protected void OnAnchorPointChanged(object sender, AnchorPointEventArgs e)
+		protected void OnAnchorPointChanged(object sender, CollectionEventArgs<PointF> e)
 		{
 			// This acts as a mediator.  It listens for changes in the anchor points
 			// and make corresponding changes in the position of the control points.
-			base.ControlPoints[e.AnchorPointIndex] = e.AnchorPoint;
-			Trace.Write(String.Format("OnAnchorPointChanged: {0}, {1}\n", e.AnchorPointIndex, e.AnchorPoint.ToString()));
+			base.ControlPoints[e.Index] = e.Item;
+			Trace.Write(String.Format("OnAnchorPointChanged: {0}, {1}\n", e.Index, e.Item.ToString()));
 		}
 
 		/// <summary>
@@ -202,16 +203,24 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		protected override void OnControlPointChanged(object sender, ControlPointEventArgs e)
+		protected override void OnControlPointChanged(object sender, CollectionEventArgs<PointF> e)
 		{
-			this.PolyLine[e.ControlPointIndex] = e.ControlPointLocation;
-			Trace.Write(String.Format("OnControlPointChanged: {0}, {1}\n", e.ControlPointIndex, e.ControlPointLocation.ToString()));
+			this.PolyLine[e.Index] = e.Item;
+			Trace.Write(String.Format("OnControlPointChanged: {0}, {1}\n", e.Index, e.Item.ToString()));
+		}
+
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing)
+				_anchorPointsGraphic.AnchorPointChangedEvent -= new EventHandler<CollectionEventArgs<PointF>>(OnAnchorPointChanged);
+
+			base.Dispose(disposing);
 		}
 
 		private void BuildGraphic()
 		{
 			base.Graphics.Add(_anchorPointsGraphic);
-			_anchorPointsGraphic.AnchorPointChangedEvent += new EventHandler<AnchorPointEventArgs>(OnAnchorPointChanged);
+			_anchorPointsGraphic.AnchorPointChangedEvent += new EventHandler<CollectionEventArgs<PointF>>(OnAnchorPointChanged);
 
 			// Add two points to begin with
 			this.PolyLine.Add(new PointF(0, 0));

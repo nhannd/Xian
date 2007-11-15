@@ -41,7 +41,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 	/// </summary>
 	public class ControlPointGroup : CompositeGraphic
 	{
-		private event EventHandler<ControlPointEventArgs> _controlPointChangedEvent;
+		private event EventHandler<CollectionEventArgs<PointF>> _controlPointChangedEvent;
 		private Color _color = Color.Yellow;
 
 		/// <summary>
@@ -54,7 +54,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// <summary>
 		/// Occurs when the location of a <see cref="ControlPoint"/> has changed.
 		/// </summary>
-		public event EventHandler<ControlPointEventArgs> ControlPointChangedEvent
+		public event EventHandler<CollectionEventArgs<PointF>> ControlPointChangedEvent
 		{
 			add { _controlPointChangedEvent += value; }
 			remove { _controlPointChangedEvent -= value; }
@@ -116,7 +116,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			this.Graphics.Add(controlPoint);
 			controlPoint.Location = point;
 			controlPoint.Color = this.Color;
-			controlPoint.LocationChanged += new EventHandler<ControlPointEventArgs>(OnControlPointChanged);
+			controlPoint.LocationChanged += new EventHandler<CollectionEventArgs<PointF>>(OnControlPointChanged);
 		}
 
 		/// <summary>
@@ -168,7 +168,18 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			return -1;
 		}
 
-		private void OnControlPointChanged(object sender, ControlPointEventArgs e)
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				foreach (ControlPoint controlPoint in this.Graphics)
+					controlPoint.LocationChanged -= new EventHandler<CollectionEventArgs<PointF>>(OnControlPointChanged);
+			}
+
+			base.Dispose(disposing);
+		}
+
+		private void OnControlPointChanged(object sender, CollectionEventArgs<PointF> e)
 		{
 			EventsHelper.Fire(_controlPointChangedEvent, this, e);
 		}

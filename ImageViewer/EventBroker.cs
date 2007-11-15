@@ -52,8 +52,8 @@ namespace ClearCanvas.ImageViewer
 		private event EventHandler<PresentationImageSelectedEventArgs> _presentationImageSelectedEvent;
 		private event EventHandler<GraphicSelectionChangedEventArgs> _graphicSelectionChangedEvent;
 
-		private event EventHandler<StudyEventArgs> _studyLoadedEvent;
-		private event EventHandler<SopEventArgs> _imageLoadedEvent;
+		private event EventHandler<ItemEventArgs<Study>> _studyLoadedEvent;
+		private event EventHandler<ItemEventArgs<Sop>> _imageLoadedEvent;
 
 		private event EventHandler<ItemEventArgs<IMouseButtonHandler>> _activeMouseButtonHandlerChanged;
 		private event EventHandler<ItemEventArgs<IMouseWheelHandler>> _activeMouseWheelHandlerChanged;
@@ -160,13 +160,13 @@ namespace ClearCanvas.ImageViewer
 		/// <summary>
 		/// Occurs when a DICOM study is loaded.
 		/// </summary>
-		public event EventHandler<StudyEventArgs> StudyLoaded
+		public event EventHandler<ItemEventArgs<Study>> StudyLoaded
 		{
 			add { _studyLoadedEvent += value; }
 			remove { _studyLoadedEvent -= value; }
 		}
 
-		internal void OnStudyLoaded(StudyEventArgs studyEventArgs)
+		internal void OnStudyLoaded(ItemEventArgs<Study> studyEventArgs)
 		{
 			EventsHelper.Fire(_studyLoadedEvent, this, studyEventArgs);
 		}
@@ -174,13 +174,13 @@ namespace ClearCanvas.ImageViewer
 		/// <summary>
 		/// Occurs when a DICOM image is loaded.
 		/// </summary>
-		public event EventHandler<SopEventArgs> ImageLoaded
+		public event EventHandler<ItemEventArgs<Sop>> ImageLoaded
 		{
 			add { _imageLoadedEvent += value; }
 			remove { _imageLoadedEvent -= value; }
 		}
 
-		internal void OnImageLoaded(SopEventArgs sopEventArgs)
+		internal void OnImageLoaded(ItemEventArgs<Sop> sopEventArgs)
 		{
 			EventsHelper.Fire(_imageLoadedEvent, this, sopEventArgs);
 		}

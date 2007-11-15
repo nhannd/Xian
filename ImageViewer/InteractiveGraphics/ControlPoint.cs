@@ -50,7 +50,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		private int _index;
 		private PointF _location;
 		private InvariantRectanglePrimitive _rectangle;
-		private event EventHandler<ControlPointEventArgs> _locationChangedEvent;
+		private event EventHandler<CollectionEventArgs<PointF>> _locationChangedEvent;
 
 		#endregion
 
@@ -97,7 +97,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 					Trace.Write(String.Format("Control Point: {0}\n", _location.ToString()));
 
 					_rectangle.AnchorPoint = this.Location;
-					EventsHelper.Fire(_locationChangedEvent, this, new ControlPointEventArgs(_index, this.Location));
+					EventsHelper.Fire(_locationChangedEvent, this, new CollectionEventArgs<PointF>(this.Location, _index));
 				}
 			}
 		}
@@ -114,7 +114,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// <summary>
 		/// Occurs when the location of the control point has changed.
 		/// </summary>
-		public event EventHandler<ControlPointEventArgs> LocationChanged
+		public event EventHandler<CollectionEventArgs<PointF>> LocationChanged
 		{
 			add { _locationChangedEvent += value; }
 			remove { _locationChangedEvent -= value; }

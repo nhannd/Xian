@@ -74,8 +74,8 @@ namespace ClearCanvas.ImageViewer
 		{
 			_name = name ?? "";
 			_uid = uid ?? "";
-			this.PresentationImages.ItemAdded += new EventHandler<PresentationImageEventArgs>(OnPresentationImageAdded);
-			this.PresentationImages.ItemRemoved += new EventHandler<PresentationImageEventArgs>(OnPresentationImageRemoved);
+			this.PresentationImages.ItemAdded += new EventHandler<CollectionEventArgs<IPresentationImage>>(OnPresentationImageAdded);
+			this.PresentationImages.ItemRemoved += new EventHandler<CollectionEventArgs<IPresentationImage>>(OnPresentationImageRemoved);
 		}
 
 		#region Properties
@@ -270,8 +270,8 @@ namespace ClearCanvas.ImageViewer
 			foreach (PresentationImage image in this.PresentationImages)
 				image.Dispose();
 
-			_presentationImages.ItemAdded -= new EventHandler<PresentationImageEventArgs>(OnPresentationImageAdded);
-			_presentationImages.ItemRemoved -= new EventHandler<PresentationImageEventArgs>(OnPresentationImageAdded);
+			_presentationImages.ItemAdded -= new EventHandler<CollectionEventArgs<IPresentationImage>>(OnPresentationImageAdded);
+			_presentationImages.ItemRemoved -= new EventHandler<CollectionEventArgs<IPresentationImage>>(OnPresentationImageAdded);
 			_presentationImages = null;
 		}
 
@@ -333,20 +333,20 @@ namespace ClearCanvas.ImageViewer
 			_linkedPresentationImages.Remove(image);
 		}
 
-		private void OnPresentationImageAdded(object sender, PresentationImageEventArgs e)
+		private void OnPresentationImageAdded(object sender, CollectionEventArgs<IPresentationImage> e)
 		{
-			PresentationImage image = e.PresentationImage as PresentationImage;
+			PresentationImage image = (PresentationImage) e.Item;
 			image.ParentDisplaySet = this;
 			image.ImageViewer = this.ImageViewer;
 
-			if (e.PresentationImage.Linked)
-				_linkedPresentationImages.Add(e.PresentationImage);
+			if (e.Item.Linked)
+				_linkedPresentationImages.Add(e.Item);
 		}
 
-		private void OnPresentationImageRemoved(object sender, PresentationImageEventArgs e)
+		private void OnPresentationImageRemoved(object sender, CollectionEventArgs<IPresentationImage> e)
 		{
-			if (e.PresentationImage.Linked)
-				_linkedPresentationImages.Remove(e.PresentationImage);
+			if (e.Item.Linked)
+				_linkedPresentationImages.Remove(e.Item);
 		}
 
 		/// <summary>

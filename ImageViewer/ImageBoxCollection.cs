@@ -30,20 +30,20 @@
 #endregion
 
 using ClearCanvas.Common.Utilities;
+using System.Collections.Generic;
 
 namespace ClearCanvas.ImageViewer
 {
 	/// <summary>
 	/// A collection of <see cref="IImageBox"/> objects.
 	/// </summary>
-	public class ImageBoxCollection : ObservableList<IImageBox, ImageBoxEventArgs>
+	public class ImageBoxCollection : ObservableList<IImageBox>
 	{
 		/// <summary>
 		/// Initializes a new instance of <see cref="ImageBoxCollection"/>.
 		/// </summary>
 		internal ImageBoxCollection()
 		{
-
 		}
 
 		/// <summary>
@@ -54,7 +54,7 @@ namespace ClearCanvas.ImageViewer
 		/// Creates a <i>shallow</i> copy.  That is, only references to objects
 		/// in the collection are copied.
 		/// </remarks>
-		public ImageBoxCollection(ObservableList<IImageBox, ImageBoxEventArgs> collection) 
+		internal ImageBoxCollection(IEnumerable<IImageBox> collection) 
 			: base(collection)
 		{
 		}

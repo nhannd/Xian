@@ -509,8 +509,7 @@ namespace ClearCanvas.ImageViewer
 			// Only bother to tell someone if at least one image loaded
 			if (successfulImages > 0)
 			{
-				this.EventBroker.OnStudyLoaded(
-					new StudyEventArgs(this.StudyTree.GetStudy(studyInstanceUID)));
+				this.EventBroker.OnStudyLoaded(new ItemEventArgs<Study>(this.StudyTree.GetStudy(studyInstanceUID)));
 			}
 
 			VerifyLoad(numberOfImages, failedImages);

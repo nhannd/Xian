@@ -36,7 +36,7 @@ namespace ClearCanvas.ImageViewer
 	/// <summary>
 	/// A collection of <see cref="IPresentationImage"/> objects.
 	/// </summary>
-	public class PresentationImageCollection : ObservableList<IPresentationImage, PresentationImageEventArgs>
+	public class PresentationImageCollection : ObservableList<IPresentationImage>
 	{
 		/// <summary>
 		/// Instantiates a new instance of <see cref="PresentationImageCollection"/>.

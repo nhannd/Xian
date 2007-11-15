@@ -136,9 +136,9 @@ namespace ClearCanvas.ImageViewer
 				imageSet.Draw();
 		}
 
-		private void OnImageSetAdded(object sender, ImageSetEventArgs e)
+		private void OnImageSetAdded(object sender, CollectionEventArgs<IImageSet> e)
 		{
-			ImageSet imageSet = e.ImageSet as ImageSet;
+			ImageSet imageSet = (ImageSet)e.Item;
 
 			imageSet.ParentLogicalWorkspace = this;
 			imageSet.ImageViewer = this.ImageViewer;
