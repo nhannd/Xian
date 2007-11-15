@@ -36,7 +36,7 @@
                                     ControlToValidate="AETitleTextBox"
                                     InvalidInputBackColor="#FAFFB5"
                                     ValidationGroup="vg1" 
-                                    ValidationExpression="^(\w|[ ][^\\]){1,16}$"
+                                    ValidationExpression="^([^\\]){1,16}$"
                                     ErrorMessage="The AE Title is not valid." Display="None">
                                     </clearcanvas:RegularExpressionFieldValidator>
                                  </td>

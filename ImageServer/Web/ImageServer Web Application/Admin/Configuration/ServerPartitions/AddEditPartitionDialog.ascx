@@ -35,7 +35,7 @@
                                  </clearcanvas:conditionalrequiredfieldvalidator>
                                 <clearcanvas:regularexpressionfieldvalidator id="RegularExpressionFieldValidator2"
                                     runat="server" controltovalidate="AETitleTextBox" display="None" errormessage="The AE Title is not valid."
-                                    invalidinputbackcolor="#FAFFB5" validationexpression="^(\w|[ ][^\\]){1,16}$"
+                                    invalidinputbackcolor="#FAFFB5" validationexpression="^([^\\]){1,16}$"
                                     validationgroup="vg1">
                                     </clearcanvas:regularexpressionfieldvalidator>
                             </td>
