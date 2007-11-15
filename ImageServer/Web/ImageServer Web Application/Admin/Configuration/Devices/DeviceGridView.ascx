@@ -59,6 +59,12 @@
                         </ItemTemplate>
                         
                     </asp:TemplateField>
+                    <asp:TemplateField HeaderText="Features">
+                        <ItemTemplate>
+                            <asp:PlaceHolder ID="FeaturePlaceHolder" runat="server"></asp:PlaceHolder>
+                        </ItemTemplate>
+                        
+                    </asp:TemplateField>
                 </Columns>
                 <RowStyle CssClass="GridRowStyle"/>
                 <EditRowStyle BackColor="#2461BF" Wrap="True" BorderColor="Yellow" />

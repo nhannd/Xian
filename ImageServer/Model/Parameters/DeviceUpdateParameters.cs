@@ -94,6 +94,20 @@ namespace ClearCanvas.ImageServer.Model.Parameters
             set { this.SubCriteria["Active"] = new ProcedureParameter<bool>("Active", value); }
             get { return ((ProcedureParameter<bool>)this.SubCriteria["Active"]).Value; }
         }
-
+        public bool AllowStorage
+        {
+            set { this.SubCriteria["AllowStorage"] = new ProcedureParameter<bool>("AllowStorage", value); }
+            get { return ((ProcedureParameter<bool>)this.SubCriteria["AllowStorage"]).Value; }
+        }
+        public bool AllowQuery
+        {
+            set { this.SubCriteria["AllowQuery"] = new ProcedureParameter<bool>("AllowQuery", value); }
+            get { return ((ProcedureParameter<bool>)this.SubCriteria["AllowQuery"]).Value; }
+        }
+        public bool AllowRetrieve
+        {
+            set { this.SubCriteria["AllowRetrieve"] = new ProcedureParameter<bool>("AllowRetrieve", value); }
+            get { return ((ProcedureParameter<bool>)this.SubCriteria["AllowRetrieve"]).Value; }
+        }
     }
 }

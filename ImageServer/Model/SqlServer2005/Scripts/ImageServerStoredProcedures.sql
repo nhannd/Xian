@@ -1572,7 +1572,10 @@ CREATE PROCEDURE [dbo].[InsertDevice]
 	@IpAddress varchar(16),
 	@Active bit,
 	@Dhcp bit,
-	@Port int
+	@Port int,
+	@AllowStorage bit,
+	@AllowQuery	bit,
+	@AllowRetrieve bit
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -1580,8 +1583,8 @@ BEGIN
 	SET NOCOUNT ON;
 
 
-	INSERT into Device (GUID, ServerPartitionGUID, AeTitle, Description, IpAddress, Port, Active, Dhcp)
-		values  (NEWID(), @ServerPartitionGUID, @AeTitle, @Description, @IpAddress, @Port, @Active, @Dhcp)
+	INSERT into Device (GUID, ServerPartitionGUID, AeTitle, Description, IpAddress, Port, Active, Dhcp, AllowStorage, AllowQuery, AllowRetrieve)
+		values  (NEWID(), @ServerPartitionGUID, @AeTitle, @Description, @IpAddress, @Port, @Active, @Dhcp, @AllowStorage, @AllowQuery, @AllowRetrieve)
 END
 ' 
 END
@@ -1608,7 +1611,10 @@ CREATE PROCEDURE [dbo].[UpdateDevice]
          @Port   int,  
          @Description    nvarchar(256),  
          @DHCP   bit,  
-         @Active bit  
+         @Active bit,
+		 @AllowStorage bit,
+		 @AllowQuery bit,
+		 @AllowRetrieve  bit
 AS  
 BEGIN  
          -- SET NOCOUNT ON added to prevent extra result sets from  
@@ -1624,6 +1630,9 @@ BEGIN
        ,[Description] = @Description  
        ,[Dhcp] = @DHCP  
        ,[Active] = @Active  
+	   ,[AllowStorage] = @AllowStorage
+	   ,[AllowQuery] = @AllowQuery
+	   ,[AllowRetrieve] = @AllowRetrieve
     WHERE GUID = @GUID  
 END  
 ' 

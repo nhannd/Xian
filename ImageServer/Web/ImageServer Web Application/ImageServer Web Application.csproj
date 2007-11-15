@@ -264,6 +264,7 @@
     <Content Include="Global.asax" />
     <Content Include="images\add_disabled.gif" />
     <Content Include="images\ajax-loader.gif" />
+    <Content Include="images\blankfeature.gif" />
     <Content Include="images\checked_tall.gif" />
     <Content Include="images\delete_disabled.gif" />
     <Content Include="images\edit_disabled.gif" />
@@ -273,7 +274,9 @@
     <Content Include="images\icon_warning.gif" />
     <Content Include="images\next.gif" />
     <Content Include="images\prev.gif" />
+    <Content Include="images\query.gif" />
     <Content Include="images\search.gif" />
+    <Content Include="images\storage.gif" />
     <Content Include="images\unchecked_tall.gif" />
     <Content Include="Admin\Styles\images\tab-active-left.gif" />
     <Content Include="Admin\Styles\images\tab-active-right.gif" />

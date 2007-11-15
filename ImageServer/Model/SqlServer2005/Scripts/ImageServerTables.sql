@@ -264,33 +264,7 @@ END
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[Device]    Script Date: 11/15/2007 12:49:58 ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-SET ANSI_PADDING ON
-GO
-IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Device]') AND type in (N'U'))
-BEGIN
-CREATE TABLE [dbo].[Device](
-	[GUID] [uniqueidentifier] ROWGUIDCOL  NOT NULL CONSTRAINT [DF_Device_GUID]  DEFAULT (newid()),
-	[ServerPartitionGUID] [uniqueidentifier] NOT NULL,
-	[AeTitle] [varchar](16) NOT NULL,
-	[IpAddress] [varchar](16) NULL,
-	[Port] [int] NOT NULL,
-	[Description] [nvarchar](256) NULL,
-	[Dhcp] [bit] NOT NULL,
-	[Active] [bit] NOT NULL,
- CONSTRAINT [PK_Device] PRIMARY KEY NONCLUSTERED 
-(
-	[GUID] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
-) ON [PRIMARY]
-END
-GO
-SET ANSI_PADDING OFF
-GO
+
 /****** Object:  Table [dbo].[StudyStorage]    Script Date: 11/15/2007 12:50:48 ******/
 SET ANSI_NULLS ON
 GO
@@ -308,6 +282,9 @@ CREATE TABLE [dbo].[StudyStorage](
 	[LastAccessedTime] [datetime] NOT NULL CONSTRAINT [DF_StudyStorage_LastAccessedTime]  DEFAULT (getdate()),
 	[Lock] [bit] NOT NULL CONSTRAINT [DF_StudyStorage_Lock]  DEFAULT ((0)),
 	[StatusEnum] [smallint] NOT NULL,
+	[AllowStorage] [bit] NOT NULL CONSTRAINT [DF_Device_StorageFlag]  DEFAULT ((0)),
+	[AllowRetrieve] [bit] NOT NULL CONSTRAINT [DF_Device_AllowRetrieve]  DEFAULT ((0)),
+	[AllowQuery] [bit] NOT NULL CONSTRAINT [DF_Device_AllowQuery]  DEFAULT ((0)),
  CONSTRAINT [PK_StudyStorage] PRIMARY KEY CLUSTERED 
 (
 	[GUID] ASC

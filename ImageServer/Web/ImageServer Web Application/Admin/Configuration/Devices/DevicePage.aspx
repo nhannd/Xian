@@ -36,6 +36,8 @@
                         </cc1:TabPanel>
                     </cc1:TabContainer><uc2:AddEditDeviceDialog ID="AddEditDeviceControl1" runat="server" />
                     <uc1:ConfirmDialog ID="ConfirmDialog1" runat="server" />
+                        <asp:Label ID="Label1" runat="server" Style="left: 70px; position: relative;"
+                            Text="Label" Visible="False" Width="305px"></asp:Label>
 
                 
                     </ContentTemplate>

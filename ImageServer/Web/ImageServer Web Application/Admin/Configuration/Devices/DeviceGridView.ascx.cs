@@ -227,6 +227,8 @@ namespace ImageServerWebApplication.Admin.Configuration.Devices
 
         }
 
+        
+
 
         protected void GridView1_RowDataBound(object sender, GridViewRowEventArgs e)
         {
@@ -248,10 +250,79 @@ namespace ImageServerWebApplication.Admin.Configuration.Devices
 
                     CustomizeServerPartitionColumn(e);
 
+                    CustomizeFeaturesColumn(e);
+
                 }
 
             }
 
+        }
+
+        protected void CustomizeFeaturesColumn(GridViewRowEventArgs e)
+        {
+            int index = e.Row.RowIndex;
+            PlaceHolder placeHolder = e.Row.FindControl("FeaturePlaceHolder") as PlaceHolder;
+
+            if (placeHolder!=null)
+            {
+                // add an image for each enabled feature
+                AddAllowStorageImage(e, placeHolder);
+                AddAllowRetrieveImage(e, placeHolder);
+                AddAllowQueryImage(e, placeHolder);
+                
+            }
+        }
+
+        private void AddAllowRetrieveImage(GridViewRowEventArgs e, PlaceHolder placeHolder)
+        {
+            Image img;
+            img = new Image();
+            if (Convert.ToBoolean(DataBinder.Eval(e.Row.DataItem, "AllowRetrieve")))
+            {
+                img = new Image();
+                img.ImageUrl = "~/images/retrieve.gif";
+                img.AlternateText = "Retrieve";
+            }
+            else
+            {
+                img.ImageUrl = "~/images/blankfeature.gif";
+                img.AlternateText = "";
+            }
+            placeHolder.Controls.Add(img);
+        }
+
+        private void AddAllowQueryImage(GridViewRowEventArgs e, PlaceHolder placeHolder)
+        {
+            Image img;
+            img = new Image();
+            if (Convert.ToBoolean(DataBinder.Eval(e.Row.DataItem, "AllowQuery")))
+            {
+                img = new Image();
+                img.ImageUrl = "~/images/query.gif";
+                img.AlternateText = "Query";
+            }
+            else
+            {
+                img.ImageUrl = "~/images/blankfeature.gif";
+                img.AlternateText = "";
+            }
+            placeHolder.Controls.Add(img);
+        }
+
+        private void AddAllowStorageImage(GridViewRowEventArgs e, PlaceHolder placeHolder)
+        {
+            Image img = new Image();
+            if (Convert.ToBoolean(DataBinder.Eval(e.Row.DataItem, "AllowStorage")))
+            {
+                img.ImageUrl = "~/images/storage.gif";
+                img.AlternateText = "Storage";
+            }
+            else
+            {
+                img.ImageUrl = "~/images/blankfeature.gif";
+                img.AlternateText = "";
+            }
+            placeHolder.Controls.Add(img);
         }
 
         protected  void CustomizeDHCPColumn(GridViewRowEventArgs e)

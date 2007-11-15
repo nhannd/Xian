@@ -69,5 +69,17 @@ namespace ClearCanvas.ImageServer.Model.Parameters
         {
             set { this.SubCriteria["Dhcp"] = new ProcedureParameter<bool>("Dhcp", value); }
         }
+        public bool AllowStorage
+        {
+            set { this.SubCriteria["AllowStorage"] = new ProcedureParameter<bool>("AllowStorage", value); }
+        }
+        public bool AllowQuery
+        {
+            set { this.SubCriteria["AllowQuery"] = new ProcedureParameter<bool>("AllowQuery", value); }
+        }
+        public bool AllowRetrieve
+        {
+            set { this.SubCriteria["AllowRetrieve"] = new ProcedureParameter<bool>("AllowRetrieve", value); }
+        }
     }
 }

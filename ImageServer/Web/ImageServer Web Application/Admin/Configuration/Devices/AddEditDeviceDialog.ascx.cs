@@ -136,18 +136,6 @@ namespace ImageServerWebApplication.Admin.Configuration.Devices
             ModalPopupExtender1.Drag = true;
             ModalPopupExtender1.PopupDragHandleControlID = TitleBarPanel.UniqueID;
 
-
-            //Register a javascript that can be called to popup this dialog on the client
-            //NOTE: NOTE BEING USED FOR NOW
-            //            Page.RegisterClientScriptBlock("popupThisWindow",
-            //                      @"<script language='javascript'>
-            //                        function ShowAddDeviceDialog()
-            //                        {  
-            //                            var ctrl = $find('" + ModalPopupExtender1.UniqueID + @"'); 
-            //                            ctrl.show();
-            //                        }
-            //                    </script>");
-
         }
 
 
@@ -189,6 +177,10 @@ namespace ImageServerWebApplication.Admin.Configuration.Devices
             Device.IpAddress = IPAddressTextBox.Text;
             Device.Port = Int32.Parse(PortTextBox.Text);
             Device.ServerPartitionKey = new ServerEntityKey("Device", ServerPartitionDropDownList.SelectedItem.Value);
+            Device.AllowStorage = AllowStorageCheckBox.Checked;
+            Device.AllowQuery = AllowQueryCheckBox.Checked;
+            Device.AllowRetrieve = AllowRetrieveCheckBox.Checked;
+
 
             // TODO: Add additional server-side validation here
 
@@ -239,6 +231,11 @@ namespace ImageServerWebApplication.Admin.Configuration.Devices
                 DHCPCheckBox.Checked = false;
                 DescriptionTextBox.Text = "";
                 PortTextBox.Text = "0";
+
+                AllowStorageCheckBox.Checked = false;
+                AllowQueryCheckBox.Checked = false;
+                AllowRetrieveCheckBox.Checked = false;
+
                 ServerPartitionDropDownList.SelectedIndex = 0;
             }
             else
@@ -249,6 +246,10 @@ namespace ImageServerWebApplication.Admin.Configuration.Devices
                 DHCPCheckBox.Checked = Device.Dhcp;
                 DescriptionTextBox.Text = Device.Description;
                 PortTextBox.Text = Device.Port.ToString();
+
+                AllowStorageCheckBox.Checked = Device.AllowStorage;
+                AllowQueryCheckBox.Checked = Device.AllowQuery;
+                AllowRetrieveCheckBox.Checked = Device.AllowRetrieve;
 
                 ServerPartitionDropDownList.SelectedValue = Device.ServerPartitionKey.Key.ToString();
             }

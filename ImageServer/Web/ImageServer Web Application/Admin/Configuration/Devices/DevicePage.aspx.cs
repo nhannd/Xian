@@ -51,7 +51,7 @@ namespace ImageServerWebApplication.Admin.Configuration.Devices
                                                    }
                                                    else
                                                    {
-                                                       // Commit the new device into database
+                                                       // Create new device in the database
                                                        if (_controller.AddDevice(dev))
                                                        {
                                                            DevicePanel panel = _mapDevicePanel[dev.ServerPartition.GetKey()];
@@ -61,22 +61,7 @@ namespace ImageServerWebApplication.Admin.Configuration.Devices
                                                    
                                                    
                                                };
-            //EditDeviceControl1.OKClicked += delegate(Device dev, ServerPartition oldPartition)
-            //                                    {
-            //                                        // Update the device information and reload the list in the affected partitions
-            //                                        if (_controller.UpdateDevice(dev))
-            //                                        {
-
-            //                                            DevicePanel oldPanel = _mapDevicePanel[oldPartition.GetKey()];
-            //                                            if (oldPanel!=null)
-            //                                                oldPanel.UpdateUI();
-
-            //                                            DevicePanel newPanel = _mapDevicePanel[dev.ServerPartition.GetKey()];
-            //                                            if (newPanel != null) // the new partition may not be visible
-            //                                                newPanel.UpdateUI();
-            //                                        }
-
-            //                                    };
+            
 
             ConfirmDialog1.Confirmed += delegate(object data)
                                            {
@@ -149,9 +134,15 @@ namespace ImageServerWebApplication.Admin.Configuration.Devices
 
                 // Add the tab into the tabstrip
                 TabContainer1.Tabs.Add(tabPannel);
-                
+            }
 
-                
+            if (partitions != null && partitions.Count > 0)
+                TabContainer1.ActiveTabIndex = 0;
+            else
+            {
+                TabContainer1.ActiveTabIndex = -1;
+                Label1.Text = "Please add a server partition first";
+                Label1.Visible = true;
             }
         }
 

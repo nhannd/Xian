@@ -46,6 +46,15 @@ namespace ClearCanvas.ImageServer.Model
         }
         #endregion
 
+        enum FEATURE
+
+        {
+           CSTORE           = 1,
+           QUERY            = 2,
+           RETRIEVE         = 4
+        }
+
+
         #region Private Members
         private String _aeTitle;
         private String _description;
@@ -54,6 +63,9 @@ namespace ClearCanvas.ImageServer.Model
         private bool _active;
         private bool _dhcp;
         private int _port;
+        private bool _allowStorage;
+        private bool _allowQuery;
+        private bool _allowRetrieve;
         private ServerPartition _serverPartition;
         #endregion
 
@@ -100,6 +112,8 @@ namespace ClearCanvas.ImageServer.Model
             set { _port = value; }
         }
 
+        
+
         public ServerPartition ServerPartition
         {
             get
@@ -109,6 +123,25 @@ namespace ClearCanvas.ImageServer.Model
                 return _serverPartition;
             }
         }
+
+        public bool AllowStorage
+        {
+            get { return _allowStorage; }
+            set { _allowStorage = value; }
+        }
+
+        public bool AllowQuery
+        {
+            get { return _allowQuery; }
+            set { _allowQuery = value; }
+        }
+
+        public bool AllowRetrieve
+        {
+            get { return _allowRetrieve; }
+            set { _allowRetrieve = value; }
+        }
+
         #endregion
 
         #region Static Methods

@@ -123,6 +123,9 @@ namespace ClearCanvas.ImageServer.Web.Common
                 param.DHCP = dev.Dhcp;
                 param.IPAddress = dev.IpAddress;
                 param.Port = dev.Port;
+                param.AllowQuery = dev.AllowQuery;
+                param.AllowRetrieve = dev.AllowRetrieve;
+                param.AllowStorage = dev.AllowStorage;
 
                 ok = update.Execute(param);
             }
@@ -151,11 +154,6 @@ namespace ClearCanvas.ImageServer.Web.Common
         /// <summary>
         /// Retrieve a list of devices with specified criteria.
         /// </summary>
-        /// <param name="AETitle"></param>
-        /// <param name="IP"></param>
-        /// <param name="enabledOnly"></param>
-        /// <param name="dhcpOnly"></param>
-        /// <param name="serverPartitionkey"></param>
         /// <returns></returns>
         public IList<Device> GetDevices(DeviceSelectCriteria criteria)
         {
@@ -171,40 +169,7 @@ namespace ClearCanvas.ImageServer.Web.Common
             return list; 
         }
 
-        /// <summary>
-        /// Create a device based on specified parameters.
-        /// </summary>
-        /// <param name="AETitle"></param>
-        /// <param name="Description"></param>
-        /// <param name="IPAddress"></param>
-        /// <param name="Port"></param>
-        /// <param name="Active"></param>
-        /// <param name="DHCP"></param>
-        /// <param name="ServerPartitionGUID"></param>
-        /// <returns></returns>
-        public bool AddDevice(string AETitle, string Description, string IPAddress, int Port, bool Active, bool DHCP, string ServerPartitionGUID)
-        {
-            bool ok = false;
-
-            using (IUpdateContext ctx = _store.OpenUpdateContext(UpdateContextSyncMode.Flush))
-            {
-                IInsertDevice insert = ctx.GetBroker<IInsertDevice>();
-                DeviceInsertParameters param = new DeviceInsertParameters();
-                param.ServerPartitionKey = new ServerEntityKey("ServerPartition", ServerPartitionGUID);
-                param.AeTitle = AETitle;
-                param.Description = Description;
-                param.IpAddress = IPAddress;
-                param.Port = Port;
-                param.Active = Active;
-                param.Dhcp = DHCP;
-
-                ok = insert.Execute(param);
-
-            }
-
-            return ok;
-            
-        }
+        
 
         /// <summary>
         /// Create a new device.
@@ -225,6 +190,9 @@ namespace ClearCanvas.ImageServer.Web.Common
                 param.Port = newDev.Port;
                 param.Active = newDev.Active;
                 param.Dhcp = newDev.Dhcp;
+                param.AllowQuery = newDev.AllowQuery;
+                param.AllowRetrieve = newDev.AllowRetrieve;
+                param.AllowStorage = newDev.AllowStorage;
 
                 ok = insert.Execute(param);
             }
