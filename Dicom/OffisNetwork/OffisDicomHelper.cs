@@ -31,20 +31,106 @@
 
 using System;
 using System.Text;
-using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom.OffisWrapper;
-using MySR = ClearCanvas.Dicom.SR;
 
 namespace ClearCanvas.Dicom.OffisNetwork
 {
+	public class QueryRetrieveResponseException : Exception
+	{
+		private readonly ushort _status;
+
+		public QueryRetrieveResponseException(ushort status, string message)
+			: base(message)
+		{
+			_status = status;
+		}
+
+		public ushort Status
+		{
+			get { return _status; }
+		}
+	}
+
 	/// <summary>
 	/// Encapsulates a set of static functions that helps with work on various aspects to
     /// do with the OFFIS DICOM Toolkit.
 	/// </summary>
 	public static class OffisDicomHelper
 	{
-        /// <summary>
+        public static void CheckCFindStatus(ushort status)
+        {
+			string message = null;
+			if (status == OffisDcm.STATUS_FIND_Cancel_MatchingTerminatedDueToCancelRequest)
+			{
+				message = SR.ExceptionFindCancelled;
+			}
+        	else if (status == OffisDcm.STATUS_FIND_Failed_IdentifierDoesNotMatchSOPClass)
+        	{
+        		message = SR.ExceptionFindFailedIdentifierDoesNotMatchSOPClass;
+        	}
+			else if (status == OffisDcm.STATUS_FIND_Failed_UnableToProcess)
+			{
+				message = SR.ExceptionFindFailedUnableToProcess;
+			}
+			else if (status == OffisDcm.STATUS_FIND_Pending_WarningUnsupportedOptionalKeys)
+        	{
+        		message = SR.ExceptionFindPendingWarningUnsupportedOptionalKeys;
+        	}
+			else if (status == OffisDcm.STATUS_FIND_Refused_OutOfResources)
+			{
+				message = SR.ExceptionFindRefusedOutOfResources;
+			}
+			else if (status == OffisDcm.STATUS_FIND_Refused_SOPClassNotSupported)
+        	{
+        		message = SR.ExceptionFindRefusedSOPClassNotSupported;
+        	}
+
+			if (message != null)
+				throw new QueryRetrieveResponseException(status, message);
+        }
+
+		public static void CheckCMoveStatus(ushort status)
+		{
+			string message = null;
+			if (status == OffisDcm.STATUS_MOVE_Cancel_SubOperationsTerminatedDueToCancelIndication)
+			{
+				message = SR.ExceptionMoveCancelled;
+			}
+			else if (status == OffisDcm.STATUS_MOVE_Failed_IdentifierDoesNotMatchSOPClass)
+			{
+				message = SR.ExceptionMoveFailedIdentifierDoesNotMatchSOPClass;
+			}
+			else if (status == OffisDcm.STATUS_MOVE_Failed_MoveDestinationUnknown)
+			{
+				message = SR.ExceptionMoveFailedDestinationUnknown;
+			}
+			else if (status == OffisDcm.STATUS_MOVE_Failed_SOPClassNotSupported)
+			{
+				message = SR.ExceptionMoveFailedSopClassNotSupported;
+			}
+			else if (status == OffisDcm.STATUS_MOVE_Failed_UnableToProcess)
+			{
+				message = SR.ExceptionMoveFailedUnableToProcess;
+			}
+			else if (status == OffisDcm.STATUS_MOVE_Refused_OutOfResourcesNumberOfMatches)
+			{
+				message = SR.ExceptionMoveFailedOutOfResourcesNumberOfMatches;
+			}
+			else if (status == OffisDcm.STATUS_MOVE_Refused_OutOfResourcesSubOperations)
+			{
+				message = SR.ExceptionMoveFailedOutOfResourcesSubOperations;
+			}
+			else if (status == OffisDcm.STATUS_MOVE_Warning_SubOperationsCompleteOneOrMoreFailures)
+			{
+				message = SR.ExceptionMoveWarningSuboperationsCompleteOneOrMoreFailures;
+			}
+
+			if (message != null)
+				throw new QueryRetrieveResponseException(status, message);
+		}
+
+		/// <summary>
         /// Check the OFCondition object that is returned from many of the OFFIS functions/methods.
         /// Used in the extraction of a DICOM tag. If the condition is that the tag does not exist,
         /// this will not be considered an exception, and execution will proceed normally.
@@ -128,7 +214,7 @@ namespace ClearCanvas.Dicom.OffisNetwork
         public static String NormalizeDirectory(String directory)
         {
             if (null == directory)
-                throw new System.ArgumentNullException("directory", MySR.ExceptionDicomSaveDirectoryNull);
+                throw new System.ArgumentNullException("directory", SR.ExceptionDicomSaveDirectoryNull);
 
             // make sure that the path passed in has a trailing backslash 
             StringBuilder normalizedDirectory = new StringBuilder();
@@ -145,7 +231,7 @@ namespace ClearCanvas.Dicom.OffisNetwork
             if (!System.IO.Directory.Exists(normalizedDirectory.ToString()))
             {
                 StringBuilder message = new StringBuilder();
-                message.AppendFormat(MySR.ExceptionDicomSaveDirectoryDoesNotExist, normalizedDirectory.ToString());
+                message.AppendFormat(SR.ExceptionDicomSaveDirectoryDoesNotExist, normalizedDirectory.ToString());
 
                 throw new System.ArgumentException(message.ToString(), "directory");
             }

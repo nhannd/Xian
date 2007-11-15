@@ -126,7 +126,7 @@
   <data name="ItemClear" xml:space="preserve">
     <value>Clear</value>
   </data>
-  <data name="MessageUnableToQueryServer" xml:space="preserve">
-    <value>Unable to query one or more servers.</value>
+  <data name="MessageErrorQueryingOneOrMoreServers" xml:space="preserve">
+    <value>At least one error has occurred while attempting to query the selected server(s).</value>
   </data>
 </root>

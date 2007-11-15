@@ -86,7 +86,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			}
 			catch (Exception ex)
 			{
-				ExceptionHandler.Report(ex, SR.MessageUnableToQueryServer, _component.DesktopWindow);
+				ExceptionHandler.Report(ex, SR.MessageErrorQueryingOneOrMoreServers, _component.DesktopWindow);
 			}
 		}
 
@@ -98,7 +98,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			}
 			catch (Exception ex)
 			{
-				ExceptionHandler.Report(ex, SR.MessageUnableToQueryServer, _component.DesktopWindow);
+				ExceptionHandler.Report(ex, SR.MessageErrorQueryingOneOrMoreServers, _component.DesktopWindow);
 			}
 		}
 
@@ -110,7 +110,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			}
 			catch (Exception ex)
 			{
-				ExceptionHandler.Report(ex, SR.MessageUnableToQueryServer, _component.DesktopWindow);
+				ExceptionHandler.Report(ex, SR.MessageErrorQueryingOneOrMoreServers, _component.DesktopWindow);
 			}
 		}
 

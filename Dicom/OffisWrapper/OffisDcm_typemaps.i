@@ -195,6 +195,11 @@
 %typemap(cstype) int& "ref int"
 %typemap(csin) int& "ref $csinput"
 
+%typemap(ctype) ushort& "ushort *"
+%typemap(imtype) ushort& "ref ushort"
+%typemap(cstype) ushort& "ref ushort"
+%typemap(csin) ushort& "ref $csinput"
+
 %typemap(ctype) unsigned long* "uint *"
 %typemap(imtype) unsigned long* "ref uint"
 %typemap(cstype) unsigned long* "ref uint"

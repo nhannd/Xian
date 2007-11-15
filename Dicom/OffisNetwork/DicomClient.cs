@@ -779,14 +779,13 @@ namespace ClearCanvas.Dicom.OffisNetwork
 
 							try
 							{
-                                if (association.SendCMoveStudyRootQuery(cMoveDataset, network, serverAE.OperationTimeout, saveDirectory, queryRetrieveOperationIdentifier, isAsServiceClassUserOnly))
+								ushort status = (ushort)OffisDcm.STATUS_Success;
+								if (association.SendCMoveStudyRootQuery(queryRetrieveOperationIdentifier, cMoveDataset, network, serverAE.OperationTimeout, saveDirectory, isAsServiceClassUserOnly, ref status))
                                     association.Release();
 								else
 									throw new NetworkDicomException(SR.ExceptionOffisDulPeerAbortedAssociation);
-							}
-							catch
-							{
-								throw;
+
+								OffisDicomHelper.CheckCMoveStatus(status);
 							}
 							finally
 							{
@@ -891,15 +890,18 @@ namespace ClearCanvas.Dicom.OffisNetwork
 							
 							try
 							{
-								if (association.SendCFindStudyRootQuery(cFindDataset, queryRetrieveOperationIdentifier))
+								ushort status = (ushort)OffisDcm.STATUS_Success;
+								if(association.SendCFindStudyRootQuery(queryRetrieveOperationIdentifier, cFindDataset, ref status))
 								{
 									association.Release();
-									return new ReadOnlyQueryResultCollection(queryResults);
 								}
 								else
 								{
-									return null;
+									throw new NetworkDicomException(SR.ExceptionOffisDulPeerAbortedAssociation);
 								}
+
+								OffisDicomHelper.CheckCFindStatus(status);
+								return new ReadOnlyQueryResultCollection(queryResults);
 							}
 							catch
 							{

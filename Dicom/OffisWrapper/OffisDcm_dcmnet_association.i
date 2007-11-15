@@ -161,8 +161,10 @@ struct T_ASC_Association
 		}
 	}
 
-	bool SendCMoveStudyRootQuery(DcmDataset* cMoveDataset, T_ASC_Network* network, int timeout, const char* saveDirectory, unsigned long queryRetrieveOperationIdentifier, bool isAsServiceClassUserOnly) 
-		throw (dicom_runtime_error)
+	bool SendCMoveStudyRootQuery(
+			unsigned long queryRetrieveOperationIdentifier, DcmDataset* cMoveDataset, 
+			T_ASC_Network* network, int timeout, const char* saveDirectory, 
+			bool isAsServiceClassUserOnly, ushort& cMoveResponseStatus) throw (dicom_runtime_error)
 	{
 		T_ASC_PresentationContextID presId;
 		T_DIMSE_C_MoveRQ    req;
@@ -188,7 +190,8 @@ struct T_ASC_Association
 		ASC_getAPTitles(self->params, req.MoveDestination, NULL, NULL);
 
 		OFCondition cond;
-
+		cMoveResponseStatus = 0x0; //Status Success
+		
 		if (isAsServiceClassUserOnly)
 		{
 			cond = DIMSE_moveUser(self, presId, &req, cMoveDataset,
@@ -208,6 +211,7 @@ struct T_ASC_Association
 
 		if (cond == EC_Normal)
 		{
+			cMoveResponseStatus = rsp.DimseStatus;
 			return true;
 		}
 		else if (cond == DUL_PEERREQUESTEDRELEASE)
@@ -219,17 +223,21 @@ struct T_ASC_Association
 		}
 		else if (cond == DUL_PEERABORTEDASSOCIATION)
 		{
+			cMoveResponseStatus = rsp.DimseStatus;
+			
 			// right now we don't do anything special
 			// but in the future, this could be logged
 			return false;
 		}
 		else // some other abnormal condition
 		{
-			return false;
+			string msg = string("SendCMoveStudyRootQuery: error - ") + cond.text();
+			ASC_abortAssociation(self);
+			throw dicom_runtime_error(cond, msg);
 		}
 	}
 
-	bool SendCFindStudyRootQuery(DcmDataset* cFindDataset, unsigned long queryRetrieveOperationIdentifier) throw (dicom_runtime_error)
+	bool SendCFindStudyRootQuery(unsigned long queryRetrieveOperationIdentifier, DcmDataset* cFindDataset, ushort& cFindResponseStatus) throw (dicom_runtime_error)
 	{
 		DIC_US msgId = self->nextMsgID++;
 		T_ASC_PresentationContextID presId;
@@ -253,6 +261,8 @@ struct T_ASC_Association
 		// prepare the callback 
 		callbackData.QueryRetrieveOperationIdentifier = queryRetrieveOperationIdentifier;
 		
+		cFindResponseStatus = 0x0;
+		
 		// finally conduct transmission of data
 		OFCondition cond = DIMSE_findUser(self, presId, &req, cFindDataset,
 						  CFindProgressCallback, &callbackData,
@@ -261,53 +271,30 @@ struct T_ASC_Association
 
 		if (cond == EC_Normal)
 		{
+			cFindResponseStatus = rsp.DimseStatus;
 			return true;
 		}
 		else if (cond == DUL_PEERREQUESTEDRELEASE)
 		{
 			ASC_abortAssociation(self);
-
+			
 			string msg = string("SendCFindStudyRootQuery: Protocol error, peer requested release (association aborted); ") + cond.text();
 			throw dicom_runtime_error(cond, msg);
 		}
 		else if (cond == DUL_PEERABORTEDASSOCIATION)
 		{
+			cFindResponseStatus = rsp.DimseStatus;
+			
 			// right now we don't do anything special
 			// but in the future, this could be logged
 			return false;
 		}
 		else // some other abnormal condition
 		{
-			return false;
+			string msg = string("SendCFindStudyRootQuery: error - ") + cond.text();
+			ASC_abortAssociation(self);
+			throw dicom_runtime_error(cond, msg);
 		}
-		
-		/* This was in the original findscu.cxx code and may become
-		 * helpful when we do more logging so I'm keeping it here for now
-
-		if (cond == EC_Normal) {
-			if (opt_verbose) {
-				DIMSE_printCFindRSP(stdout, &rsp);
-			} else {
-				if (rsp.DimseStatus != STATUS_Success) {
-					printf("Response: %s\n", DU_cfindStatusString(rsp.DimseStatus));
-				}
-			}
-		} else {
-			if (fname) {
-				errmsg("Find Failed, file: %s:", fname);
-			} else {
-				errmsg("Find Failed, query keys:");
-				dcmff.getDataset()->print(COUT);
-			}
-			DimseCondition::dump(cond);
-		}
-
-		if (statusDetail != NULL) {
-			printf("  Status Detail:\n");
-			statusDetail->print(COUT);
-			delete statusDetail;
-		}
-		*/
 	}
 
 	OFCondition ProcessServerCommands(int operationTimeout, const char* saveDirectory)

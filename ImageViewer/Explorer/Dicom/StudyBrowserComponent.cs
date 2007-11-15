@@ -636,17 +636,22 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				QueryParameters parameters = PrepareQueryParameters();
 				parameters["StudyInstanceUid"] = studyUids;
 
-				StudyItemList list = new StudyItemList();
-				list = ImageViewerComponent.FindStudy(parameters, null, "DICOM_LOCAL");
-
-				foreach (StudyItem item in list)
+				try
 				{
-					//don't need to check this again, it's just paranoia
-					if (!StudyExists(item.StudyInstanceUID))
+					StudyItemList list = ImageViewerComponent.FindStudy(parameters, null, "DICOM_LOCAL");
+					foreach (StudyItem item in list)
 					{
-						studyTable.Items.Add(item);
-						refreshTitle = true;
+						//don't need to check this again, it's just paranoia
+						if (!StudyExists(item.StudyInstanceUID))
+						{
+							studyTable.Items.Add(item);
+							refreshTitle = true;
+						}
 					}
+				}
+				catch(Exception e)
+				{
+					Platform.Log(LogLevel.Error, e);
 				}
 			}
 

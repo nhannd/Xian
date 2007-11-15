@@ -403,4 +403,46 @@
   <data name="ExceptionDicomTagPathInvalid" xml:space="preserve">
     <value>The specified Dicom Tag Path is invalid: {0}.</value>
   </data>
+  <data name="ExceptionFindCancelled" xml:space="preserve">
+    <value>C-Find failed: operation was cancelled.</value>
+  </data>
+  <data name="ExceptionFindFailedIdentifierDoesNotMatchSOPClass" xml:space="preserve">
+    <value>C-Find failed: identifier does not match Sop Class.</value>
+  </data>
+  <data name="ExceptionFindFailedUnableToProcess" xml:space="preserve">
+    <value>C-Find failed: unable to process.</value>
+  </data>
+  <data name="ExceptionFindPendingWarningUnsupportedOptionalKeys" xml:space="preserve">
+    <value>C-Find warning: unsupported optional keys.</value>
+  </data>
+  <data name="ExceptionFindRefusedOutOfResources" xml:space="preserve">
+    <value>C-Find refused: out of resources.</value>
+  </data>
+  <data name="ExceptionFindRefusedSOPClassNotSupported" xml:space="preserve">
+    <value>C-Find refused: Sop Class not supported.</value>
+  </data>
+  <data name="ExceptionMoveCancelled" xml:space="preserve">
+    <value>C-Move failed: operation was cancelled.</value>
+  </data>
+  <data name="ExceptionMoveFailedDestinationUnknown" xml:space="preserve">
+    <value>C-Move failed: destination unknown.</value>
+  </data>
+  <data name="ExceptionMoveFailedIdentifierDoesNotMatchSOPClass" xml:space="preserve">
+    <value>C-Move failed: Identifier does not match Sop Class.</value>
+  </data>
+  <data name="ExceptionMoveFailedOutOfResourcesNumberOfMatches" xml:space="preserve">
+    <value>C-Move failed: out of resources (number of matches).</value>
+  </data>
+  <data name="ExceptionMoveFailedOutOfResourcesSubOperations" xml:space="preserve">
+    <value>C-Move failed: out of resources (sub-operations).</value>
+  </data>
+  <data name="ExceptionMoveFailedSopClassNotSupported" xml:space="preserve">
+    <value>C-Move failed: Sop Class not supported.</value>
+  </data>
+  <data name="ExceptionMoveFailedUnableToProcess" xml:space="preserve">
+    <value>C-Move failed: unable to process.</value>
+  </data>
+  <data name="ExceptionMoveWarningSuboperationsCompleteOneOrMoreFailures" xml:space="preserve">
+    <value>C-Move warning: sub-operations completed; one or more failures.</value>
+  </data>
 </root>

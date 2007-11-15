@@ -235,14 +235,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			if (!ValidateDateRange())
 				return;
 
-			try
-			{
-				BlockingOperation.Run(_studyBrowserComponent.Search);
-			}
-			catch(Exception e)
-			{
-				ExceptionHandler.Report(e, this.Host.DesktopWindow);
-			}
+			BlockingOperation.Run(_studyBrowserComponent.Search);
 		}
 
 		public void SearchToday()
