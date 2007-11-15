@@ -169,5 +169,25 @@ namespace ClearCanvas.Common.Utilities
 
             return (string[])res.ToArray(typeof(string)); ;
         }
+
+        /// <summary>
+        /// Converts an empty string to a null string, otherwise returns the argument unchanged.
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
+        public static string NullIfEmpty(string s)
+        {
+            return string.IsNullOrEmpty(s) ? null : s;
+        }
+
+        /// <summary>
+        /// Converts a null argument to an empty string, otherwise returns the argument unchanged.
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
+        public static string EmptyIfNull(string s)
+        {
+            return s ?? "";
+        }
     }
 }
