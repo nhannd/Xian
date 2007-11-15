@@ -43,7 +43,8 @@ namespace ClearCanvas.Ris.Server
     {
         public override void Validate(string userName, string password)
         {
-            Console.WriteLine("Validating user " + userName);
+            Platform.Log(LogLevel.Info, "Validating user ", userName);
+
             Platform.GetService<IAuthenticationService>(
                 delegate(IAuthenticationService service)
                 {

@@ -64,11 +64,15 @@ namespace ClearCanvas.Enterprise.Hibernate
 
         public void Initialize()
         {
+            Platform.Log(LogLevel.Info, "Initializing NHibernate subsystem...");
+
             // create the hibernate configuration
             _cfg = new NHibernate.Cfg.Configuration();
 
             // this will automatically read from the hibernate.xml.cfg file
             _cfg.Configure();
+
+            Platform.Log(LogLevel.Debug, "NHibernate connection string: {0}", _cfg.Properties["connection.connection_string"]);
 
             // add each assembly to the hibernate configuration
             // this tells NHibernate to look for .hbm.xml embedded resources in these assemblies
@@ -85,6 +89,8 @@ namespace ClearCanvas.Enterprise.Hibernate
 
             // create the session factory
             _sessionFactory = _cfg.BuildSessionFactory();
+
+            Platform.Log(LogLevel.Info, "NHibernate initialization complete.");
         }
 
         public void SetTransactionNotifier(ITransactionNotifier notifier)
@@ -148,6 +154,5 @@ namespace ClearCanvas.Enterprise.Hibernate
                 }
             }
         }
-
     }
 }

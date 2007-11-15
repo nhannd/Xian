@@ -153,7 +153,6 @@ namespace ClearCanvas.Ris.Application.Services.Admin
         protected void Log(LogLevel level, string message)
         {
             Platform.Log(level, message);
-            Console.WriteLine(message);
         }
 
         protected T TryParseOrDefault<T>(string value, T defaultValue)

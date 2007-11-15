@@ -160,7 +160,6 @@ namespace ClearCanvas.Ris.Application.Services.Admin
         protected void Log(LogLevel level, string message)
         {
             Platform.Log(level, message);
-            Console.WriteLine(message);
         }
 
         #endregion

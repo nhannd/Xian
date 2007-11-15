@@ -55,7 +55,7 @@ namespace ClearCanvas.Ris.Server
 
         public void RunApplication(string[] args)
         {
-            Console.WriteLine("Starting application root " + this.GetType().FullName);
+            Platform.Log(LogLevel.Info, "Starting application root {0}", this.GetType().FullName);
  
             string baseAddress = "http://localhost:8000/";
 
@@ -64,21 +64,26 @@ namespace ClearCanvas.Ris.Server
             MountServices(new CoreServiceExtensionPoint(), baseAddress);
             MountServices(new ApplicationServiceExtensionPoint(), baseAddress);
 
-            Console.WriteLine("Starting services...");
+            Platform.Log(LogLevel.Info, "Starting WCF services on {0}...", baseAddress);
             foreach (ServiceHost host in _serviceHosts)
             {
                 host.Open();
             }
-            Console.WriteLine("Services started.");
+            Platform.Log(LogLevel.Info, "WCF Services started on {0}", baseAddress);
+
+            // kick NHibernate, rather than waiting for it to load on demand
+            PersistentStoreRegistry.GetDefaultStore();
+
             Console.WriteLine("PRESS ANY KEY TO EXIT");
 
             Console.Read();
 
-            Console.WriteLine("Stopping services...");
+            Platform.Log(LogLevel.Info, "Stopping WCF services...");
             foreach (ServiceHost host in _serviceHosts)
             {
                 host.Close();
             }
+            Platform.Log(LogLevel.Info, "WCF services stopped.");
         }
 
         #endregion
@@ -103,7 +108,7 @@ namespace ClearCanvas.Ris.Server
                     serviceClass.GetCustomAttributes(typeof(ServiceImplementsContractAttribute), false));
                 if (a != null)
                 {
-                    Console.WriteLine("Mounting service " + serviceClass.Name);
+                    Platform.Log(LogLevel.Info, "Mounting service {0}", serviceClass.Name);
 
                     // create service host
 					Uri uri = new Uri(new Uri(baseAddress), a.ServiceContract.FullName);
@@ -148,7 +153,7 @@ namespace ClearCanvas.Ris.Server
                 }
                 else
                 {
-                    Console.WriteLine("Unknown contract for service " + serviceClass.Name);
+                    Platform.Log(LogLevel.Error, "Unknown contract for service {0}", serviceClass.Name);
                 }
             }
         }
