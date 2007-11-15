@@ -79,6 +79,24 @@ namespace ClearCanvas.ImageServer.Services.Shreds {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to ServiceLock Server.
+        /// </summary>
+        internal static string ServiceLockServer {
+            get {
+                return ResourceManager.GetString("ServiceLockServer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ServiceLock Server.
+        /// </summary>
+        internal static string ServiceLockServerDescription {
+            get {
+                return ResourceManager.GetString("ServiceLockServerDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Work Queue Server.
         /// </summary>
         internal static string WorkQueueServer {

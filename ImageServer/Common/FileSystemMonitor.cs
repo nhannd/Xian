@@ -109,6 +109,18 @@ namespace ClearCanvas.ImageServer.Common
             return 0.0f;
         }
 
+        public Decimal CheckFilesystemPercentFull(ServerEntityKey filesystemKey)
+        {
+            lock (_lock)
+            {
+                if (_filesystemList.ContainsKey(filesystemKey))
+                {
+                    return (Decimal)_filesystemList[filesystemKey].UsedSpacePercentage;
+                }
+            }
+            return 0.00M;
+        }
+
         public bool CheckFilesystemWriteable(ServerEntityKey filesystemKey)
         {
             lock (_lock)

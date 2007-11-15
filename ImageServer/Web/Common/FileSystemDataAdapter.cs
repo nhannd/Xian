@@ -75,6 +75,8 @@ namespace ClearCanvas.ImageServer.Web.Common
                 parms.ReadOnly = filesystem.ReadOnly;
                 parms.TypeEnum = filesystem.FilesystemTierEnum;
                 parms.WriteOnly = filesystem.WriteOnly;
+                parms.HighWatermark = filesystem.HighWatermark;
+                parms.LowWatermark = filesystem.LowWatermark;
 
                 list = insert.Execute(parms);
             }
@@ -101,6 +103,8 @@ namespace ClearCanvas.ImageServer.Web.Common
                 parms.ReadOnly = filesystem.ReadOnly;
                 parms.FilesystemTierEnum = filesystem.FilesystemTierEnum;
                 parms.WriteOnly = filesystem.WriteOnly;
+                parms.HighWatermark = filesystem.HighWatermark;
+                parms.LowWatermark = filesystem.LowWatermark;
 
                 result = update.Execute(parms);
             }

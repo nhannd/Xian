@@ -45,21 +45,61 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
         private FilesystemMonitor _monitor;
         private float _bytesToRemove;
 
-        private void QueryCandidates(Model.ServiceLock item)
+        private void UpdateFilesystemPercentFull(Model.ServiceLock item)
+        {
+            using (
+                IUpdateContext update =
+                    PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            {
+                IUpdateFilesystem filesystemUpdate = update.GetBroker<IUpdateFilesystem>();
+
+                FilesystemUpdateParameters updateParms = new FilesystemUpdateParameters();
+
+                ServerFilesystemInfo fs = _monitor.Filesystems[item.FilesystemKey];
+                updateParms.Description = fs.Filesystem.Description;
+                updateParms.Enabled = fs.Filesystem.Enabled;
+                updateParms.ReadOnly = fs.Filesystem.ReadOnly;
+                updateParms.WriteOnly = fs.Filesystem.WriteOnly;
+                updateParms.FileSystemKey = fs.Filesystem.GetKey();
+                updateParms.FilesystemPath = fs.Filesystem.FilesystemPath;
+                updateParms.FilesystemTierEnum = fs.Filesystem.FilesystemTierEnum;
+                updateParms.HighWatermark = fs.Filesystem.HighWatermark;
+                updateParms.LowWatermark = fs.Filesystem.LowWatermark;
+                updateParms.PercentFull = (Decimal) fs.UsedSpacePercentage;
+
+                if (false == filesystemUpdate.Execute(updateParms))
+                {
+                    Platform.Log(LogLevel.Error, "Unexpected problem inserting into WorkQueue");
+                }
+                else
+                {
+                    update.Commit();
+                }
+            }
+        }
+
+        private IList<FilesystemQueue> GetFilesystemQueueCandidates(Model.ServiceLock item, DateTime scheduledTime, FilesystemQueueTypeEnum type)
         {
             IQueryFilesystemQueue query = ReadContext.GetBroker<IQueryFilesystemQueue>();
 
             FilesystemQueueQueryParameters parms = new FilesystemQueueQueryParameters();
-
             parms.FilesystemKey = item.FilesystemKey;
-            parms.ScheduledTime = Platform.Time;
-            parms.FilesystemQueueTypeEnum = FilesystemQueueTypeEnum.GetEnum("StudyDelete");
-            parms.Results = 1000; // grab 1000 rows at a time
-
+            parms.ScheduledTime = scheduledTime;
+            parms.FilesystemQueueTypeEnum = type;
+            parms.Results = ServiceLockSettings.Default.FilesystemQueueResultCount;
+            
             IList<FilesystemQueue> list = query.Execute(parms);
 
-            foreach (FilesystemQueue queueItem in list)
+            return list;
+        }
+
+        private void ProcessDeleteCandidates(Model.ServiceLock item, IList<FilesystemQueue> candidateList)
+        {
+            foreach (FilesystemQueue queueItem in candidateList)
             {
+                if (_bytesToRemove < 0)
+                    return;
+
                 IQueryStudyStorageLocation studyStorageQuery = ReadContext.GetBroker<IQueryStudyStorageLocation>();
 
                 StudyStorageLocationQueryParameters studyStorageParms = new StudyStorageLocationQueryParameters();
@@ -82,7 +122,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
 
                     if (false == studyDelete.Execute(insertParms))
                     {
-                        Platform.Log(LogLevel.Error,"Unexpected problem inserting into WorkQueue");
+                        Platform.Log(LogLevel.Error, "Unexpected problem inserting into WorkQueue");
                     }
                     else
                     {
@@ -101,7 +141,28 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
                         }
                     }
                 }
-                
+            }
+        }
+
+        private void DoStudyDelete(Model.ServiceLock item)
+        {
+            DateTime deleteTime = Platform.Time;
+            FilesystemQueueTypeEnum type = FilesystemQueueTypeEnum.GetEnum("StudyDelete");
+
+            while (_bytesToRemove > 0)
+            {
+                IList<FilesystemQueue> list =
+                    GetFilesystemQueueCandidates(item, Platform.Time, type);
+
+                if (list.Count > 0)
+                {
+                    ProcessDeleteCandidates(item, list);
+                }
+                else
+                {
+                    // No candidates, no other choice but to look for candidates eligable the next day.
+                    deleteTime.AddDays(1);
+                }
             }
         }
 
@@ -110,13 +171,25 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
             _monitor = new FilesystemMonitor();
             _monitor.Load();
 
+            // Update the DB Percent full
+            UpdateFilesystemPercentFull(item);
+
             if (_monitor.CheckFilesystemAboveHighWatermark(item.FilesystemKey))
             {
                 _bytesToRemove = _monitor.CheckFilesystemBytesToRemove(item.FilesystemKey);
+                int delayMinutes = 10;
 
-                QueryCandidates(item);
+                try
+                {
+                    DoStudyDelete(item);
+                }
+                catch (Exception e)
+                {
+                    Platform.Log(LogLevel.Error,e,"Unexpected exception when processing StudyDelete records.");
+                    delayMinutes = 1;
+                }
 
-                UnlockServiceLock(item, Platform.Time.AddMinutes(10));
+                UnlockServiceLock(item, Platform.Time.AddMinutes(delayMinutes));
             }
             else if (_monitor.CheckFilesystemAboveLowWatermark(item.FilesystemKey))
             {

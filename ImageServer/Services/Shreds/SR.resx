@@ -123,6 +123,12 @@
   <data name="DicomServerDescription" xml:space="preserve">
     <value>Dicom Server</value>
   </data>
+  <data name="ServiceLockServer" xml:space="preserve">
+    <value>ServiceLock Server</value>
+  </data>
+  <data name="ServiceLockServerDescription" xml:space="preserve">
+    <value>ServiceLock Server</value>
+  </data>
   <data name="WorkQueueServer" xml:space="preserve">
     <value>Work Queue Server</value>
   </data>

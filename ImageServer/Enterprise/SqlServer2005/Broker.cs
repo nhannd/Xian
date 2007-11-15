@@ -98,6 +98,12 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
 
                     command.Parameters.AddWithValue(sqlParmName, parm2.Value.Enum);
                 }
+                else if (parm is ProcedureParameter<Decimal>)
+                {
+                    ProcedureParameter<Decimal> parm2 = (ProcedureParameter<Decimal>)parm;
+
+                    command.Parameters.AddWithValue(sqlParmName, parm2.Value);
+                }
                 else
                     throw new PersistenceException("Unknown procedure parameter type: " + parm.GetType().ToString(), null);
 

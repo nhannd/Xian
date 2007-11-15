@@ -67,12 +67,12 @@ namespace ClearCanvas.ImageServer.Services.Shreds.ServiceLockServer
 
         public override string GetDisplayName()
         {
-            throw new Exception("The method or operation is not implemented.");
+            return SR.ServiceLockServer;
         }
 
         public override string GetDescription()
         {
-            throw new Exception("The method or operation is not implemented.");
+            return SR.ServiceLockServerDescription;
         }
     }
 }

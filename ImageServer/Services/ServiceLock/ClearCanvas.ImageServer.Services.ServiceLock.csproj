@@ -38,6 +38,11 @@
     <Compile Include="FilesystemDelete\FilesystemDeleteItemProcessor.cs" />
     <Compile Include="IServiceLockItemProcessor.cs" />
     <Compile Include="IServiceLockProcessorFactory.cs" />
+    <Compile Include="ServiceLockSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>ServiceLockSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="ServiceLockFactoryExtensionPoint.cs" />
     <Compile Include="ServiceLockProcessor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -67,6 +72,13 @@
       <Project>{2C9126D3-5B73-4539-BBC9-D56E6097D335}</Project>
       <Name>ClearCanvas.ImageServer.Model</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="ServiceLockSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>ServiceLockSettings.Designer.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="FilesystemCompress\" />

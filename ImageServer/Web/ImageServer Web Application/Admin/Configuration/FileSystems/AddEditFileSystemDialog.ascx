@@ -4,8 +4,7 @@
 <%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="cc1" %>
 <%@ Register Assembly="ClearCanvas.ImageServer.Web.WebControls" Namespace="ClearCanvas.ImageServer.Web.WebControls"
     TagPrefix="clearcanvas" %>
-    
-    <asp:UpdatePanel ID="UpdatePanel" runat="server" UpdateMode="Conditional">
+<asp:UpdatePanel ID="UpdatePanel" runat="server" UpdateMode="Conditional">
     <ContentTemplate>
         <asp:Panel ID="DialogPanel" runat="server" CssClass="PopupWindow" Width="453px" Style="display: none">
             <asp:Panel ID="TitleBarPanel" runat="server" CssClass="PopupWindowTitleBar" Width="100%">
@@ -17,12 +16,12 @@
                     </tr>
                 </table>
             </asp:Panel>
-            <div class="PopupWindowBody" style="vertical-align: top; ">
-                <asp:Panel ID="Panel2" runat="server" Height="200px" CssClass="Panel" >
-                    <cc1:TabContainer ID="TabContainer1" runat="server" ActiveTabIndex="0" Height="160px" >
-                        <cc1:TabPanel ID="TabPanel1" runat="server" HeaderText="TabPanel1" >
+            <div class="PopupWindowBody" style="vertical-align: top;">
+                <asp:Panel ID="Panel2" runat="server" Height="200px" CssClass="Panel">
+                    <cc1:TabContainer ID="TabContainer1" runat="server" ActiveTabIndex="0" Height="160px">
+                        <cc1:TabPanel ID="TabPanel1" runat="server" HeaderText="TabPanel1">
                             <ContentTemplate>
-                                <asp:Panel ID="Panel1" runat="server" CssClass="Panel" >
+                                <asp:Panel ID="Panel1" runat="server" CssClass="Panel">
                                     <table id="TABLE1" runat="server" cellspacing="4" style="text-align: left" width="90%">
                                         <tr runat="server">
                                             <td runat="server" valign="bottom">
@@ -31,12 +30,10 @@
                                                     BorderWidth="1px" MaxLength="128" ValidationGroup="vg1"></asp:TextBox>
                                             </td>
                                             <td colspan="1" runat="server" valign="bottom">
-                                                
-                                                  <clearcanvas:ConditionalRequiredFieldValidator 
-                                    ID="ConditionalRequiredFieldValidator1" runat="server" ControlToValidate="DescriptionTextBox"
-                                    InvalidInputBackColor="#FAFFB5"
-                                    ValidationGroup="vg1" EnableClientScript="true"
-                                    ErrorMessage="Description is required!!" Display="None"></clearcanvas:ConditionalRequiredFieldValidator>
+                                                <clearcanvas:ConditionalRequiredFieldValidator ID="ConditionalRequiredFieldValidator1"
+                                                    runat="server" ControlToValidate="DescriptionTextBox" InvalidInputBackColor="#FAFFB5"
+                                                    ValidationGroup="vg1" EnableClientScript="true" ErrorMessage="Description is required!!"
+                                                    Display="None"></clearcanvas:ConditionalRequiredFieldValidator>
                                             </td>
                                             <td runat="server" colspan="1" style="width: 53px; color: #000000" valign="bottom">
                                                 <asp:CheckBox ID="ReadCheckBox" runat="server" OnInit="ReadOnlyCheckBox_Init" Text="Read"
@@ -50,14 +47,11 @@
                                                     BorderWidth="1px" ValidationGroup="vg1" MaxLength="256"></asp:TextBox>
                                             </td>
                                             <td colspan="1" style="height: 29px" align="left" runat="server" valign="bottom">
-                                                
-                                                <clearcanvas:ConditionalRequiredFieldValidator 
-                                    ID="ConditionalRequiredFieldValidator2" runat="server" ControlToValidate="PathTextBox"
-                                    InvalidInputBackColor="#FAFFB5"
-                                    ValidationGroup="vg1" EnableClientScript="true"
-                                    ErrorMessage="Filesystem Path is required!!" Display="None"></clearcanvas:ConditionalRequiredFieldValidator>    
-                                                    
-                                                    </td>
+                                                <clearcanvas:ConditionalRequiredFieldValidator ID="ConditionalRequiredFieldValidator2"
+                                                    runat="server" ControlToValidate="PathTextBox" InvalidInputBackColor="#FAFFB5"
+                                                    ValidationGroup="vg1" EnableClientScript="true" ErrorMessage="Filesystem Path is required!!"
+                                                    Display="None"></clearcanvas:ConditionalRequiredFieldValidator>
+                                            </td>
                                             <td runat="server" align="left" colspan="1" style="width: 53px; height: 29px" valign="bottom">
                                                 <asp:CheckBox ID="WriteCheckBox" runat="server" Text="Write" Checked="True" />
                                             </td>
@@ -75,23 +69,50 @@
                                         </tr>
                                     </table>
                                 </asp:Panel>
-                                <cc2:ValidationSummary ID="ValidationSummary1" runat="server" ShowMessageBox="True" ShowSummary="False" ValidationGroup="vg1" />
+                                <cc2:ValidationSummary ID="ValidationSummary1" runat="server" ShowMessageBox="True"
+                                    ShowSummary="False" ValidationGroup="vg1" />
                             </ContentTemplate>
                             <HeaderTemplate>
                                 General
                             </HeaderTemplate>
                         </cc1:TabPanel>
-                        <cc1:TabPanel ID="TabPanel2" runat="server" HeaderText="TabPanel2" >
+                        <cc1:TabPanel ID="TabPanel2" runat="server" HeaderText="TabPanel2">
+                            <ContentTemplate>
+                                <asp:Panel ID="Panel3" runat="server" CssClass="Panel">
+                                    <table id="TABLE2" runat="server" cellspacing="4" style="text-align: left" width="90%">
+                                        <tr id="Tr1" runat="server">
+                                            <td id="Td1" style="height: 29px" runat="server" valign="bottom">
+                                                High Watermark<br />
+                                                <asp:TextBox ID="HighWatermarkTextBox" runat="server" Width="100%" BorderColor="LightSteelBlue"
+                                                    BorderWidth="1px" ValidationGroup="vg1" MaxLength="7"></asp:TextBox>
+                                            </td>
+                                        </tr>
+                                        <tr id="Tr2" runat="server">
+                                            <td id="Td2" style="height: 29px" runat="server" valign="bottom">
+                                                Low Watermark<br />
+                                                <asp:TextBox ID="LowWatermarkTextBox" runat="server" Width="100%" BorderColor="LightSteelBlue"
+                                                    BorderWidth="1px" ValidationGroup="vg1" MaxLength="7"></asp:TextBox>
+                                            </td>
+                                        </tr>
+                                        <tr id="Tr3" runat="server">
+                                            <td id="Td3" style="height: 29px" runat="server" valign="bottom">
+                                                Current Percent Full<br />
+                                                <asp:Label ID="PercentFullLabel" runat="server" Text="0.00" Width="68px" Style="padding-right: 5px"
+                                                    EnableViewState="False"></asp:Label>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </asp:Panel>
+                            </ContentTemplate>
                             <HeaderTemplate>
                                 Watermarks
                             </HeaderTemplate>
                         </cc1:TabPanel>
                     </cc1:TabContainer></asp:Panel>
-                
                 <table cellpadding="5" cellspacing="5" width="100%">
                     <tr>
                         <td align="center">
-                            </td>
+                        </td>
                         <td align="center" style="width: 223px">
                             <asp:Button ID="OKButton" runat="server" Text="Add" Width="77px" OnClick="OKButton_Click"
                                 ValidationGroup="vg1" />

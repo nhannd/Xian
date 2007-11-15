@@ -43,5 +43,15 @@ namespace ClearCanvas.ImageServer.Model.Parameters
         {
             set { SubCriteria["WriteOnly"] = new ProcedureParameter<bool>("WriteOnly", value); }
         }
+
+        public Decimal HighWatermark
+        {
+            set { SubCriteria["HighWatermark"] = new ProcedureParameter<Decimal>("HighWatermark", value); }
+        }
+
+        public Decimal LowWatermark
+        {
+            set { SubCriteria["LowWatermark"] = new ProcedureParameter<Decimal>("LowWatermark", value); }
+        }
     }
 }

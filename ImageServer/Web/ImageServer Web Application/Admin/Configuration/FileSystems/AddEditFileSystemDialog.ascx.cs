@@ -31,15 +31,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using ClearCanvas.Enterprise.Core;
-using ClearCanvas.Enterprise.Core.Modelling;
-using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Web.Common;
-using ImageServerWebApplication.Common;
 
 namespace ImageServerWebApplication.Admin.Configuration.FileSystems
 {
@@ -98,7 +92,6 @@ namespace ImageServerWebApplication.Admin.Configuration.FileSystems
         }
 
         #endregion // public members
-
 
         #region Events
         /// <summary>
@@ -188,6 +181,8 @@ namespace ImageServerWebApplication.Admin.Configuration.FileSystems
             {
                 // create a filesystem 
                 FileSystem = new Filesystem();
+                FileSystem.LowWatermark = 80.00M;
+                FileSystem.HighWatermark = 90.00M;
             }
 
             FileSystem.Description = DescriptionTextBox.Text;
@@ -195,15 +190,21 @@ namespace ImageServerWebApplication.Admin.Configuration.FileSystems
             FileSystem.ReadOnly = ReadCheckBox.Checked && WriteCheckBox.Checked == false;
             FileSystem.WriteOnly = WriteCheckBox.Checked && ReadCheckBox.Checked == false;
             FileSystem.Enabled = ReadCheckBox.Checked || WriteCheckBox.Checked;
-            
+
+            Decimal lowWatermark;
+            if (Decimal.TryParse(LowWatermarkTextBox.Text, out lowWatermark))
+                FileSystem.LowWatermark = lowWatermark;
+
+            Decimal highWatermark;
+            if (Decimal.TryParse(HighWatermarkTextBox.Text, out highWatermark))
+                FileSystem.HighWatermark = highWatermark;
+
             FileSystem.FilesystemTierEnum = FilesystemTiers[TiersDropDownList.SelectedIndex];
             
             if (OKClicked != null)
                 OKClicked(FileSystem);
 
             Close();
-           
-
         }
 
         
@@ -245,8 +246,10 @@ namespace ImageServerWebApplication.Admin.Configuration.FileSystems
                 PathTextBox.Text = FileSystem.FilesystemPath;
                 ReadCheckBox.Checked = FileSystem.Enabled && (FileSystem.ReadOnly || (FileSystem.WriteOnly == false));
                 WriteCheckBox.Checked = FileSystem.Enabled && (FileSystem.WriteOnly || (FileSystem.ReadOnly == false));
-
+                LowWatermarkTextBox.Text = FileSystem.LowWatermark.ToString();
+                HighWatermarkTextBox.Text = FileSystem.HighWatermark.ToString();
                 TiersDropDownList.SelectedValue = FileSystem.FilesystemTierEnum.Enum.ToString();
+                PercentFullLabel.Text = FileSystem.PercentFull.ToString();
             }
             else
             {
@@ -259,11 +262,12 @@ namespace ImageServerWebApplication.Admin.Configuration.FileSystems
                 PathTextBox.Text = "";
                 ReadCheckBox.Checked = true;
                 WriteCheckBox.Checked = true;
+                LowWatermarkTextBox.Text = "80.00";
+                HighWatermarkTextBox.Text = "90.00";
+                PercentFullLabel.Text = "0.00";
 
                 TiersDropDownList.SelectedIndex = 0;
-
             }
-
 
             UpdatePanel.Update();
             ModalPopupExtender1.Show();

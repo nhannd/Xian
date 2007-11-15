@@ -55,6 +55,7 @@ namespace ClearCanvas.ImageServer.Model
         private FilesystemTierEnum _fileSystemTierEnum;
         private Decimal _highWatermark;
         private Decimal _lowWatermark;
+        private Decimal _percentFull;
         #endregion
 
         #region Public Properties
@@ -99,7 +100,11 @@ namespace ClearCanvas.ImageServer.Model
             get { return _highWatermark; }
             set { _highWatermark = value; }
         }
-
+        public Decimal PercentFull
+        {
+            get { return _percentFull; }
+            set { _percentFull = value; }
+        }
         #endregion
 
         #region Static Methods

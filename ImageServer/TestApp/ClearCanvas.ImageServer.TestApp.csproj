@@ -151,6 +151,7 @@ copy $(ProjectDir)..\..\ImageServer\Model\SqlServer2005\$(OutDir)ClearCanvas.Ima
 copy $(ProjectDir)..\..\ImageServer\Services\Dicom\$(OutDir)ClearCanvas.ImageServer.Services.Dicom.dll $(TargetDir)plugins
 copy $(ProjectDir)..\..\ImageServer\Services\WorkQueue\$(OutDir)ClearCanvas.ImageServer.Services.WorkQueue.dll $(TargetDir)plugins
 copy $(ProjectDir)..\..\ImageServer\Services\Streaming\$(OutDir)ClearCanvas.ImageServer.Services.Streaming.dll $(TargetDir)plugins
+copy $(ProjectDir)..\..\ImageServer\Services\ServiceLock\$(OutDir)ClearCanvas.ImageServer.Services.ServiceLock.dll $(TargetDir)plugins
 copy $(ProjectDir)..\..\ImageServer\Rules\$(OutDir)ClearCanvas.ImageServer.Rules.dll $(TargetDir)plugins
 
 rem copy referenced assemblies

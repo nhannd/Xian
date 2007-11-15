@@ -14,10 +14,9 @@ namespace ClearCanvas.ImageServer.Model.Parameters
 
         public ServerEntityKey FileSystemKey
         {
-            set { this.SubCriteria["GUID"] = new ProcedureParameter<ServerEntityKey>("GUID", value); }
-            get { return ((ProcedureParameter<ServerEntityKey>)this.SubCriteria["GUID"]).Value; }
+            set { this.SubCriteria["FileSystemKey"] = new ProcedureParameter<ServerEntityKey>("FileSystemKey", value); }
+            get { return ((ProcedureParameter<ServerEntityKey>)this.SubCriteria["FileSystemKey"]).Value; }
         }
-
 
         public String FilesystemPath
         {
@@ -48,5 +47,21 @@ namespace ClearCanvas.ImageServer.Model.Parameters
         {
             set { this.SubCriteria["FilesystemTierEnum"] = new ProcedureParameter<ServerEnum>("FilesystemTierEnum", value); }
         }
+
+        public Decimal HighWatermark
+        {
+            set { SubCriteria["HighWatermark"] = new ProcedureParameter<Decimal>("HighWatermark", value); }
+        }
+
+        public Decimal LowWatermark
+        {
+            set { SubCriteria["LowWatermark"] = new ProcedureParameter<Decimal>("LowWatermark", value); }
+        }
+
+        public Decimal PercentFull
+        {
+            set { SubCriteria["PercentFull"] = new ProcedureParameter<Decimal>("PercentFull", value); }
+        }
+
     }
 }
