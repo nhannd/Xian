@@ -54,12 +54,14 @@ namespace ClearCanvas.Ris.Application.Services.Admin.DiagnosticServiceAdmin
         [ReadOperation]
         public TextQueryResponse<DiagnosticServiceSummary> TextQuery(TextQueryRequest request)
         {
+            IDiagnosticServiceBroker broker = PersistenceContext.GetBroker<IDiagnosticServiceBroker>();
             DiagnosticServiceAssembler assembler = new DiagnosticServiceAssembler();
 
             TextQueryHelper<DiagnosticService, DiagnosticServiceSearchCriteria, DiagnosticServiceSummary> helper
                 = new TextQueryHelper<DiagnosticService, DiagnosticServiceSearchCriteria, DiagnosticServiceSummary>(
-                    delegate(string rawQuery, List<string> terms)
+                    delegate(string rawQuery)
                     {
+                        IList<string> terms = TextQueryHelper.ParseTerms(rawQuery);
                         List<DiagnosticServiceSearchCriteria> criteria = new List<DiagnosticServiceSearchCriteria>();
 
                         // allow matching on name (assume entire query is a name which may contain spaces)
@@ -81,17 +83,21 @@ namespace ClearCanvas.Ris.Application.Services.Admin.DiagnosticServiceAdmin
                     delegate(DiagnosticService ds)
                     {
                         return assembler.CreateDiagnosticServiceSummary(ds);
+                    },
+                    delegate(DiagnosticServiceSearchCriteria[] criteria)
+                    {
+                        return broker.Count(criteria);
+                    },
+                    delegate(DiagnosticServiceSearchCriteria[] criteria, SearchResultPage page)
+                    {
+                        return broker.Find(criteria, page);
                     });
-
-            IDiagnosticServiceBroker broker = PersistenceContext.GetBroker<IDiagnosticServiceBroker>();
-            return helper.Query(request, broker);
+            return helper.Query(request);
         }
 
         [ReadOperation]
         public ListDiagnosticServicesResponse ListDiagnosticServices(ListDiagnosticServicesRequest request)
         {
-            SearchResultPage page = new SearchResultPage(request.PageRequest.FirstRow, request.PageRequest.MaxRows);
-
             DiagnosticServiceAssembler assembler = new DiagnosticServiceAssembler();
 
             DiagnosticServiceSearchCriteria criteria = new DiagnosticServiceSearchCriteria();
@@ -102,7 +108,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.DiagnosticServiceAdmin
 
             return new ListDiagnosticServicesResponse(
                 CollectionUtils.Map<DiagnosticService, DiagnosticServiceSummary>(
-                    PersistenceContext.GetBroker<IDiagnosticServiceBroker>().Find(criteria, page),
+                    PersistenceContext.GetBroker<IDiagnosticServiceBroker>().Find(criteria, request.Page),
                     delegate(DiagnosticService s)
                     {
                         return assembler.CreateDiagnosticServiceSummary(s);

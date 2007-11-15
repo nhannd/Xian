@@ -106,7 +106,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
             response.WorklistSummaries = CollectionUtils.Map<Worklist, WorklistAdminSummary, List<WorklistAdminSummary>>(
                 this.PersistenceContext.GetBroker<IWorklistBroker>().Find(
                     new WorklistSearchCriteria(),
-                    new SearchResultPage(request.PageRequest.FirstRow, request.PageRequest.MaxRows)),
+                    request.Page),
                 delegate(Worklist worklist)
                 {
                     return adminAssembler.GetWorklistSummary(worklist, this.PersistenceContext);

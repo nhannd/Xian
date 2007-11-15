@@ -7,43 +7,93 @@ using ClearCanvas.Healthcare;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Common;
+using System.Text.RegularExpressions;
 
 namespace ClearCanvas.Ris.Application.Services
 {
     public class TextQueryHelper
     {
-        public static void SetPersonNameCriteria(PersonNameSearchCriteria criteria, IList<string> words)
+        public static PersonName[] ParsePersonNames(string query)
         {
-            if (words.Count > 0)
-                criteria.FamilyName.StartsWith(words[0]);
+            Regex termDefinition = new Regex(@"[A-Za-z][A-Za-z'\-]*");
+            string[] terms = ParseTerms(query, termDefinition);
 
-            if (words.Count > 1)
-                criteria.GivenName.StartsWith(words[1]);
+            List<PersonName> names = new List<PersonName>();
+            for (int i = 0; i < terms.Length; i++)
+            {
+                PersonName name = new PersonName();
+                name.FamilyName = string.Join(" ", terms, 0, i + 1);
+                if (i < terms.Length - 1)
+                {
+                    name.GivenName = string.Join(" ", terms, i + 1, terms.Length - i);
+                }
+                names.Add(name);
+            }
+            return names.ToArray();
+        }
+
+        public static string[] ParseIdentifiers(string query)
+        {
+            Regex termDefinition = new Regex(@"[A-Za-z\d]*\d[A-Za-z\d]*");
+            return ParseTerms(query, termDefinition);
+        }
+
+        public static string[] ParseTerms(string query)
+        {
+            Regex termDefinition = new Regex(@"\w+");
+            return ParseTerms(query, termDefinition);
+        }
+
+        public static string[] ParseTerms(string query, Regex termDefinition)
+        {
+            MatchCollection matches = termDefinition.Matches(query);
+            return CollectionUtils.Map<Match, string>(matches, delegate(Match m) { return m.Value; }).ToArray();
         }
     }
 
-    public class TextQueryHelper<TEntity, TSearchCriteria, TSummary> : TextQueryHelper
-        where TEntity : Entity
+    public class TextQueryHelper<TDomainItem, TSearchCriteria, TSummary> : TextQueryHelper
         where TSearchCriteria : EntitySearchCriteria
         where TSummary : DataContractBase
     {
-        public delegate TSearchCriteria[] BuildCriteriaDelegate(string rawQuery, List<string> terms);
-        public delegate TSummary AssembleSummaryDelegate(TEntity entity);
+        public delegate TSearchCriteria[] BuildCriteriaDelegate(string query);
+        public delegate TSummary AssembleSummaryDelegate(TDomainItem domainItem);
+        public delegate long DoCountDelegate(TSearchCriteria[] where);
+        public delegate IList<TDomainItem> DoQueryDelegate(TSearchCriteria[] where, SearchResultPage page);
 
-        private readonly BuildCriteriaDelegate _buildCriteriaHandler;
+        private readonly BuildCriteriaDelegate _buildCriteriaCallback;
         private readonly AssembleSummaryDelegate _summaryAssembler;
+        private readonly DoQueryDelegate _queryCallback;
+        private readonly DoCountDelegate _countCallback;
 
-        public TextQueryHelper(BuildCriteriaDelegate criteriaBuilder, AssembleSummaryDelegate summaryAssembler)
+        /// <summary>
+        /// Protected constructor for subclasses.
+        /// </summary>
+        protected TextQueryHelper()
         {
-            _buildCriteriaHandler = criteriaBuilder;
-            _summaryAssembler = summaryAssembler;
+            
         }
 
-        public TextQueryResponse<TSummary> Query(TextQueryRequest request, IEntityBroker<TEntity, TSearchCriteria> broker)
+        /// <summary>
+        /// Public constructor allows direct use of this class without the need to create a subclass.
+        /// </summary>
+        /// <param name="criteriaBuilder"></param>
+        /// <param name="summaryAssembler"></param>
+        /// <param name="countCallback"></param>
+        /// <param name="queryCallback"></param>
+        public TextQueryHelper(BuildCriteriaDelegate criteriaBuilder, AssembleSummaryDelegate summaryAssembler,
+            DoCountDelegate countCallback, DoQueryDelegate queryCallback)
+        {
+            _buildCriteriaCallback = criteriaBuilder;
+            _summaryAssembler = summaryAssembler;
+            _countCallback = countCallback;
+            _queryCallback = queryCallback;
+        }
+
+        public TextQueryResponse<TSummary> Query(TextQueryRequest request)
         {
             Platform.CheckForNullReference(request, "request");
             Platform.CheckMemberIsSet(request.TextQuery, "TextQuery");
-            Platform.CheckArgumentRange(request.SpecificityThreshold, 1, 1000, "SpecificityThreshold");
+            Platform.CheckArgumentRange(request.SpecificityThreshold, 0, 1000, "SpecificityThreshold");
 
 
             // split query on spaces or commas
@@ -64,20 +114,54 @@ namespace ClearCanvas.Ris.Application.Services
                 return new TextQueryResponse<TSummary>(true, new List<TSummary>());
 
 
-            TSearchCriteria[] where = _buildCriteriaHandler(request.TextQuery.Trim(), words);
-            
-            if (broker.Count(where) > request.SpecificityThreshold)
-                return new TextQueryResponse<TSummary>(true, new List<TSummary>());
+            TSearchCriteria[] where = BuildCriteria(request.TextQuery.Trim());
 
-            IList<TEntity> matches = broker.Find(where);
+            // if a specificity threshold was specified, apply it now
+            if (request.SpecificityThreshold > 0)
+            {
+                // eliminate query that would return too many results by doing a count query first
+                if (DoCount(where) > request.SpecificityThreshold)
+                    return new TextQueryResponse<TSummary>(true, new List<TSummary>());
+            }
+
+            // execute query
+            IList<TDomainItem> matches = DoQuery(where, request.Page);
 
             return new TextQueryResponse<TSummary>(false,
-                CollectionUtils.Map<TEntity, TSummary>(
+                CollectionUtils.Map<TDomainItem, TSummary>(
                     matches,
-                    delegate(TEntity entity)
+                    delegate(TDomainItem entity)
                         {
-                            return _summaryAssembler(entity);
+                            return AssembleSummary(entity);
                         }));
+        }
+
+        protected virtual TSearchCriteria[] BuildCriteria(string query)
+        {
+            if(_buildCriteriaCallback == null)
+                throw new NotImplementedException("Method must be overridden or a delegate supplied.");
+            return _buildCriteriaCallback(query);
+        }
+
+        protected virtual long DoCount(TSearchCriteria[] where)
+        {
+            if (_countCallback == null)
+                throw new NotImplementedException("Method must be overridden or a delegate supplied.");
+            return _countCallback(where);
+        }
+
+        protected virtual IList<TDomainItem> DoQuery(TSearchCriteria[] where, SearchResultPage page)
+        {
+            if (_queryCallback == null)
+                throw new NotImplementedException("Method must be overridden or a delegate supplied.");
+            return _queryCallback(where, page);
+        }
+
+        protected virtual TSummary AssembleSummary(TDomainItem domainItem)
+        {
+            if(_summaryAssembler == null)
+                throw new NotImplementedException("Method must be overridden or a delegate supplied.");
+            return _summaryAssembler(domainItem);
         }
 
         

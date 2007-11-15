@@ -56,12 +56,11 @@ namespace ClearCanvas.Ris.Application.Services.Admin.FacilityAdmin
         public ListAllFacilitiesResponse ListAllFacilities(ListAllFacilitiesRequest request)
         {
             FacilitySearchCriteria criteria = new FacilitySearchCriteria();
-            SearchResultPage page = new SearchResultPage(request.PageRequest.FirstRow, request.PageRequest.MaxRows);
 
             FacilityAssembler assembler = new FacilityAssembler();
             return new ListAllFacilitiesResponse(
                 CollectionUtils.Map<Facility, FacilitySummary, List<FacilitySummary>>(
-                    PersistenceContext.GetBroker<IFacilityBroker>().Find(criteria, page),
+                    PersistenceContext.GetBroker<IFacilityBroker>().Find(criteria, request.Page),
                     delegate(Facility f)
                     {
                         return assembler.CreateFacilitySummary(f);

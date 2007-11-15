@@ -32,12 +32,14 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Runtime.Serialization;
 
 namespace ClearCanvas.Enterprise.Common
 {
     /// <summary>
     /// Provides a mechanism for requesting a "page" of search results from a persistent store.
     /// </summary>
+    [DataContract]
     public class SearchResultPage
     {
         private int _firstRow;
@@ -66,6 +68,7 @@ namespace ClearCanvas.Enterprise.Common
         /// <summary>
         /// The first row to return.
         /// </summary>
+        [DataMember]
         public int FirstRow
         {
             get { return _firstRow; }
@@ -76,6 +79,7 @@ namespace ClearCanvas.Enterprise.Common
         /// The maximum number of rows to return.  A value of -1 can be used to indicate that all rows should
         /// be returned.  This feature should be used with caution however.
         /// </summary>
+        [DataMember]
         public int MaxRows
         {
             get { return _maxRows; }

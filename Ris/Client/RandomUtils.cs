@@ -182,8 +182,8 @@ namespace ClearCanvas.Ris.Client
                     // get the diagnostic service by name, or if name is null, just load the first 100
                     // so that we can choose a random one
                     ListDiagnosticServicesRequest request = new ListDiagnosticServicesRequest(diagnosticServiceName, null);
-                    request.PageRequest.FirstRow = 0;
-                    request.PageRequest.MaxRows = 100;
+                    request.Page.FirstRow = 0;
+                    request.Page.MaxRows = 100;
                     diagnosticServiceChoices = service.ListDiagnosticServices(request).DiagnosticServices;
                 });
 
@@ -192,8 +192,8 @@ namespace ClearCanvas.Ris.Client
                 delegate(IExternalPractitionerAdminService service)
                 {
                     ListExternalPractitionersRequest request = new ListExternalPractitionersRequest();
-                    request.PageRequest.FirstRow = 0;
-                    request.PageRequest.MaxRows = 100;
+                    request.Page.FirstRow = 0;
+                    request.Page.MaxRows = 100;
                     practitionerChoices = service.ListExternalPractitioners(request).Practitioners;
                 });
 

@@ -136,8 +136,8 @@ namespace ClearCanvas.Ris.Client.Admin
                         delegate(INoteCategoryAdminService service)
                         {
                             ListAllNoteCategoriesRequest listRequest = new ListAllNoteCategoriesRequest();
-                            listRequest.PageRequest.FirstRow = firstRow;
-                            listRequest.PageRequest.MaxRows = maxRows;
+                            listRequest.Page.FirstRow = firstRow;
+                            listRequest.Page.MaxRows = maxRows;
 
                             listResponse = service.ListAllNoteCategories(listRequest);
                         });

@@ -141,8 +141,8 @@ namespace ClearCanvas.Ris.Client.Admin
                         delegate(IAuthenticationAdminService service)
                         {
                             ListUsersRequest listRequest = new ListUsersRequest();
-                            listRequest.PageRequest.FirstRow = firstRow;
-                            listRequest.PageRequest.MaxRows = maxRows;
+                            listRequest.Page.FirstRow = firstRow;
+                            listRequest.Page.MaxRows = maxRows;
 
                             listResponse = service.ListUsers(listRequest);
                         });

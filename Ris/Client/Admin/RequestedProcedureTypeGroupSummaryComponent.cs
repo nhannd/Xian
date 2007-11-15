@@ -92,8 +92,8 @@ namespace ClearCanvas.Ris.Client.Admin
                         delegate(IRequestedProcedureTypeGroupAdminService service)
                         {
                             ListRequestedProcedureTypeGroupsRequest listRequest = new ListRequestedProcedureTypeGroupsRequest();
-                            listRequest.PageRequest.FirstRow = firstRow;
-                            listRequest.PageRequest.MaxRows = maxRows;
+                            listRequest.Page.FirstRow = firstRow;
+                            listRequest.Page.MaxRows = maxRows;
 
                             listResponse = service.ListRequestedProcedureTypeGroups(listRequest);
                         });

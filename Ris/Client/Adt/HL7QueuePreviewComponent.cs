@@ -205,8 +205,8 @@ namespace ClearCanvas.Ris.Client.Adt
                             delegate(IHL7QueueService service)
                             {
                                 ListHL7QueueItemsRequest listRequest = _listRequest;
-                                listRequest.PageRequest.FirstRow = firstRow;
-                                listRequest.PageRequest.MaxRows = maxRows;
+                                listRequest.Page.FirstRow = firstRow;
+                                listRequest.Page.MaxRows = maxRows;
 
                                 listResponse = service.ListHL7QueueItems(listRequest);
                             });

@@ -56,8 +56,6 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
         // because it is used in non-admin situations - perhaps we need to create a separate operation???
         public ListExternalPractitionersResponse ListExternalPractitioners(ListExternalPractitionersRequest request)
         {
-            SearchResultPage page = new SearchResultPage(request.PageRequest.FirstRow, request.PageRequest.MaxRows);
-
             ExternalPractitionerAssembler assembler = new ExternalPractitionerAssembler();
 
             ExternalPractitionerSearchCriteria criteria = new ExternalPractitionerSearchCriteria();
@@ -68,7 +66,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
 
             return new ListExternalPractitionersResponse(
                 CollectionUtils.Map<ExternalPractitioner, ExternalPractitionerSummary, List<ExternalPractitionerSummary>>(
-                    PersistenceContext.GetBroker<IExternalPractitionerBroker>().Find(criteria, page),
+                    PersistenceContext.GetBroker<IExternalPractitionerBroker>().Find(criteria, request.Page),
                     delegate(ExternalPractitioner s)
                     {
                         return assembler.CreateExternalPractitionerSummary(s, PersistenceContext);
@@ -137,20 +135,30 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
         [ReadOperation]
         public TextQueryResponse<ExternalPractitionerSummary> TextQuery(TextQueryRequest request)
         {
+            IExternalPractitionerBroker broker = PersistenceContext.GetBroker<IExternalPractitionerBroker>();
             ExternalPractitionerAssembler assembler = new ExternalPractitionerAssembler();
 
             TextQueryHelper<ExternalPractitioner, ExternalPractitionerSearchCriteria, ExternalPractitionerSummary> helper
                 = new TextQueryHelper<ExternalPractitioner, ExternalPractitionerSearchCriteria, ExternalPractitionerSummary>(
-                    delegate(string rawQuery, List<string> terms)
+                    delegate(string rawQuery)
                     {
-                        // allow matching on name (assume format: lastname, firstname)
                         List<ExternalPractitionerSearchCriteria> criteria = new List<ExternalPractitionerSearchCriteria>();
-                        ExternalPractitionerSearchCriteria nameCriteria = new ExternalPractitionerSearchCriteria();
-                        TextQueryHelper.SetPersonNameCriteria(nameCriteria.Name, terms);
-                        criteria.Add(nameCriteria);
 
-                        // allow matching of any word against license #
-                        criteria.AddRange(CollectionUtils.Map<string, ExternalPractitionerSearchCriteria>(terms,
+                        // build criteria against names
+                        PersonName[] names = TextQueryHelper.ParsePersonNames(rawQuery);
+                        criteria.AddRange(CollectionUtils.Map<PersonName, ExternalPractitionerSearchCriteria>(names,
+                            delegate(PersonName n)
+                            {
+                                ExternalPractitionerSearchCriteria sc = new ExternalPractitionerSearchCriteria();
+                                sc.Name.FamilyName.StartsWith(n.FamilyName);
+                                if (n.GivenName != null)
+                                    sc.Name.GivenName.StartsWith(n.GivenName);
+                                return sc;
+                            }));
+
+                        // build criteria against identifiers
+                        string[] ids = TextQueryHelper.ParseIdentifiers(rawQuery);
+                        criteria.AddRange(CollectionUtils.Map<string, ExternalPractitionerSearchCriteria>(ids,
                                      delegate(string word)
                                      {
                                          ExternalPractitionerSearchCriteria c = new ExternalPractitionerSearchCriteria();
@@ -163,10 +171,17 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
                     delegate(ExternalPractitioner prac)
                     {
                         return assembler.CreateExternalPractitionerSummary(prac, PersistenceContext);
+                    },
+                    delegate(ExternalPractitionerSearchCriteria[] criteria)
+                    {
+                        return broker.Count(criteria);
+                    },
+                    delegate(ExternalPractitionerSearchCriteria[] criteria, SearchResultPage page)
+                    {
+                        return broker.Find(criteria, page);
                     });
 
-            IExternalPractitionerBroker broker = PersistenceContext.GetBroker<IExternalPractitionerBroker>();
-            return helper.Query(request, broker);
+            return helper.Query(request);
         }
 
         #endregion

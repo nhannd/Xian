@@ -171,8 +171,8 @@ namespace ClearCanvas.Ris.Client
                     Platform.GetService<IStaffAdminService>(
                         delegate(IStaffAdminService service)
                         {
-                            _listRequest.PageRequest.FirstRow = firstRow;
-                            _listRequest.PageRequest.MaxRows = maxRows;
+                            _listRequest.Page.FirstRow = firstRow;
+                            _listRequest.Page.MaxRows = maxRows;
                             _listRequest.StaffTypesFilter = _staffTypesFilter;
 
                             listResponse = service.ListStaff(_listRequest);

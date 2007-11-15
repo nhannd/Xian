@@ -58,11 +58,10 @@ namespace ClearCanvas.Ris.Application.Services.Admin.AuthenticationAdmin
         public ListUsersResponse ListUsers(ListUsersRequest request)
         {
             UserSearchCriteria criteria = new UserSearchCriteria();
-            SearchResultPage page = new SearchResultPage(request.PageRequest.FirstRow, request.PageRequest.MaxRows);
 
             UserAssembler assembler = new UserAssembler();
             List<UserSummary> userSummaries = CollectionUtils.Map<User, UserSummary, List<UserSummary>>(
-                PersistenceContext.GetBroker<IUserBroker>().Find(criteria, page),
+                PersistenceContext.GetBroker<IUserBroker>().Find(criteria, request.Page),
                 delegate(User user)
                 {
                     return assembler.GetUserSummary(user);
@@ -97,11 +96,10 @@ namespace ClearCanvas.Ris.Application.Services.Admin.AuthenticationAdmin
         public ListAuthorityGroupsResponse ListAuthorityGroups(ListAuthorityGroupsRequest request)
         {
             AuthorityGroupSearchCriteria criteria = new AuthorityGroupSearchCriteria();
-            SearchResultPage page = new SearchResultPage(request.PageRequest.FirstRow, request.PageRequest.MaxRows);
 
             AuthorityGroupAssembler assembler = new AuthorityGroupAssembler();
             List<AuthorityGroupSummary> authorityGroups = CollectionUtils.Map<AuthorityGroup, AuthorityGroupSummary, List<AuthorityGroupSummary>>(
-                PersistenceContext.GetBroker<IAuthorityGroupBroker>().Find(criteria, page),
+                PersistenceContext.GetBroker<IAuthorityGroupBroker>().Find(criteria, request.Page),
                 delegate(AuthorityGroup authorityGroup)
                 {
                     return assembler.GetAuthorityGroupSummary(authorityGroup);

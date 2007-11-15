@@ -140,8 +140,8 @@ namespace ClearCanvas.Ris.Client.Admin
                         delegate(ILocationAdminService service)
                         {
                             ListAllLocationsRequest listRequest = new ListAllLocationsRequest(false);
-                            listRequest.PageRequest.FirstRow = firstRow;
-                            listRequest.PageRequest.MaxRows = maxRows;
+                            listRequest.Page.FirstRow = firstRow;
+                            listRequest.Page.MaxRows = maxRows;
 
                             listResponse = service.ListAllLocations(listRequest);
                         });

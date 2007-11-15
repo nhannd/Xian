@@ -58,8 +58,6 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
         public ListStaffResponse ListStaff(ListStaffRequest request)
         {
 
-            SearchResultPage page = new SearchResultPage(request.PageRequest.FirstRow, request.PageRequest.MaxRows);
-
             StaffAssembler assembler = new StaffAssembler();
 
             StaffSearchCriteria criteria = new StaffSearchCriteria();
@@ -72,7 +70,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
 
             return new ListStaffResponse(
                 CollectionUtils.Map<Staff, StaffSummary, List<StaffSummary>>(
-                    PersistenceContext.GetBroker<IStaffBroker>().Find(criteria, page),
+                    PersistenceContext.GetBroker<IStaffBroker>().Find(criteria, request.Page),
                     delegate(Staff s)
                     {
                         return assembler.CreateStaffSummary(s, PersistenceContext);
@@ -143,20 +141,31 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
         [ReadOperation]
         public TextQueryResponse<StaffSummary> TextQuery(StaffTextQueryRequest request)
         {
+            IStaffBroker broker = PersistenceContext.GetBroker<IStaffBroker>();
             StaffAssembler assembler = new StaffAssembler();
 
             TextQueryHelper<Staff, StaffSearchCriteria, StaffSummary> helper
                 = new TextQueryHelper<Staff, StaffSearchCriteria, StaffSummary>(
-                    delegate(string rawQuery, List<string> terms)
+                    delegate(string rawQuery)
                     {
-                        // allow matching on name (assume format: lastname, firstname)
+                        // this will hold all criteria
                         List<StaffSearchCriteria> criteria = new List<StaffSearchCriteria>();
-                        StaffSearchCriteria nameCriteria = new StaffSearchCriteria();
-                        TextQueryHelper.SetPersonNameCriteria(nameCriteria.Name, terms);
-                        criteria.Add(nameCriteria);
 
-                        // allow matching of any word against ID
-                        criteria.AddRange(CollectionUtils.Map<string, StaffSearchCriteria>(terms,
+                        // build criteria against names
+                        PersonName[] names = TextQueryHelper.ParsePersonNames(rawQuery);
+                        criteria.AddRange(CollectionUtils.Map<PersonName, StaffSearchCriteria>(names,
+                            delegate(PersonName n)
+                                {
+                                    StaffSearchCriteria sc = new StaffSearchCriteria();
+                                    sc.Name.FamilyName.StartsWith(n.FamilyName);
+                                    if (n.GivenName != null)
+                                        sc.Name.GivenName.StartsWith(n.GivenName);
+                                    return sc;
+                                }));
+
+                        // build criteria against identifiers
+                        string[] ids = TextQueryHelper.ParseIdentifiers(rawQuery);
+                        criteria.AddRange(CollectionUtils.Map<string, StaffSearchCriteria>(ids,
                                      delegate(string word)
                                      {
                                          StaffSearchCriteria c = new StaffSearchCriteria();
@@ -172,10 +181,17 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
                     delegate(Staff staff)
                     {
                         return assembler.CreateStaffSummary(staff, PersistenceContext);
+                    },
+                    delegate (StaffSearchCriteria[] criteria)
+                    {
+                        return broker.Count(criteria);
+                    },
+                    delegate (StaffSearchCriteria[] criteria, SearchResultPage page)
+                    {
+                        return broker.Find(criteria, page);
                     });
 
-            IStaffBroker broker = PersistenceContext.GetBroker<IStaffBroker>();
-            return helper.Query(request, broker);
+            return helper.Query(request);
         }
 
         #endregion

@@ -82,8 +82,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.RequestedProcedureTypeGroup
 
             response.Items = CollectionUtils.Map<RequestedProcedureTypeGroup, RequestedProcedureTypeGroupSummary, List<RequestedProcedureTypeGroupSummary>>(
                 PersistenceContext.GetBroker<IRequestedProcedureTypeGroupBroker>().Find(
-                    new RequestedProcedureTypeGroupSearchCriteria(), 
-                    new SearchResultPage(request.PageRequest.FirstRow, request.PageRequest.MaxRows)),
+                    new RequestedProcedureTypeGroupSearchCriteria(),
+                    request.Page),
                 delegate(RequestedProcedureTypeGroup rptGroup)
                 {
                     return assembler.GetRequestedProcedureTypeGroupSummary(rptGroup, this.PersistenceContext);

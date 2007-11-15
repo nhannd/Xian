@@ -384,7 +384,6 @@
     <Compile Include="OrderDetail.cs" />
     <Compile Include="OrderSummary.cs" />
     <Compile Include="PagedDataContractBase.cs" />
-    <Compile Include="PageRequestDetail.cs" />
     <Compile Include="BrowsePatientData\ListProfilesRequest.cs" />
     <Compile Include="BrowsePatientData\ListProfilesResponse.cs" />
     <Compile Include="BrowsePatientData\GetOrderDetailRequest.cs" />

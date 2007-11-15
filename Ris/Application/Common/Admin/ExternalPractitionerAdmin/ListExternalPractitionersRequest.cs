@@ -45,15 +45,15 @@ namespace ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin
         }
 
         public ListExternalPractitionersRequest(string surname, string givenname)
+            : this(surname, givenname, null)
+        {
+        }
+
+        public ListExternalPractitionersRequest(string surname, string givenname, SearchResultPage page)
         {
             this.LastName = surname;
             this.FirstName = givenname;
-        }
-
-        public ListExternalPractitionersRequest(string surname, string givenname, PageRequestDetail page)
-            : this(surname, givenname)
-        {
-            this.PageRequest = page;
+            this.Page = page;
         }
 
         [DataMember]

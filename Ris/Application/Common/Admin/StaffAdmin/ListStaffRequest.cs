@@ -45,16 +45,16 @@ namespace ClearCanvas.Ris.Application.Common.Admin.StaffAdmin
         }
 
         public ListStaffRequest(string surname, string givenname, string[] staffTypesFilter)
+            : this(surname, givenname, staffTypesFilter, null)
+        {
+        }
+
+        public ListStaffRequest(string surname, string givenname, string[] staffTypesFilter, SearchResultPage page)
         {
             this.LastName = surname;
             this.FirstName = givenname;
             this.StaffTypesFilter = staffTypesFilter;
-        }
-
-        public ListStaffRequest(string surname, string givenname, string[] staffTypesFilter, PageRequestDetail page)
-            : this(surname, givenname, staffTypesFilter)
-        {
-            this.PageRequest = page;
+            this.Page = page;
         }
 
         [DataMember]

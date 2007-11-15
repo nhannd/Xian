@@ -135,8 +135,8 @@ namespace ClearCanvas.Ris.Client.Admin
                         delegate(IFacilityAdminService service)
                         {
                             ListAllFacilitiesRequest listRequest = new ListAllFacilitiesRequest();
-                            listRequest.PageRequest.FirstRow = firstRow;
-                            listRequest.PageRequest.MaxRows = maxRows;
+                            listRequest.Page.FirstRow = firstRow;
+                            listRequest.Page.MaxRows = maxRows;
 
                             listResponse = service.ListAllFacilities(listRequest);
                         });

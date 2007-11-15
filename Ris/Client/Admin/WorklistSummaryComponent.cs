@@ -90,8 +90,8 @@ namespace ClearCanvas.Ris.Client.Admin
                         delegate(IWorklistAdminService service)
                         {
                             ListWorklistsRequest listRequest = new ListWorklistsRequest();
-                            listRequest.PageRequest.FirstRow = firstRow;
-                            listRequest.PageRequest.MaxRows = maxRows;
+                            listRequest.Page.FirstRow = firstRow;
+                            listRequest.Page.MaxRows = maxRows;
 
                             listResponse = service.ListWorklists(listRequest);
                         });

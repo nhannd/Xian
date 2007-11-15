@@ -135,8 +135,8 @@ namespace ClearCanvas.Ris.Client.Admin
                         delegate(IModalityAdminService service)
                         {
                             ListAllModalitiesRequest listRequest = new ListAllModalitiesRequest(false);
-                            listRequest.PageRequest.FirstRow = firstRow;
-                            listRequest.PageRequest.MaxRows = maxRows;
+                            listRequest.Page.FirstRow = firstRow;
+                            listRequest.Page.MaxRows = maxRows;
 
                             listResponse = service.ListAllModalities(listRequest);
                         });
