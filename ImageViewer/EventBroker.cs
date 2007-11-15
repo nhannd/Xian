@@ -213,6 +213,7 @@ namespace ClearCanvas.ImageViewer
 			EventsHelper.Fire(_activeMouseWheelHandlerChanged, this, new ItemEventArgs<IMouseWheelHandler>(handler));
 		}
 
+		//TODO (Stewart): Find a better name for these events, or a different solution.
 		public event EventHandler<BeforeFindMouseButtonHandlerEventArgs> BeforeFindMouseButtonHandler
 		{
 			add { _beforeFindMouseButtonHandler += value; }	
