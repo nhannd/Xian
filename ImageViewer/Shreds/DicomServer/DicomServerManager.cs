@@ -187,25 +187,18 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 		{
 			InteropMoveScpCallbackInfo info = new InteropMoveScpCallbackInfo(e.CallbackInfoPointer, false);
 
+			DicomMoveSession moveSession;
+
 			lock (_moveSessionLock)
 			{
-				if (_moveSessionDictionary.ContainsKey(info.QueryRetrieveOperationIdentifier))
-				{
-					//this should never happen.
-					info.Response.DimseStatus = (ushort)OffisDcm.STATUS_MOVE_Failed_UnableToProcess;
-					return;
-				}
+				moveSession = new DicomMoveSession(null, null);
+				_moveSessionDictionary[info.QueryRetrieveOperationIdentifier] = moveSession;
 			}
 
 			DicomQuerySession querySession = QueryDB(info.QueryRetrieveOperationIdentifier, info.RequestIdentifiers);
 			if (querySession.DimseStatus != OffisDcm.STATUS_Pending)
 			{
-				lock(_querySessionLock)
-				{
-					_querySessionDictionary.Remove(info.QueryRetrieveOperationIdentifier);
-				}
-
-				info.Response.DimseStatus = (ushort)OffisDcm.STATUS_MOVE_Failed_UnableToProcess;
+				moveSession.Status = (ushort)OffisDcm.STATUS_MOVE_Failed_UnableToProcess;
 				return;
 			}
 
@@ -232,12 +225,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 			if (destinationAE == null)
 			{
-				lock (_querySessionLock)
-				{
-					_querySessionDictionary.Remove(info.QueryRetrieveOperationIdentifier);
-				}
-				
-				info.Response.DimseStatus = (ushort)OffisDcm.STATUS_MOVE_Failed_MoveDestinationUnknown;
+				moveSession.Status = (ushort)OffisDcm.STATUS_MOVE_Failed_MoveDestinationUnknown;
 				return;
 			}
 
@@ -260,7 +248,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 						_querySessionDictionary.Remove(info.QueryRetrieveOperationIdentifier);
 					}
 
-					info.Response.DimseStatus = (ushort)OffisDcm.STATUS_MOVE_Failed_UnableToProcess;
+					moveSession.Status = (ushort)OffisDcm.STATUS_MOVE_Failed_UnableToProcess;
 					return;
 				}
 
@@ -269,7 +257,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 			if (sendParcel.GetToSendObjectCount() == 0)
 			{
-				info.Response.DimseStatus = (ushort)OffisDcm.STATUS_Success;
+				moveSession.Status = (ushort)OffisDcm.STATUS_Success;
 				return;
 			}
 
@@ -288,26 +276,26 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 			lock (_moveSessionLock)
 			{
-				_moveSessionDictionary[info.QueryRetrieveOperationIdentifier] = new DicomMoveSession(sendParcel, task);
+				moveSession = new DicomMoveSession(sendParcel, task);
+				_moveSessionDictionary[info.QueryRetrieveOperationIdentifier] = moveSession;
 			}
 
 			info.Response.NumberOfRemainingSubOperations = (ushort)sendParcel.GetToSendObjectCount();
 			uint queryRetrieveOperationIdentifier = info.QueryRetrieveOperationIdentifier;
 
-			EventHandler<BackgroundTaskTerminatedEventArgs> deleteHandler = new EventHandler<BackgroundTaskTerminatedEventArgs>(
-				delegate
+			EventHandler<BackgroundTaskTerminatedEventArgs> deleteHandler = delegate
 				{
 					lock (_moveSessionLock)
 					{
 						_moveSessionDictionary.Remove(queryRetrieveOperationIdentifier);
 						task.Dispose();
 					}
-				});
+				};
 
 			task.Terminated += deleteHandler;
 			task.Run();
 
-			info.Response.DimseStatus = (ushort)OffisDcm.STATUS_Pending;
+			info.Response.DimseStatus = moveSession.Status;
 		}
 
 		private void OnMoveScpProgressEvent(object sender, DicomEventArgs e)
@@ -621,13 +609,22 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 			lock (_moveSessionLock)
 			{
-				//the 'begin' event did not succeed.
-				if (_moveSessionDictionary.ContainsKey(moveOperationIdentifier) == false)
+				//Something bad happened in the 'begin' event.
+				if (!_moveSessionDictionary.ContainsKey(moveOperationIdentifier))
+				{
+					info.Response.DimseStatus = (ushort) OffisDcm.STATUS_MOVE_Failed_UnableToProcess;
 					return;
-
+				}
+				
 				session = _moveSessionDictionary[moveOperationIdentifier];
-			}
 
+				if (session.Status != (ushort) OffisDcm.STATUS_Pending)
+				{
+					_moveSessionDictionary.Remove(info.QueryRetrieveOperationIdentifier);
+					info.Response.DimseStatus = session.Status;
+					return;
+				}
+			}
 			// Keep the thread here and only return CMoveRSP when there's something different to report.
 			while (session.Progress == session.Parcel.CurrentProgressStep && session.Parcel.IsActive())
 			{

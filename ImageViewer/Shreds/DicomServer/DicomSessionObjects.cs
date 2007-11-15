@@ -87,13 +87,15 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 		{
 			private SendParcel _parcel;
 			private BackgroundTask _task;
-			private int _progress = 0;
+			private int _progress;
+			private ushort _status;
 
 			public DicomMoveSession(SendParcel parcel, BackgroundTask task)
 			{
 				_parcel = parcel;
 				_task = task;
 				_progress = 0;
+				_status = (ushort)OffisDcm.STATUS_Pending;
 			}
 
 			#region Properties
@@ -112,6 +114,12 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			{
 				get { return _progress; }
 				set { _progress = value; }
+			}
+
+			public ushort Status
+			{
+				get { return _status; }
+				set { _status = value; }
 			}
 
 			#endregion
