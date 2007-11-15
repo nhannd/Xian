@@ -165,6 +165,13 @@ namespace ClearCanvas.ImageViewer.Rendering
 		#region IRendererFactory Members
 
 		/// <summary>
+		/// Does nothing.
+		/// </summary>
+		public void Initialize()
+		{
+		}
+
+		/// <summary>
 		/// Factory method for <see cref="IRenderer"/>s.
 		/// </summary>
 		/// <remarks>

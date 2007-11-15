@@ -40,6 +40,7 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.View.WinForms;
 using ClearCanvas.ImageViewer.InputManagement;
 using ClearCanvas.ImageViewer.Rendering;
+using MessageBox=ClearCanvas.Desktop.View.WinForms.MessageBox;
 
 namespace ClearCanvas.ImageViewer.View.WinForms
 {
@@ -154,7 +155,17 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			DrawArgs args = new DrawArgs(
 				this.Surface, 
 				ClearCanvas.ImageViewer.Rendering.DrawMode.Render);
-			_tile.OnDraw(args);
+
+			try
+			{
+				_tile.OnDraw(args);
+			}
+			catch (Exception ex)
+			{
+				MessageBox mb = new MessageBox();
+				mb.Show(ex.Message);
+			}
+			
 			Invalidate();
 			Update();
 
@@ -206,9 +217,17 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 				DrawArgs args = new DrawArgs(
 					this.Surface, 
 					ClearCanvas.ImageViewer.Rendering.DrawMode.Refresh);
-				
-				_tile.OnDraw(args);
-				
+
+				try
+				{
+					_tile.OnDraw(args);
+				}
+				catch (Exception ex)
+				{
+					MessageBox mb = new MessageBox();
+					mb.Show(ex.Message);
+				}
+
 				e.Graphics.ReleaseHdc(this.Surface.ContextID);
 			}
 

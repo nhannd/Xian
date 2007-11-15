@@ -33,18 +33,19 @@ using System;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Annotations;
 using ClearCanvas.ImageViewer.Graphics;
-using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.ImageViewer.Rendering;
 
 namespace ClearCanvas.ImageViewer
 {
+	#region BasicPresentationImageRendererFactoryExtensionPoint class
+
 	/// <summary>
 	/// The <see cref="BasicPresentationImage"/> creates a single factory object that is then used to create
 	/// an <see cref="IRenderer"/> for each <see cref="BasicPresentationImage"/>.  
 	/// </summary>
 	/// <remarks>
-	/// The returned <see cref="IRenderer"/>
-	/// need not be thread-safe as the <see cref="BasicPresentationImage"/> itself is not thread-safe.
+	/// The returned <see cref="IRenderer"/> need not be thread-safe as 
+	/// the <see cref="BasicPresentationImage"/> itself is not thread-safe.
 	/// </remarks>
 	public sealed class BasicPresentationImageRendererFactoryExtensionPoint : ExtensionPoint<IRendererFactory>
 	{
@@ -55,6 +56,8 @@ namespace ClearCanvas.ImageViewer
 		{
 		}
 	}
+
+	#endregion
 
 	/// <summary>
 	/// A <see cref="PresentationImage"/> that encapsulates basic
@@ -71,6 +74,7 @@ namespace ClearCanvas.ImageViewer
 
 		private static readonly object _rendererFactorySyncLock = new object();
 		private static volatile IRendererFactory _rendererFactory;
+		private static volatile RendererFactoryInitializationException _rendererFactoryInitializationException;
 
 		private CompositeGraphic _compositeImageGraphic;
 		private ImageGraphic _imageGraphic;
@@ -82,8 +86,7 @@ namespace ClearCanvas.ImageViewer
 		/// <summary>
 		/// Initializes a new instance of <see cref="BasicPresentationImage"/>.
 		/// </summary>
-		protected BasicPresentationImage(
-			ImageGraphic imageGraphic) 
+		protected BasicPresentationImage(ImageGraphic imageGraphic) 
 			: this(imageGraphic, 1.0, 1.0, 1.0, 1.0)
 		{
 
@@ -207,10 +210,17 @@ namespace ClearCanvas.ImageViewer
 							try
 							{
 								_rendererFactory = (IRendererFactory)new BasicPresentationImageRendererFactoryExtensionPoint().CreateExtension();
+								_rendererFactory.Initialize();
+							}
+							catch (RendererFactoryInitializationException e)
+							{
+								_rendererFactory = null;
+								_rendererFactoryInitializationException = e;
+								Platform.Log(LogLevel.Warn, e);
 							}
 							catch (Exception e)
 							{
-								//this isn't an error, just log it as information.
+								//this isn't necessarily an error, just log it as information.
 								Platform.Log(LogLevel.Info, e);
 							}
 
@@ -225,6 +235,13 @@ namespace ClearCanvas.ImageViewer
 
 				return base.ImageRenderer;
 			}
+		}
+
+		public override void OnDraw(DrawArgs drawArgs)
+		{
+			base.OnDraw(drawArgs);
+
+			CheckRendererInitializationError();
 		}
 
 		#region Disposal
@@ -242,6 +259,16 @@ namespace ClearCanvas.ImageViewer
 		}
 
 		#endregion
+
+		private static void CheckRendererInitializationError()
+		{
+			if (_rendererFactoryInitializationException != null)
+			{
+				Exception e = _rendererFactoryInitializationException;
+				_rendererFactoryInitializationException = null;
+				throw e;
+			}
+		}
 
 		private void InitializeSceneGraph(
 			ImageGraphic imageGraphic,
