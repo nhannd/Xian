@@ -29,23 +29,20 @@
 
 #endregion
 
-using ClearCanvas.Enterprise.Common;
 using System.Runtime.Serialization;
+using ClearCanvas.Enterprise.Common;
 
-namespace ClearCanvas.Ris.Application.Common.PreviewService
+namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
 {
     [DataContract]
-    public class GetDataRequest : DataContractBase
+    public class GetDataResponse : DataContractBase
     {
         [DataMember]
         public EntityRef ProcedureStepRef;
 
         [DataMember]
-        public GetModalityProcedureStepRequest GetModalityProcedureStepRequest;
+        public EntityRef PatientRef;
 
-        [DataMember]
-        public GetReportingProcedureStepRequest GetReportingProcedureStepRequest;
-        
         [DataMember]
         public EntityRef PatientProfileRef;
 
@@ -53,14 +50,27 @@ namespace ClearCanvas.Ris.Application.Common.PreviewService
         public EntityRef OrderRef;
 
         [DataMember]
-        public GetPatientProfileRequest GetPatientProfileRequest;
+        public GetModalityProcedureStepResponse GetModalityProcedureStepResponse;
 
         [DataMember]
-        public ListPatientOrdersRequest ListPatientOrdersRequest;
+        public GetReportingProcedureStepResponse GetReportingProcedureStepResponse;
 
         [DataMember]
-        public GetAlertsRequest GetAlertsRequest;
+        public GetProfileDetailResponse GetProfileDetailResponse;
 
+        [DataMember]
+        public ListProfilesResponse ListProfilesResponse;
 
+        [DataMember]
+        public GetOrderDetailResponse GetOrderDetailResponse;
+
+        [DataMember]
+        public ListOrdersResponse ListOrdersResponse;
+
+        [DataMember]
+        public GetAlertsResponse GetAlertsResponse;
+
+        [DataMember]
+        public LoadPatientProfileFormDataResponse LoadPatientProfileFormDataResponse;
     }
 }

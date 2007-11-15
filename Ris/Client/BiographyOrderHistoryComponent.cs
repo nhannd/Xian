@@ -38,7 +38,7 @@ using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Desktop.Trees;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Ris.Application.Common.PatientBiography;
+using ClearCanvas.Ris.Application.Common.BrowsePatientData;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry;
 
 namespace ClearCanvas.Ris.Client
@@ -296,11 +296,15 @@ namespace ClearCanvas.Ris.Client
             {
                 if (_selectedOrder != null)
                 {
-                    Platform.GetService<IPatientBiographyService>(
-                        delegate(IPatientBiographyService service)
+                    Platform.GetService<IBrowsePatientDataService>(
+                        delegate(IBrowsePatientDataService service)
                         {
-                            LoadOrderDetailResponse response = service.LoadOrderDetail(new LoadOrderDetailRequest(_selectedOrder.OrderRef));
-                            _orderDetail = response.OrderDetail;
+                            GetDataRequest request = new GetDataRequest();
+                            request.OrderRef = _selectedOrder.OrderRef;
+                            request.GetOrderDetailRequest = new GetOrderDetailRequest(true, true);
+                            GetDataResponse response = service.GetData(request);
+
+                            _orderDetail = response.GetOrderDetailResponse.OrderDetail;
                         });
 
                     _diagnosticServiceBreakdown = new Tree<RequestedProcedureSummary>(

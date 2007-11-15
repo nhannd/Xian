@@ -29,15 +29,45 @@
 
 #endregion
 
-using System;
-using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
+using System.Runtime.Serialization;
 
-namespace ClearCanvas.Ris.Application.Common.PatientBiography
+namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
 {
     [DataContract]
-    public class LoadPatientProfileFormDataRequest : DataContractBase
+    public class GetDataRequest : DataContractBase
     {
-        // none
+        [DataMember]
+        public EntityRef ProcedureStepRef;
+
+        [DataMember]
+        public EntityRef PatientProfileRef;
+
+        [DataMember]
+        public EntityRef OrderRef;
+
+        [DataMember]
+        public GetModalityProcedureStepRequest GetModalityProcedureStepRequest;
+
+        [DataMember]
+        public GetReportingProcedureStepRequest GetReportingProcedureStepRequest;
+        
+        [DataMember]
+        public GetProfileDetailRequest GetProfileDetailRequest;
+
+        [DataMember]
+        public ListProfilesRequest ListProfilesRequest;
+
+        [DataMember]
+        public GetOrderDetailRequest GetOrderDetailRequest;
+
+        [DataMember]
+        public ListOrdersRequest ListOrdersRequest;
+
+        [DataMember]
+        public GetAlertsRequest GetAlertsRequest;
+
+        [DataMember]
+        public LoadPatientProfileFormDataRequest LoadPatientProfileFormDataRequest;
     }
 }

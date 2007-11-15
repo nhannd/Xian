@@ -29,27 +29,57 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
+using ClearCanvas.Enterprise.Common;
 using System.Runtime.Serialization;
 
-using ClearCanvas.Enterprise.Common;
-
-namespace ClearCanvas.Ris.Application.Common.PatientBiography
+namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
 {
     [DataContract]
-    public class LoadPatientProfileFormDataResponse : DataContractBase
+    public class GetProfileDetailRequest : DataContractBase
     {
-        [DataMember]
-        public List<EnumValueInfo> AddressTypeChoices;
+        public GetProfileDetailRequest(
+            bool includeAddresses,
+            bool includeContactPersons,
+            bool includeEmailAddresses,
+            bool includeTelephoneNumbers,
+            bool includeNotes,
+            bool includeAttachments)
+        {
+            this.IncludeAddresses = includeAddresses;
+            this.IncludeContactPersons = includeContactPersons;
+            this.IncludeEmailAddresses = includeEmailAddresses;
+            this.IncludeTelephoneNumbers = includeTelephoneNumbers;
+            this.IncludeNotes = includeNotes;
+            this.IncludeAttachments = includeAttachments;
+        }
+
+        public GetProfileDetailRequest()
+        {
+            this.IncludeAddresses = false;
+            this.IncludeContactPersons = false;
+            this.IncludeEmailAddresses = false;
+            this.IncludeTelephoneNumbers = false;
+            this.IncludeNotes = false;
+            this.IncludeAttachments = false;
+        }
 
         [DataMember]
-        public List<EnumValueInfo> PhoneTypeChoices;
+        public bool IncludeAddresses;
 
         [DataMember]
-        public List<EnumValueInfo> ContactPersonTypeChoices;
+        public bool IncludeContactPersons;
 
         [DataMember]
-        public List<EnumValueInfo> ContactPersonRelationshipChoices;
+        public bool IncludeEmailAddresses;
+
+        [DataMember]
+        public bool IncludeTelephoneNumbers;
+
+        [DataMember]
+        public bool IncludeNotes;
+
+        [DataMember]
+        public bool IncludeAttachments;
+
     }
 }

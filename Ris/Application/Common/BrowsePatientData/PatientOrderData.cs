@@ -36,7 +36,7 @@ using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 
-namespace ClearCanvas.Ris.Application.Common.PreviewService
+namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
 {
     [ComVisible(true)]
     [DataContract]

@@ -29,29 +29,20 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Runtime.Serialization;
-
 using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Ris.Application.Common.Admin;
+using System.Runtime.Serialization;
+using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
 
-namespace ClearCanvas.Ris.Application.Common.PreviewService
+namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
 {
     [DataContract]
-    public class ListPatientOrdersResponse : DataContractBase
+    public class GetModalityProcedureStepResponse : DataContractBase
     {
-        public ListPatientOrdersResponse(List<PatientOrderData> listData)
-        {
-            this.PatientOrderData = listData;
-        }
-
-        public ListPatientOrdersResponse()
-        {
-        }
+        [DataMember]
+        public PatientOrderData PatientOrderData;
 
         [DataMember]
-        public List<PatientOrderData> PatientOrderData;
+        public List<DiagnosticServiceBreakdownSummary> DiagnosticServiceBreakdown;
     }
 }

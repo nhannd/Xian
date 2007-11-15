@@ -29,18 +29,25 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Enterprise.Common;
 using System.Runtime.Serialization;
+using ClearCanvas.Enterprise.Common;
 
-namespace ClearCanvas.Ris.Application.Common.PreviewService
+namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
 {
     [DataContract]
-    public class GetModalityProcedureStepRequest : DataContractBase
+    public class GetAlertsResponse : DataContractBase
     {
+        public GetAlertsResponse(List<AlertNotificationDetail> alertNotifications)
+        {
+            this.AlertNotifications = alertNotifications;
+        }
+
+        public GetAlertsResponse()
+        {
+        }
+
         [DataMember]
-        public bool GetDiagnosticServiceBreakdown;
+        public List<AlertNotificationDetail> AlertNotifications;
     }
 }

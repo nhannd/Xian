@@ -29,35 +29,32 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Enterprise.Common;
 using System.Runtime.Serialization;
+using ClearCanvas.Enterprise.Common;
 
-namespace ClearCanvas.Ris.Application.Common.PreviewService
+namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
 {
-    [Serializable]
-    public enum PatientOrdersQueryDetailLevel
-    {
-        Order,
-        RequestedProcedure,
-        ModalityProcedureStep
-    }
-
     [DataContract]
-    public class ListPatientOrdersRequest : DataContractBase
+    public class GetOrderDetailRequest : DataContractBase
     {
-        public ListPatientOrdersRequest(PatientOrdersQueryDetailLevel queryDetailLevel)
+        public GetOrderDetailRequest(
+            bool includeVisit,
+            bool includeRequestedProcedures)
         {
-            this.QueryDetailLevel = queryDetailLevel;
+            this.IncludeVisit = includeVisit;
+            this.IncludeRequestedProcedures = includeRequestedProcedures;
         }
 
-        public ListPatientOrdersRequest()
+        public GetOrderDetailRequest()
         {
+            this.IncludeVisit = false;
+            this.IncludeRequestedProcedures = false;
         }
 
         [DataMember]
-        public PatientOrdersQueryDetailLevel QueryDetailLevel;
+        public bool IncludeVisit;
+
+        [DataMember]
+        public bool IncludeRequestedProcedures;
     }
 }

@@ -29,19 +29,11 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
-using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
-using ClearCanvas.Ris.Application.Common.PreviewService;
-using ClearCanvas.Ris.Application.Common.Jsml;
-using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -60,7 +52,7 @@ namespace ClearCanvas.Ris.Client.Adt
     {
         class TechnologistPreviewToolContext : ToolContext, ITechnologistPreviewToolContext
         {
-            private TechnologistPreviewComponent _component;
+            private readonly TechnologistPreviewComponent _component;
 
             public TechnologistPreviewToolContext(TechnologistPreviewComponent component)
             {
@@ -84,13 +76,6 @@ namespace ClearCanvas.Ris.Client.Adt
 
         private ModalityWorklistItem _worklistItem;
         private ToolSet _toolSet;
-
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        public TechnologistPreviewComponent()
-        {
-        }
 
         public override void Start()
         {

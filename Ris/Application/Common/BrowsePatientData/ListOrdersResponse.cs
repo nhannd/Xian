@@ -29,21 +29,25 @@
 
 #endregion
 
-using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
 
-namespace ClearCanvas.Ris.Application.Common.PatientBiography
+namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
 {
     [DataContract]
-    public class LoadPatientProfileRequest : DataContractBase
+    public class ListOrdersResponse : DataContractBase
     {
-        public LoadPatientProfileRequest(EntityRef patientProfileRef)
+        public ListOrdersResponse(List<PatientOrderData> listData)
         {
-            this.PatientProfileRef = patientProfileRef;
+            this.PatientOrderData = listData;
+        }
+
+        public ListOrdersResponse()
+        {
         }
 
         [DataMember]
-        public EntityRef PatientProfileRef;
+        public List<PatientOrderData> PatientOrderData;
     }
 }

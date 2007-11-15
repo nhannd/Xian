@@ -32,12 +32,12 @@
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
-using ClearCanvas.Ris.Application.Common.PreviewService;
+using ClearCanvas.Ris.Application.Common.BrowsePatientData;
 using ClearCanvas.Ris.Application.Services.ReportingWorkflow;
 
-namespace ClearCanvas.Ris.Application.Services.PreviewService
+namespace ClearCanvas.Ris.Application.Services.BrowsePatientData
 {
-    public class PreviewServiceAssembler
+    public class BrowsePatientDataAssembler
     {
         public PatientOrderData CreatePatientOrderData(Order order, IPersistenceContext context)
         {

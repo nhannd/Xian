@@ -29,22 +29,14 @@
 
 #endregion
 
-using System;
-using System.Runtime.Serialization;
-using System.Collections.Generic;
-using ClearCanvas.Enterprise.Common;
+using System.ServiceModel;
 
-namespace ClearCanvas.Ris.Application.Common.PatientBiography
+namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
 {
-    [DataContract]
-    public class ListAllProfilesForPatientRequest : DataContractBase
+    [ServiceContract]
+    public interface IBrowsePatientDataService
     {
-        public ListAllProfilesForPatientRequest(EntityRef profileRef)
-        {
-            this.ProfileRef = profileRef;
-        }
-
-        [DataMember]
-        public EntityRef ProfileRef;
+        [OperationContract]
+        GetDataResponse GetData(GetDataRequest request);
     }
 }

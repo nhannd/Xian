@@ -37,7 +37,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Ris.Application.Common.PatientBiography;
+using ClearCanvas.Ris.Application.Common.BrowsePatientData;
 using ClearCanvas.Ris.Client;
 using ClearCanvas.Ris.Client.Formatting;
 
@@ -101,17 +101,20 @@ namespace ClearCanvas.Ris.Client
 
         public override void Start()
         {
-            Platform.GetService<IPatientBiographyService>(
-                delegate(IPatientBiographyService service)
+            Platform.GetService<IBrowsePatientDataService>(
+                delegate(IBrowsePatientDataService service)
                 {
-                    ListAllProfilesForPatientResponse response = service.ListAllProfilesForPatient(new ListAllProfilesForPatientRequest(_profileRef));
-                    _profileChoices = response.Profiles;
+                    GetDataRequest request = new GetDataRequest();
+                    request.PatientProfileRef = _profileRef;
+                    request.ListProfilesRequest = new ListProfilesRequest();
+                    request.LoadPatientProfileFormDataRequest = new LoadPatientProfileFormDataRequest();
+                    GetDataResponse response = service.GetData(request);
 
-                    LoadPatientProfileFormDataResponse formDataResponse = service.LoadPatientProfileFormData(new LoadPatientProfileFormDataRequest());
-                    _addressTypeChoices = formDataResponse.AddressTypeChoices;
-                    _phoneTypeChoices = formDataResponse.PhoneTypeChoices;
-                    _contactPersonTypeChoices = formDataResponse.ContactPersonTypeChoices;
-                    _contactPersonRelationshipChoices = formDataResponse.ContactPersonRelationshipChoices;
+                    _profileChoices = response.ListProfilesResponse.Profiles;
+                    _addressTypeChoices = response.LoadPatientProfileFormDataResponse.AddressTypeChoices;
+                    _phoneTypeChoices = response.LoadPatientProfileFormDataResponse.PhoneTypeChoices;
+                    _contactPersonTypeChoices = response.LoadPatientProfileFormDataResponse.ContactPersonTypeChoices;
+                    _contactPersonRelationshipChoices = response.LoadPatientProfileFormDataResponse.ContactPersonRelationshipChoices;
                 });
 
             UpdateTables();
@@ -147,11 +150,15 @@ namespace ClearCanvas.Ris.Client
 
             try
             {
-                Platform.GetService<IPatientBiographyService>(
-                    delegate(IPatientBiographyService service)
+                Platform.GetService<IBrowsePatientDataService>(
+                    delegate(IBrowsePatientDataService service)
                     {
-                        LoadPatientProfileResponse response = service.LoadPatientProfile(new LoadPatientProfileRequest(_selectedProfile.ProfileRef));
-                        _patientProfile = response.PatientDetail;
+                        GetDataRequest request = new GetDataRequest();
+                        request.PatientProfileRef = _profileRef;
+                        request.GetProfileDetailRequest = new GetProfileDetailRequest(true, true, true, true, true, true);
+                        GetDataResponse response = service.GetData(request);
+
+                        _patientProfile = response.GetProfileDetailResponse.PatientProfileDetail;
                     });
 
                 UpdateTables();

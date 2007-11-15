@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Ris.Application.Common;
@@ -11,16 +8,28 @@ namespace ClearCanvas.Ris.Application.Services
     {
         public OrderDetail CreateOrderDetail(Order order, IPersistenceContext context)
         {
+            return CreateOrderDetail(order, context, true, true);
+        }
+
+        public OrderDetail CreateOrderDetail(Order order, IPersistenceContext context,
+            bool includeVisit,
+            bool includeRequestedProcedures)
+        {
             OrderDetail detail = new OrderDetail();
 
-            VisitAssembler visitAssembler = new VisitAssembler();
             ExternalPractitionerAssembler pracAssembler = new ExternalPractitionerAssembler();
             FacilityAssembler facilityAssembler = new FacilityAssembler();
             DiagnosticServiceAssembler dsAssembler = new DiagnosticServiceAssembler();
 
             detail.OrderRef = order.GetRef();
             detail.PatientRef = order.Patient.GetRef();
-            detail.Visit = visitAssembler.CreateVisitDetail(order.Visit, context);
+
+            if (includeVisit)
+            {
+                VisitAssembler visitAssembler = new VisitAssembler();
+                detail.Visit = visitAssembler.CreateVisitDetail(order.Visit, context);
+            }
+
             detail.PlacerNumber = order.PlacerNumber;
             detail.AccessionNumber = order.AccessionNumber;
             detail.DiagnosticService = dsAssembler.CreateDiagnosticServiceDetail(order.DiagnosticService);
@@ -32,9 +41,12 @@ namespace ClearCanvas.Ris.Application.Services
             detail.OrderPriority = EnumUtils.GetEnumValueInfo(order.Priority, context);
             detail.CancelReason = EnumUtils.GetEnumValueInfo(order.CancelReason);
 
-            foreach (RequestedProcedure rp in order.RequestedProcedures)
+            if (includeRequestedProcedures)
             {
-                detail.RequestedProcedures.Add(this.CreateRequestedProcedureSummary(rp, context));
+                foreach (RequestedProcedure rp in order.RequestedProcedures)
+                {
+                    detail.RequestedProcedures.Add(this.CreateRequestedProcedureSummary(rp, context));
+                }
             }
 
             return detail;
@@ -58,8 +70,6 @@ namespace ClearCanvas.Ris.Application.Services
 
             return summary;
         }
-
-
 
         public RequestedProcedureSummary CreateRequestedProcedureSummary(RequestedProcedure rp, IPersistenceContext context)
         {

@@ -30,26 +30,20 @@
 #endregion
 
 using System.Runtime.Serialization;
+using System.Collections.Generic;
 using ClearCanvas.Enterprise.Common;
 
-namespace ClearCanvas.Ris.Application.Common.PreviewService
+namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
 {
     [DataContract]
-    public class GetDataResponse : DataContractBase
+    public class ListProfilesResponse : DataContractBase
     {
-        [DataMember]
-        public GetModalityProcedureStepResponse GetModalityProcedureStepResponse;
+        public ListProfilesResponse(List<PatientProfileSummary> profiles)
+        {
+            this.Profiles = profiles;
+        }
 
         [DataMember]
-        public GetReportingProcedureStepResponse GetReportingProcedureStepResponse;
-
-        [DataMember]
-        public GetPatientProfileResponse GetPatientProfileResponse;
-
-        [DataMember]
-        public ListPatientOrdersResponse ListPatientOrdersResponse;
-
-        [DataMember]
-        public GetAlertsResponse GetAlertsResponse;
+        public List<PatientProfileSummary> Profiles;
     }
 }

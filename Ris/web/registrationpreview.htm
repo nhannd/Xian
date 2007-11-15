@@ -31,12 +31,12 @@
                     var request = {
                         PatientProfileRef: worklistItem.PatientProfileRef,
                         OrderRef: worklistItem.OrderRef,
-                        GetPatientProfileRequest: {},
-                        ListPatientOrdersRequest: { QueryDetailLevel: "RequestedProcedure" },
-                        GetAlertsRequest:         {}
+                        GetProfileDetailRequest: 	{},
+                        ListOrdersRequest: 			{ QueryDetailLevel: "RequestedProcedure" },
+                        GetAlertsRequest:         	{}
                     };
                     
-                    var service = Ris.getService("ClearCanvas.Ris.Application.Common.PreviewService.IPreviewService, ClearCanvas.Ris.Application.Common");
+                    var service = Ris.getService("ClearCanvas.Ris.Application.Common.BrowsePatientData.IBrowsePatientDataService, ClearCanvas.Ris.Application.Common");
                     data = service.getData(request);
                     if (data == null || data.length == 0)
                     {
@@ -46,9 +46,9 @@
 
 		            // update patient demography
 		            var patientName = "This patient";
-		            if (data.GetPatientProfileResponse && data.GetPatientProfileResponse.PatientProfileDetail)
+		            if (data.GetProfileDetailResponse && data.GetProfileDetailResponse.PatientProfileDetail)
 		            {
-		                var patientProfile = data.GetPatientProfileResponse.PatientProfileDetail;
+		                var patientProfile = data.GetProfileDetailResponse.PatientProfileDetail;
 		                patientName = Ris.formatPersonName(patientProfile.Name);
 		                Field.setValue($("name"), patientName);
 			            Field.setValue($("mrn"), Ris.formatMrn(patientProfile.Mrn));
@@ -71,11 +71,11 @@
                         $("alerts").innerHTML = alertHtml;
 		            }
                     // update active and past RIC tables
-		            if (data.ListPatientOrdersResponse 
-		             && data.ListPatientOrdersResponse.PatientOrderData 
-		             && data.ListPatientOrdersResponse.PatientOrderData.length > 0)
+		            if (data.ListOrdersResponse 
+		             && data.ListOrdersResponse.PatientOrderData 
+		             && data.ListOrdersResponse.PatientOrderData.length > 0)
 		            {
-    		            var patientOrderData = data.ListPatientOrdersResponse.PatientOrderData;
+    		            var patientOrderData = data.ListOrdersResponse.PatientOrderData;
 
                         var orders = groupDataToOrders(patientOrderData);
 

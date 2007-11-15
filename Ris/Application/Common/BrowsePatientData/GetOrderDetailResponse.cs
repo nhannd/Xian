@@ -29,15 +29,20 @@
 
 #endregion
 
-using System;
-using System.ServiceModel;
+using System.Runtime.Serialization;
+using ClearCanvas.Enterprise.Common;
 
-namespace ClearCanvas.Ris.Application.Common.PreviewService
+namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
 {
-    [ServiceContract]
-    public interface IPreviewService
+    [DataContract]
+    public class GetOrderDetailResponse : DataContractBase
     {
-        [OperationContract]
-        GetDataResponse GetData(GetDataRequest request);
+        public GetOrderDetailResponse(OrderDetail orderDetail)
+        {
+            this.OrderDetail = orderDetail;
+        }
+
+        [DataMember]
+        public OrderDetail OrderDetail;
     }
 }

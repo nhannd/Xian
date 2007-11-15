@@ -29,22 +29,26 @@
 
 #endregion
 
-using System;
-using System.Runtime.Serialization;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
+
 using ClearCanvas.Enterprise.Common;
 
-namespace ClearCanvas.Ris.Application.Common.PatientBiography
+namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
 {
     [DataContract]
-    public class ListAllProfilesForPatientResponse : DataContractBase
+    public class LoadPatientProfileFormDataResponse : DataContractBase
     {
-        public ListAllProfilesForPatientResponse(List<PatientProfileSummary> profiles)
-        {
-            this.Profiles = profiles;
-        }
+        [DataMember]
+        public List<EnumValueInfo> AddressTypeChoices;
 
         [DataMember]
-        public List<PatientProfileSummary> Profiles;
+        public List<EnumValueInfo> PhoneTypeChoices;
+
+        [DataMember]
+        public List<EnumValueInfo> ContactPersonTypeChoices;
+
+        [DataMember]
+        public List<EnumValueInfo> ContactPersonRelationshipChoices;
     }
 }

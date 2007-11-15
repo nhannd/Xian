@@ -29,19 +29,11 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
-using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
-using ClearCanvas.Ris.Application.Common.PreviewService;
-using ClearCanvas.Ris.Application.Common.Jsml;
-using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Client.Reporting
 {
@@ -72,7 +64,8 @@ namespace ClearCanvas.Ris.Client.Reporting
     {
         class ReportingPreviewToolContext : ToolContext, IReportingPreviewToolContext
         {
-            private ReportingPreviewComponent _component;
+            private readonly ReportingPreviewComponent _component;
+
             public ReportingPreviewToolContext(ReportingPreviewComponent component)
             {
                 _component = component;
@@ -91,13 +84,6 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         private ReportingWorklistItem _worklistItem;
         private ToolSet _toolSet;
-
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        public ReportingPreviewComponent()
-        {
-        }
 
         public ReportingWorklistItem WorklistItem
         {

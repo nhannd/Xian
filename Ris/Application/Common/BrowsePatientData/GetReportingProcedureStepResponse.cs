@@ -29,38 +29,15 @@
 
 #endregion
 
-using System;
-using System.Runtime.Serialization;
-using System.Collections.Generic;
 using ClearCanvas.Enterprise.Common;
+using System.Runtime.Serialization;
 
-namespace ClearCanvas.Ris.Application.Common.PatientBiography
+namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
 {
     [DataContract]
-    public class LoadPatientProfileResponse : DataContractBase
+    public class GetReportingProcedureStepResponse : DataContractBase
     {
-        public LoadPatientProfileResponse(
-            EntityRef patientRef, 
-            EntityRef patientProfileRef, 
-            PatientProfileDetail patientDetail, 
-            List<AlertNotificationDetail> alertNotifications)
-        {
-            this.PatientRef = patientRef;
-            this.PatientProfileRef = patientProfileRef;
-            this.PatientDetail = patientDetail;
-            this.AlertNotifications = alertNotifications;
-        }
-
         [DataMember]
-        public EntityRef PatientRef;
-
-        [DataMember]
-        public EntityRef PatientProfileRef;
-
-        [DataMember]
-        public PatientProfileDetail PatientDetail;
-
-        [DataMember]
-        public List<AlertNotificationDetail> AlertNotifications;
+        public PatientOrderData PatientOrderData;
     }
 }

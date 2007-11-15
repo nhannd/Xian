@@ -29,25 +29,33 @@
 
 #endregion
 
-using System.Collections.Generic;
+using System;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
 
-namespace ClearCanvas.Ris.Application.Common.PreviewService
+namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
 {
-    [DataContract]
-    public class GetAlertsResponse : DataContractBase
+    [Serializable]
+    public enum PatientOrdersQueryDetailLevel
     {
-        public GetAlertsResponse(List<AlertNotificationDetail> alertNotifications)
+        Order,
+        RequestedProcedure,
+        ModalityProcedureStep
+    }
+
+    [DataContract]
+    public class ListOrdersRequest : DataContractBase
+    {
+        public ListOrdersRequest(PatientOrdersQueryDetailLevel queryDetailLevel)
         {
-            this.AlertNotifications = alertNotifications;
+            this.QueryDetailLevel = queryDetailLevel;
         }
 
-        public GetAlertsResponse()
+        public ListOrdersRequest()
         {
         }
 
         [DataMember]
-        public List<AlertNotificationDetail> AlertNotifications;
+        public PatientOrdersQueryDetailLevel QueryDetailLevel;
     }
 }

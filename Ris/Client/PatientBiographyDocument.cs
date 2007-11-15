@@ -35,7 +35,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Ris.Application.Common.PatientBiography;
+using ClearCanvas.Ris.Application.Common.BrowsePatientData;
 using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client
@@ -68,14 +68,19 @@ namespace ClearCanvas.Ris.Client
         {
             List<AlertNotificationDetail> alertNotifications = null;
 
-            Platform.GetService<IPatientBiographyService>(
-                delegate(IPatientBiographyService service)
+            Platform.GetService<IBrowsePatientDataService>(
+                delegate(IBrowsePatientDataService service)
                 {
-                    LoadPatientProfileResponse response = service.LoadPatientProfile(new LoadPatientProfileRequest(_profileRef));
+                    GetDataRequest request = new GetDataRequest();
+                    request.PatientProfileRef = _profileRef;
+                    request.GetProfileDetailRequest = new GetProfileDetailRequest(true, true, true, true, true, true);
+                    request.GetAlertsRequest = new GetAlertsRequest();
+                    GetDataResponse response = service.GetData(request);
+
                     _patientRef = response.PatientRef;
                     _profileRef = response.PatientProfileRef;
-                    _patientProfile = response.PatientDetail;
-                    alertNotifications = response.AlertNotifications;
+                    _patientProfile = response.GetProfileDetailResponse.PatientProfileDetail;
+                    alertNotifications = response.GetAlertsResponse.AlertNotifications;
                 });
             
             // Create component for each tab

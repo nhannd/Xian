@@ -29,23 +29,14 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
+using System.Runtime.Serialization;
 
-namespace ClearCanvas.Ris.Application.Common.PatientBiography
+namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
 {
     [DataContract]
-    public class LoadOrderDetailRequest : DataContractBase
+    public class GetAlertsRequest : DataContractBase
     {
-        public LoadOrderDetailRequest(EntityRef orderRef)
-        {
-            this.OrderRef = orderRef;
-        }
-
-        [DataMember]
-        public EntityRef OrderRef;
+        // empty
     }
 }
