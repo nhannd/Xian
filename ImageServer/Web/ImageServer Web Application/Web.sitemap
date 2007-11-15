@@ -5,7 +5,7 @@
 			<!--<siteMapNode url="~/Search/WorkQueue.aspx" title="Work Queue"  description="Search Work Queue"/> -->
 		</siteMapNode>
 		<siteMapNode url="" title="Configuration"  description="System Configuration">
-			<siteMapNode url="~/Admin/Configuration/DevicePage.aspx" title="Devices"  description="Device Configuration"/>
+			<siteMapNode url="~/Admin/Configuration/Devices/DevicePage.aspx" title="Devices"  description="Device Configuration"/>
 			<siteMapNode url="~/Admin/Configuration/ServerPartitions/ServerPartitionPage.aspx" title="Server Partitions"  description="Server Partition Configuration"/>
 			<siteMapNode url="~/Admin/Configuration/FileSystems/FileSystemsPage.aspx" title="FileSystems"  description="FileSystems Configuration"/>
 			

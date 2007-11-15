@@ -127,6 +127,10 @@ namespace ImageServerWebApplication.Admin.Configuration.FileSystems
                                                                        }
                                                                    };
 
+            FileSystemsToolBar1.GetSelectedFileSystem= delegate
+                                                         {
+                                                             return FileSystemsGridView1.SelectedFileSystem;
+                                                         };
 
             GridPager1.GetRecordCountMethod = delegate()
                                                           {

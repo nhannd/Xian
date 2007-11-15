@@ -2,9 +2,7 @@
     EnableEventValidation="false"
     CodeBehind="ServerPartitionPage.aspx.cs" Inherits="ImageServerWebApplication.Admin.Configuration.ServerPartitions.ServerPartitionPage" Title="ClearCanvas ImageServer" %>
 
-<%@ Register Src="EditPartitionDialog.ascx" TagName="EditPartitionDialog" TagPrefix="uc3" %>
-
-<%@ Register Src="AddPartitionDialog.ascx" TagName="AddPartitionDialog" TagPrefix="uc2" %>
+<%@ Register Src="AddEditPartitionDialog.ascx" TagName="AddEditPartitionDialog" TagPrefix="uc2" %>
 
 <%@ Register Src="ServerPartitionPanel.ascx" TagName="ServerPartitionPanel" TagPrefix="uc1" %>
 
@@ -25,12 +23,12 @@
                     <uc1:ServerPartitionPanel id="ServerPartitionPanel" runat="server">
                     </uc1:ServerPartitionPanel>
                 </asp:Panel>
-    <uc2:AddPartitionDialog ID="AddPartitionDialog" runat="server" />
+    <uc2:AddEditPartitionDialog ID="AddEditPartitionDialog1" runat="server" />
                 </td>
          </tr>
          
     </table>
-            <uc3:EditPartitionDialog ID="EditPartitionDialog" runat="server" />
+            
         </ContentTemplate>
     </asp:UpdatePanel>
     

@@ -128,6 +128,12 @@ GO
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[QueryStudyStorageLocation]') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[QueryStudyStorageLocation]
 GO
+/****** Object:  StoredProcedure [dbo].[UpdateFilesystem]    Script Date: 11/15/2007 10:59:06 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[UpdateFilesystem]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [dbo].[UpdateFilesystem]
+GO
+
+
 /****** Object:  StoredProcedure [dbo].[QueryModalitiesInStudy]    Script Date: 11/14/2007 17:02:11 ******/
 SET ANSI_NULLS ON
 GO
@@ -1700,6 +1706,48 @@ BEGIN
 		,@ServerPartitionGUID
 		,@StudyInstanceUid
 END
+' 
+END
+GO
+
+/****** Object:  StoredProcedure [dbo].[UpdateFilesystem]    Script Date: 11/15/2007 11:00:17 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[UpdateFilesystem]') AND type in (N'P', N'PC'))
+BEGIN
+EXEC dbo.sp_executesql @statement = N'-- =============================================  
+-- Author:              Thanh Huynh  
+-- Create date: Nov 12, 2007  
+-- Description: Called to update a file system record
+-- =============================================  
+CREATE PROCEDURE [dbo].[UpdateFilesystem]   
+         -- Add the parameters for the stored procedure here  
+         @GUID uniqueidentifier,  
+         @FilesystemPath nvarchar(256),  
+         @Enabled bit,
+		 @ReadOnly bit,
+		 @WriteOnly bit,
+		 @Description nvarchar(128),
+	     @FilesystemTierEnum smallint
+		 
+AS  
+BEGIN  
+         -- SET NOCOUNT ON added to prevent extra result sets from  
+         -- interfering with SELECT statements.  
+         SET NOCOUNT ON;  
+   
+    UPDATE [ImageServer].[dbo].[Filesystem]  
+    SET FilesystemPath = @FilesystemPath
+		, Enabled = @Enabled
+		, ReadOnly = @ReadOnly
+		, WriteOnly = @WriteOnly
+		, Description = @Description
+		, FilesystemTierEnum = @FilesystemTierEnum
+		
+    WHERE GUID = @GUID
+END  
 ' 
 END
 GO

@@ -8,51 +8,69 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ImageServerWebApplication.Admin.Configuration.ServerPartitions {
+namespace ImageServerWebApplication.Admin.Configuration.Devices {
     
     
     /// <summary>
-    /// ServerPartitionPage class.
+    /// DevicePage class.
     /// </summary>
     /// <remarks>
     /// Auto-generated class.
     /// </remarks>
-    public partial class ServerPartitionPage {
+    public partial class DevicePage {
         
         /// <summary>
-        /// UpdatePanel control.
+        /// PageContent control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.UpdatePanel UpdatePanel;
+        protected global::System.Web.UI.WebControls.Panel PageContent;
         
         /// <summary>
-        /// Panel1 control.
+        /// UpdatePanel1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel Panel1;
+        protected global::System.Web.UI.UpdatePanel UpdatePanel1;
         
         /// <summary>
-        /// ServerPartitionPanel control.
+        /// TabContainer1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ImageServerWebApplication.Admin.Configuration.ServerPartitions.ServerPartitionPanel ServerPartitionPanel;
+        protected global::AjaxControlToolkit.TabContainer TabContainer1;
         
         /// <summary>
-        /// AddEditPartitionDialog1 control.
+        /// TabPanel1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ImageServerWebApplication.Admin.Configuration.ServerPartitions.AddEditPartitionDialog AddEditPartitionDialog1;
+        protected global::AjaxControlToolkit.TabPanel TabPanel1;
+        
+        /// <summary>
+        /// AddEditDeviceControl1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ImageServerWebApplication.Admin.Configuration.Devices.AddEditDeviceDialog AddEditDeviceControl1;
+        
+        /// <summary>
+        /// ConfirmDialog1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ImageServerWebApplication.Common.ConfirmDialog ConfirmDialog1;
     }
 }

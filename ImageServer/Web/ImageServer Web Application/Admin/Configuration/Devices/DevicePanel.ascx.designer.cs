@@ -8,16 +8,16 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ImageServerWebApplication.Admin.Configuration.ServerPartitions {
+namespace ImageServerWebApplication.Admin.Configuration.Devices {
     
     
     /// <summary>
-    /// ServerPartitionPage class.
+    /// DevicePanel class.
     /// </summary>
     /// <remarks>
     /// Auto-generated class.
     /// </remarks>
-    public partial class ServerPartitionPage {
+    public partial class DevicePanel {
         
         /// <summary>
         /// UpdatePanel control.
@@ -38,21 +38,39 @@ namespace ImageServerWebApplication.Admin.Configuration.ServerPartitions {
         protected global::System.Web.UI.WebControls.Panel Panel1;
         
         /// <summary>
-        /// ServerPartitionPanel control.
+        /// DeviceToolBarControl1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ImageServerWebApplication.Admin.Configuration.ServerPartitions.ServerPartitionPanel ServerPartitionPanel;
+        protected global::ImageServerWebApplication.Admin.Configuration.Devices.DeviceToolBar DeviceToolBarControl1;
         
         /// <summary>
-        /// AddEditPartitionDialog1 control.
+        /// DeviceFilterPanel1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ImageServerWebApplication.Admin.Configuration.ServerPartitions.AddEditPartitionDialog AddEditPartitionDialog1;
+        protected global::ImageServerWebApplication.Admin.Configuration.Devices.DeviceFilterPanel DeviceFilterPanel1;
+        
+        /// <summary>
+        /// DeviceGridViewControl1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ImageServerWebApplication.Admin.Configuration.Devices.DeviceGridView DeviceGridViewControl1;
+        
+        /// <summary>
+        /// GridPager1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ImageServerWebApplication.Common.GridPager GridPager1;
     }
 }

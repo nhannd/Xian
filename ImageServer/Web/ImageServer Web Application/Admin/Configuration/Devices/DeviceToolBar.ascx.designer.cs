@@ -8,25 +8,16 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ImageServerWebApplication.Admin.Configuration.ServerPartitions {
+namespace ImageServerWebApplication.Admin.Configuration.Devices {
     
     
     /// <summary>
-    /// ServerPartitionPage class.
+    /// DeviceToolBar class.
     /// </summary>
     /// <remarks>
     /// Auto-generated class.
     /// </remarks>
-    public partial class ServerPartitionPage {
-        
-        /// <summary>
-        /// UpdatePanel control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.UpdatePanel UpdatePanel;
+    public partial class DeviceToolBar {
         
         /// <summary>
         /// Panel1 control.
@@ -38,21 +29,39 @@ namespace ImageServerWebApplication.Admin.Configuration.ServerPartitions {
         protected global::System.Web.UI.WebControls.Panel Panel1;
         
         /// <summary>
-        /// ServerPartitionPanel control.
+        /// AddButton control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ImageServerWebApplication.Admin.Configuration.ServerPartitions.ServerPartitionPanel ServerPartitionPanel;
+        protected global::System.Web.UI.WebControls.ImageButton AddButton;
         
         /// <summary>
-        /// AddEditPartitionDialog1 control.
+        /// EditButton control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ImageServerWebApplication.Admin.Configuration.ServerPartitions.AddEditPartitionDialog AddEditPartitionDialog1;
+        protected global::System.Web.UI.WebControls.ImageButton EditButton;
+        
+        /// <summary>
+        /// DeleteButton control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.ImageButton DeleteButton;
+        
+        /// <summary>
+        /// RefreshButton control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.ImageButton RefreshButton;
     }
 }

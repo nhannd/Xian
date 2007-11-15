@@ -8,16 +8,16 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ImageServerWebApplication.Admin.Configuration.FileSystems {
+namespace ImageServerWebApplication.Admin.Configuration.ServerPartitions {
     
     
     /// <summary>
-    /// AddFilesystemDialog class.
+    /// AddEditPartitionDialog class.
     /// </summary>
     /// <remarks>
     /// Auto-generated class.
     /// </remarks>
-    public partial class AddFilesystemDialog {
+    public partial class AddEditPartitionDialog {
         
         /// <summary>
         /// UpdatePanel control.
@@ -56,31 +56,13 @@ namespace ImageServerWebApplication.Admin.Configuration.FileSystems {
         protected global::System.Web.UI.WebControls.Label TitleLabel;
         
         /// <summary>
-        /// Panel2 control.
+        /// ValidationSummary1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel Panel2;
-        
-        /// <summary>
-        /// TabContainer1 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::AjaxControlToolkit.TabContainer TabContainer1;
-        
-        /// <summary>
-        /// TabPanel1 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::AjaxControlToolkit.TabPanel TabPanel1;
+        protected global::Sample.Web.UI.Compatibility.ValidationSummary ValidationSummary1;
         
         /// <summary>
         /// Panel1 control.
@@ -92,13 +74,76 @@ namespace ImageServerWebApplication.Admin.Configuration.FileSystems {
         protected global::System.Web.UI.WebControls.Panel Panel1;
         
         /// <summary>
-        /// TABLE1 control.
+        /// Table2 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlTable TABLE1;
+        protected global::System.Web.UI.HtmlControls.HtmlTable Table2;
+        
+        /// <summary>
+        /// Tr1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlTableRow Tr1;
+        
+        /// <summary>
+        /// Td1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlTableCell Td1;
+        
+        /// <summary>
+        /// AETitleTextBox control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox AETitleTextBox;
+        
+        /// <summary>
+        /// RequiredFieldValidator2 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClearCanvas.ImageServer.Web.WebControls.ConditionalRequiredFieldValidator RequiredFieldValidator2;
+        
+        /// <summary>
+        /// RegularExpressionFieldValidator2 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClearCanvas.ImageServer.Web.WebControls.RegularExpressionFieldValidator RegularExpressionFieldValidator2;
+        
+        /// <summary>
+        /// Td2 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlTableCell Td2;
+        
+        /// <summary>
+        /// Td3 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlTableCell Td3;
         
         /// <summary>
         /// DescriptionTextBox control.
@@ -110,76 +155,112 @@ namespace ImageServerWebApplication.Admin.Configuration.FileSystems {
         protected global::System.Web.UI.WebControls.TextBox DescriptionTextBox;
         
         /// <summary>
-        /// ConditionalRequiredFieldValidator1 control.
+        /// Tr2 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.WebControls.ConditionalRequiredFieldValidator ConditionalRequiredFieldValidator1;
+        protected global::System.Web.UI.HtmlControls.HtmlTableRow Tr2;
         
         /// <summary>
-        /// ReadCheckBox control.
+        /// Td4 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox ReadCheckBox;
+        protected global::System.Web.UI.HtmlControls.HtmlTableCell Td4;
         
         /// <summary>
-        /// PathTextBox control.
+        /// PortTextBox control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox PathTextBox;
+        protected global::System.Web.UI.WebControls.TextBox PortTextBox;
         
         /// <summary>
-        /// ConditionalRequiredFieldValidator2 control.
+        /// Td5 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.WebControls.ConditionalRequiredFieldValidator ConditionalRequiredFieldValidator2;
+        protected global::System.Web.UI.HtmlControls.HtmlTableCell Td5;
         
         /// <summary>
-        /// WriteCheckBox control.
+        /// Td6 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox WriteCheckBox;
+        protected global::System.Web.UI.HtmlControls.HtmlTableCell Td6;
         
         /// <summary>
-        /// TiersDropDownList control.
+        /// PartitionFolderTextBox control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList TiersDropDownList;
+        protected global::System.Web.UI.WebControls.TextBox PartitionFolderTextBox;
         
         /// <summary>
-        /// ValidationSummary1 control.
+        /// Conditionalrequiredfieldvalidator1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Sample.Web.UI.Compatibility.ValidationSummary ValidationSummary1;
+        protected global::ClearCanvas.ImageServer.Web.WebControls.ConditionalRequiredFieldValidator Conditionalrequiredfieldvalidator1;
         
         /// <summary>
-        /// TabPanel2 control.
+        /// Tr3 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::AjaxControlToolkit.TabPanel TabPanel2;
+        protected global::System.Web.UI.HtmlControls.HtmlTableRow Tr3;
+        
+        /// <summary>
+        /// Td7 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlTableCell Td7;
+        
+        /// <summary>
+        /// EnabledCheckBox control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox EnabledCheckBox;
+        
+        /// <summary>
+        /// Td8 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlTableCell Td8;
+        
+        /// <summary>
+        /// Td9 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlTableCell Td9;
         
         /// <summary>
         /// OKButton control.
@@ -216,5 +297,14 @@ namespace ImageServerWebApplication.Admin.Configuration.FileSystems {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::AjaxControlToolkit.ModalPopupExtender ModalPopupExtender1;
+        
+        /// <summary>
+        /// PortTextBoxNumericUpDownExtender control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::AjaxControlToolkit.NumericUpDownExtender PortTextBoxNumericUpDownExtender;
     }
 }

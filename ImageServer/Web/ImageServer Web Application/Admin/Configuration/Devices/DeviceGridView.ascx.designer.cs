@@ -8,25 +8,16 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ImageServerWebApplication.Admin.Configuration.ServerPartitions {
+namespace ImageServerWebApplication.Admin.Configuration.Devices {
     
     
     /// <summary>
-    /// ServerPartitionPage class.
+    /// DeviceGridView class.
     /// </summary>
     /// <remarks>
     /// Auto-generated class.
     /// </remarks>
-    public partial class ServerPartitionPage {
-        
-        /// <summary>
-        /// UpdatePanel control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.UpdatePanel UpdatePanel;
+    public partial class DeviceGridView {
         
         /// <summary>
         /// Panel1 control.
@@ -38,21 +29,21 @@ namespace ImageServerWebApplication.Admin.Configuration.ServerPartitions {
         protected global::System.Web.UI.WebControls.Panel Panel1;
         
         /// <summary>
-        /// ServerPartitionPanel control.
+        /// Panel2 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ImageServerWebApplication.Admin.Configuration.ServerPartitions.ServerPartitionPanel ServerPartitionPanel;
+        protected global::System.Web.UI.WebControls.Panel Panel2;
         
         /// <summary>
-        /// AddEditPartitionDialog1 control.
+        /// GridView1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ImageServerWebApplication.Admin.Configuration.ServerPartitions.AddEditPartitionDialog AddEditPartitionDialog1;
+        protected global::System.Web.UI.WebControls.GridView GridView1;
     }
 }

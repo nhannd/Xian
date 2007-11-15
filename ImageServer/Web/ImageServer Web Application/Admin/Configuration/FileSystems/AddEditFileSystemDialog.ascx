@@ -2,7 +2,10 @@
     Codebehind="AddEditFileSystemDialog.ascx.cs" %>
 <%@ Register Assembly="Validators" Namespace="Sample.Web.UI.Compatibility" TagPrefix="cc2" %>
 <%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="cc1" %>
-<asp:UpdatePanel ID="UpdatePanel" runat="server" UpdateMode="Conditional">
+<%@ Register Assembly="ClearCanvas.ImageServer.Web.WebControls" Namespace="ClearCanvas.ImageServer.Web.WebControls"
+    TagPrefix="clearcanvas" %>
+    
+    <asp:UpdatePanel ID="UpdatePanel" runat="server" UpdateMode="Conditional">
     <ContentTemplate>
         <asp:Panel ID="DialogPanel" runat="server" CssClass="PopupWindow" Width="453px" Style="display: none">
             <asp:Panel ID="TitleBarPanel" runat="server" CssClass="PopupWindowTitleBar" Width="100%">
@@ -25,11 +28,16 @@
                                             <td runat="server" valign="bottom">
                                                 Description<br />
                                                 <asp:TextBox ID="DescriptionTextBox" runat="server" Width="100%" BorderColor="LightSteelBlue"
-                                                    BorderWidth="1px" MaxLength="128"></asp:TextBox>
+                                                    BorderWidth="1px" MaxLength="128" ValidationGroup="vg1"></asp:TextBox>
                                             </td>
                                             <td colspan="1" runat="server" valign="bottom">
-                                                <cc2:RequiredFieldValidator ID="RequiredFieldValidator2" runat="server" ControlToValidate="DescriptionTextBox"
-                                                    ValidationGroup="vg1">*</cc2:RequiredFieldValidator></td>
+                                                
+                                                  <clearcanvas:ConditionalRequiredFieldValidator 
+                                    ID="ConditionalRequiredFieldValidator1" runat="server" ControlToValidate="DescriptionTextBox"
+                                    InvalidInputBackColor="#FAFFB5"
+                                    ValidationGroup="vg1" EnableClientScript="true"
+                                    ErrorMessage="Description is required!!" Display="None"></clearcanvas:ConditionalRequiredFieldValidator>
+                                            </td>
                                             <td runat="server" colspan="1" style="width: 53px; color: #000000" valign="bottom">
                                                 <asp:CheckBox ID="ReadCheckBox" runat="server" OnInit="ReadOnlyCheckBox_Init" Text="Read"
                                                     Checked="True" />
@@ -39,11 +47,17 @@
                                             <td style="height: 29px" runat="server" valign="bottom">
                                                 Path<br />
                                                 <asp:TextBox ID="PathTextBox" runat="server" Width="100%" BorderColor="LightSteelBlue"
-                                                    BorderWidth="1px" ValidationGroup="vg1"></asp:TextBox>
+                                                    BorderWidth="1px" ValidationGroup="vg1" MaxLength="256"></asp:TextBox>
                                             </td>
                                             <td colspan="1" style="height: 29px" align="left" runat="server" valign="bottom">
-                                                <cc2:RequiredFieldValidator ID="RequiredFieldValidator1" runat="server" ControlToValidate="PathTextBox"
-                                                    ValidationGroup="vg1">*</cc2:RequiredFieldValidator></td>
+                                                
+                                                <clearcanvas:ConditionalRequiredFieldValidator 
+                                    ID="ConditionalRequiredFieldValidator2" runat="server" ControlToValidate="PathTextBox"
+                                    InvalidInputBackColor="#FAFFB5"
+                                    ValidationGroup="vg1" EnableClientScript="true"
+                                    ErrorMessage="Filesystem Path is required!!" Display="None"></clearcanvas:ConditionalRequiredFieldValidator>    
+                                                    
+                                                    </td>
                                             <td runat="server" align="left" colspan="1" style="width: 53px; height: 29px" valign="bottom">
                                                 <asp:CheckBox ID="WriteCheckBox" runat="server" Text="Write" Checked="True" />
                                             </td>
@@ -61,12 +75,7 @@
                                         </tr>
                                     </table>
                                 </asp:Panel>
-                                <cc1:TextBoxWatermarkExtender ID="TextBoxWatermarkExtender2" runat="server" TargetControlID="DescriptionTextBox"
-                                    WatermarkText="Enter the description" WatermarkCssClass="WatermarkedText" Enabled="True">
-                                </cc1:TextBoxWatermarkExtender>
-                                <cc1:TextBoxWatermarkExtender ID="TextBoxWatermarkExtender1" runat="server" TargetControlID="PathTextBox"
-                                    WatermarkText="Enter the path" WatermarkCssClass="WatermarkedText" Enabled="True">
-                                </cc1:TextBoxWatermarkExtender>
+                                <cc2:ValidationSummary ID="ValidationSummary1" runat="server" ShowMessageBox="True" ShowSummary="False" ValidationGroup="vg1" />
                             </ContentTemplate>
                             <HeaderTemplate>
                                 General

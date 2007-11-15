@@ -41,36 +41,42 @@ namespace ImageServerWebApplication.Admin.Configuration.ServerPartitions
 
         protected void SetupEventHandlers()
         {
-            AddPartitionDialog.OKClicked += delegate(ServerPartition partition)
+            AddEditPartitionDialog1.OKClicked += delegate(ServerPartition partition)
                                                 {
-                                                    // Add partition into db and refresh the list
-                                                    if (_controller.AddPartition(partition))
+                                                    if (AddEditPartitionDialog1.EditMode)
                                                     {
-                                                        UpdateUI();
+                                                        // Add partition into db and refresh the list
+                                                        if (_controller.UpdatePartition(partition))
+                                                        {
+                                                            UpdateUI();
+                                                        }
                                                     }
+                                                    else
+                                                    {
+                                                        // Add partition into db and refresh the list
+                                                        if (_controller.AddPartition(partition))
+                                                        {
+                                                            UpdateUI();
+                                                        }
+                                                    }
+                                                    
                                                 };
-
-            EditPartitionDialog.OKClicked += delegate(ServerPartition partition)
-                                                 {
-                                                     // update partition in the db and refresh the list
-                                                     if (_controller.UpdatePartition(partition))
-                                                     {
-                                                         UpdateUI();
-                                                     }
-                                                 };
 
             
             ServerPartitionPanel.AddPartitionMethod = delegate
                                                           {
                                                               // display the add dialog
-                                                              AddPartitionDialog.Show();
+                                                              AddEditPartitionDialog1.Partition = null;
+                                                              AddEditPartitionDialog1.EditMode = false;
+                                                              AddEditPartitionDialog1.Show();
                                                           };
 
             ServerPartitionPanel.EditPartitionMethod = delegate(ServerPartition selectedPartition)
                                                            {
-                                                               // display the edit dialog
-                                                               EditPartitionDialog.Partition = selectedPartition;
-                                                               EditPartitionDialog.Show();
+                                                               // display the add dialog
+                                                               AddEditPartitionDialog1.Partition = selectedPartition;
+                                                               AddEditPartitionDialog1.EditMode = true;
+                                                               AddEditPartitionDialog1.Show();
                                                            };
         }
 

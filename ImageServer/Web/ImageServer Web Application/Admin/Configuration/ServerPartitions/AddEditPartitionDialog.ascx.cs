@@ -31,86 +31,67 @@
 
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using ClearCanvas.Enterprise.Core;
-using ClearCanvas.Enterprise.Core.Modelling;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Common;
-using ImageServerWebApplication.Common;
 
-namespace ImageServerWebApplication.Admin.Configuration.FileSystems
+namespace ImageServerWebApplication.Admin.Configuration.ServerPartitions
 {
     //
-    // Dialog for adding a new device or editting an existing one.
+    // Dialog for adding new Partition.
     //
-    public partial class AddFilesystemDialog : UserControl
+    public partial class AddEditPartitionDialog : UserControl
     {
         #region private variables
-        // The server partitions that the new device can be associated with
-        // This list will be determined by the user level permission.
-        private IList<FilesystemTierEnum> _tiers = new List<FilesystemTierEnum>();
-
-        private bool _editMode = false;
-        private Filesystem _filesystem;
+        private bool _editMode;
+        // device being editted/added
+        private ServerPartition _partition;
+        
         #endregion
 
         #region public members
+
+        public bool EditMode
+        {
+            get { return _editMode; }
+            set
+            {
+                _editMode = value;
+                ViewState[ClientID + "_EditMode"] = value;
+            }
+        }
+
         /// <summary>
-        /// Sets or gets the list of filesystem tiers which users are allowed to pick.
+        /// Sets/Gets the current editing partition.
         /// </summary>
-        public IList<FilesystemTierEnum> FilesystemTiers
+        public ServerPartition Partition
         {
             set
             {
-                _tiers = value;
+                this._partition = value;
+                // put into viewstate to retrieve later
+                ViewState[ClientID + "_EdittedPartition"] = _partition;
             }
-
             get
             {
-                return _tiers;
+                return _partition;
             }
-        }
 
-        /// <summary>
-        /// Sets the dialog in edit mode or gets a value indicating whether the dialog is in edit mode.
-        /// </summary>
-        public bool EditMode
-        {
-            set { 
-                _editMode = value;
-                ViewState[ ClientID+"_EditMode"] = value;
-            }
-            get { return _editMode; }
         }
-
-        /// <summary>
-        /// Sets or gets the filesystem users are working on.
-        /// </summary>
-        public Filesystem FileSystem
-        {
-            set { _filesystem = value;
-                ViewState[ ClientID+"_FileSystem"] = value;
-            }
-            get { return _filesystem; }
-        }
-
         #endregion // public members
-
 
         #region Events
         /// <summary>
         /// Defines the event handler for <seealso cref="OKClicked"/>.
         /// </summary>
-        /// <param name="filesystem">The device being added.</param>
-        public delegate void OKClickedEventHandler(Filesystem filesystem);
+        /// <param name="partition">The partition being added.</param>
+        public delegate void OnOKClickedEventHandler(ServerPartition partition);
         /// <summary>
         /// Occurs when users click on "OK".
         /// </summary>
-        public event OKClickedEventHandler OKClicked;
-
+        public event OnOKClickedEventHandler OKClicked;
         #endregion Events
 
         #region Public delegates
@@ -119,18 +100,10 @@ namespace ImageServerWebApplication.Admin.Configuration.FileSystems
         #endregion // public delegates
 
         #region Protected methods
-
-        protected override void OnPreRender(EventArgs e)
-        {
-            base.OnPreRender(e);
-        }
-
-        
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
 
-            
             // Set up the popup extender
             // These settings could been done in the aspx page as well
             // but if we are to javascript to display, that won't work.
@@ -143,36 +116,35 @@ namespace ImageServerWebApplication.Admin.Configuration.FileSystems
             ModalPopupExtender1.PopupDragHandleControlID = TitleBarPanel.UniqueID;
 
 
-//            Register a javascript that can be called to popup this dialog on the client
-             
-//            Page.RegisterClientScriptBlock("popupThisWindow",
-//                      @"<script language='javascript'>
-//                        function ShowAddDeviceDialog()
-//                        {  
-//                            var ctrl = $find('" + ModalPopupExtender1.UniqueID + @"'); 
-//                            ctrl.show();
-//                        }
-//                    </script>");
+            // Register a javascript that can be called to popup this dialog on the client
+            // 
+            Page.RegisterClientScriptBlock("popupThisWindow",
+                      @"<script language='javascript'>
+                        function ShowAddPartitionDialog()
+                        {  
+                            var ctrl = $find('" + ModalPopupExtender1.UniqueID + @"'); 
+                            ctrl.show();
+                        }
+                    </script>");
 
-
-           
         }
 
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            
+
             if (Page.IsPostBack == false)
             {
+
 
             }
             else
             {
-                // reload the filesystem information user is working on
-                if (ViewState[ ClientID+"_EditMode"]!=null)
-                    _editMode = (bool) ViewState[ ClientID+"_EditMode"];
+                if (ViewState[ClientID + "_EditMode"] != null)
+                    _editMode = (bool)ViewState[ClientID + "_EditMode"];
 
-                FileSystem = ViewState[ ClientID+"_FileSystem"] as Filesystem;
+                if (ViewState[ClientID + "_EdittedPartition"] != null)
+                    _partition = ViewState[ClientID + "_EdittedPartition"] as ServerPartition;
             }
         }
 
@@ -184,36 +156,24 @@ namespace ImageServerWebApplication.Admin.Configuration.FileSystems
         /// <param name="e"></param>
         protected void OKButton_Click(object sender, EventArgs e)
         {
-            if (FileSystem == null)
+            if (Partition == null)
             {
-                // create a filesystem 
-                FileSystem = new Filesystem();
+                Partition = new ServerPartition();
             }
 
-            FileSystem.Description = DescriptionTextBox.Text;
-            FileSystem.FilesystemPath = PathTextBox.Text;
-            FileSystem.ReadOnly = ReadCheckBox.Checked && WriteCheckBox.Checked == false;
-            FileSystem.WriteOnly = WriteCheckBox.Checked && ReadCheckBox.Checked == false;
-            FileSystem.Enabled = ReadCheckBox.Checked || WriteCheckBox.Checked;
-            
-            FileSystem.FilesystemTierEnum = FilesystemTiers[TiersDropDownList.SelectedIndex];
-            
+            Partition.Enabled = EnabledCheckBox.Checked;
+            Partition.AeTitle = AETitleTextBox.Text;
+            Partition.Description = DescriptionTextBox.Text;
+            Partition.PartitionFolder = PartitionFolderTextBox.Text;
+            Partition.Port = Int32.Parse(PortTextBox.Text);
+
+            // TODO: Add input validation here
+
+
             if (OKClicked != null)
-                OKClicked(FileSystem);
+                OKClicked(Partition);
 
             Close();
-           
-
-        }
-
-        
-        protected void ReadOnlyCheckBox_Init(object sender, EventArgs e)
-        {
-
-        }
-
-        protected void CancelButton_Click(object sender, EventArgs e)
-        {
 
         }
 
@@ -226,45 +186,33 @@ namespace ImageServerWebApplication.Admin.Configuration.FileSystems
         /// </summary>
         public void Show()
         {
-
-            // update the dropdown list
-            TiersDropDownList.Items.Clear();
-            foreach (FilesystemTierEnum tier in _tiers)
-            {
-                TiersDropDownList.Items.Add(new ListItem(tier.Description, tier.Enum.ToString()));
-            }
-            
             if (EditMode)
             {
-                // set the dialog box title and OK button text
-                TitleLabel.Text = "Edit Filesystem";
+                TitleLabel.Text = "Edit Partition";
                 OKButton.Text = "Update";
-
-                // set the data using the info in the filesystem to be editted
-                DescriptionTextBox.Text = FileSystem.Description;
-                PathTextBox.Text = FileSystem.FilesystemPath;
-                ReadCheckBox.Checked = FileSystem.Enabled && (FileSystem.ReadOnly || (FileSystem.WriteOnly == false));
-                WriteCheckBox.Checked = FileSystem.Enabled && (FileSystem.WriteOnly || (FileSystem.ReadOnly == false));
-
-                TiersDropDownList.SelectedValue = FileSystem.FilesystemTierEnum.Enum.ToString();
             }
             else
             {
-                // set the dialog box title and OK button text
-                TitleLabel.Text = "Add Filesystem";
+                TitleLabel.Text = "Add Partition";
                 OKButton.Text = "Add";
-
-                // Clear input
-                DescriptionTextBox.Text = "";
-                PathTextBox.Text = "";
-                ReadCheckBox.Checked = true;
-                WriteCheckBox.Checked = true;
-
-                TiersDropDownList.SelectedIndex = 0;
-
             }
 
-
+            if (Partition== null)
+            {
+                AETitleTextBox.Text = "";
+                DescriptionTextBox.Text = "";
+                PortTextBox.Text = "0";
+                PartitionFolderTextBox.Text = "";
+                EnabledCheckBox.Checked = false;
+            }
+            else
+            {
+                AETitleTextBox.Text = Partition.AeTitle;
+                DescriptionTextBox.Text = Partition.Description;
+                PortTextBox.Text = Partition.Port.ToString();
+                PartitionFolderTextBox.Text = Partition.PartitionFolder;
+                EnabledCheckBox.Checked = Partition.Enabled;
+            }
             UpdatePanel.Update();
             ModalPopupExtender1.Show();
         }
@@ -295,6 +243,7 @@ namespace ImageServerWebApplication.Admin.Configuration.FileSystems
         }
 
         #endregion Public methods
+
 
         
     }

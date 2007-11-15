@@ -69,24 +69,23 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Admin\Configuration\AddDeviceDialog.ascx" />
-    <Content Include="Admin\Configuration\DeviceGridView.ascx" />
-    <Content Include="Admin\Configuration\DeviceToolBar.ascx" />
-    <Content Include="Admin\Configuration\EditDeviceDialog.ascx" />
+    <Content Include="Admin\Configuration\Devices\AddEditDeviceDialog.ascx" />
+    <Content Include="Admin\Configuration\Devices\DeviceGridView.ascx" />
+    <Content Include="Admin\Configuration\Devices\DeviceToolBar.ascx" />
     <Content Include="Admin\Default.aspx" />
     <Content Include="Admin\Styles\StyleSheet.css" />
-    <Compile Include="Admin\Configuration\AddDeviceDialog.ascx.cs">
-      <DependentUpon>AddDeviceDialog.ascx</DependentUpon>
+    <Compile Include="Admin\Configuration\Devices\AddEditDeviceDialog.ascx.cs">
+      <DependentUpon>AddEditDeviceDialog.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Admin\Configuration\AddDeviceDialog.ascx.designer.cs">
-      <DependentUpon>AddDeviceDialog.ascx</DependentUpon>
+    <Compile Include="Admin\Configuration\Devices\AddEditDeviceDialog.ascx.designer.cs">
+      <DependentUpon>AddEditDeviceDialog.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Admin\Configuration\DevicePage.aspx.cs">
+    <Compile Include="Admin\Configuration\Devices\DevicePage.aspx.cs">
       <DependentUpon>DevicePage.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Admin\Configuration\DevicePage.aspx.designer.cs">
+    <Compile Include="Admin\Configuration\Devices\DevicePage.aspx.designer.cs">
       <DependentUpon>DevicePage.aspx</DependentUpon>
     </Compile>
     <Compile Include="Admin\Configuration\FileSystems\AddEditFileSystemDialog.ascx.cs">
@@ -131,19 +130,12 @@
     <Compile Include="Admin\Configuration\FileSystems\FileSystemsPage.aspx.designer.cs">
       <DependentUpon>FileSystemsPage.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Admin\Configuration\ServerPartitions\AddPartitionDialog.ascx.cs">
-      <DependentUpon>AddPartitionDialog.ascx</DependentUpon>
+    <Compile Include="Admin\Configuration\ServerPartitions\AddEditPartitionDialog.ascx.cs">
+      <DependentUpon>AddEditPartitionDialog.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Admin\Configuration\ServerPartitions\AddPartitionDialog.ascx.designer.cs">
-      <DependentUpon>AddPartitionDialog.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="Admin\Configuration\ServerPartitions\EditPartitionDialog.ascx.cs">
-      <DependentUpon>EditPartitionDialog.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Admin\Configuration\ServerPartitions\EditPartitionDialog.ascx.designer.cs">
-      <DependentUpon>EditPartitionDialog.ascx</DependentUpon>
+    <Compile Include="Admin\Configuration\ServerPartitions\AddEditPartitionDialog.ascx.designer.cs">
+      <DependentUpon>AddEditPartitionDialog.ascx</DependentUpon>
     </Compile>
     <Compile Include="Admin\Configuration\ServerPartitions\ServerPartitionFilterPanel.ascx.cs">
       <DependentUpon>ServerPartitionFilterPanel.ascx</DependentUpon>
@@ -180,7 +172,6 @@
     <Compile Include="Admin\Configuration\ServerPartitions\ServerPartitionToolBarPanel.ascx.designer.cs">
       <DependentUpon>ServerPartitionToolBarPanel.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Common\AEValidator.cs" />
     <Compile Include="Common\ConfirmDialog.ascx.cs">
       <DependentUpon>ConfirmDialog.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -188,40 +179,33 @@
     <Compile Include="Common\ConfirmDialog.ascx.designer.cs">
       <DependentUpon>ConfirmDialog.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Admin\Configuration\DeviceFilterPanel.ascx.cs">
+    <Compile Include="Admin\Configuration\Devices\DeviceFilterPanel.ascx.cs">
       <DependentUpon>DeviceFilterPanel.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Admin\Configuration\DeviceFilterPanel.ascx.designer.cs">
+    <Compile Include="Admin\Configuration\Devices\DeviceFilterPanel.ascx.designer.cs">
       <DependentUpon>DeviceFilterPanel.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Admin\Configuration\DeviceGridView.ascx.cs">
+    <Compile Include="Admin\Configuration\Devices\DeviceGridView.ascx.cs">
       <DependentUpon>DeviceGridView.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Admin\Configuration\DeviceGridView.ascx.designer.cs">
+    <Compile Include="Admin\Configuration\Devices\DeviceGridView.ascx.designer.cs">
       <DependentUpon>DeviceGridView.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Admin\Configuration\DevicePanel.ascx.cs">
+    <Compile Include="Admin\Configuration\Devices\DevicePanel.ascx.cs">
       <DependentUpon>DevicePanel.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Admin\Configuration\DevicePanel.ascx.designer.cs">
+    <Compile Include="Admin\Configuration\Devices\DevicePanel.ascx.designer.cs">
       <DependentUpon>DevicePanel.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Admin\Configuration\DeviceToolBar.ascx.cs">
+    <Compile Include="Admin\Configuration\Devices\DeviceToolBar.ascx.cs">
       <DependentUpon>DeviceToolBar.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Admin\Configuration\DeviceToolBar.ascx.designer.cs">
+    <Compile Include="Admin\Configuration\Devices\DeviceToolBar.ascx.designer.cs">
       <DependentUpon>DeviceToolBar.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="Admin\Configuration\EditDeviceDialog.ascx.cs">
-      <DependentUpon>EditDeviceDialog.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Admin\Configuration\EditDeviceDialog.ascx.designer.cs">
-      <DependentUpon>EditDeviceDialog.ascx</DependentUpon>
     </Compile>
     <Compile Include="Admin\Default.aspx.cs">
       <DependentUpon>Default.aspx</DependentUpon>
@@ -257,15 +241,14 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Admin\Configuration\DevicePage.aspx" />
+    <Content Include="Admin\Configuration\Devices\DevicePage.aspx" />
     <Content Include="Admin\Configuration\FileSystems\AddEditFileSystemDialog.ascx" />
     <Content Include="Admin\Configuration\FileSystems\FileSystemsFilterPanel.ascx" />
     <Content Include="Admin\Configuration\FileSystems\FileSystemsToolBar.ascx" />
     <Content Include="Admin\Configuration\FileSystems\FileSystemsGridView.ascx" />
     <Content Include="Admin\Configuration\FileSystems\FileSystemsPanel.ascx" />
     <Content Include="Admin\Configuration\FileSystems\FileSystemsPage.aspx" />
-    <Content Include="Admin\Configuration\ServerPartitions\AddPartitionDialog.ascx" />
-    <Content Include="Admin\Configuration\ServerPartitions\EditPartitionDialog.ascx" />
+    <Content Include="Admin\Configuration\ServerPartitions\AddEditPartitionDialog.ascx" />
     <Content Include="Admin\Configuration\ServerPartitions\ServerPartitionFilterPanel.ascx" />
     <Content Include="Admin\Configuration\ServerPartitions\ServerPartitionGridPanel.ascx" />
     <Content Include="Admin\Configuration\ServerPartitions\ServerPartitionPage.aspx" />
@@ -273,8 +256,8 @@
     <Content Include="Admin\Configuration\ServerPartitions\ServerPartitionToolBarPanel.ascx" />
     <Content Include="Admin\Styles\images\icon_warning.gif" />
     <Content Include="Common\ConfirmDialog.ascx" />
-    <Content Include="Admin\Configuration\DeviceFilterPanel.ascx" />
-    <Content Include="Admin\Configuration\DevicePanel.ascx" />
+    <Content Include="Admin\Configuration\Devices\DeviceFilterPanel.ascx" />
+    <Content Include="Admin\Configuration\Devices\DevicePanel.ascx" />
     <Content Include="Admin\MasterPage.master" />
     <None Include="images\Thumbs.db" />
     <Content Include="Common\GridPager.ascx" />
@@ -323,6 +306,10 @@
     <ProjectReference Include="..\Common\ClearCanvas.ImageServer.Web.Common.csproj">
       <Project>{9A4EF57B-2702-4931-9E94-B194707E87FA}</Project>
       <Name>ClearCanvas.ImageServer.Web.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WebControls\ClearCanvas.ImageServer.Web.WebControls.csproj">
+      <Project>{08B359B8-D3AB-4D52-95A0-93942B8CD2D9}</Project>
+      <Name>ClearCanvas.ImageServer.Web.WebControls</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

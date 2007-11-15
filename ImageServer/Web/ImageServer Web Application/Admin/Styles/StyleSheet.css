@@ -171,7 +171,7 @@
 	border-left: #cccccc 1px solid;
 	border-bottom: #cccccc 1px solid;
 	height:630px;
-	width: 700px;
+	width: 750px;
 	font-size:smaller;
 }
 .ChildPanel
@@ -194,7 +194,7 @@
 {
 	 background-color:Gray; 
 	 font-weight:normal;
-	 color: #333333;
+	 color: white;
 	 border-color: #0FFFF8;
 }
 

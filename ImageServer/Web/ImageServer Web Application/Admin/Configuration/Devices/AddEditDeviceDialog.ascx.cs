@@ -31,86 +31,87 @@
 
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using ClearCanvas.Enterprise.Core;
-using ClearCanvas.Enterprise.Core.Modelling;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Common;
-using ImageServerWebApplication.Common;
 
-namespace ImageServerWebApplication.Admin.Configuration.FileSystems
+namespace ImageServerWebApplication.Admin.Configuration.Devices
 {
     //
-    // Dialog for adding a new device or editting an existing one.
+    // Dialog for adding a new device or editting an existing device.
     //
-    public partial class AddFilesystemDialog : UserControl
+    public partial class AddEditDeviceDialog : UserControl
     {
         #region private variables
         // The server partitions that the new device can be associated with
         // This list will be determined by the user level permission.
-        private IList<FilesystemTierEnum> _tiers = new List<FilesystemTierEnum>();
+        private IList<ServerPartition> _partitions = new List<ServerPartition>();
 
-        private bool _editMode = false;
-        private Filesystem _filesystem;
+        private bool _editMode;
+        // device being editted/added
+        private Device _device;
         #endregion
 
         #region public members
         /// <summary>
-        /// Sets or gets the list of filesystem tiers which users are allowed to pick.
+        /// Sets the list of partitions users allowed to pick.
         /// </summary>
-        public IList<FilesystemTierEnum> FilesystemTiers
+        public IList<ServerPartition> Partitions
         {
             set
             {
-                _tiers = value;
+                _partitions = value;
             }
 
             get
             {
-                return _tiers;
+                return _partitions;
             }
         }
 
         /// <summary>
-        /// Sets the dialog in edit mode or gets a value indicating whether the dialog is in edit mode.
+        /// Sets or gets the value which indicates whether the dialog is in edit mode.
         /// </summary>
         public bool EditMode
         {
+            get { return _editMode; }
             set { 
                 _editMode = value;
-                ViewState[ ClientID+"_EditMode"] = value;
+                ViewState[ClientID + "_EditMode"] = value;
             }
-            get { return _editMode; }
         }
 
         /// <summary>
-        /// Sets or gets the filesystem users are working on.
+        /// Sets/Gets the current editing device.
         /// </summary>
-        public Filesystem FileSystem
+        public Device Device
         {
-            set { _filesystem = value;
-                ViewState[ ClientID+"_FileSystem"] = value;
+            set
+            {
+                this._device = value;
+                // put into viewstate to retrieve later
+                ViewState[ClientID + "_EdittedDevice"] = _device;
             }
-            get { return _filesystem; }
+            get
+            {
+                return _device;
+            }
+
         }
-
         #endregion // public members
-
 
         #region Events
         /// <summary>
         /// Defines the event handler for <seealso cref="OKClicked"/>.
         /// </summary>
-        /// <param name="filesystem">The device being added.</param>
-        public delegate void OKClickedEventHandler(Filesystem filesystem);
+        /// <param name="device">The device being added.</param>
+        public delegate void OnOKClickedEventHandler(Device device);
         /// <summary>
         /// Occurs when users click on "OK".
         /// </summary>
-        public event OKClickedEventHandler OKClicked;
-
+        public event OnOKClickedEventHandler OKClicked;
         #endregion Events
 
         #region Public delegates
@@ -119,13 +120,6 @@ namespace ImageServerWebApplication.Admin.Configuration.FileSystems
         #endregion // public delegates
 
         #region Protected methods
-
-        protected override void OnPreRender(EventArgs e)
-        {
-            base.OnPreRender(e);
-        }
-
-        
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
@@ -143,37 +137,36 @@ namespace ImageServerWebApplication.Admin.Configuration.FileSystems
             ModalPopupExtender1.PopupDragHandleControlID = TitleBarPanel.UniqueID;
 
 
-//            Register a javascript that can be called to popup this dialog on the client
-             
-//            Page.RegisterClientScriptBlock("popupThisWindow",
-//                      @"<script language='javascript'>
-//                        function ShowAddDeviceDialog()
-//                        {  
-//                            var ctrl = $find('" + ModalPopupExtender1.UniqueID + @"'); 
-//                            ctrl.show();
-//                        }
-//                    </script>");
+            //Register a javascript that can be called to popup this dialog on the client
+            //NOTE: NOTE BEING USED FOR NOW
+            //            Page.RegisterClientScriptBlock("popupThisWindow",
+            //                      @"<script language='javascript'>
+            //                        function ShowAddDeviceDialog()
+            //                        {  
+            //                            var ctrl = $find('" + ModalPopupExtender1.UniqueID + @"'); 
+            //                            ctrl.show();
+            //                        }
+            //                    </script>");
 
-
-           
         }
 
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            
+
             if (Page.IsPostBack == false)
             {
-
+               
             }
             else
             {
-                // reload the filesystem information user is working on
-                if (ViewState[ ClientID+"_EditMode"]!=null)
-                    _editMode = (bool) ViewState[ ClientID+"_EditMode"];
+                if (ViewState[ClientID + "_EditMode"] != null)
+                    _editMode = (bool)ViewState[ClientID + "_EditMode"];
 
-                FileSystem = ViewState[ ClientID+"_FileSystem"] as Filesystem;
+                if (ViewState[ClientID + "_EdittedDevice"] != null)
+                    _device = ViewState[ClientID + "_EdittedDevice"] as Device;
             }
+
         }
 
 
@@ -184,36 +177,26 @@ namespace ImageServerWebApplication.Admin.Configuration.FileSystems
         /// <param name="e"></param>
         protected void OKButton_Click(object sender, EventArgs e)
         {
-            if (FileSystem == null)
+            if (Device==null)
             {
-                // create a filesystem 
-                FileSystem = new Filesystem();
+                Device = new Device();
             }
 
-            FileSystem.Description = DescriptionTextBox.Text;
-            FileSystem.FilesystemPath = PathTextBox.Text;
-            FileSystem.ReadOnly = ReadCheckBox.Checked && WriteCheckBox.Checked == false;
-            FileSystem.WriteOnly = WriteCheckBox.Checked && ReadCheckBox.Checked == false;
-            FileSystem.Enabled = ReadCheckBox.Checked || WriteCheckBox.Checked;
-            
-            FileSystem.FilesystemTierEnum = FilesystemTiers[TiersDropDownList.SelectedIndex];
-            
+            Device.Active = ActiveCheckBox.Checked;
+            Device.AeTitle = AETitleTextBox.Text;
+            Device.Description = DescriptionTextBox.Text;
+            Device.Dhcp = DHCPCheckBox.Checked;
+            Device.IpAddress = IPAddressTextBox.Text;
+            Device.Port = Int32.Parse(PortTextBox.Text);
+            Device.ServerPartitionKey = new ServerEntityKey("Device", ServerPartitionDropDownList.SelectedItem.Value);
+
+            // TODO: Add additional server-side validation here
+
             if (OKClicked != null)
-                OKClicked(FileSystem);
+                OKClicked(Device);
 
             Close();
            
-
-        }
-
-        
-        protected void ReadOnlyCheckBox_Init(object sender, EventArgs e)
-        {
-
-        }
-
-        protected void CancelButton_Click(object sender, EventArgs e)
-        {
 
         }
 
@@ -222,46 +205,52 @@ namespace ImageServerWebApplication.Admin.Configuration.FileSystems
 
         #region Public methods
         /// <summary>
-        /// Displays the add device dialog box.
+        /// Displays the add/edit device dialog box.
         /// </summary>
         public void Show()
         {
-
             // update the dropdown list
-            TiersDropDownList.Items.Clear();
-            foreach (FilesystemTierEnum tier in _tiers)
+            ServerPartitionDropDownList.Items.Clear();
+            foreach (ServerPartition partition in _partitions)
             {
-                TiersDropDownList.Items.Add(new ListItem(tier.Description, tier.Enum.ToString()));
+                ServerPartitionDropDownList.Items.Add(
+                    new ListItem(partition.AeTitle, partition.GetKey().Key.ToString())
+                    );
             }
-            
+
+            // Update the title and OK button text
             if (EditMode)
             {
-                // set the dialog box title and OK button text
-                TitleLabel.Text = "Edit Filesystem";
+                TitleLabel.Text = "Edit Device";
                 OKButton.Text = "Update";
-
-                // set the data using the info in the filesystem to be editted
-                DescriptionTextBox.Text = FileSystem.Description;
-                PathTextBox.Text = FileSystem.FilesystemPath;
-                ReadCheckBox.Checked = FileSystem.Enabled && (FileSystem.ReadOnly || (FileSystem.WriteOnly == false));
-                WriteCheckBox.Checked = FileSystem.Enabled && (FileSystem.WriteOnly || (FileSystem.ReadOnly == false));
-
-                TiersDropDownList.SelectedValue = FileSystem.FilesystemTierEnum.Enum.ToString();
             }
             else
             {
-                // set the dialog box title and OK button text
-                TitleLabel.Text = "Add Filesystem";
+                TitleLabel.Text = "Add Device";
                 OKButton.Text = "Add";
+            }
 
-                // Clear input
+            // Update the rest of the fields
+            if (Device==null)
+            {
+                AETitleTextBox.Text = "";
+                IPAddressTextBox.Text = "";
+                ActiveCheckBox.Checked = false;
+                DHCPCheckBox.Checked = false;
                 DescriptionTextBox.Text = "";
-                PathTextBox.Text = "";
-                ReadCheckBox.Checked = true;
-                WriteCheckBox.Checked = true;
+                PortTextBox.Text = "0";
+                ServerPartitionDropDownList.SelectedIndex = 0;
+            }
+            else
+            {
+                AETitleTextBox.Text = Device.AeTitle;
+                IPAddressTextBox.Text = Device.IpAddress;
+                ActiveCheckBox.Checked = Device.Active;
+                DHCPCheckBox.Checked = Device.Dhcp;
+                DescriptionTextBox.Text = Device.Description;
+                PortTextBox.Text = Device.Port.ToString();
 
-                TiersDropDownList.SelectedIndex = 0;
-
+                ServerPartitionDropDownList.SelectedValue = Device.ServerPartitionKey.Key.ToString();
             }
 
 
@@ -295,6 +284,7 @@ namespace ImageServerWebApplication.Admin.Configuration.FileSystems
         }
 
         #endregion Public methods
+
 
         
     }
