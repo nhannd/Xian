@@ -66,10 +66,8 @@ namespace ClearCanvas.ImageViewer
 		private int _columns;
 		private static int _borderWidth = 2;
 		private static int _insetWidth = 5;
-		private static Color _selectedColor = Color.Green;
+		private static Color _selectedColor = Color.Orange;
 		private static Color _unselectedColor = Color.DarkGray;
-		private static Color _linkedColor = Color.Red;
-		private static Color _selectedLinkedColor = Color.Orange;
 
 		private event EventHandler _drawingEvent;
 		private event EventHandler<ItemEventArgs<IImageBox>> _selectionChangedEvent;
@@ -293,16 +291,6 @@ namespace ClearCanvas.ImageViewer
 		}
 
 		/// <summary>
-		/// Gets or sets the colour of the border when the display set
-		/// is selected and linked.
-		/// </summary>
-		public static Color SelectedLinkedColor
-		{
-			get { return _selectedLinkedColor; }
-			set { _selectedLinkedColor = value; }
-		}
-
-		/// <summary>
 		/// Gets or sets the colour of the border when the image box
 		/// is not selected.
 		/// </summary>
@@ -313,15 +301,6 @@ namespace ClearCanvas.ImageViewer
 		}
 
 		/// <summary>
-		/// Gets or sets the colour of the border when the display set is linked.
-		/// </summary>
-		public static Color LinkedColor
-		{
-			get { return _linkedColor; }
-			set { _linkedColor = value; }
-		}
-
-		/// <summary>
 		/// Gets the current border colour.
 		/// </summary>
 		public Color BorderColor
@@ -329,19 +308,9 @@ namespace ClearCanvas.ImageViewer
 			get
 			{
 				if (this.Selected)
-				{
-					if (this.DisplaySet != null && this.DisplaySet.Linked)
-						return _selectedLinkedColor;
-
 					return _selectedColor;
-				}
 				else
-				{
-					if (this.DisplaySet != null && this.DisplaySet.Linked)
-						return _linkedColor;
-
 					return _unselectedColor;
-				}
 			}
 		}
 
