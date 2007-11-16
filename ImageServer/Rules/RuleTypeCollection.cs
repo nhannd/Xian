@@ -86,29 +86,35 @@ namespace ClearCanvas.ImageServer.Rules
         public void Execute(ServerActionContext context)
         {
             bool doDefault = true;
-
-            foreach (Rule theRule in _ruleList)
+            try
             {
-                bool ruleApplied;
-                bool ruleSuccess;
-
-                theRule.Execute(context, out ruleApplied, out ruleSuccess);
-
-                if (ruleApplied && ruleSuccess)
-                    doDefault = false;
-            }
-
-            if (doDefault && DefaultRule != null)
-            {
-                bool ruleApplied;
-                bool ruleSuccess;
-
-                DefaultRule.Execute(context, out ruleApplied, out ruleSuccess);   
-             
-                if (!ruleSuccess)
+                foreach (Rule theRule in _ruleList)
                 {
-                    Platform.Log(LogLevel.Error, "Unable to apply default rule of type {0}", Type.Description);
+                    bool ruleApplied;
+                    bool ruleSuccess;
+
+                    theRule.Execute(context, false, out ruleApplied, out ruleSuccess);
+
+                    if (ruleApplied && ruleSuccess)
+                        doDefault = false;
                 }
+
+                if (doDefault && DefaultRule != null)
+                {
+                    bool ruleApplied;
+                    bool ruleSuccess;
+
+                    DefaultRule.Execute(context, true, out ruleApplied, out ruleSuccess);
+
+                    if (!ruleSuccess)
+                    {
+                        Platform.Log(LogLevel.Error, "Unable to apply default rule of type {0}", Type.Description);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Platform.Log(LogLevel.Error, e, "Unexpected exception when applying rule of type: {0}", Type.Description);
             }
         }
         #endregion

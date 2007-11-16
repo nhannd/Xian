@@ -29,63 +29,58 @@
 
 #endregion
 
-using ClearCanvas.Dicom;
+using System;
+using ClearCanvas.Common;
+using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Enterprise;
+using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Model.Brokers;
+using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Rules
 {
-    /// <summary>
-    /// A context used when applying rules and actions within the ImageServer.
-    /// </summary>
-    /// <remarks>
-    /// This class is used to pass information to rules and to the action procesor
-    /// when applying rules within the ImageServer.  It should contain enough
-    /// information to apply a given Action for a rule.
-    /// </remarks>
-    /// <seealso cref="ServerRulesEngine"/>
-    public class ServerActionContext
+    public class InsertFilesystemQueueCommand : ServerCommand
     {
-        #region Private Members
-        private readonly DicomMessageBase _msg;
-        private ServerCommandProcessor _commandProcessor;
-        private readonly ServerEntityKey _serverPartitionKey;
-        private readonly ServerEntityKey _studyLocationKey;
+        private readonly FilesystemQueueTypeEnum _queueType;
         private readonly ServerEntityKey _filesystemKey;
-        #endregion
+        private readonly ServerEntityKey _studyStorageKey;
+        private readonly DateTime _scheduledTime;
 
-        #region Constructors
-        public ServerActionContext(DicomMessageBase msg, ServerEntityKey filesystemKey, ServerEntityKey serverPartitionKey, ServerEntityKey studyLocationKey)
+        public InsertFilesystemQueueCommand(FilesystemQueueTypeEnum queueType, ServerEntityKey filesystemKey, ServerEntityKey studyStorageKey, DateTime scheduledTime )
+            : base("Insert FilesystemQueue", true)
         {
-            _msg = msg;
-            _serverPartitionKey = serverPartitionKey;
-            _studyLocationKey = studyLocationKey;
+            _queueType = queueType;
             _filesystemKey = filesystemKey;
+            _studyStorageKey = studyStorageKey;
+            _scheduledTime = scheduledTime;
         }
-        #endregion
 
-        #region Public Properties
-        public DicomMessageBase Message
+        public override void Execute()
         {
-            get { return _msg; }
+            using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            {
+                FilesystemQueueInsertParameters parms = new FilesystemQueueInsertParameters();
+
+                parms.FilesystemQueueTypeEnum = _queueType;
+                parms.ScheduledTime = _scheduledTime;
+                parms.StudyStorageKey = _studyStorageKey;
+                parms.FilesystemKey = _filesystemKey;
+
+                IInsertFilesystemQueue insertQueue = updateContext.GetBroker<IInsertFilesystemQueue>();
+
+                if (false == insertQueue.Execute(parms))
+                {
+                    Platform.Log(LogLevel.Error, "Unexpected failure inserting FilesystemQueue entry");
+                }
+
+                updateContext.Commit();
+            }  
         }
-        public ServerCommandProcessor CommandProcessor
+
+        public override void Undo()
         {
-            get { return _commandProcessor; }
-            set { _commandProcessor = value; }
+            
         }
-        public ServerEntityKey ServerPartitionKey
-        {
-            get { return _serverPartitionKey; }
-        }
-        public ServerEntityKey FilesystemKey
-        {
-            get { return _filesystemKey; }
-        }
-        public ServerEntityKey StudyLocationKey
-        {
-            get { return _studyLocationKey; }
-        }
-        #endregion
     }
 }

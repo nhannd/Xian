@@ -62,6 +62,21 @@ INSERT INTO [ImageServer].[dbo].[ServerRuleTypeEnum]
      VALUES
            (newid(),100,'AutoRoute','Auto Routing','A DICOM auto-routing rule')
 
+INSERT INTO [ImageServer].[dbo].[ServerRuleTypeEnum]
+           ([GUID],[ServerRuleTypeEnum],[Lookup],[Description],[LongDescription])
+     VALUES
+           (newid(),101,'StudyDelete','Study Delete','A rule to specify when to delete a study')
+
+INSERT INTO [ImageServer].[dbo].[ServerRuleTypeEnum]
+           ([GUID],[ServerRuleTypeEnum],[Lookup],[Description],[LongDescription])
+     VALUES
+           (newid(),102,'Tier1Retention','Tier1 Retention','A rule to specify how long a study will be retained on Tier1')
+
+INSERT INTO [ImageServer].[dbo].[ServerRuleTypeEnum]
+           ([GUID],[ServerRuleTypeEnum],[Lookup],[Description],[LongDescription])
+     VALUES
+           (newid(),103,'OnlineRetention','Online Retention','A rule to specify how long a study will be retained online')
+
 
 -- ServerRuleApplyTimeEnum inserts
 INSERT INTO [ImageServer].[dbo].[ServerRuleApplyTimeEnum]

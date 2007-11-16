@@ -87,12 +87,16 @@ namespace ClearCanvas.ImageServer.Rules
             _actions = actionCompiler.Compile(actionNode as XmlElement);
         }
 
-        public void Execute(ServerActionContext context, out bool ruleApplied, out bool ruleSuccess)
+        public void Execute(ServerActionContext context, bool defaultRule, out bool ruleApplied, out bool ruleSuccess)
         {
             ruleApplied = false;
             ruleSuccess = true;
 
-            TestResult result = _conditions.Test(context.Message);
+            TestResult result;
+            if (defaultRule) // just skip the evaluation
+                result = new TestResult(true);
+            else
+                result = _conditions.Test(context.Message);
             
             if (result.Success)
             {

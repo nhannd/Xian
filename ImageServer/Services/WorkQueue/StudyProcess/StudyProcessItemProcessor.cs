@@ -73,9 +73,16 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                 _studyProcessedRulesEngine = new ServerRulesEngine(ServerRuleApplyTimeEnum.GetEnum("StudyProcessed"));
                 _studyProcessedRulesEngine.Load();
             }
-            ServerActionContext context = new ServerActionContext(file,item.ServerPartitionKey,item.StudyStorageKey);
+            ServerActionContext context = new ServerActionContext(file,StorageLocation.FilesystemKey, item.ServerPartitionKey,item.StudyStorageKey);
+
+            context.CommandProcessor = new ServerCommandProcessor("Study Rule Processor");
 
             _studyProcessedRulesEngine.Execute(context);
+
+            if (false == context.CommandProcessor.Execute())
+            {
+                
+            }
         }
 
         /// <summary>
@@ -90,9 +97,16 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                 _seriesProcessedRulesEngine = new ServerRulesEngine(ServerRuleApplyTimeEnum.GetEnum("SeriesProcessed"));
                 _seriesProcessedRulesEngine.Load();
             }
-            ServerActionContext context = new ServerActionContext(file, item.ServerPartitionKey, item.StudyStorageKey);
+            ServerActionContext context = new ServerActionContext(file, StorageLocation.FilesystemKey, item.ServerPartitionKey, item.StudyStorageKey);
+
+            context.CommandProcessor = new ServerCommandProcessor("Series Rule Processor");
 
             _seriesProcessedRulesEngine.Execute(context);
+
+            if (false == context.CommandProcessor.Execute())
+            {
+
+            }
         }
 
         /// <summary>
@@ -126,7 +140,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
                 // Create a context for applying actions from the rules engine
                 ServerActionContext context =
-                    new ServerActionContext(file, item.ServerPartitionKey, item.StudyStorageKey);
+                    new ServerActionContext(file, StorageLocation.FilesystemKey, item.ServerPartitionKey, item.StudyStorageKey);
                 context.CommandProcessor = processor;
 
                 // Run the rules engine against the object.
