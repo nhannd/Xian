@@ -107,12 +107,17 @@ namespace ClearCanvas.Ris.Client.Adt
                     PersonNameFormat.Format(item.Name),
                     MrnFormat.Format(item.Mrn));
 
-                ShowVisitSummaryDialog(item.PatientProfileRef, title, context.DesktopWindow);
+                ShowVisitSummaryDialog(item.PatientRef, title, context.DesktopWindow);
             }
             else if (this.ContextBase is IPatientBiographyToolContext)
             {
                 IPatientBiographyToolContext context = (IPatientBiographyToolContext)this.ContextBase;
-                ShowVisitSummaryDialog(context.PatientProfileRef, SR.TitlePatientVisits, context.DesktopWindow);
+
+                string title = string.Format(SR.TitleVisitSummaryComponent,
+                    PersonNameFormat.Format(context.PatientProfile.Name),
+                    MrnFormat.Format(context.PatientProfile.Mrn));
+
+                ShowVisitSummaryDialog(context.PatientRef, title, context.DesktopWindow);
             }
         }
 

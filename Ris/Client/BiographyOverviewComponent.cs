@@ -59,6 +59,7 @@ namespace ClearCanvas.Ris.Client
     {
         EntityRef PatientRef { get; }
         EntityRef PatientProfileRef { get; }
+        PatientProfileDetail PatientProfile { get; }
         IDesktopWindow DesktopWindow { get; }
     }
 
@@ -99,6 +100,11 @@ namespace ClearCanvas.Ris.Client
             public EntityRef PatientProfileRef
             {
                 get { return _component._profileRef; }
+            }
+
+            public PatientProfileDetail PatientProfile
+            {
+                get { return _component._patientProfile;  }
             }
 
             public IDesktopWindow DesktopWindow
