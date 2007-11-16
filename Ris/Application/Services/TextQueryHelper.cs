@@ -25,7 +25,7 @@ namespace ClearCanvas.Ris.Application.Services
                 name.FamilyName = string.Join(" ", terms, 0, i + 1);
                 if (i < terms.Length - 1)
                 {
-                    name.GivenName = string.Join(" ", terms, i + 1, terms.Length - i);
+                    name.GivenName = string.Join(" ", terms, i + 1, terms.Length - i - 1);
                 }
                 names.Add(name);
             }
@@ -96,21 +96,7 @@ namespace ClearCanvas.Ris.Application.Services
             Platform.CheckArgumentRange(request.SpecificityThreshold, 0, 1000, "SpecificityThreshold");
 
 
-            // split query on spaces or commas
-            List<string> words = CollectionUtils.Map<string, string>(request.TextQuery.Split(',', ' '),
-                delegate (string word)
-                    {
-                        return word.Trim();
-                    });
-
-            // reject empty words
-            words = CollectionUtils.Reject<string>(words,
-               delegate(string word)
-                   {
-                       return string.IsNullOrEmpty(word);
-                   });
-
-            if (words.Count == 0)
+            if (string.IsNullOrEmpty(request.TextQuery))
                 return new TextQueryResponse<TSummary>(true, new List<TSummary>());
 
 

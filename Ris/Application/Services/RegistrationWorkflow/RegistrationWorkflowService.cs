@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using ClearCanvas.Common;
@@ -38,12 +39,10 @@ using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Alert;
 using ClearCanvas.Healthcare.Brokers;
+using ClearCanvas.Healthcare.Workflow;
 using ClearCanvas.Healthcare.Workflow.Registration;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
-using ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry;
-using System;
-using ClearCanvas.Healthcare.Workflow;
 
 namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 {
@@ -79,43 +78,10 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         }
 
         [ReadOperation]
-        public SearchPatientResponse SearchPatient(SearchPatientRequest request)
+        public TextQueryResponse<PatientProfileSummary> ProfileTextQuery(TextQueryRequest request)
         {
-            PatientProfileSearchCriteria criteria = new PatientProfileSearchCriteria();
-            if (!String.IsNullOrEmpty(request.MrnID))
-                criteria.Mrn.Id.StartsWith(request.MrnID);
-
-            if (!String.IsNullOrEmpty(request.MrnAssigningAuthority))
-                criteria.Mrn.AssigningAuthority.StartsWith(request.MrnAssigningAuthority);
-
-            if (!String.IsNullOrEmpty(request.HealthcardID))
-                criteria.Mrn.Id.StartsWith(request.HealthcardID);
-
-            if (!String.IsNullOrEmpty(request.FamilyName))
-                criteria.Name.FamilyName.StartsWith(request.FamilyName);
-
-            if (!String.IsNullOrEmpty(request.GivenName))
-                criteria.Name.GivenName.StartsWith(request.GivenName);
-
-            if (request.Sex != null)
-                criteria.Sex.EqualTo(EnumUtils.GetEnumValue<Sex>(request.Sex));
-
-            if (request.DateOfBirth != null)
-            {
-                DateTime start = ((DateTime)request.DateOfBirth).Date;
-                DateTime end = start + new TimeSpan(23, 59, 59);
-                criteria.DateOfBirth.Between(start, end);
-            }
-
-            IList<PatientProfile> result = PersistenceContext.GetBroker<IPatientProfileBroker>().Find(criteria);
-
-            PatientProfileAssembler assembler = new PatientProfileAssembler();
-            return new SearchPatientResponse(
-                CollectionUtils.Map<PatientProfile, PatientProfileSummary, List<PatientProfileSummary>>(result,
-                delegate(PatientProfile profile)
-                {
-                    return assembler.CreatePatientProfileSummary(profile, this.PersistenceContext);
-                }));
+            ProfileTextQueryHelper helper = new ProfileTextQueryHelper(this.PersistenceContext);
+            return helper.Query(request);
         }
 
         [ReadOperation]

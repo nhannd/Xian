@@ -85,6 +85,7 @@
     <Compile Include="ModalityProcedureStepAssembler.cs" />
     <Compile Include="OrderAssembler.cs" />
     <Compile Include="ProcedurePlanAssembler.cs" />
+    <Compile Include="ProfileTextQueryHelper.cs" />
     <Compile Include="ProtocolProcedureStepAssembler.cs" />
     <Compile Include="RequestedProcedureAssembler.cs" />
     <Compile Include="TextQueryHelper.cs" />

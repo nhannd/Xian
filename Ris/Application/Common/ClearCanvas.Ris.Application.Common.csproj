@@ -325,8 +325,6 @@
     <Compile Include="RegistrationWorkflow\LoadSearchPatientFormDataResponse.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\ReplaceOrderRequest.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\ReplaceOrderResponse.cs" />
-    <Compile Include="RegistrationWorkflow\SearchPatientRequest.cs" />
-    <Compile Include="RegistrationWorkflow\SearchPatientResponse.cs" />
     <Compile Include="RegistrationWorkflow\SearchRequest.cs" />
     <Compile Include="RegistrationWorkflow\SearchResponse.cs" />
     <Compile Include="ReportingWorkflow\GetRadiologistListRequest.cs" />

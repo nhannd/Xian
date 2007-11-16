@@ -49,12 +49,12 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
         SearchResponse Search(SearchRequest request);
 
         /// <summary>
-        /// Search for Patient
+        /// Returns a list of patient profiles based on a textual query.
         /// </summary>
-        /// <param name="request"><see cref="SearchPatientRequest"/></param>
-        /// <returns><see cref="SearchPatientResponse"/></returns>
+        /// <param name="request"><see cref="TextQueryRequest"/></param>
+        /// <returns></returns>
         [OperationContract]
-        SearchPatientResponse SearchPatient(SearchPatientRequest request);
+        TextQueryResponse<PatientProfileSummary> ProfileTextQuery(TextQueryRequest request);
 
         /// <summary>
         /// Load data required for the patient search

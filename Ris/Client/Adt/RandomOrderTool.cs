@@ -117,26 +117,21 @@ namespace ClearCanvas.Ris.Client.Adt
             Platform.GetService<IRegistrationWorkflowService>(
                 delegate(IRegistrationWorkflowService service)
                 {
-                    SearchPatientRequest request = new SearchPatientRequest();
-                    request.GivenName = randomChar.ToString();
-                    SearchPatientResponse response = service.SearchPatient(request);
-                    randomProfile = RandomUtils.ChooseRandom(response.Profiles);
+                    TextQueryRequest request = new TextQueryRequest();
+                    request.TextQuery = randomChar.ToString();
+                    TextQueryResponse<PatientProfileSummary> response = null;
+                    response = service.ProfileTextQuery(request);
+                    if (!response.TooManyMatches)
+                        randomProfile = RandomUtils.ChooseRandom(response.Matches);
 
                     if (randomProfile == null)
                     {
                         // Search for all male patient, slow but works
-                        request = new SearchPatientRequest();
-                        request.Sex = new EnumValueInfo("M", "Male");
-                        response = service.SearchPatient(request);
-                        randomProfile = RandomUtils.ChooseRandom(response.Profiles);
-
-                        if (randomProfile == null)
-                        {
-                            // Search for all female patient
-                            request.Sex = new EnumValueInfo("F", "Female");
-                            response = service.SearchPatient(request);
-                            randomProfile = RandomUtils.ChooseRandom(response.Profiles);
-                        }
+                        request.TextQuery = "Male Female Unknown";
+                        response = service.ProfileTextQuery(request);
+                        randomProfile = RandomUtils.ChooseRandom(response.Matches);
+                        if (!response.TooManyMatches)
+                            randomProfile = RandomUtils.ChooseRandom(response.Matches);
                     }
                 });
 

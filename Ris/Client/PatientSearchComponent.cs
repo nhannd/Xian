@@ -63,15 +63,7 @@ namespace ClearCanvas.Ris.Client
             }
         }
 
-        private string _mrnID;
-        private string _mrnAssigningAuthority;
-        private string _healthcard;
-        private string _familyName;
-        private string _givenName;
-        private EnumValueInfo _sex;
-        private DateTime? _dateOfBirth;
-
-        private List<EnumValueInfo> _sexChoices;
+        private string _searchString;
 
         private PatientProfileTable _profileTable;
         private PatientProfileSummary _selectedProfile;
@@ -83,20 +75,6 @@ namespace ClearCanvas.Ris.Client
         {
             _profileTable = new PatientProfileTable();
             _toolSet = new ToolSet(new PatientSearchToolExtensionPoint(), new PatientSearchToolContext(this));
-
-            try
-            {
-                Platform.GetService<IRegistrationWorkflowService>(
-                    delegate(IRegistrationWorkflowService service)
-                        {
-                            LoadSearchPatientFormDataResponse response = service.LoadSearchPatientFormData(new LoadSearchPatientFormDataRequest());
-                            _sexChoices = response.SexChoices;
-                        });
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
 
             base.Start();
         }
@@ -110,78 +88,15 @@ namespace ClearCanvas.Ris.Client
 
         #region Presentation Model
 
-        public string MrnID
+        public string SearchString
         {
-            get { return _mrnID; }
-            set { _mrnID = value; }
-        }
-
-        public string MrnAssigningAuthority
-        {
-            get { return _mrnAssigningAuthority; }
-            set { _mrnAssigningAuthority = value; }
-        }
-
-        public string Healthcard
-        {
-            get { return _healthcard; }
-            set { _healthcard = value; }
-        }
-
-        public string HealthcardMask
-        {
-            get { return TextFieldMasks.HealthcardNumberMask; }
-        }
-
-        public string FamilyName
-        {
-            get { return _familyName; }
-            set { _familyName = value; }
-        }
-
-        public string GivenName
-        {
-            get { return _givenName; }
-            set { _givenName = value; }
-        }
-
-        public string Sex
-        {
-            get { return _sex != null ? _sex.Value : null; }
-            set
-            {
-                _sex = EnumValueUtils.MapDisplayValue(_sexChoices, value);
-            }
-        }
-
-        public DateTime? DateOfBirth
-        {
-            get { return _dateOfBirth; }
-            set { _dateOfBirth = value; }
+            get { return _searchString; }
+            set { _searchString = value; }
         }
 
         public bool SearchEnabled
         {
-            get
-            {
-                return !String.IsNullOrEmpty(_mrnID) ||
-                       !String.IsNullOrEmpty(_mrnAssigningAuthority) ||
-                       !String.IsNullOrEmpty(_healthcard) ||
-                       !String.IsNullOrEmpty(_familyName) ||
-                       !String.IsNullOrEmpty(_givenName) ||
-                       _sex != null ||
-                       _dateOfBirth != null;
-            }
-        }
-
-        public List<string> SexChoices
-        {
-            get
-            {
-                List<string> displayList = EnumValueUtils.GetDisplayValues(_sexChoices);
-                displayList.Insert(0, "Any");
-                return displayList;
-            }
+            get { return !String.IsNullOrEmpty(_searchString); }
         }
 
         public ITable Profiles
@@ -215,8 +130,11 @@ namespace ClearCanvas.Ris.Client
             get { return new Selection(_selectedProfile); }
             set
             {
-                _selectedProfile = (PatientProfileSummary)value.Item;
-                EventsHelper.Fire(_selectedProfileChanged, this, EventArgs.Empty);
+                if (!Equals(_selectedProfile, value.Item))
+                {
+                    _selectedProfile = (PatientProfileSummary)value.Item;
+                    EventsHelper.Fire(_selectedProfileChanged, this, EventArgs.Empty);
+                }
             }
         }
 
@@ -231,21 +149,19 @@ namespace ClearCanvas.Ris.Client
             try
             {
                 _profileTable.Items.Clear();
-
+                
                 Platform.GetService<IRegistrationWorkflowService>(
                     delegate(IRegistrationWorkflowService service)
                     {
-                        SearchPatientResponse response = service.SearchPatient(
-                            new SearchPatientRequest(
-                            _mrnID,
-                            _mrnAssigningAuthority,
-                            _healthcard, 
-                            _familyName, 
-                            _givenName,
-                            _sex,
-                            _dateOfBirth));
+                        TextQueryRequest request = new TextQueryRequest();
+                        request.TextQuery = _searchString;
+                        TextQueryResponse<PatientProfileSummary> response = null;
+                        response = service.ProfileTextQuery(request);
 
-                        _profileTable.Items.AddRange(response.Profiles);
+                        if (!response.TooManyMatches)
+                        {
+                            _profileTable.Items.AddRange(response.Matches);
+                        }
                     });
 
                 this.SelectedProfile = new Selection(_profileTable.Items.Count > 0 ? _profileTable.Items[0] : null);
