@@ -32,7 +32,7 @@
                      GetPatientAlertsRequest:         {}
                   };
 
-                  var service = Ris.getService("ClearCanvas.Ris.Application.Common.PreviewService.IPreviewService, ClearCanvas.Ris.Application.Common");
+                  var service = Ris.getService("ClearCanvas.Ris.Application.Common.BrowsePatientData.IBrowsePatientDataService, ClearCanvas.Ris.Application.Common");
                   data = service.getData(request);
 
                   if (data == null || data.length == 0)
