@@ -41,7 +41,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
             this.protocolCodesSelector = new ClearCanvas.Desktop.View.WinForms.ListItemSelector();
-            this.comboBoxField1 = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
+            this._protocolGroup = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.splitContainer4 = new System.Windows.Forms.SplitContainer();
             this._protocolNotesSummaryPanel = new System.Windows.Forms.Panel();
@@ -241,7 +241,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel3.Controls.Add(this.protocolCodesSelector, 0, 1);
-            this.tableLayoutPanel3.Controls.Add(this.comboBoxField1, 0, 0);
+            this.tableLayoutPanel3.Controls.Add(this._protocolGroup, 0, 0);
             this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel3.Location = new System.Drawing.Point(3, 16);
             this.tableLayoutPanel3.Name = "tableLayoutPanel3";
@@ -264,22 +264,22 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this.protocolCodesSelector.Size = new System.Drawing.Size(884, 396);
             this.protocolCodesSelector.TabIndex = 0;
             // 
-            // comboBoxField1
+            // _protocolGroup
             // 
-            this.comboBoxField1.AutoSize = true;
-            this.comboBoxField1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.comboBoxField1.DataSource = null;
-            this.comboBoxField1.DisplayMember = "";
-            this.comboBoxField1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.comboBoxField1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBoxField1.Enabled = false;
-            this.comboBoxField1.LabelText = "Protocol Group";
-            this.comboBoxField1.Location = new System.Drawing.Point(2, 2);
-            this.comboBoxField1.Margin = new System.Windows.Forms.Padding(2);
-            this.comboBoxField1.Name = "comboBoxField1";
-            this.comboBoxField1.Size = new System.Drawing.Size(441, 41);
-            this.comboBoxField1.TabIndex = 0;
-            this.comboBoxField1.Value = null;
+            this._protocolGroup.AutoSize = true;
+            this._protocolGroup.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this._protocolGroup.DataSource = null;
+            this._protocolGroup.DisplayMember = "";
+            this._protocolGroup.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._protocolGroup.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this._protocolGroup.Enabled = true;
+            this._protocolGroup.LabelText = "Protocol Group";
+            this._protocolGroup.Location = new System.Drawing.Point(2, 2);
+            this._protocolGroup.Margin = new System.Windows.Forms.Padding(2);
+            this._protocolGroup.Name = "_protocolGroup";
+            this._protocolGroup.Size = new System.Drawing.Size(441, 41);
+            this._protocolGroup.TabIndex = 0;
+            this._protocolGroup.Value = null;
             // 
             // groupBox2
             // 
@@ -511,7 +511,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.Panel _protocolNotesSummaryPanel;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
-        private ClearCanvas.Desktop.View.WinForms.ComboBoxField comboBoxField1;
+        private ClearCanvas.Desktop.View.WinForms.ComboBoxField _protocolGroup;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel2;
         private System.Windows.Forms.Button btnAccept;

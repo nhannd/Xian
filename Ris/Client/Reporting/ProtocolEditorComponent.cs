@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
@@ -107,6 +108,9 @@ namespace ClearCanvas.Ris.Client.Reporting
         private bool _suspendEnabled;
         private bool _saveEnabled;
 
+        private List<ProtocolGroupSummary> _protocolGroupChoices;
+        private ProtocolGroupSummary _protocolGroup;
+
         private event EventHandler _protocolAccepted;
         private event EventHandler _protocolRejected;
         private event EventHandler _protocolSuspended;
@@ -129,6 +133,7 @@ namespace ClearCanvas.Ris.Client.Reporting
         {
             _availableProtocolCodes = new ProtocolCodeTable();
             _selectedProtocolCodes = new ProtocolCodeTable();
+            _protocolGroupChoices = new List<ProtocolGroupSummary>();
 
             InitializeProcedurePlanSummary();
 
@@ -162,6 +167,31 @@ namespace ClearCanvas.Ris.Client.Reporting
             get { return _protocolNoteSummaryComponentHost; }
         }
 
+        public IList<string> ProtocolGroupChoices
+        {
+            get
+            {
+                return CollectionUtils.Map<ProtocolGroupSummary, string>(
+                    _protocolGroupChoices,
+                    delegate(ProtocolGroupSummary summary) { return summary.Name; });
+            }
+        }
+
+        public string ProtocolGroup
+        {
+            get { return _protocolGroup == null ? "" : _protocolGroup.Name; }
+            set
+            {
+                _protocolGroup = (value == null) 
+                    ? null 
+                    : CollectionUtils.SelectFirst<ProtocolGroupSummary>(
+                        _protocolGroupChoices, 
+                        delegate(ProtocolGroupSummary summary) { return summary.Name == value; });
+
+                OnProtocolGroupSelectionChanged();
+            }
+        }
+
         public ITable ProcedurePlanSummaryTable
         {
             get { return _procedurePlanSummaryTable; }
@@ -187,7 +217,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                 {
                     if( item != _selectedProcodurePlanSummaryTableItem)
                     {
-                        OnSelectionChanged(item);
+                        OnProcedureSelectionChanged(item);
                     }
                 }
                 else
@@ -404,7 +434,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                 });
         }
 
-        private void OnSelectionChanged(ProtocolEditorProcedurePlanSummaryTableItem item)
+        private void OnProcedureSelectionChanged(ProtocolEditorProcedurePlanSummaryTableItem item)
         {
             ResetDocument();
 
@@ -414,24 +444,47 @@ namespace ClearCanvas.Ris.Client.Reporting
             Platform.GetService<IProtocollingWorkflowService>(
                 delegate(IProtocollingWorkflowService service)
                 {
-                    ListProtocolCodesRequest protocolCodesRequest = new ListProtocolCodesRequest();
-                    ListProtocolCodesResponse protocolCodesResponse = service.ListProtocolCodes(protocolCodesRequest);
+                    // Load available protocol groups
+                    ListProtocolGroupsForProcedureRequest request = new ListProtocolGroupsForProcedureRequest(item.RequestedProcedureDetail.RequestedProcedureRef);
+                    ListProtocolGroupsForProcedureResponse response = service.ListProtocolGroupsForProcedure(request);
 
-                    _availableProtocolCodes.Items.AddRange(protocolCodesResponse.Codes);
+                    _protocolGroupChoices = response.ProtocolGroups;
+                    _protocolGroup = response.InitialProtocolGroup;
+
+                    RefreshAvailableProtocolCodes(item.ProtocolDetail.Codes, service);
 
                     // fill out selected item codes
                     _selectedProtocolCodes.Items.Clear();
                     _selectedProtocolCodes.Items.AddRange(item.ProtocolDetail.Codes);
-
-                    foreach (ProtocolCodeDetail code in item.ProtocolDetail.Codes)
-                    {
-                        _availableProtocolCodes.Items.Remove(code);
-                    }
                 });
 
             _selectedProcodurePlanSummaryTableItem = item;
 
             EventsHelper.Fire(_selectionChanged, this, EventArgs.Empty);
+            NotifyPropertyChanged("ProtocolGroupChoices");
+        }
+
+        private void OnProtocolGroupSelectionChanged()
+        {
+            Platform.GetService<IProtocollingWorkflowService>(
+                delegate(IProtocollingWorkflowService service)
+                    {
+                        RefreshAvailableProtocolCodes(_selectedProcodurePlanSummaryTableItem.ProtocolDetail.Codes, service);
+                    });
+        }
+
+        private void RefreshAvailableProtocolCodes(IList<ProtocolCodeDetail> existingSelectedCodes, IProtocollingWorkflowService service)
+        {
+            GetProtocolGroupDetailRequest protocolCodesDetailRequest = new GetProtocolGroupDetailRequest(_protocolGroup);
+            GetProtocolGroupDetailResponse protocolCodesDetailResponse = service.GetProtocolGroupDetail(protocolCodesDetailRequest);
+
+            _availableProtocolCodes.Items.Clear();
+            _availableProtocolCodes.Items.AddRange(protocolCodesDetailResponse.ProtocolGroup.Codes);
+
+            foreach (ProtocolCodeDetail code in existingSelectedCodes)
+            {
+                _availableProtocolCodes.Items.Remove(code);
+            }
         }
 
         private void ResetDocument()
@@ -452,7 +505,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         private void SavePreviouslySelectedItemsProtocolCodes()
         {
-//Save codes to existing 
+            //Save codes to existing 
             if (_selectedProcodurePlanSummaryTableItem != null)
             {
                 _selectedProcodurePlanSummaryTableItem.ProtocolDetail.Codes.Clear();

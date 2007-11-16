@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
@@ -57,6 +58,26 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
                 ProtocolCode code = context.Load<ProtocolCode>(codeDetail.EntityRef, EntityLoadFlags.Proxy);
                 protocol.Codes.Add(code);
             }
+        }
+
+        public ProtocolGroupSummary CreateProtocolGroupSummary(ProtocolGroup group)
+        {
+            return new ProtocolGroupSummary(group.GetRef(), group.Name, group.Description);
+        }
+
+        public ProtocolGroupDetail CreateProtocolGroupDetail(ProtocolGroup group, IPersistenceContext context)
+        {
+            List<ProtocolCodeDetail> codes = CollectionUtils.Map<ProtocolCode, ProtocolCodeDetail>(
+                group.Codes,
+                delegate(ProtocolCode code) { return CreateProtocolCodeDetail(code); });
+
+            RequestedProcedureTypeGroupAssembler assembler = new RequestedProcedureTypeGroupAssembler();
+            List<RequestedProcedureTypeGroupSummary> groups =
+                CollectionUtils.Map<RequestedProcedureTypeGroup, RequestedProcedureTypeGroupSummary>(
+                    group.ReadingGroups,
+                    delegate(RequestedProcedureTypeGroup readingGroup) { return assembler.GetRequestedProcedureTypeGroupSummary(readingGroup, context); });
+
+            return new ProtocolGroupDetail(group.Name, group.Description, codes, groups);
         }
     }
 }

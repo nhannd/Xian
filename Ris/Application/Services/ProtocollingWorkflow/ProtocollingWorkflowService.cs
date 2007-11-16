@@ -7,7 +7,6 @@ using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ProtocollingWorkflow;
-using ClearCanvas.Workflow;
 
 namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 {
@@ -18,15 +17,27 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
         #region IProtocollingWorkflowService Members
 
         [ReadOperation]
-        public ListProtocolCodesResponse ListProtocolCodes(ListProtocolCodesRequest request)
+        public ListProtocolGroupsForProcedureResponse ListProtocolGroupsForProcedure(ListProtocolGroupsForProcedureRequest request)
         {
             ProtocollingWorkflowAssembler assembler = new ProtocollingWorkflowAssembler();
 
-            List<ProtocolCodeDetail> codes = CollectionUtils.Map<ProtocolCode, ProtocolCodeDetail>(
-                this.PersistenceContext.GetBroker<IProtocolCodeBroker>().FindAll(),
-                delegate(ProtocolCode pc) { return assembler.CreateProtocolCodeDetail(pc); });
+            List<ProtocolGroupSummary> groups = CollectionUtils.Map<ProtocolGroup, ProtocolGroupSummary>(
+                this.PersistenceContext.GetBroker<IProtocolGroupBroker>().FindAll(),
+                delegate(ProtocolGroup protocolGroup) { return assembler.CreateProtocolGroupSummary(protocolGroup); });
 
-            return new ListProtocolCodesResponse(codes);
+            ProtocolGroupSummary initialProtocolGroup = CollectionUtils.FirstElement<ProtocolGroupSummary>(groups);
+
+            return new ListProtocolGroupsForProcedureResponse(groups, initialProtocolGroup);
+        }
+
+        [ReadOperation]
+        public GetProtocolGroupDetailResponse GetProtocolGroupDetail(GetProtocolGroupDetailRequest request)
+        {
+            ProtocolGroup protocolGroup = this.PersistenceContext.Load<ProtocolGroup>(request.ProtocolGroup.EntityRef);
+            
+            ProtocollingWorkflowAssembler assembler = new ProtocollingWorkflowAssembler();
+
+            return new GetProtocolGroupDetailResponse(assembler.CreateProtocolGroupDetail(protocolGroup, this.PersistenceContext));
         }
 
         [ReadOperation]

@@ -29,10 +29,12 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             protocolNotesSummary.Dock = DockStyle.Fill;
             _protocolNotesSummaryPanel.Controls.Add(protocolNotesSummary);
 
+            _protocolGroup.DataSource = _component.ProtocolGroupChoices;
+            _protocolGroup.DataBindings.Add("Value", _component, "ProtocolGroup", true, DataSourceUpdateMode.OnPropertyChanged);
+            _component.PropertyChanged += _component_PropertyChanged;
+
             _procedurePlanSummary.Table = _component.ProcedurePlanSummaryTable;
             _procedurePlanSummary.DataBindings.Add("Selection", _component, "SelectedRequestedProcedure", true, DataSourceUpdateMode.OnPropertyChanged);
-            //_procedurePlanSummary.MenuModel = _component.ProcedurePlanTreeActionModel;
-            //_procedurePlanSummary.ToolbarModel = _component.ProcedurePlanTreeActionModel;
             _component.SelectionChanged += RefreshTables;
 
             protocolCodesSelector.AvailableItemsTable = _component.AvailableProtocolCodesTable;
@@ -43,6 +45,14 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             btnReject.DataBindings.Add("Enabled", _component, "RejectEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
             btnSuspend.DataBindings.Add("Enabled", _component, "SuspendEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
             btnSave.DataBindings.Add("Enabled", _component, "SaveEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
+        }
+
+        void _component_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if(e.PropertyName == "ProtocolGroupChoices")
+            {
+                _protocolGroup.DataSource = _component.ProtocolGroupChoices;
+            }
         }
 
         private void RefreshTables(object sender, EventArgs e)
