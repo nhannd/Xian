@@ -15,7 +15,10 @@ namespace ClearCanvas.Ris.Application.Services
     {
         public static PersonName[] ParsePersonNames(string query)
         {
-            Regex termDefinition = new Regex(@"[A-Za-z][A-Za-z'\-]*");
+            // define a term as anything starting with a letter, and followed by letters, hyphen (-) or apostrophe (')
+            // we allow hyphens for hyphenated surnames (wyatt-jones)
+            // allow apostrophe for names like O'Leary
+            Regex termDefinition = new Regex(@"\b[A-Za-z][A-Za-z'\-]*\b");
             string[] terms = ParseTerms(query, termDefinition);
 
             List<PersonName> names = new List<PersonName>();
@@ -34,7 +37,8 @@ namespace ClearCanvas.Ris.Application.Services
 
         public static string[] ParseIdentifiers(string query)
         {
-            Regex termDefinition = new Regex(@"[A-Za-z\d]*\d[A-Za-z\d]*");
+            // define an identifier as anything containing at least 1 digit, and any other alpha-digit chars
+            Regex termDefinition = new Regex(@"\b[A-Za-z\d]*\d[A-Za-z\d]*\b");
             return ParseTerms(query, termDefinition);
         }
 
