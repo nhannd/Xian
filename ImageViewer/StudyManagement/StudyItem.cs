@@ -157,6 +157,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement
             set { _server = value; }
         }
 
+		/// <summary>
+		/// Returns the patient's name, patient ID and study date associated
+		/// with the <see cref="StudyItem"/> in string form.
+		/// </summary>
+		/// <returns></returns>
 		public override string ToString()
 		{
 			DateTime studyDate;
@@ -189,6 +194,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	/// </summary>
 	public class StudyItemList : List<StudyItem>
 	{
+		/// <summary>
+		/// Initializes a new instance of <see cref="StudyItemList"/>.
+		/// </summary>
 		public StudyItemList()
 		{
 		}
@@ -199,6 +207,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	/// </summary>
 	public class QueryParameters : Dictionary<string,string>
 	{
+		/// <summary>
+		/// Initializes a new instance of <see cref="QueryParameters"/>.
+		/// </summary>
 		public QueryParameters()
 		{
 		}

@@ -35,16 +35,30 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Graphics
 {
-	// TODO (Norman): Implement HitTest and Move
+	/// <summary>
+	/// A primitive point graphic.
+	/// </summary>
 	public class PointPrimitive : VectorGraphic
 	{
 		private PointF _point;
 
+		/// <summary>
+		/// Initializes a new instance of <see cref="PointPrimitive"/>.
+		/// </summary>
+		/// <param name="point"></param>
 		public PointPrimitive(PointF point)
 		{
 			this.Point = point;
 		}
 
+		/// <summary>
+		/// Gets or sets the location of the point in either source
+		/// or destination coordinates.
+		/// </summary>
+		/// <remarks>
+		/// <see cref="IGraphic.CoordinateSystem"/> determines whether this
+		/// property is in source or destination coordinates.
+		/// </remarks>
 		public PointF Point
 		{
 			get 
@@ -69,14 +83,23 @@ namespace ClearCanvas.ImageViewer.Graphics
 			}
 		}
 
+		/// <summary>
+		/// Performs a hit test on the <see cref="PointPrimitive"/>.
+		/// </summary>
+		/// <param name="point"></param>
+		/// <returns></returns>
 		public override bool HitTest(Point point)
 		{
-			throw new Exception("The method or operation is not implemented.");
+			return _point == point;
 		}
 
+		/// <summary>
+		/// Move the <see cref="PointPrimitive"/> by a specified delta.
+		/// </summary>
+		/// <param name="delta"></param>
 		public override void Move(SizeF delta)
 		{
-			throw new Exception("The method or operation is not implemented.");
+			this.Point += delta;
 		}
 	}
 }

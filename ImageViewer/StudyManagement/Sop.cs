@@ -110,6 +110,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		private int _referenceCount;
 		private Series _parentSeries;
 
+		/// <summary>
+		/// Initializes a new instance of <see cref="Sop"/>.
+		/// </summary>
 		protected Sop()
 		{
 

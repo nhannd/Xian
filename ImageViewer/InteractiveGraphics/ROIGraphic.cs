@@ -42,23 +42,24 @@ using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
-	/// <summary>
-	/// 
-	/// </summary>
 	public class RoiGraphic
 		: StatefulCompositeGraphic, 
 		  IStandardStatefulGraphic, 
 		  ISelectableGraphic, 
 		  IFocussableGraphic, 
-		  IMemorable, 
-		  IContextMenuProvider
-    {
-        private InteractiveGraphic _roiGraphic;
+		  IContextMenuProvider,
+		  IMemorable
+	{
+		#region Private fields
+
+		private InteractiveGraphic _roiGraphic;
         private CalloutGraphic _calloutGraphic;
 		private ToolSet _toolSet;
 		private event EventHandler _roiChangedEvent;
 		private bool _selected;
 		private bool _focussed;
+
+		#endregion
 
 		public RoiGraphic(InteractiveGraphic graphic, bool userCreated)
 			: this(graphic, userCreated, true)
@@ -85,16 +86,26 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			}
 		}
 
+		/// <summary>
+		/// Gets the <see cref="CalloutGraphic"/>.
+		/// </summary>
 		public CalloutGraphic Callout
 		{
 			get { return _calloutGraphic; }
 		}
 
+		/// <summary>
+		/// Gets the <see cref="InteractiveGraphic"/> that defines
+		/// the ROI.
+		/// </summary>
         public InteractiveGraphic Roi
         {
             get { return _roiGraphic; }
         }
 
+		/// <summary>
+		/// Gets the colour of the <see cref="RoiGraphic"/>.
+		/// </summary>
 		public Color Color
 		{
 			get { return this.Roi.Color; }
@@ -105,12 +116,21 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			}
 		}
 
+		/// <summary>
+		/// Occurs when the size or position of 
+		/// <see cref="RoiGraphic.Roi"/> has changed
+		/// </summary>
 		public event EventHandler RoiChanged
 		{
 			add { _roiChangedEvent += value; }
 			remove { _roiChangedEvent -= value; }
 		}
 
+		/// <summary>
+		/// Gets the cursor token to be shown at the current mouse position.
+		/// </summary>
+		/// <param name="point"></param>
+		/// <returns></returns>
 		public override CursorToken GetCursorToken(Point point)
 		{
 			CursorToken token = _roiGraphic.GetCursorToken(point);
@@ -120,6 +140,11 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			return token;
 		}
 
+		/// <summary>
+		/// Performs a hit test on both the ROI and callout.
+		/// </summary>
+		/// <param name="point"></param>
+		/// <returns></returns>
 		public override bool HitTest(Point point)
 		{
 			return _roiGraphic.HitTest(point) || _calloutGraphic.HitTest(point);
@@ -143,26 +168,46 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		#region IStandardStatefulGraphic Members
 
+		/// <summary>
+		/// Creates a creation <see cref="GraphicState"/>.
+		/// </summary>
+		/// <returns></returns>
 		public GraphicState CreateCreateState()
 		{
 			return new CreateRoiGraphicState(this);
 		}
 
+		/// <summary>
+		/// Creates a focussed and selected <see cref="GraphicState"/>.
+		/// </summary>
+		/// <returns></returns>
 		public GraphicState CreateFocussedSelectedState()
 		{
 			return new FocussedSelectedRoiGraphicState(this);
 		}
 
+		/// <summary>
+		/// Creates a focussed <see cref="GraphicState"/>.
+		/// </summary>
+		/// <returns></returns>
 		public GraphicState CreateFocussedState()
 		{
 			return new FocussedGraphicState(this);
 		}
 
+		/// <summary>
+		/// Creates an inactive <see cref="GraphicState"/>.
+		/// </summary>
+		/// <returns></returns>
 		public GraphicState CreateInactiveState()
 		{
 			return new InactiveGraphicState(this);
 		}
 
+		/// <summary>
+		/// Creates a selected <see cref="GraphicState"/>.
+		/// </summary>
+		/// <returns></returns>
 		public GraphicState CreateSelectedState()
 		{
 			return new SelectedGraphicState(this);
@@ -172,6 +217,9 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		#region ISelectable Members
 
+		/// <summary>
+		/// Gets or set a value indicating whether the <see cref="RoiGraphic"/> is selected.
+		/// </summary>
 		public bool Selected
 		{
 			get
@@ -210,6 +258,9 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		#region IFocussable Members
 
+		/// <summary>
+		/// Gets or set a value indicating whether the <see cref="RoiGraphic"/> is in focus.
+		/// </summary>
 		public bool Focussed
 		{
 			get
@@ -246,13 +297,21 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		#region IMemorable Members
 
+		// TODO:  This is a total hack.  We've gotten away with these methods
+		// doing nothing because they're never actually called.  The problem is that
+		// if RoiGraphic is no longer IMemorable, CreateRoiGraphicstate.OnRoiStateChanged
+		// will throw an exception, because it tries to create a PositionGraphicCommand
+		// where the originator is null, which is not allowed.  The real problem
+		// is that we don't properly store a command that recreates an RoiGraphic.
+
 		public IMemento CreateMemento()
 		{
-			return null;
+			throw new NotImplementedException();
 		}
 
 		public void SetMemento(IMemento memento)
 		{
+			throw new NotImplementedException();
 		}
 
 		#endregion

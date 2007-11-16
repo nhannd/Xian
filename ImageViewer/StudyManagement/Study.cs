@@ -159,6 +159,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		#endregion
 
+		/// <summary>
+		/// Returns the study description and study instance UID associated with
+		/// the <see cref="Study"/> in string form.
+		/// </summary>
+		/// <returns></returns>
 		public override string ToString()
 		{
 			string str = String.Format("{0} | {1}", this.StudyDescription, this.StudyInstanceUID);

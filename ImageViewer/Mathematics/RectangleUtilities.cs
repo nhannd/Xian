@@ -317,6 +317,11 @@ namespace ClearCanvas.ImageViewer.Mathematics
 			return RectangleF.FromLTRB(topLeft.X, topLeft.Y, bottomRight.X, bottomRight.Y);
 		}
 
+		/// <summary>
+		/// Returns a value indicating whether the specified rectangle is normalized.
+		/// </summary>
+		/// <param name="rectangle"></param>
+		/// <returns></returns>
 		public static bool IsRectangleNormalized(RectangleF rectangle)
 		{
 			return (!(FloatComparer.IsLessThan(rectangle.Left, 0.0f) ||
