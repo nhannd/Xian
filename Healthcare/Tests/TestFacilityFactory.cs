@@ -39,7 +39,7 @@ namespace ClearCanvas.Healthcare.Tests
     {
         internal static Facility CreateFacility()
         {
-            return new Facility("TCH", "Toronto Community Hospital");
+            return new Facility("TCH", "Toronto Community Hospital", new InformationAuthorityEnum("UHN", "UHN", "University Health Network"));
         }
     }
 }

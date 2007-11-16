@@ -65,6 +65,7 @@ namespace ClearCanvas.Enterprise.Hibernate
 
         public EnumValue Find(Type enumValueClass, string code)
         {
+            Platform.CheckForEmptyString(code, "code");
             return this.Context.LoadEnumValue(enumValueClass, code, true);
         }
 

@@ -54,41 +54,73 @@ namespace ClearCanvas.Ris.Application.Services.Admin.FacilityAdmin
             get { return true; }
         }
 
+        /// <summary>
+        /// Import external practitioner from CSV format.
+        /// </summary>
+        /// <param name="rows">
+        /// Each string in the list must contain 4 CSV fields, as follows:
+        ///     0 - Facility ID
+        ///     1 - Facility Name
+        ///     2 - Information Authority ID
+        ///     3 - Information Authoirty Name
+        /// </param>
+        /// <param name="context"></param>
         public override void ImportCsv(List<string> rows, IUpdateContext context)
         {
+           IEnumBroker enumBroker = context.GetBroker<IEnumBroker>();
+
            List<Facility> facilities = new List<Facility>();
+           List<InformationAuthorityEnum> authorities = new List<InformationAuthorityEnum>(enumBroker.Load<InformationAuthorityEnum>());
 
            foreach (string line in rows)
             {
                 // expect 2 fields in the row
                 string[] fields = ParseCsv(line, 2);
 
-                string id = fields[0];
-                string name = fields[1];
+                string facilityId = fields[0];
+                string facilityName = fields[1];
+                string informationAuthorityId = fields[2];
+                string informationAuthorityName = fields[3];
 
                 // first check if we have it in memory
-                Facility facility = CollectionUtils.SelectFirst<Facility>(facilities,
-                    delegate(Facility f) { return f.Code == id && f.Name == name; });
+                Facility facility = CollectionUtils.SelectFirst(facilities,
+                    delegate(Facility f) { return f.Code == facilityId && f.Name == facilityName; });
 
                 // if not, check the database
                 if (facility == null)
                 {
                     FacilitySearchCriteria where = new FacilitySearchCriteria();
-                    where.Code.EqualTo(id);
-                    where.Name.EqualTo(name);
+                    where.Code.EqualTo(facilityId);
+                    where.Name.EqualTo(facilityName);
 
                     IFacilityBroker broker = context.GetBroker<IFacilityBroker>();
-                    facility = CollectionUtils.FirstElement<Facility>(broker.Find(where));
+                    facility = CollectionUtils.FirstElement(broker.Find(where));
 
                     // if not, create a new instance
                     if (facility == null)
                     {
-                        facility = new Facility(id, name);
+                        facility = new Facility(facilityId, facilityName, GetAuthority(informationAuthorityId, informationAuthorityId, context));
                         context.Lock(facility, DirtyState.New);
                     }
 
                     facilities.Add(facility);
                 }
+            }
+        }
+
+        private InformationAuthorityEnum GetAuthority(string id, string name, IUpdateContext context)
+        {
+            IEnumBroker broker = context.GetBroker<IEnumBroker>();
+            try
+            {
+                InformationAuthorityEnum authority = broker.Find<InformationAuthorityEnum>(id);
+                return authority;
+            }
+            catch (EnumValueNotFoundException)
+            {
+                // create a new value
+                InformationAuthorityEnum lastValue = CollectionUtils.LastElement(broker.Load<InformationAuthorityEnum>());
+                return (InformationAuthorityEnum)broker.AddValue(typeof(InformationAuthorityEnum), id, id, name, lastValue == null ? 1 : lastValue.DisplayOrder + 1);
             }
         }
     }

@@ -7,5 +7,6 @@
     <version name="Version" column="Version_"/>
     <property name="Code" column="Code_" type="String" length="30" not-null="true" unique="true"/>
     <property name="Name" column="Name_" type="String" length="200" not-null="true" unique="true"/>
+    <many-to-one name="InformationAuthority" class="InformationAuthorityEnum" column="InformationAuthority_" not-null="true"/>
   </class>
 </hibernate-mapping>
