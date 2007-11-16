@@ -132,8 +132,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 			// 
 			// CineApplicationComponentControl
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Inherit;
 			this.Controls.Add(this._startForwardButton);
 			this.Controls.Add(this._fastestLabel);
 			this.Controls.Add(this._minLabel);

@@ -286,8 +286,8 @@ namespace ClearCanvas.Desktop.View.WinForms
             //if ((hint & ShelfDisplayHint.MaximizeOnDock) != 0)
             //    content.DisplaySize = _form.DockingManager.Container.Size;
             //else
-				content.DisplaySize = content.Control.Size;
-
+			
+			content.DisplaySize = content.Control.Size;
 			content.AutoHideSize = content.Control.Size;
 			content.FloatingSize = content.Control.Size;
 
@@ -320,10 +320,18 @@ namespace ClearCanvas.Desktop.View.WinForms
 				if (shelfView.GetFloatingState(_desktopWindow.Name, out displayLocation, out displaySize))
 				{
 					content.DisplayLocation = displayLocation;
+					content.FloatingSize = displaySize;
+
+					displaySize = content.Control.Size;
+					_form.DockingManager.AddContentWithState(content, State.Floating);
+					
+					//After adding the content, it's DisplaySize gets adjusted based on the floating size.  We don't want that to happen.
 					content.DisplaySize = displaySize;
 				}
-
-				_form.DockingManager.AddContentWithState(content, State.Floating);
+				else
+				{
+					_form.DockingManager.AddContentWithState(content, State.Floating);
+				}
 			}
 
             if ((hint & ShelfDisplayHint.DockAutoHide) != 0)
