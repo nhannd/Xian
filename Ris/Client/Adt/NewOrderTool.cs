@@ -94,7 +94,8 @@ namespace ClearCanvas.Ris.Client.Adt
             else if (this.Context is IPatientBiographyToolContext)
             {
                 IPatientBiographyToolContext context = (IPatientBiographyToolContext)this.ContextBase;
-                NewOrder(context.PatientRef, "New Order", context.DesktopWindow);
+                string title = string.Format(SR.TitleNewOrder, PersonNameFormat.Format(context.PatientProfile.Name), MrnFormat.Format(context.PatientProfile.Mrn));
+                NewOrder(context.PatientRef, title, context.DesktopWindow);
             }
         }
 
