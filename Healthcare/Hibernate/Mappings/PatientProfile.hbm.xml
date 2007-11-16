@@ -5,17 +5,17 @@
       <generator class="guid.comb"/>
     </id>
     <version name="Version" column="Version_"/>
-    <component name="Mrn" class="CompositeIdentifier">
+    <component name="Mrn" class="PatientIdentifier">
       <property name="Id" type="String">
         <column name="MrnId_" unique-key="Mrn" not-null="true"/>
       </property>
-      <property name="AssigningAuthority" type="String">
-        <column name="MrnAssigningAuthority_" unique-key="Mrn" not-null="true"/>
-      </property>
+      <many-to-one name="AssigningAuthority" class="InformationAuthorityEnum">
+          <column name="MrnAssigningAuthority_" unique-key="Mrn" not-null="true"/>
+      </many-to-one>
     </component>
     <component name="Healthcard" class="HealthcardNumber">
       <property name="Id" column="HealthcardId_" type="String" length="30" not-null="true"/>
-      <property name="AssigningAuthority" column="HealthcardAssigningAuthority_" type="String" length="100" not-null="true"/>
+      <many-to-one name="AssigningAuthority" class="InsuranceAuthorityEnum" column="HealthcardAssigningAuthority_" not-null="true"/>
       <property name="VersionCode" column="HealthcardVersionCode_" type="String" length="20" not-null="false"/>
       <property name="ExpiryDate" column="HealthcardExpiryDate_" type="DateTime" not-null="false"/> 
     </component>

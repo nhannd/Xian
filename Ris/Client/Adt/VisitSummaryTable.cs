@@ -37,6 +37,7 @@ using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.VisitAdmin;
 using System.Text;
+using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -45,7 +46,7 @@ namespace ClearCanvas.Ris.Client.Adt
         public VisitSummaryTable()
         {
             this.Columns.Add(new TableColumn<VisitSummary, string>(SR.ColumnVisitNumber,
-                delegate(VisitSummary v) { return string.Format("{0} {1}", v.VisitNumberAssigningAuthority, v.VisitNumberId); },
+                delegate(VisitSummary v) { return VisitNumberFormat.Format(v.VisitNumber); },
                 1.0f));
 
             //Visit type description

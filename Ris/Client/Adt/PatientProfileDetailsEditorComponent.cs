@@ -38,6 +38,7 @@ using ClearCanvas.Desktop;
 
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Client;
+using System.Collections;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -52,14 +53,16 @@ namespace ClearCanvas.Ris.Client.Adt
         private PatientProfileDetail _profile;
         private List<EnumValueInfo> _sexChoices;
 
-        private string[] _dummyHealthcardAssigningAuthorityChoices = new string[] { "", "Ontario", "Alberta", "British Columbia", "Manitoba", "New Brunswick", "Newfoundland", "Nova Scotia", "PEI", "Quebec", "Saskatchewan" };
-        private string[] _dummyMrnAssigningAuthorityChoices = new string[] { "", "UHN", "MSH", "SiteA", "SiteB", "SiteC", "SiteD", "SiteE", "SiteF" };
+        private List<EnumValueInfo> _mrnAuthorityChoices;
+        private List<EnumValueInfo> _healthcardAuthorityChoices;
 
-        public PatientProfileDetailsEditorComponent(List<EnumValueInfo> sexChoices)
+        public PatientProfileDetailsEditorComponent(List<EnumValueInfo> sexChoices, List<EnumValueInfo> mrnAuthorityChoices, List<EnumValueInfo> healthcardAuthorityChoices)
         {
             this.Validation.Add(PatientProfileDetailsEditorComponentSettings.Default.ValidationRules);
 
             _sexChoices = sexChoices;
+            _mrnAuthorityChoices = mrnAuthorityChoices;
+            _healthcardAuthorityChoices = healthcardAuthorityChoices;
         }
 
         /// <summary>
@@ -89,7 +92,7 @@ namespace ClearCanvas.Ris.Client.Adt
             }
         }
 
-        public string MrnSite
+        public EnumValueInfo MrnSite
         {
             get { return _profile.Mrn.AssigningAuthority; }
             set
@@ -172,9 +175,9 @@ namespace ClearCanvas.Ris.Client.Adt
             }
         }
 
-        public string[] MrnAssigningAuthorityChoices
+        public IList MrnAssigningAuthorityChoices
         {
-            get { return _dummyMrnAssigningAuthorityChoices;  }
+            get { return _mrnAuthorityChoices;  }
         }
 
         public string HealthcardID
@@ -192,7 +195,7 @@ namespace ClearCanvas.Ris.Client.Adt
             get { return TextFieldMasks.HealthcardNumberMask; }
         }
 
-        public string HealthcardProvince
+        public EnumValueInfo HealthcardProvince
         {
             get { return _profile.Healthcard.AssigningAuthority; }
             set
@@ -202,9 +205,9 @@ namespace ClearCanvas.Ris.Client.Adt
             }
         }
 
-        public string[] HealthcardAssigningAuthorityChoices
+        public IList HealthcardAssigningAuthorityChoices
         {
-            get { return _dummyHealthcardAssigningAuthorityChoices;  }
+            get { return _healthcardAuthorityChoices;  }
         }
 
         public string HealthcardVersionCode

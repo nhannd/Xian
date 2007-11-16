@@ -70,7 +70,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
     public class WorklistItem : WorklistItemBase
     {
         private EntityRef _profileRef;
-        private CompositeIdentifier _mrn;
+        private PatientIdentifier _mrn;
         private PersonName _patientName;
         private string _accessionNumber;
         private OrderPriority _orderPriority;
@@ -151,7 +151,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
             get { return _profileRef; }
         }
 
-        public CompositeIdentifier Mrn
+        public PatientIdentifier Mrn
         {
             get { return _mrn; }
         }

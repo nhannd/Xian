@@ -97,7 +97,8 @@ namespace ClearCanvas.Ris.Client.Adt
                     {
                         _visit = new VisitDetail();
                         _visit.PatientRef = _patientRef;
-                        _visit.VisitNumberAssigningAuthority = response.VisitNumberAssigningAuthorityChoices[0];
+                        _visit.VisitNumber.AssigningAuthority = response.VisitNumberAssigningAuthorityChoices.Count > 0 ?
+                            response.VisitNumberAssigningAuthorityChoices[0] : null;
                         _visit.PatientClass = response.PatientClassChoices[0];
                         _visit.PatientType = response.PatientTypeChoices[0];
                         _visit.AdmissionType = response.AdmissionTypeChoices[0];

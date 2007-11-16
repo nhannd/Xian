@@ -125,19 +125,6 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
         }
 
         [ReadOperation]
-        public LoadWorklistItemPreviewResponse LoadWorklistItemPreview(LoadWorklistItemPreviewRequest request)
-        {
-            //IModalityWorklistPreviewBroker broker = PersistenceContext.GetBroker<IModalityWorklistPreviewBroker>();
-            //ModalityWorklistPreview preview = broker.GetPreview(request.ProcedureStepRef);
-            //ModalityWorklistAssembler assembler = new ModalityWorklistAssembler();
-            //return new LoadWorklistItemPreviewResponse(assembler.CreateWorklistPreview(preview));
-
-            ModalityWorklistAssembler assembler = new ModalityWorklistAssembler();
-            ModalityProcedureStep mps = PersistenceContext.Load <ModalityProcedureStep> (request.ProcedureStepRef);
-            return new LoadWorklistItemPreviewResponse(assembler.CreateWorklistPreview(mps, request.PatientProfileAuthority, PersistenceContext));
-        }
-
-        [ReadOperation]
         public GetOperationEnablementResponse GetOperationEnablement(GetOperationEnablementRequest request)
         {
             return new GetOperationEnablementResponse(GetOperationEnablement(new WorklistItemKey(request.ProcedureStepRef)));

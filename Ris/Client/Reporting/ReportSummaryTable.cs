@@ -47,7 +47,7 @@ namespace ClearCanvas.Ris.Client.Reporting
             this.Columns.Add(new TableColumn<ReportSummary, string>("Accession Number",
                 delegate(ReportSummary report) { return report.AccessionNumber; }));
             this.Columns.Add(new TableColumn<ReportSummary, string>("Visit Number",
-                delegate(ReportSummary report) { return String.Format("{0} {1}", report.VisitNumberAssigningAuthority, report.VisitNumberId); }));
+                delegate(ReportSummary report) { return VisitNumberFormat.Format(report.VisitNumber); }));
             this.Columns.Add(new TableColumn<ReportSummary, string>("Requested Procedure",
                 delegate(ReportSummary report) { return report.RequestedProcedureName; }));
             this.Columns.Add(new TableColumn<ReportSummary, string>("Performed Location",

@@ -69,14 +69,6 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
         GetWorklistCountResponse GetWorklistCount(GetWorklistCountRequest request);
 
         /// <summary>
-        /// Load all the data to populate the preview page for a worklist item
-        /// </summary>
-        /// <param name="request"><see cref="LoadWorklistPreviewRequest"/></param>
-        /// <returns><see cref="LoadWorklistPreviewResponse"/></returns>
-        [OperationContract]
-        LoadWorklistPreviewResponse LoadWorklistPreview(LoadWorklistPreviewRequest request);
-
-        /// <summary>
         /// Get enablements for operations that can be applied to a worklist item
         /// </summary>
         /// <param name="request"><see cref="GetOperationEnablementRequest"/></param>

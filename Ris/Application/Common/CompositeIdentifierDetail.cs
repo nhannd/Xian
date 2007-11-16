@@ -40,7 +40,7 @@ namespace ClearCanvas.Ris.Application.Common
     [DataContract]
     public class CompositeIdentifierDetail : DataContractBase, ICloneable
     {
-        public CompositeIdentifierDetail(string id, string assigningAuthority)
+        public CompositeIdentifierDetail(string id, EnumValueInfo assigningAuthority)
         {
             this.Id = id;
             this.AssigningAuthority = assigningAuthority;
@@ -54,13 +54,13 @@ namespace ClearCanvas.Ris.Application.Common
         public string Id;
 
         [DataMember]
-        public string AssigningAuthority;
+        public EnumValueInfo AssigningAuthority;
 
         #region ICloneable Members
 
         public object Clone()
         {
-            return new CompositeIdentifierDetail(this.Id, this.AssigningAuthority);
+            return new CompositeIdentifierDetail(this.Id, (EnumValueInfo)this.AssigningAuthority.Clone());
         }
 
         #endregion

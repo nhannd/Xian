@@ -98,7 +98,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
                 EnumUtils.GetEnumValueList<AddressTypeEnum>(PersistenceContext),
                 dummyProvinces,
                 dummyCountries,
-                (new SimplifiedPhoneTypeAssembler()).GetSimplifiedPhoneTypeChoices(false)
+                (new SimplifiedPhoneTypeAssembler()).GetSimplifiedPhoneTypeChoices(false),
+                EnumUtils.GetEnumValueList<PractitionerLicenseAuthorityEnum>(PersistenceContext)
                 );
 
         }
@@ -110,7 +111,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
             ExternalPractitioner prac = new ExternalPractitioner();
 
             ExternalPractitionerAssembler assembler = new ExternalPractitionerAssembler();
-            assembler.UpdateExternalPractitioner(request.PractitionerDetail, prac);
+            assembler.UpdateExternalPractitioner(request.PractitionerDetail, prac, PersistenceContext);
 
             PersistenceContext.Lock(prac, DirtyState.New);
 
@@ -127,7 +128,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
             ExternalPractitioner prac = PersistenceContext.Load<ExternalPractitioner>(request.PractitionerRef, EntityLoadFlags.CheckVersion);
 
             ExternalPractitionerAssembler assembler = new ExternalPractitionerAssembler();
-            assembler.UpdateExternalPractitioner(request.PractitionerDetail, prac);
+            assembler.UpdateExternalPractitioner(request.PractitionerDetail, prac, PersistenceContext);
 
             return new UpdateExternalPractitionerResponse(assembler.CreateExternalPractitionerSummary(prac, PersistenceContext));
         }

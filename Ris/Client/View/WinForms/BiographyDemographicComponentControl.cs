@@ -65,9 +65,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 
             // Patient Identification fields
             _mrn.DataBindings.Add("Value", _component, "Mrn", true, DataSourceUpdateMode.OnPropertyChanged);
-            _mrnSite.DataBindings.Add("Value", _component, "MrnSite", true, DataSourceUpdateMode.OnPropertyChanged);
             _healthcard.DataBindings.Add("Value", _component, "Healthcard", true, DataSourceUpdateMode.OnPropertyChanged);
-            _healthcardProvince.DataBindings.Add("Value", _component, "HealthcardProvince", true, DataSourceUpdateMode.OnPropertyChanged);
             _healthcardVersionCode.DataBindings.Add("Value", _component, "HealthcardVersionCode", true, DataSourceUpdateMode.OnPropertyChanged);
             _healthcardExpiry.DataBindings.Add("Value", _component, "HealthcardExpiry", true, DataSourceUpdateMode.OnPropertyChanged);
 

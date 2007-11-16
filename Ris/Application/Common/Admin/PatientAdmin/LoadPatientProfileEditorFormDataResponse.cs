@@ -41,10 +41,10 @@ namespace ClearCanvas.Ris.Application.Common.Admin.PatientAdmin
     public class LoadPatientProfileEditorFormDataResponse : DataContractBase
     {
         [DataMember]
-        public List<string> HealthcardAssigningAuthorityChoices;
+        public List<EnumValueInfo> HealthcardAssigningAuthorityChoices;
 
         [DataMember]
-        public List<string> MrnAssigningAuthorityChoices;
+        public List<EnumValueInfo> MrnAssigningAuthorityChoices;
 
         [DataMember]
         public List<EnumValueInfo> SexChoices;

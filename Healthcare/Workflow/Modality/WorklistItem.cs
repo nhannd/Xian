@@ -60,7 +60,7 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
         private EntityRef _patientRef;
         private EntityRef _orderRef;
 
-        private CompositeIdentifier _mrn;
+        private PatientIdentifier _mrn;
         private PersonName _patientName;
         private string _accessionNumber;
         private ModalityProcedureStepType _modalityProcedureStepType;
@@ -126,7 +126,7 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
             get { return _orderRef; }
         }
 
-        public CompositeIdentifier Mrn
+        public PatientIdentifier Mrn
         {
             get { return _mrn; }
         }

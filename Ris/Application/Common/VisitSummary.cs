@@ -47,8 +47,7 @@ namespace ClearCanvas.Ris.Application.Common
         public VisitSummary(
             EntityRef visitRef,
             EntityRef patientRef,
-            string visitNumberId,
-            string visitNumberAssigningAuthority,
+            CompositeIdentifierDetail visitNumber,
             string patientClass,
             string patientType,
             string admissionType,
@@ -58,8 +57,7 @@ namespace ClearCanvas.Ris.Application.Common
         {
             this.VisitRef = visitRef;
             this.PatientRef = patientRef;
-            this.VisitNumberId = visitNumberId;
-            this.VisitNumberAssigningAuthority = visitNumberAssigningAuthority;
+            this.VisitNumber = visitNumber;
             this.PatientClass = patientClass;
             this.PatientType = patientType;
             this.AdmissionType = admissionType;
@@ -75,10 +73,7 @@ namespace ClearCanvas.Ris.Application.Common
         public EntityRef PatientRef;
 
         [DataMember]
-        public string VisitNumberId;
-
-        [DataMember]
-        public string VisitNumberAssigningAuthority;
+        public CompositeIdentifierDetail VisitNumber;
 
         [DataMember]
         public string PatientClass;

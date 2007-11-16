@@ -39,6 +39,7 @@ using ClearCanvas.Enterprise;
 using ClearCanvas.Desktop;
 using ClearCanvas.Ris.Application.Common.Admin;
 using ClearCanvas.Ris.Application.Common;
+using System.Collections;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -58,13 +59,15 @@ namespace ClearCanvas.Ris.Client
     {
         private ExternalPractitionerDetail _practitionerDetail;
         private bool _isNew;
+        private List<EnumValueInfo> _licenseAuthorityChoices;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public ExternalPractitionerDetailsEditorComponent(bool isNew)
+        public ExternalPractitionerDetailsEditorComponent(bool isNew, List<EnumValueInfo> licenseAuthorityChoices)
         {
             _practitionerDetail = new ExternalPractitionerDetail();
+            _licenseAuthorityChoices = licenseAuthorityChoices;
             _isNew = isNew;
         }
 
@@ -155,6 +158,21 @@ namespace ClearCanvas.Ris.Client
             set
             {
                 _practitionerDetail.LicenseNumber.Id = value;
+                this.Modified = true;
+            }
+        }
+
+        public IList LicenseAuthorityChoices
+        {
+            get { return _licenseAuthorityChoices; }
+        }
+
+        public EnumValueInfo LicenseAuthority
+        {
+            get { return _practitionerDetail.LicenseNumber.AssigningAuthority; }
+            set
+            {
+                _practitionerDetail.LicenseNumber.AssigningAuthority = value;
                 this.Modified = true;
             }
         }

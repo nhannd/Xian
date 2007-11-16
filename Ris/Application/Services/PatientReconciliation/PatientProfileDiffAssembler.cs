@@ -45,8 +45,8 @@ namespace ClearCanvas.Ris.Application.Services.PatientReconciliation
         public PatientProfileDiff CreatePatientProfileDiff(PatientProfile left, PatientProfile right, IList<DiscrepancyTestResult> results)
         {
             PatientProfileDiff diff = new PatientProfileDiff();
-            diff.LeftProfileAssigningAuthority = left.Mrn.AssigningAuthority;
-            diff.RightProfileAssigningAuthority = right.Mrn.AssigningAuthority;
+            diff.LeftProfileAssigningAuthority = left.Mrn.AssigningAuthority.Code;
+            diff.RightProfileAssigningAuthority = right.Mrn.AssigningAuthority.Code;
 
             diff.DateOfBirth = CreatePropertyDiff(PatientProfileDiscrepancy.DateOfBirth, results);
             diff.FamilyName = CreatePropertyDiff(PatientProfileDiscrepancy.FamilyName, results);

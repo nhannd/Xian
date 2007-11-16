@@ -41,7 +41,7 @@ namespace ClearCanvas.Healthcare.Tests
         {
             return new ExternalPractitioner(
                 new PersonName("Who", "Doctor", null, null, null, null),
-                new CompositeIdentifier("1234", "CPSO"),
+                new PractitionerLicenseNumber("1234", new PractitionerLicenseAuthorityEnum("CPSO", "CPSO", "")),
                 null,
                 null);
         }

@@ -73,16 +73,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.PatientAdmin
             response.AddressTypeChoices = EnumUtils.GetEnumValueList<AddressTypeEnum>(PersistenceContext);
             response.ContactPersonRelationshipChoices = EnumUtils.GetEnumValueList<ContactPersonRelationshipEnum>(PersistenceContext);
             response.ContactPersonTypeChoices = EnumUtils.GetEnumValueList<ContactPersonTypeEnum>(PersistenceContext);
-
-            List<string> dummyHealthcardChoices = new List<string>();
-            dummyHealthcardChoices.Add("Ontario");
-            response.HealthcardAssigningAuthorityChoices = dummyHealthcardChoices;
-
-            List<string> dummyMrnChoices = new List<string>();
-            dummyMrnChoices.Add("UHN");
-            dummyMrnChoices.Add("MSH");
-            dummyMrnChoices.Add("WCH");
-            response.MrnAssigningAuthorityChoices = dummyMrnChoices;
+            response.HealthcardAssigningAuthorityChoices = EnumUtils.GetEnumValueList<InsuranceAuthorityEnum>(PersistenceContext);
+            response.MrnAssigningAuthorityChoices = EnumUtils.GetEnumValueList<InformationAuthorityEnum>(PersistenceContext);
 
             // Sort the category from High to Low, then sort by name
             IList<NoteCategory> sortedCategoryList = CollectionUtils.Sort<NoteCategory>(

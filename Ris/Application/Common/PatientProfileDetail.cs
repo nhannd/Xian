@@ -42,7 +42,7 @@ namespace ClearCanvas.Ris.Application.Common
     {
         public PatientProfileDetail()
         {
-            this.Mrn = new MrnDetail();
+            this.Mrn = new CompositeIdentifierDetail();
             this.Healthcard = new HealthcardDetail();
             this.Addresses = new List<AddressDetail>();
             this.ContactPersons = new List<ContactPersonDetail>();
@@ -54,7 +54,7 @@ namespace ClearCanvas.Ris.Application.Common
         }
 
         [DataMember]
-        public MrnDetail Mrn;
+        public CompositeIdentifierDetail Mrn;
 
         [DataMember]
         public HealthcardDetail Healthcard;

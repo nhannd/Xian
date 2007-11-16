@@ -32,20 +32,39 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Runtime.Serialization;
-using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Ris.Application.Common;
 
-namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
+namespace ClearCanvas.Ris.Client.Formatting
 {
-    [DataContract]
-    public class LoadWorklistPreviewResponse : DataContractBase
+    public static class LicenseNumberFormat
     {
-        public LoadWorklistPreviewResponse(RegistrationWorklistPreview preview)
+        /// <summary>
+        /// Formats the MRN according to the default format as specified in <see cref="FormatSettings"/>
+        /// </summary>
+        /// <param name="licenseNumber"></param>
+        /// <returns></returns>
+        public static string Format(CompositeIdentifierDetail licenseNumber)
         {
-            this.WorklistPreview = preview;
+            return Format(licenseNumber, FormatSettings.Default.LicenseNumberDefaultFormat);
         }
 
-        [DataMember]
-        public RegistrationWorklistPreview WorklistPreview;
+        /// <summary>
+        /// Formats the MRN number according to the specified format string.
+        /// </summary>
+        /// <remarks>
+        /// Valid format specifiers are as follows:
+        ///     %N - number
+        ///     %A - assigning authority
+        /// </remarks>
+        /// <param name="licenseNumber"></param>
+        /// <param name="format"></param>
+        /// <returns></returns>
+        public static string Format(CompositeIdentifierDetail licenseNumber, string format)
+        {
+            string result = format;
+            result = result.Replace("%N", licenseNumber.Id ?? "");
+            result = result.Replace("%A", licenseNumber.AssigningAuthority == null ? "" : licenseNumber.AssigningAuthority.Code);
+            return result.Trim();
+        }
     }
 }

@@ -104,10 +104,10 @@ namespace ClearCanvas.Healthcare.PatientReconciliation
 
         private static void IdentifyConflictsForSiteFromProposedMatches(PatientProfile existingReconciledProfile, IList<PatientProfileMatch> matches, IList<PatientProfileMatch> conflicts)
         {
-            String existingMrn = existingReconciledProfile.Mrn.AssigningAuthority;
+            String existingMrn = existingReconciledProfile.Mrn.AssigningAuthority.Code;
             foreach (PatientProfileMatch proposedMatch in matches)
             {
-                if (proposedMatch.PatientProfile.Mrn.AssigningAuthority == existingMrn)
+                if (proposedMatch.PatientProfile.Mrn.AssigningAuthority.Code == existingMrn)
                 {
                     conflicts.Add(proposedMatch);
                     RemoveAllProfilesRelatedToConflict(proposedMatch, matches, conflicts);

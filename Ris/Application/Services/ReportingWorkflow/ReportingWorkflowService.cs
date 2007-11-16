@@ -121,13 +121,6 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         }
 
         [ReadOperation]
-        public LoadWorklistPreviewResponse LoadWorklistPreview(LoadWorklistPreviewRequest request)
-        {
-            ReportingWorkflowAssembler assembler = new ReportingWorkflowAssembler();
-            return new LoadWorklistPreviewResponse(assembler.CreateReportingWorklistPreview(request.WorklistItem, this.PersistenceContext));
-        }
-
-        [ReadOperation]
         public GetOperationEnablementResponse GetOperationEnablement(GetOperationEnablementRequest request)
         {
             if(request.StepType == null || request.StepType != "Protocol")

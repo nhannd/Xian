@@ -41,7 +41,7 @@ namespace ClearCanvas.Healthcare.Tests
         {
             Visit visit = new Visit(
                 patient,
-                new CompositeIdentifier("10001111", "UHN"),
+                new VisitNumber("10001111", new InformationAuthorityEnum("UHN", "UHN", "")),
                 VisitStatus.AA,
                 DateTime.Now - TimeSpan.FromDays(2),
                 new PatientClassEnum("I", "Inpatient", null),

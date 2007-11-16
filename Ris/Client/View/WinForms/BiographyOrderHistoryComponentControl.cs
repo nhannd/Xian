@@ -65,7 +65,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 
             // Visit fields
             _visitNumber.DataBindings.Add("Value", _component, "VisitNumber", true, DataSourceUpdateMode.OnPropertyChanged);
-            _site.DataBindings.Add("Value", _component, "Site", true, DataSourceUpdateMode.OnPropertyChanged);
             _preAdmitNumber.DataBindings.Add("Value", _component, "PreAdmitNumber", true, DataSourceUpdateMode.OnPropertyChanged);
             _patientClass.DataBindings.Add("Value", _component, "PatientClass", true, DataSourceUpdateMode.OnPropertyChanged);
             _patientType.DataBindings.Add("Value", _component, "PatientType", true, DataSourceUpdateMode.OnPropertyChanged);

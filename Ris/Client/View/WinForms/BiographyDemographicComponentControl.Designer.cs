@@ -59,25 +59,10 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-            ClearCanvas.Desktop.Selection selection1 = new ClearCanvas.Desktop.Selection();
-            ClearCanvas.Desktop.Selection selection2 = new ClearCanvas.Desktop.Selection();
-            ClearCanvas.Desktop.Selection selection3 = new ClearCanvas.Desktop.Selection();
-            ClearCanvas.Desktop.Selection selection4 = new ClearCanvas.Desktop.Selection();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.tabControl1 = new System.Windows.Forms.TabControl();
-            this._addressPage = new System.Windows.Forms.TabPage();
-            this._addressList = new ClearCanvas.Desktop.View.WinForms.TableView();
-            this._phonePage = new System.Windows.Forms.TabPage();
-            this._phoneList = new ClearCanvas.Desktop.View.WinForms.TableView();
-            this._emailPage = new System.Windows.Forms.TabPage();
-            this._emailList = new ClearCanvas.Desktop.View.WinForms.TableView();
-            this._contactPage = new System.Windows.Forms.TabPage();
-            this._contactList = new ClearCanvas.Desktop.View.WinForms.TableView();
             this._selectedProfile = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
             this._patientIdentifierGroup = new System.Windows.Forms.GroupBox();
             this._healthcardVersionCode = new ClearCanvas.Desktop.View.WinForms.TextField();
-            this._mrnSite = new ClearCanvas.Desktop.View.WinForms.TextField();
-            this._healthcardProvince = new ClearCanvas.Desktop.View.WinForms.TextField();
             this._mrn = new ClearCanvas.Desktop.View.WinForms.TextField();
             this._healthcard = new ClearCanvas.Desktop.View.WinForms.TextField();
             this._healthcardExpiry = new ClearCanvas.Desktop.View.WinForms.TextField();
@@ -93,16 +78,25 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this._sex = new ClearCanvas.Desktop.View.WinForms.TextField();
             this._familyName = new ClearCanvas.Desktop.View.WinForms.TextField();
             this._givenName = new ClearCanvas.Desktop.View.WinForms.TextField();
+            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this._addressPage = new System.Windows.Forms.TabPage();
+            this._addressList = new ClearCanvas.Desktop.View.WinForms.TableView();
+            this._phonePage = new System.Windows.Forms.TabPage();
+            this._phoneList = new ClearCanvas.Desktop.View.WinForms.TableView();
+            this._emailPage = new System.Windows.Forms.TabPage();
+            this._emailList = new ClearCanvas.Desktop.View.WinForms.TableView();
+            this._contactPage = new System.Windows.Forms.TabPage();
+            this._contactList = new ClearCanvas.Desktop.View.WinForms.TableView();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
+            this._patientIdentifierGroup.SuspendLayout();
+            this._personalInfoGroup.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this._addressPage.SuspendLayout();
             this._phonePage.SuspendLayout();
             this._emailPage.SuspendLayout();
             this._contactPage.SuspendLayout();
-            this._patientIdentifierGroup.SuspendLayout();
-            this._personalInfoGroup.SuspendLayout();
             this.SuspendLayout();
             // 
             // splitContainer1
@@ -126,131 +120,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this.splitContainer1.SplitterDistance = 239;
             this.splitContainer1.TabIndex = 3;
             // 
-            // tabControl1
-            // 
-            this.tabControl1.Controls.Add(this._addressPage);
-            this.tabControl1.Controls.Add(this._phonePage);
-            this.tabControl1.Controls.Add(this._emailPage);
-            this.tabControl1.Controls.Add(this._contactPage);
-            this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tabControl1.Location = new System.Drawing.Point(0, 0);
-            this.tabControl1.Name = "tabControl1";
-            this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(706, 324);
-            this.tabControl1.TabIndex = 4;
-            // 
-            // _addressPage
-            // 
-            this._addressPage.Controls.Add(this._addressList);
-            this._addressPage.Location = new System.Drawing.Point(4, 22);
-            this._addressPage.Name = "_addressPage";
-            this._addressPage.Padding = new System.Windows.Forms.Padding(3);
-            this._addressPage.Size = new System.Drawing.Size(698, 298);
-            this._addressPage.TabIndex = 0;
-            this._addressPage.Text = "Addresses";
-            this._addressPage.UseVisualStyleBackColor = true;
-            // 
-            // _addressList
-            // 
-            this._addressList.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._addressList.Location = new System.Drawing.Point(3, 3);
-            this._addressList.MenuModel = null;
-            this._addressList.Name = "_addressList";
-            this._addressList.ReadOnly = false;
-            this._addressList.Selection = selection1;
-            this._addressList.ShowToolbar = false;
-            this._addressList.Size = new System.Drawing.Size(692, 292);
-            this._addressList.TabIndex = 0;
-            this._addressList.Table = null;
-            this._addressList.ToolbarModel = null;
-            this._addressList.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this._addressList.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.No;
-            this._addressList.ItemDoubleClicked += new System.EventHandler(this._addressList_ItemDoubleClicked);
-            // 
-            // _phonePage
-            // 
-            this._phonePage.Controls.Add(this._phoneList);
-            this._phonePage.Location = new System.Drawing.Point(4, 22);
-            this._phonePage.Name = "_phonePage";
-            this._phonePage.Padding = new System.Windows.Forms.Padding(3);
-            this._phonePage.Size = new System.Drawing.Size(698, 298);
-            this._phonePage.TabIndex = 1;
-            this._phonePage.Text = "Phone Numbers";
-            this._phonePage.UseVisualStyleBackColor = true;
-            // 
-            // _phoneList
-            // 
-            this._phoneList.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._phoneList.Location = new System.Drawing.Point(3, 3);
-            this._phoneList.MenuModel = null;
-            this._phoneList.Name = "_phoneList";
-            this._phoneList.ReadOnly = false;
-            this._phoneList.Selection = selection2;
-            this._phoneList.ShowToolbar = false;
-            this._phoneList.Size = new System.Drawing.Size(692, 292);
-            this._phoneList.TabIndex = 0;
-            this._phoneList.Table = null;
-            this._phoneList.ToolbarModel = null;
-            this._phoneList.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this._phoneList.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.No;
-            this._phoneList.ItemDoubleClicked += new System.EventHandler(this._phoneList_ItemDoubleClicked);
-            // 
-            // _emailPage
-            // 
-            this._emailPage.Controls.Add(this._emailList);
-            this._emailPage.Location = new System.Drawing.Point(4, 22);
-            this._emailPage.Name = "_emailPage";
-            this._emailPage.Padding = new System.Windows.Forms.Padding(3);
-            this._emailPage.Size = new System.Drawing.Size(698, 298);
-            this._emailPage.TabIndex = 2;
-            this._emailPage.Text = "Email Addresses";
-            this._emailPage.UseVisualStyleBackColor = true;
-            // 
-            // _emailList
-            // 
-            this._emailList.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._emailList.Location = new System.Drawing.Point(3, 3);
-            this._emailList.MenuModel = null;
-            this._emailList.Name = "_emailList";
-            this._emailList.ReadOnly = false;
-            this._emailList.Selection = selection3;
-            this._emailList.ShowToolbar = false;
-            this._emailList.Size = new System.Drawing.Size(692, 292);
-            this._emailList.TabIndex = 0;
-            this._emailList.Table = null;
-            this._emailList.ToolbarModel = null;
-            this._emailList.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this._emailList.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.No;
-            this._emailList.ItemDoubleClicked += new System.EventHandler(this._emailList_ItemDoubleClicked);
-            // 
-            // _contactPage
-            // 
-            this._contactPage.Controls.Add(this._contactList);
-            this._contactPage.Location = new System.Drawing.Point(4, 22);
-            this._contactPage.Name = "_contactPage";
-            this._contactPage.Padding = new System.Windows.Forms.Padding(3);
-            this._contactPage.Size = new System.Drawing.Size(698, 298);
-            this._contactPage.TabIndex = 3;
-            this._contactPage.Text = "Contact Person";
-            this._contactPage.UseVisualStyleBackColor = true;
-            // 
-            // _contactList
-            // 
-            this._contactList.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._contactList.Location = new System.Drawing.Point(3, 3);
-            this._contactList.MenuModel = null;
-            this._contactList.Name = "_contactList";
-            this._contactList.ReadOnly = false;
-            this._contactList.Selection = selection4;
-            this._contactList.ShowToolbar = false;
-            this._contactList.Size = new System.Drawing.Size(692, 292);
-            this._contactList.TabIndex = 0;
-            this._contactList.Table = null;
-            this._contactList.ToolbarModel = null;
-            this._contactList.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this._contactList.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.No;
-            this._contactList.ItemDoubleClicked += new System.EventHandler(this._contactList_ItemDoubleClicked);
-            // 
             // _selectedProfile
             // 
             this._selectedProfile.DataSource = null;
@@ -267,8 +136,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             // _patientIdentifierGroup
             // 
             this._patientIdentifierGroup.Controls.Add(this._healthcardVersionCode);
-            this._patientIdentifierGroup.Controls.Add(this._mrnSite);
-            this._patientIdentifierGroup.Controls.Add(this._healthcardProvince);
             this._patientIdentifierGroup.Controls.Add(this._mrn);
             this._patientIdentifierGroup.Controls.Add(this._healthcard);
             this._patientIdentifierGroup.Controls.Add(this._healthcardExpiry);
@@ -292,30 +159,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this._healthcardVersionCode.TabIndex = 4;
             this._healthcardVersionCode.Value = null;
             // 
-            // _mrnSite
-            // 
-            this._mrnSite.LabelText = "Site";
-            this._mrnSite.Location = new System.Drawing.Point(140, 17);
-            this._mrnSite.Margin = new System.Windows.Forms.Padding(2, 2, 15, 2);
-            this._mrnSite.Mask = "";
-            this._mrnSite.Name = "_mrnSite";
-            this._mrnSite.ReadOnly = true;
-            this._mrnSite.Size = new System.Drawing.Size(127, 44);
-            this._mrnSite.TabIndex = 1;
-            this._mrnSite.Value = null;
-            // 
-            // _healthcardProvince
-            // 
-            this._healthcardProvince.LabelText = "Province";
-            this._healthcardProvince.Location = new System.Drawing.Point(140, 65);
-            this._healthcardProvince.Margin = new System.Windows.Forms.Padding(2, 2, 15, 2);
-            this._healthcardProvince.Mask = "";
-            this._healthcardProvince.Name = "_healthcardProvince";
-            this._healthcardProvince.ReadOnly = true;
-            this._healthcardProvince.Size = new System.Drawing.Size(127, 44);
-            this._healthcardProvince.TabIndex = 3;
-            this._healthcardProvince.Value = null;
-            // 
             // _mrn
             // 
             this._mrn.LabelText = "MRN";
@@ -324,7 +167,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this._mrn.Mask = "";
             this._mrn.Name = "_mrn";
             this._mrn.ReadOnly = true;
-            this._mrn.Size = new System.Drawing.Size(127, 44);
+            this._mrn.Size = new System.Drawing.Size(262, 44);
             this._mrn.TabIndex = 0;
             this._mrn.Value = null;
             // 
@@ -337,7 +180,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this._healthcard.Mask = "";
             this._healthcard.Name = "_healthcard";
             this._healthcard.ReadOnly = true;
-            this._healthcard.Size = new System.Drawing.Size(127, 44);
+            this._healthcard.Size = new System.Drawing.Size(262, 44);
             this._healthcard.TabIndex = 2;
             this._healthcard.Value = null;
             // 
@@ -508,6 +351,111 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this._givenName.TabIndex = 1;
             this._givenName.Value = null;
             // 
+            // tabControl1
+            // 
+            this.tabControl1.Controls.Add(this._addressPage);
+            this.tabControl1.Controls.Add(this._phonePage);
+            this.tabControl1.Controls.Add(this._emailPage);
+            this.tabControl1.Controls.Add(this._contactPage);
+            this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tabControl1.Location = new System.Drawing.Point(0, 0);
+            this.tabControl1.Name = "tabControl1";
+            this.tabControl1.SelectedIndex = 0;
+            this.tabControl1.Size = new System.Drawing.Size(706, 324);
+            this.tabControl1.TabIndex = 4;
+            // 
+            // _addressPage
+            // 
+            this._addressPage.Controls.Add(this._addressList);
+            this._addressPage.Location = new System.Drawing.Point(4, 22);
+            this._addressPage.Name = "_addressPage";
+            this._addressPage.Padding = new System.Windows.Forms.Padding(3);
+            this._addressPage.Size = new System.Drawing.Size(698, 298);
+            this._addressPage.TabIndex = 0;
+            this._addressPage.Text = "Addresses";
+            this._addressPage.UseVisualStyleBackColor = true;
+            // 
+            // _addressList
+            // 
+            this._addressList.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._addressList.Location = new System.Drawing.Point(3, 3);
+            this._addressList.Name = "_addressList";
+            this._addressList.ReadOnly = false;
+            this._addressList.ShowToolbar = false;
+            this._addressList.Size = new System.Drawing.Size(692, 292);
+            this._addressList.TabIndex = 0;
+            this._addressList.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this._addressList.ItemDoubleClicked += new System.EventHandler(this._addressList_ItemDoubleClicked);
+            // 
+            // _phonePage
+            // 
+            this._phonePage.Controls.Add(this._phoneList);
+            this._phonePage.Location = new System.Drawing.Point(4, 22);
+            this._phonePage.Name = "_phonePage";
+            this._phonePage.Padding = new System.Windows.Forms.Padding(3);
+            this._phonePage.Size = new System.Drawing.Size(698, 298);
+            this._phonePage.TabIndex = 1;
+            this._phonePage.Text = "Phone Numbers";
+            this._phonePage.UseVisualStyleBackColor = true;
+            // 
+            // _phoneList
+            // 
+            this._phoneList.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._phoneList.Location = new System.Drawing.Point(3, 3);
+            this._phoneList.Name = "_phoneList";
+            this._phoneList.ReadOnly = false;
+            this._phoneList.ShowToolbar = false;
+            this._phoneList.Size = new System.Drawing.Size(692, 292);
+            this._phoneList.TabIndex = 0;
+            this._phoneList.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this._phoneList.ItemDoubleClicked += new System.EventHandler(this._phoneList_ItemDoubleClicked);
+            // 
+            // _emailPage
+            // 
+            this._emailPage.Controls.Add(this._emailList);
+            this._emailPage.Location = new System.Drawing.Point(4, 22);
+            this._emailPage.Name = "_emailPage";
+            this._emailPage.Padding = new System.Windows.Forms.Padding(3);
+            this._emailPage.Size = new System.Drawing.Size(698, 298);
+            this._emailPage.TabIndex = 2;
+            this._emailPage.Text = "Email Addresses";
+            this._emailPage.UseVisualStyleBackColor = true;
+            // 
+            // _emailList
+            // 
+            this._emailList.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._emailList.Location = new System.Drawing.Point(3, 3);
+            this._emailList.Name = "_emailList";
+            this._emailList.ReadOnly = false;
+            this._emailList.ShowToolbar = false;
+            this._emailList.Size = new System.Drawing.Size(692, 292);
+            this._emailList.TabIndex = 0;
+            this._emailList.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this._emailList.ItemDoubleClicked += new System.EventHandler(this._emailList_ItemDoubleClicked);
+            // 
+            // _contactPage
+            // 
+            this._contactPage.Controls.Add(this._contactList);
+            this._contactPage.Location = new System.Drawing.Point(4, 22);
+            this._contactPage.Name = "_contactPage";
+            this._contactPage.Padding = new System.Windows.Forms.Padding(3);
+            this._contactPage.Size = new System.Drawing.Size(698, 298);
+            this._contactPage.TabIndex = 3;
+            this._contactPage.Text = "Contact Person";
+            this._contactPage.UseVisualStyleBackColor = true;
+            // 
+            // _contactList
+            // 
+            this._contactList.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._contactList.Location = new System.Drawing.Point(3, 3);
+            this._contactList.Name = "_contactList";
+            this._contactList.ReadOnly = false;
+            this._contactList.ShowToolbar = false;
+            this._contactList.Size = new System.Drawing.Size(692, 292);
+            this._contactList.TabIndex = 0;
+            this._contactList.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this._contactList.ItemDoubleClicked += new System.EventHandler(this._contactList_ItemDoubleClicked);
+            // 
             // BiographyDemographicComponentControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -518,15 +466,15 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             this.splitContainer1.ResumeLayout(false);
+            this._patientIdentifierGroup.ResumeLayout(false);
+            this._patientIdentifierGroup.PerformLayout();
+            this._personalInfoGroup.ResumeLayout(false);
+            this._personalInfoGroup.PerformLayout();
             this.tabControl1.ResumeLayout(false);
             this._addressPage.ResumeLayout(false);
             this._phonePage.ResumeLayout(false);
             this._emailPage.ResumeLayout(false);
             this._contactPage.ResumeLayout(false);
-            this._patientIdentifierGroup.ResumeLayout(false);
-            this._patientIdentifierGroup.PerformLayout();
-            this._personalInfoGroup.ResumeLayout(false);
-            this._personalInfoGroup.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -537,8 +485,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         private ClearCanvas.Desktop.View.WinForms.ComboBoxField _selectedProfile;
         private System.Windows.Forms.GroupBox _patientIdentifierGroup;
         private ClearCanvas.Desktop.View.WinForms.TextField _healthcardVersionCode;
-        private ClearCanvas.Desktop.View.WinForms.TextField _mrnSite;
-        private ClearCanvas.Desktop.View.WinForms.TextField _healthcardProvince;
         private ClearCanvas.Desktop.View.WinForms.TextField _mrn;
         private ClearCanvas.Desktop.View.WinForms.TextField _healthcard;
         private ClearCanvas.Desktop.View.WinForms.TextField _healthcardExpiry;

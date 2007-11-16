@@ -43,7 +43,7 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
             EntityRef profileRef,
             EntityRef orderRef,
             EntityRef procedureStepRef,
-            MrnDetail mrn,
+            CompositeIdentifierDetail mrn,
             PersonNameDetail name,
             EnumValueInfo orderPriority,
             EnumValueInfo patientClass,
@@ -83,7 +83,7 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
         public EntityRef OrderRef;
 
         [DataMember]
-        public MrnDetail Mrn;
+        public CompositeIdentifierDetail Mrn;
 
         [DataMember]
         public PersonNameDetail PersonNameDetail;

@@ -74,7 +74,7 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
     {
         // PatientProfile data
         private EntityRef _patientRef;
-        private CompositeIdentifier _mrn;
+        private PatientIdentifier _mrn;
         private PersonName _patientName;
         private HealthcardNumber _healthcardNumber;
         private DateTime? _dateOfBirth;
@@ -132,7 +132,7 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
             get { return _patientRef; }
         }
 
-        public CompositeIdentifier Mrn
+        public PatientIdentifier Mrn
         {
             get { return _mrn; }
         }

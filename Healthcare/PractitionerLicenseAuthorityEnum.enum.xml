@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<enum class="PractitionerLicenseAuthorityEnum">
+  <enum-value code="CPSO">
+    <value>CPSO</value>
+    <description>College of Physicians and Surgeons of Ontario</description>
+  </enum-value>
+</enum>

@@ -42,43 +42,6 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 {
     public class ReportingWorkflowAssembler
     {
-        public ReportingWorklistPreview CreateReportingWorklistPreview(ReportingWorklistItem item, IPersistenceContext context)
-        {
-            ReportingProcedureStep step = context.Load<ReportingProcedureStep>(item.ProcedureStepRef);
-
-            //TODO: choose the profile based on some location instead of visit assigning authority
-            PatientProfile profile = step.RequestedProcedure.Order.Patient.Profiles.Count == 1 ?
-                CollectionUtils.FirstElement<PatientProfile>(step.RequestedProcedure.Order.Patient.Profiles) :                
-                CollectionUtils.SelectFirst<PatientProfile>(step.RequestedProcedure.Order.Patient.Profiles,
-                delegate(PatientProfile thisProfile)
-                {
-                    if (thisProfile.Mrn.AssigningAuthority == step.RequestedProcedure.Order.Visit.VisitNumber.AssigningAuthority)
-                        return true;
-
-                    return false;
-                });
-
-            ReportingWorklistPreview preview = new ReportingWorklistPreview();
-
-            preview.ReportContent = (step.ReportPart == null ? null : step.ReportPart.Content);
-
-            // PatientProfile Details
-            preview.Mrn = new MrnDetail(profile.Mrn.Id, profile.Mrn.AssigningAuthority);
-            preview.Name = new PersonNameAssembler().CreatePersonNameDetail(profile.Name);
-            preview.DateOfBirth = profile.DateOfBirth;
-            preview.Sex = EnumUtils.GetValue(profile.Sex, context);
-
-            // Order Details
-            preview.AccessionNumber = step.RequestedProcedure.Order.AccessionNumber;
-            preview.RequestedProcedureName = step.RequestedProcedure.Type.Name;
-
-            // Visit Details
-            preview.VisitNumberId = step.RequestedProcedure.Order.Visit.VisitNumber.Id;
-            preview.VisitNumberAssigningAuthority = step.RequestedProcedure.Order.Visit.VisitNumber.AssigningAuthority;
-            
-            return preview;
-        }
-
         public ReportingWorklistItem CreateReportingWorklistItem(WorklistItem domainItem, IPersistenceContext context)
         {
             ReportingWorklistItem item = new ReportingWorklistItem();
@@ -86,7 +49,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             item.ProcedureStepRef = domainItem.ProcedureStepRef;
 
             item.PatientProfileRef = domainItem.PatientProfileRef;
-            item.Mrn = new MrnDetail(domainItem.Mrn.Id, domainItem.Mrn.AssigningAuthority);
+            item.Mrn = new MrnAssembler().CreateMrnDetail(domainItem.Mrn);
 
             PersonNameAssembler assembler = new PersonNameAssembler();
             item.PersonNameDetail = assembler.CreatePersonNameDetail(domainItem.PatientName);
@@ -130,10 +93,10 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
             PersonNameAssembler nameAssembler = new PersonNameAssembler();
             summary.Name = nameAssembler.CreatePersonNameDetail(profile.Name);
-            summary.Mrn = new MrnDetail(profile.Mrn.Id, profile.Mrn.AssigningAuthority);
+            summary.Mrn = new MrnAssembler().CreateMrnDetail(profile.Mrn);
             summary.DateOfBirth = profile.DateOfBirth;
-            summary.VisitNumberId = order.Visit.VisitNumber.Id;
-            summary.VisitNumberAssigningAuthority = order.Visit.VisitNumber.AssigningAuthority;
+
+            summary.VisitNumber = new VisitAssembler().CreateVisitNumberDetail(order.Visit.VisitNumber);
             summary.AccessionNumber = order.AccessionNumber;
             summary.DiagnosticServiceName = order.DiagnosticService.Name;
             summary.RequestedProcedureName = rp.Type.Name;

@@ -91,7 +91,7 @@ namespace ClearCanvas.Healthcare.PatientReconciliation
             {
                 results.Add(GetResult<HealthcardNumber>(x, y, PatientProfileDiscrepancy.Healthcard,
                     delegate(PatientProfile p) { return p.Healthcard; },
-                    delegate(HealthcardNumber a, HealthcardNumber b) { return a.IsEquivalentTo(b); }));
+                    delegate(HealthcardNumber a, HealthcardNumber b) { return Equals(a, b); }));
             }
 
             // FamilyName

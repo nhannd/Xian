@@ -58,15 +58,15 @@ namespace ClearCanvas.Ris.Client.Formatting
         ///     %V - version code
         ///     %X - expiry date
         /// </remarks>
-        /// <param name="pn"></param>
+        /// <param name="hc"></param>
         /// <param name="format"></param>
         /// <returns></returns>
         public static string Format(HealthcardDetail hc, string format)
         {
             string result = format;
-            result = result.Replace("%N", hc.Id == null ? "" : hc.Id);
-            result = result.Replace("%A", hc.AssigningAuthority == null ? "" : hc.AssigningAuthority);
-            result = result.Replace("%V", hc.VersionCode == null ? "" : hc.VersionCode);
+            result = result.Replace("%N", hc.Id ?? "");
+            result = result.Replace("%A", hc.AssigningAuthority == null ? "" : hc.AssigningAuthority.Code);
+            result = result.Replace("%V", hc.VersionCode ?? "");
             result = result.Replace("%X", ClearCanvas.Desktop.Format.Date(hc.ExpiryDate));
 
             return result.Trim();

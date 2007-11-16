@@ -53,16 +53,13 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
         public PersonNameDetail Name;
 
         [DataMember]
-        public MrnDetail Mrn;
+        public CompositeIdentifierDetail Mrn;
 
         [DataMember]
         public DateTime? DateOfBirth;
 
         [DataMember]
-        public string VisitNumberId;
-
-        [DataMember]
-        public string VisitNumberAssigningAuthority;
+        public CompositeIdentifierDetail VisitNumber;
 
         [DataMember]
         public string AccessionNumber;

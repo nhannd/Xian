@@ -106,10 +106,10 @@ namespace ClearCanvas.Ris.Application.Services.BrowsePatientData
             PersonNameAssembler nameAssembler = new PersonNameAssembler();
 
             data.MrnId = profile.Mrn.Id;
-            data.MrnAssigningAuthority = profile.Mrn.AssigningAuthority;
+            data.MrnAssigningAuthority = profile.Mrn.AssigningAuthority.Code;
 
             data.HealthcardId = profile.Healthcard.Id;
-            data.HealthcardAssigningAuthority = profile.Healthcard.AssigningAuthority;
+            data.HealthcardAssigningAuthority = profile.Healthcard.AssigningAuthority.Code;
             data.HealthcardVersionCode = profile.Healthcard.VersionCode;
             data.HealthcardExpiryDate = profile.Healthcard.ExpiryDate;
 
@@ -127,7 +127,7 @@ namespace ClearCanvas.Ris.Application.Services.BrowsePatientData
             // Visit locations and practitioners collections not implemented
 
             data.VisitNumberId = visit.VisitNumber.Id;
-            data.VisitNumberAssigningAuthority = visit.VisitNumber.AssigningAuthority;
+            data.VisitNumberAssigningAuthority = visit.VisitNumber.AssigningAuthority.Code;
             data.PatientClass = EnumUtils.GetDisplayValue(visit.PatientClass);
             data.PatientType = EnumUtils.GetDisplayValue(visit.PatientType);
             data.AdmissionType = EnumUtils.GetDisplayValue(visit.AdmissionType);

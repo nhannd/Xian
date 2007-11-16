@@ -38,6 +38,7 @@ using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.VisitAdmin;
 using ClearCanvas.Ris.Application.Common.Admin;
 using ClearCanvas.Ris.Application.Common.Admin.FacilityAdmin;
+using System.Collections;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -57,7 +58,7 @@ namespace ClearCanvas.Ris.Client.Adt
     {
         private VisitDetail _visit;
 
-        private readonly List<string> _visitNumberAssigningAuthorityChoices;
+        private readonly List<EnumValueInfo> _visitNumberAssigningAuthorityChoices;
         private readonly List<EnumValueInfo> _patientClassChoices;
         private readonly List<EnumValueInfo> _patientTypeChoices;
         private readonly List<EnumValueInfo> _admissionTypeChoices;
@@ -69,7 +70,7 @@ namespace ClearCanvas.Ris.Client.Adt
         /// Constructor
         /// </summary>
         public VisitDetailsEditorComponent(
-                List<string> visitNumberAssigningAuthorityChoices,
+                List<EnumValueInfo> visitNumberAssigningAuthorityChoices,
                 List<EnumValueInfo> patientClassChoices,
                 List<EnumValueInfo> patientTypeChoices,
                 List<EnumValueInfo> admissionTypeChoices,
@@ -107,9 +108,10 @@ namespace ClearCanvas.Ris.Client.Adt
                     }
                 });
 
-            if (_visit.VisitNumberAssigningAuthority == null)
+            if (_visit.VisitNumber == null)
             {
-                _visit.VisitNumberAssigningAuthority = _visitNumberAssigningAuthorityChoices[0];
+                _visit.VisitNumber = new CompositeIdentifierDetail();
+                _visit.VisitNumber.AssigningAuthority = _visitNumberAssigningAuthorityChoices[0];
             }
 
             base.Start();
@@ -124,26 +126,26 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public string VisitNumber
         {
-            get { return _visit.VisitNumberId; }
+            get { return _visit.VisitNumber.Id; }
             set
             {
-                _visit.VisitNumberId = value;
+                _visit.VisitNumber.Id = value;
                 this.Modified = true;
             }
         }
 
         #region AssigningAuthority
-        public string VisitNumberAssigningAuthority
+        public EnumValueInfo VisitNumberAssigningAuthority
         {
-            get { return _visit.VisitNumberAssigningAuthority; }
+            get { return _visit.VisitNumber.AssigningAuthority; }
             set
             {
-                _visit.VisitNumberAssigningAuthority = value;
+                _visit.VisitNumber.AssigningAuthority = value;
                 this.Modified = true;
             }
         }
 
-        public List<string> VisitNumberAssigningAuthorityChoices
+        public IList VisitNumberAssigningAuthorityChoices
         {
             get { return this._visitNumberAssigningAuthorityChoices; }
         }

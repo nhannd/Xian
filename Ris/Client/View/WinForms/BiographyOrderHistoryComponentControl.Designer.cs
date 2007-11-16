@@ -61,7 +61,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         {
             this.components = new System.ComponentModel.Container();
             ClearCanvas.Desktop.Selection selection1 = new ClearCanvas.Desktop.Selection();
-            ClearCanvas.Desktop.Selection selection2 = new ClearCanvas.Desktop.Selection();
             this._orderList = new ClearCanvas.Desktop.View.WinForms.TableView();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.tabControl1 = new System.Windows.Forms.TabControl();
@@ -90,7 +89,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this._admitDateTime = new ClearCanvas.Desktop.View.WinForms.TextField();
             this._ambulatoryStatus = new ClearCanvas.Desktop.View.WinForms.TextField();
             this._admissionType = new ClearCanvas.Desktop.View.WinForms.TextField();
-            this._site = new ClearCanvas.Desktop.View.WinForms.TextField();
             this._patientType = new ClearCanvas.Desktop.View.WinForms.TextField();
             this._visitStatus = new ClearCanvas.Desktop.View.WinForms.TextField();
             this._patientClass = new ClearCanvas.Desktop.View.WinForms.TextField();
@@ -112,16 +110,11 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             // 
             this._orderList.Dock = System.Windows.Forms.DockStyle.Fill;
             this._orderList.Location = new System.Drawing.Point(0, 0);
-            this._orderList.MenuModel = null;
             this._orderList.Name = "_orderList";
             this._orderList.ReadOnly = false;
-            this._orderList.Selection = selection1;
             this._orderList.Size = new System.Drawing.Size(589, 239);
             this._orderList.TabIndex = 0;
-            this._orderList.Table = null;
-            this._orderList.ToolbarModel = null;
             this._orderList.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this._orderList.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.No;
             // 
             // splitContainer1
             // 
@@ -285,7 +278,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this._diagnosticServiceBreakdown.Margin = new System.Windows.Forms.Padding(2);
             this._diagnosticServiceBreakdown.MenuModel = null;
             this._diagnosticServiceBreakdown.Name = "_diagnosticServiceBreakdown";
-            this._diagnosticServiceBreakdown.Selection = selection2;
+            this._diagnosticServiceBreakdown.Selection = selection1;
             this._diagnosticServiceBreakdown.ShowRootLines = false;
             this._diagnosticServiceBreakdown.ShowToolbar = false;
             this._diagnosticServiceBreakdown.Size = new System.Drawing.Size(270, 183);
@@ -415,7 +408,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this._visitPage.Controls.Add(this._admitDateTime);
             this._visitPage.Controls.Add(this._ambulatoryStatus);
             this._visitPage.Controls.Add(this._admissionType);
-            this._visitPage.Controls.Add(this._site);
             this._visitPage.Controls.Add(this._patientType);
             this._visitPage.Controls.Add(this._visitStatus);
             this._visitPage.Controls.Add(this._patientClass);
@@ -482,19 +474,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this._admissionType.TabIndex = 38;
             this._admissionType.Value = null;
             // 
-            // _site
-            // 
-            this._site.AutoSize = true;
-            this._site.LabelText = "Site";
-            this._site.Location = new System.Drawing.Point(155, 19);
-            this._site.Margin = new System.Windows.Forms.Padding(2);
-            this._site.Mask = "";
-            this._site.Name = "_site";
-            this._site.ReadOnly = true;
-            this._site.Size = new System.Drawing.Size(138, 42);
-            this._site.TabIndex = 37;
-            this._site.Value = null;
-            // 
             // _patientType
             // 
             this._patientType.AutoSize = true;
@@ -543,7 +522,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this._visitNumber.Mask = "";
             this._visitNumber.Name = "_visitNumber";
             this._visitNumber.ReadOnly = true;
-            this._visitNumber.Size = new System.Drawing.Size(136, 42);
+            this._visitNumber.Size = new System.Drawing.Size(278, 42);
             this._visitNumber.TabIndex = 29;
             this._visitNumber.Value = null;
             // 
@@ -627,7 +606,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         private ClearCanvas.Desktop.View.WinForms.TextField _reasonForStudy;
         private ClearCanvas.Desktop.View.WinForms.TextField _ambulatoryStatus;
         private ClearCanvas.Desktop.View.WinForms.TextField _admissionType;
-        private ClearCanvas.Desktop.View.WinForms.TextField _site;
         private ClearCanvas.Desktop.View.WinForms.TextField _patientType;
         private ClearCanvas.Desktop.View.WinForms.TextField _visitStatus;
         private ClearCanvas.Desktop.View.WinForms.TextField _patientClass;

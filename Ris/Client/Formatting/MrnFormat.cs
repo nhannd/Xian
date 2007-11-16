@@ -41,9 +41,9 @@ namespace ClearCanvas.Ris.Client.Formatting
         /// <summary>
         /// Formats the MRN according to the default format as specified in <see cref="FormatSettings"/>
         /// </summary>
-        /// <param name="hc"></param>
+        /// <param name="mrn"></param>
         /// <returns></returns>
-        public static string Format(MrnDetail mrn)
+        public static string Format(CompositeIdentifierDetail mrn)
         {
             return Format(mrn, FormatSettings.Default.MrnDefaultFormat);
         }
@@ -56,14 +56,14 @@ namespace ClearCanvas.Ris.Client.Formatting
         ///     %N - number
         ///     %A - assigning authority
         /// </remarks>
-        /// <param name="pn"></param>
+        /// <param name="mrn"></param>
         /// <param name="format"></param>
         /// <returns></returns>
-        public static string Format(MrnDetail mrn, string format)
+        public static string Format(CompositeIdentifierDetail mrn, string format)
         {
             string result = format;
-            result = result.Replace("%N", mrn.Id == null ? "" : mrn.Id);
-            result = result.Replace("%A", mrn.AssigningAuthority == null ? "" : mrn.AssigningAuthority);
+            result = result.Replace("%N", mrn.Id ?? "");
+            result = result.Replace("%A", mrn.AssigningAuthority == null ? "" : mrn.AssigningAuthority.Code);
             return result.Trim();
         }
     }

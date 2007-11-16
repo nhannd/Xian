@@ -109,7 +109,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 {
                     LoadPatientProfileEditorFormDataResponse formData = service.LoadPatientProfileEditorFormData(new LoadPatientProfileEditorFormDataRequest());
                     
-                    this.Pages.Add(new NavigatorPage("Patient", _patientEditor = new PatientProfileDetailsEditorComponent(formData.SexChoices)));
+                    this.Pages.Add(new NavigatorPage("Patient", _patientEditor = new PatientProfileDetailsEditorComponent(formData.SexChoices, formData.MrnAssigningAuthorityChoices, formData.HealthcardAssigningAuthorityChoices)));
                     this.Pages.Add(new NavigatorPage("Patient/Addresses", _addressesSummary = new AddressesSummaryComponent(formData.AddressTypeChoices)));
                     this.Pages.Add(new NavigatorPage("Patient/Phone Numbers", _phoneNumbersSummary = new PhoneNumbersSummaryComponent(formData.PhoneTypeChoices)));
                     this.Pages.Add(new NavigatorPage("Patient/Email Addresses", _emailAddressesSummary = new EmailAddressesSummaryComponent()));
@@ -122,8 +122,8 @@ namespace ClearCanvas.Ris.Client.Adt
                     if (_isNew)
                     {
                         _profile = new PatientProfileDetail();
-                        _profile.Mrn.AssigningAuthority = "UHN";    // TODO remove this hack
-                        _profile.Healthcard.AssigningAuthority = "Ontario";    // TODO remove this hack
+                        _profile.Mrn.AssigningAuthority = formData.MrnAssigningAuthorityChoices.Count > 0 ? formData.MrnAssigningAuthorityChoices[0] : null;
+                        _profile.Healthcard.AssigningAuthority = formData.HealthcardAssigningAuthorityChoices.Count > 0 ? formData.HealthcardAssigningAuthorityChoices[0] : null;
                         _profile.Sex = formData.SexChoices[0];
                         _profile.Religion = formData.ReligionChoices[0];
                         _profile.PrimaryLanguage = formData.PrimaryLanguageChoices[0];

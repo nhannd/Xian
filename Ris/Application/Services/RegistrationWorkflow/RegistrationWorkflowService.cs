@@ -133,32 +133,6 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         }
 
         [ReadOperation]
-        public LoadWorklistPreviewResponse LoadWorklistPreview(LoadWorklistPreviewRequest request)
-        {
-            PatientProfile profile = PersistenceContext.Load<PatientProfile>(request.WorklistItem.PatientProfileRef);
-            Order order = PersistenceContext.Load<Order>(request.WorklistItem.OrderRef);
-
-            List<IAlertNotification> alerts = new List<IAlertNotification>();
-            alerts.AddRange(AlertHelper.Instance.Test(profile.Patient, this.PersistenceContext));
-            alerts.AddRange(AlertHelper.Instance.Test(profile, this.PersistenceContext));
-            alerts.AddRange(AlertHelper.Instance.Test(order, this.PersistenceContext));
-
-            AlertAssembler alertAssembler = new AlertAssembler();
-            List<AlertNotificationDetail> alertNotifications =
-                CollectionUtils.Map<IAlertNotification, AlertNotificationDetail>(alerts,
-                delegate(IAlertNotification alert)
-                {
-                    return alertAssembler.CreateAlertNotification(alert);
-                });
-
-            RegistrationWorkflowAssembler assembler = new RegistrationWorkflowAssembler();
-            return new LoadWorklistPreviewResponse(assembler.CreateRegistrationWorklistPreview(
-                request.WorklistItem,
-                alertNotifications,
-                this.PersistenceContext));
-        }
-
-        [ReadOperation]
         public GetOperationEnablementResponse GetOperationEnablement(GetOperationEnablementRequest request)
         {
             return new GetOperationEnablementResponse(GetOperationEnablement(new WorklistItemKey(request.OrderRef, request.PatientProfileRef)));

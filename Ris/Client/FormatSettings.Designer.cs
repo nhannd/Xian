@@ -152,9 +152,18 @@ namespace ClearCanvas.Ris.Client {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("%A %N")]
-        public string CompositeIdentifierDefaultFormat {
+        public string LicenseNumberDefaultFormat {
             get {
-                return ((string)(this["CompositeIdentifierDefaultFormat"]));
+                return ((string)(this["LicenseNumberDefaultFormat"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("%A %N")]
+        public string VisitNumberDefaultFormat {
+            get {
+                return ((string)(this["VisitNumberDefaultFormat"]));
             }
         }
     }

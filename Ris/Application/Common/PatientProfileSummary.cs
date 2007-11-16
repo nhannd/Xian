@@ -47,7 +47,7 @@ namespace ClearCanvas.Ris.Application.Common
         public EntityRef ProfileRef;
 
         [DataMember]
-        public MrnDetail Mrn;
+        public CompositeIdentifierDetail Mrn;
 
         [DataMember]
         public PersonNameDetail Name;

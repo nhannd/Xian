@@ -52,6 +52,8 @@
       <DependentUpon>AddressesSummaryComponentSettings.settings</DependentUpon>
     </Compile>
     <Compile Include="BiographyDemographicComponent.cs" />
+    <Compile Include="Formatting\LicenseNumberFormat.cs" />
+    <Compile Include="Formatting\VisitNumberFormat.cs" />
     <Compile Include="OrderAttachmentTable.cs" />
     <Compile Include="PatientAttachmentTable.cs" />
     <Compile Include="BiographyFeedbackComponent.cs" />
@@ -74,7 +76,6 @@
     <Compile Include="ExternalPractitionerLookupHandler.cs" />
     <Compile Include="ExternalPractitionerSummaryComponent.cs" />
     <Compile Include="MimeDocumentPreviewComponent.cs" />
-    <Compile Include="Formatting\CompositeIdentifierFormat.cs" />
     <Compile Include="HomePageContainer.cs" />
     <Compile Include="ILookupHandler.cs" />
     <Compile Include="IViewerIntegration.cs" />

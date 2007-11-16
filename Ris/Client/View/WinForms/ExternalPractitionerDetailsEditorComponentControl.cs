@@ -43,7 +43,7 @@ using ClearCanvas.Desktop.View.WinForms;
 namespace ClearCanvas.Ris.Client.View.WinForms
 {
     /// <summary>
-    /// Provides a Windows Forms user-interface for <see cref="PractitionerDetailsEditorComponent"/>
+    /// Provides a Windows Forms user-interface for <see cref="ExternalPractitionerDetailsEditorComponent"/>
     /// </summary>
     public partial class ExternalPractitionerDetailsEditorComponentControl : ApplicationComponentUserControl
     {
@@ -63,6 +63,8 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             _middleName.DataBindings.Add("Value", _component, "MiddleName", true, DataSourceUpdateMode.OnPropertyChanged);
             
             _licenseNumber.DataBindings.Add("Value", _component, "LicenseNumber", true, DataSourceUpdateMode.OnPropertyChanged);
+            _licenseAuthority.DataSource = _component.LicenseAuthorityChoices;
+            _licenseAuthority.DataBindings.Add("Value", _component, "LicenseAuthority", true, DataSourceUpdateMode.OnPropertyChanged);
         }
     }
 }

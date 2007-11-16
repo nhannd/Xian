@@ -342,7 +342,6 @@
     <Compile Include="ModalityWorkflow\ResumeProcedureRequest.cs" />
     <Compile Include="ModalityWorkflow\ResumeProcedureResponse.cs" />
     <Compile Include="PerformedProcedureStepDetail.cs" />
-    <Compile Include="MrnDetail.cs" />
     <Compile Include="ConcurrentModificationException.cs" />
     <Compile Include="ContactPersonDetail.cs" />
     <Compile Include="NoteCategoryDetail.cs" />
@@ -372,10 +371,7 @@
     <Compile Include="ModalityWorkflow\GetWorklistRequest.cs" />
     <Compile Include="ModalityWorkflow\GetWorklistResponse.cs" />
     <Compile Include="ModalityWorkflow\IModalityWorkflowService.cs" />
-    <Compile Include="ModalityWorkflow\LoadWorklistItemPreviewRequest.cs" />
-    <Compile Include="ModalityWorkflow\LoadWorklistItemPreviewResponse.cs" />
     <Compile Include="ModalityWorkflow\ModalityWorklistItem.cs" />
-    <Compile Include="ModalityWorkflow\ModalityWorklistPreview.cs" />
     <Compile Include="ModalityWorkflow\ModalityWorklistSearchData.cs" />
     <Compile Include="ModalityWorkflow\StartProcedureRequest.cs" />
     <Compile Include="NoteDetail.cs" />
@@ -436,8 +432,6 @@
     <Compile Include="RegistrationWorkflow\IRegistrationWorkflowService.cs" />
     <Compile Include="RegistrationWorkflow\ListWorklistsRequest.cs" />
     <Compile Include="RegistrationWorkflow\ListWorklistsResponse.cs" />
-    <Compile Include="RegistrationWorkflow\LoadWorklistPreviewRequest.cs" />
-    <Compile Include="RegistrationWorkflow\LoadWorklistPreviewResponse.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\DiagnosticServiceTreeItem.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\GetDiagnosticServiceSubTreeRequest.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\GetDiagnosticServiceSubTreeResponse.cs" />
@@ -446,7 +440,6 @@
     <Compile Include="RegistrationWorkflow\OrderEntry\ListActiveVisitsForPatientRequest.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\ListActiveVisitsForPatientResponse.cs" />
     <Compile Include="RegistrationWorkflow\RegistrationWorklistItem.cs" />
-    <Compile Include="RegistrationWorkflow\RegistrationWorklistPreview.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\GetOrderEntryFormDataRequest.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\GetOrderEntryFormDataResponse.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\IOrderEntryService.cs" />
@@ -473,8 +466,6 @@
     <Compile Include="ReportingWorkflow\GetPriorReportResponse.cs" />
     <Compile Include="ReportingWorkflow\LoadReportForEditRequest.cs" />
     <Compile Include="ReportingWorkflow\LoadReportForEditResponse.cs" />
-    <Compile Include="ReportingWorkflow\LoadWorklistPreviewRequest.cs" />
-    <Compile Include="ReportingWorkflow\LoadWorklistPreviewResponse.cs" />
     <Compile Include="ReportingWorkflow\ReportPartSummary.cs" />
     <Compile Include="ReportingWorkflow\ReportSummary.cs" />
     <Compile Include="ReportingWorkflow\ReviseResidentReportRequest.cs" />
@@ -492,7 +483,6 @@
     <Compile Include="ReportingWorkflow\GetWorklistRequest.cs" />
     <Compile Include="ReportingWorkflow\GetWorklistResponse.cs" />
     <Compile Include="ReportingWorkflow\IReportingWorkflowService.cs" />
-    <Compile Include="ReportingWorkflow\ReportingWorklistPreview.cs" />
     <Compile Include="ReportingWorkflow\ReportingWorklistItem.cs" />
     <Compile Include="ReportingWorkflow\ReportingWorklistSearchCriteria.cs" />
     <Compile Include="ReportingWorkflow\StartInterpretationRequest.cs" />

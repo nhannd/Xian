@@ -42,7 +42,7 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
             EntityRef patientRef,
             EntityRef profileRef,
             EntityRef orderRef,
-            MrnDetail mrn,
+            CompositeIdentifierDetail mrn,
             PersonNameDetail name,
             HealthcardDetail healthcard,
             DateTime? dateOfBirth,
@@ -78,7 +78,7 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
         public EntityRef PatientProfileRef;
 
         [DataMember]
-        public MrnDetail Mrn;
+        public CompositeIdentifierDetail Mrn;
 
         [DataMember]
         public PersonNameDetail Name;

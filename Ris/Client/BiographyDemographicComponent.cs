@@ -138,7 +138,7 @@ namespace ClearCanvas.Ris.Client
             _contactTable.Items.AddRange(_patientProfile.ContactPersons);
         }
 
-        private static string ProfileStringConverter(PersonNameDetail name, MrnDetail mrn)
+        private static string ProfileStringConverter(PersonNameDetail name, CompositeIdentifierDetail mrn)
         {
             return String.Format("{0} - {1}", MrnFormat.Format(mrn), PersonNameFormat.Format(name));
         }
@@ -303,22 +303,12 @@ namespace ClearCanvas.Ris.Client
 
         public string Mrn
         {
-            get { return _patientProfile.Mrn.Id; }
-        }
-
-        public string MrnSite
-        {
-            get { return _patientProfile.Mrn.AssigningAuthority; }
+            get { return MrnFormat.Format(_patientProfile.Mrn); }
         }
 
         public string Healthcard
         {
-            get { return _patientProfile.Healthcard.Id; }
-        }
-
-        public string HealthcardProvince
-        {
-            get { return _patientProfile.Healthcard.AssigningAuthority; }
+            get { return HealthcardFormat.Format(_patientProfile.Healthcard); }
         }
 
         public string HealthcardVersionCode

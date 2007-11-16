@@ -40,7 +40,7 @@ namespace ClearCanvas.Ris.Application.Common
     [DataContract]
     public class HealthcardDetail : DataContractBase
     {
-        public HealthcardDetail(string id, string assigningAuthority, string versionCode, DateTime? expiryDate)
+        public HealthcardDetail(string id, EnumValueInfo assigningAuthority, string versionCode, DateTime? expiryDate)
         {
             this.Id = id;
             this.AssigningAuthority = assigningAuthority;
@@ -56,7 +56,7 @@ namespace ClearCanvas.Ris.Application.Common
         public string Id;
 
         [DataMember]
-        public string AssigningAuthority;
+        public EnumValueInfo AssigningAuthority;
 
         [DataMember]
         public string VersionCode;

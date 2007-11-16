@@ -53,9 +53,6 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
         GetWorklistItemResponse GetWorklistItem(GetWorklistItemRequest request);
 
         [OperationContract]
-        LoadWorklistItemPreviewResponse LoadWorklistItemPreview(LoadWorklistItemPreviewRequest request);
-
-        [OperationContract]
         GetOperationEnablementResponse GetOperationEnablement(GetOperationEnablementRequest request);
 
         [OperationContract]

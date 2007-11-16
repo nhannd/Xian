@@ -135,14 +135,16 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
                 DateTime? faxValidFrom = ParseDateTime(fields[26]);
                 DateTime? faxValidUntil = ParseDateTime(fields[27]);
 
-                ExternalPractitioner ep = GetExternalPracitioner(epLicenseId, epLicenseAssigningAuthority, importedEPs);
+                PractitionerLicenseAuthorityEnum licenseAuth = context.GetBroker<IEnumBroker>().Find<PractitionerLicenseAuthorityEnum>(epLicenseAssigningAuthority);
+                PractitionerLicenseNumber licenseNumber = new PractitionerLicenseNumber(epLicenseId, licenseAuth);
+
+                ExternalPractitioner ep = GetExternalPracitioner(licenseNumber, importedEPs);
 
                 if (ep == null)
                 {
                     ep = new ExternalPractitioner();
+                    ep.LicenseNumber = licenseNumber;
 
-                    ep.LicenseNumber.Id = epLicenseId;
-                    ep.LicenseNumber.AssigningAuthority = epLicenseAssigningAuthority;
                     ep.Name = new PersonName(epFamilyName, epGivenName, epMiddlename, epPrefix, epSuffix, epDegree);
 
 
@@ -207,22 +209,22 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
 
         #region Private Methods
 
-        private ExternalPractitioner GetExternalPracitioner(string licenseId, string licenseAssigningAuthority, List<ExternalPractitioner> importedEPs)
+        private ExternalPractitioner GetExternalPracitioner(PractitionerLicenseNumber license, List<ExternalPractitioner> importedEPs)
         {
             // if licenseId is not supplied, then assume the record does not exist
-            if(string.IsNullOrEmpty(licenseId))
+            if (string.IsNullOrEmpty(license.Id))
                 return null;
 
             ExternalPractitioner externalPractitioner = null;
 
             externalPractitioner = CollectionUtils.SelectFirst<ExternalPractitioner>(importedEPs,
-                delegate(ExternalPractitioner ep) { return ep.LicenseNumber.Id == licenseId && ep.LicenseNumber.AssigningAuthority == licenseAssigningAuthority; });
+                delegate(ExternalPractitioner ep) { return Equals(ep.LicenseNumber, license); });
 
             if (externalPractitioner == null)
             {
                 ExternalPractitionerSearchCriteria criteria = new ExternalPractitionerSearchCriteria();
-                criteria.LicenseNumber.Id.EqualTo(licenseId);
-                criteria.LicenseNumber.AssigningAuthority.EqualTo(licenseAssigningAuthority);
+                criteria.LicenseNumber.Id.EqualTo(license.Id);
+                criteria.LicenseNumber.AssigningAuthority.EqualTo(license.AssigningAuthority);
 
                 IExternalPractitionerBroker broker = _context.GetBroker<IExternalPractitionerBroker>();
                 externalPractitioner = CollectionUtils.FirstElement<ExternalPractitioner>(broker.Find(criteria));

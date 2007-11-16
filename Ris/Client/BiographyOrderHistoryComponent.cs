@@ -40,6 +40,7 @@ using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.BrowsePatientData;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry;
+using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -156,12 +157,7 @@ namespace ClearCanvas.Ris.Client
 
         public string VisitNumber
         {
-            get { return _orderDetail == null ? null : _orderDetail.Visit.VisitNumberId; }
-        }
-
-        public string Site
-        {
-            get { return _orderDetail == null ? null : _orderDetail.Visit.VisitNumberAssigningAuthority; }
+            get { return _orderDetail == null ? null : VisitNumberFormat.Format(_orderDetail.Visit.VisitNumber); }
         }
 
         public string PreAdmitNumber

@@ -83,6 +83,8 @@
     <Compile Include="MimeDocumentData.cs" />
     <Compile Include="OrderAttachment.cs" />
     <Compile Include="PatientAttachment.cs" />
+    <Compile Include="PatientIdentifier.cs" />
+    <Compile Include="PractitionerLicenseNumber.cs" />
     <Compile Include="Protocol.cs" />
     <Compile Include="ProtocolCode.cs" />
     <Compile Include="ProtocolGroup.cs" />
@@ -145,6 +147,7 @@
     <Compile Include="Tests\TestOrderFactory.cs" />
     <Compile Include="Tests\ScheduledWorkflowTests.cs" />
     <Compile Include="Tests\TestStaffFactory.cs" />
+    <Compile Include="VisitNumber.cs" />
     <Compile Include="Workflow\CancelOrderOperation.cs" />
     <Compile Include="Workflow\Modality\WorklistItem.cs" />
     <Compile Include="Workflow\Modality\Worklists.cs" />
@@ -158,7 +161,6 @@
     <Compile Include="Brokers\IPatientProfileBroker.cs" />
     <Compile Include="Brokers\IReportingProcedureStepBroker.cs" />
     <Compile Include="Brokers\IReportingWorklistBroker.cs" />
-    <Compile Include="CompositeIdentifier.cs" />
     <Compile Include="ContactPerson.cs" />
     <Compile Include="ContactPersonRelationship.cs" />
     <Compile Include="ContactPersonType.cs" />
@@ -192,7 +194,6 @@
     <Compile Include="ReportingPerformedProcedureStep.cs" />
     <Compile Include="ReportingProcedureStep.cs" />
     <Compile Include="ReportingProcedureStepSearchCriteria.cs" />
-    <Compile Include="ReportingWorklistQueryResult.cs" />
     <Compile Include="RequestedProcedure.cs" />
     <Compile Include="RequestedProcedureType.cs" />
     <Compile Include="ModalityProcedureStepType.cs" />
@@ -275,6 +276,12 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ProtocolSuspendRejectReasonEnum.enum.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="InsuranceAuthorityEnum.enum.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="PractitionerLicenseAuthorityEnum.enum.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

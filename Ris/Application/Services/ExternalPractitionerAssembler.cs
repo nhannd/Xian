@@ -49,9 +49,14 @@ namespace ClearCanvas.Ris.Application.Services
             summary.Name = new PersonNameAssembler().CreatePersonNameDetail(prac.Name);
             if (prac.LicenseNumber != null)
             {
-                summary.LicenseNumber = new CompositeIdentifierDetail(prac.LicenseNumber.Id, prac.LicenseNumber.AssigningAuthority);
+                summary.LicenseNumber = CreateLicenseNumberSummary(prac.LicenseNumber);
             }
             return summary;
+        }
+
+        private CompositeIdentifierDetail CreateLicenseNumberSummary(PractitionerLicenseNumber license)
+        {
+            return new CompositeIdentifierDetail(license.Id, EnumUtils.GetEnumValueInfo(license.AssigningAuthority));
         }
 
         public ExternalPractitionerDetail CreateExternalPractitionerDetail(ExternalPractitioner prac, IPersistenceContext context)
@@ -77,13 +82,13 @@ namespace ClearCanvas.Ris.Application.Services
 
             if (prac.LicenseNumber != null)
             {
-                detail.LicenseNumber = new CompositeIdentifierDetail(prac.LicenseNumber.Id, prac.LicenseNumber.AssigningAuthority);
+                detail.LicenseNumber = CreateLicenseNumberSummary(prac.LicenseNumber);
             }
 
             return detail;
         }
 
-        public void UpdateExternalPractitioner(ExternalPractitionerDetail detail, ExternalPractitioner prac)
+        public void UpdateExternalPractitioner(ExternalPractitionerDetail detail, ExternalPractitioner prac, IPersistenceContext context)
         {
             PersonNameAssembler assembler = new PersonNameAssembler();
             TelephoneNumberAssembler telephoneNumberAssembler = new TelephoneNumberAssembler();
@@ -107,7 +112,8 @@ namespace ClearCanvas.Ris.Application.Services
                 }
             }
 
-            prac.LicenseNumber = new CompositeIdentifier(detail.LicenseNumber.Id, detail.LicenseNumber.AssigningAuthority);
+            prac.LicenseNumber = new PractitionerLicenseNumber(detail.LicenseNumber.Id,
+                EnumUtils.GetEnumValue<PractitionerLicenseAuthorityEnum>(detail.LicenseNumber.AssigningAuthority, context));
         }
     }
 }

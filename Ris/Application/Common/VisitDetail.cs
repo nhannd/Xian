@@ -42,6 +42,7 @@ namespace ClearCanvas.Ris.Application.Common
     {
         public VisitDetail()
         {
+            this.VisitNumber = new CompositeIdentifierDetail();
             this.Locations = new List<VisitLocationDetail>();
             this.Practitioners = new List<VisitPractitionerDetail>();
             this.AmbulatoryStatuses = new List<EnumValueInfo>();
@@ -54,10 +55,7 @@ namespace ClearCanvas.Ris.Application.Common
         public EntityRef PatientRef;
 
         [DataMember]
-        public string VisitNumberId;
-
-        [DataMember]
-        public string VisitNumberAssigningAuthority;
+        public CompositeIdentifierDetail VisitNumber;
 
         [DataMember]
         public EnumValueInfo PatientClass;
@@ -100,8 +98,8 @@ namespace ClearCanvas.Ris.Application.Common
 
         public VisitSummary GetSummary()
         {
-            return new VisitSummary(this.VisitRef, this.PatientRef, this.VisitNumberId,
-                this.VisitNumberAssigningAuthority, this.PatientClass.Value, this.PatientType.Value, this.AdmissionType.Value,
+            return new VisitSummary(this.VisitRef, this.PatientRef, this.VisitNumber,
+                this.PatientClass.Value, this.PatientType.Value, this.AdmissionType.Value,
                 this.Status.Value, this.AdmitDateTime, this.DischargeDateTime);
         }
     }

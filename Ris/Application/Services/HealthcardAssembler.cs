@@ -48,17 +48,17 @@ namespace ClearCanvas.Ris.Application.Services
 
             return new HealthcardDetail(
                 healthcard.Id,
-                healthcard.AssigningAuthority,
+                EnumUtils.GetEnumValueInfo(healthcard.AssigningAuthority),
                 healthcard.VersionCode,
                 healthcard.ExpiryDate);
         }
 
-        public void UpdatePersonName(HealthcardDetail detail, HealthcardNumber healthcard)
+        public void UpdateHealthcard(HealthcardNumber hc, HealthcardDetail detail, IPersistenceContext context)
         {
-            healthcard.Id = detail.Id;
-            healthcard.AssigningAuthority = detail.AssigningAuthority;
-            healthcard.ExpiryDate = detail.ExpiryDate;
-            healthcard.VersionCode = detail.VersionCode;
-        }    
+            hc.Id = detail.Id;
+            hc.AssigningAuthority = EnumUtils.GetEnumValue<InsuranceAuthorityEnum>(detail.AssigningAuthority, context);
+            hc.VersionCode = detail.VersionCode;
+            hc.ExpiryDate = detail.ExpiryDate;
+        }
     }
 }

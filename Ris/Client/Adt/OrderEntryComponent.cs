@@ -363,9 +363,8 @@ namespace ClearCanvas.Ris.Client.Adt
                 visitType.Append(v.AdmissionType);
             }
 
-            return string.Format("{0} {1} {2} {3}",
-                v.VisitNumberAssigningAuthority,
-                v.VisitNumberId,
+            return string.Format("{0} {1} {2}",
+                VisitNumberFormat.Format(v.VisitNumber),
                 visitType,
                 Format.DateTime(v.AdmitDateTime)
                 );

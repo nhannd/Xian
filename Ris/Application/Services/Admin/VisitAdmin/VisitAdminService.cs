@@ -63,19 +63,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.VisitAdmin
             response.PatientClassChoices = EnumUtils.GetEnumValueList<PatientClassEnum>(PersistenceContext);
             response.PatientTypeChoices = EnumUtils.GetEnumValueList<PatientTypeEnum>(PersistenceContext);
             response.VisitLocationRoleChoices = EnumUtils.GetEnumValueList<VisitLocationRoleEnum>(PersistenceContext);
-
-            //TODO:  replace dummy values
-            List<string> dummyVisitNumberChoices = new List<string>();
-            dummyVisitNumberChoices.Add("UHN");
-            dummyVisitNumberChoices.Add("MSH");
-            dummyVisitNumberChoices.Add("WCH");
-            response.VisitNumberAssigningAuthorityChoices = dummyVisitNumberChoices;
-            //response.VisitNumberAssigningAuthorityChoices = CollectionUtils.Map<XXXXXX, EnumValueInfo>(
-            //    PersistenceContext.GetBroker<XXXXXXXX>().Load().Items,
-            //    delegate(XXXXXXXXXX e)
-            //    {
-            //        return new EnumValueInfo(e.Code.ToString(), e.Value);
-            //    });
+            response.VisitNumberAssigningAuthorityChoices = EnumUtils.GetEnumValueList<InformationAuthorityEnum>(PersistenceContext);
 
             response.VisitPractitionerRoleChoices = EnumUtils.GetEnumValueList<VisitPractitionerRoleEnum>(PersistenceContext);
             response.VisitStatusChoices = EnumUtils.GetEnumValueList<VisitStatusEnum>(PersistenceContext);

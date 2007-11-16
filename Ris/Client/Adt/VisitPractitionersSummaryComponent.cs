@@ -179,22 +179,11 @@ namespace ClearCanvas.Ris.Client.Adt
                     delegate(IExternalPractitionerAdminService service)
                     {
                         ListExternalPractitionersResponse findResponse = service.ListExternalPractitioners(new ListExternalPractitionersRequest("Who", ""));
-                        ExternalPractitionerSummary practitioner;
-                        if (findResponse.Practitioners.Count == 0)
-                        {
-                            AddExternalPractitionerResponse addResponse = service.AddExternalPractitioner(new AddExternalPractitionerRequest(new ExternalPractitionerDetail(
-                                    new PersonNameDetail("Who", "Doctor", "", "", "", ""),
-                                    null, null, new CompositeIdentifierDetail("CPSO", "123456"))));
-                            practitioner = addResponse.Practitioner;
-                        }
-                        else
-                        {
-                            practitioner = findResponse.Practitioners[0];
-                        }
+                        ExternalPractitionerSummary practitioner = findResponse.Practitioners[0];
 
                         VisitPractitionerDetail vp = new VisitPractitionerDetail();
 
-                        vp.Role = CollectionUtils.SelectFirst<EnumValueInfo>(_visitPractitionerRoleChoices,
+                        vp.Role = CollectionUtils.SelectFirst(_visitPractitionerRoleChoices,
                                 delegate(EnumValueInfo e) { return e.Code == "RF"; });
                         vp.Practitioner = practitioner;
                         vp.StartTime = Platform.Time;

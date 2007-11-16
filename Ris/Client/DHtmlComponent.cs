@@ -150,7 +150,7 @@ namespace ClearCanvas.Ris.Client
 
             public string FormatMrn(string jsml)
             {
-                MrnDetail detail = JsmlSerializer.Deserialize<MrnDetail>(jsml);
+                CompositeIdentifierDetail detail = JsmlSerializer.Deserialize<CompositeIdentifierDetail>(jsml);
                 return detail == null ? "" : MrnFormat.Format(detail);
             }
 

@@ -136,7 +136,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.HL7Admin
 
             PatientProfileSearchCriteria criteria = new PatientProfileSearchCriteria();
             criteria.Mrn.Id.EqualTo(identifiers[0]);
-            criteria.Mrn.AssigningAuthority.EqualTo(assigningAuthority);
+            criteria.Mrn.AssigningAuthority.EqualTo(PersistenceContext.GetBroker<IEnumBroker>().Find<InformationAuthorityEnum>(assigningAuthority));
 
             IPatientProfileBroker profileBroker = PersistenceContext.GetBroker<IPatientProfileBroker>();
             IList<PatientProfile> profiles = profileBroker.Find(criteria);

@@ -126,7 +126,7 @@ namespace ClearCanvas.Ris.Client
             return result.Trim();
         }
 
-        public static VisitSummary RandomVisit(EntityRef patientRef, EntityRef profileRef, string assigningAuthority)
+        public static VisitSummary RandomVisit(EntityRef patientRef, EntityRef profileRef, EnumValueInfo assigningAuthority)
         {
             VisitSummary visit = null;
 
@@ -153,8 +153,7 @@ namespace ClearCanvas.Ris.Client
 
                     VisitDetail visitDetail = new VisitDetail();
                     visitDetail.PatientRef = patientRef;
-                    visitDetail.VisitNumberId = FormatDateTime(now, null);
-                    visitDetail.VisitNumberAssigningAuthority = assigningAuthority;
+                    visitDetail.VisitNumber = new CompositeIdentifierDetail(FormatDateTime(now, null), assigningAuthority);
                     visitDetail.PatientClass = ChooseRandom(visitFormResponse.PatientClassChoices);
                     visitDetail.PatientType = ChooseRandom(visitFormResponse.PatientTypeChoices);
                     visitDetail.AdmissionType = ChooseRandom(visitFormResponse.AdmissionTypeChoices);

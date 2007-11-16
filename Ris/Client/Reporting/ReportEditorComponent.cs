@@ -235,7 +235,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         public string VisitNumber
         {
-            get { return String.Format("{0} {1}", _report.VisitNumberAssigningAuthority, _report.VisitNumberId); }
+            get { return VisitNumberFormat.Format(_report.VisitNumber); }
         }
 
         public string AccessionNumber

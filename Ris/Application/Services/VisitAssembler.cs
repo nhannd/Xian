@@ -47,8 +47,7 @@ namespace ClearCanvas.Ris.Application.Services
             summary.VisitRef = visit.GetRef();
             summary.PatientRef = visit.Patient.GetRef();
 
-            summary.VisitNumberAssigningAuthority = visit.VisitNumber.AssigningAuthority;
-            summary.VisitNumberId = visit.VisitNumber.Id;
+            summary.VisitNumber = CreateVisitNumberDetail(visit.VisitNumber);
 
             summary.AdmissionType = visit.AdmissionType.Value;
             summary.PatientClass = visit.PatientClass.Value;
@@ -66,8 +65,7 @@ namespace ClearCanvas.Ris.Application.Services
             VisitDetail detail = new VisitDetail();
             detail.VisitRef = visit.GetRef();
             detail.PatientRef = visit.Patient.GetRef();
-            detail.VisitNumberAssigningAuthority = visit.VisitNumber.AssigningAuthority;
-            detail.VisitNumberId = visit.VisitNumber.Id;
+            detail.VisitNumber = CreateVisitNumberDetail(visit.VisitNumber);
             detail.AdmissionType = EnumUtils.GetEnumValueInfo(visit.AdmissionType);
             detail.PatientClass = EnumUtils.GetEnumValueInfo(visit.PatientClass);
             detail.PatientType = EnumUtils.GetEnumValueInfo(visit.PatientType);
@@ -105,13 +103,18 @@ namespace ClearCanvas.Ris.Application.Services
             return detail;
         }
 
+        public CompositeIdentifierDetail CreateVisitNumberDetail(VisitNumber vn)
+        {
+            return new CompositeIdentifierDetail(vn.Id, EnumUtils.GetEnumValueInfo(vn.AssigningAuthority));
+        }
+
         public void UpdateVisit(Visit visit, VisitDetail detail, IPersistenceContext context)
         {
             // TODO: add validation and throw RequestValidationException as necessary
 
             visit.Patient = context.Load<Patient>(detail.PatientRef, EntityLoadFlags.Proxy);
-            visit.VisitNumber.Id = detail.VisitNumberId;
-            visit.VisitNumber.AssigningAuthority = detail.VisitNumberAssigningAuthority;
+            visit.VisitNumber.Id = detail.VisitNumber.Id;
+            visit.VisitNumber.AssigningAuthority = EnumUtils.GetEnumValue<InformationAuthorityEnum>(detail.VisitNumber.AssigningAuthority, context);
 
             visit.AdmissionType = EnumUtils.GetEnumValue<AdmissionTypeEnum>(detail.AdmissionType, context);
             visit.PatientClass = EnumUtils.GetEnumValue<PatientClassEnum>(detail.PatientClass, context);
