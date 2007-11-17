@@ -39,6 +39,7 @@ using ClearCanvas.Common;
 using System.Reflection;
 using NHibernate;
 using ClearCanvas.Enterprise.Hibernate.Hql;
+using System.Data;
 
 namespace ClearCanvas.Enterprise.Hibernate
 {
@@ -47,6 +48,14 @@ namespace ClearCanvas.Enterprise.Hibernate
     {
         #region IUniqueConstraintValidationBroker Members
 
+        /// <summary>
+        /// Tests whether the specified object satisfies the specified unique constraint.
+        /// </summary>
+        /// <param name="obj">The object to test.</param>
+        /// <param name="uniqueConstraintMembers">The properties of the object that form the unique key.
+        /// These may be compound property expressions (e.g. Name.FirstName, Name.LastName).
+        /// </param>
+        /// <returns></returns>
         public bool IsUnique(DomainObject obj, string[] uniqueConstraintMembers)
         {
             Platform.CheckForNullReference(obj, "obj");
@@ -61,9 +70,14 @@ namespace ClearCanvas.Enterprise.Hibernate
             // this is a bit of a HACK, but we know that this may occur during an interceptor callback
             // on the originating session, and we don't want to modify the state of that session
             // ideally the new session should share the connection and transaction of the main session,
-            // but this isn't possible with NHibernate 1.0.3
+            // but this isn't possible with NHibernate 1.2.0
             using (ISession auxSession = this.Context.PersistentStore.SessionFactory.OpenSession())
             {
+                // since we are forced to use a separate transaction, use ReadUncommitted isolation level
+                // we want to avoid deadlocking here at all costs, even if it means dirty reads
+                // the worst the can happen with a dirty read is that validation will be incorrect,
+                // but that's not the end of the world, because the DB will still enforce uniqueness
+                ITransaction tx = auxSession.BeginTransaction(IsolationLevel.ReadUncommitted);
                 auxSession.FlushMode = FlushMode.Never;
                 IQuery query = auxSession.CreateQuery(hqlQuery.Hql);
                 int i = 0;
@@ -74,6 +88,8 @@ namespace ClearCanvas.Enterprise.Hibernate
                 }
 
                 long count = query.UniqueResult<long>();
+
+                tx.Commit();    // no data will be written (Flushmode.Never, and we didn't write anything anyways)
 
                 // if count == 0, there are no other objects with this particular set of values
                 return count == 0;
@@ -125,7 +141,7 @@ namespace ClearCanvas.Enterprise.Hibernate
             PropertyInfo propertyInfo = subjectType.GetProperty(parts[partIndex]);
             if(propertyInfo == null)
                 throw new InvalidOperationException(string.Format("{0} is not a property of type {1}.",
-                    propertyInfo.Name, subjectType.FullName));
+                    parts[partIndex], subjectType.FullName));
 
             // find get method
             MethodInfo getter = propertyInfo.GetGetMethod(true);
