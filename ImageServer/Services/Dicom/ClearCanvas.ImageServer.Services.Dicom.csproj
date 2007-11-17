@@ -36,6 +36,7 @@
   <ItemGroup>
     <Compile Include="AssociationVerifier.cs" />
     <Compile Include="BaseScp.cs" />
+    <Compile Include="DeviceManager.cs" />
     <Compile Include="DicomScpContext.cs" />
     <Compile Include="ImageServerServicesDicomSettings.cs" />
     <Compile Include="ImageServerServicesDicomSettings.Designer.cs">

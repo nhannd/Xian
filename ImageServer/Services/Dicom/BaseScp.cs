@@ -49,13 +49,14 @@ namespace ClearCanvas.ImageServer.Services.Dicom
     /// <summary>
     /// Base class for all DicomScpExtensions for the ImageServer.
     /// </summary>
-    public class BaseScp : IDicomScp<DicomScpContext>
+    public abstract class BaseScp : IDicomScp<DicomScpContext>
     {
         #region Protected Members
         protected IPersistentStore _store = PersistentStoreRegistry.GetDefaultStore();
         private ServerPartition _partition;
         private FilesystemMonitor _fsMonitor;
         private FilesystemSelector _selector;
+        private Device _device;
         #endregion
 
         #region Properties
@@ -73,10 +74,45 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         {
             get { return _selector; }
         }
+
+        protected Device Device
+        {
+            get { return _device; }
+            set { _device = value; }
+        }
+        #endregion
+
+        #region Protected methods
+        /// <summary>
+        /// Called during association verification.
+        /// </summary>
+        /// <param name="association"></param>
+        /// <param name="pcid"></param>
+        /// <returns></returns>
+        protected abstract DicomPresContextResult OnVerifyAssociation(AssociationParameters association, byte pcid);
         #endregion
 
         #region Public Methods
 
+        public DicomPresContextResult VerifyAssociation(AssociationParameters association, byte pcid)
+        {
+            bool isNew = false;
+
+            Device = DeviceManager.LookupDevice(_partition, association, out isNew);
+
+            // Let the subclass to perform the verification
+            DicomPresContextResult result = OnVerifyAssociation(association, pcid);
+            if (result!=DicomPresContextResult.Accept)
+            {
+                Platform.Log(LogLevel.Debug, "Rejecting Presentation Context {0}:{1} in association between {2} and {3}.",
+                             pcid, association.GetAbstractSyntax(pcid).Description,
+                             association.CallingAE, association.CalledAE);
+            }
+
+            return result;
+        }
+
+        
         /// <summary>
         /// Helper method to load a <see cref="StudyXml"/> instance for a given study location.
         /// </summary>
@@ -191,6 +227,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         }
         #endregion
 
+
         #region IDicomScp Members
 
         public void SetContext(DicomScpContext parms)
@@ -198,8 +235,10 @@ namespace ClearCanvas.ImageServer.Services.Dicom
             _partition = parms.Partition;
             _fsMonitor = parms.FilesystemMonitor;
             _selector = parms.FilesystemSelector;
+            
         }
 
+        
         public virtual bool OnReceiveRequest(DicomServer server, ServerAssociationParameters association, byte presentationID, DicomMessage message)
         {
             throw new Exception("The method or operation is not implemented.  The method must be overriden.");

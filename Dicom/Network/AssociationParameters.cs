@@ -63,7 +63,7 @@ namespace ClearCanvas.Dicom.Network
     /// <summary>
     /// Internal representation of a presentation context.
     /// </summary>
-	internal class DicomPresContext {
+	public class DicomPresContext {
 		#region Private Members
 		private readonly byte _pcid;
 		private DicomPresContextResult _result;
@@ -654,7 +654,7 @@ namespace ClearCanvas.Dicom.Network
 			_presContexts.Add(pcid, new DicomPresContext(pcid, SopClass.GetSopClass(abstractSyntax.UID), transferSyntax, result));
 		}
 
-		internal DicomPresContext GetPresentationContext(byte pcid) {
+		public DicomPresContext GetPresentationContext(byte pcid) {
 			DicomPresContext ctx;
 			if (!_presContexts.TryGetValue(pcid, out ctx))
 				throw new NetworkException("Invalid Presentaion Context ID");

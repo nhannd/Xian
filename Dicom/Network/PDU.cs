@@ -534,7 +534,8 @@ namespace ClearCanvas.Dicom.Network
                 pdu.Write("Item-Type", (byte)0x40);
                 pdu.Write("Reserved", (byte)0x00);
                 pdu.MarkLength16("Item-Length");
-                pdu.Write("Transfer Syntax UID", pc.AcceptedTransferSyntax.DicomUid.UID);
+                if (pc.AcceptedTransferSyntax!=null) // 
+                    pdu.Write("Transfer Syntax UID", pc.AcceptedTransferSyntax.DicomUid.UID);
                 pdu.WriteLength16();
 
                 pdu.WriteLength16();

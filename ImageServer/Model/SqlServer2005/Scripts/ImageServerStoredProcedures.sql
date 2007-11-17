@@ -1592,9 +1592,9 @@ CREATE PROCEDURE [dbo].[InsertDevice]
 	@Active bit,
 	@Dhcp bit,
 	@Port int,
-	@AllowStorage bit,
-	@AllowQuery	bit,
-	@AllowRetrieve bit
+	@AllowStorage bit=0,
+	@AllowQuery	bit=0,
+	@AllowRetrieve bit=0
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from

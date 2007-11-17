@@ -421,5 +421,21 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         }
 
         #endregion
+
+        #region Overridden BaseSCP methods
+
+        protected override DicomPresContextResult OnVerifyAssociation(AssociationParameters association, byte pcid)
+        {
+            
+            if (!Device.AllowRetrieve)
+            {
+                return DicomPresContextResult.RejectUser; 
+            }
+
+            return DicomPresContextResult.Accept;
+            
+        }
+
+        #endregion Overridden BaseSCP methods
     }
 }
