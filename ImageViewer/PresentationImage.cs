@@ -344,10 +344,14 @@ namespace ClearCanvas.ImageViewer
 		#region Public methods
 
 		/// <summary>
-		/// Creates a clone of the <see cref="IPresentationImage"/>.
+		/// Creates a fresh copy of the <see cref="IPresentationImage"/>.
 		/// </summary>
+		/// <remarks>
+		/// This will instantiate a fresh copy of this <see cref="IPresentationImage"/>
+		/// using the same construction parameters as the original.
+		/// </remarks>
 		/// <returns></returns>
-		public abstract IPresentationImage Clone();
+		public abstract IPresentationImage CreateFreshCopy();
 
 		/// <summary>
 		/// Fires just before the <see cref="PresentationImage"/> is actually drawn/rendered.

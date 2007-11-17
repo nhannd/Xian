@@ -171,7 +171,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			// If the display set is already visible, then we make a copy;
 			// otherwise, we use the original
 			if (displaySet.Visible)
-				this.ImageViewer.SelectedImageBox.DisplaySet = displaySet.Clone();
+				this.ImageViewer.SelectedImageBox.DisplaySet = displaySet.CreateFreshCopy();
 			else
 				this.ImageViewer.SelectedImageBox.DisplaySet = displaySet;
 

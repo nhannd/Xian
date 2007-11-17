@@ -42,7 +42,7 @@ namespace ClearCanvas.ImageViewer.Tests
 			get { return null; }
 		}
 
-		public override IPresentationImage Clone()
+		public override IPresentationImage CreateFreshCopy()
 		{
 			return new TestPresentationImage();
 		}

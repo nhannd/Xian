@@ -76,7 +76,7 @@ namespace ClearCanvas.ImageViewer
 			this.AnnotationLayoutProvider = new DicomFilteredAnnotationLayoutProvider(this);
 		}
 
-		public override IPresentationImage Clone()
+		public override IPresentationImage CreateFreshCopy()
 		{
 			return new DicomGrayscalePresentationImage(_imageSop);
 		}

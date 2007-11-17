@@ -276,16 +276,19 @@ namespace ClearCanvas.ImageViewer
 		}
 
 		/// <summary>
-		/// Creates a clone of the <see cref="DisplaySet"/>.
+		/// Creates a fresh copy of the <see cref="IDisplaySet"/>.
 		/// </summary>
-		/// <returns>The cloned <see cref="DisplaySet"/>.</returns>
-		public IDisplaySet Clone()
+		/// <remarks>
+		/// This will instantiate a fresh copy of this <see cref="IDisplaySet"/>
+		/// using the same construction parameters as the original.
+		/// </remarks>
+		public IDisplaySet CreateFreshCopy()
 		{
 			DisplaySet displaySet = new DisplaySet(this.Name, this.Uid);
 			displaySet.ParentImageSet = this.ParentImageSet;
 
 			foreach (IPresentationImage image in this.PresentationImages)
-				displaySet.PresentationImages.Add(image.Clone());
+				displaySet.PresentationImages.Add(image.CreateFreshCopy());
 
 			return displaySet;
 		}

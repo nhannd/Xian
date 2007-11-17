@@ -107,12 +107,13 @@ namespace ClearCanvas.ImageViewer
 		/// </summary>
 		string Uid { get; }
 
-		// TODO (Norman): Change Clone to some other name
-
 		/// <summary>
-		/// Creates a clone of the <see cref="IDisplaySet"/>.
+		/// Creates a fresh copy of the <see cref="IDisplaySet"/>.
 		/// </summary>
-		/// <returns>The cloned <see cref="IDisplaySet"/>.</returns>
-		IDisplaySet Clone();
+		/// <remarks>
+		/// This will instantiate a fresh copy of this <see cref="IDisplaySet"/>
+		/// using the same construction parameters as the original.
+		/// </remarks>
+		IDisplaySet CreateFreshCopy();
 	}
 }

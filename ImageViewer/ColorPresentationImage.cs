@@ -39,6 +39,22 @@ namespace ClearCanvas.ImageViewer
 	/// </summary>
 	public class ColorPresentationImage : BasicPresentationImage
 	{
+		#region Private fields
+
+		// We only bother having these private fields so
+		// we can easily implement CreateFreshCopy()
+		private int _rows;
+		private int _columns;
+		private double _pixelSpacingX;
+		private double _pixelSpacingY;
+		private double _pixelAspectRatioX;
+		private double _pixelAspectRatioY;
+		private PixelDataGetter _pixelDataGetter;
+
+		private int _constructor;
+
+		#endregion
+
 		/// <summary>
 		/// Initializes a new instance of <see cref="ColorPresentationImage"/>.
 		/// </summary>
@@ -51,7 +67,9 @@ namespace ClearCanvas.ImageViewer
 		public ColorPresentationImage(int rows, int columns) 
 			: base(new ColorImageGraphic(rows, columns))
 		{
-
+			_constructor = 0;
+			_rows = rows;
+			_columns = columns;
 		}
 
 		/// <summary>
@@ -82,14 +100,29 @@ namespace ClearCanvas.ImageViewer
 			       pixelAspectRatioX,
 			       pixelAspectRatioY)
 		{
-
+			_constructor = 1;
+			_rows = rows;
+			_columns = columns;
+			_pixelSpacingX = pixelSpacingX;
+			_pixelSpacingY = pixelSpacingY;
+			_pixelAspectRatioX = pixelAspectRatioX;
+			_pixelAspectRatioY = pixelAspectRatioY;
+			_pixelDataGetter = pixelDataGetter;
 		}
 
-		// TODO (Norman): Rename this method 
-		public override IPresentationImage Clone()
+		public override IPresentationImage CreateFreshCopy()
 		{
-			// TODO (Norman): 
-			return null;
+			if (_constructor == 0)
+				return new ColorPresentationImage(_rows, _columns);
+			else
+				return new ColorPresentationImage(
+					_rows,
+					_columns,
+					_pixelSpacingX,
+					_pixelSpacingY,
+					_pixelAspectRatioX,
+					_pixelAspectRatioY,
+					_pixelDataGetter);
 		}
 
 		/// <summary>

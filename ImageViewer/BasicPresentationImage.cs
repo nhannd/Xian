@@ -237,6 +237,14 @@ namespace ClearCanvas.ImageViewer
 			}
 		}
 
+		/// <summary>
+		/// Raises the <see cref="EventBroker.ImageDrawing"/> event and
+		/// renders the <see cref="PresentationImage"/>.
+		/// </summary>
+		/// <param name="drawArgs"></param>
+		/// <remarks>
+		/// For internal Framework use only.
+		/// </remarks>
 		public override void OnDraw(DrawArgs drawArgs)
 		{
 			base.OnDraw(drawArgs);

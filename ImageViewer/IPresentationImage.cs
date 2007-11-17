@@ -120,9 +120,13 @@ namespace ClearCanvas.ImageViewer
 		string Uid { get; set; }
 
 		/// <summary>
-		/// Creates a clone of the <see cref="IPresentationImage"/>.
+		/// Creates a fresh copy of the <see cref="IPresentationImage"/>.
 		/// </summary>
+		/// <remarks>
+		/// This will instantiate a fresh copy of this <see cref="IPresentationImage"/>
+		/// using the same construction parameters as the original.
+		/// </remarks>
 		/// <returns></returns>
-		IPresentationImage Clone();
+		IPresentationImage CreateFreshCopy();
 	}
 }

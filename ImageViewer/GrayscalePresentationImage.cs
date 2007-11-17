@@ -43,6 +43,26 @@ namespace ClearCanvas.ImageViewer
 		IVoiLutProvider, 
 		IColorMapProvider
 	{
+		#region Private fields
+
+		private int _rows;
+		private int _columns;
+		private int _bitsAllocated;
+		private int _bitsStored;
+		private int _highBit;
+		private bool _isSigned;
+		private bool _inverted;
+		private double _rescaleSlope;
+		private double _rescaleIntercept;
+		private double _pixelSpacingX;
+		private double _pixelSpacingY;
+		private double _pixelAspectRatioX;
+		private double _pixelAspectRatioY;
+		private PixelDataGetter _pixelDataGetter;
+		private int _constructor;
+
+		#endregion
+
 		/// <summary>
 		/// Initializes a new instance of <see cref="GrayscalePresentationImage"/>.
 		/// </summary>
@@ -55,6 +75,9 @@ namespace ClearCanvas.ImageViewer
 		public GrayscalePresentationImage(int rows, int columns)
 			: base(new GrayscaleImageGraphic(rows, columns))
 		{
+			_constructor = 0;
+			_rows = rows;
+			_columns = columns;
 		}
 
 		/// <summary>
@@ -109,7 +132,21 @@ namespace ClearCanvas.ImageViewer
 			       pixelAspectRatioX,
 			       pixelAspectRatioY)
 		{
-
+			_constructor = 1;
+			_rows = rows;
+			_columns = columns;
+			_bitsAllocated = bitsAllocated;
+			_bitsStored = bitsStored;
+			_highBit = highBit;
+			_isSigned = isSigned;
+			_inverted = inverted;
+			_rescaleSlope = rescaleSlope;
+			_rescaleIntercept = rescaleIntercept;
+			_pixelSpacingX = pixelSpacingX;
+			_pixelSpacingY = pixelSpacingY;
+			_pixelAspectRatioX = pixelAspectRatioX;
+			_pixelAspectRatioY = pixelAspectRatioY;
+			_pixelDataGetter = pixelDataGetter;
 		}
 
 		/// <summary>
@@ -124,16 +161,26 @@ namespace ClearCanvas.ImageViewer
 		/// Creates a clone of the <see cref="GrayscalePresentationImage"/>.
 		/// </summary>
 		/// <returns></returns>
-		public override IPresentationImage Clone()
+		public override IPresentationImage CreateFreshCopy()
 		{
-			// TODO (Norman):
-
-			//IPresentationImage image = new GrayscalePresentationImage(;
-			//image.Uid = this.Uid;
-
-			//return image;
-
-			return null;
+			if (_constructor == 0)
+				return new GrayscalePresentationImage(_rows, _columns);
+			else
+				return new GrayscalePresentationImage(
+					_rows,
+					_columns,
+					_bitsAllocated,
+					_bitsStored,
+					_highBit,
+					_isSigned,
+					_inverted,
+					_rescaleSlope,
+					_rescaleIntercept,
+					_pixelSpacingX,
+					_pixelSpacingY,
+					_pixelAspectRatioX,
+					_pixelAspectRatioY,
+					_pixelDataGetter);
 		}
 
 		#region IModalityLutProvider Members
