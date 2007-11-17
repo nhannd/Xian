@@ -44,6 +44,10 @@ namespace ClearCanvas.Ris.Application.Services.Admin.FacilityAdmin
     [ExtensionOf(typeof(ApplicationRootExtensionPoint))]
     public class FacilityImporter : DataImporterBase
     {
+        private IUpdateContext _context;
+        private IEnumBroker _enumBroker;
+        private List<InformationAuthorityEnum> _authorities;
+
         public FacilityImporter()
         {
 
@@ -67,15 +71,16 @@ namespace ClearCanvas.Ris.Application.Services.Admin.FacilityAdmin
         /// <param name="context"></param>
         public override void ImportCsv(List<string> rows, IUpdateContext context)
         {
-           IEnumBroker enumBroker = context.GetBroker<IEnumBroker>();
+            _context = context;
+            _enumBroker = context.GetBroker<IEnumBroker>();
+            _authorities = new List<InformationAuthorityEnum>(_enumBroker.Load<InformationAuthorityEnum>());
 
-           List<Facility> facilities = new List<Facility>();
-           List<InformationAuthorityEnum> authorities = new List<InformationAuthorityEnum>(enumBroker.Load<InformationAuthorityEnum>());
+            List<Facility> facilities = new List<Facility>();
 
-           foreach (string line in rows)
+            foreach (string line in rows)
             {
-                // expect 2 fields in the row
-                string[] fields = ParseCsv(line, 2);
+                // expect 4 fields in the row
+                string[] fields = ParseCsv(line, 4);
 
                 string facilityId = fields[0];
                 string facilityName = fields[1];
@@ -99,7 +104,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.FacilityAdmin
                     // if not, create a new instance
                     if (facility == null)
                     {
-                        facility = new Facility(facilityId, facilityName, GetAuthority(informationAuthorityId, informationAuthorityId, context));
+                        facility = new Facility(facilityId, facilityName, GetAuthority(informationAuthorityId, informationAuthorityName));
                         context.Lock(facility, DirtyState.New);
                     }
 
@@ -108,20 +113,19 @@ namespace ClearCanvas.Ris.Application.Services.Admin.FacilityAdmin
             }
         }
 
-        private InformationAuthorityEnum GetAuthority(string id, string name, IUpdateContext context)
+        private InformationAuthorityEnum GetAuthority(string id, string name)
         {
-            IEnumBroker broker = context.GetBroker<IEnumBroker>();
-            try
-            {
-                InformationAuthorityEnum authority = broker.Find<InformationAuthorityEnum>(id);
-                return authority;
-            }
-            catch (EnumValueNotFoundException)
+            InformationAuthorityEnum authority = CollectionUtils.SelectFirst(_authorities,
+                 delegate(InformationAuthorityEnum a) { return a.Code == id; });
+
+            if(authority == null)
             {
                 // create a new value
-                InformationAuthorityEnum lastValue = CollectionUtils.LastElement(broker.Load<InformationAuthorityEnum>());
-                return (InformationAuthorityEnum)broker.AddValue(typeof(InformationAuthorityEnum), id, id, name, lastValue == null ? 1 : lastValue.DisplayOrder + 1);
+                InformationAuthorityEnum lastValue = CollectionUtils.LastElement(_authorities);
+                authority = (InformationAuthorityEnum) _enumBroker.AddValue(typeof(InformationAuthorityEnum), id, id, name, lastValue == null ? 1 : lastValue.DisplayOrder + 1);
+                _authorities.Add(authority);
             }
+            return authority;
         }
     }
 }
