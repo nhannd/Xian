@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Ris.Application.Common.Login;
@@ -38,6 +39,8 @@ using System.Threading;
 using System.Security.Principal;
 using System.ServiceModel;
 using ClearCanvas.Desktop;
+using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -56,18 +59,35 @@ namespace ClearCanvas.Ris.Client
         {
             using (ILoginDialog loginDialog = (ILoginDialog)(new LoginDialogExtensionPoint()).CreateExtension())
             {
+                List<FacilitySummary> facilities = GetFacilityChoices();
+                string[] facilityCodes = CollectionUtils.Map<FacilitySummary, string>(
+                    facilities,
+                    delegate(FacilitySummary fs) { return fs.Code; }).ToArray();
+
+                string selectedFacilityCode = LoginDialogSettings.Default.SelectedFacility;
+
+                loginDialog.SetFacilityChoices(facilityCodes, selectedFacilityCode);
+
                 while (true)
                 {
                     string userName;
                     string password;
 
-                    if (loginDialog.Show(out userName, out password))
+                    if (loginDialog.Show(out userName, out password, out selectedFacilityCode))
                     {
+                        FacilitySummary selectedFacility = CollectionUtils.SelectFirst(facilities,
+                            delegate(FacilitySummary fs) { return fs.Code == selectedFacilityCode; });
+
                         try
                         {
-                            LoginSession.Create(userName, password);
+                            LoginSession.Create(userName, password, selectedFacility);
 
                             // successfully logged in
+
+                            // save selected facility
+                            LoginDialogSettings.Default.SelectedFacility = selectedFacilityCode;
+                            LoginDialogSettings.Default.Save();
+
                             return true;
                         }
                         catch (CommunicationException)
@@ -85,6 +105,7 @@ namespace ClearCanvas.Ris.Client
                     }
                     else
                     {
+                        // user cancelled
                         return false;
                     }
                 }
@@ -96,5 +117,16 @@ namespace ClearCanvas.Ris.Client
         }
 
         #endregion
+
+        private List<FacilitySummary> GetFacilityChoices()
+        {
+            List<FacilitySummary> choices = null;
+            Platform.GetService<ILoginService>(
+                delegate(ILoginService service)
+                {
+                    choices = service.GetWorkingFacilityChoices(new GetWorkingFacilityChoicesRequest()).FacilityChoices;
+                });
+            return choices;
+        }
     }
 }

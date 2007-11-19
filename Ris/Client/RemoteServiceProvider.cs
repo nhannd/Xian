@@ -34,6 +34,8 @@ using System.Reflection;
 using System.ServiceModel;
 
 using ClearCanvas.Common;
+using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -50,16 +52,20 @@ namespace ClearCanvas.Ris.Client
 
         public object GetService(Type serviceType)
         {
+            AuthenticationAttribute authAttr = AttributeUtils.GetAttribute<AuthenticationAttribute>(serviceType);
+            bool authenticationRequired = authAttr == null ? true : authAttr.AuthenticationRequired;
+
             try
             {
-                if (LoginSession.Current == null)
+                if (authenticationRequired && LoginSession.Current == null)
                     throw new InvalidOperationException("User login credentials have not been provided");
 
 				Uri uri = new Uri(new Uri("http://localhost:8000"), serviceType.FullName);
                 EndpointAddress endpoint = new EndpointAddress(uri);
                 WSHttpBinding binding = new WSHttpBinding();
                 binding.Security.Mode = SecurityMode.Message;
-                binding.Security.Message.ClientCredentialType = MessageCredentialType.UserName;
+                binding.Security.Message.ClientCredentialType = 
+                    authenticationRequired ? MessageCredentialType.UserName : MessageCredentialType.None;
                 binding.MaxReceivedMessageSize = OneMegaByte;
                 
                 // allow individual string content to be same size as entire message
@@ -72,9 +78,13 @@ namespace ClearCanvas.Ris.Client
                 // create the channel factory
                 Type channelFactoryClass = typeof(ChannelFactory<>).MakeGenericType(new Type[] { serviceType });
                 ChannelFactory channelFactory = (ChannelFactory)Activator.CreateInstance(channelFactoryClass, binding, endpoint);
-                channelFactory.Credentials.UserName.UserName = LoginSession.Current.UserName;
-                channelFactory.Credentials.UserName.Password = LoginSession.Current.Password;
                 channelFactory.Credentials.ServiceCertificate.Authentication.CertificateValidationMode = System.ServiceModel.Security.X509CertificateValidationMode.PeerOrChainTrust;
+                
+                if(authenticationRequired)
+                {
+                    channelFactory.Credentials.UserName.UserName = LoginSession.Current.UserName;
+                    channelFactory.Credentials.UserName.Password = LoginSession.Current.Password;
+                }
 
                 // reflection is unfortunately the only way to create the service channel
                 MethodInfo createChannelMethod = channelFactoryClass.GetMethod("CreateChannel", Type.EmptyTypes);

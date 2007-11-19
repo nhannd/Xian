@@ -169,6 +169,12 @@
     <Compile Include="TextFieldMasks.cs" />
     <Compile Include="WorkflowFolder.cs" />
     <Compile Include="FolderExplorerComponent.cs" />
+    <Compile Include="LoginDialogSettings.cs" />
+    <Compile Include="LoginDialogSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>LoginDialogSettings.settings</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SR.resx">
@@ -229,6 +235,10 @@
     <None Include="WebResourcesSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>WebResourcesSettings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="LoginDialogSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>LoginDialogSettings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
   <ItemGroup>

@@ -31,17 +31,17 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Common;
 using System.ServiceModel;
-using ClearCanvas.Common.Utilities;
-using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Security;
-using ClearCanvas.Enterprise.Core;
 using System.IdentityModel.Policy;
 using System.Security.Cryptography.X509Certificates;
+
+using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
+using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Ris.Application.Services;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Server
 {
@@ -90,72 +90,81 @@ namespace ClearCanvas.Ris.Server
 
         private void MountServices(IExtensionPoint serviceLayer, string baseAddress)
         {
-            WSHttpBinding binding = new WSHttpBinding();
-            binding.Security.Mode = SecurityMode.Message;
-            binding.Security.Message.ClientCredentialType = MessageCredentialType.UserName;
-            binding.MaxReceivedMessageSize = OneMegaByte;
-            binding.ReaderQuotas.MaxStringContentLength = OneMegaByte;
-            binding.ReaderQuotas.MaxArrayLength = OneMegaByte;
-
-
             IServiceFactory serviceFactory = new ServiceFactory(serviceLayer);
             serviceFactory.ServiceCreation += ServiceCreationEventHandler;
 
             ICollection<Type> serviceClasses = serviceFactory.ListServiceClasses();
             foreach (Type serviceClass in serviceClasses)
             {
-                ServiceImplementsContractAttribute a = CollectionUtils.FirstElement<ServiceImplementsContractAttribute>(
-                    serviceClass.GetCustomAttributes(typeof(ServiceImplementsContractAttribute), false));
-                if (a != null)
-                {
-                    Platform.Log(LogLevel.Info, "Mounting service {0}", serviceClass.Name);
-
-                    // create service host
-					Uri uri = new Uri(new Uri(baseAddress), a.ServiceContract.FullName);
-					
-                    ServiceHost host = new ServiceHost(serviceClass, uri);
-
-                    // add behaviour to grab AOP proxied service instance
-                    host.Description.Behaviors.Add(new InstanceManagementServiceBehavior(a.ServiceContract, serviceFactory));
-
-                    // establish endpoint
-                    host.AddServiceEndpoint(a.ServiceContract, binding, "");
-
-                    // expose meta-data via HTTP GET
-                    ServiceMetadataBehavior metadataBehavior = host.Description.Behaviors.Find<ServiceMetadataBehavior>();
-                    if (metadataBehavior == null)
-                    {
-                        metadataBehavior = new ServiceMetadataBehavior();
-                        metadataBehavior.HttpGetEnabled = true;
-                        host.Description.Behaviors.Add(metadataBehavior);
-                    }
-#if DEBUG
-                    ServiceBehaviorAttribute debuggingBehavior = host.Description.Behaviors.Find<ServiceBehaviorAttribute>();
-                    debuggingBehavior.IncludeExceptionDetailInFaults = true;
-#endif
-
-                    // set up authentication model
-                    host.Credentials.UserNameAuthentication.UserNamePasswordValidationMode = UserNamePasswordValidationMode.Custom;
-                    host.Credentials.UserNameAuthentication.CustomUserNamePasswordValidator = new CustomUserValidator();
-
-
-                    // set up authorization
-                    List<IAuthorizationPolicy> policies = new List<IAuthorizationPolicy>();
-                    policies.Add(new CustomAuthorizationPolicy());
-                    host.Authorization.ExternalAuthorizationPolicies = policies.AsReadOnly();
-                    host.Authorization.PrincipalPermissionMode = PrincipalPermissionMode.Custom;
-
-                    // set up the certificate - required for WSHttpBinding
-                    host.Credentials.ServiceCertificate.SetCertificate(
-                        StoreLocation.LocalMachine, StoreName.My, X509FindType.FindBySubjectName, "localhost");
-
-                    _serviceHosts.Add(host);
-                }
-                else
-                {
-                    Platform.Log(LogLevel.Error, "Unknown contract for service {0}", serviceClass.Name);
-                }
+                MountService(serviceClass, serviceFactory, baseAddress);
             }
+        }
+
+        private void MountService(Type serviceClass, IServiceFactory serviceFactory, string baseAddress)
+        {
+            ServiceImplementsContractAttribute contractAttribute = AttributeUtils.GetAttribute<ServiceImplementsContractAttribute>(serviceClass, false);
+            if(contractAttribute == null)
+            {
+                Platform.Log(LogLevel.Error, "Unknown contract for service {0}", serviceClass.Name);
+                return;
+            }
+
+            Platform.Log(LogLevel.Info, "Mounting service {0}", serviceClass.Name);
+
+            AuthenticationAttribute authenticationAttribute = AttributeUtils.GetAttribute<AuthenticationAttribute>(contractAttribute.ServiceContract);
+            bool authenticated = authenticationAttribute == null ? true : authenticationAttribute.AuthenticationRequired;
+
+            WSHttpBinding binding = new WSHttpBinding();
+            binding.MaxReceivedMessageSize = OneMegaByte;
+            binding.ReaderQuotas.MaxStringContentLength = OneMegaByte;
+            binding.ReaderQuotas.MaxArrayLength = OneMegaByte;
+            binding.Security.Mode = SecurityMode.Message;
+            binding.Security.Message.ClientCredentialType = authenticated ?
+                MessageCredentialType.UserName : MessageCredentialType.None;
+
+            // create service host
+            Uri uri = new Uri(new Uri(baseAddress), contractAttribute.ServiceContract.FullName);
+
+            ServiceHost host = new ServiceHost(serviceClass, uri);
+
+            // add behaviour to grab AOP proxied service instance
+            host.Description.Behaviors.Add(new InstanceManagementServiceBehavior(contractAttribute.ServiceContract, serviceFactory));
+
+            // establish endpoint
+            host.AddServiceEndpoint(contractAttribute.ServiceContract, binding, "");
+
+            // expose meta-data via HTTP GET
+            ServiceMetadataBehavior metadataBehavior = host.Description.Behaviors.Find<ServiceMetadataBehavior>();
+            if (metadataBehavior == null)
+            {
+                metadataBehavior = new ServiceMetadataBehavior();
+                metadataBehavior.HttpGetEnabled = true;
+                host.Description.Behaviors.Add(metadataBehavior);
+            }
+#if DEBUG
+            ServiceBehaviorAttribute debuggingBehavior = host.Description.Behaviors.Find<ServiceBehaviorAttribute>();
+            debuggingBehavior.IncludeExceptionDetailInFaults = true;
+#endif
+            // set up the certificate - required for WSHttpBinding
+            host.Credentials.ServiceCertificate.SetCertificate(
+                StoreLocation.LocalMachine, StoreName.My, X509FindType.FindBySubjectName, "localhost");
+
+            if (authenticated)
+            {
+                // set up authentication model
+                host.Credentials.UserNameAuthentication.UserNamePasswordValidationMode = UserNamePasswordValidationMode.Custom;
+                host.Credentials.UserNameAuthentication.CustomUserNamePasswordValidator = new CustomUserValidator();
+
+
+                // set up authorization
+                List<IAuthorizationPolicy> policies = new List<IAuthorizationPolicy>();
+                policies.Add(new CustomAuthorizationPolicy());
+                host.Authorization.ExternalAuthorizationPolicies = policies.AsReadOnly();
+                host.Authorization.PrincipalPermissionMode = PrincipalPermissionMode.Custom;
+            }
+
+
+            _serviceHosts.Add(host);
         }
 
         private void ServiceCreationEventHandler(object sender, ServiceCreationEventArgs e)

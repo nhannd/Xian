@@ -40,19 +40,24 @@ namespace ClearCanvas.Ris.Application.Common.Login
     /// Provides application login operations
     /// </summary>
     [ServiceContract]
+    [Authentication(false)]
     public interface ILoginService
     {
         /// <summary>
         /// Allows a client application to validate user credentials and obtain a set of authority tokens
         /// specifying what privileges the user has.
         /// </summary>
-        /// <remarks>
-        /// User validation is performed like any other application service.  If the credentials are invalid
-        /// a security exception will be thrown.
-        /// </remarks>
         /// <param name="request"></param>
         /// <returns></returns>
         [OperationContract]
         LoginResponse Login(LoginRequest request);
+
+        /// <summary>
+        /// Gets the list of facilities so that the user can choose their current working facility.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [OperationContract]
+        GetWorkingFacilityChoicesResponse GetWorkingFacilityChoices(GetWorkingFacilityChoicesRequest request);
     }
 }

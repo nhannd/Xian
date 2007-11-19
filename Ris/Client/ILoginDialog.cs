@@ -37,6 +37,7 @@ namespace ClearCanvas.Ris.Client
 {
     public interface ILoginDialog : IDisposable
     {
-        bool Show(out string userName, out string password);
+        void SetFacilityChoices(string[] facilities, string selectedFacility);
+        bool Show(out string userName, out string password, out string facility);
     }
 }

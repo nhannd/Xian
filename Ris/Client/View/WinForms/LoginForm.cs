@@ -41,14 +41,24 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 {
     public partial class LoginForm : Form
     {
-        public LoginForm()
+        private string _selectedFacility;
+
+        public LoginForm(string[] facilities, string selectedFacility)
         {
             InitializeComponent();
+
+            _facility.DataSource = facilities;
+            _selectedFacility = selectedFacility;
         }
 
         public string UserName
         {
-            get { return _userName.Text; }
+            get { return _userName.Value; }
+        }
+
+        public string SelectedFacility
+        {
+            get { return (string)_facility.Value; }
         }
 
         private void _loginButton_Click(object sender, EventArgs e)
@@ -61,11 +71,16 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this.DialogResult = DialogResult.Cancel;
         }
 
-        private void _userName_TextChanged(object sender, EventArgs e)
+        private void _userName_ValueChanged(object sender, EventArgs e)
         {
-            bool empty = string.IsNullOrEmpty(_userName.Text);
+            bool empty = string.IsNullOrEmpty(_userName.Value);
             _loginButton.Enabled = !empty;
             this.AcceptButton = empty ? _cancelButton : _loginButton;
+        }
+
+        private void LoginForm_Load(object sender, EventArgs e)
+        {
+            _facility.Value = _selectedFacility;
         }
     }
 }

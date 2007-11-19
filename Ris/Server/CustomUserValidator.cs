@@ -36,6 +36,7 @@ using System.IdentityModel.Selectors;
 using System.IdentityModel.Tokens;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
+using System.ServiceModel;
 
 namespace ClearCanvas.Ris.Server
 {

@@ -53,23 +53,20 @@ namespace ClearCanvas.Ris.Client
             get { return _current; }
         }
 
-        internal static void Create(string userName, string password)
+        internal static void Create(string userName, string password, FacilitySummary facility)
         {
-            // set the current session before attempting to access login service
-            // the service will use the credentials to attempt to connect to the server
-            _current = new LoginSession(userName, password);
-
             Platform.GetService<ILoginService>(
                 delegate(ILoginService service)
                 {
-                    LoginResponse response = service.Login(new LoginRequest());
+                    LoginResponse response = service.Login(new LoginRequest(userName, password, facility.FacilityRef));
 
                     // if the call succeeded, construct a generic principal object on this thread, containing
                     // the set of authority tokens for this user
                     Thread.CurrentPrincipal = new GenericPrincipal(
                         new GenericIdentity(userName), response.UserAuthorityTokens);
 
-                    _current.FullName = response.FullName;
+                    // set the current session before attempting to access other services, as these will require authentication
+                    _current = new LoginSession(userName, password, response.FullName);
                 });
         }
 
@@ -77,10 +74,11 @@ namespace ClearCanvas.Ris.Client
         private readonly string _password;
         private PersonNameDetail _fullName;
 
-        private LoginSession(string userName, string password)
+        private LoginSession(string userName, string password, PersonNameDetail fullName)
         {
             _userName = userName;
             _password = password;
+            _fullName = fullName;
         }
 
         internal string UserName

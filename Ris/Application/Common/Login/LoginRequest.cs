@@ -40,5 +40,29 @@ namespace ClearCanvas.Ris.Application.Common.Login
     [DataContract]
     public class LoginRequest : DataContractBase
     {
+        public LoginRequest(string user, string password, EntityRef workingFacility)
+        {
+            this.UserName = user;
+            this.Password = password;
+            this.WorkingFacility = workingFacility;
+        }
+
+        /// <summary>
+        /// UserName. Required.
+        /// </summary>
+        [DataMember]
+        public string UserName;
+
+        /// <summary>
+        /// Password. Required.
+        /// </summary>
+        [DataMember]
+        public string Password;
+
+        /// <summary>
+        /// Specifies the current working facility for the user.  If null, the last known working facility will be used.
+        /// </summary>
+        [DataMember]
+        public EntityRef WorkingFacility;
     }
 }

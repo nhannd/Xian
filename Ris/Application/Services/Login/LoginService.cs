@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Security.Principal;
 using System.Text;
 using System.Threading;
 using ClearCanvas.Healthcare.Brokers;
@@ -41,6 +42,8 @@ using System.ServiceModel;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Common.Utilities;
+using System.IdentityModel.Tokens;
 
 namespace ClearCanvas.Ris.Application.Services.Login
 {
@@ -50,24 +53,49 @@ namespace ClearCanvas.Ris.Application.Services.Login
     {
         #region ILoginService Members
 
-        [ReadOperation]
+        [UpdateOperation]
         public LoginResponse Login(LoginRequest request)
         {
-            // if we get to this point, the user's credentials have been validated and login was successful
+            Platform.CheckForNullReference(request, "request");
+            Platform.CheckMemberIsSet(request.UserName, "UserName");
+            //Platform.CheckMemberIsSet(request.Password, "Password");
+
+            string user = request.UserName;
 
             // obtain the set of authority tokens for the user
+            // note that we don't need to be authenticated to access IAuthenticationService
+            // because it will accessed in-process
             string[] authorityTokens = null;
             Platform.GetService<IAuthenticationService>(
                 delegate(IAuthenticationService service)
                 {
-                    authorityTokens = service.ListAuthorityTokensForUser(ServiceSecurityContext.Current.PrimaryIdentity.Name);
+                    // TODO validate the password
+                    if (!service.ValidateUser(user))
+                        throw new SecurityTokenException("Invalid user name or password.");
+
+                    authorityTokens = service.ListAuthorityTokensForUser(user);
+
+                    // setup a generic principal on this thread for the duration of this request
+                    Thread.CurrentPrincipal = new GenericPrincipal(
+                        new GenericIdentity(user), authorityTokens);
                 });
+
+            if (request.WorkingFacility != null)
+            {
+                Facility facility = PersistenceContext.Load<Facility>(request.WorkingFacility);
+
+                WorkingFacilitySettings settings = new WorkingFacilitySettings();
+                settings.WorkingFacility = facility.Code;
+                settings.WorkingInformationAuthority = facility.InformationAuthority.Code;
+                settings.Save();
+            }
+
 
             // obtain full name information for the user
             PersonNameDetail fullName = null;
             try 
 	        {	
-                Staff staff = PersistenceContext.GetBroker<IStaffBroker>().FindStaffForUser(Thread.CurrentPrincipal.Identity.Name);
+                Staff staff = PersistenceContext.GetBroker<IStaffBroker>().FindStaffForUser(user);
                 if(staff != null)
                 {
                     PersonNameAssembler nameAssembler = new PersonNameAssembler();
@@ -81,6 +109,20 @@ namespace ClearCanvas.Ris.Application.Services.Login
 	        }
 
             return new LoginResponse(authorityTokens, fullName);
+        }
+
+        [ReadOperation]
+        public GetWorkingFacilityChoicesResponse GetWorkingFacilityChoices(GetWorkingFacilityChoicesRequest request)
+        {
+            // facility choices - for now, just return all facilities
+            // conceivably this list could be filtered for various reasons
+            // (ie inactive facilities, etc) 
+            FacilityAssembler facilityAssembler = new FacilityAssembler();
+            List<FacilitySummary> facilities = CollectionUtils.Map<Facility, FacilitySummary>(
+                PersistenceContext.GetBroker<IFacilityBroker>().FindAll(),
+                delegate(Facility f) { return facilityAssembler.CreateFacilitySummary(f); });
+
+            return new GetWorkingFacilityChoicesResponse(facilities);
         }
 
         #endregion

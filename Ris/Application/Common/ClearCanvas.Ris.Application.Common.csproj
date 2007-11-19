@@ -79,6 +79,9 @@
     <Compile Include="Admin\ExternalPractitionerAdmin\LoadExternalPractitionerForEditResponse.cs" />
     <Compile Include="Admin\ExternalPractitionerAdmin\UpdateExternalPractitionerRequest.cs" />
     <Compile Include="Admin\ExternalPractitionerAdmin\UpdateExternalPractitionerResponse.cs" />
+    <Compile Include="AuthenticationAttribute.cs" />
+    <Compile Include="Login\GetWorkingFacilityChoicesRequest.cs" />
+    <Compile Include="Login\GetWorkingFacilityChoicesResponse.cs" />
     <Compile Include="Admin\ProtocolAdmin\AddProtocolGroupRequest.cs" />
     <Compile Include="Admin\ProtocolAdmin\AddProtocolGroupResponse.cs" />
     <Compile Include="Admin\ProtocolAdmin\DeleteProtocolCodeRequest.cs" />
