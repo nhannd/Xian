@@ -71,6 +71,13 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 			{
 				get { return _owner.Host.DesktopWindow; }
 			}
+
+			public override string Title
+			{
+				get { return _owner.Host.Title; }
+				// individual components cannot set the title for the container
+				set { throw new NotSupportedException(); }
+			}
 		}
 
 		private readonly PresetVoiLutOperationComponentHost _componentHost;
@@ -158,14 +165,12 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 		
 		public void OK()
 		{
-			this.ExitCode = ApplicationComponentExitCode.Accepted;
-			this.Host.Exit();
+			this.Exit(ApplicationComponentExitCode.Accepted);
 		}
 
 		public void Cancel()
 		{
-			this.ExitCode = ApplicationComponentExitCode.None;
-			this.Host.Exit();
+			this.Exit(ApplicationComponentExitCode.None);
 		}
 
 		public override void Start()
@@ -184,16 +189,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 			ComponentHost.Component.PropertyChanged -= new System.ComponentModel.PropertyChangedEventHandler(ComponentPropertyChanged);
 			base.Stop();
 		}
-
-		public override bool CanExit()
-		{
-			return (ComponentHost.Component.CanExit() && base.CanExit());
-		}
-
-        public override bool PrepareExit()
-        {
-            return (ComponentHost.Component.PrepareExit() && base.PrepareExit());
-        }
 
 		#region ApplicationComponentContainer overrides
 
