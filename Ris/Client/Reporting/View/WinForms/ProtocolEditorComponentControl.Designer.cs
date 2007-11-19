@@ -173,6 +173,8 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this._procedurePlanSummary.Size = new System.Drawing.Size(310, 342);
             this._procedurePlanSummary.TabIndex = 0;
             this._procedurePlanSummary.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this._procedurePlanSummary.ShowToolbar = false;
+            this._procedurePlanSummary.MultiSelect = false;
             // 
             // tabPage2
             // 

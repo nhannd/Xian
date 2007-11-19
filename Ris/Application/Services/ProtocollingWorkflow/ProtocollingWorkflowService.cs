@@ -20,9 +20,10 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
         public ListProtocolGroupsForProcedureResponse ListProtocolGroupsForProcedure(ListProtocolGroupsForProcedureRequest request)
         {
             ProtocollingWorkflowAssembler assembler = new ProtocollingWorkflowAssembler();
+            RequestedProcedure rp = this.PersistenceContext.Load<RequestedProcedure>(request.ProcedureRef);
 
             List<ProtocolGroupSummary> groups = CollectionUtils.Map<ProtocolGroup, ProtocolGroupSummary>(
-                this.PersistenceContext.GetBroker<IProtocolGroupBroker>().FindAll(),
+                this.PersistenceContext.GetBroker<IProtocolGroupBroker>().FindAll(rp.Type),
                 delegate(ProtocolGroup protocolGroup) { return assembler.CreateProtocolGroupSummary(protocolGroup); });
 
             ProtocolGroupSummary initialProtocolGroup = CollectionUtils.FirstElement<ProtocolGroupSummary>(groups);

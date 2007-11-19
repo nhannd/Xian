@@ -56,6 +56,8 @@
     <Compile Include="Admin\AuthenticationAdmin\UserAssembler.cs" />
     <Compile Include="Admin\ExternalPractitionerAdmin\ExternalPractitionerAdminService.cs" />
     <Compile Include="Admin\ProtocolAdmin\ProtocolAdminService.cs" />
+    <Compile Include="Admin\ProtocolAdmin\ProtocolExporter.cs" />
+    <Compile Include="Admin\ProtocolAdmin\ProtocolImporter.cs" />
     <Compile Include="MimeDocumentService\MimeDocumentService.cs" />
     <Compile Include="ExternalPractitionerAssembler.cs" />
     <Compile Include="Admin\DataExporterBase.cs" />

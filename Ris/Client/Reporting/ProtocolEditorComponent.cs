@@ -226,6 +226,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                     _selectedProcodurePlanSummaryTableItem = null;
                     ResetDocument();
                 }
+                NotifyPropertyChanged("ProtocolGroupChoices");
             }
         }
 
@@ -436,9 +437,8 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         private void OnProcedureSelectionChanged(ProtocolEditorProcedurePlanSummaryTableItem item)
         {
-            ResetDocument();
-
             SavePreviouslySelectedItemsProtocolCodes();
+            ResetDocument();
 
             //Refresh protocol
             Platform.GetService<IProtocollingWorkflowService>(
@@ -461,7 +461,7 @@ namespace ClearCanvas.Ris.Client.Reporting
             _selectedProcodurePlanSummaryTableItem = item;
 
             EventsHelper.Fire(_selectionChanged, this, EventArgs.Empty);
-            NotifyPropertyChanged("ProtocolGroupChoices");
+            //NotifyPropertyChanged("ProtocolGroupChoices");
         }
 
         private void OnProtocolGroupSelectionChanged()
@@ -475,20 +475,26 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         private void RefreshAvailableProtocolCodes(IList<ProtocolCodeDetail> existingSelectedCodes, IProtocollingWorkflowService service)
         {
-            GetProtocolGroupDetailRequest protocolCodesDetailRequest = new GetProtocolGroupDetailRequest(_protocolGroup);
-            GetProtocolGroupDetailResponse protocolCodesDetailResponse = service.GetProtocolGroupDetail(protocolCodesDetailRequest);
-
             _availableProtocolCodes.Items.Clear();
-            _availableProtocolCodes.Items.AddRange(protocolCodesDetailResponse.ProtocolGroup.Codes);
 
-            foreach (ProtocolCodeDetail code in existingSelectedCodes)
+            if (_protocolGroup != null)
             {
-                _availableProtocolCodes.Items.Remove(code);
+                GetProtocolGroupDetailRequest protocolCodesDetailRequest = new GetProtocolGroupDetailRequest(_protocolGroup);
+                GetProtocolGroupDetailResponse protocolCodesDetailResponse = service.GetProtocolGroupDetail(protocolCodesDetailRequest);
+
+                _availableProtocolCodes.Items.AddRange(protocolCodesDetailResponse.ProtocolGroup.Codes);
+
+                foreach (ProtocolCodeDetail code in existingSelectedCodes)
+                {
+                    _availableProtocolCodes.Items.Remove(code);
+                }
             }
         }
 
         private void ResetDocument()
         {
+            _protocolGroup = null;
+            _protocolGroupChoices = new List<ProtocolGroupSummary>();
             _availableProtocolCodes.Items.Clear();
             _selectedProtocolCodes.Items.Clear();
         }
