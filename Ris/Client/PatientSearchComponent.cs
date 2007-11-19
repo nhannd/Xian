@@ -4,10 +4,9 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tables;
+using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
-using System.Collections.Generic;
-using ClearCanvas.Desktop.Tools;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -69,6 +68,9 @@ namespace ClearCanvas.Ris.Client
         private PatientProfileSummary _selectedProfile;
         private event EventHandler _selectedProfileChanged;
 
+        private PagingController<PatientProfileSummary> _pagingController;
+        private PagingActionModel<PatientProfileSummary> _pagingActionHandler;
+
         private ToolSet _toolSet;
 
         public override void Start()
@@ -76,6 +78,8 @@ namespace ClearCanvas.Ris.Client
             _profileTable = new PatientProfileTable();
             _toolSet = new ToolSet(new PatientSearchToolExtensionPoint(), new PatientSearchToolContext(this));
 
+            InitialisePaging();
+            
             base.Start();
         }
 
@@ -84,6 +88,31 @@ namespace ClearCanvas.Ris.Client
             _toolSet.Dispose();
 
             base.Stop();
+        }
+
+        private void InitialisePaging()
+        {
+            _pagingController = new PagingController<PatientProfileSummary>(
+                delegate(int firstRow, int maxRows)
+                {
+                    TextQueryResponse<PatientProfileSummary> response = null;
+
+                    Platform.GetService<IRegistrationWorkflowService>(
+                        delegate(IRegistrationWorkflowService service)
+                        {
+                            TextQueryRequest request = new TextQueryRequest();
+                            request.TextQuery = _searchString;
+                            request.Page.FirstRow = firstRow;
+                            request.Page.MaxRows = maxRows;
+                            response = service.ProfileTextQuery(request);
+                        });
+
+
+                    return response.Matches;
+                }
+            );
+
+            _pagingActionHandler = new PagingActionModel<PatientProfileSummary>(_pagingController, _profileTable, Host.DesktopWindow);
         }
 
         #region Presentation Model
@@ -104,11 +133,13 @@ namespace ClearCanvas.Ris.Client
             get { return _profileTable; }
         }
 
-        public ActionModelRoot ItemsContextMenuModel
+        public ActionModelNode ItemsContextMenuModel
         {
             get
             {
-                return ActionModelRoot.CreateModel(this.GetType().FullName, "patientsearch-items-contextmenu", _toolSet.Actions);
+                ActionModelRoot model = ActionModelRoot.CreateModel(this.GetType().FullName, "patientsearch-items-contextmenu", _toolSet.Actions);
+                model.Merge(_pagingActionHandler);
+                return model;
             }
         }
 
@@ -116,7 +147,9 @@ namespace ClearCanvas.Ris.Client
         {
             get
             {
-                return ActionModelRoot.CreateModel(this.GetType().FullName, "patientsearch-items-toolbar", _toolSet.Actions);
+                ActionModelRoot model = ActionModelRoot.CreateModel(this.GetType().FullName, "patientsearch-items-toolbar", _toolSet.Actions);
+                model.Merge(_pagingActionHandler);
+                return model;
             }
         }
 
@@ -149,21 +182,7 @@ namespace ClearCanvas.Ris.Client
             try
             {
                 _profileTable.Items.Clear();
-                
-                Platform.GetService<IRegistrationWorkflowService>(
-                    delegate(IRegistrationWorkflowService service)
-                    {
-                        TextQueryRequest request = new TextQueryRequest();
-                        request.TextQuery = _searchString;
-                        TextQueryResponse<PatientProfileSummary> response = null;
-                        response = service.ProfileTextQuery(request);
-
-                        if (!response.TooManyMatches)
-                        {
-                            _profileTable.Items.AddRange(response.Matches);
-                        }
-                    });
-
+                _profileTable.Items.AddRange(_pagingController.GetFirst());
                 this.SelectedProfile = new Selection(_profileTable.Items.Count > 0 ? _profileTable.Items[0] : null);
             }
             catch (Exception e)

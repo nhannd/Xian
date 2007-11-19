@@ -34,11 +34,13 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Common;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Hibernate;
+using ClearCanvas.Enterprise.Hibernate.Hql;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Healthcare.Workflow.Registration;
-using NHibernate;
 using ClearCanvas.Workflow;
+using NHibernate;
 
 namespace ClearCanvas.Healthcare.Hibernate.Brokers
 {
@@ -128,9 +130,13 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         private IList DoQuery(string hqlQuery, List<QueryParameter> parameters)
         {
             IQuery query = this.Context.CreateHibernateQuery(hqlQuery);
-            foreach (QueryParameter param in parameters)
+
+            if (parameters != null)
             {
-                query.SetParameter(param.Name, param.Value);
+                foreach (QueryParameter param in parameters)
+                {
+                    query.SetParameter(param.Name, param.Value);
+                }
             }
 
             return query.List();
@@ -563,74 +569,88 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         #endregion
 
-        public IList<WorklistItem> Search(
-            string mrnID,
-            string healthcardID,
-            string familyName,
-            string givenName,
-            string accessionNumber,
-            bool showActiveOnly)
+        public IList<WorklistItem> Search(WorklistItemSearchCriteria[] where, SearchResultPage page, bool showActiveOnly)
         {
             StringBuilder hqlQuery = new StringBuilder();
-            List<QueryParameter> parameters = new List<QueryParameter>();
-
             hqlQuery.Append("select distinct o");
-            hqlQuery.Append(" from Order o");
-            hqlQuery.Append(" join o.Patient p" +
-                            " join p.Profiles pp");
+            hqlQuery.Append(" from Order o join o.Patient p join p.Profiles pp");
 
-            string conditionPrefix = " where";
+            HqlQuery query = new HqlQuery(hqlQuery.ToString());
+            query.Page = page;
+
             if (showActiveOnly)
             {
-                hqlQuery.Append(conditionPrefix);
-                hqlQuery.Append(" (o.Status = :orderStatus1 or o.Status = :orderStatus2)");
-                parameters.Add(new QueryParameter("orderStatus1", OrderStatus.SC.ToString()));
-                parameters.Add(new QueryParameter("orderStatus2", OrderStatus.IP.ToString()));
-                conditionPrefix = " and";
+                query.Conditions.Add(new HqlCondition(String.Format(
+                    " (o.Status = '{0}' or o.Status = '{1}')", 
+                    OrderStatus.SC, OrderStatus.IP), 
+                    new object[] {} ));
             }
 
-            if (!String.IsNullOrEmpty(accessionNumber))
+            HqlOr or = new HqlOr();
+            foreach (WorklistItemSearchCriteria c in where)
             {
-                hqlQuery.Append(conditionPrefix);
-                hqlQuery.Append(" o.AccessionNumber = :accessionNumber");
-                parameters.Add(new QueryParameter("accessionNumber", accessionNumber));
-                conditionPrefix = " and";
+                HqlAnd and = new HqlAnd();
+
+                and.Conditions.AddRange(HqlCondition.FromSearchCriteria("o", c.Order));
+                and.Conditions.AddRange(HqlCondition.FromSearchCriteria("pp", c.PatientProfile));
+
+                if (and.Conditions.Count > 0)
+                    or.Conditions.Add(and);
+
+                query.Sorts.AddRange(HqlSort.FromSearchCriteria("o", c.Order));
+                query.Sorts.AddRange(HqlSort.FromSearchCriteria("pp", c.PatientProfile));
             }
 
-            if (!String.IsNullOrEmpty(mrnID))
+            if (or.Conditions.Count > 0)
+                query.Conditions.Add(or);
+
+            IList<object> list = ExecuteHql<object>(query);
+            List<WorklistItem> results = new List<WorklistItem>();
+            foreach (object tuple in list)
             {
-                hqlQuery.Append(conditionPrefix);
-                hqlQuery.Append(" pp.Mrn.Id = :mrnID");
-                parameters.Add(new QueryParameter("mrnID", mrnID));
-                conditionPrefix = " and";
+                WorklistItem item = (WorklistItem)Activator.CreateInstance(typeof(WorklistItem), tuple);
+                results.Add(item);
             }
 
-            if (!String.IsNullOrEmpty(healthcardID))
-            {
-                hqlQuery.Append(conditionPrefix);
-                hqlQuery.Append(" pp.Healthcard.Id = :healthcardID");
-                parameters.Add(new QueryParameter("healthcardID", healthcardID));
-                conditionPrefix = " and";
-            }
-
-            if (!String.IsNullOrEmpty(familyName))
-            {
-                hqlQuery.Append(conditionPrefix);
-                hqlQuery.Append(" pp.Name.FamilyName like :familyName");
-                parameters.Add(new QueryParameter("familyName", familyName + "%"));
-                conditionPrefix = " and";
-            }
-
-            if (!String.IsNullOrEmpty(givenName))
-            {
-                hqlQuery.Append(conditionPrefix);
-                hqlQuery.Append(" pp.Name.GivenName like :givenName");
-                parameters.Add(new QueryParameter("givenName", givenName + "%"));
-                //conditionPrefix = " and";
-            }
-
-            return GetWorklist(hqlQuery.ToString(), parameters);
+            return results;
         }
+
+        public int SearchCount(WorklistItemSearchCriteria[] where, bool showActiveOnly)
+        {
+            StringBuilder hqlQuery = new StringBuilder();
+            hqlQuery.Append("select distinct o");
+            hqlQuery.Append(" from Order o join o.Patient p join p.Profiles pp");
+
+            HqlQuery query = new HqlQuery(hqlQuery.ToString());
+
+            if (showActiveOnly)
+            {
+                query.Conditions.Add(new HqlCondition(String.Format(
+                    " (o.Status = '{0}' or o.Status = '{1}')",
+                    OrderStatus.SC, OrderStatus.IP), null));
+            }
+
+            HqlOr or = new HqlOr();
+            foreach (WorklistItemSearchCriteria c in where)
+            {
+                HqlAnd and = new HqlAnd();
+
+                and.Conditions.AddRange(HqlCondition.FromSearchCriteria("o", c.Order));
+                and.Conditions.AddRange(HqlCondition.FromSearchCriteria("pp", c.PatientProfile));
+
+                if (and.Conditions.Count > 0)
+                    or.Conditions.Add(and);
+
+                query.Sorts.AddRange(HqlSort.FromSearchCriteria("o", c.Order));
+                query.Sorts.AddRange(HqlSort.FromSearchCriteria("pp", c.PatientProfile));
+            }
+
+            if (or.Conditions.Count > 0)
+                query.Conditions.Add(or);
+
+            return (int) ExecuteHqlUnique<long>(query);
+        }
+
 
         #endregion
     }

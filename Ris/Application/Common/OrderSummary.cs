@@ -68,5 +68,8 @@ namespace ClearCanvas.Ris.Application.Common
 
         [DataMember]
         public EnumValueInfo OrderPriority;
+
+        [DataMember]
+        public EnumValueInfo OrderStatus;
     }
 }

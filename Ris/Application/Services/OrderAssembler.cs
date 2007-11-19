@@ -67,6 +67,7 @@ namespace ClearCanvas.Ris.Application.Services
             summary.OrderingFacility = order.OrderingFacility.Name;
             summary.ReasonForStudy = order.ReasonForStudy;
             summary.OrderPriority = EnumUtils.GetEnumValueInfo(order.Priority, context);
+            summary.OrderStatus = EnumUtils.GetEnumValueInfo(order.Status, context);
 
             return summary;
         }

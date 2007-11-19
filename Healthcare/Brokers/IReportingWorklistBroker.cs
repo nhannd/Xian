@@ -30,6 +30,7 @@
 #endregion
 
 using System.Collections.Generic;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare.Workflow.Reporting;
 
@@ -71,12 +72,7 @@ namespace ClearCanvas.Healthcare.Brokers
 
         IList<Report> GetPriorReport(Patient patient);
 
-        IList<WorklistItem> Search(
-            string mrnID,
-            string healthcardID,
-            string familyName,
-            string givenName,
-            string accessionNumber,
-            bool showActiveOnly);
+        IList<WorklistItem> Search(WorklistItemSearchCriteria[] where, SearchResultPage page, bool showActiveOnly);
+        int SearchCount(WorklistItemSearchCriteria[] where, bool showActiveOnly);
     }
 }

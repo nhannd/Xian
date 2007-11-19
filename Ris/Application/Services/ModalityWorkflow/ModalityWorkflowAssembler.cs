@@ -30,22 +30,15 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
-using ClearCanvas.Healthcare.Brokers;
-using ClearCanvas.Healthcare.PatientReconciliation;
 using ClearCanvas.Healthcare.Workflow.Modality;
-using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
-using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 using ClearCanvas.Workflow;
 
 namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
 {
-    public class ModalityWorklistAssembler
+    public class ModalityWorkflowAssembler
     {
         public ModalityWorklistItem CreateModalityWorklistItem(WorklistItem domainItem, IPersistenceContext context)
         {

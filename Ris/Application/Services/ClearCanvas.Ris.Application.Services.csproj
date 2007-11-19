@@ -126,7 +126,7 @@
     <Compile Include="HealthcardAssembler.cs" />
     <Compile Include="IApplicationServiceLayer.cs" />
     <Compile Include="ModalityWorkflow\ModalityWorkflowService.cs" />
-    <Compile Include="ModalityWorkflow\ModalityWorklistAssembler.cs" />
+    <Compile Include="ModalityWorkflow\ModalityWorkflowAssembler.cs" />
     <Compile Include="PatientProfileAssembler.cs" />
     <Compile Include="PatientReconciliation\PatientProfileDiffAssembler.cs" />
     <Compile Include="PatientReconciliation\PatientReconciliationService.cs" />
@@ -151,6 +151,7 @@
     <Compile Include="StaffAssembler.cs" />
     <Compile Include="TelephoneNumberAssembler.cs" />
     <Compile Include="WorkflowServiceBase.cs" />
+    <Compile Include="WorklistTextQueryHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />

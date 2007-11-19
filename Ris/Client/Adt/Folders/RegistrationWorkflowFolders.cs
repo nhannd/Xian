@@ -372,8 +372,11 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
             Platform.GetService<IRegistrationWorkflowService>(
                 delegate(IRegistrationWorkflowService service)
                 {
-                    SearchResponse response = service.Search(new SearchRequest(this.SearchData));
-                    worklistItems = response.WorklistItems;
+                    SearchRequest request = new SearchRequest();
+                    request.TextQuery = this.SearchData.TextSearch;
+                    request.ShowActiveOnly = this.SearchData.ShowActiveOnly;
+                    TextQueryResponse<RegistrationWorklistItem> response = service.Search(request);
+                    worklistItems = response.Matches;
                 });
 
             if (worklistItems == null)

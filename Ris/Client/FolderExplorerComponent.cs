@@ -175,11 +175,6 @@ namespace ClearCanvas.Ris.Client
             }
         }
 
-        public SearchField SearchFields
-        {
-            get { return _searchDataHandler != null ? _searchDataHandler.SearchFields : SearchField.None; }
-        }
-
         #endregion
            
         private IExtensionPoint _folderExplorerToolExtensionPoint;

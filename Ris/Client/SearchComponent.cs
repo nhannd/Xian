@@ -37,24 +37,24 @@ using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client
 {
+    public class SearchData
+    {
+        public SearchData(string textSearch, bool showActiveOnly)
+        {
+            this.TextSearch = textSearch;
+            this.ShowActiveOnly = showActiveOnly;
+        }
+
+        public string TextSearch;
+        public bool ShowActiveOnly;
+    }
+
     /// <summary>
     /// Defines an interface for handling the Search Data
     /// </summary>
     public interface ISearchDataHandler
     {
         SearchData SearchData { set; }
-        SearchField SearchFields { get; }
-    }
-
-    [Flags]
-    public enum SearchField
-    {
-        None = 0x00,
-        Mrn = 0x01,
-        Healthcard = 0x02,
-        FamilyName = 0x04,
-        GivenName = 0x08,
-        AccessionNumber = 0x10
     }
 
     [ExtensionPoint]
@@ -65,22 +65,17 @@ namespace ClearCanvas.Ris.Client
     [AssociateView(typeof(SearchComponentViewExtensionPoint))]
     public class SearchComponent : ApplicationComponent
     {
-        private string _mrn;
-        private string _healthcard;
-        private string _familyName;
-        private string _givenName;
-        private string _accessionNumber;
+        private string _searchField;
         private bool _showActiveOnly;
         private bool _keepOpen;
-
-        private SearchField _searchField;
-        private bool _searchEnabled;
 
         private static SearchComponent _instance;
         private static Shelf _searchComponentShelf;
 
         private SearchComponent()
         {
+            // True by default
+            _showActiveOnly = true;
         }
 
         public static Shelf Launch(IDesktopWindow desktopWindow)
@@ -93,7 +88,7 @@ namespace ClearCanvas.Ris.Client
                 }
                 else
                 {
-                    desktopWindow.Workspaces.ItemActivationChanged += SearchComponent.Instance.Workspaces_ItemActivationChanged;
+                    desktopWindow.Workspaces.ItemActivationChanged += Workspaces_ItemActivationChanged;
 
                     _searchComponentShelf = LaunchAsShelf(
                         desktopWindow,
@@ -102,11 +97,11 @@ namespace ClearCanvas.Ris.Client
                         ShelfDisplayHint.DockFloat,
                         delegate
                             {
-                                desktopWindow.Workspaces.ItemActivationChanged -= SearchComponent.Instance.Workspaces_ItemActivationChanged;
+                                desktopWindow.Workspaces.ItemActivationChanged -= Workspaces_ItemActivationChanged;
                                 _searchComponentShelf = null;
                             });
 
-                    SearchComponent.Instance.UpdateDisplay();
+                    UpdateDisplay();
                 }
             }
             catch (Exception e)
@@ -131,98 +126,20 @@ namespace ClearCanvas.Ris.Client
 
         #region Public Member
 
-        public SearchData SearchData
+        public string SearchField
         {
-            get { return BuildSearchData(); }
-        }
-
-        public string Mrn
-        {
-            get { return _mrn; }
+            get { return _searchField; }
             set
             {
-                _mrn = value;
-
+                _searchField = value;
                 UpdateDisplay();
             }
         }
 
-        public string Healthcard
-        {
-            get { return _healthcard; }
-            set
-            {
-                _healthcard = value;
-
-                UpdateDisplay();
-            }
-        }
-
-        public string HealthcardMask
-        {
-            get { return TextFieldMasks.HealthcardNumberMask; }
-        }
-
-        public string FamilyName
-        {
-            get { return _familyName; }
-            set
-            {
-                _familyName = value;
-                UpdateDisplay();
-            }
-        }
-
-        public string GivenName
-        {
-            get { return _givenName; }
-            set
-            {
-                _givenName = value;
-                UpdateDisplay();
-            }
-        }
-
-        public string AccessionNumber
-        {
-            get { return _accessionNumber; }
-            set
-            {
-                _accessionNumber = value;
-                UpdateDisplay();
-            }
-        }
-
-        public bool ShowActive
+        public bool ShowActiveOnly
         {
             get { return _showActiveOnly; }
             set { _showActiveOnly = value; }
-        }
-
-
-        public bool UseMrn
-        {
-            get { return (_searchField & SearchField.Mrn) > 0; }
-        }
-
-        public bool UseHealthcard
-        {
-            get { return (_searchField & SearchField.Healthcard) > 0; }
-        }
-
-        public bool UseFamilyName
-        {
-            get { return (_searchField & SearchField.FamilyName) > 0; }
-        }
-
-        public bool UseGivenName
-        {
-            get { return (_searchField & SearchField.GivenName) > 0; }
-        }
-
-        public bool UseAccessionNumber
-        {
-            get { return (_searchField & SearchField.AccessionNumber) > 0; }
         }
 
         public bool KeepOpen
@@ -231,28 +148,9 @@ namespace ClearCanvas.Ris.Client
             set { _keepOpen = value; }
         }
 
-        public SearchField SearchField
-        {
-            get { return _searchField; }
-            set
-            {
-                if (_searchField != value)
-                {
-                    _searchField = value;
-                }
-            }
-        }
-
         public bool SearchEnabled
         {
-            get { return _searchEnabled; }
-            protected set
-            {
-                if (_searchEnabled != value)
-                {
-                    _searchEnabled = value;
-                }
-            }
+            get { return !string.IsNullOrEmpty(_searchField); }
         }
 
         public void Search()
@@ -261,7 +159,7 @@ namespace ClearCanvas.Ris.Client
             {
                 ISearchDataHandler searchHandler = GetActiveWorkspaceSearchHandler();
                 if (searchHandler != null)
-                    searchHandler.SearchData = this.SearchData;
+                    searchHandler.SearchData = new SearchData(_searchField, _showActiveOnly);
 
                 // always turn the validation errors off after a successful search
                 this.ShowValidation(false);
@@ -280,12 +178,12 @@ namespace ClearCanvas.Ris.Client
 
         #endregion
 
-        private void Workspaces_ItemActivationChanged(object sender, ItemEventArgs<Workspace> e)
+        private static void Workspaces_ItemActivationChanged(object sender, ItemEventArgs<Workspace> e)
         {
             UpdateDisplay();
         }
 
-        private ISearchDataHandler GetActiveWorkspaceSearchHandler()
+        private static ISearchDataHandler GetActiveWorkspaceSearchHandler()
         {
             Workspace activeWorkspace = _searchComponentShelf.DesktopWindow.ActiveWorkspace;
             if (activeWorkspace != null && activeWorkspace.Component is ISearchDataHandler)
@@ -294,36 +192,14 @@ namespace ClearCanvas.Ris.Client
             return null;
         }
 
-        private void UpdateDisplay()
+        private static void UpdateDisplay()
         {
-            // ensure the criteria is specific enough before enabling search
-            this.SearchEnabled = _mrn != null || _healthcard != null || _familyName != null || _givenName != null || _accessionNumber != null;
-
             ISearchDataHandler searchHandler = GetActiveWorkspaceSearchHandler();
             if (searchHandler != null)
             {
-                SearchComponent.Instance.SearchField = searchHandler.SearchFields;
-
-                SearchComponent.Instance.NotifyPropertyChanged("UseMrn");
-                SearchComponent.Instance.NotifyPropertyChanged("UseHealthcard");
-                SearchComponent.Instance.NotifyPropertyChanged("UseFamilyName");
-                SearchComponent.Instance.NotifyPropertyChanged("UseGivenName");
-                SearchComponent.Instance.NotifyPropertyChanged("UseAccessionNumber");
+                // Use this to update the SearchComponentControl when a workspace that implement ISearchDataHandler is active
+                // Do something here
             }
-        }
-
-        private SearchData BuildSearchData()
-        {
-            SearchData searchData = new SearchData();
-
-            searchData.MrnID = Instance.UseMrn ? _mrn : "";
-            searchData.HealthcardID = Instance.UseHealthcard ? _healthcard : "";
-            searchData.FamilyName = Instance.UseFamilyName ? _familyName : "";
-            searchData.GivenName = Instance.UseGivenName ? _givenName : "";
-            searchData.AccessionNumber = Instance.UseAccessionNumber ? _accessionNumber : "";
-            searchData.ShowActiveOnly = Instance.UseAccessionNumber ? _showActiveOnly : false;
-
-            return searchData;
         }
     }
 }

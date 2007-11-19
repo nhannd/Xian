@@ -57,23 +57,6 @@ namespace ClearCanvas.Ris.Application.Services
                              return c;
                          }));
 
-            // build criteria against sex
-            List<string> terms = new List<string>(ParseTerms(query));
-            if (terms.Count > 0)
-            {
-                CollectionUtils.ForEach<EnumValueInfo>(
-                    EnumUtils.GetEnumValueList<SexEnum>(_context),
-                    delegate(EnumValueInfo e)
-                        {
-                            if (terms.Contains(e.Value))
-                            {
-                                PatientProfileSearchCriteria c = new PatientProfileSearchCriteria();
-                                c.Sex.EqualTo(EnumUtils.GetEnumValue<Sex>(e));
-                                criteria.Add(c);
-                            }
-                        });
-            }
-
 
             return criteria.ToArray();
         }

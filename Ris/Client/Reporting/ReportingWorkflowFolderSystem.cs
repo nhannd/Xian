@@ -220,18 +220,6 @@ namespace ClearCanvas.Ris.Client.Reporting
             }
         }
 
-        public SearchField SearchFields
-        {
-            get
-            {
-                return SearchField.Mrn |
-                       SearchField.Healthcard |
-                       SearchField.FamilyName |
-                       SearchField.GivenName |
-                       SearchField.AccessionNumber;
-            }
-        }
-
         public bool GetOperationEnablement(string operationName)
         {
             try

@@ -48,6 +48,8 @@ namespace ClearCanvas.Ris.Client
                 delegate(OrderSummary order) { return order.DiagnosticServiceName; }));
             this.Columns.Add(new TableColumn<OrderSummary, string>(SR.ColumnPriority,
                 delegate(OrderSummary order) { return order.OrderPriority.Value; }));
+            this.Columns.Add(new TableColumn<OrderSummary, string>(SR.ColumnStatus,
+                delegate(OrderSummary order) { return order.OrderStatus.Value; }));
 
             //TODO PatientNameDetail formatting
             this.Columns.Add(new TableColumn<OrderSummary, string>("Ordered by",
@@ -59,6 +61,7 @@ namespace ClearCanvas.Ris.Client
                 delegate(OrderSummary order) { return order.ReasonForStudy; }));
             this.Columns.Add(new TableColumn<OrderSummary, string>(SR.ColumnCreatedOn,
                 delegate(OrderSummary order) { return Format.Date(order.EnteredDateTime); }));
+
         }
     }
 }

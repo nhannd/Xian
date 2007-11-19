@@ -29,7 +29,6 @@
 
 #endregion
 
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using ClearCanvas.Common;
@@ -37,7 +36,6 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
-using ClearCanvas.Healthcare.Alert;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Healthcare.Workflow;
 using ClearCanvas.Healthcare.Workflow.Registration;
@@ -58,23 +56,27 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         #region IRegistrationWorkflowService Members
 
         [ReadOperation]
-        public SearchResponse Search(SearchRequest request)
+        public TextQueryResponse<RegistrationWorklistItem> Search(SearchRequest request)
         {
             RegistrationWorkflowAssembler assembler = new RegistrationWorkflowAssembler();
+            IRegistrationWorklistBroker broker = PersistenceContext.GetBroker<IRegistrationWorklistBroker>();
 
-            IList<WorklistItem> result = PersistenceContext.GetBroker<IRegistrationWorklistBroker>().Search(
-                request.SearchData.MrnID,
-                request.SearchData.HealthcardID,
-                request.SearchData.FamilyName,
-                request.SearchData.GivenName,
-                request.SearchData.AccessionNumber,
-                request.SearchData.ShowActiveOnly);
+            WorklistTextQueryHelper<WorklistItem, RegistrationWorklistItem> helper = 
+                new WorklistTextQueryHelper<WorklistItem, RegistrationWorklistItem>(
+                    delegate(WorklistItem item)
+                    {
+                        return assembler.CreateRegistrationWorklistItem(item, PersistenceContext);
+                    },
+                    delegate (WorklistItemSearchCriteria[] criteria)
+                    {
+                        return broker.SearchCount(criteria, request.ShowActiveOnly);
+                    },
+                    delegate(WorklistItemSearchCriteria[] criteria, SearchResultPage page)
+                    {
+                        return broker.Search(criteria, page, request.ShowActiveOnly);
+                    });
 
-            return new SearchResponse(CollectionUtils.Map<WorklistItem, RegistrationWorklistItem, List<RegistrationWorklistItem>>(result,
-                delegate(WorklistItem item)
-                {
-                    return assembler.CreateRegistrationWorklistItem(item, this.PersistenceContext);
-                }));
+            return helper.Query(request);
         }
 
         [ReadOperation]

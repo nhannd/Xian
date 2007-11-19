@@ -55,11 +55,6 @@ namespace ClearCanvas.Ris.Client
             set { _folderExplorerComponent.SearchData = value; }
         }
 
-        public SearchField SearchFields
-        {
-            get { return _folderExplorerComponent.SearchFields; }
-        }
-
         #endregion
     }
 }

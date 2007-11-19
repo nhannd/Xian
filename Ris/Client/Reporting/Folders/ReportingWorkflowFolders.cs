@@ -249,8 +249,11 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
             Platform.GetService<IReportingWorkflowService>(
                 delegate(IReportingWorkflowService service)
                 {
-                    SearchResponse response = service.Search(new SearchRequest(this.SearchData));
-                    worklistItems = response.WorklistItems;
+                    SearchRequest request = new SearchRequest();
+                    request.TextQuery = this.SearchData.TextSearch;
+                    request.ShowActivOnly = this.SearchData.ShowActiveOnly;
+                    TextQueryResponse<ReportingWorklistItem> response = service.Search(request);
+                    worklistItems = response.Matches;
                 });
 
             if (worklistItems == null)

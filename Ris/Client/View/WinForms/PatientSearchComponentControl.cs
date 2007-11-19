@@ -28,7 +28,10 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 
         private void _searchButton_Click(object sender, EventArgs e)
         {
-            _component.Search();
+            using (new CursorManager(Cursors.WaitCursor))
+            {
+                _component.Search();
+            }
         }
 
         private void _searchResults_ItemDoubleClicked(object sender, EventArgs e)

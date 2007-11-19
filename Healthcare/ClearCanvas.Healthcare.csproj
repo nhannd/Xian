@@ -222,6 +222,7 @@
     <Compile Include="Workflow\Reporting\Worklists.cs" />
     <Compile Include="Worklist.cs" />
     <Compile Include="Workflow\WorklistBase.cs" />
+    <Compile Include="WorklistItemSearchCriteria.cs" />
     <Compile Include="WorklistSearchCriteria.cs" />
   </ItemGroup>
   <ItemGroup>

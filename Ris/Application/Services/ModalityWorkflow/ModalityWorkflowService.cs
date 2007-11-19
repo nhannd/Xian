@@ -41,7 +41,6 @@ using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Healthcare.Workflow.Modality;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
-using ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry;
 
 namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
 {
@@ -55,23 +54,27 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
         }
 
         [ReadOperation]
-        public SearchResponse Search(SearchRequest request)
+        public TextQueryResponse<ModalityWorklistItem> Search(SearchRequest request)
         {
-            ModalityWorklistAssembler assembler = new ModalityWorklistAssembler();
+            ModalityWorkflowAssembler assembler = new ModalityWorkflowAssembler();
+            IModalityWorklistBroker broker = PersistenceContext.GetBroker<IModalityWorklistBroker>();
 
-            IList<WorklistItem> result = PersistenceContext.GetBroker<IModalityWorklistBroker>().Search(
-                request.SearchData.MrnID,
-                request.SearchData.HealthcardID,
-                request.SearchData.FamilyName,
-                request.SearchData.GivenName,
-                request.SearchData.AccessionNumber,
-                request.SearchData.ShowActiveOnly);
+            WorklistTextQueryHelper<WorklistItem, ModalityWorklistItem> helper =
+                new WorklistTextQueryHelper<WorklistItem, ModalityWorklistItem>(
+                    delegate(WorklistItem item)
+                    {
+                        return assembler.CreateModalityWorklistItem(item, PersistenceContext);
+                    },
+                    delegate(WorklistItemSearchCriteria[] criteria)
+                    {
+                        return broker.SearchCount(criteria, request.ShowActiveOnly);
+                    },
+                    delegate(WorklistItemSearchCriteria[] criteria, SearchResultPage page)
+                    {
+                        return broker.Search(criteria, page, request.ShowActiveOnly);
+                    });
 
-            return new SearchResponse(CollectionUtils.Map<WorklistItem, ModalityWorklistItem, List<ModalityWorklistItem>>(result,
-                delegate(WorklistItem item)
-                {
-                    return assembler.CreateModalityWorklistItem(item, this.PersistenceContext);
-                }));
+            return helper.Query(request);
         }
 
         [ReadOperation]
@@ -90,7 +93,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
         [ReadOperation]
         public GetWorklistResponse GetWorklist(GetWorklistRequest request)
         {
-            ModalityWorklistAssembler assembler = new ModalityWorklistAssembler();
+            ModalityWorkflowAssembler assembler = new ModalityWorkflowAssembler();
 
             IList items = request.WorklistRef == null
                   ? GetWorklist(request.WorklistClassName)

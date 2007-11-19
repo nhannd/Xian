@@ -30,11 +30,7 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Workflow;
 
 namespace ClearCanvas.Healthcare.Workflow.Modality
 {
@@ -66,7 +62,7 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
         private ModalityProcedureStepType _modalityProcedureStepType;
         private RequestedProcedureType _requestedProcedureType;
         private OrderPriority _orderPriority;
-        private ClearCanvas.Healthcare.Modality _modality;
+        private Healthcare.Modality _modality;
         private PatientClassEnum _patientClass;
         private DateTime? _scheduledStartTime;
         private string _diagnosticServiceName;
@@ -79,11 +75,9 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
             Order order,
             Patient patient,
             PatientProfile profile,
-            string accessionNumber,
-            OrderPriority priority,
             RequestedProcedureType requestedProcedureType,
             ModalityProcedureStepType modalityProcedureStepType,
-            ClearCanvas.Healthcare.Modality modality,
+            Healthcare.Modality modality,
             PatientClassEnum patientClass,
             string diagnosticServiceName)
             : base(new WorklistItemKey(modalityProcedureStep.GetRef()))
@@ -93,8 +87,8 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
             _profileRef = profile.GetRef();
             _mrn = profile.Mrn;
             _patientName = profile.Name;
-            _accessionNumber = accessionNumber;
-            _orderPriority = priority;
+            _accessionNumber = order.AccessionNumber;
+            _orderPriority = order.Priority;
             _requestedProcedureType = requestedProcedureType;
             _modalityProcedureStepType = modalityProcedureStepType;
             _modality = modality;
@@ -156,7 +150,7 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
             get { return _modalityProcedureStepType; }
         }
 
-        public ClearCanvas.Healthcare.Modality Modality
+        public Healthcare.Modality Modality
         {
             get { return _modality; }
         }

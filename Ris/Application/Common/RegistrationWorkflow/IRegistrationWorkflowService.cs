@@ -44,9 +44,9 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
         /// Search for registration worklist item
         /// </summary>
         /// <param name="request"><see cref="SearchRequest"/></param>
-        /// <returns><see cref="SearchResponse"/></returns>
+        /// <returns></returns>
         [OperationContract]
-        SearchResponse Search(SearchRequest request);
+        TextQueryResponse<RegistrationWorklistItem> Search(SearchRequest request);
 
         /// <summary>
         /// Returns a list of patient profiles based on a textual query.

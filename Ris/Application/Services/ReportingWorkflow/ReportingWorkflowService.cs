@@ -59,23 +59,27 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         #region IReportingWorkflowService Members
 
         [ReadOperation]
-        public SearchResponse Search(SearchRequest request)
+        public TextQueryResponse<ReportingWorklistItem> Search(SearchRequest request)
         {
             ReportingWorkflowAssembler assembler = new ReportingWorkflowAssembler();
-            
-            IList<WorklistItem> result = PersistenceContext.GetBroker<IReportingWorklistBroker>().Search(
-                request.SearchData.MrnID,
-                request.SearchData.HealthcardID,
-                request.SearchData.FamilyName,
-                request.SearchData.GivenName,
-                request.SearchData.AccessionNumber,
-                request.SearchData.ShowActiveOnly);
+            IReportingWorklistBroker broker = PersistenceContext.GetBroker<IReportingWorklistBroker>();
 
-            return new SearchResponse(CollectionUtils.Map<WorklistItem, ReportingWorklistItem, List<ReportingWorklistItem>>(result,
-                delegate(WorklistItem item)
-                {
-                    return assembler.CreateReportingWorklistItem(item, this.PersistenceContext);
-                }));
+            WorklistTextQueryHelper<WorklistItem, ReportingWorklistItem> helper =
+                new WorklistTextQueryHelper<WorklistItem, ReportingWorklistItem>(
+                    delegate(WorklistItem item)
+                    {
+                        return assembler.CreateReportingWorklistItem(item, PersistenceContext);
+                    },
+                    delegate(WorklistItemSearchCriteria[] criteria)
+                    {
+                        return broker.SearchCount(criteria, request.ShowActivOnly);
+                    },
+                    delegate(WorklistItemSearchCriteria[] criteria, SearchResultPage page)
+                    {
+                        return broker.Search(criteria, page, request.ShowActivOnly);
+                    });
+
+            return helper.Query(request);
         }
 
         [ReadOperation]

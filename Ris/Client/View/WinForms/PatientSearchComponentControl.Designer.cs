@@ -55,7 +55,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             // 
             this.tableLayoutPanel1.SetColumnSpan(this._searchResults, 2);
             this._searchResults.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._searchResults.FilterTextBoxVisible = true;
             this._searchResults.Location = new System.Drawing.Point(3, 53);
             this._searchResults.Name = "_searchResults";
             this._searchResults.ReadOnly = false;
