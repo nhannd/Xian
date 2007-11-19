@@ -174,8 +174,8 @@ namespace ClearCanvas.ImageServer.TestApp
             //ServerActionContext context = new ServerActionContext(dicomFile,null,null);
             //engine.Execute(context);
             */
-            string folder = @"..\Debug\";
-
+            string folder = @"..\";
+            /*
             DicomDirectoryWriter dicomDirectoryWriter = new DicomDirectoryWriter();
             dicomDirectoryWriter.ImplementationVersionName = "VETPACS2006";
             dicomDirectoryWriter.SourceApplicationEntityTitle = "LEADTOOLS";
@@ -183,11 +183,13 @@ namespace ClearCanvas.ImageServer.TestApp
             dicomDirectoryWriter.MediaStorageSopInstanceUid = "1.2.840.114257.0.14168379392050430457204051014614771104832";
             dicomDirectoryWriter.FileSetId = "SVCD_6/5/2007";
             //dicomDirectoryWriter.PrivateInformationCreatorUid = "";
-            dicomDirectoryWriter.AddFile(openFileDialog.FileName, @"DIR00001\IMAGE001");
-            //dicomDirectoryWriter.AddFile(folder + @"DIR00001\IMAGE002", @"DIR00001\IMAGE002");
-            //dicomDirectoryWriter.AddFile(folder + @"DIR00001\IMAGE003", @"DIR00001\IMAGE003");
+            //dicomDirectoryWriter.AddFile(openFileDialog.FileName, @"DIR00001\IMAGE001");
+            dicomDirectoryWriter.AddFile(folder + @"DIR00001\IMAGE001", @"DIR00001\IMAGE001");
+            dicomDirectoryWriter.AddFile(folder + @"DIR00001\IMAGE002", @"DIR00001\IMAGE002");
+            dicomDirectoryWriter.AddFile(folder + @"DIR00001\IMAGE003", @"DIR00001\IMAGE003");
             dicomDirectoryWriter.Save(folder + @"DIR00001\DICOMDIR2");
             File.WriteAllText(folder + @"DIR00001\DICOMDIR2dump.txt", dicomDirectoryWriter.Dump("", DicomDumpOptions.Default));
+             * */
         }
     }
 }
