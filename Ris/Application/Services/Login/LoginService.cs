@@ -108,7 +108,8 @@ namespace ClearCanvas.Ris.Application.Services.Login
                 // no staff associated to user - can't return full name details to client
 	        }
 
-            return new LoginResponse(authorityTokens, fullName);
+            //TODO: provide session token
+            return new LoginResponse("none", authorityTokens, fullName);
         }
 
         [ReadOperation]

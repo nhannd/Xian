@@ -59,7 +59,8 @@ namespace ClearCanvas.Ris.Client
                 PersonNameFormat.Format(currentSession.FullName);
 
             // show the user name before the base title
-            return string.Format("{0} - {1}", username, base.MakeTitle(baseTitle, activeWorkspace));
+            return string.Format("{0} @ {1} - {2}", username,
+                currentSession.WorkingFacility.Code, base.MakeTitle(baseTitle, activeWorkspace));
         }
     }
 }

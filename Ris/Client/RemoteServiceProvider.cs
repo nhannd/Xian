@@ -83,7 +83,9 @@ namespace ClearCanvas.Ris.Client
                 if(authenticationRequired)
                 {
                     channelFactory.Credentials.UserName.UserName = LoginSession.Current.UserName;
-                    channelFactory.Credentials.UserName.Password = LoginSession.Current.Password;
+
+                    // use session token in place of password
+                    channelFactory.Credentials.UserName.Password = LoginSession.Current.SessionToken;
                 }
 
                 // reflection is unfortunately the only way to create the service channel

@@ -46,12 +46,14 @@ namespace ClearCanvas.Ris.Server
         {
             Platform.Log(LogLevel.Info, "Validating user ", userName);
 
+            // Note: password is actually the session token
+
             Platform.GetService<IAuthenticationService>(
                 delegate(IAuthenticationService service)
                 {
-                    // TODO validate the password
+                    // TODO validate the session token
                     if (!service.ValidateUser(userName))
-                        throw new SecurityTokenException("Invalid user name or password");
+                        throw new SecurityTokenException("Invalid session token.");
                 });
         }
     }

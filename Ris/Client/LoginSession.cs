@@ -66,19 +66,22 @@ namespace ClearCanvas.Ris.Client
                         new GenericIdentity(userName), response.UserAuthorityTokens);
 
                     // set the current session before attempting to access other services, as these will require authentication
-                    _current = new LoginSession(userName, password, response.FullName);
+                    _current = new LoginSession(userName, password, response.FullName, facility);
                 });
         }
 
         private readonly string _userName;
-        private readonly string _password;
-        private PersonNameDetail _fullName;
+        private readonly string _sessionToken;
+        private readonly PersonNameDetail _fullName;
+        private readonly FacilitySummary _workingFacility;
 
-        private LoginSession(string userName, string password, PersonNameDetail fullName)
+        private LoginSession(string userName, string sessionToken, PersonNameDetail fullName, FacilitySummary workingFacility)
         {
             _userName = userName;
-            _password = password;
+            _sessionToken = sessionToken;
             _fullName = fullName;
+            _workingFacility = workingFacility;
+            
         }
 
         internal string UserName
@@ -86,17 +89,19 @@ namespace ClearCanvas.Ris.Client
             get { return _userName; }
         }
 
-        internal string Password
+        internal string SessionToken
         {
-            get { return _password; }
+            get { return _sessionToken; }
         }
 
         internal PersonNameDetail FullName
         {
             get { return _fullName; }
-            private set { _fullName = value; }
         }
 
-
+        internal FacilitySummary WorkingFacility
+        {
+            get { return _workingFacility; }
+        }
     }
 }
