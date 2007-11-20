@@ -30,30 +30,80 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
+using System.IO;
+using ClearCanvas.Common;
+using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Model.Brokers;
+using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy
 {
     public class DeleteStudyItemProcessor : BaseItemProcessor, IWorkQueueItemProcessor
     {
+        #region Private Members
+        private string _processorId;
+        #endregion
+
+        #region Private Methods
+        private void RemoveFilesystem()
+        {
+            foreach (StudyStorageLocation location in StorageLocationList )
+            {
+                string path = location.GetStudyPath();
+                try
+                {
+                    Directory.Delete(path, true);
+                }
+                catch (Exception e)
+                {
+                    Platform.Log(LogLevel.Error, e, "Unexpected exception when trying to delete directory: {0}", path);
+                }
+            }
+        }
+
+        private void RemoveDatabase(Model.WorkQueue item)
+        {
+            using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            {
+                // Setup the delete parameters
+                StudyStorageDeleteParameters parms = new StudyStorageDeleteParameters();
+
+                parms.ServerPartitionKey = item.ServerPartitionKey;
+                parms.StudyStorageKey = item.StudyStorageKey;
+
+                // Get the Insert Instance broker and do the insert
+                IDeleteStudyStorage delete = updateContext.GetBroker<IDeleteStudyStorage>();
+
+                if (false == delete.Execute(parms))
+                {
+                    Platform.Log(LogLevel.Error, "Unexpected error when trying to delete study: {0}",
+                                 item.StudyStorageKey);
+                }
+                else
+                    updateContext.Commit();
+            }
+        }
+        #endregion
+
         #region IWorkQueueItemProcessor Members
 
         public string ProcessorID
         {
-            get
-            {
-                throw new Exception("The method or operation is not implemented.");
-            }
-            set
-            {
-                throw new Exception("The method or operation is not implemented.");
-            }
+            get { return _processorId; }
+            set { _processorId = value; }
         }
 
         public void Process(Model.WorkQueue item)
         {
-            throw new Exception("The method or operation is not implemented.");
+            //Load the storage location.
+            LoadStorageLocation(item);
+
+            RemoveFilesystem();
+
+            RemoveDatabase(item);
+
+            // No need to remove / update the Queue entry, it was deleted as part of the delete process.
         }
 
         #endregion

@@ -49,7 +49,6 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
         private readonly IPersistentStore _store = PersistentStoreRegistry.GetDefaultStore();
         private readonly Dictionary<ServiceLockTypeEnum, IServiceLockProcessorFactory> _extensions = new Dictionary<ServiceLockTypeEnum, IServiceLockProcessorFactory>();
         private readonly SimpleBlockingThreadPool _threadPool;
-        private string _processorID = null;
         private ManualResetEvent _threadStop;
         private Thread _theThread = null;
         private bool _stop = false;
@@ -66,7 +65,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
 
             if (factories == null || factories.Length == 0)
             {
-                // No extension for the workqueue processor. 
+                // No extension for the ServiceLock processor. 
                 Platform.Log(LogLevel.Warn, "No ServiceLockFactory Extension found.");
             }
             else
@@ -86,8 +85,10 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
             }
         }
         #endregion
+
+        #region Public Methods
         /// <summary>
-        /// Start the WorkQueue processor
+        /// Start the ServiceLock processor
         /// </summary>
         public void Start()
         {
@@ -103,7 +104,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
         }
 
         /// <summary>
-        /// Stop the WorkQueue processor
+        /// Stop the ServiceLock processor
         /// </summary>
         public void Stop()
         {
@@ -114,23 +115,72 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
             if (_threadPool.Active)
                 _threadPool.Stop();
         }
+        #endregion
 
-        public void ResetServiceLock(Model.ServiceLock item)
+        #region Private Methods
+        /// <summary>
+        /// Reset queue items that were unadvertly left locked. 
+        /// </summary>
+        private void ResetLocked()
         {
-            
+            using (IUpdateContext updateContext = _store.OpenUpdateContext(UpdateContextSyncMode.Flush))
+            {
+                IResetServiceLock reset = updateContext.GetBroker<IResetServiceLock>();
+                ServiceLockResetParameters parms = new ServiceLockResetParameters();
+                parms.ProcessorId = ServiceTools.ProcessorId;
+
+                IList<Model.ServiceLock> modifiedList = reset.Execute(parms);
+
+                if (modifiedList != null)
+                {
+                    // output the list of items that have been reset
+                    foreach (Model.ServiceLock queueItem in modifiedList)
+                    {
+                        Platform.Log(LogLevel.Info, "Cleanup: Reset ServiceLock Item : {0} --> Type={1} Scheduled={2}",
+                                     queueItem.GetKey().Key,
+                                     queueItem.ServiceLockTypeEnum.Description,
+                                     queueItem.ScheduledTime);
+                    }
+                }
+
+                updateContext.Commit();
+            }
+        }
+
+        private void ResetServiceLock(Model.ServiceLock item)
+        {
+            using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            {
+                // Update the ServiceLock item status and times.
+                IUpdateServiceLock update = updateContext.GetBroker<IUpdateServiceLock>();
+
+                ServiceLockUpdateParameters parms = new ServiceLockUpdateParameters();
+                parms.ServiceLockKey = item.GetKey();
+                parms.Lock = false;
+                parms.ScheduledTime = Platform.Time.AddMinutes(10);
+                parms.ProcessorId = item.ProcessorId;
+
+                if (false == update.Execute(parms))
+                {
+                    Platform.Log(LogLevel.Error, "Unable to update ServiceLock GUID Status: {0}",
+                                 item.GetKey().ToString());
+                }
+
+                updateContext.Commit();
+            }
         }
 
            /// <summary>
         /// The processing thread.
         /// </summary>
         /// <remarks>
-        /// This method queries the database for WorkQueue entries to work on, and then uses
+        /// This method queries the database for ServiceLock entries to work on, and then uses
         /// a thread pool to process the entries.
         /// </remarks>
         private void Process()
         {
-            // Reset any queue items related to this system that are in a "In Progress" state.
-           //ResetFailedItems();
+            // Reset any queue items related to this service that are have the Lock bit set.
+            ResetLocked();
 
             while (true)
             {
@@ -157,7 +207,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
                                              "No extensions loaded for ServiceLockTypeEnum item type: {0}.  Failing item.",
                                              queueItem.ServiceLockTypeEnum.Description);
 
-                                //Just fail the WorkQueue item, not much else we can do
+                                //Just fail the ServiceLock item, not much else we can do
                                 ResetServiceLock(queueItem);
                                 continue;
                             }
@@ -171,23 +221,11 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
                             }
                             catch (Exception e)
                             {
-                                Platform.Log(LogLevel.Error, e, "Unexpected exception creating WorkQueue processor.");
+                                Platform.Log(LogLevel.Error, e, "Unexpected exception creating ServiceLock processor.");
                                 ResetServiceLock(queueItem);
                                 continue;
                             }
 
-                            // Assign the id to the processor. All sub processors have the same ID as the parent
-                            // Note: 
-                            // This approach should be sufficient to work queue reset mechanism. The assumptions are:
-                            //      1. only one instance of the WorkQueueProcessor will exist on the same machine at one time.
-                            //      2. The only time that the sub-processor dies and leaves the item in "In Progress" state
-                            //          is when users stop the service. All other general failures will be handled cleanly by the general
-                            //          exception handler.
-                            //  
-                            //processor.ProcessorId = ServiceTools.ProcessorId;
-
-                            // Enqueue the actual processing of the item to the 
-                            // thread pool.  
                             _threadPool.Enqueue(delegate
                                                     {
                                                         try
@@ -197,7 +235,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
                                                         catch (Exception e)
                                                         {
                                                             Platform.Log(LogLevel.Error, e,
-                                                                         "Unexpected exception when processing WorkQueue item of type {0}.  Failing Queue item. (GUID: {1})",
+                                                                         "Unexpected exception when processing ServiceLock item of type {0}.  Failing Queue item. (GUID: {1})",
                                                                          queueItem.ServiceLockTypeEnum.Description,
                                                                          queueItem.GetKey());
 
@@ -226,5 +264,6 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
                     return;
             }
         }
+        #endregion
     }
 }

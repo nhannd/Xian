@@ -48,7 +48,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
     public abstract class BaseItemProcessor : IDisposable
     {
         #region Private Members
-        private StudyStorageLocation _storageLocation;
+        private IList<StudyStorageLocation> _storageLocationList;
         private IReadContext _readContext;
         private IList<WorkQueueUid> _uidList;
         #endregion
@@ -60,7 +60,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         }
         protected StudyStorageLocation StorageLocation
         {
-            get { return _storageLocation; }
+            get { return _storageLocationList[0]; }
+        }
+        protected IList<StudyStorageLocation> StorageLocationList
+        {
+            get { return _storageLocationList; }
         }
         protected IList<WorkQueueUid> WorkQueueUidList
         {
@@ -87,15 +91,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
             StudyStorageLocationQueryParameters parms = new StudyStorageLocationQueryParameters();
             parms.StudyStorageKey = item.StudyStorageKey;
 
-            IList<StudyStorageLocation> list = select.Execute(parms);
+            _storageLocationList = select.Execute(parms);
 
-            if (list.Count == 0)
+            if (_storageLocationList.Count == 0)
             {
                 Platform.Log(LogLevel.Error, "Unable to find storage location for WorkQueue item: {0}", item.GetKey().ToString());
                 throw new ApplicationException("Unable to find storage location for WorkQueue item.");
             }
-
-            _storageLocation = list[0];
         }
 
         /// <summary>

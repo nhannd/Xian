@@ -37,11 +37,13 @@
   <ItemGroup>
     <Compile Include="Brokers\IDeleteDevice.cs" />
     <Compile Include="Brokers\IDeleteFilesystemQueue.cs" />
+    <Compile Include="Brokers\IDeleteStudyStorage.cs" />
     <Compile Include="Brokers\IInsertFilesystemQueue.cs" />
     <Compile Include="Brokers\IInsertWorkQueueAutoRoute.cs" />
     <Compile Include="Brokers\IInsertWorkQueueDeleteStudy.cs" />
     <Compile Include="Brokers\IQueryFilesystemQueue.cs" />
     <Compile Include="Brokers\IQueryServiceLock.cs" />
+    <Compile Include="Brokers\IResetServiceLock.cs" />
     <Compile Include="Brokers\IResetWorkQueueItems.cs" />
     <Compile Include="Brokers\IDeleteWorkQueueUid.cs" />
     <Compile Include="Brokers\IInsertFilesystem.cs" />
@@ -81,7 +83,9 @@
     <Compile Include="Parameters\FilesystemUpdateParameters.cs" />
     <Compile Include="Parameters\ServerPartitionUpdateParameters.cs" />
     <Compile Include="Parameters\ServiceLockQueryParameters.cs" />
+    <Compile Include="Parameters\ServiceLockResetParameters.cs" />
     <Compile Include="Parameters\ServiceLockUpdateParameters.cs" />
+    <Compile Include="Parameters\StudyStorageDeleteParameters.cs" />
     <Compile Include="Parameters\WorkQueueAutoRouteInsertParameters.cs" />
     <Compile Include="Parameters\WorkQueueResetParameters.cs" />
     <Compile Include="Parameters\DeviceUpdateParameters.cs" />

@@ -147,12 +147,12 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
         private void DoStudyDelete(Model.ServiceLock item)
         {
             DateTime deleteTime = Platform.Time;
-            FilesystemQueueTypeEnum type = FilesystemQueueTypeEnum.GetEnum("StudyDelete");
+            FilesystemQueueTypeEnum type = FilesystemQueueTypeEnum.GetEnum("DeleteStudy");
 
             while (_bytesToRemove > 0)
             {
                 IList<FilesystemQueue> list =
-                    GetFilesystemQueueCandidates(item, Platform.Time, type);
+                    GetFilesystemQueueCandidates(item, deleteTime, type);
 
                 if (list.Count > 0)
                 {
@@ -161,7 +161,9 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
                 else
                 {
                     // No candidates, no other choice but to look for candidates eligable the next day.
-                    deleteTime.AddDays(1);
+                    deleteTime = deleteTime.AddDays(1);
+                    if (deleteTime > Platform.Time.AddDays(365))
+                        break;
                 }
             }
         }

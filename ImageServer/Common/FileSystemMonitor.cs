@@ -160,6 +160,8 @@ namespace ClearCanvas.ImageServer.Common
                 {
                     ServerFilesystemInfo info = new ServerFilesystemInfo(filesystem);
                     _filesystemList.Add(filesystem.GetKey(),info);
+
+                    info.LoadFreeSpace();
                 }
             }
 
@@ -203,7 +205,7 @@ namespace ClearCanvas.ImageServer.Common
                 if (now > nextFilesystemCheck)
                 {
                     // Check very minute
-                    nextFilesystemCheck = now.AddMinutes(2);
+                    nextFilesystemCheck = now.AddSeconds(30);
 
                     lock (_lock)
                     {

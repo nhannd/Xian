@@ -85,6 +85,9 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                         insertParms.IpAddress = association.RemoteEndPoint.Address.ToString();
                         insertParms.ServerPartitionKey = partition.GetKey();
                         insertParms.Port = ImageServerServicesDicomSettings.Default.DefaultRemotePort;
+                        insertParms.AllowQuery = true;
+                        insertParms.AllowRetrieve = true;
+                        insertParms.AllowStorage = true;
 
                         IInsertDevice insert = updateContext.GetBroker<IInsertDevice>();
 
