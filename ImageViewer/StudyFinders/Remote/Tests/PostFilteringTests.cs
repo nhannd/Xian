@@ -29,6 +29,8 @@
 
 #endregion
 
+#if	UNIT_TESTS
+
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -132,3 +134,5 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Remote.Tests
 		}
 	}
 }
+
+#endif

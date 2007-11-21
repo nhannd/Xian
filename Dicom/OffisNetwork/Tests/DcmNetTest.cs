@@ -29,6 +29,8 @@
 
 #endregion
 
+#if	UNIT_TESTS
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -426,3 +428,5 @@ namespace ClearCanvas.Dicom.OffisNetwork.Tests
         #endregion
     }
 }
+
+#endif
