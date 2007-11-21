@@ -159,19 +159,19 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
                     // no device being selected
 
                     EditButton.Enabled = false;
-                    EditButton.ImageUrl = "~/images/edit_disabled.gif";
+                    EditButton.ImageUrl = "~/images/icons/EditDisabled.png";
 
                     DeleteButton.Enabled = false;
-                    DeleteButton.ImageUrl = "~/images/delete_disabled.gif";
+                    DeleteButton.ImageUrl = "~/images/icons/DeleteDisabled.png";
 
                 }
                 else
                 {
                     EditButton.Enabled = true;
-                    EditButton.ImageUrl = "~/images/edit2.gif";
+                    EditButton.ImageUrl = "~/images/icons/EditEnabled.png";
 
                     DeleteButton.Enabled = true;
-                    DeleteButton.ImageUrl = "~/images/delete2.gif";
+                    DeleteButton.ImageUrl = "~/images/icons/DeleteEnabled.png";
                 }
             }
 

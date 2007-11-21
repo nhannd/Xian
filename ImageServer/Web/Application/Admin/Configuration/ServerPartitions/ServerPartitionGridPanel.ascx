@@ -4,7 +4,7 @@
 <asp:Panel ID="Panel1" runat="server" Width="100%" Height="480px" BorderColor="Silver" BorderWidth="1px">
 <asp:GridView ID="PartitionGridView" runat="server" AutoGenerateColumns="False" 
     Width="100%" OnRowDataBound="PartitionGridView_RowDataBound" 
-    AllowSorting="True" CellPadding="2" AllowPaging="True" BackColor="#E0E0E0" CaptionAlign="Top" BorderWidth="1px">
+    AllowSorting="True" CellPadding="0" AllowPaging="True" CaptionAlign="Top" BorderWidth="2px">
     <Columns>
         <asp:BoundField DataField="AeTitle" HeaderText="AE Title" />
         <asp:BoundField DataField="Description" HeaderText="Description" />

@@ -134,12 +134,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
 
                 if (_grid.PageIndex > 0)
                 {
-                    PrevPageButton.ImageUrl = "~/images/prev.gif";
+                    PrevPageButton.ImageUrl = "~/images/icons/BackEnabled.png";
                     PrevPageButton.Enabled = true;
                 }
                 else
                 {
-                    PrevPageButton.ImageUrl = "~/images/prev_disabled.gif";
+                    PrevPageButton.ImageUrl = "~/images/icons/BackDisabled.png";
                     PrevPageButton.Enabled = false;
                 }
                     
@@ -147,12 +147,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
 
                 if (_grid.PageIndex < _grid.PageCount-1)
                 {
-                    NextPageButton.ImageUrl = "~/images/next.gif";
+                    NextPageButton.ImageUrl = "~/images/icons/ForwardEnabled.png";
                     NextPageButton.Enabled = true;
                 }
                 else
                 {
-                    NextPageButton.ImageUrl = "~/images/next_disabled.gif";
+                    NextPageButton.ImageUrl = "~/images/icons/ForwardDisabled.png";
                     NextPageButton.Enabled = false;
                 
                     

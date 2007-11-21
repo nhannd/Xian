@@ -8,7 +8,7 @@
 <asp:UpdatePanel ID="UpdatePanel" runat="server" UpdateMode="Conditional">
     <ContentTemplate>
         <asp:Panel ID="DialogPanel" runat="server" CssClass="PopupWindow" Style="display: none"
-            Width="442px">
+            Width="400px">
             <asp:Panel ID="TitleBarPanel" runat="server" CssClass="PopupWindowTitleBar" Width="100%">
                 <table style="width: 100%">
                     <tr>
@@ -24,7 +24,7 @@
 </cc2:validationsummary>
             <div class="PopupWindowBody" style="vertical-align: top; text-align: center">
                 <asp:Panel ID="Panel1" runat="server" CssClass="Panel">
-                    <table id="Table2" runat="server" cellspacing="4" style="text-align: left" width="90%">
+                    <table id="Table2" runat="server" cellspacing="3" style="text-align: left" width="100%">
                         <tr id="Tr1" runat="server">
                             <td id="Td1" runat="server" valign="bottom">
                                 AE Title<br />

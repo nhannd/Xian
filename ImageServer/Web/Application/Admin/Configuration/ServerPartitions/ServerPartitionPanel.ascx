@@ -11,25 +11,23 @@
     <ContentTemplate>
  <table width="100%">
         <tr>
-            <td>
+            <td style="width: 320px">
                 <uc3:ServerPartitionToolBarPanel id="ServerPartitionToolBarPanel" runat="server"></uc3:ServerPartitionToolBarPanel></td>
-            <td>
-            </td>
             <td align="right" valign="bottom">
                 <uc6:ServerPartitionFilterPanel id="ServerPartitionFilterPanel" runat="server">
                 </uc6:ServerPartitionFilterPanel></td>
         </tr>
         <tr>
-            <td colspan="3">
+            <td colspan="2">
             </td>
         </tr>
         <tr>
-            <td colspan="3">
+            <td colspan="2">
                 <uc2:ServerPartitionGridPanel ID="ServerPartitionGridPanel" runat="server" />
             </td>
         </tr>
         <tr>
-            <td colspan="3">
+            <td colspan="2">
                 <uc1:GridPager id="GridPager" runat="server">
                 </uc1:GridPager>
         </tr>

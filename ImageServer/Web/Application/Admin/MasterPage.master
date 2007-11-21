@@ -33,7 +33,7 @@
                                 <table width="100%">
                                     <tr>
                                         <td>
-                                <asp:Image ID="Image1" runat="server" ImageUrl="~/images/LogoSmall.png" Height="51px" Width="152px" />&nbsp;
+                                <asp:Image ID="Image1" runat="server" ImageUrl="~/images/logos/ImageServerLogo.png" Visible="true" />
             </td>
                                         <td style="vertical-align: top; text-align: right;">
                                             <asp:Label ID="VersionLabel" runat="server" Font-Size="8pt" ForeColor="Silver" Text="Version 1.0.0.0.0.0.0"></asp:Label>

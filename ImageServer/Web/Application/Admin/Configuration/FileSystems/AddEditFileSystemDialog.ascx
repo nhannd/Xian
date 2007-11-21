@@ -6,7 +6,7 @@
     TagPrefix="clearcanvas" %>
 <asp:UpdatePanel ID="UpdatePanel" runat="server" UpdateMode="Conditional">
     <ContentTemplate>
-        <asp:Panel ID="DialogPanel" runat="server" CssClass="PopupWindow" Width="453px" Style="display: none">
+        <asp:Panel ID="DialogPanel" runat="server" CssClass="PopupWindow" Width="400px" Style="display: none">
             <asp:Panel ID="TitleBarPanel" runat="server" CssClass="PopupWindowTitleBar" Width="100%">
                 <table style="width: 100%">
                     <tr>
@@ -109,13 +109,12 @@
                             </HeaderTemplate>
                         </cc1:TabPanel>
                     </cc1:TabContainer></asp:Panel>
-                <table cellpadding="5" cellspacing="5" width="100%">
+                <table cellpadding="0" cellspacing="0" width="100%">
                     <tr>
                         <td align="center">
-                        </td>
-                        <td align="center" style="width: 223px">
                             <asp:Button ID="OKButton" runat="server" Text="Add" Width="77px" OnClick="OKButton_Click"
                                 ValidationGroup="vg1" />
+                            &nbsp;&nbsp;
                             <asp:Button ID="CancelButton" runat="server" Text="Cancel" OnClick="CancelButton_Click" /></td>
                     </tr>
                 </table>

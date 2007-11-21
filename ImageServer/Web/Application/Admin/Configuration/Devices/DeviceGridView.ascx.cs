@@ -280,11 +280,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
             if (Convert.ToBoolean(DataBinder.Eval(e.Row.DataItem, "AllowRetrieve")))
             {
                 img = new Image();
-                img.ImageUrl = "~/images/retrieve.gif";
+                img.ImageUrl = "~/images/icons/RetrieveSmall.png";
                 img.AlternateText = "Retrieve";
             }
             else
             {
+                img.Visible = false;
                 img.ImageUrl = "~/images/blankfeature.gif";
                 img.AlternateText = "";
             }
@@ -298,11 +299,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
             if (Convert.ToBoolean(DataBinder.Eval(e.Row.DataItem, "AllowQuery")))
             {
                 img = new Image();
-                img.ImageUrl = "~/images/query.gif";
+                img.ImageUrl = "~/images/icons/QuerySmall.png";
                 img.AlternateText = "Query";
             }
             else
             {
+                img.Visible = false;
                 img.ImageUrl = "~/images/blankfeature.gif";
                 img.AlternateText = "";
             }
@@ -314,11 +316,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
             Image img = new Image();
             if (Convert.ToBoolean(DataBinder.Eval(e.Row.DataItem, "AllowStorage")))
             {
-                img.ImageUrl = "~/images/storage.gif";
-                img.AlternateText = "Storage";
+                img.ImageUrl = "~/images/icons/StoreSmall.png";
+                img.AlternateText = "Store";
             }
             else
             {
+                img.Visible = false;
                 img.ImageUrl = "~/images/blankfeature.gif";
                 img.AlternateText = "";
             }

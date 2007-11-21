@@ -64,7 +64,6 @@
     <Content Include="images\LogoSmall.png" />
     <Content Include="images\refresh.jpg" />
     <Content Include="images\refresh2.gif" />
-    <Content Include="images\test.html" />
     <Content Include="images\unchecked_small.gif" />
     <Content Include="Web.config" />
   </ItemGroup>
@@ -272,7 +271,27 @@
     <Content Include="images\filter.gif" />
     <Content Include="images\filter_disabled.gif" />
     <Content Include="images\filter_on.gif" />
+    <Content Include="images\gridheaderbackground.png" />
+    <Content Include="images\icons\AddDisabled.png" />
+    <Content Include="images\icons\AddEnabled.png" />
+    <Content Include="images\icons\BackDisabled.png" />
+    <Content Include="images\icons\BackEnabled.png" />
+    <Content Include="images\icons\DeleteDisabled.png" />
+    <Content Include="images\icons\DeleteEnabled.png" />
+    <Content Include="images\icons\EditDisabled.png" />
+    <Content Include="images\icons\EditEnabled.png" />
+    <Content Include="images\icons\ForwardDisabled.png" />
+    <Content Include="images\icons\ForwardEnabled.png" />
+    <Content Include="images\icons\ImageServerLogo.png" />
+    <Content Include="images\icons\QueryDisabled.png" />
+    <Content Include="images\icons\QueryEnabled.png" />
+    <Content Include="images\icons\QuerySmall.png" />
+    <Content Include="images\icons\RefreshDisabled.png" />
+    <Content Include="images\icons\RefreshEnabled.png" />
+    <Content Include="images\icons\RetrieveSmall.png" />
+    <Content Include="images\icons\StoreSmall.png" />
     <Content Include="images\icon_warning.gif" />
+    <Content Include="images\logos\ImageServerLogo.png" />
     <Content Include="images\next.gif" />
     <Content Include="images\prev.gif" />
     <Content Include="images\query.gif" />

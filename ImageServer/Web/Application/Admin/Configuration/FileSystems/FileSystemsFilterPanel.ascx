@@ -1,7 +1,7 @@
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="FileSystemsFilterPanel.ascx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystems.FileSystemsFilterPanel" %>
 <%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="cc1" %>
 
-<asp:Panel ID="Panel1" runat="server" CssClass="toolBarPanel" Width="404px"  >
+<asp:Panel ID="Panel1" runat="server" CssClass="toolBarPanel">
 <table cellpadding="3" cellspacing="0" >
     <tr >
         <td align="left" >
@@ -12,7 +12,7 @@
             <asp:DropDownList ID="TiersDropDownList" runat="server" Width="100px">
             </asp:DropDownList></td>
         <td align="right" valign="bottom" style="width: 57px">
-            <asp:ImageButton ID="FilterButton" runat="server" ImageUrl="~/images/filter.gif" OnClick="FilterButton_Click" ToolTip="Filter" /></td>
+            <asp:ImageButton ID="FilterButton" runat="server" ImageUrl="~/images/icons/QueryEnabled.png" OnClick="FilterButton_Click" ToolTip="Filter" /></td>
     </tr>
    
     

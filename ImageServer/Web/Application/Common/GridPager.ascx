@@ -7,8 +7,8 @@
             <td align="center" valign="middle">
                 <asp:Label ID="PageCountLabel" runat="server" Text="Label"></asp:Label></td>
             <td align="right" valign="middle">
-                <asp:ImageButton ID="PrevPageButton" runat="server" CommandArgument="Prev" CommandName="Page" OnCommand="PageButtonClick" />
-                <asp:ImageButton ID="NextPageButton" runat="server" CommandArgument="Next" CommandName="Page" OnCommand="PageButtonClick" /></td>
+                <asp:ImageButton ID="PrevPageButton" runat="server" CommandArgument="Prev" CommandName="Page" OnCommand="PageButtonClick"/>
+                <asp:ImageButton ID="NextPageButton" runat="server" CommandArgument="Next" CommandName="Page" OnCommand="PageButtonClick"/></td>
         </tr>
         
     </table>

@@ -19,11 +19,11 @@
                 position: absolute; top: 317px" BackColor="#FFFFC0" Height="81px" ValidationGroup="vg1"
                 Width="159px" ShowMessageBox="true" ShowSummary="False" />
             <div class="PopupWindowBody" style="vertical-align:top;">
-                <cc1:TabContainer ID="TabContainer1" runat="server" ActiveTabIndex="0" Height="180px">
+                <cc1:TabContainer ID="TabContainer1" runat="server" ActiveTabIndex="0" Height="150px">
                     <cc1:TabPanel ID="TabPanel1" runat="server" HeaderText="TabPanel1">
                         <ContentTemplate>
-                            <asp:Panel ID="Panel1" runat="server" CssClass="Panel">
-                                <table id="Table2" runat="server" cellspacing="4" style="text-align: left" width="90%">
+                            <asp:Panel ID="Panel1" runat="server" CssClass="Panel" Width="100%">
+                                <table id="Table2" runat="server" cellspacing="2" style="text-align: left" width="100%">
                                     <tr id="Tr1" runat="server">
                                         <td id="Td1" runat="server" valign="bottom">
                                             AE Title<br />
@@ -147,31 +147,14 @@
                         </HeaderTemplate>
                     </cc1:TabPanel>
                 </cc1:TabContainer>
-                <table width="80%">
+                <table width="100%">
                     <tr>
-                        <td>
-                        </td>
-                        <td style="width: 102px">
-                        </td>
-                        <td style="width: 89px">
-                            &nbsp;</td>
-                    </tr>
-                    <tr>
-                        <td>
-                        </td>
-                        <td align="center" style="width: 102px">
+                        <td align="center">
+                            <br />
                             <asp:Button ID="OKButton" runat="server"  Text="Add" Width="77px" 
-                            OnClick="OKButton_Click"   ValidationGroup="vg1"/></td>
-                        <td align="center" style="width: 89px">
+                            OnClick="OKButton_Click"   ValidationGroup="vg1"/>
+                            &nbsp; &nbsp;&nbsp;
                             <asp:Button ID="CancelButton" runat="server" Text="Cancel" /></td>
-                    </tr>
-                    <tr>
-                        <td>
-                        </td>
-                        <td style="width: 102px">
-                        </td>
-                        <td style="width: 89px">
-                        </td>
                     </tr>
                 </table>
                 <br />

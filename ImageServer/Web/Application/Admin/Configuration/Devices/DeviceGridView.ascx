@@ -16,9 +16,9 @@
                 EmptyDataText="No devices available (Please check the filter settings!)" 
                 OnPageIndexChanging="GridView1_PageIndexChanging" 
                 PageSize="15" 
-                AllowSorting="True" width="100%" CellPadding="2" AllowPaging="True" BackColor="#E0E0E0" CaptionAlign="Top" BorderWidth="1px"
+                AllowSorting="True" width="100%" CellPadding="0" AllowPaging="True" BackColor="Transparent" CaptionAlign="Top" BorderWidth="2px" CssClass="MyGrid"
                  >
-                <FooterStyle BackColor="#507CD1" Font-Bold="True" ForeColor="White" />
+                <FooterStyle BackColor="#507CD1" ForeColor="White" />
                 <Columns>
                     <asp:BoundField DataField="AETitle" HeaderText="AE Title" >
                     </asp:BoundField>
@@ -53,7 +53,7 @@
                         <HeaderStyle HorizontalAlign="Center" />
                         
                     </asp:TemplateField>
-                    <asp:TemplateField HeaderText="Partition">
+                    <asp:TemplateField HeaderText="Partition" Visible="False">
                         <ItemTemplate>
                             <asp:Label ID="ServerParitionLabel" runat="server" Text="Label"></asp:Label>
                         </ItemTemplate>
@@ -66,11 +66,10 @@
                         
                     </asp:TemplateField>
                 </Columns>
-                <RowStyle CssClass="GridRowStyle"/>
-                <EditRowStyle BackColor="#2461BF" Wrap="True" BorderColor="Yellow" />
+                <RowStyle CssClass="GridRowStyle" Height="24px"/>
                 <SelectedRowStyle CssClass="GridSelectedRowStyle" />
                 <PagerStyle BackColor="Silver" HorizontalAlign="Center" CssClass="TableHeaderRow" />
-                <HeaderStyle CssClass="GridHeader" />
+                <HeaderStyle CssClass="GridHeader" Font-Bold="False" />
                 
     <PagerTemplate>
         <table cellpadding="0" cellspacing="0">

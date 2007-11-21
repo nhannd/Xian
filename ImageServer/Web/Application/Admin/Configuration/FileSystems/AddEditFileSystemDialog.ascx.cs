@@ -269,6 +269,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
                 TiersDropDownList.SelectedIndex = 0;
             }
 
+            TabContainer1.ActiveTabIndex = 0;
             UpdatePanel.Update();
             ModalPopupExtender1.Show();
         }

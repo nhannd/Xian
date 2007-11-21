@@ -4,11 +4,11 @@
 
 
 <asp:Panel ID="Panel1" runat="server" style="display: block; overflow: visible;" Wrap="False">
-    <asp:ImageButton ID="AddButton" runat="server" ImageUrl="~/images/add2.gif"   AlternateText="Add" OnClick="AddButton_Click" />
-    <asp:ImageButton ID="EditButton" runat="server" ImageUrl="~/images/edit2.gif" OnClick="EditButton_Click" AlternateText="Edit" />
-    <asp:ImageButton ID="DeleteButton" runat="server" ImageUrl="~/images/delete2.gif"
+    <asp:ImageButton ID="AddButton" runat="server" ImageUrl="~/images/icons/AddEnabled.png"   AlternateText="Add" OnClick="AddButton_Click" />
+    <asp:ImageButton ID="EditButton" runat="server" ImageUrl="~/images/icons/EditEnabled.png" OnClick="EditButton_Click" AlternateText="Edit" />
+    <asp:ImageButton ID="DeleteButton" runat="server" ImageUrl="~/images/icons/DeleteEnabled.png"
         OnClick="DeleteButton_Click" AlternateText="Delete" />
-    <asp:ImageButton ID="RefreshButton" runat="server" ImageUrl="~/images/refresh2.gif"
+    <asp:ImageButton ID="RefreshButton" runat="server" ImageUrl="~/images/icons/RefreshEnabled.png"
         OnClick="RefreshButton_Click" AlternateText="Refresh" />
 
 </asp:Panel>

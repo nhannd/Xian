@@ -20,7 +20,7 @@
                 Width="92px" />
         </td>
         <td style="width: 50px" align="right" valign="bottom">
-            <asp:ImageButton ID="FilterButton" runat="server" ImageUrl="~/images/filter.gif" OnClick="FilterButton_Click" />
+            <asp:ImageButton ID="FilterButton" runat="server" ImageUrl="~/images/icons/QueryEnabled.png" OnClick="FilterButton_Click" />
         </td>
     </tr>
    

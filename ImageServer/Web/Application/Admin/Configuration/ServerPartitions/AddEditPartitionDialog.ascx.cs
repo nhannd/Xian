@@ -213,6 +213,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
                 PartitionFolderTextBox.Text = Partition.PartitionFolder;
                 EnabledCheckBox.Checked = Partition.Enabled;
             }
+
+
             UpdatePanel.Update();
             ModalPopupExtender1.Show();
         }

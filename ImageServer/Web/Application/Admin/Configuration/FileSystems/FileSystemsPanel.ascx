@@ -8,11 +8,11 @@
 
 <asp:UpdatePanel ID="UpdatePanel" runat="server" UpdateMode="Conditional">
     <ContentTemplate>
-        <asp:Panel ID="Panel1" runat="server"  style="" >
+        <asp:Panel ID="Panel1" runat="server" CssClass="ToolbarPanel" >
 
             <table  width="100%" >
                 <tr class="toolBarPanel">
-                    <td colspan="1" valign="bottom">
+                    <td colspan="1" valign="bottom" style="width: 400px">
                        <uc2:FileSystemsToolBar ID="FileSystemsToolBar1" runat="server" />
                 
                     </td>

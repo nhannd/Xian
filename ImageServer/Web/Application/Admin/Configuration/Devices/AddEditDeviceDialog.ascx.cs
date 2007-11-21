@@ -254,6 +254,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
                 ServerPartitionDropDownList.SelectedValue = Device.ServerPartitionKey.Key.ToString();
             }
 
+            TabContainer1.ActiveTabIndex = 0;
 
             UpdatePanel.Update();
             ModalPopupExtender1.Show();

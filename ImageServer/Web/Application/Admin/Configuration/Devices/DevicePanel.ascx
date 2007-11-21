@@ -11,11 +11,13 @@
 
     <table width="100%">
         <tr class="toolBarPanel">
-            <td colspan="1">
-                <uc2:DeviceToolBar ID="DeviceToolBarControl1" runat="server" />
+            <td colspan="1" style="width: 250px" >
+                <uc2:DeviceToolBar ID="DeviceToolBarControl1" 
+                        runat="server" />
             </td>
             <td align="right">
-               <uc3:DeviceFilterPanel id="DeviceFilterPanel1" runat="server"></uc3:DeviceFilterPanel>
+               <uc3:DeviceFilterPanel id="DeviceFilterPanel1" runat="server">
+               </uc3:DeviceFilterPanel>
             </td>
         </tr>
         <tr>

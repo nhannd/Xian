@@ -144,9 +144,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
             {
                 // Change the image of the "Apply Filter" button based on the filter settings
                 if (HasFilters())
-                    FilterButton.ImageUrl = "~/images/filter_on.gif";
+                    FilterButton.ImageUrl = "~/images/icons/QueryEnabled.png";
                 else
-                    FilterButton.ImageUrl = "~/images/filter.gif";
+                    FilterButton.ImageUrl = "~/images/icons/QueryEnabled.png";
             }
         }
 

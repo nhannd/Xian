@@ -5,10 +5,10 @@
     <asp:Panel ID="Panel2" runat="server" BorderColor="Silver" BorderWidth="1px" Height="480px">
         <asp:GridView ID="GridView1" runat="server" AutoGenerateColumns="False" ForeColor="#333333"
             OnRowDataBound="GridView1_RowDataBound" OnDataBound="GridView1_DataBound" OnSelectedIndexChanged="GridView1_SelectedIndexChanged"
-            OnSelectedIndexChanging="GridView1_SelectedIndexChanging" EmptyDataText="No devices available (Please check the filter settings!)"
+            OnSelectedIndexChanging="GridView1_SelectedIndexChanging" EmptyDataText="No filesystems found (Please check the filters!)"
             OnPageIndexChanging="GridView1_PageIndexChanging" PageSize="15" AllowSorting="True"
-            Width="100%" CellPadding="2" AllowPaging="True" BackColor="#E0E0E0" CaptionAlign="Top"
-            BorderWidth="1px">
+            Width="100%" CellPadding="0" AllowPaging="True" CaptionAlign="Top"
+            BorderWidth="2px">
             <FooterStyle BackColor="#507CD1" Font-Bold="True" ForeColor="White" />
             <Columns>
                 <asp:BoundField DataField="Description" HeaderText="Description"></asp:BoundField>
