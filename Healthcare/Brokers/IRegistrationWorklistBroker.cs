@@ -39,47 +39,11 @@ namespace ClearCanvas.Healthcare.Brokers
 {
     public interface IRegistrationWorklistBroker : IPersistenceBroker
     {
-        IList<WorklistItem> GetScheduledWorklist();
-        IList<WorklistItem> GetScheduledWorklist(RegistrationScheduledWorklist worklist);
-        IList<WorklistItem> GetCheckInWorklist();
-        IList<WorklistItem> GetCheckInWorklist(RegistrationCheckedInWorklist worklist);
-        IList<WorklistItem> GetInProgressWorklist();
-        IList<WorklistItem> GetInProgressWorklist(RegistrationInProgressWorklist worklist);
-        IList<WorklistItem> GetCompletedWorklist();
-        IList<WorklistItem> GetCompletedWorklist(RegistrationCompletedWorklist worklist);
-        IList<WorklistItem> GetCancelledWorklist();
-        IList<WorklistItem> GetCancelledWorklist(RegistrationCancelledWorklist worklist);
+        IList<WorklistItem> GetWorklist(WorklistItemSearchCriteria[] where, Worklist worklist);
+        int GetWorklistCount(WorklistItemSearchCriteria[] where, Worklist worklist);
 
-        IList<WorklistItem> GetCompletedProtocolWorklist();
-        IList<WorklistItem> GetCompletedProtocolWorklist(RegistrationCompletedProtocolWorklist worklist);
-        IList<WorklistItem> GetSuspendedProtocolWorklist();
-        IList<WorklistItem> GetSuspendedProtocolWorklist(RegistrationSuspendedProtocolWorklist worklist);
-        IList<WorklistItem> GetPendingProtocolWorklist();
-        IList<WorklistItem> GetPendingProtocolWorklist(RegistrationPendingProtocolWorklist worklist);
-
-        int GetScheduledWorklistCount();
-        int GetScheduledWorklistCount(RegistrationScheduledWorklist worklist);
-        int GetCheckInWorklistCount();
-        int GetCheckInWorklistCount(RegistrationCheckedInWorklist worklist);
-        int GetInProgressWorklistCount();
-        int GetInProgressWorklistCount(RegistrationInProgressWorklist worklist);
-        int GetCompletedWorklistCount();
-        int GetCompletedWorklistCount(RegistrationCompletedWorklist worklist);
-        int GetCancelledWorklistCount();
-        int GetCancelledWorklistCount(RegistrationCancelledWorklist worklist);
-
-        int GetCompletedProtocolWorklistCount();
-        int GetCompletedProtocolWorklistCount(RegistrationCompletedProtocolWorklist worklist);
-        int GetSuspendedProtocolWorklistCount();
-        int GetSuspendedProtocolWorklistCount(RegistrationSuspendedProtocolWorklist worklist);
-        int GetPendingProtocolWorklistCount();
-        int GetPendingProtocolWorklistCount(RegistrationPendingProtocolWorklist worklist);
-
-        IList<Order> GetOrdersForCheckIn(Patient patient);
-        int GetOrdersForCheckInCount(Patient patient);
-
-        IList<Order> GetOrdersForCancel(Patient patient);
-        int GetOrdersForCancelCount(Patient patient);
+        IList<WorklistItem> GetProtocolWorklist(WorklistItemSearchCriteria[] where, Worklist worklist);
+        int GetProtocolWorklistCount(WorklistItemSearchCriteria[] where, Worklist worklist);
 
         IList<WorklistItem> Search(WorklistItemSearchCriteria[] where, SearchResultPage page, bool showActiveOnly);
         int SearchCount(WorklistItemSearchCriteria[] where, bool showActiveOnly);

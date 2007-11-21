@@ -144,13 +144,27 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         public GetDataForCheckInTableResponse GetDataForCheckInTable(GetDataForCheckInTableRequest request)
         {
             IPatientProfileBroker profileBroker = PersistenceContext.GetBroker<IPatientProfileBroker>();
+            IRegistrationWorklistBroker worklistBroker = PersistenceContext.GetBroker<IRegistrationWorklistBroker>();
+            IOrderBroker orderBroker = PersistenceContext.GetBroker<IOrderBroker>();
+
             PatientProfile profile = profileBroker.Load(request.PatientProfileRef, EntityLoadFlags.Proxy);
 
-            return new GetDataForCheckInTableResponse(
-                CollectionUtils.Map<Order, CheckInTableItem, List<CheckInTableItem>>(
-                    PersistenceContext.GetBroker<IRegistrationWorklistBroker>().GetOrdersForCheckIn(profile.Patient),
-                    delegate(Order o)
+            WorklistItemSearchCriteria[] criteria = RegistrationScheduledWorklist.QueryConditions;
+            CollectionUtils.ForEach(criteria,
+                delegate(WorklistItemSearchCriteria c)
                     {
+                        c.Order.Patient.EqualTo(profile.Patient);
+                    });
+
+            IList<WorklistItem> worklistItems = worklistBroker.GetWorklist(criteria, null);
+
+            return new GetDataForCheckInTableResponse(
+                CollectionUtils.Map<WorklistItem, CheckInTableItem, List<CheckInTableItem>>(
+                    worklistItems,
+                    delegate(WorklistItem worklistItem)
+                    {
+                        Order o = orderBroker.Load(worklistItem.OrderRef);
+
                         CheckInTableItem item = new CheckInTableItem();
                         item.OrderRef = o.GetRef();
                         item.RequestedProcedureNames = StringUtilities.Combine(
@@ -170,12 +184,19 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         [ReadOperation]
         public GetDataForCancelOrderTableResponse GetDataForCancelOrderTable(GetDataForCancelOrderTableRequest request)
         {
-            IPatientProfileBroker patientProfileBroker = PersistenceContext.GetBroker<IPatientProfileBroker>();
-            PatientProfile profile = patientProfileBroker.Load(request.PatientProfileRef, EntityLoadFlags.Proxy);
+            IPatientProfileBroker profileBroker = PersistenceContext.GetBroker<IPatientProfileBroker>();
+            PatientProfile profile = profileBroker.Load(request.PatientProfileRef, EntityLoadFlags.Proxy);
+
+            OrderSearchCriteria criteria = new OrderSearchCriteria();
+            criteria.Patient.EqualTo(profile.Patient);
+            criteria.Status.EqualTo(OrderStatus.SC);
+            criteria.ScheduledStartTime.Between(Platform.Time.Date, Platform.Time.Date.AddDays(1));
+
+            IList<Order> orders = PersistenceContext.GetBroker<IOrderBroker>().Find(criteria);
 
             return new GetDataForCancelOrderTableResponse(
                 CollectionUtils.Map<Order, CancelOrderTableItem, List<CancelOrderTableItem>>(
-                    PersistenceContext.GetBroker<IRegistrationWorklistBroker>().GetOrdersForCancel(profile.Patient),
+                    orders,
                     delegate(Order o)
                     {
                         CancelOrderTableItem item = new CancelOrderTableItem();
@@ -234,19 +255,29 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         public bool CanCheckInProcedure(IWorklistItemKey itemKey)
         {
             IPatientProfileBroker profileBroker = this.PersistenceContext.GetBroker<IPatientProfileBroker>();
-            IRegistrationWorklistBroker broker = this.PersistenceContext.GetBroker<IRegistrationWorklistBroker>();
-
             PatientProfile profile = profileBroker.Load(((WorklistItemKey)itemKey).ProfileRef, EntityLoadFlags.Proxy);
-            return broker.GetOrdersForCheckInCount(profile.Patient) > 0;
+
+            WorklistItemSearchCriteria[] criteria = RegistrationScheduledWorklist.QueryConditions;
+            CollectionUtils.ForEach(criteria,
+                delegate(WorklistItemSearchCriteria c)
+                {
+                    c.Order.Patient.EqualTo(profile.Patient);
+                });
+
+            return PersistenceContext.GetBroker<IRegistrationWorklistBroker>().GetWorklistCount(criteria, null) > 0;
         }
 
         public bool CanCancelOrder(IWorklistItemKey itemKey)
         {
-            IPatientProfileBroker profileBroker = this.PersistenceContext.GetBroker<IPatientProfileBroker>();
-            IRegistrationWorklistBroker broker = this.PersistenceContext.GetBroker<IRegistrationWorklistBroker>();
-
+            IPatientProfileBroker profileBroker = PersistenceContext.GetBroker<IPatientProfileBroker>();
             PatientProfile profile = profileBroker.Load(((WorklistItemKey)itemKey).ProfileRef, EntityLoadFlags.Proxy);
-            return broker.GetOrdersForCancelCount(profile.Patient) > 0;
+
+            OrderSearchCriteria criteria = new OrderSearchCriteria();
+            criteria.Patient.EqualTo(profile.Patient);
+            criteria.Status.EqualTo(OrderStatus.SC);
+            criteria.ScheduledStartTime.Between(Platform.Time.Date, Platform.Time.Date.AddDays(1));
+
+            return PersistenceContext.GetBroker<IOrderBroker>().Count(criteria) > 0;
         }
     }
 }

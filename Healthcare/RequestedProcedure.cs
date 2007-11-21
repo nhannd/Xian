@@ -112,16 +112,6 @@ namespace ClearCanvas.Healthcare {
             }
         }
 
-        public virtual bool IsCheckIn
-        {
-            get { return _procedureCheckIn != null && _procedureCheckIn.IsCheckIn; }    
-        }
-
-        public virtual bool IsCheckOut
-        {
-            get { return _procedureCheckIn != null && _procedureCheckIn.IsCheckOut; }
-        }
-
         #endregion
 
         #region Public Operations

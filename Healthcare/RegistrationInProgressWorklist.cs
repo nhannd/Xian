@@ -50,14 +50,25 @@ namespace ClearCanvas.Healthcare
         {
         }
 
+        public static WorklistItemSearchCriteria[] QueryConditions
+        {
+            get
+            {
+                WorklistItemSearchCriteria criteria = new WorklistItemSearchCriteria();
+                criteria.Order.Status.EqualTo(OrderStatus.IP);
+                criteria.RequestedProcedure.ScheduledStartTime.Between(Platform.Time.Date, Platform.Time.Date.AddDays(1));
+                return new WorklistItemSearchCriteria[] { criteria };
+            }
+        }
+
         public override IList GetWorklist(Staff currentUserStaff, IPersistenceContext context)
         {
-            return (IList) GetBroker<IRegistrationWorklistBroker>(context).GetInProgressWorklist(this);
+            return (IList) GetBroker<IRegistrationWorklistBroker>(context).GetWorklist(QueryConditions, this);
         }
 
         public override int GetWorklistCount(Staff currentUserStaff, IPersistenceContext context)
         {
-            return GetBroker<IRegistrationWorklistBroker>(context).GetInProgressWorklistCount(this);
+            return GetBroker<IRegistrationWorklistBroker>(context).GetWorklistCount(QueryConditions, this);
         }
 
         public override string NameSuffix

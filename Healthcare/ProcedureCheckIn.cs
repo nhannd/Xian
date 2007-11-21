@@ -41,6 +41,11 @@ namespace ClearCanvas.Healthcare {
                 _checkOutTime = Platform.Time;
         }
 
+        public bool IsNotCheckIn
+        {
+            get { return _checkInTime == null; }
+        }
+
         public bool IsCheckIn
         {
             get { return _checkInTime != null && _checkOutTime == null; }
