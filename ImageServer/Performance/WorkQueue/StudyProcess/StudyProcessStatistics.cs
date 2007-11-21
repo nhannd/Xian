@@ -4,7 +4,7 @@ using System.Text;
 using ClearCanvas.Common.Statistics;
 using ClearCanvas.Dicom;
 
-namespace Performance.WorkQueue.StudyProcess
+namespace ClearCanvas.ImageServer.Performance.WorkQueue.StudyProcess
 {
     
     /// <summary>

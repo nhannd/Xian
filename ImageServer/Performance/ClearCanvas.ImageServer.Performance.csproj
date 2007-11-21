@@ -7,7 +7,7 @@
     <ProjectGuid>{932BFAA9-838F-49B1-9B5A-CB157DAF058A}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Performance</RootNamespace>
+    <RootNamespace>ClearCanvas.ImageServer.Performance</RootNamespace>
     <AssemblyName>ClearCanvas.ImageServer.Performance</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">

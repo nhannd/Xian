@@ -13,7 +13,7 @@ using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Rules;
 using System.ComponentModel;
 
-namespace Performance.WorkQueue.StudyProcess
+namespace ClearCanvas.ImageServer.Performance.WorkQueue.StudyProcess
 {
     /// <summary>
     /// Generate the performance statistics for a WorkQueue study processor.
