@@ -81,7 +81,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Hql
         /// </summary>
         /// <param name="hql">The HQL string containing conditional parameter placeholders</param>
         /// <param name="parameters">Set of parameters to substitute</param>
-        public HqlCondition(string hql, object[] parameters)
+        public HqlCondition(string hql, params object[] parameters)
         {
             _hql = hql;
             _parameters = parameters;

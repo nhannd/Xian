@@ -55,8 +55,8 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
                 this.Value = value;
             }
 
-            public string Name;
-            public object Value;
+            public readonly string Name;
+            public readonly object Value;
         }
 
         private const string _hqlSelectWorklist =
@@ -88,15 +88,11 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         private const string _hqlMpsStateCountQuery =
             _hqlSelectCount + _hqlJoin + _hqlMainCondition;
 
-        private const string _hqlScheduledSubCondition = 
-            " and rp not in" +
-            " (select rp from CheckInProcedureStep cps join cps.RequestedProcedure rp where" +
-            " (cps.State = :cpsState and cps.StartTime between :cpsStartTimeBegin and :cpsStartTimeEnd))";
+        private const string _hqlScheduledSubCondition =
+            " and (rp.ProcedureCheckIn is NULL or rp.ProcedureCheckIn.CheckInTime is NULL)";
 
-        private const string _hqlCheckInSubCondition = 
-            " and rp in" +
-            " (select rp from CheckInProcedureStep cps join cps.RequestedProcedure rp where" +
-            " (cps.State = :cpsState and cps.StartTime between :cpsStartTimeBegin and :cpsStartTimeEnd))";
+        private const string _hqlCheckedInSubCondition =
+            " and rp.ProcedureCheckIn is not NULL and rp.ProcedureCheckIn.CheckInTime is not NULL and rp.ProcedureCheckIn.CheckOutTime is NULL";
 
         private const string _hqlUndocumentedSubCondition =
             " and rp in" +
@@ -106,6 +102,123 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         private const string _hqlWorklistSubQuery = 
             " and rp.Type in" +
             " (select distinct rpt from Worklist w join w.RequestedProcedureTypeGroups rptg join rptg.RequestedProcedureTypes rpt where w = :worklist)";
+
+        abstract class WorklistHelper
+        {
+            public string WorklistQuery;
+            public string CountQuery;
+            public readonly List<QueryParameter> Parameters = new List<QueryParameter>();
+
+            protected void AddWorklistQueryAndParameters(Worklist worklist)
+            {
+                if (worklist != null)
+                {
+                    this.WorklistQuery += _hqlWorklistSubQuery;
+                    this.CountQuery += _hqlWorklistSubQuery;
+                    this.Parameters.Add(new QueryParameter("worklist", worklist));
+                }
+            }
+
+            protected void AddBaseMpsStateParameters(string state)
+            {
+                this.Parameters.Add(new QueryParameter("mpsState", state));
+                AddMpsDateRangeQueryParameters();
+            }
+
+            protected void AddMpsDateRangeQueryParameters()
+            {
+                this.Parameters.Add(new QueryParameter("mpsSchedulingStartTimeBegin", Platform.Time.Date));
+                this.Parameters.Add(new QueryParameter("mpsSchedulingStartTimeEnd", Platform.Time.Date.AddDays(1)));
+            }
+        }
+
+        class ScheduledWorklistHelper : WorklistHelper
+        {
+            public ScheduledWorklistHelper(Worklist worklist)
+            {
+                this.WorklistQuery = string.Concat(_hqlMpsStateQuery, _hqlScheduledSubCondition);
+                this.CountQuery = string.Concat(_hqlMpsStateCountQuery, _hqlScheduledSubCondition);
+                AddBaseMpsStateParameters(ActivityStatus.SC.ToString());
+                AddWorklistQueryAndParameters(worklist);
+            }
+        }
+
+        class CheckedInWorklistHelper : WorklistHelper
+        {
+            public CheckedInWorklistHelper(Worklist worklist)
+            {
+                this.WorklistQuery = string.Concat(_hqlMpsStateQuery, _hqlCheckedInSubCondition);
+                this.CountQuery = string.Concat(_hqlMpsStateCountQuery, _hqlCheckedInSubCondition);
+                AddBaseMpsStateParameters(ActivityStatus.SC.ToString());
+                AddWorklistQueryAndParameters(worklist);
+            }
+        }
+
+        class UnDocumentedWorklistHelper : WorklistHelper
+        {
+            public UnDocumentedWorklistHelper(Worklist worklist)
+            {
+                string hqlMpsStatelessQuery = " where (mps.Scheduling.StartTime between :mpsSchedulingStartTimeBegin and :mpsSchedulingStartTimeEnd)";
+
+                this.WorklistQuery = String.Concat(_hqlSelectWorklist, _hqlJoin, hqlMpsStatelessQuery, _hqlUndocumentedSubCondition);
+                this.CountQuery = String.Concat(_hqlSelectCount, _hqlJoin, hqlMpsStatelessQuery, _hqlUndocumentedSubCondition);
+                AddMpsDateRangeQueryParameters();
+                this.Parameters.Add(new QueryParameter("dpsState", ActivityStatus.IP.ToString()));
+                this.Parameters.Add(new QueryParameter("dpsStartTimeBegin", Platform.Time.Date));
+                this.Parameters.Add(new QueryParameter("dpsStartTimeEnd", Platform.Time.Date.AddDays(1)));
+                AddWorklistQueryAndParameters(worklist);
+            }
+        }
+
+        class MpsStateWorklistHelper : WorklistHelper
+        {
+            public MpsStateWorklistHelper(string state, Worklist worklist)
+            {
+                this.WorklistQuery = _hqlMpsStateQuery;
+                this.CountQuery = _hqlMpsStateCountQuery;
+                AddBaseMpsStateParameters(state);
+                AddWorklistQueryAndParameters(worklist);
+            }
+        }
+
+        #region Worklist query helpers
+
+        private IList<WorklistItem> GetWorklist(WorklistHelper helper)
+        {
+            List<WorklistItem> results = new List<WorklistItem>();
+
+            IList list = DoQuery(helper.WorklistQuery, helper.Parameters);
+            foreach (object[] tuple in list)
+            {
+                WorklistItem item = (WorklistItem)Activator.CreateInstance(typeof(WorklistItem), tuple);
+                results.Add(item);
+            }
+
+            return results;
+        }
+
+        private int GetWorklistCount(WorklistHelper helper)
+        {
+            IList list = DoQuery(helper.CountQuery, helper.Parameters);
+            return (int)(long)list[0];
+        }
+
+        private IList DoQuery(string hqlQuery, IEnumerable<QueryParameter> parameters)
+        {
+            IQuery query = this.Context.CreateHibernateQuery(hqlQuery);
+
+            if (parameters != null)
+            {
+                foreach (QueryParameter param in parameters)
+                {
+                    query.SetParameter(param.Name, param.Value);
+                }
+            }
+
+            return query.List();
+        }
+
+        #endregion
 
         #region IModalityWorklistBroker Members
 
@@ -118,14 +231,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         public IList<WorklistItem> GetScheduledWorklist(TechnologistScheduledWorklist worklist)
         {
-            string hqlQuery = String.Concat(_hqlMpsStateQuery, _hqlScheduledSubCondition);
-
-            List<QueryParameter> parameters = BaseMpsStateParameters(ActivityStatus.SC.ToString());
-            AddSubQueryParameters(parameters);
-
-            AddWorklistQueryAndParameters(ref hqlQuery, parameters, worklist);
-
-            return GetWorklist(hqlQuery, parameters);
+            return GetWorklist(new ScheduledWorklistHelper(worklist));
         }
 
         public IList<WorklistItem> GetCheckedInWorklist()
@@ -135,14 +241,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         public IList<WorklistItem> GetCheckedInWorklist(TechnologistCheckedInWorklist worklist)
         {
-            string hqlQuery = String.Concat(_hqlMpsStateQuery, _hqlCheckInSubCondition);
-
-            List<QueryParameter> parameters = BaseMpsStateParameters(ActivityStatus.SC.ToString());
-            AddSubQueryParameters(parameters);
-
-            AddWorklistQueryAndParameters(ref hqlQuery, parameters, worklist);
-
-            return GetWorklist(hqlQuery, parameters);
+            return GetWorklist(new CheckedInWorklistHelper(worklist));
         }
 
         public IList<WorklistItem> GetUndocumentedWorklist()
@@ -152,21 +251,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         public IList<WorklistItem> GetUndocumentedWorklist(TechnologistUndocumentedWorklist worklist)
         {
-            string hqlMpsStatelessQuery = _hqlSelectWorklist + _hqlJoin + 
-                " where (mps.Scheduling.StartTime between :mpsSchedulingStartTimeBegin and :mpsSchedulingStartTimeEnd)";
-
-            string hqlQuery = String.Concat(hqlMpsStatelessQuery, _hqlUndocumentedSubCondition);
-
-            List<QueryParameter> parameters = new List<QueryParameter>();
-            AddMpsDateRangeQueryParameters(parameters);
-
-            parameters.Add(new QueryParameter("dpsState", ActivityStatus.IP.ToString()));
-            parameters.Add(new QueryParameter("dpsStartTimeBegin", Platform.Time.Date));
-            parameters.Add(new QueryParameter("dpsStartTimeEnd", Platform.Time.Date.AddDays(1)));
-
-            AddWorklistQueryAndParameters(ref hqlQuery, parameters, worklist);
-
-            return GetWorklist(hqlQuery, parameters);
+            return GetWorklist(new UnDocumentedWorklistHelper(worklist));
         }
 
         public IList<WorklistItem> GetInProgressWorklist()
@@ -176,7 +261,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         public IList<WorklistItem> GetInProgressWorklist(TechnologistInProgressWorklist worklist)
         {
-            return GetWorklistFromMpsState(ActivityStatus.IP.ToString(), worklist);
+            return GetWorklist(new MpsStateWorklistHelper(ActivityStatus.IP.ToString(), worklist));
         }
 
         public IList<WorklistItem> GetSuspendedWorklist()
@@ -186,7 +271,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         public IList<WorklistItem> GetSuspendedWorklist(TechnologistSuspendedWorklist worklist)
         {
-            return GetWorklistFromMpsState(ActivityStatus.SU.ToString(), worklist);
+            return GetWorklist(new MpsStateWorklistHelper(ActivityStatus.SU.ToString(), worklist));
         }
 
         public IList<WorklistItem> GetCompletedWorklist()
@@ -196,7 +281,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         public IList<WorklistItem> GetCompletedWorklist(TechnologistCompletedWorklist worklist)
         {
-            return GetWorklistFromMpsState(ActivityStatus.CM.ToString(), worklist);
+            return GetWorklist(new MpsStateWorklistHelper(ActivityStatus.CM.ToString(), worklist));
         }
 
         public IList<WorklistItem> GetCancelledWorklist()
@@ -206,7 +291,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         public IList<WorklistItem> GetCancelledWorklist(TechnologistCancelledWorklist worklist)
         {
-            return GetWorklistFromMpsState(ActivityStatus.DC.ToString(), worklist);
+            return GetWorklist(new MpsStateWorklistHelper(ActivityStatus.DC.ToString(), worklist));
         }
 
         #endregion
@@ -220,14 +305,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         public int GetScheduledWorklistCount(TechnologistScheduledWorklist worklist)
         {
-            string hqlQuery = String.Concat(_hqlMpsStateCountQuery, _hqlScheduledSubCondition);
-
-            List<QueryParameter> parameters = BaseMpsStateParameters("SC");
-            AddSubQueryParameters(parameters);
-
-            AddWorklistQueryAndParameters(ref hqlQuery, parameters, worklist);
-
-            return GetWorklistCount(hqlQuery, parameters);
+            return GetWorklistCount(new ScheduledWorklistHelper(worklist));
         }
 
         public int GetCheckedInWorklistCount()
@@ -237,14 +315,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         public int GetCheckedInWorklistCount(TechnologistCheckedInWorklist worklist)
         {
-            string hqlQuery = String.Concat(_hqlMpsStateCountQuery, _hqlCheckInSubCondition);
-
-            List<QueryParameter> parameters = BaseMpsStateParameters("SC");
-            AddSubQueryParameters(parameters);
-
-            AddWorklistQueryAndParameters(ref hqlQuery, parameters, worklist);
-
-            return GetWorklistCount(hqlQuery, parameters);
+            return GetWorklistCount(new CheckedInWorklistHelper(worklist));
         }
 
         public int GetUndocumentedWorklistCount()
@@ -254,22 +325,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         public int GetUndocumentedWorklistCount(TechnologistUndocumentedWorklist worklist)
         {
-            string hqlMpsStatelessQuery = _hqlSelectCount + _hqlJoin +
-                " where (mps.Scheduling.StartTime between :mpsSchedulingStartTimeBegin and :mpsSchedulingStartTimeEnd)";
-
-            string hqlQuery = String.Concat(hqlMpsStatelessQuery, _hqlUndocumentedSubCondition);
-
-            //List<QueryParameter> parameters = BaseMpsStateParameters(ActivityStatus.IP.ToString());
-            List<QueryParameter> parameters = new List<QueryParameter>();
-            AddMpsDateRangeQueryParameters(parameters);
-
-            parameters.Add(new QueryParameter("dpsState", ActivityStatus.IP.ToString()));
-            parameters.Add(new QueryParameter("dpsStartTimeBegin", Platform.Time.Date));
-            parameters.Add(new QueryParameter("dpsStartTimeEnd", Platform.Time.Date.AddDays(1)));
-
-            AddWorklistQueryAndParameters(ref hqlQuery, parameters, worklist);
-
-            return GetWorklistCount(hqlQuery, parameters);
+            return GetWorklistCount(new UnDocumentedWorklistHelper(worklist));
         }
 
         public int GetInProgressWorklistCount()
@@ -279,7 +335,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         public int GetInProgressWorklistCount(TechnologistInProgressWorklist worklist)
         {
-            return GetWorklistCountFromMpsState("IP", worklist);
+            return GetWorklistCount(new MpsStateWorklistHelper(ActivityStatus.IP.ToString(), worklist));
         }
 
         public int GetSuspendedWorklistCount()
@@ -289,7 +345,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         public int GetSuspendedWorklistCount(TechnologistSuspendedWorklist worklist)
         {
-            return GetWorklistCountFromMpsState("SU", worklist);
+            return GetWorklistCount(new MpsStateWorklistHelper(ActivityStatus.SU.ToString(), worklist));
         }
 
         public int GetCompletedWorklistCount()
@@ -299,7 +355,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         public int GetCompletedWorklistCount(TechnologistCompletedWorklist worklist)
         {
-            return GetWorklistCountFromMpsState("CM", worklist);
+            return GetWorklistCount(new MpsStateWorklistHelper(ActivityStatus.CM.ToString(), worklist));
         }
 
         public int GetCancelledWorklistCount()
@@ -309,10 +365,12 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         public int GetCancelledWorklistCount(TechnologistCancelledWorklist worklist)
         {
-            return GetWorklistCountFromMpsState("DC", worklist);
+            return GetWorklistCount(new MpsStateWorklistHelper(ActivityStatus.DC.ToString(), worklist));
         }
 
         #endregion
+
+        #region Search
 
         public IList<WorklistItem> Search(WorklistItemSearchCriteria[] where, SearchResultPage page, bool showActiveOnly)
         {
@@ -325,11 +383,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
             if (showActiveOnly)
             {
-                query.Conditions.Add(new HqlCondition(String.Format(
-                    " rp in (select rp from CheckInProcedureStep cps join cps.RequestedProcedure rp" +
-                    " where (cps.State != '{0}' and cps.State != '{1}'))", 
-                    ActivityStatus.CM, ActivityStatus.DC), 
-                    new object[] {} ));
+                query.Conditions.Add(new HqlCondition("mps.State in (?, ?)", ActivityStatus.SC, ActivityStatus.IP));
             }
 
             HqlOr or = new HqlOr();
@@ -368,6 +422,10 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             hqlQuery.Append(_hqlJoin);
 
             HqlQuery query = new HqlQuery(hqlQuery.ToString());
+            if (showActiveOnly)
+            {
+                query.Conditions.Add(new HqlCondition("mps.State in (?, ?)", ActivityStatus.SC, ActivityStatus.IP));
+            }
 
             HqlOr or = new HqlOr();
             foreach (WorklistItemSearchCriteria c in where)
@@ -392,99 +450,8 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         #endregion
 
-        private IList<WorklistItem> GetWorklist(string hqlQuery, List<QueryParameter> parameters)
-        {
-            List<WorklistItem> worklistItems = new List<WorklistItem>();
-
-            IList queryResults = DoQuery(hqlQuery, parameters);
-
-            foreach (object[] tuple in queryResults)
-            {
-                WorklistItem item = (WorklistItem)Activator.CreateInstance(typeof(WorklistItem), tuple);
-                worklistItems.Add(item);
-            }
-
-            return worklistItems;
-        }
-
-        private int GetWorklistCount(string hqlQuery, List<QueryParameter> parameters)
-        {
-            IList list = DoQuery(hqlQuery, parameters);
-            return (int)(long)list[0];
-        }
-
-        private IList DoQuery(string hqlQuery, List<QueryParameter> parameters)
-        {
-            IQuery query = this.Context.CreateHibernateQuery(hqlQuery);
-
-            if (parameters != null)
-            {
-                foreach (QueryParameter param in parameters)
-                {
-                    query.SetParameter(param.Name, param.Value);
-                }
-            }
-
-            return query.List();
-        }
-
-        #region Basic query by MPS State helpers
-
-        private List<QueryParameter> BaseMpsStateParameters(string state)
-        {
-            List<QueryParameter> parameters = new List<QueryParameter>();
-            parameters.Add(new QueryParameter("mpsState", state));
-            AddMpsDateRangeQueryParameters(parameters);
-
-            return parameters;
-        }
-
-        private IList<WorklistItem> GetWorklistFromMpsState(string state, Worklist worklist)
-        {
-            string hqlQuery = _hqlMpsStateQuery;
-            List<QueryParameter> parameters = BaseMpsStateParameters(state);
-
-            AddWorklistQueryAndParameters(ref hqlQuery, parameters, worklist);
-
-            return GetWorklist(hqlQuery, parameters);
-        }
-
-        private int GetWorklistCountFromMpsState(string state, Worklist worklist)
-        {
-            string hqlQuery = _hqlMpsStateCountQuery;
-            List<QueryParameter> parameters = BaseMpsStateParameters(state);
-
-            AddWorklistQueryAndParameters(ref hqlQuery, parameters, worklist);
-
-            return GetWorklistCount(hqlQuery, parameters);
-        }
-
         #endregion
 
-        #region Extended query helpers
 
-        private void AddMpsDateRangeQueryParameters(List<QueryParameter> parameters)
-        {
-            parameters.Add(new QueryParameter("mpsSchedulingStartTimeBegin", Platform.Time.Date));
-            parameters.Add(new QueryParameter("mpsSchedulingStartTimeEnd", Platform.Time.Date.AddDays(1)));
-        }
-
-        private void AddSubQueryParameters(List<QueryParameter> parameters)
-        {
-            parameters.Add(new QueryParameter("cpsState", ActivityStatus.IP.ToString()));
-            parameters.Add(new QueryParameter("cpsStartTimeBegin", Platform.Time.Date));
-            parameters.Add(new QueryParameter("cpsStartTimeEnd", Platform.Time.Date.AddDays(1)));
-        }
-
-        #endregion
-
-        private void AddWorklistQueryAndParameters(ref string hqlQuery, List<QueryParameter> parameters, Worklist worklist)
-        {
-            if (worklist != null)
-            {
-                hqlQuery += _hqlWorklistSubQuery;
-                parameters.Add(new QueryParameter("worklist", worklist));
-            }
-        }
     }
 }

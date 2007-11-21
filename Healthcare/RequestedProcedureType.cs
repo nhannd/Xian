@@ -59,9 +59,6 @@ namespace ClearCanvas.Healthcare {
         {
             RequestedProcedure rp = new RequestedProcedure(this);
 
-            // Create a check-in step - each RP only ever has one check-in step
-            rp.AddProcedureStep(new CheckInProcedureStep());
-
             // add modality procedure steps
             foreach (ModalityProcedureStepType spt in this.ModalityProcedureStepTypes)
             {

@@ -592,18 +592,13 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
             if (showActiveOnly)
             {
-                query.Conditions.Add(new HqlCondition(String.Format(
-                    " (rps.State != '{0}' and rps.State != '{1}')", 
-                    ActivityStatus.CM, ActivityStatus.DC),
-                    new object[] { }));
+                query.Conditions.Add(new HqlCondition("(rps.State != ? and rps.State != ?)", ActivityStatus.CM, ActivityStatus.DC));
             }
             else
             {
                 // Active Set of RPS union with inactive set of verification Step
-                query.Conditions.Add(new HqlCondition(String.Format(
-                    " ((rps.State != '{0}' and rps.State != '{1}') or (rps.class = VerificationStep and (rps.State = '{0}' or rps.State = '{1}')))", 
-                    ActivityStatus.CM, ActivityStatus.DC),
-                    new object[] { }));
+                query.Conditions.Add(new HqlCondition(" ((rps.State != ? and rps.State != ?) or (rps.class = VerificationStep and (rps.State = ? or rps.State = ?)))",
+                    ActivityStatus.CM, ActivityStatus.DC, ActivityStatus.CM, ActivityStatus.DC));
             }
 
             HqlOr or = new HqlOr();
@@ -643,6 +638,17 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             hqlQuery.Append(_hqlJoin);
 
             HqlQuery query = new HqlQuery(hqlQuery.ToString());
+
+            if (showActiveOnly)
+            {
+                query.Conditions.Add(new HqlCondition("rps.State in (?, ?)", ActivityStatus.SC, ActivityStatus.IP));
+            }
+            else
+            {
+                // Active Set of RPS union with inactive set of verification Step
+                query.Conditions.Add(new HqlCondition("(rps.State in (?, ?) or (rps.class = VerificationStep and rps.State in (?, ?)))",
+                    ActivityStatus.SC, ActivityStatus.IP, ActivityStatus.SC, ActivityStatus.IP));
+            }
 
             HqlOr or = new HqlOr();
             foreach (WorklistItemSearchCriteria c in where)

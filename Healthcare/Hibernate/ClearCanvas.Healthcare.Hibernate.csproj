@@ -164,7 +164,7 @@
     <EmbeddedResource Include="Mappings\ContactPersonTypeEnum.hbm.xml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Mappings\CheckInProcedureStep.hbm.xml" />
+    <EmbeddedResource Include="Mappings\ProcedureCheckIn.hbm.xml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Mappings\OrderCancelReasonEnum.hbm.xml" />

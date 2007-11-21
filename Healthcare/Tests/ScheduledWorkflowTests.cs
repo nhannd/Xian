@@ -111,7 +111,7 @@ namespace ClearCanvas.Healthcare.Tests
                 }
 
                 // verify that check-in step was scheduled
-                Assert.IsNotNull(rp.CheckInProcedureStep);
+                Assert.IsNotNull(rp.ProcedureCheckIn.CheckInTime);
             }
 
 
@@ -283,7 +283,7 @@ namespace ClearCanvas.Healthcare.Tests
             RequestedProcedure rp2 = reqProcs[1];
 
             // start rp 1
-            rp1.CheckInProcedureStep.Start(TestStaffFactory.CreateStaff(StaffType.STEC));
+            rp1.ModalityProcedureSteps[0].Start(TestStaffFactory.CreateStaff(StaffType.STEC));
 
             order.Discontinue(_defaultCancelReason);
 
@@ -312,7 +312,7 @@ namespace ClearCanvas.Healthcare.Tests
             RequestedProcedure rp2 = reqProcs[1];
 
             // start and discontinue rp1
-            rp1.CheckInProcedureStep.Start(TestStaffFactory.CreateStaff(StaffType.STEC));
+            rp1.ModalityProcedureSteps[0].Start(TestStaffFactory.CreateStaff(StaffType.STEC));
             rp1.Discontinue();
 
             // cancel rp2
@@ -393,7 +393,7 @@ namespace ClearCanvas.Healthcare.Tests
                 Order order = TestOrderFactory.CreateOrder(1, 1, true);
 
                 RequestedProcedure rp = CollectionUtils.FirstElement<RequestedProcedure>(order.RequestedProcedures);
-                rp.CheckInProcedureStep.Start(TestStaffFactory.CreateStaff(StaffType.STEC));
+                rp.ModalityProcedureSteps[0].Start(TestStaffFactory.CreateStaff(StaffType.STEC));
 
                 CheckStatus(RequestedProcedureStatus.IP, rp);
 
@@ -457,6 +457,7 @@ namespace ClearCanvas.Healthcare.Tests
             CheckStatus(ActivityStatus.IP, mps1);
             CheckStatus(RequestedProcedureStatus.IP, rp1);
             CheckStatus(OrderStatus.IP, order);
+            Assert.IsNotNull(rp1.ProcedureCheckIn.CheckInTime);
         }
 
         /// <summary>
@@ -477,6 +478,7 @@ namespace ClearCanvas.Healthcare.Tests
             CheckStatus(ActivityStatus.CM, mps1);
             CheckStatus(RequestedProcedureStatus.IP, rp1);
             CheckStatus(OrderStatus.IP, order);
+            Assert.IsNotNull(rp1.ProcedureCheckIn.CheckOutTime);
         }
 
         /// <summary>
@@ -500,6 +502,7 @@ namespace ClearCanvas.Healthcare.Tests
             CheckStatus(ActivityStatus.CM, mps1);
             CheckStatus(RequestedProcedureStatus.IP, rp1);
             CheckStatus(OrderStatus.IP, order);
+            Assert.IsNotNull(rp1.ProcedureCheckIn.CheckOutTime);
         }
 
         /// <summary>
@@ -523,6 +526,7 @@ namespace ClearCanvas.Healthcare.Tests
             // rp and order status unchanged
             CheckStatus(RequestedProcedureStatus.SC, rp1);
             CheckStatus(OrderStatus.SC, order);
+            Assert.IsNull(rp1.ProcedureCheckIn.CheckOutTime);
         }
 
         /// <summary>
@@ -544,6 +548,7 @@ namespace ClearCanvas.Healthcare.Tests
                     CheckStatus(ActivityStatus.DC, step);
                 }
                 CheckStatus(RequestedProcedureStatus.DC, rp);
+                Assert.IsNotNull(rp.ProcedureCheckIn.CheckOutTime);
             }
 
             CheckStatus(OrderStatus.DC, order);

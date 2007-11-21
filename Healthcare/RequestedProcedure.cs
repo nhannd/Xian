@@ -52,26 +52,10 @@ namespace ClearCanvas.Healthcare {
         {
             _type = type;
             _procedureSteps = new HashedSet<ProcedureStep>();
+            _procedureCheckIn = new ProcedureCheckIn();
         }
 	
         #region Public Properties
-
-        /// <summary>
-        /// Gets the check-in procedure step.
-        /// </summary>
-        public virtual CheckInProcedureStep CheckInProcedureStep
-        {
-            get
-            {
-                ProcedureStep step = CollectionUtils.SelectFirst<ProcedureStep>(this.ProcedureSteps,
-                    delegate(ProcedureStep ps)
-                    {
-                        return ps.Is<CheckInProcedureStep>();
-                    });
-
-                return step == null ? null : step.Downcast<CheckInProcedureStep>();
-            }
-        }
 
         /// <summary>
         /// Gets the modality procedure steps.
@@ -126,6 +110,16 @@ namespace ClearCanvas.Healthcare {
 
                 return step == null ? null : step.Downcast<ProtocolProcedureStep>();
             }
+        }
+
+        public virtual bool IsCheckIn
+        {
+            get { return _procedureCheckIn != null && _procedureCheckIn.IsCheckIn; }    
+        }
+
+        public virtual bool IsCheckOut
+        {
+            get { return _procedureCheckIn != null && _procedureCheckIn.IsCheckOut; }
         }
 
         #endregion
@@ -286,6 +280,27 @@ namespace ClearCanvas.Healthcare {
                     SetStatus(RequestedProcedureStatus.IP);
                 }
             }
+
+            // Update ProcedureCheckIn
+            bool allMpsScheduled = this.ModalityProcedureSteps.TrueForAll(
+                delegate(ModalityProcedureStep mps) { return mps.State == ActivityStatus.SC; });
+
+            bool allMpsComplete = this.ModalityProcedureSteps.TrueForAll(
+                delegate(ModalityProcedureStep mps) { return mps.State == ActivityStatus.CM; });
+
+            bool allMpsTerminated = this.ModalityProcedureSteps.TrueForAll(
+                delegate(ModalityProcedureStep mps) { return mps.IsTerminated; });
+
+            if (allMpsComplete || allMpsTerminated)
+            {
+                this.ProcedureCheckIn.CheckOut();
+            }
+            else if (!allMpsScheduled)
+            {
+                // check-in this procedure, since some mps has started
+                this.ProcedureCheckIn.CheckIn();
+            }
+        
         }
 
         /// <summary>

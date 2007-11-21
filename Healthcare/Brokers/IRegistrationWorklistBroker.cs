@@ -81,8 +81,6 @@ namespace ClearCanvas.Healthcare.Brokers
         IList<Order> GetOrdersForCancel(Patient patient);
         int GetOrdersForCancelCount(Patient patient);
 
-        IList<Order> GetOrdersForPatientPreview(Patient patient);
-
         IList<WorklistItem> Search(WorklistItemSearchCriteria[] where, SearchResultPage page, bool showActiveOnly);
         int SearchCount(WorklistItemSearchCriteria[] where, bool showActiveOnly);
     }

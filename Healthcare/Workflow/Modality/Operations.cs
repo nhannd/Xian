@@ -49,6 +49,9 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
 
         protected void UpdateCheckInStep(RequestedProcedure rp, bool procedureAborted, IWorkflow workflow)
         {
+            bool allMpsScheduled = rp.ModalityProcedureSteps.TrueForAll(
+                delegate(ModalityProcedureStep mps) { return mps.State == ActivityStatus.SC; });
+
             bool allMpsComplete = rp.ModalityProcedureSteps.TrueForAll(
                 delegate(ModalityProcedureStep mps) { return mps.State == ActivityStatus.CM; });
 
@@ -59,7 +62,7 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
             if (allMpsComplete || (allMpsTerminated && !procedureAborted))
             {
                 // complete the check-in
-                rp.CheckInProcedureStep.Complete();
+                rp.ProcedureCheckIn.CheckOut();
 
                 // schedule an interpretation
                 // Note: in reality, we want to create the Interpretation step earlier (perhaps when an MPS starts)
@@ -69,7 +72,12 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
             else if (allMpsTerminated && procedureAborted)
             {
                 // discontinue check-in, since procedure was aborted
-                rp.CheckInProcedureStep.Discontinue();
+                rp.ProcedureCheckIn.CheckOut();
+            }
+            else if (!allMpsScheduled)
+            {
+                // check-in this procedure, since some mps has started
+                rp.ProcedureCheckIn.CheckIn();
             }
         }
     }
@@ -86,6 +94,7 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
         public override void Execute(ModalityProcedureStep mps, IWorkflow workflow)
         {
             mps.Start(_technologist);
+            UpdateCheckInStep(mps.RequestedProcedure, false, workflow);
         }
 
         public override bool CanExecute(ModalityProcedureStep mps)

@@ -55,63 +55,192 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
                 this.Value = value;
             }
 
-            public string Name;
-            public object Value;
+            public readonly string Name;
+            public readonly object Value;
         }
 
-        private const string _hqlSelectWorklist =       "select distinct o from CheckInProcedureStep cps";
-        private const string _hqlSelectCount =          "select count(distinct o) from CheckInProcedureStep cps";
-        private const string _hqlJoin =                 " join cps.RequestedProcedure rp" +
-                                                        " join rp.Order o";
-        private const string _hqlMainCondition =        " where cps.State = :cpsState" +
-                                                        " and cps.Scheduling.StartTime between :cpsSchedulingStartTimeBegin and :cpsSchedulingStartTimeEnd";
-        
-        private const string _hqlMPSStartedSubQuery =   " and o in" +
-                                                        " (select distinct o from ModalityProcedureStep mps join mps.RequestedProcedure rp join rp.Order o where" +
-                                                        " (mps.State != :mpsState and mps.Scheduling.StartTime between :mpsSchedulingStartTimeBegin and :mpsSchedulingStartTimeEnd))";
+        private const string _hqlSelectWorklist =       "select distinct o from RequestedProcedure rp";
+        private const string _hqlSelectCount =          "select count(distinct o) from RequestedProcedure rp";
+        private const string _hqlJoin =                 " join rp.Order o";
 
-        private const string _hqlMPSNotStartedSubQuery= " and o not in" +
-                                                        " (select distinct o from ModalityProcedureStep mps join mps.RequestedProcedure rp join rp.Order o where" +
-                                                        " (mps.State != :mpsState and mps.Scheduling.StartTime between :mpsSchedulingStartTimeBegin and :mpsSchedulingStartTimeEnd))";
+        private const string _hqlScheduledCondition =   " where rp.ScheduledStartTime between :orderScheduleStartTimeBegin and :orderScheduleStartTimeEnd";
+        private const string _hqlOrderStatusCondition = " and o.Status = :orderStatus";
+        private const string _hqlNotCheckedInCondition = " and (rp.ProcedureCheckIn is NULL or rp.ProcedureCheckIn.CheckInTime is NULL)";
+        private const string _hqlCheckedInCondition =   " and rp.ProcedureCheckIn is not NULL and rp.ProcedureCheckIn.CheckInTime is not NULL and rp.ProcedureCheckIn.CheckOutTime is NULL";
+        private const string _hqlCheckedOutCondition =  " and rp.ProcedureCheckIn is not NULL and rp.ProcedureCheckIn.CheckOutTime is not NULL";
 
-        private const string _hqlWorklistSubQuery = " and rp.Type in" +
-                                                    " (select distinct rpt from Worklist w join w.RequestedProcedureTypeGroups rptg join rptg.RequestedProcedureTypes rpt where w = :worklist)";
+        private const string _hqlScheduledWorklist =    _hqlScheduledCondition + _hqlOrderStatusCondition + _hqlNotCheckedInCondition;
+        private const string _hqlCheckedInWorklist =    _hqlScheduledCondition + _hqlOrderStatusCondition + _hqlCheckedInCondition;
+        private const string _hqlInProgressWorklist =   _hqlScheduledCondition + _hqlOrderStatusCondition;
+        private const string _hqlCompletedWorklist =    _hqlScheduledCondition + " and (o.Status = :orderStatus or o.Status = :orderStatus2" + _hqlCheckedOutCondition + ")";
+        private const string _hqlCancelledWorklist =    _hqlScheduledCondition + _hqlOrderStatusCondition;
+                
+        private const string _hqlWorklistSubQuery =         " and rp.Type in" +
+                                                            " (select distinct rpt from Worklist w join w.RequestedProcedureTypeGroups rptg join rptg.RequestedProcedureTypes rpt where w = :worklist)";
 
         private const string _hqlSelectProtocolWorklist     = "select distinct o from ProtocolProcedureStep cps";
         private const string _hqlSelectProtocolCount        = "select count(distinct o) from ProtocolProcedureStep cps";
-        private const string _hqlProtocolStateCondition     = " where cps.State = :cpsState";
-        private const string _hqlUnscheduledCondition       = " and rp.ScheduledStartTime is NULL";
+        private const string _hqlProtocolJoin               = " join cps.RequestedProcedure rp" +
+                                                              " join rp.Order o";
+        private const string _hqlUnscheduledCondition =       " and rp.ScheduledStartTime is NULL";
+        private const string _hqlProtocolStateCondition =     " where cps.State = :cpsState";
         private const string _hqlDualProtocolStateCondition = " where (cps.State = :cpsState or cps.State = :cpsState2)";
 
-        #region Query helpers
-
-        private void AddMainQueryParameters(List<QueryParameter> parameters)
+        abstract class WorklistHelper
         {
-            parameters.Add(new QueryParameter("cpsSchedulingStartTimeBegin", Platform.Time.Date));
-            parameters.Add(new QueryParameter("cpsSchedulingStartTimeEnd", Platform.Time.Date.AddDays(1)));
-        }
+            public string WorklistQuery;
+            public string CountQuery;
+            public readonly List<QueryParameter> Parameters = new List<QueryParameter>();
 
-        private void AddSubQueryParameters(List<QueryParameter> parameters)
-        {
-            parameters.Add(new QueryParameter("mpsState", ActivityStatus.SC.ToString()));
-            parameters.Add(new QueryParameter("mpsSchedulingStartTimeBegin", Platform.Time.Date));
-            parameters.Add(new QueryParameter("mpsSchedulingStartTimeEnd", Platform.Time.Date.AddDays(1)));
-        }
-
-        private void AddWorklistQueryAndParameters(ref string hqlQuery, List<QueryParameter> parameters, Worklist worklist)
-        {
-            if (worklist != null)
+            protected void AddWorklistQueryAndParameters(Worklist worklist)
             {
-                hqlQuery += _hqlWorklistSubQuery;
-                parameters.Add(new QueryParameter("worklist", worklist));
+                if (worklist != null)
+                {
+                    this.WorklistQuery += _hqlWorklistSubQuery;
+                    this.CountQuery += _hqlWorklistSubQuery;
+                    this.Parameters.Add(new QueryParameter("worklist", worklist));
+                }
+            }
+
+            protected void AddOrderStatusParameters(string state)
+            {
+                this.Parameters.Add(new QueryParameter("orderStatus", state));
+                AddOrderScheduledDateRangeQueryParameters();
+            }
+
+            protected void AddDualOrderStatusParameters(string state, string state2)
+            {
+                this.Parameters.Add(new QueryParameter("orderStatus", state));
+                this.Parameters.Add(new QueryParameter("orderStatus2", state2));
+                AddOrderScheduledDateRangeQueryParameters();
+            }
+
+            private void AddOrderScheduledDateRangeQueryParameters()
+            {
+                this.Parameters.Add(new QueryParameter("orderScheduleStartTimeBegin", Platform.Time.Date));
+                this.Parameters.Add(new QueryParameter("orderScheduleStartTimeEnd", Platform.Time.Date.AddDays(1)));
             }
         }
 
-        private IList<WorklistItem> GetWorklist(string hqlQuery, List<QueryParameter> parameters)
+        class ScheduledWorklistHelper : WorklistHelper
+        {
+            public ScheduledWorklistHelper(Worklist worklist)
+            {
+                this.WorklistQuery = string.Concat(_hqlSelectWorklist, _hqlJoin, _hqlScheduledWorklist);
+                this.CountQuery = string.Concat(_hqlSelectCount, _hqlJoin, _hqlScheduledWorklist);
+                AddOrderStatusParameters(OrderStatus.SC.ToString());
+                AddWorklistQueryAndParameters(worklist);
+            }
+        }
+
+        class CheckedInWorklistHelper : WorklistHelper
+        {
+            public CheckedInWorklistHelper(Worklist worklist)
+            {
+                this.WorklistQuery = string.Concat(_hqlSelectWorklist, _hqlJoin, _hqlCheckedInWorklist);
+                this.CountQuery = string.Concat(_hqlSelectCount, _hqlJoin, _hqlCheckedInWorklist);
+                AddOrderStatusParameters(OrderStatus.SC.ToString());
+                AddWorklistQueryAndParameters(worklist);
+            }
+        }
+
+        class InProgressWorklistHelper : WorklistHelper
+        {
+            public InProgressWorklistHelper(Worklist worklist)
+            {
+                this.WorklistQuery = string.Concat(_hqlSelectWorklist, _hqlJoin, _hqlInProgressWorklist);
+                this.CountQuery = string.Concat(_hqlSelectCount, _hqlJoin, _hqlInProgressWorklist);
+                AddOrderStatusParameters(OrderStatus.IP.ToString());
+                AddWorklistQueryAndParameters(worklist);
+            }
+        }
+
+        class CompletedWorklistHelper : WorklistHelper
+        {
+            public CompletedWorklistHelper(Worklist worklist)
+            {
+                this.WorklistQuery = string.Concat(_hqlSelectWorklist, _hqlJoin, _hqlCompletedWorklist);
+                this.CountQuery = string.Concat(_hqlSelectCount, _hqlJoin, _hqlCompletedWorklist);
+                AddDualOrderStatusParameters(OrderStatus.CM.ToString(), OrderStatus.IP.ToString());
+                AddWorklistQueryAndParameters(worklist);
+            }
+        }
+
+        class CancelledWorklistHelper : WorklistHelper
+        {
+            public CancelledWorklistHelper(Worklist worklist)
+            {
+                this.WorklistQuery = string.Concat(_hqlSelectWorklist, _hqlJoin, _hqlCancelledWorklist);
+                this.CountQuery = string.Concat(_hqlSelectCount, _hqlJoin, _hqlCancelledWorklist);
+                AddOrderStatusParameters(OrderStatus.DC.ToString());
+                AddWorklistQueryAndParameters(worklist);
+            }
+        }
+
+        class CompletedProtocolWorklistHelper : WorklistHelper
+        {
+            public CompletedProtocolWorklistHelper(Worklist worklist)
+            {
+                this.WorklistQuery = string.Concat(_hqlSelectProtocolWorklist, _hqlProtocolJoin, _hqlProtocolStateCondition, _hqlUnscheduledCondition);
+                this.CountQuery = string.Concat(_hqlSelectProtocolCount, _hqlProtocolJoin, _hqlProtocolStateCondition, _hqlUnscheduledCondition);
+                this.Parameters.Add(new QueryParameter("cpsState", ActivityStatus.IP.ToString()));
+                this.Parameters.Add(new QueryParameter("cpsState", ActivityStatus.CM.ToString()));
+                this.AddWorklistQueryAndParameters(worklist);
+            }
+        }
+
+        class SuspendedProtocolWorklistHelper : WorklistHelper
+        {
+            public SuspendedProtocolWorklistHelper(Worklist worklist)
+            {
+                this.WorklistQuery = string.Concat(_hqlSelectProtocolWorklist, _hqlProtocolJoin, _hqlProtocolStateCondition);
+                this.CountQuery = string.Concat(_hqlSelectProtocolCount, _hqlProtocolJoin, _hqlProtocolStateCondition);
+                this.Parameters.Add(new QueryParameter("cpsState", ActivityStatus.SU.ToString()));
+                this.AddWorklistQueryAndParameters(worklist);
+            }
+        }
+
+        class PendingProtocolWorklistHelper : WorklistHelper
+        {
+            public PendingProtocolWorklistHelper(Worklist worklist)
+            {
+                this.WorklistQuery = string.Concat(_hqlSelectProtocolWorklist, _hqlProtocolJoin, _hqlDualProtocolStateCondition);
+                this.CountQuery = string.Concat(_hqlSelectProtocolCount, _hqlProtocolJoin, _hqlDualProtocolStateCondition);
+                this.Parameters.Add(new QueryParameter("cpsState", ActivityStatus.SC.ToString()));
+                this.Parameters.Add(new QueryParameter("cpsState2", ActivityStatus.IP.ToString()));
+                this.AddWorklistQueryAndParameters(worklist);
+            }
+        }
+
+        class GetOrdersForCheckInHelper : WorklistHelper
+        {
+            public GetOrdersForCheckInHelper(Patient patient)
+            {
+                this.WorklistQuery = string.Concat(_hqlSelectWorklist, _hqlJoin, " join o.Patient p", _hqlScheduledCondition, _hqlOrderStatusCondition, _hqlNotCheckedInCondition, " and p = :patient");
+                this.CountQuery = string.Concat(_hqlSelectCount, _hqlJoin, " join o.Patient p", _hqlScheduledCondition, _hqlOrderStatusCondition, _hqlNotCheckedInCondition, " and p = :patient");
+                AddOrderStatusParameters(OrderStatus.SC.ToString());
+                this.Parameters.Add(new QueryParameter("patient", patient));
+            }
+        }
+
+        class GetOrdersForCancelHelper : WorklistHelper
+        {
+            public GetOrdersForCancelHelper(Patient patient)
+            {
+                this.WorklistQuery = string.Concat(_hqlSelectWorklist, _hqlJoin, " join o.Patient p", _hqlScheduledCondition, _hqlOrderStatusCondition, " and p = :patient");
+                this.CountQuery = string.Concat(_hqlSelectCount, _hqlJoin, " join o.Patient p", _hqlScheduledCondition, _hqlOrderStatusCondition, " and p = :patient");
+                AddOrderStatusParameters(OrderStatus.SC.ToString());
+                this.Parameters.Add(new QueryParameter("patient", patient));
+            }
+        }
+
+        #region Worklist query helpers
+
+        private IList<WorklistItem> GetWorklist(WorklistHelper helper)
         {
             List<WorklistItem> results = new List<WorklistItem>();
 
-            IList list = DoQuery(hqlQuery, parameters);
+            IList list = DoQuery(helper.WorklistQuery, helper.Parameters);
             foreach (object tuple in list)
             {
                 WorklistItem item = (WorklistItem)Activator.CreateInstance(typeof(WorklistItem), tuple);
@@ -121,13 +250,13 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             return results;
         }
 
-        private int GetWorklistCount(string hqlQuery, List<QueryParameter> parameters)
+        private int GetWorklistCount(WorklistHelper helper)
         {
-            IList list = DoQuery(hqlQuery, parameters);
-            return (int)(long)list[0];
+            IList list = DoQuery(helper.CountQuery, helper.Parameters);
+            return (int) (long) list[0];
         }
 
-        private IList DoQuery(string hqlQuery, List<QueryParameter> parameters)
+        private IList DoQuery(string hqlQuery, IEnumerable<QueryParameter> parameters)
         {
             IQuery query = this.Context.CreateHibernateQuery(hqlQuery);
 
@@ -155,15 +284,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         public IList<WorklistItem> GetScheduledWorklist(RegistrationScheduledWorklist worklist)
         {
-            string hqlQuery = String.Concat(_hqlSelectWorklist, _hqlJoin, _hqlMainCondition);
-
-            List<QueryParameter> parameters = new List<QueryParameter>();
-            parameters.Add(new QueryParameter("cpsState", ActivityStatus.SC.ToString()));
-            AddMainQueryParameters(parameters);
-
-            AddWorklistQueryAndParameters(ref hqlQuery, parameters, worklist);
-
-            return GetWorklist(hqlQuery, parameters);
+            return GetWorklist(new ScheduledWorklistHelper(worklist));
         }
 
         public IList<WorklistItem> GetCheckInWorklist()
@@ -173,16 +294,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         public IList<WorklistItem> GetCheckInWorklist(RegistrationCheckedInWorklist worklist)
         {
-            string hqlQuery = String.Concat(_hqlSelectWorklist, _hqlJoin, _hqlMainCondition, _hqlMPSNotStartedSubQuery);
-
-            List<QueryParameter> parameters = new List<QueryParameter>();
-            parameters.Add(new QueryParameter("cpsState", ActivityStatus.IP.ToString()));
-            AddMainQueryParameters(parameters);
-            AddSubQueryParameters(parameters);
-
-            AddWorklistQueryAndParameters(ref hqlQuery, parameters, worklist);
-
-            return GetWorklist(hqlQuery, parameters);
+            return GetWorklist(new CheckedInWorklistHelper(worklist));
         }
 
         public IList<WorklistItem> GetInProgressWorklist()
@@ -192,16 +304,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         public IList<WorklistItem> GetInProgressWorklist(RegistrationInProgressWorklist worklist)
         {
-            string hqlQuery = String.Concat(_hqlSelectWorklist, _hqlJoin, _hqlMainCondition, _hqlMPSStartedSubQuery);
-
-            List<QueryParameter> parameters = new List<QueryParameter>();
-            parameters.Add(new QueryParameter("cpsState", ActivityStatus.IP.ToString()));
-            AddMainQueryParameters(parameters);
-            AddSubQueryParameters(parameters);
-
-            AddWorklistQueryAndParameters(ref hqlQuery, parameters, worklist);
-
-            return GetWorklist(hqlQuery, parameters);
+            return GetWorklist(new InProgressWorklistHelper(worklist));
         }
 
         public IList<WorklistItem> GetCompletedWorklist()
@@ -211,15 +314,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         public IList<WorklistItem> GetCompletedWorklist(RegistrationCompletedWorklist worklist)
         {
-            string hqlQuery = String.Concat(_hqlSelectWorklist, _hqlJoin, _hqlMainCondition);
-
-            List<QueryParameter> parameters = new List<QueryParameter>();
-            parameters.Add(new QueryParameter("cpsState", ActivityStatus.CM.ToString()));
-            AddMainQueryParameters(parameters);
-
-            AddWorklistQueryAndParameters(ref hqlQuery, parameters, worklist);
-
-            return GetWorklist(hqlQuery, parameters);
+            return GetWorklist(new CompletedWorklistHelper(worklist));
         }
 
         public IList<WorklistItem> GetCancelledWorklist()
@@ -229,15 +324,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         public IList<WorklistItem> GetCancelledWorklist(RegistrationCancelledWorklist worklist)
         {
-            string hqlQuery = String.Concat(_hqlSelectWorklist, _hqlJoin, _hqlMainCondition);
-
-            List<QueryParameter> parameters = new List<QueryParameter>();
-            parameters.Add(new QueryParameter("cpsState", ActivityStatus.DC.ToString()));
-            AddMainQueryParameters(parameters);
-
-            AddWorklistQueryAndParameters(ref hqlQuery, parameters, worklist);
-
-            return GetWorklist(hqlQuery, parameters);
+            return GetWorklist(new CancelledWorklistHelper(worklist));
         }
 
         public IList<WorklistItem> GetCompletedProtocolWorklist()
@@ -247,14 +334,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         public IList<WorklistItem> GetCompletedProtocolWorklist(RegistrationCompletedProtocolWorklist worklist)
         {
-            string hqlQuery = String.Concat(_hqlSelectProtocolWorklist, _hqlJoin, _hqlProtocolStateCondition, _hqlUnscheduledCondition);
-
-            List<QueryParameter> parameters = new List<QueryParameter>();
-            parameters.Add(new QueryParameter("cpsState", ActivityStatus.CM.ToString()));
-
-            AddWorklistQueryAndParameters(ref hqlQuery, parameters, worklist);
-
-            return GetWorklist(hqlQuery, parameters);
+            return GetWorklist(new CompletedProtocolWorklistHelper(worklist));
         }
 
         public IList<WorklistItem> GetSuspendedProtocolWorklist()
@@ -264,14 +344,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         public IList<WorklistItem> GetSuspendedProtocolWorklist(RegistrationSuspendedProtocolWorklist worklist)
         {
-            string hqlQuery = String.Concat(_hqlSelectProtocolWorklist, _hqlJoin, _hqlProtocolStateCondition);
-
-            List<QueryParameter> parameters = new List<QueryParameter>();
-            parameters.Add(new QueryParameter("cpsState", ActivityStatus.SU.ToString()));
-
-            AddWorklistQueryAndParameters(ref hqlQuery, parameters, worklist);
-
-            return GetWorklist(hqlQuery, parameters);
+            return GetWorklist(new SuspendedProtocolWorklistHelper(worklist));
         }
 
         public IList<WorklistItem> GetPendingProtocolWorklist()
@@ -281,20 +354,12 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         public IList<WorklistItem> GetPendingProtocolWorklist(RegistrationPendingProtocolWorklist worklist)
         {
-            string hqlQuery = String.Concat(_hqlSelectProtocolWorklist, _hqlJoin, _hqlDualProtocolStateCondition);
-
-            List<QueryParameter> parameters = new List<QueryParameter>();
-            parameters.Add(new QueryParameter("cpsState", ActivityStatus.SC.ToString()));
-            parameters.Add(new QueryParameter("cpsState2", ActivityStatus.IP.ToString()));
-
-            AddWorklistQueryAndParameters(ref hqlQuery, parameters, worklist);
-
-            return GetWorklist(hqlQuery, parameters);
+            return GetWorklist(new PendingProtocolWorklistHelper(worklist));
         }
 
         #endregion
 
-        #region Worklist Counts
+        #region Counts
 
         public int GetScheduledWorklistCount()
         {
@@ -303,15 +368,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         public int GetScheduledWorklistCount(RegistrationScheduledWorklist worklist)
         {
-            string hqlQuery = String.Concat(_hqlSelectCount, _hqlJoin, _hqlMainCondition);
-
-            List<QueryParameter> parameters = new List<QueryParameter>();
-            parameters.Add(new QueryParameter("cpsState", ActivityStatus.SC.ToString()));
-            AddMainQueryParameters(parameters);
-
-            AddWorklistQueryAndParameters(ref hqlQuery, parameters, worklist);
-
-            return GetWorklistCount(hqlQuery, parameters);
+            return GetWorklistCount(new ScheduledWorklistHelper(worklist));
         }
 
         public int GetCheckInWorklistCount()
@@ -321,16 +378,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         public int GetCheckInWorklistCount(RegistrationCheckedInWorklist worklist)
         {
-            string hqlQuery = String.Concat(_hqlSelectCount, _hqlJoin, _hqlMainCondition, _hqlMPSNotStartedSubQuery);
-
-            List<QueryParameter> parameters = new List<QueryParameter>();
-            parameters.Add(new QueryParameter("cpsState", ActivityStatus.IP.ToString()));
-            AddMainQueryParameters(parameters);
-            AddSubQueryParameters(parameters);
-
-            AddWorklistQueryAndParameters(ref hqlQuery, parameters, worklist);
-
-            return GetWorklistCount(hqlQuery, parameters);
+            return GetWorklistCount(new CheckedInWorklistHelper(worklist));
         }
 
         public int GetInProgressWorklistCount()
@@ -340,16 +388,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         public int GetInProgressWorklistCount(RegistrationInProgressWorklist worklist)
         {
-            string hqlQuery = String.Concat(_hqlSelectCount, _hqlJoin, _hqlMainCondition, _hqlMPSStartedSubQuery);
-
-            List<QueryParameter> parameters = new List<QueryParameter>();
-            parameters.Add(new QueryParameter("cpsState", ActivityStatus.IP.ToString()));
-            AddMainQueryParameters(parameters);
-            AddSubQueryParameters(parameters);
-
-            AddWorklistQueryAndParameters(ref hqlQuery, parameters, worklist);
-
-            return GetWorklistCount(hqlQuery, parameters);
+            return GetWorklistCount(new InProgressWorklistHelper(worklist));
         }
 
         public int GetCompletedWorklistCount()
@@ -359,15 +398,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         public int GetCompletedWorklistCount(RegistrationCompletedWorklist worklist)
         {
-            string hqlQuery = String.Concat(_hqlSelectCount, _hqlJoin, _hqlMainCondition);
-
-            List<QueryParameter> parameters = new List<QueryParameter>();
-            parameters.Add(new QueryParameter("cpsState", ActivityStatus.CM.ToString()));
-            AddMainQueryParameters(parameters);
-
-            AddWorklistQueryAndParameters(ref hqlQuery, parameters, worklist);
-
-            return GetWorklistCount(hqlQuery, parameters);
+            return GetWorklistCount(new CompletedWorklistHelper(worklist));
         }
 
         public int GetCancelledWorklistCount()
@@ -377,15 +408,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         public int GetCancelledWorklistCount(RegistrationCancelledWorklist worklist)
         {
-            string hqlQuery = String.Concat(_hqlSelectCount, _hqlJoin, _hqlMainCondition);
-
-            List<QueryParameter> parameters = new List<QueryParameter>();
-            parameters.Add(new QueryParameter("cpsState", ActivityStatus.DC.ToString()));
-            AddMainQueryParameters(parameters);
-
-            AddWorklistQueryAndParameters(ref hqlQuery, parameters, worklist);
-
-            return GetWorklistCount(hqlQuery, parameters);
+            return GetWorklistCount(new CancelledWorklistHelper(worklist));
         }
 
         public int GetCompletedProtocolWorklistCount()
@@ -395,14 +418,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         public int GetCompletedProtocolWorklistCount(RegistrationCompletedProtocolWorklist worklist)
         {
-            string hqlQuery = String.Concat(_hqlSelectProtocolCount, _hqlJoin, _hqlProtocolStateCondition, _hqlUnscheduledCondition);
-
-            List<QueryParameter> parameters = new List<QueryParameter>();
-            parameters.Add(new QueryParameter("cpsState", ActivityStatus.CM.ToString()));
-
-            AddWorklistQueryAndParameters(ref hqlQuery, parameters, worklist);
-
-            return GetWorklistCount(hqlQuery, parameters);
+            return GetWorklistCount(new CompletedProtocolWorklistHelper(worklist));
         }
 
         public int GetSuspendedProtocolWorklistCount()
@@ -412,14 +428,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         public int GetSuspendedProtocolWorklistCount(RegistrationSuspendedProtocolWorklist worklist)
         {
-            string hqlQuery = String.Concat(_hqlSelectProtocolCount, _hqlJoin, _hqlProtocolStateCondition);
-
-            List<QueryParameter> parameters = new List<QueryParameter>();
-            parameters.Add(new QueryParameter("cpsState", ActivityStatus.SU.ToString()));
-
-            AddWorklistQueryAndParameters(ref hqlQuery, parameters, worklist);
-
-            return GetWorklistCount(hqlQuery, parameters);
+            return GetWorklistCount(new SuspendedProtocolWorklistHelper(worklist));
         }
 
         public int GetPendingProtocolWorklistCount()
@@ -429,15 +438,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         public int GetPendingProtocolWorklistCount(RegistrationPendingProtocolWorklist worklist)
         {
-            string hqlQuery = String.Concat(_hqlSelectProtocolCount, _hqlJoin, _hqlDualProtocolStateCondition);
-
-            List<QueryParameter> parameters = new List<QueryParameter>();
-            parameters.Add(new QueryParameter("cpsState", ActivityStatus.SC.ToString()));
-            parameters.Add(new QueryParameter("cpsState2", ActivityStatus.IP.ToString()));
-
-            AddWorklistQueryAndParameters(ref hqlQuery, parameters, worklist);
-
-            return GetWorklistCount(hqlQuery, parameters);
+            return GetWorklistCount(new PendingProtocolWorklistHelper(worklist));
         }
 
         #endregion
@@ -446,20 +447,10 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         public IList<Order> GetOrdersForCheckIn(Patient patient)
         {
+            GetOrdersForCheckInHelper helper = new GetOrdersForCheckInHelper(patient);
+
             List<Order> results = new List<Order>();
-            string hqlQuery = "select distinct o from CheckInProcedureStep cps" +
-                        " join cps.RequestedProcedure rp" +
-                        " join rp.Order o" +
-                        " join o.Patient p" +
-                        _hqlMainCondition +
-                        " and p = :patient";
-
-            List<QueryParameter> parameters = new List<QueryParameter>();
-            parameters.Add(new QueryParameter("cpsState", ActivityStatus.SC.ToString()));
-            parameters.Add(new QueryParameter("patient", patient));
-            AddMainQueryParameters(parameters);
-
-            IList list = DoQuery(hqlQuery, parameters);
+            IList list = DoQuery(helper.WorklistQuery, helper.Parameters);
             foreach (object tuple in list)
             {
                 Order item = (Order)tuple;
@@ -471,42 +462,17 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         public int GetOrdersForCheckInCount(Patient patient)
         {
-            string hqlQuery = "select count(distinct o) from CheckInProcedureStep cps" +
-                        " join cps.RequestedProcedure rp" +
-                        " join rp.Order o" +
-                        " join o.Patient p" +
-                        _hqlMainCondition +
-                        " and p = :patient";
-
-            List<QueryParameter> parameters = new List<QueryParameter>();
-            parameters.Add(new QueryParameter("cpsState", ActivityStatus.SC.ToString()));
-            parameters.Add(new QueryParameter("patient", patient));
-            AddMainQueryParameters(parameters);
-
-            IList list = DoQuery(hqlQuery, parameters);
+            GetOrdersForCheckInHelper helper = new GetOrdersForCheckInHelper(patient);
+            IList list = DoQuery(helper.CountQuery, helper.Parameters);
             return (int)(long)list[0];
         }
 
         public IList<Order> GetOrdersForCancel(Patient patient)
         {
+            GetOrdersForCancelHelper helper = new GetOrdersForCancelHelper(patient);
+
             List<Order> results = new List<Order>();
-            string hqlQuery = "select distinct o from CheckInProcedureStep cps" +
-                        " join cps.RequestedProcedure rp" +
-                        " join rp.Order o" +
-                        " join o.Patient p" +
-                        " where (cps.State = :cpsState1 or cps.State = :cpsState2)" +
-                        " and cps.Scheduling.StartTime between :cpsSchedulingStartTimeBegin and :cpsSchedulingStartTimeEnd" +
-                        " and p = :patient" +
-                        _hqlMPSNotStartedSubQuery;
-
-            List<QueryParameter> parameters = new List<QueryParameter>();
-            parameters.Add(new QueryParameter("cpsState1", ActivityStatus.SC.ToString()));
-            parameters.Add(new QueryParameter("cpsState2", ActivityStatus.IP.ToString()));
-            parameters.Add(new QueryParameter("patient", patient));
-            AddMainQueryParameters(parameters);
-            AddSubQueryParameters(parameters);
-
-            IList list = DoQuery(hqlQuery, parameters);
+            IList list = DoQuery(helper.WorklistQuery, helper.Parameters);
             foreach (object tuple in list)
             {
                 Order order = (Order)tuple;
@@ -518,56 +484,14 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         public int GetOrdersForCancelCount(Patient patient)
         {
-            string hqlQuery = "select count(distinct o) from CheckInProcedureStep cps" +
-                        " join cps.RequestedProcedure rp" +
-                        " join rp.Order o" +
-                        " join o.Patient p" +
-                        " where (cps.State = :cpsState1 or cps.State = :cpsState2)" +
-                        " and cps.Scheduling.StartTime between :cpsSchedulingStartTimeBegin and :cpsSchedulingStartTimeEnd" +
-                        " and p = :patient" +
-                        _hqlMPSNotStartedSubQuery;
-
-            List<QueryParameter> parameters = new List<QueryParameter>();
-            parameters.Add(new QueryParameter("cpsState1", ActivityStatus.SC.ToString()));
-            parameters.Add(new QueryParameter("cpsState2", ActivityStatus.IP.ToString()));
-            parameters.Add(new QueryParameter("patient", patient));
-            AddMainQueryParameters(parameters);
-            AddSubQueryParameters(parameters);
-
-            IList list = DoQuery(hqlQuery, parameters);
+            GetOrdersForCancelHelper helper = new GetOrdersForCancelHelper(patient);
+            IList list = DoQuery(helper.CountQuery, helper.Parameters);
             return (int)(long)list[0];
         }
 
         #endregion
 
-        #region Query for Preview
-
-        public IList<Order> GetOrdersForPatientPreview(Patient patient)
-        {
-            List<Order> results = new List<Order>();
-            string hqlQuery = "select distinct o from ModalityProcedureStep mps" +
-                        " join mps.RequestedProcedure rp" +
-                        " join rp.Order o" +
-                        " join o.Patient p" +
-                        " where p = :patient" +
-                        " and mps.Scheduling.StartTime between :mpsSchedulingStartTimeBegin and :mpsSchedulingStartTimeEnd";
-
-            List<QueryParameter> parameters = new List<QueryParameter>();
-            parameters.Add(new QueryParameter("patient", patient));
-            parameters.Add(new QueryParameter("mpsSchedulingStartTimeBegin", Platform.Time.Date.AddDays(-14)));
-            parameters.Add(new QueryParameter("mpsSchedulingStartTimeEnd", Platform.Time.Date.AddDays(14)));
-
-            IList list = DoQuery(hqlQuery, parameters);
-            foreach (object tuple in list)
-            {
-                Order item = (Order)tuple;
-                results.Add(item);
-            }
-
-            return results;
-        }
-
-        #endregion
+        #region Search
 
         public IList<WorklistItem> Search(WorklistItemSearchCriteria[] where, SearchResultPage page, bool showActiveOnly)
         {
@@ -580,10 +504,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
             if (showActiveOnly)
             {
-                query.Conditions.Add(new HqlCondition(String.Format(
-                    " (o.Status = '{0}' or o.Status = '{1}')", 
-                    OrderStatus.SC, OrderStatus.IP), 
-                    new object[] {} ));
+                query.Conditions.Add(new HqlCondition("(o.Status in (?, ?))", OrderStatus.SC, OrderStatus.IP));
             }
 
             HqlOr or = new HqlOr();
@@ -625,9 +546,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
             if (showActiveOnly)
             {
-                query.Conditions.Add(new HqlCondition(String.Format(
-                    " (o.Status = '{0}' or o.Status = '{1}')",
-                    OrderStatus.SC, OrderStatus.IP), null));
+                query.Conditions.Add(new HqlCondition("(o.Status in (?, ?))", OrderStatus.SC, OrderStatus.IP));
             }
 
             HqlOr or = new HqlOr();
@@ -651,6 +570,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             return (int) ExecuteHqlUnique<long>(query);
         }
 
+        #endregion
 
         #endregion
     }

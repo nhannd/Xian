@@ -29,10 +29,7 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Workflow;
@@ -51,11 +48,11 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
         {
             public void Execute(Order o, Staff checkInStaff, IWorkflow workflow)
             {
-                CollectionUtils.ForEach<RequestedProcedure>(o.RequestedProcedures, new Action<RequestedProcedure>(
+                CollectionUtils.ForEach(o.RequestedProcedures,
                     delegate(RequestedProcedure rp)
                     {
-                        rp.CheckInProcedureStep.Start(checkInStaff);
-                    }));
+                        rp.ProcedureCheckIn.CheckIn();
+                    });
             }
         }
 
