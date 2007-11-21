@@ -69,7 +69,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             _storageLocation = location;
         }
 
-        public override void Execute()
+        protected override void OnExecute()
         {
             using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
@@ -105,7 +105,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             }
         }
 
-        public override void Undo()
+        protected override void OnUndo()
         {
 
         }

@@ -56,12 +56,12 @@ namespace ClearCanvas.ImageServer.Common
             _file = file;
         }
 
-        public override void Execute()
+        protected override void OnExecute()
         {
             _file.Save(DicomWriteOptions.Default);
         }
 
-        public override void Undo()
+        protected override void OnUndo()
         {
             File.Delete(_path);
         }

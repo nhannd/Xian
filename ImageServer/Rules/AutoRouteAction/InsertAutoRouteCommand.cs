@@ -69,7 +69,7 @@ namespace ClearCanvas.ImageServer.Rules.AutoRouteAction
         /// <summary>
         /// Do the insertion of the AutoRoute.
         /// </summary>
-        public override void Execute()
+        protected override void OnExecute()
         {
             using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
@@ -99,7 +99,7 @@ namespace ClearCanvas.ImageServer.Rules.AutoRouteAction
             }           
         }
 
-        public override void Undo()
+        protected override void OnUndo()
         {
 
         }

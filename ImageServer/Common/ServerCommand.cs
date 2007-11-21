@@ -78,15 +78,56 @@ namespace ClearCanvas.ImageServer.Common
         }
         #endregion
 
+        #region Events
+        public delegate void ExecuteBeginEventListener(ServerCommand cmd);
+        public delegate void ExecuteCompletedEventListener(ServerCommand cmd);
+        public delegate void UndoBeginEventListener(ServerCommand cmd);
+        public delegate void UndoCompletedEventListener(ServerCommand cmd);
+
+        public event ExecuteBeginEventListener ExecuteBegin;
+        public event ExecuteCompletedEventListener ExecuteCompleted;
+
+        public event UndoBeginEventListener UndoBegin;
+        public event UndoCompletedEventListener UndoCompleted;
+
+
+        #endregion
+
         #region Abstract Methods
         /// <summary>
         /// Execute the ServerCommand.
         /// </summary>
-        public abstract void Execute();
+        public void Execute()
+        {
+            if (ExecuteBegin != null)
+                ExecuteBegin(this);
+
+            OnExecute();
+
+            if (ExecuteCompleted != null)
+                ExecuteCompleted(this);
+        }
+
+        
         /// <summary>
         /// Undo the operation done by <see cref="Execute"/>.
         /// </summary>
-        public abstract void Undo();
+        public void Undo()
+        {
+            if (UndoBegin != null)
+                UndoBegin(this);
+
+            OnUndo();
+
+            if (UndoCompleted != null)
+                UndoCompleted(this);
+        }
+        #endregion
+
+        #region Virtual methods
+
+        protected abstract void OnExecute();
+        protected abstract void OnUndo();
         #endregion
     }
 }

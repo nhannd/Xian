@@ -94,12 +94,58 @@ namespace ClearCanvas.ImageServer.Rules
         }
         #endregion
 
+        #region Events
+        /// <summary>
+        /// Defines the event handler for <see cref="ExecuteBeginEventHandler"/>.
+        /// </summary>
+        /// <param name="engine"></param>
+        /// <param name="context"></param>
+        public delegate void ExecuteBeginEventHandler(ServerRulesEngine engine, ServerActionContext context);
+        /// <summary>
+        /// Defines the event handler for <see cref="ExecuteCompletedEventHandler"/>.
+        /// </summary>
+        /// <param name="engine"></param>
+        /// <param name="context"></param>
+        public delegate void ExecuteCompletedEventHandler(ServerRulesEngine engine, ServerActionContext context);
+        /// <summary>
+        /// Defines the event handler for <see cref="LoadBeginEventHandler"/>.
+        /// </summary>
+        /// <param name="engines"></param>
+        public delegate void LoadBeginEventHandler(ServerRulesEngine engines);
+        /// <summary>
+        /// Defines the event handler for <see cref="LoadCompletedEventHandler"/>.
+        /// </summary>
+        /// <param name="engines"></param>
+        public delegate void LoadCompletedEventHandler(ServerRulesEngine engines);
+
+        /// <summary>
+        /// Occurs when <see cref="Execute"/> is called.
+        /// </summary>
+        public event ExecuteBeginEventHandler ExecuteBegin;
+        /// <summary>
+        /// Occurs before <see cref="Execute"/> returns.
+        /// </summary>
+        public event ExecuteCompletedEventHandler ExecuteCompleted;
+        /// <summary>
+        /// Occurs when <see cref="Load"/> is called.
+        /// </summary>
+        public event LoadBeginEventHandler LoadBegin;
+        /// <summary>
+        /// Occurs before <see cref="Load"/> returns.
+        /// </summary>
+        public event LoadCompletedEventHandler LoadCompleted;
+
+        #endregion Events
+
         #region Public Methods
         /// <summary>
         /// Load the rules engine from the Persistent Store and compile the conditions and actions.
         /// </summary>
         public void Load()
         {
+            if (LoadBegin != null)
+                LoadBegin(this);
+
             // Clearout the current type list.
             _typeList.Clear();
 
@@ -138,6 +184,10 @@ namespace ClearCanvas.ImageServer.Rules
                     typeCollection.AddRule(theRule);
                 }
             }
+
+            if (LoadCompleted != null)
+                LoadCompleted(this);
+
         }
 
         /// <summary>
@@ -146,10 +196,16 @@ namespace ClearCanvas.ImageServer.Rules
         /// <param name="context">A class containing the context for applying the rules.</param>
         public void Execute(ServerActionContext context)
         {
+            if (ExecuteBegin != null)
+                ExecuteBegin(this, context);
+
             foreach (RuleTypeCollection typeCollection in _typeList.Values)
             {
                 typeCollection.Execute(context);
             }
+
+            if (ExecuteCompleted != null)
+                ExecuteCompleted(this, context);
         }
 
         #endregion

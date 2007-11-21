@@ -274,6 +274,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                             try
                             {
                                 processor = factory.GetItemProcessor();
+                                processor.WorkQueueItem = queueItem;
                             }
                             catch (Exception e)
                             {
@@ -298,7 +299,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                                                     {
                                                         try
                                                         {
-                                                            processor.Process(queueItem);
+                                                            processor.Process();
                                                         }
                                                         catch (Exception e)
                                                         {

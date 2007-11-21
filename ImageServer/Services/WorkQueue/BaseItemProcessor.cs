@@ -34,8 +34,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.DicomServices.Xml;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.Parameters;
@@ -45,12 +47,18 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
     /// <summary>
     /// Base class used when implementing WorkQueue item processors.
     /// </summary>
-    public abstract class BaseItemProcessor : IDisposable
+    public abstract class BaseItemProcessor : IDisposable, IWorkQueueItemProcessor
     {
+        
         #region Private Members
         private IList<StudyStorageLocation> _storageLocationList;
         private IReadContext _readContext;
         private IList<WorkQueueUid> _uidList;
+        private Model.WorkQueue _item;
+        private ProcessResultEnum _result;
+        private string _processorID;
+        private event ProcessingBeginEventListener _processingBegin;
+        private event ProcessingCompletedEventListener _processingCompleted;
         #endregion
 
         #region Protected Properties
@@ -62,16 +70,20 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         {
             get { return _storageLocationList[0]; }
         }
+
         protected IList<StudyStorageLocation> StorageLocationList
         {
             get { return _storageLocationList; }
         }
+
         protected IList<WorkQueueUid> WorkQueueUidList
         {
             get { return _uidList; }
         }
+        
         #endregion
 
+      
         #region Contructors
         public BaseItemProcessor()
         {
@@ -120,8 +132,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         /// </summary>
         /// <param name="item">The <see cref="WorkQueue"/> entry to set.</param>
         /// <param name="failed">If true, the item failed and the failure retry count should be incremented.</param>
-        protected static void SetWorkQueueItemPending(Model.WorkQueue item, bool failed)
+        protected void SetWorkQueueItemPending(Model.WorkQueue item, bool failed)
         {
+            _result = ProcessResultEnum.SUCCESSFUL_PENDING;
+
             using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
                 // Update the WorkQueue item status and times.
@@ -145,6 +159,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                         parms.StatusEnum = StatusEnum.GetEnum("Failed");
                         parms.ScheduledTime = Platform.Time;
                         parms.ExpirationTime = Platform.Time;
+
+                        _result = ProcessResultEnum.FAILED;
                     }
                     else
                     {
@@ -156,6 +172,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                         parms.ExpirationTime =
                             Platform.Time.AddMinutes((settings.WorkQueueMaxFailureCount-item.FailureCount) *
                                                      settings.WorkQueueFailureDelayMinutes);
+
+                        _result = ProcessResultEnum.SUCCESSFUL_PENDING;
                     }
                 }
                 else
@@ -164,6 +182,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                     parms.FailureCount = item.FailureCount;
                     parms.ScheduledTime = Platform.Time.AddSeconds(15.0);
                     parms.ExpirationTime = Platform.Time.AddSeconds(settings.WorkQueueExpireDelaySeconds);
+
+                    _result = ProcessResultEnum.SUCCESSFUL_PENDING;
                 }
 
                 if (false == update.Execute(parms))
@@ -188,8 +208,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         /// </para>
         /// </remarks>
         /// <param name="item">The <see cref="WorkQueue"/> item to set.</param>
-        protected static void SetWorkQueueItemCompleteIfExpired(Model.WorkQueue item)
+        protected void SetWorkQueueItemCompleteIfExpired(Model.WorkQueue item)
         {
+            
             using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
                 IUpdateWorkQueue update = updateContext.GetBroker<IUpdateWorkQueue>();
@@ -204,6 +225,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                     parms.FailureCount = item.FailureCount;
                     parms.ScheduledTime = item.ScheduledTime;
                     parms.ExpirationTime = item.ExpirationTime; // Keep the same
+
+                    _result = ProcessResultEnum.SUCCESSFUL_COMPLETED;
                 }
                 else
                 {
@@ -219,6 +242,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                     parms.ScheduledTime = scheduledTime; 
                     parms.ExpirationTime = item.ExpirationTime; // Keep the same
                     parms.FailureCount = item.FailureCount;
+
+                    _result = ProcessResultEnum.SUCCESSFUL_PENDING;
                 }
 
                 if (false == update.Execute(parms))
@@ -233,7 +258,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         /// Delete an entry in the <see cref="WorkQueueUid"/> table.
         /// </summary>
         /// <param name="sop">The <see cref="WorkQueueUid"/> entry to delete.</param>
-        protected static void DeleteWorkQueueUid(WorkQueueUid sop)
+        protected void DeleteWorkQueueUid(WorkQueueUid sop)
         {
             using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
@@ -275,6 +300,16 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 
             return theXml;
         }
+
+        /// <summary>
+        /// Methods to do the actual processing.
+        /// </summary>
+        /// <remarks>
+        /// The overridden method should set the value of <see cref="ProcessResult"/> before returning.
+        /// This value will be used when the processor fires notification events.
+        /// </remarks>
+        protected abstract void OnProcess();
+
         #endregion
 
         #region IDisposable Members
@@ -290,6 +325,111 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
             }
         }
         #endregion
+
+
+        #region IWorkQueueItemProcessor members
+
+        public string ProcessorID
+        {
+            set { _processorID = value; }
+            get { return _processorID; }
+        }
+
+
+        /// <summary>
+        /// Sets or gets the current WorkQueue item being processed by the processor.
+        /// </summary>
+        public Model.WorkQueue WorkQueueItem
+        {
+            get { return _item; }
+            set { _item = value; }
+        }
+
+        /// <summary>
+        /// Sets or gets the result of the processing.
+        /// </summary>
+        public ProcessResultEnum ProcessResult
+        {
+            get { return _result; }
+            set { _result = value; }
+        }
+
+
+        public event ProcessingBeginEventListener ProcessingBegin
+        {
+            add { _processingBegin += value; }
+            remove { _processingBegin -= value; }
+        }
+        public event ProcessingCompletedEventListener ProcessingCompleted
+        {
+            add { _processingCompleted += value; }
+            remove { _processingCompleted -= value; }
+        }
+
+        public void Process()
+        {
+            if (WorkQueueItem!=null)
+            {
+                EventsHelper.Fire(_processingBegin, WorkQueueItem);
+
+                OnProcess();
+
+                EventsHelper.Fire(_processingCompleted, WorkQueueItem, ProcessResult);
+            
+            }
+            
+        }
+
+        #endregion IWorkQueueItemProcessor members
+
+        /// <summary>
+        /// Simple routine for failing a work queue item.
+        /// </summary>
+        /// <param name="item">The item to fail.</param>
+        public void FailQueueItem(Model.WorkQueue item)
+        {
+            using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            {
+                IUpdateWorkQueue update = updateContext.GetBroker<IUpdateWorkQueue>();
+                WorkQueueUpdateParameters parms = new WorkQueueUpdateParameters();
+                parms.ProcessorID = ServiceTools.ProcessorId;
+
+                parms.WorkQueueKey = item.GetKey();
+                parms.StudyStorageKey = item.StudyStorageKey;
+                parms.FailureCount = item.FailureCount + 1;
+
+                WorkQueueSettings settings = WorkQueueSettings.Default;
+                if ((item.FailureCount + 1) > settings.WorkQueueMaxFailureCount)
+                {
+                    Platform.Log(LogLevel.Error,
+                                 "Failing {0} WorkQueue entry ({1}), reached max retry count of {2}",
+                                 item.TypeEnum.Description, item.GetKey(), item.FailureCount + 1);
+                    parms.StatusEnum = StatusEnum.GetEnum("Failed");
+                    parms.ScheduledTime = Platform.Time;
+                    parms.ExpirationTime = Platform.Time.AddDays(1);
+                }
+                else
+                {
+                    Platform.Log(LogLevel.Error,
+                                 "Resetting {0} WorkQueue entry ({1}) to Pending, current retry count {2}",
+                                 item.TypeEnum.Description, item.GetKey(), item.FailureCount + 1);
+                    parms.StatusEnum = StatusEnum.GetEnum("Pending");
+                    parms.ScheduledTime = Platform.Time.AddMinutes(settings.WorkQueueFailureDelayMinutes);
+                    parms.ExpirationTime =
+                        Platform.Time.AddMinutes((settings.WorkQueueMaxFailureCount - item.FailureCount) *
+                                                 settings.WorkQueueFailureDelayMinutes);
+                }
+
+                if (false == update.Execute(parms))
+                {
+                    Platform.Log(LogLevel.Error, "Unable to update {0} WorkQueue GUID: {1}", item.TypeEnum.Name,
+                                 item.GetKey().ToString());
+                }
+
+                updateContext.Commit();
+            }
+        }
+
     }
 
 }

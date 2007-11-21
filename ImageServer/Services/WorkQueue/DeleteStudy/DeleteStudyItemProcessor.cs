@@ -88,14 +88,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy
 
         #region IWorkQueueItemProcessor Members
 
-        public string ProcessorID
-        {
-            get { return _processorId; }
-            set { _processorId = value; }
-        }
+        
 
-        public void Process(Model.WorkQueue item)
+        protected override void OnProcess()
         {
+            Model.WorkQueue item = WorkQueueItem;
+
             //Load the storage location.
             LoadStorageLocation(item);
 

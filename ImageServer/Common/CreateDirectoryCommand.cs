@@ -56,7 +56,7 @@ namespace ClearCanvas.ImageServer.Common
             _directory = directory;
         }
 
-        public override void Execute()
+        protected override void OnExecute()
         {
             if (Directory.Exists(_directory))
             {
@@ -67,7 +67,7 @@ namespace ClearCanvas.ImageServer.Common
             _created = true;
         }
 
-        public override void Undo()
+        protected override void OnUndo()
         {
             if (_created)
             {

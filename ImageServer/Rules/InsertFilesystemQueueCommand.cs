@@ -56,7 +56,7 @@ namespace ClearCanvas.ImageServer.Rules
             _scheduledTime = scheduledTime;
         }
 
-        public override void Execute()
+        protected override void OnExecute()
         {
             using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
@@ -78,7 +78,7 @@ namespace ClearCanvas.ImageServer.Rules
             }  
         }
 
-        public override void Undo()
+        protected override void OnUndo()
         {
             
         }

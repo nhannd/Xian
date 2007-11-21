@@ -37,12 +37,26 @@ using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue
 {
+	/// <summary>
+    /// Defines the event handler for <see cref="IWorkQueueItemProcessor.ProcessingBegin"/>.
+	/// </summary>
+	/// <param name="item"></param>
+    public delegate void ProcessingBeginEventListener(Model.WorkQueue item);
+    /// <summary>
+    /// Defines the event handler for <see cref="IWorkQueueItemProcessor.ProcessingCompleted"/>.
+    /// </summary>
+    /// <param name="item"></param>
+    /// <param name="status"></param>
+    public delegate void ProcessingCompletedEventListener(Model.WorkQueue item, ProcessResultEnum status);
     
+
+
     /// <summary>
     /// Interface for processors of WorkQueue items
     /// </summary>
     public interface IWorkQueueItemProcessor : IDisposable
     {
+        #region Properties
         // A string used to identify the processor
         string ProcessorID
         {
@@ -50,6 +64,44 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
             set;
         }
 
-        void Process(Model.WorkQueue item);
+        /// <summary>
+        /// Gets the result of the processing.
+        /// </summary>
+        ProcessResultEnum ProcessResult
+        {
+            get;
+        }
+
+        /// <summary>
+        /// Gets or sets the WorkQueue item being processed.
+        /// </summary>
+        Model.WorkQueue WorkQueueItem
+        {
+            get; set;
+        }
+
+        #endregion Properties
+
+        #region Events
+        /// <summary>
+        /// Occurs before the <see cref="WorkQueueItem"/> is processed.
+        /// </summary>
+        event ProcessingBeginEventListener ProcessingBegin;
+
+        /// <summary>
+        /// Occurs after the <see cref="WorkQueueItem"/> has been processed.
+        /// </summary>
+        /// <remarks>
+        /// The status of the processing can be retrieved via <see cref="ProcessResult"/>.
+        /// </remarks>
+        event ProcessingCompletedEventListener ProcessingCompleted;
+        #endregion
+
+        #region Methods
+
+        void Process();
+        
+        #endregion
+
     }
 }

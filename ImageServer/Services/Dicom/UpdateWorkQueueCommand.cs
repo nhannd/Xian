@@ -59,7 +59,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
             _storageLocation = location;
         }
 
-        public override void Execute()
+        protected override void OnExecute()
         {
             using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
@@ -76,7 +76,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
             }           
         }
 
-        public override void Undo()
+        protected override void OnUndo()
         {
 
         }

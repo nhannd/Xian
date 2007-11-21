@@ -170,6 +170,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageServer.Ser
 		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageServer.Performance", "Performance\ClearCanvas.ImageServer.Performance.csproj", "{932BFAA9-838F-49B1-9B5A-CB157DAF058A}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -260,6 +266,10 @@ Global
 		{ACB80CF0-35D3-491B-A561-CF66BF7FA2BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ACB80CF0-35D3-491B-A561-CF66BF7FA2BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ACB80CF0-35D3-491B-A561-CF66BF7FA2BA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{932BFAA9-838F-49B1-9B5A-CB157DAF058A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{932BFAA9-838F-49B1-9B5A-CB157DAF058A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{932BFAA9-838F-49B1-9B5A-CB157DAF058A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{932BFAA9-838F-49B1-9B5A-CB157DAF058A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

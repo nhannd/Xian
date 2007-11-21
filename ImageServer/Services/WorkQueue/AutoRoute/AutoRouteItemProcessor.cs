@@ -75,9 +75,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
         /// <summary>
         /// Process a <see cref="WorkQueue"/> item of type AutoRoute.
         /// </summary>
-        /// <param name="item"></param>
-        public void Process(Model.WorkQueue item)
+        protected override void OnProcess()
         {
+            Model.WorkQueue item = WorkQueueItem; // avoid using property everytime for performance purpose
+
             // Load related rows form the WorkQueueUid table
             LoadUids(item);
 
