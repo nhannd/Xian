@@ -1,14 +1,10 @@
-using System;
 using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Enterprise.Core;
-using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Criteria;
-using ClearCanvas.ImageServer.Model.SelectBrokers;
 using ClearCanvas.Common;
 
-namespace ClearCanvas.ImageServer.Web.Common
+
+namespace ClearCanvas.ImageServer.Web.Common.Data
 {
     /// <summary>
     /// Defines the interface of a device configuration controller.
@@ -60,7 +56,7 @@ namespace ClearCanvas.ImageServer.Web.Common
         /// Delete a device from the database.
         /// </summary>
         /// <param name="device"></param>
-        /// <returns></returns>
+        /// <returns><b>true</b> if the record is deleted successfully. <b>false</b> otherwise.</returns>
         public bool DeleteDevice(Device device)
         {
             Platform.Log(LogLevel.Info, "Deleting {0}, GUID={1}", device.AeTitle, device.GetKey());
@@ -77,7 +73,7 @@ namespace ClearCanvas.ImageServer.Web.Common
         /// Update a device in the database.
         /// </summary>
         /// <param name="device"></param>
-        /// <returns></returns>
+        /// <returns><b>true</b> if the record is updated successfully. <b>false</b> otherwise.</returns>
         public bool UpdateDevice(Device device)
         {
             Platform.Log(LogLevel.Info, "Updating device GUID={1} : AETitle={0}",  device.GetKey(), device.AeTitle);
@@ -90,12 +86,8 @@ namespace ClearCanvas.ImageServer.Web.Common
         /// <summary>
         /// Retrieve list of devices.
         /// </summary>
-        /// <param name="AETitle"></param>
-        /// <param name="IP"></param>
-        /// <param name="enabledOnly"></param>
-        /// <param name="dhcpOnly"></param>
-        /// <param name="serverPartitionkey"></param>
-        /// <returns></returns>
+        /// <param name="criteria"/>
+        /// <returns>List of <see cref="Device"/> matches <paramref name="criteria"/></returns>
         public IList<Device> GetDevices(DeviceSelectCriteria criteria)
         {
             return _adapter.GetDevices(criteria);
@@ -104,7 +96,7 @@ namespace ClearCanvas.ImageServer.Web.Common
         /// <summary>
         /// Retrieve a list of server partitions.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>List of all <see cref="ServerPartition"/>.</returns>
         public IList<ServerPartition> GetServerPartitions()
         {
             return _serverAdapter.GetServerPartitions();

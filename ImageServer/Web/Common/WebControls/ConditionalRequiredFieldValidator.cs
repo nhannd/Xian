@@ -1,15 +1,8 @@
 using System;
-using System.Configuration;
 using System.Drawing;
-using System.Text;
-using System.Web;
-using System.Web.Security;
-using System.Web.UI;
 using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
-using System.Web.UI.HtmlControls;
 
-namespace ClearCanvas.ImageServer.Web.WebControls
+namespace ClearCanvas.ImageServer.Web.Common.WebControls
 {
     /// <summary>
     /// Validate a required Web UI input control containing value based on the state of another checkbox control.

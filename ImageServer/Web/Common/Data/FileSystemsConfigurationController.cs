@@ -4,9 +4,8 @@ using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Criteria;
-using ClearCanvas.ImageServer.Model.Parameters;
 
-namespace ClearCanvas.ImageServer.Web.Common
+namespace ClearCanvas.ImageServer.Web.Common.Data
 {
     /// <summary>
     /// Defines the interface of a file system configuration controller.

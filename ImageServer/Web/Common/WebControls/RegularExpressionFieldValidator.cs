@@ -9,7 +9,7 @@ using System.Web.UI.WebControls;
 using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
 
-namespace ClearCanvas.ImageServer.Web.WebControls
+namespace ClearCanvas.ImageServer.Web.Common.WebControls
 {
     /// <summary>
     /// Validate if an input control value matches a specified regular expression.

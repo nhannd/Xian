@@ -48,7 +48,7 @@ using ClearCanvas.ImageServer.Model.SelectBrokers;
 using ClearCanvas.ImageServer.Model.Criteria;
 
 
-namespace ClearCanvas.ImageServer.Web.Common
+namespace ClearCanvas.ImageServer.Web.Common.Data
 {
     /// <summary>
     /// Used to create/update/delete server partition entries in the database.

@@ -9,7 +9,7 @@ using ClearCanvas.ImageServer.Model.EnumBrokers;
 using ClearCanvas.ImageServer.Model.Parameters;
 using ClearCanvas.ImageServer.Model.SelectBrokers;
 
-namespace ClearCanvas.ImageServer.Web.Common
+namespace ClearCanvas.ImageServer.Web.Common.Data
 {
     /// <summary>
     /// Used to create/update/delete file system entries in the database.

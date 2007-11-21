@@ -30,18 +30,21 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DeviceConfigurationController.cs" />
-    <Compile Include="DeviceDataAdapter.cs" />
-    <Compile Include="ErrorModule.cs" />
-    <Compile Include="FileSystemDataAdapter.cs" />
-    <Compile Include="FileSystemsConfigurationController.cs" />
+    <Compile Include="Data\DeviceConfigurationController.cs" />
+    <Compile Include="Data\DeviceDataAdapter.cs" />
+    <Compile Include="Modules\ErrorModule.cs" />
+    <Compile Include="Data\FileSystemDataAdapter.cs" />
+    <Compile Include="Data\FileSystemsConfigurationController.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ServerParitionConfigController.cs" />
-    <Compile Include="ServerPartitionDataAdapter.cs" />
+    <Compile Include="Data\ServerParitionConfigController.cs" />
+    <Compile Include="Data\ServerPartitionDataAdapter.cs" />
+    <Compile Include="WebControls\ConditionalRequiredFieldValidator.cs" />
+    <Compile Include="WebControls\RegularExpressionFieldValidator.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Common\ClearCanvas.Common.csproj">

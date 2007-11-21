@@ -1,10 +1,8 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Web;
 using ClearCanvas.Common;
 
-namespace ClearCanvas.ImageServer.Web.Common
+namespace ClearCanvas.ImageServer.Web.Common.Modules
 {
     /// <summary>
     /// Used to handle web application error. 

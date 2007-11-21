@@ -41,7 +41,7 @@ using ClearCanvas.ImageServer.Model.Parameters;
 using ClearCanvas.ImageServer.Model.SelectBrokers;
 
 
-namespace ClearCanvas.ImageServer.Web.Common
+namespace ClearCanvas.ImageServer.Web.Common.Data
 {
     /// <summary>
     /// Used to create/update/delete device entries in the database.
