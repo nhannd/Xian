@@ -30,6 +30,7 @@
 #endregion
 
 using System.Collections.Generic;
+using System.Reflection;
 using System.ServiceProcess;
 using System.Text;
 using System;
@@ -38,21 +39,42 @@ namespace ClearCanvas.Server.ShredHostService
 {
     static class Program
     {
-        /// <summary>
+		private static Assembly _assembly;
+		private static Type _shredHostType;
+		
+		internal static void Start()
+		{
+			// the default startup path is in the system folder
+			// we need to change this to be able to scan for plugins and to log
+			string startupPath = System.AppDomain.CurrentDomain.BaseDirectory;
+			System.IO.Directory.SetCurrentDirectory(startupPath);
+
+			// we choose to dynamically load the ShredHost dll so that we can bypass
+			// the requirement that the ShredHost dll be Strong Name signed, i.e.
+			// if we were to reference it directly in the the project at design time
+			// ClearCanvas.Server.ShredHost.dll would also need to be Strong Name signed
+			_assembly = Assembly.Load("ClearCanvas.Server.ShredHost");
+			_shredHostType = _assembly.GetType("ClearCanvas.Server.ShredHost.ShredHost");
+			_shredHostType.InvokeMember("Start", BindingFlags.Static | BindingFlags.InvokeMethod | BindingFlags.Public,
+				null, null, new object[] { });
+		}
+
+		internal static void Stop()
+		{
+			_shredHostType.InvokeMember("Stop", BindingFlags.Static | BindingFlags.InvokeMethod | BindingFlags.Public,
+				null, null, new object[] { });
+		}
+
+    	/// <summary>
         /// The main entry point for the application.
         /// </summary>
         static void Main()
         {
-            ServiceBase[] ServicesToRun;
-
-            // More than one user Service may run within the same process. To add
-            // another service to this process, change the following line to
-            // create a second service object. For example,
-            //
-            //   ServicesToRun = new ServiceBase[] {new Service1(), new MySecondUserService()};
-            //
-            ServicesToRun = new ServiceBase[] { new ShredHostService() };
-            ServiceBase.Run(ServicesToRun);
-        }
+			Start();
+			Console.WriteLine("Press <Enter> to terminate the ShredHost.");
+			Console.WriteLine();
+			Console.ReadLine();
+			Stop();
+		}
     }
 }

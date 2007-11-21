@@ -1,90 +1,106 @@
-<!-- This batch file is executed as a postbuild step of the ClearCanvas.Desktop.Executable -->
-<!-- project.  It copies all common ClearCanvas files into the appropriate directories, -->
-<!-- then runs a solution specific batch file to copy files specific to that solution. -->
-
-<!-- Assumptions: -->
-<!-- 1) The name of the solution specific batch file is %2.bat, where %2 is the name of the solution -->
-<!-- 2) %2.bat is located in the same folder as the solution file -->
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-	<PropertyGroup>
-		<TrunkDirectory>$(ProjectDir)\..\..</TrunkDirectory>
-		<DistributionDirectory>$(ProjectDir)\$(PlatformFolderPrefix)\$(OutDir)</DistributionDirectory>
-		<CommonDirectory>$(DistributionDirectory)\common</CommonDirectory>
-		<PluginsDirectory>$(DistributionDirectory)\plugins</PluginsDirectory>
-		<LogsDirectory>$(DistributionDirectory)\logs</LogsDirectory>
-	</PropertyGroup>
+  <PropertyGroup>
+    <!-- The 'ProjectOutDir' property is the default output folder of the project and should not be overridden -->
+    <ProjectOutDir>$(ProjectDir)\$(PlatformFolderPrefix)\$(OutDir)</ProjectOutDir>
+    <DeletePlugins>true</DeletePlugins>
+  </PropertyGroup>
 
-	<ItemGroup>
-		<DestinationDirectories Include="$(CommonDirectory)" />
-		<DestinationDirectories Include="$(PluginsDirectory)" />
-		<DestinationDirectories Include="$(LogsDirectory)" />
-	</ItemGroup>
-	
-	<!-- Config files, to be placed in distribution directory -->
-	<ItemGroup>
-		<ConfigFiles Include="$(ProjectDir)\Logging.config" />
-	</ItemGroup>
+  <!-- If DistributionDirectory were set directly on the command line, we would be unable to override it.-->
+  <!-- Therefore, DistributionDir is the command line variable, and we set DistributionDirectory based on its value. -->
+  <Choose>
+    <When Condition=" '$(DistributionDir)' == ''">
+      <PropertyGroup>
+        <DistributionDirectory>$(ProjectOutDir)</DistributionDirectory>
+        <DeletePlugins>true</DeletePlugins>
+      </PropertyGroup>
+    </When>
+    <When Condition=" '$(DistributionDir)' != '$(ProjectOutDir)' ">
+      <PropertyGroup>
+        <DistributionDirectory>$(DistributionDir)</DistributionDirectory>
+        <DeletePlugins>false</DeletePlugins>
+      </PropertyGroup>
+    </When>
+  </Choose>
 
-	<!-- Shared library files, to be placed in common directory -->
-	<ItemGroup>
-		<SharedLibraryFiles Include="$(TrunkDirectory)\Common\bin\$(Configuration)\*.*" />
-		<SharedLibraryFiles Include="$(TrunkDirectory)\ReferencedAssemblies\nunit.framework.dll" /> 
-		<SharedLibraryFiles Include="$(TrunkDirectory)\ReferencedAssemblies\log4net.dll" />
-		<SharedLibraryFiles Include="$(TrunkDirectory)\ReferencedAssemblies\DotNetMagic2005.DLL" />
-	</ItemGroup>
+  <PropertyGroup>
+    <CommonDirectory>$(DistributionDirectory)\common</CommonDirectory>
+    <PluginsDirectory>$(DistributionDirectory)\plugins</PluginsDirectory>
+    <LogDirectory>$(DistributionDirectory)\logs</LogDirectory>
+  </PropertyGroup>
 
-	<!-- License files -->
-	<ItemGroup>
-		<LicenseFiles Include="$(TrunkDirectory)\License.rtf" />
-	</ItemGroup>
+  <ItemGroup>
+    <DestinationDirectories Include="$(DistributionDirectory)" />
+    <DestinationDirectories Include="$(CommonDirectory)" />
+    <DestinationDirectories Include="$(PluginsDirectory)" />
+    <DestinationDirectories Include="$(LogDirectory)" />
+  </ItemGroup>
 
-	<!-- Shared plugin files, to be placed in common directory -->
-	<ItemGroup>
-		<SharedPluginFiles Include="$(TrunkDirectory)\Desktop\bin\$(Configuration)\ClearCanvas.Desktop.dll" />
-		<SharedPluginFiles Include="$(TrunkDirectory)\Desktop\Configuration\bin\$(Configuration)\ClearCanvas.Desktop.Configuration.dll" />
-		<SharedPluginFiles Include="$(TrunkDirectory)\Desktop\Configuration\View\WinForms\bin\$(Configuration)\ClearCanvas.Desktop.Configuration.View.WinForms.dll" />
-		<SharedPluginFiles Include="$(TrunkDirectory)\Desktop\View\WinForms\bin\$(Configuration)\ClearCanvas.Desktop.View.WinForms.dll" />
-		<SharedPluginFiles Include="$(TrunkDirectory)\Desktop\Help\bin\$(Configuration)\ClearCanvas.Desktop.Help.dll" />
-		<SharedPluginFiles Include="$(TrunkDirectory)\Desktop\ExtensionBrowser\bin\$(Configuration)\ClearCanvas.Desktop.ExtensionBrowser.dll" />
-		<SharedPluginFiles Include="$(TrunkDirectory)\Desktop\ExtensionBrowser\View\WinForms\bin\$(Configuration)\ClearCanvas.Desktop.ExtensionBrowser.View.WinForms.dll" />
-	</ItemGroup>
+  <!-- Config files, to be placed in distribution directory -->
+  <ItemGroup>
+    <ConfigFiles Include="$(ProjectDir)\Logging.config" />
+  </ItemGroup>
 
-	<!-- Execution files -->
-	<ItemGroup>
-		<ExecutionFiles Include="$(ProjectDir)\bin\$(Configuration)\ClearCanvas.Desktop.Executable.exe" />
-		<ExecutionFiles Include="$(ProjectDir)\bin\$(Configuration)\ClearCanvas.Desktop.Executable.exe.config" />
-	</ItemGroup>
+  <!-- Shared library files, to be placed in common directory -->
+  <ItemGroup>
+    <SharedLibraryFiles Include="$(ProjectDir)\..\..\Common\bin\$(Configuration)\ClearCanvas.Common.dll" />
+    <SharedLibraryFiles Include="$(ProjectDir)\..\..\ReferencedAssemblies\log4net.dll" />
+    <SharedLibraryFiles Include="$(ProjectDir)\..\..\ReferencedAssemblies\DotNetMagic2005.DLL" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <SharedLibraryFiles Include="$(ProjectDir)\..\..\ReferencedAssemblies\nunit.framework.dll" />
+  </ItemGroup>
+  
+  <!-- License files -->
+  <ItemGroup>
+    <LicenseFiles Include="$(ProjectDir)\..\..\License.rtf" />
+  </ItemGroup>
+
+  <!-- Shared plugin files, to be placed in common directory -->
+  <ItemGroup>
+    <SharedPluginFiles Include="$(ProjectDir)\..\..\Desktop\bin\$(Configuration)\ClearCanvas.Desktop.dll" />
+    <SharedPluginFiles Include="$(ProjectDir)\..\..\Desktop\Configuration\bin\$(Configuration)\ClearCanvas.Desktop.Configuration.dll" />
+    <SharedPluginFiles Include="$(ProjectDir)\..\..\Desktop\Configuration\View\WinForms\bin\$(Configuration)\ClearCanvas.Desktop.Configuration.View.WinForms.dll" />
+    <SharedPluginFiles Include="$(ProjectDir)\..\..\Desktop\View\WinForms\bin\$(Configuration)\ClearCanvas.Desktop.View.WinForms.dll" />
+    <SharedPluginFiles Include="$(ProjectDir)\..\..\Desktop\Help\bin\$(Configuration)\ClearCanvas.Desktop.Help.dll" />
+    <SharedPluginFiles Include="$(ProjectDir)\..\..\Desktop\ExtensionBrowser\bin\$(Configuration)\ClearCanvas.Desktop.ExtensionBrowser.dll" />
+    <SharedPluginFiles Include="$(ProjectDir)\..\..\Desktop\ExtensionBrowser\View\WinForms\bin\$(Configuration)\ClearCanvas.Desktop.ExtensionBrowser.View.WinForms.dll" />
+  </ItemGroup>
+
+  <!-- Execution files -->
+  <ItemGroup>
+    <ExecutionFiles Include="$(ProjectDir)\bin\$(Configuration)\ClearCanvas.Desktop.Executable.exe" />
+    <ExecutionFiles Include="$(ProjectDir)\bin\$(Configuration)\ClearCanvas.Desktop.Executable.exe.config" />
+  </ItemGroup>
 
   <!-- Plugin files -->
   <ItemGroup>
     <PluginDeleteFiles Include="$(PluginsDirectory)\*.*" />
   </ItemGroup>
-  
-	<Target Name="Copy files">
-		<Message Text="Executing ClearCanvas post-build step" />
 
-		<!-- Delete contents of plugin directory -->
-		<Delete Files="@(PluginDeleteFiles)" ContinueOnError="true"/>
+  <Target Name="Copy files">
 
-		<!-- Make required directories -->
-		<MakeDir Directories="@(DestinatonDirectories)" ContinueOnError="true"/>
+    <!-- Make required directories -->
+    <MakeDir Directories="@(DestinationDirectories)" ContinueOnError="true" />
 
-		<!-- Copy shared config files -->
+    <!-- Delete contents of plugin directory -->
+    <Delete Condition="$(DeletePlugins)" Files="@(PluginDeleteFiles)" ContinueOnError="true" />
+
+    <!-- Copy shared config files -->
 		<Copy SourceFiles="@(ConfigFiles)" DestinationFolder="$(DistributionDirectory)" ContinueOnError="true"/>
 
 		<!-- Copy shared libraries -->
-		<Copy SourceFiles="@(SharedLibraryFiles)" DestinationFolder="$(CommonDirectory)" ContinueOnError="true"/>
+		<Copy SourceFiles="@(SharedLibraryFiles)" DestinationFolder="$(CommonDirectory)" />
 
 		<!-- Copy shared plugins -->
-		<Copy SourceFiles="@(SharedPluginFiles)" DestinationFolder="$(PluginsDirectory)" ContinueOnError="true"/>
+		<Copy SourceFiles="@(SharedPluginFiles)" DestinationFolder="$(PluginsDirectory)" />
 
 		<!-- Copy license file -->
-		<Copy SourceFiles="@(LicenseFiles)" DestinationFolder="$(DistributionDirectory)" ContinueOnError="true"/>	
+		<Copy SkipUnchangedFiles="true" SourceFiles="@(LicenseFiles)" DestinationFolder="$(DistributionDirectory)" ContinueOnError="true"/>	
 
 		<!-- Copy execution files -->
-		<Copy SourceFiles="@(ExecutionFiles)" DestinationFolder="$(DistributionDirectory)" ContinueOnError="true"/>	
+		<Copy SkipUnchangedFiles="true" SourceFiles="@(ExecutionFiles)" DestinationFolder="$(DistributionDirectory)" />	
 
 		<!-- Run the solution specific build file -->
-		<MSBuild Projects="$(SolutionDir)\$(SolutionName)_dist.proj" Properties="SolutionDir=$(SolutionDir);SolutionName=$(SolutionName);Configuration=$(Configuration);ProjectDir=$(ProjectDir);OutDir=$(OutDir);Platform=$(Platform);DistributionDirectory=$(DistributionDirectory);CommonDirectory=$(CommonDirectory);PluginsDirectory=$(PluginsDirectory);LogDirectory=$(LogDirectory)" />
+		<MSBuild Projects="$(SolutionDir)\$(SolutionName)_dist.proj" Properties="SolutionDir=$(SolutionDir);SolutionName=$(SolutionName);Configuration=$(Configuration);ProjectName=$(ProjectName);ProjectOutDir=$(ProjectOutDir);DistributionDirectory=$(DistributionDirectory);CommonDirectory=$(CommonDirectory);PluginsDirectory=$(PluginsDirectory);LogDirectory=$(LogDirectory)" />
 	</Target>
 </Project>

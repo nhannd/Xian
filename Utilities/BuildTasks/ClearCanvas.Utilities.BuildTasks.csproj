@@ -35,6 +35,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CombineAppConfigs.cs" />
+    <Compile Include="FileReplaceText.cs" />
     <Compile Include="NUnitLogParser.cs" />
     <Compile Include="RelativeBuildDateTime.cs" />
     <Compile Include="VersionProjects.cs" />
@@ -49,6 +51,7 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>copy $(ProjectDir)\ClearCanvas.Utilities.BuildTasks.Targets $(TargetDir)</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
 </Project>

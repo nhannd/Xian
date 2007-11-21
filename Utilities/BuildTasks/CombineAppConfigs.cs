@@ -1,54 +1,57 @@
-#region License
-
-// Copyright (c) 2006-2007, ClearCanvas Inc.
-// All rights reserved.
-//
-// Redistribution and use in source and binary forms, with or without modification, 
-// are permitted provided that the following conditions are met:
-//
-//    * Redistributions of source code must retain the above copyright notice, 
-//      this list of conditions and the following disclaimer.
-//    * Redistributions in binary form must reproduce the above copyright notice, 
-//      this list of conditions and the following disclaimer in the documentation 
-//      and/or other materials provided with the distribution.
-//    * Neither the name of ClearCanvas Inc. nor the names of its contributors 
-//      may be used to endorse or promote products derived from this software without 
-//      specific prior written permission.
-//
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
-// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR 
-// PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR 
-// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, 
-// OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE 
-// GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) 
-// HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
-// STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN 
-// ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
-// OF SUCH DAMAGE.
-
-#endregion
-
 using System;
 using System.Xml;
+using Microsoft.Build.Utilities;
+using System.Text;
 
-namespace AppConfigCreator
+namespace ClearCanvas.Utilities.BuildTasks
 {
-	class Program
+	public class CombineAppConfigs : Task
 	{
-		/// <summary>
-		/// This is just a very simple tool that will combine app.config files from multiple projects together.
-		/// It uses a 'layered' technique, replacing existing elements as it proceeeds through the list of source 
-		/// config files.
-		/// Note that it is not a robust tool, it only accounts for the following nodes explicitly:
-		/// - configSections (applicationSettings and userSettings)
-		/// - applicationSettings
-		/// - userSettings
-		/// - system.ServiceModel
-		/// 
-		/// all other elements are simply replaced as each source file is processed.
-		/// </summary>
-		static void Main(string[] args)
+		private string[] _sourceFiles;
+		private string _outputFile;
+
+		public CombineAppConfigs()
+		{
+			_outputFile = "app.config";
+		}
+
+		public string OutputFile
+		{
+			get { return _outputFile; }
+			set { _outputFile = value; }
+		}
+	
+		public string[] SourceFiles
+		{
+			get { return _sourceFiles; }
+			set { _sourceFiles = value; }
+		}
+				
+		public override bool Execute()
+		{
+			try
+			{
+				StringBuilder builder = new StringBuilder();
+				builder.AppendLine("Combining App Configs:");
+				foreach (string sourceFile in _sourceFiles)
+					builder.AppendFormat("\t{0}\n", sourceFile);
+
+				builder.AppendFormat("into file: {0}", _outputFile);
+
+				base.Log.LogMessage(builder.ToString());
+
+				Run();
+				
+				return true;
+			}
+			catch(Exception e)
+			{
+				base.Log.LogErrorFromException(e);
+				return false;
+			}
+		}
+
+		private void Run()
 		{
 			XmlDocument newDocument = new XmlDocument();
 
@@ -70,9 +73,9 @@ namespace AppConfigCreator
 				newConfigurationElement.AppendChild(newElement);
 			}
 
-			for (int i = 0; i < args.Length; ++i)
+			for (int i = 0; i < SourceFiles.Length; ++i)
 			{
-				string path = args[i];
+				string path = SourceFiles[i];
 				XmlDocument document = new XmlDocument();
 				document.Load(path);
 
@@ -139,6 +142,14 @@ namespace AppConfigCreator
 					}
 				}
 
+				elementPath = "configSections/section";
+				foreach (XmlElement sectionNode in configurationElement.SelectNodes(elementPath))
+				{
+					XmlElement newConfigSection = CreateElement(newConfigurationElement, "configSections", null, null);
+					xPath = string.Format("section[@name='{0}']", sectionNode.GetAttribute("name"));
+					UpdateNode(newConfigSection, sectionNode, xPath);
+				}
+
 				XmlElement serviceModelBindingsElement = configurationElement.SelectSingleNode("system.serviceModel/bindings") as XmlElement;
 				if (serviceModelBindingsElement != null)
 				{
@@ -176,8 +187,8 @@ namespace AppConfigCreator
 					newConfigurationElement.RemoveChild(element);
 			}
 
-			System.IO.File.Delete("app.config");
-			newDocument.Save("app.config");
+			System.IO.File.Delete(OutputFile);
+			newDocument.Save(OutputFile);
 		}
 
 		private static XmlElement CreateElement(XmlElement parentElement, string path, string attributeName, string attributeValue)
