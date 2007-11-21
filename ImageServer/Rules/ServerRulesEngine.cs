@@ -33,6 +33,7 @@ using System.Collections.Generic;
 using ClearCanvas.Common.Actions;
 using ClearCanvas.Common.Specifications;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Criteria;
 using ClearCanvas.ImageServer.Model.SelectBrokers;
@@ -66,6 +67,7 @@ namespace ClearCanvas.ImageServer.Rules
     {
         #region Private Members
         private readonly ServerRuleApplyTimeEnum _applyTime;
+        private readonly ServerEntityKey _serverPartitionKey;
         private readonly Dictionary<ServerRuleTypeEnum, RuleTypeCollection> _typeList = new Dictionary<ServerRuleTypeEnum, RuleTypeCollection>();
         #endregion
 
@@ -78,9 +80,11 @@ namespace ClearCanvas.ImageServer.Rules
         /// apply time is specified by the <paramref name="applyTime"/> parameter.
         /// </remarks>
         /// <param name="applyTime">An enumerater value as to when the rules shall apply.</param>
-        public ServerRulesEngine(ServerRuleApplyTimeEnum applyTime)
+        /// <param name="serverPartitionKey">The Server Partition the rules engine applies to.</param>
+        public ServerRulesEngine(ServerRuleApplyTimeEnum applyTime, ServerEntityKey serverPartitionKey)
         {
             _applyTime = applyTime;
+            _serverPartitionKey = serverPartitionKey;
         }
         #endregion
 
@@ -153,11 +157,12 @@ namespace ClearCanvas.ImageServer.Rules
             {
                 ISelectServerRule broker = read.GetBroker<ISelectServerRule>();
 
-                ServerRuleSelectCriteria critera = new ServerRuleSelectCriteria();
-                critera.Active.EqualTo(true);
-                critera.ServerRuleApplyTimeEnum.EqualTo(_applyTime);
+                ServerRuleSelectCriteria criteria = new ServerRuleSelectCriteria();
+                criteria.Active.EqualTo(true);
+                criteria.ServerRuleApplyTimeEnum.EqualTo(_applyTime);
+                criteria.ServerPartitionKey.EqualTo(_serverPartitionKey);
 
-                IList<ServerRule> list = broker.Find(critera);
+                IList<ServerRule> list = broker.Find(criteria);
 
                 // Create the specification and action compilers
                 // We'll compile the rules right away

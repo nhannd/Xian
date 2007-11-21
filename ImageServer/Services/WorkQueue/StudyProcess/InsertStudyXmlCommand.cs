@@ -43,7 +43,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
     /// <summary>
     /// Insert DICOM file into a <see cref="StudyXml"/> file and save to disk.
     /// </summary>
-    public class InsertStreamCommand : ServerCommand
+    public class InsertStudyXmlCommand : ServerCommand
     {
         #region Private Members
 
@@ -53,8 +53,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         #endregion
 
         #region Constructors
-        public InsertStreamCommand( DicomFile file, StudyXml stream, StudyStorageLocation storageLocation)
-            : base("Insert Instance into StudyStream", true)
+        public InsertStudyXmlCommand( DicomFile file, StudyXml stream, StudyStorageLocation storageLocation)
+            : base("Insert into Study XML", true)
         {
             Platform.CheckForNullReference(file, "Dicom File object");
             Platform.CheckForNullReference(stream, "StudyStream object");
@@ -100,7 +100,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                 fileStream = new FileStream(streamFile, FileMode.CreateNew);
 
                 StudyXmlIo.Write(doc, fileStream);
-
+            }
+            catch (Exception e)
+            {
+                throw;
             }
             finally
             {

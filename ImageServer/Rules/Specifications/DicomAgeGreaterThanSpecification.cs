@@ -41,6 +41,12 @@ namespace ClearCanvas.ImageServer.Rules.Specifications
     [ExtensionOf(typeof(XmlSpecificationCompilerOperatorExtensionPoint))]
     public class DicomAgeGreaterThanSpecificationOperator : IXmlSpecificationCompilerOperator
     {
+        private string GetAttributeOrNull(XmlElement node, string attr)
+        {
+            string val = node.GetAttribute(attr);
+            return string.IsNullOrEmpty(val) ? null : val;
+        }
+
         #region IXmlSpecificationCompilerOperator Members
 
         public string OperatorTag
@@ -55,7 +61,11 @@ namespace ClearCanvas.ImageServer.Rules.Specifications
             if (units == null)
                 units = "years";
 
-            return new DicomAgeGreaterThanSpecification(units);
+            string refValue = GetAttributeOrNull(xmlNode, "refValue");
+            if (refValue == null)
+                throw new XmlSpecificationCompilerException("Xml attribute 'refValue' is required.");
+
+            return new DicomAgeGreaterThanSpecification(units, refValue);
         }
 
         #endregion
@@ -64,10 +74,12 @@ namespace ClearCanvas.ImageServer.Rules.Specifications
     public class DicomAgeGreaterThanSpecification : PrimitiveSpecification
     {
         private readonly string _units;
+        private readonly string _refValue;
 
-        public DicomAgeGreaterThanSpecification(string units)
+        public DicomAgeGreaterThanSpecification(string units, string refValue)
         {
             _units = units.ToLower();
+            _refValue = refValue;
         }
 
         protected override TestResult InnerTest(object exp, object root)
@@ -76,12 +88,14 @@ namespace ClearCanvas.ImageServer.Rules.Specifications
             if (exp == null || root == null)
                 return DefaultTestResult(true);
 
-            if (exp is string && root is string)
+            if (exp is string)
             {
                 DateTime comparisonTime = Platform.Time;
                 double time;
-                if (false == double.TryParse(root as string, out time))
+                if (false == double.TryParse(_refValue, out time))
                     throw new SpecificationException(SR.ExceptionCastExpressionString);
+
+                time = time*-1;
 
                 if (_units.Equals("weeks"))
                     comparisonTime = comparisonTime.AddDays(time * 7f);
@@ -92,7 +106,7 @@ namespace ClearCanvas.ImageServer.Rules.Specifications
 
                 DateTime? testTime = DateTimeParser.Parse(exp as string);
 
-                return DefaultTestResult(comparisonTime < testTime);
+                return DefaultTestResult(comparisonTime > testTime);
             }
             else
             {

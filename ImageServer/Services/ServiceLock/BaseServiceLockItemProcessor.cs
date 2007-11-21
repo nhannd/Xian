@@ -30,14 +30,19 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Services.ServiceLock
 {
+    /// <summary>
+    /// Base class with common routines for processors of <see cref="Model.ServiceLock"/> entries.
+    /// </summary>
     public class BaseServiceLockItemProcessor : IDisposable
     {
         private IReadContext _readContext;
@@ -56,7 +61,24 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
         }
         #endregion
 
-        #region Methods
+        #region Protected Methods
+        protected IList<FilesystemQueue> GetFilesystemQueueCandidates(Model.ServiceLock item, DateTime scheduledTime, FilesystemQueueTypeEnum type)
+        {
+            IQueryFilesystemQueue query = ReadContext.GetBroker<IQueryFilesystemQueue>();
+
+            FilesystemQueueQueryParameters parms = new FilesystemQueueQueryParameters();
+            parms.FilesystemKey = item.FilesystemKey;
+            parms.ScheduledTime = scheduledTime;
+            parms.FilesystemQueueTypeEnum = type;
+            parms.Results = ServiceLockSettings.Default.FilesystemQueueResultCount;
+
+            IList<FilesystemQueue> list = query.Execute(parms);
+
+            return list;
+        }
+        #endregion
+
+        #region Static Methods
         protected static float CalculateFolderSize(string folder)
         {
             float folderSize = 0.0f;

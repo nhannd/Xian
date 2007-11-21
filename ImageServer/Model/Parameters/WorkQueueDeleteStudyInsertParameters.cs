@@ -28,5 +28,10 @@ namespace ClearCanvas.ImageServer.Model.Parameters
         {
             set { this.SubCriteria["ScheduledTime"] = new ProcedureParameter<DateTime>("ScheduledTime", value); }
         }
+
+        public bool DeleteFilesystemQueue
+        {
+            set { this.SubCriteria["DeleteFilesystemQueue"] = new ProcedureParameter<bool>("DeleteFilesystemQueue", value); }
+        }
     }
 }

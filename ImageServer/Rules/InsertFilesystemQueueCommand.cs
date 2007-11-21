@@ -40,7 +40,7 @@ using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Rules
 {
-    public class InsertFilesystemQueueCommand : ServerCommand
+    public class InsertFilesystemQueueCommand : ServerDatabaseCommand
     {
         private readonly FilesystemQueueTypeEnum _queueType;
         private readonly ServerEntityKey _filesystemKey;
@@ -48,7 +48,7 @@ namespace ClearCanvas.ImageServer.Rules
         private readonly DateTime _scheduledTime;
 
         public InsertFilesystemQueueCommand(FilesystemQueueTypeEnum queueType, ServerEntityKey filesystemKey, ServerEntityKey studyStorageKey, DateTime scheduledTime )
-            : base("Insert FilesystemQueue", true)
+            : base("Insert FilesystemQueue Record of type " + queueType.Description, true)
         {
             _queueType = queueType;
             _filesystemKey = filesystemKey;
@@ -56,31 +56,22 @@ namespace ClearCanvas.ImageServer.Rules
             _scheduledTime = scheduledTime;
         }
 
-        protected override void OnExecute()
+        protected override void OnExecute(IUpdateContext updateContext)
         {
-            using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            FilesystemQueueInsertParameters parms = new FilesystemQueueInsertParameters();
+
+            parms.FilesystemQueueTypeEnum = _queueType;
+            parms.ScheduledTime = _scheduledTime;
+            parms.StudyStorageKey = _studyStorageKey;
+            parms.FilesystemKey = _filesystemKey;
+
+            IInsertFilesystemQueue insertQueue = updateContext.GetBroker<IInsertFilesystemQueue>();
+
+            if (false == insertQueue.Execute(parms))
             {
-                FilesystemQueueInsertParameters parms = new FilesystemQueueInsertParameters();
-
-                parms.FilesystemQueueTypeEnum = _queueType;
-                parms.ScheduledTime = _scheduledTime;
-                parms.StudyStorageKey = _studyStorageKey;
-                parms.FilesystemKey = _filesystemKey;
-
-                IInsertFilesystemQueue insertQueue = updateContext.GetBroker<IInsertFilesystemQueue>();
-
-                if (false == insertQueue.Execute(parms))
-                {
-                    Platform.Log(LogLevel.Error, "Unexpected failure inserting FilesystemQueue entry");
-                }
-
-                updateContext.Commit();
-            }  
-        }
-
-        protected override void OnUndo()
-        {
-            
+                Platform.Log(LogLevel.Error, "Unexpected failure inserting FilesystemQueue entry");
+                throw new PersistenceException("Unexpected failure inserting FilesystemQueue entry", null);
+            }
         }
     }
 }

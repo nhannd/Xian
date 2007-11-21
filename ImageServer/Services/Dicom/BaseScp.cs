@@ -181,6 +181,13 @@ namespace ClearCanvas.ImageServer.Services.Dicom
             String studyInstanceUid = message.DataSet[DicomTags.StudyInstanceUid].GetString(0, "");
             String studyDate = message.DataSet[DicomTags.StudyDate].GetString(0, Platform.Time.ToString("yyyyMMdd"));
 
+            Filesystem filesystem = Selector.SelectFilesystem(message);
+            if (filesystem == null)
+            {
+                Platform.Log(LogLevel.Error, "Unable to select location for storing study.");
+                return null;
+            }
+
             using (IUpdateContext updateContext = _store.OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
                 IQueryStudyStorageLocation locQuery = updateContext.GetBroker<IQueryStudyStorageLocation>();
@@ -196,14 +203,6 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                     insertParms.ServerPartitionKey = Partition.GetKey();
                     insertParms.StudyInstanceUid = studyInstanceUid;
                     insertParms.Folder = studyDate;
-
-                    Filesystem filesystem = Selector.SelectFilesystem(message);
-                    if (filesystem == null)
-                    {
-                        Platform.Log(LogLevel.Error, "Unable to select location for storing study.");
-                        return null;
-                    }
-
                     insertParms.FilesystemKey = filesystem.GetKey();
 
                     studyLocationList = locInsert.Execute(insertParms);

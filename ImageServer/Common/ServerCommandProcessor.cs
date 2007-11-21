@@ -32,6 +32,7 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
+using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.ImageServer.Common
 {
@@ -44,6 +45,20 @@ namespace ClearCanvas.ImageServer.Common
     /// DICOM files.  The pattern allows undoing of the operations as files are being modified and
     /// data inserted into the database.  
     /// </para>
+    /// <para>
+    /// If <see cref="ServerDatabaseCommand"/> objects are included among the <see cref="ServerCommand"/>
+    /// instances, an <see cref="IUpdateContext"/> will be opened for the database, and will be used
+    /// to execute each of the <see cref="ServerDatabaseCommand"/> instances.  If a failure occurs
+    /// when executing the commands, the <see cref="IUpdateContext"/> will be rolled back.  If no
+    /// failures occur, the context will be committed.
+    /// </para>
+    /// <para>
+    /// When implementing <see cref="ServerDatabaseCommand"/> instances, it is recommended to group these
+    /// together at the end of the list of commands, so that they are executed in sequence, and there
+    /// are not any long running non-database related commands executing.  Having long running 
+    /// non-database related commands being executed between database commands will cause a delay
+    /// in committing transactions, and could cause database deadlocks and problems.
+    /// </para>
     /// </remarks>
     public class ServerCommandProcessor
     {
@@ -52,6 +67,7 @@ namespace ClearCanvas.ImageServer.Common
         private readonly Stack<ServerCommand> _stack = new Stack<ServerCommand>();
         private readonly Queue<ServerCommand> _queue = new Queue<ServerCommand>();
         private string _failureReason;
+        private IUpdateContext _updateContext = null;
         #endregion
 
         #region Constructors
@@ -98,18 +114,27 @@ namespace ClearCanvas.ImageServer.Common
             while (_queue.Count > 0)
             {
                 ServerCommand command = _queue.Dequeue();
+                ServerDatabaseCommand dbCommand = command as ServerDatabaseCommand;
 
                 _stack.Push(command);
                 try
                 {
+                    if (dbCommand != null)
+                    {
+                        if (_updateContext == null)
+                            _updateContext =
+                                PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush);
+                        dbCommand.UpdateContext = _updateContext;
+                    }
+
                     command.Execute();
                 } 
                 catch (Exception e)
                 {
-                    if (command.RequiresRollback)
+                    if (command.RequiresRollback || dbCommand != null)
                     {
                         _failureReason = e.Message;
-                        Platform.Log(LogLevel.Error, e, "Unexpeceted error when executing command: {0}", command.Description);
+                        Platform.Log(LogLevel.Error, e, "Unexpected error when executing command: {0}", command.Description);
                         Rollback();
                         return false;
                     }
@@ -121,6 +146,14 @@ namespace ClearCanvas.ImageServer.Common
                     }
                 }
             }
+
+            if (_updateContext != null)
+            {
+                _updateContext.Commit();
+                _updateContext.Dispose();
+                _updateContext = null;
+            }
+
             return true;
         }
 
@@ -129,6 +162,12 @@ namespace ClearCanvas.ImageServer.Common
         /// </summary>
         public void Rollback()
         {
+            if (_updateContext != null)
+            {
+                _updateContext.Dispose(); // Rollback the db
+                _updateContext = null;
+            }
+
             while (_stack.Count > 0)
             {
                 ServerCommand command = _stack.Pop();

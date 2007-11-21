@@ -30,11 +30,12 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ClearCanvas.ImageServer.Services.ServiceLock
 {
+    /// <summary>
+    /// Interface for processors of <see cref="Model.ServiceLock"/> rows.
+    /// </summary>
     public interface IServiceLockItemProcessor : IDisposable
     {
         void Process(Model.ServiceLock item);

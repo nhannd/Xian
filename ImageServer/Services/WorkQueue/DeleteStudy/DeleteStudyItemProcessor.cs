@@ -54,6 +54,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy
                 try
                 {
                     Directory.Delete(path, true);
+
+                    DirectoryInfo info = Directory.GetParent(path);
+                    DirectoryInfo[] subdirs = info.GetDirectories();
+                    if (subdirs.Length == 0)
+                        Directory.Delete(info.FullName);
                 }
                 catch (Exception e)
                 {

@@ -40,11 +40,21 @@ using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
 {
+    /// <summary>
+    /// Class for processing 'FilesystemDelete' <see cref="Model.ServiceLock"/> rows.
+    /// </summary>
     public class FilesystemDeleteItemProcessor : BaseServiceLockItemProcessor, IServiceLockItemProcessor
     {
+        #region Private Members
         private FilesystemMonitor _monitor;
         private float _bytesToRemove;
+        #endregion
 
+        #region Private Methods
+        /// <summary>
+        /// Update the Percentage full for a <see cref="Model.Filesystem"/> in the database.
+        /// </summary>
+        /// <param name="item">The <see cref="Model.ServiceLock"/> triggering this update.</param>
         private void UpdateFilesystemPercentFull(Model.ServiceLock item)
         {
             using (
@@ -69,7 +79,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
 
                 if (false == filesystemUpdate.Execute(updateParms))
                 {
-                    Platform.Log(LogLevel.Error, "Unexpected problem inserting into WorkQueue");
+                    Platform.Log(LogLevel.Error, "Unexpected problem updating Filesystem table with the Percent Full of the Filesystem");
                 }
                 else
                 {
@@ -78,34 +88,24 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
             }
         }
 
-        private IList<FilesystemQueue> GetFilesystemQueueCandidates(Model.ServiceLock item, DateTime scheduledTime, FilesystemQueueTypeEnum type)
-        {
-            IQueryFilesystemQueue query = ReadContext.GetBroker<IQueryFilesystemQueue>();
-
-            FilesystemQueueQueryParameters parms = new FilesystemQueueQueryParameters();
-            parms.FilesystemKey = item.FilesystemKey;
-            parms.ScheduledTime = scheduledTime;
-            parms.FilesystemQueueTypeEnum = type;
-            parms.Results = ServiceLockSettings.Default.FilesystemQueueResultCount;
-            
-            IList<FilesystemQueue> list = query.Execute(parms);
-
-            return list;
-        }
-
-        private void ProcessDeleteCandidates(Model.ServiceLock item, IList<FilesystemQueue> candidateList)
+        /// <summary>
+        /// Process StudyDelete Candidates retrieved from the <see cref="Model.FilesystemQueue"/> table
+        /// </summary>
+        /// <param name="candidateList">The list of candidate studies for deleting.</param>
+        private void ProcessStudyDeleteCandidates(IList<FilesystemQueue> candidateList)
         {
             foreach (FilesystemQueue queueItem in candidateList)
             {
                 if (_bytesToRemove < 0)
                     return;
 
+                // First, get the StudyStorage locations for the study, and calculate the disk usage.
                 IQueryStudyStorageLocation studyStorageQuery = ReadContext.GetBroker<IQueryStudyStorageLocation>();
-
                 StudyStorageLocationQueryParameters studyStorageParms = new StudyStorageLocationQueryParameters();
                 studyStorageParms.StudyStorageKey = queueItem.StudyStorageKey;
-
                 IList<StudyStorageLocation> storageList = studyStorageQuery.Execute(studyStorageParms);
+                
+                // Get the disk usage
                 StudyStorageLocation location = storageList[0];
                 float studySize = CalculateFolderSize(location.GetStudyPath());
 
@@ -119,26 +119,16 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
                     DateTime expirationTime = Platform.Time.AddSeconds(10);
                     insertParms.ScheduledTime = expirationTime;
                     insertParms.ExpirationTime = expirationTime;
+                    insertParms.DeleteFilesystemQueue = true;
 
                     if (false == studyDelete.Execute(insertParms))
                     {
-                        Platform.Log(LogLevel.Error, "Unexpected problem inserting into WorkQueue");
+                        Platform.Log(LogLevel.Error, "Unexpected problem inserting 'StudyDelete' record into WorkQueue for Study {0}", location.StudyInstanceUid);
                     }
                     else
                     {
-                        IDeleteFilesystemQueue deleteQueue = update.GetBroker<IDeleteFilesystemQueue>();
-                        FilesystemQueueDeleteParameters deleteParms = new FilesystemQueueDeleteParameters();
-                        deleteParms.FilesystemQueueKey = item.GetKey();
-
-                        if (false == deleteQueue.Execute(deleteParms))
-                        {
-                            Platform.Log(LogLevel.Error, "Unexpected problem deleting from FilesystemQueue table");
-                        }
-                        else
-                        {
-                            update.Commit();
-                            _bytesToRemove -= studySize;
-                        }
+                        update.Commit();
+                        _bytesToRemove -= studySize;
                     }
                 }
             }
@@ -156,7 +146,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
 
                 if (list.Count > 0)
                 {
-                    ProcessDeleteCandidates(item, list);
+                    ProcessStudyDeleteCandidates(list);
                 }
                 else
                 {
@@ -167,7 +157,9 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
                 }
             }
         }
+        #endregion
 
+        #region Public Methods
         public void Process(Model.ServiceLock item)
         {
             _monitor = new FilesystemMonitor();
@@ -195,10 +187,10 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
             }
             else if (_monitor.CheckFilesystemAboveLowWatermark(item.FilesystemKey))
             {
-                UnlockServiceLock(item, Platform.Time.AddMinutes(5));
+                UnlockServiceLock(item, Platform.Time.AddMinutes(1));
             }
             else
-                UnlockServiceLock(item, Platform.Time.AddMinutes(10));
+                UnlockServiceLock(item, Platform.Time.AddMinutes(2));
         }
 
         public new void Dispose()
@@ -208,5 +200,6 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
 
             base.Dispose();
         }
+        #endregion
     }
 }

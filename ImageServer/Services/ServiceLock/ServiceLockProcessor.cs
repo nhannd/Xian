@@ -42,6 +42,10 @@ using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Services.ServiceLock
 {
+
+    /// <summary>
+    /// Processor for the Services in the <see cref="Model.ServiceLock"/> table.
+    /// </summary>
     public class ServiceLockProcessor
     {
         #region Members
@@ -55,6 +59,11 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
         #endregion
 
         #region Constructor
+        /// <summary>
+        /// Constructor for ServiceLock processor.
+        /// </summary>
+        /// <param name="name">The name of the processor.</param>
+        /// <param name="numberThreads">The number of threads allocated to the processor.</param>
         public ServiceLockProcessor(String name, int numberThreads)
         {
             _name = name;
@@ -119,7 +128,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
 
         #region Private Methods
         /// <summary>
-        /// Reset queue items that were unadvertly left locked. 
+        /// Reset queue items that were unadvertly left locked, more than likely due to a crash. 
         /// </summary>
         private void ResetLocked()
         {
@@ -147,6 +156,10 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
             }
         }
 
+        /// <summary>
+        /// Reset the Lock for a specific <see cref="Model.ServiceLock"/> row.
+        /// </summary>
+        /// <param name="item">The row to reset the lock for.</param>
         private void ResetServiceLock(Model.ServiceLock item)
         {
             using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
@@ -170,7 +183,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
             }
         }
 
-           /// <summary>
+        /// <summary>
         /// The processing thread.
         /// </summary>
         /// <remarks>
@@ -188,64 +201,67 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
 
                 if (_threadPool.QueueCount < _threadPool.Concurrency)
                 {
-                    using (IUpdateContext read = _store.OpenUpdateContext(UpdateContextSyncMode.Flush))
+                    IList<Model.ServiceLock> list;
+
+                    using (IUpdateContext updateContext = _store.OpenUpdateContext(UpdateContextSyncMode.Flush))
                     {
-                        IQueryServiceLock select = read.GetBroker<IQueryServiceLock>();
+                        IQueryServiceLock select = updateContext.GetBroker<IQueryServiceLock>();
                         ServiceLockQueryParameters parms = new ServiceLockQueryParameters();
                         parms.ProcessorId = ServiceTools.ProcessorId;
 
-                        IList<Model.ServiceLock> list = select.Execute(parms);
+                        list = select.Execute(parms);
+                        updateContext.Commit();
+                    }
 
-                        if (list.Count > 0)
-                            foundResult = true;
+                    if (list.Count > 0)
+                        foundResult = true;
 
-                        foreach (Model.ServiceLock queueItem in list)
+                    foreach (Model.ServiceLock queueItem in list)
+                    {
+                        if (!_extensions.ContainsKey(queueItem.ServiceLockTypeEnum))
                         {
-                            if (!_extensions.ContainsKey(queueItem.ServiceLockTypeEnum))
-                            {
-                                Platform.Log(LogLevel.Error,
-                                             "No extensions loaded for ServiceLockTypeEnum item type: {0}.  Failing item.",
-                                             queueItem.ServiceLockTypeEnum.Description);
+                            Platform.Log(LogLevel.Error,
+                                         "No extensions loaded for ServiceLockTypeEnum item type: {0}.  Failing item.",
+                                         queueItem.ServiceLockTypeEnum.Description);
 
-                                //Just fail the ServiceLock item, not much else we can do
-                                ResetServiceLock(queueItem);
-                                continue;
-                            }
-
-                            IServiceLockProcessorFactory factory = _extensions[queueItem.ServiceLockTypeEnum];
-
-                            IServiceLockItemProcessor processor;
-                            try
-                            {
-                                processor = factory.GetItemProcessor();
-                            }
-                            catch (Exception e)
-                            {
-                                Platform.Log(LogLevel.Error, e, "Unexpected exception creating ServiceLock processor.");
-                                ResetServiceLock(queueItem);
-                                continue;
-                            }
-
-                            _threadPool.Enqueue(delegate
-                                                    {
-                                                        try
-                                                        {
-                                                            processor.Process(queueItem);
-                                                        }
-                                                        catch (Exception e)
-                                                        {
-                                                            Platform.Log(LogLevel.Error, e,
-                                                                         "Unexpected exception when processing ServiceLock item of type {0}.  Failing Queue item. (GUID: {1})",
-                                                                         queueItem.ServiceLockTypeEnum.Description,
-                                                                         queueItem.GetKey());
-
-                                                            ResetServiceLock(queueItem);
-                                                        }
-
-                                                        // Cleanup the processor
-                                                        processor.Dispose();
-                                                    });
+                            //Just fail the ServiceLock item, not much else we can do
+                            ResetServiceLock(queueItem);
+                            continue;
                         }
+
+                        IServiceLockProcessorFactory factory = _extensions[queueItem.ServiceLockTypeEnum];
+
+                        IServiceLockItemProcessor processor;
+                        try
+                        {
+                            processor = factory.GetItemProcessor();
+                        }
+                        catch (Exception e)
+                        {
+                            Platform.Log(LogLevel.Error, e, "Unexpected exception creating ServiceLock processor.");
+                            ResetServiceLock(queueItem);
+                            continue;
+                        }
+
+                        _threadPool.Enqueue(delegate
+                                                {
+                                                    try
+                                                    {
+                                                        processor.Process(queueItem);
+                                                    }
+                                                    catch (Exception e)
+                                                    {
+                                                        Platform.Log(LogLevel.Error, e,
+                                                                     "Unexpected exception when processing ServiceLock item of type {0}.  Failing Queue item. (GUID: {1})",
+                                                                     queueItem.ServiceLockTypeEnum.Description,
+                                                                     queueItem.GetKey());
+
+                                                        ResetServiceLock(queueItem);
+                                                    }
+
+                                                    // Cleanup the processor
+                                                    processor.Dispose();
+                                                });
                     }
 
                     if (!foundResult)

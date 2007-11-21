@@ -43,7 +43,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
     /// <summary>
     /// ServerCommand for inserting a DICOM File into the persistent store.
     /// </summary>
-    public class InsertInstanceCommand : ServerCommand
+    public class InsertInstanceCommand : ServerDatabaseCommand
     {
         #region Private Members
 
@@ -69,45 +69,35 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             _storageLocation = location;
         }
 
-        protected override void OnExecute()
+        protected override void OnExecute(IUpdateContext updateContext)
         {
-            using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            // Setup the insert parameters
+            InstanceInsertParameters parms = new InstanceInsertParameters();
+            _file.LoadDicomFields(parms);
+            parms.ServerPartitionKey = _storageLocation.ServerPartitionKey;
+            parms.StatusEnum = StatusEnum.GetEnum("Online");
+
+            // Get the Insert Instance broker and do the insert
+            IInsertInstance insert = updateContext.GetBroker<IInsertInstance>();
+            _insertKey = CollectionUtils.FirstElement<InstanceKeys>(insert.Execute(parms));
+
+            // If the Request Attributes Sequence is in the dataset, do an insert.
+            if (_file.DataSet.Contains(DicomTags.RequestAttributesSequence))
             {
-                // Setup the insert parameters
-                InstanceInsertParameters parms = new InstanceInsertParameters();
-                _file.LoadDicomFields(parms);
-                parms.ServerPartitionKey = _storageLocation.ServerPartitionKey;
-                parms.StatusEnum = StatusEnum.GetEnum("Online");
-
-                // Get the Insert Instance broker and do the insert
-                IInsertInstance insert = updateContext.GetBroker<IInsertInstance>();
-                _insertKey = CollectionUtils.FirstElement<InstanceKeys>(insert.Execute(parms));
-
-                // If the Request Attributes Sequence is in the dataset, do an insert.
-                if (_file.DataSet.Contains(DicomTags.RequestAttributesSequence))
+                DicomAttributeSQ attribute = _file.DataSet[DicomTags.RequestAttributesSequence] as DicomAttributeSQ;
+                if (!attribute.IsEmpty)
                 {
-                    DicomAttributeSQ attribute = _file.DataSet[DicomTags.RequestAttributesSequence] as DicomAttributeSQ;
-                    if (!attribute.IsEmpty)
+                    foreach (DicomSequenceItem sequenceItem in (DicomSequenceItem[]) attribute.Values)
                     {
-                        foreach (DicomSequenceItem sequenceItem in (DicomSequenceItem[]) attribute.Values)
-                        {
-                            RequestAttributesInsertParameters requestParms = new RequestAttributesInsertParameters();
-                            sequenceItem.LoadDicomFields(requestParms);
-                            requestParms.SeriesKey = _insertKey.SeriesKey;
+                        RequestAttributesInsertParameters requestParms = new RequestAttributesInsertParameters();
+                        sequenceItem.LoadDicomFields(requestParms);
+                        requestParms.SeriesKey = _insertKey.SeriesKey;
 
-                            IInsertRequestAttributes insertRequest = updateContext.GetBroker<IInsertRequestAttributes>();
-                            insertRequest.Execute(requestParms);
-                        }
+                        IInsertRequestAttributes insertRequest = updateContext.GetBroker<IInsertRequestAttributes>();
+                        insertRequest.Execute(requestParms);
                     }
                 }
-
-                updateContext.Commit();
             }
-        }
-
-        protected override void OnUndo()
-        {
-
         }
     }
 }

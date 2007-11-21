@@ -43,9 +43,9 @@ using ClearCanvas.ImageServer.Model.SelectBrokers;
 namespace ClearCanvas.ImageServer.Rules.AutoRouteAction
 {
     /// <summary>
-    /// <see cref="ServerCommand"/> derived class for use with <see cref="ServerCommandProcessor"/> for inserting AutoRoute WorkQueue entries into the Persistent Store.
+    /// <see cref="ServerDatabaseCommand"/> derived class for use with <see cref="ServerCommandProcessor"/> for inserting AutoRoute WorkQueue entries into the Persistent Store.
     /// </summary>
-    public class InsertAutoRouteCommand : ServerCommand
+    public class InsertAutoRouteCommand : ServerDatabaseCommand
     {
         #region Private Members
         private readonly ServerActionContext _context;
@@ -58,7 +58,7 @@ namespace ClearCanvas.ImageServer.Rules.AutoRouteAction
         /// <param name="context">A contentxt in which to apply the AutoRoute request.</param>
         /// <param name="device">The AE Title of the device to AutoRoute to.</param>
         public InsertAutoRouteCommand(ServerActionContext context, string device)
-            : base("Update/Insert a WorkQueue Entry", false)
+            : base("Update/Insert an AutoRoute WorkQueue Entry", false)
         {
             Platform.CheckForNullReference(context, "ServerActionContext");
 
@@ -69,39 +69,29 @@ namespace ClearCanvas.ImageServer.Rules.AutoRouteAction
         /// <summary>
         /// Do the insertion of the AutoRoute.
         /// </summary>
-        protected override void OnExecute()
+        protected override void OnExecute(IUpdateContext updateContext)
         {
-            using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
-            {
-                DeviceSelectCriteria deviceSelectCriteria = new DeviceSelectCriteria();
-                deviceSelectCriteria.AeTitle.EqualTo(_deviceAe);
-                deviceSelectCriteria.ServerPartitionKey.EqualTo(_context.ServerPartitionKey);
+            DeviceSelectCriteria deviceSelectCriteria = new DeviceSelectCriteria();
+            deviceSelectCriteria.AeTitle.EqualTo(_deviceAe);
+            deviceSelectCriteria.ServerPartitionKey.EqualTo(_context.ServerPartitionKey);
 
-                ISelectDevice selectDevice = updateContext.GetBroker<ISelectDevice>();
+            ISelectDevice selectDevice = updateContext.GetBroker<ISelectDevice>();
 
-                Device dev = CollectionUtils.FirstElement<Device>(selectDevice.Find(deviceSelectCriteria));
+            Device dev = CollectionUtils.FirstElement<Device>(selectDevice.Find(deviceSelectCriteria));
 
-                WorkQueueAutoRouteInsertParameters parms = new WorkQueueAutoRouteInsertParameters();
+            WorkQueueAutoRouteInsertParameters parms = new WorkQueueAutoRouteInsertParameters();
 
-                parms.ScheduledTime = Platform.Time.AddSeconds(60);
-                parms.ExpirationTime = Platform.Time.AddMinutes(5);
-                parms.StudyStorageKey = _context.StudyLocationKey;
-                parms.ServerPartitionKey = _context.ServerPartitionKey;
-                parms.DeviceKey = dev.GetKey();
-                parms.SeriesInstanceUid = _context.Message.DataSet[DicomTags.SeriesInstanceUid].GetString(0, "");
-                parms.SopInstanceUid = _context.Message.DataSet[DicomTags.SopInstanceUid].GetString(0, "");
+            parms.ScheduledTime = Platform.Time.AddSeconds(60);
+            parms.ExpirationTime = Platform.Time.AddMinutes(5);
+            parms.StudyStorageKey = _context.StudyLocationKey;
+            parms.ServerPartitionKey = _context.ServerPartitionKey;
+            parms.DeviceKey = dev.GetKey();
+            parms.SeriesInstanceUid = _context.Message.DataSet[DicomTags.SeriesInstanceUid].GetString(0, "");
+            parms.SopInstanceUid = _context.Message.DataSet[DicomTags.SopInstanceUid].GetString(0, "");
 
-                IInsertWorkQueueAutoRoute broker = updateContext.GetBroker<IInsertWorkQueueAutoRoute>();
+            IInsertWorkQueueAutoRoute broker = updateContext.GetBroker<IInsertWorkQueueAutoRoute>();
 
-                broker.Execute(parms);
-
-                updateContext.Commit();
-            }           
-        }
-
-        protected override void OnUndo()
-        {
-
+            broker.Execute(parms);
         }
     }
 }

@@ -51,7 +51,7 @@
     <Compile Include="IWorkQueueItemProcessor.cs" />
     <Compile Include="IWorkQueueProcessorFactory.cs" />
     <Compile Include="StudyProcess\InsertInstanceCommand.cs" />
-    <Compile Include="StudyProcess\InsertStreamCommand.cs" />
+    <Compile Include="StudyProcess\InsertStudyXmlCommand.cs" />
     <Compile Include="StudyProcess\StudyProcessFactoryExtension.cs" />
     <Compile Include="StudyProcess\StudyProcessItemProcessor.cs" />
     <Compile Include="WorkQueueFactoryExtensionPoint.cs" />

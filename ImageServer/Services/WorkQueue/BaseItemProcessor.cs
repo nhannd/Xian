@@ -191,8 +191,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                     Platform.Log(LogLevel.Error, "Unable to update StudyProcess WorkQueue GUID Status: {0}",
                                  item.GetKey().ToString());
                 }
-
-                updateContext.Commit();
+                else
+                    updateContext.Commit();
             }
         }
 
@@ -251,6 +251,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                     Platform.Log(LogLevel.Error, "Unable to update StudyProcess WorkQueue GUID: {0}",
                                  item.GetKey().ToString());
                 }
+                else
+                    updateContext.Commit();
             }
         }
 

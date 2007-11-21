@@ -101,7 +101,7 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                 {
                     try
                     {
-                        _transaction.Commit();
+                        _transaction.Rollback();
                     }
                     catch (SqlException e)
                     {

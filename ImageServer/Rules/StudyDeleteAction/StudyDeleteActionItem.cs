@@ -62,7 +62,7 @@ namespace ClearCanvas.ImageServer.Rules.StudyDeleteAction
                 scheduledTime = scheduledTime.AddDays(_time * 7f);
             else if (_timeUnits.Equals("months"))
                 scheduledTime = scheduledTime.AddMonths((int)_time);
-            else if (_timeUnits.Equals("patientage"))
+            else if (_timeUnits.Equals("patientAge"))
             {
                 DateTime birthDate = context.Message.DataSet[DicomTags.PatientsBirthDate].GetDateTime(0, Platform.Time);
 

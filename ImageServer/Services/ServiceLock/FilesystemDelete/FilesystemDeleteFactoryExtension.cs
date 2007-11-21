@@ -35,13 +35,12 @@ using ClearCanvas.ImageServer.Model;
 namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
 {
     /// <summary>
-    /// Plugin for processing 'AutoRoute' WorkQueue items.
+    /// Plugin for creating processors for 'FilesystemDelete' <see cref="Model.ServiceLock"/> items.
     /// </summary>
     [ExtensionOf(typeof(ServiceLockFactoryExtensionPoint))]
     public class FilesystemDeleteFactoryExtension : IServiceLockProcessorFactory
     {
-
-        #region IWorkQueueProcessorFactory Members
+        #region IServiceLockProcessorFactory Members
 
         public ServiceLockTypeEnum GetServiceLockType()
         {

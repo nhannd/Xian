@@ -33,6 +33,9 @@ using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Services.ServiceLock
 {
+    /// <summary>
+    /// Interface for factor for creating processors for <see cref="Model.ServiceLock"/> rows.
+    /// </summary>
     public interface IServiceLockProcessorFactory
     {
         ServiceLockTypeEnum GetServiceLockType();

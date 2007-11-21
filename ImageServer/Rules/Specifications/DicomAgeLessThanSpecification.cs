@@ -41,6 +41,12 @@ namespace ClearCanvas.ImageServer.Rules.Specifications
     [ExtensionOf(typeof(XmlSpecificationCompilerOperatorExtensionPoint))]
     public class DicomAgeLessThanSpecificationOperator : IXmlSpecificationCompilerOperator
     {
+        private string GetAttributeOrNull(XmlElement node, string attr)
+        {
+            string val = node.GetAttribute(attr);
+            return string.IsNullOrEmpty(val) ? null : val;
+        }
+
         #region IXmlSpecificationCompilerOperator Members
 
         public string OperatorTag
@@ -55,7 +61,12 @@ namespace ClearCanvas.ImageServer.Rules.Specifications
             if (units == null)
                 units = "years";
 
-            return new DicomAgeLessThanSpecification(units);
+            string refValue = GetAttributeOrNull(xmlNode, "refValue");
+            if (refValue == null)
+                throw new XmlSpecificationCompilerException("Xml attribute 'refValue' is required.");
+
+
+            return new DicomAgeLessThanSpecification(units, refValue);
         }
 
         #endregion
@@ -64,35 +75,40 @@ namespace ClearCanvas.ImageServer.Rules.Specifications
     public class DicomAgeLessThanSpecification : PrimitiveSpecification
     {
         private readonly string _units;
+        private readonly string _refValue;
 
-        public DicomAgeLessThanSpecification(string units)
+        public DicomAgeLessThanSpecification(string units, string refValue)
         {
+            _refValue = refValue;
             _units = units.ToLower();
         }
 
         protected override TestResult InnerTest(object exp, object root)
         {
-            // assume that null matches anything
+            // assume that null doesn't match
             if (exp == null || root == null)
-                return DefaultTestResult(true);
+                return DefaultTestResult(false);
 
-            if (exp is string && root is string)
+            if (exp is string)
             {
+                if ((exp as string).Length == 0)
+                    return DefaultTestResult(false);
+
                 DateTime comparisonTime = Platform.Time;
                 double time;
-                if (false == double.TryParse(root as string, out time))
+                if (false == double.TryParse(_refValue, out time))
                     throw new SpecificationException(SR.ExceptionCastExpressionString);
 
                 if (_units.Equals("weeks"))
-                    comparisonTime = comparisonTime.AddDays(time * 7f);
+                    comparisonTime = comparisonTime.AddDays(time * -7f);
                 else if (_units.Equals("days"))
-                    comparisonTime = comparisonTime.AddDays(time);
+                    comparisonTime = comparisonTime.AddDays(-1*time);
                 else
-                    comparisonTime = comparisonTime.AddYears((int)time);
+                    comparisonTime = comparisonTime.AddYears((int)(-1*time));
 
                 DateTime? testTime = DateTimeParser.Parse(exp as string);
 
-                return DefaultTestResult(comparisonTime > testTime);
+                return DefaultTestResult(comparisonTime < testTime);
             }
             else
             {

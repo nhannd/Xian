@@ -79,21 +79,15 @@ namespace ClearCanvas.ImageServer.Common
         #endregion
 
         #region Events
-        public delegate void ExecuteBeginEventListener(ServerCommand cmd);
-        public delegate void ExecuteCompletedEventListener(ServerCommand cmd);
-        public delegate void UndoBeginEventListener(ServerCommand cmd);
-        public delegate void UndoCompletedEventListener(ServerCommand cmd);
+        public delegate void ServerCommandEventListener(ServerCommand cmd);
 
-        public event ExecuteBeginEventListener ExecuteBegin;
-        public event ExecuteCompletedEventListener ExecuteCompleted;
-
-        public event UndoBeginEventListener UndoBegin;
-        public event UndoCompletedEventListener UndoCompleted;
-
-
+        public event ServerCommandEventListener ExecuteBegin;
+        public event ServerCommandEventListener ExecuteCompleted;
+        public event ServerCommandEventListener UndoBegin;
+        public event ServerCommandEventListener UndoCompleted;
         #endregion
 
-        #region Abstract Methods
+        #region Public Methods
         /// <summary>
         /// Execute the ServerCommand.
         /// </summary>

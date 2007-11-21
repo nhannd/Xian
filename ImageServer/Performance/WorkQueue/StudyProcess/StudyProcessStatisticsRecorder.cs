@@ -72,7 +72,7 @@ namespace ClearCanvas.ImageServer.Performance.WorkQueue.StudyProcess
             stats.EngineLoadEnd();
         }
 
-        void InsertStreamCommandRolledback(InsertStreamCommand cmd)
+        void InsertStreamCommandRolledback(InsertStudyXmlCommand cmd)
         {
             stats.InsertStreamEnd();
         }
@@ -83,12 +83,12 @@ namespace ClearCanvas.ImageServer.Performance.WorkQueue.StudyProcess
         }
 
 
-        void InsertStreamCommandCompleted(InsertStreamCommand cmd)
+        void InsertStreamCommandCompleted(InsertStudyXmlCommand cmd)
         {
             stats.InsertStreamEnd();
         }
 
-        void InsertStreamCommandBegin(InsertStreamCommand cmd)
+        void InsertStreamCommandBegin(InsertStudyXmlCommand cmd)
         {
             stats.InsertStreamBegin();
         }
@@ -150,9 +150,9 @@ namespace ClearCanvas.ImageServer.Performance.WorkQueue.StudyProcess
                 processor.InsertInstanceCommandBegin += new StudyProcessItemProcessor.InsertInstanceCommandBeginEventListener(InsertInstanceCommandBegin);
                 processor.InsertInstanceCommandCompleted += new StudyProcessItemProcessor.InsertInstanceCommandCompletedEventListener(InsertInstanceCommandCompleted);
                 processor.InsertInstanceCommandRolledback+=new StudyProcessItemProcessor.InsertInstanceCommandRolledbackEventListener(InsertInstanceCommandRolledback);
-                processor.InsertStreamCommandBegin += new StudyProcessItemProcessor.InsertStreamCommandBeginEventListener(InsertStreamCommandBegin);
-                processor.InsertStreamCommandCompleted += new StudyProcessItemProcessor.InsertStreamCommandCompletedEventListener(InsertStreamCommandCompleted);
-                processor.InsertStreamCommandRolledback += new StudyProcessItemProcessor.InsertStreamCommandRolledbackEventListener(InsertStreamCommandRolledback);
+                processor.InsertStudyXmlCommandBegin += new StudyProcessItemProcessor.InsertStreamCommandBeginEventListener(InsertStreamCommandBegin);
+                processor.InsertStudyXmlCommandCompleted += new StudyProcessItemProcessor.InsertStreamCommandCompletedEventListener(InsertStreamCommandCompleted);
+                processor.InsertStudyXmlCommandRolledback += new StudyProcessItemProcessor.InsertStreamCommandRolledbackEventListener(InsertStreamCommandRolledback);
 
                 processor.RuleEngineLoadBegin += new StudyProcessItemProcessor.RuleEngineLoadBeginEventListener(RuleEngineLoadBegin);
                 processor.RuleEngineLoadCompleted += new StudyProcessItemProcessor.RuleEngineLoadCompletedEventListener(RuleEngineLoadCompleted);

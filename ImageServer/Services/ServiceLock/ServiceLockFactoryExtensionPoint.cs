@@ -34,7 +34,7 @@ using ClearCanvas.Common;
 namespace ClearCanvas.ImageServer.Services.ServiceLock
 {
     /// <summary>
-    /// Plugin for ServiceLock item processors.
+    /// Plugin for <see cref="Model.ServiceLock"/> item processors.
     /// </summary>
     [ExtensionPoint()]
     public class ServiceLockFactoryExtensionPoint : ExtensionPoint<IServiceLockProcessorFactory>

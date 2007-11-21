@@ -42,7 +42,7 @@ using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Services.Dicom
 {
-    public class UpdateWorkQueueCommand : ServerCommand
+    public class UpdateWorkQueueCommand : ServerDatabaseCommand
     {
         #region Private Members
         private readonly DicomMessageBase _message;
@@ -59,26 +59,17 @@ namespace ClearCanvas.ImageServer.Services.Dicom
             _storageLocation = location;
         }
 
-        protected override void OnExecute()
+        protected override void OnExecute(IUpdateContext updateContext)
         {
-            using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
-            {
-                IInsertWorkQueueStudyProcess insert = updateContext.GetBroker<IInsertWorkQueueStudyProcess>();
-                WorkQueueStudyProcessInsertParameters parms = new WorkQueueStudyProcessInsertParameters();
-                parms.StudyStorageKey = _storageLocation.GetKey();
-                parms.ServerPartitionKey = _storageLocation.ServerPartitionKey;
-                parms.SeriesInstanceUid = _message.DataSet[DicomTags.SeriesInstanceUid].GetString(0, "");
-                parms.SopInstanceUid = _message.DataSet[DicomTags.SopInstanceUid].GetString(0, "");
-                parms.ScheduledTime = Platform.Time;
-                parms.ExpirationTime = Platform.Time.AddMinutes(5.0);
-                insert.Execute(parms);
-                updateContext.Commit();
-            }           
-        }
-
-        protected override void OnUndo()
-        {
-
+            IInsertWorkQueueStudyProcess insert = updateContext.GetBroker<IInsertWorkQueueStudyProcess>();
+            WorkQueueStudyProcessInsertParameters parms = new WorkQueueStudyProcessInsertParameters();
+            parms.StudyStorageKey = _storageLocation.GetKey();
+            parms.ServerPartitionKey = _storageLocation.ServerPartitionKey;
+            parms.SeriesInstanceUid = _message.DataSet[DicomTags.SeriesInstanceUid].GetString(0, "");
+            parms.SopInstanceUid = _message.DataSet[DicomTags.SopInstanceUid].GetString(0, "");
+            parms.ScheduledTime = Platform.Time;
+            parms.ExpirationTime = Platform.Time.AddMinutes(5.0);
+            insert.Execute(parms);
         }
     }
 }
