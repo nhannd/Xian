@@ -75,6 +75,10 @@
     <Compile Include="Alert\IAlert.cs" />
     <Compile Include="Alert\LanguageAlert.cs" />
     <Compile Include="Alert\NoteAlert.cs" />
+    <Compile Include="WorklistItemSearchCriteria.cs" />
+    <Compile Include="ReportingWorklistItemSearchCriteria.cs" />
+    <Compile Include="ModalityWorklistItemSearchCriteria.cs" />
+    <Compile Include="RegistrationWorklistItemSearchCriteria.cs" />
     <Compile Include="DocumentationProcedureStep.cs" />
     <Compile Include="DocumentationProcedureStepSearchCriteria.cs" />
     <Compile Include="ExternalPractitioner.cs" />
@@ -221,7 +225,6 @@
     <Compile Include="Workflow\Reporting\Worklists.cs" />
     <Compile Include="Worklist.cs" />
     <Compile Include="Workflow\WorklistBase.cs" />
-    <Compile Include="WorklistItemSearchCriteria.cs" />
     <Compile Include="WorklistSearchCriteria.cs" />
   </ItemGroup>
   <ItemGroup>

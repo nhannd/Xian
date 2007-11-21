@@ -48,12 +48,12 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
         {
             public override IList GetWorklist(Staff currentUserStaff, IPersistenceContext context)
             {
-                return (IList)GetBroker(context).GetScheduledWorklist();
+                return (IList)GetBroker(context).GetWorklist(TechnologistScheduledWorklist.QueryConditions, null);
             }
 
             public override int GetWorklistCount(Staff currentUserStaff, IPersistenceContext context)
             {
-                return GetBroker(context).GetScheduledWorklistCount();
+                return GetBroker(context).GetWorklistCount(TechnologistScheduledWorklist.QueryConditions, null);
             }
         }
 
@@ -62,12 +62,12 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
         {
             public override IList GetWorklist(Staff currentUserStaff, IPersistenceContext context)
             {
-                return (IList)GetBroker(context).GetCheckedInWorklist();
+                return (IList)GetBroker(context).GetWorklist(TechnologistCheckedInWorklist.QueryConditions, null);
             }
 
             public override int GetWorklistCount(Staff currentUserStaff, IPersistenceContext context)
             {
-                return GetBroker(context).GetCheckedInWorklistCount();
+                return GetBroker(context).GetWorklistCount(TechnologistCheckedInWorklist.QueryConditions, null);
             }
         }
 
@@ -76,12 +76,12 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
         {
             public override IList GetWorklist(Staff currentUserStaff, IPersistenceContext context)
             {
-                return (IList)GetBroker(context).GetInProgressWorklist();
+                return (IList)GetBroker(context).GetWorklist(TechnologistInProgressWorklist.QueryConditions, null);
             }
 
             public override int GetWorklistCount(Staff currentUserStaff, IPersistenceContext context)
             {
-                return GetBroker(context).GetInProgressWorklistCount();
+                return GetBroker(context).GetWorklistCount(TechnologistInProgressWorklist.QueryConditions, null);
             }
         }
 
@@ -90,12 +90,12 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
         {
             public override IList GetWorklist(Staff currentUserStaff, IPersistenceContext context)
             {
-                return (IList)GetBroker(context).GetSuspendedWorklist();
+                return (IList)GetBroker(context).GetWorklist(TechnologistSuspendedWorklist.QueryConditions, null);
             }
 
             public override int GetWorklistCount(Staff currentUserStaff, IPersistenceContext context)
             {
-                return GetBroker(context).GetSuspendedWorklistCount();
+                return GetBroker(context).GetWorklistCount(TechnologistSuspendedWorklist.QueryConditions, null);
             }
        }
 
@@ -104,12 +104,12 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
         {
             public override IList GetWorklist(Staff currentUserStaff, IPersistenceContext context)
             {
-                return (IList)GetBroker(context).GetCancelledWorklist();
+                return (IList)GetBroker(context).GetWorklist(TechnologistCancelledWorklist.QueryConditions, null);
             }
 
             public override int GetWorklistCount(Staff currentUserStaff, IPersistenceContext context)
             {
-                return GetBroker(context).GetCancelledWorklistCount();
+                return GetBroker(context).GetWorklistCount(TechnologistCancelledWorklist.QueryConditions, null);
             }
         }
 
@@ -118,12 +118,12 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
         {
             public override IList GetWorklist(Staff currentUserStaff, IPersistenceContext context)
             {
-                return (IList)GetBroker(context).GetCompletedWorklist();
+                return (IList)GetBroker(context).GetWorklist(TechnologistCompletedWorklist.QueryConditions, null);
             }
 
             public override int GetWorklistCount(Staff currentUserStaff, IPersistenceContext context)
             {
-                return GetBroker(context).GetCompletedWorklistCount();
+                return GetBroker(context).GetWorklistCount(TechnologistCompletedWorklist.QueryConditions, null);
             }
         }
 
@@ -132,12 +132,12 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
         {
             public override IList GetWorklist(Staff currentUserStaff, IPersistenceContext context)
             {
-                return (IList)GetBroker(context).GetUndocumentedWorklist();
+                return (IList)GetBroker(context).GetUndocumentedWorklist(TechnologistUndocumentedWorklist.QueryConditions, null);
             }
 
             public override int GetWorklistCount(Staff currentUserStaff, IPersistenceContext context)
             {
-                return GetBroker(context).GetUndocumentedWorklistCount();
+                return GetBroker(context).GetUndocumentedWorklistCount(TechnologistUndocumentedWorklist.QueryConditions, null);
             }
         }
     }

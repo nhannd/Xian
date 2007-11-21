@@ -50,15 +50,15 @@ namespace ClearCanvas.Healthcare
         {
         }
 
-        public static WorklistItemSearchCriteria[] QueryConditions
+        public static RegistrationWorklistItemSearchCriteria[] QueryConditions
         {
             get
             {
-                WorklistItemSearchCriteria criteria = new WorklistItemSearchCriteria();
+                RegistrationWorklistItemSearchCriteria criteria = new RegistrationWorklistItemSearchCriteria();
                 criteria.Order.Status.In( new OrderStatus[] {OrderStatus.IP, OrderStatus.CM} );
                 criteria.RequestedProcedure.ScheduledStartTime.Between(Platform.Time.Date, Platform.Time.Date.AddDays(1));
                 criteria.ProcedureCheckIn.CheckOutTime.IsNotNull();
-                return new WorklistItemSearchCriteria[] { criteria };
+                return new RegistrationWorklistItemSearchCriteria[] { criteria };
             }
         }
 

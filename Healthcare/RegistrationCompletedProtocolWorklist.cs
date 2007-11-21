@@ -22,14 +22,14 @@ namespace ClearCanvas.Healthcare {
 		{
 		}
 
-        public static WorklistItemSearchCriteria[] QueryConditions
+        public static RegistrationWorklistItemSearchCriteria[] QueryConditions
         {
             get
             {
-                WorklistItemSearchCriteria criteria = new WorklistItemSearchCriteria();
+                RegistrationWorklistItemSearchCriteria criteria = new RegistrationWorklistItemSearchCriteria();
                 criteria.RequestedProcedure.ScheduledStartTime.IsNull(); // unscheduled
-                criteria.ProcedureStep.State.EqualTo(ActivityStatus.CM);
-                return new WorklistItemSearchCriteria[] { criteria };
+                criteria.ProtocolProcedureStep.State.EqualTo(ActivityStatus.CM);
+                return new RegistrationWorklistItemSearchCriteria[] { criteria };
             }
         }
 

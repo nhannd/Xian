@@ -39,11 +39,11 @@ namespace ClearCanvas.Healthcare.Brokers
 {
     public interface IRegistrationWorklistBroker : IPersistenceBroker
     {
-        IList<WorklistItem> GetWorklist(WorklistItemSearchCriteria[] where, Worklist worklist);
-        int GetWorklistCount(WorklistItemSearchCriteria[] where, Worklist worklist);
+        IList<WorklistItem> GetWorklist(RegistrationWorklistItemSearchCriteria[] where, Worklist worklist);
+        int GetWorklistCount(RegistrationWorklistItemSearchCriteria[] where, Worklist worklist);
 
-        IList<WorklistItem> GetProtocolWorklist(WorklistItemSearchCriteria[] where, Worklist worklist);
-        int GetProtocolWorklistCount(WorklistItemSearchCriteria[] where, Worklist worklist);
+        IList<WorklistItem> GetProtocolWorklist(RegistrationWorklistItemSearchCriteria[] where, Worklist worklist);
+        int GetProtocolWorklistCount(RegistrationWorklistItemSearchCriteria[] where, Worklist worklist);
 
         IList<WorklistItem> Search(WorklistItemSearchCriteria[] where, SearchResultPage page, bool showActiveOnly);
         int SearchCount(WorklistItemSearchCriteria[] where, bool showActiveOnly);

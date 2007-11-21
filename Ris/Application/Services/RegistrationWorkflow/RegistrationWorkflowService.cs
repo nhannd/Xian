@@ -149,9 +149,9 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
             PatientProfile profile = profileBroker.Load(request.PatientProfileRef, EntityLoadFlags.Proxy);
 
-            WorklistItemSearchCriteria[] criteria = RegistrationScheduledWorklist.QueryConditions;
+            RegistrationWorklistItemSearchCriteria[] criteria = RegistrationScheduledWorklist.QueryConditions;
             CollectionUtils.ForEach(criteria,
-                delegate(WorklistItemSearchCriteria c)
+                delegate(RegistrationWorklistItemSearchCriteria c)
                     {
                         c.Order.Patient.EqualTo(profile.Patient);
                     });
@@ -257,9 +257,9 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             IPatientProfileBroker profileBroker = this.PersistenceContext.GetBroker<IPatientProfileBroker>();
             PatientProfile profile = profileBroker.Load(((WorklistItemKey)itemKey).ProfileRef, EntityLoadFlags.Proxy);
 
-            WorklistItemSearchCriteria[] criteria = RegistrationScheduledWorklist.QueryConditions;
+            RegistrationWorklistItemSearchCriteria[] criteria = RegistrationScheduledWorklist.QueryConditions;
             CollectionUtils.ForEach(criteria,
-                delegate(WorklistItemSearchCriteria c)
+                delegate(RegistrationWorklistItemSearchCriteria c)
                 {
                     c.Order.Patient.EqualTo(profile.Patient);
                 });

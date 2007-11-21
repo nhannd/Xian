@@ -77,5 +77,17 @@ namespace ClearCanvas.Workflow
                 return (ISearchCondition<ActivityStatus>)this.SubCriteria["State"];
 	  		}
 	  	}
-   }
+
+        public ISearchCondition<DateTime?> StartTime
+        {
+            get
+            {
+                if (!this.SubCriteria.ContainsKey("StartTime"))
+                {
+                    this.SubCriteria["StartTime"] = new SearchCondition<DateTime?>("StartTime");
+                }
+                return (ISearchCondition<DateTime?>)this.SubCriteria["StartTime"];
+            }
+        }
+    }
 }

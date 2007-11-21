@@ -62,28 +62,28 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         #region IRegistrationWorklistBroker members
 
-        public IList<WorklistItem> GetWorklist(WorklistItemSearchCriteria[] where, Worklist worklist)
+        public IList<WorklistItem> GetWorklist(RegistrationWorklistItemSearchCriteria[] where, Worklist worklist)
         {
             HqlQuery query = new HqlQuery(string.Concat(_hqlSelectWorklist, _hqlJoin, _hqlJoinProfile));
             ConstructWorklistCondition(query, where, worklist);
             return DoQuery(query);
         }
 
-        public int GetWorklistCount(WorklistItemSearchCriteria[] where, Worklist worklist)
+        public int GetWorklistCount(RegistrationWorklistItemSearchCriteria[] where, Worklist worklist)
         {
             HqlQuery query = new HqlQuery(string.Concat(_hqlSelectCount, _hqlJoin, _hqlJoinProfile));
             ConstructWorklistCondition(query, where, worklist);
             return DoQueryCount(query);
         }
 
-        public IList<WorklistItem> GetProtocolWorklist(WorklistItemSearchCriteria[] where, Worklist worklist)
+        public IList<WorklistItem> GetProtocolWorklist(RegistrationWorklistItemSearchCriteria[] where, Worklist worklist)
         {
             HqlQuery query = new HqlQuery(string.Concat(_hqlSelectProtocolWorklist, _hqlProtocolJoin));
             ConstructWorklistCondition(query, where, worklist);
             return DoQuery(query);
         }
 
-        public int GetProtocolWorklistCount(WorklistItemSearchCriteria[] where, Worklist worklist)
+        public int GetProtocolWorklistCount(RegistrationWorklistItemSearchCriteria[] where, Worklist worklist)
         {
             HqlQuery query = new HqlQuery(string.Concat(_hqlSelectProtocolCount, _hqlProtocolJoin));
             ConstructWorklistCondition(query, where, worklist);
@@ -109,17 +109,17 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         #region Private Helpers
 
-        private static void ConstructWorklistCondition(HqlQuery query, IEnumerable<WorklistItemSearchCriteria> where, Worklist worklist)
+        private static void ConstructWorklistCondition(HqlQuery query, IEnumerable<RegistrationWorklistItemSearchCriteria> where, Worklist worklist)
         {
             HqlOr or = new HqlOr();
-            foreach (WorklistItemSearchCriteria c in where)
+            foreach (RegistrationWorklistItemSearchCriteria c in where)
             {
                 HqlAnd and = new HqlAnd();
 
                 and.Conditions.AddRange(HqlCondition.FromSearchCriteria("o", c.Order));
                 and.Conditions.AddRange(HqlCondition.FromSearchCriteria("rp", c.RequestedProcedure));
                 and.Conditions.AddRange(HqlCondition.FromSearchCriteria("rp.ProcedureCheckIn", c.ProcedureCheckIn));
-                and.Conditions.AddRange(HqlCondition.FromSearchCriteria("ps", c.ProcedureStep));
+                and.Conditions.AddRange(HqlCondition.FromSearchCriteria("ps", c.ProtocolProcedureStep));
                 and.Conditions.AddRange(HqlCondition.FromSearchCriteria("pp", c.PatientProfile));
 
                 if (and.Conditions.Count > 0)
@@ -128,7 +128,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
                 query.Sorts.AddRange(HqlSort.FromSearchCriteria("o", c.Order));
                 query.Sorts.AddRange(HqlSort.FromSearchCriteria("rp", c.RequestedProcedure));
                 query.Sorts.AddRange(HqlSort.FromSearchCriteria("rp.ProcedureCheckIn", c.ProcedureCheckIn));
-                query.Sorts.AddRange(HqlSort.FromSearchCriteria("ps", c.ProcedureStep));
+                query.Sorts.AddRange(HqlSort.FromSearchCriteria("ps", c.ProtocolProcedureStep));
                 query.Sorts.AddRange(HqlSort.FromSearchCriteria("pp", c.PatientProfile));
             }
 

@@ -22,13 +22,13 @@ namespace ClearCanvas.Healthcare {
 		{
 		}
 
-        public static WorklistItemSearchCriteria[] QueryConditions
+        public static RegistrationWorklistItemSearchCriteria[] QueryConditions
         {
             get
             {
-                WorklistItemSearchCriteria criteria = new WorklistItemSearchCriteria();
-                criteria.ProcedureStep.State.In(new ActivityStatus[] { ActivityStatus.SC, ActivityStatus.IP });
-                return new WorklistItemSearchCriteria[] { criteria };
+                RegistrationWorklistItemSearchCriteria criteria = new RegistrationWorklistItemSearchCriteria();
+                criteria.ProtocolProcedureStep.State.In(new ActivityStatus[] { ActivityStatus.SC, ActivityStatus.IP });
+                return new RegistrationWorklistItemSearchCriteria[] { criteria };
             }
         }
 

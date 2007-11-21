@@ -1,6 +1,8 @@
 using System.Collections;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare.Brokers;
+using ClearCanvas.Common;
+using ClearCanvas.Workflow;
 
 namespace ClearCanvas.Healthcare 
 {
@@ -18,16 +20,26 @@ namespace ClearCanvas.Healthcare
         {
         }
 
+        public static ModalityWorklistItemSearchCriteria[] QueryConditions
+        {
+            get
+            {
+                ModalityWorklistItemSearchCriteria criteria = new ModalityWorklistItemSearchCriteria();
+                criteria.ModalityProcedureStep.Scheduling.StartTime.Between(Platform.Time.Date, Platform.Time.Date.AddDays(1));
+                return new ModalityWorklistItemSearchCriteria[] { criteria };
+            }
+        }
+
         #region Worklist overrides
 
         public override IList GetWorklist(Staff currentUserStaff, IPersistenceContext context)
         {
-            return (IList)GetBroker<IModalityWorklistBroker>(context).GetUndocumentedWorklist(this);
+            return (IList)GetBroker<IModalityWorklistBroker>(context).GetUndocumentedWorklist(QueryConditions, this);
         }
 
         public override int GetWorklistCount(Staff currentUserStaff, IPersistenceContext context)
         {
-            return GetBroker<IModalityWorklistBroker>(context).GetUndocumentedWorklistCount(this);
+            return GetBroker<IModalityWorklistBroker>(context).GetUndocumentedWorklistCount(QueryConditions, this);
         }
 
         public override string NameSuffix
