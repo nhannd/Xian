@@ -38,10 +38,7 @@
     <Compile Include="BaseItemProcessor.cs" />
     <Compile Include="DeleteStudy\DeleteStudyFactoryExtension.cs" />
     <Compile Include="DeleteStudy\DeleteStudyItemProcessor.cs" />
-    <Compile Include="IWorkQueueProcessorListener.cs" />
-    <Compile Include="ProcessResultEnum.cs" />
-    <Compile Include="StudyProcess\IStudyProcessItemProcessorListener.cs" />
-    <Compile Include="StudyProcess\StudyProcessItemProcessorExtensionPoint.cs" />
+    <Compile Include="StudyProcess\StudyProcessStatistics.cs" />
     <Compile Include="WorkQueueSettings.cs" />
     <Compile Include="WorkQueueSettings.Designer.cs">
       <AutoGen>True</AutoGen>

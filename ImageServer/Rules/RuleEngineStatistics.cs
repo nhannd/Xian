@@ -29,46 +29,68 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
+using ClearCanvas.Common.Statistics;
 
-using ClearCanvas.ImageServer.Model;
-
-namespace ClearCanvas.ImageServer.Services.WorkQueue
+namespace ClearCanvas.ImageServer.Rules
 {
     /// <summary>
-    /// Interface for processors of WorkQueue items
+    /// Stores the engine statistics of a rule engine.
     /// </summary>
-    public interface IWorkQueueItemProcessor : IDisposable
+    public class RuleEngineStatistics:BaseStatistics
     {
-        #region Properties
-        // A string used to identify the processor
-        string ProcessorID
+        #region Private members
+        private double _loadTime;
+        private double _executionTime;
+        #endregion Private members
+
+        #region Public properties
+        /// <summary>
+        /// Gets or sets the execution time of the rule engine in miliseconds.
+        /// </summary>
+        public double ExecutionTimeInMs
         {
-            get;
-            set;
+            get { 
+                return _executionTime; 
+            }
+            set
+            {
+                _executionTime = value;
+                this["ExecutionTimeInMs"] = string.Format("{0:0.00}", value);
+            }
+
         }
 
         /// <summary>
-        /// Gets or sets the WorkQueue item being processed.
+        /// Gets or sets the load time of the rule engine in miliseconds.
         /// </summary>
-        Model.WorkQueue WorkQueueItem
+        public double LoadTimeInMs
         {
-            get; set;
+
+            get { 
+                return _loadTime; 
+            }
+            set
+            {
+                _loadTime = value;
+                this["LoadTimeInMs"] = string.Format("{0:0.00}", value);
+            }
         }
 
-        #endregion Properties
+        #endregion Public properties
 
-        #region Events
-        
-        #endregion
+        public RuleEngineStatistics(ServerRulesEngine engine):base(engine.RuleApplyTime.Description)
+        {
+            
+        }
 
-        #region Methods
+        protected override void OnBegin()
+        {
+            // NOOP
+        }
 
-        void Process();
-        
-        #endregion
-
+        protected override void OnEnd()
+        {
+            // NOOP
+        }
     }
 }

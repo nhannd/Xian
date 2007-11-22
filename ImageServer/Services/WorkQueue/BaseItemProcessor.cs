@@ -55,10 +55,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         private IReadContext _readContext;
         private IList<WorkQueueUid> _uidList;
         private Model.WorkQueue _item;
-        private ProcessResultEnum _result;
         private string _processorID;
-        private event ProcessingBeginEventListener _processingBegin;
-        private event ProcessingCompletedEventListener _processingCompleted;
         #endregion
 
         #region Protected Properties
@@ -134,8 +131,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         /// <param name="failed">If true, the item failed and the failure retry count should be incremented.</param>
         protected void SetWorkQueueItemPending(Model.WorkQueue item, bool failed)
         {
-            _result = ProcessResultEnum.SUCCESSFUL_PENDING;
-
+            
             using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
                 // Update the WorkQueue item status and times.
@@ -160,7 +156,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                         parms.ScheduledTime = Platform.Time;
                         parms.ExpirationTime = Platform.Time;
 
-                        _result = ProcessResultEnum.FAILED;
+                        
                     }
                     else
                     {
@@ -173,7 +169,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                             Platform.Time.AddMinutes((settings.WorkQueueMaxFailureCount-item.FailureCount) *
                                                      settings.WorkQueueFailureDelayMinutes);
 
-                        _result = ProcessResultEnum.SUCCESSFUL_PENDING;
+                        
                     }
                 }
                 else
@@ -183,7 +179,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                     parms.ScheduledTime = Platform.Time.AddSeconds(15.0);
                     parms.ExpirationTime = Platform.Time.AddSeconds(settings.WorkQueueExpireDelaySeconds);
 
-                    _result = ProcessResultEnum.SUCCESSFUL_PENDING;
                 }
 
                 if (false == update.Execute(parms))
@@ -226,7 +221,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                     parms.ScheduledTime = item.ScheduledTime;
                     parms.ExpirationTime = item.ExpirationTime; // Keep the same
 
-                    _result = ProcessResultEnum.SUCCESSFUL_COMPLETED;
                 }
                 else
                 {
@@ -243,7 +237,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                     parms.ExpirationTime = item.ExpirationTime; // Keep the same
                     parms.FailureCount = item.FailureCount;
 
-                    _result = ProcessResultEnum.SUCCESSFUL_PENDING;
                 }
 
                 if (false == update.Execute(parms))
@@ -347,37 +340,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
             set { _item = value; }
         }
 
-        /// <summary>
-        /// Sets or gets the result of the processing.
-        /// </summary>
-        public ProcessResultEnum ProcessResult
-        {
-            get { return _result; }
-            set { _result = value; }
-        }
-
-
-        public event ProcessingBeginEventListener ProcessingBegin
-        {
-            add { _processingBegin += value; }
-            remove { _processingBegin -= value; }
-        }
-        public event ProcessingCompletedEventListener ProcessingCompleted
-        {
-            add { _processingCompleted += value; }
-            remove { _processingCompleted -= value; }
-        }
-
         public void Process()
         {
             if (WorkQueueItem!=null)
             {
-                EventsHelper.Fire(_processingBegin, WorkQueueItem);
-
                 OnProcess();
-
-                EventsHelper.Fire(_processingCompleted, WorkQueueItem, ProcessResult);
-            
             }
             
         }

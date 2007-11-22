@@ -29,6 +29,8 @@
 
 #endregion
 
+using System;
+
 namespace ClearCanvas.ImageServer.Common
 {
     /// <summary>
@@ -44,6 +46,20 @@ namespace ClearCanvas.ImageServer.Common
         #region Private Members
         private string _description;
         private readonly bool _requiresRollback;
+        private ServerCommandStatistics _stats;
+            
+        #endregion
+
+        #region Public property
+
+        /// <summary>
+        /// Gets the <see cref="ServerCommandStatistics"/> of the command.
+        /// </summary>
+        public ServerCommandStatistics Statistics
+        {
+            get { return _stats; }
+        }
+
         #endregion
 
         #region Constructor
@@ -56,6 +72,7 @@ namespace ClearCanvas.ImageServer.Common
         {
             _description = description;
             _requiresRollback = requiresRollback;
+            _stats = new ServerCommandStatistics(this);
         }
         #endregion
 
@@ -79,12 +96,6 @@ namespace ClearCanvas.ImageServer.Common
         #endregion
 
         #region Events
-        public delegate void ServerCommandEventListener(ServerCommand cmd);
-
-        public event ServerCommandEventListener ExecuteBegin;
-        public event ServerCommandEventListener ExecuteCompleted;
-        public event ServerCommandEventListener UndoBegin;
-        public event ServerCommandEventListener UndoCompleted;
         #endregion
 
         #region Public Methods
@@ -93,13 +104,9 @@ namespace ClearCanvas.ImageServer.Common
         /// </summary>
         public void Execute()
         {
-            if (ExecuteBegin != null)
-                ExecuteBegin(this);
-
+            _stats.Begin();
             OnExecute();
-
-            if (ExecuteCompleted != null)
-                ExecuteCompleted(this);
+            _stats.End();
         }
 
         
@@ -108,13 +115,8 @@ namespace ClearCanvas.ImageServer.Common
         /// </summary>
         public void Undo()
         {
-            if (UndoBegin != null)
-                UndoBegin(this);
-
             OnUndo();
-
-            if (UndoCompleted != null)
-                UndoCompleted(this);
+            _stats.End();
         }
         #endregion
 

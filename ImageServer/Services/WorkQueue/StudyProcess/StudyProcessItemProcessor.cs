@@ -51,26 +51,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         private ServerRulesEngine _sopProcessedRulesEngine;
         private ServerRulesEngine _studyProcessedRulesEngine;
         private ServerRulesEngine _seriesProcessedRulesEngine;
-        private IStudyProcessItemProcessorListener[] _extensions;
-      
-        private event WorkQueueUIDListProcessingBeginEventListener _workQueueUIDListProcessingBegin;
-        private event WorkQueueUIDListProcessingCompletedEventListener _workQueueUIDListProcessingCompleted;
-        private event WorkQueueUIDProcessingBeginEventListener _workQueueUIDProcessingBegin;
-        private event WorkQueueUIDProcessingCompletedEventListener _workQueueUIDProcessingCompleted;
-        private event InsertStreamCommandBeginEventListener _insertStreamCommandBegin;
-        private event InsertStreamCommandCompletedEventListener _insertStreamCommandCompleted;
-        private event InsertStreamCommandRolledbackEventListener _insertStreamCommandRolledback;
-        private event InsertInstanceCommandBeginEventListener _insertInstanceCommandBegin;
-        private event InsertInstanceCommandCompletedEventListener _insertInstanceCommandCompleted;
-        private event InsertInstanceCommandRolledbackEventListener _insertInstanceCommandRolledback;
 
-        private event RuleEngineExecuteBeginEventListener _ruleEngineExecuteBegin;
-        private event RuleEngineExecuteCompletedEventListener _ruleEngineExecuteCompleted;
-        private event RuleEngineLoadBeginEventListener _ruleEngineLoadBegin;
-        private event RuleEngineLoadCompletedEventListener _ruleEngineLoadCompleted;
-
-        private event DicomFileLoadBeginEventListener _dicomFileLoadBegin;
-        private event DicomFileLoadCompletedEventListener _dicomFileLoadCompleted;
+        private StudyProcessStatistics _stats;
         
         #endregion
 
@@ -79,257 +61,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         #endregion
 
         #region Events
-        /// <summary>
-        /// Defines the interface for <see cref="WorkQueueUIDListProcessingBegin"/>.
-        /// </summary>
-        /// <param name="list"></param>
-        public delegate void WorkQueueUIDListProcessingBeginEventListener(IList<WorkQueueUid> list);
         
-        /// <summary>
-        /// Defines the interface for <see cref="WorkQueueUIDListProcessingCompleted"/>.
-        /// </summary>
-        /// <param name="list"></param>
-        /// <param name="status"></param>
-        public delegate void WorkQueueUIDListProcessingCompletedEventListener(IList<WorkQueueUid> list, bool status);
-
-        /// <summary>
-        /// Defines the interface for <see cref="WorkQueueUIDProcessingBegin"/>.
-        /// </summary>
-        /// <param name="uid"></param>
-        public delegate void WorkQueueUIDProcessingBeginEventListener(WorkQueueUid uid);
-
-        /// <summary>
-        /// Defines the interface for <see cref="WorkQueueUIDProcessingCompleted"/>.
-        /// </summary>
-        /// <param name="uid"></param>
-        /// <param name="status"></param>
-        public delegate void WorkQueueUIDProcessingCompletedEventListener(WorkQueueUid uid, bool status);
-
-        /// <summary>
-        /// Defines the interface for <see cref="StudyProcessItemProcessor.InsertStudyXmlCommandBegin"/>.
-        /// </summary>
-        /// <param name="cmd"></param>
-        public delegate void InsertStreamCommandBeginEventListener(InsertStudyXmlCommand cmd);
-
-        /// <summary>
-        /// Defines the interface for <see cref="StudyProcessItemProcessor.InsertStudyXmlCommandCompleted"/>.
-        /// </summary>
-        /// <param name="cmd"></param>
-        public delegate void InsertStreamCommandCompletedEventListener(InsertStudyXmlCommand cmd);
-
-        /// <summary>
-        /// Defines the interface for <see cref="StudyProcessItemProcessor.InsertStudyXmlCommandRolledback"/>.
-        /// </summary>
-        /// <param name="cmd"></param>
-        public delegate void InsertStreamCommandRolledbackEventListener(InsertStudyXmlCommand cmd);
-
-        /// <summary>
-        /// Defines the interface for <see cref="InsertInstanceCommandBegin"/>.
-        /// </summary>
-        /// <param name="cmd"></param>
-        public delegate void InsertInstanceCommandBeginEventListener(InsertInstanceCommand cmd);
-
-        /// <summary>
-        /// Defines the interface for <see cref="InsertInstanceCommandCompleted"/>.
-        /// </summary>
-        /// <param name="cmd"></param>
-        public delegate void InsertInstanceCommandCompletedEventListener(InsertInstanceCommand cmd);
-
-        /// <summary>
-        /// Defines the interface for <see cref="InsertInstanceCommandRolledback"/>.
-        /// </summary>
-        /// <param name="cmd"></param>
-        public delegate void InsertInstanceCommandRolledbackEventListener(InsertInstanceCommand cmd);
-
-        /// <summary>
-        /// Defines the interface for <see cref="RuleEngineLoadBegin"/>.
-        /// </summary>
-        /// <param name="engines"></param>
-        public delegate void RuleEngineLoadBeginEventListener(ServerRulesEngine engines);
-
-        /// <summary>
-        /// Defines the interface for <see cref="RuleEngineLoadCompleted"/>.
-        /// </summary>
-        /// <param name="engines"></param>
-        public delegate void RuleEngineLoadCompletedEventListener(ServerRulesEngine engines);
-
-        /// <summary>
-        /// Defines the interface for <see cref="RuleEngineExecuteBegin"/>.
-        /// </summary>
-        /// <param name="engine"></param>
-        /// <param name="context"></param>
-        public delegate void RuleEngineExecuteBeginEventListener(ServerRulesEngine engine, ServerActionContext context);
-
-        /// <summary>
-        /// Defines the interface for <see cref="RuleEngineExecuteCompleted"/>.
-        /// </summary>
-        /// <param name="engine"></param>
-        /// <param name="context"></param>
-        public delegate void RuleEngineExecuteCompletedEventListener(ServerRulesEngine engine, ServerActionContext context);
-
-        /// <summary>
-        /// Defines the interface for <see cref="DicomFileLoadBegin"/>.
-        /// </summary>
-        /// <param name="path"></param>
-        public delegate void DicomFileLoadBeginEventListener(string path);
-
-        /// <summary>
-        /// Defines the interface for <see cref="DicomFileLoadCompleted"/>.
-        /// </summary>
-        /// <param name="file"></param>
-        public delegate void DicomFileLoadCompletedEventListener(DicomFile file);
-        
-        /// <summary>
-        /// Occurs when the processor begins processing the list of WorkQueueUIDs in the database.
-        /// </summary>
-        public event WorkQueueUIDListProcessingBeginEventListener WorkQueueUIDListProcessingBegin
-        {
-            add { _workQueueUIDListProcessingBegin += value; }
-            remove { _workQueueUIDListProcessingBegin -= value; }
-        }
-
-        /// <summary>
-        /// Occurs when the processor finishes processing the list of WorkQueueUIDs in the database.
-        /// </summary>
-        public event WorkQueueUIDListProcessingCompletedEventListener WorkQueueUIDListProcessingCompleted
-        {
-            add { _workQueueUIDListProcessingCompleted += value; }
-            remove { _workQueueUIDListProcessingCompleted -= value; }
-        }
-
-        /// <summary>
-        /// Occurs when the processor begins processing a <see cref="WorkQueueUid"/>.
-        /// </summary>
-        public event WorkQueueUIDProcessingBeginEventListener WorkQueueUIDProcessingBegin
-        {
-            add { _workQueueUIDProcessingBegin += value; }
-            remove { _workQueueUIDProcessingBegin -= value; }
-        }
-
-        /// <summary>
-        /// Occurs when the processor finishes processing a <see cref="WorkQueueUid"/>.
-        /// </summary>
-        public event WorkQueueUIDProcessingCompletedEventListener WorkQueueUIDProcessingCompleted
-        {
-            add { _workQueueUIDProcessingCompleted += value; }
-            remove { _workQueueUIDProcessingCompleted -= value; }
-        }
-
-        /// <summary>
-        /// Occurs when the processor begins executing a <see cref="InsertStudyXmlCommand"/>.
-        /// </summary>
-        public event InsertStreamCommandBeginEventListener InsertStudyXmlCommandBegin
-        {
-            add { _insertStreamCommandBegin += value; }
-            remove { _insertStreamCommandBegin -= value; }
-        }
-
-        /// <summary>
-        /// Occurs when the processor finishes executing a <see cref="InsertStudyXmlCommand"/>.
-        /// </summary>
-        public event InsertStreamCommandCompletedEventListener InsertStudyXmlCommandCompleted
-        {
-            add { _insertStreamCommandCompleted += value; }
-            remove { _insertStreamCommandCompleted -= value; }
-        }
-
-        /// <summary>
-        /// Occurs after the processor has rolled back a <see cref="InsertStudyXmlCommand"/>.
-        /// </summary>
-        public event InsertStreamCommandRolledbackEventListener InsertStudyXmlCommandRolledback
-        {
-            add { _insertStreamCommandRolledback += value; }
-            remove { _insertStreamCommandRolledback -= value; }
-        }
-
-        /// <summary>
-        /// Occurs when the processor begins executing a <see cref="InsertInstanceCommand"/>.
-        /// </summary>
-        public event InsertInstanceCommandBeginEventListener InsertInstanceCommandBegin
-        {
-            add { _insertInstanceCommandBegin += value; }
-            remove { _insertInstanceCommandBegin -= value; }
-        }
-
-        /// <summary>
-        /// Occurs when the processor finishes executing a <see cref="InsertInstanceCommand"/>.
-        /// </summary>
-        public event InsertInstanceCommandCompletedEventListener InsertInstanceCommandCompleted
-        {
-            add { _insertInstanceCommandCompleted += value; }
-            remove { _insertInstanceCommandCompleted -= value; }
-        }
-
-        /// <summary>
-        /// Occurs after the processor has rolled back a <see cref="InsertInstanceCommand"/>.
-        /// </summary>
-        public event InsertInstanceCommandRolledbackEventListener InsertInstanceCommandRolledback
-        {
-            add { _insertInstanceCommandRolledback += value; }
-            remove { _insertInstanceCommandRolledback -= value; }
-        }
-
-        /// <summary>
-        /// Occurs when the processor begins executing a <see cref="ServerRulesEngine"/>.
-        /// </summary>
-        public event RuleEngineExecuteBeginEventListener RuleEngineExecuteBegin
-        {
-            add { _ruleEngineExecuteBegin += value; }
-            remove { _ruleEngineExecuteBegin -= value; }
-        }
-
-        /// <summary>
-        /// Occurs when the processor finishes executing a <see cref="ServerRulesEngine"/>.
-        /// </summary>
-        public event RuleEngineExecuteCompletedEventListener RuleEngineExecuteCompleted
-        {
-            add { _ruleEngineExecuteCompleted += value; }
-            remove { _ruleEngineExecuteCompleted -= value; }
-        }
-
-        /// <summary>
-        /// Occurs when the processor begins loading a <see cref="ServerRulesEngine"/>.
-        /// </summary>
-        public event RuleEngineLoadBeginEventListener RuleEngineLoadBegin
-        {
-            add { _ruleEngineLoadBegin += value; }
-            remove { _ruleEngineLoadBegin -= value; }
-        }
-
-        /// <summary>
-        /// Occurs after the processor has finished loading a <see cref="ServerRulesEngine"/>.
-        /// </summary>
-        public event RuleEngineLoadCompletedEventListener RuleEngineLoadCompleted
-        {
-            add { _ruleEngineLoadCompleted += value; }
-            remove { _ruleEngineLoadCompleted -= value; }
-        }
-
-        /// <summary>
-        /// Occurs when the processor begins loading a <see cref="DicomFile"/>.
-        /// </summary>
-        public event DicomFileLoadBeginEventListener DicomFileLoadBegin
-        {
-            add { _dicomFileLoadBegin += value; }
-            remove { _dicomFileLoadBegin -= value; }
-        }
-
-        /// <summary>
-        /// Occurs after the processor has loaded a <see cref="DicomFile"/>.
-        /// </summary>
-        public event DicomFileLoadCompletedEventListener DicomFileLoadCompleted
-        {
-            add { _dicomFileLoadCompleted += value; }
-            remove { _dicomFileLoadCompleted -= value; }
-        }
-        
-
         #endregion Events
 
         #region Constructors
         public StudyProcessItemProcessor():base()
         {
-            LoadExtensions();
+            _stats = new StudyProcessStatistics();
         }
         #endregion Constructors
 
@@ -343,8 +81,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         {
             if (_studyProcessedRulesEngine == null)
             {
-                _studyProcessedRulesEngine = CreateStudyProcessedRuleEngine(item);
+                _studyProcessedRulesEngine = new ServerRulesEngine(ServerRuleApplyTimeEnum.GetEnum("StudyProcessed"), item.ServerPartitionKey);
                 _studyProcessedRulesEngine.Load();
+                _stats.EngineLoadTimeInMs += _studyProcessedRulesEngine.Statistics.LoadTimeInMs;
             }
             ServerActionContext context = new ServerActionContext(file,StorageLocation.FilesystemKey, item.ServerPartitionKey,item.StudyStorageKey);
 
@@ -356,35 +95,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             {
                 Platform.Log(LogLevel.Error, "Unexpeected failure processing Study level rules");   
             }
+
+            _stats.EngineExecutionTimeInMs += _studyProcessedRulesEngine.Statistics.ExecutionTimeInMs;
         }
 
-        /// <summary>
-        /// Method to create an instance of <see cref="ServerRulesEngine"/> to process study rules.
-        /// </summary>
-        private ServerRulesEngine CreateStudyProcessedRuleEngine(Model.WorkQueue item)
-        {
-            ServerRulesEngine theEngine = new ServerRulesEngine(ServerRuleApplyTimeEnum.GetEnum("StudyProcessed"), item.ServerPartitionKey);
-
-            theEngine.ExecuteBegin += delegate(ServerRulesEngine engine, ServerActionContext ctx)
-                                                           {
-                                                               EventsHelper.Fire(_ruleEngineExecuteBegin, engine, ctx);
-                                                           };
-
-            theEngine.ExecuteCompleted += delegate(ServerRulesEngine engine, ServerActionContext ctx)
-                                                               {
-                                                                   EventsHelper.Fire(_ruleEngineExecuteCompleted, engine, ctx);
-                                                               };
-            theEngine.LoadBegin += delegate(ServerRulesEngine engine)
-                                                        {
-                                                            EventsHelper.Fire(_ruleEngineLoadBegin, engine);
-                                                        };
-            theEngine.LoadCompleted += delegate(ServerRulesEngine engine)
-                                                            {
-                                                                EventsHelper.Fire(_ruleEngineLoadCompleted, engine);
-                                                            };
-
-            return theEngine;
-        }
 
         /// <summary>
         /// Method for applying rules when a new series has been inserted.
@@ -395,9 +109,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         {
             if (_seriesProcessedRulesEngine == null)
             {
-                _seriesProcessedRulesEngine = CreateSeriesProcessedRuleEngine(item);
-
+                _seriesProcessedRulesEngine = new ServerRulesEngine(ServerRuleApplyTimeEnum.GetEnum("SeriesProcessed"), item.ServerPartitionKey);
                 _seriesProcessedRulesEngine.Load();
+                _stats.EngineLoadTimeInMs += _seriesProcessedRulesEngine.Statistics.LoadTimeInMs;
             }
             ServerActionContext context = new ServerActionContext(file, StorageLocation.FilesystemKey, item.ServerPartitionKey, item.StudyStorageKey);
 
@@ -409,35 +123,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             {
                 Platform.Log(LogLevel.Error,"Error processing Series level rules StudyStorage {0}",item.StudyStorageKey);
             }
-        }
 
-        /// <summary>
-        /// Method to create an instance of <see cref="ServerRulesEngine"/> to process series rules.
-        /// </summary>
-        /// 
-        private ServerRulesEngine CreateSeriesProcessedRuleEngine(Model.WorkQueue item)
-        {
-            ServerRulesEngine theEngine = new ServerRulesEngine(ServerRuleApplyTimeEnum.GetEnum("SeriesProcessed"), item.ServerPartitionKey);
-
-            theEngine.ExecuteBegin += delegate(ServerRulesEngine engine, ServerActionContext ctx)
-                                            {
-                                                EventsHelper.Fire(_ruleEngineExecuteBegin, engine, ctx);
-                                            };
-
-            theEngine.ExecuteCompleted += delegate(ServerRulesEngine engine, ServerActionContext ctx)
-                                            {
-                                                EventsHelper.Fire(_ruleEngineExecuteCompleted, engine, ctx);
-                                            };
-            theEngine.LoadBegin += delegate(ServerRulesEngine engine)
-                                             {
-                                                 EventsHelper.Fire(_ruleEngineLoadBegin, engine);
-                                             };
-            theEngine.LoadCompleted += delegate(ServerRulesEngine engine)
-                                             {
-                                                 EventsHelper.Fire(_ruleEngineLoadCompleted, engine);
-                                             };
-
-            return theEngine;
+            _stats.EngineExecutionTimeInMs += _seriesProcessedRulesEngine.Statistics.ExecutionTimeInMs;
         }
 
         /// <summary>
@@ -449,54 +136,37 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         private void ProcessFile(Model.WorkQueue item, string path, StudyXml stream)
         {
             InstanceKeys keys;
-            DicomFile file;
+            DicomFile file=null;
+            long fileSize = 0;
+            String modality = null;
+            String patientsName = null;
+
+            FileInfo fileInfo = new FileInfo(path);
+            fileSize = fileInfo.Length;
 
             // Use the command processor for rollback capabilities.
             ServerCommandProcessor processor = new ServerCommandProcessor("Processing WorkQueue DICOM File");
+            InsertStudyXmlCommand insertStudyXmlCommand = null;
+            InsertInstanceCommand insertInstanceCommand = null;
+
             try
             {
-                EventsHelper.Fire(_dicomFileLoadBegin, path);
-
+                long t1 = DateTime.Now.Ticks;
                 file = new DicomFile(path);
                 file.Load();
-
-                EventsHelper.Fire(_dicomFileLoadCompleted, file);
+                _stats.DicomFileLoadtimeInMs += (DateTime.Now.Ticks - t1)/10000d;
+                
 
                 // Get the Patients Name for processing purposes.
-                String patientsName = file.DataSet[DicomTags.PatientsName].GetString(0, "");
-                String instanceuid = file.DataSet[DicomTags.SopInstanceUid].GetString(0, "");
-
+                patientsName = file.DataSet[DicomTags.PatientsName].GetString(0, "");
+                modality = file.DataSet[DicomTags.Modality].GetString(0, "");
+                
                 // Update the StudyStream object
-                InsertStudyXmlCommand insertCommand = new InsertStudyXmlCommand(file, stream, StorageLocation);
-                insertCommand.ExecuteBegin += delegate(ServerCommand cmd)
-                                                  {
-                                                      EventsHelper.Fire(_insertStreamCommandBegin, cmd);
-                                                  };
-                insertCommand.ExecuteCompleted += delegate(ServerCommand cmd)
-                                                  {
-                                                      EventsHelper.Fire(_insertStreamCommandCompleted, cmd);
-                                                  };
-                insertCommand.UndoCompleted += delegate(ServerCommand cmd)
-                                                  {
-                                                      EventsHelper.Fire(_insertStreamCommandRolledback, cmd);
-                                                  };
-
-                processor.AddCommand(insertCommand);
+                insertStudyXmlCommand = new InsertStudyXmlCommand(file, stream, StorageLocation);
+                processor.AddCommand(insertStudyXmlCommand);
 
                 // Insert into the database
-                InsertInstanceCommand insertInstanceCommand = new InsertInstanceCommand(file, StorageLocation);
-                insertInstanceCommand.ExecuteBegin += delegate(ServerCommand cmd)
-                                                  {
-                                                      EventsHelper.Fire(_insertInstanceCommandBegin, cmd);
-                                                  };
-                insertInstanceCommand.ExecuteCompleted += delegate(ServerCommand cmd)
-                                                  {
-                                                      EventsHelper.Fire(_insertInstanceCommandCompleted, cmd);
-                                                  };
-                insertInstanceCommand.UndoCompleted += delegate(ServerCommand cmd)
-                                                  {
-                                                      EventsHelper.Fire(_insertInstanceCommandRolledback, cmd);
-                                                  };
+                insertInstanceCommand = new InsertInstanceCommand(file, StorageLocation);
                 processor.AddCommand(insertInstanceCommand);
 
                 // Create a context for applying actions from the rules engine
@@ -506,7 +176,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
                 // Run the rules engine against the object.
                 _sopProcessedRulesEngine.Execute(context);
-
+                
                 // Do the actual processing
                 if (!processor.Execute())
                 {
@@ -519,6 +189,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                                  patientsName);
                     keys = insertInstanceCommand.InsertKeys;
                 }
+
             }
             catch (Exception e)
             {
@@ -527,6 +198,27 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                 processor.Rollback();
                 throw new ApplicationException("Unexpected exception when processing file.", e);
             }
+            finally
+            {
+                _stats.StudyInstanceUID = StorageLocation.StudyInstanceUid;
+                if (String.IsNullOrEmpty(modality) == false)
+                    _stats.ModalityType = modality;
+
+                // Update the statistics
+                _stats.NumInstances++;
+
+                // add the statistics in the commands and rule engines
+                _stats.EngineLoadTimeInMs += _sopProcessedRulesEngine.Statistics.LoadTimeInMs;
+                _stats.EngineExecutionTimeInMs += _sopProcessedRulesEngine.Statistics.ExecutionTimeInMs;
+                if (insertInstanceCommand != null)
+                    _stats.InsertDBTotalTimeInMs += insertInstanceCommand.Statistics.ElapsedTimeInMs;
+                if (insertStudyXmlCommand != null)
+                    _stats.InsertStreamTotalTimeInMs += insertStudyXmlCommand.Statistics.ElapsedTimeInMs;
+
+                _stats.TotalFileSizeInMB += fileSize / (1024d*1024d);
+
+            }
+            
 
             if (keys != null)
             {
@@ -542,6 +234,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                     ProcessSeriesRules(item, file);
                 }
             }
+
+            
         }
 
 
@@ -553,16 +247,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         {
             StudyXml studyXml;
             
-            EventsHelper.Fire(_workQueueUIDListProcessingBegin, WorkQueueUidList);
-            
             studyXml = LoadStudyXml(StorageLocation);
             
             int successfulProcessCount = 0;
 
             foreach (WorkQueueUid sop in WorkQueueUidList)
             {
-                EventsHelper.Fire(_workQueueUIDProcessingBegin, sop);
-
                 string path = Path.Combine(StorageLocation.GetStudyPath(), sop.SeriesInstanceUid);
                 path = Path.Combine(path, sop.SopInstanceUid + ".dcm");
 
@@ -573,7 +263,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                 catch (Exception e)
                 {
                     Platform.Log(LogLevel.Error, e, "Unexpected exception when processing file: {0} SOP Instance: {1}", path, sop.SopInstanceUid);
-                    EventsHelper.Fire(_workQueueUIDProcessingCompleted, sop, false);
                     continue;
                 }
 
@@ -582,43 +271,21 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                 // Delete it out of the queue
                 DeleteWorkQueueUid(sop);
 
-                EventsHelper.Fire(_workQueueUIDProcessingCompleted, sop, true);
             }
 
             if (successfulProcessCount == 0)
             {
                 SetWorkQueueItemPending(item, true); // set failure status, retries will be attempted if necessary
-                EventsHelper.Fire(_workQueueUIDListProcessingCompleted, WorkQueueUidList, true);
             }
             else
             {
                 SetWorkQueueItemPending(item, false); // set success status}
-                EventsHelper.Fire(_workQueueUIDListProcessingCompleted, WorkQueueUidList, false);
             }
             
         }
 
 
-        private void LoadExtensions()
-        {
-            StudyProcessItemProcessorExtensionPoint ep = new StudyProcessItemProcessorExtensionPoint();
-            try
-            {
-                object[] ex = ep.CreateExtensions();
-                _extensions = new IStudyProcessItemProcessorListener[ex.Length];
-                ex.CopyTo(_extensions, 0);
-
-                foreach(IStudyProcessItemProcessorListener listener in _extensions)
-                {
-                    listener.Initialize(this);
-                }
-            }
-            catch(PluginException e)
-            {
-                Console.WriteLine(e);
-            }
-            
-        }
+       
         #endregion
 
         #region IWorkQueueItemProcessor Members
@@ -628,6 +295,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         /// </summary>
         protected override void OnProcess()
         {
+            // Start timing how long the processor takes to execute
+            _stats.Begin();
 
             Model.WorkQueue item = WorkQueueItem; // avoid using property everytime for performance purpose
 
@@ -639,6 +308,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             Thread.Sleep(10000);
             Console.WriteLine("WorkQueue Item is being processed...");
 #endif
+            
 
             //Load the specific UIDs that need to be processed.
             LoadUids(item);
@@ -653,25 +323,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                 // Load the rules engine
                 _sopProcessedRulesEngine =
                     new ServerRulesEngine(ServerRuleApplyTimeEnum.GetEnum("SopProcessed"), item.ServerPartitionKey);
-                _sopProcessedRulesEngine.ExecuteBegin += delegate(ServerRulesEngine engine, ServerActionContext ctx)
-                                                             {
-                                                                 EventsHelper.Fire(_ruleEngineExecuteBegin, engine, ctx);
-                                                             };
-
-                _sopProcessedRulesEngine.ExecuteCompleted += delegate(ServerRulesEngine engine, ServerActionContext ctx)
-                                                             {
-                                                                 EventsHelper.Fire(_ruleEngineExecuteCompleted, engine, ctx);
-                                                             };
-                _sopProcessedRulesEngine.LoadBegin += delegate(ServerRulesEngine engine)
-                                                       {
-                                                           EventsHelper.Fire(_ruleEngineLoadBegin, engine);
-                                                       };
-                _sopProcessedRulesEngine.LoadCompleted += delegate(ServerRulesEngine engine)
-                                                       {
-                                                           EventsHelper.Fire(_ruleEngineLoadCompleted, engine);
-                                                       };
                 _sopProcessedRulesEngine.Load();
-                
+                _stats.EngineLoadTimeInMs += _sopProcessedRulesEngine.Statistics.LoadTimeInMs;
 
                 //Load the storage location.
                 LoadStorageLocation(item);
@@ -679,6 +332,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                 // Process the images in the list
                 ProcessUidList(item);
             }
+
+            
+            _stats.End();
+
+            if (_stats.NumInstances>0)
+                Platform.LogStatistics(LogLevel.Info, _stats);
+
         }
 
         

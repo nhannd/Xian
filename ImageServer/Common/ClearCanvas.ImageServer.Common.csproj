@@ -40,6 +40,7 @@
     <Compile Include="SaveDicomFileCommand.cs" />
     <Compile Include="ServerCommand.cs" />
     <Compile Include="ServerCommandProcessor.cs" />
+    <Compile Include="ServerCommandStatistics.cs" />
     <Compile Include="ServerDatabaseCommand.cs" />
     <Compile Include="ServerFilesystemInfo.cs" />
     <Compile Include="ServiceTools.cs" />

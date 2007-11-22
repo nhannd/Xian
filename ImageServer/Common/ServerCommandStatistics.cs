@@ -29,46 +29,19 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
+using ClearCanvas.Common.Statistics;
 
-using ClearCanvas.ImageServer.Model;
-
-namespace ClearCanvas.ImageServer.Services.WorkQueue
+namespace ClearCanvas.ImageServer.Common
 {
     /// <summary>
-    /// Interface for processors of WorkQueue items
+    /// Stores the statistics of a <see cref="ServerCommand"/>.
     /// </summary>
-    public interface IWorkQueueItemProcessor : IDisposable
+    public class ServerCommandStatistics:TimeSpanStatistics
     {
-        #region Properties
-        // A string used to identify the processor
-        string ProcessorID
+        public ServerCommandStatistics(ServerCommand cmd)
+            :base(cmd.Description)
         {
-            get;
-            set;
+            
         }
-
-        /// <summary>
-        /// Gets or sets the WorkQueue item being processed.
-        /// </summary>
-        Model.WorkQueue WorkQueueItem
-        {
-            get; set;
-        }
-
-        #endregion Properties
-
-        #region Events
-        
-        #endregion
-
-        #region Methods
-
-        void Process();
-        
-        #endregion
-
     }
 }

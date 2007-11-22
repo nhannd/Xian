@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using ClearCanvas.Common.Actions;
 using ClearCanvas.Common.Specifications;
@@ -69,6 +70,8 @@ namespace ClearCanvas.ImageServer.Rules
         private readonly ServerRuleApplyTimeEnum _applyTime;
         private readonly ServerEntityKey _serverPartitionKey;
         private readonly Dictionary<ServerRuleTypeEnum, RuleTypeCollection> _typeList = new Dictionary<ServerRuleTypeEnum, RuleTypeCollection>();
+
+        private RuleEngineStatistics _stats;
         #endregion
 
         #region Constructors
@@ -85,6 +88,8 @@ namespace ClearCanvas.ImageServer.Rules
         {
             _applyTime = applyTime;
             _serverPartitionKey = serverPartitionKey;
+
+            _stats = new RuleEngineStatistics(this);
         }
         #endregion
 
@@ -96,49 +101,17 @@ namespace ClearCanvas.ImageServer.Rules
         {
             get { return _applyTime; }
         }
+
+        /// <summary>
+        /// Gets the <see cref="RuleEngineStatistics"/> for the rules engine.
+        /// </summary>
+        public RuleEngineStatistics Statistics
+        {
+            get { return _stats; }
+        }
         #endregion
 
         #region Events
-        /// <summary>
-        /// Defines the event handler for <see cref="ExecuteBeginEventHandler"/>.
-        /// </summary>
-        /// <param name="engine"></param>
-        /// <param name="context"></param>
-        public delegate void ExecuteBeginEventHandler(ServerRulesEngine engine, ServerActionContext context);
-        /// <summary>
-        /// Defines the event handler for <see cref="ExecuteCompletedEventHandler"/>.
-        /// </summary>
-        /// <param name="engine"></param>
-        /// <param name="context"></param>
-        public delegate void ExecuteCompletedEventHandler(ServerRulesEngine engine, ServerActionContext context);
-        /// <summary>
-        /// Defines the event handler for <see cref="LoadBeginEventHandler"/>.
-        /// </summary>
-        /// <param name="engines"></param>
-        public delegate void LoadBeginEventHandler(ServerRulesEngine engines);
-        /// <summary>
-        /// Defines the event handler for <see cref="LoadCompletedEventHandler"/>.
-        /// </summary>
-        /// <param name="engines"></param>
-        public delegate void LoadCompletedEventHandler(ServerRulesEngine engines);
-
-        /// <summary>
-        /// Occurs when <see cref="Execute"/> is called.
-        /// </summary>
-        public event ExecuteBeginEventHandler ExecuteBegin;
-        /// <summary>
-        /// Occurs before <see cref="Execute"/> returns.
-        /// </summary>
-        public event ExecuteCompletedEventHandler ExecuteCompleted;
-        /// <summary>
-        /// Occurs when <see cref="Load"/> is called.
-        /// </summary>
-        public event LoadBeginEventHandler LoadBegin;
-        /// <summary>
-        /// Occurs before <see cref="Load"/> returns.
-        /// </summary>
-        public event LoadCompletedEventHandler LoadCompleted;
-
         #endregion Events
 
         #region Public Methods
@@ -147,8 +120,7 @@ namespace ClearCanvas.ImageServer.Rules
         /// </summary>
         public void Load()
         {
-            if (LoadBegin != null)
-                LoadBegin(this);
+            long t1 = DateTime.Now.Ticks;
 
             // Clearout the current type list.
             _typeList.Clear();
@@ -190,8 +162,7 @@ namespace ClearCanvas.ImageServer.Rules
                 }
             }
 
-            if (LoadCompleted != null)
-                LoadCompleted(this);
+            _stats.LoadTimeInMs = (DateTime.Now.Ticks - t1)/10000d;
 
         }
 
@@ -201,16 +172,14 @@ namespace ClearCanvas.ImageServer.Rules
         /// <param name="context">A class containing the context for applying the rules.</param>
         public void Execute(ServerActionContext context)
         {
-            if (ExecuteBegin != null)
-                ExecuteBegin(this, context);
+            long t1 = DateTime.Now.Ticks;
 
             foreach (RuleTypeCollection typeCollection in _typeList.Values)
             {
                 typeCollection.Execute(context);
             }
 
-            if (ExecuteCompleted != null)
-                ExecuteCompleted(this, context);
+            _stats.ExecutionTimeInMs = (DateTime.Now.Ticks - t1)/1000d;
         }
 
         #endregion

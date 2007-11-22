@@ -4,7 +4,7 @@ using System.Text;
 using ClearCanvas.Common.Statistics;
 using ClearCanvas.Dicom;
 
-namespace ClearCanvas.ImageServer.Performance.WorkQueue.StudyProcess
+namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 {
     
     /// <summary>
@@ -16,17 +16,11 @@ namespace ClearCanvas.ImageServer.Performance.WorkQueue.StudyProcess
         private string _modalityType;
         private string _studyInstanceUID;
         private int _numInstances = 0;
-        private long _engineLoadTime;
-        private long _engineTotalExecTime;
-        private long _insertStreamTotalTime;
-        private long _insertDBTotalTime;
-        private long _dicomFileLoadTime;
-
-        private long _engineLoadStart;
-        private long _engineExecStart;
-        private long _insertStreamStart;
-        private long _insertDBStart;
-        private long _dicomFileLoadStart;
+        private double _engineLoadTime;
+        private double _engineTotalExecTime;
+        private double _insertStreamTotalTime;
+        private double _insertDBTotalTime;
+        private double _dicomFileLoadTime;
 
         private double _totalFileSizeInMB;
 
@@ -69,12 +63,12 @@ namespace ClearCanvas.ImageServer.Performance.WorkQueue.StudyProcess
             }
         }
 
-        public long EngineLoadTime
+        public double EngineLoadTimeInMs
         {
             set
             {
                 _engineLoadTime = value;
-                this["EnginesLoadInMs"] = string.Format("{0}", value/10000.0d);
+                this["EnginesLoadInMs"] = string.Format("{0:0.00}", value);
             }
             get
             {
@@ -82,12 +76,11 @@ namespace ClearCanvas.ImageServer.Performance.WorkQueue.StudyProcess
             }
         }
 
-        public long EngineExecutionTime
+        public double EngineExecutionTimeInMs
         {
             set
             {
                 _engineTotalExecTime = value;
-                //this["RuleEngineExecInMs"] = string.Format("{0}", value/10000.0d);
             }
             get
             {
@@ -95,7 +88,7 @@ namespace ClearCanvas.ImageServer.Performance.WorkQueue.StudyProcess
             }
         }
 
-        public long InsertStreamTotalTime
+        public double InsertStreamTotalTimeInMs
         {
             set
             {
@@ -108,7 +101,7 @@ namespace ClearCanvas.ImageServer.Performance.WorkQueue.StudyProcess
             }
         }
 
-        public long InsertDBTotalTime
+        public double InsertDBTotalTimeInMs
         {
             set
             {
@@ -121,7 +114,7 @@ namespace ClearCanvas.ImageServer.Performance.WorkQueue.StudyProcess
             }
         }
 
-        public long DicomFileLoadtime
+        public double DicomFileLoadtimeInMs
         {
             set
             {
@@ -202,62 +195,6 @@ namespace ClearCanvas.ImageServer.Performance.WorkQueue.StudyProcess
         }
         #endregion Constructors
 
-        #region Public methods
-        public void EngineLoadBegin()
-        {
-            _engineLoadStart = DateTime.Now.Ticks;
-        }
-
-        public void EngineLoadEnd()
-        {
-            EngineLoadTime += DateTime.Now.Ticks - _engineLoadStart;
-        }
-
-        public void EngineExecutionBegin()
-        {
-            _engineExecStart = DateTime.Now.Ticks;
-        }
-
-        public void EngineExecutionEnd()
-        {
-            EngineExecutionTime += DateTime.Now.Ticks - _engineExecStart;
-        }
-
-        public void InsertStreamBegin()
-        {
-            _insertStreamStart = DateTime.Now.Ticks;
-        }
-
-        public void InsertStreamEnd()
-        {
-            InsertStreamTotalTime += DateTime.Now.Ticks - _insertStreamStart;
-        }
-        public void InsertDBBegin()
-        {
-            _insertDBStart = DateTime.Now.Ticks;
-        }
-
-        public void InsertDBEnd()
-        {
-            InsertDBTotalTime += DateTime.Now.Ticks - _insertDBStart;
-        }
-
-        public void DicomFileLoadBegin(string path)
-        {
-            _dicomFileLoadStart = DateTime.Now.Ticks;
-            System.IO.FileInfo fi = new System.IO.FileInfo(path);
-            TotalFileSizeInMB += (fi.Length / (1024d * 1024d));
-        }
-
-        public void DicomFileLoadEnd(DicomFile file)
-        {
-            DicomFileLoadtime += DateTime.Now.Ticks - _dicomFileLoadStart;
-
-            StudyInstanceUID = file.DataSet[DicomTags.StudyInstanceUid].GetString(0, "");
-            ModalityType = file.DataSet[DicomTags.Modality].GetString(0, "");
-
-        }
-
         protected override void OnEnd()
         {
             base.OnEnd();
@@ -266,15 +203,13 @@ namespace ClearCanvas.ImageServer.Performance.WorkQueue.StudyProcess
             {
                 // derive the average process times
                 AverageProcessTimePerInstance = (double)base.ElapsedTimeInMs / NumInstances;
-                AverageDicomFileLoadTime = DicomFileLoadtime / NumInstances / 10000d;
+                AverageDicomFileLoadTime = DicomFileLoadtimeInMs / NumInstances;
                 AverageFileSizeInMB = TotalFileSizeInMB / NumInstances;
-                AverageEngineExecutionTimePerInstance = (double)EngineExecutionTime / NumInstances / 10000d;
-                AverageInsertDBPerInstance = (double)InsertDBTotalTime / NumInstances / 10000d;
-                AverageInsertStreamPerInstance = (double)InsertStreamTotalTime / NumInstances / 10000d;
+                AverageEngineExecutionTimePerInstance = (double)EngineExecutionTimeInMs / NumInstances;
+                AverageInsertDBPerInstance = (double)InsertDBTotalTimeInMs / NumInstances;
+                AverageInsertStreamPerInstance = (double)InsertStreamTotalTimeInMs / NumInstances;
             }
 
         }
-
-        #endregion Public methods
     }
 }
