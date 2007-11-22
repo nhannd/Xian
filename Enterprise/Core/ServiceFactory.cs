@@ -79,6 +79,8 @@ namespace ClearCanvas.Enterprise.Core
                 }
 
                 ProxyFactory factory = _proxyFactoryCache[serviceContract];
+                object service = _serviceExtensionPoint.CreateExtension(new TypeExtensionFilter(serviceContract));
+                factory.Target = service;
                 return factory.GetProxy();
             }
         }
