@@ -226,12 +226,12 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
                 throw new RequestValidationException(SR.ExceptionVerifyWithNoReport);
 
             Operations.CompleteInterpretationAndVerify op = new Operations.CompleteInterpretationAndVerify();
-            VerificationStep verification = op.Execute(interpretation, this.CurrentUserStaff, new PersistentWorkflow(this.PersistenceContext));
+            PublicationStep publication = op.Execute(interpretation, this.CurrentUserStaff, new PersistentWorkflow(this.PersistenceContext));
 
             PersistenceContext.SynchState();
             CompleteInterpretationAndVerifyResponse response = new CompleteInterpretationAndVerifyResponse();
             response.InterpretationStepRef = interpretation.GetRef();
-            response.VerificationStepRef = verification.GetRef();
+            response.PublicationStepRef = publication.GetRef();
             return response;
         }
 

@@ -185,7 +185,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 
         public class CompleteInterpretationAndVerify : CompleteInterpretationBase
         {
-            public new VerificationStep Execute(InterpretationStep step, Staff currentUserStaff, IWorkflow workflow)
+            public new PublicationStep Execute(InterpretationStep step, Staff currentUserStaff, IWorkflow workflow)
             {
                 base.Execute(step, currentUserStaff, workflow);
 
@@ -193,7 +193,11 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
                 verification.Assign(currentUserStaff);
                 verification.Complete(currentUserStaff);
                 workflow.AddActivity(verification);
-                return verification;
+
+                PublicationStep publication = new PublicationStep(verification);
+                workflow.AddActivity(publication);
+
+                return publication;
             }
         }
 
