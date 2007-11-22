@@ -1,11 +1,8 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
-<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ClearCanvas.Ris.Client" GeneratedClassName="WorkingFacilityLocalSettings">
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ClearCanvas.Ris.Client" GeneratedClassName="LoginDialogSettings">
   <Profiles />
   <Settings>
     <Setting Name="SelectedFacility" Description="Last working facility selected at this workstation" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="FacilityChoices" Description="Cached list of facility choices" Type="System.String[]" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
   </Settings>

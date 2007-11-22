@@ -382,7 +382,7 @@ namespace ClearCanvas.Desktop.Configuration
         /// <returns></returns>
         public IList<SettingsGroupDescriptor> ListSettingsGroups()
         {
-            return SettingsGroupDescriptor.ListInstalledSettingsGroups();
+            return SettingsGroupDescriptor.ListInstalledSettingsGroups(false);
         }
 
         /// <summary>

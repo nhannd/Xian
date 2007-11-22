@@ -38,20 +38,5 @@ namespace ClearCanvas.Ris.Client {
                 this["SelectedFacility"] = value;
             }
         }
-        
-        /// <summary>
-        /// Cached list of facility choices
-        /// </summary>
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Configuration.SettingsDescriptionAttribute("Cached list of facility choices")]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        public string[] FacilityChoices {
-            get {
-                return ((string[])(this["FacilityChoices"]));
-            }
-            set {
-                this["FacilityChoices"] = value;
-            }
-        }
     }
 }

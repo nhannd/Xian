@@ -33,6 +33,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Configuration;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Common.Configuration
 {
@@ -41,7 +42,16 @@ namespace ClearCanvas.Common.Configuration
     /// </summary>
     public class SettingsGroupDescriptor : IEquatable<SettingsGroupDescriptor>
     {
-        public static List<SettingsGroupDescriptor> ListInstalledSettingsGroups()
+        /// <summary>
+        /// Returns a list of <see cref="SettingsGroupDescriptor"/> objects describing each settings class
+        /// that exists in the installed plugin base.
+        /// </summary>
+        /// <remarks>
+        /// If <param name="excludeLocalSettingsGroups"/> is true, this method only returns settings classes 
+        /// that use the <see cref="StandardSettingsProvider"/> for persistence.
+        /// </remarks>
+        /// <returns></returns>
+        public static List<SettingsGroupDescriptor> ListInstalledSettingsGroups(bool excludeLocalSettingsGroups)
         {
             List<SettingsGroupDescriptor> groups = new List<SettingsGroupDescriptor>();
 
@@ -51,6 +61,19 @@ namespace ClearCanvas.Common.Configuration
                 {
                     if (t.IsSubclassOf(typeof(ApplicationSettingsBase)) && !t.IsAbstract)
                     {
+                        if (excludeLocalSettingsGroups)
+                        {
+                            bool isStandard = AttributeUtils.HasAttribute<SettingsProviderAttribute>(t, false,
+                                                   delegate(SettingsProviderAttribute a)
+                                                   {
+                                                       return a.ProviderTypeName == typeof(StandardSettingsProvider).AssemblyQualifiedName;
+                                                   });
+
+                            // exclude non-standard settings groups
+                            if (!isStandard)
+                                continue;
+                        }
+
                         SettingsGroupDescriptor group = new SettingsGroupDescriptor(
                             SettingsClassMetaDataReader.GetGroupName(t),
                             SettingsClassMetaDataReader.GetVersion(t),

@@ -109,10 +109,10 @@ namespace ClearCanvas.Enterprise.Common
             // add remote groups
             List<SettingsGroupDescriptor> groups = new List<SettingsGroupDescriptor>(_remoteGroups);
 
-            // HACK: add local groups
-            // this is probably a bad security practice in a production environment, because local plugins may not be trusted
-            // but for development it makes things easier
-            IList<SettingsGroupDescriptor> localGroups = SettingsGroupDescriptor.ListInstalledSettingsGroups();
+            // add local groups
+            // note that local settings groups are excluded (ListInstalledSettingsGroups(true)) because they
+            // are not stored in the enterprise configuration store
+            IList<SettingsGroupDescriptor> localGroups = SettingsGroupDescriptor.ListInstalledSettingsGroups(true);
             foreach (SettingsGroupDescriptor group in localGroups)
             {
                 if (!groups.Contains(group))

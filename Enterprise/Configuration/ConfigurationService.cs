@@ -56,7 +56,7 @@ namespace ClearCanvas.Enterprise.Configuration
         public List<SettingsGroupInfo> ListSettingsGroups()
         {
             return CollectionUtils.Map<SettingsGroupDescriptor, SettingsGroupInfo, List<SettingsGroupInfo>>(
-                SettingsGroupDescriptor.ListInstalledSettingsGroups(),
+                SettingsGroupDescriptor.ListInstalledSettingsGroups(true),
                 delegate(SettingsGroupDescriptor desc)
                 {
                     return new SettingsGroupInfo(desc);
