@@ -1738,6 +1738,11 @@ namespace ClearCanvas.Dicom.Tests
                 attrib.SetStringValue("1000\\2000");
                 Assert.IsTrue(attrib.Count== 2);
 
+                attrib = CreateAttribute();
+                attrib.SetStringValue(
+                    @"0.0\6.500000e+02\\6.649999e+02\6.700001e+02\6.649998e+02\6.649999e+02");
+                Assert.IsTrue(attrib.Count == 7);
+
                 // special case : invalid index
                 attrib = CreateAttribute();
                 try
