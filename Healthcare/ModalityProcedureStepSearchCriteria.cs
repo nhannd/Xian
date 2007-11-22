@@ -44,6 +44,14 @@ namespace ClearCanvas.Healthcare
 
         }
 
+		/// <summary>
+		/// Constructor for sub-criteria (key required)
+		/// </summary>
+        public ModalityProcedureStepSearchCriteria(string key)
+			:base(key)
+		{
+		}
+
         public ModalityProcedureStepSearchCriteria(EntityRef mpsRef)
             :base(mpsRef)
         {

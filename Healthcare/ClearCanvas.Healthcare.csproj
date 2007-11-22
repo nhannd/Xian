@@ -75,6 +75,7 @@
     <Compile Include="Alert\IAlert.cs" />
     <Compile Include="Alert\LanguageAlert.cs" />
     <Compile Include="Alert\NoteAlert.cs" />
+    <Compile Include="ProcedureStepSchedulingSearchCriteria.cs" />
     <Compile Include="WorklistItemSearchCriteria.cs" />
     <Compile Include="ReportingWorklistItemSearchCriteria.cs" />
     <Compile Include="ModalityWorklistItemSearchCriteria.cs" />

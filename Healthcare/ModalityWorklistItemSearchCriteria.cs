@@ -43,15 +43,15 @@ namespace ClearCanvas.Healthcare
             }
         }
 
-        public ClearCanvas.Healthcare.ProcedureStepSearchCriteria ModalityProcedureStep
+        public ClearCanvas.Healthcare.ModalityProcedureStepSearchCriteria ModalityProcedureStep
         {
             get
             {
                 if (!this.SubCriteria.ContainsKey("ModalityProcedureStep"))
                 {
-                    this.SubCriteria["ModalityProcedureStep"] = new ClearCanvas.Healthcare.ProcedureStepSearchCriteria("ModalityProcedureStep");
+                    this.SubCriteria["ModalityProcedureStep"] = new ClearCanvas.Healthcare.ModalityProcedureStepSearchCriteria("ModalityProcedureStep");
                 }
-                return (ClearCanvas.Healthcare.ProcedureStepSearchCriteria)this.SubCriteria["ModalityProcedureStep"];
+                return (ClearCanvas.Healthcare.ModalityProcedureStepSearchCriteria)this.SubCriteria["ModalityProcedureStep"];
             }
         }
     }

@@ -129,19 +129,19 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
                 HqlAnd and = new HqlAnd();
 
                 and.Conditions.AddRange(HqlCondition.FromSearchCriteria("o", c.Order));
+                and.Conditions.AddRange(HqlCondition.FromSearchCriteria("pp", c.PatientProfile));
                 and.Conditions.AddRange(HqlCondition.FromSearchCriteria("rp", c.RequestedProcedure));
                 and.Conditions.AddRange(HqlCondition.FromSearchCriteria("rp.ProcedureCheckIn", c.ProcedureCheckIn));
                 and.Conditions.AddRange(HqlCondition.FromSearchCriteria("ps", c.ModalityProcedureStep));
-                and.Conditions.AddRange(HqlCondition.FromSearchCriteria("pp", c.PatientProfile));
 
                 if (and.Conditions.Count > 0)
                     or.Conditions.Add(and);
 
                 query.Sorts.AddRange(HqlSort.FromSearchCriteria("o", c.Order));
+                query.Sorts.AddRange(HqlSort.FromSearchCriteria("pp", c.PatientProfile));
                 query.Sorts.AddRange(HqlSort.FromSearchCriteria("rp", c.RequestedProcedure));
                 query.Sorts.AddRange(HqlSort.FromSearchCriteria("rp.ProcedureCheckIn", c.ProcedureCheckIn));
                 query.Sorts.AddRange(HqlSort.FromSearchCriteria("ps", c.ModalityProcedureStep));
-                query.Sorts.AddRange(HqlSort.FromSearchCriteria("pp", c.PatientProfile));
             }
 
             if (or.Conditions.Count > 0)

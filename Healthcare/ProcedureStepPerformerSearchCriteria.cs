@@ -34,6 +34,7 @@ using System.Collections.Generic;
 using System.Text;
 
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Workflow;
 
 namespace ClearCanvas.Healthcare {
 
@@ -58,9 +59,7 @@ namespace ClearCanvas.Healthcare {
 		{
 		}
 
-		
-	
-		
+
 	  	public ISearchCondition<Staff> Staff
 	  	{
 	  		get

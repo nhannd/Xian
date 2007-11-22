@@ -69,10 +69,20 @@ namespace ClearCanvas.Healthcare {
 			this.SubCriteria["OID"] = new SearchCondition<object>("OID");
             ((ISearchCondition<object>)this.SubCriteria["OID"]).EqualTo(EntityRefUtils.GetOID(entityRef));
 		}
-		
-	
-		
-	  	public ISearchCondition<RequestedProcedure> Procedure
+
+        public new ProcedureStepSchedulingSearchCriteria Scheduling
+        {
+            get
+            {
+                if (!this.SubCriteria.ContainsKey("Scheduling"))
+                {
+                    this.SubCriteria["Scheduling"] = new ProcedureStepSchedulingSearchCriteria("Scheduling");
+                }
+                return (ProcedureStepSchedulingSearchCriteria)this.SubCriteria["Scheduling"];
+            }
+        }
+
+        public ISearchCondition<RequestedProcedure> Procedure
 	  	{
 	  		get
 	  		{
@@ -83,5 +93,18 @@ namespace ClearCanvas.Healthcare {
 	  			return (ISearchCondition<RequestedProcedure>)this.SubCriteria["Procedure"];
 	  		}
 	  	}
+
+        public ProcedureStepPerformerSearchCriteria Performer
+        {
+            get
+            {
+                if (!this.SubCriteria.ContainsKey("Performer"))
+                {
+                    this.SubCriteria["Performer"] = new ProcedureStepPerformerSearchCriteria("Performer");
+                }
+                return (ProcedureStepPerformerSearchCriteria)this.SubCriteria["Procedure"];
+            }
+        }
+
 	}
 }

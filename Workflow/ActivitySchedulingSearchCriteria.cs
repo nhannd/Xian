@@ -58,7 +58,8 @@ namespace ClearCanvas.Workflow {
 		{
 		}
 		
-	  	public ISearchCondition<DateTime?> StartTime
+ 
+        public ISearchCondition<DateTime?> StartTime
 	  	{
 	  		get
 	  		{

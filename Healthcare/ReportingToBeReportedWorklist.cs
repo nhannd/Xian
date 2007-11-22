@@ -33,6 +33,7 @@ using System.Collections;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Common;
+using ClearCanvas.Workflow;
 
 namespace ClearCanvas.Healthcare
 {
@@ -50,16 +51,27 @@ namespace ClearCanvas.Healthcare
         {
         }
 
+        public static ReportingWorklistItemSearchCriteria[] QueryConditions
+        {
+            get
+            {
+                ReportingWorklistItemSearchCriteria criteria = new ReportingWorklistItemSearchCriteria();
+                criteria.ReportingProcedureStep.State.EqualTo(ActivityStatus.SC);
+                criteria.ReportingProcedureStep.Scheduling.Performer.Staff.IsNull();
+                return new ReportingWorklistItemSearchCriteria[] { criteria };
+            }
+        }
+
         #region Worklist overrides
 
         public override IList GetWorklist(Staff currentUserStaff, IPersistenceContext context)
         {
-            return (IList)GetBroker<IReportingWorklistBroker>(context).GetToBeReportedWorklist(this);
+            return (IList)GetBroker<IReportingWorklistBroker>(context).GetWorklist(typeof(InterpretationStep), QueryConditions, this);
         }
 
         public override int GetWorklistCount(Staff currentUserStaff, IPersistenceContext context)
         {
-            return GetBroker<IReportingWorklistBroker>(context).GetToBeReportedWorklistCount(this);
+            return GetBroker<IReportingWorklistBroker>(context).GetWorklistCount(typeof(InterpretationStep), QueryConditions, this);
         }
 
         public override string NameSuffix
