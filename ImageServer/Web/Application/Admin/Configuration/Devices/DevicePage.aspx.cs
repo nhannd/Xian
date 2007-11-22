@@ -113,7 +113,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
 
                 devPanel.DeleteDeviceDelegate = delegate(DeviceConfigurationController controller, ServerPartition partition, Device dev)
                                               {
-                                                  ConfirmDialog1.Message = string.Format("Are you sure to remove {0} from {1}?", dev.AeTitle, partition.Description);
+                                                  ConfirmDialog1.Message = string.Format("Are you sure to remove {0} from partition {1}?", dev.AeTitle, partition.AeTitle);
                                                   ConfirmDialog1.MessageType = ConfirmDialog.MessageTypeEnum.WARNING;
                                                   ConfirmDialog1.Data = dev;
                                                   ConfirmDialog1.Show();

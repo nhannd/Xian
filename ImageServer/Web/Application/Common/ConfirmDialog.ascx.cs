@@ -132,7 +132,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
                         break;
 
                 case MessageTypeEnum.WARNING:
-                    IconImage.ImageUrl = "~/images/icon_warning2.gif";
+                    IconImage.ImageUrl = "~/images/icons/icon_warning.png";
                     break;
             }
 

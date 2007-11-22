@@ -15,8 +15,8 @@
                     </tr>
                 </table>
             </asp:Panel>
-            <cc2:ValidationSummary ID="ValidationSummary1" runat="server" Style="left: 44px;
-                position: absolute; top: 317px" BackColor="#FFFFC0" Height="81px" ValidationGroup="vg1"
+            <cc2:ValidationSummary ID="ValidationSummary1" runat="server" Style="left: 42px;
+                position: absolute; top: 378px" BackColor="#FFFFC0" Height="81px" ValidationGroup="vg1"
                 Width="159px" ShowMessageBox="true" ShowSummary="False" />
             <div class="PopupWindowBody" style="vertical-align:top;">
                 <cc1:TabContainer ID="TabContainer1" runat="server" ActiveTabIndex="0" Height="150px">
@@ -27,7 +27,7 @@
                                     <tr id="Tr1" runat="server">
                                         <td id="Td1" runat="server" valign="bottom">
                                             AE Title<br />
-                                            <asp:TextBox ID="AETitleTextBox" runat="server" ValidationGroup="vg1" MaxLength="16" ></asp:TextBox>
+                                            <asp:TextBox ID="AETitleTextBox" runat="server" ValidationGroup="vg1" MaxLength="16" Width="150px" ></asp:TextBox>
                                             <clearcanvas:ConditionalRequiredFieldValidator 
                                                 ID="RequiredFieldValidator2" runat="server" ControlToValidate="AETitleTextBox"
                                                 InvalidInputBackColor="#FAFFB5"
@@ -45,21 +45,21 @@
                                             </td>
                                         <td id="Td3" runat="server" colspan="1" style="color: #000000" valign="bottom">
                                             Description<br />
-                                            <asp:TextBox ID="DescriptionTextBox" runat="server"></asp:TextBox></td>
+                                            <asp:TextBox ID="DescriptionTextBox" runat="server" Width="150px"></asp:TextBox></td>
                                     </tr>
                                     <tr id="Tr2" runat="server">
-                                        <td id="Td4" runat="server" style="height: 29px" valign="bottom">
+                                        <td id="Td4" runat="server" valign="bottom">
                                             <table cellpadding="0" cellspacing="0" width="100%">
                                                 <tr>
                                                     <td>
                                                         IP Address
                                                     </td>
-                                                    <td align="center">
+                                                    <td align="left">
                                                         <asp:CheckBox ID="DHCPCheckBox" runat="server" Text="DHCP" Width="68px" /></td>
                                                 </tr>
                                                 <tr>
                                                     <td colspan="2">
-                                            <asp:TextBox ID="IPAddressTextBox" runat="server" CausesValidation="True" ValidationGroup="vg1"></asp:TextBox></td>
+                                            <asp:TextBox ID="IPAddressTextBox" runat="server" CausesValidation="True" ValidationGroup="vg1" Width="150px"></asp:TextBox></td>
                                                 </tr>
                                             </table>
                                             <clearcanvas:ConditionalRequiredFieldValidator 
@@ -83,20 +83,32 @@
                                                 
                                             
                                             </td>
-                                        <td id="Td5" runat="server" align="left" colspan="1" style="height: 29px" valign="bottom">
+                                        <td id="Td5" runat="server" align="left" colspan="1" valign="bottom">
                                         </td>
-                                        <td id="Td6" runat="server" align="left" colspan="1" style="height: 29px" valign="bottom">
+                                        <td id="Td6" runat="server" align="left" colspan="1" valign="bottom">
                                             Partition<br />
-                                            <asp:DropDownList ID="ServerPartitionDropDownList" runat="server">
+                                            <asp:DropDownList ID="ServerPartitionDropDownList" runat="server" Width="150px">
                                             </asp:DropDownList></td>
                                     </tr>
                                     <tr id="Tr3" runat="server">
-                                        <td id="Td7" runat="server" style="height: 43px">
+                                        <td id="Td7" runat="server" >
                                             Port<br />
-                                            <asp:TextBox ID="PortTextBox" runat="server"></asp:TextBox></td>
-                                        <td id="Td8" runat="server" style="height: 43px">
+                                            <asp:TextBox ID="PortTextBox" runat="server"></asp:TextBox>
+                                            <clearcanvas:RangeValidator 
+                                                ID="PortValidator1" runat="server"
+                                                ControlToValidate="PortTextBox"
+                                                InvalidInputBackColor="#FAFFB5"
+                                                ValidationGroup="vg1" 
+                                                MinValue = "0"
+                                                MaxValue = "65535"
+                                                ErrorMessage="Device Port must be between 0 and 65535"
+                                                Display="None">
+                                            </clearcanvas:RangeValidator>
+                                                 
+                                            </td>
+                                        <td id="Td8" runat="server" >
                                         </td>
-                                        <td id="Td9" runat="server" style="height: 43px" valign="bottom">
+                                        <td id="Td9" runat="server"  valign="bottom">
                                             <asp:CheckBox ID="ActiveCheckBox" runat="server" Checked="True" Text="Active" /></td>
                                     </tr>
                                 </table>

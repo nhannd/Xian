@@ -12,7 +12,7 @@
 
             <table  width="100%" >
                 <tr class="toolBarPanel">
-                    <td colspan="1" valign="bottom" style="width: 400px">
+                    <td colspan="1" valign="bottom" style="width: 600px">
                        <uc2:FileSystemsToolBar ID="FileSystemsToolBar1" runat="server" />
                 
                     </td>

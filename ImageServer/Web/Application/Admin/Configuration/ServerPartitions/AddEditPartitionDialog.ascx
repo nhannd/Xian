@@ -48,7 +48,19 @@
                         <tr id="Tr2" runat="server">
                             <td id="Td4" runat="server" style="height: 29px" valign="bottom">
                                 Port<br />
-                                <asp:TextBox ID="PortTextBox" runat="server"></asp:TextBox></td>
+                                <asp:TextBox ID="PortTextBox" runat="server"></asp:TextBox>
+                                <clearcanvas:RangeValidator 
+                                                ID="PortValidator1" runat="server"
+                                                ControlToValidate="PortTextBox"
+                                                InvalidInputBackColor="#FAFFB5"
+                                                ValidationGroup="vg1" 
+                                                MinValue = "0"
+                                                MaxValue = "65535"
+                                                ErrorMessage="Parition Port must be between 0 and 65535"
+                                                Display="None">
+                                            </clearcanvas:RangeValidator>
+                                
+                                </td>
                             <td id="Td5" runat="server" align="left" colspan="1" style="height: 29px" valign="bottom">
                             </td>
                             <td id="Td6" runat="server" align="left" colspan="1" style="height: 29px" valign="bottom">

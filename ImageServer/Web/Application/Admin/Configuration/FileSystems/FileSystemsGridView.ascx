@@ -36,9 +36,15 @@
                         <asp:Label ID="PathLabel" runat="server" Text='<%# Bind("FileSystemPath") %>'></asp:Label>
                     </ItemTemplate>
                 </asp:TemplateField>
-                <asp:BoundField DataField="HighWatermark" HeaderText="High Watermark"></asp:BoundField>
-                <asp:BoundField DataField="LowWatermark" HeaderText="Low Watermark"></asp:BoundField>
-                <asp:BoundField DataField="PercentFull" HeaderText="Percent Full"></asp:BoundField>
+                <asp:BoundField DataField="HighWatermark" HeaderText="High Watermark">
+                    <HeaderStyle Wrap="False" />
+                </asp:BoundField>
+                <asp:BoundField DataField="LowWatermark" HeaderText="Low Watermark">
+                    <HeaderStyle Wrap="False" />
+                </asp:BoundField>
+                <asp:BoundField DataField="PercentFull" HeaderText="Percent Full">
+                    <HeaderStyle Wrap="False" />
+                </asp:BoundField>
             </Columns>
             <RowStyle CssClass="GridRowStyle" />
             <EditRowStyle BackColor="#2461BF" Wrap="True" BorderColor="Yellow" />

@@ -62,7 +62,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         /// <param name="filesystem"></param>
         public bool AddFileSystem(Filesystem filesystem)
         {
-            bool result = false;
+            bool ok = false;
             IList<Filesystem> list = null;
 
             using (IUpdateContext ctx = _store.OpenUpdateContext(UpdateContextSyncMode.Flush))
@@ -79,18 +79,22 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                 parms.LowWatermark = filesystem.LowWatermark;
 
                 list = insert.Execute(parms);
+
+                ok = list != null && list.Count > 0;
+
+                if (ok)
+                    ctx.Commit();
             }
 
-            result = list != null && list.Count > 0;
-
-            return result;
+           
+            return ok;
         }
 
 
 
         public bool Update(Filesystem filesystem)
         {
-            bool result = false;
+            bool ok = false;
 
             using (IUpdateContext ctx = _store.OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
@@ -106,10 +110,12 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                 parms.HighWatermark = filesystem.HighWatermark;
                 parms.LowWatermark = filesystem.LowWatermark;
 
-                result = update.Execute(parms);
+                ok = update.Execute(parms);
+                if (ok)
+                    ctx.Commit();
             }
 
-            return result;
+            return ok;
 
         }
 

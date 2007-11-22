@@ -44,6 +44,7 @@
     <Compile Include="Data\ServerParitionConfigController.cs" />
     <Compile Include="Data\ServerPartitionDataAdapter.cs" />
     <Compile Include="WebControls\ConditionalRequiredFieldValidator.cs" />
+    <Compile Include="WebControls\RangeValidator.cs" />
     <Compile Include="WebControls\RegularExpressionFieldValidator.cs" />
   </ItemGroup>
   <ItemGroup>

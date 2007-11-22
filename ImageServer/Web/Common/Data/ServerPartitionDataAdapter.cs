@@ -108,7 +108,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         /// <param name="partition"></param>
         public bool AddServerPartition(ServerPartition partition)
         {
-            bool result = false;
+            bool ok = false;
             IList<ServerPartition> list = null;
 
             using (IUpdateContext ctx = _store.OpenUpdateContext(UpdateContextSyncMode.Flush))
@@ -122,18 +122,21 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                 parms.Port = partition.Port;
 
                 list = insert.Execute(parms);
+                ok = list != null && list.Count > 0;
+
+                if (ok)
+                    ctx.Commit();
             }
 
-            result = list != null && list.Count > 0;
-
-            return result;
+            
+            return ok;
         }
 
 
 
         public bool Update(ServerPartition partition)
         {
-            bool result = false;
+            bool ok = false;
 
             using (IUpdateContext ctx = _store.OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
@@ -146,10 +149,13 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                 parms.PartitionFolder = partition.PartitionFolder;
                 parms.Port = partition.Port;
 
-                result = update.Execute(parms);
+                ok = update.Execute(parms);
+
+                if (ok)
+                    ctx.Commit();
             }
 
-            return result;
+            return ok;
 
         }
 

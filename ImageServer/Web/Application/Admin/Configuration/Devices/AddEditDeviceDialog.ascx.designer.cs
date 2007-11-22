@@ -281,6 +281,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices {
         protected global::System.Web.UI.WebControls.TextBox PortTextBox;
         
         /// <summary>
+        /// PortValidator1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.RangeValidator PortValidator1;
+        
+        /// <summary>
         /// Td8 control.
         /// </summary>
         /// <remarks>

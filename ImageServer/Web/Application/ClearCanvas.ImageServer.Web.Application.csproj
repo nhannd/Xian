@@ -282,6 +282,7 @@
     <Content Include="images\icons\EditEnabled.png" />
     <Content Include="images\icons\ForwardDisabled.png" />
     <Content Include="images\icons\ForwardEnabled.png" />
+    <Content Include="images\icons\icon_warning.png" />
     <Content Include="images\icons\ImageServerLogo.png" />
     <Content Include="images\icons\QueryDisabled.png" />
     <Content Include="images\icons\QueryEnabled.png" />

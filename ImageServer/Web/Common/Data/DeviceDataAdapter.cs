@@ -94,7 +94,8 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                 param.DeviceGUID = dev.GetKey();
 
                 ok = delete.Execute(param);
-                ctx.Commit();
+                if (ok)
+                    ctx.Commit();
             }
 
             return ok;
@@ -128,6 +129,9 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                 param.AllowStorage = dev.AllowStorage;
 
                 ok = update.Execute(param);
+
+                if (ok)
+                    ctx.Commit();
             }
 
             return ok;
@@ -195,6 +199,9 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                 param.AllowStorage = newDev.AllowStorage;
 
                 ok = insert.Execute(param);
+
+                if (ok)
+                    ctx.Commit();
             }
 
             return ok;
