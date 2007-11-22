@@ -43,6 +43,8 @@ using ClearCanvas.Ris.Application.Common.Admin;
 using ClearCanvas.Ris.Application.Common.Admin.DiagnosticServiceAdmin;
 using ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
+using ClearCanvas.Ris.Application.Common.Admin.PatientAdmin;
+using System.IO;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -108,6 +110,22 @@ namespace ClearCanvas.Ris.Client
             return target[randomIndex];
         }
 
+        private static string GetRandomNameFromFile(string file)
+        {
+            List<string> nameList = new List<string>();
+
+            using (TextReader reader = new StringReader(file))
+            {
+                string line;
+                while ((line = reader.ReadLine()) != null)
+                {
+                    nameList.Add(line);
+                }
+            }
+
+            return RandomUtils.ChooseRandom(nameList);
+        }
+
         #endregion
 
         public static string FormatDateTime(DateTime dateTime, string format)
@@ -124,6 +142,68 @@ namespace ClearCanvas.Ris.Client
             result = result.Replace("ss", dateTime.Second.ToString("00"));
             result = result.Replace("xxx", dateTime.Millisecond.ToString("000"));
             return result.Trim();
+        }
+
+        public static PatientProfileSummary RandomPatientProfile()
+        {
+            PatientProfileDetail profile = null;
+
+            Platform.GetService<IPatientAdminService>(
+                delegate(IPatientAdminService service)
+                {
+                    LoadPatientProfileEditorFormDataResponse fromResponse = service.LoadPatientProfileEditorFormData(new LoadPatientProfileEditorFormDataRequest());
+
+                    DateTime now = Platform.Time;
+
+                    profile = new PatientProfileDetail();
+
+                    profile.Mrn = new CompositeIdentifierDetail(
+                        RandomUtils.FormatDateTime(now, null),
+                        RandomUtils.ChooseRandom(fromResponse.MrnAssigningAuthorityChoices));
+
+                    profile.Healthcard = new HealthcardDetail(
+                        RandomUtils.GenerateRandomIntegerString(10),
+                        RandomUtils.ChooseRandom(fromResponse.HealthcardAssigningAuthorityChoices),
+                        "", null);
+
+                    profile.DateOfBirth = now;
+                    profile.Sex = RandomUtils.ChooseRandom(fromResponse.SexChoices);
+                    profile.PrimaryLanguage = RandomUtils.ChooseRandom(fromResponse.PrimaryLanguageChoices);
+                    profile.Religion = RandomUtils.ChooseRandom(fromResponse.ReligionChoices);
+                    profile.DeathIndicator = false;
+                    profile.TimeOfDeath = null;
+
+                    string givenName;
+                    string familyName = GetRandomNameFromFile(RandomUtilsSettings.Default.FamilyNameDictionary);
+                    if (profile.Sex.Code == "F")
+                        givenName = GetRandomNameFromFile(RandomUtilsSettings.Default.FemaleNameDictionary);
+                    else
+                        givenName = GetRandomNameFromFile(RandomUtilsSettings.Default.MaleNameDictionary);
+
+                    givenName += " Anonymous";
+                    profile.Name = new PersonNameDetail();
+                    profile.Name.FamilyName = familyName;
+                    profile.Name.GivenName = givenName;
+                });
+
+            AdminAddPatientProfileResponse addResponse = null;
+
+            Platform.GetService<IPatientAdminService>(
+                delegate(IPatientAdminService service)
+                {
+                    addResponse = service.AdminAddPatientProfile(new AdminAddPatientProfileRequest(profile));
+                });
+
+            PatientProfileSummary summary = new PatientProfileSummary();
+            summary.PatientRef = addResponse.PatientRef;
+            summary.ProfileRef = addResponse.PatientProfileRef;
+            summary.Mrn = profile.Mrn;
+            summary.Name = profile.Name;
+            summary.Healthcard = profile.Healthcard;
+            summary.DateOfBirth = profile.DateOfBirth;
+            summary.Sex = profile.Sex;
+
+            return summary;
         }
 
         public static VisitSummary RandomVisit(EntityRef patientRef, EntityRef profileRef, EnumValueInfo assigningAuthority)

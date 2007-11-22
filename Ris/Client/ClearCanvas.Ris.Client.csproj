@@ -95,6 +95,12 @@
     <Compile Include="PatientProfileTable.cs" />
     <Compile Include="PatientSearchComponent.cs" />
     <Compile Include="RandomUtils.cs" />
+    <Compile Include="RandomUtilsSettings.cs" />
+    <Compile Include="RandomUtilsSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>RandomUtilsSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="RisDesktopWindow.cs" />
     <Compile Include="SearchComponent.cs" />
     <Compile Include="RemoteSuggestionProvider.cs" />
@@ -238,6 +244,10 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>FormatSettings.Designer.cs</LastGenOutput>
     </None>
+    <None Include="RandomUtilsSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>RandomUtilsSettings.Designer.cs</LastGenOutput>
+    </None>
     <None Include="WebResourcesSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>WebResourcesSettings.Designer.cs</LastGenOutput>
@@ -288,6 +298,11 @@
     <EmbeddedResource Include="Icons\AlertMessenger.png" />
     <EmbeddedResource Include="Icons\AlertPen.png" />
     <EmbeddedResource Include="Icons\AlertWorld.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Test\Dictionary.Name.Family.txt" />
+    <EmbeddedResource Include="Test\Dictionary.Name.Female.txt" />
+    <EmbeddedResource Include="Test\Dictionary.Name.Male.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

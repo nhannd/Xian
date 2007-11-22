@@ -5,14 +5,5 @@
     <Setting Name="DiagnosticServiceDictionary" Type="System.String" Scope="Application">
       <Value Profile="(Default)">Dictionary.DiagnosticServices.csv</Value>
     </Setting>
-    <Setting Name="MaleNameDictionary" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">Dictionary.Name.Male.txt</Value>
-    </Setting>
-    <Setting Name="FemaleNameDictionary" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">Dictionary.Name.Female.txt</Value>
-    </Setting>
-    <Setting Name="FamilyNameDictionary" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">Dictionary.Name.Family.txt</Value>
-    </Setting>
   </Settings>
 </SettingsFile>

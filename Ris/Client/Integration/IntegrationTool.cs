@@ -47,10 +47,6 @@ using ClearCanvas.ImageViewer.Services.LocalDataStore;
 using ClearCanvas.ImageViewer.StudyFinders.LocalDataStore;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Ris.Application.Common.Admin;
-using ClearCanvas.Ris.Application.Common.Admin.PatientAdmin;
-using ClearCanvas.Ris.Application.Common.Admin.VisitAdmin;
-using ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow.TechnologistDocumentation;
 using GetWorklistRequest = ClearCanvas.Ris.Application.Common.ModalityWorkflow.GetWorklistRequest;
@@ -60,10 +56,9 @@ using SearchRequest=ClearCanvas.Ris.Application.Common.RegistrationWorkflow.Sear
 
 namespace ClearCanvas.Ris.Client.Integration
 {
-    [MenuAction("apply", "global-menus/Tools/Integration")]
-    [ButtonAction("apply", "global-toolbars/Tools/Integration")]
+    [MenuAction("apply", "global-menus/Tools/Integration", "Apply")]
+    [ButtonAction("apply", "global-toolbars/Tools/Integration", "Apply")]
     [Tooltip("apply", "Integration")]
-    [ClickHandler("apply", "Apply")]
     [IconSet("apply", IconScheme.Colour, "AddToolSmall.png", "AddToolMedium.png", "AddToolLarge.png")]
     [ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.DemoAdmin)]
     [ExtensionOf(typeof(DesktopToolExtensionPoint))]
@@ -105,19 +100,16 @@ namespace ClearCanvas.Ris.Client.Integration
                     string diagnosticServiceName = GetDiagnosticServiceName(study.StudyDescription);
 
                     context.ReportProgress(new BackgroundTaskProgress(CalculatePercentage(step++, totalStep), commonMessage + "Generate an anonymized patient in Ris database..."));
-                    PatientProfileDetail profileDetail = GeneratePatientProfile();
-
-                    EntityRef patientRef, profileRef;
-                    AddPatientProfile(profileDetail, out patientRef, out profileRef);
+                    PatientProfileSummary profile = RandomUtils.RandomPatientProfile();
 
                     context.ReportProgress(new BackgroundTaskProgress(CalculatePercentage(step++, totalStep), commonMessage + "Generate a visit..."));
-                    VisitSummary visit = RandomUtils.RandomVisit(patientRef, profileRef, profileDetail.Mrn.AssigningAuthority);
+                    VisitSummary visit = RandomUtils.RandomVisit(profile.PatientRef, profile.ProfileRef, profile.Mrn.AssigningAuthority);
 
                     context.ReportProgress(new BackgroundTaskProgress(CalculatePercentage(step++, totalStep), commonMessage + "Generate an order..."));
-                    string newOrderAccessionNumber = GenerateRandomOrder(profileDetail, diagnosticServiceName, visit);
+                    string newOrderAccessionNumber = GenerateRandomOrder(profile, diagnosticServiceName, visit);
 
                     context.ReportProgress(new BackgroundTaskProgress(CalculatePercentage(step++, totalStep), commonMessage + "Duplicating study with anonymized patient data..."));
-                    List<string> filePaths = CreateNewStudy(study, profileDetail, newOrderAccessionNumber);
+                    List<string> filePaths = CreateNewStudy(study, profile, newOrderAccessionNumber);
 
                     context.ReportProgress(new BackgroundTaskProgress(CalculatePercentage(step++, totalStep), commonMessage + "Importing new study..."));
                     ImportFiles(filePaths);
@@ -157,22 +149,6 @@ namespace ClearCanvas.Ris.Client.Integration
             return (int)Math.Floor(result);
         }
 
-        private static string GetRandomName(string names)
-        {
-            List<string> nameList = new List<string>();
-
-            using (TextReader reader = new StringReader(names))
-            {
-                string line;
-                while ((line = reader.ReadLine()) != null)
-                {
-                    nameList.Add(line);
-                }
-            }
-
-            return RandomUtils.ChooseRandom(nameList);
-        }
-
         #endregion
 
         #region Ris Related Functions
@@ -202,63 +178,7 @@ namespace ClearCanvas.Ris.Client.Integration
             return diagnosticServiceName;
         }
 
-        private static PatientProfileDetail GeneratePatientProfile()
-        {
-            PatientProfileDetail profile = null;
-
-            Platform.GetService<IPatientAdminService>(
-                delegate(IPatientAdminService service)
-                {
-                    LoadPatientProfileEditorFormDataResponse response = service.LoadPatientProfileEditorFormData(new LoadPatientProfileEditorFormDataRequest());
-
-                    DateTime now = Platform.Time;
-
-                    profile = new PatientProfileDetail();
-                    profile.Mrn = new MrnDetail(RandomUtils.FormatDateTime(now, null),
-                        RandomUtils.ChooseRandom(response.MrnAssigningAuthorityChoices));
-                    profile.Healthcard = new HealthcardDetail(
-                        RandomUtils.GenerateRandomIntegerString(10),
-                        RandomUtils.ChooseRandom(response.HealthcardAssigningAuthorityChoices),
-                        "", null);
-
-                    profile.DateOfBirth = now;
-                    profile.Sex = RandomUtils.ChooseRandom(response.SexChoices);
-                    profile.PrimaryLanguage = RandomUtils.ChooseRandom(response.PrimaryLanguageChoices);
-                    profile.Religion = RandomUtils.ChooseRandom(response.ReligionChoices);
-                    profile.DeathIndicator = false;
-                    profile.TimeOfDeath = null;
-
-                    string givenName;
-                    string familyName = GetRandomName(IntegrationSettings.Default.FamilyNameDictionary);
-                    if (profile.Sex.Code == "F")
-                        givenName = GetRandomName(IntegrationSettings.Default.FemaleNameDictionary);
-                    else
-                        givenName = GetRandomName(IntegrationSettings.Default.MaleNameDictionary);
-
-                    givenName += " Anonymous";
-                    profile.Name = new PersonNameDetail();
-                    profile.Name.FamilyName = familyName;
-                    profile.Name.GivenName = givenName;
-                });
-
-            return profile;
-        }
-
-        private static void AddPatientProfile(PatientProfileDetail profileDetail, out EntityRef patientRef, out EntityRef profileRef)
-        {
-            AdminAddPatientProfileResponse response = null;
-
-            Platform.GetService<IPatientAdminService>(
-                delegate(IPatientAdminService service)
-                {
-                    response = service.AdminAddPatientProfile(new AdminAddPatientProfileRequest(profileDetail));
-                });
-
-            patientRef = response.PatientRef;
-            profileRef = response.PatientProfileRef;
-        }
-
-        private static string GenerateRandomOrder(PatientProfileDetail profileDetail, string diagnosticServiceName, VisitSummary visit)
+        private static string GenerateRandomOrder(PatientProfileSummary profile, string diagnosticServiceName, VisitSummary visit)
         {
             EntityRef orderRef = RandomUtils.RandomOrder(visit, diagnosticServiceName);
             string accessionNumber = null;
@@ -266,14 +186,12 @@ namespace ClearCanvas.Ris.Client.Integration
             Platform.GetService<IRegistrationWorkflowService>(
                 delegate(IRegistrationWorkflowService service)
                     {
-                        SearchData searchData = new SearchData();
-                        searchData.FamilyName = profileDetail.Name.FamilyName;
-                        searchData.GivenName = profileDetail.Name.GivenName;
-                        searchData.MrnID = profileDetail.Mrn.Id;
-                        
-                        ClearCanvas.Ris.Application.Common.RegistrationWorkflow.SearchResponse response = service.Search(new SearchRequest(searchData));
+                        SearchRequest request = new SearchRequest();
+                        request.TextQuery = string.Join(" ", new string[] { profile.Name.FamilyName, profile.Name.GivenName, profile.Mrn.Id });
+                        TextQueryResponse<RegistrationWorklistItem> response = service.Search(request);
 
-                        RegistrationWorklistItem selectedItem = CollectionUtils.SelectFirst<RegistrationWorklistItem>(response.WorklistItems,
+                        RegistrationWorklistItem selectedItem = CollectionUtils.SelectFirst(
+                            response.Matches,
                             delegate(RegistrationWorklistItem item)
                                 {
                                     return item.OrderRef == orderRef;
@@ -302,7 +220,7 @@ namespace ClearCanvas.Ris.Client.Integration
             Platform.GetService<ITechnologistDocumentationService>(
                 delegate(ITechnologistDocumentationService service)
                 {
-                    CollectionUtils.ForEach<ModalityWorklistItem>(listItem,
+                    CollectionUtils.ForEach(listItem,
                         delegate(ModalityWorklistItem item)
                         {
                             List<EntityRef> mpsRefs = new List<EntityRef>();
@@ -342,7 +260,7 @@ namespace ClearCanvas.Ris.Client.Integration
             return studyFinder.Query(queryParams, null);
         }
 
-        private static List<string> CreateNewStudy(StudyItem studyItem, PatientProfileDetail profile, string accessionNumber)
+        private static List<string> CreateNewStudy(StudyItem studyItem, PatientProfileSummary profile, string accessionNumber)
         {
             // Code copied from StudyLoader
             List<string> filePaths = new List<string>();

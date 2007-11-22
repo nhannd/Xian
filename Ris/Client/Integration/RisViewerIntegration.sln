@@ -292,6 +292,18 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageViewer.Too
 		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageViewer.Explorer.Dicom", "..\..\..\ImageViewer\Explorer\Dicom\ClearCanvas.ImageViewer.Explorer.Dicom.csproj", "{14111EC7-C62E-4483-8573-7C04986D048F}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms", "..\..\..\ImageViewer\Explorer\Dicom\View\WinForms\ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms.csproj", "{4822272B-D8B3-43DE-A55D-8A04720DE181}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -458,6 +470,14 @@ Global
 		{D3E9C1B7-2CC5-42AD-A26A-46162F23BFD1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D3E9C1B7-2CC5-42AD-A26A-46162F23BFD1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D3E9C1B7-2CC5-42AD-A26A-46162F23BFD1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{14111EC7-C62E-4483-8573-7C04986D048F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{14111EC7-C62E-4483-8573-7C04986D048F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{14111EC7-C62E-4483-8573-7C04986D048F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{14111EC7-C62E-4483-8573-7C04986D048F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4822272B-D8B3-43DE-A55D-8A04720DE181}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4822272B-D8B3-43DE-A55D-8A04720DE181}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4822272B-D8B3-43DE-A55D-8A04720DE181}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4822272B-D8B3-43DE-A55D-8A04720DE181}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
