@@ -99,6 +99,12 @@
     <Compile Include="SearchComponent.cs" />
     <Compile Include="RemoteSuggestionProvider.cs" />
     <Compile Include="TempFileManager.cs" />
+    <Compile Include="WebServicesSettings.cs" />
+    <Compile Include="WebServicesSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>WebServicesSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="WorkflowFolderFactory.cs" />
     <Compile Include="Formatting\AddressFormat.cs" />
     <Compile Include="AddressEditorComponentSettings.cs" />
@@ -239,6 +245,10 @@
     <None Include="LoginDialogSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>LoginDialogSettings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="WebServicesSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>WebServicesSettings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
   <ItemGroup>

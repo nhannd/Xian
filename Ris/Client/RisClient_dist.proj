@@ -1,4 +1,4 @@
-<Project DefaultTargets="CopyClientFiles" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="CopyClientFiles;AppConfigs" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 	<!-- RisClient specific postbuild step -->
 	<PropertyGroup>
 		<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -6,7 +6,7 @@
 	
 	<PropertyGroup>
 		<DistributionDirectory>$(ProjectDir)\$(OutDir)</DistributionDirectory>		
-		<TrunkDirectory>$(SolutionDir)\..\..</TrunkDirectory>
+		<TrunkDirectory>$(SolutionDir)..\..</TrunkDirectory>
 		<PluginsDirectory>$(DistributionDirectory)\plugins</PluginsDirectory>
 		<JscriptDirectory>$(ProjectDir)\..\..\Jscript\bin\$(Configuration)</JscriptDirectory>
 	</PropertyGroup>
@@ -40,8 +40,23 @@
   <ItemGroup>
     <JscriptFiles Include="$(JscriptDirectory)\ClearCanvas.Jscript.dll" />
   </ItemGroup>
-	
-	<Target Name="CopyClientFiles">
+
+  <ItemGroup>
+    <AppConfigSourceFiles Include="$(SolutionDir)\app.config" />
+    <AppConfigSourceFiles Include="$(TrunkDirectory)\Desktop\Executable\app.config" />
+  </ItemGroup>
+
+  <Target Name="Build BuildTasks">
+    <MSBuild Projects="$(TrunkDirectory)\Utilities\BuildTasks\ClearCanvas.Utilities.BuildTasks.csproj" Properties="Configuration=$(Configuration);Platform=Any CPU;OutputPath=$(TrunkDirectory)\Utilities\BuildTasks\bin\$(Configuration)"/>
+  </Target>
+  <UsingTask TaskName="ClearCanvas.Utilities.BuildTasks.FileReplaceText" AssemblyFile="$(TrunkDirectory)\Utilities\BuildTasks\bin\$(Configuration)\ClearCanvas.Utilities.BuildTasks.dll"/>
+  <UsingTask TaskName="ClearCanvas.Utilities.BuildTasks.CombineAppConfigs" AssemblyFile="$(TrunkDirectory)\Utilities\BuildTasks\bin\$(Configuration)\ClearCanvas.Utilities.BuildTasks.dll"/>
+
+  <Target Name="AppConfigs">
+    <CombineAppConfigs SourceFiles="@(AppConfigSourceFiles)" OutputFile="$(DistributionDirectory)\ClearCanvas.Desktop.Executable.exe.config" />
+  </Target>
+
+  <Target Name="CopyClientFiles">
 		<!-- Copy Client files -->
 		<Copy SourceFiles="@(ConfigFiles)" DestinationFolder="$(DistributionDirectory)" ContinueOnError="true" />
 		

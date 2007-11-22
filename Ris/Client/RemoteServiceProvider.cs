@@ -60,7 +60,9 @@ namespace ClearCanvas.Ris.Client
                 if (authenticationRequired && LoginSession.Current == null)
                     throw new InvalidOperationException("User login credentials have not been provided");
 
-				Uri uri = new Uri(new Uri("http://localhost:8000"), serviceType.FullName);
+                string baseUrl = WebServicesSettings.Default.ApplicationServicesBaseUrl;
+
+                Uri uri = new Uri(new Uri(baseUrl), serviceType.FullName);
                 EndpointAddress endpoint = new EndpointAddress(uri);
                 WSHttpBinding binding = new WSHttpBinding();
                 binding.Security.Mode = SecurityMode.Message;

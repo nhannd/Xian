@@ -56,8 +56,8 @@ namespace ClearCanvas.Ris.Server
         public void RunApplication(string[] args)
         {
             Platform.Log(LogLevel.Info, "Starting application root {0}", this.GetType().FullName);
- 
-            string baseAddress = "http://localhost:8000/";
+
+            string baseAddress = WebServicesSettings.Default.BaseUrl;
 
             _serviceHosts = new List<ServiceHost>();
 

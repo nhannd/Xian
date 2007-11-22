@@ -62,6 +62,12 @@
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
     <Compile Include="CustomUserValidator.cs" />
+    <Compile Include="WebServicesSettings.cs" />
+    <Compile Include="WebServicesSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>WebServicesSettings.settings</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SR.resx">
@@ -89,9 +95,14 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="setup\ddl-writer.bat" />
     <None Include="setup\import-authority-groups.bat" />
     <None Include="setup\import-authority-tokens.bat" />
+    <None Include="WebServicesSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>WebServicesSettings.Designer.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Content Include="setup\default-authority-groups.xml" />
