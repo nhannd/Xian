@@ -204,7 +204,7 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiAnalysis
 
 		private RectangleInteractiveGraphic GetSelectedRectangle()
 		{
-			ROIGraphic graphic = GetSelectedRoi();
+			RoiGraphic graphic = GetSelectedRoi();
 
 			if (graphic == null)
 				return null;

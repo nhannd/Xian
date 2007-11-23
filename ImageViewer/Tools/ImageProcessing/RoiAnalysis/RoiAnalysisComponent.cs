@@ -44,7 +44,7 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiAnalysis
 		private RoiAnalysisComponentContainer _container;
 
 		protected RoiAnalysisComponent(IImageViewerToolContext imageViewerToolContext)
-			: base(imageViewerToolContext)
+			: base(imageViewerToolContext.DesktopWindow)
 		{
 		}
 
@@ -79,7 +79,7 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiAnalysis
 			base.Stop();
 		}
 
-		public ROIGraphic GetSelectedRoi()
+		public RoiGraphic GetSelectedRoi()
 		{
 			if (this.ImageViewer == null)
 				return null;
@@ -90,8 +90,8 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiAnalysis
 			if (this.ImageViewer.SelectedPresentationImage.SelectedGraphic == null)
 				return null;
 
-			ROIGraphic graphic =
-				this.ImageViewer.SelectedPresentationImage.SelectedGraphic as ROIGraphic;
+			RoiGraphic graphic =
+				this.ImageViewer.SelectedPresentationImage.SelectedGraphic as RoiGraphic;
 
 			return graphic;
 		}
@@ -127,8 +127,8 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiAnalysis
 
 		void OnGraphicSelectionChanged(object sender, GraphicSelectionChangedEventArgs e)
 		{
-			ROIGraphic deselectedGraphic = e.DeselectedGraphic as ROIGraphic;
-			ROIGraphic selectedGraphic = e.SelectedGraphic as ROIGraphic;
+			RoiGraphic deselectedGraphic = e.DeselectedGraphic as RoiGraphic;
+			RoiGraphic selectedGraphic = e.SelectedGraphic as RoiGraphic;
 
 			UnwatchRoiGraphic(deselectedGraphic);
 			WatchRoiGraphic(selectedGraphic);
@@ -136,13 +136,13 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiAnalysis
 			OnSubjectChanged();
 		}
 
-		private void UnwatchRoiGraphic(ROIGraphic roiGraphic)
+		private void UnwatchRoiGraphic(RoiGraphic roiGraphic)
 		{
 			if (roiGraphic != null)
 				roiGraphic.RoiChanged -= OnRoiChanged;
 		}
 
-		private void WatchRoiGraphic(ROIGraphic roiGraphic)
+		private void WatchRoiGraphic(RoiGraphic roiGraphic)
 		{
 			if (roiGraphic != null)
 				roiGraphic.RoiChanged += OnRoiChanged;

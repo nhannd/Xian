@@ -120,8 +120,8 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiAnalysis
 			}
 
 			polyLine.CoordinateSystem = CoordinateSystem.Source;
-			Point pt1 = new Point((int)polyLine.AnchorPoints[0].X, (int)polyLine.AnchorPoints[0].Y);
-			Point pt2 = new Point((int)polyLine.AnchorPoints[1].X, (int)polyLine.AnchorPoints[1].Y);
+			Point pt1 = new Point((int)polyLine.PolyLine[0].X, (int)polyLine.PolyLine[0].Y);
+			Point pt2 = new Point((int)polyLine.PolyLine[1].X, (int)polyLine.PolyLine[1].Y);
 
 			if (pt1.X < 0 || pt1.X > image.Columns - 1 ||
 				pt2.X < 0 || pt2.X > image.Columns - 1 ||
@@ -159,7 +159,7 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiAnalysis
 
 		private PolyLineInteractiveGraphic GetSelectedPolyLine()
 		{
-			ROIGraphic graphic = GetSelectedRoi();
+			RoiGraphic graphic = GetSelectedRoi();
 
 			if (graphic == null)
 				return null;
