@@ -7,11 +7,14 @@ class CodeGen
   # specifies a set of templates that will be applied to entity classes
   @@entityTemplates = [
     Template.new("Entity.ct", "<%=@className%>.cs", false),
-    Template.new("Entity.gen.ct", "<%=@className%>.gen.cs", true),
+    Template.new("Entity.gen.ct", "<%=@className%>.gen.cs", true)
+  ]
+  
+  # specifies a set of templates that will be applied to entity classes that need generated brokers
+  @@entityBrokerTemplates = [
     Template.new("SearchCriteria.gen.ct", "<%=@className%>SearchCriteria.gen.cs", true),
     Template.new("IEntityBroker.gen.ct", "Brokers/I<%=@className%>Broker.gen.cs", true),
     Template.new("EntityBroker.gen.ct", "Hibernate/Brokers/<%=@className%>Broker.gen.cs", true)
-    #Template.new("EntityInfo.gen.ct", "Support/<%=@className%>Info.gen.cs", true)
   ]
   
   # specifies a set of templates that will be applied to all enum classes
@@ -78,6 +81,7 @@ class CodeGen
     
     #process each template
     applyTemplates(@@entityTemplates, model.entityDefs, destDir)
+    applyTemplates(@@entityBrokerTemplates, model.entityDefs.select {|entityDef| !entityDef.suppressBrokerGen }, destDir)
     applyTemplates(@@enumTemplates, model.enumDefs, destDir)
     applyTemplates(@@hardEnumTemplates, model.enumDefs.select {|enumDef| enumDef.isHardEnum }, destDir)
     applyTemplates(@@componentTemplates, model.componentDefs, destDir)
