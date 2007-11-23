@@ -39,8 +39,8 @@ namespace ClearCanvas.Healthcare.Brokers
 {
     public interface IReportingWorklistBroker : IPersistenceBroker
     {
-        IList<WorklistItem> GetWorklist(Type fromType, ReportingWorklistItemSearchCriteria[] where, Worklist worklist);
-        int GetWorklistCount(Type fromType, ReportingWorklistItemSearchCriteria[] where, Worklist worklist);
+        IList<WorklistItem> GetWorklist(Type stepClass, ReportingWorklistItemSearchCriteria[] where, Worklist worklist);
+        int GetWorklistCount(Type stepClass, ReportingWorklistItemSearchCriteria[] where, Worklist worklist);
 
         IList<WorklistItem> Search(WorklistItemSearchCriteria[] where, SearchResultPage page, bool showActiveOnly);
         int SearchCount(WorklistItemSearchCriteria[] where, bool showActiveOnly);
