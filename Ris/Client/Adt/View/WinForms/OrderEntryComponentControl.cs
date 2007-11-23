@@ -90,10 +90,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             _priority.DataSource = _component.PriorityChoices;
             _priority.DataBindings.Add("Value", _component, "SelectedPriority", true, DataSourceUpdateMode.OnPropertyChanged);
 
-            _orderingFacility.DataSource = _component.FacilityChoices;
-            _orderingFacility.DataBindings.Add("Value", _component, "SelectedFacility", true, DataSourceUpdateMode.OnPropertyChanged);
-            _orderingFacility.Format += delegate(object source, ListControlConvertEventArgs e) { e.Value = _component.FormatFacility(e.ListItem); };
-            _orderingFacility.DataBindings.Add("Enabled", _component, "IsOrderingFacilityEditable");
+            _orderingFacility.DataBindings.Add("Value", _component, "OrderingFacility", true, DataSourceUpdateMode.OnPropertyChanged);
 
             _orderingPractitioner.LookupHandler = _component.OrderingPractitionerLookupHandler;
             _orderingPractitioner.DataBindings.Add("Value", _component, "SelectedOrderingPractitioner", true, DataSourceUpdateMode.OnPropertyChanged);

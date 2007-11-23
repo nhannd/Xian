@@ -129,7 +129,7 @@ namespace ClearCanvas.Ris.Client.Adt
         private List<EnumValueInfo> _priorityChoices;
         private List<EnumValueInfo> _cancelReasonChoices;
 
-        private FacilitySummary _selectedFacility;
+        private FacilitySummary _orderingFacility;
 
         private ExternalPractitionerLookupHandler _orderingPractitionerLookupHandler;
         private ExternalPractitionerSummary _selectedOrderingPractitioner;
@@ -273,7 +273,7 @@ namespace ClearCanvas.Ris.Client.Adt
             {
                 _selectedVisit = _activeVisits.Count > 0 ? _activeVisits[0] : null;
                 _selectedPriority = _priorityChoices.Count > 0 ? _priorityChoices[0] : null;
-                _selectedFacility = _facilityChoices.Count > 0 ? _facilityChoices[0] : null;
+                _orderingFacility = LoginSession.Current.WorkingFacility;
                 _schedulingRequestTime = Platform.Time;
             }
             else
@@ -311,11 +311,6 @@ namespace ClearCanvas.Ris.Client.Adt
         }
 
         public bool IsDiagnosticServiceEditable
-        {
-            get { return _mode != Mode.ModifyOrder; }
-        }
-
-        public bool IsOrderingFacilityEditable
         {
             get { return _mode != Mode.ModifyOrder; }
         }
@@ -464,11 +459,9 @@ namespace ClearCanvas.Ris.Client.Adt
             get { return _facilityChoices;  }
         }
 
-        [ValidateNotNull]
-        public FacilitySummary SelectedFacility
+        public string OrderingFacility
         {
-            get { return _selectedFacility; }
-            set { _selectedFacility = value; }
+            get { return _orderingFacility.Name; }
         }
 
         public string FormatFacility(object facility)
@@ -579,7 +572,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
                     });
 
-                ProcedureRequisition procReq = new ProcedureRequisition(null, _selectedFacility);
+                ProcedureRequisition procReq = new ProcedureRequisition(null, _orderingFacility);
                 RequestedProcedureEditorComponent procedureEditor = new RequestedProcedureEditorComponent(procReq, _facilityChoices, _lateralityChoices, orderableProcedureTypes);
                 if(ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, procedureEditor, "Add Procedure")
                     == ApplicationComponentExitCode.Accepted)
@@ -693,7 +686,7 @@ namespace ClearCanvas.Ris.Client.Adt
                                response.DiagnosticServiceDetail.RequestedProcedureTypes,
                                delegate(RequestedProcedureTypeDetail rpt)
                                {
-                                   return new ProcedureRequisition(rpt.GetSummary(), _selectedFacility);
+                                   return new ProcedureRequisition(rpt.GetSummary(), _orderingFacility);
                                }));
                     });
             }
@@ -709,7 +702,7 @@ namespace ClearCanvas.Ris.Client.Adt
             requisition.DiagnosticService = _selectedDiagnosticService;
             requisition.ReasonForStudy = _indication;
             requisition.Priority = _selectedPriority;
-            requisition.OrderingFacility = _selectedFacility;
+            requisition.OrderingFacility = _orderingFacility;
             requisition.SchedulingRequestTime = _schedulingRequestTime;
             requisition.OrderingPractitioner = _selectedOrderingPractitioner;
             requisition.RequestedProcedures = new List<ProcedureRequisition>(_proceduresTable.Items);
@@ -726,7 +719,7 @@ namespace ClearCanvas.Ris.Client.Adt
             _selectedDiagnosticService = existingOrder.DiagnosticService;
             _indication = existingOrder.ReasonForStudy;
             _selectedPriority = existingOrder.Priority;
-            _selectedFacility = existingOrder.OrderingFacility;
+            _orderingFacility = existingOrder.OrderingFacility;
             _schedulingRequestTime = existingOrder.SchedulingRequestTime;
             _selectedOrderingPractitioner = existingOrder.OrderingPractitioner;
 

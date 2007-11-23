@@ -41,18 +41,30 @@ using ClearCanvas.Ris.Application.Common;
 namespace ClearCanvas.Ris.Client
 {
     /// <summary>
-    /// Holds information related to the current login session.  This information may be sensitive, therefore
-    /// all members of this class are either private or internal.
+    /// Holds information related to the current login session.
     /// </summary>
-    internal sealed class LoginSession
+    public sealed class LoginSession
     {
         private static LoginSession _current;
 
-        internal static LoginSession Current
+        /// <summary>
+        /// Gets the current <see cref="LoginSession"/>.
+        /// </summary>
+        public static LoginSession Current
         {
             get { return _current; }
         }
 
+        /// <summary>
+        /// Creates a new <see cref="LoginSession"/>.
+        /// </summary>
+        /// <remarks>
+        /// Contacts the server and requests login using the specified credentials.  An exception will be thrown
+        /// if the credentials are not valid.
+        /// </remarks>
+        /// <param name="userName"></param>
+        /// <param name="password"></param>
+        /// <param name="facility"></param>
         internal static void Create(string userName, string password, FacilitySummary facility)
         {
             Platform.GetService<ILoginService>(
@@ -84,24 +96,38 @@ namespace ClearCanvas.Ris.Client
             
         }
 
-        internal string UserName
+        /// <summary>
+        /// Gets the user name of the logged on user.
+        /// </summary>
+        public string UserName
         {
             get { return _userName; }
         }
 
+        /// <summary>
+        /// Gets the full person name of the logged on user.
+        /// </summary>
+        public PersonNameDetail FullName
+        {
+            get { return _fullName; }
+        }
+
+        /// <summary>
+        /// Gets the current working facility.
+        /// </summary>
+        public FacilitySummary WorkingFacility
+        {
+            get { return _workingFacility; }
+        }
+
+        /// <summary>
+        /// Gets the session token.  This property is internal in order to limit exposure of the session
+        /// token.
+        /// </summary>
         internal string SessionToken
         {
             get { return _sessionToken; }
         }
 
-        internal PersonNameDetail FullName
-        {
-            get { return _fullName; }
-        }
-
-        internal FacilitySummary WorkingFacility
-        {
-            get { return _workingFacility; }
-        }
     }
 }

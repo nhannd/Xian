@@ -65,7 +65,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._applySchedulingButton = new System.Windows.Forms.Button();
             this._schedulingRequestTime = new ClearCanvas.Desktop.View.WinForms.DateTimeField();
             this._schedulingRequestDate = new ClearCanvas.Desktop.View.WinForms.DateTimeField();
-            this._orderingFacility = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
             this._visit = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
             this._orderingPractitioner = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
             this._indication = new ClearCanvas.Desktop.View.WinForms.TextField();
@@ -90,6 +89,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._documentBrowser = new System.Windows.Forms.WebBrowser();
             this._cancelButton = new System.Windows.Forms.Button();
             this._acceptButton = new System.Windows.Forms.Button();
+            this._orderingFacility = new ClearCanvas.Desktop.View.WinForms.TextField();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
@@ -114,11 +114,11 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // 
             // splitContainer1.Panel1
             // 
+            this.splitContainer1.Panel1.Controls.Add(this._orderingFacility);
             this.splitContainer1.Panel1.Controls.Add(this._visitSummaryButton);
             this.splitContainer1.Panel1.Controls.Add(this._applySchedulingButton);
             this.splitContainer1.Panel1.Controls.Add(this._schedulingRequestTime);
             this.splitContainer1.Panel1.Controls.Add(this._schedulingRequestDate);
-            this.splitContainer1.Panel1.Controls.Add(this._orderingFacility);
             this.splitContainer1.Panel1.Controls.Add(this._visit);
             this.splitContainer1.Panel1.Controls.Add(this._orderingPractitioner);
             this.splitContainer1.Panel1.Controls.Add(this._indication);
@@ -135,11 +135,11 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.splitContainer1.SplitterWidth = 3;
             this.splitContainer1.TabIndex = 26;
             // 
-            // _visitSearchButton
+            // _visitSummaryButton
             // 
-            this._visitSummaryButton.Image = ((System.Drawing.Image)(resources.GetObject("_visitSearchButton.Image")));
+            this._visitSummaryButton.Image = ((System.Drawing.Image)(resources.GetObject("_visitSummaryButton.Image")));
             this._visitSummaryButton.Location = new System.Drawing.Point(463, 289);
-            this._visitSummaryButton.Name = "_visitSearchButton";
+            this._visitSummaryButton.Name = "_visitSummaryButton";
             this._visitSummaryButton.Size = new System.Drawing.Size(24, 24);
             this._visitSummaryButton.TabIndex = 11;
             this._visitSummaryButton.UseVisualStyleBackColor = true;
@@ -183,19 +183,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._schedulingRequestDate.Size = new System.Drawing.Size(166, 41);
             this._schedulingRequestDate.TabIndex = 7;
             this._schedulingRequestDate.Value = null;
-            // 
-            // _orderingFacility
-            // 
-            this._orderingFacility.DataSource = null;
-            this._orderingFacility.DisplayMember = "";
-            this._orderingFacility.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this._orderingFacility.LabelText = "Ordering Facility (temporary)";
-            this._orderingFacility.Location = new System.Drawing.Point(7, 81);
-            this._orderingFacility.Margin = new System.Windows.Forms.Padding(2);
-            this._orderingFacility.Name = "_orderingFacility";
-            this._orderingFacility.Size = new System.Drawing.Size(171, 41);
-            this._orderingFacility.TabIndex = 0;
-            this._orderingFacility.Value = null;
             // 
             // _visit
             // 
@@ -491,6 +478,18 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._acceptButton.UseVisualStyleBackColor = true;
             this._acceptButton.Click += new System.EventHandler(this._placeOrderButton_Click);
             // 
+            // _orderingFacility
+            // 
+            this._orderingFacility.LabelText = "Ordering Facility";
+            this._orderingFacility.Location = new System.Drawing.Point(7, 81);
+            this._orderingFacility.Margin = new System.Windows.Forms.Padding(2);
+            this._orderingFacility.Mask = "";
+            this._orderingFacility.Name = "_orderingFacility";
+            this._orderingFacility.ReadOnly = true;
+            this._orderingFacility.Size = new System.Drawing.Size(150, 41);
+            this._orderingFacility.TabIndex = 12;
+            this._orderingFacility.Value = null;
+            // 
             // OrderEntryComponentControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -541,7 +540,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         private ClearCanvas.Desktop.View.WinForms.ComboBoxField _visit;
         private ClearCanvas.Ris.Client.View.WinForms.LookupField _orderingPractitioner;
         private ClearCanvas.Desktop.View.WinForms.TextField _indication;
-        private ClearCanvas.Desktop.View.WinForms.ComboBoxField _orderingFacility;
         private ClearCanvas.Desktop.View.WinForms.ComboBoxField _reorderReason;
         private ClearCanvas.Desktop.View.WinForms.ComboBoxField _priority;
         private ClearCanvas.Desktop.View.WinForms.DateTimeField _schedulingRequestTime;
@@ -551,6 +549,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         private System.Windows.Forms.Button _applySchedulingButton;
         private System.Windows.Forms.SplitContainer _documentSplitContainer;
         private System.Windows.Forms.Button _visitSummaryButton;
+        private ClearCanvas.Desktop.View.WinForms.TextField _orderingFacility;
 
     }
 }
