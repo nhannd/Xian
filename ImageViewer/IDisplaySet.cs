@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections.ObjectModel;
+using System.Collections.Generic;
 
 namespace ClearCanvas.ImageViewer
 {
@@ -64,7 +65,7 @@ namespace ClearCanvas.ImageViewer
 		/// <summary>
 		/// Gets a collection of linked <see cref="IPresentationImage"/> objects.
 		/// </summary>
-		ReadOnlyCollection<IPresentationImage> LinkedPresentationImages { get; }
+		IEnumerable<IPresentationImage> LinkedPresentationImages { get; }
 
 		/// <summary>
 		/// Gets the <see cref="IImageBox"/> associated with this <see cref="IDisplaySet"/>.

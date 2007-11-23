@@ -95,13 +95,12 @@ namespace ClearCanvas.ImageViewer
 			}
 		}
 
-		// TODO (Norman): Consider returning IEnumerable
 		// TODO (Norman): Also consider how to use yield instead of a whole collection
 
 		/// <summary>
 		/// Gets a collection of linked <see cref="IPresentationImage"/> objects.
 		/// </summary>
-		public ReadOnlyCollection<IPresentationImage> LinkedPresentationImages
+		public IEnumerable<IPresentationImage> LinkedPresentationImages
 		{
 			get { return _linkedPresentationImages.AsReadOnly(); }
 		}

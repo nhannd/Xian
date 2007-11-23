@@ -113,7 +113,7 @@ namespace ClearCanvas.ImageViewer
 		/// <summary>
 		/// Gets a collection of linked <see cref="IDisplaySet"/> objects.
 		/// </summary>
-		public ReadOnlyCollection<IDisplaySet> LinkedDisplaySets
+		public IEnumerable<IDisplaySet> LinkedDisplaySets
 		{
 			get { return _linkedDisplaySets.AsReadOnly(); }
 		}
