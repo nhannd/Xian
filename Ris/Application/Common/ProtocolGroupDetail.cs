@@ -7,6 +7,12 @@ namespace ClearCanvas.Ris.Application.Common
     [DataContract]
     public class ProtocolGroupDetail : DataContractBase
     {
+        public ProtocolGroupDetail()
+        {
+            Codes = new List<ProtocolCodeDetail>();
+            ReadingGroups = new List<RequestedProcedureTypeGroupSummary>();
+        }
+
         public ProtocolGroupDetail(string name, string description, List<ProtocolCodeDetail> codes, List<RequestedProcedureTypeGroupSummary> readingGroups)
         {
             Name = name;

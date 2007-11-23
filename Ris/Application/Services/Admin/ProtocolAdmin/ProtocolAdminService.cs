@@ -51,27 +51,55 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ProtocolAdmin
         [ReadOperation]
         public LoadProtocolGroupForEditResponse LoadProtocolGroupForEdit(LoadProtocolGroupForEditRequest request)
         {
+            ProtocolGroup group = this.PersistenceContext.Load<ProtocolGroup>(request.ProtocolGroupRef);
+
             ProtocolGroupAssembler assembler = new ProtocolGroupAssembler();
-            throw new System.NotImplementedException();
+            return new LoadProtocolGroupForEditResponse(group.GetRef(), assembler.GetProtocolGroupDetail(group, this.PersistenceContext));
         }
 
         [ReadOperation]
         public GetProtocolGroupEditFormDataResponse GetProtocolGroupEditFormData(
             GetProtocolGroupEditFormDataRequest request)
         {
-            throw new System.NotImplementedException();
+            List<ProtocolCodeDetail> codes = CollectionUtils.Map<ProtocolCode, ProtocolCodeDetail>(
+                this.PersistenceContext.GetBroker<IProtocolCodeBroker>().FindAll(),
+                delegate(ProtocolCode code) { return new ProtocolCodeDetail(code.GetRef(), code.Name, code.Description); });
+
+            RequestedProcedureTypeGroupAssembler assembler = new RequestedProcedureTypeGroupAssembler();
+            RequestedProcedureTypeGroupSearchCriteria criteria = new RequestedProcedureTypeGroupSearchCriteria();
+            criteria.Category.EqualTo(RequestedProcedureTypeGroupCategory.READING);
+            List<RequestedProcedureTypeGroupSummary> readingGroups = CollectionUtils.Map<RequestedProcedureTypeGroup, RequestedProcedureTypeGroupSummary>(
+                this.PersistenceContext.GetBroker<IRequestedProcedureTypeGroupBroker>().Find(criteria),
+                delegate(RequestedProcedureTypeGroup readingGroup) { return assembler.GetRequestedProcedureTypeGroupSummary(readingGroup, this.PersistenceContext); });
+
+            return new GetProtocolGroupEditFormDataResponse(codes, readingGroups);
         }
 
         [UpdateOperation]
         public AddProtocolGroupResponse AddProtocolGroup(AddProtocolGroupRequest request)
         {
-            throw new System.NotImplementedException();
+            ProtocolGroupAssembler assembler = new ProtocolGroupAssembler();
+
+            ProtocolGroup group = new ProtocolGroup();
+            assembler.UpdateProtocolGroup(group, request.Detail, this.PersistenceContext);
+
+            this.PersistenceContext.Lock(group);
+            this.PersistenceContext.SynchState();
+
+            return new AddProtocolGroupResponse(assembler.GetProtocolGroupSummary(group));
         }
 
         [UpdateOperation]
         public UpdateProtocolGroupResponse UpdateProtocolGroup(UpdateProtocolGroupRequest request)
         {
-            throw new System.NotImplementedException();
+            ProtocolGroup group = this.PersistenceContext.Load<ProtocolGroup>(request.ProtocolGroupRef);
+
+            ProtocolGroupAssembler assembler = new ProtocolGroupAssembler();
+            assembler.UpdateProtocolGroup(group, request.Detail, this.PersistenceContext);
+
+            this.PersistenceContext.SynchState();
+
+            return new UpdateProtocolGroupResponse(assembler.GetProtocolGroupSummary(group));
         }
 
         [UpdateOperation]

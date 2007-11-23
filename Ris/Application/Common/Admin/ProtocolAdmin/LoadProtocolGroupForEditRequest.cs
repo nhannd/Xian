@@ -6,6 +6,11 @@ namespace ClearCanvas.Ris.Application.Common.Admin.ProtocolAdmin
     [DataContract]
     public class LoadProtocolGroupForEditRequest : DataContractBase
     {
+        public LoadProtocolGroupForEditRequest(EntityRef protocolGroupRef)
+        {
+            ProtocolGroupRef = protocolGroupRef;
+        }
+
         [DataMember]
         public EntityRef ProtocolGroupRef;
     }

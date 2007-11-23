@@ -94,6 +94,7 @@
     <Compile Include="ProcedurePlanSummaryTable.cs" />
     <Compile Include="PatientProfileTable.cs" />
     <Compile Include="PatientSearchComponent.cs" />
+    <Compile Include="ProtocolCodeTable.cs" />
     <Compile Include="RandomUtils.cs" />
     <Compile Include="RandomUtilsSettings.cs" />
     <Compile Include="RandomUtilsSettings.Designer.cs">

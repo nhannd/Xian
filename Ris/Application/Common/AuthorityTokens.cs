@@ -91,5 +91,8 @@ namespace ClearCanvas.Ris.Application.Common
 
         [AuthorityToken(Description = "Enable Transcription workflow features")]
         public const string UseTranscriptionWorkflow = "UseTranscriptionWorkflow";
+
+        [AuthorityToken(Description = "Allow administration of protocol groups and codes")]
+        public const string ProtocolGroupAdmin = "ProtocolGroupAdmin";
     }
 }

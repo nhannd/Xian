@@ -231,6 +231,12 @@
   <data name="ExceptionSaveNoteCategory" xml:space="preserve">
     <value>Unable to save Note Category</value>
   </data>
+  <data name="ExceptionSaveProtocolCode" xml:space="preserve">
+    <value>Unable to save Protocol Code</value>
+  </data>
+  <data name="ExceptionSaveProtocolGroup" xml:space="preserve">
+    <value>Unable to savev Protocol Group</value>
+  </data>
   <data name="ExceptionSaveRequestedProcedureTypeGroup" xml:space="preserve">
     <value>Unable to save Requested Procedure Type Group</value>
   </data>
@@ -297,6 +303,12 @@
   <data name="TitleAddNoteCategory" xml:space="preserve">
     <value>Add Note Category</value>
   </data>
+  <data name="TitleAddProtocolCode" xml:space="preserve">
+    <value>Add Protocol Code</value>
+  </data>
+  <data name="TitleAddProtocolGroup" xml:space="preserve">
+    <value>Add Protocol Group</value>
+  </data>
   <data name="TitleAddRequestedProcedureTypeGroup" xml:space="preserve">
     <value>Add Requested Procedure Type Group</value>
   </data>
@@ -327,6 +339,9 @@
   <data name="TitleDiagnosticServices" xml:space="preserve">
     <value>Diagnostic Services</value>
   </data>
+  <data name="TitleEditProtocolGroup" xml:space="preserve">
+    <value>Edit Protocol Group</value>
+  </data>
   <data name="TitleEnumAddValue" xml:space="preserve">
     <value>New Value</value>
   </data>
@@ -350,6 +365,9 @@
   </data>
   <data name="TitleNoteCategories" xml:space="preserve">
     <value>Note Categories</value>
+  </data>
+  <data name="TitleProtocolGroups" xml:space="preserve">
+    <value>Protocol Groups</value>
   </data>
   <data name="TitleRequestedProcedureTypeGroup" xml:space="preserve">
     <value>Requested Procedure Type Groups Admin</value>
