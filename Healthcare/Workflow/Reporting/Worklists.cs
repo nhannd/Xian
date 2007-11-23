@@ -37,31 +37,30 @@ using ClearCanvas.Workflow;
 
 namespace ClearCanvas.Healthcare.Workflow.Reporting
 {
-    [ExtensionPoint]
-    public class ReportingWorklistExtensionPoint : ExtensionPoint<IWorklist>
-    {
-    }
-
     public class Worklists
     {
-        [ExtensionOf(typeof(ReportingWorklistExtensionPoint))]
-        public class ToBeReported : WorklistBase<IReportingWorklistBroker>
+        public abstract class ReportingWorklist : Worklist
         {
-            public override IList GetWorklist(Staff currentUserStaff, IPersistenceContext context)
+            public IReportingWorklistBroker GetBroker(IPersistenceContext context)
             {
-                return (IList)GetBroker(context).GetWorklist(typeof(InterpretationStep), ReportingToBeReportedWorklist.QueryConditions, null);
+                return GetBroker(context);
             }
 
-            public override int GetWorklistCount(Staff currentUserStaff, IPersistenceContext context)
+            public override string Description
             {
-                return GetBroker(context).GetWorklistCount(typeof(InterpretationStep), ReportingToBeReportedWorklist.QueryConditions, null);
+                get { return "Reporting"; }
+            }
+
+            public override string Name
+            {
+                get { return "Reporting"; }
             }
         }
 
-        [ExtensionOf(typeof(ReportingWorklistExtensionPoint))]
-        public class Draft : WorklistBase<IReportingWorklistBroker>
+        [ExtensionOf(typeof(WorklistExtensionPoint), Name = "ReportingDraftWorklist")]
+        public class Draft : ReportingWorklist
         {
-            public ReportingWorklistItemSearchCriteria[] GetQueryConditions(Staff currentUserStaff)
+            private ReportingWorklistItemSearchCriteria[] GetQueryConditions(Staff currentUserStaff)
             {
                 ReportingWorklistItemSearchCriteria criteria = new ReportingWorklistItemSearchCriteria();
                 criteria.ReportingProcedureStep.State.In(new ActivityStatus[] { ActivityStatus.SC, ActivityStatus.IP });
@@ -78,12 +77,17 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
             {
                 return GetBroker(context).GetWorklistCount(typeof(InterpretationStep), GetQueryConditions(currentUserStaff), null);
             }
+
+            public override string NameSuffix
+            {
+                get { return " - Draft"; }
+            }
         }
 
-        [ExtensionOf(typeof(ReportingWorklistExtensionPoint))]
-        public class InTranscription : WorklistBase<IReportingWorklistBroker>
+        [ExtensionOf(typeof(WorklistExtensionPoint), Name = "ReportingInTranscriptionWorklist")]
+        public class InTranscription : ReportingWorklist
         {
-            public ReportingWorklistItemSearchCriteria[] GetQueryConditions(Staff currentUserStaff)
+            private ReportingWorklistItemSearchCriteria[] GetQueryConditions(Staff currentUserStaff)
             {
                 ReportingWorklistItemSearchCriteria criteria = new ReportingWorklistItemSearchCriteria();
                 criteria.ReportingProcedureStep.State.In(new ActivityStatus[] { ActivityStatus.SC, ActivityStatus.IP });
@@ -100,12 +104,17 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
             {
                 return GetBroker(context).GetWorklistCount(typeof(TranscriptionStep), GetQueryConditions(currentUserStaff), null);
             }
+
+            public override string NameSuffix
+            {
+                get { return " - To Be Transcribed"; }
+            }
         }
 
-        [ExtensionOf(typeof(ReportingWorklistExtensionPoint))]
-        public class ToBeVerified : WorklistBase<IReportingWorklistBroker>
+        [ExtensionOf(typeof(WorklistExtensionPoint), Name = "ReportingToBeVerifiedWorklist")]
+        public class ToBeVerified : ReportingWorklist
         {
-            public ReportingWorklistItemSearchCriteria[] GetQueryConditions(Staff currentUserStaff)
+            private ReportingWorklistItemSearchCriteria[] GetQueryConditions(Staff currentUserStaff)
             {
                 ReportingWorklistItemSearchCriteria criteria = new ReportingWorklistItemSearchCriteria();
                 criteria.ReportingProcedureStep.State.In(new ActivityStatus[] { ActivityStatus.SC, ActivityStatus.IP });
@@ -115,7 +124,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
                 return new ReportingWorklistItemSearchCriteria[] { criteria };
             }
 
-            public ReportingWorklistItemSearchCriteria[] GetResidentQueryConditions(Staff currentUserStaff)
+            private ReportingWorklistItemSearchCriteria[] GetResidentQueryConditions(Staff currentUserStaff)
             {
                 ReportingWorklistItemSearchCriteria criteria = new ReportingWorklistItemSearchCriteria();
                 criteria.ReportingProcedureStep.State.In(new ActivityStatus[] { ActivityStatus.SC, ActivityStatus.IP });
@@ -138,12 +147,17 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
                 else
                     return GetBroker(context).GetWorklistCount(typeof(VerificationStep), GetQueryConditions(currentUserStaff), null);
             }
+
+            public override string NameSuffix
+            {
+                get { return " - To Be Verified"; }
+            }
         }
 
-        [ExtensionOf(typeof(ReportingWorklistExtensionPoint))]
-        public class Verified : WorklistBase<IReportingWorklistBroker>
+        [ExtensionOf(typeof(WorklistExtensionPoint), Name = "ReportingVerifiedWorklist")]
+        public class Verified : ReportingWorklist
         {
-            public ReportingWorklistItemSearchCriteria[] GetResidentQueryConditions(Staff currentUserStaff)
+            private ReportingWorklistItemSearchCriteria[] GetResidentQueryConditions(Staff currentUserStaff)
             {
                 ReportingWorklistItemSearchCriteria criteria = new ReportingWorklistItemSearchCriteria();
                 criteria.ReportingProcedureStep.State.In(new ActivityStatus[] { ActivityStatus.SC, ActivityStatus.CM });
@@ -151,7 +165,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
                 return new ReportingWorklistItemSearchCriteria[] { criteria };
             }
 
-            public ReportingWorklistItemSearchCriteria[] GetQueryConditions(Staff currentUserStaff)
+            private ReportingWorklistItemSearchCriteria[] GetQueryConditions(Staff currentUserStaff)
             {
                 ReportingWorklistItemSearchCriteria criteria = new ReportingWorklistItemSearchCriteria();
                 criteria.ReportingProcedureStep.State.In(new ActivityStatus[] { ActivityStatus.SC, ActivityStatus.CM });
@@ -174,12 +188,17 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
                 else
                     return GetBroker(context).GetWorklistCount(typeof(PublicationStep), GetQueryConditions(currentUserStaff), null);
             }
+
+            public override string NameSuffix
+            {
+                get { return " - Verified"; }
+            }
         }
 
-        [ExtensionOf(typeof(ReportingWorklistExtensionPoint))]
-        public class MyResidentToBeVerified : WorklistBase<IReportingWorklistBroker>
+        [ExtensionOf(typeof(WorklistExtensionPoint), Name = "ReportingReviewResidentReport")]
+        public class ReviewResidentReport : ReportingWorklist
         {
-            public ReportingWorklistItemSearchCriteria[] GetQueryConditions(Staff currentUserStaff)
+            private ReportingWorklistItemSearchCriteria[] GetQueryConditions(Staff currentUserStaff)
             {
                 ReportingWorklistItemSearchCriteria criteria = new ReportingWorklistItemSearchCriteria();
                 criteria.ReportingProcedureStep.State.In(new ActivityStatus[] { ActivityStatus.SC, ActivityStatus.IP });
@@ -196,26 +215,17 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
             {
                 return GetBroker(context).GetWorklistCount(typeof(VerificationStep), GetQueryConditions(currentUserStaff), null);
             }
-        }
 
-        [ExtensionOf(typeof(ReportingWorklistExtensionPoint))]
-        public class ToBeProtocolled : WorklistBase<IReportingWorklistBroker>
-        {
-            public override IList GetWorklist(Staff currentUserStaff, IPersistenceContext context)
+            public override string NameSuffix
             {
-                return (IList)GetBroker(context).GetWorklist(typeof(ProtocolProcedureStep), ReportingToBeProtocolledWorklist.QueryConditions, null);
-            }
-
-            public override int GetWorklistCount(Staff currentUserStaff, IPersistenceContext context)
-            {
-                return GetBroker(context).GetWorklistCount(typeof(ProtocolProcedureStep), ReportingToBeProtocolledWorklist.QueryConditions, null);
+                get { return " - Review Resident Report"; }
             }
         }
 
-        [ExtensionOf(typeof(ReportingWorklistExtensionPoint))]
-        public class ToBeApproved : WorklistBase<IReportingWorklistBroker>
+        [ExtensionOf(typeof(WorklistExtensionPoint), Name = "ReportingToBeApprovedWorklist")]
+        public class ToBeApproved : ReportingWorklist
         {
-            public ReportingWorklistItemSearchCriteria[] GetQueryConditions(Staff currentUserStaff)
+            private ReportingWorklistItemSearchCriteria[] GetQueryConditions(Staff currentUserStaff)
             {
                 ReportingWorklistItemSearchCriteria criteria = new ReportingWorklistItemSearchCriteria();
                 criteria.ReportingProcedureStep.State.EqualTo(ActivityStatus.IP);
@@ -232,12 +242,17 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
             {
                 return GetBroker(context).GetWorklistCount(typeof(ProtocolProcedureStep), GetQueryConditions(currentUserStaff), null);
             }
+
+            public override string NameSuffix
+            {
+                get { return " - To Be Approved"; }
+            }
         }
 
-        [ExtensionOf(typeof(ReportingWorklistExtensionPoint))]
-        public class CompletedProtocol : WorklistBase<IReportingWorklistBroker>
+        [ExtensionOf(typeof(WorklistExtensionPoint), Name = "ReportingCompletedProtocolWorklist")]
+        public class CompletedProtocol : ReportingWorklist
         {
-            public ReportingWorklistItemSearchCriteria[] GetQueryConditions(Staff currentUserStaff)
+            private ReportingWorklistItemSearchCriteria[] GetQueryConditions(Staff currentUserStaff)
             {
                 ReportingWorklistItemSearchCriteria criteria = new ReportingWorklistItemSearchCriteria();
                 criteria.ReportingProcedureStep.State.In(new ActivityStatus[] { ActivityStatus.CM, ActivityStatus.DC });
@@ -253,12 +268,17 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
             {
                 return GetBroker(context).GetWorklistCount(typeof(ProtocolProcedureStep), GetQueryConditions(currentUserStaff), null);
             }
+
+            public override string NameSuffix
+            {
+                get { return " - Completed Protocol"; }
+            }
         }
 
-        [ExtensionOf(typeof(ReportingWorklistExtensionPoint))]
-        public class SuspendedProtocol : WorklistBase<IReportingWorklistBroker>
+        [ExtensionOf(typeof(WorklistExtensionPoint), Name = "ReportingSuspendedProtocolWorklist")]
+        public class SuspendedProtocol : ReportingWorklist
         {
-            public ReportingWorklistItemSearchCriteria[] GetQueryConditions(Staff currentUserStaff)
+            private ReportingWorklistItemSearchCriteria[] GetQueryConditions(Staff currentUserStaff)
             {
                 ReportingWorklistItemSearchCriteria criteria = new ReportingWorklistItemSearchCriteria();
                 criteria.ReportingProcedureStep.State.EqualTo(ActivityStatus.SU);
@@ -274,6 +294,11 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
             public override int GetWorklistCount(Staff currentUserStaff, IPersistenceContext context)
             {
                 return GetBroker(context).GetWorklistCount(typeof(ProtocolProcedureStep), GetQueryConditions(currentUserStaff), null);
+            }
+
+            public override string NameSuffix
+            {
+                get { return " - Suspended Protocol"; }
             }
         }
     }

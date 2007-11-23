@@ -50,7 +50,7 @@ namespace ClearCanvas.Healthcare
         {
         }
 
-        public static RegistrationWorklistItemSearchCriteria[] QueryConditions
+        private RegistrationWorklistItemSearchCriteria[] QueryConditions
         {
             get
             {

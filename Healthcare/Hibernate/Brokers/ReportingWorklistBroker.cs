@@ -38,7 +38,6 @@ using ClearCanvas.Enterprise.Hibernate.Hql;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Healthcare.Workflow.Reporting;
 using ClearCanvas.Workflow;
-using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Healthcare.Hibernate.Brokers
 {
@@ -61,7 +60,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             " join o.Patient p" +
             " join p.Profiles pp";
 
-        private const string _hqlJoinReportPart = " join ps.ReportPart rpp";
+        private const string _hqlJoinReportPart = " left outer join ps.ReportPart rpp";
         private const string _hqlJoinProtocol = " join ps.Protocol protocol";
 
         private const string _hqlWorklistSubQuery = 
@@ -74,19 +73,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         public IList<WorklistItem> GetWorklist(Type stepClass, ReportingWorklistItemSearchCriteria[] where, Worklist worklist)
         {
             string hqlFrom = string.Format(_hqlFrom, stepClass.Name);
-            string hqlJoin;
-            if (stepClass == typeof(ProtocolProcedureStep))
-                hqlJoin = string.Concat(_hqlJoin, _hqlJoinProtocol);
-            else
-            {
-                bool hasReportPartCriteria = CollectionUtils.Contains(where,
-                    delegate(ReportingWorklistItemSearchCriteria c)
-                        {
-                            return c.ReportPart.SubCriteria.Count > 0;
-                        });
-
-                hqlJoin = hasReportPartCriteria ? string.Concat(_hqlJoin, _hqlJoinReportPart) : _hqlJoin;
-            }
+            string hqlJoin = string.Concat(_hqlJoin, stepClass == typeof(ProtocolProcedureStep) ? _hqlJoinProtocol : _hqlJoinReportPart);
 
             HqlQuery query = new HqlQuery(string.Concat(_hqlSelectWorklist, hqlFrom, hqlJoin));
             ConstructWorklistCondition(query, where, worklist);
@@ -97,19 +84,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         public int GetWorklistCount(Type stepClass, ReportingWorklistItemSearchCriteria[] where, Worklist worklist)
         {
             string hqlFrom = string.Format(_hqlFrom, stepClass.Name);
-            string hqlJoin;
-            if (stepClass == typeof(ProtocolProcedureStep))
-                hqlJoin = string.Concat(_hqlJoin, _hqlJoinProtocol);
-            else
-            {
-                bool hasReportPartCriteria = CollectionUtils.Contains(where,
-                    delegate(ReportingWorklistItemSearchCriteria c)
-                    {
-                        return c.ReportPart.SubCriteria.Count > 0;
-                    });
-
-                hqlJoin = hasReportPartCriteria ? string.Concat(_hqlJoin, _hqlJoinReportPart) : _hqlJoin;
-            }
+            string hqlJoin = string.Concat(_hqlJoin, stepClass == typeof(ProtocolProcedureStep) ? _hqlJoinProtocol : _hqlJoinReportPart);
 
             HqlQuery query = new HqlQuery(string.Concat(_hqlSelectCount, hqlFrom, hqlJoin));
             ConstructWorklistCondition(query, where, worklist);
@@ -178,7 +153,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             if (or.Conditions.Count > 0)
                 query.Conditions.Add(or);
 
-            if (worklist != null)
+            if (worklist != null && !worklist.RequestedProcedureTypeGroups.IsEmpty)
             {
                 query.Conditions.Add(new HqlCondition(_hqlWorklistSubQuery, worklist));
             }

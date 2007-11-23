@@ -20,7 +20,7 @@ namespace ClearCanvas.Healthcare
         {
         }
 
-        public static ReportingWorklistItemSearchCriteria[] QueryConditions
+        private ReportingWorklistItemSearchCriteria[] QueryConditions
         {
             get
             {

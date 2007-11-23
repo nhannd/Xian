@@ -29,16 +29,7 @@
 
 #endregion
 
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Text;
-
-using ClearCanvas.Common;
-using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
-using ClearCanvas.Healthcare.Brokers;
-using ClearCanvas.Workflow;
 
 namespace ClearCanvas.Healthcare.Workflow
 {
@@ -67,32 +58,6 @@ namespace ClearCanvas.Healthcare.Workflow
         public override int GetHashCode()
         {
             return this.Key.GetHashCode();
-        }
-    }
-
-    public abstract class WorklistBase : IWorklist
-    {
-        #region IWorklist Members
-
-        public virtual IList GetWorklist(Staff currentUserStaff, IPersistenceContext context)
-        { return null; }
-
-        public virtual int GetWorklistCount(Staff currentUserStaff, IPersistenceContext context)
-        { return -1; }
-
-        public virtual string DisplayName
-        {
-            get { return this.GetType().Name; }
-        }
-
-        #endregion
-    }
-
-    public abstract class WorklistBase<T> : WorklistBase where T : IPersistenceBroker
-    {
-        protected static T GetBroker(IPersistenceContext context)
-        {
-            return context.GetBroker<T>();
         }
     }
 }

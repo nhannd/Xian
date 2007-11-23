@@ -52,7 +52,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
                 delegate() { DisplayOption(folderSystem.DesktopWindow); });
 
             this.RefreshTime = 0;
-            this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Registration.Worklists+Scheduled";
+            this.WorklistClassName = "ClearCanvas.Healthcare.RegistrationScheduledWorklist";
         }
 
         public ScheduledFolder(RegistrationWorkflowFolderSystem folderSystem)
@@ -92,7 +92,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
                 delegate() { DisplayOption(folderSystem.DesktopWindow); });
 
             this.RefreshTime = 0;
-            this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Registration.Worklists+CheckIn";
+            this.WorklistClassName = "ClearCanvas.Healthcare.RegistrationCheckedInWorklist";
         }
 
         public CheckedInFolder(RegistrationWorkflowFolderSystem folderSystem)
@@ -127,7 +127,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
                 delegate() { DisplayOption(folderSystem.DesktopWindow); });
 
             this.RefreshTime = 0;
-            this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Registration.Worklists+InProgress";
+            this.WorklistClassName = "ClearCanvas.Healthcare.RegistrationInProgressWorklist";
         }
 
         public InProgressFolder(RegistrationWorkflowFolderSystem folderSystem)
@@ -162,7 +162,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
                 delegate() { DisplayOption(folderSystem.DesktopWindow); });
 
             this.RefreshTime = 0;
-            this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Registration.Worklists+Completed";
+            this.WorklistClassName = "ClearCanvas.Healthcare.RegistrationCompletedWorklist";
         }
 
         public CompletedFolder(RegistrationWorkflowFolderSystem folderSystem)
@@ -202,7 +202,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
                 delegate() { DisplayOption(folderSystem.DesktopWindow); });
 
             this.RefreshTime = 0;
-            this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Registration.Worklists+Cancelled";
+            this.WorklistClassName = "ClearCanvas.Healthcare.RegistrationCancelledWorklist";
         }
 
         public CancelledFolder(RegistrationWorkflowFolderSystem folderSystem)
@@ -237,7 +237,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
                 delegate() { DisplayOption(folderSystem.DesktopWindow); });
 
             this.RefreshTime = 0;
-            this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Registration.Worklists+CompletedProtocol";
+            this.WorklistClassName = "ClearCanvas.Healthcare.RegistrationCompletedProtocolWorklist";
         }
 
         public CompletedProtocolFolder(RegistrationWorkflowFolderSystem folderSystem)
@@ -272,7 +272,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
                 delegate() { DisplayOption(folderSystem.DesktopWindow); });
 
             this.RefreshTime = 0;
-            this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Registration.Worklists+SuspendedProtocol";
+            this.WorklistClassName = "ClearCanvas.Healthcare.RegistrationSuspendedProtocolWorklist";
         }
 
         public SuspendedProtocolFolder(RegistrationWorkflowFolderSystem folderSystem)
@@ -307,7 +307,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
                 delegate() { DisplayOption(folderSystem.DesktopWindow); });
 
             this.RefreshTime = 0;
-            this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Registration.Worklists+PendingProtocol";
+            this.WorklistClassName = "ClearCanvas.Healthcare.RegistrationPendingProtocolWorklist";
         }
 
         public PendingProtocolFolder(RegistrationWorkflowFolderSystem folderSystem)
@@ -345,7 +345,6 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
                 this.IconSet = this.ClosedIconSet;
 
             this.RefreshTime = 0;
-            //this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Registration.Worklists+Search";
         }
 
         public SearchData SearchData

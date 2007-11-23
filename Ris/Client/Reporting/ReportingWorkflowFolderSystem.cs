@@ -191,7 +191,7 @@ namespace ClearCanvas.Ris.Client.Reporting
             this.AddFolder(new Folders.ToBeVerifiedFolder(this));
 
             if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.VerifyReport))
-                this.AddFolder(new Folders.MyResidentToBeVerifyFolder(this));
+                this.AddFolder(new Folders.ReviewResidentReportFolder(this));
 
             this.AddFolder(new Folders.VerifiedFolder(this));
 

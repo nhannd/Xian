@@ -147,7 +147,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             if (or.Conditions.Count > 0)
                 query.Conditions.Add(or);
 
-            if (worklist != null)
+            if (worklist != null && !worklist.RequestedProcedureTypeGroups.IsEmpty)
             {
                 query.Conditions.Add(new HqlCondition(_hqlWorklistSubQuery, worklist));
             }

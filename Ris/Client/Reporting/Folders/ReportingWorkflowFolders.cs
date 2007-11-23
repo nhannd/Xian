@@ -45,7 +45,7 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
         public ToBeReportedFolder(ReportingWorkflowFolderSystem folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
             : base(folderSystem, folderDisplayName, folderDescription, worklistRef)
         {
-            this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Reporting.Worklists+ToBeReported";
+            this.WorklistClassName = "ClearCanvas.Healthcare.ReportingToBeReportedWorklist";
         }
 
         public ToBeReportedFolder(ReportingWorkflowFolderSystem folderSystem)
@@ -101,17 +101,17 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
         }
     }
 
-    public class MyResidentToBeVerifyFolder : ReportingWorkflowFolder
+    public class ReviewResidentReportFolder : ReportingWorkflowFolder
     {
         [ExtensionPoint]
         public class DropHandlerExtensionPoint : ExtensionPoint<IDropHandler<ReportingWorklistItem>>
         {
         }
 
-        public MyResidentToBeVerifyFolder(ReportingWorkflowFolderSystem folderSystem)
+        public ReviewResidentReportFolder(ReportingWorkflowFolderSystem folderSystem)
             : base(folderSystem, "Review Resident Report", new DropHandlerExtensionPoint())
         {
-            this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Reporting.Worklists+MyResidentToBeVerified";
+            this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Reporting.Worklists+ReviewResidentReport";
         }
     }
 
@@ -136,7 +136,7 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
         public ToBeProtocolledFolder(ReportingWorkflowFolderSystem folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
             : base(folderSystem, folderDisplayName, folderDescription, worklistRef)
         {
-            this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Reporting.Worklists+ToBeProtocolled";
+            this.WorklistClassName = "ClearCanvas.Healthcare.ReportingToBeProtocolledWorklist";
         }
 
         public ToBeProtocolledFolder(ReportingWorkflowFolderSystem folderSystem)
@@ -222,7 +222,6 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
                 this.IconSet = this.ClosedIconSet;
 
             this.RefreshTime = 0;
-            //this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Reporting.Worklists+Search";
         }
 
         public SearchData SearchData

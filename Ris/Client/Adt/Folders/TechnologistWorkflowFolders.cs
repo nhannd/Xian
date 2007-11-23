@@ -47,7 +47,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         public ScheduledTechnologistWorkflowFolder(TechnologistWorkflowFolderSystem folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
             : base(folderSystem, folderDisplayName, folderDescription, worklistRef, null)
         {
-            this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Modality.Worklists+Scheduled";
+            this.WorklistClassName = "ClearCanvas.Healthcare.TechnologistScheduledWorklist";
         }
 
         public ScheduledTechnologistWorkflowFolder(TechnologistWorkflowFolderSystem folderSystem)
@@ -73,7 +73,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         public CheckedInTechnologistWorkflowFolder(TechnologistWorkflowFolderSystem folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
             : base(folderSystem, folderDisplayName, folderDescription, worklistRef, new DropHandlerExtensionPoint())
         {
-            this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Modality.Worklists+CheckedIn";
+            this.WorklistClassName = "ClearCanvas.Healthcare.TechnologistCheckedInWorklist";
         }
 
         public CheckedInTechnologistWorkflowFolder(TechnologistWorkflowFolderSystem folderSystem)
@@ -99,7 +99,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         public InProgressTechnologistWorkflowFolder(TechnologistWorkflowFolderSystem folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
             : base(folderSystem, folderDisplayName, folderDescription, worklistRef, new DropHandlerExtensionPoint())
         {
-            this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Modality.Worklists+InProgress";
+            this.WorklistClassName = "ClearCanvas.Healthcare.TechnologistInProgressWorklist";
         }
 
         public InProgressTechnologistWorkflowFolder(TechnologistWorkflowFolderSystem folderSystem)
@@ -125,7 +125,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         public CompletedTechnologistWorkflowFolder(TechnologistWorkflowFolderSystem folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
             : base(folderSystem, folderDisplayName, folderDescription, worklistRef, new DropHandlerExtensionPoint())
         {
-            this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Modality.Worklists+Completed";
+            this.WorklistClassName = "ClearCanvas.Healthcare.TechnologistCompletedWorklist";
         }
 
         public CompletedTechnologistWorkflowFolder(TechnologistWorkflowFolderSystem folderSystem)
@@ -151,7 +151,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
                 delegate() { DisplayOption(folderSystem.DesktopWindow); });
 
             this.RefreshTime = 0;
-            this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Modality.Worklists+Undocumented";
+            this.WorklistClassName = "ClearCanvas.Healthcare.TechnologistUndocumentedWorklist";
         }
 
         public UndocumentedTechnologistWorkflowFolder(TechnologistWorkflowFolderSystem folderSystem)
@@ -186,7 +186,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         public SuspendedTechnologistWorkflowFolder(TechnologistWorkflowFolderSystem folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
             : base(folderSystem, folderDisplayName, folderDescription, worklistRef, new DropHandlerExtensionPoint())
         {
-            this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Modality.Worklists+Suspended";
+            this.WorklistClassName = "ClearCanvas.Healthcare.TechnologistSuspendedWorklist";
         }
 
         public SuspendedTechnologistWorkflowFolder(TechnologistWorkflowFolderSystem folderSystem)
@@ -212,7 +212,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         public CancelledTechnologistWorkflowFolder(TechnologistWorkflowFolderSystem folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
             : base(folderSystem, folderDisplayName, folderDescription, worklistRef, new DropHandlerExtensionPoint())
         {
-            this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Modality.Worklists+Cancelled";
+            this.WorklistClassName = "ClearCanvas.Healthcare.TechnologistCancelledWorklist";
         }
 
         public CancelledTechnologistWorkflowFolder(TechnologistWorkflowFolderSystem folderSystem)
@@ -241,7 +241,6 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
                 this.IconSet = this.ClosedIconSet;
 
             this.RefreshTime = 0;
-            //this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Modality.Worklists+Search";
         }
 
         public SearchData SearchData

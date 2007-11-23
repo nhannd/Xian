@@ -51,7 +51,7 @@ namespace ClearCanvas.Healthcare
         {
         }
 
-        public static ModalityWorklistItemSearchCriteria[] QueryConditions
+        private ModalityWorklistItemSearchCriteria[] QueryConditions
         {
             get
             {

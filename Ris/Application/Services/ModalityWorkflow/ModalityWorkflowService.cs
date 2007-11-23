@@ -50,7 +50,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
     {
         public ModalityWorkflowService()
         {
-            _worklistExtPoint = new ModalityWorklistExtensionPoint();
+            _worklistExtPoint = new WorklistExtensionPoint();
         }
 
         [ReadOperation]

@@ -2,7 +2,6 @@ using System.Collections;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Common;
-using ClearCanvas.Workflow;
 
 namespace ClearCanvas.Healthcare 
 {
@@ -10,6 +9,7 @@ namespace ClearCanvas.Healthcare
     /// <summary>
     /// TechnologistUndocumentedWorklist entity
     /// </summary>
+    [ExtensionOf(typeof(WorklistExtensionPoint), Name = "TechnologistUndocumentedWorklist")]
     public partial class TechnologistUndocumentedWorklist : Worklist
     {
         /// <summary>
@@ -20,7 +20,7 @@ namespace ClearCanvas.Healthcare
         {
         }
 
-        public static ModalityWorklistItemSearchCriteria[] QueryConditions
+        private ModalityWorklistItemSearchCriteria[] QueryConditions
         {
             get
             {

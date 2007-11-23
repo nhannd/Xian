@@ -50,7 +50,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
     {
         public RegistrationWorkflowService()
         {
-            _worklistExtPoint = new RegistrationWorklistExtensionPoint();
+            _worklistExtPoint = new WorklistExtensionPoint();
         }
 
         #region IRegistrationWorkflowService Members
@@ -149,14 +149,19 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
             PatientProfile profile = profileBroker.Load(request.PatientProfileRef, EntityLoadFlags.Proxy);
 
-            RegistrationWorklistItemSearchCriteria[] criteria = RegistrationScheduledWorklist.QueryConditions;
-            CollectionUtils.ForEach(criteria,
+            RegistrationWorklistItemSearchCriteria criteria = new RegistrationWorklistItemSearchCriteria();
+            criteria.Order.Status.EqualTo(OrderStatus.SC);
+            criteria.RequestedProcedure.ScheduledStartTime.Between(Platform.Time.Date, Platform.Time.Date.AddDays(1));
+            criteria.ProcedureCheckIn.CheckInTime.IsNull();
+            RegistrationWorklistItemSearchCriteria[] where = new RegistrationWorklistItemSearchCriteria[] { criteria };
+
+            CollectionUtils.ForEach(where,
                 delegate(RegistrationWorklistItemSearchCriteria c)
                     {
                         c.Order.Patient.EqualTo(profile.Patient);
                     });
 
-            IList<WorklistItem> worklistItems = worklistBroker.GetWorklist(criteria, null);
+            IList<WorklistItem> worklistItems = worklistBroker.GetWorklist(where, null);
 
             return new GetDataForCheckInTableResponse(
                 CollectionUtils.Map<WorklistItem, CheckInTableItem, List<CheckInTableItem>>(
@@ -257,14 +262,19 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             IPatientProfileBroker profileBroker = this.PersistenceContext.GetBroker<IPatientProfileBroker>();
             PatientProfile profile = profileBroker.Load(((WorklistItemKey)itemKey).ProfileRef, EntityLoadFlags.Proxy);
 
-            RegistrationWorklistItemSearchCriteria[] criteria = RegistrationScheduledWorklist.QueryConditions;
-            CollectionUtils.ForEach(criteria,
+            RegistrationWorklistItemSearchCriteria criteria = new RegistrationWorklistItemSearchCriteria();
+            criteria.Order.Status.EqualTo(OrderStatus.SC);
+            criteria.RequestedProcedure.ScheduledStartTime.Between(Platform.Time.Date, Platform.Time.Date.AddDays(1));
+            criteria.ProcedureCheckIn.CheckInTime.IsNull();
+            RegistrationWorklistItemSearchCriteria[] where = new RegistrationWorklistItemSearchCriteria[] { criteria };
+
+            CollectionUtils.ForEach(where,
                 delegate(RegistrationWorklistItemSearchCriteria c)
                 {
                     c.Order.Patient.EqualTo(profile.Patient);
                 });
 
-            return PersistenceContext.GetBroker<IRegistrationWorklistBroker>().GetWorklistCount(criteria, null) > 0;
+            return PersistenceContext.GetBroker<IRegistrationWorklistBroker>().GetWorklistCount(where, null) > 0;
         }
 
         public bool CanCancelOrder(IWorklistItemKey itemKey)

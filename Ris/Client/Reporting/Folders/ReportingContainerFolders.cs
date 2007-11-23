@@ -48,7 +48,7 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
             AddSubfolderType(typeof(DraftFolder));
             AddSubfolderType(typeof(InTranscriptionFolder));
             AddSubfolderType(typeof(ToBeVerifiedFolder));
-            AddSubfolderType(typeof(MyResidentToBeVerifyFolder));
+            AddSubfolderType(typeof(ReviewResidentReportFolder));
             AddSubfolderType(typeof(VerifiedFolder));
         }
 
