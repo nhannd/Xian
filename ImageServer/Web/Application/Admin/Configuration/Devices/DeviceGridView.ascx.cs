@@ -285,7 +285,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
             }
             else
             {
-                img.Visible = false;
+                //img.Visible = false;
                 img.ImageUrl = "~/images/blankfeature.gif";
                 img.AlternateText = "";
             }
@@ -304,7 +304,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
             }
             else
             {
-                img.Visible = false;
+                //img.Visible = false;
                 img.ImageUrl = "~/images/blankfeature.gif";
                 img.AlternateText = "";
             }
@@ -321,7 +321,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
             }
             else
             {
-                img.Visible = false;
+                //img.Visible = false;
                 img.ImageUrl = "~/images/blankfeature.gif";
                 img.AlternateText = "";
             }
