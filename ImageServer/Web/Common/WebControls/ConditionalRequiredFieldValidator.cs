@@ -30,7 +30,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
     /// 
     /// </example>
     /// 
-    public class ConditionalRequiredFieldValidator: BaseValidator
+    public class ConditionalRequiredFieldValidator: Sample.Web.UI.Compatibility.BaseValidator
     {
         #region Private Members
         // the control, if checked, "enables" this validation control

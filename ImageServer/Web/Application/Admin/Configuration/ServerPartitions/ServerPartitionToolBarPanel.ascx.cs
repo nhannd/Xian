@@ -167,13 +167,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
                     // no Partition being selected
 
                     EditButton.Enabled = false;
-                    EditButton.ImageUrl = "~/images/edit_disabled.gif";
+                    EditButton.ImageUrl = "~/images/icons/EditDisabled.png";
 
                 }
                 else
                 {
                     EditButton.Enabled = true;
-                    EditButton.ImageUrl = "~/images/edit2.gif";
+                    EditButton.ImageUrl = "~/images/icons/EditEnabled.png";
 
                 }
             }

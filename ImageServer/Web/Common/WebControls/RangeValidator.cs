@@ -35,7 +35,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
     /// 
     /// </example>
     /// 
-    public class RangeValidator:BaseValidator
+    public class RangeValidator: Sample.Web.UI.Compatibility.BaseValidator
     {
         #region Private Members
         private string _evalFunctionName;

@@ -34,7 +34,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
     /// 
     /// </example>
     /// 
-    public class RegularExpressionFieldValidator:BaseValidator
+    public class RegularExpressionFieldValidator : Sample.Web.UI.Compatibility.BaseValidator
     {
         #region Private Members
         private string _evalFunctionName;
