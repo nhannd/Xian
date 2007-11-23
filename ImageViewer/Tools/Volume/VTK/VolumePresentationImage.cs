@@ -30,14 +30,10 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.ImageViewer.Rendering;
-using vtk;
-using ClearCanvas.ImageViewer.Imaging;
-using ClearCanvas.ImageViewer.StudyManagement;
-using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.Graphics;
+using ClearCanvas.ImageViewer.Rendering;
+using ClearCanvas.ImageViewer.StudyManagement;
+using vtk;
 
 namespace ClearCanvas.ImageViewer.Tools.Volume.VTK
 {
@@ -129,7 +125,7 @@ namespace ClearCanvas.ImageViewer.Tools.Volume.VTK
 
 		#endregion
 
-		public override IPresentationImage Clone()
+		public override IPresentationImage CreateFreshCopy()
 		{
 			return new VolumePresentationImage(_displaySet);
 		}
