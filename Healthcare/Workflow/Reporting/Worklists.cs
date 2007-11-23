@@ -43,7 +43,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
         {
             public IReportingWorklistBroker GetBroker(IPersistenceContext context)
             {
-                return GetBroker(context);
+                return GetBroker<IReportingWorklistBroker>(context);
             }
 
             public override string Description
