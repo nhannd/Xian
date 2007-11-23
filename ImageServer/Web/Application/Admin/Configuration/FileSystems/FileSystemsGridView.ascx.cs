@@ -236,11 +236,30 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
                     CustomizeReadColumn(e);
                     CustomizeWriteColumn(e);
                     CustomizeFilesystemTierColumn(e.Row);
-
+                    CustomizeUsageColumn(e.Row);
                 }
 
             }
 
+        }
+
+        private void CustomizeUsageColumn(GridViewRow row)
+        {
+            Filesystem fs = row.DataItem as Filesystem;
+            Image img = row.FindControl("UsageImage") as Image;
+
+            if (img != null)
+            {
+                img.ImageUrl = string.Format("~/Common/BarChart.aspx?pct={0}&high={1}&low={2}",
+                                        fs.PercentFull,
+                                        fs.HighWatermark,
+                                        fs.LowWatermark);
+                img.AlternateText = string.Format("Current Usage   : {0}%\nHigh Watermark : {1}%\nLow Watermark  : {2}%",
+                                        fs.PercentFull,
+                                        fs.HighWatermark,
+                                        fs.LowWatermark);
+
+            }
         }
         private void CustomizePathColumn(GridViewRow row)
         {
@@ -250,9 +269,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
             if (fs.FilesystemPath!=null)
             {
                 // truncate it
-                if (fs.FilesystemPath.Length>30)
+                if (fs.FilesystemPath.Length>50)
                 {
-                    lbl.Text = fs.FilesystemPath.Substring(0, 30) + "...";
+                    lbl.Text = fs.FilesystemPath.Substring(0, 45) + "...";
+                    lbl.ToolTip = string.Format("{0}: {1}", fs.Description, fs.FilesystemPath);
                 }
                 else
                 {

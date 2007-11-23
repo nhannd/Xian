@@ -26,7 +26,7 @@
                                         <tr runat="server">
                                             <td runat="server" valign="bottom">
                                                 Description<br />
-                                                <asp:TextBox ID="DescriptionTextBox" runat="server" Width="100%" BorderColor="LightSteelBlue"
+                                                <asp:TextBox ID="DescriptionTextBox" runat="server" Width="250px" BorderColor="LightSteelBlue"
                                                     BorderWidth="1px" MaxLength="128" ValidationGroup="vg1"></asp:TextBox>
                                             </td>
                                             <td colspan="1" runat="server" valign="bottom">
@@ -43,7 +43,7 @@
                                         <tr runat="server">
                                             <td style="height: 29px" runat="server" valign="bottom">
                                                 Path<br />
-                                                <asp:TextBox ID="PathTextBox" runat="server" Width="100%" BorderColor="LightSteelBlue"
+                                                <asp:TextBox ID="PathTextBox" runat="server" Width="250px" BorderColor="LightSteelBlue"
                                                     BorderWidth="1px" ValidationGroup="vg1" MaxLength="256"></asp:TextBox>
                                             </td>
                                             <td colspan="1" style="height: 29px" align="left" runat="server" valign="bottom">
@@ -59,7 +59,7 @@
                                         <tr runat="server">
                                             <td style="height: 43px" runat="server">
                                                 Filesystem Tier<br />
-                                                <asp:DropDownList ID="TiersDropDownList" runat="server" Width="100%">
+                                                <asp:DropDownList ID="TiersDropDownList" runat="server" Width="250px">
                                                 </asp:DropDownList>
                                             </td>
                                             <td runat="server" style="height: 43px">
@@ -69,7 +69,7 @@
                                         </tr>
                                     </table>
                                 </asp:Panel>
-                                <cc2:ValidationSummary ID="ValidationSummary1" runat="server" ShowMessageBox="True"
+                                <cc2:ValidationSummary ID="ValidationSummary1" runat="server" ShowMessageBox="false"
                                     ShowSummary="False" ValidationGroup="vg1" />
                             </ContentTemplate>
                             <HeaderTemplate>

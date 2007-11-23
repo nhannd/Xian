@@ -19,7 +19,7 @@
                 </table>
             </asp:Panel>
             <cc2:validationsummary id="ValidationSummary1" runat="server" backcolor="#FFFFC0"
-                height="81px" showmessagebox="true" showsummary="False" style="left: 462px; position: absolute;
+                height="81px" showmessagebox="false" showsummary="False" style="left: 462px; position: absolute;
                 top: 77px" validationgroup="vg1" width="159px">
 </cc2:validationsummary>
             <div class="PopupWindowBody" style="vertical-align: top; text-align: center">
@@ -30,7 +30,8 @@
                                 AE Title<br />
                                 <asp:TextBox ID="AETitleTextBox" runat="server" MaxLength="16" ValidationGroup="vg1"></asp:TextBox>
                                 <clearcanvas:conditionalrequiredfieldvalidator id="RequiredFieldValidator2" runat="server"
-                                    controltovalidate="AETitleTextBox" display="None" enableclientscript="true" errormessage="AE Title is required!!"
+                                    controltovalidate="AETitleTextBox" display="None" enableclientscript="true" 
+                                    errormessage="AE Title is required!!"
                                     invalidinputbackcolor="#FAFFB5" validationgroup="vg1">
                                  </clearcanvas:conditionalrequiredfieldvalidator>
                                 <clearcanvas:regularexpressionfieldvalidator id="RegularExpressionFieldValidator2"

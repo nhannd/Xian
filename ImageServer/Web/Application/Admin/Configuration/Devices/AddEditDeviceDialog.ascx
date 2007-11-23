@@ -17,7 +17,7 @@
             </asp:Panel>
             <cc2:ValidationSummary ID="ValidationSummary1" runat="server" Style="left: 42px;
                 position: absolute; top: 378px" BackColor="#FFFFC0" Height="81px" ValidationGroup="vg1"
-                Width="159px" ShowMessageBox="true" ShowSummary="False" />
+                Width="159px" ShowMessageBox="false" ShowSummary="False" />
             <div class="PopupWindowBody" style="vertical-align:top;">
                 <cc1:TabContainer ID="TabContainer1" runat="server" ActiveTabIndex="0" Height="150px">
                     <cc1:TabPanel ID="TabPanel1" runat="server" HeaderText="TabPanel1">

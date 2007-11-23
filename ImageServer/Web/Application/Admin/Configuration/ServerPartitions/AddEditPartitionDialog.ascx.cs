@@ -127,6 +127,28 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
                         }
                     </script>");
 
+
+            OKButton.OnClientClick = ClientID + "_clearFields()";
+
+            Page.ClientScript.RegisterClientScriptBlock(this.GetType(), this.ClientID,
+                        @"<script language='javascript'>
+
+                            function AddEditPartitionDialog_ClearField(fieldID)
+                            {
+                                txtbox = document.getElementById(fieldID);
+                                txtbox.style.backgroundColor = '';
+                            }
+
+                            function " + ClientID + @"_clearFields()
+                            {
+                                
+                                AddEditPartitionDialog_ClearField('" + AETitleTextBox.ClientID + @"');
+                                AddEditPartitionDialog_ClearField('" + PortTextBox.ClientID + @"');
+                                AddEditPartitionDialog_ClearField('" + PartitionFolderTextBox.ClientID + @"');
+                                
+                            }
+                        </script>");
+
         }
 
 

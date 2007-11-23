@@ -171,6 +171,13 @@
     <Compile Include="Admin\Configuration\ServerPartitions\ServerPartitionToolBarPanel.ascx.designer.cs">
       <DependentUpon>ServerPartitionToolBarPanel.ascx</DependentUpon>
     </Compile>
+    <Compile Include="Common\BarChart.aspx.cs">
+      <DependentUpon>BarChart.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Common\BarChart.aspx.designer.cs">
+      <DependentUpon>BarChart.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Common\ConfirmDialog.ascx.cs">
       <DependentUpon>ConfirmDialog.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -254,6 +261,7 @@
     <Content Include="Admin\Configuration\ServerPartitions\ServerPartitionPanel.ascx" />
     <Content Include="Admin\Configuration\ServerPartitions\ServerPartitionToolBarPanel.ascx" />
     <Content Include="Admin\Styles\images\icon_warning.gif" />
+    <Content Include="Common\BarChart.aspx" />
     <Content Include="Common\ConfirmDialog.ascx" />
     <Content Include="Admin\Configuration\Devices\DeviceFilterPanel.ascx" />
     <Content Include="Admin\Configuration\Devices\DevicePanel.ascx" />
@@ -311,6 +319,7 @@
     <Content Include="Admin\Styles\images\tab.gif" />
     <Content Include="Admin\Styles\visoft__tab_xpie7.css" />
     <Content Include="images\Plus.ico" />
+    <Content Include="images\usage.png" />
     <Content Include="Web.sitemap" />
     <Content Include="Logging.config" />
   </ItemGroup>

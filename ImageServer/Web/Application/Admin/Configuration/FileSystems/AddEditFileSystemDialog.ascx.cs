@@ -135,18 +135,25 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
             ModalPopupExtender1.Drag = true;
             ModalPopupExtender1.PopupDragHandleControlID = TitleBarPanel.UniqueID;
 
+            OKButton.OnClientClick = ClientID + "_clearFields()";
 
-//            Register a javascript that can be called to popup this dialog on the client
-             
-//            Page.RegisterClientScriptBlock("popupThisWindow",
-//                      @"<script language='javascript'>
-//                        function ShowAddDeviceDialog()
-//                        {  
-//                            var ctrl = $find('" + ModalPopupExtender1.UniqueID + @"'); 
-//                            ctrl.show();
-//                        }
-//                    </script>");
+            Page.ClientScript.RegisterClientScriptBlock(this.GetType(), this.ClientID,
+                        @"<script language='javascript'>
 
+                            function AddEditFileSystemsDialog_ClearField(fieldID)
+                            {
+                                txtbox = document.getElementById(fieldID);
+                                txtbox.style.backgroundColor = '';
+                            }
+
+                            function " + ClientID + @"_clearFields()
+                            {
+                                
+                                AddEditFileSystemsDialog_ClearField('" + DescriptionTextBox.ClientID + @"');
+                                AddEditFileSystemsDialog_ClearField('" + PathTextBox.ClientID + @"');
+                                
+                            }
+                        </script>");
 
            
         }

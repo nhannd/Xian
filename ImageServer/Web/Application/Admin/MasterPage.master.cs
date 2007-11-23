@@ -48,8 +48,8 @@ public partial class Admin_MasterPage : System.Web.UI.MasterPage
 
         Assembly asm = Assembly.GetExecutingAssembly();
         VersionLabel.Text =
-            string.Format("Ver: {0}", asm.GetName().Version.ToString());
-
+            string.Format("Ver: {0}",
+                        asm.GetName().Version.ToString());
 
     }
 }

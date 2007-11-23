@@ -136,6 +136,25 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
             ModalPopupExtender1.Drag = true;
             ModalPopupExtender1.PopupDragHandleControlID = TitleBarPanel.UniqueID;
 
+            OKButton.OnClientClick = ClientID + "_clearFields()";
+
+            Page.ClientScript.RegisterClientScriptBlock(this.GetType(), this.ClientID, 
+                        @"<script language='javascript'>
+                            function AddEditDialog_ClearField(fieldID)
+                            {
+                                txtbox = document.getElementById(fieldID);
+                                txtbox.style.backgroundColor = '';
+                            }
+
+                            function " + ClientID+ @"_clearFields()
+                            {
+                                
+                                AddEditDialog_ClearField('" + AETitleTextBox.ClientID + @"');
+                                AddEditDialog_ClearField('" + IPAddressTextBox.ClientID + @"');
+                                AddEditDialog_ClearField('" + PortTextBox.ClientID + @"');
+                                
+                            }
+                        </script>");
         }
 
 
