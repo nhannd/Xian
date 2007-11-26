@@ -57,8 +57,8 @@ namespace ClearCanvas.Desktop
         /// </summary>
         /// <remarks>
         /// This method is called after the GUI system and application view have been initialized,
-        /// so the implementation implementation may interact with the user if necessary, and may
-        /// make use of the <see cref="Application"/> object.
+        /// so the implementation may interact with the user if necessary, and may
+        /// make use of the <see cref="Application"/> object.  However, no desktop windows exist yet.
         /// Any exception thrown from this method will effectively prevent the establishment of a session, causing
         /// execution to terminate with an error.  A return value of false may be used
         /// to silently refuse initiation of a session.  In this case, no error is reported, but the application

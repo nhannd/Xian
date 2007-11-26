@@ -57,6 +57,27 @@ namespace ClearCanvas.Ris.Client
 
         public bool InitiateSession()
         {
+            try
+            {
+                return DoLogin();
+            }
+            catch(Exception e)
+            {
+                // can't use ExceptionHandler here because no desktopWindow exists yet
+                Desktop.Application.ShowMessageBox(e.Message, MessageBoxActions.Ok);
+                return false;
+            }
+        }
+
+        public void TerminateSession()
+        {
+        }
+
+        #endregion
+
+
+        private bool DoLogin()
+        {
             using (ILoginDialog loginDialog = (ILoginDialog)(new LoginDialogExtensionPoint()).CreateExtension())
             {
                 List<FacilitySummary> facilities = GetFacilityChoices();
@@ -111,12 +132,6 @@ namespace ClearCanvas.Ris.Client
                 }
             }
         }
-
-        public void TerminateSession()
-        {
-        }
-
-        #endregion
 
         private List<FacilitySummary> GetFacilityChoices()
         {
