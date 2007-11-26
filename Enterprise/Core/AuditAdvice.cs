@@ -32,37 +32,35 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Castle.DynamicProxy;
 
-using Spring.Aop;
-using AopAlliance.Intercept;
 
 
 namespace ClearCanvas.Enterprise.Core
 {
-    public class AuditAdvice : ServiceOperationAdvice, IMethodInterceptor
+    public class AuditAdvice : ServiceOperationAdvice, IInterceptor
     {
         internal AuditAdvice()
-            : base()
         {
         }
 
-        #region IMethodInterceptor Members
+        #region IInterceptor Members
 
-        public object Invoke(IMethodInvocation invocation)
+        public object Intercept(IInvocation invocation, params object[] args)
         {
-            ServiceOperationAttribute a = GetServiceOperationAttribute(invocation.Method);
-            if (a.Auditable)
+            ServiceOperationAttribute a = GetServiceOperationAttribute(invocation);
+            if (a != null && a.Auditable)
             {
                 IUpdateContext uctx = PersistenceScope.Current as IUpdateContext;
 
                 // only install a TransactionRecorder if the current context is an update context, and does not already have one
                 if (uctx != null && uctx.TransactionRecorder == null)
                 {
-                    string transactionName = string.Format("{0}.{1}", invocation.This.GetType().FullName, invocation.Method.Name);
+                    string transactionName = string.Format("{0}.{1}", invocation.InvocationTarget.GetType().FullName, invocation.Method.Name);
                     uctx.TransactionRecorder = new DefaultTransactionRecorder(transactionName);
                 }
             }
-            return invocation.Proceed();
+            return invocation.Proceed(args);
         }
 
         #endregion

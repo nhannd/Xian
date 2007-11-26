@@ -44,7 +44,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
 {
     [ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
     [ServiceImplementsContract(typeof(ITechnologistDocumentationService))]
-    class TechnologistDocumentationService : ApplicationServiceBase, ITechnologistDocumentationService
+    public class TechnologistDocumentationService : ApplicationServiceBase, ITechnologistDocumentationService
     {
         #region ITechnologistDocumentationService Members
 

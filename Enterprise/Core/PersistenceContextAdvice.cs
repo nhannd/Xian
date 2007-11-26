@@ -34,30 +34,38 @@ using System.Collections.Generic;
 using System.Text;
 using System.Reflection;
 using System.Diagnostics;
+using Castle.DynamicProxy;
 
-using AopAlliance.Intercept;
 
 namespace ClearCanvas.Enterprise.Core
 {
-    public class PersistenceContextAdvice : ServiceOperationAdvice, IMethodInterceptor
+    public class PersistenceContextAdvice : ServiceOperationAdvice, IInterceptor
     {
         internal PersistenceContextAdvice()
         {
         }
 
-        public object Invoke(IMethodInvocation invocation)
+        public object Intercept(IInvocation invocation, params object[] args)
         {
-            object retval = null;
-
             try
             {
-                ServiceOperationAttribute a = GetServiceOperationAttribute(invocation.Method);
-                using (PersistenceScope scope = a.CreatePersistenceScope())
+                object retval;
+                ServiceOperationAttribute a = GetServiceOperationAttribute(invocation);
+                if (a != null)
                 {
-                    retval = invocation.Proceed();
+                    // persistence context required
+                    using (PersistenceScope scope = a.CreatePersistenceScope())
+                    {
+                        retval = invocation.Proceed(args);
 
-                    // auto-commit transaction
-                    scope.Complete();
+                        // auto-commit transaction
+                        scope.Complete();
+                    }
+                }
+                else
+                {
+                    // no persistence context required
+                    retval = invocation.Proceed(args);
                 }
 
                 return retval;

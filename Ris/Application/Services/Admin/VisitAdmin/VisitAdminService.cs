@@ -47,7 +47,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.VisitAdmin
 {
     [ServiceImplementsContract(typeof(IVisitAdminService))]
     [ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
-    class VisitAdminService : ApplicationServiceBase, IVisitAdminService
+    public class VisitAdminService : ApplicationServiceBase, IVisitAdminService
     {
         #region IVisitAdminService Members
 

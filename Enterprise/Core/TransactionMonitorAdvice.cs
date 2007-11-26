@@ -33,14 +33,12 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-using Spring.Aop;
-
 namespace ClearCanvas.Enterprise.Core
 {
     /// <summary>
     /// Advises the session's transaction monitor to post the pending entity change notifications
     /// </summary>
-    public class TransactionMonitorAdvice : ServiceOperationAdvice, IAfterReturningAdvice
+    public class TransactionMonitorAdvice : ServiceOperationAdvice
     {
         internal TransactionMonitorAdvice()
         {

@@ -34,6 +34,8 @@ using System.Collections.Generic;
 using System.Text;
 using System.Reflection;
 using System.Diagnostics;
+using Castle.DynamicProxy;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Enterprise.Core
 {
@@ -43,11 +45,9 @@ namespace ClearCanvas.Enterprise.Core
         {
         }
 
-        protected ServiceOperationAttribute GetServiceOperationAttribute(MethodInfo method)
+        protected ServiceOperationAttribute GetServiceOperationAttribute(IInvocation invocation)
         {
-            object[] attributes = method.GetCustomAttributes(typeof(ServiceOperationAttribute), true);
-            Debug.Assert(attributes.Length == 1);
-            return (ServiceOperationAttribute)attributes[0];
+            return AttributeUtils.GetAttribute<ServiceOperationAttribute>(invocation.MethodInvocationTarget);
         }
     }
 }

@@ -49,7 +49,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.AuthenticationAdmin
 {
     [ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
     [ServiceImplementsContract(typeof(IAuthenticationAdminService))]
-    class AuthenticationAdminService : ApplicationServiceBase, IAuthenticationAdminService
+    public class AuthenticationAdminService : ApplicationServiceBase, IAuthenticationAdminService
     {
         #region IAuthorityAdminService Members
 

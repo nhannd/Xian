@@ -32,24 +32,24 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using AopAlliance.Intercept;
 using System.ServiceModel;
 using System.Reflection;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Ris.Application.Common;
+using Castle.DynamicProxy;
 
 namespace ClearCanvas.Ris.Server
 {
-    class ErrorHandlerAdvice : IMethodInterceptor
+    class ErrorHandlerAdvice : IInterceptor
     {
         #region IMethodInterceptor Members
 
-        public object Invoke(IMethodInvocation invocation)
+        public object Intercept(IInvocation invocation, params object[] args)
         {
             try
             {
-                return invocation.Proceed();
+                return invocation.Proceed(args);
             }
             catch (Exception e)
             {
@@ -58,7 +58,7 @@ namespace ClearCanvas.Ris.Server
 
                 // try promoting the exception to a fault
                 // if successful, throw the fault exception, otherwise throw the normal exception
-                FaultException fault = PromoteExceptionToFault(translated, invocation.This, invocation.Method.Name);
+                FaultException fault = PromoteExceptionToFault(translated, invocation.InvocationTarget, invocation.Method.Name);
                 if (fault != null)
                     throw fault;
                 else
