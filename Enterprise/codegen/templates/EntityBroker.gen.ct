@@ -14,13 +14,5 @@ namespace <%= namespace %>.Hibernate.Brokers
     [ClearCanvas.Common.ExtensionOf(typeof(BrokerExtensionPoint))]
 	public partial class <%= className %>Broker : EntityBroker<<%= className %>, <%= searchCriteriaClassName %>>, I<%= className %>Broker
 	{
-		/*
-		<% fields.select {|f| (f.kind == :collection && f.isLazy) || f.kind == :entity }.each do |f| %>
-		public void Load<%= f.accessorName %>For<%= className %>(<%= className %> entity)
-		{
-			LoadAssociation(entity, entity.<%= f.accessorName %>);
-		}
-		<% end %>
-		*/
 	}
 }
