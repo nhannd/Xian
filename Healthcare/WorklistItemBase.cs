@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Workflow;
 
 namespace ClearCanvas.Healthcare
 {

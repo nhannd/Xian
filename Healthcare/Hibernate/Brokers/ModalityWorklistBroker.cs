@@ -45,17 +45,15 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
     public class ModalityWorklistBroker : WorklistItemBrokerBase<WorklistItem>, IModalityWorklistBroker
     {
         private const string _hqlSelectWorklist =
-           "select ps, rp, o, p, pp, pp.Mrn, pp.Name, o.AccessionNumber, o.Priority," +
-           " v.PatientClass, ds.Name, rpt.Name, ps.Scheduling.StartTime, m" +
-           " from ModalityProcedureStep ps";
+            "select ps, rp, o, p, pp, pp.Mrn, pp.Name, o.AccessionNumber, o.Priority," +
+            " v.PatientClass, ds.Name, rpt.Name, ps.Scheduling.StartTime";
 
-        private const string _hqlSelectCount = 
-            "select count(*)" +
-            " from ModalityProcedureStep ps";
+        private const string _hqlSelectCount =
+            "select count(*)";
+
+        private const string _hqlFrom = " from {0} ps";
 
         private const string _hqlJoin =
-            " join ps.Type spst" +
-            " join ps.Modality m" +
             " join ps.RequestedProcedure rp" +
             " join rp.Type rpt" +
             " join rp.Order o" +
@@ -63,6 +61,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             " join o.Visit v" +
             " join o.Patient p" +
             " join p.Profiles pp";
+
 
         private const string _hqlUndocumentedSubCondition =
             "rp in" +
@@ -75,31 +74,19 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         #region IModalityWorklistBroker Members
 
-        public IList<WorklistItem> GetWorklist(ModalityWorklistItemSearchCriteria[] where, Worklist worklist)
+        public IList<WorklistItem> GetWorklist(Type stepClass, ModalityWorklistItemSearchCriteria[] where, Worklist worklist)
         {
-            HqlQuery query = new HqlQuery(string.Concat(_hqlSelectWorklist, _hqlJoin));
-            ConstructWorklistCondition(query, where, worklist, false);
+            string hqlFrom = string.Format(_hqlFrom, stepClass.Name);
+            HqlQuery query = new HqlQuery(string.Concat(_hqlSelectWorklist, hqlFrom, _hqlJoin));
+            ConstructWorklistCondition(query, where, worklist);
             return DoQuery(query);
         }
 
-        public int GetWorklistCount(ModalityWorklistItemSearchCriteria[] where, Worklist worklist)
+        public int GetWorklistCount(Type stepClass, ModalityWorklistItemSearchCriteria[] where, Worklist worklist)
         {
-            HqlQuery query = new HqlQuery(string.Concat(_hqlSelectCount, _hqlJoin));
-            ConstructWorklistCondition(query, where, worklist, false);
-            return DoQueryCount(query);
-        }
-
-        public IList<WorklistItem> GetUndocumentedWorklist(ModalityWorklistItemSearchCriteria[] where, Worklist worklist)
-        {
-            HqlQuery query = new HqlQuery(string.Concat(_hqlSelectWorklist, _hqlJoin));
-            ConstructWorklistCondition(query, where, worklist, true);
-            return DoQuery(query);
-        }
-
-        public int GetUndocumentedWorklistCount(ModalityWorklistItemSearchCriteria[] where, Worklist worklist)
-        {
-            HqlQuery query = new HqlQuery(string.Concat(_hqlSelectCount, _hqlJoin));
-            ConstructWorklistCondition(query, where, worklist, true);
+            string hqlFrom = string.Format(_hqlFrom, stepClass.Name);
+            HqlQuery query = new HqlQuery(string.Concat(_hqlSelectCount, hqlFrom, _hqlJoin));
+            ConstructWorklistCondition(query, where, worklist);
             return DoQueryCount(query);
         }
 
@@ -122,7 +109,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         #region Private Helpers
 
-        private static void ConstructWorklistCondition(HqlQuery query, IEnumerable<ModalityWorklistItemSearchCriteria> where, Worklist worklist, bool undocumentedCondition)
+        private static void ConstructWorklistCondition(HqlQuery query, IEnumerable<ModalityWorklistItemSearchCriteria> where, Worklist worklist)
         {
             HqlOr or = new HqlOr();
             foreach (ModalityWorklistItemSearchCriteria c in where)
@@ -133,7 +120,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
                 and.Conditions.AddRange(HqlCondition.FromSearchCriteria("pp", c.PatientProfile));
                 and.Conditions.AddRange(HqlCondition.FromSearchCriteria("rp", c.RequestedProcedure));
                 and.Conditions.AddRange(HqlCondition.FromSearchCriteria("rp.ProcedureCheckIn", c.ProcedureCheckIn));
-                and.Conditions.AddRange(HqlCondition.FromSearchCriteria("ps", c.ModalityProcedureStep));
+                and.Conditions.AddRange(HqlCondition.FromSearchCriteria("ps", c.ProcedureStep));
 
                 if (and.Conditions.Count > 0)
                     or.Conditions.Add(and);
@@ -142,7 +129,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
                 query.Sorts.AddRange(HqlSort.FromSearchCriteria("pp", c.PatientProfile));
                 query.Sorts.AddRange(HqlSort.FromSearchCriteria("rp", c.RequestedProcedure));
                 query.Sorts.AddRange(HqlSort.FromSearchCriteria("rp.ProcedureCheckIn", c.ProcedureCheckIn));
-                query.Sorts.AddRange(HqlSort.FromSearchCriteria("ps", c.ModalityProcedureStep));
+                query.Sorts.AddRange(HqlSort.FromSearchCriteria("ps", c.ProcedureStep));
             }
 
             if (or.Conditions.Count > 0)
@@ -151,11 +138,6 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             if (worklist != null && !worklist.RequestedProcedureTypeGroups.IsEmpty)
             {
                 query.Conditions.Add(new HqlCondition(_hqlWorklistSubQuery, worklist));
-            }
-
-            if (undocumentedCondition)
-            {
-                query.Conditions.Add(new HqlCondition(_hqlUndocumentedSubCondition, ActivityStatus.IP, Platform.Time.Date, Platform.Time.Date.AddDays(1)));
             }
         }
 

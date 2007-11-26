@@ -52,8 +52,7 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
             string diagnosticServiceName,
             string requestedProcedureName,
             string procedureStepName,
-            DateTime? scheduledStartTime,
-            string modalityName)
+            DateTime? scheduledStartTime)
             :base(
                 procedureStepRef,
                 requestedProcedureRef,
@@ -71,11 +70,6 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
                 scheduledStartTime
             )
         {
-            this.ModalityName = modalityName;
         }
-
-
-        [DataMember]
-        public string ModalityName;
     }
 }

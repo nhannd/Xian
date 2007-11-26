@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
@@ -38,11 +39,8 @@ namespace ClearCanvas.Healthcare.Brokers
 {
     public interface IModalityWorklistBroker : IPersistenceBroker
     {
-        IList<WorklistItem> GetWorklist(ModalityWorklistItemSearchCriteria[] where, Worklist worklist);
-        int GetWorklistCount(ModalityWorklistItemSearchCriteria[] where, Worklist worklist);
-
-        IList<WorklistItem> GetUndocumentedWorklist(ModalityWorklistItemSearchCriteria[] where, Worklist worklist);
-        int GetUndocumentedWorklistCount(ModalityWorklistItemSearchCriteria[] where, Worklist worklist);
+        IList<WorklistItem> GetWorklist(Type stepType, ModalityWorklistItemSearchCriteria[] where, Worklist worklist);
+        int GetWorklistCount(Type stepType, ModalityWorklistItemSearchCriteria[] where, Worklist worklist);
 
         IList<WorklistItem> Search(WorklistItemSearchCriteria[] where, SearchResultPage page, bool showActiveOnly);
         int SearchCount(WorklistItemSearchCriteria[] where, bool showActiveOnly);

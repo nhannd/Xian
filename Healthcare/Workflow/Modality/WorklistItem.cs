@@ -51,8 +51,6 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
 
     public class WorklistItem : WorklistItemBase
     {
-        private readonly Healthcare.Modality _modality;
-
         /// <summary>
         /// Constructor
         /// </summary>
@@ -69,8 +67,7 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
             PatientClassEnum patientClass,
             string diagnosticServiceName,
             string requestedProcedureName,
-            DateTime? scheduledStartTime,
-            Healthcare.Modality modality)
+            DateTime? scheduledStartTime)
             : base(
                 procedureStep,
                 requestedProcedure,
@@ -87,12 +84,6 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
                 scheduledStartTime
             )
         {
-            _modality = modality;
-        }
-
-        public Healthcare.Modality Modality
-        {
-            get { return _modality; }
         }
     }
 }

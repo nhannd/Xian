@@ -190,8 +190,14 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
 
         private bool CanExecuteOperation(ModalityOperation op, WorklistItemKey itemKey)
         {
-            ModalityProcedureStep modalityProcedureStep = PersistenceContext.Load<ModalityProcedureStep>(itemKey.ProcedureStepRef);
-            return op.CanExecute(modalityProcedureStep);
+            ProcedureStep procedureStep = PersistenceContext.Load<ProcedureStep>(itemKey.ProcedureStepRef);
+
+            // for now we can only operate on ModalityProcedureStep
+            // this may need to change in future
+            if(!procedureStep.Is<ModalityProcedureStep>())
+                return false;
+
+            return op.CanExecute(procedureStep.As<ModalityProcedureStep>());
         }
     }
 }

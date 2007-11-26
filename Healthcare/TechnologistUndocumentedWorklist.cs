@@ -2,6 +2,7 @@ using System.Collections;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Common;
+using ClearCanvas.Workflow;
 
 namespace ClearCanvas.Healthcare 
 {
@@ -25,7 +26,7 @@ namespace ClearCanvas.Healthcare
             get
             {
                 ModalityWorklistItemSearchCriteria criteria = new ModalityWorklistItemSearchCriteria();
-                criteria.ModalityProcedureStep.Scheduling.StartTime.Between(Platform.Time.Date, Platform.Time.Date.AddDays(1));
+                criteria.ProcedureStep.State.EqualTo(ActivityStatus.IP);
                 return new ModalityWorklistItemSearchCriteria[] { criteria };
             }
         }
@@ -34,12 +35,12 @@ namespace ClearCanvas.Healthcare
 
         public override IList GetWorklist(Staff currentUserStaff, IPersistenceContext context)
         {
-            return (IList)GetBroker<IModalityWorklistBroker>(context).GetUndocumentedWorklist(QueryConditions, this);
+            return (IList)GetBroker<IModalityWorklistBroker>(context).GetWorklist(typeof(DocumentationProcedureStep), QueryConditions, this);
         }
 
         public override int GetWorklistCount(Staff currentUserStaff, IPersistenceContext context)
         {
-            return GetBroker<IModalityWorklistBroker>(context).GetUndocumentedWorklistCount(QueryConditions, this);
+            return GetBroker<IModalityWorklistBroker>(context).GetWorklistCount(typeof(DocumentationProcedureStep), QueryConditions, this);
         }
 
         #endregion

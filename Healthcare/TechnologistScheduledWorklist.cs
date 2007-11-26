@@ -57,8 +57,8 @@ namespace ClearCanvas.Healthcare
             {
                 ModalityWorklistItemSearchCriteria criteria = new ModalityWorklistItemSearchCriteria();
                 criteria.ProcedureCheckIn.CheckInTime.IsNull(); // not checked in
-                criteria.ModalityProcedureStep.State.EqualTo(ActivityStatus.SC);
-                criteria.ModalityProcedureStep.Scheduling.StartTime.Between(Platform.Time.Date, Platform.Time.Date.AddDays(1));
+                criteria.ProcedureStep.State.EqualTo(ActivityStatus.SC);
+                criteria.ProcedureStep.Scheduling.StartTime.Between(Platform.Time.Date, Platform.Time.Date.AddDays(1));
                 return new ModalityWorklistItemSearchCriteria[] { criteria };
             }
         }
@@ -67,12 +67,12 @@ namespace ClearCanvas.Healthcare
 
         public override IList GetWorklist(Staff currentUserStaff, IPersistenceContext context)
         {
-            return (IList)GetBroker<IModalityWorklistBroker>(context).GetWorklist(QueryConditions, this);
+            return (IList)GetBroker<IModalityWorklistBroker>(context).GetWorklist(typeof(ModalityProcedureStep), QueryConditions, this);
         }
 
         public override int GetWorklistCount(Staff currentUserStaff, IPersistenceContext context)
         {
-            return GetBroker<IModalityWorklistBroker>(context).GetWorklistCount(QueryConditions, this);
+            return GetBroker<IModalityWorklistBroker>(context).GetWorklistCount(typeof(ModalityProcedureStep), QueryConditions, this);
         }
 
         #endregion
