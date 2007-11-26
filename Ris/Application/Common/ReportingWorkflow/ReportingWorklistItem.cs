@@ -38,56 +38,45 @@ using ClearCanvas.Enterprise.Common;
 namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
 {
     [DataContract]
-    public class ReportingWorklistItem : DataContractBase
+    public class ReportingWorklistItem : WorklistItemSummaryBase
     {
-        [DataMember]
-        public EntityRef ProcedureStepRef;
-
-        [DataMember]
-        public EntityRef PatientProfileRef;
-
-        [DataMember]
-        public CompositeIdentifierDetail Mrn;
-
-        [DataMember]
-        public PersonNameDetail PersonNameDetail;
-
-        [DataMember]
-        public string AccessionNumber;
-
-        [DataMember]
-        public string RequestedProcedureTypeName;
-
-        [DataMember]
-        public string DiagnosticServiceName;
-
-        [DataMember]
-        public EnumValueInfo OrderPriority;
-
-        [DataMember]
-        public EnumValueInfo PatientClass;
+        public ReportingWorklistItem(
+            EntityRef procedureStepRef,
+            EntityRef requestedProcedureRef,
+            EntityRef orderRef,
+            EntityRef patientRef,
+            EntityRef profileRef,
+            CompositeIdentifierDetail mrn,
+            PersonNameDetail name,
+            string accessionNumber,
+            EnumValueInfo orderPriority,
+            EnumValueInfo patientClass,
+            string diagnosticServiceName,
+            string requestedProcedureName,
+            string procedureStepName,
+            DateTime? scheduledStartTime,
+            EnumValueInfo activityStatus)
+            : base(
+                procedureStepRef,
+                requestedProcedureRef,
+                orderRef,
+                patientRef,
+                profileRef,
+                mrn,
+                name,
+                accessionNumber,
+                orderPriority,
+                patientClass,
+                diagnosticServiceName,
+                requestedProcedureName,
+                procedureStepName,
+                scheduledStartTime
+            )
+        {
+            this.ActivityStatus = activityStatus;
+        }
 
         [DataMember]
         public EnumValueInfo ActivityStatus;
-
-        [DataMember]
-        public string StepType;
-
-        [DataMember]
-        public DateTime? ProcedureEndTime;
-
-        public override bool Equals(object obj)
-        {
-            ReportingWorklistItem that = obj as ReportingWorklistItem;
-            if (that != null)
-                return this.ProcedureStepRef.Equals(that.ProcedureStepRef);
-
-            return false;
-        }
-
-        public override int GetHashCode()
-        {
-            return this.ProcedureStepRef.GetHashCode();
-        }
     }
 }

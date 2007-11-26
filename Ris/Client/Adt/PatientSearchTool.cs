@@ -76,19 +76,19 @@ namespace ClearCanvas.Ris.Client.Adt
                     previewComponent.WorklistItem = null;
                 else
                     previewComponent.WorklistItem = new RegistrationWorklistItem(
+                        null,
                         summary.PatientRef,
                         summary.ProfileRef,
-                        null,
                         summary.Mrn,
                         summary.Name,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
                         summary.Healthcard,
                         summary.DateOfBirth,
-                        summary.Sex,
-                        null,
-                        null,
-                        null,
-                        null,
-                        null);
+                        summary.Sex);
             };
 
             SplitComponentContainer splitComponent = new SplitComponentContainer(SplitOrientation.Vertical);

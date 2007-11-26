@@ -36,52 +36,44 @@ using ClearCanvas.Enterprise.Common;
 namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
 {
     [DataContract]
-    public class RegistrationWorklistItem : DataContractBase
+    public class RegistrationWorklistItem : WorklistItemSummaryBase
     {
         public RegistrationWorklistItem(
+            EntityRef orderRef,
             EntityRef patientRef,
             EntityRef profileRef,
-            EntityRef orderRef,
             CompositeIdentifierDetail mrn,
             PersonNameDetail name,
-            HealthcardDetail healthcard,
-            DateTime? dateOfBirth,
-            EnumValueInfo sex,
             string accessionNumber,
             EnumValueInfo orderPriority,
-            DateTime? earliestScheduledTime,
             EnumValueInfo patientClass,
-            string diagnosticServiceName)
+            string diagnosticServiceName,
+            DateTime? scheduledStartTime,
+            HealthcardDetail healthcard,
+            DateTime? dateOfBirth,
+            EnumValueInfo sex)
+            :base(
+                null,
+                null,
+                orderRef,
+                patientRef,
+                profileRef,
+                mrn,
+                name,
+                accessionNumber,
+                orderPriority,
+                patientClass,
+                diagnosticServiceName,
+                null,
+                null,
+                scheduledStartTime
+            )
         {
-            this.PatientRef = patientRef;
-            this.PatientProfileRef = profileRef;
-            this.OrderRef = orderRef;
-            this.Mrn = mrn;
-            this.Name = name;
             this.Healthcard = healthcard;
             this.DateOfBirth = dateOfBirth;
             this.Sex = sex;
-            this.EarliestScheduledTime = earliestScheduledTime;
-            this.OrderPriority = orderPriority;
-            this.PatientClass = patientClass;
-            this.AccessionNumber = accessionNumber;
-            this.DiagnosticServiceName = diagnosticServiceName;
         }
 
-        [DataMember]
-        public EntityRef OrderRef;
-
-        [DataMember]
-        public EntityRef PatientRef;
-
-        [DataMember]
-        public EntityRef PatientProfileRef;
-
-        [DataMember]
-        public CompositeIdentifierDetail Mrn;
-
-        [DataMember]
-        public PersonNameDetail Name;
 
         [DataMember]
         public HealthcardDetail Healthcard;
@@ -92,21 +84,11 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
         [DataMember]
         public EnumValueInfo Sex;
 
-        [DataMember]
-        public DateTime? EarliestScheduledTime;
-
-        [DataMember]
-        public EnumValueInfo OrderPriority;
-
-        [DataMember]
-        public EnumValueInfo PatientClass;
-
-        [DataMember]
-        public string AccessionNumber;
-
-        [DataMember]
-        public string DiagnosticServiceName;
-
+        /// <summary>
+        /// Overridden to use OrderRef.
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
         public override bool Equals(object obj)
         {
             RegistrationWorklistItem that = obj as RegistrationWorklistItem;

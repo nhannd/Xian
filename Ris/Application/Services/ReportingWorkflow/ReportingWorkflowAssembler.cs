@@ -36,7 +36,6 @@ using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Workflow.Reporting;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
-using ClearCanvas.Ris.Application.Services.Admin;
 
 namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 {
@@ -44,26 +43,24 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
     {
         public ReportingWorklistItem CreateReportingWorklistItem(WorklistItem domainItem, IPersistenceContext context)
         {
-            ReportingWorklistItem item = new ReportingWorklistItem();
-
-            item.ProcedureStepRef = domainItem.ProcedureStepRef;
-
-            item.PatientProfileRef = domainItem.PatientProfileRef;
-            item.Mrn = new MrnAssembler().CreateMrnDetail(domainItem.Mrn);
-
             PersonNameAssembler assembler = new PersonNameAssembler();
-            item.PersonNameDetail = assembler.CreatePersonNameDetail(domainItem.PatientName);
-
-            item.AccessionNumber = domainItem.AccessionNumber;
-            item.RequestedProcedureTypeName = domainItem.RequestedProcedureName;
-            item.DiagnosticServiceName = domainItem.DiagnosticServiceName;
-            item.OrderPriority = EnumUtils.GetEnumValueInfo(domainItem.OrderPriority, context);
-            item.ActivityStatus = EnumUtils.GetEnumValueInfo(domainItem.ActivityStatus, context);
-            item.StepType = domainItem.ProcedureStepName;
-            item.PatientClass = EnumUtils.GetEnumValueInfo(domainItem.PatientClass);
-            item.ProcedureEndTime = domainItem.ScheduledStartTime;
-
-            return item;
+            return new ReportingWorklistItem(
+                domainItem.ProcedureStepRef,
+                domainItem.RequestedProcedureRef,
+                domainItem.OrderRef,
+                domainItem.PatientRef,
+                domainItem.PatientProfileRef,
+                new MrnAssembler().CreateMrnDetail(domainItem.Mrn),
+                assembler.CreatePersonNameDetail(domainItem.PatientName),
+                domainItem.AccessionNumber,
+                EnumUtils.GetEnumValueInfo(domainItem.OrderPriority, context),
+                EnumUtils.GetEnumValueInfo(domainItem.PatientClass),
+                domainItem.DiagnosticServiceName,
+                domainItem.RequestedProcedureName,
+                domainItem.ProcedureStepName,
+                domainItem.ScheduledStartTime,
+                EnumUtils.GetEnumValueInfo(domainItem.ActivityStatus, context)
+                );
         }
 
         public ReportSummary CreateReportSummary(RequestedProcedure rp, Report report, IPersistenceContext context)

@@ -250,7 +250,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                         Platform.GetService<IReportingWorkflowService>(
                             delegate(IReportingWorkflowService service)
                             {
-                                GetOperationEnablementResponse response = service.GetOperationEnablement(new GetOperationEnablementRequest(selectedItem.ProcedureStepRef, selectedItem.StepType));
+                                GetOperationEnablementResponse response = service.GetOperationEnablement(new GetOperationEnablementRequest(selectedItem.ProcedureStepRef, selectedItem.ProcedureStepName));
                                 _workflowEnablement = response.OperationEnablementDictionary;
                             });
                     });

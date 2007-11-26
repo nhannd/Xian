@@ -201,7 +201,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                 IReportingWorkflowFolderDropContext ctxt = (IReportingWorkflowFolderDropContext)dropContext;
                 ReportingWorklistItem firstItem = CollectionUtils.FirstElement<ReportingWorklistItem>(items);
 
-                return firstItem.StepType == "Interpretation" &&
+                return firstItem.ProcedureStepName == "Interpretation" &&
                     (ctxt.GetOperationEnablement("ClaimInterpretation") ||
                     ctxt.GetOperationEnablement("StartInterpretation") ||
                     ctxt.GetOperationEnablement("StartVerification"));
@@ -219,7 +219,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                     try
                     {
                         EntityRef stepForOpeningReport = null;
-                        if (item.StepType == "Interpretation")
+                        if (item.ProcedureStepName == "Interpretation")
                         {
                             Platform.GetService<IReportingWorkflowService>(
                                 delegate(IReportingWorkflowService service)
@@ -229,7 +229,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                                     stepForOpeningReport = response.InterpretationStepRef;
                                 });
                         }
-                        else if (item.StepType == "Verification")
+                        else if (item.ProcedureStepName == "Verification")
                         {
                             if (Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.VerifyReport))
                             {
@@ -256,7 +256,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                                     });
                             }
                         }
-                        else if (item.StepType == "Publication")
+                        else if (item.ProcedureStepName == "Publication")
                         {
                             Platform.GetService<IReportingWorkflowService>(
                                 delegate(IReportingWorkflowService service)
@@ -275,7 +275,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                         //bool readOnly = selectedFolder is Folders.InTranscriptionFolder ||
                         //    selectedFolder is Folders.VerifiedFolder;
 
-                        doc = new ReportDocument(stepForOpeningReport, item.PersonNameDetail, folders, desktopWindow);
+                        doc = new ReportDocument(stepForOpeningReport, item.PatientName, folders, desktopWindow);
                         doc.Closed += delegate
                         {
                             if (selectedFolder.IsOpen)
@@ -457,7 +457,7 @@ namespace ClearCanvas.Ris.Client.Reporting
             {
                 try
                 {
-                    if (item.StepType == "Interpretation")
+                    if (item.ProcedureStepName == "Interpretation")
                     {
                         Platform.GetService<IReportingWorkflowService>(
                             delegate(IReportingWorkflowService service)
@@ -465,7 +465,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                                 service.CompleteInterpretationAndVerify(new CompleteInterpretationAndVerifyRequest(item.ProcedureStepRef));
                             });
                     }
-                    else if (item.StepType == "Verification")
+                    else if (item.ProcedureStepName == "Verification")
                     {
                         Platform.GetService<IReportingWorkflowService>(
                             delegate(IReportingWorkflowService service)
@@ -529,7 +529,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                             delegate(IFolder f) { return f is Folders.DraftFolder; });
                         myInterpretationFolder.RefreshCount();
 
-                        doc = new ReportDocument(response.InterpretationStepRef, item.PersonNameDetail, folders, desktopWindow);
+                        doc = new ReportDocument(response.InterpretationStepRef, item.PatientName, folders, desktopWindow);
                         doc.Open();
                     }
                     catch (Exception e)

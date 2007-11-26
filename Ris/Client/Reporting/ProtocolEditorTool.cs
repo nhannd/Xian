@@ -49,7 +49,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                 ReportingWorklistItem item = CollectionUtils.FirstElement<ReportingWorklistItem>(this.Context.SelectedItems);
                 if(item != null)
                 {
-                    return item.StepType == "Protocol";
+                    return item.ProcedureStepName == "Protocol";
                 }
                 return false;
             }

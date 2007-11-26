@@ -56,7 +56,7 @@ namespace ClearCanvas.Ris.Client.Adt
         public void Apply()
         {
             RegistrationWorklistItem item = CollectionUtils.FirstElement<RegistrationWorklistItem>(Context.SelectedItems);
-            string title = string.Format("Modify Order - {0} {1}", PersonNameFormat.Format(item.Name), MrnFormat.Format(item.Mrn));
+            string title = string.Format("Modify Order - {0} {1}", PersonNameFormat.Format(item.PatientName), MrnFormat.Format(item.Mrn));
             try
             {
                 ApplicationComponent.LaunchAsWorkspace(

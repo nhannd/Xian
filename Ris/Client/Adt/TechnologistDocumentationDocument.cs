@@ -60,7 +60,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         protected override string GetTitle()
         {
-            return string.Format("A# {0} - {1}, {2}", _item.AccessionNumber, _item.PersonNameDetail.FamilyName, _item.PersonNameDetail.GivenName);
+            return string.Format("A# {0} - {1}, {2}", _item.AccessionNumber, _item.PatientName.FamilyName, _item.PatientName.GivenName);
         }
 
         protected override IApplicationComponent GetComponent()

@@ -265,7 +265,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 ApplicationComponent.LaunchAsWorkspace(
                     this.Context.DesktopWindow,
                     new OrderEntryComponent(item.PatientRef, item.OrderRef, OrderEntryComponent.Mode.ReplaceOrder),
-                    string.Format(SR.TitleNewOrder, PersonNameFormat.Format(item.PersonNameDetail), MrnFormat.Format(item.Mrn)),
+                    string.Format(SR.TitleNewOrder, PersonNameFormat.Format(item.PatientName), MrnFormat.Format(item.Mrn)),
                     delegate
                     {
                         IFolder folder = CollectionUtils.SelectFirst<IFolder>(folders,

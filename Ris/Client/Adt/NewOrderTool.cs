@@ -82,7 +82,7 @@ namespace ClearCanvas.Ris.Client.Adt
             {
                 IRegistrationWorkflowItemToolContext context = (IRegistrationWorkflowItemToolContext)this.ContextBase;
                 RegistrationWorklistItem item = CollectionUtils.FirstElement<RegistrationWorklistItem>(context.SelectedItems);
-                string title = string.Format(SR.TitleNewOrder, PersonNameFormat.Format(item.Name), MrnFormat.Format(item.Mrn));
+                string title = string.Format(SR.TitleNewOrder, PersonNameFormat.Format(item.PatientName), MrnFormat.Format(item.Mrn));
                 NewOrder(item.PatientRef, title, context.DesktopWindow);
             }
             else if (this.Context is IPatientSearchToolContext)

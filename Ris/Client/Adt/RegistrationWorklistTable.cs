@@ -67,7 +67,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
             TableColumn<RegistrationWorklistItem, string> nameColumn = 
                 new TableColumn<RegistrationWorklistItem, string>(SR.ColumnName,
-                delegate(RegistrationWorklistItem item) { return PersonNameFormat.Format(item.Name); }, 1.5f);
+                delegate(RegistrationWorklistItem item) { return PersonNameFormat.Format(item.PatientName); }, 1.5f);
 
             TableColumn<RegistrationWorklistItem, string> patientClassColumn = 
                 new TableColumn<RegistrationWorklistItem, string>(SR.ColumnPatientClass,
@@ -78,7 +78,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 delegate(RegistrationWorklistItem item) { return string.Format("{0} {1} - {2}", 
                     item.AccessionNumber, 
                     item.DiagnosticServiceName, 
-                    item.EarliestScheduledTime); },
+                    item.ScheduledStartTime); },
                 1.0f, DescriptionRow);
             descriptionRow.Comparison = null;
 
@@ -95,7 +95,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
             TableColumn<RegistrationWorklistItem, string> scheduledForColumn = 
                 new TableColumn<RegistrationWorklistItem, string>(SR.ColumnScheduledFor,
-                delegate(RegistrationWorklistItem item) { return Format.Time(item.EarliestScheduledTime); }, 1.0f);
+                delegate(RegistrationWorklistItem item) { return Format.Time(item.ScheduledStartTime); }, 1.0f);
             scheduledForColumn.Visible = false;
 
             // The order of the addition determines the order of SortBy dropdown

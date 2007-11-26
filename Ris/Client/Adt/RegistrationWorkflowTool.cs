@@ -131,8 +131,8 @@ namespace ClearCanvas.Ris.Client.Adt
                     CheckInOrderComponent checkInComponent = new CheckInOrderComponent(item); 
                     ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
                         desktopWindow,
-                        checkInComponent, 
-                        String.Format("Checking in {0}", PersonNameFormat.Format(item.Name)));
+                        checkInComponent,
+                        String.Format("Checking in {0}", PersonNameFormat.Format(item.PatientName)));
 
                     if (exitCode == ApplicationComponentExitCode.Accepted)
                     {
@@ -182,8 +182,8 @@ namespace ClearCanvas.Ris.Client.Adt
                     CancelOrderComponent cancelOrderComponent = new CancelOrderComponent(item);
                     ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
                         desktopWindow,
-                        cancelOrderComponent, 
-                        String.Format(SR.TitleCancelOrder, PersonNameFormat.Format(item.Name)));
+                        cancelOrderComponent,
+                        String.Format(SR.TitleCancelOrder, PersonNameFormat.Format(item.PatientName)));
 
                     if (exitCode == ApplicationComponentExitCode.Accepted)
                     {
@@ -241,7 +241,7 @@ namespace ClearCanvas.Ris.Client.Adt
                     ApplicationComponent.LaunchAsWorkspace(
                         desktopWindow,
                         new OrderEntryComponent(item.PatientRef, item.OrderRef, OrderEntryComponent.Mode.ReplaceOrder),
-                        string.Format(SR.TitleReplaceOrder, PersonNameFormat.Format(item.Name), MrnFormat.Format(item.Mrn)),
+                        string.Format(SR.TitleReplaceOrder, PersonNameFormat.Format(item.PatientName), MrnFormat.Format(item.Mrn)),
                         delegate(IApplicationComponent c)
                         {
                             if (c.ExitCode == ApplicationComponentExitCode.Accepted)

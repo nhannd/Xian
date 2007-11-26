@@ -65,7 +65,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 
             TableColumn<ReportingWorklistItem, string> nameColumn =
                 new TableColumn<ReportingWorklistItem, string>(SR.ColumnName,
-                delegate(ReportingWorklistItem item) { return PersonNameFormat.Format(item.PersonNameDetail); }, 1.5f);
+                delegate(ReportingWorklistItem item) { return PersonNameFormat.Format(item.PatientName); }, 1.5f);
 
             TableColumn<ReportingWorklistItem, string> patientClassColumn =
                 new TableColumn<ReportingWorklistItem, string>(SR.ColumnPatientClass,
@@ -76,8 +76,8 @@ namespace ClearCanvas.Ris.Client.Reporting
                 delegate(ReportingWorklistItem item) { return string.Format("{0} {1} - {2} {3}", 
                     item.AccessionNumber, 
                     item.DiagnosticServiceName,
-                    item.RequestedProcedureTypeName, 
-                    item.ProcedureEndTime); },
+                    item.RequestedProcedureName, 
+                    item.ScheduledStartTime); },
                 1.0f, DescriptionRow);
 
             // Invisible but sortable columns
@@ -93,13 +93,13 @@ namespace ClearCanvas.Ris.Client.Reporting
 
             TableColumn<ReportingWorklistItem, string> procedureNameColumn =
                 new TableColumn<ReportingWorklistItem, string>(SR.ColumnProcedure,
-                delegate(ReportingWorklistItem item) { return item.RequestedProcedureTypeName; }, 1.0f);
+                delegate(ReportingWorklistItem item) { return item.RequestedProcedureName; }, 1.0f);
             procedureNameColumn.Visible = false;
 
             // Currently the creation time of the interpretation step
             TableColumn<ReportingWorklistItem, string> procedureEndTimeColumn =
                 new TableColumn<ReportingWorklistItem, string>(SR.ColumnProcedureEndTime,
-                delegate(ReportingWorklistItem item) { return Format.Time(item.ProcedureEndTime); }, 0.5f);
+                delegate(ReportingWorklistItem item) { return Format.Time(item.ScheduledStartTime); }, 0.5f);
             procedureEndTimeColumn.Visible = false;
 
             // The order of the addition determines the order of SortBy dropdown

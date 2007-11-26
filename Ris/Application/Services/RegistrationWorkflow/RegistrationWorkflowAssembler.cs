@@ -33,10 +33,7 @@ using System;
 using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
-using ClearCanvas.Healthcare;
-using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Healthcare.Workflow.Registration;
-using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 
 namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
@@ -49,19 +46,20 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             HealthcardAssembler healthcardAssembler = new HealthcardAssembler();
 
             return new RegistrationWorklistItem(
+                domainItem.OrderRef,
                 domainItem.PatientRef,
                 domainItem.PatientProfileRef,
-                domainItem.OrderRef,
                 new MrnAssembler().CreateMrnDetail(domainItem.Mrn),
                 nameAssembler.CreatePersonNameDetail(domainItem.PatientName),
-                healthcardAssembler.CreateHealthcardDetail(domainItem.HealthcardNumber),
-                domainItem.DateOfBirth,
-                EnumUtils.GetEnumValueInfo(domainItem.Sex, context),
                 domainItem.AccessionNumber,
                 EnumUtils.GetEnumValueInfo(domainItem.OrderPriority, context),
-                domainItem.ScheduledStartTime,
                 EnumUtils.GetEnumValueInfo(domainItem.PatientClass),
-                domainItem.DiagnosticServiceName);
+                domainItem.DiagnosticServiceName,
+                domainItem.ScheduledStartTime,
+                healthcardAssembler.CreateHealthcardDetail(domainItem.HealthcardNumber),
+                domainItem.DateOfBirth,
+                EnumUtils.GetEnumValueInfo(domainItem.Sex, context)
+                );
         }
     }
 }

@@ -44,20 +44,22 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
         {
             PersonNameAssembler assembler = new PersonNameAssembler();
             return new ModalityWorklistItem(
+                domainItem.ProcedureStepRef,
+                domainItem.RequestedProcedureRef,
+                domainItem.OrderRef,
                 domainItem.PatientRef,
                 domainItem.PatientProfileRef,
-                domainItem.OrderRef,
-                domainItem.ProcedureStepRef,
                 new MrnAssembler().CreateMrnDetail(domainItem.Mrn),
                 assembler.CreatePersonNameDetail(domainItem.PatientName),
+                domainItem.AccessionNumber,
                 EnumUtils.GetEnumValueInfo(domainItem.OrderPriority, context),
                 EnumUtils.GetEnumValueInfo(domainItem.PatientClass),
-                domainItem.AccessionNumber,
+                domainItem.DiagnosticServiceName,
                 domainItem.RequestedProcedureName,
                 domainItem.ProcedureStepName,
-                domainItem.Modality.Name,
                 domainItem.ScheduledStartTime,
-                domainItem.DiagnosticServiceName);
+                domainItem.Modality.Name
+                );
         }
 
         public ModalityProcedureStepSearchCriteria CreateSearchCriteria(ModalityWorklistSearchData criteria)

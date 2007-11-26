@@ -104,7 +104,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 RegistrationWorklistItem item = CollectionUtils.FirstElement<RegistrationWorklistItem>(context.SelectedItems);
 
                 string title = string.Format(SR.TitleVisitSummaryComponent,
-                    PersonNameFormat.Format(item.Name),
+                    PersonNameFormat.Format(item.PatientName),
                     MrnFormat.Format(item.Mrn));
 
                 ShowVisitSummaryDialog(item.PatientRef, title, context.DesktopWindow);

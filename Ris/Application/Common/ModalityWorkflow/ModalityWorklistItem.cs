@@ -36,94 +36,46 @@ using ClearCanvas.Enterprise.Common;
 namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
 {
     [DataContract]
-    public class ModalityWorklistItem : DataContractBase
+    public class ModalityWorklistItem : WorklistItemSummaryBase
     {
         public ModalityWorklistItem(
+            EntityRef procedureStepRef,
+            EntityRef requestedProcedureRef,
+            EntityRef orderRef,
             EntityRef patientRef,
             EntityRef profileRef,
-            EntityRef orderRef,
-            EntityRef procedureStepRef,
             CompositeIdentifierDetail mrn,
             PersonNameDetail name,
+            string accessionNumber,
             EnumValueInfo orderPriority,
             EnumValueInfo patientClass,
-            string accessionNumber,
+            string diagnosticServiceName,
             string requestedProcedureName,
-            string modalityProcedureStepName,
-            string modalityName,
+            string procedureStepName,
             DateTime? scheduledStartTime,
-            string diagnosticServiceName)
+            string modalityName)
+            :base(
+                procedureStepRef,
+                requestedProcedureRef,
+                orderRef,
+                patientRef,
+                profileRef,
+                mrn,
+                name,
+                accessionNumber,
+                orderPriority,
+                patientClass,
+                diagnosticServiceName,
+                requestedProcedureName,
+                procedureStepName,
+                scheduledStartTime
+            )
         {
-            this.PatientRef = patientRef;
-            this.PatientProfileRef = profileRef;
-            this.OrderRef = orderRef;
-            this.ProcedureStepRef = procedureStepRef;
-            this.Mrn = mrn;
-            this.PersonNameDetail = name;
-            this.OrderPriority = orderPriority;
-            this.PatientClass = patientClass;
-            this.AccessionNumber = accessionNumber;
-            this.RequestedProcedureTypeName = requestedProcedureName;
-            this.ModalityProcedureStepName = modalityProcedureStepName;
             this.ModalityName = modalityName;
-            this.ScheduledStartTime = scheduledStartTime;
-            this.DiagnosticServiceName = diagnosticServiceName;
         }
 
-        [DataMember]
-        public EntityRef ProcedureStepRef;
-
-        [DataMember]
-        public EntityRef PatientProfileRef;
-
-        [DataMember]
-        public EntityRef PatientRef;
-
-        [DataMember]
-        public EntityRef OrderRef;
-
-        [DataMember]
-        public CompositeIdentifierDetail Mrn;
-
-        [DataMember]
-        public PersonNameDetail PersonNameDetail;
-
-        [DataMember]
-        public EnumValueInfo OrderPriority;
-
-        [DataMember]
-        public EnumValueInfo PatientClass;
-
-        [DataMember]
-        public string AccessionNumber;
-
-        [DataMember]
-        public string ModalityProcedureStepName;
-
-        [DataMember]
-        public string RequestedProcedureTypeName;
 
         [DataMember]
         public string ModalityName;
-
-        [DataMember]
-        public DateTime? ScheduledStartTime;
-
-        [DataMember]
-        public string DiagnosticServiceName;
-
-        public override bool Equals(object obj)
-        {
-            ModalityWorklistItem that = obj as ModalityWorklistItem;
-            if (that != null)
-                return Equals(this.ProcedureStepRef, that.ProcedureStepRef);
-
-            return false;
-        }
-
-        public override int GetHashCode()
-        {
-            return this.ProcedureStepRef.GetHashCode();
-        }
     }
 }

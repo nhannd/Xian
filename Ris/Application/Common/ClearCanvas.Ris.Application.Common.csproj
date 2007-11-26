@@ -80,6 +80,7 @@
     <Compile Include="Admin\ExternalPractitionerAdmin\UpdateExternalPractitionerRequest.cs" />
     <Compile Include="Admin\ExternalPractitionerAdmin\UpdateExternalPractitionerResponse.cs" />
     <Compile Include="AuthenticationAttribute.cs" />
+    <Compile Include="WorklistItemSummaryBase.cs" />
     <Compile Include="Login\GetWorkingFacilityChoicesRequest.cs" />
     <Compile Include="Login\GetWorkingFacilityChoicesResponse.cs" />
     <Compile Include="Admin\ProtocolAdmin\AddProtocolGroupRequest.cs" />
