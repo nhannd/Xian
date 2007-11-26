@@ -20,6 +20,7 @@ namespace ClearCanvas.Ris.Application.Services
             ExternalPractitionerAssembler pracAssembler = new ExternalPractitionerAssembler();
             FacilityAssembler facilityAssembler = new FacilityAssembler();
             DiagnosticServiceAssembler dsAssembler = new DiagnosticServiceAssembler();
+            RequestedProcedureAssembler rpAssembler = new RequestedProcedureAssembler();
 
             detail.OrderRef = order.GetRef();
             detail.PatientRef = order.Patient.GetRef();
@@ -45,7 +46,7 @@ namespace ClearCanvas.Ris.Application.Services
             {
                 foreach (RequestedProcedure rp in order.RequestedProcedures)
                 {
-                    detail.RequestedProcedures.Add(this.CreateRequestedProcedureSummary(rp, context));
+                    detail.RequestedProcedures.Add(rpAssembler.CreateRequestedProcedureSummary(rp, context));
                 }
             }
 
@@ -70,61 +71,6 @@ namespace ClearCanvas.Ris.Application.Services
             summary.OrderStatus = EnumUtils.GetEnumValueInfo(order.Status, context);
 
             return summary;
-        }
-
-        public RequestedProcedureSummary CreateRequestedProcedureSummary(RequestedProcedure rp, IPersistenceContext context)
-        {
-            RequestedProcedureTypeAssembler rptAssembler = new RequestedProcedureTypeAssembler();
-            RequestedProcedureSummary detail = new RequestedProcedureSummary();
-
-            detail.OrderRef = rp.Order.GetRef();
-            detail.Index = rp.Index;
-            detail.Type = rptAssembler.CreateRequestedProcedureTypeDetail(rp.Type);
-
-            foreach (ProcedureStep step in rp.ProcedureSteps)
-            {
-                //TODO: include other ProcedureStep in RequestedProcedureSummary
-                if (step.Is<ModalityProcedureStep>())
-                {
-                    detail.ProcedureSteps.Add(this.CreateModalityProcedureStepSummary(step.Downcast<ModalityProcedureStep>(), context));
-                }
-            }
-
-            return detail;
-        }
-
-        public ModalityProcedureStepSummary CreateModalityProcedureStepSummary(ModalityProcedureStep mps, IPersistenceContext context)
-        {
-            StaffAssembler staffAssembler = new StaffAssembler();
-
-            ModalityProcedureStepSummary summary = new ModalityProcedureStepSummary();
-
-            summary.Type = this.CreateModalityProcedureStepTypeDetail(mps.Type);
-
-            summary.State = EnumUtils.GetEnumValueInfo(mps.State, context);
-
-            summary.PerformerStaff = staffAssembler.CreateStaffSummary(mps.PerformingStaff, context);
-            summary.StartTime = mps.StartTime;
-            summary.EndTime = mps.EndTime;
-
-            if (mps.Scheduling != null)
-            {
-                //TODO ScheduledPerformerStaff for ModalityProcedureStepSummary
-                //summary.ScheduledPerformerStaff = staffAssembler.CreateStaffSummary(mps.Scheduling.Performer);
-                summary.ScheduledStartTime = mps.Scheduling.StartTime;
-                summary.ScheduledEndTime = mps.Scheduling.EndTime;
-            }
-
-            return summary;
-        }
-
-        public ModalityProcedureStepTypeDetail CreateModalityProcedureStepTypeDetail(ModalityProcedureStepType modalityProcedureStepType)
-        {
-            ModalityAssembler assembler = new ModalityAssembler();
-            return new ModalityProcedureStepTypeDetail(
-                modalityProcedureStepType.Id,
-                modalityProcedureStepType.Name,
-                assembler.CreateModalityDetail(modalityProcedureStepType.DefaultModality));
         }
     }
 }

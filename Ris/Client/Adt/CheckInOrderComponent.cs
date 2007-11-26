@@ -31,16 +31,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Ris.Application.Common.Admin;
-using ClearCanvas.Ris.Application.Common.Admin.StaffAdmin;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 
 namespace ClearCanvas.Ris.Client.Adt
@@ -59,9 +55,9 @@ namespace ClearCanvas.Ris.Client.Adt
     [AssociateView(typeof(CheckInOrderComponentViewExtensionPoint))]
     public class CheckInOrderComponent : ApplicationComponent
     {
-        private RegistrationWorklistItem _worklistItem;
+        private readonly RegistrationWorklistItem _worklistItem;
         private CheckInOrderTable _checkInOrderTable;
-        private List<EntityRef> _selectedOrders;
+        private List<EntityRef> _selectedRequestedProcedures;
 
         /// <summary>
         /// Constructor
@@ -73,38 +69,33 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public override void Start()
         {
-            _selectedOrders = new List<EntityRef>();
+            _selectedRequestedProcedures = new List<EntityRef>();
             _checkInOrderTable = new CheckInOrderTable();
 
             Platform.GetService<IRegistrationWorkflowService>(
                 delegate(IRegistrationWorkflowService service)
                 {
-                    GetDataForCheckInTableResponse response = service.GetDataForCheckInTable(new GetDataForCheckInTableRequest(_worklistItem.PatientProfileRef));
+                    GetDataForCheckInTableResponse response = service.GetDataForCheckInTable(new GetDataForCheckInTableRequest(_worklistItem.OrderRef));
                     _checkInOrderTable.Items.AddRange(
-                        CollectionUtils.Map<CheckInTableItem, CheckInOrderTableEntry>(response.CheckInTableItems,
-                                delegate(CheckInTableItem item)
+                        CollectionUtils.Map<RequestedProcedureSummary, CheckInOrderTableEntry>(response.RequestedProcedures,
+                                delegate(RequestedProcedureSummary item)
                                 {
                                     CheckInOrderTableEntry entry = new CheckInOrderTableEntry(item);
-                                    entry.CheckedChanged += new EventHandler(OrderCheckedStateChangedEventHandler);
+                                    entry.CheckedChanged += OrderCheckedStateChangedEventHandler;
                                     return entry;
                                 }));
                 });
 
-            CheckInOrderTableEntry selectedEntry = CollectionUtils.SelectFirst<CheckInOrderTableEntry>(_checkInOrderTable.Items,
+            CheckInOrderTableEntry selectedEntry = CollectionUtils.SelectFirst(_checkInOrderTable.Items,
                 delegate(CheckInOrderTableEntry entry)
                 {
-                    return entry.CheckInTableItem.OrderRef == _worklistItem.OrderRef;
+                    return entry.RequestedProcedure.OrderRef == _worklistItem.OrderRef;
                 });
 
             if (selectedEntry != null)
                 selectedEntry.Checked = true;
 
             base.Start();
-        }
-
-        public override void Stop()
-        {
-            base.Stop();
         }
 
         #region Presentation Model
@@ -114,9 +105,9 @@ namespace ClearCanvas.Ris.Client.Adt
             get { return _checkInOrderTable; }
         }
 
-        public List<EntityRef> SelectedOrders
+        public List<EntityRef> SelectedRequestedProcedures
         {
-            get { return _selectedOrders; }
+            get { return _selectedRequestedProcedures; }
         }
 
         #endregion
@@ -147,7 +138,7 @@ namespace ClearCanvas.Ris.Client.Adt
             foreach (CheckInOrderTableEntry entry in _checkInOrderTable.Items)
             {
                 if (entry.Checked)
-                    _selectedOrders.Add(entry.CheckInTableItem.OrderRef);
+                    _selectedRequestedProcedures.Add(entry.RequestedProcedure.RequestedProcedureRef);
             }      
         }
 

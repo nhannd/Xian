@@ -138,6 +138,9 @@
   <data name="ColumnCancel" xml:space="preserve">
     <value>Cancel</value>
   </data>
+  <data name="ColumnCheckIn" xml:space="preserve">
+    <value>Check In</value>
+  </data>
   <data name="ColumnCreatedOn" xml:space="preserve">
     <value>Created On</value>
   </data>
@@ -221,6 +224,9 @@
   </data>
   <data name="ColumnPeer" xml:space="preserve">
     <value>Peer</value>
+  </data>
+  <data name="ColumnPerformingFacility" xml:space="preserve">
+    <value>Performing Facility</value>
   </data>
   <data name="ColumnPractitioner" xml:space="preserve">
     <value>Practitioner</value>

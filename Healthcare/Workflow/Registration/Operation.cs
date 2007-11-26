@@ -46,13 +46,9 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
 
         public class CheckIn : RegistrationOperation
         {
-            public void Execute(Order o, Staff checkInStaff, IWorkflow workflow)
+            public void Execute(RequestedProcedure rp, Staff checkInStaff, IWorkflow workflow)
             {
-                CollectionUtils.ForEach(o.RequestedProcedures,
-                    delegate(RequestedProcedure rp)
-                    {
-                        rp.ProcedureCheckIn.CheckIn();
-                    });
+                rp.ProcedureCheckIn.CheckIn();
             }
         }
 

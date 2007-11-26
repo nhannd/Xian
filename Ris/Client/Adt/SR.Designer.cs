@@ -124,6 +124,15 @@ namespace ClearCanvas.Ris.Client.Adt {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Check In.
+        /// </summary>
+        internal static string ColumnCheckIn {
+            get {
+                return ResourceManager.GetString("ColumnCheckIn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Created On.
         /// </summary>
         internal static string ColumnCreatedOn {
@@ -372,6 +381,15 @@ namespace ClearCanvas.Ris.Client.Adt {
         internal static string ColumnPeer {
             get {
                 return ResourceManager.GetString("ColumnPeer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Performing Facility.
+        /// </summary>
+        internal static string ColumnPerformingFacility {
+            get {
+                return ResourceManager.GetString("ColumnPerformingFacility", resourceCulture);
             }
         }
         

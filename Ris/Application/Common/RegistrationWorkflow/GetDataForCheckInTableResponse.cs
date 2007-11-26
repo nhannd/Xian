@@ -29,9 +29,7 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
 
@@ -40,12 +38,12 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
     [DataContract]
     public class GetDataForCheckInTableResponse : DataContractBase
     {
-        public GetDataForCheckInTableResponse(List<CheckInTableItem> items)
+        public GetDataForCheckInTableResponse(List<RequestedProcedureSummary> items)
         {
-            this.CheckInTableItems = items;
+            this.RequestedProcedures = items;
         }
 
         [DataMember]
-        public List<CheckInTableItem> CheckInTableItems;
+        public List<RequestedProcedureSummary> RequestedProcedures;
     }
 }

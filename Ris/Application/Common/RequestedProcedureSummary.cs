@@ -31,9 +31,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Runtime.Serialization;
-
 using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common
@@ -63,6 +61,12 @@ namespace ClearCanvas.Ris.Application.Common
 
         [DataMember]
         public string Index;
+
+        [DataMember]
+        public DateTime? ScheduledStartTime;
+
+        [DataMember]
+        public FacilitySummary PerformingFacility;
 
         [DataMember]
         public RequestedProcedureTypeDetail Type;

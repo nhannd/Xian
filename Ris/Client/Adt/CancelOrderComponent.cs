@@ -29,19 +29,12 @@
 
 #endregion
 
-using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
-using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
-using ClearCanvas.Desktop.Tables;
-using ClearCanvas.Ris.Application.Common.Admin.StaffAdmin;
-using ClearCanvas.Ris.Application.Common.Admin;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -59,157 +52,56 @@ namespace ClearCanvas.Ris.Client.Adt
     [AssociateView(typeof(CancelOrderComponentViewExtensionPoint))]
     public class CancelOrderComponent : ApplicationComponent
     {
-        private RegistrationWorklistItem _worklistItem;
-        private CancelOrderTable _cancelOrderTable;
-
         private EnumValueInfo _selectedCancelReason;
         private List<EnumValueInfo> _cancelReasonChoices;
-
-        private List<EntityRef> _selectedOrders;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public CancelOrderComponent(RegistrationWorklistItem item)
+        public CancelOrderComponent()
         {
-            _worklistItem = item;
         }
 
         public override void Start()
         {
-            _selectedOrders = new List<EntityRef>();
-            _cancelOrderTable = new CancelOrderTable();
-
             Platform.GetService<IRegistrationWorkflowService>(
                 delegate(IRegistrationWorkflowService service)
                 {
-                    GetDataForCancelOrderTableResponse response = service.GetDataForCancelOrderTable(new GetDataForCancelOrderTableRequest(_worklistItem.PatientProfileRef));
-                    _cancelOrderTable.Items.AddRange(
-                        CollectionUtils.Map<CancelOrderTableItem, CancelOrderTableEntry>(response.CancelOrderTableItems,
-                                delegate(CancelOrderTableItem item)
-                                {
-                                    CancelOrderTableEntry entry = new CancelOrderTableEntry(item);
-                                    entry.CheckedChanged += new EventHandler(CancelOrderCheckedStateChangedEventHandler);                                        
-                                    return entry;
-                                }));
-
-
+                    GetDataForCancelOrderTableResponse response = service.GetDataForCancelOrderTable(new GetDataForCancelOrderTableRequest());
                     _cancelReasonChoices = response.CancelReasonChoices;
-                    _selectedCancelReason = _cancelReasonChoices[0];
                 });
-
-            CancelOrderTableEntry selectedEntry = CollectionUtils.SelectFirst<CancelOrderTableEntry>(_cancelOrderTable.Items,
-                delegate(CancelOrderTableEntry entry)
-                {
-                    return entry.CancelOrderTableItem.OrderRef == _worklistItem.OrderRef;
-                });
-
-            if (selectedEntry != null)
-                selectedEntry.Checked = true;
 
             base.Start();
         }
 
-        public override void Stop()
-        {
-            base.Stop();
-        }
-
         #region Presentation Model
 
-        public ITable CancelOrderTable
+        public IList CancelReasonChoices
         {
-            get { return _cancelOrderTable; }
+            get { return _cancelReasonChoices; }
         }
 
-        public List<string> CancelReasonChoices
-        {
-            get { return EnumValueUtils.GetDisplayValues(_cancelReasonChoices); }
-        }
-
-        public string SelectedCancelReason
-        {
-            get { return _selectedCancelReason == null ? "" : _selectedCancelReason.Value; }
-            set
-            {
-                _selectedCancelReason = (value == "") ? null :
-                    CollectionUtils.SelectFirst<EnumValueInfo>(_cancelReasonChoices,
-                        delegate(EnumValueInfo reason) { return reason.Value == value; });
-            }
-        }
-
-        public EnumValueInfo SelectedReason
+        public EnumValueInfo SelectedCancelReason
         {
             get { return _selectedCancelReason; }
-        }
-
-        public List<EntityRef> SelectedOrders
-        {
-            get { return _selectedOrders; }
+            set { _selectedCancelReason = value; }
         }
 
         #endregion
 
         public void Accept()
         {
-            if (this.HasValidationErrors)
-            {
-                this.ShowValidation(true);
-            }
-            else
-            {
-                try
-                {
-                    SaveChanges();
-                    this.Exit(ApplicationComponentExitCode.Accepted);
-                }
-                catch (Exception e)
-                {
-                    ExceptionHandler.Report(e, this.Host.DesktopWindow);
-                }
-            }
-        }
-
-        private void SaveChanges()
-        {
-            // Get the list of Order EntityRef from the table
-            foreach (CancelOrderTableEntry entry in _cancelOrderTable.Items)
-            {
-                if (entry.Checked)
-                    _selectedOrders.Add(entry.CancelOrderTableItem.OrderRef);
-            }
+            this.Exit(ApplicationComponentExitCode.Accepted);
         }
 
         public void Cancel()
         {
-            this.ExitCode = ApplicationComponentExitCode.None;
-            Host.Exit();
+            this.Exit(ApplicationComponentExitCode.None);
         }
 
         public bool AcceptEnabled
         {
-            get { return this.Modified && SelectedCancelReason != ""; }
+            get { return _selectedCancelReason != null; }
         }
-
-        public event EventHandler AcceptEnabledChanged
-        {
-            add { this.ModifiedChanged += value; }
-            remove { this.ModifiedChanged -= value; }
-        }
-
-        private void CancelOrderCheckedStateChangedEventHandler(object sender, EventArgs e)
-        {
-            foreach (CancelOrderTableEntry entry in _cancelOrderTable.Items)
-            {
-                if (entry.Checked)
-                {
-                    this.Modified = true;
-                    return;
-                }
-            }
-
-            this.Modified = false;
-        }
-    
     }
 }

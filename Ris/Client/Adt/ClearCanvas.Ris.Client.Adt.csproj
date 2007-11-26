@@ -72,7 +72,6 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>PerformedProcedureComponentSettings.settings</DependentUpon>
     </Compile>
-    <Compile Include="CancelOrderTable.cs" />
     <Compile Include="Folders\FolderOptionComponent.cs" />
     <Compile Include="Folders\RegistrationWorkflowFolders.cs" />
     <Compile Include="OrderEntryComponent.cs" />

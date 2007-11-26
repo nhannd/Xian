@@ -139,7 +139,7 @@ namespace ClearCanvas.Ris.Client.Adt
                         Platform.GetService<IRegistrationWorkflowService>(
                             delegate(IRegistrationWorkflowService service)
                             {
-                                service.CheckInProcedure(new CheckInProcedureRequest(checkInComponent.SelectedOrders));
+                                service.CheckInProcedure(new CheckInProcedureRequest(checkInComponent.SelectedRequestedProcedures));
                             });
 
                         IFolder checkInFolder = CollectionUtils.SelectFirst<IFolder>(folders,
@@ -161,8 +161,8 @@ namespace ClearCanvas.Ris.Client.Adt
             }
         }
 
-        [MenuAction("apply", "folderexplorer-items-contextmenu/Cancel")]
-        [ButtonAction("apply", "folderexplorer-items-toolbar/Cancel")]
+        [MenuAction("apply", "folderexplorer-items-contextmenu/Cancel Order")]
+        [ButtonAction("apply", "folderexplorer-items-toolbar/Cancel Order")]
         [ClickHandler("apply", "Apply")]
 		[IconSet("apply", IconScheme.Colour, "Icons.DeleteToolSmall.png", "Icons.DeleteToolMedium.png", "Icons.DeleteToolLarge.png")]
 		[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
@@ -179,7 +179,7 @@ namespace ClearCanvas.Ris.Client.Adt
             {
                 try
                 {
-                    CancelOrderComponent cancelOrderComponent = new CancelOrderComponent(item);
+                    CancelOrderComponent cancelOrderComponent = new CancelOrderComponent();
                     ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
                         desktopWindow,
                         cancelOrderComponent,
@@ -190,7 +190,7 @@ namespace ClearCanvas.Ris.Client.Adt
                         Platform.GetService<IRegistrationWorkflowService>(
                             delegate(IRegistrationWorkflowService service)
                             {
-                                service.CancelOrder(new CancelOrderRequest(cancelOrderComponent.SelectedOrders, cancelOrderComponent.SelectedReason));
+                                service.CancelOrder(new CancelOrderRequest(item.OrderRef, cancelOrderComponent.SelectedCancelReason));
                             });
 
                         IFolder cancelledFolder = CollectionUtils.SelectFirst<IFolder>(folders,

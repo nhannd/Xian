@@ -30,9 +30,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
@@ -44,12 +41,12 @@ namespace ClearCanvas.Ris.Client.Adt
     class CheckInOrderTableEntry
     {
         private bool _checked = false;
-        private CheckInTableItem _checkInTableItem;
+        private RequestedProcedureSummary _requestedProcedure;
         private event EventHandler _checkedChanged;
 
-        public CheckInOrderTableEntry(CheckInTableItem item)
+        public CheckInOrderTableEntry(RequestedProcedureSummary item)
         {
-            _checkInTableItem = item;
+            _requestedProcedure = item;
         }
 
         public bool Checked
@@ -65,9 +62,9 @@ namespace ClearCanvas.Ris.Client.Adt
             }
         }
 
-        public CheckInTableItem CheckInTableItem
+        public RequestedProcedureSummary RequestedProcedure
         {
-            get { return _checkInTableItem; }
+            get { return _requestedProcedure; }
         }
 
         public event EventHandler CheckedChanged
@@ -82,18 +79,18 @@ namespace ClearCanvas.Ris.Client.Adt
         public CheckInOrderTable()
         {
             this.Columns.Add(
-               new TableColumn<CheckInOrderTableEntry, bool>("Check-In",
+               new TableColumn<CheckInOrderTableEntry, bool>(SR.ColumnCheckIn,
                    delegate(CheckInOrderTableEntry entry) { return entry.Checked; },
                    delegate(CheckInOrderTableEntry entry, bool value) { entry.Checked = value; }, 0.30f));
             this.Columns.Add(
-                new TableColumn<CheckInOrderTableEntry, string>("Requested Procedures",
-                    delegate(CheckInOrderTableEntry entry) { return entry.CheckInTableItem.RequestedProcedureNames; }, 1.0f));
+                new TableColumn<CheckInOrderTableEntry, string>(SR.ColumnRequestedProcedures,
+                    delegate(CheckInOrderTableEntry entry) { return entry.RequestedProcedure.Type.Name; }, 1.0f));
             this.Columns.Add(
-                new TableColumn<CheckInOrderTableEntry, string>("Scheduling Date",
-                delegate(CheckInOrderTableEntry entry) { return Format.Date(entry.CheckInTableItem.SchedulingDate); }, 0.5f));
+                new TableColumn<CheckInOrderTableEntry, string>(SR.ColumnScheduledFor,
+                delegate(CheckInOrderTableEntry entry) { return Format.Date(entry.RequestedProcedure.ScheduledStartTime); }, 0.5f));
             this.Columns.Add(
-                new TableColumn<CheckInOrderTableEntry, string>("Ordering Facility",
-                delegate(CheckInOrderTableEntry entry) { return entry.CheckInTableItem.OrderingFacility; }, 0.5f));
+                new TableColumn<CheckInOrderTableEntry, string>(SR.ColumnPerformingFacility,
+                delegate(CheckInOrderTableEntry entry) { return entry.RequestedProcedure.PerformingFacility.Name; }, 0.5f));
         }
     }
 }

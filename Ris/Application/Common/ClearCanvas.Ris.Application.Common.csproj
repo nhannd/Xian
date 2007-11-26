@@ -439,8 +439,6 @@
     <Compile Include="RegistrationWorkflow\CancelOrderResponse.cs" />
     <Compile Include="RegistrationWorkflow\CheckInProcedureRequest.cs" />
     <Compile Include="RegistrationWorkflow\CheckInProcedureResponse.cs" />
-    <Compile Include="RegistrationWorkflow\CheckInTableItem.cs" />
-    <Compile Include="RegistrationWorkflow\CancelOrderTableItem.cs" />
     <Compile Include="RegistrationWorkflow\GetWorklistCountRequest.cs" />
     <Compile Include="RegistrationWorkflow\GetWorklistCountResponse.cs" />
     <Compile Include="RegistrationWorkflow\GetDataForCancelOrderTableRequest.cs" />

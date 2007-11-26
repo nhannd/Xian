@@ -56,10 +56,9 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         {
             InitializeComponent();
             _component = component;
-
+            
             _cancelReason.DataSource = _component.CancelReasonChoices;
-            _cancelReason.DataBindings.Add("Value", _component, "SelectedCancelReason", true, DataSourceUpdateMode.OnPropertyChanged); 
-            _cancelOrderTableView.Table = _component.CancelOrderTable;
+            _cancelReason.DataBindings.Add("Value", _component, "SelectedCancelReason", true, DataSourceUpdateMode.OnPropertyChanged);
             _okButton.DataBindings.Add("Enabled", _component, "AcceptEnabled", false, DataSourceUpdateMode.OnPropertyChanged);
         }
 
