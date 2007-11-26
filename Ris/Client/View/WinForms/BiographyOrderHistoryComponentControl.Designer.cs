@@ -273,7 +273,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             // _diagnosticServiceBreakdown
             // 
             this._diagnosticServiceBreakdown.AllowDrop = true;
-            this._diagnosticServiceBreakdown.ImageList = this.imageList1;
             this._diagnosticServiceBreakdown.Location = new System.Drawing.Point(5, 18);
             this._diagnosticServiceBreakdown.Margin = new System.Windows.Forms.Padding(2);
             this._diagnosticServiceBreakdown.MenuModel = null;

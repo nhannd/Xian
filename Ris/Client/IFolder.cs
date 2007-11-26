@@ -55,14 +55,14 @@ namespace ClearCanvas.Ris.Client
         IconSet IconSet { get; }
 
         /// <summary>
-        /// Gets the resource resolver that is used to resolve the Icon
-        /// </summary>
-        IResourceResolver ResourceResolver { get; }
-
-        /// <summary>
         /// Allows the folder to nofity that it's icon has changed
         /// </summary>
         event EventHandler IconChanged;
+
+        /// <summary>
+        /// Gets the resource resolver that is used to resolve the Icon
+        /// </summary>
+        IResourceResolver ResourceResolver { get; }
 
         /// <summary>
         /// Gets the tooltip that should be displayed for the folder
@@ -90,20 +90,34 @@ namespace ClearCanvas.Ris.Client
         bool StartExpanded { get; }
 
         /// <summary>
-        /// Allows the folder to notify when refresh is about to begin
+        /// Occurs when refresh is about to begin
         /// </summary>
         event EventHandler RefreshBegin;
 
         /// <summary>
-        /// Allows the folder to notify when refresh is about to finish
+        /// Occurs when refresh is about to finish
         /// </summary>
         event EventHandler RefreshFinish;
 
+        /// <summary>
+        /// Asks the folder to refresh its contents.  The implementation may be asynchronous.
+        /// </summary>
         void Refresh();
 
+        /// <summary>
+        /// Asks the folder to refresh the count of its contents, without actually refreshing the contents.
+        /// The implementation may be asynchronous.
+        /// </summary>
         void RefreshCount();
 
+        /// <summary>
+        /// Opens the folder (i.e. instructs the folder to show its "open" state icon).
+        /// </summary>
         void OpenFolder();
+
+        /// <summary>
+        /// Closes the folder (i.e. instructs the folder to show its "closed" state icon).
+        /// </summary>
         void CloseFolder();
 
         /// <summary>

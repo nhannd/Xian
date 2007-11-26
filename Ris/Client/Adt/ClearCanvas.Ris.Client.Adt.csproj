@@ -201,12 +201,6 @@
     <EmbeddedResource Include="Icons\ProcessMessageToolLarge.png" />
     <EmbeddedResource Include="Icons\ProcessMessageToolMedium.png" />
     <EmbeddedResource Include="Icons\ProcessMessageToolSmall.png" />
-    <EmbeddedResource Include="Icons\SearchFolderClosedLarge.png" />
-    <EmbeddedResource Include="Icons\SearchFolderClosedMedium.png" />
-    <EmbeddedResource Include="Icons\SearchFolderClosedSmall.png" />
-    <EmbeddedResource Include="Icons\SearchFolderOpenLarge.png" />
-    <EmbeddedResource Include="Icons\SearchFolderOpenMedium.png" />
-    <EmbeddedResource Include="Icons\SearchFolderOpenSmall.png" />
     <EmbeddedResource Include="Icons\CheckInToolLarge.png" />
     <EmbeddedResource Include="Icons\CheckInToolMedium.png" />
     <EmbeddedResource Include="Icons\CheckInToolSmall.png" />
@@ -240,8 +234,6 @@
     <EmbeddedResource Include="Icons\AddPatientToolLarge.png" />
     <EmbeddedResource Include="Icons\AddPatientToolMedium.png" />
     <EmbeddedResource Include="Icons\AddPatientToolSmall.png" />
-    <EmbeddedResource Include="Icons\FolderClosedLarge.png" />
-    <EmbeddedResource Include="Icons\FolderOpenLarge.png" />
     <EmbeddedResource Include="Icons\CompleteToolSmall.png" />
     <EmbeddedResource Include="Icons\SuspendToolSmall.png" />
     <EmbeddedResource Include="Icons\ResumeToolSmall.png" />
@@ -253,10 +245,6 @@
     <EmbeddedResource Include="Icons\NoteTestToolLarge.png" />
     <EmbeddedResource Include="Icons\NoteTestToolMedium.png" />
     <EmbeddedResource Include="Icons\NoteTestToolSmall.png" />
-    <EmbeddedResource Include="Icons\FolderClosedMedium.png" />
-    <EmbeddedResource Include="Icons\FolderClosedSmall.png" />
-    <EmbeddedResource Include="Icons\FolderOpenMedium.png" />
-    <EmbeddedResource Include="Icons\FolderOpenSmall.png" />
     <EmbeddedResource Include="PatientProfileAdditionalInfoEditorComponent.val.xml" />
     <EmbeddedResource Include="OrderEntryComponent.val.xml" />
     <EmbeddedResource Include="PatientProfileDetailsEditorComponent.val.xml" />

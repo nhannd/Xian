@@ -53,9 +53,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 
             _folderContentsTableView.MultiSelect = _component.MultiSelect;
 
-            _folderTreeView.ImageList.ImageSize = new System.Drawing.Size(24, 24);
-            _folderTreeView.ImageList.ColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
-
             _folderTreeView.Tree = _component.FolderTree;
             _folderTreeView.DataBindings.Add("Selection", _component, "SelectedFolder", true, DataSourceUpdateMode.OnPropertyChanged);
             _folderTreeView.MenuModel = _component.FoldersContextMenuModel;

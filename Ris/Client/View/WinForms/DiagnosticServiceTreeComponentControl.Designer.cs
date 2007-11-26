@@ -40,7 +40,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             // _diagnosticServiceTree
             // 
             this._diagnosticServiceTree.AllowDrop = true;
-            this._diagnosticServiceTree.ImageList = null;
             this._diagnosticServiceTree.Location = new System.Drawing.Point(3, 2);
             this._diagnosticServiceTree.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this._diagnosticServiceTree.MenuModel = null;

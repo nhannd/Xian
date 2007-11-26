@@ -119,7 +119,7 @@ namespace ClearCanvas.Ris.Client.Adt
             _closedIconSet = new IconSet(IconScheme.Colour, "FolderClosedSmall.png", "FolderClosedMedium.png", "FolderClosedMedium.png");
             _openIconSet = new IconSet(IconScheme.Colour, "FolderOpenSmall.png", "FolderOpenMedium.png", "FolderOpenMedium.png");
             this.IconSet = _closedIconSet;
-            this.ResourceResolver = new ResourceResolver(this.GetType().Assembly);
+            this.ResourceResolver = new ResourceResolver(this.GetType().Assembly, this.ResourceResolver);
             if (dropHandlerExtensionPoint != null)
             {
                 this.InitDragDropHandling(dropHandlerExtensionPoint, new DropContext(this));

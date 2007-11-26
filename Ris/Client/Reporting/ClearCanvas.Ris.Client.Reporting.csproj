@@ -184,14 +184,6 @@
     <EmbeddedResource Include="Icons\SearchToolSmall.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Icons\SearchFolderClosedLarge.png" />
-    <EmbeddedResource Include="Icons\SearchFolderClosedMedium.png" />
-    <EmbeddedResource Include="Icons\SearchFolderClosedSmall.png" />
-    <EmbeddedResource Include="Icons\SearchFolderOpenLarge.png" />
-    <EmbeddedResource Include="Icons\SearchFolderOpenMedium.png" />
-    <EmbeddedResource Include="Icons\SearchFolderOpenSmall.png" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Icons\PatientDetailsToolLarge.png" />
     <EmbeddedResource Include="Icons\PatientDetailsToolMedium.png" />
     <EmbeddedResource Include="Icons\PatientDetailsToolSmall.png" />
@@ -210,14 +202,6 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\DoubleExclamation.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\FolderClosedLarge.png" />
-    <EmbeddedResource Include="Icons\FolderClosedMedium.png" />
-    <EmbeddedResource Include="Icons\FolderClosedSmall.png" />
-    <EmbeddedResource Include="Icons\FolderOpenLarge.png" />
-    <EmbeddedResource Include="Icons\FolderOpenMedium.png" />
-    <EmbeddedResource Include="Icons\FolderOpenSmall.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
