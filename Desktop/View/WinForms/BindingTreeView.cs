@@ -71,9 +71,12 @@ namespace ClearCanvas.Desktop.View.WinForms
             InitializeComponent();
         }
 
+        #region Public members
+
         /// <summary>
         /// Gets or sets the model that this view looks at
         /// </summary>
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public ITree Tree
         {
             get { return _root; }
@@ -90,6 +93,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         /// <summary>
         /// Gets or sets the current selection
         /// </summary>
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public ISelection Selection
         {
             get
@@ -120,6 +124,40 @@ namespace ClearCanvas.Desktop.View.WinForms
             }
         }
 
+        [Obsolete("Do not use.  Toolstrip item alignment is now controlled by application setting")]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public RightToLeft ToolStripRightToLeft
+        {
+            get { return RightToLeft.No; }
+            set { }
+        }
+
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public ActionModelNode ToolbarModel
+        {
+            get { return _toolbarModel; }
+            set
+            {
+                _toolbarModel = value;
+                if (_isLoaded) InitializeToolStrip();
+            }
+        }
+
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public ActionModelNode MenuModel
+        {
+            get { return _menuModel; }
+            set
+            {
+                _menuModel = value;
+                ToolStripBuilder.Clear(_contextMenu.Items);
+                if (_menuModel != null)
+                {
+                    ToolStripBuilder.BuildMenu(_contextMenu.Items, _menuModel.ChildNodes);
+                }
+            }
+        }
+
         /// <summary>
         /// Notifies that the selection has changed
         /// </summary>
@@ -145,6 +183,8 @@ namespace ClearCanvas.Desktop.View.WinForms
         {
             _treeCtrl.ExpandAll();
         }
+
+        #endregion
 
         #region Design time properties
 
@@ -200,23 +240,22 @@ namespace ClearCanvas.Desktop.View.WinForms
             }
         }
 
-        public ImageList ImageList
-        {
-            get { return _treeCtrl.ImageList; }
-            set { _treeCtrl.ImageList = value; }
-        }
-
-        [Obsolete("Do not use.  Toolstrip item alignment is now controlled by application setting")]
-        public RightToLeft ToolStripRightToLeft
-        {
-            get { return RightToLeft.No; }
-            set { }
-        }
-
         public ToolStripItemDisplayStyle ToolStripItemDisplayStyle
         {
             get { return _toolStripItemDisplayStyle; }
             set { _toolStripItemDisplayStyle = value; }
+        }
+
+        public Size IconSize
+        {
+            get { return _imageList.ImageSize; }
+            set { _imageList.ImageSize = value; }
+        }
+
+        public ColorDepth IconColorDepth
+        {
+            get { return _imageList.ColorDepth; }
+            set { _imageList.ColorDepth = value; }
         }
 
         #endregion
@@ -287,6 +326,85 @@ namespace ClearCanvas.Desktop.View.WinForms
             EventsHelper.Fire(_selectionChanged, this, EventArgs.Empty);
         }
 
+        private void InitializeToolStrip()
+        {
+            ToolStripBuilder.Clear(_toolStrip.Items);
+            if (_toolbarModel != null)
+            {
+                if (_toolStripItemAlignment == ToolStripItemAlignment.Right)
+                {
+                    _toolbarModel.ChildNodes.Reverse();
+                }
+
+                ToolStripBuilder.BuildToolbar(
+                    _toolStrip.Items,
+                    _toolbarModel.ChildNodes,
+                    new ToolStripBuilder.ToolStripBuilderStyle(_toolStripItemDisplayStyle, _toolStripItemAlignment, _textImageRelation));
+            }
+        }
+
+        private void _contextMenu_Opening(object sender, CancelEventArgs e)
+        {
+            // Find the node we're on
+            Point pt = _treeCtrl.PointToClient(TreeView.MousePosition);
+            BindingTreeNode node = (BindingTreeNode)_treeCtrl.GetNodeAt(pt.X, pt.Y);
+            _treeCtrl.SelectedNode = node;
+        }
+
+        private void _contextMenu_Opened(object sender, EventArgs e)
+        {
+
+        }
+
+        private void _contextMenu_Closing(object sender, ToolStripDropDownClosingEventArgs e)
+        {
+
+        }
+
+        private void _contextMenu_Closed(object sender, ToolStripDropDownClosedEventArgs e)
+        {
+
+        }
+
+        private void BindingTreeView_Load(object sender, EventArgs e)
+        {
+            if (this.DesignMode == false)
+            {
+                _toolStripItemAlignment = DesktopViewSettings.Default.LocalToolStripItemAlignment;
+                _textImageRelation = DesktopViewSettings.Default.LocalToolStripItemTextImageRelation;
+            }
+            else
+            {
+                _toolStripItemAlignment = ToolStripItemAlignment.Left;
+                _textImageRelation = TextImageRelation.ImageBeforeText;
+            }
+
+            InitializeToolStrip();
+            _isLoaded = true;
+        }
+
+        private void _treeCtrl_AfterCheck(object sender, TreeViewEventArgs e)
+        {
+            BindingTreeNode node = e.Node as BindingTreeNode;
+            if (node != null)
+            {
+                node.OnChecked();
+            }
+        }
+
+        private void _treeCtrl_BeforeSelect(object sender, TreeViewCancelEventArgs e)
+        {
+            if (_selectionDisabled)
+            {
+                e.Cancel = true;
+            }
+        }
+
+        private void _treeCtrl_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            EventsHelper.Fire(_nodeMouseDoubleClicked, this, e);
+        }
+        
         #endregion
 
         #region Drag Drop support
@@ -507,107 +625,5 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         #endregion
 
-        public ActionModelNode ToolbarModel
-        {
-            get { return _toolbarModel; }
-            set
-            {
-                _toolbarModel = value;
-                if(_isLoaded) InitializeToolStrip();
-            }
-        }
-
-        private void InitializeToolStrip()
-        {
-            ToolStripBuilder.Clear(_toolStrip.Items);
-            if (_toolbarModel != null)
-            {
-                if (_toolStripItemAlignment == ToolStripItemAlignment.Right)
-                {
-                    _toolbarModel.ChildNodes.Reverse();
-                }
-
-                ToolStripBuilder.BuildToolbar(
-                    _toolStrip.Items,
-                    _toolbarModel.ChildNodes,
-                    new ToolStripBuilder.ToolStripBuilderStyle(_toolStripItemDisplayStyle, _toolStripItemAlignment, _textImageRelation));
-            }
-        }
-
-        public ActionModelNode MenuModel
-        {
-            get { return _menuModel; }
-            set
-            {
-                _menuModel = value;
-                ToolStripBuilder.Clear(_contextMenu.Items);
-                if (_menuModel != null)
-                {
-                    ToolStripBuilder.BuildMenu(_contextMenu.Items, _menuModel.ChildNodes);
-                }
-            }
-        }
-
-        private void _contextMenu_Opening(object sender, CancelEventArgs e)
-        {
-            // Find the node we're on
-            Point pt = _treeCtrl.PointToClient(TreeView.MousePosition);
-            BindingTreeNode node = (BindingTreeNode)_treeCtrl.GetNodeAt(pt.X, pt.Y);
-            _treeCtrl.SelectedNode = node;
-        }
-
-        private void _contextMenu_Opened(object sender, EventArgs e)
-        {
-
-        }
-
-        private void _contextMenu_Closing(object sender, ToolStripDropDownClosingEventArgs e)
-        {
-
-        }
-
-        private void _contextMenu_Closed(object sender, ToolStripDropDownClosedEventArgs e)
-        {
-
-        }
-
-        private void BindingTreeView_Load(object sender, EventArgs e)
-        {
-            if (this.DesignMode == false)
-            {
-                _toolStripItemAlignment = DesktopViewSettings.Default.LocalToolStripItemAlignment;
-                _textImageRelation = DesktopViewSettings.Default.LocalToolStripItemTextImageRelation;
-            }
-            else
-            {
-                _toolStripItemAlignment = ToolStripItemAlignment.Left;
-                _textImageRelation = TextImageRelation.ImageBeforeText;
-            }
-
-            InitializeToolStrip();
-            _isLoaded = true;
-        }
-
-        private void _treeCtrl_AfterCheck(object sender, TreeViewEventArgs e)
-        {
-            BindingTreeNode node = e.Node as BindingTreeNode;
-            if (node != null)
-            {
-                node.OnChecked();
-            }
-        }
-
-        private void _treeCtrl_BeforeSelect(object sender, TreeViewCancelEventArgs e)
-        {
-            if(_selectionDisabled)
-            {
-                e.Cancel = true;
-            }
-        }
-
-        private void _treeCtrl_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
-        {
-            EventsHelper.Fire(_nodeMouseDoubleClicked, this, e);
-        }
     }
 }
