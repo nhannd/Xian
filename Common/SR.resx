@@ -223,7 +223,7 @@
     <value>JScript evaluation error on: {0}</value>
   </data>
   <data name="ExceptionResourceNotFound" xml:space="preserve">
-    <value>Resource not found.</value>
+    <value>Resource {0}  not found.</value>
   </data>
   <data name="ExceptionScriptEngineLanguage" xml:space="preserve">
     <value>No script engine available for language {0}.</value>

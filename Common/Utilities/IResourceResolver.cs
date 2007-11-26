@@ -31,6 +31,7 @@
 
 using System;
 using System.IO;
+using System.Resources;
 
 namespace ClearCanvas.Common.Utilities
 {

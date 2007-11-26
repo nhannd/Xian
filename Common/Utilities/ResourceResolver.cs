@@ -39,11 +39,13 @@ using System.IO;
 namespace ClearCanvas.Common.Utilities
 {
     /// <summary>
-    /// Default implementation of <see cref="IResourceResolver"/>.
+    /// Default implementation of <see cref="IResourceResolver"/>.  Finds resources embedded in assemblies.
     /// </summary>
     /// <remarks>
+    /// <para>
     /// Resolves resources by searching the set of assemblies (specified in the constructor)
-    /// in order for a matching resource.  This class is thread-safe.
+    /// in order for a matching resource.  Instances of this class are immutable and thread-safe.
+    /// </para>
     /// </remarks>
     public class ResourceResolver : IResourceResolver
     {
@@ -51,17 +53,25 @@ namespace ClearCanvas.Common.Utilities
         /// Cache of string resource managers for each assembly.  This field is accessed in only one method,
         /// GetStringResourceManagers().  This is important from a thread-sync point of view.
         /// </summary>
-        private static Dictionary<Assembly, List<ResourceManager>> _mapStringResourceManagers = new Dictionary<Assembly, List<ResourceManager>>();
-
-        private Assembly[] _assemblies;
+        private static readonly Dictionary<Assembly, List<ResourceManager>> _mapStringResourceManagers = new Dictionary<Assembly, List<ResourceManager>>();
 
         /// <summary>
-        /// Constructs an object that will search the specified set of assemblies.
+        /// Assemblies to search for resources.
+        /// </summary>
+        private readonly Assembly[] _assemblies;
+
+        /// <summary>
+        /// A fallback resolver, used when a resource cannot be resolved by this resolver.
+        /// </summary>
+        private readonly IResourceResolver _fallbackResovler;
+
+        /// <summary>
+        /// Constructs a resource resolver that will look in the specified set of assemblies for resources.
         /// </summary>
         /// <param name="assemblies">The set of assemblies to search</param>
         public ResourceResolver(Assembly[] assemblies)
+            :this(assemblies, null)
         {
-            _assemblies = assemblies;
         }
 
         /// <summary>
@@ -71,6 +81,28 @@ namespace ClearCanvas.Common.Utilities
         public ResourceResolver(Assembly assembly)
             :this(new Assembly[] { assembly })
         {
+        }
+
+        /// <summary>
+        /// Constructs a resource resolver that will look in the specified assembly for resources.
+        /// </summary>
+        /// <param name="assembly"></param>
+        /// <param name="fallback"></param>
+        public ResourceResolver(Assembly assembly, IResourceResolver fallback)
+            :this(new Assembly[] {assembly}, fallback)
+        {
+
+        }
+
+        /// <summary>
+        /// Constructs a resource resolver that will look in the specified set of assemblies for resources.
+        /// </summary>
+        /// <param name="assemblies">Assemblies covered by this resolver.</param>
+        /// <param name="fallback">A fallback resolver, that will invoked if resources are not found in the specified assemblies.</param>
+        public ResourceResolver(Assembly[] assemblies, IResourceResolver fallback)
+        {
+            _assemblies = assemblies;
+            _fallbackResovler = fallback;
         }
 
         /// <summary>
@@ -101,7 +133,13 @@ namespace ClearCanvas.Common.Utilities
                     // failed to resolve in the specified assembly
                 }
             }
-            return unqualifiedStringKey;     // return the unresolved string if not resolved
+
+            // try the fallback
+            if (_fallbackResovler != null)
+                return _fallbackResovler.LocalizeString(unqualifiedStringKey);
+
+            // return the unresolved string if not resolved
+            return unqualifiedStringKey;     
         }
 
         /// <summary>
@@ -131,7 +169,12 @@ namespace ClearCanvas.Common.Utilities
                 }
             }
 
-			throw new MissingManifestResourceException(SR.ExceptionResourceNotFound);
+            // try the fallback
+            if (_fallbackResovler != null)
+                return _fallbackResovler.ResolveResource(resourceName);
+
+            // not found - throw exception
+            throw new MissingManifestResourceException(string.Format(SR.ExceptionResourceNotFound, resourceName));
         }
 
         /// <summary>
@@ -163,7 +206,12 @@ namespace ClearCanvas.Common.Utilities
 				}
 			}
 
-			throw new MissingManifestResourceException(SR.ExceptionResourceNotFound);
+            // try the fallback
+            if (_fallbackResovler != null)
+                return _fallbackResovler.OpenResource(resourceName);
+
+            // not found - throw exception
+            throw new MissingManifestResourceException(string.Format(SR.ExceptionResourceNotFound, resourceName));
         }
 
         /// <summary>

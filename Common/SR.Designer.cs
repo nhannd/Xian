@@ -376,7 +376,7 @@ namespace ClearCanvas.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Resource not found..
+        ///   Looks up a localized string similar to Resource {0}  not found..
         /// </summary>
         public static string ExceptionResourceNotFound {
             get {
