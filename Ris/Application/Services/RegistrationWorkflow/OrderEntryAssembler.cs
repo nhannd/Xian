@@ -127,7 +127,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             FacilityAssembler facilityAssembler = new FacilityAssembler();
 
             // consider it portable if any MPS is portable
-            bool portable = CollectionUtils.Contains<ModalityProcedureStep>(rp.ModalityProcedureSteps,
+            bool portable = CollectionUtils.Contains(rp.ModalityProcedureSteps,
                 delegate(ModalityProcedureStep mps)
                 {
                     return mps.Portable;
@@ -149,7 +149,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         {
             foreach (ProcedureStep step in rp.ProcedureSteps)
             {
-                // only procedure steps that have not been started are modifiable
+                // only procedure steps that are still scheduled are modifiable
                 if (step.State == ActivityStatus.SC)
                 {
                     step.Schedule(requisition.ScheduledTime);
@@ -174,15 +174,10 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         // arguably this is a business logic decision that shouldn't go here, but there is really no
         // better place to put it right now
         // note that the notion of "modifiable" here is specific to the idea of a "requisition"
-        // The "requisition" is no longer modifiable after any MPS has started
+        // The "requisition" is modifiable only as long as the procedure is in the SC status
         private bool IsProcedureModifiable(RequestedProcedure rp)
         {
-            // procedure requisition can be modified only if all MPS are still in the SC state
-            return CollectionUtils.TrueForAll<ModalityProcedureStep>(rp.ModalityProcedureSteps,
-                delegate(ModalityProcedureStep mps)
-                {
-                    return mps.State == ActivityStatus.SC;
-                });
+            return rp.Status == RequestedProcedureStatus.SC;
         }
     }
 }

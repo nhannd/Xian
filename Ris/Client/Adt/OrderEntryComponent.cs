@@ -621,7 +621,7 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             _proceduresActionModel.Add.Enabled = true;
             _proceduresActionModel.Edit.Enabled = (_selectedProcedure != null && _selectedProcedure.CanModify);
-            _proceduresActionModel.Delete.Enabled = (_selectedProcedure != null);
+            _proceduresActionModel.Delete.Enabled = (_selectedProcedure != null && _selectedProcedure.CanModify);
         }
 
         public void AddConsultant()
