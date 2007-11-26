@@ -117,8 +117,8 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             if (reportPart.Supervisor != null)
                 summary.Supervisor = staffAssembler.CreateStaffSummary(reportPart.Supervisor, context);
 
-            if (reportPart.Interpretor != null)
-                summary.InterpretedBy = staffAssembler.CreateStaffSummary(reportPart.Interpretor, context);
+            if (reportPart.Interpreter != null)
+                summary.InterpretedBy = staffAssembler.CreateStaffSummary(reportPart.Interpreter, context);
 
             if (reportPart.Transcriber != null)
                 summary.TranscribedBy = staffAssembler.CreateStaffSummary(reportPart.Transcriber, context);

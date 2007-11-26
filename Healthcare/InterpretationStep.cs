@@ -74,7 +74,7 @@ namespace ClearCanvas.Healthcare {
             if (this.ReportPart == null)
                 throw new WorkflowException("ReportPart must be assigned");
 
-            this.ReportPart.Interpretor = this.PerformingStaff;
+            this.ReportPart.Interpreter = this.PerformingStaff;
             base.Complete();
         }
 		

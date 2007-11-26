@@ -109,7 +109,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
                 ReportingWorklistItemSearchCriteria criteria = new ReportingWorklistItemSearchCriteria();
                 criteria.ReportingProcedureStep.State.In(new ActivityStatus[] { ActivityStatus.SC, ActivityStatus.IP });
                 criteria.ReportingProcedureStep.Scheduling.Performer.Staff.EqualTo(currentUserStaff);
-                criteria.ReportPart.Interpretor.EqualTo(currentUserStaff);
+                criteria.ReportPart.Interpreter.EqualTo(currentUserStaff);
                 criteria.ReportPart.Supervisor.IsNull();
                 return new ReportingWorklistItemSearchCriteria[] { criteria };
             }
@@ -118,7 +118,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
             {
                 ReportingWorklistItemSearchCriteria criteria = new ReportingWorklistItemSearchCriteria();
                 criteria.ReportingProcedureStep.State.In(new ActivityStatus[] { ActivityStatus.SC, ActivityStatus.IP });
-                criteria.ReportPart.Interpretor.EqualTo(currentUserStaff);
+                criteria.ReportPart.Interpreter.EqualTo(currentUserStaff);
                 return new ReportingWorklistItemSearchCriteria[] { criteria };
             }
 
@@ -146,7 +146,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
             {
                 ReportingWorklistItemSearchCriteria criteria = new ReportingWorklistItemSearchCriteria();
                 criteria.ReportingProcedureStep.State.In(new ActivityStatus[] { ActivityStatus.SC, ActivityStatus.CM });
-                criteria.ReportPart.Interpretor.EqualTo(currentUserStaff);
+                criteria.ReportPart.Interpreter.EqualTo(currentUserStaff);
                 return new ReportingWorklistItemSearchCriteria[] { criteria };
             }
 

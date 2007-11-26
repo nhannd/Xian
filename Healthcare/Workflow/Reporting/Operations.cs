@@ -259,7 +259,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
                 InterpretationStep interpretation = new InterpretationStep(step);
 
                 // Reset the report part status and interpretator
-                interpretation.ReportPart.Interpretor = null;
+                interpretation.ReportPart.Interpreter = null;
                 interpretation.ReportPart.Revised();
 
                 // Assign the new step back to me
@@ -280,7 +280,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
                     return false;
 
                 // cannot revise an empty report or one that was read by someone else
-                if (step.ReportPart == null || Equals(step.ReportPart.Interpretor, currentUserStaff) == false)
+                if (step.ReportPart == null || Equals(step.ReportPart.Interpreter, currentUserStaff) == false)
                     return false;
 
                 return true;
