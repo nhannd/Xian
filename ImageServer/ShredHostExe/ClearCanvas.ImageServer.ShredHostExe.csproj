@@ -95,6 +95,7 @@ copy $(ProjectDir)..\..\ReferencedAssemblies\NHibernate1.2\Iesi.Collections.dll 
 copy $(ProjectDir)..\..\ReferencedAssemblies\log4net.dll $(TargetDir)common
 copy $(ProjectDir)..\..\ReferencedAssemblies\Spring1.1\Spring.Aop.dll $(TargetDir)common
 copy $(ProjectDir)..\..\ReferencedAssemblies\Spring1.1\Spring.Core.dll $(TargetDir)common
+copy $(ProjectDir)..\..\ReferencedAssemblies\NHibernate1.2\Castle.DynamicProxy.dll $(TargetDir)common
 copy $(ProjectDir)..\..\ReferencedAssemblies\Spring1.1\Common.Logging.dll $(TargetDir)common
 copy $(ProjectDir)..\..\ReferencedAssemblies\nunit.framework.dll $(TargetDir)common
 
