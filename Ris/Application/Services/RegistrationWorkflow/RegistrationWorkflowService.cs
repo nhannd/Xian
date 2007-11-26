@@ -257,10 +257,10 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
         #endregion
 
-        public bool CanCheckInProcedure(IWorklistItemKey itemKey)
+        public bool CanCheckInProcedure(WorklistItemKey itemKey)
         {
             IPatientProfileBroker profileBroker = this.PersistenceContext.GetBroker<IPatientProfileBroker>();
-            PatientProfile profile = profileBroker.Load(((WorklistItemKey)itemKey).ProfileRef, EntityLoadFlags.Proxy);
+            PatientProfile profile = profileBroker.Load(itemKey.ProfileRef, EntityLoadFlags.Proxy);
 
             RegistrationWorklistItemSearchCriteria criteria = new RegistrationWorklistItemSearchCriteria();
             criteria.Order.Status.EqualTo(OrderStatus.SC);
@@ -277,10 +277,10 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             return PersistenceContext.GetBroker<IRegistrationWorklistBroker>().GetWorklistCount(where, null) > 0;
         }
 
-        public bool CanCancelOrder(IWorklistItemKey itemKey)
+        public bool CanCancelOrder(WorklistItemKey itemKey)
         {
             IPatientProfileBroker profileBroker = PersistenceContext.GetBroker<IPatientProfileBroker>();
-            PatientProfile profile = profileBroker.Load(((WorklistItemKey)itemKey).ProfileRef, EntityLoadFlags.Proxy);
+            PatientProfile profile = profileBroker.Load(itemKey.ProfileRef, EntityLoadFlags.Proxy);
 
             OrderSearchCriteria criteria = new OrderSearchCriteria();
             criteria.Patient.EqualTo(profile.Patient);

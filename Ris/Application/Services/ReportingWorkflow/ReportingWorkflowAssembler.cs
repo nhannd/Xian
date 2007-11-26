@@ -59,9 +59,9 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             item.DiagnosticServiceName = domainItem.DiagnosticServiceName;
             item.OrderPriority = EnumUtils.GetEnumValueInfo(domainItem.OrderPriority, context);
             item.ActivityStatus = EnumUtils.GetEnumValueInfo(domainItem.ActivityStatus, context);
-            item.StepType = domainItem.StepType;
+            item.StepType = domainItem.ProcedureStepName;
             item.PatientClass = EnumUtils.GetEnumValueInfo(domainItem.PatientClass);
-            item.ProcedureEndTime = domainItem.ProcedureEndTime;
+            item.ProcedureEndTime = domainItem.ScheduledStartTime;
 
             return item;
         }

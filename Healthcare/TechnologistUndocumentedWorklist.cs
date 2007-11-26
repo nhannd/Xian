@@ -42,11 +42,6 @@ namespace ClearCanvas.Healthcare
             return GetBroker<IModalityWorklistBroker>(context).GetUndocumentedWorklistCount(QueryConditions, this);
         }
 
-        public override string NameSuffix
-        {
-            get { return " - Undocumented"; }
-        }
-
         #endregion
 
         #region Object overrides

@@ -159,25 +159,25 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
             return new CancelProcedureResponse();
         }
 
-        public bool CanStartProcedure(IWorklistItemKey itemKey)
+        public bool CanStartProcedure(WorklistItemKey itemKey)
         {
             return CanExecuteOperation(new StartModalityProcedureStepOperation(this.CurrentUserStaff), itemKey);
         }
 
-        public bool CanCompleteProcedure(IWorklistItemKey itemKey)
+        public bool CanCompleteProcedure(WorklistItemKey itemKey)
         {
             return CanExecuteOperation(new CompleteModalityProcedureStepOperation(false), itemKey);
         }
 
-        public bool CanCancelProcedure(IWorklistItemKey itemKey)
+        public bool CanCancelProcedure(WorklistItemKey itemKey)
         {
             return CanExecuteOperation(new CancelModalityProcedureStepOperation(false), itemKey);
         }
 
-        public bool CanReplaceOrder(IWorklistItemKey itemKey)
+        public bool CanReplaceOrder(WorklistItemKey itemKey)
         {
             IModalityProcedureStepBroker broker = PersistenceContext.GetBroker<IModalityProcedureStepBroker>();
-            ModalityProcedureStep mps = broker.Load(((WorklistItemKey)itemKey).ModalityProcedureStep);
+            ModalityProcedureStep mps = broker.Load(itemKey.ProcedureStepRef);
             Order order = mps.RequestedProcedure.Order;
             return order.Status == OrderStatus.SC || order.Status == OrderStatus.IP;
         }
@@ -188,17 +188,10 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
             op.Execute(modalityProcedureStep, new PersistentWorkflow(this.PersistenceContext));
         }
 
-        private bool CanExecuteOperation(ModalityOperation op, IWorklistItemKey itemKey)
+        private bool CanExecuteOperation(ModalityOperation op, WorklistItemKey itemKey)
         {
-            if (itemKey is WorklistItemKey)
-            {
-                ModalityProcedureStep modalityProcedureStep = PersistenceContext.Load<ModalityProcedureStep>(((WorklistItemKey)itemKey).ModalityProcedureStep);
-                return op.CanExecute(modalityProcedureStep);
-            }
-            else
-            {
-                return false;
-            }
+            ModalityProcedureStep modalityProcedureStep = PersistenceContext.Load<ModalityProcedureStep>(itemKey.ProcedureStepRef);
+            return op.CanExecute(modalityProcedureStep);
         }
     }
 }

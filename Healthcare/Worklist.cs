@@ -30,8 +30,10 @@
 #endregion
 
 using System.Collections;
+using ClearCanvas.Enterprise.Authentication;
 using ClearCanvas.Enterprise.Core;
 using Iesi.Collections;
+using Iesi.Collections.Generic;
 
 namespace ClearCanvas.Healthcare
 {
@@ -39,32 +41,24 @@ namespace ClearCanvas.Healthcare
     {
         private string _name;
         private string _description;
-        private ISet _requestedProcedureTypeGroups;
-        private ISet _users;
+        private ISet<RequestedProcedureTypeGroup> _requestedProcedureTypeGroups;
+        private ISet<User> _users;
 
         public Worklist()
         {
-            _requestedProcedureTypeGroups = new HybridSet();
-            _users = new HybridSet();
-        }
-        
-        public virtual IList GetWorklist(Staff currentUserStaff, IPersistenceContext context)
-        {
-            return null;
+            _requestedProcedureTypeGroups = new HashedSet<RequestedProcedureTypeGroup>();
+            _users = new HashedSet<User>();
         }
 
-        public virtual int GetWorklistCount(Staff currentUserStaff, IPersistenceContext context)
-        {
-            return 0;
-        }
+        public abstract IList GetWorklist(Staff currentUserStaff, IPersistenceContext context);
+
+        public abstract int GetWorklistCount(Staff currentUserStaff, IPersistenceContext context);
 
         public virtual string Name
         {
             get { return _name; }
             set { _name = value; }
         }
-
-        public abstract string NameSuffix { get; }
 
         public virtual string DisplayName
         {
@@ -77,12 +71,12 @@ namespace ClearCanvas.Healthcare
             set { _description = value; }
         }
 
-        public virtual ISet RequestedProcedureTypeGroups
+        public virtual ISet<RequestedProcedureTypeGroup> RequestedProcedureTypeGroups
         {
             get { return _requestedProcedureTypeGroups; }
         }
 
-        public virtual ISet Users
+        public virtual ISet<User> Users
         {
             get { return _users; }
         }

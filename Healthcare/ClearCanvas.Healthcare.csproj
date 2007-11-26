@@ -76,6 +76,7 @@
     <Compile Include="Alert\LanguageAlert.cs" />
     <Compile Include="Alert\NoteAlert.cs" />
     <Compile Include="ProcedureStepSchedulingSearchCriteria.cs" />
+    <Compile Include="WorklistItemBase.cs" />
     <Compile Include="WorklistItemSearchCriteria.cs" />
     <Compile Include="ReportingWorklistItemSearchCriteria.cs" />
     <Compile Include="ModalityWorklistItemSearchCriteria.cs" />
@@ -225,7 +226,6 @@
     <Compile Include="Workflow\Reporting\WorklistItem.cs" />
     <Compile Include="Workflow\Reporting\Worklists.cs" />
     <Compile Include="Worklist.cs" />
-    <Compile Include="Workflow\WorklistBase.cs" />
     <Compile Include="WorklistSearchCriteria.cs" />
   </ItemGroup>
   <ItemGroup>

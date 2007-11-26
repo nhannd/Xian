@@ -34,140 +34,65 @@ using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Healthcare.Workflow.Modality
 {
-    public class WorklistItemKey : IWorklistItemKey
+    public class WorklistItemKey
     {
-        private EntityRef _modalityProcedureStep;
+        private readonly EntityRef _procedureStepRef;
 
-        public WorklistItemKey(EntityRef modalityProcedureStep)
+        public WorklistItemKey(EntityRef procedureStepRef)
         {
-            _modalityProcedureStep = modalityProcedureStep;
+            _procedureStepRef = procedureStepRef;
         }
 
-        public EntityRef ModalityProcedureStep
+        public EntityRef ProcedureStepRef
         {
-            get { return _modalityProcedureStep; }
-            set { _modalityProcedureStep = value; }
+            get { return _procedureStepRef; }
         }
     }
 
     public class WorklistItem : WorklistItemBase
     {
-        private EntityRef _profileRef;
-        private EntityRef _patientRef;
-        private EntityRef _orderRef;
-
-        private PatientIdentifier _mrn;
-        private PersonName _patientName;
-        private string _accessionNumber;
-        private ModalityProcedureStepType _modalityProcedureStepType;
-        private RequestedProcedureType _requestedProcedureType;
-        private OrderPriority _orderPriority;
-        private Healthcare.Modality _modality;
-        private PatientClassEnum _patientClass;
-        private DateTime? _scheduledStartTime;
-        private string _diagnosticServiceName;
+        private readonly Healthcare.Modality _modality;
 
         /// <summary>
-        /// Constructor for ModalityWorklistBroker
+        /// Constructor
         /// </summary>
         public WorklistItem(
-            ModalityProcedureStep modalityProcedureStep,
+            ProcedureStep procedureStep,
+            RequestedProcedure requestedProcedure,
             Order order,
             Patient patient,
             PatientProfile profile,
-            RequestedProcedureType requestedProcedureType,
-            ModalityProcedureStepType modalityProcedureStepType,
-            Healthcare.Modality modality,
+            PatientIdentifier mrn,
+            PersonName patientName,
+            string accessionNumber,
+            OrderPriority orderPriority,
             PatientClassEnum patientClass,
-            string diagnosticServiceName)
-            : base(new WorklistItemKey(modalityProcedureStep.GetRef()))
+            string diagnosticServiceName,
+            string requestedProcedureName,
+            DateTime? scheduledStartTime,
+            Healthcare.Modality modality)
+            : base(
+                procedureStep,
+                requestedProcedure,
+                order,
+                patient,
+                profile,
+                mrn,
+                patientName,
+                accessionNumber,
+                orderPriority,
+                patientClass,
+                diagnosticServiceName,
+                requestedProcedureName,
+                scheduledStartTime
+            )
         {
-            _orderRef = order.GetRef();
-            _patientRef = patient.GetRef();
-            _profileRef = profile.GetRef();
-            _mrn = profile.Mrn;
-            _patientName = profile.Name;
-            _accessionNumber = order.AccessionNumber;
-            _orderPriority = order.Priority;
-            _requestedProcedureType = requestedProcedureType;
-            _modalityProcedureStepType = modalityProcedureStepType;
             _modality = modality;
-            _patientClass = patientClass;
-            _diagnosticServiceName = diagnosticServiceName;
-
-            if (modalityProcedureStep.Scheduling != null)
-                _scheduledStartTime = modalityProcedureStep.Scheduling.StartTime;
-        }
-
-
-        public EntityRef ModalityProcedureStepRef
-        {
-            get { return (this.Key as WorklistItemKey).ModalityProcedureStep; }
-        }
-
-        public EntityRef PatientProfileRef
-        {
-            get { return _profileRef; }
-        }
-
-        public EntityRef PatientRef
-        {
-            get { return _patientRef; }
-        }
-
-        public EntityRef OrderRef
-        {
-            get { return _orderRef; }
-        }
-
-        public PatientIdentifier Mrn
-        {
-            get { return _mrn; }
-        }
-
-        public PersonName PatientName
-        {
-            get { return _patientName; }
-        }
-
-        public string AccessionNumber
-        {
-            get { return _accessionNumber; }
-        }
-
-        public OrderPriority OrderPriority
-        {
-            get { return _orderPriority; }
-        }
-
-        public RequestedProcedureType RequestedProcedureType
-        {
-            get { return _requestedProcedureType; }
-        }
-
-        public ModalityProcedureStepType ModalityProcedureStepType
-        {
-            get { return _modalityProcedureStepType; }
         }
 
         public Healthcare.Modality Modality
         {
             get { return _modality; }
-        }
-
-        public PatientClassEnum PatientClass
-        {
-            get { return _patientClass; }
-        }
-
-        public DateTime? ScheduledStartTime
-        {
-            get { return _scheduledStartTime; }
-        }
-
-        public string DiagnosticServiceName
-        {
-            get { return _diagnosticServiceName; }
         }
     }
 }

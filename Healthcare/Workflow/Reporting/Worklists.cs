@@ -41,7 +41,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
     {
         public abstract class ReportingWorklist : Worklist
         {
-            public IReportingWorklistBroker GetBroker(IPersistenceContext context)
+            protected IReportingWorklistBroker GetBroker(IPersistenceContext context)
             {
                 return GetBroker<IReportingWorklistBroker>(context);
             }
@@ -77,11 +77,6 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
             {
                 return GetBroker(context).GetWorklistCount(typeof(InterpretationStep), GetQueryConditions(currentUserStaff), null);
             }
-
-            public override string NameSuffix
-            {
-                get { return " - Draft"; }
-            }
         }
 
         [ExtensionOf(typeof(WorklistExtensionPoint), Name = "ReportingInTranscriptionWorklist")]
@@ -103,11 +98,6 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
             public override int GetWorklistCount(Staff currentUserStaff, IPersistenceContext context)
             {
                 return GetBroker(context).GetWorklistCount(typeof(TranscriptionStep), GetQueryConditions(currentUserStaff), null);
-            }
-
-            public override string NameSuffix
-            {
-                get { return " - To Be Transcribed"; }
             }
         }
 
@@ -147,11 +137,6 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
                 else
                     return GetBroker(context).GetWorklistCount(typeof(VerificationStep), GetQueryConditions(currentUserStaff), null);
             }
-
-            public override string NameSuffix
-            {
-                get { return " - To Be Verified"; }
-            }
         }
 
         [ExtensionOf(typeof(WorklistExtensionPoint), Name = "ReportingVerifiedWorklist")]
@@ -188,11 +173,6 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
                 else
                     return GetBroker(context).GetWorklistCount(typeof(PublicationStep), GetQueryConditions(currentUserStaff), null);
             }
-
-            public override string NameSuffix
-            {
-                get { return " - Verified"; }
-            }
         }
 
         [ExtensionOf(typeof(WorklistExtensionPoint), Name = "ReportingReviewResidentReport")]
@@ -214,11 +194,6 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
             public override int GetWorklistCount(Staff currentUserStaff, IPersistenceContext context)
             {
                 return GetBroker(context).GetWorklistCount(typeof(VerificationStep), GetQueryConditions(currentUserStaff), null);
-            }
-
-            public override string NameSuffix
-            {
-                get { return " - Review Resident Report"; }
             }
         }
 
@@ -242,11 +217,6 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
             {
                 return GetBroker(context).GetWorklistCount(typeof(ProtocolProcedureStep), GetQueryConditions(currentUserStaff), null);
             }
-
-            public override string NameSuffix
-            {
-                get { return " - To Be Approved"; }
-            }
         }
 
         [ExtensionOf(typeof(WorklistExtensionPoint), Name = "ReportingCompletedProtocolWorklist")]
@@ -267,11 +237,6 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
             public override int GetWorklistCount(Staff currentUserStaff, IPersistenceContext context)
             {
                 return GetBroker(context).GetWorklistCount(typeof(ProtocolProcedureStep), GetQueryConditions(currentUserStaff), null);
-            }
-
-            public override string NameSuffix
-            {
-                get { return " - Completed Protocol"; }
             }
         }
 
@@ -294,11 +259,6 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
             public override int GetWorklistCount(Staff currentUserStaff, IPersistenceContext context)
             {
                 return GetBroker(context).GetWorklistCount(typeof(ProtocolProcedureStep), GetQueryConditions(currentUserStaff), null);
-            }
-
-            public override string NameSuffix
-            {
-                get { return " - Suspended Protocol"; }
             }
         }
     }

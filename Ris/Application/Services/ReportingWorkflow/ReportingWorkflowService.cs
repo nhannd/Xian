@@ -127,10 +127,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         [ReadOperation]
         public GetOperationEnablementResponse GetOperationEnablement(GetOperationEnablementRequest request)
         {
-            if(request.StepType == null || request.StepType != "Protocol")
             return new GetOperationEnablementResponse(GetOperationEnablement(new WorklistItemKey(request.ProcedureStepRef)));
-            else 
-                return new GetOperationEnablementResponse(GetOperationEnablement(new ProtocollingWorklistItemKey(request.ProcedureStepRef)));
         }
 
         [UpdateOperation]
@@ -432,27 +429,27 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
         #region OperationEnablement Helpers
 
-        public bool CanClaimInterpretation(IWorklistItemKey itemKey)
+        public bool CanClaimInterpretation(WorklistItemKey itemKey)
         {
             return CanExecuteOperation(new Operations.ClaimInterpretation(), itemKey);
         }
 
-        public bool CanStartInterpretation(IWorklistItemKey itemKey)
+        public bool CanStartInterpretation(WorklistItemKey itemKey)
         {
             return CanExecuteOperation(new Operations.StartInterpretation(), itemKey);
         }
 
-        public bool CanCompleteInterpretationForTranscription(IWorklistItemKey itemKey)
+        public bool CanCompleteInterpretationForTranscription(WorklistItemKey itemKey)
         {
             return CanExecuteOperation(new Operations.CompleteInterpretationForTranscription(), itemKey);
         }
 
-        public bool CanCompleteInterpretationForVerification(IWorklistItemKey itemKey)
+        public bool CanCompleteInterpretationForVerification(WorklistItemKey itemKey)
         {
             return CanExecuteOperation(new Operations.CompleteInterpretationForVerification(), itemKey);
         }
 
-        public bool CanCompleteInterpretationAndVerify(IWorklistItemKey itemKey)
+        public bool CanCompleteInterpretationAndVerify(WorklistItemKey itemKey)
         {
             if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.VerifyReport))
                 return false;
@@ -460,17 +457,17 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             return CanExecuteOperation(new Operations.CompleteInterpretationAndVerify(), itemKey);
         }
 
-        public bool CanCancelReportingStep(IWorklistItemKey itemKey)
+        public bool CanCancelReportingStep(WorklistItemKey itemKey)
         {
             return CanExecuteOperation(new Operations.CancelReportingStep(), itemKey);
         }
 
-        public bool CanReviseResidentReport(IWorklistItemKey itemKey)
+        public bool CanReviseResidentReport(WorklistItemKey itemKey)
         {
             return CanExecuteOperation(new Operations.ReviseResidentReport(), itemKey);
         }
 
-        public bool CanStartVerification(IWorklistItemKey itemKey)
+        public bool CanStartVerification(WorklistItemKey itemKey)
         {
             if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.VerifyReport))
                 return false;
@@ -478,7 +475,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             return CanExecuteOperation(new Operations.StartVerification(), itemKey);
         }
 
-        public bool CanCompleteVerification(IWorklistItemKey itemKey)
+        public bool CanCompleteVerification(WorklistItemKey itemKey)
         {
             if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.VerifyReport))
                 return false;
@@ -486,7 +483,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             return CanExecuteOperation(new Operations.CompleteVerification(), itemKey);
         }
 
-        public bool CanCreateAddendum(IWorklistItemKey itemKey)
+        public bool CanCreateAddendum(WorklistItemKey itemKey)
         {
             if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.VerifyReport))
                 return false;
@@ -494,7 +491,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             return CanExecuteOperation(new Operations.CreateAddendum(), itemKey);
         }
 
-        public bool CanReviseUnpublishedReport(IWorklistItemKey itemKey)
+        public bool CanReviseUnpublishedReport(WorklistItemKey itemKey)
         {
             if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.VerifyReport))
                 return false;
@@ -502,7 +499,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             return CanExecuteOperation(new Operations.ReviseUnpublishedReport(), itemKey);
         }
 
-        public bool CanPublishReport(IWorklistItemKey itemKey)
+        public bool CanPublishReport(WorklistItemKey itemKey)
         {
             if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.VerifyReport))
                 return false;
@@ -510,22 +507,20 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             return CanExecuteOperation(new Operations.PublishReport(), itemKey);
         }
 
-        public bool CanSaveReport(IWorklistItemKey itemKey)
+        public bool CanSaveReport(WorklistItemKey itemKey)
         {
             return CanExecuteOperation(new Operations.SaveReport(), itemKey);
         }
 
-        private bool CanExecuteOperation(Operations.ReportingOperation op, IWorklistItemKey itemKey)
+        private bool CanExecuteOperation(Operations.ReportingOperation op, WorklistItemKey itemKey)
         {
-            if (itemKey is WorklistItemKey)
-            {
-                ReportingProcedureStep step = PersistenceContext.Load<ReportingProcedureStep>(((WorklistItemKey)itemKey).ReportingProcedureStep);
-                return op.CanExecute(step, this.CurrentUserStaff);
-            }
-            else
-            {
+            ProcedureStep step = PersistenceContext.Load<ProcedureStep>(itemKey.ProcedureStepRef);
+
+            // for now, all of these operations assume they are operating on a ReportingProcedureStep
+            // this may need to change in future
+            if(!step.Is<ReportingProcedureStep>())
                 return false;
-            }
+            return op.CanExecute(step.As<ReportingProcedureStep>(), this.CurrentUserStaff);
         }
 
         #endregion

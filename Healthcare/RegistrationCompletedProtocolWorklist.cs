@@ -43,11 +43,6 @@ namespace ClearCanvas.Healthcare {
             return GetBroker<IRegistrationWorklistBroker>(context).GetProtocolWorklistCount(QueryConditions, this);
         }
 
-        public override string NameSuffix
-        {
-            get { return " - Completed Protocol"; }
-        }
-
         #region Object overrides
 		
 		public override bool Equals(object that)

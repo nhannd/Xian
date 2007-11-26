@@ -43,10 +43,10 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Healthcare.Workflow.Registration
 {
-    public class WorklistItemKey : IWorklistItemKey
+    public class WorklistItemKey
     {
-        private EntityRef _orderRef;
-        private EntityRef _profileRef;
+        private readonly EntityRef _orderRef;
+        private readonly EntityRef _profileRef;
 
         public WorklistItemKey(EntityRef orderRef, EntityRef profileRef)
         {
@@ -54,93 +54,62 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
             _profileRef = profileRef;
         }
 
-        /// <summary>
-        /// Primary Key
-        /// </summary>
         public EntityRef OrderRef
         {
             get { return _orderRef; }
-            set { _orderRef = value; }
         }
 
         public EntityRef ProfileRef
         {
             get { return _profileRef; }
-            set { _profileRef = value; }
         }
     }
 
-    public class WorklistItem : WorklistItemBase
+    public class WorklistItem : WorklistItemBase, IEquatable<WorklistItem>
     {
-        // PatientProfile data
-        private EntityRef _patientRef;
-        private PatientIdentifier _mrn;
-        private PersonName _patientName;
-        private HealthcardNumber _healthcardNumber;
-        private DateTime? _dateOfBirth;
-        private Sex _sex;
+        private readonly HealthcardNumber _healthcardNumber;
+        private readonly DateTime? _dateOfBirth;
+        private readonly Sex _sex;
 
-        // Order data
-        private DateTime? _scheduledStartTime;
-        private PatientClassEnum _patientClass;
-        private OrderPriority _orderPriority;
-        private string _accessionNumber;
-        private string _diagnosticServiceName;
-
-        public WorklistItem(Order order)
-            : base(new WorklistItemKey(order.GetRef(), null))
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public WorklistItem(
+            Order order,
+            Patient patient,
+            PatientProfile profile,
+            PatientIdentifier mrn,
+            PersonName patientName,
+            string accessionNumber,
+            OrderPriority orderPriority,
+            PatientClassEnum patientClass,
+            string diagnosticServiceName,
+            DateTime? scheduledStartTime,
+            HealthcardNumber healthcardNumber,
+            DateTime? dateOfBirth,
+            Sex sex)
+            : base(
+                null,
+                null,
+                order,
+                patient,
+                profile,
+                mrn,
+                patientName,
+                accessionNumber,
+                orderPriority,
+                patientClass,
+                diagnosticServiceName,
+                null,
+                scheduledStartTime
+            )
         {
-            //TODO: choose the profile based on some location instead of visit assigning authority
-            PatientProfile profile = order.Patient.Profiles.Count == 1 ?
-                CollectionUtils.FirstElement<PatientProfile>(order.Patient.Profiles) :
-                CollectionUtils.SelectFirst<PatientProfile>(order.Patient.Profiles,
-                delegate(PatientProfile pp)
-                {
-                    return pp.Mrn.AssigningAuthority == order.Visit.VisitNumber.AssigningAuthority;
-                });
-
-            WorklistItemKey thisKey = (WorklistItemKey)this.Key;
-            thisKey.ProfileRef = profile.GetRef();
-
-            _patientRef = order.Patient.GetRef();
-            _mrn = profile.Mrn;
-            _patientName = profile.Name;
-            _healthcardNumber = profile.Healthcard;
-            _dateOfBirth = profile.DateOfBirth;
-            _sex = profile.Sex;
-            _orderPriority = order.Priority;
-            _patientClass = order.Visit.PatientClass;
-            _accessionNumber = order.AccessionNumber;
-            _scheduledStartTime = order.ScheduledStartTime;
-            _diagnosticServiceName = order.DiagnosticService.Name;
+            _healthcardNumber = healthcardNumber;
+            _dateOfBirth = dateOfBirth;
+            _sex = sex;
         }
 
         #region Public Properties
-
-        public EntityRef ProfileRef
-        {
-            get { return ((WorklistItemKey)this.Key).ProfileRef; }
-        }
-
-        public EntityRef OrderRef
-        {
-            get { return ((WorklistItemKey)this.Key).OrderRef; }
-        }
-
-        public EntityRef PatientRef
-        {
-            get { return _patientRef; }
-        }
-
-        public PatientIdentifier Mrn
-        {
-            get { return _mrn; }
-        }
-
-        public PersonName PatientName
-        {
-            get { return _patientName; }
-        }
 
         public HealthcardNumber HealthcardNumber
         {
@@ -157,31 +126,32 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
             get { return _sex; }
         }
 
-        public DateTime? ScheduledStartTime
-        {
-            get { return _scheduledStartTime; }
-        }
-
-        public OrderPriority OrderPriority
-        {
-            get { return _orderPriority; }
-        }
-
-        public string AccessionNumber
-        {
-            get { return _accessionNumber; }
-        }
-
-        public string DiagnosticServiceName
-        {
-            get { return _diagnosticServiceName; }    
-        }
-
-        public PatientClassEnum PatientClass
-        {
-            get { return _patientClass; }
-        }
-
         #endregion
+
+        /// <summary>
+        /// Overridden to be based on order rather than procedure step.
+        /// </summary>
+        /// <param name="worklistItem"></param>
+        /// <returns></returns>
+        public bool Equals(WorklistItem worklistItem)
+        {
+            if (worklistItem == null) return false;
+            return Equals(this.OrderRef, worklistItem.OrderRef);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(this, obj)) return true;
+            return Equals(obj as WorklistItem);
+        }
+
+        /// <summary>
+        /// Overridden to be based on order rather than procedure step.
+        /// </summary>
+        /// <returns></returns>
+        public override int GetHashCode()
+        {
+            return this.OrderRef != null ? this.OrderRef.GetHashCode() : 0;
+        }
     }
 }

@@ -43,11 +43,6 @@ namespace ClearCanvas.Healthcare
             return GetBroker<IReportingWorklistBroker>(context).GetWorklistCount(typeof(ProtocolProcedureStep), QueryConditions, this);
         }
 
-        public override string NameSuffix
-        {
-            get { return " - To Be Protocolled"; }
-        }
-
         #endregion
 
         #region Object overrides

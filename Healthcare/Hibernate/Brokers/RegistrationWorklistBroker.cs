@@ -41,22 +41,43 @@ using ClearCanvas.Healthcare.Workflow.Registration;
 namespace ClearCanvas.Healthcare.Hibernate.Brokers
 {
     [ExtensionOf(typeof(BrokerExtensionPoint))]
-    public class RegistrationWorklistBroker : Broker, IRegistrationWorklistBroker
+    public class RegistrationWorklistBroker : WorklistItemBrokerBase<WorklistItem>, IRegistrationWorklistBroker
     {
-        private const string _hqlSelectWorklist =       "select distinct o from RequestedProcedure rp";
-        private const string _hqlSelectCount =          "select count(distinct o) from RequestedProcedure rp";
-        private const string _hqlJoin =                 " join rp.Order o";
+        private const string _hqlSelectWorklist =
+           "select distinct o, p, pp, pp.Mrn, pp.Name, o.AccessionNumber, o.Priority," +
+           " v.PatientClass, ds.Name, o.ScheduledStartTime, pp.Healthcard, pp.DateOfBirth, pp.Sex";
 
-        private const string _hqlSelectProtocolWorklist     = "select distinct o from ProtocolProcedureStep ps";
-        private const string _hqlSelectProtocolCount        = "select count(distinct o) from ProtocolProcedureStep ps";
-        private const string _hqlProtocolJoin               = " join ps.RequestedProcedure rp" +
-                                                              " join rp.Order o";
+        private const string _hqlSelectCount =
+            "select count(distinct o)";
 
-        private const string _hqlSearchWorklist             = "select o from Order o";
-        private const string _hqlSearchCount                = "select count(o) from Order o";
+        private const string _hqlFrom =
+            " from RequestedProcedure rp";
+
+        private const string _hqlJoin =
+            " join rp.Order o" +
+            " join o.DiagnosticService ds" +
+            " join o.Visit v" +
+            " join o.Patient p" +
+            " join p.Profiles pp";
+
+        private const string _hqlProtocolFrom = " from ProtocolProcedureStep ps";
+        private const string _hqlProtocolJoin =
+            " join ps.RequestedProcedure rp" +
+            " join rp.Order o" +
+            " join o.DiagnosticService ds" +
+            " join o.Visit v" +
+            " join o.Patient p" +
+            " join p.Profiles pp";
+
+        private const string _hqlSearchFrom = 
+            " from Order o";
+        private const string _hqlSearchJoin =
+            " join o.DiagnosticService ds" +
+            " join o.Visit v" +
+            " join o.Patient p" +
+            " join p.Profiles pp";
 
         // Share constants
-        private const string _hqlJoinProfile                = " join o.Patient p join p.Profiles pp";
         private const string _hqlWorklistSubQuery           = "rp.Type in (select distinct rpt from Worklist w" +
                                                               " join w.RequestedProcedureTypeGroups rptg join rptg.RequestedProcedureTypes rpt where w = ?)";
 
@@ -64,35 +85,35 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         public IList<WorklistItem> GetWorklist(RegistrationWorklistItemSearchCriteria[] where, Worklist worklist)
         {
-            HqlQuery query = new HqlQuery(string.Concat(_hqlSelectWorklist, _hqlJoin, _hqlJoinProfile));
+            HqlQuery query = new HqlQuery(string.Concat(_hqlSelectWorklist, _hqlFrom, _hqlJoin));
             ConstructWorklistCondition(query, where, worklist);
             return DoQuery(query);
         }
 
         public int GetWorklistCount(RegistrationWorklistItemSearchCriteria[] where, Worklist worklist)
         {
-            HqlQuery query = new HqlQuery(string.Concat(_hqlSelectCount, _hqlJoin, _hqlJoinProfile));
+            HqlQuery query = new HqlQuery(string.Concat(_hqlSelectCount, _hqlFrom,  _hqlJoin));
             ConstructWorklistCondition(query, where, worklist);
             return DoQueryCount(query);
         }
 
         public IList<WorklistItem> GetProtocolWorklist(RegistrationWorklistItemSearchCriteria[] where, Worklist worklist)
         {
-            HqlQuery query = new HqlQuery(string.Concat(_hqlSelectProtocolWorklist, _hqlProtocolJoin));
+            HqlQuery query = new HqlQuery(string.Concat(_hqlSelectWorklist, _hqlProtocolFrom, _hqlProtocolJoin));
             ConstructWorklistCondition(query, where, worklist);
             return DoQuery(query);
         }
 
         public int GetProtocolWorklistCount(RegistrationWorklistItemSearchCriteria[] where, Worklist worklist)
         {
-            HqlQuery query = new HqlQuery(string.Concat(_hqlSelectProtocolCount, _hqlProtocolJoin));
+            HqlQuery query = new HqlQuery(string.Concat(_hqlSelectCount, _hqlProtocolFrom, _hqlProtocolJoin));
             ConstructWorklistCondition(query, where, worklist);
             return DoQueryCount(query);
         }
 
         public IList<WorklistItem> Search(WorklistItemSearchCriteria[] where, SearchResultPage page, bool showActiveOnly)
         {
-            HqlQuery query = new HqlQuery(string.Concat(_hqlSearchWorklist, _hqlJoinProfile));
+            HqlQuery query = new HqlQuery(string.Concat(_hqlSelectWorklist, _hqlSearchFrom, _hqlSearchJoin));
             query.Page = page;
             ConstructSearchCondition(query, where, showActiveOnly);
             return DoQuery(query);
@@ -100,7 +121,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         public int SearchCount(WorklistItemSearchCriteria[] where, bool showActiveOnly)
         {
-            HqlQuery query = new HqlQuery(string.Concat(_hqlSearchCount, _hqlJoinProfile));
+            HqlQuery query = new HqlQuery(string.Concat(_hqlSelectCount, _hqlSearchFrom, _hqlSearchJoin));
             ConstructSearchCondition(query, where, showActiveOnly);
             return DoQueryCount(query);
         }
@@ -165,24 +186,6 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
             if (or.Conditions.Count > 0)
                 query.Conditions.Add(or);
-        }
-
-        private List<WorklistItem> DoQuery(HqlQuery query)
-        {
-            IList<object> list = ExecuteHql<object>(query);
-            List<WorklistItem> results = new List<WorklistItem>();
-            foreach (object tuple in list)
-            {
-                WorklistItem item = (WorklistItem) Activator.CreateInstance(typeof (WorklistItem), tuple);
-                results.Add(item);
-            }
-
-            return results;
-        }
-
-        private int DoQueryCount(HqlQuery query)
-        {
-            return (int)ExecuteHqlUnique<long>(query);
         }
 
         #endregion

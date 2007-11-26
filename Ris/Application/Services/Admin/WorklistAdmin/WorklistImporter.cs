@@ -117,10 +117,10 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
                 string description = reader.GetAttribute(attrDescription);
 
                 reader.ReadToFollowing(tagRequestedProcedureTypeGroups);
-                ICollection requestedProcedureTypeGroups = GetRequestedProcedureTypeGroups(reader.ReadSubtree());
+                ICollection<RequestedProcedureTypeGroup> requestedProcedureTypeGroups = GetRequestedProcedureTypeGroups(reader.ReadSubtree());
 
                 reader.ReadToFollowing(tagSubscribers);
-                ICollection users = GetUsers(reader.ReadSubtree());
+                ICollection<User> users = GetUsers(reader.ReadSubtree());
 
                 worklist.Description = description;
                 worklist.RequestedProcedureTypeGroups.AddAll(requestedProcedureTypeGroups);
@@ -136,7 +136,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
             }
         }
 
-        private ICollection GetRequestedProcedureTypeGroups(XmlReader reader)
+        private ICollection<RequestedProcedureTypeGroup> GetRequestedProcedureTypeGroups(XmlReader reader)
         {
             List<RequestedProcedureTypeGroup> groups = new List<RequestedProcedureTypeGroup>();
 
@@ -171,7 +171,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
             return groups;
         }
 
-        private ICollection GetUsers(XmlReader reader)
+        private ICollection<User> GetUsers(XmlReader reader)
         {
             List<User> users = new List<User>();
 

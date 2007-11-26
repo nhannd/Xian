@@ -50,7 +50,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
             return new RegistrationWorklistItem(
                 domainItem.PatientRef,
-                domainItem.ProfileRef,
+                domainItem.PatientProfileRef,
                 domainItem.OrderRef,
                 new MrnAssembler().CreateMrnDetail(domainItem.Mrn),
                 nameAssembler.CreatePersonNameDetail(domainItem.PatientName),

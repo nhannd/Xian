@@ -38,15 +38,7 @@ namespace ClearCanvas.Healthcare
 {
     [ExtensionPoint]
     public class WorklistExtensionPoint : ExtensionPoint<IWorklist>
-    { }
-
-    public interface IWorklistItemKey
     {
-    }
-
-    public interface IWorklistItem
-    {
-        IWorklistItemKey Key { get; set; }
     }
 
     public interface IWorklist

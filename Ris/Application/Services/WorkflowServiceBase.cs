@@ -114,7 +114,7 @@ namespace ClearCanvas.Ris.Application.Services
             return worklist.GetWorklistCount(this.CurrentUserStaff, this.PersistenceContext);
         }
 
-        protected Dictionary<string, bool> GetOperationEnablement(IWorklistItemKey itemKey)
+        protected Dictionary<string, bool> GetOperationEnablement(object itemKey)
         {
             Dictionary<string, bool> results = new Dictionary<string, bool>();
 

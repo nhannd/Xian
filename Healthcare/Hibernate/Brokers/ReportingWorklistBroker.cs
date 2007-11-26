@@ -42,11 +42,12 @@ using ClearCanvas.Workflow;
 namespace ClearCanvas.Healthcare.Hibernate.Brokers
 {
     [ExtensionOf(typeof(BrokerExtensionPoint))]
-    public class ReportingWorklistBroker : Broker, IReportingWorklistBroker
+    public class ReportingWorklistBroker : WorklistItemBrokerBase<WorklistItem>, IReportingWorklistBroker
     {
         private const string _hqlSelectCount = "select count(*)";
         private const string _hqlSelectWorklist =
-            "select ps, pp, o.AccessionNumber, o.Priority, rpt.Name, ds.Name, ps.State, v.PatientClass";
+            "select ps, rp, o, p, pp, pp.Mrn, pp.Name, o.AccessionNumber, o.Priority," +
+            " v.PatientClass, ds.Name, rpt.Name, ps.Scheduling.StartTime, ps.State ";
 
         private const string _hqlFrom = " from {0} ps";
         private const string _hqlFromReportingStep = " from ReportingProcedureStep ps";
@@ -190,24 +191,5 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
                 query.Conditions.Add(or);
 
         }
-
-        private List<WorklistItem> DoQuery(HqlQuery query)
-        {
-            IList<object> list = ExecuteHql<object>(query);
-            List<WorklistItem> results = new List<WorklistItem>();
-            foreach (object[] tuple in list)
-            {
-                WorklistItem item = (WorklistItem)Activator.CreateInstance(typeof(WorklistItem), tuple);
-                results.Add(item);
-            }
-
-            return results;
-        }
-
-        private int DoQueryCount(HqlQuery query)
-        {
-            return (int)ExecuteHqlUnique<long>(query);
-        }
-
     }
 }
