@@ -65,8 +65,16 @@ namespace ClearCanvas.Desktop
             public CloseWorkspaceTool()
             {
             }
+			protected override void Dispose(bool disposing)
+			{
+				this.Context.DesktopWindow.Workspaces.ItemOpened -= Workspaces_Changed;
+				this.Context.DesktopWindow.Workspaces.ItemClosed -= Workspaces_Changed;
+				this.Context.DesktopWindow.Workspaces.ItemActivationChanged -= Workspaces_Changed;
 
-            public override void Initialize()
+				base.Dispose(disposing);
+			}
+
+			public override void Initialize()
             {
                 base.Initialize();
 

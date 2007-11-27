@@ -45,9 +45,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		// We add these master dictionaries so we can have rapid
 		// look up of study, series and sop objects without having to traverse
 		// the tree.
-		private StudyCollection _studies = new StudyCollection();
-		private SeriesCollection _seriesCollection = new SeriesCollection();
-		private SopCollection _sops = new SopCollection();
+		private StudyCollection _studies;
+		private SeriesCollection _series;
+		private SopCollection _sops;
 
 		private static ReferenceCountedObjectCache _sopCache = new ReferenceCountedObjectCache();
 
@@ -94,10 +94,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				if (_seriesCollection == null)
-					_seriesCollection = new SeriesCollection();
+				if (_series == null)
+					_series = new SeriesCollection();
 
-				return _seriesCollection;
+				return _series;
 			}
 		}
 
@@ -324,9 +324,34 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			if (disposing)
 			{
 				foreach (Sop sop in _sops.Values)
+				{
+					sop.ParentSeries.SetSop(null);
 					_sopCache.Remove(sop.SopInstanceUID);
+				}
 
-				_sops.Clear();
+				if (_patients != null)
+				{
+					_patients.Clear();
+					_patients = null;
+				}
+
+				if (_studies != null)
+				{
+					_studies.Clear();
+					_studies = null;
+				}
+
+				if (_series != null)
+				{
+					_series.Clear();
+					_series = null;
+				}
+
+				if (_sops != null)
+				{
+					_sops.Clear();
+					_sops = null;
+				}
 			}
 		}
 

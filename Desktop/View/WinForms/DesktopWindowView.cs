@@ -643,7 +643,20 @@ namespace ClearCanvas.Desktop.View.WinForms
         {
             if (disposing && _form != null)
             {
-                SaveWindowSettings();
+				_form.VisibleChanged -= new EventHandler(FormVisibleChangedEventHandler);
+				_form.Activated -= new EventHandler(FormActivatedEventHandler);
+				_form.Deactivate -= new EventHandler(FormDeactivateEventHandler);
+				_form.FormClosing -= new FormClosingEventHandler(FormFormClosingEventHandler);
+				_form.TabbedGroups.PageCloseRequest -= new TabbedGroups.PageCloseRequestHandler(TabbedGroupPageClosePressedEventHandler);
+				_form.TabbedGroups.PageChanged -= new TabbedGroups.PageChangeHandler(TabbedGroupPageChangedEventHandler);
+				_form.DockingManager.ContentHiding -= new DockingManager.ContentHidingHandler(DockingManagerContentHidingEventHandler);
+				_form.DockingManager.ContentShown -= new DockingManager.ContentHandler(DockingManagerContentShownEventHandler);
+				_form.DockingManager.ContentAutoHideOpening -= new DockingManager.ContentHandler(DockingManagerContentAutoHideOpeningEventHandler);
+				_form.DockingManager.ContentAutoHideClosed -= new DockingManager.ContentHandler(DockingManagerContentAutoHideClosedEventHandler);
+				_form.DockingManager.WindowActivated -= new DockingManager.WindowHandler(DockingManagerWindowActivatedEventHandler);
+				_form.DockingManager.WindowDeactivated -= new DockingManager.WindowHandler(FormDockingManagerWindowDeactivatedEventHandler);
+				
+				SaveWindowSettings();
 
                 // bug #1171: if this window is the active window and there are other windows,
                 // select the previously active one before destroying this one

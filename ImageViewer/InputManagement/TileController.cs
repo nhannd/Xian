@@ -31,6 +31,8 @@
 
 using System;
 using System.Drawing;
+using System.Diagnostics;
+using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
@@ -98,6 +100,119 @@ namespace ClearCanvas.ImageViewer.InputManagement
 	{
 		private delegate bool CallHandlerMethodDelegate(IMouseButtonHandler handler);
 
+		#region MouseWheelManager class 
+
+		private class MouseWheelManager
+		{
+			private readonly uint WheelStopDelayMilliseconds = 500;
+
+			//One per UI Thread.
+			[ThreadStatic]
+			private static MouseWheelManager _instance;
+
+			private ITile _ownerTile;
+			private IMouseWheelHandler _captureMouseWheelHandler;
+			private DateTime _timeOfLastWheel;
+			private volatile bool _stopTimer;
+
+			private MouseWheelManager()
+			{
+				_ownerTile = null;
+				_captureMouseWheelHandler = null;
+				_stopTimer = true;
+			}
+
+			public static MouseWheelManager Instance
+			{
+				get
+				{
+					if (_instance == null)
+						_instance = new MouseWheelManager();
+
+					return _instance;
+				}
+			}
+
+			public void UpdateLastWheelTime()
+			{
+				_timeOfLastWheel = Platform.Time;
+			}
+
+			public void SetCaptureHandler(ITile ownerTile, IMouseWheelHandler captureMouseWheelHandler)
+			{
+				if (ownerTile == _ownerTile && _captureMouseWheelHandler == captureMouseWheelHandler)
+					return;
+
+				if (ownerTile == null && captureMouseWheelHandler != null)
+				{
+					Debug.Assert(false, "Non-null IMouseWheelHandler must have a valid owner tile.");
+					return;
+				}
+
+				if (_captureMouseWheelHandler != null)
+				{
+					Trace.WriteLine("Stopping current mouse wheel handler"); 
+					_captureMouseWheelHandler.Stop();
+				}
+
+				IImageViewer previousViewer = null;
+				if (_ownerTile != null)
+					previousViewer = _ownerTile.ImageViewer;
+
+				_captureMouseWheelHandler = captureMouseWheelHandler;
+				_ownerTile = (_captureMouseWheelHandler != null) ? ownerTile : null;
+
+				IImageViewer currentViewer = null;
+				if (_ownerTile != null)
+					currentViewer = _ownerTile.ImageViewer;
+
+				if (previousViewer != null && previousViewer != currentViewer)
+				{
+					Trace.WriteLine("Notifying subscribers active mouse wheel handler is null"); 
+					previousViewer.EventBroker.OnActiveMouseWheelHandlerChanged(null);
+				}
+				else if (currentViewer != null)
+				{
+					Trace.WriteLine("Notifying subscribers active mouse wheel handler changed"); 
+					currentViewer.EventBroker.OnActiveMouseWheelHandlerChanged(_captureMouseWheelHandler);
+				}
+
+				if (_captureMouseWheelHandler == null)
+				{
+					Trace.WriteLine("Stopping mouse wheel handler timer"); 
+					_stopTimer = true;
+					return;
+				}
+
+				Trace.WriteLine("Starting mouse wheel handler (+timer)");
+				_captureMouseWheelHandler.Start();
+
+				_stopTimer = false;
+				SynchronizationContext context = SynchronizationContext.Current;
+				WaitCallback del = delegate
+				                   	{
+										while (!_stopTimer)
+										{
+											Thread.Sleep(10);
+											context.Post(delegate
+												 	{
+														if (_captureMouseWheelHandler == null)
+															return;
+
+														TimeSpan elapsed = Platform.Time.Subtract(_timeOfLastWheel);
+														if (elapsed.Milliseconds >= WheelStopDelayMilliseconds)
+															SetCaptureHandler(null, null);
+												 	}
+												, null);
+										}
+				                   	};
+
+				ThreadPool.QueueUserWorkItem(del);
+			}
+		}
+
+		#endregion
+		
 		#region Private Fields
 
 		private readonly Tile _tile;
@@ -107,13 +222,6 @@ namespace ClearCanvas.ImageViewer.InputManagement
 		private Rectangle _tileClientRectangle;
 
 		private IMouseButtonHandler _captureHandler;
-
-		//The wheel can only act on one tile at a time, and a click in another tile should stop the timer, therefore use statics.
-		private static IMouseWheelHandler _captureMouseWheelHandler;
-		private static Timer _wheelHandlerTimer;
-		private static DateTime _timeOfLastWheel;
-		private static readonly uint WheelStopDelayMilliseconds = 500;
-
 		private CursorToken _cursorToken;
 		
 		private bool _contextMenuEnabled; 
@@ -166,30 +274,7 @@ namespace ClearCanvas.ImageViewer.InputManagement
 		{
 			set 
 			{
-				if (_captureMouseWheelHandler == value)
-					return;
-
-				if (_captureMouseWheelHandler != null)
-				{
-					_captureMouseWheelHandler.Stop();
-					_wheelHandlerTimer.Stop();
-				}
-
-				_captureMouseWheelHandler = value;
-				if (_tile.ImageViewer != null)
-					_tile.ImageViewer.EventBroker.OnActiveMouseWheelHandlerChanged(_captureMouseWheelHandler);
-
-				if (_captureMouseWheelHandler != null)
-				{
-					if (_wheelHandlerTimer == null)
-					{
-						_wheelHandlerTimer = new Timer(OnTimer);
-						_wheelHandlerTimer.Interval = 10;
-					}
-
-					_wheelHandlerTimer.Start();
-					_captureMouseWheelHandler.Start();
-				}
+				MouseWheelManager.Instance.SetCaptureHandler(_tile, value);
 			}
 		}
 
@@ -210,16 +295,6 @@ namespace ClearCanvas.ImageViewer.InputManagement
 		private static bool SuppressOnTileActivate(IMouseButtonHandler handler)
 		{
 			return (handler.Behaviour & MouseButtonHandlerBehaviour.SuppressOnTileActivate) == MouseButtonHandlerBehaviour.SuppressOnTileActivate;
-		}
-
-		private void OnTimer(object nothing)
-		{
-			if (_captureMouseWheelHandler == null)
-				return;
-
-			TimeSpan elapsed = Platform.Time.Subtract(_timeOfLastWheel);
-			if (elapsed.Milliseconds >= WheelStopDelayMilliseconds)
-				this.CaptureMouseWheelHandler = null;
 		}
 
 		private void SetCursorToken(IMouseButtonHandler handler, Point location)
@@ -278,7 +353,7 @@ namespace ClearCanvas.ImageViewer.InputManagement
 				this.CaptureMouseWheelHandler = handler;
 
 				handler.Wheel(wheelMessage.WheelDelta);
-				_timeOfLastWheel = Platform.Time;
+				MouseWheelManager.Instance.UpdateLastWheelTime();
 				return true;
 			}
 

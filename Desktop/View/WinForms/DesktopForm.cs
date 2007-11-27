@@ -50,8 +50,6 @@ namespace ClearCanvas.Desktop.View.WinForms
         private ActionModelNode _menuModel;
         private ActionModelNode _toolbarModel;
 
-		private DockingManager _dockingManager;
-
         /// <summary>
         /// Constructor
         /// </summary>
@@ -65,10 +63,10 @@ namespace ClearCanvas.Desktop.View.WinForms
             _dockingManager = new DockingManager(_toolStripContainer.ContentPanel, VisualStyle.IDE2005);
             _dockingManager.ActiveColor = SystemColors.Control;
             _dockingManager.InnerControl = _tabbedGroups;
-			_dockingManager.TabControlCreated += new DockingManager.TabControlCreatedHandler(OnDockingManagerTabControlCreated);
+			_dockingManager.TabControlCreated += OnDockingManagerTabControlCreated;
 
 			_tabbedGroups.DisplayTabMode = DisplayTabModes.HideAll;
-			_tabbedGroups.TabControlCreated += new TabbedGroups.TabControlCreatedHandler(OnTabbedGroupsTabControlCreated);
+			_tabbedGroups.TabControlCreated += OnTabbedGroupsTabControlCreated;
 
 			if (_tabbedGroups.ActiveLeaf != null)
 			{

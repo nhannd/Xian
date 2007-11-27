@@ -209,6 +209,7 @@ namespace ClearCanvas.Desktop
             {
                 _host.StopComponent();
                 _host = null;
+            	_desktopWindow = null;
             }
         }
 

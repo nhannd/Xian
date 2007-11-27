@@ -49,7 +49,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	public class CineTool : ImageViewerTool
 	{
 		private static readonly Dictionary<IDesktopWindow, IShelf> _shelves;
-		private IDesktopWindow _desktopWindow;
 
 		static CineTool()
 		{
@@ -60,34 +59,29 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		{
 		}
 
-		public override void Initialize()
-		{
-			base.Initialize();
-			//when the desktop window is closed, the context is set to null, so we hold a reference to it here.
-			_desktopWindow = this.Context.DesktopWindow;
-		}
-
 		public void Activate()
 		{
+			IDesktopWindow desktopWindow = this.Context.DesktopWindow;
+
 			// check if a layout component is already displayed
-			if (_shelves.ContainsKey(_desktopWindow))
+			if (_shelves.ContainsKey(desktopWindow))
 			{
-				_shelves[_desktopWindow].Activate();
+				_shelves[desktopWindow].Activate();
 			}
 			else
 			{
-				CineApplicationComponent component = new CineApplicationComponent(_desktopWindow);
+				CineApplicationComponent component = new CineApplicationComponent(desktopWindow);
 				IShelf shelf = ApplicationComponent.LaunchAsShelf(
-					_desktopWindow,
+					desktopWindow,
 					component, SR.TitleCine, 
 					"Cine", 
 					ShelfDisplayHint.DockFloat,
 					delegate
 					{
-						_shelves.Remove(_desktopWindow);
+						_shelves.Remove(desktopWindow);
 					});
 
-				_shelves[_desktopWindow] = shelf;
+				_shelves[desktopWindow] = shelf;
 			}
 		}
 	}

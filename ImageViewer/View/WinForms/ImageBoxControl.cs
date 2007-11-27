@@ -161,12 +161,34 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			Draw();
 		}
 
-		private void OnLayoutCompleted(object sender, EventArgs e)
+		private List<TileControl> GetTileControls()
 		{
-			List<Control> oldControlList = new List<Control>();
+			List<TileControl> controls = new List<TileControl>();
 
-			foreach (Control control in this.Controls)
-				oldControlList.Add(control);
+			foreach (TileControl control in this.Controls)
+				controls.Add(control);
+
+			return controls;
+		}
+
+		private void DisposeControls(IEnumerable<TileControl> controls)
+		{
+			foreach (TileControl control in controls)
+			{
+				this.Controls.Remove(control);
+				control.Tile.SelectionChanged -= new EventHandler<ItemEventArgs<ITile>>(OnTileSelectionChanged);
+				control.Dispose();
+			}
+		}
+
+		private void DisposeControls()
+		{
+			DisposeControls(GetTileControls());
+		}
+
+    	private void OnLayoutCompleted(object sender, EventArgs e)
+		{
+    		List<TileControl> oldControls = GetTileControls();
 
 			this.SuspendLayout();
 
@@ -175,11 +197,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			// results in flickering, which we don't want.
 			AddTileControls(_imageBox);
 
-			foreach (Control control in oldControlList)
-			{
-				this.Controls.Remove(control);
-				control.Dispose();
-			}
+    		DisposeControls(oldControls);
 
 			this.ResumeLayout(true);
 		}

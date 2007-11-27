@@ -282,23 +282,24 @@ namespace ClearCanvas.Desktop
 
             if (disposing)
             {
-                if (_workspaces != null)
-                {
-                    (_workspaces as IDisposable).Dispose();
-                    _workspaces = null;
-                }
+				if (_desktopTools != null)
+					(_desktopTools as IDisposable).Dispose();
+
+				if (_dialogs != null)
+					(_dialogs as IDisposable).Dispose();
+
+				if (_workspaces != null)
+					(_workspaces as IDisposable).Dispose();
 
                 if (_shelves != null)
-                {
                     (_shelves as IDisposable).Dispose();
-                    _shelves = null;
-                }
 
-                if (_desktopTools != null)
-                {
-                    (_desktopTools as IDisposable).Dispose();
-                    _desktopTools = null;
-                }
+				// These types of objects (particularly tools) can subscribe to each other's events
+				// so we set everything to null at the end to allow objects to unsubscribe on disposal.
+				_desktopTools = null;
+            	_dialogs = null;
+            	_workspaces = null;
+            	_shelves = null;
             }
         }
 

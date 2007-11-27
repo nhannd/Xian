@@ -51,6 +51,12 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 				if (components != null)
 					components.Dispose();
 
+				if (_component != null)
+				{
+					_component.Closing -= new EventHandler(OnComponentClosing);
+					_component = null;
+				} 
+				
 				if (_physicalWorkspace != null)
 				{
 					_physicalWorkspace.Drawing -= new EventHandler(OnPhysicalWorkspaceDrawing);
@@ -58,6 +64,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 					_physicalWorkspace = null;
 				}
 			}
+
 			base.Dispose(disposing);
 		}
 

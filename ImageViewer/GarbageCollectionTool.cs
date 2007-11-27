@@ -48,58 +48,41 @@ namespace ClearCanvas.ImageViewer
 	// the UI code itself is to get a timer to perform a GC a few times after
 	// the workspace has been closed.
 
+
 	[ExtensionOf(typeof(DesktopToolExtensionPoint))]
 	internal class GarbageCollectionTool : Tool<IDesktopToolContext>
 	{
-		private Timer _timer;
-		private int _gcCycles;
-
 		public GarbageCollectionTool()
 		{
 		}
 
-		/// <summary>
-		/// Called by the framework to initialize this tool.
-		/// </summary>
 		public override void Initialize()
 		{
 			base.Initialize();
-
 			this.Context.DesktopWindow.Workspaces.ItemClosed += OnWorkspaceClosed;
+		}
 
-			TimerCallback timerCallback = new TimerCallback(OnTimer);
-
-			AutoResetEvent autoReset = new AutoResetEvent(false);
-			_timer = new Timer(timerCallback, autoReset, 0, 2000);
+		protected override void Dispose(bool disposing)
+		{
+			this.Context.DesktopWindow.Workspaces.ItemClosed -= OnWorkspaceClosed;
+			base.Dispose(disposing);
 		}
 
 		void OnWorkspaceClosed(object sender, ItemEventArgs<Workspace> e)
 		{
 			// When a workspace has been closed, we want the GC to run
-			// a few times triggered by a timer to release what is often
-			// a significant amount of managed memory.
-			_gcCycles = 5;
-		}
+			// a few times to release what is often a significant amount of managed memory.
 
-		void OnTimer(object autoReset)
-		{
-			// We don't care if _gcCycles is thread-safe, since the actual
-			// value is arbitrary and it doesn't matter if it's off once in a while.
-			// As long as it eventually hits zero, thus stopping garbage collection,
-			// we're good.
-			if (_gcCycles > 0)
-			{
-				_gcCycles--;
-				GC.Collect();
-			}
-		}
+			WaitCallback del = delegate
+			                   	{
+									for (int i = 0; i < 5; ++i)
+									{
+										Thread.Sleep(500);
+										GC.Collect();
+									}
+			                   	};
 
-		protected override void Dispose(bool disposing)
-		{
-			if (_timer != null)
-				_timer.Dispose();
-
-			base.Dispose(disposing);
+			ThreadPool.QueueUserWorkItem(del);
 		}
 	}
 }

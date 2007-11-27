@@ -616,6 +616,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		protected override void Dispose(bool disposing)
 		{
+			_realImageSop = null;
 			base.Dispose(disposing);
 		}
 	}

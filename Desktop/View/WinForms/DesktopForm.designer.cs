@@ -47,9 +47,43 @@ namespace ClearCanvas.Desktop.View.WinForms
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
-            if (disposing && (_components != null))
+            if (disposing)
             {
-                _components.Dispose();
+				if (_mainMenu != null)
+				{
+					_mainMenu.Dispose();
+					_mainMenu = null;
+				}
+
+				if (_toolbar != null)
+				{
+					_toolbar.Dispose();
+					_toolbar = null;
+				}
+
+				if (_toolStripContainer != null)
+				{
+					_toolStripContainer.Dispose();
+					_toolStripContainer = null;
+				}
+
+				if (_dockingManager != null)
+				{
+					_dockingManager.TabControlCreated -= OnDockingManagerTabControlCreated;
+					_dockingManager.InnerControl = null;
+					_dockingManager.Dispose();
+					_dockingManager = null;
+				}
+
+				if (_tabbedGroups != null)
+				{
+					_tabbedGroups.TabControlCreated -= OnTabbedGroupsTabControlCreated;
+					_tabbedGroups.Dispose();
+					_tabbedGroups = null;
+				}
+				
+				if (_components != null)
+					_components.Dispose();
             }
             base.Dispose(disposing);
         }
@@ -161,5 +195,6 @@ namespace ClearCanvas.Desktop.View.WinForms
 		private ToolStrip _toolbar;
 		private ToolStripContainer _toolStripContainer;
 		private Crownwood.DotNetMagic.Controls.TabbedGroups _tabbedGroups;
+		private Crownwood.DotNetMagic.Docking.DockingManager _dockingManager;
 	}
 }

@@ -43,54 +43,16 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 {
 #if DEBUG
 	[MenuAction("apply", "global-menus/MenuTools/MenuUtilities/MenuMemoryUsage", "Apply")]
-	[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
 	[ExtensionOf(typeof(ClearCanvas.Desktop.DesktopToolExtensionPoint))]
 #endif
 	public class MemoryUsageTool : Tool<ClearCanvas.Desktop.IDesktopToolContext>
 	{
-		private bool _enabled;
-		private event EventHandler _enabledChanged;
-
 		/// <summary>
 		/// Default constructor.  A no-args constructor is required by the
 		/// framework.  Do not remove.
 		/// </summary>
 		public MemoryUsageTool()
 		{
-			_enabled = true;
-		}
-
-		/// <summary>
-		/// Called by the framework to initialize this tool.
-		/// </summary>
-		public override void Initialize()
-		{
-			base.Initialize();
-		}
-
-		/// <summary>
-		/// Called to determine whether this tool is enabled/disabled in the UI.
-		/// </summary>
-		public bool Enabled
-		{
-			get { return _enabled; }
-			protected set
-			{
-				if (_enabled != value)
-				{
-					_enabled = value;
-					EventsHelper.Fire(_enabledChanged, this, EventArgs.Empty);
-				}
-			}
-		}
-
-		/// <summary>
-		/// Notifies that the Enabled state of this tool has changed.
-		/// </summary>
-		public event EventHandler EnabledChanged
-		{
-			add { _enabledChanged += value; }
-			remove { _enabledChanged -= value; }
 		}
 
 		/// <summary>

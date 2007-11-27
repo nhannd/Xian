@@ -63,6 +63,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <param name="disposing">True if this object is being disposed, false if it is being finalized</param>
 		protected override void Dispose(bool disposing)
 		{
+			_dicomFile = null;
+			_pixelData = null;
+			_loaded = false;
+
 			base.Dispose(disposing);
 		}
 

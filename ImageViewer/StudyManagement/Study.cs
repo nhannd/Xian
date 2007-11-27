@@ -172,11 +172,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		internal void SetSop(ImageSop imageSop)
 		{
-			if (_imageSop == null)
-			{
-				_imageSop = imageSop;
-				this.ParentPatient.SetSop(imageSop);
-			}
+			_imageSop = imageSop;
+			this.ParentPatient.SetSop(imageSop);
 		}
 	}
 }

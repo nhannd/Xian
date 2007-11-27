@@ -544,6 +544,7 @@ namespace ClearCanvas.ImageViewer
 			if (disposing)
 			{
 				DisposeTiles();
+				_tiles = null;
 			}
 		}
 
@@ -555,7 +556,7 @@ namespace ClearCanvas.ImageViewer
 			foreach (Tile tile in this.Tiles)
 				tile.Dispose();
 
-			_tiles = null;
+			this.Tiles.Clear();
 		}
 
 		#endregion 
@@ -588,7 +589,7 @@ namespace ClearCanvas.ImageViewer
 			_rows = numberOfRows;
 			_columns = numberOfColumns;
 
-			this.Tiles.Clear();
+			DisposeTiles();
 
 			double tileWidth = 1.0d / numberOfColumns;
 			double tileHeight = 1.0d / numberOfRows;

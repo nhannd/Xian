@@ -661,20 +661,35 @@ namespace ClearCanvas.ImageViewer
 		{
 			if (disposing)
 			{
-				if (this.PhysicalWorkspace != null)
-					this.PhysicalWorkspace.Dispose();
+				if (_physicalWorkspace != null)
+				{
+					_physicalWorkspace.Dispose();
+					_physicalWorkspace = null;
+				}
 
-				if (this.LogicalWorkspace != null)
-					this.LogicalWorkspace.Dispose();
+				if (_logicalWorkspace != null)
+				{
+					_logicalWorkspace.Dispose();
+					_logicalWorkspace = null;
+				}
 
-				if (this.ToolSet != null)
-					this.ToolSet.Dispose();
+				if (_toolSet != null)
+				{
+					_toolSet.Dispose();
+					_toolSet = null;
+				}
 
-				if (this.StudyTree != null)
-					this.StudyTree.Dispose();
+				if (_studyTree != null)
+				{
+					_studyTree.Dispose();
+					_studyTree = null;
+				}
 
 				if (_layoutManager != null)
+				{
 					_layoutManager.Dispose();
+					_layoutManager = null;
+				}
 			}
 		}
 

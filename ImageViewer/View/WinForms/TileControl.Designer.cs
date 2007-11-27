@@ -65,6 +65,8 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 					_tile = null;
 				}
+
+				_tileController = null;
             }
             base.Dispose(disposing);
         }

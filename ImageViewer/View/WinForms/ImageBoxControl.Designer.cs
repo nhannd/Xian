@@ -49,6 +49,8 @@ namespace ClearCanvas.ImageViewer.View.WinForms
         {
             if (disposing)
             {
+            	DisposeControls();
+
 				if (components != null)
 					components.Dispose();
 
