@@ -36,9 +36,9 @@ using ClearCanvas.ImageServer.Model.EnumBrokers;
 namespace ClearCanvas.ImageServer.Model.SqlServer2005.EnumBrokers
 {
     [ExtensionOf(typeof(BrokerExtensionPoint))]
-    public class TypeEnumBroker : EnumBroker<TypeEnum>, ITypeEnum 
+    public class WorkQueueStatusEnumBroker : EnumBroker<WorkQueueStatusEnum>, IWorkQueueStatusEnum
     {
-        public TypeEnumBroker()
+        public WorkQueueStatusEnumBroker()
             : base()
         {
         }

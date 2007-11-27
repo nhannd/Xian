@@ -50,6 +50,8 @@
     <Compile Include="Brokers\IUpdateFileSystem.cs" />
     <Compile Include="Brokers\IUpdateServerPartition.cs" />
     <Compile Include="Brokers\IUpdateServiceLock.cs" />
+    <Compile Include="EnumBrokers\IStudyStatusEnum.cs" />
+    <Compile Include="StudyStatusEnum.cs" />
     <Compile Include="Criteria\ServerRuleSelectCriteria.cs" />
     <Compile Include="EnumBrokers\IFilesystemQueueTypeEnum.cs" />
     <Compile Include="EnumBrokers\IFilesystemTierEnum.cs" />
@@ -102,8 +104,8 @@
     <Compile Include="SelectBrokers\ISelectStudy.cs" />
     <Compile Include="Brokers\IQueryStudyStorageLocation.cs" />
     <Compile Include="Brokers\IQueryWorkQueueUids.cs" />
-    <Compile Include="EnumBrokers\IStatusEnum.cs" />
-    <Compile Include="EnumBrokers\ITypeEnum.cs" />
+    <Compile Include="EnumBrokers\IWorkQueueStatusEnum.cs" />
+    <Compile Include="EnumBrokers\IWorkQueueTypeEnum.cs" />
     <Compile Include="Brokers\IUpdateWorkQueue.cs" />
     <Compile Include="Criteria\PatientSelectCriteria.cs" />
     <Compile Include="Device.cs" />
@@ -135,7 +137,7 @@
     <Compile Include="ServerTransferSyntax.cs" />
     <Compile Include="ServiceLock.cs" />
     <Compile Include="ServiceLockTypeEnum.cs" />
-    <Compile Include="StatusEnum.cs" />
+    <Compile Include="WorkQueueStatusEnum.cs" />
     <Compile Include="Study.cs" />
     <Compile Include="Parameters\StudyStorageInsertParameters.cs" />
     <Compile Include="Patient.cs" />
@@ -143,7 +145,7 @@
     <Compile Include="Parameters\StudyStorageLocationQueryParameters.cs" />
     <Compile Include="ServerPartition.cs" />
     <Compile Include="StudyStorageLocation.cs" />
-    <Compile Include="TypeEnum.cs" />
+    <Compile Include="WorkQueueTypeEnum.cs" />
     <Compile Include="WorkQueue.cs" />
     <Compile Include="Parameters\WorkQueueQueryParameters.cs" />
     <Compile Include="Parameters\WorkQueueStudyProcessInsertParameters.cs" />

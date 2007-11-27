@@ -50,9 +50,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
         #region IWorkQueueProcessorFactory Members
 
-        public TypeEnum GetWorkQueueType()
+        public WorkQueueTypeEnum GetWorkQueueType()
         {
-            return TypeEnum.GetEnum("StudyProcess");
+            return WorkQueueTypeEnum.GetEnum("StudyProcess");
         }
 
         public IWorkQueueItemProcessor GetItemProcessor()

@@ -52,7 +52,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         #region Members
         private readonly string _name;
         private readonly IPersistentStore _store = PersistentStoreRegistry.GetDefaultStore();
-        private readonly Dictionary<TypeEnum, IWorkQueueProcessorFactory> _extensions = new Dictionary<TypeEnum, IWorkQueueProcessorFactory>();
+        private readonly Dictionary<WorkQueueTypeEnum, IWorkQueueProcessorFactory> _extensions = new Dictionary<WorkQueueTypeEnum, IWorkQueueProcessorFactory>();
         private readonly SimpleBlockingThreadPool _threadPool;
         private ManualResetEvent _threadStop;
         private Thread _theThread = null;
@@ -80,7 +80,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                     IWorkQueueProcessorFactory factory = obj as IWorkQueueProcessorFactory;
                     if (factory != null)
                     {
-                        TypeEnum type = factory.GetWorkQueueType();
+                        WorkQueueTypeEnum type = factory.GetWorkQueueType();
                         _extensions.Add(type, factory);
                     }
                     else
@@ -143,7 +143,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                     Platform.Log(LogLevel.Error,
                                  "Failing {0} WorkQueue entry ({1}), reached max retry count of {2}",
                                  item.TypeEnum.Description, item.GetKey(), item.FailureCount + 1);
-                    parms.StatusEnum = StatusEnum.GetEnum("Failed");
+                    parms.StatusEnum = WorkQueueStatusEnum.GetEnum("Failed");
                     parms.ScheduledTime = Platform.Time;
                     parms.ExpirationTime = Platform.Time.AddDays(1);
                 }
@@ -152,7 +152,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                     Platform.Log(LogLevel.Error,
                                  "Resetting {0} WorkQueue entry ({1}) to Pending, current retry count {2}",
                                  item.TypeEnum.Description, item.GetKey(), item.FailureCount + 1);
-                    parms.StatusEnum = StatusEnum.GetEnum("Pending");
+                    parms.StatusEnum = WorkQueueStatusEnum.GetEnum("Pending");
                     parms.ScheduledTime = Platform.Time.AddMinutes(settings.WorkQueueFailureDelayMinutes);
                     parms.ExpirationTime =
                         Platform.Time.AddMinutes((settings.WorkQueueMaxFailureCount - item.FailureCount) *
@@ -176,8 +176,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         {
             WorkQueueSettings settings = WorkQueueSettings.Default;
 
-            StatusEnum pending = StatusEnum.GetEnum("Pending");
-            StatusEnum failed = StatusEnum.GetEnum("Failed");
+            WorkQueueStatusEnum pending = WorkQueueStatusEnum.GetEnum("Pending");
+            WorkQueueStatusEnum failed = WorkQueueStatusEnum.GetEnum("Failed");
 
             using (IUpdateContext ctx = _store.OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
@@ -204,7 +204,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                     {
                         if (queueItem.StatusEnum.Equals(pending))
                             Platform.Log(LogLevel.Info, "Cleanup: Reset Queue Item : {0} --> Status={1} Scheduled={2} ExpirationTime={3}",
-                                            queueItem.GetKey().Key, 
+                                            queueItem.GetKey().Key,
                                             queueItem.StatusEnum.Description, 
                                             queueItem.ScheduledTime, 
                                             queueItem.ExpirationTime);

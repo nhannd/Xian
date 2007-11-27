@@ -29,51 +29,60 @@
 
 #endregion
 
-using System;
+using System.Collections.Generic;
+using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Enterprise;
+using ClearCanvas.ImageServer.Model.EnumBrokers;
 
-namespace ClearCanvas.ImageServer.Model.Parameters
+namespace ClearCanvas.ImageServer.Model
 {
-    public class WorkQueueUpdateParameters : ProcedureParameters
+    public class WorkQueueTypeEnum : ServerEnum
     {
-        public WorkQueueUpdateParameters()
-            : base("UpdateWorkQueue")
-        { }
+        private static readonly Dictionary<short, WorkQueueTypeEnum> _dict = new Dictionary<short, WorkQueueTypeEnum>();
 
-        public ServerEntityKey WorkQueueKey
+        /// <summary>
+        /// One-time load from the database of type enumerated value.
+        /// </summary>
+        static WorkQueueTypeEnum()
         {
-            set { this.SubCriteria["WorkQueueKey"] = new ProcedureParameter<ServerEntityKey>("WorkQueueKey", value); }
+            using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+            {
+                IEnumBroker<WorkQueueTypeEnum> broker = read.GetBroker<IWorkQueueTypeEnum>();
+                IList<WorkQueueTypeEnum> list = broker.Execute();
+                foreach (WorkQueueTypeEnum type in list)
+                {
+                    _dict.Add(type.Enum, type);
+                }
+            }
         }
 
-        public ServerEntityKey StudyStorageKey
+        #region Constructors
+        public WorkQueueTypeEnum()
+            : base("WorkQueueTypeEnum")
         {
-            set { this.SubCriteria["StudyStorageKey"] = new ProcedureParameter<ServerEntityKey>("StudyStorageKey", value); }
+        }
+        #endregion
+
+        public override void SetEnum(short val)
+        {
+            WorkQueueTypeEnum typeEnum;
+            if (false == _dict.TryGetValue(val, out typeEnum))
+                throw new PersistenceException("Unknown WorkQueueTypeEnum value: " + val,null);
+
+            Enum = typeEnum.Enum;
+            Lookup = typeEnum.Lookup;
+            Description = typeEnum.Description;
+            LongDescription = typeEnum.LongDescription;
         }
 
-        public WorkQueueStatusEnum StatusEnum
+        public static WorkQueueTypeEnum GetEnum(string lookup)
         {
-            set { this.SubCriteria["StatusEnum"] = new ProcedureParameter<ServerEnum>("StatusEnum", value); }
+            foreach (WorkQueueTypeEnum type in _dict.Values)
+            {
+                if (type.Lookup.Equals(lookup))
+                    return type;
+            }
+            throw new PersistenceException("Unknown WorkQueueTypeEnum: " + lookup, null);
         }
-
-        public DateTime ExpirationTime
-        {
-            set { this.SubCriteria["ExpirationTime"] = new ProcedureParameter<DateTime>("ExpirationTime", value); }
-        }
-
-        public DateTime ScheduledTime
-        {
-            set { this.SubCriteria["ScheduledTime"] = new ProcedureParameter<DateTime>("ScheduledTime", value); }
-        }
-
-        public int FailureCount
-        {
-            set { this.SubCriteria["FailureCount"] = new ProcedureParameter<int>("FailureCount", value); }
-        }
-
-        public string ProcessorID
-        {
-            set { this.SubCriteria["ProcessorID"] = new ProcedureParameter<string>("ProcessorID", value); }
-        }
-
     }
 }

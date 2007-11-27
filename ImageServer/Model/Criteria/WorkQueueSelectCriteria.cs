@@ -85,27 +85,27 @@ namespace ClearCanvas.ImageServer.Model.Criteria
                 return (ISearchCondition<ServerEntityKey>)SubCriteria["DeviceKey"];
             }
         }
-        public ISearchCondition<TypeEnum> TypeEnum
+        public ISearchCondition<WorkQueueTypeEnum> TypeEnum
         {
             get
             {
                 if (!SubCriteria.ContainsKey("TypeEnum"))
                 {
-                    SubCriteria["TypeEnum"] = new SearchCondition<TypeEnum>("TypeEnum");
+                    SubCriteria["TypeEnum"] = new SearchCondition<ServerEnum>("TypeEnum");
                 }
-                return (ISearchCondition<TypeEnum>)SubCriteria["TypeEnum"];
+                return (ISearchCondition<WorkQueueTypeEnum>)SubCriteria["TypeEnum"];
             }
         }
 
-        public ISearchCondition<StatusEnum> StatusEnum
+        public ISearchCondition<WorkQueueStatusEnum> StatusEnum
         {
             get
             {
                 if (!SubCriteria.ContainsKey("StatusEnum"))
                 {
-                    SubCriteria["StatusEnum"] = new SearchCondition<StatusEnum>("StatusEnum");
+                    SubCriteria["StatusEnum"] = new SearchCondition<ServerEnum>("StatusEnum");
                 }
-                return (ISearchCondition<StatusEnum>)SubCriteria["StatusEnum"];
+                return (ISearchCondition<WorkQueueStatusEnum>)SubCriteria["StatusEnum"];
             }
         }
         public ISearchCondition<DateTime> ExpirationTime

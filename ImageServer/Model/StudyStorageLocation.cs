@@ -49,7 +49,7 @@ namespace ClearCanvas.ImageServer.Model
         private ServerEntityKey _filesystemKey;
         private string _studyInstanceUid;
         private DateTime _lastAccessed;
-        private short _statusEnum;
+        private StudyStatusEnum _statusEnum;
         private String _filesystemPath;
         private String _serverPartitionFolder;
         private String _storageFilesystemFolder;
@@ -80,7 +80,7 @@ namespace ClearCanvas.ImageServer.Model
             get { return _lastAccessed; }
             set { _lastAccessed = value; }
         }
-        public short StatusEnum
+        public StudyStatusEnum StatusEnum
         {
             get { return _statusEnum; }
             set { _statusEnum = value; }

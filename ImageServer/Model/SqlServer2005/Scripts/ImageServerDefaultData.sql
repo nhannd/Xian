@@ -1,42 +1,42 @@
--- TypeEnum inserts
-INSERT INTO [ImageServer].[dbo].[TypeEnum]
-           ([GUID],[TypeEnum],[Lookup],[Description],[LongDescription])
+-- WorkQueueTypeEnum inserts
+INSERT INTO [ImageServer].[dbo].[WorkQueueTypeEnum]
+           ([GUID],[WorkQueueTypeEnum],[Lookup],[Description],[LongDescription])
      VALUES
            (newid(),100,'StudyProcess','Process Study','Processing of a new incoming study.');
 
-INSERT INTO [ImageServer].[dbo].[TypeEnum]
-           ([GUID],[TypeEnum],[Lookup],[Description],[LongDescription])
+INSERT INTO [ImageServer].[dbo].[WorkQueueTypeEnum]
+           ([GUID],[WorkQueueTypeEnum],[Lookup],[Description],[LongDescription])
      VALUES
            (newid(),101,'AutoRoute','Auto Route','DICOM Auto-route request.');
 
-INSERT INTO [ImageServer].[dbo].[TypeEnum]
-           ([GUID],[TypeEnum],[Lookup],[Description],[LongDescription])
+INSERT INTO [ImageServer].[dbo].[WorkQueueTypeEnum]
+           ([GUID],[WorkQueueTypeEnum],[Lookup],[Description],[LongDescription])
      VALUES
            (newid(),102,'DeleteStudy','Delete Study','Delete a Study.');
 
--- StatusEnum inserts
-INSERT INTO [ImageServer].[dbo].[StatusEnum]
-           ([GUID],[StatusEnum],[Lookup],[Description],[LongDescription])
+-- WorkQueueStatusEnum inserts
+INSERT INTO [ImageServer].[dbo].[WorkQueueStatusEnum]
+           ([GUID],[WorkQueueStatusEnum],[Lookup],[Description],[LongDescription])
      VALUES
            (newid(),100,'Online','Online','Online')
 
-INSERT INTO [ImageServer].[dbo].[StatusEnum]
-           ([GUID],[StatusEnum],[Lookup],[Description],[LongDescription])
+INSERT INTO [ImageServer].[dbo].[WorkQueueStatusEnum]
+           ([GUID],[WorkQueueStatusEnum],[Lookup],[Description],[LongDescription])
      VALUES
            (newid(),200,'Pending','Pending','Pending')
 
-INSERT INTO [ImageServer].[dbo].[StatusEnum]
-           ([GUID],[StatusEnum],[Lookup],[Description],[LongDescription])
+INSERT INTO [ImageServer].[dbo].[WorkQueueStatusEnum]
+           ([GUID],[WorkQueueStatusEnum],[Lookup],[Description],[LongDescription])
      VALUES
            (newid(),201,'In Progress','In Progress','In Progress')
 
-INSERT INTO [ImageServer].[dbo].[StatusEnum]
-           ([GUID],[StatusEnum],[Lookup],[Description],[LongDescription])
+INSERT INTO [ImageServer].[dbo].[WorkQueueStatusEnum]
+           ([GUID],[WorkQueueStatusEnum],[Lookup],[Description],[LongDescription])
      VALUES
            (newid(),202,'Completed','Completed','The Queue entry is completed.')
 
-INSERT INTO [ImageServer].[dbo].[StatusEnum]
-           ([GUID],[StatusEnum],[Lookup],[Description],[LongDescription])
+INSERT INTO [ImageServer].[dbo].[WorkQueueStatusEnum]
+           ([GUID],[WorkQueueStatusEnum],[Lookup],[Description],[LongDescription])
      VALUES
            (newid(),203,'Failed','Failed','The Queue entry has failed.')
 
@@ -377,3 +377,9 @@ VALUES (newid(), '1.2.840.10008.1.2.1', 'Explicit VR Little Endian', 1);
 INSERT INTO [ImageServer].[dbo].[ServerTransferSyntax] ([GUID],[Uid],[Description],[Enabled])
 VALUES (newid(), '1.2.840.10008.1.2', 'Implicit VR Little Endian: Default Transfer Syntax for DICOM', 1);
 
+-- [StudyStatusEnum] inserts
+INSERT INTO [ImageServer].[dbo].[StudyStatusEnum]([GUID],[StudyStatusEnum],[Lookup],[Description],[LongDescription])
+VALUES(newid(),100,'Online','Online','Study is online')
+
+INSERT INTO [ImageServer].[dbo].[StudyStatusEnum]([GUID],[StudyStatusEnum],[Lookup],[Description],[LongDescription])
+VALUES(newid(),200,'Pending','Pending','Pending')

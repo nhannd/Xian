@@ -61,6 +61,7 @@
     <Compile Include="Brokers\UpdateFilesystem.cs" />
     <Compile Include="Brokers\UpdateServerPartition.cs" />
     <Compile Include="Brokers\UpdateServiceLock.cs" />
+    <Compile Include="EnumBrokers\StudyStatusEnumBroker.cs" />
     <Compile Include="EnumBrokers\FilesystemQueueTypeEnumBroker.cs" />
     <Compile Include="EnumBrokers\FilesystemTierEnumBroker.cs" />
     <Compile Include="EnumBrokers\ServerRuleApplyTimeEnumBroker.cs" />
@@ -79,8 +80,8 @@
     <Compile Include="Brokers\QueryStudyStorageLocation.cs" />
     <Compile Include="Brokers\QueryWorkQueue.cs" />
     <Compile Include="Brokers\QueryWorkQueueUids.cs" />
-    <Compile Include="EnumBrokers\StatusEnumBroker.cs" />
-    <Compile Include="EnumBrokers\TypeEnumBroker.cs" />
+    <Compile Include="EnumBrokers\WorkQueueStatusEnumBroker.cs" />
+    <Compile Include="EnumBrokers\WorkQueueTypeEnumBroker.cs" />
     <Compile Include="Brokers\UpdateWorkQueue.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SelectBrokers\SelectWorkQueue.cs" />

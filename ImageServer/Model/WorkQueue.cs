@@ -53,8 +53,8 @@ namespace ClearCanvas.ImageServer.Model
         private ServerEntityKey _serverPartitionKey;
         private ServerEntityKey _studyStorageKey;
         private ServerEntityKey _deviceKey; 
-        private TypeEnum _typeEnum;
-        private StatusEnum _statusEnum;
+        private WorkQueueTypeEnum _typeEnum;
+        private WorkQueueStatusEnum _statusEnum;
         private DateTime _expirationTime;
         private DateTime _scheduledTime;
         private DateTime _insertTime;
@@ -79,12 +79,12 @@ namespace ClearCanvas.ImageServer.Model
             get { return _deviceKey; }
             set { _deviceKey = value; }
         }
-        public TypeEnum TypeEnum
+        public WorkQueueTypeEnum TypeEnum
         {
             get { return _typeEnum; }
             set { _typeEnum = value; }
         }
-        public StatusEnum StatusEnum
+        public WorkQueueStatusEnum StatusEnum
         {
             get { return _statusEnum; }
             set { _statusEnum = value; }

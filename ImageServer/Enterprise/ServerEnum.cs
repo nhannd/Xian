@@ -44,7 +44,7 @@ namespace ClearCanvas.ImageServer.Enterprise
         #endregion
 
         #region Private Members
-        private short _typeEnum;
+        private short   _enumValue;
         private string _lookup;
         private string _description;
         private string _longDescription;
@@ -53,8 +53,8 @@ namespace ClearCanvas.ImageServer.Enterprise
         #region Public Properties
         public short Enum
         {
-            get { return _typeEnum; }
-            set { _typeEnum = value; }
+            get { return _enumValue; }
+            set { _enumValue = value; }
         }
         public string Lookup
         {
@@ -82,7 +82,16 @@ namespace ClearCanvas.ImageServer.Enterprise
             ServerEnum e = obj as ServerEnum;
             if (e == null)
                 return false;
-            return e.Enum == Enum;
+
+            // Must be in the inheritance hierarchy of each other to be equal
+            // eg, Status enum can't be equal to Type enum.
+            if (this.GetType().IsAssignableFrom(obj.GetType()) ||
+                 obj.GetType().IsAssignableFrom(this.GetType()))
+            {
+                return e.Enum == Enum;
+            }
+            else
+                return false;
         }
 
         public abstract void SetEnum(short val);
@@ -96,7 +105,7 @@ namespace ClearCanvas.ImageServer.Enterprise
                 return true;
             if ((object)t1 == null || (object)t2 == null)
                 return false;
-            return t1.Enum == t2.Enum;
+            return t1.Equals(t1);
         }
 
         /// <summary>
@@ -108,7 +117,7 @@ namespace ClearCanvas.ImageServer.Enterprise
                 return false;
             if ((object)t1 == null || (object)t2 == null)
                 return true;
-            return t1.Enum != t2.Enum;
+            return !t1.Equals(t2);
         }
 
     }

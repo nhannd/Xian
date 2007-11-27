@@ -46,7 +46,7 @@ namespace ClearCanvas.ImageServer.Model.Parameters
             set { this.SubCriteria["ServerPartitionKey"] = new ProcedureParameter<ServerEntityKey>("ServerPartitionKey", value); }
         }
 
-        public StatusEnum StatusEnum
+        public StudyStatusEnum StatusEnum
         {
             set { this.SubCriteria["StatusEnum"] = new ProcedureParameter<ServerEnum>("StatusEnum", value); }
         }

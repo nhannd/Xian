@@ -47,9 +47,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
 
         #region IWorkQueueProcessorFactory Members
 
-        public TypeEnum GetWorkQueueType()
+        public WorkQueueTypeEnum GetWorkQueueType()
         {
-            return TypeEnum.GetEnum("AutoRoute");
+            return WorkQueueTypeEnum.GetEnum("AutoRoute");
         }
 
         public IWorkQueueItemProcessor GetItemProcessor()

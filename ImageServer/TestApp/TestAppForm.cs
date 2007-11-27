@@ -60,7 +60,7 @@ namespace ClearCanvas.ImageServer.TestApp
 
                 monitor.Load();
 
-                TypeEnum t = new TypeEnum();
+                WorkQueueTypeEnum t = new WorkQueueTypeEnum();
                 t.SetEnum(200);
 
                 using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())

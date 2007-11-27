@@ -29,51 +29,60 @@
 
 #endregion
 
-using System;
+using System.Collections.Generic;
+using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Enterprise;
+using ClearCanvas.ImageServer.Model.EnumBrokers;
 
-namespace ClearCanvas.ImageServer.Model.Parameters
+namespace ClearCanvas.ImageServer.Model
 {
-    public class WorkQueueUpdateParameters : ProcedureParameters
+    public class StudyStatusEnum : ServerEnum
     {
-        public WorkQueueUpdateParameters()
-            : base("UpdateWorkQueue")
-        { }
+        private static readonly Dictionary<short, StudyStatusEnum> _dict = new Dictionary<short, StudyStatusEnum>();
 
-        public ServerEntityKey WorkQueueKey
+        /// <summary>
+        /// One-time load of status values from the database.
+        /// </summary>
+        static StudyStatusEnum()
         {
-            set { this.SubCriteria["WorkQueueKey"] = new ProcedureParameter<ServerEntityKey>("WorkQueueKey", value); }
+            using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+            {
+                IEnumBroker<StudyStatusEnum> broker = read.GetBroker<IStudyStatusEnum>();
+                IList<StudyStatusEnum> list = broker.Execute();
+                foreach (StudyStatusEnum type in list)
+                {
+                    _dict.Add(type.Enum, type);
+                }
+            }
         }
 
-        public ServerEntityKey StudyStorageKey
+        #region Constructors
+        public StudyStatusEnum()
+            : base("StudyStatusEnum")
         {
-            set { this.SubCriteria["StudyStorageKey"] = new ProcedureParameter<ServerEntityKey>("StudyStorageKey", value); }
+        }
+        #endregion
+
+        public override void SetEnum(short val)
+        {
+            StudyStatusEnum enumValue;
+            if (false == _dict.TryGetValue(val, out enumValue))
+                throw new PersistenceException("Unknown StudyStatusEnum value: " + val, null);
+
+            Enum = enumValue.Enum;
+            Lookup = enumValue.Lookup;
+            Description = enumValue.Description;
+            LongDescription = enumValue.LongDescription;
         }
 
-        public WorkQueueStatusEnum StatusEnum
+        public static StudyStatusEnum GetEnum(string lookup)
         {
-            set { this.SubCriteria["StatusEnum"] = new ProcedureParameter<ServerEnum>("StatusEnum", value); }
+            foreach (StudyStatusEnum status in _dict.Values)
+            {
+                if (status.Lookup.Equals(lookup))
+                    return status;
+            }
+            throw new PersistenceException("Unknown StudyStatusEnum: " + lookup, null);
         }
-
-        public DateTime ExpirationTime
-        {
-            set { this.SubCriteria["ExpirationTime"] = new ProcedureParameter<DateTime>("ExpirationTime", value); }
-        }
-
-        public DateTime ScheduledTime
-        {
-            set { this.SubCriteria["ScheduledTime"] = new ProcedureParameter<DateTime>("ScheduledTime", value); }
-        }
-
-        public int FailureCount
-        {
-            set { this.SubCriteria["FailureCount"] = new ProcedureParameter<int>("FailureCount", value); }
-        }
-
-        public string ProcessorID
-        {
-            set { this.SubCriteria["ProcessorID"] = new ProcedureParameter<string>("ProcessorID", value); }
-        }
-
     }
 }

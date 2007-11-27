@@ -58,7 +58,7 @@ namespace ClearCanvas.ImageServer.Model
         private int _numberOfSeriesRelatedInstances;
         private string _performedProcedureStepStartDate;
         private string _performedProcedureStepStartTime;
-        private short _statusEnum;
+        private StudyStatusEnum _statusEnum;
         #endregion
 
         #region Public Properties
@@ -121,7 +121,7 @@ namespace ClearCanvas.ImageServer.Model
             get { return _performedProcedureStepStartTime; }
             set { _performedProcedureStepStartTime = value; }
         }
-        public short StatusEnum
+        public StudyStatusEnum StatusEnum
         {
             get { return _statusEnum; }
             set { _statusEnum = value; }

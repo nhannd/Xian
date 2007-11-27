@@ -29,60 +29,18 @@
 
 #endregion
 
-using System.Collections.Generic;
-using ClearCanvas.Enterprise.Core;
-using ClearCanvas.ImageServer.Enterprise;
+using ClearCanvas.Common;
+using ClearCanvas.ImageServer.Enterprise.SqlServer2005;
 using ClearCanvas.ImageServer.Model.EnumBrokers;
 
-namespace ClearCanvas.ImageServer.Model
+namespace ClearCanvas.ImageServer.Model.SqlServer2005.EnumBrokers
 {
-    public class TypeEnum : ServerEnum
+    [ExtensionOf(typeof(BrokerExtensionPoint))]
+    public class WorkQueueTypeEnumBroker : EnumBroker<WorkQueueTypeEnum>, IWorkQueueTypeEnum 
     {
-        private static readonly Dictionary<short, TypeEnum> _dict = new Dictionary<short, TypeEnum>();
-
-        /// <summary>
-        /// One-time load from the database of type enumerated value.
-        /// </summary>
-        static TypeEnum()
+        public WorkQueueTypeEnumBroker()
+            : base()
         {
-            using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
-            {
-                IEnumBroker<TypeEnum> broker = read.GetBroker<ITypeEnum>();
-                IList<TypeEnum> list = broker.Execute();
-                foreach (TypeEnum type in list)
-                {
-                    _dict.Add(type.Enum, type);
-                }
-            }
-        }
-
-        #region Constructors
-        public TypeEnum()
-            : base("TypeEnum")
-        {
-        }
-        #endregion
-
-        public override void SetEnum(short val)
-        {
-            TypeEnum typeEnum;
-            if (false == _dict.TryGetValue(val, out typeEnum))
-                throw new PersistenceException("Unknown TypeEnum value: " + val,null);
-
-            Enum = typeEnum.Enum;
-            Lookup = typeEnum.Lookup;
-            Description = typeEnum.Description;
-            LongDescription = typeEnum.LongDescription;
-        }
-
-        public static TypeEnum GetEnum(string lookup)
-        {
-            foreach (TypeEnum type in _dict.Values)
-            {
-                if (type.Lookup.Equals(lookup))
-                    return type;
-            }
-            throw new PersistenceException("Unknown TypeEnum: " + lookup, null);
         }
     }
 }

@@ -34,9 +34,9 @@ using ClearCanvas.ImageServer.Enterprise;
 namespace ClearCanvas.ImageServer.Model.EnumBrokers
 {
     /// <summary>
-    /// Broker for loading <see cref="StatusEnum"/> values.
+    /// Broker for loading <see cref="WorkQueueStatusEnum"/> values.
     /// </summary>
-    public interface IStatusEnum : IEnumBroker<StatusEnum>
+    public interface IWorkQueueStatusEnum : IEnumBroker<WorkQueueStatusEnum>
     {
     }
 }

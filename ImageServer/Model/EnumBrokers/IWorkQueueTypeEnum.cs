@@ -29,51 +29,14 @@
 
 #endregion
 
-using System;
 using ClearCanvas.ImageServer.Enterprise;
 
-namespace ClearCanvas.ImageServer.Model.Parameters
+namespace ClearCanvas.ImageServer.Model.EnumBrokers
 {
-    public class WorkQueueUpdateParameters : ProcedureParameters
+    /// <summary>
+    /// Broker for accessing <see cref="WorkQueueTypeEnum"/> values.
+    /// </summary>
+    public interface IWorkQueueTypeEnum : IEnumBroker<WorkQueueTypeEnum>
     {
-        public WorkQueueUpdateParameters()
-            : base("UpdateWorkQueue")
-        { }
-
-        public ServerEntityKey WorkQueueKey
-        {
-            set { this.SubCriteria["WorkQueueKey"] = new ProcedureParameter<ServerEntityKey>("WorkQueueKey", value); }
-        }
-
-        public ServerEntityKey StudyStorageKey
-        {
-            set { this.SubCriteria["StudyStorageKey"] = new ProcedureParameter<ServerEntityKey>("StudyStorageKey", value); }
-        }
-
-        public WorkQueueStatusEnum StatusEnum
-        {
-            set { this.SubCriteria["StatusEnum"] = new ProcedureParameter<ServerEnum>("StatusEnum", value); }
-        }
-
-        public DateTime ExpirationTime
-        {
-            set { this.SubCriteria["ExpirationTime"] = new ProcedureParameter<DateTime>("ExpirationTime", value); }
-        }
-
-        public DateTime ScheduledTime
-        {
-            set { this.SubCriteria["ScheduledTime"] = new ProcedureParameter<DateTime>("ScheduledTime", value); }
-        }
-
-        public int FailureCount
-        {
-            set { this.SubCriteria["FailureCount"] = new ProcedureParameter<int>("FailureCount", value); }
-        }
-
-        public string ProcessorID
-        {
-            set { this.SubCriteria["ProcessorID"] = new ProcedureParameter<string>("ProcessorID", value); }
-        }
-
     }
 }

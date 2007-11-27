@@ -43,7 +43,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
     /// </summary>
     public interface IWorkQueueProcessorFactory
     {
-        TypeEnum GetWorkQueueType();
+        WorkQueueTypeEnum GetWorkQueueType();
 
         IWorkQueueItemProcessor GetItemProcessor();
     }

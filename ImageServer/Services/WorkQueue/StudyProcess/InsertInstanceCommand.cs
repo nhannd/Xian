@@ -75,7 +75,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             InstanceInsertParameters parms = new InstanceInsertParameters();
             _file.LoadDicomFields(parms);
             parms.ServerPartitionKey = _storageLocation.ServerPartitionKey;
-            parms.StatusEnum = StatusEnum.GetEnum("Online");
+            parms.StatusEnum = StudyStatusEnum.GetEnum("Online");
 
             // Get the Insert Instance broker and do the insert
             IInsertInstance insert = updateContext.GetBroker<IInsertInstance>();

@@ -208,8 +208,8 @@ BEGIN
 	declare @DeleteStudyTypeEnum as smallint
 	declare @DeleteStudyFilesystemQueueTypeEnum smallint
 
-	select @PendingStatusEnum = StatusEnum from StatusEnum where Lookup = ''Pending''
-	select @DeleteStudyTypeEnum = TypeEnum from TypeEnum where Lookup = ''DeleteStudy''
+	select @PendingStatusEnum = WorkQueueStatusEnum from WorkQueueStatusEnum where Lookup = ''Pending''
+	select @DeleteStudyTypeEnum = WorkQueueTypeEnum from WorkQueueTypeEnum where Lookup = ''DeleteStudy''
 	select @DeleteStudyFilesystemQueueTypeEnum = FilesystemQueueTypeEnum from FilesystemQueueTypeEnum where Lookup = ''DeleteStudy''
 
 	BEGIN TRANSACTION
@@ -1128,9 +1128,9 @@ BEGIN
 	declare @PendingStatusEnum as int
 	declare @FailedStatusEnum as int
 
-	select @CompletedStatusEnum = StatusEnum from StatusEnum where Lookup = ''Completed''
-	select @PendingStatusEnum = StatusEnum from StatusEnum where Lookup = ''Pending''
-	select @FailedStatusEnum = StatusEnum from StatusEnum where Lookup = ''Failed''
+	select @CompletedStatusEnum = WorkQueueStatusEnum from WorkQueueStatusEnum where Lookup = ''Completed''
+	select @PendingStatusEnum = WorkQueueStatusEnum from WorkQueueStatusEnum where Lookup = ''Pending''
+	select @FailedStatusEnum = WorkQueueStatusEnum from WorkQueueStatusEnum where Lookup = ''Failed''
 
 	BEGIN TRANSACTION
 
@@ -1215,8 +1215,8 @@ BEGIN
 	declare @PendingStatusEnum as int
 	declare @InProgressStatusEnum as int
 
-	select @PendingStatusEnum = StatusEnum from StatusEnum where Lookup = ''Pending''
-	select @InProgressStatusEnum = StatusEnum from StatusEnum where Lookup = ''In Progress''
+	select @PendingStatusEnum = WorkQueueStatusEnum from WorkQueueStatusEnum where Lookup = ''Pending''
+	select @InProgressStatusEnum = WorkQueueStatusEnum from WorkQueueStatusEnum where Lookup = ''In Progress''
 	
     IF @TypeEnum = 0
 	BEGIN
@@ -1305,8 +1305,8 @@ BEGIN
 	declare @PendingStatusEnum as int
 	declare @AutoRouteTypeEnum as int
 
-	select @PendingStatusEnum = StatusEnum from StatusEnum where Lookup = ''Pending''
-	select @AutoRouteTypeEnum = TypeEnum from TypeEnum where Lookup = ''AutoRoute''
+	select @PendingStatusEnum = WorkQueueStatusEnum from WorkQueueStatusEnum where Lookup = ''Pending''
+	select @AutoRouteTypeEnum = WorkQueueTypeEnum from WorkQueueTypeEnum where Lookup = ''AutoRoute''
 
 	BEGIN TRANSACTION
 
@@ -1367,8 +1367,8 @@ BEGIN
 	declare @PendingStatusEnum as int
 	declare @StudyProcessTypeEnum as int
 
-	select @PendingStatusEnum = StatusEnum from StatusEnum where Lookup = ''Pending''
-	select @StudyProcessTypeEnum = TypeEnum from TypeEnum where Lookup = ''StudyProcess''
+	select @PendingStatusEnum = WorkQueueStatusEnum from WorkQueueStatusEnum where Lookup = ''Pending''
+	select @StudyProcessTypeEnum = WorkQueueTypeEnum from WorkQueueTypeEnum where Lookup = ''StudyProcess''
 
 	BEGIN TRANSACTION
 
@@ -1441,9 +1441,9 @@ BEGIN
 		declare @WorkQueueGUID uniqueidentifier
 		
 
-		select @PendingStatusEnum = StatusEnum from StatusEnum where Lookup = ''Pending''
-		select @InProgressStatusEnum = StatusEnum from StatusEnum where Lookup = ''In Progress''
-		select @FailedStatusEnum = StatusEnum from StatusEnum where Lookup = ''Failed''
+		select @PendingStatusEnum = WorkQueueStatusEnum from WorkQueueStatusEnum where Lookup = ''Pending''
+		select @InProgressStatusEnum = WorkQueueStatusEnum from WorkQueueStatusEnum where Lookup = ''In Progress''
+		select @FailedStatusEnum = WorkQueueStatusEnum from WorkQueueStatusEnum where Lookup = ''Failed''
 
 
 		/* All entries that are in progress and failure count = MaxFailureCount should be failed */
@@ -1987,7 +1987,7 @@ BEGIN
 	declare @PendingStatusEnum as int
 
 	set @StudyStorageGUID = NEWID()
-	select @PendingStatusEnum = StatusEnum from StatusEnum where Lookup = ''Pending''
+	select @PendingStatusEnum = StudyStatusEnum from StudyStatusEnum where Lookup = ''Pending''
 
 	INSERT into StudyStorage(GUID, ServerPartitionGUID, StudyInstanceUid, Lock, StatusEnum) 
 		values (@StudyStorageGUID, @ServerPartitionGUID, @StudyInstanceUid, 0, @PendingStatusEnum)

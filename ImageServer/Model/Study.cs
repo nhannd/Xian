@@ -62,7 +62,7 @@ namespace ClearCanvas.ImageServer.Model
         private String _referringPhysiciansName;
         private int _numberOfStudyRelatedSeries;
         private int _numberOfStudyRelatedInstances;
-        private StatusEnum _statusEnum;
+        private StudyStatusEnum _statusEnum;
         #endregion
 
         #region Public Properties
@@ -168,7 +168,7 @@ namespace ClearCanvas.ImageServer.Model
             set { _numberOfStudyRelatedInstances = value; }
         }
 
-        public StatusEnum StatusEnum
+        public StudyStatusEnum StatusEnum
         {
             get { return _statusEnum; }
             set { _statusEnum = value; }

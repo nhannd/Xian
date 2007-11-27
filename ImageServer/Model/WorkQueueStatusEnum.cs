@@ -36,20 +36,20 @@ using ClearCanvas.ImageServer.Model.EnumBrokers;
 
 namespace ClearCanvas.ImageServer.Model
 {
-    public class StatusEnum : ServerEnum
+    public class WorkQueueStatusEnum : ServerEnum
     {
-        private static readonly Dictionary<short, StatusEnum> _dict = new Dictionary<short, StatusEnum>();
+        private static readonly Dictionary<short, WorkQueueStatusEnum> _dict = new Dictionary<short, WorkQueueStatusEnum>();
 
         /// <summary>
         /// One-time load of status values from the database.
         /// </summary>
-        static StatusEnum()
+        static WorkQueueStatusEnum()
         {
             using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
             {
-                IEnumBroker<StatusEnum> broker = read.GetBroker<IStatusEnum>();
-                IList<StatusEnum> list = broker.Execute();
-                foreach (StatusEnum type in list)
+                IEnumBroker<WorkQueueStatusEnum> broker = read.GetBroker<IWorkQueueStatusEnum>();
+                IList<WorkQueueStatusEnum> list = broker.Execute();
+                foreach (WorkQueueStatusEnum type in list)
                 {
                     _dict.Add(type.Enum, type);
                 }
@@ -57,17 +57,17 @@ namespace ClearCanvas.ImageServer.Model
         }
 
         #region Constructors
-        public StatusEnum()
-            : base("StatusEnum")
+        public WorkQueueStatusEnum()
+            : base("WorkQueueStatusEnum")
         {
         }
         #endregion
 
         public override void SetEnum(short val)
         {
-            StatusEnum enumValue;
+            WorkQueueStatusEnum enumValue;
             if (false == _dict.TryGetValue(val, out enumValue))
-                throw new PersistenceException("Unknown StatusEnum value: " + val, null);
+                throw new PersistenceException("Unknown WorkQueueTypeEnum value: " + val, null);
 
             Enum = enumValue.Enum;
             Lookup = enumValue.Lookup;
@@ -75,14 +75,14 @@ namespace ClearCanvas.ImageServer.Model
             LongDescription = enumValue.LongDescription;
         }
 
-        public static StatusEnum GetEnum(string lookup)
+        public static WorkQueueStatusEnum GetEnum(string lookup)
         {
-            foreach (StatusEnum status in _dict.Values)
+            foreach (WorkQueueStatusEnum status in _dict.Values)
             {
                 if (status.Lookup.Equals(lookup))
                     return status;
             }
-            throw new PersistenceException("Unknown StatusEnum: " + lookup, null);
+            throw new PersistenceException("Unknown WorkQueueTypeEnum: " + lookup, null);
         }
     }
 }
