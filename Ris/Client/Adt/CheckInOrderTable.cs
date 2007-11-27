@@ -34,14 +34,13 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
     class CheckInOrderTableEntry
     {
-        private bool _checked = false;
-        private RequestedProcedureSummary _requestedProcedure;
+        private bool _checked = true;
+        private readonly RequestedProcedureSummary _requestedProcedure;
         private event EventHandler _checkedChanged;
 
         public CheckInOrderTableEntry(RequestedProcedureSummary item)

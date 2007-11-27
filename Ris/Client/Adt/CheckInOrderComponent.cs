@@ -58,6 +58,8 @@ namespace ClearCanvas.Ris.Client.Adt
         private readonly RegistrationWorklistItem _worklistItem;
         private CheckInOrderTable _checkInOrderTable;
         private List<EntityRef> _selectedRequestedProcedures;
+        private bool _acceptEnabled;
+        private event EventHandler _acceptEnabledChanged;
 
         /// <summary>
         /// Constructor
@@ -86,14 +88,7 @@ namespace ClearCanvas.Ris.Client.Adt
                                 }));
                 });
 
-            CheckInOrderTableEntry selectedEntry = CollectionUtils.SelectFirst(_checkInOrderTable.Items,
-                delegate(CheckInOrderTableEntry entry)
-                {
-                    return entry.RequestedProcedure.OrderRef == _worklistItem.OrderRef;
-                });
-
-            if (selectedEntry != null)
-                selectedEntry.Checked = true;
+            UpdateAcceptStatus();
 
             base.Start();
         }
@@ -114,63 +109,51 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public void Accept()
         {
-            if (this.HasValidationErrors)
-            {
-                this.ShowValidation(true);
-            }
-            else
-            {
-                try
-                {
-                    SaveChanges();
-                    this.Exit(ApplicationComponentExitCode.Accepted);
-                }
-                catch (Exception e)
-                {
-                    ExceptionHandler.Report(e, this.Host.DesktopWindow);
-                }
-            }
-        }
-
-        private void SaveChanges()
-        {
             // Get the list of Order EntityRef from the table
             foreach (CheckInOrderTableEntry entry in _checkInOrderTable.Items)
             {
                 if (entry.Checked)
                     _selectedRequestedProcedures.Add(entry.RequestedProcedure.RequestedProcedureRef);
             }      
+
+            this.Exit(ApplicationComponentExitCode.Accepted);
         }
 
         public void Cancel()
         {
-            this.ExitCode = ApplicationComponentExitCode.None;
-            Host.Exit();
+            this.Exit(ApplicationComponentExitCode.None);
         }
 
         public bool AcceptEnabled
         {
-            get { return this.Modified; }
+            get { return _acceptEnabled; }
         }
 
         public event EventHandler AcceptEnabledChanged
         {
-            add { this.ModifiedChanged += value; }
-            remove { this.ModifiedChanged -= value; }
+            add { _acceptEnabledChanged += value; }
+            remove { _acceptEnabledChanged -= value; }
         }
 
         private void OrderCheckedStateChangedEventHandler(object sender, EventArgs e)
         {
-            foreach (CheckInOrderTableEntry entry in _checkInOrderTable.Items)
-            {
-                if (entry.Checked)
-                {
-                    this.Modified = true;
-                    return;
-                }
-            }
+            UpdateAcceptStatus();
+        }
 
-            this.Modified = false;
+        private void UpdateAcceptStatus()
+        {
+            bool entryChecked = CollectionUtils.Contains(
+                _checkInOrderTable.Items,
+                delegate(CheckInOrderTableEntry entry)
+                {
+                    return entry.Checked;
+                });
+
+            if (_acceptEnabled != entryChecked)
+            {
+                _acceptEnabled = entryChecked;
+                EventsHelper.Fire(_acceptEnabledChanged, this, EventArgs.Empty);
+            }
         }
 
     }
