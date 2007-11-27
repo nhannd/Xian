@@ -151,7 +151,7 @@ namespace ClearCanvas.ImageViewer.InputManagement
 
 				if (_captureMouseWheelHandler != null)
 				{
-					Trace.WriteLine("Stopping current mouse wheel handler"); 
+					//Trace.WriteLine("Stopping current mouse wheel handler"); 
 					_captureMouseWheelHandler.Stop();
 				}
 
@@ -168,23 +168,23 @@ namespace ClearCanvas.ImageViewer.InputManagement
 
 				if (previousViewer != null && previousViewer != currentViewer)
 				{
-					Trace.WriteLine("Notifying subscribers active mouse wheel handler is null"); 
+					//Trace.WriteLine("Notifying subscribers active mouse wheel handler is null"); 
 					previousViewer.EventBroker.OnActiveMouseWheelHandlerChanged(null);
 				}
 				else if (currentViewer != null)
 				{
-					Trace.WriteLine("Notifying subscribers active mouse wheel handler changed"); 
+					//Trace.WriteLine("Notifying subscribers active mouse wheel handler changed"); 
 					currentViewer.EventBroker.OnActiveMouseWheelHandlerChanged(_captureMouseWheelHandler);
 				}
 
 				if (_captureMouseWheelHandler == null)
 				{
-					Trace.WriteLine("Stopping mouse wheel handler timer"); 
+					//Trace.WriteLine("Stopping mouse wheel handler timer"); 
 					_stopTimer = true;
 					return;
 				}
 
-				Trace.WriteLine("Starting mouse wheel handler (+timer)");
+				//Trace.WriteLine("Starting mouse wheel handler (+timer)");
 				_captureMouseWheelHandler.Start();
 
 				_stopTimer = false;
