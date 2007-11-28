@@ -82,7 +82,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Hql
         }
 
         /// <summary>
-        /// Exposes the set of conditions that will form the "where" clause
+        /// Exposes the set of conditions that will form the "where" clause.
         /// </summary>
         public List<HqlCondition> Conditions
         {
@@ -90,7 +90,15 @@ namespace ClearCanvas.Enterprise.Hibernate.Hql
         }
 
         /// <summary>
-        /// Exposes the collection of sorts, which will form the "order by" clause
+        /// Gets the parameter values that have been supplied to the query.
+        /// </summary>
+        public object[] Parameters
+        {
+            get { return _where.Parameters; }
+        }
+
+        /// <summary>
+        /// Exposes the collection of sorts, which will form the "order by" clause.
         /// </summary>
         public List<HqlSort> Sorts
         {
