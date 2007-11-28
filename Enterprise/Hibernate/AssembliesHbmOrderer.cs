@@ -48,9 +48,9 @@ namespace ClearCanvas.Enterprise.Hibernate
             ArrayList extraFiles;
             this.GetHbmFiles(out orderedHbms, out extraFiles);
 
-            foreach (string fileName in extraFiles)
+            foreach (NonClassEntry file in extraFiles)
             {
-                cfg.AddFile(fileName);    
+                cfg.AddResource(file.FileName, file.Assembly);    
             }
 
             // Add ordered hbms *after* the extra files, so that the extra files are processed first.
@@ -149,7 +149,7 @@ namespace ClearCanvas.Enterprise.Hibernate
 
                     if (!fileContainsClasses)
                     {
-                        extraFiles.Add(fileName);
+                        extraFiles.Add(new NonClassEntry(fileName, assembly));
                     }
                 }
             }
@@ -276,5 +276,27 @@ namespace ClearCanvas.Enterprise.Hibernate
                 get { return _assembly; }
 		    }
 		}
-	}
+
+        internal class NonClassEntry
+        {
+            private readonly string _fileName;
+            private readonly Assembly _assembly;
+
+            public NonClassEntry(string fileName, Assembly assembly)
+            {
+                _fileName = fileName;
+                _assembly = assembly;
+            }
+
+            public string FileName
+            {
+                get { return _fileName; }
+            }
+
+            public Assembly Assembly
+            {
+                get { return _assembly; }
+            }
+        }
+    }
 }

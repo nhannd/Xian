@@ -46,6 +46,7 @@
     <Compile Include="Brokers\AccessionNumberBroker.cs" />
     <Compile Include="Brokers\MimeDocumentDataBroker.cs" />
     <Compile Include="Brokers\PreviewBroker.cs" />
+    <Compile Include="Brokers\PriorReportBroker.cs" />
     <Compile Include="Brokers\ProtocolGroupBroker.cs" />
     <Compile Include="Brokers\RegistrationWorklistBroker.cs" />
     <Compile Include="Brokers\ModalityWorklistBroker.cs" />
@@ -199,6 +200,7 @@
     <EmbeddedResource Include="Mappings\InformationAuthorityEnum.hbm.xml" />
     <EmbeddedResource Include="Mappings\InsuranceAuthorityEnum.hbm.xml" />
     <EmbeddedResource Include="Mappings\PractitionerLicenseAuthorityEnum.hbm.xml" />
+    <EmbeddedResource Include="Brokers\PriorReportBroker.hbm.xml" />
     <Content Include="Mappings\WorklistQueryBase.hrq.xml" />
     <EmbeddedResource Include="Mappings\NoteCategory.hbm.xml" />
     <EmbeddedResource Include="Mappings\NoteSeverityEnum.hbm.xml" />

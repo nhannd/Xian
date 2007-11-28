@@ -41,10 +41,12 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
     /// Request object for <see cref="IReportingWorkflowService.GetPriorReports"/>.
     /// </summary>
     /// <remarks>
-    /// Only one of <see cref="ReportingProcedureStepRef"/> or <see cref="ProcedureRefs"/> needs to be supplied
-    /// by the caller.  If <see cref="ReportingProcedureStepRef"/> is supplied, the priors will be obtained
-    /// based on all procedures attached to the report to which the reporting step refers.  Otherwise,
+    /// Only one of <see cref="ReportingProcedureStepRef"/> or <see cref="ProcedureRefs"/> 
+    /// or <see cref="PatientRef"/> needs to be supplied by the caller.  If <see cref="ReportingProcedureStepRef"/>
+    /// is supplied, the priors will be obtained based on all procedures attached to the report 
+    /// to which the reporting step refers.  If <see cref="ProcedureRefs"/> is supplied,
     /// priors will be obtained based on the set of procedures specified in <see cref="ProcedureRefs"/>.
+    /// If <see cref="PatientRef"/> is supplied, all priors for the patient will be returned.
     /// </remarks>
     [DataContract]
     public class GetPriorReportsRequest : DataContractBase
@@ -78,5 +80,11 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
         /// </summary>
         [DataMember]
         public List<EntityRef> ProcedureRefs;
+
+        /// <summary>
+        /// A patient for which all priors are obtained.
+        /// </summary>
+        [DataMember]
+        public EntityRef PatientRef;
     }
 }

@@ -386,6 +386,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         public GetPriorReportsResponse GetPriorReports(GetPriorReportsRequest request)
         {
             IList<Report> priorReports = new List<Report>();
+            IPriorReportBroker broker = PersistenceContext.GetBroker<IPriorReportBroker>();
 
             // if a reporting step was supplied, find priors based on the attached report
             if(request.ReportingProcedureStepRef != null)
@@ -394,7 +395,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
                     request.ReportingProcedureStepRef, EntityLoadFlags.Proxy);
                 if(ps.ReportPart != null)
                 {
-                    priorReports = PersistenceContext.GetBroker<IReportingWorklistBroker>().GetPriorReports(ps.ReportPart.Report, true);
+                    priorReports = broker.GetPriorReports(ps.ReportPart.Report);
                 }
             }
             // otherwise if a set of procedures was explicitly supplied, find priors based on those procedures
@@ -404,7 +405,12 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
                     request.ProcedureRefs,
                     delegate(EntityRef pr) { return PersistenceContext.Load<RequestedProcedure>(pr, EntityLoadFlags.Proxy); });
 
-                priorReports = PersistenceContext.GetBroker<IReportingWorklistBroker>().GetPriorReports(procedures, true);
+                priorReports = broker.GetPriorReports(procedures);
+            }
+            else if(request.PatientRef != null)
+            {
+                Patient patient = PersistenceContext.Load<Patient>(request.PatientRef, EntityLoadFlags.Proxy);
+                priorReports = broker.GetPriorReports(patient);
             }
 
             // assemble results

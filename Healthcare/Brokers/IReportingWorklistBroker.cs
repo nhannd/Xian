@@ -44,22 +44,5 @@ namespace ClearCanvas.Healthcare.Brokers
 
         IList<WorklistItem> Search(WorklistItemSearchCriteria[] where, SearchResultPage page, bool showActiveOnly);
         int SearchCount(WorklistItemSearchCriteria[] where, bool showActiveOnly);
-
-        /// <summary>
-        /// Obtains a list of prior reports for the specified report, optionally constrained by Relevance grouping.
-        /// </summary>
-        /// <param name="report"></param>
-        /// <param name="relevantOnly"></param>
-        /// <returns></returns>
-        IList<Report> GetPriorReports(Report report, bool relevantOnly);
-
-        /// <summary>
-        /// Obtains a list of prior reports relevant to the specified set of procedures.
-        /// </summary>
-        /// <param name="procedures"></param>
-        /// <param name="relevantOnly"></param>
-        /// <returns></returns>
-        IList<Report> GetPriorReports(IList<RequestedProcedure> procedures, bool relevantOnly);
-
     }
 }

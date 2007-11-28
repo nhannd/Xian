@@ -203,6 +203,16 @@ namespace ClearCanvas.Enterprise.Hibernate
             return this.Session.CreateQuery(hql);
         }
 
+        /// <summary>
+        /// Allows a broker to load a named HQL query stored in a *.hbm.xml file.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public IQuery GetNamedHqlQuery(string name)
+        {
+            return this.Session.GetNamedQuery(name);
+        }
+
         #endregion
 
         #region Protected abstract members
