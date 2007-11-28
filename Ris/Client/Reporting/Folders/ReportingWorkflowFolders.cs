@@ -225,11 +225,6 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
         {
             this.OpenIconSet = new IconSet(IconScheme.Colour, "SearchFolderOpenSmall.png", "SearchFolderOpenMedium.png", "SearchFolderOpenLarge.png");
             this.ClosedIconSet = new IconSet(IconScheme.Colour, "SearchFolderClosedSmall.png", "SearchFolderClosedMedium.png", "SearchFolderClosedLarge.png");
-            if (this.IsOpen)
-                this.IconSet = this.OpenIconSet;
-            else
-                this.IconSet = this.ClosedIconSet;
-
             this.RefreshTime = 0;
         }
 

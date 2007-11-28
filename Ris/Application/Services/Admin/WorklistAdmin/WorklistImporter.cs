@@ -249,7 +249,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
 
             if (worklist == null)
             {
-                worklist = CreateWorklist(worklistClassName);
+                worklist = WorklistFactory.Instance.GetWorklist(worklistClassName);
                 worklist.Name = name;
 
                 _context.Lock(worklist, DirtyState.New);
@@ -257,52 +257,5 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
 
             return worklist;
         }
-
-        private Worklist CreateWorklist(string worklistClassName)
-        {
-            Worklist worklist = null;
-
-            switch (worklistClassName)
-            {
-                case "RegistrationScheduledWorklist":
-                    worklist = new RegistrationScheduledWorklist();
-                    break;
-                case "RegistrationCheckedInWorklist":
-                    worklist = new RegistrationCheckedInWorklist();
-                    break;
-                case "RegistrationInProgressWorklist":
-                    worklist = new RegistrationInProgressWorklist();
-                    break;
-                case "RegistrationCancelledWorklist":
-                    worklist = new RegistrationCancelledWorklist();
-                    break;
-                case "RegistrationCompletedWorklist":
-                    worklist = new RegistrationCompletedWorklist();
-                    break;
-                case "TechnologistScheduledWorklist":
-                    worklist = new TechnologistScheduledWorklist();
-                    break;
-                case "TechnologistCheckedInWorklist":
-                    worklist = new TechnologistCheckedInWorklist();
-                    break;
-                case "TechnologistInProgressWorklist":
-                    worklist = new TechnologistInProgressWorklist();
-                    break;
-                case "TechnologistCancelledWorklist":
-                    worklist = new TechnologistCancelledWorklist();
-                    break;
-                case "TechnologistCompletedWorklist":
-                    worklist = new TechnologistCompletedWorklist();
-                    break;
-                case "ReportingToBeReportedWorklist":
-                    worklist = new ReportingToBeReportedWorklist();
-                    break;
-                default:
-                    break;
-            }
-
-            return worklist;
-        }
-
     }
 }

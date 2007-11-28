@@ -34,8 +34,10 @@ using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
+using ClearCanvas.Ris.Client.Adt.Folders;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -124,7 +126,20 @@ namespace ClearCanvas.Ris.Client.Adt
             }
 
             _worklistRef = worklistRef;
+
+            //this.MenuModel = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));
+            //((SimpleActionModel)this.MenuModel).AddAction("Option", "Option", "EditToolSmall.png", "Option",
+            //    delegate { DisplayOption(folderSystem.DesktopWindow); });
         }
+
+        //private void DisplayOption(IDesktopWindow desktopWindow)
+        //{
+        //    FolderOptionComponent optionComponent = new FolderOptionComponent(this.RefreshTime);
+        //    if (ApplicationComponent.LaunchAsDialog(desktopWindow, optionComponent, "Option") == ApplicationComponentExitCode.Accepted)
+        //    {
+        //        this.RefreshTime = optionComponent.RefreshTime;
+        //    }
+        //}
 
         public RegistrationWorkflowFolder(RegistrationWorkflowFolderSystemBase folderSystem, string folderName, ExtensionPoint<IDropHandler<RegistrationWorklistItem>> dropHandlerExtensionPoint)
             : this(folderSystem, folderName, null, null, dropHandlerExtensionPoint)
