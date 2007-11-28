@@ -83,7 +83,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
             WorklistAssembler assembler = new WorklistAssembler();
             return new ListWorklistsResponse(
                 CollectionUtils.Map<Worklist, WorklistSummary, List<WorklistSummary>>(
-                    this.PersistenceContext.GetBroker<IWorklistBroker>().FindAllTechnologistWorklists(this.CurrentUser),
+                    this.PersistenceContext.GetBroker<IWorklistBroker>().FindWorklists(this.CurrentUser, request.WorklistTokens),
                     delegate(Worklist worklist)
                     {
                         return assembler.GetWorklistSummary(worklist);

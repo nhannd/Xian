@@ -29,21 +29,23 @@
 
 #endregion
 
-using System.Runtime.Serialization;
-using ClearCanvas.Enterprise.Common;
-using System.Collections.Generic;
+using ClearCanvas.Common;
 
-namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
+namespace ClearCanvas.Ris.Client.Adt
 {
-    [DataContract]
-    public class ListWorklistsRequest : DataContractBase
+    [ExtensionPoint]
+    public class RegistrationBookingWorkflowFolderExtensionPoint : ExtensionPoint<IFolder>
     {
-        public ListWorklistsRequest(List<string> worklistTokens)
-        {
-            this.WorklistTokens = worklistTokens;
-        }
+    }
 
-        [DataMember]
-        public List<string> WorklistTokens;
+    public class RegistrationBookingWorkflowFolderSystem : RegistrationWorkflowFolderSystemBase
+    {
+        public RegistrationBookingWorkflowFolderSystem(IFolderExplorerToolContext folderExplorer)
+            : base(folderExplorer, new RegistrationBookingWorkflowFolderExtensionPoint())
+        {
+            this.AddFolder(new Folders.CompletedProtocolFolder(this));
+            this.AddFolder(new Folders.SuspendedProtocolFolder(this));
+            this.AddFolder(new Folders.PendingProtocolFolder(this));
+        }
     }
 }

@@ -38,11 +38,6 @@ using ClearCanvas.Desktop.Tables;
 
 namespace ClearCanvas.Ris.Client
 {
-    [ExtensionPoint]
-    public class WorkflowFolderExtensionPoint : ExtensionPoint<IFolder>
-    {
-    }
-
     [AttributeUsage(AttributeTargets.Class)]
     public class FolderForWorklistTypeAttribute : Attribute
     {
@@ -61,12 +56,12 @@ namespace ClearCanvas.Ris.Client
 
     public abstract class WorkflowFolder<TItem> : Folder, IDisposable
     {
-        private string _folderName;
-        private string _folderTooltip;
-        private Table<TItem> _itemsTable;
+        private readonly string _folderTooltip;
+        private readonly Table<TItem> _itemsTable;
         private bool _isPopulated;
         private int _itemCount = -1;
-        private WorkflowFolderSystem<TItem> _folderSystem;
+        private readonly WorkflowFolderSystem<TItem> _folderSystem;
+        private readonly string _worklistType;
 
         private Timer _refreshTimer;
         private int _refreshTime;
@@ -81,14 +76,29 @@ namespace ClearCanvas.Ris.Client
         public WorkflowFolder(WorkflowFolderSystem<TItem> folderSystem, string folderName, string folderTooltip, Table<TItem> itemsTable)
         {
             _folderSystem = folderSystem;
-            _folderName = folderName;
             _folderTooltip = folderTooltip;
             _itemsTable = itemsTable;
-            _itemsTable.Items.ItemsChanged += delegate(object sender, ItemChangedEventArgs args)
+            _itemsTable.Items.ItemsChanged += delegate
                 {
                     _itemCount = _itemsTable.Items.Count;
                     NotifyTextChanged();
                 };
+
+            Platform.CheckForNullReference(_folderPath, "FolderPath attribute");
+
+            if (!string.IsNullOrEmpty(folderName))
+                _folderPath = new Path(string.Concat(_folderPath.ToString(), "/", folderName), _resourceResolver);
+
+            // Initialize worklist type
+            FolderForWorklistTypeAttribute attrib = (FolderForWorklistTypeAttribute) CollectionUtils.SelectFirst(
+                this.GetType().GetCustomAttributes(false),
+                delegate(object o)
+                    {
+                        return o is FolderForWorklistTypeAttribute;
+                    });
+
+            if (attrib != null)
+                _worklistType = attrib.WorklistType;
         }
 
         public void UpdateWorklistItem(TItem item)
@@ -124,12 +134,18 @@ namespace ClearCanvas.Ris.Client
             }
         }
 
+        public string WorklistType
+        {
+            get { return _worklistType; }
+        }
+
         public override string Text
         {
             get
             {
+                string folderName = _folderPath.LastSegment.LocalizedText;
                 return _isPopulated || _itemCount >= 0 ?
-                    string.Format("{0} ({1})", _folderName, _itemCount) : _folderName;
+                    string.Format("{0} ({1})", folderName, _itemCount) : folderName;
             }
         }
 

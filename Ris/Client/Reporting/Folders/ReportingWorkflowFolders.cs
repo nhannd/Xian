@@ -38,18 +38,19 @@ using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client.Reporting.Folders
 {
-    [ExtensionOf(typeof(WorkflowFolderExtensionPoint))]
+    [ExtensionOf(typeof(ReportingMainWorkflowFolderExtensionPoint))]
     [FolderForWorklistType(WorklistTokens.ReportingToBeReportedWorklist)]
+    [FolderPath("Reporting/To be Reported", true)]
     public class ToBeReportedFolder : ReportingWorkflowFolder
     {
-        public ToBeReportedFolder(ReportingWorkflowFolderSystem folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
+        public ToBeReportedFolder(ReportingWorkflowFolderSystemBase folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
             : base(folderSystem, folderDisplayName, folderDescription, worklistRef)
         {
             this.WorklistClassName = "ClearCanvas.Healthcare.ReportingToBeReportedWorklist";
         }
 
-        public ToBeReportedFolder(ReportingWorkflowFolderSystem folderSystem)
-            : this(folderSystem, "To be Reported", null, null)
+        public ToBeReportedFolder(ReportingWorkflowFolderSystemBase folderSystem)
+            : this(folderSystem, null, null, null)
         {
         }
 
@@ -59,6 +60,7 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
         }
     }
 
+    [FolderPath("Reporting/Draft")]
     public class DraftFolder : ReportingWorkflowFolder
     {
         [ExtensionPoint]
@@ -66,13 +68,14 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
         {
         }
 
-        public DraftFolder(ReportingWorkflowFolderSystem folderSystem)
-            : base(folderSystem, "Draft", new DropHandlerExtensionPoint())
+        public DraftFolder(ReportingWorkflowFolderSystemBase folderSystem)
+            : base(folderSystem, null, new DropHandlerExtensionPoint())
         {
             this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Reporting.Worklists+Draft";
         }
     }
 
+    [FolderPath("Reporting/In Transcriptioin")]
     public class InTranscriptionFolder : ReportingWorkflowFolder
     {
         [ExtensionPoint]
@@ -80,13 +83,14 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
         {
         }
 
-        public InTranscriptionFolder(ReportingWorkflowFolderSystem folderSystem)
-            : base(folderSystem, "In Transcription", new DropHandlerExtensionPoint())
+        public InTranscriptionFolder(ReportingWorkflowFolderSystemBase folderSystem)
+            : base(folderSystem, null, new DropHandlerExtensionPoint())
         {
             this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Reporting.Worklists+InTranscription";
         }
     }
 
+    [FolderPath("Reporting/To be Verified")]
     public class ToBeVerifiedFolder : ReportingWorkflowFolder
     {
         [ExtensionPoint]
@@ -94,13 +98,14 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
         {
         }
 
-        public ToBeVerifiedFolder(ReportingWorkflowFolderSystem folderSystem)
-            : base(folderSystem, "To be Verified", new DropHandlerExtensionPoint())
+        public ToBeVerifiedFolder(ReportingWorkflowFolderSystemBase folderSystem)
+            : base(folderSystem, null, new DropHandlerExtensionPoint())
         {
             this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Reporting.Worklists+ToBeVerified";
         }
     }
 
+    [FolderPath("Reporting/Review Resident Report")]
     public class ReviewResidentReportFolder : ReportingWorkflowFolder
     {
         [ExtensionPoint]
@@ -108,13 +113,14 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
         {
         }
 
-        public ReviewResidentReportFolder(ReportingWorkflowFolderSystem folderSystem)
-            : base(folderSystem, "Review Resident Report", new DropHandlerExtensionPoint())
+        public ReviewResidentReportFolder(ReportingWorkflowFolderSystemBase folderSystem)
+            : base(folderSystem, null, new DropHandlerExtensionPoint())
         {
             this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Reporting.Worklists+ReviewResidentReport";
         }
     }
 
+    [FolderPath("Reporting/Verified")]
     public class VerifiedFolder : ReportingWorkflowFolder
     {
         [ExtensionPoint]
@@ -122,25 +128,26 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
         {
         }
 
-        public VerifiedFolder(ReportingWorkflowFolderSystem folderSystem)
-            : base(folderSystem, "Verified", new DropHandlerExtensionPoint())
+        public VerifiedFolder(ReportingWorkflowFolderSystemBase folderSystem)
+            : base(folderSystem, null, new DropHandlerExtensionPoint())
         {
             this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Reporting.Worklists+Verified";
         }
     }
 
-    [ExtensionOf(typeof(WorkflowFolderExtensionPoint))]
+    [ExtensionOf(typeof(ReportingProtocolWorkflowFolderExtensionPoint))]
     [FolderForWorklistType(WorklistTokens.ReportingToBeProtocolledWorklist)]
+    [FolderPath("Protocolling/To be Protocolled")]
     public class ToBeProtocolledFolder : ReportingWorkflowFolder
     {
-        public ToBeProtocolledFolder(ReportingWorkflowFolderSystem folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
+        public ToBeProtocolledFolder(ReportingWorkflowFolderSystemBase folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
             : base(folderSystem, folderDisplayName, folderDescription, worklistRef)
         {
             this.WorklistClassName = "ClearCanvas.Healthcare.ReportingToBeProtocolledWorklist";
         }
 
-        public ToBeProtocolledFolder(ReportingWorkflowFolderSystem folderSystem)
-            : this(folderSystem, "To be Protocolled", null, null)
+        public ToBeProtocolledFolder(ReportingWorkflowFolderSystemBase folderSystem)
+            : this(folderSystem, null, null, null)
         {
         }
 
@@ -150,16 +157,17 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
         }
     }
 
+    [FolderPath("Protocolling/To be Approved")]
     public class ToBeApprovedFolder : ReportingWorkflowFolder
     {
-        public ToBeApprovedFolder(ReportingWorkflowFolderSystem folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
+        public ToBeApprovedFolder(ReportingWorkflowFolderSystemBase folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
             : base(folderSystem, folderDisplayName, folderDescription, worklistRef)
         {
             this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Reporting.Worklists+ToBeApproved";
         }
 
-        public ToBeApprovedFolder(ReportingWorkflowFolderSystem folderSystem)
-            : this(folderSystem, "To be Approved", null, null)
+        public ToBeApprovedFolder(ReportingWorkflowFolderSystemBase folderSystem)
+            : this(folderSystem, null, null, null)
         {
         }
 
@@ -169,16 +177,17 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
         }
     }
 
+    [FolderPath("Protocolling/Completed Protocols")]
     public class CompletedProtocolFolder : ReportingWorkflowFolder
     {
-        public CompletedProtocolFolder(ReportingWorkflowFolderSystem folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
+        public CompletedProtocolFolder(ReportingWorkflowFolderSystemBase folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
             : base(folderSystem, folderDisplayName, folderDescription, worklistRef)
         {
             this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Reporting.Worklists+CompletedProtocol";
         }
 
-        public CompletedProtocolFolder(ReportingWorkflowFolderSystem folderSystem)
-            : this(folderSystem, "Completed Protocols", null, null)
+        public CompletedProtocolFolder(ReportingWorkflowFolderSystemBase folderSystem)
+            : this(folderSystem, null, null, null)
         {
         }
 
@@ -188,16 +197,17 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
         }
     }
 
+    [FolderPath("Protocolling/Suspended Protocols")]
     public class SuspendedProtocolFolder : ReportingWorkflowFolder
     {
-        public SuspendedProtocolFolder(ReportingWorkflowFolderSystem folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
+        public SuspendedProtocolFolder(ReportingWorkflowFolderSystemBase folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
             : base(folderSystem, folderDisplayName, folderDescription, worklistRef)
         {
             this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Reporting.Worklists+SuspendedProtocol";
         }
 
-        public SuspendedProtocolFolder(ReportingWorkflowFolderSystem folderSystem)
-            : this(folderSystem, "Suspended Protocols", null, null)
+        public SuspendedProtocolFolder(ReportingWorkflowFolderSystemBase folderSystem)
+            : this(folderSystem, null, null, null)
         {
         }
 
@@ -207,12 +217,13 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
         }
     }
 
+    [FolderPath("Search")]
     public class SearchFolder : ReportingWorkflowFolder
     {
         private SearchData _searchData;
 
-        public SearchFolder(ReportingWorkflowFolderSystem folderSystem)
-            : base(folderSystem, "Search")
+        public SearchFolder(ReportingWorkflowFolderSystemBase folderSystem)
+            : base(folderSystem, null)
         {
             this.OpenIconSet = new IconSet(IconScheme.Colour, "SearchFolderOpenSmall.png", "SearchFolderOpenMedium.png", "SearchFolderOpenLarge.png");
             this.ClosedIconSet = new IconSet(IconScheme.Colour, "SearchFolderClosedSmall.png", "SearchFolderClosedMedium.png", "SearchFolderClosedLarge.png");

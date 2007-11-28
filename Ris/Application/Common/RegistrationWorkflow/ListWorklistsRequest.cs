@@ -30,6 +30,7 @@
 #endregion
 
 using System.Runtime.Serialization;
+using System.Collections.Generic;
 using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
@@ -37,5 +38,12 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
     [DataContract]
     public class ListWorklistsRequest : DataContractBase
     {
+        public ListWorklistsRequest(List<string> worklistTokens)
+        {
+            this.WorklistTokens = worklistTokens;
+        }
+
+        [DataMember]
+        public List<string> WorklistTokens;
     }
 }

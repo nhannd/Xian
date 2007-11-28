@@ -40,23 +40,24 @@ using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client.Adt.Folders
 {
-    [ExtensionOf(typeof(WorkflowFolderExtensionPoint))]
+    [ExtensionOf(typeof(RegistrationMainWorkflowFolderExtensionPoint))]
     [FolderForWorklistType(WorklistTokens.RegistrationScheduledWorklist)]
+    [FolderPath("Registration/Scheduled", true)]
     public class ScheduledFolder : RegistrationWorkflowFolder
     {
-        public ScheduledFolder(RegistrationWorkflowFolderSystem folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
+        public ScheduledFolder(RegistrationWorkflowFolderSystemBase folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
             : base(folderSystem, folderDisplayName, folderDescription, worklistRef)
         {
             this.MenuModel = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));
 			((SimpleActionModel)this.MenuModel).AddAction("ScheduledOption", "Option", "EditToolSmall.png", "Option",
-                delegate() { DisplayOption(folderSystem.DesktopWindow); });
+                delegate { DisplayOption(folderSystem.DesktopWindow); });
 
             this.RefreshTime = 0;
             this.WorklistClassName = "ClearCanvas.Healthcare.RegistrationScheduledWorklist";
         }
 
-        public ScheduledFolder(RegistrationWorkflowFolderSystem folderSystem)
-            : this(folderSystem, "Scheduled", null, null)
+        public ScheduledFolder(RegistrationWorkflowFolderSystemBase folderSystem)
+            : this(folderSystem, null, null, null)
         {
         }
 
@@ -75,8 +76,9 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         }
     }
 
-    [ExtensionOf(typeof(WorkflowFolderExtensionPoint))]
+    [ExtensionOf(typeof(RegistrationMainWorkflowFolderExtensionPoint))]
     [FolderForWorklistType(WorklistTokens.RegistrationCheckedInWorklist)]
+    [FolderPath("Registration/Checked In")]
     public class CheckedInFolder : RegistrationWorkflowFolder
     {
         [ExtensionPoint]
@@ -84,19 +86,19 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         {
         }
 
-        public CheckedInFolder(RegistrationWorkflowFolderSystem folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
+        public CheckedInFolder(RegistrationWorkflowFolderSystemBase folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
             : base(folderSystem, folderDisplayName, folderDescription, worklistRef, new DropHandlerExtensionPoint())
         {
             this.MenuModel = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));
             ((SimpleActionModel)this.MenuModel).AddAction("ScheduledOption", "Option", "EditToolSmall.png", "Option",
-                delegate() { DisplayOption(folderSystem.DesktopWindow); });
+                delegate { DisplayOption(folderSystem.DesktopWindow); });
 
             this.RefreshTime = 0;
             this.WorklistClassName = "ClearCanvas.Healthcare.RegistrationCheckedInWorklist";
         }
 
-        public CheckedInFolder(RegistrationWorkflowFolderSystem folderSystem)
-            : this(folderSystem, "Checked In", null, null)
+        public CheckedInFolder(RegistrationWorkflowFolderSystemBase folderSystem)
+            : this(folderSystem, null, null, null)
         {
         }
 
@@ -115,23 +117,24 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         }
     }
 
-    [ExtensionOf(typeof(WorkflowFolderExtensionPoint))]
+    [ExtensionOf(typeof(RegistrationMainWorkflowFolderExtensionPoint))]
     [FolderForWorklistType(WorklistTokens.RegistrationInProgressWorklist)]
+    [FolderPath("Registration/In Progress")]
     public class InProgressFolder : RegistrationWorkflowFolder
     {
-        public InProgressFolder(RegistrationWorkflowFolderSystem folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
+        public InProgressFolder(RegistrationWorkflowFolderSystemBase folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
             : base(folderSystem, folderDisplayName, folderDescription, worklistRef)
         {
             this.MenuModel = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));
 			((SimpleActionModel)this.MenuModel).AddAction("ScheduledOption", "Option", "EditToolSmall.png", "Option",
-                delegate() { DisplayOption(folderSystem.DesktopWindow); });
+                delegate { DisplayOption(folderSystem.DesktopWindow); });
 
             this.RefreshTime = 0;
             this.WorklistClassName = "ClearCanvas.Healthcare.RegistrationInProgressWorklist";
         }
 
-        public InProgressFolder(RegistrationWorkflowFolderSystem folderSystem)
-            : this(folderSystem, "In Progress", null, null)
+        public InProgressFolder(RegistrationWorkflowFolderSystemBase folderSystem)
+            : this(folderSystem, null, null, null)
         {
         }
 
@@ -150,23 +153,24 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         }
     }
 
-    [ExtensionOf(typeof(WorkflowFolderExtensionPoint))]
+    [ExtensionOf(typeof(RegistrationMainWorkflowFolderExtensionPoint))]
     [FolderForWorklistType(WorklistTokens.RegistrationCompletedWorklist)]
+    [FolderPath("Registration/Completed")]
     public class CompletedFolder : RegistrationWorkflowFolder
     {
-        public CompletedFolder(RegistrationWorkflowFolderSystem folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
+        public CompletedFolder(RegistrationWorkflowFolderSystemBase folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
             : base(folderSystem, folderDisplayName, folderDescription, worklistRef)
         {
             this.MenuModel = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));
 			((SimpleActionModel)this.MenuModel).AddAction("ScheduledOption", "Option", "EditToolSmall.png", "Option",
-                delegate() { DisplayOption(folderSystem.DesktopWindow); });
+                delegate { DisplayOption(folderSystem.DesktopWindow); });
 
             this.RefreshTime = 0;
             this.WorklistClassName = "ClearCanvas.Healthcare.RegistrationCompletedWorklist";
         }
 
-        public CompletedFolder(RegistrationWorkflowFolderSystem folderSystem)
-            : this(folderSystem, "Completed", null, null)
+        public CompletedFolder(RegistrationWorkflowFolderSystemBase folderSystem)
+            : this(folderSystem, null, null, null)
         {
         }
 
@@ -185,8 +189,9 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         }
     }
 
-    [ExtensionOf(typeof(WorkflowFolderExtensionPoint))]
+    [ExtensionOf(typeof(RegistrationMainWorkflowFolderExtensionPoint))]
     [FolderForWorklistType(WorklistTokens.RegistrationCancelledWorklist)]
+    [FolderPath("Registration/Cancelled")]
     public class CancelledFolder : RegistrationWorkflowFolder
     {
         [ExtensionPoint]
@@ -194,19 +199,19 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         {
         }
 
-        public CancelledFolder(RegistrationWorkflowFolderSystem folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
+        public CancelledFolder(RegistrationWorkflowFolderSystemBase folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
             : base(folderSystem, folderDisplayName, folderDescription, worklistRef, new DropHandlerExtensionPoint())
         {
             this.MenuModel = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));
 			((SimpleActionModel)this.MenuModel).AddAction("ScheduledOption", "Option", "EditToolSmall.png", "Option",
-                delegate() { DisplayOption(folderSystem.DesktopWindow); });
+                delegate { DisplayOption(folderSystem.DesktopWindow); });
 
             this.RefreshTime = 0;
             this.WorklistClassName = "ClearCanvas.Healthcare.RegistrationCancelledWorklist";
         }
 
-        public CancelledFolder(RegistrationWorkflowFolderSystem folderSystem)
-            : this(folderSystem, "Cancelled", null, null)
+        public CancelledFolder(RegistrationWorkflowFolderSystemBase folderSystem)
+            : this(folderSystem, null, null, null)
         {
         }
 
@@ -225,23 +230,24 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         }
     }
 
-    [ExtensionOf(typeof(WorkflowFolderExtensionPoint))]
+    [ExtensionOf(typeof(RegistrationBookingWorkflowFolderExtensionPoint))]
     [FolderForWorklistType(WorklistTokens.RegistrationCompletedProtocolWorklist)]
+    [FolderPath("Protocolling/Completed Protocol")]
     public class CompletedProtocolFolder : RegistrationWorkflowFolder
     {
-        public CompletedProtocolFolder(RegistrationWorkflowFolderSystem folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
+        public CompletedProtocolFolder(RegistrationWorkflowFolderSystemBase folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
             : base(folderSystem, folderDisplayName, folderDescription, worklistRef)
         {
             this.MenuModel = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));
             ((SimpleActionModel)this.MenuModel).AddAction("ScheduledOption", "Option", "EditToolSmall.png", "Option",
-                delegate() { DisplayOption(folderSystem.DesktopWindow); });
+                delegate { DisplayOption(folderSystem.DesktopWindow); });
 
             this.RefreshTime = 0;
             this.WorklistClassName = "ClearCanvas.Healthcare.RegistrationCompletedProtocolWorklist";
         }
 
-        public CompletedProtocolFolder(RegistrationWorkflowFolderSystem folderSystem)
-            : this(folderSystem, "Completed Protocol", null, null)
+        public CompletedProtocolFolder(RegistrationWorkflowFolderSystemBase folderSystem)
+            : this(folderSystem, null, null, null)
         {
         }
 
@@ -260,23 +266,24 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         }
     }
 
-    [ExtensionOf(typeof(WorkflowFolderExtensionPoint))]
+    [ExtensionOf(typeof(RegistrationBookingWorkflowFolderExtensionPoint))]
     [FolderForWorklistType(WorklistTokens.RegistrationSuspendedProtocolWorklist)]
+    [FolderPath("Protocolling/Suspended Protocol")]
     public class SuspendedProtocolFolder : RegistrationWorkflowFolder
     {
-        public SuspendedProtocolFolder(RegistrationWorkflowFolderSystem folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
+        public SuspendedProtocolFolder(RegistrationWorkflowFolderSystemBase folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
             : base(folderSystem, folderDisplayName, folderDescription, worklistRef)
         {
             this.MenuModel = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));
             ((SimpleActionModel)this.MenuModel).AddAction("ScheduledOption", "Option", "EditToolSmall.png", "Option",
-                delegate() { DisplayOption(folderSystem.DesktopWindow); });
+                delegate { DisplayOption(folderSystem.DesktopWindow); });
 
             this.RefreshTime = 0;
             this.WorklistClassName = "ClearCanvas.Healthcare.RegistrationSuspendedProtocolWorklist";
         }
 
-        public SuspendedProtocolFolder(RegistrationWorkflowFolderSystem folderSystem)
-            : this(folderSystem, "Suspended Protocol", null, null)
+        public SuspendedProtocolFolder(RegistrationWorkflowFolderSystemBase folderSystem)
+            : this(folderSystem, null, null, null)
         {
         }
 
@@ -295,23 +302,24 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         }
     }
 
-    [ExtensionOf(typeof(WorkflowFolderExtensionPoint))]
+    [ExtensionOf(typeof(RegistrationBookingWorkflowFolderExtensionPoint))]
     [FolderForWorklistType(WorklistTokens.RegistrationPendingProtocolWorklist)]
+    [FolderPath("Protocolling/Pending Protocol")]
     public class PendingProtocolFolder : RegistrationWorkflowFolder
     {
-        public PendingProtocolFolder(RegistrationWorkflowFolderSystem folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
+        public PendingProtocolFolder(RegistrationWorkflowFolderSystemBase folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
             : base(folderSystem, folderDisplayName, folderDescription, worklistRef)
         {
             this.MenuModel = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));
             ((SimpleActionModel)this.MenuModel).AddAction("ScheduledOption", "Option", "EditToolSmall.png", "Option",
-                delegate() { DisplayOption(folderSystem.DesktopWindow); });
+                delegate { DisplayOption(folderSystem.DesktopWindow); });
 
             this.RefreshTime = 0;
             this.WorklistClassName = "ClearCanvas.Healthcare.RegistrationPendingProtocolWorklist";
         }
 
-        public PendingProtocolFolder(RegistrationWorkflowFolderSystem folderSystem)
-            : this(folderSystem, "Pending Protocol", null, null)
+        public PendingProtocolFolder(RegistrationWorkflowFolderSystemBase folderSystem)
+            : this(folderSystem, null, null, null)
         {
         }
 
@@ -330,12 +338,13 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         }
     }
 
+    [FolderPath("Search")]
     public class RegistrationSearchFolder : RegistrationWorkflowFolder
     {
         private SearchData _searchData;
 
-        public RegistrationSearchFolder(RegistrationWorkflowFolderSystem folderSystem)
-            : base(folderSystem, "Search")
+        public RegistrationSearchFolder(RegistrationWorkflowFolderSystemBase folderSystem)
+            : base(folderSystem, null)
         {
 			this.OpenIconSet = new IconSet(IconScheme.Colour, "SearchFolderOpenSmall.png", "SearchFolderOpenMedium.png", "SearchFolderOpenLarge.png");
 			this.ClosedIconSet = new IconSet(IconScheme.Colour, "SearchFolderClosedSmall.png", "SearchFolderClosedMedium.png", "SearchFolderClosedLarge.png");

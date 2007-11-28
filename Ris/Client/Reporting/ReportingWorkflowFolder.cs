@@ -56,7 +56,7 @@ namespace ClearCanvas.Ris.Client.Reporting
         /// <summary>
         /// Gets the folder system that owns the drop target folder
         /// </summary>
-        ReportingWorkflowFolderSystem FolderSystem { get; }
+        ReportingWorkflowFolderSystemBase FolderSystem { get; }
     }
 
     public abstract class ReportingWorkflowFolder : WorkflowFolder<ReportingWorklistItem>
@@ -82,7 +82,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                 get { return _folder; }
             }
 
-            public ReportingWorkflowFolderSystem FolderSystem
+            public ReportingWorkflowFolderSystemBase FolderSystem
             {
                 get
                 {
@@ -102,14 +102,14 @@ namespace ClearCanvas.Ris.Client.Reporting
             #endregion
         }
 
-        private readonly ReportingWorkflowFolderSystem _folderSystem;
+        private readonly ReportingWorkflowFolderSystemBase _folderSystem;
         private IconSet _closedIconSet;
         private IconSet _openIconSet;
 
         private readonly EntityRef _worklistRef;
         private string _worklistClassName;
 
-        public ReportingWorkflowFolder(ReportingWorkflowFolderSystem folderSystem, string folderName, string folderDescription, EntityRef worklistRef, ExtensionPoint<IDropHandler<ReportingWorklistItem>> dropHandlerExtensionPoint)
+        public ReportingWorkflowFolder(ReportingWorkflowFolderSystemBase folderSystem, string folderName, string folderDescription, EntityRef worklistRef, ExtensionPoint<IDropHandler<ReportingWorklistItem>> dropHandlerExtensionPoint)
             :base(folderSystem, folderName, folderDescription, new ReportingWorklistTable())
         {
             _folderSystem = folderSystem;
@@ -126,17 +126,17 @@ namespace ClearCanvas.Ris.Client.Reporting
             _worklistRef = worklistRef;
         }
 
-        public ReportingWorkflowFolder(ReportingWorkflowFolderSystem folderSystem, string folderName, ExtensionPoint<IDropHandler<ReportingWorklistItem>> dropHandlerExtensionPoint)
+        public ReportingWorkflowFolder(ReportingWorkflowFolderSystemBase folderSystem, string folderName, ExtensionPoint<IDropHandler<ReportingWorklistItem>> dropHandlerExtensionPoint)
             : this(folderSystem, folderName, null, null, dropHandlerExtensionPoint)
         {
         }
 
-        public ReportingWorkflowFolder(ReportingWorkflowFolderSystem folderSystem, string folderName, string folderDescription, EntityRef worklistRef)
+        public ReportingWorkflowFolder(ReportingWorkflowFolderSystemBase folderSystem, string folderName, string folderDescription, EntityRef worklistRef)
             : this(folderSystem, folderName, folderDescription, worklistRef, null)
         {
         }
 
-        public ReportingWorkflowFolder(ReportingWorkflowFolderSystem folderSystem, string folderName)
+        public ReportingWorkflowFolder(ReportingWorkflowFolderSystemBase folderSystem, string folderName)
             : this(folderSystem, folderName, null, null, null)
         {
         }

@@ -29,21 +29,35 @@
 
 #endregion
 
-using System.Runtime.Serialization;
-using ClearCanvas.Enterprise.Common;
-using System.Collections.Generic;
+using ClearCanvas.Common;
+using ClearCanvas.Desktop.Tools;
 
-namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
+namespace ClearCanvas.Ris.Client.Adt
 {
-    [DataContract]
-    public class ListWorklistsRequest : DataContractBase
+    [ExtensionOf(typeof(TechnologistFolderExplorerToolExtensionPoint))]
+    class TechnologistMainWorkflowFolderSystemTool : Tool<IFolderExplorerToolContext>
     {
-        public ListWorklistsRequest(List<string> worklistTokens)
+        private TechnologistMainWorkflowFolderSystem _folderSystem;
+
+        public TechnologistMainWorkflowFolderSystemTool()
         {
-            this.WorklistTokens = worklistTokens;
+
         }
 
-        [DataMember]
-        public List<string> WorklistTokens;
+        public override void Initialize()
+        {
+            base.Initialize();
+
+            _folderSystem = new TechnologistMainWorkflowFolderSystem(this.Context);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                if (_folderSystem != null) _folderSystem.Dispose();
+            }
+        }
+
     }
 }

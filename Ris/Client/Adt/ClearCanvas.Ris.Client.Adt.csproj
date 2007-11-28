@@ -41,6 +41,9 @@
     <Compile Include="CancelOrderComponent.cs" />
     <Compile Include="CheckInOrderComponent.cs" />
     <Compile Include="CheckInOrderTable.cs" />
+    <Compile Include="TechnologistSearchWorkflowFolderSystem.cs" />
+    <Compile Include="TechnologistMainWorkflowFolderSystem.cs" />
+    <Compile Include="TechnologistMainWorkflowFolderSystemTool.cs" />
     <Compile Include="FolderSearchTool.cs" />
     <Compile Include="ModifyOrderTool.cs" />
     <Compile Include="NewOrderTool.cs" />
@@ -48,8 +51,6 @@
     <Compile Include="PatientSearchTool.cs" />
     <Compile Include="ExamDetailsComponent.cs" />
     <Compile Include="Folders\RefreshTool.cs" />
-    <Compile Include="Folders\RegistrationContainerFolders.cs" />
-    <Compile Include="Folders\TechnologistContainerFolders.cs" />
     <Compile Include="Folders\TechnologistWorkflowFolders.cs" />
     <Compile Include="HtmlFormSelector.cs" />
     <Compile Include="IDocumentationPage.cs" />
@@ -95,6 +96,10 @@
     <Compile Include="ReconciliationComponent.cs" />
     <Compile Include="PatientReconcileTool.cs" />
     <Compile Include="HomeTool.cs" />
+    <Compile Include="RegistrationBookingWorkflowFolderSystem.cs" />
+    <Compile Include="RegistrationBookingWorkflowFolderSystemTool.cs" />
+    <Compile Include="RegistrationMainWorkflowFolderSystem.cs" />
+    <Compile Include="RegistrationMainWorkflowFolderSystemTool.cs" />
     <Compile Include="RegistrationPreviewComponent.cs" />
     <Compile Include="RegistrationPreviewComponentSettings.cs" />
     <Compile Include="RegistrationPreviewComponentSettings.Designer.cs">
@@ -102,9 +107,10 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>RegistrationPreviewComponentSettings.settings</DependentUpon>
     </Compile>
+    <Compile Include="RegistrationSearchWorkflowFolderSystem.cs" />
+    <Compile Include="RegistrationSearchWorkflowFolderSystemTool.cs" />
     <Compile Include="RegistrationWorkflowFolder.cs" />
-    <Compile Include="RegistrationWorkflowFolderSystem.cs" />
-    <Compile Include="RegistrationWorkflowFolderSystemTool.cs" />
+    <Compile Include="RegistrationWorkflowFolderSystemBase.cs" />
     <Compile Include="RegistrationWorkflowTool.cs" />
     <Compile Include="RegistrationWorklistTable.cs" />
     <Compile Include="RequestedProcedureEditorComponent.cs" />
@@ -129,8 +135,8 @@
       <DependentUpon>TechnologistPreviewComponentSettings.settings</DependentUpon>
     </Compile>
     <Compile Include="TechnologistWorkflowFolder.cs" />
-    <Compile Include="TechnologistWorkflowFolderSystem.cs" />
-    <Compile Include="TechnologistWorkflowFolderSystemTool.cs" />
+    <Compile Include="TechnologistWorkflowFolderSystemBase.cs" />
+    <Compile Include="TechnologistSearchWorkflowFolderSystemTool.cs" />
     <Compile Include="TechnologistWorkflowTool.cs" />
     <Compile Include="TechnologistWorklistTable.cs" />
     <Compile Include="VisitEditorComponent.cs" />

@@ -38,7 +38,6 @@ using ClearCanvas.Desktop.Trees;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -46,8 +45,10 @@ namespace ClearCanvas.Ris.Client
     {
         IDesktopWindow DesktopWindow { get; }
         void AddFolder(IFolder folder);
-        void AddFolder(IFolder folder, IContainerFolder container);
+        void AddFolder(IFolder folder, IFolder parentFolder);
         void RemoveFolder(IFolder folder);
+        void RemoveFolder(IFolder folder, IFolder parentFolder);
+        void ReplaceFolder(IFolder oldFolder, IFolder newFolder);
         IFolder SelectedFolder { get; set; }
         event EventHandler SelectedFolderChanged;
 
@@ -98,14 +99,24 @@ namespace ClearCanvas.Ris.Client
                 _component.AddFolder(folder);
             }
 
-            public void AddFolder(IFolder folder, IContainerFolder container)
+            public void AddFolder(IFolder folder, IFolder parentFolder)
             {
-                _component.AddFolder(folder, container);
+                _component.AddFolder(folder, parentFolder);
             }
 
             public void RemoveFolder(IFolder folder)
             {
                 _component.RemoveFolder(folder);
+            }
+
+            public void RemoveFolder(IFolder folder, IFolder parentFolder)
+            {
+                _component.RemoveFolder(folder, parentFolder);
+            }
+
+            public void ReplaceFolder(IFolder oldFolder, IFolder newFolder)
+            {
+                _component.ReplaceFolder(oldFolder, newFolder);
             }
 
             public IFolder SelectedFolder
@@ -218,18 +229,18 @@ namespace ClearCanvas.Ris.Client
             binding.CanAcceptDropHandler = CanFolderAcceptDrop;
             binding.AcceptDropHandler = FolderAcceptDrop;
 
-            binding.CanHaveSubTreeHandler = delegate(IFolder folder) { return folder is IContainerFolder; };
+            binding.CanHaveSubTreeHandler = delegate(IFolder folder) { return folder.Subfolders.Count > 0; };
             binding.ShouldInitiallyExpandSubTreeHandler = delegate(IFolder folder) { return folder.StartExpanded; };
             binding.SubTreeProvider =
                 delegate(IFolder folder)
                 {
-                    if (folder is IContainerFolder)
+                    if (folder.Subfolders.Count > 0)
                     {
                         // Sub trees need to be cached so that delegates assigned to its ItemsChanged event are not orphaned 
                         // on successive GetSubTree calls
                         if (_containers.ContainsKey(folder) == false)
                         {
-                            _containers.Add(folder, new Tree<IFolder>(GetBinding(), ((IContainerFolder)folder).Subfolders));
+                            _containers.Add(folder, new Tree<IFolder>(GetBinding(), folder.Subfolders));
                         }
                         return _containers[folder];
                     }
@@ -496,11 +507,35 @@ namespace ClearCanvas.Ris.Client
             folder.IconChanged -= FolderChangedEventHandler;
         }
 
-        private void AddFolder(IFolder folder, IContainerFolder container)
+        private void AddFolder(IFolder folder, IFolder parentFolder)
         {
-            container.AddFolder(folder);
+            parentFolder.AddFolder(folder);
             folder.TextChanged += FolderChangedEventHandler;
             folder.IconChanged += FolderChangedEventHandler;
+        }
+
+        private void RemoveFolder(IFolder folder, IFolder parentFolder)
+        {
+            parentFolder.RemoveFolder(folder);
+            folder.TextChanged -= FolderChangedEventHandler;
+            folder.IconChanged -= FolderChangedEventHandler;
+        }
+
+        private void ReplaceFolder(IFolder oldFolder, IFolder newFolder)
+        {
+            foreach (IFolder subFolder in oldFolder.Subfolders)
+            {
+                // we don't use this.AddFolder(...) so the eventHandler will stay intact
+                newFolder.AddFolder(subFolder);
+            }
+
+            oldFolder.Subfolders.Clear();
+
+            IFolder parentFolder = CollectionUtils.SelectFirst(_folderTree.Items,
+                delegate(IFolder f) { return f.Subfolders.Contains(oldFolder); });
+
+            RemoveFolder(oldFolder, parentFolder);
+            AddFolder(newFolder, parentFolder);
         }
 
         // Tells the item collection holding the specified folder that the folder has been changed

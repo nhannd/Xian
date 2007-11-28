@@ -47,41 +47,13 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         private readonly string _selectHql = "select w from Worklist w join w.Users u"
                                              + " where u = :user ";
 
-        private readonly string _registrationWorklistHql = " and (w.class = RegistrationScheduledWorklist"
-                                                           + " or w.class = RegistrationCheckedInWorklist"
-                                                           + " or w.class = RegistrationInProgressWorklist"
-                                                           + " or w.class = RegistrationCancelledWorklist"
-                                                           + " or w.class = RegistrationCompletedWorklist"
-                                                           + " or w.class = RegistrationCompletedProtocolWorklist"
-                                                           + " or w.class = RegistrationSuspendedProtocolWorklist"
-                                                           + " or w.class = RegistrationPendingProtocolWorklist)";
-
-        private readonly string _technologistWorklistHql = " and (w.class = TechnologistScheduledWorklist"
-                                                           + " or w.class = TechnologistCheckedInWorklist"
-                                                           + " or w.class = TechnologistInProgressWorklist"
-                                                           + " or w.class = TechnologistCancelledWorklist"
-                                                           + " or w.class = TechnologistCompletedWorklist)";
-
-        private readonly string _reportingWorklistHql = " and (w.class = ReportingToBeReportedWorklist"
-                                                        + " or w.class = ReportingToBeProtocolledWorklist)";
-
         #endregion
 
         #region IWorklistBroker Members
 
-        public IList FindAllRegistrationWorklists(User currentUser)
+        public IList FindWorklists(User currentUser, IList classNames)
         {
-            return DoQuery(currentUser, _registrationWorklistHql);
-        }
-
-        public IList FindAllTechnologistWorklists(User currentUser)
-        {
-            return DoQuery(currentUser, _technologistWorklistHql);
-        }
-
-        public IList FindAllReportingWorklists(User currentUser)
-        {
-            return DoQuery(currentUser, _reportingWorklistHql);
+            return DoQuery(currentUser, ConstructWorklistHql(classNames));
         }
 
         public Worklist FindWorklist(string name, string type)
@@ -101,6 +73,21 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         #endregion
 
         #region Private Methods
+
+        private string ConstructWorklistHql(IList classNames)
+        {
+            // Construct a worklist hql that looks like the following
+            // " and (w.class = className1 or w.class = className2)"
+
+            string worklistCondition = string.Join(" or ",
+                CollectionUtils.Map<string, string>(classNames,
+                delegate(string className)
+                {
+                    return string.Format("w.class = {0}", className);
+                }).ToArray());
+
+            return string.Concat(" and (", worklistCondition, ")");
+        }
 
         private IList DoQuery(User currentUser, string subCriteria)
         {

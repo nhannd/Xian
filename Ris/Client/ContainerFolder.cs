@@ -29,66 +29,34 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 
 namespace ClearCanvas.Ris.Client
 {
-    public interface IContainerFolder : IFolder
+    public class ContainerFolder : Folder //, IDisposable
     {
-        IList<Type> SubfolderTypes { get; }
-        void AddSubfolderType(Type type);
-        IList<IFolder> Subfolders { get; }
-        void AddFolder(IFolder subFolder);
-        bool RemoveFolder(IFolder subFolder);
-    }
-
-    public abstract class ContainerFolder : Folder, IContainerFolder//, IDisposable
-    {
-        private readonly IList<IFolder> _subfolders;
-        private readonly string _text;
-        private readonly IList<Type> _subfolderTypes;
-
         private readonly IconSet _openIconSet;
         private readonly IconSet _closedIconSet;
 
-        public ContainerFolder(string text)
-            : this(text, new List<Type>())
+        public ContainerFolder(string path, bool startExpanded)
         {
-        }
-
-        public ContainerFolder(string text, Type subfolderType)
-            : this(text)
-        {
-            _subfolderTypes.Add(subfolderType);
-        }
-
-        public ContainerFolder(string text, IList<Type> subfolderTypes)
-        {
-            _subfolders = new List<IFolder>();
-            _text = text;
-            _subfolderTypes = subfolderTypes;
-
             _openIconSet = new IconSet(IconScheme.Colour, "ContainerFolderOpenSmall.png", "ContainerFolderOpenMedium.png", "ContainerFolderOpenMedium.png");
             _closedIconSet = new IconSet(IconScheme.Colour, "ContainerFolderClosedSmall.png", "ContainerFolderClosedMedium.png", "ContainerFolderClosedMedium.png");
             _iconSet = _closedIconSet;
             _resourceResolver = new ResourceResolver(typeof(ContainerFolder).Assembly);
-        }
 
-        /// <summary>
-        /// Not to be used by subclasses
-        /// </summary>
-        private ContainerFolder()
-        {
+            if (!string.IsNullOrEmpty(path))
+                _folderPath = new Path(path, _resourceResolver);
+
+            _startExpanded = startExpanded;
         }
 
         #region Folder overrides
 
         public override string Text
         {
-            get { return _text; }
+            get { return _folderPath.LastSegment.LocalizedText; }
         }
 
         public override void Refresh()
@@ -99,7 +67,7 @@ namespace ClearCanvas.Ris.Client
         {
         }
 
-        public override ClearCanvas.Desktop.Tables.ITable ItemsTable
+        public override Desktop.Tables.ITable ItemsTable
         {
             get { return null; }
         }
@@ -149,38 +117,6 @@ namespace ClearCanvas.Ris.Client
 
         #endregion
 
-        #region IContainerFolder Members
-
-        public IList<Type> SubfolderTypes
-        {
-            get { return _subfolderTypes; }
-        }
-
-        public void AddSubfolderType(Type type)
-        {
-            if (false == CollectionUtils.Contains<Type>(_subfolderTypes, delegate(Type existingType) { return type == existingType; }))
-                _subfolderTypes.Add(type);
-        }
-
-        public IList<IFolder> Subfolders
-        {
-            get { return _subfolders; }
-        }
-
-        public void AddFolder(IFolder subFolder)
-        {
-            if (CollectionUtils.Contains<Type>(_subfolderTypes, delegate(Type type) { return type == subFolder.GetType(); }))
-                _subfolders.Add(subFolder);
-            else
-                throw new Exception("Bad subfolder");
-        }
-
-        public bool RemoveFolder(IFolder subFolder)
-        {
-            return _subfolders.Remove(subFolder);
-        }
-
-        #endregion
 
         #region IDisposable Members
 

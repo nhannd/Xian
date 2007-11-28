@@ -29,42 +29,24 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common;
-using ClearCanvas.Desktop.Tools;
 
-namespace ClearCanvas.Ris.Client.Adt
+namespace ClearCanvas.Ris.Client.Reporting
 {
     [ExtensionPoint]
-    public class RegistrationFolderExplorerToolExtensionPoint : ExtensionPoint<ITool>
+    public class ReportingProtocolWorkflowFolderExtensionPoint : ExtensionPoint<IFolder>
     {
     }
 
-    [ExtensionOf(typeof(RegistrationFolderExplorerToolExtensionPoint))]
-    public class RegistrationWorkflowFolderSystemTool : Tool<IFolderExplorerToolContext>
+    public class ReportingProtocolWorkflowFolderSystem : ReportingWorkflowFolderSystemBase
     {
-        private RegistrationWorkflowFolderSystem _folderSystem;
-
-        public RegistrationWorkflowFolderSystemTool()
+        public ReportingProtocolWorkflowFolderSystem(IFolderExplorerToolContext folderExplorer)
+            : base(folderExplorer, new ReportingProtocolWorkflowFolderExtensionPoint())
         {
-        }
-
-        public override void Initialize()
-        {
-            base.Initialize();
-
-            _folderSystem = new RegistrationWorkflowFolderSystem(this.Context);
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                if (_folderSystem != null) _folderSystem.Dispose();
-            }
+            this.AddFolder(new Folders.ToBeProtocolledFolder(this));
+            this.AddFolder(new Folders.ToBeApprovedFolder(this));
+            this.AddFolder(new Folders.CompletedProtocolFolder(this));
+            this.AddFolder(new Folders.SuspendedProtocolFolder(this));
         }
     }
 }

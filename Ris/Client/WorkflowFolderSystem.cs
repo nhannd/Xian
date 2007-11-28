@@ -31,8 +31,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Common;
@@ -41,9 +39,10 @@ namespace ClearCanvas.Ris.Client
 {
     public abstract class WorkflowFolderSystem<TItem> : IDisposable
     {
-        private IFolderExplorerToolContext _folderExplorer;
-        private List<WorkflowFolder<TItem>> _folders;
-        private IDictionary<Type, IContainerFolder> _containers;
+        private readonly IFolderExplorerToolContext _folderExplorer;
+        private readonly IDictionary<string, Type> _worklistType;
+        private readonly List<WorkflowFolder<TItem>> _workflowFolders;
+        private readonly List<IFolder> _folders;
 
         private event EventHandler _selectedItemDoubleClicked;
         private event EventHandler _selectedItemsChanged;
@@ -54,38 +53,27 @@ namespace ClearCanvas.Ris.Client
         {
         }
 
-        public WorkflowFolderSystem(IFolderExplorerToolContext folderExplorer, ExtensionPoint<IContainerFolder> containerExtensionPoint)
+        public WorkflowFolderSystem(IFolderExplorerToolContext folderExplorer, ExtensionPoint<IFolder> folderExtensionPoint)
         {
-            _folders = new List<WorkflowFolder<TItem>>();
+            _workflowFolders = new List<WorkflowFolder<TItem>>();
+            _folders = new List<IFolder>();
 
             _folderExplorer = folderExplorer;
-            _folderExplorer.SelectedFolderChanged += new EventHandler(_folderExplorer_SelectedFolderChanged);
-            _folderExplorer.SelectedItemsChanged += new EventHandler(_folderExplorer_SelectedItemsChanged);
-            _folderExplorer.SelectedItemDoubleClicked += new EventHandler(_folderExplorer_SelectedItemDoubleClicked);
+            _folderExplorer.SelectedFolderChanged += _folderExplorer_SelectedFolderChanged;
+            _folderExplorer.SelectedItemsChanged += _folderExplorer_SelectedItemsChanged;
+            _folderExplorer.SelectedItemDoubleClicked += _folderExplorer_SelectedItemDoubleClicked;
 
-            _containers = new Dictionary<Type, IContainerFolder>();
-
-            // Add any containers defined by the provided extension point to the list of folders
-            if (containerExtensionPoint != null)
+            // Collect all worklist tokens
+            _worklistType = new Dictionary<string, Type>();
+            if (folderExtensionPoint != null)
             {
-                foreach (IContainerFolder container in containerExtensionPoint.CreateExtensions())
+                foreach (IFolder folder in folderExtensionPoint.CreateExtensions())
                 {
-                    foreach (Type subfoldderTType in container.SubfolderTypes)
+                    if (folder is WorkflowFolder<TItem>)
                     {
-                        _containers.Add(subfoldderTType, container);
-                    }
-
-                    IContainerFolder rootContainer;
-
-                    // Find any containers that exist for this folder type
-                    if (_containers.TryGetValue(container.GetType(), out rootContainer))
-                    {
-                        _folderExplorer.AddFolder(container, rootContainer);
-                    }
-                    else
-                    {
-                        // No container, so add to root
-                        _folderExplorer.AddFolder(container);
+                        WorkflowFolder<TItem> workflowFolder = (WorkflowFolder<TItem>)folder;
+                        if (!string.IsNullOrEmpty(workflowFolder.WorklistType))
+                            _worklistType.Add(workflowFolder.WorklistType, workflowFolder.GetType());
                     }
                 }
             }
@@ -94,6 +82,16 @@ namespace ClearCanvas.Ris.Client
         ~WorkflowFolderSystem()
         {
             Dispose(false);
+        }
+
+        public Type GetWorklistType(string type)
+        {
+            return _worklistType.ContainsKey(type) ? _worklistType[type] : null;
+        }
+
+        public List<string> WorklistTokens
+        {
+            get { return new List<string>(_worklistType.Keys); }
         }
 
         public IDesktopWindow DesktopWindow
@@ -162,28 +160,58 @@ namespace ClearCanvas.Ris.Client
 
         protected void AddFolder(WorkflowFolder<TItem> folder)
         {
-            IContainerFolder container;
-            // Find any containers that exist for this folder type
-            if (_containers.TryGetValue(folder.GetType(), out container))
+            int lastIndex = folder.FolderPath.Segments.Length - 1;
+            IFolder parentFolder = null;
+
+            for (int index = 0; index < folder.FolderPath.Segments.Length; index++)
             {
-                _folderExplorer.AddFolder(folder, container);
+                string currentPath = folder.FolderPath.SubPath(index);
+                IFolder folderWithCurrentPath = CollectionUtils.SelectFirst(_folders,
+                    delegate(IFolder f) { return Equals(currentPath, f.FolderPath.ToString()); });
+
+                if (folderWithCurrentPath != null)
+                {
+                    if (folderWithCurrentPath is ContainerFolder && index == lastIndex)
+                    {
+                        _folderExplorer.ReplaceFolder(folderWithCurrentPath, folder);
+                        _folders.Remove(folderWithCurrentPath);
+                    }
+
+                    parentFolder = folderWithCurrentPath;
+                    continue;
+                }
+
+                IFolder currentFolder;
+                if (index == lastIndex)
+                {
+                    currentFolder = folder;
+                }
+                else
+                {
+                    currentFolder = new ContainerFolder(currentPath, folder.StartExpanded);
+                    _folders.Add(currentFolder);
+                }
+
+                if (parentFolder == null)
+                    _folderExplorer.AddFolder(currentFolder);
+                else
+                    _folderExplorer.AddFolder(currentFolder, parentFolder);
+
+                parentFolder = currentFolder;
             }
-            else
-            {
-                // No container, so add to root
-                _folderExplorer.AddFolder(folder);
-            }
+
+            _workflowFolders.Add(folder);
             _folders.Add(folder);
         }
 
         public IEnumerable<WorkflowFolder<TItem>> Folders
         {
-            get { return _folders; }
+            get { return _workflowFolders; }
         }
 
         protected virtual void Dispose(bool disposing)
         {
-            foreach (WorkflowFolder<TItem> folder in _folders)
+            foreach (WorkflowFolder<TItem> folder in _workflowFolders)
             {
                 folder.Dispose();
             }

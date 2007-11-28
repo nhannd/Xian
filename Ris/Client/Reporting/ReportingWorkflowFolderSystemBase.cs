@@ -32,17 +32,20 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
-using ClearCanvas.Ris.Client.Reporting.Folders;
 
 namespace ClearCanvas.Ris.Client.Reporting
 {
+    [ExtensionPoint]
+    public class ReportingFolderExplorerToolExtensionPoint : ExtensionPoint<ITool>
+    {
+    }
+
     [ExtensionPoint]
     public class ReportingWorkflowItemToolExtensionPoint : ExtensionPoint<ITool>
     {
@@ -75,13 +78,13 @@ namespace ClearCanvas.Ris.Client.Reporting
         IDesktopWindow DesktopWindow { get; }
     }
 
-    public class ReportingWorkflowFolderSystem : WorkflowFolderSystem<ReportingWorklistItem>, ISearchDataHandler
+    public abstract class ReportingWorkflowFolderSystemBase : WorkflowFolderSystem<ReportingWorklistItem>
     {
         class ReportingWorkflowItemToolContext : ToolContext, IReportingWorkflowItemToolContext
         {
-            private readonly ReportingWorkflowFolderSystem _owner;
+            private readonly ReportingWorkflowFolderSystemBase _owner;
 
-            public ReportingWorkflowItemToolContext(ReportingWorkflowFolderSystem owner)
+            public ReportingWorkflowItemToolContext(ReportingWorkflowFolderSystemBase owner)
             {
                 _owner = owner;
             }
@@ -124,9 +127,9 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         class ReportingWorkflowFolderToolContext : ToolContext, IReportingWorkflowFolderToolContext
         {
-            private readonly ReportingWorkflowFolderSystem _owner;
+            private readonly ReportingWorkflowFolderSystemBase _owner;
 
-            public ReportingWorkflowFolderToolContext(ReportingWorkflowFolderSystem owner)
+            public ReportingWorkflowFolderToolContext(ReportingWorkflowFolderSystemBase owner)
             {
                 _owner = owner;
             }
@@ -160,64 +163,36 @@ namespace ClearCanvas.Ris.Client.Reporting
         private ToolSet _itemToolSet;
         private ToolSet _folderToolSet;
         private IDictionary<string, bool> _workflowEnablement;
-        private Folders.SearchFolder _searchFolder;
 
-        public ReportingWorkflowFolderSystem(IFolderExplorerToolContext folderExplorer)
-            : base(folderExplorer, new ReportingContainerFolderExtensionPoint())
+        public ReportingWorkflowFolderSystemBase(IFolderExplorerToolContext folderExplorer, ExtensionPoint<IFolder> folderExtensionPoint)
+            : base(folderExplorer, folderExtensionPoint)
         {
             // important to initialize service before adding any folders, because folders may access service
 
             this.SelectedItemsChanged += SelectedItemsChangedEventHandler;
             this.SelectedItemDoubleClicked += SelectedItemDoubleClickedEventHandler;
 
-            Platform.GetService<IReportingWorkflowService>(
-                delegate(IReportingWorkflowService service)
-                {
-                    ListWorklistsResponse response = service.ListWorklists(new ListWorklistsRequest());
-                    foreach (WorklistSummary worklistSummary in response.Worklists)
+            if (this.WorklistTokens.Count > 0)
+            {
+                Platform.GetService<IReportingWorkflowService>(
+                    delegate(IReportingWorkflowService service)
                     {
-                        WorkflowFolder<ReportingWorklistItem> folder = 
-                            WorkflowFolderFactory.Instance.GetFolder<ReportingWorklistItem>(worklistSummary.Type, this, worklistSummary);
-                        if (folder != null) this.AddFolder(folder);
-                    }
-                });
-
-            this.AddFolder(new Folders.ToBeReportedFolder(this));
-            this.AddFolder(new Folders.DraftFolder(this));
-
-            if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.UseTranscriptionWorkflow))
-                this.AddFolder(new Folders.InTranscriptionFolder(this));
-
-            this.AddFolder(new Folders.ToBeVerifiedFolder(this));
-
-            if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.VerifyReport))
-                this.AddFolder(new Folders.ReviewResidentReportFolder(this));
-
-            this.AddFolder(new Folders.VerifiedFolder(this));
-
-            this.AddFolder(new Folders.ToBeProtocolledFolder(this));
-            this.AddFolder(new Folders.ToBeApprovedFolder(this));
-            this.AddFolder(new Folders.CompletedProtocolFolder(this));
-            this.AddFolder(new Folders.SuspendedProtocolFolder(this));
-
-            this.AddFolder(_searchFolder = new Folders.SearchFolder(this));
+                        ListWorklistsResponse response = service.ListWorklists(new ListWorklistsRequest(this.WorklistTokens));
+                        foreach (WorklistSummary summary in response.Worklists)
+                        {
+                            Type foundType = GetWorklistType(summary.Type);
+                            WorkflowFolder<ReportingWorklistItem> folder =
+                                (WorkflowFolder<ReportingWorklistItem>)Activator.CreateInstance(foundType, this, summary.DisplayName, summary.Description, summary.EntityRef);
+                            if (folder != null) this.AddFolder(folder);
+                        }
+                    });
+            }
 
             _itemToolSet = new ToolSet(new ReportingWorkflowItemToolExtensionPoint(), new ReportingWorkflowItemToolContext(this));
             _folderToolSet = new ToolSet(new ReportingWorkflowFolderToolExtensionPoint(), new ReportingWorkflowFolderToolContext(this));
 
             folderExplorer.AddItemActions(_itemToolSet.Actions);
             folderExplorer.AddFolderActions(_folderToolSet.Actions);
-
-            folderExplorer.RegisterSearchDataHandler(this);
-        }
-
-        public SearchData SearchData
-        {
-            set
-            {
-                _searchFolder.SearchData = value;
-                SelectedFolder = _searchFolder;
-            }
         }
 
         public bool GetOperationEnablement(string operationName)
@@ -235,7 +210,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         private void SelectedItemsChangedEventHandler(object sender, EventArgs e)
         {
-            ReportingWorklistItem selectedItem = CollectionUtils.FirstElement<ReportingWorklistItem>(this.SelectedItems);
+            ReportingWorklistItem selectedItem = CollectionUtils.FirstElement(this.SelectedItems);
             if (selectedItem == null)
             {
                 _workflowEnablement = null;
@@ -245,7 +220,7 @@ namespace ClearCanvas.Ris.Client.Reporting
             try
             {
                 BlockingOperation.Run(
-                    delegate()
+                    delegate
                     {
                         Platform.GetService<IReportingWorkflowService>(
                             delegate(IReportingWorkflowService service)

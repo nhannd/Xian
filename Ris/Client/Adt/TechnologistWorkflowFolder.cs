@@ -55,7 +55,7 @@ namespace ClearCanvas.Ris.Client.Adt
         /// <summary>
         /// Gets the folder system that owns the drop target folder
         /// </summary>
-        TechnologistWorkflowFolderSystem FolderSystem { get; }
+        TechnologistWorkflowFolderSystemBase FolderSystem { get; }
     }
 
     public abstract class TechnologistWorkflowFolder : WorkflowFolder<ModalityWorklistItem>
@@ -81,7 +81,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 get { return _folder; }
             }
 
-            public TechnologistWorkflowFolderSystem FolderSystem
+            public TechnologistWorkflowFolderSystemBase FolderSystem
             {
                 get
                 {
@@ -101,14 +101,14 @@ namespace ClearCanvas.Ris.Client.Adt
             #endregion
         }
 
-        private TechnologistWorkflowFolderSystem _folderSystem;
+        private TechnologistWorkflowFolderSystemBase _folderSystem;
         private IconSet _closedIconSet;
         private IconSet _openIconSet;
 
         private readonly EntityRef _worklistRef;
         private string _worklistClassName;
 
-        public TechnologistWorkflowFolder(TechnologistWorkflowFolderSystem folderSystem, string folderName, string folderDescription, EntityRef worklistRef, ExtensionPoint<IDropHandler<ModalityWorklistItem>> dropHandlerExtensionPoint)
+        public TechnologistWorkflowFolder(TechnologistWorkflowFolderSystemBase folderSystem, string folderName, string folderDescription, EntityRef worklistRef, ExtensionPoint<IDropHandler<ModalityWorklistItem>> dropHandlerExtensionPoint)
             : base(folderSystem, folderName, folderDescription, new ModalityWorklistTable())
         {
             _folderSystem = folderSystem;
@@ -125,17 +125,17 @@ namespace ClearCanvas.Ris.Client.Adt
             _worklistRef = worklistRef;
         }
 
-        public TechnologistWorkflowFolder(TechnologistWorkflowFolderSystem folderSystem, string folderName, ExtensionPoint<IDropHandler<ModalityWorklistItem>> dropHandlerExtensionPoint)
+        public TechnologistWorkflowFolder(TechnologistWorkflowFolderSystemBase folderSystem, string folderName, ExtensionPoint<IDropHandler<ModalityWorklistItem>> dropHandlerExtensionPoint)
             : this(folderSystem, folderName, null, null, dropHandlerExtensionPoint)
         {
         }
 
-        public TechnologistWorkflowFolder(TechnologistWorkflowFolderSystem folderSystem, string folderName)
+        public TechnologistWorkflowFolder(TechnologistWorkflowFolderSystemBase folderSystem, string folderName)
             : this(folderSystem, folderName, null, null, null)
         {
         }
 
-        public TechnologistWorkflowFolder(TechnologistWorkflowFolderSystem folderSystem, string folderName, string folderDescription, EntityRef worklistRef)
+        public TechnologistWorkflowFolder(TechnologistWorkflowFolderSystemBase folderSystem, string folderName, string folderDescription, EntityRef worklistRef)
             : this(folderSystem, folderName, folderDescription, worklistRef, null)
         {
         }

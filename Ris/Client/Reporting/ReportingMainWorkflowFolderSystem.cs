@@ -29,21 +29,34 @@
 
 #endregion
 
-using System.Runtime.Serialization;
-using ClearCanvas.Enterprise.Common;
-using System.Collections.Generic;
+using System.Threading;
+using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Common;
 
-namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
+namespace ClearCanvas.Ris.Client.Reporting
 {
-    [DataContract]
-    public class ListWorklistsRequest : DataContractBase
+    [ExtensionPoint]
+    public class ReportingMainWorkflowFolderExtensionPoint : ExtensionPoint<IFolder>
     {
-        public ListWorklistsRequest(List<string> worklistTokens)
-        {
-            this.WorklistTokens = worklistTokens;
-        }
+    }
 
-        [DataMember]
-        public List<string> WorklistTokens;
+    public class ReportingMainWorkflowFolderSystem : ReportingWorkflowFolderSystemBase
+    {
+        public ReportingMainWorkflowFolderSystem(IFolderExplorerToolContext folderExplorer)
+            : base(folderExplorer, new ReportingMainWorkflowFolderExtensionPoint())
+        {
+            this.AddFolder(new Folders.ToBeReportedFolder(this));
+            this.AddFolder(new Folders.DraftFolder(this));
+
+            if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.UseTranscriptionWorkflow))
+                this.AddFolder(new Folders.InTranscriptionFolder(this));
+
+            this.AddFolder(new Folders.ToBeVerifiedFolder(this));
+
+            if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.VerifyReport))
+                this.AddFolder(new Folders.ReviewResidentReportFolder(this));
+
+            this.AddFolder(new Folders.VerifiedFolder(this));
+        }
     }
 }

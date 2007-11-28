@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
@@ -37,6 +38,34 @@ using ClearCanvas.Desktop.Tables;
 
 namespace ClearCanvas.Ris.Client
 {
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
+    public class FolderPathAttribute : Attribute
+    {
+        private readonly string _path;
+        private readonly bool _startExpanded;
+
+        public FolderPathAttribute(string path)
+        {
+            _path = path;
+        }
+
+        public FolderPathAttribute(string path, bool startExpanded)
+        {
+            _path = path;
+            _startExpanded = startExpanded;
+        }
+
+        public string Path
+        {
+            get { return _path; }
+        }
+
+        public bool StartExpanded
+        {
+            get { return _startExpanded; }
+        }
+    }
+
     public abstract class Folder : IFolder
     {
         private event EventHandler _textChanged;
@@ -51,6 +80,10 @@ namespace ClearCanvas.Ris.Client
         protected IResourceResolver _resourceResolver;
         private bool _isOpen;
 
+        protected readonly IList<IFolder> _subfolders;
+        protected Path _folderPath;
+        protected bool _startExpanded;
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -58,6 +91,22 @@ namespace ClearCanvas.Ris.Client
         {
             // establish default resource resolver on this assembly (not the assembly of the derived class)
             _resourceResolver = new ResourceResolver(typeof(Folder).Assembly);
+
+            _subfolders = new List<IFolder>();
+
+            // Initialize folder Path
+            FolderPathAttribute attrib = (FolderPathAttribute) CollectionUtils.SelectFirst(
+                this.GetType().GetCustomAttributes(false),
+                delegate(object o)
+                    {
+                        return o is FolderPathAttribute;
+                    });
+
+            if (attrib != null)
+            {
+                _folderPath = new Path(attrib.Path, _resourceResolver);
+                _startExpanded = attrib.StartExpanded;
+            }
         }
 
 
@@ -110,7 +159,7 @@ namespace ClearCanvas.Ris.Client
         /// </summary>
         public virtual bool StartExpanded
         {
-            get { return false; }
+            get { return _startExpanded; }
         }
 
         /// <summary>
@@ -236,6 +285,42 @@ namespace ClearCanvas.Ris.Client
             get;
         }
 
+        /// <summary>
+        /// Gets or sets the folder path which sets up the tree structure
+        /// </summary>
+        public Path FolderPath
+        {
+            get { return _folderPath; }
+            set { _folderPath = value; }
+        }
+
+        /// <summary>
+        /// Gets a list of sub folders
+        /// </summary>
+        public IList<IFolder> Subfolders
+        {
+            get { return _subfolders; }
+        }
+
+        /// <summary>
+        /// Add a subfolder
+        /// </summary>
+        /// <param name="subFolder"></param>
+        public void AddFolder(IFolder subFolder)
+        {
+            _subfolders.Add(subFolder);
+        }
+
+        /// <summary>
+        /// Remove a sub folder
+        /// </summary>
+        /// <param name="subFolder"></param>
+        /// <returns></returns>
+        public bool RemoveFolder(IFolder subFolder)
+        {
+            return _subfolders.Remove(subFolder);
+        }
+
         #endregion
 
         #region Protected members
@@ -256,6 +341,5 @@ namespace ClearCanvas.Ris.Client
         }
 
         #endregion
-
     }
 }

@@ -112,7 +112,6 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>WebServicesSettings.settings</DependentUpon>
     </Compile>
-    <Compile Include="WorkflowFolderFactory.cs" />
     <Compile Include="Formatting\AddressFormat.cs" />
     <Compile Include="AddressEditorComponentSettings.cs" />
     <Compile Include="AddressEditorComponentSettings.Designer.cs">

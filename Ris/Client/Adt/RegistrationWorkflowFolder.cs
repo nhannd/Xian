@@ -56,7 +56,7 @@ namespace ClearCanvas.Ris.Client.Adt
         /// <summary>
         /// Gets the folder system that owns the drop target folder
         /// </summary>
-        RegistrationWorkflowFolderSystem FolderSystem { get; }
+        RegistrationWorkflowFolderSystemBase FolderSystem { get; }
     }
 
     public abstract class RegistrationWorkflowFolder : WorkflowFolder<RegistrationWorklistItem>
@@ -82,7 +82,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 get { return _folder; }
             }
 
-            public RegistrationWorkflowFolderSystem FolderSystem
+            public RegistrationWorkflowFolderSystemBase FolderSystem
             {
                 get
                 {
@@ -103,7 +103,7 @@ namespace ClearCanvas.Ris.Client.Adt
         }
 
 
-        private RegistrationWorkflowFolderSystem _folderSystem;
+        private RegistrationWorkflowFolderSystemBase _folderSystem;
         private IconSet _closedIconSet;
         private IconSet _openIconSet;
 
@@ -111,7 +111,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         private string _worklistClassName;
 
-        public RegistrationWorkflowFolder(RegistrationWorkflowFolderSystem folderSystem, string folderName, string folderDescription, EntityRef worklistRef, ExtensionPoint<IDropHandler<RegistrationWorklistItem>> dropHandlerExtensionPoint)
+        public RegistrationWorkflowFolder(RegistrationWorkflowFolderSystemBase folderSystem, string folderName, string folderDescription, EntityRef worklistRef, ExtensionPoint<IDropHandler<RegistrationWorklistItem>> dropHandlerExtensionPoint)
             : base(folderSystem, folderName, folderDescription, new RegistrationWorklistTable())
         {
             _folderSystem = folderSystem;
@@ -128,17 +128,17 @@ namespace ClearCanvas.Ris.Client.Adt
             _worklistRef = worklistRef;
         }
 
-        public RegistrationWorkflowFolder(RegistrationWorkflowFolderSystem folderSystem, string folderName, ExtensionPoint<IDropHandler<RegistrationWorklistItem>> dropHandlerExtensionPoint)
+        public RegistrationWorkflowFolder(RegistrationWorkflowFolderSystemBase folderSystem, string folderName, ExtensionPoint<IDropHandler<RegistrationWorklistItem>> dropHandlerExtensionPoint)
             : this(folderSystem, folderName, null, null, dropHandlerExtensionPoint)
         {
         }
 
-        public RegistrationWorkflowFolder(RegistrationWorkflowFolderSystem folderSystem, string folderName)
+        public RegistrationWorkflowFolder(RegistrationWorkflowFolderSystemBase folderSystem, string folderName)
             :this(folderSystem, folderName, null, null, null)
         {
         }
 
-        public RegistrationWorkflowFolder(RegistrationWorkflowFolderSystem folderSystem, string folderName, string folderDescription, EntityRef worklistRef)
+        public RegistrationWorkflowFolder(RegistrationWorkflowFolderSystemBase folderSystem, string folderName, string folderDescription, EntityRef worklistRef)
             : this(folderSystem, folderName, folderDescription, worklistRef, null)
         {
         }

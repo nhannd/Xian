@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
@@ -147,5 +148,28 @@ namespace ClearCanvas.Ris.Client
         /// Gets a table of the items that are contained in this folder
         /// </summary>
         ITable ItemsTable { get; }
+
+        /// <summary>
+        /// Gets or sets the folder path which sets up the tree structure
+        /// </summary>
+        Path FolderPath { get; set; }
+
+        /// <summary>
+        /// Gets a list of sub folders
+        /// </summary>
+        IList<IFolder> Subfolders { get; }
+
+        /// <summary>
+        /// Add a subfolder
+        /// </summary>
+        /// <param name="subFolder"></param>
+        void AddFolder(IFolder subFolder);
+
+        /// <summary>
+        /// Remove a sub folder
+        /// </summary>
+        /// <param name="subFolder"></param>
+        /// <returns></returns>
+        bool RemoveFolder(IFolder subFolder);
     }
 }

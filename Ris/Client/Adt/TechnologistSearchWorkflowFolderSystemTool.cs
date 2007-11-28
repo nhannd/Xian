@@ -30,33 +30,27 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.Tools;
 
-namespace ClearCanvas.Ris.Client.Reporting
+namespace ClearCanvas.Ris.Client.Adt
 {
-    [ExtensionPoint]
-    public class ReportingFolderExplorerToolExtensionPoint : ExtensionPoint<ITool>
+    [ExtensionOf(typeof(TechnologistFolderExplorerToolExtensionPoint))]
+    class TechnologistSearchWorkflowFolderSystemTool : Tool<IFolderExplorerToolContext>
     {
-    }
+        private TechnologistSearchWorkflowFolderSystem _folderSystem;
 
-    [ExtensionOf(typeof(ReportingFolderExplorerToolExtensionPoint))]
-    public class ReportingWorkflowFolderSystemTool : Tool<IFolderExplorerToolContext>
-    {
-        private ReportingWorkflowFolderSystem _folderSystem;
-
-        public ReportingWorkflowFolderSystemTool()
+        public TechnologistSearchWorkflowFolderSystemTool()
         {
+
         }
 
         public override void Initialize()
         {
             base.Initialize();
 
-            _folderSystem = new ReportingWorkflowFolderSystem(this.Context);
+            _folderSystem = new TechnologistSearchWorkflowFolderSystem(this.Context);
         }
 
         protected override void Dispose(bool disposing)
@@ -66,5 +60,6 @@ namespace ClearCanvas.Ris.Client.Reporting
                 if (_folderSystem != null) _folderSystem.Dispose();
             }
         }
+
     }
 }

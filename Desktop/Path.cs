@@ -111,7 +111,23 @@ namespace ClearCanvas.Desktop
 			}
 		}
 
-		/// <summary>
+        public string SubPath(int depth)
+        {
+            Platform.CheckIndexRange(depth, 0, _segments.Length - 1, "depth");
+
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i <= depth; i++)
+            {
+                if (sb.Length > 0)
+                    sb.Append(SEPARATOR);
+
+                sb.Append(_segments[i].LocalizedText);
+            }
+
+            return sb.ToString();
+        }
+
+        /// <summary>
         /// Converts this path back to the original string from which it was created.
         /// </summary>
         /// <returns></returns>

@@ -29,21 +29,28 @@
 
 #endregion
 
-using System.Runtime.Serialization;
-using ClearCanvas.Enterprise.Common;
-using System.Collections.Generic;
+using ClearCanvas.Ris.Client.Adt.Folders;
 
-namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
+namespace ClearCanvas.Ris.Client.Adt
 {
-    [DataContract]
-    public class ListWorklistsRequest : DataContractBase
+    public class RegistrationSearchWorkflowFolderSystem : RegistrationWorkflowFolderSystemBase, ISearchDataHandler
     {
-        public ListWorklistsRequest(List<string> worklistTokens)
+        private readonly RegistrationSearchFolder _searchFolder;
+
+        public RegistrationSearchWorkflowFolderSystem(IFolderExplorerToolContext folderExplorer)
+            : base(folderExplorer, null)
         {
-            this.WorklistTokens = worklistTokens;
+            this.AddFolder(_searchFolder = new RegistrationSearchFolder(this));
+            folderExplorer.RegisterSearchDataHandler(this);
         }
 
-        [DataMember]
-        public List<string> WorklistTokens;
+        public SearchData SearchData
+        {
+            set
+            {
+                _searchFolder.SearchData = value;
+                SelectedFolder = _searchFolder;
+            }
+        }
     }
 }
