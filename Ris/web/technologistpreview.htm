@@ -112,65 +112,62 @@
 		            {
     		            var patientOrderData = data.ListOrdersResponse.PatientOrderData;
 
-                        // group patientOrderData by AccessionNumber
-                        var orders = groupDataToOrders(patientOrderData);
-
 		                var today = Date.today();
-		                var pastOrders = orders.select(
+		                var pastProcedures = patientOrderData.select(
 		                    function(item) 
 		                    { 
 		                        return item.OrderScheduledStartTime && Date.compare(item.OrderScheduledStartTime, today) < 0;
-		                    }).sort(orderDataComparison);
+		                    }).sort(procedureScheduledDateComparison);
 
-		                var activeOrders = orders.select(
+		                var activeProcedures = patientOrderData.select(
 		                    function(item) 
 		                    { 
 		                        return item.OrderScheduledStartTime && Date.compare(item.OrderScheduledStartTime, today) >= 0;
-		                    }).sort(orderDataComparison);
+		                    }).sort(procedureScheduledDateComparison);
 
-//			            var notScheduledOrders = orders.select(
+//			            var notScheduledProcedures = patientOrderData.select(
 //			                function(item) 
 //			                { 
 //			                    return item.OrderScheduledStartTime == null;
 //			                });
-//			            activeOrders = activeOrders.concat(notScheduledOrders);
+//			            activeProcedures = activeProcedures.concat(notScheduledProcedures);
 
 						var currentAccession = Ris.getWorklistItem().AccessionNumber;
 
-                        if (activeOrders.length == 0)
+                        if (activeProcedures.length == 0)
                         {
-                            Field.show($("activeOrdersTable"), false);
+                            Field.show($("activeProceduresTable"), false);
                         }
                         else
                         {
-                            var activeOrdersTable = createOrdersTable($("activeOrdersTable"));
+                            var activeProceduresTable = createProceduresTable($("activeProceduresTable"));
 							
-                            activeOrdersTable.renderRow = function(sender, args)
+                            activeProceduresTable.renderRow = function(sender, args)
                             {
                                 if(args.item.AccessionNumber == currentAccession)
                                     args.htmlRow.className = "highlight";
                             };
 
-	                        activeOrdersTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
-                            activeOrdersTable.bindItems(activeOrders);
+	                        activeProceduresTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
+                            activeProceduresTable.bindItems(activeProcedures);
     	                }
     	                
-                        if (pastOrders.length == 0)
+                        if (pastProcedures.length == 0)
                         {
-                            Field.show($("pastOrdersTable"), false);
+                            Field.show($("pastProceduresTable"), false);
                         }
                         else
                         {
-                            var pastOrdersTable = createOrdersTable($("pastOrdersTable"));
+                            var pastProceduresTable = createProceduresTable($("pastProceduresTable"));
 							
-                            pastOrdersTable.renderRow = function(sender, args)
+                            pastProceduresTable.renderRow = function(sender, args)
                             {
                                 if(args.item.AccessionNumber == currentAccession)
                                     args.htmlRow.className = "highlight";
                             };
 
-	                        pastOrdersTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
-                            pastOrdersTable.bindItems(pastOrders);
+	                        pastProceduresTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
+                            pastProceduresTable.bindItems(pastProcedures);
     	                }
 		            }
 
@@ -326,23 +323,23 @@
                 </tr>
             </table>
             <p>&nbsp;</p>
-	        <table width="100%" border="0" id="activeOrdersTable">
+	        <table width="100%" border="0" id="activeProceduresTable">
 	            <tr><td class="sectionheading" colspan="6">Active Requests for Imaging Consultation</td></tr>
 	            <tr class="tableheading">
-		            <td>Requested Procedures</td>
+		            <td>Requested Procedure</td>
 		            <td>Scheduled For</td>
-		            <td>Order Status</td>
+		            <td>Status</td>
 		            <td>Insurance</td>
 		            <td>Ordering Facility</td>
 		            <td>Ordering Physician</td>
 	            </tr>
 	        </table>
-	        <table width="100%" border="0" id="pastOrdersTable">
+	        <table width="100%" border="0" id="pastProceduresTable">
 	            <tr><td class="sectionheading" colspan="6">Past Requests for Imaging Consultation</td></tr>
 	            <tr class="tableheading">
-		            <td>Requested Procedures</td>
+		            <td>Requested Procedure</td>
 		            <td>Scheduled For</td>
-		            <td>Order Status</td>
+		            <td>Status</td>
 		            <td>Insurance</td>
 		            <td>Ordering Facility</td>
 		            <td>Ordering Physician</td>

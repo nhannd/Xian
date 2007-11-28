@@ -162,6 +162,7 @@ namespace ClearCanvas.Ris.Application.Services.BrowsePatientData
         {
             data.RequestedProcedureName = rp.Type.Name;
             data.RequestedProcedureScheduledStartTime = rp.ScheduledStartTime;
+            data.RequestedProcedureStatus = EnumUtils.GetValue(rp.Status, context);
         }
 
         private void UpdatePatientOrderData(PatientOrderData data, ProcedureStep ps, IPersistenceContext context)

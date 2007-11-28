@@ -77,65 +77,73 @@
 		            {
     		            var patientOrderData = data.ListOrdersResponse.PatientOrderData;
 
-                        var orders = groupDataToOrders(patientOrderData);
-
 		                var today = Date.today();
-		                var pastOrders = orders.select(
+		                var pastProcedures = patientOrderData.select(
 		                    function(item) 
 		                    { 
-		                        return item.OrderScheduledStartTime && Date.compare(item.OrderScheduledStartTime, today) < 0;
-		                    }).sort(orderDataComparison);
+		                        return item.RequestedProcedureScheduledStartTime && Date.compare(item.RequestedProcedureScheduledStartTime, today) < 0;
+		                    }).sort(procedureScheduledDateComparison);
 
-		                var activeOrders = orders.select(
+		                var activeProcedures = patientOrderData.select(
 		                    function(item) 
 		                    { 
-		                        return item.OrderScheduledStartTime && Date.compare(item.OrderScheduledStartTime, today) >= 0;
-		                    }).sort(orderDataComparison);
+		                        return item.RequestedProcedureScheduledStartTime && Date.compare(item.RequestedProcedureScheduledStartTime, today) >= 0;
+		                    }).sort(procedureScheduledDateComparison);
 
-			            var notScheduledOrders = orders.select(
+			            var notScheduledActiveProceduress = patientOrderData.select(
 			                function(item) 
 			                { 
-			                    return item.OrderScheduledStartTime == null;
-			                });
-			            activeOrders = activeOrders.concat(notScheduledOrders);
+			                    return item.RequestedProcedureScheduledStartTime == null
+								&& item.SchedulingRequestDateTime && Date.compare(item.SchedulingRequestDateTime, today) >= 0;
+			                }).sort(orderRequestScheduledDateComparison);
+							
+			            var notScheduledPastProceduress = patientOrderData.select(
+			                function(item) 
+			                { 
+			                    return item.RequestedProcedureScheduledStartTime == null
+								&& item.SchedulingRequestDateTime && Date.compare(item.SchedulingRequestDateTime, today) < 0;
+			                }).sort(orderRequestScheduledDateComparison);
+
+			            activeProcedures = activeProcedures.concat(notScheduledActiveProceduress);
+			            pastProcedures = pastProcedures.concat(notScheduledPastProceduress);
 
 						// add a renderRow handler to highlight the correct row
 						var currentAccession = Ris.getWorklistItem().AccessionNumber;
 						
-                        if (activeOrders.length == 0)
+                        if (activeProcedures.length == 0)
                         {
-                            Field.show($("activeOrdersTable"), false);
+                            Field.show($("activeProceduresTable"), false);
                         }
                         else
                         {
-                            var activeOrdersTable = createOrdersTable($("activeOrdersTable"));
+                            var activeProceduresTable = createProceduresTable($("activeProceduresTable"));
                             
-                            activeOrdersTable.renderRow = function(sender, args)
+                            activeProceduresTable.renderRow = function(sender, args)
                             {
                                 if(args.item.AccessionNumber == currentAccession)
                                     args.htmlRow.className = "highlight";
                             };
 							
-							activeOrdersTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form                            
-                            activeOrdersTable.bindItems(activeOrders);
+							activeProceduresTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form                            
+                            activeProceduresTable.bindItems(activeProcedures);
     	                }
     	                
-                        if (pastOrders.length == 0)
+                        if (pastProcedures.length == 0)
                         {
-                            Field.show($("pastOrdersTable"), false);
+                            Field.show($("pastProceduresTable"), false);
                         }
                         else
                         {
-                            var pastOrdersTable = createOrdersTable($("pastOrdersTable"));
+                            var pastProceduresTable = createProceduresTable($("pastProceduresTable"));
 
-                            pastOrdersTable.renderRow = function(sender, args)
+                            pastProceduresTable.renderRow = function(sender, args)
                             {
                                 if(args.item.AccessionNumber == currentAccession)
                                     args.htmlRow.className = "highlight";
                             };
 
-	                        pastOrdersTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
-                            pastOrdersTable.bindItems(pastOrders);
+	                        pastProceduresTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
+                            pastProceduresTable.bindItems(pastProcedures);
     	                }
 		            }
 	            }
@@ -190,23 +198,23 @@
 			    </tr>
 		    </table>
     		
-	        <table border="0" id="activeOrdersTable">
+	        <table border="0" id="activeProceduresTable">
 		    <tr><td class="sectionheading" colspan="6">Active Requests for Imaging Consultation</td></tr>
 	            <tr class="tableheading">
-		            <td>Requested Procedures</td>
+		            <td>Requested Procedure</td>
 		            <td>Scheduled For</td>
-		            <td>Order Status</td>
+		            <td>Status</td>
 		            <td>Insurance</td>
 		            <td>Ordering Facility</td>
 		            <td>Ordering Physician</td>
 	            </tr>
 	        </table>
-	        <table border="0" id="pastOrdersTable">
+	        <table border="0" id="pastProceduresTable">
 	            <tr><td class="sectionheading" colspan="6">Past Requests for Imaging Consultation</td></tr>
 	            <tr class="tableheading">
-		            <td>Requested Procedures</td>
+		            <td>Requested Procedure</td>
 		            <td>Scheduled For</td>
-		            <td>Order Status</td>
+		            <td>Status</td>
 		            <td>Insurance</td>
 		            <td>Ordering Facility</td>
 		            <td>Ordering Physician</td>

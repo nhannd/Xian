@@ -90,21 +90,25 @@ function getDescriptiveTime(dateTime)
 	}
 }
 
-function createOrdersTable(htmlTable)
+function createProceduresTable(htmlTable)
 {
 	var ordersTable = Table.createTable(htmlTable, { editInPlace: false, flow: false },
 		 [
-			{   label: "Requested Procedures",
+			{   label: "Requested Procedure",
 				cellType: "text",
-				getValue: function(item) { return item.CombineRequestedProcedureName; }
+				getValue: function(item) { return item.RequestedProcedureName; }
 			},
 			{   label: "Scheduled For",
 				cellType: "text",
-				getValue: function(item) { return getDescriptiveTime(item.OrderScheduledStartTime); }
+				getValue: function(item) 
+				{ 
+					return item.RequestedProcedureScheduledStartTime == null 
+					? "Requested for " + getDescriptiveTime(item.SchedulingRequestDateTime) 
+					: getDescriptiveTime(item.RequestedProcedureScheduledStartTime); }
 			},
-			{   label: "Order Status",
+			{   label: "Status",
 				cellType: "text",
-				getValue: function(item) { return item.OrderStatus; }
+				getValue: function(item) { return item.RequestedProcedureScheduledStartTime == null ? "UnScheduled" : item.RequestedProcedureStatus; }
 			},
 			{   label: "Insurance",
 				cellType: "text",
@@ -157,9 +161,14 @@ function createDiagnosticServiceBreakdownTable(htmlTable)
 	return dsTable;
 }
 
-function orderDataComparison(data1, data2)
+function orderRequestScheduledDateComparison(data1, data2)
 {
-	return Date.compareMoreRecent(data1.OrderScheduledStartTime, data2.OrderScheduledStartTime);
+	return Date.compareMoreRecent(data1.SchedulingRequestDateTime, data2.SchedulingRequestDateTime);
+}
+
+function procedureScheduledDateComparison(data1, data2)
+{
+	return Date.compareMoreRecent(data1.RequestedProcedureScheduledStartTime, data2.RequestedProcedureScheduledStartTime);
 }
 
 // group patientOrderData by AccessionNumber

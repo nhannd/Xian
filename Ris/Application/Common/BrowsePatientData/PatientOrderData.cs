@@ -176,6 +176,9 @@ namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
         [DataMember]
         public DateTime? RequestedProcedureScheduledStartTime;
 
+        [DataMember]
+        public string RequestedProcedureStatus;
+
         #endregion
 
         #region Procedure Step
