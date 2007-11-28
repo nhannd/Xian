@@ -66,7 +66,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.RequestedProcedureTypeGroup
                 PersistenceContext.GetBroker<IRequestedProcedureTypeBroker>().FindAll(),
                 delegate(RequestedProcedureType rpt)
                 {
-                    return assembler.GetRequestedProcedureTypeSummary(rpt);
+                    return assembler.CreateRequestedProcedureTypeSummary(rpt);
                 });
 
             return response;

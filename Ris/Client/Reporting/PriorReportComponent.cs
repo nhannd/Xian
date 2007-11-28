@@ -38,6 +38,7 @@ using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 using ClearCanvas.Ris.Application.Common.Jsml;
 using ClearCanvas.Ris.Client.Formatting;
+using System.Collections.Generic;
 
 namespace ClearCanvas.Ris.Client.Reporting
 {
@@ -90,18 +91,39 @@ namespace ClearCanvas.Ris.Client.Reporting
         private readonly ScriptCallback _scriptCallback;
 
         private readonly EntityRef _reportingStepRef;
+        private readonly List<EntityRef> _procedureRefs;
 
         private readonly ReportSummaryTable _reportList;
         private ReportSummary _selectedReport;
 
         /// <summary>
-        /// Constructor
+        /// Constructor for showing priors based on a reporting step.
         /// </summary>
         public PriorReportComponent(EntityRef reportingStepRef)
+            :this(reportingStepRef, null)
         {
-            _scriptCallback = new ScriptCallback(this);
+        }
 
+        /// <summary>
+        /// Constructor to show priors based on a set of procedures.
+        /// </summary>
+        /// <param name="procedureRefs"></param>
+        public PriorReportComponent(List<EntityRef> procedureRefs)
+            :this(null, procedureRefs)
+        {
+        }
+
+        /// <summary>
+        /// Private constructor.
+        /// </summary>
+        /// <param name="reportingStepRef"></param>
+        /// <param name="procedureRefs"></param>
+        private PriorReportComponent(EntityRef reportingStepRef, List<EntityRef> procedureRefs)
+        {
             _reportingStepRef = reportingStepRef;
+            _procedureRefs = procedureRefs;
+
+            _scriptCallback = new ScriptCallback(this);
             _reportList = new ReportSummaryTable();
         }
 
@@ -110,7 +132,9 @@ namespace ClearCanvas.Ris.Client.Reporting
             Platform.GetService<IReportingWorkflowService>(
                 delegate(IReportingWorkflowService service)
                 {
-                    GetPriorReportResponse response = service.GetPriorReport(new GetPriorReportRequest(_reportingStepRef));
+                    GetPriorReportsRequest request = _reportingStepRef != null ?
+                        new GetPriorReportsRequest(_reportingStepRef) : new GetPriorReportsRequest(_procedureRefs);
+                    GetPriorReportsResponse response = service.GetPriorReports(request);
                     _reportList.Items.AddRange(response.Reports);
                 });
 
@@ -124,7 +148,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         public ISelection SelectedReport
         {
-            get { return _selectedReport == null ? Selection.Empty : new Selection(_selectedReport); }
+            get { return new Selection(_selectedReport); }
             set
             {
                 ReportSummary newSelection = (ReportSummary)value.Item;

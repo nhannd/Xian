@@ -275,7 +275,8 @@ namespace ClearCanvas.Ris.Client.Reporting
                         //bool readOnly = selectedFolder is Folders.InTranscriptionFolder ||
                         //    selectedFolder is Folders.VerifiedFolder;
 
-                        doc = new ReportDocument(stepForOpeningReport, item.PatientName, folders, desktopWindow);
+                        item.ProcedureStepRef = stepForOpeningReport;
+                        doc = new ReportDocument(item, folders, desktopWindow);
                         doc.Closed += delegate
                         {
                             if (selectedFolder.IsOpen)
@@ -529,7 +530,8 @@ namespace ClearCanvas.Ris.Client.Reporting
                             delegate(IFolder f) { return f is Folders.DraftFolder; });
                         myInterpretationFolder.RefreshCount();
 
-                        doc = new ReportDocument(response.InterpretationStepRef, item.PatientName, folders, desktopWindow);
+                        item.ProcedureStepRef = response.InterpretationStepRef;
+                        doc = new ReportDocument(item, folders, desktopWindow);
                         doc.Open();
                     }
                     catch (Exception e)

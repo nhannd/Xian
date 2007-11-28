@@ -38,14 +38,14 @@ using System.Runtime.Serialization;
 namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
 {
     [DataContract]
-    public class GetPriorReportRequest : DataContractBase
+    public class GetPriorReportsResponse : DataContractBase
     {
-        public GetPriorReportRequest(EntityRef reportingStepRef)
+        public GetPriorReportsResponse(List<ReportSummary> reports)
         {
-            this.ReportingStepRef = reportingStepRef;
+            this.Reports = reports;
         }
 
         [DataMember]
-        public EntityRef ReportingStepRef;
+        public List<ReportSummary> Reports;
     }
 }

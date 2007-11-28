@@ -250,7 +250,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         public string RequestedProcedure
         {
-            get { return _report.RequestedProcedureName; }
+            get { return "TODO"; }
         }
 
         public string PerformedLocation
@@ -260,7 +260,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         public string PerformedDate
         {
-            get { return Format.Date(_report.PerformedDate); }
+            get { return "TODO"; }
         }
 
         public bool VerifyEnabled

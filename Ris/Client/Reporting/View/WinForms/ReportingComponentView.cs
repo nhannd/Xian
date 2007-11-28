@@ -29,42 +29,45 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
-using ClearCanvas.Common.Utilities;
-using ClearCanvas.Healthcare;
-using ClearCanvas.Ris.Application.Common;
+using System.Text;
 
-namespace ClearCanvas.Ris.Application.Services
+using ClearCanvas.Common;
+using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.View.WinForms;
+
+namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 {
-    public class RequestedProcedureTypeAssembler
+    /// <summary>
+    /// Provides a Windows Forms view onto <see cref="ReportingComponent"/>
+    /// </summary>
+    //[ExtensionOf(typeof(ReportingComponentViewExtensionPoint))]
+    public class ReportingComponentView : WinFormsView, IApplicationComponentView
     {
-        public RequestedProcedureTypeSummary CreateRequestedProcedureTypeSummary(RequestedProcedureType rpt)
+        private ReportingComponent _component;
+        private ReportingComponentControl _control;
+
+
+        #region IApplicationComponentView Members
+
+        public void SetComponent(IApplicationComponent component)
         {
-            return new RequestedProcedureTypeSummary(rpt.GetRef(), rpt.Name, rpt.Id);
+            _component = (ReportingComponent)component;
         }
 
-        public RequestedProcedureTypeDetail CreateRequestedProcedureTypeDetail(RequestedProcedureType requestedProcedureType)
-        {
-            return new RequestedProcedureTypeDetail(
-                requestedProcedureType.GetRef(),
-                requestedProcedureType.Id,
-                requestedProcedureType.Name,
-                CollectionUtils.Map<ModalityProcedureStepType, ModalityProcedureStepTypeDetail>(
-                    requestedProcedureType.ModalityProcedureStepTypes,
-                    delegate(ModalityProcedureStepType mpsType)
-                    {
-                        return CreateModalityProcedureStepTypeDetail(mpsType);
-                    }));
-        }
+        #endregion
 
-        //TODO: should there be a separate assembler for this?
-        public ModalityProcedureStepTypeDetail CreateModalityProcedureStepTypeDetail(ModalityProcedureStepType modalityProcedureStepType)
+        public override object GuiElement
         {
-            ModalityAssembler assembler = new ModalityAssembler();
-            return new ModalityProcedureStepTypeDetail(
-                modalityProcedureStepType.Id,
-                modalityProcedureStepType.Name,
-                assembler.CreateModalityDetail(modalityProcedureStepType.DefaultModality));
+            get
+            {
+                if (_control == null)
+                {
+                    _control = new ReportingComponentControl(_component);
+                }
+                return _control;
+            }
         }
     }
 }

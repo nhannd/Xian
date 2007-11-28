@@ -70,6 +70,16 @@ namespace ClearCanvas.Healthcare {
 		#endregion
 
         /// <summary>
+        /// Adds a <see cref="RequestedProcedure"/> to this report, meaning that the report covers
+        /// this radiology procedure.
+        /// </summary>
+        /// <param name="rp"></param>
+        public virtual void AddProcedure(RequestedProcedure rp)
+        {
+            _procedures.Add(rp);
+        }
+
+        /// <summary>
         /// Adds a report part to this report, setting the report's <see cref="Report.Parts"/> property
         /// to refer to this object.  Use this method rather than referring to the <see cref="Report.Parts"/>
         /// collection directly.

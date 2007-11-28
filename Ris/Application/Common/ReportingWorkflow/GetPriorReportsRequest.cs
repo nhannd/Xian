@@ -37,15 +37,46 @@ using System.Runtime.Serialization;
 
 namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
 {
+    /// <summary>
+    /// Request object for <see cref="IReportingWorkflowService.GetPriorReports"/>.
+    /// </summary>
+    /// <remarks>
+    /// Only one of <see cref="ReportingProcedureStepRef"/> or <see cref="ProcedureRefs"/> needs to be supplied
+    /// by the caller.  If <see cref="ReportingProcedureStepRef"/> is supplied, the priors will be obtained
+    /// based on all procedures attached to the report to which the reporting step refers.  Otherwise,
+    /// priors will be obtained based on the set of procedures specified in <see cref="ProcedureRefs"/>.
+    /// </remarks>
     [DataContract]
-    public class GetPriorReportResponse : DataContractBase
+    public class GetPriorReportsRequest : DataContractBase
     {
-        public GetPriorReportResponse(List<ReportSummary> reports)
+        /// <summary>
+        /// Constructor to request priors based on a reporting step.
+        /// </summary>
+        /// <param name="reportingProcedureStepRef"></param>
+        public GetPriorReportsRequest(EntityRef reportingProcedureStepRef)
         {
-            this.Reports = reports;
+            this.ReportingProcedureStepRef = reportingProcedureStepRef;
         }
 
+        /// <summary>
+        /// Constructor to request priors based on a set of procedures.
+        /// </summary>
+        /// <param name="procedureRefs"></param>
+        public GetPriorReportsRequest(List<EntityRef> procedureRefs)
+        {
+            this.ProcedureRefs = procedureRefs;
+        }
+
+        /// <summary>
+        /// A reporting step that has an associated report for which relevant priors are obtained.
+        /// </summary>
         [DataMember]
-        public List<ReportSummary> Reports;
+        public EntityRef ReportingProcedureStepRef;
+
+        /// <summary>
+        /// A set of procedures, for which relevant priors are obtained.
+        /// </summary>
+        [DataMember]
+        public List<EntityRef> ProcedureRefs;
     }
 }

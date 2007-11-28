@@ -37,6 +37,7 @@ using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 using ClearCanvas.Ris.Client.Formatting;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client.Reporting
 {
@@ -49,11 +50,15 @@ namespace ClearCanvas.Ris.Client.Reporting
             this.Columns.Add(new TableColumn<ReportSummary, string>("Visit Number",
                 delegate(ReportSummary report) { return VisitNumberFormat.Format(report.VisitNumber); }));
             this.Columns.Add(new TableColumn<ReportSummary, string>("Requested Procedure",
-                delegate(ReportSummary report) { return report.RequestedProcedureName; }));
+                delegate(ReportSummary report)
+                {
+                    return StringUtilities.Combine(report.Procedures, ", ",
+                        delegate(RequestedProcedureSummary summary) { return summary.Type.Name; });
+                }));
             this.Columns.Add(new TableColumn<ReportSummary, string>("Performed Location",
                 delegate(ReportSummary report) { return report.PerformedLocation; }));
-            this.Columns.Add(new TableColumn<ReportSummary, DateTime?>("Performed Date",
-                delegate(ReportSummary report) { return report.PerformedDate; }));
+            this.Columns.Add(new TableColumn<ReportSummary, string>("Performed Date",
+                delegate(ReportSummary report) { return "TODO"; }));
             this.Columns.Add(new TableColumn<ReportSummary, string>("Status",
                 delegate(ReportSummary report) { return report.ReportStatus.Value; }));
         }

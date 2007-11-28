@@ -46,7 +46,7 @@ namespace ClearCanvas.Ris.Application.Services
             {
                 foreach (RequestedProcedure rp in order.RequestedProcedures)
                 {
-                    detail.RequestedProcedures.Add(rpAssembler.CreateRequestedProcedureSummary(rp, context));
+                    detail.RequestedProcedures.Add(rpAssembler.CreateRequestedProcedureDetail(rp, context));
                 }
             }
 

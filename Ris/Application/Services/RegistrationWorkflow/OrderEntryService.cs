@@ -174,7 +174,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             List<RequestedProcedureTypeSummary> summaries = CollectionUtils.Map<RequestedProcedureType, RequestedProcedureTypeSummary>(rpTypes,
                    delegate(RequestedProcedureType rpt)
                        {
-                           return rptAssembler.GetRequestedProcedureTypeSummary(rpt);
+                           return rptAssembler.CreateRequestedProcedureTypeSummary(rpt);
                        });
             
             // remove types that have already been ordered

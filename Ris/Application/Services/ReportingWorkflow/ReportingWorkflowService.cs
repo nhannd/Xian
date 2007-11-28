@@ -383,20 +383,39 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         }
 
         [ReadOperation]
-        public GetPriorReportResponse GetPriorReport(GetPriorReportRequest request)
+        public GetPriorReportsResponse GetPriorReports(GetPriorReportsRequest request)
         {
+            IList<Report> priorReports = new List<Report>();
+
+            // if a reporting step was supplied, find priors based on the attached report
+            if(request.ReportingProcedureStepRef != null)
+            {
+                ReportingProcedureStep ps = PersistenceContext.Load<ReportingProcedureStep>(
+                    request.ReportingProcedureStepRef, EntityLoadFlags.Proxy);
+                if(ps.ReportPart != null)
+                {
+                    priorReports = PersistenceContext.GetBroker<IReportingWorklistBroker>().GetPriorReports(ps.ReportPart.Report, true);
+                }
+            }
+            // otherwise if a set of procedures was explicitly supplied, find priors based on those procedures
+            else if(request.ProcedureRefs != null && request.ProcedureRefs.Count > 0)
+            {
+                List<RequestedProcedure> procedures = CollectionUtils.Map<EntityRef, RequestedProcedure>(
+                    request.ProcedureRefs,
+                    delegate(EntityRef pr) { return PersistenceContext.Load<RequestedProcedure>(pr, EntityLoadFlags.Proxy); });
+
+                priorReports = PersistenceContext.GetBroker<IReportingWorklistBroker>().GetPriorReports(procedures, true);
+            }
+
+            // assemble results
             ReportingWorkflowAssembler assembler = new ReportingWorkflowAssembler();
-
-            ReportingProcedureStep step = PersistenceContext.Load<ReportingProcedureStep>(request.ReportingStepRef, EntityLoadFlags.Proxy);
-
-            IList<Report> listReports = PersistenceContext.GetBroker<IReportingWorklistBroker>().GetPriorReport(step.RequestedProcedure.Order.Patient);
-            List<ReportSummary> listSummary = CollectionUtils.Map<Report, ReportSummary, List<ReportSummary>>(listReports,
+            List<ReportSummary> listSummary = CollectionUtils.Map<Report, ReportSummary>(priorReports,
                 delegate(Report report)
                 {
-                    return assembler.CreateReportSummary(report.Procedure, report, this.PersistenceContext);
+                    return assembler.CreateReportSummary(CollectionUtils.FirstElement(report.Procedures), report, this.PersistenceContext);
                 });
 
-            return new GetPriorReportResponse(listSummary);
+            return new GetPriorReportsResponse(listSummary);
         }
 
         [ReadOperation]
@@ -418,6 +437,12 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
                     {
                         return assembler.CreateStaffSummary(staff, this.PersistenceContext);
                     }));
+        }
+
+        [ReadOperation]
+        public GetLinkableProceduresResponse GetLinkableProcedures(GetLinkableProceduresRequest request)
+        {
+            throw new Exception("The method or operation is not implemented.");
         }
 
         #endregion
@@ -529,5 +554,6 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
             return supervisor;
         }
+
     }
 }

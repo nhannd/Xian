@@ -41,7 +41,7 @@ namespace ClearCanvas.Ris.Application.Common
     {
         public OrderDetail()
         {
-            this.RequestedProcedures = new List<RequestedProcedureSummary>();
+            this.RequestedProcedures = new List<RequestedProcedureDetail>();
         }
 
         [DataMember] 
@@ -84,7 +84,7 @@ namespace ClearCanvas.Ris.Application.Common
         public EnumValueInfo CancelReason;
 
         [DataMember]
-        public List<RequestedProcedureSummary> RequestedProcedures;
+        public List<RequestedProcedureDetail> RequestedProcedures;
 
     }
 }

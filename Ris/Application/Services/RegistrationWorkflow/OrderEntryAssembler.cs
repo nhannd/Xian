@@ -135,7 +135,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
             // create requisition
             return new ProcedureRequisition(
-                rptAssembler.GetRequestedProcedureTypeSummary(rp.Type),
+                rptAssembler.CreateRequestedProcedureTypeSummary(rp.Type),
                 rp.Index,
                 rp.ScheduledStartTime,
                 rp.PerformingFacility == null ? null : facilityAssembler.CreateFacilitySummary(rp.PerformingFacility),

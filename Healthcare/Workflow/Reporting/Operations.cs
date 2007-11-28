@@ -54,7 +54,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
                 else
                 {
                     Report report = new Report();
-                    report.Procedure = step.RequestedProcedure;
+                    report.AddProcedure(step.RequestedProcedure);
                     ReportPart part = report.AddPart(reportContent);
                     part.Supervisor = supervisor;
 

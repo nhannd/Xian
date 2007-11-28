@@ -17,6 +17,7 @@ namespace ClearCanvas.Ris.Application.Services
             detail.RequestedProcedureRef = rp.GetRef();
             detail.Name = rp.Type.Name;
             detail.Status = EnumUtils.GetEnumValueInfo(rp.Status, context);
+            detail.Type = new RequestedProcedureTypeAssembler().CreateRequestedProcedureTypeDetail(rp.Type);
             detail.ModalityProcedureSteps = CollectionUtils.Map<ModalityProcedureStep, ModalityProcedureStepDetail>(
                 rp.ModalityProcedureSteps,
                 delegate(ModalityProcedureStep mp) { return modalityProcedureStepAssembler.CreateModalityProcedureStepDetail(mp, context); });
@@ -37,52 +38,9 @@ namespace ClearCanvas.Ris.Application.Services
             summary.Index = rp.Index;
             summary.ScheduledStartTime = rp.ScheduledStartTime;
             summary.PerformingFacility = new FacilityAssembler().CreateFacilitySummary(rp.PerformingFacility);
-            summary.Type = rptAssembler.CreateRequestedProcedureTypeDetail(rp.Type);
-
-            foreach (ProcedureStep step in rp.ProcedureSteps)
-            {
-                //TODO: include other ProcedureStep in RequestedProcedureSummary
-                if (step.Is<ModalityProcedureStep>())
-                {
-                    summary.ProcedureSteps.Add(this.CreateModalityProcedureStepSummary(step.Downcast<ModalityProcedureStep>(), context));
-                }
-            }
+            summary.Type = rptAssembler.CreateRequestedProcedureTypeSummary(rp.Type);
 
             return summary;
-        }
-
-        public ModalityProcedureStepSummary CreateModalityProcedureStepSummary(ModalityProcedureStep mps, IPersistenceContext context)
-        {
-            StaffAssembler staffAssembler = new StaffAssembler();
-
-            ModalityProcedureStepSummary summary = new ModalityProcedureStepSummary();
-
-            summary.Type = this.CreateModalityProcedureStepTypeDetail(mps.Type);
-
-            summary.State = EnumUtils.GetEnumValueInfo(mps.State, context);
-
-            summary.PerformerStaff = staffAssembler.CreateStaffSummary(mps.PerformingStaff, context);
-            summary.StartTime = mps.StartTime;
-            summary.EndTime = mps.EndTime;
-
-            if (mps.Scheduling != null)
-            {
-                //TODO ScheduledPerformerStaff for ModalityProcedureStepSummary
-                //summary.ScheduledPerformerStaff = staffAssembler.CreateStaffSummary(mps.Scheduling.Performer);
-                summary.ScheduledStartTime = mps.Scheduling.StartTime;
-                summary.ScheduledEndTime = mps.Scheduling.EndTime;
-            }
-
-            return summary;
-        }
-
-        public ModalityProcedureStepTypeDetail CreateModalityProcedureStepTypeDetail(ModalityProcedureStepType modalityProcedureStepType)
-        {
-            ModalityAssembler assembler = new ModalityAssembler();
-            return new ModalityProcedureStepTypeDetail(
-                modalityProcedureStepType.Id,
-                modalityProcedureStepType.Name,
-                assembler.CreateModalityDetail(modalityProcedureStepType.DefaultModality));
         }
     }
 }

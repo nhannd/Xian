@@ -46,6 +46,9 @@ namespace ClearCanvas.Ris.Application.Common
 
         [DataMember]
         public EnumValueInfo Status;
+
+        [DataMember]
+        public RequestedProcedureTypeDetail Type;
         
         [DataMember]
         public List<ModalityProcedureStepDetail> ModalityProcedureSteps;

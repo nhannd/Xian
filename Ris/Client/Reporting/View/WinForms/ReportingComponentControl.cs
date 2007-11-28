@@ -29,42 +29,36 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
-using ClearCanvas.Common.Utilities;
-using ClearCanvas.Healthcare;
-using ClearCanvas.Ris.Application.Common;
+using System.ComponentModel;
+using System.Drawing;
+using System.Data;
+using System.Text;
+using System.Windows.Forms;
 
-namespace ClearCanvas.Ris.Application.Services
+using ClearCanvas.Desktop.View.WinForms;
+
+namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 {
-    public class RequestedProcedureTypeAssembler
+    /// <summary>
+    /// Provides a Windows Forms user-interface for <see cref="ReportingComponent"/>
+    /// </summary>
+    public partial class ReportingComponentControl : ApplicationComponentUserControl
     {
-        public RequestedProcedureTypeSummary CreateRequestedProcedureTypeSummary(RequestedProcedureType rpt)
-        {
-            return new RequestedProcedureTypeSummary(rpt.GetRef(), rpt.Name, rpt.Id);
-        }
+        private ReportingComponent _component;
 
-        public RequestedProcedureTypeDetail CreateRequestedProcedureTypeDetail(RequestedProcedureType requestedProcedureType)
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public ReportingComponentControl(ReportingComponent component)
+            :base(component)
         {
-            return new RequestedProcedureTypeDetail(
-                requestedProcedureType.GetRef(),
-                requestedProcedureType.Id,
-                requestedProcedureType.Name,
-                CollectionUtils.Map<ModalityProcedureStepType, ModalityProcedureStepTypeDetail>(
-                    requestedProcedureType.ModalityProcedureStepTypes,
-                    delegate(ModalityProcedureStepType mpsType)
-                    {
-                        return CreateModalityProcedureStepTypeDetail(mpsType);
-                    }));
-        }
+            InitializeComponent();
 
-        //TODO: should there be a separate assembler for this?
-        public ModalityProcedureStepTypeDetail CreateModalityProcedureStepTypeDetail(ModalityProcedureStepType modalityProcedureStepType)
-        {
-            ModalityAssembler assembler = new ModalityAssembler();
-            return new ModalityProcedureStepTypeDetail(
-                modalityProcedureStepType.Id,
-                modalityProcedureStepType.Name,
-                assembler.CreateModalityDetail(modalityProcedureStepType.DefaultModality));
+            _component = component;
+
+            // TODO add .NET databindings to _component
         }
     }
 }

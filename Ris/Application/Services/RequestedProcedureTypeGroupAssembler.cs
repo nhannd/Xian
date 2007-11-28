@@ -60,7 +60,7 @@ namespace ClearCanvas.Ris.Application.Services
                 rptGroup.RequestedProcedureTypes,
                 delegate (RequestedProcedureType rpt)
                     {
-                        return assembler.GetRequestedProcedureTypeSummary(rpt);
+                        return assembler.CreateRequestedProcedureTypeSummary(rpt);
                     });
 
             return detail;

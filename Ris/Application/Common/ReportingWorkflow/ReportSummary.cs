@@ -68,13 +68,10 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
         public string DiagnosticServiceName;
 
         [DataMember]
-        public string RequestedProcedureName;
+        public List<RequestedProcedureSummary> Procedures;
 
         [DataMember]
         public string PerformedLocation;
-
-        [DataMember]
-        public DateTime? PerformedDate;
 
         public ReportPartSummary GetPart(int index)
         {

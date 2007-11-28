@@ -39,18 +39,16 @@ namespace ClearCanvas.Ris.Application.Common
     [DataContract]
     public class RequestedProcedureSummary : DataContractBase
     {
-        public RequestedProcedureSummary(EntityRef rpRef, EntityRef orderRef, string index, RequestedProcedureTypeDetail type, List<ModalityProcedureStepSummary> procedureSteps)
+        public RequestedProcedureSummary(EntityRef rpRef, EntityRef orderRef, string index, RequestedProcedureTypeSummary type)
         {
             this.RequestedProcedureRef = rpRef;
             this.OrderRef = orderRef;
             this.Index = index;
             this.Type = type;
-            this.ProcedureSteps = procedureSteps;
         }
 
         public RequestedProcedureSummary()
         {
-            this.ProcedureSteps = new List<ModalityProcedureStepSummary>();
         }
 
         [DataMember]
@@ -69,9 +67,6 @@ namespace ClearCanvas.Ris.Application.Common
         public FacilitySummary PerformingFacility;
 
         [DataMember]
-        public RequestedProcedureTypeDetail Type;
-
-        [DataMember]
-        public List<ModalityProcedureStepSummary> ProcedureSteps;
+        public RequestedProcedureTypeSummary Type;
     }
 }

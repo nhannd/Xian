@@ -29,42 +29,40 @@
 
 #endregion
 
-using System.Collections.Generic;
-using ClearCanvas.Common.Utilities;
-using ClearCanvas.Healthcare;
-using ClearCanvas.Ris.Application.Common;
-
-namespace ClearCanvas.Ris.Application.Services
+namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 {
-    public class RequestedProcedureTypeAssembler
+    partial class ReportingComponentControl
     {
-        public RequestedProcedureTypeSummary CreateRequestedProcedureTypeSummary(RequestedProcedureType rpt)
+        /// <summary> 
+        /// Required designer variable.
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
+
+        /// <summary> 
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
         {
-            return new RequestedProcedureTypeSummary(rpt.GetRef(), rpt.Name, rpt.Id);
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
         }
 
-        public RequestedProcedureTypeDetail CreateRequestedProcedureTypeDetail(RequestedProcedureType requestedProcedureType)
+        #region Component Designer generated code
+
+        /// <summary> 
+        /// Required method for Designer support - do not modify 
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
         {
-            return new RequestedProcedureTypeDetail(
-                requestedProcedureType.GetRef(),
-                requestedProcedureType.Id,
-                requestedProcedureType.Name,
-                CollectionUtils.Map<ModalityProcedureStepType, ModalityProcedureStepTypeDetail>(
-                    requestedProcedureType.ModalityProcedureStepTypes,
-                    delegate(ModalityProcedureStepType mpsType)
-                    {
-                        return CreateModalityProcedureStepTypeDetail(mpsType);
-                    }));
+            components = new System.ComponentModel.Container();
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
         }
 
-        //TODO: should there be a separate assembler for this?
-        public ModalityProcedureStepTypeDetail CreateModalityProcedureStepTypeDetail(ModalityProcedureStepType modalityProcedureStepType)
-        {
-            ModalityAssembler assembler = new ModalityAssembler();
-            return new ModalityProcedureStepTypeDetail(
-                modalityProcedureStepType.Id,
-                modalityProcedureStepType.Name,
-                assembler.CreateModalityDetail(modalityProcedureStepType.DefaultModality));
-        }
+        #endregion
     }
 }

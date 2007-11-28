@@ -323,22 +323,22 @@ namespace ClearCanvas.Ris.Client
         {
             if (_orderDetail.RequestedProcedures.Count > 0)
             {
-                if (_orderDetail.RequestedProcedures[0].ProcedureSteps.Count > 0)
+                if (_orderDetail.RequestedProcedures[0].ModalityProcedureSteps.Count > 0)
                 {
-                    this.SelectedDiagnosticServiceBreakdownItem = new Selection(_orderDetail.RequestedProcedures[0].ProcedureSteps[0]);
+                    this.SelectedDiagnosticServiceBreakdownItem = new Selection(_orderDetail.RequestedProcedures[0].ModalityProcedureSteps[0]);
                 }
             }
         }
 
-        private TreeItemBinding<RequestedProcedureSummary> GetRequestedProcedureBinding()
+        private TreeItemBinding<RequestedProcedureDetail> GetRequestedProcedureBinding()
         {
-            TreeItemBinding<RequestedProcedureSummary> binding = 
-                new TreeItemBinding<RequestedProcedureSummary>(
-                delegate(RequestedProcedureSummary rp) { return rp.Type.Name; },
-                delegate(RequestedProcedureSummary rp)
+            TreeItemBinding<RequestedProcedureDetail> binding =
+                new TreeItemBinding<RequestedProcedureDetail>(
+                delegate(RequestedProcedureDetail rp) { return rp.Type.Name; },
+                delegate(RequestedProcedureDetail rp)
                 {
                     return new Tree<ModalityProcedureStepSummary>(
-                        GetModalityProcedureStepBinding(), rp.ProcedureSteps);
+                        GetModalityProcedureStepBinding(), rp.ModalityProcedureSteps);
                 });
 
             binding.ResourceResolverProvider = delegate{ return new ResourceResolver(this.GetType().Assembly); };

@@ -19,8 +19,7 @@
     <many-to-one name="PerformingFacility" class="Facility" column="PerformingFacilityOID_"/>
     <property name="Laterality" column="Laterality_" type="ClearCanvas.Healthcare.Hibernate.LateralityEnumHbm, ClearCanvas.Healthcare.Hibernate" not-null="true"/>
 
-    <!-- this is supposed to be an one-to-one mapping with ProcedureCheckIn, but unique="true is currently not supported with value member"  -->
-    <many-to-one name="ProcedureCheckIn" column="ProcedureCheckInOID_" class="ProcedureCheckIn" not-null="true" cascade="all" fetch="join"/>
+    <many-to-one name="ProcedureCheckIn" column="ProcedureCheckInOID_" class="ProcedureCheckIn" cascade="all" fetch="join"/>
 
   </class>
 </hibernate-mapping>

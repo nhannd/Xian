@@ -67,6 +67,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         {
             ReportSummary summary = new ReportSummary();
 
+            RequestedProcedureAssembler rpAssembler = new RequestedProcedureAssembler();
             if (report != null)
             {
                 summary.ReportRef = report.GetRef();
@@ -76,6 +77,16 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
                     {
                         return CreateReportPartSummary(part, context);
                     });
+
+                // use all procedures attached to report
+                summary.Procedures = CollectionUtils.Map<RequestedProcedure, RequestedProcedureSummary>(report.Procedures,
+                    delegate(RequestedProcedure p) { return rpAssembler.CreateRequestedProcedureSummary(p, context); });
+            }
+            else
+            {
+                // use supplied procedure
+                summary.Procedures = CollectionUtils.Map<RequestedProcedure, RequestedProcedureSummary>(new RequestedProcedure[]{rp},
+                    delegate(RequestedProcedure p) { return rpAssembler.CreateRequestedProcedureSummary(p, context); });
             }
 
             Order order = rp.Order;
@@ -96,7 +107,6 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             summary.VisitNumber = new VisitAssembler().CreateVisitNumberDetail(order.Visit.VisitNumber);
             summary.AccessionNumber = order.AccessionNumber;
             summary.DiagnosticServiceName = order.DiagnosticService.Name;
-            summary.RequestedProcedureName = rp.Type.Name;
             summary.PerformedLocation = "Not implemented";
             //summary.PerformedDate = ;
 

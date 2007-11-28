@@ -38,6 +38,8 @@ using ClearCanvas.Enterprise.Hibernate.Hql;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Healthcare.Workflow.Reporting;
 using ClearCanvas.Workflow;
+using ClearCanvas.Common.Utilities;
+using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.Healthcare.Hibernate.Brokers
 {
@@ -107,23 +109,64 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             return DoQueryCount(query);
         }
 
-        public IList<Report> GetPriorReport(Patient patient)
+        /// <summary>
+        /// Obtains a list of prior reports for the specified patient, constrained by Relevance grouping
+        /// to be relevant to the specified set of procedures.
+        /// </summary>
+        /// <param name="report"></param>
+        /// <param name="relevantOnly"></param>
+        /// <returns></returns>
+        public IList<Report> GetPriorReports(Report report, bool relevantOnly)
         {
-            string hqlQuery = "select rep from Report rep" +
-                              " join rep.Procedure rp" +
-                              " join rp.Order o" +
-                              " join o.Patient p";
+            // The algorithm to obtain prior reports is broken into 2 queries
+            // (in theory it could be accomplished in a single query, but it is not clear
+            // that the performance gain would be worth the additional headache of trying to write that query)
 
-            HqlQuery query = new HqlQuery(hqlQuery);
+            // step 1: map the set of procedures to a set of procedure-types
+            // this could be done without using HQL, but it would invoke a lazy-load for each procedure
+            // we use HQL so that it is done in one query
+            SearchCondition<RequestedProcedure> rpCriteria = new SearchCondition<RequestedProcedure>();
+            rpCriteria.In(report.Procedures);
 
-            PatientSearchCriteria patientCriteria = new PatientSearchCriteria(patient.GetRef());
-            ReportSearchCriteria reportCriteria = new ReportSearchCriteria();
-            reportCriteria.Status.In(new ReportStatus[] { ReportStatus.F, ReportStatus.C});
+            HqlQuery getReferenceProcedureTypesQuery = new HqlQuery("select rpt from RequestedProcedure rp join rp.Type rpt");
+            getReferenceProcedureTypesQuery.Conditions.AddRange(HqlCondition.FromSearchCriteria("rp", rpCriteria));
+            IList<RequestedProcedureType> referenceProcedureTypes = ExecuteHql<RequestedProcedureType>(getReferenceProcedureTypesQuery);
 
-            query.Conditions.AddRange(HqlCondition.FromSearchCriteria("p", patientCriteria));
-            query.Conditions.AddRange(HqlCondition.FromSearchCriteria("rep", reportCriteria));
+            // step 2: now that we have the set of procedure-types, we construct the main query,
+            SearchCondition<RequestedProcedureType> referenceProcedureTypeCriteria = new SearchCondition<RequestedProcedureType>();
+            referenceProcedureTypeCriteria.In(referenceProcedureTypes);
 
-            return ExecuteHql<Report>(query);
+            RequestedProcedureTypeGroupSearchCriteria procedureGroupCriteria = new RequestedProcedureTypeGroupSearchCriteria();
+            procedureGroupCriteria.Category.EqualTo(RequestedProcedureTypeGroupCategory.RELEVANCE);
+
+
+            string hqlSubQuery =
+                "select priorProcedureType from RequestedProcedureTypeGroup procedureGroup" +
+                " join procedureGroup.RequestedProcedureTypes priorProcedureType" +
+                " join procedureGroup.RequestedProcedureTypes referenceProcedureType";
+
+            HqlQuery subQuery = new HqlQuery(hqlSubQuery);
+            subQuery.Conditions.AddRange(HqlCondition.FromSearchCriteria("referenceProcedureType", referenceProcedureTypeCriteria));
+            subQuery.Conditions.AddRange(HqlCondition.FromSearchCriteria("procedureGroup", procedureGroupCriteria));
+
+
+            string reportQuery = "select distinct priorReport from Report priorReport" +
+                " join priorReport.Procedures priorProcedure" +
+                " join priorProcedure.Type priorProcedureType" +
+                " join priorProcedure.Order priorOrder" +
+                " join priorOrder.Patient patient";
+
+            HqlQuery query = new HqlQuery(reportQuery);
+            query.Conditions.Add(new HqlCondition(string.Format("priorProcedureType in ({0})", subQuery.Hql), subQuery.Parameters));
+            query.Conditions.Add(new HqlCondition("patient = ?", report));
+            IList<Report> priors = ExecuteHql<Report>(query);
+
+            return priors;
+        }
+
+        public IList<Report> GetPriorReports(IList<RequestedProcedure> procedures, bool relevantOnly)
+        {
+            return new List<Report>();
         }
 
         #endregion
@@ -191,5 +234,6 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
                 query.Conditions.Add(or);
 
         }
+
     }
 }

@@ -46,44 +46,24 @@ namespace ClearCanvas.Ris.Client.Reporting
 {
     public class ReportDocument : Document
     {
-        private EntityRef _reportingStepRef;
-        private PersonNameDetail _patientName;
+        private ReportingWorklistItem _worklistItem;
         private IEnumerable _reportFolders;
 
-        public ReportDocument(EntityRef reportingStepRef, PersonNameDetail patientName, IEnumerable folders, IDesktopWindow window)
-            : base(reportingStepRef, window)
+        public ReportDocument(ReportingWorklistItem worklistItem, IEnumerable folders, IDesktopWindow window)
+            : base(worklistItem.ProcedureStepRef, window)
         {
-            _reportingStepRef = reportingStepRef;
-            _patientName = patientName;
+            _worklistItem = worklistItem;
             _reportFolders = folders;
         }
 
         protected override string GetTitle()
         {
-            return String.Format("Report - {0}", PersonNameFormat.Format(_patientName));
+            return String.Format("Report - {0}", PersonNameFormat.Format(_worklistItem.PatientName));
         }
 
         protected override IApplicationComponent GetComponent()
         {
-            // Create tab and tab groups
-            TabComponentContainer tabContainer1 = new TabComponentContainer();
-            tabContainer1.Pages.Add(new TabPage("Prior Report", new PriorReportComponent(_reportingStepRef)));
-
-            TabGroupComponentContainer tabGroupContainer = new TabGroupComponentContainer(LayoutDirection.Horizontal);
-            tabGroupContainer.AddTabGroup(new TabGroup(tabContainer1, 1.0f));
-
-            ReportEditorComponent reportEditor = new ReportEditorComponent(_reportingStepRef);
-            reportEditor.VerifyEvent += new EventHandler(reportEditor_VerifyEvent);
-            reportEditor.SendToVerifyEvent += new EventHandler(reportEditor_SendToVerifyEvent);
-            reportEditor.SendToTranscriptionEvent += new EventHandler(reportEditor_SendToTranscriptionEvent);
-            reportEditor.SaveEvent += new EventHandler(reportEditor_SaveEvent);
-            reportEditor.CloseComponentEvent += new EventHandler(reportEditor_CloseComponentEvent);
-
-            // Construct the Patient Biography page
-            return new SplitComponentContainer(
-                new SplitPane("", reportEditor, 0.5f),
-                new SplitPane("", tabGroupContainer, 0.5f),
-                SplitOrientation.Vertical);
+            return new ReportingComponent(_worklistItem);
         }
 
         void reportEditor_VerifyEvent(object sender, EventArgs e)

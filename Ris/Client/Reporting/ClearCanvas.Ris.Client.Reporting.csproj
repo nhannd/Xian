@@ -59,6 +59,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>ReportEditorComponentSettings.settings</DependentUpon>
     </Compile>
+    <Compile Include="ReportingComponent.cs" />
     <Compile Include="ReportingPreviewComponentSettings.cs" />
     <Compile Include="ReportingPreviewComponentSettings.Designer.cs">
       <AutoGen>True</AutoGen>

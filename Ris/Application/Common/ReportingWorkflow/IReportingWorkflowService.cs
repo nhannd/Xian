@@ -197,6 +197,15 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
         LoadReportForEditResponse LoadReportForEdit(LoadReportForEditRequest request);
 
         /// <summary>
+        /// Obtains the set of procedures that can optionally be linked to the specified procedure
+        /// for reporting.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [OperationContract]
+        GetLinkableProceduresResponse GetLinkableProcedures(GetLinkableProceduresRequest request);
+
+        /// <summary>
         /// Save the report of a given reporting step
         /// </summary>
         /// <param name="request"><see cref="SaveReportRequest"/></param>
@@ -208,10 +217,10 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
         /// <summary>
         /// Get all the reports of a given patient
         /// </summary>
-        /// <param name="request"><see cref="GetPriorReportRequest"/></param>
-        /// <returns><see cref="GetPriorReportResponse"/></returns>
+        /// <param name="request"><see cref="GetPriorReportsRequest"/></param>
+        /// <returns><see cref="GetPriorReportsResponse"/></returns>
         [OperationContract]
-        GetPriorReportResponse GetPriorReport(GetPriorReportRequest request);
+        GetPriorReportsResponse GetPriorReports(GetPriorReportsRequest request);
 
         /// <summary>
         /// Get a list of staff who are Radiologists
