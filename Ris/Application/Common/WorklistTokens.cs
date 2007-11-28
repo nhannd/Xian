@@ -102,6 +102,30 @@ namespace ClearCanvas.Ris.Application.Common
         [WorklistToken(Description = "Reporting - To Be Protocolled")]
         public const string ReportingToBeProtocolledWorklist = "ReportingToBeProtocolledWorklist";
 
+        [WorklistToken(Description = "Reporting - Draft")]
+        public const string ReportingDraftWorklist = "ReportingDraftWorklist";
+        
+        [WorklistToken(Description = "Reporting - In Transcription")]
+        public const string ReportingInTranscriptionWorklist = "ReportingInTranscriptionWorklist";
+
+        [WorklistToken(Description = "Reporting - To Be Verified")]
+        public const string ReportingToBeVerifiedWorklist = "ReportingToBeVerifiedWorklist";
+
+        [WorklistToken(Description = "Reporting - Verified")]
+        public const string ReportingVerifiedWorklist = "ReportingVerifiedWorklist";
+
+        [WorklistToken(Description = "Reporting - Review Resident Report")]
+        public const string ReportingReviewResidentReport = "ReportingReviewResidentReport";
+
+        [WorklistToken(Description = "Reporting - To Be Approved")]
+        public const string ReportingToBeApprovedWorklist = "ReportingToBeApprovedWorklist";
+
+        [WorklistToken(Description = "Reporting - Completed Protocol")]
+        public const string ReportingCompletedProtocolWorklist = "ReportingCompletedProtocolWorklist";
+
+        [WorklistToken(Description = "Reporting - Suspended Protocol")]
+        public const string ReportingSuspendedProtocolWorklist = "ReportingSuspendedProtocolWorklist";
+
         #endregion
     }
 }

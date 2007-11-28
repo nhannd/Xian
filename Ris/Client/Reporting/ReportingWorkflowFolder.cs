@@ -107,7 +107,6 @@ namespace ClearCanvas.Ris.Client.Reporting
         private IconSet _openIconSet;
 
         private readonly EntityRef _worklistRef;
-        private string _worklistClassName;
 
         public ReportingWorkflowFolder(ReportingWorkflowFolderSystemBase folderSystem, string folderName, string folderDescription, EntityRef worklistRef, ExtensionPoint<IDropHandler<ReportingWorklistItem>> dropHandlerExtensionPoint)
             :base(folderSystem, folderName, folderDescription, new ReportingWorklistTable())
@@ -139,12 +138,6 @@ namespace ClearCanvas.Ris.Client.Reporting
         public ReportingWorkflowFolder(ReportingWorkflowFolderSystemBase folderSystem, string folderName)
             : this(folderSystem, folderName, null, null, null)
         {
-        }
-
-        public string WorklistClassName
-        {
-            get { return _worklistClassName; }
-            set { _worklistClassName = value; }
         }
 
         public IconSet ClosedIconSet
@@ -187,7 +180,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                 delegate(IReportingWorkflowService service)
                 {
                     GetWorklistRequest request = _worklistRef == null
-                        ? new GetWorklistRequest(this.WorklistClassName)
+                        ? new GetWorklistRequest(this.WorklistType)
                         : new GetWorklistRequest(_worklistRef);
 
                     GetWorklistResponse response = service.GetWorklist(request);
@@ -207,7 +200,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                 delegate(IReportingWorkflowService service)
                 {
                     GetWorklistCountRequest request = _worklistRef == null
-                        ? new GetWorklistCountRequest(this.WorklistClassName)
+                        ? new GetWorklistCountRequest(this.WorklistType)
                         : new GetWorklistCountRequest(_worklistRef);
 
                     GetWorklistCountResponse response = service.GetWorklistCount(request);

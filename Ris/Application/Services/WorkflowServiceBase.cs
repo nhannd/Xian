@@ -32,14 +32,12 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 using System.Reflection;
 
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
-using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Workflow;
 
@@ -53,7 +51,7 @@ namespace ClearCanvas.Ris.Application.Services
         [AttributeUsage(AttributeTargets.Method, AllowMultiple = true, Inherited = true)]
         protected class OperationEnablementAttribute : Attribute
         {
-            private string _enablementMethodName;
+            private readonly string _enablementMethodName;
 
             public OperationEnablementAttribute(string enablementMethodName)
             {
@@ -68,7 +66,7 @@ namespace ClearCanvas.Ris.Application.Services
 
         protected class PersistentWorkflow : IWorkflow
         {
-            private IPersistenceContext _context;
+            private readonly IPersistenceContext _context;
 
             public PersistentWorkflow(IPersistenceContext context)
             {
@@ -90,9 +88,14 @@ namespace ClearCanvas.Ris.Application.Services
             #endregion
         }
 
-        protected IList GetWorklist(string worklistClassName)
+        public WorkflowServiceBase()
         {
-            IWorklist worklist = (IWorklist)_worklistExtPoint.CreateExtension(new ClassNameExtensionFilter(worklistClassName));
+            _worklistExtPoint = new WorklistExtensionPoint();
+        }
+
+        protected IList GetWorklist(string worklistType)
+        {
+            IWorklist worklist = WorklistFactory.Instance.GetWorklist(worklistType);
             return worklist.GetWorklist(this.CurrentUserStaff, this.PersistenceContext);
         }
 
@@ -102,9 +105,9 @@ namespace ClearCanvas.Ris.Application.Services
             return worklist.GetWorklist(this.CurrentUserStaff, this.PersistenceContext);
         }
 
-        protected int GetWorklistCount(string worklistClassName)
+        protected int GetWorklistCount(string worklistType)
         {
-            IWorklist worklist = (IWorklist)_worklistExtPoint.CreateExtension(new ClassNameExtensionFilter(worklistClassName));
+            IWorklist worklist = WorklistFactory.Instance.GetWorklist(worklistType);
             return worklist.GetWorklistCount(this.CurrentUserStaff, this.PersistenceContext);
         }
 

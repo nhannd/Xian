@@ -37,9 +37,9 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
     [DataContract]
     public class GetWorklistCountRequest : DataContractBase
     {
-        public GetWorklistCountRequest(string worklistClassName)
+        public GetWorklistCountRequest(string worklistType)
         {
-            this.WorklistClassName = worklistClassName;
+            this.WorklistType = worklistType;
         }
 
         public GetWorklistCountRequest(EntityRef worklistRef)
@@ -51,6 +51,6 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
         public EntityRef WorklistRef;
 
         [DataMember]
-        public string WorklistClassName;
+        public string WorklistType;
     }
 }

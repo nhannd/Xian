@@ -36,6 +36,7 @@ using ClearCanvas.Ris.Application.Common;
 using System.Reflection;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Application.Services
 {
@@ -164,6 +165,15 @@ namespace ClearCanvas.Ris.Application.Services
             {
                 throw new RequestValidationException("Invalid worklist type");
             }
+        }
+
+        public List<string> GetWorklistClassNames(List<string> types)
+        {
+            return CollectionUtils.Map<string, string>(types,
+                delegate(string tokens)
+                {
+                    return GetWorklistType(tokens).Name;
+                });
         }
 
         public string GetWorklistType(Worklist worklist)

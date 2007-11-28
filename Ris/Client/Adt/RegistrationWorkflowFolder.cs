@@ -109,8 +109,6 @@ namespace ClearCanvas.Ris.Client.Adt
 
         private readonly EntityRef _worklistRef;
 
-        private string _worklistClassName;
-
         public RegistrationWorkflowFolder(RegistrationWorkflowFolderSystemBase folderSystem, string folderName, string folderDescription, EntityRef worklistRef, ExtensionPoint<IDropHandler<RegistrationWorklistItem>> dropHandlerExtensionPoint)
             : base(folderSystem, folderName, folderDescription, new RegistrationWorklistTable())
         {
@@ -141,12 +139,6 @@ namespace ClearCanvas.Ris.Client.Adt
         public RegistrationWorkflowFolder(RegistrationWorkflowFolderSystemBase folderSystem, string folderName, string folderDescription, EntityRef worklistRef)
             : this(folderSystem, folderName, folderDescription, worklistRef, null)
         {
-        }
-
-        public string WorklistClassName
-        {
-            get { return _worklistClassName; }
-            set { _worklistClassName = value; }
         }
 
         public IconSet ClosedIconSet
@@ -189,8 +181,8 @@ namespace ClearCanvas.Ris.Client.Adt
             Platform.GetService<IRegistrationWorkflowService>(
                 delegate(IRegistrationWorkflowService service)
                 {
-                    GetWorklistRequest request = _worklistRef == null 
-                        ? new GetWorklistRequest(this.WorklistClassName) 
+                    GetWorklistRequest request = _worklistRef == null
+                        ? new GetWorklistRequest(this.WorklistType) 
                         : new GetWorklistRequest(_worklistRef);
 
                     GetWorklistResponse response = service.GetWorklist(request);
@@ -208,7 +200,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 delegate(IRegistrationWorkflowService service)
                 {
                     GetWorklistCountRequest request = _worklistRef == null
-                        ? new GetWorklistCountRequest(this.WorklistClassName)
+                        ? new GetWorklistCountRequest(this.WorklistType)
                         : new GetWorklistCountRequest(_worklistRef);
 
                     GetWorklistCountResponse response = service.GetWorklistCount(request);

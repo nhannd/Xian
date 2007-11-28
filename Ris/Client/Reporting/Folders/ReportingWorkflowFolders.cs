@@ -46,7 +46,6 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
         public ToBeReportedFolder(ReportingWorkflowFolderSystemBase folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
             : base(folderSystem, folderDisplayName, folderDescription, worklistRef)
         {
-            this.WorklistClassName = "ClearCanvas.Healthcare.ReportingToBeReportedWorklist";
         }
 
         public ToBeReportedFolder(ReportingWorkflowFolderSystemBase folderSystem)
@@ -60,6 +59,7 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
         }
     }
 
+    [FolderForWorklistType(WorklistTokens.ReportingDraftWorklist)]
     [FolderPath("Reporting/Draft")]
     public class DraftFolder : ReportingWorkflowFolder
     {
@@ -71,10 +71,10 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
         public DraftFolder(ReportingWorkflowFolderSystemBase folderSystem)
             : base(folderSystem, null, new DropHandlerExtensionPoint())
         {
-            this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Reporting.Worklists+Draft";
         }
     }
 
+    [FolderForWorklistType(WorklistTokens.ReportingInTranscriptionWorklist)]
     [FolderPath("Reporting/In Transcriptioin")]
     public class InTranscriptionFolder : ReportingWorkflowFolder
     {
@@ -86,10 +86,10 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
         public InTranscriptionFolder(ReportingWorkflowFolderSystemBase folderSystem)
             : base(folderSystem, null, new DropHandlerExtensionPoint())
         {
-            this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Reporting.Worklists+InTranscription";
         }
     }
 
+    [FolderForWorklistType(WorklistTokens.ReportingToBeVerifiedWorklist)]
     [FolderPath("Reporting/To be Verified")]
     public class ToBeVerifiedFolder : ReportingWorkflowFolder
     {
@@ -101,10 +101,10 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
         public ToBeVerifiedFolder(ReportingWorkflowFolderSystemBase folderSystem)
             : base(folderSystem, null, new DropHandlerExtensionPoint())
         {
-            this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Reporting.Worklists+ToBeVerified";
         }
     }
 
+    [FolderForWorklistType(WorklistTokens.ReportingReviewResidentReport)]
     [FolderPath("Reporting/Review Resident Report")]
     public class ReviewResidentReportFolder : ReportingWorkflowFolder
     {
@@ -116,10 +116,10 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
         public ReviewResidentReportFolder(ReportingWorkflowFolderSystemBase folderSystem)
             : base(folderSystem, null, new DropHandlerExtensionPoint())
         {
-            this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Reporting.Worklists+ReviewResidentReport";
         }
     }
 
+    [FolderForWorklistType(WorklistTokens.ReportingVerifiedWorklist)]
     [FolderPath("Reporting/Verified")]
     public class VerifiedFolder : ReportingWorkflowFolder
     {
@@ -131,7 +131,6 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
         public VerifiedFolder(ReportingWorkflowFolderSystemBase folderSystem)
             : base(folderSystem, null, new DropHandlerExtensionPoint())
         {
-            this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Reporting.Worklists+Verified";
         }
     }
 
@@ -143,7 +142,6 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
         public ToBeProtocolledFolder(ReportingWorkflowFolderSystemBase folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
             : base(folderSystem, folderDisplayName, folderDescription, worklistRef)
         {
-            this.WorklistClassName = "ClearCanvas.Healthcare.ReportingToBeProtocolledWorklist";
         }
 
         public ToBeProtocolledFolder(ReportingWorkflowFolderSystemBase folderSystem)
@@ -157,13 +155,13 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
         }
     }
 
+    [FolderForWorklistType(WorklistTokens.ReportingToBeApprovedWorklist)]
     [FolderPath("Protocolling/To be Approved")]
     public class ToBeApprovedFolder : ReportingWorkflowFolder
     {
         public ToBeApprovedFolder(ReportingWorkflowFolderSystemBase folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
             : base(folderSystem, folderDisplayName, folderDescription, worklistRef)
         {
-            this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Reporting.Worklists+ToBeApproved";
         }
 
         public ToBeApprovedFolder(ReportingWorkflowFolderSystemBase folderSystem)
@@ -177,13 +175,13 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
         }
     }
 
+    [FolderForWorklistType(WorklistTokens.ReportingCompletedProtocolWorklist)]
     [FolderPath("Protocolling/Completed Protocols")]
     public class CompletedProtocolFolder : ReportingWorkflowFolder
     {
         public CompletedProtocolFolder(ReportingWorkflowFolderSystemBase folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
             : base(folderSystem, folderDisplayName, folderDescription, worklistRef)
         {
-            this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Reporting.Worklists+CompletedProtocol";
         }
 
         public CompletedProtocolFolder(ReportingWorkflowFolderSystemBase folderSystem)
@@ -197,13 +195,13 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
         }
     }
 
+    [FolderForWorklistType(WorklistTokens.ReportingSuspendedProtocolWorklist)]
     [FolderPath("Protocolling/Suspended Protocols")]
     public class SuspendedProtocolFolder : ReportingWorkflowFolder
     {
         public SuspendedProtocolFolder(ReportingWorkflowFolderSystemBase folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
             : base(folderSystem, folderDisplayName, folderDescription, worklistRef)
         {
-            this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Reporting.Worklists+SuspendedProtocol";
         }
 
         public SuspendedProtocolFolder(ReportingWorkflowFolderSystemBase folderSystem)

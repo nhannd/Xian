@@ -48,11 +48,6 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
     [ServiceImplementsContract(typeof(IModalityWorkflowService))]
     public class ModalityWorkflowService : WorkflowServiceBase, IModalityWorkflowService
     {
-        public ModalityWorkflowService()
-        {
-            _worklistExtPoint = new WorklistExtensionPoint();
-        }
-
         [ReadOperation]
         public TextQueryResponse<ModalityWorklistItem> Search(SearchRequest request)
         {
@@ -83,7 +78,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
             WorklistAssembler assembler = new WorklistAssembler();
             return new ListWorklistsResponse(
                 CollectionUtils.Map<Worklist, WorklistSummary, List<WorklistSummary>>(
-                    this.PersistenceContext.GetBroker<IWorklistBroker>().FindWorklists(this.CurrentUser, request.WorklistTokens),
+                    this.PersistenceContext.GetBroker<IWorklistBroker>().FindWorklists(this.CurrentUser, WorklistFactory.Instance.GetWorklistClassNames(request.WorklistTokens)),
                     delegate(Worklist worklist)
                     {
                         return assembler.GetWorklistSummary(worklist);
@@ -96,7 +91,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
             ModalityWorkflowAssembler assembler = new ModalityWorkflowAssembler();
 
             IList items = request.WorklistRef == null
-                  ? GetWorklist(request.WorklistClassName)
+                  ? GetWorklist(request.WorklistType)
                   : GetWorklist(request.WorklistRef);
 
             return new GetWorklistResponse(
@@ -112,7 +107,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
         public GetWorklistCountResponse GetWorklistCount(GetWorklistCountRequest request)
         {
             int count = request.WorklistRef == null
-                            ? GetWorklistCount(request.WorklistClassName)
+                            ? GetWorklistCount(request.WorklistType)
                             : GetWorklistCount(request.WorklistRef);
 
             return new GetWorklistCountResponse(count);

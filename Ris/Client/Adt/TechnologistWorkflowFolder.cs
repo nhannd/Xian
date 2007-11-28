@@ -106,7 +106,6 @@ namespace ClearCanvas.Ris.Client.Adt
         private IconSet _openIconSet;
 
         private readonly EntityRef _worklistRef;
-        private string _worklistClassName;
 
         public TechnologistWorkflowFolder(TechnologistWorkflowFolderSystemBase folderSystem, string folderName, string folderDescription, EntityRef worklistRef, ExtensionPoint<IDropHandler<ModalityWorklistItem>> dropHandlerExtensionPoint)
             : base(folderSystem, folderName, folderDescription, new ModalityWorklistTable())
@@ -138,13 +137,6 @@ namespace ClearCanvas.Ris.Client.Adt
         public TechnologistWorkflowFolder(TechnologistWorkflowFolderSystemBase folderSystem, string folderName, string folderDescription, EntityRef worklistRef)
             : this(folderSystem, folderName, folderDescription, worklistRef, null)
         {
-        }
-
-
-        public string WorklistClassName
-        {
-            get { return _worklistClassName; }
-            set { _worklistClassName = value; }
         }
 
         public IconSet ClosedIconSet
@@ -188,7 +180,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 delegate(IModalityWorkflowService service)
                 {
                     GetWorklistCountRequest request = _worklistRef == null 
-                        ? new GetWorklistCountRequest(this.WorklistClassName)
+                        ? new GetWorklistCountRequest(this.WorklistType)
                         : new GetWorklistCountRequest(_worklistRef);
 
                     GetWorklistCountResponse response = service.GetWorklistCount(request);
@@ -205,8 +197,8 @@ namespace ClearCanvas.Ris.Client.Adt
             Platform.GetService<IModalityWorkflowService>(
                 delegate(IModalityWorkflowService service)
                 {
-                    GetWorklistRequest request = _worklistRef == null 
-                        ? new GetWorklistRequest(this.WorklistClassName)
+                    GetWorklistRequest request = _worklistRef == null
+                        ? new GetWorklistRequest(this.WorklistType)
                         : new GetWorklistRequest(_worklistRef);
 
                     GetWorklistResponse response = service.GetWorklist(request);

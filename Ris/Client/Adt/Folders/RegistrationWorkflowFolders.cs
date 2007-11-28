@@ -53,7 +53,6 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
                 delegate { DisplayOption(folderSystem.DesktopWindow); });
 
             this.RefreshTime = 0;
-            this.WorklistClassName = "ClearCanvas.Healthcare.RegistrationScheduledWorklist";
         }
 
         public ScheduledFolder(RegistrationWorkflowFolderSystemBase folderSystem)
@@ -94,7 +93,6 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
                 delegate { DisplayOption(folderSystem.DesktopWindow); });
 
             this.RefreshTime = 0;
-            this.WorklistClassName = "ClearCanvas.Healthcare.RegistrationCheckedInWorklist";
         }
 
         public CheckedInFolder(RegistrationWorkflowFolderSystemBase folderSystem)
@@ -130,7 +128,6 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
                 delegate { DisplayOption(folderSystem.DesktopWindow); });
 
             this.RefreshTime = 0;
-            this.WorklistClassName = "ClearCanvas.Healthcare.RegistrationInProgressWorklist";
         }
 
         public InProgressFolder(RegistrationWorkflowFolderSystemBase folderSystem)
@@ -166,7 +163,6 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
                 delegate { DisplayOption(folderSystem.DesktopWindow); });
 
             this.RefreshTime = 0;
-            this.WorklistClassName = "ClearCanvas.Healthcare.RegistrationCompletedWorklist";
         }
 
         public CompletedFolder(RegistrationWorkflowFolderSystemBase folderSystem)
@@ -207,7 +203,6 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
                 delegate { DisplayOption(folderSystem.DesktopWindow); });
 
             this.RefreshTime = 0;
-            this.WorklistClassName = "ClearCanvas.Healthcare.RegistrationCancelledWorklist";
         }
 
         public CancelledFolder(RegistrationWorkflowFolderSystemBase folderSystem)
@@ -243,7 +238,6 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
                 delegate { DisplayOption(folderSystem.DesktopWindow); });
 
             this.RefreshTime = 0;
-            this.WorklistClassName = "ClearCanvas.Healthcare.RegistrationCompletedProtocolWorklist";
         }
 
         public CompletedProtocolFolder(RegistrationWorkflowFolderSystemBase folderSystem)
@@ -279,7 +273,6 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
                 delegate { DisplayOption(folderSystem.DesktopWindow); });
 
             this.RefreshTime = 0;
-            this.WorklistClassName = "ClearCanvas.Healthcare.RegistrationSuspendedProtocolWorklist";
         }
 
         public SuspendedProtocolFolder(RegistrationWorkflowFolderSystemBase folderSystem)
@@ -315,7 +308,6 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
                 delegate { DisplayOption(folderSystem.DesktopWindow); });
 
             this.RefreshTime = 0;
-            this.WorklistClassName = "ClearCanvas.Healthcare.RegistrationPendingProtocolWorklist";
         }
 
         public PendingProtocolFolder(RegistrationWorkflowFolderSystemBase folderSystem)

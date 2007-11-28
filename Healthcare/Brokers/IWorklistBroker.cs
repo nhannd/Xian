@@ -37,7 +37,7 @@ namespace ClearCanvas.Healthcare.Brokers
 {
     public interface IWorklistBroker : IEntityBroker<Worklist, WorklistSearchCriteria>
     {
-        IList FindWorklists(User currentUser, IList classNames);
+        IList FindWorklists(User currentUser, IList worklistClassNames);
         Worklist FindWorklist(string name, string type);
         bool NameExistsForType(string name, string type);
     }

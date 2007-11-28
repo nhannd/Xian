@@ -37,9 +37,9 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
     [DataContract]
     public class GetWorklistRequest : DataContractBase
     {
-        public GetWorklistRequest(string worklistClassName)
+        public GetWorklistRequest(string worklistType)
         {
-            this.WorklistClassName = worklistClassName;
+            this.WorklistType = worklistType;
         }
 
         public GetWorklistRequest(EntityRef worklistRef)
@@ -51,6 +51,6 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
         public EntityRef WorklistRef;
 
         [DataMember]
-        public string WorklistClassName;
+        public string WorklistType;
     }
 }

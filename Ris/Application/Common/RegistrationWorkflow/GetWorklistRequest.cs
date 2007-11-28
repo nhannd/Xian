@@ -29,9 +29,6 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
 
@@ -40,9 +37,9 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
     [DataContract]
     public class GetWorklistRequest : DataContractBase
     {
-        public GetWorklistRequest(string worklistClassName)
+        public GetWorklistRequest(string worklistType)
         {
-            this.WorklistClassName = worklistClassName;
+            this.WorklistType = worklistType;
         }
 
         public GetWorklistRequest(EntityRef worklistRef)
@@ -54,6 +51,6 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
         public EntityRef WorklistRef;
 
         [DataMember]
-        public string WorklistClassName;
+        public string WorklistType;
     }
 }
