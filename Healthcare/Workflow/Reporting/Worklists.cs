@@ -197,25 +197,47 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
             }
         }
 
-        [ExtensionOf(typeof(WorklistExtensionPoint), Name = "ReportingToBeApprovedWorklist")]
-        public class ToBeApproved : ReportingWorklist
+        //[ExtensionOf(typeof(WorklistExtensionPoint), Name = "ReportingToBeApprovedWorklist")]
+        //public class ToBeApproved : ReportingWorklist
+        //{
+        //    private ReportingWorklistItemSearchCriteria[] GetQueryConditions(Staff currentUserStaff)
+        //    {
+        //        ReportingWorklistItemSearchCriteria criteria = new ReportingWorklistItemSearchCriteria();
+        //        criteria.ReportingProcedureStep.State.EqualTo(ActivityStatus.IP);
+        //        criteria.Protocol.Status.EqualTo(ProtocolStatus.AA);
+        //        return new ReportingWorklistItemSearchCriteria[] { criteria };
+        //    }
+
+        //    public override IList GetWorklist(Staff currentUserStaff, IPersistenceContext context)
+        //    {
+        //        return (IList)GetBroker(context).GetWorklist(typeof(ProtocolProcedureStep), GetQueryConditions(currentUserStaff), null);
+        //    }
+
+        //    public override int GetWorklistCount(Staff currentUserStaff, IPersistenceContext context)
+        //    {
+        //        return GetBroker(context).GetWorklistCount(typeof(ProtocolProcedureStep), GetQueryConditions(currentUserStaff), null);
+        //    }
+        //}
+
+        [ExtensionOf(typeof(WorklistExtensionPoint), Name = "ReportingDraftProtocolWorklist")]
+        public class DraftProtocol : ReportingWorklist
         {
             private ReportingWorklistItemSearchCriteria[] GetQueryConditions(Staff currentUserStaff)
             {
                 ReportingWorklistItemSearchCriteria criteria = new ReportingWorklistItemSearchCriteria();
                 criteria.ReportingProcedureStep.State.EqualTo(ActivityStatus.IP);
-                criteria.Protocol.Status.EqualTo(ProtocolStatus.AA);
+                criteria.ReportingProcedureStep.Performer.Staff.EqualTo(currentUserStaff);
                 return new ReportingWorklistItemSearchCriteria[] { criteria };
             }
 
             public override IList GetWorklist(Staff currentUserStaff, IPersistenceContext context)
             {
-                return (IList)GetBroker(context).GetWorklist(typeof(ProtocolProcedureStep), GetQueryConditions(currentUserStaff), null);
+                return (IList)GetBroker(context).GetWorklist(typeof(ProtocolAssignmentStep), GetQueryConditions(currentUserStaff), null);
             }
 
             public override int GetWorklistCount(Staff currentUserStaff, IPersistenceContext context)
             {
-                return GetBroker(context).GetWorklistCount(typeof(ProtocolProcedureStep), GetQueryConditions(currentUserStaff), null);
+                return GetBroker(context).GetWorklistCount(typeof(ProtocolAssignmentStep), GetQueryConditions(currentUserStaff), null);
             }
         }
 
@@ -225,18 +247,19 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
             private ReportingWorklistItemSearchCriteria[] GetQueryConditions(Staff currentUserStaff)
             {
                 ReportingWorklistItemSearchCriteria criteria = new ReportingWorklistItemSearchCriteria();
-                criteria.ReportingProcedureStep.State.In(new ActivityStatus[] { ActivityStatus.CM, ActivityStatus.DC });
+                criteria.ReportingProcedureStep.State.EqualTo(ActivityStatus.CM);
+                criteria.ReportingProcedureStep.Performer.Staff.EqualTo(currentUserStaff);
                 return new ReportingWorklistItemSearchCriteria[] { criteria };
             }
 
             public override IList GetWorklist(Staff currentUserStaff, IPersistenceContext context)
             {
-                return (IList)GetBroker(context).GetWorklist(typeof(ProtocolProcedureStep), GetQueryConditions(currentUserStaff), null);
+                return (IList)GetBroker(context).GetWorklist(typeof(ProtocolAssignmentStep), GetQueryConditions(currentUserStaff), null);
             }
 
             public override int GetWorklistCount(Staff currentUserStaff, IPersistenceContext context)
             {
-                return GetBroker(context).GetWorklistCount(typeof(ProtocolProcedureStep), GetQueryConditions(currentUserStaff), null);
+                return GetBroker(context).GetWorklistCount(typeof(ProtocolAssignmentStep), GetQueryConditions(currentUserStaff), null);
             }
         }
 
@@ -246,19 +269,43 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
             private ReportingWorklistItemSearchCriteria[] GetQueryConditions(Staff currentUserStaff)
             {
                 ReportingWorklistItemSearchCriteria criteria = new ReportingWorklistItemSearchCriteria();
-                criteria.ReportingProcedureStep.State.EqualTo(ActivityStatus.SU);
+                criteria.ReportingProcedureStep.State.EqualTo(ActivityStatus.DC);
                 criteria.Protocol.Status.EqualTo(ProtocolStatus.SU);
+                criteria.ReportingProcedureStep.Performer.Staff.EqualTo(currentUserStaff);
                 return new ReportingWorklistItemSearchCriteria[] { criteria };
             }
 
             public override IList GetWorklist(Staff currentUserStaff, IPersistenceContext context)
             {
-                return (IList)GetBroker(context).GetWorklist(typeof(ProtocolProcedureStep), GetQueryConditions(currentUserStaff), null);
+                return (IList)GetBroker(context).GetWorklist(typeof(ProtocolAssignmentStep), GetQueryConditions(currentUserStaff), null);
             }
 
             public override int GetWorklistCount(Staff currentUserStaff, IPersistenceContext context)
             {
-                return GetBroker(context).GetWorklistCount(typeof(ProtocolProcedureStep), GetQueryConditions(currentUserStaff), null);
+                return GetBroker(context).GetWorklistCount(typeof(ProtocolAssignmentStep), GetQueryConditions(currentUserStaff), null);
+            }
+        }
+
+        [ExtensionOf(typeof(WorklistExtensionPoint), Name = "ReportingRejectedProtocolWorklist")]
+        public class RejectedProtocol : ReportingWorklist
+        {
+            private ReportingWorklistItemSearchCriteria[] GetQueryConditions(Staff currentUserStaff)
+            {
+                ReportingWorklistItemSearchCriteria criteria = new ReportingWorklistItemSearchCriteria();
+                criteria.ReportingProcedureStep.State.EqualTo(ActivityStatus.DC);
+                criteria.Protocol.Status.EqualTo(ProtocolStatus.RJ);
+                criteria.ReportingProcedureStep.Performer.Staff.EqualTo(currentUserStaff);
+                return new ReportingWorklistItemSearchCriteria[] { criteria };
+            }
+
+            public override IList GetWorklist(Staff currentUserStaff, IPersistenceContext context)
+            {
+                return (IList)GetBroker(context).GetWorklist(typeof(ProtocolAssignmentStep), GetQueryConditions(currentUserStaff), null);
+            }
+
+            public override int GetWorklistCount(Staff currentUserStaff, IPersistenceContext context)
+            {
+                return GetBroker(context).GetWorklistCount(typeof(ProtocolAssignmentStep), GetQueryConditions(currentUserStaff), null);
             }
         }
     }

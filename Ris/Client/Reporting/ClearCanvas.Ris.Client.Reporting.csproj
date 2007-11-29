@@ -49,7 +49,7 @@
     <Compile Include="PatientBiographyTool.cs" />
     <Compile Include="ProtocolEditorComponent.cs" />
     <Compile Include="ProtocolEditorComponentDocument.cs" />
-    <Compile Include="ProtocolEditorTool.cs" />
+    <Compile Include="AssignProtocolTool.cs" />
     <Compile Include="ProtocolEditorProcedurePlanSummaryTable.cs" />
     <Compile Include="ProtocolEditorProcedurePlanSummaryTableItem.cs" />
     <Compile Include="ProtocolReasonComponent.cs" />

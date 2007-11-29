@@ -60,8 +60,9 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             " join o.Patient p" +
             " join p.Profiles pp";
 
-        private const string _hqlProtocolFrom = " from ProtocolProcedureStep ps";
+        private const string _hqlProtocolFrom = " from {0} ps";
         private const string _hqlProtocolJoin =
+            " join ps.Protocol pr" +
             " join ps.RequestedProcedure rp" +
             " join rp.Order o" +
             " join o.DiagnosticService ds" +
@@ -97,16 +98,18 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             return DoQueryCount(query);
         }
 
-        public IList<WorklistItem> GetProtocolWorklist(RegistrationWorklistItemSearchCriteria[] where, Worklist worklist)
+        public IList<WorklistItem> GetProtocolWorklist(Type stepClass, RegistrationWorklistItemSearchCriteria[] where, Worklist worklist)
         {
-            HqlQuery query = new HqlQuery(string.Concat(_hqlSelectWorklist, _hqlProtocolFrom, _hqlProtocolJoin));
+            string hqlFrom = String.Format(_hqlProtocolFrom, stepClass.Name);
+            HqlQuery query = new HqlQuery(string.Concat(_hqlSelectWorklist, hqlFrom, _hqlProtocolJoin));
             ConstructWorklistCondition(query, where, worklist);
             return DoQuery(query);
         }
 
-        public int GetProtocolWorklistCount(RegistrationWorklistItemSearchCriteria[] where, Worklist worklist)
+        public int GetProtocolWorklistCount(Type stepClass, RegistrationWorklistItemSearchCriteria[] where, Worklist worklist)
         {
-            HqlQuery query = new HqlQuery(string.Concat(_hqlSelectCount, _hqlProtocolFrom, _hqlProtocolJoin));
+            string hqlFrom = String.Format(_hqlProtocolFrom, stepClass.Name);
+            HqlQuery query = new HqlQuery(string.Concat(_hqlSelectCount, hqlFrom, _hqlProtocolJoin));
             ConstructWorklistCondition(query, where, worklist);
             return DoQueryCount(query);
         }
@@ -142,6 +145,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
                 and.Conditions.AddRange(HqlCondition.FromSearchCriteria("rp", c.RequestedProcedure));
                 and.Conditions.AddRange(HqlCondition.FromSearchCriteria("rp.ProcedureCheckIn", c.ProcedureCheckIn));
                 and.Conditions.AddRange(HqlCondition.FromSearchCriteria("ps", c.ProtocolProcedureStep));
+                and.Conditions.AddRange(HqlCondition.FromSearchCriteria("pr", c.Protocol));
 
                 if (and.Conditions.Count > 0)
                     or.Conditions.Add(and);

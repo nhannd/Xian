@@ -77,7 +77,11 @@
     <Compile Include="Alert\LanguageAlert.cs" />
     <Compile Include="Alert\NoteAlert.cs" />
     <Compile Include="ProcedureStepSchedulingSearchCriteria.cs" />
+    <Compile Include="RegistrationRejectedProtocolWorklist.cs" />
     <Compile Include="RegistrationToBeScheduledWorklist.cs" />
+    <Compile Include="ProtocolAssignmentStep.cs" />
+    <Compile Include="ProtocolProcedureStepSearchCriteria.cs" />
+    <Compile Include="ProtocolResolutionStep.cs" />
     <Compile Include="WorklistItemBase.cs" />
     <Compile Include="WorklistItemSearchCriteria.cs" />
     <Compile Include="ReportingWorklistItemSearchCriteria.cs" />

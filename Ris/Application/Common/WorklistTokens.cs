@@ -61,8 +61,11 @@ namespace ClearCanvas.Ris.Application.Common
         [WorklistToken(Description = "Registration - Completed Protocol")]
         public const string RegistrationCompletedProtocolWorklist = "RegistrationCompletedProtocolWorklist";
 
-        [WorklistToken(Description = "Registration - Suspended/Rejected Protocol")]
+        [WorklistToken(Description = "Registration - Suspended Protocol")]
         public const string RegistrationSuspendedProtocolWorklist = "RegistrationSuspendedProtocolWorklist";
+
+        [WorklistToken(Description = "Registration - Rejected Protocol")]
+        public const string RegistrationRejectedProtocolWorklist = "RegistrationRejectedProtocolWorklist";
 
         [WorklistToken(Description = "Registration - Pending Protocol")]
         public const string RegistrationPendingProtocolWorklist = "RegistrationPendingProtocolWorklist";
@@ -123,11 +126,17 @@ namespace ClearCanvas.Ris.Application.Common
         [WorklistToken(Description = "Reporting - To Be Approved")]
         public const string ReportingToBeApprovedWorklist = "ReportingToBeApprovedWorklist";
 
+        [WorklistToken(Description = "Reporting - Draft Protocol")]
+        public const string ReportingDraftProtocolWorklist = "ReportingDraftProtocolWorklist";
+
         [WorklistToken(Description = "Reporting - Completed Protocol")]
         public const string ReportingCompletedProtocolWorklist = "ReportingCompletedProtocolWorklist";
 
         [WorklistToken(Description = "Reporting - Suspended Protocol")]
         public const string ReportingSuspendedProtocolWorklist = "ReportingSuspendedProtocolWorklist";
+
+        [WorklistToken(Description = "Reporting - Rejected Protocol")]
+        public const string ReportingRejectedProtocolWorklist = "ReportingRejectedProtocolWorklist";
 
         #endregion
     }

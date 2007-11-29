@@ -25,7 +25,7 @@ namespace ClearCanvas.Healthcare
             get
             {
                 ReportingWorklistItemSearchCriteria criteria = new ReportingWorklistItemSearchCriteria();
-                criteria.ReportingProcedureStep.State.In(new ActivityStatus[] { ActivityStatus.SC, ActivityStatus.IP });
+                criteria.ReportingProcedureStep.State.EqualTo(ActivityStatus.SC);
                 criteria.ReportingProcedureStep.Scheduling.Performer.Staff.IsNull();
                 return new ReportingWorklistItemSearchCriteria[] { criteria };
             }
@@ -35,12 +35,12 @@ namespace ClearCanvas.Healthcare
 
         public override IList GetWorklist(Staff currentUserStaff, IPersistenceContext context)
         {
-            return (IList)GetBroker<IReportingWorklistBroker>(context).GetWorklist(typeof(ProtocolProcedureStep), QueryConditions, this);
+            return (IList)GetBroker<IReportingWorklistBroker>(context).GetWorklist(typeof(ProtocolAssignmentStep), QueryConditions, this);
         }
 
         public override int GetWorklistCount(Staff currentUserStaff, IPersistenceContext context)
         {
-            return GetBroker<IReportingWorklistBroker>(context).GetWorklistCount(typeof(ProtocolProcedureStep), QueryConditions, this);
+            return GetBroker<IReportingWorklistBroker>(context).GetWorklistCount(typeof(ProtocolAssignmentStep), QueryConditions, this);
         }
 
         #endregion

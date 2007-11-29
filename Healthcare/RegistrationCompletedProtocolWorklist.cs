@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
@@ -27,20 +28,22 @@ namespace ClearCanvas.Healthcare {
             get
             {
                 RegistrationWorklistItemSearchCriteria criteria = new RegistrationWorklistItemSearchCriteria();
-                criteria.RequestedProcedure.ScheduledStartTime.IsNull(); // unscheduled
                 criteria.ProtocolProcedureStep.State.EqualTo(ActivityStatus.CM);
+                DateTime? lower = Platform.Time.AddMonths(-1);
+                DateTime? upper = Platform.Time.AddDays(14);
+                criteria.RequestedProcedure.ScheduledStartTime.Between(lower, upper);
                 return new RegistrationWorklistItemSearchCriteria[] { criteria };
             }
         }
 
         public override IList GetWorklist(Staff currentUserStaff, IPersistenceContext context)
         {
-            return (IList)GetBroker<IRegistrationWorklistBroker>(context).GetProtocolWorklist(QueryConditions, this);
+            return (IList)GetBroker<IRegistrationWorklistBroker>(context).GetProtocolWorklist(typeof(ProtocolAssignmentStep), QueryConditions, this);
         }
 
         public override int GetWorklistCount(Staff currentUserStaff, IPersistenceContext context)
         {
-            return GetBroker<IRegistrationWorklistBroker>(context).GetProtocolWorklistCount(QueryConditions, this);
+            return GetBroker<IRegistrationWorklistBroker>(context).GetProtocolWorklistCount(typeof(ProtocolAssignmentStep), QueryConditions, this);
         }
 
         #region Object overrides

@@ -6,12 +6,20 @@ namespace ClearCanvas.Ris.Application.Common.ProtocollingWorkflow
     [DataContract]
     public class GetProtocolOperationEnablementRequest : DataContractBase
     {
-        public GetProtocolOperationEnablementRequest(EntityRef orderRef)
+        //public GetProtocolOperationEnablementRequest(EntityRef orderRef)
+        //{
+        //    OrderRef = orderRef;
+        //}
+
+        //[DataMember]
+        //public EntityRef OrderRef;
+
+        public GetProtocolOperationEnablementRequest(EntityRef protocolAssignementStepRef)
         {
-            OrderRef = orderRef;
+            ProtocolAssignementStepRef = protocolAssignementStepRef;
         }
 
         [DataMember]
-        public EntityRef OrderRef;
+        public EntityRef ProtocolAssignementStepRef;
     }
 }

@@ -7,8 +7,9 @@ namespace ClearCanvas.Ris.Client.Reporting
     class ProtocolEditorComponentDocument : Document
     {
         private readonly ReportingWorklistItem _item;
+        private readonly bool _claimProtocol;
 
-        public ProtocolEditorComponentDocument(string accessionNumber, ReportingWorklistItem item, IDesktopWindow desktopWindow)
+        public ProtocolEditorComponentDocument(string accessionNumber, ReportingWorklistItem item, bool claimProtocol, IDesktopWindow desktopWindow)
             : base(accessionNumber, desktopWindow)
         {
             if(string.IsNullOrEmpty(accessionNumber))
@@ -21,6 +22,7 @@ namespace ClearCanvas.Ris.Client.Reporting
             }
 
             _item = item;
+            _claimProtocol = claimProtocol;
         }
 
         protected override string GetTitle()
@@ -30,7 +32,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         protected override IApplicationComponent GetComponent()
         {
-            ProtocolEditorComponent component = new ProtocolEditorComponent(_item);
+            ProtocolEditorComponent component = new ProtocolEditorComponent(_item, _claimProtocol);
 
             component.ProtocolAccepted += ProtocolFinished;
             component.ProtocolCancelled += ProtocolNotFinished;

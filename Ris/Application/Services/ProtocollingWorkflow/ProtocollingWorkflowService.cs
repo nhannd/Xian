@@ -7,6 +7,7 @@ using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ProtocollingWorkflow;
+using ClearCanvas.Workflow;
 
 namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 {
@@ -54,7 +55,14 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
         {
             RequestedProcedure rp = this.PersistenceContext.Load<RequestedProcedure>(request.RequestedProcedureRef);
             ProtocollingWorkflowAssembler assembler = new ProtocollingWorkflowAssembler();
-            return new GetProcedureProtocolResponse(assembler.CreateProtocolDetail(rp.ProtocolProcedureStep.Protocol, this.PersistenceContext));
+
+            ProcedureStep uncastProtcolStep = CollectionUtils.SelectFirst<ProcedureStep>(
+                rp.ProcedureSteps,
+                delegate(ProcedureStep ps) { return ps.Is<ProtocolProcedureStep>(); });
+
+            ProtocolProcedureStep protocolStep = uncastProtcolStep.Downcast<ProtocolProcedureStep>();
+
+            return new GetProcedureProtocolResponse(protocolStep.Protocol.GetRef(), assembler.CreateProtocolDetail(protocolStep.Protocol, this.PersistenceContext));
         }
 
         [ReadOperation]
@@ -73,19 +81,17 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
         [ReadOperation]
         public GetProtocolOperationEnablementResponse GetProtocolOperationEnablement(GetProtocolOperationEnablementRequest request)
         {
-            Order order = this.PersistenceContext.Load<Order>(request.OrderRef);
-            RequestedProcedure protocolledRequestedProcedure = CollectionUtils.SelectFirst<RequestedProcedure>(
-                order.RequestedProcedures,
-                delegate(RequestedProcedure rp) { return rp.ProtocolProcedureStep != null; });
-
-            ProtocolProcedureStep protocolStep = protocolledRequestedProcedure.ProtocolProcedureStep;
-
+            ProcedureStep ps = this.PersistenceContext.Load<ProcedureStep>(request.ProtocolAssignementStepRef);
             GetProtocolOperationEnablementResponse response = new GetProtocolOperationEnablementResponse();
 
-            response.AcceptEnabled = protocolStep.CanAccept;
-            response.RejectEnabled = protocolStep.CanReject;
-            response.SuspendEnabled = protocolStep.CanSuspend;
-            response.SaveEnabled = protocolStep.CanSave;
+            if (ps.Is<ProtocolAssignmentStep>())
+            {
+                ProtocolAssignmentStep protocolAssignementStep = ps.As<ProtocolAssignmentStep>();
+                response.AcceptEnabled = protocolAssignementStep.CanAccept;
+                response.RejectEnabled = protocolAssignementStep.CanReject;
+                response.SuspendEnabled = protocolAssignementStep.CanSuspend;
+                response.SaveEnabled = protocolAssignementStep.CanSave;
+            }
 
             return response;
         }
@@ -94,16 +100,15 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
         public GetClericalProtocolOperationEnablementResponse GetClericalProtocolOperationEnablement(GetClericalProtocolOperationEnablementRequest request)
         {
             Order order = this.PersistenceContext.Load<Order>(request.OrderRef);
-            RequestedProcedure protocolledRequestedProcedure = CollectionUtils.SelectFirst<RequestedProcedure>(
-                order.RequestedProcedures,
-                delegate(RequestedProcedure rp) { return rp.ProtocolProcedureStep != null; });
+            RequestedProcedure rp = CollectionUtils.FirstElement<RequestedProcedure>(order.RequestedProcedures);
+            ProtocolResolutionStep resolutionStep = ScheduledProcedureStep<ProtocolResolutionStep>(rp);
 
             GetClericalProtocolOperationEnablementResponse response = new GetClericalProtocolOperationEnablementResponse();
 
-            if (protocolledRequestedProcedure != null)
+            if (resolutionStep != null)
             {
-                response.CanResolveByCancel = protocolledRequestedProcedure.ProtocolProcedureStep.IsRejected;
-                response.CanResolveByResubmit = protocolledRequestedProcedure.ProtocolProcedureStep.IsSuspended;
+                response.CanResolveByCancel = resolutionStep.ShouldCancel;
+                response.CanResolveByResubmit = resolutionStep.ShouldResubmit;
             }
             else
             {
@@ -128,22 +133,67 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 
             foreach (RequestedProcedure rp in o.RequestedProcedures)
             {
-                if(rp.ProtocolProcedureStep != null)
+                if(InprogressProcedureStep<ProtocolAssignmentStep>(rp) != null)
                     throw new RequestValidationException("Protocol step already exists for one or more requested procedures.  Probably stale data.");
 
                 Protocol protocol = new Protocol(rp);
-                ProtocolProcedureStep protocolStep = new ProtocolProcedureStep(protocol);
-                rp.AddProcedureStep(protocolStep);
+                ProtocolAssignmentStep assignmentStep = new ProtocolAssignmentStep(protocol);
+                rp.AddProcedureStep(assignmentStep);
 
-                protocolStep.Schedule(DateTime.Now);
+                assignmentStep.Schedule(DateTime.Now);
 
                 this.PersistenceContext.Lock(protocol, DirtyState.New);
-                this.PersistenceContext.Lock(protocolStep, DirtyState.New);
+                this.PersistenceContext.Lock(assignmentStep, DirtyState.New);
             }
             
             this.PersistenceContext.SynchState();
 
             return new AddOrderProtocolStepsResponse();
+        }
+
+        [UpdateOperation]
+        public StartOrderProtocolResponse StartOrderProtocol(StartOrderProtocolRequest request)
+        {
+            Order order = this.PersistenceContext.Load<Order>(request.OrderRef);
+
+            foreach (RequestedProcedure rp in order.RequestedProcedures)
+            {
+                ProtocolAssignmentStep assignmentStep = ScheduledProcedureStep<ProtocolAssignmentStep>(rp);
+
+                if (assignmentStep != null)
+                {
+                    assignmentStep.Start(this.CurrentUserStaff);
+                }
+            }
+
+            return new StartOrderProtocolResponse();
+        }
+
+        [UpdateOperation]
+        public DiscardOrderProtocolResponse DiscardOrderProtocol(DiscardOrderProtocolRequest request)
+        {
+            Order order = this.PersistenceContext.Load<Order>(request.OrderRef);
+
+            foreach (RequestedProcedure rp in order.RequestedProcedures)
+            {
+                // Discontinue claimed/in-progress protocol step
+                ProtocolAssignmentStep existingAssignmentStep = InprogressProcedureStep<ProtocolAssignmentStep>(rp);
+
+                if (existingAssignmentStep != null)
+                {
+                    existingAssignmentStep.Discontinue();
+
+                    // Replace with new step scheduled step
+                    ProtocolAssignmentStep replacementAssignmentStep = new ProtocolAssignmentStep(existingAssignmentStep.Protocol);
+                    rp.AddProcedureStep(replacementAssignmentStep);
+
+                    replacementAssignmentStep.Schedule(DateTime.Now);
+
+                    this.PersistenceContext.Lock(replacementAssignmentStep, DirtyState.New);
+                }
+            }
+
+            return new DiscardOrderProtocolResponse();
         }
 
         [UpdateOperation]
@@ -153,14 +203,12 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 
             foreach (RequestedProcedure rp in order.RequestedProcedures)
             {
-                if(rp.ProtocolProcedureStep != null)
-                {
-                    if(rp.ProtocolProcedureStep.Performer != null)
-                        rp.ProtocolProcedureStep.Complete();
-                    else 
-                        rp.ProtocolProcedureStep.Complete(this.CurrentUserStaff);
+                ProtocolAssignmentStep assignmentStep = InprogressProcedureStep<ProtocolAssignmentStep>(rp);
 
-                    rp.ProtocolProcedureStep.Protocol.Accept();
+                if(assignmentStep != null)
+                {
+                    assignmentStep.Complete();
+                    assignmentStep.Protocol.Accept();
                 }
             }
 
@@ -174,10 +222,15 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 
             foreach (RequestedProcedure rp in order.RequestedProcedures)
             {
-                if (rp.ProtocolProcedureStep != null)
+                ProtocolAssignmentStep assignmentStep = InprogressProcedureStep<ProtocolAssignmentStep>(rp);
+
+                if (assignmentStep != null)
                 {
-                    rp.ProtocolProcedureStep.Suspend();
-                    rp.ProtocolProcedureStep.Protocol.Reject(EnumUtils.GetEnumValue<ProtocolSuspendRejectReasonEnum>(request.RejectReason, this.PersistenceContext));
+                    assignmentStep.Discontinue();
+                    assignmentStep.Protocol.Reject(EnumUtils.GetEnumValue<ProtocolSuspendRejectReasonEnum>(request.RejectReason, this.PersistenceContext));
+
+                    ProtocolResolutionStep resolutionStep = new ProtocolResolutionStep(assignmentStep.Protocol);
+                    rp.AddProcedureStep(resolutionStep);
                 }
             }
 
@@ -191,10 +244,15 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 
             foreach (RequestedProcedure rp in order.RequestedProcedures)
             {
-                if (rp.ProtocolProcedureStep != null)
+                ProtocolAssignmentStep assignmentStep = InprogressProcedureStep<ProtocolAssignmentStep>(rp);
+
+                if (assignmentStep != null)
                 {
-                    rp.ProtocolProcedureStep.Suspend();
-                    rp.ProtocolProcedureStep.Protocol.Suspend(EnumUtils.GetEnumValue<ProtocolSuspendRejectReasonEnum>(request.SuspendReason, this.PersistenceContext));
+                    assignmentStep.Discontinue();
+                    assignmentStep.Protocol.Suspend(EnumUtils.GetEnumValue<ProtocolSuspendRejectReasonEnum>(request.SuspendReason, this.PersistenceContext));
+
+                    ProtocolResolutionStep resolutionStep = new ProtocolResolutionStep(assignmentStep.Protocol);
+                    rp.AddProcedureStep(resolutionStep);
                 }
             }
 
@@ -219,10 +277,14 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 
             foreach (RequestedProcedure rp in order.RequestedProcedures)
             {
-                if (rp.ProtocolProcedureStep != null)
+                ProtocolResolutionStep resolutionStep = ScheduledProcedureStep<ProtocolResolutionStep>(rp);
+
+                if (resolutionStep != null)
                 {
-                    rp.ProtocolProcedureStep.Resume();
-                    rp.ProtocolProcedureStep.Protocol.Resolve();
+                    resolutionStep.Complete(this.CurrentUserStaff);
+                    resolutionStep.Protocol.Resolve();
+                    ProtocolAssignmentStep assignmentStep = new ProtocolAssignmentStep(resolutionStep.Protocol);
+                    rp.AddProcedureStep(assignmentStep);
                 }
             }
 
@@ -233,6 +295,16 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
         public CancelProtocolAndOrderResponse CancelProtocolAndOrder(CancelProtocolAndOrderRequest request)
         {
             Order order = this.PersistenceContext.Load<Order>(request.OrderRef);
+
+            foreach (RequestedProcedure rp in order.RequestedProcedures)
+            {
+                ProtocolResolutionStep resolutionStep = ScheduledProcedureStep<ProtocolResolutionStep>(rp);
+
+                if (resolutionStep != null)
+                {
+                    resolutionStep.Complete(this.CurrentUserStaff);
+                }
+            }
 
             EnumValueInfo reason =
                 CollectionUtils.FirstElement<EnumValueInfo>(EnumUtils.GetEnumValueList<OrderCancelReasonEnum>(this.PersistenceContext));
@@ -255,5 +327,24 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
         }
 
         #endregion
+
+        private T InprogressProcedureStep<T>(RequestedProcedure rp) where T : ProcedureStep
+        {
+            return CurrentProcedureStep<T>(rp, ActivityStatus.IP);
+        }
+
+        private T ScheduledProcedureStep<T>(RequestedProcedure rp) where T : ProcedureStep
+        {
+            return CurrentProcedureStep<T>(rp, ActivityStatus.SC);
+        }
+
+        private T CurrentProcedureStep<T>(RequestedProcedure rp, ActivityStatus status) where T : ProcedureStep
+        {
+            ProcedureStep uncastProcedureStep = CollectionUtils.SelectFirst<ProcedureStep>(
+                rp.ProcedureSteps,
+                delegate(ProcedureStep ps) { return ps.Is<T>() && ps.State == status; });
+
+            return uncastProcedureStep != null ? uncastProcedureStep.Downcast<T>() : null;
+        }
     }
 }

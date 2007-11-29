@@ -6,10 +6,14 @@ namespace ClearCanvas.Ris.Application.Common.ProtocollingWorkflow
     [DataContract]
     public class GetProcedureProtocolResponse : DataContractBase
     {
-        public GetProcedureProtocolResponse(ProtocolDetail protocolDetail)
+        public GetProcedureProtocolResponse(EntityRef protocolRef, ProtocolDetail protocolDetail)
         {
+            ProtocolRef = protocolRef;
             ProtocolDetail = protocolDetail;
         }
+
+        [DataMember]
+        public EntityRef ProtocolRef;
 
         [DataMember]
         public ProtocolDetail ProtocolDetail;

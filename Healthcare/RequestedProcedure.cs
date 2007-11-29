@@ -30,15 +30,11 @@
 #endregion
 
 using System;
-using System.Collections;
-using System.Text;
-
-using ClearCanvas.Enterprise.Core;
-using ClearCanvas.Common.Utilities;
-using ClearCanvas.Workflow;
 using System.Collections.Generic;
+using ClearCanvas.Common.Utilities;
+using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Workflow;
 using Iesi.Collections.Generic;
-
 
 namespace ClearCanvas.Healthcare {
 
@@ -95,20 +91,6 @@ namespace ClearCanvas.Healthcare {
                     });
 
                 return step == null ? null : step.Downcast<DocumentationProcedureStep>();
-            }
-        }
-
-        public virtual ProtocolProcedureStep ProtocolProcedureStep
-        {
-            get
-            {
-                ProcedureStep step = CollectionUtils.SelectFirst<ProcedureStep>(this.ProcedureSteps,
-                    delegate(ProcedureStep ps)
-                    {
-                        return ps.Is<ProtocolProcedureStep>();
-                    });
-
-                return step == null ? null : step.Downcast<ProtocolProcedureStep>();
             }
         }
 

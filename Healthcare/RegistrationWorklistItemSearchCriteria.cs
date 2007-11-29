@@ -54,5 +54,17 @@ namespace ClearCanvas.Healthcare
                 return (ClearCanvas.Healthcare.ProcedureStepSearchCriteria)this.SubCriteria["ProtocolProcedureStep"];
             }
         }
+
+        public ClearCanvas.Healthcare.ProtocolSearchCriteria Protocol
+        {
+            get
+            {
+                if (!this.SubCriteria.ContainsKey("Protocol"))
+                {
+                    this.SubCriteria["Protocol"] = new ClearCanvas.Healthcare.ProtocolSearchCriteria("Protocol");
+                }
+                return (ClearCanvas.Healthcare.ProtocolSearchCriteria)this.SubCriteria["Protocol"];
+            }
+        }
     }
 }

@@ -73,6 +73,16 @@ namespace ClearCanvas.Ris.Application.Common.ProtocollingWorkflow
         [OperationContract]
         [FaultContract(typeof(RequestValidationException))]
         [FaultContract(typeof(ConcurrentModificationException))]
+        StartOrderProtocolResponse StartOrderProtocol(StartOrderProtocolRequest request);
+
+        [OperationContract]
+        [FaultContract(typeof(RequestValidationException))]
+        [FaultContract(typeof(ConcurrentModificationException))]
+        DiscardOrderProtocolResponse DiscardOrderProtocol(DiscardOrderProtocolRequest request);
+
+        [OperationContract]
+        [FaultContract(typeof(RequestValidationException))]
+        [FaultContract(typeof(ConcurrentModificationException))]
         AcceptOrderProtocolResponse AcceptOrderProtocol(AcceptOrderProtocolRequest request);
 
         [OperationContract]

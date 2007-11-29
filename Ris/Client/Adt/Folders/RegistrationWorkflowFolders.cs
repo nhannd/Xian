@@ -196,6 +196,27 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
     }
 
     [ExtensionOf(typeof(RegistrationBookingWorkflowFolderExtensionPoint))]
+    [FolderForWorklistType(WorklistTokens.RegistrationRejectedProtocolWorklist)]
+    [FolderPath("Protocolling/Rejected Protocol")]
+    public class RejectedProtocolFolder : RegistrationWorkflowFolder
+    {
+        public RejectedProtocolFolder(RegistrationWorkflowFolderSystemBase folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
+            : base(folderSystem, folderDisplayName, folderDescription, worklistRef)
+        {
+        }
+
+        public RejectedProtocolFolder(RegistrationWorkflowFolderSystemBase folderSystem)
+            : this(folderSystem, null, null, null)
+        {
+        }
+
+        public RejectedProtocolFolder()
+            : this(null)
+        {
+        }
+    }
+
+    [ExtensionOf(typeof(RegistrationBookingWorkflowFolderExtensionPoint))]
     [FolderForWorklistType(WorklistTokens.RegistrationPendingProtocolWorklist)]
     [FolderPath("Protocolling/Pending Protocol")]
     public class PendingProtocolFolder : RegistrationWorkflowFolder

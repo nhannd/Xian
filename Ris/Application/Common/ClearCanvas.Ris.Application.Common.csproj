@@ -81,8 +81,12 @@
     <Compile Include="Admin\ExternalPractitionerAdmin\UpdateExternalPractitionerResponse.cs" />
     <Compile Include="AuthenticationAttribute.cs" />
     <Compile Include="ReportingWorkflow\CompleteInterpretationRequestBase.cs" />
+    <Compile Include="ProtocollingWorkflow\DiscardOrderProtocolRequest.cs" />
+    <Compile Include="ProtocollingWorkflow\DiscardOrderProtocolResponse.cs" />
     <Compile Include="ReportingWorkflow\GetLinkableProceduresRequest.cs" />
     <Compile Include="ReportingWorkflow\GetLinkableProceduresResponse.cs" />
+    <Compile Include="ProtocollingWorkflow\StartOrderProtocolRequest.cs" />
+    <Compile Include="ProtocollingWorkflow\StartOrderProtocolResponse.cs" />
     <Compile Include="WorklistItemSummaryBase.cs" />
     <Compile Include="Login\GetWorkingFacilityChoicesRequest.cs" />
     <Compile Include="Login\GetWorkingFacilityChoicesResponse.cs" />

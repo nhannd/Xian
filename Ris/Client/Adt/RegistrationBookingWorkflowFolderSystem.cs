@@ -45,6 +45,7 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             this.AddFolder(new Folders.CompletedProtocolFolder(this));
             this.AddFolder(new Folders.SuspendedProtocolFolder(this));
+            this.AddFolder(new Folders.RejectedProtocolFolder(this));
             this.AddFolder(new Folders.PendingProtocolFolder(this));
             this.AddFolder(new Folders.ToBeScheduledFolder(this));
         }

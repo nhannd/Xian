@@ -78,36 +78,6 @@ namespace ClearCanvas.Healthcare
             base.Suspend();
         }
 
-        public virtual bool CanAccept
-        {
-            get { return this.State == ActivityStatus.SC || this.State == ActivityStatus.IP || (this.State == ActivityStatus.SU && this.Protocol.Status == ProtocolStatus.SU); }
-        }
-
-        public virtual bool CanReject
-        {
-            get { return this.State == ActivityStatus.SC || this.State == ActivityStatus.IP || (this.State == ActivityStatus.SU && this.Protocol.Status == ProtocolStatus.SU); }
-        }
-
-        public virtual bool CanSuspend
-        {
-            get { return this.State == ActivityStatus.SC || this.State == ActivityStatus.IP; }
-        }
-
-        public virtual bool CanSave
-        {
-            get { return this.State == ActivityStatus.SC || this.State == ActivityStatus.IP || (this.State == ActivityStatus.SU && this.Protocol.Status == ProtocolStatus.SU); }
-        }
-
-        public virtual bool IsRejected
-        {
-            get { return this.State == ActivityStatus.SU && this.Protocol.Status == ProtocolStatus.RJ; }
-        }
-
-        public virtual bool IsSuspended
-        {
-            get { return this.State == ActivityStatus.SU && this.Protocol.Status == ProtocolStatus.SU; }
-        }
-
         #region Object overrides
 
         public override bool Equals(object obj)

@@ -12,7 +12,6 @@ namespace ClearCanvas.Ris.Application.Services
             RequestedProcedureDetail detail = new RequestedProcedureDetail();
 
             ModalityProcedureStepAssembler modalityProcedureStepAssembler = new ModalityProcedureStepAssembler();
-            ProtocolProcedureStepAssembler protocolProcedureStepAssembler = new ProtocolProcedureStepAssembler();
 
             detail.RequestedProcedureRef = rp.GetRef();
             detail.Name = rp.Type.Name;
@@ -21,9 +20,6 @@ namespace ClearCanvas.Ris.Application.Services
             detail.ModalityProcedureSteps = CollectionUtils.Map<ModalityProcedureStep, ModalityProcedureStepDetail>(
                 rp.ModalityProcedureSteps,
                 delegate(ModalityProcedureStep mp) { return modalityProcedureStepAssembler.CreateModalityProcedureStepDetail(mp, context); });
-            detail.ProtocolProcedureStepDetail = rp.ProtocolProcedureStep != null
-                ? protocolProcedureStepAssembler.CreateProtocolProcedureStepDetail(rp.ProtocolProcedureStep, context)
-                : null;
 
             return detail;
         }

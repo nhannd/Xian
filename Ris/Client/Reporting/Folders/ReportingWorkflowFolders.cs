@@ -175,6 +175,26 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
         }
     }
 
+    [FolderForWorklistType(WorklistTokens.ReportingDraftProtocolWorklist)]
+    [FolderPath("Protocolling/Draft Protocols")]
+    public class DraftProtocolFolder : ReportingWorkflowFolder
+    {
+        public DraftProtocolFolder(ReportingWorkflowFolderSystemBase folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
+            : base(folderSystem, folderDisplayName, folderDescription, worklistRef)
+        {
+        }
+
+        public DraftProtocolFolder(ReportingWorkflowFolderSystemBase folderSystem)
+            : this(folderSystem, null, null, null)
+        {
+        }
+
+        public DraftProtocolFolder()
+            : this(null)
+        {
+        }
+    }
+
     [FolderForWorklistType(WorklistTokens.ReportingCompletedProtocolWorklist)]
     [FolderPath("Protocolling/Completed Protocols")]
     public class CompletedProtocolFolder : ReportingWorkflowFolder
@@ -210,6 +230,26 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
         }
 
         public SuspendedProtocolFolder()
+            : this(null)
+        {
+        }
+    }
+
+    [FolderForWorklistType(WorklistTokens.ReportingRejectedProtocolWorklist)]
+    [FolderPath("Protocolling/Rejected Protocols")]
+    public class RejectedProtocolFolder : ReportingWorkflowFolder
+    {
+        public RejectedProtocolFolder(ReportingWorkflowFolderSystemBase folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
+            : base(folderSystem, folderDisplayName, folderDescription, worklistRef)
+        {
+        }
+
+        public RejectedProtocolFolder(ReportingWorkflowFolderSystemBase folderSystem)
+            : this(folderSystem, null, null, null)
+        {
+        }
+
+        public RejectedProtocolFolder()
             : this(null)
         {
         }

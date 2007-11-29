@@ -44,9 +44,11 @@ namespace ClearCanvas.Ris.Client.Reporting
             : base(folderExplorer, new ReportingProtocolWorkflowFolderExtensionPoint())
         {
             this.AddFolder(new Folders.ToBeProtocolledFolder(this));
-            this.AddFolder(new Folders.ToBeApprovedFolder(this));
+            //this.AddFolder(new Folders.ToBeApprovedFolder(this));
+            this.AddFolder(new Folders.DraftProtocolFolder(this));
             this.AddFolder(new Folders.CompletedProtocolFolder(this));
             this.AddFolder(new Folders.SuspendedProtocolFolder(this));
+            this.AddFolder(new Folders.RejectedProtocolFolder(this));
         }
     }
 }

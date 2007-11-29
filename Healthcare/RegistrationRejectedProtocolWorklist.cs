@@ -8,10 +8,10 @@ namespace ClearCanvas.Healthcare {
 
 
     /// <summary>
-    /// RegistrationPendingProtocolWorklist entity
+    /// RegistrationRejectedProtocolWorklist entity
     /// </summary>
-    [ExtensionOf(typeof(WorklistExtensionPoint), Name = "RegistrationPendingProtocolWorklist")]
-    public partial class RegistrationPendingProtocolWorklist : ClearCanvas.Healthcare.Worklist
+    [ExtensionOf(typeof(WorklistExtensionPoint), Name = "RegistrationRejectedProtocolWorklist")]
+    public partial class RegistrationRejectedProtocolWorklist : ClearCanvas.Healthcare.Worklist
 	{
 	
 		/// <summary>
@@ -27,19 +27,20 @@ namespace ClearCanvas.Healthcare {
             get
             {
                 RegistrationWorklistItemSearchCriteria criteria = new RegistrationWorklistItemSearchCriteria();
-                criteria.ProtocolProcedureStep.State.In(new ActivityStatus[] { ActivityStatus.SC, ActivityStatus.IP });
+                criteria.ProtocolProcedureStep.State.EqualTo(ActivityStatus.SC);
+                criteria.Protocol.Status.EqualTo(ProtocolStatus.RJ);
                 return new RegistrationWorklistItemSearchCriteria[] { criteria };
             }
         }
 
         public override IList GetWorklist(Staff currentUserStaff, IPersistenceContext context)
         {
-            return (IList)GetBroker<IRegistrationWorklistBroker>(context).GetProtocolWorklist(typeof(ProtocolAssignmentStep), QueryConditions, this);
+            return (IList)GetBroker<IRegistrationWorklistBroker>(context).GetProtocolWorklist(typeof(ProtocolResolutionStep), QueryConditions, this);
         }
 
         public override int GetWorklistCount(Staff currentUserStaff, IPersistenceContext context)
         {
-            return GetBroker<IRegistrationWorklistBroker>(context).GetProtocolWorklistCount(typeof(ProtocolAssignmentStep), QueryConditions, this);
+            return GetBroker<IRegistrationWorklistBroker>(context).GetProtocolWorklistCount(typeof(ProtocolResolutionStep), QueryConditions, this);
         }
 
         #region Object overrides

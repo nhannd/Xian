@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 
 using ClearCanvas.Enterprise.Common;
@@ -42,8 +43,8 @@ namespace ClearCanvas.Healthcare.Brokers
         IList<WorklistItem> GetWorklist(RegistrationWorklistItemSearchCriteria[] where, Worklist worklist);
         int GetWorklistCount(RegistrationWorklistItemSearchCriteria[] where, Worklist worklist);
 
-        IList<WorklistItem> GetProtocolWorklist(RegistrationWorklistItemSearchCriteria[] where, Worklist worklist);
-        int GetProtocolWorklistCount(RegistrationWorklistItemSearchCriteria[] where, Worklist worklist);
+        IList<WorklistItem> GetProtocolWorklist(Type stepClass, RegistrationWorklistItemSearchCriteria[] where, Worklist worklist);
+        int GetProtocolWorklistCount(Type stepClass, RegistrationWorklistItemSearchCriteria[] where, Worklist worklist);
 
         IList<WorklistItem> Search(WorklistItemSearchCriteria[] where, SearchResultPage page, bool showActiveOnly);
         int SearchCount(WorklistItemSearchCriteria[] where, bool showActiveOnly);

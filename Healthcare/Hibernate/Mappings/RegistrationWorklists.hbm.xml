@@ -8,6 +8,7 @@
   <subclass name="RegistrationCompletedWorklist" proxy="RegistrationCompletedWorklist" extends="Worklist" discriminator-value="REG_CM"/>
   <subclass name="RegistrationCompletedProtocolWorklist" proxy="RegistrationCompletedProtocolWorklist" extends="Worklist" discriminator-value="REG_CMPROTO"/>
   <subclass name="RegistrationSuspendedProtocolWorklist" proxy="RegistrationSuspendedProtocolWorklist" extends="Worklist" discriminator-value="REG_SUPROTO"/>
-  <subclass name="RegistrationPendingProtocolWorklist" proxy="RegistrationPendingProtocolWorklist" extends="Worklist" discriminator-value="REG_IPPROTO"/>
+  <subclass name="RegistrationRejectedProtocolWorklist" proxy="RegistrationRejectedProtocolWorklist" extends="Worklist" discriminator-value="REG_RJPROTO"/>
+  <subclass name="RegistrationPendingProtocolWorklist" proxy="RegistrationPendingProtocolWorklist" extends="Worklist" discriminator-value="REG_SCPROTO"/>
   <subclass name="RegistrationToBeScheduledWorklist" proxy="RegistrationToBeScheduledWorklist" extends="Worklist" discriminator-value="REG_UNSC"/>
 </hibernate-mapping>

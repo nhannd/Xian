@@ -29,13 +29,9 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Workflow;
-using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Healthcare {
 
@@ -102,7 +98,7 @@ namespace ClearCanvas.Healthcare {
                 {
                     this.SubCriteria["Performer"] = new ProcedureStepPerformerSearchCriteria("Performer");
                 }
-                return (ProcedureStepPerformerSearchCriteria)this.SubCriteria["Procedure"];
+                return (ProcedureStepPerformerSearchCriteria)this.SubCriteria["Performer"];
             }
         }
 
