@@ -346,7 +346,7 @@ namespace ClearCanvas.Dicom
                     return defaultVal;
                 return value;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return defaultVal; 
             }
@@ -368,7 +368,7 @@ namespace ClearCanvas.Dicom
                     return defaultVal;
                 return value;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return defaultVal;
             }
@@ -390,7 +390,7 @@ namespace ClearCanvas.Dicom
                     return defaultVal;
                 return value;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return defaultVal;
             }
@@ -411,7 +411,7 @@ namespace ClearCanvas.Dicom
                 if (!ok)
                     return defaultVal;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return defaultVal;
             }
@@ -434,7 +434,7 @@ namespace ClearCanvas.Dicom
                     return defaultVal;
                 return value;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return defaultVal;
             }
@@ -456,7 +456,7 @@ namespace ClearCanvas.Dicom
                     return defaultVal;
                 return value;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return defaultVal;
             }
@@ -478,7 +478,7 @@ namespace ClearCanvas.Dicom
                     return defaultVal;
                 return value;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return defaultVal;
             }
@@ -514,7 +514,7 @@ namespace ClearCanvas.Dicom
                     return defaultVal;
                 return value;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return defaultVal;
             }
@@ -536,7 +536,7 @@ namespace ClearCanvas.Dicom
                     return defaultVal;
                 return value;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return defaultVal;
             }
@@ -559,7 +559,7 @@ namespace ClearCanvas.Dicom
                     return defaultVal;
                 return value;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return defaultVal;
             }

@@ -2647,9 +2647,7 @@ namespace ClearCanvas.Dicom
                 }
                 else if (value is uint)
                 {
-                    _values = new uint[1];
-                    _values[0] = (uint)value;
-                    SetStreamLength();
+                    SetUInt32(0, (uint)value);
                 }
                 else if (value is string)
                 {
@@ -2657,7 +2655,15 @@ namespace ClearCanvas.Dicom
                 }
                 else
                 {
-                    throw new DicomException(SR.InvalidType);
+                    uint parsedValue;
+                    if (UInt32.TryParse(value.ToString(), out parsedValue))
+                    {
+                        SetUInt32(0, parsedValue);
+                    }
+                    else
+                    {
+                        throw new DicomException(SR.InvalidType);
+                    }
                 }
             }
         }
@@ -3214,14 +3220,21 @@ namespace ClearCanvas.Dicom
                     SetStringValue((String)value);
                     return;
                 }
-
                 if (value is ushort)
                 {
                     SetUInt16(0, (ushort)value);
                 }
                 else
                 {
-                    throw new DicomException(SR.InvalidType);
+                    ushort parsedValue;
+                    if (ushort.TryParse(value.ToString(), out parsedValue))
+                    {
+                        SetUInt16(0, parsedValue);
+                    }
+                    else
+                    {
+                        throw new DicomException(SR.InvalidType);
+                    }
                 }
             }
         }
@@ -3558,4 +3571,5 @@ namespace ClearCanvas.Dicom
     #endregion
 
 }
+
 

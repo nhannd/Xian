@@ -169,6 +169,7 @@
   <ItemGroup>
     <Compile Include="DicomAttributeMultiValueText.cs" />
     <Compile Include="DicomDataException.cs" />
+    <Compile Include="DicomDirectoryWriter.cs" />
     <Compile Include="DicomImplementation.cs" />
     <Compile Include="DicomLogger.cs" />
     <Compile Include="DicomMessage.cs" />

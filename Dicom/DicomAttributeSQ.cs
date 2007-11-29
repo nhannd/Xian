@@ -78,6 +78,11 @@ namespace ClearCanvas.Dicom
 
         #region Public Methods
 
+        public void ClearSequenceItems()
+        {
+            _values = null;
+        }
+
         public override void AddSequenceItem(DicomSequenceItem item)
         {
             if (_values == null)
@@ -222,15 +227,19 @@ namespace ClearCanvas.Dicom
             {
                 length += 4; // length
             }
-            foreach (DicomSequenceItem item in _values)
+
+            if (_values != null)
             {
-                length += 4 + 4; // Sequence Item Tag
-                length += item.CalculateWriteLength(syntax, options & ~DicomWriteOptions.CalculateGroupLengths);
-                if (!Flags.IsSet(options, DicomWriteOptions.ExplicitLengthSequenceItem))
-                    length += 4 + 4; // Sequence Item Delimitation Item
+                foreach (DicomSequenceItem item in _values)
+                {
+                    length += 4 + 4; // Sequence Item Tag
+                    length += item.CalculateWriteLength(syntax, options & ~DicomWriteOptions.CalculateGroupLengths);
+                    if (!Flags.IsSet(options, DicomWriteOptions.ExplicitLengthSequenceItem))
+                        length += 4 + 4; // Sequence Item Delimitation Item
+                }
+                if (!Flags.IsSet(options, DicomWriteOptions.ExplicitLengthSequence))
+                    length += 4 + 4; // Sequence Delimitation Item
             }
-            if (!Flags.IsSet(options, DicomWriteOptions.ExplicitLengthSequence))
-                length += 4 + 4; // Sequence Delimitation Item
             return length;
         }
         #endregion

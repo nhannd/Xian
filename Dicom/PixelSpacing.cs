@@ -87,6 +87,17 @@ namespace ClearCanvas.Dicom
 			return false;
 		}
 
+        /// <summary>
+        /// Serves as a hash function for a particular type. <see cref="M:System.Object.GetHashCode"></see> is suitable for use in hashing algorithms and data structures like a hash table.
+        /// </summary>
+        /// <returns>
+        /// A hash code for the current <see cref="T:System.Object"></see>.
+        /// </returns>
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
+
 		#region IEquatable<PixelSpacing> Members
 
 		public bool Equals(PixelSpacing other)
