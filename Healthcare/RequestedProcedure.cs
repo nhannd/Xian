@@ -112,6 +112,36 @@ namespace ClearCanvas.Healthcare {
             }
         }
 
+        /// <summary>
+        /// Gets the active <see cref="Report"/> for this procedure, or returns null if there is no active report.
+        /// </summary>
+        public virtual Report ActiveReport
+        {
+            get
+            {
+                return CollectionUtils.SelectFirst(_reports,
+                    delegate(Report r) { return r.Status != ReportStatus.X; });
+            }
+        }
+
+        /// <summary>
+        /// Gets the active <see cref="ReportingProcedureStep"/> for this procedure, or returns null if
+        /// there is no active reporting step.
+        /// </summary>
+        /// <remarks>
+        /// Unlike modality procedure steps, at most one reporting procedure step should ever be in an active status
+        /// at any given time.
+        /// </remarks>
+        public virtual ReportingProcedureStep ActiveReportingStep
+        {
+            get
+            {
+                ProcedureStep step = CollectionUtils.SelectFirst(_procedureSteps,
+                    delegate(ProcedureStep ps) { return ps.Is<ReportingProcedureStep>() && !ps.IsTerminated; });
+                return step != null ? step.As<ReportingProcedureStep>() : null;
+            }
+        }
+
         #endregion
 
         #region Public Operations

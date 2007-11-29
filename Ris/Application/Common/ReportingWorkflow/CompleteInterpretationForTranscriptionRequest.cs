@@ -29,40 +29,23 @@
 
 #endregion
 
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
 {
     [DataContract]
-    public class CompleteInterpretationForTranscriptionRequest : DataContractBase
+    public class CompleteInterpretationForTranscriptionRequest : CompleteInterpretationRequestBase
     {
         public CompleteInterpretationForTranscriptionRequest(EntityRef interpretationStepRef)
+            : this(interpretationStepRef, null, null, null)
         {
-            this.InterpretationStepRef = interpretationStepRef;
         }
 
-        public CompleteInterpretationForTranscriptionRequest(EntityRef interpretationStepRef, string reportContent)
+        public CompleteInterpretationForTranscriptionRequest(EntityRef interpretationStepRef, string reportContent, EntityRef supervisorRef, List<EntityRef> linkProcedureRefs)
+            : base(interpretationStepRef, reportContent, supervisorRef, linkProcedureRefs)
         {
-            this.InterpretationStepRef = interpretationStepRef;
-            this.ReportContent = reportContent;
         }
-
-        public CompleteInterpretationForTranscriptionRequest(EntityRef interpretationStepRef, string reportContent, EntityRef supervisorRef)
-        {
-            this.InterpretationStepRef = interpretationStepRef;
-            this.ReportContent = reportContent;
-            this.SupervisorRef = supervisorRef;
-        }
-
-
-        [DataMember]
-        public EntityRef InterpretationStepRef;
-
-        [DataMember]
-        public string ReportContent;
-
-        [DataMember]
-        public EntityRef SupervisorRef;
     }
 }

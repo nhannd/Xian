@@ -38,23 +38,16 @@ using ClearCanvas.Enterprise.Common;
 namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
 {
     [DataContract]
-    public class CompleteVerificationRequest : DataContractBase
+    public class CompleteVerificationRequest : SaveReportRequest
     {
         public CompleteVerificationRequest(EntityRef verificationStepRef)
+            :this(verificationStepRef, null)
         {
-            this.VerificationStepRef = verificationStepRef;
         }
 
         public CompleteVerificationRequest(EntityRef verificationStepRef, string reportContent)
+            :base(verificationStepRef, reportContent, null, null)
         {
-            this.VerificationStepRef = verificationStepRef;
-            this.ReportContent = reportContent;
         }
-
-        [DataMember]
-        public EntityRef VerificationStepRef;
-
-        [DataMember]
-        public string ReportContent;
     }
 }

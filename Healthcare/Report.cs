@@ -31,10 +31,13 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Text;
 
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Workflow;
+using Iesi.Collections.Generic;
 
 namespace ClearCanvas.Healthcare {
 
@@ -44,6 +47,18 @@ namespace ClearCanvas.Healthcare {
     /// </summary>
 	public partial class Report : ClearCanvas.Enterprise.Core.Entity
 	{
+        /// <summary>
+        /// Constructor for creating a new report.
+        /// </summary>
+        /// <param name="procedure">The procedure being reported.</param>
+        public Report(RequestedProcedure procedure)
+        {
+            _procedures = new HashedSet<ClearCanvas.Healthcare.RequestedProcedure>();
+            _parts = new List<ClearCanvas.Healthcare.ReportPart>();
+
+            _procedures.Add(procedure);
+            procedure.Reports.Add(this);
+        }
 	
 		/// <summary>
 		/// This method is called from the constructor.  Use this method to implement any custom
@@ -70,13 +85,46 @@ namespace ClearCanvas.Healthcare {
 		#endregion
 
         /// <summary>
-        /// Adds a <see cref="RequestedProcedure"/> to this report, meaning that the report covers
+        /// Links a <see cref="RequestedProcedure"/> to this report, meaning that the report covers
         /// this radiology procedure.
         /// </summary>
-        /// <param name="rp"></param>
-        public virtual void AddProcedure(RequestedProcedure rp)
+        /// <param name="procedure"></param>
+        public virtual void LinkProcedure(RequestedProcedure procedure)
         {
-            _procedures.Add(rp);
+            if(_procedures.Contains(procedure))
+                throw new WorkflowException("The procedure is already associated with this report.");
+
+            // does the procedure already have a report?
+            Report otherReport = procedure.ActiveReport;
+            if (otherReport != null && !this.Equals(otherReport))
+                throw new WorkflowException("Cannot link this procedure because it already has an active report.");
+
+            // any IP or SU reporting steps?
+            ReportingProcedureStep rps = procedure.ActiveReportingStep;
+            if (rps != null)
+            {
+                if (rps.State != ActivityStatus.SC)
+                    throw new WorkflowException("Cannot link this procedure because it is already being reported.");
+
+                // discontinue active step for the procedure
+                rps.Discontinue();
+            }
+
+            _procedures.Add(procedure);
+            procedure.Reports.Add(this);
+        }
+
+        /// <summary>
+        /// Links the specified <see cref="RequestedProcedure"/>s to this report, meaning that the report covers
+        /// these radiology procedures.
+        /// </summary>
+        /// <param name="procedures"></param>
+        public virtual void LinkProcedures(IEnumerable<RequestedProcedure> procedures)
+        {
+            foreach (RequestedProcedure procedure in procedures)
+            {
+                LinkProcedure(procedure);
+            }
         }
 
         /// <summary>

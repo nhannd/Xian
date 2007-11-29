@@ -32,6 +32,8 @@
 using System;
 using ClearCanvas.Workflow;
 using ClearCanvas.Enterprise.Core;
+using System.Collections.Generic;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Healthcare.Workflow.Reporting
 {
@@ -54,7 +56,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
                 else
                 {
                     Report report = new Report();
-                    report.AddProcedure(step.RequestedProcedure);
+                    report.LinkProcedure(step.RequestedProcedure);
                     ReportPart part = report.AddPart(reportContent);
                     part.Supervisor = supervisor;
 
@@ -67,6 +69,30 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
             public override bool CanExecute(ReportingProcedureStep step, Staff currentUserStaff)
             {
                 if (step.ReportPart == null || String.IsNullOrEmpty(step.ReportPart.Content))
+                    return false;
+
+                return true;
+            }
+        }
+
+        /// <summary>
+        /// Link other procedures to the report.
+        /// </summary>
+        public class LinkProcedures: ReportingOperation
+        {
+            public void Execute(ReportingProcedureStep step, List<RequestedProcedure> procedures, IPersistenceContext context)
+            {
+                if(step.ReportPart == null)
+                    throw new WorkflowException("ReportingProcedureStep does not have an associated report.");
+
+                Report report = step.ReportPart.Report;
+                report.LinkProcedures(procedures);
+            }
+
+            public override bool CanExecute(ReportingProcedureStep step, Staff currentUserStaff)
+            {
+                // must be a report to link to
+                if(step.ReportPart == null)
                     return false;
 
                 return true;

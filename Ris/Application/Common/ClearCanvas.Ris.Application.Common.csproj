@@ -80,6 +80,7 @@
     <Compile Include="Admin\ExternalPractitionerAdmin\UpdateExternalPractitionerRequest.cs" />
     <Compile Include="Admin\ExternalPractitionerAdmin\UpdateExternalPractitionerResponse.cs" />
     <Compile Include="AuthenticationAttribute.cs" />
+    <Compile Include="ReportingWorkflow\CompleteInterpretationRequestBase.cs" />
     <Compile Include="ReportingWorkflow\GetLinkableProceduresRequest.cs" />
     <Compile Include="ReportingWorkflow\GetLinkableProceduresResponse.cs" />
     <Compile Include="WorklistItemSummaryBase.cs" />

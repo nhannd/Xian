@@ -31,36 +31,21 @@
 
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
+using System.Collections.Generic;
 
 namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
 {
     [DataContract]
-    public class CompleteInterpretationForVerificationRequest : DataContractBase
+    public class CompleteInterpretationForVerificationRequest : CompleteInterpretationRequestBase
     {
         public CompleteInterpretationForVerificationRequest(EntityRef interpretationStepRef)
-            : this(interpretationStepRef, null, null)
+            : this(interpretationStepRef, null, null, null)
         {
         }
 
-        public CompleteInterpretationForVerificationRequest(EntityRef interpretationStepRef, string reportContent)
-            : this(interpretationStepRef, reportContent, null)
+        public CompleteInterpretationForVerificationRequest(EntityRef interpretationStepRef, string reportContent, EntityRef supervisorRef, List<EntityRef> linkProcedureRefs)
+            :base(interpretationStepRef, reportContent, supervisorRef, linkProcedureRefs)
         {
         }
-
-        public CompleteInterpretationForVerificationRequest(EntityRef interpretationStepRef, string reportContent, EntityRef supervisorRef)
-        {
-            this.InterpretationStepRef = interpretationStepRef;
-            this.ReportContent = reportContent;
-            this.SupervisorRef = supervisorRef;
-        }
-
-        [DataMember]
-        public EntityRef InterpretationStepRef;
-
-        [DataMember]
-        public string ReportContent;
-
-        [DataMember]
-        public EntityRef SupervisorRef;
     }
 }
