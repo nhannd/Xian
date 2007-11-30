@@ -34,10 +34,9 @@ using System;
 namespace ClearCanvas.Desktop.Tables
 {
     /// <summary>
-    /// A delegate for selecting color based on an object
+    /// A delegate for selecting color based on an object.
     /// </summary>
-    /// <param name="o"></param>
-    /// <returns>Name of a predefine color</returns>
+    /// <returns>Name of a predefined color.</returns>
     public delegate string ColorSelector(object o);
 
     /// <summary>
@@ -51,13 +50,20 @@ namespace ClearCanvas.Desktop.Tables
         Type ItemType { get; }
 
         /// <summary>
-        /// Gets the collection of items in the table.  The returned collection is filtered if <see cref="Filter()"/> has been called.  To ensure all items are returned, use <see cref="RemoveFilter()"/> prior to using this property.
+        /// Gets the collection of items in the table.
         /// </summary>
-        /// <remarks>CF: ITable{TItem}.Items which always returns the complete collection</remarks>
+        /// <remarks>
+        /// <para>
+		/// The returned collection is filtered if <see cref="Filter()"/> has been called.  To
+		/// ensure all items are returned, use <see cref="RemoveFilter()"/> prior to using this property.
+		/// </para>
+		/// <para>
+		/// CF: <see cref="ITable{TItem}.Items"/> which always returns the complete collection.</remarks>
+		/// </para>
         IItemCollection Items { get; }
 
         /// <summary>
-        /// Get the collection of columns
+        /// Get the collection of columns.
         /// </summary>
         ITableColumnCollection Columns { get; }
 
@@ -69,11 +75,10 @@ namespace ClearCanvas.Desktop.Tables
         /// <summary>
         /// Sorts this table according to the specified sort parameters.
         /// </summary>
-        /// <param name="sortParams"></param>
         void Sort(TableSortParams sortParams);
 
         /// <summary>
-        /// Fires after the table is sorted
+        /// Fires after the table is sorted.
         /// </summary>
         event EventHandler SortEvent;
 
@@ -95,7 +100,6 @@ namespace ClearCanvas.Desktop.Tables
         /// <summary>
         /// Filters this table accordint ot the specified filter parameters.
         /// </summary>
-        /// <param name="filterParams"></param>
         void Filter(TableFilterParams filterParams);
 
         /// <summary>
@@ -110,17 +114,17 @@ namespace ClearCanvas.Desktop.Tables
         float BaseColumnWidthChars { get; }
 
         /// <summary>
-        /// Gets the number of cell rows in each row
+        /// Gets the number of cell rows in each row.
         /// </summary>
         uint CellRowCount { get; }
 
         /// <summary>
-        /// Gets and sets the background color of a cell row
+        /// Gets and sets the background color of a cell row.
         /// </summary>
         ColorSelector BackgroundColorSelector { get; set; }
 
         /// <summary>
-        /// Gets and sets the outline color of a cell row
+        /// Gets and sets the outline color of a cell row.
         /// </summary>
         ColorSelector OutlineColorSelector { get; set; }
     }
@@ -134,7 +138,7 @@ namespace ClearCanvas.Desktop.Tables
         /// <summary>
         /// Gets the collection of items in the table.
         /// </summary>
-        /// <remarks>The returned collection is never filtered.  CF: ITable.Items which may return a filtered list</remarks>
+		/// <remarks>The returned collection is never filtered.  CF: <see cref="ITable.Items"/> which may return a filtered list.</remarks>
         ItemCollection<TItem> Items { get; }
 
         /// <summary>

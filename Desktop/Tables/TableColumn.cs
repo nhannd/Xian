@@ -36,41 +36,41 @@ namespace ClearCanvas.Desktop.Tables
     /// <summary>
     /// Implementation of <see cref="ITableColumn"/> for use with the <see cref="Table{TItem}"/> class.
     /// </summary>
-    /// <typeparam name="TItem">The type of item on which the table is based</typeparam>
-    /// <typeparam name="TColumn">The type of value that this column holds</typeparam>
+    /// <typeparam name="TItem">The type of item on which the table is based.</typeparam>
+    /// <typeparam name="TColumn">The type of value that this column holds<./typeparam>
     public class TableColumn<TItem, TColumn> : TableColumnBase<TItem>
     {
         /// <summary>
         /// Delegate that is used to pull the value of a column from an object.
         /// </summary>
-        /// <typeparam name="TObject">The type of the object</typeparam>
-        /// <typeparam name="TValue">The expected type of the value to pull</typeparam>
-        /// <param name="obj">The object from which to pull the value</param>
-        /// <returns>The value</returns>
+        /// <typeparam name="TObject">The type of the object.</typeparam>
+        /// <typeparam name="TValue">The expected type of the value to pull.</typeparam>
+        /// <param name="obj">The object from which to pull the value.</param>
+        /// <returns>The value.</returns>
         public delegate TValue GetColumnValueDelegate<TObject, TValue>(TObject obj);
 
         /// <summary>
         /// Delegate that is used to push the value of a column to an object.
         /// </summary>
-        /// <typeparam name="TObject">The type of the object</typeparam>
-        /// <typeparam name="TValue">The type of the value to push</typeparam>
-        /// <param name="obj">The object to which the value is pushed</param>
-        /// <param name="val">The value</param>
+        /// <typeparam name="TObject">The type of the object.</typeparam>
+        /// <typeparam name="TValue">The type of the value to push.</typeparam>
+        /// <param name="obj">The object to which the value is pushed.</param>
+        /// <param name="val">The value.</param>
         public delegate void SetColumnValueDelegate<TObject, TValue>(TObject obj, TValue val);
 
-
         private GetColumnValueDelegate<TItem, TColumn> _valueGetter;
-        private SetColumnValueDelegate<TItem, TColumn> _valueSetter;
+
+		private SetColumnValueDelegate<TItem, TColumn> _valueSetter;
 
         /// <summary>
-        /// Constructs a multi-cellrow table column
+        /// Constructs a multi-cellrow table column.
         /// </summary>
-        /// <param name="columnName">The name of the column</param>
-        /// <param name="valueGetter">A delegate that accepts an item and pulls the column value from the item</param>
+        /// <param name="columnName">The name of the column.</param>
+        /// <param name="valueGetter">A delegate that accepts an item and pulls the column value from the item.</param>
         /// <param name="valueSetter">A delegate that accepts an item and a value, and pushes the value to the item.  May be null if the column is read-only.</param>
-        /// <param name="widthFactor">A weighting factor that is applied to the width of the column</param>
-        /// <param name="comparison">A custom comparison operator that is used for sorting based on this column</param>
-        /// <param name="cellRow">The cell row this column will be display in</param>
+        /// <param name="widthFactor">A weighting factor that is applied to the width of the column.</param>
+        /// <param name="comparison">A custom comparison operator that is used for sorting based on this column.</param>
+        /// <param name="cellRow">The cell row this column will be displayed in.</param>
         public TableColumn(
             string columnName,
             GetColumnValueDelegate<TItem, TColumn> valueGetter,
@@ -87,25 +87,25 @@ namespace ClearCanvas.Desktop.Tables
         #region Multi-CellRow constructors
 
         /// <summary>
-        /// Constructs a Multi-cellrow table column with no comparison delegate
+        /// Constructs a Multi-cellrow table column with no comparison delegate.
         /// </summary>
-        /// <param name="columnName">The name of the column</param>
-        /// <param name="valueGetter">A delegate that accepts an item and pulls the column value from the item</param>
+        /// <param name="columnName">The name of the column.</param>
+        /// <param name="valueGetter">A delegate that accepts an item and pulls the column value from the item.</param>
         /// <param name="valueSetter">A delegate that accepts an item and a value, and pushes the value to the item.  May be null if the column is read-only.</param>
-        /// <param name="cellRow">The cell row this column will be display in</param>
+        /// <param name="cellRow">The cell row this column will be displayed in.</param>
         public TableColumn(string columnName, GetColumnValueDelegate<TItem, TColumn> valueGetter, SetColumnValueDelegate<TItem, TColumn> valueSetter, uint cellRow)
             : this(columnName, valueGetter, valueSetter, 1.0f, null, cellRow)
         {
         }
 
         /// <summary>
-        /// Constructs a Multi-cellrow table column with specific width factor but no comparison delegate
+        /// Constructs a Multi-cellrow table column with specific width factor but no comparison delegate.
         /// </summary>
-        /// <param name="columnName">The name of the column</param>
-        /// <param name="valueGetter">A delegate that accepts an item and pulls the column value from the item</param>
+        /// <param name="columnName">The name of the column.</param>
+        /// <param name="valueGetter">A delegate that accepts an item and pulls the column value from the item.</param>
         /// <param name="valueSetter">A delegate that accepts an item and a value, and pushes the value to the item.  May be null if the column is read-only.</param>
-        /// <param name="widthFactor">A weighting factor that is applied to the width of the column</param>
-        /// <param name="cellRow">The cell row this column will be display in</param>
+        /// <param name="widthFactor">A weighting factor that is applied to the width of the column.</param>
+		/// <param name="cellRow">The cell row this column will be displayed in.</param>
         public TableColumn(
             string columnName,
             GetColumnValueDelegate<TItem, TColumn> valueGetter,
@@ -117,23 +117,23 @@ namespace ClearCanvas.Desktop.Tables
         }
 
         /// <summary>
-        /// Constructs a read-only Multi-cellrow table column with no comparison delegate
+        /// Constructs a read-only Multi-cellrow table column with no comparison delegate.
         /// </summary>
-        /// <param name="columnName">The name of the column</param>
-        /// <param name="valueGetter">A delegate that accepts an item and pulls the column value from the item</param>
-        /// <param name="cellRow">The cell row this column will be display in</param>
+        /// <param name="columnName">The name of the column.</param>
+        /// <param name="valueGetter">A delegate that accepts an item and pulls the column value from the item.</param>
+        /// <param name="cellRow">The cell row this column will be display in.</param>
         public TableColumn(string columnName, GetColumnValueDelegate<TItem, TColumn> valueGetter, uint cellRow)
             : this(columnName, valueGetter, null, 1.0f, null, cellRow)
         {
         }
 
         /// <summary>
-        /// Constructs a read-only Multi-cellrow table column with specific width factor but no comparison delegate
+        /// Constructs a read-only Multi-cellrow table column with specific width factor but no comparison delegate.
         /// </summary>
-        /// <param name="columnName">The name of the column</param>
-        /// <param name="valueGetter">A delegate that accepts an item and pulls the column value from the item</param>
-        /// <param name="widthFactor">A weighting factor that is applied to the width of the column</param>
-        /// <param name="cellRow">The cell row this column will be display in</param>
+        /// <param name="columnName">The name of the column.</param>
+        /// <param name="valueGetter">A delegate that accepts an item and pulls the column value from the item.</param>
+        /// <param name="widthFactor">A weighting factor that is applied to the width of the column.</param>
+		/// <param name="cellRow">The cell row this column will be displayed in.</param>
         public TableColumn(string columnName, GetColumnValueDelegate<TItem, TColumn> valueGetter, float widthFactor, uint cellRow)
             : this(columnName, valueGetter, null, widthFactor, null, cellRow)
         {
@@ -144,13 +144,13 @@ namespace ClearCanvas.Desktop.Tables
         #region Single-CellRow constructors
 
         /// <summary>
-        /// Constructs a single-cellrow table column
+        /// Constructs a single-cellrow table column.
         /// </summary>
-        /// <param name="columnName">The name of the column</param>
-        /// <param name="valueGetter">A delegate that accepts an item and pulls the column value from the item</param>
+        /// <param name="columnName">The name of the column.</param>
+        /// <param name="valueGetter">A delegate that accepts an item and pulls the column value from the item.</param>
         /// <param name="valueSetter">A delegate that accepts an item and a value, and pushes the value to the item.  May be null if the column is read-only.</param>
-        /// <param name="widthFactor">A weighting factor that is applied to the width of the column</param>
-        /// <param name="comparison">A custom comparison operator that is used for sorting based on this column</param>
+        /// <param name="widthFactor">A weighting factor that is applied to the width of the column.</param>
+        /// <param name="comparison">A custom comparison operator that is used for sorting based on this column.</param>
         public TableColumn(
             string columnName,
             GetColumnValueDelegate<TItem, TColumn> valueGetter,
@@ -162,10 +162,10 @@ namespace ClearCanvas.Desktop.Tables
         }
 
         /// <summary>
-        /// Constructs a single-cellrow table column with no comparison delegate
+        /// Constructs a single-cellrow table column with no comparison delegate.
         /// </summary>
-        /// <param name="columnName">The name of the column</param>
-        /// <param name="valueGetter">A delegate that accepts an item and pulls the column value from the item</param>
+        /// <param name="columnName">The name of the column.</param>
+        /// <param name="valueGetter">A delegate that accepts an item and pulls the column value from the item.</param>
         /// <param name="valueSetter">A delegate that accepts an item and a value, and pushes the value to the item.  May be null if the column is read-only.</param>
         public TableColumn(string columnName, GetColumnValueDelegate<TItem, TColumn> valueGetter, SetColumnValueDelegate<TItem, TColumn> valueSetter)
             : this(columnName, valueGetter, valueSetter, 1.0f, null)
@@ -173,12 +173,12 @@ namespace ClearCanvas.Desktop.Tables
         }
 
         /// <summary>
-        /// Constructs a single-cellrow table column with specific width factor but no comparison delegate
+        /// Constructs a single-cellrow table column with specific width factor but no comparison delegate.
         /// </summary>
-        /// <param name="columnName">The name of the column</param>
-        /// <param name="valueGetter">A delegate that accepts an item and pulls the column value from the item</param>
+        /// <param name="columnName">The name of the column.</param>
+        /// <param name="valueGetter">A delegate that accepts an item and pulls the column value from the item.</param>
         /// <param name="valueSetter">A delegate that accepts an item and a value, and pushes the value to the item.  May be null if the column is read-only.</param>
-        /// <param name="widthFactor">A weighting factor that is applied to the width of the column</param>
+        /// <param name="widthFactor">A weighting factor that is applied to the width of the column.</param>
         public TableColumn(
             string columnName,
             GetColumnValueDelegate<TItem, TColumn> valueGetter,
@@ -189,21 +189,21 @@ namespace ClearCanvas.Desktop.Tables
         }
 
         /// <summary>
-        /// Constructs a read-only single-cellrow table column with no comparison delegate
+        /// Constructs a read-only single-cellrow table column with no comparison delegate.
         /// </summary>
-        /// <param name="columnName">The name of the column</param>
-        /// <param name="valueGetter">A delegate that accepts an item and pulls the column value from the item</param>
+        /// <param name="columnName">The name of the column.</param>
+        /// <param name="valueGetter">A delegate that accepts an item and pulls the column value from the item.</param>
         public TableColumn(string columnName, GetColumnValueDelegate<TItem, TColumn> valueGetter)
             :this(columnName, valueGetter, null, 1.0f, null)
         {
         }
 
         /// <summary>
-        /// Constructs a read-only single-cellrow table column with specific width factor but no comparison delegate
+        /// Constructs a read-only single-cellrow table column with specific width factor but no comparison delegate.
         /// </summary>
-        /// <param name="columnName">The name of the column</param>
-        /// <param name="valueGetter">A delegate that accepts an item and pulls the column value from the item</param>
-        /// <param name="widthFactor">A weighting factor that is applied to the width of the column</param>
+        /// <param name="columnName">The name of the column.</param>
+        /// <param name="valueGetter">A delegate that accepts an item and pulls the column value from the item.</param>
+        /// <param name="widthFactor">A weighting factor that is applied to the width of the column.</param>
         public TableColumn(string columnName, GetColumnValueDelegate<TItem, TColumn> valueGetter, float widthFactor)
             : this(columnName, valueGetter, null, widthFactor, null)
         {
@@ -211,17 +211,29 @@ namespace ClearCanvas.Desktop.Tables
 
         #endregion
 
-        public override bool ReadOnly
+    	///<summary>
+    	/// Indicates whether this column is read-only.
+    	///</summary>
+    	public override bool ReadOnly
         {
             get { return _valueSetter == null; }
         }
 
-        public override object GetValue(object item)
+    	///<summary>
+    	/// Gets the value of this column for the specified item.
+    	///</summary>
+    	///<param name="item">The item from which the value is to be obtained.</param>
+    	public override object GetValue(object item)
         {
             return _valueGetter((TItem)item);
         }
 
-        public override void SetValue(object item, object value)
+    	///<summary>
+    	/// Sets the value of this column on the specified item, assuming this is not a read-only column.
+    	///</summary>
+    	///<param name="item">The item on which the value is to be set.</param>
+    	///<param name="value">The value.</param>
+    	public override void SetValue(object item, object value)
         {
             _valueSetter((TItem)item, (TColumn)value);
         }

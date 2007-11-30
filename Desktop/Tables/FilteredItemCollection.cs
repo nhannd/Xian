@@ -37,9 +37,9 @@ using ClearCanvas.Common.Utilities;
 namespace ClearCanvas.Desktop.Tables
 {
     /// <summary>
-    /// Adds filtering capablities to <see cref="ItemCollection{TItem}"/>
+    /// Adds filtering capablities to <see cref="ItemCollection{TItem}"/> 
+    /// for use with <see cref="ITable{TItem}"/>s.
     /// </summary>
-    /// <typeparam name="TItem"></typeparam>
     public class FilteredItemCollection<TItem> : ItemCollection<TItem>, IItemCollection<TItem>
     {
         private readonly TableColumnCollection<TItem> _columns;
@@ -47,10 +47,10 @@ namespace ClearCanvas.Desktop.Tables
         private readonly List<TItem> _filteredList;
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
-        /// <param name="table">The <see cref="Table{TItem}"/> to filter</param>
-        /// <param name="filterParams">The filter parameters</param>
+        /// <param name="table">The <see cref="Table{TItem}"/> to filter.</param>
+        /// <param name="filterParams">The filter parameters.</param>
         public FilteredItemCollection(ITable<TItem> table, TableFilterParams filterParams)
             : base(table.Items)
         {
@@ -66,18 +66,28 @@ namespace ClearCanvas.Desktop.Tables
 
         #region IItemCollection<TItem> Members
 
+		/// <summary>
+		/// Adds a range of items to the collection.
+		/// </summary>
         public override void AddRange(IEnumerable<TItem> enumerable)
         {
             _filteredList.AddRange(enumerable);
             base.AddRange(enumerable);
         }
 
+		/// <summary>
+		/// Sorts the collection using the specified <see cref="IComparer{T}"/>.
+		/// </summary>
         public override void Sort(IComparer<TItem> comparer)
         {
             _filteredList.Sort(comparer);
             base.Sort(comparer);
         }
 
+		/// <summary>
+		/// Replaces all items in the collection with <paramref name="newValue"/> that
+		/// match the input <paramref name="constraint"/>.
+		/// </summary>
         public override void Replace(Predicate<TItem> constraint, TItem newValue)
         {
             for (int i = 0; i < this.Count; i++)
@@ -92,7 +102,11 @@ namespace ClearCanvas.Desktop.Tables
             base.Replace(constraint, newValue);
         }
 
-        public override int FindIndex(Predicate<TItem> constraint)
+		/// <summary>
+		/// Gets the index of an item in the collection matching the given <param name="constraint"/>.
+		/// </summary>
+		/// <returns>The index of the item, or -1 if no such item exists.</returns>
+		public override int FindIndex(Predicate<TItem> constraint)
         {
             for (int i = 0; i < this.Count; i++)
             {
@@ -106,12 +120,18 @@ namespace ClearCanvas.Desktop.Tables
 
         #region IList Members
 
+		/// <summary>
+		/// Clears the entire collection.
+		/// </summary>
         public override void Clear()
         {
             _filteredList.Clear();
             base.Clear();
         }
 
+		/// <summary>
+		/// Removes the item at the specified <paramref name="index"/>.
+		/// </summary>
         public override void RemoveAt(int index)
         {
             TItem item = this[index];
@@ -122,6 +142,9 @@ namespace ClearCanvas.Desktop.Tables
             base.ItemsChanged += BaseItemsChanged;
         }
 
+		/// <summary>
+		/// Gets the item at the specified <paramref name="index"/>.
+		/// </summary>
         object IList.this[int index]
         {
             get { return ((IList<TItem>) _filteredList)[index]; }
@@ -132,11 +155,18 @@ namespace ClearCanvas.Desktop.Tables
 
         #region IList<TItem> Members
 
-        public override int IndexOf(TItem item)
+		/// <summary>
+		/// Gets the index of an item in the collection.
+		/// </summary>
+		/// <returns>The index of the item, or -1 if no such item exists.</returns>
+		public override int IndexOf(TItem item)
         {
             return _filteredList.IndexOf(item);
         }
 
+		/// <summary>
+		/// Inserts <paramref name="index"/> into the collection at the specified <paramref name="index"/>.
+		/// </summary>
         public override void Insert(int index, TItem item)
         {
             _filteredList.Insert(index, item);
@@ -146,7 +176,10 @@ namespace ClearCanvas.Desktop.Tables
             base.ItemsChanged += BaseItemsChanged;
         }
 
-        TItem IList<TItem>.this[int index]
+		/// <summary>
+		/// Gets the item at the specified <paramref name="index"/>.
+		/// </summary>
+		TItem IList<TItem>.this[int index]
         {
             get { return _filteredList[index]; }
             set 
@@ -161,6 +194,10 @@ namespace ClearCanvas.Desktop.Tables
 
         #region ICollection Members
 
+		/// <summary>
+		/// Copies the entire contents of the collection to <paramref name="array"/>, 
+		/// starting at <paramref name="index"/>.
+		/// </summary>
         public override void CopyTo(Array array, int index)
         {
             if (array is TItem[])
@@ -169,6 +206,9 @@ namespace ClearCanvas.Desktop.Tables
             }
         }
 
+		/// <summary>
+		/// Gets the number of items in the collection.
+		/// </summary>
         public override int Count
         {
             get { return _filteredList.Count; }
@@ -178,6 +218,9 @@ namespace ClearCanvas.Desktop.Tables
 
         #region ICollection<TItem> Members
 
+		/// <summary>
+		/// Adds <paramref name="item"/> to the collection.
+		/// </summary>
         public override void Add(TItem item)
         {
             _filteredList.Add(item);
@@ -187,17 +230,28 @@ namespace ClearCanvas.Desktop.Tables
             base.ItemsChanged += BaseItemsChanged;
         }
 
+		/// <summary>
+		/// Gets whether or not <paramref name="item"/> exists in the collection.
+		/// </summary>
         public override bool Contains(TItem item)
         {
             return _filteredList.Contains(item);
         }
 
+		/// <summary>
+		/// Copies the entire contents of the collection to <paramref name="array"/>, 
+		/// starting at <paramref name="arrayIndex"/>.
+		/// </summary>
         public override void CopyTo(TItem[] array, int arrayIndex)
         {
             _filteredList.CopyTo(array, arrayIndex);
         }
 
-        public override bool Remove(TItem item)
+        /// <summary>
+        /// Removes <paramref name="item"/> from the collection.
+        /// </summary>
+        /// <returns>True if the item existed in the collection and was removed, otherwise false.</returns>
+		public override bool Remove(TItem item)
         {
             base.ItemsChanged -= BaseItemsChanged;
             base.RemoveAt(base.IndexOf(item));
@@ -212,7 +266,10 @@ namespace ClearCanvas.Desktop.Tables
 
         #region IEnumerable Members
 
-        IEnumerator IEnumerable.GetEnumerator()
+        /// <summary>
+        /// Gets an <see cref="IEnumerator"/> for the collection.
+        /// </summary>
+		IEnumerator IEnumerable.GetEnumerator()
         {
             return ((IEnumerable<TItem>)this).GetEnumerator();
         }
@@ -221,7 +278,10 @@ namespace ClearCanvas.Desktop.Tables
 
         #region IEnumerable<TItem> Members
 
-        public override IEnumerator<TItem> GetEnumerator()
+		/// <summary>
+		/// Gets an <see cref="IEnumerator{TItem}"/> for the collection.
+		/// </summary>
+		public override IEnumerator<TItem> GetEnumerator()
         {
             return _filteredList.GetEnumerator();
         }
@@ -231,7 +291,7 @@ namespace ClearCanvas.Desktop.Tables
 
         #region Private Methods
 
-        internal List<TItem> GetFilteredItemCollection(Predicate<TItem> filter)
+		private List<TItem> GetFilteredItemCollection(Predicate<TItem> filter)
         {
             return CollectionUtils.Select<TItem, List<TItem>>(
                 this.List,

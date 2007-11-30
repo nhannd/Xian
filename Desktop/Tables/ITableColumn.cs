@@ -39,17 +39,17 @@ using ClearCanvas.Common.Utilities;
 namespace ClearCanvas.Desktop.Tables
 {
     /// <summary>
-    /// Defines a column in an <see cref="ITable"/>
+    /// Defines a column in an <see cref="ITable"/>.
     /// </summary>
     public interface ITableColumn
     {
         /// <summary>
-        /// The name or heading of the column
+        /// The name or heading of the column.
         /// </summary>
         string Name { get; }
 
         /// <summary>
-        /// The type of data that the column holds
+        /// The type of data that the column holds.
         /// </summary>
         Type ColumnType { get; }
 
@@ -59,7 +59,7 @@ namespace ClearCanvas.Desktop.Tables
 		bool Visible { get; set; }
 
         /// <summary>
-        /// Gets or sets a resource resolver
+        /// Gets or sets a resource resolver.
         /// </summary>
         IResourceResolver ResourceResolver { get; set; }
         
@@ -70,8 +70,10 @@ namespace ClearCanvas.Desktop.Tables
 
         /// <summary>
         /// A factor that influences the width of the column relative to other columns.
-        /// A value of 1.0 is default.
         /// </summary>
+        /// <remarks>
+		/// A value of 1.0 is default.
+        /// </remarks>
         float WidthFactor { get; }
 
         /// <summary>
@@ -80,33 +82,30 @@ namespace ClearCanvas.Desktop.Tables
         int WidthPercent { get; }
 
         /// <summary>
-        /// Indicates whether this column is read-only
+        /// Indicates whether this column is read-only.
         /// </summary>
         bool ReadOnly { get; }
 
         /// <summary>
-        /// Gets the value of this column for the specified item
+        /// Gets the value of this column for the specified item.
         /// </summary>
         /// <param name="item">The item from which the value is to be obtained</param>
-        /// <returns>The value</returns>
         object GetValue(object item);
 
         /// <summary>
-        /// Sets the value of this column on the specified item, assuming this is not a read-only column
+        /// Sets the value of this column on the specified item, assuming this is not a read-only column.
         /// </summary>
-        /// <param name="item">The item on which the value is to be set</param>
-        /// <param name="value">The value</param>
+        /// <param name="item">The item on which the value is to be set.</param>
+        /// <param name="value">The value.</param>
         void SetValue(object item, object value);
 
         /// <summary>
-        /// Get a comparer that can be used to sort items in the specified direction
+        /// Get a comparer that can be used to sort items in the specified direction.
         /// </summary>
-        /// <param name="ascending"></param>
-        /// <returns></returns>
         IComparer GetComparer(bool ascending);
 
         /// <summary>
-        /// Gets the cell row for which this column will be displayed in
+        /// Gets the cell row for which this column will be displayed in.
         /// </summary>
         uint CellRow { get; }
     }

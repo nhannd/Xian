@@ -32,7 +32,7 @@
 namespace ClearCanvas.Desktop.Tables
 {
     /// <summary>
-    /// Filter parameters that can be applied to a table
+    /// Filter parameters that can be applied to a table.
     /// </summary>
     public class TableFilterParams
     {
@@ -40,10 +40,10 @@ namespace ClearCanvas.Desktop.Tables
         private object value;
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
-        /// <param name="_column">The column to filter by, null to filter by any column</param>
-        /// <param name="value">The value to filter by</param>
+        /// <param name="_column">The column to filter by, null to filter by any column.</param>
+        /// <param name="value">The value to filter by.</param>
         public TableFilterParams(ITableColumn _column, object value)
         {
             this._column = _column;
@@ -51,7 +51,7 @@ namespace ClearCanvas.Desktop.Tables
         }
 
         /// <summary>
-        /// Gets or sets the column to filter by
+        /// Gets or sets the column to filter by.
         /// </summary>
         public ITableColumn Column
         {
@@ -60,7 +60,7 @@ namespace ClearCanvas.Desktop.Tables
         }
 
         /// <summary>
-        /// Gets or sets the value to filter by
+        /// Gets or sets the value to filter by.
         /// </summary>
         public object Value
         {

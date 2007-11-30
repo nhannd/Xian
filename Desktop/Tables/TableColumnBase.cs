@@ -40,15 +40,17 @@ namespace ClearCanvas.Desktop.Tables
 {
     /// <summary>
     /// Abstract base implementation of <see cref="ITableColumn"/> for use with the <see cref="Table"/> class.
-    /// Application code should use the concrete <see cref="TableColumn"/> class.
     /// </summary>
-    /// <typeparam name="TItem">The type of item on which the table is based</typeparam>
+    /// <remarks>
+	/// Application code should use the concrete <see cref="TableColumn{TItem,TColumn}"/> class.
+	/// </remarks>
+    /// <typeparam name="TItem">The type of item on which the table is based.</typeparam>
     public abstract class TableColumnBase<TItem> : ITableColumn
     {
         /// <summary>
         /// Comparer for sorting operations
         /// </summary>
-        class SortComparer : IComparer
+        private class SortComparer : IComparer
         {
             private int _direction;
             private Comparison<TItem> _comp;
@@ -78,12 +80,12 @@ namespace ClearCanvas.Desktop.Tables
         private IResourceResolver _resolver;
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
-        /// <param name="columnName">The name of the column</param>
-        /// <param name="columnType">The type of value that the column holds</param>
-		/// <param name="widthFactor">A weighting factor that is applied to the width of the column</param>
-        /// <param name="comparison">A custom comparison operator that is used for sorting based on this column</param>
+        /// <param name="columnName">The name of the column.</param>
+        /// <param name="columnType">The type of value that the column holds.</param>
+		/// <param name="widthFactor">A weighting factor that is applied to the width of the column.</param>
+        /// <param name="comparison">A custom comparison operator that is used for sorting based on this column.</param>
         public TableColumnBase(
 			string columnName, 
 			Type columnType, 
@@ -94,13 +96,13 @@ namespace ClearCanvas.Desktop.Tables
         }
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
-        /// <param name="columnName">The name of the column</param>
-        /// <param name="columnType">The type of value that the column holds</param>
-        /// <param name="widthFactor">A weighting factor that is applied to the width of the column</param>
-        /// <param name="comparison">A custom comparison operator that is used for sorting based on this column</param>
-        /// <param name="cellRow">The cell row this column will be display in</param>
+        /// <param name="columnName">The name of the column.</param>
+        /// <param name="columnType">The type of value that the column holds.</param>
+        /// <param name="widthFactor">A weighting factor that is applied to the width of the column.</param>
+        /// <param name="comparison">A custom comparison operator that is used for sorting based on this column.</param>
+        /// <param name="cellRow">The cell row this column will be displayed in.</param>
         public TableColumnBase(
             string columnName,
             Type columnType,
@@ -138,7 +140,7 @@ namespace ClearCanvas.Desktop.Tables
         }
 
         /// <summary>
-        /// Used by the framework to associate this column with a parent <see cref="Table"/>
+        /// Used by the framework to associate this column with a parent <see cref="Table"/>.
         /// </summary>
         internal Table<TItem> Table
         {
@@ -148,17 +150,26 @@ namespace ClearCanvas.Desktop.Tables
 
         #region ITableColumn members
 
-        public string Name
+    	/// <summary>
+    	/// The name or heading of the column.
+    	/// </summary>
+    	public string Name
         {
             get { return _name; }
         }
 
-        public Type ColumnType
+    	/// <summary>
+    	/// The type of data that the column holds.
+    	/// </summary>
+    	public Type ColumnType
         {
             get { return _columnType; }
         }
 
-		public bool Visible
+    	/// <summary>
+    	/// Gets or sets a value indicating whether this column is visible.
+    	/// </summary>
+    	public bool Visible
 		{
 			get { return _visible; }
 			set 
@@ -168,23 +179,31 @@ namespace ClearCanvas.Desktop.Tables
 			}
 		}
 
-        public IResourceResolver ResourceResolver
+    	/// <summary>
+    	/// Gets or sets a resource resolver.
+    	/// </summary>
+    	public IResourceResolver ResourceResolver
         {
             get { return _resolver; }
             set { _resolver = value; }
         }
-        
-        public event EventHandler VisibilityChanged
+
+    	/// <summary>
+    	/// Occurs when the <see cref="Visible"/> property has changed.
+    	/// </summary>
+    	public event EventHandler VisibilityChanged
 		{
 			add { _visibilityChangedEvent += value; }
 			remove { _visibilityChangedEvent -= value; }
 		}
-		
-		/// <summary>
-        /// Gets or sets a factor that determines the width of this column relative to other columns in the table.
-        /// The default value is 1.0.  
-        /// </summary>
-        public float WidthFactor
+
+    	/// <summary>
+    	/// A factor that influences the width of the column relative to other columns.
+    	/// </summary>
+    	/// <remarks>
+    	/// A value of 1.0 is default.
+    	/// </remarks>
+    	public float WidthFactor
         {
             get { return _widthFactor; }
             set
@@ -197,7 +216,10 @@ namespace ClearCanvas.Desktop.Tables
             }
         }
 
-        public int WidthPercent
+    	/// <summary>
+    	/// Gets the width of this column as a percentage of the overall table width.
+    	/// </summary>
+    	public int WidthPercent
         {
             get
             {
@@ -208,18 +230,31 @@ namespace ClearCanvas.Desktop.Tables
             }
         }
 
-        public abstract bool ReadOnly { get; }
+    	/// <summary>
+    	/// Indicates whether this column is read-only.
+    	/// </summary>
+    	public abstract bool ReadOnly { get; }
 
-        public abstract object GetValue(object item);
+    	/// <summary>
+    	/// Gets the value of this column for the specified item.
+    	/// </summary>
+    	/// <param name="item">The item from which the value is to be obtained</param>
+    	public abstract object GetValue(object item);
 
         public abstract void SetValue(object item, object value);
 
-        public IComparer GetComparer(bool ascending)
+    	/// <summary>
+    	/// Get a comparer that can be used to sort items in the specified direction.
+    	/// </summary>
+    	public IComparer GetComparer(bool ascending)
         {
             return new SortComparer(_comparison, ascending);
         }
 
-        public uint CellRow
+    	/// <summary>
+    	/// Gets the cell row for which this column will be displayed in.
+    	/// </summary>
+    	public uint CellRow
         {
             get { return _cellRow; }
         }
@@ -227,7 +262,7 @@ namespace ClearCanvas.Desktop.Tables
         #endregion
 
         /// <summary>
-        /// Default comparison used when TColumn is IComparable
+        /// Default comparison used when TColumn is IComparable.
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
@@ -252,11 +287,8 @@ namespace ClearCanvas.Desktop.Tables
         }
 
         /// <summary>
-        /// Default comparison used when TColumn is not IComparable (in which case, sorting is not possible)
+        /// Default comparison used when TColumn is not IComparable (in which case, sorting is not possible).
         /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <returns></returns>
         private int NopComparison(TItem x, TItem y)
         {
             return 0;

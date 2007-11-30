@@ -36,9 +36,9 @@ using ClearCanvas.Common.Utilities;
 namespace ClearCanvas.Desktop.Tables
 {
     /// <summary>
-    /// A useful generic implementation of <see cref="ITable"/>
+    /// A useful generic implementation of <see cref="ITable"/>.
     /// </summary>
-    /// <typeparam name="TItem">The type of item that this table holds</typeparam>
+    /// <typeparam name="TItem">The type of item that this table holds.</typeparam>
     public class Table<TItem> : ITable, ITable<TItem>
     {
         private TableColumnCollection<TItem> _columns;
@@ -58,7 +58,7 @@ namespace ClearCanvas.Desktop.Tables
         private EventHandler _sortEvent;
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         public Table()
             : this(1)
@@ -66,9 +66,8 @@ namespace ClearCanvas.Desktop.Tables
         }
 
         ///<summary>
-        /// Constructor a table column with cellRowCount in each row
+        /// Constructs a table with the specified number of cells in each row.
         ///</summary>
-        ///<param name="cellRowCount"></param>
         public Table(uint cellRowCount)
         {
             Platform.CheckArgumentRange((int)cellRowCount, 1, int.MaxValue, "cellRowCount");
@@ -95,22 +94,34 @@ namespace ClearCanvas.Desktop.Tables
 
         #region ITable members
 
-        public Type ItemType
+    	/// <summary>
+    	/// Returns the <see cref="Type"/> of the items in this table.
+    	/// </summary>
+    	public Type ItemType
         {
             get { return typeof(TItem); }
         }
 
-        public TableSortParams SortParams
+    	/// <summary>
+    	/// Gets the cached sort parameters, or returns null if this table has not been sorted.
+    	/// </summary>
+    	public TableSortParams SortParams
         {
             get { return _sortParams; }
         }
 
-        ITableColumnCollection ITable.Columns
+    	/// <summary>
+    	/// Get the collection of columns.
+    	/// </summary>
+    	ITableColumnCollection ITable.Columns
         {
             get { return _columns; }
         }
 
-        public void Sort()
+    	/// <summary>
+    	/// Sorts this table according to the cached sort parameters, if any exist.
+    	/// </summary>
+    	public void Sort()
         {
             if (_sortParams != null)
             {
@@ -119,41 +130,71 @@ namespace ClearCanvas.Desktop.Tables
             }
         }
 
-        public void Sort(TableSortParams sortParams)
+    	/// <summary>
+    	/// Sorts this table according to the specified sort parameters.
+    	/// </summary>
+    	public void Sort(TableSortParams sortParams)
         {
             _sortParams = sortParams;
             Sort();
         }
 
-        public event EventHandler SortEvent
+    	/// <summary>
+    	/// Fires after the table is sorted.
+    	/// </summary>
+    	public event EventHandler SortEvent
         {
             add { _sortEvent += value; }
             remove { _sortEvent -= value; }
         }
 
-        public float BaseColumnWidthChars
+    	/// <summary>
+    	/// Gets the base column width for this table, in units that correspond roughly to the
+    	/// width of one character.
+    	/// </summary>
+    	public float BaseColumnWidthChars
         {
             get { return _baseColumnWidth; }
             set { _baseColumnWidth = value; }
         }
 
-        IItemCollection ITable.Items
+    	/// <summary>
+    	/// Gets the collection of items in the table.
+    	/// </summary>
+    	/// <remarks>
+    	/// <para>
+    	/// The returned collection is filtered if <see cref="Filter()"/> has been called.  To
+    	/// ensure all items are returned, use <see cref="RemoveFilter()"/> prior to using this property.
+    	/// </para>
+    	/// <para>
+    	/// CF: <see cref="ITable{TItem}.Items"/> which always returns the complete collection.</remarks>
+    	/// </para>
+    	IItemCollection ITable.Items
         {
             get { return _isFiltered ? _filteredData : _data; }
         }
 
-        public bool IsFiltered
+    	/// <summary>
+    	/// Gets a value indicating if the table is filtered or not.
+    	/// </summary>
+    	public bool IsFiltered
         {
             get { return _isFiltered; }
         }
 
-        public void Filter(TableFilterParams filterParams)
+    	/// <summary>
+    	/// Filters this table accordint ot the specified filter parameters.
+    	/// </summary>
+    	public void Filter(TableFilterParams filterParams)
         {
             _filterParams = filterParams;
             Filter();
         }
 
-        public void Filter()
+    	/// <summary>
+    	/// Filters this table according to the cached filter parameters, if any exist.
+    	/// </summary>
+    	public void Filter()
         {
             if(_filterParams != null && _filterParams.Value != null)
             {
@@ -163,23 +204,35 @@ namespace ClearCanvas.Desktop.Tables
             }
         }
 
-        public void RemoveFilter()
+    	/// <summary>
+    	/// Removes the applied filter, if one exists.
+    	/// </summary>
+    	public void RemoveFilter()
         {
             _isFiltered = false;
         }
 
-        public uint CellRowCount
+    	/// <summary>
+    	/// Gets the number of cell rows in each row.
+    	/// </summary>
+    	public uint CellRowCount
         {
             get { return _cellRowCount; }
         }
 
-        public ColorSelector BackgroundColorSelector
+    	/// <summary>
+    	/// Gets and sets the background color of a cell row.
+    	/// </summary>
+    	public ColorSelector BackgroundColorSelector
         {
             get { return _backgroundColorSelector; }
             set { _backgroundColorSelector = value; }
         }
 
-        public ColorSelector OutlineColorSelector
+    	/// <summary>
+    	/// Gets and sets the outline color of a cell row.
+    	/// </summary>
+    	public ColorSelector OutlineColorSelector
         {
             get { return _outlineColorSelector; }
             set { _outlineColorSelector = value; }
@@ -190,8 +243,11 @@ namespace ClearCanvas.Desktop.Tables
         #region ITable<TItem> members
 
         /// <summary>
-        /// Gets the collection of columns for the table.  Use this property to add <see cref="ITableColumn"/> objects.
+        /// Gets the collection of columns for the table.
         /// </summary>
+        /// <remarks>
+		/// Use this property to add <see cref="ITableColumn"/> objects.
+		/// </remarks>
         public TableColumnCollection<TItem> Columns
         {
             get { return _columns; }
