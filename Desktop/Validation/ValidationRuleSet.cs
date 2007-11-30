@@ -41,21 +41,24 @@ using ClearCanvas.Common.Specifications;
 namespace ClearCanvas.Desktop.Validation
 {
     /// <summary>
-    /// Implemenation of <see cref="IValidationRuleSet"/>
+    /// Default implemenation of <see cref="IValidationRuleSet"/>.
     /// </summary>
     public class ValidationRuleSet : IValidationRuleSet
     {
         private List<IValidationRule> _rules;
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         public ValidationRuleSet()
         {
             _rules = new List<IValidationRule>();
         }
 
-        public void Add(string xmlSpecifications)
+        /// <summary>
+        /// Add a specification (as xml) to the set.
+        /// </summary>
+		public void Add(string xmlSpecifications)
         {
             using (TextReader xml = new StringReader(xmlSpecifications))
             {
@@ -68,45 +71,64 @@ namespace ClearCanvas.Desktop.Validation
             }
         }
 
+		/// <summary>
+		/// Gets the concatenation of all error strings, based on the results of all
+		/// <see cref="IValidationRule"/>s in the set.
+		/// </summary>
+		public string GetErrorsString(IApplicationComponent component)
+		{
+			List<IValidationRule> brokenRules = _rules.FindAll(
+				delegate(IValidationRule r) { return r.GetResult(component).Success == false; });
+
+			return StringUtilities.Combine(brokenRules, "\n",
+				delegate(IValidationRule r)
+				{
+					return string.Format("{0}: {1}",
+						r.PropertyName,
+						StringUtilities.Combine(r.GetResult(component).Messages, ", "));
+				});
+		}
+
         #region IValidationRuleSet members
 
-        public void Add(IValidationRule rule)
+    	/// <summary>
+    	/// Adds a rule to the set.
+    	/// </summary>
+    	public void Add(IValidationRule rule)
         {
             _rules.Add(rule);
         }
 
-        public void Remove(IValidationRule rule)
+    	/// <summary>
+    	/// Removes a rule from the set.
+    	/// </summary>
+    	public void Remove(IValidationRule rule)
         {
             _rules.Remove(rule);
         }
 
-        public List<ValidationResult> GetResults(IApplicationComponent component)
+    	/// <summary>
+    	/// Evaluates every rule in the set against the specified component.
+    	/// </summary>
+    	/// <param name="component">Component to validate.</param>
+    	public List<ValidationResult> GetResults(IApplicationComponent component)
         {
             return GetResults(component, _rules);
         }
 
-        public List<ValidationResult> GetResults(IApplicationComponent component, string propertyName)
+    	/// <summary>
+    	/// Evaluates all rules in the set that apply to the specified property against the specified component.
+    	/// </summary>
+    	/// <param name="component">Component to validate.</param>
+    	/// <param name="propertyName">Property to validate.</param>
+    	public List<ValidationResult> GetResults(IApplicationComponent component, string propertyName)
         {
             return GetResults(component, _rules.FindAll(delegate(IValidationRule v) { return v.PropertyName == propertyName; }));
         }
 
-        public string GetErrorsString(IApplicationComponent component)
-        {
-            List<IValidationRule> brokenRules = _rules.FindAll(
-                delegate(IValidationRule r) { return r.GetResult(component).Success == false; });
-
-            return StringUtilities.Combine(brokenRules, "\n",
-                delegate(IValidationRule r)
-                    {
-                        return string.Format("{0}: {1}",
-                            r.PropertyName,
-                            StringUtilities.Combine(r.GetResult(component).Messages, ", "));
-                    });
-        }
-
         #endregion
 
-        private List<ValidationResult> GetResults(IApplicationComponent component, List<IValidationRule> validators)
+        private static List<ValidationResult> GetResults(IApplicationComponent component, List<IValidationRule> validators)
         {
             return validators.ConvertAll<ValidationResult>(delegate(IValidationRule v) { return v.GetResult(component); });
         }

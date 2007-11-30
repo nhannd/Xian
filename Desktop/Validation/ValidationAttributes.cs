@@ -52,7 +52,7 @@ namespace ClearCanvas.Desktop.Validation
         private string _message;
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         protected ValidationAttribute()
         {
@@ -70,8 +70,6 @@ namespace ClearCanvas.Desktop.Validation
         /// <summary>
         /// Gets the custom message localized according to the specified resource resolver.
         /// </summary>
-        /// <param name="resourceResolver"></param>
-        /// <returns></returns>
         protected string GetLocalizedCustomMessage(IResourceResolver resourceResolver)
         {
             return string.IsNullOrEmpty(_message) ? null : resourceResolver.LocalizeString(_message);
@@ -80,20 +78,16 @@ namespace ClearCanvas.Desktop.Validation
         /// <summary>
         /// Validates that the specified property is assignable to one of the specified types.
         /// </summary>
-        /// <param name="property"></param>
-        /// <param name="types"></param>
         protected void CheckPropertyIsType(PropertyInfo property, params Type[] types)
         {
             if (!CollectionUtils.Contains<Type>(types, delegate(Type t) { return t.IsAssignableFrom(property.PropertyType); }))
                 throw new ValidationAttributeException(
-                    string.Format("{0} attribute cannot be applied to property of type {1}.", this.GetType().Name, property.PropertyType.FullName));
+					string.Format(SR.FormatAttributeCannotBeAppliedToPropertyType, this.GetType().Name, property.PropertyType.FullName));
         }
 
         /// <summary>
         /// Factory method to create a delegate that invokes the getter of the specified property.
         /// </summary>
-        /// <param name="property"></param>
-        /// <returns></returns>
         protected PropertyGetter CreatePropertyGetter(PropertyInfo property)
         {
             //JR> in theory we should be able to bind a delegate to the property's GetMethod,
@@ -113,9 +107,6 @@ namespace ClearCanvas.Desktop.Validation
         /// <summary>
         /// Factory method to create an <see cref="IValidationRule"/> based on this attribute.
         /// </summary>
-        /// <param name="property"></param>
-        /// <param name="resourceResolver"></param>
-        /// <returns></returns>
         public IValidationRule CreateRule(PropertyInfo property, IResourceResolver resourceResolver)
         {
             PropertyGetter getter = CreatePropertyGetter(property);
@@ -165,10 +156,17 @@ namespace ClearCanvas.Desktop.Validation
             set { _allowNull = value; }
         }
 
-        protected override IValidationRule CreateRule(PropertyInfo property, PropertyGetter getter, string customMessage)
+    	/// <summary>
+    	/// Factory method to create an <see cref="IValidationRule"/> based on this attribute.
+    	/// </summary>
+    	/// <param name="property">The property on which the attribute is applied.</param>
+    	/// <param name="getter">A delegate that, when invoked, returns the current value of the property.</param>
+    	/// <param name="customMessage">A custom message to be displayed, or null if none was supplied.</param>
+    	/// <returns></returns>
+    	protected override IValidationRule CreateRule(PropertyInfo property, PropertyGetter getter, string customMessage)
         {
             CheckPropertyIsType(property, typeof(string));
-            string message = customMessage ?? "Unrecognized format";
+			string message = customMessage ?? SR.MessageUnrecognizedFormat;
 
             return new ValidationRule(property.Name,
                 delegate(IApplicationComponent component)
@@ -194,9 +192,16 @@ namespace ClearCanvas.Desktop.Validation
         {
         }
 
-        protected override IValidationRule CreateRule(PropertyInfo property, PropertyGetter getter, string customMessage)
+    	/// <summary>
+    	/// Factory method to create an <see cref="IValidationRule"/> based on this attribute.
+    	/// </summary>
+    	/// <param name="property">The property on which the attribute is applied.</param>
+    	/// <param name="getter">A delegate that, when invoked, returns the current value of the property.</param>
+    	/// <param name="customMessage">A custom message to be displayed, or null if none was supplied.</param>
+    	/// <returns></returns>
+    	protected override IValidationRule CreateRule(PropertyInfo property, PropertyGetter getter, string customMessage)
         {
-            string message = customMessage ?? "Value required";
+			string message = customMessage ?? SR.MessageValueRequired;
             return new ValidationRule(property.Name,
                delegate(IApplicationComponent component)
                {
@@ -219,19 +224,16 @@ namespace ClearCanvas.Desktop.Validation
         private int _maxLength;
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
-        /// <param name="minLength"></param>
         public ValidateLengthAttribute(int minLength)
             : this(minLength, -1)
         {
         }
         
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
-        /// <param name="minLength"></param>
-        /// <param name="maxLength"></param>
         public ValidateLengthAttribute(int minLength, int maxLength)
         {
             Platform.CheckArgumentRange(minLength, 0, int.MaxValue, "minLength");
@@ -241,16 +243,23 @@ namespace ClearCanvas.Desktop.Validation
             _maxLength = maxLength;
         }
 
-        protected override IValidationRule CreateRule(PropertyInfo property, PropertyGetter getter, string customMessage)
+    	/// <summary>
+    	/// Factory method to create an <see cref="IValidationRule"/> based on this attribute.
+    	/// </summary>
+    	/// <param name="property">The property on which the attribute is applied.</param>
+    	/// <param name="getter">A delegate that, when invoked, returns the current value of the property.</param>
+    	/// <param name="customMessage">A custom message to be displayed, or null if none was supplied.</param>
+    	/// <returns></returns>
+    	protected override IValidationRule CreateRule(PropertyInfo property, PropertyGetter getter, string customMessage)
         {
             CheckPropertyIsType(property, typeof(string));
             string message = customMessage;
             if (message == null)
             {
                 if (_maxLength == -1)
-                    message = string.Format("More than {0} characters required", _minLength);
+					message = string.Format(SR.FormatMoreThanXCharactersRequired, _minLength);
                 else
-                    message = string.Format("Between {0} and {1} characters required", _minLength, _maxLength);
+					message = string.Format(SR.FormatRangeCharactersRequired, _minLength, _maxLength);
             }
 
             return new ValidationRule(property.Name,
@@ -263,14 +272,17 @@ namespace ClearCanvas.Desktop.Validation
         }
     }
 
-    /// <summary>
+	//TODO (Jon): actually this won't work because there is no data-binding to an ITable/IEnumerable property,
+	//hence nowhere to display the error symbol on the UI
+	//leave as internal for now until we figure out how to resolve this
+	
+	/// <summary>
     /// Validates that the number of items in an <see cref="IEnumerable"/> property is within a specified range.
+    /// </summary>
+    /// <remarks>
     /// Can also be applied to properties of type <see cref="ITable"/>, in which case it is applied to the
     /// <see cref="ITable.Items"/> collection.
-    /// </summary>
-    //JR: actually this won't work because there is no data-binding to an ITable/IEnumerable property,
-    //hence nowhere to display the error symbol on the UI
-    //leave as internal for now until we figure out how to resolve this
+	/// </remarks>
     internal class ValidateCountAttribute : ValidationAttribute
     {
         private int _min;
@@ -279,8 +291,6 @@ namespace ClearCanvas.Desktop.Validation
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <param name="min"></param>
-        /// <param name="max"></param>
         public ValidateCountAttribute(int min, int max)
         {
             Platform.CheckArgumentRange(min, 0, int.MaxValue, "min");
@@ -290,7 +300,14 @@ namespace ClearCanvas.Desktop.Validation
             _max = max;
         }
 
-        protected override IValidationRule CreateRule(PropertyInfo property, PropertyGetter getter, string message)
+		/// <summary>
+		/// Factory method to create an <see cref="IValidationRule"/> based on this attribute.
+		/// </summary>
+		/// <param name="property">The property on which the attribute is applied.</param>
+		/// <param name="getter">A delegate that, when invoked, returns the current value of the property.</param>
+		/// <param name="customMessage">A custom message to be displayed, or null if none was supplied.</param>
+		/// <returns></returns>
+		protected override IValidationRule CreateRule(PropertyInfo property, PropertyGetter getter, string customMessage)
         {
             CheckPropertyIsType(property, typeof(ITable), typeof(IEnumerable));
 
@@ -315,7 +332,7 @@ namespace ClearCanvas.Desktop.Validation
                            count++;
                    }
 
-                   return new ValidationResult(count >= _min && (_max == -1 || count <= _max), message);
+                   return new ValidationResult(count >= _min && (_max == -1 || count <= _max), customMessage);
                });
         }
     }
@@ -329,33 +346,59 @@ namespace ClearCanvas.Desktop.Validation
         private object _referenceValue;
         private bool _inclusive;
 
-        public ValidateCompareAttribute(string referenceProperty)
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="referenceProperty">The name of another property to compare against.</param>
+		public ValidateCompareAttribute(string referenceProperty)
         {
             _referenceProperty = referenceProperty;
         }
 
-        public ValidateCompareAttribute(int referenceValue)
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="referenceValue">A value to compare against.</param>
+		public ValidateCompareAttribute(int referenceValue)
         {
             _referenceValue = referenceValue;
         }
 
-        public ValidateCompareAttribute(float referenceValue)
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="referenceValue">A value to compare against.</param>
+		public ValidateCompareAttribute(float referenceValue)
         {
             _referenceValue = referenceValue;
         }
 
-        public ValidateCompareAttribute(double referenceValue)
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="referenceValue">A value to compare against.</param>
+		public ValidateCompareAttribute(double referenceValue)
         {
             _referenceValue = referenceValue;
         }
 
+		/// <summary>
+		/// Gets or sets whether or not the comparison should be inclusive.
+		/// </summary>
         public bool Inclusive
         {
             get { return _inclusive; }
             set { _inclusive = value; }
         }
 
-        protected override IValidationRule CreateRule(PropertyInfo property, PropertyGetter getter, string customMessage)
+    	/// <summary>
+    	/// Factory method to create an <see cref="IValidationRule"/> based on this attribute.
+    	/// </summary>
+    	/// <param name="property">The property on which the attribute is applied.</param>
+    	/// <param name="getter">A delegate that, when invoked, returns the current value of the property.</param>
+    	/// <param name="customMessage">A custom message to be displayed, or null if none was supplied.</param>
+    	/// <returns></returns>
+    	protected override IValidationRule CreateRule(PropertyInfo property, PropertyGetter getter, string customMessage)
         {
             CheckPropertyIsType(property, typeof(IComparable));
             if (_referenceProperty != null)
@@ -363,7 +406,7 @@ namespace ClearCanvas.Desktop.Validation
                 // check that reference property is same type as validating property
                 PropertyInfo refProp = property.DeclaringType.GetProperty(_referenceProperty);
                 if (refProp.PropertyType != property.PropertyType)
-                    throw new ValidationAttributeException("Reference property must be of same type as validating property.");
+					throw new ValidationAttributeException(SR.ExceptionReferencePropertyMustBeOfSameType);
 
                 PropertyGetter refPropGetter = CreatePropertyGetter(refProp);
                 return new ValidationRule(property.Name,
@@ -378,7 +421,7 @@ namespace ClearCanvas.Desktop.Validation
             {
                 // check that reference value is same type as validating property
                 if (_referenceValue.GetType() != property.PropertyType)
-                    throw new ValidationAttributeException("Reference value must be of same type as validating property.");
+					throw new ValidationAttributeException(SR.ExceptionReferenceValueMustBeOfSameType);
                 
                 // compare against fixed reference value
                 return new ValidationRule(property.Name,
@@ -401,22 +444,25 @@ namespace ClearCanvas.Desktop.Validation
             if (GetCompareSign() > 0)
             {
                 return _inclusive ?
-                    string.Format("Must be greater than or equal to {0}", referenceValue) :
-                    string.Format("Must be greater than {0}", referenceValue);
+					string.Format(SR.FormatMustBeGreaterThanOrEqualTo, referenceValue) :
+					string.Format(SR.FormatMustBeGreaterThan, referenceValue);
             }
             else
             {
                 return _inclusive ?
-                   string.Format("Must be less than or equal to {0}", referenceValue) :
-                   string.Format("Must be less than {0}", referenceValue);
+				   string.Format(SR.FormatMustBeLessThanOrEqualTo, referenceValue) :
+				   string.Format(SR.FormatMustBeLessThan, referenceValue);
             }
         }
 
+        /// <summary>
+        /// Gets the sign of the comparison.
+        /// </summary>
         protected abstract int GetCompareSign();
     }
 
     /// <summary>
-    /// Validates that a property value is greater than reference value.
+    /// Validates that a property value is greater than a reference value.
     /// </summary>
     public class ValidateGreaterThanAttribute : ValidateCompareAttribute
     {
@@ -432,7 +478,6 @@ namespace ClearCanvas.Desktop.Validation
         /// <summary>
         /// Constructor that accepts a constant reference value.
         /// </summary>
-        /// <param name="referenceValue"></param>
         public ValidateGreaterThanAttribute(int referenceValue)
             : base(referenceValue)
         {
@@ -441,7 +486,6 @@ namespace ClearCanvas.Desktop.Validation
         /// <summary>
         /// Constructor that accepts a constant reference value.
         /// </summary>
-        /// <param name="referenceValue"></param>
         public ValidateGreaterThanAttribute(float referenceValue)
             : base(referenceValue)
         {
@@ -450,13 +494,15 @@ namespace ClearCanvas.Desktop.Validation
         /// <summary>
         /// Constructor that accepts a constant reference value.
         /// </summary>
-        /// <param name="referenceValue"></param>
         public ValidateGreaterThanAttribute(double referenceValue)
             : base(referenceValue)
         {
         }
 
-        protected override int GetCompareSign()
+        /// <summary>
+        /// Returns 1.
+        /// </summary>
+		protected override int GetCompareSign()
         {
             return 1;
         }
@@ -479,7 +525,6 @@ namespace ClearCanvas.Desktop.Validation
         /// <summary>
         /// Constructor that accepts a constant reference value.
         /// </summary>
-        /// <param name="referenceValue"></param>
         public ValidateLessThanAttribute(int referenceValue)
             : base(referenceValue)
         {
@@ -488,7 +533,6 @@ namespace ClearCanvas.Desktop.Validation
         /// <summary>
         /// Constructor that accepts a constant reference value.
         /// </summary>
-        /// <param name="referenceValue"></param>
         public ValidateLessThanAttribute(float referenceValue)
             : base(referenceValue)
         {
@@ -497,12 +541,14 @@ namespace ClearCanvas.Desktop.Validation
         /// <summary>
         /// Constructor that accepts a constant reference value.
         /// </summary>
-        /// <param name="referenceValue"></param>
         public ValidateLessThanAttribute(double referenceValue)
             : base(referenceValue)
         {
         }
 
+		/// <summary>
+		/// Returns -1.
+		/// </summary>
         protected override int GetCompareSign()
         {
             return -1;

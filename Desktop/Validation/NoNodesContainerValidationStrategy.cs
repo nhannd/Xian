@@ -36,19 +36,28 @@ using System.Text;
 namespace ClearCanvas.Desktop.Validation
 {
     /// <summary>
-    /// Implements a validation strategy that does not consider any nodes.  This is effectively equivalent
-    /// to having no validation at all.  The container is always considered valid, regardless of the validity
-    /// of contained nodes.
+    /// Implements a validation strategy that does not consider any nodes.
     /// </summary>
+    /// <remarks>
+	/// This is effectively equivalent to having no validation at all.  The 
+	/// container is always considered valid, regardless of the validity
+	/// of contained nodes.
+	/// </remarks>
     public class NoNodesContainerValidationStrategy : IApplicationComponentContainerValidationStrategy
     {
         #region IApplicationComponentContainerValidationStrategy Members
 
+		/// <summary>
+		/// Returns false.
+		/// </summary>
         public bool HasValidationErrors(IApplicationComponentContainer container)
         {
             return false;
         }
 
+		/// <summary>
+		/// Does nothing.
+		/// </summary>
         public void ShowValidation(IApplicationComponentContainer container, bool show)
         {
             // do nothing

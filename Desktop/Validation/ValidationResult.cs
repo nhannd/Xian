@@ -43,8 +43,6 @@ namespace ClearCanvas.Desktop.Validation
         /// <summary>
         /// Combines a collection of validation results into a single result.
         /// </summary>
-        /// <param name="results"></param>
-        /// <returns></returns>
         public static ValidationResult Combine(IEnumerable<ValidationResult> results)
         {
             List<string> messages = new List<string>();
@@ -61,20 +59,20 @@ namespace ClearCanvas.Desktop.Validation
         private string[] _messages;
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
-        /// <param name="success">Indicates whether the validation succeeded</param>
-        /// <param name="message">When validation fails, a message indicating why the validation failed</param>
+        /// <param name="success">Indicates whether the validation succeeded.</param>
+        /// <param name="message">When validation fails, a message indicating why the validation failed.</param>
         public ValidationResult(bool success, string message)
             : this(success, new string[] { message })
         {
         }
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
-        /// <param name="success">Indicates whether the validation succeeded</param>
-        /// <param name="messages">When validation fails, a set of messages indicating why the validation failed</param>
+        /// <param name="success">Indicates whether the validation succeeded.</param>
+        /// <param name="messages">When validation fails, a set of messages indicating why the validation failed.</param>
         public ValidationResult(bool success, string[] messages)
         {
             _success = success;
@@ -82,7 +80,7 @@ namespace ClearCanvas.Desktop.Validation
         }
 
         /// <summary>
-        /// True if the validation was successful
+        /// True if the validation was successful.
         /// </summary>
         public bool Success
         {
@@ -98,10 +96,8 @@ namespace ClearCanvas.Desktop.Validation
         }
 
         /// <summary>
-        /// Concatenates the elements of the <see cref="Messages"/> property into a single message using the specified separator
+        /// Concatenates the elements of the <see cref="Messages"/> property into a single message using the specified separator.
         /// </summary>
-        /// <param name="separator"></param>
-        /// <returns></returns>
         public string GetMessageString(string separator)
         {
             StringBuilder sb = new StringBuilder();

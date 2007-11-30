@@ -35,9 +35,12 @@ using System.Text;
 
 namespace ClearCanvas.Desktop.Validation
 {
-    public class ValidationAttributeException : Exception
+    /// <summary>
+	/// Thrown by <see cref="ValidationAttribute"/> when errors occur creating validation rules.
+    /// </summary>
+	public class ValidationAttributeException : Exception
     {
-        public ValidationAttributeException(string message)
+        internal ValidationAttributeException(string message)
             :base(message)
         {
         }

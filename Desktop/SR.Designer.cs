@@ -214,6 +214,24 @@ namespace ClearCanvas.Desktop {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Reference property must be of same type as validating property..
+        /// </summary>
+        public static string ExceptionReferencePropertyMustBeOfSameType {
+            get {
+                return ResourceManager.GetString("ExceptionReferencePropertyMustBeOfSameType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reference value must be of same type as validating property..
+        /// </summary>
+        public static string ExceptionReferenceValueMustBeOfSameType {
+            get {
+                return ResourceManager.GetString("ExceptionReferenceValueMustBeOfSameType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Component cannot exit because it is not at the top of the component stack..
         /// </summary>
         public static string ExceptionStackComponentCannotExit {
@@ -250,11 +268,74 @@ namespace ClearCanvas.Desktop {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} attribute cannot be applied to property of type {1}..
+        /// </summary>
+        public static string FormatAttributeCannotBeAppliedToPropertyType {
+            get {
+                return ResourceManager.GetString("FormatAttributeCannotBeAppliedToPropertyType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0} [{1}].
         /// </summary>
         public static string FormatDesktopWindowTitle {
             get {
                 return ResourceManager.GetString("FormatDesktopWindowTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to More than {0} characters required.
+        /// </summary>
+        public static string FormatMoreThanXCharactersRequired {
+            get {
+                return ResourceManager.GetString("FormatMoreThanXCharactersRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Must be greater than {0}.
+        /// </summary>
+        public static string FormatMustBeGreaterThan {
+            get {
+                return ResourceManager.GetString("FormatMustBeGreaterThan", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Must be greater than or equal to {0}.
+        /// </summary>
+        public static string FormatMustBeGreaterThanOrEqualTo {
+            get {
+                return ResourceManager.GetString("FormatMustBeGreaterThanOrEqualTo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Must be less than {0}.
+        /// </summary>
+        public static string FormatMustBeLessThan {
+            get {
+                return ResourceManager.GetString("FormatMustBeLessThan", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Must be less than or equal to {0}.
+        /// </summary>
+        public static string FormatMustBeLessThanOrEqualTo {
+            get {
+                return ResourceManager.GetString("FormatMustBeLessThanOrEqualTo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Between {0} and {1} characters required.
+        /// </summary>
+        public static string FormatRangeCharactersRequired {
+            get {
+                return ResourceManager.GetString("FormatRangeCharactersRequired", resourceCulture);
             }
         }
         
@@ -390,6 +471,24 @@ namespace ClearCanvas.Desktop {
         public static string MessageNoConfigurationPagesExist {
             get {
                 return ResourceManager.GetString("MessageNoConfigurationPagesExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unrecognized format.
+        /// </summary>
+        public static string MessageUnrecognizedFormat {
+            get {
+                return ResourceManager.GetString("MessageUnrecognizedFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Value required.
+        /// </summary>
+        public static string MessageValueRequired {
+            get {
+                return ResourceManager.GetString("MessageValueRequired", resourceCulture);
             }
         }
         

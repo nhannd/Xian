@@ -50,7 +50,7 @@ namespace ClearCanvas.Desktop.Validation
         private ValidationDelegate _callback;
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         /// <param name="propertyName">The property to which this rule applies.</param>
         /// <param name="callback">A method that performs the validation.</param>
@@ -64,9 +64,11 @@ namespace ClearCanvas.Desktop.Validation
         }
 
         /// <summary>
-        /// Constructor that accepts an instance of a <see cref="ISpecification"/>.  The specification
-        /// defines the validation rule.
+        /// Constructor that accepts an instance of a <see cref="ISpecification"/>.
         /// </summary>
+        /// <remarks>
+		/// The specification defines the validation rule.
+		/// </remarks>
         /// <param name="propertyName">The property to which the rule applies.</param>
         /// <param name="spec">The specification to use to evaluate the rule.</param>
         public ValidationRule(string propertyName, ISpecification spec)
@@ -99,7 +101,7 @@ namespace ClearCanvas.Desktop.Validation
         /// <summary>
         /// Helper class for evaluating a specification as a validation rule.
         /// </summary>
-        class SpecificationEvaluator
+        private class SpecificationEvaluator
         {
             private ISpecification _specification;
 

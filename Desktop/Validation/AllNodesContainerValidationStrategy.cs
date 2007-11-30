@@ -44,7 +44,10 @@ namespace ClearCanvas.Desktop.Validation
     {
         #region IApplicationComponentContainerValidationStrategy Members
 
-        public bool HasValidationErrors(IApplicationComponentContainer container)
+    	/// <summary>
+    	/// Determines whether the specified container has validation errors, according to this strategy.
+    	/// </summary>
+    	public bool HasValidationErrors(IApplicationComponentContainer container)
         {
             // true if any contained component has validation errors
             return CollectionUtils.Contains<IApplicationComponent>(container.ContainedComponents,
@@ -55,7 +58,11 @@ namespace ClearCanvas.Desktop.Validation
                 });
         }
 
-        public void ShowValidation(IApplicationComponentContainer container, bool show)
+    	/// <summary>
+    	/// Displays validation errors for the specified container to the user, according to the logic
+    	/// encapsulated in this strategy.
+    	/// </summary>
+    	public void ShowValidation(IApplicationComponentContainer container, bool show)
         {
             if (show)
             {

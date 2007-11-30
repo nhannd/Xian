@@ -42,13 +42,17 @@ using ClearCanvas.Common.Configuration;
 
 namespace ClearCanvas.Desktop.Validation
 {
+	// TODO (Stewart): Made this internal because as it is stated below, this is experimental code not in use right now.
+
     /// <summary>
     /// Supports management of mapping of validation rules from an embedded xml document to a settings class.
-    /// Derive from this class to create a settings class that is populated dynamically with rules
-    /// obtained from an xml doc. NOTE: this is just experimental code, not actually in use right now.
     /// </summary>
+    /// <remarks>
+	/// Derive from this class to create a settings class that is populated dynamically with rules
+	/// obtained from an xml document. NOTE: this is just experimental code, not actually in use right now.
+    /// </remarks>
     [SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
-    public abstract class ValidationRulesSettings : ApplicationSettingsBase
+    internal abstract class ValidationRulesSettings : ApplicationSettingsBase
     {
         class SpecXmlSource : ISpecificationXmlSource
         {

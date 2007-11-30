@@ -37,10 +37,12 @@ namespace ClearCanvas.Desktop.Validation
 {
     /// <summary>
     /// Defines the interface to a validation rule that is applied to a <see cref="IApplicationComponent"/>.
-    /// The <see cref="PropertyName"/> property specifies a property of the application component
-    /// that the rule applies to.  Any validation error message will be displayed next to the GUI object
-    /// that is bound to this property.
     /// </summary>
+    /// <remarks>
+	/// The <see cref="PropertyName"/> property specifies a property of the application component
+	/// that the rule applies to.  Any validation error message will be displayed next to the GUI object
+	/// that is bound to this property.
+    /// </remarks>
     public interface IValidationRule
     {
         /// <summary>

@@ -168,6 +168,12 @@
   <data name="ExceptionObjectWithNameAlreadyExists" xml:space="preserve">
     <value>An object with the name {0} already exists</value>
   </data>
+  <data name="ExceptionReferencePropertyMustBeOfSameType" xml:space="preserve">
+    <value>Reference property must be of same type as validating property.</value>
+  </data>
+  <data name="ExceptionReferenceValueMustBeOfSameType" xml:space="preserve">
+    <value>Reference value must be of same type as validating property.</value>
+  </data>
   <data name="ExceptionStackComponentCannotExit" xml:space="preserve">
     <value>Component cannot exit because it is not at the top of the component stack.</value>
   </data>
@@ -180,8 +186,29 @@
   <data name="ExceptionTableItemNotFoundInCollection" xml:space="preserve">
     <value>Table item not found in collection.</value>
   </data>
+  <data name="FormatAttributeCannotBeAppliedToPropertyType" xml:space="preserve">
+    <value>{0} attribute cannot be applied to property of type {1}.</value>
+  </data>
   <data name="FormatDesktopWindowTitle" xml:space="preserve">
     <value>{0} [{1}]</value>
+  </data>
+  <data name="FormatMoreThanXCharactersRequired" xml:space="preserve">
+    <value>More than {0} characters required</value>
+  </data>
+  <data name="FormatMustBeGreaterThan" xml:space="preserve">
+    <value>Must be greater than {0}</value>
+  </data>
+  <data name="FormatMustBeGreaterThanOrEqualTo" xml:space="preserve">
+    <value>Must be greater than or equal to {0}</value>
+  </data>
+  <data name="FormatMustBeLessThan" xml:space="preserve">
+    <value>Must be less than {0}</value>
+  </data>
+  <data name="FormatMustBeLessThanOrEqualTo" xml:space="preserve">
+    <value>Must be less than or equal to {0}</value>
+  </data>
+  <data name="FormatRangeCharactersRequired" xml:space="preserve">
+    <value>Between {0} and {1} characters required</value>
   </data>
   <data name="InvalidCustomDateFormat" xml:space="preserve">
     <value>The custom date format must be from the available list.</value>
@@ -227,6 +254,12 @@
   </data>
   <data name="MessageNoConfigurationPagesExist" xml:space="preserve">
     <value>No configuration pages exist.</value>
+  </data>
+  <data name="MessageUnrecognizedFormat" xml:space="preserve">
+    <value>Unrecognized format</value>
+  </data>
+  <data name="MessageValueRequired" xml:space="preserve">
+    <value>Value required</value>
   </data>
   <data name="TitleCloseAssistant" xml:space="preserve">
     <value>Close Assistant</value>
