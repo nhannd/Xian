@@ -39,6 +39,9 @@ namespace ClearCanvas.Common
     /// The default implementation of <see cref="IExtensionFactory"/> that creates extensions from
     /// the set of plugins discovered at runtime.
     /// </summary>
+    /// <remarks>
+    /// This class is safe for use by mutliple concurrent threads.
+    /// </remarks>
     internal class DefaultExtensionFactory : IExtensionFactory
     {
         internal DefaultExtensionFactory()
@@ -47,10 +50,16 @@ namespace ClearCanvas.Common
 
         #region IExtensionFactory Members
 
+        /// <summary>
+        /// Creates one of each type of object that extends the input <paramref name="extensionPoint" />, 
+        /// matching the input <paramref name="filter" />; creates a single extension if <paramref name="justOne"/> is true.
+        /// </summary>
+        /// <param name="extensionPoint">The <see cref="ExtensionPoint"/> to create extensions for.</param>
+        /// <param name="filter">The filter used to match each extension that is discovered.</param>
+        /// <param name="justOne">Indicates whether or not to return only the first matching extension that is found.</param>
+        /// <returns></returns>
         public object[] CreateExtensions(ExtensionPoint extensionPoint, ExtensionFilter filter, bool justOne)
         {
-            Type extensionPointClass = extensionPoint.GetType();
-
             // get subset of applicable extensions
             ExtensionInfo[] extensions = ListExtensions(extensionPoint, filter);
 
@@ -95,12 +104,24 @@ namespace ClearCanvas.Common
             return createdObjects.ToArray();
         }
 
+        /// <summary>
+        /// Gets metadata describing all extensions of the input <paramref name="extensionPoint"/>, 
+        /// matching the given <paramref name="filter"/>.
+        /// </summary>
+        /// <param name="extensionPoint">The <see cref="ExtensionPoint"/> whose extension metadata is to be retrieved.</param>
+        /// <param name="filter">An <see cref="ExtensionFilter"/> used to filter out extensions with particular characteristics.</param>
+        /// <returns></returns>
         public ExtensionInfo[] ListExtensions(ExtensionPoint extensionPoint, ExtensionFilter filter)
         {
             Type extensionPointClass = extensionPoint.GetType();
 
             List<ExtensionInfo> extensions = new List<ExtensionInfo>();
-            foreach (ExtensionInfo extension in Platform.PluginManager.Extensions)
+
+            // assume that Platform.PluginManager.Extensions is a thread-safe property, 
+            // therefore no need to lock here
+            ExtensionInfo[] allExtensions = Platform.PluginManager.Extensions;
+
+            foreach (ExtensionInfo extension in allExtensions)
             {
                 if (extension.PointExtended == extensionPointClass
                     && (filter == null || filter.Test(extension)))
@@ -111,7 +132,7 @@ namespace ClearCanvas.Common
             return extensions.ToArray();
         }
 
-        private bool IsConcreteClass(Type type)
+        private static bool IsConcreteClass(Type type)
         {
             return !type.IsAbstract && type.IsClass;
         }

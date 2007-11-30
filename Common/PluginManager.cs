@@ -43,21 +43,18 @@ using ClearCanvas.Common.Utilities;
 namespace ClearCanvas.Common
 {
 	/// <summary>
-	/// Loads and keeps track of all plugins.
+	/// Loads plugin assemblies dynamically from disk and exposes meta-data about the set of installed
+	/// plugins, extension points, and extensions to the application.
 	/// </summary>
-	/// <remarks>
-	/// The PluginManager class is at the heart of the ClearCanvas framework.
-	/// It provides <I>all</I> the functionality required for loading binary components known
-	/// as <i>plugins</i> at runtime.  A plugin is the basic building block for extending the
-	/// functionality of the application.
-	///	</remarks>
 	public class PluginManager 
 	{
-        private PluginInfo[] _plugins;
-        private ExtensionInfo[] _extensions;
-        private ExtensionPointInfo[] _extensionPoints;
-		private string _pluginDir;
+        private volatile PluginInfo[] _plugins;
+        private volatile ExtensionInfo[] _extensions;
+        private volatile ExtensionPointInfo[] _extensionPoints;
+		private readonly string _pluginDir;
 		private event EventHandler<PluginLoadedEventArgs> _pluginProgressEvent;
+
+        private readonly object _syncLock = new object();
 
 		internal PluginManager(string pluginDir)
 		{
@@ -78,10 +75,7 @@ namespace ClearCanvas.Common
         {
             get 
             {
-                if (_plugins == null)
-                {
-                    LoadPlugins();
-                }
+                EnsurePluginsLoaded();
                 return _plugins;
             }
         }
@@ -97,10 +91,7 @@ namespace ClearCanvas.Common
         {
             get
             {
-                if (_extensions == null)
-                {
-                    LoadPlugins();
-                }
+                EnsurePluginsLoaded();
                 return _extensions;
             }
         }
@@ -115,10 +106,7 @@ namespace ClearCanvas.Common
         {
             get
             {
-                if (_extensionPoints == null)
-                {
-                    LoadPlugins();
-                }
+                EnsurePluginsLoaded();
                 return _extensionPoints;
             }
         }
@@ -133,17 +121,38 @@ namespace ClearCanvas.Common
 		}
 
 		/// <summary>
-		/// Loads all plugins in the current plugin directory.
+		/// Ensures plugins are loaded exactly once.
 		/// </summary>
 		/// <remarks>
-		/// This method will traverse the plugin directory and all its subdirectories loading
-		/// all valid plugin assemblies.  A valid plugin is an assembly that contains an assembly
-		/// attribute derived from <see cref="ClearCanvas.Common.PluginAttribute"/>.
 		/// </remarks>
 		/// <exception cref="PluginException">Specified plugin directory does not exist or 
 		/// a problem has occurred while loading a plugin.</exception>
-		public void LoadPlugins()
+		private void EnsurePluginsLoaded()
 		{
+            if(_plugins == null)
+            {
+                lock(_syncLock)
+                {
+                    if(_plugins == null)
+                    {
+                        LoadPlugins();
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Loads all plugins in the current plugin directory.
+        /// </summary>
+        /// <remarks>
+        /// This method will traverse the plugin directory and all its subdirectories loading
+        /// all valid plugin assemblies.  A valid plugin is an assembly that is marked with an assembly
+        /// attribute of type <see cref="ClearCanvas.Common.PluginAttribute"/>.
+        /// </remarks>
+        /// <exception cref="PluginException">Specified plugin directory does not exist or 
+        /// a problem has occurred while loading a plugin.</exception>
+        private void LoadPlugins()
+        {
             if (!RootPluginDirectoryExists())
                 throw new PluginException(SR.ExceptionPluginDirectoryNotFound);
 

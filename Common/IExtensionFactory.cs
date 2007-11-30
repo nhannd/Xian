@@ -38,6 +38,9 @@ namespace ClearCanvas.Common
     /// <summary>
     /// Interface defining a factory for extensions of arbitrary <see cref="ExtensionPoint"/>s.
     /// </summary>
+    /// <remarks>
+    /// Implementations of this interface are expected to be thread-safe.
+    /// </remarks>
 	public interface IExtensionFactory
     {
 		/// <summary>
