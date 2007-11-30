@@ -41,13 +41,13 @@ namespace ClearCanvas.Desktop.Actions
     /// </summary>
 	public class KeyboardAction : ClickAction
 	{
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="actionID"></param>
-        /// <param name="path"></param>
-        /// <param name="flags"></param>
-        /// <param name="resourceResolver"></param>
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="actionID">The fully qualified action ID.</param>
+		/// <param name="path">The action path.</param>
+		/// <param name="flags">Flags that control the style of the action.</param>
+		/// <param name="resourceResolver">A resource resolver that will be used to resolve text and image resources.</param>
 		public KeyboardAction(string actionID, ActionPath path, ClickActionFlags flags, IResourceResolver resourceResolver)
             : base(actionID, path, flags, resourceResolver)
         {

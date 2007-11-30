@@ -42,7 +42,7 @@ namespace ClearCanvas.Desktop.Actions
     public enum ClickActionFlags
     {
         /// <summary>
-        /// Default value
+        /// Default value.
         /// </summary>
         None = 0x00,
 

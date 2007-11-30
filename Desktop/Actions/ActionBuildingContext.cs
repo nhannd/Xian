@@ -48,7 +48,7 @@ namespace ClearCanvas.Desktop.Actions
         private readonly ResourceResolver _resolver;
         private Action _action;
 
-        internal ActionBuildingContext(string actionID, object actionTarget)
+        public ActionBuildingContext(string actionID, object actionTarget)
         {
             _actionID = actionID;
             _actionTarget = actionTarget;

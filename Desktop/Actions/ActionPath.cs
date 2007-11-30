@@ -45,8 +45,9 @@ namespace ClearCanvas.Desktop.Actions
         /// <summary>
         /// Constructs an action path from the specified path string, using the specified resource resolver.
         /// </summary>
-        /// <param name="pathString">A string respresenting the path</param>
-        /// <param name="resolver">A resource resolver used to localize each path segment. If the resource resolver is null, the path segments will be treated as localized text.</param>
+        /// <param name="pathString">A string respresenting the path.</param>
+        /// <param name="resolver">A resource resolver used to localize each path segment. If
+        /// the resource resolver is null, the path segments will be treated as localized text.</param>
         public ActionPath(string pathString, IResourceResolver resolver)
             :base(pathString, resolver)
         {

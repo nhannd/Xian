@@ -43,7 +43,7 @@ namespace ClearCanvas.Desktop.Actions
     public class ButtonAction : ClickAction
     {
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         /// <param name="actionID">The fully qualified action ID.</param>
         /// <param name="path">The action path.</param>

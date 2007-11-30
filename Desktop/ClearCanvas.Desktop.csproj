@@ -184,7 +184,6 @@
     <Compile Include="Actions\ClickActionAttribute.cs" />
     <Compile Include="Actions\ClickActionFlags.cs" />
     <Compile Include="Actions\ClickHandlerAttribute.cs" />
-    <Compile Include="Actions\delegates.cs" />
     <Compile Include="Actions\EnabledStateObserverAttribute.cs" />
     <Compile Include="Actions\IAction.cs" />
     <Compile Include="Actions\IActionBuildingContext.cs" />

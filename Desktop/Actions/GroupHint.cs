@@ -38,16 +38,17 @@ namespace ClearCanvas.Desktop.Actions
 {
 	/// <summary>
 	/// The GroupHint is used to determine a reasonably appropriate point in the 
-	/// action model to put an action that does not yet exist in
-	/// the stored model.
+	/// action model to put an action that does not yet exist in the stored model.
 	/// </summary>
 	/// <remarks>
+	/// <para>
 	/// The action (call it Left-Hand Action) whose position in the store is to be 
 	/// determined is compared with each action in the store (Right-Hand Action).
 	/// The comparison of the Left-Hand Action to the Right-Hand Action is given
 	/// a score.  The score is based on the GroupHint and the algorithm works 
 	/// as follows:
-	///	
+	/// </para>
+	/// <para>
 	///		LHS										RHS										Score
 	///		-----------------------------------------------------------------------------------------
 	///	1.	Tools.Image.Manipulation.Zoom			""										1
@@ -55,22 +56,32 @@ namespace ClearCanvas.Desktop.Actions
 	///	3.	Tools.Image.Manipulation.Zoom			DisplaySets								0
 	/// 4.  ""										""										1
 	/// 5.  ""										DisplaySets								0
-	/// 
+	/// </para>
+	/// <para>
 	/// A brief explanation of the logic:
-	///	1. For backward compatibility, actions with a non-empty GroupHint, when compared to an 
-	///    existing action in the store whose GroupHint="", the score is 1 because it is considered
-	///    a better match than 2 actions whose GroupHints are non-empty and are completely different.
-	/// 2. Actions with GroupHints that have similar components (separated by '.') are given a score
-	///    equal to the number of (consecutive) matching components + 1.  The +1 accounts for the fact 
-	///    that any number of equal components is a better score than the first example, whose score is 1.
-	/// 3. Actions with completely different components are given an automatic score of zero (0).
-	/// 4. Two actions with GroupHints = "" are considered equal, so a score of 1 is given.
-	/// 5. In this case, an existing action with an empty GroupHint is being matched to a non-empty
-	///    GroupHint.  So, the LHS cannot be considered at all similar to RHS and the 
-	///    score is automatically zero (0).
-	/// 
+	/// <list type="bullet">
+	/// <item>
+	/// For backward compatibility, actions with a non-empty GroupHint, when compared to an 
+	/// existing action in the store whose GroupHint="", the score is 1 because it is considered
+	/// a better match than 2 actions whose GroupHints are non-empty and are completely different.
+	/// </item>
+	/// <item>
+	/// Actions with GroupHints that have similar components (separated by '.') are given a score
+	/// equal to the number of (consecutive) matching components + 1.  The +1 accounts for the fact 
+	/// that any number of equal components is a better score than the first example, whose score is 1.
+	/// </item>
+	/// <item>
+	/// Actions with completely different components are given an automatic score of zero (0).
+	/// Two actions with GroupHints = "" are considered equal, so a score of 1 is given.
+	/// </item>
+	/// <item>
+	/// In this case, an existing action with an empty GroupHint is being matched to a non-empty
+	/// GroupHint.  So, the LHS cannot be considered at all similar to RHS and the 
+	/// score is automatically zero (0).
+	/// </item>
+	/// </list>
+	/// </para>
 	/// </remarks>
-
 	public class GroupHint
 	{
 		private const char SEPARATOR = '.';
@@ -78,9 +89,8 @@ namespace ClearCanvas.Desktop.Actions
 		private readonly string[] _components;
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
-        /// <param name="groupHint"></param>
 		public GroupHint(string groupHint)
 		{
 			if (groupHint == null)
@@ -101,16 +111,14 @@ namespace ClearCanvas.Desktop.Actions
         /// <summary>
         /// Gets an array containing the components of the hint path.
         /// </summary>
-		public string[] Components
+		protected string[] Components
 		{
 			get { return _components; }
 		}
 
         /// <summary>
-        /// 
+        /// Performs matching based on the algorithm described in <see cref="GroupHint"/>'s class summary.
         /// </summary>
-        /// <param name="other"></param>
-        /// <returns></returns>
 		public int MatchScore(GroupHint other)
 		{
 			int i = 0;

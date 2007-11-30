@@ -48,7 +48,7 @@ namespace ClearCanvas.Desktop.Actions
         /// </summary>
         /// <remarks>
         /// If an action model specification for the namespace/site
-        /// does not exist, it will be created.  If it does it exist, it will be used as guidance
+        /// does not exist, it will be created.  If it does exist, it will be used as guidance
         /// in constructing the action model tree.
         /// </remarks>
         /// <param name="namespaze">A namespace to qualify the site, typically the class name of the calling class is a good choice.</param>
@@ -61,7 +61,7 @@ namespace ClearCanvas.Desktop.Actions
         }
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         public ActionModelRoot()
             :this(null)
@@ -69,9 +69,9 @@ namespace ClearCanvas.Desktop.Actions
         }
 
         /// <summary>
-		/// Constructor
+		/// Constructor.
         /// </summary>
-        /// <param name="site">The site to which this model corresponds</param>
+        /// <param name="site">The site to which this model corresponds.</param>
         public ActionModelRoot(string site)
             : base(null)
         {
@@ -116,6 +116,5 @@ namespace ClearCanvas.Desktop.Actions
         {
             return new ActionModelRoot();
         }
-
     }
 }

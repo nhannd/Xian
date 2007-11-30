@@ -43,10 +43,10 @@ namespace ClearCanvas.Desktop.Actions
         private readonly string _tooltip;
 
         /// <summary>
-        /// Attribute constructor
+        /// Attribute constructor.
         /// </summary>
-        /// <param name="actionID">The logical action identifier to which this attribute applies</param>
-        /// <param name="tooltip">The tooltip message to associate with the action</param>
+        /// <param name="actionID">The logical action identifier to which this attribute applies.</param>
+        /// <param name="tooltip">The tooltip message to associate with the action.</param>
         public TooltipAttribute(string actionID, string tooltip)
             :base(actionID)
         {
@@ -54,10 +54,14 @@ namespace ClearCanvas.Desktop.Actions
         }
 
         /// <summary>
-        /// The tooltip message
+        /// The tooltip message.
         /// </summary>
         public string TooltipText { get { return _tooltip; } }
 
+		/// <summary>
+		/// Sets the <see cref="IAction.Tooltip"/> value for and <see cref="IAction"/> instance,
+		/// via the specified <see cref="IActionBuildingContext"/>.
+		/// </summary>
         public override void Apply(IActionBuildingContext builder)
         {
             // assert _action != null

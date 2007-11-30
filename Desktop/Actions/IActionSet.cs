@@ -48,14 +48,11 @@ namespace ClearCanvas.Desktop.Actions
         /// Returns a subset of this set containing only the elements for which the predicate is true.
         /// </summary>
         /// <param name="predicate">The predicate to test.</param>
-        /// <returns></returns>
         IActionSet Select(Predicate<IAction> predicate);
 
         /// <summary>
         /// Returns a set that corresponds to the union of this set with another set.
         /// </summary>
-        /// <param name="other"></param>
-        /// <returns></returns>
         IActionSet Union(IActionSet other);
     }
 }

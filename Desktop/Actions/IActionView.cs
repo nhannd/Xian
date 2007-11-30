@@ -43,7 +43,6 @@ namespace ClearCanvas.Desktop.Actions
         /// <summary>
         /// Called by the framework to set the action that the view looks at.
         /// </summary>
-        /// <param name="action"></param>
         void SetAction(IAction action);
     }
 }

@@ -37,7 +37,8 @@ using ClearCanvas.Common.Utilities;
 namespace ClearCanvas.Desktop.Actions
 {
     /// <summary>
-    /// Used by the action attribute mechanism to maintain context between attributes that co-operate to build the same action.
+    /// Used by the action attribute mechanism to maintain context 
+    /// between attributes that co-operate to build the same action.
     /// </summary>
     public interface IActionBuildingContext
     {

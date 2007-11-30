@@ -42,11 +42,12 @@ namespace ClearCanvas.Desktop.Actions
     public class ActionModelNodeList : List<ActionModelNode>
     {
         /// <summary>
-        /// Returns the child node whose <see cref="ActionModelNode.PathSegment"/> <see cref="ClearCanvas.Desktop.PathSegment.LocalizedText"/> property
+        /// Returns the child node whose <see cref="ActionModelNode.PathSegment"/> 
+        /// <see cref="ClearCanvas.Desktop.PathSegment.LocalizedText"/> property
         /// is equal to the specified value.
         /// </summary>
-        /// <param name="name">The name of the node to retrieve</param>
-        /// <returns>The corresponding child node, or null if no such node exists</returns>
+        /// <param name="name">The name of the node to retrieve.</param>
+        /// <returns>The corresponding child node, or null if no such node exists.</returns>
         public ActionModelNode this[string name]
         {
             get

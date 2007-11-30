@@ -46,10 +46,12 @@ namespace ClearCanvas.Desktop.Actions
     public class ActionResourceResolver : ResourceResolver
     {
         /// <summary>
-        /// Constructs an instance of this object for the specified action target. The class of the target
-        /// object determines the primary assembly that will be used to resolve resources.
+        /// Constructs an instance of this object for the specified action target.
         /// </summary>
-        /// <param name="actionTarget">The action target for which resources will be resolved</param>
+        /// <remarks>
+		/// The class of the target object determines the primary assembly that will be used to resolve resources.
+		/// </remarks>
+        /// <param name="actionTarget">The action target for which resources will be resolved.</param>
 		public ActionResourceResolver(object actionTarget)
             :base(new Assembly[] { actionTarget.GetType().Assembly, typeof(Application).Assembly } )
         {

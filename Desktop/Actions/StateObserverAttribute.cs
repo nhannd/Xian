@@ -46,11 +46,11 @@ namespace ClearCanvas.Desktop.Actions
         private readonly string _observedChangeEvent;
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
-        /// <param name="actionID"></param>
-        /// <param name="observedProperty"></param>
-        /// <param name="observedChangeEvent"></param>
+		/// <param name="actionID">The unique identifer of the action.</param>
+        /// <param name="observedProperty">The name of the property to bind to.</param>
+        /// <param name="observedChangeEvent">The name of the event to bind to that notifies subscribers of changes in the property value.</param>
         public StateObserverAttribute(string actionID, string observedProperty, string observedChangeEvent)
             : base(actionID)
         {
@@ -68,6 +68,10 @@ namespace ClearCanvas.Desktop.Actions
         /// </summary>
         public string ChangeEventName { get { return _observedChangeEvent; } }
 
+		/// <summary>
+		/// Binds an <see cref="IAction"/> instance to the <paramref name="actionProperty"/> and 
+		/// <paramref name="actionEvent"/> on the target object, via the specified <see cref="IActionBuildingContext"/>.
+		/// </summary>
         protected void Bind<T>(IActionBuildingContext builder, string actionProperty, string actionEvent)
         {
             ValidateProperty(builder.ActionTarget, this.PropertyName, typeof(T));
@@ -79,7 +83,10 @@ namespace ClearCanvas.Desktop.Actions
             ObservablePropertyCoupler<T>.Couple(toolBinding, actionBinding);
         }
 
-        protected void ValidateEvent(object target, string eventName)
+		/// <summary>
+		/// Validates the event that is to be bound to exists in the target object.
+		/// </summary>
+		protected void ValidateEvent(object target, string eventName)
         {
             EventInfo info = target.GetType().GetEvent(eventName);
             if (info == null)
@@ -89,7 +96,10 @@ namespace ClearCanvas.Desktop.Actions
             }
         }
 
-        protected void ValidateProperty(object target, string propertyName, Type type)
+		/// <summary>
+		/// Validates the property that is to be bound to exists in the target object.
+		/// </summary>
+		protected void ValidateProperty(object target, string propertyName, Type type)
         {
             PropertyInfo info = target.GetType().GetProperty(propertyName, type);
             if (info == null)

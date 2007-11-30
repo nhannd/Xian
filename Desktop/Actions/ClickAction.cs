@@ -39,8 +39,13 @@ using System.Security;
 
 namespace ClearCanvas.Desktop.Actions
 {
-    /// <summary>
-    /// Default implementation of <see cref="IClickAction"/>.  Models a user-interface action that is invoked by
+	/// <summary>
+	/// Used by <see cref="ClickAction"/> objects to establish a handler for a click.
+	/// </summary>
+	public delegate void ClickHandlerDelegate();
+	
+	/// <summary>
+    /// Default implementation of <see cref="IClickAction"/> which models a user-interface action that is invoked by
     /// a click, such as a toolbar button or a menu item.
     /// </summary>
     public class ClickAction : Action, IClickAction
@@ -55,12 +60,12 @@ namespace ClearCanvas.Desktop.Actions
 		private bool _checkParents = false;
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
-        /// <param name="actionID">The fully qualified action ID</param>
-        /// <param name="path">The action path</param>
-        /// <param name="flags">Flags that control the style of the action</param>
-        /// <param name="resourceResolver">A resource resolver that will be used to resolve text and image resources</param>
+        /// <param name="actionID">The fully qualified action ID.</param>
+        /// <param name="path">The action path.</param>
+        /// <param name="flags">Flags that control the style of the action.</param>
+        /// <param name="resourceResolver">A resource resolver that will be used to resolve text and image resources.</param>
         public ClickAction(string actionID, ActionPath path, ClickActionFlags flags, IResourceResolver resourceResolver)
             : base(actionID, path, resourceResolver)
         {
@@ -71,24 +76,23 @@ namespace ClearCanvas.Desktop.Actions
         /// <summary>
         /// Sets the delegate that will respond when this action is clicked.
         /// </summary>
-        /// <param name="clickHandler"></param>
         public void SetClickHandler(ClickHandlerDelegate clickHandler)
         {
             _clickHandler = clickHandler;
         }
 
-        /// <summary>
-        /// Sets the key stroke that can be used to invoke this action from the keyboard.
-        /// </summary>
-        /// <param name="keyStroke"></param>
-		public void SetKeyStroke(XKeys keyStroke)
-		{
-			_keyStroke = keyStroke;
-		}
-
         #region IClickAction members
 
-        /// <summary>
+		/// <summary>
+		/// Gets the keystroke that the UI should attempt to intercept to invoke the action.
+		/// </summary>
+		public XKeys KeyStroke
+		{
+			get { return _keyStroke; }
+			set { _keyStroke = value; }
+		}
+		
+		/// <summary>
         /// Gets a value indicating whether this action is a "check" action, that is, an action that behaves as a toggle.
         /// </summary>
         public bool IsCheckAction
@@ -144,15 +148,6 @@ namespace ClearCanvas.Desktop.Actions
                 _clickHandler();
             }
         }
-
-        /// <summary>
-        /// Gets the keystroke that the UI should attempt to intercept to invoke the action.
-        /// </summary>
-        public XKeys KeyStroke
-		{
-			get { return _keyStroke; }
-			set { _keyStroke = value; }
-		}
 
         #endregion
 	}

@@ -56,8 +56,6 @@ namespace ClearCanvas.Desktop.Actions
         /// <summary>
         /// Constructor - the specified authority token will be associated with the specified action ID.
         /// </summary>
-        /// <param name="actionID"></param>
-        /// <param name="authorityToken"></param>
         public ActionPermissionAttribute(string actionID, string authorityToken)
             : this(actionID, new string[] { authorityToken })
         {
@@ -66,15 +64,16 @@ namespace ClearCanvas.Desktop.Actions
         /// <summary>
         /// Constructor - all of the specified tokens will combined using AND and associated with the specified action ID.
         /// </summary>
-        /// <param name="actionID"></param>
-        /// <param name="authorityTokens"></param>
         public ActionPermissionAttribute(string actionID, string[] authorityTokens)
             :base(actionID)
         {
             _authorityTokens = authorityTokens;
         }
 
-        public override void Apply(IActionBuildingContext builder)
+		/// <summary>
+		/// Applies permissions represented by this attribute to an action instance, via the specified <see cref="IActionBuildingContext"/>.
+		/// </summary>
+		public override void Apply(IActionBuildingContext builder)
         {
             // if this is the first occurence of this attribute, create the parent spec
             if (builder.Action.PermissionSpecification == null)

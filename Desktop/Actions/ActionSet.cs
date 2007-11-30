@@ -36,14 +36,14 @@ using System.Text;
 namespace ClearCanvas.Desktop.Actions
 {
     /// <summary>
-    /// Default implementation of <see cref="IActionSet"/>
+    /// Default implementation of <see cref="IActionSet"/>.
     /// </summary>
     public class ActionSet : IActionSet
     {
         private readonly List<IAction> _actions;
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         public ActionSet()
             : this(null)
@@ -53,7 +53,6 @@ namespace ClearCanvas.Desktop.Actions
         /// <summary>
         /// Constructs an action set containing the specified actions.
         /// </summary>
-        /// <param name="actions"></param>
         public ActionSet(IEnumerable<IAction> actions)
         {
             _actions = new List<IAction>();
@@ -67,8 +66,6 @@ namespace ClearCanvas.Desktop.Actions
         /// <summary>
         /// Returns a subset of this set containing only the elements for which the predicate is true.
         /// </summary>
-        /// <param name="predicate">The predicate to test</param>
-        /// <returns></returns>
         public IActionSet Select(Predicate<IAction> predicate)
         {
             List<IAction> subset = new List<IAction>();
@@ -91,8 +88,6 @@ namespace ClearCanvas.Desktop.Actions
         /// <summary>
         /// Returns a set that corresponds to the union of this set with another set.
         /// </summary>
-        /// <param name="other"></param>
-        /// <returns></returns>
         public IActionSet Union(IActionSet other)
         {
             List<IAction> union = new List<IAction>();
@@ -105,7 +100,9 @@ namespace ClearCanvas.Desktop.Actions
 
         #region IEnumerable<IAction> Members
 
-
+		/// <summary>
+		/// Gets an enumerator for the <see cref="IAction"/>s in the set.
+		/// </summary>
         public IEnumerator<IAction> GetEnumerator()
         {
             return _actions.GetEnumerator();
@@ -115,7 +112,10 @@ namespace ClearCanvas.Desktop.Actions
 
         #region IEnumerable Members
 
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+		/// <summary>
+		/// Gets an enumerator for the <see cref="IAction"/>s in the set.
+		/// </summary>
+		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
         {
             return _actions.GetEnumerator();
         }

@@ -45,9 +45,9 @@ namespace ClearCanvas.Desktop.Actions
         private IAction _action; // null if this is not a leaf node
 
         /// <summary>
-        /// Protected constructor
+        /// Protected constructor.
         /// </summary>
-        /// <param name="pathSegment">The segment of the action path to which this node corresponds</param>
+        /// <param name="pathSegment">The segment of the action path to which this node corresponds.</param>
         protected ActionModelNode(PathSegment pathSegment)
         {
             _pathSegment = pathSegment;
@@ -55,8 +55,11 @@ namespace ClearCanvas.Desktop.Actions
         }
 
         /// <summary>
-        /// Used by the <see cref="CloneTree"/> method.  Derived classes must override this method to return a new node of their own type.
+        /// Used by the <see cref="CloneTree"/> method.
         /// </summary>
+        /// <remarks>
+		/// Derived classes must override this method to return a new node of their own type.
+		/// </remarks>
         /// <param name="pathSegment">The path segment which this node represents.</param>
         /// <returns>A new node of this type.</returns>
         protected virtual ActionModelNode CreateNode(PathSegment pathSegment)
@@ -100,7 +103,6 @@ namespace ClearCanvas.Desktop.Actions
         /// <summary>
         /// Merges the specified model into this model.
         /// </summary>
-        /// <param name="other">The other model</param>
         public void Merge(ActionModelNode other)
         {
             foreach (ActionModelNode otherChild in other._childNodes)
@@ -120,7 +122,7 @@ namespace ClearCanvas.Desktop.Actions
         /// <summary>
         /// Performs an in-order traversal of this model and returns the set of actions as an array.
         /// </summary>
-        /// <returns>An array of <see cref="IAction"/> objects</returns>
+        /// <returns>An array of <see cref="IAction"/> objects.</returns>
         public IAction[] GetActionsInOrder()
         {
             List<IAction> actions = new List<IAction>();
@@ -128,6 +130,9 @@ namespace ClearCanvas.Desktop.Actions
             return actions.ToArray();
         }
 
+		/// <summary>
+		/// Inserts the specified <paramref name="action"/> at the specified <paramref name="pathDepth"/>.
+		/// </summary>
         protected void InsertAction(IAction action, int pathDepth)
         {
             int segmentCount = action.Path.Segments.Length;
@@ -154,6 +159,9 @@ namespace ClearCanvas.Desktop.Actions
             }
         }
 
+		/// <summary>
+		/// Finds a child of this node, based on the specified <see cref="PathSegment"/>.
+		/// </summary>
         protected ActionModelNode FindChild(PathSegment segment)
         {
             return _childNodes[segment.LocalizedText];
@@ -162,7 +170,6 @@ namespace ClearCanvas.Desktop.Actions
         /// <summary>
         /// Creates a copy of the subtree beginning at this node.
         /// </summary>
-        /// <returns></returns>
         protected ActionModelNode CloneTree()
         {
             ActionModelNode clone = CreateNode(this.PathSegment);

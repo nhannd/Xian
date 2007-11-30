@@ -36,7 +36,7 @@ using System.Reflection;
 
 namespace ClearCanvas.Desktop.Actions
 {
-    /// <summary>
+	/// <summary>
     /// Declares a click handler binding for a click action.
     /// </summary>
     /// <remarks>
@@ -49,15 +49,27 @@ namespace ClearCanvas.Desktop.Actions
     {
         private string _handlerMethod;
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="actionID">The logical action ID.</param>
+		/// <param name="handlerMethod">The name of the click handler method.</param>
         public ClickHandlerAttribute(string actionID, string handlerMethod)
             :base(actionID)
         {
             _handlerMethod = handlerMethod;
         }
 
-        public string HandlerMethodName { get { return _handlerMethod; } }
+        /// <summary>
+        /// Gets the name of the click handler method.
+        /// </summary>
+		public string HandlerMethodName { get { return _handlerMethod; } }
 
-        public override void Apply(IActionBuildingContext builder)
+    	/// <summary>
+		/// Applies this attribute to an <see cref="IAction"/> instance, via the specified <see cref="IActionBuildingContext"/>,
+		/// by binding the appropriate handler method on the target object to the action.
+    	/// </summary>
+    	public override void Apply(IActionBuildingContext builder)
         {
             // check that the method exists, etc
             ValidateClickHandler(builder.ActionTarget, this.HandlerMethodName);
@@ -67,7 +79,7 @@ namespace ClearCanvas.Desktop.Actions
             ((ClickAction)builder.Action).SetClickHandler(clickHandler);
         }
 
-        private void ValidateClickHandler(object target, string methodName)
+        private static void ValidateClickHandler(object target, string methodName)
         {
             MethodInfo info = target.GetType().GetMethod(
                 methodName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic,

@@ -40,9 +40,11 @@ using ClearCanvas.Common.Specifications;
 namespace ClearCanvas.Desktop.Actions
 {
     /// <summary>
-    /// Abstract base class providing a default implementation of <see cref="IAction"/>.  Action classes should
-    /// inherit this class rather than implement <see cref="IAction"/> directly.
+    /// Abstract base class providing a default implementation of <see cref="IAction"/>.  
     /// </summary>
+    /// <remarks>
+	/// Action classes should inherit from this class rather than implement <see cref="IAction"/> directly.
+	/// </remarks>
     public abstract class Action : IAction
     {
         private readonly string _actionID;
@@ -71,11 +73,11 @@ namespace ClearCanvas.Desktop.Actions
         private ISpecification _permissionSpec;
 
 		/// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
-        /// <param name="actionID">The logical action ID</param>
-        /// <param name="path">The action path</param>
-        /// <param name="resourceResolver">A resource resolver that will be used to resolve icons associated with this action</param>
+        /// <param name="actionID">The logical action ID.</param>
+        /// <param name="path">The action path.</param>
+        /// <param name="resourceResolver">A resource resolver that will be used to resolve icons associated with this action.</param>
         public Action(string actionID, ActionPath path, IResourceResolver resourceResolver)
         {
             _actionID = actionID;
@@ -91,9 +93,11 @@ namespace ClearCanvas.Desktop.Actions
 
         /// <summary>
         /// Gets or sets a <see cref="ISpecification"/> that is tested to establish whether the 
-        /// current user has sufficient privileges to access the action.  The visibility of the
-        /// action is affected.
+        /// current user has sufficient privileges to access the action.
         /// </summary>
+        /// <remarks>
+		///  The visibility of the action is affected.
+		/// </remarks>
         public ISpecification PermissionSpecification
         {
             get { return _permissionSpec; }
@@ -233,7 +237,7 @@ namespace ClearCanvas.Desktop.Actions
         /// Gets a value indicating whether or not the action is 'persistent'.
         /// </summary>
         /// <remarks>
-        /// Actions created via the Action Attributes are considered persistent and are
+        /// Actions created via the Action attributes are considered persistent and are
         /// committed to the <see cref="ActionModelSettings"/>,
         /// otherwise they are considered generated and they are not committed.
         /// </remarks>

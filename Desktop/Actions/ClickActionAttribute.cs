@@ -48,7 +48,7 @@ namespace ClearCanvas.Desktop.Actions
 		private XKeys _keyStroke;
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         /// <param name="actionID">The logical action ID.</param>
         /// <param name="path">The action path.</param>
@@ -62,7 +62,7 @@ namespace ClearCanvas.Desktop.Actions
         }
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         /// <param name="actionID">The logical action ID.</param>
         /// <param name="path">The action path.</param>
@@ -89,13 +89,26 @@ namespace ClearCanvas.Desktop.Actions
 			set { _keyStroke = value; }
 		}
 
-        public override void Apply(IActionBuildingContext builder)
+		/// <summary>
+		/// The suggested location of the action in the action model.
+		/// </summary>
+		public string Path { get { return _path; } }
+		
+		/// <summary>
+		/// Applies this attribute to an <see cref="IAction"/> instance, via the specified <see cref="IActionBuildingContext"/>.
+    	/// </summary>
+    	/// <remarks>
+    	/// Because this action is an <see cref="ActionInitiatorAttribute"/>, this method actually
+    	/// creates the associated <see cref="ClickAction"/>.  <see cref="ActionDecoratorAttribute"/>s
+    	/// merely modify the properties of the action.
+    	/// </remarks>
+    	public override void Apply(IActionBuildingContext builder)
         {
             // assert _action == null
             ActionPath path = new ActionPath(this.Path, builder.ResourceResolver);
             builder.Action = CreateAction(builder.ActionID, path, this.Flags, builder.ResourceResolver);
             builder.Action.Persistent = true;
-            ((ClickAction)builder.Action).SetKeyStroke(this.KeyStroke);
+            ((ClickAction)builder.Action).KeyStroke = this.KeyStroke;
             builder.Action.Label = path.LastSegment.LocalizedText;
 
             if (!string.IsNullOrEmpty(_clickHandler))
@@ -109,12 +122,14 @@ namespace ClearCanvas.Desktop.Actions
             }
         }
 
+		/// <summary>
+		/// Creates the <see cref="ClickAction"/> represented by this attribute.
+		/// </summary>
+		/// <param name="actionID">The logical action ID.</param>
+		/// <param name="path">The action path.</param>
+		/// <param name="flags">Flags that specify the click behaviour of the action.</param>
+		/// <param name="resolver">The object used to resolve the action path and icons.</param>
         protected abstract ClickAction CreateAction(string actionID, ActionPath path, ClickActionFlags flags, IResourceResolver resolver);
-
-        /// <summary>
-        /// The suggested location of the action in the action model.
-        /// </summary>
-        public string Path { get { return _path; } }
 
         private static void ValidateClickHandler(object target, string methodName)
         {

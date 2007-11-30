@@ -36,10 +36,13 @@ using System.Text;
 namespace ClearCanvas.Desktop.Actions
 {
     /// <summary>
-    /// Declares a set of icon resources to associate with an action.  The icon resources must
-    /// refer to different sized versions of the same icon.
+    /// Declares a set of icon resources to associate with an action.  
     /// </summary>
     /// <remarks>
+    /// <para>
+	/// The icon resources must refer to different sized versions of the same icon.
+	/// </para>
+	/// <para>
     /// Icons should be supplied in several sizes so that different displays can be accomodated without
     /// having to scale the images:
     /// <list type="bullet">
@@ -49,19 +52,20 @@ namespace ClearCanvas.Desktop.Actions
     /// </list>
     /// The attribute may appear more than once for a given action ID, in order to specify 
     /// a different scheme.
+	/// </para>
     /// </remarks>
     public class IconSetAttribute : ActionDecoratorAttribute
     {
         private IconSet _iconSet;
 
         /// <summary>
-        /// Attribute constructor
+        /// Attribute constructor.
         /// </summary>
-        /// <param name="actionID">The logical action identifier to which this attribute applies</param>
-        /// <param name="scheme">The scheme of this icon set</param>
-        /// <param name="smallIcon">The resource name of the small icon</param>
-        /// <param name="mediumIcon">The resource name of the medium icon</param>
-        /// <param name="largeIcon">The resource name of the large icon</param>
+        /// <param name="actionID">The logical action identifier to which this attribute applies.</param>
+        /// <param name="scheme">The scheme of this icon set.</param>
+        /// <param name="smallIcon">The resource name of the small icon.</param>
+        /// <param name="mediumIcon">The resource name of the medium icon.</param>
+        /// <param name="largeIcon">The resource name of the large icon.</param>
         public IconSetAttribute(string actionID, IconScheme scheme, string smallIcon, string mediumIcon, string largeIcon)
             : base(actionID)
         {
@@ -73,6 +77,9 @@ namespace ClearCanvas.Desktop.Actions
         /// </summary>
         public IconSet IconSet { get { return _iconSet; } }
 
+		/// <summary>
+		/// Sets the icon set for an <see cref="IAction"/>, via the specified <see cref="IActionBuildingContext"/>.
+		/// </summary>
         public override void Apply(IActionBuildingContext builder)
         {
             // note that only one IconSet is currently supported, although it may be desirable to 

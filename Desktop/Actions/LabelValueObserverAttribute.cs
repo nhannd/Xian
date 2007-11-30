@@ -45,20 +45,23 @@ namespace ClearCanvas.Desktop.Actions
 	/// The change event name must refer to a public event on the class that will fire whenever the value of the property
 	/// changes.
 	/// </remarks>
-
 	public class LabelValueObserverAttribute : StateObserverAttribute
 	{
 		/// <summary>
-		/// Attribute constructor
+		/// Attribute constructor.
 		/// </summary>
-		/// <param name="actionID">The logical action identifier to which this attribute applies</param>
-		/// <param name="propertyName">The name of the property to bind to</param>
-		/// <param name="changeEventName">The name of the property change notification event to bind to</param>
+		/// <param name="actionID">The logical action identifier to which this attribute applies.</param>
+		/// <param name="propertyName">The name of the property to bind to.</param>
+		/// <param name="changeEventName">The name of the property change notification event to bind to.</param>
 		public LabelValueObserverAttribute(string actionID, string propertyName, string changeEventName)
 			: base(actionID, propertyName, changeEventName)
 		{
 		}
 
+		/// <summary>
+		/// Binds the <see cref="IAction.Label"/> property and <see cref="IAction.LabelChanged"/> event 
+		/// to the corresponding items on the target object, via the specified <see cref="IActionBuildingContext"/>.
+		/// </summary>
         public override void Apply(IActionBuildingContext builder)
 		{
             Bind<string>(builder, "Label", "LabelChanged");

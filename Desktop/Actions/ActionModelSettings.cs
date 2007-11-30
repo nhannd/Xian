@@ -56,15 +56,17 @@ namespace ClearCanvas.Desktop.Actions
 
 		/// <summary>
         /// Builds an in-memory action model from the specified XML model and the specified set of actions.
+        /// </summary>
+        /// <remarks>
         /// The actions will be ordered according to the XML model.  Any actions that are not a part of the
         /// XML model will be added to the memory model and inserted into the XML model based on a 'group hint'.
 		/// The XML model is automatically persisted, and new models that have never before been persisted
-		/// will be added to the store.
-        /// </summary>
-        /// <param name="namespaze">A namespace to qualify the site</param>
-        /// <param name="site">The site</param>
-        /// <param name="actions">The set of actions to include</param>
-        /// <returns>an <see cref="ActionModelNode"/> representing the root of the action model</returns>
+		/// will be added.
+		/// </remarks>
+        /// <param name="namespaze">A namespace to qualify the site.</param>
+        /// <param name="site">The site.</param>
+        /// <param name="actions">The set of actions to include.</param>
+        /// <returns>An <see cref="ActionModelNode"/> representing the root of the action model.</returns>
         public ActionModelRoot BuildAndSynchronize(string namespaze, string site, IActionSet actions)
         {
 			string actionModelID = string.Format("{0}:{1}", namespaze, site);
@@ -154,7 +156,7 @@ namespace ClearCanvas.Desktop.Actions
 
 		/// <summary>
 		/// Synchronizes persistent actions with the xml store.
-		/// Refer to <see cref="ActionModelStore.BuildAndSynchronize"/> for more details.
+		/// Refer to <see cref="BuildAndSynchronize"/> for more details.
 		/// </summary>
 		/// <param name="actionModelID">the ID of the action model</param>
 		/// <param name="actionMap">the actions that are to be synchronized/added to the store</param>
