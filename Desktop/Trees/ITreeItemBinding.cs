@@ -45,82 +45,76 @@ namespace ClearCanvas.Desktop.Trees
     public interface ITreeItemBinding
     {
         /// <summary>
-        /// Gets the text to display for the node representing the specified item
+        /// Gets the text to display for the node representing the specified item.
         /// </summary>
-        /// <param name="item"></param>
-        /// <returns></returns>
         string GetNodeText(object item);
 
         /// <summary>
-        /// 
+        /// Gets whether or not <paramref name="item"/> is checked.
         /// </summary>
-        /// <param name="item"></param>
-        /// <returns></returns>
         bool GetIsChecked(object item);
 
+		/// <summary>
+		/// Sets whether or not <paramref name="item"/> is checked.
+		/// </summary>
         void SetIsChecked(object item, bool value);
 
         /// <summary>
-        /// Gets the tooltip to display for the specified item
+        /// Gets the tooltip to display for the specified item.
         /// </summary>
-        /// <param name="item"></param>
-        /// <returns></returns>
         string GetTooltipText(object item);
 
         /// <summary>
-        /// Gets the image iconset to display for the specified item
+        /// Gets the image iconset to display for the specified item.
         /// </summary>
-        /// <param name="item"></param>
-        /// <returns></returns>
         IconSet GetIconSet(object item);
 
         /// <summary>
-        /// Gets the resource resolver used to resolve the icon
+        /// Gets the resource resolver used to resolve the icon(s).
         /// </summary>
-        /// <param name="item"></param>
-        /// <returns></returns>
         IResourceResolver GetResourceResolver(object item);
 
         /// <summary>
-        /// Asks if the item can have a subtree.  Note that this method should return true to inidicate that it
-        /// is possible that the item might have a subtree.  This allows the view to determine whether to display
-        /// a "plus" sign next to the node, without having to actually call <see cref="GetSubTree"/>.
+        /// Asks if the item can have a subtree.
         /// </summary>
-        /// <param name="item"></param>
-        /// <returns></returns>
+        /// <remarks>
+		/// Note that this method should return true to inidicate that it
+		/// is possible that the item might have a subtree.  This allows the view to determine whether to display
+		/// a "plus" sign next to the node, without having to actually call <see cref="GetSubTree"/>.
+		/// </remarks>
         bool CanHaveSubTree(object item);
 
         /// <summary>
         /// Gets the <see cref="ITree"/> that represents the subtree for the specified item,
-        /// or null if the item does not have a subtree.  Note that <see cref="CanHaveSubTree"/> is called first,
-        /// and this method will be called only if <see cref="CanHaveSubTree"/> returns true.
+        /// or null if the item does not have a subtree.
         /// </summary>
-        /// <param name="item"></param>
-        /// <returns></returns>
+        /// <remarks>
+		/// Note that <see cref="CanHaveSubTree"/> is called first,
+		/// and this method will be called only if <see cref="CanHaveSubTree"/> returns true.
+		/// </remarks>
         ITree GetSubTree(object item);
 
         /// <summary>
-        /// Gets a value indicating if the item should be expanded when the tree is initially loaded
+        /// Gets a value indicating if the item should be expanded when the tree is initially loaded.
         /// </summary>
-        /// <returns></returns>
         bool ShouldInitiallyExpandSubTree(object item);
 
         /// <summary>
         /// Asks the specified item if it can accept the specified drop data in a drag-drop operation.
         /// </summary>
-        /// <param name="item"></param>
-        /// <param name="dropData"></param>
-        /// <param name="kind"></param>
-        /// <returns>The drop kind that will be accepted</returns>
+        /// <param name="item">The item being drag-dropped.</param>
+		/// <param name="dropData">Information about the item drag-dropped.</param>
+        /// <param name="kind">The drop kind being performed.</param>
+        /// <returns>The drop kind that will be accepted.</returns>
         DragDropKind CanAcceptDrop(object item, object dropData, DragDropKind kind);
 
         /// <summary>
         /// Informs the specified item that it should accept a drop of the specified data, completing a drag-drop operation.
         /// </summary>
-        /// <param name="item"></param>
-        /// <param name="dropData"></param>
-        /// <param name="kind"></param>
-        /// <returns>The drop kind that will be accepted</returns>
-        DragDropKind AcceptDrop(object item, object dropData, DragDropKind kind);
+		/// <param name="item">The item being drag-dropped.</param>
+		/// <param name="dropData">Information about the item being drag-dropped.</param>
+		/// <param name="kind">The drop kind being performed.</param>
+		/// <returns>The drop kind that will be accepted.</returns>
+		DragDropKind AcceptDrop(object item, object dropData, DragDropKind kind);
     }
 }

@@ -37,21 +37,51 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop.Trees
 {
-    public delegate string TextProviderDelegate<T>(T item);
-    public delegate bool IsCheckedGetterDelegate<T>(T item);
-    public delegate void IsCheckedSetterDelegate<T>(T item, bool value);
+    /// <summary>
+	/// A delegate that returns text for <paramref name="item"/> in a tree.
+    /// </summary>
+	public delegate string TextProviderDelegate<T>(T item);
+	/// <summary>
+	/// A delegate that returns whether or not <paramref name="item"/> is checked in a tree.
+	/// </summary>
+	public delegate bool IsCheckedGetterDelegate<T>(T item);
+	/// <summary>
+	/// A delegate that allows setting whether or not <paramref name="item"/> is checked in a tree.
+	/// </summary>
+	public delegate void IsCheckedSetterDelegate<T>(T item, bool value);
+	/// <summary>
+	/// A delegate that returns the icon set for <paramref name="item"/> in a tree.
+	/// </summary>
     public delegate IconSet IconSetProviderDelegate<T>(T item);
-    public delegate IResourceResolver ResourceResolverProviderDelegate<T>(T item);
-    public delegate bool CanHaveSubTreeDelegate<T>(T item);
+	/// <summary>
+	/// A delegate that returns an <see cref="IResourceResolver"/> for <paramref name="item"/> in a tree.
+	/// </summary>
+	public delegate IResourceResolver ResourceResolverProviderDelegate<T>(T item);
+	/// <summary>
+	/// A delegate that returns whether or not an <paramref name="item"/> in a tree can have a sub-tree.
+	/// </summary>
+	public delegate bool CanHaveSubTreeDelegate<T>(T item);
+	/// <summary>
+	/// A delegate that gets the <see cref="ITree"/> associated with <paramref name="item"/>.
+	/// </summary>
     public delegate ITree TreeProviderDelegate<T>(T item);
+	/// <summary>
+	/// A delegate that gets whether or not the sub-tree should be expanded for <param name="item"/>.
+	/// </summary>
     public delegate bool ShouldExpandSubTreeDelegate<T>(T item);
-    public delegate DragDropKind CanAcceptDropDelegate<T>(T item, object dropData, DragDropKind kind);
-    public delegate DragDropKind AcceptDropDelegate<T>(T item, object dropData, DragDropKind kind);
+	/// <summary>
+	/// A delegate that determines whether or not <paramref name="item"/> can accept a dropped item.
+	/// </summary>
+	public delegate DragDropKind CanAcceptDropDelegate<T>(T item, object dropData, DragDropKind kind);
+	/// <summary>
+	/// A delegate that finalizes a drop operation.
+	/// </summary>
+	public delegate DragDropKind AcceptDropDelegate<T>(T item, object dropData, DragDropKind kind);
 
     /// <summary>
-    /// A useful generic implementation of <see cref="ITreeItemBinding"/>
+    /// A useful generic implementation of <see cref="ITreeItemBinding"/>.
     /// </summary>
-    /// <typeparam name="TItem"></typeparam>
+    /// <typeparam name="TItem">The type of item being bound to a tree.</typeparam>
     public class TreeItemBinding<TItem> : TreeItemBindingBase
     {
         private TextProviderDelegate<TItem> _nodeTextProvider;
@@ -68,10 +98,10 @@ namespace ClearCanvas.Desktop.Trees
 
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
-        /// <param name="nodeTextProvider"></param>
-        /// <param name="subTreeProvider"></param>
+        /// <param name="nodeTextProvider">A delegate providing text for the node in the tree.</param>
+        /// <param name="subTreeProvider">A delegate providing the sub-tree for a node in the tree.</param>
         public TreeItemBinding(TextProviderDelegate<TItem> nodeTextProvider, TreeProviderDelegate<TItem> subTreeProvider)
         {
             _nodeTextProvider = nodeTextProvider;
@@ -79,16 +109,16 @@ namespace ClearCanvas.Desktop.Trees
         }
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
-        /// <param name="nodeTextProvider"></param>
+		/// <param name="nodeTextProvider">A delegate providing text for the node in the tree.</param>
         public TreeItemBinding(TextProviderDelegate<TItem> nodeTextProvider)
             : this(nodeTextProvider, null)
         {
         }
 
         /// <summary>
-        /// Constructor
+        /// Default constructor.
         /// </summary>
         public TreeItemBinding()
             :this(null, null)
@@ -96,7 +126,7 @@ namespace ClearCanvas.Desktop.Trees
         }
 
         /// <summary>
-        /// Gets or sets the node text provider for this binding
+        /// Gets or sets the node text provider for this binding.
         /// </summary>
         public TextProviderDelegate<TItem> NodeTextProvider
         {
@@ -105,7 +135,7 @@ namespace ClearCanvas.Desktop.Trees
         }
 
         /// <summary>
-        /// Gets or sets the node checked status provider for this binding
+        /// Gets or sets the node checked status provider for this binding.
         /// </summary>
         public IsCheckedGetterDelegate<TItem> IsCheckedGetter
         {
@@ -113,14 +143,17 @@ namespace ClearCanvas.Desktop.Trees
             set { _isCheckedGetter = value; }
         }
 
-        public IsCheckedSetterDelegate<TItem> IsCheckedSetter
+		/// <summary>
+		/// Gets or sets the node checked setter for this binding.
+		/// </summary>
+		public IsCheckedSetterDelegate<TItem> IsCheckedSetter
         {
             get { return _isCheckedSetter; }
             set { _isCheckedSetter = value; }
         }
 
         /// <summary>
-        /// Gets or sets the tooltip text provider for this binding
+        /// Gets or sets the tooltip text provider for this binding.
         /// </summary>
         public TextProviderDelegate<TItem> TooltipTextProvider
         {
@@ -129,7 +162,7 @@ namespace ClearCanvas.Desktop.Trees
         }
 
         /// <summary>
-        /// Gets or sets the iconset provider for this binding
+        /// Gets or sets the iconset provider for this binding.
         /// </summary>
         public IconSetProviderDelegate<TItem> IconSetProvider
         {
@@ -138,7 +171,7 @@ namespace ClearCanvas.Desktop.Trees
         }
 
         /// <summary>
-        /// Gets or sets the resource resolver provider for this binding
+        /// Gets or sets the resource resolver provider for this binding.
         /// </summary>
         public ResourceResolverProviderDelegate<TItem> ResourceResolverProvider
         {
@@ -146,6 +179,9 @@ namespace ClearCanvas.Desktop.Trees
             set { _resourceResolverProvider = value; }
         }
 
+		/// <summary>
+		/// Gets or sets the handler that determines whether or not this item can have a sub-tree.
+		/// </summary>
         public CanHaveSubTreeDelegate<TItem> CanHaveSubTreeHandler
         {
             get { return _canHaveSubTreeHandler; }
@@ -153,7 +189,7 @@ namespace ClearCanvas.Desktop.Trees
         }
 
         /// <summary>
-        /// Gets or sets the subtree expansion state provider for this binding
+        /// Gets or sets the subtree expansion state provider for this binding.
         /// </summary>
         public ShouldExpandSubTreeDelegate<TItem> ShouldInitiallyExpandSubTreeHandler
         {
@@ -162,7 +198,7 @@ namespace ClearCanvas.Desktop.Trees
         }
 
         /// <summary>
-        /// Gets or sets the subtree provider for this binding
+        /// Gets or sets the subtree provider for this binding.
         /// </summary>
         public TreeProviderDelegate<TItem> SubTreeProvider
         {
@@ -170,31 +206,44 @@ namespace ClearCanvas.Desktop.Trees
             set { _subTreeProvider = value; }
         }
 
+		/// <summary>
+		/// Gets or sets the handler that decides whether or not an item can be dropped on this node in the tree.
+		/// </summary>
         public CanAcceptDropDelegate<TItem> CanAcceptDropHandler
         {
             get { return _canAcceptDropHandler; }
             set { _canAcceptDropHandler = value; }
         }
 
-        public AcceptDropDelegate<TItem> AcceptDropHandler
+		/// <summary>
+		/// Gets or sets the handler that accepts dropped items onto this node in the tree.
+		/// </summary>
+		public AcceptDropDelegate<TItem> AcceptDropHandler
         {
             get { return _acceptDropHandler; }
             set { _acceptDropHandler = value; }
         }
-	
-	
 
-        public override string GetNodeText(object item)
+    	///<summary>
+    	/// Gets the text to display for the node representing the specified item.
+    	///</summary>
+    	public override string GetNodeText(object item)
         {
             return _nodeTextProvider((TItem)item);
         }
 
-        public override bool GetIsChecked(object item)
+    	///<summary>
+    	/// Gets whether or not <paramref name="item" /> is checked.
+    	///</summary>
+    	public override bool GetIsChecked(object item)
         {
             return _isCheckedGetter == null ? base.GetIsChecked(((TItem) item)) : _isCheckedGetter((TItem) item);
         }
 
-        public override void SetIsChecked(object item, bool value)
+    	///<summary>
+    	/// Sets whether or not <paramref name="item" /> is checked.
+    	///</summary>
+    	public override void SetIsChecked(object item, bool value)
         {
             if(_isCheckedSetter != null)
             {
@@ -202,45 +251,90 @@ namespace ClearCanvas.Desktop.Trees
             }
         }
 
-        public override bool CanHaveSubTree(object item)
+    	///<summary>
+    	/// Asks if the item can have a subtree.
+    	///</summary>
+    	///<remarks>
+    	/// Note that this method should return true to inidicate that it
+    	/// is possible that the item might have a subtree.  This allows the view to determine whether to display
+    	/// a "plus" sign next to the node, without having to actually call <see cref="M:ClearCanvas.Desktop.Trees.ITreeItemBinding.GetSubTree(System.Object)" />.
+    	///</remarks>
+    	public override bool CanHaveSubTree(object item)
         {
             return _canHaveSubTreeHandler == null ? base.CanHaveSubTree(item) : _canHaveSubTreeHandler((TItem)item);
         }
 
-        public override ITree GetSubTree(object item)
+    	///<summary>
+    	/// Gets the <see cref="T:ClearCanvas.Desktop.Trees.ITree" /> that represents the subtree for the specified item,
+    	/// or null if the item does not have a subtree.
+    	///</summary>
+    	///<remarks>
+    	/// Note that <see cref="M:ClearCanvas.Desktop.Trees.ITreeItemBinding.CanHaveSubTree(System.Object)" /> is called first,
+    	/// and this method will be called only if <see cref="M:ClearCanvas.Desktop.Trees.ITreeItemBinding.CanHaveSubTree(System.Object)" /> returns true.
+    	///</remarks>
+    	public override ITree GetSubTree(object item)
         {
             return _subTreeProvider == null ? base.GetSubTree(item) : _subTreeProvider((TItem)item);
         }
 
-        public override bool ShouldInitiallyExpandSubTree(object item)
+    	///<summary>
+    	/// Gets a value indicating if the item should be expanded when the tree is initially loaded.
+    	///</summary>
+    	public override bool ShouldInitiallyExpandSubTree(object item)
         {
              return _shouldInitiallyExpandSubTreeHandler == null ? base.ShouldInitiallyExpandSubTree(item) : _shouldInitiallyExpandSubTreeHandler((TItem)item);
         }
 
-        public override string GetTooltipText(object item)
+    	///<summary>
+    	/// Gets the tooltip to display for the specified item.
+    	///</summary>
+    	public override string GetTooltipText(object item)
         {
             return _tooltipTextProvider == null ? base.GetTooltipText(item) : _tooltipTextProvider((TItem)item);
         }
 
-        public override IconSet GetIconSet(object item)
+    	///<summary>
+    	/// Gets the image iconset to display for the specified item.
+    	///</summary>
+    	public override IconSet GetIconSet(object item)
         {
             return _iconSetIndexProvider == null ? base.GetIconSet(item) : _iconSetIndexProvider((TItem)item);
         }
 
-        public override IResourceResolver GetResourceResolver(object item)
+    	///<summary>
+    	/// Gets the resource resolver used to resolve the icon(s).
+    	///</summary>
+    	public override IResourceResolver GetResourceResolver(object item)
         {
             return _resourceResolverProvider == null ? base.GetResourceResolver(item) : _resourceResolverProvider((TItem)item);
         }
 
-        public override DragDropKind CanAcceptDrop(object item, object dropData, DragDropKind kind)
+    	///<summary>
+    	/// Asks the specified item if it can accept the specified drop data in a drag-drop operation.
+    	///</summary>
+    	///<param name="item">The item being drag-dropped.</param>
+    	///<param name="dropData">Information about the item drag-dropped.</param>
+    	///<param name="kind">The drop kind being performed.</param>
+    	///<returns>
+    	///The drop kind that will be accepted.
+    	///</returns>
+    	public override DragDropKind CanAcceptDrop(object item, object dropData, DragDropKind kind)
         {
             return _canAcceptDropHandler == null ? base.CanAcceptDrop(item, dropData, kind) : _canAcceptDropHandler((TItem)item, dropData, kind);
         }
 
-        public override DragDropKind AcceptDrop(object item, object dropData, DragDropKind kind)
+    	///<summary>
+    	/// Informs the specified item that it should accept a drop of the specified data, completing a drag-drop operation.
+    	///</summary>
+    	///<param name="item">The item being drag-dropped.</param>
+    	///<param name="dropData">Information about the item being drag-dropped.</param>
+    	///<param name="kind">The drop kind being performed.</param>
+    	///<returns>
+    	///The drop kind that will be accepted.
+    	///</returns>
+    	public override DragDropKind AcceptDrop(object item, object dropData, DragDropKind kind)
         {
             return _acceptDropHandler == null ? base.AcceptDrop(item, dropData, kind) : _acceptDropHandler((TItem)item, dropData, kind);
         }
-
     }
 }

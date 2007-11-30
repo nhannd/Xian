@@ -38,7 +38,7 @@ using ClearCanvas.Common.Utilities;
 namespace ClearCanvas.Desktop.Trees
 {
     /// <summary>
-    /// A useful generic implementation of <see cref="ITree"/>
+    /// A useful generic implementation of <see cref="ITree"/>.
     /// </summary>
     /// <typeparam name="TItem"></typeparam>
     public class Tree<TItem> : ITree
@@ -47,19 +47,19 @@ namespace ClearCanvas.Desktop.Trees
         private ItemCollection<TItem> _items;
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
-        /// <param name="binding"></param>
+		/// <param name="binding">The tree item binding.</param>
         public Tree(ITreeItemBinding binding)
             :this(binding, null)
         {
         }
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
-        /// <param name="binding"></param>
-        /// <param name="items">The set of items that are initially contained in this tree</param>
+        /// <param name="binding">The tree item binding.</param>
+        /// <param name="items">The set of items that are initially contained in this tree.</param>
         public Tree(ITreeItemBinding binding, IEnumerable items)
         {
             _binding = binding;
@@ -71,7 +71,7 @@ namespace ClearCanvas.Desktop.Trees
         }
 
         /// <summary>
-        /// Gets the item collection associated with this tree
+		/// Gets the <see cref="IItemCollection{TItem}"/> associated with this tree.
         /// </summary>
         public ItemCollection<TItem> Items
         {
@@ -79,7 +79,7 @@ namespace ClearCanvas.Desktop.Trees
         }
 
         /// <summary>
-        /// Gets or sets the item binding associated with this tree
+        /// Gets or sets the item binding associated with this tree.
         /// </summary>
         public ITreeItemBinding Binding
         {
@@ -89,7 +89,10 @@ namespace ClearCanvas.Desktop.Trees
 
         #region ITree Members
 
-        IItemCollection ITree.Items
+		/// <summary>
+		/// Gets the <see cref="IItemCollection"/> associated with this tree.
+		/// </summary>
+		IItemCollection ITree.Items
         {
             get { return _items; }
         }

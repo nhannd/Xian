@@ -41,15 +41,13 @@ namespace ClearCanvas.Desktop.Trees
     public interface ITreeItemCollection : System.Collections.IEnumerable
     {
         /// <summary>
-        /// Gets the number of items in the collection
+        /// Gets the number of items in the collection.
         /// </summary>
         int Count { get; }
 
         /// <summary>
-        /// Gets the item at the specified index
+		/// Gets the item at the specified <paramref name="index"/>.
         /// </summary>
-        /// <param name="index"></param>
-        /// <returns></returns>
         object this[int index] { get; }
     }
 }

@@ -34,60 +34,111 @@ using ClearCanvas.Common.Utilities;
 namespace ClearCanvas.Desktop.Trees
 {
     /// <summary>
-    /// Base implementation of <see cref="ITreeItemBinding"/>.  Provides null default implementations of most methods.
+    /// Base implementation of <see cref="ITreeItemBinding"/>.
     /// </summary>
+    /// <remarks>
+	/// Provides null default implementations of most methods.
+	/// </remarks>
     public abstract class TreeItemBindingBase : ITreeItemBinding
     {
         #region ITreeItemBinding members
 
         public abstract string GetNodeText(object item);
 
-        public virtual bool GetIsChecked(object item)
+    	/// <summary>
+    	/// Gets whether or not <paramref name="item"/> is checked.
+    	/// </summary>
+    	public virtual bool GetIsChecked(object item)
         {
             return false;
         }
 
-        public virtual void SetIsChecked(object item, bool value)
+    	/// <summary>
+    	/// Sets whether or not <paramref name="item"/> is checked.
+    	/// </summary>
+    	public virtual void SetIsChecked(object item, bool value)
         {
             return;
         }
 
-        public virtual string GetTooltipText(object item)
+    	/// <summary>
+    	/// Gets the tooltip to display for the specified item.
+    	/// </summary>
+    	public virtual string GetTooltipText(object item)
         {
             return null;
         }
 
-        public virtual IconSet GetIconSet(object item)
+    	/// <summary>
+    	/// Gets the image iconset to display for the specified item.
+    	/// </summary>
+    	public virtual IconSet GetIconSet(object item)
         {
             return null;
         }
 
-        public virtual IResourceResolver GetResourceResolver(object item)
+    	/// <summary>
+    	/// Gets the resource resolver used to resolve the icon(s).
+    	/// </summary>
+    	public virtual IResourceResolver GetResourceResolver(object item)
         {
             return null;
         }
-        
-        public virtual bool CanHaveSubTree(object item)
+
+    	/// <summary>
+    	/// Asks if the item can have a subtree.
+    	/// </summary>
+    	/// <remarks>
+    	/// Note that this method should return true to inidicate that it
+    	/// is possible that the item might have a subtree.  This allows the view to determine whether to display
+    	/// a "plus" sign next to the node, without having to actually call <see cref="GetSubTree"/>.
+    	/// </remarks>
+    	public virtual bool CanHaveSubTree(object item)
         {
             return true;
         }
 
-        public virtual bool ShouldInitiallyExpandSubTree(object item)
+    	/// <summary>
+    	/// Gets a value indicating if the item should be expanded when the tree is initially loaded.
+    	/// </summary>
+    	public virtual bool ShouldInitiallyExpandSubTree(object item)
         {
             return false;
         }
 
-        public virtual ITree GetSubTree(object item)
+    	/// <summary>
+    	/// Gets the <see cref="ITree"/> that represents the subtree for the specified item,
+    	/// or null if the item does not have a subtree.
+    	/// </summary>
+    	/// <remarks>
+    	/// Note that <see cref="CanHaveSubTree"/> is called first,
+    	/// and this method will be called only if <see cref="CanHaveSubTree"/> returns true.
+    	/// </remarks>
+    	public virtual ITree GetSubTree(object item)
         {
             return null;
         }
 
-        public virtual DragDropKind CanAcceptDrop(object item, object dropData, DragDropKind kind)
+    	/// <summary>
+    	/// Asks the specified item if it can accept the specified drop data in a drag-drop operation.
+    	/// </summary>
+    	/// <param name="item">The item being drag-dropped.</param>
+    	/// <param name="dropData">Information about the item drag-dropped.</param>
+    	/// <param name="kind">The drop kind being performed.</param>
+    	/// <returns>The drop kind that will be accepted.</returns>
+    	public virtual DragDropKind CanAcceptDrop(object item, object dropData, DragDropKind kind)
         {
             return DragDropKind.None;
         }
 
-        public virtual DragDropKind AcceptDrop(object item, object dropData, DragDropKind kind)
+    	/// <summary>
+    	/// Informs the specified item that it should accept a drop of the specified data, completing a drag-drop operation.
+    	/// </summary>
+    	/// <param name="item">The item being drag-dropped.</param>
+    	/// <param name="dropData">Information about the item being drag-dropped.</param>
+    	/// <param name="kind">The drop kind being performed.</param>
+    	/// <returns>The drop kind that will be accepted.</returns>
+    	public virtual DragDropKind AcceptDrop(object item, object dropData, DragDropKind kind)
         {
             return DragDropKind.None;
         }

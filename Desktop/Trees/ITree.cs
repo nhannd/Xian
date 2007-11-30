@@ -36,7 +36,7 @@ using System.Text;
 namespace ClearCanvas.Desktop.Trees
 {
     /// <summary>
-    /// Defines the interface to a tree, which provides a presentation model for viewing hierarchical data
+    /// Defines the interface to a tree, which provides a presentation model for viewing hierarchical data.
     /// </summary>
     public interface ITree
     {
@@ -46,10 +46,13 @@ namespace ClearCanvas.Desktop.Trees
         ITreeItemBinding Binding { get; }
 
         /// <summary>
-        /// Obtains a reference to the collection of items in this tree.  Note that this collection contains
-        /// only the immediate items.  Each item may provide a sub-tree, which can be obtained via the
-        /// <see cref="ITreeItemBinding.GetSubTree"/> method.
+        /// Obtains a reference to the collection of items in this tree.
         /// </summary>
+        /// <remarks>
+		/// Note that this collection contains only the immediate items.  Each 
+		/// item may provide a sub-tree, which can be obtained via the
+		/// <see cref="ITreeItemBinding.GetSubTree"/> method.
+		/// </remarks>
         IItemCollection Items { get; }
     }
 }
