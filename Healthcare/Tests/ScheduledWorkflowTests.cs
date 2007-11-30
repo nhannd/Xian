@@ -96,7 +96,7 @@ namespace ClearCanvas.Healthcare.Tests
             {
                 CheckStatus(RequestedProcedureStatus.SC, rp);
 
-                RequestedProcedureType rpType = CollectionUtils.SelectFirst<RequestedProcedureType>(ds.RequestedProcedureTypes,
+                RequestedProcedureType rpType = CollectionUtils.SelectFirst(ds.RequestedProcedureTypes,
                     delegate(RequestedProcedureType rpt) { return rpt.Equals(rp.Type); });
 
                 Assert.IsNotNull(rpType, "diagnostic service plan not copied correctly");
@@ -104,14 +104,11 @@ namespace ClearCanvas.Healthcare.Tests
                 {
                     CheckStatus(ActivityStatus.SC, mps);
 
-                    ModalityProcedureStepType mpsType = CollectionUtils.SelectFirst<ModalityProcedureStepType>(rpType.ModalityProcedureStepTypes,
+                    ModalityProcedureStepType mpsType = CollectionUtils.SelectFirst(rpType.ModalityProcedureStepTypes,
                         delegate(ModalityProcedureStepType mpst) { return mpst.Equals(mps.Type); });
 
                     Assert.IsNotNull(mpsType, "diagnostic service plan not copied correctly");
                 }
-
-                // verify that check-in step was scheduled
-                Assert.IsNotNull(rp.ProcedureCheckIn.CheckInTime);
             }
 
 
@@ -457,7 +454,6 @@ namespace ClearCanvas.Healthcare.Tests
             CheckStatus(ActivityStatus.IP, mps1);
             CheckStatus(RequestedProcedureStatus.IP, rp1);
             CheckStatus(OrderStatus.IP, order);
-            Assert.IsNotNull(rp1.ProcedureCheckIn.CheckInTime);
         }
 
         /// <summary>
@@ -478,7 +474,6 @@ namespace ClearCanvas.Healthcare.Tests
             CheckStatus(ActivityStatus.CM, mps1);
             CheckStatus(RequestedProcedureStatus.IP, rp1);
             CheckStatus(OrderStatus.IP, order);
-            Assert.IsNotNull(rp1.ProcedureCheckIn.CheckOutTime);
         }
 
         /// <summary>
@@ -502,7 +497,6 @@ namespace ClearCanvas.Healthcare.Tests
             CheckStatus(ActivityStatus.CM, mps1);
             CheckStatus(RequestedProcedureStatus.IP, rp1);
             CheckStatus(OrderStatus.IP, order);
-            Assert.IsNotNull(rp1.ProcedureCheckIn.CheckOutTime);
         }
 
         /// <summary>
@@ -548,7 +542,6 @@ namespace ClearCanvas.Healthcare.Tests
                     CheckStatus(ActivityStatus.DC, step);
                 }
                 CheckStatus(RequestedProcedureStatus.DC, rp);
-                Assert.IsNotNull(rp.ProcedureCheckIn.CheckOutTime);
             }
 
             CheckStatus(OrderStatus.DC, order);

@@ -282,27 +282,6 @@ namespace ClearCanvas.Healthcare {
                     SetStatus(RequestedProcedureStatus.IP);
                 }
             }
-
-            // Update ProcedureCheckIn
-            bool allMpsScheduled = this.ModalityProcedureSteps.TrueForAll(
-                delegate(ModalityProcedureStep mps) { return mps.State == ActivityStatus.SC; });
-
-            bool allMpsComplete = this.ModalityProcedureSteps.TrueForAll(
-                delegate(ModalityProcedureStep mps) { return mps.State == ActivityStatus.CM; });
-
-            bool allMpsTerminated = this.ModalityProcedureSteps.TrueForAll(
-                delegate(ModalityProcedureStep mps) { return mps.IsTerminated; });
-
-            if (allMpsComplete || allMpsTerminated)
-            {
-                this.ProcedureCheckIn.CheckOut();
-            }
-            else if (!allMpsScheduled)
-            {
-                // check-in this procedure, since some mps has started
-                this.ProcedureCheckIn.CheckIn();
-            }
-        
         }
 
         /// <summary>

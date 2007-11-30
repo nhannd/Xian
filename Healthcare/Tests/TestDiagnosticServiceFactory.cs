@@ -41,20 +41,7 @@ namespace ClearCanvas.Healthcare.Tests
     {
         internal static DiagnosticService CreateDiagnosticService()
         {
-            Modality m = new Modality("01", "CT");
-
-            HashedSet<ModalityProcedureStepType> mpsTypes1 = new HashedSet<ModalityProcedureStepType>();
-            mpsTypes1.Add(new ModalityProcedureStepType("101", "CT Chest", m));
-            mpsTypes1.Add(new ModalityProcedureStepType("102", "CT Abdo/Pelvis", m));
-
-            HashedSet<ModalityProcedureStepType> mpsTypes2 = new HashedSet<ModalityProcedureStepType>();
-            mpsTypes2.Add(new ModalityProcedureStepType("103", "MR Head", m));
-
-            HashedSet<RequestedProcedureType> rpTypes = new HashedSet<RequestedProcedureType>();
-            rpTypes.Add(new RequestedProcedureType("201", "CT Chest/Abdo/Pelvis"));
-            rpTypes.Add(new RequestedProcedureType("202", "MR Head"));
-
-            return new DiagnosticService("301", "R/O everything", rpTypes);
+            return CreateDiagnosticService(1, 1);
         }
 
         internal static DiagnosticService CreateDiagnosticService(int numReqProcs, int numMpsPerReqProc)
