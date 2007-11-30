@@ -55,9 +55,9 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
                 }
                 else
                 {
-                    Report report = new Report();
-                    report.LinkProcedure(step.RequestedProcedure);
-                    ReportPart part = report.AddPart(reportContent);
+                    Report report = new Report(step.RequestedProcedure);
+                    ReportPart part = report.ActivePart;
+                    part.Content = reportContent;
                     part.Supervisor = supervisor;
 
                     context.Lock(report, DirtyState.New);
@@ -233,6 +233,10 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
             {
                 step.Discontinue();
 
+                // cancel the report part if exists
+                if(step.ReportPart != null)
+                    step.ReportPart.Cancel();
+
                 if (step.ReportPart != null && step.ReportPart.IsAddendum)
                 {
                     // if this is an addendum step, no need to create new interpretation step
@@ -253,8 +257,8 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 
             public override bool CanExecute(ReportingProcedureStep step, Staff currentUserStaff)
             {
-                // Publication step cannot be cancelled
-                if (step.Is<PublicationStep>())
+                // Publication step cannot be cancelled after starting
+                if (step.Is<PublicationStep>() && step.State != ActivityStatus.SC)
                     return false;
 
                 // cannot cancel an unclaimed interpretation step
@@ -284,9 +288,8 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
                 // Create a new interpreatation step that uses the same report part
                 InterpretationStep interpretation = new InterpretationStep(step);
 
-                // Reset the report part status and interpretator
+                // Reset the interpretator
                 interpretation.ReportPart.Interpreter = null;
-                interpretation.ReportPart.Revised();
 
                 // Assign the new step back to me
                 interpretation.Assign(currentUserStaff);
@@ -374,7 +377,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
                 InterpretationStep interpretation = new InterpretationStep(step.RequestedProcedure);
                 interpretation.Assign(currentUserStaff);
                 interpretation.Start(currentUserStaff);
-                interpretation.ReportPart = step.ReportPart.Report.AddPart("");
+                interpretation.ReportPart = step.ReportPart.Report.AddAddendum();
                 workflow.AddActivity(interpretation);
                 return interpretation;
             }
@@ -386,6 +389,10 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
                     return false;
 
                 if (step.State != ActivityStatus.CM)
+                    return false;
+
+                // cannot add a new addendum while there is still an active report/addendum
+                if(step.ReportPart.Report.ActivePart != null)
                     return false;
 
                 return true;
@@ -402,9 +409,8 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
                 // Create a new verification step that uses the same report part
                 VerificationStep verification = new VerificationStep(step);
 
-                // Reset the report part status and verifier
+                // Reset the verifier
                 verification.ReportPart.Verifier = null;
-                verification.ReportPart.Revised();
 
                 // Assign the new step back to me
                 verification.Assign(currentUserStaff);

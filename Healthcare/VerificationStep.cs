@@ -65,15 +65,14 @@ namespace ClearCanvas.Healthcare {
             get { return "Verification"; }
         }
 
-        public override void Complete()
+        protected override void OnStateChanged(ActivityStatus previousState, ActivityStatus newState)
         {
-            if (this.ReportPart == null)
-                throw new WorkflowException("ReportPart must be assigned");
+            if (newState == ActivityStatus.CM)
+                this.ReportPart.Verifier = this.PerformingStaff;
 
-            this.ReportPart.Verifier = this.PerformingStaff;
-            this.ReportPart.Finalized();
-            base.Complete();
+            base.OnStateChanged(previousState, newState);
         }
+
 		
 		#region Object overrides
 		

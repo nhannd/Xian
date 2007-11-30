@@ -48,16 +48,22 @@ namespace ClearCanvas.Healthcare {
 	public partial class Report : ClearCanvas.Enterprise.Core.Entity
 	{
         /// <summary>
-        /// Constructor for creating a new report.
+        /// Constructor for creating a new radiology report for the specified procedure.
         /// </summary>
         /// <param name="procedure">The procedure being reported.</param>
         public Report(RequestedProcedure procedure)
         {
             _procedures = new HashedSet<ClearCanvas.Healthcare.RequestedProcedure>();
-            _parts = new List<ClearCanvas.Healthcare.ReportPart>();
+            _parts = new List<ReportPart>();
 
             _procedures.Add(procedure);
             procedure.Reports.Add(this);
+
+            // create the main report part
+            ReportPart mainReport = new ReportPart();
+            mainReport.Index = 0;
+            mainReport.Report = this;
+            _parts.Add(mainReport);
         }
 	
 		/// <summary>
@@ -128,34 +134,39 @@ namespace ClearCanvas.Healthcare {
         }
 
         /// <summary>
-        /// Adds a report part to this report, setting the report's <see cref="Report.Parts"/> property
-        /// to refer to this object.  Use this method rather than referring to the <see cref="Report.Parts"/>
-        /// collection directly.
+        /// Gets a value indicating whether this report has any addenda.
         /// </summary>
-        /// <param name="part"></param>
-        public virtual void AddPart(ReportPart part)
+        public virtual bool HasAddenda
         {
-            if (part.Report != null)
+            get { return _parts.Count > 1; }
+        }
+
+        /// <summary>
+        /// Gets the active (modifiable) report part, or null if no report part is active.
+        /// </summary>
+        public virtual ReportPart ActivePart
+        {
+            get
             {
-                //NB: technically we should remove the report part from the other report's collection, but there
-                //seems to be a bug with NHibernate where it deletes the part if we do this
-                //part.Report.Parts.Remove(part);
+                ReportPart lastPart = CollectionUtils.LastElement(_parts);
+                return lastPart.Status == ReportPartStatus.P ? lastPart : null;
             }
-            part.Report = this;
-            this.Parts.Add(part);
+        }
+
+        /// <summary>
+        /// Adds a new part to this report.
+        /// </summary>
+        /// <returns></returns>
+        public virtual ReportPart AddAddendum()
+        {
+            if(this.ActivePart != null)
+                throw new WorkflowException("Cannot add an addendum because the report, or a previous addendum, has not been completed.");
+
+            ReportPart part = new ReportPart(_parts.Count, null, ReportPartStatus.P, null, null, null, null, this);
+            _parts.Add(part);
 
             UpdateStatus();
-        }
-
-        public bool HasAddendum
-        {
-            get { return _parts != null && _parts.Count > 0; }
-        }
-
-        public virtual ReportPart AddPart(string reportPartContent)
-        {
-            ReportPart part = new ReportPart(_parts.Count, reportPartContent, ReportPartStatus.P, null, null, null, null, this);
-            this.AddPart(part);
+            
             return part;
         }
 
@@ -164,25 +175,30 @@ namespace ClearCanvas.Healthcare {
         /// </summary>
         protected internal virtual void UpdateStatus()
         {
-            // if all report parts are cancelled, the report is cancelled
-            if (CollectionUtils.TrueForAll<ReportPart>(_parts,
-                delegate(ReportPart part) { return part.Status == ReportPartStatus.X; }))
+            if (_status == ReportStatus.P || _status == ReportStatus.F)
             {
-                _status = ReportStatus.X;
-            }
-            else
-            // if the report contains any report parts that is still preliminary, the report is prelimiinary
-            if (CollectionUtils.Contains<ReportPart>(_parts,
-               delegate(ReportPart part) { return part.Status == ReportPartStatus.P; }))
-            {
-                _status = ReportStatus.P;
-            }
-            else
-            {
-                if (HasAddendum)
+                int numCompletedParts =
+                    CollectionUtils.Select(_parts,
+                        delegate(ReportPart part) { return part.Status == ReportPartStatus.F; }).Count;
+
+                // transition from F to C if addendum completed
+                if (_status == ReportStatus.F && numCompletedParts > 1)
+                {
                     _status = ReportStatus.C;
-                else
+                }
+                // transition from P to F if initial report part completed
+                else if (_status == ReportStatus.P && numCompletedParts > 0)
+                {
                     _status = ReportStatus.F;
+                }
+
+                // if all report parts are cancelled, the report is cancelled
+                // (note that cancelling an addendum alone does not affect the status of this report)
+                if (_parts.Count > 0 && CollectionUtils.TrueForAll(_parts,
+                    delegate(ReportPart part) { return part.Status == ReportPartStatus.X; }))
+                {
+                    _status = ReportStatus.X;
+                }
             }
         }
     }

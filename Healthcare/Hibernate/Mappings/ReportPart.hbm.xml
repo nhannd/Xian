@@ -9,7 +9,7 @@
     <property name="Index" column="Index_" type="int" not-null="true"/>
     <property name="Content" column="Content_" type="StringClob" length="65000" not-null="false"/>
 
-    <property name="Status" column="Status_" type="ClearCanvas.Healthcare.Hibernate.ReportPartStatusEnumHbm, ClearCanvas.Healthcare.Hibernate" not-null="true"/>
+    <property name="Status" column="Status_" type="ClearCanvas.Healthcare.Hibernate.ReportPartStatusEnumHbm, ClearCanvas.Healthcare.Hibernate" not-null="true" access="nosetter.camelcase-underscore"/>
 
     <many-to-one name="Supervisor" class="Staff" column="SupervisorOID_"/>
     <many-to-one name="Interpreter" class="Staff" column="InterpreterOID_"/>

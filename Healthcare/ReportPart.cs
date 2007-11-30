@@ -42,7 +42,6 @@ namespace ClearCanvas.Healthcare {
     /// </summary>
 	public partial class ReportPart
 	{
-	
 		/// <summary>
 		/// This method is called from the constructor.  Use this method to implement any custom
 		/// object initialization.
@@ -51,28 +50,32 @@ namespace ClearCanvas.Healthcare {
 		{
 		}
 
+        /// <summary>
+        /// Gets a value indicating whether this report part is an addendum.
+        /// </summary>
         public virtual bool IsAddendum
         {
             get { return _index > 0; }
         }
 
-        public virtual void Finalized()
+        /// <summary>
+        /// Marks this report part as being complete (status Final).
+        /// </summary>
+        public virtual void Complete()
         {
             SetStatus(ReportPartStatus.F);
         }
 
-        public virtual void Revised()
-        {
-            SetStatus(ReportPartStatus.P);
-        }
-
-        public virtual void Cancelled()
+        /// <summary>
+        /// Marks this report part as being cancelled (status Cancelled).
+        /// </summary>
+        public virtual void Cancel()
         {
             SetStatus(ReportPartStatus.X);
         }
 
         /// <summary>
-        /// Helper method to change the status and also notify the parent order to change its status
+        /// Helper method to change the status and also notify the parent report to change its status
         /// if necessary.
         /// </summary>
         /// <param name="status"></param>
@@ -80,9 +83,7 @@ namespace ClearCanvas.Healthcare {
         {
             _status = status;
 
-            // the report should never be null, unless this is a brand new instance that has not yet been assigned an order
-            if (this.Report != null)
-                this.Report.UpdateStatus();
+            _report.UpdateStatus();
         }
     }
 }

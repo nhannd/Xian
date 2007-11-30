@@ -3,6 +3,7 @@ using System.Collections;
 using System.Text;
 
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Workflow;
 
 namespace ClearCanvas.Healthcare {
 
@@ -46,5 +47,13 @@ namespace ClearCanvas.Healthcare {
 		
 		#endregion
 
-	}
+        protected override void OnStateChanged(ActivityStatus previousState, ActivityStatus newState)
+        {
+            // complete the report part when publication is complete
+            if (newState == ActivityStatus.CM)
+                this.ReportPart.Complete();
+
+            base.OnStateChanged(previousState, newState);
+        }
+    }
 }
