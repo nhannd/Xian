@@ -41,16 +41,26 @@ using System.Resources;
 
 namespace ClearCanvas.Common.Configuration
 {
+	/// <summary>
+	/// Enum defining the scope of a setting.
+	/// </summary>
     [Serializable]
     public enum SettingScope
     {
-        Application,
+        /// <summary>
+        /// Indicates that a setting has application scope.
+        /// </summary>
+		Application,
+
+		/// <summary>
+		/// Indicates that a setting has user scope.
+		/// </summary>
         User
     }
 
     /// <summary>
     /// Utility class for reading meta-data associated with a settings class
-    /// (a subclass of <see cref="SettingsBase"/>)
+    /// (a subclass of <see cref="SettingsBase"/>).
     /// </summary>
     public static class SettingsClassMetaDataReader
     {
@@ -58,8 +68,6 @@ namespace ClearCanvas.Common.Configuration
         /// Obtains the version of the settings class, which is always the version of the assembly
         /// in which the class is contained.
         /// </summary>
-        /// <param name="settingsClass"></param>
-        /// <returns></returns>
         public static Version GetVersion(Type settingsClass)
         {
             return settingsClass.Assembly.GetName().Version;
@@ -68,18 +76,14 @@ namespace ClearCanvas.Common.Configuration
         /// <summary>
         /// Obtains the name of the settings group, which is always the full name of the settings class.
         /// </summary>
-        /// <param name="settingsClass"></param>
-        /// <returns></returns>
         public static string GetGroupName(Type settingsClass)
         {
             return settingsClass.FullName;
         }
 
         /// <summary>
-        /// Obtains the settings group description from the <see cref="SettingsGroupDescriptionAttribute"/>
+        /// Obtains the settings group description from the <see cref="SettingsGroupDescriptionAttribute"/>.
         /// </summary>
-        /// <param name="settingsClass"></param>
-        /// <returns></returns>
         public static string GetGroupDescription(Type settingsClass)
         {
             SettingsGroupDescriptionAttribute a = CollectionUtils.FirstElement<SettingsGroupDescriptionAttribute>(
@@ -91,8 +95,6 @@ namespace ClearCanvas.Common.Configuration
         /// <summary>
         /// Obtains the collection of properties that represent settings.
         /// </summary>
-        /// <param name="settingsClass"></param>
-        /// <returns></returns>
         public static ICollection<PropertyInfo> GetSettingsProperties(Type settingsClass)
         {
             return CollectionUtils.Select<PropertyInfo>(settingsClass.GetProperties(),
@@ -101,11 +103,10 @@ namespace ClearCanvas.Common.Configuration
 
 		/// <summary>
 		/// Obtains the default value of a setting from the <see cref="DefaultSettingValueAttribute"/>.
-		/// If translate is true, and the value is the name of an embedded resource, it is automatically translated.
 		/// </summary>
-		/// <param name="property"></param>
-		/// <param name="translate"></param>
-		/// <returns></returns>
+		/// <remarks>
+		/// If translate is true, and the value is the name of an embedded resource, it is automatically translated.
+		/// </remarks>
 		public static string GetDefaultValue(PropertyInfo property, bool translate)
 		{
 			DefaultSettingValueAttribute a = CollectionUtils.FirstElement<DefaultSettingValueAttribute>(
@@ -122,23 +123,23 @@ namespace ClearCanvas.Common.Configuration
 		
 		/// <summary>
         /// Obtains the default value of a setting from the <see cref="DefaultSettingValueAttribute"/>.
-        /// If the value is the name of an embedded resource, it is automatically translated.
         /// </summary>
-        /// <param name="property"></param>
-        /// <returns></returns>
+        /// <remarks>
+		/// If the value is the name of an embedded resource, it is automatically translated.
+		/// </remarks>
         public static string GetDefaultValue(PropertyInfo property)
         {
 			return GetDefaultValue(property, true);
         }
 
         /// <summary>
+        /// Translates the default value for a settings class given the raw value.
+        /// </summary>
+        /// <remarks>
         /// If the specified raw value is the name of an embedded resource (embedded in the same
         /// assembly as the specified settings class), the contents of the resource are returned.
         /// Otherwise, the raw value is simply returned.
-        /// </summary>
-        /// <param name="settingsClass"></param>
-        /// <param name="rawValue"></param>
-        /// <returns></returns>
+		/// </remarks>
         public static string TranslateDefaultValue(Type settingsClass, string rawValue)
         {
             // does the raw value look like it could be an embedded resource?
@@ -167,10 +168,8 @@ namespace ClearCanvas.Common.Configuration
         }
 
         /// <summary>
-        /// Obtains the setting description from the <see cref="SettingsDescriptionAttribute"/>
+        /// Obtains the setting description from the <see cref="SettingsDescriptionAttribute"/>.
         /// </summary>
-        /// <param name="property"></param>
-        /// <returns></returns>
         public static string GetDescription(PropertyInfo property)
         {
             SettingsDescriptionAttribute a = CollectionUtils.FirstElement<SettingsDescriptionAttribute>(
@@ -180,10 +179,8 @@ namespace ClearCanvas.Common.Configuration
         }
 
         /// <summary>
-        /// Returns a string describing the scope of the property.
+		/// Returns a <see cref="SettingScope"/> enum describing the scope of the property.
         /// </summary>
-        /// <param name="property"></param>
-        /// <returns></returns>
         public static SettingScope GetScope(PropertyInfo property)
         {
             if(IsAppScoped(property))
@@ -191,14 +188,12 @@ namespace ClearCanvas.Common.Configuration
             if(IsUserScoped(property))
                 return SettingScope.User;
 
-            throw new Exception("Settings scope not defined");
+			throw new Exception(SR.MessageSettingsScopeNotDefined);
         }
 
         /// <summary>
         /// Returns the name of the settings property.
         /// </summary>
-        /// <param name="property"></param>
-        /// <returns></returns>
         public static string GetName(PropertyInfo property)
         {
             return property.Name;
@@ -207,18 +202,14 @@ namespace ClearCanvas.Common.Configuration
         /// <summary>
         /// Returns the <see cref="Type"/> of the settings property.
         /// </summary>
-        /// <param name="property"></param>
-        /// <returns></returns>
         public static Type GetType(PropertyInfo property)
         {
             return property.PropertyType;
         }
 
         /// <summary>
-        /// Returns true if the property is decorated with a <see cref="UserScopedSettingAttribute"/>
+        /// Returns true if the property is decorated with a <see cref="UserScopedSettingAttribute"/>.
         /// </summary>
-        /// <param name="property"></param>
-        /// <returns></returns>
         public static bool IsUserScoped(PropertyInfo property)
         {
             UserScopedSettingAttribute a = CollectionUtils.FirstElement<UserScopedSettingAttribute>(
@@ -228,10 +219,8 @@ namespace ClearCanvas.Common.Configuration
         }
 
         /// <summary>
-        /// Returns true if the property is decorated with a <see cref="ApplicationScopedSettingAttribute"/>
+        /// Returns true if the property is decorated with a <see cref="ApplicationScopedSettingAttribute"/>.
         /// </summary>
-        /// <param name="property"></param>
-        /// <returns></returns>
         public static bool IsAppScoped(PropertyInfo property)
         {
             ApplicationScopedSettingAttribute a = CollectionUtils.FirstElement<ApplicationScopedSettingAttribute>(

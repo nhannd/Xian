@@ -35,15 +35,25 @@ using System.Text;
 
 namespace ClearCanvas.Common.Authorization
 {
-    [AttributeUsage(AttributeTargets.Field, AllowMultiple=false, Inherited=false)]
+    /// <summary>
+    /// Attribute used to define authority group tokens on types.
+    /// </summary>
+	/// <seealso cref="AuthorityGroupDefinition"/>
+	[AttributeUsage(AttributeTargets.Field, AllowMultiple=false, Inherited=false)]
     public class AuthorityTokenAttribute : Attribute
     {
         private string _description;
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
         public AuthorityTokenAttribute()
         {
         }
 
+		/// <summary>
+		/// The token description.
+		/// </summary>
         public string Description
         {
             get { return _description; }

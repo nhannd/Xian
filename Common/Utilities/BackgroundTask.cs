@@ -39,82 +39,96 @@ namespace ClearCanvas.Common.Utilities
 {
     /// <summary>
     /// Allows the background thread to communicate with the <see cref="BackgroundTask"/> object.
-    /// Note that the background thread should not directly access the <see cref="BackgroundTask"/> object.
     /// </summary>
+    /// <remarks>
+	/// Note that the background thread should not directly access the <see cref="BackgroundTask"/> object.
+	/// </remarks>
     public interface IBackgroundTaskContext
     {
         /// <summary>
-        /// Provides access to the user state object.  Note that the user state object is available
-        /// to both threads, and therefore it should either be immutable or thread-safe.
+        /// Provides access to the user state object.
         /// </summary>
+        /// <remarks>
+		/// Note that the user state object is available
+		/// to both threads, and therefore it should either be immutable or thread-safe.
+		/// </remarks>
         object UserState { get; }
 
         /// <summary>
-        /// Allows the background thread to ask whether cancellation has been requested.  If possible, the
-        /// <see cref="BackgroundTaskMethod"/> should periodically poll this flag, and if true, terminate as quickly as possible
-        /// without completing its work.  It should call <see cref="Cancel"/> to confirm cancellation.
+        /// Allows the background thread to ask whether cancellation has been requested.
         /// </summary>
+        /// <remarks>
+		/// If possible, the <see cref="BackgroundTaskMethod"/> should periodically poll this flag, 
+		/// and if true, terminate as quickly as possible without completing its work.  
+		/// It should call <see cref="Cancel"/> to confirm cancellation.
+		/// </remarks>
         bool CancelRequested { get; }
 
         /// <summary>
-        /// Allows the <see cref="BackgroundTaskMethod"/> to report progress to the foreground thread.  The progress object
-        /// may be an instance of <see cref="BackgroundTaskProgress"/> or a derived class.
+        /// Allows the <see cref="BackgroundTaskMethod"/> to report progress to the foreground thread.
         /// </summary>
-        /// <param name="progress"></param>
+        /// <remarks>
+		/// The progress object may be an instance of <see cref="BackgroundTaskProgress"/> or a derived class.</remarks>
         void ReportProgress(BackgroundTaskProgress progress);
 
         /// <summary>
         /// Allows the <see cref="BackgroundTaskMethod"/> to inform that it has completed successfully, and return the result objects
-        /// to the foreground thread.  After calling this method, the <see cref="BackgroundTaskMethod"/> should simply exit.
+        /// to the foreground thread.
         /// </summary>
-        /// <param name="results"></param>
+        /// <remarks>
+		/// After calling this method, the <see cref="BackgroundTaskMethod"/> should simply exit.
+		/// </remarks>
         void Complete(params object[] results);
 
         /// <summary>
         /// Allows the <see cref="BackgroundTaskMethod"/> to inform that it has successfully cancelled,
         /// in response to querying the <see cref="CancelRequested"/> flag, and return the result object
-        /// to the foreground thread.  After calling this method, the <see cref="BackgroundTaskMethod"/> should simply exit.
+        /// to the foreground thread.
         /// </summary>
+        /// <remarks>
+		/// After calling this method, the <see cref="BackgroundTaskMethod"/> should simply exit.
+		/// </remarks>
         void Cancel();
 
         /// <summary>
         /// Allows the <see cref="BackgroundTaskMethod"/> to inform that it cannot complete due to an exception,
-        /// and return the exception to the foreground thread.  After calling this method,
-        /// the <see cref="BackgroundTaskMethod"/> should simply exit.  Note that it is technically ok for the background
-        /// method to allow an exception to go unhandled, an the unhandled exception will still be reported to the foreground
-        /// thread as an error.  However, the VS debugger will break in this case, which may not be desirable.
+        /// and return the exception to the foreground thread.
         /// </summary>
-        /// <param name="e"></param>
+        /// <remarks>
+		/// After calling this method, the <see cref="BackgroundTaskMethod"/> should simply exit.  
+		/// Note that it is technically ok for the background method to allow an exception to go unhandled, 
+		/// an the unhandled exception will still be reported to the foreground thread as an error.  
+		/// However, the VS debugger will break in this case, which may not be desirable.
+		/// </remarks>
         void Error(Exception e);
     }
 
     /// <summary>
     /// Defines the signature for a method that is to be executed as a background task.
     /// </summary>
-    /// <param name="context"></param>
     public delegate void BackgroundTaskMethod(IBackgroundTaskContext context);
 
     /// <summary>
-    /// Encapsulates information about the progress of the task.  This class may be subclassed in order
-    /// to add additional information, or override the existing methods.
+    /// Encapsulates information about the progress of the task.
     /// </summary>
+    /// <remarks>
+	/// This class may be subclassed in order to add additional information, or override the existing methods.
+	/// </remarks>
     public class BackgroundTaskProgress
     {
         private int _percent;
         private string _message;
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         public BackgroundTaskProgress()
         {
         }
 
 		/// <summary>
-		/// Initializes a new instance of <see cref="BackgroundTaskProgress"/>
-		/// with the specified parameters.
-		/// <param name="percent"></param>
-        /// <param name="message"></param>
+		/// Initializes a new instance of <see cref="BackgroundTaskProgress"/> with the specified parameters.
+		/// </summary>
         public BackgroundTaskProgress(int percent, string message)
         {
             Platform.CheckArgumentRange(percent, 0, 100, "percent");
@@ -123,12 +137,11 @@ namespace ClearCanvas.Common.Utilities
         }
 
 		/// <summary>
-		/// Initializes a new instance of <see cref="BackgroundTaskProgress"/>
-		/// with the specified parameters.
+		/// Initializes a new instance of <see cref="BackgroundTaskProgress"/> with the specified parameters.
 		/// </summary>
-		/// <param name="index">A zero-based index</param>
-		/// <param name="total">Total number of increments</param>
-		/// <param name="message"></param>
+		/// <param name="index">A zero-based index.</param>
+		/// <param name="total">Total number of increments.</param>
+		/// <param name="message">A use friendly message.</param>
 		public BackgroundTaskProgress(int index, int total, string message)
 		{
 			Platform.CheckNonNegative(index, "index");
@@ -139,24 +152,27 @@ namespace ClearCanvas.Common.Utilities
 		}
 		
 		/// <summary>
-        /// Gets the percent completion, as an integer between 0..100
+        /// Gets the percent completion, as an integer between 0 and 100.
         /// </summary>
         public virtual int Percent { get { return _percent; } }
 
         /// <summary>
-        /// Gets a status message describing the current state of the task
+        /// Gets a status message describing the current state of the task.
         /// </summary>
         public virtual string Message { get { return _message; } }
     }
 
     /// <summary>
-    /// Conveys progress information about a <see cref="BackgroundTask"/>
+    /// Conveys progress information about a <see cref="BackgroundTask"/>.
     /// </summary>
     public class BackgroundTaskProgressEventArgs : EventArgs
     {
         private object _userState;
         private BackgroundTaskProgress _progress;
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
         public BackgroundTaskProgressEventArgs(object userState, BackgroundTaskProgress progress)
         {
             _userState = userState;
@@ -175,22 +191,22 @@ namespace ClearCanvas.Common.Utilities
     }
 
     /// <summary>
-    /// Defines the possible reasons a <see cref="BackgroundTask"/> has terminated.
+    /// Defines the possible reasons why a <see cref="BackgroundTask"/> has terminated.
     /// </summary>
     public enum BackgroundTaskTerminatedReason
     {
         /// <summary>
-        /// The task completed
+        /// The task completed.
         /// </summary>
         Completed,
 
         /// <summary>
-        /// The task was cancelled
+        /// The task was cancelled.
         /// </summary>
         Cancelled,
 
         /// <summary>
-        /// The task encountered an exception and could not complete
+        /// The task encountered an exception and could not complete.
         /// </summary>
         Exception
     }
@@ -205,6 +221,9 @@ namespace ClearCanvas.Common.Utilities
         private object[] _results;
         private Exception _exception;
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
         public BackgroundTaskTerminatedEventArgs(object userState, BackgroundTaskTerminatedReason reason, object[] results, Exception ex)
         {
             _userState = userState;
@@ -214,12 +233,12 @@ namespace ClearCanvas.Common.Utilities
         }
 
         /// <summary>
-        /// Gets the reason for termination
+        /// Gets the reason for termination.
         /// </summary>
         public BackgroundTaskTerminatedReason Reason { get { return _reason; } }
 
         /// <summary>
-        /// Gets the result of the background task, assuming it returned exactly one result.  Otherwise null is returned.
+        /// Gets the result of the background task, assuming it returned exactly one result, otherwise null.
         /// </summary>
         public object Result { get { return _results.Length > 0 ? _results[0] : null; } }
 
@@ -229,7 +248,7 @@ namespace ClearCanvas.Common.Utilities
         public object[] Results { get { return _results; } }
 
         /// <summary>
-        /// Gets the exception that occured, if <see cref="Reason"/> is <see cref="BackgroundTaskTerminatedReason.Exception"/>
+        /// Gets the exception that occured, if <see cref="Reason"/> is <see cref="BackgroundTaskTerminatedReason.Exception"/>.
         /// </summary>
         public Exception Exception { get { return _exception; } }
     }
@@ -242,7 +261,7 @@ namespace ClearCanvas.Common.Utilities
     {
         #region Helper implementation of IBackgroundTaskContext
 
-        class BackgroundTaskContext : IBackgroundTaskContext
+        private class BackgroundTaskContext : IBackgroundTaskContext
         {
             private BackgroundTask _owner;
             private DoWorkEventArgs _doWorkArgs;
@@ -300,11 +319,11 @@ namespace ClearCanvas.Common.Utilities
         /// <summary>
         /// Creates and executes a new <see cref="BackgroundTask"/> based on the specified arguments.
         /// </summary>
-        /// <param name="method">The method to run in the background</param>
-        /// <param name="supportsCancel">Indicates whether the task supports cancellation or not</param>
-        /// <param name="terminateHandler">Method that will be called when the task terminates</param>
-        /// <param name="progressHandler">Optional method to handle progress updates, may be null</param>
-        /// <param name="userState">Optional state to be passed to the background task, may be null</param>
+        /// <param name="method">The method to run in the background.</param>
+        /// <param name="supportsCancel">Indicates whether the task supports cancellation or not.</param>
+        /// <param name="terminateHandler">Method that will be called when the task terminates.</param>
+        /// <param name="progressHandler">Optional method to handle progress updates, may be null.</param>
+        /// <param name="userState">Optional state to be passed to the background task, may be null.</param>
         /// <returns>A running <see cref="BackgroundTask"/> object.</returns>
         public static BackgroundTask CreateAndRun(
             BackgroundTaskMethod method,
@@ -327,12 +346,14 @@ namespace ClearCanvas.Common.Utilities
         }
 
         /// <summary>
-        /// Constructs a new background task based on the specified method and optional state object.  The task
-        /// is not executed until the <see cref="Run"/> method is called.
+        /// Constructs a new background task based on the specified method and optional state object.
         /// </summary>
-        /// <param name="method">The method to run in the background</param>
-        /// <param name="supportsCancel">Indicates whether the task supports cancellation or not</param>
-        /// <param name="userState">Optional state to be passed to the background method</param>
+        /// <remarks>
+		/// The task is not executed until the <see cref="Run"/> method is called.
+		/// </remarks>
+        /// <param name="method">The method to run in the background.</param>
+        /// <param name="supportsCancel">Indicates whether the task supports cancellation or not.</param>
+        /// <param name="userState">Optional state to be passed to the background method.</param>
         public BackgroundTask(BackgroundTaskMethod method, bool supportsCancel, object userState)
         {
             Platform.CheckForNullReference(method, "method");
@@ -342,24 +363,26 @@ namespace ClearCanvas.Common.Utilities
             _backgroundWorker = new BackgroundWorker();
             _backgroundWorker.WorkerReportsProgress = true;
             _backgroundWorker.WorkerSupportsCancellation = supportsCancel;
-            _backgroundWorker.DoWork += new DoWorkEventHandler(_backgroundWorker_DoWork);
-            _backgroundWorker.ProgressChanged += new ProgressChangedEventHandler(_backgroundWorker_ProgressChanged);
-            _backgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(_backgroundWorker_RunWorkerCompleted);
+            _backgroundWorker.DoWork += new DoWorkEventHandler(BackgroundWorkerDoWork);
+            _backgroundWorker.ProgressChanged += new ProgressChangedEventHandler(BackgroundWorkerProgressChanged);
+            _backgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(BackgroundWorkerRunWorkerCompleted);
         }
 
         /// <summary>
-        /// Constructs a new background task based on the specified method.  The task
-        /// is not executed until the <see cref="Run"/> method is called.
+        /// Constructs a new background task based on the specified method.
         /// </summary>
-        /// <param name="method">The method to run in the background</param>
-        /// <param name="supportsCancel">Indicates whether the task supports cancellation or not</param>
+		/// <remarks>
+		/// The task is not executed until the <see cref="Run"/> method is called.
+		/// </remarks>
+		/// <param name="method">The method to run in the background.</param>
+        /// <param name="supportsCancel">Indicates whether the task supports cancellation or not.</param>
         public BackgroundTask(BackgroundTaskMethod method, bool supportsCancel)
             : this(method, supportsCancel, null)
         {
         }
 
         /// <summary>
-        /// Runs the background task
+        /// Runs the background task.
         /// </summary>
         public void Run()
         {
@@ -370,7 +393,7 @@ namespace ClearCanvas.Common.Utilities
         }
 
         /// <summary>
-        /// True if the task is currently running
+        /// True if the task is currently running.
         /// </summary>
         public bool IsRunning
         {
@@ -378,7 +401,7 @@ namespace ClearCanvas.Common.Utilities
         }
 
         /// <summary>
-        /// True if the task supports cancellation
+        /// True if the task supports cancellation.
         /// </summary>
         public bool SupportsCancel
         {
@@ -386,9 +409,11 @@ namespace ClearCanvas.Common.Utilities
         }
 
         /// <summary>
-        /// Requests that the background task be cancelled.  The does not actually stop running until
-        /// the <see cref="Terminated"/> event is fired.
+        /// Requests that the background task be cancelled.
         /// </summary>
+        /// <remarks>
+		/// The task does not actually stop running until the <see cref="Terminated"/> event is fired.
+		/// </remarks>
         public void RequestCancel()
         {
             _backgroundWorker.CancelAsync();
@@ -403,7 +428,7 @@ namespace ClearCanvas.Common.Utilities
         }
 
         /// <summary>
-        /// Notifies that the progress of the task has been updated
+        /// Notifies that the progress of the task has been updated.
         /// </summary>
         public event EventHandler<BackgroundTaskProgressEventArgs> ProgressUpdated
         {
@@ -412,9 +437,11 @@ namespace ClearCanvas.Common.Utilities
         }
 
         /// <summary>
-        /// Notifies that the task has terminated.  Check the <see cref="BackgroundTaskTerminatedEventArgs"/>
-        /// to determine the reason for termination, and obtain results.
+        /// Notifies that the task has terminated.
         /// </summary>
+        /// <remarks>
+		/// Check the <see cref="BackgroundTaskTerminatedEventArgs"/> to determine the reason for termination, and obtain results.
+		/// </remarks>
         public event EventHandler<BackgroundTaskTerminatedEventArgs> Terminated
         {
             add { _terminated += value; }
@@ -423,6 +450,9 @@ namespace ClearCanvas.Common.Utilities
 
         #region IDisposable Members
 
+		/// <summary>
+		/// Disposes of the task.
+		/// </summary>
         public void Dispose()
         {
             _backgroundWorker.Dispose();
@@ -430,19 +460,19 @@ namespace ClearCanvas.Common.Utilities
 
         #endregion
         
-        private void _backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        private void BackgroundWorkerDoWork(object sender, DoWorkEventArgs e)
         {
             // execute the operation
             _method(new BackgroundTaskContext(this, e));
         }
 
-        private void _backgroundWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        private void BackgroundWorkerProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             EventsHelper.Fire(_progressUpdated, this, new BackgroundTaskProgressEventArgs(_userState, 
                 (BackgroundTaskProgress)e.UserState));
         }
         
-        private void _backgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        private void BackgroundWorkerRunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             // if there was an unhandled exception in the worker thread, then e.Error will be non-null
             // if there was a handled exception in the worker thread, and the worker passed it back, _error will be non-null
@@ -459,6 +489,5 @@ namespace ClearCanvas.Common.Utilities
             EventsHelper.Fire(_terminated, this,
                 new BackgroundTaskTerminatedEventArgs(_userState, reason, results, _error));
         }
-
     }
 }

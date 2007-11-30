@@ -31,13 +31,13 @@
 
 namespace ClearCanvas.Common.Utilities
 {
-	public interface IPerformanceCounter
+	internal interface IPerformanceCounter
 	{
 		long Count
 		{
 			get;
 		}
-		
+
 		long Frequency
 		{
 			get;

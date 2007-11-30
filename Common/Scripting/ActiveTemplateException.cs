@@ -35,8 +35,15 @@ using System.Text;
 
 namespace ClearCanvas.Common.Scripting
 {
-    public class ActiveTemplateException : Exception
+	/// <summary>
+	/// Used by the <see cref="ActiveTemplate"/> class.
+	/// </summary>
+	[Serializable]
+	public class ActiveTemplateException : Exception
     {
+		/// <summary>
+		/// Constructor.
+		/// </summary>
         public ActiveTemplateException(string message, Exception inner)
             :base(message, inner)
         {

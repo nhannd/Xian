@@ -31,58 +31,88 @@
 
 using System;
 using System.Collections.Generic;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.Common.Utilities
 {
 	/// <summary>
 	/// This class serves as a basic container for a collection of unknown extensions.
-	/// The class itself helps to decouple the extension point interface (<see cref="IExtensionPoint"/>
-	/// from the extension point class that gets used to generate the actual
-	/// extensions from the plugins.  This is useful, for example, for testing the <see cref="Auditor"/>
-	/// extension points/interfaces that currently have no real implementation to test.
 	/// </summary>
+	/// <remarks>
+	/// The class itself helps to decouple the extension point interface (<see cref="IExtensionPoint"/>)
+	/// from the extension point class that is used to generate the actual extensions from the plugins.
+	/// </remarks>
 	/// <typeparam name="TInterface">The interface that the extensions are expected to implement.</typeparam>
 	public abstract class BasicExtensionPointManager<TInterface>
 	{
-		private List<TInterface> _listExtensions = new List<TInterface>();
+		private readonly List<TInterface> _listExtensions;
+		private bool _loaded;
 
-		protected List<TInterface> Extensions
-		{
-			get { return _listExtensions; }
-		}
-
-		private Type InterfaceType
-		{ 
-			get { return typeof(TInterface); }
-		}
-
+		/// <summary>
+		/// Protected constructor.
+		/// </summary>
 		protected BasicExtensionPointManager()
 		{
 			//TInterface can't be IExtensionPoint (can't extend and extension point).
 			if (InterfaceType == typeof(IExtensionPoint))
-				throw new InvalidOperationException();
+				throw new InvalidOperationException(SR.MessageCannotExtendIExtensionPoint);
 
-			//TInterface must be (you guessed it) and interface.
+			//TInterface must be (you guessed it) an interface.
 			if (!InterfaceType.IsInterface)
-				throw new InvalidOperationException();
+				throw new InvalidOperationException(String.Format(SR.FormatTypeMustBeInterface, InterfaceType.FullName));
+
+			_listExtensions = new List<TInterface>();
+			_loaded = false;
 		}
 
+		private static Type InterfaceType
+		{
+			get { return typeof(TInterface); }
+		}
+
+		/// <summary>
+		/// Gets the internal list of extensions.
+		/// </summary>
+		/// <remarks>
+		/// When <see cref="LoadExtensions"/> is called is left up to the derived class.  This property does
+		/// <b>not</b> call <see cref="LoadExtensions"/> automatically.
+		/// </remarks>
+		protected IEnumerable<TInterface> Extensions
+		{
+			get { return _listExtensions; }	
+		}
+
+		/// <summary>
+		/// Loads the extensions.
+		/// </summary>
+		/// <remarks>
+		/// Repeated calls to this method will do nothing.
+		/// </remarks>
 		protected void LoadExtensions()
 		{
-			if (_listExtensions.Count > 0)
+			if (_loaded)
 				return;
 
+			_loaded = true;
+
 			IExtensionPoint iExtensionPoint = GetExtensionPoint();
-			
+			if (iExtensionPoint == null)
+				return;
+
 			object[] objects = iExtensionPoint.CreateExtensions();
 			
 			foreach (object currentObject in objects)
 			{
-				TInterface expectedInterface = (TInterface)currentObject;
-				_listExtensions.Add(expectedInterface);
+				if (currentObject is TInterface)
+					_listExtensions.Add((TInterface)currentObject);
+				else
+					Platform.Log(LogLevel.Warn, String.Format(SR.FormatTypeMustImplementInterface, currentObject.GetType().FullName, InterfaceType.FullName));
 			}
 		}
 
+		/// <summary>
+		/// Inheritors must implement this method and return a valid <see cref="IExtensionPoint"/>-derived object.
+		/// </summary>
 		protected abstract IExtensionPoint GetExtensionPoint();
 	}
 }

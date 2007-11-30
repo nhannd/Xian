@@ -37,24 +37,32 @@ using System.Reflection;
 
 namespace ClearCanvas.Common.Configuration
 {
-    [ExtensionPoint]
+    /// <summary>
+    /// An extension point for <see cref="IConfigurationStore"/>s.
+    /// </summary>
+	[ExtensionPoint]
     public class ConfigurationStoreExtensionPoint : ExtensionPoint<IConfigurationStore>
     {
     }
 
     /// <summary>
     /// This class is the standard settings provider that should be used by all settings classes that operate
-    /// within the ClearCanvas framework.  Internally, this class will delegate the storage of settings between
-    /// the local file system and an implemetation of <see cref="EnterpriseConfigurationStoreExtensionPoint"/>,
-    /// if an extension is found.  All methods on this class are thread-safe, as per MSDN guidelines.
+    /// within the ClearCanvas framework.
     /// </summary>
+    /// <remarks>
+	/// Internally, this class will delegate the storage of settings between
+	/// the local file system and an implemetation of <see cref="ConfigurationStoreExtensionPoint"/>,
+	/// if an extension is found.  All methods on this class are thread-safe, as per MSDN guidelines.
+	/// </remarks>
     public class StandardSettingsProvider : SettingsProvider, IApplicationSettingsProvider
     {
         private string _appName;
         private SettingsProvider _sourceProvider;
         private object _syncLock = new object();
 
-
+		/// <summary>
+		/// Constructor.
+		/// </summary>
         public StandardSettingsProvider()
         {
             // according to MSDN recommendation, use the name of the executing assembly here
@@ -63,6 +71,9 @@ namespace ClearCanvas.Common.Configuration
 
         #region SettingsProvider overrides
 
+		/// <summary>
+		/// Gets the Application Name used to initialize the settings subsystem.
+		/// </summary>
         public override string ApplicationName
         {
             get
@@ -75,7 +86,13 @@ namespace ClearCanvas.Common.Configuration
             }
         }
 
-        public override void Initialize(string name, System.Collections.Specialized.NameValueCollection config)
+    	///<summary>
+    	///Initializes the provider.
+    	///</summary>
+    	///
+    	///<param name="config">A collection of the name/value pairs representing the provider-specific attributes specified in the configuration for this provider.</param>
+    	///<param name="name">The friendly name of the provider.</param>
+    	public override void Initialize(string name, System.Collections.Specialized.NameValueCollection config)
         {
             lock (_syncLock)
             {
@@ -100,7 +117,17 @@ namespace ClearCanvas.Common.Configuration
             }
         }
 
-        public override SettingsPropertyValueCollection GetPropertyValues(SettingsContext context, SettingsPropertyCollection props)
+    	///<summary>
+    	///Returns the collection of settings property values for the specified application instance and settings property group.
+    	///</summary>
+    	///
+    	///<returns>
+    	///A <see cref="T:System.Configuration.SettingsPropertyValueCollection"></see> containing the values for the specified settings property group.
+    	///</returns>
+    	///
+    	///<param name="context">A <see cref="T:System.Configuration.SettingsContext"></see> describing the current application use.</param>
+    	///<param name="props">A <see cref="T:System.Configuration.SettingsPropertyCollection"></see> containing the settings property group whose values are to be retrieved.</param><filterpriority>2</filterpriority>
+    	public override SettingsPropertyValueCollection GetPropertyValues(SettingsContext context, SettingsPropertyCollection props)
         {
             lock (_syncLock)
             {
@@ -119,7 +146,13 @@ namespace ClearCanvas.Common.Configuration
             }
         }
 
-        public override void SetPropertyValues(SettingsContext context, SettingsPropertyValueCollection settings)
+    	///<summary>
+    	///Sets the values of the specified group of property settings.
+    	///</summary>
+    	///
+    	///<param name="context">A <see cref="T:System.Configuration.SettingsContext"></see> describing the current application usage.</param>
+		///<param name="settings">A <see cref="T:System.Configuration.SettingsPropertyValueCollection"></see> representing the group of property settings to set.</param><filterpriority>2</filterpriority>
+    	public override void SetPropertyValues(SettingsContext context, SettingsPropertyValueCollection settings)
         {
             lock (_syncLock)
             {
@@ -132,7 +165,17 @@ namespace ClearCanvas.Common.Configuration
 
         #region IApplicationSettingsProvider Members
 
-        public SettingsPropertyValue GetPreviousVersion(SettingsContext context, SettingsProperty property)
+    	///<summary>
+    	///Returns the value of the specified settings property for the previous version of the same application.
+    	///</summary>
+    	///
+    	///<returns>
+    	///A <see cref="T:System.Configuration.SettingsPropertyValue"></see> containing the value of the specified property setting as it was last set in the previous version of the application; or null if the setting cannot be found.
+    	///</returns>
+    	///
+    	///<param name="context">A <see cref="T:System.Configuration.SettingsContext"></see> describing the current application usage.</param>
+    	///<param name="property">The <see cref="T:System.Configuration.SettingsProperty"></see> whose value is to be returned.</param><filterpriority>2</filterpriority>
+    	public SettingsPropertyValue GetPreviousVersion(SettingsContext context, SettingsProperty property)
         {
             lock (_syncLock)
             {
@@ -148,7 +191,12 @@ namespace ClearCanvas.Common.Configuration
             }
         }
 
-        public void Reset(SettingsContext context)
+    	///<summary>
+    	///Resets the application settings associated with the specified application to their default values.
+    	///</summary>
+    	///
+    	///<param name="context">A <see cref="T:System.Configuration.SettingsContext"></see> describing the current application usage.</param><filterpriority>2</filterpriority>
+    	public void Reset(SettingsContext context)
         {
             lock (_syncLock)
             {
@@ -163,7 +211,13 @@ namespace ClearCanvas.Common.Configuration
             }
         }
 
-        public void Upgrade(SettingsContext context, SettingsPropertyCollection properties)
+    	///<summary>
+    	///Indicates to the provider that the application has been upgraded. This offers the provider an opportunity to upgrade its stored settings as appropriate.
+    	///</summary>
+    	///
+    	///<param name="properties">A <see cref="T:System.Configuration.SettingsPropertyCollection"></see> containing the settings property group whose values are to be retrieved.</param>
+    	///<param name="context">A <see cref="T:System.Configuration.SettingsContext"></see> describing the current application usage.</param><filterpriority>2</filterpriority>
+    	public void Upgrade(SettingsContext context, SettingsPropertyCollection properties)
         {
             lock (_syncLock)
             {

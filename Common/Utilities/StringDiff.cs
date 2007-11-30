@@ -36,13 +36,17 @@ using System.Text;
 namespace ClearCanvas.Common.Utilities
 {
     /// <summary>
-    /// Computes the difference between two strings.  The speed and memory requirements are 
-    /// O(n2) for this algorithm, so it should not be used on very long strings.
-    /// 
-    /// Adapted from an algorithm presented here in Javascript:
-    /// http://www.csse.monash.edu.au/~lloyd/tildeAlgDS/Dynamic/Edit/
+    /// Computes the difference between two strings.
     /// </summary>
     /// <remarks>
+    /// <para>
+	/// The speed and memory requirements are O(n2) for this algorithm, 
+	/// so it should not be used on very long strings.
+	/// 
+	/// Adapted from an algorithm presented here in Javascript:
+	/// http://www.csse.monash.edu.au/~lloyd/tildeAlgDS/Dynamic/Edit/
+	/// </para>
+	/// <para>
     /// The <see cref="AlignedLeft"/> and  <see cref="AlignedRight"/> properties return versions
     /// of the left and right strings that are as closely aligned as possible on a character by
     /// character basis.  '-' characters are inserted into both strings at specific points so as to
@@ -50,9 +54,18 @@ namespace ClearCanvas.Common.Utilities
     /// The <see cref="DiffMask"/> property is a string of the same length that contains a '|' character
     /// where the aligned strings match and a space where they don't, e.g.
     /// <code>DiffMask[i] = (AlignedLeft[i] == AlignedRight[i]) ? '|' : ' '</code>
+	/// </para>
     /// </remarks>
     public class StringDiff
     {
+		/// <summary>
+		/// Computes the difference between two strings, <paramref name="left"/> 
+		/// and <paramref name="right"/>, respectively.
+		/// </summary>
+		/// <param name="left">The left-hand string.</param>
+		/// <param name="right">The right-hand string.</param>
+		/// <param name="ignoreCase">Specifies whether or not to ignore character case.</param>
+		/// <returns>A <see cref="StringDiff"/> object containing the results.</returns>
         public static StringDiff Compute(string left, string right, bool ignoreCase)
         {
             if (left == right)
@@ -70,23 +83,37 @@ namespace ClearCanvas.Common.Utilities
         private string _alignedRight;
         private string _diffMask;
 
-        public StringDiff(string alignedLeft, string alignedRight, string diffMask)
+        private StringDiff(string alignedLeft, string alignedRight, string diffMask)
         {
             _alignedLeft = alignedLeft;
             _alignedRight = alignedRight;
             _diffMask = diffMask;
         }
 
+		/// <summary>
+		/// Returns the left string (input into <see cref="StringDiff.Compute"/>),
+		/// but modified to be aligned with the right string.
+		/// </summary>
         public string AlignedLeft
         {
             get { return _alignedLeft; }
         }
 
-        public string AlignedRight
+		/// <summary>
+		/// Returns the right string (input into <see cref="StringDiff.Compute"/>),
+		/// but modified to be aligned with the left string.
+		/// </summary>
+		public string AlignedRight
         {
             get { return _alignedRight; }
         }
 
+		/// <summary>
+		/// Returns a diff mask, each character in which indicates whether or not
+		/// there is a difference at that position between <see cref="AlignedLeft"/>
+		/// and <see cref="AlignedRight"/> (space characters indicate no difference,
+		/// '|' characters indicate a difference).
+		/// </summary>
         public string DiffMask
         {
             get { return _diffMask; }

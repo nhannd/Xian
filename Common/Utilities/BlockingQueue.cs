@@ -41,13 +41,16 @@ namespace ClearCanvas.Common.Utilities
     /// http://blogs.msdn.com/toub/archive/2006/04/12/575103.aspx 
 	/// but slightly modified so the thread being blocked can exit and re-enter.
     /// </summary>
-    /// <typeparam name="T">the type to be used in the queue</typeparam>
+    /// <typeparam name="T">The type to be used in the queue.</typeparam>
     public class BlockingQueue<T>
     {
 		private object _syncLock = new object();
 		private Queue<T> _queue;
 		private bool _continueBlocking;
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
 		public BlockingQueue()
 		{
 			 _queue = new Queue<T>();
@@ -55,15 +58,21 @@ namespace ClearCanvas.Common.Utilities
 		}
 
         /// <summary>
-        /// Removes the item at the head of the queue.  If no items are available, this call
-		/// will block until an item becomes available, unless the <see cref="ContinueBlocking"/> member
-		/// has been set to false.
+        /// Removes the item at the head of the queue.
         /// </summary>
-		/// <remarks>Note that if you use this method, you must be prepared to catch the exception on whatever thread(s) are currently blocked
+		/// <remarks>
+		/// <para>
+		/// If no items are available, this call will block until an item becomes available, unless the <see cref="ContinueBlocking"/> member
+		/// has been set to false.
+		/// </para>
+		/// <para>
+		/// Note that if you use this method, you must be prepared to catch the exception on whatever thread(s) are currently blocked
 		/// in a call to Dequeue() because you will ultimately have to release the threads by setting the <see cref="ContinueBlocking"/> member to false.
 		/// That being said, it is preferable to use the alternate <see cref="Dequeue(out T)"/> method unless there is a compelling reason to
-		/// use this one.</remarks>
-		/// <exception cref="InvalidOperationException">if the queue is empty and the <see cref="ContinueBlocking"/> member is false.</exception> 
+		/// use this one.
+		/// </para>
+		/// </remarks>
+		/// <exception cref="InvalidOperationException">Thrown if the queue is empty and the <see cref="ContinueBlocking"/> member is false.</exception> 
         /// <returns>The item removed from the queue.</returns>
         public T Dequeue()
         {
@@ -78,13 +87,20 @@ namespace ClearCanvas.Common.Utilities
         }
 
 		/// <summary>
-		/// Removes the item at the head of the queue.  If no items are available, this call
-		/// will block until an item becomes available, unless the <see cref="ContinueBlocking"/> member
-		/// has been set to false.
+		/// Removes the item at the head of the queue.
 		/// </summary>
-		/// <remarks>This method will not throw an exception.</remarks>
-		/// <param name="value">the value of the next item in the queue, or default(T) if <see cref="ContinueBlocking"/> is false and the queue is empty.</param>
-		/// <returns>true if the item returned (via the out parameter) was in the queue, otherwise false.</returns>
+		/// <remarks>
+		/// <para>
+		/// If no items are available, this call will block until an item becomes available, 
+		/// unless the <see cref="ContinueBlocking"/> member has been set to false.
+		/// </para>
+		/// <para>
+		/// This method will not throw an exception.
+		/// </para>
+		/// </remarks>
+		/// <param name="value">The value of the next item in the queue, or <b>default(T)</b> 
+		/// if <see cref="ContinueBlocking"/> is false and the queue is empty.</param>
+		/// <returns>True if the item returned (via the out parameter) was in the queue, otherwise false.</returns>
 		public bool Dequeue(out T value)
 		{
 			value = default(T);
@@ -106,8 +122,8 @@ namespace ClearCanvas.Common.Utilities
 		/// <summary>
         /// Adds the specified item to the end of the queue.
         /// </summary>
-		/// <exception cref="ArgumentNullException">thrown when the input item is null</exception>
-		/// <param name="item">The item to enqueue</param>
+		/// <exception cref="ArgumentNullException">Thrown when the input item is null.</exception>
+		/// <param name="item">The item to enqueue.</param>
         public void Enqueue(T item)
         {
 			Platform.CheckForNullReference(item, "item");
@@ -119,11 +135,14 @@ namespace ClearCanvas.Common.Utilities
         }
 
 		/// <summary>
-		/// Indicates whether or not <see cref="Dequeue"/> should block until the queue
-		/// becomes non-empty.  When set to false, all actively waiting threads 
-		/// (e.g. currently blocked, calling <see cref="Dequeue"/>) are  released so they 
-		/// can determine whether or not they should quit.
+		/// Indicates whether or not the <b>Dequeue</b> methods should block until the queue
+		/// becomes non-empty.
 		/// </summary>
+		/// <remarks>
+		/// When set to false, all actively waiting threads 
+		/// (e.g. currently blocked, calling <b>Dequeue</b>) are  released so they 
+		/// can determine whether or not they should quit.
+		/// </remarks>
 		public bool ContinueBlocking
 		{
 			get 

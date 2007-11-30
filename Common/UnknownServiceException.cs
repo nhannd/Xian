@@ -35,9 +35,12 @@ using System.Text;
 
 namespace ClearCanvas.Common
 {
-    public class UnknownServiceException : Exception
+    /// <summary>
+    /// Used internally by the framework to indicate an error when attempting to load/use a service.
+    /// </summary>
+	public class UnknownServiceException : Exception
     {
-        public UnknownServiceException(string message)
+        internal UnknownServiceException(string message)
             :base(message)
         {
         }

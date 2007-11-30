@@ -38,8 +38,7 @@ using ClearCanvas.Common.Utilities;
 namespace ClearCanvas.Common.Actions
 {
     /// <summary>
-    /// Defines an extension point for types of actions that can be parsed by the 
-    /// <see cref="XmlActionCompiler{T}"/>.
+    /// Defines an extension point for types of actions that can be parsed by the <see cref="XmlActionCompiler{T}"/>.
     /// </summary>
     /// <seealso cref="IXmlActionCompilerOperator{T}"/>
     [ExtensionPoint]
@@ -60,7 +59,7 @@ namespace ClearCanvas.Common.Actions
     /// Actions are defined by the <see cref="XmlActionCompilerOperatorExtensionPoint{T}"/> extension
     /// point.  The compiler does not contain any predefined actions.  The compiler makes no assumptions
     /// about the attributes of the <see cref="XmlElement"/> for the action.  Any attributes can be defined
-    /// for the action are are interpreted by the operation defined for the action type.
+    /// for the action and are interpreted by the operation defined for the action type.
     /// </para>
     /// </remarks>
     public class XmlActionCompiler<T>
@@ -91,13 +90,14 @@ namespace ClearCanvas.Common.Actions
         /// <see cref="IActionSet{T}"/> interface is returned which can be called to exectute the actions based on input data.
         /// </para>
         /// </remarks>
-        /// <param name="containingNode">The input XML to perform</param>
+        /// <param name="containingNode">The input XML containg actions to perform.</param>
         /// <returns>A class instance that implements the <see cref="IActionSet{T}"/> interface.</returns>
         public IActionSet<T> Compile(XmlElement containingNode)
         {
             List<IActionItem<T>> actions = new List<IActionItem<T>>();
             ICollection<XmlNode> nodes = GetChildElements(containingNode);
-            foreach(XmlNode node in nodes)
+            
+			foreach(XmlNode node in nodes)
             {
                 if (_operatorMap.ContainsKey(node.Name))
                 {
@@ -106,10 +106,11 @@ namespace ClearCanvas.Common.Actions
                 }
                 else
                 {
-                    throw new XmlActionCompilerException(string.Format("Unable to find matching action for {0} node in script.  Unable to perform action.", node.Name));
+					throw new XmlActionCompilerException(string.Format(SR.FormatUnableToFindMatchingAction, node.Name));
                 }
             }
-            return new ActionSet<T>(actions);
+
+			return new ActionSet<T>(actions);
         }
 
         private void AddOperator(IXmlActionCompilerOperator<T> op)

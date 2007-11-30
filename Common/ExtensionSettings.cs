@@ -39,11 +39,14 @@ using System.Configuration;
 namespace ClearCanvas.Common
 {
 	/// <summary>
-	/// Currently empty, but in the future, methods may be added that, for example
-	/// switches SettingsProviders.
+	/// Currently empty, but in the future methods may be added that, for example,
+	/// switches <see cref="SettingsProvider"/>s.
 	/// </summary>
 	public class ExtensionSettings : ApplicationSettingsBase
 	{
+		/// <summary>
+		/// Constructor.
+		/// </summary>
 		public ExtensionSettings()
 		{
 		}

@@ -35,6 +35,14 @@ using System.Collections.Generic;
 
 namespace ClearCanvas.Common.Utilities
 {
+	/// <summary>
+	/// A list class, changes to which can be observed via events.
+	/// </summary>
+	/// <remarks>
+	/// Internally, a simple <see cref="List{T}"/> object is used.  
+	/// For exception details on individual methods, see <see cref="List{T}"/>.
+	/// </remarks>
+	/// <typeparam name="TItem">The type of the objects stored in the list.</typeparam>
 	public class ObservableList<TItem> : IList<TItem>
 	{
 		private readonly List<TItem> _list;
@@ -44,11 +52,17 @@ namespace ClearCanvas.Common.Utilities
 		private event EventHandler<CollectionEventArgs<TItem>> _itemChanging; 
 		private event EventHandler<CollectionEventArgs<TItem>> _itemChangedEvent;
 
+		/// <summary>
+		/// Default constructor.
+		/// </summary>
 		public ObservableList()
 		{
 			_list = new List<TItem>();
 		}
 
+		/// <summary>
+		/// Copy constructor that takes a set of <typeparamref name="TItem"/>s and adds them to this list.
+		/// </summary>
 		public ObservableList(IEnumerable<TItem> values)
 			: this()
 		{
@@ -56,6 +70,10 @@ namespace ClearCanvas.Common.Utilities
 				this.Add(item);
 		}
 
+		/// <summary>
+		/// Sorts the list given the input <paramref name="sortComparer"/>.
+		/// </summary>
+		/// <param name="sortComparer">A comparer to be used to sort the list.</param>
 		public void Sort(IComparer<TItem> sortComparer)
 		{
 			Platform.CheckForNullReference(sortComparer, "sortComparer");
@@ -63,24 +81,36 @@ namespace ClearCanvas.Common.Utilities
 			_list.Sort(sortComparer);
 		}
 
+		/// <summary>
+		/// Fired when an item is added to the list.
+		/// </summary>
 		public virtual event EventHandler<CollectionEventArgs<TItem>> ItemAdded
 		{
 			add { _itemAddedEvent += value; }
 			remove { _itemAddedEvent -= value;	}
 		}
 
+		/// <summary>
+		/// Fired when an item is removed from the list.
+		/// </summary>
 		public virtual event EventHandler<CollectionEventArgs<TItem>> ItemRemoved
 		{
 			add { _itemRemovedEvent += value; }
 			remove { _itemRemovedEvent -= value; }
 		}
 
+		/// <summary>
+		/// Fired when an item in the list has changed.
+		/// </summary>
 		public virtual event EventHandler<CollectionEventArgs<TItem>> ItemChanged
 		{
 			add { _itemChangedEvent += value; }
 			remove { _itemChangedEvent -= value; }
 		}
 
+		/// <summary>
+		/// Fires when an item in the list is about to change.
+		/// </summary>
 		public virtual event EventHandler<CollectionEventArgs<TItem>> ItemChanging
 		{
 			add { _itemChanging += value; }
@@ -89,6 +119,10 @@ namespace ClearCanvas.Common.Utilities
 
 		#region IList<T> Members
 
+		/// <summary>
+		/// Gets the index of <paramref name="item"/> in the list.
+		/// </summary>
+		/// <returns>The index of <paramref name="item"/>, or -1 if it is not in the list.</returns>
 		public int IndexOf(TItem item)
 		{
 			Platform.CheckForNullReference(item, "item");
@@ -96,6 +130,9 @@ namespace ClearCanvas.Common.Utilities
 			return _list.IndexOf(item);
 		}
 
+		/// <summary>
+		/// Inserts <paramref name="item"/> at the specified <paramref name="index"/>.
+		/// </summary>
 		public virtual void Insert(int index, TItem item)
 		{
 			Platform.CheckArgumentRange(index, 0, this.Count, "index");
@@ -107,6 +144,9 @@ namespace ClearCanvas.Common.Utilities
 			OnItemAdded(new CollectionEventArgs<TItem>(item, index));
 		}
 
+		/// <summary>
+		/// Removes the item at the specified <paramref name="index"/>.
+		/// </summary>
 		public virtual void RemoveAt(int index)
 		{
 			Platform.CheckArgumentRange(index, 0, this.Count - 1, "index");
@@ -117,6 +157,9 @@ namespace ClearCanvas.Common.Utilities
 			OnItemRemoved(new CollectionEventArgs<TItem>(itemToRemove, index));
 		}
 
+		/// <summary>
+		/// Gets or sets the item at the specified index.
+		/// </summary>
 		public TItem this[int index]
 		{
 			get
@@ -142,6 +185,9 @@ namespace ClearCanvas.Common.Utilities
 
 		#region ICollection<TItem> Members
 
+		/// <summary>
+		/// Adds the specified item to the list.
+		/// </summary>
 		public virtual void Add(TItem item)
 		{
 			if (_list.Contains(item))
@@ -151,6 +197,9 @@ namespace ClearCanvas.Common.Utilities
 			OnItemAdded(new CollectionEventArgs<TItem>(item, this.Count - 1));
 		}
 
+		/// <summary>
+		/// Clears the list.
+		/// </summary>
 		public virtual void Clear()
 		{
 			// If we don't have any subscribers to the ItemRemovedEvent, then
@@ -171,6 +220,9 @@ namespace ClearCanvas.Common.Utilities
 			}
 		}
 
+		/// <summary>
+		/// Gets whether or not the list contains the specified item.
+		/// </summary>
 		public bool Contains(TItem item)
 		{
 			Platform.CheckForNullReference(item, "item");
@@ -178,21 +230,35 @@ namespace ClearCanvas.Common.Utilities
 			return _list.Contains(item);
 		}
 
+		/// <summary>
+		/// Copies the entire contents of the list to the input <paramref name="array"/>, 
+		/// starting at the specified <paramref name="arrayIndex"/>.
+		/// </summary>
 		public void CopyTo(TItem[] array, int arrayIndex)
 		{
 			_list.CopyTo(array, arrayIndex);
 		}
 
+		/// <summary>
+		/// Gets the number of items in the list.
+		/// </summary>
 		public int Count
 		{
 			get { return _list.Count; }
 		}
 
+		/// <summary>
+		/// returns false.
+		/// </summary>
 		public bool IsReadOnly
 		{
 			get { return false; }
 		}
 
+		/// <summary>
+		/// Removes the specified <paramref name="item"/> from the list.
+		/// </summary>
+		/// <returns>True if the item was in the list and was removed.</returns>
 		public virtual bool Remove(TItem item)
 		{
 			Platform.CheckForNullReference(item, "item");
@@ -214,6 +280,9 @@ namespace ClearCanvas.Common.Utilities
 
 		#region IEnumerable<TItem> Members
 
+		/// <summary>
+		/// Gets an <see cref="IEnumerator{T}"/> for the list.
+		/// </summary>
 		public IEnumerator<TItem> GetEnumerator()
 		{
 			return (_list as IEnumerable<TItem>).GetEnumerator();
@@ -223,6 +292,9 @@ namespace ClearCanvas.Common.Utilities
 
 		#region IEnumerable Members
 
+		/// <summary>
+		/// Gets an <see cref="IEnumerator"/> for the list.
+		/// </summary>
 		IEnumerator IEnumerable.GetEnumerator()
 		{
 			return _list.GetEnumerator();
@@ -230,20 +302,33 @@ namespace ClearCanvas.Common.Utilities
 
 		#endregion
 
+		/// <summary>
+		/// Called internally when an item is added.
+		/// </summary>
 		protected virtual void OnItemAdded(CollectionEventArgs<TItem> e)
 		{
 			EventsHelper.Fire(_itemAddedEvent, this, e);
 		}
 
+		/// <summary>
+		/// Called internally when an item is removed.
+		/// </summary>
 		protected virtual void OnItemRemoved(CollectionEventArgs<TItem> e)
 		{
 			EventsHelper.Fire(_itemRemovedEvent, this, e);
 		}
 
-		private void OnItemChanging(CollectionEventArgs<TItem> e)
+		/// <summary>
+		/// Called internally when an item is changing.
+		/// </summary>
+		protected void OnItemChanging(CollectionEventArgs<TItem> e)
 		{
 			EventsHelper.Fire(_itemChanging, this, e);
 		}
+
+		/// <summary>
+		/// Called internally when an item has changed.
+		/// </summary>
 		protected virtual void OnItemChanged(CollectionEventArgs<TItem> e)
 		{
 			EventsHelper.Fire(_itemChangedEvent, this, e);

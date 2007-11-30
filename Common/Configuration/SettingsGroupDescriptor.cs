@@ -50,7 +50,6 @@ namespace ClearCanvas.Common.Configuration
         /// If <param name="excludeLocalSettingsGroups"/> is true, this method only returns settings classes 
         /// that use the <see cref="StandardSettingsProvider"/> for persistence.
         /// </remarks>
-        /// <returns></returns>
         public static List<SettingsGroupDescriptor> ListInstalledSettingsGroups(bool excludeLocalSettingsGroups)
         {
             List<SettingsGroupDescriptor> groups = new List<SettingsGroupDescriptor>();
@@ -94,12 +93,8 @@ namespace ClearCanvas.Common.Configuration
         private string _assemblyQualifiedTypeName;
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
-        /// <param name="name"></param>
-        /// <param name="version"></param>
-        /// <param name="description"></param>
-        /// <param name="assemblyQualifiedTypeName"></param>
         public SettingsGroupDescriptor(string name, Version version, string description, string assemblyQualifiedTypeName)
         {
             _name = name;
@@ -108,6 +103,9 @@ namespace ClearCanvas.Common.Configuration
             _assemblyQualifiedTypeName = assemblyQualifiedTypeName;
         }
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
         public SettingsGroupDescriptor(Type settingsClass)
         {
             _name = SettingsClassMetaDataReader.GetGroupName(settingsClass);
@@ -149,15 +147,16 @@ namespace ClearCanvas.Common.Configuration
         }
 
         /// <summary>
-        /// Settings groups are considered equal if they have the same name and version
+        /// Settings groups are considered equal if they have the same name and version.
         /// </summary>
-        /// <param name="other"></param>
-        /// <returns></returns>
         public override bool Equals(object obj)
         {
             return this.Equals(obj as SettingsGroupDescriptor);
         }
 
+		/// <summary>
+		/// Gets the hash code for this object.
+		/// </summary>
         public override int GetHashCode()
         {
             return _name.GetHashCode() ^ _version.GetHashCode();
@@ -166,10 +165,8 @@ namespace ClearCanvas.Common.Configuration
         #region IEquatable<SettingsGroupDescriptor> Members
 
         /// <summary>
-        /// Settings groups are considered equal if they have the same name and version
+        /// Settings groups are considered equal if they have the same name and version.
         /// </summary>
-        /// <param name="other"></param>
-        /// <returns></returns>
         public bool Equals(SettingsGroupDescriptor other)
         {
             return other != null && this._name == other._name && this._version == other._version;

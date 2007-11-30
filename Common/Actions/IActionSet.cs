@@ -41,8 +41,8 @@ namespace ClearCanvas.Common.Actions
         /// <summary>
         /// Execute a set of actions.
         /// </summary>
-        /// <param name="context"></param>
-        /// <returns></returns>
+		/// <param name="context">An implementation specific context for the actions.</param>
+        /// <returns>A <see cref="TestResult"/> object describing the results.</returns>
         TestResult Execute(T context);
     }
 }

@@ -55,18 +55,36 @@ using System.ComponentModel;
 
 namespace ClearCanvas.Common
 {
+	/// <summary>
+	/// Defines the logging level for calls to one of the <b>Platform.Log</b> methods.
+	/// </summary>
 	public enum LogLevel
 	{
+		/// <summary>
+		/// Debug log level.
+		/// </summary>
 		Debug,
+		/// <summary>
+		/// Info log level.
+		/// </summary>
 		Info,
+		/// <summary>
+		/// Warning log level.
+		/// </summary>
 		Warn,
+		/// <summary>
+		/// Error log level.
+		/// </summary>
 		Error,
+		/// <summary>
+		/// Fatal log level.
+		/// </summary>
 		Fatal
 	}
 
 
     /// <summary>
-    /// 
+    /// An extension point for <see cref="IMessageBox"/>es.
     /// </summary>
     [ExtensionPoint()]
     public class MessageBoxExtensionPoint : ExtensionPoint<IMessageBox>
@@ -74,31 +92,46 @@ namespace ClearCanvas.Common
     }
 
     /// <summary>
-    /// Defines the Application Root extension point.  When <see cref="Platform.StartApp" /> is called,
-    /// the platform creates an application root extension and executes it by calling
-    /// <see cref="IApplicationRoot.RunApplication" />.
+    /// Defines the Application Root extension point.
     /// </summary>
+    /// <remarks>
+	/// When one of the <b>Platform.StartApp</b> methods are called,
+	/// the platform creates an application root extension and executes it by calling
+	/// <see cref="IApplicationRoot.RunApplication" />.
+	/// </remarks>
     [ExtensionPoint()]
     public class ApplicationRootExtensionPoint : ExtensionPoint<IApplicationRoot>
     {
     }
 
-    [ExtensionPoint()]
+    /// <summary>
+    /// An extension point for <see cref="ITimeProvider"/>s.
+    /// </summary>
+    /// <remarks>
+    /// Used internally by the framework to create a <see cref="ITimeProvider"/> for
+    /// use by the application (see <see cref="Platform.Time"/>).
+    /// </remarks>
+	[ExtensionPoint()]
     public class TimeProviderExtensionPoint : ExtensionPoint<ITimeProvider>
     {
     }
 
     /// <summary>
-    /// Defines an extension point for service providers.  A service provider is a class that knows how
-    /// to provide a specific set of services to the application.  A given service should be provided
-    /// exclusively by one provider (i.e. no two providers should provide the same service).  The application obtains
-    /// services through the <see cref="Platform.GetService"/> method.
+    /// Defines an extension point for service providers.
     /// </summary>
     /// <remarks>
+    /// <para>
+	/// A service provider is a class that knows how to provide a specific set of services to the 
+	/// application.  A given service should be provided exclusively by one provider 
+	/// (i.e. no two providers should provide the same service).  The application obtains
+	/// services through the <see cref="Platform.GetService"/> method.
+	/// </para>
+	/// <para>
     /// A service provider may be accessed by multiple threads.  For reasons of thread-safety, a service provider
     /// should return a new instance of the service class for each call to <see cref="IServiceProvider.GetService"/>,
     /// so that each thread receives its own copy of the service.
     /// If the provider returns the same object (singleton), then the service object itself must be thread-safe.
+	/// </para>
     /// </remarks>
     [ExtensionPoint]
     public class ServiceProviderExtensionPoint : ExtensionPoint<IServiceProvider>
@@ -110,24 +143,31 @@ namespace ClearCanvas.Common
 	/// </summary>
 	public static class Platform
 	{
-        private static object _syncRoot = new Object();
+		#region Private fields
 
-        private static string _installDirectory = null;
-        private static string _pluginsDirectory = null;
-        private static string _logDirectory = null;
+		private static object _syncRoot = new Object();
+
+		private static readonly ILog _log = LogManager.GetLogger(typeof(Platform));
 
 		private static string _pluginSubFolder = "plugins";
 		private static string _logSubFolder = "logs";
+
+		private static volatile string _installDirectory = null;
+		private static volatile string _pluginsDirectory = null;
+		private static volatile string _logDirectory = null;
+
 		private static volatile PluginManager _pluginManager;
-		private static readonly ILog _log = LogManager.GetLogger(typeof(Platform));
-        private static IApplicationRoot _applicationRoot;
-		private static IMessageBox _messageBox;
-		private static AuditManager _auditManager;
-        private static ITimeProvider _timeProvider;
-        private static IServiceProvider[] _serviceProviders;
+		private static volatile IApplicationRoot _applicationRoot;
+		private static volatile IMessageBox _messageBox;
+		private static volatile AuditManager _auditManager;
+		private static volatile ITimeProvider _timeProvider;
+        private static volatile IServiceProvider[] _serviceProviders;
+
+		#endregion
 
 #if UNIT_TESTS
-        /// <summary>
+
+		/// <summary>
         /// Sets the extension factory that is used to instantiate extensions.
         /// </summary>
         /// <remarks>
@@ -144,7 +184,6 @@ namespace ClearCanvas.Common
 		/// <summary>
 		/// Gets the one and only <see cref="PluginManager"/>.
 		/// </summary>
-		/// <value>The <see cref="PluginManager"/>.</value>
 		public static PluginManager PluginManager
 		{
 			get
@@ -273,7 +312,16 @@ namespace ClearCanvas.Common
 			}
 		}
 
-		public static AuditManager AuditManager
+		/// <summary>
+		/// Gets the <see cref="AuditManager"/>.
+		/// </summary>
+		/// <remarks>
+		/// The <see cref="AuditManager"/> is itself an <see cref="IAuditor"/>, but internally it manages a list
+		/// of <see cref="IAuditor"/>s created via the <see cref="AuditorExtensionPoint"/>.  When <see cref="IAuditor.Audit"/> 
+		/// is called on the <see cref="AuditManager"/>, it calls <see cref="IAuditor.Audit"/> on each of the 
+		/// <see cref="IAuditor"/>s in its internal list.
+		/// </remarks>
+		public static IAuditor AuditManager
 		{
 			get
 			{
@@ -294,9 +342,13 @@ namespace ClearCanvas.Common
         /// Gets the current time from an extension of <see cref="TimeProviderExtensionPoint"/>, if one exists.
         /// </summary>
         /// <remarks>
+        /// <para>
         /// The time returned may differ from the current time on the local machine, because the provider may choose
         /// to obtain the time from another source (i.e. a server).
+		/// </para>
+		/// <para>
         /// This method is thread-safe.
+		/// </para>
         /// </remarks>
         public static DateTime Time
         {
@@ -337,13 +389,13 @@ namespace ClearCanvas.Common
         /// <summary>
         /// Starts the application.
         /// </summary>
-        /// <param name="applicationRootFilter">An extension filter that selects the application root extension to execute</param>
-        /// <param name="args">The set of arguments passed from the command line</param>
+        /// <param name="applicationRootFilter">An extension filter that selects the application root extension to execute.</param>
+        /// <param name="args">The set of arguments passed from the command line.</param>
         /// <remarks>
         /// A ClearCanvas based application is started by calling this convenience method from
         /// a bootstrap executable of some kind.  Calling this method results in the loading
-        /// of all plugins and creation of an IApplicationRoot extension.  This method is not thread-safe as it should only
-        /// ever be invoked once per execution, by a single thread.
+		/// of all plugins and creation of an <see cref="IApplicationRoot"/> extension.  
+		/// This method is not thread-safe as it should only ever be invoked once per execution, by a single thread.
         /// </remarks>
         public static void StartApp(ExtensionFilter applicationRootFilter, string[] args)
         {
@@ -377,8 +429,8 @@ namespace ClearCanvas.Common
 		/// <remarks>
 		/// A ClearCanvas based application is started by calling this convenience method from
 		/// a bootstrap executable of some kind.  Calling this method results in the loading
-        /// of all plugins and creation of an IApplicationRoot extension.  This method is not thread-safe as it should only
-        /// ever be invoked once per execution, by a single thread.
+		/// of all plugins and creation of an <see cref="IApplicationRoot"/> extension.  
+		/// This method is not thread-safe as it should only ever be invoked once per execution, by a single thread.
 		/// </remarks>
 		public static void StartApp()
 		{
@@ -391,29 +443,36 @@ namespace ClearCanvas.Common
         /// <remarks>
         /// This method is thread-safe.
         /// </remarks>
-        /// <typeparam name="TService">The type of service to obtain</typeparam>
-        /// <returns>An instance of the specified service</returns>
-        /// <exception cref="UnknownServiceException">The requested service cannot be provided</exception>
+        /// <typeparam name="TService">The type of service to obtain.</typeparam>
+        /// <returns>An instance of the specified service.</returns>
+        /// <exception cref="UnknownServiceException">The requested service cannot be provided.</exception>
         public static TService GetService<TService>()
         {
             return (TService)GetService(typeof(TService));
         }
 
-        public delegate void WithServiceDelegate<T>(T service);
+        /// <summary>
+		/// For use with the <see cref="GetService{TService}(WithServiceDelegate{TService})"/> method.
+        /// </summary>
+		public delegate void WithServiceDelegate<T>(T service);
 
         /// <summary>
-        /// Obtains an instance of the specified service for use by the application.  Instead of returning the
-        /// service directly, this overload passes the service to the specified delegate for use.  When the delegate returns,
-        /// this method automatically takes care of determing whether the service implements <see cref="IDisposable"/>
-        /// and calling <see cref="IDisposable.Dispose"/> if it does.  The delegate must not cache the returned service
-        /// because it may be disposed as soon as the delegate returns.  For the single-use scenario, this overload is preferred
-        /// to the other overloads because it automatically manages the lifecycle of the service object.
+        /// Obtains an instance of the specified service for use by the application.  
         /// </summary>
         /// <remarks>
+        /// <para>
+		/// Instead of returning the service directly, this overload passes the service to the specified delegate for use.
+		/// When the delegate returns, this method automatically takes care of determing whether the service implements <see cref="IDisposable"/>
+		/// and calling <see cref="IDisposable.Dispose"/> if it does.  The delegate must not cache the returned service
+		/// because it may be disposed as soon as the delegate returns.  For the single-use scenario, this overload is preferred
+		/// to the other overloads because it automatically manages the lifecycle of the service object.
+		/// </para>
+        /// <para>
         /// This method is thread-safe.
+		/// </para>
         /// </remarks>
-        /// <typeparam name="TService">The service to obtain</typeparam>
-        /// <param name="proc">A delegate that will receive the service for one-time use</param>
+        /// <typeparam name="TService">The service to obtain.</typeparam>
+        /// <param name="proc">A delegate that will receive the service for one-time use.</param>
         public static void GetService<TService>(WithServiceDelegate<TService> proc)
         {
             TService service = Platform.GetService<TService>();
@@ -447,9 +506,9 @@ namespace ClearCanvas.Common
         /// <remarks>
         /// This method is thread-safe.
         /// </remarks>
-        /// <param name="service">The type of service to obtain</param>
-        /// <returns>An instance of the specified service</returns>
-        /// <exception cref="UnknownServiceException">The requested service cannot be provided</exception>
+        /// <param name="service">The type of service to obtain.</param>
+        /// <returns>An instance of the specified service.</returns>
+        /// <exception cref="UnknownServiceException">The requested service cannot be provided.</exception>
         public static object GetService(Type service)
         {
             // load all service providers if not yet loaded
@@ -485,9 +544,9 @@ namespace ClearCanvas.Common
         /// Logs the specified message at the specified <see cref="LogLevel"/>.
         /// </summary>
         /// <remarks>This method is thread-safe.</remarks>
-        /// <param name="message"></param>
-        /// <param name="category"></param>
-        public static void Log(LogLevel category, object message)
+        /// <param name="category">The logging level.</param>
+		/// <param name="message">The message to be logged.</param>
+		public static void Log(LogLevel category, object message)
         {
             Exception ex = message as Exception;
             if (ex != null)
@@ -538,9 +597,9 @@ namespace ClearCanvas.Common
         /// Logs the specified message at the specified <see cref="LogLevel"/>.
         /// </summary>
         /// <remarks>This method is thread-safe.</remarks>
-        /// <param name="category"></param>
-        /// <param name="message">Format message, as used with <see cref="System.Text.StringBuilder"/></param>
-        /// <param name="args">Optional arguments used with <paramref name="message"/></param>
+        /// <param name="category">The log level.</param>
+        /// <param name="message">Format message, as used with <see cref="System.Text.StringBuilder"/>.</param>
+        /// <param name="args">Optional arguments used with <paramref name="message"/>.</param>
         public static void Log(LogLevel category,String message, params object[] args)
         {
             StringBuilder sb = new StringBuilder();
@@ -571,8 +630,8 @@ namespace ClearCanvas.Common
         /// Logs the statistics at the specified <see cref="LogLevel"/>.
         /// </summary>
         /// <remarks>This method is thread-safe.</remarks>
-        /// <param name="category"></param>
-        /// <param name="stats">The statistics to log</param>
+        /// <param name="category">The log level.</param>
+        /// <param name="stats">The statistics to log.</param>
         public static void LogStatistics(LogLevel category, IStatistics stats)
         {
             StringBuilder sb = new StringBuilder();
@@ -588,10 +647,10 @@ namespace ClearCanvas.Common
         /// Logs the specified exception at the specified <see cref="LogLevel"/>.
         /// </summary>
         /// <remarks>This method is thread-safe.</remarks>
-        /// <param name="ex"></param>
-        /// <param name="category"></param>
-        /// <param name="message">Format message, as used with <see cref="System.Text.StringBuilder"/></param>
-        /// <param name="args">Optional arguments used with <paramref name="message"/></param>
+        /// <param name="ex">The exception to log.</param>
+        /// <param name="category">The log level.</param>
+        /// <param name="message">Format message, as used with <see cref="System.Text.StringBuilder"/>.</param>
+        /// <param name="args">Optional arguments used with <paramref name="message"/>.</param>
         public static void Log(LogLevel category, Exception ex, String message, params object[] args)
         {
             StringBuilder sb = new StringBuilder();
@@ -623,7 +682,7 @@ namespace ClearCanvas.Common
         /// Displays a message box with the specified message.
         /// </summary>
         /// <remarks>
-        /// This method is thread-safe, however displaying message boxes from a thread other than the UI
+        /// This method is thread-safe, however displaying message boxes from a thread other than a UI
         /// thread is not a recommended practice.
         /// </remarks>
         [Obsolete("Use DesktopWindow.ShowMessageBox instead", false)]
@@ -637,12 +696,9 @@ namespace ClearCanvas.Common
         /// taken by the user.
         /// </summary>
         /// <remarks>
-        /// This method is thread-safe, however displaying message boxes from a thread other than the UI
+        /// This method is thread-safe, however displaying message boxes from a thread other than a UI
         /// thread is not a recommended practice.
         /// </remarks>
-        /// <param name="message"></param>
-        /// <param name="buttons"></param>
-        /// <returns></returns>
         [Obsolete("Use DesktopWindow.ShowMessageBox instead", false)]
         public static DialogBoxAction ShowMessageBox(string message, MessageBoxActions buttons)
         {
@@ -692,7 +748,7 @@ namespace ClearCanvas.Common
 		/// <param name="variable">The object reference to check.</param>
 		/// <param name="variableName">The variable name of the object reference to check.</param>
 		/// <remarks>Use for checking if an input argument is <b>null</b>.  To check if a member variable
-		/// is <b>null</b> (i.e., to see if an object is in a valid state), use <see cref="CheckMemberIsSet"/> instead.</remarks>
+		/// is <b>null</b> (i.e., to see if an object is in a valid state), use <b>CheckMemberIsSet</b> instead.</remarks>
 		/// <exception cref="ArgumentNullException"><paramref name="variable"/> or <paramref name="variableName"/>
 		/// is <b>null</b>.</exception>
 		public static void CheckForNullReference(object variable, string variableName)
@@ -743,7 +799,7 @@ namespace ClearCanvas.Common
 		/// </code>
 		/// </example>
 		/// <exception cref="ArgumentNullException"><paramref name="castOutput"/>,
-		/// <paramref name="castInputName"/>, <paramref name="castTypeName"/> is <b>null</b></exception>
+		/// <paramref name="castInputName"/>, <paramref name="castTypeName"/> is <b>null</b>.</exception>
 		/// <exception cref="InvalidCastException">Cast is invalid.</exception>
 		public static void CheckForInvalidCast(object castOutput, string castInputName, string castTypeName)
 		{
@@ -841,8 +897,8 @@ namespace ClearCanvas.Common
 		/// <param name="min">Minimum value.</param>
 		/// <param name="max">Maximum value.</param>
 		/// <param name="obj">Object being indexed.</param>
-		/// <remarks>Checks if <paramref name="min"/> &lt;= <paramref name="index"/> &lt;= <paramref name="max"/></remarks>
-		/// <exception cref="ArgumentNullException"><paramref name="variableName"/> is <b>null</b>.</exception>
+		/// <remarks>Checks if <paramref name="min"/> &lt;= <paramref name="index"/> &lt;= <paramref name="max"/>.</remarks>
+		/// <exception cref="ArgumentNullException"><paramref name="obj"/> is <b>null</b>.</exception>
 		/// <exception cref="IndexOutOfRangeException"><paramref name="index"/> is not within the
 		/// specified range.</exception>
 		public static void CheckIndexRange(int index, int min, int max, object obj)
@@ -862,7 +918,7 @@ namespace ClearCanvas.Common
 		/// is not in an invalid state by checking that various fields and/or properties
 		/// have been set, i.e., are not null.</remarks>
 		/// <exception cref="ArgumentNullException"><paramref name="variableName"/> is <b>null</b>.</exception>
-		/// <exception cref="InvalidOperatonException"><paramref name="variable"/> is <b>null</b>.</exception>
+		/// <exception cref="System.InvalidOperationException"><paramref name="variable"/> is <b>null</b>.</exception>
 		public static void CheckMemberIsSet(object variable, string variableName)
 		{
 			Platform.CheckForNullReference(variableName, "variableName");
@@ -882,7 +938,7 @@ namespace ClearCanvas.Common
 		/// is not in an invalid state by checking that various fields and/or properties
 		/// have been set, i.e., are not null.</remarks>
 		/// <exception cref="ArgumentNullException"><paramref name="variableName"/> is <b>null</b>.</exception>
-		/// <exception cref="InvalidOperatonException"><paramref name="variable"/> is <b>null</b>.</exception>
+		/// <exception cref="System.InvalidOperationException"><paramref name="variable"/> is <b>null</b>.</exception>
 		public static void CheckMemberIsSet(object variable, string variableName, string detailedMessage)
 		{
 			Platform.CheckForNullReference(variableName, "variableName");
@@ -893,8 +949,11 @@ namespace ClearCanvas.Common
 		}
 
         /// <summary>
-        /// Launches a file browser opened to the parent folder of a path to a single file or folder and highlights the file/folder 
+        /// Launches a file browser opened to the parent folder of a path to a single file or folder and highlights the file/folder.
         /// </summary>
+        /// <remarks>
+        /// Currently only implemented for Windows platforms, otherwise it does nothing.
+        /// </remarks>
         public static void OpenFileBrowser(string path)
         {
             if (IsWin32Platform)

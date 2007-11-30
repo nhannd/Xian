@@ -36,7 +36,7 @@ using System.Collections;
 namespace ClearCanvas.Common.Scripting
 {
     /// <summary>
-    /// Extension point that defines a script engine for a given language
+	/// Extension point for <see cref="IScriptEngine"/>s.
     /// </summary>
     [ExtensionPoint]
     public class ScriptEngineExtensionPoint : ExtensionPoint<IScriptEngine>
@@ -44,16 +44,25 @@ namespace ClearCanvas.Common.Scripting
     }
 
     /// <summary>
-    /// Factory for creating instances of script engines that support a given language  
+	/// Factory for creating instances of <see cref="IScriptEngine"/>s that support a given language.
     /// </summary>
     public static class ScriptEngineFactory
     {
         /// <summary>
-        /// Attempts to instantiate a script engine for the specified language. Internally,
-        /// this class looks for an extension of <see cref="ScriptEngineExtensionPoint"/> that is capable of running scripts in the specified
-        /// language.  In theory, any scripting language is supported, as long as a script engine extension exists for that language.
+        /// Attempts to instantiate a script engine for the specified language. 
         /// </summary>
-        /// <param name="language">The script language - case insensitive, so jscript is equivalent to JScript</param>
+        /// <remarks>
+		/// <para>
+		/// Internally, this class looks for an extension of <see cref="ScriptEngineExtensionPoint"/> 
+		/// that is capable of running scripts in the specified language.  In theory, any scripting 
+		/// language is supported, as long as a script engine extension exists for that language.
+		/// </para>
+		/// <para>
+		/// In order to be considered a match, extensions must be decorated with a 
+		/// <see cref="LanguageSupportAttribute"/> matching the <paramref name="language"/> parameter.
+		/// </para>
+		/// </remarks>
+        /// <param name="language">The case-insensitive script language, so jscript is equivalent to JScript.</param>
         public static IScriptEngine CreateEngine(string language)
         {
             try

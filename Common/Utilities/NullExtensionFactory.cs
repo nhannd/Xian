@@ -51,10 +51,6 @@ namespace ClearCanvas.Common.Utilities
         /// <summary>
         /// Return an empty array.
         /// </summary>
-        /// <param name="extensionPoint"></param>
-        /// <param name="filter"></param>
-        /// <param name="justOne"></param>
-        /// <returns></returns>
         public virtual object[] CreateExtensions(ExtensionPoint extensionPoint, ExtensionFilter filter, bool justOne)
         {
             return new object[] { };
@@ -63,9 +59,6 @@ namespace ClearCanvas.Common.Utilities
         /// <summary>
         /// Returns an empty array.
         /// </summary>
-        /// <param name="extensionPoint"></param>
-        /// <param name="filter"></param>
-        /// <returns></returns>
         public virtual ExtensionInfo[] ListExtensions(ExtensionPoint extensionPoint, ExtensionFilter filter)
         {
             return new ExtensionInfo[] { };

@@ -33,15 +33,28 @@ using System;
 
 namespace ClearCanvas.Common
 {
+	/// <summary>
+	/// Conveys information about plugins as they are loaded.
+	/// </summary>
+	/// <remarks>
+	/// This class is used internally by the framework.
+	/// </remarks>
+	/// <see cref="PluginManager"/>
 	public class PluginLoadedEventArgs : EventArgs
 	{
 		string _message;
 
-		public PluginLoadedEventArgs(string message)
+		internal PluginLoadedEventArgs(string message)
 		{
 			_message = message;
 		}
 
+		/// <summary>
+		/// Gets a user-friendly message describing the plugin that was loaded.
+		/// </summary>
+		/// <remarks>
+		/// This is typically just the full name of the plugin assembly.
+		/// </remarks>
 		public string Message
 		{
 			get

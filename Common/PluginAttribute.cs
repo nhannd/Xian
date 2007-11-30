@@ -45,18 +45,24 @@ namespace ClearCanvas.Common
         private string _description;
 
         /// <summary>
-        /// A friendly name for the plugin.  This is optional and may be supplied as a named parameter.
+        /// A friendly name for the plugin.  
         /// </summary>
+        /// <remarks>
+		/// This is optional and may be supplied as a named parameter.
+		/// </remarks>
         public string Name
         {
             get { return _name; }
             set { _name = value; }
         }
 
-        /// <summary>
-        /// A friendly description for the plugin.  This is optional and may be supplied as a named parameter.
-        /// </summary>
-        public string Description
+		/// <summary>
+		/// A friendly description for the plugin.  
+		/// </summary>
+		/// <remarks>
+		/// This is optional and may be supplied as a named parameter.
+		/// </remarks>
+		public string Description
         {
             get { return _description; }
             set { _description = value; }

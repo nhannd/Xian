@@ -40,7 +40,14 @@ namespace ClearCanvas.Common
     /// </summary>
     public class GuiToolkitID
     {
-        public const string WinForms = "WinForms";
-        public const string GTK = "GTK";
+        /// <summary>
+        /// WinForms Gui Toolkit.
+        /// </summary>
+		public const string WinForms = "WinForms";
+
+		/// <summary>
+		/// GTK (unix based platforms) Gui Toolkit.
+		/// </summary>
+		public const string GTK = "GTK";
     }
 }

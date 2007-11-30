@@ -39,20 +39,21 @@ using System.IO;
 namespace ClearCanvas.Common.Utilities
 {
     /// <summary>
-    /// Default implementation of <see cref="IResourceResolver"/>.  Finds resources embedded in assemblies.
+    /// Default implementation of <see cref="IResourceResolver"/>; finds resources embedded in assemblies.
     /// </summary>
     /// <remarks>
-    /// <para>
     /// Resolves resources by searching the set of assemblies (specified in the constructor)
     /// in order for a matching resource.  Instances of this class are immutable and thread-safe.
-    /// </para>
     /// </remarks>
     public class ResourceResolver : IResourceResolver
     {
         /// <summary>
-        /// Cache of string resource managers for each assembly.  This field is accessed in only one method,
-        /// GetStringResourceManagers().  This is important from a thread-sync point of view.
+        /// Cache of string resource managers for each assembly.
         /// </summary>
+        /// <remarks>
+		/// This field is accessed in only one method, GetStringResourceManagers().  This 
+		/// is important from a thread-sync point of view.
+		/// </remarks>
         private static readonly Dictionary<Assembly, List<ResourceManager>> _mapStringResourceManagers = new Dictionary<Assembly, List<ResourceManager>>();
 
         /// <summary>
@@ -68,7 +69,7 @@ namespace ClearCanvas.Common.Utilities
         /// <summary>
         /// Constructs a resource resolver that will look in the specified set of assemblies for resources.
         /// </summary>
-        /// <param name="assemblies">The set of assemblies to search</param>
+        /// <param name="assemblies">The set of assemblies to search.</param>
         public ResourceResolver(Assembly[] assemblies)
             :this(assemblies, null)
         {
@@ -77,7 +78,7 @@ namespace ClearCanvas.Common.Utilities
         /// <summary>
         /// Constructs an object that will search the specified assembly.
         /// </summary>
-        /// <param name="assembly">The set of assemblies to search</param>
+        /// <param name="assembly">The assembly to search.</param>
         public ResourceResolver(Assembly assembly)
             :this(new Assembly[] { assembly })
         {
@@ -86,8 +87,8 @@ namespace ClearCanvas.Common.Utilities
         /// <summary>
         /// Constructs a resource resolver that will look in the specified assembly for resources.
         /// </summary>
-        /// <param name="assembly"></param>
-        /// <param name="fallback"></param>
+        /// <param name="assembly">The assembly to search.</param>
+        /// <param name="fallback">The fallback <see cref="IResourceResolver"/> to use when an object cannot be resolved by this resolver.</param>
         public ResourceResolver(Assembly assembly, IResourceResolver fallback)
             :this(new Assembly[] {assembly}, fallback)
         {
@@ -98,7 +99,7 @@ namespace ClearCanvas.Common.Utilities
         /// Constructs a resource resolver that will look in the specified set of assemblies for resources.
         /// </summary>
         /// <param name="assemblies">Assemblies covered by this resolver.</param>
-        /// <param name="fallback">A fallback resolver, that will invoked if resources are not found in the specified assemblies.</param>
+        /// <param name="fallback">A fallback resolver, that will be invoked if resources are not found in the specified assemblies.</param>
         public ResourceResolver(Assembly[] assemblies, IResourceResolver fallback)
         {
             _assemblies = assemblies;
@@ -111,10 +112,10 @@ namespace ClearCanvas.Common.Utilities
         /// </summary>
         /// <remarks>
         /// Searches the assemblies for resources ending in "SR.resources", and searches those resources
-        /// for a string whose matching the specified key.
+        /// for a string matching the specified key.
         /// </remarks>
         /// <param name="unqualifiedStringKey">The string resource key to search for.  Must not be qualified.</param>
-        /// <returns>The localized string, or the argument unchanged if the key could not be found</returns>
+        /// <returns>The localized string, or the argument unchanged if the key could not be found.</returns>
         public string LocalizeString(string unqualifiedStringKey)
         {
             // search the assemblies in order
@@ -146,9 +147,9 @@ namespace ClearCanvas.Common.Utilities
         /// Attempts to return a fully qualified resource name from the specified name, which may be partially
         /// qualified or entirely unqualified, by searching the assemblies associated with this <see cref="ResourceResolver"/> in order.
         /// </summary>
-        /// <param name="resourceName">A partially qualified or unqualified resource name</param>
-        /// <returns>A qualified resource name, if found, otherwise an exception is thrown</returns>
-        /// <exception cref="MissingManifestResourceException">if the resource name could not be resolved</exception>
+        /// <param name="resourceName">A partially qualified or unqualified resource name.</param>
+        /// <returns>A qualified resource name, if found, otherwise an exception is thrown.</returns>
+        /// <exception cref="MissingManifestResourceException">if the resource name could not be resolved.</exception>
         public string ResolveResource(string resourceName)
         { 
 			//resources are qualified internally in the manifest with '.' characters, so let's first try
@@ -181,9 +182,9 @@ namespace ClearCanvas.Common.Utilities
         /// Attempts to resolve and open a resource from the specified name, which may be partially
         /// qualified or entirely unqualified, by searching the assemblies associated with this <see cref="ResourceResolver"/> in order.
         /// </summary>
-        /// <param name="resourceName">A partially qualified or unqualified resource name</param>
-        /// <returns>A qualified resource name, if found, otherwise an exception is thrown</returns>
-        /// <exception cref="MissingManifestResourceException">if the resource name could not be resolved</exception>
+        /// <param name="resourceName">A partially qualified or unqualified resource name.</param>
+        /// <returns>A qualified resource name, if found, otherwise an exception is thrown.</returns>
+        /// <exception cref="MissingManifestResourceException">if the resource name could not be resolved.</exception>
         public Stream OpenResource(string resourceName)
         {
 			//resources are qualified internally in the manifest with '.' characters, so let's first try
@@ -216,12 +217,14 @@ namespace ClearCanvas.Common.Utilities
 
         /// <summary>
         /// Attempts to localize the specified string table key from the specified assembly, checking all
-        /// string resource file in arbitrary order.  The first match is returned, or null if no matches
-        /// are found.
+        /// string resource files in arbitrary order.
         /// </summary>
-        /// <param name="stringTableKey">The string table key to localize</param>
-        /// <param name="asm">The assembly to look in</param>
-        /// <returns>The first string table entry that matches the specified key, or null if no matches are found</returns>
+        /// <remarks>
+		/// The first match is returned, or null if no matches are found.
+		/// </remarks>
+        /// <param name="stringTableKey">The string table key to localize.</param>
+        /// <param name="asm">The assembly to look in.</param>
+        /// <returns>The first string table entry that matches the specified key, or null if no matches are found.</returns>
         private string LocalizeString(string stringTableKey, Assembly asm)
         {
             foreach (ResourceManager resourceManager in GetStringResourceManagers(asm))
@@ -235,11 +238,12 @@ namespace ClearCanvas.Common.Utilities
         }
 
         /// <summary>
-        /// Returns a list of <see cref="ResourceManager"/>, one for each string resource file that is present
-        /// in the specified assembly.  The resource manager can then be used to localize strings.
+        /// Returns a list of <see cref="ResourceManager"/>s, one for each string resource file that is present
+        /// in the specified assembly.
         /// </summary>
-        /// <param name="asm"></param>
-        /// <returns></returns>
+        /// <remarks>
+		/// The returned <see cref="ResourceManager"/>s can be used to localize strings.
+		/// </remarks>
         private static List<ResourceManager> GetStringResourceManagers(Assembly asm)
         {
             List<ResourceManager> resourceManagers;
@@ -272,9 +276,8 @@ namespace ClearCanvas.Common.Utilities
         /// <summary>
         /// Searches the specified assembly for resource files whose names end with the specified string.
         /// </summary>
-        /// <param name="asm">The assembly to search</param>
-        /// <param name="endingWith">The string to match the end of the resource name with</param>
-        /// <returns></returns>
+        /// <param name="asm">The assembly to search.</param>
+        /// <param name="endingWith">The string to match the end of the resource name with.</param>
         private static string[] GetResourcesEndingWith(Assembly asm, string endingWith)
         {
             List<string> stringResources = new List<string>();

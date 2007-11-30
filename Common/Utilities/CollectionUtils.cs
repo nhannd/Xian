@@ -41,17 +41,20 @@ namespace ClearCanvas.Common.Utilities
     /// </summary>
     public static class CollectionUtils
     {
-        public delegate M ReduceDelegate<T, M>(T item, M memo);
+        /// <summary>
+        /// Delegate for use with <see cref="CollectionUtils.Reduce{TItem,TMemo}"/>.
+        /// </summary>
+		public delegate M ReduceDelegate<T, M>(T item, M memo);
 
         /// <summary>
         /// Selects all items in the target collection that match the specified predicate, returning
         /// them as a new collection of the specified type.
         /// </summary>
-        /// <typeparam name="TItem">The type of items in the target collection</typeparam>
-        /// <typeparam name="TResultCollection">The type of collection to return</typeparam>
-        /// <param name="target">The collection to operate on</param>
-        /// <param name="predicate">The predicate to test</param>
-        /// <returns>A collection containing the subset of matching items from the target collection</returns>
+        /// <typeparam name="TItem">The type of items in the target collection.</typeparam>
+        /// <typeparam name="TResultCollection">The type of collection to return.</typeparam>
+        /// <param name="target">The collection to operate on.</param>
+        /// <param name="predicate">The predicate to test.</param>
+        /// <returns>A collection containing the subset of matching items from the target collection.</returns>
         public static TResultCollection Select<TItem, TResultCollection>(IEnumerable target, Predicate<TItem> predicate)
             where TResultCollection : ICollection<TItem>, new()
         {
@@ -69,10 +72,10 @@ namespace ClearCanvas.Common.Utilities
         /// <summary>
         /// Selects all items in the target collection that match the specified predicate.
         /// </summary>
-        /// <typeparam name="TItem">The type of items in the target collection</typeparam>
-        /// <param name="target">The collection to operate on</param>
-        /// <param name="predicate">The predicate to test</param>
-        /// <returns>A collection containing the subset of matching items from the target collection</returns>
+        /// <typeparam name="TItem">The type of items in the target collection.</typeparam>
+        /// <param name="target">The collection to operate on.</param>
+        /// <param name="predicate">The predicate to test.</param>
+        /// <returns>A collection containing the subset of matching items from the target collection.</returns>
         public static List<TItem> Select<TItem>(IEnumerable target, Predicate<TItem> predicate)
         {
             List<TItem> result = new List<TItem>();
@@ -89,22 +92,24 @@ namespace ClearCanvas.Common.Utilities
         /// <summary>
         /// Selects all items in the target collection that match the specified predicate.
         /// </summary>
-        /// <typeparam name="TItem">The type of items in the target collection</typeparam>
-        /// <param name="target">The collection to operate on</param>
-        /// <param name="predicate">The predicate to test</param>
-        /// <returns>A collection containing the subset of matching items from the target collection</returns>
+        /// <typeparam name="TItem">The type of items in the target collection.</typeparam>
+        /// <param name="target">The collection to operate on.</param>
+        /// <param name="predicate">The predicate to test.</param>
+        /// <returns>A collection containing the subset of matching items from the target collection.</returns>
         public static List<TItem> Select<TItem>(IEnumerable<TItem> target, Predicate<TItem> predicate)
         {
             return Select((IEnumerable)target, predicate);
         }
 
         /// <summary>
-        /// Selects all items in the target collection that match the specified predicate. This overload
-        /// accepts an untyped collection, and returns an untyped collection.
+        /// Selects all items in the target collection that match the specified predicate.
         /// </summary>
-        /// <param name="target">The collection to operate on</param>
-        /// <param name="predicate">The predicate to test</param>
-        /// <returns>A collection containing the subset of matching items from the target collection</returns>
+        /// <remarks>
+		/// This overload accepts an untyped collection, and returns an untyped collection.
+		/// </remarks>
+        /// <param name="target">The collection to operate on.</param>
+        /// <param name="predicate">The predicate to test.</param>
+        /// <returns>A collection containing the subset of matching items from the target collection.</returns>
         public static ArrayList Select(IEnumerable target, Predicate<object> predicate)
         {
             ArrayList result = new ArrayList();
@@ -122,11 +127,11 @@ namespace ClearCanvas.Common.Utilities
         /// Excludes all items in the target collection that match the specified predicate, returning
         /// the rest of the items as a new collection of the specified type.
         /// </summary>
-        /// <typeparam name="TItem">The type of items in the target collection</typeparam>
-        /// <typeparam name="TResultCollection">The type of collection to return</typeparam>
-        /// <param name="target">The collection to operate on</param>
-        /// <param name="predicate">The predicate to test</param>
-        /// <returns>A collection containing the subset of matching items from the target collection</returns>
+        /// <typeparam name="TItem">The type of items in the target collection.</typeparam>
+        /// <typeparam name="TResultCollection">The type of collection to return.</typeparam>
+        /// <param name="target">The collection to operate on.</param>
+        /// <param name="predicate">The predicate to test.</param>
+        /// <returns>A collection containing the subset of matching items from the target collection.</returns>
         public static TResultCollection Reject<TItem, TResultCollection>(IEnumerable target, Predicate<TItem> predicate)
             where TResultCollection : ICollection<TItem>, new()
         {
@@ -137,10 +142,10 @@ namespace ClearCanvas.Common.Utilities
         /// Excludes all items in the target collection that match the specified predicate, returning
         /// the rest of the items as a new collection.
         /// </summary>
-        /// <typeparam name="TItem">The type of items in the target collection</typeparam>
-        /// <param name="target">The collection to operate on</param>
-        /// <param name="predicate">The predicate to test</param>
-        /// <returns>A collection containing the subset of matching items from the target collection</returns>
+        /// <typeparam name="TItem">The type of items in the target collection.</typeparam>
+        /// <param name="target">The collection to operate on.</param>
+        /// <param name="predicate">The predicate to test.</param>
+        /// <returns>A collection containing the subset of matching items from the target collection.</returns>
         public static List<TItem> Reject<TItem>(IEnumerable target, Predicate<TItem> predicate)
         {
             return Select<TItem>(target, delegate(TItem item) { return !predicate(item); });
@@ -150,10 +155,10 @@ namespace ClearCanvas.Common.Utilities
         /// Excludes all items in the target collection that match the specified predicate, returning
         /// the rest of the items as a new collection.
         /// </summary>
-        /// <typeparam name="TItem">The type of items in the target collection</typeparam>
-        /// <param name="target">The collection to operate on</param>
-        /// <param name="predicate">The predicate to test</param>
-        /// <returns>A collection containing the subset of matching items from the target collection</returns>
+        /// <typeparam name="TItem">The type of items in the target collection.</typeparam>
+        /// <param name="target">The collection to operate on.</param>
+        /// <param name="predicate">The predicate to test.</param>
+        /// <returns>A collection containing the subset of matching items from the target collection.</returns>
         public static List<TItem> Reject<TItem>(IEnumerable<TItem> target, Predicate<TItem> predicate)
         {
             return Reject((IEnumerable)target, predicate);
@@ -161,9 +166,11 @@ namespace ClearCanvas.Common.Utilities
 
         /// <summary>
         /// Excludes all items in the target collection that match the specified predicate, returning
-        /// the rest of the items as a new collection.  This overload accepts an untyped collection,
-        /// and returns an untyped collection.
+        /// the rest of the items as a new collection.
         /// </summary>
+        /// <remarks>
+		/// This overload accepts an untyped collection and returns an untyped collection.
+		/// </remarks>
         /// <param name="target">The collection to operate on</param>
         /// <param name="predicate">The predicate to test</param>
         /// <returns>A collection containing the subset of matching items from the target collection</returns>
@@ -174,12 +181,15 @@ namespace ClearCanvas.Common.Utilities
 
         /// <summary>
         /// Returns the first item in the target collection that matches the specified predicate, or
-        /// null if no match is found.  TItem must be an reference type, not a value type.
+        /// null if no match is found.
         /// </summary>
-        /// <typeparam name="TItem">The type of items in the target collection</typeparam>
-        /// <param name="target">The collection to operate on</param>
-        /// <param name="predicate">The predicate to test</param>
-        /// <returns>The first matching item, or null if no match are found</returns>
+        /// <remarks>
+		/// <typeparamref name="TItem"/> must be a reference type, not a value type.
+		/// </remarks>
+        /// <typeparam name="TItem">The type of items in the target collection.</typeparam>
+        /// <param name="target">The collection to operate on.</param>
+        /// <param name="predicate">The predicate to test.</param>
+        /// <returns>The first matching item, or null if no match are found.</returns>
         public static TItem SelectFirst<TItem>(IEnumerable target, Predicate<TItem> predicate)
             where TItem : class
         {
@@ -195,12 +205,15 @@ namespace ClearCanvas.Common.Utilities
 
         /// <summary>
         /// Returns the first item in the target collection that matches the specified predicate, or
-        /// null if no match is found.  TItem must be an reference type, not a value type.
+        /// null if no match is found.
         /// </summary>
-        /// <typeparam name="TItem">The type of items in the target collection</typeparam>
-        /// <param name="target">The collection to operate on</param>
-        /// <param name="predicate">The predicate to test</param>
-        /// <returns>The first matching item, or null if no match are found</returns>
+		/// <remarks>
+		/// <typeparamref name="TItem"/> must be a reference type, not a value type.
+		/// </remarks>
+        /// <typeparam name="TItem">The type of items in the target collection.</typeparam>
+        /// <param name="target">The collection to operate on.</param>
+        /// <param name="predicate">The predicate to test.</param>
+        /// <returns>The first matching item, or null if no match are found.</returns>
         public static TItem SelectFirst<TItem>(IEnumerable<TItem> target, Predicate<TItem> predicate)
             where TItem : class
         {
@@ -209,11 +222,14 @@ namespace ClearCanvas.Common.Utilities
 
         /// <summary>
         /// Returns the first item in the target collection that matches the specified predicate, or
-        /// null if no match is found.  This overload accepts an untyped collection.
+        /// null if no match is found.
         /// </summary>
-        /// <param name="target">The collection to operate on</param>
-        /// <param name="predicate">The predicate to test</param>
-        /// <returns>The first matching item, or null if no matches are found</returns>
+        /// <remarks>
+		/// This overload accepts an untyped collection.
+		/// </remarks>
+        /// <param name="target">The collection to operate on.</param>
+        /// <param name="predicate">The predicate to test.</param>
+        /// <returns>The first matching item, or null if no matches are found.</returns>
         public static object SelectFirst(IEnumerable target, Predicate<object> predicate)
         {
             foreach (object item in target)
@@ -228,14 +244,16 @@ namespace ClearCanvas.Common.Utilities
 
         /// <summary>
         /// Maps the specified collection onto a new collection according to the specified map function.
-        /// Allows the type of the return collection to be specified.
         /// </summary>
-        /// <typeparam name="TItem">The type of items in the target collection</typeparam>
-        /// <typeparam name="TResultItem">The type of item returned by the map function</typeparam>
-        /// <typeparam name="TResultCollection">The type of collection to return</typeparam>
-        /// <param name="target">The collection to operate on</param>
-        /// <param name="mapFunction">A delegate that performs the mapping</param>
-        /// <returns>A new collection of the specified type, containing a mapped entry for each entry in the target collection</returns>
+        /// <remarks>
+		/// Allows the type of the return collection to be specified.
+		/// </remarks>
+        /// <typeparam name="TItem">The type of items in the target collection.</typeparam>
+        /// <typeparam name="TResultItem">The type of item returned by the map function.</typeparam>
+        /// <typeparam name="TResultCollection">The type of collection to return.</typeparam>
+        /// <param name="target">The collection to operate on.</param>
+        /// <param name="mapFunction">A delegate that performs the mapping.</param>
+        /// <returns>A new collection of the specified type, containing a mapped entry for each entry in the target collection.</returns>
         public static TResultCollection Map<TItem, TResultItem, TResultCollection>(IEnumerable target, Converter<TItem, TResultItem> mapFunction)
             where TResultCollection : ICollection<TResultItem>, new()
         {
@@ -250,11 +268,11 @@ namespace ClearCanvas.Common.Utilities
         /// <summary>
         /// Maps the specified collection onto a new collection according to the specified map function.
         /// </summary>
-        /// <typeparam name="TItem">The type of items in the target collection</typeparam>
-        /// <typeparam name="TResultItem">The type of item returned by the map function</typeparam>
-        /// <param name="target">The collection to operate on</param>
-        /// <param name="mapFunction">A delegate that performs the mapping</param>
-        /// <returns>A new collection containing a mapped entry for each entry in the target collection</returns>
+        /// <typeparam name="TItem">The type of items in the target collection.</typeparam>
+        /// <typeparam name="TResultItem">The type of item returned by the map function.</typeparam>
+        /// <param name="target">The collection to operate on.</param>
+        /// <param name="mapFunction">A delegate that performs the mapping.</param>
+        /// <returns>A new collection containing a mapped entry for each entry in the target collection.</returns>
         public static List<TResultItem> Map<TItem, TResultItem>(IEnumerable target, Converter<TItem, TResultItem> mapFunction)
         {
             List<TResultItem> result = new List<TResultItem>();
@@ -267,11 +285,13 @@ namespace ClearCanvas.Common.Utilities
 
         /// <summary>
         /// Maps the specified collection onto a new collection according to the specified map function.
-        /// This overload operates on an untyped collection and returns an untyped collection.
         /// </summary>
-        /// <param name="target">The collection to operate on</param>
-        /// <param name="mapFunction">A delegate that performs the mapping</param>
-        /// <returns>A new collection containing a mapped entry for each entry in the target collection</returns>
+        /// <remarks>
+		/// This overload operates on an untyped collection and returns an untyped collection.
+		/// </remarks>
+		/// <param name="target">The collection to operate on.</param>
+        /// <param name="mapFunction">A delegate that performs the mapping.</param>
+        /// <returns>A new collection containing a mapped entry for each entry in the target collection.</returns>
         public static ArrayList Map(IEnumerable target, Converter<object, object> mapFunction)
         {
             ArrayList result = new ArrayList();
@@ -285,12 +305,12 @@ namespace ClearCanvas.Common.Utilities
         /// <summary>
         /// Reduces the specified collection to a singular value according to the specified reduce function.
         /// </summary>
-        /// <typeparam name="TItem">The type of items in the target collection</typeparam>
+        /// <typeparam name="TItem">The type of items in the target collection.</typeparam>
         /// <typeparam name="TMemo">The type of the singular value to reduce the collection to.</typeparam>
-        /// <param name="target">The collection to operate on</param>
-        /// <param name="initial">The initial value for the reduce operation</param>
-        /// <param name="reduceFunction">A delegate that performs the reduce operation</param>
-        /// <returns>The value of the reduce operation</returns>
+        /// <param name="target">The collection to operate on.</param>
+        /// <param name="initial">The initial value for the reduce operation.</param>
+        /// <param name="reduceFunction">A delegate that performs the reduce operation.</param>
+        /// <returns>The value of the reduce operation.</returns>
         public static TMemo Reduce<TItem, TMemo>(IEnumerable target, TMemo initial, ReduceDelegate<TItem, TMemo> reduceFunction)
         {
             TMemo memo = initial;
@@ -304,9 +324,9 @@ namespace ClearCanvas.Common.Utilities
         /// <summary>
         /// Performs the specified action for each item in the target collection.
         /// </summary>
-        /// <typeparam name="TItem">The type of items in the target collection</typeparam>
-        /// <param name="target">The collection to operate on</param>
-        /// <param name="action">The action to perform</param>
+        /// <typeparam name="TItem">The type of items in the target collection.</typeparam>
+        /// <param name="target">The collection to operate on.</param>
+        /// <param name="action">The action to perform.</param>
         public static void ForEach<TItem>(IEnumerable target, Action<TItem> action)
         {
             foreach (TItem item in target)
@@ -318,9 +338,9 @@ namespace ClearCanvas.Common.Utilities
         /// <summary>
         /// Performs the specified action for each item in the target collection.
         /// </summary>
-        /// <typeparam name="TItem">The type of items in the target collection</typeparam>
-        /// <param name="target">The collection to operate on</param>
-        /// <param name="action">The action to perform</param>
+        /// <typeparam name="TItem">The type of items in the target collection.</typeparam>
+        /// <param name="target">The collection to operate on.</param>
+        /// <param name="action">The action to perform.</param>
         public static void ForEach<TItem>(IEnumerable<TItem> target, Action<TItem> action)
         {
             ForEach((IEnumerable)target, action);
@@ -328,10 +348,12 @@ namespace ClearCanvas.Common.Utilities
 
         /// <summary>
         /// Performs the specified action for each item in the target collection.
-        /// This overload operates on an untyped collection.
         /// </summary>
-        /// <param name="target">The collection to operate on</param>
-        /// <param name="action">The action to perform</param>
+		/// <remarks>
+		/// This overload operates on an untyped collection.
+		/// </remarks>
+		/// <param name="target">The collection to operate on.</param>
+        /// <param name="action">The action to perform.</param>
         public static void ForEach(IEnumerable target, Action<object> action)
         {
             foreach (object item in target)
@@ -343,10 +365,6 @@ namespace ClearCanvas.Common.Utilities
         /// <summary>
         /// Returns true if any item in the target collection satisfies the specified predicate.
         /// </summary>
-        /// <typeparam name="TItem"></typeparam>
-        /// <param name="target"></param>
-        /// <param name="predicate"></param>
-        /// <returns></returns>
         public static bool Contains<TItem>(IEnumerable target, Predicate<TItem> predicate)
         {
             foreach (TItem item in target)
@@ -360,10 +378,6 @@ namespace ClearCanvas.Common.Utilities
         /// <summary>
         /// Returns true if any item in the target collection satisfies the specified predicate.
         /// </summary>
-        /// <typeparam name="TItem"></typeparam>
-        /// <param name="target"></param>
-        /// <param name="predicate"></param>
-        /// <returns></returns>
         public static bool Contains<TItem>(IEnumerable<TItem> target, Predicate<TItem> predicate)
         {
             return Contains((IEnumerable)target, predicate);
@@ -372,9 +386,6 @@ namespace ClearCanvas.Common.Utilities
         /// <summary>
         /// Returns true if any item in the target collection satisfies the specified predicate.
         /// </summary>
-        /// <param name="target"></param>
-        /// <param name="predicate"></param>
-        /// <returns></returns>
         public static bool Contains(IEnumerable target, Predicate<object> predicate)
         {
             foreach (object item in target)
@@ -388,9 +399,6 @@ namespace ClearCanvas.Common.Utilities
         /// <summary>
         /// Returns true if all items in the target collection satisfy the specified predicate.
         /// </summary>
-        /// <param name="target"></param>
-        /// <param name="predicate"></param>
-        /// <returns></returns>
         public static bool TrueForAll<TItem>(IEnumerable target, Predicate<TItem> predicate)
         {
             foreach (TItem item in target)
@@ -404,9 +412,6 @@ namespace ClearCanvas.Common.Utilities
         /// <summary>
         /// Returns true if all items in the target collection satisfy the specified predicate.
         /// </summary>
-        /// <param name="target"></param>
-        /// <param name="predicate"></param>
-        /// <returns></returns>
         public static bool TrueForAll<TItem>(IEnumerable<TItem> target, Predicate<TItem> predicate)
         {
             return TrueForAll((IEnumerable)target, predicate);
@@ -415,9 +420,6 @@ namespace ClearCanvas.Common.Utilities
         /// <summary>
         /// Returns true if all items in the target collection satisfy the specified predicate.
         /// </summary>
-        /// <param name="target"></param>
-        /// <param name="predicate"></param>
-        /// <returns></returns>
         public static bool TrueForAll(IEnumerable target, Predicate<object> predicate)
         {
             foreach (object item in target)
@@ -429,10 +431,8 @@ namespace ClearCanvas.Common.Utilities
         }
 
         /// <summary>
-        /// Returns the first element in the target collection, or null if the collection is empty
+        /// Returns the first element in the target collection, or null if the collection is empty.
         /// </summary>
-        /// <param name="target"></param>
-        /// <returns></returns>
         public static object FirstElement(IEnumerable target)
         {
             if(target is IList)
@@ -448,12 +448,8 @@ namespace ClearCanvas.Common.Utilities
         }
 
         /// <summary>
-        /// Returns the first element in the target collection, or the specified defaultValue if the collection is empty.
+		/// Returns the first element in the target collection, or the specified <paramref name="defaultValue"/> if the collection is empty.
         /// </summary>
-        /// <typeparam name="TItem"></typeparam>
-        /// <param name="target"></param>
-        /// <param name="defaultValue"></param>
-        /// <returns></returns>
         public static TItem FirstElement<TItem>(IEnumerable target, TItem defaultValue)
         {
             object value = FirstElement(target);
@@ -462,25 +458,23 @@ namespace ClearCanvas.Common.Utilities
 
         /// <summary>
         /// Returns the first element in the target collection, or null if the collection is empty.
-        /// TItem must be a reference type, not a value type.
         /// </summary>
-        /// <typeparam name="TItem"></typeparam>
-        /// <param name="target"></param>
-        /// <returns></returns>
+		/// <remarks>
+		/// TItem must be a reference type, not a value type.
+		/// </remarks>
         public static TItem FirstElement<TItem>(IEnumerable target)
             where TItem: class
         {
             return FirstElement<TItem>(target, null);
         }
 
-        /// <summary>
-        /// Returns the first element in the target collection, or null if the collection is empty.
-        /// TItem must be a reference type, not a value type.
-        /// </summary>
-        /// <typeparam name="TItem"></typeparam>
-        /// <param name="target"></param>
-        /// <returns></returns>
-        public static TItem FirstElement<TItem>(IEnumerable<TItem> target)
+		/// <summary>
+		/// Returns the first element in the target collection, or null if the collection is empty.
+		/// </summary>
+		/// <remarks>
+		/// TItem must be a reference type, not a value type.
+		/// </remarks>
+		public static TItem FirstElement<TItem>(IEnumerable<TItem> target)
             where TItem : class
         {
             return FirstElement<TItem>(target, null);
@@ -489,8 +483,6 @@ namespace ClearCanvas.Common.Utilities
         /// <summary>
         /// Returns the last element in the target collection, or null if the collection is empty.
         /// </summary>
-        /// <param name="target"></param>
-        /// <returns></returns>
         public static object LastElement(IEnumerable target)
         {
             if (target is IList)
@@ -509,12 +501,8 @@ namespace ClearCanvas.Common.Utilities
         }
 
         /// <summary>
-        /// Returns the last element in the target collection, or the specified defaultValue if the collection is empty.
+		/// Returns the last element in the target collection, or the specified <paramref name="defaultValue "/> if the collection is empty.
         /// </summary>
-        /// <typeparam name="TItem"></typeparam>
-        /// <param name="target"></param>
-        /// <param name="defaultValue"></param>
-        /// <returns></returns>
         public static TItem LastElement<TItem>(IEnumerable target, TItem defaultValue)
         {
             object value = LastElement(target);
@@ -523,12 +511,11 @@ namespace ClearCanvas.Common.Utilities
 
         /// <summary>
         /// Returns the last element in the target collection, or null if the collection is empty.
-        /// TItem must be a reference type, not a value type.
         /// </summary>
-        /// <typeparam name="TItem"></typeparam>
-        /// <param name="target"></param>
-        /// <returns></returns>
-        public static TItem LastElement<TItem>(IEnumerable target)
+		///<remarks>
+		/// TItem must be a reference type, not a value type.
+		/// </remarks>
+		public static TItem LastElement<TItem>(IEnumerable target)
             where TItem : class
         {
             return LastElement<TItem>(target, null);
@@ -536,23 +523,22 @@ namespace ClearCanvas.Common.Utilities
 
         /// <summary>
         /// Returns the last element in the target collection, or null if the collection is empty.
-        /// TItem must be a reference type, not a value type.
-        /// </summary>
-        /// <typeparam name="TItem"></typeparam>
-        /// <param name="target"></param>
-        /// <returns></returns>
-        public static TItem LastElement<TItem>(IEnumerable<TItem> target)
+		/// </summary>
+		///<remarks>
+		/// TItem must be a reference type, not a value type.
+		/// </remarks>
+		public static TItem LastElement<TItem>(IEnumerable<TItem> target)
             where TItem : class
         {
             return LastElement<TItem>(target, null);
         }
 
         /// <summary>
-        /// Removes all items in the target collection that match the specified predicate.  Unlike
-        /// <see cref="Reject"/>, this method modifies the target collection itself.
+        /// Removes all items in the target collection that match the specified predicate.
         /// </summary>
-        /// <param name="target"></param>
-        /// <param name="predicate"></param>
+        /// <remarks>
+		/// Unlike <see cref="Reject"/>, this method modifies the target collection itself.
+		/// </remarks>
         public static void Remove<TItem>(ICollection<TItem> target, Predicate<TItem> predicate)
         {
             List<TItem> removes = new List<TItem>();
@@ -567,13 +553,13 @@ namespace ClearCanvas.Common.Utilities
             }
         }
 
-        /// <summary>
-        /// Removes all items in the target collection that match the specified predicate.  Unlike
-        /// <see cref="Reject"/>, this method modifies the target collection itself.
-        /// </summary>
-        /// <param name="target"></param>
-        /// <param name="predicate"></param>
-        public static void Remove(IList target, Predicate<object> predicate)
+		/// <summary>
+		/// Removes all items in the target collection that match the specified predicate.
+		/// </summary>
+		/// <remarks>
+		/// Unlike <see cref="Reject"/>, this method modifies the target collection itself.
+		/// </remarks>
+		public static void Remove(IList target, Predicate<object> predicate)
         {
             List<object> removes = new List<object>();
             foreach (object item in target)
@@ -589,13 +575,11 @@ namespace ClearCanvas.Common.Utilities
 
         /// <summary>
         /// Returns a list of the items in the target collection, sorted according to the specified comparison.
-        /// Does not modify the target collection, since it may not even be a sortable collection.
-        /// If the collection may contain nulls, the comparison must handle nulls.
         /// </summary>
-        /// <typeparam name="TItem"></typeparam>
-        /// <param name="target"></param>
-        /// <param name="comparison"></param>
-        /// <returns></returns>
+		/// <remarks>
+		/// Does not modify the target collection, since it may not even be a sortable collection.
+        /// If the collection may contain nulls, the comparison must handle nulls.
+		/// </remarks>
         public static List<TItem> Sort<TItem>(IEnumerable target, Comparison<TItem> comparison)
         {
             List<TItem> list = new List<TItem>(new TypeSafeEnumerableWrapper<TItem>(target));
@@ -603,16 +587,14 @@ namespace ClearCanvas.Common.Utilities
             return list;
         }
 
-        /// <summary>
-        /// Returns a list of the items in the target collection, sorted according to the specified comparison.
-        /// Does not modify the target collection, since it may not even be a sortable collection.
-        /// If the collection may contain nulls, the comparison must handle nulls.
-        /// </summary>
-        /// <typeparam name="TItem"></typeparam>
-        /// <param name="target"></param>
-        /// <param name="comparison"></param>
-        /// <returns></returns>
-        public static List<TItem> Sort<TItem>(IEnumerable<TItem> target, Comparison<TItem> comparison)
+		/// <summary>
+		/// Returns a list of the items in the target collection, sorted according to the specified comparison.
+		/// </summary>
+		/// <remarks>
+		/// Does not modify the target collection, since it may not even be a sortable collection.
+		/// If the collection may contain nulls, the comparison must handle nulls.
+		/// </remarks>
+		public static List<TItem> Sort<TItem>(IEnumerable<TItem> target, Comparison<TItem> comparison)
         {
             return Sort((IEnumerable)target, comparison);
         }
@@ -620,9 +602,6 @@ namespace ClearCanvas.Common.Utilities
         /// <summary>
         /// Converts the target enumerable to an array of the specified type.
         /// </summary>
-        /// <typeparam name="TItem"></typeparam>
-        /// <param name="target"></param>
-        /// <returns></returns>
         public static TItem[] ToArray<TItem>(IEnumerable target)
         {
             // optimize if collection
@@ -643,9 +622,6 @@ namespace ClearCanvas.Common.Utilities
         /// <summary>
         /// Converts the target enumerable to an array of the specified type.
         /// </summary>
-        /// <typeparam name="TItem"></typeparam>
-        /// <param name="target"></param>
-        /// <returns></returns>
         public static TItem[] ToArray<TItem>(IEnumerable<TItem> target)
         {
             // optimize if collection
@@ -664,178 +640,148 @@ namespace ClearCanvas.Common.Utilities
         }
 
         /// <summary>
-        /// Returns the minimum value in the target collection, or the specified nullValue if the target is empty.
-        /// If the collection may contain nulls, the comparison must handle nulls.
+		/// Returns the minimum value in the target collection, or the specified <paramref name="nullValue "/> if the target is empty.
         /// </summary>
-        /// <typeparam name="TItem"></typeparam>
-        /// <param name="target"></param>
-        /// <param name="nullValue"></param>
-        /// <param name="comparison"></param>
-        /// <returns></returns>
+        /// <remarks>
+		/// If the collection may contain nulls, the comparison must handle nulls.
+		/// </remarks>
         public static TItem Min<TItem>(IEnumerable target, TItem nullValue, Comparison<TItem> comparison)
         {
             return FindExtremeValue(target, nullValue, comparison, -1);
         }
 
-        /// <summary>
-        /// Returns the minimum value in the target collection, or the specified nullValue if the target is empty.
-        /// If the collection may contain nulls, the comparison must handle nulls.
-        /// </summary>
-        /// <typeparam name="TItem"></typeparam>
-        /// <param name="target"></param>
-        /// <param name="nullValue"></param>
-        /// <param name="comparison"></param>
-        /// <returns></returns>
-        public static TItem Min<TItem>(IEnumerable<TItem> target, TItem nullValue, Comparison<TItem> comparison)
+		/// <summary>
+		/// Returns the minimum value in the target collection, or the specified <paramref name="nullValue "/> if the target is empty.
+		/// </summary>
+		/// <remarks>
+		/// If the collection may contain nulls, the comparison must handle nulls.
+		/// </remarks>
+		public static TItem Min<TItem>(IEnumerable<TItem> target, TItem nullValue, Comparison<TItem> comparison)
         {
             return FindExtremeValue(target, nullValue, comparison, -1);
         }
 
-        /// <summary>
-        /// Returns the minimum value in the target collection, or the specified nullValue if the collection is empty.
-        /// If the collection contains nulls, they are treated as less than any other value.
-        /// </summary>
-        /// <typeparam name="TItem"></typeparam>
-        /// <param name="target"></param>
-        /// <param name="nullValue"></param>
-        /// <returns></returns>
-        public static TItem Min<TItem>(IEnumerable target, TItem nullValue)
+		/// <summary>
+		/// Returns the minimum value in the target collection, or the specified <paramref name="nullValue "/> if the target is empty.
+		/// </summary>
+		/// <remarks>
+		/// If the collection may contain nulls, the comparison must handle nulls.
+		/// </remarks>
+		public static TItem Min<TItem>(IEnumerable target, TItem nullValue)
         {
             return Min(target, nullValue, Comparer<TItem>.Default.Compare);
         }
 
-        /// <summary>
-        /// Returns the minimum value in the target collection, or the specified nullValue if the collection is empty.
-        /// If the collection contains nulls, they are treated as less than any other value.
-        /// </summary>
-        /// <typeparam name="TItem"></typeparam>
-        /// <param name="target"></param>
-        /// <param name="nullValue"></param>
-        /// <returns></returns>
-        public static TItem Min<TItem>(IEnumerable<TItem> target, TItem nullValue)
+		/// <summary>
+		/// Returns the minimum value in the target collection, or the specified <paramref name="nullValue "/> if the target is empty.
+		/// </summary>
+		/// <remarks>
+		/// If the collection may contain nulls, the comparison must handle nulls.
+		/// </remarks>
+		public static TItem Min<TItem>(IEnumerable<TItem> target, TItem nullValue)
         {
             return Min(target, nullValue, Comparer<TItem>.Default.Compare);
         }
 
         /// <summary>
         /// Returns the minimum value in the target collection, or null if the collection is empty.
-        /// The collection must contain object references, not value types.
-        /// If the collection contains nulls, they are treated as less than any other value.
         /// </summary>
-        /// <typeparam name="TItem"></typeparam>
-        /// <param name="target"></param>
-        /// <returns></returns>
+        /// <remarks>
+		/// <para>The collection must contain object references, not value types.</para>
+		/// <para>If the collection contains nulls, they are treated as less than any other value.</para>
+		/// </remarks>
         public static TItem Min<TItem>(IEnumerable target)
             where TItem : class, IComparable<TItem>
         {
             return Min<TItem>(target, null);
         }
 
-        /// <summary>
-        /// Returns the minimum value in the target collection, or null if the collection is empty.
-        /// The collection must contain object references, not value types.
-        /// If the collection contains nulls, they are treated as less than any other value.
-        /// </summary>
-        /// <typeparam name="TItem"></typeparam>
-        /// <param name="target"></param>
-        /// <returns></returns>
-        public static TItem Min<TItem>(IEnumerable<TItem> target)
+		/// <summary>
+		/// Returns the minimum value in the target collection, or null if the collection is empty.
+		/// </summary>
+		/// <remarks>
+		/// <para>The collection must contain object references, not value types.</para>
+		/// <para>If the collection contains nulls, they are treated as less than any other value.</para>
+		/// </remarks>
+		public static TItem Min<TItem>(IEnumerable<TItem> target)
             where TItem : class, IComparable<TItem>
         {
             return Min(target, null);
         }
 
         /// <summary>
-        /// Returns the maximum value in the target collection, or the specified nullValue if the collection is empty.
-        /// If the collection may contain nulls, the comparison must handle nulls.
-        /// </summary>
-        /// <typeparam name="TItem"></typeparam>
-        /// <param name="target"></param>
-        /// <param name="nullValue"></param>
-        /// <param name="comparison">Must</param>
-        /// <returns></returns>
+		/// Returns the maximum value in the target collection, or the specified <paramref name="nullValue"/> if the collection is empty.
+		/// </summary>
+		/// <remarks>
+		/// If the collection may contain nulls, the comparison must handle nulls.
+		/// </remarks>
         public static TItem Max<TItem>(IEnumerable target, TItem nullValue, Comparison<TItem> comparison)
         {
             return FindExtremeValue(target, nullValue, comparison, 1);
         }
 
-        /// <summary>
-        /// Returns the maximum value in the target collection, or the specified nullValue if the collection is empty.
-        /// If the collection may contain nulls, the comparison must handle nulls.
-        /// </summary>
-        /// <typeparam name="TItem"></typeparam>
-        /// <param name="target"></param>
-        /// <param name="nullValue"></param>
-        /// <param name="comparison">Must</param>
-        /// <returns></returns>
-        public static TItem Max<TItem>(IEnumerable<TItem> target, TItem nullValue, Comparison<TItem> comparison)
+		/// <summary>
+		/// Returns the maximum value in the target collection, or the specified <paramref name="nullValue"/> if the collection is empty.
+		/// </summary>
+		/// <remarks>
+		/// If the collection may contain nulls, the comparison must handle nulls.
+		/// </remarks>
+		public static TItem Max<TItem>(IEnumerable<TItem> target, TItem nullValue, Comparison<TItem> comparison)
         {
             return FindExtremeValue(target, nullValue, comparison, 1);
         }
 
-        /// <summary>
-        /// Returns the maximum value in the target collection, or the specified nullValue if the collection is empty.
-        /// If the collection contains nulls, they are treated as less than any other value.
-        /// </summary>
-        /// <typeparam name="TItem"></typeparam>
-        /// <param name="target"></param>
-        /// <param name="nullValue"></param>
-        /// <returns></returns>
-        public static TItem Max<TItem>(IEnumerable target, TItem nullValue)
+		/// <summary>
+		/// Returns the maximum value in the target collection, or the specified <paramref name="nullValue"/> if the collection is empty.
+		/// </summary>
+		/// <remarks>
+		/// If the collection may contain nulls, the comparison must handle nulls.
+		/// </remarks>
+		public static TItem Max<TItem>(IEnumerable target, TItem nullValue)
         {
             return Max(target, nullValue, Comparer<TItem>.Default.Compare);
         }
 
-        /// <summary>
-        /// Returns the maximum value in the target collection, or the specified nullValue if the collection is empty.
-        /// If the collection contains nulls, they are treated as less than any other value.
-        /// </summary>
-        /// <typeparam name="TItem"></typeparam>
-        /// <param name="target"></param>
-        /// <param name="nullValue"></param>
-        /// <returns></returns>
-        public static TItem Max<TItem>(IEnumerable<TItem> target, TItem nullValue)
+		/// <summary>
+		/// Returns the maximum value in the target collection, or the specified <paramref name="nullValue"/> if the collection is empty.
+		/// </summary>
+		/// <remarks>
+		/// If the collection may contain nulls, the comparison must handle nulls.
+		/// </remarks>
+		public static TItem Max<TItem>(IEnumerable<TItem> target, TItem nullValue)
         {
             return Max(target, nullValue, Comparer<TItem>.Default.Compare);
         }
 
         /// <summary>
         /// Returns the maximum value in the target collection, or the null if the collection is empty.
-        /// The collection must contain object references, not value types.
-        /// If the collection contains nulls, they are treated as less than any other value.
-        /// </summary>
-        /// <typeparam name="TItem"></typeparam>
-        /// <param name="target"></param>
-        /// <returns></returns>
+		/// </summary>
+		/// <remarks>
+		/// <para>The collection must contain object references, not value types.</para>
+		/// <para>If the collection contains nulls, they are treated as less than any other value.</para>
+		/// </remarks>
         public static TItem Max<TItem>(IEnumerable target)
             where TItem : class, IComparable<TItem>
         {
             return Max<TItem>(target, null);
         }
 
-        /// <summary>
-        /// Returns the maximum value in the target collection, or the null if the collection is empty.
-        /// The collection must contain object references, not value types.
-        /// If the collection contains nulls, they are treated as less than any other value.
-        /// </summary>
-        /// <typeparam name="TItem"></typeparam>
-        /// <param name="target"></param>
-        /// <returns></returns>
-        public static TItem Max<TItem>(IEnumerable<TItem> target)
+		/// <summary>
+		/// Returns the maximum value in the target collection, or the null if the collection is empty.
+		/// </summary>
+		/// <remarks>
+		/// <para>The collection must contain object references, not value types.</para>
+		/// <para>If the collection contains nulls, they are treated as less than any other value.</para>
+		/// </remarks>
+		public static TItem Max<TItem>(IEnumerable<TItem> target)
             where TItem : class, IComparable<TItem>
         {
             return Max(target, null);
         }
 
         /// <summary>
-        /// Helper method to provide implementation of <see cref="Min"/> and <see cref="Max"/> methods.
+        /// Helper method to provide implementation of <b>Min</b> and <b>Max</b>.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="items"></param>
-        /// <param name="nullValue"></param>
-        /// <param name="comparison"></param>
-        /// <param name="sign"></param>
-        /// <returns></returns>
         private static T FindExtremeValue<T>(IEnumerable items, T nullValue, Comparison<T> comparison, int sign)
         {
             IEnumerator enumerator = items.GetEnumerator();

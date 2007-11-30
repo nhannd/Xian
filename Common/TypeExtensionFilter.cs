@@ -50,7 +50,7 @@ namespace ClearCanvas.Common
         /// <summary>
         /// Creates a filter that matches on multiple types.
         /// </summary>
-        /// <param name="types">The types used as criteria to match</param>
+        /// <param name="types">The types used as criteria to match.</param>
         public TypeExtensionFilter(Type[] types)
         {
             _types = types;
@@ -59,7 +59,7 @@ namespace ClearCanvas.Common
         /// <summary>
         /// Creates a filter that matches on a single type.
         /// </summary>
-        /// <param name="type">The type used as criteria to match</param>
+        /// <param name="type">The type used as criteria to match.</param>
         public TypeExtensionFilter(Type type)
             : this(new Type[] { type })
         {
@@ -68,8 +68,8 @@ namespace ClearCanvas.Common
         /// <summary>
         /// Checks whether the specified extension implements/subclasses all of the criteria types.
         /// </summary>
-        /// <param name="extension">The extension to test</param>
-        /// <returns>True if the test succeeds</returns>
+        /// <param name="extension">The extension to test.</param>
+        /// <returns>True if the test succeeds.</returns>
         public override bool Test(ExtensionInfo extension)
         {
             foreach (Type filterType in _types)

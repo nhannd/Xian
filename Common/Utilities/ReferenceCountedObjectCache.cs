@@ -35,15 +35,41 @@ using System.Text;
 
 namespace ClearCanvas.Common.Utilities
 {
+	/// <summary>
+	/// A cache of <see cref="IReferenceCountable"/> objects.
+	/// </summary>
+	/// <remarks>
+	/// <para>
+	/// Objects are 'added' and 'removed' to/from the cache using string keys.
+	/// Repeated <see cref="Add"/> operations simply increment the reference count, and repeated <see cref="Remove"/>
+	/// operations decrement the reference count.  When the reference count falls to zero, the object is 
+	/// actually removed from the cache.
+	/// </para>
+	/// <para>
+	/// This class is not thread-safe.
+	/// </para>
+	/// </remarks>
 	public class ReferenceCountedObjectCache
 	{
 		private Dictionary<string, IReferenceCountable> _cache = new Dictionary<string, IReferenceCountable>();
 
+		/// <summary>
+		/// Default constructor.
+		/// </summary>
 		public ReferenceCountedObjectCache()
 		{
 
 		}
 
+		/// <summary>
+		/// Adds an <see cref="IReferenceCountable"/> object to the cache.
+		/// </summary>
+		/// <remarks>
+		/// When an object already exists for the specified <paramref name="key"/>, its reference count
+		/// is simply incremented.  Otherwise, the object is first added, then incremented.
+		/// </remarks>
+		/// <param name="key">A string key identifying the <see cref="IReferenceCountable"/> object.</param>
+		/// <param name="referenceCountedObject">The <see cref="IReferenceCountable"/> object to add to the cache.</param>
 		public void Add(string key, IReferenceCountable referenceCountedObject)
 		{
 			if (_cache.ContainsKey(key))
@@ -57,6 +83,15 @@ namespace ClearCanvas.Common.Utilities
 			}
 		}
 
+		/// <summary>
+		/// Removes an object in the cache, given the specified <paramref name="key"/>.
+		/// </summary>
+		/// <remarks>
+		/// When an object exists for the input <paramref name="key"/>, its reference count
+		/// is first decremented, and the object is only actually removed if its reference count
+		/// is zero.
+		/// </remarks>
+		/// <param name="key">The key at which to remove the stored object.</param>
 		public void Remove(string key)
 		{
 			if (key == String.Empty)
@@ -79,6 +114,9 @@ namespace ClearCanvas.Common.Utilities
 			}
 		}
 
+		/// <summary>
+		/// Gets the object stored with the given <paramref name="key"/> if one exists, otherwise null.
+		/// </summary>
 		public IReferenceCountable this[string key]
 		{
 			get
@@ -90,6 +128,9 @@ namespace ClearCanvas.Common.Utilities
 			}
 		}
 
+		/// <summary>
+		/// Clears the cache.
+		/// </summary>
 		public void Clear()
 		{
 			_cache.Clear();

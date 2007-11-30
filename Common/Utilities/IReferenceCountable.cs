@@ -35,13 +35,32 @@ using System.Text;
 
 namespace ClearCanvas.Common.Utilities
 {
+	/// <summary>
+	/// An interface for a reference countable object.
+	/// </summary>
+	/// <remarks>
+	/// Implementations of this interface should be thread-safe, unless the object 
+	/// will <b>never</b> be used from multiple threads.
+	/// </remarks>
 	public interface IReferenceCountable
 	{
+		/// <summary>
+		/// Increments the reference count.
+		/// </summary>
 		void IncrementReferenceCount();
+
+		/// <summary>
+		/// Decrements the reference count.
+		/// </summary>
 		void DecrementReferenceCount();
+
+		/// <summary>
+		/// Gets whether the reference count is zero.
+		/// </summary>
 		bool IsReferenceCountZero { get; }
 
 #if UNIT_TESTS
+#pragma warning disable 1591
 		int ReferenceCount { get; }
 #endif
 	}

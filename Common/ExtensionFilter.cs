@@ -36,17 +36,20 @@ using System.Text;
 namespace ClearCanvas.Common
 {
     /// <summary>
-    /// An abstract base class for extension filters.  Extension filters are used to filter the
-    /// extension points returned by <see cref="IExtensionPoint.CreateExtensions"/>.  Subclasses of this
-    /// class implement specific types of filters.
+    /// An abstract base class for extension filters.  
     /// </summary>
+    /// <remarks>
+	/// Extension filters are used to filter the extension points returned by 
+	/// one of the <b>CreateExtensions</b> methods.  Subclasses of this
+	/// class implement specific types of filters.
+	/// </remarks>
     public abstract class ExtensionFilter
     {
         /// <summary>
         /// Tests the specified extension against the criteria of this filter.
         /// </summary>
-        /// <param name="extension">The extension to test</param>
-        /// <returns>true if the extension meets the criteria, false otherwise</returns>
+        /// <param name="extension">The extension to test.</param>
+        /// <returns>True if the extension meets the criteria, false otherwise.</returns>
         public abstract bool Test(ExtensionInfo extension);
     }
 }

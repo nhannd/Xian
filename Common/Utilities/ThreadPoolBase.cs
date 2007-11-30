@@ -36,12 +36,54 @@ using System.Threading;
 
 namespace ClearCanvas.Common.Utilities
 {
+	/// <summary>
+	/// A base class for thread pools that makes no assumptions about how each
+	/// thread in the thread pool behaves.
+	/// </summary>
+	/// <remarks>
+	/// It is unlikely you will ever need to derive from this class.  In most
+	/// cases, either the <see cref="SimpleBlockingThreadPool"/> or the 
+	/// <see cref="BlockingThreadPool{T}"/> will be adequate to suit your needs.
+	/// </remarks>
 	public abstract class ThreadPoolBase
 	{
+		/// <summary>
+		/// The minimum (and also the default) concurrency for the thread pool.
+		/// </summary>
 		public static readonly int MinConcurrency = 1;
+
+		/// <summary>
+		/// The maximum concurrency for the thread pool.
+		/// </summary>
 		public static readonly int MaxConcurrency = 100;
 
-		public enum StartStopState { Starting, Started, Stopping, Stopped };
+		/// <summary>
+		/// An enum used to indicate the current running state of the thread pool.
+		/// </summary>
+		public enum StartStopState
+		{
+			/// <summary>
+			/// The thread pool is starting up.
+			/// </summary>
+			Starting, 
+
+			/// <summary>
+			/// The thread pool is running.
+			/// </summary>
+			Started, 
+
+			/// <summary>
+			/// The thread pool is stopping.
+			/// </summary>
+			Stopping, 
+
+			/// <summary>
+			/// The thread pool has stopped.
+			/// </summary>
+			Stopped
+		};
+
+		#region Private Fields
 
 		private readonly object _startStopSyncLock = new object();
 		private StartStopState _state;
@@ -53,12 +95,24 @@ namespace ClearCanvas.Common.Utilities
 		private int _concurrency = MinConcurrency;
 		private ThreadPriority _threadPriority;
 
-		public ThreadPoolBase(int concurrency)
+		#endregion
+
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="concurrency">The number of concurrent threads to start.</param>
+		protected ThreadPoolBase(int concurrency)
 			: this()
 		{
 			this.Concurrency = concurrency;
 		}
 
+		/// <summary>
+		/// Default constructor.
+		/// </summary>
+		/// <remarks>
+		/// The default number of threads in the thread pool is 1.
+		/// </remarks>
 		protected ThreadPoolBase()
 		{
 			_state = StartStopState.Stopped;
@@ -67,6 +121,9 @@ namespace ClearCanvas.Common.Utilities
 			_threadPriority = ThreadPriority.Normal;
 		}
 
+		/// <summary>
+		/// Fired when the <see cref="State"/> has changed.
+		/// </summary>
 		public event EventHandler<ItemEventArgs<StartStopState>> StartStopStateChangedEvent
 		{
 			add 
@@ -85,6 +142,9 @@ namespace ClearCanvas.Common.Utilities
 			}
 		}
 		
+		/// <summary>
+		/// Gets whether or not the thread pool is currently running.
+		/// </summary>
 		public bool Active
 		{
 			get 
@@ -96,6 +156,14 @@ namespace ClearCanvas.Common.Utilities
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the number of concurrently running threads in the thread pool.
+		/// </summary>
+		/// <remarks>
+		/// This property can only be set when the thread pool is in the <see cref="StartStopState.Stopped"/> state.
+		/// </remarks>
+		/// <exception cref="InvalidOperationException">Thrown if the thread pool is not in the stopped state when
+		/// the property is set.</exception>
 		public int Concurrency
 		{
 			get { return _concurrency; }
@@ -111,6 +179,14 @@ namespace ClearCanvas.Common.Utilities
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the <see cref="ThreadPriority"/> of the threads in the thread pool.
+		/// </summary>
+		/// <remarks>
+		/// This property can only be set when the thread pool is in the <see cref="StartStopState.Stopped"/> state.
+		/// </remarks>
+		/// <exception cref="InvalidOperationException">Thrown if the thread pool is not in the stopped state when
+		/// the property is set.</exception>
 		public ThreadPriority ThreadPriority
 		{
 			get { return _threadPriority; }
@@ -123,12 +199,9 @@ namespace ClearCanvas.Common.Utilities
 			}
 		}
 
-
-		protected object StartStopSyncLock
-		{
-			get { return _startStopSyncLock; }
-		}
-
+		/// <summary>
+		/// Indicates whether or not the thread pool should finish processing all items before stopping.
+		/// </summary>
 		protected bool CompleteBeforeStop
 		{
 			get 
@@ -140,6 +213,9 @@ namespace ClearCanvas.Common.Utilities
 			}
 		}
 
+		/// <summary>
+		/// Gets the current state (<see cref="StartStopState"/>) of the thread pool.
+		/// </summary>
 		protected StartStopState State
 		{
 			get
@@ -151,6 +227,17 @@ namespace ClearCanvas.Common.Utilities
 			}
 		}
 
+		/// <summary>
+		/// Called before the thread pool is started.
+		/// </summary>
+		/// <remarks>
+		/// Inheritors that override this method must first call the base method and 
+		/// cannot return true if the base method returns false.
+		/// </remarks>
+		/// <returns>
+		/// False if the thread pool is not in the <see cref="StartStopState.Stopped"/> 
+		/// state, and thus cannot be started.
+		/// </returns>
 		protected virtual bool OnStart()
 		{
 			//lock other threads out of the Start function by checking/setting the state.
@@ -166,6 +253,13 @@ namespace ClearCanvas.Common.Utilities
 			return true;
 		}
 
+		/// <summary>
+		/// Called when the thread pool has started.
+		/// </summary>
+		/// <remarks>
+		/// Inheritors that override this method must ensure that the base method gets called
+		/// in order for the thread pool to function correctly.
+		/// </remarks>
 		protected virtual void OnStarted()
 		{
 			lock (_startStopSyncLock)
@@ -175,6 +269,17 @@ namespace ClearCanvas.Common.Utilities
 			}
 		}
 
+		/// <summary>
+		/// Called before the thread pool is stopped.
+		/// </summary>
+		/// <remarks>
+		/// Inheritors that override this method must first call the base method and 
+		/// cannot return true if the base method returns false.
+		/// </remarks>
+		/// <returns>
+		/// False if the thread pool is not in the <see cref="StartStopState.Started"/> 
+		/// state, and thus cannot be stopped.
+		/// </returns>
 		protected virtual bool OnStop(bool completeBeforeStop)
 		{
 			//lock other threads out of the Stop function by checking/setting the state.
@@ -191,6 +296,13 @@ namespace ClearCanvas.Common.Utilities
 			return true;
 		}
 
+		/// <summary>
+		/// Called when the thread pool has stopped.
+		/// </summary>
+		/// <remarks>
+		/// Inheritors that override this method must ensure that the base method gets called
+		/// in order for the thread pool to function correctly.
+		/// </remarks>
 		protected virtual void OnStopped()
 		{
 			lock (_startStopSyncLock)
@@ -200,6 +312,12 @@ namespace ClearCanvas.Common.Utilities
 			}
 		}
 
+		/// <summary>
+		/// Starts the thread pool.
+		/// </summary>
+		/// <remarks>
+		/// Repeated calls to this method will do nothing, and no exceptions will be thrown.
+		/// </remarks>
 		public void Start()
 		{
 			if (!OnStart())
@@ -220,11 +338,24 @@ namespace ClearCanvas.Common.Utilities
 			OnStarted();
 		}
 
+		/// <summary>
+		/// Stops the thread pool.
+		/// </summary>
+		/// <remarks>
+		/// Repeated calls to this method will do nothing, and no exceptions will be thrown.
+		/// </remarks>
 		public void Stop()
 		{
 			Stop(false);
 		}
 
+		/// <summary>
+		/// Stops the thread pool, indicating whether or not the thread pool should process
+		/// any remaining items first before stopping (via the parameter <param name="completeBeforeStop"/>).
+		/// </summary>
+		/// <remarks>
+		/// Repeated calls to this method will do nothing, and no exceptions will be thrown.
+		/// </remarks>
 		public void Stop(bool completeBeforeStop)
 		{
 			if (!OnStop(completeBeforeStop))
@@ -238,6 +369,13 @@ namespace ClearCanvas.Common.Utilities
 			OnStopped();
 		}
 
+		/// <summary>
+		/// The method that each thread in the thread pool will run on.
+		/// </summary>
+		/// <remarks>
+		/// This method must be overridden by inheritors.  The method should not exit until the
+		/// <see cref="StartStopState"/> has changed to <see cref="StartStopState.Stopping"/>.
+		/// </remarks>
 		protected abstract void RunThread();
 	}
 }

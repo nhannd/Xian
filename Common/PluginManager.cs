@@ -59,8 +59,6 @@ namespace ClearCanvas.Common
 		private string _pluginDir;
 		private event EventHandler<PluginLoadedEventArgs> _pluginProgressEvent;
 
-		// Constructor is internal, since we only ever one instance of it and that
-		// one instance is created through the Platform class.
 		internal PluginManager(string pluginDir)
 		{
 			Platform.CheckForNullReference(pluginDir, "pluginDir");
@@ -70,9 +68,12 @@ namespace ClearCanvas.Common
 		}
 
         /// <summary>
-        /// The set of installed plugins.  If plugins have not yet been loaded into memory,
-        /// querying this property will cause them to be loaded.
+		/// Information about the set of all installed plugins.
         /// </summary>
+        /// <remarks>
+		/// If plugins have not yet been loaded into memory,
+		/// querying this property will cause them to be loaded.
+		/// </remarks>
         public PluginInfo[] Plugins
         {
             get 
@@ -86,9 +87,12 @@ namespace ClearCanvas.Common
         }
 
         /// <summary>
-        /// The set of extensions defined across all installed plugins.  If plugins have not yet been loaded
-        /// into memory, querying this property will cause them to be loaded.
+        /// Information about the set of extensions defined across all installed plugins.
         /// </summary>
+        /// <remarks>
+		/// If plugins have not yet been loaded
+		/// into memory, querying this property will cause them to be loaded.
+		/// </remarks>
         public ExtensionInfo[] Extensions
         {
             get
@@ -102,9 +106,11 @@ namespace ClearCanvas.Common
         }
 
         /// <summary>
-        /// The set of extension points defined across all installed plugins.  If plugins have not yet been loaded
-        /// into memory, querying this property will cause them to be loaded.
+        /// Information about the set of extension points defined across all installed plugins.  
         /// </summary>
+        /// <remarks>
+		/// If plugins have not yet been loaded into memory, querying this property will cause them to be loaded.
+		/// </remarks>
         public ExtensionPointInfo[] ExtensionPoints
         {
             get
@@ -127,16 +133,15 @@ namespace ClearCanvas.Common
 		}
 
 		/// <summary>
-		/// Loads all plugins in current plugin directory.
+		/// Loads all plugins in the current plugin directory.
 		/// </summary>
 		/// <remarks>
 		/// This method will traverse the plugin directory and all its subdirectories loading
-		/// all valid plugin assemblies.  A valid plugin is an assembly that contains a class
-		/// derived from <see cref="Plugin"/>.  Plugins are loaded only the first time this
-		/// method is called; subsequent calls are ignored.
+		/// all valid plugin assemblies.  A valid plugin is an assembly that contains an assembly
+		/// attribute derived from <see cref="ClearCanvas.Common.PluginAttribute"/>.
 		/// </remarks>
 		/// <exception cref="PluginException">Specified plugin directory does not exist or 
-		/// a problem with the loading of a plugin.</exception>
+		/// a problem has occurred while loading a plugin.</exception>
 		public void LoadPlugins()
 		{
             if (!RootPluginDirectoryExists())

@@ -47,7 +47,9 @@ namespace ClearCanvas.Common.Utilities
     /// This class allows any block of code, in the form of a delegate, to be passed from an abitrary
     /// thread over to the application's main thread for execution. 
     /// </summary>
-	/// <remarks>Note that on disposal, this object does not finish processing its queue, it quits immediately.</remarks>
+	/// <remarks>
+	/// Note that on disposal, this object does not finish processing its queue, it quits immediately.
+	/// </remarks>
     public class InterthreadMarshaler : IDisposable
     {
         private BlockingQueue<InvokeDelegate> _queue;
@@ -56,8 +58,11 @@ namespace ClearCanvas.Common.Utilities
 		private object _threadExitingLock = new object(); 
         
 		/// <summary>
-		/// Constructor.  The object must be constructed on the thread that events should be marshaled to.
+		/// Constructor.
 		/// </summary>
+		/// <remarks>
+		/// The object must be constructed on the thread that events should be marshaled to.
+		/// </remarks>
 		public InterthreadMarshaler()
 		{
 			_queue = new BlockingQueue<InvokeDelegate>();
@@ -70,20 +75,21 @@ namespace ClearCanvas.Common.Utilities
 
         /// <summary>
         /// Queues the specified delegate for invocation on this object's thread, regardless of which
-        /// thread this method is called from.  Note that this method simply queues the delegate and
-        /// returns.  There is no guarantee as to when the delegate will actually be invoked.
+        /// thread this method is called from. 
         /// </summary>
-        /// <param name="del"></param>
+        /// <remarks>
+		/// Note that this method simply queues the delegate and returns.  There 
+		/// is no guarantee as to when the delegate will actually be invoked.
+		/// </remarks>
+        /// <param name="del">The delegate to be invoked on this object's thread.</param>
         public void QueueInvoke(InvokeDelegate del)
         {
             _queue.Enqueue(del);
         }
 
         /// <summary>
-        /// Handles progress events from the queue processing thread
+        /// Handles progress events from the queue processing thread.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void QueueProgressEventHandler(object sender, ProgressChangedEventArgs e)
         {
             // this method will be called on the main thread, hence it will fire the event
@@ -93,10 +99,8 @@ namespace ClearCanvas.Common.Utilities
         }
 
         /// <summary>
-        /// Defines the worker process for the queue processing thread
+        /// Defines the worker process for the queue processing thread.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void ProcessQueueAsync(object sender, DoWorkEventArgs e)
         {
             // this method is running on a background thread

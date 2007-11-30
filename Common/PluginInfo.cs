@@ -46,8 +46,8 @@ namespace ClearCanvas.Common
         /// <summary>
         /// Internal method used by the framework to discover the extensions declared in a plugin.
         /// </summary>
-        /// <param name="asm">The plugin assembly to inspect</param>
-        /// <returns>An array of <see cref="ExtensionInfo" />objects describing the extensions</returns>
+        /// <param name="asm">The plugin assembly to inspect.</param>
+        /// <returns>An array of <see cref="ExtensionInfo" /> objects describing the extensions.</returns>
         internal static ExtensionInfo[] DiscoverExtensions(Assembly asm)
         {
             List<ExtensionInfo> extensionList = new List<ExtensionInfo>();
@@ -65,8 +65,8 @@ namespace ClearCanvas.Common
         /// <summary>
         /// Internal method used by the framework to discover the extension points declared in a plugin.
         /// </summary>
-        /// <param name="asm">The plugin assembly to inspect</param>
-        /// <returns>An array of <see cref="ExtensionPointInfo" />objects describing the extension points</returns>
+        /// <param name="asm">The plugin assembly to inspect.</param>
+        /// <returns>An array of <see cref="ExtensionPointInfo" />objects describing the extension points.</returns>
         internal static ExtensionPointInfo[] DiscoverExtensionPoints(Assembly asm)
         {
             List<ExtensionPointInfo> extensionPointList = new List<ExtensionPointInfo>();
@@ -113,9 +113,6 @@ namespace ClearCanvas.Common
         /// <summary>
         /// Internal constructor.
         /// </summary>
-        /// <param name="assembly"></param>
-        /// <param name="name"></param>
-        /// <param name="description"></param>
         internal PluginInfo(Assembly assembly, string name, string description)
         {
             _name = name;
@@ -152,17 +149,26 @@ namespace ClearCanvas.Common
 
         #region IBrowsable Members
 
-        public string FormalName
+    	/// <summary>
+    	/// Formal name of this object, typically the type name or assembly name.  Cannot be null.
+    	/// </summary>
+    	public string FormalName
         {
             get { return Assembly.FullName; }
         }
 
-        public string Name
+    	/// <summary>
+    	/// Friendly name of the object, if one exists, otherwise null.
+    	/// </summary>
+    	public string Name
         {
             get { return _name; }
         }
 
-        public string Description
+    	/// <summary>
+    	/// A friendly description of this object, if one exists, otherwise null.
+    	/// </summary>
+    	public string Description
         {
             get { return _description; }
         }

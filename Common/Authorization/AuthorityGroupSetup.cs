@@ -43,7 +43,10 @@ namespace ClearCanvas.Common.Authorization
     {
     }
 
-    public static class AuthorityGroupSetup
+    /// <summary>
+    /// Helper class for setting up authority groups.
+    /// </summary>
+	public static class AuthorityGroupSetup
     {
         /// <summary>
         /// Returns the set of default authority groups defined by all plugins.

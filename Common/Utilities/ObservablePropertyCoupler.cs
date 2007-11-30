@@ -36,13 +36,16 @@ using System.Text;
 namespace ClearCanvas.Common.Utilities
 {
     /// <summary>
-    /// Couples two instances of <see cref="IObservablePropertyBinding"/> such that a change to the primary property
-    /// will be propagated to the secondary property.  A bi-directional mode is also possible, where changes to the secondary
-    /// property are also propagated back to the primary property.  In this case, infinite mutual
-    /// recursion is prevented by only propagating the change if the values are actually different.
-    /// To remove the coupling, call <see cref="Dispose"/> on this object.
+    /// Couples two instances of <see cref="IObservablePropertyBinding{T}"/> such that a change to the primary property
+    /// will be propagated to the secondary property.  
     /// </summary>
-    /// <typeparam name="T">The type of the bound property</typeparam>
+    /// <remarks>
+	/// A bi-directional mode is also possible, where changes to the secondary
+	/// property are also propagated back to the primary property.  In this case, infinite mutual
+	/// recursion is prevented by only propagating the change if the values are actually different.
+	/// To remove the coupling, call <see cref="Dispose()"/> on this object.
+	/// </remarks>
+    /// <typeparam name="T">The type of the bound property.</typeparam>
     public class ObservablePropertyCoupler<T> : IDisposable
     {
         private IObservablePropertyBinding<T> _primary;
@@ -50,13 +53,16 @@ namespace ClearCanvas.Common.Utilities
         private bool _bidirectional;
 
         /// <summary>
-        /// Establishes the coupling between the specified primary and secondary properties.  The value of the secondary
-        /// property will be initialized to the value of the primary property, and will continue to be synchronized for the duration
-        /// of the lifetime of this object.  To remove the coupling at any point in the future, retain
-        /// the returned object, and call Dispose() on it to remove the coupling.
+        /// Establishes the coupling between the specified primary and secondary properties.
         /// </summary>
-        /// <param name="primary">The primary property, which serves as the subject</param>
-        /// <param name="secondary">The secondary property, which observes the subject and tracks its value</param>
+        /// <remarks>
+		/// The value of the secondary property will be initialized to the value of the primary property, 
+		/// and will continue to be synchronized for the duration of the lifetime of this object.  
+		/// To remove the coupling at any point in the future, retain the returned object, and 
+		/// call Dispose() on it to remove the coupling.
+		/// </remarks>
+        /// <param name="primary">The primary property, which serves as the subject.</param>
+        /// <param name="secondary">The secondary property, which observes the subject and tracks its value.</param>
         /// <returns>A property coupler object, which can optionally be retained for eventual disposal.</returns>
         public static ObservablePropertyCoupler<T> Couple(IObservablePropertyBinding<T> primary, IObservablePropertyBinding<T> secondary)
         {
@@ -64,15 +70,18 @@ namespace ClearCanvas.Common.Utilities
         }
 
         /// <summary>
-        /// Establishes the coupling between the specified primary and secondary properties.  The value of the secondary
-        /// property will be initialized to the value of the primary property, and will continue to be synchronized for the duration
-        /// of the lifetime of this object.  The coupling is optionally bi-directional, in which case changes made to the secondary
-        /// property are also propagated back to the primary property.  To remove the coupling at any point in the future, retain
-        /// the returned object, and call Dispose() on it to remove the coupling.
+        /// Establishes the coupling between the specified primary and secondary properties.
         /// </summary>
-        /// <param name="primary">The primary property, which serves as the subject</param>
-        /// <param name="secondary">The secondary property, which observes the subject and tracks its value</param>
-        /// <param name="bidirectional">If true, the primary property will also track the value of the secondary property</param>
+        /// <remarks>
+		/// The value of the secondary property will be initialized to the value of the primary property, 
+		/// and will continue to be synchronized for the duration of the lifetime of this object.  The coupling is 
+		/// optionally bi-directional, in which case changes made to the secondary property are also propagated 
+		/// back to the primary property.  To remove the coupling at any point in the future, retain the returned 
+		/// object, and call Dispose() on it to remove the coupling.
+		/// </remarks>
+        /// <param name="primary">The primary property, which serves as the subject.</param>
+        /// <param name="secondary">The secondary property, which observes the subject and tracks its value.</param>
+        /// <param name="bidirectional">If true, the primary property will also track the value of the secondary property.</param>
         /// <returns>A property coupler object, which can optionally be retained for eventual disposal.</returns>
         public static ObservablePropertyCoupler<T> Couple(IObservablePropertyBinding<T> primary, IObservablePropertyBinding<T> secondary, bool bidirectional)
         {
@@ -80,11 +89,11 @@ namespace ClearCanvas.Common.Utilities
         }
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
-        /// <param name="primary">The primary property, which serves as the subject</param>
-        /// <param name="secondary">The secondary property, which observes the subject and tracks its value</param>
-        /// <param name="bidirectional">If true, the primary property will also track the value of the secondary property</param>
+        /// <param name="primary">The primary property, which serves as the subject.</param>
+        /// <param name="secondary">The secondary property, which observes the subject and tracks its value.</param>
+        /// <param name="bidirectional">If true, the primary property will also track the value of the secondary property.</param>
         protected ObservablePropertyCoupler(IObservablePropertyBinding<T> primary, IObservablePropertyBinding<T> secondary, bool bidirectional)
         {
             Platform.CheckForNullReference(primary, "primary");
@@ -105,7 +114,10 @@ namespace ClearCanvas.Common.Utilities
             _secondary.PropertyValue = _primary.PropertyValue;
         }
 
-        protected virtual void Dispose(bool disposing)
+		/// <summary>
+		/// Supports the implementation of the <see cref="IDisposable"/> pattern.
+		/// </summary>
+		protected virtual void Dispose(bool disposing)
         {
             if (disposing)
             {
@@ -116,6 +128,19 @@ namespace ClearCanvas.Common.Utilities
                 }
             }
         }
+
+		#region IDisposable Members
+
+		/// <summary>
+		/// Implementation of the <see cref="IDisposable"/> pattern.
+		/// </summary>
+		public void Dispose()
+		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+
+		#endregion
 
         private void PrimaryChangedEventHandler(object sender, EventArgs args)
         {
@@ -136,15 +161,5 @@ namespace ClearCanvas.Common.Utilities
                 dst.PropertyValue = src.PropertyValue;
             }
         }
-
-        #region IDisposable Members
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        #endregion
     }
 }

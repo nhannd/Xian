@@ -43,9 +43,12 @@ namespace ClearCanvas.Common.Configuration
 {
     /// <summary>
     /// Communicates with an <see cref="IConfigurationStore"/> to manage loading and saving of
-    /// settings from the store.  Supports the framework and is not intended for use by application code.
-    /// Use <see cref="StandardSettingsProvider"/> instead.
+    /// settings from the store.
     /// </summary>
+    /// <remarks>
+	/// Supports the framework and is not intended for use by application code.  Use 
+	/// <see cref="StandardSettingsProvider"/> instead.
+	/// </remarks>
     internal class ConfigurationStoreSettingsProvider : SettingsProvider, IApplicationSettingsProvider
     {
         private string _appName;
@@ -56,7 +59,10 @@ namespace ClearCanvas.Common.Configuration
             _store = store;
         }
 
-        public override string ApplicationName
+        /// <summary>
+        /// Gets the Application Name used to initialize the settings subsystem.
+        /// </summary>
+		public override string ApplicationName
         {
             get
             {
@@ -68,12 +74,10 @@ namespace ClearCanvas.Common.Configuration
             }
         }
 
-        public override void Initialize(string name, NameValueCollection config)
-        {
-            base.Initialize(name, config);
-        }
-
-        public override SettingsPropertyValueCollection GetPropertyValues(SettingsContext context, SettingsPropertyCollection props)
+    	///<summary>
+    	///Returns the collection of settings property values for the specified application instance and settings property group.
+    	///</summary>
+    	public override SettingsPropertyValueCollection GetPropertyValues(SettingsContext context, SettingsPropertyCollection props)
         {
             Type settingsClass = (Type)context["SettingsClassType"];
             string settingsKey = (string)context["SettingsKey"];
@@ -110,7 +114,10 @@ namespace ClearCanvas.Common.Configuration
             return values;
         }
 
-        public override void SetPropertyValues(SettingsContext context, SettingsPropertyValueCollection settings)
+    	///<summary>
+    	///Sets the values of the specified group of property settings.
+    	///</summary>
+    	public override void SetPropertyValues(SettingsContext context, SettingsPropertyValueCollection settings)
         {
             Dictionary<string, string> valuesToStore = new Dictionary<string, string>();
 
@@ -147,11 +154,8 @@ namespace ClearCanvas.Common.Configuration
         #region IApplicationSettingsProvider Members
 
         /// <summary>
-        /// Not implemented
+        /// Not implemented.
         /// </summary>
-        /// <param name="context"></param>
-        /// <param name="property"></param>
-        /// <returns></returns>
         public SettingsPropertyValue GetPreviousVersion(SettingsContext context, SettingsProperty property)
         {
             // seems like implementing this method would be quite inefficient, unless we could be sure that
@@ -161,9 +165,11 @@ namespace ClearCanvas.Common.Configuration
         }
 
         /// <summary>
-        /// Note that this implementation resets the user-scoped settings only.  It does not touch application-scoped settings.
+        /// Resets all settings back to the defaults.
         /// </summary>
-        /// <param name="context"></param>
+        /// <remarks>
+		/// Note that this implementation resets the user-scoped settings only.  It does not touch application-scoped settings.
+		/// </remarks>
         public void Reset(SettingsContext context)
         {
             Type settingsClass = (Type)context["SettingsClassType"];
@@ -174,11 +180,12 @@ namespace ClearCanvas.Common.Configuration
         }
 
         /// <summary>
-        /// Note that this implementation upgrades user-scoped settings only, and it upgrades all settings in the group,
-        /// regardless of the contents of the specified properties collection.  It does not touch application-scoped settings.
+        /// Upgrades the settings from a previous version.
         /// </summary>
-        /// <param name="context"></param>
-        /// <param name="properties"></param>
+		/// <remarks>
+		/// Note that this implementation upgrades user-scoped settings only, and it upgrades all settings in the group,
+        /// regardless of the contents of the specified properties collection.  It does not touch application-scoped settings.
+		/// </remarks>
         public void Upgrade(SettingsContext context, SettingsPropertyCollection properties)
         {
             Type settingsClass = (Type)context["SettingsClassType"];

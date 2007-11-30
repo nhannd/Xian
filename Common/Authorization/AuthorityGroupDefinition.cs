@@ -38,11 +38,17 @@ namespace ClearCanvas.Common.Authorization
     /// <summary>
     /// Helper class for providing authority group definitions to be imported at deployment time.
     /// </summary>
-    public class AuthorityGroupDefinition
+	/// <seealso cref="AuthorityTokenAttribute"/>
+	public class AuthorityGroupDefinition
     {
         private string _name;
         private string[] _tokens;
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="name">The name of the authority group.</param>
+		/// <param name="tokens">The associated authority group tokens.</param>
         public AuthorityGroupDefinition(string name, string[] tokens)
         {
             _name = name;

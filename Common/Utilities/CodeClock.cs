@@ -34,13 +34,17 @@ using System;
 namespace ClearCanvas.Common.Utilities
 {
 	/// <summary>
-	/// A simple stopwatch class that can be used to profile code.  To ensure portability, use this
-    /// class instead of the <see cref="System.Diagnostics.Stopwatch" /> class which has not yet been
-    /// implemented in Mono.
+	/// A simple stopwatch class that can be used to profile code.  
 	/// </summary>
 	/// <remarks>
+	/// <para>
+	/// To ensure portability, use this class instead of the <see cref="System.Diagnostics.Stopwatch" /> 
+	/// class which has not yet been implemented in Mono.
+	/// </para>
+	/// <para>
 	/// On Windows, this class will internally use the Win32 high resolution performance counter.
 	/// On other platforms, a default portable clock is used.
+	/// </para>
 	/// </remarks>
 	/// <example>
 	/// <code>
@@ -76,7 +80,7 @@ namespace ClearCanvas.Common.Utilities
 		}
 
 		/// <summary>
-		/// Starts the clock
+		/// Starts the clock.
 		/// </summary>
 		public void Start()
 		{
@@ -85,7 +89,7 @@ namespace ClearCanvas.Common.Utilities
 		
 
 		/// <summary>
-		/// Stops the clock
+		/// Stops the clock.
 		/// </summary>
 		public void Stop()
 		{
@@ -94,7 +98,7 @@ namespace ClearCanvas.Common.Utilities
 		}
 
 		/// <summary>
-		/// Clears (resets) the clock
+		/// Clears (resets) the clock.
 		/// </summary>
 		public void Clear()
 		{
@@ -104,7 +108,6 @@ namespace ClearCanvas.Common.Utilities
 		/// <summary>
 		/// Gets the number of seconds elapsed between start and stop.
 		/// </summary>
-		/// <value>The number of seconds elapsed between start and stop.</value>
 		public float Seconds
 		{
 			get
@@ -114,9 +117,8 @@ namespace ClearCanvas.Common.Utilities
 		}
 
 		/// <summary>
-		/// Number of seconds elapsed between start and stop.
+		/// Gets the number of seconds elapsed between start and stop as a formatted string.
 		/// </summary>
-		/// <returns>Formatted string containing number of seconds elapsed.</returns>
 		public override string ToString()
 		{
 			return String.Format(SR.FormatSeconds, Seconds);

@@ -36,25 +36,49 @@ using System.Threading;
 
 namespace ClearCanvas.Common.Utilities
 {
+	#region SimpleBlockingThreadPool class
+
+	/// <summary>
+	/// A simple delegate for use in a <see cref="SimpleBlockingThreadPool"/>.
+	/// </summary>
 	public delegate void SimpleBlockingThreadPoolDelegate();
 
+	/// <summary>
+	/// An implementation of <see cref="BlockingThreadPool{T}"/> that processes <see cref="SimpleBlockingThreadPoolDelegate"/>s.
+	/// </summary>
 	public class SimpleBlockingThreadPool : BlockingThreadPool<SimpleBlockingThreadPoolDelegate>
 	{
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="concurrency">Defines the number of concurrent threads that will process enqueued items.</param>
+		/// <param name="allowInactiveAdd">Specifies whether or not items can be added while the threads are not running.</param>
 		public SimpleBlockingThreadPool(int concurrency, bool allowInactiveAdd)
 			: base(concurrency, allowInactiveAdd)
 		{
 		}
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="concurrency">Defines the number of concurrent threads that will process enqueued items.</param>
 		public SimpleBlockingThreadPool(int concurrency)
 			: base(concurrency)
 		{
 		}
 
+		/// <summary>
+		/// Protected constructor.
+		/// </summary>
 		protected SimpleBlockingThreadPool()
 			: base()
 		{
 		}
 
+		/// <summary>
+		/// Called by one of the threads in the pool when a <see cref="SimpleBlockingThreadPoolDelegate"/> is about to be processed.
+		/// </summary>
+		/// <param name="del">The delegate that will be executed by this method call.</param>
 		protected override void ProcessItem(SimpleBlockingThreadPoolDelegate del)
 		{
 			//execute the delegate.
@@ -62,6 +86,16 @@ namespace ClearCanvas.Common.Utilities
 		}
 	}
 
+	#endregion
+
+	/// <summary>
+	/// A blocking thread pool.
+	/// </summary>
+	/// <remarks>
+	/// This class uses a <see cref="BlockingQueue{T}"/> internally and processes
+	/// items of type <typeparamref name="T"/> concurrently on multiple threads.
+	/// </remarks>
+	/// <typeparam name="T">The type of object to be processed by the thread pool.</typeparam>
 	public abstract class BlockingThreadPool<T> : ThreadPoolBase
 		where T : class
 	{
@@ -69,7 +103,12 @@ namespace ClearCanvas.Common.Utilities
 		private bool _allowInactiveAdd;
 		private volatile int _sleepTime;
 	
-		public BlockingThreadPool(int concurrency, bool allowInactiveAdd)
+		/// <summary>
+		/// Protected constructor.
+		/// </summary>
+		/// <param name="concurrency">Defines the number of concurrent threads that will process enqueued items.</param>
+		/// <param name="allowInactiveAdd">Specifies whether or not items can be added while the threads are not running.</param>
+		protected BlockingThreadPool(int concurrency, bool allowInactiveAdd)
 			: base(concurrency)
 		{
 			_blockingQueue = new BlockingQueue<T>();
@@ -77,16 +116,26 @@ namespace ClearCanvas.Common.Utilities
 			_sleepTime = 0; //will at least give up the remainder of the time slice.
 		}
 
+		/// <summary>
+		/// Protected constructor.
+		/// </summary>
+		/// <param name="concurrency">Defines the number of concurrent threads that will process enqueued items.</param>
 		protected BlockingThreadPool(int concurrency)
 			: this(concurrency, false)
 		{ 
 		}
 
+		/// <summary>
+		/// Protected constructor.
+		/// </summary>
 		protected BlockingThreadPool()
 			: this(MinConcurrency, false)
 		{
 		}
 
+		/// <summary>
+		/// Specifies whether or not items to be processed can be added while the thread pool is not running.
+		/// </summary>
 		public bool AllowInactiveAdd
 		{
 			get { return _allowInactiveAdd; }
@@ -99,17 +148,34 @@ namespace ClearCanvas.Common.Utilities
 			}
 		}
 
-		public int SleepTime
+		/// <summary>
+		/// Specifies an amount of time, in milliseconds, for each thread to sleep between processing items.
+		/// </summary>
+		public int SleepTimeMilliseconds
 		{
 			get { return _sleepTime; }
 			set { _sleepTime = value; }
 		}
 
+		/// <summary>
+		/// Gets the number of items remaining in the queue.
+		/// </summary>
 		public int QueueCount
 		{
 			get { return _blockingQueue.Count; }
 		}
 
+		/// <summary>
+		/// Called before the thread pool is started.
+		/// </summary>
+		/// <remarks>
+		/// Inheritors that override this method must first call the base method and 
+		/// cannot return true if the base method returns false.
+		/// </remarks>
+		/// <returns>
+		/// False if the thread pool is not in the <see cref="ThreadPoolBase.StartStopState.Stopped"/> 
+		/// state, and thus cannot be started.
+		/// </returns>
 		protected override bool OnStart()
 		{
 			if (!base.OnStart())
@@ -119,6 +185,17 @@ namespace ClearCanvas.Common.Utilities
 			return true;
 		}
 
+		/// <summary>
+		/// Called before the thread pool is stopped.
+		/// </summary>
+		/// <remarks>
+		/// Inheritors that override this method must first call the base method and 
+		/// cannot return true if the base method returns false.
+		/// </remarks>
+		/// <returns>
+		/// False if the thread pool is not in the <see cref="ThreadPoolBase.StartStopState.Started"/> 
+		/// state, and thus cannot be stopped.
+		/// </returns>
 		protected override bool OnStop(bool completeBeforeStop)
 		{
 			if (!base.OnStop(completeBeforeStop))
@@ -128,6 +205,10 @@ namespace ClearCanvas.Common.Utilities
 			return true;
 		}
 
+		/// <summary>
+		/// Adds an item of type <typeparamref name="T"/> to the queue.
+		/// </summary>
+		/// <param name="item"></param>
 		public void Enqueue(T item)
 		{
 			if (!_allowInactiveAdd && !this.Active)
@@ -135,8 +216,11 @@ namespace ClearCanvas.Common.Utilities
 
 			_blockingQueue.Enqueue(item);
 		}
-		
-		protected override void RunThread()
+
+		/// <summary>
+		/// The method that each thread in the thread pool will run on.
+		/// </summary>
+		protected sealed override void RunThread()
 		{
 			while (true)
 			{
@@ -156,6 +240,13 @@ namespace ClearCanvas.Common.Utilities
 			}
 		}
 
+		/// <summary>
+		/// Inheritors must override this method in order to perform processing on items.
+		/// </summary>
+		/// <remarks>
+		/// This method is called from within the <see cref="RunThread"/> 
+		/// method to process each item that has been taken from the queue.
+		/// </remarks>
 		protected abstract void ProcessItem(T item);
 	}
 }

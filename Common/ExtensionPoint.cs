@@ -36,13 +36,13 @@ using System.Text;
 namespace ClearCanvas.Common
 {
     /// <summary>
-    /// Abstract base class for the generic ExtensionPoint class.
+    /// Abstract base class for extension points.
     /// </summary>
     public abstract class ExtensionPoint : IExtensionPoint
     {
         #region PredicateExtensionFilter
 
-        class PredicateExtensionFilter : ExtensionFilter
+        private class PredicateExtensionFilter : ExtensionFilter
         {
             private Predicate<ExtensionInfo> _predicate;
 
@@ -68,7 +68,6 @@ namespace ClearCanvas.Common
         /// <summary>
         /// Sets the <see cref="IExtensionFactory"/> that is used to create extensions.
         /// </summary>
-        /// <param name="extensionFactory"></param>
         internal static void SetExtensionFactory(IExtensionFactory extensionFactory)
         {
             Platform.CheckForNullReference(extensionFactory, "extensionFactory");
@@ -126,8 +125,6 @@ namespace ClearCanvas.Common
         /// <summary>
         /// Instantiates one extension of this point that matches the specified filter.
         /// </summary>
-        /// <param name="filter"></param>
-        /// <returns></returns>
         public object CreateExtension(ExtensionFilter filter)
         {
             return AtLeastOne(CreateExtensionsHelper(filter, true), this.GetType());
@@ -136,8 +133,6 @@ namespace ClearCanvas.Common
         /// <summary>
         /// Instantiates one extension of this point that matches the specified filter.
         /// </summary>
-        /// <param name="filter"></param>
-        /// <returns></returns>
         public object CreateExtension(Predicate<ExtensionInfo> filter)
         {
             return CreateExtension(new PredicateExtensionFilter(filter));
@@ -146,7 +141,6 @@ namespace ClearCanvas.Common
         /// <summary>
         /// Instantiates all extensions of this point.
         /// </summary>
-        /// <returns></returns>
         public object[] CreateExtensions()
         {
             return CreateExtensionsHelper(null, false);
@@ -155,8 +149,6 @@ namespace ClearCanvas.Common
         /// <summary>
         /// Instantiates all extensions of this point that match the supplied filter.
         /// </summary>
-        /// <param name="filter"></param>
-        /// <returns></returns>
         public object[] CreateExtensions(ExtensionFilter filter)
         {
             return CreateExtensionsHelper(filter, false);
@@ -165,8 +157,6 @@ namespace ClearCanvas.Common
         /// <summary>
         /// Instantiates all extensions of this point that match the supplied filter.
         /// </summary>
-        /// <param name="filter"></param>
-        /// <returns></returns>
         public object[] CreateExtensions(Predicate<ExtensionInfo> filter)
         {
             return CreateExtensions(new PredicateExtensionFilter(filter));
@@ -176,20 +166,33 @@ namespace ClearCanvas.Common
 
         #region Protected methods
 
-        protected object[] CreateExtensionsHelper(ExtensionFilter filter, bool justOne)
+        /// <summary>
+        /// Protected method that actually performs the extension creation
+        /// from an internal <see cref="IExtensionFactory"/>.
+        /// </summary>
+		protected object[] CreateExtensionsHelper(ExtensionFilter filter, bool justOne)
         {
             // we assume that the factory itself is thread-safe, and therefore we don't need to lock
             // (don't want to incur the cost of locking if not necessary)
             return _extensionFactory.CreateExtensions(this, filter, justOne);
         }
 
-        protected ExtensionInfo[] ListExtensionsHelper(ExtensionFilter filter)
+        /// <summary>
+		/// Protected method that actually retrieves the <see cref="ExtensionInfo"/>
+		/// objects from an internal <see cref="IExtensionFactory"/>.
+        /// </summary>
+		protected ExtensionInfo[] ListExtensionsHelper(ExtensionFilter filter)
         {
             // we assume that the factory itself is thread-safe, and therefore we don't need to lock
             // (don't want to incur the cost of locking if not necessary)
             return _extensionFactory.ListExtensions(this, filter);
         }
 
+		/// <summary>
+		/// Checks to see if there is at least one object in <paramref name="objs"/> and returns 
+		/// the first one, otherwise an exception is thrown.
+		/// </summary>
+		/// <exception cref="NotSupportedException">Thrown if <paramref name="objs"/> is empty.</exception>
         protected object AtLeastOne(object[] objs, Type extensionPointType)
         {
             if (objs.Length > 0)
@@ -208,7 +211,7 @@ namespace ClearCanvas.Common
 
 
     /// <summary>
-    /// Base class for all extension points.
+    /// Abstract base class for all extension points.
     /// </summary>
     /// <typeparam name="TInterface">The interface that extensions are expected to implement.</typeparam>
     /// <remarks>

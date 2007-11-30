@@ -33,10 +33,12 @@ namespace ClearCanvas.Common.Utilities
 {
 	/// <summary>
 	/// A wrapping of the Win32 high resolution performance counter
-	/// that can be used to profile code.  Taken from an MSDN article.
-    /// 
-    /// Do not use this class directly - use <see cref="CodeClock" /> instead.
-	/// </summary>
+	/// that can be used to profile code.
+    /// </summary>
+	/// <remarks>
+	/// <para>Do not use this class directly - use <see cref="CodeClock" /> instead.</para>
+	/// <para>Taken from an MSDN article.</para>
+	/// </remarks>
 	internal class Win32PerformanceCounter : IPerformanceCounter
 	{
 		[System.Runtime.InteropServices.DllImport("KERNEL32")]
@@ -47,7 +49,8 @@ namespace ClearCanvas.Common.Utilities
 
 		public long Count
 		{
-			get {
+			get 
+			{
 				long count = 0;
 				QueryPerformanceCounter(ref count);
 				return count;
@@ -56,7 +59,8 @@ namespace ClearCanvas.Common.Utilities
 		
 		public long Frequency
 		{
-			get {
+			get 
+			{
 				long freq = 0;
 				QueryPerformanceFrequency(ref freq);
 				return freq;

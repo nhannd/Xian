@@ -50,9 +50,12 @@ namespace ClearCanvas.Common
         private Attribute[] _attributes;
 
         /// <summary>
-        /// Creates a filter to match on multiple attributes.  The extension must test true on each attribute.
+        /// Creates a filter to match on multiple attributes.
         /// </summary>
-        /// <param name="attributes">The attributes to be used as test criteria</param>
+        /// <remarks>
+		/// The extension must test true on each attribute.
+		/// </remarks>
+        /// <param name="attributes">The attributes to be used as test criteria.</param>
         public AttributeExtensionFilter(Attribute[] attributes)
         {
             _attributes = attributes;
@@ -61,7 +64,7 @@ namespace ClearCanvas.Common
         /// <summary>
         /// Creates a filter to match on a single attribute.
         /// </summary>
-        /// <param name="attribute">The attribute to be used as test criteria</param>
+        /// <param name="attribute">The attribute to be used as test criteria.</param>
         public AttributeExtensionFilter(Attribute attribute)
             :this(new Attribute[] { attribute })
         {
@@ -71,8 +74,8 @@ namespace ClearCanvas.Common
         /// Checks whether the specified extension is marked with attributes that 
         /// match every test attribute supplied as criteria to this filter.
         /// </summary>
-        /// <param name="extension">The extension to test</param>
-        /// <returns>true if the test succeeds</returns>
+        /// <param name="extension">The information about the extension to test.</param>
+        /// <returns>true if the test succeeds.</returns>
         public override bool Test(ExtensionInfo extension)
         {
             foreach (Attribute a in _attributes)

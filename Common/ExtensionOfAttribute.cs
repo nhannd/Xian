@@ -52,7 +52,7 @@ namespace ClearCanvas.Common
         /// <summary>
         /// Attribute constructor.
         /// </summary>
-        /// <param name="extensionPointClass">The type of the extension point class which the target class extends</param>
+        /// <param name="extensionPointClass">The type of the extension point class which the target class extends.</param>
         public ExtensionOfAttribute(Type extensionPointClass)
         {
             _extensionPointClass = extensionPointClass;
@@ -67,8 +67,11 @@ namespace ClearCanvas.Common
         }
 
         /// <summary>
-        /// A friendly name for the extension.  This is optional and may be supplied as a named parameter.
+        /// A friendly name for the extension.
         /// </summary>
+        /// <remarks>
+		/// This is optional and may be supplied as a named parameter.
+		/// </remarks>
         public string Name
         {
             get { return _name; }
@@ -76,8 +79,11 @@ namespace ClearCanvas.Common
         }
 
         /// <summary>
-        /// A friendly description for the extension.  This is optional and may be supplied as a named parameter.
+        /// A friendly description for the extension.
         /// </summary>
+        /// <remarks>
+		/// This is optional and may be supplied as a named parameter.
+		/// </remarks>
         public string Description
         {
             get { return _description; }

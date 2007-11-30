@@ -34,27 +34,49 @@ using System.Text;
 
 namespace ClearCanvas.Common.Utilities
 {
+	/// <summary>
+	/// Event used to notify observers of a change in a collection.
+	/// </summary>
+	/// <remarks>
+	/// This class is used internally by the <see cref="ObservableList{TItem}"/>, but can be used
+	/// for any collection-related event.
+	/// </remarks>
+	/// <typeparam name="TItem">The type of item in the collection.</typeparam>
 	public class CollectionEventArgs<TItem> : EventArgs
 	{
 		private TItem _item;
 		private int _index;
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
 		internal protected CollectionEventArgs()
 		{
 		}
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="item">The item that has changed.</param>
+		/// <param name="index">The index of the item that has changed.</param>
 		public CollectionEventArgs(TItem item, int index)
 		{
 			_item = item;
 			_index = index;
 		}
 
+		/// <summary>
+		/// Gets the item that has somehow changed in the related collection.
+		/// </summary>
 		public TItem Item
 		{
 			get { return _item; }
 			internal protected set { _item = value; }
 		}
 
+		/// <summary>
+		/// Gets the index of the item that has somehow changed in the related collection.
+		/// </summary>
 		public int Index
 		{
 			get { return _index; }

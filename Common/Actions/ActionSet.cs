@@ -35,9 +35,6 @@ using ClearCanvas.Common.Specifications;
 
 namespace ClearCanvas.Common.Actions
 {
-    /// <summary>
-    /// Used for executing a set of actions.
-    /// </summary>
     internal class ActionSet<T> : IActionSet<T>
     {
         private readonly IList<IActionItem<T>> _actionList;

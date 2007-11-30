@@ -42,9 +42,9 @@ namespace ClearCanvas.Common.Utilities
 	/// This attribute class is used to decorate properties of other classes for use with the <see cref="SimpleSerializer"/>.
 	/// </summary>
 	[AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
-	public sealed class SimpleSerializedAttribute : Attribute
+	public class SimpleSerializedAttribute : Attribute
 	{
-		private bool _useInvariantCulture;
+		private readonly bool _useInvariantCulture;
 	
 		/// <summary>
 		/// Default Constructor.
@@ -54,11 +54,20 @@ namespace ClearCanvas.Common.Utilities
 		{
 		}
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="useInvariantCulture">Specifies whether or not to use the 
+		/// <see cref="System.Globalization.CultureInfo.InvariantCulture"/> when converting property values to/from strings.</param>
 		public SimpleSerializedAttribute(bool useInvariantCulture)
 		{
 			_useInvariantCulture = useInvariantCulture;
 		}
 
+		/// <summary>
+		/// Gets whether or not the <see cref="System.Globalization.CultureInfo.InvariantCulture"/> 
+		/// should be used when when converting property values to/from strings.
+		/// </summary>
 		public bool UseInvariantCulture
 		{
 			get { return _useInvariantCulture; }
@@ -66,35 +75,37 @@ namespace ClearCanvas.Common.Utilities
 	}
 
 	/// <summary>
-	/// The <see cref="SimpleSerializer"/> class can be used to serialize to and from a string dictionary (Property/Value pairs).
-	/// The resulting dictionary can then be stored to a file or setting so that objects can be easily persisted and restored.
+	/// Thrown by <see cref="SimpleSerializer"/>'s public methods: <see cref="SimpleSerializer.Deserialize"/> and <see cref="SimpleSerializer.Serialize"/>.
 	/// </summary>
+	[Serializable]
+	public sealed class SimpleSerializerException : Exception
+	{
+		internal SimpleSerializerException(string message, Exception innerException)
+			: base(message, innerException)
+		{
+		}
+	}
+
+	/// <summary>
+	/// The <see cref="SimpleSerializer"/> class can be used to serialize objects to and from a string dictionary (Property/Value pairs).
+	/// </summary>
+	/// <remarks>
+	/// The resulting dictionary can be stored to a file or setting so that objects can be easily persisted and restored.
+	/// </remarks>
 	public sealed class SimpleSerializer
 	{
-		/// <summary>
-		/// Thrown by <see cref="SimpleSerializer"/>'s public methods: <see cref="SimpleSerializer.Deserialize"/> and <see cref="SimpleSerializer.Serialize"/>.
-		/// </summary>
-		[Serializable]
-		public sealed class SimpleSerializerException : Exception
-		{
-			internal SimpleSerializerException(string message, Exception innerException)
-				: base(message, innerException)
-			{
-			}
-		}
-
 		private SimpleSerializer()
 		{
 		}
 
 		/// <summary>
-		/// Populates the destinationObject's properties that are marked with a <see cref="SimpleSerializedAttribute"/> 
-		/// attribute using the Property/Value pairs from the input dictionary (sourceValues).
+		/// Populates the <paramref name="destinationObject"/>'s properties that are marked with a <see cref="SimpleSerializedAttribute"/> 
+		/// attribute using the Property/Value pairs from the input dictionary (<paramref name="sourceValues"/>).
 		/// </summary>
 		/// <param name="destinationObject">The object whose properties are to be initialized using the input dictionary's Property/Value pairs.</param>
 		/// <param name="sourceValues">The input dictionary of Property/Value pairs.</param>
-		/// <exception cref="ArgumentNullException">thrown when either of the input values are null</exception>
-		/// <exception cref="SimpleSerializerException">thrown when an error occurs during serialization</exception>
+		/// <exception cref="ArgumentNullException">Thrown when either of the input values are null.</exception>
+		/// <exception cref="SimpleSerializerException">Thrown when an error occurs during serialization.</exception>
 		public static void Serialize(object destinationObject, IDictionary<string, string> sourceValues)
 		{
 			Platform.CheckForNullReference(destinationObject, "destinationObject");
@@ -136,12 +147,16 @@ namespace ClearCanvas.Common.Utilities
 		}
 
 		/// <summary>
-		/// Constructs and returns a dictionary of Property/Value pairs from the input sourceObject.
+		/// Constructs and returns a dictionary of Property/Value pairs from the input <paramref name="sourceObject"/>.
+		/// </summary>
+		/// <remarks>
 		/// Those properties decorated with the <see cref="SimpleSerializedAttribute"/> attribute will have their
 		/// values extracted and inserted into the resulting dictionary.
-		/// </summary>
-		/// <param name="sourceObject">the object whose properties are to be extracted</param>
-		/// <returns>a dictionary of Property/Value pairs</returns>
+		/// </remarks>
+		/// <param name="sourceObject">The object whose properties are to be extracted.</param>
+		/// <exception cref="ArgumentNullException">Thrown when the input value is null.</exception>
+		/// <exception cref="SimpleSerializerException">Thrown when an error occurs during deserialization.</exception>
+		/// <returns>A dictionary of Property/Value pairs.</returns>
 		public static IDictionary<string, string> Deserialize(object sourceObject)
 		{
 			Platform.CheckForNullReference(sourceObject, "sourceObject");

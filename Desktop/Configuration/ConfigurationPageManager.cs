@@ -54,7 +54,7 @@ namespace ClearCanvas.Desktop.Configuration
 
 		public IEnumerable<IConfigurationPageProvider> Providers
 		{
-			get{ return base.Extensions.AsReadOnly(); }
+			get{ return base.Extensions; }
 		}
 
 		public IEnumerable<IConfigurationPage> Pages

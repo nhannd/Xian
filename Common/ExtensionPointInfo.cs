@@ -70,7 +70,7 @@ namespace ClearCanvas.Common
         }
 
         /// <summary>
-        /// The interface that an extension must implement
+        /// The interface that an extension must implement.
         /// </summary>
         public Type ExtensionInteface
         {
@@ -80,7 +80,7 @@ namespace ClearCanvas.Common
         #region IBrowsable Members
 
         /// <summary>
-        /// Friendly name of this extension point, if one exists, otherwise null.
+        /// Friendly name of the extension point, if one exists, otherwise null.
         /// </summary>
         public string Name
         {
@@ -88,7 +88,7 @@ namespace ClearCanvas.Common
         }
 
         /// <summary>
-        /// A friendly description of this extension point, if one exists, otherwise null.
+        /// A friendly description of the extension point, if one exists, otherwise null.
         /// </summary>
         public string Description
         {
@@ -96,7 +96,7 @@ namespace ClearCanvas.Common
         }
 
         /// <summary>
-        /// Formal name of this extension, which is the fully qualified name of the extension point class.
+        /// Formal name of the extension, which is the fully qualified name of the extension point class.
         /// </summary>
         public string FormalName
         {

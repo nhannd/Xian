@@ -466,6 +466,33 @@ namespace ClearCanvas.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &apos;{0}&apos; must be an interface..
+        /// </summary>
+        public static string FormatTypeMustBeInterface {
+            get {
+                return ResourceManager.GetString("FormatTypeMustBeInterface", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Type &apos;{0}&apos; must implement interface &apos;{1}&apos;..
+        /// </summary>
+        public static string FormatTypeMustImplementInterface {
+            get {
+                return ResourceManager.GetString("FormatTypeMustImplementInterface", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unable to find matching action for &apos;{0}&apos; node in script.  Unable to perform action..
+        /// </summary>
+        public static string FormatUnableToFindMatchingAction {
+            get {
+                return ResourceManager.GetString("FormatUnableToFindMatchingAction", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Configuration store not found - defaulting to LocalFileSettingsProvider.
         /// </summary>
         public static string LogConfigurationStoreNotFound {
@@ -520,11 +547,29 @@ namespace ClearCanvas.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to An extension point cannot extend IExtensionPoint..
+        /// </summary>
+        public static string MessageCannotExtendIExtensionPoint {
+            get {
+                return ResourceManager.GetString("MessageCannotExtendIExtensionPoint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Finding plugins....
         /// </summary>
         public static string MessageFindingPlugins {
             get {
                 return ResourceManager.GetString("MessageFindingPlugins", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Settings scope not defined..
+        /// </summary>
+        public static string MessageSettingsScopeNotDefined {
+            get {
+                return ResourceManager.GetString("MessageSettingsScopeNotDefined", resourceCulture);
             }
         }
     }

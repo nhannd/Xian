@@ -30,6 +30,7 @@
 #endregion
 
 #if	UNIT_TESTS
+#pragma warning disable 1591, 219, 169
 
 using System;
 using System.IO;

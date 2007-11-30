@@ -35,52 +35,54 @@ using System.Runtime.Serialization;
 namespace ClearCanvas.Common
 {
 	/// <summary>
-	/// Summary description for PluginException.
+	/// Used by the framework to relay errors regarding plugins.
 	/// </summary>
+	/// <seealso cref="PluginManager"/>
     [SerializableAttribute]
 	public class PluginException : ApplicationException
 	{
+		/// <summary>
+		/// Constructor.
+		/// </summary>
 		public PluginException(SerializationInfo info, StreamingContext context) : base(info, context) {}
-		public PluginException(string message) : base(message) {}
-		public PluginException(string message, Exception inner) : base(message, inner) {}
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            base.GetObjectData(info, context);
-        }
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		public PluginException(string message) : base(message) { }
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		public PluginException(string message, Exception inner) : base(message, inner) { }
 	}
 
+	/// <summary>
+	/// Used by the framework to relay errors regarding <see cref="IExtensionPoint"/>s.
+	/// </summary>
+	/// <seealso cref="PluginInfo"/>
     public class ExtensionPointException : Exception
     {
-        public ExtensionPointException(string message) : base(message) { }
-        public ExtensionPointException(string message, Exception inner) : base(message, inner) { }
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		public ExtensionPointException(string message) : base(message) { }
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		public ExtensionPointException(string message, Exception inner) : base(message, inner) { }
     }
 
+	/// <summary>
+	/// Used by the framework to relay errors regarding extensions (created via <see cref="IExtensionPoint"/>s).
+	/// </summary>
     public class ExtensionException : Exception
     {
-		public ExtensionException(string message) : base(message) {}
-        public ExtensionException(string message, Exception inner) : base(message, inner) { }
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		public ExtensionException(string message) : base(message) { }
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		public ExtensionException(string message, Exception inner) : base(message, inner) { }
     }
-	
-/*
-	public class PluginErrorException : PluginException
-	{
-		public PluginErrorException() {}
-		public PluginErrorException(string message) : base(message) {}
-		public PluginErrorException(string message, Exception inner) : base(message, inner) {}
-	}
-
-	public class PluginWarningException : PluginException
-	{
-		public PluginWarningException() {}
-		public PluginWarningException(string message) : base(message) {}
-		public PluginWarningException(string message, Exception inner) : base(message, inner) {}
-	}
-
-	public class DuplicateObjectFoundException : ApplicationException
-	{
-		public DuplicateObjectFoundException() {}
-		public DuplicateObjectFoundException(string message) : base(message) {}
-		public DuplicateObjectFoundException(string message, Exception inner) : base(message, inner) {}
-	}
-*/
 }

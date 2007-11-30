@@ -273,4 +273,19 @@
   <data name="ExceptionFormatSerializationFailedForType" xml:space="preserve">
     <value>Serialization failed for object type '{0}'</value>
   </data>
+  <data name="FormatTypeMustBeInterface" xml:space="preserve">
+    <value>'{0}' must be an interface.</value>
+  </data>
+  <data name="FormatTypeMustImplementInterface" xml:space="preserve">
+    <value>Type '{0}' must implement interface '{1}'.</value>
+  </data>
+  <data name="FormatUnableToFindMatchingAction" xml:space="preserve">
+    <value>Unable to find matching action for '{0}' node in script.  Unable to perform action.</value>
+  </data>
+  <data name="MessageCannotExtendIExtensionPoint" xml:space="preserve">
+    <value>An extension point cannot extend IExtensionPoint.</value>
+  </data>
+  <data name="MessageSettingsScopeNotDefined" xml:space="preserve">
+    <value>Settings scope not defined.</value>
+  </data>
 </root>

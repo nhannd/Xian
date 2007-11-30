@@ -31,6 +31,8 @@
 
 #if	UNIT_TESTS
 
+#pragma warning disable 1591
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -42,7 +44,7 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Common.Auditing.Tests
 {
-	public class FakeRawAuditMessage : IAuditMessage
+	internal class FakeRawAuditMessage : IAuditMessage
 	{
 		private string _message;
 
@@ -57,7 +59,7 @@ namespace ClearCanvas.Common.Auditing.Tests
 		}
 	}
 
-	public class FakeStudyAccessedAuditMessage : IAuditMessage
+	internal class FakeStudyAccessedAuditMessage : IAuditMessage
 	{
 		private string _studyInstanceUID;
 		private string _userID;
@@ -79,7 +81,7 @@ namespace ClearCanvas.Common.Auditing.Tests
 		}
 	}
 
-	public class FakeAuditor : IAuditor
+	internal class FakeAuditor : IAuditor
 	{
 		public FakeAuditor()
 		{
@@ -92,7 +94,7 @@ namespace ClearCanvas.Common.Auditing.Tests
 		}
 	}
 
-	public class FakeAuditorExtensionPoint : IExtensionPoint
+	internal class FakeAuditorExtensionPoint : IExtensionPoint
 	{
 		int _numberFakeAuditors;
 
@@ -157,7 +159,7 @@ namespace ClearCanvas.Common.Auditing.Tests
         #endregion
 	}
 
-	public class FakeAuditManager : AuditManager
+	internal class FakeAuditManager : AuditManager
 	{
 		private int _numberFakeAuditors;
 
@@ -166,9 +168,9 @@ namespace ClearCanvas.Common.Auditing.Tests
 			_numberFakeAuditors = numberFakeAuditors;
 		}
 
-		public List<IAuditor> Auditors
+		public ICollection Auditors
 		{
-			get { return Extensions; }
+			get { return new List<IAuditor>(Extensions); }
 		}
 
 		protected override IExtensionPoint GetExtensionPoint()
@@ -177,7 +179,7 @@ namespace ClearCanvas.Common.Auditing.Tests
 		}
 	}
 	
-	public class MockAuditorExtensionPoint : IExtensionPoint
+	internal class MockAuditorExtensionPoint : IExtensionPoint
 	{
 		Mockery _mockery;
 		int _numberMockAuditors;
@@ -248,8 +250,8 @@ namespace ClearCanvas.Common.Auditing.Tests
         }
         #endregion
 	}
-	
-	public class MockAuditManager : AuditManager
+
+	internal class MockAuditManager : AuditManager
 	{
 		Mockery _mockery;
 		int _numberMockAuditors;
@@ -260,9 +262,9 @@ namespace ClearCanvas.Common.Auditing.Tests
 			_numberMockAuditors = numberMockAuditors;
 		}
 
-		public List<IAuditor> Auditors
+		public ICollection Auditors
 		{
-			get { return Extensions; }
+			get { return new List<IAuditor>(Extensions); }
 		}
 
 		protected override IExtensionPoint GetExtensionPoint()
@@ -271,7 +273,7 @@ namespace ClearCanvas.Common.Auditing.Tests
 		}
 	}
 
-	public class BadAuditorExtensionPoint : IExtensionPoint
+	internal class BadAuditorExtensionPoint : IExtensionPoint
 	{
 		public object[] CreateExtensions()
 		{
@@ -328,7 +330,7 @@ namespace ClearCanvas.Common.Auditing.Tests
 	}
 
 	//try to use an ExtensionPointManager where the extension's interface is IExtensionPoint.
-	public class BadExtensionPointManager : BasicExtensionPointManager<IExtensionPoint>
+	internal class BadExtensionPointManager : BasicExtensionPointManager<IExtensionPoint>
 	{
 		protected override IExtensionPoint GetExtensionPoint()
 		{
@@ -342,7 +344,7 @@ namespace ClearCanvas.Common.Auditing.Tests
 	}
 
 	//Try to use an ExtensionPointManager for a class (e.g. not an interface).
-	public class BadExtensionPointManager2 : BasicExtensionPointManager<FakeAuditor>
+	internal class BadExtensionPointManager2 : BasicExtensionPointManager<FakeAuditor>
 	{
 		protected override IExtensionPoint GetExtensionPoint()
 		{
@@ -356,7 +358,7 @@ namespace ClearCanvas.Common.Auditing.Tests
 	}
 
 	//Try to use an ExtensionPointManager where GetExtensionPoint returns something that doesn't implement IExtensionPoint.
-	public class BadExtensionPointManager3 : BasicExtensionPointManager<IAuditor>
+	internal class BadExtensionPointManager3 : BasicExtensionPointManager<IAuditor>
 	{
 		protected override IExtensionPoint GetExtensionPoint()
 		{
@@ -371,7 +373,7 @@ namespace ClearCanvas.Common.Auditing.Tests
 	}
 
 	//Try to use an ExtensionPointManager where GetExtensionPoint returns an object that doesn't implement the expected interface (IAuditor).
-	public class BadExtensionPointManager4 : BasicExtensionPointManager<IAuditor>
+	internal class BadExtensionPointManager4 : BasicExtensionPointManager<IAuditor>
 	{
 		protected override IExtensionPoint GetExtensionPoint()
 		{
@@ -386,7 +388,7 @@ namespace ClearCanvas.Common.Auditing.Tests
 	}
 
 	[TestFixture]
-	public class AuditorTests
+	internal class AuditorTests
 	{
 		private Mockery _mockery;
 		private int _numberAuditors;

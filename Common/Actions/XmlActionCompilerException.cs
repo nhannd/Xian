@@ -34,8 +34,10 @@ using System;
 namespace ClearCanvas.Common.Actions
 {
     /// <summary>
-    /// Exception returned by <see cref="XmlActionCompiler{T}"/> or extensions implementing <see cref="XmlActionCompilerOperatorExtensionPoint{T}"/>.
+    /// Exception thrown by <see cref="XmlActionCompiler{T}"/> or extensions 
+    /// implementing <see cref="XmlActionCompilerOperatorExtensionPoint{T}"/>.
     /// </summary>
+    [Serializable]
     public class XmlActionCompilerException : Exception
     {
         /// <summary>
@@ -46,5 +48,15 @@ namespace ClearCanvas.Common.Actions
             : base(message)
         {
         }
+
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="message">Descriptive message associated with the exception.</param>
+		/// <param name="innerException">The inner exception.</param>
+		public XmlActionCompilerException(string message, Exception innerException)
+			: base(message, innerException)
+		{
+		}
     }
 }

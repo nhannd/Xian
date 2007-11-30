@@ -29,18 +29,36 @@
 
 #endregion
 
+using ClearCanvas.Common;
 
 namespace ClearCanvas.Common.Auditing
 {
 	/// <summary>
-	/// The IAuditor interface that all auditor extensions must implement.
+	/// Extension point for <see cref="IAuditor"/>s.
 	/// </summary>
+	/// <remarks>
+	/// Although there would normally only be a single auditor present in a running application,
+	/// it is possible for there to be more than one.  For example, you might have a local auditor
+	/// that logs to a text file, and a remote auditor that logs to a WCF service.
+	/// </remarks>
+	[ExtensionPoint()]
+	public class AuditorExtensionPoint : ExtensionPoint<IAuditor>
+	{
+	}
+
+	/// <summary>
+	/// An auditor.
+	/// </summary>
+	/// <remarks>
+	/// <see cref="IAuditor"/>s are internally created an managed via the <see cref="AuditorExtensionPoint"/>.
+	/// The <see cref="Platform.AuditManager"/> is itself an <see cref="IAuditor"/>, but internally it 
+	/// creates/manages a list of <see cref="IAuditor"/>s.
+	/// </remarks>
 	public interface IAuditor
 	{
 		/// <summary>
 		/// Audits an <see cref="IAuditMessage"/>.
 		/// </summary>
-		/// <param name="auditMessage">The message to be audited.</param>
 		void Audit(IAuditMessage auditMessage);
 	}
 }

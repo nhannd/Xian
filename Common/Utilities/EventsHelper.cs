@@ -34,21 +34,20 @@ using System;
 namespace ClearCanvas.Common.Utilities
 {
 	/// <summary>
-	/// Helps clients raise events safely.
+	/// Helper class for safely raising events.
 	/// </summary>
 	public class EventsHelper
 	{
 		/// <summary>
-		/// Raises events safely.
+		/// Helper method for raising events safely.
 		/// </summary>
-		/// <param name="del">Delegate.</param>
+		/// <param name="del">Delegate to invoke.</param>
 		/// <param name="args">Parameters to be passed to the delegate.</param>
-		/// <remarks>Use this method to safely invoke user code via delegates.
-		/// Because there is no guarantee that user code will not throw
-		/// exceptions, it has to be executed safely.  That is, any exceptions thrown
-		/// must be handled.  This method will log any exceptions thrown in user code.
-		/// Whether the exception is rethrown depends on how the exception policy
-		/// has been configured.  The typical usage is shown below.</remarks>
+		/// <remarks>
+		/// Use this method to invoke user code via delegates.
+		/// This method will log any exceptions thrown in user code and immediately rethrow it.
+		/// The typical usage is shown below.
+		/// </remarks>
 		/// <example>
 		/// <code>
 		/// [C#]
@@ -79,7 +78,7 @@ namespace ClearCanvas.Common.Utilities
 				catch (Exception e)
 				{
                     Platform.Log(LogLevel.Error, e);
-					throw e;
+					throw;
 				}
 			}
 		}

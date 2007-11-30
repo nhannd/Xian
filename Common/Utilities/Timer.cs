@@ -37,14 +37,20 @@ using System.Timers;
 
 namespace ClearCanvas.Common.Utilities
 {
+	// TODO (Stewart): change this so it doesn't use a timer internally, but just uses a thread pool thread.
+
+	/// <summary>
+	/// A delegate for use by a <see cref="Timer"/> object.
+	/// </summary>
 	public delegate void TimerDelegate(object state);
 
 	/// <summary>
-	/// Implements a simple timer class that handles marshalling delegates back to a UI Thread (usually the main thread).
+	/// Implements a simple timer class that handles marshalling delegates back to the thread on which
+	/// this object was allocated (usually the main UI thread).
 	/// </summary>
 	/// <remarks>
-	/// This class <B>must</B> be instantiated from within a UI Thread, otherwise an exception
-	/// could be thrown upon construction (unless the thread has a custom <see cref="SynchronizationContext"/>.  
+	/// This class <B>must</B> be instantiated from within a UI thread, otherwise an exception
+	/// could be thrown upon construction (unless the thread has a custom <see cref="SynchronizationContext"/>).  
 	/// This class relies on <see cref="SynchronizationContext.Current"/> being non-null in order to do the marshalling.
 	/// </remarks>
 	public sealed class Timer : IDisposable
@@ -57,7 +63,7 @@ namespace ClearCanvas.Common.Utilities
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		/// <param name="elapsedDelegate">the delegate to execute on a timer.</param>
+		/// <param name="elapsedDelegate">The delegate to execute on a timer.</param>
 		public Timer(TimerDelegate elapsedDelegate)
 			: this(elapsedDelegate, null)
 		{ 
@@ -66,8 +72,8 @@ namespace ClearCanvas.Common.Utilities
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		/// <param name="elapsedDelegate">the delegate to execute on a timer.</param>
-		/// <param name="stateObject">a user defined state object.</param>
+		/// <param name="elapsedDelegate">The delegate to execute on a timer.</param>
+		/// <param name="stateObject">A user defined state object.</param>
 		public Timer(TimerDelegate elapsedDelegate, object stateObject)
 		{
 			Platform.CheckForNullReference(SynchronizationContext.Current, "SynchronizationContext.Current");
@@ -118,7 +124,7 @@ namespace ClearCanvas.Common.Utilities
 		#region IDisposable Members
 
 		/// <summary>
-		/// Timer disposal.
+		/// Implementation of the <see cref="IDisposable"/> pattern.
 		/// </summary>
 		public void  Dispose()
 		{

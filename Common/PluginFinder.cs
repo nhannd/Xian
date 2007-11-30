@@ -37,7 +37,10 @@ using System.IO;
 
 namespace ClearCanvas.Common
 {
-	public class PluginFinder : MarshalByRefObject
+	/// <summary>
+	/// A helper class for finding ClearCanvas plugins.
+	/// </summary>
+	internal class PluginFinder : MarshalByRefObject
 	{
 		// Private attributes
         private List<string> _pluginFiles = new List<string>();

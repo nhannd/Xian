@@ -38,11 +38,18 @@ using System.Reflection;
 namespace ClearCanvas.Common.Configuration
 {
     /// <summary>
-    /// Describes a settings property.  A settings property is a single property belonging to a settings group.
+    /// Describes a settings property.
     /// </summary>
+    /// <remarks>
+	/// A settings property is a single property belonging to a settings group.
+	/// </remarks>
     public class SettingsPropertyDescriptor
     {
-        public static List<SettingsPropertyDescriptor> ListSettingsProperties(SettingsGroupDescriptor group)
+		/// <summary>
+		/// Returns a list of <see cref="SettingsPropertyDescriptor"/> objects describing each property belonging
+		/// to a settings group.
+		/// </summary>
+		public static List<SettingsPropertyDescriptor> ListSettingsProperties(SettingsGroupDescriptor group)
         {
             Type settingsClass = Type.GetType(group.AssemblyQualifiedTypeName);
 
@@ -68,13 +75,8 @@ namespace ClearCanvas.Common.Configuration
         private string _defaultValue;
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
-        /// <param name="name"></param>
-        /// <param name="typeName"></param>
-        /// <param name="description"></param>
-        /// <param name="scope"></param>
-        /// <param name="defaultValue"></param>
         public SettingsPropertyDescriptor(string name, string typeName, string description, SettingScope scope, string defaultValue)
         {
             _name = name;

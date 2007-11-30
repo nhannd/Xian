@@ -36,10 +36,20 @@ using System.Text;
 
 namespace ClearCanvas.Common.Utilities
 {
+	/// <summary>
+	/// A static string helper class.
+	/// </summary>
 	public static class StringUtilities
 	{
+		/// <summary>
+		/// A delegate used by <see cref="StringUtilities"/> to format output strings.
+		/// </summary>
 		public delegate string FormatDelegate<T>(T value);
 
+		/// <summary>
+		/// Combines the input <paramref name="values"/> into a string, separated by <paramref name="separator"/>,
+		/// using the given <paramref name="formatSpecifier"/> to format each entry in the string.
+		/// </summary>
 		public static string CombineDouble(IEnumerable<double> values, string separator, string formatSpecifier)
 		{
 			return Combine<double>(values, separator,
@@ -52,6 +62,10 @@ namespace ClearCanvas.Common.Utilities
 				});
 		}
 
+		/// <summary>
+		/// Combines the input <paramref name="values"/> into a string, separated by <paramref name="separator"/>,
+		/// using the given <paramref name="formatSpecifier"/> to format each entry in the string.
+		/// </summary>
 		public static string CombineFloat(IEnumerable<float> values, string separator, string formatSpecifier)
 		{
 			return Combine<float>(values, separator,
@@ -64,6 +78,10 @@ namespace ClearCanvas.Common.Utilities
 				});
 		}
 
+		/// <summary>
+		/// Combines the input <paramref name="values"/> into a string, separated by <paramref name="separator"/>,
+		/// using the given <paramref name="formatSpecifier"/> to format each entry in the string.
+		/// </summary>
 		public static string CombineInt(IEnumerable<int> values, string separator, string formatSpecifier)
 		{
 			return Combine<int>(values, separator,
@@ -76,6 +94,10 @@ namespace ClearCanvas.Common.Utilities
 				});
 		}
 
+		/// <summary>
+		/// Combines the input <paramref name="values"/> into a string, separated by <paramref name="separator"/>,
+		/// using the given <paramref name="formatSpecifier"/> to format each entry in the string.
+		/// </summary>
 		public static string CombineDateTime(IEnumerable<DateTime> values, string separator, string formatSpecifier)
 		{
 			return Combine<DateTime>(values, separator,
@@ -88,21 +110,36 @@ namespace ClearCanvas.Common.Utilities
 				});
 		}
 
+		/// <summary>
+		/// Combines the input <paramref name="values"/> into a string separated by the <paramref name="separator"/>.
+		/// </summary>
 		public static string Combine<T>(IEnumerable<T> values, string separator)
 		{
 			return Combine<T>(values, separator, true);
 		}
 
+		/// <summary>
+		/// Combines the input <paramref name="values"/> into a string separated by the <paramref name="separator"/>;
+		/// empty values are skipped when <paramref name="skipEmptyValues"/> is true.
+		/// </summary>
 		public static string Combine<T>(IEnumerable<T> values, string separator, bool skipEmptyValues)
 		{
 			return Combine<T>(values, separator, null, skipEmptyValues);
 		}
 
+		/// <summary>
+		/// Combines the input <paramref name="values"/> into a string separated by the <paramref name="separator"/> 
+		/// and formatted using <paramref name="formatDelegate"/>.
+		/// </summary>
 		public static string Combine<T>(IEnumerable<T> values, string separator, FormatDelegate<T> formatDelegate)
 		{
 			return Combine<T>(values, separator, formatDelegate, true);
 		}
 
+		/// <summary>
+		/// Combines the input <paramref name="values"/> into a string separated by the <paramref name="separator"/> 
+		/// and formatted using <paramref name="formatDelegate"/>; empty values are skipped when <paramref name="skipEmptyValues"/> is true.
+		/// </summary>
 		public static string Combine<T>(IEnumerable<T> values, string separator, FormatDelegate<T> formatDelegate, bool skipEmptyValues)
 		{
 			if (values == null)
@@ -134,9 +171,13 @@ namespace ClearCanvas.Common.Utilities
 		}
 
         /// <summary>
-        /// Splits any string using seperators string.  This is different from the
-        /// string.Split method as we ignore delimiters inside double quotes
+        /// Splits any string into sub-strings using the specified <paramref name="delimiters"/>, 
+        /// ignoring delimiters inside double quotes.
         /// </summary>
+        /// <remarks>
+		/// This is different from the <b>String.Split</b> methods 
+		/// as we ignore delimiters inside double quotes.
+		/// </remarks>
         /// <param name="text">The string to split.</param>
         /// <param name="delimiters">The characters to split on.</param>
         /// <returns></returns>
@@ -173,8 +214,6 @@ namespace ClearCanvas.Common.Utilities
         /// <summary>
         /// Converts an empty string to a null string, otherwise returns the argument unchanged.
         /// </summary>
-        /// <param name="s"></param>
-        /// <returns></returns>
         public static string NullIfEmpty(string s)
         {
             return string.IsNullOrEmpty(s) ? null : s;
@@ -183,8 +222,6 @@ namespace ClearCanvas.Common.Utilities
         /// <summary>
         /// Converts a null argument to an empty string, otherwise returns the argument unchanged.
         /// </summary>
-        /// <param name="s"></param>
-        /// <returns></returns>
         public static string EmptyIfNull(string s)
         {
             return s ?? "";
