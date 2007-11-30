@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
@@ -8,7 +6,6 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
-using ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry;
 using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client.Adt
@@ -22,7 +19,8 @@ namespace ClearCanvas.Ris.Client.Adt
     [IconSet("neworder", IconScheme.Colour, "AddToolSmall.png", "AddToolMedium.png", "AddToolLarge.png")]
     [EnabledStateObserver("neworder", "Enabled", "EnabledChanged")]
     [ClickHandler("neworder", "NewOrder")]
-    [ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]
+    [ExtensionOf(typeof(RegistrationMainWorkflowItemToolExtensionPoint))]
+    [ExtensionOf(typeof(RegistrationBookingWorkflowItemToolExtensionPoint))]
     [ExtensionOf(typeof(RegistrationPreviewToolExtensionPoint))]
     [ExtensionOf(typeof(PatientSearchToolExtensionPoint))]
     public class NewOrderTool : Tool<IToolContext>
@@ -81,7 +79,7 @@ namespace ClearCanvas.Ris.Client.Adt
             if (this.Context is IRegistrationWorkflowItemToolContext)
             {
                 IRegistrationWorkflowItemToolContext context = (IRegistrationWorkflowItemToolContext)this.ContextBase;
-                RegistrationWorklistItem item = CollectionUtils.FirstElement<RegistrationWorklistItem>(context.SelectedItems);
+                RegistrationWorklistItem item = CollectionUtils.FirstElement(context.SelectedItems);
                 string title = string.Format(SR.TitleNewOrder, PersonNameFormat.Format(item.PatientName), MrnFormat.Format(item.Mrn));
                 NewOrder(item.PatientRef, title, context.DesktopWindow);
             }

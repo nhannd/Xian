@@ -83,6 +83,7 @@ namespace ClearCanvas.Ris.Client
         protected readonly IList<IFolder> _subfolders;
         protected Path _folderPath;
         protected bool _startExpanded;
+        protected bool _isStatic = true;
 
         /// <summary>
         /// Constructor
@@ -111,6 +112,14 @@ namespace ClearCanvas.Ris.Client
 
 
         #region IFolder Members
+
+        /// <summary>
+        /// Gets the ID that identifies the folder
+        /// </summary>
+        public virtual string Id
+        {
+            get { return this.GetType().Name; }
+        }
 
         /// <summary>
         /// Gets the text that should be displayed for the folder
@@ -319,6 +328,19 @@ namespace ClearCanvas.Ris.Client
         public bool RemoveFolder(IFolder subFolder)
         {
             return _subfolders.Remove(subFolder);
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether or not the folder is 'static'.
+        /// </summary>
+        /// <remarks>
+        /// In the context of workflow, folders created via the normal constructor (new Folder(...)) are considered static and are
+        /// otherwise they are considered generated if created by Activator.CreateInstance.
+        /// </remarks>
+        public bool IsStatic
+        {
+            get { return _isStatic; }
+            set { _isStatic = value;  }
         }
 
         #endregion

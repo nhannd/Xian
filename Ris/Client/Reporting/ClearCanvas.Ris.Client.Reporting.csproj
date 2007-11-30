@@ -40,8 +40,6 @@
   <ItemGroup>
     <Compile Include="ReportingProtocolWorkflowFolderSystem.cs" />
     <Compile Include="ReportingProtocolWorkflowFolderSystemTool.cs" />
-    <Compile Include="ReportingSearchWorkflowFolderSystem.cs" />
-    <Compile Include="ReportingSearchWorkflowFolderSystemTool.cs" />
     <Compile Include="ReportingMainWorkflowFolderSystem.cs" />
     <Compile Include="Folders\RefreshTool.cs" />
     <Compile Include="Folders\ReportingWorkflowFolders.cs" />

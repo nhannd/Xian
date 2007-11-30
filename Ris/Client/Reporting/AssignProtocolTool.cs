@@ -16,7 +16,7 @@ namespace ClearCanvas.Ris.Client.Reporting
         {
             try
             {
-                ReportingWorklistItem item = CollectionUtils.FirstElement<ReportingWorklistItem>(this.Context.SelectedItems);
+                ReportingWorklistItem item = CollectionUtils.FirstElement(this.Context.SelectedItems);
                 if (item != null)
                 {
                     Document doc = DocumentManager.Get(item.AccessionNumber);
@@ -41,7 +41,7 @@ namespace ClearCanvas.Ris.Client.Reporting
         {
             get
             {
-                ReportingWorklistItem item = CollectionUtils.FirstElement<ReportingWorklistItem>(this.Context.SelectedItems);
+                ReportingWorklistItem item = CollectionUtils.FirstElement(this.Context.SelectedItems);
                 if (item != null)
                 {
                     return item.ProcedureStepName == "Protocol";
@@ -62,7 +62,7 @@ namespace ClearCanvas.Ris.Client.Reporting
     [ButtonAction("apply", "folderexplorer-items-toolbar/Assign Protocol", "Apply")]
     [IconSet("apply", IconScheme.Colour, "Icons.AddToolSmall.png", "Icons.AddToolMedium.png", "Icons.AddToolLarge.png")]
     [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
-    [ExtensionOf(typeof(ReportingWorkflowItemToolExtensionPoint))]
+    [ExtensionOf(typeof(ReportingProtocolWorkflowItemToolExtensionPoint))]
     public class AssignProtocolTool : ReportingProtocolTool
     {
         protected override bool ClaimProtocol
@@ -84,7 +84,7 @@ namespace ClearCanvas.Ris.Client.Reporting
     [ButtonAction("apply", "folderexplorer-items-toolbar/Edit Protocol", "Apply")]
     [IconSet("apply", IconScheme.Colour, "Icons.ProtocolEditorToolSmall.png", "Icons.ProtocolEditorToolMedium.png", "Icons.ProtocolEditorToolLarge.png")]
     [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
-    [ExtensionOf(typeof(ReportingWorkflowItemToolExtensionPoint))]
+    [ExtensionOf(typeof(ReportingProtocolWorkflowItemToolExtensionPoint))]
     public class EditProtocolTool : ReportingProtocolTool
     {
         protected override bool ClaimProtocol

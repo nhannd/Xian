@@ -42,8 +42,8 @@ namespace ClearCanvas.Ris.Client.Adt
 	[IconSet("search", IconScheme.Colour, "Icons.SearchToolSmall.png", "Icons.SearchToolMedium.png", "Icons.SearchToolLarge.png")]
     [ClickHandler("search", "Search")]
 
-    [ExtensionOf(typeof(RegistrationWorkflowFolderToolExtensionPoint))]
-    [ExtensionOf(typeof(TechnologistWorkflowFolderToolExtensionPoint))]
+    [ExtensionOf(typeof(RegistrationMainWorkflowFolderToolExtensionPoint))]
+    [ExtensionOf(typeof(TechnologistMainWorkflowFolderToolExtensionPoint))]
     public class FolderSearchTool : Tool<IToolContext>
     {
         public void Search()

@@ -37,9 +37,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
-using ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry;
 using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client.Adt
@@ -71,7 +69,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
             public virtual void Apply()
             {
-                RegistrationWorklistItem item = CollectionUtils.FirstElement<RegistrationWorklistItem>(this.Context.SelectedItems);
+                RegistrationWorklistItem item = CollectionUtils.FirstElement(this.Context.SelectedItems);
                 bool success = Execute(item, this.Context.DesktopWindow, this.Context.Folders);
                 if (success)
                 {
@@ -97,7 +95,7 @@ namespace ClearCanvas.Ris.Client.Adt
             public virtual bool ProcessDrop(IDropContext dropContext, ICollection<RegistrationWorklistItem> items)
             {
                 IRegistrationWorkflowFolderDropContext ctxt = (IRegistrationWorkflowFolderDropContext)dropContext;
-                RegistrationWorklistItem item = CollectionUtils.FirstElement<RegistrationWorklistItem>(items);
+                RegistrationWorklistItem item = CollectionUtils.FirstElement(items);
                 bool success = Execute(item, ctxt.DesktopWindow, ctxt.FolderSystem.Folders);
                 if (success)
                 {
@@ -110,12 +108,11 @@ namespace ClearCanvas.Ris.Client.Adt
             #endregion
         }
 
-        [MenuAction("apply", "folderexplorer-items-contextmenu/Check-in")]
-        [ButtonAction("apply", "folderexplorer-items-toolbar/Check-in")]
-        [ClickHandler("apply", "Apply")]
+        [MenuAction("apply", "folderexplorer-items-contextmenu/Check-in", "Apply")]
+        [ButtonAction("apply", "folderexplorer-items-toolbar/Check-in", "Apply")]
 		[IconSet("apply", IconScheme.Colour, "Icons.CheckInToolSmall.png", "Icons.CheckInToolMedium.png", "Icons.CheckInToolLarge.png")]
 		[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
-        [ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]
+        [ExtensionOf(typeof(RegistrationMainWorkflowItemToolExtensionPoint))]
         [ExtensionOf(typeof(Folders.CheckedInFolder.DropHandlerExtensionPoint))]
         public class CheckInTool : WorkflowItemTool
         {
@@ -161,14 +158,13 @@ namespace ClearCanvas.Ris.Client.Adt
             }
         }
 
-        [MenuAction("apply", "folderexplorer-items-contextmenu/Cancel Order")]
-        [ButtonAction("apply", "folderexplorer-items-toolbar/Cancel Order")]
-        [ClickHandler("apply", "Apply")]
+        [MenuAction("apply", "folderexplorer-items-contextmenu/Cancel Order", "Apply")]
+        [ButtonAction("apply", "folderexplorer-items-toolbar/Cancel Order", "Apply")]
 		[IconSet("apply", IconScheme.Colour, "Icons.DeleteToolSmall.png", "Icons.DeleteToolMedium.png", "Icons.DeleteToolLarge.png")]
 		[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
-        [ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]
+        [ExtensionOf(typeof(RegistrationMainWorkflowItemToolExtensionPoint))]
         [ExtensionOf(typeof(Folders.CancelledFolder.DropHandlerExtensionPoint))]
-        public class CancelTool : WorkflowItemTool, IDropHandler<RegistrationWorklistItem>
+        public class CancelTool : WorkflowItemTool
         {
             public CancelTool()
                 : base("CancelOrder")
@@ -212,12 +208,11 @@ namespace ClearCanvas.Ris.Client.Adt
             }
         }
 
-        [MenuAction("apply", "folderexplorer-items-contextmenu/Replace Order")]
-        [ButtonAction("apply", "folderexplorer-items-toolbar/Replace Order")]
-        [ClickHandler("apply", "Apply")]
+        [MenuAction("apply", "folderexplorer-items-contextmenu/Replace Order", "Apply")]
+        [ButtonAction("apply", "folderexplorer-items-toolbar/Replace Order", "Apply")]
         [IconSet("apply", IconScheme.Colour, "AddToolSmall.png", "AddToolMedium.png", "AddToolLarge.png")]
         [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
-        [ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]
+        [ExtensionOf(typeof(RegistrationMainWorkflowItemToolExtensionPoint))]
         public class RegistrationReplaceOrderTool : WorkflowItemTool
         {
             public RegistrationReplaceOrderTool()

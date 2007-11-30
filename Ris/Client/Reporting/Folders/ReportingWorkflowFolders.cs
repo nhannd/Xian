@@ -255,7 +255,7 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
         }
     }
 
-    [FolderPath("Search")]
+    [FolderPath("Reporting/Search")]
     public class SearchFolder : ReportingWorkflowFolder
     {
         private SearchData _searchData;

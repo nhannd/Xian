@@ -52,6 +52,12 @@
       <DependentUpon>AddressesSummaryComponentSettings.settings</DependentUpon>
     </Compile>
     <Compile Include="BiographyDemographicComponent.cs" />
+    <Compile Include="FolderExplorerComponentSettings.cs" />
+    <Compile Include="FolderExplorerComponentSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>FolderExplorerComponentSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="Formatting\LicenseNumberFormat.cs" />
     <Compile Include="Formatting\VisitNumberFormat.cs" />
     <Compile Include="OrderAttachmentTable.cs" />
@@ -240,6 +246,10 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>EmailAddressEditorComponentSettings.Designer.cs</LastGenOutput>
     </None>
+    <None Include="FolderExplorerComponentSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>FolderExplorerComponentSettings.Designer.cs</LastGenOutput>
+    </None>
     <None Include="FormatSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>FormatSettings.Designer.cs</LastGenOutput>
@@ -339,6 +349,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\SearchFolderOpenMedium.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="FolderExplorerComponentSettings.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

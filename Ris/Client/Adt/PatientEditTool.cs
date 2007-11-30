@@ -55,7 +55,8 @@ namespace ClearCanvas.Ris.Client.Adt
     [ActionPermission("edit", ClearCanvas.Ris.Application.Common.AuthorityTokens.PatientProfileAdmin)]
 
     [ExtensionOf(typeof(PatientBiographyToolExtensionPoint))]
-    [ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]
+    [ExtensionOf(typeof(RegistrationMainWorkflowItemToolExtensionPoint))]
+    [ExtensionOf(typeof(RegistrationBookingWorkflowItemToolExtensionPoint))]
     [ExtensionOf(typeof(PatientSearchToolExtensionPoint))]
     public class PatientEditTool : ToolBase
     {

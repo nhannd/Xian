@@ -37,12 +37,17 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.Ris.Client
 {
-    public abstract class WorkflowFolderSystem<TItem> : IDisposable
+    public interface IFolderSystem
+    {
+        string Id { get; }
+        IList<IFolder> Folders { get; }
+    }
+
+    public abstract class WorkflowFolderSystem<TItem> : IFolderSystem, IDisposable
     {
         private readonly IFolderExplorerToolContext _folderExplorer;
         private readonly IDictionary<string, Type> _worklistType;
-        private readonly List<WorkflowFolder<TItem>> _workflowFolders;
-        private readonly List<IFolder> _folders;
+        private readonly IList<IFolder> _workflowFolders;
 
         private event EventHandler _selectedItemDoubleClicked;
         private event EventHandler _selectedItemsChanged;
@@ -55,8 +60,7 @@ namespace ClearCanvas.Ris.Client
 
         public WorkflowFolderSystem(IFolderExplorerToolContext folderExplorer, ExtensionPoint<IFolder> folderExtensionPoint)
         {
-            _workflowFolders = new List<WorkflowFolder<TItem>>();
-            _folders = new List<IFolder>();
+            _workflowFolders = new List<IFolder>();
 
             _folderExplorer = folderExplorer;
             _folderExplorer.SelectedFolderChanged += _folderExplorer_SelectedFolderChanged;
@@ -83,6 +87,20 @@ namespace ClearCanvas.Ris.Client
         {
             Dispose(false);
         }
+
+        #region IFolderSystem implmentation
+
+        public string Id
+        {
+            get { return this.GetType().FullName; }
+        }
+
+        public IList<IFolder> Folders
+        {
+            get { return _workflowFolders; }
+        }
+
+        #endregion
 
         public Type GetWorklistType(string type)
         {
@@ -160,53 +178,8 @@ namespace ClearCanvas.Ris.Client
 
         protected void AddFolder(WorkflowFolder<TItem> folder)
         {
-            int lastIndex = folder.FolderPath.Segments.Length - 1;
-            IFolder parentFolder = null;
-
-            for (int index = 0; index < folder.FolderPath.Segments.Length; index++)
-            {
-                string currentPath = folder.FolderPath.SubPath(index);
-                IFolder folderWithCurrentPath = CollectionUtils.SelectFirst(_folders,
-                    delegate(IFolder f) { return Equals(currentPath, f.FolderPath.ToString()); });
-
-                if (folderWithCurrentPath != null)
-                {
-                    if (folderWithCurrentPath is ContainerFolder && index == lastIndex)
-                    {
-                        _folderExplorer.ReplaceFolder(folderWithCurrentPath, folder);
-                        _folders.Remove(folderWithCurrentPath);
-                    }
-
-                    parentFolder = folderWithCurrentPath;
-                    continue;
-                }
-
-                IFolder currentFolder;
-                if (index == lastIndex)
-                {
-                    currentFolder = folder;
-                }
-                else
-                {
-                    currentFolder = new ContainerFolder(currentPath, folder.StartExpanded);
-                    _folders.Add(currentFolder);
-                }
-
-                if (parentFolder == null)
-                    _folderExplorer.AddFolder(currentFolder);
-                else
-                    _folderExplorer.AddFolder(currentFolder, parentFolder);
-
-                parentFolder = currentFolder;
-            }
-
             _workflowFolders.Add(folder);
-            _folders.Add(folder);
-        }
-
-        public IEnumerable<WorkflowFolder<TItem>> Folders
-        {
-            get { return _workflowFolders; }
+            _folderExplorer.AddFolderSystem(this);
         }
 
         protected virtual void Dispose(bool disposing)

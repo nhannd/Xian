@@ -30,6 +30,7 @@
 #endregion
 
 using ClearCanvas.Common;
+using ClearCanvas.Desktop.Tools;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -38,10 +39,23 @@ namespace ClearCanvas.Ris.Client.Adt
     {
     }
 
+    [ExtensionPoint]
+    public class RegistrationBookingWorkflowItemToolExtensionPoint : ExtensionPoint<ITool>
+    {
+    }
+
+    [ExtensionPoint]
+    public class RegistrationBookingWorkflowFolderToolExtensionPoint : ExtensionPoint<ITool>
+    {
+    }
+
     public class RegistrationBookingWorkflowFolderSystem : RegistrationWorkflowFolderSystemBase
     {
         public RegistrationBookingWorkflowFolderSystem(IFolderExplorerToolContext folderExplorer)
-            : base(folderExplorer, new RegistrationBookingWorkflowFolderExtensionPoint())
+            : base(folderExplorer, 
+            new RegistrationBookingWorkflowFolderExtensionPoint(),
+            new RegistrationBookingWorkflowItemToolExtensionPoint(),
+            new RegistrationBookingWorkflowFolderToolExtensionPoint())
         {
             this.AddFolder(new Folders.CompletedProtocolFolder(this));
             this.AddFolder(new Folders.SuspendedProtocolFolder(this));

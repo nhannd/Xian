@@ -39,12 +39,12 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.Ris.Client.Reporting.Folders
 {
-    [MenuAction("apply", "folderexplorer-folders-contextmenu/Refresh")]
-    [ButtonAction("apply", "folderexplorer-folders-toolbar/Refresh")]
+    [MenuAction("apply", "folderexplorer-folders-contextmenu/Refresh", "Refresh")]
+    [ButtonAction("apply", "folderexplorer-folders-toolbar/Refresh", "Refresh")]
     [Tooltip("apply", "Refresh Folder")]
     [IconSet("apply", IconScheme.Colour, "Icons.RefreshToolSmall.png", "Icons.RefreshToolMedium.png", "Icons.RefreshToolLarge.png")]
-    [ClickHandler("apply", "Refresh")]
-    [ExtensionOf(typeof(ReportingWorkflowFolderToolExtensionPoint))]
+    [ExtensionOf(typeof(ReportingMainWorkflowFolderToolExtensionPoint))]
+    [ExtensionOf(typeof(ReportingProtocolWorkflowFolderToolExtensionPoint))]
     public class RefreshTool : Tool<IReportingWorkflowFolderToolContext>
     {
         public void Refresh()

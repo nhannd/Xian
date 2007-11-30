@@ -50,16 +50,6 @@ namespace ClearCanvas.Ris.Client.Adt
     {
     }
 
-    [ExtensionPoint]
-    public class TechnologistWorkflowItemToolExtensionPoint : ExtensionPoint<ITool>
-    {
-    }
-
-    [ExtensionPoint]
-    public class TechnologistWorkflowFolderToolExtensionPoint : ExtensionPoint<ITool>
-    {
-    }
-
     public interface ITechnologistWorkflowItemToolContext : IToolContext
     {
         bool GetWorkflowOperationEnablement(string operationClass);
@@ -168,8 +158,13 @@ namespace ClearCanvas.Ris.Client.Adt
         private readonly ToolSet _folderToolSet;
         private IDictionary<string, bool> _workflowEnablement;
 
-        public TechnologistWorkflowFolderSystemBase(IFolderExplorerToolContext folderExplorer, ExtensionPoint<IFolder> folderExtensionPoint)
-            : base(folderExplorer, folderExtensionPoint)
+        public TechnologistWorkflowFolderSystemBase(
+            IFolderExplorerToolContext folderExplorer,
+            ExtensionPoint<IFolder> folderExtensionPoint,
+            ExtensionPoint<ITool> itemToolExtensionPoint,
+            ExtensionPoint<ITool> folderToolExtensionPoint)
+            : base(folderExplorer, 
+            folderExtensionPoint)
         {
             this.SelectedItemsChanged += SelectedItemsChangedEventHandler;
 
@@ -185,13 +180,17 @@ namespace ClearCanvas.Ris.Client.Adt
                                 Type foundType = GetWorklistType(summary.Type);
                                 WorkflowFolder<ModalityWorklistItem> folder =
                                     (WorkflowFolder<ModalityWorklistItem>)Activator.CreateInstance(foundType, this, summary.DisplayName, summary.Description, summary.EntityRef);
-                                if (folder != null) this.AddFolder(folder);
+                                if (folder != null)
+                                {
+                                    folder.IsStatic = false;
+                                    this.AddFolder(folder);
+                                }
                             }
                         });
             }
 
-            _itemToolSet = new ToolSet(new TechnologistWorkflowItemToolExtensionPoint(), new TechnologistWorkflowItemToolContext(this));
-            _folderToolSet = new ToolSet(new TechnologistWorkflowFolderToolExtensionPoint(), new TechnologistWorkflowFolderToolContext(this));
+            _itemToolSet = new ToolSet(itemToolExtensionPoint, new TechnologistWorkflowItemToolContext(this));
+            _folderToolSet = new ToolSet(folderToolExtensionPoint, new TechnologistWorkflowFolderToolContext(this));
 
             folderExplorer.AddItemActions(_itemToolSet.Actions);
             folderExplorer.AddFolderActions(_folderToolSet.Actions);

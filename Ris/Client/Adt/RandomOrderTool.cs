@@ -36,19 +36,18 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Ris.Application.Common.Admin.VisitAdmin;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
-    [MenuAction("apply", "folderexplorer-items-contextmenu/Random Order")]
-    [ButtonAction("apply", "folderexplorer-items-toolbar/Random Order")]
+    [MenuAction("apply", "folderexplorer-items-contextmenu/Random Order", "RandomOrder")]
+    [ButtonAction("apply", "folderexplorer-items-toolbar/Random Order", "RandomOrder")]
     [Tooltip("apply", "Random Order")]
     [IconSet("apply", IconScheme.Colour, "AddToolSmall.png", "AddToolMedium.png", "AddToolLarge.png")]
-    [ClickHandler("apply", "RandomOrder")]
     [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
 
-    [ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]
+    [ExtensionOf(typeof(RegistrationMainWorkflowItemToolExtensionPoint))]
+    [ExtensionOf(typeof(RegistrationBookingWorkflowItemToolExtensionPoint))]
     [ExtensionOf(typeof(RegistrationPreviewToolExtensionPoint))]
     public class RandomOrderTool : Tool<IToolContext>
     {
@@ -86,7 +85,7 @@ namespace ClearCanvas.Ris.Client.Adt
             try
             {
                 VisitSummary randomVisit;
-                RegistrationWorklistItem item = CollectionUtils.FirstElement<RegistrationWorklistItem>(context.SelectedItems);
+                RegistrationWorklistItem item = CollectionUtils.FirstElement(context.SelectedItems);
                 if (item == null)
                 {
                     PatientProfileSummary profile = GetRandomPatient();
@@ -119,7 +118,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 {
                     TextQueryRequest request = new TextQueryRequest();
                     request.TextQuery = randomChar.ToString();
-                    TextQueryResponse<PatientProfileSummary> response = null;
+                    TextQueryResponse<PatientProfileSummary> response;
                     response = service.ProfileTextQuery(request);
                     if (!response.TooManyMatches)
                         randomProfile = RandomUtils.ChooseRandom(response.Matches);

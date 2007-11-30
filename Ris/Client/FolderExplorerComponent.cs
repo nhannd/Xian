@@ -44,11 +44,7 @@ namespace ClearCanvas.Ris.Client
     public interface IFolderExplorerToolContext : IToolContext
     {
         IDesktopWindow DesktopWindow { get; }
-        void AddFolder(IFolder folder);
-        void AddFolder(IFolder folder, IFolder parentFolder);
-        void RemoveFolder(IFolder folder);
-        void RemoveFolder(IFolder folder, IFolder parentFolder);
-        void ReplaceFolder(IFolder oldFolder, IFolder newFolder);
+        void AddFolderSystem(IFolderSystem folderSystem);
         IFolder SelectedFolder { get; set; }
         event EventHandler SelectedFolderChanged;
 
@@ -94,29 +90,9 @@ namespace ClearCanvas.Ris.Client
                 get { return _component.Host.DesktopWindow; }
             }
 
-            public void AddFolder(IFolder folder)
+            public void AddFolderSystem(IFolderSystem folderSystem)
             {
-                _component.AddFolder(folder);
-            }
-
-            public void AddFolder(IFolder folder, IFolder parentFolder)
-            {
-                _component.AddFolder(folder, parentFolder);
-            }
-
-            public void RemoveFolder(IFolder folder)
-            {
-                _component.RemoveFolder(folder);
-            }
-
-            public void RemoveFolder(IFolder folder, IFolder parentFolder)
-            {
-                _component.RemoveFolder(folder, parentFolder);
-            }
-
-            public void ReplaceFolder(IFolder oldFolder, IFolder newFolder)
-            {
-                _component.ReplaceFolder(oldFolder, newFolder);
+                _component.AddFolderSystem(folderSystem);
             }
 
             public IFolder SelectedFolder
@@ -207,6 +183,9 @@ namespace ClearCanvas.Ris.Client
         private IActionSet _itemActions = new ActionSet();
         private IActionSet _folderActions = new ActionSet();
 
+        private readonly IList<IFolderSystem> _folderSystems;
+        private readonly IList<IFolder> _folders;
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -214,6 +193,9 @@ namespace ClearCanvas.Ris.Client
         {
             _containers = new Dictionary<IFolder, ITree>();
             _folderTree = new Tree<IFolder>(GetBinding());
+            _folderSystems = new List<IFolderSystem>();
+            _folders = new List<IFolder>();
+
             _folderExplorerToolExtensionPoint = extensionPoint;
         }
 
@@ -260,6 +242,8 @@ namespace ClearCanvas.Ris.Client
             base.Start();
 
             _tools = new ToolSet(_folderExplorerToolExtensionPoint, new FolderExplorerToolContext(this));
+
+            FolderExplorerComponentSettings.Default.BuildAndSynchronize(_folderSystems, InsertFolderUsingPath);
 
             RefreshCounts(_folderTree);
         }
@@ -493,6 +477,62 @@ namespace ClearCanvas.Ris.Client
             return DragDropKind.None;
         }
 
+        private void AddFolderSystem(IFolderSystem folderSystem)
+        {
+            if (!_folderSystems.Contains(folderSystem))
+                _folderSystems.Add(folderSystem);
+        }
+
+        /// <summary>
+        /// Insert a folder into the folder system.  This will use the folder.FolderPath property to 
+        /// insert the folder into the right structure.  Container folders are created whenever necessary
+        /// </summary>
+        /// <param name="folder"></param>
+        private void InsertFolderUsingPath(IFolder folder)
+        {
+            int lastIndex = folder.FolderPath.Segments.Length - 1;
+            IFolder parentFolder = null;
+
+            for (int index = 0; index < folder.FolderPath.Segments.Length; index++)
+            {
+                string currentPath = folder.FolderPath.SubPath(index);
+                IFolder folderWithCurrentPath = CollectionUtils.SelectFirst(_folders,
+                    delegate(IFolder f) { return Equals(currentPath, f.FolderPath.ToString()); });
+
+                if (folderWithCurrentPath != null)
+                {
+                    if (folderWithCurrentPath is ContainerFolder && index == lastIndex)
+                    {
+                        ReplaceFolder(folderWithCurrentPath, folder);
+                        _folders.Remove(folderWithCurrentPath);
+                    }
+
+                    parentFolder = folderWithCurrentPath;
+                    continue;
+                }
+
+                IFolder currentFolder;
+                if (index == lastIndex)
+                {
+                    currentFolder = folder;
+                }
+                else
+                {
+                    currentFolder = new ContainerFolder(currentPath, folder.StartExpanded);
+                    _folders.Add(currentFolder);
+                }
+
+                if (parentFolder == null)
+                    AddFolder(currentFolder);
+                else
+                    AddFolder(currentFolder, parentFolder);
+
+                parentFolder = currentFolder;
+            }
+
+            _folders.Add(folder);
+        }
+
         private void AddFolder(IFolder folder)
         {
             _folderTree.Items.Add(folder);
@@ -528,7 +568,7 @@ namespace ClearCanvas.Ris.Client
                 // we don't use this.AddFolder(...) so the eventHandler will stay intact
                 newFolder.AddFolder(subFolder);
             }
-
+            
             oldFolder.Subfolders.Clear();
 
             IFolder parentFolder = CollectionUtils.SelectFirst(_folderTree.Items,

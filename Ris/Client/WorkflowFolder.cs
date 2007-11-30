@@ -134,6 +134,16 @@ namespace ClearCanvas.Ris.Client
             }
         }
 
+        public override string Id
+        {
+            get
+            {
+                return this.IsStatic
+                           ? string.Concat(this.GetType().Name)
+                           : string.Concat(this.GetType().Name, ":", this.FolderPath.LastSegment.LocalizedText);
+            }
+        }
+
         public string WorklistType
         {
             get { return _worklistType; }

@@ -30,6 +30,7 @@
 #endregion
 
 using ClearCanvas.Common;
+using ClearCanvas.Desktop.Tools;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -38,16 +39,42 @@ namespace ClearCanvas.Ris.Client.Adt
     {
     }
 
-    public class RegistrationMainWorkflowFolderSystem : RegistrationWorkflowFolderSystemBase
+    [ExtensionPoint]
+    public class RegistrationMainWorkflowItemToolExtensionPoint : ExtensionPoint<ITool>
     {
+    }
+
+    [ExtensionPoint]
+    public class RegistrationMainWorkflowFolderToolExtensionPoint : ExtensionPoint<ITool>
+    {
+    }
+
+    public class RegistrationMainWorkflowFolderSystem : RegistrationWorkflowFolderSystemBase, ISearchDataHandler
+    {
+        private readonly Folders.RegistrationSearchFolder _searchFolder;
+
         public RegistrationMainWorkflowFolderSystem(IFolderExplorerToolContext folderExplorer)
-            : base(folderExplorer, new RegistrationMainWorkflowFolderExtensionPoint())
+            : base(folderExplorer, 
+            new RegistrationMainWorkflowFolderExtensionPoint(),
+            new RegistrationMainWorkflowItemToolExtensionPoint(),
+            new RegistrationMainWorkflowFolderToolExtensionPoint())
         {
             this.AddFolder(new Folders.ScheduledFolder(this));
             this.AddFolder(new Folders.CheckedInFolder(this));
             this.AddFolder(new Folders.InProgressFolder(this));
             this.AddFolder(new Folders.CompletedFolder(this));
             this.AddFolder(new Folders.CancelledFolder(this));
+            this.AddFolder(_searchFolder = new Folders.RegistrationSearchFolder(this));
+            folderExplorer.RegisterSearchDataHandler(this);
         }
-   }
+
+        public SearchData SearchData
+        {
+            set
+            {
+                _searchFolder.SearchData = value;
+                SelectedFolder = _searchFolder;
+            }
+        }
+    }
 }

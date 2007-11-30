@@ -41,7 +41,6 @@
     <Compile Include="CancelOrderComponent.cs" />
     <Compile Include="CheckInOrderComponent.cs" />
     <Compile Include="CheckInOrderTable.cs" />
-    <Compile Include="TechnologistSearchWorkflowFolderSystem.cs" />
     <Compile Include="TechnologistMainWorkflowFolderSystem.cs" />
     <Compile Include="TechnologistMainWorkflowFolderSystemTool.cs" />
     <Compile Include="FolderSearchTool.cs" />
@@ -107,8 +106,6 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>RegistrationPreviewComponentSettings.settings</DependentUpon>
     </Compile>
-    <Compile Include="RegistrationSearchWorkflowFolderSystem.cs" />
-    <Compile Include="RegistrationSearchWorkflowFolderSystemTool.cs" />
     <Compile Include="RegistrationWorkflowFolder.cs" />
     <Compile Include="RegistrationWorkflowFolderSystemBase.cs" />
     <Compile Include="RegistrationWorkflowTool.cs" />
@@ -136,7 +133,6 @@
     </Compile>
     <Compile Include="TechnologistWorkflowFolder.cs" />
     <Compile Include="TechnologistWorkflowFolderSystemBase.cs" />
-    <Compile Include="TechnologistSearchWorkflowFolderSystemTool.cs" />
     <Compile Include="TechnologistWorkflowTool.cs" />
     <Compile Include="TechnologistWorklistTable.cs" />
     <Compile Include="VisitEditorComponent.cs" />

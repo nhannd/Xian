@@ -258,7 +258,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         }
     }
 
-    [FolderPath("Search")]
+    [FolderPath("Registration/Search")]
     public class RegistrationSearchFolder : RegistrationWorkflowFolder
     {
         private SearchData _searchData;

@@ -32,6 +32,7 @@
 using System.Threading;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Common;
+using ClearCanvas.Desktop.Tools;
 
 namespace ClearCanvas.Ris.Client.Reporting
 {
@@ -40,10 +41,25 @@ namespace ClearCanvas.Ris.Client.Reporting
     {
     }
 
-    public class ReportingMainWorkflowFolderSystem : ReportingWorkflowFolderSystemBase
+    [ExtensionPoint]
+    public class ReportingMainWorkflowItemToolExtensionPoint : ExtensionPoint<ITool>
     {
+    }
+
+    [ExtensionPoint]
+    public class ReportingMainWorkflowFolderToolExtensionPoint : ExtensionPoint<ITool>
+    {
+    }
+
+    public class ReportingMainWorkflowFolderSystem : ReportingWorkflowFolderSystemBase, ISearchDataHandler
+    {
+        private readonly Folders.SearchFolder _searchFolder;
+
         public ReportingMainWorkflowFolderSystem(IFolderExplorerToolContext folderExplorer)
-            : base(folderExplorer, new ReportingMainWorkflowFolderExtensionPoint())
+            : base(folderExplorer, 
+            new ReportingMainWorkflowFolderExtensionPoint(),
+            new ReportingMainWorkflowItemToolExtensionPoint(),
+            new ReportingMainWorkflowFolderToolExtensionPoint())
         {
             this.AddFolder(new Folders.ToBeReportedFolder(this));
             this.AddFolder(new Folders.DraftFolder(this));
@@ -57,6 +73,18 @@ namespace ClearCanvas.Ris.Client.Reporting
                 this.AddFolder(new Folders.ReviewResidentReportFolder(this));
 
             this.AddFolder(new Folders.VerifiedFolder(this));
+
+            this.AddFolder(_searchFolder = new Folders.SearchFolder(this));
+            folderExplorer.RegisterSearchDataHandler(this);
+        }
+
+        public SearchData SearchData
+        {
+            set
+            {
+                _searchFolder.SearchData = value;
+                SelectedFolder = _searchFolder;
+            }
         }
     }
 }

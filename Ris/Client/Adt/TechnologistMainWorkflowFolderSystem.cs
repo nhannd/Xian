@@ -30,6 +30,7 @@
 #endregion
 
 using ClearCanvas.Common;
+using ClearCanvas.Desktop.Tools;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -38,10 +39,25 @@ namespace ClearCanvas.Ris.Client.Adt
     {
     }
 
-    public class TechnologistMainWorkflowFolderSystem : TechnologistWorkflowFolderSystemBase
+    [ExtensionPoint]
+    public class TechnologistMainWorkflowItemToolExtensionPoint : ExtensionPoint<ITool>
     {
+    }
+
+    [ExtensionPoint]
+    public class TechnologistMainWorkflowFolderToolExtensionPoint : ExtensionPoint<ITool>
+    {
+    }
+
+    public class TechnologistMainWorkflowFolderSystem : TechnologistWorkflowFolderSystemBase, ISearchDataHandler
+    {
+        private readonly Folders.TechnologistSearchFolder _searchFolder;
+
         public TechnologistMainWorkflowFolderSystem(IFolderExplorerToolContext folderExplorer)
-            : base(folderExplorer, new TechnologistMainWorkflowFolderExtensionPoint())
+            : base(folderExplorer, 
+            new TechnologistMainWorkflowFolderExtensionPoint(),
+            new TechnologistMainWorkflowItemToolExtensionPoint(),
+            new TechnologistMainWorkflowFolderToolExtensionPoint())
         {
             this.AddFolder(new Folders.ScheduledTechnologistWorkflowFolder(this));
             this.AddFolder(new Folders.CheckedInTechnologistWorkflowFolder(this));
@@ -50,6 +66,17 @@ namespace ClearCanvas.Ris.Client.Adt
             //this.AddFolder(new Folders.SuspendedTechnologistWorkflowFolder(this));
             this.AddFolder(new Folders.CancelledTechnologistWorkflowFolder(this));
             this.AddFolder(new Folders.CompletedTechnologistWorkflowFolder(this));
+            this.AddFolder(_searchFolder = new Folders.TechnologistSearchFolder(this));
+            folderExplorer.RegisterSearchDataHandler(this);
+        }
+
+        public SearchData SearchData
+        {
+            set
+            {
+                _searchFolder.SearchData = value;
+                SelectedFolder = _searchFolder;
+            }
         }
     }
 }

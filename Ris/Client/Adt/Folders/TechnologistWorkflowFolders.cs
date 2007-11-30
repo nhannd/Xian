@@ -210,7 +210,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         }
     }
 
-    [FolderPath("Search")]
+    [FolderPath("Technologist/Search")]
     public class TechnologistSearchFolder : TechnologistWorkflowFolder
     {
         private SearchData _searchData;

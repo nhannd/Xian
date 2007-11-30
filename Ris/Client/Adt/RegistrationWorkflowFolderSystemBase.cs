@@ -46,16 +46,6 @@ namespace ClearCanvas.Ris.Client.Adt
     {
     }
 
-    [ExtensionPoint]
-    public class RegistrationWorkflowItemToolExtensionPoint : ExtensionPoint<ITool>
-    {
-    }
-
-    [ExtensionPoint]
-    public class RegistrationWorkflowFolderToolExtensionPoint : ExtensionPoint<ITool>
-    {
-    }
-
     public interface IRegistrationWorkflowItemToolContext : IToolContext
     {
         bool GetWorkflowOperationEnablement(string operationClass);
@@ -164,7 +154,11 @@ namespace ClearCanvas.Ris.Client.Adt
         private readonly ToolSet _folderToolSet;
         private IDictionary<string, bool> _workflowEnablment;
 
-        public RegistrationWorkflowFolderSystemBase(IFolderExplorerToolContext folderExplorer, ExtensionPoint<IFolder> folderExtensionPoint)
+        public RegistrationWorkflowFolderSystemBase(
+            IFolderExplorerToolContext folderExplorer, 
+            ExtensionPoint<IFolder> folderExtensionPoint,
+            ExtensionPoint<ITool> itemToolExtensionPoint,
+            ExtensionPoint<ITool> folderToolExtensionPoint)
             : base(folderExplorer, folderExtensionPoint)
         {
             // important to initialize service before adding any folders, because folders may access service
@@ -183,13 +177,17 @@ namespace ClearCanvas.Ris.Client.Adt
                             Type foundType = GetWorklistType(summary.Type);
                             WorkflowFolder<RegistrationWorklistItem> folder = 
                                 (WorkflowFolder<RegistrationWorklistItem>)Activator.CreateInstance(foundType, this, summary.DisplayName, summary.Description, summary.EntityRef);
-                            if (folder != null) this.AddFolder(folder);
+                            if (folder != null)
+                            {
+                                folder.IsStatic = false;
+                                this.AddFolder(folder);
+                            }
                         }
                     });
             }
 
-            _itemToolSet = new ToolSet(new RegistrationWorkflowItemToolExtensionPoint(), new RegistrationWorkflowItemToolContext(this));
-            _folderToolSet = new ToolSet(new RegistrationWorkflowFolderToolExtensionPoint(), new RegistrationWorkflowFolderToolContext(this));
+            _itemToolSet = new ToolSet(itemToolExtensionPoint, new RegistrationWorkflowItemToolContext(this));
+            _folderToolSet = new ToolSet(folderToolExtensionPoint, new RegistrationWorkflowFolderToolContext(this));
 
             folderExplorer.AddItemActions(_itemToolSet.Actions);
             folderExplorer.AddFolderActions(_folderToolSet.Actions);

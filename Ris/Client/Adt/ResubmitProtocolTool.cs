@@ -12,12 +12,12 @@ namespace ClearCanvas.Ris.Client.Adt
     [MenuAction("apply", "folderexplorer-items-contextmenu/Resolve Protocol - Resubmit", "ResolveProtocol")]
     [IconSet("apply", IconScheme.Colour, "AddToolSmall.png", "AddToolMedium.png", "AddToolLarge.png")]
     [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
-    [ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]
+    [ExtensionOf(typeof(RegistrationBookingWorkflowItemToolExtensionPoint))]
     public class ResubmitProtocolTool : Tool<IRegistrationWorkflowItemToolContext>
     {
         public void ResolveProtocol()
         {
-            RegistrationWorklistItem item = CollectionUtils.FirstElement<RegistrationWorklistItem>(this.Context.SelectedItems);
+            RegistrationWorklistItem item = CollectionUtils.FirstElement(this.Context.SelectedItems);
             if (item != null)
             {
                 try
@@ -41,7 +41,7 @@ namespace ClearCanvas.Ris.Client.Adt
             {
                 bool enabled = false;
 
-                RegistrationWorklistItem item = CollectionUtils.FirstElement<RegistrationWorklistItem>(this.Context.SelectedItems);
+                RegistrationWorklistItem item = CollectionUtils.FirstElement(this.Context.SelectedItems);
                 if (item != null)
                 {
                     try
@@ -75,12 +75,12 @@ namespace ClearCanvas.Ris.Client.Adt
     [MenuAction("apply", "folderexplorer-items-contextmenu/Resolve Protocol - Cancel Order", "ResolveProtocol")]
     [IconSet("apply", IconScheme.Colour, "AddToolSmall.png", "AddToolMedium.png", "AddToolLarge.png")]
     [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
-    [ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]
+    [ExtensionOf(typeof(RegistrationBookingWorkflowItemToolExtensionPoint))]
     public class CancelProtcolTool : Tool<IRegistrationWorkflowItemToolContext>
     {
         public void ResolveProtocol()
         {
-            RegistrationWorklistItem item = CollectionUtils.FirstElement<RegistrationWorklistItem>(this.Context.SelectedItems);
+            RegistrationWorklistItem item = CollectionUtils.FirstElement(this.Context.SelectedItems);
             if (item != null)
             {
                 try
@@ -104,7 +104,7 @@ namespace ClearCanvas.Ris.Client.Adt
             {
                 bool enabled = false;
 
-                RegistrationWorklistItem item = CollectionUtils.FirstElement<RegistrationWorklistItem>(this.Context.SelectedItems);
+                RegistrationWorklistItem item = CollectionUtils.FirstElement(this.Context.SelectedItems);
                 if (item != null)
                 {
                     try

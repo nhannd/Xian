@@ -39,8 +39,6 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
-using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry;
 using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client.Adt
@@ -122,10 +120,9 @@ namespace ClearCanvas.Ris.Client.Adt
         }
     }
 
-    [MenuAction("apply", "folderexplorer-items-contextmenu/Start")]
-    [ButtonAction("apply", "folderexplorer-items-toolbar/Start")]
+    [MenuAction("apply", "folderexplorer-items-contextmenu/Start", "Apply")]
+    [ButtonAction("apply", "folderexplorer-items-toolbar/Start", "Apply")]
 	[IconSet("apply", IconScheme.Colour, "StartToolSmall.png", "StartToolMedium.png", "StartToolLarge.png")]
-    [ClickHandler("apply", "Apply")]
     [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
     //[ExtensionOf(typeof(TechnologistWorkflowItemToolExtensionPoint))]
     //[ExtensionOf(typeof(Folders.InProgressTechnologistWorkflowFolder.DropHandlerExtensionPoint))]
@@ -160,10 +157,9 @@ namespace ClearCanvas.Ris.Client.Adt
         }
     }
 
-    [MenuAction("apply", "folderexplorer-items-contextmenu/Complete")]
-    [ButtonAction("apply", "folderexplorer-items-toolbar/Complete")]
+    [MenuAction("apply", "folderexplorer-items-contextmenu/Complete", "Apply")]
+    [ButtonAction("apply", "folderexplorer-items-toolbar/Complete", "Apply")]
 	[IconSet("apply", IconScheme.Colour, "CompleteToolSmall.png", "CompleteToolMedium.png", "CompleteToolLarge.png")]
-    [ClickHandler("apply", "Apply")]
     [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
     //[ExtensionOf(typeof(TechnologistWorkflowItemToolExtensionPoint))]
     //[ExtensionOf(typeof(Folders.CompletedTechnologistWorkflowFolder.DropHandlerExtensionPoint))]
@@ -198,10 +194,9 @@ namespace ClearCanvas.Ris.Client.Adt
         }
     }
 
-    [MenuAction("apply", "folderexplorer-items-contextmenu/Cancel")]
-    [ButtonAction("apply", "folderexplorer-items-toolbar/Cancel")]
+    [MenuAction("apply", "folderexplorer-items-contextmenu/Cancel", "Apply")]
+    [ButtonAction("apply", "folderexplorer-items-toolbar/Cancel", "Apply")]
 	[IconSet("apply", IconScheme.Colour, "DeleteToolSmall.png", "DeleteToolMedium.png", "DeleteToolLarge.png")]
-    [ClickHandler("apply", "Apply")]
     [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
     //[ExtensionOf(typeof(TechnologistWorkflowItemToolExtensionPoint))]
     //[ExtensionOf(typeof(Folders.CancelledTechnologistWorkflowFolder.DropHandlerExtensionPoint))]
@@ -236,12 +231,11 @@ namespace ClearCanvas.Ris.Client.Adt
         }
     }
 
-    [MenuAction("apply", "folderexplorer-items-contextmenu/Replace Order")]
-    [ButtonAction("apply", "folderexplorer-items-toolbar/Replace Order")]
-    [ClickHandler("apply", "Apply")]
+    [MenuAction("apply", "folderexplorer-items-contextmenu/Replace Order", "Apply")]
+    [ButtonAction("apply", "folderexplorer-items-toolbar/Replace Order", "Apply")]
     [IconSet("apply", IconScheme.Colour, "AddToolSmall.png", "AddToolMedium.png", "AddToolLarge.png")]
     [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
-    [ExtensionOf(typeof(TechnologistWorkflowItemToolExtensionPoint))]
+    [ExtensionOf(typeof(TechnologistMainWorkflowItemToolExtensionPoint))]
     public class TechnologistReplaceOrderTool : TechnologistWorkflowTool
     {
         public TechnologistReplaceOrderTool()

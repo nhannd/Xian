@@ -5,10 +5,10 @@
     <Setting Name="ReportEditorPageUrl" Type="System.String" Scope="Application">
       <Value Profile="(Default)">http://localhost/RIS/reporteditor.htm</Value>
     </Setting>
-    <Setting Name="ReportPreviewPageUrl" Type="System.String" Scope="User">
+    <Setting Name="ReportPreviewPageUrl" Type="System.String" Scope="Application">
       <Value Profile="(Default)">http://localhost/RIS/reportpreview.htm</Value>
     </Setting>
-    <Setting Name="AddendumEditorPageUrl" Type="System.String" Scope="User">
+    <Setting Name="AddendumEditorPageUrl" Type="System.String" Scope="Application">
       <Value Profile="(Default)">http://localhost/RIS/addendumeditor.htm</Value>
     </Setting>
   </Settings>

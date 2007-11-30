@@ -46,16 +46,6 @@ namespace ClearCanvas.Ris.Client.Reporting
     {
     }
 
-    [ExtensionPoint]
-    public class ReportingWorkflowItemToolExtensionPoint : ExtensionPoint<ITool>
-    {
-    }
-
-    [ExtensionPoint]
-    public class ReportingWorkflowFolderToolExtensionPoint : ExtensionPoint<ITool>
-    {
-    }
-
     public interface IReportingWorkflowItemToolContext : IToolContext
     {
         bool GetWorkflowOperationEnablement(string operationClass);
@@ -164,7 +154,11 @@ namespace ClearCanvas.Ris.Client.Reporting
         private ToolSet _folderToolSet;
         private IDictionary<string, bool> _workflowEnablement;
 
-        public ReportingWorkflowFolderSystemBase(IFolderExplorerToolContext folderExplorer, ExtensionPoint<IFolder> folderExtensionPoint)
+        public ReportingWorkflowFolderSystemBase(
+            IFolderExplorerToolContext folderExplorer,
+            ExtensionPoint<IFolder> folderExtensionPoint,
+            ExtensionPoint<ITool> itemToolExtensionPoint,
+            ExtensionPoint<ITool> folderToolExtensionPoint)
             : base(folderExplorer, folderExtensionPoint)
         {
             // important to initialize service before adding any folders, because folders may access service
@@ -183,13 +177,17 @@ namespace ClearCanvas.Ris.Client.Reporting
                             Type foundType = GetWorklistType(summary.Type);
                             WorkflowFolder<ReportingWorklistItem> folder =
                                 (WorkflowFolder<ReportingWorklistItem>)Activator.CreateInstance(foundType, this, summary.DisplayName, summary.Description, summary.EntityRef);
-                            if (folder != null) this.AddFolder(folder);
+                            if (folder != null)
+                            {
+                                folder.IsStatic = false;
+                                this.AddFolder(folder);
+                            }
                         }
                     });
             }
 
-            _itemToolSet = new ToolSet(new ReportingWorkflowItemToolExtensionPoint(), new ReportingWorkflowItemToolContext(this));
-            _folderToolSet = new ToolSet(new ReportingWorkflowFolderToolExtensionPoint(), new ReportingWorkflowFolderToolContext(this));
+            _itemToolSet = new ToolSet(itemToolExtensionPoint, new ReportingWorkflowItemToolContext(this));
+            _folderToolSet = new ToolSet(folderToolExtensionPoint, new ReportingWorkflowFolderToolContext(this));
 
             folderExplorer.AddItemActions(_itemToolSet.Actions);
             folderExplorer.AddFolderActions(_folderToolSet.Actions);

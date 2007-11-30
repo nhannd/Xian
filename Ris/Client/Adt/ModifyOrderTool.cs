@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
@@ -15,7 +13,7 @@ namespace ClearCanvas.Ris.Client.Adt
     [ButtonAction("apply", "folderexplorer-items-toolbar/Modify Order", "Apply")]
     [IconSet("apply", IconScheme.Colour, "EditToolSmall.png", "EditToolMedium.png", "EditToolLarge.png")]
     [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
-    [ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]
+    [ExtensionOf(typeof(RegistrationMainWorkflowItemToolExtensionPoint))]
     public class ModifyOrderTool : Tool<IRegistrationWorkflowItemToolContext>
     {
         private bool _enabled;
@@ -55,7 +53,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public void Apply()
         {
-            RegistrationWorklistItem item = CollectionUtils.FirstElement<RegistrationWorklistItem>(Context.SelectedItems);
+            RegistrationWorklistItem item = CollectionUtils.FirstElement(Context.SelectedItems);
             string title = string.Format("Modify Order - {0} {1}", PersonNameFormat.Format(item.PatientName), MrnFormat.Format(item.Mrn));
             try
             {

@@ -49,7 +49,8 @@ namespace ClearCanvas.Ris.Client.Adt
     [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
 
     [ExtensionOf(typeof(PatientBiographyToolExtensionPoint))]
-    [ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]
+    [ExtensionOf(typeof(RegistrationMainWorkflowItemToolExtensionPoint))]
+    [ExtensionOf(typeof(RegistrationBookingWorkflowItemToolExtensionPoint))]
     public class VisitSummaryTool : ToolBase
     {
         private bool _enabled;
