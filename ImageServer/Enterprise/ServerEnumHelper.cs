@@ -32,10 +32,10 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.Enterprise.Core;
 
-namespace ClearCanvas.ImageServer.Model
+
+namespace ClearCanvas.ImageServer.Enterprise
 {
     /// <summary>
     /// Helper class to populate or lookup value for a sepecialized <see cref="ServerEnum"/>.
@@ -44,7 +44,7 @@ namespace ClearCanvas.ImageServer.Model
     /// <typeparam name="TBroker">The broker class to be used to load the enumerated values.</typeparam>
     /// <remarks>
     /// </remarks>
-    sealed class  ServerEnumHelper<TEnum, TBroker>
+    sealed public class  ServerEnumHelper<TEnum, TBroker>
         where TEnum : ServerEnum, new()
         where TBroker : IEnumBroker<TEnum>
     {
