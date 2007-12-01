@@ -38,51 +38,28 @@ namespace ClearCanvas.ImageServer.Model
 {
     public class WorkQueueTypeEnum : ServerEnum
     {
-        private static readonly Dictionary<short, WorkQueueTypeEnum> _dict = new Dictionary<short, WorkQueueTypeEnum>();
-
-        /// <summary>
-        /// One-time load from the database of type enumerated value.
-        /// </summary>
-        static WorkQueueTypeEnum()
-        {
-            using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
-            {
-                IEnumBroker<WorkQueueTypeEnum> broker = read.GetBroker<IWorkQueueTypeEnum>();
-                IList<WorkQueueTypeEnum> list = broker.Execute();
-                foreach (WorkQueueTypeEnum type in list)
-                {
-                    _dict.Add(type.Enum, type);
-                }
-            }
-        }
-
+       
+        
         #region Constructors
+        
         public WorkQueueTypeEnum()
             : base("WorkQueueTypeEnum")
         {
         }
+
         #endregion
+
 
         public override void SetEnum(short val)
         {
-            WorkQueueTypeEnum typeEnum;
-            if (false == _dict.TryGetValue(val, out typeEnum))
-                throw new PersistenceException("Unknown WorkQueueTypeEnum value: " + val,null);
-
-            Enum = typeEnum.Enum;
-            Lookup = typeEnum.Lookup;
-            Description = typeEnum.Description;
-            LongDescription = typeEnum.LongDescription;
+            ServerEnumHelper<WorkQueueTypeEnum, IWorkQueueTypeEnum>.SetEnum(this, val);
         }
 
-        public static WorkQueueTypeEnum GetEnum(string lookup)
+
+        static public WorkQueueTypeEnum GetEnum(string lookup)
         {
-            foreach (WorkQueueTypeEnum type in _dict.Values)
-            {
-                if (type.Lookup.Equals(lookup))
-                    return type;
-            }
-            throw new PersistenceException("Unknown WorkQueueTypeEnum: " + lookup, null);
+            return ServerEnumHelper<WorkQueueTypeEnum, IWorkQueueTypeEnum>.GetEnum(lookup);
         }
+
     }
 }

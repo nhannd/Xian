@@ -168,7 +168,7 @@ namespace ClearCanvas.ImageServer.Model
             set { _numberOfStudyRelatedInstances = value; }
         }
 
-        public StudyStatusEnum StatusEnum
+        public StudyStatusEnum StudyStatusEnum
         {
             get { return _statusEnum; }
             set { _statusEnum = value; }

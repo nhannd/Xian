@@ -1,94 +1,94 @@
 -- WorkQueueTypeEnum inserts
 INSERT INTO [ImageServer].[dbo].[WorkQueueTypeEnum]
-           ([GUID],[WorkQueueTypeEnum],[Lookup],[Description],[LongDescription])
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
      VALUES
            (newid(),100,'StudyProcess','Process Study','Processing of a new incoming study.')
 GO
 
 INSERT INTO [ImageServer].[dbo].[WorkQueueTypeEnum]
-           ([GUID],[WorkQueueTypeEnum],[Lookup],[Description],[LongDescription])
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
      VALUES
            (newid(),101,'AutoRoute','Auto Route','DICOM Auto-route request.')
 GO
 
 INSERT INTO [ImageServer].[dbo].[WorkQueueTypeEnum]
-           ([GUID],[WorkQueueTypeEnum],[Lookup],[Description],[LongDescription])
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
      VALUES
            (newid(),102,'DeleteStudy','Delete Study','Delete a Study.')
 GO
 
 -- WorkQueueStatusEnum inserts
 INSERT INTO [ImageServer].[dbo].[WorkQueueStatusEnum]
-           ([GUID],[WorkQueueStatusEnum],[Lookup],[Description],[LongDescription])
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
      VALUES
            (newid(),100,'Online','Online','Online')
 GO
 
 INSERT INTO [ImageServer].[dbo].[WorkQueueStatusEnum]
-           ([GUID],[WorkQueueStatusEnum],[Lookup],[Description],[LongDescription])
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
      VALUES
            (newid(),200,'Pending','Pending','Pending')
 GO
 
 
 INSERT INTO [ImageServer].[dbo].[WorkQueueStatusEnum]
-           ([GUID],[WorkQueueStatusEnum],[Lookup],[Description],[LongDescription])
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
      VALUES
            (newid(),201,'In Progress','In Progress','In Progress')
 GO
 
 INSERT INTO [ImageServer].[dbo].[WorkQueueStatusEnum]
-           ([GUID],[WorkQueueStatusEnum],[Lookup],[Description],[LongDescription])
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
      VALUES
            (newid(),202,'Completed','Completed','The Queue entry is completed.')
 GO
 
 INSERT INTO [ImageServer].[dbo].[WorkQueueStatusEnum]
-           ([GUID],[WorkQueueStatusEnum],[Lookup],[Description],[LongDescription])
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
      VALUES
            (newid(),203,'Failed','Failed','The Queue entry has failed.')
 GO
 
 -- FilesystemTierEnum
 INSERT INTO [ImageServer].[dbo].[FilesystemTierEnum]
-           ([GUID],[FilesystemTierEnum],[Lookup],[Description],[LongDescription])
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
      VALUES
            (newid(),101,'Tier1','Tier 1','Filesystem Tier 1')
 GO
 
 INSERT INTO [ImageServer].[dbo].[FilesystemTierEnum]
-           ([GUID],[FilesystemTierEnum],[Lookup],[Description],[LongDescription])
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
      VALUES
            (newid(),102,'Tier2','Tier 2','Filesystem Tier 2')
 GO
 
 INSERT INTO [ImageServer].[dbo].[FilesystemTierEnum]
-           ([GUID],[FilesystemTierEnum],[Lookup],[Description],[LongDescription])
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
      VALUES
            (newid(),103,'Tier3','Tier 3','Filesystem Tier 3')
 GO
 
 -- ServerRuleTypeEnum inserts
 INSERT INTO [ImageServer].[dbo].[ServerRuleTypeEnum]
-           ([GUID],[ServerRuleTypeEnum],[Lookup],[Description],[LongDescription])
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
      VALUES
            (newid(),100,'AutoRoute','Auto Routing','A DICOM auto-routing rule')
 GO
 
 INSERT INTO [ImageServer].[dbo].[ServerRuleTypeEnum]
-           ([GUID],[ServerRuleTypeEnum],[Lookup],[Description],[LongDescription])
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
      VALUES
            (newid(),101,'StudyDelete','Study Delete','A rule to specify when to delete a study')
 GO
 
 INSERT INTO [ImageServer].[dbo].[ServerRuleTypeEnum]
-           ([GUID],[ServerRuleTypeEnum],[Lookup],[Description],[LongDescription])
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
      VALUES
            (newid(),102,'Tier1Retention','Tier1 Retention','A rule to specify how long a study will be retained on Tier1')
 GO
 
 INSERT INTO [ImageServer].[dbo].[ServerRuleTypeEnum]
-           ([GUID],[ServerRuleTypeEnum],[Lookup],[Description],[LongDescription])
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
      VALUES
            (newid(),103,'OnlineRetention','Online Retention','A rule to specify how long a study will be retained online')
 GO
@@ -96,51 +96,51 @@ GO
 
 -- ServerRuleApplyTimeEnum inserts
 INSERT INTO [ImageServer].[dbo].[ServerRuleApplyTimeEnum]
-           ([GUID],[ServerRuleApplyTimeEnum],[Lookup],[Description],[LongDescription])
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
      VALUES
            (newid(),100,'SopReceived','SOP Received','Apply rule when a SOP Instance has been received')
 GO
 
 INSERT INTO [ImageServer].[dbo].[ServerRuleApplyTimeEnum]
-           ([GUID],[ServerRuleApplyTimeEnum],[Lookup],[Description],[LongDescription])
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
      VALUES
            (newid(),101,'SopProcessed','SOP Processed','Apply rule when a SOP Instance has been processed')
 GO
 
 INSERT INTO [ImageServer].[dbo].[ServerRuleApplyTimeEnum]
-           ([GUID],[ServerRuleApplyTimeEnum],[Lookup],[Description],[LongDescription])
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
      VALUES
            (newid(),102,'SeriesProcessed','Series Processed','Apply rule when a Series is initially processed')
 GO
 
 INSERT INTO [ImageServer].[dbo].[ServerRuleApplyTimeEnum]
-           ([GUID],[ServerRuleApplyTimeEnum],[Lookup],[Description],[LongDescription])
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
      VALUES
            (newid(),103,'StudyProcessed','Study Processed','Apply rule when a Study is initially processed')
 GO
 
 -- FilesystemQueueTypeEnum inserts
 INSERT INTO [ImageServer].[dbo].[FilesystemQueueTypeEnum]
-           ([GUID],[FilesystemQueueTypeEnum],[Lookup],[Description],[LongDescription])
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
      VALUES
            (newid(),100,'DeleteStudy','Delete Study','Delete a Study')
 GO
            
 INSERT INTO [ImageServer].[dbo].[FilesystemQueueTypeEnum]
-           ([GUID],[FilesystemQueueTypeEnum],[Lookup],[Description],[LongDescription])
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
      VALUES
            (newid(),101,'PurgeStudy','Purge Study','Purge an Online Study')
 GO
 
 INSERT INTO [ImageServer].[dbo].[FilesystemQueueTypeEnum]
-           ([GUID],[FilesystemQueueTypeEnum],[Lookup],[Description],[LongDescription])
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
      VALUES
            (newid(),102,'TierMigrate','Tier Migrate','Migrate a Study to a Lower Tier')
 GO
 
 -- ServiceLockTypeEnum inserts
 INSERT INTO [ImageServer].[dbo].[ServiceLockTypeEnum]
-           ([GUID],[ServiceLockTypeEnum],[Lookup],[Description],[LongDescription])
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
      VALUES
            (newid(),100,'FilesystemDelete','Filesystem Delete','Purge Data from a Filesystem')
 GO
@@ -486,12 +486,10 @@ VALUES (newid(), '1.2.840.10008.1.2', 'Implicit VR Little Endian: Default Transf
 GO
 
 -- [StudyStatusEnum] inserts
-INSERT INTO [ImageServer].[dbo].[StudyStatusEnum]
-         ([GUID],[StudyStatusEnum],[Lookup],[Description],[LongDescription])
-VALUES
-         (newid(),100,'Online','Online','Study is online')
+INSERT INTO [ImageServer].[dbo].[StudyStatusEnum]([GUID],[Enum],[Lookup],[Description],[LongDescription])
+VALUES(newid(),100,'Online','Online','Study is online')
 GO
 
-INSERT INTO [ImageServer].[dbo].[StudyStatusEnum] ([GUID],[StudyStatusEnum],[Lookup],[Description],[LongDescription])
-VALUES (newid(),200,'Pending','Pending','Pending')
+INSERT INTO [ImageServer].[dbo].[StudyStatusEnum]([GUID],[Enum],[Lookup],[Description],[LongDescription])
+VALUES(newid(),200,'Pending','Pending','Pending')
 GO

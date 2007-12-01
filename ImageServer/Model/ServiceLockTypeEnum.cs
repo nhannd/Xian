@@ -38,51 +38,27 @@ namespace ClearCanvas.ImageServer.Model
 {
     public class ServiceLockTypeEnum : ServerEnum
     {
-        private static readonly Dictionary<short, ServiceLockTypeEnum> _dict = new Dictionary<short, ServiceLockTypeEnum>();
-
-        /// <summary>
-        /// One-time load of status values from the database.
-        /// </summary>
-        static ServiceLockTypeEnum()
-        {
-            using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
-            {
-                IEnumBroker<ServiceLockTypeEnum> broker = read.GetBroker<IServiceLockTypeEnum>();
-                IList<ServiceLockTypeEnum> list = broker.Execute();
-                foreach (ServiceLockTypeEnum type in list)
-                {
-                    _dict.Add(type.Enum, type);
-                }
-            }
-        }
+        
 
         #region Constructors
+
         public ServiceLockTypeEnum()
             : base("ServiceLockTypeEnum")
         {
         }
         #endregion
 
+
+
         public override void SetEnum(short val)
         {
-            ServiceLockTypeEnum enumValue;
-            if (false == _dict.TryGetValue(val, out enumValue))
-                throw new PersistenceException("Unknown ServiceLockTypeEnum value: " + val, null);
-
-            Enum = enumValue.Enum;
-            Lookup = enumValue.Lookup;
-            Description = enumValue.Description;
-            LongDescription = enumValue.LongDescription;
+            ServerEnumHelper<ServiceLockTypeEnum, IServiceLockTypeEnum>.SetEnum(this, val);
         }
 
-        public static ServiceLockTypeEnum GetEnum(string lookup)
+
+        static public ServiceLockTypeEnum GetEnum(string lookup)
         {
-            foreach (ServiceLockTypeEnum status in _dict.Values)
-            {
-                if (status.Lookup.Equals(lookup))
-                    return status;
-            }
-            throw new PersistenceException("Unknown ServiceLockTypeEnum: " + lookup, null);
+            return ServerEnumHelper<ServiceLockTypeEnum, IServiceLockTypeEnum>.GetEnum(lookup);
         }
     }
 }

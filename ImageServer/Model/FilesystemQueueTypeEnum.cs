@@ -38,51 +38,25 @@ namespace ClearCanvas.ImageServer.Model
 {
     public class FilesystemQueueTypeEnum : ServerEnum
     {
-        private static readonly Dictionary<short, FilesystemQueueTypeEnum> _dict = new Dictionary<short, FilesystemQueueTypeEnum>();
-
+        
         #region Constructors
-        /// <summary>
-        /// One-time load from the database of type enumerated value.
-        /// </summary>
-        static FilesystemQueueTypeEnum()
-        {
-            using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
-            {
-                IEnumBroker<FilesystemQueueTypeEnum> broker = read.GetBroker<IFilesystemQueueTypeEnum>();
-                IList<FilesystemQueueTypeEnum> list = broker.Execute();
-                foreach (FilesystemQueueTypeEnum type in list)
-                {
-                    _dict.Add(type.Enum, type);
-                }
-            }
-        }
-
+        
         public FilesystemQueueTypeEnum()
             : base("FilesystemQueueTypeEnum")
         {
         }
         #endregion
 
+
         public override void SetEnum(short val)
         {
-            FilesystemQueueTypeEnum tierEnum;
-            if (false == _dict.TryGetValue(val, out tierEnum))
-                throw new PersistenceException("Unknown FilesystemQueueTypeEnum value: " + val, null);
-
-            Enum = tierEnum.Enum;
-            Lookup = tierEnum.Lookup;
-            Description = tierEnum.Description;
-            LongDescription = tierEnum.LongDescription;
+            ServerEnumHelper<FilesystemQueueTypeEnum, IFilesystemQueueTypeEnum>.SetEnum(this, val);
         }
 
-        public static FilesystemQueueTypeEnum GetEnum(string lookup)
+
+        static public FilesystemQueueTypeEnum GetEnum(string lookup)
         {
-            foreach (FilesystemQueueTypeEnum type in _dict.Values)
-            {
-                if (type.Lookup.Equals(lookup))
-                    return type;
-            }
-            throw new PersistenceException("Unknown FilesystemQueueTypeEnum: " + lookup, null);
+            return ServerEnumHelper<FilesystemQueueTypeEnum, IFilesystemQueueTypeEnum>.GetEnum(lookup);
         }
     }
 }

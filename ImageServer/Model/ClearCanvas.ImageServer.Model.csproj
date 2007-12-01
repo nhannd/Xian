@@ -35,6 +35,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ServerEnumHelper.cs" />
     <Compile Include="Brokers\IDeleteDevice.cs" />
     <Compile Include="Brokers\IDeleteFilesystemQueue.cs" />
     <Compile Include="Brokers\IDeleteStudyStorage.cs" />

@@ -79,12 +79,12 @@ namespace ClearCanvas.ImageServer.Model
             get { return _deviceKey; }
             set { _deviceKey = value; }
         }
-        public WorkQueueTypeEnum TypeEnum
+        public WorkQueueTypeEnum WorkQueueTypeEnum
         {
             get { return _typeEnum; }
             set { _typeEnum = value; }
         }
-        public WorkQueueStatusEnum StatusEnum
+        public WorkQueueStatusEnum WorkQueueStatusEnum
         {
             get { return _statusEnum; }
             set { _statusEnum = value; }

@@ -38,51 +38,25 @@ namespace ClearCanvas.ImageServer.Model
 {
     public class ServerRuleApplyTimeEnum : ServerEnum
     {
-        private static readonly Dictionary<short, ServerRuleApplyTimeEnum> _dict = new Dictionary<short, ServerRuleApplyTimeEnum>();
-
-        /// <summary>
-        /// One-time load of status values from the database.
-        /// </summary>
-        static ServerRuleApplyTimeEnum()
-        {
-            using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
-            {
-                IEnumBroker<ServerRuleApplyTimeEnum> broker = read.GetBroker<IServerRuleApplyTimeEnum>();
-                IList<ServerRuleApplyTimeEnum> list = broker.Execute();
-                foreach (ServerRuleApplyTimeEnum type in list)
-                {
-                    _dict.Add(type.Enum, type);
-                }
-            }
-        }
-
         #region Constructors
+
+
         public ServerRuleApplyTimeEnum()
             : base("ServerRuleApplyTimeEnum")
         {
         }
         #endregion
 
+
         public override void SetEnum(short val)
         {
-            ServerRuleApplyTimeEnum enumValue;
-            if (false == _dict.TryGetValue(val, out enumValue))
-                throw new PersistenceException("Unknown ServerRuleApplyTimeEnum value: " + val, null);
-
-            Enum = enumValue.Enum;
-            Lookup = enumValue.Lookup;
-            Description = enumValue.Description;
-            LongDescription = enumValue.LongDescription;
+            ServerEnumHelper<ServerRuleApplyTimeEnum, IServerRuleApplyTimeEnum>.SetEnum(this, val);
         }
 
-        public static ServerRuleApplyTimeEnum GetEnum(string lookup)
+
+        static public ServerRuleApplyTimeEnum GetEnum(string lookup)
         {
-            foreach (ServerRuleApplyTimeEnum status in _dict.Values)
-            {
-                if (status.Lookup.Equals(lookup))
-                    return status;
-            }
-            throw new PersistenceException("Unknown ServerRuleApplyTimeEnum: " + lookup, null);
+            return ServerEnumHelper<ServerRuleApplyTimeEnum, IServerRuleApplyTimeEnum>.GetEnum(lookup);
         }
     }
 }

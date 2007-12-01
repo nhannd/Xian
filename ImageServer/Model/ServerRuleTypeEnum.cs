@@ -38,51 +38,20 @@ namespace ClearCanvas.ImageServer.Model
 {
     public class ServerRuleTypeEnum : ServerEnum
     {
-        private static readonly Dictionary<short, ServerRuleTypeEnum> _dict = new Dictionary<short, ServerRuleTypeEnum>();
-
-        /// <summary>
-        /// One-time load of status values from the database.
-        /// </summary>
-        static ServerRuleTypeEnum()
-        {
-            using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
-            {
-                IEnumBroker<ServerRuleTypeEnum> broker = read.GetBroker<IServerRuleTypeEnum>();
-                IList<ServerRuleTypeEnum> list = broker.Execute();
-                foreach (ServerRuleTypeEnum type in list)
-                {
-                    _dict.Add(type.Enum, type);
-                }
-            }
-        }
 
         #region Constructors
+
         public ServerRuleTypeEnum()
             : base("ServerRuleTypeEnum")
         {
         }
         #endregion
 
+
         public override void SetEnum(short val)
         {
-            ServerRuleTypeEnum enumValue;
-            if (false == _dict.TryGetValue(val, out enumValue))
-                throw new PersistenceException("Unknown ServerRuleTypeEnum value: " + val, null);
-
-            Enum = enumValue.Enum;
-            Lookup = enumValue.Lookup;
-            Description = enumValue.Description;
-            LongDescription = enumValue.LongDescription;
+            ServerEnumHelper<ServerRuleTypeEnum, IServerRuleTypeEnum>.SetEnum(this, val);
         }
 
-        public static ServerRuleTypeEnum GetEnum(string lookup)
-        {
-            foreach (ServerRuleTypeEnum status in _dict.Values)
-            {
-                if (status.Lookup.Equals(lookup))
-                    return status;
-            }
-            throw new PersistenceException("Unknown ServerRuleTypeEnum: " + lookup, null);
-        }
     }
 }

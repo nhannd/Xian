@@ -167,7 +167,7 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                     Guid uid = reader.GetGuid(i);
                     prop.SetValue(entity, new ServerEntityKey(columnName.Replace("Key", ""), uid));
                 }
-                else if (prop.PropertyType.BaseType == typeof(ServerEnum))
+                else if (typeof(ServerEnum).IsAssignableFrom(prop.PropertyType))
                 {
                     short enumVal = reader.GetInt16(i);
                     ConstructorInfo construct = prop.PropertyType.GetConstructor(new Type[0]);

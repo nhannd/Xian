@@ -38,51 +38,25 @@ namespace ClearCanvas.ImageServer.Model
 {
     public class StudyStatusEnum : ServerEnum
     {
-        private static readonly Dictionary<short, StudyStatusEnum> _dict = new Dictionary<short, StudyStatusEnum>();
-
-        /// <summary>
-        /// One-time load of status values from the database.
-        /// </summary>
-        static StudyStatusEnum()
-        {
-            using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
-            {
-                IEnumBroker<StudyStatusEnum> broker = read.GetBroker<IStudyStatusEnum>();
-                IList<StudyStatusEnum> list = broker.Execute();
-                foreach (StudyStatusEnum type in list)
-                {
-                    _dict.Add(type.Enum, type);
-                }
-            }
-        }
-
+        
         #region Constructors
+
         public StudyStatusEnum()
             : base("StudyStatusEnum")
         {
         }
         #endregion
 
+
         public override void SetEnum(short val)
         {
-            StudyStatusEnum enumValue;
-            if (false == _dict.TryGetValue(val, out enumValue))
-                throw new PersistenceException("Unknown StudyStatusEnum value: " + val, null);
-
-            Enum = enumValue.Enum;
-            Lookup = enumValue.Lookup;
-            Description = enumValue.Description;
-            LongDescription = enumValue.LongDescription;
+            ServerEnumHelper<StudyStatusEnum, IStudyStatusEnum>.SetEnum(this, val);
         }
 
-        public static StudyStatusEnum GetEnum(string lookup)
+
+        static public StudyStatusEnum GetEnum(string lookup)
         {
-            foreach (StudyStatusEnum status in _dict.Values)
-            {
-                if (status.Lookup.Equals(lookup))
-                    return status;
-            }
-            throw new PersistenceException("Unknown StudyStatusEnum: " + lookup, null);
+            return ServerEnumHelper<StudyStatusEnum, IStudyStatusEnum>.GetEnum(lookup);
         }
     }
 }

@@ -142,8 +142,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                 {
                     Platform.Log(LogLevel.Error,
                                  "Failing {0} WorkQueue entry ({1}), reached max retry count of {2}",
-                                 item.TypeEnum.Description, item.GetKey(), item.FailureCount + 1);
-                    parms.StatusEnum = WorkQueueStatusEnum.GetEnum("Failed");
+                                 item.WorkQueueTypeEnum.Description, item.GetKey(), item.FailureCount + 1);
+                    parms.WorkQueueStatusEnum = WorkQueueStatusEnum.GetEnum("Failed");
                     parms.ScheduledTime = Platform.Time;
                     parms.ExpirationTime = Platform.Time.AddDays(1);
                 }
@@ -151,8 +151,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                 {
                     Platform.Log(LogLevel.Error,
                                  "Resetting {0} WorkQueue entry ({1}) to Pending, current retry count {2}",
-                                 item.TypeEnum.Description, item.GetKey(), item.FailureCount + 1);
-                    parms.StatusEnum = WorkQueueStatusEnum.GetEnum("Pending");
+                                 item.WorkQueueTypeEnum.Description, item.GetKey(), item.FailureCount + 1);
+                    parms.WorkQueueStatusEnum = WorkQueueStatusEnum.GetEnum("Pending");
                     parms.ScheduledTime = Platform.Time.AddMinutes(settings.WorkQueueFailureDelayMinutes);
                     parms.ExpirationTime =
                         Platform.Time.AddMinutes((settings.WorkQueueMaxFailureCount - item.FailureCount) *
@@ -161,7 +161,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 
                 if (false == update.Execute(parms))
                 {
-                    Platform.Log(LogLevel.Error, "Unable to update {0} WorkQueue GUID: {1}", item.TypeEnum.Name,
+                    Platform.Log(LogLevel.Error, "Unable to update {0} WorkQueue GUID: {1}", item.WorkQueueTypeEnum.Name,
                                  item.GetKey().ToString());
                 }
                 else
@@ -202,10 +202,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                     // output the list of items that have been reset
                     foreach (Model.WorkQueue queueItem in modifiedList)
                     {
-                        if (queueItem.StatusEnum.Equals(pending))
+                        if (queueItem.WorkQueueStatusEnum.Equals(pending))
                             Platform.Log(LogLevel.Info, "Cleanup: Reset Queue Item : {0} --> Status={1} Scheduled={2} ExpirationTime={3}",
                                             queueItem.GetKey().Key,
-                                            queueItem.StatusEnum.Description, 
+                                            queueItem.WorkQueueStatusEnum.Description, 
                                             queueItem.ScheduledTime, 
                                             queueItem.ExpirationTime);
                     }
@@ -213,7 +213,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                     // output the list of items that have been failed because it exceeds the max retry count
                     foreach (Model.WorkQueue queueItem in modifiedList)
                     {
-                        if (queueItem.StatusEnum.Equals(failed))
+                        if (queueItem.WorkQueueStatusEnum.Equals(failed))
                             Platform.Log(LogLevel.Info, "Cleanup: Fail Queue Item  : {0} : FailureCount={1} ExpirationTime={2}",
                                             queueItem.GetKey().Key,
                                             queueItem.FailureCount,
@@ -262,18 +262,18 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 
                     foreach (Model.WorkQueue queueItem in list)
                     {
-                        if (!_extensions.ContainsKey(queueItem.TypeEnum))
+                        if (!_extensions.ContainsKey(queueItem.WorkQueueTypeEnum))
                         {
                             Platform.Log(LogLevel.Error,
                                          "No extensions loaded for WorkQueue item type: {0}.  Failing item.",
-                                         queueItem.TypeEnum.Description);
+                                         queueItem.WorkQueueTypeEnum.Description);
 
                             //Just fail the WorkQueue item, not much else we can do
                             FailQueueItem(queueItem);
                             continue;
                         }
 
-                        IWorkQueueProcessorFactory factory = _extensions[queueItem.TypeEnum];
+                        IWorkQueueProcessorFactory factory = _extensions[queueItem.WorkQueueTypeEnum];
 
                             IWorkQueueItemProcessor processor;
                             try
@@ -310,7 +310,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                                                     {
                                                         Platform.Log(LogLevel.Error, e,
                                                                      "Unexpected exception when processing WorkQueue item of type {0}.  Failing Queue item. (GUID: {1})",
-                                                                     queueItem.TypeEnum.Description,
+                                                                     queueItem.WorkQueueTypeEnum.Description,
                                                                      queueItem.GetKey());
 
                                                         FailQueueItem(queueItem);

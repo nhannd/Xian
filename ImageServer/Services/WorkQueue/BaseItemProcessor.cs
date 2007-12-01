@@ -152,7 +152,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                         Platform.Log(LogLevel.Error,
                                      "Failing StudyProcess WorkQueue entry ({0}), reached max retry count of {1}",
                                      item.GetKey(), item.FailureCount + 1);
-                        parms.StatusEnum = WorkQueueStatusEnum.GetEnum("Failed");
+                        parms.WorkQueueStatusEnum= WorkQueueStatusEnum.GetEnum("Failed");
                         parms.ScheduledTime = Platform.Time;
                         parms.ExpirationTime = Platform.Time;
 
@@ -163,7 +163,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                         Platform.Log(LogLevel.Error,
                                      "Resetting StudyProcess WorkQueue entry ({0}) to Pending, current retry count {1}",
                                      item.GetKey(), item.FailureCount + 1);
-                        parms.StatusEnum = WorkQueueStatusEnum.GetEnum("Pending");
+                        parms.WorkQueueStatusEnum = WorkQueueStatusEnum.GetEnum("Pending");
                         parms.ScheduledTime = Platform.Time.AddMinutes(settings.WorkQueueFailureDelayMinutes);
                         parms.ExpirationTime =
                             Platform.Time.AddMinutes((settings.WorkQueueMaxFailureCount-item.FailureCount) *
@@ -174,7 +174,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                 }
                 else
                 {
-                    parms.StatusEnum = WorkQueueStatusEnum.GetEnum("Pending");
+                    parms.WorkQueueStatusEnum = WorkQueueStatusEnum.GetEnum("Pending");
                     parms.FailureCount = item.FailureCount;
                     parms.ScheduledTime = Platform.Time.AddSeconds(15.0);
                     parms.ExpirationTime = Platform.Time.AddSeconds(settings.WorkQueueExpireDelaySeconds);
@@ -214,7 +214,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 
                 if (item.ExpirationTime < Platform.Time)
                 {
-                    parms.StatusEnum = WorkQueueStatusEnum.GetEnum("Completed");
+                    parms.WorkQueueStatusEnum = WorkQueueStatusEnum.GetEnum("Completed");
                     parms.WorkQueueKey = item.GetKey();
                     parms.StudyStorageKey = item.StudyStorageKey;
                     parms.FailureCount = item.FailureCount;
@@ -230,7 +230,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                     if (scheduledTime > item.ExpirationTime)
                         scheduledTime = item.ExpirationTime;
 
-                    parms.StatusEnum = WorkQueueStatusEnum.GetEnum("Pending");
+                    parms.WorkQueueStatusEnum = WorkQueueStatusEnum.GetEnum("Pending");
                     parms.WorkQueueKey = item.GetKey();
                     parms.StudyStorageKey = item.StudyStorageKey;
                     parms.ScheduledTime = scheduledTime; 
@@ -372,8 +372,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                 {
                     Platform.Log(LogLevel.Error,
                                  "Failing {0} WorkQueue entry ({1}), reached max retry count of {2}",
-                                 item.TypeEnum.Description, item.GetKey(), item.FailureCount + 1);
-                    parms.StatusEnum = WorkQueueStatusEnum.GetEnum("Failed");
+                                 item.WorkQueueTypeEnum.Description, item.GetKey(), item.FailureCount + 1);
+                    parms.WorkQueueStatusEnum = WorkQueueStatusEnum.GetEnum("Failed");
                     parms.ScheduledTime = Platform.Time;
                     parms.ExpirationTime = Platform.Time.AddDays(1);
                 }
@@ -381,8 +381,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                 {
                     Platform.Log(LogLevel.Error,
                                  "Resetting {0} WorkQueue entry ({1}) to Pending, current retry count {2}",
-                                 item.TypeEnum.Description, item.GetKey(), item.FailureCount + 1);
-                    parms.StatusEnum = WorkQueueStatusEnum.GetEnum("Pending");
+                                 item.WorkQueueTypeEnum.Description, item.GetKey(), item.FailureCount + 1);
+                    parms.WorkQueueStatusEnum = WorkQueueStatusEnum.GetEnum("Pending");
                     parms.ScheduledTime = Platform.Time.AddMinutes(settings.WorkQueueFailureDelayMinutes);
                     parms.ExpirationTime =
                         Platform.Time.AddMinutes((settings.WorkQueueMaxFailureCount - item.FailureCount) *
@@ -391,7 +391,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 
                 if (false == update.Execute(parms))
                 {
-                    Platform.Log(LogLevel.Error, "Unable to update {0} WorkQueue GUID: {1}", item.TypeEnum.Name,
+                    Platform.Log(LogLevel.Error, "Unable to update {0} WorkQueue GUID: {1}", item.WorkQueueTypeEnum.Name,
                                  item.GetKey().ToString());
                 }
 

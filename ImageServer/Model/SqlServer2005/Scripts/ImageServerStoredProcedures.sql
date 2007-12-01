@@ -208,21 +208,21 @@ BEGIN
 	declare @DeleteStudyTypeEnum as smallint
 	declare @DeleteStudyFilesystemQueueTypeEnum smallint
 
-	select @PendingStatusEnum = WorkQueueStatusEnum from WorkQueueStatusEnum where Lookup = ''Pending''
-	select @DeleteStudyTypeEnum = WorkQueueTypeEnum from WorkQueueTypeEnum where Lookup = ''DeleteStudy''
-	select @DeleteStudyFilesystemQueueTypeEnum = FilesystemQueueTypeEnum from FilesystemQueueTypeEnum where Lookup = ''DeleteStudy''
+	select @PendingStatusEnum = Enum from WorkQueueStatusEnum where Lookup = ''Pending''
+	select @DeleteStudyTypeEnum = Enum from WorkQueueTypeEnum where Lookup = ''DeleteStudy''
+	select @DeleteStudyFilesystemQueueTypeEnum = Enum from FilesystemQueueTypeEnum where Lookup = ''DeleteStudy''
 
 	BEGIN TRANSACTION
 
     -- Insert statements for procedure here
 	SELECT @WorkQueueGUID = GUID from WorkQueue 
 		where StudyStorageGUID = @StudyStorageGUID
-		AND TypeEnum = @DeleteStudyTypeEnum
+		AND WorkQueueTypeEnum = @DeleteStudyTypeEnum
 	if @@ROWCOUNT = 0
 	BEGIN
 		set @WorkQueueGUID = NEWID();
 
-		INSERT into WorkQueue (GUID, ServerPartitionGUID, StudyStorageGUID, TypeEnum, StatusEnum, ExpirationTime, ScheduledTime)
+		INSERT into WorkQueue (GUID, ServerPartitionGUID, StudyStorageGUID, WorkQueueTypeEnum, WorkQueueStatusEnum, ExpirationTime, ScheduledTime)
 			values  (@WorkQueueGUID, @ServerPartitionGUID, @StudyStorageGUID, @DeleteStudyTypeEnum, @PendingStatusEnum, @ExpirationTime, @ScheduledTime)
 		IF @DeleteFilesystemQueue = 1
 		BEGIN
@@ -447,7 +447,7 @@ BEGIN
 	DECLARE @FilesystemDeleteServiceLockTypeEnum smallint
 
 	SET @GUID = newid()
-	SELECT @FilesystemDeleteServiceLockTypeEnum = ServiceLockTypeEnum FROM ServiceLockTypeEnum WHERE [Lookup] = ''FilesystemDelete''
+	SELECT @FilesystemDeleteServiceLockTypeEnum = Enum FROM ServiceLockTypeEnum WHERE [Lookup] = ''FilesystemDelete''
 
     -- Insert statements
 	BEGIN TRANSACTION
@@ -745,7 +745,7 @@ BEGIN
 	SET NOCOUNT ON;
 	if @StudyStorageGUID is null
 	BEGIN
-	    SELECT  StudyStorage.GUID, StudyStorage.StudyInstanceUid, StudyStorage.ServerPartitionGUID, StudyStorage.LastAccessedTime, StudyStorage.StatusEnum,
+	    SELECT  StudyStorage.GUID, StudyStorage.StudyInstanceUid, StudyStorage.ServerPartitionGUID, StudyStorage.LastAccessedTime, StudyStorage.StudyStatusEnum,
 				Filesystem.FilesystemPath, ServerPartition.PartitionFolder, StorageFilesystem.StudyFolder, StorageFilesystem.FilesystemGUID, Filesystem.Enabled, Filesystem.ReadOnly, Filesystem.WriteOnly,
 				Filesystem.FilesystemTierEnum
 		FROM StudyStorage
@@ -756,7 +756,7 @@ BEGIN
 	END
 	ELSE
 	BEGIN
-		SELECT  StudyStorage.GUID, StudyStorage.StudyInstanceUid, StudyStorage.ServerPartitionGUID, StudyStorage.LastAccessedTime, StudyStorage.StatusEnum,
+		SELECT  StudyStorage.GUID, StudyStorage.StudyInstanceUid, StudyStorage.ServerPartitionGUID, StudyStorage.LastAccessedTime, StudyStorage.StudyStatusEnum,
 				Filesystem.FilesystemPath, ServerPartition.PartitionFolder, StorageFilesystem.StudyFolder, StorageFilesystem.FilesystemGUID, Filesystem.Enabled, Filesystem.ReadOnly, Filesystem.WriteOnly,
 				Filesystem.FilesystemTierEnum
 		FROM StudyStorage
@@ -1039,12 +1039,12 @@ BEGIN
 	DECLARE  @OnlineRetentionServerRuleTypeEnum smallint
 
 	-- Get the Study Processed Rule Apply Time
-	SELECT @StudyServerRuleApplyTimeEnum = ServerRuleApplyTimeEnum FROM ServerRuleApplyTimeEnum WHERE Lookup = ''StudyProcessed''
+	SELECT @StudyServerRuleApplyTimeEnum = Enum FROM ServerRuleApplyTimeEnum WHERE Lookup = ''StudyProcessed''
 
 	-- Get all 3 types of Retention Rules
-	SELECT @StudyDeleteServerRuleTypeEnum = ServerRuleTypeEnum FROM ServerRuleTypeEnum WHERE Lookup = ''StudyDelete''
-	SELECT @Tier1RetentionServerRuleTypeEnum = ServerRuleTypeEnum FROM ServerRuleTypeEnum WHERE Lookup = ''Tier1Retention''
-	SELECT @OnlineRetentionServerRuleTypeEnum = ServerRuleTypeEnum FROM ServerRuleTypeEnum WHERE Lookup = ''OnlineRetention''
+	SELECT @StudyDeleteServerRuleTypeEnum = Enum FROM ServerRuleTypeEnum WHERE Lookup = ''StudyDelete''
+	SELECT @Tier1RetentionServerRuleTypeEnum = Enum FROM ServerRuleTypeEnum WHERE Lookup = ''Tier1Retention''
+	SELECT @OnlineRetentionServerRuleTypeEnum = Enum FROM ServerRuleTypeEnum WHERE Lookup = ''OnlineRetention''
 
 	-- Insert a default StudyDelete rule
 	INSERT INTO [ImageServer].[dbo].[ServerRule]
@@ -1107,7 +1107,7 @@ CREATE PROCEDURE [dbo].[UpdateWorkQueue]
 	@ProcessorID varchar(256),
 	@WorkQueueGUID uniqueidentifier, 
 	@StudyStorageGUID uniqueidentifier,
-	@StatusEnum smallint,
+	@WorkQueueStatusEnum smallint,
 	@FailureCount int,
 	@ExpirationTime datetime = null,
 	@ScheduledTime datetime = null
@@ -1128,13 +1128,13 @@ BEGIN
 	declare @PendingStatusEnum as int
 	declare @FailedStatusEnum as int
 
-	select @CompletedStatusEnum = WorkQueueStatusEnum from WorkQueueStatusEnum where Lookup = ''Completed''
-	select @PendingStatusEnum = WorkQueueStatusEnum from WorkQueueStatusEnum where Lookup = ''Pending''
-	select @FailedStatusEnum = WorkQueueStatusEnum from WorkQueueStatusEnum where Lookup = ''Failed''
+	select @CompletedStatusEnum = Enum from WorkQueueStatusEnum where Lookup = ''Completed''
+	select @PendingStatusEnum = Enum from WorkQueueStatusEnum where Lookup = ''Pending''
+	select @FailedStatusEnum = Enum from WorkQueueStatusEnum where Lookup = ''Failed''
 
 	BEGIN TRANSACTION
 
-	if @StatusEnum = @CompletedStatusEnum 
+	if @WorkQueueStatusEnum = @CompletedStatusEnum 
 	BEGIN
 		-- Completed
 		UPDATE StudyStorage set Lock = 0, LastAccessedTime = getdate() 
@@ -1142,14 +1142,14 @@ BEGIN
 
 		DELETE FROM WorkQueue where GUID = @WorkQueueGUID
 	END
-	ELSE if  @StatusEnum = @FailedStatusEnum
+	ELSE if  @WorkQueueStatusEnum = @FailedStatusEnum
 	BEGIN
 		-- Failed
 		UPDATE StudyStorage set Lock = 0, LastAccessedTime = getdate() 
 		WHERE GUID = @StudyStorageGUID AND Lock = 1
 
 		UPDATE WorkQueue
-		SET StatusEnum = @StatusEnum, ExpirationTime = @ExpirationTime, ScheduledTime = @ScheduledTime,
+		SET WorkQueueStatusEnum = @WorkQueueStatusEnum, ExpirationTime = @ExpirationTime, ScheduledTime = @ScheduledTime,
 			FailureCount = @FailureCount,
 			ProcessorID = @ProcessorID
 		WHERE GUID = @WorkQueueGUID
@@ -1157,14 +1157,14 @@ BEGIN
 	ELSE
 	BEGIN
 		-- Pending
-		if @StatusEnum = @PendingStatusEnum
+		if @WorkQueueStatusEnum = @PendingStatusEnum
 		BEGIN
 			UPDATE StudyStorage set Lock = 0, LastAccessedTime = getdate() 
 			WHERE GUID = @StudyStorageGUID AND Lock = 1
 		END
 
 		UPDATE WorkQueue
-		SET StatusEnum = @StatusEnum, ExpirationTime = @ExpirationTime, ScheduledTime = @ScheduledTime,
+		SET WorkQueueStatusEnum = @WorkQueueStatusEnum, ExpirationTime = @ExpirationTime, ScheduledTime = @ScheduledTime,
 			FailureCount = @FailureCount, ProcessorID = @ProcessorID
 		WHERE GUID = @WorkQueueGUID
 	END
@@ -1194,7 +1194,7 @@ EXEC dbo.sp_executesql @statement = N'
 CREATE PROCEDURE [dbo].[QueryWorkQueue] 
 	-- Add the parameters for the stored procedure here
 	@ProcessorID varchar(256), 
-	@TypeEnum smallint = 0
+	@WorkQueueTypeEnum smallint = 0
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -1215,10 +1215,10 @@ BEGIN
 	declare @PendingStatusEnum as int
 	declare @InProgressStatusEnum as int
 
-	select @PendingStatusEnum = WorkQueueStatusEnum from WorkQueueStatusEnum where Lookup = ''Pending''
-	select @InProgressStatusEnum = WorkQueueStatusEnum from WorkQueueStatusEnum where Lookup = ''In Progress''
+	select @PendingStatusEnum = Enum from WorkQueueStatusEnum where Lookup = ''Pending''
+	select @InProgressStatusEnum = Enum from WorkQueueStatusEnum where Lookup = ''In Progress''
 	
-    IF @TypeEnum = 0
+    IF @WorkQueueTypeEnum = 0
 	BEGIN
 		SELECT TOP (1) @StudyStorageGUID = WorkQueue.StudyStorageGUID,
 			@WorkQueueGUID = WorkQueue.GUID 
@@ -1227,7 +1227,7 @@ BEGIN
 			StudyStorage ON StudyStorage.GUID = WorkQueue.StudyStorageGUID AND StudyStorage.Lock = 0
 		WHERE
 			ScheduledTime < getdate() 
-			AND (  WorkQueue.StatusEnum = @PendingStatusEnum )
+			AND (  WorkQueue.WorkQueueStatusEnum = @PendingStatusEnum )
 		ORDER BY WorkQueue.ScheduledTime
 	END
 	ELSE
@@ -1239,8 +1239,8 @@ BEGIN
 			StudyStorage ON StudyStorage.GUID = WorkQueue.StudyStorageGUID AND StudyStorage.Lock = 0
 		WHERE
 			ScheduledTime < getdate() 
-			AND WorkQueue.StatusEnum = @PendingStatusEnum
-			AND WorkQueue.TypeEnum = @TypeEnum
+			AND WorkQueue.WorkQueueStatusEnum = @PendingStatusEnum
+			AND WorkQueue.WorkQueueTypeEnum = @WorkQueueTypeEnum
 		ORDER BY WorkQueue.ScheduledTime
 	END
 
@@ -1256,7 +1256,7 @@ BEGIN
 	if (@@ROWCOUNT = 1)
 	BEGIN
 		UPDATE WorkQueue
-			SET StatusEnum  = @InProgressStatusEnum,
+			SET WorkQueueStatusEnum  = @InProgressStatusEnum,
 				ProcessorID = @ProcessorID
 		WHERE 
 			GUID = @WorkQueueGUID
@@ -1267,7 +1267,7 @@ BEGIN
 	-- If the first update failed, this should select 0 records
 	SELECT * 
 	FROM WorkQueue
-	WHERE StatusEnum = @InProgressStatusEnum
+	WHERE WorkQueueStatusEnum = @InProgressStatusEnum
 		AND GUID = @WorkQueueGUID
 END
 ' 
@@ -1305,20 +1305,20 @@ BEGIN
 	declare @PendingStatusEnum as int
 	declare @AutoRouteTypeEnum as int
 
-	select @PendingStatusEnum = WorkQueueStatusEnum from WorkQueueStatusEnum where Lookup = ''Pending''
-	select @AutoRouteTypeEnum = WorkQueueTypeEnum from WorkQueueTypeEnum where Lookup = ''AutoRoute''
+	select @PendingStatusEnum = Enum from WorkQueueStatusEnum where Lookup = ''Pending''
+	select @AutoRouteTypeEnum = Enum from WorkQueueTypeEnum where Lookup = ''AutoRoute''
 
 	BEGIN TRANSACTION
 
     -- Insert statements for procedure here
 	SELECT @WorkQueueGUID = GUID from WorkQueue 
 		where StudyStorageGUID = @StudyStorageGUID
-		AND TypeEnum = @AutoRouteTypeEnum
+		AND WorkQueueTypeEnum = @AutoRouteTypeEnum
 	if @@ROWCOUNT = 0
 	BEGIN
 		set @WorkQueueGUID = NEWID();
 
-		INSERT into WorkQueue (GUID, ServerPartitionGUID, StudyStorageGUID, DeviceGUID, TypeEnum, StatusEnum, ExpirationTime, ScheduledTime)
+		INSERT into WorkQueue (GUID, ServerPartitionGUID, StudyStorageGUID, DeviceGUID, WorkQueueTypeEnum, WorkQueueStatusEnum, ExpirationTime, ScheduledTime)
 			values  (@WorkQueueGUID, @ServerPartitionGUID, @StudyStorageGUID, @DeviceGUID, @AutoRouteTypeEnum, @PendingStatusEnum, @ExpirationTime, @ScheduledTime)
 	END
 	ELSE
@@ -1367,20 +1367,20 @@ BEGIN
 	declare @PendingStatusEnum as int
 	declare @StudyProcessTypeEnum as int
 
-	select @PendingStatusEnum = WorkQueueStatusEnum from WorkQueueStatusEnum where Lookup = ''Pending''
-	select @StudyProcessTypeEnum = WorkQueueTypeEnum from WorkQueueTypeEnum where Lookup = ''StudyProcess''
+	select @PendingStatusEnum = Enum from WorkQueueStatusEnum where Lookup = ''Pending''
+	select @StudyProcessTypeEnum = Enum from WorkQueueTypeEnum where Lookup = ''StudyProcess''
 
 	BEGIN TRANSACTION
 
     -- Insert statements for procedure here
 	SELECT @WorkQueueGUID = GUID from WorkQueue 
 		where StudyStorageGUID = @StudyStorageGUID
-		AND TypeEnum = @StudyProcessTypeEnum
+		AND WorkQueueTypeEnum = @StudyProcessTypeEnum
 	if @@ROWCOUNT = 0
 	BEGIN
 		set @WorkQueueGUID = NEWID();
 
-		INSERT into WorkQueue (GUID, ServerPartitionGUID, StudyStorageGUID, TypeEnum, StatusEnum, ExpirationTime, ScheduledTime)
+		INSERT into WorkQueue (GUID, ServerPartitionGUID, StudyStorageGUID, WorkQueueTypeEnum, WorkQueueStatusEnum, ExpirationTime, ScheduledTime)
 			values  (@WorkQueueGUID, @ServerPartitionGUID, @StudyStorageGUID, @StudyProcessTypeEnum, @PendingStatusEnum, @ExpirationTime, @ScheduledTime)
 	END
 	ELSE
@@ -1441,9 +1441,9 @@ BEGIN
 		declare @WorkQueueGUID uniqueidentifier
 		
 
-		select @PendingStatusEnum = WorkQueueStatusEnum from WorkQueueStatusEnum where Lookup = ''Pending''
-		select @InProgressStatusEnum = WorkQueueStatusEnum from WorkQueueStatusEnum where Lookup = ''In Progress''
-		select @FailedStatusEnum = WorkQueueStatusEnum from WorkQueueStatusEnum where Lookup = ''Failed''
+		select @PendingStatusEnum = Enum from WorkQueueStatusEnum where Lookup = ''Pending''
+		select @InProgressStatusEnum = Enum from WorkQueueStatusEnum where Lookup = ''In Progress''
+		select @FailedStatusEnum = Enum from WorkQueueStatusEnum where Lookup = ''Failed''
 
 
 		/* All entries that are in progress and failure count = MaxFailureCount should be failed */
@@ -1458,7 +1458,7 @@ BEGIN
 		FROM dbo.WorkQueue 
 		LEFT JOIN	dbo.StudyStorage ON dbo.WorkQueue.StudyStorageGUID=dbo.StudyStorage.GUID
 		WHERE ProcessorID=@ProcessorID 
-				AND WorkQueue.StatusEnum=@InProgressStatusEnum 
+				AND WorkQueue.WorkQueueStatusEnum=@InProgressStatusEnum 
 				AND WorkQueue.FailureCount+1 >= @MaxFailureCount 
 
 
@@ -1467,7 +1467,7 @@ BEGIN
 		FROM dbo.WorkQueue 
 		LEFT JOIN	dbo.StudyStorage ON dbo.WorkQueue.StudyStorageGUID=dbo.StudyStorage.GUID
 		WHERE ProcessorID=@ProcessorID 
-				AND WorkQueue.StatusEnum=@InProgressStatusEnum 
+				AND WorkQueue.WorkQueueStatusEnum=@InProgressStatusEnum 
 				AND WorkQueue.FailureCount+1 < @MaxFailureCount
 
 		/* unlock all studies in the "failed" list */
@@ -1477,7 +1477,7 @@ BEGIN
 		WHERE GUID IN (SELECT StudyStorageGUID FROM #FailedList)
 		
 		UPDATE dbo.WorkQueue
-		SET StatusEnum = @FailedStatusEnum,	/* Status=FAILED */
+		SET WorkQueueStatusEnum = @FailedStatusEnum,	/* Status=FAILED */
 			FailureCount = FailureCount+1,
 			ExpirationTime = @FailedExpirationTime
 		WHERE	GUID IN (SELECT WorkQueueGuid FROM #FailedList)
@@ -1489,7 +1489,7 @@ BEGIN
 		WHERE GUID IN (SELECT StudyStorageGUID FROM #RetryList)
 			
 		UPDATE dbo.WorkQueue 
-		SET StatusEnum = @PendingStatusEnum,	/* Status=PENDING */
+		SET WorkQueueStatusEnum = @PendingStatusEnum,	/* Status=PENDING */
 			ProcessorID=NULL,					/* may be picked up by another processor */
 			FailureCount = FailureCount+1,		/* has failed once. This is needed to prevent endless reset later on*/
 			ScheduledTime = @RescheduleTime,
@@ -1644,7 +1644,7 @@ EXEC dbo.sp_executesql @statement = N'-- =======================================
 CREATE PROCEDURE [dbo].[InsertInstance] 
 	-- Add the parameters for the stored procedure here
 	@ServerPartitionGUID uniqueidentifier, 
-	@StatusEnum smallint,
+	@StudyStatusEnum smallint,
 	@PatientId nvarchar(64) = null,
 	@PatientName nvarchar(64) = null,
 	@IssuerOfPatientId nvarchar(64) = null,
@@ -1735,12 +1735,12 @@ BEGIN
 				StudyInstanceUid, PatientName, PatientId, PatientsBirthDate,
 				PatientsSex, StudyDate, StudyTime, AccessionNumber, StudyId,
 				StudyDescription, ReferringPhysiciansName, NumberOfStudyRelatedSeries,
-				NumberOfStudyRelatedInstances, StatusEnum)
+				NumberOfStudyRelatedInstances, StudyStatusEnum)
 		VALUES
 				(@StudyGUID, @ServerPartitionGUID, @PatientGUID, 
 				@StudyInstanceUid, @PatientName, @PatientId, @PatientsBirthDate,
 				@PatientsSex, @StudyDate, @StudyTime, @AccessionNumber, @StudyId,
-				@StudyDescription, @ReferringPhysiciansName, 0, 1, @StatusEnum)
+				@StudyDescription, @ReferringPhysiciansName, 0, 1, @StudyStatusEnum)
 
 		UPDATE Patient
 			SET NumberOfPatientRelatedStudies = NumberOfPatientRelatedStudies + 1
@@ -1769,12 +1769,12 @@ BEGIN
 		INSERT into Series (GUID, ServerPartitionGUID, StudyGUID,
 				SeriesInstanceUid, Modality, SeriesNumber, SeriesDescription,
 				NumberOfSeriesRelatedInstances, PerformedProcedureStepStartDate,
-				PerformedProcedureStepStartTime, SourceAeTitle, StatusEnum)
+				PerformedProcedureStepStartTime, SourceAeTitle, StudyStatusEnum)
 		VALUES
 				(@SeriesGUID, @ServerPartitionGUID, @StudyGUID, 
 				@SeriesInstanceUid, @Modality, @SeriesNumber, @SeriesDescription,
 				1,@PerformedProcedureStepStartDate, @PerformedProcedureStepStartTime, 
-				@SourceAeTitle,	@StatusEnum)
+				@SourceAeTitle,	@StudyStatusEnum)
 
 		UPDATE Study
 			SET NumberOfStudyRelatedSeries = NumberOfStudyRelatedSeries + 1
@@ -1987,9 +1987,9 @@ BEGIN
 	declare @PendingStatusEnum as int
 
 	set @StudyStorageGUID = NEWID()
-	select @PendingStatusEnum = StudyStatusEnum from StudyStatusEnum where Lookup = ''Pending''
+	select @PendingStatusEnum = Enum from StudyStatusEnum where Lookup = ''Pending''
 
-	INSERT into StudyStorage(GUID, ServerPartitionGUID, StudyInstanceUid, Lock, StatusEnum) 
+	INSERT into StudyStorage(GUID, ServerPartitionGUID, StudyInstanceUid, Lock, StudyStatusEnum) 
 		values (@StudyStorageGUID, @ServerPartitionGUID, @StudyInstanceUid, 0, @PendingStatusEnum)
 
 	INSERT into StorageFilesystem(GUID, StudyStorageGUID, FilesystemGUID, StudyFolder)

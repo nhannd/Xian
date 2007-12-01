@@ -50,12 +50,12 @@ namespace ClearCanvas.ImageServer.Model.Parameters
             set { this.SubCriteria["StudyStorageKey"] = new ProcedureParameter<ServerEntityKey>("StudyStorageKey", value); }
         }
 
-        public WorkQueueStatusEnum StatusEnum
+        public WorkQueueStatusEnum WorkQueueStatusEnum
         {
-            set { this.SubCriteria["StatusEnum"] = new ProcedureParameter<ServerEnum>("StatusEnum", value); }
+            set { this.SubCriteria["WorkQueueStatusEnum"] = new ProcedureParameter<ServerEnum>("WorkQueueStatusEnum", value); }
         }
 
-        public DateTime ExpirationTime
+        public DateTime ExpirationTime 
         {
             set { this.SubCriteria["ExpirationTime"] = new ProcedureParameter<DateTime>("ExpirationTime", value); }
         }

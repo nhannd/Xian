@@ -80,7 +80,7 @@ namespace ClearCanvas.ImageServer.Model
             get { return _lastAccessed; }
             set { _lastAccessed = value; }
         }
-        public StudyStatusEnum StatusEnum
+        public StudyStatusEnum StudyStatusEnum
         {
             get { return _statusEnum; }
             set { _statusEnum = value; }

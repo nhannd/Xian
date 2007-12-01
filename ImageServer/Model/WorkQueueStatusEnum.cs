@@ -38,25 +38,10 @@ namespace ClearCanvas.ImageServer.Model
 {
     public class WorkQueueStatusEnum : ServerEnum
     {
-        private static readonly Dictionary<short, WorkQueueStatusEnum> _dict = new Dictionary<short, WorkQueueStatusEnum>();
-
-        /// <summary>
-        /// One-time load of status values from the database.
-        /// </summary>
-        static WorkQueueStatusEnum()
-        {
-            using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
-            {
-                IEnumBroker<WorkQueueStatusEnum> broker = read.GetBroker<IWorkQueueStatusEnum>();
-                IList<WorkQueueStatusEnum> list = broker.Execute();
-                foreach (WorkQueueStatusEnum type in list)
-                {
-                    _dict.Add(type.Enum, type);
-                }
-            }
-        }
-
+    
+    
         #region Constructors
+
         public WorkQueueStatusEnum()
             : base("WorkQueueStatusEnum")
         {
@@ -65,24 +50,14 @@ namespace ClearCanvas.ImageServer.Model
 
         public override void SetEnum(short val)
         {
-            WorkQueueStatusEnum enumValue;
-            if (false == _dict.TryGetValue(val, out enumValue))
-                throw new PersistenceException("Unknown WorkQueueTypeEnum value: " + val, null);
-
-            Enum = enumValue.Enum;
-            Lookup = enumValue.Lookup;
-            Description = enumValue.Description;
-            LongDescription = enumValue.LongDescription;
+            ServerEnumHelper<WorkQueueStatusEnum, IWorkQueueStatusEnum>.SetEnum(this, val);
         }
 
-        public static WorkQueueStatusEnum GetEnum(string lookup)
+        static public WorkQueueStatusEnum GetEnum(string lookup)
         {
-            foreach (WorkQueueStatusEnum status in _dict.Values)
-            {
-                if (status.Lookup.Equals(lookup))
-                    return status;
-            }
-            throw new PersistenceException("Unknown WorkQueueTypeEnum: " + lookup, null);
+            return ServerEnumHelper<WorkQueueStatusEnum, IWorkQueueStatusEnum>.GetEnum(lookup);
         }
+
+
     }
 }
