@@ -83,8 +83,8 @@
     <Compile Include="ReportingWorkflow\CompleteInterpretationRequestBase.cs" />
     <Compile Include="ProtocollingWorkflow\DiscardOrderProtocolRequest.cs" />
     <Compile Include="ProtocollingWorkflow\DiscardOrderProtocolResponse.cs" />
-    <Compile Include="ReportingWorkflow\GetLinkableProceduresRequest.cs" />
-    <Compile Include="ReportingWorkflow\GetLinkableProceduresResponse.cs" />
+    <Compile Include="ReportingWorkflow\GetLinkableInterpretationsRequest.cs" />
+    <Compile Include="ReportingWorkflow\GetLinkableInterpretationsResponse.cs" />
     <Compile Include="ProtocollingWorkflow\StartOrderProtocolRequest.cs" />
     <Compile Include="ProtocollingWorkflow\StartOrderProtocolResponse.cs" />
     <Compile Include="WorklistItemSummaryBase.cs" />

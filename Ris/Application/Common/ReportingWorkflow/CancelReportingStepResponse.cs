@@ -40,10 +40,22 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
     [DataContract]
     public class CancelReportingStepResponse : DataContractBase
     {
-        [DataMember]
-        public EntityRef ReportingStepRef;
+        public CancelReportingStepResponse(EntityRef cancelledStepRef, List<EntityRef> scheduledInterpretationStepRefs)
+        {
+            this.CancelledStepRef = cancelledStepRef;
+            this.ScheduledInterpretationStepRefs = scheduledInterpretationStepRefs;
+        }
 
+        /// <summary>
+        /// The step that was cancelled.
+        /// </summary>
         [DataMember]
-        public EntityRef InterpretationStepRef;
+        public EntityRef CancelledStepRef;
+
+        /// <summary>
+        /// References to any new interpretation steps that were scheduled.
+        /// </summary>
+        [DataMember]
+        public List<EntityRef> ScheduledInterpretationStepRefs;
     }
 }

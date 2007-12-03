@@ -35,6 +35,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="LinkedInterpretationComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="LinkedInterpretationComponentControl.Designer.cs">
+      <DependentUpon>LinkedInterpretationComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LinkedInterpretationComponentView.cs" />
     <Compile Include="PriorReportComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -101,6 +108,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="LinkedInterpretationComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>LinkedInterpretationComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="PriorReportComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>PriorReportComponentControl.cs</DependentUpon>

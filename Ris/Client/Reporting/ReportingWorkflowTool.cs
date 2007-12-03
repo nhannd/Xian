@@ -43,542 +43,297 @@ using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 
 namespace ClearCanvas.Ris.Client.Reporting
 {
-    public class ReportingWorkflowTool
+
+    [MenuAction("apply", "folderexplorer-items-contextmenu/Claim", "Apply")]
+    [ButtonAction("apply", "folderexplorer-items-toolbar/Claim", "Apply")]
+    [IconSet("apply", IconScheme.Colour, "Icons.AddToolSmall.png", "Icons.AddToolMedium.png", "Icons.AddToolLarge.png")]
+    [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
+    [ExtensionOf(typeof(ReportingMainWorkflowItemToolExtensionPoint))]
+    public class ClaimInterpretationTool : WorkflowItemTool
     {
-        public abstract class WorkflowItemTool : Tool<IReportingWorkflowItemToolContext>, IDropHandler<ReportingWorklistItem>
+        public ClaimInterpretationTool()
+            : base("ClaimInterpretation")
         {
-            protected string _operationName;
+        }
 
-            public WorkflowItemTool(string operationName)
+        protected override bool Execute(ReportingWorklistItem item, IDesktopWindow desktopWindow, IFolder selectedFolder, IEnumerable folders)
+        {
+            try
             {
-                _operationName = operationName;
+                Platform.GetService<IReportingWorkflowService>(
+                    delegate(IReportingWorkflowService service)
+                    {
+                        service.ClaimInterpretation(new ClaimInterpretationRequest(item.ProcedureStepRef));
+                    });
+
+                IFolder myInterpretationFolder = CollectionUtils.SelectFirst<IFolder>(folders,
+                    delegate(IFolder f) { return f is Folders.DraftFolder; });
+                myInterpretationFolder.RefreshCount();
+
+                return true;
             }
-
-            public virtual bool Enabled
+            catch (Exception e)
             {
-                get
+                ExceptionHandler.Report(e, desktopWindow);
+                return false;
+            }
+        }
+    }
+
+
+    [MenuAction("apply", "folderexplorer-items-contextmenu/Send/To Transcription", "Apply")]
+    [IconSet("apply", IconScheme.Colour, "Icons.CompleteToolSmall.png", "Icons.CompleteToolMedium.png", "Icons.CompleteToolLarge.png")]
+    [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
+    [ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.UseTranscriptionWorkflow)]
+    [ExtensionOf(typeof(ReportingMainWorkflowItemToolExtensionPoint))]
+    [ExtensionOf(typeof(Folders.InTranscriptionFolder.DropHandlerExtensionPoint))]
+    public class CompleteInterpretationForTranscriptionTool : WorkflowItemTool
+    {
+        public CompleteInterpretationForTranscriptionTool()
+            : base("CompleteInterpretationForTranscription")
+        {
+        }
+
+        protected override bool Execute(ReportingWorklistItem item, IDesktopWindow desktopWindow, IFolder selectedFolder, IEnumerable folders)
+        {
+            try
+            {
+                Platform.GetService<IReportingWorkflowService>(
+                    delegate(IReportingWorkflowService service)
+                    {
+                        service.CompleteInterpretationForTranscription(new CompleteInterpretationForTranscriptionRequest(item.ProcedureStepRef));
+                    });
+
+                IFolder myTranscriptionFolder = CollectionUtils.SelectFirst<IFolder>(folders,
+                    delegate(IFolder f) { return f is Folders.InTranscriptionFolder; });
+                myTranscriptionFolder.RefreshCount();
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Report(e, desktopWindow);
+                return false;
+            }
+        }
+    }
+
+    [MenuAction("apply", "folderexplorer-items-contextmenu/Send/To be Verified", "Apply")]
+    [IconSet("apply", IconScheme.Colour, "Icons.CompleteToolSmall.png", "Icons.CompleteToolMedium.png", "Icons.CompleteToolLarge.png")]
+    [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
+    [ExtensionOf(typeof(ReportingMainWorkflowItemToolExtensionPoint))]
+    [ExtensionOf(typeof(Folders.ToBeVerifiedFolder.DropHandlerExtensionPoint))]
+    public class CompleteInterpretationForVerificationTool : WorkflowItemTool
+    {
+        public CompleteInterpretationForVerificationTool()
+            : base("CompleteInterpretationForVerification")
+        {
+        }
+
+        protected override bool Execute(ReportingWorklistItem item, IDesktopWindow desktopWindow, IFolder selectedFolder, IEnumerable folders)
+        {
+            try
+            {
+                Platform.GetService<IReportingWorkflowService>(
+                    delegate(IReportingWorkflowService service)
+                    {
+                        service.CompleteInterpretationForVerification(new CompleteInterpretationForVerificationRequest(item.ProcedureStepRef));
+                    });
+
+                IFolder myVerificationFolder = CollectionUtils.SelectFirst<IFolder>(folders,
+                    delegate(IFolder f) { return f is Folders.ToBeVerifiedFolder; });
+                myVerificationFolder.RefreshCount();
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Report(e, desktopWindow);
+                return false;
+            }
+        }
+    }
+
+    [MenuAction("apply", "folderexplorer-items-contextmenu/Send/To be Reported", "Apply")]
+    [IconSet("apply", IconScheme.Colour, "Icons.DeleteToolSmall.png", "Icons.DeleteToolMedium.png", "Icons.DeleteToolLarge.png")]
+    [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
+    [ExtensionOf(typeof(ReportingMainWorkflowItemToolExtensionPoint))]
+    public class CancelReportingStepTool : WorkflowItemTool
+    {
+        public CancelReportingStepTool()
+            : base("CancelReportingStep")
+        {
+        }
+
+        protected override bool Execute(ReportingWorklistItem item, IDesktopWindow desktopWindow, IFolder selectedFolder, IEnumerable folders)
+        {
+            try
+            {
+                if (desktopWindow.ShowMessageBox("This action will discard the existing report. Continue?", MessageBoxActions.OkCancel)
+                    == DialogBoxAction.Cancel)
+                    return false;
+
+
+                Platform.GetService<IReportingWorkflowService>(
+                    delegate(IReportingWorkflowService service)
+                    {
+                        service.CancelReportingStep(new CancelReportingStepRequest(item.ProcedureStepRef));
+                    });
+
+                IFolder toBeReportedFolder = CollectionUtils.SelectFirst<IFolder>(folders,
+                    delegate(IFolder f) { return f is Folders.ToBeReportedFolder; });
+                toBeReportedFolder.Refresh();
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Report(e, desktopWindow);
+                return false;
+            }
+        }
+    }
+
+    [MenuAction("apply", "folderexplorer-items-contextmenu/Verify", "Apply")]
+    [ButtonAction("apply", "folderexplorer-items-toolbar/Verify", "Apply")]
+    [IconSet("apply", IconScheme.Colour, "Icons.CompleteToolSmall.png", "Icons.CompleteToolMedium.png", "Icons.CompleteToolLarge.png")]
+    [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
+    [ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.VerifyReport)]
+    [ExtensionOf(typeof(ReportingMainWorkflowItemToolExtensionPoint))]
+    [ExtensionOf(typeof(Folders.VerifiedFolder.DropHandlerExtensionPoint))]
+    public class VerifyTool : WorkflowItemTool
+    {
+        public VerifyTool()
+            : base("Verify")
+        {
+        }
+
+        public override bool Enabled
+        {
+            get
+            {
+                return this.Context.GetWorkflowOperationEnablement("CompleteInterpretationAndVerify") ||
+                    this.Context.GetWorkflowOperationEnablement("CompleteVerification");
+            }
+        }
+
+        public override bool CanAcceptDrop(IDropContext dropContext, ICollection<ReportingWorklistItem> items)
+        {
+            IReportingWorkflowFolderDropContext ctxt = (IReportingWorkflowFolderDropContext)dropContext;
+            return ctxt.GetOperationEnablement("CompleteInterpretationAndVerify") ||
+                ctxt.GetOperationEnablement("CompleteVerification");
+        }
+
+        protected override bool Execute(ReportingWorklistItem item, IDesktopWindow desktopWindow, IFolder selectedFolder, IEnumerable folders)
+        {
+            try
+            {
+                if (item.ProcedureStepName == "Interpretation")
                 {
-                    return this.Context.GetWorkflowOperationEnablement(_operationName);
+                    Platform.GetService<IReportingWorkflowService>(
+                        delegate(IReportingWorkflowService service)
+                        {
+                            service.CompleteInterpretationAndVerify(new CompleteInterpretationAndVerifyRequest(item.ProcedureStepRef));
+                        });
                 }
-            }
-
-            public virtual event EventHandler EnabledChanged
-            {
-                add { this.Context.SelectedItemsChanged += value; }
-                remove { this.Context.SelectedItemsChanged -= value; }
-            }
-
-            public virtual void Apply()
-            {
-                ReportingWorklistItem item = CollectionUtils.FirstElement(this.Context.SelectedItems);
-                bool success = Execute(item, this.Context.DesktopWindow, this.Context.SelectedFolder, this.Context.Folders);
-                if (success)
+                else if (item.ProcedureStepName == "Verification")
                 {
-                    this.Context.SelectedFolder.Refresh();
+                    Platform.GetService<IReportingWorkflowService>(
+                        delegate(IReportingWorkflowService service)
+                        {
+                            service.CompleteVerification(new CompleteVerificationRequest(item.ProcedureStepRef));
+                        });
                 }
-            }
-
-            protected string OperationName
-            {
-                get { return _operationName; }
-            }
-
-            protected abstract bool Execute(ReportingWorklistItem item, IDesktopWindow desktopWindow, IFolder selectedFolder, IEnumerable folders);
-
-            #region IDropHandler<ReportingWorklistItem> Members
-
-            public virtual bool CanAcceptDrop(IDropContext dropContext, ICollection<ReportingWorklistItem> items)
-            {
-                IReportingWorkflowFolderDropContext ctxt = (IReportingWorkflowFolderDropContext)dropContext;
-                return ctxt.GetOperationEnablement(this.OperationName);
-            }
-
-            public virtual bool ProcessDrop(IDropContext dropContext, ICollection<ReportingWorklistItem> items)
-            {
-                IReportingWorkflowFolderDropContext ctxt = (IReportingWorkflowFolderDropContext)dropContext;
-                ReportingWorklistItem item = CollectionUtils.FirstElement(items);
-                bool success = Execute(item, ctxt.DesktopWindow, ctxt.FolderSystem.SelectedFolder, ctxt.FolderSystem.Folders);
-                if (success)
+                else // (item.StepType == "Transcription")
                 {
-                    ctxt.FolderSystem.SelectedFolder.Refresh();
-                    return true;
+                    // Not defined
                 }
+
+                IFolder myVerifiedFolder = CollectionUtils.SelectFirst<IFolder>(folders,
+                    delegate(IFolder f) { return f is Folders.VerifiedFolder; });
+                myVerifiedFolder.RefreshCount();
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Report(e, desktopWindow);
+                return false;
+            }
+        }
+    }
+
+    [MenuAction("apply", "folderexplorer-items-contextmenu/Add Addendum", "Apply")]
+    [ButtonAction("apply", "folderexplorer-items-toolbar/Add Addendum", "Apply")]
+    [IconSet("apply", IconScheme.Colour, "Icons.AddToolSmall.png", "Icons.AddToolMedium.png", "Icons.AddToolLarge.png")]
+    [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
+    [ExtensionOf(typeof(ReportingMainWorkflowItemToolExtensionPoint))]
+    public class AddendumTool : WorkflowItemTool
+    {
+        public AddendumTool()
+            : base("CreateAddendum")
+        {
+        }
+
+        protected override bool Execute(ReportingWorklistItem item, IDesktopWindow desktopWindow, IFolder selectedFolder, IEnumerable folders)
+        {
+            if (ActivateIfAlreadyOpen(item))
+                return false;
+
+            try
+            {
+                Platform.GetService<IReportingWorkflowService>(
+                    delegate(IReportingWorkflowService service)
+                    {
+                        CreateAddendumResponse response = service.CreateAddendum(new CreateAddendumRequest(item.ProcedureStepRef));
+                        item.ProcedureStepRef = response.PublicationStepRef;
+                    });
+
+                IFolder myInterpretationFolder = CollectionUtils.SelectFirst<IFolder>(folders,
+                    delegate(IFolder f) { return f is Folders.DraftFolder; });
+                myInterpretationFolder.RefreshCount();
+
+                OpenReportEditor(item);
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Report(e, desktopWindow);
                 return false;
             }
 
-            #endregion
+            return true;
+        }
+    }
+
+    [MenuAction("apply", "folderexplorer-items-contextmenu/Publish (testing)", "Apply")]
+    [ButtonAction("apply", "folderexplorer-items-toolbar/Publish (testing)", "Apply")]
+    [IconSet("apply", IconScheme.Colour, "Icons.AddToolSmall.png", "Icons.AddToolMedium.png", "Icons.AddToolLarge.png")]
+    [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
+    [ExtensionOf(typeof(ReportingMainWorkflowItemToolExtensionPoint))]
+    public class PublishReportTool : WorkflowItemTool
+    {
+        public PublishReportTool()
+            : base("PublishReport")
+        {
         }
 
-        [MenuAction("apply", "folderexplorer-items-contextmenu/Claim", "Apply")]
-        [ButtonAction("apply", "folderexplorer-items-toolbar/Claim", "Apply")]
-        [IconSet("apply", IconScheme.Colour, "Icons.AddToolSmall.png", "Icons.AddToolMedium.png", "Icons.AddToolLarge.png")]
-        [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
-        [ExtensionOf(typeof(ReportingMainWorkflowItemToolExtensionPoint))]
-        public class ClaimInterpretationTool : WorkflowItemTool
+        protected override bool Execute(ReportingWorklistItem item, IDesktopWindow desktopWindow, IFolder selectedFolder, IEnumerable folders)
         {
-            public ClaimInterpretationTool()
-                : base("ClaimInterpretation")
+            try
             {
-            }
-
-            protected override bool Execute(ReportingWorklistItem item, IDesktopWindow desktopWindow, IFolder selectedFolder, IEnumerable folders)
-            {
-                try
-                {
-                    Platform.GetService<IReportingWorkflowService>(
-                        delegate(IReportingWorkflowService service)
-                        {
-                            service.ClaimInterpretation(new ClaimInterpretationRequest(item.ProcedureStepRef));
-                        });
-
-                    IFolder myInterpretationFolder = CollectionUtils.SelectFirst<IFolder>(folders,
-                        delegate(IFolder f) { return f is Folders.DraftFolder; });
-                    myInterpretationFolder.RefreshCount();
-
-                    return true;
-                }
-                catch (Exception e)
-                {
-                    ExceptionHandler.Report(e, desktopWindow);
-                    return false;
-                }
-            }
-        }
-
-        [MenuAction("apply", "folderexplorer-items-contextmenu/Edit Report", "Apply")]
-        [ButtonAction("apply", "folderexplorer-items-toolbar/Edit Report", "Apply")]
-        [IconSet("apply", IconScheme.Colour, "Icons.EditToolSmall.png", "Icons.EditToolSmall.png", "Icons.EditToolSmall.png")]
-        [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
-        [LabelValueObserver("apply", "Label", "LabelChanged")]
-        [ExtensionOf(typeof(ReportingMainWorkflowItemToolExtensionPoint))]
-        [ExtensionOf(typeof(Folders.DraftFolder.DropHandlerExtensionPoint))]
-        public class EditReportTool : WorkflowItemTool
-        {
-            public EditReportTool()
-                : base("EditReport")
-            {
-            }
-
-            public string Label
-            {
-                get
-                {
-                    if (this.Context.GetWorkflowOperationEnablement("SaveReport") &&
-                        (this.Context.GetWorkflowOperationEnablement("StartInterpretation") ||
-                        this.Context.GetWorkflowOperationEnablement("StartVerification")))
-                        return SR.TitleEditReport;
-                    else if (this.Context.GetWorkflowOperationEnablement("ReviseResidentReport"))
-                        return SR.TitleReviseReport;
-                    else if (this.Context.GetWorkflowOperationEnablement("ReviseUnpublishedReport"))
-                        return SR.TitleReviseReport;
-                    else
-                        return SR.TitleCreateReport;
-                }
-            }
-
-            public event EventHandler LabelChanged
-            {
-                add { this.Context.SelectedItemsChanged += value; }
-                remove { this.Context.SelectedItemsChanged -= value; }
-            }
-
-            public override bool Enabled
-            {
-                get
-                {
-                    return this.Context.GetWorkflowOperationEnablement("ReviseResidentReport") ||
-                        this.Context.GetWorkflowOperationEnablement("ReviseUnpublishedReport") ||
-                        this.Context.GetWorkflowOperationEnablement("ClaimInterpretation") ||
-                        this.Context.GetWorkflowOperationEnablement("StartInterpretation") ||
-                        this.Context.GetWorkflowOperationEnablement("StartVerification");
-                }
-            }
-
-            public override bool CanAcceptDrop(IDropContext dropContext, ICollection<ReportingWorklistItem> items)
-            {
-                IReportingWorkflowFolderDropContext ctxt = (IReportingWorkflowFolderDropContext)dropContext;
-                ReportingWorklistItem firstItem = CollectionUtils.FirstElement(items);
-
-                return firstItem.ProcedureStepName == "Interpretation" &&
-                    (ctxt.GetOperationEnablement("ClaimInterpretation") ||
-                    ctxt.GetOperationEnablement("StartInterpretation") ||
-                    ctxt.GetOperationEnablement("StartVerification"));
-            }
-
-            protected override bool Execute(ReportingWorklistItem item, IDesktopWindow desktopWindow, IFolder selectedFolder, IEnumerable folders)
-            {
-                Document doc = DocumentManager.Get(item.ProcedureStepRef);
-                if (doc != null)
-                {
-                    doc.Activate();
-                }
-                else
-                {
-                    try
+                Platform.GetService<IReportingWorkflowService>(
+                    delegate(IReportingWorkflowService service)
                     {
-                        EntityRef stepForOpeningReport = null;
-                        if (item.ProcedureStepName == "Interpretation")
-                        {
-                            Platform.GetService<IReportingWorkflowService>(
-                                delegate(IReportingWorkflowService service)
-                                {
-                                    StartInterpretationResponse response = service.StartInterpretation(new StartInterpretationRequest(item.ProcedureStepRef));
-                                    item.ProcedureStepRef = response.InterpretationStepRef;
-                                    stepForOpeningReport = response.InterpretationStepRef;
-                                });
-                        }
-                        else if (item.ProcedureStepName == "Verification")
-                        {
-                            if (Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.VerifyReport))
-                            {
-                                // if the staff can verify report, then he can start the verifications step and edit report
-
-                                Platform.GetService<IReportingWorkflowService>(
-                                    delegate(IReportingWorkflowService service)
-                                    {
-                                        StartVerificationResponse response = service.StartVerification(new StartVerificationRequest(item.ProcedureStepRef));
-                                        item.ProcedureStepRef = response.VerificationStepRef;
-                                        stepForOpeningReport = response.VerificationStepRef;
-                                    });
-                            }
-                            else if (this.Context.GetWorkflowOperationEnablement("ReviseResidentReport"))
-                            {
-                                // Otherwise the staff need to have permission to revise report
-
-                                Platform.GetService<IReportingWorkflowService>(
-                                    delegate(IReportingWorkflowService service)
-                                    {
-                                        ReviseResidentReportResponse response = service.ReviseResidentReport(new ReviseResidentReportRequest(item.ProcedureStepRef));
-                                        item.ProcedureStepRef = response.VerificationStepRef;
-                                        stepForOpeningReport = response.InterpretationStepRef;
-                                    });
-                            }
-                        }
-                        else if (item.ProcedureStepName == "Publication")
-                        {
-                            Platform.GetService<IReportingWorkflowService>(
-                                delegate(IReportingWorkflowService service)
-                                {
-                                    ReviseUnpublishedReportResponse response = service.ReviseUnpublishedReport(
-                                        new ReviseUnpublishedReportRequest(item.ProcedureStepRef));
-                                    item.ProcedureStepRef = response.PublicationStepRef;
-                                    stepForOpeningReport = response.VerificationStepRef;
-                                });
-                        }
-                        else // (item.StepType == "Transcription")
-                        {
-                            // Not defined
-                        }
-
-                        //bool readOnly = selectedFolder is Folders.InTranscriptionFolder ||
-                        //    selectedFolder is Folders.VerifiedFolder;
-
-                        item.ProcedureStepRef = stepForOpeningReport;
-                        doc = new ReportDocument(item, folders, desktopWindow);
-                        doc.Closed += delegate
-                        {
-                            if (selectedFolder.IsOpen)
-                                selectedFolder.Refresh();
-                            else
-                                selectedFolder.RefreshCount();
-                        };                       
-                        doc.Open();
-                    }
-                    catch (Exception e)
-                    {
-                        ExceptionHandler.Report(e, desktopWindow);
-                        return false;
-                    }
-
-                    try
-                    {
-                        IViewerIntegration viewerIntegration = (IViewerIntegration)(new ViewerIntegrationExtensionPoint()).CreateExtension();
-                        if (viewerIntegration != null)
-                            viewerIntegration.OpenStudy(item.AccessionNumber);
-                    }
-                    catch (NotSupportedException)
-                    {
-                        Platform.Log(LogLevel.Info, "No viewer integration extension found");
-                    }
-
-                }
-
-                return true;
+                        service.PublishReport(new PublishReportRequest(item.ProcedureStepRef));
+                    });
             }
-        }
-
-        [MenuAction("apply", "folderexplorer-items-contextmenu/Send to Transcription", "Apply")]
-        [ButtonAction("apply", "folderexplorer-items-toolbar/Send to Transcription", "Apply")]
-        [IconSet("apply", IconScheme.Colour, "Icons.CompleteToolSmall.png", "Icons.CompleteToolMedium.png", "Icons.CompleteToolLarge.png")]
-        [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
-        [ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.UseTranscriptionWorkflow)]
-        [ExtensionOf(typeof(ReportingMainWorkflowItemToolExtensionPoint))]
-        [ExtensionOf(typeof(Folders.InTranscriptionFolder.DropHandlerExtensionPoint))]
-        public class CompleteInterpretationForTranscriptionTool : WorkflowItemTool
-        {
-            public CompleteInterpretationForTranscriptionTool()
-                : base("CompleteInterpretationForTranscription")
+            catch (Exception e)
             {
+                ExceptionHandler.Report(e, desktopWindow);
+                return false;
             }
 
-            protected override bool Execute(ReportingWorklistItem item, IDesktopWindow desktopWindow, IFolder selectedFolder, IEnumerable folders)
-            {
-                try
-                {
-                    Platform.GetService<IReportingWorkflowService>(
-                        delegate(IReportingWorkflowService service)
-                        {
-                            service.CompleteInterpretationForTranscription(new CompleteInterpretationForTranscriptionRequest(item.ProcedureStepRef));
-                        });
-
-                    IFolder myTranscriptionFolder = CollectionUtils.SelectFirst<IFolder>(folders,
-                        delegate(IFolder f) { return f is Folders.InTranscriptionFolder; });
-                    myTranscriptionFolder.RefreshCount();
-
-                    return true;
-                }
-                catch (Exception e)
-                {
-                    ExceptionHandler.Report(e, desktopWindow);
-                    return false;
-                }
-            }
-        }
-
-        [MenuAction("apply", "folderexplorer-items-contextmenu/To be Verified", "Apply")]
-        [ButtonAction("apply", "folderexplorer-items-toolbar/To be Verified", "Apply")]
-        [IconSet("apply", IconScheme.Colour, "Icons.CompleteToolSmall.png", "Icons.CompleteToolMedium.png", "Icons.CompleteToolLarge.png")]
-        [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
-        [ExtensionOf(typeof(ReportingMainWorkflowItemToolExtensionPoint))]
-        [ExtensionOf(typeof(Folders.ToBeVerifiedFolder.DropHandlerExtensionPoint))]
-        public class CompleteInterpretationForVerificationTool : WorkflowItemTool
-        {
-            public CompleteInterpretationForVerificationTool()
-                : base("CompleteInterpretationForVerification")
-            {
-            }
-
-            protected override bool Execute(ReportingWorklistItem item, IDesktopWindow desktopWindow, IFolder selectedFolder, IEnumerable folders)
-            {
-                try
-                {
-                    Platform.GetService<IReportingWorkflowService>(
-                        delegate(IReportingWorkflowService service)
-                        {
-                            service.CompleteInterpretationForVerification(new CompleteInterpretationForVerificationRequest(item.ProcedureStepRef));
-                        });
-
-                    IFolder myVerificationFolder = CollectionUtils.SelectFirst<IFolder>(folders,
-                        delegate(IFolder f) { return f is Folders.ToBeVerifiedFolder; });
-                    myVerificationFolder.RefreshCount();
-
-                    return true;
-                }
-                catch (Exception e)
-                {
-                    ExceptionHandler.Report(e, desktopWindow);
-                    return false;
-                }
-            }
-        }
-
-        [MenuAction("apply", "folderexplorer-items-contextmenu/Cancel Step", "Apply")]
-        [ButtonAction("apply", "folderexplorer-items-toolbar/Cancel Step", "Apply")]
-        [IconSet("apply", IconScheme.Colour, "Icons.DeleteToolSmall.png", "Icons.DeleteToolMedium.png", "Icons.DeleteToolLarge.png")]
-        [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
-        [ExtensionOf(typeof(ReportingMainWorkflowItemToolExtensionPoint))]
-        public class CancelReportingStepTool : WorkflowItemTool
-        {
-            public CancelReportingStepTool()
-                : base("CancelReportingStep")
-            {
-            }
-
-            protected override bool Execute(ReportingWorklistItem item, IDesktopWindow desktopWindow, IFolder selectedFolder, IEnumerable folders)
-            {
-                try
-                {
-                    Platform.GetService<IReportingWorkflowService>(
-                        delegate(IReportingWorkflowService service)
-                        {
-                            service.CancelReportingStep(new CancelReportingStepRequest(item.ProcedureStepRef));
-                        });
-
-                    IFolder toBeReportedFolder = CollectionUtils.SelectFirst<IFolder>(folders,
-                        delegate(IFolder f) { return f is Folders.ToBeReportedFolder; });
-                    toBeReportedFolder.Refresh();
-
-                    return true;
-                }
-                catch (Exception e)
-                {
-                    ExceptionHandler.Report(e, desktopWindow);
-                    return false;
-                }
-            }
-        }
-
-        [MenuAction("apply", "folderexplorer-items-contextmenu/Verify", "Apply")]
-        [ButtonAction("apply", "folderexplorer-items-toolbar/Verify", "Apply")]
-        [IconSet("apply", IconScheme.Colour, "Icons.CompleteToolSmall.png", "Icons.CompleteToolMedium.png", "Icons.CompleteToolLarge.png")]
-        [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
-        [ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.VerifyReport)]
-        [ExtensionOf(typeof(ReportingMainWorkflowItemToolExtensionPoint))]
-        [ExtensionOf(typeof(Folders.VerifiedFolder.DropHandlerExtensionPoint))]
-        public class VerifyTool : WorkflowItemTool
-        {
-            public VerifyTool()
-                : base("Verify")
-            {
-            }
-
-            public override bool Enabled
-            {
-                get
-                {
-                    return this.Context.GetWorkflowOperationEnablement("CompleteInterpretationAndVerify") ||
-                        this.Context.GetWorkflowOperationEnablement("CompleteVerification");
-                }
-            }
-
-            public override bool CanAcceptDrop(IDropContext dropContext, ICollection<ReportingWorklistItem> items)
-            {
-                IReportingWorkflowFolderDropContext ctxt = (IReportingWorkflowFolderDropContext)dropContext;
-                return ctxt.GetOperationEnablement("CompleteInterpretationAndVerify") ||
-                    ctxt.GetOperationEnablement("CompleteVerification");
-            }
-
-            protected override bool Execute(ReportingWorklistItem item, IDesktopWindow desktopWindow, IFolder selectedFolder, IEnumerable folders)
-            {
-                try
-                {
-                    if (item.ProcedureStepName == "Interpretation")
-                    {
-                        Platform.GetService<IReportingWorkflowService>(
-                            delegate(IReportingWorkflowService service)
-                            {
-                                service.CompleteInterpretationAndVerify(new CompleteInterpretationAndVerifyRequest(item.ProcedureStepRef));
-                            });
-                    }
-                    else if (item.ProcedureStepName == "Verification")
-                    {
-                        Platform.GetService<IReportingWorkflowService>(
-                            delegate(IReportingWorkflowService service)
-                            {
-                                service.CompleteVerification(new CompleteVerificationRequest(item.ProcedureStepRef));
-                            });
-                    }
-                    else // (item.StepType == "Transcription")
-                    {
-                        // Not defined
-                    }
-
-                    IFolder myVerifiedFolder = CollectionUtils.SelectFirst<IFolder>(folders,
-                        delegate(IFolder f) { return f is Folders.VerifiedFolder; });
-                    myVerifiedFolder.RefreshCount();
-
-                    return true;
-                }
-                catch (Exception e)
-                {
-                    ExceptionHandler.Report(e, desktopWindow);
-                    return false;
-                }
-            }
-        }
-
-        [MenuAction("apply", "folderexplorer-items-contextmenu/Add Addendum", "Apply")]
-        [ButtonAction("apply", "folderexplorer-items-toolbar/Add Addendum", "Apply")]
-        [IconSet("apply", IconScheme.Colour, "Icons.AddToolSmall.png", "Icons.AddToolMedium.png", "Icons.AddToolLarge.png")]
-        [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
-        [ExtensionOf(typeof(ReportingMainWorkflowItemToolExtensionPoint))]
-        public class AddendumTool : WorkflowItemTool
-        {
-            public AddendumTool()
-                : base("CreateAddendum")
-            {
-            }
-
-            protected override bool Execute(ReportingWorklistItem item, IDesktopWindow desktopWindow, IFolder selectedFolder, IEnumerable folders)
-            {
-                Document doc = DocumentManager.Get(item.ProcedureStepRef);
-                if (doc != null)
-                {
-                    doc.Activate();
-                }
-                else
-                {
-                    try
-                    {
-                        CreateAddendumResponse response = null;
-
-                        Platform.GetService<IReportingWorkflowService>(
-                            delegate(IReportingWorkflowService service)
-                            {
-                                response = service.CreateAddendum(new CreateAddendumRequest(item.ProcedureStepRef));
-                                item.ProcedureStepRef = response.PublicationStepRef;
-                            });
-
-                        IFolder myInterpretationFolder = CollectionUtils.SelectFirst<IFolder>(folders,
-                            delegate(IFolder f) { return f is Folders.DraftFolder; });
-                        myInterpretationFolder.RefreshCount();
-
-                        item.ProcedureStepRef = response.InterpretationStepRef;
-                        doc = new ReportDocument(item, folders, desktopWindow);
-                        doc.Open();
-                    }
-                    catch (Exception e)
-                    {
-                        ExceptionHandler.Report(e, desktopWindow);
-                        return false;
-                    }
-                }
-
-                return true;
-            }
-        }
-
-        [MenuAction("apply", "folderexplorer-items-contextmenu/Publish (testing)", "Apply")]
-        [ButtonAction("apply", "folderexplorer-items-toolbar/Publish (testing)", "Apply")]
-        [IconSet("apply", IconScheme.Colour, "Icons.AddToolSmall.png", "Icons.AddToolMedium.png", "Icons.AddToolLarge.png")]
-        [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
-        [ExtensionOf(typeof(ReportingMainWorkflowItemToolExtensionPoint))]
-        public class PublishReportTool : WorkflowItemTool
-        {
-            public PublishReportTool()
-                : base("PublishReport")
-            {
-            }
-
-            protected override bool Execute(ReportingWorklistItem item, IDesktopWindow desktopWindow, IFolder selectedFolder, IEnumerable folders)
-            {
-                Document doc = DocumentManager.Get(item.ProcedureStepRef);
-                if (doc != null)
-                {
-                    doc.Activate();
-                }
-                else
-                {
-                    try
-                    {
-                        PublishReportResponse response;
-
-                        Platform.GetService<IReportingWorkflowService>(
-                            delegate(IReportingWorkflowService service)
-                            {
-                                response = service.PublishReport(new PublishReportRequest(item.ProcedureStepRef));
-                                item.ProcedureStepRef = response.PublicationStepRef;
-                            });
-                    }
-                    catch (Exception e)
-                    {
-                        ExceptionHandler.Report(e, desktopWindow);
-                        return false;
-                    }
-                }
-
-                return true;
-            }
+            return true;
         }
     }
 }

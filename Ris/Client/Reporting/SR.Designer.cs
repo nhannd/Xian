@@ -214,6 +214,15 @@ namespace ClearCanvas.Ris.Client.Reporting {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Link Procedures.
+        /// </summary>
+        internal static string TitleLinkProcedures {
+            get {
+                return ResourceManager.GetString("TitleLinkProcedures", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Radiologist Home.
         /// </summary>
         internal static string TitleRadiologistHome {

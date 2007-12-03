@@ -38,12 +38,11 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
     [DataContract]
     public class SaveReportRequest : DataContractBase
     {
-        public SaveReportRequest(EntityRef reportingStepRef, string reportContent, EntityRef supervisorRef, List<EntityRef> linkProcedureRefs)
+        public SaveReportRequest(EntityRef reportingStepRef, string reportContent, EntityRef supervisorRef)
         {
             this.ReportingStepRef = reportingStepRef;
             this.ReportContent = reportContent;
             this.SupervisorRef = supervisorRef;
-            this.LinkProcedureRefs = linkProcedureRefs;
         }
 
         [DataMember]
@@ -54,11 +53,5 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
 
         [DataMember]
         public EntityRef SupervisorRef;
-
-        /// <summary>
-        /// A set of procedures to link to the report.
-        /// </summary>
-        [DataMember]
-        public List<EntityRef> LinkProcedureRefs;
     }
 }

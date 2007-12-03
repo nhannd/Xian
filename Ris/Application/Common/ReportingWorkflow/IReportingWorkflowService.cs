@@ -197,13 +197,13 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
         LoadReportForEditResponse LoadReportForEdit(LoadReportForEditRequest request);
 
         /// <summary>
-        /// Obtains the set of procedures that can optionally be linked to the specified procedure
-        /// for reporting.
+        /// Obtains the set of scheduled interpretations that can optionally be linked to the specified interpretation
+        /// so that the report is shared.
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
         [OperationContract]
-        GetLinkableProceduresResponse GetLinkableProcedures(GetLinkableProceduresRequest request);
+        GetLinkableInterpretationsResponse GetLinkableInterpretations(GetLinkableInterpretationsRequest request);
 
         /// <summary>
         /// Save the report of a given reporting step

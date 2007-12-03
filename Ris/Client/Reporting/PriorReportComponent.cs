@@ -90,8 +90,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         private readonly ScriptCallback _scriptCallback;
 
-        private readonly EntityRef _reportingStepRef;
-        private readonly List<EntityRef> _procedureRefs;
+        private readonly ReportingWorklistItem _worklistItem;
 
         private readonly ReportSummaryTable _reportList;
         private ReportSummary _selectedReport;
@@ -99,29 +98,9 @@ namespace ClearCanvas.Ris.Client.Reporting
         /// <summary>
         /// Constructor for showing priors based on a reporting step.
         /// </summary>
-        public PriorReportComponent(EntityRef reportingStepRef)
-            :this(reportingStepRef, null)
+        public PriorReportComponent(ReportingWorklistItem worklistItem)
         {
-        }
-
-        /// <summary>
-        /// Constructor to show priors based on a set of procedures.
-        /// </summary>
-        /// <param name="procedureRefs"></param>
-        public PriorReportComponent(List<EntityRef> procedureRefs)
-            :this(null, procedureRefs)
-        {
-        }
-
-        /// <summary>
-        /// Private constructor.
-        /// </summary>
-        /// <param name="reportingStepRef"></param>
-        /// <param name="procedureRefs"></param>
-        private PriorReportComponent(EntityRef reportingStepRef, List<EntityRef> procedureRefs)
-        {
-            _reportingStepRef = reportingStepRef;
-            _procedureRefs = procedureRefs;
+            _worklistItem = worklistItem;
 
             _scriptCallback = new ScriptCallback(this);
             _reportList = new ReportSummaryTable();
@@ -132,8 +111,8 @@ namespace ClearCanvas.Ris.Client.Reporting
             Platform.GetService<IReportingWorkflowService>(
                 delegate(IReportingWorkflowService service)
                 {
-                    GetPriorReportsRequest request = _reportingStepRef != null ?
-                        new GetPriorReportsRequest(_reportingStepRef) : new GetPriorReportsRequest(_procedureRefs);
+                    GetPriorReportsRequest request = new GetPriorReportsRequest();
+                    request.ReportingProcedureStepRef = _worklistItem.ProcedureStepRef;
                     GetPriorReportsResponse response = service.GetPriorReports(request);
                     _reportList.Items.AddRange(response.Reports);
                 });

@@ -109,6 +109,14 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             return DoQueryCount(query);
         }
 
+        public IList<InterpretationStep> GetLinkedInterpretationCandidates(InterpretationStep step, Staff interpreter)
+        {
+            NHibernate.IQuery q = this.Context.GetNamedHqlQuery("linkedInterpretationCandidates");
+            q.SetParameter(0, step);
+            q.SetParameter(1, interpreter);
+            return q.List<InterpretationStep>();
+        }
+
         #endregion
 
         private static void ConstructWorklistCondition(HqlQuery query, IEnumerable<ReportingWorklistItemSearchCriteria> where, Worklist worklist)
@@ -174,6 +182,5 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
                 query.Conditions.Add(or);
 
         }
-
     }
 }

@@ -91,49 +91,6 @@ namespace ClearCanvas.Healthcare {
 		#endregion
 
         /// <summary>
-        /// Links a <see cref="RequestedProcedure"/> to this report, meaning that the report covers
-        /// this radiology procedure.
-        /// </summary>
-        /// <param name="procedure"></param>
-        public virtual void LinkProcedure(RequestedProcedure procedure)
-        {
-            if(_procedures.Contains(procedure))
-                throw new WorkflowException("The procedure is already associated with this report.");
-
-            // does the procedure already have a report?
-            Report otherReport = procedure.ActiveReport;
-            if (otherReport != null && !this.Equals(otherReport))
-                throw new WorkflowException("Cannot link this procedure because it already has an active report.");
-
-            // any IP or SU reporting steps?
-            ReportingProcedureStep rps = procedure.ActiveReportingStep;
-            if (rps != null)
-            {
-                if (rps.State != ActivityStatus.SC)
-                    throw new WorkflowException("Cannot link this procedure because it is already being reported.");
-
-                // discontinue active step for the procedure
-                rps.Discontinue();
-            }
-
-            _procedures.Add(procedure);
-            procedure.Reports.Add(this);
-        }
-
-        /// <summary>
-        /// Links the specified <see cref="RequestedProcedure"/>s to this report, meaning that the report covers
-        /// these radiology procedures.
-        /// </summary>
-        /// <param name="procedures"></param>
-        public virtual void LinkProcedures(IEnumerable<RequestedProcedure> procedures)
-        {
-            foreach (RequestedProcedure procedure in procedures)
-            {
-                LinkProcedure(procedure);
-            }
-        }
-
-        /// <summary>
         /// Gets a value indicating whether this report has any addenda.
         /// </summary>
         public virtual bool HasAddenda
@@ -149,7 +106,7 @@ namespace ClearCanvas.Healthcare {
             get
             {
                 ReportPart lastPart = CollectionUtils.LastElement(_parts);
-                return lastPart.Status == ReportPartStatus.P ? lastPart : null;
+                return lastPart.IsModifiable ? lastPart : null;
             }
         }
 
@@ -171,10 +128,46 @@ namespace ClearCanvas.Healthcare {
         }
 
         /// <summary>
+        /// Links a <see cref="RequestedProcedure"/> to this report, meaning that the report covers
+        /// this radiology procedure.
+        /// </summary>
+        /// <param name="procedure"></param>
+        protected internal virtual void LinkProcedure(RequestedProcedure procedure)
+        {
+            if (_procedures.Contains(procedure))
+                throw new WorkflowException("The procedure is already associated with this report.");
+
+            // does the procedure already have a report?
+            Report otherReport = procedure.ActiveReport;
+            if (otherReport != null && !this.Equals(otherReport))
+                throw new WorkflowException("Cannot link this procedure because it already has an active report.");
+
+            _procedures.Add(procedure);
+            procedure.Reports.Add(this);
+        }
+
+        /// <summary>
         /// Called by this report or by a child report part to tell this report to update its status.
         /// </summary>
         protected internal virtual void UpdateStatus()
         {
+            // if the main report part is cancelled, the report is cancelled
+            // (cancelling an addendum alone does not cancel the report)
+            if (_parts.Count > 0 && _parts[0].Status == ReportPartStatus.X)
+            {
+                _status = ReportStatus.X;
+            }
+            else
+            if (_status == ReportStatus.D)
+            {
+                bool prelimParts =
+                    CollectionUtils.Contains(_parts,
+                        delegate(ReportPart part) { return part.Status == ReportPartStatus.P; });
+
+                if (prelimParts)
+                    _status = ReportStatus.P;
+            }
+            else
             if (_status == ReportStatus.P || _status == ReportStatus.F)
             {
                 int numCompletedParts =
@@ -190,14 +183,6 @@ namespace ClearCanvas.Healthcare {
                 else if (_status == ReportStatus.P && numCompletedParts > 0)
                 {
                     _status = ReportStatus.F;
-                }
-
-                // if all report parts are cancelled, the report is cancelled
-                // (note that cancelling an addendum alone does not affect the status of this report)
-                if (_parts.Count > 0 && CollectionUtils.TrueForAll(_parts,
-                    delegate(ReportPart part) { return part.Status == ReportPartStatus.X; }))
-                {
-                    _status = ReportStatus.X;
                 }
             }
         }

@@ -41,45 +41,19 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
     /// Request object for <see cref="IReportingWorkflowService.GetPriorReports"/>.
     /// </summary>
     /// <remarks>
-    /// Only one of <see cref="ReportingProcedureStepRef"/> or <see cref="ProcedureRefs"/> 
-    /// or <see cref="PatientRef"/> needs to be supplied by the caller.  If <see cref="ReportingProcedureStepRef"/>
-    /// is supplied, the priors will be obtained based on all procedures attached to the report 
-    /// to which the reporting step refers.  If <see cref="ProcedureRefs"/> is supplied,
-    /// priors will be obtained based on the set of procedures specified in <see cref="ProcedureRefs"/>.
     /// If <see cref="PatientRef"/> is supplied, all priors for the patient will be returned.
+    /// The <see cref="ReportingProcedureStepRef"/> value will be ignored.
+    /// If <see cref="PatientRef"/> is null, only priors relevant to the report for <see cref="ReportingProcedureStepRef"/>
+    /// will be returned.
     /// </remarks>
     [DataContract]
     public class GetPriorReportsRequest : DataContractBase
     {
         /// <summary>
-        /// Constructor to request priors based on a reporting step.
-        /// </summary>
-        /// <param name="reportingProcedureStepRef"></param>
-        public GetPriorReportsRequest(EntityRef reportingProcedureStepRef)
-        {
-            this.ReportingProcedureStepRef = reportingProcedureStepRef;
-        }
-
-        /// <summary>
-        /// Constructor to request priors based on a set of procedures.
-        /// </summary>
-        /// <param name="procedureRefs"></param>
-        public GetPriorReportsRequest(List<EntityRef> procedureRefs)
-        {
-            this.ProcedureRefs = procedureRefs;
-        }
-
-        /// <summary>
         /// A reporting step that has an associated report for which relevant priors are obtained.
         /// </summary>
         [DataMember]
         public EntityRef ReportingProcedureStepRef;
-
-        /// <summary>
-        /// A set of procedures, for which relevant priors are obtained.
-        /// </summary>
-        [DataMember]
-        public List<EntityRef> ProcedureRefs;
 
         /// <summary>
         /// A patient for which all priors are obtained.

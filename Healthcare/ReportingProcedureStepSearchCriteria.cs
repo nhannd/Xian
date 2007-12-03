@@ -53,6 +53,15 @@ namespace ClearCanvas.Healthcare
 		{
 		}
 
+        public void EqualTo(ReportingProcedureStep instance)
+        {
+            if (!this.SubCriteria.ContainsKey("OID"))
+            {
+                this.SubCriteria["OID"] = new SearchCondition<object>("OID");
+            }
+            ((ISearchCondition<object>)this.SubCriteria["OID"]).EqualTo(instance.OID);
+        }
+
         public ISearchCondition<ClearCanvas.Healthcare.ReportPart> ReportPart
         {
 	  		get

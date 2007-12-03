@@ -64,18 +64,38 @@ namespace ClearCanvas.Healthcare {
 		{
 		}
 
+        /// <summary>
+        /// Links the procedure associated with this step to the specified report, and discontinues this step.
+        /// </summary>
+        /// <param name="report"></param>
+        public virtual void LinkToReport(Report report)
+        {
+            if (this.State != ActivityStatus.SC)
+                throw new WorkflowException("Cannot link to existing report because this interpretation has already been started.");
+
+            // link the associated procedure to the specified report
+            report.LinkProcedure(this.RequestedProcedure);
+
+            // discontinue step so we don't show up in any worklists
+            this.Discontinue();
+        }
+
         public override string Name
         {
             get { return "Interpretation"; }
         }
 
-        public override void Complete()
+        protected override void OnStateChanged(ActivityStatus previousState, ActivityStatus newState)
         {
-            if (this.ReportPart == null)
-                throw new WorkflowException("ReportPart must be assigned");
+            if(newState == ActivityStatus.CM)
+            {
+                if (this.ReportPart == null)
+                    throw new WorkflowException("This ReportingStep does not have an associated ReportPart.");
 
-            this.ReportPart.Interpreter = this.PerformingStaff;
-            base.Complete();
+                this.ReportPart.Interpreter = this.PerformingStaff;
+            }
+
+            base.OnStateChanged(previousState, newState);
         }
 		
 		#region Object overrides

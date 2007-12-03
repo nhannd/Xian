@@ -9,8 +9,8 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
     [DataContract]
     public abstract class CompleteInterpretationRequestBase : SaveReportRequest
     {
-        public CompleteInterpretationRequestBase(EntityRef reportingStepRef, string reportContent, EntityRef supervisorRef, List<EntityRef> linkProcedureRefs)
-            :base(reportingStepRef, reportContent, supervisorRef, linkProcedureRefs)
+        public CompleteInterpretationRequestBase(EntityRef reportingStepRef, string reportContent, EntityRef supervisorRef)
+            : base(reportingStepRef, reportContent, supervisorRef)
         {
         }
     }

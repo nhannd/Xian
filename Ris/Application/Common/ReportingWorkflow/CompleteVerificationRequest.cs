@@ -46,7 +46,7 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
         }
 
         public CompleteVerificationRequest(EntityRef verificationStepRef, string reportContent)
-            :base(verificationStepRef, reportContent, null, null)
+            :base(verificationStepRef, reportContent, null)
         {
         }
     }

@@ -128,6 +128,13 @@ namespace ClearCanvas.Desktop.Tables
                 else
                     _comparison = NopComparison;    // no comparison is possible
             }
+
+            // assign a default resource resolver that looks for resources
+            // in the TItem assembly
+            if(_resolver == null)
+            {
+                _resolver = new ResourceResolver(typeof(TItem).Assembly);
+            }
         }
 
         /// <summary>

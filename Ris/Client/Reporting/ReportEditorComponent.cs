@@ -314,8 +314,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                                 new CompleteInterpretationAndVerifyRequest(
                                 _reportingStepRef, 
                                 this.ReportContent,
-                                _supervisor == null ? null : _supervisor.StaffRef,
-                                null));
+                                _supervisor == null ? null : _supervisor.StaffRef));
                         });
                 }
                 else if (_canCompleteVerification)
@@ -357,8 +356,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                             new CompleteInterpretationForVerificationRequest(
                             _reportingStepRef, 
                             this.ReportContent,
-                            _supervisor == null ? null : _supervisor.StaffRef,
-                            null));
+                            _supervisor == null ? null : _supervisor.StaffRef));
                     });
 
                 EventsHelper.Fire(_sendToVerifyEvent, this, EventArgs.Empty);
@@ -385,8 +383,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                             new CompleteInterpretationForTranscriptionRequest(
                             _reportingStepRef, 
                             this.ReportContent,
-                            _supervisor == null ? null : _supervisor.StaffRef,
-                            null));
+                            _supervisor == null ? null : _supervisor.StaffRef));
                     });
 
                 EventsHelper.Fire(_sendToTranscriptionEvent, this, EventArgs.Empty);
@@ -413,8 +410,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                             new SaveReportRequest(
                             _reportingStepRef, 
                             this.ReportContent,
-                            _supervisor == null ? null : _supervisor.StaffRef,
-                            null));
+                            _supervisor == null ? null : _supervisor.StaffRef));
                     });
 
                 EventsHelper.Fire(_saveEvent, this, EventArgs.Empty);

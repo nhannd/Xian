@@ -65,16 +65,20 @@ namespace ClearCanvas.Healthcare {
             get { return "Transcription"; }
         }
 
-        public override void Complete()
+        protected override void OnStateChanged(ActivityStatus previousState, ActivityStatus newState)
         {
-            if (this.ReportPart == null)
-                throw new WorkflowException("ReportPart must be assigned");
+            if (newState == ActivityStatus.CM)
+            {
+                if (this.ReportPart == null)
+                    throw new WorkflowException("This ReportingStep does not have an associated ReportPart.");
 
-            this.ReportPart.Transcriber = this.PerformingStaff;
-            base.Complete();
+                this.ReportPart.Transcriber = this.PerformingStaff;
+            }
+
+            base.OnStateChanged(previousState, newState);
         }
-		
-		#region Object overrides
+
+        #region Object overrides
 		
 		public override bool Equals(object that)
 		{

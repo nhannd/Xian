@@ -44,6 +44,7 @@ using ClearCanvas.Healthcare.Workflow.Reporting;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 using AuthorityTokens = ClearCanvas.Ris.Application.Common.AuthorityTokens;
+using Iesi.Collections.Generic;
 
 namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 {
@@ -143,9 +144,17 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         public StartInterpretationResponse StartInterpretation(StartInterpretationRequest request)
         {
             InterpretationStep interpretation = PersistenceContext.Load<InterpretationStep>(request.InterpretationStepRef, EntityLoadFlags.CheckVersion);
+            
+            List<InterpretationStep> linkedInterpretations = new List<InterpretationStep>();
+            if (request.LinkedInterpretationStepRefs != null && request.LinkedInterpretationStepRefs.Count > 0)
+            {
+                linkedInterpretations = CollectionUtils.Map<EntityRef, InterpretationStep>(
+                    request.LinkedInterpretationStepRefs,
+                    delegate(EntityRef stepRef) { return PersistenceContext.Load<InterpretationStep>(stepRef); });
+            }
 
             Operations.StartInterpretation op = new Operations.StartInterpretation();
-            op.Execute(interpretation, this.CurrentUserStaff, new PersistentWorkflow(this.PersistenceContext));
+            op.Execute(interpretation, this.CurrentUserStaff, linkedInterpretations, new PersistentWorkflow(this.PersistenceContext), PersistenceContext);
 
             PersistenceContext.SynchState();
             return new StartInterpretationResponse(interpretation.GetRef());
@@ -159,15 +168,14 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             Staff supervisor = GetSupervisor(interpretation, request.SupervisorRef);
 
             SaveReportHelper(request, interpretation, supervisor);
-            LinkProceduresHelper(request, interpretation);
 
             Operations.CompleteInterpretationForTranscription op = new Operations.CompleteInterpretationForTranscription();
-            TranscriptionStep transcription = op.Execute(interpretation, this.CurrentUserStaff, new PersistentWorkflow(this.PersistenceContext));
+            ReportingProcedureStep nextStep = op.Execute(interpretation, this.CurrentUserStaff, new PersistentWorkflow(this.PersistenceContext));
 
             PersistenceContext.SynchState();
             CompleteInterpretationForTranscriptionResponse response = new CompleteInterpretationForTranscriptionResponse();
             response.InterpretationStepRef = interpretation.GetRef();
-            response.TranscriptionStepRef = transcription.GetRef();
+            response.TranscriptionStepRef = nextStep.GetRef();
             return response;
         }
 
@@ -182,15 +190,14 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
                 throw new RequestValidationException(SR.ExceptionResidentReportMissingSupervisor);
 
             SaveReportHelper(request, interpretation, supervisor);
-            LinkProceduresHelper(request, interpretation);
 
             Operations.CompleteInterpretationForVerification op = new Operations.CompleteInterpretationForVerification();
-            VerificationStep verification = op.Execute(interpretation, this.CurrentUserStaff, new PersistentWorkflow(this.PersistenceContext));
+            ReportingProcedureStep nextStep = op.Execute(interpretation, this.CurrentUserStaff, new PersistentWorkflow(this.PersistenceContext));
 
             PersistenceContext.SynchState();
             CompleteInterpretationForVerificationResponse response = new CompleteInterpretationForVerificationResponse();
             response.InterpretationStepRef = interpretation.GetRef();
-            response.VerificationStepRef = verification.GetRef();
+            response.VerificationStepRef = nextStep.GetRef();
             return response;
         }
 
@@ -203,18 +210,17 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             Staff supervisor = GetSupervisor(interpretation, request.SupervisorRef);
 
             SaveReportHelper(request, interpretation, supervisor);
-            LinkProceduresHelper(request, interpretation);
 
             if (interpretation.ReportPart == null || String.IsNullOrEmpty(interpretation.ReportPart.Content))
                 throw new RequestValidationException(SR.ExceptionVerifyWithNoReport);
 
             Operations.CompleteInterpretationAndVerify op = new Operations.CompleteInterpretationAndVerify();
-            PublicationStep publication = op.Execute(interpretation, this.CurrentUserStaff, new PersistentWorkflow(this.PersistenceContext));
+            ReportingProcedureStep nextStep = op.Execute(interpretation, this.CurrentUserStaff, new PersistentWorkflow(this.PersistenceContext));
 
             PersistenceContext.SynchState();
             CompleteInterpretationAndVerifyResponse response = new CompleteInterpretationAndVerifyResponse();
             response.InterpretationStepRef = interpretation.GetRef();
-            response.PublicationStepRef = publication.GetRef();
+            response.PublicationStepRef = nextStep.GetRef();
             return response;
         }
 
@@ -225,13 +231,13 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             ReportingProcedureStep step = PersistenceContext.Load<ReportingProcedureStep>(request.ReportingStepRef, EntityLoadFlags.CheckVersion);
 
             Operations.CancelReportingStep op = new Operations.CancelReportingStep();
-            InterpretationStep interpretation = op.Execute(step, this.CurrentUserStaff, new PersistentWorkflow(this.PersistenceContext));
+            List<InterpretationStep> scheduledInterpretations = op.Execute(step, this.CurrentUserStaff, new PersistentWorkflow(this.PersistenceContext));
 
             PersistenceContext.SynchState();
-            CancelReportingStepResponse response = new CancelReportingStepResponse();
-            response.ReportingStepRef = step.GetRef();
-            response.InterpretationStepRef = interpretation == null ? null : interpretation.GetRef();
-            return response;
+
+            return new CancelReportingStepResponse(step.GetRef(),
+                CollectionUtils.Map<InterpretationStep, EntityRef>(scheduledInterpretations,
+                    delegate(InterpretationStep s) { return s.GetRef(); }));
         }
 
         [UpdateOperation]
@@ -272,7 +278,6 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             VerificationStep verification = PersistenceContext.Load<VerificationStep>(request.ReportingStepRef, EntityLoadFlags.CheckVersion);
 
             SaveReportHelper(request, verification, null);
-            LinkProceduresHelper(request, verification);
 
             if (verification.ReportPart == null || String.IsNullOrEmpty(verification.ReportPart.Content))
                 throw new RequestValidationException(SR.ExceptionVerifyWithNoReport);
@@ -364,7 +369,6 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             Staff supervisor = GetSupervisor(step, request.SupervisorRef);
 
             SaveReportHelper(request, step, supervisor);
-            LinkProceduresHelper(request, step);
 
             PersistenceContext.SynchState();
             return new SaveReportResponse(step.GetRef());
@@ -373,32 +377,29 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         [ReadOperation]
         public GetPriorReportsResponse GetPriorReports(GetPriorReportsRequest request)
         {
-            IList<Report> priorReports = new List<Report>();
+            Platform.CheckForNullReference(request, "request");
+            if(request.PatientRef == null && request.ReportingProcedureStepRef == null)
+                throw new ArgumentException("Either PatientRef or ReportingProcedureStepRef must be non-null");
+
+            HashedSet<Report> priorReports = new HashedSet<Report>();
+
             IPriorReportBroker broker = PersistenceContext.GetBroker<IPriorReportBroker>();
 
+            // if a patient was supplied, find all reports for the patient
+            if(request.PatientRef != null)
+            {
+                Patient patient = PersistenceContext.Load<Patient>(request.PatientRef, EntityLoadFlags.Proxy);
+                priorReports.AddAll(broker.GetPriorReports(patient));
+            }
             // if a reporting step was supplied, find priors based on the attached report
-            if(request.ReportingProcedureStepRef != null)
+            else if (request.ReportingProcedureStepRef != null)
             {
                 ReportingProcedureStep ps = PersistenceContext.Load<ReportingProcedureStep>(
                     request.ReportingProcedureStepRef, EntityLoadFlags.Proxy);
-                if(ps.ReportPart != null)
+                if (ps.ReportPart != null)
                 {
-                    priorReports = broker.GetPriorReports(ps.ReportPart.Report);
+                    priorReports.AddAll(broker.GetPriorReports(ps.ReportPart.Report));
                 }
-            }
-            // otherwise if a set of procedures was explicitly supplied, find priors based on those procedures
-            else if(request.ProcedureRefs != null && request.ProcedureRefs.Count > 0)
-            {
-                List<RequestedProcedure> procedures = CollectionUtils.Map<EntityRef, RequestedProcedure>(
-                    request.ProcedureRefs,
-                    delegate(EntityRef pr) { return PersistenceContext.Load<RequestedProcedure>(pr, EntityLoadFlags.Proxy); });
-
-                priorReports = broker.GetPriorReports(procedures);
-            }
-            else if(request.PatientRef != null)
-            {
-                Patient patient = PersistenceContext.Load<Patient>(request.PatientRef, EntityLoadFlags.Proxy);
-                priorReports = broker.GetPriorReports(patient);
             }
 
             // assemble results
@@ -434,9 +435,43 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         }
 
         [ReadOperation]
-        public GetLinkableProceduresResponse GetLinkableProcedures(GetLinkableProceduresRequest request)
+        public GetLinkableInterpretationsResponse GetLinkableInterpretations(GetLinkableInterpretationsRequest request)
         {
-            throw new Exception("The method or operation is not implemented.");
+            Platform.CheckForNullReference(request, "request");
+            Platform.CheckMemberIsSet(request.InterpretationStepRef, "InterpretationStepRef");
+
+            InterpretationStep step = PersistenceContext.Load<InterpretationStep>(request.InterpretationStepRef, EntityLoadFlags.Proxy);
+
+            IReportingWorklistBroker broker = PersistenceContext.GetBroker<IReportingWorklistBroker>();
+            IList<InterpretationStep> candidateSteps = broker.GetLinkedInterpretationCandidates(step, this.CurrentUserStaff);
+
+            // if any candidate steps were found, need to convert them to worklist items
+            IList<WorklistItem> worklistItems;
+            if(candidateSteps.Count > 0)
+            {
+                ReportingWorklistItemSearchCriteria[] worklistItemCriteria =
+                    CollectionUtils.Map<InterpretationStep, ReportingWorklistItemSearchCriteria>(candidateSteps,
+                    delegate(InterpretationStep ps)
+                    {
+                        ReportingWorklistItemSearchCriteria criteria = new ReportingWorklistItemSearchCriteria();
+                        criteria.ReportingProcedureStep.EqualTo(ps);
+                        return criteria;
+                    }).ToArray();
+
+                worklistItems = broker.GetWorklist(typeof(InterpretationStep), worklistItemCriteria, null);
+            }
+            else
+            {
+                worklistItems = new List<WorklistItem>();
+            }
+
+            ReportingWorkflowAssembler assembler = new ReportingWorkflowAssembler();
+            return new GetLinkableInterpretationsResponse(
+                CollectionUtils.Map<WorklistItem, ReportingWorklistItem>(worklistItems,
+                delegate (WorklistItem item)
+                    {
+                        return assembler.CreateReportingWorklistItem(item, PersistenceContext);
+                    }));
         }
 
         #endregion
@@ -478,6 +513,11 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
         public bool CanReviseResidentReport(WorklistItemKey itemKey)
         {
+            // only available to users that can't verify reports
+            // there is no need to revise an interpretation if you have the authority to verify it
+            if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.VerifyReport))
+                return false;
+
             return CanExecuteOperation(new Operations.ReviseResidentReport(), itemKey);
         }
 
@@ -555,18 +595,6 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             {
                 Operations.SaveReport saveReportOp = new Operations.SaveReport();
                 saveReportOp.Execute(step, request.ReportContent, supervisor, this.PersistenceContext);
-            }
-        }
-
-        private void LinkProceduresHelper(SaveReportRequest request, ReportingProcedureStep step)
-        {
-            if(request.LinkProcedureRefs != null && request.LinkProcedureRefs.Count > 0)
-            {
-                List<RequestedProcedure> procedures = CollectionUtils.Map<EntityRef, RequestedProcedure>(
-                    request.LinkProcedureRefs,
-                    delegate(EntityRef pr) { return PersistenceContext.Load<RequestedProcedure>(pr); });
-
-                step.ReportPart.Report.LinkProcedures(procedures);
             }
         }
 

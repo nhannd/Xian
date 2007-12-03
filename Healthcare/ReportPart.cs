@@ -32,6 +32,7 @@
 using System;
 using System.Collections;
 using System.Text;
+using ClearCanvas.Workflow;
 
 
 namespace ClearCanvas.Healthcare {
@@ -59,10 +60,29 @@ namespace ClearCanvas.Healthcare {
         }
 
         /// <summary>
+        /// Gets a value indicating whether this report part is modifiable.
+        /// </summary>
+        public virtual bool IsModifiable
+        {
+            get { return _status == ReportPartStatus.D || _status == ReportPartStatus.P; }
+        }
+
+        public virtual void Preliminary()
+        {
+            if(_status == ReportPartStatus.F || _status == ReportPartStatus.X)
+                throw new WorkflowException(string.Format("Cannot transition from {0} to P", _status));
+
+            SetStatus(ReportPartStatus.P);
+        }
+
+        /// <summary>
         /// Marks this report part as being complete (status Final).
         /// </summary>
         public virtual void Complete()
         {
+            if (_status == ReportPartStatus.X)
+                throw new WorkflowException(string.Format("Cannot transition from {0} to F", _status));
+
             SetStatus(ReportPartStatus.F);
         }
 
@@ -71,6 +91,9 @@ namespace ClearCanvas.Healthcare {
         /// </summary>
         public virtual void Cancel()
         {
+            if (_status == ReportPartStatus.F || _status == ReportPartStatus.X)
+                throw new WorkflowException(string.Format("Cannot transition from {0} to X", _status));
+
             SetStatus(ReportPartStatus.X);
         }
 

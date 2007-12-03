@@ -42,21 +42,27 @@ namespace ClearCanvas.Healthcare {
 	public enum ReportPartStatus
 	{
         /// <summary>
+        /// Draft
+        /// </summary>
+        [EnumValue("Draft")]
+        D,
+
+        /// <summary>
         /// Preliminary
         /// </summary>
-        [EnumValue("Preliminary", Description="Prior to report being verified")]
+        [EnumValue("Preliminary")]
         P,
  
         /// <summary>
         /// Final
         /// </summary>
-        [EnumValue("Final", Description = "Report is verified")]
+        [EnumValue("Final")]
         F,
 
         /// <summary>
         /// Cancelled
         /// </summary>
-        [EnumValue("Cancelled", Description="Report is cancelled")]
+        [EnumValue("Cancelled")]
         X
 	}
 }

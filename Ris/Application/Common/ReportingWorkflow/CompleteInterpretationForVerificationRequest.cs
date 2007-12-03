@@ -39,12 +39,12 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
     public class CompleteInterpretationForVerificationRequest : CompleteInterpretationRequestBase
     {
         public CompleteInterpretationForVerificationRequest(EntityRef interpretationStepRef)
-            : this(interpretationStepRef, null, null, null)
+            : this(interpretationStepRef, null, null)
         {
         }
 
-        public CompleteInterpretationForVerificationRequest(EntityRef interpretationStepRef, string reportContent, EntityRef supervisorRef, List<EntityRef> linkProcedureRefs)
-            :base(interpretationStepRef, reportContent, supervisorRef, linkProcedureRefs)
+        public CompleteInterpretationForVerificationRequest(EntityRef interpretationStepRef, string reportContent, EntityRef supervisorRef)
+            : base(interpretationStepRef, reportContent, supervisorRef)
         {
         }
     }

@@ -236,10 +236,11 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         private void SelectedItemDoubleClickedEventHandler(object sender, EventArgs e)
         {
-            ReportingWorkflowTool.EditReportTool tool = new ReportingWorkflowTool.EditReportTool();
-            tool.SetContext(new ReportingWorkflowItemToolContext(this));
-            if (tool.Enabled)
-                tool.Apply();
+            EditReportTool editTool = (EditReportTool)CollectionUtils.SelectFirst(_itemToolSet.Tools,
+                delegate(ITool tool) { return tool is EditReportTool; });
+
+            if (editTool.Enabled)
+                editTool.Apply();
         }
 
         protected override void Dispose(bool disposing)

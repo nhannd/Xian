@@ -40,12 +40,16 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
     [DataContract]
     public class StartInterpretationRequest : DataContractBase
     {
-        public StartInterpretationRequest(EntityRef interpretationStepRef)
+        public StartInterpretationRequest(EntityRef interpretationStepRef, List<EntityRef> linkedInterpretationStepRefs)
         {
             this.InterpretationStepRef = interpretationStepRef;
+            this.LinkedInterpretationStepRefs = linkedInterpretationStepRefs;
         }
 
         [DataMember]
         public EntityRef InterpretationStepRef;
+
+        [DataMember]
+        public List<EntityRef> LinkedInterpretationStepRefs;
     }
 }

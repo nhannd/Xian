@@ -68,9 +68,13 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         public override void Start()
         {
+            List<EntityRef> procedureRefs = new List<EntityRef>();
+            procedureRefs.Add(_worklistItem.RequestedProcedureRef);
+            PriorReportComponent priorComponent = new PriorReportComponent(_worklistItem);
+
             // Create tab and tab groups
             TabComponentContainer tabContainer1 = new TabComponentContainer();
-            tabContainer1.Pages.Add(new TabPage("Prior Reports", new PriorReportComponent(_worklistItem.ProcedureStepRef)));
+            tabContainer1.Pages.Add(new TabPage("Prior Reports", priorComponent));
 
             TabGroupComponentContainer tabGroupContainer = new TabGroupComponentContainer(LayoutDirection.Horizontal);
             tabGroupContainer.AddTabGroup(new TabGroup(tabContainer1, 1.0f));

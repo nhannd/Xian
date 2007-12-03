@@ -61,7 +61,7 @@ namespace ClearCanvas.Healthcare {
             get
             {
                 return CollectionUtils.Map<ProcedureStep, ModalityProcedureStep>(
-                    CollectionUtils.Select<ProcedureStep>(this.ProcedureSteps,
+                    CollectionUtils.Select(this.ProcedureSteps,
                         delegate(ProcedureStep ps)
                         {
                             return ps.Is<ModalityProcedureStep>();
@@ -69,6 +69,22 @@ namespace ClearCanvas.Healthcare {
             }
         }
 
+        /// <summary>
+        /// Gets the reporting procedure steps.
+        /// </summary>
+        public virtual List<ReportingProcedureStep> ReportingProcedureSteps
+        {
+            get
+            {
+                return CollectionUtils.Map<ProcedureStep, ReportingProcedureStep>(
+                    CollectionUtils.Select(this.ProcedureSteps,
+                        delegate(ProcedureStep ps)
+                        {
+                            return ps.Is<ReportingProcedureStep>();
+                        }), delegate(ProcedureStep ps) { return ps.As<ReportingProcedureStep>(); });
+            }
+        }
+        
         /// <summary>
         /// Gets a value indicating whether this procedure is in a terminal state.
         /// </summary>
@@ -103,24 +119,6 @@ namespace ClearCanvas.Healthcare {
             {
                 return CollectionUtils.SelectFirst(_reports,
                     delegate(Report r) { return r.Status != ReportStatus.X; });
-            }
-        }
-
-        /// <summary>
-        /// Gets the active <see cref="ReportingProcedureStep"/> for this procedure, or returns null if
-        /// there is no active reporting step.
-        /// </summary>
-        /// <remarks>
-        /// Unlike modality procedure steps, at most one reporting procedure step should ever be in an active status
-        /// at any given time.
-        /// </remarks>
-        public virtual ReportingProcedureStep ActiveReportingStep
-        {
-            get
-            {
-                ProcedureStep step = CollectionUtils.SelectFirst(_procedureSteps,
-                    delegate(ProcedureStep ps) { return ps.Is<ReportingProcedureStep>() && !ps.IsTerminated; });
-                return step != null ? step.As<ReportingProcedureStep>() : null;
             }
         }
 

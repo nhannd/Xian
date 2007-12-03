@@ -38,6 +38,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EditReportTool.cs" />
+    <Compile Include="LinkedInterpretationComponent.cs" />
     <Compile Include="ReportingProtocolWorkflowFolderSystem.cs" />
     <Compile Include="ReportingProtocolWorkflowFolderSystemTool.cs" />
     <Compile Include="ReportingMainWorkflowFolderSystem.cs" />
@@ -75,6 +77,7 @@
     <Compile Include="ReportingMainWorkflowFolderSystemTool.cs" />
     <Compile Include="ReportingWorkflowFolder.cs" />
     <Compile Include="ReportingWorklistTable.cs" />
+    <Compile Include="ReviseReportTool.cs" />
     <Compile Include="SearchTool.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -87,6 +90,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>SupervisorSettings.settings</DependentUpon>
     </Compile>
+    <Compile Include="WorkflowItemTool.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SR.resx">

@@ -37,9 +37,15 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
     [DataContract]
     public class ReviseResidentReportResponse : DataContractBase
     {
+        /// <summary>
+        /// Updated reference to the verification step that was discontinued.
+        /// </summary>
         [DataMember]
         public EntityRef VerificationStepRef;
 
+        /// <summary>
+        /// Reference to the new interpretation step that was created.
+        /// </summary>
         [DataMember]
         public EntityRef InterpretationStepRef;
     }

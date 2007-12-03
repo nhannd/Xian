@@ -44,5 +44,7 @@ namespace ClearCanvas.Healthcare.Brokers
 
         IList<WorklistItem> Search(WorklistItemSearchCriteria[] where, SearchResultPage page, bool showActiveOnly);
         int SearchCount(WorklistItemSearchCriteria[] where, bool showActiveOnly);
+
+        IList<InterpretationStep> GetLinkedInterpretationCandidates(InterpretationStep step, Staff interpreter);
     }
 }
