@@ -55,9 +55,9 @@ namespace ClearCanvas.ImageServer.Rules.StudyDeleteAction
             DateTime scheduledTime = Platform.Time;
 
             if (_timeUnits.Equals("hours"))
-                scheduledTime = scheduledTime.AddDays(_time);
-            else if (_timeUnits.Equals("days"))
                 scheduledTime = scheduledTime.AddHours(_time);
+            else if (_timeUnits.Equals("days"))
+                scheduledTime = scheduledTime.AddDays(_time);
             else if (_timeUnits.Equals("weeks"))
                 scheduledTime = scheduledTime.AddDays(_time * 7f);
             else if (_timeUnits.Equals("months"))
