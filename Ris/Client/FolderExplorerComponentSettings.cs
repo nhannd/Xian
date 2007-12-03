@@ -27,10 +27,10 @@ namespace ClearCanvas.Ris.Client
         }
 
         /// <summary>
-        /// Builds an in-memory folder system from the specified XML model and the specified set of folders.
-        /// The folders will be ordered according to the XML model.  Any folders that are not a part of the
-        /// XML model will be added to the memory model and inserted into the XML model based on the path.
-        /// The XML model is automatically persisted, and new systems that have never before been persisted
+        /// Builds an in-memory folder system from the specified XML system and the specified set of folders.
+        /// The folders will be ordered according to the XML system.  Any folders that are not a part of the
+        /// XML system will be added to the memory folder system and inserted into the XML system based on the path.
+        /// The XML system is automatically persisted, and new systems that have never before been persisted
         /// will be added to the store.
         /// </summary>
         /// <param name="folderSystems">FolderSystem that contains lists of folders</param>
@@ -45,17 +45,20 @@ namespace ClearCanvas.Ris.Client
             {
                 string folderSystemID = folderSystem.Id;
 
+                // remember the folder system map
                 IDictionary<string, IFolder> folderMap = BuildFolderMap(folderSystem.Folders);
                 xmlFolderSystemFolderMap.Add(folderSystemID, folderMap);
 
+                // remember the modified xmlFolderSystem, since it may be different from the settings (which only store static folder)
                 XmlElement xmlFolderSystem = Synchronize(folderSystemID, folderMap);
                 xmlFolderSystemMap.Add(folderSystemID, xmlFolderSystem);
             }
 
-            // Build each folder systems using the order in the xml
+            // Using the order in the setting, rebuild each folder systems 
             foreach (XmlElement xmlFolderSystem in this.ListXmlFolderSystems())
             {
                 string folderSystemID = xmlFolderSystem.GetAttribute("id");
+
                 if (xmlFolderSystemFolderMap.ContainsKey(folderSystemID))
                     Build(xmlFolderSystemMap[folderSystemID], xmlFolderSystemFolderMap[folderSystemID], insertFolderDelegate);
             }
@@ -260,7 +263,10 @@ namespace ClearCanvas.Ris.Client
         }
 
         /// <summary>
-        /// Appends the specified folder to the specified XML folder system.
+        /// Appends the specified folder to the specified XML system.  The path
+        /// attribute of the folder to be inserted is compared with the path of the
+        /// folders in the xml system and an appropriate place to insert the folder is determined
+        /// based on the length of the common path.
         /// </summary>
         /// <param name="xmlFolderSystem">the "folder-system" node to insert an folder into</param>
         /// <param name="folder">the folder to be inserted</param>
@@ -271,18 +277,18 @@ namespace ClearCanvas.Ris.Client
                 return false;
 
             XmlNode insertionPoint = null;
-            int currentGroupScore = 0;
+            int highestScore = 0;
+            string folderPath = folder.FolderPath.LocalizedPath;
 
             foreach (XmlElement xmlFolder in xmlFolderSystem.GetElementsByTagName("folder"))
             {
                 string path = xmlFolder.GetAttribute("path");
 
-                string pathUpToLastSegment = GetPathUpToLastSegment(folder.FolderPath);
-                int groupScore = path.Contains(pathUpToLastSegment) ? pathUpToLastSegment.Length : 0;
-                if (groupScore >= currentGroupScore)
+                int currentScore = path.Contains(folderPath) ? folderPath.Length : 0;
+                if (currentScore >= highestScore)
                 {
                     insertionPoint = xmlFolder;
-                    currentGroupScore = groupScore;
+                    highestScore = currentScore;
                 }
             }
 
@@ -294,16 +300,6 @@ namespace ClearCanvas.Ris.Client
                 xmlFolderSystem.AppendChild(newXmlFolder);
 
             return true;
-        }
-
-
-        private string GetPathUpToLastSegment(Path path)
-        {
-            if (path.Segments.Length < 2)
-                return "";
-
-            int secondLastSegmentIndex = path.Segments.Length - 2;
-            return path.SubPath(secondLastSegmentIndex);
         }
     }
 }

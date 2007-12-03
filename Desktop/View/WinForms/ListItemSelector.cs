@@ -115,12 +115,20 @@ namespace ClearCanvas.Desktop.View.WinForms
         private void AddSelection(object sender, EventArgs e)
         {
             ISelection selection = _availableItems.Selection;
+            ISelection originalSelectedSelection = _selectedItems.Selection;
+
             foreach (object item in selection.Items)
             {
-                _selectedItems.Table.Items.Add(item);
-                _availableItems.Table.Items.Remove(item);
+                _selectedItemsTable.Items.Add(item);
+                _availableItemsTable.Items.Remove(item);
             }
+
             _selectedItemsTable.Sort();
+
+            _selectedItems.Table = _selectedItemsTable;
+            _availableItems.Table = _availableItemsTable;
+
+            _selectedItems.Selection = originalSelectedSelection;
 
             EventsHelper.Fire(_itemAdded, this, EventArgs.Empty);
         }
@@ -128,12 +136,20 @@ namespace ClearCanvas.Desktop.View.WinForms
         private void RemoveSelection(object sender, EventArgs e)
         {
             ISelection selection = _selectedItems.Selection;
+            ISelection originalAvailableSelection = _availableItems.Selection;
+
             foreach (object item in selection.Items)
             {
                 _selectedItemsTable.Items.Remove(item);
                 _availableItemsTable.Items.Add(item);
             }
+
             _availableItemsTable.Sort();
+
+            _selectedItems.Table = _selectedItemsTable;
+            _availableItems.Table = _availableItemsTable;
+
+            _availableItems.Selection = originalAvailableSelection;
 
             EventsHelper.Fire(_itemRemoved, this, EventArgs.Empty);
         }

@@ -493,15 +493,22 @@ namespace ClearCanvas.Ris.Client
             int lastIndex = folder.FolderPath.Segments.Length - 1;
             IFolder parentFolder = null;
 
+            // Loop through all folder path segments, create container folder for all intermediate path
+            // and insert the actual folder as the leaf folder
             for (int index = 0; index < folder.FolderPath.Segments.Length; index++)
             {
+                bool isLeaf = index == lastIndex;
+
                 string currentPath = folder.FolderPath.SubPath(index);
                 IFolder folderWithCurrentPath = CollectionUtils.SelectFirst(_folders,
                     delegate(IFolder f) { return Equals(currentPath, f.FolderPath.ToString()); });
 
                 if (folderWithCurrentPath != null)
                 {
-                    if (folderWithCurrentPath is ContainerFolder && index == lastIndex)
+                    // If this is not the leaf folder, no need to replace ContainerFolder with ContainerFolder
+                    // if the original leaf folder is NOT a container folder, do not replace.  It's okay to have two leaf folders with the same name
+                    // Only replace if the original leaf folder is a container folder
+                    if (isLeaf && folderWithCurrentPath is ContainerFolder && !(folder is ContainerFolder))
                     {
                         ReplaceFolder(folderWithCurrentPath, folder);
                         _folders.Remove(folderWithCurrentPath);
@@ -512,7 +519,7 @@ namespace ClearCanvas.Ris.Client
                 }
 
                 IFolder currentFolder;
-                if (index == lastIndex)
+                if (isLeaf)
                 {
                     currentFolder = folder;
                 }
@@ -574,8 +581,16 @@ namespace ClearCanvas.Ris.Client
             IFolder parentFolder = CollectionUtils.SelectFirst(_folderTree.Items,
                 delegate(IFolder f) { return f.Subfolders.Contains(oldFolder); });
 
-            RemoveFolder(oldFolder, parentFolder);
-            AddFolder(newFolder, parentFolder);
+            if (parentFolder != null)
+            {
+                RemoveFolder(oldFolder, parentFolder);
+                AddFolder(newFolder, parentFolder);
+            }
+            else
+            {
+                RemoveFolder(oldFolder);
+                AddFolder(newFolder);
+            }
         }
 
         // Tells the item collection holding the specified folder that the folder has been changed
