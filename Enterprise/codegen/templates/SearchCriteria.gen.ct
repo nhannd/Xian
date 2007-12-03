@@ -10,9 +10,9 @@ namespace <%= namespace %>
 {
 
     /// <summary>
-    /// Search criteria for <see cref="<%= className %>"/> entity
+    /// Search criteria for <see cref="<%= className %>"/> class.
     /// </summary>
-	public partial class <%= searchCriteriaClassName %> : <%= superClass  ? superClass.searchCriteriaClassName : superClassName + "SearchCriteria" %>
+	public partial class <%= searchCriteriaClassName %> : <%= searchCriteriaSuperClassName %>
 	{
 		/// <summary>
 		/// Constructor for top-level search criteria (no key required)
@@ -29,17 +29,6 @@ namespace <%= namespace %>
 		{
 		}
 
-		<% if( kind == :entity ) %>
-		/// <summary>
-		/// Constructor to search by EntityRef
-		/// </summary>
-		public <%= searchCriteriaClassName %>(EntityRef entityRef)
-		{
-			this.SubCriteria["OID"] = new SearchCondition<object>("OID");
-			((ISearchCondition<object>)this.SubCriteria["OID"]).EqualTo(EntityRefUtils.GetOID(entityRef));
-		}
-		<% end %>
-	
 		<% searchableFields.each do |f| %>
 	  	public <%= f.searchCriteriaReturnType %> <%= f.accessorName %>
 	  	{

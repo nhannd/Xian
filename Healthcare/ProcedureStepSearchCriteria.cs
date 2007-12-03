@@ -57,15 +57,6 @@ namespace ClearCanvas.Healthcare {
 		}
 
 		
-		/// <summary>
-		/// Constructor to search by EntityRef
-		/// </summary>
-		public ProcedureStepSearchCriteria(EntityRef entityRef)
-		{
-			this.SubCriteria["OID"] = new SearchCondition<object>("OID");
-            ((ISearchCondition<object>)this.SubCriteria["OID"]).EqualTo(EntityRefUtils.GetOID(entityRef));
-		}
-
         public new ProcedureStepSchedulingSearchCriteria Scheduling
         {
             get
@@ -78,15 +69,15 @@ namespace ClearCanvas.Healthcare {
             }
         }
 
-        public ISearchCondition<RequestedProcedure> Procedure
+        public RequestedProcedureSearchCriteria Procedure
 	  	{
 	  		get
 	  		{
 	  			if(!this.SubCriteria.ContainsKey("Procedure"))
 	  			{
-	  				this.SubCriteria["Procedure"] = new SearchCondition<RequestedProcedure>("Procedure");
+                    this.SubCriteria["Procedure"] = new RequestedProcedureSearchCriteria("Procedure");
 	  			}
-	  			return (ISearchCondition<RequestedProcedure>)this.SubCriteria["Procedure"];
+                return (RequestedProcedureSearchCriteria)this.SubCriteria["Procedure"];
 	  		}
 	  	}
 

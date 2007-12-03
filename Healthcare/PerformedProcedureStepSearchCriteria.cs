@@ -60,16 +60,6 @@ namespace ClearCanvas.Healthcare {
 		{
 		}
 
-		
-		/// <summary>
-		/// Constructor to search by EntityRef
-		/// </summary>
-		public PerformedProcedureStepSearchCriteria(EntityRef entityRef)
-		{
-            this.SubCriteria["OID"] = new SearchCondition<object>("OID");
-            ((ISearchCondition<object>)this.SubCriteria["OID"]).EqualTo(EntityRefUtils.GetOID(entityRef));
-		}
-		
 	  	public ProcedureStepPerformerSearchCriteria Performer
 	  	{
 	  		get

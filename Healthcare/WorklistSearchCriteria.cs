@@ -33,7 +33,7 @@ using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.Healthcare
 {
-    public class WorklistSearchCriteria : EntitySearchCriteria
+    public class WorklistSearchCriteria : EntitySearchCriteria<Worklist>
     {
         /// <summary>
         /// Constructor for top-level search criteria (no key required)

@@ -39,7 +39,8 @@ class ComponentFieldDef < FieldDef
   end
   
   def searchCriteriaReturnType
-    componentDef.searchCriteriaQualifiedClassName
+    # return type same as data type
+    searchCriteriaDataType
   end
   
   def attributes

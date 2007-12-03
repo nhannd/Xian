@@ -38,10 +38,5 @@ namespace ClearCanvas.Healthcare
         public DocumentationProcedureStepSearchCriteria()
         {
         }
-
-        public DocumentationProcedureStepSearchCriteria(EntityRef entityRef)
-            : base(entityRef)
-        {
-        }
     }
 }

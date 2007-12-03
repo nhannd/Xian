@@ -35,7 +35,8 @@ using System.Text;
 
 namespace ClearCanvas.Enterprise.Core
 {
-    public abstract class EntitySearchCriteria : SearchCriteria
+    public abstract class EntitySearchCriteria<TEntity> : SearchCriteria
+        where TEntity : Entity
     {
         public EntitySearchCriteria(string key)
             :base(key)
@@ -44,6 +45,43 @@ namespace ClearCanvas.Enterprise.Core
 
         public EntitySearchCriteria()
         {
+        }
+
+        public void EqualTo(TEntity entity)
+        {
+            this.IdentityCondition.EqualTo(entity);
+        }
+
+        public void NotEqualTo(TEntity entity)
+        {
+            this.IdentityCondition.NotEqualTo(entity);
+        }
+
+        public void In(IEnumerable<TEntity> entities)
+        {
+            this.IdentityCondition.In(entities);
+        }
+
+        public void IsNull()
+        {
+            this.IdentityCondition.IsNull();
+        }
+
+        public void IsNotNull()
+        {
+            this.IdentityCondition.IsNotNull();
+        }
+
+        private ISearchCondition<TEntity> IdentityCondition
+        {
+            get
+            {
+                if (!this.SubCriteria.ContainsKey("OID"))
+                {
+                    this.SubCriteria["OID"] = new SearchCondition<TEntity>("OID");
+                }
+                return (ISearchCondition<TEntity>) this.SubCriteria["OID"];
+            }
         }
    }
 }

@@ -36,7 +36,7 @@ using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.Workflow
 {
-    public class PerformedStepSearchCriteria : EntitySearchCriteria
+    public class PerformedStepSearchCriteria : EntitySearchCriteria<PerformedStep>
     {
  		/// <summary>
 		/// Constructor for top-level search criteria (no key required)

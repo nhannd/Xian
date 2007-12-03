@@ -33,6 +33,12 @@ class EntityDef < ClassDef
     className + "SearchCriteria"
   end
   
+  def searchCriteriaSuperClassName
+    # if this entity has a superclass, inherit from it's searchCriteria class, otherwise use "EntitySearchCriteria"
+    superClass ? superClass.searchCriteriaClassName : "EntitySearchCriteria<"+className+">"
+  end
+
+  
 protected
 
   def processUniqueKeys(fieldNode)

@@ -26,4 +26,9 @@ class ComponentDef < ClassDef
   def searchCriteriaClassName
     className + "SearchCriteria"
   end
+  
+   def searchCriteriaSuperClassName
+    # a component never has a superclass, therefore always return "SearchCriteria"
+   "SearchCriteria"
+  end
 end

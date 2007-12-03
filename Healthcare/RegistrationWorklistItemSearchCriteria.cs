@@ -11,14 +11,6 @@ namespace ClearCanvas.Healthcare
         {
         }
 
-        /// <summary>
-        /// Constructor for sub-criteria (key required)
-        /// </summary>
-        public RegistrationWorklistItemSearchCriteria(string key)
-            : base(key)
-        {
-        }
-
         public ClearCanvas.Healthcare.RequestedProcedureSearchCriteria RequestedProcedure
         {
             get

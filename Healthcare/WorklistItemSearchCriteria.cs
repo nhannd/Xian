@@ -2,20 +2,12 @@ using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.Healthcare
 {
-    public class WorklistItemSearchCriteria : EntitySearchCriteria
+    public class WorklistItemSearchCriteria : SearchCriteria
     {
         /// <summary>
         /// Constructor for top-level search criteria (no key required)
         /// </summary>
         public WorklistItemSearchCriteria()
-        {
-        }
-
-        /// <summary>
-        /// Constructor for sub-criteria (key required)
-        /// </summary>
-        public WorklistItemSearchCriteria(string key)
-            : base(key)
         {
         }
 

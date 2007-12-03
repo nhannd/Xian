@@ -24,4 +24,23 @@ class EntityFieldDef < FieldDef
   def supportDataType
     "EntityRef"
   end
+  
+  def searchCriteriaDataType
+    e = entityDef	
+    #if the entityDef exists, get it's searchCriteria class name, otherwise use the default 
+    #(the entityDef may not exist if our dataType refers to a class that this model doesn't know about)
+    e && e.searchCriteriaQualifiedClassName ?  e.searchCriteriaQualifiedClassName : super
+  end
+  
+  def searchCriteriaReturnType
+    e = entityDef
+    #if the entityDef exists, get it's searchCriteria class name, otherwise use the default 
+    #(the entityDef may not exist if our dataType refers to a class that this model doesn't know about)
+    e && e.searchCriteriaQualifiedClassName ?  e.searchCriteriaQualifiedClassName : super
+  end
+  
+protected
+  def entityDef
+    model.findDef(@dataType)
+  end
 end

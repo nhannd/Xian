@@ -53,24 +53,15 @@ namespace ClearCanvas.Healthcare
 		{
 		}
 
-        public void EqualTo(ReportingProcedureStep instance)
-        {
-            if (!this.SubCriteria.ContainsKey("OID"))
-            {
-                this.SubCriteria["OID"] = new SearchCondition<object>("OID");
-            }
-            ((ISearchCondition<object>)this.SubCriteria["OID"]).EqualTo(instance.OID);
-        }
-
-        public ISearchCondition<ClearCanvas.Healthcare.ReportPart> ReportPart
+        public ReportPartSearchCriteria ReportPart
         {
 	  		get
 	  		{
                 if (!this.SubCriteria.ContainsKey("ReportPart"))
 	  			{
-                    this.SubCriteria["ReportPart"] = new SearchCondition<ClearCanvas.Healthcare.ReportPart>("ReportPart");
+                    this.SubCriteria["ReportPart"] = new ReportPartSearchCriteria("ReportPart");
 	  			}
-                return (ISearchCondition<ClearCanvas.Healthcare.ReportPart>)this.SubCriteria["ReportPart"];
+                return (ReportPartSearchCriteria)this.SubCriteria["ReportPart"];
 	  		}
         }
     }

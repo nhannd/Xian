@@ -55,7 +55,7 @@ namespace ClearCanvas.Ris.Application.Services
     }
 
     public class TextQueryHelper<TDomainItem, TSearchCriteria, TSummary> : TextQueryHelper
-        where TSearchCriteria : EntitySearchCriteria
+        where TSearchCriteria : SearchCriteria
         where TSummary : DataContractBase
     {
         public delegate TSearchCriteria[] BuildCriteriaDelegate(string query);

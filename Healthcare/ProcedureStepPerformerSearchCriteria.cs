@@ -60,15 +60,15 @@ namespace ClearCanvas.Healthcare {
 		}
 
 
-	  	public ISearchCondition<Staff> Staff
+	  	public StaffSearchCriteria Staff
 	  	{
 	  		get
 	  		{
 	  			if(!this.SubCriteria.ContainsKey("Staff"))
 	  			{
-	  				this.SubCriteria["Staff"] = new SearchCondition<Staff>("Staff");
+                    this.SubCriteria["Staff"] = new StaffSearchCriteria("Staff");
 	  			}
-	  			return (ISearchCondition<Staff>)this.SubCriteria["Staff"];
+                return (StaffSearchCriteria)this.SubCriteria["Staff"];
 	  		}
 	  	}
 	  	

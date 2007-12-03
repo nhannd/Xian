@@ -51,11 +51,5 @@ namespace ClearCanvas.Healthcare
 			:base(key)
 		{
 		}
-
-        public ModalityProcedureStepSearchCriteria(EntityRef mpsRef)
-            :base(mpsRef)
-        {
-
-        }
     }
 }

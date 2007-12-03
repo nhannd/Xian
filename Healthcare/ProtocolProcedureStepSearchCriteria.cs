@@ -13,15 +13,15 @@ namespace ClearCanvas.Healthcare
         {
         }
 
-        public ISearchCondition<Protocol> Protocol
+        public ProtocolSearchCriteria Protocol
         {
             get
             {
                 if(!this.SubCriteria.ContainsKey("Protocol"))
                 {
-                    this.SubCriteria["Protocol"] = new SearchCondition<Protocol>("Protocol");
+                    this.SubCriteria["Protocol"] = new ProtocolSearchCriteria("Protocol");
                 }
-                return (ISearchCondition<Protocol>) this.SubCriteria["Protocol"];
+                return (ProtocolSearchCriteria)this.SubCriteria["Protocol"];
             }
         }
     }
