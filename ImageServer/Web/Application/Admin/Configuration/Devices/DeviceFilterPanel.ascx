@@ -10,7 +10,7 @@
             <asp:Label ID="Label2" runat="server" Text="IP Address"  EnableViewState="False"></asp:Label><br />
         <asp:TextBox ID="IPAddressFilter" runat="server" Width="100px" ToolTip="Filter the list by IP Address"></asp:TextBox></td>
         <td  align="left" valign="bottom" >
-            <asp:CheckBox ID="EnabledOnlyFilter" runat="server" Text="Active" ToolTip="Show active devices only" /></td>
+            <asp:CheckBox ID="EnabledOnlyFilter" runat="server" Text="Enabled" ToolTip="Show Enabled devices only" /></td>
         <td  align="left" valign="bottom" >
             <br />
             <asp:CheckBox ID="DHCPOnlyFilter" runat="server" Text="DHCP"  ToolTip="Show only devices using DHCP" /></td>

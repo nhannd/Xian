@@ -197,7 +197,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
                 Device = new Device();
             }
 
-            Device.Active = ActiveCheckBox.Checked;
+            Device.Enabled = ActiveCheckBox.Checked;
             Device.AeTitle = AETitleTextBox.Text;
             Device.Description = DescriptionTextBox.Text;
             Device.Dhcp = DHCPCheckBox.Checked;
@@ -269,7 +269,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
             {
                 AETitleTextBox.Text = Device.AeTitle;
                 IPAddressTextBox.Text = Device.IpAddress;
-                ActiveCheckBox.Checked = Device.Active;
+                ActiveCheckBox.Checked = Device.Enabled;
                 DHCPCheckBox.Checked = Device.Dhcp;
                 DescriptionTextBox.Text = Device.Description;
                 PortTextBox.Text = Device.Port.ToString();

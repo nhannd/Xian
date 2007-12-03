@@ -126,7 +126,7 @@ namespace ClearCanvas.ImageServer.Rules
                 ISelectServerRule broker = read.GetBroker<ISelectServerRule>();
 
                 ServerRuleSelectCriteria criteria = new ServerRuleSelectCriteria();
-                criteria.Active.EqualTo(true);
+                criteria.Enabled.EqualTo(true);
                 criteria.ServerRuleApplyTimeEnum.EqualTo(_applyTime);
                 criteria.ServerPartitionKey.EqualTo(_serverPartitionKey);
 

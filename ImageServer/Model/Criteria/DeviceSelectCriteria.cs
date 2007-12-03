@@ -88,15 +88,15 @@ namespace ClearCanvas.ImageServer.Model.Criteria
             }
         }
 
-        public ISearchCondition<bool> Active
+        public ISearchCondition<bool> Enabled
         {
             get
             {
-                if (!SubCriteria.ContainsKey("Active"))
+                if (!SubCriteria.ContainsKey("Enabled"))
                 {
-                    SubCriteria["Active"] = new SearchCondition<bool>("Active");
+                    SubCriteria["Enabled"] = new SearchCondition<bool>("Enabled");
                 }
-                return (ISearchCondition<bool>)SubCriteria["Active"];
+                return (ISearchCondition<bool>)SubCriteria["Enabled"];
             }
         }
     

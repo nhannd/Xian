@@ -351,7 +351,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
             
             if (img != null)
             {
-                bool active = Convert.ToBoolean(DataBinder.Eval(e.Row.DataItem, "Active"));
+                bool active = Convert.ToBoolean(DataBinder.Eval(e.Row.DataItem, "Enabled"));
                 if (active)
                     img.ImageUrl = "~/images/checked_small.gif";
                 else

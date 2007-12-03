@@ -31,9 +31,9 @@
                     <asp:BoundField DataField="Port" HeaderText="Port">
                         
                     </asp:BoundField>
-                    <asp:TemplateField HeaderText="Active">
+                    <asp:TemplateField HeaderText="Enabled">
                         <EditItemTemplate>
-                            <asp:TextBox ID="TextBox1" runat="server" Text='<%# Bind("Active") %>'></asp:TextBox>
+                            <asp:TextBox ID="TextBox1" runat="server" Text='<%# Bind("Enabled") %>'></asp:TextBox>
                         </EditItemTemplate>
                         <ItemTemplate>
                             <asp:Image ID="ActiveImage" runat="server" ImageUrl="~/images/unchecked_small.gif"/>

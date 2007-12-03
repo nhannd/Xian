@@ -42,42 +42,30 @@ namespace ClearCanvas.ImageServer.Model.Parameters
 
         public ServerEntityKey DeviceKey
         {
-            set { this.SubCriteria["GUID"] = new ProcedureParameter<ServerEntityKey>("GUID", value); }
-            get { return ((ProcedureParameter<ServerEntityKey>)this.SubCriteria["GUID"]).Value; }
+            set { this.SubCriteria["Key"] = new ProcedureParameter<ServerEntityKey>("Key", value); }
+            get { return ((ProcedureParameter<ServerEntityKey>)this.SubCriteria["Key"]).Value; }
         }
-
-        //public string ServerPartitionGUID
-        //{
-        //    set { this.SubCriteria["ServerPartitionGUID"] = new ProcedureParameter<string>("ServerPartitionGUID", value); }
-        //    get { return ((ProcedureParameter<string>)this.SubCriteria["ServerPartitionGUID"]).Value; }
-        //}
         public ServerEntityKey ServerPartitionKey
         {
-            set { this.SubCriteria["ServerPartitionGUID"] = new ProcedureParameter<ServerEntityKey>("ServerPartitionGUID", value); }
-            get { return ((ProcedureParameter<ServerEntityKey>)this.SubCriteria["ServerPartitionGUID"]).Value; }
+            set { this.SubCriteria["ServerPartitionKey"] = new ProcedureParameter<ServerEntityKey>("ServerPartitionKey", value); }
+            get { return ((ProcedureParameter<ServerEntityKey>)this.SubCriteria["ServerPartitionKey"]).Value; }
             
         }
-
         public string AETitle
         {
             set { this.SubCriteria["AETitle"] = new ProcedureParameter<string>("AETitle", value); }
             get { return ((ProcedureParameter<string>)this.SubCriteria["AETitle"]).Value; }
         }
-
         public string IPAddress
         {
             set { this.SubCriteria["IPAddress"] = new ProcedureParameter<string>("IPAddress", value); }
             get { return ((ProcedureParameter<string>)this.SubCriteria["IPAddress"]).Value; }
         }
-
-
         public int Port
         {
             set { this.SubCriteria["Port"] = new ProcedureParameter<int>("Port", value); }
             get { return ((ProcedureParameter<int>)this.SubCriteria["Port"]).Value; }
-        }
-
-        
+        } 
         public string Description
         {
             set { this.SubCriteria["Description"] = new ProcedureParameter<string>("Description", value); }
@@ -88,11 +76,10 @@ namespace ClearCanvas.ImageServer.Model.Parameters
             set { this.SubCriteria["DHCP"] = new ProcedureParameter<bool>("DHCP", value); }
             get { return ((ProcedureParameter<bool>)this.SubCriteria["DHCP"]).Value; }
         }
-
-        public bool Active
+        public bool Enabled
         {
-            set { this.SubCriteria["Active"] = new ProcedureParameter<bool>("Active", value); }
-            get { return ((ProcedureParameter<bool>)this.SubCriteria["Active"]).Value; }
+            set { this.SubCriteria["Enabled"] = new ProcedureParameter<bool>("Enabled", value); }
+            get { return ((ProcedureParameter<bool>)this.SubCriteria["Enabled"]).Value; }
         }
         public bool AllowStorage
         {

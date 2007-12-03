@@ -445,9 +445,11 @@ BEGIN
     -- Variables
 	DECLARE @GUID uniqueidentifier
 	DECLARE @FilesystemDeleteServiceLockTypeEnum smallint
+	DECLARE @FilesystemReinventoryServiceLockTypeEnum smallint
 
 	SET @GUID = newid()
 	SELECT @FilesystemDeleteServiceLockTypeEnum = Enum FROM ServiceLockTypeEnum WHERE [Lookup] = ''FilesystemDelete''
+	SELECT @FilesystemReinventoryServiceLockTypeEnum = Enum FROM ServiceLockTypeEnum WHERE [Lookup] = ''FilesystemReinventory''
 
     -- Insert statements
 	BEGIN TRANSACTION
@@ -457,8 +459,12 @@ BEGIN
 	VALUES (@GUID, @FilesystemTierEnum, @FilesystemPath, @Enabled, @ReadOnly, @WriteOnly, @Description, @HighWatermark, @LowWatermark)
 
 	INSERT INTO [ImageServer].[dbo].ServiceLock
-		([GUID],[ServiceLockTypeEnum],[Lock],[ScheduledTime],[FilesystemGUID])
-	VALUES (newid(),@FilesystemDeleteServiceLockTypeEnum,0,getdate(),@GUID)
+		([GUID],[ServiceLockTypeEnum],[Lock],[ScheduledTime],[FilesystemGUID],[Enabled])
+	VALUES (newid(),@FilesystemDeleteServiceLockTypeEnum,0,getdate(),@GUID,1)
+
+	INSERT INTO [ImageServer].[dbo].ServiceLock
+		([GUID],[ServiceLockTypeEnum],[Lock],[ScheduledTime],[FilesystemGUID],[Enabled])
+	VALUES (newid(),@FilesystemReinventoryServiceLockTypeEnum,0,getdate(),@GUID,0)
 
 	COMMIT TRANSACTION
 
@@ -503,8 +509,9 @@ BEGIN
 		SELECT TOP (1) @ServiceLockGUID = ServiceLock.GUID 
 		FROM ServiceLock
 		WHERE
-			ScheduledTime < getdate() 
-			AND (  ServiceLock.Lock = 0 )
+			Enabled = 1
+			AND ScheduledTime < getdate() 
+			AND ( ServiceLock.Lock = 0 )
 		ORDER BY ServiceLock.ScheduledTime
 	END
 	ELSE
@@ -512,9 +519,10 @@ BEGIN
 		SELECT TOP (1) @ServiceLockGUID = ServiceLock.GUID 
 		FROM ServiceLock
 		WHERE
-			ScheduledTime < getdate() 
+			Enabled = 1
+			AND ScheduledTime < getdate() 
 			AND ServiceLock.ServiceLockTypeEnum = @ServiceLockTypeEnum
-			AND (  ServiceLock.Lock = 0 )
+			AND ( ServiceLock.Lock = 0 )
 		ORDER BY ServiceLock.ScheduledTime
 	END
 
@@ -623,7 +631,8 @@ CREATE PROCEDURE [dbo].[UpdateServiceLock]
 	@ProcessorId varchar(256), 
 	@ServiceLockGUID uniqueidentifier,
 	@Lock bit,
-	@ScheduledTime datetime
+	@ScheduledTime datetime,
+	@Enabled bit = 1
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -633,7 +642,7 @@ BEGIN
     -- Insert statements for procedure here
 		UPDATE ServiceLock
 		SET Lock = @Lock, ScheduledTime = @ScheduledTime,
-			ProcessorID = @ProcessorID
+			ProcessorID = @ProcessorID, Enabled = @Enabled
 		WHERE GUID = @ServiceLockGUID
 END
 ' 
@@ -787,7 +796,7 @@ CREATE PROCEDURE [dbo].[InsertDevice]
 	@AeTitle varchar(16),
 	@Description nvarchar(256),
 	@IpAddress varchar(16),
-	@Active bit,
+	@Enabled bit,
 	@Dhcp bit,
 	@Port int,
 	@AllowStorage bit=0,
@@ -800,8 +809,8 @@ BEGIN
 	SET NOCOUNT ON;
 
 
-	INSERT into Device (GUID, ServerPartitionGUID, AeTitle, Description, IpAddress, Port, Active, Dhcp, AllowStorage, AllowQuery, AllowRetrieve)
-		values  (NEWID(), @ServerPartitionGUID, @AeTitle, @Description, @IpAddress, @Port, @Active, @Dhcp, @AllowStorage, @AllowQuery, @AllowRetrieve)
+	INSERT into Device (GUID, ServerPartitionGUID, AeTitle, Description, IpAddress, Port, Enabled, Dhcp, AllowStorage, AllowQuery, AllowRetrieve)
+		values  (NEWID(), @ServerPartitionGUID, @AeTitle, @Description, @IpAddress, @Port, @Enabled, @Dhcp, @AllowStorage, @AllowQuery, @AllowRetrieve)
 END
 ' 
 END
@@ -823,12 +832,12 @@ CREATE PROCEDURE [dbo].[UpdateDevice]
          -- Add the parameters for the stored procedure here  
          @GUID uniqueidentifier,  
          @ServerPartitionGUID uniqueidentifier,  
-         @AETitle varchar(16),  
-         @IPAddress varchar(16),  
+         @AeTitle varchar(16),  
+         @IpAddress varchar(16),  
          @Port   int,  
          @Description    nvarchar(256),  
-         @DHCP   bit,  
-         @Active bit,
+         @Dhcp  bit,  
+         @Enabled bit,
 		 @AllowStorage bit,
 		 @AllowQuery bit,
 		 @AllowRetrieve  bit
@@ -839,14 +848,13 @@ BEGIN
          SET NOCOUNT ON;  
    
     UPDATE [ImageServer].[dbo].[Device]  
-    SET [GUID] = @GUID  
-       ,[ServerPartitionGUID] = @ServerPartitionGUID  
-       ,[AeTitle] = @AETitle  
-       ,[IpAddress] = @IPAddress  
+    SET [ServerPartitionGUID] = @ServerPartitionGUID  
+       ,[AeTitle] = @AeTitle  
+       ,[IpAddress] = @IpAddress  
        ,[Port] = @Port  
        ,[Description] = @Description  
-       ,[Dhcp] = @DHCP  
-       ,[Active] = @Active  
+       ,[Dhcp] = @Dhcp  
+       ,[Enabled] = @Enabled  
 	   ,[AllowStorage] = @AllowStorage
 	   ,[AllowQuery] = @AllowQuery
 	   ,[AllowRetrieve] = @AllowRetrieve
@@ -1048,7 +1056,7 @@ BEGIN
 
 	-- Insert a default StudyDelete rule
 	INSERT INTO [ImageServer].[dbo].[ServerRule]
-			   ([GUID],[RuleName],[ServerPartitionGUID],[ServerRuleApplyTimeEnum],[ServerRuleTypeEnum],[Active],[DefaultRule],[RuleXml])
+			   ([GUID],[RuleName],[ServerPartitionGUID],[ServerRuleApplyTimeEnum],[ServerRuleTypeEnum],[Enabled],[DefaultRule],[RuleXml])
 		 VALUES
 			   (newid(),''Default Delete'',@ServerPartitionGUID, @StudyServerRuleApplyTimeEnum, @StudyDeleteServerRuleTypeEnum, 1, 1,
 				''<rule id="Default Delete">
@@ -1059,7 +1067,7 @@ BEGIN
 
 	-- Insert a default Tier1Retention rule
 	INSERT INTO [ImageServer].[dbo].[ServerRule]
-			   ([GUID],[RuleName],[ServerPartitionGUID],[ServerRuleApplyTimeEnum],[ServerRuleTypeEnum],[Active],[DefaultRule],[RuleXml])
+			   ([GUID],[RuleName],[ServerPartitionGUID],[ServerRuleApplyTimeEnum],[ServerRuleTypeEnum],[Enabled],[DefaultRule],[RuleXml])
 		 VALUES
 			   (newid(),''Default Tier1 Retention'',@ServerPartitionGUID, @StudyServerRuleApplyTimeEnum, @Tier1RetentionServerRuleTypeEnum, 1, 1,
 				''<rule id="Default Tier1 Retention">
@@ -1070,7 +1078,7 @@ BEGIN
 
 	-- Insert a default Online Retention Rule
 	INSERT INTO [ImageServer].[dbo].[ServerRule]
-			   ([GUID],[RuleName],[ServerPartitionGUID],[ServerRuleApplyTimeEnum],[ServerRuleTypeEnum],[Active],[DefaultRule],[RuleXml])
+			   ([GUID],[RuleName],[ServerPartitionGUID],[ServerRuleApplyTimeEnum],[ServerRuleTypeEnum],[Enabled],[DefaultRule],[RuleXml])
 		 VALUES
 			   (newid(),''Default Online Retention'',@ServerPartitionGUID, @StudyServerRuleApplyTimeEnum, @OnlineRetentionServerRuleTypeEnum, 1, 1,
 				''<rule id="Default Online Retention">

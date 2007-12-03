@@ -30,8 +30,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.ImageServer.Enterprise;
 
 namespace ClearCanvas.ImageServer.Model
@@ -49,6 +47,7 @@ namespace ClearCanvas.ImageServer.Model
         private ServiceLockTypeEnum _serviceLockTypeEnum;
         private string _processorId;
         private bool _lock;
+        private bool _enabled;
         private DateTime _scheduledTime;
         private ServerEntityKey _filesystemKey;
         #endregion
@@ -78,6 +77,11 @@ namespace ClearCanvas.ImageServer.Model
         {
             get { return _filesystemKey; }
             set { _filesystemKey = value; }
+        }
+        public bool Enabled
+        {
+            get { return _enabled; }
+            set { _enabled = value; }
         }
         #endregion
     }

@@ -121,7 +121,8 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
         /// </summary>
         /// <param name="item">The <see cref="ServiceLock"/> entry to set.</param>
         /// <param name="scheduledTime"></param>
-        protected static void UnlockServiceLock(Model.ServiceLock item, DateTime scheduledTime)
+        /// <param name="enabled">Bool telling if the ServiceLock entry should be enabled after unlock.</param>
+        protected static void UnlockServiceLock(Model.ServiceLock item, bool enabled, DateTime scheduledTime)
         {
             using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
@@ -133,6 +134,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
                 parms.Lock = false;
                 parms.ScheduledTime = scheduledTime;
                 parms.ProcessorId = item.ProcessorId;
+                parms.Enabled = enabled;
 
                 if (false == update.Execute(parms))
                 {

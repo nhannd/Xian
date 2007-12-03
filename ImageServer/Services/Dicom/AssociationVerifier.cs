@@ -70,7 +70,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                 return false;
             }
 
-            if (device.Active==false)
+            if (device.Enabled==false)
             {
             
                 Platform.Log(LogLevel.Error,

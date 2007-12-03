@@ -79,7 +79,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                         DeviceInsertParameters insertParms = new DeviceInsertParameters();
 
                         insertParms.AeTitle = association.CallingAE;
-                        insertParms.Active = true;
+                        insertParms.Enabled = true;
                         insertParms.Description = String.Format("AE: {0}", association.CallingAE);
                         insertParms.Dhcp = false;
                         insertParms.IpAddress = association.RemoteEndPoint.Address.ToString();

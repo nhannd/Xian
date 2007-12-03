@@ -117,7 +117,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
                                     queueInsertParms.SeriesInstanceUid = seriesInstanceUid;
                                     queueInsertParms.SopInstanceUid = sopInstanceUid;
                                     queueInsertParms.ScheduledTime = Platform.Time;
-                                    queueInsertParms.ExpirationTime = Platform.Time.AddMinutes(5.0);
+                                    queueInsertParms.ExpirationTime = Platform.Time.AddMinutes(1.0);
 
                                     workQueueInsert.Execute(queueInsertParms);
 
@@ -203,6 +203,9 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
             ReinventoryFilesystem(info.Filesystem);
 
             item.ScheduledTime = item.ScheduledTime.AddDays(1);
+
+            UnlockServiceLock(item, false, Platform.Time.AddDays(1));
+
         }
         #endregion
     }

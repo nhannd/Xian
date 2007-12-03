@@ -210,7 +210,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
 
             if (filters.EnabledOnly)
             {
-                criteria.Active.EqualTo(true);
+                criteria.Enabled.EqualTo(true);
             }
 
             if (filters.DhcpOnly)

@@ -50,7 +50,7 @@ namespace ClearCanvas.ImageServer.Model
         private ServerEntityKey _serverPartitionKey;
         private ServerRuleTypeEnum _serverRuleTypeEnum;
         private ServerRuleApplyTimeEnum _serverRuleApplyTimeEnum;
-        private bool _active;
+        private bool _enabled;
         private bool _defaultRule;
         private XmlDocument _ruleXml;
         #endregion
@@ -76,10 +76,10 @@ namespace ClearCanvas.ImageServer.Model
             get { return _serverRuleApplyTimeEnum; }
             set { _serverRuleApplyTimeEnum = value; }
         }
-        public bool Active
+        public bool Enabled
         {
-            get { return _active; }
-            set { _active = value; }
+            get { return _enabled; }
+            set { _enabled = value; }
         }
         public bool DefaultRule
         {

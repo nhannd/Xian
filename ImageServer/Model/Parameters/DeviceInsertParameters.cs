@@ -61,9 +61,9 @@ namespace ClearCanvas.ImageServer.Model.Parameters
         {
             set { this.SubCriteria["Port"] = new ProcedureParameter<int>("Port", value); }
         }
-        public bool Active
+        public bool Enabled
         {
-            set { this.SubCriteria["Active"] = new ProcedureParameter<bool>("Active", value); }
+            set { this.SubCriteria["Enabled"] = new ProcedureParameter<bool>("Enabled", value); }
         }
         public bool Dhcp
         {

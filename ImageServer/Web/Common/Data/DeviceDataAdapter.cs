@@ -29,9 +29,7 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
@@ -39,7 +37,6 @@ using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.Criteria;
 using ClearCanvas.ImageServer.Model.Parameters;
 using ClearCanvas.ImageServer.Model.SelectBrokers;
-
 
 namespace ClearCanvas.ImageServer.Web.Common.Data
 {
@@ -118,7 +115,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                 DeviceUpdateParameters param = new DeviceUpdateParameters();
                 param.DeviceKey = dev.GetKey();
                 param.ServerPartitionKey = dev.ServerPartitionKey;
-                param.Active = dev.Active;
+                param.Enabled = dev.Enabled;
                 param.AETitle = dev.AeTitle;
                 param.Description = dev.Description;
                 param.DHCP = dev.Dhcp;
@@ -192,7 +189,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                 param.Description = newDev.Description;
                 param.IpAddress = newDev.IpAddress;
                 param.Port = newDev.Port;
-                param.Active = newDev.Active;
+                param.Enabled = newDev.Enabled;
                 param.Dhcp = newDev.Dhcp;
                 param.AllowQuery = newDev.AllowQuery;
                 param.AllowRetrieve = newDev.AllowRetrieve;

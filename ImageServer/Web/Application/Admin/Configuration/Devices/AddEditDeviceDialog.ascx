@@ -117,7 +117,7 @@
                                         <td id="Td8" runat="server" >
                                         </td>
                                         <td id="Td9" runat="server"  valign="bottom">
-                                            <asp:CheckBox ID="ActiveCheckBox" runat="server" Checked="True" Text="Active" /></td>
+                                            <asp:CheckBox ID="ActiveCheckBox" runat="server" Checked="True" Text="Enabled" /></td>
                                     </tr>
                                 </table>
                             </asp:Panel>

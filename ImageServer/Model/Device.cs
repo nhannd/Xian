@@ -60,7 +60,7 @@ namespace ClearCanvas.ImageServer.Model
         private String _description;
         private String _ipAddress;
         private ServerEntityKey _serverPartitionKey;    
-        private bool _active;
+        private bool _enabled;
         private bool _dhcp;
         private int _port;
         private bool _allowStorage;
@@ -70,10 +70,10 @@ namespace ClearCanvas.ImageServer.Model
         #endregion
 
         #region Public Properties
-        public bool Active
+        public bool Enabled
         {
-            get { return _active; }
-            set { _active = value; }
+            get { return _enabled; }
+            set { _enabled = value; }
         }
 
         public bool Dhcp
