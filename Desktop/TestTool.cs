@@ -77,8 +77,9 @@ namespace ClearCanvas.Desktop
                     this.Context.DesktopWindow,
                     component,
                     "Shelf 1",
-                    ShelfDisplayHint.DockAutoHide | ShelfDisplayHint.DockRight | ShelfDisplayHint.HideOnWorkspaceOpen,
-                    delegate(IApplicationComponent c) { _shelf1 = null; });
+                    ShelfDisplayHint.DockAutoHide | ShelfDisplayHint.DockRight | ShelfDisplayHint.HideOnWorkspaceOpen);
+
+                _shelf1.Closed += delegate { _shelf1 = null; };
             }
             else
             {
@@ -107,8 +108,8 @@ namespace ClearCanvas.Desktop
                     this.Context.DesktopWindow,
                     component,
                     "Shelf 2",
-                    ShelfDisplayHint.DockAutoHide | ShelfDisplayHint.DockLeft,
-                    delegate(IApplicationComponent c) { _shelf2 = null; });
+                    ShelfDisplayHint.DockAutoHide | ShelfDisplayHint.DockLeft);
+                _shelf2.Closed += delegate { _shelf2 = null; };
             }
             else
             {
@@ -135,7 +136,7 @@ namespace ClearCanvas.Desktop
                 this.Context.DesktopWindow,
                 new TestComponent(name),
                 name,
-                null);
+                name);
         }
 
 		void NewDesktopWindow()

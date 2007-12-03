@@ -101,10 +101,9 @@ namespace ClearCanvas.Desktop.Explorer
 			// should be visible at all times.
 			args.UserClosable = false;
 
-			_workspace = ApplicationComponent.LaunchAsWorkspace(
-				this.Context.DesktopWindow,
-				args,
-				delegate
+		    _workspace = ApplicationComponent.LaunchAsWorkspace(this.Context.DesktopWindow, args);
+            _workspace.Closed += 
+                delegate
 				{
 					_workspace = null;
 					_tabComponentContainer = null;
@@ -114,7 +113,7 @@ namespace ClearCanvas.Desktop.Explorer
 					// The Explorer drives the image viewer, so if it's closing
 					// we assume that any child image viewer windows should close too
 					CloseChildDesktopWindows();
-				});
+				};
 
 		}
 

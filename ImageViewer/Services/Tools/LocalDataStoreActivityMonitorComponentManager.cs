@@ -64,15 +64,16 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 					SplitComponentContainer container = new SplitComponentContainer(topPane, bottomPane, SplitOrientation.Horizontal);
 
-					_dicomSendReceiveActivityComponentShelf = ApplicationComponent.LaunchAsShelf(
-							desktopWindow, container, 
-							SR.MenuDicomSendReceiveActivity,
-							"Send/Receive Activity Monitor", 
-							ShelfDisplayHint.DockLeft | ShelfDisplayHint.DockAutoHide,
-							delegate(IApplicationComponent closingComponent)
-							{
-								_dicomSendReceiveActivityComponentShelf = null;
-							});
+				    _dicomSendReceiveActivityComponentShelf = ApplicationComponent.LaunchAsShelf(
+				        desktopWindow, container,
+				        SR.MenuDicomSendReceiveActivity,
+				        "Send/Receive Activity Monitor",
+				        ShelfDisplayHint.DockLeft | ShelfDisplayHint.DockAutoHide);
+				    _dicomSendReceiveActivityComponentShelf.Closed +=
+				        delegate
+				        {
+				            _dicomSendReceiveActivityComponentShelf = null;
+				        };
 				}
 				catch
 				{
@@ -93,15 +94,16 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 				try
 				{
 					DicomFileImportApplicationComponent component = new DicomFileImportApplicationComponent();
-					_importComponentShelf = ApplicationComponent.LaunchAsShelf(
-						desktopWindow, component, 
-						component.Title, 
-						"Import",
-						ShelfDisplayHint.DockBottom | ShelfDisplayHint.DockAutoHide,
-						delegate(IApplicationComponent closingComponent)
-						{
-							_importComponentShelf = null;
-						});
+				    _importComponentShelf = ApplicationComponent.LaunchAsShelf(
+				        desktopWindow, component,
+				        component.Title,
+				        "Import",
+				        ShelfDisplayHint.DockBottom | ShelfDisplayHint.DockAutoHide);
+				    _importComponentShelf.Closed +=
+				        delegate
+				        {
+				            _importComponentShelf = null;
+				        };
 				}
 				catch
 				{
@@ -122,15 +124,16 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 				try
 				{
 					LocalDataStoreReindexApplicationComponent component = new LocalDataStoreReindexApplicationComponent();
-					_reindexComponentShelf = ApplicationComponent.LaunchAsShelf(
-						desktopWindow, component, 
-						component.Title, 
-						"Reindex",
-						ShelfDisplayHint.DockBottom | ShelfDisplayHint.DockAutoHide,
-						delegate(IApplicationComponent closingComponent)
-						{
-							_reindexComponentShelf = null;
-						});
+				    _reindexComponentShelf = ApplicationComponent.LaunchAsShelf(
+				        desktopWindow, component,
+				        component.Title,
+				        "Reindex",
+				        ShelfDisplayHint.DockBottom | ShelfDisplayHint.DockAutoHide);
+				    _reindexComponentShelf.Closed +=
+				        delegate
+				        {
+				            _reindexComponentShelf = null;
+				        };
 				}
 				catch
 				{

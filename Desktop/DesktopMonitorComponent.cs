@@ -59,8 +59,8 @@ namespace ClearCanvas.Desktop
                 _workspace = ApplicationComponent.LaunchAsWorkspace(
                     this.Context.DesktopWindow,
                     component,
-                    "Desktop Monitor",
-                    delegate(IApplicationComponent c) { _workspace = null; });
+                    "Desktop Monitor");
+                _workspace.Closed += delegate { _workspace = null; };
             }
             else
             {

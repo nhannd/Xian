@@ -87,7 +87,8 @@ namespace ClearCanvas.Desktop
                 _closeHelperShelf = ApplicationComponent.LaunchAsShelf(window, component,
 					SR.TitleCloseAssistant,
 					"Close Assistant",
-                    ShelfDisplayHint.DockLeft, delegate { _closeHelperShelf = null; });
+                    ShelfDisplayHint.DockLeft);
+                _closeHelperShelf.Closed += delegate { _closeHelperShelf = null; };
             }
             else
             {

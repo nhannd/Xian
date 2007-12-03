@@ -58,6 +58,8 @@ namespace ClearCanvas.Desktop
     /// </remarks>
     public abstract class ApplicationComponent : IApplicationComponent, INotifyPropertyChanged, IDataErrorInfo
     {
+        #region LaunchAsWorkspace overloads
+
         /// <summary>
         /// Executes the specified application component in a new workspace.  The exit callback will be invoked
         /// when the workspace is closed.
@@ -71,13 +73,15 @@ namespace ClearCanvas.Desktop
         /// <param name="title">The title of the workspace.</param>
         /// <param name="exitCallback">An optional callback to invoke when the workspace is closed.</param>
         /// <returns>The workspace that is hosting the component.</returns>
+        [Obsolete("This overload has been deprecated.  Use the Workspace.Closed event instead of the exitCallback parameter.")]
         public static Workspace LaunchAsWorkspace(
             IDesktopWindow desktopWindow,
             IApplicationComponent component,
             string title,
             ApplicationComponentExitDelegate exitCallback)
         {
-            return LaunchAsWorkspace(desktopWindow, component, title, null, exitCallback);
+            WorkspaceCreationArgs args = new WorkspaceCreationArgs(component, title, null);
+            return LaunchAsWorkspace(desktopWindow, args, exitCallback);
         }
 
         /// <summary>
@@ -90,6 +94,7 @@ namespace ClearCanvas.Desktop
         /// <param name="name">The unique name of the workspace.</param>
         /// <param name="exitCallback">An optional callback to invoke when the workspace is closed.</param>
         /// <returns>The workspace that is hosting the component.</returns>
+        [Obsolete("This overload has been deprecated.  Use the Workspace.Closed event instead of the exitCallback parameter.")]
         public static Workspace LaunchAsWorkspace(
             IDesktopWindow desktopWindow,
             IApplicationComponent component,
@@ -105,15 +110,81 @@ namespace ClearCanvas.Desktop
         	return LaunchAsWorkspace(desktopWindow, args, exitCallback);
         }
 
-		/// <summary>
-		/// Executes the specified application component in a new workspace.  The exit callback will be invoked
-		/// when the workspace is closed.
+        /// <summary>
+        /// Executes the specified application component in a new workspace.
+        /// </summary>
+        /// <remarks>
+        /// If the specified component throws an exception from the <see cref="Start"/> method, that exception
+        /// will be propagate to the caller of this method and the component will not be launched.
+        /// </remarks>
+        /// <param name="desktopWindow">The desktop window in which the workspace will run.</param>
+        /// <param name="component">The application component to launch.</param>
+        /// <param name="title">The title of the workspace.</param>
+        /// <param name="name">A name that will be assigned to the workspace.</param>
+        /// <returns>The workspace that is hosting the component.</returns>
+        public static Workspace LaunchAsWorkspace(
+            IDesktopWindow desktopWindow,
+            IApplicationComponent component,
+            string title,
+            string name)
+        {
+            Platform.CheckForNullReference(desktopWindow, "desktopWindow");
+            Platform.CheckForNullReference(component, "component");
+
+            WorkspaceCreationArgs args = new WorkspaceCreationArgs(component, title, name);
+
+            return LaunchAsWorkspace(desktopWindow, args, null);
+        }
+
+        /// <summary>
+        /// Executes the specified application component in a new workspace.
+        /// </summary>
+        /// <remarks>
+        /// If the specified component throws an exception from the <see cref="Start"/> method, that exception
+        /// will be propagate to the caller of this method and the component will not be launched.
+        /// </remarks>
+        /// <param name="desktopWindow">The desktop window in which the workspace will run.</param>
+        /// <param name="component">The application component to launch.</param>
+        /// <param name="title">The title of the workspace.</param>
+        /// <returns>The workspace that is hosting the component.</returns>
+        public static Workspace LaunchAsWorkspace(
+            IDesktopWindow desktopWindow,
+            IApplicationComponent component,
+            string title)
+        {
+            Platform.CheckForNullReference(desktopWindow, "desktopWindow");
+            Platform.CheckForNullReference(component, "component");
+
+            WorkspaceCreationArgs args = new WorkspaceCreationArgs(component, title, null);
+
+            return LaunchAsWorkspace(desktopWindow, args, null);
+        }
+
+
+        /// <summary>
+        /// Executes the specified application component in a new workspace.
+        /// </summary>
+        /// <remarks>
+        /// If the specified component throws an exception from the <see cref="Start"/> method, that exception
+        /// will be propagate to the caller of this method and the component will not be launched.
+        /// </remarks>
+        /// <param name="desktopWindow">The desktop window in which the workspace will run.</param>
+        /// <param name="creationArgs">A <see cref="WorkspaceCreationArgs"/> object.</param>
+        /// <returns>The workspace that is hosting the component.</returns>
+        public static Workspace LaunchAsWorkspace(
+            IDesktopWindow desktopWindow,
+            WorkspaceCreationArgs creationArgs)
+        {
+            Platform.CheckForNullReference(desktopWindow, "desktopWindow");
+            Platform.CheckForNullReference(creationArgs, "creationArgs");
+
+            return LaunchAsWorkspace(desktopWindow, creationArgs, null);
+        }
+        
+        /// <summary>
+        /// Private helper method to support LaunchAsWorkspace.
 		/// </summary>
-		/// <param name="desktopWindow">The desktop window in which the workspace will run.</param>
-		/// <param name="creationArgs">The workspace creation arguments.</param>
-		/// <param name="exitCallback">An optional callback to invoke when the workspace is closed.</param>
-		/// <returns>The workspace that is hosting the component.</returns>
-		public static Workspace LaunchAsWorkspace(
+		private static Workspace LaunchAsWorkspace(
     		IDesktopWindow desktopWindow, 
 			WorkspaceCreationArgs creationArgs,
     		ApplicationComponentExitDelegate exitCallback)
@@ -130,7 +201,11 @@ namespace ClearCanvas.Desktop
 				};
 			}
 			return workspace;
-		}
+        }
+
+        #endregion
+
+        #region LaunchAsShelf overloads
 
         /// <summary>
         /// Executes the specified application component in a new shelf.  The exit callback will be invoked
@@ -146,6 +221,7 @@ namespace ClearCanvas.Desktop
         /// <param name="displayHint">A hint as to how the shelf should initially be displayed.</param>
         /// <param name="exitCallback">The callback to invoke when the shelf is closed.</param>
         /// <returns>The shelf that is hosting the component.</returns>
+        [Obsolete("This overload has been deprecated.  Use the Shelf.Closed event instead of the exitCallback parameter.")]
         public static Shelf LaunchAsShelf(
             IDesktopWindow desktopWindow,
             IApplicationComponent component,
@@ -153,7 +229,8 @@ namespace ClearCanvas.Desktop
             ShelfDisplayHint displayHint,
             ApplicationComponentExitDelegate exitCallback)
         {
-            return LaunchAsShelf(desktopWindow, component, title, null, displayHint, exitCallback);
+            ShelfCreationArgs args = new ShelfCreationArgs(component, title, null, displayHint);
+            return LaunchAsShelf(desktopWindow, args, exitCallback);
         }
 
         /// <summary>
@@ -171,6 +248,7 @@ namespace ClearCanvas.Desktop
         /// <param name="displayHint">A hint as to how the shelf should initially be displayed.</param>
         /// <param name="exitCallback">The callback to invoke when the shelf is closed.</param>
         /// <returns>The shelf that is hosting the component.</returns>
+        [Obsolete("This overload has been deprecated.  Use the Shelf.Closed event instead of the exitCallback parameter.")]
         public static Shelf LaunchAsShelf(
             IDesktopWindow desktopWindow,
             IApplicationComponent component,
@@ -183,16 +261,100 @@ namespace ClearCanvas.Desktop
             Platform.CheckForNullReference(component, "component");
 
             ShelfCreationArgs args = new ShelfCreationArgs(component, title, name, displayHint);
+            return LaunchAsShelf(desktopWindow, args, exitCallback);
+        }
+
+        /// <summary>
+        /// Executes the specified application component in a new shelf.
+        /// </summary>
+        /// <remarks>
+        /// If the specified component throws an exception from its <see cref="Start"/> method, that exception
+        /// will be propagate to the caller of this method and the component will not be launched.
+        /// </remarks>
+        /// <param name="desktopWindow">The desktop window in which the shelf will run.</param>
+        /// <param name="component">The application component to launch.</param>
+        /// <param name="title">The title of the shelf.</param>
+        /// <param name="name">The unique name of the shelf.</param>
+        /// <param name="displayHint">A hint as to how the shelf should initially be displayed.</param>
+        /// <returns>The shelf that is hosting the component.</returns>
+        public static Shelf LaunchAsShelf(
+            IDesktopWindow desktopWindow,
+            IApplicationComponent component,
+            string title,
+            string name,
+            ShelfDisplayHint displayHint)
+        {
+            Platform.CheckForNullReference(desktopWindow, "desktopWindow");
+            Platform.CheckForNullReference(component, "component");
+
+            ShelfCreationArgs args = new ShelfCreationArgs(component, title, name, displayHint);
+            return LaunchAsShelf(desktopWindow, args, null);
+        }
+
+        /// <summary>
+        /// Executes the specified application component in a new shelf.
+        /// </summary>
+        /// <remarks>
+        /// If the specified component throws an exception from its <see cref="Start"/> method, that exception
+        /// will be propagate to the caller of this method and the component will not be launched.
+        /// </remarks>
+        /// <param name="desktopWindow">The desktop window in which the shelf will run.</param>
+        /// <param name="component">The application component to launch.</param>
+        /// <param name="title">The title of the shelf.</param>
+        /// <param name="displayHint">A hint as to how the shelf should initially be displayed.</param>
+        /// <returns>The shelf that is hosting the component.</returns>
+        public static Shelf LaunchAsShelf(
+            IDesktopWindow desktopWindow,
+            IApplicationComponent component,
+            string title,
+            ShelfDisplayHint displayHint)
+        {
+            ShelfCreationArgs args = new ShelfCreationArgs(component, title, null, displayHint);
+            return LaunchAsShelf(desktopWindow, args, null);
+        }
+
+        /// <summary>
+        /// Executes the specified application component in a new shelf.
+        /// </summary>
+        /// <remarks>
+        /// If the specified component throws an exception from its <see cref="Start"/> method, that exception
+        /// will be propagate to the caller of this method and the component will not be launched.
+        /// </remarks>
+        /// <param name="desktopWindow">The desktop window in which the shelf will run.</param>
+        /// <param name="creationArgs">A <see cref="ShelfCreationArgs"/> object.</param>
+        /// <returns>The shelf that is hosting the component.</returns>
+        public static Shelf LaunchAsShelf(
+            IDesktopWindow desktopWindow,
+            ShelfCreationArgs creationArgs)
+        {
+            Platform.CheckForNullReference(desktopWindow, "desktopWindow");
+            Platform.CheckForNullReference(creationArgs, "creationArgs");
+
+            return LaunchAsShelf(desktopWindow, creationArgs, null);
+        }
+
+        /// <summary>
+        /// Private helper method to support LaunchAsShelf
+        /// </summary>
+        private static Shelf LaunchAsShelf(
+            IDesktopWindow desktopWindow,
+            ShelfCreationArgs args,
+            ApplicationComponentExitDelegate exitCallback)
+        {
             Shelf shelf = desktopWindow.Shelves.AddNew(args);
             if (exitCallback != null)
             {
-                shelf.Closed += delegate(object sender, ClosedEventArgs e)
+                shelf.Closed += delegate
                 {
-                    exitCallback(component);
+                    exitCallback(args.Component);
                 };
             }
             return shelf;
         }
+
+        #endregion
+
+        #region LaunchAsDialog overloads
 
         /// <summary>
         /// Executes the specified application component in a modal dialog box.  This call will block until
@@ -211,19 +373,31 @@ namespace ClearCanvas.Desktop
             IApplicationComponent component,
             string title)
         {
-            return LaunchAsDialog(desktopWindow, component, title, null);
+            DialogBoxCreationArgs args = new DialogBoxCreationArgs(component, title, null);
+            return LaunchAsDialog(desktopWindow, args);
         }
 
-        private static ApplicationComponentExitCode LaunchAsDialog(
+        /// <summary>
+        /// Executes the specified application component in a modal dialog box.  This call will block until
+        /// the dialog box is closed.
+        /// </summary>
+        /// <remarks>
+        /// If the specified component throws an exception from its <see cref="Start"/> method, that exception
+        /// will be propagate to the caller of this method and the component will not be launched.
+        /// </remarks>
+        /// <param name="desktopWindow">The desktop window in which the dialog box is centered.</param>
+        /// <param name="creationArgs">A <see cref="DialogBoxCreationArgs"/> object.</param>
+        /// <returns>The exit code that the component exits with.</returns>
+        public static ApplicationComponentExitCode LaunchAsDialog(
             IDesktopWindow desktopWindow,
-            IApplicationComponent component,
-            string title,
-            string name)
+            DialogBoxCreationArgs creationArgs)
         {
-            DialogBoxCreationArgs args = new DialogBoxCreationArgs(component, title, name);
-            desktopWindow.ShowDialogBox(args);
-            return component.ExitCode;
+            desktopWindow.ShowDialogBox(creationArgs);
+            return creationArgs.Component.ExitCode;
         }
+
+        #endregion
+
 
         private IApplicationComponentHost _host;
         private ApplicationComponentExitCode _exitCode;

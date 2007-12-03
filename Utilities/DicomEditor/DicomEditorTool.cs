@@ -131,16 +131,17 @@ namespace ClearCanvas.Utilities.DicomEditor
                     _component = new DicomEditorComponent();
 
                     _shelf = ApplicationComponent.LaunchAsShelf(
-                                context.DesktopWindow,
-                                _component,
-                                SR.TitleDicomEditor,
-								"Dicom Editor",
-                                ShelfDisplayHint.DockRight | ShelfDisplayHint.DockAutoHide,
-                                delegate(IApplicationComponent component)
-								{
-									_shelf = null;
-									_component = null; 
-								});
+                        context.DesktopWindow,
+                        _component,
+                        SR.TitleDicomEditor,
+                        "Dicom Editor",
+                        ShelfDisplayHint.DockRight | ShelfDisplayHint.DockAutoHide);
+                    _shelf.Closed +=
+                        delegate
+                        {
+                            _shelf = null;
+                            _component = null;
+                        };
                 }
 
                 _component.Clear();
@@ -216,17 +217,18 @@ namespace ClearCanvas.Utilities.DicomEditor
 
                 if (newComponent == true)
                 {
-					_shelf = ApplicationComponent.LaunchAsShelf(
-								context.DesktopWindow,
-								_component,
-								SR.TitleDicomEditor,
-								"Dicom Editor",
-								ShelfDisplayHint.DockRight | ShelfDisplayHint.DockAutoHide,
-								delegate(IApplicationComponent component)
-								{
-									_shelf = null;
-									_component = null; 
-								});
+                    _shelf = ApplicationComponent.LaunchAsShelf(
+                        context.DesktopWindow,
+                        _component,
+                        SR.TitleDicomEditor,
+                        "Dicom Editor",
+                        ShelfDisplayHint.DockRight | ShelfDisplayHint.DockAutoHide);
+                    _shelf.Closed +=
+                        delegate
+                        {
+                            _shelf = null;
+                            _component = null;
+                        };
 				}
 
                 _component.UpdateComponent();

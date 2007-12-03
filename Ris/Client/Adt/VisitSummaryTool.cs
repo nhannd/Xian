@@ -130,8 +130,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 ApplicationComponent.LaunchAsWorkspace(
                     desktopWindow,
                     component,
-                    title,
-                    null);
+                    title);
             }
             catch (Exception e)
             {
