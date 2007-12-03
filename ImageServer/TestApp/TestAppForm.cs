@@ -175,7 +175,7 @@ namespace ClearCanvas.ImageServer.TestApp
             //engine.Execute(context);
             */
             string folder = @"..\";
-            /*
+            
             DicomDirectoryWriter dicomDirectoryWriter = new DicomDirectoryWriter();
             dicomDirectoryWriter.ImplementationVersionName = "VETPACS2006";
             dicomDirectoryWriter.SourceApplicationEntityTitle = "LEADTOOLS";
@@ -189,7 +189,7 @@ namespace ClearCanvas.ImageServer.TestApp
             dicomDirectoryWriter.AddFile(folder + @"DIR00001\IMAGE003", @"DIR00001\IMAGE003");
             dicomDirectoryWriter.Save(folder + @"DIR00001\DICOMDIR2");
             File.WriteAllText(folder + @"DIR00001\DICOMDIR2dump.txt", dicomDirectoryWriter.Dump("", DicomDumpOptions.Default));
-             * */
+            
         }
     }
 }

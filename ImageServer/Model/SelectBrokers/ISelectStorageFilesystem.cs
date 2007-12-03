@@ -29,57 +29,15 @@
 
 #endregion
 
-namespace ClearCanvas.Enterprise.Core
+using System;
+using System.Collections.Generic;
+using System.Text;
+using ClearCanvas.ImageServer.Enterprise;
+using ClearCanvas.ImageServer.Model.Criteria;
+
+namespace ClearCanvas.ImageServer.Model.SelectBrokers
 {
-    /// <summary>
-    /// Provides a basic implementation of <see cref="IRelatedEntityCondition{T}"/>.  See <see cref="SearchCriteria"/> for 
-    /// usage of this class.
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public class RelatedEntityCondition<T> : SearchConditionBase, IRelatedEntityCondition<T>
-        where T: SearchCriteria
+    public interface ISelectStorageFilesystem: ISelectBroker<StorageFilesystemSelectCriteria,StorageFilesystem>
     {
-        #region Private Members
-        private readonly string _baseTableColumn;
-        private readonly string _relatedTableColumn;
-        #endregion
-
-        #region Public Properties
-        public string BaseTableColumn
-        {
-            get { return _baseTableColumn; }
-        }
-        public string RelatedTableColumn
-        {
-            get { return _relatedTableColumn; }
-        }
-        #endregion
-
-        #region Constructors
-        public RelatedEntityCondition()
-        {
-        }
-
-        public RelatedEntityCondition(string name, string baseTableColumn, string relatedTableColumn)
-            : base(name)
-        {
-            _baseTableColumn = baseTableColumn;
-            _relatedTableColumn = relatedTableColumn;
-        }
-        #endregion
-
-        #region IRelatedEntityCondition<T> Members
-
-        public void Exists(T val)
-        {
-            SetCondition(SearchConditionTest.Exists, val);
-        }
-
-        public void NotExists(T val)
-        {
-            SetCondition(SearchConditionTest.NotExists, val);
-        }
-
-        #endregion
     }
 }

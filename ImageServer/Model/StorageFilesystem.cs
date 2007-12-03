@@ -29,69 +29,42 @@
 
 #endregion
 
-namespace ClearCanvas.Common.Statistics
+using System;
+using ClearCanvas.ImageServer.Enterprise;
+
+namespace ClearCanvas.ImageServer.Model
 {
-    /// <summary>
-    /// Used to store the elapsed time between two "events"
-    /// </summary>
-    /// <remarks>
-    /// <para>
-    /// Users call <seealso cref="OnBegin()"/> and <seealso cref="OnEnd()"/> to signal
-    /// the beginning and at of the events. The elapsed time can be determinted using <seealso cref="ElapsedTimeInMs"/>
-    /// </para>
-    /// </remarks>
-    public class TimeSpanStatistics : BaseStatistics
+    public class StorageFilesystem : ServerEntity
     {
-        #region Private Variables
-        private long _elapsedTime;
+        #region Constructors
+        public StorageFilesystem()
+            : base("StorageFilesystem")
+        {
+        }
+        #endregion
+
+        #region Private Members
+        private ServerEntityKey _serverPartitionKey;
+        private ServerEntityKey _filesystemKey;
+        private String _storageFilesystemFolder;
         #endregion
 
         #region Public Properties
-        /// <summary>
-        /// Elapsed time between two "events" (In 100 nanoseconds)
-        /// </summary>
-        /// <remarks>
-        /// "Events" are marked by calling <seealso cref="OnBegin()"/> and <seealso cref="OnEnd()"/>
-        /// </remarks>
-        public long ElapsedTimeInMs
+        public ServerEntityKey ServerPartitionKey
         {
-            get
-            {
-                return _elapsedTime;
-            }
-            set
-            {
-                _elapsedTime = value;
-                _statsValuesCollection["@ElapsedTimeInMs"] = value;
-            }
+            get { return _serverPartitionKey; }
+            set { _serverPartitionKey = value; }
         }
-
-        #endregion
-
-        #region Constructors
-        /// <summary>
-        /// Creates an instance of <seealso cref="TimeSpanStatistics"/>.
-        /// </summary>
-        /// <param name="desc"></param>
-        public TimeSpanStatistics(string desc)
-            : base(desc)
+        public ServerEntityKey FilesystemKey
         {
-        }
-
-        #endregion
-
-        #region Protected Overridden Methods
-        
-        protected override void OnBegin()
+            get { return _filesystemKey; }
+            set { _filesystemKey = value; }
+        }        
+        public string StudyFolder
         {
-            // NOOP
+            get { return _storageFilesystemFolder; }
+            set { _storageFilesystemFolder = value; }
         }
-
-        protected override void OnEnd()
-        {
-            ElapsedTimeInMs = (_endTick - _beginTick) / 10000; // convert 100 ns to ms
-        }
-
         #endregion
     }
 }

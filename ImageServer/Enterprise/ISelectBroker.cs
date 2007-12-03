@@ -64,5 +64,12 @@ namespace ClearCanvas.ImageServer.Enterprise
         /// <returns></returns>
         void Find(TInput criteria, SelectCallback<TOutput> callback);
 
+        /// <summary>
+        /// Retrieves a count of the entities within the persistent store that
+        /// match the specified criteria.
+        /// </summary>
+        /// <param name="criteria">The input criteria</param>
+        /// <returns>The number or resultant rows.</returns>
+        int Count(TInput criteria);
     }
 }

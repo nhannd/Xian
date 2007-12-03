@@ -85,27 +85,27 @@ namespace ClearCanvas.ImageServer.Model.Criteria
                 return (ISearchCondition<ServerEntityKey>)SubCriteria["DeviceKey"];
             }
         }
-        public ISearchCondition<WorkQueueTypeEnum> TypeEnum
+        public ISearchCondition<WorkQueueTypeEnum> WorkQueueTypeEnum
         {
             get
             {
-                if (!SubCriteria.ContainsKey("TypeEnum"))
+                if (!SubCriteria.ContainsKey("WorkQueueTypeEnum"))
                 {
-                    SubCriteria["TypeEnum"] = new SearchCondition<ServerEnum>("TypeEnum");
+                    SubCriteria["WorkQueueTypeEnum"] = new SearchCondition<WorkQueueTypeEnum>("WorkQueueTypeEnum");
                 }
-                return (ISearchCondition<WorkQueueTypeEnum>)SubCriteria["TypeEnum"];
+                return (ISearchCondition<WorkQueueTypeEnum>)SubCriteria["WorkQueueTypeEnum"];
             }
         }
 
-        public ISearchCondition<WorkQueueStatusEnum> StatusEnum
+        public ISearchCondition<WorkQueueStatusEnum> WorkQueueStatusEnum
         {
             get
             {
-                if (!SubCriteria.ContainsKey("StatusEnum"))
+                if (!SubCriteria.ContainsKey("WorkQueueStatusEnum"))
                 {
-                    SubCriteria["StatusEnum"] = new SearchCondition<ServerEnum>("StatusEnum");
+                    SubCriteria["WorkQueueStatusEnum"] = new SearchCondition<WorkQueueStatusEnum>("WorkQueueStatusEnum");
                 }
-                return (ISearchCondition<WorkQueueStatusEnum>)SubCriteria["StatusEnum"];
+                return (ISearchCondition<WorkQueueStatusEnum>)SubCriteria["WorkQueueStatusEnum"];
             }
         }
         public ISearchCondition<DateTime> ExpirationTime
@@ -151,6 +151,27 @@ namespace ClearCanvas.ImageServer.Model.Criteria
                     SubCriteria["FailureCount"] = new SearchCondition<int>("FailureCount");
                 }
                 return (ISearchCondition<int>)SubCriteria["FailureCount"];
+            }
+        }
+        /// <summary>
+        /// Used for EXISTS or NOT EXISTS subselects against the Series table.
+        /// </summary>
+        /// <remarks>
+        /// A <see cref="SeriesSelectCriteria"/> instance is created with the subselect parameters, 
+        /// and assigned to this Sub-Criteria.  Note that the link between the <see cref="Study"/>
+        /// and <see cref="Series"/> tables is automatically added into the <see cref="SeriesSelectCriteria"/>
+        /// instance by the broker.
+        /// </remarks>
+        public IRelatedEntityCondition<SelectCriteria> StudyFilesystemRelatedEntityCondition
+        {
+            get
+            {
+                if (!this.SubCriteria.ContainsKey("StudyStorageRelatedEntityCondition"))
+                {
+                    this.SubCriteria["StudyStorageRelatedEntityCondition"] = new RelatedEntityCondition<SelectCriteria>("StudyStorageRelatedEntityCondition", 
+                        "StudyStorageKey","StudyStorageKey");
+                }
+                return (IRelatedEntityCondition<SelectCriteria>)this.SubCriteria["StudyStorageRelatedEntityCondition"];
             }
         }
     }

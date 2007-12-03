@@ -39,8 +39,6 @@ using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.Parameters;
-using ClearCanvas.ImageServer.Services.WorkQueue;
-using System.Net;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue
 {

@@ -50,7 +50,10 @@
     <Compile Include="Brokers\IUpdateFileSystem.cs" />
     <Compile Include="Brokers\IUpdateServerPartition.cs" />
     <Compile Include="Brokers\IUpdateServiceLock.cs" />
+    <Compile Include="Criteria\StorageFilesystemSelectCriteria.cs" />
     <Compile Include="EnumBrokers\IStudyStatusEnum.cs" />
+    <Compile Include="SelectBrokers\ISelectStorageFilesystem.cs" />
+    <Compile Include="StorageFilesystem.cs" />
     <Compile Include="StudyStatusEnum.cs" />
     <Compile Include="Criteria\ServerRuleSelectCriteria.cs" />
     <Compile Include="EnumBrokers\IFilesystemQueueTypeEnum.cs" />

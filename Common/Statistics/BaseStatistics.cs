@@ -29,12 +29,9 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.ComponentModel;
 using System.Xml;
-using System.Xml.Serialization;
 
 namespace ClearCanvas.Common.Statistics
 {
@@ -44,9 +41,10 @@ namespace ClearCanvas.Common.Statistics
     public class StatisticEventArg
     {
         #region Private Variables
-        private BaseStatistics _statistics =null;
-
+        private readonly BaseStatistics _statistics =null;
         #endregion
+
+        #region Public Properties
         /// <summary>
         /// The statistics object that has been updated
         /// </summary>
@@ -54,15 +52,19 @@ namespace ClearCanvas.Common.Statistics
         {
             get { return _statistics; }
         }
+        #endregion
 
-
+        #region Constructors
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="stats"></param>
         public StatisticEventArg(BaseStatistics stats)
         {
             _statistics = stats;
         }
-
+        #endregion
     }
-
 
     /// <summary>
     /// Defines method to handle a statistics update.
@@ -98,38 +100,33 @@ namespace ClearCanvas.Common.Statistics
     
     /// <summary>
     /// The basic class which allows building a hiearchical statistics structure.
-    /// 
     /// </summary>
     /// <remarks>
-    /// <para><see cref="BaseStatistics"/> can be used to store multi-level operation statistics if needed. 
-    /// It provides sub-classes with a mechnism to populate each level with any type of statistics data. 
-    /// The statistical data is kept in a generic collection accessible using indexer <seealso cref="this[key]"/>
-    /// </para>
-    ///
-    /// <para>Sub-level statistics is accessible using <seealso cref="SubStats[key]"/>. The index <i>key</i> can be anything
-    /// that uniquely identifies the statistics (if there are muliple statistics in the same level)</para>
-    ///
     /// <para>
-    /// <see cref="BasicStatisticConverter"/> can be used to generate statistical report in XML format.
+    /// <see cref="BaseStatistics"/> can be used to store multi-level operation statistics if needed. 
+    /// It provides sub-classes with a mechnism to populate each level with any type of statistics data. 
+    /// The statistical data is kept in a generic collection accessible using indexer.
+    /// </para>
+    /// <para>
+    /// Sub-level statistics is accessible using <seealso cref="SubStats"/>. The index <i>key</i> can be anything
+    /// that uniquely identifies the statistics (if there are muliple statistics in the same level)</para>
+    /// <para>
+    /// <see cref="BasicStatisticsConverter"/> can be used to generate statistical report in XML format.
     /// </para>
     /// <para>Other features:</para>
     /// <para>It keeps track of the time when the recording is started/stoped when <seealso cref="Begin"/> or <seealso cref="End"/> are called.</para>
-    /// <para>Listeners can register to statistics events using <seealso cref="OnStatisticsUpdated"/> to receive notification when statistics are updated</para>
-    /// 
+    /// <para>Listeners can register to statistics events using <seealso cref="StatisticsUpdated"/> to receive notification when statistics are updated</para>
     /// </remarks>
-    /// 
     [TypeConverter(typeof(BasicStatisticsConverter))]
     public abstract class BaseStatistics:IStatistics
     {
-        
-
-        #region static methods
+        #region Static Methods
         /// <summary>
         /// Returns name for a key to be used in an XML message.
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        static private string XMLElementName(string key)
+        static private string XmlElementName(string key)
         {
             if (key.StartsWith("@")) //Keys starting with "@" are considered as primary and should be listed first in the xml
             {
@@ -143,7 +140,7 @@ namespace ClearCanvas.Common.Statistics
         }
         #endregion
 
-        #region private members
+        #region Protected Members
         // the tick count when the statistics recording begins. In 100 nanoseconds
         protected long _beginTick;
         // the tick count when the statistics recording ends. In 100 nanoseconds
@@ -169,24 +166,19 @@ namespace ClearCanvas.Common.Statistics
             _beginTick = _endTick = 0;
             Begin(); // in case the caller forgets to do this
         }
-
-        
         #endregion
 
         #region Events
-
         /// <summary>
         /// Occurs when the statistics is updated.
         /// </summary>
         public event StatisticsUpdateEventHandler StatisticsUpdated;
-
         #endregion
 
-        #region public methods
+        #region Public Methods
 
         /// <summary>
         /// Writes the statistics into an XML stream.
-        ///
         /// </summary>
         /// <param name="writer"></param>
         /// <remarks>
@@ -195,7 +187,6 @@ namespace ClearCanvas.Common.Statistics
         /// Primary statistcal data are listed first, followed by secondary statistical ones.
         /// </para>
         /// </remarks>
-        /// 
         public void WriteXml(XmlWriter writer)
         {
             writer.WriteStartElement("Statistics");
@@ -206,13 +197,13 @@ namespace ClearCanvas.Common.Statistics
             foreach (string key in Details.Keys)
             {
                 if (key.StartsWith("@")) // Primary info
-                    writer.WriteAttributeString(XMLElementName(key), Details[key].ToString());
+                    writer.WriteAttributeString(XmlElementName(key), Details[key].ToString());
             }
 
             foreach (string key in Details.Keys)
             {
                 if (!key.StartsWith("@")) // Secondary info
-                    writer.WriteAttributeString(XMLElementName(key), Details[key].ToString());
+                    writer.WriteAttributeString(XmlElementName(key), Details[key].ToString());
             }
 
             // write sub-level statistics as child elements
@@ -226,17 +217,17 @@ namespace ClearCanvas.Common.Statistics
         } //WriteXml
         #endregion
 
-        #region Public members
+        #region Public Properties
 
         /// <summary>
         /// Retrieves the sub-level statistics.
-        /// 
         /// </summary>
         /// <remarks>
         /// <para>
         /// Individual sub-level statistics can be accessed directly by index.</para>
         /// </remarks>
         /// <example>
+        /// <code>
         ///         TransmissionStatistics stats = ...   
         /// 
         ///         Association assoc = .....
@@ -246,10 +237,8 @@ namespace ClearCanvas.Common.Statistics
         /// 
         ///         // You can access statistical property within the sub-statistics directly using indexer
         ///         stats.SubStats[assoc]["RemoteAE"] = "remoteAE";
-        /// 
-        /// 
+        /// </code>
         /// </example>
-        ///
         public Dictionary<object, BaseStatistics> SubStats
         {
             get
@@ -260,11 +249,9 @@ namespace ClearCanvas.Common.Statistics
 
         /// <summary>
         /// Gets/Sets a statistical data
-        /// 
         /// </summary>
         /// <param name="key">Name of the statistical data</param>
         /// <returns>The statistical data object</returns>
-        /// 
         /// <remarks>
         /// <para>
         /// Statistic property name must be a valid XML element name (eg, no spaces).
@@ -275,14 +262,13 @@ namespace ClearCanvas.Common.Statistics
         /// When the data is set, an <see cref="StatisticsUpdated"/> event will be fired.
         /// </para>
         /// </remarks>
-        /// 
         /// <example>
+        /// <code>
         ///         TransmissionStatistics stats  = ....
         ///         stats["@TransferRate"] = "100KB/s" // primary statistical data
         ///         stats["RemoteAE"] = remoteAE;   // secondary statistical data
+        /// </code>
         /// </example>
-        /// 
-        /// 
         public object this[string key]
         {
             get
@@ -298,25 +284,22 @@ namespace ClearCanvas.Common.Statistics
 
         /// <summary>
         /// Returns the list of all statistical data in the "root" level statistics.
-        /// 
-        /// 
         /// </summary>
         /// <remarks>
-        /// Individual statistical data can be retrieved using <seealso cref="this[key]"/>.
+        /// Individual statistical data can be retrieved using the indexer.
         /// </remarks>
-        /// 
         /// <example>
+        /// <code>
         ///      TransmissionStatistics stats  = ....
         ///      stats["@TransferRate"] = "100KB/s" // primary statistical info
-        ///      stats["TimeStamp"] = DateTime.Now;   // secondary statistical info
-        /// 
+        ///      stats["TimeStamp"] = Platform.Time;   // secondary statistical info
+        /// </code>
         /// is the same as
-        /// 
+        /// <code>
         ///      stats.Details["@TransferRate"] = "100KB/s"
-        ///      stats.Details["TimeStamp"] = DateTime.Now;
-        /// 
+        ///      stats.Details["TimeStamp"] = Platform.Time;
+        /// </code>
         /// </example>
-        /// 
         public IDictionary<string, object> Details
         {
             get
@@ -324,38 +307,28 @@ namespace ClearCanvas.Common.Statistics
                 return _statsValuesCollection;
             }
         }
-
-        public override string ToString()
-        {
-            return string.Format("Statistics:{0}", Description);
-        }
         #endregion
 
         #region Protected Methods
         /// <summary>
         /// Notifies event handlers when statistics is updated.
         /// </summary>
-        /// 
         /// <remarks>
         /// Event handlers are registered through <seealso cref="StatisticsUpdated"/>
         /// </remarks>
-        ///
         protected void RaiseUpdateEvent()
         {
             if (StatisticsUpdated!=null)
                StatisticsUpdated(new StatisticEventArg(this));
-            
         }
-
-
         #endregion
 
         #region IStatistics interface
-
         public string Description
         {
             get { return _description; }
-            set { 
+            set 
+            { 
                 _description = value; 
                 RaiseUpdateEvent(); // should we fire update event?
             }
@@ -363,26 +336,22 @@ namespace ClearCanvas.Common.Statistics
 
         public void Begin()
         {
-            _beginTick = _endTick = DateTime.Now.Ticks;
+            _beginTick = _endTick = Platform.Time.Ticks;
             OnBegin(); // sub-class can do additional stuff
             RaiseUpdateEvent();
         }
 
         public void End()
         {
-            _endTick = DateTime.Now.Ticks;
+            _endTick = Platform.Time.Ticks;
 
             OnEnd(); // sub-class can do additional stuff
 
             RaiseUpdateEvent();
-        }
-
-        
-
-        
+        }       
         #endregion
 
-        #region Abstract methods
+        #region Abstract Methods
         /// <summary>
         /// Called by <seealso cref="BaseStatistics"/> when Begin() is called, prior to firing StatisticsUpdated event.
         /// </summary>
@@ -404,29 +373,34 @@ namespace ClearCanvas.Common.Statistics
         /// </para>
         /// </remarks>
         abstract protected void OnEnd();
-
         #endregion
-        
+
+        #region Overrides
+        public override string ToString()
+        {
+            return string.Format("Statistics: {0}", Description);
+        }
+        #endregion
     }
-
-
-
 
     /// <summary>
     /// Statistics to record the size of a object such as image, file, etc
-    /// <para>
-    /// To set the size, assign value to <seealso cref="SizeInBytes"/> between calling <seealso cref="Begin()"/> and <seealso cref="End()"/>
-    /// </para>
     /// </summary>
+    /// <remarks>
+    /// <para>
+    /// To set the size, assign value to <seealso cref="SizeInBytes"/> between calling <seealso cref="OnBegin()"/> and <seealso cref="OnEnd()"/>
+    /// </para>
+    /// </remarks>
     public class SizeStatistics : BaseStatistics
     {
-
-        #region private members
+        #region Private Members
         private ulong _size;
         #endregion
 
-        #region public members
-
+        #region Public Members
+        ///<summary>
+        /// Size in bytes.
+        ///</summary>
         public ulong SizeInBytes
         {
             get
@@ -439,19 +413,20 @@ namespace ClearCanvas.Common.Statistics
                 this["@SizeInKB"] = string.Format("{0:0}", value / 1000);
             }
         }
-        
         #endregion
 
-        #region constructors
-
+        #region Constructors
+        ///<summary>
+        /// Constructor.
+        ///</summary>
+        ///<param name="desc">A description of the statistic</param>
         public SizeStatistics(string desc)
             : base(desc)
         {
         }
-
         #endregion
 
-        #region override methods
+        #region Override Methods
         protected override void OnBegin()
         {
             // NOOP
@@ -461,7 +436,6 @@ namespace ClearCanvas.Common.Statistics
         {
             // NOOP
         }
-
         #endregion
     }
 

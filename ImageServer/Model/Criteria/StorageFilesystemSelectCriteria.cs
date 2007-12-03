@@ -29,69 +29,49 @@
 
 #endregion
 
-namespace ClearCanvas.Common.Statistics
-{
-    /// <summary>
-    /// Used to store the elapsed time between two "events"
-    /// </summary>
-    /// <remarks>
-    /// <para>
-    /// Users call <seealso cref="OnBegin()"/> and <seealso cref="OnEnd()"/> to signal
-    /// the beginning and at of the events. The elapsed time can be determinted using <seealso cref="ElapsedTimeInMs"/>
-    /// </para>
-    /// </remarks>
-    public class TimeSpanStatistics : BaseStatistics
-    {
-        #region Private Variables
-        private long _elapsedTime;
-        #endregion
+using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Enterprise;
 
-        #region Public Properties
-        /// <summary>
-        /// Elapsed time between two "events" (In 100 nanoseconds)
-        /// </summary>
-        /// <remarks>
-        /// "Events" are marked by calling <seealso cref="OnBegin()"/> and <seealso cref="OnEnd()"/>
-        /// </remarks>
-        public long ElapsedTimeInMs
+namespace ClearCanvas.ImageServer.Model.Criteria
+{
+    public class StorageFilesystemSelectCriteria : SelectCriteria
+    {
+        public StorageFilesystemSelectCriteria()
+            : base("StorageFilesystem")
+        {}
+
+        public ISearchCondition<ServerEntityKey> Key
         {
             get
             {
-                return _elapsedTime;
+                if (!SubCriteria.ContainsKey("Key"))
+                {
+                    SubCriteria["Key"] = new SearchCondition<ServerEntityKey>("Key");
+                }
+                return (ISearchCondition<ServerEntityKey>)SubCriteria["Key"];
             }
-            set
+        }
+        public ISearchCondition<ServerEntityKey> StudyStorageKey
+        {
+            get
             {
-                _elapsedTime = value;
-                _statsValuesCollection["@ElapsedTimeInMs"] = value;
+                if (!SubCriteria.ContainsKey("StudyStorageKey"))
+                {
+                    SubCriteria["StudyStorageKey"] = new SearchCondition<ServerEntityKey>("StudyStorageKey");
+                }
+                return (ISearchCondition<ServerEntityKey>)SubCriteria["StudyStorageKey"];
             }
         }
-
-        #endregion
-
-        #region Constructors
-        /// <summary>
-        /// Creates an instance of <seealso cref="TimeSpanStatistics"/>.
-        /// </summary>
-        /// <param name="desc"></param>
-        public TimeSpanStatistics(string desc)
-            : base(desc)
+        public ISearchCondition<ServerEntityKey> FilesystemKey
         {
+            get
+            {
+                if (!SubCriteria.ContainsKey("FilesystemKey"))
+                {
+                    SubCriteria["FilesystemKey"] = new SearchCondition<ServerEntityKey>("FilesystemKey");
+                }
+                return (ISearchCondition<ServerEntityKey>)SubCriteria["FilesystemKey"];
+            }
         }
-
-        #endregion
-
-        #region Protected Overridden Methods
-        
-        protected override void OnBegin()
-        {
-            // NOOP
-        }
-
-        protected override void OnEnd()
-        {
-            ElapsedTimeInMs = (_endTick - _beginTick) / 10000; // convert 100 ns to ms
-        }
-
-        #endregion
     }
 }

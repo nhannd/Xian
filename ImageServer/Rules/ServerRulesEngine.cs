@@ -29,8 +29,8 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
+using ClearCanvas.Common;
 using ClearCanvas.Common.Actions;
 using ClearCanvas.Common.Specifications;
 using ClearCanvas.Enterprise.Core;
@@ -70,8 +70,7 @@ namespace ClearCanvas.ImageServer.Rules
         private readonly ServerRuleApplyTimeEnum _applyTime;
         private readonly ServerEntityKey _serverPartitionKey;
         private readonly Dictionary<ServerRuleTypeEnum, RuleTypeCollection> _typeList = new Dictionary<ServerRuleTypeEnum, RuleTypeCollection>();
-
-        private RuleEngineStatistics _stats;
+        private readonly RuleEngineStatistics _stats;
         #endregion
 
         #region Constructors
@@ -111,16 +110,13 @@ namespace ClearCanvas.ImageServer.Rules
         }
         #endregion
 
-        #region Events
-        #endregion Events
-
         #region Public Methods
         /// <summary>
         /// Load the rules engine from the Persistent Store and compile the conditions and actions.
         /// </summary>
         public void Load()
         {
-            long t1 = DateTime.Now.Ticks;
+            long tickStart = Platform.Time.Ticks;
 
             // Clearout the current type list.
             _typeList.Clear();
@@ -162,7 +158,7 @@ namespace ClearCanvas.ImageServer.Rules
                 }
             }
 
-            _stats.LoadTimeInMs = (DateTime.Now.Ticks - t1)/10000d;
+            _stats.LoadTimeInMs = (Platform.Time.Ticks - tickStart)/10000d;
 
         }
 
@@ -172,14 +168,14 @@ namespace ClearCanvas.ImageServer.Rules
         /// <param name="context">A class containing the context for applying the rules.</param>
         public void Execute(ServerActionContext context)
         {
-            long t1 = DateTime.Now.Ticks;
+            long tickStart = Platform.Time.Ticks;
 
             foreach (RuleTypeCollection typeCollection in _typeList.Values)
             {
                 typeCollection.Execute(context);
             }
 
-            _stats.ExecutionTimeInMs = (DateTime.Now.Ticks - t1)/1000d;
+            _stats.ExecutionTimeInMs = (Platform.Time.Ticks - tickStart)/1000d;
         }
 
         #endregion

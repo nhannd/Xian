@@ -36,7 +36,9 @@ using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
+using ClearCanvas.ImageServer.Model.Criteria;
 using ClearCanvas.ImageServer.Model.Parameters;
+using ClearCanvas.ImageServer.Model.SelectBrokers;
 
 namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
 {
@@ -157,6 +159,27 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
                 }
             }
         }
+
+        private int CheckWorkQueueDeleteCount(Model.ServiceLock item)
+        {
+            ISelectWorkQueue select = ReadContext.GetBroker<ISelectWorkQueue>();
+
+            WorkQueueSelectCriteria criteria = new WorkQueueSelectCriteria();
+
+            criteria.WorkQueueTypeEnum.EqualTo(WorkQueueTypeEnum.GetEnum("DeleteStudy"));
+            // Do Pending status, in case there's a Failure status entry, we don't want to 
+            // block on that.
+            criteria.WorkQueueStatusEnum.EqualTo(WorkQueueStatusEnum.GetEnum("Pending"));
+
+            StorageFilesystemSelectCriteria storageCriteria = new StorageFilesystemSelectCriteria();
+
+            storageCriteria.FilesystemKey.EqualTo(item.FilesystemKey);
+
+            criteria.StudyFilesystemRelatedEntityCondition.Exists(storageCriteria);
+            int count = select.Count(criteria);
+
+            return count;
+        }
         #endregion
 
         #region Public Methods
@@ -168,29 +191,53 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
             // Update the DB Percent full
             UpdateFilesystemPercentFull(item);
 
+            Platform.Log(LogLevel.Info, "Starting filesystem watermark check on filesystem {0}",
+                         _monitor.Filesystems[item.FilesystemKey].Filesystem.Description);
+
             if (_monitor.CheckFilesystemAboveHighWatermark(item.FilesystemKey))
             {
-                _bytesToRemove = _monitor.CheckFilesystemBytesToRemove(item.FilesystemKey);
-                int delayMinutes = 10;
-
-                try
+                if (CheckWorkQueueDeleteCount(item) > 0)
                 {
-                    DoStudyDelete(item);
-                }
-                catch (Exception e)
-                {
-                    Platform.Log(LogLevel.Error,e,"Unexpected exception when processing StudyDelete records.");
-                    delayMinutes = 1;
-                }
+                    Platform.Log(LogLevel.Info, "Delaying filesystem check, StudyDelete items still in the WorkQueue: {0}",
+                                 _monitor.Filesystems[item.FilesystemKey].Filesystem.Description);
 
-                UnlockServiceLock(item, Platform.Time.AddMinutes(delayMinutes));
+                    UnlockServiceLock(item, Platform.Time.AddMinutes(1));
+                }
+                else
+                {
+                    _bytesToRemove = _monitor.CheckFilesystemBytesToRemove(item.FilesystemKey);
+                    int delayMinutes = 10;
+
+                    try
+                    {
+                        DoStudyDelete(item);
+                    }
+                    catch (Exception e)
+                    {
+                        Platform.Log(LogLevel.Error, e, "Unexpected exception when processing StudyDelete records.");
+                        delayMinutes = 1;
+                    }
+
+                    Platform.Log(LogLevel.Info, "Completed filesystem delete: {0}",
+                           _monitor.Filesystems[item.FilesystemKey].Filesystem.Description);
+
+                    UnlockServiceLock(item, Platform.Time.AddMinutes(delayMinutes));
+                }
             }
             else if (_monitor.CheckFilesystemAboveLowWatermark(item.FilesystemKey))
             {
+                Platform.Log(LogLevel.Info, "Filesystem below high watermark: {0}",
+                       _monitor.Filesystems[item.FilesystemKey].Filesystem.Description);
+
                 UnlockServiceLock(item, Platform.Time.AddMinutes(1));
             }
             else
+            {
+                Platform.Log(LogLevel.Info, "Filesystem below watermarks: {0}",
+                       _monitor.Filesystems[item.FilesystemKey].Filesystem.Description);
+
                 UnlockServiceLock(item, Platform.Time.AddMinutes(2));
+            }
         }
 
         public new void Dispose()

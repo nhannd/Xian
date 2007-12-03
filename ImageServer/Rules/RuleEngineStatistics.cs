@@ -43,21 +43,18 @@ namespace ClearCanvas.ImageServer.Rules
         private double _executionTime;
         #endregion Private members
 
-        #region Public properties
+        #region Public Properties
         /// <summary>
         /// Gets or sets the execution time of the rule engine in miliseconds.
         /// </summary>
         public double ExecutionTimeInMs
         {
-            get { 
-                return _executionTime; 
-            }
+            get { return _executionTime; }
             set
             {
                 _executionTime = value;
                 this["ExecutionTimeInMs"] = string.Format("{0:0.00}", value);
             }
-
         }
 
         /// <summary>
@@ -65,10 +62,7 @@ namespace ClearCanvas.ImageServer.Rules
         /// </summary>
         public double LoadTimeInMs
         {
-
-            get { 
-                return _loadTime; 
-            }
+            get { return _loadTime; }
             set
             {
                 _loadTime = value;
@@ -76,13 +70,16 @@ namespace ClearCanvas.ImageServer.Rules
             }
         }
 
-        #endregion Public properties
+        #endregion Public Properties
 
-        public RuleEngineStatistics(ServerRulesEngine engine):base(engine.RuleApplyTime.Description)
+        #region Constructors
+        public RuleEngineStatistics(ServerRulesEngine engine)
+            : base(engine.RuleApplyTime.Description)
         {
-            
         }
+        #endregion
 
+        #region Overrides
         protected override void OnBegin()
         {
             // NOOP
@@ -92,5 +89,6 @@ namespace ClearCanvas.ImageServer.Rules
         {
             // NOOP
         }
+        #endregion
     }
 }

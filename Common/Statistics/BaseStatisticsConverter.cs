@@ -1,13 +1,12 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.ComponentModel;
+using System.Text;
 using System.Xml;
 
 namespace ClearCanvas.Common.Statistics
 {
     /// <summary>
-    ///  Class used to convert <seealso cref="BasicStatistics"/> to other types.
+    ///  Class used to convert <seealso cref="BaseStatistics"/> to other types.
     /// </summary>
     public class BasicStatisticsConverter : TypeConverter
     {

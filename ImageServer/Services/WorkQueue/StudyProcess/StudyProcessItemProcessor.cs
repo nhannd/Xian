@@ -30,10 +30,8 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.DicomServices.Xml;
 using ClearCanvas.ImageServer.Common;
@@ -52,7 +50,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         private ServerRulesEngine _studyProcessedRulesEngine;
         private ServerRulesEngine _seriesProcessedRulesEngine;
 
-        private StudyProcessStatistics _stats;
+        private readonly StudyProcessStatistics _stats;
         
         #endregion
 
@@ -60,12 +58,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
        
         #endregion
 
-        #region Events
-        
-        #endregion Events
-
         #region Constructors
-        public StudyProcessItemProcessor():base()
+        public StudyProcessItemProcessor()
         {
             _stats = new StudyProcessStatistics();
         }
@@ -136,10 +130,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         private void ProcessFile(Model.WorkQueue item, string path, StudyXml stream)
         {
             InstanceKeys keys;
-            DicomFile file=null;
-            long fileSize = 0;
+            DicomFile file;
+            long fileSize;
             String modality = null;
-            String patientsName = null;
 
             FileInfo fileInfo = new FileInfo(path);
             fileSize = fileInfo.Length;
@@ -151,14 +144,14 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
             try
             {
-                long t1 = DateTime.Now.Ticks;
+                long startTicks = Platform.Time.Ticks;
                 file = new DicomFile(path);
                 file.Load();
-                _stats.DicomFileLoadtimeInMs += (DateTime.Now.Ticks - t1)/10000d;
+                _stats.DicomFileLoadTimeInMs += (Platform.Time.Ticks - startTicks)/10000d;
                 
 
                 // Get the Patients Name for processing purposes.
-                patientsName = file.DataSet[DicomTags.PatientsName].GetString(0, "");
+                String patientsName = file.DataSet[DicomTags.PatientsName].GetString(0, "");
                 modality = file.DataSet[DicomTags.Modality].GetString(0, "");
                 
                 // Update the StudyStream object
@@ -200,7 +193,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             }
             finally
             {
-                _stats.StudyInstanceUID = StorageLocation.StudyInstanceUid;
+                _stats.StudyInstanceUid = StorageLocation.StudyInstanceUid;
                 if (String.IsNullOrEmpty(modality) == false)
                     _stats.ModalityType = modality;
 
@@ -341,9 +334,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
         }
 
-        
-
         #endregion
-
     }
 }

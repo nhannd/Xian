@@ -183,10 +183,22 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                     sb.AppendFormat("NOT EXISTS ({0})",sql);
                     break;
                 case SearchConditionTest.Exists:
+                    RelatedEntityCondition<SelectCriteria> rec = sc as RelatedEntityCondition<SelectCriteria>;
+                    if (rec == null) throw new PersistenceException("Casting error with RelatedEntityCondition",null);
                     SelectCriteria existsSubCriteria = (SelectCriteria)values[0];
+
+                    string baseTableColumn = rec.BaseTableColumn;
+                    if (baseTableColumn.EndsWith("Key"))
+                        baseTableColumn = baseTableColumn.Replace("Key", "GUID");
+                    string relatedTableColumn = rec.RelatedTableColumn;
+                    if (relatedTableColumn.EndsWith("Key"))
+                        relatedTableColumn = relatedTableColumn.Replace("Key", "GUID");
+
                     string existsSql;
+                    
                     existsSql = GetSql(existsSubCriteria.GetKey(), command, existsSubCriteria,
-                        String.Format("{0}.GUID = {1}.{0}GUID", variable, existsSubCriteria.GetKey()));
+                                       String.Format("{0}.{2} = {1}.{3}", variable, existsSubCriteria.GetKey(),
+                                                     baseTableColumn, relatedTableColumn));
                     sb.AppendFormat("EXISTS ({0})", existsSql);
                     break;
                 case SearchConditionTest.None:
@@ -261,6 +273,42 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
             {
                 first = false;
                 sb.AppendFormat(" WHERE {0}", subWhere);  
+            }
+
+            foreach (String clause in where)
+            {
+                if (first)
+                {
+                    first = false;
+                    sb.AppendFormat(" WHERE {0}", clause);
+                }
+                else
+                    sb.AppendFormat(" AND {0}", clause);
+            }
+            return sb.ToString();
+        }
+        /// <summary>
+        /// Proves a SELECT COUNT(*) SQL statement based on the supplied input criteria.
+        /// </summary>
+        /// <param name="entityName">The entity that is being selected from.</param>
+        /// <param name="command">The SqlCommand to use.</param>
+        /// <param name="criteria">The criteria for the select count</param>
+        /// <param name="subWhere">If this is being used to generate the SQL for a sub-select, additional where clauses are included here for the select.  Otherwise the parameter is null.</param>
+        /// <returns>The SQL string.</returns>
+        public static string GetSelectCountSql(string entityName, SqlCommand command, SelectCriteria criteria, String subWhere)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendFormat("SELECT COUNT(*) FROM {0}", entityName);
+
+            // Generate an array of the WHERE clauses to be used.
+            String[] where = WhereSearchCriteria(entityName, criteria, command);
+
+            // Add the where clauses on.
+            bool first = true;
+            if (subWhere != null)
+            {
+                first = false;
+                sb.AppendFormat(" WHERE {0}", subWhere);
             }
 
             foreach (String clause in where)
@@ -415,6 +463,38 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
             }
         }
 
+        public int Count(TInput criteria)
+        {
+            SqlCommand command = null;
+            string sql = "";
+
+            try
+            {
+                command = new SqlCommand();
+                command.Connection = Context.Connection;
+                command.CommandType = CommandType.Text;
+
+                command.CommandText = sql = GetSelectCountSql(_entityName, command, criteria, null);
+
+                object result = command.ExecuteScalar();
+
+                int count = (int)result;
+                return count;
+            }
+            catch (Exception e)
+            {
+                Platform.Log(LogLevel.Error, e, "Unexpected exception with select: {0}", sql);
+
+                throw new PersistenceException(String.Format("Unexpected problem with select statment on table {0}: {1}", _entityName, e.Message), e);
+            }
+            finally
+            {
+                // Cleanup the command, or else we won't be able to do anything with the
+                // connection the next time here.
+                if (command != null)
+                    command.Dispose();
+            }
+        }
         #endregion
     }
 }

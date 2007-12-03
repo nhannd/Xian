@@ -226,7 +226,7 @@ namespace ClearCanvas.ImageServer.Model.Criteria
             {
                 if (!this.SubCriteria.ContainsKey("SeriesRelatedEntityCondition"))
                 {
-                    this.SubCriteria["SeriesRelatedEntityCondition"] = new RelatedEntityCondition<SelectCriteria>("SeriesRelatedEntityCondition");
+                    this.SubCriteria["SeriesRelatedEntityCondition"] = new RelatedEntityCondition<SelectCriteria>("SeriesRelatedEntityCondition", "Key", "StudyKey");
                 }
                 return (IRelatedEntityCondition<SelectCriteria>)this.SubCriteria["SeriesRelatedEntityCondition"];
             }
