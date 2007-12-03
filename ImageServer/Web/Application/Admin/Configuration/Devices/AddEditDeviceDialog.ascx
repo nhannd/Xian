@@ -27,25 +27,28 @@
                                     <tr id="Tr1" runat="server">
                                         <td id="Td1" runat="server" valign="bottom">
                                             AE Title<br />
-                                            <asp:TextBox ID="AETitleTextBox" runat="server" ValidationGroup="vg1" MaxLength="16" Width="150px" ></asp:TextBox>
-                                            <clearcanvas:ConditionalRequiredFieldValidator 
+                                            <asp:TextBox ID="AETitleTextBox" runat="server" ValidationGroup="vg1" MaxLength="16" Width="150px" ></asp:TextBox><asp:Image
+                                                ID="AETitleHelpImage" runat="server" ImageAlign="Top" ImageUrl="~/images/icons/HelpSmall.png" style="visibility: hidden"/><clearcanvas:ConditionalRequiredFieldValidator 
                                                 ID="RequiredFieldValidator2" runat="server" ControlToValidate="AETitleTextBox"
                                                 InvalidInputBackColor="#FAFFB5"
                                                 ValidationGroup="vg1"
-                                                ErrorMessage="AE Title is required!!" Display="None" RequiredWhenChecked="False"></clearcanvas:ConditionalRequiredFieldValidator>
-                                             <clearcanvas:RegularExpressionFieldValidator 
+                                                PopupHelpControlID="AETitleHelpImage"
+                                                ErrorMessage="AE Title is required" Display="None" RequiredWhenChecked="False"></clearcanvas:ConditionalRequiredFieldValidator><clearcanvas:RegularExpressionFieldValidator 
                                                 ID="RegularExpressionFieldValidator2" runat="server"
                                                 ControlToValidate="AETitleTextBox"
                                                 InvalidInputBackColor="#FAFFB5"
                                                 ValidationGroup="vg1" 
+                                                PopupHelpControlID="AETitleHelpImage"
                                                 ValidationExpression="^([^\\]){1,16}$"
-                                                ErrorMessage="The AE Title is not valid." Display="None"></clearcanvas:RegularExpressionFieldValidator>
+                                                ErrorMessage="Acceptable characters: any characters except backslash" 
+                                                Display="None"></clearcanvas:RegularExpressionFieldValidator>
                                              </td>
                                         <td id="Td2" runat="server" colspan="1" valign="bottom" align="left">
                                             </td>
                                         <td id="Td3" runat="server" colspan="1" style="color: #000000" valign="bottom">
                                             Description<br />
-                                            <asp:TextBox ID="DescriptionTextBox" runat="server" Width="150px"></asp:TextBox></td>
+                                            <asp:TextBox ID="DescriptionTextBox" runat="server" Width="150px"></asp:TextBox>&nbsp;
+                                        </td>
                                     </tr>
                                     <tr id="Tr2" runat="server">
                                         <td id="Td4" runat="server" valign="bottom">
@@ -59,7 +62,8 @@
                                                 </tr>
                                                 <tr>
                                                     <td colspan="2">
-                                            <asp:TextBox ID="IPAddressTextBox" runat="server" CausesValidation="True" ValidationGroup="vg1" Width="150px"></asp:TextBox></td>
+                                                        <asp:TextBox ID="IPAddressTextBox" runat="server" CausesValidation="True" ValidationGroup="vg1" Width="150px"></asp:TextBox><asp:Image ID="IPAddressHelpImage" runat="server" ImageAlign="Top" ImageUrl="~/images/icons/HelpSmall.png" style="visibility: hidden"/>
+                                                    </td>
                                                 </tr>
                                             </table>
                                             <clearcanvas:ConditionalRequiredFieldValidator 
@@ -70,6 +74,7 @@
                                                 RequiredWhenChecked="False"
                                                 ValidationGroup="vg1" 
                                                 ErrorMessage="Device IP address is required if it uses static IP" 
+                                                PopupHelpControlID="IPAddressHelpImage"
                                                 Display="None"></clearcanvas:ConditionalRequiredFieldValidator>
                                                 
                                                 
@@ -79,7 +84,8 @@
                                                 InvalidInputBackColor="#FAFFB5"
                                                 ValidationGroup="vg1" 
                                                 ValidationExpression="^([1-9]?\d|1\d\d|2[0-4]\d|25[0-5])\.([1-9]?\d|1\d\d|2[0-4]\d|25[0-5])\.([1-9]?\d|1\d\d|2[0-4]\d|25[0-5])\.([1-9]?\d|1\d\d|2[0-4]\d|25[0-5])$"
-                                                ErrorMessage="The IP address is not valid." Display="None"></clearcanvas:RegularExpressionFieldValidator>
+                                                ErrorMessage="The IP address must be of form AAA.BBB.CCC.DDD\nAll components must be in the range from 0 to 255" 
+                                                Display="None" PopupHelpControlID="IPAddressHelpImage"></clearcanvas:RegularExpressionFieldValidator>
                                                 
                                             
                                             </td>
@@ -93,17 +99,19 @@
                                     <tr id="Tr3" runat="server">
                                         <td id="Td7" runat="server" >
                                             Port<br />
-                                            <asp:TextBox ID="PortTextBox" runat="server"></asp:TextBox>
+                                            <asp:TextBox ID="PortTextBox" runat="server"></asp:TextBox><asp:Image
+                                                ID="PortHelpImage" runat="server" ImageAlign="Top" 
+                                                ImageUrl="~/images/icons/HelpSmall.png" style="visibility: hidden"/>
                                             <clearcanvas:RangeValidator 
                                                 ID="PortValidator1" runat="server"
                                                 ControlToValidate="PortTextBox"
                                                 InvalidInputBackColor="#FAFFB5"
                                                 ValidationGroup="vg1" 
-                                                MinValue = "0"
+                                                MinValue = "1"
                                                 MaxValue = "65535"
-                                                ErrorMessage="Device Port must be between 0 and 65535"
-                                                Display="None">
-                                            </clearcanvas:RangeValidator>
+                                                ErrorMessage="Device Port must be between 1 and 65535"
+                                                PopupHelpControlID="PortHelpImage"
+                                                Display="None"></clearcanvas:RangeValidator>
                                                  
                                             </td>
                                         <td id="Td8" runat="server" >
@@ -114,7 +122,7 @@
                                 </table>
                             </asp:Panel>
         <cc1:NumericUpDownExtender ID="PortTextBoxNumericUpDownExtender" runat="server" Maximum="65536"
-            Minimum="0" TargetControlID="PortTextBox" Width="100" Enabled="True" RefValues="" ServiceDownMethod="" ServiceDownPath="" ServiceUpMethod="" Tag="" TargetButtonDownID="" TargetButtonUpID="">
+            Minimum="1" TargetControlID="PortTextBox" Width="100" Enabled="True" RefValues="" ServiceDownMethod="" ServiceDownPath="" ServiceUpMethod="" Tag="" TargetButtonDownID="" TargetButtonUpID="">
         </cc1:NumericUpDownExtender>
                         </ContentTemplate>
                         <HeaderTemplate>

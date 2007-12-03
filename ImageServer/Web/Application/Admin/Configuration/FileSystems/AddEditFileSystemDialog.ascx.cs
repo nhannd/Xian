@@ -139,7 +139,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
 
             Page.ClientScript.RegisterClientScriptBlock(this.GetType(), this.ClientID,
                         @"<script language='javascript'>
-
+                            function AddEditFileSystemsDialog_HideHelpImage(helpImgID)
+                            {
+                                img = document.getElementById(helpImgID);
+                                img.style.visibility = 'hidden';
+                            }
                             function AddEditFileSystemsDialog_ClearField(fieldID)
                             {
                                 txtbox = document.getElementById(fieldID);
@@ -151,6 +155,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
                                 
                                 AddEditFileSystemsDialog_ClearField('" + DescriptionTextBox.ClientID + @"');
                                 AddEditFileSystemsDialog_ClearField('" + PathTextBox.ClientID + @"');
+
+                                AddEditFileSystemsDialog_HideHelpImage('" + DescriptionHelpImage.ClientID + @"');
+                                AddEditFileSystemsDialog_HideHelpImage('" + PathHelpImage.ClientID + @"');
                                 
                             }
                         </script>");

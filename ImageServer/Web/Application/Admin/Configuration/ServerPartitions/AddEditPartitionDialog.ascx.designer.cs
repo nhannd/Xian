@@ -110,6 +110,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
         protected global::System.Web.UI.WebControls.TextBox AETitleTextBox;
         
         /// <summary>
+        /// AETitleHelpImage control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Image AETitleHelpImage;
+        
+        /// <summary>
         /// RequiredFieldValidator2 control.
         /// </summary>
         /// <remarks>
@@ -182,6 +191,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
         protected global::System.Web.UI.WebControls.TextBox PortTextBox;
         
         /// <summary>
+        /// PortHelpImage control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Image PortHelpImage;
+        
+        /// <summary>
         /// PortValidator1 control.
         /// </summary>
         /// <remarks>
@@ -216,6 +234,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox PartitionFolderTextBox;
+        
+        /// <summary>
+        /// FolderHelpImage control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Image FolderHelpImage;
         
         /// <summary>
         /// Conditionalrequiredfieldvalidator1 control.

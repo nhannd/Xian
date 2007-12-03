@@ -138,8 +138,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
 
             OKButton.OnClientClick = ClientID + "_clearFields()";
 
-            Page.ClientScript.RegisterClientScriptBlock(this.GetType(), this.ClientID, 
+            Page.ClientScript.RegisterClientScriptBlock(this.GetType(), this.ClientID,
                         @"<script language='javascript'>
+                            function AddEditDialog_HideHelpImage(helpImgID)
+                            {
+                                img = document.getElementById(helpImgID);
+                                img.style.visibility = 'hidden';
+                            }
                             function AddEditDialog_ClearField(fieldID)
                             {
                                 txtbox = document.getElementById(fieldID);
@@ -150,8 +155,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
                             {
                                 
                                 AddEditDialog_ClearField('" + AETitleTextBox.ClientID + @"');
+                                AddEditDialog_HideHelpImage('" + AETitleHelpImage.ClientID + @"');
                                 AddEditDialog_ClearField('" + IPAddressTextBox.ClientID + @"');
+                                AddEditDialog_HideHelpImage('" + IPAddressHelpImage.ClientID + @"');
                                 AddEditDialog_ClearField('" + PortTextBox.ClientID + @"');
+                                AddEditDialog_HideHelpImage('" + PortHelpImage.ClientID + @"');
                                 
                             }
                         </script>");
@@ -249,7 +257,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
                 ActiveCheckBox.Checked = false;
                 DHCPCheckBox.Checked = false;
                 DescriptionTextBox.Text = "";
-                PortTextBox.Text = "0";
+                PortTextBox.Text = "1";
 
                 AllowStorageCheckBox.Checked = false;
                 AllowQueryCheckBox.Checked = false;

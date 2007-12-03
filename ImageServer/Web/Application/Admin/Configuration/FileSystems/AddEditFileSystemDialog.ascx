@@ -26,14 +26,16 @@
                                         <tr runat="server">
                                             <td runat="server" valign="bottom">
                                                 Description<br />
-                                                <asp:TextBox ID="DescriptionTextBox" runat="server" Width="250px" BorderColor="LightSteelBlue"
-                                                    BorderWidth="1px" MaxLength="128" ValidationGroup="vg1"></asp:TextBox>
+                                                <asp:TextBox ID="DescriptionTextBox" runat="server" Width="220px" BorderColor="LightSteelBlue"
+                                                    BorderWidth="1px" MaxLength="128" ValidationGroup="vg1"></asp:TextBox><asp:Image
+                                                        ID="DescriptionHelpImage" runat="server" ImageAlign="Top" ImageUrl="~/images/icons/HelpSmall.png"
+                                                        Style="visibility: hidden" />
                                             </td>
                                             <td colspan="1" runat="server" valign="bottom">
                                                 <clearcanvas:ConditionalRequiredFieldValidator ID="ConditionalRequiredFieldValidator1"
                                                     runat="server" ControlToValidate="DescriptionTextBox" InvalidInputBackColor="#FAFFB5"
                                                     ValidationGroup="vg1" EnableClientScript="true" ErrorMessage="Description is required!!"
-                                                    Display="None"></clearcanvas:ConditionalRequiredFieldValidator>
+                                                    Display="None" PopupHelpControlID="DescriptionHelpImage"></clearcanvas:ConditionalRequiredFieldValidator>
                                             </td>
                                             <td runat="server" colspan="1" style="width: 53px; color: #000000" valign="bottom">
                                                 <asp:CheckBox ID="ReadCheckBox" runat="server" OnInit="ReadOnlyCheckBox_Init" Text="Read"
@@ -43,14 +45,20 @@
                                         <tr runat="server">
                                             <td style="height: 29px" runat="server" valign="bottom">
                                                 Path<br />
-                                                <asp:TextBox ID="PathTextBox" runat="server" Width="250px" BorderColor="LightSteelBlue"
-                                                    BorderWidth="1px" ValidationGroup="vg1" MaxLength="256"></asp:TextBox>
+                                                <asp:TextBox ID="PathTextBox" runat="server" Width="220px" BorderColor="LightSteelBlue"
+                                                    BorderWidth="1px" ValidationGroup="vg1" MaxLength="256"></asp:TextBox><asp:Image
+                                                        ID="PathHelpImage" runat="server" ImageAlign="Top" ImageUrl="~/images/icons/HelpSmall.png"
+                                                        Style="visibility: hidden" />
                                             </td>
                                             <td colspan="1" style="height: 29px" align="left" runat="server" valign="bottom">
                                                 <clearcanvas:ConditionalRequiredFieldValidator ID="ConditionalRequiredFieldValidator2"
                                                     runat="server" ControlToValidate="PathTextBox" InvalidInputBackColor="#FAFFB5"
                                                     ValidationGroup="vg1" EnableClientScript="true" ErrorMessage="Filesystem Path is required!!"
-                                                    Display="None"></clearcanvas:ConditionalRequiredFieldValidator>
+                                                    Display="None" PopupHelpControlID="PathHelpImage">
+                                                    </clearcanvas:ConditionalRequiredFieldValidator>
+
+                                                
+                                                    
                                             </td>
                                             <td runat="server" align="left" colspan="1" style="width: 53px; height: 29px" valign="bottom">
                                                 <asp:CheckBox ID="WriteCheckBox" runat="server" Text="Write" Checked="True" />
@@ -59,7 +67,7 @@
                                         <tr runat="server">
                                             <td style="height: 43px" runat="server">
                                                 Filesystem Tier<br />
-                                                <asp:DropDownList ID="TiersDropDownList" runat="server" Width="250px">
+                                                <asp:DropDownList ID="TiersDropDownList" runat="server" Width="220px">
                                                 </asp:DropDownList>
                                             </td>
                                             <td runat="server" style="height: 43px">

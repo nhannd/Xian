@@ -139,12 +139,22 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
                                 txtbox.style.backgroundColor = '';
                             }
 
+                            function AddEditPartitionDialog_HideHelpImage(helpImgID)
+                            {
+                                img = document.getElementById(helpImgID);
+                                img.style.visibility = 'hidden';
+                            }
+
                             function " + ClientID + @"_clearFields()
                             {
                                 
                                 AddEditPartitionDialog_ClearField('" + AETitleTextBox.ClientID + @"');
                                 AddEditPartitionDialog_ClearField('" + PortTextBox.ClientID + @"');
                                 AddEditPartitionDialog_ClearField('" + PartitionFolderTextBox.ClientID + @"');
+
+                                AddEditPartitionDialog_HideHelpImage('" + AETitleHelpImage.ClientID + @"');
+                                AddEditPartitionDialog_HideHelpImage('" + PortHelpImage.ClientID + @"');
+                                AddEditPartitionDialog_HideHelpImage('" + FolderHelpImage.ClientID + @"');
                                 
                             }
                         </script>");
@@ -223,7 +233,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
             {
                 AETitleTextBox.Text = "";
                 DescriptionTextBox.Text = "";
-                PortTextBox.Text = "0";
+                PortTextBox.Text = "1";
                 PartitionFolderTextBox.Text = "";
                 EnabledCheckBox.Checked = false;
             }

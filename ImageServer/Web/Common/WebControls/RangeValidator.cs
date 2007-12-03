@@ -35,26 +35,15 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
     /// 
     /// </example>
     /// 
-    public class RangeValidator: Sample.Web.UI.Compatibility.BaseValidator
+    public class RangeValidator: BaseValidator
     {
         #region Private Members
-        private string _evalFunctionName;
-        private string _invalidInputBackColor;
         private int _min;
         private int _max;
         #endregion Private Members
 
         #region Public Properties
 
-
-        /// <summary>
-        /// Gets or retrieves the specified background color for the input control when the validation fails.
-        /// </summary>
-        public string InvalidInputBackColor
-        {
-            get { return _invalidInputBackColor; }
-            set { _invalidInputBackColor = value; }
-        }
 
         /// <summary>
         /// Sets or gets the minimum acceptable value.
@@ -81,16 +70,16 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
         {
             // Register Javascript for client-side validation
 
-            _evalFunctionName = ClientID + "_Evaluation";
              
             string script =
                 "<script language='javascript'>" + @"
                     
-                        function " + _evalFunctionName + @"()
+                        function " + EvalFunctionName + @"()
                         {
                             extenderCtrl =  document.getElementById('" + this.ClientID + @"');                            
                             textbox = document.getElementById('" + GetControlRenderID(ControlToValidate) + @"');
-                                    
+                            helpCtrl = document.getElementById('" + GetControlRenderID(PopupHelpControlID) + @"');
+     
                             result = true;
                             if (textbox.value!=null && textbox.value!='')
                             {
@@ -106,11 +95,18 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
                             if (!result)
                             {
                                 extenderCtrl.style.visibility='visible';
+                                if (helpCtrl!=null){
+                                    helpCtrl.style.visibility='visible';
+                                    helpCtrl.alt='" + ErrorMessage + @"';
+                                }
+                                    
                                 textbox.style.backgroundColor ='" + InvalidInputBackColor + @"';
                             }
                             else
                             {
-                                extenderCtrl.style.visibility='hidden';
+                                //if (helpCtrl!=null)
+                                //    helpCtrl.style.visibility='hidden';
+                                //extenderCtrl.style.visibility='hidden';
                                 //textbox.style.backgroundColor='" + System.Drawing.ColorTranslator.ToHtml(BackColor) + @"';
                             }
 
@@ -134,7 +130,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
             if (RenderUplevel)
             {
                 // Add client-side validation function
-                writer.AddAttribute("evaluationfunction", _evalFunctionName);
+                writer.AddAttribute("evaluationfunction", EvalFunctionName);
             }
         }
 

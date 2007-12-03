@@ -110,6 +110,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
         protected global::System.Web.UI.WebControls.TextBox DescriptionTextBox;
         
         /// <summary>
+        /// DescriptionHelpImage control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Image DescriptionHelpImage;
+        
+        /// <summary>
         /// ConditionalRequiredFieldValidator1 control.
         /// </summary>
         /// <remarks>
@@ -137,6 +146,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
         protected global::System.Web.UI.WebControls.TextBox PathTextBox;
         
         /// <summary>
+        /// PathHelpImage control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Image PathHelpImage;
+        
+        /// <summary>
         /// ConditionalRequiredFieldValidator2 control.
         /// </summary>
         /// <remarks>
@@ -144,6 +162,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::ClearCanvas.ImageServer.Web.Common.WebControls.ConditionalRequiredFieldValidator ConditionalRequiredFieldValidator2;
+        
+        /// <summary>
+        /// RegularExpressionFieldValidator1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.RegularExpressionFieldValidator RegularExpressionFieldValidator1;
         
         /// <summary>
         /// WriteCheckBox control.

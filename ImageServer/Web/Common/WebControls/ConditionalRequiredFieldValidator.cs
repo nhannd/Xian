@@ -30,17 +30,14 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
     /// 
     /// </example>
     /// 
-    public class ConditionalRequiredFieldValidator: Sample.Web.UI.Compatibility.BaseValidator
+    public class ConditionalRequiredFieldValidator: BaseValidator
     {
         #region Private Members
         // the control, if checked, "enables" this validation control
         private string _conditionalCheckBoxID;
         // specify when the validation should be enabled: when the condition control is checked or unchecked
         private bool    _requiredWhenChecked;
-        // the background color of the input when the validation fails.
-        private string _invalidInputBackColor;
-        
-        private string _evalFunctionName;
+
 
         #endregion Private members
 
@@ -72,16 +69,6 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
             set { _requiredWhenChecked = value; }
         }
 
-        
-        /// <summary>
-        /// Sets or retrieve the specified background color of the input control when the validation fails.
-        /// </summary>
-        public string InvalidInputBackColor
-        {
-            get { return _invalidInputBackColor; }
-            set { _invalidInputBackColor = value; }
-        }
-
 
         #endregion Public Properties
 
@@ -96,20 +83,21 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
             // Register the javascripts to be used by the validator controls on the client
             string script;
 
-            _evalFunctionName = ClientID + "_Evaluation";
-
+            
             // Create different javascript based depending on whether the condition checkbox is specified
             if (ConditionalCheckBoxID!= null)
             {
                 script =
                     "<script language='javascript'>" + @"
-                        function " + _evalFunctionName + @"()
+                        function " + EvalFunctionName + @"()
                         {
                                 result = true;
 
                                 chkbox = document.getElementById('" + ConditionalCheckBox.ClientID + @"');
                                 textbox = document.getElementById('" + GetControlRenderID(ControlToValidate) + @"');
                                 extenderCtrl =  document.getElementById('" + this.ClientID + @"');
+                                helpCtrl = document.getElementById('" + GetControlRenderID(PopupHelpControlID) + @"');
+
                                 
                                 if (chkbox.checked == " + _requiredWhenChecked.ToString().ToLower() + @")
                                 {
@@ -121,13 +109,16 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
 
                                  if (!result)
                                 {
-                                    extenderCtrl.style.visibility='visible';
                                     textbox.style.backgroundColor ='" + InvalidInputBackColor + @"';
+                                    if (helpCtrl!=null){
+                                        helpCtrl.style.visibility='visible';
+                                        helpCtrl.alt='" + ErrorMessage + @"';
+                                    }
                                 }
                                 else
                                 {
-                                    extenderCtrl.style.visibility='hidden';
-                                    //textbox.style.backgroundColor='" + System.Drawing.ColorTranslator.ToHtml(BackColor) + @"';
+                                    //if (helpCtrl!=null)
+                                    //    helpCtrl.style.visibility='hidden';
                                 }
 
                                 return  result;
@@ -140,14 +131,15 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
             {
                 script =
                     "<script language='javascript'>" + @"
-                        function " + _evalFunctionName + @"()
+                        function " + EvalFunctionName + @"()
                         {
 
                                 result = true;
 
                                 textbox = document.getElementById('" + GetControlRenderID(ControlToValidate) + @"');
                                 extenderCtrl =  document.getElementById('" + this.ClientID + @"');
-                                
+                                helpCtrl = document.getElementById('" + GetControlRenderID(PopupHelpControlID) + @"');
+
                                 if (textbox.value==null || textbox.value=='')
                                 {
                                     result = false;
@@ -155,12 +147,17 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
                             
                                 if (!result)
                                 {
-                                    extenderCtrl.style.visibility='visible';
+                                    if (helpCtrl!=null)
+                                    {
+                                        helpCtrl.style.visibility='visible';
+                                        helpCtrl.alt='" + ErrorMessage + @"';
+                                    }
                                     textbox.style.backgroundColor ='" + InvalidInputBackColor + @"';
                                 }
                                 else
                                 {
-                                    extenderCtrl.style.visibility='hidden';
+                                    //if (helpCtrl!=null)
+                                    //    helpCtrl.style.visibility='hidden';
                                     //textbox.style.backgroundColor='" + System.Drawing.ColorTranslator.ToHtml(BackColor) + @"';
                                 }
 
@@ -174,17 +171,6 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
             Page.RegisterClientScriptBlock(ClientID, script);
 
             base.OnInit(e);
-        }
-
-        protected override void AddAttributesToRender(System.Web.UI.HtmlTextWriter writer)
-        {
-            base.AddAttributesToRender(writer);
-
-            if (RenderUplevel)
-            {
-                // Add the javascript for clien-side validation
-                writer.AddAttribute("evaluationfunction", _evalFunctionName);
-            }
         }
 
 

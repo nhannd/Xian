@@ -280,6 +280,7 @@
     <Content Include="images\filter_disabled.gif" />
     <Content Include="images\filter_on.gif" />
     <Content Include="images\gridheaderbackground.png" />
+    <Content Include="images\icons\HelpSmall.png" />
     <Content Include="images\icons\AddDisabled.png" />
     <Content Include="images\icons\AddEnabled.png" />
     <Content Include="images\icons\BackDisabled.png" />

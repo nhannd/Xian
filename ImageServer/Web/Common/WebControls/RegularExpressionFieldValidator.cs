@@ -34,11 +34,9 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
     /// 
     /// </example>
     /// 
-    public class RegularExpressionFieldValidator : Sample.Web.UI.Compatibility.BaseValidator
+    public class RegularExpressionFieldValidator : BaseValidator
     {
         #region Private Members
-        private string _evalFunctionName;
-        private string _invalidInputBackColor;
         private string _regEx;
         #endregion Private Members
 
@@ -53,14 +51,6 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
             set { _regEx = value; }
         }
 
-        /// <summary>
-        /// Gets or retrieves the specified background color for the input control when the validation fails.
-        /// </summary>
-        public string InvalidInputBackColor
-        {
-            get { return _invalidInputBackColor; }
-            set { _invalidInputBackColor = value; }
-        }
 
         #endregion Public Properties
 
@@ -69,17 +59,19 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
         {
             // Register Javascript for client-side validation
 
-            _evalFunctionName = ClientID + "_Evaluation";
+            
              
             string script =
                 "<script language='javascript'>" + @"
                     
-                        function " + _evalFunctionName + @"()
+                        function " + EvalFunctionName + @"()
                         {
                             extenderCtrl =  document.getElementById('" + this.ClientID + @"');                            
                             textbox = document.getElementById('" + GetControlRenderID(ControlToValidate) + @"');
-                                          
-                            var re = new RegExp('" + ValidationExpression.Replace("\\", "\\\\") + @"');
+                            helpCtrl = document.getElementById('" + GetControlRenderID(PopupHelpControlID) + @"');
+                 
+                            var re = new RegExp('" + ValidationExpression.Replace("\\", "\\\\").Replace("'", "\\'") + @"');
+                            //var re = new RegExp('" + ValidationExpression+ @"');
                             if (textbox.value=='')
                             {
                                 result = true;
@@ -92,12 +84,19 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
 
                             if (!result)
                             {
-                                extenderCtrl.style.visibility='visible';
+                                if (helpCtrl!=null)
+                                {
+                                    helpCtrl.style.visibility='visible';
+                                    
+                                    helpCtrl.alt='" + ErrorMessage +@"';
+                                }
                                 textbox.style.backgroundColor ='" + InvalidInputBackColor + @"';
                             }
                             else
                             {
-                                extenderCtrl.style.visibility='hidden';
+                                //if (helpCtrl!=null)
+                                //        helpCtrl.style.visibility='hidden';
+                                //extenderCtrl.style.visibility='hidden';
                                 //textbox.style.backgroundColor='" + System.Drawing.ColorTranslator.ToHtml(BackColor) + @"';
                             }
 
@@ -121,7 +120,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
             if (RenderUplevel)
             {
                 // Add client-side validation function
-                writer.AddAttribute("evaluationfunction", _evalFunctionName);
+                writer.AddAttribute("evaluationfunction", EvalFunctionName);
             }
         }
 
