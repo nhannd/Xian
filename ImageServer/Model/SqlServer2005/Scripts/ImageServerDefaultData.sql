@@ -145,6 +145,11 @@ INSERT INTO [ImageServer].[dbo].[ServiceLockTypeEnum]
            (newid(),100,'FilesystemDelete','Filesystem Delete','Purge Data from a Filesystem')
 GO
 
+INSERT INTO [ImageServer].[dbo].[ServiceLockTypeEnum]
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES
+           (newid(),101,'FilesystemReinventory','Filesystem Reinventory','Re-inventory Data within a Filesystem')
+GO
 
 -- ServerSopClass inserts
 INSERT INTO [ImageServer].[dbo].[ServerSopClass] ([GUID],[SopClassUid],[Description],[NonImage])
