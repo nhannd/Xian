@@ -34,7 +34,9 @@
 using System;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tables;
+using ClearCanvas.Desktop.Tools;
 
 namespace ClearCanvas.Desktop
 {
