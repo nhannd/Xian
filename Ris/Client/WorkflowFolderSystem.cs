@@ -102,6 +102,37 @@ namespace ClearCanvas.Ris.Client
 
         #endregion
 
+        /// <summary>
+        /// Invalidates all folders of the specified type so that they
+        /// will refresh their content or count.
+        /// </summary>
+        /// <param name="folderType"></param>
+        public void InvalidateFolder(Type folderType)
+        {
+            // TODO: could implement more of an "invalidate", rather than an immediate refresh
+            // the folder doesn't actually need to refresh unless the explorer workspace is visible
+            foreach (IFolder folder in _workflowFolders)
+            {
+                if(folder.GetType().Equals(folderType))
+                {
+                    if(folder.IsOpen)
+                        folder.Refresh();
+                    else 
+                        folder.RefreshCount();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Invalidates the currently selected folder, causing it to re-populate its contents.
+        /// </summary>
+        public void InvalidateSelectedFolder()
+        {
+            // TODO: could implement more of an "invalidate", rather than an immediate refresh
+            // the folder doesn't actually need to refresh unless the explorer workspace is visible
+            _folderExplorer.SelectedFolder.Refresh();
+        }
+
         public Type GetWorklistType(string type)
         {
             return _worklistType.ContainsKey(type) ? _worklistType[type] : null;

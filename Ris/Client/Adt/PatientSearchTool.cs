@@ -55,8 +55,8 @@ namespace ClearCanvas.Ris.Client.Adt
                 _workspace = ApplicationComponent.LaunchAsWorkspace(
                     this.Context.DesktopWindow,
                     BuildComponent(),
-                    SR.TitleSearchPatients,
-                    delegate { _workspace = null; });
+                    SR.TitleSearchPatients);
+                    _workspace.Closed += delegate { _workspace = null; };
             }
             else
             {

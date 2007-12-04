@@ -46,14 +46,12 @@ namespace ClearCanvas.Ris.Client.Reporting
 {
     public class ReportDocument : Document
     {
-        private ReportingWorklistItem _worklistItem;
-        private IEnumerable _reportFolders;
+        private readonly ReportingWorklistItem _worklistItem;
 
-        public ReportDocument(ReportingWorklistItem worklistItem, IEnumerable folders, IDesktopWindow window)
+        public ReportDocument(ReportingWorklistItem worklistItem, IDesktopWindow window)
             : base(worklistItem.ProcedureStepRef, window)
         {
             _worklistItem = worklistItem;
-            _reportFolders = folders;
         }
 
         protected override string GetTitle()
@@ -64,90 +62,6 @@ namespace ClearCanvas.Ris.Client.Reporting
         protected override IApplicationComponent GetComponent()
         {
             return new ReportingComponent(_worklistItem);
-        }
-
-        void reportEditor_VerifyEvent(object sender, EventArgs e)
-        {
-            IFolder myVerifiedFolder = CollectionUtils.SelectFirst<IFolder>(_reportFolders,
-                delegate(IFolder folder) 
-                { 
-                    return folder is Folders.VerifiedFolder;
-                });
-
-            if (myVerifiedFolder != null)
-            {
-                if (myVerifiedFolder.IsOpen)
-                    myVerifiedFolder.Refresh();
-                else
-                    myVerifiedFolder.RefreshCount();
-            }
-
-            this.Close();
-        }
-
-        void reportEditor_SendToVerifyEvent(object sender, EventArgs e)
-        {
-            IFolder myVerificationFolder = CollectionUtils.SelectFirst<IFolder>(_reportFolders,
-                delegate(IFolder folder)
-                {
-                    return folder is Folders.ToBeVerifiedFolder;
-                });
-
-            if (myVerificationFolder != null)
-            {
-                if (myVerificationFolder.IsOpen)
-                    myVerificationFolder.Refresh();
-                else
-                    myVerificationFolder.RefreshCount();
-            }
-
-            this.Close();
-        }
-
-        void reportEditor_SendToTranscriptionEvent(object sender, EventArgs e)
-        {
-            IFolder myTranscriptionFolder = CollectionUtils.SelectFirst<IFolder>(_reportFolders,
-                delegate(IFolder folder)
-                {
-                    return folder is Folders.InTranscriptionFolder;
-                });
-
-            if (myTranscriptionFolder != null)
-            {
-                if (myTranscriptionFolder.IsOpen)
-                    myTranscriptionFolder.Refresh();
-                else
-                    myTranscriptionFolder.RefreshCount();
-            }
-
-            this.Close();
-        }
-
-        void reportEditor_SaveEvent(object sender, EventArgs e)
-        {
-            IFolder toBeReportedFolder = CollectionUtils.SelectFirst<IFolder>(_reportFolders,
-                delegate(IFolder folder)
-                {
-                    return folder is Folders.ToBeReportedFolder;
-                });
-
-            if (toBeReportedFolder != null && toBeReportedFolder.IsOpen)
-            {
-                IFolder draftFolder = CollectionUtils.SelectFirst<IFolder>(_reportFolders,
-                    delegate(IFolder folder)
-                    {
-                        return folder is Folders.DraftFolder;
-                    });
-
-                draftFolder.RefreshCount();
-            }
-           
-            this.Close();
-        }
-
-        void reportEditor_CloseComponentEvent(object sender, EventArgs e)
-        {
-            this.Close();
         }
     }    
 }

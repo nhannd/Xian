@@ -41,6 +41,7 @@
     <Compile Include="CancelOrderComponent.cs" />
     <Compile Include="CheckInOrderComponent.cs" />
     <Compile Include="CheckInOrderTable.cs" />
+    <Compile Include="RegistrationReplaceOrderTool.cs" />
     <Compile Include="TechnologistMainWorkflowFolderSystem.cs" />
     <Compile Include="TechnologistMainWorkflowFolderSystemTool.cs" />
     <Compile Include="FolderSearchTool.cs" />

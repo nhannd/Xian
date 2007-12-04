@@ -75,7 +75,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public virtual void Apply()
         {
-            ExecuteAndRefresh(this.Context.DesktopWindow, this.Context.SelectedFolder, this.Context.Folders, this.Context.SelectedItems);
+            ExecuteAndRefresh(this.Context.DesktopWindow, this.Context.SelectedItems);
         }
 
         public string OperationName
@@ -83,7 +83,7 @@ namespace ClearCanvas.Ris.Client.Adt
             get { return _operationName; }
         }
 
-        protected abstract bool Execute(ModalityWorklistItem item, IEnumerable folders);
+        protected abstract bool Execute(ModalityWorklistItem item);
 
         #region IDropHandler<ModalityWorklistItem> Members
 
@@ -96,19 +96,18 @@ namespace ClearCanvas.Ris.Client.Adt
         public virtual bool ProcessDrop(IDropContext dropContext, ICollection<ModalityWorklistItem> items)
         {
             ITechnologistWorkflowFolderDropContext ctxt = (ITechnologistWorkflowFolderDropContext)dropContext;
-            return ExecuteAndRefresh(ctxt.DesktopWindow, ctxt.FolderSystem.SelectedFolder, ctxt.FolderSystem.Folders, items);
+            return ExecuteAndRefresh(ctxt.DesktopWindow, items);
         }
 
         #endregion
 
-        private bool ExecuteAndRefresh(IDesktopWindow desktopWindow, IFolder selectedFolder, IEnumerable folders, IEnumerable items)
+        private bool ExecuteAndRefresh(IDesktopWindow desktopWindow, IEnumerable items)
         {
             try
             {
                 ModalityWorklistItem item = CollectionUtils.FirstElement<ModalityWorklistItem>(items);
-                if (Execute(item, folders))
+                if (Execute(item))
                 {
-                    selectedFolder.Refresh();
                     return true;
                 }
             }
@@ -133,7 +132,7 @@ namespace ClearCanvas.Ris.Client.Adt
         {
         }
 
-        protected override bool Execute(ModalityWorklistItem item, IEnumerable folders)
+        protected override bool Execute(ModalityWorklistItem item)
         {
             try
             {
@@ -143,9 +142,6 @@ namespace ClearCanvas.Ris.Client.Adt
                         service.StartProcedure(new StartProcedureRequest(item.ProcedureStepRef));
                     });
 
-                IFolder folder = CollectionUtils.SelectFirst<IFolder>(folders,
-                    delegate(IFolder f) { return f is Folders.InProgressTechnologistWorkflowFolder; });
-                folder.RefreshCount();
                 return true;
 
             }
@@ -170,7 +166,7 @@ namespace ClearCanvas.Ris.Client.Adt
         {
         }
 
-        protected override bool Execute(ModalityWorklistItem item, IEnumerable folders)
+        protected override bool Execute(ModalityWorklistItem item)
         {
             try
             {
@@ -179,12 +175,7 @@ namespace ClearCanvas.Ris.Client.Adt
                     {
                         service.CompleteProcedure(new CompleteProcedureRequest(item.ProcedureStepRef));
                     });
-
-                IFolder folder = CollectionUtils.SelectFirst<IFolder>(folders,
-                    delegate(IFolder f) { return f is Folders.InProgressTechnologistWorkflowFolder; });
-                folder.RefreshCount();
                 return true;
-
             }
             catch (Exception e)
             {
@@ -207,7 +198,7 @@ namespace ClearCanvas.Ris.Client.Adt
         {
         }
 
-        protected override bool Execute(ModalityWorklistItem item, IEnumerable folders)
+        protected override bool Execute(ModalityWorklistItem item)
         {
             try
             {
@@ -217,9 +208,6 @@ namespace ClearCanvas.Ris.Client.Adt
                         service.CancelProcedure(new CancelProcedureRequest(item.ProcedureStepRef));
                     });
 
-                IFolder folder = CollectionUtils.SelectFirst<IFolder>(folders,
-                    delegate(IFolder f) { return f is Folders.InProgressTechnologistWorkflowFolder; });
-                folder.RefreshCount();
                 return true;
 
             }
@@ -252,24 +240,14 @@ namespace ClearCanvas.Ris.Client.Adt
             }
         }
 
-        protected override bool Execute(ModalityWorklistItem item, IEnumerable folders)
+        protected override bool Execute(ModalityWorklistItem item)
         {
             try
             {
                 ApplicationComponent.LaunchAsWorkspace(
                     this.Context.DesktopWindow,
                     new OrderEntryComponent(item.PatientRef, item.OrderRef, OrderEntryComponent.Mode.ReplaceOrder),
-                    string.Format(SR.TitleNewOrder, PersonNameFormat.Format(item.PatientName), MrnFormat.Format(item.Mrn)),
-                    delegate
-                    {
-                        IFolder folder = CollectionUtils.SelectFirst<IFolder>(folders,
-                            delegate(IFolder f) { return f is Folders.CancelledTechnologistWorkflowFolder; });
-                        folder.RefreshCount();
-
-                        folder = CollectionUtils.SelectFirst<IFolder>(folders,
-                            delegate(IFolder f) { return f is Folders.ScheduledTechnologistWorkflowFolder; });
-                        folder.RefreshCount();
-                    });
+                    string.Format(SR.TitleNewOrder, PersonNameFormat.Format(item.PatientName), MrnFormat.Format(item.Mrn)));
 
             }
             catch (Exception e)

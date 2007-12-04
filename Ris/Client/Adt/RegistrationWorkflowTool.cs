@@ -70,10 +70,10 @@ namespace ClearCanvas.Ris.Client.Adt
             public virtual void Apply()
             {
                 RegistrationWorklistItem item = CollectionUtils.FirstElement(this.Context.SelectedItems);
-                bool success = Execute(item, this.Context.DesktopWindow, this.Context.Folders);
+                bool success = Execute(item, this.Context.DesktopWindow, this.Context.FolderSystem);
                 if (success)
                 {
-                    this.Context.SelectedFolder.Refresh();
+                    this.Context.FolderSystem.InvalidateSelectedFolder();
                 }
             }
 
@@ -82,7 +82,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 get { return _operationName; }
             }
 
-            protected abstract bool Execute(RegistrationWorklistItem item, IDesktopWindow desktopWindow, IEnumerable folders);
+            protected abstract bool Execute(RegistrationWorklistItem item, IDesktopWindow desktopWindow, RegistrationWorkflowFolderSystemBase folderSystem);
 
             #region IDropHandler<RegistrationWorklistItem> Members
 
@@ -96,10 +96,10 @@ namespace ClearCanvas.Ris.Client.Adt
             {
                 IRegistrationWorkflowFolderDropContext ctxt = (IRegistrationWorkflowFolderDropContext)dropContext;
                 RegistrationWorklistItem item = CollectionUtils.FirstElement(items);
-                bool success = Execute(item, ctxt.DesktopWindow, ctxt.FolderSystem.Folders);
+                bool success = Execute(item, ctxt.DesktopWindow, ctxt.FolderSystem);
                 if (success)
                 {
-                    ctxt.FolderSystem.SelectedFolder.Refresh();
+                    ctxt.FolderSystem.InvalidateSelectedFolder();
                     return true;
                 }
                 return false;
@@ -121,7 +121,7 @@ namespace ClearCanvas.Ris.Client.Adt
             {
             }
 
-            protected override bool Execute(RegistrationWorklistItem item, IDesktopWindow desktopWindow, IEnumerable folders)
+            protected override bool Execute(RegistrationWorklistItem item, IDesktopWindow desktopWindow, RegistrationWorkflowFolderSystemBase folderSystem)
             {
                 try
                 {
@@ -139,10 +139,7 @@ namespace ClearCanvas.Ris.Client.Adt
                                 service.CheckInProcedure(new CheckInProcedureRequest(checkInComponent.SelectedRequestedProcedures));
                             });
 
-                        IFolder checkInFolder = CollectionUtils.SelectFirst<IFolder>(folders,
-                            delegate(IFolder f) { return f is Folders.CheckedInFolder; });
-                        checkInFolder.RefreshCount();
-
+                        folderSystem.InvalidateFolder(typeof(Folders.CheckedInFolder));
                         return true;
                     }
                     else
@@ -171,7 +168,7 @@ namespace ClearCanvas.Ris.Client.Adt
             {
             }
 
-            protected override bool Execute(RegistrationWorklistItem item, IDesktopWindow desktopWindow, IEnumerable folders)
+            protected override bool Execute(RegistrationWorklistItem item, IDesktopWindow desktopWindow, RegistrationWorkflowFolderSystemBase folderSystem)
             {
                 try
                 {
@@ -189,10 +186,7 @@ namespace ClearCanvas.Ris.Client.Adt
                                 service.CancelOrder(new CancelOrderRequest(item.OrderRef, cancelOrderComponent.SelectedCancelReason));
                             });
 
-                        IFolder cancelledFolder = CollectionUtils.SelectFirst<IFolder>(folders,
-                           delegate(IFolder f) { return f is Folders.CancelledFolder; });
-                        cancelledFolder.RefreshCount();
-
+                        folderSystem.InvalidateFolder(typeof(Folders.CancelledFolder));
                         return true;
                     }
                     else
@@ -205,56 +199,6 @@ namespace ClearCanvas.Ris.Client.Adt
                     ExceptionHandler.Report(e, desktopWindow);
                     return false;
                 }
-            }
-        }
-
-        [MenuAction("apply", "folderexplorer-items-contextmenu/Replace Order", "Apply")]
-        [ButtonAction("apply", "folderexplorer-items-toolbar/Replace Order", "Apply")]
-        [IconSet("apply", IconScheme.Colour, "AddToolSmall.png", "AddToolMedium.png", "AddToolLarge.png")]
-        [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
-        [ExtensionOf(typeof(RegistrationMainWorkflowItemToolExtensionPoint))]
-        public class RegistrationReplaceOrderTool : WorkflowItemTool
-        {
-            public RegistrationReplaceOrderTool()
-                : base("")
-            {
-            }
-
-            public override bool Enabled
-            {
-                get
-                {
-                    //TODO: this is a hack, since this tool isn't really a workflow tool it doesn't have a corresponding operation name
-                    return this.Context.SelectedItems.Count > 0;
-                }
-            }
-
-            protected override bool Execute(RegistrationWorklistItem item, IDesktopWindow desktopWindow, IEnumerable folders)
-            {
-                try
-                {
-                    ApplicationComponent.LaunchAsWorkspace(
-                        desktopWindow,
-                        new OrderEntryComponent(item.PatientRef, item.OrderRef, OrderEntryComponent.Mode.ReplaceOrder),
-                        string.Format(SR.TitleReplaceOrder, PersonNameFormat.Format(item.PatientName), MrnFormat.Format(item.Mrn)),
-                        delegate(IApplicationComponent c)
-                        {
-                            if (c.ExitCode == ApplicationComponentExitCode.Accepted)
-                            {
-                                IFolder cancelledFolder = CollectionUtils.SelectFirst<IFolder>(folders,
-                                   delegate(IFolder f) { return f is Folders.CancelledFolder; });
-
-                                cancelledFolder.RefreshCount();
-                            }
-                        });
-                }
-                catch (Exception e)
-                {
-                    ExceptionHandler.Report(e, this.Context.DesktopWindow);
-                }
-
-                // return false, because we don't need to update the selected folder until the workspace closes
-                return false;
             }
         }
     }

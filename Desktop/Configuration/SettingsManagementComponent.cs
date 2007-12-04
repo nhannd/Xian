@@ -67,12 +67,12 @@ namespace ClearCanvas.Desktop.Configuration
 					//allow editing of the app.config file via the LocalConfigurationStore.
 					store = new LocalConfigurationStore();
                 }
-			
-				_workspace = ApplicationComponent.LaunchAsWorkspace(
-					this.Context.DesktopWindow,
-					new SettingsManagementComponent(store),
-					"Settings Management",
-					delegate(IApplicationComponent c) { _workspace = null; });
+
+                _workspace = ApplicationComponent.LaunchAsWorkspace(
+                    this.Context.DesktopWindow,
+                    new SettingsManagementComponent(store),
+                    "Settings Management");
+                _workspace.Closed += delegate { _workspace = null; };
 			}
             else
             {

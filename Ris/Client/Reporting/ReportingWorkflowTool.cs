@@ -56,7 +56,7 @@ namespace ClearCanvas.Ris.Client.Reporting
         {
         }
 
-        protected override bool Execute(ReportingWorklistItem item, IDesktopWindow desktopWindow, IFolder selectedFolder, IEnumerable folders)
+        protected override bool Execute(ReportingWorklistItem item, IDesktopWindow desktopWindow, ReportingWorkflowFolderSystemBase folderSystem)
         {
             try
             {
@@ -66,9 +66,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                         service.ClaimInterpretation(new ClaimInterpretationRequest(item.ProcedureStepRef));
                     });
 
-                IFolder myInterpretationFolder = CollectionUtils.SelectFirst<IFolder>(folders,
-                    delegate(IFolder f) { return f is Folders.DraftFolder; });
-                myInterpretationFolder.RefreshCount();
+                folderSystem.InvalidateFolder(typeof(Folders.DraftFolder));
 
                 return true;
             }
@@ -94,7 +92,7 @@ namespace ClearCanvas.Ris.Client.Reporting
         {
         }
 
-        protected override bool Execute(ReportingWorklistItem item, IDesktopWindow desktopWindow, IFolder selectedFolder, IEnumerable folders)
+        protected override bool Execute(ReportingWorklistItem item, IDesktopWindow desktopWindow, ReportingWorkflowFolderSystemBase folderSystem)
         {
             try
             {
@@ -104,9 +102,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                         service.CompleteInterpretationForTranscription(new CompleteInterpretationForTranscriptionRequest(item.ProcedureStepRef));
                     });
 
-                IFolder myTranscriptionFolder = CollectionUtils.SelectFirst<IFolder>(folders,
-                    delegate(IFolder f) { return f is Folders.InTranscriptionFolder; });
-                myTranscriptionFolder.RefreshCount();
+                folderSystem.InvalidateFolder(typeof(Folders.InTranscriptionFolder));
 
                 return true;
             }
@@ -130,7 +126,7 @@ namespace ClearCanvas.Ris.Client.Reporting
         {
         }
 
-        protected override bool Execute(ReportingWorklistItem item, IDesktopWindow desktopWindow, IFolder selectedFolder, IEnumerable folders)
+        protected override bool Execute(ReportingWorklistItem item, IDesktopWindow desktopWindow, ReportingWorkflowFolderSystemBase folderSystem)
         {
             try
             {
@@ -140,9 +136,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                         service.CompleteInterpretationForVerification(new CompleteInterpretationForVerificationRequest(item.ProcedureStepRef));
                     });
 
-                IFolder myVerificationFolder = CollectionUtils.SelectFirst<IFolder>(folders,
-                    delegate(IFolder f) { return f is Folders.ToBeVerifiedFolder; });
-                myVerificationFolder.RefreshCount();
+                folderSystem.InvalidateFolder(typeof(Folders.ToBeVerifiedFolder));
 
                 return true;
             }
@@ -165,7 +159,7 @@ namespace ClearCanvas.Ris.Client.Reporting
         {
         }
 
-        protected override bool Execute(ReportingWorklistItem item, IDesktopWindow desktopWindow, IFolder selectedFolder, IEnumerable folders)
+        protected override bool Execute(ReportingWorklistItem item, IDesktopWindow desktopWindow, ReportingWorkflowFolderSystemBase folderSystem)
         {
             try
             {
@@ -180,9 +174,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                         service.CancelReportingStep(new CancelReportingStepRequest(item.ProcedureStepRef));
                     });
 
-                IFolder toBeReportedFolder = CollectionUtils.SelectFirst<IFolder>(folders,
-                    delegate(IFolder f) { return f is Folders.ToBeReportedFolder; });
-                toBeReportedFolder.Refresh();
+                // no point in invalidating "to be reported" folder because its communal
 
                 return true;
             }
@@ -224,7 +216,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                 ctxt.GetOperationEnablement("CompleteVerification");
         }
 
-        protected override bool Execute(ReportingWorklistItem item, IDesktopWindow desktopWindow, IFolder selectedFolder, IEnumerable folders)
+        protected override bool Execute(ReportingWorklistItem item, IDesktopWindow desktopWindow, ReportingWorkflowFolderSystemBase folderSystem)
         {
             try
             {
@@ -249,9 +241,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                     // Not defined
                 }
 
-                IFolder myVerifiedFolder = CollectionUtils.SelectFirst<IFolder>(folders,
-                    delegate(IFolder f) { return f is Folders.VerifiedFolder; });
-                myVerifiedFolder.RefreshCount();
+                folderSystem.InvalidateFolder(typeof(Folders.VerifiedFolder));
 
                 return true;
             }
@@ -275,7 +265,7 @@ namespace ClearCanvas.Ris.Client.Reporting
         {
         }
 
-        protected override bool Execute(ReportingWorklistItem item, IDesktopWindow desktopWindow, IFolder selectedFolder, IEnumerable folders)
+        protected override bool Execute(ReportingWorklistItem item, IDesktopWindow desktopWindow, ReportingWorkflowFolderSystemBase folderSystem)
         {
             if (ActivateIfAlreadyOpen(item))
                 return false;
@@ -289,9 +279,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                         item.ProcedureStepRef = response.PublicationStepRef;
                     });
 
-                IFolder myInterpretationFolder = CollectionUtils.SelectFirst<IFolder>(folders,
-                    delegate(IFolder f) { return f is Folders.DraftFolder; });
-                myInterpretationFolder.RefreshCount();
+                folderSystem.InvalidateFolder(typeof(Folders.DraftFolder));
 
                 OpenReportEditor(item);
             }
@@ -317,7 +305,7 @@ namespace ClearCanvas.Ris.Client.Reporting
         {
         }
 
-        protected override bool Execute(ReportingWorklistItem item, IDesktopWindow desktopWindow, IFolder selectedFolder, IEnumerable folders)
+        protected override bool Execute(ReportingWorklistItem item, IDesktopWindow desktopWindow, ReportingWorkflowFolderSystemBase folderSystem)
         {
             try
             {

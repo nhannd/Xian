@@ -28,6 +28,8 @@ namespace ClearCanvas.Ris.Client.Adt
         private bool _enabled;
         private event EventHandler _enabledChanged;
 
+        private Workspace _orderEntryWorkspace;
+
         public override void Initialize()
         {
             base.Initialize();
@@ -104,26 +106,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 ApplicationComponent.LaunchAsWorkspace(
                     desktopWindow,
                     new OrderEntryComponent(patientRef),
-                    title,
-                    delegate(IApplicationComponent c)
-                    {
-                        if (c.ExitCode == ApplicationComponentExitCode.Accepted)
-                        {
-                            if (this.ContextBase is IRegistrationWorkflowItemToolContext)
-                            {
-                                IRegistrationWorkflowItemToolContext context = (IRegistrationWorkflowItemToolContext)this.ContextBase;
-
-                                // Refresh the schedule folder is a new folder is placed
-                                IFolder scheduledFolder = CollectionUtils.SelectFirst<IFolder>(context.Folders,
-                                    delegate(IFolder f) { return f is Folders.ScheduledFolder; });
-
-                                if (scheduledFolder.IsOpen)
-                                    scheduledFolder.Refresh();
-                                else
-                                    scheduledFolder.RefreshCount();
-                            }
-                        }
-                    });
+                    title);
             }
             catch (Exception e)
             {

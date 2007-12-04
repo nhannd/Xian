@@ -46,17 +46,9 @@ namespace ClearCanvas.Ris.Client.Reporting
     {
     }
 
-    public interface IReportingWorkflowItemToolContext : IToolContext
+    public interface IReportingWorkflowItemToolContext : IWorkflowItemToolContext<ReportingWorklistItem>
     {
-        bool GetWorkflowOperationEnablement(string operationClass);
-
-        ICollection<ReportingWorklistItem> SelectedItems { get; }
-        event EventHandler SelectedItemsChanged;
-
-        IEnumerable Folders { get; }
-        IFolder SelectedFolder { get; }
-
-        IDesktopWindow DesktopWindow { get; }
+        ReportingWorkflowFolderSystemBase FolderSystem { get; }
     }
 
     public interface IReportingWorkflowFolderToolContext : IToolContext
@@ -110,6 +102,11 @@ namespace ClearCanvas.Ris.Client.Reporting
             public IFolder SelectedFolder
             {
                 get { return _owner.SelectedFolder; }
+            }
+
+            public ReportingWorkflowFolderSystemBase FolderSystem
+            {
+                get { return _owner; }
             }
 
             #endregion

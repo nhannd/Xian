@@ -80,20 +80,6 @@ namespace ClearCanvas.Ris.Client.Adt
 
         private void DocumentCompleted(object sender, EventArgs e)
         {
-            IFolder undocumentedFolder = CollectionUtils.SelectFirst<IFolder>(_folders,
-                delegate(IFolder folder)
-                {
-                    return folder is Folders.UndocumentedTechnologistWorkflowFolder;
-                });
-
-            if (undocumentedFolder != null)
-            {
-                if (undocumentedFolder.IsOpen)
-                    undocumentedFolder.Refresh();
-                else
-                    undocumentedFolder.RefreshCount();
-            }
-
             this.Close();
         }
     }

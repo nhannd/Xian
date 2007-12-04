@@ -42,7 +42,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                     ctxt.GetOperationEnablement("ReviseUnpublishedReport");
         }
 
-        protected override bool Execute(ReportingWorklistItem item, IDesktopWindow desktopWindow, IFolder selectedFolder, IEnumerable folders)
+        protected override bool Execute(ReportingWorklistItem item, IDesktopWindow desktopWindow, ReportingWorkflowFolderSystemBase folderSystem)
         {
             // check if the document is already open
             if(ActivateIfAlreadyOpen(item))

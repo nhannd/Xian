@@ -63,8 +63,8 @@ namespace ClearCanvas.Ris.Client.Reporting
                     _workspace = ApplicationComponent.LaunchAsWorkspace(
                         this.Context.DesktopWindow,
                         BuildComponent(),
-                        SR.TitleRadiologistHome,
-                        delegate(IApplicationComponent c) { _workspace = null; });
+                        SR.TitleRadiologistHome);
+                    _workspace.Closed += delegate { _workspace = null; };
                 }
                 catch (Exception e)
                 {

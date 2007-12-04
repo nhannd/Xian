@@ -63,8 +63,8 @@ namespace ClearCanvas.Ris.Client.Adt
                     _workspace = ApplicationComponent.LaunchAsWorkspace(
                         this.Context.DesktopWindow,
                         new HL7QueuePreviewComponent(),
-                        SR.TitleHL7Queue,
-                        delegate(IApplicationComponent component) { _workspace = null; });
+                        SR.TitleHL7Queue);
+                    _workspace.Closed += delegate { _workspace = null; };
                 }
                 else
                 {

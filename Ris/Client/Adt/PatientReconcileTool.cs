@@ -68,7 +68,7 @@ namespace ClearCanvas.Ris.Client.Adt
             if (this.ContextBase is IRegistrationWorkflowItemToolContext)
             {
                 _enabled = false;   // disable by default
-                ((IRegistrationWorkflowItemToolContext)this.ContextBase).SelectedItemsChanged += delegate(object sender, EventArgs args)
+                ((IRegistrationWorkflowItemToolContext)this.ContextBase).SelectedItemsChanged += delegate
                 {
                     this.Enabled = (((IRegistrationWorkflowItemToolContext)this.ContextBase).SelectedItems != null
                         && ((IRegistrationWorkflowItemToolContext)this.ContextBase).SelectedItems.Count == 1);
@@ -107,7 +107,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 RegistrationWorklistItem item = CollectionUtils.FirstElement<RegistrationWorklistItem>(context.SelectedItems);
                 if (ShowReconciliationDialog(item.PatientProfileRef, context.DesktopWindow))
                 {
-                    context.SelectedFolder.Refresh();
+                    context.FolderSystem.InvalidateSelectedFolder();
                 }
             }
             else

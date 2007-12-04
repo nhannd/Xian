@@ -114,10 +114,10 @@ namespace ClearCanvas.Ris.Client.Adt
             if (this.ContextBase is IRegistrationWorkflowItemToolContext)
             {
                 IRegistrationWorkflowItemToolContext context = (IRegistrationWorkflowItemToolContext)this.ContextBase;
-                RegistrationWorklistItem item = CollectionUtils.FirstElement<RegistrationWorklistItem>(context.SelectedItems);
+                RegistrationWorklistItem item = CollectionUtils.FirstElement(context.SelectedItems);
                 if (Edit(item.PatientProfileRef, context.DesktopWindow))
                 {
-                    context.SelectedFolder.Refresh();
+                    context.FolderSystem.InvalidateSelectedFolder();
                 }
             }
             else if (this.ContextBase is IPatientSearchToolContext)

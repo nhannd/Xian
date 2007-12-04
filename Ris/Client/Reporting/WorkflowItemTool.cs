@@ -53,10 +53,10 @@ namespace ClearCanvas.Ris.Client.Reporting
         public virtual void Apply()
         {
             ReportingWorklistItem item = CollectionUtils.FirstElement(this.Context.SelectedItems);
-            bool success = Execute(item, this.Context.DesktopWindow, this.Context.SelectedFolder, this.Context.Folders);
+            bool success = Execute(item, this.Context.DesktopWindow, this.Context.FolderSystem);
             if (success)
             {
-                this.Context.SelectedFolder.Refresh();
+                this.Context.FolderSystem.InvalidateSelectedFolder();
             }
         }
 
@@ -81,7 +81,7 @@ namespace ClearCanvas.Ris.Client.Reporting
             if(!ActivateIfAlreadyOpen(item))
             {
                 // open the report editor
-                ReportDocument doc = new ReportDocument(item, this.Context.Folders, this.Context.DesktopWindow);
+                ReportDocument doc = new ReportDocument(item, this.Context.DesktopWindow);
                 doc.Open();
 
                 // open the images
@@ -105,7 +105,7 @@ namespace ClearCanvas.Ris.Client.Reporting
             return CollectionUtils.FirstElement(this.Context.SelectedItems);
         }
 
-        protected abstract bool Execute(ReportingWorklistItem item, IDesktopWindow desktopWindow, IFolder selectedFolder, IEnumerable folders);
+        protected abstract bool Execute(ReportingWorklistItem item, IDesktopWindow desktopWindow, ReportingWorkflowFolderSystemBase folderSystem);
 
         #region IDropHandler<ReportingWorklistItem> Members
 
@@ -119,10 +119,10 @@ namespace ClearCanvas.Ris.Client.Reporting
         {
             IReportingWorkflowFolderDropContext ctxt = (IReportingWorkflowFolderDropContext)dropContext;
             ReportingWorklistItem item = CollectionUtils.FirstElement(items);
-            bool success = Execute(item, ctxt.DesktopWindow, ctxt.FolderSystem.SelectedFolder, ctxt.FolderSystem.Folders);
+            bool success = Execute(item, ctxt.DesktopWindow, ctxt.FolderSystem);
             if (success)
             {
-                ctxt.FolderSystem.SelectedFolder.Refresh();
+                ctxt.FolderSystem.InvalidateSelectedFolder();
                 return true;
             }
             return false;

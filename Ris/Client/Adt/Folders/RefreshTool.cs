@@ -47,10 +47,8 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
     {
         public void Refresh()
         {
-            if (this.ContextBase is IRegistrationWorkflowFolderToolContext)
-                ((IRegistrationWorkflowFolderToolContext)this.Context).SelectedFolder.Refresh();
-            else if (this.ContextBase is ITechnologistWorkflowFolderToolContext)
-                ((ITechnologistWorkflowFolderToolContext)this.Context).SelectedFolder.Refresh();
+            if (this.ContextBase is IWorkflowItemToolContext)
+                ((IWorkflowItemToolContext)this.Context).SelectedFolder.Refresh();
         }
     }
 }

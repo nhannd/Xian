@@ -60,10 +60,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 ApplicationComponent.LaunchAsWorkspace(
                     this.Context.DesktopWindow,
                     new OrderEntryComponent(item.PatientRef, item.OrderRef, OrderEntryComponent.Mode.ModifyOrder),
-                    title,
-                    delegate(IApplicationComponent c)
-                    {
-                    });
+                    title);
             }
             catch (Exception e)
             {

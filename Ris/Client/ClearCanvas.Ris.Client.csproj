@@ -60,6 +60,7 @@
     </Compile>
     <Compile Include="Formatting\LicenseNumberFormat.cs" />
     <Compile Include="Formatting\VisitNumberFormat.cs" />
+    <Compile Include="IWorkflowItemToolContext.cs" />
     <Compile Include="OrderAttachmentTable.cs" />
     <Compile Include="PatientAttachmentTable.cs" />
     <Compile Include="BiographyFeedbackComponent.cs" />

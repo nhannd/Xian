@@ -62,8 +62,8 @@ namespace ClearCanvas.Ris.Client.Admin
                     _workspace = ApplicationComponent.LaunchAsWorkspace(
                         this.Context.DesktopWindow,
                         component,
-                        SR.TitleFacilities,
-                        delegate(IApplicationComponent c) { _workspace = null; });
+                        SR.TitleFacilities);
+                    _workspace.Closed += delegate { _workspace = null; };
 
                 }
                 catch (Exception e)

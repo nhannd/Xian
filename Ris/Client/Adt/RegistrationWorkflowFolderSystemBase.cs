@@ -46,17 +46,9 @@ namespace ClearCanvas.Ris.Client.Adt
     {
     }
 
-    public interface IRegistrationWorkflowItemToolContext : IToolContext
+    public interface IRegistrationWorkflowItemToolContext : IWorkflowItemToolContext<RegistrationWorklistItem>
     {
-        bool GetWorkflowOperationEnablement(string operationClass);
-
-        ICollection<RegistrationWorklistItem> SelectedItems { get; }
-        event EventHandler SelectedItemsChanged;
-
-        IEnumerable Folders { get; }
-        IFolder SelectedFolder { get; }
-
-        IDesktopWindow DesktopWindow { get; }
+        RegistrationWorkflowFolderSystemBase FolderSystem { get; }
     }
 
     public interface IRegistrationWorkflowFolderToolContext : IToolContext
@@ -97,11 +89,6 @@ namespace ClearCanvas.Ris.Client.Adt
                 remove { _owner.SelectedItemsChanged -= value; }
             }
 
-            public bool GetWorkflowOperationEnablement(string operationClass)
-            {
-                return _owner.GetOperationEnablement(operationClass);
-            }
-
             public IEnumerable Folders
             {
                 get { return _owner.Folders; }
@@ -110,6 +97,16 @@ namespace ClearCanvas.Ris.Client.Adt
             public IFolder SelectedFolder
             {
                 get { return _owner.SelectedFolder; }
+            }
+
+            public bool GetWorkflowOperationEnablement(string operationClass)
+            {
+                return _owner.GetOperationEnablement(operationClass);
+            }
+
+            public RegistrationWorkflowFolderSystemBase FolderSystem
+            {
+                get { return _owner; }
             }
 
             #endregion
