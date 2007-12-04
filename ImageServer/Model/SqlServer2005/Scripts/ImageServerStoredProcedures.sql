@@ -351,9 +351,6 @@ BEGIN
 	declare @NumberOfStudyRelatedInstances int
 	declare @NumberOfPatientRelatedStudies int
 
-	-- Begin the transaction, keep all the deletes in a single transaction
-	BEGIN TRANSACTION
-
 	-- Select key values
 	SELECT @StudyInstanceUid = StudyInstanceUid FROM StudyStorage WHERE GUID = @StudyStorageGUID
 
@@ -367,7 +364,11 @@ BEGIN
 	SELECT @NumberOfPatientRelatedStudies = NumberOfPatientRelatedStudies 
 	FROM Patient
 	WHERE GUID = @PatientGUID
- 
+
+
+	-- Begin the transaction, keep all the deletes in a single transaction
+	BEGIN TRANSACTION
+
 	-- Delete the Study / Series / RequestAttributes tables, reduce counts or delete from Patient table
 	DELETE FROM RequestAttributes 
 	WHERE SeriesGUID IN (select SeriesGUID from Series where StudyGUID = @StudyGUID)
@@ -1701,50 +1702,51 @@ BEGIN
 
 	BEGIN TRANSACTION
 
-	-- Start with the Patient table
-	if @IssuerOfPatientId is null
-	BEGIN
-		SELECT @PatientGUID = GUID 
-		FROM Patient
-		WHERE ServerPartitionGUID = @ServerPartitionGUID
-			AND PatientName = @PatientName
-			AND PatientId = @PatientId
-	END
-	ELSE
-	BEGIN
-		SELECT @PatientGUID = GUID 
-		FROM Patient
-		WHERE ServerPartitionGUID = @ServerPartitionGUID
-			AND PatientName = @PatientName
-			AND PatientId = @PatientId
-			AND IssuerOfPatientId = @IssuerOfPatientId
-	END
-
-	IF @@ROWCOUNT = 0
-	BEGIN
-		set @PatientGUID = newid()
-		set @InsertPatient = 1
-
-		INSERT into Patient (GUID, ServerPartitionGUID, PatientName, PatientId, IssuerOfPatientId, NumberOfPatientRelatedStudies, NumberOfPatientRelatedSeries, NumberOfPatientRelatedInstances)
-		VALUES
-			(@PatientGUID, @ServerPartitionGUID, @PatientName, @PatientId, @IssuerOfPatientId, 0,0,1)
-	END
-	ELSE
-	BEGIN
-		UPDATE Patient 
-		SET NumberOfPatientRelatedInstances = NumberOfPatientRelatedInstances +1
-		WHERE GUID = @PatientGUID
-	END
-
-	-- Next, the Study Table
-	SELECT @StudyGUID = GUID
+	-- First, check for the existance of the Study
+	SELECT @StudyGUID = GUID,
+		   @PatientGUID = PatientGUID
 	FROM Study
 	WHERE ServerPartitionGUID = @ServerPartitionGUID
 		AND StudyInstanceUid = @StudyInstanceUid
-		AND PatientGUID = @PatientGUID
 
 	IF @@ROWCOUNT = 0
 	BEGIN
+		-- No Study, Check for the Patient table
+		if @IssuerOfPatientId is null
+		BEGIN
+			SELECT @PatientGUID = GUID 
+			FROM Patient
+			WHERE ServerPartitionGUID = @ServerPartitionGUID
+				AND PatientName = @PatientName
+				AND PatientId = @PatientId
+		END
+		ELSE
+		BEGIN
+			SELECT @PatientGUID = GUID 
+			FROM Patient
+			WHERE ServerPartitionGUID = @ServerPartitionGUID
+				AND PatientName = @PatientName
+				AND PatientId = @PatientId
+				AND IssuerOfPatientId = @IssuerOfPatientId
+		END
+
+		IF @@ROWCOUNT = 0
+		BEGIN
+			set @PatientGUID = newid()
+			set @InsertPatient = 1
+
+			INSERT into Patient (GUID, ServerPartitionGUID, PatientName, PatientId, IssuerOfPatientId, NumberOfPatientRelatedStudies, NumberOfPatientRelatedSeries, NumberOfPatientRelatedInstances)
+			VALUES
+				(@PatientGUID, @ServerPartitionGUID, @PatientName, @PatientId, @IssuerOfPatientId, 1,0,1)
+		END
+		ELSE
+		BEGIN
+			UPDATE Patient 
+			SET NumberOfPatientRelatedInstances = NumberOfPatientRelatedInstances + 1,
+			    NumberOfPatientRelatedStudies = NumberOfPatientRelatedStudies + 1
+			WHERE GUID = @PatientGUID
+		END
+
 		set @StudyGUID = newid()
 		set @InsertStudy = 1
 
@@ -1759,15 +1761,19 @@ BEGIN
 				@PatientsSex, @StudyDate, @StudyTime, @AccessionNumber, @StudyId,
 				@StudyDescription, @ReferringPhysiciansName, 0, 1, @StudyStatusEnum)
 
-		UPDATE Patient
-			SET NumberOfPatientRelatedStudies = NumberOfPatientRelatedStudies + 1
-			WHERE GUID = @PatientGUID
+
 	END
 	ELSE
 	BEGIN
+		-- Update Study, Patient TablesNext, the Study Table
 		UPDATE Study 
-			SET NumberOfStudyRelatedInstances = NumberOfStudyRelatedInstances + 1
-			WHERE GUID = @StudyGUID
+		SET NumberOfStudyRelatedInstances = NumberOfStudyRelatedInstances + 1
+		WHERE GUID = @StudyGUID
+
+		UPDATE Patient 
+		SET NumberOfPatientRelatedInstances = NumberOfPatientRelatedInstances + 1,
+		    NumberOfPatientRelatedStudies = NumberOfPatientRelatedStudies + 1
+		WHERE GUID = @PatientGUID
 	END
 
 	-- Finally, the Series Table
