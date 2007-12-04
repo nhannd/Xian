@@ -183,4 +183,7 @@
   <data name="ExceptionResidentReportMissingSupervisor" xml:space="preserve">
     <value>The radiologist supervisor must be chosen to complete this step</value>
   </data>
+  <data name="ExceptionNoProtocolAssignmentStep" xml:space="preserve">
+    <value>No scheduled Protocol Assignment steps exist for this procedure.  Either the assignment step was never created for this procedure, or it has been started by another user.</value>
+  </data>
 </root>

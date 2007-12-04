@@ -8,28 +8,19 @@ using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 
 namespace ClearCanvas.Ris.Client.Reporting
 {
-    public abstract class ReportingProtocolTool : Tool<IReportingWorkflowItemToolContext>
+    [MenuAction("apply", "folderexplorer-items-contextmenu/Protocol", "Apply")]
+    [ButtonAction("apply", "folderexplorer-items-toolbar/Protocol", "Apply")]
+    [IconSet("apply", IconScheme.Colour, "Icons.AddToolSmall.png", "Icons.AddToolMedium.png", "Icons.AddToolLarge.png")]
+    [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
+    [ExtensionOf(typeof(ReportingProtocolWorkflowItemToolExtensionPoint))]
+    public class ReportingProtocolTool : Tool<IReportingWorkflowItemToolContext>
     {
-        abstract protected bool ClaimProtocol { get; }
-
         public void Apply()
         {
             try
             {
-                ReportingWorklistItem item = CollectionUtils.FirstElement(this.Context.SelectedItems);
-                if (item != null)
-                {
-                    Document doc = DocumentManager.Get(item.AccessionNumber);
-                    if (doc == null)
-                    {
-                        doc = new ProtocolEditorComponentDocument(item.AccessionNumber, item, this.ClaimProtocol, this.Context.DesktopWindow);
-                        doc.Open();
-                    }
-                    else
-                    {
-                        doc.Activate();
-                    }
-                }
+                ReportingWorklistItem item = CollectionUtils.FirstElement<ReportingWorklistItem>(this.Context.SelectedItems);
+                OpenItem(item);
             }
             catch (Exception e)
             {
@@ -37,16 +28,29 @@ namespace ClearCanvas.Ris.Client.Reporting
             }
         }
 
-        public virtual bool Enabled
+        private void OpenItem(ReportingWorklistItem item)
+        {
+            if (item == null)
+                return;
+
+            Document doc = DocumentManager.Get(item.AccessionNumber);
+            if (doc == null)
+            {
+                ProtocolEditorComponentDocument protocolEditorComponentDocument = new ProtocolEditorComponentDocument(item.AccessionNumber, item, this.Context, this.Context.DesktopWindow);
+                protocolEditorComponentDocument.Open();
+            }
+            else
+            {
+                doc.Activate();
+            }
+        }
+
+        public bool Enabled
         {
             get
             {
-                ReportingWorklistItem item = CollectionUtils.FirstElement(this.Context.SelectedItems);
-                if (item != null)
-                {
-                    return item.ProcedureStepName == "Protocol";
-                }
-                return false;
+                ReportingWorklistItem item = CollectionUtils.FirstElement<ReportingWorklistItem>(this.Context.SelectedItems);
+                return item != null && item.ProcedureStepName == "Protocol";
             }
         }
 
@@ -54,51 +58,6 @@ namespace ClearCanvas.Ris.Client.Reporting
         {
             add { this.Context.SelectedItemsChanged += value; }
             remove { this.Context.SelectedItemsChanged -= value; }
-        }
-    }
-
-
-    [MenuAction("apply", "folderexplorer-items-contextmenu/Assign Protocol", "Apply")]
-    [ButtonAction("apply", "folderexplorer-items-toolbar/Assign Protocol", "Apply")]
-    [IconSet("apply", IconScheme.Colour, "Icons.AddToolSmall.png", "Icons.AddToolMedium.png", "Icons.AddToolLarge.png")]
-    [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
-    [ExtensionOf(typeof(ReportingProtocolWorkflowItemToolExtensionPoint))]
-    public class AssignProtocolTool : ReportingProtocolTool
-    {
-        protected override bool ClaimProtocol
-        {
-            get { return true; }
-        }
-
-        public override bool Enabled
-        {
-            get
-            {
-                // todo: only enabled for to be protocolled folder
-                return base.Enabled;
-            }
-        }
-    }
-
-    [MenuAction("apply", "folderexplorer-items-contextmenu/Edit Protocol", "Apply")]
-    [ButtonAction("apply", "folderexplorer-items-toolbar/Edit Protocol", "Apply")]
-    [IconSet("apply", IconScheme.Colour, "Icons.ProtocolEditorToolSmall.png", "Icons.ProtocolEditorToolMedium.png", "Icons.ProtocolEditorToolLarge.png")]
-    [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
-    [ExtensionOf(typeof(ReportingProtocolWorkflowItemToolExtensionPoint))]
-    public class EditProtocolTool : ReportingProtocolTool
-    {
-        protected override bool ClaimProtocol
-        {
-            get { return false; }
-        }
-
-        public override bool Enabled
-        {
-            get
-            {
-                // todo: only enabled for draft folder
-                return base.Enabled;
-            }
         }
     }
 }

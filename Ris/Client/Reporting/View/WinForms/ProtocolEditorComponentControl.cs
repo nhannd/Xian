@@ -37,6 +37,9 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             _procedurePlanSummary.DataBindings.Add("Selection", _component, "SelectedRequestedProcedure", true, DataSourceUpdateMode.OnPropertyChanged);
             _component.SelectionChanged += RefreshTables;
 
+            _protocolNextItem.DataBindings.Add("Checked", _component, "ProtocolNextItem", true, DataSourceUpdateMode.OnPropertyChanged);
+            _protocolNextItem.DataBindings.Add("Enabled", _component, "ProtocolNextItemEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
+
             protocolCodesSelector.AvailableItemsTable = _component.AvailableProtocolCodesTable;
             protocolCodesSelector.SelectedItemsTable = _component.SelectedProtocolCodesTable;
             protocolCodesSelector.DataBindings.Add("Enabled", _component, "SaveEnabled", true, DataSourceUpdateMode.OnPropertyChanged);

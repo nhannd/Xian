@@ -39,6 +39,11 @@ namespace ClearCanvas.Healthcare {
             get { return this.State == ActivityStatus.IP; }
         }
 
+        public bool CanEdit(Staff staff)
+        {
+            return this.State == ActivityStatus.IP && this.PerformingStaff == staff;
+        }
+
         #region Object overrides
 
         public override bool Equals(object that)

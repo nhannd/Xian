@@ -176,7 +176,7 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
     }
 
     [FolderForWorklistType(WorklistTokens.ReportingDraftProtocolWorklist)]
-    [FolderPath("Protocolling/Draft Protocols")]
+    [FolderPath("Protocolling/Draft")]
     public class DraftProtocolFolder : ReportingWorkflowFolder
     {
         public DraftProtocolFolder(ReportingWorkflowFolderSystemBase folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
@@ -196,7 +196,7 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
     }
 
     [FolderForWorklistType(WorklistTokens.ReportingCompletedProtocolWorklist)]
-    [FolderPath("Protocolling/Completed Protocols")]
+    [FolderPath("Protocolling/Completed")]
     public class CompletedProtocolFolder : ReportingWorkflowFolder
     {
         public CompletedProtocolFolder(ReportingWorkflowFolderSystemBase folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
@@ -216,7 +216,7 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
     }
 
     [FolderForWorklistType(WorklistTokens.ReportingSuspendedProtocolWorklist)]
-    [FolderPath("Protocolling/Suspended Protocols")]
+    [FolderPath("Protocolling/Suspended")]
     public class SuspendedProtocolFolder : ReportingWorkflowFolder
     {
         public SuspendedProtocolFolder(ReportingWorkflowFolderSystemBase folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
@@ -236,7 +236,7 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
     }
 
     [FolderForWorklistType(WorklistTokens.ReportingRejectedProtocolWorklist)]
-    [FolderPath("Protocolling/Rejected Protocols")]
+    [FolderPath("Protocolling/Rejected")]
     public class RejectedProtocolFolder : ReportingWorkflowFolder
     {
         public RejectedProtocolFolder(ReportingWorkflowFolderSystemBase folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)

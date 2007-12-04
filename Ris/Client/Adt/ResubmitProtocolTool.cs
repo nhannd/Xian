@@ -26,6 +26,19 @@ namespace ClearCanvas.Ris.Client.Adt
                         delegate(IProtocollingWorkflowService service)
                         {
                             service.ResubmitProtocol(new ResubmitProtocolRequest(item.OrderRef));
+
+                            IRegistrationWorkflowItemToolContext context = (IRegistrationWorkflowItemToolContext)this.ContextBase;
+
+                            IFolder suspendedProtocolFolder = CollectionUtils.SelectFirst<IFolder>(context.Folders,
+                                delegate(IFolder f) { return f is Folders.SuspendedProtocolFolder; });
+
+                            if (suspendedProtocolFolder != null)
+                            {
+                                if (suspendedProtocolFolder.IsOpen)
+                                    suspendedProtocolFolder.Refresh();
+                                else
+                                    suspendedProtocolFolder.RefreshCount();
+                            }
                         });
                 }
                 catch (Exception e)
@@ -76,7 +89,7 @@ namespace ClearCanvas.Ris.Client.Adt
     [IconSet("apply", IconScheme.Colour, "AddToolSmall.png", "AddToolMedium.png", "AddToolLarge.png")]
     [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
     [ExtensionOf(typeof(RegistrationBookingWorkflowItemToolExtensionPoint))]
-    public class CancelProtcolTool : Tool<IRegistrationWorkflowItemToolContext>
+    public class CancelProtocolTool : Tool<IRegistrationWorkflowItemToolContext>
     {
         public void ResolveProtocol()
         {
@@ -89,6 +102,19 @@ namespace ClearCanvas.Ris.Client.Adt
                         delegate(IProtocollingWorkflowService service)
                         {
                             service.CancelProtocolAndOrder(new CancelProtocolAndOrderRequest(item.OrderRef));
+
+                            IRegistrationWorkflowItemToolContext context = (IRegistrationWorkflowItemToolContext)this.ContextBase;
+
+                            IFolder rejectedProtocolFolder = CollectionUtils.SelectFirst<IFolder>(context.Folders,
+                                delegate(IFolder f) { return f is Folders.RejectedProtocolFolder; });
+
+                            if (rejectedProtocolFolder != null)
+                            {
+                                if (rejectedProtocolFolder.IsOpen)
+                                    rejectedProtocolFolder.Refresh();
+                                else
+                                    rejectedProtocolFolder.RefreshCount();
+                            }
                         });
                 }
                 catch (Exception e)

@@ -11,6 +11,13 @@ using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 
 namespace ClearCanvas.Ris.Client.Reporting
 {
+    public enum ClaimProtocolResult
+    {
+        AlreadyClaimed,
+        Claimed,
+        Failed
+    }
+
     /// <summary>
     /// Extension point for views onto <see cref="ProtocolEditorComponent"/>
     /// </summary>
@@ -92,7 +99,7 @@ namespace ClearCanvas.Ris.Client.Reporting
         private readonly ReportingWorklistItem _worklistItem;
         private EntityRef _orderRef;
 
-        private readonly bool _claimProtocol;
+        private ClaimProtocolResult _claimResult;
 
         private readonly ProtocolEditorProcedurePlanSummaryTable _procedurePlanSummaryTable;
         private ProtocolEditorProcedurePlanSummaryTableItem _selectedProcodurePlanSummaryTableItem;
@@ -112,6 +119,9 @@ namespace ClearCanvas.Ris.Client.Reporting
         private List<ProtocolGroupSummary> _protocolGroupChoices;
         private ProtocolGroupSummary _protocolGroup;
 
+        private bool _protocolNextItem = false;
+        private bool _protocolNextItemEnabled = false;
+
         private event EventHandler _protocolAccepted;
         private event EventHandler _protocolRejected;
         private event EventHandler _protocolSuspended;
@@ -123,9 +133,8 @@ namespace ClearCanvas.Ris.Client.Reporting
         /// <summary>
         /// Constructor
         /// </summary>
-        public ProtocolEditorComponent(ReportingWorklistItem worklistItem, bool claimProtocol)
+        public ProtocolEditorComponent(ReportingWorklistItem worklistItem)
         {
-            _claimProtocol = claimProtocol;
             _worklistItem = worklistItem;
 
             _availableProtocolCodes = new ProtocolCodeTable();
@@ -142,13 +151,12 @@ namespace ClearCanvas.Ris.Client.Reporting
             Platform.GetService<IProtocollingWorkflowService>(
                 delegate(IProtocollingWorkflowService service)
                 {
-                    if (_claimProtocol)
+                    ClaimProtocol(service);
+                    if (_claimResult != Reporting.ClaimProtocolResult.Failed)
                     {
-                        service.StartOrderProtocol(new StartOrderProtocolRequest(_worklistItem.OrderRef));
+                        InitializeProcedurePlanSummary(service);
+                        InitializeActionEnablement(service);
                     }
-
-                    InitializeProcedurePlanSummary(service);
-                    InitializeActionEnablement(service);
                 });
 
             _orderSummaryComponentHost = new ChildComponentHost(this.Host, new OrderSummaryComponent(this));
@@ -158,6 +166,25 @@ namespace ClearCanvas.Ris.Client.Reporting
             _protocolNoteSummaryComponentHost.StartComponent();
 
             base.Start();
+        }
+
+        private void ClaimProtocol(IProtocollingWorkflowService service)
+        {
+            try
+            {
+                StartOrderProtocolResponse response = service.StartOrderProtocol(new StartOrderProtocolRequest(_worklistItem.OrderRef));
+                _claimResult = response.ProtocolClaimed ? ClaimProtocolResult.Claimed : ClaimProtocolResult.AlreadyClaimed;
+
+                // Default behaviour is to protocol next item if creating new protocol
+                _protocolNextItem = response.ProtocolClaimed;
+                _protocolNextItemEnabled = response.ProtocolClaimed;
+            }
+            catch(Exception)
+            {
+                // Already claimed, so just move on to the next one
+                _claimResult = ClaimProtocolResult.Failed;
+                _protocolNextItem = true;
+            }
         }
 
         public override void Stop()
@@ -235,6 +262,20 @@ namespace ClearCanvas.Ris.Client.Reporting
         {
             add { _selectedProcedurePlanSummaryTableItemChanged += value; }
             remove { _selectedProcedurePlanSummaryTableItemChanged -= value; }
+        }
+
+        /// <summary>
+        /// Specifies to containing <see cref="ProtocolEditorComponentDocument"/> if the next <see cref="ReportingWorklistItem"/> should be protocolled
+        /// </summary>
+        public bool ProtocolNextItem
+        {
+            get { return _protocolNextItem; }
+            set { _protocolNextItem = value; }
+        }
+
+        public bool ProtocolNextItemEnabled
+        {
+            get { return _protocolNextItemEnabled; }
         }
 
         #region Accept
@@ -388,17 +429,8 @@ namespace ClearCanvas.Ris.Client.Reporting
         {
             try
             {
-                if (this.Modified)
-                {
-                    DialogBoxAction action = this.Host.DesktopWindow.ShowMessageBox("Protocol has changed.  Close editor and lose changes?", MessageBoxActions.YesNo);
-                    if (action == DialogBoxAction.No)
-                    {
-                        return;
-                    }
-                }
-
                 // Unclaim any newly started protocols
-                if (_claimProtocol)
+                if (_claimResult == ClaimProtocolResult.Claimed)
                 {
                     Platform.GetService<IProtocollingWorkflowService>(
                         delegate(IProtocollingWorkflowService service)
@@ -422,6 +454,11 @@ namespace ClearCanvas.Ris.Client.Reporting
         }
 
         #endregion
+
+        public ClaimProtocolResult ClaimProtocolResult
+        {
+            get { return _claimResult; }
+        }
 
         public void AddNote()
         {
@@ -581,6 +618,7 @@ namespace ClearCanvas.Ris.Client.Reporting
             {
                 service.SaveProtocol(new SaveProtocolRequest(item.ProtocolRef, item.ProtocolDetail));
             }
+            this.Modified = false;
         }
 
         #endregion

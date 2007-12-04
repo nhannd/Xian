@@ -56,6 +56,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this.btnSave = new System.Windows.Forms.Button();
             this.flowLayoutPanel3 = new System.Windows.Forms.FlowLayoutPanel();
             this.btnClose = new System.Windows.Forms.Button();
+            this._protocolNextItem = new System.Windows.Forms.CheckBox();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
@@ -168,13 +169,13 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this._procedurePlanSummary.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this._procedurePlanSummary.Dock = System.Windows.Forms.DockStyle.Fill;
             this._procedurePlanSummary.Location = new System.Drawing.Point(3, 3);
+            this._procedurePlanSummary.MultiSelect = false;
             this._procedurePlanSummary.Name = "_procedurePlanSummary";
             this._procedurePlanSummary.ReadOnly = false;
+            this._procedurePlanSummary.ShowToolbar = false;
             this._procedurePlanSummary.Size = new System.Drawing.Size(310, 342);
             this._procedurePlanSummary.TabIndex = 0;
             this._procedurePlanSummary.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this._procedurePlanSummary.ShowToolbar = false;
-            this._procedurePlanSummary.MultiSelect = false;
             // 
             // tabPage2
             // 
@@ -274,7 +275,6 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this._protocolGroup.DisplayMember = "";
             this._protocolGroup.Dock = System.Windows.Forms.DockStyle.Fill;
             this._protocolGroup.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this._protocolGroup.Enabled = true;
             this._protocolGroup.LabelText = "Protocol Group";
             this._protocolGroup.Location = new System.Drawing.Point(2, 2);
             this._protocolGroup.Margin = new System.Windows.Forms.Padding(2);
@@ -366,7 +366,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             // 
             this.textBox1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.textBox1.Location = new System.Drawing.Point(3, 3);
-            this.textBox1.MinimumSize = new System.Drawing.Size(0, 40);
+            this.textBox1.MinimumSize = new System.Drawing.Size(4, 40);
             this.textBox1.Multiline = true;
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(884, 52);
@@ -380,6 +380,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this.flowLayoutPanel2.Controls.Add(this.btnReject);
             this.flowLayoutPanel2.Controls.Add(this.btnSuspend);
             this.flowLayoutPanel2.Controls.Add(this.btnSave);
+            this.flowLayoutPanel2.Controls.Add(this._protocolNextItem);
             this.flowLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanel2.Location = new System.Drawing.Point(3, 784);
             this.flowLayoutPanel2.Name = "flowLayoutPanel2";
@@ -447,6 +448,17 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this.btnClose.UseVisualStyleBackColor = true;
             this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
             // 
+            // _protocolNextItem
+            // 
+            this._protocolNextItem.AutoSize = true;
+            this._protocolNextItem.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._protocolNextItem.Location = new System.Drawing.Point(327, 3);
+            this._protocolNextItem.Name = "_protocolNextItem";
+            this._protocolNextItem.Size = new System.Drawing.Size(119, 23);
+            this._protocolNextItem.TabIndex = 4;
+            this._protocolNextItem.Text = "Protocol Next Order";
+            this._protocolNextItem.UseVisualStyleBackColor = true;
+            // 
             // ProtocolEditorComponentControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -487,6 +499,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this.tableLayoutPanel1.PerformLayout();
             this.flowLayoutPanel1.ResumeLayout(false);
             this.flowLayoutPanel2.ResumeLayout(false);
+            this.flowLayoutPanel2.PerformLayout();
             this.flowLayoutPanel3.ResumeLayout(false);
             this.ResumeLayout(false);
 
@@ -522,5 +535,6 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel3;
         private System.Windows.Forms.Button btnClose;
         private System.Windows.Forms.Button btnSave;
+        private System.Windows.Forms.CheckBox _protocolNextItem;
     }
 }

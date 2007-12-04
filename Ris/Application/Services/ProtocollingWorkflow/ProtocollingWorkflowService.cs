@@ -156,17 +156,20 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
         {
             Order order = this.PersistenceContext.Load<Order>(request.OrderRef);
 
+            bool protocolClaimed = false;
+
             foreach (RequestedProcedure rp in order.RequestedProcedures)
             {
                 ProtocolAssignmentStep assignmentStep = ScheduledProcedureStep<ProtocolAssignmentStep>(rp);
 
-                if (assignmentStep != null)
-                {
-                    assignmentStep.Start(this.CurrentUserStaff);
-                }
+                if(assignmentStep == null)
+                    throw new RequestValidationException(SR.ExceptionNoProtocolAssignmentStep);
+
+                assignmentStep.Start(this.CurrentUserStaff);
+                protocolClaimed = true;
             }
 
-            return new StartOrderProtocolResponse();
+            return new StartOrderProtocolResponse(protocolClaimed);
         }
 
         [UpdateOperation]

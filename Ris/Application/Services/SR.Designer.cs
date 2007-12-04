@@ -124,6 +124,15 @@ namespace ClearCanvas.Ris.Application.Services {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No scheduled Protocol Assignment steps exist for this procedure.  Either the assignment step was never created for this procedure, or it has been started by another user..
+        /// </summary>
+        internal static string ExceptionNoProtocolAssignmentStep {
+            get {
+                return ResourceManager.GetString("ExceptionNoProtocolAssignmentStep", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Current user must be associated with a Staff in order to perform this operation.
         /// </summary>
         internal static string ExceptionNoStaffForUser {
