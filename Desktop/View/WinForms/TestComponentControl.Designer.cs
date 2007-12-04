@@ -28,7 +28,6 @@
 // OF SUCH DAMAGE.
 
 #endregion
-#if DEBUG
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
@@ -178,4 +177,3 @@ namespace ClearCanvas.Desktop.View.WinForms
 
     }
 }
-#endif

@@ -27,7 +27,6 @@
 // OF SUCH DAMAGE.
 
 #endregion
-#if DEBUG
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
@@ -360,4 +359,3 @@ namespace ClearCanvas.Desktop.View.WinForms
         private TableView _events;
     }
 }
-#endif

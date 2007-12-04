@@ -217,6 +217,11 @@ namespace ClearCanvas.Desktop.View.WinForms
 				return configurations.ToArray();
 			}
 
+			public override int GetHashCode()
+			{
+				return base.GetHashCode();
+			}
+
 			public override bool Equals(object obj)
 			{
 				if (obj == this)
@@ -360,6 +365,11 @@ namespace ClearCanvas.Desktop.View.WinForms
 			public static DesktopWindowSetting Get()
 			{
 				return new DesktopWindowSetting(SystemInformation.VirtualScreen, ScreenConfiguration.Get());
+			}
+
+			public override int GetHashCode()
+			{
+				return base.GetHashCode();
 			}
 
 			public override bool Equals(object obj)

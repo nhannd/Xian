@@ -29,7 +29,6 @@
 
 #endregion
 
-#if DEBUG
 #pragma warning disable 1591
 
 using ClearCanvas.Common;
@@ -45,7 +44,7 @@ namespace ClearCanvas.Desktop
     }
 
     /// <summary>
-    /// TestComponent class
+	/// A test component not intended for production use.
     /// </summary>
     [AssociateView(typeof(TestComponentViewExtensionPoint))]
     public class TestComponent : ApplicationComponent
@@ -103,5 +102,3 @@ namespace ClearCanvas.Desktop
         }
     }
 }
-
-#endif
