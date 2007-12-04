@@ -53,15 +53,17 @@ namespace ClearCanvas.ImageViewer.Configuration
 
 		public ValidationResult GetResult(IApplicationComponent component)
 		{
-			DicomServerConfigurationComponent dicomComponent = component as DicomServerConfigurationComponent;
+			DicomServerConfigurationComponent dicomComponent = (DicomServerConfigurationComponent)component;
+			if (dicomComponent.Enabled)
+			{
+				string aeTitle = dicomComponent.AETitle;
 
-			string aeTitle = dicomComponent.AETitle;
+				if (String.IsNullOrEmpty(aeTitle))
+					return new ValidationResult(false, SR.ValidationAETitleMustBeSpecified);
 
-			if (String.IsNullOrEmpty(aeTitle))
-				return new ValidationResult(false, SR.ValidationAETitleMustBeSpecified);
-
-			if (aeTitle.Length < 1 || aeTitle.Length > 16)
-				return new ValidationResult(false, SR.ValidationAETitleLengthIncorrect);
+				if (aeTitle.Length < 1 || aeTitle.Length > 16)
+					return new ValidationResult(false, SR.ValidationAETitleLengthIncorrect);
+			}
 
 			return new ValidationResult(true, "");
 		}

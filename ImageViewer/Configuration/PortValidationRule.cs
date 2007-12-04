@@ -53,28 +53,27 @@ namespace ClearCanvas.ImageViewer.Configuration
 
 		public ValidationResult GetResult(IApplicationComponent component)
 		{
-			DicomServerConfigurationComponent dicomComponent = component as DicomServerConfigurationComponent;
-
-			if (String.IsNullOrEmpty(dicomComponent.Port))
-				return new ValidationResult(false, SR.ValidationPortMustBeSpecified);
-
-			int port;
-
-			try
+			DicomServerConfigurationComponent dicomComponent = (DicomServerConfigurationComponent)component;
+			if (dicomComponent.Enabled)
 			{
-				port = Convert.ToInt32(dicomComponent.Port);
-			}
-			catch (FormatException e)
-			{
-				return new ValidationResult(false, SR.ValidationPortMustBeNumeric);
-			}
-			catch (OverflowException e)
-			{
-				return new ValidationResult(false, SR.ValidationPortOutOfRange);
-			}
+				if (String.IsNullOrEmpty(dicomComponent.Port))
+					return new ValidationResult(false, SR.ValidationPortMustBeSpecified);
 
-			if (port < 1 || port > 65535)
-				return new ValidationResult(false, SR.ValidationPortOutOfRange);
+				try
+				{
+					int port = Convert.ToInt32(dicomComponent.Port);
+					if (port < 1 || port > 65535)
+						return new ValidationResult(false, SR.ValidationPortOutOfRange);
+				}
+				catch (FormatException e)
+				{
+					return new ValidationResult(false, SR.ValidationPortMustBeNumeric);
+				}
+				catch (OverflowException e)
+				{
+					return new ValidationResult(false, SR.ValidationPortOutOfRange);
+				}
+			}
 
 			return new ValidationResult(true, "");
 		}
