@@ -83,7 +83,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ProtocolAdmin
             ProtocolGroup group = new ProtocolGroup();
             assembler.UpdateProtocolGroup(group, request.Detail, this.PersistenceContext);
 
-            this.PersistenceContext.Lock(group);
+            this.PersistenceContext.Lock(group, DirtyState.New);
             this.PersistenceContext.SynchState();
 
             return new AddProtocolGroupResponse(assembler.GetProtocolGroupSummary(group));

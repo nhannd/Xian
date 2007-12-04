@@ -162,11 +162,26 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
             {
                 ProtocolAssignmentStep assignmentStep = ScheduledProcedureStep<ProtocolAssignmentStep>(rp);
 
-                if(assignmentStep == null)
-                    throw new RequestValidationException(SR.ExceptionNoProtocolAssignmentStep);
+                if (assignmentStep != null)
+                {
+                    // Scheduled assignment step exists (i.e. Protocol has not been claimed), so claim it
+                    assignmentStep.Start(this.CurrentUserStaff);
+                    protocolClaimed = true;
+                }
+                else
+                {
+                    // No scheduled assignment step, so possibly already claimed
+                    assignmentStep = InprogressProcedureStep<ProtocolAssignmentStep>(rp);
 
-                assignmentStep.Start(this.CurrentUserStaff);
-                protocolClaimed = true;
+                    // In-progress assignment step started by someone else
+                    if (assignmentStep != null && assignmentStep.PerformingStaff != this.CurrentUserStaff)
+                    {
+                        // So not available to this user to start
+                        throw new RequestValidationException(SR.ExceptionNoProtocolAssignmentStep);
+                    }
+
+                    // otherwise, it's been claimed by this user, so do nothing
+                }
             }
 
             return new StartOrderProtocolResponse(protocolClaimed);
