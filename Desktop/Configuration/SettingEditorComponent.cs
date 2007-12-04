@@ -39,7 +39,7 @@ using ClearCanvas.Desktop;
 namespace ClearCanvas.Desktop.Configuration
 {
     /// <summary>
-    /// Extension point for views onto <see cref="SettingEditorComponent"/>
+    /// Extension point for views onto <see cref="SettingEditorComponent"/>.
     /// </summary>
     [ExtensionPoint]
     public class SettingEditorComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
@@ -47,7 +47,8 @@ namespace ClearCanvas.Desktop.Configuration
     }
 
     /// <summary>
-    /// SettingEditorComponent class
+    /// Used by the <see cref="SettingsManagementComponent"/> to show
+    /// the default and current values of a setting, allowing the current value to be edited.
     /// </summary>
     [AssociateView(typeof(SettingEditorComponentViewExtensionPoint))]
     public class SettingEditorComponent : ApplicationComponent
@@ -56,7 +57,7 @@ namespace ClearCanvas.Desktop.Configuration
         private string _currentValue;
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         public SettingEditorComponent(string defaultValue, string currentValue)
         {
@@ -64,23 +65,19 @@ namespace ClearCanvas.Desktop.Configuration
             _currentValue = currentValue;
         }
 
-        public override void Start()
-        {
-            base.Start();
-        }
-
-        public override void Stop()
-        {
-            base.Stop();
-        }
-
         #region Presentation Model
 
+		/// <summary>
+		/// Gets the default setting value.
+		/// </summary>
         public string DefaultValue
         {
             get { return _defaultValue; }
         }
 
+		/// <summary>
+		/// Gets or sets the current setting value.
+		/// </summary>
         public string CurrentValue
         {
             get { return _currentValue; }
@@ -91,20 +88,24 @@ namespace ClearCanvas.Desktop.Configuration
             }
         }
 
+		/// <summary>
+		/// The user has accepted the changes (if any).
+		/// </summary>
         public void Accept()
         {
             this.ExitCode = ApplicationComponentExitCode.Accepted;
             this.Host.Exit();
         }
 
-        public void Cancel()
+		/// <summary>
+		/// The user has cancelled the changes (if any).
+		/// </summary>
+		public void Cancel()
         {
             this.ExitCode = ApplicationComponentExitCode.None;
             this.Host.Exit();
         }
 
         #endregion
-
-
     }
 }

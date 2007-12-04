@@ -35,8 +35,16 @@ using System.Text;
 
 namespace ClearCanvas.Desktop.Configuration
 {
+	/// <summary>
+	/// Rather than making each <see cref="IConfigurationPage"/> a separate
+	/// extension of <see cref="ConfigurationPageProviderExtensionPoint"/>, we
+	/// use this interface so that related pages can be grouped together.
+	/// </summary>
 	public interface IConfigurationPageProvider
 	{
+		/// <summary>
+		/// Gets all the <see cref="IConfigurationPage"/>s for this provider.
+		/// </summary>
 		IEnumerable<IConfigurationPage> GetPages();
 	}
 }

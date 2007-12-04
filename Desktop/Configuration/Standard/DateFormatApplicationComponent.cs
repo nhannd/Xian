@@ -40,7 +40,7 @@ using System.Globalization;
 namespace ClearCanvas.Desktop.Configuration.Standard
 {
 	/// <summary>
-	/// Extension point for views onto <see cref="DateFormatApplicationComponent"/>
+	/// Extension point for views onto <see cref="DateFormatApplicationComponent"/>.
 	/// </summary>
 	[ExtensionPoint]
 	public class DateFormatApplicationComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
@@ -48,39 +48,69 @@ namespace ClearCanvas.Desktop.Configuration.Standard
 	}
 
 	/// <summary>
-	/// DateFormatApplicationComponent class
+	/// Component that allows the date format to be set for the application.
 	/// </summary>
 	[AssociateView(typeof(DateFormatApplicationComponentViewExtensionPoint))]
 	public sealed class DateFormatApplicationComponent : ConfigurationApplicationComponent
 	{
-		public enum DateFormatOptions { Custom = 0, SystemShort, SystemLong };
+		/// <summary>
+		/// An enumeration of date format options.
+		/// </summary>
+		public enum DateFormatOptions
+		{
+			/// <summary>
+			/// A custom date format.
+			/// </summary>
+			Custom = 0, 
+			
+			/// <summary>
+			/// The 'short' format defined by the system (varies by user).
+			/// </summary>
+			SystemShort,
+
+			/// <summary>
+			/// The 'long' format defined by the system (varies by user).
+			/// </summary>
+			SystemLong
+		};
 		
 		private string _customFormat;
 		private DateFormatOptions _formatOption;
 		private List<string> _availableCustomFormats;
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
 		public DateFormatApplicationComponent()
 		{
 			_availableCustomFormats = new List<string>();
 			_formatOption = DateFormatOptions.SystemShort;
 			_customFormat = "";
 		}
-		
+
+		private static string SystemLongFormat
+		{
+			get { return System.Threading.Thread.CurrentThread.CurrentCulture.DateTimeFormat.LongDatePattern; }
+		}
+
+		private static string SystemShortFormat
+		{
+			get { return System.Threading.Thread.CurrentThread.CurrentCulture.DateTimeFormat.ShortDatePattern; }
+		}
+
+		#region Presentation Model
+
+		/// <summary>
+		/// Gets the available custom date formats.
+		/// </summary>
 		public IEnumerable<string> AvailableCustomFormats
 		{
 			get { return _availableCustomFormats; }
 		}
 
-		private string SystemLongFormat
-		{
-			get { return System.Threading.Thread.CurrentThread.CurrentCulture.DateTimeFormat.LongDatePattern; }
-		}
-
-		private string SystemShortFormat
-		{
-			get { return System.Threading.Thread.CurrentThread.CurrentCulture.DateTimeFormat.ShortDatePattern; }
-		}
-
+		/// <summary>
+		/// Get the currently selected format option (<see cref="DateFormatOptions"/>).
+		/// </summary>
 		public DateFormatOptions FormatOption
 		{
 			get { return _formatOption; }
@@ -96,6 +126,9 @@ namespace ClearCanvas.Desktop.Configuration.Standard
 			}
 		}
 
+		/// <summary>
+		/// Gets the currently selected custom format.
+		/// </summary>
 		public string SelectedCustomFormat
 		{
 			get { return _customFormat; }
@@ -114,11 +147,17 @@ namespace ClearCanvas.Desktop.Configuration.Standard
 			}
 		}
 
+		/// <summary>
+		/// Gets whether or not the 'custom' format option is enabled.
+		/// </summary>
 		public bool CustomFormatsEnabled
 		{
 			get { return _availableCustomFormats.Count > 0; }
 		}
 
+		/// <summary>
+		/// Gets the currently selected date format.
+		/// </summary>
 		public string DateFormat
 		{
 			get
@@ -127,12 +166,15 @@ namespace ClearCanvas.Desktop.Configuration.Standard
 					return _customFormat;
 
 				if (_formatOption == DateFormatOptions.SystemLong)
-					return this.SystemLongFormat;
+					return SystemLongFormat;
 
-				return this.SystemShortFormat;
+				return SystemShortFormat;
 			}
 		}
 
+		/// <summary>
+		/// Returns a 'sample date', formatted according to the currently selected format.
+		/// </summary>
 		public string SampleDate
 		{
 			get
@@ -141,12 +183,20 @@ namespace ClearCanvas.Desktop.Configuration.Standard
 			}
 		}
 
+		#endregion
+
+		/// <summary>
+		/// Saves the changes.
+		/// </summary>
 		public override void Save()
 		{
 			//Save the settings to the persistent store.
 			Format.DateFormat = this.DateFormat;
 		}
 
+		/// <summary>
+		/// Starts/initializes the component.
+		/// </summary>
 		public override void Start()
 		{
 			base.Start();
@@ -157,22 +207,22 @@ namespace ClearCanvas.Desktop.Configuration.Standard
 					_availableCustomFormats.Add(format);
 			}
 
-			if (_availableCustomFormats.Contains(this.SystemShortFormat))
-				_availableCustomFormats.Remove(this.SystemShortFormat);
+			if (_availableCustomFormats.Contains(SystemShortFormat))
+				_availableCustomFormats.Remove(SystemShortFormat);
 
-			if (_availableCustomFormats.Contains(this.SystemLongFormat))
-				_availableCustomFormats.Remove(this.SystemLongFormat);
+			if (_availableCustomFormats.Contains(SystemLongFormat))
+				_availableCustomFormats.Remove(SystemLongFormat);
 
 			//always select a custom format for display, regardless of whether or not it is going to be used.
 			//The view should restrict the user to only be allowed to select from the list.
 			if (_availableCustomFormats.Count > 0)
 				_customFormat = _availableCustomFormats[0];
 
-			if (Format.DateFormat == this.SystemLongFormat)
+			if (Format.DateFormat == SystemLongFormat)
 			{
 				_formatOption = DateFormatOptions.SystemLong;
 			}
-			else if (!String.IsNullOrEmpty(Format.DateFormat) && Format.DateFormat != this.SystemShortFormat)
+			else if (!String.IsNullOrEmpty(Format.DateFormat) && Format.DateFormat != SystemShortFormat)
 			{
 				_formatOption = DateFormatOptions.Custom;
 				_customFormat = Format.DateFormat;
@@ -185,11 +235,6 @@ namespace ClearCanvas.Desktop.Configuration.Standard
 			{
 				_formatOption = DateFormatOptions.SystemShort;
 			}
-		}
-
-		public override void Stop()
-		{
-			base.Stop();
 		}
 	}
 }

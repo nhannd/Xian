@@ -38,6 +38,9 @@ using System.Collections;
 
 namespace ClearCanvas.Desktop.Configuration
 {
+	/// <summary>
+	/// An extension point for <see cref="IConfigurationPageProvider"/>s.
+	/// </summary>
 	[ExtensionPoint()]
 	public class ConfigurationPageProviderExtensionPoint : ExtensionPoint<IConfigurationPageProvider>
 	{

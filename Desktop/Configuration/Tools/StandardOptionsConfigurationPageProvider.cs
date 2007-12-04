@@ -38,15 +38,24 @@ using ClearCanvas.Desktop.Configuration.Standard;
 
 namespace ClearCanvas.Desktop.Configuration.Tools
 {
+	/// <summary>
+	/// Provides common <see cref="IConfigurationPage"/>s for settings defined in the framework.
+	/// </summary>
 	[ExtensionOf(typeof(ConfigurationPageProviderExtensionPoint))]
 	public class StandardOptionsConfigurationPageProvider : IConfigurationPageProvider
 	{
+		/// <summary>
+		/// Constructor.
+		/// </summary>
 		public StandardOptionsConfigurationPageProvider()
 		{ 
 		}
 
 		#region IConfigurationPageProvider Members
 
+		/// <summary>
+		/// Gets all the <see cref="IConfigurationPage"/>s for this provider.
+		/// </summary>
 		public IEnumerable<IConfigurationPage> GetPages()
 		{
 			List<IConfigurationPage> listPages = new List<IConfigurationPage>();

@@ -36,12 +36,21 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.Desktop.Configuration
 {
-	public sealed class ConfigurationPage<T> : IConfigurationPage
+	/// <summary>
+	/// A default implementation of <see cref="IConfigurationPage"/>.
+	/// </summary>
+	/// <typeparam name="T">The type of <see cref="ConfigurationApplicationComponent"/>-derived 
+	/// class that will be hosted in this page.  The class must have a parameterless default constructor.</typeparam>
+	public class ConfigurationPage<T> : IConfigurationPage
 		 where T : ConfigurationApplicationComponent, new()
 	{
 		private T _component;
 		private string _path;
-
+		
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="path">The path to the <see cref="ConfigurationPage{T}"/>.</param>
 		public ConfigurationPage(string path)
 		{
 			Platform.CheckForEmptyString(path, "path");
@@ -49,22 +58,27 @@ namespace ClearCanvas.Desktop.Configuration
 			_component = new T();
 		}
 
-		private ConfigurationPage()
-		{
-		}
-
 		#region IConfigurationPage Members
 
+		/// <summary>
+		/// Gets the path to this page.
+		/// </summary>
 		public string GetPath()
 		{
 			return _path;
 		}
 
+		/// <summary>
+		/// Gets the <see cref="IApplicationComponent"/> that is hosted in this page.
+		/// </summary>
 		public IApplicationComponent GetComponent()
 		{
 			return _component;
 		}
 
+		/// <summary>
+		/// Saves any configuration changes that were made.
+		/// </summary>
 		public void SaveConfiguration()
 		{
 			_component.Save();

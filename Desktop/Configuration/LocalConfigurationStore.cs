@@ -58,6 +58,9 @@ namespace ClearCanvas.Desktop.Configuration
 		private static string _applicationSettingsGroup = "applicationSettings";
 		private static string _userSettingsGroup = "userSettings";
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
 		public LocalConfigurationStore()
 		{
         }

@@ -46,13 +46,33 @@ using ClearCanvas.Desktop.Trees;
 
 namespace ClearCanvas.Desktop.Configuration
 {
+	/// <summary>
+	/// Launches the <see cref="SettingsManagementComponent"/>.
+	/// </summary>
 	[MenuAction("activate", "global-menus/MenuTools/MenuUtilities/MenuConfigureSettings", "Activate")]
     [ExtensionOf(typeof(DesktopToolExtensionPoint))]
     public class SettingsManagementLaunchTool : Tool<IDesktopToolContext>
     {
         private IWorkspace _workspace;
 
-        public void Activate()
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		public SettingsManagementLaunchTool()
+		{
+		}
+
+		/// <summary>
+		/// Launches the <see cref="SettingsManagementComponent"/> or activates it if it's already open.
+		/// </summary>
+		/// <remarks>
+		/// This method first looks for a valid extension of <see cref="ConfigurationStoreExtensionPoint"/> and
+		/// with which to initialize the <see cref="SettingsManagementComponent"/>.  If one is not found,
+		/// an instance of <see cref="LocalConfigurationStore"/> is instantiated and passed to the
+		/// <see cref="SettingsManagementComponent"/>.  The <see cref="LocalConfigurationStore"/> allows
+		/// the local application settings to be modified, where by default they cannot be.
+		/// </remarks>
+		public void Activate()
         {
             if (_workspace == null)
             {
@@ -68,9 +88,9 @@ namespace ClearCanvas.Desktop.Configuration
 					store = new LocalConfigurationStore();
                 }
 
-                _workspace = ApplicationComponent.LaunchAsWorkspace(
-                    this.Context.DesktopWindow,
-                    new SettingsManagementComponent(store),
+				_workspace = ApplicationComponent.LaunchAsWorkspace(
+					this.Context.DesktopWindow,
+					new SettingsManagementComponent(store),
                     "Settings Management");
                 _workspace.Closed += delegate { _workspace = null; };
 			}
@@ -82,7 +102,7 @@ namespace ClearCanvas.Desktop.Configuration
     }
 
     /// <summary>
-    /// Extension point for views onto <see cref="SettingsManagementComponent"/>
+    /// Extension point for views onto <see cref="SettingsManagementComponent"/>.
     /// </summary>
     [ExtensionPoint]
     public class SettingsManagementComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
@@ -90,14 +110,18 @@ namespace ClearCanvas.Desktop.Configuration
     }
 
     /// <summary>
-    /// SettingsManagementComponent class
+    /// The <see cref="SettingsManagementComponent"/> allows editing of
+    /// the application and default user profile settings through a generic UI.
     /// </summary>
     [AssociateView(typeof(SettingsManagementComponentViewExtensionPoint))]
     public class SettingsManagementComponent : ApplicationComponent
     {
         #region SettingsProperty class
 
-        public class SettingsProperty
+        /// <summary>
+        /// Defines a settings property for presentation in the <see cref="SettingsManagementComponent"/> view.
+        /// </summary>
+		public class SettingsProperty
         {
             private SettingsPropertyDescriptor _descriptor;
             private string _value;
@@ -105,37 +129,60 @@ namespace ClearCanvas.Desktop.Configuration
 
             private event EventHandler _valueChanged;
 
+			/// <summary>
+			/// Constructor.
+			/// </summary>
+			/// <param name="descriptor">The descriptor for the property.</param>
+			/// <param name="value">The current value of the property.</param>
             public SettingsProperty(SettingsPropertyDescriptor descriptor, string value)
             {
                 _descriptor = descriptor;
                 _startingValue = _value = value;
             }
 
+			/// <summary>
+			/// Gets the name of the settings property.
+			/// </summary>
             public string Name
             {
                 get { return _descriptor.Name; }
             }
 
+			/// <summary>
+			/// Gets the type name of the settings property.
+			/// </summary>
             public string TypeName
             {
                 get { return _descriptor.TypeName; }
             }
 
+			/// <summary>
+			/// Gets a description of the settings property.
+			/// </summary>
             public string Description
             {
                 get { return _descriptor.Description; }
             }
 
+			/// <summary>
+			/// Gets an enum describing the scope of the settings property.
+			/// </summary>
             public SettingScope Scope
             {
                 get { return _descriptor.Scope; }
             }
 
+			/// <summary>
+			/// Gets the default value of the settings property.
+			/// </summary>
             public string DefaultValue
             {
                 get { return _descriptor.DefaultValue; }
             }
 
+			/// <summary>
+			/// Gets/sets the current value of the settings property.
+			/// </summary>
             public string Value
             {
                 get { return _value; }
@@ -149,17 +196,26 @@ namespace ClearCanvas.Desktop.Configuration
                 }
             }
 
+			/// <summary>
+			/// Raised when <see cref="Value"/> has changed.
+			/// </summary>
             public event EventHandler ValueChanged
             {
                 add { _valueChanged += value; }
                 remove { _valueChanged -= value; }
             }
 
+			/// <summary>
+			/// Gets whether or not the default value matches the current value.
+			/// </summary>
             public bool UsingDefaultValue
             {
                 get { return _value == _descriptor.DefaultValue; }
             }
 
+			/// <summary>
+			/// Gets whether or not the property setting value has been modified.
+			/// </summary>
             public bool Dirty
             {
                 get { return _value != _startingValue; }
@@ -186,8 +242,9 @@ namespace ClearCanvas.Desktop.Configuration
 
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
+        /// <param name="configStore">The <see cref="IConfigurationStore"/> for which the default values will be modified.</param>
         public SettingsManagementComponent(IConfigurationStore configStore)
         {
             _configStore = configStore;
@@ -234,7 +291,13 @@ namespace ClearCanvas.Desktop.Configuration
 
         }
 
-        public override void Start()
+    	/// <summary>
+    	/// Called by the host to initialize the application component.
+    	/// </summary>
+    	///  <remarks>
+    	/// Override this method to implement custom initialization logic.  Overrides must be sure to call the base implementation.
+    	/// </remarks>
+    	public override void Start()
         {
             try
             {
@@ -251,17 +314,31 @@ namespace ClearCanvas.Desktop.Configuration
             base.Start();
         }
 
-        public override void Stop()
+    	/// <summary>
+    	/// Called by the host when the application component is being terminated.
+    	/// </summary>
+    	/// <remarks>
+    	/// Override this method to implement custom termination logic.  Overrides must be sure to call the base implementation.
+    	/// </remarks>
+    	public override void Stop()
         {
             base.Stop();
         }
 
-        public override bool CanExit()
+        /// <summary>
+        /// Determines whether the component can exit without any user interaction.
+        /// </summary>
+        /// <returns>True if no properties are dirty, otherwise false.</returns>
+		public override bool CanExit()
         {
             // return false if anything modified
             return _selectedSettingsGroup == null || !IsAnyPropertyDirty();
         }
 
+		/// <summary>
+		/// Saves the changes and returns true.
+		/// </summary>
+		/// <returns></returns>
         public override bool PrepareExit()
         {
             SaveModifiedSettings(true);
@@ -270,11 +347,18 @@ namespace ClearCanvas.Desktop.Configuration
 
         #region Presentation Model
 
-        public ITable SettingsGroupTable
+        /// <summary>
+        /// Gets the currently selected settings group table.
+        /// </summary>
+		public ITable SettingsGroupTable
         {
             get { return _settingsGroupTable; }
         }
 
+		/// <summary>
+		/// Gets the currently selected settings group (aka settings class or <see cref="SettingsGroupDescriptor"/>)
+		/// as an <see cref="ISelection"/>.
+		/// </summary>
         public ISelection SelectedSettingsGroup
         {
             get { return new Selection(_selectedSettingsGroup); }
@@ -294,22 +378,35 @@ namespace ClearCanvas.Desktop.Configuration
             }
         }
 
-        public event EventHandler SelectedSettingsGroupChanged
+        /// <summary>
+		/// Raised when <see cref="SelectedSettingsGroup"/> has changed.
+        /// </summary>
+		public event EventHandler SelectedSettingsGroupChanged
         {
             add { _selectedSettingsGroupChanged += value; }
             remove { _selectedSettingsGroupChanged -= value; }
         }
 
-        public ITable SettingsPropertiesTable
+        /// <summary>
+        /// Gets a table of settings properties (<see cref="SettingsProperty"/>) for the
+        /// currently selected settings group.
+        /// </summary>
+		public ITable SettingsPropertiesTable
         {
             get { return _settingsPropertiesTable; }
         }
 
+		/// <summary>
+		/// Gets the action model for the settings properties.
+		/// </summary>
         public ActionModelRoot SettingsPropertiesActionModel
         {
             get { return _settingsPropertiesActionModel; }
         }
 
+		/// <summary>
+		/// Gets or sets the currently selected <see cref="SettingsProperty"/> as an <see cref="ISelection"/>.
+		/// </summary>
         public ISelection SelectedSettingsProperty
         {
             get { return new Selection(_selectedSettingsProperty); }
@@ -325,12 +422,18 @@ namespace ClearCanvas.Desktop.Configuration
             }
         }
 
+		/// <summary>
+		/// Raised when <see cref="SelectedSettingsProperty"/> has changed.
+		/// </summary>
         public event EventHandler SelectedSettingsPropertyChanged
         {
             add { _selectedSettingsPropertyChanged += value; }
             remove { _selectedSettingsPropertyChanged -= value; }
         }
 
+		/// <summary>
+		/// Executed when the <see cref="SelectedSettingsProperty"/> has been double-clicked in the view.
+		/// </summary>
         public void SettingsPropertyDoubleClicked()
         {
             if (_selectedSettingsProperty != null)

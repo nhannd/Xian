@@ -35,12 +35,22 @@ using System.Text;
 
 namespace ClearCanvas.Desktop.Configuration
 {
+	/// <summary>
+	/// A component that hosts a configuration page, where some settings need to
+	/// be saved when the user dismisses it.
+	/// </summary>
 	public abstract class ConfigurationApplicationComponent : ApplicationComponent
 	{
+		/// <summary>
+		/// Constructor.
+		/// </summary>
 		public ConfigurationApplicationComponent()
 		{ 
 		}
 
+		/// <summary>
+		/// Save any settings modified in the hosted component.
+		/// </summary>
 		public abstract void Save();
 	}
 }

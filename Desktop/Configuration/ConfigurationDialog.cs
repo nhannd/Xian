@@ -117,11 +117,19 @@ namespace ClearCanvas.Desktop.Configuration
 			}
 		}
 
+		/// <summary>
+		/// Shows all <see cref="IConfigurationPage"/>s returned by extensions of <see cref="IConfigurationPageProvider"/>
+		/// in a dialog, with a navigable tree to select the pages.
+		/// </summary>
 		public static ApplicationComponentExitCode Show(IDesktopWindow desktopWindow)
 		{
 			return ConfigurationDialog.Show(desktopWindow, null);
 		}
 
+		/// <summary>
+		/// Shows all <see cref="IConfigurationPage"/>s returned by extensions of <see cref="IConfigurationPageProvider"/>
+		/// in a dialog, with a navigable tree to select the pages.
+		/// </summary>
 		public static ApplicationComponentExitCode Show(IDesktopWindow desktopWindow, string initialPageIdentifier)
 		{
 			ConfigurationNavigatorComponentContainer container = new ConfigurationNavigatorComponentContainer(initialPageIdentifier);

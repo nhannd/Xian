@@ -43,6 +43,9 @@ using ClearCanvas.Desktop.Tools;
 
 namespace ClearCanvas.Desktop.Configuration.Tools
 {
+	/// <summary>
+	/// A tool that, when executed, will show a configuration dialog.
+	/// </summary>
 	[MenuAction("show", "global-menus/MenuTools/MenuOptions", "Show", KeyStroke = XKeys.Control | XKeys.O)]
 	[Tooltip("show", "MenuOptions")]
 	[IconSet("show", IconScheme.Colour, "Icons.OptionsToolSmall.png", "Icons.OptionsToolMedium.png", "Icons.OptionsToolLarge.png")]
@@ -56,22 +59,11 @@ namespace ClearCanvas.Desktop.Configuration.Tools
 		private event EventHandler _enabledChanged;
 
 		/// <summary>
-		/// Default constructor.  A no-args constructor is required by the
-		/// framework.  Do not remove.
+		/// Default constructor.
 		/// </summary>
 		public OptionsTool()
 		{
 			_enabled = true;
-		}
-
-		/// <summary>
-		/// Called by the framework to initialize this tool.
-		/// </summary>
-		public override void Initialize()
-		{
-			base.Initialize();
-
-			// TODO: add any significant initialization code here rather than in the constructor
 		}
 
 		/// <summary>
@@ -100,7 +92,7 @@ namespace ClearCanvas.Desktop.Configuration.Tools
 		}
 
 		/// <summary>
-		/// Called by the framework when the user clicks the "Options" menu item or toolbar button.
+		/// Called by the framework when the user clicks the "Options" menu item.
 		/// </summary>
 		public void Show()
 		{
