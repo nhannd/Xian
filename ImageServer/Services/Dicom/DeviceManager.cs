@@ -31,7 +31,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom.Network;
 using ClearCanvas.Enterprise.Core;
@@ -68,12 +67,12 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                 IList<Device> list = queryDevice.Execute(queryParameters);
                 if (list.Count == 0)
                 {
-                    if (!ImageServerServicesDicomSettings.Default.AcceptAnyDevice)
+                    if (!partition.AcceptAnyDevice)
                     {
                         return null;
                     }
 
-                    if (ImageServerServicesDicomSettings.Default.AutoInsertDevices)
+                    if (partition.AutoInsertDevice)
                     {
                         // Auto-insert a new entry in the table.
                         DeviceInsertParameters insertParms = new DeviceInsertParameters();
@@ -84,7 +83,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                         insertParms.Dhcp = false;
                         insertParms.IpAddress = association.RemoteEndPoint.Address.ToString();
                         insertParms.ServerPartitionKey = partition.GetKey();
-                        insertParms.Port = ImageServerServicesDicomSettings.Default.DefaultRemotePort;
+                        insertParms.Port = partition.DefaultRemotePort;
                         insertParms.AllowQuery = true;
                         insertParms.AllowRetrieve = true;
                         insertParms.AllowStorage = true;

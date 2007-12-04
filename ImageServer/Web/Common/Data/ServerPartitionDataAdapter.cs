@@ -29,24 +29,13 @@
 
 #endregion
 
-using System;
-using System.Data;
-using System.Configuration;
-using System.Web;
-using System.Web.Security;
-using System.Web.UI;
-using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
-using System.Web.UI.HtmlControls;
 using System.Collections.Generic;
-using System.ComponentModel;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
+using ClearCanvas.ImageServer.Model.Criteria;
 using ClearCanvas.ImageServer.Model.Parameters;
 using ClearCanvas.ImageServer.Model.SelectBrokers;
-using ClearCanvas.ImageServer.Model.Criteria;
-
 
 namespace ClearCanvas.ImageServer.Web.Common.Data
 {
@@ -56,18 +45,21 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
     public class ServerPartitionDataAdapter
     {
         #region Private Members
+
         private IPersistentStore _store = PersistentStoreRegistry.GetDefaultStore();
+
         #endregion Private Members
 
         #region Constructors
+
         public ServerPartitionDataAdapter()
         {
         }
 
         #endregion Constructors
 
-
         #region Public methods
+
         /// <summary>
         /// Gets a list of all server partitions.
         /// </summary>
@@ -84,7 +76,6 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             }
 
             return list;
-
         }
 
         public IList<ServerPartition> GetServerPartitions(ServerPartitionSelectCriteria criteria)
@@ -97,10 +88,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             }
 
             return list;
-
         }
-
-
 
         /// <summary>
         /// Creats a new server parition.
@@ -120,6 +108,9 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                 parms.Enabled = partition.Enabled;
                 parms.PartitionFolder = partition.PartitionFolder;
                 parms.Port = partition.Port;
+                parms.DefaultRemotePort = partition.DefaultRemotePort;
+                parms.AutoInsertDevice = partition.AutoInsertDevice;
+                parms.AcceptAnyDevice = partition.AcceptAnyDevice;
 
                 list = insert.Execute(parms);
                 ok = list != null && list.Count > 0;
@@ -128,11 +119,9 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                     ctx.Commit();
             }
 
-            
+
             return ok;
         }
-
-
 
         public bool Update(ServerPartition partition)
         {
@@ -148,6 +137,9 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                 parms.Enabled = partition.Enabled;
                 parms.PartitionFolder = partition.PartitionFolder;
                 parms.Port = partition.Port;
+                parms.AcceptAnyDevice = partition.AcceptAnyDevice;
+                parms.AutoInsertDevice = partition.AutoInsertDevice;
+                parms.DefaultRemotePort = partition.DefaultRemotePort;
 
                 ok = update.Execute(parms);
 
@@ -156,13 +148,9 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             }
 
             return ok;
-
         }
 
-
-
         #endregion Public methods
-
     }
 }
 

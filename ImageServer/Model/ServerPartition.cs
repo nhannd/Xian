@@ -53,6 +53,9 @@ namespace ClearCanvas.ImageServer.Model
         private int _port;
         private string _partitionFolder;
         ServerEntityKey _serverPartitionKey;
+        private bool _acceptAnyDevice;
+        private bool _autoInsertDevice;
+        private int _defaultRemotePort;
         #endregion
 
         #region Public Properties
@@ -86,8 +89,23 @@ namespace ClearCanvas.ImageServer.Model
             get { return _serverPartitionKey; }
             set { _serverPartitionKey = value; }
         }
+        public bool AcceptAnyDevice
+        {
+            get { return _acceptAnyDevice; }
+            set { _acceptAnyDevice = value; }
+        }
+        public bool AutoInsertDevice
+        {
+            get { return _autoInsertDevice; }
+            set { _autoInsertDevice = value; }
+        }
+        public int DefaultRemotePort
+        {
+            get { return _defaultRemotePort; }
+            set { _defaultRemotePort = value; }
+        }
+     
         #endregion
-
 
         #region Static Methods
         static public ServerPartition Load(ServerEntityKey key)
@@ -104,7 +122,5 @@ namespace ClearCanvas.ImageServer.Model
             return entity;
         }
         #endregion
-
-
     }
 }

@@ -30,12 +30,8 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Web.UI;
-using System.Web.UI.WebControls;
-using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Web.Common;
 
 namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPartitions
 {
@@ -44,14 +40,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
     //
     public partial class AddEditPartitionDialog : UserControl
     {
-        #region private variables
+        #region Private Members
+
         private bool _editMode;
         // device being editted/added
         private ServerPartition _partition;
         
         #endregion
 
-        #region public members
+        #region Public Properties
 
         public bool EditMode
         {
@@ -94,12 +91,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
         public event OnOKClickedEventHandler OKClicked;
         #endregion Events
 
-        #region Public delegates
-
-
-        #endregion // public delegates
-
-        #region Protected methods
+        #region Protected Methods
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
@@ -151,7 +143,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
                                 AddEditPartitionDialog_ClearField('" + AETitleTextBox.ClientID + @"');
                                 AddEditPartitionDialog_ClearField('" + PortTextBox.ClientID + @"');
                                 AddEditPartitionDialog_ClearField('" + PartitionFolderTextBox.ClientID + @"');
-
+                                AddEditPartitionDialog_ClearField('" + DefaultRemotePortTextBox.ClientID + @"');
+                                
                                 AddEditPartitionDialog_HideHelpImage('" + AETitleHelpImage.ClientID + @"');
                                 AddEditPartitionDialog_HideHelpImage('" + PortHelpImage.ClientID + @"');
                                 AddEditPartitionDialog_HideHelpImage('" + FolderHelpImage.ClientID + @"');
@@ -164,11 +157,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
 
         protected void Page_Load(object sender, EventArgs e)
         {
-
             if (Page.IsPostBack == false)
             {
-
-
             }
             else
             {
@@ -198,21 +188,21 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
             Partition.Description = DescriptionTextBox.Text;
             Partition.PartitionFolder = PartitionFolderTextBox.Text;
             Partition.Port = Int32.Parse(PortTextBox.Text);
+            Partition.AcceptAnyDevice = AcceptAnyDeviceCheckBox.Checked;
+            Partition.AutoInsertDevice = AutoInsertDeviceCheckBox.Checked;
+            Partition.DefaultRemotePort = Int32.Parse(DefaultRemotePortTextBox.Text);
 
             // TODO: Add input validation here
-
 
             if (OKClicked != null)
                 OKClicked(Partition);
 
             Close();
-
         }
 
         #endregion Protected methods
 
-
-        #region Public methods
+        #region Public Methods
         /// <summary>
         /// Displays the add device dialog box.
         /// </summary>
@@ -236,6 +226,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
                 PortTextBox.Text = "1";
                 PartitionFolderTextBox.Text = "";
                 EnabledCheckBox.Checked = false;
+                AutoInsertDeviceCheckBox.Checked = true;
+                AcceptAnyDeviceCheckBox.Checked = true;
+                DefaultRemotePortTextBox.Text = "104";
             }
             else
             {
@@ -244,8 +237,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
                 PortTextBox.Text = Partition.Port.ToString();
                 PartitionFolderTextBox.Text = Partition.PartitionFolder;
                 EnabledCheckBox.Checked = Partition.Enabled;
+                AutoInsertDeviceCheckBox.Checked = Partition.AutoInsertDevice;
+                AcceptAnyDeviceCheckBox.Checked = Partition.AcceptAnyDevice;
+                DefaultRemotePortTextBox.Text = Partition.DefaultRemotePort.ToString();
             }
-
 
             UpdatePanel.Update();
             ModalPopupExtender1.Show();
@@ -277,9 +272,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
         }
 
         #endregion Public methods
-
-
-        
     }
  
 }

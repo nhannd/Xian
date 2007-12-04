@@ -61,5 +61,17 @@ namespace ClearCanvas.ImageServer.Model.Parameters
         {
             set { this.SubCriteria["PartitionFolder"] = new ProcedureParameter<String>("PartitionFolder", value); }
         }
+        public int DefaultRemotePort
+        {
+            set { this.SubCriteria["DefaultRemotePort"] = new ProcedureParameter<int>("DefaultRemotePort", value); }
+        }
+        public bool AcceptAnyDevice
+        {
+            set { this.SubCriteria["AcceptAnyDevice"] = new ProcedureParameter<bool>("AcceptAnyDevice", value); }
+        }
+        public bool AutoInsertDevice
+        {
+            set { this.SubCriteria["AutoInsertDevice"] = new ProcedureParameter<bool>("AutoInsertDevice", value); }
+        }
     }
 }

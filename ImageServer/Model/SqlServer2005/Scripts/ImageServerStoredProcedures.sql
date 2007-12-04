@@ -936,10 +936,13 @@ CREATE PROCEDURE [dbo].[UpdateServerPartition]
          -- Add the parameters for the stored procedure here  
          @ServerPartitionGUID uniqueidentifier,  
          @AETitle varchar(16),  
-         @Port   int,  
-         @Description    nvarchar(256),  
+         @Port int,  
+         @Description nvarchar(256),  
          @Enabled bit,
-		 @PartitionFolder nvarchar(16)
+		 @PartitionFolder nvarchar(16),
+		 @AcceptAnyDevice bit,
+		 @AutoInsertDevice bit,
+		 @DefaultRemotePort int
 AS  
 BEGIN  
          -- SET NOCOUNT ON added to prevent extra result sets from  
@@ -952,6 +955,9 @@ BEGIN
        ,[Description] = @Description  
        ,[Enabled]=@Enabled
 	   ,[PartitionFolder]=@PartitionFolder
+	   ,[AcceptAnyDevice]=@AcceptAnyDevice
+	   ,[AutoInsertDevice]=@AutoInsertDevice
+	   ,[DefaultRemotePort]=@DefaultRemotePort
     WHERE GUID = @ServerPartitionGUID  
 END' 
 END
@@ -977,7 +983,7 @@ BEGIN
 	SET NOCOUNT ON;
 
     -- Insert statements for procedure here
-	SELECT GUID, Enabled, Description, AeTitle, Port, PartitionFolder from ServerPartition
+	SELECT * from ServerPartition
 END
 ' 
 END
@@ -1000,7 +1006,10 @@ CREATE PROCEDURE [dbo].[InsertServerPartition]
 	@Description nvarchar(128),
 	@AeTitle varchar(16),
 	@Port int,
-	@PartitionFolder nvarchar(16)
+	@PartitionFolder nvarchar(16),
+	@AcceptAnyDevice bit = 1,
+	@AutoInsertDevice bit = 1,
+	@DefaultRemotePort int = 104
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -1018,8 +1027,8 @@ BEGIN
 	BEGIN TRANSACTION
 
 	INSERT INTO [ImageServer].[dbo].[ServerPartition] 
-		([GUID],[Enabled],[Description],[AeTitle],[Port],[PartitionFolder])
-	VALUES (@ServerPartitionGUID, @Enabled, @Description, @AeTitle, @Port, @PartitionFolder)
+		([GUID],[Enabled],[Description],[AeTitle],[Port],[PartitionFolder],[AcceptAnyDevice],[AutoInsertDevice],[DefaultRemotePort])
+	VALUES (@ServerPartitionGUID, @Enabled, @Description, @AeTitle, @Port, @PartitionFolder, @AcceptAnyDevice, @AutoInsertDevice, @DefaultRemotePort)
 
 
 	DECLARE cur_sopclass CURSOR FOR 
@@ -1089,7 +1098,7 @@ BEGIN
 
 	COMMIT TRANSACTION
 
-	SELECT GUID, Enabled, Description, AeTitle, Port, PartitionFolder from ServerPartition
+	SELECT * from ServerPartition
 
 END
 ' 

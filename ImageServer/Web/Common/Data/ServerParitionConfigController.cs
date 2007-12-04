@@ -1,11 +1,7 @@
-using System;
 using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common;
-using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Criteria;
-using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Web.Common.Data
 {
@@ -18,7 +14,6 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         bool UpdatePartition(ServerPartition partition);
         IList<ServerPartition> GetPartitions(ServerPartitionSelectCriteria criteria);
         IList<ServerPartition> GetAllPartitions();
-        
     }
 
     public class ServerParitionConfigController:IServerPartitionConfigurationController
@@ -27,7 +22,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         /// <summary>
         /// The adapter class to set/retrieve server partitions from server partition table
         /// </summary>
-        private ServerPartitionDataAdapter _serverAdapter = new ServerPartitionDataAdapter();
+        private readonly ServerPartitionDataAdapter _serverAdapter = new ServerPartitionDataAdapter();
 
         #endregion
 
@@ -73,11 +68,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         /// <summary>
         /// Retrieves a list of <seealso cref="ServerPartition"/> matching the specified criteria.
         /// </summary>
-        /// <param name="AETitle"></param>
-        /// <param name="description"></param>
-        /// <param name="enabledOnly"></param>
-        /// <param name="partitionFolder"></param>
-        /// <returns></returns>
+         /// <returns>A list of partitions</returns>
         public IList<ServerPartition> GetPartitions(ServerPartitionSelectCriteria criteria)
         {
             //ServerPartitionSelectCriteria criteria = new ServerPartitionSelectCriteria();
