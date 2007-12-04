@@ -1,5 +1,4 @@
 #region License
-
 // Copyright (c) 2006-2007, ClearCanvas Inc.
 // All rights reserved.
 //
@@ -28,6 +27,7 @@
 // OF SUCH DAMAGE.
 
 #endregion
+#if DEBUG
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
@@ -51,7 +51,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             base.Dispose(disposing);
         }
 
-        #region Component Designer generated code
+#region Component Designer generated code
 
         /// <summary> 
         /// Required method for Designer support - do not modify 
@@ -336,7 +336,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         }
 
-        #endregion
+		#endregion
 
         private TableView _windows;
         private System.Windows.Forms.Button _activateWindow;
@@ -360,3 +360,4 @@ namespace ClearCanvas.Desktop.View.WinForms
         private TableView _events;
     }
 }
+#endif

@@ -28,7 +28,7 @@
 // OF SUCH DAMAGE.
 
 #endregion
-
+#if DEBUG
 using System;
 using System.Windows.Forms;
 
@@ -82,3 +82,4 @@ namespace ClearCanvas.Desktop.View.WinForms
         }
     }
 }
+#endif
