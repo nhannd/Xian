@@ -31,12 +31,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common;
-using ClearCanvas.Desktop.Tools;
-using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Desktop.Tools;
 
 namespace ClearCanvas.Desktop
 {
@@ -55,7 +53,7 @@ namespace ClearCanvas.Desktop
     }
 
     /// <summary>
-    /// Tool context interface provided to tools that extend <see cref="DesktopToolExtensionPoint"/>
+    /// Tool context interface provided to tools that extend <see cref="DesktopToolExtensionPoint"/>.
     /// </summary>
     public interface IDesktopToolContext : IToolContext
     {
@@ -74,7 +72,7 @@ namespace ClearCanvas.Desktop
     {
         #region DesktopToolContext
 
-        class DesktopToolContext : ToolContext, IDesktopToolContext
+        private class DesktopToolContext : ToolContext, IDesktopToolContext
         {
             private DesktopWindow _window;
 
@@ -115,7 +113,7 @@ namespace ClearCanvas.Desktop
         private ActionModelNode _toolbarModel;
         
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         protected internal DesktopWindow(DesktopWindowCreationArgs args, Application application)
             :base(args)
@@ -167,15 +165,22 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Shows a message box in front of this window.
         /// </summary>
-        /// <param name="message"></param>
-        /// <param name="buttons"></param>
-        /// <returns></returns>
+        /// <param name="message">The message to show in the message box.</param>
+        /// <param name="buttons">The buttons to display in the message box.</param>
+        /// <returns>The button the user selected to dismiss the message box.</returns>
         public DialogBoxAction ShowMessageBox(string message, MessageBoxActions buttons)
         {
             return this.DesktopWindowView.ShowMessageBox(message, null, buttons);
         }
 
-        public DialogBoxAction ShowMessageBox(string message, string title, MessageBoxActions buttons)
+		/// <summary>
+		/// Shows a message box in front of this window.
+		/// </summary>
+		/// <param name="message">The message to show in the message box.</param>
+		/// <param name="title">The title of the message box.</param>
+		/// <param name="buttons">The buttons to display in the message box.</param>
+		/// <returns>The button the user selected to dismiss the message box.</returns>
+		public DialogBoxAction ShowMessageBox(string message, string title, MessageBoxActions buttons)
         {
             AssertState(new DesktopObjectState[] { DesktopObjectState.Open, DesktopObjectState.Closing });
 
@@ -185,8 +190,8 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Shows a dialog box in front of this window.
         /// </summary>
-        /// <param name="args"></param>
-        /// <returns></returns>
+        /// <param name="args">Creation helper object.</param>
+		/// <returns>The button the user selected to dismiss the dialog.</returns>
         public DialogBoxAction ShowDialogBox(DialogBoxCreationArgs args)
         {
             AssertState(new DesktopObjectState[] { DesktopObjectState.Open, DesktopObjectState.Closing });
@@ -198,9 +203,9 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Shows a dialog box in front of this window.
         /// </summary>
-        /// <param name="component"></param>
-        /// <param name="title"></param>
-        /// <returns></returns>
+        /// <param name="component">The application component to be hosted in the dialog.</param>
+        /// <param name="title">The dialog's title.</param>
+		/// <returns>The button the user selected to dismiss the dialog.</returns>
         public DialogBoxAction ShowDialogBox(IApplicationComponent component, string title)
         {
             return ShowDialogBox(new DialogBoxCreationArgs(component, title, null));
@@ -210,6 +215,10 @@ namespace ClearCanvas.Desktop
 
         #region Protected overridables
 
+		/// <summary>
+		/// Creates the desktop tools (via <see cref="DesktopToolExtensionPoint"/>) and initializes
+		/// the view.
+		/// </summary>
         protected override void OnOpened(EventArgs args)
         {
             // note that we can't do this initialize in the Initialize override because the view has not been created yet
@@ -229,10 +238,8 @@ namespace ClearCanvas.Desktop
         }
 
         /// <summary>
-        /// Checks if all workspaces can close.
+        /// Checks if all workspaces can close without any user interaction.
         /// </summary>
-        /// <param name="interactive"></param>
-        /// <returns></returns>
         protected internal override bool CanClose()
         {
             // we can close if all workspaces can close without interacting
@@ -243,8 +250,8 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Attempts to close all workspaces and shelves.
         /// </summary>
-        /// <param name="reason"></param>
-        /// <returns></returns>
+        /// <param name="reason">The reason for closing all workspaces and shelves.</param>
+        /// <returns>Whether or not all affected objects were closed successfully.</returns>
         protected override bool PrepareClose(CloseReason reason)
         {
             List<Workspace> workspaces = new List<Workspace>(_workspaces);
@@ -273,9 +280,8 @@ namespace ClearCanvas.Desktop
         }
 
         /// <summary>
-        /// Disposes of this object.
+        /// Disposes of this object, its toos, dialogs, shelves and workspaces.
         /// </summary>
-        /// <param name="disposing"></param>
         protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing);
@@ -304,11 +310,14 @@ namespace ClearCanvas.Desktop
         }
 
         /// <summary>
-        /// Creates the title that is displayed in the title bar.  Override this method to customize the title. 
+        /// Creates the title that is displayed in the title bar.
         /// </summary>
-        /// <param name="baseTitle"></param>
-        /// <param name="activeWorkspace"></param>
-        /// <returns></returns>
+        /// <remarks>
+		/// Override this method to customize the title. 
+		/// </remarks>
+        /// <param name="baseTitle">The base title for the window.</param>
+        /// <param name="activeWorkspace">The active workspace, from which additional text will be added to the title.</param>
+        /// <returns>The title for the window.</returns>
         protected virtual string MakeTitle(string baseTitle, Workspace activeWorkspace)
         {
             if (activeWorkspace != null)
@@ -337,8 +346,6 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Creates a workspace view for the specified workspace.
         /// </summary>
-        /// <param name="workspace"></param>
-        /// <returns></returns>
         internal IWorkspaceView CreateWorkspaceView(Workspace workspace)
         {
             return this.DesktopWindowView.CreateWorkspaceView(workspace);
@@ -347,8 +354,6 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Creates a shelf view for the specified shelf.
         /// </summary>
-        /// <param name="shelf"></param>
-        /// <returns></returns>
         internal IShelfView CreateShelfView(Shelf shelf)
         {
             return this.DesktopWindowView.CreateShelfView(shelf);
@@ -357,15 +362,13 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Creates a dialog box view for the specified dialog box.
         /// </summary>
-        /// <param name="dialog"></param>
-        /// <returns></returns>
         internal IDialogBoxView CreateDialogView(DialogBox dialog)
         {
             return this.DesktopWindowView.CreateDialogBoxView(dialog);
         }
 
         /// <summary>
-        /// Gets the view for this object as an <see cref="IDesktopWindowView"/>
+        /// Gets the view for this object as an <see cref="IDesktopWindowView"/>.
         /// </summary>
         protected IDesktopWindowView DesktopWindowView
         {
@@ -416,8 +419,6 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Builds the action model for the specified site.
         /// </summary>
-        /// <param name="site"></param>
-        /// <returns></returns>
         private ActionModelNode BuildActionModel(string site)
         {
             IActionSet actions = this.DesktopTools.Actions;

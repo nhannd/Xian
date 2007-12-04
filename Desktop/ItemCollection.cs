@@ -37,9 +37,9 @@ using ClearCanvas.Common.Utilities;
 namespace ClearCanvas.Desktop
 {
     ///<summary>
-    /// Implements <see cref="IItemCollection{TItem}"/>
+    /// Default implementation of <see cref="IItemCollection{TItem}"/>.
     ///</summary>
-    ///<typeparam name="TItem">The type of item that the table holds</typeparam>
+    ///<typeparam name="TItem">The type of item that the table holds.</typeparam>
     public class ItemCollection<TItem> : IItemCollection<TItem>
     {
         private readonly List<TItem> _list;
@@ -53,11 +53,17 @@ namespace ClearCanvas.Desktop
             _list = new List<TItem>();
         }
 
+		/// <summary>
+		/// Copy constructor.
+		/// </summary>
         protected ItemCollection(ItemCollection<TItem> itemCollection)
         {
             _list = itemCollection.List;
         }
 
+		/// <summary>
+		/// Gets the internal list of items.
+		/// </summary>
         protected List<TItem> List
         {
             get { return _list; }
@@ -65,18 +71,30 @@ namespace ClearCanvas.Desktop
 
         #region IItemCollection Members
 
-        public void NotifyItemUpdated(int index)
+    	/// <summary>
+    	/// Notifies the table that the item at the specified index has changed in some way.
+    	/// </summary>
+    	/// <remarks>
+    	/// Use this method to cause the view to update itself to reflect the changed item.
+    	/// </remarks>
+    	public void NotifyItemUpdated(int index)
         {
             NotifyItemsChanged(ItemChangeType.ItemChanged, index, this[index]);
         }
 
-        public event EventHandler<ItemChangedEventArgs> ItemsChanged
+    	/// <summary>
+    	/// Occurs when an item in the collection has changed.
+    	/// </summary>
+    	public event EventHandler<ItemChangedEventArgs> ItemsChanged
         {
             add { _itemsChanged += value; }
             remove { _itemsChanged -= value; }
         }
 
-        public virtual void AddRange(IEnumerable enumerable)
+    	/// <summary>
+    	/// Adds all items in the specified enumeration.
+    	/// </summary>
+    	public virtual void AddRange(IEnumerable enumerable)
         {
             if(enumerable is IEnumerable<TItem>)
             {
@@ -88,7 +106,13 @@ namespace ClearCanvas.Desktop
 
         #region IItemCollection<TItem> Members
 
-        public void NotifyItemUpdated(TItem item)
+    	/// <summary>
+    	/// Notifies the table that the specified item has changed in some way.
+    	/// </summary>
+    	/// <remarks>
+    	/// Use this method to cause the view to update itself to reflect the changed item.
+    	/// </remarks>
+    	public void NotifyItemUpdated(TItem item)
         {
             int index = this.IndexOf(item);
             if (index > -1)
@@ -101,13 +125,19 @@ namespace ClearCanvas.Desktop
             }
         }
 
-        public virtual void AddRange(IEnumerable<TItem> enumerable)
+    	/// <summary>
+    	/// Adds all items in the specified enumeration.
+    	/// </summary>
+    	public virtual void AddRange(IEnumerable<TItem> enumerable)
         {
             _list.AddRange(enumerable);
             NotifyItemsChanged(ItemChangeType.Reset, -1, default(TItem));
         }
 
-        public virtual void Sort(IComparer<TItem> comparer)
+    	/// <summary>
+    	/// Sorts items in the collection using the specified <see cref="IComparer{TItem}"/>.
+    	/// </summary>
+    	public virtual void Sort(IComparer<TItem> comparer)
         {
             _list.Sort(comparer);
 
@@ -115,7 +145,12 @@ namespace ClearCanvas.Desktop
             NotifyItemsChanged(ItemChangeType.Reset, -1, default(TItem));
         }
 
-        public virtual void Replace(Predicate<TItem> constraint, TItem newValue)
+    	/// <summary>
+    	/// Sets any items in the collection matching the specified constraint to the specified new value. 
+    	/// </summary>
+    	/// <param name="constraint">A predicate against which all items in the collection will be compared, and replaced with the new value.</param>
+    	/// <param name="newValue">The new value with which to replace all matching items in the collection.</param>
+    	public virtual void Replace(Predicate<TItem> constraint, TItem newValue)
         {
             for (int i = 0; i < this.Count; i++)
             {
@@ -127,7 +162,12 @@ namespace ClearCanvas.Desktop
             }
         }
 
-        public virtual int FindIndex(Predicate<TItem> constraint)
+    	/// <summary>
+    	/// Searches the collection for an item that satisfies the specified constraint and returns
+    	/// the index of the first such item.
+    	/// </summary>
+    	/// <returns>The index of the first matching item, or -1 if no matching items are found.</returns>
+    	public virtual int FindIndex(Predicate<TItem> constraint)
         {
             for (int i = 0; i < this.Count; i++)
             {
@@ -141,6 +181,12 @@ namespace ClearCanvas.Desktop
 
         #region IList Members
 
+		/// <summary>
+		/// Adds an item to the collection, returning the index of the item's position in the collection.
+		/// </summary>
+		/// <remarks>
+		/// The method returns -1 if the item is not of the correct type.
+		/// </remarks>
         public virtual int Add(object value)
         {
             if (value is TItem)
@@ -151,6 +197,9 @@ namespace ClearCanvas.Desktop
             else return -1;
         }
 
+		/// <summary>
+		/// Gets whether or not the item is in the collection.
+		/// </summary>
         public virtual bool Contains(object value)
         {
             if (value is TItem)
@@ -160,12 +209,18 @@ namespace ClearCanvas.Desktop
             else return false;
         }
 
+		/// <summary>
+		/// Clears the collection.
+		/// </summary>
         public virtual void Clear()
         {
             _list.Clear();
             NotifyItemsChanged(ItemChangeType.Reset, -1, default(TItem));
         }
 
+		/// <summary>
+		/// Gets the index of the item in the collection, or -1 if it doesn't exist.
+		/// </summary>
         public virtual int IndexOf(object value)
         {
             if (value is TItem)
@@ -175,6 +230,9 @@ namespace ClearCanvas.Desktop
             else return -1;
         }
 
+		/// <summary>
+		/// Inserts the specified item at the given index.
+		/// </summary>
         public virtual void Insert(int index, object value)
         {
             if(value is TItem)
@@ -183,6 +241,9 @@ namespace ClearCanvas.Desktop
             }
         }
 
+		/// <summary>
+		/// Removes the specified item from the collection.
+		/// </summary>
         public virtual void Remove(object value)
         {
             if(value is TItem)
@@ -191,6 +252,9 @@ namespace ClearCanvas.Desktop
             }
         }
 
+		/// <summary>
+		/// Removes the item at the specified index.
+		/// </summary>
         public virtual void RemoveAt(int index)
         {
             TItem item = _list[index];
@@ -198,18 +262,27 @@ namespace ClearCanvas.Desktop
             NotifyItemsChanged(ItemChangeType.ItemRemoved, index, item);
         }
 
+		/// <summary>
+		/// gets the item at the specified index.
+		/// </summary>
         object IList.this[int index]
         {
             get { return ((IList<TItem>)this)[index]; }
             set { ((IList<TItem>)this)[index] = (TItem)value; }
         }
 
+		/// <summary>
+		/// Not implemented.
+		/// </summary>
         public virtual bool IsReadOnly
         {
             get { throw new NotImplementedException(); }
         }
 
-        public virtual bool IsFixedSize
+		/// <summary>
+		/// Not implemented.
+		/// </summary>
+		public virtual bool IsFixedSize
         {
             get { throw new NotImplementedException(); }
         }
@@ -218,17 +291,26 @@ namespace ClearCanvas.Desktop
 
         #region IList<TItem> Members
 
+		/// <summary>
+		/// Gets the index of the specified item, or -1 if it doesn't exist.
+		/// </summary>
         public virtual int IndexOf(TItem item)
         {
             return _list.IndexOf(item);
         }
 
+		/// <summary>
+		/// Inserts the specified item at the given index.
+		/// </summary>
         public virtual void Insert(int index, TItem item)
         {
             _list.Insert(index, item);
             NotifyItemsChanged(ItemChangeType.ItemAdded, index, item);
         }
 
+		/// <summary>
+		/// Gets the item at the given index.
+		/// </summary>
         public virtual TItem this[int index]
         {
             get { return _list[index]; }
@@ -243,6 +325,9 @@ namespace ClearCanvas.Desktop
 
         #region ICollection Members
 
+		/// <summary>
+		/// Copies the entire contents of the collection to <paramref name="array"/>, starting at <paramref name="index"/>.
+		/// </summary>
         public virtual void CopyTo(Array array, int index)
         {
             if(array is TItem[])
@@ -251,17 +336,26 @@ namespace ClearCanvas.Desktop
             }
         }
 
-        public virtual int Count
+		/// <summary>
+		/// Gets the number of items in the collection.
+		/// </summary>
+		public virtual int Count
         {
             get { return _list.Count; }
         }
 
+		/// <summary>
+		/// Not implemented.
+		/// </summary>
         public virtual object SyncRoot
         {
             get { throw new NotImplementedException(); }
         }
 
-        public virtual bool IsSynchronized
+		/// <summary>
+		/// Not implemented.
+		/// </summary>
+		public virtual bool IsSynchronized
         {
             get { throw new NotImplementedException(); }
         }
@@ -270,23 +364,37 @@ namespace ClearCanvas.Desktop
 
         #region ICollection<TItem> Members
 
-        public virtual void Add(TItem item)
+        /// <summary>
+        /// Adds the specified item to the collection.
+        /// </summary>
+		public virtual void Add(TItem item)
         {
             _list.Add(item);
             NotifyItemsChanged(ItemChangeType.ItemAdded, this.Count - 1, item);
         }
 
-        public virtual bool Contains(TItem item)
+        /// <summary>
+        /// Gets whether or not the collection contains the specified item.
+        /// </summary>
+		public virtual bool Contains(TItem item)
         {
             return _list.Contains(item);
         }
 
+		/// <summary>
+		/// Copies the entire contents of the collection to the specified <paramref name="array"/>, starting
+		/// at the given <paramref name="arrayIndex"/>.
+		/// </summary>
         public virtual void CopyTo(TItem[] array, int arrayIndex)
         {
             _list.CopyTo(array, arrayIndex);
         }
 
-        public virtual bool Remove(TItem item)
+        /// <summary>
+        /// Removes the specified item from the collection.
+        /// </summary>
+        /// <returns>True if the item existed in the collection and was removed, otherwise false.</returns>
+		public virtual bool Remove(TItem item)
         {
             int index = IndexOf(item);
             bool removed = _list.Remove(item);
@@ -301,6 +409,9 @@ namespace ClearCanvas.Desktop
 
         #region IEnumerable Members
 
+		/// <summary>
+		/// Gets an <see cref="IEnumerator"/> for the collection.
+		/// </summary>
         IEnumerator IEnumerable.GetEnumerator()
         {
             return ((IEnumerable<TItem>) this).GetEnumerator();
@@ -310,13 +421,19 @@ namespace ClearCanvas.Desktop
 
         #region IEnumerable<TItem> Members
 
-        public virtual IEnumerator<TItem> GetEnumerator()
+		/// <summary>
+		/// Gets an <see cref="IEnumerator{TItem}"/> for the collection.
+		/// </summary>
+		public virtual IEnumerator<TItem> GetEnumerator()
         {
             return _list.GetEnumerator();
         }
 
         #endregion
 
+		/// <summary>
+		/// Raises the <see cref="ItemsChanged"/> event.
+		/// </summary>
         protected void NotifyItemsChanged(ItemChangeType itemChangeType, int index, TItem item)
         {
             EventsHelper.Fire(_itemsChanged, this, new ItemChangedEventArgs(itemChangeType, index, item));

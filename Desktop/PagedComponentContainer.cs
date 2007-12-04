@@ -31,7 +31,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop
@@ -43,6 +42,11 @@ namespace ClearCanvas.Desktop
     {
         private IApplicationComponent _component;
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="component">The <see cref="IApplicationComponent"/> to host 
+		/// in a page within the <see cref="PagedComponentContainer{TPage}"/>.</param>
         public ContainerPage(IApplicationComponent component)
         {
             _component = component;
@@ -60,10 +64,11 @@ namespace ClearCanvas.Desktop
     /// <summary>
     /// Abstract base class for application component containers that support multiple pages.
     /// </summary>
-    /// <typeparam name="TPage"></typeparam>
+    /// <typeparam name="TPage">The type of the page in the container.</typeparam>
     public class PagedComponentContainer<TPage> : ApplicationComponentContainer
         where TPage : ContainerPage
     {
+		// TODO (Jon): can this be made private?
 
         /// <summary>
         /// Defines an application component host for one page.
@@ -80,11 +85,20 @@ namespace ClearCanvas.Desktop
 
             #region ApplicationComponentHost overrides
 
+			/// <summary>
+			/// Gets the <see cref="DesktopWindow"/> that owns the <see cref="PagedComponentContainer{TPage}"/>.
+			/// </summary>
             public override DesktopWindow DesktopWindow
             {
                 get { return _container.Host.DesktopWindow; }
             }
 
+			/// <summary>
+			/// Gets the title of the <see cref="PagedComponentContainer{TPage}"/>.
+			/// </summary>
+			/// <remarks>
+			/// The set method is unsupported and will throw an exception.
+			/// </remarks>
             public override string Title
             {
                 get { return _container.Host.Title; }
@@ -95,7 +109,7 @@ namespace ClearCanvas.Desktop
             #endregion
         }
 
-        class PageList : ObservableList<TPage>
+        private class PageList : ObservableList<TPage>
         {
 			public PageList()
 			{
@@ -110,7 +124,7 @@ namespace ClearCanvas.Desktop
         private event EventHandler _currentPageChanged;
 
         /// <summary>
-        /// Default constructor
+        /// Default constructor.
         /// </summary>
         public PagedComponentContainer()
         {
@@ -138,7 +152,18 @@ namespace ClearCanvas.Desktop
 
         #region ApplicationComponent overrides
 
-        public override void Start()
+    	/// <summary>
+    	/// Called by the host to initialize the application component.
+    	/// </summary>
+    	///  <remarks>
+    	/// <para>
+    	/// Automatically moves to and starts the first contained page.
+    	/// </para>
+    	/// <para>
+    	/// Override this method to implement custom initialization logic.  Overrides must be sure to call the base implementation.
+		/// </para>
+    	/// </remarks>
+    	public override void Start()
         {
             base.Start();
 
@@ -146,7 +171,18 @@ namespace ClearCanvas.Desktop
 				MoveTo(0);
         }
 
-        public override void Stop()
+    	/// <summary>
+    	/// Called by the host when the application component is being terminated.
+    	/// </summary>
+    	/// <remarks>
+    	/// <para>
+    	/// Calls <see cref="ApplicationComponent.Stop"/> on all contained <see cref="IApplicationComponent"/>s.
+    	/// </para>
+    	/// <para>
+    	/// Override this method to implement custom termination logic.  Overrides must be sure to call the base implementation.
+		/// </para>
+		/// </remarks>
+    	public override void Stop()
         {
             StopAll();
             base.Stop();
@@ -156,7 +192,10 @@ namespace ClearCanvas.Desktop
 
         #region ApplicationComponentContainer overrides
 
-        public override IEnumerable<IApplicationComponent> ContainedComponents
+    	/// <summary>
+    	/// Gets an enumeration of the contained components.
+    	/// </summary>
+    	public override IEnumerable<IApplicationComponent> ContainedComponents
         {
             get
             {
@@ -165,7 +204,10 @@ namespace ClearCanvas.Desktop
             }
         }
 
-        public override IEnumerable<IApplicationComponent> VisibleComponents
+    	/// <summary>
+    	/// Gets an enumeration of the contained components that are currently visible.
+    	/// </summary>
+    	public override IEnumerable<IApplicationComponent> VisibleComponents
         {
             get
             {
@@ -173,7 +215,10 @@ namespace ClearCanvas.Desktop
             }
         }
 
-        public override void EnsureVisible(IApplicationComponent component)
+    	/// <summary>
+    	/// Ensures that the specified component is visible.
+    	/// </summary>
+    	public override void EnsureVisible(IApplicationComponent component)
         {
             TPage page = CollectionUtils.SelectFirst<TPage>(_pages,
                 delegate(TPage p) { return p.Component == component; });
@@ -181,7 +226,10 @@ namespace ClearCanvas.Desktop
             this.CurrentPage = page;
         }
 
-        public override void EnsureStarted(IApplicationComponent component)
+    	/// <summary>
+    	/// Ensures that the specified component has been started.
+    	/// </summary>
+    	public override void EnsureStarted(IApplicationComponent component)
         {
             ContainerPage page = CollectionUtils.SelectFirst<ContainerPage>(_pages,
                 delegate(ContainerPage p) { return p.Component == component; });
@@ -232,8 +280,6 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Gets the view for the specified page.
         /// </summary>
-        /// <param name="page"></param>
-        /// <returns></returns>
         public IApplicationComponentView GetPageView(ContainerPage page)
         {
             PageHost host = _mapPageToHost[page];
@@ -245,9 +291,8 @@ namespace ClearCanvas.Desktop
         #region Helper methods
 
         /// <summary>
-        /// Moves to the page at the specified index
+        /// Moves to the page at the specified index.
         /// </summary>
-        /// <param name="index"></param>
         protected virtual void MoveTo(int index)
         {
             if (index > -1 && index < _pages.Count)
@@ -270,6 +315,9 @@ namespace ClearCanvas.Desktop
             }
         }
 
+		/// <summary>
+		/// Ensures that the specified <see cref="ContainerPage"/> is started, regardless of whether or not it is visible.
+		/// </summary>
         protected void EnsureStarted(ContainerPage page)
         {
             PageHost host = _mapPageToHost[page];
@@ -297,9 +345,8 @@ namespace ClearCanvas.Desktop
         }
 
         /// <summary>
-        /// True if <see cref="IApplicatonComponent.Modified"/> returns true for any child component.
+        /// True if <see cref="IApplicationComponent.Modified"/> returns true for any child component.
         /// </summary>
-        /// <returns></returns>
         private bool AnyPageModified()
         {
             return CollectionUtils.Contains<ContainerPage>(_pages,
@@ -312,9 +359,16 @@ namespace ClearCanvas.Desktop
             OnComponentModifiedChanged((IApplicationComponent)sender);
         }
 
+		/// <summary>
+		/// Does nothing unless overridden.
+		/// </summary>
+		/// <remarks>
+		/// This method is called each time a child component's <see cref="IApplicationComponent.ModifiedChanged"/>
+		/// event has fired.  Override this method when custom handling is required for the container.
+		/// </remarks>
+		/// <param name="component">The component whose <see cref="IApplicationComponent.ModifiedChanged"/> event has fired.</param>
         protected virtual void OnComponentModifiedChanged(IApplicationComponent component)
         {
-            // do nothing
         }
 
         #endregion

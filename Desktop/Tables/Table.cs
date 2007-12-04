@@ -140,7 +140,7 @@ namespace ClearCanvas.Desktop.Tables
         }
 
     	/// <summary>
-    	/// Fires after the table is sorted.
+		/// Raised after the table is sorted.
     	/// </summary>
     	public event EventHandler SortEvent
         {
@@ -167,8 +167,9 @@ namespace ClearCanvas.Desktop.Tables
     	/// ensure all items are returned, use <see cref="RemoveFilter()"/> prior to using this property.
     	/// </para>
     	/// <para>
-    	/// CF: <see cref="ITable{TItem}.Items"/> which always returns the complete collection.</remarks>
+    	/// CF: <see cref="ITable{TItem}.Items"/> which always returns the complete collection.
     	/// </para>
+		/// </remarks>
     	IItemCollection ITable.Items
         {
             get { return _isFiltered ? _filteredData : _data; }

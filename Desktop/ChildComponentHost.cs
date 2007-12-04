@@ -29,17 +29,22 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common;
 
 namespace ClearCanvas.Desktop
 {
+	/// <summary>
+	/// A host for components that are children of other components.
+	/// </summary>
     public class ChildComponentHost : ApplicationComponentHost
     {
         private IApplicationComponentHost _parentHost;
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="parentHost">The object that hosts the <paramref name="childComponent"/>'s parent component.</param>
+		/// <param name="childComponent">The child application component being hosted.</param>
         public ChildComponentHost(IApplicationComponentHost parentHost, IApplicationComponent childComponent)
             : base(childComponent)
         {
@@ -48,11 +53,17 @@ namespace ClearCanvas.Desktop
             _parentHost = parentHost;
         }
 
+		/// <summary>
+		/// Gets the <see cref="DesktopWindow"/> that owns the parent component.
+		/// </summary>
         public override DesktopWindow DesktopWindow
         {
             get { return _parentHost.DesktopWindow; }
         }
 
+		/// <summary>
+		/// Gets the title of the parent host.
+		/// </summary>
         public override string Title
         {
             get { return _parentHost.Title; }

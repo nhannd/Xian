@@ -29,19 +29,15 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common;
-using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop.Tables;
 
 namespace ClearCanvas.Desktop
 {
     /// <summary>
-    /// Extension point for views onto <see cref="CloseHelperComponent"/>
+    /// Extension point for views onto <see cref="CloseHelperComponent"/>.
     /// </summary>
     [ExtensionPoint]
     public class CloseHelperComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
@@ -49,8 +45,13 @@ namespace ClearCanvas.Desktop
     }
 
     /// <summary>
-    /// CloseHelperComponent class
+    /// The <see cref="CloseHelperComponent"/> assists the user in completing remaining work 
+    /// that is preventing open workspaces from closing.
     /// </summary>
+    /// <remarks>
+    /// This component is shown when an <see cref="IDesktopWindow"/> is being closed or 
+    /// the application is shutting down.
+    /// </remarks>
     [AssociateView(typeof(CloseHelperComponentViewExtensionPoint))]
     public class CloseHelperComponent : ApplicationComponent
     {
@@ -58,7 +59,7 @@ namespace ClearCanvas.Desktop
         private Workspace _selectedWorkspace;
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         public CloseHelperComponent()
         {
@@ -66,6 +67,10 @@ namespace ClearCanvas.Desktop
             _workspaces.Columns.Add(new TableColumn<Workspace, string>("Workspace", delegate(Workspace w) { return w.Title; }));
         }
 
+		/// <summary>
+		/// Refreshes the active <see cref="IWorkspace"/>s and determines which ones cannot be
+		/// closed because there is input required from the user.
+		/// </summary>
         public void Refresh()
         {
             UnsubscribeWorkspaces(_workspaces.Items);
@@ -99,22 +104,43 @@ namespace ClearCanvas.Desktop
             _workspaces.Items.Remove((Workspace)sender);
         }
 
-        public override void Start()
+    	/// <summary>
+    	/// Called by the host to initialize the application component.
+    	/// </summary>
+    	///  <remarks>
+    	/// Override this method to implement custom initialization logic.  Overrides must be sure to call the base implementation.
+    	/// </remarks>
+    	public override void Start()
         {
             base.Start();
         }
 
-        public override void Stop()
+    	/// <summary>
+    	/// Called by the host when the application component is being terminated.
+    	/// </summary>
+    	/// <remarks>
+    	/// Override this method to implement custom termination logic.  Overrides must be sure to call the base implementation.
+    	/// </remarks>
+    	public override void Stop()
         {
             UnsubscribeWorkspaces(_workspaces.Items);
             base.Stop();
         }
 
+		/// <summary>
+		/// Gets an <see cref="ITable"/> containing the workspaces that still require user input in order to close.
+		/// </summary>
         public ITable Workspaces
         {
             get { return _workspaces; }
         }
 
+		/// <summary>
+		/// Gets or sets the currently selected <see cref="IWorkspace"/>.
+		/// </summary>
+		/// <remarks>
+		/// When the selected workspace is set, it is immediately activated.
+		/// </remarks>
         public ISelection SelectedWorkspace
         {
             get { return new Selection(_selectedWorkspace); }

@@ -335,7 +335,10 @@ namespace ClearCanvas.ImageViewer.Mathematics
 					FloatComparer.IsGreaterThan(rectangle.Left, rectangle.Right) ||
 					FloatComparer.IsGreaterThan(rectangle.Top, rectangle.Bottom)));
 		}
-
+		/// <summary>
+		/// Verifies that the specified rectangle is normalized.
+		/// </summary>
+		/// <exception cref="ArgumentException">Thrown when the rectangle is not normalized.</exception>
 		public static void VerifyNormalizedRectangle(RectangleF rectangle)
 		{ 
 			if (!IsRectangleNormalized(rectangle))

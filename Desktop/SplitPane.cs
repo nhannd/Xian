@@ -29,14 +29,12 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-using ClearCanvas.Common;
-
 namespace ClearCanvas.Desktop
 {
+	/// <summary>
+	/// A <see cref="SplitPane"/> hosts a single <see cref="IApplicationComponent"/> in one
+	/// side of a <see cref="SplitComponentContainer"/>.
+	/// </summary>
 	public class SplitPane
 	{
         private IApplicationComponent _component;
@@ -46,6 +44,12 @@ namespace ClearCanvas.Desktop
 
         private SplitComponentContainer.SplitPaneHost _host;
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="name">The name of the <see cref="SplitPane"/>.</param>
+		/// <param name="component">The <see cref="IApplicationComponent"/> to be hosted.</param>
+		/// <param name="fix">Whether or not the pane should be fixed (based on size).  Only one of the two <see cref="SplitPane"/>s can be fixed.</param>
 		public SplitPane(string name, IApplicationComponent component, bool fix)
 		{
 			_name = name;
@@ -55,12 +59,12 @@ namespace ClearCanvas.Desktop
 		}
 
 		/// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
-        /// <param name="name">Name of the pane</param>
-        /// <param name="component">Component that the pane will host</param>
-        /// <param name="initialWeight">Initial weight of the pane, relative to other panes</param>
-        public SplitPane(string name, IApplicationComponent component, float initialWeight)
+		/// <param name="name">The name of the <see cref="SplitPane"/>.</param>
+		/// <param name="component">The <see cref="IApplicationComponent"/> to be hosted.</param>
+		/// <param name="initialWeight">The initial weighting factor for determing the <see cref="SplitPane"/>'s initial size.</param>
+		public SplitPane(string name, IApplicationComponent component, float initialWeight)
         {
             _name = name;
             _component = component;
@@ -68,6 +72,9 @@ namespace ClearCanvas.Desktop
 			_fixed = false;
         }
 
+		/// <summary>
+		/// Gets the name of the <see cref="SplitPane"/>.
+		/// </summary>
 		public string Name
 		{
 			get { return _name; }
@@ -89,14 +96,20 @@ namespace ClearCanvas.Desktop
             get { return _weight; }
         }
 
+		/// <summary>
+		/// Gets whether or not this pane should be 'fixed', based on its size.
+		/// </summary>
 		public bool Fixed
 		{
 			get { return _fixed; }
 		}
 
         /// <summary>
-        /// Gets the component host for this pane.  For internal use only.
+        /// Gets the component host for this pane.
         /// </summary>
+        /// <remarks>
+		/// For internal framework use only.
+		/// </remarks>
         public SplitComponentContainer.SplitPaneHost ComponentHost
         {
             get { return _host; }

@@ -30,8 +30,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop
@@ -44,9 +42,8 @@ namespace ClearCanvas.Desktop
         private CloseReason _reason;
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
-        /// <param name="reason"></param>
         public ClosedEventArgs(CloseReason reason)
         {
             _reason = reason;
@@ -70,10 +67,8 @@ namespace ClearCanvas.Desktop
         private CloseReason _reason;
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
-        /// <param name="item"></param>
-        /// <param name="reason"></param>
         public ClosedItemEventArgs(TItem item, CloseReason reason)
             :base(item)
         {

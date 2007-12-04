@@ -29,10 +29,6 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace ClearCanvas.Desktop
 {
     /// <summary>
@@ -53,8 +49,8 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <param name="title"></param>
-        /// <param name="name"></param>
+        /// <param name="title">The title for the <see cref="DesktopObject"/>.</param>
+        /// <param name="name">The name/identifier of the <see cref="DesktopObject"/>.</param>
         protected DesktopObjectCreationArgs(string title, string name)
         {
             _name = name;

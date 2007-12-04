@@ -31,15 +31,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-
-using ClearCanvas.Common;
-using ClearCanvas.Desktop.Tools;
-using ClearCanvas.Desktop.Actions;
-using System.Threading;
-using System.Security.Principal;
-using ClearCanvas.Common.Utilities;
 using System.Reflection;
+using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop.Tools;
 
 namespace ClearCanvas.Desktop
 {
@@ -47,8 +42,10 @@ namespace ClearCanvas.Desktop
 
     /// <summary>
     /// Defines an extension point for providing an implementation of <see cref="IGuiToolkit"/>.
-    /// The application requires one extension of this point.
     /// </summary>
+    /// <remarks>
+	/// The application requires one extension of this point.
+	/// </remarks>
     [ExtensionPoint]
     public class GuiToolkitExtensionPoint : ExtensionPoint<IGuiToolkit>
     {
@@ -104,12 +101,12 @@ namespace ClearCanvas.Desktop
     /// <para>
     /// This class extends <see cref="ApplicationRootExtensionPoint"/> and provides the implementation of
     /// <see cref="IApplicationRoot"/> for a desktop application.  This class may be subclassed if necessary.
-    /// In order for the framework to use the subclass, it must be passed to <see cref="Platform.StartApp"/>.
+	/// In order for the framework to use the subclass, it must be passed to <see cref="Platform.StartApp(ExtensionFilter, string[])"/>.
     /// (Typically this is done by passing the class name as a command line argument to the executable).
     /// </para>
     /// <para>
     /// The class provides a number of static convenience methods that may be freely used by application code.
-    /// These static members should not be considered thread-safe.
+    /// These static members should not be considered thread-safe unless they specifically state that they are.
     /// </para>
     /// <para>
     /// The <see cref="Instance"/> property can be used to obtain the singleton instance of the class (or subclass).
@@ -124,7 +121,7 @@ namespace ClearCanvas.Desktop
         private static Application _instance;
 
         /// <summary>
-        /// Gets the singleton instance of the <see cref="Application"/> object
+        /// Gets the singleton instance of the <see cref="Application"/> object.
         /// </summary>
         public static Application Instance
         {
@@ -177,14 +174,16 @@ namespace ClearCanvas.Desktop
         /// Shows a message box using the application name as the title.
         /// </summary>
         /// <remarks>
-        /// It is preferable to use <see cref="ClearCanvas.Desktop.DesktopWindow.ShowMessageBox"/> if a desktop window
-        /// is available, since that method will ensure that the message box window is associated with
-        /// the parent desktop window. This method is provided for situations where a message box needs to 
-        /// be displayed prior to the creation of any desktop windows.
+		/// It is preferable to use one of the <b>ClearCanvas.Desktop.DesktopWindow.ShowMessageBox</b> 
+		/// methods if a desktop window is available, since they will ensure that the message box window is 
+		/// associated with the parent desktop window. This method is provided for situations where a 
+		/// message box needs to be displayed prior to the creation of any desktop windows.
         /// </remarks>
-        /// <param name="message">The message to display</param>
-        /// <param name="actions">The actions that the user may take</param>
-        /// <returns>The resulting action taken by the user</returns>
+        /// <param name="message">The message to display.</param>
+        /// <param name="actions">The actions that the user may take.</param>
+        /// <returns>The resulting action taken by the user.</returns>
+        /// <seealso cref="ClearCanvas.Desktop.DesktopWindow.ShowMessageBox(string, MessageBoxActions)"/>
+		/// <seealso cref="ClearCanvas.Desktop.DesktopWindow.ShowMessageBox(string, string, MessageBoxActions)"/>
         public static DialogBoxAction ShowMessageBox(string message, MessageBoxActions actions)
         {
             return _instance.View.ShowMessageBox(message, actions);
@@ -222,9 +221,9 @@ namespace ClearCanvas.Desktop
 
         #region ApplicationToolContext
 
-        class ApplicationToolContext : ToolContext, IApplicationToolContext
+        private class ApplicationToolContext : ToolContext, IApplicationToolContext
         {
-            internal ApplicationToolContext(Application application)
+            public ApplicationToolContext(Application application)
             {
 
             }
@@ -234,9 +233,13 @@ namespace ClearCanvas.Desktop
 
         #region Default Session Manager Implementation
 
-        class DefaultSessionManager : ISessionManager
+        private class DefaultSessionManager : ISessionManager
         {
-            #region ISessionManager Members
+			public DefaultSessionManager()
+			{
+			}
+
+        	#region ISessionManager Members
 
             public bool InitiateSession()
             {
@@ -354,7 +357,6 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Raises the <see cref="Quitting"/> event.
         /// </summary>
-        /// <param name="args"></param>
         protected virtual void OnQuitting(QuittingEventArgs args)
         {
             EventsHelper.Fire(_quitting, this, args);
@@ -363,7 +365,6 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Gets the display name for the application. Override this method to provide a custom display name.
         /// </summary>
-        /// <returns></returns>
         protected virtual string GetName()
         {
             return SR.ApplicationName;
@@ -373,7 +374,6 @@ namespace ClearCanvas.Desktop
         /// Gets the version of the application, which is by default the version of this assembly.
         /// Override this method to provide custom version information.
         /// </summary>
-        /// <returns></returns>
         protected virtual Version GetVersion()
         {
             return Assembly.GetExecutingAssembly().GetName().Version;
@@ -386,7 +386,6 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Closes all desktop windows.
         /// </summary>
-        /// <returns></returns>
         protected bool CloseAllWindows()
         {
             // make a copy of the windows collection for iteration
@@ -438,7 +437,6 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Implements the logic to start up the desktop by running the GUI toolkit and creating the application view.
         /// </summary>
-        /// <param name="args"></param>
         private void Run(string[] args)
         {
             // load gui toolkit
@@ -495,7 +493,7 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Implements the logic to terminate the desktop, including closing all windows and terminating the session.
         /// </summary>
-        /// <returns>True if the application is really going to terminate, false otherwise</returns>
+        /// <returns>True if the application is really going to terminate, false otherwise.</returns>
         private bool DoQuit()
         {
             if (!_initialized)
@@ -588,8 +586,6 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Creates a view for a desktop window.
         /// </summary>
-        /// <param name="window"></param>
-        /// <returns></returns>
         internal IDesktopWindowView CreateDesktopWindowView(DesktopWindow window)
         {
             return _view.CreateDesktopWindowView(window);

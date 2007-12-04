@@ -29,9 +29,6 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop
@@ -45,9 +42,8 @@ namespace ClearCanvas.Desktop
         private DesktopWindow _activeWindow;
 
         /// <summary>
-        /// Default constructor
+        /// Constructor.
         /// </summary>
-        /// <param name="owner"></param>
         internal DesktopWindowCollection(Application owner)
         {
             _owner = owner;
@@ -66,7 +62,6 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Opens a new unnamed desktop window.
         /// </summary>
-        /// <returns></returns>
         public DesktopWindow AddNew()
         {
             return AddNew(new DesktopWindowCreationArgs(null, null));
@@ -75,8 +70,9 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Opens a new desktop window with the specified name.
         /// </summary>
-        /// <param name="name"></param>
-        /// <returns></returns>
+        /// <remarks>
+        /// <see cref="DesktopWindow"/> names must be unique within a collection or an exception will be thrown.
+        /// </remarks>
         public DesktopWindow AddNew(string name)
         {
             return AddNew(new DesktopWindowCreationArgs(null, name));
@@ -85,8 +81,6 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Opens a new desktop window with the specified creation arguments.
         /// </summary>
-        /// <param name="args"></param>
-        /// <returns></returns>
         public DesktopWindow AddNew(DesktopWindowCreationArgs args)
         {
             DesktopWindow window = CreateWindow(args);
@@ -98,7 +92,11 @@ namespace ClearCanvas.Desktop
 
         #region Protected overrides
 
-        protected sealed override void OnItemActivationChangedInternal(ItemEventArgs<DesktopWindow> args)
+		/// <summary>
+		/// Called when a <see cref="DesktopWindow"/> item's <see cref="DesktopObject.InternalActiveChanged"/> event
+		/// has fired.
+		/// </summary>
+		protected sealed override void OnItemActivationChangedInternal(ItemEventArgs<DesktopWindow> args)
         {
             if (args.Item.Active)
             {
@@ -117,7 +115,11 @@ namespace ClearCanvas.Desktop
             }
         }
 
-        protected sealed override void OnItemClosed(ClosedItemEventArgs<DesktopWindow> args)
+		/// <summary>
+		/// Called when a <see cref="DesktopWindow"/> item's <see cref="DesktopObject.Closed"/> event
+		/// has fired.
+		/// </summary>
+		protected sealed override void OnItemClosed(ClosedItemEventArgs<DesktopWindow> args)
         {
             if (this.Count == 0)
             {
@@ -140,8 +142,6 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Creates a new <see cref="DesktopWindow"/>.
         /// </summary>
-        /// <param name="args"></param>
-        /// <returns></returns>
         private DesktopWindow CreateWindow(DesktopWindowCreationArgs args)
         {
             IDesktopWindowFactory factory = CollectionUtils.FirstElement<IDesktopWindowFactory>(

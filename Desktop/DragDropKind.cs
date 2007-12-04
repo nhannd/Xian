@@ -29,16 +29,26 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace ClearCanvas.Desktop
 {
-    public enum DragDropKind
+    /// <summary>
+    /// Enumeration of types of drag-drop operations.
+    /// </summary>
+	public enum DragDropKind
     {
+		/// <summary>
+		/// No-op.
+		/// </summary>
         None,
+
+		/// <summary>
+		/// The drag-drop operation is a move operation.
+		/// </summary>
         Move,
-        Copy
+		
+		/// <summary>
+		/// The drag-drop operation is a copy operation.
+		/// </summary>
+		Copy
     }
 }

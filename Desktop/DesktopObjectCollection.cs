@@ -31,7 +31,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 
@@ -63,7 +62,7 @@ namespace ClearCanvas.Desktop
         private event EventHandler<ItemEventArgs<T>> _itemVisibilityChanged;
 
         /// <summary>
-        /// Default constructor
+        /// Default constructor.
         /// </summary>
         protected DesktopObjectCollection()
         {
@@ -72,7 +71,7 @@ namespace ClearCanvas.Desktop
         }
 
         /// <summary>
-        /// Finalizer
+        /// Finalizer.
         /// </summary>
         ~DesktopObjectCollection()
         {
@@ -84,8 +83,7 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Gets the object in the collection with the specified name.
         /// </summary>
-        /// <param name="name">The name of the desktop object</param>
-        /// <returns></returns>
+        /// <param name="name">The name of the desktop object.</param>
         public T this[string name]
         {
             get
@@ -110,7 +108,6 @@ namespace ClearCanvas.Desktop
         /// Checks if the specified item exists in this collection.
         /// </summary>
         /// <param name="obj">The desktop object to look for.</param>
-        /// <returns></returns>
         public bool Contains(T obj)
         {
             return _list.Contains(obj);
@@ -120,7 +117,6 @@ namespace ClearCanvas.Desktop
         /// Checks if this collection contains an item with the specified name.
         /// </summary>
         /// <param name="name">The name of the object to look for.</param>
-        /// <returns></returns>
         public bool Contains(string name)
         {
             return _nameMap.ContainsKey(name);
@@ -188,7 +184,10 @@ namespace ClearCanvas.Desktop
 
         #region IEnumerable<T> Members
 
-        IEnumerator<T> IEnumerable<T>.GetEnumerator()
+		/// <summary>
+		/// Gets an <see cref="IEnumerator{T}"/> for the collection.
+		/// </summary>
+		IEnumerator<T> IEnumerable<T>.GetEnumerator()
         {
             return _list.GetEnumerator();
         }
@@ -197,7 +196,10 @@ namespace ClearCanvas.Desktop
 
         #region IEnumerable Members
 
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+		/// <summary>
+		/// Gets an <see cref="System.Collections.IEnumerator"/> for the collection.
+		/// </summary>
+		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
         {
             return _list.GetEnumerator();
         }
@@ -206,6 +208,9 @@ namespace ClearCanvas.Desktop
 
         #region IDisposable Members
 
+		/// <summary>
+		/// Implementation of the <see cref="IDisposable"/> pattern.
+		/// </summary>
         void IDisposable.Dispose()
         {
             try
@@ -227,7 +232,6 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Raises the <see cref="ItemOpening"/> event.
         /// </summary>
-        /// <param name="args"></param>
         protected virtual void OnItemOpening(ItemEventArgs<T> args)
         {
             EventsHelper.Fire(_itemOpening, this, args);
@@ -236,7 +240,6 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Raises the <see cref="ItemOpened"/> event.
         /// </summary>
-        /// <param name="args"></param>
         protected virtual void OnItemOpened(ItemEventArgs<T> args)
         {
             EventsHelper.Fire(_itemOpened, this, args);
@@ -245,7 +248,6 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Raises the <see cref="ItemClosing"/> event.
         /// </summary>
-        /// <param name="args"></param>
         protected virtual void OnItemClosing(ClosingItemEventArgs<T> args)
         {
             EventsHelper.Fire(_itemClosing, this, args);
@@ -254,7 +256,6 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Raises the <see cref="ItemClosed"/> event.
         /// </summary>
-        /// <param name="args"></param>
         protected virtual void OnItemClosed(ClosedItemEventArgs<T> args)
         {
             EventsHelper.Fire(_itemClosed, this, args);
@@ -263,15 +264,14 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Raises the <see cref="ItemVisibilityChanged"/> event.
         /// </summary>
-        /// <param name="args"></param>
         protected virtual void OnItemVisibilityChanged(ItemEventArgs<T> args)
         {
             EventsHelper.Fire(_itemVisibilityChanged, this, args);
         }
 
         /// <summary>
+        /// Raises the <see cref="ItemActivationChanged"/> event.
         /// </summary>
-        /// <param name="args"></param>
         protected virtual void OnItemActivationChangedInternal(ItemEventArgs<T> args)
         {
             // default behaviour, just raise the public event
@@ -281,7 +281,6 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Raises the <see cref="ItemActivationChanged"/> event.
         /// </summary>
-        /// <param name="args"></param>
         protected virtual void OnItemActivationChanged(ItemEventArgs<T> args)
         {
             EventsHelper.Fire(_itemActivationChanged, this, args);
@@ -290,7 +289,6 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Disposes of this collection, first disposing of each object in the collection.
         /// </summary>
-        /// <param name="disposing"></param>
         protected virtual void Dispose(bool disposing)
         {
             if (disposing)
@@ -319,7 +317,6 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Opens the specified object.
         /// </summary>
-        /// <param name="obj"></param>
         protected void Open(T obj)
         {
             obj.Opening += delegate(object sender, EventArgs e)
@@ -361,7 +358,6 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Adds the specified object to the collection.
         /// </summary>
-        /// <param name="obj"></param>
         private void Add(T obj)
         {
             if (_list.Contains(obj))
@@ -379,7 +375,6 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Removes the specified object from the collection.
         /// </summary>
-        /// <param name="obj"></param>
         private void Remove(T obj)
         {
             if (_nameMap.ContainsValue(obj))

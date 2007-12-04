@@ -1,15 +1,24 @@
 using System;
-using System.Collections;
-using System.Text;
-using ClearCanvas.Common.Utilities;
 using System.Collections.Generic;
 
 namespace ClearCanvas.Desktop
 {
+	/// <summary>
+	/// A default implementation of <see cref="ISuggestionProvider"/>, dynamically providing suggested
+	/// text based on user input.
+	/// </summary>
+	/// <typeparam name="TItem">The type of object for which suggestions should be made.</typeparam>
     public class DefaultSuggestionProvider<TItem> : ISuggestionProvider
     {
-        public delegate string FormatDelegate<T>(T obj);
-        public event EventHandler<SuggestionsProvidedEventArgs> SuggestionsProvided;
+        /// <summary>
+        /// Gets a formatted string based on the input item, for use in determining suggestions.
+        /// </summary>
+		public delegate string FormatDelegate<T>(T obj);
+
+		/// <summary>
+		/// Notifies the user-interfaces that an updated list of suggestions is available.
+		/// </summary>
+		public event EventHandler<SuggestionsProvidedEventArgs> SuggestionsProvided;
 
         private IList<TItem> _sourceList;
         private FormatDelegate<TItem> _formatHandler;
@@ -17,12 +26,24 @@ namespace ClearCanvas.Desktop
         private List<TItem> _shortList;
         private string _lastQuery;
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="sourceList">The source list of objects.</param>
+		/// <param name="formatHandler">A delegate that returns a formatted text string for the input object.</param>
         public DefaultSuggestionProvider(IList<TItem> sourceList, FormatDelegate<TItem> formatHandler)
             :this(sourceList, formatHandler, null)
         {
             
         }
-        public DefaultSuggestionProvider(IList<TItem> sourceList, FormatDelegate<TItem> formatHandler, Comparison<TItem> sortComparison)
+		
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="sourceList">The source list of objects.</param>
+		/// <param name="formatHandler">A delegate that returns a formatted text string for the input object.</param>
+		/// <param name="sortComparison">A <see cref="Comparison{T}"/> object used to sort the list of suggestions.</param>
+		public DefaultSuggestionProvider(IList<TItem> sourceList, FormatDelegate<TItem> formatHandler, Comparison<TItem> sortComparison)
         {
             _sourceList = sourceList;
             _formatHandler = formatHandler;
@@ -31,7 +52,10 @@ namespace ClearCanvas.Desktop
 
         #region ISuggestionProvider Members
 
-        public void SetQuery(string query)
+		/// <summary>
+		/// Called by the user-inteface to inform this object of changes in the user query text.
+		/// </summary>
+		public void SetQuery(string query)
         {
             if (string.IsNullOrEmpty(query))
             {
@@ -62,12 +86,6 @@ namespace ClearCanvas.Desktop
                 SuggestionsProvided(this, new SuggestionsProvidedEventArgs(_shortList));
 
         }
-
-        public string FormatItem(object item)
-        {
-            return _formatHandler((TItem)item);
-        }
-
 
         #endregion
     }

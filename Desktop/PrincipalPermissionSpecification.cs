@@ -29,13 +29,9 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Common.Specifications;
-using System.Security.Principal;
-using ClearCanvas.Common;
 using System.Threading;
+using ClearCanvas.Common.Specifications;
 
 namespace ClearCanvas.Desktop
 {
@@ -49,7 +45,6 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Constructs an instance of this class for the specified role.
         /// </summary>
-        /// <param name="role"></param>
         public PrincipalPermissionSpecification(string role)
         {
             _role = role;
@@ -58,17 +53,21 @@ namespace ClearCanvas.Desktop
         #region ISpecification Members
 
         /// <summary>
-        /// Tests the <see cref="Thread.CurrentPrincipal"/> for the permission represented by this object.  Note that the
-        /// argument obj is ignored.
+        /// Tests the <see cref="Thread.CurrentPrincipal"/> for the permission represented by this object.
         /// </summary>
-        /// <param name="obj">Ignored</param>
-        /// <returns></returns>
+		/// <remarks>
+		/// Note that the argument obj is ignored.
+		/// </remarks>
+		/// <param name="obj">Ignored.</param>
         public TestResult Test(object obj)
         {
             return new TestResult(Thread.CurrentPrincipal == null ? false : Thread.CurrentPrincipal.IsInRole(_role));
         }
 
-        public IEnumerable<ISpecification> SubSpecs
+        /// <summary>
+        /// Not applicable, there are no sub-specs.
+        /// </summary>
+		public IEnumerable<ISpecification> SubSpecs
         {
             get { return new ISpecification[0]; }
         }

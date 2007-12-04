@@ -30,8 +30,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ClearCanvas.Desktop
 {
@@ -42,7 +40,7 @@ namespace ClearCanvas.Desktop
     public enum ShelfDisplayHint
     {
         /// <summary>
-        /// None
+        /// None.
         /// </summary>
 		None = 0,
 

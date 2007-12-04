@@ -30,9 +30,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common;
 
 namespace ClearCanvas.Desktop
@@ -43,7 +40,7 @@ namespace ClearCanvas.Desktop
     public interface IApplicationComponentHost
     {
         /// <summary>
-        /// Instructs the host to terminate, if for instance, the user has pressed an OK or Cancel button.
+        /// Instructs the host to terminate if, for instance, the user has pressed an OK or Cancel button.
         /// </summary>
         /// <remarks>
         /// The host will subsequently call <see cref="IApplicationComponent.Stop"/>.  Not all hosts
@@ -65,12 +62,11 @@ namespace ClearCanvas.Desktop
         /// <remarks>
         /// Not all hosts support this method.
         /// </remarks>
-        /// <param name="title"></param>
         [Obsolete("Use the IApplicationComponentHost.Title property instead.")]
         void SetTitle(string title);
 
         /// <summary>
-        /// Gets or sets the title that the host displays in the UI above this component.s
+        /// Gets or sets the title that the host displays in the UI above this component.
         /// </summary>
         /// <remarks>
         /// Not all hosts support this property.
@@ -81,7 +77,7 @@ namespace ClearCanvas.Desktop
         /// Gets the <see cref="CommandHistory"/> object associated with this host.
         /// </summary>
         /// <remarks>
-        /// Not all hosts support this method.
+        /// Not all hosts support this property.
         /// </remarks>
         CommandHistory CommandHistory { get; }
 

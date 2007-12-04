@@ -31,12 +31,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Xml;
-using System.Diagnostics;
 using System.Configuration;
-using ClearCanvas.Common.Configuration;
+using System.Diagnostics;
+using System.Xml;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Configuration;
 
 namespace ClearCanvas.Desktop.Actions
 {

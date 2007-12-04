@@ -29,11 +29,7 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Reflection;
-
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 
@@ -48,9 +44,9 @@ namespace ClearCanvas.Desktop
         private Path _path;
 
         /// <summary>
-        /// Default constructor.
+        /// Constructor.
         /// </summary>
-        /// <param name="path">The path to this page in the navigation tree</param>
+        /// <param name="path">The path to this page in the navigation tree.</param>
         /// <param name="component">The application component to be displayed by this page</param>
         public NavigatorPage(string path, IApplicationComponent component)
             :base(component)
@@ -69,6 +65,9 @@ namespace ClearCanvas.Desktop
             get { return _path; }
         }
 
+		/// <summary>
+		/// Returns <see cref="ClearCanvas.Desktop.Path.ToString"/>.
+		/// </summary>
 		public override string ToString()
 		{
 			return this.Path.ToString();

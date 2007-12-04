@@ -31,14 +31,13 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Configuration;
-using ClearCanvas.Common.Utilities;
-using System.Reflection;
 using System.IO;
+using System.Reflection;
 using System.Xml;
-using ClearCanvas.Common.Specifications;
 using ClearCanvas.Common.Configuration;
+using ClearCanvas.Common.Specifications;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop.Validation
 {

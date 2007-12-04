@@ -29,32 +29,46 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace ClearCanvas.Desktop
 {
     /// <summary>
-    /// Represents a single or multiple selection
+    /// Represents a single or multiple selection.
     /// </summary>
     public interface ISelection
     {
         /// <summary>
-        /// Returns the set of items that are currently selected
+        /// Returns the set of items that are currently selected.
         /// </summary>
         object[] Items { get; }
 
         /// <summary>
         /// Convenience method to obtain the currently selected item in a single-select scenario.
-        /// If no rows are selected, the method returns null.  If more than one row is selected,
-        /// it is undefined which item will be returned.
         /// </summary>
-        object Item { get; }
+		/// <remarks>
+		/// If no rows are selected, the method returns null.  If more than one row is selected,
+        /// it is undefined which item will be returned.
+		/// </remarks>
+		object Item { get; }
 
+		/// <summary>
+		/// Computes the union of this selection with another and returns it.
+		/// </summary>
         ISelection Union(ISelection other);
-        ISelection Intersect(ISelection other);
-        ISelection Subtract(ISelection other);
-        bool Contains(object item);
+
+		/// <summary>
+		/// Computes the intersection of this selection with another and returns it.
+		/// </summary>
+		ISelection Intersect(ISelection other);
+        
+		/// <summary>
+		/// Returns an <see cref="ISelection"/> that contains every item contained
+		/// in this one that doesn't exist in <param name="other" />.
+		/// </summary>
+		ISelection Subtract(ISelection other);
+
+		/// <summary>
+		/// Determines whether this selection contains the input object.
+		/// </summary>
+		bool Contains(object item);
     }
 }

@@ -29,22 +29,19 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
+#if DEBUG   // only include this tool in debug builds
+#pragma warning disable 1591
 
+using System;
 using ClearCanvas.Common;
-using ClearCanvas.Desktop;
+using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Desktop.Tools;
-using ClearCanvas.Desktop.Actions;
-using System.IO;
-using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop
 {
     
-#if DEBUG   // only include this tool in debug builds
     [MenuAction("launch", "global-menus/MenuTools/MenuUtilities/Desktop Monitor", "Launch")]
 
     [ExtensionOf(typeof(DesktopToolExtensionPoint))]
@@ -68,7 +65,6 @@ namespace ClearCanvas.Desktop
             }
         }
     }
-#endif
 
     /// <summary>
     /// Extension point for views onto <see cref="DesktopMonitorComponent"/>
@@ -552,3 +548,5 @@ namespace ClearCanvas.Desktop
         }
     }
 }
+
+#endif

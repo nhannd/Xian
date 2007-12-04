@@ -29,16 +29,22 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace ClearCanvas.Desktop
 {
+	/// <summary>
+	/// A delegate to be executed in the view.
+	/// </summary>
 	public delegate void BlockingOperationDelegate();
 
+	/// <summary>
+	/// An interface for executing long-running operations in the
+	/// view while showing a wait cursor.
+	/// </summary>
 	public interface IBlockingOperationView : IView
 	{
+		/// <summary>
+		/// Executes the specified operation in the view, showing a wait cursor.
+		/// </summary>
 		void Run(BlockingOperationDelegate operation);
 	}
 }

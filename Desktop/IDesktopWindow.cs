@@ -29,11 +29,7 @@
 
 #endregion
 
-using System;
-
 using ClearCanvas.Common;
-using ClearCanvas.Desktop.Tools;
-using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.Desktop
 {
@@ -60,33 +56,33 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Shows a message box in front of this window.
         /// </summary>
-        /// <param name="message"></param>
-        /// <param name="buttons"></param>
-        /// <returns></returns>
+        /// <param name="message">The message to display in the message box.</param>
+        /// <param name="buttons">The buttons to display in the message box.</param>
+        /// <returns>The result of the user dismissing the message box.</returns>
         DialogBoxAction ShowMessageBox(string message, MessageBoxActions buttons);
 
         /// <summary>
         /// Shows a message box in front of this window.
         /// </summary>
-        /// <param name="message"></param>
-        /// <param name="title"></param>
-        /// <param name="buttons"></param>
-        /// <returns></returns>
-        DialogBoxAction ShowMessageBox(string message, string title, MessageBoxActions buttons);
+		/// <param name="message">The message to display in the message box.</param>
+		/// <param name="title">The title of the message box.</param>
+		/// <param name="buttons">The buttons to display in the message box.</param>
+		/// <returns>The result of the user dismissing the message box.</returns>
+		DialogBoxAction ShowMessageBox(string message, string title, MessageBoxActions buttons);
 
         /// <summary>
         /// Shows a dialog box in front of this window.
         /// </summary>
-        /// <param name="component"></param>
-        /// <param name="title"></param>
+        /// <param name="component">The <see cref="IApplicationComponent"/> to be hosted in the dialog.</param>
+        /// <param name="title">The title of the dialog box.</param>
         /// <returns></returns>
         DialogBoxAction ShowDialogBox(IApplicationComponent component, string title);
 
         /// <summary>
         /// Shows a dialog box in front of this window.
         /// </summary>
-        /// <param name="args"></param>
-        /// <returns></returns>
+        /// <param name="args">Arguments used to create the dialog box.</param>
+        /// <returns>The result of the user dismissing the dialog box.</returns>
         DialogBoxAction ShowDialogBox(DialogBoxCreationArgs args);
     }
 }

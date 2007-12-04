@@ -108,6 +108,14 @@ namespace ClearCanvas.ImageViewer
 			return false;
 		}
 
+		/// <summary>
+		/// Gets a hash code for the object.
+		/// </summary>
+		public override int GetHashCode()
+		{
+			return base.GetHashCode();
+		}
+
 		#region IEquatable<ImageBoxMemento> Members
 
 		public bool Equals(ImageBoxMemento other)

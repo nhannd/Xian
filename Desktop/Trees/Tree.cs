@@ -29,11 +29,7 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Collections;
-using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop.Trees
 {

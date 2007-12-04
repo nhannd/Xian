@@ -29,20 +29,17 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-using ClearCanvas.Common;
-
 namespace ClearCanvas.Desktop
 {
+	/// <summary>
+	/// For use with the <see cref="DialogComponentContainer"/> class.
+	/// </summary>
 	public class DialogContent
 	{
         private IApplicationComponent _component;
 
         /// <summary>
-        /// Default constructor.
+        /// Constructor.
         /// </summary>
 		public DialogContent(IApplicationComponent component)
         {
@@ -50,7 +47,7 @@ namespace ClearCanvas.Desktop
         }
 
 		/// <summary>
-        /// Gets the component that is displayed on this page.
+        /// Gets the hosted component.
         /// </summary>
         public IApplicationComponent Component
         {

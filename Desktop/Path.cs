@@ -29,10 +29,7 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
 using System.Text;
-
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 
@@ -56,8 +53,8 @@ namespace ClearCanvas.Desktop
         /// will be attempted on each path segment by treating the segment as a resource key,
         /// and path segments that fail as resource keys will be treated as literals.
         /// </remarks>
-        /// <param name="pathString">The path string to parse</param>
-        /// <param name="resolver">The <see cref="ResourceResolver"/> to use for localization</param>
+        /// <param name="pathString">The path string to parse.</param>
+        /// <param name="resolver">The <see cref="IResourceResolver"/> to use for localization.</param>
         public Path(string pathString, IResourceResolver resolver)
         {
             string[] parts = pathString.Split(new char[] { SEPARATOR });
@@ -71,7 +68,7 @@ namespace ClearCanvas.Desktop
         }
 
         /// <summary>
-        /// Internal constructor
+        /// Internal constructor.
         /// </summary>
         /// <param name="segments"></param>
         internal Path(PathSegment[] segments)
@@ -89,13 +86,16 @@ namespace ClearCanvas.Desktop
         }
 
         /// <summary>
-        /// The final segment in this path, or null if this path is empty
+        /// The final segment in this path, or null if this path is empty.
         /// </summary>
         public PathSegment LastSegment
         {
             get { return _segments.Length > 0 ? _segments[_segments.Length - 1] : null; }
         }
 
+		/// <summary>
+		/// Gets the full path, localized.
+		/// </summary>
 		public string LocalizedPath
 		{
 			get
@@ -111,6 +111,9 @@ namespace ClearCanvas.Desktop
 			}
 		}
 
+		/// <summary>
+		/// Gets the remainder of the full path, beginning at the specified depth.
+		/// </summary>
         public string SubPath(int depth)
         {
             Platform.CheckIndexRange(depth, 0, _segments.Length - 1, "depth");
@@ -130,7 +133,6 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Converts this path back to the original string from which it was created.
         /// </summary>
-        /// <returns></returns>
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();

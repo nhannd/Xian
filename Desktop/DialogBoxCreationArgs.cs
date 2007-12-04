@@ -29,10 +29,6 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace ClearCanvas.Desktop
 {
     /// <summary>
@@ -43,19 +39,18 @@ namespace ClearCanvas.Desktop
         private IApplicationComponent _component;
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         public DialogBoxCreationArgs()
         {
-
         }
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
-        /// <param name="component"></param>
-        /// <param name="title"></param>
-        /// <param name="name"></param>
+        /// <param name="component">The component to be hosted in the dialog.</param>
+        /// <param name="title">The title to assign to the dialog.</param>
+        /// <param name="name">The name/identifier of the dialog.</param>
         public DialogBoxCreationArgs(IApplicationComponent component, string title, string name)
             :base(title, name)
         {

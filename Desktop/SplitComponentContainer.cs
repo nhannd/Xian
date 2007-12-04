@@ -31,29 +31,46 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.Desktop
 {
     /// <summary>
-    /// Defines an extension point for views onto the <see cref="TabComponent"/>
+	/// Defines an extension point for views onto the <see cref="SplitComponentContainer"/>.
     /// </summary>
     public class SplitComponentContainerViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
     {
     }
 
+	/// <summary>
+	/// Specifies the orientation of the <see cref="SplitComponentContainer"/>.
+	/// </summary>
 	public enum SplitOrientation
 	{
+		/// <summary>
+		/// The <see cref="SplitComponentContainer"/> should be split horizontally.
+		/// </summary>
 		Horizontal = 0,
+
+		/// <summary>
+		/// The <see cref="SplitComponentContainer"/> should be split vertically.
+		/// </summary>
 		Vertical = 1
 	}
 
+	/// <summary>
+	/// A component container for hosting two <see cref="IApplicationComponent"/>s
+	/// separated by a splitter.
+	/// </summary>
     [AssociateView(typeof(SplitComponentContainerViewExtensionPoint))]
     public class SplitComponentContainer : ApplicationComponentContainer
     {
+		//TODO (Jon): can this be made private?
+
+		/// <summary>
+		/// A host for a <see cref="SplitPane"/>.
+		/// </summary>
         public class SplitPaneHost : ApplicationComponentHost
         {
             private SplitComponentContainer _owner;
@@ -71,6 +88,9 @@ namespace ClearCanvas.Desktop
 				_pane = pane;
             }
 
+			/// <summary>
+			/// Gets the <see cref="SplitComponentContainer"/> that owns the pane.
+			/// </summary>
             public SplitComponentContainer Owner
             {
                 get { return _owner; }
@@ -78,12 +98,22 @@ namespace ClearCanvas.Desktop
 
             #region ApplicationComponentHost overrides
 
-            public override DesktopWindow DesktopWindow
+			/// <summary>
+			/// Gets the associated desktop window.
+			/// </summary>
+			public override DesktopWindow DesktopWindow
             {
                 get { return _owner.Host.DesktopWindow; }
             }
 
-            public override string Title
+			/// <summary>
+			/// Gets the title displayed in the user-interface.
+			/// </summary>
+			/// <remarks>
+			/// The title cannot be set.
+			/// </remarks>
+			/// <exception cref="NotSupportedException">The host does not support titles.</exception>
+			public override string Title
             {
                 get { return _owner.Host.Title; }
                 // individual components cannot set the title for the container
@@ -99,7 +129,7 @@ namespace ClearCanvas.Desktop
 		private SplitOrientation _splitOrientation;
 
         /// <summary>
-        /// Default constructor
+        /// Constructor.
         /// </summary>
         public SplitComponentContainer(
 			SplitPane pane1, 
@@ -113,14 +143,16 @@ namespace ClearCanvas.Desktop
 		}
 
         /// <summary>
-        /// Default constructor
+        /// Constructor.
         /// </summary>
         public SplitComponentContainer(SplitOrientation splitOrientation)
         {
             _splitOrientation = splitOrientation;
         }
 
-
+		/// <summary>
+		/// Gets or sets the first <see cref="SplitPane"/>.
+		/// </summary>
 		public SplitPane Pane1
 		{
 			get { return _pane1; }
@@ -134,6 +166,9 @@ namespace ClearCanvas.Desktop
             }
 		}
 
+		/// <summary>
+		/// Gets or sets the second <see cref="SplitPane"/>.
+		/// </summary>
 		public SplitPane Pane2
 		{
 			get { return _pane2; }
@@ -147,6 +182,9 @@ namespace ClearCanvas.Desktop
             }
         }
 
+		/// <summary>
+		/// Gets the <see cref="SplitOrientation"/> of the container.
+		/// </summary>
 		public SplitOrientation SplitOrientation
 		{
 			get { return _splitOrientation; }
@@ -154,7 +192,18 @@ namespace ClearCanvas.Desktop
 
         #region ApplicationComponent overrides
 
-        public override void Start()
+		/// <summary>
+		/// Called by the host to initialize the application component.
+		/// </summary>
+		///  <remarks>
+		/// <para>
+		/// Calls <see cref="ApplicationComponent.Start"/> on both of the <see cref="SplitPane"/>s.
+		/// </para>
+		/// <para>
+		/// Override this method to implement custom initialization logic.  Overrides must be sure to call the base implementation.
+		/// </para>
+		/// </remarks>
+		public override void Start()
         {
 			base.Start();
 
@@ -162,7 +211,18 @@ namespace ClearCanvas.Desktop
             _pane2.ComponentHost.StartComponent();
         }
 
-        public override void Stop()
+		/// <summary>
+		/// Called by the host when the application component is being terminated.
+		/// </summary>
+		/// <remarks>
+		/// <para>
+		/// Calls <see cref="ApplicationComponent.Stop"/> on both of the <see cref="SplitPane"/>s.
+		/// </para>
+		/// <para>
+		/// Override this method to implement custom termination logic.  Overrides must be sure to call the base implementation.
+		/// </para>
+		/// </remarks>
+		public override void Stop()
         {
             _pane1.ComponentHost.StopComponent();
             _pane2.ComponentHost.StopComponent();
@@ -170,7 +230,14 @@ namespace ClearCanvas.Desktop
             base.Stop();
         }
 
-        public override IActionSet ExportedActions
+		/// <summary>
+		/// Returns the set of actions that the component wishes to export to the desktop.
+		/// </summary>
+		/// <remarks>
+		/// The <see cref="IActionSet"/> returned by this method is the union of the 
+		/// exported actions from the two <see cref="SplitPane"/>s.
+		/// </remarks>
+		public override IActionSet ExportedActions
         {
             get
             {
@@ -183,17 +250,35 @@ namespace ClearCanvas.Desktop
 
         #region ApplicationComponentContainer overrides
 
-        public override IEnumerable<IApplicationComponent> ContainedComponents
+		/// <summary>
+		/// Gets an enumeration of the contained components.
+		/// </summary>
+		/// <remarks>
+		/// Simply returns both <see cref="SplitPane"/>s.
+		/// </remarks>
+		public override IEnumerable<IApplicationComponent> ContainedComponents
         {
             get { return new IApplicationComponent[] { _pane1.Component, _pane2.Component }; }
         }
 
-        public override IEnumerable<IApplicationComponent> VisibleComponents
+		/// <summary>
+		/// Gets an enumeration of the components that are currently visible.
+		/// </summary>
+		/// <remarks>
+		/// Simply returns both <see cref="SplitPane"/>s, since they are always visible.
+		/// </remarks>
+		public override IEnumerable<IApplicationComponent> VisibleComponents
         {
             get { return this.ContainedComponents; }
         }
 
-        public override void EnsureVisible(IApplicationComponent component)
+		/// <summary>
+		/// Ensures that the specified component is visible.
+		/// </summary>
+		/// <remarks>
+		/// Does nothing because both <see cref="SplitPane"/>s are already visible.
+		/// </remarks>
+		public override void EnsureVisible(IApplicationComponent component)
         {
             if (!this.IsStarted)
                 throw new InvalidOperationException(SR.ExceptionContainerNeverStarted);
@@ -201,7 +286,13 @@ namespace ClearCanvas.Desktop
             // nothing to do, since the hosted components are started by default
         }
 
-        public override void EnsureStarted(IApplicationComponent component)
+		/// <summary>
+		/// Ensures that the specified component has been started.
+		/// </summary>
+		/// <remarks>
+		/// Does nothing because both <see cref="SplitPane"/>s are already started.
+		/// </remarks>
+		public override void EnsureStarted(IApplicationComponent component)
         {
             if (!this.IsStarted)
                 throw new InvalidOperationException(SR.ExceptionContainerNeverStarted);

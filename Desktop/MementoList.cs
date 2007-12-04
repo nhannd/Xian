@@ -29,26 +29,37 @@
 
 #endregion
 
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 
 namespace ClearCanvas.Desktop
 {
+	/// <summary>
+	/// A basic container for a list of <see cref="IMemento"/>s.
+	/// </summary>
 	public class MementoList : IEnumerable<IMemento> 
 	{
 		private List<IMemento> _mementos = new List<IMemento>();
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
 		public MementoList()
 		{
 		}
 
+		/// <summary>
+		/// Gets the number of <see cref="IMemento"/>s.
+		/// </summary>
 		public int Count
 		{
 			get { return _mementos.Count; }
 		}
 
+		/// <summary>
+		/// Gets the <see cref="IMemento"/> at the specified index.
+		/// </summary>
 		public IMemento this[int index]
 		{
 			get
@@ -58,6 +69,9 @@ namespace ClearCanvas.Desktop
 			}
 		}
 
+		/// <summary>
+		/// Adds an <see cref="IMemento"/> to the list.
+		/// </summary>
 		public void AddMemento(IMemento memento)
 		{
 			Platform.CheckForNullReference(memento, "memento");
@@ -67,6 +81,9 @@ namespace ClearCanvas.Desktop
 
 		#region IEnumerable<IMemento> Members
 
+		/// <summary>
+		/// Gets an <see cref="IEnumerator{T}"/> for the contained <see cref="IMemento"/>s.
+		/// </summary>
 		public IEnumerator<IMemento> GetEnumerator()
 		{
 			return _mementos.GetEnumerator();
@@ -76,6 +93,9 @@ namespace ClearCanvas.Desktop
 
 		#region IEnumerable Members
 
+		/// <summary>
+		/// Gets an <see cref="IEnumerator"/> for the contained <see cref="IMemento"/>s.
+		/// </summary>
 		IEnumerator IEnumerable.GetEnumerator()
 		{
 			return _mementos.GetEnumerator();

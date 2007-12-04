@@ -30,20 +30,16 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Common;
 
 namespace ClearCanvas.Desktop
 {
     /// <summary>
-    /// Utility class that assists with formatting objects for display.  This class is configurable through
-    /// the <see cref="FormatSettings"/> class.
+    /// Utility class that assists with formatting objects for display.
     /// </summary>
     public static class Format
     {
         /// <summary>
-        /// Gets the default date format string
+        /// Gets or sets the default date format string.
         /// </summary>
         public static string DateFormat
         {
@@ -56,7 +52,7 @@ namespace ClearCanvas.Desktop
         }
 
         /// <summary>
-        /// Gets the default time format string
+        /// Gets or sets the default time format string.
         /// </summary>
         public static string TimeFormat
         { 
@@ -69,7 +65,7 @@ namespace ClearCanvas.Desktop
         }
 
         /// <summary>
-        /// Gets the default date-time format string
+        /// Gets or sets the default date-time format string.
         /// </summary>
         public static string DateTimeFormat
         {
@@ -82,60 +78,48 @@ namespace ClearCanvas.Desktop
         }
 
         /// <summary>
-        /// Formats the specified date-time as a date
+		/// Formats the specified <see cref="System.DateTime"/> as a date.
         /// </summary>
-        /// <param name="dt"></param>
-        /// <returns></returns>
         public static string Date(DateTime dt)
         {
             return dt.ToString(DateFormat);
         }
 
         /// <summary>
-        /// Formats the specified date-time as a date, returning an empty string if null
+		/// Formats the specified <see cref="System.DateTime"/> as a date, returning an empty string if null.
         /// </summary>
-        /// <param name="dt"></param>
-        /// <returns></returns>
         public static string Date(DateTime? dt)
         {
             return dt == null ? "" : dt.Value.ToString(DateFormat);
         }
 
         /// <summary>
-        /// Formats the specified date-time as a time
+		/// Formats the specified <see cref="System.DateTime"/> as a time.
         /// </summary>
-        /// <param name="dt"></param>
-        /// <returns></returns>
         public static string Time(DateTime dt)
         {
             return dt.ToString(TimeFormat);
         }
 
         /// <summary>
-        /// Formats the specified date-time as a time, returning an empty string if null
+		/// Formats the specified <see cref="System.DateTime"/> as a time, returning an empty string if null.
         /// </summary>
-        /// <param name="dt"></param>
-        /// <returns></returns>
         public static string Time(DateTime? dt)
         {
             return dt == null ? "" : dt.Value.ToString(TimeFormat);
         }
 
         /// <summary>
-        /// Formats the specified date-time as a date + time
+		/// Formats the specified <see cref="System.DateTime"/> as a date + time.
         /// </summary>
-        /// <param name="dt"></param>
-        /// <returns></returns>
         public static string DateTime(DateTime dt)
         {
             return dt.ToString(DateTimeFormat);
         }
 
         /// <summary>
-        /// Formats the specified date-time as a date + time
+		/// Formats the specified <see cref="System.DateTime"/> as a date + time.
         /// </summary>
-        /// <param name="dt"></param>
-        /// <returns></returns>
         public static string DateTime(DateTime? dt)
         {
             return dt == null ? "" : dt.Value.ToString(DateTimeFormat);

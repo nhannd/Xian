@@ -37,7 +37,7 @@ namespace ClearCanvas.Desktop.Tables
     /// Implementation of <see cref="ITableColumn"/> for use with the <see cref="Table{TItem}"/> class.
     /// </summary>
     /// <typeparam name="TItem">The type of item on which the table is based.</typeparam>
-    /// <typeparam name="TColumn">The type of value that this column holds<./typeparam>
+    /// <typeparam name="TColumn">The type of value that this column holds.</typeparam>
     public class TableColumn<TItem, TColumn> : TableColumnBase<TItem>
     {
         /// <summary>

@@ -29,14 +29,11 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-using ClearCanvas.Common;
-
 namespace ClearCanvas.Desktop
 {
+	/// <summary>
+	/// A <see cref="TabGroup"/> to be hosted within a <see cref="TabGroupComponentContainer"/>.
+	/// </summary>
     public class TabGroup
     {
         private float _weight;
@@ -45,9 +42,10 @@ namespace ClearCanvas.Desktop
         private TabGroupComponentContainer.TabGroupHost _host;
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
-        /// <param name="initialWeight">Initial weight of the tab group, relative to other tab groups</param>
+        /// <param name="tabContainer">The owning container.</param>
+        /// <param name="initialWeight">Initial weight of the tab group, relative to other tab groups.</param>
         public TabGroup(TabComponentContainer tabContainer, float initialWeight)
         {
             _tabContainer = tabContainer;
@@ -55,7 +53,7 @@ namespace ClearCanvas.Desktop
         }
 
         /// <summary>
-        /// Gets the tabComponentContainer of this tabgroup
+        /// Gets the owner <see cref="TabComponentContainer"/>.
         /// </summary>
         public TabComponentContainer Component
         {
@@ -63,7 +61,7 @@ namespace ClearCanvas.Desktop
         }
 
         /// <summary>
-        /// Gets the weight that was assigned to this tabgroup
+        /// Gets the weight assigned to this group, relative to the other groups.
         /// </summary>
         public float Weight
         {
@@ -71,8 +69,11 @@ namespace ClearCanvas.Desktop
         }
 
         /// <summary>
-        /// Gets the component host for this pane.  For internal use only.
+        /// Gets or sets the component host for this pane.
         /// </summary>
+        /// <remarks>
+		/// For internal framework use only.
+		/// </remarks>
         public TabGroupComponentContainer.TabGroupHost ComponentHost
         {
             get { return _host; }

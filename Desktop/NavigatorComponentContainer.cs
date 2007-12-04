@@ -30,16 +30,13 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop
 {
     /// <summary>
-    /// Defines an extension point for views onto the <see cref="NavigatorComponent"/>
+	/// Defines an extension point for views onto the <see cref="NavigatorComponentContainer"/>.
     /// </summary>
     public class NavigatorComponentContainerViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
     {
@@ -47,10 +44,12 @@ namespace ClearCanvas.Desktop
 
     /// <summary>
     /// An application component that acts as a container for other application components.
+    /// </summary>
+    /// <remarks>
     /// The child components are treated as "pages", where each page is a node in a tree.
     /// Only one page is displayed at a time, however, a navigation tree is provided on the side
     /// to aid the user in navigating the set of pages.
-    /// </summary>
+	/// </remarks>
     [AssociateView(typeof(NavigatorComponentContainerViewExtensionPoint))]
     public class NavigatorComponentContainer : PagedComponentContainer<NavigatorPage>
     {
@@ -64,7 +63,7 @@ namespace ClearCanvas.Desktop
         private event EventHandler _acceptEnabledChanged;
 
         /// <summary>
-        /// Default constructor
+        /// Default constructor.
         /// </summary>
         public NavigatorComponentContainer()
         {
@@ -74,7 +73,7 @@ namespace ClearCanvas.Desktop
 
 
         /// <summary>
-        /// Advances to the next page
+        /// Advances to the next page.
         /// </summary>
         public void Forward()
         {
@@ -82,9 +81,9 @@ namespace ClearCanvas.Desktop
         }
 
         /// <summary>
-        /// Indicates whether it is possible to advance one page.  True unless the current
-        /// page is the last page.
+        /// Indicates whether it is possible to advance one page.
         /// </summary>
+        /// <returns> True unless the current page is the last page.</returns>
         public bool ForwardEnabled
         {
             get { return _forwardEnabled; }
@@ -116,9 +115,9 @@ namespace ClearCanvas.Desktop
         }
 
         /// <summary>
-        /// Indicates whether it is possible to go back one page.  True unless the current page
-        /// is the first page.
+        /// Indicates whether it is possible to go back one page.
         /// </summary>
+		/// <returns>True unless the current page is the first page.</returns>
         public bool BackEnabled
         {
             get { return _backEnabled; }
@@ -142,9 +141,11 @@ namespace ClearCanvas.Desktop
         }
         
         /// <summary>
-        /// Causes the component to exit, accepting any changes made by the user. Override this method
-        /// if desired.
+        /// Causes the component to exit, accepting any changes made by the user.
         /// </summary>
+        /// <remarks>
+		/// Override this method if desired.
+		/// </remarks>
         public virtual void Accept()
         {
             this.ExitCode = ApplicationComponentExitCode.Accepted;
@@ -177,9 +178,11 @@ namespace ClearCanvas.Desktop
         }
 
         /// <summary>
-        /// Causes the component to exit, discarding any changes made by the user.  Override this method
-        /// if desired.
+        /// Causes the component to exit, discarding any changes made by the user.
         /// </summary>
+        /// <remarks>
+		/// Override this method if desired.
+		/// </remarks>
         public virtual void Cancel()
         {
             this.ExitCode = ApplicationComponentExitCode.None;
@@ -190,9 +193,8 @@ namespace ClearCanvas.Desktop
 
 
         /// <summary>
-        /// Moves to the page at the specified index
+        /// Moves to the page at the specified index.
         /// </summary>
-        /// <param name="index"></param>
         protected override void MoveTo(int index)
         {
             base.MoveTo(index);
@@ -201,6 +203,9 @@ namespace ClearCanvas.Desktop
             this.BackEnabled = (this.CurrentPageIndex > 0);
         }
 
+		/// <summary>
+		/// Sets <see cref="AcceptEnabled"/> based on the value of <see cref="ApplicationComponent.Modified"/>.
+		/// </summary>
         protected override void OnComponentModifiedChanged(IApplicationComponent component)
         {
             base.OnComponentModifiedChanged(component);

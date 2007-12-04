@@ -29,12 +29,7 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop
 {
@@ -46,7 +41,7 @@ namespace ClearCanvas.Desktop
         #region Host Implementation
 
         // implements the host interface, which is exposed to the hosted application component
-        class Host : ApplicationComponentHost, IShelfHost
+        private class Host : ApplicationComponentHost, IShelfHost
         {
             private Shelf _shelf;
 
@@ -84,10 +79,10 @@ namespace ClearCanvas.Desktop
         private bool _exitRequestedByComponent;
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
-        /// <param name="args"></param>
-        /// <param name="desktopWindow"></param>
+        /// <param name="args">Object used to specify how the <see cref="Shelf"/> should be created.</param>
+        /// <param name="desktopWindow">The owner window of the <see cref="Shelf"/>.</param>
         protected internal Shelf(ShelfCreationArgs args, DesktopWindow desktopWindow)
             :base(args)
         {
@@ -151,6 +146,9 @@ namespace ClearCanvas.Desktop
 
         #region IShelf Members
 
+		/// <summary>
+		/// Gets the owner <see cref="IDesktopWindow"/>.
+		/// </summary>
         IDesktopWindow IShelf.DesktopWindow
         {
             get { return _desktopWindow; }
@@ -181,8 +179,6 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Gives the hosted component a chance to prepare for a forced exit.
         /// </summary>
-        /// <param name="reason"></param>
-        /// <returns></returns>
         protected override bool PrepareClose(CloseReason reason)
         {
             base.PrepareClose(reason);
@@ -193,7 +189,6 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Disposes of this object, stopping the hosted component.
         /// </summary>
-        /// <param name="disposing"></param>
         protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing);

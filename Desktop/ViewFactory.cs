@@ -30,9 +30,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common;
 
 namespace ClearCanvas.Desktop
@@ -46,7 +43,7 @@ namespace ClearCanvas.Desktop
         /// Creates a view for the specified extension point and GUI toolkit.
         /// </summary>
         /// <param name="extensionPoint">The view extension point.</param>
-        /// <param name="toolkitID">The desired GUI toolkit</param>
+        /// <param name="toolkitID">The desired GUI toolkit.</param>
         /// <returns>The view object that was created.</returns>
         /// <exception cref="NotSupportedException">A view extension matching the specified GUI toolkit does not exist.</exception>
         public static IView CreateView(IExtensionPoint extensionPoint, string toolkitID)
@@ -63,7 +60,7 @@ namespace ClearCanvas.Desktop
         /// </summary>
         /// <param name="extensionPoint">The view extension point.</param>
         /// <returns>The view object that was created.</returns>
-        /// <exception cref="NotSupportedException">A view extension matching the GUI toolkit of the main view not exist.</exception>
+        /// <exception cref="NotSupportedException">A view extension matching the GUI toolkit of the main view does not exist.</exception>
         /// <exception cref="InvalidOperationException">The main workstation view has not yet been created.</exception>
         public static IView CreateView(IExtensionPoint extensionPoint)
         {
@@ -75,8 +72,6 @@ namespace ClearCanvas.Desktop
         /// model type.  The model type is any class that has a <see cref="AssociateViewAttribute"/> attribute
         /// specified.
         /// </summary>
-        /// <param name="modelType"></param>
-        /// <returns></returns>
         public static IView CreateAssociatedView(Type modelType)
         {
             object[] attrs = modelType.GetCustomAttributes(typeof(AssociateViewAttribute), true);

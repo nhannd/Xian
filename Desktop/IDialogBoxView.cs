@@ -29,10 +29,6 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common;
 
 namespace ClearCanvas.Desktop
@@ -45,7 +41,7 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Displays the dialog and blocks until the dialog is closed by the user.
         /// </summary>
-        /// <returns>A result representing the action taken by the user</returns>
+        /// <returns>A result representing the action taken by the user.</returns>
         DialogBoxAction RunModal();
     }
 }

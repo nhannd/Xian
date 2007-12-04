@@ -30,10 +30,7 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Collections;
-using System.ComponentModel;
 using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop.Tables
@@ -248,7 +245,12 @@ namespace ClearCanvas.Desktop.Tables
     	/// <param name="item">The item from which the value is to be obtained</param>
     	public abstract object GetValue(object item);
 
-        public abstract void SetValue(object item, object value);
+    	/// <summary>
+    	/// Sets the value of this column on the specified item, assuming this is not a read-only column.
+    	/// </summary>
+    	/// <param name="item">The item on which the value is to be set.</param>
+    	/// <param name="value">The value.</param>
+    	public abstract void SetValue(object item, object value);
 
     	/// <summary>
     	/// Get a comparer that can be used to sort items in the specified direction.

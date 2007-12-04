@@ -30,8 +30,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ClearCanvas.Desktop
 {
@@ -41,7 +39,7 @@ namespace ClearCanvas.Desktop
     public class QuittingEventArgs : EventArgs
     {
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         public QuittingEventArgs()
         {

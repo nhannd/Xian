@@ -29,10 +29,6 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace ClearCanvas.Desktop
 {
     /// <summary>
@@ -44,7 +40,7 @@ namespace ClearCanvas.Desktop
         private string _menuSite;
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         public DesktopWindowCreationArgs()
         {
@@ -52,7 +48,7 @@ namespace ClearCanvas.Desktop
         }
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         public DesktopWindowCreationArgs(string title, string name)
             :base(title, name)

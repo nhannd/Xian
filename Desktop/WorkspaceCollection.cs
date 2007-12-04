@@ -29,10 +29,6 @@
 
 #endregion
 
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop
@@ -107,6 +103,10 @@ namespace ClearCanvas.Desktop
 
         #region Protected overridables
 
+		/// <summary>
+		/// Called when a <see cref="Workspace"/> item's <see cref="DesktopObject.InternalActiveChanged"/> event
+		/// has fired.
+		/// </summary>
         protected sealed override void OnItemActivationChangedInternal(ItemEventArgs<Workspace> args)
         {
             if (args.Item.Active)
@@ -126,7 +126,11 @@ namespace ClearCanvas.Desktop
             }
         }
 
-        protected sealed override void OnItemClosed(ClosedItemEventArgs<Workspace> args)
+		/// <summary>
+		/// Called when a <see cref="Workspace"/> item's <see cref="DesktopObject.Closed"/> event
+		/// has fired.
+		/// </summary>
+		protected sealed override void OnItemClosed(ClosedItemEventArgs<Workspace> args)
         {
             if (this.Count == 0)
             {

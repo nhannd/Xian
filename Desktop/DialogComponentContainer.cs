@@ -31,23 +31,30 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common;
 
 namespace ClearCanvas.Desktop
 {
     /// <summary>
-    /// Defines an extension point for views onto the <see cref="TabComponent"/>
+	/// Defines an extension point for views onto the <see cref="DialogComponentContainer"/>.
     /// </summary>
     public class DialogComponentContainerViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
     {
     }
 
+	/// <summary>
+	/// A container class for hosting <see cref="IApplicationComponent"/>s in a dialog
+	/// box that can be dismissed with Ok or Cancel.
+	/// </summary>
     [AssociateView(typeof(DialogComponentContainerViewExtensionPoint))]
     public class DialogComponentContainer : ApplicationComponentContainer
     {
-        public class DialogContentHost : ApplicationComponentHost
+        //Todo (Jon): Can this be made private?
+
+		/// <summary>
+		/// Host object for <see cref="DialogContent"/>.
+		/// </summary>
+		public class DialogContentHost : ApplicationComponentHost
         {
             private DialogComponentContainer _owner;
 			private DialogContent _content;
@@ -64,6 +71,9 @@ namespace ClearCanvas.Desktop
 				_content = content;
             }
 
+			/// <summary>
+			/// Gets the owner <see cref="DialogComponentContainer" />.
+			/// </summary>
             public DialogComponentContainer Owner
             {
                 get { return _owner; }
@@ -71,17 +81,28 @@ namespace ClearCanvas.Desktop
 
             #region ApplicationComponentHost overrides
 
-            public override CommandHistory CommandHistory
+			/// <summary>
+			/// Gets the associated command history object.
+			/// </summary>
+			/// <exception cref="NotSupportedException">The host does not support command history.</exception>
+			public override CommandHistory CommandHistory
             {
                 get { return _owner.Host.CommandHistory; }
             }
 
-            public override DesktopWindow DesktopWindow
+			/// <summary>
+			/// Gets the associated desktop window.
+			/// </summary>
+			public override DesktopWindow DesktopWindow
             {
                 get { return _owner.Host.DesktopWindow; }
             }
 
-            public override string Title
+			/// <summary>
+			/// Gets or sets the title displayed in the user-interface.
+			/// </summary>
+			/// <exception cref="NotSupportedException">The host does not support titles.</exception>
+			public override string Title
             {
                 get { return _owner.Host.Title; }
                 set { _owner.Host.Title = value; }
@@ -95,20 +116,25 @@ namespace ClearCanvas.Desktop
         private DialogContentHost _contentHost;
 
         /// <summary>
-        /// Default constructor
+        /// Constructor.
         /// </summary>
-        public DialogComponentContainer(
-			DialogContent content)
+        public DialogComponentContainer(DialogContent content)
 		{
 			_content = content;
             _contentHost = new DialogContentHost(this, _content);
 		}
 
+		/// <summary>
+		/// The <see cref="DialogContent"/> to be hosted in the <see cref="DialogComponentContainer"/>.
+		/// </summary>
 		public DialogContent Content
 		{
 			get { return _content; }
 		}
 
+		/// <summary>
+		/// The host object for the <see cref="DialogContent"/>.
+		/// </summary>
         public DialogContentHost ContentHost
         {
             get { return _contentHost; }
@@ -116,14 +142,26 @@ namespace ClearCanvas.Desktop
 
         #region ApplicationComponent overrides
 
-        public override void Start()
+		/// <summary>
+		/// Starts this component and the <see cref="ContentHost"/>.
+		/// </summary>
+		///  <remarks>
+		/// Override this method to implement custom initialization logic.  Overrides must be sure to call the base implementation.
+		/// </remarks>
+		public override void Start()
         {
 			base.Start();
 
 			_contentHost.StartComponent();
         }
 
-        public override void Stop()
+		/// <summary>
+		/// Stops this component and the <see cref="ContentHost"/>.
+		/// </summary>
+		/// <remarks>
+		/// Override this method to implement custom termination logic.  Overrides must be sure to call the base implementation.
+		/// </remarks>
+		public override void Stop()
         {
             _contentHost.StopComponent();
 
@@ -134,17 +172,26 @@ namespace ClearCanvas.Desktop
 
         #region ApplicationComponentContainer overrides
 
-        public override IEnumerable<IApplicationComponent> ContainedComponents
+		/// <summary>
+		/// Gets an enumeration of the contained components.
+		/// </summary>
+		public override IEnumerable<IApplicationComponent> ContainedComponents
         {
             get { return new IApplicationComponent[] { _contentHost.Component }; }
         }
 
-        public override IEnumerable<IApplicationComponent> VisibleComponents
+		/// <summary>
+		/// Gets an enumeration of the components that are currently visible.
+		/// </summary>
+		public override IEnumerable<IApplicationComponent> VisibleComponents
         {
             get { return this.ContainedComponents; }
         }
 
-        public override void EnsureStarted(IApplicationComponent component)
+		/// <summary>
+		/// Does nothing, since the hosted component is started by default.
+		/// </summary>
+		public override void EnsureStarted(IApplicationComponent component)
         {
             if (!this.IsStarted)
                 throw new InvalidOperationException(SR.ExceptionContainerNeverStarted);
@@ -152,7 +199,10 @@ namespace ClearCanvas.Desktop
             // nothing to do, since the hosted component is started by default
         }
 
-        public override void EnsureVisible(IApplicationComponent component)
+		/// <summary>
+		/// Does nothing, since the hosted component is visible by default.
+		/// </summary>
+		public override void EnsureVisible(IApplicationComponent component)
         {
             if (!this.IsStarted)
                 throw new InvalidOperationException(SR.ExceptionContainerNeverStarted);
@@ -164,12 +214,20 @@ namespace ClearCanvas.Desktop
 
         #region Presentation Model
 
+		/// <summary>
+		/// Called by the view to indicate the user dismissed the dialog with "Ok"; the <see cref="ApplicationComponent.ExitCode"/>
+		/// is set to <see cref="ApplicationComponentExitCode.Accepted"/>.
+		/// </summary>
         public void OK()
 		{
 			this.ExitCode = ApplicationComponentExitCode.Accepted;
 			this.Host.Exit();
 		}
 
+		/// <summary>
+		/// Called by the view to indicate the user dismissed the dialog with "Cancel"; the <see cref="ApplicationComponent.ExitCode"/>
+		/// is set to <see cref="ApplicationComponentExitCode.None"/>.
+		/// </summary>
 		public void Cancel()
 		{
 			this.ExitCode = ApplicationComponentExitCode.None;

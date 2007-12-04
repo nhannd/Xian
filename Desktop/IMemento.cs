@@ -29,10 +29,13 @@
 
 #endregion
 
-using System;
-
 namespace ClearCanvas.Desktop
 {
+	//TODO: Should this even be an interface?  It might as well just be an object.
+
+	/// <summary>
+	/// Convenience interface for the memento pattern.
+	/// </summary>
 	public interface IMemento
 	{
 	}

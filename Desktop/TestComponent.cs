@@ -29,12 +29,10 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
+#if DEBUG
+#pragma warning disable 1591
 
 using ClearCanvas.Common;
-using ClearCanvas.Desktop;
 
 namespace ClearCanvas.Desktop
 {
@@ -105,3 +103,5 @@ namespace ClearCanvas.Desktop
         }
     }
 }
+
+#endif

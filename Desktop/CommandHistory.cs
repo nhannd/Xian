@@ -36,6 +36,10 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop 
 {
+	/// <summary>
+	/// Class that facilitates undo/redo by storing incremental changes
+	/// in the form of <see cref="UndoableCommand"/>s.
+	/// </summary>
 	public class CommandHistory 
 	{
 		// Private attributes
@@ -47,7 +51,10 @@ namespace ClearCanvas.Desktop
 		private event EventHandler _currentCommandChangingEvent;
 		private event EventHandler _currentCommandChangedEvent;
 
-		// Constructor
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="maxSize">The maximum number of <see cref="UndoableCommand"/>s to keep in memory.</param>
 		public CommandHistory(int maxSize)
 		{
 			Platform.CheckPositive(maxSize, "maxSize");
@@ -55,7 +62,9 @@ namespace ClearCanvas.Desktop
 			_maxSize = maxSize;
 		}
 
-		// Properties
+		/// <summary>
+		/// Gets the current number of <see cref="UndoableCommand"/>s stored.
+		/// </summary>
 		public int NumCommands 
 		{
 			get
@@ -64,6 +73,9 @@ namespace ClearCanvas.Desktop
 			}
 		}
 
+		/// <summary>
+		/// Gets the maximum number of <see cref="UndoableCommand"/>s that can be stored in memory by this object.
+		/// </summary>
 		public int MaxSize
 		{
 			get
@@ -72,6 +84,9 @@ namespace ClearCanvas.Desktop
 			}
 		}
 
+		/// <summary>
+		/// Gets the index of the current command in the command history.
+		/// </summary>
 		public int CurrentCommandIndex
 		{
 			get
@@ -80,6 +95,9 @@ namespace ClearCanvas.Desktop
 			}
 		}
 
+		/// <summary>
+		/// Gets the index of the last command in the command history.
+		/// </summary>
 		public int LastCommandIndex
 		{
 			get
@@ -88,20 +106,34 @@ namespace ClearCanvas.Desktop
 			}
 		}
 
+		/// <summary>
+		/// Indicates that the <see cref="CurrentCommandIndex"/> is about to change
+		/// because of a call to <see cref="Undo"/>, <see cref="Redo"/> or <see cref="AddCommand"/>.
+		/// </summary>
 		public event EventHandler CurrentCommandChanging
 		{
 			add { _currentCommandChangingEvent += value; }	
 			remove { _currentCommandChangingEvent -= value; }	
 		}
 
-		// Event accessors
+		/// <summary>
+		/// Indicates that the <see cref="CurrentCommandIndex"/> has changed
+		/// because of a call to <see cref="Undo"/>, <see cref="Redo"/> or <see cref="AddCommand"/>.
+		/// </summary>
 		public event EventHandler CurrentCommandChanged
 		{
 			add { _currentCommandChangedEvent += value; }
 			remove { _currentCommandChangedEvent -= value; }
 		}
 
-		// Public methods
+		/// <summary>
+		/// Adds a command to the command history.
+		/// </summary>
+		/// <remarks>
+		/// When a command is added, all commands after the <see cref="CurrentCommandIndex"/> will be removed
+		/// in order to keep the state of the application consistent.  The added command will then become
+		/// the last command (<see cref="LastCommandIndex"/>).
+		/// </remarks>
 		public void AddCommand(UndoableCommand command)
 		{
 			Platform.CheckForNullReference(command, "command");
@@ -133,6 +165,13 @@ namespace ClearCanvas.Desktop
 			EventsHelper.Fire(_currentCommandChangedEvent, this, EventArgs.Empty);
 		}
 
+		/// <summary>
+		/// Calls <see cref="UndoableCommand.Execute"/> in order to 'redo' the current command.
+		/// </summary>
+		/// <remarks>
+		/// The <see cref="CurrentCommandIndex"/> will be incremented unless the <see cref="CurrentCommandIndex"/> is 
+		/// the same as the <see cref="LastCommandIndex"/>, in which case only <see cref="Undo"/> operations can occur.
+		/// </remarks>
 		public void Redo()
 		{
 			if (NumCommands == 0)
@@ -158,6 +197,13 @@ namespace ClearCanvas.Desktop
 			EventsHelper.Fire(_currentCommandChangedEvent, this, EventArgs.Empty);
 		}
 
+		/// <summary>
+		/// Calls <see cref="UndoableCommand.Unexecute"/> in order to 'undo' the current command.
+		/// </summary>
+		/// <remarks>
+		/// Decrements the <see cref="CurrentCommandIndex"/>, unless it is already -1.  A <see cref="CurrentCommandIndex"/> of -1
+		/// indicates that the entire command history has been undone and only <see cref="Redo"/> operations can occur.
+		/// </remarks>
 		public void Undo()
 		{
 			if (NumCommands == 0)

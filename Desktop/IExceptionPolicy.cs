@@ -30,18 +30,18 @@
 #endregion
 
 using System;
-
 using ClearCanvas.Common;
 
 namespace ClearCanvas.Desktop
 {
     ///<summary>
+	/// Extension point for <see cref="IExceptionPolicy"/>s.
     ///</summary>
     [ExtensionPoint]
     public sealed class ExceptionPolicyExtensionPoint : ExtensionPoint<IExceptionPolicy> { }
 
     /// <summary>
-    /// Provides Exception specific handling policies
+    /// Provides Exception specific handling policies.
     /// </summary>
     /// <example>
     /// <code>
@@ -56,15 +56,13 @@ namespace ClearCanvas.Desktop
     public interface IExceptionPolicy
     {
         ///<summary>
-        /// Handles the specified Exception
+        /// Handles the specified exception.
         ///</summary>
-        ///<param name="e"></param>
-        ///<param name="exceptonHandlingContext"></param>
         void Handle(Exception e, IExceptionHandlingContext exceptonHandlingContext);
     }
 
     ///<summary>
-    /// Specifies an exception type to which an <see cref="IExceptionPolicy"/> applies
+    /// Specifies an exception type to which an <see cref="IExceptionPolicy"/> applies.
     ///</summary>
     [AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = true)]
     public sealed class ExceptionPolicyForAttribute : Attribute
@@ -72,14 +70,16 @@ namespace ClearCanvas.Desktop
         private readonly Type _exceptionType;
 
         ///<summary>
+        /// Constructor.
         ///</summary>
-        ///<param name="exceptionType"></param>
+        ///<param name="exceptionType">The type of exception the policy is for.</param>
         public ExceptionPolicyForAttribute(Type exceptionType)
         {
             _exceptionType = exceptionType;
         }
 
         ///<summary>
+        /// Gets the type of exception the policy is for.
         ///</summary>
         public Type ExceptionType
         {

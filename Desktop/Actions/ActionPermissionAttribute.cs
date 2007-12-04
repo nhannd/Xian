@@ -29,12 +29,6 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Security.Permissions;
-using System.Threading;
-using System.Security;
 using ClearCanvas.Common.Specifications;
 
 namespace ClearCanvas.Desktop.Actions

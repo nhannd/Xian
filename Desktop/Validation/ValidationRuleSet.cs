@@ -29,14 +29,10 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
-using System.ComponentModel;
 using System.IO;
-
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Common.Specifications;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop.Validation
 {

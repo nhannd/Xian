@@ -30,11 +30,9 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common;
-using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop.Tools;
 
 namespace ClearCanvas.Desktop
 {
@@ -43,16 +41,26 @@ namespace ClearCanvas.Desktop
     /// to a desktop window close or application quit.
     /// </summary>
     [ExtensionOf(typeof(DesktopToolExtensionPoint))]
-    class CloseHelperTool : Tool<IDesktopToolContext>
+    public class CloseHelperTool : Tool<IDesktopToolContext>
     {
         private Shelf _closeHelperShelf;
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
         public CloseHelperTool()
         {
 
         }
 
-        public override void Initialize()
+    	///<summary>
+    	/// Called by the framework to allow the tool to initialize itself.
+    	///</summary>
+    	/// <remarks>
+		/// This method will be called after <see cref="ITool.SetContext" /> has been called, which guarantees that 
+		/// the tool will have access to its context when this method is called.
+		/// </remarks>
+    	public override void Initialize()
         {
             this.Context.DesktopWindow.Closing += new EventHandler<ClosingEventArgs>(WindowClosingEventHandler);
 

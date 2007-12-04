@@ -29,10 +29,7 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Validation;
 
 namespace ClearCanvas.Desktop
@@ -45,9 +42,9 @@ namespace ClearCanvas.Desktop
         private IApplicationComponentContainerValidationStrategy _validationStrategy;
 
         /// <summary>
-        /// Default constructor
+        /// Default constructor.
         /// </summary>
-        public ApplicationComponentContainer()
+        protected ApplicationComponentContainer()
         {
             _validationStrategy = new NoNodesContainerValidationStrategy();
         }
@@ -79,7 +76,8 @@ namespace ClearCanvas.Desktop
         }
 
         /// <summary>
-        /// Sets the <see cref="ValidationVisible"/> property and raises the <see cref="ValidationVisibleChanged"/> event.
+		/// Sets the <see cref="ApplicationComponent.ValidationVisible"/> property and raises the 
+		/// <see cref="ApplicationComponent.ValidationVisibleChanged"/> event.
         /// </summary>
         /// <remarks>
         /// The default implementation of this property delegates to the <see cref="ValidationStrategy"/> object.
@@ -107,13 +105,11 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Ensures that the specified component is visible.
         /// </summary>
-        /// <param name="component"></param>
         public abstract void EnsureVisible(IApplicationComponent component);
 
         /// <summary>
         /// Ensures that the specified component has been started.
         /// </summary>
-        /// <param name="component"></param>
         public abstract void EnsureStarted(IApplicationComponent component);
 
         #endregion

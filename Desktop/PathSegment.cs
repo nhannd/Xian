@@ -29,10 +29,6 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace ClearCanvas.Desktop
 {
     /// <summary>
@@ -46,8 +42,8 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Internal constructor.
         /// </summary>
-        /// <param name="key">The resource key or unlocalized path segment string</param>
-        /// <param name="localized">The localized path segment string</param>
+        /// <param name="key">The resource key or unlocalized path segment string.</param>
+        /// <param name="localized">The localized path segment string.</param>
         internal PathSegment(string key, string localized)
         {
             _key = key;
@@ -55,7 +51,7 @@ namespace ClearCanvas.Desktop
         }
 
         /// <summary>
-        /// The resource key or unlocalized text
+        /// Gets the resource key or unlocalized text.
         /// </summary>
         public string ResourceKey
         {
@@ -63,7 +59,7 @@ namespace ClearCanvas.Desktop
         }
 
         /// <summary>
-        /// The localized text
+		/// Gets the localized text.
         /// </summary>
         public string LocalizedText
         {

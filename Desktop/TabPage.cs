@@ -29,37 +29,37 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Reflection;
-
-using ClearCanvas.Common;
-
 namespace ClearCanvas.Desktop
 {
     /// <summary>
-    /// Represents a single page in a <see cref="TabComponent"/>.
+    /// Represents a single page in a <see cref="TabComponentContainer"/>.
     /// </summary>
     public class TabPage : ContainerPage
     {
 		private string _name;
-
-
+		
         /// <summary>
-        /// Default constructor.
+        /// Constructor.
         /// </summary>
+        /// <param name="name">The name of the page.</param>
+        /// <param name="component">The <see cref="IApplicationComponent"/> to be hosted in this page.</param>
         public TabPage(string name, IApplicationComponent component)
             :base(component)
         {
 			_name = name;
         }
 
+		/// <summary>
+		/// Gets the name of the page.
+		/// </summary>
 		public string Name
 		{
 			get { return _name; }
 		}
 		
+		/// <summary>
+		/// Gets the <see cref="Name"/> property.
+		/// </summary>
 		public override string ToString()
 		{
 			return this.Name;

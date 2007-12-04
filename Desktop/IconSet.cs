@@ -29,10 +29,6 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace ClearCanvas.Desktop
 {
     /// <summary>
@@ -46,12 +42,12 @@ namespace ClearCanvas.Desktop
         private IconScheme _scheme;
 
         /// <summary>
-        /// Default constructor.
+        /// Constructor.
         /// </summary>
-        /// <param name="scheme">The scheme of this icon set</param>
-        /// <param name="smallIcon">The resource name of the small icon</param>
-        /// <param name="mediumIcon">The resource name of the medium icon</param>
-        /// <param name="largeIcon">The resource name of the large icon</param>
+        /// <param name="scheme">The scheme of this icon set.</param>
+        /// <param name="smallIcon">The resource name of the small icon.</param>
+        /// <param name="mediumIcon">The resource name of the medium icon.</param>
+        /// <param name="largeIcon">The resource name of the large icon.</param>
         public IconSet(IconScheme scheme, string smallIcon, string mediumIcon, string largeIcon)
         {
             _scheme = scheme;
@@ -61,9 +57,9 @@ namespace ClearCanvas.Desktop
         }
 
         /// <summary>
-        /// Constructor that assumes all the icons are colour and have the same size
+        /// Constructor that assumes all the icons are colour and have the same size.
         /// </summary>
-        /// <param name="icon">The resource name of the icon</param>
+        /// <param name="icon">The resource name of the icon.</param>
         public IconSet(string icon)
         {
             _scheme = IconScheme.Colour;
@@ -78,17 +74,17 @@ namespace ClearCanvas.Desktop
         public IconScheme Scheme { get { return _scheme; } }
 
         /// <summary>
-        /// The resource name of the small icon
+        /// The resource name of the small icon.
         /// </summary>
         public string SmallIcon { get { return _small; } }
 
         /// <summary>
-        /// The resource name of the medium icon
+        /// The resource name of the medium icon.
         /// </summary>
         public string MediumIcon { get { return _medium; } }
 
         /// <summary>
-        /// The resource name of the large icon
+        /// The resource name of the large icon.
         /// </summary>
         public string LargeIcon { get { return _large; } }
     }

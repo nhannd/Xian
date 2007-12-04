@@ -30,16 +30,23 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.Desktop
 {
-
+	/// <summary>
+	/// A helper class for rendering an action model as HTML.
+	/// </summary>
     public class ActionModelRenderer
     {
+		/// <summary>
+		/// Searches <paramref name="actionNode"/> and returns the action (represented as HTML) whose label matches
+		/// <paramref name="labelSearch"/>.
+		/// </summary>
+		/// <param name="actionNode">The node to be searched.</param>
+		/// <param name="labelSearch">The label to match on.</param>
+		/// <param name="actionLabel">The new label to be applied to the action in the returned HTML.</param>
+		/// <returns>The found action represented as HTML, otherwise an empty string.</returns>
         public string GetHTML(ActionModelNode actionNode, string labelSearch, string actionLabel)
         {
             IAction[] actions = actionNode.GetActionsInOrder();
@@ -56,7 +63,7 @@ namespace ClearCanvas.Desktop
             return "";
         }
 
-        private string GetHTML(string actionPath, string actionLabel)
+        private static string GetHTML(string actionPath, string actionLabel)
         {
             return String.Format("<a href=\"action://{0}\">{1}</a>", actionPath, actionLabel);
         }

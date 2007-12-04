@@ -30,9 +30,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common;
 
 namespace ClearCanvas.Desktop
@@ -51,6 +48,10 @@ namespace ClearCanvas.Desktop
 	/// </summary>
 	public static class BlockingOperation
 	{
+		/// <summary>
+		/// Executes the provided operation in the view, showing a wait cursor for the duration of the call.
+		/// </summary>
+		/// <param name="operation">The operation to execute in the view layer.</param>
 		public static void Run(BlockingOperationDelegate operation)
 		{
 			Platform.CheckForNullReference(operation, "operation");

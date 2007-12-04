@@ -30,8 +30,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Reflection;
 using ClearCanvas.Common.Utilities;
 

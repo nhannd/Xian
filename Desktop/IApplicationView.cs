@@ -29,9 +29,6 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common;
 
 namespace ClearCanvas.Desktop
@@ -44,16 +41,14 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Creates a view for the specified desktop window.
         /// </summary>
-        /// <param name="window"></param>
-        /// <returns></returns>
         IDesktopWindowView CreateDesktopWindowView(DesktopWindow window);
 
         /// <summary>
         /// Displays a message box.
         /// </summary>
-        /// <param name="message"></param>
-        /// <param name="buttons"></param>
-        /// <returns></returns>
+        /// <param name="message">The message to display in the mesage box.</param>
+        /// <param name="buttons">The buttons to display in the message box.</param>
+        /// <returns>The result of the user dismissing the message box.</returns>
         DialogBoxAction ShowMessageBox(string message, MessageBoxActions buttons);
     }
 }

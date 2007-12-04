@@ -30,11 +30,8 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.ComponentModel;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop
 {
@@ -63,9 +60,8 @@ namespace ClearCanvas.Desktop
         private IDesktopObjectView _view;
 
         /// <summary>
-        /// Default constructor.
+        /// Constructor.
         /// </summary>
-        /// <param name="args"></param>
         protected DesktopObject(DesktopObjectCreationArgs args)
         {
             _name = args.Name;
@@ -74,7 +70,7 @@ namespace ClearCanvas.Desktop
         }
 
         /// <summary>
-        /// Finalizer
+        /// Finalizer.
         /// </summary>
         ~DesktopObject()
         {
@@ -269,6 +265,9 @@ namespace ClearCanvas.Desktop
 
         #region IDisposable Members
 
+		/// <summary>
+		/// Implementation of the <see cref="IDisposable"/> pattern.
+		/// </summary>
         void IDisposable.Dispose()
         {
             try
@@ -290,13 +289,14 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Factory method to create a view for this object.
         /// </summary>
-        /// <returns></returns>
         protected abstract IDesktopObjectView CreateView();
 
         /// <summary>
-        /// Initializes the object, prior to it becoming visible on the screen.  Override this method to perform
-        /// custom initialization.
+        /// Initializes the object, prior to it becoming visible on the screen.
         /// </summary>
+        /// <remarks>
+		/// Override this method to perform custom initialization.
+		/// </remarks>
         protected virtual void Initialize()
         {
             // nothing to initialize
@@ -324,7 +324,7 @@ namespace ClearCanvas.Desktop
         /// prior to being closed.  The object may return false if it still cannot close (e.g. there is
         /// unsaved data, and the user, when prompted, elects to cancel the close operation).
         /// </remarks>
-        /// <param name="reason"></param>
+        /// <param name="reason">The reason for closing the object.</param>
         /// <returns>True if the object is ready to close, or false it the object cannot be closed.</returns>
         protected virtual bool PrepareClose(CloseReason reason)
         {
@@ -344,7 +344,6 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Called to dispose of this object.
         /// </summary>
-        /// <param name="disposing"></param>
         protected virtual void Dispose(bool disposing)
         {
             if (disposing)
@@ -361,7 +360,6 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Raises the <see cref="Opening"/> event.
         /// </summary>
-        /// <param name="args"></param>
         protected virtual void OnOpening(EventArgs args)
         {
             EventsHelper.Fire(_opening, this, args);
@@ -370,7 +368,6 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Raises the <see cref="Opened"/> event.
         /// </summary>
-        /// <param name="args"></param>
         protected virtual void OnOpened(EventArgs args)
         {
             EventsHelper.Fire(_opened, this, args);
@@ -379,7 +376,6 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Raises the <see cref="Closing"/> event.
         /// </summary>
-        /// <param name="args"></param>
         protected virtual void OnClosing(ClosingEventArgs args)
         {
             EventsHelper.Fire(_closing, this, args);
@@ -388,7 +384,6 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Raises the <see cref="Closed"/> event.
         /// </summary>
-        /// <param name="args"></param>
         protected virtual void OnClosed(EventArgs args)
         {
             EventsHelper.Fire(_closed, this, args);
@@ -397,7 +392,6 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Raises the <see cref="VisibleChanged"/> event.
         /// </summary>
-        /// <param name="args"></param>
         protected virtual void OnVisibleChanged(EventArgs args)
         {
             EventsHelper.Fire(_visibleChanged, this, args);
@@ -406,7 +400,6 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Raises the <see cref="ActiveChanged"/> event.
         /// </summary>
-        /// <param name="args"></param>
         protected virtual void OnActiveChanged(EventArgs args)
         {
             EventsHelper.Fire(_activeChanged, this, args);
@@ -415,7 +408,6 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Raises the <see cref="TitleChanged"/> event.
         /// </summary>
-        /// <param name="args"></param>
         protected virtual void OnTitleChanged(EventArgs args)
         {
             EventsHelper.Fire(_titleChanged, this, args);
@@ -487,8 +479,6 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Closes this object.
         /// </summary>
-        /// <param name="interactive"></param>
-        /// <param name="reason"></param>
         /// <returns>True if the object was closed, otherwise false.</returns>
         protected internal bool Close(UserInteraction interactive, CloseReason reason)
         {
@@ -538,7 +528,6 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Asserts that the object is in one of the specified valid states.
         /// </summary>
-        /// <param name="validStates"></param>
         protected void AssertState(DesktopObjectState[] validStates)
         {
             if (!CollectionUtils.Contains<DesktopObjectState>(validStates,
@@ -562,7 +551,6 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Raises the <see cref="InternalActiveChanged"/> event.
         /// </summary>
-        /// <param name="args"></param>
         private void OnInternalActiveChanged(EventArgs args)
         {
             EventsHelper.Fire(_internalActiveChanged, this, args);

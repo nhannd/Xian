@@ -30,9 +30,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.ComponentModel;
 using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop
@@ -55,18 +52,22 @@ namespace ClearCanvas.Desktop
 
         /// <summary>
         /// The close request is occuring because the application has been asked to terminate.
+        /// </summary>
+        /// <remarks>
         /// The <see cref="Application.Quit"/> API may have been invoked, or the request
         /// may have come from the operating system.
-        /// </summary>
+		/// </remarks>
         ApplicationQuit = 0x0004,
 
         /// <summary>
         /// The object is being closed because it's parent window is closing.
-        /// Applicable to <see cref="Workspace"/> and <see cref="Shelf"/> objects.
-        /// This value is combined with one of <see cref="UserInterface"/>, 
-        /// <see cref="Program"/> or <see cref="ApplicationQuit"/>, indicating why the parent is closing.
         /// </summary>
-        ParentClosing = 0x0010
+		/// <remarks>
+		/// Applicable to <see cref="Workspace"/> and <see cref="Shelf"/> objects.
+		/// This value is combined with one of <see cref="UserInterface"/>, 
+		/// <see cref="Program"/> or <see cref="ApplicationQuit"/>, indicating why the parent is closing.
+		/// </remarks>
+		ParentClosing = 0x0010
 
     }
 
@@ -80,21 +81,21 @@ namespace ClearCanvas.Desktop
         private UserInteraction _interaction;
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
-        /// <param name="reason"></param>
-        /// <param name="interaction"></param>
-        public ClosingEventArgs(CloseReason reason, UserInteraction interaction)
+		/// <param name="reason">The reason the <see cref="DesktopObject"/> is closing.</param>
+		/// <param name="interaction">The user interaction policy for the closing object.</param>
+		public ClosingEventArgs(CloseReason reason, UserInteraction interaction)
             : this(reason, interaction, false)
         {
         }
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
-        /// <param name="reason"></param>
-        /// <param name="interaction"></param>
-        /// <param name="cancel"></param>
+		/// <param name="reason">The reason the <see cref="DesktopObject"/> is closing.</param>
+		/// <param name="interaction">The user interaction policy for the closing object.</param>
+		/// <param name="cancel">A boolean value indicating whether the close operation should be cancelled.</param>
         public ClosingEventArgs(CloseReason reason, UserInteraction interaction, bool cancel)
         {
             _reason = reason;
@@ -136,12 +137,12 @@ namespace ClearCanvas.Desktop
         private UserInteraction _interaction;
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
-        /// <param name="item"></param>
-        /// <param name="reason"></param>
-        /// <param name="interaction"></param>
-        /// <param name="cancel"></param>
+		/// <param name="reason">The reason the <paramref name="item"/> is closing.</param>
+		/// <param name="item">The item that is being closed.</param>
+		/// <param name="interaction">The user interaction policy for the closing object.</param>
+		/// <param name="cancel">A boolean value indicating whether the close operation should be cancelled.</param>
         public ClosingItemEventArgs(TItem item, CloseReason reason, UserInteraction interaction, bool cancel)
             :base(item)
         {
@@ -159,7 +160,7 @@ namespace ClearCanvas.Desktop
         }
 
         /// <summary>
-        /// Gets the user-interaction policy for this closing operation, which handlers must abide by.
+        /// Gets the user interaction policy for this closing operation, which handlers must abide by.
         /// </summary>
         public UserInteraction Interaction
         {

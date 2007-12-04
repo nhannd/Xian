@@ -29,20 +29,19 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Common;
-
 namespace ClearCanvas.Desktop
 {
     /// <summary>
-    /// A base interface for all classes that represent UI views.  A view is a class that provides
-    /// a UI representation for another object (the model).
+    /// A base interface for all classes that represent UI views.
     /// </summary>
     /// <remarks>
+    /// <para>
+	/// A view is a class that provides a UI representation for another object (the model).
+	/// </para>
+	/// <para>
     /// The purpose of a view class is to separate the presentation from the application logic,
     /// allowing the application to work with different GUI toolkits.
+	/// </para>
     /// </remarks>
     public interface IView
     {
@@ -55,7 +54,7 @@ namespace ClearCanvas.Desktop
         }
 
         /// <summary>
-        /// Gets the underlying GUI component that for this view.
+        /// Gets the underlying GUI component for this view.
         /// </summary>
         /// <remarks>
         /// The type of the returned object is specific to a given GUI toolkit.  For example,

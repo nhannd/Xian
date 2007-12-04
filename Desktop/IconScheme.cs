@@ -30,8 +30,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ClearCanvas.Desktop
 {
@@ -42,12 +40,12 @@ namespace ClearCanvas.Desktop
     public enum IconScheme
     {
         /// <summary>
-        /// Colour icons
+        /// Colour icons.
         /// </summary>
         Colour,
 
         /// <summary>
-        /// Monochrome icons
+        /// Monochrome icons.
         /// </summary>
         Monochrome
     }

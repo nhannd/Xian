@@ -30,12 +30,7 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-
-using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
-using System.Security;
 
 namespace ClearCanvas.Desktop.Actions
 {

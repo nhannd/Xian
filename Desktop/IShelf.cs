@@ -29,14 +29,10 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace ClearCanvas.Desktop
 {
     /// <summary>
-    /// Defines the public interface to a <see cref="Shelf"/>
+    /// Defines the public interface to a <see cref="Shelf"/>.
     /// </summary>
     public interface IShelf : IDesktopObject
     {

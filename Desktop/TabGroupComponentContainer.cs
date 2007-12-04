@@ -31,8 +31,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Actions;
@@ -40,29 +38,50 @@ using ClearCanvas.Desktop.Actions;
 namespace ClearCanvas.Desktop
 {
     /// <summary>
-    /// Defines an extension point for views onto the <see cref="TabComponent"/>
+	/// Defines an extension point for views onto the <see cref="TabGroupComponentContainer"/>
     /// </summary>
     public class TabbedGroupsComponentContainerViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
     {
     }
 
+	/// <summary>
+	/// An enumeration describing the available layout directions of the <see cref="TabGroupComponentContainer"/>.
+	/// </summary>
     public enum LayoutDirection
     {
+		/// <summary>
+		/// The layout should be horizontal.
+		/// </summary>
         Horizontal = 0,
+
+		/// <summary>
+		/// The layout should be vertical.
+		/// </summary>
         Vertical = 1
     }
 
+	/// <summary>
+	/// An application component that serves as a container for other components, hosted in <see cref="TabGroup"/>s.
+	/// </summary>
     [AssociateView(typeof(TabbedGroupsComponentContainerViewExtensionPoint))]
     public class TabGroupComponentContainer : ApplicationComponentContainer
     {
+		//TODO (Jon): Can this be made private?
+
+		/// <summary>
+		/// A host for <see cref="TabGroup"/>s.
+		/// </summary>
         public class TabGroupHost : ApplicationComponentHost
         {
             private TabGroupComponentContainer _owner;
             private TabGroup _tabGroup;
 
-            internal TabGroupHost(
-                TabGroupComponentContainer owner,
-                TabGroup tabGroup)
+            /// <summary>
+            /// Constructor.
+            /// </summary>
+            /// <param name="owner">The container that owns this host.</param>
+            /// <param name="tabGroup">The <see cref="TabGroup"/> that is hosted by this object.</param>
+			internal TabGroupHost(TabGroupComponentContainer owner, TabGroup tabGroup)
                 : base(tabGroup.Component)
             {
                 Platform.CheckForNullReference(owner, "owner");
@@ -72,6 +91,9 @@ namespace ClearCanvas.Desktop
                 _tabGroup = tabGroup;
             }
 
+			/// <summary>
+			/// Gets the <see cref="TabComponentContainer"/> that owns this host.
+			/// </summary>
             public TabGroupComponentContainer Owner
             {
                 get { return _owner; }
@@ -79,6 +101,9 @@ namespace ClearCanvas.Desktop
 
             #region ApplicationComponentHost overrides
 
+			/// <summary>
+			/// Gets the title of the parent container.
+			/// </summary>
             public override string Title
             {
                 get { return _owner.Host.Title; }
@@ -86,6 +111,9 @@ namespace ClearCanvas.Desktop
                 set { throw new NotSupportedException(); }
             }
 
+			/// <summary>
+			/// Gets the <see cref="IDesktopWindow"/> that owns the parent container.
+			/// </summary>
             public override DesktopWindow DesktopWindow
             {
                 get { return _owner.Host.DesktopWindow; }
@@ -98,7 +126,7 @@ namespace ClearCanvas.Desktop
         private LayoutDirection _layoutDirection;
 
         /// <summary>
-        /// Default constructor
+        /// Constructor.
         /// </summary>
         public TabGroupComponentContainer(LayoutDirection layoutDirection)
         {
@@ -106,6 +134,9 @@ namespace ClearCanvas.Desktop
             _layoutDirection = layoutDirection;
         }
 
+		/// <summary>
+		/// Adds a <see cref="TabGroup"/> to the container.
+		/// </summary>
         public void AddTabGroup(TabGroup tg)
         {
             //if (tg != null && tg.ComponentHost != null && tg.ComponentHost.IsStarted)
@@ -115,16 +146,25 @@ namespace ClearCanvas.Desktop
             _tabGroups.Add(tg);
         }
 
-        public IList<TabGroup> TabGroups
+		/// <summary>
+		/// Gets a list of the <see cref="TabGroup"/>s in the container.
+		/// </summary>
+		public IList<TabGroup> TabGroups
         {
             get { return _tabGroups.AsReadOnly(); ; }
         }
 
+		/// <summary>
+		/// Gets the <see cref="LayoutDirection"/> of the container.
+		/// </summary>
         public LayoutDirection LayoutDirection
         {
             get { return _layoutDirection; }
         }
 
+		/// <summary>
+		/// Gets the <see cref="TabGroup"/> that owns a particular <see cref="TabPage"/>.
+		/// </summary>
         public TabGroup GetTabGroup(TabPage page)
         {
             foreach (TabGroup tg in _tabGroups)
@@ -141,6 +181,9 @@ namespace ClearCanvas.Desktop
 
         #region ApplicationComponent overrides
 
+		/// <summary>
+		/// Starts this component and all the contained <see cref="TabGroup"/>s.
+		/// </summary>
         public override void Start()
         {
             base.Start();
@@ -151,7 +194,10 @@ namespace ClearCanvas.Desktop
             }
         }
 
-        public override void Stop()
+		/// <summary>
+		/// Stops this component and all the contained <see cref="TabGroup"/>s.
+		/// </summary>
+		public override void Stop()
         {
             foreach (TabGroup tabGroup in _tabGroups)
             {
@@ -161,6 +207,9 @@ namespace ClearCanvas.Desktop
             base.Stop();
         }
 
+		/// <summary>
+		/// Unless overridden, returns the union of all actions in the contained <see cref="TabGroup"/>s.
+		/// </summary>
         public override IActionSet ExportedActions
         {
             get
@@ -181,6 +230,9 @@ namespace ClearCanvas.Desktop
 
         #region ApplicationComponentContainer overrides
 
+		/// <summary>
+		/// Enumerates all the <see cref="IApplicationComponent"/>s hosted in the contained <see cref="TabGroup"/>s.
+		/// </summary>
         public override IEnumerable<IApplicationComponent> ContainedComponents
         {
             get 
@@ -194,7 +246,11 @@ namespace ClearCanvas.Desktop
             }
         }
 
-        public override IEnumerable<IApplicationComponent> VisibleComponents
+		/// <summary>
+		/// Enumerates all the <see cref="IApplicationComponent"/>s hosted 
+		/// in the contained <see cref="TabGroup"/>s that are currently visible.
+		/// </summary>
+		public override IEnumerable<IApplicationComponent> VisibleComponents
         {
             get 
             {
@@ -207,7 +263,10 @@ namespace ClearCanvas.Desktop
             }
         }
 
-        public override void EnsureVisible(IApplicationComponent component)
+		/// <summary>
+		/// Does nothing, since all contained <see cref="IApplicationComponent" />s are already visible.
+		/// </summary>
+		public override void EnsureVisible(IApplicationComponent component)
         {
             if (!this.IsStarted)
                 throw new InvalidOperationException(SR.ExceptionContainerNeverStarted);
@@ -215,7 +274,10 @@ namespace ClearCanvas.Desktop
             // nothing to do, since the hosted components are started by default
         }
 
-        public override void EnsureStarted(IApplicationComponent component)
+		/// <summary>
+		/// Does nothing, since all contained <see cref="IApplicationComponent" />s have already been started.
+		/// </summary>
+		public override void EnsureStarted(IApplicationComponent component)
         {
             if (!this.IsStarted)
                 throw new InvalidOperationException(SR.ExceptionContainerNeverStarted);

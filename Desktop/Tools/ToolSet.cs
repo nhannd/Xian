@@ -31,8 +31,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.Actions;
 
@@ -46,7 +44,7 @@ namespace ClearCanvas.Desktop.Tools
         private List<ITool> _tools;
 
         /// <summary>
-        /// Constructs a toolset that is initially empty
+        /// Constructs a toolset that is initially empty.
         /// </summary>
         public ToolSet()
         {
@@ -54,11 +52,14 @@ namespace ClearCanvas.Desktop.Tools
         }
 
         /// <summary>
-        /// Constructs a toolset based on the specified extension point and context. The toolset will
-        /// attempt to instantiate and initialize all extensions of the specified tool extension point.
+        /// Constructs a toolset based on the specified extension point and context.
         /// </summary>
-        /// <param name="toolExtensionPoint">The tool extension point that provides the tools</param>
-        /// <param name="context">The tool context to pass to each tool</param>
+        /// <remarks>
+		/// The toolset will attempt to instantiate and initialize all 
+		/// extensions of the specified tool extension point.
+		/// </remarks>
+        /// <param name="toolExtensionPoint">The tool extension point that provides the tools.</param>
+        /// <param name="context">The tool context to pass to each tool.</param>
         public ToolSet(IExtensionPoint toolExtensionPoint, IToolContext context)
             :this()
         {
@@ -66,11 +67,14 @@ namespace ClearCanvas.Desktop.Tools
         }
 
         /// <summary>
-        /// Adds tools to the toolset based on the specified extension point and context. The toolset will
-        /// attempt to instantiate and initialize all extensions of the specified tool extension point.
+        /// Adds tools to the toolset based on the specified extension point and context.
         /// </summary>
-        /// <param name="toolExtensionPoint">The tool extension point that provides the tools</param>
-        /// <param name="context">The tool context to pass to each tool</param>
+        /// <remarks>
+		/// The toolset will attempt to instantiate and initialize all 
+		/// extensions of the specified tool extension point.
+		/// </remarks>
+        /// <param name="toolExtensionPoint">The tool extension point that provides the tools.</param>
+        /// <param name="context">The tool context to pass to each tool.</param>
         private void AddTools(IExtensionPoint toolExtensionPoint, IToolContext context)
         {
             object[] tools = toolExtensionPoint.CreateExtensions();
@@ -92,9 +96,9 @@ namespace ClearCanvas.Desktop.Tools
         }
 
         /// <summary>
-        /// Implementation of the <see cref="IDisposable"/> pattern
+        /// Disposes of all the <see cref="ITool"/>s in the tool set.
         /// </summary>
-        /// <param name="disposing">True if this object is being disposed, false if it is being finalized</param>
+        /// <param name="disposing">True if this object is being disposed, false if it is being finalized.</param>
         protected virtual void Dispose(bool disposing)
         {
             if (disposing)
@@ -117,12 +121,18 @@ namespace ClearCanvas.Desktop.Tools
 
         #region IToolSet members
 
-        public ITool[] Tools
+    	/// <summary>
+    	/// Gets the tools contained in this tool set.
+    	/// </summary>
+    	public ITool[] Tools
         {
             get { return _tools.ToArray(); }
         }
 
-        public IActionSet Actions
+    	/// <summary>
+    	/// Returns the union of all actions defined by all tools in this tool set.
+    	/// </summary>
+    	public IActionSet Actions
         {
             get
             {
@@ -139,6 +149,9 @@ namespace ClearCanvas.Desktop.Tools
 
         #region IDisposable Members
 
+		/// <summary>
+		/// Implementation of the <see cref="IDisposable"/> pattern.
+		/// </summary>
         public void Dispose()
         {
             try

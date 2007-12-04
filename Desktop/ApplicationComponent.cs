@@ -30,23 +30,19 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.ComponentModel;
 using System.Reflection;
-
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Validation;
 
 namespace ClearCanvas.Desktop
 {
     /// <summary>
-    /// Provides a callback when an application component exits
+    /// Provides a callback when an application component exits.
     /// </summary>
-    /// <param name="component">The component that exited</param>
+    /// <param name="component">The component that exited.</param>
     public delegate void ApplicationComponentExitDelegate(IApplicationComponent component);    
     
     /// <summary>
@@ -61,12 +57,12 @@ namespace ClearCanvas.Desktop
         #region LaunchAsWorkspace overloads
 
         /// <summary>
-        /// Executes the specified application component in a new workspace.  The exit callback will be invoked
+        /// Executes the specified application component in a new workspace; the exit callback will be invoked
         /// when the workspace is closed.
         /// </summary>
         /// <remarks>
         /// If the specified component throws an exception from the <see cref="Start"/> method, that exception
-        /// will be propagate to the caller of this method and the component will not be launched.
+        /// will be propagated to the caller of this method and the component will not be launched.
         /// </remarks>
         /// <param name="desktopWindow">The desktop window in which the workspace will run.</param>
         /// <param name="component">The application component to launch.</param>
@@ -85,7 +81,7 @@ namespace ClearCanvas.Desktop
         }
 
         /// <summary>
-        /// Executes the specified application component in a new workspace.  The exit callback will be invoked
+        /// Executes the specified application component in a new workspace; the exit callback will be invoked
         /// when the workspace is closed.
         /// </summary>
         /// <param name="desktopWindow">The desktop window in which the workspace will run.</param>
@@ -110,19 +106,19 @@ namespace ClearCanvas.Desktop
         	return LaunchAsWorkspace(desktopWindow, args, exitCallback);
         }
 
-        /// <summary>
+		/// <summary>
         /// Executes the specified application component in a new workspace.
-        /// </summary>
+		/// </summary>
         /// <remarks>
         /// If the specified component throws an exception from the <see cref="Start"/> method, that exception
         /// will be propagate to the caller of this method and the component will not be launched.
         /// </remarks>
-        /// <param name="desktopWindow">The desktop window in which the workspace will run.</param>
+		/// <param name="desktopWindow">The desktop window in which the workspace will run.</param>
         /// <param name="component">The application component to launch.</param>
         /// <param name="title">The title of the workspace.</param>
         /// <param name="name">A name that will be assigned to the workspace.</param>
-        /// <returns>The workspace that is hosting the component.</returns>
-        public static Workspace LaunchAsWorkspace(
+		/// <returns>The workspace that is hosting the component.</returns>
+		public static Workspace LaunchAsWorkspace(
             IDesktopWindow desktopWindow,
             IApplicationComponent component,
             string title,
@@ -141,7 +137,7 @@ namespace ClearCanvas.Desktop
         /// </summary>
         /// <remarks>
         /// If the specified component throws an exception from the <see cref="Start"/> method, that exception
-        /// will be propagate to the caller of this method and the component will not be launched.
+        /// will be propagated to the caller of this method and the component will not be launched.
         /// </remarks>
         /// <param name="desktopWindow">The desktop window in which the workspace will run.</param>
         /// <param name="component">The application component to launch.</param>
@@ -201,19 +197,19 @@ namespace ClearCanvas.Desktop
 				};
 			}
 			return workspace;
-        }
+		}
 
         #endregion
 
         #region LaunchAsShelf overloads
 
         /// <summary>
-        /// Executes the specified application component in a new shelf.  The exit callback will be invoked
+        /// Executes the specified application component in a new shelf; the exit callback will be invoked
         /// when the shelf is closed.
         /// </summary>
         /// <remarks>
         /// If the specified component throws an exception from its <see cref="Start"/> method, that exception
-        /// will be propagate to the caller of this method and the component will not be launched.
+        /// will be propagated to the caller of this method and the component will not be launched.
         /// </remarks>
         /// <param name="desktopWindow">The desktop window in which the shelf will run.</param>
         /// <param name="component">The application component to launch.</param>
@@ -234,12 +230,12 @@ namespace ClearCanvas.Desktop
         }
 
         /// <summary>
-        /// Executes the specified application component in a new shelf.  The exit callback will be invoked
+        /// Executes the specified application component in a new shelf; the exit callback will be invoked
         /// when the shelf is closed.
         /// </summary>
         /// <remarks>
         /// If the specified component throws an exception from its <see cref="Start"/> method, that exception
-        /// will be propagate to the caller of this method and the component will not be launched.
+        /// will be propagated to the caller of this method and the component will not be launched.
         /// </remarks>
         /// <param name="desktopWindow">The desktop window in which the shelf will run.</param>
         /// <param name="component">The application component to launch.</param>
@@ -357,7 +353,7 @@ namespace ClearCanvas.Desktop
         #region LaunchAsDialog overloads
 
         /// <summary>
-        /// Executes the specified application component in a modal dialog box.  This call will block until
+        /// Executes the specified application component in a modal dialog box; this call will block until
         /// the dialog box is closed.
         /// </summary>
         /// <remarks>
@@ -417,7 +413,7 @@ namespace ClearCanvas.Desktop
 
 
         /// <summary>
-        /// Default constructor
+        /// Default constructor.
         /// </summary>
         protected ApplicationComponent()
         {
@@ -481,7 +477,7 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Notifies subscribers of the <see cref="PropertyChanged"/> event that the specified property has changed.
         /// </summary>
-        /// <param name="propertyName"></param>
+        /// <param name="propertyName">The name of the property that has changed.</param>
         protected void NotifyPropertyChanged(string propertyName)
         {
             EventsHelper.Fire(_propertyChanged, this, new PropertyChangedEventArgs(propertyName));
@@ -489,8 +485,10 @@ namespace ClearCanvas.Desktop
 
         /// <summary>
         /// Notifies subscribers of the <see cref="AllPropertiesChanged"/> that all properties may have changed.
-        /// A view should respond to this event by refreshing itself completely.
         /// </summary>
+        /// <remarks>
+		/// A view should respond to this event by refreshing itself completely.
+		/// </remarks>
         protected void NotifyAllPropertiesChanged()
         {
             EventsHelper.Fire(_allPropertiesChanged, this, EventArgs.Empty);
@@ -501,9 +499,11 @@ namespace ClearCanvas.Desktop
         #region IApplicationComponent Members
 
         /// <summary>
-        /// Called by the framework to set the host.  For internal use only.
+        /// Called by the framework to set the host.
         /// </summary>
-        /// <param name="host"></param>
+        /// <remarks>
+		/// For internal framework use only.
+		/// </remarks>
         public void SetHost(IApplicationComponentHost host)
         {
 			Platform.CheckForNullReference(host, "host");
@@ -522,11 +522,10 @@ namespace ClearCanvas.Desktop
         }
 
         /// <summary>
-        /// Called by the host to initialize the application component.  Override this method to implement
-        /// custom initialization logic.
+        /// Called by the host to initialize the application component.
         /// </summary>
-        /// <remarks>
-        /// Overrides must be sure to call the base implementation.
+        ///  <remarks>
+		/// Override this method to implement custom initialization logic.  Overrides must be sure to call the base implementation.
         /// </remarks>
         public virtual void Start()
         {
@@ -536,11 +535,10 @@ namespace ClearCanvas.Desktop
         }
 
         /// <summary>
-        /// Called by the host when the application component is being terminated.  Override this method to implement
-        /// custom termination logic.
+        /// Called by the host when the application component is being terminated.
         /// </summary>
         /// <remarks>
-        /// Overrides must be sure to call the base implementation.
+		/// Override this method to implement custom termination logic.  Overrides must be sure to call the base implementation.
         /// </remarks>
         public virtual void Stop()
         {
@@ -558,14 +556,19 @@ namespace ClearCanvas.Desktop
         }
 
         /// <summary>
-        /// Called by the framework to determine if this component in a state
+        /// Called by the framework to determine if this component is in a state
         /// such that it can be stopped without user interaction.
         /// </summary>
         /// <remarks>
+        /// <para>
         /// The behaviour of the default implementation depends upon the type of host.  If the component is running
-        /// in a <see cref="IShelfHost"/> or an <see cref="IDialogBoxHost"/>, this method always returns true.
+        /// in an <see cref="IShelfHost"/> or an <see cref="IDialogBoxHost"/>, this method always returns true.
         /// Otherwise, it checks the <see cref="Modified"/> property and returns
-        /// false if data has been modified. Override this method to provide custom logic for responding to this query.
+        /// false if data has been modified.
+        /// </para>
+        /// <para>
+		/// Override this method to provide custom logic for responding to this query.
+		/// </para>
         /// </remarks>
         public virtual bool CanExit()
         {
@@ -633,7 +636,7 @@ namespace ClearCanvas.Desktop
 
         /// <summary>
         /// Occurs when all properties may have changed, and the entire view should be updated to reflect
-        /// the components data.
+        /// the component's data.
         /// </summary>
         public event EventHandler AllPropertiesChanged
         {
@@ -680,7 +683,6 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Sets the <see cref="ValidationVisible"/> property and raises the <see cref="ValidationVisibleChanged"/> event.
         /// </summary>
-        /// <param name="show"></param>
         public virtual void ShowValidation(bool show)
         {
             AssertStarted();
@@ -710,7 +712,10 @@ namespace ClearCanvas.Desktop
 
         #region INotifyPropertyChanged Members
 
-        public event PropertyChangedEventHandler PropertyChanged
+		/// <summary>
+		/// Notifies subscribers that one of the component's properties has changed.
+		/// </summary>
+		public event PropertyChangedEventHandler PropertyChanged
         {
             add { _propertyChanged += value; }
             remove { _propertyChanged -= value; }
@@ -720,11 +725,20 @@ namespace ClearCanvas.Desktop
 
         #region IDataErrorInfo Members
 
+		/// <summary>
+		/// Not implemented.
+		/// </summary>
         string IDataErrorInfo.Error
         {
             get { throw new Exception("The method or operation is not implemented."); }
         }
 
+		/// <summary>
+		/// Gets the error message, taken from the results of <see cref="Validation"/>, that arose due to the
+		/// value of the input <paramref name="propertyName"/>.
+		/// </summary>
+		/// <param name="propertyName">The name of the property to check for errors.</param>
+		/// <returns>A string representation of the error, or null if there isn't one.</returns>
         string IDataErrorInfo.this[string propertyName]
         {
             get

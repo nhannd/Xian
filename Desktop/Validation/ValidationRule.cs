@@ -29,13 +29,8 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-using ClearCanvas.Common.Utilities;
-using ClearCanvas.Common.Specifications;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Specifications;
 
 namespace ClearCanvas.Desktop.Validation
 {
@@ -44,6 +39,10 @@ namespace ClearCanvas.Desktop.Validation
     /// </summary>
     public class ValidationRule : IValidationRule
     {
+		/// <summary>
+		/// Delegate used to validate an <see cref="IApplicationComponent"/> and return the 
+		/// results as a <see cref="TestResult"/>.
+		/// </summary>
         public delegate ValidationResult ValidationDelegate(IApplicationComponent component);
 
         private string _propertyName;

@@ -30,26 +30,27 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Desktop;
 
 namespace ClearCanvas.Desktop
 {
     /// <summary>
-    /// Extension point for views onto <see cref="ProgressDialogComponent"/>
+    /// Extension point for views onto <see cref="ProgressDialogComponent"/>.
     /// </summary>
     [ExtensionPoint]
     public class ProgressDialogComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
     {
     }
 
-    /// <summary>
-    /// ProgressDialogComponent class
-    /// </summary>
+	/// <summary>
+	/// A default implementation of a progress dialog as an <see cref="ApplicationComponent"/>.
+	/// </summary>
+	/// <remarks>
+	/// The progress dialog blocks the UI thread while the actual processing takes place
+	/// on a worker thread (a <see cref="BackgroundTask"/>).  You must therefore be very careful
+	/// to ensure that all shared resources are thread-safe.
+	/// </remarks>
     [AssociateView(typeof(ProgressDialogComponentViewExtensionPoint))]
     public class ProgressDialogComponent : ApplicationComponent
     {
@@ -65,25 +66,13 @@ namespace ClearCanvas.Desktop
 
         private EventHandler<EventArgs> _progressUpdateEvent;
         private EventHandler<EventArgs> _progressTerminateEvent;
-        public event EventHandler<EventArgs> ProgressUpdateEvent
-        {
-            add { _progressUpdateEvent += value; }
-            remove { _progressUpdateEvent -= value; }
-        }
-        public event EventHandler<EventArgs> ProgressTerminateEvent
-        {
-            add { _progressTerminateEvent += value; }
-            remove { _progressTerminateEvent -= value; }
-        }
-
-        public Exception TaskException
-        {
-            get { return _exception; }
-        }
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
+        /// <param name="task">The task that will run in the background, reporting its progress to the foreground UI thread.</param>
+        /// <param name="autoClose">Whether or not the progress dialog should close automatically upon task completion.</param>
+        /// <param name="progressBarStyle">The style of the progress bar.</param>
         public ProgressDialogComponent(BackgroundTask task, bool autoClose, ProgressBarStyle progressBarStyle)
         {
             _task = task;
@@ -100,6 +89,35 @@ namespace ClearCanvas.Desktop
                 _enableCancel = false;
         }
 
+		/// <summary>
+		/// Raised when a progress update has occurred.
+		/// </summary>
+		public event EventHandler<EventArgs> ProgressUpdateEvent
+		{
+			add { _progressUpdateEvent += value; }
+			remove { _progressUpdateEvent -= value; }
+		}
+
+		/// <summary>
+		/// Raised when the task has finished, for any reason.
+		/// </summary>
+		public event EventHandler<EventArgs> ProgressTerminateEvent
+		{
+			add { _progressTerminateEvent += value; }
+			remove { _progressTerminateEvent -= value; }
+		}
+
+		/// <summary>
+		/// Gets the error that has occurred while running the task.
+		/// </summary>
+		public Exception TaskException
+		{
+			get { return _exception; }
+		}
+
+		/// <summary>
+		/// Starts the <see cref="BackgroundTask"/> and shows the progress dialog.
+		/// </summary>
         public override void Start()
         {
             if (_task != null)
@@ -112,6 +130,9 @@ namespace ClearCanvas.Desktop
             base.Start();
         }
 
+		/// <summary>
+		/// Does nothing unless the task has completed; closes the progress dialog.
+		/// </summary>
         public override void Stop()
         {
             // wait for the background task to stop running
@@ -125,8 +146,11 @@ namespace ClearCanvas.Desktop
 
         /// <summary>
         /// Override implementation of <see cref="IApplicationComponent.CanExit"/>.
-        /// This is called when user click on the 'X' button to close the dialog
         /// </summary>
+        /// <remarks>
+		/// This is called when the user clicks on the 'X' button to close the dialog.
+		/// </remarks>
+		/// <returns>True only if the task has finished running.</returns>
         public override bool CanExit()
         {
             return _task == null || !_task.IsRunning;
@@ -166,6 +190,9 @@ namespace ClearCanvas.Desktop
 
         #region Presentation Model
 
+		/// <summary>
+		/// Gets whether or not a 'Cancel' button should be shown.
+		/// </summary>
         public bool ShowCancel
         {
             get 
@@ -179,31 +206,49 @@ namespace ClearCanvas.Desktop
             }
         }
 
+		/// <summary>
+		/// Returns 100.
+		/// </summary>
         public int ProgressBarMaximum
         {
             get { return 100; }
         }
 
+		/// <summary>
+		/// Geths the current position of the progress bar.
+		/// </summary>
         public int ProgressBar
         {
             get { return _progressBar; }
         }
 
+		/// <summary>
+		/// Gets the style of the progress bar.
+		/// </summary>
         public ProgressBarStyle ProgressBarStyle
         {
             get { return _progressBarStyle; }
         }
 
+		/// <summary>
+		/// Gets a number indicating the speed of the progress bar when in Marquee mode.
+		/// </summary>
         public int MarqueeSpeed
         {
             get { return _marqueeSpeed; }
         }
 
+		/// <summary>
+		/// Gets the current progress message.
+		/// </summary>
         public string ProgressMessage
         {
             get { return _progressMessage; }
         }
 
+		/// <summary>
+		/// "Close" if the task has completed, "Cancel" if it is still running.
+		/// </summary>
         public string ButtonText
         {
             get { return (_task != null && _task.IsRunning ? "Cancel" : "Close"); }
@@ -272,6 +317,9 @@ namespace ClearCanvas.Desktop
 
         #endregion
 
+		/// <summary>
+		/// Called from the view to indicate that the task should be cancelled.
+		/// </summary>
         public void Cancel()
         {
             if (_task != null && _task.IsRunning)

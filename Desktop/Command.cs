@@ -29,24 +29,34 @@
 
 #endregion
 
-using System;
-
 namespace ClearCanvas.Desktop
 {
+	/// <summary>
+	/// Abstract base class for commands.
+	/// </summary>
 	public abstract class Command
 	{
 		private string _name;
 
-		public Command()
+		/// <summary>
+		/// Default constructor.
+		/// </summary>
+		protected Command()
 		{
 		}
 
+		/// <summary>
+		/// Gets or sets the command name.
+		/// </summary>
 		public string Name
 		{
 			get { return _name; }
 			set { _name = value; }
 		}
 
+		/// <summary>
+		/// Executes the command.
+		/// </summary>
 		public abstract void Execute();
 	}
 }

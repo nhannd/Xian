@@ -30,16 +30,12 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common;
-using ClearCanvas.Desktop;
 
 namespace ClearCanvas.Desktop
 {
     /// <summary>
-    /// Extension point for views onto <see cref="ExceptionHandlerComponent"/>
+    /// Extension point for views onto <see cref="ExceptionHandlerComponent"/>.
     /// </summary>
     [ExtensionPoint]
     public class ExceptionHandlerComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
@@ -47,8 +43,11 @@ namespace ClearCanvas.Desktop
     }
 
     /// <summary>
-    /// ExceptionHandlerComponent class
+    /// Application component used for reporting exceptions to the user.
     /// </summary>
+    /// <remarks>
+    /// This class is intended for internal framework use only.
+    /// </remarks>
     [AssociateView(typeof(ExceptionHandlerComponentViewExtensionPoint))]
     public class ExceptionHandlerComponent : ApplicationComponent
     {
@@ -56,7 +55,7 @@ namespace ClearCanvas.Desktop
         private string _message;
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         internal ExceptionHandlerComponent(Exception e, string message)
         {
@@ -64,29 +63,25 @@ namespace ClearCanvas.Desktop
             _message = message;
         }
 
-        public override void Start()
-        {
-            // TODO prepare the component for its live phase
-            base.Start();
-        }
-
-        public override void Stop()
-        {
-            // TODO prepare the component to exit the live phase
-            // This is a good place to do any clean up
-            base.Stop();
-        }
-
+        ///<summary>
+        /// The exception to be shown to the user.
+        ///</summary>
         public Exception Exception
         {
             get { return _exception; }
         }
 
+		/// <summary>
+		/// A user-friendly message to display.
+		/// </summary>
         public string Message
         {
             get { return _message; }
         }
 
+		/// <summary>
+		/// The user has dismissed the component in the view.
+		/// </summary>
         public void Cancel()
         {
             this.ExitCode = ApplicationComponentExitCode.None;

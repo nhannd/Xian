@@ -30,23 +30,23 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ClearCanvas.Desktop
 {
     /// <summary>
-    /// Associates a view extension point with a "model" class.  The model class may be
-    /// any class that participates in a model-view relationship and defines an associated
-    /// view extension point.
+    /// Associates a view extension point with a "model" class.
     /// </summary>
+    /// <remarks>
+	/// The model class may be any class that participates in a model-view 
+	/// relationship and defines an associated view extension point.
+	/// </remarks>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple=false, Inherited=true)]
     public class AssociateViewAttribute : Attribute
     {
         private Type _viewExtensionPointType;
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         /// <param name="viewExtensionPointType">The view extension point class.</param>
         public AssociateViewAttribute(Type viewExtensionPointType)

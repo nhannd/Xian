@@ -29,48 +29,76 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common;
 
 namespace ClearCanvas.Desktop
 {
+	/// <summary>
+	/// A command that facilitates undo/redo using the <b>Memento</b> design pattern.
+	/// </summary>
 	public class UndoableCommand : Command
 	{
 		private IMemorable _originator;
 		private IMemento _beginState;
 		private IMemento _endState;
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="originator">The originator is the object responsible for creating
+		/// <see cref="IMemento"/>s and restoring state from <see cref="IMemento"/>s.</param>
 		public UndoableCommand(IMemorable originator)
 		{
 			Platform.CheckForNullReference(originator, "originator");
 			_originator = originator;
 		}
 
+		/// <summary>
+		/// Gets the originator.
+		/// </summary>
+		/// <remarks>
+		/// The originator is the object responsible for creating
+		/// <see cref="IMemento"/>s and restoring state from <see cref="IMemento"/>s.
+		/// </remarks>
 		protected IMemorable Originator
 		{
 			get { return _originator; }
 		}
 
+		/// <summary>
+		/// Gets the begin state, which is the state of the <see cref="Originator"/> before
+		/// the operation resulting in this <see cref="UndoableCommand"/> was performed.
+		/// </summary>
 		public virtual IMemento BeginState
 		{
 			get { return _beginState; }
 			set { _beginState = value; }
 		}
 
+		/// <summary>
+		/// Gets the end state, which is the state of the <see cref="Originator"/> after
+		/// the operation resulting in this <see cref="UndoableCommand"/> was performed.
+		/// </summary>
 		public virtual IMemento EndState
 		{
 			get { return _endState; }
 			set { _endState = value; }
 		}
 
+		/// <summary>
+		/// Performs a 'redo' by calling <see cref="IMemorable.SetMemento"/> on the 
+		/// <see cref="Originator"/> with the <see cref="EndState"/> as a parameter.
+		/// </summary>
 		public override void Execute()
 		{
 			if (_originator != null)
 				_originator.SetMemento(_endState);
 		}
 
+		/// <summary>
+		/// Performs an 'undo' by calling <see cref="IMemorable.SetMemento"/> on the 
+		/// <see cref="Originator"/> with the <see cref="BeginState"/> as a parameter.
+		/// </summary>
 		public virtual void Unexecute()
 		{
 			if (_originator != null)

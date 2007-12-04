@@ -30,12 +30,9 @@
 #endregion
 
 #if DEBUG
+#pragma warning disable 1591
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common;
-using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 
 namespace ClearCanvas.Desktop

@@ -30,15 +30,15 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ClearCanvas.Desktop
 {
     /// <summary>
-    /// Defines a base interface for views that serve desktop objects.  The view provides the on-screen representation
-    /// of the object.
+    /// Defines a base interface for views that serve desktop objects.
     /// </summary>
+    /// <remarks>
+	/// The view provides the on-screen representation of the object.
+	/// </remarks>
     public interface IDesktopObjectView : IView, IDisposable
     {
         /// <summary>
@@ -59,7 +59,6 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Sets the title that is displayed to the user.
         /// </summary>
-        /// <param name="title"></param>
         void SetTitle(string title);
 
         /// <summary>

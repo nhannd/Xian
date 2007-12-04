@@ -29,10 +29,6 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common;
 
 namespace ClearCanvas.Desktop
@@ -43,7 +39,7 @@ namespace ClearCanvas.Desktop
     public class DialogBox : DesktopObject
     {
         // implements the host interface, which is exposed to the hosted application component
-        class Host : ApplicationComponentHost, IDialogBoxHost
+        private class Host : ApplicationComponentHost, IDialogBoxHost
         {
             private DialogBox _owner;
 
@@ -83,8 +79,8 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <param name="args"></param>
-        /// <param name="desktopWindow"></param>
+        /// <param name="args">Creation args for the dialog box.</param>
+        /// <param name="desktopWindow">The <see cref="DesktopWindow"/> that owns the dialog box.</param>
         protected internal DialogBox(DialogBoxCreationArgs args, DesktopWindow desktopWindow)
             :base(args)
         {
@@ -122,9 +118,8 @@ namespace ClearCanvas.Desktop
         }
 
         /// <summary>
-        /// Checks if the hosted component can close.
+        /// Checks if the hosted component can close without user interaction.
         /// </summary>
-        /// <returns></returns>
         protected internal override bool CanClose()
         {
             return _exitRequestedByComponent || _host.Component.CanExit();
@@ -133,8 +128,6 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Gives the hosted component a chance to prepare for a forced exit.
         /// </summary>
-        /// <param name="reason"></param>
-        /// <returns></returns>
         protected override bool PrepareClose(CloseReason reason)
         {
             base.PrepareClose(reason);
@@ -145,7 +138,6 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Disposes of this object.
         /// </summary>
-        /// <param name="disposing"></param>
         protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing);

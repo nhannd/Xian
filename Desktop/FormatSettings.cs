@@ -29,13 +29,8 @@
 
 #endregion
 
-using System;
 using System.Configuration;
-using ClearCanvas.Desktop.Tools;
-using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Common;
 using ClearCanvas.Common.Configuration;
-using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop
 {

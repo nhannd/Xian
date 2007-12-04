@@ -43,7 +43,10 @@ namespace ClearCanvas.Desktop.Trees
     {
         #region ITreeItemBinding members
 
-        public abstract string GetNodeText(object item);
+    	/// <summary>
+    	/// Gets the text to display for the node representing the specified item.
+    	/// </summary>
+    	public abstract string GetNodeText(object item);
 
     	/// <summary>
     	/// Gets whether or not <paramref name="item"/> is checked.

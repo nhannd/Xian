@@ -29,11 +29,6 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop
@@ -46,9 +41,8 @@ namespace ClearCanvas.Desktop
         private DesktopWindow _owner;
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
-        /// <param name="owner"></param>
         internal ShelfCollection(DesktopWindow owner)
         {
             _owner = owner;
@@ -57,33 +51,29 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Opens a new shelf.
         /// </summary>
-        /// <param name="component"></param>
-        /// <param name="title"></param>
-        /// <param name="displayHint"></param>
-        /// <returns></returns>
+        /// <param name="component">The <see cref="IApplicationComponent"/> that is to be hosted in the returned <see cref="Shelf"/>.</param>
+        /// <param name="title">The title of the <see cref="Shelf"/>.</param>
+        /// <param name="displayHint">A hint for how the <see cref="Shelf"/> should be initially displayed.</param>
         public Shelf AddNew(IApplicationComponent component, string title, ShelfDisplayHint displayHint)
         {
             return AddNew(component, title, null, displayHint);
         }
 
-        /// <summary>
-        /// Opens a new shelf.
-        /// </summary>
-        /// <param name="component"></param>
-        /// <param name="title"></param>
-        /// <param name="name"></param>
-        /// <param name="displayHint"></param>
-        /// <returns></returns>
-        public Shelf AddNew(IApplicationComponent component, string title, string name, ShelfDisplayHint displayHint)
+		/// <summary>
+		/// Opens a new shelf.
+		/// </summary>
+		/// <param name="component">The <see cref="IApplicationComponent"/> that is to be hosted in the returned <see cref="Shelf"/>.</param>
+		/// <param name="title">The title of the <see cref="Shelf"/>.</param>
+		/// <param name="name">A name/identifier for the <see cref="Shelf"/>.</param>
+		/// <param name="displayHint">A hint for how the <see cref="Shelf"/> should be initially displayed.</param>
+		public Shelf AddNew(IApplicationComponent component, string title, string name, ShelfDisplayHint displayHint)
         {
             return AddNew(new ShelfCreationArgs(component, title, name, displayHint));
         }
 
         /// <summary>
-        /// Opens a new shelf.
+        /// Opens a new shelf given the input <see cref="ShelfCreationArgs"/>.
         /// </summary>
-        /// <param name="args"></param>
-        /// <returns></returns>
         public Shelf AddNew(ShelfCreationArgs args)
         {
             Shelf shelf = CreateShelf(args);
@@ -94,8 +84,6 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Creates a new shelf.
         /// </summary>
-        /// <param name="args"></param>
-        /// <returns></returns>
         private Shelf CreateShelf(ShelfCreationArgs args)
         {
             IShelfFactory factory = CollectionUtils.FirstElement<IShelfFactory>(

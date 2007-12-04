@@ -29,14 +29,10 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace ClearCanvas.Desktop
 {
     /// <summary>
-    /// Defines the possible states for a <see cref="DesktopObject"/>
+    /// Defines the possible states for a <see cref="DesktopObject"/>.
     /// </summary>
     public enum DesktopObjectState
     {

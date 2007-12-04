@@ -1,7 +1,5 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ClearCanvas.Desktop
 {
@@ -15,7 +13,6 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="items"></param>
         public SuggestionsProvidedEventArgs(IList items)
         {
             _items = items;
@@ -49,7 +46,6 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Called by the user-inteface to inform this object of changes in the user query text.
         /// </summary>
-        /// <param name="query"></param>
         void SetQuery(string query);
     }
 }

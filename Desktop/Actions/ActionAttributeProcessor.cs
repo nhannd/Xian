@@ -29,11 +29,7 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Common.Utilities;
-using System.Security;
 
 namespace ClearCanvas.Desktop.Actions
 {

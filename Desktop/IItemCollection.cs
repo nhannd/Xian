@@ -36,27 +36,27 @@ using System.Collections.Generic;
 namespace ClearCanvas.Desktop
 {
     /// <summary>
-    /// Enumerates the types of item changes
+    /// Enumerates the types of item changes.
     /// </summary>
     public enum ItemChangeType
     {
         /// <summary>
-        /// An item was added to the table
+        /// An item was added to the table.
         /// </summary>
         ItemAdded,
 
         /// <summary>
-        /// An item in the table was changed
+        /// An item in the table was changed.
         /// </summary>
         ItemChanged,
 
         /// <summary>
-        /// An item was removed from the table
+        /// An item was removed from the table.
         /// </summary>
         ItemRemoved,
 
         /// <summary>
-        /// All items in the table may have changed
+        /// All items in the table may have changed.
         /// </summary>
         Reset
     }
@@ -78,7 +78,7 @@ namespace ClearCanvas.Desktop
         }
 
         /// <summary>
-        /// Gets the type of change that occured
+        /// Gets the type of change that occured.
         /// </summary>
         public ItemChangeType ChangeType
         {
@@ -105,7 +105,7 @@ namespace ClearCanvas.Desktop
     /// <summary>
     /// Defines the interface to the collection of items.
     /// </summary>
-    public interface IItemCollection : IEnumerable, IList
+    public interface IItemCollection : IList
     {
         /// <summary>
         /// Occurs when an item in the collection has changed.
@@ -113,56 +113,55 @@ namespace ClearCanvas.Desktop
         event EventHandler<ItemChangedEventArgs> ItemsChanged;
 
         /// <summary>
-        /// Notifies the table that the item at the specified index has changed in some way.  Use this method
-        /// to cause the view to update itself to reflect the changed item.
+        /// Notifies the table that the item at the specified index has changed in some way.
         /// </summary>
-        /// <param name="index"></param>
+        /// <remarks>
+		/// Use this method to cause the view to update itself to reflect the changed item.
+		/// </remarks>
         void NotifyItemUpdated(int index);
 
         /// <summary>
-        /// Adds all items in the specified enumerable
+        /// Adds all items in the specified enumeration..
         /// </summary>
-        /// <param name="enumerable"></param>
         void AddRange(IEnumerable enumerable);
     }
 
     /// <summary>
-    /// Defines the interface to the collection of items
+    /// Defines the interface to the collection of items.
     /// </summary>
-    /// <typeparam name="TItem">Item type</typeparam>
-    public interface IItemCollection<TItem> : IItemCollection, IEnumerable<TItem>, IList<TItem>
+    /// <typeparam name="TItem">The item type.</typeparam>
+    public interface IItemCollection<TItem> : IItemCollection, IList<TItem>
     {
         /// <summary>
-        /// Notifies the table that the specified item has changed in some way.  Use this method
-        /// to cause the view to update itself to reflect the changed item.
+        /// Notifies the table that the specified item has changed in some way.
         /// </summary>
-        /// <param name="item"></param>
+        /// <remarks>
+		/// Use this method to cause the view to update itself to reflect the changed item.
+		/// </remarks>
         void NotifyItemUpdated(TItem item);
 
         /// <summary>
-        /// Adds all items in the specified enumerable
+        /// Adds all items in the specified enumeration.
         /// </summary>
-        /// <param name="enumerable"></param>
         void AddRange(IEnumerable<TItem> enumerable);
 
         /// <summary>
-        /// Sorts items in the collection using the specified <see cref="IComparer{TItem}"/>
+        /// Sorts items in the collection using the specified <see cref="IComparer{TItem}"/>.
         /// </summary>
-        /// <param name="comparer"></param>
         void Sort(IComparer<TItem> comparer);
 
         /// <summary>
         /// Sets any items in the collection matching the specified constraint to the specified new value. 
         /// </summary>
-        /// <param name="constraint"></param>
-        /// <param name="newValue"></param>
+        /// <param name="constraint">A predicate against which all items in the collection will be compared, and replaced with the new value.</param>
+        /// <param name="newValue">The new value with which to replace all matching items in the collection.</param>
         void Replace(Predicate<TItem> constraint, TItem newValue);
 
         /// <summary>
         /// Searches the collection for an item that satisfies the specified constraint and returns
         /// the index of the first such item.
         /// </summary>
-        /// <returns>The index of the first matching item, or -1 if no matching items are found</returns>
+        /// <returns>The index of the first matching item, or -1 if no matching items are found.</returns>
         int FindIndex(Predicate<TItem> constraint);
     }
 }

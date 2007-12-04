@@ -30,12 +30,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.ComponentModel;
-
-using ClearCanvas.Common;
-using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.Desktop
@@ -46,7 +40,7 @@ namespace ClearCanvas.Desktop
     public enum ApplicationComponentExitCode
     {
         /// <summary>
-        /// Implies that nothing of significance occured. The component was closed or cancelled.
+        /// Implies that nothing of significance occured; the component was closed or cancelled.
         /// </summary>
         None,
 
@@ -72,34 +66,39 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Called by the framework to initialize the component with a host.
         /// </summary>
-        /// <param name="host"></param>
         void SetHost(IApplicationComponentHost host);
 
         /// <summary>
         /// Allows the component to export a set of actions to the host.
+        /// </summary>
+        /// <remarks>
         /// It is up to the host implementation to determine what, if anything,
         /// is done with the actions.
-        /// </summary>
+		/// </remarks>
         IActionSet ExportedActions { get; }
 
         /// <summary>
-        /// Called by the framework to initialize the component.  This method
-        /// will be called before the component becomes visible
-        /// on the screen.  All significant initialization should be performed
-        /// here rather than in the constructor.
+        /// Called by the framework to initialize the component.
         /// </summary>
+        /// <remarks>
+		/// This method will be called before the component becomes visible
+		/// on the screen.  All significant initialization should be performed
+		/// here rather than in the constructor.
+		/// </remarks>
         void Start();
 
         /// <summary>
-        /// Called by the framework to allow the component to perform any
-        /// clean-up.
+        /// Called by the framework to allow the component to perform any clean-up.
         /// </summary>
         void Stop();
 
         /// <summary>
-        /// Returns true if the component is live.  A component is considered live after the Start()
-        /// method has been called, and before the Stop() method is called.
+        /// Returns true if the component is live.
         /// </summary>
+        /// <remarks>
+		/// A component is considered live after the Start()
+		/// method has been called, and before the Stop() method is called.
+		/// </remarks>
         bool IsStarted { get; }
 
         /// <summary>
@@ -126,7 +125,6 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Shows or hides validation errors.
         /// </summary>
-        /// <param name="show"></param>
         void ShowValidation(bool show);
 
         /// <summary>
@@ -149,7 +147,7 @@ namespace ClearCanvas.Desktop
         /// Called by the framework in the case where the host has initiated the exit, rather than the component,
         /// to give the component a chance to prepare prior to being stopped.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Whether or not the component is capable of exiting at this time.</returns>
         bool PrepareExit();
 
         /// <summary>

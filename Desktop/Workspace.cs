@@ -47,7 +47,7 @@ namespace ClearCanvas.Desktop
         #region Host Implementation
 
         // implements the host interface, which is exposed to the hosted application component
-        class Host : ApplicationComponentHost, IWorkspaceHost
+        private class Host : ApplicationComponentHost, IWorkspaceHost
         {
             private Workspace _workspace;
 
@@ -93,10 +93,10 @@ namespace ClearCanvas.Desktop
         private bool _userClosable;
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
-        /// <param name="args"></param>
-        /// <param name="desktopWindow"></param>
+        /// <param name="args">Arguments for creation of the <see cref="Workspace"/>.</param>
+        /// <param name="desktopWindow">The <see cref="DesktopWindow"/> that owns the <see cref="Workspace"/>.</param>
         protected internal Workspace(WorkspaceCreationArgs args, DesktopWindow desktopWindow)
             : base(args)
         {
@@ -145,12 +145,11 @@ namespace ClearCanvas.Desktop
 
         #region Protected overrides
 
-
-        /// <summary>
-        /// Checks if the hosted component can exit.
-        /// </summary>
-        /// <returns></returns>
-        protected internal override bool CanClose()
+    	/// <summary>
+    	/// Asks the object whether it is in a closable state without user intervention.
+    	/// </summary>
+    	/// <returns>True if the object can be closed, otherwise false.</returns>
+    	protected internal override bool CanClose()
         {
             return _exitRequestedByComponent || _host.Component.CanExit();
         }
@@ -158,8 +157,6 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Gives the hosted component a chance to prepare for a forced exit.
         /// </summary>
-        /// <param name="reason"></param>
-        /// <returns></returns>
         protected override bool PrepareClose(CloseReason reason)
         {
             base.PrepareClose(reason);
@@ -168,9 +165,8 @@ namespace ClearCanvas.Desktop
         }
 
         /// <summary>
-        /// Overridden to prevent closing of workspace if <see cref="UserClosable"/> is false.
+        /// Overridden to prevent closing the <see cref="Workspace"/> if <see cref="UserClosable"/> is false.
         /// </summary>
-        /// <param name="args"></param>
         protected override void OnClosing(ClosingEventArgs args)
         {
             bool parentClosing = (args.Reason & CloseReason.ParentClosing) == CloseReason.ParentClosing;
@@ -200,7 +196,6 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Stops the hosted component.
         /// </summary>
-        /// <param name="disposing"></param>
         protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing);
@@ -216,7 +211,6 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Creates a view for this workspace.
         /// </summary>
-        /// <returns></returns>
         protected sealed override IDesktopObjectView CreateView()
         {
             return _desktopWindow.CreateWorkspaceView(this);
@@ -246,6 +240,9 @@ namespace ClearCanvas.Desktop
 
         #region IWorkspace Members
 
+		/// <summary>
+		/// Gets the <see cref="IDesktopWindow"/> that owns this <see cref="Workspace"/>.
+		/// </summary>
         IDesktopWindow IWorkspace.DesktopWindow
         {
             get { return _desktopWindow; }

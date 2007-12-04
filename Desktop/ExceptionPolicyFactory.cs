@@ -36,7 +36,7 @@ using ClearCanvas.Common;
 namespace ClearCanvas.Desktop
 {
     ///<summary>
-    /// Provides <see cref="IExceptionPolicy"/> objects via static <see cref="GetPolicy"/> method
+    /// Provides <see cref="IExceptionPolicy"/> objects via static <see cref="GetPolicy"/> method.
     ///</summary>
     public class ExceptionPolicyFactory
     {
@@ -105,10 +105,10 @@ namespace ClearCanvas.Desktop
         }
 
         ///<summary>
-        /// Returns an <see cref="IExceptionPolicy"/> for a requested <see cref="Exception"/> type
+        /// Returns an <see cref="IExceptionPolicy"/> for a requested <see cref="Exception"/> type.
         ///</summary>
-        ///<param name="exceptionType">An <see cref="Exception"/> derived type</param>
-        ///<returns>An <see cref="IExceptionPolicy"/> for the requested type if found or a <see cref="DefaultExceptionPolicy"/></returns>
+        ///<param name="exceptionType">An <see cref="Exception"/> derived type.</param>
+        ///<returns>An <see cref="IExceptionPolicy"/> for the requested type if found or a <see cref="DefaultExceptionPolicy"/>.</returns>
         public static IExceptionPolicy GetPolicy(Type exceptionType)
         {
             IExceptionPolicy policy;

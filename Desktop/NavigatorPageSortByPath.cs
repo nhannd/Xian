@@ -29,16 +29,22 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace ClearCanvas.Desktop
 {
+	/// <summary>
+	/// A default <see cref="IComparer{T}"/> for <see cref="NavigatorPage"/>s
+	/// that simply sorts based on the <see cref="Path.LocalizedPath"/>
+	/// of the page.
+	/// </summary>
 	public class NavigatorPageSortByPath : IComparer<NavigatorPage>
 	{
 		#region IComparer<NavigatorPage> Members
 
+		/// <summary>
+		/// Compares two <see cref="NavigatorPage"/>s.
+		/// </summary>
 		public int Compare(NavigatorPage x, NavigatorPage y)
 		{
 			if (x == null)

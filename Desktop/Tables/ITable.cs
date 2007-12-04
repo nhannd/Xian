@@ -58,8 +58,9 @@ namespace ClearCanvas.Desktop.Tables
 		/// ensure all items are returned, use <see cref="RemoveFilter()"/> prior to using this property.
 		/// </para>
 		/// <para>
-		/// CF: <see cref="ITable{TItem}.Items"/> which always returns the complete collection.</remarks>
+		/// CF: <see cref="ITable{TItem}.Items"/> which always returns the complete collection.
 		/// </para>
+		/// </remarks>
         IItemCollection Items { get; }
 
         /// <summary>
@@ -78,7 +79,7 @@ namespace ClearCanvas.Desktop.Tables
         void Sort(TableSortParams sortParams);
 
         /// <summary>
-        /// Fires after the table is sorted.
+		/// Raised after the table is sorted.
         /// </summary>
         event EventHandler SortEvent;
 

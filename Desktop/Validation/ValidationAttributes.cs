@@ -31,13 +31,11 @@
 
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Text;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Tables;
-using System.Text.RegularExpressions;
 
 namespace ClearCanvas.Desktop.Validation
 {
@@ -47,6 +45,9 @@ namespace ClearCanvas.Desktop.Validation
     [AttributeUsage(AttributeTargets.Property, AllowMultiple=true, Inherited=true)]
     public abstract class ValidationAttribute : Attribute
     {
+		/// <summary>
+		/// Delegate used to get the value of a property from an <see cref="IApplicationComponent"/>.
+		/// </summary>
         public delegate object PropertyGetter(IApplicationComponent component);
 
         private string _message;

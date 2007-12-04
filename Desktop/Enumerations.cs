@@ -33,29 +33,69 @@ using System;
 
 namespace ClearCanvas.Desktop
 {
+	/// <summary>
+	/// Enumeration of (potentially) available mouse buttons.
+	/// </summary>
 	[Flags]
 	public enum XMouseButtons
 	{
+		/// <summary>
+		/// Default value
+		/// </summary>
 		None		= 0x00000000,
+		/// <summary>
+		/// The left mouse button.
+		/// </summary>
 		Left		= 0x00100000,
+		/// <summary>
+		/// The right mouse button.
+		/// </summary>
 		Right		= 0x00200000,
+		/// <summary>
+		/// The middle mouse button.
+		/// </summary>
 		Middle		= 0x00400000,
+		/// <summary>
+		/// The 'x1' button.
+		/// </summary>
 		XButton1	= 0x00800000,
+		/// <summary>
+		/// The 'x2' button.
+		/// </summary>
 		XButton2	= 0x01000000
 	}
 
+	/// <summary>
+	/// Enumeration for keyboard modifiers.
+	/// </summary>
 	[Flags]
 	public enum ModifierFlags
 	{
+		/// <summary>
+		/// Default value.
+		/// </summary>
 		None = 0,
+		/// <summary>
+		/// Any one of the 'control' keys.
+		/// </summary>
 		Control = 1,
+		/// <summary>
+		/// Any one of the 'alt' keys.
+		/// </summary>
 		Alt = 2,
+		/// <summary>
+		/// Any one of the 'shift' keys.
+		/// </summary>
 		Shift = 4
 	}
 
+	/// <summary>
+	/// Enumeration of all the (potentially) available keys on a keyboard.
+	/// </summary>
 	[Flags]
 	public enum XKeys
 	{
+#pragma warning disable 1591
 		A = 65,
 		Add = 107,
 		Alt = 262144,
@@ -239,5 +279,6 @@ namespace ClearCanvas.Desktop
 		Y = 89,
 		Z = 90,
 		Zoom = 251
+#pragma warning restore 1591
 	}
 }

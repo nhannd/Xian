@@ -29,10 +29,6 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace ClearCanvas.Desktop
 {
     /// <summary>
@@ -44,7 +40,7 @@ namespace ClearCanvas.Desktop
         private ShelfDisplayHint _displayHint;
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         public ShelfCreationArgs()
         {
@@ -52,13 +48,13 @@ namespace ClearCanvas.Desktop
         }
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
-        /// <param name="component"></param>
-        /// <param name="title"></param>
-        /// <param name="name"></param>
-        /// <param name="displayHint"></param>
-        public ShelfCreationArgs(IApplicationComponent component, string title, string name, ShelfDisplayHint displayHint)
+		/// <param name="component">The <see cref="IApplicationComponent"/> that is to be hosted in the <see cref="Shelf"/>.</param>
+		/// <param name="title">The title of the <see cref="Shelf"/>.</param>
+		/// <param name="name">A name/identifier for the <see cref="Shelf"/>.</param>
+		/// <param name="displayHint">A hint for how the <see cref="Shelf"/> should be initially displayed.</param>
+		public ShelfCreationArgs(IApplicationComponent component, string title, string name, ShelfDisplayHint displayHint)
             : base(title, name)
         {
             _component = component;
@@ -66,12 +62,12 @@ namespace ClearCanvas.Desktop
         }
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
-        /// <param name="component"></param>
-        /// <param name="title"></param>
-        /// <param name="name"></param>
-        public ShelfCreationArgs(IApplicationComponent component, string title, string name)
+		/// <param name="component">The <see cref="IApplicationComponent"/> that is to be hosted in the <see cref="Shelf"/>.</param>
+		/// <param name="title">The title of the <see cref="Shelf"/>.</param>
+		/// <param name="name">A name/identifier for the <see cref="Shelf"/>.</param>
+		public ShelfCreationArgs(IApplicationComponent component, string title, string name)
             : this(component, name, title, ShelfDisplayHint.None)
         {
         }

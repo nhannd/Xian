@@ -29,9 +29,6 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop
@@ -46,7 +43,7 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <param name="owner"></param>
+        /// <param name="owner">The <see cref="DesktopWindow"/> that owns the dialog box.</param>
         internal DialogBoxCollection(DesktopWindow owner)
 		{
             _owner = owner;
@@ -55,8 +52,6 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Creates a new dialog box with the specified arguments.
         /// </summary>
-        /// <param name="args"></param>
-        /// <returns></returns>
         internal DialogBox AddNew(DialogBoxCreationArgs args)
         {
             DialogBox dialog = CreateDialogBox(args);
@@ -65,10 +60,8 @@ namespace ClearCanvas.Desktop
         }
 
         /// <summary>
-        /// Creates a new <see cref="DialogBox"/>
+        /// Creates a new <see cref="DialogBox"/>.
         /// </summary>
-        /// <param name="args"></param>
-        /// <returns></returns>
         private DialogBox CreateDialogBox(DialogBoxCreationArgs args)
         {
             IDialogBoxFactory factory = CollectionUtils.FirstElement<IDialogBoxFactory>(

@@ -30,29 +30,37 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Collections;
-using ClearCanvas.Common.Utilities;
-using ClearCanvas.Common;
+using System.Collections.Generic;
 
 namespace ClearCanvas.Desktop
 {
     /// <summary>
     /// Default implementation of <see cref="ISelection"/>.  
-    /// Note: It is important that this class retain immutable semantics.  Do not add mutator methods/properties to this class.
     /// </summary>
+    /// <remarks>
+	/// Note: It is important that this class retain immutable semantics.  Do not add mutator methods/properties to this class.
+	/// </remarks>
     public class Selection : ISelection, IEquatable<ISelection>
     {
+		/// <summary>
+		/// Represents an empty <see cref="ISelection"/>.
+		/// </summary>
         public static readonly Selection Empty = new Selection();
-
 
         private List<object> _items = new List<object>();
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
         public Selection()
         {
         }
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="item">The single item that is selected.</param>
         public Selection(object item)
         {
             // if item == null, then don't add it, which gives us the Empty Selection
@@ -62,6 +70,10 @@ namespace ClearCanvas.Desktop
             }
         }
 
+		/// <summary>
+		/// Constructor for multi-selection.
+		/// </summary>
+		/// <param name="items">The selected items.</param>
         public Selection(IEnumerable items)
         {
             foreach (object item in items)
@@ -70,17 +82,26 @@ namespace ClearCanvas.Desktop
 
         #region ISelection Members
 
-        public object[] Items
+    	/// <summary>
+    	/// Returns the set of items that are currently selected.
+    	/// </summary>
+    	public object[] Items
         {
             get { return _items.ToArray(); }
         }
 
+		/// <summary>
+		/// Returns the first item in the list of selected items, or null if nothing is selected.
+		/// </summary>
         public object Item
         {
             get { return _items.Count > 0 ? _items[0] : null; }
         }
 
-        public ISelection Union(ISelection other)
+    	/// <summary>
+    	/// Computes the union of this selection with another and returns it.
+    	/// </summary>
+    	public ISelection Union(ISelection other)
         {
             List<object> sum = new List<object>();
 
@@ -93,19 +114,29 @@ namespace ClearCanvas.Desktop
             return new Selection(sum);
         }
 
-        public ISelection Intersect(ISelection other)
+    	/// <summary>
+    	/// Computes the intersection of this selection with another and returns it.
+    	/// </summary>
+    	public ISelection Intersect(ISelection other)
         {
             // return every item in this selection also contained in the other selection
             return new Selection(_items.FindAll(delegate(object x) { return other.Contains(x); }));
         }
 
-        public ISelection Subtract(ISelection other)
+    	/// <summary>
+    	/// Returns an <see cref="ISelection"/> that contains every item contained
+    	/// in this one that doesn't exist in <param name="other" />.
+    	/// </summary>
+    	public ISelection Subtract(ISelection other)
         {
             // return every item in this selection not contained in the other selection
             return new Selection(_items.FindAll(delegate(object x) { return !other.Contains(x); }));
         }
 
-        public bool Contains(object item)
+    	/// <summary>
+    	/// Determines whether this selection contains the input object.
+    	/// </summary>
+    	public bool Contains(object item)
         {
             return _items.Contains(item);
         }
@@ -114,6 +145,9 @@ namespace ClearCanvas.Desktop
 
         #region IEquatable<ISelection> Members
 
+		/// <summary>
+		/// Gets whether or not this <see cref="ISelection"/> is considered equivalent to <paramref name="other"/>.
+		/// </summary>
         public bool Equals(ISelection other)
         {
             if (other == null)
@@ -131,12 +165,18 @@ namespace ClearCanvas.Desktop
 
         #endregion
 
+		/// <summary>
+		/// Gets whether or not this object is considered equal to another.
+		/// </summary>
         public override bool Equals(object obj)
         {
             ISelection that = obj as ISelection;
             return this.Equals(that);
         }
 
+		/// <summary>
+		/// Gets a hash code for this object.
+		/// </summary>
         public override int GetHashCode()
         {
             int n = 0;
