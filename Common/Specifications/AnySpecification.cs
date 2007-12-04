@@ -29,11 +29,6 @@
 
 #endregion
 
-using System;
-using System.Collections;
-using System.Text;
-using ClearCanvas.Common.Utilities;
-
 namespace ClearCanvas.Common.Specifications
 {
     public class AnySpecification : EnumerableSpecification

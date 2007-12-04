@@ -30,11 +30,9 @@
 #endregion
 
 using System;
-using System.Reflection;
-using System.ComponentModel;
 using System.Collections.Generic;
-
-using ClearCanvas.Common;
+using System.ComponentModel;
+using System.Reflection;
 
 namespace ClearCanvas.Common.Utilities
 {

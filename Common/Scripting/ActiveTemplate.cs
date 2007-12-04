@@ -31,9 +31,8 @@
 
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Text;
 using System.IO;
+using System.Text;
 using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Common.Scripting

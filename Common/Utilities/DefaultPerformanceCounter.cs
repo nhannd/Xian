@@ -29,8 +29,6 @@
 
 #endregion
 
-using System;
-
 namespace ClearCanvas.Common.Utilities
 {
 	internal class DefaultPerformanceCounter : IPerformanceCounter

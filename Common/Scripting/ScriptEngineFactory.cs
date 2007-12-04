@@ -30,8 +30,6 @@
 #endregion
 
 using System;
-using System.Text;
-using System.Collections;
 
 namespace ClearCanvas.Common.Scripting
 {

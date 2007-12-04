@@ -30,7 +30,6 @@
 #endregion
 
 using System.Xml;
-using ClearCanvas.Common.Actions;
 
 namespace ClearCanvas.Common.Actions
 {

@@ -29,9 +29,6 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-
 namespace ClearCanvas.Common.Specifications
 {
     public abstract class Specification : ISpecification

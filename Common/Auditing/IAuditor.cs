@@ -29,8 +29,6 @@
 
 #endregion
 
-using ClearCanvas.Common;
-
 namespace ClearCanvas.Common.Auditing
 {
 	/// <summary>

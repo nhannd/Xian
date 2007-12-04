@@ -31,13 +31,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Reflection;
 using System.Configuration;
-using ClearCanvas.Common.Utilities;
-using System.Text.RegularExpressions;
 using System.IO;
+using System.Reflection;
 using System.Resources;
+using System.Text.RegularExpressions;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Common.Configuration
 {

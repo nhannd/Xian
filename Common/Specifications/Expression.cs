@@ -29,11 +29,6 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Common.Scripting;
-
 namespace ClearCanvas.Common.Specifications
 {
     public abstract class Expression

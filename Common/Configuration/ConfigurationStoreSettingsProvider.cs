@@ -31,13 +31,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Configuration;
-using System.Collections.Specialized;
-
-using ClearCanvas.Common.Utilities;
-using ClearCanvas.Common;
 using System.Threading;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Common.Configuration
 {

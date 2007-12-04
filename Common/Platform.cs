@@ -30,21 +30,12 @@
 #endregion
 
 using System;
-using System.IO;
-using System.Reflection;
-using System.Resources;
+using System.ComponentModel;
 using System.Text;
-
+using ClearCanvas.Common.Auditing;
+using ClearCanvas.Common.Statistics;
 using log4net;
 //using log4net.spi;
-using log4net.Config;
-
-using ClearCanvas.Common.Auditing;
-using System.Collections.Generic;
-using ClearCanvas.Common.Utilities;
-using System.Diagnostics;
-using ClearCanvas.Common.Statistics;
-using System.ComponentModel;
 
 // Configure log4net using the .log4net file
 [assembly: log4net.Config.XmlConfigurator(ConfigFile = "Logging.config", Watch = true)]

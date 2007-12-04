@@ -29,7 +29,6 @@
 
 #endregion
 
-
 using System;
 using ClearCanvas.Common.Utilities;
 

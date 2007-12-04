@@ -32,12 +32,9 @@
 #if	UNIT_TESTS
 #pragma warning disable 1591
 
-using System;
-using System.IO;
-using System.Collections;
 using System.Collections.Specialized;
+using System.IO;
 using NUnit.Framework;
-using ClearCanvas.Common;
 
 namespace ClearCanvas.Common.Tests
 {

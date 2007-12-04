@@ -36,11 +36,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Text;
-using NUnit.Framework;
-using NMock2;
-using ClearCanvas.Common.Auditing;
 using ClearCanvas.Common.Utilities;
+using NMock2;
+using NUnit.Framework;
 
 namespace ClearCanvas.Common.Auditing.Tests
 {

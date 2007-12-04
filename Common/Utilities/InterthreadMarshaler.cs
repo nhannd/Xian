@@ -30,10 +30,7 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.ComponentModel;
-using ClearCanvas.Common;
 using System.Threading;
 
 namespace ClearCanvas.Common.Utilities

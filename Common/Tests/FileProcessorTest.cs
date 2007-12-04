@@ -35,9 +35,8 @@
 
 using System;
 using System.IO;
-using ClearCanvas.Common;
-using NUnit.Framework;
 using ClearCanvas.Common.Utilities;
+using NUnit.Framework;
 
 namespace ClearCanvas.Common.Tests
 {

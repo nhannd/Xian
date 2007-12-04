@@ -31,8 +31,6 @@
 
 using System.Collections.Generic;
 using System.Xml;
-using ClearCanvas.Common;
-using ClearCanvas.Common.Actions;
 using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Common.Actions

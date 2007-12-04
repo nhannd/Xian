@@ -33,12 +33,9 @@
 
 #pragma warning disable 1591
 
-using System;
 using System.Collections.Generic;
-using System.Text;
-using NUnit.Framework;
-using ClearCanvas.Common.Utilities;
 using System.Threading;
+using NUnit.Framework;
 
 namespace ClearCanvas.Common.Utilities.Tests
 {

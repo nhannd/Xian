@@ -31,9 +31,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Common.Utilities;
 using System.Reflection;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Common.Configuration
 {

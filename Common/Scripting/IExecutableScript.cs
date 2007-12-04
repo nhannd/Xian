@@ -29,9 +29,7 @@
 
 #endregion
 
-using System;
 using System.Collections;
-using System.Text;
 
 namespace ClearCanvas.Common.Scripting
 {
