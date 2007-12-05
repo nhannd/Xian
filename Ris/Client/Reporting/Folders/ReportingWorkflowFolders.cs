@@ -136,7 +136,7 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
 
     [ExtensionOf(typeof(ReportingProtocolWorkflowFolderExtensionPoint))]
     [FolderForWorklistType(WorklistTokens.ReportingToBeProtocolledWorklist)]
-    [FolderPath("Protocolling/To be Protocolled")]
+    [FolderPath("Protocolling/To be Protocolled", true)]
     public class ToBeProtocolledFolder : ReportingWorkflowFolder
     {
         public ToBeProtocolledFolder(ReportingWorkflowFolderSystemBase folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)

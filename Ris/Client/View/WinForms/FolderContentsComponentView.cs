@@ -40,20 +40,20 @@ using ClearCanvas.Desktop.View.WinForms;
 namespace ClearCanvas.Ris.Client.View.WinForms
 {
     /// <summary>
-    /// Provides a Windows Forms view onto <see cref="FolderExplorerComponent"/>
+    /// Provides a Windows Forms view onto <see cref="FolderContentsComponent"/>
     /// </summary>
-    [ExtensionOf(typeof(FolderExplorerComponentViewExtensionPoint))]
-    public class FolderExplorerComponentView : WinFormsView, IApplicationComponentView
+    [ExtensionOf(typeof(FolderContentsComponentViewExtensionPoint))]
+    public class FolderContentsComponentView : WinFormsView, IApplicationComponentView
     {
-        private FolderExplorerComponent _component;
-        private FolderExplorerComponentControl _control;
+        private FolderContentsComponent _component;
+        private FolderContentsComponentControl _control;
 
 
         #region IApplicationComponentView Members
 
         public void SetComponent(IApplicationComponent component)
         {
-            _component = (FolderExplorerComponent)component;
+            _component = (FolderContentsComponent)component;
         }
 
         #endregion
@@ -64,7 +64,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             {
                 if (_control == null)
                 {
-                    _control = new FolderExplorerComponentControl(_component);
+                    _control = new FolderContentsComponentControl(_component);
                 }
                 return _control;
             }

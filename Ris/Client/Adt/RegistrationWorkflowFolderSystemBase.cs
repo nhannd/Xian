@@ -125,8 +125,8 @@ namespace ClearCanvas.Ris.Client.Adt
 
             public event EventHandler SelectedFolderChanged
             {
-                add { _owner.SelectedItemsChanged += value; }
-                remove { _owner.SelectedItemsChanged -= value; }
+                add { _owner.SelectedFolderChanged += value; }
+                remove { _owner.SelectedFolderChanged -= value; }
             }
 
             public IDesktopWindow DesktopWindow
@@ -147,8 +147,6 @@ namespace ClearCanvas.Ris.Client.Adt
             #endregion
         }
 
-        private readonly ToolSet _itemToolSet;
-        private readonly ToolSet _folderToolSet;
         private IDictionary<string, bool> _workflowEnablment;
 
         public RegistrationWorkflowFolderSystemBase(
@@ -158,11 +156,6 @@ namespace ClearCanvas.Ris.Client.Adt
             ExtensionPoint<ITool> folderToolExtensionPoint)
             : base(folderExplorer, folderExtensionPoint)
         {
-            // important to initialize service before adding any folders, because folders may access service
-
-            this.SelectedItemsChanged += SelectedItemsChangedEventHandler;
-            this.SelectedItemDoubleClicked += SelectedItemDoubleClickedEventHandler;
-
             if (this.WorklistTokens.Count > 0)
             {
                 Platform.GetService<IRegistrationWorkflowService>(
@@ -183,11 +176,8 @@ namespace ClearCanvas.Ris.Client.Adt
                     });
             }
 
-            _itemToolSet = new ToolSet(itemToolExtensionPoint, new RegistrationWorkflowItemToolContext(this));
-            _folderToolSet = new ToolSet(folderToolExtensionPoint, new RegistrationWorkflowFolderToolContext(this));
-
-            folderExplorer.AddItemActions(_itemToolSet.Actions);
-            folderExplorer.AddFolderActions(_folderToolSet.Actions);
+            _itemTools = new ToolSet(itemToolExtensionPoint, new RegistrationWorkflowItemToolContext(this));
+            _folderTools = new ToolSet(folderToolExtensionPoint, new RegistrationWorkflowFolderToolContext(this));
         }
 
         public bool GetOperationEnablement(string operationName)
@@ -195,52 +185,46 @@ namespace ClearCanvas.Ris.Client.Adt
             return _workflowEnablment == null ? false : _workflowEnablment[operationName];
         }
 
-        private void SelectedItemsChangedEventHandler(object sender, EventArgs e)
+        public override void SelectedItemsChangedEventHandler(object sender, EventArgs e)
         {
             RegistrationWorklistItem selectedItem = CollectionUtils.FirstElement(this.SelectedItems);
+
             if (selectedItem == null)
             {
                 _workflowEnablment = null;
-                return;
+            }
+            else
+            {
+                try
+                {
+                    BlockingOperation.Run(
+                        delegate
+                        {
+                            Platform.GetService<IRegistrationWorkflowService>(
+                                delegate(IRegistrationWorkflowService service)
+                                {
+                                    GetOperationEnablementResponse response = service.GetOperationEnablement(new GetOperationEnablementRequest(selectedItem.PatientProfileRef, selectedItem.OrderRef));
+                                    _workflowEnablment = response.OperationEnablementDictionary;
+                                });
+                        });
+                }
+                catch (Exception ex)
+                {
+                    ExceptionHandler.Report(ex, this.DesktopWindow);
+                }
             }
 
-            try
-            {
-                BlockingOperation.Run(
-                    delegate
-                        {
-                        Platform.GetService<IRegistrationWorkflowService>(
-                            delegate(IRegistrationWorkflowService service)
-                            {
-                                GetOperationEnablementResponse response = service.GetOperationEnablement(new GetOperationEnablementRequest(selectedItem.PatientProfileRef, selectedItem.OrderRef));
-                                _workflowEnablment = response.OperationEnablementDictionary;
-                            });
-                    });
-            }
-            catch (Exception ex)
-            {
-                ExceptionHandler.Report(ex, this.DesktopWindow);
-            }
+            base.SelectedItemsChangedEventHandler(sender, e);
         }
 
-        private void SelectedItemDoubleClickedEventHandler(object sender, EventArgs e)
+        public override void SelectedItemDoubleClickedEventHandler(object sender, EventArgs e)
         {
+            base.SelectedItemDoubleClickedEventHandler(sender, e);
+
             PatientBiographyTool tool = new PatientBiographyTool();
             tool.SetContext(new RegistrationWorkflowItemToolContext(this));
             if (tool.Enabled)
                 tool.View();
         }
-
-        protected override void Dispose(bool disposing)
-        {
-            base.Dispose(disposing);
-
-            if (disposing)
-            {
-                if(_itemToolSet != null) _itemToolSet.Dispose();
-                if (_folderToolSet != null) _folderToolSet.Dispose();
-            }
-        }
-
     }
 }

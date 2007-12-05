@@ -64,5 +64,10 @@ namespace ClearCanvas.Ris.Client.Reporting
             this.AddFolder(new Folders.SuspendedProtocolFolder(this));
             this.AddFolder(new Folders.RejectedProtocolFolder(this));
         }
+
+        public override string DisplayName
+        {
+            get { return "Protocolling"; }
+        }
     }
 }

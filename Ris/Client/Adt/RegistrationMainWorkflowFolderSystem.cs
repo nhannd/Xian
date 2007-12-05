@@ -68,6 +68,11 @@ namespace ClearCanvas.Ris.Client.Adt
             folderExplorer.RegisterSearchDataHandler(this);
         }
 
+        public override string DisplayName
+        {
+            get { return "Registration"; }
+        }
+
         public SearchData SearchData
         {
             set

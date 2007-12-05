@@ -125,8 +125,8 @@ namespace ClearCanvas.Ris.Client.Reporting
 
             public event EventHandler SelectedFolderChanged
             {
-                add { _owner.SelectedItemsChanged += value; }
-                remove { _owner.SelectedItemsChanged -= value; }
+                add { _owner.SelectedFolderChanged += value; }
+                remove { _owner.SelectedFolderChanged -= value; }
             }
 
             public IDesktopWindow DesktopWindow
@@ -147,8 +147,6 @@ namespace ClearCanvas.Ris.Client.Reporting
             #endregion
         }
 
-        private ToolSet _itemToolSet;
-        private ToolSet _folderToolSet;
         private IDictionary<string, bool> _workflowEnablement;
 
         public ReportingWorkflowFolderSystemBase(
@@ -158,11 +156,6 @@ namespace ClearCanvas.Ris.Client.Reporting
             ExtensionPoint<ITool> folderToolExtensionPoint)
             : base(folderExplorer, folderExtensionPoint)
         {
-            // important to initialize service before adding any folders, because folders may access service
-
-            this.SelectedItemsChanged += SelectedItemsChangedEventHandler;
-            this.SelectedItemDoubleClicked += SelectedItemDoubleClickedEventHandler;
-
             if (this.WorklistTokens.Count > 0)
             {
                 Platform.GetService<IReportingWorkflowService>(
@@ -183,11 +176,8 @@ namespace ClearCanvas.Ris.Client.Reporting
                     });
             }
 
-            _itemToolSet = new ToolSet(itemToolExtensionPoint, new ReportingWorkflowItemToolContext(this));
-            _folderToolSet = new ToolSet(folderToolExtensionPoint, new ReportingWorkflowFolderToolContext(this));
-
-            folderExplorer.AddItemActions(_itemToolSet.Actions);
-            folderExplorer.AddFolderActions(_folderToolSet.Actions);
+            _itemTools = new ToolSet(itemToolExtensionPoint, new ReportingWorkflowItemToolContext(this));
+            _folderTools = new ToolSet(folderToolExtensionPoint, new ReportingWorkflowFolderToolContext(this));
         }
 
         public bool GetOperationEnablement(string operationName)
@@ -203,53 +193,47 @@ namespace ClearCanvas.Ris.Client.Reporting
             }
         }
 
-        private void SelectedItemsChangedEventHandler(object sender, EventArgs e)
+        public override void SelectedItemsChangedEventHandler(object sender, EventArgs e)
         {
             ReportingWorklistItem selectedItem = CollectionUtils.FirstElement(this.SelectedItems);
+
             if (selectedItem == null)
             {
                 _workflowEnablement = null;
-                return;
+            }
+            else
+            {
+                try
+                {
+                    BlockingOperation.Run(
+                        delegate
+                        {
+                            Platform.GetService<IReportingWorkflowService>(
+                                delegate(IReportingWorkflowService service)
+                                {
+                                    GetOperationEnablementResponse response = service.GetOperationEnablement(new GetOperationEnablementRequest(selectedItem.ProcedureStepRef, selectedItem.ProcedureStepName));
+                                    _workflowEnablement = response.OperationEnablementDictionary;
+                                });
+                        });
+                }
+                catch (Exception ex)
+                {
+                    ExceptionHandler.Report(ex, this.DesktopWindow);
+                }
             }
 
-            try
-            {
-                BlockingOperation.Run(
-                    delegate
-                    {
-                        Platform.GetService<IReportingWorkflowService>(
-                            delegate(IReportingWorkflowService service)
-                            {
-                                GetOperationEnablementResponse response = service.GetOperationEnablement(new GetOperationEnablementRequest(selectedItem.ProcedureStepRef, selectedItem.ProcedureStepName));
-                                _workflowEnablement = response.OperationEnablementDictionary;
-                            });
-                    });
-            }
-            catch (Exception ex)
-            {
-                ExceptionHandler.Report(ex, this.DesktopWindow);
-            }
+            base.SelectedItemsChangedEventHandler(sender, e);
         }
 
-        private void SelectedItemDoubleClickedEventHandler(object sender, EventArgs e)
+        public override void SelectedItemDoubleClickedEventHandler(object sender, EventArgs e)
         {
-            EditReportTool editTool = (EditReportTool)CollectionUtils.SelectFirst(_itemToolSet.Tools,
+            base.SelectedItemDoubleClickedEventHandler(sender, e);
+
+            EditReportTool editTool = (EditReportTool)CollectionUtils.SelectFirst(this.ItemTools.Tools,
                 delegate(ITool tool) { return tool is EditReportTool; });
 
             if (editTool.Enabled)
                 editTool.Apply();
         }
-
-        protected override void Dispose(bool disposing)
-        {
-            base.Dispose(disposing);
-
-            if (disposing)
-            {
-                if(_itemToolSet != null) _itemToolSet.Dispose();
-                if (_folderToolSet != null) _folderToolSet.Dispose();
-            }
-        }
-
     }
 }

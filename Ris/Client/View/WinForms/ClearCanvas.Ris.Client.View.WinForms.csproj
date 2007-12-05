@@ -98,6 +98,20 @@
       <DependentUpon>ContactPersonsSummaryComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="ContactPersonsSummaryComponentView.cs" />
+    <Compile Include="FolderContentsComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="FolderContentsComponentControl.Designer.cs">
+      <DependentUpon>FolderContentsComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FolderContentsComponentView.cs" />
+    <Compile Include="FolderExplorerComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="FolderExplorerComponentControl.Designer.cs">
+      <DependentUpon>FolderExplorerComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FolderExplorerComponentView.cs" />
     <Compile Include="DiagnosticServiceTreeComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -196,13 +210,6 @@
       <DependentUpon>PhoneNumbersSummaryControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="FolderExplorerComponentControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="FolderExplorerComponentControl.Designer.cs">
-      <DependentUpon>FolderExplorerComponentControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="FolderExplorerComponentView.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -292,6 +299,14 @@
       <SubType>Designer</SubType>
       <DependentUpon>ContactPersonsSummaryComponentControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="FolderContentsComponentControl.resx">
+      <DependentUpon>FolderContentsComponentControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FolderExplorerComponentControl.resx">
+      <DependentUpon>FolderExplorerComponentControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="DiagnosticServiceTreeComponentControl.resx">
       <DependentUpon>DiagnosticServiceTreeComponentControl.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -315,10 +330,6 @@
     <EmbeddedResource Include="MimeDocumentPreviewComponentControl.resx">
       <DependentUpon>MimeDocumentPreviewComponentControl.cs</DependentUpon>
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FolderExplorerComponentControl.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>FolderExplorerComponentControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="DHtmlComponentControl.resx">
       <DependentUpon>DHtmlComponentControl.cs</DependentUpon>

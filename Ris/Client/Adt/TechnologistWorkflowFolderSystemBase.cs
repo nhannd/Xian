@@ -132,8 +132,8 @@ namespace ClearCanvas.Ris.Client.Adt
 
             public event EventHandler SelectedFolderChanged
             {
-                add { _owner.SelectedItemsChanged += value; }
-                remove { _owner.SelectedItemsChanged -= value; }
+                add { _owner.SelectedFolderChanged += value; }
+                remove { _owner.SelectedFolderChanged -= value; }
             }
 
             public IDesktopWindow DesktopWindow
@@ -154,8 +154,6 @@ namespace ClearCanvas.Ris.Client.Adt
             #endregion
         }
 
-        private readonly ToolSet _itemToolSet;
-        private readonly ToolSet _folderToolSet;
         private IDictionary<string, bool> _workflowEnablement;
 
         public TechnologistWorkflowFolderSystemBase(
@@ -166,8 +164,6 @@ namespace ClearCanvas.Ris.Client.Adt
             : base(folderExplorer, 
             folderExtensionPoint)
         {
-            this.SelectedItemsChanged += SelectedItemsChangedEventHandler;
-
             if (this.WorklistTokens.Count > 0)
             {
                 Platform.GetService<IModalityWorkflowService>(
@@ -189,11 +185,8 @@ namespace ClearCanvas.Ris.Client.Adt
                         });
             }
 
-            _itemToolSet = new ToolSet(itemToolExtensionPoint, new TechnologistWorkflowItemToolContext(this));
-            _folderToolSet = new ToolSet(folderToolExtensionPoint, new TechnologistWorkflowFolderToolContext(this));
-
-            folderExplorer.AddItemActions(_itemToolSet.Actions);
-            folderExplorer.AddFolderActions(_folderToolSet.Actions);
+            _itemTools = new ToolSet(itemToolExtensionPoint, new TechnologistWorkflowItemToolContext(this));
+            _folderTools = new ToolSet(folderToolExtensionPoint, new TechnologistWorkflowFolderToolContext(this));
         }
 
         public bool GetOperationEnablement(string operationName)
@@ -209,40 +202,32 @@ namespace ClearCanvas.Ris.Client.Adt
             }
         }
 
-        private void SelectedItemsChangedEventHandler(object sender, EventArgs e)
+        public override void SelectedItemsChangedEventHandler(object sender, EventArgs e)
         {
             ModalityWorklistItem selectedItem = CollectionUtils.FirstElement(this.SelectedItems);
 
             if (selectedItem == null)
             {
                 _workflowEnablement = null;
-                return;
+            }
+            else
+            {
+                try
+                {
+                    Platform.GetService<IModalityWorkflowService>(
+                        delegate(IModalityWorkflowService service)
+                        {
+                            GetOperationEnablementResponse response = service.GetOperationEnablement(new GetOperationEnablementRequest(selectedItem.ProcedureStepRef));
+                            _workflowEnablement = response.OperationEnablementDictionary;
+                        });
+                }
+                catch (Exception ex)
+                {
+                    ExceptionHandler.ReferenceEquals(ex, this.DesktopWindow);
+                }
             }
 
-            try
-            {
-                Platform.GetService<IModalityWorkflowService>(
-                    delegate(IModalityWorkflowService service)
-                    {
-                        GetOperationEnablementResponse response = service.GetOperationEnablement(new GetOperationEnablementRequest(selectedItem.ProcedureStepRef));
-                        _workflowEnablement = response.OperationEnablementDictionary;
-                    });
-            }
-            catch (Exception ex)
-            {
-                ExceptionHandler.ReferenceEquals(ex, this.DesktopWindow);
-            }
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            base.Dispose(disposing);
-
-            if (disposing)
-            {
-                if (_itemToolSet != null) _itemToolSet.Dispose();
-                if (_folderToolSet != null) _folderToolSet.Dispose();
-            }
+            base.SelectedItemsChangedEventHandler(sender, e);
         }
     }
 }

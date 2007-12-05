@@ -64,6 +64,17 @@ namespace ClearCanvas.Ris.Client
             }
         }
 
+        public void BuildAndSynchronize(IFolderSystem folderSystem, InsertFolderDelegate insertFolderDelegate)
+        {
+            // Synchronize all folder systems
+            string folderSystemID = folderSystem.Id;
+
+            IDictionary<string, IFolder> folderMap = BuildFolderMap(folderSystem.Folders);
+            XmlElement xmlFolderSystem = Synchronize(folderSystemID, folderMap);
+
+            Build(xmlFolderSystem, folderMap, insertFolderDelegate);
+        }
+
         #region Private Utility Methods
 
         private XmlDocument GetXmlDocument()

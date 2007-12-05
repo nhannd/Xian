@@ -34,16 +34,24 @@ using System.Collections.Generic;
 using ClearCanvas.Desktop;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Common;
+using ClearCanvas.Desktop.Tools;
 
 namespace ClearCanvas.Ris.Client
 {
-    public interface IFolderSystem
+    public interface IFolderSystem : IDisposable
     {
         string Id { get; }
+        string DisplayName { get; }
         IList<IFolder> Folders { get; }
+        IToolSet FolderTools { get; }
+        IToolSet ItemTools { get; }
+
+        void SelectedFolderChangedEventHandler(object sender, EventArgs e);
+        void SelectedItemsChangedEventHandler(object sender, EventArgs e);
+        void SelectedItemDoubleClickedEventHandler(object sender, EventArgs e);
     }
 
-    public abstract class WorkflowFolderSystem<TItem> : IFolderSystem, IDisposable
+    public abstract class WorkflowFolderSystem<TItem> : IFolderSystem
     {
         private readonly IFolderExplorerToolContext _folderExplorer;
         private readonly IDictionary<string, Type> _worklistType;
@@ -52,6 +60,9 @@ namespace ClearCanvas.Ris.Client
         private event EventHandler _selectedItemDoubleClicked;
         private event EventHandler _selectedItemsChanged;
         private event EventHandler _selectedFolderChanged;
+
+        protected IToolSet _itemTools;
+        protected IToolSet _folderTools;
 
         public WorkflowFolderSystem(IFolderExplorerToolContext folderExplorer)
             : this(folderExplorer, null)
@@ -63,9 +74,6 @@ namespace ClearCanvas.Ris.Client
             _workflowFolders = new List<IFolder>();
 
             _folderExplorer = folderExplorer;
-            _folderExplorer.SelectedFolderChanged += _folderExplorer_SelectedFolderChanged;
-            _folderExplorer.SelectedItemsChanged += _folderExplorer_SelectedItemsChanged;
-            _folderExplorer.SelectedItemDoubleClicked += _folderExplorer_SelectedItemDoubleClicked;
 
             // Collect all worklist tokens
             _worklistType = new Dictionary<string, Type>();
@@ -81,6 +89,9 @@ namespace ClearCanvas.Ris.Client
                     }
                 }
             }
+
+            _itemTools = new ToolSet();
+            _folderTools = new ToolSet();
         }
 
         ~WorkflowFolderSystem()
@@ -95,9 +106,21 @@ namespace ClearCanvas.Ris.Client
             get { return this.GetType().FullName; }
         }
 
+        public abstract string DisplayName { get; }
+
         public IList<IFolder> Folders
         {
             get { return _workflowFolders; }
+        }
+
+        public IToolSet FolderTools
+        {
+            get { return _folderTools; }
+        }
+
+        public IToolSet ItemTools
+        {
+            get { return _itemTools; }
         }
 
         #endregion
@@ -192,17 +215,17 @@ namespace ClearCanvas.Ris.Client
             }
         }
 
-        private void _folderExplorer_SelectedFolderChanged(object sender, EventArgs e)
+        public virtual void SelectedFolderChangedEventHandler(object sender, EventArgs e)
         {
             EventsHelper.Fire(_selectedFolderChanged, this, EventArgs.Empty);
         }
 
-        private void _folderExplorer_SelectedItemsChanged(object sender, EventArgs e)
+        public virtual void SelectedItemsChangedEventHandler(object sender, EventArgs e)
         {
             EventsHelper.Fire(_selectedItemsChanged, this, EventArgs.Empty);
         }
 
-        void _folderExplorer_SelectedItemDoubleClicked(object sender, EventArgs e)
+        public virtual void SelectedItemDoubleClickedEventHandler(object sender, EventArgs e)
         {
             EventsHelper.Fire(_selectedItemDoubleClicked, this, EventArgs.Empty);
         }
@@ -210,7 +233,6 @@ namespace ClearCanvas.Ris.Client
         protected void AddFolder(WorkflowFolder<TItem> folder)
         {
             _workflowFolders.Add(folder);
-            _folderExplorer.AddFolderSystem(this);
         }
 
         protected virtual void Dispose(bool disposing)
@@ -218,6 +240,12 @@ namespace ClearCanvas.Ris.Client
             foreach (WorkflowFolder<TItem> folder in _workflowFolders)
             {
                 folder.Dispose();
+            }
+
+            if (disposing)
+            {
+                if (_itemTools != null) _itemTools.Dispose();
+                if (_folderTools != null) _folderTools.Dispose();
             }
         }
 

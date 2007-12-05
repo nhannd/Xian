@@ -230,11 +230,15 @@ namespace ClearCanvas.Desktop.View.WinForms
                 page.Component.Start();
 
             if (stackTab.ApplicationComponentControl == null)
+            {
                 stackTab.ApplicationComponentControl = (Control)_component.GetPageView(page).GuiElement;
+                stackTab.ApplicationComponentControl.Dock = DockStyle.Fill;
+            }
 
             if (_component.StackStyle == StackStyle.ShowMultiple)
                 stackTab.TitleBar.ArrowButton = Crownwood.DotNetMagic.Controls.ArrowButton.UpArrow;
 
+            _component.CurrentPage = page;
             tabPageUI.Select();
             tgl.Space = space;
         }

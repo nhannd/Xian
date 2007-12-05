@@ -30,25 +30,19 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Client;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
-using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client.Reporting
 {
-    [MenuAction("launch", "global-menus/Go/Radiologist Home")]
-    //[ButtonAction("launch", "global-toolbars/Go/Radiologist Home")]
+    [MenuAction("launch", "global-menus/Go/Radiologist Home", "Launch")]
+    //[ButtonAction("launch", "global-toolbars/Go/Radiologist Home", "Launch")]
     [Tooltip("launch", "Radiologist Home")]
     [IconSet("launch", IconScheme.Colour, "Icons.RadiologistHomeToolSmall.png", "Icons.RadiologistHomeToolMedium.png", "Icons.RadiologistHomeToolLarge.png")]
-    [ClickHandler("launch", "Launch")]
     [ExtensionOf(typeof(DesktopToolExtensionPoint))]
     public class HomeTool : Tool<IDesktopToolContext>
     {
@@ -78,18 +72,18 @@ namespace ClearCanvas.Ris.Client.Reporting
             }
         }
 
-        private IApplicationComponent BuildComponent()
+        private static IApplicationComponent BuildComponent()
         {
-            FolderExplorerComponent folderComponent = new FolderExplorerComponent(new ReportingFolderExplorerToolExtensionPoint());
             ReportingPreviewComponent previewComponent = new ReportingPreviewComponent();
+            HomePageContainer homePage = new HomePageContainer(new ReportingFolderExplorerToolExtensionPoint(), previewComponent);
 
-            folderComponent.SelectedItemsChanged += delegate(object sender, EventArgs args)
+            homePage.ContentsComponent.SelectedItemsChanged += delegate
             {
-                ReportingWorklistItem item = folderComponent.SelectedItems.Item as ReportingWorklistItem;
+                ReportingWorklistItem item = homePage.ContentsComponent.SelectedItems.Item as ReportingWorklistItem;
                 previewComponent.WorklistItem = item;
             };
 
-            return new HomePageContainer(folderComponent, previewComponent);
+            return homePage;
         }
     }
 }

@@ -36,28 +36,10 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Trees;
 using ClearCanvas.Desktop.Tables;
-using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.Ris.Client
 {
-    public interface IFolderExplorerToolContext : IToolContext
-    {
-        IDesktopWindow DesktopWindow { get; }
-        void AddFolderSystem(IFolderSystem folderSystem);
-        IFolder SelectedFolder { get; set; }
-        event EventHandler SelectedFolderChanged;
-
-        ISelection SelectedItems { get; }
-        event EventHandler SelectedItemsChanged;
-        event EventHandler SelectedItemDoubleClicked;
-
-        void AddItemActions(IActionSet actions);
-        void AddFolderActions(IActionSet actions);
-
-        void RegisterSearchDataHandler(ISearchDataHandler handler);
-    }
-
     /// <summary>
     /// Extension point for views onto <see cref="FolderExplorerComponent"/>
     /// </summary>
@@ -70,133 +52,27 @@ namespace ClearCanvas.Ris.Client
     /// WorklistExplorerComponent class
     /// </summary>
     [AssociateView(typeof(FolderExplorerComponentViewExtensionPoint))]
-    public class FolderExplorerComponent : ApplicationComponent, ISearchDataHandler
+    public class FolderExplorerComponent : ApplicationComponent
     {
-        #region IFolderExplorerToolContext implementation
-
-        class FolderExplorerToolContext : ToolContext, IFolderExplorerToolContext
-        {
-            private readonly FolderExplorerComponent _component;
-
-            public FolderExplorerToolContext(FolderExplorerComponent component)
-            {
-                _component = component;
-            }
-
-            #region IFolderExplorerToolContext Members
-
-            public IDesktopWindow DesktopWindow
-            {
-                get { return _component.Host.DesktopWindow; }
-            }
-
-            public void AddFolderSystem(IFolderSystem folderSystem)
-            {
-                _component.AddFolderSystem(folderSystem);
-            }
-
-            public IFolder SelectedFolder
-            {
-                get { return _component._selectedFolder; }
-                set { _component.SelectFolder(value); }
-            }
-
-            public event EventHandler SelectedFolderChanged
-            {
-                add { _component.SelectedFolderChanged += value; }
-                remove { _component.SelectedFolderChanged -= value; }
-            }
-
-            public ISelection SelectedItems
-            {
-                get { return _component.SelectedItems; }
-            }
-
-            public event EventHandler SelectedItemsChanged
-            {
-                add { _component.SelectedItemsChanged += value; }
-                remove { _component.SelectedItemsChanged -= value; }
-            }
-
-            public event EventHandler SelectedItemDoubleClicked
-            {
-                add { _component.SelectedItemDoubleClicked += value; }
-                remove { _component.SelectedItemDoubleClicked -= value; }
-            }
-
-            public void AddItemActions(IActionSet actions)
-            {
-                _component._itemActions = _component._itemActions.Union(actions);
-            }
-
-            public void AddFolderActions(IActionSet actions)
-            {
-                _component._folderActions = _component._folderActions.Union(actions);
-            }
-
-            public void RegisterSearchDataHandler(ISearchDataHandler handler)
-            {
-                _component.RegisterSearchDataHandler(handler);
-            }
-
-            #endregion
-        }
-
-        #endregion
-
-        #region Search related
-
-        private ISearchDataHandler _searchDataHandler;
-
-        public void RegisterSearchDataHandler(ISearchDataHandler handler)
-        {
-            _searchDataHandler = handler;
-        }
-
-        public SearchData SearchData
-        {
-            set
-            {
-                if (_searchDataHandler != null)
-                    _searchDataHandler.SearchData = value;
-            }
-        }
-
-        #endregion
-           
-        private IExtensionPoint _folderExplorerToolExtensionPoint;
-        private Tree<IFolder> _folderTree;
-        private IDictionary<IFolder, ITree> _containers;
+        private readonly Tree<IFolder> _folderTree;
+        private readonly IDictionary<IFolder, ITree> _containers;
         private IFolder _selectedFolder;
         private event EventHandler _selectedFolderChanged;
         private event EventHandler _folderIconChanged;
-
-        private bool _multiSelect;
-        private ISelection _selectedItems = Selection.Empty;
-        private ISelection _selectedItemsBeforeRefresh = Selection.Empty;
-        private event EventHandler _selectedItemDoubleClicked;
-        private event EventHandler _selectedItemsChanged;
         private event EventHandler _suppressSelectionChangedEvent;
 
-        private ToolSet _tools;
-
-        private IActionSet _itemActions = new ActionSet();
-        private IActionSet _folderActions = new ActionSet();
-
-        private readonly IList<IFolderSystem> _folderSystems;
+        private readonly IFolderSystem _folderSystem;
         private readonly IList<IFolder> _folders;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public FolderExplorerComponent(IExtensionPoint extensionPoint)
+        public FolderExplorerComponent(IFolderSystem folderSystem)
         {
             _containers = new Dictionary<IFolder, ITree>();
             _folderTree = new Tree<IFolder>(GetBinding());
-            _folderSystems = new List<IFolderSystem>();
             _folders = new List<IFolder>();
-
-            _folderExplorerToolExtensionPoint = extensionPoint;
+            _folderSystem = folderSystem;
         }
 
         private TreeItemBinding<IFolder> GetBinding()
@@ -241,9 +117,7 @@ namespace ClearCanvas.Ris.Client
         {
             base.Start();
 
-            _tools = new ToolSet(_folderExplorerToolExtensionPoint, new FolderExplorerToolContext(this));
-
-            FolderExplorerComponentSettings.Default.BuildAndSynchronize(_folderSystems, InsertFolderUsingPath);
+            FolderExplorerComponentSettings.Default.BuildAndSynchronize(_folderSystem, InsertFolderUsingPath);
 
             RefreshCounts(_folderTree);
         }
@@ -259,16 +133,14 @@ namespace ClearCanvas.Ris.Client
             }
         }
 
-        public override void Stop()
-        {
-            _tools.Dispose();
-
-            base.Stop();
-        }
-
         public override IActionSet ExportedActions
         {
-            get { return _itemActions.Union(_folderActions); }
+            get 
+            { 
+                return _folderSystem.FolderTools == null
+                    ? new ActionSet()
+                    : _folderSystem.FolderTools.Actions; 
+            }
         }
 
         #endregion
@@ -277,18 +149,12 @@ namespace ClearCanvas.Ris.Client
 
         public ITree FolderTree
         {
-            get
-            {
-                return _folderTree;
-            }
+            get { return _folderTree; }
         }
 
         public ISelection SelectedFolder
         {
-            get
-            {
-                return new Selection(_selectedFolder);
-            }
+            get { return new Selection(_selectedFolder); }
             set
             {
                 IFolder folderToSelect = (IFolder)value.Item;
@@ -307,38 +173,10 @@ namespace ClearCanvas.Ris.Client
             remove { _selectedFolderChanged -= value; }
         }
 
-        public bool MultiSelect
+        public event EventHandler FolderIconChanged
         {
-            get { return _multiSelect; }
-            set { _multiSelect = value; }
-        }
-
-        public ISelection SelectedItems
-        {
-            get
-            {
-                return _selectedItems;
-            }
-            set 
-            {
-                if (!_selectedItems.Equals(value))
-                {
-                    _selectedItems = value;
-                    EventsHelper.Fire(_selectedItemsChanged, this, EventArgs.Empty);
-                }
-            }
-        }
-
-        public event EventHandler SelectedItemDoubleClicked
-        {
-            add { _selectedItemDoubleClicked += value; }
-            remove { _selectedItemDoubleClicked -= value; }
-        }
-
-        public event EventHandler SelectedItemsChanged
-        {
-            add { _selectedItemsChanged += value; }
-            remove { _selectedItemsChanged -= value; }
+            add { _folderIconChanged += value; }
+            remove { _folderIconChanged -= value; }
         }
 
         public event EventHandler SuppressSelectionChanged
@@ -347,33 +185,11 @@ namespace ClearCanvas.Ris.Client
             remove { _suppressSelectionChangedEvent -= value; }
         }
 
-        public event EventHandler FolderIconChanged
-        {
-            add { _folderIconChanged += value; }
-            remove { _folderIconChanged -= value; }
-        }
-
-        public ActionModelRoot ItemsContextMenuModel
-        {
-            get
-            {
-                return ActionModelRoot.CreateModel(this.GetType().FullName, "folderexplorer-items-contextmenu", _itemActions);
-            }
-        }
-
-        public ActionModelNode ItemsToolbarModel
-        {
-            get
-            {
-                return ActionModelRoot.CreateModel(this.GetType().FullName, "folderexplorer-items-toolbar", _itemActions);
-            }
-        }
-
         public ActionModelRoot FoldersContextMenuModel
         {
             get
             {
-                ActionModelRoot amr = ActionModelRoot.CreateModel(this.GetType().FullName, "folderexplorer-folders-contextmenu", _folderActions);
+                ActionModelRoot amr = ActionModelRoot.CreateModel(this.GetType().FullName, "folderexplorer-folders-contextmenu", _folderSystem.FolderTools.Actions);
                 if (_selectedFolder != null && _selectedFolder.MenuModel != null)
                     amr.Merge(_selectedFolder.MenuModel);
                 return amr;
@@ -384,16 +200,16 @@ namespace ClearCanvas.Ris.Client
         {
             get
             {
-                ActionModelRoot amr = ActionModelRoot.CreateModel(this.GetType().FullName, "folderexplorer-folders-toolbar", _folderActions);
+                ActionModelRoot amr = ActionModelRoot.CreateModel(this.GetType().FullName, "folderexplorer-folders-toolbar", _folderSystem.FolderTools.Actions);
                 if (_selectedFolder != null && _selectedFolder.MenuModel != null)
                     amr.Merge(_selectedFolder.MenuModel);
                 return amr;
             }
         }
 
-        public void OnSelectedItemDoubleClick()
+        public IFolderSystem FolderSystem
         {
-            EventsHelper.Fire(_selectedItemDoubleClicked, this, EventArgs.Empty);
+            get { return _folderSystem; }
         }
 
         #endregion
@@ -425,34 +241,11 @@ namespace ClearCanvas.Ris.Client
         void OnSelectedFolderRefreshBegin(object sender, EventArgs e)
         {
             EventsHelper.Fire(_suppressSelectionChangedEvent, this, new ItemEventArgs<bool>(true));
-
-            _selectedItemsBeforeRefresh = _selectedItems;
         }
 
         void OnSelectedFolderRefreshFinish(object sender, EventArgs e)
         {
             EventsHelper.Fire(_suppressSelectionChangedEvent, this, new ItemEventArgs<bool>(false));
-
-            object sameObjFound = CollectionUtils.SelectFirst<object>(_selectedFolder.ItemsTable.Items,
-                delegate(object obj)
-                {
-                    return obj.Equals(_selectedItemsBeforeRefresh.Item);
-                });
-
-            Selection newSelection = Selection.Empty;
-            if (sameObjFound != null)
-            {
-                newSelection = new Selection(sameObjFound);
-            }
-            else if (_selectedFolder.ItemsTable.Items.Count > 0)
-            {
-                newSelection = new Selection(_selectedFolder.ItemsTable.Items[0]);
-            }
-
-            // Normally we check if _selectedItems is the same as new selection, but we must force a selected items changed event 
-            // because the detail of the selection may have changed after a refresh
-            _selectedItems = newSelection;
-            EventsHelper.Fire(_selectedItemsChanged, this, EventArgs.Empty);
         }
 
         private DragDropKind CanFolderAcceptDrop(IFolder folder, object dropData, DragDropKind kind)
@@ -475,12 +268,6 @@ namespace ClearCanvas.Ris.Client
                 _selectedFolder.DragComplete((dropData as ISelection).Items, result);
             }
             return DragDropKind.None;
-        }
-
-        private void AddFolderSystem(IFolderSystem folderSystem)
-        {
-            if (!_folderSystems.Contains(folderSystem))
-                _folderSystems.Add(folderSystem);
         }
 
         /// <summary>

@@ -71,16 +71,16 @@ namespace ClearCanvas.Ris.Client.Adt
 
         private IApplicationComponent BuildComponent()
         {
-            FolderExplorerComponent folderComponent = new FolderExplorerComponent(new TechnologistFolderExplorerToolExtensionPoint());
             TechnologistPreviewComponent previewComponent = new TechnologistPreviewComponent();
+            HomePageContainer homePage = new HomePageContainer(new TechnologistFolderExplorerToolExtensionPoint(), previewComponent);
 
-            folderComponent.SelectedItemsChanged += delegate(object sender, EventArgs args)
+            homePage.ContentsComponent.SelectedItemsChanged += delegate
             {
-                ModalityWorklistItem item = folderComponent.SelectedItems.Item as ModalityWorklistItem;
+                ModalityWorklistItem item = homePage.ContentsComponent.SelectedItems.Item as ModalityWorklistItem;
                 previewComponent.WorklistItem = item;
             };
 
-            return new HomePageContainer(folderComponent, previewComponent);
+            return homePage;
         }
     }
 }

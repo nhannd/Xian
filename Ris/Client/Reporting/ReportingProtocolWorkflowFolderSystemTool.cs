@@ -30,32 +30,17 @@
 #endregion
 
 using ClearCanvas.Common;
-using ClearCanvas.Desktop.Tools;
 
 namespace ClearCanvas.Ris.Client.Reporting
 {
     [ExtensionOf(typeof(ReportingFolderExplorerToolExtensionPoint))]
-    public class ReportingProtocolWorkflowFolderSystemTool : Tool<IFolderExplorerToolContext>
+    public class ReportingProtocolWorkflowFolderSystemTool : FolderExplorerToolBase
     {
-        private ReportingProtocolWorkflowFolderSystem _folderSystem;
-
-        public ReportingProtocolWorkflowFolderSystemTool()
-        {
-        }
-
         public override void Initialize()
         {
             base.Initialize();
 
             _folderSystem = new ReportingProtocolWorkflowFolderSystem(this.Context);
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                if (_folderSystem != null) _folderSystem.Dispose();
-            }
         }
     }
 }

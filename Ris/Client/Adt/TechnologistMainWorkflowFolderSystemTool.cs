@@ -30,34 +30,17 @@
 #endregion
 
 using ClearCanvas.Common;
-using ClearCanvas.Desktop.Tools;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
     [ExtensionOf(typeof(TechnologistFolderExplorerToolExtensionPoint))]
-    class TechnologistMainWorkflowFolderSystemTool : Tool<IFolderExplorerToolContext>
+    class TechnologistMainWorkflowFolderSystemTool : FolderExplorerToolBase
     {
-        private TechnologistMainWorkflowFolderSystem _folderSystem;
-
-        public TechnologistMainWorkflowFolderSystemTool()
-        {
-
-        }
-
         public override void Initialize()
         {
             base.Initialize();
 
             _folderSystem = new TechnologistMainWorkflowFolderSystem(this.Context);
         }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                if (_folderSystem != null) _folderSystem.Dispose();
-            }
-        }
-
     }
 }

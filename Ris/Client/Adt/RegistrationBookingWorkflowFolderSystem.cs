@@ -63,5 +63,10 @@ namespace ClearCanvas.Ris.Client.Adt
             this.AddFolder(new Folders.PendingProtocolFolder(this));
             this.AddFolder(new Folders.ToBeScheduledFolder(this));
         }
+
+        public override string DisplayName
+        {
+            get { return "Booking"; }
+        }
     }
 }

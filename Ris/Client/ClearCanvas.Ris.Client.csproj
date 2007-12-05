@@ -52,6 +52,9 @@
       <DependentUpon>AddressesSummaryComponentSettings.settings</DependentUpon>
     </Compile>
     <Compile Include="BiographyDemographicComponent.cs" />
+    <Compile Include="FolderContentsComponent.cs" />
+    <Compile Include="HomePageContainer.cs" />
+    <Compile Include="FolderExplorerComponent.cs" />
     <Compile Include="FolderExplorerComponentSettings.cs" />
     <Compile Include="FolderExplorerComponentSettings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -83,7 +86,6 @@
     <Compile Include="ExternalPractitionerLookupHandler.cs" />
     <Compile Include="ExternalPractitionerSummaryComponent.cs" />
     <Compile Include="MimeDocumentPreviewComponent.cs" />
-    <Compile Include="HomePageContainer.cs" />
     <Compile Include="ILookupHandler.cs" />
     <Compile Include="IViewerIntegration.cs" />
     <Compile Include="Document.cs" />
@@ -187,7 +189,6 @@
     <Compile Include="TestStorageFolders.cs" />
     <Compile Include="TextFieldMasks.cs" />
     <Compile Include="WorkflowFolder.cs" />
-    <Compile Include="FolderExplorerComponent.cs" />
     <Compile Include="LoginDialogSettings.cs" />
     <Compile Include="LoginDialogSettings.Designer.cs">
       <AutoGen>True</AutoGen>

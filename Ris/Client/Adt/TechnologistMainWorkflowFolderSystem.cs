@@ -70,6 +70,11 @@ namespace ClearCanvas.Ris.Client.Adt
             folderExplorer.RegisterSearchDataHandler(this);
         }
 
+        public override string DisplayName
+        {
+            get { return "Technologist"; }
+        }
+
         public SearchData SearchData
         {
             set

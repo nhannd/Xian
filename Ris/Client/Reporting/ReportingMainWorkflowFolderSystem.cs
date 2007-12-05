@@ -78,6 +78,11 @@ namespace ClearCanvas.Ris.Client.Reporting
             folderExplorer.RegisterSearchDataHandler(this);
         }
 
+        public override string DisplayName
+        {
+            get { return "Reporting"; }
+        }
+
         public SearchData SearchData
         {
             set

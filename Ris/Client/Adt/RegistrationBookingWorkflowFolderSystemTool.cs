@@ -29,37 +29,18 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common;
-using ClearCanvas.Desktop.Tools;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
     [ExtensionOf(typeof(RegistrationFolderExplorerToolExtensionPoint))]
-    public class RegistrationBookingWorkflowFolderSystemTool : Tool<IFolderExplorerToolContext>
+    public class RegistrationBookingWorkflowFolderSystemTool : FolderExplorerToolBase
     {
-        private RegistrationBookingWorkflowFolderSystem _folderSystem;
-
-        public RegistrationBookingWorkflowFolderSystemTool()
-        {
-        }
-
         public override void Initialize()
         {
             base.Initialize();
 
             _folderSystem = new RegistrationBookingWorkflowFolderSystem(this.Context);
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                if (_folderSystem != null) _folderSystem.Dispose();
-            }
         }
     }
 }
