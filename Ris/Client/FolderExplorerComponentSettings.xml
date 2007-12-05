@@ -1,2 +1,49 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<folder-systems />
+<folder-systems>
+  <folder-system id="ClearCanvas.Ris.Client.Adt.RegistrationMainWorkflowFolderSystem">
+    <folder id="ScheduledFolder" path="Scheduled" />
+    <folder id="CheckedInFolder" path="Checked In" />
+    <folder id="InProgressFolder" path="In Progress" />
+    <folder id="CompletedFolder" path="Completed" />
+    <folder id="CancelledFolder" path="Cancelled" />
+    <folder id="RegistrationSearchFolder" path="Search" />
+  </folder-system>
+  <folder-system id="ClearCanvas.Ris.Client.Adt.RegistrationBookingWorkflowFolderSystem">
+    <folder id="CompletedProtocolFolder" path="Completed Protocol" />
+    <folder id="SuspendedProtocolFolder" path="Suspended Protocol" />
+    <folder id="RejectedProtocolFolder" path="Rejected Protocol" />
+    <folder id="PendingProtocolFolder" path="Pending Protocol" />
+    <folder id="ToBeScheduledFolder" path="To Be Scheduled" />
+  </folder-system>
+  <folder-system id="ClearCanvas.Ris.Client.Adt.TechnologistMainWorkflowFolderSystem">
+    <folder id="ScheduledTechnologistWorkflowFolder" path="Scheduled" />
+    <folder id="CheckedInTechnologistWorkflowFolder" path="Checked In" />
+    <folder id="InProgressTechnologistWorkflowFolder" path="In Progress" />
+    <folder id="UndocumentedTechnologistWorkflowFolder" path="Undocumented" />
+    <folder id="CancelledTechnologistWorkflowFolder" path="Cancelled" />
+    <folder id="CompletedTechnologistWorkflowFolder" path="Completed" />
+    <folder id="TechnologistSearchFolder" path="Search" />
+  </folder-system>
+  <folder-system id="ClearCanvas.Ris.Client.Reporting.ReportingMainWorkflowFolderSystem">
+    <folder id="ToBeReportedFolder" path="Reporting/To be Reported" />
+    <folder id="DraftFolder" path="Reporting/Draft" />
+    <folder id="InTranscriptionFolder" path="Reporting/In Transcriptioin" />
+    <folder id="ToBeVerifiedFolder" path="Reporting/To be Verified" />
+    <folder id="ReviewResidentReportFolder" path="Reporting/Review Resident Report" />
+    <folder id="VerifiedFolder" path="Reporting/Verified" />
+    <folder id="SearchFolder" path="Reporting/Search" />
+  </folder-system>
+  <folder-system id="ClearCanvas.Ris.Client.Reporting.ReportingProtocolWorkflowFolderSystem">
+    <folder id="ToBeProtocolledFolder" path="Protocolling/To be Protocolled" />
+    <folder id="DraftProtocolFolder" path="Protocolling/Draft" />
+    <folder id="CompletedProtocolFolder" path="Protocolling/Completed" />
+    <folder id="SuspendedProtocolFolder" path="Protocolling/Suspended" />
+    <folder id="RejectedProtocolFolder" path="Protocolling/Rejected" />
+  </folder-system>
+  <folder-system id="ClearCanvas.Ris.Client.Fax.IncomingFaxWorkflowFolderSystem">
+    <folder id="IncomingPendingFolder" path="Pending" />
+    <folder id="IncomingProcessedFolder" path="Processed" />
+    <folder id="IncomingDeletedFolder" path="Deleted" />
+    <folder id="IncomingSpamFolder" path="Spam" />
+  </folder-system>
+</folder-systems>

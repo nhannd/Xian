@@ -143,24 +143,30 @@ namespace ClearCanvas.Ris.Client
 
             // Construct the explorer component and place each into a stack tab
             StackTabComponentContainer explorerComponents = new StackTabComponentContainer(StackStyle.ShowOneOnly);
-            CollectionUtils.ForEach(_tools.Tools,
+            explorerComponents.CurrentPageChanged +=
+                delegate { this.SelectedFolderExplorer = (FolderExplorerComponent)explorerComponents.CurrentPage.Component; };
+
+            List<IFolderSystem> folderSystems = CollectionUtils.Map<ITool, IFolderSystem, List<IFolderSystem>>(_tools.Tools,
                 delegate(ITool tool)
                 {
                     FolderExplorerToolBase folderExplorerTool = (FolderExplorerToolBase) tool;
-
-                    FolderExplorerComponent component = new FolderExplorerComponent(folderExplorerTool.FolderSystem);
-                    _folderExplorerComponents.Add(folderExplorerTool.FolderSystem, component);
-                    explorerComponents.Pages.Add(new TabPage(folderExplorerTool.FolderSystem.DisplayName, component));
-
-                    component.SelectedFolderChanged += OnSelectedFolderChanged;
-
-                    // TODO: what does this suppress??
-                    //component.SuppressSelectionChanged += _folderContentComponent.OnSuppressSelectionChanged;
+                    return folderExplorerTool.FolderSystem;
                 });
 
-            explorerComponents.CurrentPageChanged += 
-                delegate { this.SelectedFolderExplorer = (FolderExplorerComponent)explorerComponents.CurrentPage.Component; };
+            // Order the Folder Systems
+            folderSystems = FolderExplorerComponentSettings.Default.OrderFolderSystems(folderSystems);
 
+            CollectionUtils.ForEach(folderSystems,
+                delegate(IFolderSystem folderSystem)
+                    {
+                        FolderExplorerComponent component = new FolderExplorerComponent(folderSystem);
+                        component.SelectedFolderChanged += OnSelectedFolderChanged;
+                        // TODO: what does this suppress??
+                        //component.SuppressSelectionChanged += _folderContentComponent.OnSuppressSelectionChanged;
+
+                        _folderExplorerComponents.Add(folderSystem, component);
+                        explorerComponents.Pages.Add(new TabPage(folderSystem.DisplayName, component));
+                    });
 
             // Construct the home page
             SplitComponentContainer contentAndPreview = new SplitComponentContainer(

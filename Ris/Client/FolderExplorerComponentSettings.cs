@@ -6,6 +6,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Configuration;
 using ClearCanvas.Desktop;
 using System.Diagnostics;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -33,46 +34,48 @@ namespace ClearCanvas.Ris.Client
         /// The XML system is automatically persisted, and new systems that have never before been persisted
         /// will be added to the store.
         /// </summary>
-        /// <param name="folderSystems">FolderSystem that contains lists of folders</param>
+        /// <param name="folderSystem">FolderSystem that contains lists of folders</param>
         /// <param name="insertFolderDelegate">A delegate to insert folder</param>
-        public void BuildAndSynchronize(IList<IFolderSystem> folderSystems, InsertFolderDelegate insertFolderDelegate)
-        {
-            Dictionary<string, IDictionary<string, IFolder>> xmlFolderSystemFolderMap = new Dictionary<string, IDictionary<string, IFolder>>();
-            Dictionary<string, XmlElement> xmlFolderSystemMap = new Dictionary<string, XmlElement>();
-
-            // Synchronize all folder systems
-            foreach (IFolderSystem folderSystem in folderSystems)
-            {
-                string folderSystemID = folderSystem.Id;
-
-                // remember the folder system map
-                IDictionary<string, IFolder> folderMap = BuildFolderMap(folderSystem.Folders);
-                xmlFolderSystemFolderMap.Add(folderSystemID, folderMap);
-
-                // remember the modified xmlFolderSystem, since it may be different from the settings (which only store static folder)
-                XmlElement xmlFolderSystem = Synchronize(folderSystemID, folderMap);
-                xmlFolderSystemMap.Add(folderSystemID, xmlFolderSystem);
-            }
-
-            // Using the order in the setting, rebuild each folder systems 
-            foreach (XmlElement xmlFolderSystem in this.ListXmlFolderSystems())
-            {
-                string folderSystemID = xmlFolderSystem.GetAttribute("id");
-
-                if (xmlFolderSystemFolderMap.ContainsKey(folderSystemID))
-                    Build(xmlFolderSystemMap[folderSystemID], xmlFolderSystemFolderMap[folderSystemID], insertFolderDelegate);
-            }
-        }
-
         public void BuildAndSynchronize(IFolderSystem folderSystem, InsertFolderDelegate insertFolderDelegate)
         {
-            // Synchronize all folder systems
             string folderSystemID = folderSystem.Id;
 
             IDictionary<string, IFolder> folderMap = BuildFolderMap(folderSystem.Folders);
             XmlElement xmlFolderSystem = Synchronize(folderSystemID, folderMap);
 
             Build(xmlFolderSystem, folderMap, insertFolderDelegate);
+        }
+
+        /// <summary>
+        /// Ordered the folder systems based on what is in the XML.  Any new folder systems will be appended at the end
+        /// </summary>
+        /// <param name="folderSystems">a list of folder systems</param>
+        /// <returns>A list of folder systems that is ordered based on the XML</returns>
+        public List<IFolderSystem> OrderFolderSystems(List<IFolderSystem> folderSystems)
+        {
+            List<IFolderSystem> orderedList = new List<IFolderSystem>();
+
+            // order the folderSystems based on the order in the XML
+            foreach (XmlElement xmlFolderSystem in this.ListXmlFolderSystems())
+            {
+                string folderSystemID = xmlFolderSystem.GetAttribute("id");
+
+                IFolderSystem folderSystem = CollectionUtils.SelectFirst(folderSystems, 
+                    delegate(IFolderSystem fs) { return Equals(fs.Id, folderSystemID); });
+
+                if (folderSystem != null)
+                {
+                    orderedList.Add(folderSystem);
+                    folderSystems.Remove(folderSystem);
+                    if (folderSystems.Count == 0)
+                        break;
+                }
+            }
+
+            // Add all remaining folder systems, which does not yet exist in the XML
+            orderedList.AddRange(folderSystems);
+
+            return orderedList;
         }
 
         #region Private Utility Methods
