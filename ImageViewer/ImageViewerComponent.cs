@@ -615,17 +615,22 @@ namespace ClearCanvas.ImageViewer
 
 		private static void LaunchInWindow(ImageViewerComponent imageViewer, IDesktopWindow desktopWindow)
 		{
-			ApplicationComponent.LaunchAsWorkspace(
+			IWorkspace workspace = ApplicationComponent.LaunchAsWorkspace(
 				desktopWindow,
 				imageViewer,
-				imageViewer.PatientsLoadedLabel,
-				delegate
-				{
-					imageViewer.Dispose();
-				});
+				imageViewer.PatientsLoadedLabel);
 
+			workspace.Closed += delegate(object sender, ClosedEventArgs e)
+			                    	{
+			                    		imageViewer.Dispose();
+			                    	};
 			imageViewer.Layout();
 			imageViewer.PhysicalWorkspace.SelectDefaultImageBox();			
+		}
+
+		private static void workspace_Closed(object sender, ClosedEventArgs e)
+		{
+			throw new NotImplementedException();
 		}
 
 		#endregion

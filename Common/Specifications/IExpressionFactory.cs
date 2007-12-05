@@ -29,6 +29,8 @@
 
 #endregion
 
+#pragma warning disable 1591
+
 namespace ClearCanvas.Common.Specifications
 {
     public interface IExpressionFactory

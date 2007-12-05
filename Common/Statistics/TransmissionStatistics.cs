@@ -1,3 +1,6 @@
+
+#pragma warning disable 1591, 1574
+
 namespace ClearCanvas.Common.Statistics
 {
 

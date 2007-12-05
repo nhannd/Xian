@@ -88,18 +88,32 @@ namespace ClearCanvas.Desktop.Configuration
 					store = new LocalConfigurationStore();
                 }
 
-				_workspace = ApplicationComponent.LaunchAsWorkspace(
-					this.Context.DesktopWindow,
-					new SettingsManagementComponent(store),
-                    "Settings Management");
-                _workspace.Closed += delegate { _workspace = null; };
+            	_workspace = ApplicationComponent.LaunchAsWorkspace(
+            		this.Context.DesktopWindow,
+            		new SettingsManagementComponent(store),
+            		"Settings Management");
+
+				_workspace.Closed += OnWorkspaceClosed;
 			}
             else
             {
                 _workspace.Activate();
             }
         }
-    }
+
+		private void OnWorkspaceClosed(object sender, ClosedEventArgs e)
+		{
+			_workspace = null;
+		}
+
+		protected override void Dispose(bool disposing)
+		{
+			if (_workspace != null)
+				_workspace.Closed -= OnWorkspaceClosed;
+
+			base.Dispose(disposing);
+		}
+	}
 
     /// <summary>
     /// Extension point for views onto <see cref="SettingsManagementComponent"/>.

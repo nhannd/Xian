@@ -29,21 +29,17 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
-using ClearCanvas.Desktop.Tools;
-using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.BaseTools;
-using ClearCanvas.Common.Utilities;
-using System.Diagnostics;
 
 namespace ClearCanvas.ImageViewer.Layout.Basic
 {
 	[MenuAction("show", "global-menus/MenuTools/MenuStandard/MenuLayoutManager", "Show")]
 	[ButtonAction("show", "global-toolbars/ToolbarStandard/ToolbarLayoutManager", "Show")]
-	[IconSet("show", IconScheme.Colour, "Icons.LayoutToolSmall.png", "Icons.LayoutToolMedium.png", "Icons.LayoutToolLarge.png")]
+	[Desktop.Actions.IconSet("show", IconScheme.Colour, "Icons.LayoutToolSmall.png", "Icons.LayoutToolMedium.png", "Icons.LayoutToolLarge.png")]
     [Tooltip("show", "Layout Manager")]
 	[GroupHint("show", "Application.Workspace.Layout.Basic")]
 
@@ -83,19 +79,31 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
                 // launch the layout component in a shelf
                 // note that the component is thrown away when the shelf is closed by the user
-				IShelf shelf = ApplicationComponent.LaunchAsShelf(
-					desktopWindow,
-					layoutComponent,
-                    SR.TitleLayoutManager,
-					"Layout",
-                    ShelfDisplayHint.DockLeft | ShelfDisplayHint.DockAutoHide,
-					delegate
-						{
-							_shelves.Remove(desktopWindow);
-						});
-
+            	IShelf shelf = ApplicationComponent.LaunchAsShelf(
+            		desktopWindow,
+            		layoutComponent,
+            		SR.TitleLayoutManager,
+            		"Layout",
+            		ShelfDisplayHint.DockLeft | ShelfDisplayHint.DockAutoHide);
 				_shelves[desktopWindow] = shelf;
+
+				_shelves[desktopWindow].Closed += OnShelfClosed;
             }
         }
+
+		void OnShelfClosed(object sender, ClosedEventArgs e)
+		{							
+			_shelves.Remove(this.Context.DesktopWindow);
+		}
+
+		protected override void Dispose(bool disposing)
+		{
+			IDesktopWindow desktopWindow = this.Context.DesktopWindow;
+			
+			if (_shelves.ContainsKey(desktopWindow))
+				_shelves[desktopWindow].Closed -= OnShelfClosed;
+
+			base.Dispose(disposing);
+		}
 	}
 }

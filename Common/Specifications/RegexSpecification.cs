@@ -29,6 +29,8 @@
 
 #endregion
 
+#pragma warning disable 1591
+
 using System.Text.RegularExpressions;
 
 namespace ClearCanvas.Common.Specifications

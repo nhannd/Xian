@@ -29,6 +29,8 @@
 
 #endregion
 
+#pragma warning disable 1591
+
 using System.Collections;
 
 namespace ClearCanvas.Common.Specifications

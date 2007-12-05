@@ -73,16 +73,28 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 				CineApplicationComponent component = new CineApplicationComponent(desktopWindow);
 				IShelf shelf = ApplicationComponent.LaunchAsShelf(
 					desktopWindow,
-					component, SR.TitleCine, 
-					"Cine", 
-					ShelfDisplayHint.DockFloat,
-					delegate
-					{
-						_shelves.Remove(desktopWindow);
-					});
+					component, SR.TitleCine,
+					"Cine",
+					ShelfDisplayHint.DockFloat);
 
 				_shelves[desktopWindow] = shelf;
+				_shelves[desktopWindow].Closed += OnShelfClosed;
 			}
+		}
+
+		void OnShelfClosed(object sender, ClosedEventArgs e)
+		{
+			_shelves.Remove(this.Context.DesktopWindow);
+		}
+
+		protected override void Dispose(bool disposing)
+		{
+			IDesktopWindow desktopWindow = this.Context.DesktopWindow;
+
+			if (_shelves.ContainsKey(desktopWindow))
+				_shelves[desktopWindow].Closed -= OnShelfClosed;
+
+			base.Dispose(disposing);
 		}
 	}
 }

@@ -62,14 +62,28 @@ namespace ClearCanvas.Desktop.ExtensionBrowser
             {
 				ExtensionBrowserComponent browser = new ExtensionBrowserComponent();
 
-                _shelf = ApplicationComponent.LaunchAsShelf(
-                    this.Context.DesktopWindow,
-                    browser,
-                    SR.TitleExtensionBrowser,
-					"Extension Browser",
-                    ShelfDisplayHint.DockLeft | ShelfDisplayHint.DockAutoHide,
-                    delegate(IApplicationComponent component) { _shelf = null; });
+            	_shelf = ApplicationComponent.LaunchAsShelf(
+            		this.Context.DesktopWindow,
+            		browser,
+            		SR.TitleExtensionBrowser,
+            		"Extension Browser",
+            		ShelfDisplayHint.DockLeft | ShelfDisplayHint.DockAutoHide);
+
+				_shelf.Closed += OnShelfClosed;
             }
         }
+
+		private void OnShelfClosed(object sender, ClosedEventArgs e)
+		{
+			_shelf = null;
+		}
+
+		protected override void Dispose(bool disposing)
+		{
+			if (_shelf != null)
+				_shelf.Closed -= OnShelfClosed;
+
+			base.Dispose(disposing);
+		}
     }
 }

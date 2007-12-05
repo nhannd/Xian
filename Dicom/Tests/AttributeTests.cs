@@ -28,6 +28,9 @@
 // OF SUCH DAMAGE.
 
 #endregion
+
+#pragma warning disable 1591, 0168
+
 #if UNIT_TESTS
 using System;
 using System.Collections.Generic;

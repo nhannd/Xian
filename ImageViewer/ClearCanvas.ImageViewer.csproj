@@ -437,7 +437,7 @@
     <None Include="ClassDiagrams\Annotations.cd" />
     <None Include="ClassDiagrams\CompositeGraphics.cd" />
     <None Include="ClassDiagrams\Graphics.cd" />
-    <None Include="ClassDiagrams\DiagnosticImageViewerComponent.cd" />
+    <None Include="ClassDiagrams\ImageViewerAndLayoutManager.cd" />
     <None Include="ClassDiagrams\GraphicSpatialTransform.cd" />
     <None Include="ClassDiagrams\ImageGraphics.cd" />
     <None Include="ClassDiagrams\ImageViewerComponent.cd" />

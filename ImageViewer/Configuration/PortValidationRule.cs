@@ -65,11 +65,11 @@ namespace ClearCanvas.ImageViewer.Configuration
 					if (port < 1 || port > 65535)
 						return new ValidationResult(false, SR.ValidationPortOutOfRange);
 				}
-				catch (FormatException e)
+				catch (FormatException)
 				{
 					return new ValidationResult(false, SR.ValidationPortMustBeNumeric);
 				}
-				catch (OverflowException e)
+				catch (OverflowException)
 				{
 					return new ValidationResult(false, SR.ValidationPortOutOfRange);
 				}
