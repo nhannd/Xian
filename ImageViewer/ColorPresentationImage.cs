@@ -110,6 +110,14 @@ namespace ClearCanvas.ImageViewer
 			_pixelDataGetter = pixelDataGetter;
 		}
 
+		/// <summary>
+		/// Creates a fresh copy of the <see cref="ColorPresentationImage"/>.
+		/// </summary>
+		/// <remarks>
+		/// This will instantiate a fresh copy of this <see cref="ColorPresentationImage"/>
+		/// using the same construction parameters as the original.
+		/// </remarks>
+		/// <returns></returns>		
 		public override IPresentationImage CreateFreshCopy()
 		{
 			if (_constructor == 0)
