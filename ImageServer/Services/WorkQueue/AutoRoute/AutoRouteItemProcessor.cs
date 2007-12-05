@@ -44,13 +44,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
     /// </summary>
     public class AutoRouteItemProcessor : BaseItemProcessor, IWorkQueueItemProcessor
     {
-        private string _processorId;
-        public string ProcessorID
-        {
-            get { return _processorId; }
-            set { _processorId = value; }
-        }
-
         #region Private Methods
         /// <summary>
         /// Add the UIDs scheduled to be transfered to the SCU
@@ -75,10 +68,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
         /// <summary>
         /// Process a <see cref="WorkQueue"/> item of type AutoRoute.
         /// </summary>
-        protected override void OnProcess()
+        public override void Process(Model.WorkQueue item)
         {
-            Model.WorkQueue item = WorkQueueItem; // avoid using property everytime for performance purpose
-
             // Load related rows form the WorkQueueUid table
             LoadUids(item);
 

@@ -279,7 +279,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                             try
                             {
                                 processor = factory.GetItemProcessor();
-                                processor.WorkQueueItem = queueItem;
                             }
                             catch (Exception e)
                             {
@@ -288,23 +287,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                                 continue;
                             }
 
-                            // Assign the id to the processor. All sub processors have the same ID as the parent
-                            // Note: 
-                            // This approach should be sufficient to work queue reset mechanism. The assumptions are:
-                            //      1. only one instance of the WorkQueueProcessor will exist on the same machine at one time.
-                            //      2. The only time that the sub-processor dies and leaves the item in "In Progress" state
-                            //          is when users stop the service. All other general failures will be handled cleanly by the general
-                            //          exception handler.
-                            //  
-                            processor.ProcessorID = ServiceTools.ProcessorId;
-
                             // Enqueue the actual processing of the item to the 
                             // thread pool.  
                             _threadPool.Enqueue(delegate
                                                     {
                                                         try
                                                         {
-                                                            processor.Process();
+                                                            processor.Process(queueItem);
                                                         }
                                                         catch (Exception e)
                                                         {

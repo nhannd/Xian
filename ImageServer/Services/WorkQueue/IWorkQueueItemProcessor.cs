@@ -30,10 +30,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-
-using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue
 {
@@ -42,33 +38,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
     /// </summary>
     public interface IWorkQueueItemProcessor : IDisposable
     {
-        #region Properties
-        // A string used to identify the processor
-        string ProcessorID
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// Gets or sets the WorkQueue item being processed.
-        /// </summary>
-        Model.WorkQueue WorkQueueItem
-        {
-            get; set;
-        }
-
-        #endregion Properties
-
-        #region Events
-        
-        #endregion
-
         #region Methods
 
-        void Process();
+        void Process(Model.WorkQueue item);
         
         #endregion
-
     }
 }

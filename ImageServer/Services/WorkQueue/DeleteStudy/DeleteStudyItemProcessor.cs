@@ -42,7 +42,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy
     public class DeleteStudyItemProcessor : BaseItemProcessor, IWorkQueueItemProcessor
     {
         #region Private Members
-        private string _processorId;
+
+        private ServerPartition _partition;
+
         #endregion
 
         #region Private Methods
@@ -85,8 +87,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy
 
                 if (false == delete.Execute(parms))
                 {
-                    Platform.Log(LogLevel.Error, "Unexpected error when trying to delete study: {0}",
-                                 item.StudyStorageKey);
+                    Platform.Log(LogLevel.Error, "Unexpected error when trying to delete study: {0} on partition {1}",
+                                 StorageLocation.StudyInstanceUid, _partition.Description);
                 }
                 else
                     updateContext.Commit();
@@ -96,15 +98,16 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy
 
         #region IWorkQueueItemProcessor Members
 
-        
-
-        protected override void OnProcess()
+        public override void Process(Model.WorkQueue item)
         {
-            Model.WorkQueue item = WorkQueueItem;
-
             //Load the storage location.
             LoadStorageLocation(item);
 
+            _partition = ServerPartition.Load(ReadContext, item.ServerPartitionKey);
+
+            Platform.Log(LogLevel.Info, "Deleting study {0} from Partition {1}", StorageLocation.StudyInstanceUid,
+                         _partition.Description);
+            
             RemoveFilesystem();
 
             RemoveDatabase(item);

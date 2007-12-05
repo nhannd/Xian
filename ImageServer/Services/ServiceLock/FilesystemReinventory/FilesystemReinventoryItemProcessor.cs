@@ -31,14 +31,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.Parameters;
-using System.IO;
-using ClearCanvas.ImageServer.Model.SelectBrokers;
 
 namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
 {
@@ -57,15 +56,8 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
         private void ReinventoryFilesystem(Filesystem filesystem)
         {
             ServerPartition partition;
-            String studyInstanceUid;
-            String seriesInstanceUid;
-            String sopInstanceUid;
-            FileInfo[] sopInstanceFiles;
-            IList<StudyStorageLocation> studyLocationList;
 
             DirectoryInfo filesystemDir = new DirectoryInfo(filesystem.FilesystemPath);
-
-            PurgeXml(filesystemDir);
 
             foreach(DirectoryInfo partitionDir in filesystemDir.GetDirectories())
             {
@@ -76,11 +68,12 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
                 {
                     foreach(DirectoryInfo studyDir in dateDir.GetDirectories())
                     {
-                        studyInstanceUid = studyDir.Name;
+                        String studyInstanceUid = studyDir.Name;
 
                         StudyStorageLocation location;
                         if (false == GetStudyStorageLocation(partition, studyInstanceUid, out location))
                         {
+                            IList<StudyStorageLocation> studyLocationList;
                             using (IUpdateContext update = _store.OpenUpdateContext(UpdateContextSyncMode.Flush))
                             {
                                 IInsertStudyStorage studyInsert = update.GetBroker<IInsertStudyStorage>();
@@ -96,22 +89,28 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
                             }
 
                             location = studyLocationList[0];
-                        }
 
-                        foreach (DirectoryInfo seriesDir in studyDir.GetDirectories())
-                        {
-                            seriesInstanceUid = seriesDir.Name;
-                            sopInstanceFiles = seriesDir.GetFiles("*.dcm");
+                            string studyXml = Path.Combine(location.GetStudyPath(), studyInstanceUid + ".xml");
+                            if (File.Exists(studyXml))
+                                File.Delete(studyXml);
 
-                            foreach (FileInfo sopFile in sopInstanceFiles)
+                            foreach (DirectoryInfo seriesDir in studyDir.GetDirectories())
                             {
-                                sopInstanceUid = sopFile.Name.Replace(sopFile.Extension, "");
+                                String seriesInstanceUid = seriesDir.Name;
+                                FileInfo[] sopInstanceFiles = seriesDir.GetFiles("*.dcm");
 
-                                using (IUpdateContext update = _store.OpenUpdateContext(UpdateContextSyncMode.Flush))
+                                foreach (FileInfo sopFile in sopInstanceFiles)
                                 {
-                                    IInsertWorkQueueStudyProcess workQueueInsert = update.GetBroker<IInsertWorkQueueStudyProcess>();
+                                    String sopInstanceUid = sopFile.Name.Replace(sopFile.Extension, "");
 
-                                    WorkQueueStudyProcessInsertParameters queueInsertParms = new WorkQueueStudyProcessInsertParameters();
+                                    // Just use a read context here, in hopes of improving 
+                                    // performance.  Every other place in the code should use
+                                    // Update contexts when doing transactions.
+                                    IInsertWorkQueueStudyProcess workQueueInsert =
+                                        ReadContext.GetBroker<IInsertWorkQueueStudyProcess>();
+
+                                    WorkQueueStudyProcessInsertParameters queueInsertParms =
+                                        new WorkQueueStudyProcessInsertParameters();
                                     queueInsertParms.StudyStorageKey = location.GetKey();
                                     queueInsertParms.ServerPartitionKey = partition.GetKey();
                                     queueInsertParms.SeriesInstanceUid = seriesInstanceUid;
@@ -119,30 +118,14 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
                                     queueInsertParms.ScheduledTime = Platform.Time;
                                     queueInsertParms.ExpirationTime = Platform.Time.AddMinutes(1.0);
 
-                                    workQueueInsert.Execute(queueInsertParms);
-
-                                    update.Commit();
+                                    if (!workQueueInsert.Execute(queueInsertParms))
+                                        Platform.Log(LogLevel.Error,
+                                                     "Failure attempting to insert SOP Instance into WorkQueue during Reinventory.");
                                 }
                             }
                         }
                     }
                 }
-            }
-        }
-        private void PurgeXml(DirectoryInfo dir)
-        {
-            FileInfo[] files = dir.GetFiles("*.xml");
-            foreach (FileInfo file in files)
-            {
-                file.Delete();
-            }
-
-            String[] subdirectories = Directory.GetDirectories(dir.FullName);
-            foreach (String subPath in subdirectories)
-            {
-                DirectoryInfo subDir = new DirectoryInfo(subPath);
-                PurgeXml(subDir);
-                continue;
             }
         }
         private bool GetServerPartition(string partitionFolderName, out ServerPartition partition)
@@ -161,25 +144,22 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
         }
         private bool GetStudyStorageLocation(ServerPartition partition, string studyInstanceUid, out StudyStorageLocation location)
         {
-            using (IReadContext read = _store.OpenReadContext())
-            {
-                IQueryStudyStorageLocation procedure = read.GetBroker<IQueryStudyStorageLocation>();
-                StudyStorageLocationQueryParameters parms = new StudyStorageLocationQueryParameters();
-                parms.ServerPartitionKey = partition.GetKey();
-                parms.StudyInstanceUid = studyInstanceUid;
-                IList<StudyStorageLocation> locationList = procedure.Execute(parms);
+            IQueryStudyStorageLocation procedure = ReadContext.GetBroker<IQueryStudyStorageLocation>();
+            StudyStorageLocationQueryParameters parms = new StudyStorageLocationQueryParameters();
+            parms.ServerPartitionKey = partition.GetKey();
+            parms.StudyInstanceUid = studyInstanceUid;
+            IList<StudyStorageLocation> locationList = procedure.Execute(parms);
 
-                foreach (StudyStorageLocation studyLocation in locationList)
+            foreach (StudyStorageLocation studyLocation in locationList)
+            {
+                if (_monitor.CheckFilesystemReadable(studyLocation.FilesystemKey))
                 {
-                    if (_monitor.CheckFilesystemReadable(studyLocation.FilesystemKey))
-                    {
-                        location = studyLocation;
-                        return true;
-                    }
+                    location = studyLocation;
+                    return true;
                 }
-                location = null;
-                return false;
             }
+            location = null;
+            return false;
         }
 
         #endregion
@@ -187,25 +167,25 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
         #region Public Methods
         public void Process(Model.ServiceLock item)
         {
-            DirectoryInfo dir;
             _monitor = new FilesystemMonitor();
             _monitor.Load();
             _store = PersistentStoreRegistry.GetDefaultStore();            
             
-            using (IReadContext read = _store.OpenReadContext())
-            {
-                IGetServerPartitions broker = read.GetBroker<IGetServerPartitions>();
-                _partitions = broker.Execute();
-            }
+            IGetServerPartitions broker = ReadContext.GetBroker<IGetServerPartitions>();
+            _partitions = broker.Execute();
 
             ServerFilesystemInfo info;
             _monitor.Filesystems.TryGetValue(item.FilesystemKey, out info);
+
+            Platform.Log(LogLevel.Info, "Starting reinventory of filesystem: {0}", info.Filesystem.Description);
+
             ReinventoryFilesystem(info.Filesystem);
+
+            Platform.Log(LogLevel.Info, "Completed reinventory of filesystem: {0}", info.Filesystem.Description);
 
             item.ScheduledTime = item.ScheduledTime.AddDays(1);
 
             UnlockServiceLock(item, false, Platform.Time.AddDays(1));
-
         }
         #endregion
     }

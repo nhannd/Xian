@@ -286,13 +286,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         /// <summary>
         /// Process a <see cref="WorkQueue"/> item.
         /// </summary>
-        protected override void OnProcess()
+        public override void Process(Model.WorkQueue item)
         {
             // Start timing how long the processor takes to execute
             _stats.Begin();
 
-            Model.WorkQueue item = WorkQueueItem; // avoid using property everytime for performance purpose
-
+   
 #if DEBUG_TEST
         // Simulate slow processing so that we can stop the service
         // and test that it reset workqueue item when restarted

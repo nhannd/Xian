@@ -191,15 +191,17 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
             // Update the DB Percent full
             UpdateFilesystemPercentFull(item);
 
-            Platform.Log(LogLevel.Info, "Starting filesystem watermark check on filesystem {0}",
-                         _monitor.Filesystems[item.FilesystemKey].Filesystem.Description);
+            ServerFilesystemInfo fs = _monitor.Filesystems[item.FilesystemKey];
+
+            Platform.Log(LogLevel.Info, "Starting filesystem watermark check on filesystem {0} (High Watermark: {1}, Low Watermark: {2}",
+                         fs.Filesystem.Description, fs.Filesystem.HighWatermark, fs.Filesystem.LowWatermark);
 
             if (_monitor.CheckFilesystemAboveHighWatermark(item.FilesystemKey))
             {
                 if (CheckWorkQueueDeleteCount(item) > 0)
                 {
-                    Platform.Log(LogLevel.Info, "Delaying filesystem check, StudyDelete items still in the WorkQueue: {0}",
-                                 _monitor.Filesystems[item.FilesystemKey].Filesystem.Description);
+                    Platform.Log(LogLevel.Info, "Delaying filesystem check, StudyDelete items still in the WorkQueue: {0} (Current: {1}, High Watermark: {2}",
+                                 fs.Filesystem.Description, fs.Filesystem.PercentFull, fs.Filesystem.HighWatermark);
 
                     UnlockServiceLock(item, true, Platform.Time.AddMinutes(1));
                 }
@@ -218,23 +220,23 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
                         delayMinutes = 1;
                     }
 
-                    Platform.Log(LogLevel.Info, "Completed filesystem delete: {0}",
-                           _monitor.Filesystems[item.FilesystemKey].Filesystem.Description);
+                    Platform.Log(LogLevel.Info, "Completed filesystem delete: {0} (Current: {1}, High Watermark: {2})",
+                           fs.Filesystem.Description, fs.Filesystem.PercentFull, fs.Filesystem.HighWatermark);
 
                     UnlockServiceLock(item, true, Platform.Time.AddMinutes(delayMinutes));
                 }
             }
             else if (_monitor.CheckFilesystemAboveLowWatermark(item.FilesystemKey))
             {
-                Platform.Log(LogLevel.Info, "Filesystem below high watermark: {0}",
-                       _monitor.Filesystems[item.FilesystemKey].Filesystem.Description);
+                Platform.Log(LogLevel.Info, "Filesystem below high watermark: {0} (Current: {1}, High Watermark: {2}",
+                       fs.Filesystem.Description, fs.Filesystem.PercentFull, fs.Filesystem.HighWatermark);
 
                 UnlockServiceLock(item, true, Platform.Time.AddMinutes(1));
             }
             else
             {
-                Platform.Log(LogLevel.Info, "Filesystem below watermarks: {0}",
-                       _monitor.Filesystems[item.FilesystemKey].Filesystem.Description);
+                Platform.Log(LogLevel.Info, "Filesystem below watermarks: {0} (Current: {1}, High Watermark: {2}",
+                       fs.Filesystem.Description, fs.Filesystem.PercentFull, fs.Filesystem.HighWatermark);
 
                 UnlockServiceLock(item, true, Platform.Time.AddMinutes(2));
             }

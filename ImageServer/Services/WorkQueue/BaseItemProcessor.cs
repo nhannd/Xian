@@ -34,7 +34,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.DicomServices.Xml;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
@@ -47,15 +46,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
     /// <summary>
     /// Base class used when implementing WorkQueue item processors.
     /// </summary>
-    public abstract class BaseItemProcessor : IDisposable, IWorkQueueItemProcessor
-    {
-        
+    public abstract class BaseItemProcessor : IWorkQueueItemProcessor
+    {     
         #region Private Members
         private IList<StudyStorageLocation> _storageLocationList;
         private IReadContext _readContext;
         private IList<WorkQueueUid> _uidList;
-        private Model.WorkQueue _item;
-        private string _processorID;
         #endregion
 
         #region Protected Properties
@@ -79,8 +75,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         }
         
         #endregion
-
-      
+   
         #region Contructors
         public BaseItemProcessor()
         {
@@ -129,7 +124,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         /// </summary>
         /// <param name="item">The <see cref="WorkQueue"/> entry to set.</param>
         /// <param name="failed">If true, the item failed and the failure retry count should be incremented.</param>
-        protected void SetWorkQueueItemPending(Model.WorkQueue item, bool failed)
+        protected static void SetWorkQueueItemPending(Model.WorkQueue item, bool failed)
         {
             
             using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
@@ -203,7 +198,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         /// </para>
         /// </remarks>
         /// <param name="item">The <see cref="WorkQueue"/> item to set.</param>
-        protected void SetWorkQueueItemCompleteIfExpired(Model.WorkQueue item)
+        protected static void SetWorkQueueItemCompleteIfExpired(Model.WorkQueue item)
         {
             
             using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
@@ -253,7 +248,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         /// Delete an entry in the <see cref="WorkQueueUid"/> table.
         /// </summary>
         /// <param name="sop">The <see cref="WorkQueueUid"/> entry to delete.</param>
-        protected void DeleteWorkQueueUid(WorkQueueUid sop)
+        protected static void DeleteWorkQueueUid(WorkQueueUid sop)
         {
             using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
@@ -269,93 +264,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         }
 
         /// <summary>
-        /// Load a <see cref="StudyXml"/> file for a given <see cref="StudyStorageLocation"/>
-        /// </summary>
-        /// <param name="location">The location a study is stored.</param>
-        /// <returns>The <see cref="StudyXml"/> instance for <paramref name="location"/></returns>
-        protected static StudyXml LoadStudyXml(StudyStorageLocation location)
-        {
-            String streamFile = Path.Combine(location.GetStudyPath(), location.StudyInstanceUid + ".xml");
-
-            StudyXml theXml = new StudyXml();
-
-            if (File.Exists(streamFile))
-            {
-                using (Stream fileStream = new FileStream(streamFile, FileMode.Open))
-                {
-                    XmlDocument theDoc = new XmlDocument();
-
-                    StudyXmlIo.Read(theDoc, fileStream);
-
-                    theXml.SetMemento(theDoc);
-
-                    fileStream.Close();
-                }
-            }
-
-            return theXml;
-        }
-
-        /// <summary>
-        /// Methods to do the actual processing.
-        /// </summary>
-        /// <remarks>
-        /// The overridden method should set the value of <see cref="ProcessResult"/> before returning.
-        /// This value will be used when the processor fires notification events.
-        /// </remarks>
-        protected abstract void OnProcess();
-
-        #endregion
-
-        #region IDisposable Members
-        /// <summary>
-        /// Dispose of any native resources.
-        /// </summary>
-        public void Dispose()
-        {
-            if (_readContext != null)
-            {
-                _readContext.Dispose();
-                _readContext = null;
-            }
-        }
-        #endregion
-
-
-        #region IWorkQueueItemProcessor members
-
-        public string ProcessorID
-        {
-            set { _processorID = value; }
-            get { return _processorID; }
-        }
-
-
-        /// <summary>
-        /// Sets or gets the current WorkQueue item being processed by the processor.
-        /// </summary>
-        public Model.WorkQueue WorkQueueItem
-        {
-            get { return _item; }
-            set { _item = value; }
-        }
-
-        public void Process()
-        {
-            if (WorkQueueItem!=null)
-            {
-                OnProcess();
-            }
-            
-        }
-
-        #endregion IWorkQueueItemProcessor members
-
-        /// <summary>
         /// Simple routine for failing a work queue item.
         /// </summary>
         /// <param name="item">The item to fail.</param>
-        public void FailQueueItem(Model.WorkQueue item)
+        protected static void FailQueueItem(Model.WorkQueue item)
         {
             using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
@@ -399,6 +311,54 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
             }
         }
 
-    }
+        /// <summary>
+        /// Load a <see cref="StudyXml"/> file for a given <see cref="StudyStorageLocation"/>
+        /// </summary>
+        /// <param name="location">The location a study is stored.</param>
+        /// <returns>The <see cref="StudyXml"/> instance for <paramref name="location"/></returns>
+        protected static StudyXml LoadStudyXml(StudyStorageLocation location)
+        {
+            String streamFile = Path.Combine(location.GetStudyPath(), location.StudyInstanceUid + ".xml");
 
+            StudyXml theXml = new StudyXml();
+
+            if (File.Exists(streamFile))
+            {
+                using (Stream fileStream = new FileStream(streamFile, FileMode.Open))
+                {
+                    XmlDocument theDoc = new XmlDocument();
+
+                    StudyXmlIo.Read(theDoc, fileStream);
+
+                    theXml.SetMemento(theDoc);
+
+                    fileStream.Close();
+                }
+            }
+
+            return theXml;
+        }
+
+        #endregion
+
+        #region IDisposable Members
+        /// <summary>
+        /// Dispose of any native resources.
+        /// </summary>
+        public void Dispose()
+        {
+            if (_readContext != null)
+            {
+                _readContext.Dispose();
+                _readContext = null;
+            }
+        }
+        #endregion
+
+        #region IWorkQueueItemProcessor members
+
+        public abstract void Process(Model.WorkQueue item);
+
+        #endregion IWorkQueueItemProcessor members
+    }
 }
