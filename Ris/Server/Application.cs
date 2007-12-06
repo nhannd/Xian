@@ -124,6 +124,7 @@ namespace ClearCanvas.Ris.Server
 
             // create service host
             Uri uri = new Uri(new Uri(baseAddress), contractAttribute.ServiceContract.FullName);
+            
 
             ServiceHost host = new ServiceHost(serviceClass, uri);
 
@@ -147,7 +148,7 @@ namespace ClearCanvas.Ris.Server
 #endif
             // set up the certificate - required for WSHttpBinding
             host.Credentials.ServiceCertificate.SetCertificate(
-                StoreLocation.LocalMachine, StoreName.My, X509FindType.FindBySubjectName, "localhost");
+                StoreLocation.LocalMachine, StoreName.My, X509FindType.FindBySubjectName, uri.Host);
 
             if (authenticated)
             {
