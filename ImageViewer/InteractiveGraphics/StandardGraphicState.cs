@@ -31,14 +31,25 @@
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
-	public class StandardGraphicState : GraphicState
+	/// <summary>
+	/// Base class for standard graphic states.
+	/// </summary>
+	public abstract class StandardGraphicState : GraphicState
 	{
+		/// <summary>
+		/// Initializes a new instance of <see cref="StandardGraphicState"/>.
+		/// </summary>
+		/// <param name="interactiveGraphic"></param>
 		protected StandardGraphicState(IStandardStatefulGraphic interactiveGraphic)
 			: base(interactiveGraphic)
 		{
 
 		}
 
+		/// <summary>
+		/// Gets the <see cref="IStandardStatefulGraphic"/> associated with
+		/// this state.
+		/// </summary>
 		protected IStandardStatefulGraphic StandardStatefulGraphic
 		{
 			get { return this.StatefulGraphic as IStandardStatefulGraphic; }

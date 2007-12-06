@@ -75,6 +75,18 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		#region IMouseButtonHandler Members
 
+		/// <summary>
+		/// Called by the framework each time a mouse button is pressed.
+		/// </summary>
+		/// <remarks>
+		/// As a general rule, if the <see cref="IMouseButtonHandler"/> object did anything as a result of this call, it must 
+		/// return true.  If false is returned, <see cref="IMouseButtonHandler.Start"/> is called on other <see cref="IMouseButtonHandler"/>s
+		/// until one returns true.
+		/// </remarks>
+		/// <returns>
+		/// True if the <see cref="IMouseButtonHandler"/> did something as a result of the call, 
+		/// and hence would like to receive capture.  Otherwise, false.
+		/// </returns>
 		public virtual bool Start(IMouseInformation mouseInformation)
 		{
 			Platform.CheckMemberIsSet(this.State, "State");
@@ -82,6 +94,14 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			return this.State.Start(mouseInformation);
 		}
 
+		/// <summary>
+		/// Called by the framework when the mouse has moved.
+		/// </summary>
+		/// <remarks>
+		/// A button does not necessarily have to be down for this message to be called.  The framework can
+		/// call it any time the mouse moves.
+		/// </remarks>
+		/// <returns>True if the message was handled, otherwise false.</returns>
 		public virtual bool Track(IMouseInformation mouseInformation)
 		{
 			Platform.CheckMemberIsSet(this.State, "State");
@@ -89,6 +109,12 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			return this.State.Track(mouseInformation);
 		}
 
+		/// <summary>
+		/// Called by the framework when the mouse button is released.
+		/// </summary>
+		/// <returns>
+		/// True if the framework should <b>not</b> release capture, otherwise false.
+		/// </returns>
 		public virtual bool Stop(IMouseInformation mouseInformation)
 		{
 			Platform.CheckMemberIsSet(this.State, "State");
@@ -96,11 +122,22 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			return this.State.Stop(mouseInformation);
 		}
 
+		/// <summary>
+		/// Called by the framework to let <see cref="IMouseButtonHandler"/> perform any necessary cleanup 
+		/// when capture is going to be forcibly released.
+		/// </summary>
+		/// <remarks>
+		/// It is important that this method is implemented correctly and doesn't simply do nothing when it is inappropriate
+		/// to do so, otherwise odd behaviour may be experienced.
+		/// </remarks>
 		public virtual void Cancel()
 		{
 			this.State.Cancel();
 		}
 
+		/// <summary>
+		/// Allows the <see cref="IMouseButtonHandler"/> to override certain default framework behaviour.
+		/// </summary>
 		public MouseButtonHandlerBehaviour Behaviour
 		{
 			get { return this.State.Behaviour; }

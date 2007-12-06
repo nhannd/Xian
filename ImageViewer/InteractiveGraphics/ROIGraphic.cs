@@ -42,6 +42,18 @@ using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
+	/// <summary>
+	/// An interactive graphic that consists of region of interest
+	/// of some kind and a callout.
+	/// </summary>
+	/// <remarks>
+	/// <see cref="RoiGraphic"/> essentially acts as a template for any kind
+	/// of interactive region of interest.  The type of region of interest
+	/// can be any <see cref="InteractiveGraphic"/>, such as a line, a rectangle, 
+	/// an ellipse, etc.; it is definable by the
+	/// the tool writer via the constructor.  The callout line will snap to the
+	/// nearest <see cref="ControlPoint"/> on the <see cref="InteractiveGraphic"/>.
+	/// </remarks>
 	public class RoiGraphic
 		: StatefulCompositeGraphic, 
 		  IStandardStatefulGraphic, 
@@ -61,6 +73,11 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		#endregion
 
+		/// <summary>
+		/// Initializes a new instance of <see cref="RoiGraphic"/>.
+		/// </summary>
+		/// <param name="graphic"></param>
+		/// <param name="userCreated"></param>
 		public RoiGraphic(InteractiveGraphic graphic, bool userCreated)
 			: this(graphic, userCreated, true)
 		{
@@ -153,6 +170,9 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		#region IContextMenuProvider Members
 
+		/// <summary>
+		/// Gets the context menu <see cref="ActionModelNode"/> based on the current state of the mouse.
+		/// </summary>
 		public virtual ActionModelNode GetContextMenuModel(IMouseInformation mouseInformation)
 		{
 			if (!this.HitTest(mouseInformation.Location))
@@ -304,11 +324,19 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		// where the originator is null, which is not allowed.  The real problem
 		// is that we don't properly store a command that recreates an RoiGraphic.
 
+		/// <summary>
+		/// Not implemented.
+		/// </summary>
+		/// <returns></returns>
 		public IMemento CreateMemento()
 		{
 			throw new NotImplementedException();
 		}
 
+		/// <summary>
+		/// Not implemented.
+		/// </summary>
+		/// <param name="memento"></param>
 		public void SetMemento(IMemento memento)
 		{
 			throw new NotImplementedException();

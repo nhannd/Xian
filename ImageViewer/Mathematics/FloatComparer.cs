@@ -39,14 +39,53 @@ using dbg = System.Diagnostics.Debug;
 
 namespace ClearCanvas.ImageViewer.Mathematics
 {
+	/// <summary>
+	/// A utility class to facilitate comparison of floats.
+	/// </summary>
 	public class FloatComparer
 	{
+		/// <summary>
+		/// Compares two floats with a specified tolerance.
+		/// </summary>
+		/// <param name="x">First float to compare.</param>
+		/// <param name="y">Second float to compare.</param>
+		/// <param name="tolerance">The tolerance expressed in terms
+		/// of the number of floats above or below <paramref name="y"/>.
+		/// </param>
+		/// <returns>
+		/// <list>
+		/// <item> 0 if x - y &lt; tolerance</item>
+		/// <item>+1 if x - y &gt; tolerance</item>
+		/// <item>-1 if x - y &lt; -tolerance</item>
+		/// </list>
+		/// </returns>
+		/// <remarks>
+		/// Look <a href="http://www.windojitsu.com/code/floatcomparer.html">here</a>
+		/// for details on floating point comparison.
+		/// </remarks>
 		public static int Compare(float x, float y, int tolerance)
 		{
 			int dummy;
 			return Compare(x, y, tolerance, out dummy);
 		}
 
+		/// <summary>
+		/// Compares two floats with a specified tolerance.
+		/// </summary>
+		/// <param name="x">First float to compare.</param>
+		/// <param name="y">Second float to compare.</param>
+		/// <param name="tolerance">The tolerance expressed in terms
+		/// of the number of floats above or below <paramref name="y"/>.
+		/// </param>
+		/// <param name="difference">The number of floats between 
+		/// <paramref name="x"/> and <paramref name="y"/>.</param>
+		/// <returns>
+		/// <list>
+		/// <item> 0 if x - y &lt; tolerance</item>
+		/// <item>+1 if x - y &gt; tolerance</item>
+		/// <item>-1 if x - y &lt; -tolerance</item>
+		/// </list>
+		/// </returns>
 		public static int Compare(float x, float y, int tolerance, out int difference)
 		{
 			// Make sure maxUlps is non-negative and small enough that the
@@ -76,11 +115,30 @@ namespace ClearCanvas.ImageViewer.Mathematics
 				return 0;
 		}
 
+		/// <summary>
+		/// Returns a value indicating whether two values are equal
+		/// within a specified absolute tolerance.
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <param name="tolerance"></param>
+		/// <returns></returns>
 		public static bool AreEqual(float x, float y, float tolerance)
 		{
 			return Math.Abs(x - y) < tolerance;
 		}
 
+		/// <summary>
+		/// Returns a value indicating whether two values are equal
+		/// within a specified tolerance in units of number of floats.
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <returns></returns>
+		/// <remarks>
+		/// Uses <see cref="Compare(float,float,int)"/> to perform
+		/// the comparison.  Assumes a tolerance of 100.
+		/// </remarks>
 		public static bool AreEqual(float x, float y)
 		{
 			int dummy;
@@ -94,6 +152,16 @@ namespace ClearCanvas.ImageViewer.Mathematics
 				return false;
 		}
 
+		/// <summary>
+		/// Returns a value indicating whether x is greater than y.
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <returns></returns>
+		/// <remarks>
+		/// Uses <see cref="Compare(float,float,int)"/> to perform
+		/// the comparison.  Assumes a tolerance of 100.
+		/// </remarks>
 		public static bool IsGreaterThan(float x, float y)
 		{
 			int dummy;
@@ -107,6 +175,16 @@ namespace ClearCanvas.ImageViewer.Mathematics
 				return false;
 		}
 
+		/// <summary>
+		/// Returns a value indicating whether x is less than y.
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <returns></returns>
+		/// <remarks>
+		/// Uses <see cref="Compare(float,float,int)"/> to perform
+		/// the comparison.  Assumes a tolerance of 100.
+		/// </remarks>
 		public static bool IsLessThan(float x, float y)
 		{
 			int dummy;
@@ -120,6 +198,16 @@ namespace ClearCanvas.ImageViewer.Mathematics
 				return false;
 		}
 
+		/// <summary>
+		/// Returns a value indicating whether two points are equal.
+		/// </summary>
+		/// <param name="pt1"></param>
+		/// <param name="pt2"></param>
+		/// <returns></returns>
+		/// <remarks>
+		/// Uses <see cref="Compare(float,float,int)"/> to perform
+		/// the comparison.  Assumes a tolerance of 100.
+		/// </remarks>
 		public static bool AreEqual(PointF pt1, PointF pt2)
 		{
 			int dummy;
