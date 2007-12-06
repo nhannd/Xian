@@ -41,11 +41,6 @@ using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
-    [ExtensionPoint]
-    public class RegistrationFolderExplorerToolExtensionPoint : ExtensionPoint<ITool>
-    {
-    }
-
     public interface IRegistrationWorkflowItemToolContext : IWorkflowItemToolContext<RegistrationWorklistItem>
     {
         RegistrationWorkflowFolderSystemBase FolderSystem { get; }

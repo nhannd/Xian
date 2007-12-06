@@ -59,7 +59,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 
             _component.AllPropertiesChanged += AllPropertiesChangedEventHandler;
 
-            _webBrowser.DataBindings.Add("Url", _component, "HtmlPageUrl", true);
+            _webBrowser.DataBindings.Add("Url", _component, "HtmlPageUrl", true, DataSourceUpdateMode.OnPropertyChanged);
             _webBrowser.ObjectForScripting = _component.ScriptObject;
             _webBrowser.Navigating += NavigatingEventHandler;
 
@@ -74,8 +74,8 @@ namespace ClearCanvas.Ris.Client.View.WinForms
                     return new ValidationResult(!hasErrors, "");
                 }));
 
-            _component.ValidationVisibleChanged += new EventHandler(_component_ValidationVisibleChanged);
-            _component.DataSaving += new EventHandler(_component_DataSaving);
+            _component.ValidationVisibleChanged += _component_ValidationVisibleChanged;
+            _component.DataSaving += _component_DataSaving;
         }
 
         private void _component_DataSaving(object sender, EventArgs e)

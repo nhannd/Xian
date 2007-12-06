@@ -73,6 +73,11 @@ namespace ClearCanvas.Ris.Client.Adt
             get { return "Registration"; }
         }
 
+        public override string PreviewUrl
+        {
+            get { return RegistrationPreviewComponentSettings.Default.RegistrationFolderSystemUrl; }
+        }
+
         public SearchData SearchData
         {
             set

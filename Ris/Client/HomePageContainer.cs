@@ -29,39 +29,18 @@
 
 #endregion
 
-using ClearCanvas.Desktop;
-using ClearCanvas.Common;
-using System.Collections.Generic;
-using ClearCanvas.Common.Utilities;
-using ClearCanvas.Desktop.Tools;
 using System;
+using System.Collections.Generic;
+using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.Tools;
 
 namespace ClearCanvas.Ris.Client
 {
-    public interface IFolderExplorerToolContext : IToolContext
+    public interface IPreviewComponent : IApplicationComponent
     {
-        IDesktopWindow DesktopWindow { get; }
-        IFolder SelectedFolder { get; set; }
-        ISelection SelectedItems { get; }
-        void RegisterSearchDataHandler(ISearchDataHandler handler);
-    }
-
-    public class FolderExplorerToolBase : Tool<IFolderExplorerToolContext>
-    {
-        protected IFolderSystem _folderSystem;
-
-        public IFolderSystem FolderSystem
-        {
-            get { return _folderSystem; }
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                if (_folderSystem != null) _folderSystem.Dispose();
-            }
-        }
+        void SetUrl(string url);
     }
 
     public class HomePageContainer : SplitComponentContainer, ISearchDataHandler
@@ -127,12 +106,13 @@ namespace ClearCanvas.Ris.Client
 
         private readonly Dictionary<IFolderSystem, FolderExplorerComponent> _folderExplorerComponents;
         private readonly FolderContentsComponent _folderContentComponent;
-        private readonly IApplicationComponent _previewComponent;
+        private readonly IPreviewComponent _previewComponent;
+        private readonly StackTabComponentContainer _stackContainers;
 
         private FolderExplorerComponent _selectedFolderExplorer;
         private readonly ToolSet _tools;
 
-        public HomePageContainer(IExtensionPoint folderExplorerExtensionPoint, IApplicationComponent preview)
+        public HomePageContainer(IExtensionPoint folderExplorerExtensionPoint, IPreviewComponent preview)
             : base(Desktop.SplitOrientation.Vertical)
         {
             _folderExplorerComponents = new Dictionary<IFolderSystem, FolderExplorerComponent>();
@@ -142,9 +122,8 @@ namespace ClearCanvas.Ris.Client
             _tools = new ToolSet(folderExplorerExtensionPoint, new FolderExplorerToolContext(this));
 
             // Construct the explorer component and place each into a stack tab
-            StackTabComponentContainer explorerComponents = new StackTabComponentContainer(StackStyle.ShowOneOnly);
-            explorerComponents.CurrentPageChanged +=
-                delegate { this.SelectedFolderExplorer = (FolderExplorerComponent)explorerComponents.CurrentPage.Component; };
+            _stackContainers = new StackTabComponentContainer(StackStyle.ShowOneOnly);
+            _stackContainers.CurrentPageChanged += OnFolderSystemChanged;
 
             List<IFolderSystem> folderSystems = CollectionUtils.Map<ITool, IFolderSystem, List<IFolderSystem>>(_tools.Tools,
                 delegate(ITool tool)
@@ -165,7 +144,7 @@ namespace ClearCanvas.Ris.Client
                         //component.SuppressSelectionChanged += _folderContentComponent.OnSuppressSelectionChanged;
 
                         _folderExplorerComponents.Add(folderSystem, component);
-                        explorerComponents.Pages.Add(new TabPage(folderSystem.DisplayName, component));
+                        _stackContainers.Pages.Add(new TabPage(folderSystem.DisplayName, component));
                     });
 
             // Construct the home page
@@ -174,7 +153,7 @@ namespace ClearCanvas.Ris.Client
                 new SplitPane("Content Preview", _previewComponent, 0.6f),
                 SplitOrientation.Vertical);
 
-            this.Pane1 = new SplitPane("Folders", explorerComponents, 0.2f);
+            this.Pane1 = new SplitPane("Folders", _stackContainers, 0.2f);
             this.Pane2 = new SplitPane("Contents", contentAndPreview, 0.8f);
         }
 
@@ -185,14 +164,25 @@ namespace ClearCanvas.Ris.Client
             {
                 _selectedFolderExplorer = value;
 
-                if (_selectedFolderExplorer != null)
+                if (_selectedFolderExplorer == null)
+                {
+                    _folderContentComponent.FolderSystem = null;
+                    _previewComponent.SetUrl(null);
+                }
+                else
                 {
                     _folderContentComponent.FolderSystem = _selectedFolderExplorer.FolderSystem;
+                    _previewComponent.SetUrl(_selectedFolderExplorer.FolderSystem.PreviewUrl);
 
                     IFolder selectedFolder = ((IFolder)_selectedFolderExplorer.SelectedFolder.Item);
                     _folderContentComponent.FolderContentsTable = selectedFolder == null ? null : selectedFolder.ItemsTable;
                 }
             }
+        }
+
+        void OnFolderSystemChanged(object sender, EventArgs e)
+        {
+            this.SelectedFolderExplorer = (FolderExplorerComponent)_stackContainers.CurrentPage.Component;
         }
 
         void OnSelectedFolderChanged(object sender, EventArgs e)

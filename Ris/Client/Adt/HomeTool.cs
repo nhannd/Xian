@@ -29,20 +29,20 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Client;
-using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
+    [ExtensionPoint]
+    public class RegistrationHomeFolderSystemToolExtensionPoint : ExtensionPoint<ITool>
+    {
+    }
+    
     [MenuAction("launch", "global-menus/Go/Registration Home")]
     //[ButtonAction("launch", "global-toolbars/Go/Registration Home")]
     [Tooltip("launch", "Registration Home")]
@@ -71,12 +71,12 @@ namespace ClearCanvas.Ris.Client.Adt
 
         private IApplicationComponent BuildComponent()
         {
-            RegistrationPreviewComponent previewComponent = new RegistrationPreviewComponent();
-            HomePageContainer homePage = new HomePageContainer(new RegistrationFolderExplorerToolExtensionPoint(), previewComponent);
+            WorklistPreviewComponent previewComponent = new WorklistPreviewComponent();
+            HomePageContainer homePage = new HomePageContainer(new RegistrationHomeFolderSystemToolExtensionPoint(), previewComponent);
 
             homePage.ContentsComponent.SelectedItemsChanged += delegate
             {
-                RegistrationWorklistItem item = homePage.ContentsComponent.SelectedItems.Item as RegistrationWorklistItem;
+                WorklistItemSummaryBase item = homePage.ContentsComponent.SelectedItems.Item as WorklistItemSummaryBase;
                 previewComponent.WorklistItem = item;
             };
 

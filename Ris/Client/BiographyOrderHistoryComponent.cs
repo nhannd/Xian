@@ -128,7 +128,7 @@ namespace ClearCanvas.Ris.Client
 
         public string CancelReason
         {
-            get { return _orderDetail == null ? null : _orderDetail.CancelReason.Value; }
+            get { return _orderDetail == null || _orderDetail.CancelReason == null ? null : _orderDetail.CancelReason.Value; }
         }
 
         public string Priority

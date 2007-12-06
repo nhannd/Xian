@@ -26,9 +26,9 @@ namespace ClearCanvas.Ris.Client.Adt {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("http://localhost/RIS/technologistpreview.htm")]
-        public string DetailsPageUrl {
+        public string TechnologistFolderSystemUrl {
             get {
-                return ((string)(this["DetailsPageUrl"]));
+                return ((string)(this["TechnologistFolderSystemUrl"]));
             }
         }
     }

@@ -29,63 +29,74 @@
 
 #endregion
 
+using System;
+using System.Runtime.InteropServices;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Ris.Application.Common.Jsml;
+using ClearCanvas.Ris.Client.Formatting;
 using ClearCanvas.Desktop.Tools;
-using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 
-namespace ClearCanvas.Ris.Client.Reporting
+namespace ClearCanvas.Ris.Client
 {
     [ExtensionPoint]
-    public class ReportingPreviewToolExtensionPoint : ExtensionPoint<ITool>
+    public class PreviewToolExtensionPoint : ExtensionPoint<ITool>
     {
     }
 
-    public interface IReportingPreviewToolContext : IToolContext
+    public interface IPreviewToolContext : IToolContext
     {
-        ReportingWorklistItem WorklistItem { get; }
+        WorklistItemSummaryBase WorklistItem { get; }
         IDesktopWindow DesktopWindow { get; }
     }
-    
-    /// <summary>
-    /// Extension point for views onto <see cref="ReportingPreviewComponent"/>
-    /// </summary>
-    [ExtensionPoint]
-    public class ReportingPreviewComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
-    {
-    }
 
-    /// <summary>
-    /// ReportingPreviewComponent class
-    /// </summary>
-    [AssociateView(typeof(ReportingPreviewComponentViewExtensionPoint))]
-    public class ReportingPreviewComponent : DHtmlComponent
+    public class WorklistPreviewComponent : DHtmlComponent, IPreviewComponent
     {
-        class ReportingPreviewToolContext : ToolContext, IReportingPreviewToolContext
+        class PreviewToolContext : ToolContext, IPreviewToolContext
         {
-            private readonly ReportingPreviewComponent _component;
+            private readonly WorklistPreviewComponent _component;
 
-            public ReportingPreviewToolContext(ReportingPreviewComponent component)
+            public PreviewToolContext(WorklistPreviewComponent component)
             {
                 _component = component;
             }
 
-            public ReportingWorklistItem WorklistItem
+            #region IPreviewToolContext Members
+
+            public WorklistItemSummaryBase WorklistItem
             {
-                get { return _component.WorklistItem; }
+                get { return _component._worklistItem; }
             }
 
             public IDesktopWindow DesktopWindow
             {
                 get { return _component.Host.DesktopWindow; }
             }
+
+            #endregion
         }
 
-        private ReportingWorklistItem _worklistItem;
+        private WorklistItemSummaryBase _worklistItem;
         private ToolSet _toolSet;
 
-        public ReportingWorklistItem WorklistItem
+        public override void Start()
+        {
+            _toolSet = new ToolSet(new PreviewToolExtensionPoint(), new PreviewToolContext(this));
+            base.Start();
+        }
+
+        public override void Stop()
+        {
+            _toolSet.Dispose();
+            base.Stop();
+        }
+
+        #region Public Properties
+
+        public WorklistItemSummaryBase WorklistItem
         {
             get { return _worklistItem; }
             set
@@ -95,34 +106,16 @@ namespace ClearCanvas.Ris.Client.Reporting
             }
         }
 
-        public override void Start()
-        {
-            _toolSet = new ToolSet(new ReportingPreviewToolExtensionPoint(), new ReportingPreviewToolContext(this));
-
-            SetUrl(ReportingPreviewComponentSettings.Default.DetailsPageUrl);
-
-            base.Start();
-        }
-
-        public override void Stop()
-        {
-            _toolSet.Dispose();
-
-            base.Stop();
-        }
-
-        #region Presentation Model
+        #endregion
 
         protected override ActionModelNode GetActionModel()
         {
-            return ActionModelRoot.CreateModel(this.GetType().FullName, "ReportingPreview-menu", _toolSet.Actions);
+            return ActionModelRoot.CreateModel(this.GetType().FullName, "WorklistPreview-menu", _toolSet.Actions);
         }
 
         protected override object GetWorklistItem()
         {
             return _worklistItem;
         }
-
-        #endregion
     }
 }

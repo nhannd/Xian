@@ -45,11 +45,6 @@ using ListWorklistsResponse=ClearCanvas.Ris.Application.Common.ModalityWorkflow.
 
 namespace ClearCanvas.Ris.Client.Adt
 {
-    [ExtensionPoint]
-    public class TechnologistFolderExplorerToolExtensionPoint : ExtensionPoint<ITool>
-    {
-    }
-
     public interface ITechnologistWorkflowItemToolContext : IToolContext
     {
         bool GetWorkflowOperationEnablement(string operationClass);

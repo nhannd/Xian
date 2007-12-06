@@ -69,5 +69,10 @@ namespace ClearCanvas.Ris.Client.Reporting
         {
             get { return "Protocolling"; }
         }
+
+        public override string PreviewUrl
+        {
+            get { return ReportingPreviewComponentSettings.Default.ProtocollingFolderSystemUrl; }
+        }
     }
 }

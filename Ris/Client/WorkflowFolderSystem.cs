@@ -45,6 +45,7 @@ namespace ClearCanvas.Ris.Client
         IList<IFolder> Folders { get; }
         IToolSet FolderTools { get; }
         IToolSet ItemTools { get; }
+        string PreviewUrl { get; }
 
         void SelectedFolderChangedEventHandler(object sender, EventArgs e);
         void SelectedItemsChangedEventHandler(object sender, EventArgs e);
@@ -122,6 +123,8 @@ namespace ClearCanvas.Ris.Client
         {
             get { return _itemTools; }
         }
+
+        public abstract string PreviewUrl { get; }
 
         #endregion
 

@@ -34,11 +34,16 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Client;
-using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 
 namespace ClearCanvas.Ris.Client.Reporting
 {
+    [ExtensionPoint]
+    public class ReportingHomeFolderSystemToolExtensionPoint : ExtensionPoint<ITool>
+    {
+    }
+
     [MenuAction("launch", "global-menus/Go/Radiologist Home", "Launch")]
     //[ButtonAction("launch", "global-toolbars/Go/Radiologist Home", "Launch")]
     [Tooltip("launch", "Radiologist Home")]
@@ -74,12 +79,12 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         private static IApplicationComponent BuildComponent()
         {
-            ReportingPreviewComponent previewComponent = new ReportingPreviewComponent();
-            HomePageContainer homePage = new HomePageContainer(new ReportingFolderExplorerToolExtensionPoint(), previewComponent);
+            WorklistPreviewComponent previewComponent = new WorklistPreviewComponent();
+            HomePageContainer homePage = new HomePageContainer(new ReportingHomeFolderSystemToolExtensionPoint(), previewComponent);
 
             homePage.ContentsComponent.SelectedItemsChanged += delegate
             {
-                ReportingWorklistItem item = homePage.ContentsComponent.SelectedItems.Item as ReportingWorklistItem;
+                WorklistItemSummaryBase item = homePage.ContentsComponent.SelectedItems.Item as WorklistItemSummaryBase;
                 previewComponent.WorklistItem = item;
             };
 

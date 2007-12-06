@@ -68,5 +68,10 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             get { return "Booking"; }
         }
+
+        public override string PreviewUrl
+        {
+            get { return RegistrationPreviewComponentSettings.Default.BookingFolderSystemUrl; }
+        }
     }
 }

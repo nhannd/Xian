@@ -75,6 +75,11 @@ namespace ClearCanvas.Ris.Client.Adt
             get { return "Technologist"; }
         }
 
+        public override string PreviewUrl
+        {
+            get { return TechnologistPreviewComponentSettings.Default.TechnologistFolderSystemUrl; }
+        }
+
         public SearchData SearchData
         {
             set

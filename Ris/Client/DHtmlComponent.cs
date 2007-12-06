@@ -36,10 +36,8 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Ris.Application.Common.Admin;
 using ClearCanvas.Ris.Application.Common.Jsml;
 using ClearCanvas.Ris.Client.Formatting;
-using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -319,7 +317,7 @@ namespace ClearCanvas.Ris.Client
             return new DHtmlScriptCallback(this);
         }
 
-        protected void SetUrl(string url)
+        public void SetUrl(string url)
         {
             this.HtmlPageUrl = url == null ? null : new Uri(url);
         }

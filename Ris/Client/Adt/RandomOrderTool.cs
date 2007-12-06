@@ -48,7 +48,6 @@ namespace ClearCanvas.Ris.Client.Adt
 
     [ExtensionOf(typeof(RegistrationMainWorkflowItemToolExtensionPoint))]
     [ExtensionOf(typeof(RegistrationBookingWorkflowItemToolExtensionPoint))]
-    [ExtensionOf(typeof(RegistrationPreviewToolExtensionPoint))]
     public class RandomOrderTool : Tool<IToolContext>
     {
         private bool _enabled;

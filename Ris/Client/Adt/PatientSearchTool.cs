@@ -67,7 +67,7 @@ namespace ClearCanvas.Ris.Client.Adt
         private static IApplicationComponent BuildComponent()
         {
             PatientSearchComponent searchComponent = new PatientSearchComponent();
-            RegistrationPreviewComponent previewComponent = new RegistrationPreviewComponent();
+            WorklistPreviewComponent previewComponent = new WorklistPreviewComponent();
 
             searchComponent.SelectedProfileChanged += delegate
             {

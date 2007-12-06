@@ -29,25 +29,24 @@
 
 #endregion
 
-using System;
-using System.Text;
-
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Client;
-//using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
-using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
-    [MenuAction("launch", "global-menus/Go/Technologist Home")]
-    //[ButtonAction("launch", "global-toolbars/Go/Technologist Home")]
+    [ExtensionPoint]
+    public class TechnologistHomeFolderSystemToolExtensionPoint : ExtensionPoint<ITool>
+    {
+    }
+
+    [MenuAction("launch", "global-menus/Go/Technologist Home", "Launch")]
+    //[ButtonAction("launch", "global-toolbars/Go/Technologist Home", "Launch")]
     [Tooltip("launch", "Technologist Home")]
 	[IconSet("launch", IconScheme.Colour, "Icons.TechnologistHomeToolSmall.png", "Icons.TechnologistHomeToolMedium.png", "Icons.TechnologistHomeToolLarge.png")]
-    [ClickHandler("launch", "Launch")]
     [ExtensionOf(typeof(DesktopToolExtensionPoint))]
     public class TechnologistHomeTool : Tool<IDesktopToolContext>
     {
@@ -71,12 +70,12 @@ namespace ClearCanvas.Ris.Client.Adt
 
         private IApplicationComponent BuildComponent()
         {
-            TechnologistPreviewComponent previewComponent = new TechnologistPreviewComponent();
-            HomePageContainer homePage = new HomePageContainer(new TechnologistFolderExplorerToolExtensionPoint(), previewComponent);
+            WorklistPreviewComponent previewComponent = new WorklistPreviewComponent();
+            HomePageContainer homePage = new HomePageContainer(new TechnologistHomeFolderSystemToolExtensionPoint(), previewComponent);
 
             homePage.ContentsComponent.SelectedItemsChanged += delegate
             {
-                ModalityWorklistItem item = homePage.ContentsComponent.SelectedItems.Item as ModalityWorklistItem;
+                WorklistItemSummaryBase item = homePage.ContentsComponent.SelectedItems.Item as WorklistItemSummaryBase;
                 previewComponent.WorklistItem = item;
             };
 

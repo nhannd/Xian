@@ -41,11 +41,6 @@ using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 
 namespace ClearCanvas.Ris.Client.Reporting
 {
-    [ExtensionPoint]
-    public class ReportingFolderExplorerToolExtensionPoint : ExtensionPoint<ITool>
-    {
-    }
-
     public interface IReportingWorkflowItemToolContext : IWorkflowItemToolContext<ReportingWorklistItem>
     {
         ReportingWorkflowFolderSystemBase FolderSystem { get; }

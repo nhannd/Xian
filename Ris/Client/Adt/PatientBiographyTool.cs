@@ -45,7 +45,7 @@ namespace ClearCanvas.Ris.Client.Adt
     //[ButtonAction("view", "global-toolbars/Patient/ViewPatient")]
     [ButtonAction("view", "folderexplorer-items-toolbar/Patient Biography")]
     [MenuAction("view", "folderexplorer-items-contextmenu/Patient Biography")]
-    [MenuAction("view", "RegistrationPreview-menu/Details")] // This action is used by the registration preview script object
+    [MenuAction("view", "WorklistPreview-menu/Details")] // This action is used by the registration preview script object
     [ButtonAction("view", "patientsearch-items-toolbar/Patient Biography")]
     [MenuAction("view", "patientsearch-items-contextmenu/Patient Biography")]
     [ClickHandler("view", "View")]
@@ -54,7 +54,7 @@ namespace ClearCanvas.Ris.Client.Adt
 	[IconSet("view", IconScheme.Colour, "PatientDetailsToolSmall.png", "PatientDetailsToolMedium.png", "PatientDetailsToolLarge.png")]
     [ExtensionOf(typeof(RegistrationMainWorkflowItemToolExtensionPoint))]
     [ExtensionOf(typeof(RegistrationBookingWorkflowItemToolExtensionPoint))]
-    [ExtensionOf(typeof(RegistrationPreviewToolExtensionPoint))]
+    [ExtensionOf(typeof(PreviewToolExtensionPoint))]
     [ExtensionOf(typeof(TechnologistMainWorkflowItemToolExtensionPoint))]
     [ExtensionOf(typeof(PatientSearchToolExtensionPoint))]
     public class PatientBiographyTool : Tool<IToolContext>
@@ -80,7 +80,7 @@ namespace ClearCanvas.Ris.Client.Adt
                     this.Enabled = DetermineEnablement();
                 };
             }
-            else if (this.ContextBase is IRegistrationPreviewToolContext)
+            else if (this.ContextBase is IPreviewToolContext)
             {
                 this.Enabled = DetermineEnablement();
             }
@@ -105,9 +105,9 @@ namespace ClearCanvas.Ris.Client.Adt
                 return (((IRegistrationWorkflowItemToolContext)this.ContextBase).SelectedItems != null
                     && ((IRegistrationWorkflowItemToolContext)this.ContextBase).SelectedItems.Count == 1);
             }
-            else if (this.ContextBase is IRegistrationPreviewToolContext)
+            else if (this.ContextBase is IPreviewToolContext)
             {
-                IRegistrationPreviewToolContext context = (IRegistrationPreviewToolContext)this.ContextBase;
+                IPreviewToolContext context = (IPreviewToolContext)this.ContextBase;
                 return (context.WorklistItem != null && context.WorklistItem.PatientProfileRef != null);
             }
             else if (this.ContextBase is IPatientSearchToolContext)
@@ -156,9 +156,9 @@ namespace ClearCanvas.Ris.Client.Adt
                 RegistrationWorklistItem item = CollectionUtils.FirstElement<RegistrationWorklistItem>(context.SelectedItems);
                 OpenPatient(item.PatientProfileRef, context.DesktopWindow);
             }
-            else if (this.ContextBase is IRegistrationPreviewToolContext)
+            else if (this.ContextBase is IPreviewToolContext)
             {
-                IRegistrationPreviewToolContext context = (IRegistrationPreviewToolContext)this.ContextBase;
+                IPreviewToolContext context = (IPreviewToolContext)this.ContextBase;
                 OpenPatient(context.WorklistItem.PatientProfileRef, context.DesktopWindow);
             }
             else if (this.ContextBase is IPatientSearchToolContext)

@@ -52,7 +52,9 @@
       <DependentUpon>AddressesSummaryComponentSettings.settings</DependentUpon>
     </Compile>
     <Compile Include="BiographyDemographicComponent.cs" />
+    <Compile Include="WorklistPreviewComponent.cs" />
     <Compile Include="FolderContentsComponent.cs" />
+    <Compile Include="FolderExplorerToolBase.cs" />
     <Compile Include="HomePageContainer.cs" />
     <Compile Include="FolderExplorerComponent.cs" />
     <Compile Include="FolderExplorerComponentSettings.cs" />

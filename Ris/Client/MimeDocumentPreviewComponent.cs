@@ -40,7 +40,7 @@ namespace ClearCanvas.Ris.Client
     /// MimeDocumentPreviewComponent class
     /// </summary>
     [AssociateView(typeof(MimeDocumentPreviewComponentViewExtensionPoint))]
-    public class MimeDocumentPreviewComponent : ApplicationComponent
+    public class MimeDocumentPreviewComponent : ApplicationComponent, IPreviewComponent
     {
         public enum Mode
         {
@@ -346,6 +346,15 @@ namespace ClearCanvas.Ris.Client
                     });
 
             return data;
+        }
+
+        #endregion
+
+        #region IPreviewComponent Members
+
+        public void SetUrl(string url)
+        {
+            // this does nothing because this component does not take Url to change preview
         }
 
         #endregion

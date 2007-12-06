@@ -100,7 +100,6 @@
     <Compile Include="RegistrationBookingWorkflowFolderSystemTool.cs" />
     <Compile Include="RegistrationMainWorkflowFolderSystem.cs" />
     <Compile Include="RegistrationMainWorkflowFolderSystemTool.cs" />
-    <Compile Include="RegistrationPreviewComponent.cs" />
     <Compile Include="RegistrationPreviewComponentSettings.cs" />
     <Compile Include="RegistrationPreviewComponentSettings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -125,7 +124,6 @@
     <Compile Include="TechnologistDocumentationMppsSummaryTable.cs" />
     <Compile Include="TechnologistDocumentationTool.cs" />
     <Compile Include="TechnologistHomeTool.cs" />
-    <Compile Include="TechnologistPreviewComponent.cs" />
     <Compile Include="TechnologistPreviewComponentSettings.cs" />
     <Compile Include="TechnologistPreviewComponentSettings.Designer.cs">
       <AutoGen>True</AutoGen>

@@ -12,7 +12,6 @@ namespace ClearCanvas.Ris.Client.Adt
 {
     [MenuAction("neworder", "folderexplorer-items-contextmenu/New Order")]
     [ButtonAction("neworder", "folderexplorer-items-toolbar/New Order")]
-    [MenuAction("neworder", "RegistrationPreview-menu/NewOrders")]
     [MenuAction("neworder", "global-menus/Orders/New")]
     [ButtonAction("neworder", "patientsearch-items-toolbar/New Order")]
     [MenuAction("neworder", "patientsearch-items-contextmenu/New Order")]
@@ -21,7 +20,6 @@ namespace ClearCanvas.Ris.Client.Adt
     [ClickHandler("neworder", "NewOrder")]
     [ExtensionOf(typeof(RegistrationMainWorkflowItemToolExtensionPoint))]
     [ExtensionOf(typeof(RegistrationBookingWorkflowItemToolExtensionPoint))]
-    [ExtensionOf(typeof(RegistrationPreviewToolExtensionPoint))]
     [ExtensionOf(typeof(PatientSearchToolExtensionPoint))]
     public class NewOrderTool : Tool<IToolContext>
     {

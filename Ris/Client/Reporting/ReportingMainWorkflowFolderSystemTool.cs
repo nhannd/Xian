@@ -33,7 +33,7 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.Ris.Client.Reporting
 {
-    [ExtensionOf(typeof(ReportingFolderExplorerToolExtensionPoint))]
+    [ExtensionOf(typeof(ReportingHomeFolderSystemToolExtensionPoint))]
     public class ReportingMainWorkflowFolderSystemTool : FolderExplorerToolBase
     {
         public override void Initialize()
