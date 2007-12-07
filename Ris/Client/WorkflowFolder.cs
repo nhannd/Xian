@@ -374,7 +374,7 @@ namespace ClearCanvas.Ris.Client
                     : new TimerDelegate(delegate(object state) { RefreshCount(); });
 
                 _refreshTimer = new Timer(timerDelegate);
-                _refreshTimer.Interval = _refreshTime;
+                _refreshTimer.IntervalMilliseconds = _refreshTime;
                 _refreshTimer.Start();
             }
         }

@@ -182,7 +182,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			_toolSet = new ToolSet(new SendQueueApplicationComponentToolExtensionPoint(), new SendQueueApplicationComponentToolContext(this));
 
 			_timer = new Timer(this.OnTimer);
-			_timer.Interval = 30000;
+			_timer.IntervalMilliseconds = 30000;
 			_timer.Start();
 
 			LocalDataStoreActivityMonitor.Instance.LostConnection += new EventHandler(OnLostConnection);
@@ -224,6 +224,9 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 		private void OnTimer(object nothing)
 		{
+			if (_timer == null)
+				return;
+
 			foreach (SendQueueItem item in _sendTable.Items)
 			{
 				//need to do this to update the 'last active' column.

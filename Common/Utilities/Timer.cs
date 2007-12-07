@@ -35,8 +35,6 @@ using System.Timers;
 
 namespace ClearCanvas.Common.Utilities
 {
-	// TODO (Stewart): change this so it doesn't use a timer internally, but just uses a thread pool thread.
-
 	/// <summary>
 	/// A delegate for use by a <see cref="Timer"/> object.
 	/// </summary>
@@ -50,13 +48,25 @@ namespace ClearCanvas.Common.Utilities
 	/// This class <B>must</B> be instantiated from within a UI thread, otherwise an exception
 	/// could be thrown upon construction (unless the thread has a custom <see cref="SynchronizationContext"/>).  
 	/// This class relies on <see cref="SynchronizationContext.Current"/> being non-null in order to do the marshalling.
+	/// Also, this class is very simple and may not be as accurate as other timer classes.
 	/// </remarks>
 	public sealed class Timer : IDisposable
 	{
-		private TimerDelegate _elapsedDelegate;
-		private object _stateObject;
-		private System.Timers.Timer _internalTimer;
-		private SynchronizationContext _synchronizationContext;
+		private enum State
+		{
+			Starting,
+			Started,
+			Stopping,
+			Stopped
+		} 
+
+		private readonly SynchronizationContext _synchronizationContext;
+		private readonly object _stateObject;
+		private readonly TimerDelegate _elapsedDelegate;
+
+		private readonly object _startStopLock;
+		private volatile State _state;
+		private volatile int _intervalMilliseconds;
 
 		/// <summary>
 		/// Constructor.
@@ -73,34 +83,64 @@ namespace ClearCanvas.Common.Utilities
 		/// <param name="elapsedDelegate">The delegate to execute on a timer.</param>
 		/// <param name="stateObject">A user defined state object.</param>
 		public Timer(TimerDelegate elapsedDelegate, object stateObject)
+			: this(elapsedDelegate, stateObject, 1000)
 		{
-			Platform.CheckForNullReference(SynchronizationContext.Current, "SynchronizationContext.Current");
-			Platform.CheckForNullReference(elapsedDelegate, "elapsedDelegate");
-			
-			_synchronizationContext = SynchronizationContext.Current;
-
-			_elapsedDelegate = elapsedDelegate;
-			_stateObject = stateObject;
-			_internalTimer = new System.Timers.Timer();
-			_internalTimer.Elapsed += new ElapsedEventHandler(OnInternalTimerElapsed);
 		}
 
 		/// <summary>
-		/// Enables/Disables the timer.
+		/// Constructor.
+		/// </summary>
+		/// <param name="elapsedDelegate">The delegate to execute on a timer.</param>
+		/// <param name="stateObject">A user defined state object.</param>
+		/// <param name="intervalMilliseconds">The time to wait in milliseconds.</param>
+		public Timer(TimerDelegate elapsedDelegate, object stateObject, int intervalMilliseconds)
+		{
+			_synchronizationContext = SynchronizationContext.Current;
+
+			Platform.CheckForNullReference(_synchronizationContext, "SynchronizationContext.Current");
+			Platform.CheckForNullReference(elapsedDelegate, "elapsedDelegate");
+			
+			_stateObject = stateObject; 
+			_elapsedDelegate = elapsedDelegate;
+
+			_startStopLock = new object();
+			_state = State.Stopped;
+			_intervalMilliseconds = intervalMilliseconds;
+		}
+
+		/// <summary>
+		/// Finalizer.
+		/// </summary>
+		~Timer()
+		{
+			try
+			{
+				Stop();
+			}
+			catch(Exception e)
+			{
+				Platform.Log(LogLevel.Warn, e);
+			}
+		}
+
+		/// <summary>
+		/// Gets whether or not the timer is currently running.
 		/// </summary>
 		public bool Enabled
 		{
-			get { return _internalTimer.Enabled; }
-			set { _internalTimer.Enabled = false; }
+			get { return _state != State.Stopped; }	
 		}
 
 		/// <summary>
 		/// Sets the timer interval in milliseconds.
 		/// </summary>
-		public double Interval
+		/// <remarks>
+		/// The default value is 1000 milliseconds, or 1 second.
+		/// </remarks>
+		public int IntervalMilliseconds
 		{
-			get { return _internalTimer.Interval; }
-			set { _internalTimer.Interval = value; }
+			get { return _intervalMilliseconds; }
+			set { _intervalMilliseconds = value; }
 		}
 
 		/// <summary>
@@ -108,7 +148,15 @@ namespace ClearCanvas.Common.Utilities
 		/// </summary>
 		public void Start()
 		{
-			_internalTimer.Start();
+			lock (_startStopLock)
+			{
+				if (_state != State.Stopped)
+					return;
+
+				_state = State.Starting;
+				ThreadPool.QueueUserWorkItem(RunThread);
+				Monitor.Wait(_startStopLock);
+			}
 		}
 
 		/// <summary>
@@ -116,7 +164,15 @@ namespace ClearCanvas.Common.Utilities
 		/// </summary>
 		public void Stop()
 		{
-			_internalTimer.Stop();
+			lock(_startStopLock)
+			{
+				if (_state != State.Started)
+					return;
+
+				_state = State.Stopping;
+				Monitor.Pulse(_startStopLock);
+				Monitor.Wait(_startStopLock);
+			}
 		}
 
 		#region IDisposable Members
@@ -128,27 +184,38 @@ namespace ClearCanvas.Common.Utilities
 		{
 			try
 			{
-				if (_internalTimer != null)
-				{
-					_internalTimer.Dispose();
-					_internalTimer = null;
-				}
-
+				Stop();
 				GC.SuppressFinalize(this);
 			}
 			catch (Exception e)
 			{
-
 				Platform.Log(LogLevel.Error, e);
 			}
 		}
 
 		#endregion
 
-		private void OnInternalTimerElapsed(object sender, ElapsedEventArgs e)
+		private void RunThread(object nothing)
 		{
-			if (_internalTimer != null)
-				_synchronizationContext.Post(delegate(object o) { _elapsedDelegate(_stateObject); }, null);
+			lock (_startStopLock)
+			{
+				_state = State.Started;
+				//Signal started.
+				Monitor.Pulse(_startStopLock);
+
+				while (_state != State.Stopping)
+				{
+					Monitor.Wait(_startStopLock, _intervalMilliseconds);
+					if (_state == State.Stopping)
+						break;
+
+					_synchronizationContext.Post(delegate{ _elapsedDelegate(_stateObject); }, null);
+				}
+
+				_state = State.Stopped;
+				//Signal stopped.
+				Monitor.Pulse(_startStopLock);
+			}
 		}
 	}
 }
