@@ -132,6 +132,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 if (exitCode == ApplicationComponentExitCode.Accepted)
                 {
                     LoadVisitsTable();
+                    this.Modified = true;
                 }
             }
             catch (Exception e)
