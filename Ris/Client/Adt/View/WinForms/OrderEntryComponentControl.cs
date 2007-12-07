@@ -83,9 +83,10 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             _consultantLookup.LookupHandler = _component.ConsultantsLookupHandler;
             _consultantLookup.DataBindings.Add("Value", _component, "ConsultantToAdd", true, DataSourceUpdateMode.OnPropertyChanged);
 
-            _visit.DataSource = _component.ActiveVisits;
             _visit.DataBindings.Add("Value", _component, "SelectedVisit", true, DataSourceUpdateMode.OnPropertyChanged);
             _visit.Format += delegate(object source, ListControlConvertEventArgs e) { e.Value = _component.FormatVisit(e.ListItem); };
+            RefreshActiveVisit();
+            _component.ActiveVisitsChanged += _component_ActiveVisitsChanged;
 
             _priority.DataSource = _component.PriorityChoices;
             _priority.DataBindings.Add("Value", _component, "SelectedPriority", true, DataSourceUpdateMode.OnPropertyChanged);
@@ -110,6 +111,16 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             RefreshAttachmentPreview();
             _component.SelectedAttachmentChanged += _component_AttachmentSelectionChanged;
  
+        }
+
+        void _component_ActiveVisitsChanged(object sender, EventArgs e)
+        {
+            RefreshActiveVisit();
+        }
+
+        void RefreshActiveVisit()
+        {
+            _visit.DataSource = _component.ActiveVisits;
         }
 
         void _component_AttachmentSelectionChanged(object sender, EventArgs e)

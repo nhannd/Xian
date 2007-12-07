@@ -30,55 +30,14 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Threading;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Desktop.Tools;
-using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 
 namespace ClearCanvas.Ris.Client.Reporting
 {
-
-    [MenuAction("apply", "folderexplorer-items-contextmenu/Claim", "Apply")]
-    [ButtonAction("apply", "folderexplorer-items-toolbar/Claim", "Apply")]
-    [IconSet("apply", IconScheme.Colour, "Icons.AddToolSmall.png", "Icons.AddToolMedium.png", "Icons.AddToolLarge.png")]
-    [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
-    [ExtensionOf(typeof(ReportingMainWorkflowItemToolExtensionPoint))]
-    public class ClaimInterpretationTool : WorkflowItemTool
-    {
-        public ClaimInterpretationTool()
-            : base("ClaimInterpretation")
-        {
-        }
-
-        protected override bool Execute(ReportingWorklistItem item, IDesktopWindow desktopWindow, ReportingWorkflowFolderSystemBase folderSystem)
-        {
-            try
-            {
-                Platform.GetService<IReportingWorkflowService>(
-                    delegate(IReportingWorkflowService service)
-                    {
-                        service.ClaimInterpretation(new ClaimInterpretationRequest(item.ProcedureStepRef));
-                    });
-
-                folderSystem.InvalidateFolder(typeof(Folders.DraftFolder));
-
-                return true;
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, desktopWindow);
-                return false;
-            }
-        }
-    }
-
-
     [MenuAction("apply", "folderexplorer-items-contextmenu/Send/To Transcription", "Apply")]
     [IconSet("apply", IconScheme.Colour, "Icons.CompleteToolSmall.png", "Icons.CompleteToolMedium.png", "Icons.CompleteToolLarge.png")]
     [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]

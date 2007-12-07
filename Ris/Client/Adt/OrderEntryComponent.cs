@@ -121,6 +121,7 @@ namespace ClearCanvas.Ris.Client.Adt
         private EntityRef _orderRef;
 
         private List<VisitSummary> _activeVisits;
+        private event EventHandler _activeVisitsChanged; 
         private VisitSummary _selectedVisit;
 
         private DiagnosticServiceLookupHandler _diagnosticServiceLookupHandler;
@@ -325,6 +326,13 @@ namespace ClearCanvas.Ris.Client.Adt
             get { return _activeVisits; }
         }
 
+        public event EventHandler ActiveVisitsChanged
+        {
+            add { _activeVisitsChanged += value; }
+            remove { _activeVisitsChanged -= value; }
+        }
+
+
         [ValidateNotNull]
         public VisitSummary SelectedVisit
         {
@@ -374,6 +382,8 @@ namespace ClearCanvas.Ris.Client.Adt
                     component,
                     SR.TitlePatientVisits))
             {
+                EntityRef existingSelectedVisitRef = _selectedVisit == null ? null : _selectedVisit.VisitRef;
+
                 Platform.GetService<IOrderEntryService>(
                     delegate(IOrderEntryService service)
                         {
@@ -381,6 +391,17 @@ namespace ClearCanvas.Ris.Client.Adt
                                 service.ListActiveVisitsForPatient(new ListActiveVisitsForPatientRequest(_patientRef));
                             _activeVisits = response.Visits;
                         });
+
+                EventsHelper.Fire(_activeVisitsChanged, this, EventArgs.Empty);
+
+                if (existingSelectedVisitRef != null)
+                {
+                    this.SelectedVisit = CollectionUtils.SelectFirst(_activeVisits,
+                        delegate(VisitSummary visit)
+                        {
+                            return Equals(visit.VisitRef, existingSelectedVisitRef);
+                        });
+                }
             }
            
         }

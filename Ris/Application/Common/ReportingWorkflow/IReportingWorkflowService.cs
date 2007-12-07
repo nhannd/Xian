@@ -77,15 +77,6 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
         GetOperationEnablementResponse GetOperationEnablement(GetOperationEnablementRequest request);
 
         /// <summary>
-        /// Claim an interpretation step
-        /// </summary>
-        /// <param name="request"><see cref="ClaimInterpretationRequest"/></param>
-        /// <returns><see cref="ClaimInterpretationResponse"/></returns>
-        [OperationContract]
-        [FaultContract(typeof(ConcurrentModificationException))]
-        ClaimInterpretationResponse ClaimInterpretation(ClaimInterpretationRequest request);
-
-        /// <summary>
         /// Start an interpretation step
         /// </summary>
         /// <param name="request"><see cref="StartInterpretationRequest"/></param>

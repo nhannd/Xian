@@ -476,13 +476,11 @@
     <Compile Include="RegistrationWorkflow\OrderEntry\PlaceOrderResponse.cs" />
     <Compile Include="RegistrationWorkflow\RICSummary.cs" />
     <Compile Include="ReportingWorkflow\CancelReportingStepRequest.cs" />
-    <Compile Include="ReportingWorkflow\ClaimInterpretationRequest.cs" />
     <Compile Include="ReportingWorkflow\CompleteInterpretationAndVerifyRequest.cs" />
     <Compile Include="ReportingWorkflow\CompleteInterpretationForTranscriptionRequest.cs" />
     <Compile Include="ReportingWorkflow\CompleteInterpretationForVerificationRequest.cs" />
     <Compile Include="ReportingWorkflow\CompleteVerificationRequest.cs" />
     <Compile Include="ReportingWorkflow\CancelReportingStepResponse.cs" />
-    <Compile Include="ReportingWorkflow\ClaimInterpretationResponse.cs" />
     <Compile Include="ReportingWorkflow\CompleteInterpretationAndVerifyResponse.cs" />
     <Compile Include="ReportingWorkflow\CompleteInterpretationForTranscriptionResponse.cs" />
     <Compile Include="ReportingWorkflow\CompleteInterpretationForVerificationResponse.cs" />

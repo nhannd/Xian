@@ -127,19 +127,6 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         }
 
         [UpdateOperation]
-        [OperationEnablement("CanClaimInterpretation")]
-        public ClaimInterpretationResponse ClaimInterpretation(ClaimInterpretationRequest request)
-        {
-            InterpretationStep interpretation = PersistenceContext.Load<InterpretationStep>(request.InterpretationStepRef, EntityLoadFlags.CheckVersion);
-
-            Operations.ClaimInterpretation op = new Operations.ClaimInterpretation();
-            op.Execute(interpretation, this.CurrentUserStaff, new PersistentWorkflow(this.PersistenceContext));
-
-            PersistenceContext.SynchState();
-            return new ClaimInterpretationResponse(interpretation.GetRef());
-        }
-
-        [UpdateOperation]
         [OperationEnablement("CanStartInterpretation")]
         public StartInterpretationResponse StartInterpretation(StartInterpretationRequest request)
         {
@@ -477,11 +464,6 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         #endregion
 
         #region OperationEnablement Helpers
-
-        public bool CanClaimInterpretation(WorklistItemKey itemKey)
-        {
-            return CanExecuteOperation(new Operations.ClaimInterpretation(), itemKey);
-        }
 
         public bool CanStartInterpretation(WorklistItemKey itemKey)
         {

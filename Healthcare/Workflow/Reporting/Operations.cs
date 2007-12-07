@@ -59,30 +59,6 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
             }
         }
 
-        public class ClaimInterpretation : ReportingOperation
-        {
-            public void Execute(InterpretationStep step, Staff currentUserStaff, IWorkflow workflow)
-            {
-                step.Assign(currentUserStaff);
-            }
-
-            public override bool CanExecute(ReportingProcedureStep step, Staff currentUserStaff)
-            {
-                if (step.Is<InterpretationStep>() == false)
-                    return false;
-
-                // must be scheduled
-                if (step.State != ActivityStatus.SC)
-                    return false;
-
-                // must not already be claimed
-                if (step.AssignedStaff != null)
-                    return false;
-
-                return true;
-            }
-        }
-
         public class StartInterpretation : ReportingOperation
         {
             public void Execute(InterpretationStep step, Staff currentUserStaff, List<InterpretationStep> linkInterpretations, IWorkflow workflow, IPersistenceContext context)
