@@ -1885,7 +1885,7 @@ namespace ClearCanvas.Dicom
         /// This method returns <b>false</b> if
         ///     If the value doesn't exist
         ///     The value cannot be converted into Int16 (eg, floating-point number 1.102 cannot be converted into Int16)
-        ///     The value is an integer but too big or too small to fit into an Int16 (eg, 100000)
+        ///     The value is an integer but outside the range of type  Int16 (eg, 100000)
         /// 
         /// If the method returns false, the returned <paramref name="value"/> is not reliable.
         /// 
@@ -1922,7 +1922,7 @@ namespace ClearCanvas.Dicom
         /// This method returns <b>false</b> if
         ///     If the value doesn't exist
         ///     The value cannot be converted into Int32 (eg, floating-point number 1.102 cannot be converted into Int32)
-        ///     The value is an integer but too big or too small to fit into an Int16 (eg, 100000)
+        ///     The value is an integer but outside the range of type  Int16 (eg, 100000)
         /// 
         /// If the method returns false, the returned <paramref name="value"/> is not reliable.
         /// 
@@ -1951,8 +1951,6 @@ namespace ClearCanvas.Dicom
         /// <remarks>
         /// This method returns <b>false</b> if
         ///     If the value doesn't exist
-        ///     The value cannot be converted into Int64 (eg, floating-point number 1.102 cannot be converted into Int64)
-        ///     The value is an integer but too big or too small to fit into an Int16 (eg, 100000)
         /// 
         /// If the method returns false, the returned <paramref name="value"/> is not reliable.
         /// 
@@ -1967,16 +1965,9 @@ namespace ClearCanvas.Dicom
             }
 
 
-            if (_values[index] < Int64.MinValue || _values[index] > Int64.MaxValue)
-            {
-                value = 0;
-                return false;
-            }
-            else
-            {
-                value = _values[index];
-                return true;
-            }
+            value = _values[index];
+            return true;
+            
         }
         /// <summary>
         /// Retrieves an UInt16 value from an SL attribute.
@@ -1989,7 +1980,7 @@ namespace ClearCanvas.Dicom
         /// This method returns <b>false</b> if
         ///     If the value doesn't exist
         ///     The value cannot be converted into UInt16 (eg, floating-point number 1.102 cannot be converted into UInt16)
-        ///     The value is an integer but too big or too small to fit into an UInt16 (eg, -100)
+        ///     The value is an integer but outside the range of type  UInt16 (eg, -100)
         /// 
         /// If the method returns false, the returned <paramref name="value"/> is not reliable.
         /// 
@@ -2026,7 +2017,7 @@ namespace ClearCanvas.Dicom
         /// This method returns <b>false</b> if
         ///     If the value doesn't exist
         ///     The value cannot be converted into UInt32 (eg, floating-point number 1.102 cannot be converted into UInt32)
-        ///     The value is an integer but too big or too small to fit into an UInt32 (eg, -100)
+        ///     The value is an integer but outside the range of type  UInt32 (eg, -100)
         /// 
         /// If the method returns false, the returned <paramref name="value"/> is not reliable.
         /// 
@@ -2041,7 +2032,7 @@ namespace ClearCanvas.Dicom
             }
 
 
-            if (_values[index] < UInt32.MinValue || _values[index] > UInt32.MaxValue)
+            if (_values[index] < UInt32.MinValue)
             {
                 value = 0;
                 return false;
@@ -2063,7 +2054,7 @@ namespace ClearCanvas.Dicom
         /// This method returns <b>false</b> if
         ///     If the value doesn't exist
         ///     The value cannot be converted into UInt64 (eg, floating-point number 1.102 cannot be converted into UInt64)
-        ///     The value is an integer but too big or too small to fit into an UInt64 (eg, -100)
+        ///     The value is an integer but outside the range of type  UInt64 (eg, -100)
         /// 
         /// If the method returns false, the returned <paramref name="value"/> is not reliable.
         /// 
@@ -2689,8 +2680,9 @@ namespace ClearCanvas.Dicom
         /// 
         public override void AppendInt32(Int32 value)
         {
-            if (value > uint.MaxValue)
+            if (value < uint.MinValue)
                 throw new DicomDataException(String.Format("Invalid UL value '{0}' for {1}.", value, Tag));
+
             AppendValue((uint)value);
         }
         /// <summary>
