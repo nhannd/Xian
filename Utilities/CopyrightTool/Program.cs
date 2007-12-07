@@ -42,7 +42,8 @@ namespace CopyrightTool
 		{
 			if (args.Length != 2)
 			{
-				Console.Write("Usage: COPYRIGHTTOOL path newDate\n");
+				Console.Write("Usage:   COPYRIGHTTOOL path newDate\n");
+				Console.Write("Example: COPYRIGHTTOOL C:\\Trunk 2006-2007\n");
 				return;
 			}
 
@@ -76,6 +77,10 @@ namespace CopyrightTool
 
 		private static void ProcessFile(string file, string newDate)
 		{
+			// Don't process designer generated files.
+			if (file.Contains(".Designer.cs"))
+				return;
+
 			string cscode = File.ReadAllText(file);
 
 			// Insert the license if the license isn't already there
@@ -86,10 +91,17 @@ namespace CopyrightTool
 				cscode = builder.ToString();
 			}
 
+			// Update the copyright in the license text
 			bool licensedChanged;
 			cscode = UpdateLicense(cscode, newDate, out licensedChanged);
 
-			if (licensedChanged)
+			// Update the copyright in the assembly level attribute
+			bool assemblyCopyrightChanged = false;
+
+			if (Path.GetFileName(file) == "AssemblyInfo.cs")
+				cscode = UpdateAssemblyCopyright(cscode, newDate, out assemblyCopyrightChanged);
+
+			if (licensedChanged || assemblyCopyrightChanged)
 			{
 				File.WriteAllText(file, cscode);
 				Console.Write("UPDATED: {0}\n", file);
@@ -108,13 +120,33 @@ namespace CopyrightTool
 			string oldCopyright = text.Substring(start, end - start + 1);
 			string newCopyright = string.Format("// Copyright (c) {0}, ClearCanvas Inc.", newDate);
 
+			text = ReplaceCopyright(text, oldCopyright, newCopyright, out licensedChanged);
+
+			return text;
+		}
+
+		private static string UpdateAssemblyCopyright(string text, string newDate, out bool assemblyCopyrightChanged)
+		{
+			int start = text.IndexOf("[assembly: AssemblyCopyright");
+			int end = text.IndexOf("]", start);
+
+			string oldCopyright = text.Substring(start, end - start + 1);
+			string newCopyright = string.Format("[assembly: AssemblyCopyright(\"Copyright (c) {0}\")]", newDate);
+
+			text = ReplaceCopyright(text, oldCopyright, newCopyright, out assemblyCopyrightChanged);
+
+			return text;
+		}
+
+		private static string ReplaceCopyright(string text, string oldCopyright, string newCopyright, out bool copyrightChanged)
+		{
 			if (oldCopyright != newCopyright)
 			{
 				text = text.Replace(oldCopyright, newCopyright);
-				licensedChanged = true;
+				copyrightChanged = true;
 			}
 			else
-				licensedChanged = false;
+				copyrightChanged = false;
 
 			return text;
 		}
