@@ -46,13 +46,8 @@ namespace ClearCanvas.Ris.Client.Adt
         RegistrationWorkflowFolderSystemBase FolderSystem { get; }
     }
 
-    public interface IRegistrationWorkflowFolderToolContext : IToolContext
+    public interface IRegistrationWorkflowFolderToolContext : IWorkflowFolderToolContext
     {
-        IEnumerable Folders { get; }
-        IFolder SelectedFolder { get; }
-
-        event EventHandler SelectedFolderChanged;
-        IDesktopWindow DesktopWindow { get; }
     }
 
     public abstract class RegistrationWorkflowFolderSystemBase : WorkflowFolderSystem<RegistrationWorklistItem>

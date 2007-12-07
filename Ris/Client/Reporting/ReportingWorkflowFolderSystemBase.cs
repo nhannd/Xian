@@ -46,13 +46,8 @@ namespace ClearCanvas.Ris.Client.Reporting
         ReportingWorkflowFolderSystemBase FolderSystem { get; }
     }
 
-    public interface IReportingWorkflowFolderToolContext : IToolContext
+    public interface IReportingWorkflowFolderToolContext : IWorkflowFolderToolContext
     {
-        IEnumerable Folders { get; }
-        IFolder SelectedFolder { get; }
-
-        event EventHandler SelectedFolderChanged;
-        IDesktopWindow DesktopWindow { get; }
     }
 
     public abstract class ReportingWorkflowFolderSystemBase : WorkflowFolderSystem<ReportingWorklistItem>

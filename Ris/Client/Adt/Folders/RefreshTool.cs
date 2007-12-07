@@ -43,12 +43,11 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
     [ExtensionOf(typeof(RegistrationMainWorkflowFolderToolExtensionPoint))]
     [ExtensionOf(typeof(RegistrationBookingWorkflowFolderToolExtensionPoint))]
     [ExtensionOf(typeof(TechnologistMainWorkflowFolderToolExtensionPoint))]
-    public class RefreshTool : Tool<IToolContext>
+    public class RefreshTool : Tool<IWorkflowFolderToolContext>
     {
         public void Refresh()
         {
-            if (this.ContextBase is IWorkflowItemToolContext)
-                ((IWorkflowItemToolContext)this.Context).SelectedFolder.Refresh();
+            this.Context.SelectedFolder.Refresh();
         }
     }
 }

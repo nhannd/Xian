@@ -58,13 +58,8 @@ namespace ClearCanvas.Ris.Client.Adt
         IDesktopWindow DesktopWindow { get; }
     }
 
-    public interface ITechnologistWorkflowFolderToolContext : IToolContext
+    public interface ITechnologistWorkflowFolderToolContext : IWorkflowFolderToolContext
     {
-        IEnumerable Folders { get; }
-        IFolder SelectedFolder { get; }
-
-        event EventHandler SelectedFolderChanged;
-        IDesktopWindow DesktopWindow { get; }
     }
 
     public abstract class TechnologistWorkflowFolderSystemBase : WorkflowFolderSystem<ModalityWorklistItem>
