@@ -53,7 +53,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             requisition.Patient = order.Patient.GetRef();
             requisition.Visit = visitAssembler.CreateVisitSummary(order.Visit, context);
             requisition.DiagnosticService = dsAssembler.CreateDiagnosticServiceSummary(order.DiagnosticService);
-            requisition.SchedulingRequestTime = order.SchedulingRequestDateTime;
+            requisition.SchedulingRequestTime = order.SchedulingRequestTime;
             requisition.OrderingPractitioner = pracAssembler.CreateExternalPractitionerSummary(order.OrderingPractitioner, context);
             requisition.OrderingFacility = facilityAssembler.CreateFacilitySummary(order.OrderingFacility);
             requisition.ReasonForStudy = order.ReasonForStudy;
@@ -96,7 +96,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
 
             order.Visit = context.Load<Visit>(requisition.Visit.VisitRef, EntityLoadFlags.Proxy);
-            order.SchedulingRequestDateTime = requisition.SchedulingRequestTime;
+            order.SchedulingRequestTime = requisition.SchedulingRequestTime;
             order.OrderingPractitioner = context.Load<ExternalPractitioner>(requisition.OrderingPractitioner.PractitionerRef, EntityLoadFlags.Proxy);
             order.ReasonForStudy = requisition.ReasonForStudy;
             order.Priority = EnumUtils.GetEnumValue<OrderPriority>(requisition.Priority);

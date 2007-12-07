@@ -60,12 +60,12 @@ namespace ClearCanvas.Healthcare {
             this.VisitNumber.Id = v.VisitNumber.Id;
             this.VisitNumber.AssigningAuthority = v.VisitNumber.AssigningAuthority;
             this.VisitStatus = v.VisitStatus;
-            this.AdmitDateTime = v.AdmitDateTime;
+            this.AdmitTime = v.AdmitTime;
             this.PatientClass = v.PatientClass;
             this.PatientType = v.PatientType;
             this.AdmissionType = v.AdmissionType;
             this.Facility = v.Facility;
-            this.DischargeDateTime = v.DischargeDateTime;
+            this.DischargeTime = v.DischargeTime;
             this.DischargeDisposition = v.DischargeDisposition;
             this.VipIndicator = v.VipIndicator;
             //this.AmbulatoryStatus = v.AmbulatoryStatus;
@@ -102,12 +102,12 @@ namespace ClearCanvas.Healthcare {
         }
 
         /// <summary>
-        /// Infers VisitStatus from AdmitDateTime and DischargeDateTime.  
+        /// Infers VisitStatus from AdmitTime and DischargeTime.  
         /// </summary>
         public virtual void InferVisitStatus()
         {
-            if (this.AdmitDateTime.HasValue) this.VisitStatus = VisitStatus.AA;
-            if (this.DischargeDateTime.HasValue) this.VisitStatus = VisitStatus.DC;
+            if (this.AdmitTime.HasValue) this.VisitStatus = VisitStatus.AA;
+            if (this.DischargeTime.HasValue) this.VisitStatus = VisitStatus.DC;
         }
 
         public virtual void Discharge(DateTime dischargeDateTime, string dischargeDispostion)
@@ -115,7 +115,7 @@ namespace ClearCanvas.Healthcare {
             if (this.VisitStatus != VisitStatus.DC && this.VisitStatus != VisitStatus.CX)
             {
                 this.VisitStatus = VisitStatus.DC;
-                this.DischargeDateTime = dischargeDateTime;
+                this.DischargeTime = dischargeDateTime;
                 this.DischargeDisposition = dischargeDispostion;
             }
         }

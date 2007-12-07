@@ -83,7 +83,7 @@ namespace ClearCanvas.Healthcare.Tests
             Assert.AreEqual(patient, order.Patient);
             Assert.AreEqual(visit, order.Visit);
             Assert.AreEqual(ds, order.DiagnosticService);
-            Assert.AreEqual(scheduleTime, order.SchedulingRequestDateTime);
+            Assert.AreEqual(scheduleTime, order.SchedulingRequestTime);
             Assert.AreEqual(scheduleTime, order.ScheduledStartTime);    // because the order was scheduled
             Assert.AreEqual(orderingPrac, order.OrderingPractitioner);
             Assert.AreEqual(facility, order.OrderingFacility);

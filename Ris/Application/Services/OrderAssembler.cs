@@ -34,8 +34,8 @@ namespace ClearCanvas.Ris.Application.Services
             detail.PlacerNumber = order.PlacerNumber;
             detail.AccessionNumber = order.AccessionNumber;
             detail.DiagnosticService = dsAssembler.CreateDiagnosticServiceDetail(order.DiagnosticService);
-            detail.EnteredDateTime = order.EnteredDateTime;
-            detail.SchedulingRequestDateTime = order.SchedulingRequestDateTime;
+            detail.EnteredDateTime = order.EnteredTime;
+            detail.SchedulingRequestDateTime = order.SchedulingRequestTime;
             detail.OrderingPractitioner = pracAssembler.CreateExternalPractitionerDetail(order.OrderingPractitioner, context);
             detail.OrderingFacility = facilityAssembler.CreateFacilityDetail(order.OrderingFacility);
             detail.ReasonForStudy = order.ReasonForStudy;
@@ -62,8 +62,8 @@ namespace ClearCanvas.Ris.Application.Services
             summary.OrderRef = order.GetRef();
             summary.AccessionNumber = order.AccessionNumber;
             summary.DiagnosticServiceName = order.DiagnosticService.Name;
-            summary.EnteredDateTime = order.EnteredDateTime;
-            summary.SchedulingRequestDateTime = order.SchedulingRequestDateTime;
+            summary.EnteredDateTime = order.EnteredTime;
+            summary.SchedulingRequestDateTime = order.SchedulingRequestTime;
             summary.OrderingPractitioner = pracAssembler.CreateExternalPractitionerDetail(order.OrderingPractitioner, context);
             summary.OrderingFacility = order.OrderingFacility.Name;
             summary.ReasonForStudy = order.ReasonForStudy;

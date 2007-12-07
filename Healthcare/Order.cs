@@ -112,8 +112,8 @@ namespace ClearCanvas.Healthcare {
             order.ReasonForStudy = reasonForStudy;
             order.Priority = priority;
             order.OrderingFacility = orderingFacility;
-            order.EnteredDateTime = Platform.Time;
-            order.SchedulingRequestDateTime = schedulingRequestTime;
+            order.EnteredTime = Platform.Time;
+            order.SchedulingRequestTime = schedulingRequestTime;
             order.OrderingPractitioner = orderingPractitioner;
             order.ResultCopiesToPractitioners.AddAll(copiesToPractitioners);
 

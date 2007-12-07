@@ -62,16 +62,16 @@ namespace ClearCanvas.Healthcare.Alert
                     alertNotification.Reasons.Add("Visit Status is not active");
 
                 // Check Visit date
-                if (order.Visit.AdmitDateTime == null)
+                if (order.Visit.AdmitTime == null)
                 {
                     // This should never happen in production since visit admit date should always be created from HIS
                     alertNotification.Reasons.Add("Visit date is missing");                    
                 }
                 else if (order.ScheduledStartTime != null)
                 {
-                    if (order.Visit.AdmitDateTime.Value.Date > order.ScheduledStartTime.Value.Date)
+                    if (order.Visit.AdmitTime.Value.Date > order.ScheduledStartTime.Value.Date)
                         alertNotification.Reasons.Add("Visit date is in the future");
-                    else if (order.Visit.AdmitDateTime.Value.Date < order.ScheduledStartTime.Value.Date)
+                    else if (order.Visit.AdmitTime.Value.Date < order.ScheduledStartTime.Value.Date)
                         alertNotification.Reasons.Add("Visit date is in the past");
                 }
             }

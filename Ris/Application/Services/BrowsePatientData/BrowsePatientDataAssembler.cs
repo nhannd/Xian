@@ -132,8 +132,8 @@ namespace ClearCanvas.Ris.Application.Services.BrowsePatientData
             data.PatientType = EnumUtils.GetDisplayValue(visit.PatientType);
             data.AdmissionType = EnumUtils.GetDisplayValue(visit.AdmissionType);
             data.VisitStatus = EnumUtils.GetValue(visit.VisitStatus, context);
-            data.AdmitDateTime = visit.AdmitDateTime;
-            data.DischargeDateTime = visit.DischargeDateTime;
+            data.AdmitDateTime = visit.AdmitTime;
+            data.DischargeDateTime = visit.DischargeTime;
             data.VisitFacilityName = visit.Facility.Name;
             data.DischargeDisposition = visit.DischargeDisposition;
             data.VipIndicator = visit.VipIndicator;
@@ -147,8 +147,8 @@ namespace ClearCanvas.Ris.Application.Services.BrowsePatientData
             data.PlacerNumber = order.PlacerNumber;
             data.AccessionNumber = order.AccessionNumber;
             data.DiagnosticServiceName = order.DiagnosticService.Name;
-            data.EnteredDateTime = order.EnteredDateTime;
-            data.SchedulingRequestDateTime = order.SchedulingRequestDateTime;
+            data.EnteredDateTime = order.EnteredTime;
+            data.SchedulingRequestDateTime = order.SchedulingRequestTime;
             data.OrderingPractitionerName = nameAssembler.CreatePersonNameDetail(order.OrderingPractitioner.Name);
             data.OrderingFacilityName = order.OrderingFacility.Name;
             data.ReasonForStudy = order.ReasonForStudy;
