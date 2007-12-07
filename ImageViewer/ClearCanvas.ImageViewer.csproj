@@ -92,6 +92,7 @@
   <ItemGroup>
     <Compile Include="Annotations\AnnotationItem.cs" />
     <Compile Include="Annotations\AnnotationItemProvider.cs" />
+    <Compile Include="Annotations\AnnotationLayout.cs" />
     <Compile Include="Annotations\AnnotationLayoutProvider.cs" />
     <Compile Include="Annotations\AnnotationLayoutStoreSettings.cs" />
     <Compile Include="Annotations\AnnotationLayoutStoreSettings.Designer.cs">

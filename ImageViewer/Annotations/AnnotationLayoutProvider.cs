@@ -70,7 +70,7 @@ namespace ClearCanvas.ImageViewer.Annotations
 			return null;
 		}
 
-		#region IAssociateAnnotationLayout Members
+		#region IAnnotationLayoutProvider Members
 
 		public abstract IAnnotationLayout AnnotationLayout { get; } 
 

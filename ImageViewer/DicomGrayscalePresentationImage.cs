@@ -31,6 +31,7 @@
 
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
+using ClearCanvas.ImageViewer.Annotations;
 using ClearCanvas.ImageViewer.Annotations.Dicom;
 using ClearCanvas.ImageViewer.StudyManagement;
 
@@ -69,13 +70,23 @@ namespace ClearCanvas.ImageViewer
 			       imageSop.GetNormalizedPixelData)
 		{
 			Platform.CheckForNullReference(imageSop, "imageSop");
-
 			_imageSop = imageSop;
-
-			// TODO (Stewart): Consider making this a singleton
-			this.AnnotationLayoutProvider = new DicomFilteredAnnotationLayoutProvider(this);
 		}
 
+		protected override IAnnotationLayoutProvider AnnotationLayoutProvider
+		{
+			get
+			{
+				if (base.AnnotationLayoutProvider == null)
+					base.AnnotationLayoutProvider = new DicomFilteredAnnotationLayoutProvider(this);
+				
+				return base.AnnotationLayoutProvider;
+			}
+			set
+			{
+				base.AnnotationLayoutProvider = value;
+			}
+		}
 		/// <summary>
 		/// Creates a fresh copy of the <see cref="DicomGrayscalePresentationImage"/>.
 		/// </summary>

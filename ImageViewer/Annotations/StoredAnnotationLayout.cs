@@ -34,7 +34,7 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Annotations
 {
-	internal sealed class StoredAnnotationLayout : IAnnotationLayout
+	internal sealed class StoredAnnotationLayout : AnnotationLayout
 	{
 		private string _identifier;
 		private List<StoredAnnotationBoxGroup> _annotationBoxGroups;
@@ -66,16 +66,15 @@ namespace ClearCanvas.ImageViewer.Annotations
 
 		#region IAnnotationLayout
 
-		public IEnumerable<AnnotationBox> AnnotationBoxes
+		public override IEnumerable<AnnotationBox> AnnotationBoxes
 		{
 			get
 			{
-				List<AnnotationBox> completeList = new List<AnnotationBox>();
-
 				foreach (StoredAnnotationBoxGroup group in _annotationBoxGroups)
-					completeList.AddRange(group.AnnotationBoxes);
-
-				return completeList;
+				{
+					foreach (AnnotationBox box in group.AnnotationBoxes)
+						yield return box;
+				}
 			}
 		}
 

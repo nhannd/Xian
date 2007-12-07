@@ -172,10 +172,10 @@ namespace ClearCanvas.ImageViewer
 		{
 			get
 			{
-				if (_annotationLayoutProvider == null)
-					return null;
+				if (AnnotationLayoutProvider == null)
+					return ClearCanvas.ImageViewer.Annotations.AnnotationLayout.Empty;
 
-				return _annotationLayoutProvider.AnnotationLayout;
+				return AnnotationLayoutProvider.AnnotationLayout ?? ClearCanvas.ImageViewer.Annotations.AnnotationLayout.Empty;
 			}
 		}
 
@@ -184,14 +184,14 @@ namespace ClearCanvas.ImageViewer
 		/// <summary>
 		/// Gets the associated <see cref="IAnnotationLayoutProvider"/> for this image.
 		/// </summary>
-		protected IAnnotationLayoutProvider AnnotationLayoutProvider
+		protected virtual IAnnotationLayoutProvider AnnotationLayoutProvider
 		{
 			get { return _annotationLayoutProvider; }			
 			set { _annotationLayoutProvider = value; }
 		}
 
 		/// <summary>
-		/// Gets a <see cref="IRenderer"/>.
+		/// Gets an <see cref="IRenderer"/>.
 		/// </summary>
 		/// <remarks>
 		/// In general, <see cref="ImageRenderer"/> should be considered an internal

@@ -53,7 +53,8 @@ namespace ClearCanvas.ImageViewer.Annotations
 
 				try
 				{
-					returnLayout = AnnotationLayoutStore.Instance.GetLayout(this.StoredLayoutId, this.AvailableAnnotationItems);
+					returnLayout = AnnotationLayoutStore.Instance.GetLayout(this.StoredLayoutId, this.AvailableAnnotationItems) ?? 
+						ClearCanvas.ImageViewer.Annotations.AnnotationLayout.Empty;
 				}
 				catch(Exception e)
 				{

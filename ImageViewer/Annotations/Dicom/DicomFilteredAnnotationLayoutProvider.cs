@@ -43,7 +43,7 @@ namespace ClearCanvas.ImageViewer.Annotations.Dicom
 			Platform.CheckForNullReference(provider, "provider");
 			_provider = provider;
 		}
-
+		
 		protected override string StoredLayoutId
 		{
 			get 
