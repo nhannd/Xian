@@ -125,7 +125,11 @@ namespace ClearCanvas.Desktop.Tables
         {
             if (_sortParams != null)
             {
-                _data.Sort(new TypeSafeComparerWrapper<TItem>(_sortParams.Column.GetComparer(_sortParams.Ascending)));
+                if (_isFiltered)
+                    _filteredData.Sort(new TypeSafeComparerWrapper<TItem>(_sortParams.Column.GetComparer(_sortParams.Ascending)));
+                else 
+                    _data.Sort(new TypeSafeComparerWrapper<TItem>(_sortParams.Column.GetComparer(_sortParams.Ascending)));
+
                 EventsHelper.Fire(_sortEvent, this, EventArgs.Empty);
             }
         }
@@ -255,7 +259,7 @@ namespace ClearCanvas.Desktop.Tables
         }
 
         /// <summary>
-        /// Gets the collection of items in the table.
+        /// Gets the collection of items in the table.  The returned collection is never filtered.
         /// </summary>
         /// <remarks>The returned collection is never filtered.</remarks>
         public ItemCollection<TItem> Items

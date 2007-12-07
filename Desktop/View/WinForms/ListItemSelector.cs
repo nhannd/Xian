@@ -31,6 +31,7 @@
 
 using System;
 using System.Windows.Forms;
+using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Tables;
 
@@ -116,6 +117,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         {
             ISelection selection = _availableItems.Selection;
             ISelection originalSelectedSelection = _selectedItems.Selection;
+            ISelection availableSelectionAfterRemove = GetSelectionAfterRemove(_availableItemsTable, selection);
 
             foreach (object item in selection.Items)
             {
@@ -129,6 +131,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             _availableItems.Table = _availableItemsTable;
 
             _selectedItems.Selection = originalSelectedSelection;
+            _availableItems.Selection = availableSelectionAfterRemove;
 
             EventsHelper.Fire(_itemAdded, this, EventArgs.Empty);
         }
@@ -137,6 +140,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         {
             ISelection selection = _selectedItems.Selection;
             ISelection originalAvailableSelection = _availableItems.Selection;
+            ISelection selectedSelectionAfterRemove = GetSelectionAfterRemove(_selectedItemsTable, selection);
 
             foreach (object item in selection.Items)
             {
@@ -150,9 +154,44 @@ namespace ClearCanvas.Desktop.View.WinForms
             _availableItems.Table = _availableItemsTable;
 
             _availableItems.Selection = originalAvailableSelection;
+            _selectedItems.Selection = selectedSelectionAfterRemove;
 
             EventsHelper.Fire(_itemRemoved, this, EventArgs.Empty);
         }
+
+        private ISelection GetSelectionAfterRemove(ITable table, ISelection selectionToBeRemoved)
+        {
+            // if nothing is selected, next selection should be empty too
+            if (selectionToBeRemoved.Items.Length == 0)
+                return new Selection();
+
+            List<int> toBeRemovedIndices = CollectionUtils.Map<object, int>(selectionToBeRemoved.Items,
+                delegate(object item) { return table.Items.IndexOf(item); });
+            toBeRemovedIndices.Sort();
+
+            // use the first unselected item between the to-be-removed items as the next selection
+            foreach (int index in toBeRemovedIndices)
+            {
+                if (index < table.Items.Count - 1 &&
+                    toBeRemovedIndices.Contains(index + 1) == false)
+                {
+                    return new Selection(table.Items[index + 1]);
+                }
+            }
+
+            // if there is no item between all the to-be-removed items
+            // use the item after the last to-be-removed item as the next selection
+            int lastToBeRemovedIndex = toBeRemovedIndices[toBeRemovedIndices.Count - 1];
+            if (lastToBeRemovedIndex < table.Items.Count - 1)
+                return new Selection(table.Items[lastToBeRemovedIndex + 1]);
+
+            // otherwise, use the item before the first to-be-removed item as the next selection
+            if (toBeRemovedIndices[0] > 0)
+                return new Selection(table.Items[toBeRemovedIndices[0] - 1]);
+
+            // empty selection
+            return new Selection();
+	    }
 
         #endregion
     }

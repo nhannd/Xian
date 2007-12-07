@@ -288,6 +288,13 @@ namespace ClearCanvas.Desktop.Tables
 
         #endregion
 
+        protected override void NotifyItemsChanged(ItemChangeType itemChangeType, int index, TItem item)
+        {
+            // This function is called from the base, so the index is the unfiltered item index
+            // Need to convert to the filtered item index, or else an exception will be thrown when
+            // table adaptor fire a ListChangedEvent
+            base.NotifyItemsChanged(itemChangeType, IndexOf(item), item);
+        }
 
         #region Private Methods
 

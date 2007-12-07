@@ -434,7 +434,7 @@ namespace ClearCanvas.Desktop
 		/// <summary>
 		/// Raises the <see cref="ItemsChanged"/> event.
 		/// </summary>
-        protected void NotifyItemsChanged(ItemChangeType itemChangeType, int index, TItem item)
+        protected virtual void NotifyItemsChanged(ItemChangeType itemChangeType, int index, TItem item)
         {
             EventsHelper.Fire(_itemsChanged, this, new ItemChangedEventArgs(itemChangeType, index, item));
         }
