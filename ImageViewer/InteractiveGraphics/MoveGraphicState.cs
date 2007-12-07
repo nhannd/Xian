@@ -33,6 +33,7 @@ using System.Drawing;
 using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.InputManagement;
+using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
@@ -66,7 +67,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			_currentPoint = this.StandardStatefulGraphic.SpatialTransform.ConvertToSource(mouseInformation.Location);
 
 			base.StatefulGraphic.CoordinateSystem = CoordinateSystem.Source;
-			SizeF delta = VectorGraphic.CalcGraphicPositionDelta(base.LastPoint, _currentPoint);
+			SizeF delta = Vector.CalculatePositionDelta(base.LastPoint, _currentPoint);
 			base.StatefulGraphic.Move(delta);
 			base.StatefulGraphic.ResetCoordinateSystem();
 			base.StatefulGraphic.Draw();

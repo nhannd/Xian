@@ -35,33 +35,6 @@ using ClearCanvas.Desktop.Tools;
 
 namespace ClearCanvas.ImageViewer.Graphics
 {
-	// TODO (Stewart): Move this GraphicTool stuff to another file
-	[ExtensionPoint()]
-	public class GraphicToolExtensionPoint : ExtensionPoint<ITool>
-	{
-	}
-
-	public interface IGraphicToolContext : IToolContext
-	{
-		//you can go all the way up the chain to the imageviewer, so this is the only property needed.
-		IGraphic Graphic { get; }
-	}
-
-	public class GraphicToolContext : ToolContext, IGraphicToolContext
-	{
-		private IGraphic _graphic;
-
-		public GraphicToolContext(IGraphic graphic)
-		{
-			_graphic = graphic;
-		}
-
-		public IGraphic Graphic
-		{
-			get { return _graphic; }
-		}
-	}
-
 	/// <summary>
 	/// Specifies the line style to use when drawing the vector.
 	/// </summary>
@@ -116,15 +89,6 @@ namespace ClearCanvas.ImageViewer.Graphics
 		{
 			get { return _lineStyle; }
 			set { _lineStyle = value; }
-		}
-
-		// TODO (Stewart): move this to Vector
-		public static SizeF CalcGraphicPositionDelta(PointF lastPoint, PointF currentPoint)
-		{
-			float deltaX = currentPoint.X - lastPoint.X;
-			float deltaY = currentPoint.Y - lastPoint.Y;
-
-			return new SizeF(deltaX, deltaY);
 		}
 	}
 }

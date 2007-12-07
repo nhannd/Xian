@@ -390,5 +390,17 @@ namespace ClearCanvas.ImageViewer.Mathematics
 
 			return LineSegments.Intersect;
 		}
+
+		/// <summary>
+		/// Given two points (current and last), returns a <see cref="SizeF"/> 
+		/// object representing the delta in x and y between the 2 points.
+		/// </summary>
+		public static SizeF CalculatePositionDelta(PointF lastPoint, PointF currentPoint)
+		{
+			float deltaX = currentPoint.X - lastPoint.X;
+			float deltaY = currentPoint.Y - lastPoint.Y;
+
+			return new SizeF(deltaX, deltaY);
+		}
 	}
 }
