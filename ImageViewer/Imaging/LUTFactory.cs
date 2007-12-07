@@ -252,6 +252,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 				{
 					_colorMapFactories = new List<IColorMapFactory>();
 
+					//Add the default color map.
+					_colorMapFactories.Add(new GrayscaleColorMapFactory());
+
 					object[] factories = new ColorMapFactoryExtensionPoint().CreateExtensions();
 					foreach (object obj in factories)
 					{
@@ -279,9 +282,17 @@ namespace ClearCanvas.ImageViewer.Imaging
 		{
 			get
 			{
-				foreach (IColorMapFactory factory in this.ColorMapFactories)
+				//If there's only the default grayscale one, then don't return any (no point).
+				if (this.ColorMapFactories.Count == 1)
 				{
-					yield return ColorMapDescriptor.FromFactory(factory);
+					yield break;
+				}
+				else
+				{
+					foreach (IColorMapFactory factory in this.ColorMapFactories)
+					{
+						yield return ColorMapDescriptor.FromFactory(factory);
+					}
 				}
 			}
 		}
@@ -302,6 +313,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 			return existingLut;
 		}
 
+		internal IColorMap GetGrayscaleColorMap()
+		{
+			return this.GetColorMap(GrayscaleColorMapFactory.FactoryName);
+		}
+		
 		internal IColorMap GetColorMap(string name)
 		{
 			if (this.ColorMapFactories.Find(delegate(IColorMapFactory factory) { return factory.Name == name; }) == null)

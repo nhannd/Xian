@@ -261,7 +261,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 			get
 			{
 				if (_colorMap == null)
-					InstallColorMap(GrayscaleColorMapFactory.FactoryName);
+					InstallColorMap(this.LutFactory.GetGrayscaleColorMap());
 
 				return _colorMap;
 			}

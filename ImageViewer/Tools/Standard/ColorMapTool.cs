@@ -39,6 +39,7 @@ using ClearCanvas.ImageViewer.Imaging;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
+	///TODO (Stewart): uncomment this to re-enable the color maps in the context menu.
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class ColorMapTool : ImageViewerTool
 	{
