@@ -38,7 +38,7 @@ namespace ClearCanvas.Desktop
     /// Extension point for views onto <see cref="ExceptionHandlerComponent"/>.
     /// </summary>
     [ExtensionPoint]
-    public class ExceptionHandlerComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+	public sealed class ExceptionHandlerComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
     {
     }
 

@@ -39,7 +39,7 @@ namespace ClearCanvas.Desktop
     /// Extension point for views onto <see cref="ProgressDialogComponent"/>.
     /// </summary>
     [ExtensionPoint]
-    public class ProgressDialogComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+	public sealed class ProgressDialogComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
     {
     }
 

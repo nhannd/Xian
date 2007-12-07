@@ -41,12 +41,12 @@ using ClearCanvas.ImageViewer.Services.ServerTree;
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
     [ExtensionPoint()]
-    public class AENavigatorToolExtensionPoint : ExtensionPoint<ITool>
+	public sealed class AENavigatorToolExtensionPoint : ExtensionPoint<ITool>
     {
     }
 
     [ExtensionPoint()]
-    public class AENavigatorComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+	public sealed class AENavigatorComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
     {
     }
 

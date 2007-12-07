@@ -44,7 +44,7 @@ namespace ClearCanvas.Desktop.ExtensionBrowser
     /// Defines an extension point for views onto the <see cref="ExtensionBrowserComponent"/>
     /// </summary>
     [ExtensionPoint()]
-    public class ExtensionBrowserComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+	public sealed class ExtensionBrowserComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
     {
     }
 

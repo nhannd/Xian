@@ -40,7 +40,7 @@ namespace ClearCanvas.Desktop
     /// Extension point for views onto <see cref="CloseHelperComponent"/>.
     /// </summary>
     [ExtensionPoint]
-    public class CloseHelperComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+	public sealed class CloseHelperComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
     {
     }
 

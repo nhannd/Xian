@@ -48,7 +48,7 @@ namespace ClearCanvas.Desktop
     /// Extensions should expect to recieve a tool context of type <see cref="IDesktopToolContext"/>.
     /// </remarks>
     [ExtensionPoint()]
-    public class DesktopToolExtensionPoint : ExtensionPoint<ITool>
+	public sealed class DesktopToolExtensionPoint : ExtensionPoint<ITool>
     {
     }
 

@@ -45,7 +45,7 @@ using ClearCanvas.Desktop.Actions;
 namespace ClearCanvas.ImageViewer.Services.Tools
 {
 	[ExtensionPoint()]
-	public class DicomFileImportComponentToolExtensionPoint : ExtensionPoint<ITool>
+	public sealed class DicomFileImportComponentToolExtensionPoint : ExtensionPoint<ITool>
 	{
 	}
 
@@ -65,7 +65,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 	}
 
 	[ExtensionPoint]
-	public class DicomFileImportApplicationComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+	public sealed class DicomFileImportApplicationComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
 	{
 	}
 

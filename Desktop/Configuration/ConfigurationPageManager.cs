@@ -42,7 +42,7 @@ namespace ClearCanvas.Desktop.Configuration
 	/// An extension point for <see cref="IConfigurationPageProvider"/>s.
 	/// </summary>
 	[ExtensionPoint()]
-	public class ConfigurationPageProviderExtensionPoint : ExtensionPoint<IConfigurationPageProvider>
+	public sealed class ConfigurationPageProviderExtensionPoint : ExtensionPoint<IConfigurationPageProvider>
 	{
 	}
 

@@ -45,7 +45,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
     /// Defines an extension point for views onto a <see cref="LayoutComponent"/>
     /// </summary>
     [ExtensionPoint()]
-    public class LayoutComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+	public sealed class LayoutComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
     {
     }
 

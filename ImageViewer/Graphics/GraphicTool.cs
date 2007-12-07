@@ -10,7 +10,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 	/// An extension point for graphic tools.
 	/// </summary>
 	[ExtensionPoint()]
-	public class GraphicToolExtensionPoint : ExtensionPoint<ITool>
+	public sealed class GraphicToolExtensionPoint : ExtensionPoint<ITool>
 	{
 	}
 

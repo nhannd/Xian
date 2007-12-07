@@ -38,7 +38,7 @@ namespace ClearCanvas.Desktop
     /// <summary>
 	/// Defines an extension point for views onto the <see cref="DialogComponentContainer"/>.
     /// </summary>
-    public class DialogComponentContainerViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+	public sealed class DialogComponentContainerViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
     {
     }
 

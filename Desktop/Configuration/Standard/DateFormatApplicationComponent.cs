@@ -43,7 +43,7 @@ namespace ClearCanvas.Desktop.Configuration.Standard
 	/// Extension point for views onto <see cref="DateFormatApplicationComponent"/>.
 	/// </summary>
 	[ExtensionPoint]
-	public class DateFormatApplicationComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+	public sealed class DateFormatApplicationComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
 	{
 	}
 

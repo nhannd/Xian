@@ -47,7 +47,7 @@ namespace ClearCanvas.Desktop
 	/// The application requires one extension of this point.
 	/// </remarks>
     [ExtensionPoint]
-    public class GuiToolkitExtensionPoint : ExtensionPoint<IGuiToolkit>
+	public sealed class GuiToolkitExtensionPoint : ExtensionPoint<IGuiToolkit>
     {
     }
 
@@ -57,7 +57,7 @@ namespace ClearCanvas.Desktop
     /// <remarks>
     /// The framework will use one extension of this point if found, but no extension is required.</remarks>
     [ExtensionPoint()]
-    public class SessionManagerExtensionPoint : ExtensionPoint<ISessionManager>
+	public sealed class SessionManagerExtensionPoint : ExtensionPoint<ISessionManager>
     {
     }
 
@@ -68,7 +68,7 @@ namespace ClearCanvas.Desktop
     /// One extension is required, or the application will not run.
     /// </remarks>
     [ExtensionPoint]
-    public class ApplicationViewExtensionPoint : ExtensionPoint<IApplicationView>
+	public sealed class ApplicationViewExtensionPoint : ExtensionPoint<IApplicationView>
     {
     }
 
@@ -88,7 +88,7 @@ namespace ClearCanvas.Desktop
     /// Extensions should expect to recieve a tool context of type <see cref="IApplicationToolContext"/>.
     /// </remarks>
     [ExtensionPoint]
-    public class ApplicationToolExtensionPoint : ExtensionPoint<ITool>
+    public sealed class ApplicationToolExtensionPoint : ExtensionPoint<ITool>
     {
     }
 

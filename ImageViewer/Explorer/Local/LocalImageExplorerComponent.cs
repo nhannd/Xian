@@ -49,11 +49,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Local
 	}
 
 	[ExtensionPoint()]
-	public class LocalImageExplorerToolExtensionPoint : ExtensionPoint<ITool>
+	public sealed class LocalImageExplorerToolExtensionPoint : ExtensionPoint<ITool>
 	{
 	}
 
-	public class LocalImageExplorerComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+	public sealed class LocalImageExplorerComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
 	{
 	}
 

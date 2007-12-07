@@ -44,11 +44,11 @@ using System.ComponentModel;
 namespace ClearCanvas.Utilities.DicomEditor
 {
     [ExtensionPoint()]
-    public class DicomEditorToolExtensionPoint : ExtensionPoint<ITool>
+	public sealed class DicomEditorToolExtensionPoint : ExtensionPoint<ITool>
     {
     }
 
-    public class DicomEditorComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+	public sealed class DicomEditorComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
     {
     }
 

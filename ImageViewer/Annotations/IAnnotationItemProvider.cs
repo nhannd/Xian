@@ -38,7 +38,7 @@ namespace ClearCanvas.ImageViewer.Annotations
 	/// An <see cref="ExtensionPoint"/> for <see cref="IAnnotationItemProvider"/>s.
 	/// </summary>
 	[ExtensionPoint()]
-	public class AnnotationItemProviderExtensionPoint : ExtensionPoint<IAnnotationItemProvider>
+	public sealed class AnnotationItemProviderExtensionPoint : ExtensionPoint<IAnnotationItemProvider>
 	{
 	}
 

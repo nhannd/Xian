@@ -42,7 +42,7 @@ namespace ClearCanvas.Desktop.Configuration
     /// Extension point for views onto <see cref="SettingEditorComponent"/>.
     /// </summary>
     [ExtensionPoint]
-    public class SettingEditorComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+	public sealed class SettingEditorComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
     {
     }
 

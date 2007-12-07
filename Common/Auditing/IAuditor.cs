@@ -40,7 +40,7 @@ namespace ClearCanvas.Common.Auditing
 	/// that logs to a text file, and a remote auditor that logs to a WCF service.
 	/// </remarks>
 	[ExtensionPoint()]
-	public class AuditorExtensionPoint : ExtensionPoint<IAuditor>
+	public sealed class AuditorExtensionPoint : ExtensionPoint<IAuditor>
 	{
 	}
 

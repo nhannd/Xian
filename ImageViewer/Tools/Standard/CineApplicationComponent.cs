@@ -39,7 +39,7 @@ using ClearCanvas.ImageViewer.InputManagement;
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
 	[ExtensionPoint]
-	public class CineApplicationComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+	public sealed class CineApplicationComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
 	{
 	}
 

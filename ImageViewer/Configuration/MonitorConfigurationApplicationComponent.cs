@@ -8,7 +8,7 @@ namespace ClearCanvas.ImageViewer.Configuration
 	/// Extension point for views onto <see cref="MonitorConfigurationApplicationComponent"/>
 	/// </summary>
 	[ExtensionPoint]
-	public class MonitorConfigurationApplicationComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+	public sealed class MonitorConfigurationApplicationComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
 	{
 	}
 

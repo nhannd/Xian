@@ -44,7 +44,7 @@ namespace ClearCanvas.ImageViewer.Configuration
     /// Extension point for views onto <see cref="DiskspaceManagerConfigurationComponent"/>
     /// </summary>
     [ExtensionPoint]
-    public class DiskspaceManagerConfigurationComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+	public sealed class DiskspaceManagerConfigurationComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
     {
     }
 

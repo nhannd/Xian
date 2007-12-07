@@ -42,7 +42,7 @@ namespace ClearCanvas.ImageViewer
 	/// Extension point for views onto <see cref="Tile"/>
 	/// </summary>
 	[ExtensionPoint]
-	public class TileViewExtensionPoint : ExtensionPoint<IView>
+	public sealed class TileViewExtensionPoint : ExtensionPoint<IView>
 	{
 	}
 

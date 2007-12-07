@@ -34,16 +34,15 @@ using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
+using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer
 {
-	// TODO (Stewart): Seal all ExtensionPoint subclasses
-
 	/// <summary>
 	/// An extension point for views onto <see cref="ImageBox"/>.
 	/// </summary>
 	[ExtensionPoint]
-	public class ImageBoxViewExtensionPoint : ExtensionPoint<IView>
+	public sealed class ImageBoxViewExtensionPoint : ExtensionPoint<IView>
 	{
 	}
 
@@ -156,7 +155,7 @@ namespace ClearCanvas.ImageViewer
 			get { return _normalizedRectangle; }
 			set 
 			{
-				// TODO (Stewart): validate this 
+				RectangleUtilities.VerifyNormalizedRectangle(value);
 				_normalizedRectangle = value; 
 			}
 		}

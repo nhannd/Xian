@@ -41,7 +41,7 @@ namespace ClearCanvas.Desktop
     /// able to provide instances of your subclass to the framework when it requests creation of a new desktop window.
     /// </remarks>
     [ExtensionPoint]
-    public class DesktopWindowFactoryExtensionPoint : ExtensionPoint<IDesktopWindowFactory>
+	public sealed class DesktopWindowFactoryExtensionPoint : ExtensionPoint<IDesktopWindowFactory>
     {
     }
 
@@ -82,7 +82,7 @@ namespace ClearCanvas.Desktop
     /// able to provide instances of your subclass to the framework when it requests creation of a new workspace.
     /// </remarks>
     [ExtensionPoint]
-    public class WorkspaceFactoryExtensionPoint : ExtensionPoint<IWorkspaceFactory>
+	public sealed class WorkspaceFactoryExtensionPoint : ExtensionPoint<IWorkspaceFactory>
     {
     }
 
@@ -123,7 +123,7 @@ namespace ClearCanvas.Desktop
     /// able to provide instances of your subclass to the framework when it requests creation of a new shelf.
     /// </remarks>
     [ExtensionPoint]
-    public class ShelfFactoryExtensionPoint : ExtensionPoint<IShelfFactory>
+	public sealed class ShelfFactoryExtensionPoint : ExtensionPoint<IShelfFactory>
     {
     }
 
@@ -164,7 +164,7 @@ namespace ClearCanvas.Desktop
     /// able to provide instances of your subclass to the framework when it requests creation of a new dialog box.
     /// </remarks>
     [ExtensionPoint]
-    public class DialogBoxFactoryExtensionPoint : ExtensionPoint<IDialogBoxFactory>
+	public sealed class DialogBoxFactoryExtensionPoint : ExtensionPoint<IDialogBoxFactory>
     {
     }
 

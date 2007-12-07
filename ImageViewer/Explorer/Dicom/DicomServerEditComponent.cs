@@ -42,7 +42,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 	/// Extension point for views onto <see cref="DicomServerEditComponent"/>
 	/// </summary>
 	[ExtensionPoint]
-	public class DicomServerEditComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+	public sealed class DicomServerEditComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
 	{
 	}
 

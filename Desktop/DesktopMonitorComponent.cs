@@ -73,7 +73,7 @@ namespace ClearCanvas.Desktop
     /// Extension point for views onto <see cref="DesktopMonitorComponent"/>
     /// </summary>
     [ExtensionPoint]
-    public class DesktopMonitorComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+	public sealed class DesktopMonitorComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
     {
     }
 

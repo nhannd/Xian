@@ -37,7 +37,7 @@ using ClearCanvas.Common;
 namespace ClearCanvas.Server.ShredHost
 {
     [ExtensionPoint()]
-    public class ShredExtensionPoint : ExtensionPoint<IShred>
+	public sealed class ShredExtensionPoint : ExtensionPoint<IShred>
     {
     }
 }

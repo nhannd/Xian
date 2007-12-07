@@ -44,7 +44,7 @@ namespace ClearCanvas.ImageViewer.Configuration
     /// Extension point for views onto <see cref="DicomServerConfigurationComponent"/>
     /// </summary>
     [ExtensionPoint]
-    public class DicomServerConfigurationComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+	public sealed class DicomServerConfigurationComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
     {
     }
 

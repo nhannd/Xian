@@ -40,7 +40,7 @@ using System.Collections.Generic;
 namespace ClearCanvas.Desktop.Explorer
 {
 	[ExtensionPoint()]
-	public class HealthcareArtifactExplorerExtensionPoint : ExtensionPoint<IHealthcareArtifactExplorer>
+	public sealed class HealthcareArtifactExplorerExtensionPoint : ExtensionPoint<IHealthcareArtifactExplorer>
 	{
 	}
 

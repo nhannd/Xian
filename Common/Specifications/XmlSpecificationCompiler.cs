@@ -40,7 +40,7 @@ using ClearCanvas.Common.Utilities;
 namespace ClearCanvas.Common.Specifications
 {
     [ExtensionPoint]
-    public class ExpressionFactoryExtensionPoint : ExtensionPoint<IExpressionFactory>
+    public sealed class ExpressionFactoryExtensionPoint : ExtensionPoint<IExpressionFactory>
     {
         public IExpressionFactory CreateExtension(string language)
         {
@@ -57,7 +57,7 @@ namespace ClearCanvas.Common.Specifications
     }
 
     [ExtensionPoint]
-    public class XmlSpecificationCompilerOperatorExtensionPoint : ExtensionPoint<IXmlSpecificationCompilerOperator>
+    public sealed class XmlSpecificationCompilerOperatorExtensionPoint : ExtensionPoint<IXmlSpecificationCompilerOperator>
     {
     }
 

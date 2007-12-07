@@ -38,7 +38,7 @@ namespace ClearCanvas.Desktop
 	/// Extension point for views onto <see cref="BlockingOperation"/>.
 	/// </summary>
 	[ExtensionPoint]
-	public class BlockingOperationViewExtensionPoint : ExtensionPoint<IBlockingOperationView>
+	public sealed class BlockingOperationViewExtensionPoint : ExtensionPoint<IBlockingOperationView>
 	{
 	}
 

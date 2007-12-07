@@ -47,7 +47,7 @@ namespace ClearCanvas.ImageViewer
 	/// <see cref="ImageViewerComponent"/>.
 	/// </summary>
 	[ExtensionPoint]
-	public class ImageViewerComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+	public sealed class ImageViewerComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
 	{
 	}
 
@@ -59,7 +59,7 @@ namespace ClearCanvas.ImageViewer
 	/// are added to the <see cref="ImageViewerComponent"/>.
 	/// </remarks>
 	[ExtensionPoint]
-	public class ImageViewerToolExtensionPoint : ExtensionPoint<ITool>
+	public sealed class ImageViewerToolExtensionPoint : ExtensionPoint<ITool>
 	{
 	}
 

@@ -51,12 +51,12 @@ using ClearCanvas.ImageViewer.Services.ServerTree;
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
 	[ExtensionPoint()]
-	public class StudyBrowserToolExtensionPoint : ExtensionPoint<ITool>
+	public sealed class StudyBrowserToolExtensionPoint : ExtensionPoint<ITool>
 	{
 	}
 
 	[ExtensionPoint()]
-	public class StudyBrowserComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+	public sealed class StudyBrowserComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
 	{
 	}
 

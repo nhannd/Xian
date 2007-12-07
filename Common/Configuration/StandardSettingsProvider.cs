@@ -38,7 +38,7 @@ namespace ClearCanvas.Common.Configuration
     /// An extension point for <see cref="IConfigurationStore"/>s.
     /// </summary>
 	[ExtensionPoint]
-    public class ConfigurationStoreExtensionPoint : ExtensionPoint<IConfigurationStore>
+    public sealed class ConfigurationStoreExtensionPoint : ExtensionPoint<IConfigurationStore>
     {
     }
 

@@ -37,7 +37,7 @@ namespace ClearCanvas.Common.Scripting
 	/// Extension point for <see cref="IScriptEngine"/>s.
     /// </summary>
     [ExtensionPoint]
-    public class ScriptEngineExtensionPoint : ExtensionPoint<IScriptEngine>
+    public sealed class ScriptEngineExtensionPoint : ExtensionPoint<IScriptEngine>
     {
     }
 

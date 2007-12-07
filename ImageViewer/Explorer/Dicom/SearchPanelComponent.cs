@@ -40,7 +40,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 	/// Extension point for views onto <see cref="SearchPanelComponent"/>
 	/// </summary>
 	[ExtensionPoint]
-	public class SearchPanelComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+	public sealed class SearchPanelComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
 	{
 	}
 	

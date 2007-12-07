@@ -43,7 +43,7 @@ namespace ClearCanvas.Utilities.DicomEditor.Tools
     /// Extension point for views onto <see cref="DicomEditorCreateToolComponent"/>
     /// </summary>
     [ExtensionPoint]
-    public class DicomEditorCreateToolComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+	public sealed class DicomEditorCreateToolComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
     {
     }
 

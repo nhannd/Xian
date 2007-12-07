@@ -39,7 +39,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	/// Defines an a study finder extension point.
 	/// </summary>
 	[ExtensionPoint()]
-    public class StudyFinderExtensionPoint : ExtensionPoint<IStudyFinder>
+	public sealed class StudyFinderExtensionPoint : ExtensionPoint<IStudyFinder>
     {
     }
     

@@ -42,7 +42,7 @@ namespace ClearCanvas.ImageViewer
 	/// Defines an extension point for image layout management.
 	/// </summary>
 	[ExtensionPoint()]
-	public class LayoutManagerExtensionPoint : ExtensionPoint<ILayoutManager>
+	public sealed class LayoutManagerExtensionPoint : ExtensionPoint<ILayoutManager>
 	{
 	}
 

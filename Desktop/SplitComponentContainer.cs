@@ -39,7 +39,7 @@ namespace ClearCanvas.Desktop
     /// <summary>
 	/// Defines an extension point for views onto the <see cref="SplitComponentContainer"/>.
     /// </summary>
-    public class SplitComponentContainerViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+	public sealed class SplitComponentContainerViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
     {
     }
 

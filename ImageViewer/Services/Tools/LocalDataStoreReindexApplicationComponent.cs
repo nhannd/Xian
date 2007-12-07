@@ -41,7 +41,7 @@ using ClearCanvas.Common.Utilities;
 namespace ClearCanvas.ImageViewer.Services.Tools
 {
 	[ExtensionPoint]
-	public class LocalDataStoreReindexApplicationComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+	public sealed class LocalDataStoreReindexApplicationComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
 	{
 	}
 

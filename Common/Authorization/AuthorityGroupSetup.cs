@@ -37,7 +37,7 @@ namespace ClearCanvas.Common.Authorization
     /// Extension point for defining default authority groups to be imported at deployment time.
     /// </summary>
     [ExtensionPoint]
-    public class DefineAuthorityGroupsExtensionPoint : ExtensionPoint<IDefineAuthorityGroups>
+    public sealed class DefineAuthorityGroupsExtensionPoint : ExtensionPoint<IDefineAuthorityGroups>
     {
     }
 

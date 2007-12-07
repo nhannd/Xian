@@ -40,7 +40,7 @@ namespace ClearCanvas.Common.Actions
     /// </summary>
     /// <seealso cref="IXmlActionCompilerOperator{T}"/>
     [ExtensionPoint]
-    public class XmlActionCompilerOperatorExtensionPoint<T> : ExtensionPoint<IXmlActionCompilerOperator<T>>
+    public sealed class XmlActionCompilerOperatorExtensionPoint<T> : ExtensionPoint<IXmlActionCompilerOperator<T>>
     {
     }
 

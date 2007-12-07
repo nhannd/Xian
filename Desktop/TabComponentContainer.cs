@@ -36,7 +36,7 @@ namespace ClearCanvas.Desktop
     /// <summary>
 	/// Defines an extension point for views onto the <see cref="TabComponentContainer"/>.
     /// </summary>
-    public class TabComponentContainerViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+	public sealed class TabComponentContainerViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
     {
     }
 

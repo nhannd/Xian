@@ -45,7 +45,7 @@ using ClearCanvas.Dicom;
 namespace ClearCanvas.ImageViewer.Services.Tools
 {
 	[ExtensionPoint()]
-	public class ReceiveQueueApplicationComponentToolExtensionPoint : ExtensionPoint<ITool>
+	public sealed class ReceiveQueueApplicationComponentToolExtensionPoint : ExtensionPoint<ITool>
 	{
 	}
 
@@ -63,7 +63,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 	}
 
 	[ExtensionPoint]
-	public class ReceiveQueueApplicationComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+	public sealed class ReceiveQueueApplicationComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
 	{
 	}
 

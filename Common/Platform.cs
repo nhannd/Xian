@@ -78,7 +78,7 @@ namespace ClearCanvas.Common
     /// An extension point for <see cref="IMessageBox"/>es.
     /// </summary>
     [ExtensionPoint()]
-    public class MessageBoxExtensionPoint : ExtensionPoint<IMessageBox>
+    public sealed class MessageBoxExtensionPoint : ExtensionPoint<IMessageBox>
     {
     }
 
@@ -91,7 +91,7 @@ namespace ClearCanvas.Common
 	/// <see cref="IApplicationRoot.RunApplication" />.
 	/// </remarks>
     [ExtensionPoint()]
-    public class ApplicationRootExtensionPoint : ExtensionPoint<IApplicationRoot>
+    public sealed class ApplicationRootExtensionPoint : ExtensionPoint<IApplicationRoot>
     {
     }
 
@@ -103,7 +103,7 @@ namespace ClearCanvas.Common
     /// use by the application (see <see cref="Platform.Time"/>).
     /// </remarks>
 	[ExtensionPoint()]
-    public class TimeProviderExtensionPoint : ExtensionPoint<ITimeProvider>
+    public sealed class TimeProviderExtensionPoint : ExtensionPoint<ITimeProvider>
     {
     }
 
@@ -125,7 +125,7 @@ namespace ClearCanvas.Common
 	/// </para>
     /// </remarks>
     [ExtensionPoint]
-    public class ServiceProviderExtensionPoint : ExtensionPoint<IServiceProvider>
+    public sealed class ServiceProviderExtensionPoint : ExtensionPoint<IServiceProvider>
     {
     }
 
