@@ -41,7 +41,7 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop.Validation
 {
-	// TODO (Stewart): Made this internal because as it is stated below, this is experimental code not in use right now.
+	// NOTE: Made this internal because as it is stated below, this is experimental code not in use right now.
 
     /// <summary>
     /// Supports management of mapping of validation rules from an embedded xml document to a settings class.

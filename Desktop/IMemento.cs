@@ -31,7 +31,7 @@
 
 namespace ClearCanvas.Desktop
 {
-	//TODO: Should this even be an interface?  It might as well just be an object.
+	//TODO: (Stewart) Should this even be an interface?  It might as well just be an object, unless derived from IEquatable<IMemento>
 
 	/// <summary>
 	/// Convenience interface for the memento pattern.
