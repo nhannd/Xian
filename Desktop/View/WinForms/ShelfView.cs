@@ -138,19 +138,18 @@ namespace ClearCanvas.Desktop.View.WinForms
 				return;
 
 			// because of what was mentioned above, just remember the state when the window is floating.
-			DesktopViewSettings.Default.SaveFloatingShelfState(desktopWindowName, _shelf.Name, _content.DisplayLocation, _content.FloatingSize);
+			DesktopViewSettings.Default.SaveFloatingShelfState(desktopWindowName, _shelf.Name, _content.DisplayLocation);
 		}
 
-		public bool GetFloatingState(string desktopWindowName, out Point displayLocation, out Size displaySize)
+		public bool GetFloatingState(string desktopWindowName, out Point displayLocation)
 		{
 			if ((_shelf.DisplayHint & ShelfDisplayHint.DockFloat) != ShelfDisplayHint.DockFloat)
 			{
 				displayLocation = Point.Empty;
-				displaySize = Size.Empty;
 				return false;
 			}
 
-			return DesktopViewSettings.Default.GetFloatingShelfState(desktopWindowName, _shelf.Name, out displayLocation, out displaySize);
+			return DesktopViewSettings.Default.GetFloatingShelfState(desktopWindowName, _shelf.Name, out displayLocation);
 		}
 
     	/// <summary>

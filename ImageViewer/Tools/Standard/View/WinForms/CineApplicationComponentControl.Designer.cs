@@ -74,7 +74,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 			this._cineSpeed.Location = new System.Drawing.Point(6, 41);
 			this._cineSpeed.Maximum = 100;
 			this._cineSpeed.Name = "_cineSpeed";
-			this._cineSpeed.Size = new System.Drawing.Size(186, 42);
+			this._cineSpeed.Size = new System.Drawing.Size(186, 56);
 			this._cineSpeed.TabIndex = 3;
 			this._cineSpeed.TickFrequency = 10;
 			// 
@@ -132,7 +132,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 			// 
 			// CineApplicationComponentControl
 			// 
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Inherit;
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this._startForwardButton);
 			this.Controls.Add(this._fastestLabel);
 			this.Controls.Add(this._minLabel);

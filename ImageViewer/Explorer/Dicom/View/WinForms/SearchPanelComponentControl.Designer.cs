@@ -242,7 +242,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			this.Controls.Add(this._searchLastWeekButton);
 			this.Controls.Add(this._clearButton);
 			this.Name = "SearchPanelComponentControl";
-			this.Size = new System.Drawing.Size(913, 181);
+			this.Size = new System.Drawing.Size(913, 151);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 

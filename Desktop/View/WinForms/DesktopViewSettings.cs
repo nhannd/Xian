@@ -50,18 +50,16 @@ namespace ClearCanvas.Desktop.View.WinForms
 		
 		private class FloatingShelfState : IEquatable<FloatingShelfState>
 		{
-			public FloatingShelfState(string desktopWindowName, string name, Point displayLocation, Size displaySize)
+			public FloatingShelfState(string desktopWindowName, string name, Point displayLocation)
 			{
 				DesktopWindowName = desktopWindowName ?? "";
 				Name = name ?? "";
 				DisplayLocation = displayLocation;
-				DisplaySize = displaySize;
 			}
 
 			public readonly string DesktopWindowName;
 			public readonly string Name;
 			public readonly Point DisplayLocation;
-			public readonly Size DisplaySize;
 
 			public static FloatingShelfState FromXmlElement(XmlElement element)
 			{
@@ -71,10 +69,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 				TypeConverter converter = TypeDescriptor.GetConverter(typeof (Point));
 				Point displayLocation = (Point)converter.ConvertFromString(null, CultureInfo.InvariantCulture, element.GetAttribute("display-location"));
 
-				converter = TypeDescriptor.GetConverter(typeof (Size));
-				Size displaySize = (Size)converter.ConvertFromString(null, CultureInfo.InvariantCulture, element.GetAttribute("display-size"));
-
-				return new FloatingShelfState(desktopWindowName, name, displayLocation, displaySize);
+				return new FloatingShelfState(desktopWindowName, name, displayLocation);
 			}
 
 			public void UpdateXmlElement(XmlElement element)
@@ -84,9 +79,6 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 				TypeConverter converter = TypeDescriptor.GetConverter(typeof (Point));
 				element.SetAttribute("display-location", converter.ConvertToString(null, CultureInfo.InvariantCulture, this.DisplayLocation));
-
-				converter = TypeDescriptor.GetConverter(typeof (Size));
-				element.SetAttribute("display-size", converter.ConvertToString(null, CultureInfo.InvariantCulture, this.DisplaySize));
 			}
 
 			public override bool Equals(object obj)
@@ -506,24 +498,22 @@ namespace ClearCanvas.Desktop.View.WinForms
 			SaveDesktopWindowSettings(settings);
 		}
 
-		public bool GetFloatingShelfState(string desktopWindowName, string shelfName, out Point displayLocation, out Size displaySize)
+		public bool GetFloatingShelfState(string desktopWindowName, string shelfName, out Point displayLocation)
 		{
 			FloatingShelfState existingState = GetDesktopWindowSetting().GetFloatingShelfState(desktopWindowName, shelfName);
 			if (existingState == null)
 			{
 				displayLocation = Point.Empty;
-				displaySize = Size.Empty;
 				return false;
 			}
 			else
 			{
 				displayLocation = existingState.DisplayLocation;
-				displaySize = existingState.DisplaySize;
 				return true;
 			}
 		}
 
-		public void SaveFloatingShelfState(string desktopWindowName, string shelfName, Point displayLocation, Size displaySize)
+		public void SaveFloatingShelfState(string desktopWindowName, string shelfName, Point displayLocation)
 		{
 			if (String.IsNullOrEmpty(shelfName))
 				return;
@@ -537,7 +527,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			else
 				settings.Add(currentSetting);
 
-			currentSetting.Update(new FloatingShelfState(desktopWindowName, shelfName, displayLocation, displaySize));
+			currentSetting.Update(new FloatingShelfState(desktopWindowName, shelfName, displayLocation));
 
 			SaveDesktopWindowSettings(settings);
 		}

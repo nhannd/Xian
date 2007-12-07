@@ -36,11 +36,11 @@ namespace ClearCanvas.Desktop.View.WinForms
 {
 	public partial class SplitComponentContainerControl : UserControl
 	{
-		private SplitComponentContainer _component;
-        private float _splitRatio;
-        private bool _vertical;
-        private bool _resetting;
-
+		private readonly SplitComponentContainer _component;
+		private readonly bool _vertical;
+		private bool _resetting;
+		private float _splitRatio;
+		
 		private bool PaneFixed
 		{
 			get { return (_component.Pane1.Fixed || _component.Pane2.Fixed); }
@@ -49,23 +49,27 @@ namespace ClearCanvas.Desktop.View.WinForms
 		public SplitComponentContainerControl(SplitComponentContainer component)
 		{
 			_component = component;
-			InitializeComponent();
-			
+
+			_vertical = _component.SplitOrientation == SplitOrientation.Vertical;
+			_resetting = false;
+
 			SplitPane pane1 = _component.Pane1;
 			SplitPane pane2 = _component.Pane2;
 
-            // are we vertical?
-            _vertical = _component.SplitOrientation == SplitOrientation.Vertical;
-
-            // assemble the split container control
-            _splitContainer.Orientation = _vertical ? Orientation.Vertical : Orientation.Horizontal;
-
-			Control control1 = pane1.ComponentHost.ComponentView.GuiElement as Control;
+			Control control1 = (Control)pane1.ComponentHost.ComponentView.GuiElement;
             control1.Dock = DockStyle.Fill;
-            _splitContainer.Panel1.Controls.Add(control1);
 
-            Control control2 = pane2.ComponentHost.ComponentView.GuiElement as Control;
+            Control control2 = (Control)pane2.ComponentHost.ComponentView.GuiElement;
 			control2.Dock = DockStyle.Fill;
+
+			control1.FontChanged += ContainedControlFontChanged;
+			control2.FontChanged += ContainedControlFontChanged;
+
+			InitializeComponent();
+
+			// assemble the split container control
+			_splitContainer.Orientation = _vertical ? Orientation.Vertical : Orientation.Horizontal;
+			_splitContainer.Panel1.Controls.Add(control1);
 			_splitContainer.Panel2.Controls.Add(control2);
 
 			if (!PaneFixed)
@@ -80,7 +84,13 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 			// initialize the splitter distance
             ResetSplitterDistance();
-        }
+		}
+
+		private void ContainedControlFontChanged(object sender, EventArgs e)
+		{
+			FixPane();
+			ResetSplitterDistance();
+		}
 
         private void _splitContainer_SplitterMoved(object sender, SplitterEventArgs e)
         {
@@ -101,32 +111,39 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 			// when the size of the overall control changes, we adjust the splitter distance
             // so as to maintain the current splitRatio
-
 			ResetSplitterDistance();
         }
 
 		private void FixPane()
 		{
-			float baseDimension = _vertical ? this.Width : this.Height;
+			float baseDimension = _vertical ? _splitContainer.Width : _splitContainer.Height;
 			int maxDimensionPixels = 20;
 
 			if (_component.Pane1.Fixed)
 			{
 				_splitContainer.FixedPanel = FixedPanel.Panel1;
 
+				int margin = 5 + (_vertical
+				             	? _splitContainer.Panel1.Controls[0].Margin.Horizontal
+				             	: _splitContainer.Panel1.Controls[0].Margin.Vertical);
+
 				foreach (Control control in _splitContainer.Panel1.Controls[0].Controls)
 					maxDimensionPixels = Math.Max(maxDimensionPixels, (_vertical ? control.Bounds.Right : control.Bounds.Bottom));
 
-				_splitRatio = (maxDimensionPixels + 20) / baseDimension;
+				_splitRatio = (maxDimensionPixels + margin) / baseDimension;
 			}
 			else if (_component.Pane2.Fixed)
 			{
 				_splitContainer.FixedPanel = FixedPanel.Panel2;
 
+				int margin = 5 + (_vertical
+								? _splitContainer.Panel2.Controls[0].Margin.Horizontal
+								: _splitContainer.Panel2.Controls[0].Margin.Vertical);
+
 				foreach (Control control in _splitContainer.Panel2.Controls[0].Controls)
 					maxDimensionPixels = Math.Max(maxDimensionPixels, (_vertical ? control.Bounds.Right : control.Bounds.Bottom));
 
-				_splitRatio = 1F - (maxDimensionPixels + 20) / baseDimension;
+				_splitRatio = 1F - (maxDimensionPixels + margin) / baseDimension;
 			}
 		}
 		

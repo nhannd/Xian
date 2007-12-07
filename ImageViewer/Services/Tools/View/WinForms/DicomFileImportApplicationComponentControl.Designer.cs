@@ -59,7 +59,6 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-			ClearCanvas.Desktop.Selection selection1 = new ClearCanvas.Desktop.Selection();
 			this._importTable = new ClearCanvas.Desktop.View.WinForms.TableView();
 			this._importProgressControl = new ClearCanvas.ImageViewer.Services.Tools.View.WinForms.ImportProgressControl();
 			this.SuspendLayout();
@@ -68,15 +67,11 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 			// 
 			this._importTable.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._importTable.Location = new System.Drawing.Point(0, 0);
-			this._importTable.MenuModel = null;
 			this._importTable.MultiSelect = false;
 			this._importTable.Name = "_importTable";
 			this._importTable.ReadOnly = false;
-			this._importTable.Selection = selection1;
 			this._importTable.Size = new System.Drawing.Size(776, 228);
 			this._importTable.TabIndex = 0;
-			this._importTable.Table = null;
-			this._importTable.ToolbarModel = null;
 			this._importTable.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			// 
 			// _importProgressControl

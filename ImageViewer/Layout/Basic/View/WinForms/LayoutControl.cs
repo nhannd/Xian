@@ -248,7 +248,6 @@ namespace ClearCanvas.ImageViewer.Layout.Basic.View.WinForms
 			// imageBoxPanel
 			// 
 			this.imageBoxPanel.Controls.Add(this.groupBox1);
-			this.imageBoxPanel.Dock = System.Windows.Forms.DockStyle.Top;
 			this.imageBoxPanel.Location = new System.Drawing.Point(0, 0);
 			this.imageBoxPanel.Name = "imageBoxPanel";
 			this.imageBoxPanel.Size = new System.Drawing.Size(225, 155);
@@ -309,7 +308,6 @@ namespace ClearCanvas.ImageViewer.Layout.Basic.View.WinForms
 			// tilePanel
 			// 
 			this.tilePanel.Controls.Add(this.groupBox2);
-			this.tilePanel.Dock = System.Windows.Forms.DockStyle.Top;
 			this.tilePanel.Location = new System.Drawing.Point(0, 155);
 			this.tilePanel.Name = "tilePanel";
 			this.tilePanel.Size = new System.Drawing.Size(225, 155);
@@ -379,11 +377,13 @@ namespace ClearCanvas.ImageViewer.Layout.Basic.View.WinForms
 			// 
 			// LayoutControl
 			// 
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this._buttonConfigure);
 			this.Controls.Add(this.tilePanel);
 			this.Controls.Add(this.imageBoxPanel);
 			this.Name = "LayoutControl";
-			this.Size = new System.Drawing.Size(225, 349);
+			this.Size = new System.Drawing.Size(225, 359);
 			this.imageBoxPanel.ResumeLayout(false);
 			this.groupBox1.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this._imageBoxColumns)).EndInit();
