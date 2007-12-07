@@ -56,19 +56,15 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
         {
             InitializeComponent();
             _component = component;
-            _component.AllPropertiesChanged += new EventHandler(_component_AllPropertiesChanged);
 
-            _browser.Url = new Uri(_component.PreviewUrl);
-            _browser.ObjectForScripting = _component.ScriptObject;
+            Control reportViewer = (Control)_component.ReportViewComponentHost.ComponentView.GuiElement;
+            reportViewer.Dock = DockStyle.Fill;
+            splitContainer1.Panel2.Controls.Add(reportViewer);
 
             _reportList.Table = _component.Reports;
             _reportList.DataBindings.Add("Selection", _component, "SelectedReport", true, DataSourceUpdateMode.OnPropertyChanged);
 
-        }
-
-        void _component_AllPropertiesChanged(object sender, EventArgs e)
-        {
-            _browser.Document.InvokeScript("refresh", null);
+            _radioRelevantPriors.DataBindings.Add("Checked", _component, "RelevantPriorsOnly", true, DataSourceUpdateMode.OnPropertyChanged);
         }
     }
 }

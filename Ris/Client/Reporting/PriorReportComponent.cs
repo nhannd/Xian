@@ -39,6 +39,7 @@ using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 using ClearCanvas.Ris.Application.Common.Jsml;
 using ClearCanvas.Ris.Client.Formatting;
 using System.Collections.Generic;
+using System;
 
 namespace ClearCanvas.Ris.Client.Reporting
 {
@@ -56,44 +57,50 @@ namespace ClearCanvas.Ris.Client.Reporting
     [AssociateView(typeof(PriorReportComponentViewExtensionPoint))]
     public class PriorReportComponent : ApplicationComponent
     {
-        /// <summary>
-        /// The script callback is an object that is made available to the web browser so that
-        /// the javascript code can invoke methods on the host.  It must be COM-visible.
-        /// </summary>
-        [ComVisible(true)]
-        public class ScriptCallback
+        class ReportViewComponent : DHtmlComponent
         {
-            private readonly PriorReportComponent _component;
+            private readonly PriorReportComponent _owner;
 
-            public ScriptCallback(PriorReportComponent component)
+            public ReportViewComponent(PriorReportComponent owner)
             {
-                _component = component;
+                _owner = owner;
             }
 
-            public void Alert(string message)
+            public override void Start()
             {
-                _component.Host.ShowMessageBox(message, MessageBoxActions.Ok);
+                // TODO need a separate DHtML page for prior preview
+                SetUrl(ReportEditorComponentSettings.Default.ReportPreviewPageUrl);
+                base.Start();
             }
 
-            public string GetData(string tag)
+            public void Refresh()
             {
-                string temp = _component.GetData(tag);
-                return temp;
+                NotifyAllPropertiesChanged();
             }
 
-            public string FormatPersonName(string jsml)
+            protected override object GetWorklistItem()
             {
-                PersonNameDetail detail = JsmlSerializer.Deserialize<PersonNameDetail>(jsml);
-                return detail == null ? "" : PersonNameFormat.Format(detail);
+                throw new NotImplementedException();
+            }
+
+            protected override string GetTagData(string tag)
+            {
+                if(tag == "Preview")
+                    return JsmlSerializer.Serialize(_owner._selectedReport, "report"); 
+                return base.GetTagData(tag);
             }
         }
-
-        private readonly ScriptCallback _scriptCallback;
 
         private readonly ReportingWorklistItem _worklistItem;
 
         private readonly ReportSummaryTable _reportList;
         private ReportSummary _selectedReport;
+        private bool _relevantPriorsOnly;
+
+        private List<ReportSummary> _relevantPriors;
+        private List<ReportSummary> _allPriors;
+
+        private ChildComponentHost _reportViewComponentHost;
 
         /// <summary>
         /// Constructor for showing priors based on a reporting step.
@@ -102,22 +109,55 @@ namespace ClearCanvas.Ris.Client.Reporting
         {
             _worklistItem = worklistItem;
 
-            _scriptCallback = new ScriptCallback(this);
             _reportList = new ReportSummaryTable();
         }
 
         public override void Start()
         {
-            Platform.GetService<IReportingWorkflowService>(
-                delegate(IReportingWorkflowService service)
-                {
-                    GetPriorReportsRequest request = new GetPriorReportsRequest();
-                    request.ReportingProcedureStepRef = _worklistItem.ProcedureStepRef;
-                    GetPriorReportsResponse response = service.GetPriorReports(request);
-                    _reportList.Items.AddRange(response.Reports);
-                });
+            _reportViewComponentHost = new ChildComponentHost(this.Host, new ReportViewComponent(this));
+            _reportViewComponentHost.StartComponent();
+
+            _relevantPriorsOnly = true;
+            UpdateReportList();
 
             base.Start();
+        }
+
+        #region Presentation Model
+
+        public ApplicationComponentHost ReportViewComponentHost
+        {
+            get { return _reportViewComponentHost; }
+        }
+        
+        public bool RelevantPriorsOnly
+        {
+            get { return _relevantPriorsOnly; }
+            set
+            {
+                if(value != _relevantPriorsOnly)
+                {
+                    _relevantPriorsOnly = value;
+                    UpdateReportList();
+                }
+            }
+        }
+
+        private void UpdateReportList()
+        {
+            _reportList.Items.Clear();
+            if(_relevantPriorsOnly)
+            {
+                if (_relevantPriors == null)
+                    _relevantPriors = LoadPriors(true);
+                _reportList.Items.AddRange(_relevantPriors);
+            }
+            else
+            {
+                if (_allPriors == null)
+                    _allPriors = LoadPriors(false);
+                _reportList.Items.AddRange(_allPriors);
+            }
         }
 
         public ITable Reports
@@ -134,7 +174,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                 if (_selectedReport != newSelection)
                 {
                     _selectedReport = newSelection;
-                    NotifyAllPropertiesChanged();
+                    ((ReportViewComponent)_reportViewComponentHost.Component).Refresh();
                 }
             }
         }
@@ -144,14 +184,27 @@ namespace ClearCanvas.Ris.Client.Reporting
             get { return ReportEditorComponentSettings.Default.ReportPreviewPageUrl; }
         }
 
-        public ScriptCallback ScriptObject
-        {
-            get { return _scriptCallback; }
-        }
-
         public string GetData(string tag)
         {
             return JsmlSerializer.Serialize(_selectedReport, "report");
+        }
+
+        #endregion
+
+        private List<ReportSummary> LoadPriors(bool relevantOnly)
+        {
+            GetPriorReportsResponse response = null;
+            Platform.GetService<IReportingWorkflowService>(
+                delegate(IReportingWorkflowService service)
+                {
+                    GetPriorReportsRequest request = new GetPriorReportsRequest();
+                    if (relevantOnly)
+                        request.ReportingProcedureStepRef = _worklistItem.ProcedureStepRef;
+                    else
+                        request.PatientRef = _worklistItem.PatientRef;
+                    response = service.GetPriorReports(request);
+                });
+            return response.Reports;
         }
 
     }

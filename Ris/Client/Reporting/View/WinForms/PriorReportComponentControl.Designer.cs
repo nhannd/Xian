@@ -59,13 +59,16 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-            ClearCanvas.Desktop.Selection selection1 = new ClearCanvas.Desktop.Selection();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this._reportList = new ClearCanvas.Desktop.View.WinForms.TableView();
-            this._browser = new System.Windows.Forms.WebBrowser();
+            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this._radioRelevantPriors = new System.Windows.Forms.RadioButton();
+            this._radioAllPriors = new System.Windows.Forms.RadioButton();
             this.splitContainer1.Panel1.SuspendLayout();
-            this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
+            this.tableLayoutPanel1.SuspendLayout();
+            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // splitContainer1
@@ -78,38 +81,73 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             // 
             // splitContainer1.Panel1
             // 
-            this.splitContainer1.Panel1.Controls.Add(this._reportList);
-            // 
-            // splitContainer1.Panel2
-            // 
-            this.splitContainer1.Panel2.Controls.Add(this._browser);
+            this.splitContainer1.Panel1.Controls.Add(this.tableLayoutPanel1);
             this.splitContainer1.Size = new System.Drawing.Size(443, 428);
             this.splitContainer1.SplitterDistance = 181;
             this.splitContainer1.TabIndex = 1;
             // 
             // _reportList
             // 
-            this._reportList.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._reportList.Location = new System.Drawing.Point(0, 0);
-            this._reportList.MenuModel = null;
+            this._reportList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this._reportList.Location = new System.Drawing.Point(3, 51);
             this._reportList.Name = "_reportList";
             this._reportList.ReadOnly = false;
-            this._reportList.Selection = selection1;
-            this._reportList.Size = new System.Drawing.Size(443, 181);
+            this._reportList.ShowToolbar = false;
+            this._reportList.Size = new System.Drawing.Size(437, 127);
             this._reportList.TabIndex = 2;
-            this._reportList.Table = null;
-            this._reportList.ToolbarModel = null;
             this._reportList.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this._reportList.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.No;
             // 
-            // _browser
+            // tableLayoutPanel1
             // 
-            this._browser.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._browser.Location = new System.Drawing.Point(0, 0);
-            this._browser.MinimumSize = new System.Drawing.Size(20, 20);
-            this._browser.Name = "_browser";
-            this._browser.Size = new System.Drawing.Size(443, 243);
-            this._browser.TabIndex = 0;
+            this.tableLayoutPanel1.ColumnCount = 1;
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel1.Controls.Add(this._reportList, 0, 1);
+            this.tableLayoutPanel1.Controls.Add(this.groupBox1, 0, 0);
+            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
+            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+            this.tableLayoutPanel1.RowCount = 2;
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(443, 181);
+            this.tableLayoutPanel1.TabIndex = 3;
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.Controls.Add(this._radioAllPriors);
+            this.groupBox1.Controls.Add(this._radioRelevantPriors);
+            this.groupBox1.Location = new System.Drawing.Point(3, 3);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(437, 42);
+            this.groupBox1.TabIndex = 3;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Filter";
+            // 
+            // _radioRelevantPriors
+            // 
+            this._radioRelevantPriors.AutoSize = true;
+            this._radioRelevantPriors.Location = new System.Drawing.Point(6, 19);
+            this._radioRelevantPriors.Name = "_radioRelevantPriors";
+            this._radioRelevantPriors.Size = new System.Drawing.Size(68, 17);
+            this._radioRelevantPriors.TabIndex = 0;
+            this._radioRelevantPriors.TabStop = true;
+            this._radioRelevantPriors.Text = "Relevant";
+            this._radioRelevantPriors.UseVisualStyleBackColor = true;
+            // 
+            // _radioAllPriors
+            // 
+            this._radioAllPriors.AutoSize = true;
+            this._radioAllPriors.Location = new System.Drawing.Point(90, 19);
+            this._radioAllPriors.Name = "_radioAllPriors";
+            this._radioAllPriors.Size = new System.Drawing.Size(36, 17);
+            this._radioAllPriors.TabIndex = 1;
+            this._radioAllPriors.TabStop = true;
+            this._radioAllPriors.Text = "All";
+            this._radioAllPriors.UseVisualStyleBackColor = true;
             // 
             // PriorReportComponentControl
             // 
@@ -119,8 +157,10 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this.Name = "PriorReportComponentControl";
             this.Size = new System.Drawing.Size(443, 428);
             this.splitContainer1.Panel1.ResumeLayout(false);
-            this.splitContainer1.Panel2.ResumeLayout(false);
             this.splitContainer1.ResumeLayout(false);
+            this.tableLayoutPanel1.ResumeLayout(false);
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -129,7 +169,10 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 
         private System.Windows.Forms.SplitContainer splitContainer1;
         private ClearCanvas.Desktop.View.WinForms.TableView _reportList;
-        private System.Windows.Forms.WebBrowser _browser;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.RadioButton _radioAllPriors;
+        private System.Windows.Forms.RadioButton _radioRelevantPriors;
 
     }
 }
