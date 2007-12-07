@@ -1,6 +1,6 @@
-<%@ Page Language="C#" MasterPageFile="~/Admin/MasterPage.master" AutoEventWireup="true" 
+<%@ Page Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" 
     EnableEventValidation="false"
-    CodeBehind="DevicePage.aspx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices.DevicePage" Title="ClearCanvas ImageServer" %>
+    CodeBehind="DevicePage.aspx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices.DevicePage" Title="ImageServer Device Config" %>
 
 <%@ Register Src="~/Common/ConfirmDialog.ascx" TagName="ConfirmDialog" TagPrefix="uc1" %>
 

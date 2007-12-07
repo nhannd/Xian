@@ -16,7 +16,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         IList<ServerPartition> GetAllPartitions();
     }
 
-    public class ServerParitionConfigController:IServerPartitionConfigurationController
+    public class ServerPartitionConfigController:IServerPartitionConfigurationController
     {
         #region Private members
         /// <summary>
@@ -71,31 +71,6 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
          /// <returns>A list of partitions</returns>
         public IList<ServerPartition> GetPartitions(ServerPartitionSelectCriteria criteria)
         {
-            //ServerPartitionSelectCriteria criteria = new ServerPartitionSelectCriteria();
-
-            //if (String.IsNullOrEmpty(AETitle)==false)
-            //{
-            //    AETitle = AETitle.Replace("*", "%");
-            //    criteria.AETitle.Like(AETitle + "%");
-            //}
-
-            //if (String.IsNullOrEmpty(description) == false)
-            //{
-            //    description = description.Replace("*", "%");
-            //    criteria.Description.Like(description + "%");
-            //}
-
-            //if (String.IsNullOrEmpty(partitionFolder)==false)
-            //{
-            //    partitionFolder = partitionFolder.Replace("*", "%");
-            //    criteria.PartitionFolder.Like(partitionFolder + "%");
-            //}
-
-            //if (enabledOnly)
-            //{
-            //    criteria.Enabled.EqualTo(true);
-            //}
-
             return _serverAdapter.GetServerPartitions(criteria);
         }
 

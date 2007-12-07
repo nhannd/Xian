@@ -8,51 +8,69 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPartitions {
+namespace ClearCanvas.ImageServer.Web.Application.Search {
     
     
     /// <summary>
-    /// ServerPartitionPage class.
+    /// SearchPage class.
     /// </summary>
     /// <remarks>
     /// Auto-generated class.
     /// </remarks>
-    public partial class ServerPartitionPage {
+    public partial class SearchPage {
         
         /// <summary>
-        /// UpdatePanel control.
+        /// PageContent control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.UpdatePanel UpdatePanel;
+        protected global::System.Web.UI.WebControls.Panel PageContent;
         
         /// <summary>
-        /// Panel1 control.
+        /// UpdatePanel1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel Panel1;
+        protected global::System.Web.UI.UpdatePanel UpdatePanel1;
         
         /// <summary>
-        /// ServerPartitionPanel control.
+        /// SearchPartitionTabContainer control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPartitions.ServerPartitionPanel ServerPartitionPanel;
+        protected global::AjaxControlToolkit.TabContainer SearchPartitionTabContainer;
         
         /// <summary>
-        /// AddEditPartitionDialog1 control.
+        /// SearchPartitionTabPanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPartitions.AddEditPartitionDialog AddEditPartitionDialog1;
+        protected global::AjaxControlToolkit.TabPanel SearchPartitionTabPanel;
+        
+        /// <summary>
+        /// ConfirmDialog1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClearCanvas.ImageServer.Web.Application.Common.ConfirmDialog ConfirmDialog1;
+        
+        /// <summary>
+        /// Label1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label Label1;
     }
 }

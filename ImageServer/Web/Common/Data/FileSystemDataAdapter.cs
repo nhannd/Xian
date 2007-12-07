@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
@@ -15,46 +13,23 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
     /// Used to create/update/delete file system entries in the database.
     /// </summary>
     ///
-    public class FileSystemDataAdapter
+    public class FileSystemDataAdapter : BaseAdaptor<Filesystem, FilesystemSelectCriteria, ISelectFilesystem>
     {
-        #region Private Members
-        private IPersistentStore _store = PersistentStoreRegistry.GetDefaultStore();
-        #endregion Private Members
-
         #region Public methods
+
         /// <summary>
         /// Gets a list of all file systems.
         /// </summary>
         /// <returns></returns>
         public IList<Filesystem> GetAllFileSystems()
         {
-            IList<Filesystem> list = null;
-            using (IReadContext ctx = _store.OpenReadContext())
-            {
-                ISelectFilesystem find = ctx.GetBroker<ISelectFilesystem>();
-
-                FilesystemSelectCriteria criteria = new FilesystemSelectCriteria();
-                list = find.Find(criteria);
-            }
-
-            return list;
-
+            return Get();
         }
 
         public IList<Filesystem> GetFileSystems(FilesystemSelectCriteria criteria)
         {
-            IList<Filesystem> list = null;
-            using (IReadContext ctx = _store.OpenReadContext())
-            {
-                ISelectFilesystem select = ctx.GetBroker<ISelectFilesystem>();
-                list = select.Find(criteria);
-            }
-
-            return list;
-
+            return Get(criteria);
         }
-
-
 
         /// <summary>
         /// Creats a new file system.
@@ -63,9 +38,8 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         public bool AddFileSystem(Filesystem filesystem)
         {
             bool ok = false;
-            IList<Filesystem> list = null;
 
-            using (IUpdateContext ctx = _store.OpenUpdateContext(UpdateContextSyncMode.Flush))
+            using (IUpdateContext ctx = PersistentStore.OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
                 IInsertFilesystem insert = ctx.GetBroker<IInsertFilesystem>();
                 FilesystemInsertParameters parms = new FilesystemInsertParameters();
@@ -78,7 +52,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                 parms.HighWatermark = filesystem.HighWatermark;
                 parms.LowWatermark = filesystem.LowWatermark;
 
-                list = insert.Execute(parms);
+                IList<Filesystem> list = insert.Execute(parms);
 
                 ok = list != null && list.Count > 0;
 
@@ -86,17 +60,15 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                     ctx.Commit();
             }
 
-           
             return ok;
         }
-
 
 
         public bool Update(Filesystem filesystem)
         {
             bool ok = false;
 
-            using (IUpdateContext ctx = _store.OpenUpdateContext(UpdateContextSyncMode.Flush))
+            using (IUpdateContext ctx = PersistentStore.OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
                 IUpdateFilesystem update = ctx.GetBroker<IUpdateFilesystem>();
                 FilesystemUpdateParameters parms = new FilesystemUpdateParameters();
@@ -116,13 +88,12 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             }
 
             return ok;
-
         }
 
         public IList<FilesystemTierEnum> GetFileSystemTiers()
         {
             IList<FilesystemTierEnum> result = null;
-            using (IReadContext ctx = _store.OpenReadContext())
+            using (IReadContext ctx = PersistentStore.OpenReadContext())
             {
                 IFilesystemTierEnum select = ctx.GetBroker<IFilesystemTierEnum>();
                 result = select.Execute();
@@ -130,8 +101,6 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
             return result;
         }
-
-
 
         #endregion Public methods
     }

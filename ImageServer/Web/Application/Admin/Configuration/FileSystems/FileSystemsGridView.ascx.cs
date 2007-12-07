@@ -376,13 +376,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
 
         protected void GridView1_PageIndexChanged(object sender, EventArgs e)
         {
-            DataBind();
+           // DataBind();
         }
         
         protected void GridView1_PageIndexChanging(object sender, GridViewPageEventArgs e)
         {
-            GridView1.PageIndex = e.NewPageIndex;
-            DataBind();
+          //  GridView1.PageIndex = e.NewPageIndex;
+          //  DataBind();
         }
 
         protected void ImageButton_Command(object sender, CommandEventArgs e)

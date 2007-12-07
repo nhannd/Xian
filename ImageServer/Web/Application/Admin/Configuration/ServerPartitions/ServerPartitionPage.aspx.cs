@@ -11,7 +11,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
     {
         #region Private Members
         // used for database interaction
-        private ServerParitionConfigController _controller = null;
+        private ServerPartitionConfigController _controller = null;
 
         #endregion
 
@@ -19,7 +19,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
 
         protected void Initialize()
         {
-            _controller = new ServerParitionConfigController();
+            _controller = new ServerPartitionConfigController();
 
             ServerPartitionPanel.Controller = _controller;
 

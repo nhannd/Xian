@@ -8,16 +8,16 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystems {
+namespace ClearCanvas.ImageServer.Web.Application.Search {
     
     
     /// <summary>
-    /// FileSystemsPage class.
+    /// SearchToolBar class.
     /// </summary>
     /// <remarks>
     /// Auto-generated class.
     /// </remarks>
-    public partial class FileSystemsPage {
+    public partial class SearchToolBar {
         
         /// <summary>
         /// Panel1 control.
@@ -29,30 +29,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
         protected global::System.Web.UI.WebControls.Panel Panel1;
         
         /// <summary>
-        /// UpdatePanel1 control.
+        /// RefreshButton control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.UpdatePanel UpdatePanel1;
-        
-        /// <summary>
-        /// FileSystemsPanel1 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystems.FileSystemsPanel FileSystemsPanel1;
-        
-        /// <summary>
-        /// AddEditFileSystemDialog1 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystems.AddFilesystemDialog AddEditFileSystemDialog1;
+        protected global::System.Web.UI.WebControls.ImageButton RefreshButton;
     }
 }

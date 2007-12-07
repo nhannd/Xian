@@ -42,22 +42,8 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
     /// <summary>
     /// Used to create/update/delete server partition entries in the database.
     /// </summary>
-    public class ServerPartitionDataAdapter
+    public class ServerPartitionDataAdapter : BaseAdaptor<ServerPartition,ServerPartitionSelectCriteria,ISelectServerPartition>
     {
-        #region Private Members
-
-        private IPersistentStore _store = PersistentStoreRegistry.GetDefaultStore();
-
-        #endregion Private Members
-
-        #region Constructors
-
-        public ServerPartitionDataAdapter()
-        {
-        }
-
-        #endregion Constructors
-
         #region Public methods
 
         /// <summary>
@@ -66,28 +52,12 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         /// <returns></returns>
         public IList<ServerPartition> GetServerPartitions()
         {
-            IList<ServerPartition> list = null;
-            using (IReadContext ctx = _store.OpenReadContext())
-            {
-                ISelectServerPartition find = ctx.GetBroker<ISelectServerPartition>();
-
-                ServerPartitionSelectCriteria criteria = new ServerPartitionSelectCriteria();
-                list = find.Find(criteria);
-            }
-
-            return list;
+            return Get();
         }
 
         public IList<ServerPartition> GetServerPartitions(ServerPartitionSelectCriteria criteria)
         {
-            IList<ServerPartition> list = null;
-            using (IReadContext ctx = _store.OpenReadContext())
-            {
-                ISelectServerPartition select = ctx.GetBroker<ISelectServerPartition>();
-                list = select.Find(criteria);
-            }
-
-            return list;
+            return Get(criteria);
         }
 
         /// <summary>
@@ -99,7 +69,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             bool ok = false;
             IList<ServerPartition> list = null;
 
-            using (IUpdateContext ctx = _store.OpenUpdateContext(UpdateContextSyncMode.Flush))
+            using (IUpdateContext ctx = PersistentStore.OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
                 IInsertServerPartition insert = ctx.GetBroker<IInsertServerPartition>();
                 ServerPartitionInsertParameters parms = new ServerPartitionInsertParameters();
@@ -119,7 +89,6 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                     ctx.Commit();
             }
 
-
             return ok;
         }
 
@@ -127,7 +96,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         {
             bool ok = false;
 
-            using (IUpdateContext ctx = _store.OpenUpdateContext(UpdateContextSyncMode.Flush))
+            using (IUpdateContext ctx = PersistentStore.OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
                 IUpdateServerPartition update = ctx.GetBroker<IUpdateServerPartition>();
                 ServerPartitionUpdateParameters parms = new ServerPartitionUpdateParameters();

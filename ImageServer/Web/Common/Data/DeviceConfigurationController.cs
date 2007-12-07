@@ -3,7 +3,6 @@ using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Criteria;
 using ClearCanvas.Common;
 
-
 namespace ClearCanvas.ImageServer.Web.Common.Data
 {
     /// <summary>
@@ -51,7 +50,6 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             return ok;
         }
 
-        #endregion // public methods
         /// <summary>
         /// Delete a device from the database.
         /// </summary>
@@ -102,6 +100,6 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             return _serverAdapter.GetServerPartitions();
 
         }
-
+        #endregion public methods
     }
 }

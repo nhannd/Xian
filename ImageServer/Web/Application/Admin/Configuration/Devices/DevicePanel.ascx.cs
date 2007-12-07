@@ -195,16 +195,16 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
             if (!String.IsNullOrEmpty(filters.AETitle))
             {
                 string key = filters.AETitle + "%";
-                key.Replace("*", "%");
-                //AETitle.Replace("?", "?");
+                key = key.Replace("*", "%");
+                key = key.Replace("?", "_");
                 criteria.AeTitle.Like(key);
             }
 
             if (!String.IsNullOrEmpty(filters.IPAddress))
             {
                 string key = filters.IPAddress + "%";
-                key.Replace("*", "%");
-                //IP.Replace("?", "?");
+                key = key.Replace("*", "%");
+                key = key.Replace("?", "_");
                 criteria.IPAddress.Like(key);
             }
 

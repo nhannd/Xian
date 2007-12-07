@@ -8,8 +8,8 @@
     <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ImageServerWebApplication</RootNamespace>
-    <AssemblyName>ImageServerWebApplication</AssemblyName>
+    <RootNamespace>ClearCanvas.ImageServer.Web.Application</RootNamespace>
+    <AssemblyName>ClearCanvas.ImageServer.Web.Application</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -72,7 +72,7 @@
     <Content Include="Admin\Configuration\Devices\DeviceGridView.ascx" />
     <Content Include="Admin\Configuration\Devices\DeviceToolBar.ascx" />
     <Content Include="Admin\Default.aspx" />
-    <Content Include="Admin\Styles\StyleSheet.css" />
+    <Content Include="Styles\StyleSheet.css" />
     <Compile Include="Admin\Configuration\Devices\AddEditDeviceDialog.ascx.cs">
       <DependentUpon>AddEditDeviceDialog.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -220,11 +220,11 @@
     <Compile Include="Admin\Default.aspx.designer.cs">
       <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Admin\MasterPage.master.cs">
+    <Compile Include="MasterPage.master.cs">
       <DependentUpon>MasterPage.master</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Admin\MasterPage.master.designer.cs">
+    <Compile Include="MasterPage.master.designer.cs">
       <DependentUpon>MasterPage.master</DependentUpon>
     </Compile>
     <Compile Include="Common\GridPager.ascx.cs">
@@ -245,6 +245,41 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Search\SearchFilterPanel.ascx.cs">
+      <DependentUpon>SearchFilterPanel.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Search\SearchFilterPanel.ascx.designer.cs">
+      <DependentUpon>SearchFilterPanel.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Search\SearchGridView.ascx.cs">
+      <DependentUpon>SearchGridView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Search\SearchGridView.ascx.designer.cs">
+      <DependentUpon>SearchGridView.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Search\SearchPage.aspx.cs">
+      <SubType>ASPXCodeBehind</SubType>
+      <DependentUpon>SearchPage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Search\SearchPage.aspx.designer.cs">
+      <DependentUpon>SearchPage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Search\SearchPanel.ascx.cs">
+      <DependentUpon>SearchPanel.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Search\SearchPanel.ascx.designer.cs">
+      <DependentUpon>SearchPanel.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Search\SearchToolBar.ascx.cs">
+      <DependentUpon>SearchToolBar.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Search\SearchToolBar.ascx.designer.cs">
+      <DependentUpon>SearchToolBar.ascx</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Admin\Configuration\Devices\DevicePage.aspx" />
@@ -260,12 +295,12 @@
     <Content Include="Admin\Configuration\ServerPartitions\ServerPartitionPage.aspx" />
     <Content Include="Admin\Configuration\ServerPartitions\ServerPartitionPanel.ascx" />
     <Content Include="Admin\Configuration\ServerPartitions\ServerPartitionToolBarPanel.ascx" />
-    <Content Include="Admin\Styles\images\icon_warning.gif" />
+    <Content Include="Styles\images\icon_warning.gif" />
     <Content Include="Common\BarChart.aspx" />
     <Content Include="Common\ConfirmDialog.ascx" />
     <Content Include="Admin\Configuration\Devices\DeviceFilterPanel.ascx" />
     <Content Include="Admin\Configuration\Devices\DevicePanel.ascx" />
-    <Content Include="Admin\MasterPage.master" />
+    <Content Include="MasterPage.master" />
     <None Include="images\Thumbs.db" />
     <Content Include="Common\GridPager.ascx" />
     <Content Include="Global.asax" />
@@ -308,19 +343,24 @@
     <Content Include="images\search.gif" />
     <Content Include="images\storage.gif" />
     <Content Include="images\unchecked_tall.gif" />
-    <Content Include="Admin\Styles\images\tab-active-left.gif" />
-    <Content Include="Admin\Styles\images\tab-active-right.gif" />
-    <Content Include="Admin\Styles\images\tab-active.gif" />
-    <Content Include="Admin\Styles\images\tab-hover-left.gif" />
-    <Content Include="Admin\Styles\images\tab-hover-right.gif" />
-    <Content Include="Admin\Styles\images\tab-hover.gif" />
-    <Content Include="Admin\Styles\images\tab-left.gif" />
-    <Content Include="Admin\Styles\images\tab-line.gif" />
-    <Content Include="Admin\Styles\images\tab-right.gif" />
-    <Content Include="Admin\Styles\images\tab.gif" />
-    <Content Include="Admin\Styles\visoft__tab_xpie7.css" />
+    <Content Include="Styles\images\tab-active-left.gif" />
+    <Content Include="Styles\images\tab-active-right.gif" />
+    <Content Include="Styles\images\tab-active.gif" />
+    <Content Include="Styles\images\tab-hover-left.gif" />
+    <Content Include="Styles\images\tab-hover-right.gif" />
+    <Content Include="Styles\images\tab-hover.gif" />
+    <Content Include="Styles\images\tab-left.gif" />
+    <Content Include="Styles\images\tab-line.gif" />
+    <Content Include="Styles\images\tab-right.gif" />
+    <Content Include="Styles\images\tab.gif" />
+    <Content Include="Styles\visoft__tab_xpie7.css" />
     <Content Include="images\Plus.ico" />
     <Content Include="images\usage.png" />
+    <Content Include="Search\SearchFilterPanel.ascx" />
+    <Content Include="Search\SearchGridView.ascx" />
+    <Content Include="Search\SearchPage.aspx" />
+    <Content Include="Search\SearchPanel.ascx" />
+    <Content Include="Search\SearchToolBar.ascx" />
     <Content Include="Web.sitemap" />
     <Content Include="Logging.config" />
   </ItemGroup>

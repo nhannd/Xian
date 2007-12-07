@@ -44,36 +44,15 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
     /// Used to create/update/delete device entries in the database.
     /// </summary>
     /// 
-    public class DeviceDataAdapter
+    public class DeviceDataAdapter : BaseAdaptor<Device, DeviceSelectCriteria, ISelectDevice>
     {
-
-        #region Private Members
-        private IPersistentStore _store = PersistentStoreRegistry.GetDefaultStore();
-        #endregion Private Members
-
-        #region Constructor
-        public DeviceDataAdapter()
-        {
-
-        }
-        #endregion Constructor
-
         /// <summary>
         /// Retrieve list of devices.
         /// </summary>
         /// <returns></returns>
         public IList<Device> GetDevices()
         {
-            using (IReadContext ctx= _store.OpenReadContext())
-            {
-                ISelectDevice find = ctx.GetBroker<ISelectDevice>();
-                DeviceSelectCriteria criteria = new DeviceSelectCriteria();
-                IList<Device> list = find.Find(criteria);
-
-                return list;
-            }
-
-            
+            return Get();
         }
 
         /// <summary>
@@ -83,8 +62,8 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         /// <returns></returns>
         public bool DeleteDevice(Device dev)
         {
-            bool ok = false;
-            using (IUpdateContext ctx = _store.OpenUpdateContext(UpdateContextSyncMode.Flush))
+            bool ok;
+            using (IUpdateContext ctx = PersistentStore.OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
                 IDeleteDevice delete = ctx.GetBroker<IDeleteDevice>();
                 DeviceDeleteParameters param = new DeviceDeleteParameters();
@@ -96,8 +75,6 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             }
 
             return ok;
-            
-
         }
 
         /// <summary>
@@ -109,7 +86,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         {
             bool ok = false;
 
-            using (IUpdateContext ctx = _store.OpenUpdateContext(UpdateContextSyncMode.Flush))
+            using (IUpdateContext ctx = PersistentStore.OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
                 IUpdateDevice update = ctx.GetBroker<IUpdateDevice>();
                 DeviceUpdateParameters param = new DeviceUpdateParameters();
@@ -132,7 +109,6 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             }
 
             return ok;
-
         }
 
         public IList<Device> DummyList
@@ -151,26 +127,14 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             }
         }
 
-        
         /// <summary>
         /// Retrieve a list of devices with specified criteria.
         /// </summary>
         /// <returns></returns>
         public IList<Device> GetDevices(DeviceSelectCriteria criteria)
         {
-            IList<Device> list = null;
-
-            using (IReadContext ctx = _store.OpenReadContext())
-            {
-                ISelectDevice find = ctx.GetBroker<ISelectDevice>();
-                list = find.Find(criteria);
-                
-            }
-
-            return list; 
+            return base.Get(criteria);
         }
-
-        
 
         /// <summary>
         /// Create a new device.
@@ -180,7 +144,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         public bool AddDevice(Device newDev)
         {
             bool ok = false;
-            using(IUpdateContext ctx = _store.OpenUpdateContext(UpdateContextSyncMode.Flush))
+            using (IUpdateContext ctx = PersistentStore.OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
                 IInsertDevice insert = ctx.GetBroker<IInsertDevice>();
                 DeviceInsertParameters param = new DeviceInsertParameters();
@@ -203,9 +167,6 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
             return ok;
         }
-
-
-
     }
 }
 

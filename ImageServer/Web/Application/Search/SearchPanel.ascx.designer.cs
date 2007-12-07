@@ -8,16 +8,16 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPartitions {
+namespace ClearCanvas.ImageServer.Web.Application.Search {
     
     
     /// <summary>
-    /// ServerPartitionPage class.
+    /// SearchPanel class.
     /// </summary>
     /// <remarks>
     /// Auto-generated class.
     /// </remarks>
-    public partial class ServerPartitionPage {
+    public partial class SearchPanel {
         
         /// <summary>
         /// UpdatePanel control.
@@ -38,21 +38,39 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
         protected global::System.Web.UI.WebControls.Panel Panel1;
         
         /// <summary>
-        /// ServerPartitionPanel control.
+        /// SearchToolBarControl control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPartitions.ServerPartitionPanel ServerPartitionPanel;
+        protected global::ClearCanvas.ImageServer.Web.Application.Search.SearchToolBar SearchToolBarControl;
         
         /// <summary>
-        /// AddEditPartitionDialog1 control.
+        /// SearchFilterPanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPartitions.AddEditPartitionDialog AddEditPartitionDialog1;
+        protected global::ClearCanvas.ImageServer.Web.Application.Search.SearchFilterPanel SearchFilterPanel;
+        
+        /// <summary>
+        /// SearchGridViewControl control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClearCanvas.ImageServer.Web.Application.Search.SearchGridView SearchGridViewControl;
+        
+        /// <summary>
+        /// GridPager1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClearCanvas.ImageServer.Web.Application.Common.GridPager GridPager1;
     }
 }

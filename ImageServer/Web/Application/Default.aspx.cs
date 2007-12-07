@@ -15,7 +15,7 @@ namespace ClearCanvas.ImageServer.Web.Application
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            Response.Redirect("~/Admin/Configuration/Devices/DevicePage.aspx");
+            Response.Redirect("~/Search/SearchPage.aspx");
         }
     }
 }

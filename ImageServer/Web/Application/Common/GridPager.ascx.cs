@@ -164,8 +164,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
 
         }
         #endregion Public methods
-
-       
+      
     }
 
 }

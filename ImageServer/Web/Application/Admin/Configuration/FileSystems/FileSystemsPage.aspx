@@ -1,4 +1,4 @@
-<%@ Page Language="C#" MasterPageFile="~/Admin/MasterPage.master" AutoEventWireup="true" 
+<%@ Page Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" 
     EnableEventValidation="false"
     CodeBehind="FileSystemsPage.aspx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystems.FileSystemsPage" Title="ClearCanvas ImageServer" %>
 

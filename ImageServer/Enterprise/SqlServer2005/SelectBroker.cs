@@ -69,6 +69,43 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
         /// <summary>
         /// Gets WHERE clauses based on the input search condition.
         /// </summary>
+        /// <returns></returns>
+        private static string GetOrderBy(String entity, SelectCriteria criteria)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            // recurse on subCriteria
+            foreach (SearchCriteria subCriteria in criteria.SubCriteria.Values)
+            {
+                string variable = string.Format("{0}.{1}", entity, subCriteria.GetKey());
+                SearchConditionBase sc = subCriteria as SearchConditionBase;
+                if (sc != null)
+                {
+                    if (sc.SortPosition != -1)
+                    {
+                        string sqlColumnName;
+
+                        // With the Server, all primary keys end with "Key".  The database implementation itself
+                        // names these columns with the name GUID instead of Key.
+                        if (variable.EndsWith("Key"))
+                            sqlColumnName = variable.Replace("Key", "GUID");
+                        else
+                            sqlColumnName = variable;
+
+                        if (sb.ToString().Length == 0)
+                            sb.AppendFormat("ORDER BY {0} {1}", sqlColumnName, sc.SortDirection ? "ASC" : "DESC");
+                        else
+                            sb.AppendFormat(", {0} {1}", sqlColumnName, sc.SortDirection ? "ASC" : "DESC");
+                    }
+                }
+            }
+
+            return sb.ToString();
+        }
+
+        /// <summary>
+        /// Gets WHERE clauses based on the input search condition.
+        /// </summary>
         /// <param name="variable"></param>
         /// <param name="sc"></param>
         /// <param name="command"></param>
@@ -202,6 +239,7 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                     sb.AppendFormat("EXISTS ({0})", existsSql);
                     break;
                 case SearchConditionTest.None:
+
                 default:
                     throw new ApplicationException();  // invalid
             }
@@ -285,8 +323,14 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                 else
                     sb.AppendFormat(" AND {0}", clause);
             }
+
+            string orderBy = GetOrderBy(entityName, criteria);
+            if (orderBy.Length > 0)
+                sb.AppendFormat(" {0}", orderBy);
+
             return sb.ToString();
         }
+
         /// <summary>
         /// Proves a SELECT COUNT(*) SQL statement based on the supplied input criteria.
         /// </summary>
