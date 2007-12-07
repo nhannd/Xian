@@ -32,6 +32,7 @@
 using System;
 using System.Drawing;
 using ClearCanvas.Common;
+using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.Graphics
 {
@@ -200,8 +201,17 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// <returns></returns>
 		public override bool HitTest(Point point)
 		{
-			// TODO (Stewart): implement this
-			throw new NotImplementedException();
+			PointF ptMouse = this.SpatialTransform.ConvertToSource(point);
+
+			CoordinateSystem = CoordinateSystem.Source;
+
+			RectF srcRect = new RectF();
+			srcRect.TopLeft = TopLeft;
+			srcRect.BottomRight = BottomRight;
+
+			ResetCoordinateSystem();
+
+			return srcRect.Contains(ptMouse);
 		}
 	}
 }

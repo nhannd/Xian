@@ -127,18 +127,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// <returns></returns>
 		public override bool HitTest(Point point)
 		{
-			PointF ptMouse = this.SpatialTransform.ConvertToSource(point);
-
-			// TODO (Stewart): Should call _rectangle.HitTest instead
-			_rectangle.CoordinateSystem = CoordinateSystem.Source;
-
-			RectF srcRect = new RectF();
-			srcRect.TopLeft = _rectangle.TopLeft;
-			srcRect.BottomRight = _rectangle.BottomRight;
-
-			_rectangle.ResetCoordinateSystem();
-
-			return srcRect.Contains(ptMouse);
+			return _rectangle.HitTest(point);
 		}
 	}
 }
