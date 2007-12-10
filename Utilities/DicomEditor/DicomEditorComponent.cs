@@ -91,7 +91,7 @@ namespace ClearCanvas.Utilities.DicomEditor
 	}
 
     [AssociateView(typeof(DicomEditorComponentViewExtensionPoint))]
-    public class DicomEditorComponent : ApplicationComponent, INotifyPropertyChanged, IDicomEditorDumpManagement
+    public class DicomEditorComponent : ApplicationComponent, IDicomEditorDumpManagement
     {
         public class DicomEditorToolContext : ToolContext, IDicomEditorToolContext
         {
@@ -456,29 +456,13 @@ namespace ClearCanvas.Utilities.DicomEditor
             return attribute <= 267546;
         }
 
-        private void OnPropertyChanged(string propertyName)
-        {
-            if (this.PropertyChanged != null)
-            {
-                this.PropertyChanged(
-                  this,
-                  new PropertyChangedEventArgs(propertyName));
-            }
-        }
-
-        #region INotifyPropertyChanged Members
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        #endregion
-
         public string DicomFileTitle
         {
             get { return _title; }
             set
             {
                 _title = value;
-                OnPropertyChanged("DicomFileTitle");
+                NotifyPropertyChanged("DicomFileTitle");
             }
         }
 

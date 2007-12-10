@@ -174,7 +174,6 @@ namespace ClearCanvas.Utilities.DicomEditor
                     {
                         return _parentTag.SortKey(type) + String.Format("({0:x4},", _group) + String.Format("{0:x4})", _element);
                     }
-                    break;
                 case SortType.TagName:
                     typeSpecificModifier = _tagName;
                     while (parentTag != null)
