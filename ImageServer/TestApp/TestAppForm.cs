@@ -159,11 +159,16 @@ namespace ClearCanvas.ImageServer.TestApp
         {
             
             openFileDialog.ShowDialog();
-            /*
+
             DicomFile dicomFile = new DicomFile(openFileDialog.FileName);
 
             dicomFile.Load();
 
+            double val;
+            dicomFile.DataSet[DicomTags.RescaleSlope].TryGetFloat64(0, out val);
+
+
+            /*
             dicomFile.DataSet[DicomTags.StationName].SetStringValue("AE");
 
             dicomFile.Save("F:\\MedicalImages\\ClearCanvasDownloadImageSet\\DXStudy\\tmp.dcm");

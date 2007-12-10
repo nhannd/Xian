@@ -96,7 +96,7 @@ namespace ClearCanvas.Dicom
         {
             get
             {
-                return (T)_values[index];
+                return _values[index];
             }
         }
 
@@ -3018,7 +3018,7 @@ namespace ClearCanvas.Dicom
                 return false;
             }
 
-            value = (UInt64)_values[index];
+            value = _values[index];
             return true;
             
 
@@ -3304,7 +3304,7 @@ namespace ClearCanvas.Dicom
         /// <exception cref="IndexOutofBoundException">if <paramref name="index"/> is negative or greater than <seealso cref="Count"/></exception>
         public override void SetUInt16(int index, UInt16 value)
         {
-            SetValue(index, (ushort)value);
+            SetValue(index, value);
         }
         /// <summary>
         /// Sets an US value.
@@ -3453,7 +3453,7 @@ namespace ClearCanvas.Dicom
                 return false;
             }
 
-            value = (Int32)_values[index];
+            value = _values[index];
             return true;
         }
         /// <summary>
@@ -3478,7 +3478,7 @@ namespace ClearCanvas.Dicom
                 return false;
             }
 
-            value = (Int64)_values[index];
+            value = _values[index];
             return true;
         }
 

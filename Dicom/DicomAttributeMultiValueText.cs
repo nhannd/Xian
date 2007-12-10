@@ -30,16 +30,10 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Runtime.InteropServices;
 using System.Globalization;
-
+using System.Text;
 using ClearCanvas.Dicom.IO;
-using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Validation;
-
-using System.ComponentModel;
 
 namespace ClearCanvas.Dicom
 {
@@ -278,8 +272,7 @@ namespace ClearCanvas.Dicom
 
 
         /// <summary>
-        /// Retrieve a value in the attribute
-        /// 
+        /// Retrieve a value in the attribute 
         /// </summary>
         /// <param name="i">zero-based index of the value to retrieve</param>
         /// <param name="value">reference to the value retrieved</param>
@@ -321,14 +314,13 @@ namespace ClearCanvas.Dicom
 
             _values = stringValue.Split(new char[] { '\\' });
 
-            Count = (long)_values.Length;
+            Count = _values.Length;
 
             StreamLength = (uint)stringValue.Length;
         }
 
         /// <summary>
         /// Set a value from a string. Existing value, if any, will be overwritten.
-        /// 
         /// </summary>
         /// <param name="index"></param>
         /// <param name="value"></param>
@@ -370,8 +362,7 @@ namespace ClearCanvas.Dicom
         ///     DicomAttributeUS attrib = new DicomAttributeUS(DicomTagDictionary.GetDicomTag(DicomTags.SelectorUsValue));
         ///     attrib.AppendString("-1000"); // will throw DicomDataException (US VR can only hold value in the range 0..2^16
         /// 
-        /// </example>
-        ///        
+        /// </example>      
         public override void AppendString(string stringValue)
         {
             ValidateString(stringValue);
@@ -388,7 +379,7 @@ namespace ClearCanvas.Dicom
             string[] newArray = new string[newArrayLength];
             if (oldArrayLength > 0)
                 _values.CopyTo(newArray, 0);
-            newArray[newArrayLength - 1] = (string)stringValue;
+            newArray[newArrayLength - 1] = stringValue;
             _values = newArray;
 
             StreamLength = (uint)this.ToString().Length;
@@ -763,7 +754,7 @@ namespace ClearCanvas.Dicom
         /// </remarks>
         public override void SetInt16(int index, Int16 value)
         {
-            SetInt64(index, (Int64)value);
+            SetInt64(index, value);
         }
         /// <summary>
         /// Set an integer as a DS value. Existing value will be overwritten
@@ -776,8 +767,9 @@ namespace ClearCanvas.Dicom
         /// </remarks>
         public override void SetInt32(int index, Int32 value)
         {
-            SetInt64(index, (Int64)value);
+            SetInt64(index, value);
         }
+
         /// <summary>
         /// Set an integer as a DS value. Existing value will be overwritten
         /// </summary>
@@ -812,7 +804,7 @@ namespace ClearCanvas.Dicom
         /// </remarks>
         public override void SetUInt16(int index, UInt16 value)
         {
-            SetUInt64(index, (UInt64) value);
+            SetUInt64(index, value);
         }
         /// <summary>
         /// Set DS value from an interger
@@ -825,8 +817,9 @@ namespace ClearCanvas.Dicom
         /// </remarks>
         public override void SetUInt32(int index, UInt32 value)
         {
-            SetUInt64(index, (UInt64) value);
+            SetUInt64(index, value);
         }
+
         /// <summary>
         /// Set DS value from an interger
         /// </summary>
@@ -837,9 +830,7 @@ namespace ClearCanvas.Dicom
         /// If <i>index</i> equals to <seealso cref="Count"/>, this method behaves exactly as <seealso cref="AppendUInt64"/>
         /// </remarks>
         public override void SetUInt64(int index, UInt64 value)
-        {
-
-            
+        {            
             if (index == Count)
             {
                 AppendUInt64(value);
@@ -862,8 +853,9 @@ namespace ClearCanvas.Dicom
         /// </remarks>
         public override void SetFloat32(int index, float value)
         {
-            SetFloat64(index, (double)value);
+            SetFloat64(index, value);
         }
+
         /// <summary>
         /// Set DS value from a floating-point number
         /// </summary>
@@ -942,8 +934,9 @@ namespace ClearCanvas.Dicom
         /// </remarks>
         public override void AppendInt16(short value)
         {
-            AppendInt64((Int64) value);
+            AppendInt64(value);
         }
+
         /// <summary>
         /// Append an integer as a DS value
         /// </summary>
@@ -952,7 +945,7 @@ namespace ClearCanvas.Dicom
         /// </remarks>
         public override void AppendInt32(Int32 value)
         {
-            AppendInt64((Int64)value);
+            AppendInt64(value);
         }
 
         /// <summary>
@@ -986,6 +979,7 @@ namespace ClearCanvas.Dicom
         {
             AppendUInt64(value);
         }
+
         /// <summary>
         /// Append an integer as a DS value
         /// </summary>
@@ -994,8 +988,9 @@ namespace ClearCanvas.Dicom
         /// </remarks>
         public override void AppendUInt32(uint value)
         {
-            AppendUInt64((UInt64)value);
+            AppendUInt64(value);
         }
+
         /// <summary>
         /// Append an integer as a DS value
         /// </summary>
@@ -1019,7 +1014,6 @@ namespace ClearCanvas.Dicom
 
         /// <summary>
         /// Method to retrieve an Int16 value from a DS attribute.
-        /// 
         /// </summary>
         /// <param name="i"></param>
         /// <param name="value"></param>
@@ -1035,7 +1029,7 @@ namespace ClearCanvas.Dicom
         /// </remarks>
         public override bool TryGetInt16(int i, out Int16 value)
         {
-            if (i < 0 || i >= Count)
+            if (i < 0 || _values == null || _values.Length <= i)
             {
                 value = 0;
                 return false;
@@ -1052,7 +1046,6 @@ namespace ClearCanvas.Dicom
         }
         /// <summary>
         /// Method to retrieve an Int32 value from a DS attribute.
-        /// 
         /// </summary>
         /// <param name="i"></param>
         /// <param name="value"></param>
@@ -1068,7 +1061,7 @@ namespace ClearCanvas.Dicom
         /// </remarks>
         public override bool TryGetInt32(int i, out Int32 value)
         {
-            if (i < 0 || i >= Count)
+            if (i < 0 || _values == null || _values.Length <= i)
             {
                 value = 0;
                 return false;
@@ -1085,8 +1078,7 @@ namespace ClearCanvas.Dicom
         }
         /// <summary>
         /// Method to retrieve an Int64 value from a DS attribute.
-        /// 
-        /// </summary>
+         /// </summary>
         /// <param name="i"></param>
         /// <param name="value"></param>
         /// <returns><i>true</i>if value can be retrieved. <i>false</i> otherwise (see remarks)</returns>
@@ -1097,11 +1089,10 @@ namespace ClearCanvas.Dicom
         ///     The value is an integer but too big or too small to fit into an Int16 (eg, 100000)
         /// 
         /// If the method returns false, the returned <i>value</i> should not be trusted.
-        /// 
         /// </remarks>
         public override bool TryGetInt64(int i, out Int64 value)
         {
-            if (i < 0 || i >= Count)
+            if (i < 0 || _values == null || _values.Length <= i)
             {
                 value = 0;
                 return false;
@@ -1119,7 +1110,6 @@ namespace ClearCanvas.Dicom
 
         /// <summary>
         /// Method to retrieve an UInt16 value from a DS attribute.
-        /// 
         /// </summary>
         /// <param name="i"></param>
         /// <param name="value"></param>
@@ -1135,7 +1125,7 @@ namespace ClearCanvas.Dicom
         /// </remarks>
         public override bool TryGetUInt16(int i, out UInt16 value)
         {
-            if (i < 0 || i >= Count)
+            if (i < 0 || _values == null || _values.Length <= i)
             {
                 value = 0;
                 return false;
@@ -1152,7 +1142,6 @@ namespace ClearCanvas.Dicom
         }
         /// <summary>
         /// Method to retrieve an UInt32 value from a DS attribute.
-        /// 
         /// </summary>
         /// <param name="i"></param>
         /// <param name="value"></param>
@@ -1168,7 +1157,7 @@ namespace ClearCanvas.Dicom
         /// </remarks>
         public override bool TryGetUInt32(int i, out UInt32 value)
         {
-            if (i < 0 || i >= Count)
+            if (i < 0 || _values == null || _values.Length <= i)
             {
                 value = 0;
                 return false;
@@ -1185,7 +1174,6 @@ namespace ClearCanvas.Dicom
         }
         /// <summary>
         /// Method to retrieve an UInt64 value from a DS attribute.
-        /// 
         /// </summary>
         /// <param name="i"></param>
         /// <param name="value"></param>
@@ -1201,7 +1189,7 @@ namespace ClearCanvas.Dicom
         /// </remarks>
         public override bool TryGetUInt64(int i, out UInt64 value)
         {
-            if (i < 0 || i >= Count)
+            if (i < 0 || _values == null || _values.Length <= i)
             {
                 value = 0;
                 return false;
@@ -1219,7 +1207,6 @@ namespace ClearCanvas.Dicom
 
         /// <summary>
         /// Method to retrieve a float value from a DS attribute.
-        /// 
         /// </summary>
         /// <param name="i"></param>
         /// <param name="value"></param>
@@ -1234,7 +1221,7 @@ namespace ClearCanvas.Dicom
         /// </remarks>
         public override bool TryGetFloat32(int i, out float value)
         {
-            if (i < 0 || i >= Count)
+            if (i < 0 || _values == null || _values.Length <= i)
             {
                 value = 0.0f;
                 return false;
@@ -1251,7 +1238,6 @@ namespace ClearCanvas.Dicom
         }
         /// <summary>
         /// Method to retrieve a double value from a DS attribute.
-        /// 
         /// </summary>
         /// <param name="i"></param>
         /// <param name="value"></param>
@@ -1265,7 +1251,7 @@ namespace ClearCanvas.Dicom
         /// </remarks>
         public override bool TryGetFloat64(int i, out double value)
         {
-            if (i < 0 || i >= Count)
+            if (i < 0 || _values == null || _values.Length <= i)
             {
                 value = 0.0d;
                 return false;
@@ -1399,7 +1385,7 @@ namespace ClearCanvas.Dicom
                 AppendDateTime(value);
             else
             {
-                _values[index++] = DateTimeParser.ToDicomString(value, UseTimeZone);
+                _values[index] = DateTimeParser.ToDicomString(value, UseTimeZone);
                 StreamLength = (uint)ToString().Length;
             }
         }
@@ -1505,7 +1491,7 @@ namespace ClearCanvas.Dicom
         /// 
         public override bool TryGetInt16(int i, out short value)
         {
-            if (_values == null || _values.Length <= i)
+            if (i < 0 || _values == null || _values.Length <= i)
             {
                 value = 0;
                 return false;
@@ -1532,7 +1518,7 @@ namespace ClearCanvas.Dicom
         /// 
         public override bool TryGetInt32(int i, out int value)
         {
-            if (_values == null || _values.Length <= i)
+            if (i < 0 || _values == null || _values.Length <= i)
             {
                 value = 0;
                 return false;
@@ -1558,7 +1544,7 @@ namespace ClearCanvas.Dicom
         /// </remarks>
         public override bool TryGetInt64(int i, out Int64 value)
         {
-            if (_values == null || _values.Length <= i)
+            if (i < 0 || _values == null || _values.Length <= i)
             {
                 value = 0;
                 return false;
@@ -1585,7 +1571,7 @@ namespace ClearCanvas.Dicom
         /// </remarks>
         public override bool TryGetUInt16(int i, out ushort value)
         {
-            if (_values == null || _values.Length <= i)
+            if (i < 0 || _values == null || _values.Length <= i)
             {
                 value = 0;
                 return false;
@@ -1612,7 +1598,7 @@ namespace ClearCanvas.Dicom
         /// 
         public override bool TryGetUInt32(int i, out uint value)
         {
-            if (_values == null || _values.Length <= i)
+            if (i < 0 || _values == null || _values.Length <= i)
             {
                 value = 0;
                 return false;
@@ -1639,7 +1625,7 @@ namespace ClearCanvas.Dicom
         /// 
         public override bool TryGetUInt64(int i, out UInt64 value)
         {
-            if (_values == null || _values.Length <= i)
+            if (i < 0 || _values == null || _values.Length <= i)
             {
                 value = 0;
                 return false;
@@ -1666,7 +1652,7 @@ namespace ClearCanvas.Dicom
         /// 
         public override bool TryGetFloat32(int i, out float value)
         {
-            if (_values == null || _values.Length <= i)
+            if (i < 0 || _values == null || _values.Length <= i )
             {
                 value = 0.0f;
                 return false;
@@ -1691,7 +1677,7 @@ namespace ClearCanvas.Dicom
         /// 
         public override bool TryGetFloat64(int i, out double value)
         {
-            if (_values == null || _values.Length <= i)
+            if (i < 0 || _values == null || _values.Length <= i)
             {
                 value = 0.0f;
                 return false;
@@ -1876,9 +1862,7 @@ namespace ClearCanvas.Dicom
             _values = temp;
             _values[Count++] = value.ToString();
             StreamLength = (uint)ToString().Length;
-        }
-
-        
+        }        
     }
     #endregion
 
@@ -2199,12 +2183,10 @@ namespace ClearCanvas.Dicom
         {
             ByteBuffer bb = new ByteBuffer(syntax.Endian);
 
-            bb.SetString(ToString(), (byte)0x00);
+            bb.SetString(ToString(), 0x00);
 
             return bb;
         }
-
-
 
         public override DicomAttribute Copy()
         {
@@ -2215,7 +2197,6 @@ namespace ClearCanvas.Dicom
         {
             return new DicomAttributeUI(this);
         }
-
 
         /// <summary>
         /// Method to retrieve a DicomUI value from a UI attribute.
