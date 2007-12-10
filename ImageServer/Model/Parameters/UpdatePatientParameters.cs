@@ -29,39 +29,55 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
-using ClearCanvas.Enterprise.Core;
+using System.Text;
 using ClearCanvas.ImageServer.Enterprise;
-using ClearCanvas.ImageServer.Model.EnumBrokers;
 
-namespace ClearCanvas.ImageServer.Model
+namespace ClearCanvas.ImageServer.Model.Parameters
 {
-    public class WorkQueueStatusEnum : ServerEnum
+    public class UpdatePatientParameters : UpdateBrokerParameters
     {
-    
-    
-        #region Constructors
-
-        public WorkQueueStatusEnum()
-            : base("WorkQueueStatusEnum")
+        public UpdatePatientParameters()
+            : base("Patient")
         {
         }
-        #endregion
 
-        public override void SetEnum(short val)
+        public String PatientName
         {
-            ServerEnumHelper<WorkQueueStatusEnum, IWorkQueueStatusEnum>.SetEnum(this, val);
+            set { SubParameters["PatientName"] = new UpdateBrokerParameter<String>("PatientName", value); }
         }
 
-        static public WorkQueueStatusEnum GetEnum(string lookup)
+        public String PatientId
         {
-            return ServerEnumHelper<WorkQueueStatusEnum, IWorkQueueStatusEnum>.GetEnum(lookup);
+            set { SubParameters["Description"] = new UpdateBrokerParameter<String>("PatientId", value); }
         }
-        static public IList<WorkQueueStatusEnum> GetAll()
+
+        public String IssuerOfPatientId
         {
-            return ServerEnumHelper<WorkQueueStatusEnum, IWorkQueueStatusEnum>.GetAll();
+            set { SubParameters["IssuerOfPatientId"] = new UpdateBrokerParameter<String>("IssuerOfPatientId", value); }
+        }
+
+        public int NumberOfPatientRelatedStudies
+        {
+            set { SubParameters["NumberOfPatientRelatedStudies"] = new UpdateBrokerParameter<int>("NumberOfPatientRelatedStudies", value); }
+        }
+        
+        public int NumberOfPatientRelatedSeries
+        {
+            set { SubParameters["NumberOfPatientRelatedSeries"] = new UpdateBrokerParameter<int>("NumberOfPatientRelatedSeries", value); }
+        }
+        
+        public int NumberOfPatientRelatedInstances
+        {
+            set { SubParameters["NumberOfPatientRelatedInstances"] = new UpdateBrokerParameter<int>("NumberOfPatientRelatedInstances", value); }
         }
 
 
+        public ServerEntityKey ServerPartitionKey
+        {
+            set { SubParameters["ServerParitition"] = new UpdateBrokerParameter<ServerEntityKey>("ServerPartition", value); }
+        }
+        
     }
 }

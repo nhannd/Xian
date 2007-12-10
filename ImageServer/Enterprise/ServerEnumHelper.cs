@@ -49,6 +49,7 @@ namespace ClearCanvas.ImageServer.Enterprise
         where TBroker : IEnumBroker<TEnum>
     {
         #region Static private members
+        static IList<TEnum> _list = new List<TEnum>();
         static Dictionary<short, TEnum> _dict = new Dictionary<short, TEnum>();
         #endregion Static private members
 
@@ -65,8 +66,8 @@ namespace ClearCanvas.ImageServer.Enterprise
             using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
             {
                 TBroker broker = read.GetBroker<TBroker>();
-                IList<TEnum> list = broker.Execute();
-                foreach (TEnum value in list)
+                _list = broker.Execute();
+                foreach (TEnum value in _list)
                 {
                     _dict.Add(value.Enum, value);
                 }
@@ -83,6 +84,11 @@ namespace ClearCanvas.ImageServer.Enterprise
                     return value;
             }
             throw new PersistenceException(string.Format("Unknown {0} {1}", typeof(TEnum).Name, lookup), null);
+        }
+
+        public static IList<TEnum> GetAll()
+        {
+            return _list;
         }
 
         public static void SetEnum(TEnum dest, short val)

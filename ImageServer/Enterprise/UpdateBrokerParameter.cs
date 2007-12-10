@@ -29,39 +29,42 @@
 
 #endregion
 
-using System.Collections.Generic;
 using ClearCanvas.Enterprise.Core;
-using ClearCanvas.ImageServer.Enterprise;
-using ClearCanvas.ImageServer.Model.EnumBrokers;
+using System.Collections.Generic;
+using System;
 
-namespace ClearCanvas.ImageServer.Model
+namespace ClearCanvas.ImageServer.Enterprise
 {
-    public class WorkQueueStatusEnum : ServerEnum
+    
+    /// <summary>
+    /// Generic base class for update parameter classes used in an update broker.
+    /// </summary>
+    /// <typeparam name="T">The type of the field to be updated</typeparam>
+    public class UpdateBrokerParameter<T> : UpdateBrokerParameterBase, IUpdateBrokerParameter<T>
     {
-    
-    
-        #region Constructors
-
-        public WorkQueueStatusEnum()
-            : base("WorkQueueStatusEnum")
-        {
-        }
+        #region Private members
         #endregion
 
-        public override void SetEnum(short val)
+        #region Constructors
+        public UpdateBrokerParameter(String fieldName, T value)
+            : base(fieldName)
         {
-            ServerEnumHelper<WorkQueueStatusEnum, IWorkQueueStatusEnum>.SetEnum(this, val);
+            _value = value;
         }
 
-        static public WorkQueueStatusEnum GetEnum(string lookup)
-        {
-            return ServerEnumHelper<WorkQueueStatusEnum, IWorkQueueStatusEnum>.GetEnum(lookup);
-        }
-        static public IList<WorkQueueStatusEnum> GetAll()
-        {
-            return ServerEnumHelper<WorkQueueStatusEnum, IWorkQueueStatusEnum>.GetAll();
-        }
+        #endregion Constructors
 
 
+        #region IUpdateBrokerParameter<T> Members
+
+
+        public new T Value
+        {
+            get { return (T) _value; }
+        }
+
+        #endregion
     }
+
+    
 }

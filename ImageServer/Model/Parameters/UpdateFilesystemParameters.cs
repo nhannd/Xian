@@ -29,39 +29,66 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
-using ClearCanvas.Enterprise.Core;
+using System.Text;
 using ClearCanvas.ImageServer.Enterprise;
-using ClearCanvas.ImageServer.Model.EnumBrokers;
 
-namespace ClearCanvas.ImageServer.Model
+namespace ClearCanvas.ImageServer.Model.Parameters
 {
-    public class WorkQueueStatusEnum : ServerEnum
+    public class UpdateFilesystemParameters : UpdateBrokerParameters
     {
-    
-    
-        #region Constructors
-
-        public WorkQueueStatusEnum()
-            : base("WorkQueueStatusEnum")
+        public UpdateFilesystemParameters()
+            : base("Filesystem")
         {
         }
-        #endregion
 
-        public override void SetEnum(short val)
+        public String FilesystemPath
         {
-            ServerEnumHelper<WorkQueueStatusEnum, IWorkQueueStatusEnum>.SetEnum(this, val);
+            set { SubParameters["FilesystemPath"] = new UpdateBrokerParameter<String>("FilesystemPath", value); }
         }
 
-        static public WorkQueueStatusEnum GetEnum(string lookup)
+        public String Description
         {
-            return ServerEnumHelper<WorkQueueStatusEnum, IWorkQueueStatusEnum>.GetEnum(lookup);
+            set { SubParameters["Description"] = new UpdateBrokerParameter<String>("Description", value); }
         }
-        static public IList<WorkQueueStatusEnum> GetAll()
+
+        
+        public bool Enabled
         {
-            return ServerEnumHelper<WorkQueueStatusEnum, IWorkQueueStatusEnum>.GetAll();
+            set { SubParameters["Enabled"] = new UpdateBrokerParameter<bool>("Enabled", value); }
+        }
+
+        public bool  ReadOnly
+        {
+            set { SubParameters["ReadOnly"] = new UpdateBrokerParameter<bool>("ReadOnly", value); }
+        }
+
+        public bool  WriteOnly
+        {
+            set { SubParameters["WriteOnly"] = new UpdateBrokerParameter<bool>("WriteOnly", value); }
         }
 
 
+        public Decimal LowWatermark
+        {
+            set { SubParameters["LowWatermark"] = new UpdateBrokerParameter<Decimal>("LowWatermark", value); }
+        }
+
+        public Decimal HighWatermark
+        {
+            set { SubParameters["HighWatermark"] = new UpdateBrokerParameter<Decimal>("HighWatermark", value); }
+        }
+
+        public Decimal PercentFull
+        {
+            set { SubParameters["PercentFull"] = new UpdateBrokerParameter<Decimal>("PercentFull", value); }
+        }
+
+        public FilesystemTierEnum FilesystemTier
+        {
+            set { SubParameters["FilesystemTier"] = new UpdateBrokerParameter<ServerEnum>("FilesystemTier", value); }
+        }
+        
     }
 }

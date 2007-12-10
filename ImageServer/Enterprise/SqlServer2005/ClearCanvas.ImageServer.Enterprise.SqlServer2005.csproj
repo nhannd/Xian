@@ -35,6 +35,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Broker.cs" />
+    <Compile Include="UpdateBroker.cs" />
     <Compile Include="EnumBroker.cs" />
     <Compile Include="PersistentStore.cs" />
     <Compile Include="ProcedureReadBroker.cs" />

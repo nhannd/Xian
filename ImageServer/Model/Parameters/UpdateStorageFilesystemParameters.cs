@@ -29,39 +29,35 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
-using ClearCanvas.Enterprise.Core;
+using System.Text;
 using ClearCanvas.ImageServer.Enterprise;
-using ClearCanvas.ImageServer.Model.EnumBrokers;
 
-namespace ClearCanvas.ImageServer.Model
+namespace ClearCanvas.ImageServer.Model.Parameters
 {
-    public class WorkQueueStatusEnum : ServerEnum
+    public class UpdateStorageFilesystemParameters : UpdateBrokerParameters
     {
-    
-    
-        #region Constructors
-
-        public WorkQueueStatusEnum()
-            : base("WorkQueueStatusEnum")
+        public UpdateStorageFilesystemParameters()
+            : base("StorageFilesystem")
         {
         }
-        #endregion
 
-        public override void SetEnum(short val)
+        public ServerEntityKey StudyStorageKey
         {
-            ServerEnumHelper<WorkQueueStatusEnum, IWorkQueueStatusEnum>.SetEnum(this, val);
+            set { SubParameters["StudyStorage"] = new UpdateBrokerParameter<ServerEntityKey>("StudyStorage", value); }
         }
 
-        static public WorkQueueStatusEnum GetEnum(string lookup)
+        public ServerEntityKey FilesystemKey
         {
-            return ServerEnumHelper<WorkQueueStatusEnum, IWorkQueueStatusEnum>.GetEnum(lookup);
-        }
-        static public IList<WorkQueueStatusEnum> GetAll()
-        {
-            return ServerEnumHelper<WorkQueueStatusEnum, IWorkQueueStatusEnum>.GetAll();
+            set { SubParameters["Filesystem"] = new UpdateBrokerParameter<ServerEntityKey>("Filesystem", value); }
         }
 
 
+        public String StudyFolder
+        {
+            set { SubParameters["StudyFolder"] = new UpdateBrokerParameter<String>("StudyFolder", value); }
+        }
+        
     }
 }

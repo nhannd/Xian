@@ -29,39 +29,32 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
-using ClearCanvas.Enterprise.Core;
+using System.Text;
 using ClearCanvas.ImageServer.Enterprise;
-using ClearCanvas.ImageServer.Model.EnumBrokers;
 
-namespace ClearCanvas.ImageServer.Model
+namespace ClearCanvas.ImageServer.Model.Parameters
 {
-    public class WorkQueueStatusEnum : ServerEnum
+    public class UpdatePartitionSopClassParameters : UpdateBrokerParameters
     {
-    
-    
-        #region Constructors
-
-        public WorkQueueStatusEnum()
-            : base("WorkQueueStatusEnum")
+        public UpdatePartitionSopClassParameters()
+            : base("PartitionSopClass")
         {
         }
-        #endregion
 
-        public override void SetEnum(short val)
+        public ServerEntityKey ServerPartitionKey
         {
-            ServerEnumHelper<WorkQueueStatusEnum, IWorkQueueStatusEnum>.SetEnum(this, val);
+            set { this.SubParameters["ServerPartition"] = new UpdateBrokerParameter<ServerEntityKey>("ServerPartition", value); }
         }
 
-        static public WorkQueueStatusEnum GetEnum(string lookup)
+        public ServerEntityKey ServerSopClassKey
         {
-            return ServerEnumHelper<WorkQueueStatusEnum, IWorkQueueStatusEnum>.GetEnum(lookup);
+            set { this.SubParameters["ServerSopClass"] = new UpdateBrokerParameter<ServerEntityKey>("ServerSopClass", value); }
         }
-        static public IList<WorkQueueStatusEnum> GetAll()
+        public bool Enabled
         {
-            return ServerEnumHelper<WorkQueueStatusEnum, IWorkQueueStatusEnum>.GetAll();
+            set { this.SubParameters["Enabled"] = new UpdateBrokerParameter<bool>("Enabled", value); }
         }
-
-
     }
 }

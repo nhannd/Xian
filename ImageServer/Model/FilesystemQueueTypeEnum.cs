@@ -58,5 +58,10 @@ namespace ClearCanvas.ImageServer.Model
         {
             return ServerEnumHelper<FilesystemQueueTypeEnum, IFilesystemQueueTypeEnum>.GetEnum(lookup);
         }
+
+        static public IList<FilesystemQueueTypeEnum> GetAll()
+        {
+            return ServerEnumHelper<FilesystemQueueTypeEnum, IFilesystemQueueTypeEnum>.GetAll();
+        }
     }
 }

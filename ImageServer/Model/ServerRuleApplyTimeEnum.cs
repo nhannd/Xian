@@ -58,5 +58,11 @@ namespace ClearCanvas.ImageServer.Model
         {
             return ServerEnumHelper<ServerRuleApplyTimeEnum, IServerRuleApplyTimeEnum>.GetEnum(lookup);
         }
+
+        static public IList<ServerRuleApplyTimeEnum> GetAll()
+        {
+            return ServerEnumHelper<ServerRuleApplyTimeEnum, IServerRuleApplyTimeEnum>.GetAll();
+        }
+
     }
 }

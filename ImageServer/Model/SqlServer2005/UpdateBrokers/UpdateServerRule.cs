@@ -29,39 +29,21 @@
 
 #endregion
 
-using System.Collections.Generic;
-using ClearCanvas.Enterprise.Core;
-using ClearCanvas.ImageServer.Enterprise;
-using ClearCanvas.ImageServer.Model.EnumBrokers;
+using ClearCanvas.Common;
+using ClearCanvas.ImageServer.Enterprise.SqlServer2005;
+using ClearCanvas.ImageServer.Model.Parameters;
+using ClearCanvas.ImageServer.Model.UpdateBrokers;
 
-namespace ClearCanvas.ImageServer.Model
+namespace ClearCanvas.ImageServer.Model.SqlServer2005.SelectBrokers
 {
-    public class WorkQueueStatusEnum : ServerEnum
+    /// <summary>
+    /// Broker implementation for <see cref="IUpdateServerRuleBroker"/>
+    /// </summary>
+    [ExtensionOf(typeof(BrokerExtensionPoint))]
+    public class UpdateServerRuleBroker : UpdateBroker<ServerRule, UpdateServerRuleParameters>, IUpdateServerRuleBroker
     {
-    
-    
-        #region Constructors
-
-        public WorkQueueStatusEnum()
-            : base("WorkQueueStatusEnum")
-        {
-        }
-        #endregion
-
-        public override void SetEnum(short val)
-        {
-            ServerEnumHelper<WorkQueueStatusEnum, IWorkQueueStatusEnum>.SetEnum(this, val);
-        }
-
-        static public WorkQueueStatusEnum GetEnum(string lookup)
-        {
-            return ServerEnumHelper<WorkQueueStatusEnum, IWorkQueueStatusEnum>.GetEnum(lookup);
-        }
-        static public IList<WorkQueueStatusEnum> GetAll()
-        {
-            return ServerEnumHelper<WorkQueueStatusEnum, IWorkQueueStatusEnum>.GetAll();
-        }
-
-
+        public UpdateServerRuleBroker()
+            : base("ServerRule")
+        { }
     }
 }

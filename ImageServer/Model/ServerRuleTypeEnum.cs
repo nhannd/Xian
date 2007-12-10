@@ -53,5 +53,11 @@ namespace ClearCanvas.ImageServer.Model
             ServerEnumHelper<ServerRuleTypeEnum, IServerRuleTypeEnum>.SetEnum(this, val);
         }
 
+        static public IList<ServerRuleTypeEnum> GetAll()
+        {
+            return ServerEnumHelper<ServerRuleTypeEnum, IServerRuleTypeEnum>.GetAll();
+        }
+
+
     }
 }

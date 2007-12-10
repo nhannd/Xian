@@ -58,5 +58,10 @@ namespace ClearCanvas.ImageServer.Model
         {
             return ServerEnumHelper<StudyStatusEnum, IStudyStatusEnum>.GetEnum(lookup);
         }
+
+        static public IList<StudyStatusEnum> GetAll()
+        {
+            return ServerEnumHelper<StudyStatusEnum, IStudyStatusEnum>.GetAll();
+        }
     }
 }

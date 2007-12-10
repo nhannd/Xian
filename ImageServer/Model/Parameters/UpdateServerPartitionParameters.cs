@@ -29,39 +29,60 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
-using ClearCanvas.Enterprise.Core;
+using System.Text;
 using ClearCanvas.ImageServer.Enterprise;
-using ClearCanvas.ImageServer.Model.EnumBrokers;
 
-namespace ClearCanvas.ImageServer.Model
+namespace ClearCanvas.ImageServer.Model.Parameters
 {
-    public class WorkQueueStatusEnum : ServerEnum
+    public class UpdateServerPartitionParameters : UpdateBrokerParameters
     {
-    
-    
-        #region Constructors
-
-        public WorkQueueStatusEnum()
-            : base("WorkQueueStatusEnum")
+        public UpdateServerPartitionParameters()
+            : base("ServerPartition")
         {
         }
-        #endregion
 
-        public override void SetEnum(short val)
+        public bool Enabled
         {
-            ServerEnumHelper<WorkQueueStatusEnum, IWorkQueueStatusEnum>.SetEnum(this, val);
+            set { this.SubParameters["Enabled"] = new UpdateBrokerParameter<bool>("Enabled", value); }
         }
 
-        static public WorkQueueStatusEnum GetEnum(string lookup)
+        public String Description
         {
-            return ServerEnumHelper<WorkQueueStatusEnum, IWorkQueueStatusEnum>.GetEnum(lookup);
-        }
-        static public IList<WorkQueueStatusEnum> GetAll()
-        {
-            return ServerEnumHelper<WorkQueueStatusEnum, IWorkQueueStatusEnum>.GetAll();
+            set { this.SubParameters["Description"] = new UpdateBrokerParameter<String>("Description", value); }
         }
 
+        public String AeTitle
+        {
+            set { this.SubParameters["AeTitle"] = new UpdateBrokerParameter<String>("AeTitle", value); }
+        }
+
+        public int Port
+        {
+            set { this.SubParameters["Port"] = new UpdateBrokerParameter<int>("Port", value); }
+        }
+
+        public String PartitionFolder
+        {
+            set { this.SubParameters["PartitionFolder"] = new UpdateBrokerParameter<String>("PartitionFolder", value); }
+        }
+
+        public bool AcceptAnyDevice
+        {
+            set { this.SubParameters["AcceptAnyDevice"] = new UpdateBrokerParameter<bool>("AcceptAnyDevice", value); }
+        }
+
+        
+        public bool AutoInsertDevice
+        {
+            set { this.SubParameters["AutoInsertDevice"] = new UpdateBrokerParameter<bool>("AutoInsertDevice", value); }
+        }
+
+        public int DefaultRemotePort
+        {
+            set { this.SubParameters["DefaultRemotePort"] = new UpdateBrokerParameter<int>("DefaultRemotePort", value); }
+        }
 
     }
 }

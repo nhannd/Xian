@@ -29,39 +29,52 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
-using ClearCanvas.Enterprise.Core;
+using System.Text;
 using ClearCanvas.ImageServer.Enterprise;
-using ClearCanvas.ImageServer.Model.EnumBrokers;
 
-namespace ClearCanvas.ImageServer.Model
+namespace ClearCanvas.ImageServer.Model.Parameters
 {
-    public class WorkQueueStatusEnum : ServerEnum
+    public class UpdateStudyStorageParameters : UpdateBrokerParameters
     {
-    
-    
-        #region Constructors
-
-        public WorkQueueStatusEnum()
-            : base("WorkQueueStatusEnum")
+        public UpdateStudyStorageParameters()
+            : base("StudyStorage")
         {
         }
-        #endregion
 
-        public override void SetEnum(short val)
-        {
-            ServerEnumHelper<WorkQueueStatusEnum, IWorkQueueStatusEnum>.SetEnum(this, val);
-        }
 
-        static public WorkQueueStatusEnum GetEnum(string lookup)
+        public ServerEntityKey ServerPartitionKey
         {
-            return ServerEnumHelper<WorkQueueStatusEnum, IWorkQueueStatusEnum>.GetEnum(lookup);
-        }
-        static public IList<WorkQueueStatusEnum> GetAll()
-        {
-            return ServerEnumHelper<WorkQueueStatusEnum, IWorkQueueStatusEnum>.GetAll();
+            set { SubParameters["ServerPartition"] = new UpdateBrokerParameter<ServerEntityKey>("ServerPartition", value); }
         }
 
 
+        public String StudyInstanceUid
+        {
+            set { SubParameters["StudyInstanceUid"] = new UpdateBrokerParameter<String>("StudyInstanceUid", value); }
+        }
+
+        public DateTime InsertTime
+        {
+            set { SubParameters["InsertTime"] = new UpdateBrokerParameter<DateTime>("InsertTime", value); }
+        }
+
+        public DateTime LastAccessedTime
+        {
+            set { SubParameters["LastAccessedTime"] = new UpdateBrokerParameter<DateTime>("LastAccessedTime", value); }
+        }
+
+        public bool Lock
+        {
+            set { SubParameters["Lock"] = new UpdateBrokerParameter<bool>("Lock", value); }
+        }
+
+        public StudyStatusEnum StudyStatus
+        {
+            set { SubParameters["StudyStatus"] = new UpdateBrokerParameter<ServerEnum>("StudyStatus", value); }
+        }
+        
+        
     }
 }

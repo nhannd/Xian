@@ -29,39 +29,37 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
-using ClearCanvas.Enterprise.Core;
+using System.Text;
 using ClearCanvas.ImageServer.Enterprise;
-using ClearCanvas.ImageServer.Model.EnumBrokers;
+using System.Xml;
 
-namespace ClearCanvas.ImageServer.Model
+namespace ClearCanvas.ImageServer.Model.Parameters
 {
-    public class WorkQueueStatusEnum : ServerEnum
+    public class UpdateServerSopClassParameters : UpdateBrokerParameters
     {
-    
-    
-        #region Constructors
-
-        public WorkQueueStatusEnum()
-            : base("WorkQueueStatusEnum")
+        public UpdateServerSopClassParameters()
+            : base("ServerSopClass")
         {
         }
-        #endregion
 
-        public override void SetEnum(short val)
+
+        public String SopClassUid
         {
-            ServerEnumHelper<WorkQueueStatusEnum, IWorkQueueStatusEnum>.SetEnum(this, val);
+            set { SubParameters["SopClassUid"] = new UpdateBrokerParameter<String>("SopClassUid", value); }
         }
 
-        static public WorkQueueStatusEnum GetEnum(string lookup)
+        public String Description
         {
-            return ServerEnumHelper<WorkQueueStatusEnum, IWorkQueueStatusEnum>.GetEnum(lookup);
-        }
-        static public IList<WorkQueueStatusEnum> GetAll()
-        {
-            return ServerEnumHelper<WorkQueueStatusEnum, IWorkQueueStatusEnum>.GetAll();
+            set { SubParameters["Description"] = new UpdateBrokerParameter<String>("Description", value); }
         }
 
+        public bool IsNonImage
+        {
+            set { SubParameters["NonImage"] = new UpdateBrokerParameter<bool>("NonImage", value); }
+        }
 
+        
     }
 }

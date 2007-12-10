@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 
 // Copyright (c) 2006-2007, ClearCanvas Inc.
 // All rights reserved.
@@ -29,39 +29,28 @@
 
 #endregion
 
-using System.Collections.Generic;
-using ClearCanvas.Enterprise.Core;
-using ClearCanvas.ImageServer.Enterprise;
-using ClearCanvas.ImageServer.Model.EnumBrokers;
+using System;
 
-namespace ClearCanvas.ImageServer.Model
+
+namespace ClearCanvas.ImageServer.Enterprise
 {
-    public class WorkQueueStatusEnum : ServerEnum
+    /// <summary>
+    /// Defines the interface for a parameter class to be used by brokers implementing <seealso cref="IUpdateBroker"/> interface
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    interface IUpdateBrokerParameter<T>
     {
-    
-    
-        #region Constructors
+        /// <summary>
+        /// Gets the name of the field to be updated.
+        /// </summary>
+        /// <remarks>
+        /// The <seealso cref="FieldName"/> may not be the same as the name for the field the database.
+        /// </remarks>
+        string FieldName { get; }
 
-        public WorkQueueStatusEnum()
-            : base("WorkQueueStatusEnum")
-        {
-        }
-        #endregion
-
-        public override void SetEnum(short val)
-        {
-            ServerEnumHelper<WorkQueueStatusEnum, IWorkQueueStatusEnum>.SetEnum(this, val);
-        }
-
-        static public WorkQueueStatusEnum GetEnum(string lookup)
-        {
-            return ServerEnumHelper<WorkQueueStatusEnum, IWorkQueueStatusEnum>.GetEnum(lookup);
-        }
-        static public IList<WorkQueueStatusEnum> GetAll()
-        {
-            return ServerEnumHelper<WorkQueueStatusEnum, IWorkQueueStatusEnum>.GetAll();
-        }
-
-
+        /// <summary>
+        /// Returns the value to be set for the field.
+        /// </summary>
+        T Value { get; }
     }
 }

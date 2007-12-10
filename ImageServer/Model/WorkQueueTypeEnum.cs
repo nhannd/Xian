@@ -61,5 +61,10 @@ namespace ClearCanvas.ImageServer.Model
             return ServerEnumHelper<WorkQueueTypeEnum, IWorkQueueTypeEnum>.GetEnum(lookup);
         }
 
+        static public IList<WorkQueueTypeEnum> GetAll()
+        {
+            return ServerEnumHelper<WorkQueueTypeEnum, IWorkQueueTypeEnum>.GetAll();
+        }
+
     }
 }

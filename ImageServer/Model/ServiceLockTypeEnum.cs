@@ -60,5 +60,10 @@ namespace ClearCanvas.ImageServer.Model
         {
             return ServerEnumHelper<ServiceLockTypeEnum, IServiceLockTypeEnum>.GetEnum(lookup);
         }
+
+        static public IList<ServiceLockTypeEnum> GetAll()
+        {
+            return ServerEnumHelper<ServiceLockTypeEnum, IServiceLockTypeEnum>.GetAll();
+        }
     }
 }

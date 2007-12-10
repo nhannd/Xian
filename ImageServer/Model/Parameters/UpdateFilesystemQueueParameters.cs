@@ -29,39 +29,44 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
-using ClearCanvas.Enterprise.Core;
+using System.Text;
 using ClearCanvas.ImageServer.Enterprise;
-using ClearCanvas.ImageServer.Model.EnumBrokers;
 
-namespace ClearCanvas.ImageServer.Model
+namespace ClearCanvas.ImageServer.Model.Parameters
 {
-    public class WorkQueueStatusEnum : ServerEnum
+    public class UpdateFilesystemQueueParameters : UpdateBrokerParameters
     {
-    
-    
-        #region Constructors
-
-        public WorkQueueStatusEnum()
-            : base("WorkQueueStatusEnum")
+        public UpdateFilesystemQueueParameters()
+            : base("FilesystemQueue")
         {
         }
-        #endregion
+        
 
-        public override void SetEnum(short val)
+        public FilesystemQueueTypeEnum FilesystemQueueType
         {
-            ServerEnumHelper<WorkQueueStatusEnum, IWorkQueueStatusEnum>.SetEnum(this, val);
+            set { SubParameters["FilesystemQueueType"] = new UpdateBrokerParameter<ServerEnum>("FilesystemQueueType", value); }
         }
 
-        static public WorkQueueStatusEnum GetEnum(string lookup)
+        public ServerEntityKey StudyStorageKey
         {
-            return ServerEnumHelper<WorkQueueStatusEnum, IWorkQueueStatusEnum>.GetEnum(lookup);
-        }
-        static public IList<WorkQueueStatusEnum> GetAll()
-        {
-            return ServerEnumHelper<WorkQueueStatusEnum, IWorkQueueStatusEnum>.GetAll();
+            set { SubParameters["StudyStorage"] = new UpdateBrokerParameter<ServerEntityKey>("StudyStorage", value); }
         }
 
+         public ServerEntityKey FilesystemKey
+        {
+            set { SubParameters["Filesystem"] = new UpdateBrokerParameter<ServerEntityKey>("Filesystem", value); }
+        }
 
+        public DateTime ScheduledTime
+        {
+            set { SubParameters["ScheduledTime"] = new UpdateBrokerParameter<DateTime>("ScheduledTime", value); }
+        }
+
+        public String SeriesInstanceUid
+        {
+            set { SubParameters["SeriesInstanceUid"] = new UpdateBrokerParameter<String>("SeriesInstanceUid", value); }
+        }
     }
 }

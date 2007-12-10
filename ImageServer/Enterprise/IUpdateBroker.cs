@@ -29,39 +29,36 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
+using System.Text;
 using ClearCanvas.Enterprise.Core;
-using ClearCanvas.ImageServer.Enterprise;
-using ClearCanvas.ImageServer.Model.EnumBrokers;
 
-namespace ClearCanvas.ImageServer.Model
+namespace ClearCanvas.ImageServer.Enterprise
 {
-    public class WorkQueueStatusEnum : ServerEnum
+    /// <summary>
+    /// Defines the interface for an update broker.
+    /// </summary>
+    /// <typeparam name="TEntity">The type of the object to be updated/inserted.</typeparam>
+    /// <typeparam name="TUpdateBrokerParameters">The parameter type derived from <seealso cref="UpdateBrokerParameters"/></typeparam>
+    public interface IUpdateBroker<TEntity, TUpdateBrokerParameters> : IPersistenceBroker
+        where TUpdateBrokerParameters : UpdateBrokerParameters
+        where TEntity : ServerEntity, new()
     {
-    
-    
-        #region Constructors
+        /// <summary>
+        /// Updates the entity specified by the <paramref name="entityKey"/> with values specified in <paramref="parameters"/>.
+        /// </summary>
+        /// <param name="entityKey">The <seealso cref="ServerEntitykey"/> object whose <seealso cref="ServerEntityKey.Key"/> references to the object to be updated.</param>
+        /// <param name="parameters">The <seealso cref="UpdateBrokerParameters"/> specifying the columns to be updated.</param>
+        /// <returns></returns>
+        bool Update(ServerEntityKey entityKey, TUpdateBrokerParameters parameters);
 
-        public WorkQueueStatusEnum()
-            : base("WorkQueueStatusEnum")
-        {
-        }
-        #endregion
-
-        public override void SetEnum(short val)
-        {
-            ServerEnumHelper<WorkQueueStatusEnum, IWorkQueueStatusEnum>.SetEnum(this, val);
-        }
-
-        static public WorkQueueStatusEnum GetEnum(string lookup)
-        {
-            return ServerEnumHelper<WorkQueueStatusEnum, IWorkQueueStatusEnum>.GetEnum(lookup);
-        }
-        static public IList<WorkQueueStatusEnum> GetAll()
-        {
-            return ServerEnumHelper<WorkQueueStatusEnum, IWorkQueueStatusEnum>.GetAll();
-        }
-
-
+        /// <summary>
+        /// Inserts a new entity with field values indicated in <paramref name="parameters"/>.
+        /// </summary>
+        /// <param name="paramters">The <seealso cref="UpdateBrokerParameters"/> specifying the values for the columns in the new entity.</param>
+        /// <returns>References to the newly inserted entity</returns>
+        TEntity Insert(TUpdateBrokerParameters parameters);
+     
     }
 }

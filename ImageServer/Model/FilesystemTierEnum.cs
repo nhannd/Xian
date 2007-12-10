@@ -54,5 +54,10 @@ namespace ClearCanvas.ImageServer.Model
             ServerEnumHelper<FilesystemTierEnum, IFilesystemTierEnum>.SetEnum(this, val);
         }
 
+        static public IList<FilesystemTierEnum> GetAll()
+        {
+            return ServerEnumHelper<FilesystemTierEnum, IFilesystemTierEnum>.GetAll();
+        }
+
     }
 }

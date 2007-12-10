@@ -29,39 +29,58 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
-using ClearCanvas.Enterprise.Core;
+using System.Text;
 using ClearCanvas.ImageServer.Enterprise;
-using ClearCanvas.ImageServer.Model.EnumBrokers;
+using System.Xml;
 
-namespace ClearCanvas.ImageServer.Model
+namespace ClearCanvas.ImageServer.Model.Parameters
 {
-    public class WorkQueueStatusEnum : ServerEnum
+    public class UpdateServerRuleParameters : UpdateBrokerParameters
     {
-    
-    
-        #region Constructors
-
-        public WorkQueueStatusEnum()
-            : base("WorkQueueStatusEnum")
+        public UpdateServerRuleParameters()
+            : base("ServerRule")
         {
         }
-        #endregion
 
-        public override void SetEnum(short val)
+
+        public String RuleName
         {
-            ServerEnumHelper<WorkQueueStatusEnum, IWorkQueueStatusEnum>.SetEnum(this, val);
+            set { SubParameters["RuleName"] = new UpdateBrokerParameter<String>("RuleName", value); }
         }
 
-        static public WorkQueueStatusEnum GetEnum(string lookup)
+        public ServerEntityKey ServerPartitionKey
         {
-            return ServerEnumHelper<WorkQueueStatusEnum, IWorkQueueStatusEnum>.GetEnum(lookup);
-        }
-        static public IList<WorkQueueStatusEnum> GetAll()
-        {
-            return ServerEnumHelper<WorkQueueStatusEnum, IWorkQueueStatusEnum>.GetAll();
+            set { SubParameters["ServerPartition"] = new UpdateBrokerParameter<ServerEntityKey>("ServerPartition", value); }
         }
 
 
+        public ServerRuleTypeEnum ServerRuleType
+        {
+            set { SubParameters["ServerRuleType"] = new UpdateBrokerParameter<ServerEnum>("ServerRuleType", value); }
+        }
+
+        public ServerRuleApplyTimeEnum ServerRuleApplyTime
+        {
+            set { SubParameters["ServerRuleApplyTime"] = new UpdateBrokerParameter<ServerEnum>("ServerRuleApplyTime", value); }
+        }
+
+        public bool Enabled
+        {
+            set { SubParameters["Enabled"] = new UpdateBrokerParameter<bool>("Enabled", value); }
+        }
+
+        public bool Default
+        {
+            set { SubParameters["DefaultRule"] = new UpdateBrokerParameter<bool>("DefaultRule", value); }
+        }
+
+        public XmlDocument RuleXml
+        {
+            set { SubParameters["RuleXml"] = new UpdateBrokerParameter<XmlDocument>("RuleXml", value); }
+        }
+        
+        
     }
 }

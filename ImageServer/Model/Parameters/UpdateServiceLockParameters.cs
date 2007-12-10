@@ -29,39 +29,55 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
-using ClearCanvas.Enterprise.Core;
+using System.Text;
 using ClearCanvas.ImageServer.Enterprise;
-using ClearCanvas.ImageServer.Model.EnumBrokers;
+using System.Xml;
 
-namespace ClearCanvas.ImageServer.Model
+namespace ClearCanvas.ImageServer.Model.Parameters
 {
-    public class WorkQueueStatusEnum : ServerEnum
+    public class UpdateServiceLockParameters : UpdateBrokerParameters
     {
-    
-    
-        #region Constructors
-
-        public WorkQueueStatusEnum()
-            : base("WorkQueueStatusEnum")
+        public UpdateServiceLockParameters()
+            : base("ServiceLock")
         {
         }
-        #endregion
 
-        public override void SetEnum(short val)
+
+        public ServiceLockTypeEnum ServiceLockType
         {
-            ServerEnumHelper<WorkQueueStatusEnum, IWorkQueueStatusEnum>.SetEnum(this, val);
+            set { SubParameters["ServiceLockType"] = new UpdateBrokerParameter<ServerEnum>("ServiceLockType", value); }
         }
 
-        static public WorkQueueStatusEnum GetEnum(string lookup)
+        public String ProcessorId
         {
-            return ServerEnumHelper<WorkQueueStatusEnum, IWorkQueueStatusEnum>.GetEnum(lookup);
-        }
-        static public IList<WorkQueueStatusEnum> GetAll()
-        {
-            return ServerEnumHelper<WorkQueueStatusEnum, IWorkQueueStatusEnum>.GetAll();
+            set { SubParameters["ProcessorId"] = new UpdateBrokerParameter<String>("ProcessorId", value); }
         }
 
+        public bool Lock
+        {
+            set { SubParameters["Lock"] = new UpdateBrokerParameter<bool>("Lock", value); }
+        }
+        
+        public bool Enabled
+        {
+            set { SubParameters["Enabled"] = new UpdateBrokerParameter<bool>("Enabled", value); }
+        }
 
+        public DateTime ScheduledTime
+        {
+            set { SubParameters["ScheduledTime"] = new UpdateBrokerParameter<DateTime>("ScheduledTime", value); }
+        }
+
+        public ServerEntityKey FilesystemKey
+        {
+            set { SubParameters["Filesystem"] = new UpdateBrokerParameter<ServerEntityKey>("Filesystem", value); }
+        }
+        
+
+
+        
+        
     }
 }

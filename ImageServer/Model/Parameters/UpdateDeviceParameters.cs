@@ -29,39 +29,65 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
-using ClearCanvas.Enterprise.Core;
+using System.Text;
 using ClearCanvas.ImageServer.Enterprise;
-using ClearCanvas.ImageServer.Model.EnumBrokers;
 
-namespace ClearCanvas.ImageServer.Model
+namespace ClearCanvas.ImageServer.Model.Parameters
 {
-    public class WorkQueueStatusEnum : ServerEnum
+    public class UpdateDeviceParameters : UpdateBrokerParameters
     {
-    
-    
-        #region Constructors
-
-        public WorkQueueStatusEnum()
-            : base("WorkQueueStatusEnum")
+        public UpdateDeviceParameters()
+            : base("Device")
         {
         }
-        #endregion
 
-        public override void SetEnum(short val)
+        public String  AETitle
         {
-            ServerEnumHelper<WorkQueueStatusEnum, IWorkQueueStatusEnum>.SetEnum(this, val);
+            set { SubParameters["AETitle"] = new UpdateBrokerParameter<String>("AETitle", value); }
         }
 
-        static public WorkQueueStatusEnum GetEnum(string lookup)
+        public String Description
         {
-            return ServerEnumHelper<WorkQueueStatusEnum, IWorkQueueStatusEnum>.GetEnum(lookup);
+            set { SubParameters["Description"] = new UpdateBrokerParameter<String>("Description", value); }
         }
-        static public IList<WorkQueueStatusEnum> GetAll()
+        public String IPAddress
         {
-            return ServerEnumHelper<WorkQueueStatusEnum, IWorkQueueStatusEnum>.GetAll();
+            set { SubParameters["IPAddress"] = new UpdateBrokerParameter<String>("IPAddress", value); }
+        }
+        public int Port
+        {
+            set { SubParameters["Port"] = new UpdateBrokerParameter<int>("Port", value); }
         }
 
+        public bool Enabled
+        {
+            set { SubParameters["Enabled"] = new UpdateBrokerParameter<bool>("Enabled", value); }
+        }
 
+        public bool DHCP
+        {
+            set { SubParameters["DHCP"] = new UpdateBrokerParameter<bool>("DHCP", value); }
+        }
+
+        public bool AllowStorage
+        {
+            set { SubParameters["AllowStorage"] = new UpdateBrokerParameter<bool>("AllowStorage", value); }
+        }
+        public bool AllowQuery
+        {
+            set { SubParameters["AllowQuery"] = new UpdateBrokerParameter<bool>("AllowQuery", value); }
+        }
+        public bool AllowRetrieve
+        {
+            set { SubParameters["AllowRetrieve"] = new UpdateBrokerParameter<bool>("AllowRetrieve", value); }
+        }
+
+        public ServerEntityKey ServerParititionKey
+        {
+            set { SubParameters["ServerParitition"] = new UpdateBrokerParameter<ServerEntityKey>("ServerPartition", value); }
+        }
+        
     }
 }
