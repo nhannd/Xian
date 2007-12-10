@@ -5,8 +5,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
-using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
-using ClearCanvas.Common.Utilities;
+using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client.Adt
@@ -16,24 +15,25 @@ namespace ClearCanvas.Ris.Client.Adt
     [IconSet("apply", IconScheme.Colour, "AddToolSmall.png", "AddToolMedium.png", "AddToolLarge.png")]
     [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
     [ExtensionOf(typeof(RegistrationMainWorkflowItemToolExtensionPoint))]
-    public class RegistrationReplaceOrderTool : Tool<IRegistrationWorkflowItemToolContext>
+    [ExtensionOf(typeof(TechnologistMainWorkflowItemToolExtensionPoint))]
+    public class ReplaceOrderTool : Tool<IWorkflowItemToolContext>
     {
         public event EventHandler EnabledChanged
         {
-            add { this.Context.SelectedItemsChanged += value; }
-            remove { this.Context.SelectedItemsChanged -= value; }
+            add { this.Context.SelectionChanged += value; }
+            remove { this.Context.SelectionChanged -= value; }
         }
 
         public bool Enabled
         {
-            get { return this.Context.SelectedItems.Count > 0; }
+            get { return this.Context.Selection.Items.Length > 0; }
         }
 
         public void Apply()
         {
             try
             {
-                RegistrationWorklistItem item = CollectionUtils.FirstElement(this.Context.SelectedItems);
+                WorklistItemSummaryBase item = (WorklistItemSummaryBase)this.Context.Selection.Item;
                 ApplicationComponent.LaunchAsWorkspace(
                     this.Context.DesktopWindow,
                     new OrderEntryComponent(item.PatientRef, item.OrderRef, OrderEntryComponent.Mode.ReplaceOrder),

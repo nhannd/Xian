@@ -68,12 +68,21 @@ namespace ClearCanvas.Ris.Client.Reporting
                 get { return _owner.DesktopWindow; }
             }
 
-            public ICollection<ReportingWorklistItem> SelectedItems
+            public ISelection Selection
             {
                 get { return _owner.SelectedItems; }
             }
 
-            public event EventHandler SelectedItemsChanged
+            public ICollection<ReportingWorklistItem> SelectedItems
+            {
+                get
+                {
+                    return CollectionUtils.Map<object, ReportingWorklistItem>(_owner.SelectedItems.Items,
+                        delegate(object item) { return (ReportingWorklistItem)item; });
+                }
+            }
+
+            public event EventHandler SelectionChanged
             {
                 add { _owner.SelectedItemsChanged += value; }
                 remove { _owner.SelectedItemsChanged -= value; }
@@ -185,7 +194,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         public override void SelectedItemsChangedEventHandler(object sender, EventArgs e)
         {
-            ReportingWorklistItem selectedItem = CollectionUtils.FirstElement(this.SelectedItems);
+            ReportingWorklistItem selectedItem = (ReportingWorklistItem) this.SelectedItems.Item;
 
             if (selectedItem == null)
             {

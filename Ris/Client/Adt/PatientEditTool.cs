@@ -70,7 +70,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
             if (this.ContextBase is IRegistrationWorkflowItemToolContext)
             {
-                ((IRegistrationWorkflowItemToolContext)this.ContextBase).SelectedItemsChanged += delegate
+                ((IRegistrationWorkflowItemToolContext)this.ContextBase).SelectionChanged += delegate
                 {
                     this.Enabled = (((IRegistrationWorkflowItemToolContext)this.ContextBase).SelectedItems != null
                     && ((IRegistrationWorkflowItemToolContext)this.ContextBase).SelectedItems.Count == 1);

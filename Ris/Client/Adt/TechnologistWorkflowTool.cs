@@ -69,8 +69,8 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public virtual event EventHandler EnabledChanged
         {
-            add { this.Context.SelectedItemsChanged += value; }
-            remove { this.Context.SelectedItemsChanged -= value; }
+            add { this.Context.SelectionChanged += value; }
+            remove { this.Context.SelectionChanged -= value; }
         }
 
         public virtual void Apply()
@@ -115,147 +115,6 @@ namespace ClearCanvas.Ris.Client.Adt
             {
                 ExceptionHandler.Report(e, _errorMessage, desktopWindow);
             }
-            return false;
-        }
-    }
-
-    [MenuAction("apply", "folderexplorer-items-contextmenu/Start", "Apply")]
-    [ButtonAction("apply", "folderexplorer-items-toolbar/Start", "Apply")]
-	[IconSet("apply", IconScheme.Colour, "StartToolSmall.png", "StartToolMedium.png", "StartToolLarge.png")]
-    [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
-    //[ExtensionOf(typeof(TechnologistWorkflowItemToolExtensionPoint))]
-    //[ExtensionOf(typeof(Folders.InProgressTechnologistWorkflowFolder.DropHandlerExtensionPoint))]
-    public class StartTool : TechnologistWorkflowTool
-    {
-        public StartTool()
-            : base("StartProcedure", SR.ExceptionTechnologistWorkflowStartTool)
-        {
-        }
-
-        protected override bool Execute(ModalityWorklistItem item)
-        {
-            try
-            {
-                Platform.GetService<IModalityWorkflowService>(
-                    delegate(IModalityWorkflowService service)
-                    {
-                        service.StartProcedure(new StartProcedureRequest(item.ProcedureStepRef));
-                    });
-
-                return true;
-
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, this.Context.DesktopWindow);
-                return false;
-            }
-        }
-    }
-
-    [MenuAction("apply", "folderexplorer-items-contextmenu/Complete", "Apply")]
-    [ButtonAction("apply", "folderexplorer-items-toolbar/Complete", "Apply")]
-	[IconSet("apply", IconScheme.Colour, "CompleteToolSmall.png", "CompleteToolMedium.png", "CompleteToolLarge.png")]
-    [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
-    //[ExtensionOf(typeof(TechnologistWorkflowItemToolExtensionPoint))]
-    //[ExtensionOf(typeof(Folders.CompletedTechnologistWorkflowFolder.DropHandlerExtensionPoint))]
-    public class CompleteTool : TechnologistWorkflowTool
-    {
-        public CompleteTool()
-            : base("CompleteProcedure", SR.ExceptionTechnologistWorkflowCompleteTool)
-        {
-        }
-
-        protected override bool Execute(ModalityWorklistItem item)
-        {
-            try
-            {
-                Platform.GetService<IModalityWorkflowService>(
-                    delegate(IModalityWorkflowService service)
-                    {
-                        service.CompleteProcedure(new CompleteProcedureRequest(item.ProcedureStepRef));
-                    });
-                return true;
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, this.Context.DesktopWindow);
-                return false;
-            }
-        }
-    }
-
-    [MenuAction("apply", "folderexplorer-items-contextmenu/Cancel", "Apply")]
-    [ButtonAction("apply", "folderexplorer-items-toolbar/Cancel", "Apply")]
-	[IconSet("apply", IconScheme.Colour, "DeleteToolSmall.png", "DeleteToolMedium.png", "DeleteToolLarge.png")]
-    [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
-    //[ExtensionOf(typeof(TechnologistWorkflowItemToolExtensionPoint))]
-    //[ExtensionOf(typeof(Folders.CancelledTechnologistWorkflowFolder.DropHandlerExtensionPoint))]
-    public class CancelTool : TechnologistWorkflowTool
-    {
-        public CancelTool()
-            : base("CancelProcedure", SR.ExceptionTechnologistWorkflowCancelTool)
-        {
-        }
-
-        protected override bool Execute(ModalityWorklistItem item)
-        {
-            try
-            {
-                Platform.GetService<IModalityWorkflowService>(
-                    delegate(IModalityWorkflowService service)
-                    {
-                        service.CancelProcedure(new CancelProcedureRequest(item.ProcedureStepRef));
-                    });
-
-                return true;
-
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, this.Context.DesktopWindow);
-                return false;
-            }
-        }
-    }
-
-    [MenuAction("apply", "folderexplorer-items-contextmenu/Replace Order", "Apply")]
-    [ButtonAction("apply", "folderexplorer-items-toolbar/Replace Order", "Apply")]
-    [IconSet("apply", IconScheme.Colour, "AddToolSmall.png", "AddToolMedium.png", "AddToolLarge.png")]
-    [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
-    [ExtensionOf(typeof(TechnologistMainWorkflowItemToolExtensionPoint))]
-    public class TechnologistReplaceOrderTool : TechnologistWorkflowTool
-    {
-        public TechnologistReplaceOrderTool()
-            : base("", SR.ExceptionTechnologistWorkflowReplaceOrderTool)
-        {
-        }
-
-        public override bool Enabled
-        {
-            get
-            {
-                //TODO: this is a hack, since this tool isn't really a workflow tool it doesn't have a corresponding operation name
-                return this.Context.SelectedItems.Count > 0;
-            }
-        }
-
-        protected override bool Execute(ModalityWorklistItem item)
-        {
-            try
-            {
-                ApplicationComponent.LaunchAsWorkspace(
-                    this.Context.DesktopWindow,
-                    new OrderEntryComponent(item.PatientRef, item.OrderRef, OrderEntryComponent.Mode.ReplaceOrder),
-                    string.Format(SR.TitleNewOrder, PersonNameFormat.Format(item.PatientName), MrnFormat.Format(item.Mrn)));
-
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, this.Context.DesktopWindow);
-            }
-
-            // return false, because we don't need to update the selected folder until the workspace closes
             return false;
         }
     }

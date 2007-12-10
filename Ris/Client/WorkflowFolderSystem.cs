@@ -198,24 +198,9 @@ namespace ClearCanvas.Ris.Client
             set { _folderExplorer.SelectedFolder = value; }
         }
 
-        public ICollection<TItem> SelectedItems
+        public ISelection SelectedItems
         {
-            get
-            {
-                // in general we don't know what type the selected items are, since they may
-                // have come from another folder system
-                // therefore, need to check if they are of type TItem and only include them
-                // in SelectedItems if they are of the correct type
-                List<TItem> items = new List<TItem>();
-
-                // map the selection to a collection of TItem
-                foreach(object obj in _folderExplorer.SelectedItems.Items)
-                {
-                    if(obj is TItem)
-                        items.Add((TItem)obj);
-                }
-                return items;
-            }
+            get { return _folderExplorer.SelectedItems; }
         }
 
         public virtual void SelectedFolderChangedEventHandler(object sender, EventArgs e)

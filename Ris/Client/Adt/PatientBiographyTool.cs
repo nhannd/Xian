@@ -68,14 +68,14 @@ namespace ClearCanvas.Ris.Client.Adt
 
             if (this.ContextBase is ITechnologistWorkflowItemToolContext)
             {
-                ((ITechnologistWorkflowItemToolContext)this.ContextBase).SelectedItemsChanged += delegate
+                ((ITechnologistWorkflowItemToolContext)this.ContextBase).SelectionChanged += delegate
                 {
                     this.Enabled = DetermineEnablement();
                 };
             }
             else if (this.ContextBase is IRegistrationWorkflowItemToolContext)
             {
-                ((IRegistrationWorkflowItemToolContext)this.ContextBase).SelectedItemsChanged += delegate
+                ((IRegistrationWorkflowItemToolContext)this.ContextBase).SelectionChanged += delegate
                 {
                     this.Enabled = DetermineEnablement();
                 };

@@ -11,8 +11,8 @@ namespace ClearCanvas.Ris.Client
     {
         bool GetWorkflowOperationEnablement(string operationClass);
 
-        event EventHandler SelectedItemsChanged;
-        
+        event EventHandler SelectionChanged;
+        ISelection Selection { get; }
 
         IEnumerable Folders { get; }
         IFolder SelectedFolder { get; }

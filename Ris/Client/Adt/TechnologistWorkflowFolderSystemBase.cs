@@ -38,24 +38,11 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
-using GetOperationEnablementRequest=ClearCanvas.Ris.Application.Common.ModalityWorkflow.GetOperationEnablementRequest;
-using GetOperationEnablementResponse=ClearCanvas.Ris.Application.Common.ModalityWorkflow.GetOperationEnablementResponse;
-using ListWorklistsRequest=ClearCanvas.Ris.Application.Common.ModalityWorkflow.ListWorklistsRequest;
-using ListWorklistsResponse=ClearCanvas.Ris.Application.Common.ModalityWorkflow.ListWorklistsResponse;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
-    public interface ITechnologistWorkflowItemToolContext : IToolContext
+    public interface ITechnologistWorkflowItemToolContext : IWorkflowItemToolContext<ModalityWorklistItem>
     {
-        bool GetWorkflowOperationEnablement(string operationClass);
-
-        ICollection<ModalityWorklistItem> SelectedItems { get; }
-        event EventHandler SelectedItemsChanged;
-
-        IEnumerable Folders { get; }
-        IFolder SelectedFolder { get; }
-
-        IDesktopWindow DesktopWindow { get; }
     }
 
     public interface ITechnologistWorkflowFolderToolContext : IWorkflowFolderToolContext
@@ -80,12 +67,21 @@ namespace ClearCanvas.Ris.Client.Adt
                 get { return _owner.DesktopWindow; }
             }
 
-            public ICollection<ModalityWorklistItem> SelectedItems
+            public ISelection Selection
             {
                 get { return _owner.SelectedItems; }
             }
 
-            public event EventHandler SelectedItemsChanged
+            public ICollection<ModalityWorklistItem> SelectedItems
+            {
+                get
+                {
+                    return CollectionUtils.Map<object, ModalityWorklistItem>(_owner.SelectedItems.Items,
+                        delegate(object item) { return (ModalityWorklistItem)item; });
+                }
+            }
+
+            public event EventHandler SelectionChanged
             {
                 add { _owner.SelectedItemsChanged += value; }
                 remove { _owner.SelectedItemsChanged -= value; }
@@ -194,7 +190,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public override void SelectedItemsChangedEventHandler(object sender, EventArgs e)
         {
-            ModalityWorklistItem selectedItem = CollectionUtils.FirstElement(this.SelectedItems);
+            ModalityWorklistItem selectedItem = (ModalityWorklistItem) this.SelectedItems.Item;
 
             if (selectedItem == null)
             {

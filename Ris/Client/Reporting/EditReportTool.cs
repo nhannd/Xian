@@ -42,8 +42,8 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         public event EventHandler LabelChanged
         {
-            add { this.Context.SelectedItemsChanged += value; }
-            remove { this.Context.SelectedItemsChanged -= value; }
+            add { this.Context.SelectionChanged += value; }
+            remove { this.Context.SelectionChanged -= value; }
         }
 
         public override bool Enabled

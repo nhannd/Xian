@@ -60,7 +60,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 
             if (this.ContextBase is IReportingWorkflowItemToolContext)
             {
-                ((IReportingWorkflowItemToolContext)this.ContextBase).SelectedItemsChanged += delegate
+                ((IReportingWorkflowItemToolContext)this.ContextBase).SelectionChanged += delegate
                 {
                     this.Enabled = DetermineEnablement();
                 };

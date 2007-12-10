@@ -63,8 +63,8 @@ namespace ClearCanvas.Ris.Client.Adt
 
             public virtual event EventHandler EnabledChanged
             {
-                add { this.Context.SelectedItemsChanged += value; }
-                remove { this.Context.SelectedItemsChanged -= value; }
+                add { this.Context.SelectionChanged += value; }
+                remove { this.Context.SelectionChanged -= value; }
             }
 
             public virtual void Apply()

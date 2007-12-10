@@ -24,7 +24,7 @@ namespace ClearCanvas.Ris.Client.Adt
             base.Initialize();
             _enabled = false;   // disable by default
 
-            this.Context.SelectedItemsChanged += delegate
+            this.Context.SelectionChanged += delegate
             {
                 // optimistically enable this tool for any selected order, regardless of statuss
                 this.Enabled = this.Context.SelectedItems != null
