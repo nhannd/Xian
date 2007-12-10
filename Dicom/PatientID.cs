@@ -99,6 +99,9 @@ namespace ClearCanvas.Dicom
 
 		public bool Equals(PatientId other)
 		{
+			if (other == null)
+				return false;
+
 			return InternalPatientId == other.InternalPatientId;
 		}
 

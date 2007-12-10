@@ -83,6 +83,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		public bool Equals(ComposableLutMemento other)
 		{
+			if (other == null)
+				return false;
+
 			if (this._innerMemento != null)
 				return this._originatingLut.Equals(other._originatingLut) && this._innerMemento.Equals(other._innerMemento);
 			

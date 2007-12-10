@@ -95,6 +95,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 
 			public bool Equals(PresetFactoryDescriptor other)
 			{
+				if (other == null)
+					return false;
+
 				return this.Factory == other.Factory;
 			}
 

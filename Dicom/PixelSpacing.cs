@@ -102,6 +102,9 @@ namespace ClearCanvas.Dicom
 
 		public bool Equals(PixelSpacing other)
 		{
+			if (other == null)
+				return false;
+
 			return this.Row == other.Row && this.Column == other.Column;
 		}
 

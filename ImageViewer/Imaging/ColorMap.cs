@@ -193,6 +193,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 		///</summary>
 		public bool Equals(IColorMap other)
 		{
+			if (other == null)
+				return false;
+
 			return this.MinInputValue == other.MinInputValue && 
 				this.MaxInputValue == other.MaxInputValue &&
 				this.GetType() == other.GetType();

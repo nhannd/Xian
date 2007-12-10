@@ -120,6 +120,9 @@ namespace ClearCanvas.ImageViewer
 
 		public bool Equals(ImageBoxMemento other)
 		{
+			if (other == null)
+				return false;
+
 			return DisplaySet == other.DisplaySet &&
 			       Rows == other.Rows &&
 			       Columns == other.Columns &&

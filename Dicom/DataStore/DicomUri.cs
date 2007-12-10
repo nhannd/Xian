@@ -122,6 +122,9 @@ namespace ClearCanvas.Dicom.DataStore
 
     	public bool Equals(DicomUri other)
     	{
+			if (other == null)
+				return false;
+
 			return InternalUriObject.Equals(other.InternalUriObject);
     	}
 

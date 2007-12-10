@@ -92,6 +92,9 @@ namespace ClearCanvas.Dicom
 
 		public bool Equals(Window other)
 		{
+			if (other == null)
+				return false;
+
 			return Width == other.Width && Center == other.Center;
 		}
 

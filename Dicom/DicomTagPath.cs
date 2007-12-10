@@ -114,6 +114,9 @@ namespace ClearCanvas.Dicom
 
 		public bool Equals(DicomTagPath other)
 		{
+			if (other == null)
+				return false;
+
 			return other.Path.Equals(this.Path);
 		}
 
@@ -123,6 +126,9 @@ namespace ClearCanvas.Dicom
 
 		public bool Equals(DicomTag other)
 		{
+			if (other == null)
+				return false;
+
 			if (_tags.Count != 1)
 				return false;
 

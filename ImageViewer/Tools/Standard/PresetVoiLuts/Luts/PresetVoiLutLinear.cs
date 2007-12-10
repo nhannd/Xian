@@ -84,6 +84,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts
 
 			public bool Equals(PresetVoiLutLinearParameters other)
 			{
+				if (other == null)
+					return false;
+
 				return Name == other.Name && WindowWidth == other.WindowWidth && WindowCenter == other.WindowCenter;
 			}
 

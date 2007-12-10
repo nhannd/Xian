@@ -135,6 +135,9 @@ namespace ClearCanvas.Dicom
 
 		public bool Equals(PersonName other)
 		{
+			if (other == null)
+				return false;
+
 			return InternalPersonName == other.InternalPersonName;
 		}
 

@@ -84,6 +84,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 
 		public bool Equals(PresetVoiLut other)
 		{
+			if (other == null)
+				return false;
+
 			return (String.Compare(this.Operation.Name, other.Operation.Name, true) == 0 || (KeyStroke != XKeys.None && KeyStroke == other.KeyStroke));
 		}
 

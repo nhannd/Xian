@@ -74,6 +74,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 			public bool Equals(WindowLevelMemento other)
 			{
+				if (other == null)
+					return false;
+
 				return this.WindowWidth == other.WindowWidth && this.WindowCenter == other.WindowCenter;
 			}
 

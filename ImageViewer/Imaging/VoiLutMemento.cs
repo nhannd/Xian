@@ -44,6 +44,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		public bool Equals(VoiLutMemento other)
 		{
+			if (other == null)
+				return false;
+
 			return this._invert == other._invert && this._composableLutMemento.Equals(other._composableLutMemento);
 		}
 

@@ -82,6 +82,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 
 		public bool Equals(PresetVoiLutGroup other)
 		{
+			if (other == null)
+				return false;
+
 			return this._modality == other._modality;
 		}
 

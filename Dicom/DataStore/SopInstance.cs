@@ -105,6 +105,9 @@ namespace ClearCanvas.Dicom.DataStore
 
 		public bool Equals(SopInstance other)
 		{
+			if (other == null)
+				return false;
+
 			return (this.SopInstanceUid == other.SopInstanceUid);
 		}
 

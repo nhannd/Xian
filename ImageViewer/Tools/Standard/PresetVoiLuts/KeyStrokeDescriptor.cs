@@ -79,6 +79,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 
 		public bool Equals(KeyStrokeDescriptor other)
 		{
+			if (other == null)
+				return false;
+
 			return this.KeyStroke == other.KeyStroke;
 		}
 

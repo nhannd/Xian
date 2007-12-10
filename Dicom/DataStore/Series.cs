@@ -138,6 +138,9 @@ namespace ClearCanvas.Dicom.DataStore
 
     	public bool Equals(Series other)
     	{
+			if (other == null)
+				return false;
+
 			return (this.SeriesInstanceUid == other.SeriesInstanceUid);
     	}
 

@@ -177,6 +177,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 			public bool Equals(IColorMap other)
 			{
+				if (other == null)
+					return false;
+
 				if (other is ColorMapProxy)
 					return this.Equals((ColorMapProxy)other);
 
@@ -189,6 +192,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 			public bool Equals(ColorMapProxy other)
 			{
+				if (other == null)
+					return false;
+
 				return _factoryName == other._factoryName;
 			}
 

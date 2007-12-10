@@ -94,6 +94,9 @@ namespace ClearCanvas.ImageViewer
 
 		public bool Equals(ImageOperationApplicatorMemento other)
 		{
+			if (other == null)
+				return false;
+
 			if (this.ImageOriginatorMementos.Count != other.ImageOriginatorMementos.Count)
 				return false;
 

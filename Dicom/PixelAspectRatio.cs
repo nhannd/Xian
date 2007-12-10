@@ -91,6 +91,9 @@ namespace ClearCanvas.Dicom
 
 		public bool Equals(PixelAspectRatio other)
 		{
+			if (other == null)
+				return false;
+
 			return Row == other.Row && Column == other.Column;
 		}
 

@@ -74,6 +74,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts
 
 			public bool Equals(AutoVoiLutLinearMemento other)
 			{
+				if (other == null)
+					return false;
+
 				return this.Index == other.Index;
 			}
 

@@ -100,7 +100,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 			public bool  Equals(FloatingShelfState other)
 			{
-				return this.DesktopWindowName == other.DesktopWindowName && this.Name == other.Name;
+				return other != null && this.DesktopWindowName == other.DesktopWindowName && this.Name == other.Name;
 			}
 
 			#endregion
@@ -166,7 +166,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 			public bool Equals(DesktopWindowState other)
 			{
-				return other.Name.Equals(Name);
+				return other != null && other.Name.Equals(Name);
 			}
 
 			#endregion
@@ -228,7 +228,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 			public bool Equals(ScreenConfiguration other)
 			{
-				return other.ScreenRegion.Equals(ScreenRegion);
+				return other != null && other.ScreenRegion.Equals(ScreenRegion);
 			}
 
 			#endregion
@@ -378,6 +378,9 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 			public bool Equals(DesktopWindowSetting other)
 			{
+				if (other == null)
+					return false;
+
 				if (!other.VirtualScreenRectangle.Equals(VirtualScreenRectangle))
 					return false;
 

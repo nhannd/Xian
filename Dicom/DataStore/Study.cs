@@ -201,6 +201,9 @@ namespace ClearCanvas.Dicom.DataStore
 
     	public bool Equals(Study other)
     	{
+			if (other == null)
+				return false;
+
 			return (this.StudyInstanceUid == other.StudyInstanceUid);
     	}
 

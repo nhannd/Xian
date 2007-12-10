@@ -170,6 +170,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		public bool Equals(IModalityLut other)
 		{
+			if (other == null)
+				return false;
+
 			if (this == other)
 				return true;
 
@@ -185,6 +188,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		public bool Equals(ModalityLutLinear other)
 		{
+			if (other == null)
+				return false;
+
 			return
 				this.BitsStored == other.BitsStored && this.IsSigned == other.IsSigned && this.RescaleSlope == other.RescaleSlope &&
 				this.RescaleIntercept == other.RescaleIntercept;
