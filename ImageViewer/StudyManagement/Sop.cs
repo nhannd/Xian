@@ -189,7 +189,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string specificCharacterSet;
-				GetTagArray(DicomTags.SpecificCharacterSet, out specificCharacterSet, out tagExists);
+				GetTagAsDicomStringArray(DicomTags.SpecificCharacterSet, out specificCharacterSet, out tagExists);
 
 				if (tagExists)
 				{
@@ -375,7 +375,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string nameOfPhysiciansReadingStudy;
-				GetTagArray(DicomTags.NameOfPhysiciansReadingStudy, out nameOfPhysiciansReadingStudy, out tagExists);
+				GetTagAsDicomStringArray(DicomTags.NameOfPhysiciansReadingStudy, out nameOfPhysiciansReadingStudy, out tagExists);
 				return DicomStringHelper.GetPersonNameArray(nameOfPhysiciansReadingStudy);
 			}
 		}
@@ -393,7 +393,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string admittingDiagnosesDescription;
-				GetTagArray(DicomTags.AdmittingDiagnosesDescription, out admittingDiagnosesDescription, out tagExists);
+				GetTagAsDicomStringArray(DicomTags.AdmittingDiagnosesDescription, out admittingDiagnosesDescription, out tagExists);
 				return DicomStringHelper.GetStringArray(admittingDiagnosesDescription);
 			}
 		}
@@ -597,7 +597,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string performingPhysiciansNames;
-				GetTagArray(DicomTags.PerformingPhysiciansName, out performingPhysiciansNames, out tagExists);
+				GetTagAsDicomStringArray(DicomTags.PerformingPhysiciansName, out performingPhysiciansNames, out tagExists);
 				return DicomStringHelper.GetPersonNameArray(performingPhysiciansNames);
 			}
 		}
@@ -639,7 +639,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string operatorsNames;
-				GetTagArray(DicomTags.OperatorsName, out operatorsNames, out tagExists);
+				GetTagAsDicomStringArray(DicomTags.OperatorsName, out operatorsNames, out tagExists);
 				return DicomStringHelper.GetPersonNameArray(operatorsNames);
 			}
 		}
@@ -805,7 +805,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <param name="tag"></param>
 		/// <param name="value"></param>
 		/// <param name="tagExists"></param>
-		public abstract void GetTagArray(uint tag, out string value, out bool tagExists);
+		public abstract void GetTagAsDicomStringArray(uint tag, out string value, out bool tagExists);
 
 		#endregion
 

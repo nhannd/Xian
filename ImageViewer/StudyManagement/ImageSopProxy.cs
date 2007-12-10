@@ -609,9 +609,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			_realImageSop.GetTag(tag, out val, position, out tagExists);
 		}
 
-		public override void GetTagArray(uint tag, out string val, out bool tagExists)
+		public override void GetTagAsDicomStringArray(uint tag, out string val, out bool tagExists)
 		{
-			_realImageSop.GetTagArray(tag, out val, out tagExists);
+			_realImageSop.GetTagAsDicomStringArray(tag, out val, out tagExists);
 		}
 
 		protected override void Dispose(bool disposing)

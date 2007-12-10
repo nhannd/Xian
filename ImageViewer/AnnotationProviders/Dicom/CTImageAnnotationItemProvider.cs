@@ -67,7 +67,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 							resolver,
 							delegate(ImageSop imageSop)
 							{
-								double val = double.NaN;
+								double val;
 								bool tagExists;
 								imageSop.GetTag(DicomTags.Kvp, out val, out tagExists);
 								string str = String.Format("{0} kV", val);

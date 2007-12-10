@@ -65,7 +65,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string patientOrientation;
-				GetTagArray(DicomTags.PatientOrientation, out patientOrientation, out tagExists);
+				GetTagAsDicomStringArray(DicomTags.PatientOrientation, out patientOrientation, out tagExists);
 				if (tagExists)
 				{
 					string[] values = DicomStringHelper.GetStringArray(patientOrientation);
@@ -86,7 +86,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string imageType;
-				GetTagArray(DicomTags.ImageType, out imageType, out tagExists);
+				GetTagAsDicomStringArray(DicomTags.ImageType, out imageType, out tagExists);
 				return imageType ?? "";
 			}
 		}
@@ -201,7 +201,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string lossyImageCompressionRatios;
-				GetTagArray(DicomTags.LossyImageCompressionRatio, out lossyImageCompressionRatios, out tagExists);
+				GetTagAsDicomStringArray(DicomTags.LossyImageCompressionRatio, out lossyImageCompressionRatios, out tagExists);
 				
 				double[] values;
 				DicomStringHelper.TryGetDoubleArray(lossyImageCompressionRatios, out values);
@@ -225,7 +225,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string pixelSpacing;
-				GetTagArray(DicomTags.PixelSpacing, out pixelSpacing, out tagExists);
+				GetTagAsDicomStringArray(DicomTags.PixelSpacing, out pixelSpacing, out tagExists);
 				if (tagExists)
 				{
 					double[] values;
@@ -249,7 +249,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string imageOrientationPatient;
-				GetTagArray(DicomTags.ImageOrientationPatient, out imageOrientationPatient, out tagExists);
+				GetTagAsDicomStringArray(DicomTags.ImageOrientationPatient, out imageOrientationPatient, out tagExists);
 				if (tagExists)
 				{
 					double[] values;
@@ -273,7 +273,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string imagePositionPatient;
-				GetTagArray(DicomTags.ImagePositionPatient, out imagePositionPatient, out tagExists);
+				GetTagAsDicomStringArray(DicomTags.ImagePositionPatient, out imagePositionPatient, out tagExists);
 				if (tagExists)
 				{
 					double[] values;
@@ -460,7 +460,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string pixelAspectRatio;
-				GetTagArray(DicomTags.PixelAspectRatio, out pixelAspectRatio, out tagExists);
+				GetTagAsDicomStringArray(DicomTags.PixelAspectRatio, out pixelAspectRatio, out tagExists);
 				if (tagExists)
 				{
 					double[] values;
@@ -541,11 +541,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string windowCenterValues;
-				GetTagArray(DicomTags.WindowCenter, out windowCenterValues, out tagExists);
+				GetTagAsDicomStringArray(DicomTags.WindowCenter, out windowCenterValues, out tagExists);
 				if (tagExists)
 				{
 					string windowWidthValues;
-					GetTagArray(DicomTags.WindowWidth, out windowWidthValues, out tagExists);
+					GetTagAsDicomStringArray(DicomTags.WindowWidth, out windowWidthValues, out tagExists);
 					if (tagExists)
 					{
 						if (!String.IsNullOrEmpty(windowCenterValues) && !String.IsNullOrEmpty(windowWidthValues))
@@ -581,7 +581,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string windowCenterAndWidthExplanations;
-				GetTagArray(DicomTags.WindowCenterWidthExplanation, out windowCenterAndWidthExplanations, out tagExists);
+				GetTagAsDicomStringArray(DicomTags.WindowCenterWidthExplanation, out windowCenterAndWidthExplanations, out tagExists);
 				return DicomStringHelper.GetStringArray(windowCenterAndWidthExplanations);
 			}
 		}

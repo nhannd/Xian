@@ -120,7 +120,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						(
 							"Dicom.GeneralStudy.StudyId",
 							resolver, 
-							new DicomTagAsStringRetriever(DicomTags.StudyId).GetTagValue,
+							SopDataRetrieverFactory.GetStringRetriever(DicomTags.StudyId),
 							DicomDataFormatHelper.RawStringFormat
 						)
 					);

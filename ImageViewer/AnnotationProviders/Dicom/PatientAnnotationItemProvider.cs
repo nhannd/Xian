@@ -65,7 +65,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						(
 							"Dicom.Patient.EthnicGroup",
 							resolver,
-							new DicomTagAsStringRetriever(DicomTags.EthnicGroup).GetTagValue,
+							SopDataRetrieverFactory.GetStringRetriever(DicomTags.EthnicGroup),
 							DicomDataFormatHelper.RawStringFormat
 						)
 					);
@@ -76,7 +76,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						(
 							"Dicom.Patient.PatientComments",
 							resolver,
-							new DicomTagAsStringRetriever(DicomTags.PatientComments).GetTagValue,
+							SopDataRetrieverFactory.GetStringRetriever(DicomTags.PatientComments),
 							DicomDataFormatHelper.RawStringFormat
 						)
 					);
@@ -109,7 +109,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						(
 							"Dicom.Patient.PatientsBirthTime",
 							resolver,
-							new DicomTagAsStringRetriever(DicomTags.PatientsBirthTime).GetTagValue,
+							SopDataRetrieverFactory.GetStringRetriever(DicomTags.PatientsBirthTime),
 							DicomDataFormatHelper.TimeFormat
 						)
 					);

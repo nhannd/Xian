@@ -216,15 +216,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			value = value ?? "";
 		}
 
-		// TODO (Stewart): Should rename since it's unclear what this tag array is.
-
 		/// <summary>
-		/// This method overrides <see cref="Sop.GetTagArray"/>
+		/// This method overrides <see cref="Sop.GetTagAsDicomStringArray"/>
 		/// </summary>
 		/// <param name="tag"></param>
 		/// <param name="value"></param>
 		/// <param name="tagExists"></param>
-		public override void GetTagArray(uint tag, out string value, out bool tagExists)
+		public override void GetTagAsDicomStringArray(uint tag, out string value, out bool tagExists)
 		{
 			GetTag<string>(tag, out value, 0, out tagExists, GetStringArrayFromAttribute);
 			value = value ?? "";

@@ -118,7 +118,6 @@
     <Compile Include="Imaging\VoiLutMemento.cs" />
     <Compile Include="InputManagement\BeforeFindMouseButtonHandlerEventArgs.cs" />
     <Compile Include="InputManagement\BeforeFindMouseWheelHandlerEventArgs.cs" />
-    <Compile Include="StudyManagement\DicomTagRetriever.cs" />
     <Compile Include="Annotations\Dicom\Tests\DicomBasicFormatterTests.cs" />
     <Compile Include="Annotations\Dicom\Tests\DicomFilteredAnnotationLayoutStoreTests.cs" />
     <Compile Include="Annotations\IAnnotationLayoutProvider.cs" />
@@ -205,6 +204,7 @@
     <Compile Include="SimpleLogicalWorkspaceBuilder.cs" />
     <Compile Include="SimpleImageLayoutManager.cs" />
     <Compile Include="SimplePhysicalWorkspaceFiller.cs" />
+    <Compile Include="StudyManagement\SopDataRetrieverFactory.cs" />
     <Compile Include="StudyManagement\SopValidationException.cs" />
     <Compile Include="Imaging\IVoiLutManager.cs" />
     <Compile Include="Imaging\LutCollection.cs" />

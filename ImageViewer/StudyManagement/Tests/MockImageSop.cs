@@ -611,7 +611,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 			throw new Exception("The method or operation is not implemented.");
 		}
 
-		public override void GetTagArray(uint tag, out string valueArray, out bool tagExists)
+		public override void GetTagAsDicomStringArray(uint tag, out string valueArray, out bool tagExists)
 		{
 			throw new Exception("The method or operation is not implemented.");
 		}

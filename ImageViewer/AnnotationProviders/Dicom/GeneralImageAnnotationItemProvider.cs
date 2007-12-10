@@ -108,11 +108,11 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 
 				_annotationItems.Add
 					(
-						new DicomAnnotationItem<string>
+					new DicomAnnotationItem<string>
 						(
 							"Dicom.GeneralImage.ContentDate",
-							resolver, 
-							new DicomTagAsStringRetriever(DicomTags.ContentDate).GetTagValue,
+							resolver,
+							SopDataRetrieverFactory.GetStringRetriever(DicomTags.ContentDate),
 							DicomDataFormatHelper.DateFormat
 						)
 					);
@@ -122,8 +122,8 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						new DicomAnnotationItem<string>
 						(
 							"Dicom.GeneralImage.ContentTime",
-							resolver, 
-							new DicomTagAsStringRetriever(DicomTags.ContentTime).GetTagValue,
+							resolver,
+							SopDataRetrieverFactory.GetStringRetriever(DicomTags.ContentTime),
 							DicomDataFormatHelper.TimeFormat
 						)
 					);
@@ -133,8 +133,8 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						new DicomAnnotationItem<string>
 						(
 							"Dicom.GeneralImage.DerivationDescription",
-							resolver, 
-							new DicomTagAsStringRetriever(DicomTags.DerivationDescription).GetTagValue,
+							resolver,
+							SopDataRetrieverFactory.GetStringRetriever(DicomTags.DerivationDescription),
 							DicomDataFormatHelper.RawStringFormat
 						)
 					);
@@ -221,7 +221,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						(
 							"Dicom.GeneralImage.QualityControlImage",
 							resolver,
-							new DicomTagAsStringRetriever(DicomTags.QualityControlImage).GetTagValue,
+							SopDataRetrieverFactory.GetStringRetriever(DicomTags.QualityControlImage),
 							DicomDataFormatHelper.BooleanFormatter
 						)
 					);
