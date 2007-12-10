@@ -251,7 +251,8 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 			Trace.Write("TileControl.OnSizeChanged()\n");
 
-			_tileController.TileClientRectangle = this.ClientRectangle;
+			if (_tileController != null)
+				_tileController.TileClientRectangle = this.ClientRectangle;
 
 			// Set the surface to null so when it's accessed, a new surface
 			// will be created.
@@ -267,7 +268,8 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			if (message == null)
 				return;
 
-			_tileController.ProcessMessage(message);
+			if (_tileController != null)
+				_tileController.ProcessMessage(message);
 		}
 
 		protected override void OnMouseDown(MouseEventArgs e)
@@ -278,7 +280,8 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			if (message == null)
 				return;
 
-			_tileController.ProcessMessage(message);
+			if (_tileController != null)
+				_tileController.ProcessMessage(message);
 		}
 
 		protected override void OnMouseMove(MouseEventArgs e)
@@ -287,7 +290,8 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			if (message == null)
 				return;
 
-			_tileController.ProcessMessage(message);
+			if (_tileController != null) 
+				_tileController.ProcessMessage(message);
 		}
 
 		protected override void OnMouseUp(MouseEventArgs e)
@@ -296,7 +300,8 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			if (message == null)
 				return;
 
-			_tileController.ProcessMessage(message);
+			if (_tileController != null) 
+				_tileController.ProcessMessage(message);
 		}
 
 		protected override void OnMouseWheel(MouseEventArgs e)
@@ -305,7 +310,8 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			if (message == null)
 				return;
 
-			_tileController.ProcessMessage(message);
+			if (_tileController != null) 
+				_tileController.ProcessMessage(message);
 		}
 
 		protected override void OnKeyDown(KeyEventArgs e)
@@ -314,7 +320,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			if (message == null)
 				return;
 
-			if (_tileController.ProcessMessage(message))
+			if (_tileController != null && _tileController.ProcessMessage(message))
 				e.Handled = true;
 
 			base.OnKeyDown(e);
@@ -326,7 +332,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			if (message == null)
 				return;
 
-			if (_tileController.ProcessMessage(message))
+			if (_tileController != null && _tileController.ProcessMessage(message))
 				e.Handled = true;
 
 			base.OnKeyUp(e);
@@ -341,13 +347,13 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 		public override bool PreProcessMessage(ref Message msg)
 		{
 			object message = _inputTranslator.PreProcessMessage(msg);
-			if (message != null)
+			if (message != null && _tileController != null)
 				_tileController.ProcessMessage(message);
 
 			bool returnValue = base.PreProcessMessage(ref msg);
 
 			message = _inputTranslator.PostProcessMessage(msg, returnValue);
-			if (message != null)
+			if (message != null && _tileController != null)
 				_tileController.ProcessMessage(message);
 
 			return returnValue;
@@ -389,6 +395,9 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 		private void OnCursorTokenChanged(object sender, EventArgs e)
 		{
+			if (_tileController == null)
+				return;
+
 			if (_tileController.CursorToken == null)
 			{
 				this.Cursor = this.DefaultCursor;
@@ -421,7 +430,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 		private void OnContextMenuStripOpening(object sender, CancelEventArgs e)
 		{
-			if (_tileController.ContextMenuProvider == null)
+			if (_tileController == null || _tileController.ContextMenuProvider == null)
 			{
 				e.Cancel = true;
 				return;
