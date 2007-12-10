@@ -59,14 +59,14 @@ namespace ClearCanvas.ImageViewer
 			mouseTool.ActivationChanged += new EventHandler(OnMouseToolActivationChanged);
 		}
 
-		private MouseImageViewerTool GetActiveMouseTool()
+		private MouseImageViewerTool GetActiveMouseTool(XMouseButtons button)
 		{
 			foreach (ITool tool in _setRegisteredTools.Keys)
 			{
 				MouseImageViewerTool mouseTool = tool as MouseImageViewerTool;
 				if (mouseTool != null)
 				{
-					if (mouseTool.Active)
+					if (mouseTool.Active && mouseTool.MouseButton == button)
 						return mouseTool;
 				}
 			}
@@ -96,7 +96,7 @@ namespace ClearCanvas.ImageViewer
 				return;
 			}
 
-			MouseImageViewerTool current = GetActiveMouseTool();
+			MouseImageViewerTool current = GetActiveMouseTool(activateMouseTool.MouseButton);
 			if (!replaceExisting && current != null && current != activateMouseTool)
 			{
 				activateMouseTool.Active = false;
