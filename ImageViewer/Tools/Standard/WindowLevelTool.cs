@@ -48,7 +48,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[MouseToolButton(XMouseButtons.Right, true)]
 
 	[MenuAction("activate", "global-menus/MenuTools/MenuStandard/MenuWindowLevel", "Select", Flags = ClickActionFlags.CheckAction)]
-	[KeyboardAction("activate", "imageviewer-keyboard/ToolsStandardWindowLevel/Activate", KeyStroke = XKeys.W)]
+	[KeyboardAction("activate", "imageviewer-keyboard/ToolsStandardWindowLevel/Activate", "Select", KeyStroke = XKeys.W)]
 	[MenuAction("activate", "imageviewer-contextmenu/MenuWindowLevel", "Select", Flags = ClickActionFlags.CheckAction)]
 	[ButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarWindowLevel", "Select", Flags = ClickActionFlags.CheckAction)]
 	[CheckedStateObserver("activate", "Active", "ActivationChanged")]
