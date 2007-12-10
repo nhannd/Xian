@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using System.Windows.Forms;
 using ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts;
 
@@ -54,7 +55,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 			BindingSource source = new BindingSource();
         	source.DataSource = _component;
 
-        	_presetVoiLuts.Table = _component.VoiLutPresets;
+			OnAddPresetVisibleChanged(null, EventArgs.Empty);
+			
+			_presetVoiLuts.Table = _component.VoiLutPresets;
 			_presetVoiLuts.ToolbarModel = _component.ToolbarModel;
         	_presetVoiLuts.MenuModel = _component.ContextMenuModel;
 
@@ -71,8 +74,22 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 			_addPresetButton.DataBindings.Add("Visible", source, "HasMultipleFactories", true, DataSourceUpdateMode.Never);
 			_addPresetButton.DataBindings.Add("Enabled", source, "AddEnabled", true, DataSourceUpdateMode.Never);
 
-        	_addPresetButton.Click += delegate { _component.OnAdd(); };
+			_comboAddPreset.VisibleChanged += new System.EventHandler(OnAddPresetVisibleChanged);
+			
+			_addPresetButton.Click += delegate { _component.OnAdd(); };
 			_presetVoiLuts.ItemDoubleClicked += delegate { _component.OnEditSelected(); };
         }
+
+		void OnAddPresetVisibleChanged(object sender, System.EventArgs e)
+		{
+			if (!_comboAddPreset.Visible)
+			{
+				_tableLayoutPanel.SetRowSpan(_presetVoiLuts, 2);
+			}
+			else
+			{
+				_tableLayoutPanel.SetRowSpan(_presetVoiLuts, 1);
+			}
+		}
     }
 }

@@ -73,6 +73,9 @@ namespace ClearCanvas.ImageViewer
 			_imageSop = imageSop;
 		}
 
+		/// <summary>
+		/// Gets or sets the <see cref="IAnnotationLayoutProvider"/> associated with this image.
+		/// </summary>
 		protected override IAnnotationLayoutProvider AnnotationLayoutProvider
 		{
 			get

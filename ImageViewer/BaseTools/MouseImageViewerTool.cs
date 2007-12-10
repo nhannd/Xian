@@ -105,6 +105,10 @@ namespace ClearCanvas.ImageViewer.BaseTools
 			: this(SR.LabelUnknown)
 		{
 		}
+
+		/// <summary>
+		/// Gets or sets the tooltip prefix for this <see cref="MouseImageViewerTool"/>.
+		/// </summary>
 		protected virtual string TooltipPrefix
 		{
 			get { return _tooltipPrefix; }

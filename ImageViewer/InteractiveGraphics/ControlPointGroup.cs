@@ -168,6 +168,9 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			return -1;
 		}
 
+		/// <summary>
+		/// Releases all resources used by this <see cref="ControlPointGroup"/>.
+		/// </summary>
 		protected override void Dispose(bool disposing)
 		{
 			if (disposing)

@@ -34,8 +34,7 @@ using ClearCanvas.Common;
 namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 {
 	[AllowMultiplePresetVoiLutOperations]
-	[ExtensionOf(typeof(PresetVoiLutOperationFactoryExtensionPoint))]
-	public sealed class LinearPresetVoiLutOperationFactory : PresetVoiLutOperationFactory<LinearPresetVoiLutOperationComponent>
+	internal sealed class LinearPresetVoiLutOperationFactory : PresetVoiLutOperationFactory<LinearPresetVoiLutOperationComponent>
 	{
 		internal static readonly string FactoryName = "Linear Preset";
 

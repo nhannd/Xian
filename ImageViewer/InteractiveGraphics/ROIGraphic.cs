@@ -79,13 +79,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// <param name="graphic"></param>
 		/// <param name="userCreated"></param>
 		public RoiGraphic(InteractiveGraphic graphic, bool userCreated)
-			: this(graphic, userCreated, true)
-		{
-		}
-
-		// TODO (Stewart): Remove the constructor, since the InstallDefaultCursors parameter
-		// will be removed
-		public RoiGraphic(InteractiveGraphic graphic, bool userCreated, bool installDefaultCursors)
 		{
 			_roiGraphic = graphic;
 
@@ -95,12 +88,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 				base.State = CreateCreateState();
 			else
 				base.State = CreateInactiveState();
-
-			if (installDefaultCursors)
-			{
-				_roiGraphic.InstallDefaultCursors();
-				_calloutGraphic.InstallDefaultCursors();
-			}
 		}
 
 		/// <summary>

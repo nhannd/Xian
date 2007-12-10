@@ -33,8 +33,7 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 {
-	[ExtensionOf(typeof(PresetVoiLutOperationFactoryExtensionPoint))]
-	public sealed class MinMaxAlgorithmPresetVoiLutOperationFactory : PresetVoiLutOperationFactory<MinMaxAlgorithmPresetVoiLutOperationComponent>
+	internal sealed class MinMaxAlgorithmPresetVoiLutOperationFactory : PresetVoiLutOperationFactory<MinMaxAlgorithmPresetVoiLutOperationComponent>
 	{
 		internal static readonly string FactoryName = "Min/Max Algorithm";
 

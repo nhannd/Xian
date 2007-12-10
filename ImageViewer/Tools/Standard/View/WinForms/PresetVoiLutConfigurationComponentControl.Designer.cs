@@ -59,7 +59,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-			ClearCanvas.Desktop.Selection selection1 = new ClearCanvas.Desktop.Selection();
 			this._presetVoiLuts = new ClearCanvas.Desktop.View.WinForms.TableView();
 			this._comboModality = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
 			this._tableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
@@ -73,15 +72,11 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 			this._tableLayoutPanel.SetColumnSpan(this._presetVoiLuts, 2);
 			this._presetVoiLuts.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._presetVoiLuts.Location = new System.Drawing.Point(3, 63);
-			this._presetVoiLuts.MenuModel = null;
 			this._presetVoiLuts.MultiSelect = false;
 			this._presetVoiLuts.Name = "_presetVoiLuts";
 			this._presetVoiLuts.ReadOnly = false;
-			this._presetVoiLuts.Selection = selection1;
 			this._presetVoiLuts.Size = new System.Drawing.Size(335, 190);
 			this._presetVoiLuts.TabIndex = 0;
-			this._presetVoiLuts.Table = null;
-			this._presetVoiLuts.ToolbarModel = null;
 			this._presetVoiLuts.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			// 
 			// _comboModality

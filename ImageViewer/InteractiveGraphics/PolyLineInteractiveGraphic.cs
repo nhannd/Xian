@@ -64,6 +64,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		{
 			_maxAnchorPoints = maximumAnchorPoints;
 			BuildGraphic();
+			_moveToken = new CursorToken(CursorToken.SystemCursors.SizeAll);
 		}
 
 		/// <summary>
@@ -95,7 +96,11 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			}
 		}
 
-		private CursorToken MoveToken
+		/// <summary>
+		/// Gets or sets the <see cref="CursorToken"/> that should be shown
+		/// when moving this graphic.
+		/// </summary>
+		public CursorToken MoveToken
 		{
 			get { return _moveToken; }
 			set { _moveToken = value; }
@@ -179,12 +184,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			return token;
 		}
 
-		public override void InstallDefaultCursors()
-		{
-			base.InstallDefaultCursors();
-			this.MoveToken = new CursorToken(CursorToken.SystemCursors.SizeAll);
-		}
-
 		/// <summary>
 		/// Executed when the position of an anchor point has changed.
 		/// </summary>
@@ -209,6 +208,9 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			Trace.Write(String.Format("OnControlPointChanged: {0}, {1}\n", e.Index, e.Item.ToString()));
 		}
 
+		/// <summary>
+		/// Releases all resources used by this <see cref="PolyLineInteractiveGraphic"/>.
+		/// </summary>
 		protected override void Dispose(bool disposing)
 		{
 			if (disposing)

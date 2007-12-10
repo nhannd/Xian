@@ -47,6 +47,10 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 				{
 					_factories = new List<IPresetVoiLutOperationFactory>();
 
+					_factories.Add(new LinearPresetVoiLutOperationFactory());
+					//TODO: Uncomment this to re-enable multi-type preset lut functionality.
+					//_factories.Add(new MinMaxAlgorithmPresetVoiLutOperationFactory());
+					
 					PresetVoiLutOperationFactoryExtensionPoint xp = new PresetVoiLutOperationFactoryExtensionPoint();
 					
 					object[] factories = xp.CreateExtensions();

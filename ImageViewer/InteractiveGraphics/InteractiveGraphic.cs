@@ -32,6 +32,7 @@
 using System;
 using System.Drawing;
 using ClearCanvas.Desktop;
+using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.InputManagement;
 using ClearCanvas.Common.Utilities;
 
@@ -54,12 +55,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// <param name="userCreated"></param>
 		protected InteractiveGraphic(bool userCreated)
 		{
-			Initialize();
-
-			if (userCreated)
-				base.State = CreateCreateState();
-			else
-				base.State = CreateInactiveState();
+			Initialize(userCreated);
 		}
 
 		/// <summary>
@@ -85,13 +81,21 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			set { _controlPointGroup.Color = value; }
 		}
 
-		private CursorToken StretchToken
+		/// <summary>
+		/// Gets or sets the <see cref="CursorToken"/> that should be shown when stretching
+		/// this graphic.
+		/// </summary>
+		public CursorToken StretchToken
 		{
 			get { return _stretchToken; }
 			set { _stretchToken = value; }
 		}
 
-		private ICursorTokenProvider StretchIndicatorProvider
+		/// <summary>
+		/// Gets or sets the <see cref="CursorToken"/> that should be shown to indicate
+		/// that the operation performed at a given point will be a stretch operation.
+		/// </summary>
+		public ICursorTokenProvider StretchIndicatorProvider
 		{
 			get { return _stretchIndicatorProvider; }
 			set { _stretchIndicatorProvider = value; }
@@ -140,14 +144,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			}
 
 			return returnToken;
-		}
-
-		public override void InstallDefaultCursors()
-		{
-			base.InstallDefaultCursors();
-
-			_stretchToken = new CursorToken(CursorToken.SystemCursors.Cross);
-			_stretchIndicatorProvider = new CompassStretchIndicatorCursorProvider(_controlPointGroup);
 		}
 
 		/// <summary>
@@ -202,6 +198,9 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// <param name="e"></param>
 		protected abstract void OnControlPointChanged(object sender, CollectionEventArgs<PointF> e);
 
+		/// <summary>
+		/// Releases all resources used by this <see cref="InteractiveGraphic"/>.
+		/// </summary>
 		protected override void Dispose(bool disposing)
 		{
 			if (disposing)
@@ -210,12 +209,20 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			base.Dispose(disposing);
 		}
 
-		private void Initialize()
+		private void Initialize(bool userCreated)
 		{
+			if (userCreated)
+				base.State = CreateCreateState();
+			else
+				base.State = CreateInactiveState();
+
 			base.Graphics.Add(this.ControlPoints);
 
 			// Make sure we know when the control points change
 			_controlPointGroup.ControlPointChangedEvent += new EventHandler<CollectionEventArgs<PointF>>(OnControlPointChanged);
+
+			_stretchToken = new CursorToken(CursorToken.SystemCursors.Cross);
+			_stretchIndicatorProvider = new CompassStretchIndicatorCursorProvider(_controlPointGroup);
 		}
 	}
 }

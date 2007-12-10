@@ -65,7 +65,8 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
         {
 			BuildGraphic();
 			base.State = new InactiveGraphicState(this);
-        }
+			_moveToken = new CursorToken(CursorToken.SystemCursors.SizeAll);
+		}
 
 		/// <summary>
 		/// Gets or sets the text label.
@@ -370,13 +371,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		private void OnTextBoundingBoxChanged(object sender, RectangleChangedEventArgs e)
 		{
 			SetCalloutLineStart();
-		}
-
-
-		public override void InstallDefaultCursors()
-		{
-			base.InstallDefaultCursors();
-			this.MoveToken = new CursorToken(CursorToken.SystemCursors.SizeAll);
 		}
 	}
 }

@@ -62,6 +62,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			: base(userCreated)
 		{
 			BuildGraphic();
+			_moveToken = new CursorToken(CursorToken.SystemCursors.SizeAll);
 		}
 
 		/// <summary>
@@ -143,7 +144,11 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			}
 		}
 
-		private CursorToken MoveToken
+		/// <summary>
+		/// Gets or sets the <see cref="CursorToken"/> that should be shown
+		/// when moving this graphic.
+		/// </summary>
+		public CursorToken MoveToken
 		{
 			get { return _moveToken; }
 			set { _moveToken = value; }
@@ -241,12 +246,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			return token;
 		}
 
-		public override void InstallDefaultCursors()
-		{
-			base.InstallDefaultCursors();
-			this.MoveToken = new CursorToken(CursorToken.SystemCursors.SizeAll);
-		}
-		
 		private void BuildGraphic()
 		{
 			AddRectangle();

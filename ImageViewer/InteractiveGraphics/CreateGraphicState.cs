@@ -38,6 +38,9 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 	/// </summary>
 	public abstract class CreateGraphicState : StandardGraphicState
 	{
+		/// <summary>
+		/// Constructor.
+		/// </summary>
 		protected CreateGraphicState(IStandardStatefulGraphic standardStatefulGraphic)
 			: base(standardStatefulGraphic)
 		{ 

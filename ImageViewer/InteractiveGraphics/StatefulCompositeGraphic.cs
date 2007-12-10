@@ -38,8 +38,6 @@ using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
-	// TODO (Stewart): Get rid of InstallDefaultCursors; each graphic should install its own
-
 	/// <summary>
 	/// A <see cref="CompositeGraphic"/> with state.
 	/// </summary>
@@ -147,15 +145,14 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		#region ICursorTokenProvider Members
 
+		/// <summary>
+		/// Gets the cursor token to be shown at the current mouse position.
+		/// </summary>
 		public virtual CursorToken GetCursorToken(Point point)
 		{
 			return null;
 		}
 
 		#endregion
-
-		public virtual void InstallDefaultCursors()
-		{
-		}	
 	}
 }

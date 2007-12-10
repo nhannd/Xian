@@ -276,6 +276,9 @@ namespace ClearCanvas.ImageViewer.Graphics
 		}
 
 #if UNIT_TESTS
+		/// <summary>
+		/// Gets the client rectangle for this <see cref="SpatialTransform"/>.
+		/// </summary>
 		public Rectangle ClientRectangle
 #else
 		internal Rectangle ClientRectangle
