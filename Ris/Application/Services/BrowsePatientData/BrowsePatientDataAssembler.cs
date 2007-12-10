@@ -43,7 +43,7 @@ namespace ClearCanvas.Ris.Application.Services.BrowsePatientData
         {
             PatientOrderData data = new PatientOrderData();
 
-            PatientProfile profile = CollectionUtils.SelectFirst<PatientProfile>(order.Patient.Profiles,
+            PatientProfile profile = CollectionUtils.SelectFirst(order.Patient.Profiles,
                 delegate(PatientProfile thisProfile)
                 {
                     return thisProfile.Mrn.AssigningAuthority == order.Visit.VisitNumber.AssigningAuthority;
@@ -62,8 +62,8 @@ namespace ClearCanvas.Ris.Application.Services.BrowsePatientData
 
             //TODO: choose the profile based on some location instead of visit assigning authority
             PatientProfile profile = rp.Order.Patient.Profiles.Count == 1 ?
-                CollectionUtils.FirstElement<PatientProfile>(rp.Order.Patient.Profiles) :                
-                CollectionUtils.SelectFirst<PatientProfile>(rp.Order.Patient.Profiles,
+                CollectionUtils.FirstElement(rp.Order.Patient.Profiles) :                
+                CollectionUtils.SelectFirst(rp.Order.Patient.Profiles,
                 delegate(PatientProfile thisProfile)
                 {
                     return thisProfile.Mrn.AssigningAuthority == rp.Order.Visit.VisitNumber.AssigningAuthority;
@@ -83,8 +83,8 @@ namespace ClearCanvas.Ris.Application.Services.BrowsePatientData
 
             //TODO: choose the profile based on some location instead of visit assigning authority
             PatientProfile profile = ps.RequestedProcedure.Order.Patient.Profiles.Count == 1 ?
-                CollectionUtils.FirstElement<PatientProfile>(ps.RequestedProcedure.Order.Patient.Profiles) :                
-                CollectionUtils.SelectFirst<PatientProfile>(ps.RequestedProcedure.Order.Patient.Profiles,
+                CollectionUtils.FirstElement(ps.RequestedProcedure.Order.Patient.Profiles) :                
+                CollectionUtils.SelectFirst(ps.RequestedProcedure.Order.Patient.Profiles,
                 delegate(PatientProfile thisProfile)
                 {
                     return thisProfile.Mrn.AssigningAuthority == ps.RequestedProcedure.Order.Visit.VisitNumber.AssigningAuthority;
@@ -131,7 +131,7 @@ namespace ClearCanvas.Ris.Application.Services.BrowsePatientData
             data.PatientClass = EnumUtils.GetDisplayValue(visit.PatientClass);
             data.PatientType = EnumUtils.GetDisplayValue(visit.PatientType);
             data.AdmissionType = EnumUtils.GetDisplayValue(visit.AdmissionType);
-            data.VisitStatus = EnumUtils.GetValue(visit.VisitStatus, context);
+            data.VisitStatus = EnumUtils.GetEnumValueInfo(visit.VisitStatus, context);
             data.AdmitDateTime = visit.AdmitTime;
             data.DischargeDateTime = visit.DischargeTime;
             data.VisitFacilityName = visit.Facility.Name;
@@ -154,7 +154,7 @@ namespace ClearCanvas.Ris.Application.Services.BrowsePatientData
             data.ReasonForStudy = order.ReasonForStudy;
             data.OrderPriority = EnumUtils.GetValue(order.Priority, context);
             data.CancelReason = EnumUtils.GetDisplayValue(order.CancelReason);
-            data.OrderStatus = EnumUtils.GetValue(order.Status, context);
+            data.OrderStatus = EnumUtils.GetEnumValueInfo(order.Status, context);
             data.OrderScheduledStartTime = order.ScheduledStartTime;
         }
 
@@ -162,14 +162,16 @@ namespace ClearCanvas.Ris.Application.Services.BrowsePatientData
         {
             data.RequestedProcedureName = rp.Type.Name;
             data.RequestedProcedureScheduledStartTime = rp.ScheduledStartTime;
-            data.RequestedProcedureStatus = EnumUtils.GetValue(rp.Status, context);
+            data.RequestedProcedureCheckInTime = rp.ProcedureCheckIn.CheckInTime;
+            data.RequestedProcedureCheckOutTime = rp.ProcedureCheckIn.CheckOutTime;
+            data.RequestedProcedureStatus = EnumUtils.GetEnumValueInfo(rp.Status, context);
         }
 
         private void UpdatePatientOrderData(PatientOrderData data, ProcedureStep ps, IPersistenceContext context)
         {
             PersonNameAssembler nameAssembler = new PersonNameAssembler();
 
-            data.ProcedureStepStatus = EnumUtils.GetValue(ps.State, context);
+            data.ProcedureStepStatus = EnumUtils.GetEnumValueInfo(ps.State, context);
             if (ps.Scheduling != null)
             {
                 //TODO ScheduledPerformerStaff for ModalityProcedureStepSummary

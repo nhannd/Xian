@@ -103,7 +103,7 @@ namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
         public string AdmissionType;
 
         [DataMember]
-        public string VisitStatus;
+        public EnumValueInfo VisitStatus;
 
         [DataMember]
         public DateTime? AdmitDateTime;
@@ -161,7 +161,7 @@ namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
         public string CancelReason;
 
         [DataMember]
-        public string OrderStatus;
+        public EnumValueInfo OrderStatus;
 
         [DataMember]
         public DateTime? OrderScheduledStartTime;
@@ -177,14 +177,20 @@ namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
         public DateTime? RequestedProcedureScheduledStartTime;
 
         [DataMember]
-        public string RequestedProcedureStatus;
+        public DateTime? RequestedProcedureCheckInTime;
+
+        [DataMember]
+        public DateTime? RequestedProcedureCheckOutTime;
+
+        [DataMember]
+        public EnumValueInfo RequestedProcedureStatus;
 
         #endregion
 
         #region Procedure Step
 
         [DataMember]
-        public string ProcedureStepStatus;
+        public EnumValueInfo ProcedureStepStatus;
 
         [DataMember]
         public PersonNameDetail ScheduledPerformerStaffName;

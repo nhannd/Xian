@@ -30,7 +30,10 @@
 #endregion
 
 using System.Collections;
+using System.Collections.Generic;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Workflow;
@@ -160,14 +163,38 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 
             public override IList GetWorklist(Staff currentUserStaff, IPersistenceContext context)
             {
+                IList<WorklistItem> results;
+
                 if (currentUserStaff.Type == StaffType.PRAR)
-                    return (IList)GetBroker(context).GetWorklist(typeof(PublicationStep), GetResidentQueryConditions(currentUserStaff), null);
+                    results = GetBroker(context).GetWorklist(typeof(PublicationStep), GetResidentQueryConditions(currentUserStaff), null);
                 else
-                    return (IList)GetBroker(context).GetWorklist(typeof(PublicationStep), GetQueryConditions(currentUserStaff), null);
+                    results = GetBroker(context).GetWorklist(typeof(PublicationStep), GetQueryConditions(currentUserStaff), null);
+
+                // Addendum appears as a separate item - should only be one item
+                // It was decided to filter the result collection instead of rewriting the query
+                // Filter out duplicate WorklistItems that have the same requested procedure and keep the newest item
+                Dictionary<EntityRef, WorklistItem> filter = new Dictionary<EntityRef, WorklistItem>();
+                CollectionUtils.ForEach(results,
+                    delegate(WorklistItem item)
+                    {
+                        if (!filter.ContainsKey(item.RequestedProcedureRef))
+                        {
+                            filter.Add(item.RequestedProcedureRef, item);
+                        }
+                        else
+                        {
+                            WorklistItem existingItem = filter[item.RequestedProcedureRef];
+                            if (item.CreationTime > existingItem.CreationTime)
+                                filter[item.RequestedProcedureRef] = item;
+                        }
+                    });
+
+                return new List<WorklistItem>(filter.Values);
             }
 
             public override int GetWorklistCount(Staff currentUserStaff, IPersistenceContext context)
             {
+                // GetWorklistCount isn't filtered, so the count may be inconsistent with the actual number of worklist item returned
                 if (currentUserStaff.Type == StaffType.PRAR)
                     return GetBroker(context).GetWorklistCount(typeof(PublicationStep), GetResidentQueryConditions(currentUserStaff), null);
                 else

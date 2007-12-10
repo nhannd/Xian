@@ -53,6 +53,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
     public class WorklistItem : WorklistItemBase
     {
         private readonly ActivityStatus _activityStatus;
+        private readonly DateTime _creationTime;
 
         /// <summary>
         /// Constructor
@@ -89,6 +90,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
             )
         {
             _activityStatus = activityStatus;
+            _creationTime = procedureStep.CreationTime;
         }
 
         #region Public Properties
@@ -96,6 +98,11 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
         public ActivityStatus ActivityStatus
         {
             get { return _activityStatus; }
+        }
+
+        public DateTime CreationTime
+        {
+            get { return _creationTime; }
         }
 
         #endregion

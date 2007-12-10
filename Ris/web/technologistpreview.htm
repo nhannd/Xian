@@ -85,7 +85,7 @@
     		                // update Selected MPS Detail
 		                    Field.setValue($("MPSName"), mpsData.ModalityProcedureStepTypeName);
 		                    Field.setValue($("Modality"), mpsData.Modality);
-		                    Field.setValue($("ProcedureStepStatus"), mpsData.ProcedureStepStatus);
+		                    Field.setValue($("ProcedureStepStatus"), mpsData.ProcedureStepStatus.Value);
 		                    Field.setValue($("DiscontinueReason"), mpsData.DiscontinueReason);
 		                    if (mpsData.DiscontinueReason == null || mpsData.DiscontinueReason.length == 0)
     		                    Field.show($("DiscontinueReasonRow"), false);
@@ -327,7 +327,7 @@
 	            <tr><td class="sectionheading" colspan="6">Active Requests for Imaging Consultation</td></tr>
 	            <tr class="tableheading">
 		            <td>Requested Procedure</td>
-		            <td>Scheduled For</td>
+		            <td>Schedule</td>
 		            <td>Status</td>
 		            <td>Insurance</td>
 		            <td>Ordering Facility</td>
@@ -338,7 +338,7 @@
 	            <tr><td class="sectionheading" colspan="6">Past Requests for Imaging Consultation</td></tr>
 	            <tr class="tableheading">
 		            <td>Requested Procedure</td>
-		            <td>Scheduled For</td>
+		            <td>Schedule</td>
 		            <td>Status</td>
 		            <td>Insurance</td>
 		            <td>Ordering Facility</td>

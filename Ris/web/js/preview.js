@@ -98,17 +98,31 @@ function createProceduresTable(htmlTable)
 				cellType: "text",
 				getValue: function(item) { return item.RequestedProcedureName; }
 			},
-			{   label: "Scheduled For",
+			{   label: "Schedule",
 				cellType: "text",
 				getValue: function(item) 
 				{ 
 					return item.RequestedProcedureScheduledStartTime == null 
 					? "Requested for " + getDescriptiveTime(item.SchedulingRequestDateTime) 
-					: getDescriptiveTime(item.RequestedProcedureScheduledStartTime); }
+					: getDescriptiveTime(item.RequestedProcedureScheduledStartTime); 
+				}
 			},
 			{   label: "Status",
 				cellType: "text",
-				getValue: function(item) { return item.RequestedProcedureScheduledStartTime == null ? "UnScheduled" : item.RequestedProcedureStatus; }
+				getValue: function(item) 
+				{ 
+					if (item.RequestedProcedureScheduledStartTime == null)
+						return "UnScheduled";
+
+					if (item.RequestedProcedureStatus.Code == 'SC' && item.RequestedProcedureCheckInTime != null)
+						return "Checked-In";
+					
+					if ((item.RequestedProcedureStatus.Code == 'IP' || item.RequestedProcedureStatus.Code == 'CM') 
+						&& item.RequestedProcedureCheckOutTime != null)
+						return "Completed";
+
+					return  item.RequestedProcedureStatus.Value; 
+				}
 			},
 			{   label: "Insurance",
 				cellType: "text",
@@ -148,7 +162,7 @@ function createDiagnosticServiceBreakdownTable(htmlTable)
 			},
 			{   label: "Status",
 				cellType: "text",
-				getValue: function(item) { return item.ModalityProcedureStepStatus; }
+				getValue: function(item) { return item.ModalityProcedureStepStatus.Value; }
 			},
 			{   label: "Active",
 				cellType: "text",
