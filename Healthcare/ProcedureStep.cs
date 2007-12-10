@@ -142,13 +142,25 @@ namespace ClearCanvas.Healthcare
         }
 
         /// <summary>
+        /// Indicates if the procedure is a "Pre" procedure step.  If true, the procedure step's requested
+        /// procedure is not started with the procedure.
+        /// </summary>
+        protected virtual bool IsPreStep
+        {
+            get { return false; }
+        }
+
+        /// <summary>
         /// Called after this procedure step undergoes a state transition.
         /// </summary>
         /// <param name="previousState"></param>
         /// <param name="newState"></param>
         protected override void OnStateChanged(ActivityStatus previousState, ActivityStatus newState)
         {
-            _requestedProcedure.UpdateStatus();
+            if (this.IsPreStep == false)
+            {
+                _requestedProcedure.UpdateStatus();
+            }
 
             base.OnStateChanged(previousState, newState);
         }
