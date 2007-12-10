@@ -36,29 +36,56 @@ using System;
 namespace ClearCanvas.ImageServer.Enterprise
 {
     /// <summary>
-    /// Abstract base class for all update parameter classes.
+    /// Abstract base class for all update parameter classes used in a non-procedural update broker implementing the <see cref="IUpdateBroker"/> interface
     /// </summary>
     public abstract class UpdateBrokerParameterBase 
     {
         #region Protected Members
         protected string _fieldName;
         protected object _value;
+        private Dictionary<string, UpdateBrokerParameterBase> _subParameters = new Dictionary<string, UpdateBrokerParameterBase>();
+
         #endregion  Protected Members
 
         #region Public Propertieset
+        /// <summary>
+        /// Returns the list of sub-parameters
+        /// </summary>
+        public IDictionary<string, UpdateBrokerParameterBase> SubParameters
+        {
+            get { return _subParameters; }
+        }
         
         /// <summary>
-        /// Gets the key corresponding to the update parameter.
+        /// Gets the key corresponding to the parameter/field to be updated.
         /// </summary>
         public String FieldName
         {
             get { return _fieldName; }
         }
 
+        /// <summary>
+        /// Gets the value of the parameter/field.
+        /// </summary>
         public object Value
         {
             get { return _value; }
         }
+
+        public virtual bool IsEmpty
+        {
+            get
+            {
+                foreach (UpdateBrokerParameterBase subParams in _subParameters.Values)
+                {
+                    if (!subParams.IsEmpty)
+                        return false;
+                }
+                return true;
+            }
+        }
+
+
         #endregion Public Properties
 
 
@@ -68,6 +95,7 @@ namespace ClearCanvas.ImageServer.Enterprise
             _fieldName = fieldName;
 
         }
+
         #endregion Constructors
 
     }

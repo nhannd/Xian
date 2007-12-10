@@ -288,4 +288,7 @@
   <data name="MessageSettingsScopeNotDefined" xml:space="preserve">
     <value>Settings scope not defined.</value>
   </data>
+  <data name="ExceptionConditionIsNotMet" xml:space="preserve">
+    <value>Condition is not met :{0}</value>
+  </data>
 </root>

@@ -817,6 +817,38 @@ namespace ClearCanvas.Common
 				throw new ArgumentException(SR.ExceptionArgumentNotPositive, variableName);
 		}
 
+
+        /// <summary>
+        /// Checks if a value is true.
+        /// </summary>
+        /// <param name="testTrueCondition">The value to check.</param>
+        /// <param name="conditionName">The name of the condition to check.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="conditionName"/> is <b>null</b>.</exception>
+        /// <exception cref="ArgumentException"><paramref name="testTrueCondition"/> is  <b>false</b>.</exception>
+        public static void CheckTrue(bool testTrueCondition, string conditionName)
+        {
+            Platform.CheckForNullReference(conditionName, "conditionName");
+
+            if (testTrueCondition != true)
+                throw new ArgumentException(SR.ExceptionConditionIsNotMet, conditionName);
+        }
+
+
+        /// <summary>
+        /// Checks if a value is false.
+        /// </summary>
+        /// <param name="testFalseCondition">The value to check.</param>
+        /// <param name="conditionName">The name of the condition to check.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="conditionName"/> is <b>null</b>.</exception>
+        /// <exception cref="ArgumentException"><paramref name="testFalseCondition"/> is  <b>true</b>.</exception>
+        public static void CheckFalse(bool testFalseCondition, string conditionName)
+        {
+            Platform.CheckForNullReference(conditionName, "conditionName");
+
+            if (testFalseCondition != false)
+                throw new ArgumentException(SR.ExceptionConditionIsNotMet, conditionName);
+        }
+
 		/// <summary>
 		/// Checks if a value is positive.
 		/// </summary>

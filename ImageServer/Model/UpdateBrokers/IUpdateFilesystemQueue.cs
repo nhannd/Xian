@@ -35,7 +35,7 @@ using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Model.UpdateBrokers
 {
-    public interface IUpdateFilesystemQueue : IUpdateBroker<FilesystemQueue, UpdateFilesystemQueueParameters>
+    public interface IUpdateFilesystemQueueBroker : IUpdateBroker<FilesystemQueue, UpdateFilesystemQueueParameters>
     {
     }
 }

@@ -29,30 +29,21 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
 using ClearCanvas.Common;
-using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Enterprise.SqlServer2005;
+using ClearCanvas.ImageServer.Model.Parameters;
+using ClearCanvas.ImageServer.Model.UpdateBrokers;
 
-namespace ClearCanvas.ImageServer.Enterprise
+namespace ClearCanvas.ImageServer.Model.SqlServer2005.SelectBrokers
 {
     /// <summary>
-    /// Abstract base class to store a collection of update parameters to be used in in a non-procedural update broker implementing the <see cref="IUpdateBroker"/> interface.
+    /// Broker implementation for <see cref="IUpdateRequestAttributesBroker"/>
     /// </summary>
-    /// <remark>
-    /// Each updatable field in the parameter collection is an element of the <see cref="SubParameters"/>.
-    /// </remark>
-    abstract public class UpdateBrokerParameters : UpdateBrokerParameterBase
+    [ExtensionOf(typeof(BrokerExtensionPoint))]
+    public class UpdateRequestAttributesBroker : UpdateBroker<RequestAttributes, UpdateRequestAttributesParameters>, IUpdateRequestAttributesBroker
     {
-       
-        #region Constructors
-        public UpdateBrokerParameters(string entityName)
-            :base(entityName)
-        {
-
-        }
-
-        #endregion Constructors
-
+        public UpdateRequestAttributesBroker()
+            : base("RequestAttributes")
+        { }
     }
 }

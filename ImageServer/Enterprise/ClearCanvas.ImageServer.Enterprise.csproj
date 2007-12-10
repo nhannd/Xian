@@ -39,7 +39,6 @@
     <Compile Include="IProcedureUpdateBroker.cs" />
     <Compile Include="ISelectBroker.cs" />
     <Compile Include="IUpdateBroker.cs" />
-    <Compile Include="IUpdateBrokerParameter.cs" />
     <Compile Include="SelectCriteria.cs" />
     <Compile Include="ServerEntity.cs" />
     <Compile Include="ServerEntityKey.cs" />

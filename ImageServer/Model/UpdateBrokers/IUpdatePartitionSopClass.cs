@@ -35,7 +35,7 @@ using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Model.UpdateBrokers
 {
-    public interface IUpdatePartitionSopClass : IUpdateBroker<PartitionSopClass, UpdatePartitionSopClassParameters>
+    public interface IUpdatePartitionSopClassBroker : IUpdateBroker<PartitionSopClass, UpdatePartitionSopClassParameters>
     {
     }
 }

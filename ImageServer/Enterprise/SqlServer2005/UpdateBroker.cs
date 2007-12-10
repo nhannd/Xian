@@ -41,17 +41,18 @@ using System.Xml;
 namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
 {
     /// <summary>
-    /// Provides base implementation of <see cref="ISelectBroker{TInput,TOutput}"/>.
+    /// Provides base implementation of <see cref="IUpdateBroker{TEntity, TParameters}"/>.
     /// </summary>
     /// <remarks>
     /// <para>
-    /// This class provides a base implementation for doing dynamic SQL queries.  It takes as input 
-    /// query criteria as defined in a <see cref="UpdateCriteria"/> derived class.  It outputs
-    /// data into a <see cref="ServerEntity"/> defined class.
+    /// This class provides a base implementation for doing non-procedural dynamic SQL update/insert.  When used to
+    /// update a record, it takes as input a <see cref="ServerEntityKey"/> which references to the record in the database,
+    /// and an update parameter derived from <see cref="UpdateBrokerParameters"/> which specifies
+    /// the fields to be updated.
     /// </para>
     /// <para>
-    /// The class generates a SQL Server compatible SELECT statement, executes the statement, 
-    /// and returns results.
+    /// When used to insert a record, it takes an update parameter derived from <see cref="UpdateBrokerParameters"/> which specifies
+    /// the values of for the fields in the new record. When successful, it returns the newly inserted entity derived from <see cref="ServerEntity"/>.
     /// </para>
     /// </remarks>
     /// <typeparam name="TInput"></typeparam>
@@ -287,6 +288,9 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
 
         public bool Update(ServerEntityKey key, TParameters parameters)
         {
+            Platform.CheckForNullReference(key, "key");
+            Platform.CheckForNullReference(parameters, "parameters");
+
             SqlCommand command = null;
             try
             {
@@ -302,7 +306,7 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
 
                 int rows = command.ExecuteNonQuery();
 
-                return true;
+                return rows > 0;
             }
             catch (Exception e)
             {
@@ -324,6 +328,10 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
 
         public TEntity Insert(TParameters parameters)
         {
+            Platform.CheckForNullReference(parameters, "parameters");
+            Platform.CheckFalse(parameters.IsEmpty, "parameters must not be empty");
+            
+            
             SqlCommand command = null;
             try
             {

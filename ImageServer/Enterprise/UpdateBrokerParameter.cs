@@ -37,10 +37,10 @@ namespace ClearCanvas.ImageServer.Enterprise
 {
     
     /// <summary>
-    /// Generic base class for update parameter classes used in an update broker.
+    /// Generic base class for update parameter classes used in a non-procedural update broker implementing the <see cref="IUpdateBroker"/> interface.
     /// </summary>
     /// <typeparam name="T">The type of the field to be updated</typeparam>
-    public class UpdateBrokerParameter<T> : UpdateBrokerParameterBase, IUpdateBrokerParameter<T>
+    public class UpdateBrokerParameter<T> : UpdateBrokerParameterBase
     {
         #region Private members
         #endregion
@@ -54,16 +54,16 @@ namespace ClearCanvas.ImageServer.Enterprise
 
         #endregion Constructors
 
-
-        #region IUpdateBrokerParameter<T> Members
-
-
+        #region Public properties
+        
         public new T Value
         {
             get { return (T) _value; }
         }
 
-        #endregion
+        #endregion Public properties
+
+
     }
 
     

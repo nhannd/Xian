@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 // Copyright (c) 2006-2007, ClearCanvas Inc.
 // All rights reserved.
@@ -29,28 +29,21 @@
 
 #endregion
 
-using System;
+using ClearCanvas.Common;
+using ClearCanvas.ImageServer.Enterprise.SqlServer2005;
+using ClearCanvas.ImageServer.Model.Parameters;
+using ClearCanvas.ImageServer.Model.UpdateBrokers;
 
-
-namespace ClearCanvas.ImageServer.Enterprise
+namespace ClearCanvas.ImageServer.Model.SqlServer2005.SelectBrokers
 {
     /// <summary>
-    /// Defines the interface for a parameter class to be used by brokers implementing <seealso cref="IUpdateBroker"/> interface
+    /// Broker implementation for <see cref="IUpdateStorageFilesystemBroker"/>
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    interface IUpdateBrokerParameter<T>
+    [ExtensionOf(typeof(BrokerExtensionPoint))]
+    public class UpdateStorageFilesystemBroker : UpdateBroker<StorageFilesystem, UpdateStorageFilesystemParameters>, IUpdateStorageFilesystemBroker
     {
-        /// <summary>
-        /// Gets the name of the field to be updated.
-        /// </summary>
-        /// <remarks>
-        /// The <seealso cref="FieldName"/> may not be the same as the name for the field the database.
-        /// </remarks>
-        string FieldName { get; }
-
-        /// <summary>
-        /// Returns the value to be set for the field.
-        /// </summary>
-        T Value { get; }
+        public UpdateStorageFilesystemBroker()
+            : base("StorageFilesystem")
+        { }
     }
 }
