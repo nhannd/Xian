@@ -349,15 +349,6 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The specified keystroke is already in use.  The assignment has been ignored..
-        /// </summary>
-        public static string ExceptionKeyStrokeAssignmentInUse {
-            get {
-                return ResourceManager.GetString("ExceptionKeyStrokeAssignmentInUse", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to The layout of the physical workspace is either non-rectangular or has not been set..
         /// </summary>
         public static string ExceptionLayoutIsNotRectangular {
@@ -466,60 +457,6 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Another mouse tool is already using the specified assignment ({0}).  The assignment has been ignored..
-        /// </summary>
-        public static string ExceptionMouseToolAssignmentInUse {
-            get {
-                return ResourceManager.GetString("ExceptionMouseToolAssignmentInUse", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The mouse tool does not have a shortcut assignment ({0}).  The tool cannot be activated..
-        /// </summary>
-        public static string ExceptionMouseToolHasNoAssignment {
-            get {
-                return ResourceManager.GetString("ExceptionMouseToolHasNoAssignment", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to A mouse tool must have a button assignment ({0})..
-        /// </summary>
-        public static string ExceptionMouseToolMustHaveButtonAssignment {
-            get {
-                return ResourceManager.GetString("ExceptionMouseToolMustHaveButtonAssignment", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to A mouse tool must have a default button assignment ({0})..
-        /// </summary>
-        public static string ExceptionMouseToolMustHaveDefault {
-            get {
-                return ResourceManager.GetString("ExceptionMouseToolMustHaveDefault", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to A mouse tool can only be assigned a valid mouse button..
-        /// </summary>
-        public static string ExceptionMouseToolMustHaveValidAssignment {
-            get {
-                return ResourceManager.GetString("ExceptionMouseToolMustHaveValidAssignment", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The specified mouse wheel assignment is in use ({0}:{1})..
-        /// </summary>
-        public static string ExceptionMouseWheelAssignmentInUse {
-            get {
-                return ResourceManager.GetString("ExceptionMouseWheelAssignmentInUse", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to You must override SetMemento in order to restore state from a previous call to CreateMemento..
         /// </summary>
         public static string ExceptionMustOverrideSetMemento {
@@ -615,6 +552,24 @@ namespace ClearCanvas.ImageViewer {
         public static string FormatMouseButtonShortcutDescription {
             get {
                 return ResourceManager.GetString("FormatMouseButtonShortcutDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The mouse tool does not have a shortcut assignment ({0}).  The tool cannot be activated..
+        /// </summary>
+        public static string FormatMouseToolHasNoAssignment {
+            get {
+                return ResourceManager.GetString("FormatMouseToolHasNoAssignment", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The mouse tool has an invalid shortcut assignment ({0})..
+        /// </summary>
+        public static string FormatMouseToolInvalidAssignment {
+            get {
+                return ResourceManager.GetString("FormatMouseToolInvalidAssignment", resourceCulture);
             }
         }
         

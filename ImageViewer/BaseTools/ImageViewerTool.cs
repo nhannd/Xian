@@ -43,13 +43,10 @@ namespace ClearCanvas.ImageViewer.BaseTools
 	/// <summary>
 	/// A base class for image viewer tools.
 	/// </summary>
-	public abstract class ImageViewerTool : Tool<IImageViewerToolContext>, IMouseWheelHandler
+	public abstract class ImageViewerTool : Tool<IImageViewerToolContext>
 	{
 		private bool _enabled = true;
 		private event EventHandler _enabledChanged;
-
-		private MouseWheelShortcut _mouseWheelShortcut;
-		private event EventHandler _mouseWheelShortcutChanged;
 
 		/// <summary>
 		/// Initializes the <see cref="ImageViewerTool"/>.
@@ -60,8 +57,6 @@ namespace ClearCanvas.ImageViewer.BaseTools
 			this.Context.Viewer.EventBroker.PresentationImageSelected += new EventHandler<PresentationImageSelectedEventArgs>(OnPresentationImageSelected);
 
 			base.Initialize();
-
-			ImageViewerToolAttributeProcessor.Process(this);
 		}
 
 		/// <summary>
@@ -232,105 +227,6 @@ namespace ClearCanvas.ImageViewer.BaseTools
 				this.Enabled = false;
 			else
 				this.Enabled = true;
-		}
-
-		/// <summary>
-		/// Gets or sets the <see cref="MouseWheelShortcut"/>.
-		/// </summary>
-		public MouseWheelShortcut MouseWheelShortcut
-		{
-			get { return _mouseWheelShortcut; }
-			set 
-			{
-				if (_mouseWheelShortcut != null && _mouseWheelShortcut.Equals(value))
-					return;
-
-				_mouseWheelShortcut = value;
-				EventsHelper.Fire(_mouseWheelShortcutChanged, this, EventArgs.Empty);
-			}
-		}
-
-		/// <summary>
-		/// Fired when the <see cref="MouseWheelShortcut"/> property has changed.
-		/// </summary>
-		public event EventHandler MouseWheelShortcutChanged
-		{
-			add { _mouseWheelShortcutChanged += value; }
-			remove { _mouseWheelShortcutChanged -= value; }
-		}
-
-		#region IMouseWheelHandler Members
-
-		void IMouseWheelHandler.Start()
-		{
-			this.StartWheel();
-		}
-
-		void IMouseWheelHandler.Wheel(int wheelDelta)
-		{
-			this.Wheel(wheelDelta);
-		}
-
-		void IMouseWheelHandler.Stop()
-		{
-			this.StopWheel();
-		}
-
-		#endregion
-
-		/// <summary>
-		/// Called by the framework when mouse wheel activity starts.
-		/// </summary>
-		/// <remarks>
-		/// This method does nothing unless overridden.
-		/// </remarks>
-		protected virtual void StartWheel()
-		{
-		}
-
-		/// <summary>
-		/// Called by the framework each time the mouse wheel is moved.
-		/// </summary>
-		/// <remarks>
-		/// Unless overridden, this method simply calls <see cref="WheelUp"/> and <see cref="WheelDown"/>.
-		/// </remarks>
-		protected virtual void Wheel(int wheelDelta)
-		{
-			if (wheelDelta > 0)
-				WheelUp();
-			else if (wheelDelta < 0)
-				WheelDown();
-		}
-
-		/// <summary>
-		/// Called when the mouse wheel has moved up.
-		/// </summary>
-		/// <remarks>
-		/// This method does nothing unless overridden.
-		/// </remarks>
-		protected virtual void WheelUp()
-		{
-		}
-
-		/// <summary>
-		/// Called when the mouse wheel has moved down.
-		/// </summary>
-		/// <remarks>
-		/// This method does nothing unless overridden.
-		/// </remarks>
-		protected virtual void WheelDown()
-		{
-		}
-
-		/// <summary>
-		/// Called by the framework to indicate that mouse wheel activity has stopped 
-		/// (a short period of time has elapsed without any activity).
-		/// </summary>
-		/// <remarks>
-		/// This method does nothing unless overridden.
-		/// </remarks>
-		protected virtual void StopWheel()
-		{
 		}
 	}
 }

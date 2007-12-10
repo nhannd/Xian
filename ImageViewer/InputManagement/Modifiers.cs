@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.InputManagement
@@ -39,7 +40,7 @@ namespace ClearCanvas.ImageViewer.InputManagement
 	/// <remarks>
 	/// This class is intended for internal framework use only.
 	/// </remarks>
-	public sealed class Modifiers
+	public sealed class Modifiers : IEquatable<Modifiers>, IEquatable<ModifierFlags>
 	{
 		private readonly ModifierFlags _modifierFlags;
 
@@ -100,14 +101,40 @@ namespace ClearCanvas.ImageViewer.InputManagement
 		/// </summary>
 		public override bool Equals(object obj)
 		{
+			if (obj == this)
+				return true;
+
 			if (obj is Modifiers)
-			{
-				Modifiers modifiers = (Modifiers)obj;
-				return (modifiers.ModifierFlags == this.ModifierFlags);
-			}
+				return this.Equals((Modifiers)obj);
+			else if (obj is ModifierFlags)
+				return this.Equals((ModifierFlags) obj);
 
 			return false;
 		}
+
+		#region IEquatable<Modifiers> Members
+
+		/// <summary>
+		/// Gets whether or not this object is equal to <paramref name="other"/>.
+		/// </summary>
+		public bool Equals(Modifiers other)
+		{
+			return other != null && this.ModifierFlags == other.ModifierFlags;
+		}
+
+		#endregion
+
+		#region IEquatable<ModifierFlags> Members
+
+		/// <summary>
+		/// Gets whether or not this object is equal to <paramref name="other"/>.
+		/// </summary>
+		public bool Equals(ModifierFlags other)
+		{
+			return this.ModifierFlags == other;
+		}
+
+		#endregion
 
 		/// <summary>
 		/// Gets a hashcode for this object instance. 

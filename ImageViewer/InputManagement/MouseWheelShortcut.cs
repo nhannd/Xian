@@ -31,6 +31,7 @@
 
 using System;
 using ClearCanvas.Desktop;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.InputManagement
 {
@@ -38,7 +39,7 @@ namespace ClearCanvas.ImageViewer.InputManagement
 	/// Represents the current message object's (e.g. <see cref="MouseWheelMessage"/>) state.
 	/// </summary>
 	/// <seealso cref="MouseWheelMessage"/>
-	public sealed class MouseWheelShortcut
+	public sealed class MouseWheelShortcut : IEquatable<MouseWheelShortcut>, IEquatable<Modifiers>
 	{
 		private readonly Modifiers _modifiers;
 		private readonly string _description;
@@ -56,7 +57,7 @@ namespace ClearCanvas.ImageViewer.InputManagement
 		/// </summary>
 		public MouseWheelShortcut(Modifiers modifiers)
 		{
-			_modifiers = modifiers;
+			_modifiers = modifiers ?? new Modifiers(ModifierFlags.None);
 			_description = String.Format(SR.FormatMouseWheelShortcutDescription, _modifiers.ToString());
 		}
 
@@ -89,14 +90,40 @@ namespace ClearCanvas.ImageViewer.InputManagement
 		/// </summary>
 		public override bool Equals(object obj)
 		{
+			if (obj == this)
+				return true;
+
 			if (obj is MouseWheelShortcut)
-			{
-				MouseWheelShortcut shortcut = (MouseWheelShortcut)obj;
-				return shortcut.Modifiers.Equals(this.Modifiers);
-			}
+				return this.Equals((MouseWheelShortcut)obj);
+			else if (obj is Modifiers)
+				return this.Equals((Modifiers) obj);
 
 			return false;
 		}
+
+		#region IEquatable<MouseWheelShortcut> Members
+
+		/// <summary>
+		/// Gets whether or not this object is equal to <paramref name="other"/>.
+		/// </summary>
+		public bool Equals(MouseWheelShortcut other)
+		{
+			return other != null && Modifiers.Equals(other.Modifiers);
+		}
+
+		#endregion
+
+		#region IEquatable<Modifiers> Members
+
+		/// <summary>
+		/// Gets whether or not this object is equal to <paramref name="other"/>.
+		/// </summary>
+		public bool Equals(Modifiers other)
+		{
+			return other != null && Modifiers.Equals(other);
+		}
+
+		#endregion
 
 		/// <summary>
 		/// Gets a hash code for this object instance.

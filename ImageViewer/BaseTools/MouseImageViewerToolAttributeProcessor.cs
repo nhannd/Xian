@@ -47,22 +47,18 @@ namespace ClearCanvas.ImageViewer.BaseTools
 
 			InitializeMouseToolButton(mouseTool);
 			InitializeModifiedMouseToolButton(mouseTool);
+			InitializeMouseWheel(mouseTool);
 		}
 
 		private static void InitializeMouseToolButton(MouseImageViewerTool mouseTool)
 		{
 			object[] buttonAssignment = mouseTool.GetType().GetCustomAttributes(typeof(MouseToolButtonAttribute), true);
-			if (buttonAssignment == null || buttonAssignment.Length == 0)
+			if (buttonAssignment != null && buttonAssignment.Length > 0)
 			{
-				throw new InvalidOperationException(String.Format(SR.ExceptionMouseToolMustHaveDefault, mouseTool.GetType().FullName));
-			}
-			else
-			{
-				MouseToolButtonAttribute attribute = buttonAssignment[0] as MouseToolButtonAttribute;
-
+				MouseToolButtonAttribute attribute = (MouseToolButtonAttribute)buttonAssignment[0];
 				if (attribute.MouseButton == XMouseButtons.None)
 				{
-					throw new InvalidOperationException(String.Format(SR.ExceptionMouseToolMustHaveDefault, mouseTool.GetType().FullName));
+					Platform.Log(LogLevel.Warn, String.Format(SR.FormatMouseToolInvalidAssignment, mouseTool.GetType().FullName));
 				}
 				else
 				{
@@ -78,7 +74,7 @@ namespace ClearCanvas.ImageViewer.BaseTools
 			if (modifiedButtonAssignments == null || modifiedButtonAssignments.Length == 0)
 				return;
 
-			ModifiedMouseToolButtonAttribute attribute = modifiedButtonAssignments[0] as ModifiedMouseToolButtonAttribute;
+			ModifiedMouseToolButtonAttribute attribute = (ModifiedMouseToolButtonAttribute)modifiedButtonAssignments[0];
 
 			try
 			{
@@ -86,8 +82,18 @@ namespace ClearCanvas.ImageViewer.BaseTools
 			}
 			catch (Exception e)
 			{
-				Platform.Log(LogLevel.Error, e);
+				Platform.Log(LogLevel.Warn, e);
 			}
+		}
+
+		private static void InitializeMouseWheel(MouseImageViewerTool mouseTool)
+		{
+			object[] attributes = mouseTool.GetType().GetCustomAttributes(typeof(MouseWheelHandlerAttribute), false);
+			if (attributes == null || attributes.Length == 0)
+				return;
+
+			MouseWheelHandlerAttribute attribute = (MouseWheelHandlerAttribute)attributes[0];
+			mouseTool.MouseWheelShortcut = attribute.Shortcut;
 		}
 	}
 }

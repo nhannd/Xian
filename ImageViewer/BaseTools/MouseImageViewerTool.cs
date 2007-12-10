@@ -48,9 +48,38 @@ namespace ClearCanvas.ImageViewer.BaseTools
     /// mouse events for that button.  Developers implementing mouse tools should subclass this class.
 	/// </para>
 	/// <para>
+	/// Typically, a mouse tool needs to be decorated with certain attributes in order to work properly.  For
+	/// example:
+	/// <example>
+	/// <code>
+	/// [C#]
+	///  	[MenuAction("activate", "imageviewer-contextmenu/My Tool", "Select", Flags = ClickActionFlags.CheckAction)]
+	///		[MenuAction("activate", "global-menus/MenuTools/MenuStandard/My Tool", "Select", Flags = ClickActionFlags.CheckAction)]
+	///		[ButtonAction("activate", "global-toolbars/ToolbarStandard/My Tool", "Select", Flags = ClickActionFlags.CheckAction)]
+	///		[KeyboardAction("activate", "imageviewer-keyboard/ToolsStandard/My Tool", "Select", KeyStroke = XKeys.R)]
+	///		[CheckedStateObserver("activate", "Active", "ActivationChanged")]
+	///		[IconSet("activate", IconScheme.Colour, "Icons.MyToolSmall.png", "Icons.MyToolToolMedium.png", "Icons.MyToolToolLarge.png")]
+	///		[MouseToolButton(XMouseButtons.Left, true)]
+	/// </code>
+	/// The "Select" parameter in each of the 'Action' attributes refers to the <see cref="MouseImageViewerTool.Select"/> method
+	/// which activates (and checks) the tool.  All other tools with the same <see cref="MouseButton"/> are deactivated.
+	/// </example>
+	/// </para>
+	/// <para>
+	/// When a tool does not implement the typical mouse button handling behaviour, it should <b>not</b> be 
+	/// decorated with any of the above attributes as it will result in unexpected behaviour with regards to the toolbars and menus.
+	/// </para>
+	/// <para>
 	/// A mouse tool can also have an additional modified mouse button shortcut specified 
 	/// (see <see cref="ModifiedMouseToolButtonAttribute"/>) that does not require the mouse 
 	/// tool to be activated in order to use it.
+	/// </para>
+	/// <para>
+	/// One further piece of functionality that subclasses of <see cref="MouseImageViewerTool"/> can choose to implement
+	/// is handling of the mouse wheel.  When decorated with a <see cref="MouseWheelHandlerAttribute"/>, the tool's
+	/// <see cref="MouseWheelShortcut"/> will be set upon construction.  The subclass must override the mouse wheel-related
+	/// methods in order for the tool to have any effect (see <see cref="StartWheel"/>, <see cref="StopWheel"/>, <see cref="WheelUp"/>,
+	/// <see cref="WheelDown"/>).
 	/// </para>
 	/// </remarks>
 	/// <seealso cref="MouseToolButtonAttribute"/>
@@ -58,6 +87,7 @@ namespace ClearCanvas.ImageViewer.BaseTools
 	public abstract class MouseImageViewerTool :
 		ImageViewerTool,
 		IMouseButtonHandler,
+		IMouseWheelHandler,
 		ICursorTokenProvider
 	{
 		#region Private fields
@@ -72,15 +102,18 @@ namespace ClearCanvas.ImageViewer.BaseTools
 
 		private XMouseButtons _mouseButton;
 		private event EventHandler _mouseButtonChanged;
+		private MouseButtonHandlerBehaviour _mousebuttonBehaviour;
 
 		private MouseButtonShortcut _modifiedMouseButtonShortcut;
 		private event EventHandler _modifiedMouseButtonShortcutChanged;
+
+		private MouseWheelShortcut _mouseWheelShortcut;
+		private event EventHandler _mouseWheelShortcutChanged;
 
         private bool _active;
         private event EventHandler _activationChangedEvent;
 
 		private CursorToken _cursorToken;
-		private MouseButtonHandlerBehaviour _mousebuttonBehaviour;
 		
 		#endregion
 
@@ -95,6 +128,7 @@ namespace ClearCanvas.ImageViewer.BaseTools
 
 			_mouseButton = XMouseButtons.None;
 			_modifiedMouseButtonShortcut = null;
+			_mouseWheelShortcut = null;
 			_active = false;
 		}
 
@@ -251,9 +285,6 @@ namespace ClearCanvas.ImageViewer.BaseTools
 			}
 			set
 			{
-				if (value == XMouseButtons.None)
-					throw new ArgumentException(SR.ExceptionMouseToolMustHaveValidAssignment);
-
 				if (_mouseButton == value)
 					return;
 
@@ -288,6 +319,22 @@ namespace ClearCanvas.ImageViewer.BaseTools
 		}
 
 		/// <summary>
+		/// Gets or sets the <see cref="MouseWheelShortcut"/>.
+		/// </summary>
+		public MouseWheelShortcut MouseWheelShortcut
+		{
+			get { return _mouseWheelShortcut; }
+			set
+			{
+				if (_mouseWheelShortcut != null && _mouseWheelShortcut.Equals(value))
+					return;
+
+				_mouseWheelShortcut = value;
+				EventsHelper.Fire(_mouseWheelShortcutChanged, this, EventArgs.Empty);
+			}
+		}
+
+		/// <summary>
 		/// Fired when the <see cref="MouseButton"/> property has changed.
 		/// </summary>
 		public event EventHandler MouseButtonChanged
@@ -305,7 +352,16 @@ namespace ClearCanvas.ImageViewer.BaseTools
 			remove { _modifiedMouseButtonShortcutChanged -= value; }
 		}
 
-		#region IMouseButtonHandler
+    	/// <summary>
+    	/// Fired when the <see cref="MouseWheelShortcut"/> property has changed.
+    	/// </summary>
+    	public event EventHandler MouseWheelShortcutChanged
+    	{
+    		add { _mouseWheelShortcutChanged += value; }
+    		remove { _mouseWheelShortcutChanged -= value; }
+    	}
+
+    	#region IMouseButtonHandler
 
 		/// <summary>
 		/// Handles a "start mouse" message from the Framework.
@@ -397,6 +453,84 @@ namespace ClearCanvas.ImageViewer.BaseTools
 		{
 			get { return _mousebuttonBehaviour; }
 			protected set { _mousebuttonBehaviour = value; }
+		}
+
+		#endregion
+
+		#region Mouse Wheel
+
+    	#region IMouseWheelHandler Members
+
+		void IMouseWheelHandler.Start()
+		{
+			this.StartWheel();
+		}
+
+		void IMouseWheelHandler.Wheel(int wheelDelta)
+		{
+			this.Wheel(wheelDelta);
+		}
+
+		void IMouseWheelHandler.Stop()
+		{
+			this.StopWheel();
+		}
+
+		#endregion
+
+		/// <summary>
+		/// Called by the framework when mouse wheel activity starts.
+		/// </summary>
+		/// <remarks>
+		/// This method does nothing unless overridden.
+		/// </remarks>
+		protected virtual void StartWheel()
+		{
+		}
+
+		/// <summary>
+		/// Called by the framework each time the mouse wheel is moved.
+		/// </summary>
+		/// <remarks>
+		/// Unless overridden, this method simply calls <see cref="WheelUp"/> and <see cref="WheelDown"/>.
+		/// </remarks>
+		protected virtual void Wheel(int wheelDelta)
+		{
+			if (wheelDelta > 0)
+				WheelUp();
+			else if (wheelDelta < 0)
+				WheelDown();
+		}
+
+		/// <summary>
+		/// Called when the mouse wheel has moved up.
+		/// </summary>
+		/// <remarks>
+		/// This method does nothing unless overridden.
+		/// </remarks>
+		protected virtual void WheelUp()
+		{
+		}
+
+		/// <summary>
+		/// Called when the mouse wheel has moved down.
+		/// </summary>
+		/// <remarks>
+		/// This method does nothing unless overridden.
+		/// </remarks>
+		protected virtual void WheelDown()
+		{
+		}
+
+		/// <summary>
+		/// Called by the framework to indicate that mouse wheel activity has stopped 
+		/// (a short period of time has elapsed without any activity).
+		/// </summary>
+		/// <remarks>
+		/// This method does nothing unless overridden.
+		/// </remarks>
+		protected virtual void StopWheel()
+		{
 		}
 
 		#endregion

@@ -213,9 +213,6 @@
   <data name="ExceptionInvalidTransferSyntaxUID" xml:space="preserve">
     <value>Transfer syntax UID must be one of: 1.2.840.10008.1.2, 1.2.840.10008.1.2.1 or 1.2.840.10008.1.2.2.</value>
   </data>
-  <data name="ExceptionKeyStrokeAssignmentInUse" xml:space="preserve">
-    <value>The specified keystroke is already in use.  The assignment has been ignored.</value>
-  </data>
   <data name="ExceptionLayoutIsNotRectangular" xml:space="preserve">
     <value>The layout of the physical workspace is either non-rectangular or has not been set.</value>
   </data>
@@ -252,24 +249,6 @@
   <data name="ExceptionMinMaxInputValuesNotSet" xml:space="preserve">
     <value>The minimum and maximum input values have not been set.</value>
   </data>
-  <data name="ExceptionMouseToolAssignmentInUse" xml:space="preserve">
-    <value>Another mouse tool is already using the specified assignment ({0}).  The assignment has been ignored.</value>
-  </data>
-  <data name="ExceptionMouseToolHasNoAssignment" xml:space="preserve">
-    <value>The mouse tool does not have a shortcut assignment ({0}).  The tool cannot be activated.</value>
-  </data>
-  <data name="ExceptionMouseToolMustHaveButtonAssignment" xml:space="preserve">
-    <value>A mouse tool must have a button assignment ({0}).</value>
-  </data>
-  <data name="ExceptionMouseToolMustHaveDefault" xml:space="preserve">
-    <value>A mouse tool must have a default button assignment ({0}).</value>
-  </data>
-  <data name="ExceptionMouseToolMustHaveValidAssignment" xml:space="preserve">
-    <value>A mouse tool can only be assigned a valid mouse button.</value>
-  </data>
-  <data name="ExceptionMouseWheelAssignmentInUse" xml:space="preserve">
-    <value>The specified mouse wheel assignment is in use ({0}:{1}).</value>
-  </data>
   <data name="ExceptionMustOverrideSetMemento" xml:space="preserve">
     <value>You must override SetMemento in order to restore state from a previous call to CreateMemento.</value>
   </data>
@@ -302,6 +281,12 @@
   </data>
   <data name="FormatMouseButtonShortcutDescription" xml:space="preserve">
     <value>{0} : {1}</value>
+  </data>
+  <data name="FormatMouseToolHasNoAssignment" xml:space="preserve">
+    <value>The mouse tool does not have a shortcut assignment ({0}).  The tool cannot be activated.</value>
+  </data>
+  <data name="FormatMouseToolInvalidAssignment" xml:space="preserve">
+    <value>The mouse tool has an invalid shortcut assignment ({0}).</value>
   </data>
   <data name="FormatMouseWheelShortcutDescription" xml:space="preserve">
     <value>Wheel : {0}</value>

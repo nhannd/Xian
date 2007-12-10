@@ -129,7 +129,6 @@
     <Compile Include="Annotations\StoredAnnotatationLayoutProvider.cs" />
     <Compile Include="Annotations\Tests\AnnotationLayoutStoreTests.cs" />
     <Compile Include="ActiveImageViewerChangedEventArgs.cs" />
-    <Compile Include="BaseTools\ImageViewerToolAttributeProcessor.cs" />
     <Compile Include="BaseTools\ModifiedMouseToolButtonAttribute.cs" />
     <Compile Include="BaseTools\MouseImageViewerToolAttributeProcessor.cs" />
     <Compile Include="BaseTools\MouseToolButtonAttribute.cs" />

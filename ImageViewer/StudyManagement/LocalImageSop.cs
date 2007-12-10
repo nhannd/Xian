@@ -91,11 +91,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				// Decompress the pixel data (if pixel data is already uncompressed,
 				// this is a pass-through, a no-op.)
 				//
-				// TODO: When the pixel data is compressed, we should delete the
-				// compressed buffer and just leave the uncompressed buffer, so as to
-				// save memory.  If a memory management mechanism decides to unload the
-				// pixel data, the next time this method is called should again decompress
-				// the data as if it were doing so for the first time.
 				byte[] pixelData = (byte[])_dicomFile.DataSet[DicomTags.PixelData].Values;
 				_pixelData = ImageSopHelper.DecompressPixelData(this, pixelData);
 

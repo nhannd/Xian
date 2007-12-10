@@ -47,12 +47,11 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[MenuAction("activate", "global-menus/MenuTools/MenuStandard/MenuZoom", "Select", Flags = ClickActionFlags.CheckAction)]
 	[ButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarZoom", "Select", Flags = ClickActionFlags.CheckAction)]
 	[KeyboardAction("activate", "imageviewer-keyboard/ToolsStandardZoom/Activate", "Select", KeyStroke = XKeys.Z)]
-    [CheckedStateObserver("activate", "Active", "ActivationChanged")]
+	[CheckedStateObserver("activate", "Active", "ActivationChanged")]
 	[TooltipValueObserver("activate", "Tooltip", "TooltipChanged")]
 	[IconSet("activate", IconScheme.Colour, "Icons.ZoomToolSmall.png", "Icons.ZoomToolMedium.png", "Icons.ZoomToolLarge.png")]
 	[GroupHint("activate", "Tools.Image.Manipulation.Zoom")]
 
-	//Mark the delegates as keyboard controllable, without assigning a default keystroke.
 	[KeyboardAction("zoomin", "imageviewer-keyboard/ToolsStandardZoom/ZoomIn", "ZoomIn", KeyStroke = XKeys.OemPeriod)]
 	[KeyboardAction("zoomout", "imageviewer-keyboard/ToolsStandardZoom/ZoomOut", "ZoomOut", KeyStroke = XKeys.Oemcomma)]
 

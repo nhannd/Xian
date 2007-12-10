@@ -38,7 +38,7 @@ namespace ClearCanvas.ImageViewer.InputManagement
 	/// Represents the current message object's (e.g. <see cref="MouseButtonMessage"/>) state.
 	/// </summary>
 	/// <seealso cref="MouseButtonMessage"/>
-	public sealed class MouseButtonShortcut
+	public sealed class MouseButtonShortcut : IEquatable<MouseButtonShortcut>, IEquatable<XMouseButtons>
 	{
 		private readonly XMouseButtons _mouseButton;
 		private readonly Modifiers _modifiers;
@@ -107,14 +107,40 @@ namespace ClearCanvas.ImageViewer.InputManagement
 		/// </summary>
 		public override bool Equals(object obj)
 		{
+			if (obj == this)
+				return true;
+
 			if (obj is MouseButtonShortcut)
-			{
-				MouseButtonShortcut shortcut = (MouseButtonShortcut)obj;
-				return shortcut.MouseButton == this.MouseButton && shortcut.Modifiers.Equals(this.Modifiers);
-			}
+				return this.Equals((MouseButtonShortcut)obj);
+			else if (obj is XMouseButtons)
+				return this.Equals((XMouseButtons) obj);
 
 			return false;
 		}
+
+		#region IEquatable<MouseButtonShortcut> Members
+
+		/// <summary>
+		/// Gets whether or not this object is equal to <paramref name="other"/>.
+		/// </summary>
+		public bool Equals(MouseButtonShortcut other)
+		{
+			return other != null && other.MouseButton == this.MouseButton && other.Modifiers.Equals(this.Modifiers);
+		}
+
+		#endregion
+
+		#region IEquatable<XMouseButtons> Members
+
+		/// <summary>
+		/// Gets whether or not this object is equal to <paramref name="other"/>.
+		/// </summary>
+		public bool Equals(XMouseButtons other)
+		{
+			return this.Modifiers.Equals(ModifierFlags.None) && this.MouseButton == other;
+		}
+
+		#endregion
 
 		/// <summary>
 		/// Gets a hash code for this object instance.

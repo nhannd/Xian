@@ -125,7 +125,7 @@ namespace ClearCanvas.ImageViewer.InputManagement
 		#region IEquatable<KeyboardButtonShortcut> Members
 
 		/// <summary>
-		/// Determines if this object is equal to another.
+		/// Gets whether or not this object is equal to <paramref name="other"/>.
 		/// </summary>
 		public bool Equals(KeyboardButtonShortcut other)
 		{
@@ -137,7 +137,7 @@ namespace ClearCanvas.ImageViewer.InputManagement
 		#region IEquatable<XKeys> Members
 
 		/// <summary>
-		/// Determines if this object is equal to another.
+		/// Gets whether or not this object is equal to <paramref name="other"/>.
 		/// </summary>
 		public bool Equals(XKeys other)
 		{
