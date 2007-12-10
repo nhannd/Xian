@@ -33,6 +33,7 @@ using System;
 using System.Windows.Forms;
 using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tables;
 
 namespace ClearCanvas.Desktop.View.WinForms
@@ -91,6 +92,26 @@ namespace ClearCanvas.Desktop.View.WinForms
         {
             if(_availableItemsTable.IsFiltered) _availableItemsTable.Filter();
             _availableItems.Table = _availableItemsTable;
+        }
+
+        public void AppendToSelectedItemsActionModel(ActionModelNode model)
+        {
+            AppendActionModel(_selectedItems, model);
+        }
+
+        public void AppendToAvailableItemsActionModel(ActionModelNode model)
+        {
+            AppendActionModel(_availableItems, model);
+        }
+
+        public void BindSelectedItemsTableSelection(object dataSource, string dataMember)
+        {
+            BindSelection(_selectedItems, dataSource, dataMember);
+        }
+
+        public void BindAvailableItemsTableSelection(object dataSource, string dataMember)
+        {
+            BindSelection(_availableItems, dataSource, dataMember);
         }
 
         #endregion
@@ -192,6 +213,24 @@ namespace ClearCanvas.Desktop.View.WinForms
             // empty selection
             return new Selection();
 	    }
+
+        private void AppendActionModel(TableView table, ActionModelNode model)
+        {
+            if (table.ToolbarModel == null) 
+                table.ToolbarModel = model;
+            else 
+                table.ToolbarModel.Merge(model);
+
+            if (table.MenuModel == null)
+                table.MenuModel = model;
+            else
+                table.MenuModel.Merge(model);
+        }
+
+        private void BindSelection(TableView table, object dataSource, string dataMember)
+        {
+            table.DataBindings.Add("Selection", dataSource, dataMember, true, DataSourceUpdateMode.OnPropertyChanged);
+        }
 
         #endregion
     }

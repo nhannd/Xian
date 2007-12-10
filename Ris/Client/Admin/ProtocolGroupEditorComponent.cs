@@ -1,6 +1,8 @@
 using System;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
@@ -32,10 +34,15 @@ namespace ClearCanvas.Ris.Client.Admin
 
         private ProtocolCodeTable _availableProtocolCodes;
         private ProtocolCodeTable _selectedProtocolCodes;
+        private ProtocolCodeDetail _selectedProtocolCodesSelection;
+
+        private SimpleActionModel _selectedProtocolCodesActionHandler;
+        private readonly string _moveCodeUpKey = "MoveCodeUp";
+        private readonly string _moveCodeDownKey = "MoveCodeDown";
+        private readonly string _newCodeKey = "NewCode";
 
         private RequestedProcedureTypeGroupSummaryTable _availableReadingGroups;
         private RequestedProcedureTypeGroupSummaryTable _selectedReadingGroups;
-
 
         #endregion
 
@@ -63,6 +70,14 @@ namespace ClearCanvas.Ris.Client.Admin
         {
             _availableProtocolCodes = new ProtocolCodeTable();
             _selectedProtocolCodes = new ProtocolCodeTable();
+
+            _selectedProtocolCodesActionHandler = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));
+            _selectedProtocolCodesActionHandler.AddAction(_moveCodeUpKey, SR.TitleMoveProtocolCodeUp, "Icons.UpToolSmall.png", SR.TitleMoveProtocolCodeUp, MoveProtocolCodeUp);
+            _selectedProtocolCodesActionHandler.AddAction(_moveCodeDownKey, SR.TitleMoveProtocolCodeDown, "Icons.DownToolSmall.png", SR.TitleMoveProtocolCodeDown, MoveProtocolCodeDown);
+            _selectedProtocolCodesActionHandler.AddAction(_newCodeKey, SR.TitleNewProtocolCode, "Icons.AddToolSmall.png", SR.TitleNewProtocolCode, AddNewProtocolCode);
+            _selectedProtocolCodesActionHandler[_moveCodeUpKey].Enabled = false;
+            _selectedProtocolCodesActionHandler[_moveCodeDownKey].Enabled = false;
+            _selectedProtocolCodesActionHandler[_newCodeKey].Enabled = true;
 
             _availableReadingGroups = new RequestedProcedureTypeGroupSummaryTable();
             _selectedReadingGroups = new RequestedProcedureTypeGroupSummaryTable();
@@ -154,6 +169,29 @@ namespace ClearCanvas.Ris.Client.Admin
             get { return _selectedProtocolCodes; }
         }
 
+        public ActionModelNode SelectedProtocolCodesActionModel
+        {
+            get { return _selectedProtocolCodesActionHandler; }
+        }
+
+        public ISelection SelectedProtocolCodesSelection
+        {
+            get { return new Selection(_selectedProtocolCodesSelection); }
+            set
+            {
+                _selectedProtocolCodesSelection = (ProtocolCodeDetail)value.Item;
+                SelectedProtocolCodesSelectionChanged();
+            }
+        }
+
+        private void SelectedProtocolCodesSelectionChanged()
+        {
+            bool somethingSelected = _selectedProtocolCodesSelection != null;
+
+            _selectedProtocolCodesActionHandler[_moveCodeUpKey].Enabled = somethingSelected;
+            _selectedProtocolCodesActionHandler[_moveCodeDownKey].Enabled = somethingSelected;
+        }
+
         public ITable AvailableReadingGroups
         {
             get { return _availableReadingGroups; }
@@ -243,7 +281,7 @@ namespace ClearCanvas.Ris.Client.Admin
 
         #endregion
 
-        public void AddNewCode()
+        public void AddNewProtocolCode()
         {
             try
             {
@@ -261,7 +299,45 @@ namespace ClearCanvas.Ris.Client.Admin
                 // could not launch editor
                 ExceptionHandler.Report(e, this.Host.DesktopWindow);
             }
-            ;
         }
+
+        public void MoveProtocolCodeUp()
+        {
+            if(_selectedProtocolCodesSelection != null)
+            {
+                int index = _selectedProtocolCodes.Items.IndexOf(_selectedProtocolCodesSelection);
+                if(index > 0)
+                {
+                    // Swap selected item with preceding item
+                    _selectedProtocolCodes.Items[index] = _selectedProtocolCodes.Items[index - 1];
+                    _selectedProtocolCodes.Items[index - 1] = _selectedProtocolCodesSelection;
+
+                    // Ensures that UI updates and correct row is highlighted
+                    NotifyPropertyChanged("SelectedProtocolCodesSelection");
+
+                    this.Modified = true;
+                }
+            }
+        }
+
+        public void MoveProtocolCodeDown()
+        {
+            if (_selectedProtocolCodesSelection != null)
+            {
+                int index = _selectedProtocolCodes.Items.IndexOf(_selectedProtocolCodesSelection);
+                if (index < _selectedProtocolCodes.Items.Count - 1)
+                {
+                    // Swap selected item with following item
+                    _selectedProtocolCodes.Items[index] = _selectedProtocolCodes.Items[index + 1];
+                    _selectedProtocolCodes.Items[index + 1] = _selectedProtocolCodesSelection;
+
+                    // Ensures that UI updates and correct row is highlighted
+                    NotifyPropertyChanged("SelectedProtocolCodesSelection");
+
+                    this.Modified = true;
+                }
+            }
+        }
+
     }
 }

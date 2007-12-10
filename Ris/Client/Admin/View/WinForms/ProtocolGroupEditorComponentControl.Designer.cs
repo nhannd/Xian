@@ -36,8 +36,6 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this._protocolCodesTabPage = new System.Windows.Forms.TabPage();
             this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
             this._codesSelector = new ClearCanvas.Desktop.View.WinForms.ListItemSelector();
-            this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
-            this._newCodeButton = new System.Windows.Forms.Button();
             this._readingGroupsTabPage = new System.Windows.Forms.TabPage();
             this._readingGroupsSelector = new ClearCanvas.Desktop.View.WinForms.ListItemSelector();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
@@ -48,7 +46,6 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this.tabControl1.SuspendLayout();
             this._protocolCodesTabPage.SuspendLayout();
             this.tableLayoutPanel3.SuspendLayout();
-            this.flowLayoutPanel2.SuspendLayout();
             this._readingGroupsTabPage.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             this.SuspendLayout();
@@ -134,7 +131,6 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this.tableLayoutPanel3.ColumnCount = 1;
             this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel3.Controls.Add(this._codesSelector, 0, 0);
-            this.tableLayoutPanel3.Controls.Add(this.flowLayoutPanel2, 0, 1);
             this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel3.Location = new System.Drawing.Point(3, 3);
             this.tableLayoutPanel3.Name = "tableLayoutPanel3";
@@ -153,30 +149,8 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this._codesSelector.Location = new System.Drawing.Point(3, 3);
             this._codesSelector.Name = "_codesSelector";
             this._codesSelector.SelectedItemsTable = null;
-            this._codesSelector.Size = new System.Drawing.Size(638, 332);
+            this._codesSelector.Size = new System.Drawing.Size(638, 367);
             this._codesSelector.TabIndex = 0;
-            // 
-            // flowLayoutPanel2
-            // 
-            this.flowLayoutPanel2.AutoSize = true;
-            this.flowLayoutPanel2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.flowLayoutPanel2.Controls.Add(this._newCodeButton);
-            this.flowLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.flowLayoutPanel2.Location = new System.Drawing.Point(3, 341);
-            this.flowLayoutPanel2.Name = "flowLayoutPanel2";
-            this.flowLayoutPanel2.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.flowLayoutPanel2.Size = new System.Drawing.Size(638, 29);
-            this.flowLayoutPanel2.TabIndex = 1;
-            // 
-            // _newCodeButton
-            // 
-            this._newCodeButton.Location = new System.Drawing.Point(560, 3);
-            this._newCodeButton.Name = "_newCodeButton";
-            this._newCodeButton.Size = new System.Drawing.Size(75, 23);
-            this._newCodeButton.TabIndex = 0;
-            this._newCodeButton.Text = "New Code";
-            this._newCodeButton.UseVisualStyleBackColor = true;
-            this._newCodeButton.Click += new System.EventHandler(this._newCodeButton_Click);
             // 
             // _readingGroupsTabPage
             // 
@@ -260,7 +234,6 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this._protocolCodesTabPage.PerformLayout();
             this.tableLayoutPanel3.ResumeLayout(false);
             this.tableLayoutPanel3.PerformLayout();
-            this.flowLayoutPanel2.ResumeLayout(false);
             this._readingGroupsTabPage.ResumeLayout(false);
             this._readingGroupsTabPage.PerformLayout();
             this.tableLayoutPanel2.ResumeLayout(false);
@@ -285,7 +258,5 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
         private ClearCanvas.Desktop.View.WinForms.ListItemSelector _codesSelector;
         private ClearCanvas.Desktop.View.WinForms.ListItemSelector _readingGroupsSelector;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
-        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel2;
-        private System.Windows.Forms.Button _newCodeButton;
     }
 }

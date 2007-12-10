@@ -363,6 +363,15 @@
   <data name="TitleModalities" xml:space="preserve">
     <value>Modalities</value>
   </data>
+  <data name="TitleMoveProtocolCodeDown" xml:space="preserve">
+    <value>Move down</value>
+  </data>
+  <data name="TitleMoveProtocolCodeUp" xml:space="preserve">
+    <value>Move up</value>
+  </data>
+  <data name="TitleNewProtocolCode" xml:space="preserve">
+    <value>New code</value>
+  </data>
   <data name="TitleNoteCategories" xml:space="preserve">
     <value>Note Categories</value>
   </data>

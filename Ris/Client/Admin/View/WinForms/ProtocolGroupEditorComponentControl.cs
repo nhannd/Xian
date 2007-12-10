@@ -25,6 +25,9 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 
             _codesSelector.AvailableItemsTable = _component.AvailableProtocolCodes;
             _codesSelector.SelectedItemsTable = _component.SelectedProtocolCodes;
+            _codesSelector.BindSelectedItemsTableSelection(_component, "SelectedProtocolCodesSelection");
+            _codesSelector.AppendToSelectedItemsActionModel(_component.SelectedProtocolCodesActionModel);
+            
             _codesSelector.ItemAdded += OnItemsAddedOrRemoved;
             _codesSelector.ItemRemoved += OnItemsAddedOrRemoved;
 
@@ -49,11 +52,6 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
         private void _cancelButton_Click(object sender, EventArgs e)
         {
             _component.Cancel();
-        }
-
-        private void _newCodeButton_Click(object sender, EventArgs e)
-        {
-            _component.AddNewCode();
         }
     }
 }

@@ -799,6 +799,33 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Move down.
+        /// </summary>
+        internal static string TitleMoveProtocolCodeDown {
+            get {
+                return ResourceManager.GetString("TitleMoveProtocolCodeDown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Move up.
+        /// </summary>
+        internal static string TitleMoveProtocolCodeUp {
+            get {
+                return ResourceManager.GetString("TitleMoveProtocolCodeUp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to New code.
+        /// </summary>
+        internal static string TitleNewProtocolCode {
+            get {
+                return ResourceManager.GetString("TitleNewProtocolCode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Note Categories.
         /// </summary>
         internal static string TitleNoteCategories {
