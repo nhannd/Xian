@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.ComponentModel;
 using System.Windows.Forms;
 using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
@@ -48,6 +49,9 @@ namespace ClearCanvas.Desktop.View.WinForms
         private event EventHandler _itemAdded;
         private event EventHandler _itemRemoved;
 
+        private event EventHandler _availableItemsTableSelectionChanged;
+        private event EventHandler _selectedItemsTableSelectionChanged;
+
         #endregion
 
         #region Constructor
@@ -55,6 +59,15 @@ namespace ClearCanvas.Desktop.View.WinForms
         public ListItemSelector()
         {
             InitializeComponent();
+
+            _availableItems.SelectionChanged += _availableItems_SelectionChanged;
+            _selectedItems.SelectionChanged += _selectedItems_SelectionChanged;
+        }
+
+        ~ListItemSelector()
+        {
+            _availableItems.SelectionChanged -= _availableItems_SelectionChanged;
+            _selectedItems.SelectionChanged -= _selectedItems_SelectionChanged;
         }
 
         #endregion
@@ -104,14 +117,30 @@ namespace ClearCanvas.Desktop.View.WinForms
             AppendActionModel(_availableItems, model);
         }
 
-        public void BindSelectedItemsTableSelection(object dataSource, string dataMember)
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public ISelection SelectedItemsTableSelection
         {
-            BindSelection(_selectedItems, dataSource, dataMember);
+            get { return _selectedItems.Selection; }
+            set { _selectedItems.Selection = value; }
         }
 
-        public void BindAvailableItemsTableSelection(object dataSource, string dataMember)
+        public event EventHandler SelectedItemsTableSelectionChanged
         {
-            BindSelection(_availableItems, dataSource, dataMember);
+            add { _selectedItemsTableSelectionChanged += value; }
+            remove { _selectedItemsTableSelectionChanged -= value; }
+        }
+
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public ISelection AvailableItemsTableSelection
+        {
+            get { return _availableItems.Selection; }
+            set { _availableItems.Selection = value; }
+        }
+
+        public event EventHandler AvailableItemsTableSelectionChanged
+        {
+            add { _availableItemsTableSelectionChanged += value; }
+            remove { _availableItemsTableSelectionChanged -= value; }
         }
 
         #endregion
@@ -227,9 +256,14 @@ namespace ClearCanvas.Desktop.View.WinForms
                 table.MenuModel.Merge(model);
         }
 
-        private void BindSelection(TableView table, object dataSource, string dataMember)
+        void _selectedItems_SelectionChanged(object sender, EventArgs e)
         {
-            table.DataBindings.Add("Selection", dataSource, dataMember, true, DataSourceUpdateMode.OnPropertyChanged);
+            EventsHelper.Fire(_selectedItemsTableSelectionChanged, this, e);
+        }
+
+        void _availableItems_SelectionChanged(object sender, EventArgs e)
+        {
+            EventsHelper.Fire(_availableItemsTableSelectionChanged, this, e);
         }
 
         #endregion

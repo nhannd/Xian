@@ -7,14 +7,15 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
     /// <summary>
     /// Provides a Windows Forms user-interface for <see cref="ProtocolGroupEditorComponent"/>
     /// </summary>
-    public partial class ProtocolGroupEditorComponentControl : CustomUserControl
+    public partial class ProtocolGroupEditorComponentControl : ApplicationComponentUserControl
     {
-        private ProtocolGroupEditorComponent _component;
+        private readonly ProtocolGroupEditorComponent _component;
 
         /// <summary>
         /// Constructor
         /// </summary>
         public ProtocolGroupEditorComponentControl(ProtocolGroupEditorComponent component)
+            : base(component)
         {
             InitializeComponent();
 
@@ -25,7 +26,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 
             _codesSelector.AvailableItemsTable = _component.AvailableProtocolCodes;
             _codesSelector.SelectedItemsTable = _component.SelectedProtocolCodes;
-            _codesSelector.BindSelectedItemsTableSelection(_component, "SelectedProtocolCodesSelection");
+            _codesSelector.DataBindings.Add("SelectedItemsTableSelection", _component, "SelectedProtocolCodesSelection", true, DataSourceUpdateMode.OnPropertyChanged);
             _codesSelector.AppendToSelectedItemsActionModel(_component.SelectedProtocolCodesActionModel);
             
             _codesSelector.ItemAdded += OnItemsAddedOrRemoved;
