@@ -113,19 +113,6 @@ namespace ClearCanvas.Desktop
         /// Occurs when an item in the collection has changed.
         /// </summary>
         event EventHandler<ItemChangedEventArgs> ItemsChanged;
-
-        /// <summary>
-        /// Notifies the table that the item at the specified index has changed in some way.
-        /// </summary>
-        /// <remarks>
-		/// Use this method to cause the view to update itself to reflect the changed item.
-		/// </remarks>
-        void NotifyItemUpdated(int index);
-
-        /// <summary>
-        /// Adds all items in the specified enumeration..
-        /// </summary>
-        void AddRange(IEnumerable enumerable);
     }
 
     /// <summary>
@@ -134,36 +121,5 @@ namespace ClearCanvas.Desktop
     /// <typeparam name="TItem">The item type.</typeparam>
     public interface IItemCollection<TItem> : IItemCollection, IList<TItem>
     {
-        /// <summary>
-        /// Notifies the table that the specified item has changed in some way.
-        /// </summary>
-        /// <remarks>
-		/// Use this method to cause the view to update itself to reflect the changed item.
-		/// </remarks>
-        void NotifyItemUpdated(TItem item);
-
-        /// <summary>
-        /// Adds all items in the specified enumeration.
-        /// </summary>
-        void AddRange(IEnumerable<TItem> enumerable);
-
-        /// <summary>
-        /// Sorts items in the collection using the specified <see cref="IComparer{TItem}"/>.
-        /// </summary>
-        void Sort(IComparer<TItem> comparer);
-
-        /// <summary>
-        /// Sets any items in the collection matching the specified constraint to the specified new value. 
-        /// </summary>
-        /// <param name="constraint">A predicate against which all items in the collection will be compared, and replaced with the new value.</param>
-        /// <param name="newValue">The new value with which to replace all matching items in the collection.</param>
-        void Replace(Predicate<TItem> constraint, TItem newValue);
-
-        /// <summary>
-        /// Searches the collection for an item that satisfies the specified constraint and returns
-        /// the index of the first such item.
-        /// </summary>
-        /// <returns>The index of the first matching item, or -1 if no matching items are found.</returns>
-        int FindIndex(Predicate<TItem> constraint);
     }
 }

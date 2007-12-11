@@ -167,8 +167,9 @@ namespace ClearCanvas.Ris.Client
             {
                 _patientAttachments = value;
                 _mode = Mode.PatientAttachment;
-                _attachmentTable = new PatientAttachmentTable();
-                _attachmentTable.Items.AddRange(_patientAttachments);
+                PatientAttachmentTable table = new PatientAttachmentTable();
+                table.Items.AddRange(_patientAttachments);
+                _attachmentTable = table;
             }
         }
             
@@ -179,8 +180,9 @@ namespace ClearCanvas.Ris.Client
             {
                 _orderAttachments = value;
                 _mode = Mode.OrderAttachment;
-                _attachmentTable = new OrderAttachmentTable();
-                _attachmentTable.Items.AddRange(_orderAttachments);
+                OrderAttachmentTable table = new OrderAttachmentTable();
+                table.Items.AddRange(_orderAttachments);
+                _attachmentTable = table;
             }
         }
 

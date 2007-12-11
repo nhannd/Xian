@@ -51,8 +51,6 @@ namespace ClearCanvas.Desktop
     [AssociateView(typeof(DialogComponentContainerViewExtensionPoint))]
     public class DialogComponentContainer : ApplicationComponentContainer
     {
-        //Todo (Jon): Can this be made private?
-
 		/// <summary>
 		/// Host object for <see cref="DialogContent"/>.
 		/// </summary>

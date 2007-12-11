@@ -32,23 +32,21 @@
 using System;
 using ClearCanvas.Desktop.Actions;
 
-namespace ClearCanvas.Desktop
+namespace ClearCanvas.Ris.Client
 {
-	//TODO (Jon): would rather not have people using this, if possible.
-
-	/// <summary>
-	/// A helper class for rendering an action model as HTML.
-	/// </summary>
+    /// <summary>
+    /// A helper class for rendering an action model as HTML.
+    /// </summary>
     public class HtmlActionModelRenderer
     {
-		/// <summary>
-		/// Searches <paramref name="actionNode"/> and returns the action (represented as HTML) whose label matches
-		/// <paramref name="labelSearch"/>.
-		/// </summary>
-		/// <param name="actionNode">The node to be searched.</param>
-		/// <param name="labelSearch">The label to match on.</param>
-		/// <param name="actionLabel">The new label to be applied to the action in the returned HTML.</param>
-		/// <returns>The found action represented as HTML, otherwise an empty string.</returns>
+        /// <summary>
+        /// Searches <paramref name="actionNode"/> and returns the action (represented as HTML) whose label matches
+        /// <paramref name="labelSearch"/>.
+        /// </summary>
+        /// <param name="actionNode">The node to be searched.</param>
+        /// <param name="labelSearch">The label to match on.</param>
+        /// <param name="actionLabel">The new label to be applied to the action in the returned HTML.</param>
+        /// <returns>The found action represented as HTML, otherwise an empty string.</returns>
         public string GetHTML(ActionModelNode actionNode, string labelSearch, string actionLabel)
         {
             IAction[] actions = actionNode.GetActionsInOrder();

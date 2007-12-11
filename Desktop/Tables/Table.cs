@@ -36,6 +36,13 @@ using ClearCanvas.Common.Utilities;
 namespace ClearCanvas.Desktop.Tables
 {
     /// <summary>
+    /// A delegate for selecting color based on an object based on
+    /// an item in <see cref="ITable.Items"/>.
+    /// </summary>
+    /// <returns>Name of a predefined color.</returns>
+    public delegate string ColorSelector<T>(T item);
+
+    /// <summary>
     /// A useful generic implementation of <see cref="ITable"/>.
     /// </summary>
     /// <typeparam name="TItem">The type of item that this table holds.</typeparam>
@@ -52,8 +59,8 @@ namespace ClearCanvas.Desktop.Tables
         private FilteredItemCollection<TItem> _filteredData;
 
         private readonly int _cellRowCount;
-        private ColorSelector _backgroundColorSelector;
-        private ColorSelector _outlineColorSelector;
+        private ColorSelector<TItem> _backgroundColorSelector;
+        private ColorSelector<TItem> _outlineColorSelector;
 
         private EventHandler _sortEvent;
 
@@ -90,6 +97,24 @@ namespace ClearCanvas.Desktop.Tables
 
             _data = new ItemCollection<TItem>();
             _filteredData = null;
+        }
+
+        /// <summary>
+        /// Gets and sets the background color of a cell row.
+        /// </summary>
+        public ColorSelector<TItem> BackgroundColorSelector
+        {
+            get { return _backgroundColorSelector; }
+            set { _backgroundColorSelector = value; }
+        }
+
+        /// <summary>
+        /// Gets and sets the outline color of a cell row.
+        /// </summary>
+        public ColorSelector<TItem> OutlineColorSelector
+        {
+            get { return _outlineColorSelector; }
+            set { _outlineColorSelector = value; }
         }
 
         #region ITable members
@@ -225,23 +250,22 @@ namespace ClearCanvas.Desktop.Tables
             get { return _cellRowCount; }
         }
 
-    	/// <summary>
-    	/// Gets and sets the background color of a cell row.
-    	/// </summary>
-    	public ColorSelector BackgroundColorSelector
+        /// <summary>
+        /// Gets the color for the background of a cell row.
+        /// </summary>
+        public string GetItemBackgroundColor(object item)
         {
-            get { return _backgroundColorSelector; }
-            set { _backgroundColorSelector = value; }
+            return _backgroundColorSelector == null ? null : _backgroundColorSelector((TItem)item);
         }
 
-    	/// <summary>
-    	/// Gets and sets the outline color of a cell row.
-    	/// </summary>
-    	public ColorSelector OutlineColorSelector
+        /// <summary>
+        /// Gets color for the outline of a cell row.
+        /// </summary>
+        public string GetItemOutlineColor(object item)
         {
-            get { return _outlineColorSelector; }
-            set { _outlineColorSelector = value; }
+            return _outlineColorSelector == null ? null : _outlineColorSelector((TItem)item);
         }
+
 
         #endregion
 
@@ -287,5 +311,6 @@ namespace ClearCanvas.Desktop.Tables
         }
 
         #endregion
+
     }
 }

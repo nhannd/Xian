@@ -34,13 +34,6 @@ using System;
 namespace ClearCanvas.Desktop.Tables
 {
     /// <summary>
-    /// A delegate for selecting color based on an object based on
-    /// an item in <see cref="ITable.Items"/>.
-    /// </summary>
-    /// <returns>Name of a predefined color.</returns>
-    public delegate string ColorSelector(object item);
-
-    /// <summary>
     /// Defines the interface to a table, which provides a presentation model for viewing data in a tabular form.
     /// </summary>
     public interface ITable
@@ -120,16 +113,15 @@ namespace ClearCanvas.Desktop.Tables
         /// </summary>
         int CellRowCount { get; }
 
-		//TODO (Jon) : just return the string name.
         /// <summary>
-        /// Gets the <see cref="ColorSelector"/>for the background of a cell row.
+        /// Gets the color for the background of a cell row.
         /// </summary>
-        ColorSelector BackgroundColorSelector { get; }
+        string GetItemBackgroundColor(object item);
 
         /// <summary>
-		/// Gets <see cref="ColorSelector"/> for the outline of a cell row.
+		/// Gets color for the outline of a cell row.
         /// </summary>
-        ColorSelector OutlineColorSelector { get; }
+        string GetItemOutlineColor(object item);
     }
 
     /// <summary>

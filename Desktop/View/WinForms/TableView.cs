@@ -435,13 +435,13 @@ namespace ClearCanvas.Desktop.View.WinForms
                 return;
             }
 
-            if (_table != null && _table.BackgroundColorSelector != null)
+            if (_table != null)
             {
                 Rectangle rowBounds = GetAdjustedRowBounds(e.RowBounds);
 
                 // Color.FromName("Empty") does not return Color.Empty, so need to manually check for Empty
-                string colorName = _table.BackgroundColorSelector(_table.Items[e.RowIndex]);
-                Color backgroundColor = colorName.Equals("Empty") ? Color.Empty : Color.FromName(colorName);
+                string colorName = _table.GetItemBackgroundColor(_table.Items[e.RowIndex]);
+                Color backgroundColor = string.IsNullOrEmpty(colorName)|| colorName.Equals("Empty") ? Color.Empty : Color.FromName(colorName);
 
                 if (backgroundColor.Equals(Color.Empty))
                 {
@@ -463,7 +463,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         {
             Rectangle rowBounds = GetAdjustedRowBounds(e.RowBounds);
 
-            if (_table != null && _table.OutlineColorSelector != null)
+            if (_table != null)
             {
                 int penWidth = 2;
                 Rectangle outline = new Rectangle(
@@ -472,8 +472,8 @@ namespace ClearCanvas.Desktop.View.WinForms
                     rowBounds.Width - penWidth,
                     rowBounds.Height - penWidth - 2);
 
-                Color outlineColor = Color.FromName(_table.OutlineColorSelector(_table.Items[e.RowIndex]));
-
+                string colorName = _table.GetItemOutlineColor(_table.Items[e.RowIndex]);
+                Color outlineColor  = string.IsNullOrEmpty(colorName) || colorName.Equals("Empty") ? Color.Empty : Color.FromName(colorName);
                 using (Pen outlinePen =
                     new Pen(outlineColor, penWidth))
                 {

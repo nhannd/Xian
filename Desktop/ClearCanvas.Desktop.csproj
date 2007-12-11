@@ -43,7 +43,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="HtmlActionModelRenderer.cs" />
     <Compile Include="Actions\Action.cs" />
     <Compile Include="Actions\ActionAttribute.cs" />
     <Compile Include="Actions\ActionAttributeProcessor.cs" />
