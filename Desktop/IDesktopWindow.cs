@@ -36,7 +36,11 @@ namespace ClearCanvas.Desktop
     /// <summary>
     /// Defines the public interface to a <see cref="DesktopWindow"/>.
     /// </summary>
-    public interface IDesktopWindow : IDesktopObject
+	/// <remarks>
+	/// This interface exists mainly for backward compatibility.  New application
+	/// code should use the <see cref="DesktopWindow"/> class.
+	/// </remarks>
+	public interface IDesktopWindow : IDesktopObject
     {
         /// <summary>
         /// Gets the collection of workspaces associated with this window.

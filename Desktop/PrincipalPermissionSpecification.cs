@@ -64,14 +64,6 @@ namespace ClearCanvas.Desktop
             return new TestResult(Thread.CurrentPrincipal == null ? false : Thread.CurrentPrincipal.IsInRole(_role));
         }
 
-        /// <summary>
-        /// Not applicable, there are no sub-specs.
-        /// </summary>
-		public IEnumerable<ISpecification> SubSpecs
-        {
-            get { return new ISpecification[0]; }
-        }
-
         #endregion
     }
 }

@@ -102,7 +102,9 @@ namespace ClearCanvas.Desktop
         }
     }
 
-    /// <summary>
+	// TODO (Jon): try to get rid of these interfaces altogether.
+	
+	/// <summary>
     /// Defines the interface to the collection of items.
     /// </summary>
     public interface IItemCollection : IList

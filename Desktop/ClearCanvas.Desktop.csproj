@@ -139,7 +139,6 @@
     </Compile>
     <Compile Include="IApplicationComponentContainer.cs" />
     <Compile Include="IBlockingOperationView.cs" />
-    <Compile Include="NavigatorPageSortByPath.cs" />
     <Compile Include="Actions\SimpleActionModel.cs" />
     <Compile Include="TestComponent.cs" />
     <Compile Include="TestTool.cs" />

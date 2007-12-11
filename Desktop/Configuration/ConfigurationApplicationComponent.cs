@@ -44,7 +44,7 @@ namespace ClearCanvas.Desktop.Configuration
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public ConfigurationApplicationComponent()
+		protected ConfigurationApplicationComponent()
 		{ 
 		}
 

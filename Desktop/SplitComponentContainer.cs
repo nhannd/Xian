@@ -66,15 +66,12 @@ namespace ClearCanvas.Desktop
     [AssociateView(typeof(SplitComponentContainerViewExtensionPoint))]
     public class SplitComponentContainer : ApplicationComponentContainer
     {
-		//TODO (Jon): can this be made private?
-
 		/// <summary>
 		/// A host for a <see cref="SplitPane"/>.
 		/// </summary>
-        public class SplitPaneHost : ApplicationComponentHost
+        private class SplitPaneHost : ApplicationComponentHost
         {
             private SplitComponentContainer _owner;
-			private SplitPane _pane;
 
             internal SplitPaneHost(
 				SplitComponentContainer owner,
@@ -82,18 +79,8 @@ namespace ClearCanvas.Desktop
                 :base(pane.Component)
             {
 				Platform.CheckForNullReference(owner, "owner");
-				Platform.CheckForNullReference(pane, "pane");
 
                 _owner = owner;
-				_pane = pane;
-            }
-
-			/// <summary>
-			/// Gets the <see cref="SplitComponentContainer"/> that owns the pane.
-			/// </summary>
-            public SplitComponentContainer Owner
-            {
-                get { return _owner; }
             }
 
             #region ApplicationComponentHost overrides

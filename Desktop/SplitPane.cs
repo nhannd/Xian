@@ -42,7 +42,7 @@ namespace ClearCanvas.Desktop
         private float _weight;
 		private bool _fixed;
 
-        private SplitComponentContainer.SplitPaneHost _host;
+		private ApplicationComponentHost _host;
 
 		/// <summary>
 		/// Constructor.
@@ -110,10 +110,10 @@ namespace ClearCanvas.Desktop
         /// <remarks>
 		/// For internal framework use only.
 		/// </remarks>
-        public SplitComponentContainer.SplitPaneHost ComponentHost
+		public ApplicationComponentHost ComponentHost
         {
             get { return _host; }
-            set { _host = value; }
+            internal set { _host = value; }
         }
 	}
 }

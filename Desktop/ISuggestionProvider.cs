@@ -11,7 +11,7 @@ namespace ClearCanvas.Desktop
         private readonly IList _items;
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         public SuggestionsProvidedEventArgs(IList items)
         {

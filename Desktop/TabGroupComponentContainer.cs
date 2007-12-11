@@ -66,15 +66,12 @@ namespace ClearCanvas.Desktop
     [AssociateView(typeof(TabbedGroupsComponentContainerViewExtensionPoint))]
     public class TabGroupComponentContainer : ApplicationComponentContainer
     {
-		//TODO (Jon): Can this be made private?
-
 		/// <summary>
 		/// A host for <see cref="TabGroup"/>s.
 		/// </summary>
-        public class TabGroupHost : ApplicationComponentHost
+        private class TabGroupHost : ApplicationComponentHost
         {
             private TabGroupComponentContainer _owner;
-            private TabGroup _tabGroup;
 
             /// <summary>
             /// Constructor.
@@ -85,21 +82,10 @@ namespace ClearCanvas.Desktop
                 : base(tabGroup.Component)
             {
                 Platform.CheckForNullReference(owner, "owner");
-                Platform.CheckForNullReference(tabGroup, "pane");
-
                 _owner = owner;
-                _tabGroup = tabGroup;
             }
 
-			/// <summary>
-			/// Gets the <see cref="TabComponentContainer"/> that owns this host.
-			/// </summary>
-            public TabGroupComponentContainer Owner
-            {
-                get { return _owner; }
-            }
-
-            #region ApplicationComponentHost overrides
+			#region ApplicationComponentHost overrides
 
 			/// <summary>
 			/// Gets the title of the parent container.

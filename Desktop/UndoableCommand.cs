@@ -33,6 +33,8 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.Desktop
 {
+	//TODO (Stewart): return objects instead of IMemorable?
+
 	/// <summary>
 	/// A command that facilitates undo/redo using the <b>Memento</b> design pattern.
 	/// </summary>

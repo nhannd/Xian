@@ -68,12 +68,10 @@ namespace ClearCanvas.Desktop
     public class PagedComponentContainer<TPage> : ApplicationComponentContainer
         where TPage : ContainerPage
     {
-		// TODO (Jon): can this be made private?
-
         /// <summary>
         /// Defines an application component host for one page.
         /// </summary>
-        public class PageHost : ApplicationComponentHost
+        private class PageHost : ApplicationComponentHost
         {
             private PagedComponentContainer<TPage> _container;
 

@@ -35,6 +35,8 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.Desktop
 {
+	//TODO (Stewart): get rid of this.
+
 	/// <summary>
 	/// A basic container for a list of <see cref="IMemento"/>s.
 	/// </summary>

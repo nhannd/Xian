@@ -38,6 +38,32 @@ namespace ClearCanvas.Desktop.Configuration
 {
 	public sealed class ConfigurationDialog
 	{
+		private class NavigatorPagePathComparer : IComparer<NavigatorPage>
+		{
+			#region IComparer<NavigatorPage> Members
+
+			/// <summary>
+			/// Compares two <see cref="NavigatorPage"/>s.
+			/// </summary>
+			public int Compare(NavigatorPage x, NavigatorPage y)
+			{
+				if (x == null)
+				{
+					if (y == null)
+						return 0;
+					else
+						return -1;
+				}
+
+				if (y == null)
+					return 1;
+
+				return x.Path.LocalizedPath.CompareTo(y.Path.LocalizedPath);
+			}
+
+			#endregion
+		}
+
 		private ConfigurationDialog()
 		{
 		}
@@ -59,7 +85,7 @@ namespace ClearCanvas.Desktop.Configuration
 				foreach (IConfigurationPage configurationPage in this.ConfigurationPages)
 					pages.Add(new NavigatorPage(configurationPage.GetPath(), configurationPage.GetComponent()));
 
-				pages.Sort(new NavigatorPageSortByPath());
+				pages.Sort(new NavigatorPagePathComparer());
 
 				int initialPage = 0;
 				int i = 0;

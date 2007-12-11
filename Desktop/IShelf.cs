@@ -31,9 +31,13 @@
 
 namespace ClearCanvas.Desktop
 {
-    /// <summary>
+	/// <summary>
     /// Defines the public interface to a <see cref="Shelf"/>.
     /// </summary>
+    /// <remarks>
+    /// This interface exists mainly for backward compatibility.  New application
+    /// code should use the <see cref="Shelf"/> class.
+    /// </remarks>
     public interface IShelf : IDesktopObject
     {
         /// <summary>

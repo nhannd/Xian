@@ -41,7 +41,7 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Constructor.
         /// </summary>
-        public QuittingEventArgs()
+        internal QuittingEventArgs()
         {
         }
     }

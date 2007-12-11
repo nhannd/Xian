@@ -35,13 +35,12 @@ using System.Collections.Generic;
 
 namespace ClearCanvas.Desktop
 {
-    /// <summary>
+	// Note: It is important that this class retain immutable semantics.  Do not add mutator methods/properties to this class.
+	
+	/// <summary>
     /// Default implementation of <see cref="ISelection"/>.  
     /// </summary>
-    /// <remarks>
-	/// Note: It is important that this class retain immutable semantics.  Do not add mutator methods/properties to this class.
-	/// </remarks>
-    public class Selection : ISelection, IEquatable<ISelection>
+	public class Selection : ISelection, IEquatable<ISelection>
     {
 		/// <summary>
 		/// Represents an empty <see cref="ISelection"/>.
