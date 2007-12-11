@@ -292,12 +292,12 @@ namespace ClearCanvas.Ris.Client.Adt
             {
                 List<EntityRef> checkedMpsRefs = CollectionUtils.Map<ProcedurePlanSummaryTableItem, EntityRef, List<EntityRef>>(
                     ListCheckedSummmaryTableItems(),
-                    delegate(ProcedurePlanSummaryTableItem item) { return item.mpsDetail.ModalityProcedureStepRef; });
+                    delegate(ProcedurePlanSummaryTableItem item) { return item.mpsDetail.ProcedureStepRef; });
 
                 if (checkedMpsRefs.Count > 0)
                 {
-                    Platform.GetService<ITechnologistDocumentationService>(
-                        delegate(ITechnologistDocumentationService service)
+                    Platform.GetService<IModalityWorkflowService>(
+                        delegate(IModalityWorkflowService service)
                         {
                             StartModalityProcedureStepsRequest request = new StartModalityProcedureStepsRequest(checkedMpsRefs);
                             StartModalityProcedureStepsResponse response = service.StartModalityProcedureSteps(request);
@@ -321,12 +321,12 @@ namespace ClearCanvas.Ris.Client.Adt
             {
                 List<EntityRef> checkedMpsRefs = CollectionUtils.Map<ProcedurePlanSummaryTableItem, EntityRef, List<EntityRef>>(
                     ListCheckedSummmaryTableItems(),
-                    delegate(ProcedurePlanSummaryTableItem item) { return item.mpsDetail.ModalityProcedureStepRef; });
+                    delegate(ProcedurePlanSummaryTableItem item) { return item.mpsDetail.ProcedureStepRef; });
 
                 if (checkedMpsRefs.Count > 0)
                 {
-                    Platform.GetService<ITechnologistDocumentationService>(
-                        delegate(ITechnologistDocumentationService service)
+                    Platform.GetService<IModalityWorkflowService>(
+                        delegate(IModalityWorkflowService service)
                         {
                             DiscontinueModalityProcedureStepsRequest request = new DiscontinueModalityProcedureStepsRequest(checkedMpsRefs);
                             DiscontinueModalityProcedureStepsResponse response = service.DiscontinueModalityProcedureSteps(request);
@@ -391,8 +391,8 @@ namespace ClearCanvas.Ris.Client.Adt
             _procedurePlanSummaryTable = new ProcedurePlanSummaryTable();
             _procedurePlanSummaryTable.CheckedRowsChanged += delegate(object sender, EventArgs args) { UpdateActionEnablement(); };
 
-            Platform.GetService<ITechnologistDocumentationService>(
-                delegate(ITechnologistDocumentationService service)
+            Platform.GetService<IModalityWorkflowService>(
+                delegate(IModalityWorkflowService service)
                 {
                     GetProcedurePlanForWorklistItemRequest procedurePlanRequest = new GetProcedurePlanForWorklistItemRequest(_worklistItem.ProcedureStepRef);
                     GetProcedurePlanForWorklistItemResponse procedurePlanResponse = service.GetProcedurePlanForWorklistItem(procedurePlanRequest);
@@ -485,11 +485,11 @@ namespace ClearCanvas.Ris.Client.Adt
             else
             {
                 // TODO: defer enablement to server
-                _startAction.Enabled = CollectionUtils.TrueForAll<ProcedurePlanSummaryTableItem>(checkedSummaryTableItems,
-                    delegate(ProcedurePlanSummaryTableItem item) { return item.mpsDetail.Status.Code == "SC"; });
+                _startAction.Enabled = CollectionUtils.TrueForAll(checkedSummaryTableItems,
+                    delegate(ProcedurePlanSummaryTableItem item) { return item.mpsDetail.State.Code == "SC"; });
 
-                _discontinueAction.Enabled = CollectionUtils.TrueForAll<ProcedurePlanSummaryTableItem>(checkedSummaryTableItems,
-                    delegate(ProcedurePlanSummaryTableItem item) { return item.mpsDetail.Status.Code == "SC"; });
+                _discontinueAction.Enabled = CollectionUtils.TrueForAll(checkedSummaryTableItems,
+                    delegate(ProcedurePlanSummaryTableItem item) { return item.mpsDetail.State.Code == "SC"; });
             }
         }
 

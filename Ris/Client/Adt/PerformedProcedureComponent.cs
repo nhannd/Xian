@@ -37,6 +37,7 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow.TechnologistDocumentation;
 
 namespace ClearCanvas.Ris.Client.Adt
@@ -165,8 +166,8 @@ namespace ClearCanvas.Ris.Client.Adt
 
             if (_orderRef != null)
             {
-                Platform.GetService<ITechnologistDocumentationService>(
-                    delegate(ITechnologistDocumentationService service)
+                Platform.GetService<IModalityWorkflowService>(
+                    delegate(IModalityWorkflowService service)
                     {
                         ListPerformedProcedureStepsRequest mppsRequest = new ListPerformedProcedureStepsRequest(_orderRef);
                         ListPerformedProcedureStepsResponse mppsResponse = service.ListPerformedProcedureSteps(mppsRequest);
@@ -262,13 +263,13 @@ namespace ClearCanvas.Ris.Client.Adt
             {
                 _detailsComponent.SaveData();
 
-                Platform.GetService<ITechnologistDocumentationService>(
-                    delegate(ITechnologistDocumentationService service)
+                Platform.GetService<IModalityWorkflowService>(
+                    delegate(IModalityWorkflowService service)
                     {
-                        StopModalityPerformedProcedureStepRequest request = new StopModalityPerformedProcedureStepRequest(
+                        CompleteModalityPerformedProcedureStepRequest request = new CompleteModalityPerformedProcedureStepRequest(
                                 _selectedMpps.ModalityPerformendProcedureStepRef,
                                 _selectedMpps.ExtendedProperties);
-                        StopModalityPerformedProcedureStepResponse response = service.StopModalityPerformedProcedureStep(request);
+                        CompleteModalityPerformedProcedureStepResponse response = service.CompleteModalityPerformedProcedureStep(request);
 
                         RefreshProcedurePlanTree(response.ProcedurePlanSummary);
 
@@ -299,8 +300,8 @@ namespace ClearCanvas.Ris.Client.Adt
 
                 if (selectedMpps != null)
                 {
-                    Platform.GetService<ITechnologistDocumentationService>(
-                        delegate(ITechnologistDocumentationService service)
+                    Platform.GetService<IModalityWorkflowService>(
+                        delegate(IModalityWorkflowService service)
                         {
                             //TODO should save details here too
                             DiscontinueModalityPerformedProcedureStepRequest request = new DiscontinueModalityPerformedProcedureStepRequest(selectedMpps.ModalityPerformendProcedureStepRef);

@@ -52,8 +52,5 @@ namespace ClearCanvas.Ris.Application.Common
         
         [DataMember]
         public List<ModalityProcedureStepDetail> ModalityProcedureSteps;
-
-        //[DataMember]
-        //public ProtocolProcedureStepDetail ProtocolProcedureStepDetail;
     }
 }

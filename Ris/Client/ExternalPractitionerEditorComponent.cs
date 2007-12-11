@@ -96,7 +96,7 @@ namespace ClearCanvas.Ris.Client
                     this.Pages.Add(new NavigatorPage(rootPath + "/Addresses", _addressesSummary = new AddressesSummaryComponent(formDataResponse.AddressTypeChoices)));
                     this.Pages.Add(new NavigatorPage(rootPath + "/Phone Numbers", _phoneNumbersSummary = new PhoneNumbersSummaryComponent(formDataResponse.PhoneTypeChoices)));
 
-                    this.ValidationStrategy = new AllNodesContainerValidationStrategy();
+                    this.ValidationStrategy = new AllComponentsValidationStrategy();
 
                     if (_isNew)
                     {

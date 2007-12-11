@@ -40,15 +40,15 @@ namespace ClearCanvas.Ris.Client.Adt
 {
     public class RegistrationWorklistTable : Table<RegistrationWorklistItem>
     {
-        private static readonly uint NumRows = 2;
-        private static readonly uint DescriptionRow = 1;
+        private static readonly int NumRows = 2;
+        private static readonly int DescriptionRow = 1;
 
         public RegistrationWorklistTable()
             : this(NumRows)
         {
         }
 
-        private RegistrationWorklistTable(uint cellRowCount)
+        private RegistrationWorklistTable(int cellRowCount)
             : base(cellRowCount)
         {
             // Visible Columns

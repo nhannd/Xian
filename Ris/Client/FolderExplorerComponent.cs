@@ -88,7 +88,7 @@ namespace ClearCanvas.Ris.Client
             binding.AcceptDropHandler = FolderAcceptDrop;
 
             binding.CanHaveSubTreeHandler = delegate(IFolder folder) { return folder.Subfolders.Count > 0; };
-            binding.ShouldInitiallyExpandSubTreeHandler = delegate(IFolder folder) { return folder.StartExpanded; };
+            binding.IsInitiallyExpandedHandler = delegate(IFolder folder) { return folder.StartExpanded; };
             binding.SubTreeProvider =
                 delegate(IFolder folder)
                 {

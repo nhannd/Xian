@@ -29,20 +29,53 @@
 
 #endregion
 
+using System;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
+using System.Collections.Generic;
 
-namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow.TechnologistDocumentation
+namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
 {
     [DataContract]
-    public class ListPerformedProcedureStepsRequest : DataContractBase
+    public class ModalityPerformedProcedureStepSummary : DataContractBase
     {
-        public ListPerformedProcedureStepsRequest(EntityRef orderRef)
+        public ModalityPerformedProcedureStepSummary(EntityRef modalityPerformendProcedureStepRef, string inheritedName, EnumValueInfo state, DateTime startTime, DateTime? endTime, string performer, List<ModalityProcedureStepSummary> modalityProcedureSteps, Dictionary<string, string> extendedProperties)
         {
-            OrderRef = orderRef;
+            ModalityPerformendProcedureStepRef = modalityPerformendProcedureStepRef;
+            InheritedName = inheritedName;
+            State = state;
+            StartTime = startTime;
+            EndTime = endTime;
+            Performer = performer;
+            this.ModalityProcedureSteps = modalityProcedureSteps;
+            this.ExtendedProperties = extendedProperties;
         }
 
         [DataMember]
-        public EntityRef OrderRef;
+        public EntityRef ModalityPerformendProcedureStepRef;
+
+        [DataMember]
+        public string InheritedName;
+
+        [DataMember]
+        public EnumValueInfo State;
+
+        [DataMember]
+        public DateTime StartTime;
+
+        [DataMember]
+        public DateTime? EndTime;
+
+        [DataMember]
+        public string Performer;
+
+        /// <summary>
+        /// Modality procedure steps that were performed with this performed procedure step.
+        /// </summary>
+        [DataMember]
+        public List<ModalityProcedureStepSummary> ModalityProcedureSteps;
+
+        [DataMember]
+        public Dictionary<string, string> ExtendedProperties;
     }
 }

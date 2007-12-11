@@ -29,21 +29,20 @@
 
 #endregion
 
-using System.Collections.Generic;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
 
-namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow.TechnologistDocumentation
+namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
 {
     [DataContract]
-    public class ListPerformedProcedureStepsResponse : DataContractBase
+    public class DiscontinueModalityPerformedProcedureStepRequest : DataContractBase
     {
-        public ListPerformedProcedureStepsResponse()
+        public DiscontinueModalityPerformedProcedureStepRequest(EntityRef mppsRef)
         {
-            PerformedProcedureSteps = new List<ModalityPerformedProcedureStepSummary>();
+            MppsRef = mppsRef;
         }
 
         [DataMember]
-        public List<ModalityPerformedProcedureStepSummary> PerformedProcedureSteps;
+        public EntityRef MppsRef;
     }
 }

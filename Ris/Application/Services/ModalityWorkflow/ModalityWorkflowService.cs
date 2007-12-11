@@ -41,6 +41,8 @@ using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Healthcare.Workflow.Modality;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
+using ClearCanvas.Workflow;
+using Iesi.Collections.Generic;
 
 namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
 {
@@ -48,6 +50,11 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
     [ServiceImplementsContract(typeof(IModalityWorkflowService))]
     public class ModalityWorkflowService : WorkflowServiceBase, IModalityWorkflowService
     {
+        /// <summary>
+        /// Search for worklist items based on specified criteria.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [ReadOperation]
         public TextQueryResponse<ModalityWorklistItem> Search(SearchRequest request)
         {
@@ -72,6 +79,11 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
             return helper.Query(request);
         }
 
+        /// <summary>
+        /// Obtain the list of worklists for the current user.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [ReadOperation]
         public ListWorklistsResponse ListWorklists(ListWorklistsRequest request)
         {
@@ -85,6 +97,11 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
                     }));
         }
 
+        /// <summary>
+        /// Get the specified worklist.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [ReadOperation]
         public GetWorklistResponse GetWorklist(GetWorklistRequest request)
         {
@@ -103,6 +120,11 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
                     }));
         }
 
+        /// <summary>
+        /// Get the item count for the specified worklist.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [ReadOperation]
         public GetWorklistCountResponse GetWorklistCount(GetWorklistCountRequest request)
         {
@@ -113,86 +135,192 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
             return new GetWorklistCountResponse(count);
         }
 
-        [ReadOperation]
-        public GetWorklistItemResponse GetWorklistItem(GetWorklistItemRequest request)
-        {
-            throw new NotImplementedException();
-            //ModalityWorklistAssembler assembler = new ModalityWorklistAssembler();
-            //WorklistItem result = PersistenceContext.GetBroker<IModalityWorklistBroker>().GetWorklistItem(request.ProcedureStepRef, request.PatientProfileAuthority);
-            //return new GetWorklistItemResponse(assembler.CreateModalityWorklistItem(result, this.PersistenceContext));
-        }
-
+        /// <summary>
+        /// Get the enablement of all workflow operations.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [ReadOperation]
         public GetOperationEnablementResponse GetOperationEnablement(GetOperationEnablementRequest request)
         {
             return new GetOperationEnablementResponse(GetOperationEnablement(new WorklistItemKey(request.ProcedureStepRef)));
         }
 
-        [UpdateOperation]
-        [OperationEnablement("CanStartProcedure")]
-        public StartProcedureResponse StartProcedure(StartProcedureRequest request)
+        /// <summary>
+        /// Returns a summary of the procedure plan for a specified modality procedure step
+        /// </summary>
+        /// <param name="request"><see cref="GetProcedurePlanForWorklistItemRequest"/></param>
+        /// <returns><see cref="GetProcedurePlanForWorklistItemResponse"/></returns>
+        [ReadOperation]
+        public GetProcedurePlanForWorklistItemResponse GetProcedurePlanForWorklistItem(GetProcedurePlanForWorklistItemRequest request)
         {
-            ExecuteOperation(new StartModalityProcedureStepOperation(this.CurrentUserStaff), request.ModalityProcedureStepRef);
-            return new StartProcedureResponse();
-        }
-
-        [UpdateOperation]
-        [OperationEnablement("CanCompleteProcedure")]
-        public CompleteProcedureResponse CompleteProcedure(CompleteProcedureRequest request)
-        {
-            // TODO determine procedureAborted logic
-            ExecuteOperation(new CompleteModalityProcedureStepOperation(false), request.ModalityProcedureStepRef);
-            return new CompleteProcedureResponse();
-        }
-
-        [UpdateOperation]
-        [OperationEnablement("CanCancelProcedure")]
-        public CancelProcedureResponse CancelProcedure(CancelProcedureRequest request)
-        {
-            // TODO determine procedureAborted logic
-            ExecuteOperation(new CancelModalityProcedureStepOperation(false), request.ModalityProcedureStepRef);
-            return new CancelProcedureResponse();
-        }
-
-        public bool CanStartProcedure(WorklistItemKey itemKey)
-        {
-            return CanExecuteOperation(new StartModalityProcedureStepOperation(this.CurrentUserStaff), itemKey);
-        }
-
-        public bool CanCompleteProcedure(WorklistItemKey itemKey)
-        {
-            return CanExecuteOperation(new CompleteModalityProcedureStepOperation(false), itemKey);
-        }
-
-        public bool CanCancelProcedure(WorklistItemKey itemKey)
-        {
-            return CanExecuteOperation(new CancelModalityProcedureStepOperation(false), itemKey);
-        }
-
-        public bool CanReplaceOrder(WorklistItemKey itemKey)
-        {
-            IModalityProcedureStepBroker broker = PersistenceContext.GetBroker<IModalityProcedureStepBroker>();
-            ModalityProcedureStep mps = broker.Load(itemKey.ProcedureStepRef);
+            ProcedureStep mps = this.PersistenceContext.Load<ProcedureStep>(request.ProcedureStepRef);
             Order order = mps.RequestedProcedure.Order;
-            return order.Status == OrderStatus.SC || order.Status == OrderStatus.IP;
+            ProcedurePlanAssembler assembler = new ProcedurePlanAssembler();
+
+            GetProcedurePlanForWorklistItemResponse response = new GetProcedurePlanForWorklistItemResponse();
+            response.ProcedurePlanSummary = assembler.CreateProcedurePlanSummary(order, this.PersistenceContext);
+
+            response.OrderExtendedProperties = new Dictionary<string, string>();
+            foreach (string key in order.ExtendedProperties.Keys)
+            {
+                response.OrderExtendedProperties[key] = order.ExtendedProperties[key];
+            }
+
+            return response;
         }
 
-        private void ExecuteOperation(ModalityOperation op, EntityRef modalityProcedureStepRef)
+        /// <summary>
+        /// Returns a list of all modality performed procedure steps for a particular order.
+        /// </summary>
+        /// <param name="request"><see cref="ListPerformedProcedureStepsRequest"/></param>
+        /// <returns><see cref="ListPerformedProcedureStepsResponse"/></returns>
+        [ReadOperation]
+        public ListPerformedProcedureStepsResponse ListPerformedProcedureSteps(ListPerformedProcedureStepsRequest request)
         {
-            ModalityProcedureStep modalityProcedureStep = PersistenceContext.Load<ModalityProcedureStep>(modalityProcedureStepRef);
-            op.Execute(modalityProcedureStep, new PersistentWorkflow(this.PersistenceContext));
+            Order order = this.PersistenceContext.Load<Order>(request.OrderRef);
+
+            ModalityPerformedProcedureStepAssembler assembler = new ModalityPerformedProcedureStepAssembler();
+
+            ISet<PerformedStep> mppsSet = new HashedSet<PerformedStep>();
+            foreach (RequestedProcedure rp in order.RequestedProcedures)
+            {
+                foreach (ModalityProcedureStep mps in rp.ModalityProcedureSteps)
+                {
+                    mppsSet.AddAll(mps.PerformedSteps);
+                }
+            }
+
+            ListPerformedProcedureStepsResponse response = new ListPerformedProcedureStepsResponse();
+            response.PerformedProcedureSteps = CollectionUtils.Map<ModalityPerformedProcedureStep, ModalityPerformedProcedureStepSummary>(
+                mppsSet,
+                delegate(ModalityPerformedProcedureStep mpps) { return assembler.CreateModalityPerformedProcedureStepSummary(mpps, this.PersistenceContext); });
+
+            return response;
         }
 
-        private bool CanExecuteOperation(ModalityOperation op, WorklistItemKey itemKey)
+
+        /// <summary>
+        /// Starts a specified set of modality procedure steps with a single modality performed procedure step.
+        /// </summary>
+        /// <param name="request"><see cref="StartModalityProcedureStepsRequest"/></param>
+        /// <returns><see cref="StartModalityProcedureStepsResponse"/></returns>
+        [UpdateOperation]
+        public StartModalityProcedureStepsResponse StartModalityProcedureSteps(StartModalityProcedureStepsRequest request)
         {
-            ProcedureStep procedureStep = PersistenceContext.Load<ProcedureStep>(itemKey.ProcedureStepRef);
+            Platform.CheckForNullReference(request, "request");
+            Platform.CheckMemberIsSet(request.ModalityProcedureSteps, "ModalityProcedureSteps");
 
-            // for now we can only operate on ModalityProcedureStep
-            // this may need to change in future
-            if(!procedureStep.Is<ModalityProcedureStep>())
-                return false;
+            // load the set of mps
+            List<ModalityProcedureStep> modalitySteps = CollectionUtils.Map<EntityRef, ModalityProcedureStep>(request.ModalityProcedureSteps,
+                delegate(EntityRef mpsRef) { return this.PersistenceContext.Load<ModalityProcedureStep>(mpsRef); });
 
-            return op.CanExecute(procedureStep.As<ModalityProcedureStep>());
+            StartModalityProcedureStepsOperation op = new StartModalityProcedureStepsOperation();
+            ModalityPerformedProcedureStep mpps = op.Execute(modalitySteps, this.CurrentUserStaff, new PersistentWorkflow(PersistenceContext), PersistenceContext);
+
+            this.PersistenceContext.SynchState();
+
+            StartModalityProcedureStepsResponse response = new StartModalityProcedureStepsResponse();
+            ProcedurePlanAssembler procedurePlanAssembler = new ProcedurePlanAssembler();
+            ModalityPerformedProcedureStepAssembler modalityPerformedProcedureStepAssembler = new ModalityPerformedProcedureStepAssembler();
+
+            response.ProcedurePlanSummary = procedurePlanAssembler.CreateProcedurePlanSummary(modalitySteps[0].RequestedProcedure.Order, this.PersistenceContext);
+            response.StartedMpps = modalityPerformedProcedureStepAssembler.CreateModalityPerformedProcedureStepSummary(mpps, this.PersistenceContext);
+
+            return response;
+        }
+
+        /// <summary>
+        /// Discontinues a set of specified modality procedure steps.
+        /// </summary>
+        /// <param name="request"><see cref="DiscontinueModalityProcedureStepsResponse"/></param>
+        /// <returns><see cref="DiscontinueModalityProcedureStepsRequest"/></returns>
+        [UpdateOperation]
+        public DiscontinueModalityProcedureStepsResponse DiscontinueModalityProcedureSteps(DiscontinueModalityProcedureStepsRequest request)
+        {
+            Platform.CheckForNullReference(request, "request");
+            Platform.CheckMemberIsSet(request.ModalityProcedureSteps, "ModalityProcedureSteps");
+            
+            // load the set of mps
+            List<ModalityProcedureStep> modalitySteps = CollectionUtils.Map<EntityRef, ModalityProcedureStep>(request.ModalityProcedureSteps,
+                delegate(EntityRef mpsRef) { return this.PersistenceContext.Load<ModalityProcedureStep>(mpsRef); });
+
+            // TODO determine procedureAborted logic
+            foreach (ModalityProcedureStep step in modalitySteps)
+            {
+                DiscontinueModalityProcedureStepOperation op = new DiscontinueModalityProcedureStepOperation();
+                op.Execute(step, false, new PersistentWorkflow(PersistenceContext));
+            }
+
+            this.PersistenceContext.SynchState();
+
+            DiscontinueModalityProcedureStepsResponse response = new DiscontinueModalityProcedureStepsResponse();
+            ProcedurePlanAssembler assembler = new ProcedurePlanAssembler();
+
+            response.ProcedurePlanSummary = assembler.CreateProcedurePlanSummary(modalitySteps[0].RequestedProcedure.Order, this.PersistenceContext);
+
+            return response;
+        }
+
+        /// <summary>
+        /// Completes a specified modality performed procedure step.
+        /// </summary>
+        /// <param name="request"><see cref="CompleteModalityPerformedProcedureStepRequest"/></param>
+        /// <returns><see cref="CompleteModalityPerformedProcedureStepResponse"/></returns>
+        [UpdateOperation]
+        public CompleteModalityPerformedProcedureStepResponse CompleteModalityPerformedProcedureStep(CompleteModalityPerformedProcedureStepRequest request)
+        {
+            ModalityPerformedProcedureStep mpps = this.PersistenceContext.Load<ModalityPerformedProcedureStep>(request.MppsRef);
+
+            // copy extended properties (should this be in an assembler?)
+            foreach (KeyValuePair<string, string> pair in request.ExtendedProperties)
+            {
+                mpps.ExtendedProperties[pair.Key] = pair.Value;
+            }
+
+            CompleteModalityPerformedProcedureStepOperation op = new CompleteModalityPerformedProcedureStepOperation();
+            op.Execute(mpps, new PersistentWorkflow(PersistenceContext));
+
+            this.PersistenceContext.SynchState();
+
+            // Drill back to order so we can refresh procedure plan
+            ProcedureStep onePs = CollectionUtils.FirstElement(mpps.Activities).As<ProcedureStep>();
+            CompleteModalityPerformedProcedureStepResponse response = new CompleteModalityPerformedProcedureStepResponse();
+            ProcedurePlanAssembler assembler = new ProcedurePlanAssembler();
+            ModalityPerformedProcedureStepAssembler stepAssembler = new ModalityPerformedProcedureStepAssembler();
+
+            response.ProcedurePlanSummary = assembler.CreateProcedurePlanSummary(onePs.RequestedProcedure.Order, this.PersistenceContext);
+            response.StoppedMpps = stepAssembler.CreateModalityPerformedProcedureStepSummary(mpps, this.PersistenceContext);
+
+            return response;
+        }
+
+        /// <summary>
+        /// Discontinues a specified modality performed procedure step.
+        /// </summary>
+        /// <param name="request"><see cref="DiscontinueModalityPerformedProcedureStepRequest"/></param>
+        /// <returns><see cref="DiscontinueModalityPerformedProcedureStepResponse"/></returns>
+        [UpdateOperation]
+        public DiscontinueModalityPerformedProcedureStepResponse DiscontinueModalityPerformedProcedureStep(DiscontinueModalityPerformedProcedureStepRequest request)
+        {
+            ModalityPerformedProcedureStep mpps = this.PersistenceContext.Load<ModalityPerformedProcedureStep>(request.MppsRef);
+
+            // TODO determine procedureAborted logic
+            DiscontinueModalityPerformedProcedureStepOperation op = new DiscontinueModalityPerformedProcedureStepOperation();
+            op.Execute(mpps, new PersistentWorkflow(PersistenceContext));
+
+            this.PersistenceContext.SynchState();
+
+            // Drill back to order so we can refresh procedure plan
+            ModalityProcedureStep oneMps = CollectionUtils.FirstElement<ModalityProcedureStep>(mpps.Activities);
+            ProcedurePlanAssembler planAssembler = new ProcedurePlanAssembler();
+            ModalityPerformedProcedureStepAssembler stepAssembler = new ModalityPerformedProcedureStepAssembler();
+
+            DiscontinueModalityPerformedProcedureStepResponse response = new DiscontinueModalityPerformedProcedureStepResponse();
+            response.ProcedurePlanSummary = planAssembler.CreateProcedurePlanSummary(oneMps.RequestedProcedure.Order, this.PersistenceContext);
+            response.DiscontinuedMpps = stepAssembler.CreateModalityPerformedProcedureStepSummary(mpps, this.PersistenceContext);
+
+            return response;
         }
     }
 }

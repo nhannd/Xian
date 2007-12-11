@@ -117,7 +117,7 @@ namespace ClearCanvas.Ris.Client.Adt
                     this.Pages.Add(new NavigatorPage("Patient/Additional Info", _additionalPatientInfoSummary = new PatientProfileAdditionalInfoEditorComponent(formData.ReligionChoices, formData.PrimaryLanguageChoices)));
                     this.Pages.Add(new NavigatorPage("Patient/Notes", _notesSummary = new NoteSummaryComponent(formData.NoteCategoryChoices)));
                     this.Pages.Add(new NavigatorPage("Patient/Documents", _documentSummary = new MimeDocumentPreviewComponent(true, true)));
-                    this.ValidationStrategy = new AllNodesContainerValidationStrategy();
+                    this.ValidationStrategy = new AllComponentsValidationStrategy();
 
                     if (_isNew)
                     {

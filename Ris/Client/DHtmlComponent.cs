@@ -58,12 +58,12 @@ namespace ClearCanvas.Ris.Client
         public class DHtmlScriptCallback
         {
             protected DHtmlComponent _component;
-            private ActionModelRenderer _renderer;
+            private HtmlActionModelRenderer _renderer;
 
             public DHtmlScriptCallback(DHtmlComponent component)
             {
                 _component = component;
-                _renderer = new ActionModelRenderer();
+                _renderer = new HtmlActionModelRenderer();
             }
 
             /// <summary>

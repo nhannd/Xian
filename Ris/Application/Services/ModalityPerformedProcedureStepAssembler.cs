@@ -4,7 +4,8 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Ris.Application.Common.ModalityWorkflow.TechnologistDocumentation;
+using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
+using ClearCanvas.Workflow;
 
 namespace ClearCanvas.Ris.Application.Services
 {
@@ -12,20 +13,14 @@ namespace ClearCanvas.Ris.Application.Services
     {
         public  ModalityPerformedProcedureStepSummary CreateModalityPerformedProcedureStepSummary(ModalityPerformedProcedureStep mpps, IPersistenceContext context)
         {
-            StringBuilder nameBuilder = new StringBuilder();
-            int mpsCount = mpps.Activities.Count;
-            foreach (ModalityProcedureStep mps in mpps.Activities)
-            {
-                nameBuilder.Append(mps.Name);
-                if (1 < mpsCount--) nameBuilder.Append(" / ");
-            }
+            string name = StringUtilities.Combine(mpps.Activities, " / ", delegate(Activity a) { return a.As<ModalityProcedureStep>().Name; });
 
             ModalityProcedureStepAssembler assembler = new ModalityProcedureStepAssembler();
 
             // include the details of each MPS in the mpps summary
-            List<ModalityProcedureStepDetail> mpsDetails = CollectionUtils.Map<ModalityProcedureStep, ModalityProcedureStepDetail>(
+            List<ModalityProcedureStepSummary> mpsDetails = CollectionUtils.Map<ModalityProcedureStep, ModalityProcedureStepSummary>(
                 mpps.Activities,
-                delegate(ModalityProcedureStep mps) { return assembler.CreateModalityProcedureStepDetail(mps, context); });
+                delegate(ModalityProcedureStep mps) { return assembler.CreateModalityProcedureStepSummary(mps, context); });
 
             Dictionary<string, string> extendedProperties = new Dictionary<string, string>();
             foreach (string key in mpps.ExtendedProperties.Keys)
@@ -36,7 +31,7 @@ namespace ClearCanvas.Ris.Application.Services
 
             return new ModalityPerformedProcedureStepSummary(
                 mpps.GetRef(),
-                nameBuilder.ToString(),
+                name,
                 EnumUtils.GetEnumValueInfo(mpps.State, context),
                 mpps.StartTime,
                 mpps.EndTime,

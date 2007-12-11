@@ -101,20 +101,6 @@ namespace ClearCanvas.Healthcare {
             set { _portable = value; }
         }
 
-        public virtual void TryCompleteFromPerformedProcedureSteps()
-        {
-            if (this.State == ActivityStatus.CM) return;
-
-            bool canComplete = false;
-
-            foreach (PerformedProcedureStep pps in this.PerformedSteps)
-            {
-                canComplete |= (pps.State == PerformedStepStatus.CM || pps.State == PerformedStepStatus.DC);
-            }
-
-            if(canComplete) Complete();
-        }
-
 		#region Object overrides
 		
 		public override bool Equals(object that)

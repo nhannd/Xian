@@ -36,32 +36,97 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
     [ServiceContract]
     public interface IModalityWorkflowService
     {
+        /// <summary>
+        /// Search for worklist items based on specified criteria.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [OperationContract]
         TextQueryResponse<ModalityWorklistItem> Search(SearchRequest request);
 
+        /// <summary>
+        /// Obtain the list of worklists for the current user.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [OperationContract]
         ListWorklistsResponse ListWorklists(ListWorklistsRequest request);
 
+        /// <summary>
+        /// Get the specified worklist.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [OperationContract]
         [FaultContract(typeof(RequestValidationException))]
         GetWorklistResponse GetWorklist(GetWorklistRequest request);
 
+        /// <summary>
+        /// Get the item count for the specified worklist.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [OperationContract]
         GetWorklistCountResponse GetWorklistCount(GetWorklistCountRequest request);
 
-        [OperationContract]
-        GetWorklistItemResponse GetWorklistItem(GetWorklistItemRequest request);
-
+        /// <summary>
+        /// Get the enablement of all workflow operations.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [OperationContract]
         GetOperationEnablementResponse GetOperationEnablement(GetOperationEnablementRequest request);
 
+        /// <summary>
+        /// Returns a summary of the procedure plan for a specified modality procedure step
+        /// </summary>
+        /// <param name="request"><see cref="GetProcedurePlanForWorklistItemRequest"/></param>
+        /// <returns><see cref="GetProcedurePlanForWorklistItemResponse"/></returns>
         [OperationContract]
-        StartProcedureResponse StartProcedure(StartProcedureRequest request);
+        GetProcedurePlanForWorklistItemResponse GetProcedurePlanForWorklistItem(GetProcedurePlanForWorklistItemRequest request);
 
+        /// <summary>
+        /// Returns a list of all modality performed procedure steps for a particular order.
+        /// </summary>
+        /// <param name="request"><see cref="ListPerformedProcedureStepsRequest"/></param>
+        /// <returns><see cref="ListPerformedProcedureStepsResponse"/></returns>
         [OperationContract]
-        CompleteProcedureResponse CompleteProcedure(CompleteProcedureRequest request);
+        ListPerformedProcedureStepsResponse ListPerformedProcedureSteps(ListPerformedProcedureStepsRequest request);
 
+        /// <summary>
+        /// Starts a specified set of modality procedure steps with a single modality performed procedure step.
+        /// </summary>
+        /// <param name="request"><see cref="StartModalityProcedureStepsRequest"/></param>
+        /// <returns><see cref="StartModalityProcedureStepsResponse"/></returns>
         [OperationContract]
-        CancelProcedureResponse CancelProcedure(CancelProcedureRequest request);
+        [FaultContract(typeof(RequestValidationException))]
+        StartModalityProcedureStepsResponse StartModalityProcedureSteps(StartModalityProcedureStepsRequest request);
+
+        /// <summary>
+        /// Discontinues a set of specified modality procedure steps.
+        /// </summary>
+        /// <param name="request"><see cref="DiscontinueModalityProcedureStepsResponse"/></param>
+        /// <returns><see cref="DiscontinueModalityProcedureStepsRequest"/></returns>
+        [OperationContract]
+        [FaultContract(typeof(RequestValidationException))]
+        DiscontinueModalityProcedureStepsResponse DiscontinueModalityProcedureSteps(DiscontinueModalityProcedureStepsRequest request);
+
+        /// <summary>
+        /// Completes a specified modality performed procedure step.
+        /// </summary>
+        /// <param name="request"><see cref="CompleteModalityPerformedProcedureStepRequest"/></param>
+        /// <returns><see cref="CompleteModalityPerformedProcedureStepResponse"/></returns>
+        [OperationContract]
+        [FaultContract(typeof(RequestValidationException))]
+        CompleteModalityPerformedProcedureStepResponse CompleteModalityPerformedProcedureStep(CompleteModalityPerformedProcedureStepRequest request);
+
+        /// <summary>
+        /// Discontinues a specified modality performed procedure step.
+        /// </summary>
+        /// <param name="request"><see cref="DiscontinueModalityPerformedProcedureStepRequest"/></param>
+        /// <returns><see cref="DiscontinueModalityPerformedProcedureStepResponse"/></returns>
+        [OperationContract]
+        [FaultContract(typeof(RequestValidationException))]
+        DiscontinueModalityPerformedProcedureStepResponse DiscontinueModalityPerformedProcedureStep(DiscontinueModalityPerformedProcedureStepRequest request);
     }
 }

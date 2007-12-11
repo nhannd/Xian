@@ -32,15 +32,15 @@
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
 
-namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow.TechnologistDocumentation
+namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
 {
     [DataContract]
-    public class DiscontinueModalityPerformedProcedureStepResponse : DataContractBase
+    public class CompleteModalityPerformedProcedureStepResponse : DataContractBase
     {
         [DataMember]
         public ProcedurePlanSummary ProcedurePlanSummary;
 
         [DataMember]
-        public ModalityPerformedProcedureStepSummary DiscontinuedMpps;
+        public ModalityPerformedProcedureStepSummary StoppedMpps;
     }
 }

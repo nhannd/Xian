@@ -33,12 +33,12 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
 
-namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow.TechnologistDocumentation
+namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
 {
     [DataContract]
-    public class StartModalityProcedureStepsRequest : DataContractBase
+    public class DiscontinueModalityProcedureStepsRequest : DataContractBase
     {
-        public StartModalityProcedureStepsRequest(List<EntityRef> modalityProcedureSteps)
+        public DiscontinueModalityProcedureStepsRequest(List<EntityRef> modalityProcedureSteps)
         {
             ModalityProcedureSteps = modalityProcedureSteps;
         }

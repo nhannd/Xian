@@ -51,7 +51,7 @@ namespace ClearCanvas.Desktop.Tables
         private TableFilterParams _filterParams;
         private FilteredItemCollection<TItem> _filteredData;
 
-        private readonly uint _cellRowCount;
+        private readonly int _cellRowCount;
         private ColorSelector _backgroundColorSelector;
         private ColorSelector _outlineColorSelector;
 
@@ -68,7 +68,7 @@ namespace ClearCanvas.Desktop.Tables
         ///<summary>
         /// Constructs a table with the specified number of cells in each row.
         ///</summary>
-        public Table(uint cellRowCount)
+        public Table(int cellRowCount)
         {
             Platform.CheckArgumentRange((int)cellRowCount, 1, int.MaxValue, "cellRowCount");
             _cellRowCount = cellRowCount;
@@ -220,7 +220,7 @@ namespace ClearCanvas.Desktop.Tables
     	/// <summary>
     	/// Gets the number of cell rows in each row.
     	/// </summary>
-    	public uint CellRowCount
+    	public int CellRowCount
         {
             get { return _cellRowCount; }
         }

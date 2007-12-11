@@ -34,8 +34,8 @@ namespace ClearCanvas.Ris.Client
 
     public class ProcedurePlanSummaryTable : Table<Checkable<ProcedurePlanSummaryTableItem>>
     {
-        private static readonly uint NumRows = 2;
-        private static readonly uint ProcedureDescriptionRow = 1;
+        private static readonly int NumRows = 2;
+        private static readonly int ProcedureDescriptionRow = 1;
 
         private event EventHandler _checkedRowsChanged;
 
@@ -44,7 +44,7 @@ namespace ClearCanvas.Ris.Client
         {
         }
 
-        private ProcedurePlanSummaryTable(uint cellRowCount)
+        private ProcedurePlanSummaryTable(int cellRowCount)
             : base(cellRowCount)
         {
             this.Columns.Add(new TableColumn<Checkable<ProcedurePlanSummaryTableItem>, bool>(
@@ -59,7 +59,7 @@ namespace ClearCanvas.Ris.Client
 
             this.Columns.Add(new TableColumn<Checkable<ProcedurePlanSummaryTableItem>, string>(
                                  "Status",
-                                 delegate(Checkable<ProcedurePlanSummaryTableItem> checkable) { return checkable.Item.mpsDetail.Status.Value; },
+                                 delegate(Checkable<ProcedurePlanSummaryTableItem> checkable) { return checkable.Item.mpsDetail.State.Value; },
                                  0.5f));
 
             this.Columns.Add(new TableColumn<Checkable<ProcedurePlanSummaryTableItem>, string>(
@@ -68,12 +68,12 @@ namespace ClearCanvas.Ris.Client
                                  0.5f));
 
             ITableColumn sortColumn = new TableColumn<Checkable<ProcedurePlanSummaryTableItem>, string>("Procedure Description",
-                                                                                                        delegate(Checkable<ProcedurePlanSummaryTableItem> checkable)
-                                                                                                            {
-                                                                                                                return string.Format("{0} - {1}", checkable.Item.rpDetail.Name, checkable.Item.mpsDetail.Name);
-                                                                                                            },
-                                                                                                        0.5f,
-                                                                                                        ProcedureDescriptionRow);
+                                delegate(Checkable<ProcedurePlanSummaryTableItem> checkable)
+                                    {
+                                        return string.Format("{0} - {1}", checkable.Item.rpDetail.Name, checkable.Item.mpsDetail.ProcedureStepName);
+                                    },
+                                0.5f,
+                                ProcedureDescriptionRow);
             this.Columns.Add(sortColumn);
 
             this.Sort(new TableSortParams(sortColumn, true));

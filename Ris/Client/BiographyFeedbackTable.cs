@@ -54,15 +54,15 @@ namespace ClearCanvas.Ris.Client
 
     public class BiographyFeedbackTable : Table<FeedbackDetail>
     {
-        private static readonly uint NumRows = 2;
-        private static readonly uint NoteCommentRow = 1;
+        private static readonly int NumRows = 2;
+        private static readonly int NoteCommentRow = 1;
 
         public BiographyFeedbackTable()
             : this(NumRows)
         {
         }
 
-        private BiographyFeedbackTable(uint cellRowCount)
+        private BiographyFeedbackTable(int cellRowCount)
             : base(cellRowCount)
         {
             this.Columns.Add(new TableColumn<FeedbackDetail, string>("Category",

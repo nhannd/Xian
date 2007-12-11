@@ -32,17 +32,12 @@
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
 
-namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow.TechnologistDocumentation
+namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
 {
     [DataContract]
-    public class DiscontinueModalityPerformedProcedureStepRequest : DataContractBase
+    public class DiscontinueModalityProcedureStepsResponse : DataContractBase
     {
-        public DiscontinueModalityPerformedProcedureStepRequest(EntityRef mppsRef)
-        {
-            MppsRef = mppsRef;
-        }
-
         [DataMember]
-        public EntityRef MppsRef;
+        public ProcedurePlanSummary ProcedurePlanSummary;
     }
 }

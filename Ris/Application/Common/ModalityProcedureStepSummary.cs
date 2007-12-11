@@ -42,24 +42,33 @@ namespace ClearCanvas.Ris.Application.Common
     [DataContract]
     public class ModalityProcedureStepSummary : DataContractBase
     {
-        public ModalityProcedureStepSummary()
+        public ModalityProcedureStepSummary(
+            EntityRef procedureStepRef,
+            string procedureStepName,
+            EnumValueInfo state,
+            DateTime? startTime,
+            DateTime? endTime,
+            string modalityId,
+            string modalityName
+            )
         {
+            this.ProcedureStepRef = procedureStepRef;
+            this.ProcedureStepName = procedureStepName;
+            this.State = state;
+            this.StartTime = startTime;
+            this.EndTime = endTime;
+            this.ModalityId = modalityId;
+            this.ModalityName = modalityName;
         }
 
         [DataMember]
+        public EntityRef ProcedureStepRef;
+
+        [DataMember]
+        public string ProcedureStepName;
+
+        [DataMember]
         public EnumValueInfo State;
-
-        [DataMember]
-        public StaffSummary ScheduledPerformerStaff;
-
-        [DataMember]
-        public DateTime? ScheduledStartTime;
-
-        [DataMember]
-        public DateTime? ScheduledEndTime;
-
-        [DataMember]
-        public StaffSummary PerformerStaff;
 
         [DataMember]
         public DateTime? StartTime;
@@ -68,6 +77,9 @@ namespace ClearCanvas.Ris.Application.Common
         public DateTime? EndTime;
 
         [DataMember]
-        public ModalityProcedureStepTypeDetail Type;
+        public string ModalityId;
+
+        [DataMember]
+        public string ModalityName;
     }
 }

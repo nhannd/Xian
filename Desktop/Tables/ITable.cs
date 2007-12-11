@@ -118,7 +118,7 @@ namespace ClearCanvas.Desktop.Tables
         /// <summary>
         /// Gets the number of cell rows in each row.
         /// </summary>
-        uint CellRowCount { get; }
+        int CellRowCount { get; }
 
 		//TODO (Jon) : just return the string name.
         /// <summary>

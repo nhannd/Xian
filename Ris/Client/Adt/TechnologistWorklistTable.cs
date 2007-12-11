@@ -40,15 +40,15 @@ namespace ClearCanvas.Ris.Client.Adt
 {
     public class ModalityWorklistTable : Table<ModalityWorklistItem>
     {
-        private static readonly uint NumRows = 2;
-        private static readonly uint DescriptionRow = 1;
+        private static readonly int NumRows = 2;
+        private static readonly int DescriptionRow = 1;
 
         public ModalityWorklistTable()
             : this(NumRows)
         {
         }
 
-        private ModalityWorklistTable(uint cellRowCount)
+        private ModalityWorklistTable(int cellRowCount)
             : base(cellRowCount)
         {
             // Visible Columns

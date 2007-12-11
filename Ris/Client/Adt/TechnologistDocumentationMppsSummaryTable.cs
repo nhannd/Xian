@@ -31,7 +31,7 @@
 
 using System;
 using ClearCanvas.Desktop.Tables;
-using ClearCanvas.Ris.Application.Common.ModalityWorkflow.TechnologistDocumentation;
+using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
 
 namespace ClearCanvas.Ris.Client.Adt
 {

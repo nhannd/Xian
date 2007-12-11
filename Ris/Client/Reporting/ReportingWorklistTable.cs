@@ -40,15 +40,15 @@ namespace ClearCanvas.Ris.Client.Reporting
 {
     public class ReportingWorklistTable : Table<ReportingWorklistItem>
     {
-        private static readonly uint NumRows = 2;
-        private static readonly uint DescriptionRow = 1;
+        private static readonly int NumRows = 2;
+        private static readonly int DescriptionRow = 1;
 
         public ReportingWorklistTable()
             : this(NumRows)
         {
         }
 
-        private ReportingWorklistTable(uint cellRowCount)
+        private ReportingWorklistTable(int cellRowCount)
             : base(cellRowCount)
         {
             // Visible Columns

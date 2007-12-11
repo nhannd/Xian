@@ -38,15 +38,15 @@ namespace ClearCanvas.Ris.Client
 {
     public class BiographyNoteTable : Table<NoteDetail>
     {
-        private static readonly uint NumRows = 2;
-        private static readonly uint NoteCommentRow = 1;
+        private static readonly int NumRows = 2;
+        private static readonly int NoteCommentRow = 1;
 
         public BiographyNoteTable()
             : this(NumRows)
         {
         }
 
-        private BiographyNoteTable(uint cellRowCount)
+        private BiographyNoteTable(int cellRowCount)
             : base(cellRowCount)
         {
             this.Columns.Add(new TableColumn<NoteDetail, string>("Severity",

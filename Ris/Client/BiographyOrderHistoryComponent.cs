@@ -62,10 +62,10 @@ namespace ClearCanvas.Ris.Client
         private readonly OrderSummaryTable _orderList;
         private OrderSummary _selectedOrder;
         private OrderDetail _orderDetail;
-        private ModalityProcedureStepSummary _selectedMPS;
+        private ModalityProcedureStepDetail _selectedMPS;
 
         private event EventHandler _diagnosticServiceChanged;
-        private Tree<RequestedProcedureSummary> _diagnosticServiceBreakdown;
+        private Tree<RequestedProcedureDetail> _diagnosticServiceBreakdown;
         private object _selectedDiagnosticServiceBreakdownItem;
 
 
@@ -221,7 +221,7 @@ namespace ClearCanvas.Ris.Client
 
         public string Modality
         {
-            get { return _selectedMPS == null ? null : _selectedMPS.Type.DefaultModality.Name; }
+            get { return _selectedMPS == null ? null : _selectedMPS.ModalityName; }
         }
 
         public string MPSState
@@ -231,7 +231,7 @@ namespace ClearCanvas.Ris.Client
 
         public string PerformerStaff
         {
-            get { return _selectedMPS == null ? null : String.Format("{0}, {1}", _selectedMPS.PerformerStaff.Name.FamilyName, _selectedMPS.PerformerStaff.Name.GivenName); }
+            get { return _selectedMPS == null ? null : String.Format("{0}, {1}", _selectedMPS.Performer.Name.FamilyName, _selectedMPS.Performer.Name.GivenName); }
         }
 
         public string StartTime
@@ -246,7 +246,7 @@ namespace ClearCanvas.Ris.Client
 
         public string ScheduledPerformerStaff
         {
-            get { return _selectedMPS == null ? null : String.Format("{0}, {1}", _selectedMPS.ScheduledPerformerStaff.Name.FamilyName, _selectedMPS.ScheduledPerformerStaff.Name.GivenName); }
+            get { return _selectedMPS == null ? null : String.Format("{0}, {1}", _selectedMPS.ScheduledPerformer.Name.FamilyName, _selectedMPS.ScheduledPerformer.Name.GivenName); }
         }
 
         public string ScheduledStartTime
@@ -256,7 +256,7 @@ namespace ClearCanvas.Ris.Client
 
         public string ScheduledEndTime
         {
-            get { return _selectedMPS == null ? null : Format.DateTime(_selectedMPS.ScheduledEndTime); }
+            get { return "FooBar"; }
         }
 
         #endregion
@@ -278,9 +278,9 @@ namespace ClearCanvas.Ris.Client
             set
             {
                 _selectedDiagnosticServiceBreakdownItem = value.Item;
-                if (_selectedDiagnosticServiceBreakdownItem == null || _selectedDiagnosticServiceBreakdownItem is ModalityProcedureStepSummary)
+                if (_selectedDiagnosticServiceBreakdownItem == null || _selectedDiagnosticServiceBreakdownItem is ModalityProcedureStepDetail)
                 {
-                    _selectedMPS = _selectedDiagnosticServiceBreakdownItem as ModalityProcedureStepSummary;
+                    _selectedMPS = _selectedDiagnosticServiceBreakdownItem as ModalityProcedureStepDetail;
                     NotifyAllPropertiesChanged();
                 }
             }
@@ -303,7 +303,7 @@ namespace ClearCanvas.Ris.Client
                             _orderDetail = response.GetOrderDetailResponse.OrderDetail;
                         });
 
-                    _diagnosticServiceBreakdown = new Tree<RequestedProcedureSummary>(
+                    _diagnosticServiceBreakdown = new Tree<RequestedProcedureDetail>(
                         GetRequestedProcedureBinding(), _orderDetail.RequestedProcedures);
 
                     EventsHelper.Fire(_diagnosticServiceChanged, this, EventArgs.Empty);
@@ -337,7 +337,7 @@ namespace ClearCanvas.Ris.Client
                 delegate(RequestedProcedureDetail rp) { return rp.Type.Name; },
                 delegate(RequestedProcedureDetail rp)
                 {
-                    return new Tree<ModalityProcedureStepSummary>(
+                    return new Tree<ModalityProcedureStepDetail>(
                         GetModalityProcedureStepBinding(), rp.ModalityProcedureSteps);
                 });
 
@@ -347,15 +347,15 @@ namespace ClearCanvas.Ris.Client
             return binding;
         }
 
-        private TreeItemBinding<ModalityProcedureStepSummary> GetModalityProcedureStepBinding()
+        private TreeItemBinding<ModalityProcedureStepDetail> GetModalityProcedureStepBinding()
         {
-            TreeItemBinding<ModalityProcedureStepSummary> binding =
-                new TreeItemBinding<ModalityProcedureStepSummary>(
-                delegate(ModalityProcedureStepSummary mps) { return String.Format("{0} ({1})", mps.Type.Name, mps.Type.DefaultModality.Name); });
+            TreeItemBinding<ModalityProcedureStepDetail> binding =
+                new TreeItemBinding<ModalityProcedureStepDetail>(
+                delegate(ModalityProcedureStepDetail mps) { return String.Format("{0} ({1})", mps.ProcedureStepName, mps.ModalityName); });
 
             binding.ResourceResolverProvider = delegate{ return new ResourceResolver(this.GetType().Assembly); };
             binding.IconSetProvider =
-                delegate(ModalityProcedureStepSummary mps)
+                delegate(ModalityProcedureStepDetail mps)
                 {
                     if (mps.State.Code == "SC")
 						return new IconSet(IconScheme.Colour, "EditToolSmall.png", "EditToolSmall.png", "EditToolSmall.png");
