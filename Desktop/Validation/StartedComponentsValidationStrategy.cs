@@ -34,24 +34,29 @@ using ClearCanvas.Common.Utilities;
 namespace ClearCanvas.Desktop.Validation
 {
     /// <summary>
-    /// Implements a validation strategy that considers all contained nodes, regardless of whether the user
-    /// has visited them or not.
+    /// Implements a validation strategy that considers only the contained nodes that have been visited.
     /// </summary>
-    public class AllNodesContainerValidationStrategy : IApplicationComponentContainerValidationStrategy
+	public class StartedComponentsValidationStrategy : IApplicationComponentContainerValidationStrategy
     {
-        #region IApplicationComponentContainerValidationStrategy Members
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		public StartedComponentsValidationStrategy()
+		{
+		}
+
+    	#region IApplicationComponentContainerValidationStrategy Members
 
     	/// <summary>
     	/// Determines whether the specified container has validation errors, according to this strategy.
     	/// </summary>
     	public bool HasValidationErrors(IApplicationComponentContainer container)
         {
-            // true if any contained component has validation errors
+            // true if any started component has validation errors
             return CollectionUtils.Contains<IApplicationComponent>(container.ContainedComponents,
                 delegate(IApplicationComponent c)
                 {
-                    container.EnsureStarted(c);
-                    return c.HasValidationErrors;
+                    return c.IsStarted && c.HasValidationErrors;
                 });
         }
 
@@ -63,11 +68,11 @@ namespace ClearCanvas.Desktop.Validation
         {
             if (show)
             {
-                // propagate to each component, starting the component if not already started
+                // propagate to each started component
                 foreach (IApplicationComponent c in container.ContainedComponents)
                 {
-                    container.EnsureStarted(c);
-                    c.ShowValidation(show);
+                    if(c.IsStarted)
+                        c.ShowValidation(show);
                 }
 
                 bool visibleComponentHasErrors = CollectionUtils.Contains<IApplicationComponent>(container.VisibleComponents,
@@ -78,7 +83,7 @@ namespace ClearCanvas.Desktop.Validation
                 {
                     IApplicationComponent firstComponentWithErrors = CollectionUtils.SelectFirst<IApplicationComponent>(
                         container.ContainedComponents,
-                        delegate(IApplicationComponent c) { return c.HasValidationErrors; });
+                        delegate(IApplicationComponent c) { return c.IsStarted && c.HasValidationErrors; });
 
                     if (firstComponentWithErrors != null)
                         container.EnsureVisible(firstComponentWithErrors);
@@ -89,11 +94,11 @@ namespace ClearCanvas.Desktop.Validation
                 // propagate to each started component
                 foreach (IApplicationComponent c in container.ContainedComponents)
                 {
-                    if(c.IsStarted)
+                    if (c.IsStarted)
                         c.ShowValidation(show);
                 }
             }
-            
+
         }
 
         #endregion

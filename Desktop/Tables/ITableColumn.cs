@@ -53,17 +53,17 @@ namespace ClearCanvas.Desktop.Tables
 		/// <summary>
 		/// Gets or sets a value indicating whether this column is visible.
 		/// </summary>
-		bool Visible { get; set; }
+		bool Visible { get; }
 
         /// <summary>
         /// Gets or sets a resource resolver.
         /// </summary>
-        IResourceResolver ResourceResolver { get; set; }
+        IResourceResolver ResourceResolver { get; }
         
         /// <summary>
 		/// Occurs when the <see cref="Visible"/> property has changed.
 		/// </summary>
-		event EventHandler VisibilityChanged;
+		event EventHandler VisibleChanged;
 
         /// <summary>
         /// A factor that influences the width of the column relative to other columns.
@@ -104,6 +104,6 @@ namespace ClearCanvas.Desktop.Tables
         /// <summary>
         /// Gets the cell row for which this column will be displayed in.
         /// </summary>
-        uint CellRow { get; }
+        int CellRow { get; }
     }
 }

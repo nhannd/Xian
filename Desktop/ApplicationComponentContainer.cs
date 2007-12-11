@@ -46,7 +46,7 @@ namespace ClearCanvas.Desktop
         /// </summary>
         protected ApplicationComponentContainer()
         {
-            _validationStrategy = new NoNodesContainerValidationStrategy();
+            _validationStrategy = new NoComponentsValidationStrategy();
         }
 
         /// <summary>

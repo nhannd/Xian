@@ -45,7 +45,7 @@ namespace ClearCanvas.Desktop.Actions
         /// Attribute constructor.
         /// </summary>
         /// <param name="actionID">A logical action identifier.</param>
-        public ActionAttribute(string actionID)
+        protected ActionAttribute(string actionID)
         {
             _actionID = actionID;
         }

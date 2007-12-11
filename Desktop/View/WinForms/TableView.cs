@@ -253,7 +253,7 @@ namespace ClearCanvas.Desktop.View.WinForms
                     // spans multiple columns.
                     this.DataGridView.RowTemplate.Height = _rowHeight + CUSTOM_CONTENT_HEIGHT * ((int)_table.CellRowCount - 1);
 
-                    _table.SortEvent += new EventHandler(_table_SortEvent);
+                    _table.Sorted += new EventHandler(_table_SortEvent);
                 }
 
                 InitializeSortButton();
@@ -382,7 +382,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 					// Associate the ITableColumn with the DataGridViewColumn
 					dgcol.Tag = col;
 
-					col.VisibilityChanged += OnColumnVisibilityChanged;
+					col.VisibleChanged += OnColumnVisibilityChanged;
 
                     _dataGridView.Columns.Add(dgcol);
                 }
@@ -394,9 +394,9 @@ namespace ClearCanvas.Desktop.View.WinForms
 			if (_table != null)
 			{
 				foreach (ITableColumn column in _table.Columns)
-					column.VisibilityChanged -= OnColumnVisibilityChanged;
+					column.VisibleChanged -= OnColumnVisibilityChanged;
 
-			    _table.SortEvent -= _table_SortEvent;
+			    _table.Sorted -= _table_SortEvent;
 			}
 		}
 

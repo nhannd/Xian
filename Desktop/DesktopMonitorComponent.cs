@@ -83,8 +83,7 @@ namespace ClearCanvas.Desktop
     [AssociateView(typeof(DesktopMonitorComponentViewExtensionPoint))]
     public class DesktopMonitorComponent : ApplicationComponent
     {
-
-        class EventLogItem
+        private class EventLogItem
         {
             private string _objectName;
             private string _objectTitle;

@@ -56,7 +56,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 
             UpdateDisplay();
 
-            if (_parentTree.Binding.ShouldInitiallyExpandSubTree(_item))
+            if (_parentTree.Binding.IsInitiallyExpanded(_item))
                 this.Expand();
         }
 

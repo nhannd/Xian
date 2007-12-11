@@ -43,7 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ActionModelRenderer.cs" />
+    <Compile Include="HtmlActionModelRenderer.cs" />
     <Compile Include="Actions\Action.cs" />
     <Compile Include="Actions\ActionAttribute.cs" />
     <Compile Include="Actions\ActionAttributeProcessor.cs" />
@@ -202,17 +202,16 @@
     <Compile Include="Trees\TreeItemBindingBase.cs" />
     <Compile Include="Trees\Tree.cs" />
     <Compile Include="Trees\TreeItemBinding.cs" />
-    <Compile Include="Validation\AllNodesContainerValidationStrategy.cs" />
+    <Compile Include="Validation\AllComponentsValidationStrategy.cs" />
     <Compile Include="Validation\IValidationRuleSet.cs" />
     <Compile Include="Validation\IValidationRule.cs" />
-    <Compile Include="Validation\NoNodesContainerValidationStrategy.cs" />
+    <Compile Include="Validation\NoComponentsValidationStrategy.cs" />
     <Compile Include="Validation\ValidationAttributes.cs" />
     <Compile Include="Validation\ValidationAttributeException.cs" />
-    <Compile Include="Validation\ValidationRulesSettings.cs" />
     <Compile Include="Validation\ValidationResult.cs" />
     <Compile Include="Validation\ValidationRuleSet.cs" />
     <Compile Include="Validation\ValidationRule.cs" />
-    <Compile Include="Validation\VisitedNodesContainerValidationStrategy.cs" />
+    <Compile Include="Validation\StartedComponentsValidationStrategy.cs" />
     <Compile Include="ApplicationComponent.cs" />
     <Compile Include="AssociateViewAttribute.cs" />
     <Compile Include="Command.cs" />

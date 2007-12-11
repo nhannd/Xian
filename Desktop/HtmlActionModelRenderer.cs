@@ -29,36 +29,45 @@
 
 #endregion
 
-namespace ClearCanvas.Desktop.Validation
+using System;
+using ClearCanvas.Desktop.Actions;
+
+namespace ClearCanvas.Desktop
 {
-    /// <summary>
-    /// Implements a validation strategy that does not consider any nodes.
-    /// </summary>
-    /// <remarks>
-	/// This is effectively equivalent to having no validation at all.  The 
-	/// container is always considered valid, regardless of the validity
-	/// of contained nodes.
-	/// </remarks>
-    public class NoNodesContainerValidationStrategy : IApplicationComponentContainerValidationStrategy
+	//TODO (Jon): would rather not have people using this, if possible.
+
+	/// <summary>
+	/// A helper class for rendering an action model as HTML.
+	/// </summary>
+    public class HtmlActionModelRenderer
     {
-        #region IApplicationComponentContainerValidationStrategy Members
-
 		/// <summary>
-		/// Returns false.
+		/// Searches <paramref name="actionNode"/> and returns the action (represented as HTML) whose label matches
+		/// <paramref name="labelSearch"/>.
 		/// </summary>
-        public bool HasValidationErrors(IApplicationComponentContainer container)
+		/// <param name="actionNode">The node to be searched.</param>
+		/// <param name="labelSearch">The label to match on.</param>
+		/// <param name="actionLabel">The new label to be applied to the action in the returned HTML.</param>
+		/// <returns>The found action represented as HTML, otherwise an empty string.</returns>
+        public string GetHTML(ActionModelNode actionNode, string labelSearch, string actionLabel)
         {
-            return false;
+            IAction[] actions = actionNode.GetActionsInOrder();
+            if (actions.Length == 0)
+                return "";
+
+            // find the action corresponding to the action label, if exist
+            foreach (Action action in actions)
+            {
+                if (action.Label == labelSearch)
+                    return GetHTML(action.Path.LocalizedPath, actionLabel);
+            }
+
+            return "";
         }
 
-		/// <summary>
-		/// Does nothing.
-		/// </summary>
-        public void ShowValidation(IApplicationComponentContainer container, bool show)
+        private static string GetHTML(string actionPath, string actionLabel)
         {
-            // do nothing
+            return String.Format("<a href=\"action://{0}\">{1}</a>", actionPath, actionLabel);
         }
-
-        #endregion
     }
 }

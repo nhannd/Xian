@@ -74,7 +74,7 @@ namespace ClearCanvas.Desktop.Actions
         /// <param name="actionID">The logical action ID.</param>
         /// <param name="path">The action path.</param>
         /// <param name="resourceResolver">A resource resolver that will be used to resolve icons associated with this action.</param>
-        public Action(string actionID, ActionPath path, IResourceResolver resourceResolver)
+        protected Action(string actionID, ActionPath path, IResourceResolver resourceResolver)
         {
             _actionID = actionID;
             _path = path;
@@ -94,7 +94,7 @@ namespace ClearCanvas.Desktop.Actions
         /// <remarks>
 		///  The visibility of the action is affected.
 		/// </remarks>
-        public ISpecification PermissionSpecification
+		internal ISpecification PermissionSpecification
         {
             get { return _permissionSpec; }
             set { _permissionSpec = value; }

@@ -30,6 +30,7 @@
 #endregion
 
 using System.Collections;
+using System.Collections.Generic;
 
 namespace ClearCanvas.Desktop.Trees
 {
@@ -56,7 +57,7 @@ namespace ClearCanvas.Desktop.Trees
         /// </summary>
         /// <param name="binding">The tree item binding.</param>
         /// <param name="items">The set of items that are initially contained in this tree.</param>
-        public Tree(ITreeItemBinding binding, IEnumerable items)
+        public Tree(ITreeItemBinding binding, IEnumerable<TItem> items)
         {
             _binding = binding;
             _items = new ItemCollection<TItem>();

@@ -41,7 +41,7 @@ namespace ClearCanvas.Desktop.Actions
         /// <summary>
         /// Constructor.
         /// </summary>
-        public ActionBuilderException(string message)
+        internal ActionBuilderException(string message)
             : base(message)
         {
         }

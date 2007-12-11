@@ -37,17 +37,10 @@ using ClearCanvas.Common.Utilities;
 namespace ClearCanvas.Desktop
 {
     /// <summary>
-    /// Abstract base class for collections of <see cref="DesktopObject"/> subclasses.
-    /// </summary>
-    public abstract class DesktopObjectCollection
-    {
-    }
-
-    /// <summary>
     /// Generic abstract base class for collections of <see cref="DesktopObject"/> subclasses.
     /// </summary>
     /// <typeparam name="T">The type of <see cref="DesktopObject"/> subclass.</typeparam>
-    public abstract class DesktopObjectCollection<T> : DesktopObjectCollection, IEnumerable<T>, IDisposable
+    public abstract class DesktopObjectCollection<T> : IEnumerable<T>, IDisposable
         where T : DesktopObject
     {
 

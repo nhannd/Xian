@@ -31,6 +31,8 @@
 
 namespace ClearCanvas.Desktop
 {
+	//TODO (Stewart): Try to get rid of this.
+
 	/// <summary>
 	/// For use with the <see cref="DialogComponentContainer"/> class.
 	/// </summary>

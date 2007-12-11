@@ -38,7 +38,14 @@ namespace ClearCanvas.Desktop.Actions
     /// </summary>
     public class ActionModelNodeList : List<ActionModelNode>
     {
-        /// <summary>
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		internal ActionModelNodeList()
+		{
+		}
+
+    	/// <summary>
         /// Returns the child node whose <see cref="ActionModelNode.PathSegment"/> 
         /// <see cref="ClearCanvas.Desktop.PathSegment.LocalizedText"/> property
         /// is equal to the specified value.

@@ -49,7 +49,7 @@ namespace ClearCanvas.Desktop.Actions
 		/// <param name="actionID">The unique identifer of the action.</param>
         /// <param name="observedProperty">The name of the property to bind to.</param>
         /// <param name="observedChangeEvent">The name of the event to bind to that notifies subscribers of changes in the property value.</param>
-        public StateObserverAttribute(string actionID, string observedProperty, string observedChangeEvent)
+        protected StateObserverAttribute(string actionID, string observedProperty, string observedChangeEvent)
             : base(actionID)
         {
             _observedProperty = observedProperty;

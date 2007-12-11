@@ -69,7 +69,6 @@ namespace ClearCanvas.Desktop
         public TItem Item
         {
             get { return _item; }
-            set { _item = value; }
         }
 
 		/// <summary>

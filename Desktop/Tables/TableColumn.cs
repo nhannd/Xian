@@ -77,7 +77,7 @@ namespace ClearCanvas.Desktop.Tables
             SetColumnValueDelegate<TItem, TColumn> valueSetter,
             float widthFactor,
             Comparison<TItem> comparison,
-            uint cellRow)
+            int cellRow)
             : base(columnName, typeof(TColumn), widthFactor, comparison, cellRow)
         {
             _valueGetter = valueGetter;
@@ -93,7 +93,7 @@ namespace ClearCanvas.Desktop.Tables
         /// <param name="valueGetter">A delegate that accepts an item and pulls the column value from the item.</param>
         /// <param name="valueSetter">A delegate that accepts an item and a value, and pushes the value to the item.  May be null if the column is read-only.</param>
         /// <param name="cellRow">The cell row this column will be displayed in.</param>
-        public TableColumn(string columnName, GetColumnValueDelegate<TItem, TColumn> valueGetter, SetColumnValueDelegate<TItem, TColumn> valueSetter, uint cellRow)
+        public TableColumn(string columnName, GetColumnValueDelegate<TItem, TColumn> valueGetter, SetColumnValueDelegate<TItem, TColumn> valueSetter, int cellRow)
             : this(columnName, valueGetter, valueSetter, 1.0f, null, cellRow)
         {
         }
@@ -111,7 +111,7 @@ namespace ClearCanvas.Desktop.Tables
             GetColumnValueDelegate<TItem, TColumn> valueGetter,
             SetColumnValueDelegate<TItem, TColumn> valueSetter,
             float widthFactor, 
-            uint cellRow)
+            int cellRow)
             : this(columnName, valueGetter, valueSetter, widthFactor, null, cellRow)
         {
         }
@@ -122,7 +122,7 @@ namespace ClearCanvas.Desktop.Tables
         /// <param name="columnName">The name of the column.</param>
         /// <param name="valueGetter">A delegate that accepts an item and pulls the column value from the item.</param>
         /// <param name="cellRow">The cell row this column will be display in.</param>
-        public TableColumn(string columnName, GetColumnValueDelegate<TItem, TColumn> valueGetter, uint cellRow)
+        public TableColumn(string columnName, GetColumnValueDelegate<TItem, TColumn> valueGetter, int cellRow)
             : this(columnName, valueGetter, null, 1.0f, null, cellRow)
         {
         }
@@ -134,7 +134,7 @@ namespace ClearCanvas.Desktop.Tables
         /// <param name="valueGetter">A delegate that accepts an item and pulls the column value from the item.</param>
         /// <param name="widthFactor">A weighting factor that is applied to the width of the column.</param>
 		/// <param name="cellRow">The cell row this column will be displayed in.</param>
-        public TableColumn(string columnName, GetColumnValueDelegate<TItem, TColumn> valueGetter, float widthFactor, uint cellRow)
+        public TableColumn(string columnName, GetColumnValueDelegate<TItem, TColumn> valueGetter, float widthFactor, int cellRow)
             : this(columnName, valueGetter, null, widthFactor, null, cellRow)
         {
         }

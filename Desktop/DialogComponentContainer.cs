@@ -42,6 +42,8 @@ namespace ClearCanvas.Desktop
     {
     }
 
+	//TODO (Stewart): Try to get rid of this altogether.
+
 	/// <summary>
 	/// A container class for hosting <see cref="IApplicationComponent"/>s in a dialog
 	/// box that can be dismissed with Ok or Cancel.

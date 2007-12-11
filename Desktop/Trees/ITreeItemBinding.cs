@@ -92,7 +92,7 @@ namespace ClearCanvas.Desktop.Trees
         /// <summary>
         /// Gets a value indicating if the item should be expanded when the tree is initially loaded.
         /// </summary>
-        bool ShouldInitiallyExpandSubTree(object item);
+        bool IsInitiallyExpanded(object item);
 
         /// <summary>
         /// Asks the specified item if it can accept the specified drop data in a drag-drop operation.

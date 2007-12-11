@@ -85,7 +85,7 @@ namespace ClearCanvas.Desktop
         /// </summary>
 		/// <param name="reason">The reason the <see cref="DesktopObject"/> is closing.</param>
 		/// <param name="interaction">The user interaction policy for the closing object.</param>
-		public ClosingEventArgs(CloseReason reason, UserInteraction interaction)
+		internal ClosingEventArgs(CloseReason reason, UserInteraction interaction)
             : this(reason, interaction, false)
         {
         }
@@ -96,7 +96,7 @@ namespace ClearCanvas.Desktop
 		/// <param name="reason">The reason the <see cref="DesktopObject"/> is closing.</param>
 		/// <param name="interaction">The user interaction policy for the closing object.</param>
 		/// <param name="cancel">A boolean value indicating whether the close operation should be cancelled.</param>
-        public ClosingEventArgs(CloseReason reason, UserInteraction interaction, bool cancel)
+		internal ClosingEventArgs(CloseReason reason, UserInteraction interaction, bool cancel)
         {
             _reason = reason;
             _interaction = interaction;
@@ -143,7 +143,7 @@ namespace ClearCanvas.Desktop
 		/// <param name="item">The item that is being closed.</param>
 		/// <param name="interaction">The user interaction policy for the closing object.</param>
 		/// <param name="cancel">A boolean value indicating whether the close operation should be cancelled.</param>
-        public ClosingItemEventArgs(TItem item, CloseReason reason, UserInteraction interaction, bool cancel)
+		internal ClosingItemEventArgs(TItem item, CloseReason reason, UserInteraction interaction, bool cancel)
             :base(item)
         {
             _reason = reason;

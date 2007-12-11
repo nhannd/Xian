@@ -34,10 +34,11 @@ using System;
 namespace ClearCanvas.Desktop.Tables
 {
     /// <summary>
-    /// A delegate for selecting color based on an object.
+    /// A delegate for selecting color based on an object based on
+    /// an item in <see cref="ITable.Items"/>.
     /// </summary>
     /// <returns>Name of a predefined color.</returns>
-    public delegate string ColorSelector(object o);
+    public delegate string ColorSelector(object item);
 
     /// <summary>
     /// Defines the interface to a table, which provides a presentation model for viewing data in a tabular form.
@@ -81,7 +82,7 @@ namespace ClearCanvas.Desktop.Tables
         /// <summary>
 		/// Raised after the table is sorted.
         /// </summary>
-        event EventHandler SortEvent;
+        event EventHandler Sorted;
 
         /// <summary>
         /// Gets the cached sort parameters, or returns null if this table has not been sorted.
@@ -119,15 +120,16 @@ namespace ClearCanvas.Desktop.Tables
         /// </summary>
         uint CellRowCount { get; }
 
+		//TODO (Jon) : just return the string name.
         /// <summary>
-        /// Gets and sets the background color of a cell row.
+        /// Gets the <see cref="ColorSelector"/>for the background of a cell row.
         /// </summary>
-        ColorSelector BackgroundColorSelector { get; set; }
+        ColorSelector BackgroundColorSelector { get; }
 
         /// <summary>
-        /// Gets and sets the outline color of a cell row.
+		/// Gets <see cref="ColorSelector"/> for the outline of a cell row.
         /// </summary>
-        ColorSelector OutlineColorSelector { get; set; }
+        ColorSelector OutlineColorSelector { get; }
     }
 
     /// <summary>

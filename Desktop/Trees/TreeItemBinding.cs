@@ -64,7 +64,7 @@ namespace ClearCanvas.Desktop.Trees
 	/// <summary>
 	/// A delegate that gets whether or not the sub-tree should be expanded for <param name="item"/>.
 	/// </summary>
-    public delegate bool ShouldExpandSubTreeDelegate<T>(T item);
+    public delegate bool IsInitiallyExpandedDelegate<T>(T item);
 	/// <summary>
 	/// A delegate that determines whether or not <paramref name="item"/> can accept a dropped item.
 	/// </summary>
@@ -87,7 +87,7 @@ namespace ClearCanvas.Desktop.Trees
         private IconSetProviderDelegate<TItem> _iconSetIndexProvider;
         private ResourceResolverProviderDelegate<TItem> _resourceResolverProvider;
         private CanHaveSubTreeDelegate<TItem> _canHaveSubTreeHandler;
-        private ShouldExpandSubTreeDelegate<TItem> _shouldInitiallyExpandSubTreeHandler;
+        private IsInitiallyExpandedDelegate<TItem> _isInitiallyExpandedHandler;
         private TreeProviderDelegate<TItem> _subTreeProvider;
         private CanAcceptDropDelegate<TItem> _canAcceptDropHandler;
         private AcceptDropDelegate<TItem> _acceptDropHandler;
@@ -187,10 +187,10 @@ namespace ClearCanvas.Desktop.Trees
         /// <summary>
         /// Gets or sets the subtree expansion state provider for this binding.
         /// </summary>
-        public ShouldExpandSubTreeDelegate<TItem> ShouldInitiallyExpandSubTreeHandler
+        public IsInitiallyExpandedDelegate<TItem> IsInitiallyExpandedHandler
         {
-            get { return _shouldInitiallyExpandSubTreeHandler; }
-            set { _shouldInitiallyExpandSubTreeHandler = value; }
+            get { return _isInitiallyExpandedHandler; }
+            set { _isInitiallyExpandedHandler = value; }
         }
 
         /// <summary>
@@ -276,9 +276,9 @@ namespace ClearCanvas.Desktop.Trees
     	///<summary>
     	/// Gets a value indicating if the item should be expanded when the tree is initially loaded.
     	///</summary>
-    	public override bool ShouldInitiallyExpandSubTree(object item)
+    	public override bool IsInitiallyExpanded(object item)
         {
-             return _shouldInitiallyExpandSubTreeHandler == null ? base.ShouldInitiallyExpandSubTree(item) : _shouldInitiallyExpandSubTreeHandler((TItem)item);
+             return _isInitiallyExpandedHandler == null ? base.IsInitiallyExpanded(item) : _isInitiallyExpandedHandler((TItem)item);
         }
 
     	///<summary>

@@ -46,7 +46,7 @@ namespace ClearCanvas.Desktop
         /// Default constructor.
         /// </summary>
         /// <param name="component">The component to be hosted.</param>
-        public ApplicationComponentHost(IApplicationComponent component)
+        protected ApplicationComponentHost(IApplicationComponent component)
         {
             _component = component;
             _component.SetHost(this);

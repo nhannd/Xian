@@ -69,7 +69,7 @@ namespace ClearCanvas.Desktop.Tables
 		private bool _visible = true;
         private Type _columnType;
         private float _widthFactor;
-        private uint _cellRow;
+        private int _cellRow;
 
         private Comparison<TItem> _comparison;
 		private event EventHandler _visibilityChangedEvent;
@@ -83,7 +83,7 @@ namespace ClearCanvas.Desktop.Tables
         /// <param name="columnType">The type of value that the column holds.</param>
 		/// <param name="widthFactor">A weighting factor that is applied to the width of the column.</param>
         /// <param name="comparison">A custom comparison operator that is used for sorting based on this column.</param>
-        public TableColumnBase(
+        protected TableColumnBase(
 			string columnName, 
 			Type columnType, 
 			float widthFactor, 
@@ -100,12 +100,12 @@ namespace ClearCanvas.Desktop.Tables
         /// <param name="widthFactor">A weighting factor that is applied to the width of the column.</param>
         /// <param name="comparison">A custom comparison operator that is used for sorting based on this column.</param>
         /// <param name="cellRow">The cell row this column will be displayed in.</param>
-        public TableColumnBase(
+        protected TableColumnBase(
             string columnName,
             Type columnType,
             float widthFactor,
             Comparison<TItem> comparison,
-            uint cellRow)
+            int cellRow)
         {
             _name = columnName;
             _widthFactor = widthFactor;
@@ -195,7 +195,7 @@ namespace ClearCanvas.Desktop.Tables
     	/// <summary>
     	/// Occurs when the <see cref="Visible"/> property has changed.
     	/// </summary>
-    	public event EventHandler VisibilityChanged
+    	public event EventHandler VisibleChanged
 		{
 			add { _visibilityChangedEvent += value; }
 			remove { _visibilityChangedEvent -= value; }
@@ -263,7 +263,7 @@ namespace ClearCanvas.Desktop.Tables
     	/// <summary>
     	/// Gets the cell row for which this column will be displayed in.
     	/// </summary>
-    	public uint CellRow
+    	public int CellRow
         {
             get { return _cellRow; }
         }

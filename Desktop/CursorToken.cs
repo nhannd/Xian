@@ -34,6 +34,7 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.Desktop
 {
+	//TODO (Stewart): Refactor to get rid of assembly and use resolver.
 	/// <summary>
 	/// A helper class for storing information about cursors that are to be
 	/// shown in the view.

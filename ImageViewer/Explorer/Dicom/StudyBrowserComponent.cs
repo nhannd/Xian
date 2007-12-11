@@ -731,7 +731,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				// the appropriate columns.
 				foreach (SearchResult result in _searchResults.Values)
 				{
-					foreach (ITableColumn column in result.StudyList.Columns)
+					foreach (TableColumnBase<StudyItem> column in result.StudyList.Columns)
 					{
 						if (column.Name == SR.ColumnHeadingPhoneticName ||
 							column.Name == SR.ColumnHeadingIdeographicName)

@@ -38,7 +38,7 @@ namespace ClearCanvas.Desktop
     ///<summary>
     /// Provides <see cref="IExceptionPolicy"/> objects via static <see cref="GetPolicy"/> method.
     ///</summary>
-    public class ExceptionPolicyFactory
+    internal class ExceptionPolicyFactory
     {
 
         private sealed class DefaultExceptionPolicyKey

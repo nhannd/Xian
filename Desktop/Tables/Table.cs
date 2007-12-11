@@ -146,7 +146,7 @@ namespace ClearCanvas.Desktop.Tables
     	/// <summary>
 		/// Raised after the table is sorted.
     	/// </summary>
-    	public event EventHandler SortEvent
+    	public event EventHandler Sorted
         {
             add { _sortEvent += value; }
             remove { _sortEvent -= value; }

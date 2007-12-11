@@ -41,7 +41,14 @@ namespace ClearCanvas.Desktop.Trees
 	/// </remarks>
     public abstract class TreeItemBindingBase : ITreeItemBinding
     {
-        #region ITreeItemBinding members
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		protected TreeItemBindingBase()
+		{
+		}
+
+    	#region ITreeItemBinding members
 
     	/// <summary>
     	/// Gets the text to display for the node representing the specified item.
@@ -104,7 +111,7 @@ namespace ClearCanvas.Desktop.Trees
     	/// <summary>
     	/// Gets a value indicating if the item should be expanded when the tree is initially loaded.
     	/// </summary>
-    	public virtual bool ShouldInitiallyExpandSubTree(object item)
+    	public virtual bool IsInitiallyExpanded(object item)
         {
             return false;
         }

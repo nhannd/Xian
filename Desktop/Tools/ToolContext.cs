@@ -40,5 +40,11 @@ namespace ClearCanvas.Desktop.Tools
 	/// </remarks>
     public abstract class ToolContext : IToolContext
     {
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		protected ToolContext()
+		{
+		}
     }
 }

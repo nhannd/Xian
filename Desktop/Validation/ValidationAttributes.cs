@@ -39,7 +39,9 @@ using ClearCanvas.Desktop.Tables;
 
 namespace ClearCanvas.Desktop.Validation
 {
-    /// <summary>
+	//TODO (Jon): Separate classes into files.
+
+	/// <summary>
     /// Abstract base class for validation attributes.
     /// </summary>
     [AttributeUsage(AttributeTargets.Property, AllowMultiple=true, Inherited=true)]
@@ -273,71 +275,6 @@ namespace ClearCanvas.Desktop.Validation
         }
     }
 
-	//TODO (Jon): actually this won't work because there is no data-binding to an ITable/IEnumerable property,
-	//hence nowhere to display the error symbol on the UI
-	//leave as internal for now until we figure out how to resolve this
-	
-	/// <summary>
-    /// Validates that the number of items in an <see cref="IEnumerable"/> property is within a specified range.
-    /// </summary>
-    /// <remarks>
-    /// Can also be applied to properties of type <see cref="ITable"/>, in which case it is applied to the
-    /// <see cref="ITable.Items"/> collection.
-	/// </remarks>
-    internal class ValidateCountAttribute : ValidationAttribute
-    {
-        private int _min;
-        private int _max;
-
-        /// <summary>
-        /// Constructor.
-        /// </summary>
-        public ValidateCountAttribute(int min, int max)
-        {
-            Platform.CheckArgumentRange(min, 0, int.MaxValue, "min");
-            Platform.CheckArgumentRange(max, -1, int.MaxValue, "max");
-
-            _min = min;
-            _max = max;
-        }
-
-		/// <summary>
-		/// Factory method to create an <see cref="IValidationRule"/> based on this attribute.
-		/// </summary>
-		/// <param name="property">The property on which the attribute is applied.</param>
-		/// <param name="getter">A delegate that, when invoked, returns the current value of the property.</param>
-		/// <param name="customMessage">A custom message to be displayed, or null if none was supplied.</param>
-		/// <returns></returns>
-		protected override IValidationRule CreateRule(PropertyInfo property, PropertyGetter getter, string customMessage)
-        {
-            CheckPropertyIsType(property, typeof(ITable), typeof(IEnumerable));
-
-            return new ValidationRule(property.Name,
-               delegate(IApplicationComponent component)
-               {
-                   IEnumerable value = null;
-                   if (value is ITable)
-                       value = ((ITable)getter(component)).Items;
-                   else
-                       value = (IEnumerable)getter(component);
-
-                   int count = 0;
-                   if(value is IList)
-                       count = (value as IList).Count;
-                   else if(value is ICollection)
-                       count = (value as ICollection).Count;
-                   else
-                   {
-                       // enumerate the items to count them
-                       foreach(object obj in value)
-                           count++;
-                   }
-
-                   return new ValidationResult(count >= _min && (_max == -1 || count <= _max), customMessage);
-               });
-        }
-    }
-
     /// <summary>
     /// Abstract base class for comparison validations.
     /// </summary>
@@ -351,7 +288,7 @@ namespace ClearCanvas.Desktop.Validation
         /// Constructor.
         /// </summary>
         /// <param name="referenceProperty">The name of another property to compare against.</param>
-		public ValidateCompareAttribute(string referenceProperty)
+		protected ValidateCompareAttribute(string referenceProperty)
         {
             _referenceProperty = referenceProperty;
         }
@@ -360,7 +297,7 @@ namespace ClearCanvas.Desktop.Validation
 		/// Constructor.
 		/// </summary>
 		/// <param name="referenceValue">A value to compare against.</param>
-		public ValidateCompareAttribute(int referenceValue)
+		protected ValidateCompareAttribute(int referenceValue)
         {
             _referenceValue = referenceValue;
         }
@@ -369,7 +306,7 @@ namespace ClearCanvas.Desktop.Validation
 		/// Constructor.
 		/// </summary>
 		/// <param name="referenceValue">A value to compare against.</param>
-		public ValidateCompareAttribute(float referenceValue)
+		protected ValidateCompareAttribute(float referenceValue)
         {
             _referenceValue = referenceValue;
         }
@@ -378,7 +315,7 @@ namespace ClearCanvas.Desktop.Validation
 		/// Constructor.
 		/// </summary>
 		/// <param name="referenceValue">A value to compare against.</param>
-		public ValidateCompareAttribute(double referenceValue)
+		protected ValidateCompareAttribute(double referenceValue)
         {
             _referenceValue = referenceValue;
         }

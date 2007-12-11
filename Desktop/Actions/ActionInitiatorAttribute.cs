@@ -40,7 +40,7 @@ namespace ClearCanvas.Desktop.Actions
 		/// Constructor.
 		/// </summary>
 		/// <param name="actionID">The unique identifer of the action.</param>
-		public ActionInitiatorAttribute(string actionID)
+		protected ActionInitiatorAttribute(string actionID)
             : base(actionID)
         {
         }

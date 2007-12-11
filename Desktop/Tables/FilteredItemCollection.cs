@@ -40,7 +40,7 @@ namespace ClearCanvas.Desktop.Tables
     /// Adds filtering capablities to <see cref="ItemCollection{TItem}"/> 
     /// for use with <see cref="ITable{TItem}"/>s.
     /// </summary>
-    public class FilteredItemCollection<TItem> : ItemCollection<TItem>, IItemCollection<TItem>
+    internal class FilteredItemCollection<TItem> : ItemCollection<TItem>, IItemCollection<TItem>
     {
         private readonly TableColumnCollection<TItem> _columns;
         private readonly TableFilterParams _filterParams;

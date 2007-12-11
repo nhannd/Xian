@@ -44,7 +44,7 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Constructor.
         /// </summary>
-        public ClosedEventArgs(CloseReason reason)
+        internal ClosedEventArgs(CloseReason reason)
         {
             _reason = reason;
         }
@@ -69,7 +69,7 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Constructor.
         /// </summary>
-        public ClosedItemEventArgs(TItem item, CloseReason reason)
+		internal ClosedItemEventArgs(TItem item, CloseReason reason)
             :base(item)
         {
             _reason = reason;

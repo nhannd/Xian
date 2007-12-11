@@ -123,6 +123,8 @@ namespace ClearCanvas.Desktop.Actions
             remove { _checkedChanged -= value; }
         }
 
+		//TODO (Stewart): Make this part of ClickActionFlags.
+
         /// <summary>
         /// Gets a value indicating whether parent items should be checked if this
         /// <see cref="IClickAction"/> is checked.
