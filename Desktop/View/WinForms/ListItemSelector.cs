@@ -49,9 +49,6 @@ namespace ClearCanvas.Desktop.View.WinForms
         private event EventHandler _itemAdded;
         private event EventHandler _itemRemoved;
 
-        private event EventHandler _availableItemsTableSelectionChanged;
-        private event EventHandler _selectedItemsTableSelectionChanged;
-
         #endregion
 
         #region Constructor
@@ -59,15 +56,6 @@ namespace ClearCanvas.Desktop.View.WinForms
         public ListItemSelector()
         {
             InitializeComponent();
-
-            _availableItems.SelectionChanged += _availableItems_SelectionChanged;
-            _selectedItems.SelectionChanged += _selectedItems_SelectionChanged;
-        }
-
-        ~ListItemSelector()
-        {
-            _availableItems.SelectionChanged -= _availableItems_SelectionChanged;
-            _selectedItems.SelectionChanged -= _selectedItems_SelectionChanged;
         }
 
         #endregion
@@ -126,8 +114,8 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         public event EventHandler SelectedItemsTableSelectionChanged
         {
-            add { _selectedItemsTableSelectionChanged += value; }
-            remove { _selectedItemsTableSelectionChanged -= value; }
+            add { _selectedItems.SelectionChanged += value; }
+            remove { _selectedItems.SelectionChanged -= value; }
         }
 
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -139,8 +127,8 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         public event EventHandler AvailableItemsTableSelectionChanged
         {
-            add { _availableItemsTableSelectionChanged += value; }
-            remove { _availableItemsTableSelectionChanged -= value; }
+            add { _availableItems.SelectionChanged += value; }
+            remove { _availableItems.SelectionChanged -= value; }
         }
 
         #endregion
@@ -254,16 +242,6 @@ namespace ClearCanvas.Desktop.View.WinForms
                 table.MenuModel = model;
             else
                 table.MenuModel.Merge(model);
-        }
-
-        void _selectedItems_SelectionChanged(object sender, EventArgs e)
-        {
-            EventsHelper.Fire(_selectedItemsTableSelectionChanged, this, e);
-        }
-
-        void _availableItems_SelectionChanged(object sender, EventArgs e)
-        {
-            EventsHelper.Fire(_availableItemsTableSelectionChanged, this, e);
         }
 
         #endregion
