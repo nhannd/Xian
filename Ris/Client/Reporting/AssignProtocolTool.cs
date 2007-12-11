@@ -33,15 +33,15 @@ namespace ClearCanvas.Ris.Client.Reporting
             if (item == null)
                 return;
 
-            Document doc = DocumentManager.Get(item.AccessionNumber);
-            if (doc == null)
+            Workspace workspace = DocumentManager.Get<ProtocolEditorComponentDocument>(item.OrderRef, this.Context.DesktopWindow);
+            if (workspace == null)
             {
-                ProtocolEditorComponentDocument protocolEditorComponentDocument = new ProtocolEditorComponentDocument(item.AccessionNumber, item, this.Context, this.Context.DesktopWindow);
+                ProtocolEditorComponentDocument protocolEditorComponentDocument = new ProtocolEditorComponentDocument(item, this.Context);
                 protocolEditorComponentDocument.Open();
             }
             else
             {
-                doc.Activate();
+                workspace.Activate();
             }
         }
 

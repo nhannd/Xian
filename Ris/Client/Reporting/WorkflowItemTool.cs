@@ -67,10 +67,10 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         protected bool ActivateIfAlreadyOpen(ReportingWorklistItem item)
         {
-            Document doc = DocumentManager.Get(item.ProcedureStepRef);
-            if (doc != null)
+            Workspace workspace = DocumentManager.Get<ReportDocument>(item.ProcedureStepRef, this.Context.DesktopWindow);
+            if (workspace != null)
             {
-                doc.Activate();
+                workspace.Activate();
                 return true;
             }
             return false;

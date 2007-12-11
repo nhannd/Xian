@@ -147,13 +147,13 @@ namespace ClearCanvas.Ris.Client.Adt
             if (this.ContextBase is ITechnologistWorkflowItemToolContext)
             {
                 ITechnologistWorkflowItemToolContext context = (ITechnologistWorkflowItemToolContext)this.ContextBase;
-                ModalityWorklistItem item = CollectionUtils.FirstElement<ModalityWorklistItem>(context.SelectedItems);
+                ModalityWorklistItem item = CollectionUtils.FirstElement(context.SelectedItems);
                 OpenPatient(item.PatientProfileRef, context.DesktopWindow);
             }
             if (this.ContextBase is IRegistrationWorkflowItemToolContext)
             {
                 IRegistrationWorkflowItemToolContext context = (IRegistrationWorkflowItemToolContext)this.ContextBase;
-                RegistrationWorklistItem item = CollectionUtils.FirstElement<RegistrationWorklistItem>(context.SelectedItems);
+                RegistrationWorklistItem item = CollectionUtils.FirstElement(context.SelectedItems);
                 OpenPatient(item.PatientProfileRef, context.DesktopWindow);
             }
             else if (this.ContextBase is IPreviewToolContext)
@@ -168,19 +168,19 @@ namespace ClearCanvas.Ris.Client.Adt
             }
         }
 
-        protected static void OpenPatient(EntityRef profile, IDesktopWindow window)
+        protected static void OpenPatient(EntityRef profileRef, IDesktopWindow window)
         {
             try
             {
-                Document doc = DocumentManager.Get(profile.ToString());
-                if (doc == null)
+                Workspace workspace = DocumentManager.Get<PatientBiographyDocument>(profileRef, window);
+                if (workspace == null)
                 {
-                    doc = new PatientBiographyDocument(profile, window);
+                    Document doc = new PatientBiographyDocument(profileRef, window);
                     doc.Open();
                 }
                 else
                 {
-                    doc.Activate();
+                    workspace.Activate();
                 }
             }
             catch (Exception e)

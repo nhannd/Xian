@@ -105,15 +105,15 @@ namespace ClearCanvas.Ris.Client.Adt
                         GetReferencedPatientRequest request = new GetReferencedPatientRequest(selectedQueueItem.QueueItemRef);
                         GetReferencedPatientResponse response = service.GetReferencedPatient(request);
 
-                        Document doc = DocumentManager.Get(response.PatientProfileRef);
-                        if (doc == null)
+                        Workspace workspace = DocumentManager.Get<PatientBiographyDocument>(response.PatientProfileRef, window);
+                        if (workspace == null)
                         {
-                            doc = new PatientBiographyDocument(response.PatientProfileRef, window);
+                            Document doc = new PatientBiographyDocument(response.PatientProfileRef, window);
                             doc.Open();
                         }
                         else
                         {
-                            doc.Activate();
+                            workspace.Activate();
                         }
                     });
             }

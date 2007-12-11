@@ -24,13 +24,9 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         #region Constructor
 
-        public ProtocolEditorComponentDocument(string accessionNumber, ReportingWorklistItem item, IReportingWorkflowItemToolContext context, IDesktopWindow desktopWindow)
-            : base(accessionNumber, desktopWindow)
+        public ProtocolEditorComponentDocument(ReportingWorklistItem item, IReportingWorkflowItemToolContext context)
+            : base(item.OrderRef, context.DesktopWindow)
         {
-            if(string.IsNullOrEmpty(accessionNumber))
-            {
-                throw new ArgumentException("Cannot be null or empty", "accessionNumber");
-            }
             if(item == null)
             {
                 throw new ArgumentNullException("item");
@@ -44,12 +40,12 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         #region Document overrides
 
-        protected override string GetTitle()
+        public override string GetTitle()
         {
             return string.Format("A# {0} - {1}, {2}", _item.AccessionNumber, _item.PatientName.FamilyName, _item.PatientName.GivenName);
         }
 
-        protected override IApplicationComponent GetComponent()
+        public override IApplicationComponent GetComponent()
         {
             ProtocolEditorComponent component = new ProtocolEditorComponent(_item);
 
@@ -178,15 +174,15 @@ namespace ClearCanvas.Ris.Client.Reporting
             if (item == null)
                 return;
 
-            Document doc = DocumentManager.Get(item.AccessionNumber);
-            if (doc == null)
+            Workspace workspace = DocumentManager.Get<ProtocolEditorComponentDocument>(item.OrderRef, _context.DesktopWindow);
+            if (workspace == null)
             {
-                ProtocolEditorComponentDocument protocolEditorComponentDocument = new ProtocolEditorComponentDocument(item.AccessionNumber, item, _context, _context.DesktopWindow);
+                ProtocolEditorComponentDocument protocolEditorComponentDocument = new ProtocolEditorComponentDocument(item, _context);
                 protocolEditorComponentDocument.Open();
             }
             else
             {
-                doc.Activate();
+                workspace.Activate();
             }
         }
 

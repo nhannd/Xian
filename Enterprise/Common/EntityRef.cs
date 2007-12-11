@@ -175,7 +175,20 @@ namespace ClearCanvas.Enterprise.Common
         /// <returns>Formatted string containing the type and OID of the referenced object</returns>
         public override string ToString()
         {
-            return String.Format("{0}/{1}/{2}", _entityClass.ToString(), _entityOid.ToString(), _version.ToString());
+            return this.ToString(false);
+        }
+
+        /// <summary>
+        /// Provide a string representation of the reference.
+        /// </summary>
+        /// <param name="excludeVersion"></param>
+        /// <returns>Formatted string containing the type and OID of the referenced object</returns>
+        public string ToString(bool excludeVersion)
+        {
+            if (excludeVersion)
+                return String.Format("{0}/{1}", _entityClass.ToString(), _entityOid.ToString());
+            else
+                return String.Format("{0}/{1}/{2}", _entityClass.ToString(), _entityOid.ToString(), _version.ToString());
         }
 
         /// <summary>

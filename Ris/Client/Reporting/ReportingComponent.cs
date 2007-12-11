@@ -80,11 +80,50 @@ namespace ClearCanvas.Ris.Client.Reporting
             tabGroupContainer.AddTabGroup(new TabGroup(tabContainer1, 1.0f));
 
             ReportEditorComponent reportEditor = new ReportEditorComponent(_worklistItem.ProcedureStepRef);
-            //reportEditor.VerifyEvent += new EventHandler(reportEditor_VerifyEvent);
-            //reportEditor.SendToVerifyEvent += new EventHandler(reportEditor_SendToVerifyEvent);
-            //reportEditor.SendToTranscriptionEvent += new EventHandler(reportEditor_SendToTranscriptionEvent);
-            //reportEditor.SaveEvent += new EventHandler(reportEditor_SaveEvent);
-            //reportEditor.CloseComponentEvent += new EventHandler(reportEditor_CloseComponentEvent);
+
+            // Setup the various editor closed events.  Do not invalidate the ToBeReported folder type, since it's communual
+            reportEditor.VerifyEvent += delegate
+            {
+                // Source Folders
+                //DocumentManager.InvalidateFolder(typeof(Folders.ToBeReportedFolder));
+                DocumentManager.InvalidateFolder(typeof(Folders.DraftFolder));
+                DocumentManager.InvalidateFolder(typeof(Folders.ToBeVerifiedFolder));
+                // Destination Folders
+                DocumentManager.InvalidateFolder(typeof(Folders.VerifiedFolder));
+                this.Exit(ApplicationComponentExitCode.Accepted);
+            };
+            reportEditor.SendToVerifyEvent += delegate
+            {
+                // Source Folders
+                //DocumentManager.InvalidateFolder(typeof(Folders.ToBeReportedFolder));
+                DocumentManager.InvalidateFolder(typeof(Folders.DraftFolder));
+                // Destination Folders
+                DocumentManager.InvalidateFolder(typeof(Folders.ToBeVerifiedFolder));
+                this.Exit(ApplicationComponentExitCode.Accepted);
+            };
+            reportEditor.SendToTranscriptionEvent += delegate
+            {
+                // Source Folders
+                //DocumentManager.InvalidateFolder(typeof(Folders.ToBeReportedFolder));
+                DocumentManager.InvalidateFolder(typeof(Folders.DraftFolder));
+                // Destination Folders
+                DocumentManager.InvalidateFolder(typeof(Folders.InTranscriptionFolder));
+                this.Exit(ApplicationComponentExitCode.Accepted);
+            };
+            reportEditor.SaveEvent += delegate
+            {
+                // Source Folders
+                //DocumentManager.InvalidateFolder(typeof(Folders.ToBeReportedFolder));
+                DocumentManager.InvalidateFolder(typeof(Folders.VerifiedFolder));
+                // Destination Folders
+                DocumentManager.InvalidateFolder(typeof(Folders.DraftFolder));
+                DocumentManager.InvalidateFolder(typeof(Folders.ToBeVerifiedFolder));
+                this.Exit(ApplicationComponentExitCode.Accepted);
+            };
+            reportEditor.CloseComponentEvent += delegate
+            {
+                this.Exit(ApplicationComponentExitCode.None);
+            };
 
             this.Pane1 = new SplitPane("", reportEditor, 0.5f);
             this.Pane2 = new SplitPane("", tabGroupContainer, 0.5f);

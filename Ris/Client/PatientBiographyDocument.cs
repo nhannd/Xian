@@ -52,7 +52,7 @@ namespace ClearCanvas.Ris.Client
             _profileRef = profileRef;
         }
 
-        protected override string GetTitle()
+        public override string GetTitle()
         {
             if (_patientProfile != null)
             {
@@ -64,7 +64,7 @@ namespace ClearCanvas.Ris.Client
             return SR.TitlePatientProfile;   // doesn't matter, cause the component will set the title when it starts
         }
 
-        protected override IApplicationComponent GetComponent()
+        public override IApplicationComponent GetComponent()
         {
             List<AlertNotificationDetail> alertNotifications = null;
 

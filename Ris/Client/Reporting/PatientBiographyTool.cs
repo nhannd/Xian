@@ -111,19 +111,19 @@ namespace ClearCanvas.Ris.Client.Reporting
             }
         }
 
-        protected static void OpenPatient(EntityRef profile, IDesktopWindow window)
+        protected static void OpenPatient(EntityRef profileRef, IDesktopWindow window)
         {
             try
             {
-                Document doc = DocumentManager.Get(profile.ToString());
-                if (doc == null)
+                Workspace workspace = DocumentManager.Get<PatientBiographyDocument>(profileRef, window);
+                if (workspace == null)
                 {
-                    doc = new PatientBiographyDocument(profile, window);
+                    Document doc = new PatientBiographyDocument(profileRef, window);
                     doc.Open();
                 }
                 else
                 {
-                    doc.Activate();
+                    workspace.Activate();
                 }
             }
             catch (Exception e)

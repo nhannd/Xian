@@ -30,17 +30,9 @@
 #endregion
 
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Text;
-
-using ClearCanvas.Common;
 using ClearCanvas.Desktop;
-using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Client.Formatting;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
-using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client.Reporting
 {
@@ -54,12 +46,12 @@ namespace ClearCanvas.Ris.Client.Reporting
             _worklistItem = worklistItem;
         }
 
-        protected override string GetTitle()
+        public override string GetTitle()
         {
             return String.Format("Report - {0}", PersonNameFormat.Format(_worklistItem.PatientName));
         }
 
-        protected override IApplicationComponent GetComponent()
+        public override IApplicationComponent GetComponent()
         {
             return new ReportingComponent(_worklistItem);
         }

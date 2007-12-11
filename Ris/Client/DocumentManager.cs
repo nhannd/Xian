@@ -31,29 +31,66 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Client
 {
     public static class DocumentManager
     {
-        private static Dictionary<object, Document> _documents = new Dictionary<object, Document>();
+        private readonly static List<IFolderSystem> _folderSystems = new List<IFolderSystem>();
 
-        public static void Set(object key, Document doc)
+        public static Workspace Get<TDocument>(EntityRef subject, IDesktopWindow desktopWindow)
+            where TDocument : Document
         {
-            _documents[key] = doc;
+            return Get(GenerateDocumentKey<TDocument>(subject), desktopWindow);
         }
 
-        public static Document Get(object key)
+        public static Workspace Get(string documentKey, IDesktopWindow desktopWindow)
         {
-            return _documents.ContainsKey(key) ? _documents[key] : null;
+            return desktopWindow.Workspaces.Contains(documentKey) ? desktopWindow.Workspaces[documentKey] : null;
         }
 
-        public static void Remove(object key)
+        public static string GenerateDocumentKey<TDocument>(EntityRef subject)
+            where TDocument : Document
         {
-            _documents.Remove(key);
+            return GenerateDocumentKey(typeof(TDocument), subject);
         }
 
+        public static string GenerateDocumentKey(Document doc, EntityRef subject)
+        {
+            return GenerateDocumentKey(doc.GetType(), subject);
+        }
+
+        public static void RegisterFolderSystem(IFolderSystem folderSystem)
+        {
+            if (!_folderSystems.Contains(folderSystem))
+                _folderSystems.Add(folderSystem);
+        }
+
+        public static void UnregisterFolderSystem(IFolderSystem folderSystem)
+        {
+            if (_folderSystems.Contains(folderSystem))
+                _folderSystems.Remove(folderSystem);
+        }
+
+        public static void InvalidateFolder(Type folderType)
+        {
+            CollectionUtils.ForEach(_folderSystems,
+                delegate(IFolderSystem folderSystem)
+                {
+                    folderSystem.InvalidateFolder(folderType);
+                });
+        }
+
+        #region Private helper
+
+        private static string GenerateDocumentKey(Type documentType, EntityRef subject)
+        {
+            return string.Format("{0}+{1}", documentType, subject.ToString(true));
+        }
+
+        #endregion
     }
 }

@@ -33,13 +33,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
-using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client.Adt
 {

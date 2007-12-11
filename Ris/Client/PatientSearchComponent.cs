@@ -195,15 +195,15 @@ namespace ClearCanvas.Ris.Client
         {
             try
             {
-                Document doc = DocumentManager.Get(_selectedProfile.ProfileRef.ToString());
-                if (doc == null)
+                Workspace workspace = DocumentManager.Get<PatientBiographyDocument>(_selectedProfile.ProfileRef, this.Host.DesktopWindow);
+                if (workspace == null)
                 {
-                    doc = new PatientBiographyDocument(_selectedProfile.ProfileRef, this.Host.DesktopWindow);
+                    Document doc = new PatientBiographyDocument(_selectedProfile.ProfileRef, this.Host.DesktopWindow);
                     doc.Open();
                 }
                 else
                 {
-                    doc.Activate();
+                    workspace.Activate();
                 }
             }
             catch (Exception e)

@@ -42,13 +42,9 @@ namespace ClearCanvas.Ris.Client.Adt
         private readonly ModalityWorklistItem _item;
         private readonly IEnumerable _folders;
 
-        public TechnologistDocumentationDocument(string accessionNumber, ModalityWorklistItem item, IEnumerable folders, IDesktopWindow desktopWindow)
-            : base(accessionNumber, desktopWindow)
+        public TechnologistDocumentationDocument(ModalityWorklistItem item, IEnumerable folders, IDesktopWindow desktopWindow)
+            : base(item.OrderRef, desktopWindow)
         {
-            if(string.IsNullOrEmpty(accessionNumber))
-            {
-                throw new ArgumentException("Cannot be null or empty", "accessionNumber");
-            }
             if(item == null)
             {
                 throw new ArgumentNullException("item");
@@ -58,12 +54,12 @@ namespace ClearCanvas.Ris.Client.Adt
             _folders = folders;
         }
 
-        protected override string GetTitle()
+        public override string GetTitle()
         {
             return string.Format("A# {0} - {1}, {2}", _item.AccessionNumber, _item.PatientName.FamilyName, _item.PatientName.GivenName);
         }
 
-        protected override IApplicationComponent GetComponent()
+        public override IApplicationComponent GetComponent()
         {
             TechnologistDocumentationComponent component = new TechnologistDocumentationComponent(_item);
 

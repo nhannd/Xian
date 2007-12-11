@@ -47,6 +47,8 @@ namespace ClearCanvas.Ris.Client
         IToolSet ItemTools { get; }
         string PreviewUrl { get; }
 
+        void InvalidateFolder(Type folderType);
+
         void SelectedFolderChangedEventHandler(object sender, EventArgs e);
         void SelectedItemsChangedEventHandler(object sender, EventArgs e);
         void SelectedItemDoubleClickedEventHandler(object sender, EventArgs e);
@@ -93,10 +95,13 @@ namespace ClearCanvas.Ris.Client
 
             _itemTools = new ToolSet();
             _folderTools = new ToolSet();
+
+            DocumentManager.RegisterFolderSystem(this);
         }
 
         ~WorkflowFolderSystem()
         {
+            DocumentManager.UnregisterFolderSystem(this);
             Dispose(false);
         }
 

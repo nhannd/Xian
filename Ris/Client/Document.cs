@@ -30,79 +30,82 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Desktop;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client
 {
     public abstract class Document
     {
-        private object _docID;
-        private IWorkspace _workspace;
-        private IDesktopWindow _desktopWindow;
+        private readonly string _key;
+        private readonly IDesktopWindow _desktopWindow;
+        private event EventHandler<ClosedEventArgs> _closed;
 
-        private event EventHandler _closed;
-
-        public Document(object docID, IDesktopWindow desktopWindow)
+        public Document(EntityRef subject, IDesktopWindow desktopWindow)
         {
-            _docID = docID;
+            _key = DocumentManager.GenerateDocumentKey(this, subject);
             _desktopWindow = desktopWindow;
         }
 
         public void Open()
         {
-            LaunchWorkspace(GetComponent(), GetTitle());
+            if (_desktopWindow.Workspaces.Contains(_key))
+            {
+                _desktopWindow.Workspaces[_key].Activate();
+            }
+            else
+            {
+                Workspace workspace = LaunchWorkspace();
+                if (workspace != null)
+                    workspace.Closed += DocumentClosedEventHandler;
+            }
         }
 
         public bool Close()
         {
-            if (_workspace != null && _workspace.Close())
-            {
-                _workspace = null;
-                return true;
-            }
-            return false;
+            Workspace workspace = DocumentManager.Get(_key, _desktopWindow);
+            return workspace == null ? false : workspace.Close();
         }
 
-        public event EventHandler Closed
+        public event EventHandler<ClosedEventArgs> Closed
         {
             add { _closed += value; }
             remove { _closed -= value; }
         }
 
-        public void Activate()
+        public abstract string GetTitle();
+
+        public abstract IApplicationComponent GetComponent();
+
+        #region Private Helpers
+
+        private void DocumentClosedEventHandler(object sender, ClosedEventArgs e)
         {
-            _workspace.Activate();
+            EventsHelper.Fire(_closed, this, e);
         }
 
-        protected abstract string GetTitle();
-
-        protected abstract IApplicationComponent GetComponent();
-
-        protected void LaunchWorkspace(IApplicationComponent component, string title)
+        private Workspace LaunchWorkspace()
         {
+            Workspace workspace = null;
+
             try
             {
-                _workspace = ApplicationComponent.LaunchAsWorkspace(
+                workspace = ApplicationComponent.LaunchAsWorkspace(
                     _desktopWindow,
-                    component,
-                    title,
-                    delegate(IApplicationComponent c)
-                    {
-                        // remove from list of open editors
-                        DocumentManager.Remove(_docID);
-                        EventsHelper.Fire(_closed, this, EventArgs.Empty);
-                    });
-
-                DocumentManager.Set(_docID, this);
+                    GetComponent(),
+                    GetTitle(),
+                    _key);
             }
             catch (Exception e)
             {
                 // could not launch component
                 ExceptionHandler.Report(e, _desktopWindow);
             }
+
+            return workspace;
         }
+
+        #endregion
     }
 }

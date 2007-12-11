@@ -49,19 +49,19 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             try
             {
-                ModalityWorklistItem item = CollectionUtils.FirstElement<ModalityWorklistItem>(this.Context.SelectedItems);
+                ModalityWorklistItem item = CollectionUtils.FirstElement(this.Context.SelectedItems);
 
                 if (item != null)
                 {
-                    Document doc = DocumentManager.Get(item.AccessionNumber);
-                    if (doc == null)
+                    Workspace workspace = DocumentManager.Get<TechnologistDocumentationDocument>(item.OrderRef, this.Context.DesktopWindow);
+                    if (workspace == null)
                     {
-                        doc = new TechnologistDocumentationDocument(item.AccessionNumber, item, this.Context.Folders, this.Context.DesktopWindow);
+                        Document doc = new TechnologistDocumentationDocument(item, this.Context.Folders, this.Context.DesktopWindow);
                         doc.Open();
                     }
                     else
                     {
-                        doc.Activate();
+                        workspace.Activate();
                     }
                 }
 

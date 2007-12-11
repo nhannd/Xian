@@ -99,6 +99,8 @@ namespace ClearCanvas.Ris.Client.Adt
                 }
 
                 RandomUtils.RandomOrder(randomVisit, null);
+
+                context.FolderSystem.InvalidateFolder(typeof(Folders.ScheduledFolder));
             }
             catch (Exception e)
             {
