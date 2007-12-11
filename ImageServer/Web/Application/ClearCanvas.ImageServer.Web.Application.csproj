@@ -9,7 +9,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ClearCanvas.ImageServer.Web.Application</RootNamespace>
-    <AssemblyName>ClearCanvas.ImageServer.Web.Application</AssemblyName>
+    <AssemblyName>ClearCanvas.ImageServer.Web.Application.Assembly</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
