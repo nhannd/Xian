@@ -195,7 +195,7 @@ namespace ClearCanvas.Ris.Client
         {
             try
             {
-                Workspace workspace = DocumentManager.Get<PatientBiographyDocument>(_selectedProfile.ProfileRef, this.Host.DesktopWindow);
+                Workspace workspace = DocumentManager.Get<PatientBiographyDocument>(_selectedProfile.ProfileRef);
                 if (workspace == null)
                 {
                     Document doc = new PatientBiographyDocument(_selectedProfile.ProfileRef, this.Host.DesktopWindow);

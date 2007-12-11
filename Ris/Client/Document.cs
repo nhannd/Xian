@@ -50,13 +50,14 @@ namespace ClearCanvas.Ris.Client
 
         public void Open()
         {
-            if (_desktopWindow.Workspaces.Contains(_key))
+            Workspace workspace = DocumentManager.Get(_key);
+            if (workspace != null)
             {
-                _desktopWindow.Workspaces[_key].Activate();
+                workspace.Activate();
             }
             else
             {
-                Workspace workspace = LaunchWorkspace();
+                workspace = LaunchWorkspace();
                 if (workspace != null)
                     workspace.Closed += DocumentClosedEventHandler;
             }
@@ -64,7 +65,7 @@ namespace ClearCanvas.Ris.Client
 
         public bool Close()
         {
-            Workspace workspace = DocumentManager.Get(_key, _desktopWindow);
+            Workspace workspace = DocumentManager.Get(_key);
             return workspace == null ? false : workspace.Close();
         }
 

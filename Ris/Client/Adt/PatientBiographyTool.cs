@@ -172,7 +172,7 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             try
             {
-                Workspace workspace = DocumentManager.Get<PatientBiographyDocument>(profileRef, window);
+                Workspace workspace = DocumentManager.Get<PatientBiographyDocument>(profileRef);
                 if (workspace == null)
                 {
                     Document doc = new PatientBiographyDocument(profileRef, window);

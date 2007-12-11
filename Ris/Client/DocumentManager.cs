@@ -41,21 +41,22 @@ namespace ClearCanvas.Ris.Client
     {
         private readonly static List<IFolderSystem> _folderSystems = new List<IFolderSystem>();
 
-        public static Workspace Get<TDocument>(EntityRef subject, IDesktopWindow desktopWindow)
+        public static Workspace Get<TDocument>(EntityRef subject)
             where TDocument : Document
         {
-            return Get(GenerateDocumentKey<TDocument>(subject), desktopWindow);
+            string documentKey = GenerateDocumentKey(typeof(TDocument), subject);
+            return Get(documentKey);
         }
 
-        public static Workspace Get(string documentKey, IDesktopWindow desktopWindow)
+        public static Workspace Get(string documentKey)
         {
-            return desktopWindow.Workspaces.Contains(documentKey) ? desktopWindow.Workspaces[documentKey] : null;
-        }
+            foreach (DesktopWindow window in Desktop.Application.DesktopWindows)
+            {
+                if (window.Workspaces.Contains(documentKey))
+                    return window.Workspaces[documentKey];
+            }
 
-        public static string GenerateDocumentKey<TDocument>(EntityRef subject)
-            where TDocument : Document
-        {
-            return GenerateDocumentKey(typeof(TDocument), subject);
+            return null;
         }
 
         public static string GenerateDocumentKey(Document doc, EntityRef subject)

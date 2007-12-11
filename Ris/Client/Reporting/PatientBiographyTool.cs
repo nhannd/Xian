@@ -115,7 +115,7 @@ namespace ClearCanvas.Ris.Client.Reporting
         {
             try
             {
-                Workspace workspace = DocumentManager.Get<PatientBiographyDocument>(profileRef, window);
+                Workspace workspace = DocumentManager.Get<PatientBiographyDocument>(profileRef);
                 if (workspace == null)
                 {
                     Document doc = new PatientBiographyDocument(profileRef, window);

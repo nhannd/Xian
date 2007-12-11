@@ -33,7 +33,7 @@ namespace ClearCanvas.Ris.Client.Reporting
             if (item == null)
                 return;
 
-            Workspace workspace = DocumentManager.Get<ProtocolEditorComponentDocument>(item.OrderRef, this.Context.DesktopWindow);
+            Workspace workspace = DocumentManager.Get<ProtocolEditorComponentDocument>(item.OrderRef);
             if (workspace == null)
             {
                 ProtocolEditorComponentDocument protocolEditorComponentDocument = new ProtocolEditorComponentDocument(item, this.Context);

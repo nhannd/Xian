@@ -53,7 +53,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
                 if (item != null)
                 {
-                    Workspace workspace = DocumentManager.Get<TechnologistDocumentationDocument>(item.OrderRef, this.Context.DesktopWindow);
+                    Workspace workspace = DocumentManager.Get<TechnologistDocumentationDocument>(item.OrderRef);
                     if (workspace == null)
                     {
                         Document doc = new TechnologistDocumentationDocument(item, this.Context.Folders, this.Context.DesktopWindow);
