@@ -29,15 +29,13 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
-using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Ris.Application.Services.Admin;
 using ClearCanvas.Ris.Application.Services.MimeDocumentService;
+using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Application.Services
 {
@@ -55,7 +53,7 @@ namespace ClearCanvas.Ris.Application.Services
             summary.Name = nameAssembler.CreatePersonNameDetail(profile.Name);
             summary.PatientRef = profile.Patient.GetRef();
             summary.ProfileRef = profile.GetRef();
-            summary.Sex = EnumUtils.GetEnumValueInfo<Sex>(profile.Sex, context);
+            summary.Sex = EnumUtils.GetEnumValueInfo(profile.Sex, context);
 
             return summary;
         }
@@ -83,7 +81,7 @@ namespace ClearCanvas.Ris.Application.Services
 
             PersonNameAssembler nameAssembler = new PersonNameAssembler();
             detail.Name = nameAssembler.CreatePersonNameDetail(profile.Name);
-            detail.Sex = EnumUtils.GetEnumValueInfo<Sex>(profile.Sex, context);
+            detail.Sex = EnumUtils.GetEnumValueInfo(profile.Sex, context);
             detail.DateOfBirth = profile.DateOfBirth;
             detail.DeathIndicator = profile.DeathIndicator;
             detail.TimeOfDeath = profile.TimeOfDeath;
@@ -148,13 +146,12 @@ namespace ClearCanvas.Ris.Application.Services
 
             if (includeAttachments)
             {
-                MimeDocumentAssembler docAssembler = new MimeDocumentAssembler();
+                PatientAttachmentAssembler attachmentAssembler = new PatientAttachmentAssembler();
                 detail.Attachments = new List<PatientAttachmentSummary>();
                 foreach (PatientAttachment a in profile.Patient.Attachments)
                 {
-                    detail.Attachments.Add(new PatientAttachmentSummary(
-                        EnumUtils.GetEnumValueInfo(a.Category),
-                        docAssembler.CreateMimeDocumentSummary(a.Document)));
+                    
+                    detail.Attachments.Add(attachmentAssembler.CreatePatientAttachmentSummary(a));
                 }
             }
 
@@ -209,22 +206,10 @@ namespace ClearCanvas.Ris.Application.Services
             }
 
             PatientNoteAssembler noteAssembler = new PatientNoteAssembler();
-            profile.Patient.Notes.Clear();
-            foreach (PatientNoteDetail n in detail.Notes)
-            {
-                profile.Patient.Notes.Add(noteAssembler.CreateNote(n, context));
-            }
+            noteAssembler.Synchronize(profile.Patient.Notes, detail.Notes, context);
 
-            profile.Patient.Attachments.Clear();
-            if (detail.Attachments != null)
-            {
-                foreach (PatientAttachmentSummary a in detail.Attachments)
-                {
-                    profile.Patient.Attachments.Add(new PatientAttachment(
-                        EnumUtils.GetEnumValue<PatientAttachmentCategoryEnum>(a.Category, context),
-                        context.Load<MimeDocument>(a.Document.DocumentRef)));
-                }
-            }
+            PatientAttachmentAssembler attachmentAssembler = new PatientAttachmentAssembler();
+            attachmentAssembler.Synchronize(profile.Patient.Attachments, detail.Attachments, context);
         }
     }
 }

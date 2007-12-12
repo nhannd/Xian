@@ -29,11 +29,7 @@
 
 #endregion
 
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
@@ -44,6 +40,40 @@ namespace ClearCanvas.Ris.Application.Services
 {
     public class PatientNoteAssembler
     {
+        class PatientNoteSynchronizeHelper : SynchronizeHelper<PatientNote, PatientNoteDetail>
+        {
+            private PatientNoteAssembler _assembler;
+            private IPersistenceContext _context;
+
+            public PatientNoteSynchronizeHelper(PatientNoteAssembler assembler, IPersistenceContext context)
+            {
+                _assembler = assembler;
+                _context = context;
+            }
+
+            protected override bool CompareItems(PatientNote domainItem, PatientNoteDetail sourceItem)
+            {
+                return Equals(domainItem.CreationTime, sourceItem.CreationTime) &&
+                       Equals(domainItem.Author.GetRef(), sourceItem.Author.StaffRef);
+            }
+
+            protected override PatientNote CreateDomainItem(PatientNoteDetail sourceItem)
+            {
+                return _assembler.CreateNote(sourceItem, _context);
+            }
+
+            protected override void UpdateDomainItem(PatientNote domainItem, PatientNoteDetail sourceItem)
+            {
+                _assembler.UpdateNote(domainItem, sourceItem, _context);
+            }
+        }
+
+        public void Synchronize(IList<PatientNote> domainList, IList<PatientNoteDetail> sourceList, IPersistenceContext context)
+        {
+            PatientNoteSynchronizeHelper synchronizer = new PatientNoteSynchronizeHelper(this, context);
+            synchronizer.Synchronize(domainList, sourceList);
+        }
+
         public PatientNoteDetail CreateNoteDetail(PatientNote note, IPersistenceContext context)
         {
             if (note == null)
@@ -90,6 +120,16 @@ namespace ClearCanvas.Ris.Application.Services
             }
 
             return newNote;
+        }
+
+        public void UpdateNote(PatientNote note, PatientNoteDetail detail, IPersistenceContext context)
+        {
+            // The creation time and author should never be changed
+            note.Comment = detail.Comment;
+            note.ValidRange.From = detail.ValidRangeFrom;
+            note.ValidRange.Until = detail.ValidRangeUntil;
+            if (detail.Category != null)
+                note.Category = context.Load<PatientNoteCategory>(detail.Category.NoteCategoryRef, EntityLoadFlags.Proxy);
         }
     }
 }

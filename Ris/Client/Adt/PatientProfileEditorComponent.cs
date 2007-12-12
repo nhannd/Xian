@@ -68,6 +68,7 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             _profileRef = profileRef;
             _isNew = false;
+            _newAttachments = new List<PatientAttachmentSummary>();
         }
 
         /// <summary>
@@ -76,6 +77,7 @@ namespace ClearCanvas.Ris.Client.Adt
         public PatientProfileEditorComponent()
         {
             _isNew = true;
+            _newAttachments = new List<PatientAttachmentSummary>();
         }
 
         /// <summary>
