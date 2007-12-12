@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<specifications>
+  <spec id="Category">
+    <not-null test="$.Category" failMessage="Category is required"/>
+  </spec>
+  <spec id="Comment">
+    <not-null test="$.Comment" failMessage="Comment is required"/>
+  </spec>
+</specifications>

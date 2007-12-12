@@ -48,8 +48,8 @@ namespace ClearCanvas.Ris.Client
     [AssociateView(typeof(NoteEditorComponentViewExtensionPoint))]
     public class NoteEditorComponent : ApplicationComponent
     {
-        private PatientNoteDetail _note;
-        private IList<PatientNoteCategorySummary> _noteCategoryChoices;
+        private readonly PatientNoteDetail _note;
+        private readonly IList<PatientNoteCategorySummary> _noteCategoryChoices;
 
         public NoteEditorComponent(PatientNoteDetail noteDetail, List<PatientNoteCategorySummary> noteCategoryChoices)
         {
@@ -59,6 +59,8 @@ namespace ClearCanvas.Ris.Client
 
         public override void Start()
         {
+            this.Validation.Add(NoteEditorComponentSettings.Default.ValidationRules);
+
             base.Start();
         }
 
@@ -135,10 +137,22 @@ namespace ClearCanvas.Ris.Client
             }
         }
 
+        public bool IsNewItem
+        {
+            get { return _note.CreationTime == null; }
+        }
+
         public void Accept()
         {
-            this.ExitCode = ApplicationComponentExitCode.Accepted;
-            Host.Exit();
+            if (this.HasValidationErrors)
+            {
+                this.ShowValidation(true);
+            }
+            else
+            {
+                this.ExitCode = ApplicationComponentExitCode.Accepted;
+                Host.Exit();
+            }
         }
 
         public void Cancel()
@@ -149,7 +163,7 @@ namespace ClearCanvas.Ris.Client
 
         public bool AcceptEnabled
         {
-            get { return this.Modified; }
+            get { return this.Modified && this.IsNewItem; }
         }
 
         public event EventHandler AcceptEnabledChanged

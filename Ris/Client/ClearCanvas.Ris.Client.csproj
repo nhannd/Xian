@@ -53,6 +53,12 @@
     </Compile>
     <Compile Include="BiographyDemographicComponent.cs" />
     <Compile Include="HtmlActionModelRenderer.cs" />
+    <Compile Include="NoteEditorComponentSettings.cs" />
+    <Compile Include="NoteEditorComponentSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>NoteEditorComponentSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="WorklistPreviewComponent.cs" />
     <Compile Include="FolderContentsComponent.cs" />
     <Compile Include="FolderExplorerToolBase.cs" />
@@ -260,6 +266,10 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>FormatSettings.Designer.cs</LastGenOutput>
     </None>
+    <None Include="NoteEditorComponentSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>NoteEditorComponentSettings.Designer.cs</LastGenOutput>
+    </None>
     <None Include="RandomUtilsSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>RandomUtilsSettings.Designer.cs</LastGenOutput>
@@ -358,6 +368,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="FolderExplorerComponentSettings.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="NoteEditorComponent.val.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

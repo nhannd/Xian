@@ -95,13 +95,10 @@ namespace ClearCanvas.Ris.Client
 
             _itemTools = new ToolSet();
             _folderTools = new ToolSet();
-
-            DocumentManager.RegisterFolderSystem(this);
         }
 
         ~WorkflowFolderSystem()
         {
-            DocumentManager.UnregisterFolderSystem(this);
             Dispose(false);
         }
 

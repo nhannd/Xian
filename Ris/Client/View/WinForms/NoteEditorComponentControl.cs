@@ -61,6 +61,9 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             _description.DataBindings.Add("Value", _component, "CategoryDescription", true, DataSourceUpdateMode.OnPropertyChanged);
             _comment.DataBindings.Add("Value", _component, "Comment", true, DataSourceUpdateMode.OnPropertyChanged);
             _acceptButton.DataBindings.Add("Enabled", _component, "AcceptEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
+
+            _category.Enabled = _component.IsNewItem;
+            _comment.ReadOnly = !_component.IsNewItem;
         }
 
         private void _acceptButton_Click(object sender, EventArgs e)

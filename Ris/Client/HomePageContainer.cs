@@ -157,6 +157,28 @@ namespace ClearCanvas.Ris.Client
             this.Pane2 = new SplitPane("Contents", contentAndPreview, 0.8f);
         }
 
+        public override void Start()
+        {
+            base.Start();
+
+            CollectionUtils.ForEach(_folderExplorerComponents.Keys,
+                delegate(IFolderSystem folderSystem)
+                    {
+                        DocumentManager.UnregisterFolderSystem(folderSystem);
+                    });
+        }
+
+        public override void Stop()
+        {
+            CollectionUtils.ForEach(_folderExplorerComponents.Keys,
+                delegate(IFolderSystem folderSystem)
+                {
+                    DocumentManager.UnregisterFolderSystem(folderSystem);
+                });
+
+            base.Stop();
+        }
+
         public FolderExplorerComponent SelectedFolderExplorer
         {
             get { return _selectedFolderExplorer; }
