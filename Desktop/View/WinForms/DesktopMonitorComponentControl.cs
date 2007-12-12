@@ -51,7 +51,6 @@ namespace ClearCanvas.Desktop.View.WinForms
 
             _component = component;
 
-            // TODO add .NET databindings to _component
             _windows.Table = _component.Windows;
             _windows.DataBindings.Add("Selection", _component, "SelectedWindow", true, DataSourceUpdateMode.OnPropertyChanged);
 

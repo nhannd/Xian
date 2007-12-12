@@ -51,7 +51,6 @@ namespace ClearCanvas.Desktop.View.WinForms
             _component = component;
             _workspaceTableView.Table = _component.Workspaces;
             _workspaceTableView.DataBindings.Add("Selection", _component, "SelectedWorkspace", true, DataSourceUpdateMode.OnPropertyChanged);
-            // TODO add .NET databindings to _component
         }
     }
 }

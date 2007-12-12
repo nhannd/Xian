@@ -33,8 +33,6 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 {
-	//TODO: Later, we can uncomment this and allow 'Auto' to be an extension.
-	//[ExtensionOf(typeof(PresetVoiLutOperationFactoryExtensionPoint))]
 	public sealed class AutoPresetVoiLutOperationFactory : PresetVoiLutOperationFactory<AutoPresetVoiLutOperationComponent>
 	{
 		internal static readonly string FactoryName = "Auto";

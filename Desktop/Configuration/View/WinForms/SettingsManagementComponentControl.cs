@@ -52,7 +52,6 @@ namespace ClearCanvas.Desktop.Configuration.View.WinForms
 
             _component = component;
 
-            // TODO add .NET databindings to _component
             _settingsGroupTableView.Table = _component.SettingsGroupTable;
             _settingsGroupTableView.DataBindings.Add("Selection", _component, "SelectedSettingsGroup", true, DataSourceUpdateMode.OnPropertyChanged);
 

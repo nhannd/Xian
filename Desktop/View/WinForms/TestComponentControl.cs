@@ -50,7 +50,6 @@ namespace ClearCanvas.Desktop.View.WinForms
 
             _component = component;
 
-            // TODO add .NET databindings to _component
             _label.DataBindings.Add("Text", _component, "Name");
             _text.DataBindings.Add("Text", _component, "Text", true, DataSourceUpdateMode.OnPropertyChanged);
         }
