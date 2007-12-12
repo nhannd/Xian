@@ -11,9 +11,11 @@
 	    <script type="text/javascript" >
 		    var data = {};
 		    
-		    // this no-arg function is required for the component to refresh the browser
-		    function refresh()
-		    {
+		    function onBodyLoad()
+		    {		        
+		        if(!Ris)
+		            return;
+		        
 	            try
 	            {
 	                data = Ris.getData("Preview");
@@ -28,14 +30,6 @@
 	                var message = "Failed to load preview page.  An exception occurred in the script. Error name: " + e.name + ". Error message: " + e.message;
 		            Field.setValue($("myForm"), message);
 	            }
-		    }
-
-		    function onBodyLoad()
-		    {		        
-		        if(!Ris)
-		            return;
-		        
-                refresh();				
 		    }
 		</script>
 	</head>
