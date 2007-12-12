@@ -33,31 +33,25 @@
 #pragma warning disable 1591
 
 using ClearCanvas.Common;
+using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 
 namespace ClearCanvas.Desktop
 {
-    /*
-    [MenuAction("shelf1", "global-menus/Test/Shelf1")]
-    [ClickHandler("shelf1", "Shelf1")]
-    [MenuAction("show1", "global-menus/Test/Show Shelf1")]
-    [ClickHandler("show1", "ShowShelf1")]
-    [MenuAction("hide1", "global-menus/Test/Hide Shelf1")]
-    [ClickHandler("hide1", "HideShelf1")]
+/*
+    [MenuAction("shelf1", "global-menus/Test/Shelf1", "Shelf1")]
+    [MenuAction("show1", "global-menus/Test/Show Shelf1", "ShowShelf1")]
+    [MenuAction("hide1", "global-menus/Test/Hide Shelf1", "HideShelf1")]
 
-    [MenuAction("shelf2", "global-menus/Test/Shelf2")]
-    [ClickHandler("shelf2", "Shelf2")]
-    [MenuAction("show2", "global-menus/Test/Show Shelf2")]
-    [ClickHandler("show2", "ShowShelf2")]
-    [MenuAction("hide2", "global-menus/Test/Hide Shelf2")]
-    [ClickHandler("hide2", "HideShelf2")]
+	[MenuAction("shelf2", "global-menus/Test/Shelf2", "Shelf2")]
+    [MenuAction("show2", "global-menus/Test/Show Shelf2", "ShowShelf2")]
+    [MenuAction("hide2", "global-menus/Test/Hide Shelf2", "HideShelf2")]
 
-    [MenuAction("ws", "global-menus/Test/New Workspace")]
-    [ClickHandler("ws", "NewWorkspace")]
+	[MenuAction("ws", "global-menus/Test/New Workspace", "NewWorkspace")]
 
-	[MenuAction("desktop", "global-menus/Test/New Desktop Window")]
-	[ClickHandler("desktop", "NewDesktopWindow")]
-    */
+	[MenuAction("desktop1", "global-menus/Test/Desktop1", "Desktop1")]
+	[MenuAction("desktop2", "global-menus/Test/Desktop2", "Desktop2")]
+*/
     [ExtensionOf(typeof(DesktopToolExtensionPoint))]
     public class TestTool : Tool<IDesktopToolContext>
     {
@@ -73,8 +67,9 @@ namespace ClearCanvas.Desktop
                 _shelf1 = ApplicationComponent.LaunchAsShelf(
                     this.Context.DesktopWindow,
                     component,
-                    "Shelf 1",
-                    ShelfDisplayHint.DockAutoHide | ShelfDisplayHint.DockRight | ShelfDisplayHint.HideOnWorkspaceOpen);
+                    "Shelf 1", 
+					"Shelf1",
+                    ShelfDisplayHint.DockFloat | ShelfDisplayHint.DockLeft | ShelfDisplayHint.HideOnWorkspaceOpen);
 
                 _shelf1.Closed += delegate { _shelf1 = null; };
             }
@@ -105,7 +100,9 @@ namespace ClearCanvas.Desktop
                     this.Context.DesktopWindow,
                     component,
                     "Shelf 2",
-                    ShelfDisplayHint.DockAutoHide | ShelfDisplayHint.DockLeft);
+					"Shelf2",
+					ShelfDisplayHint.DockFloat);
+
                 _shelf2.Closed += delegate { _shelf2 = null; };
             }
             else
@@ -136,13 +133,18 @@ namespace ClearCanvas.Desktop
                 name);
         }
 
-		void NewDesktopWindow()
+		void Desktop1()
 		{
-			int numberDesktopWindows = Application.DesktopWindows.Count;
-			DesktopWindowCreationArgs args = new DesktopWindowCreationArgs("Test Window", "DesktopWindow" + numberDesktopWindows.ToString());
+			DesktopWindowCreationArgs args = new DesktopWindowCreationArgs("Desktop1", "Desktop1");
 			Application.DesktopWindows.AddNew(args);
 		}
-    }
+	
+		void Desktop2()
+		{
+			DesktopWindowCreationArgs args = new DesktopWindowCreationArgs("Desktop2", "Desktop2");
+			Application.DesktopWindows.AddNew(args);
+		}
+	}
 }
 
 #endif
