@@ -9,17 +9,34 @@ namespace ClearCanvas.Ris.Application.Services
     {
         public RequestedProcedureDetail CreateRequestedProcedureDetail(RequestedProcedure rp, IPersistenceContext context)
         {
-            RequestedProcedureDetail detail = new RequestedProcedureDetail();
+            return CreateRequestedProcedureDetail(rp, true, true, context);
+        }
 
-            ModalityProcedureStepAssembler modalityProcedureStepAssembler = new ModalityProcedureStepAssembler();
+        public RequestedProcedureDetail CreateRequestedProcedureDetail(RequestedProcedure rp, bool includeProcedureSteps, bool includeProtocol, IPersistenceContext context)
+        {
+            RequestedProcedureDetail detail = new RequestedProcedureDetail();
 
             detail.RequestedProcedureRef = rp.GetRef();
             detail.Name = rp.Type.Name;
             detail.Status = EnumUtils.GetEnumValueInfo(rp.Status, context);
             detail.Type = new RequestedProcedureTypeAssembler().CreateRequestedProcedureTypeDetail(rp.Type);
-            detail.ModalityProcedureSteps = CollectionUtils.Map<ModalityProcedureStep, ModalityProcedureStepDetail>(
-                rp.ModalityProcedureSteps,
-                delegate(ModalityProcedureStep mp) { return modalityProcedureStepAssembler.CreateModalityProcedureStepDetail(mp, context); });
+
+            if (includeProcedureSteps)
+            {
+                //TODO: what about other kinds of procedure steps ??
+                ModalityProcedureStepAssembler modalityProcedureStepAssembler = new ModalityProcedureStepAssembler();
+                detail.ModalityProcedureSteps = CollectionUtils.Map<ModalityProcedureStep, ModalityProcedureStepDetail>(
+                    rp.ModalityProcedureSteps,
+                    delegate(ModalityProcedureStep mp)
+                    { return modalityProcedureStepAssembler.CreateModalityProcedureStepDetail(mp, context); });
+            }
+
+            // the Protocol may be null, if this procedure has not been protocolled
+            if(includeProtocol && rp.Protocol != null)
+            {
+                ProtocolAssembler protocolAssembler = new ProtocolAssembler();
+                detail.Protocol = protocolAssembler.CreateProtocolDetail(rp.Protocol, context);
+            }
 
             return detail;
         }

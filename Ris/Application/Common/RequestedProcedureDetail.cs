@@ -38,6 +38,11 @@ namespace ClearCanvas.Ris.Application.Common
     [DataContract]
     public class RequestedProcedureDetail : DataContractBase
     {
+        public RequestedProcedureDetail()
+        {
+
+        }
+
         [DataMember]
         public EntityRef RequestedProcedureRef;
 
@@ -52,5 +57,8 @@ namespace ClearCanvas.Ris.Application.Common
         
         [DataMember]
         public List<ModalityProcedureStepDetail> ModalityProcedureSteps;
+
+        [DataMember]
+        public ProtocolDetail Protocol;
     }
 }

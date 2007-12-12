@@ -24,8 +24,5 @@ namespace ClearCanvas.Ris.Application.Common
 
         [DataMember]
         public List<ProtocolCodeDetail> Codes;
-
-        [DataMember]
-        public List<ProtocolNoteDetail> Notes;
     }
 }

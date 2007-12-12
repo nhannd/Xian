@@ -1,20 +1,15 @@
 using System;
 using System.Collections.Generic;
+using System.Text;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Ris.Application.Common;
 
-namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
+namespace ClearCanvas.Ris.Application.Services
 {
-    internal class ProtocollingWorkflowAssembler
+    public class ProtocolAssembler
     {
-        public ProtocolCodeDetail CreateProtocolCodeDetail(ProtocolCode pc)
-        {
-            ProtocolCodeDetail detail = new ProtocolCodeDetail(pc.GetRef(), pc.Name, pc.Description);
-            return detail;
-        }
-
         public ProtocolDetail CreateProtocolDetail(Protocol protocol, IPersistenceContext context)
         {
             ProtocolDetail detail = new ProtocolDetail();
@@ -24,34 +19,19 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 
             detail.Codes = protocol.Codes == null
                 ? new List<ProtocolCodeDetail>()
-                : CollectionUtils.Map<ProtocolCode, ProtocolCodeDetail>(protocol.Codes, 
+                : CollectionUtils.Map<ProtocolCode, ProtocolCodeDetail>(protocol.Codes,
                     delegate(ProtocolCode code) { return CreateProtocolCodeDetail(code); });
-
-            detail.Notes = protocol.Notes == null
-                ? new List<ProtocolNoteDetail>()
-                : CollectionUtils.Map<ProtocolNote, ProtocolNoteDetail>(
-                    protocol.Notes,
-                    delegate(ProtocolNote note) { return CreateProtocolNoteDetail(note, context); });
 
             return detail;
         }
 
-        public ProtocolNoteDetail CreateProtocolNoteDetail(ProtocolNote note, IPersistenceContext context)
+        public ProtocolCodeDetail CreateProtocolCodeDetail(ProtocolCode pc)
         {
-            StaffSummary author = new StaffAssembler().CreateStaffSummary(note.Author, context);
-
-            return new ProtocolNoteDetail(author, note.TimeStamp, note.Text);
+            ProtocolCodeDetail detail = new ProtocolCodeDetail(pc.GetRef(), pc.Name, pc.Description);
+            return detail;
         }
-
         public void UpdateProtocol(Protocol protocol, ProtocolDetail detail, IPersistenceContext context)
         {
-            //protocol.ApprovalRequired = detail.ApprovalRequired;
-
-            if (detail.Author != null && detail.Author.StaffRef != null)
-            {
-                protocol.Author = context.Load<Staff>(detail.Author.StaffRef);
-            }
-
             protocol.Codes.Clear();
             foreach (ProtocolCodeDetail codeDetail in detail.Codes)
             {

@@ -231,7 +231,7 @@ namespace ClearCanvas.Ris.Client
 
         public string PerformerStaff
         {
-            get { return _selectedMPS == null ? null : String.Format("{0}, {1}", _selectedMPS.Performer.Name.FamilyName, _selectedMPS.Performer.Name.GivenName); }
+            get { return _selectedMPS == null || _selectedMPS.Performer == null ? null : String.Format("{0}, {1}", _selectedMPS.Performer.Name.FamilyName, _selectedMPS.Performer.Name.GivenName); }
         }
 
         public string StartTime
@@ -246,7 +246,7 @@ namespace ClearCanvas.Ris.Client
 
         public string ScheduledPerformerStaff
         {
-            get { return _selectedMPS == null ? null : String.Format("{0}, {1}", _selectedMPS.ScheduledPerformer.Name.FamilyName, _selectedMPS.ScheduledPerformer.Name.GivenName); }
+            get { return _selectedMPS == null || _selectedMPS.ScheduledPerformer == null ? null : String.Format("{0}, {1}", _selectedMPS.ScheduledPerformer.Name.FamilyName, _selectedMPS.ScheduledPerformer.Name.GivenName); }
         }
 
         public string ScheduledStartTime

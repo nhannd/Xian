@@ -15,7 +15,7 @@ class FieldDefFactory
     # what kind of field is this?
     if(NHIBERNATE_COLLECTION_TYPES.include?(fieldNode.name))
       return CollectionFieldDef.new(model, fieldNode, defaultNamespace)
-    elsif(fieldNode.name == 'many-to-one')
+    elsif(['many-to-one', 'one-to-one'].include?(fieldNode.name))
       return EntityFieldDef.new(model, fieldNode, defaultNamespace)
     elsif(fieldNode.name == 'component')
       return ComponentFieldDef.new(model, fieldNode, defaultNamespace)

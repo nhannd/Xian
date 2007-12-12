@@ -20,7 +20,7 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
         [ReadOperation]
         public ListProtocolGroupsForProcedureResponse ListProtocolGroupsForProcedure(ListProtocolGroupsForProcedureRequest request)
         {
-            ProtocollingWorkflowAssembler assembler = new ProtocollingWorkflowAssembler();
+            ProtocolAssembler assembler = new ProtocolAssembler();
             RequestedProcedure rp = this.PersistenceContext.Load<RequestedProcedure>(request.ProcedureRef);
 
             List<ProtocolGroupSummary> groups = CollectionUtils.Map<ProtocolGroup, ProtocolGroupSummary>(
@@ -36,8 +36,8 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
         public GetProtocolGroupDetailResponse GetProtocolGroupDetail(GetProtocolGroupDetailRequest request)
         {
             ProtocolGroup protocolGroup = this.PersistenceContext.Load<ProtocolGroup>(request.ProtocolGroup.EntityRef);
-            
-            ProtocollingWorkflowAssembler assembler = new ProtocollingWorkflowAssembler();
+
+            ProtocolAssembler assembler = new ProtocolAssembler();
 
             return new GetProtocolGroupDetailResponse(assembler.CreateProtocolGroupDetail(protocolGroup, this.PersistenceContext));
         }
@@ -46,7 +46,7 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
         public GetProtocolResponse GetProtocol(GetProtocolRequest request)
         {
             Protocol protocol = this.PersistenceContext.Load<Protocol>(request.ProtocolRef);
-            ProtocollingWorkflowAssembler assembler = new ProtocollingWorkflowAssembler();
+            ProtocolAssembler assembler = new ProtocolAssembler();
             return new GetProtocolResponse(protocol.GetRef(), assembler.CreateProtocolDetail(protocol, this.PersistenceContext));
         }
 
@@ -54,7 +54,7 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
         public GetProcedureProtocolResponse GetProcedureProtocol(GetProcedureProtocolRequest request)
         {
             RequestedProcedure rp = this.PersistenceContext.Load<RequestedProcedure>(request.RequestedProcedureRef);
-            ProtocollingWorkflowAssembler assembler = new ProtocollingWorkflowAssembler();
+            ProtocolAssembler assembler = new ProtocolAssembler();
 
             ProcedureStep uncastProtcolStep = CollectionUtils.SelectFirst<ProcedureStep>(
                 rp.ProcedureSteps,
@@ -281,7 +281,7 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
         public SaveProtocolResponse SaveProtocol(SaveProtocolRequest request)
         {
             Protocol protocol = this.PersistenceContext.Load<Protocol>(request.ProtocolRef);
-            ProtocollingWorkflowAssembler assembler = new ProtocollingWorkflowAssembler();
+            ProtocolAssembler assembler = new ProtocolAssembler();
 
             assembler.UpdateProtocol(protocol, request.ProtocolDetail, this.PersistenceContext);
 
@@ -339,8 +339,8 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
             protocol.Accept();
 
             this.PersistenceContext.SynchState();
-            
-            ProtocollingWorkflowAssembler assembler = new ProtocollingWorkflowAssembler();
+
+            ProtocolAssembler assembler = new ProtocolAssembler();
             return new ApproveResidentProtocolResponse(assembler.CreateProtocolDetail(protocol, this.PersistenceContext));
         }
 

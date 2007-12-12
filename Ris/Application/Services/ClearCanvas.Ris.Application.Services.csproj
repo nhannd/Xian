@@ -65,6 +65,7 @@
     <Compile Include="Admin\ProtocolAdmin\ProtocolImporter.cs" />
     <Compile Include="OrderNoteAssembler.cs" />
     <Compile Include="PatientAttachmentAssembler.cs" />
+    <Compile Include="ProtocolAssembler.cs" />
     <Compile Include="SynchronizeHelper.cs" />
     <Compile Include="MimeDocumentService\MimeDocumentService.cs" />
     <Compile Include="ExternalPractitionerAssembler.cs" />
@@ -124,7 +125,6 @@
     <Compile Include="EnumUtils.cs" />
     <Compile Include="InProcessApplicationServiceProvider.cs" />
     <Compile Include="Jsml\JsmlShimService.cs" />
-    <Compile Include="ProtocollingWorkflow\ProtocollingWorkflowAssembler.cs" />
     <Compile Include="ProtocollingWorkflow\ProtocollingWorkflowService.cs" />
     <Compile Include="WorklistAssembler.cs" />
     <Compile Include="WorklistFactory.cs" />
