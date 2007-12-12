@@ -45,6 +45,7 @@
     <Compile Include="Data\DeviceDataAdapter.cs" />
     <Compile Include="Data\SearchAdaptor.cs" />
     <Compile Include="Data\SearchController.cs" />
+    <Compile Include="Data\SeriesSearchAdaptor.cs" />
     <Compile Include="Modules\ErrorModule.cs" />
     <Compile Include="Data\FileSystemDataAdapter.cs" />
     <Compile Include="Data\FileSystemsConfigurationController.cs" />

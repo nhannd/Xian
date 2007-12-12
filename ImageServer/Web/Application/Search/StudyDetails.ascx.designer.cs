@@ -12,38 +12,29 @@ namespace ClearCanvas.ImageServer.Web.Application.Search {
     
     
     /// <summary>
-    /// SearchGridView class.
+    /// StudyDetails class.
     /// </summary>
     /// <remarks>
     /// Auto-generated class.
     /// </remarks>
-    public partial class SearchGridView {
+    public partial class StudyDetails {
         
         /// <summary>
-        /// Panel1 control.
+        /// DetailsPanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel Panel1;
+        protected global::System.Web.UI.WebControls.Panel DetailsPanel;
         
         /// <summary>
-        /// Panel2 control.
+        /// DetailsTable control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel Panel2;
-        
-        /// <summary>
-        /// GridView1 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.GridView GridView1;
+        protected global::System.Web.UI.WebControls.Table DetailsTable;
     }
 }

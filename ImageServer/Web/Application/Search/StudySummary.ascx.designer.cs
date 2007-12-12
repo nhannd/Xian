@@ -12,47 +12,65 @@ namespace ClearCanvas.ImageServer.Web.Application.Search {
     
     
     /// <summary>
-    /// SearchPanel class.
+    /// StudySummary class.
     /// </summary>
     /// <remarks>
     /// Auto-generated class.
     /// </remarks>
-    public partial class SearchPanel {
+    public partial class StudySummary {
         
         /// <summary>
-        /// UpdatePanel control.
+        /// DetailsPanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.UpdatePanel UpdatePanel;
+        protected global::System.Web.UI.WebControls.Panel DetailsPanel;
         
         /// <summary>
-        /// Panel1 control.
+        /// PatientName control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel Panel1;
+        protected global::System.Web.UI.WebControls.Label PatientName;
         
         /// <summary>
-        /// SearchFilterPanel control.
+        /// PatientId control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Search.SearchFilterPanel SearchFilterPanel;
+        protected global::System.Web.UI.WebControls.Label PatientId;
         
         /// <summary>
-        /// SearchAccordianControl control.
+        /// StudyDate control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Search.SearchAccordian SearchAccordianControl;
+        protected global::System.Web.UI.WebControls.Label StudyDate;
+        
+        /// <summary>
+        /// AccessionNumber control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label AccessionNumber;
+        
+        /// <summary>
+        /// StudyDescription control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label StudyDescription;
     }
 }

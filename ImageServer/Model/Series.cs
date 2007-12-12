@@ -59,6 +59,7 @@ namespace ClearCanvas.ImageServer.Model
         private string _performedProcedureStepStartDate;
         private string _performedProcedureStepStartTime;
         private StudyStatusEnum _statusEnum;
+        private string _sourceAeTitle;
         #endregion
 
         #region Public Properties
@@ -120,6 +121,13 @@ namespace ClearCanvas.ImageServer.Model
         {
             get { return _performedProcedureStepStartTime; }
             set { _performedProcedureStepStartTime = value; }
+        }
+
+        [DicomField(DicomTags.SourceApplicationEntityTitle,DefaultValue = DicomFieldDefault.Null)]
+        public string SourceAeTitle
+        {
+            get { return _sourceAeTitle; }
+            set { _sourceAeTitle = value; }
         }
         public StudyStatusEnum StudyStatusEnum
         {

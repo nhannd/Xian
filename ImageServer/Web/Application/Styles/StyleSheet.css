@@ -46,7 +46,7 @@
 	color: white;
 	height: 30px; /*background-color: #0099ff;*/
 	background-color: #3D98D1;
-	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#3D98D1, endColorstr=#4486FF);
+	/*filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#3D98D1, endColorstr=#4486FF);*/
 	vertical-align: middle;
 	text-align: center;
 	font-weight: bold;
@@ -81,7 +81,7 @@
 	border-bottom: 1px outset;
 	height: 30px;
 	background-color: #3D98D1;
-	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#3D98D1, endColorstr=#4486FF);
+	/*filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#3D98D1, endColorstr=#4486FF);*/
 	text-align: left;
 	text-indent: 10pt;
 }
@@ -156,8 +156,8 @@
 .modalBackground 
 {
    background-color:#000;
-   filter:alpha(opacity=60);
-   opacity:0.6;
+   /*filter:alpha(opacity=60);*/
+  /* opacity:0.6;*/
 }
 
 .PageMenuPanel
@@ -207,7 +207,7 @@
 	border-color: #E0E0E0;
 	padding-right: 3px;
 	padding-left: 3px;
-	height: 24px;
+	height: 24px; 
 }
 
 .GridSelectedRowStyle
@@ -226,4 +226,43 @@
 	background-color: transparent;
 	color: #cccc99;
 	font-style: italic;
+}
+
+.accordionHeader
+{
+    background-color: white;
+	font-size: 12px;
+    cursor: pointer;
+}
+.accordionHeaderSelected
+{
+    background-color: #3D98D1;
+	font-size: 12px;
+    cursor: pointer;
+}
+.accordionHeader2
+{
+    border: 1px solid #2F4F4F;
+    color: white;
+    background-color: #3D98D1;
+	font-size: 12px;
+	font-weight: bold;
+    padding: 3px;
+    margin-top: 3px;
+    cursor: pointer;
+}
+
+.accordionContent
+{
+    background-color: #EFF3FB;
+    border: 1px dashed #2F4F4F;
+    border-top: none;
+    padding: 5px;
+    padding-top: 10px;
+}
+
+.accordionLink
+{
+ background-color: #D3DEEF;
+   cursor: pointer;
 }

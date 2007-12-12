@@ -10,6 +10,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
     {
         #region Private Members
         private readonly SearchAdaptor _adaptor = new SearchAdaptor();
+        private readonly SeriesSearchAdaptor _seriesAdaptor = new SeriesSearchAdaptor();
         #endregion
 
         #region Public Methods
@@ -17,6 +18,16 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         {
             return _adaptor.Get(criteria);
         }
+
+        public IList<Series> GetSeries(Study study)
+        {
+            SeriesSelectCriteria criteria = new SeriesSelectCriteria();
+
+            criteria.StudyKey.EqualTo(study.GetKey());
+
+            return _seriesAdaptor.Get(criteria);
+        }
         #endregion
+
     }
 }

@@ -55,8 +55,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Search
                 criteria.StudyDescription.Like(key);
             }
 
-            SearchGridViewControl.Studies = _searchController.GetStudies(criteria);
-            SearchGridViewControl.DataBind();
+            SearchAccordianControl.Studies = _searchController.GetStudies(criteria);
+            SearchAccordianControl.DataBind();
         }
 
         /// <summary>
@@ -64,21 +64,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Search
         /// </summary>
         protected void SetUpEventHandlers()
         {
-            SearchToolBarControl.OnRefreshButtonClick += delegate
-                                                             {
-                                                                 // Clear all filters and reload the data
-                                                                 SearchFilterPanel.Clear();
-                                                                 LoadStudies();
-                                                             };
-
             SearchFilterPanel.ApplyFiltersClicked += delegate
                                                          {
                                                              // reload the data
                                                              LoadStudies();
-                                                             SearchGridViewControl.TheGrid.PageIndex = 0;
+                                                             SearchAccordianControl.PageIndex = 0;
                                                          };
-
-            GridPager1.GetRecordCountMethod = delegate { return SearchGridViewControl.Studies.Count; };
         }
 
 
@@ -89,20 +80,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Search
             // initialize the controller
             _searchController = new SearchController();
 
-
-            // setup child controls
-            GridPager1.ItemName = "Study";
-            GridPager1.PuralItemName = "Studies";
-            GridPager1.Grid = SearchGridViewControl.TheGrid;
-
-
             // setup event handler for child controls
             SetUpEventHandlers();
         }
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (SearchGridViewControl.IsPostBack)
+            if (SearchAccordianControl.IsPostBack)
                 LoadStudies();
         }
     }
