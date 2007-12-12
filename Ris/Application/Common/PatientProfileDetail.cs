@@ -48,7 +48,7 @@ namespace ClearCanvas.Ris.Application.Common
             this.ContactPersons = new List<ContactPersonDetail>();
             this.EmailAddresses = new List<EmailAddressDetail>();
             this.TelephoneNumbers = new List<TelephoneDetail>();
-            this.Notes = new List<NoteDetail>();
+            this.Notes = new List<PatientNoteDetail>();
             this.Attachments = new List<PatientAttachmentSummary>();
             this.Name = new PersonNameDetail();
         }
@@ -108,7 +108,7 @@ namespace ClearCanvas.Ris.Application.Common
         public List<ContactPersonDetail> ContactPersons;
 
         [DataMember]
-        public List<NoteDetail> Notes;
+        public List<PatientNoteDetail> Notes;
 
         [DataMember]
         public List<PatientAttachmentSummary> Attachments;

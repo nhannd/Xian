@@ -129,10 +129,10 @@
     <Compile Include="ApplicationServiceExtensionPoint.cs" />
     <Compile Include="Admin\HL7QueueItemAssembler.cs" />
     <Compile Include="ContactPersonAssembler.cs" />
-    <Compile Include="NoteCategoryAssembler.cs" />
+    <Compile Include="PatientNoteCategoryAssembler.cs" />
     <Compile Include="Login\LoginService.cs" />
     <Compile Include="ModalityWorkflow\TechnologistDocumentation\TechnologistDocumentationService.cs" />
-    <Compile Include="NoteAssembler.cs" />
+    <Compile Include="PatientNoteAssembler.cs" />
     <Compile Include="EmailAddressAssembler.cs" />
     <Compile Include="HealthcardAssembler.cs" />
     <Compile Include="IApplicationServiceLayer.cs" />

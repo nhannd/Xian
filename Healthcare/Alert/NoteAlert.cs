@@ -56,7 +56,7 @@ namespace ClearCanvas.Healthcare.Alert
         {
             NoteAlertNotification alertNotification = new NoteAlertNotification();
 
-            foreach (Note note in patient.Notes)
+            foreach (PatientNote note in patient.Notes)
             {
                 if (note.Category.Severity == NoteSeverity.H)
                     alertNotification.Reasons.Add(note.Category.Name);

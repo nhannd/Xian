@@ -68,7 +68,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.PatientAdmin
         public List<EnumValueInfo> ContactPersonRelationshipChoices;
 
         [DataMember]
-        public List<NoteCategorySummary> NoteCategoryChoices;
+        public List<PatientNoteCategorySummary> NoteCategoryChoices;
 
         [DataMember]
         public List<EnumValueInfo> PrimaryLanguageChoices;

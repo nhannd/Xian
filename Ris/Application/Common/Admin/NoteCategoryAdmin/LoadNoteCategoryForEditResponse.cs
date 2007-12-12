@@ -40,7 +40,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.NoteCategoryAdmin
     [DataContract]
     public class LoadNoteCategoryForEditResponse : DataContractBase
     {
-        public LoadNoteCategoryForEditResponse(EntityRef NoteCategoryRef, NoteCategoryDetail NoteCategoryDetail)
+        public LoadNoteCategoryForEditResponse(EntityRef NoteCategoryRef, PatientNoteCategoryDetail NoteCategoryDetail)
         {
             this.NoteCategoryRef = NoteCategoryRef;
             this.NoteCategoryDetail = NoteCategoryDetail;
@@ -51,6 +51,6 @@ namespace ClearCanvas.Ris.Application.Common.Admin.NoteCategoryAdmin
         public EntityRef NoteCategoryRef;
 
         [DataMember]
-        public NoteCategoryDetail NoteCategoryDetail;
+        public PatientNoteCategoryDetail NoteCategoryDetail;
     }
 }

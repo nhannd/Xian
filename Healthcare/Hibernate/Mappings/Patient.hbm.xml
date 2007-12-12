@@ -18,8 +18,6 @@
       <key column="PatientOID_"/>
       <composite-element class="PatientAttachment">
         <many-to-one name="Category" column="Category_" class="PatientAttachmentCategoryEnum"/>
-
-        <!-- this is supposed to be an one-to-one mapping with document, but unique="true is currently not supported with value member"  -->
         <many-to-one name="Document" column="MimeDocumentOID_" class="MimeDocument" not-null="true" cascade="all" fetch="join"/>
       </composite-element>
     </idbag>
@@ -29,15 +27,15 @@
         <generator class="guid.comb"/>
       </collection-id>
       <key column="PatientOID_"/>
-      <composite-element class="Note">
+      <composite-element class="PatientNote">
         <property name="Comment" column="Comment_" type="String" length ="1024"/>
-        <property name="TimeStamp" column="TimeStamp_" type="DateTime" not-null="true"/>
+        <property name="CreationTime" column="CreationTime_" type="DateTime" not-null="true"/>
         <property name="ValidRange" type="ClearCanvas.Healthcare.Hibernate.DateTimeRangeHbm, ClearCanvas.Healthcare.Hibernate">
           <column name="ValidFrom_"/>
           <column name="ValidUntil_"/>
         </property>
-        <many-to-one name="CreatedBy" class="Staff" column="CreatedBy_" not-null="true" fetch="join"/>
-        <many-to-one name="Category" class="NoteCategory" column="NoteCategoryOID_" fetch="join"/>
+        <many-to-one name="Author" class="Staff" column="Author_" not-null="true" fetch="join"/>
+        <many-to-one name="Category" class="PatientNoteCategory" column="CategoryOID_" fetch="join"/>
       </composite-element>
     </idbag>
 

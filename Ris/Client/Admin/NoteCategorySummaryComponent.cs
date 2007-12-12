@@ -94,12 +94,12 @@ namespace ClearCanvas.Ris.Client.Admin
     [AssociateView(typeof(NoteCategorySummaryComponentViewExtensionPoint))]
     public class NoteCategorySummaryComponent : ApplicationComponent
     {
-        private NoteCategorySummary _selectedNoteCategory;
+        private PatientNoteCategorySummary _selectedNoteCategory;
         private NoteCategoryTable _noteCategoryTable;
         private CrudActionModel _noteCategoryActionHandler;
 
-        private PagingController<NoteCategorySummary> _pagingController;
-        private PagingActionModel<NoteCategorySummary> _pagingActionHandler;
+        private PagingController<PatientNoteCategorySummary> _pagingController;
+        private PagingActionModel<PatientNoteCategorySummary> _pagingActionHandler;
 
         /// <summary>
         /// Constructor
@@ -127,7 +127,7 @@ namespace ClearCanvas.Ris.Client.Admin
 
         private void InitialisePaging()
         {
-            _pagingController = new PagingController<NoteCategorySummary>(
+            _pagingController = new PagingController<PatientNoteCategorySummary>(
                 delegate(int firstRow, int maxRows)
                 {
                     ListAllNoteCategoriesResponse listResponse = null;
@@ -146,7 +146,7 @@ namespace ClearCanvas.Ris.Client.Admin
                 }
             );
 
-            _pagingActionHandler = new PagingActionModel<NoteCategorySummary>(_pagingController, _noteCategoryTable, Host.DesktopWindow);
+            _pagingActionHandler = new PagingActionModel<PatientNoteCategorySummary>(_pagingController, _noteCategoryTable, Host.DesktopWindow);
         }
 
         public override void Stop()
@@ -172,7 +172,7 @@ namespace ClearCanvas.Ris.Client.Admin
             get { return _selectedNoteCategory == null ? Selection.Empty : new Selection(_selectedNoteCategory); }
             set
             {
-                _selectedNoteCategory = (NoteCategorySummary)value.Item;
+                _selectedNoteCategory = (PatientNoteCategorySummary)value.Item;
                 NoteCategorySelectionChanged();
             }
         }
@@ -211,7 +211,7 @@ namespace ClearCanvas.Ris.Client.Admin
                 if (exitCode == ApplicationComponentExitCode.Accepted)
                 {
                     _noteCategoryTable.Items.Replace(
-                        delegate(NoteCategorySummary s) { return s.NoteCategoryRef.Equals(editor.NoteCategorySummary.NoteCategoryRef); },
+                        delegate(PatientNoteCategorySummary s) { return s.NoteCategoryRef.Equals(editor.NoteCategorySummary.NoteCategoryRef); },
                         editor.NoteCategorySummary);
                 }
 

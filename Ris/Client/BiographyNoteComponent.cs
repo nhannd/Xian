@@ -51,14 +51,14 @@ namespace ClearCanvas.Ris.Client
     [AssociateView(typeof(BiographyNoteComponentViewExtensionPoint))]
     public class BiographyNoteComponent : ApplicationComponent
     {
-        private readonly List<NoteDetail> _noteList;
+        private readonly List<PatientNoteDetail> _noteList;
         private readonly BiographyNoteTable _noteTable;
-        private NoteDetail _selectedNote;
+        private PatientNoteDetail _selectedNote;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public BiographyNoteComponent(List<NoteDetail> notes)
+        public BiographyNoteComponent(List<PatientNoteDetail> notes)
         {
             _noteTable = new BiographyNoteTable();
             _noteList = notes;
@@ -81,7 +81,7 @@ namespace ClearCanvas.Ris.Client
             get { return new Selection(_selectedNote); }
             set
             {
-                _selectedNote = (NoteDetail)value.Item;
+                _selectedNote = (PatientNoteDetail)value.Item;
                 NoteSelectionChanged();
             }
         }

@@ -38,44 +38,60 @@ using ClearCanvas.Ris.Application.Common.Admin;
 namespace ClearCanvas.Ris.Application.Common
 {
     [DataContract]
-    public class NoteCategorySummary : DataContractBase, ICloneable
+    public class PatientNoteDetail : DataContractBase, ICloneable
     {
-        public NoteCategorySummary(EntityRef noteCategoryRef, string name, string description, EnumValueInfo severity)
+        public PatientNoteDetail(string comment, 
+            PatientNoteCategorySummary category, 
+            StaffSummary createdBy, 
+            DateTime? timeStamp,
+            DateTime? validRangeFrom,
+            DateTime? validRangeUntil)
         {
-            this.NoteCategoryRef = noteCategoryRef;
-            this.Name = name;
-            this.Description = description;
-            this.Severity = severity;
+            this.Comment = comment;
+            this.Category = category;
+            this.Author = createdBy;
+            this.CreationTime = timeStamp;
+            this.ValidRangeFrom = validRangeFrom;
+            this.ValidRangeUntil = validRangeUntil;
         }
 
-        public NoteCategorySummary()
+        public PatientNoteDetail()
         {
         }
 
         [DataMember]
-        public EntityRef NoteCategoryRef;
+        public string Comment;
 
         [DataMember]
-        public string Name;
+        public PatientNoteCategorySummary Category;
 
         [DataMember]
-        public string Description;
+        public StaffSummary Author;
 
         [DataMember]
-        public EnumValueInfo Severity;
+        public DateTime? CreationTime;
+
+        [DataMember]
+        public DateTime? ValidRangeFrom;
+
+        [DataMember]
+        public DateTime? ValidRangeUntil;
 
         #region ICloneable Members
 
         public object Clone()
         {
-            NoteCategorySummary clone = new NoteCategorySummary();
-            clone.NoteCategoryRef = this.NoteCategoryRef;
-            clone.Name = this.Name;
-            clone.Description = this.Description;
-            clone.Severity = (EnumValueInfo)this.Severity.Clone();
+            PatientNoteDetail clone = new PatientNoteDetail();
+            clone.Comment = this.Comment;
+            clone.Category = (PatientNoteCategorySummary)this.Category.Clone();
+            clone.Author = this.Author == null ? null : (StaffSummary)this.Author.Clone();
+            clone.CreationTime = this.CreationTime;
+            clone.ValidRangeFrom = this.ValidRangeFrom;
+            clone.ValidRangeUntil = this.ValidRangeUntil;
+
             return clone;
         }
 
-        #endregion
+        #endregion    
     }
 }

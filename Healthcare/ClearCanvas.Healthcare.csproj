@@ -76,6 +76,7 @@
     <Compile Include="Alert\IAlert.cs" />
     <Compile Include="Alert\LanguageAlert.cs" />
     <Compile Include="Alert\NoteAlert.cs" />
+    <Compile Include="OrderNote.cs" />
     <Compile Include="ProcedureStepSchedulingSearchCriteria.cs" />
     <Compile Include="RegistrationRejectedProtocolWorklist.cs" />
     <Compile Include="RegistrationToBeScheduledWorklist.cs" />
@@ -112,7 +113,7 @@
     <Compile Include="ReportPartStatus.cs" />
     <Compile Include="ReportStatus.cs" />
     <Compile Include="DiagnosticServiceTreeNode.cs" />
-    <Compile Include="NoteCategory.cs" />
+    <Compile Include="PatientNoteCategory.cs" />
     <Compile Include="NoteSeverity.cs" />
     <Compile Include="OrderStatus.cs" />
     <Compile Include="PatientReconciliationException.cs">
@@ -124,7 +125,7 @@
     <Compile Include="PatientReconciliation\PatientProfileDiscrepancyTest.cs" />
     <Compile Include="PatientReconciliation\PatientProfileMatch.cs" />
     <Compile Include="PatientReconciliation\PatientReconciliationStrategyExtensionPoint.cs" />
-    <Compile Include="Note.cs" />
+    <Compile Include="PatientNote.cs" />
     <Compile Include="RegistrationCancelledWorklist.cs" />
     <Compile Include="RegistrationCheckedInWorklist.cs" />
     <Compile Include="RegistrationCompletedWorklist.cs" />

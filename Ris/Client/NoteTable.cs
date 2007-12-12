@@ -42,21 +42,21 @@ using System.Drawing;
 
 namespace ClearCanvas.Ris.Client
 {
-    public class NoteTable : Table<NoteDetail>
+    public class NoteTable : Table<PatientNoteDetail>
     {
         public NoteTable()
         {
-            this.Columns.Add(new TableColumn<NoteDetail, string>("Severity",
-                delegate(NoteDetail n) { return (n.Category == null ? "" : n.Category.Severity.Code); },
+            this.Columns.Add(new TableColumn<PatientNoteDetail, string>("Severity",
+                delegate(PatientNoteDetail n) { return (n.Category == null ? "" : n.Category.Severity.Code); },
                 0.1f));
-            this.Columns.Add(new TableColumn<NoteDetail, string>("Category",
-                delegate(NoteDetail n) { return (n.Category == null ? "" : n.Category.Name); },
+            this.Columns.Add(new TableColumn<PatientNoteDetail, string>("Category",
+                delegate(PatientNoteDetail n) { return (n.Category == null ? "" : n.Category.Name); },
                 0.2f));
-            this.Columns.Add(new TableColumn<NoteDetail, string>("Comment",
-                delegate(NoteDetail n) { return n.Comment; },
+            this.Columns.Add(new TableColumn<PatientNoteDetail, string>("Comment",
+                delegate(PatientNoteDetail n) { return n.Comment; },
                 0.45f));
-            this.Columns.Add(new TableColumn<NoteDetail, string>("Created",
-                delegate(NoteDetail n) { return Format.Date(n.TimeStamp); },
+            this.Columns.Add(new TableColumn<PatientNoteDetail, string>("Created",
+                delegate(PatientNoteDetail n) { return Format.Date(n.CreationTime); },
                 0.2f));
             //this.Columns.Add(new TableColumn<NoteDetail, string>("Description",
             //    delegate(NoteDetail n) { return (n.Category == null ? "" : n.Category.Description); },

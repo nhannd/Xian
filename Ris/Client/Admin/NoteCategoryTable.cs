@@ -36,20 +36,20 @@ using ClearCanvas.Ris.Application.Common.Admin;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
-    class NoteCategoryTable : Table<NoteCategorySummary>
+    class NoteCategoryTable : Table<PatientNoteCategorySummary>
     {
         public NoteCategoryTable()
         {
-            this.Columns.Add(new TableColumn<NoteCategorySummary, string>(SR.ColumnSeverity,
-                delegate(NoteCategorySummary category) { return category.Severity.Value; },
+            this.Columns.Add(new TableColumn<PatientNoteCategorySummary, string>(SR.ColumnSeverity,
+                delegate(PatientNoteCategorySummary category) { return category.Severity.Value; },
                 0.2f));
 
-            this.Columns.Add(new TableColumn<NoteCategorySummary, string>(SR.ColumnCategory,
-                delegate(NoteCategorySummary category) { return category.Name; },
+            this.Columns.Add(new TableColumn<PatientNoteCategorySummary, string>(SR.ColumnCategory,
+                delegate(PatientNoteCategorySummary category) { return category.Name; },
                 0.5f));
 
-            this.Columns.Add(new TableColumn<NoteCategorySummary, string>(SR.ColumnDescription,
-                delegate(NoteCategorySummary category) { return category.Description; },
+            this.Columns.Add(new TableColumn<PatientNoteCategorySummary, string>(SR.ColumnDescription,
+                delegate(PatientNoteCategorySummary category) { return category.Description; },
                 1.0f));
         }
     }

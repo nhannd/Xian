@@ -38,16 +38,16 @@ using ClearCanvas.Ris.Application.Common.Admin;
 namespace ClearCanvas.Ris.Application.Common
 {
     [DataContract]
-    public class NoteCategoryDetail : DataContractBase, ICloneable
+    public class PatientNoteCategoryDetail : DataContractBase, ICloneable
     {
-        public NoteCategoryDetail(string category, string description, EnumValueInfo severity)
+        public PatientNoteCategoryDetail(string category, string description, EnumValueInfo severity)
         {
             this.Category = category;
             this.Description = description;
             this.Severity = severity;
         }
 
-        public NoteCategoryDetail()
+        public PatientNoteCategoryDetail()
         {
         }
 
@@ -64,7 +64,7 @@ namespace ClearCanvas.Ris.Application.Common
 
         public object Clone()
         {
-            NoteCategoryDetail clone = new NoteCategoryDetail();
+            PatientNoteCategoryDetail clone = new PatientNoteCategoryDetail();
             clone.Category = this.Category;
             clone.Description = this.Description;
             clone.Severity = (EnumValueInfo)this.Severity.Clone();

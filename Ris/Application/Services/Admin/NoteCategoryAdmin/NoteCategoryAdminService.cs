@@ -59,13 +59,13 @@ namespace ClearCanvas.Ris.Application.Services.Admin.NoteCategoryAdmin
         [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.NoteAdmin)]
         public ListAllNoteCategoriesResponse ListAllNoteCategories(ListAllNoteCategoriesRequest request)
         {
-            NoteCategorySearchCriteria criteria = new NoteCategorySearchCriteria();
+            PatientNoteCategorySearchCriteria criteria = new PatientNoteCategorySearchCriteria();
 
-            NoteCategoryAssembler assembler = new NoteCategoryAssembler();
+            PatientNoteCategoryAssembler assembler = new PatientNoteCategoryAssembler();
             return new ListAllNoteCategoriesResponse(
-                CollectionUtils.Map<NoteCategory, NoteCategorySummary, List<NoteCategorySummary>>(
-                    PersistenceContext.GetBroker<INoteCategoryBroker>().Find(criteria, request.Page),
-                    delegate(NoteCategory category)
+                CollectionUtils.Map<PatientNoteCategory, PatientNoteCategorySummary, List<PatientNoteCategorySummary>>(
+                    PersistenceContext.GetBroker<IPatientNoteCategoryBroker>().Find(criteria, request.Page),
+                    delegate(PatientNoteCategory category)
                     {
                         return assembler.CreateNoteCategorySummary(category, this.PersistenceContext);
                     }));
@@ -84,8 +84,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.NoteCategoryAdmin
         public LoadNoteCategoryForEditResponse LoadNoteCategoryForEdit(LoadNoteCategoryForEditRequest request)
         {
             // note that the version of the NoteCategoryRef is intentionally ignored here (default behaviour of ReadOperation)
-            NoteCategory category = PersistenceContext.Load<NoteCategory>(request.NoteCategoryRef);
-            NoteCategoryAssembler assembler = new NoteCategoryAssembler();
+            PatientNoteCategory category = PersistenceContext.Load<PatientNoteCategory>(request.NoteCategoryRef);
+            PatientNoteCategoryAssembler assembler = new PatientNoteCategoryAssembler();
 
             return new LoadNoteCategoryForEditResponse(category.GetRef(), assembler.CreateNoteCategoryDetail(category, this.PersistenceContext));
         }
@@ -98,9 +98,9 @@ namespace ClearCanvas.Ris.Application.Services.Admin.NoteCategoryAdmin
         [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.NoteAdmin)]
         public AddNoteCategoryResponse AddNoteCategory(AddNoteCategoryRequest request)
         {
-            NoteCategory noteCategory = new NoteCategory();
+            PatientNoteCategory noteCategory = new PatientNoteCategory();
 
-            NoteCategoryAssembler assembler = new NoteCategoryAssembler();
+            PatientNoteCategoryAssembler assembler = new PatientNoteCategoryAssembler();
             assembler.UpdateNoteCategory(request.NoteCategoryDetail, noteCategory);
 
             PersistenceContext.Lock(noteCategory, DirtyState.New);
@@ -120,9 +120,9 @@ namespace ClearCanvas.Ris.Application.Services.Admin.NoteCategoryAdmin
         [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.NoteAdmin)]
         public UpdateNoteCategoryResponse UpdateNoteCategory(UpdateNoteCategoryRequest request)
         {
-            NoteCategory noteCategory = PersistenceContext.Load<NoteCategory>(request.NoteCategoryRef, EntityLoadFlags.CheckVersion);
+            PatientNoteCategory noteCategory = PersistenceContext.Load<PatientNoteCategory>(request.NoteCategoryRef, EntityLoadFlags.CheckVersion);
 
-            NoteCategoryAssembler assembler = new NoteCategoryAssembler();
+            PatientNoteCategoryAssembler assembler = new PatientNoteCategoryAssembler();
             assembler.UpdateNoteCategory(request.NoteCategoryDetail, noteCategory);
 
             return new UpdateNoteCategoryResponse(assembler.CreateNoteCategorySummary(noteCategory, this.PersistenceContext));

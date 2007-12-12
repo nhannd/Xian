@@ -60,11 +60,11 @@ namespace ClearCanvas.Ris.Client.Admin
     {
         private List<EnumValueInfo> _severityChoices;
 
-        private NoteCategoryDetail _noteCategoryDetail;
+        private PatientNoteCategoryDetail _noteCategoryDetail;
         private EntityRef _noteCategoryRef;
         private bool _isNew;
 
-        private NoteCategorySummary _noteCategorySummary;
+        private PatientNoteCategorySummary _noteCategorySummary;
 
         /// <summary>
         /// Constructor
@@ -80,7 +80,7 @@ namespace ClearCanvas.Ris.Client.Admin
             _noteCategoryRef = noteCategoryRef;
         }
 
-        public NoteCategorySummary NoteCategorySummary
+        public PatientNoteCategorySummary NoteCategorySummary
         {
             get { return _noteCategorySummary; }
         }
@@ -89,7 +89,7 @@ namespace ClearCanvas.Ris.Client.Admin
         {
             if (_isNew)
             {
-                _noteCategoryDetail = new NoteCategoryDetail();
+                _noteCategoryDetail = new PatientNoteCategoryDetail();
             }
             else
             {
@@ -122,7 +122,7 @@ namespace ClearCanvas.Ris.Client.Admin
             base.Stop();
         }
 
-        public NoteCategoryDetail NoteCategoryDetail
+        public PatientNoteCategoryDetail NoteCategoryDetail
         {
             get { return _noteCategoryDetail; }
             set { _noteCategoryDetail = value; }

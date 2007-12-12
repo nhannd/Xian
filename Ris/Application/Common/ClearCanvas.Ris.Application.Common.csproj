@@ -371,8 +371,8 @@
     <Compile Include="PerformedProcedureStepDetail.cs" />
     <Compile Include="ConcurrentModificationException.cs" />
     <Compile Include="ContactPersonDetail.cs" />
-    <Compile Include="NoteCategoryDetail.cs" />
-    <Compile Include="NoteCategorySummary.cs" />
+    <Compile Include="PatientNoteCategoryDetail.cs" />
+    <Compile Include="PatientNoteCategorySummary.cs" />
     <Compile Include="EnablementMethodNotFoundException.cs" />
     <Compile Include="EmailAddressDetail.cs" />
     <Compile Include="EnumValueInfo.cs" />
@@ -401,7 +401,7 @@
     <Compile Include="ModalityWorkflow\ModalityWorklistItem.cs" />
     <Compile Include="ModalityWorkflow\ModalityWorklistSearchData.cs" />
     <Compile Include="ModalityWorkflow\StartProcedureRequest.cs" />
-    <Compile Include="NoteDetail.cs" />
+    <Compile Include="PatientNoteDetail.cs" />
     <Compile Include="OrderDetail.cs" />
     <Compile Include="OrderSummary.cs" />
     <Compile Include="PagedDataContractBase.cs" />

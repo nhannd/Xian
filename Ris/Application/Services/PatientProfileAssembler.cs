@@ -138,9 +138,9 @@ namespace ClearCanvas.Ris.Application.Services
 
             if (includeNotes)
             {
-                NoteAssembler noteAssembler = new NoteAssembler();
-                detail.Notes = new List<NoteDetail>();
-                foreach (Note n in profile.Patient.Notes)
+                PatientNoteAssembler noteAssembler = new PatientNoteAssembler();
+                detail.Notes = new List<PatientNoteDetail>();
+                foreach (PatientNote n in profile.Patient.Notes)
                 {
                     detail.Notes.Add(noteAssembler.CreateNoteDetail(n, context));
                 }
@@ -208,9 +208,9 @@ namespace ClearCanvas.Ris.Application.Services
                 profile.EmailAddresses.Add(emailAssembler.CreateEmailAddress(e));
             }
 
-            NoteAssembler noteAssembler = new NoteAssembler();
+            PatientNoteAssembler noteAssembler = new PatientNoteAssembler();
             profile.Patient.Notes.Clear();
-            foreach (NoteDetail n in detail.Notes)
+            foreach (PatientNoteDetail n in detail.Notes)
             {
                 profile.Patient.Notes.Add(noteAssembler.CreateNote(n, context));
             }

@@ -40,12 +40,12 @@ namespace ClearCanvas.Ris.Application.Common.Admin.NoteCategoryAdmin
     [DataContract]
     public class UpdateNoteCategoryResponse : DataContractBase
     {
-        public UpdateNoteCategoryResponse(NoteCategorySummary summary)
+        public UpdateNoteCategoryResponse(PatientNoteCategorySummary summary)
         {
             this.NoteCategory = summary;
         }
 
         [DataMember]
-        public NoteCategorySummary NoteCategory;
+        public PatientNoteCategorySummary NoteCategory;
     }
 }

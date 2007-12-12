@@ -56,16 +56,16 @@ namespace ClearCanvas.Ris.Client
     [AssociateView(typeof(NoteSummaryComponentViewExtensionPoint))]
     public class NoteSummaryComponent : ApplicationComponent
     {
-        private List<NoteDetail> _noteList;
+        private List<PatientNoteDetail> _noteList;
         private NoteTable _noteTable;
-        private NoteDetail _currentNoteSelection;
+        private PatientNoteDetail _currentNoteSelection;
         private CrudActionModel _noteActionHandler;
-        private List<NoteCategorySummary> _noteCategoryChoices;
+        private List<PatientNoteCategorySummary> _noteCategoryChoices;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public NoteSummaryComponent(List<NoteCategorySummary> categoryChoices)
+        public NoteSummaryComponent(List<PatientNoteCategorySummary> categoryChoices)
         {
             _noteCategoryChoices = categoryChoices;
             _noteTable = new NoteTable();
@@ -80,7 +80,7 @@ namespace ClearCanvas.Ris.Client
             _noteActionHandler.Delete.Enabled = false;
         }
 
-        public List<NoteDetail> Subject
+        public List<PatientNoteDetail> Subject
         {
             get { return _noteList; }
             set { _noteList = value; }
@@ -115,14 +115,14 @@ namespace ClearCanvas.Ris.Client
             get { return new Selection(_currentNoteSelection); }
             set
             {
-                _currentNoteSelection = (NoteDetail)value.Item;
+                _currentNoteSelection = (PatientNoteDetail)value.Item;
                 NoteSelectionChanged();
             }
         }
 
         public void AddNote()
         {
-            NoteDetail note = new NoteDetail();
+            PatientNoteDetail note = new PatientNoteDetail();
 
             NoteEditorComponent editor = new NoteEditorComponent(note, _noteCategoryChoices);
             ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleAddNote);
@@ -139,14 +139,14 @@ namespace ClearCanvas.Ris.Client
             // can occur if user double clicks while holding control
             if (_currentNoteSelection == null) return;
 
-            NoteDetail note = (NoteDetail)_currentNoteSelection.Clone();
+            PatientNoteDetail note = (PatientNoteDetail)_currentNoteSelection.Clone();
 
             NoteEditorComponent editor = new NoteEditorComponent(note, _noteCategoryChoices);
             ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleUpdateNote);
             if (exitCode == ApplicationComponentExitCode.Accepted)
             {
                 // delete and re-insert to ensure that TableView updates correctly
-                NoteDetail toBeRemoved = _currentNoteSelection;
+                PatientNoteDetail toBeRemoved = _currentNoteSelection;
                 _noteTable.Items.Remove(toBeRemoved);
                 _noteList.Remove(toBeRemoved);
 
@@ -163,7 +163,7 @@ namespace ClearCanvas.Ris.Client
             {
                 //  Must use temporary note otherwise as a side effect TableDate.Remove() will change the current selection 
                 //  resulting in the wrong note being removed from the Patient
-                NoteDetail toBeRemoved = _currentNoteSelection;
+                PatientNoteDetail toBeRemoved = _currentNoteSelection;
                 _noteTable.Items.Remove(toBeRemoved);
                 _noteList.Remove(toBeRemoved);
                 this.Modified = true;

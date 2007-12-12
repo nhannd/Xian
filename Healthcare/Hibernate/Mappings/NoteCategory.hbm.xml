@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="ClearCanvas.Healthcare" namespace="ClearCanvas.Healthcare">
-  <class name="NoteCategory" proxy="NoteCategory" table="NoteCategory_">
+  <class name="PatientNoteCategory" proxy="PatientNoteCategory" table="PatientNoteCategory_">
     <id name="OID" column="OID_" type="Guid">
       <generator class="guid.comb"/>
     </id>

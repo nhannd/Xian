@@ -42,51 +42,51 @@ using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Application.Services
 {
-    public class NoteAssembler
+    public class PatientNoteAssembler
     {
-        public NoteDetail CreateNoteDetail(Note note, IPersistenceContext context)
+        public PatientNoteDetail CreateNoteDetail(PatientNote note, IPersistenceContext context)
         {
             if (note == null)
                 return null;
 
-            NoteDetail detail = new NoteDetail();
+            PatientNoteDetail detail = new PatientNoteDetail();
 
             detail.Comment = note.Comment;
-            detail.TimeStamp = note.TimeStamp;
+            detail.CreationTime = note.CreationTime;
             detail.ValidRangeFrom = note.ValidRange.From;
             detail.ValidRangeUntil = note.ValidRange.Until;
 
-            NoteCategoryAssembler categoryAssembler = new NoteCategoryAssembler();
+            PatientNoteCategoryAssembler categoryAssembler = new PatientNoteCategoryAssembler();
             detail.Category = categoryAssembler.CreateNoteCategorySummary(note.Category, context);
 
             StaffAssembler staffAssembler = new StaffAssembler();
-            detail.CreatedBy = staffAssembler.CreateStaffSummary(note.CreatedBy, context);
+            detail.Author = staffAssembler.CreateStaffSummary(note.Author, context);
 
             return detail;
         }
 
-        public Note CreateNote(NoteDetail detail, IPersistenceContext context)
+        public PatientNote CreateNote(PatientNoteDetail detail, IPersistenceContext context)
         {
-            Note newNote = new Note();
+            PatientNote newNote = new PatientNote();
 
             newNote.Comment = detail.Comment;
             newNote.ValidRange.From = detail.ValidRangeFrom;
             newNote.ValidRange.Until = detail.ValidRangeUntil;
 
-            if (detail.TimeStamp != null)
-                newNote.TimeStamp = detail.TimeStamp.Value;
+            if (detail.CreationTime != null)
+                newNote.CreationTime = detail.CreationTime.Value;
             else
-                newNote.TimeStamp = Platform.Time;
+                newNote.CreationTime = Platform.Time;
 
             if (detail.Category != null)
-                newNote.Category = context.Load<NoteCategory>(detail.Category.NoteCategoryRef, EntityLoadFlags.Proxy);
+                newNote.Category = context.Load<PatientNoteCategory>(detail.Category.NoteCategoryRef, EntityLoadFlags.Proxy);
 
-            if (detail.CreatedBy != null)
-                newNote.CreatedBy = context.Load<Staff>(detail.CreatedBy.StaffRef, EntityLoadFlags.Proxy);
+            if (detail.Author != null)
+                newNote.Author = context.Load<Staff>(detail.Author.StaffRef, EntityLoadFlags.Proxy);
             else
             {
                 //TODO: Services should know which staff is invoking the operation, use that staff instead
-                newNote.CreatedBy = context.GetBroker<IStaffBroker>().FindOne(new StaffSearchCriteria());
+                newNote.Author = context.GetBroker<IStaffBroker>().FindOne(new StaffSearchCriteria());
             }
 
             return newNote;

@@ -30,68 +30,54 @@
 #endregion
 
 using System;
-using System.Runtime.Serialization;
+using System.Collections;
+using System.Collections.Generic;
+using System.Text;
 
-using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Ris.Application.Common.Admin;
+using ClearCanvas.Healthcare;
+using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Ris.Application.Common;
 
-namespace ClearCanvas.Ris.Application.Common
+namespace ClearCanvas.Ris.Application.Services
 {
-    [DataContract]
-    public class NoteDetail : DataContractBase, ICloneable
+    public class PatientNoteCategoryAssembler
     {
-        public NoteDetail(string comment, 
-            NoteCategorySummary category, 
-            StaffSummary createdBy, 
-            DateTime? timeStamp,
-            DateTime? validRangeFrom,
-            DateTime? validRangeUntil)
+        public PatientNoteCategoryDetail CreateNoteCategoryDetail(PatientNoteCategory category, IPersistenceContext context)
         {
-            this.Comment = comment;
-            this.Category = category;
-            this.CreatedBy = createdBy;
-            this.TimeStamp = timeStamp;
-            this.ValidRangeFrom = validRangeFrom;
-            this.ValidRangeUntil = validRangeUntil;
+            if (category == null)
+                return null;
+
+            PatientNoteCategoryDetail detail = new PatientNoteCategoryDetail();
+
+            detail.Category = category.Name;
+            detail.Description = category.Description;
+
+            detail.Severity = EnumUtils.GetEnumValueInfo(category.Severity, context);
+
+            return detail;
         }
 
-        public NoteDetail()
+        public PatientNoteCategorySummary CreateNoteCategorySummary(PatientNoteCategory category, IPersistenceContext context)
         {
+            if (category == null)
+                return null;
+
+            PatientNoteCategorySummary summary = new PatientNoteCategorySummary();
+
+            summary.NoteCategoryRef = category.GetRef();
+            summary.Name = category.Name;
+            summary.Description = category.Description;
+
+            summary.Severity = EnumUtils.GetEnumValueInfo(category.Severity, context);
+
+            return summary;
         }
 
-        [DataMember]
-        public string Comment;
-
-        [DataMember]
-        public NoteCategorySummary Category;
-
-        [DataMember]
-        public StaffSummary CreatedBy;
-
-        [DataMember]
-        public DateTime? TimeStamp;
-
-        [DataMember]
-        public DateTime? ValidRangeFrom;
-
-        [DataMember]
-        public DateTime? ValidRangeUntil;
-
-        #region ICloneable Members
-
-        public object Clone()
+        public void UpdateNoteCategory(PatientNoteCategoryDetail detail, PatientNoteCategory category)
         {
-            NoteDetail clone = new NoteDetail();
-            clone.Comment = this.Comment;
-            clone.Category = (NoteCategorySummary)this.Category.Clone();
-            clone.CreatedBy = this.CreatedBy == null ? null : (StaffSummary)this.CreatedBy.Clone();
-            clone.TimeStamp = this.TimeStamp;
-            clone.ValidRangeFrom = this.ValidRangeFrom;
-            clone.ValidRangeUntil = this.ValidRangeUntil;
-
-            return clone;
+            category.Name = detail.Category;
+            category.Description = detail.Description;
+            category.Severity = EnumUtils.GetEnumValue<NoteSeverity>(detail.Severity);
         }
-
-        #endregion    
     }
 }

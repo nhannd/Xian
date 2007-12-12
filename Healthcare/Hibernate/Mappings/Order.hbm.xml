@@ -27,6 +27,11 @@
     <many-to-one name="OrderingPractitioner" class="ExternalPractitioner" column="OrderingPractitionerOID_" not-null="true"/>
     <many-to-one name="OrderingFacility" class="Facility" column="FacilityOID_" not-null="true"/>
 
+    <set name="RequestedProcedures" lazy="true" inverse="true" cascade="all-delete-orphan" access="nosetter.camelcase-underscore">
+      <key column="OrderOID_"/>
+      <one-to-many class="RequestedProcedure"/>
+    </set>
+
     <set name="ResultCopiesToPractitioners" table="OrderResultCopiesToPractitioners_" lazy="true" access="nosetter.camelcase-underscore">
       <key column="OrderOID_"/>
       <many-to-many column="PractitionerOID_" class="ExternalPractitioner" fetch="join"/>
@@ -51,11 +56,19 @@
     <property name="Status" column="Status_" type="ClearCanvas.Healthcare.Hibernate.OrderStatusEnumHbm, ClearCanvas.Healthcare.Hibernate" not-null="true"/>
     <many-to-one name="CancelReason" class="OrderCancelReasonEnum" column="CancelReason_"/>
 
-    <set name="RequestedProcedures" lazy="true" inverse="true" cascade="all-delete-orphan" access="nosetter.camelcase-underscore">
+
+    <idbag name="Notes" table="OrderNote_" lazy="true">
+      <collection-id column="OID_" type="Guid">
+        <generator class="guid.comb"/>
+      </collection-id>
       <key column="OrderOID_"/>
-      <one-to-many class="RequestedProcedure"/>
-    </set>
-    
+      <composite-element class="OrderNote">
+        <property name="CreationTime" column="CreationTime_" type="DateTime" not-null="true"/>
+        <many-to-one name="Author" class="Staff" column="Author_" not-null="true" fetch="join"/>
+        <property name="Comment" column="Comment_" type="String" length ="1024"/>
+      </composite-element>
+    </idbag>
+
     <map name="ExtendedProperties" lazy="true" table="OrderExtendedProperties_">
       <key column="OrderOID_"/>
       <index column="Name_" type="String"/>

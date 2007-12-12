@@ -48,10 +48,10 @@ namespace ClearCanvas.Ris.Client
     [AssociateView(typeof(NoteEditorComponentViewExtensionPoint))]
     public class NoteEditorComponent : ApplicationComponent
     {
-        private NoteDetail _note;
-        private IList<NoteCategorySummary> _noteCategoryChoices;
+        private PatientNoteDetail _note;
+        private IList<PatientNoteCategorySummary> _noteCategoryChoices;
 
-        public NoteEditorComponent(NoteDetail noteDetail, List<NoteCategorySummary> noteCategoryChoices)
+        public NoteEditorComponent(PatientNoteDetail noteDetail, List<PatientNoteCategorySummary> noteCategoryChoices)
         {
             _note = noteDetail;
             _noteCategoryChoices = noteCategoryChoices;
@@ -101,8 +101,8 @@ namespace ClearCanvas.Ris.Client
             set
             {
                 _note.Category = (value == "") ? null :
-                    CollectionUtils.SelectFirst<NoteCategorySummary>(_noteCategoryChoices,
-                        delegate(NoteCategorySummary category) 
+                    CollectionUtils.SelectFirst<PatientNoteCategorySummary>(_noteCategoryChoices,
+                        delegate(PatientNoteCategorySummary category) 
                         {
                             return (String.Format(SR.FormatNoteCategory, category.Name, category.Severity.Value) == value); 
                         });
@@ -124,9 +124,9 @@ namespace ClearCanvas.Ris.Client
                 List<string> categoryStrings = new List<string>();
                 categoryStrings.Add("");
                 categoryStrings.AddRange(
-                    CollectionUtils.Map<NoteCategorySummary, string>(
-                        _noteCategoryChoices, 
-                        delegate(NoteCategorySummary category) 
+                    CollectionUtils.Map<PatientNoteCategorySummary, string>(
+                        _noteCategoryChoices,
+                        delegate(PatientNoteCategorySummary category) 
                         {
                             return String.Format(SR.FormatNoteCategory, category.Name, category.Severity.Value);
                         }));

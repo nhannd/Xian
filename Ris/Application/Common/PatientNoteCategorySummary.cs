@@ -30,54 +30,52 @@
 #endregion
 
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Text;
+using System.Runtime.Serialization;
 
-using ClearCanvas.Healthcare;
-using ClearCanvas.Enterprise.Core;
-using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Ris.Application.Common.Admin;
 
-namespace ClearCanvas.Ris.Application.Services
+namespace ClearCanvas.Ris.Application.Common
 {
-    public class NoteCategoryAssembler
+    [DataContract]
+    public class PatientNoteCategorySummary : DataContractBase, ICloneable
     {
-        public NoteCategoryDetail CreateNoteCategoryDetail(NoteCategory category, IPersistenceContext context)
+        public PatientNoteCategorySummary(EntityRef noteCategoryRef, string name, string description, EnumValueInfo severity)
         {
-            if (category == null)
-                return null;
-
-            NoteCategoryDetail detail = new NoteCategoryDetail();
-
-            detail.Category = category.Name;
-            detail.Description = category.Description;
-
-            detail.Severity = EnumUtils.GetEnumValueInfo(category.Severity, context);
-
-            return detail;
+            this.NoteCategoryRef = noteCategoryRef;
+            this.Name = name;
+            this.Description = description;
+            this.Severity = severity;
         }
 
-        public NoteCategorySummary CreateNoteCategorySummary(NoteCategory category, IPersistenceContext context)
+        public PatientNoteCategorySummary()
         {
-            if (category == null)
-                return null;
-
-            NoteCategorySummary summary = new NoteCategorySummary();
-
-            summary.NoteCategoryRef = category.GetRef();
-            summary.Name = category.Name;
-            summary.Description = category.Description;
-
-            summary.Severity = EnumUtils.GetEnumValueInfo(category.Severity, context);
-
-            return summary;
         }
 
-        public void UpdateNoteCategory(NoteCategoryDetail detail, NoteCategory category)
+        [DataMember]
+        public EntityRef NoteCategoryRef;
+
+        [DataMember]
+        public string Name;
+
+        [DataMember]
+        public string Description;
+
+        [DataMember]
+        public EnumValueInfo Severity;
+
+        #region ICloneable Members
+
+        public object Clone()
         {
-            category.Name = detail.Category;
-            category.Description = detail.Description;
-            category.Severity = EnumUtils.GetEnumValue<NoteSeverity>(detail.Severity);
+            PatientNoteCategorySummary clone = new PatientNoteCategorySummary();
+            clone.NoteCategoryRef = this.NoteCategoryRef;
+            clone.Name = this.Name;
+            clone.Description = this.Description;
+            clone.Severity = (EnumValueInfo)this.Severity.Clone();
+            return clone;
         }
+
+        #endregion
     }
 }
