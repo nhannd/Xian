@@ -52,8 +52,6 @@ namespace ClearCanvas.Desktop.Actions
         private bool _checked = false;
         private event EventHandler _checkedChanged;
 
-		private bool _checkParents = false;
-
         /// <summary>
         /// Constructor.
         /// </summary>
@@ -123,16 +121,13 @@ namespace ClearCanvas.Desktop.Actions
             remove { _checkedChanged -= value; }
         }
 
-		//TODO (Stewart): Make this part of ClickActionFlags.
-
         /// <summary>
         /// Gets a value indicating whether parent items should be checked if this
         /// <see cref="IClickAction"/> is checked.
         /// </summary>
         public bool CheckParents
 		{
-			get { return _checkParents; }
-			set { _checkParents = value; }
+			get { return (_flags & ClickActionFlags.CheckParents) == ClickActionFlags.CheckParents; }
 		}
 
         /// <summary>

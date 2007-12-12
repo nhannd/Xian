@@ -43,7 +43,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 	{
 		#region Window/Level Memento class
 
-		private class WindowLevelMemento : IMemento, IEquatable<WindowLevelMemento>
+		private class WindowLevelMemento : IEquatable<WindowLevelMemento>
 		{
 			public readonly double WindowWidth;
 			public readonly double WindowCenter;
@@ -198,17 +198,17 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Creates a memento, through which the Lut's state can be restored.
 		/// </summary>
-		public override IMemento CreateMemento()
+		public override object CreateMemento()
 		{
 			return new WindowLevelMemento(this.WindowWidth, this.WindowCenter);
 		}
 
 		/// <summary>
-		/// Sets the Lut's state from the input <see cref="IMemento"/>.
+		/// Sets the Lut's state from the input memento object.
 		/// </summary>
 		/// <exception cref="InvalidCastException">Thrown when the memento is unrecognized, which should never happen.</exception>
 		/// <param name="memento">The memento to use to restore a previous state.</param>
-		public override void SetMemento(IMemento memento)
+		public override void SetMemento(object memento)
 		{
 			WindowLevelMemento windowLevelMemento = memento as WindowLevelMemento;
 			Platform.CheckForInvalidCast(windowLevelMemento, "memento", typeof(WindowLevelMemento).Name);

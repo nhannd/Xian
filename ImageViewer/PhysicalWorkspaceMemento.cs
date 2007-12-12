@@ -31,19 +31,20 @@
 
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
+using System.Collections.Generic;
 
 namespace ClearCanvas.ImageViewer
 {
-	internal class PhysicalWorkspaceMemento : IMemento
+	internal class PhysicalWorkspaceMemento
 	{
 		private ImageBoxCollection _imageBoxes;
-		private MementoList _imageBoxMementos;
+		private List<object> _imageBoxMementos;
 		private int _rows;
 		private int _columns;
 
 		public PhysicalWorkspaceMemento(
 			ImageBoxCollection imageBoxes,
-			MementoList imageBoxMementos,
+			List<object> imageBoxMementos,
 			int rows,
 			int columns)
 		{
@@ -61,7 +62,7 @@ namespace ClearCanvas.ImageViewer
 			get { return _imageBoxes; }
 		}
 
-		public MementoList ImageBoxMementos
+		public List<object> ImageBoxMementos
 		{
 			get { return _imageBoxMementos; }
 		}

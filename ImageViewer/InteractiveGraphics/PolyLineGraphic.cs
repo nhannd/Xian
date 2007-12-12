@@ -211,7 +211,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// Captures the state of the polyline.
 		/// </summary>
 		/// <returns></returns>
-		public virtual IMemento CreateMemento()
+		public virtual object CreateMemento()
 		{
 			PointsMemento memento = new PointsMemento();
 
@@ -230,7 +230,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// Restores the state of the polyline.
 		/// </summary>
 		/// <param name="memento"></param>
-		public virtual void SetMemento(IMemento memento)
+		public virtual void SetMemento(object memento)
 		{
 			Platform.CheckForNullReference(memento, "memento");
 			PointsMemento anchorPointsMemento = memento as PointsMemento;

@@ -37,7 +37,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 	/// <summary>
 	/// 
 	/// </summary>
-	internal class PointMemento : IMemento
+	internal class PointMemento
 	{
 		private PointF _point;
 

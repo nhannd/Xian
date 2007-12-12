@@ -40,9 +40,9 @@ namespace ClearCanvas.ImageViewer
 	{
 		private readonly IPresentationImage _presentationImage;
 		private readonly IMemorable _originator;
-		private readonly IMemento _memento;
+		private readonly object _memento;
 
-		public ImageOriginatorMemento(IPresentationImage presentationImage, IMemorable originator, IMemento memento)
+		public ImageOriginatorMemento(IPresentationImage presentationImage, IMemorable originator, object memento)
 		{
 			_presentationImage = presentationImage;
 			_originator = originator;
@@ -59,13 +59,13 @@ namespace ClearCanvas.ImageViewer
 			get { return _originator; }
 		}
 
-		public IMemento Memento
+		public object Memento
 		{
 			get { return _memento; }
 		}
 	}
 
-	internal class ImageOperationApplicatorMemento : IMemento, IEquatable<ImageOperationApplicatorMemento>
+	internal class ImageOperationApplicatorMemento : IEquatable<ImageOperationApplicatorMemento>
 	{
 		private readonly IList<ImageOriginatorMemento> _imageOriginatorMementos;
 

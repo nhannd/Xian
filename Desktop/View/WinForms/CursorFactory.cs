@@ -62,14 +62,9 @@ namespace ClearCanvas.Desktop.View.WinForms
 			_disposeCursor = true;
 		}
 
-		private CursorWrapper()
-		{ 
-		}
-
 		public Cursor Cursor
 		{
 			get { return _cursor; }
-			set { _cursor = value; }
 		}
 
 		/// <summary>
@@ -121,12 +116,10 @@ namespace ClearCanvas.Desktop.View.WinForms
 			if (cursorToken.IsSystemCursor)
 				return new CursorWrapper(GetSystemCursor(cursorToken.ResourceName), false);
 
-			ResourceResolver resolver = new ResourceResolver(cursorToken.ResourceAssembly);
-
 			if (cursorToken.ResourceName.EndsWith(".cur", StringComparison.InvariantCultureIgnoreCase))
-				return FromCursorResource(cursorToken.ResourceName, resolver);
+				return FromCursorResource(cursorToken.ResourceName, cursorToken.Resolver);
 
-			return FromImageResource(cursorToken.ResourceName, resolver);
+			return FromImageResource(cursorToken.ResourceName, cursorToken.Resolver);
 		}
 
 		private static Cursor GetSystemCursor(string systemCursorName)

@@ -33,17 +33,17 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Graphics
 {
-	internal class ImageSpatialTransformMemento : IMemento
+	internal class ImageSpatialTransformMemento
 	{
 		private bool _scaleToFit;
-		private IMemento _spatialTransformMemento;
+		private object _spatialTransformMemento;
 
 		public ImageSpatialTransformMemento()
 		{
 
 		}
 
-		public IMemento SpatialTransformMemento
+		public object SpatialTransformMemento
 		{
 			get { return _spatialTransformMemento; }
 			set { _spatialTransformMemento = value; }

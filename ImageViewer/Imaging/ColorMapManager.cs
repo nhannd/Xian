@@ -79,12 +79,12 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		#region IMemorable Members
 
-		public IMemento CreateMemento()
+		public object CreateMemento()
 		{
 			return new ComposableLutMemento(_grayscaleImageGraphic.ColorMap);
 		}
 
-		public void SetMemento(IMemento memento)
+		public void SetMemento(object memento)
 		{
 			ComposableLutMemento lutMemento = memento as ComposableLutMemento;
 			Platform.CheckForInvalidCast(lutMemento, "memento", typeof(ComposableLutMemento).Name);

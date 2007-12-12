@@ -34,7 +34,7 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
-	internal class RectangleMemento : IMemento
+	internal class RectangleMemento
 	{
 		PointF _topLeft;
 		PointF _bottomRight;

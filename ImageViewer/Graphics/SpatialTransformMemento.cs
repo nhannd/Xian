@@ -34,7 +34,7 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Graphics
 {
-	internal class SpatialTransformMemento : IMemento
+	internal class SpatialTransformMemento
 	{
 		private float _scale;
 		private float _translationX;

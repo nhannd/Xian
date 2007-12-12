@@ -31,10 +31,10 @@
 
 using System.Reflection;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop
 {
-	//TODO (Stewart): Refactor to get rid of assembly and use resolver.
 	/// <summary>
 	/// A helper class for storing information about cursors that are to be
 	/// shown in the view.
@@ -149,7 +149,7 @@ namespace ClearCanvas.Desktop
 		}; 
 		
 		private string _resourceName;
-		private Assembly _resourceAssembly;
+		private ResourceResolver _resolver;
 
 		/// <summary>
 		/// Constructor.
@@ -158,7 +158,7 @@ namespace ClearCanvas.Desktop
 		public CursorToken(SystemCursors systemCursor)
 		{
 			_resourceName = systemCursor.ToString();
-			_resourceAssembly = null;
+			_resolver = null;
 		}
 
 		/// <summary>
@@ -170,11 +170,10 @@ namespace ClearCanvas.Desktop
 		/// <param name="resourceName">The resource name of the cursor.</param>
 		public CursorToken(string resourceName)
 		{
-			Platform.CheckForNullReference(resourceName, "resourceName"); 
 			Platform.CheckForEmptyString(resourceName, "resourceName");
 
 			_resourceName = resourceName;
-			_resourceAssembly = System.Reflection.Assembly.GetCallingAssembly();
+			_resolver = new ResourceResolver(Assembly.GetCallingAssembly());
 		}
 
 		/// <summary>
@@ -184,12 +183,11 @@ namespace ClearCanvas.Desktop
 		/// <param name="resourceAssembly">The assembly where the cursor resource resides.</param>
 		public CursorToken(string resourceName, Assembly resourceAssembly)
 		{
-			Platform.CheckForNullReference(resourceName, "resourceName");
 			Platform.CheckForEmptyString(resourceName, "resourceName");
 			Platform.CheckForNullReference(resourceAssembly, "resourceAssembly");
 
 			_resourceName = resourceName;
-			_resourceAssembly = resourceAssembly;
+			_resolver = new ResourceResolver(resourceAssembly);
 		}
 
 		/// <summary>
@@ -201,11 +199,11 @@ namespace ClearCanvas.Desktop
 		}
 
 		/// <summary>
-		/// Gets the assembly where the cursor resource resides.
+		/// Gets t<see cref="IResourceResolver"/> for the cursor resource.
 		/// </summary>
-		public Assembly ResourceAssembly
+		public IResourceResolver Resolver
 		{
-			get { return _resourceAssembly; }
+			get { return _resolver; }
 		}
 
 		/// <summary>
@@ -213,7 +211,7 @@ namespace ClearCanvas.Desktop
 		/// </summary>
 		public bool IsSystemCursor
 		{
-			get { return (_resourceAssembly == null); }
+			get { return (_resolver == null); }
 		}
 	}
 }

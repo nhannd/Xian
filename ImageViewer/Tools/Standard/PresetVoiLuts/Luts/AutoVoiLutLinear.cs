@@ -45,7 +45,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts
 
 	internal sealed class AutoVoiLutLinear : CalculatedVoiLutLinear, IAutoVoiLutLinear
 	{
-		private class AutoVoiLutLinearMemento : IMemento, IEquatable<AutoVoiLutLinearMemento>
+		private class AutoVoiLutLinearMemento : IEquatable<AutoVoiLutLinearMemento>
 		{
 			public readonly uint Index;
 
@@ -142,12 +142,12 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts
 			return String.Format(SR.FormatDescriptionAutoLinearLut, WindowWidth, WindowCenter);
 		}
 
-		public override IMemento CreateMemento()
+		public override object CreateMemento()
 		{
 			return new AutoVoiLutLinearMemento(_index);
 		}
 
-		public override void SetMemento(IMemento memento)
+		public override void SetMemento(object memento)
 		{
 			AutoVoiLutLinearMemento autoMemento = memento as AutoVoiLutLinearMemento;
 			Platform.CheckForInvalidCast(autoMemento, "memento", typeof(AutoVoiLutLinearMemento).Name);

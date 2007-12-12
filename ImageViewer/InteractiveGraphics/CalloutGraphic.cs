@@ -215,7 +215,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// Creates a memento of this object.
 		/// </summary>
 		/// <returns></returns>
-		public virtual IMemento CreateMemento()
+		public virtual object CreateMemento()
         {
 			// Must store source coordinates in memento
 			this.CoordinateSystem = CoordinateSystem.Source;
@@ -230,7 +230,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// Sets a memento for this object.
 		/// </summary>
 		/// <param name="memento"></param>
-        public virtual void SetMemento(IMemento memento)
+        public virtual void SetMemento(object memento)
         {
 			PointMemento pointMemento = memento as PointMemento;
 			Platform.CheckForInvalidCast(pointMemento, "memento", "PointMemento");

@@ -38,7 +38,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts
 {
 	internal sealed class PresetVoiLutLinear : CalculatedVoiLutLinear
 	{
-		public sealed class PresetVoiLutLinearParameters : IMemento, IEquatable<PresetVoiLutLinearParameters>
+		public sealed class PresetVoiLutLinearParameters : IEquatable<PresetVoiLutLinearParameters>
 		{
 			public readonly string Name;
 			public readonly double WindowWidth;
@@ -141,12 +141,12 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts
 			return String.Format(SR.FormatDescriptionPresetLinearLut, WindowWidth, WindowCenter, this.Name);
 		}
 
-		public override IMemento CreateMemento()
+		public override object CreateMemento()
 		{
 			return _parameters;
 		}
 
-		public override void SetMemento(IMemento memento)
+		public override void SetMemento(object memento)
 		{
 			PresetVoiLutLinearParameters parameters = memento as PresetVoiLutLinearParameters;
 			Platform.CheckForInvalidCast(parameters, "memento", typeof (PresetVoiLutLinearParameters).Name);

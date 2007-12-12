@@ -83,12 +83,12 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		#region IMemorable Members
 
-		public IMemento CreateMemento()
+		public object CreateMemento()
 		{
 			return new VoiLutMemento(_grayscaleImageGraphic.VoiLut, _grayscaleImageGraphic.Invert);
 		}
 
-		public void SetMemento(IMemento memento)
+		public void SetMemento(object memento)
 		{
 			VoiLutMemento lutMemento = memento as VoiLutMemento;
 			Platform.CheckForInvalidCast(lutMemento, "memento", typeof(VoiLutMemento).Name);

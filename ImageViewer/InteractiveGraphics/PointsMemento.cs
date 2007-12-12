@@ -36,7 +36,7 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
-	internal class PointsMemento : IMemento, IEnumerable<PointF>
+	internal class PointsMemento : IEnumerable<PointF>
 	{
 		List<PointF> _anchorPoints = new List<PointF>();
 

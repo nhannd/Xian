@@ -33,7 +33,7 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer
 {
-	internal class TileMemento : IMemento
+	internal class TileMemento
 	{
 		private IPresentationImage _presentationImage;
 

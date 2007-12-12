@@ -217,7 +217,6 @@
     <Compile Include="IApplicationComponent.cs" />
     <Compile Include="IApplicationComponentHost.cs" />
     <Compile Include="IApplicationComponentView.cs" />
-    <Compile Include="IMemento.cs" />
     <Compile Include="IMemorable.cs" />
     <Compile Include="IView.cs" />
     <Compile Include="IWorkspace.cs" />
@@ -227,7 +226,6 @@
     <Compile Include="Shelf.cs" />
     <Compile Include="ShelfCollection.cs" />
     <Compile Include="ShelfDisplayHint.cs" />
-    <Compile Include="MementoList.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>

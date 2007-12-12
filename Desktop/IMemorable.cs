@@ -31,10 +31,6 @@
 
 namespace ClearCanvas.Desktop
 {
-	// TODO (Stewart): Make sure that all implementations of CreateMemento and
-	// SetMemento are virtual, unless the class is sealed.
-	// TODO (Stewart): Rename this to something else? 
-
 	/// <summary>
 	/// Allows object state to be captured and restored.
 	/// </summary>
@@ -42,32 +38,31 @@ namespace ClearCanvas.Desktop
 	/// <see cref="IMemorable"/> can be implemented by classes that require support
 	/// for the <i>Memento</i> design pattern--<see cref="IMemorable"/> acts as the
 	/// <i>Originator</i>.  Typically, the <see cref="IMemorable"/>
-	/// and <see cref="IMemento"/> interfaces are used in conjunction with
-	/// <see cref="UndoableCommand"/> to provide undo/redo support.
+	/// interface is used in conjunction with <see cref="UndoableCommand"/> 
+	/// to provide undo/redo support.
 	/// </remarks>
 	public interface IMemorable
 	{
 		/// <summary>
 		/// Captures the state of an object.
 		/// </summary>
-		/// <returns>An <see cref="IMemento"/>.</returns>
 		/// <remarks>
 		/// The implementation of <see cref="CreateMemento"/> should return an
-		/// <see cref="IMemento"/> containing enough state information so that
+		/// object containing enough state information so that
 		/// when <see cref="SetMemento"/> is called, the object can be restored
 		/// to the original state.
 		/// </remarks>
-		IMemento CreateMemento();
+		object CreateMemento();
 
 		/// <summary>
 		/// Restores the state of an object.
 		/// </summary>
-		/// <param name="memento">The <see cref="IMemento"/> object that was
+		/// <param name="memento">The object that was
 		/// originally created with <see cref="CreateMemento"/>.</param>
 		/// <remarks>
 		/// The implementation of <see cref="SetMemento"/> should return the 
 		/// object to the original state captured by <see cref="CreateMemento"/>.
 		/// </remarks>
-		void SetMemento(IMemento memento);
+		void SetMemento(object memento);
 	}
 }

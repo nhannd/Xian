@@ -315,7 +315,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// Not implemented.
 		/// </summary>
 		/// <returns></returns>
-		public virtual IMemento CreateMemento()
+		public virtual object CreateMemento()
 		{
 			throw new NotImplementedException();
 		}
@@ -324,7 +324,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// Not implemented.
 		/// </summary>
 		/// <param name="memento"></param>
-		public virtual void SetMemento(IMemento memento)
+		public virtual void SetMemento(object memento)
 		{
 			throw new NotImplementedException();
 		}

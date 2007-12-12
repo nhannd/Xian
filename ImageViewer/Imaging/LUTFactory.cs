@@ -149,7 +149,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 			#region IMemorable Members
 
-			public override IMemento CreateMemento()
+			public override object CreateMemento()
 			{
 				//no state to remember, but we do want to remove the reference to the 'real lut'.  It will be recreated later.
 				_realLut = null;

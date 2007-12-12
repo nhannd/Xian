@@ -450,7 +450,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// </summary>
 		/// <remarks>Typically used in conjunction with <see cref="UndoableCommand"/>
 		/// to support undo/redo.</remarks>
-		public virtual IMemento CreateMemento()
+		public virtual object CreateMemento()
 		{
 			SpatialTransformMemento memento = new SpatialTransformMemento();
 
@@ -473,7 +473,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// is <b>null</b>.</exception>
 		/// <exception cref="InvalidCastException"><b>memento</b>
 		/// is not of the type expected by the object.</exception>
-		public virtual void SetMemento(IMemento memento)
+		public virtual void SetMemento(object memento)
 		{
 			Platform.CheckForNullReference(memento, "memento");
 			SpatialTransformMemento spatialTransformMemento = memento as SpatialTransformMemento;

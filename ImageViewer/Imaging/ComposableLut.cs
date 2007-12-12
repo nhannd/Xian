@@ -143,7 +143,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// Override this member only when necessary.  If this method is overridden, <see cref="SetMemento"/> must also be overridden.
 		///  </remarks>
 		/// <returns>null, unless overridden.</returns>
-		public virtual IMemento CreateMemento()
+		public virtual object CreateMemento()
 		{
 			return null;
 		}
@@ -155,10 +155,10 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// If you override <see cref="CreateMemento"/> to capture the Lut's state, you must also override this method
 		/// to allow the state to be restored.
 		/// </remarks>
-		/// <param name="memento">The <see cref="IMemento"/> from which to restore the Lut's state.</param>
+		/// <param name="memento">The memento object from which to restore the Lut's state.</param>
 		/// <exception cref="InvalidOperationException">Thrown if <paramref name="memento"/> is <B>not</B> null, 
 		/// which would indicate that <see cref="CreateMemento"/> has been overridden, but <see cref="SetMemento"/> has not.</exception>
-		public virtual void SetMemento(IMemento memento)
+		public virtual void SetMemento(object memento)
 		{
 			if (memento != null)
 				throw new InvalidOperationException(SR.ExceptionMustOverrideSetMemento);

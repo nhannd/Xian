@@ -160,7 +160,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// Captures the state of the <see cref="RectangleInteractiveGraphic"/>.
 		/// </summary>
 		/// <returns></returns>
-		public override IMemento CreateMemento()
+		public override object CreateMemento()
 		{
 			RectangleMemento memento = new RectangleMemento();
 
@@ -177,7 +177,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// Restores the state of the <see cref="RectangleInteractiveGraphic"/>.
 		/// </summary>
 		/// <param name="memento"></param>
-		public override void SetMemento(IMemento memento)
+		public override void SetMemento(object memento)
 		{
 			Platform.CheckForNullReference(memento, "memento");
 			RectangleMemento graphicMemento = memento as RectangleMemento;

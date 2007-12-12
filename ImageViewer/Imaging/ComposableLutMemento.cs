@@ -35,12 +35,12 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
-	internal sealed class ComposableLutMemento : IMemento, IEquatable<ComposableLutMemento>
+	internal sealed class ComposableLutMemento : IEquatable<ComposableLutMemento>
 	{
 		#region Private Fields
 
 		private readonly IComposableLut _originatingLut;
-		private readonly IMemento _innerMemento;
+		private readonly object _innerMemento;
 
 		#endregion
 
@@ -58,7 +58,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 			get { return _originatingLut; }
 		}
 
-		public IMemento InnerMemento
+		public object InnerMemento
 		{
 			get { return _innerMemento; }	
 		}

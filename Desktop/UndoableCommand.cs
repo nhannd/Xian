@@ -33,22 +33,20 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.Desktop
 {
-	//TODO (Stewart): return objects instead of IMemorable?
-
 	/// <summary>
 	/// A command that facilitates undo/redo using the <b>Memento</b> design pattern.
 	/// </summary>
 	public class UndoableCommand : Command
 	{
 		private IMemorable _originator;
-		private IMemento _beginState;
-		private IMemento _endState;
+		private object _beginState;
+		private object _endState;
 
 		/// <summary>
 		/// Constructor.
 		/// </summary>
 		/// <param name="originator">The originator is the object responsible for creating
-		/// <see cref="IMemento"/>s and restoring state from <see cref="IMemento"/>s.</param>
+		/// memento objects and restoring state from them.</param>
 		public UndoableCommand(IMemorable originator)
 		{
 			Platform.CheckForNullReference(originator, "originator");
@@ -60,7 +58,7 @@ namespace ClearCanvas.Desktop
 		/// </summary>
 		/// <remarks>
 		/// The originator is the object responsible for creating
-		/// <see cref="IMemento"/>s and restoring state from <see cref="IMemento"/>s.
+		/// mementos and restoring state from them.
 		/// </remarks>
 		protected IMemorable Originator
 		{
@@ -71,7 +69,7 @@ namespace ClearCanvas.Desktop
 		/// Gets the begin state, which is the state of the <see cref="Originator"/> before
 		/// the operation resulting in this <see cref="UndoableCommand"/> was performed.
 		/// </summary>
-		public virtual IMemento BeginState
+		public virtual object BeginState
 		{
 			get { return _beginState; }
 			set { _beginState = value; }
@@ -81,7 +79,7 @@ namespace ClearCanvas.Desktop
 		/// Gets the end state, which is the state of the <see cref="Originator"/> after
 		/// the operation resulting in this <see cref="UndoableCommand"/> was performed.
 		/// </summary>
-		public virtual IMemento EndState
+		public virtual object EndState
 		{
 			get { return _endState; }
 			set { _endState = value; }

@@ -112,7 +112,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// Captures the state of the <see cref="PolyLineInteractiveGraphic"/>.
 		/// </summary>
 		/// <returns></returns>
-		public override IMemento CreateMemento()
+		public override object CreateMemento()
 		{
 			return this.PolyLine.CreateMemento();
 		}
@@ -121,7 +121,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// Restores the state of the <see cref="PolyLineInteractiveGraphic"/>.
 		/// </summary>
 		/// <param name="memento"></param>
-		public override void SetMemento(IMemento memento)
+		public override void SetMemento(object memento)
 		{
 			this.PolyLine.SetMemento(memento);
 		}

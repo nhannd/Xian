@@ -36,7 +36,7 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer
 {
-	internal class ImageBoxMemento : IMemento, IEquatable<ImageBoxMemento>
+	internal class ImageBoxMemento : IEquatable<ImageBoxMemento>
 	{
 		private IDisplaySet _displaySet;
 		private int _rows;

@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -367,12 +368,12 @@ namespace ClearCanvas.ImageViewer
 		/// <see cref="SetMemento"/> at a later time restores 
 		/// those instances.
 		/// </remarks>
-		public virtual IMemento CreateMemento()
+		public virtual object CreateMemento()
 		{
-			MementoList imageBoxMementos = new MementoList();
+			List<object> imageBoxMementos = new List<object>();
 
 			foreach (ImageBox imageBox in this.ImageBoxes)
-				imageBoxMementos.AddMemento(imageBox.CreateMemento());
+				imageBoxMementos.Add(imageBox.CreateMemento());
 
 			PhysicalWorkspaceMemento workspaceMemento =
 				new PhysicalWorkspaceMemento(new ImageBoxCollection(this.ImageBoxes),
@@ -391,7 +392,7 @@ namespace ClearCanvas.ImageViewer
 		/// This method restores the state of a <see cref="PhysicalWorkspace"/> with
 		/// a memento previously created by <see cref="CreateMemento"/>.
 		/// </remarks>
-		public virtual void SetMemento(IMemento memento)
+		public virtual void SetMemento(object memento)
 		{
 			Platform.CheckForNullReference(memento, "memento");
 
@@ -405,7 +406,7 @@ namespace ClearCanvas.ImageViewer
 
 			for (int i = 0; i < workspaceMemento.ImageBoxes.Count; i++)
 			{
-				IMemento imageBoxMemento = workspaceMemento.ImageBoxMementos[i];
+				object imageBoxMemento = workspaceMemento.ImageBoxMementos[i];
 				IImageBox imageBox = workspaceMemento.ImageBoxes[i];
 				imageBox.SetMemento(imageBoxMemento);
 

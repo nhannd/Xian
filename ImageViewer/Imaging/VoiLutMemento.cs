@@ -3,7 +3,7 @@ using ClearCanvas.Desktop;
 using System;
 namespace ClearCanvas.ImageViewer.Imaging
 {
-	internal class VoiLutMemento : IMemento, IEquatable<VoiLutMemento>
+	internal class VoiLutMemento : IEquatable<VoiLutMemento>
 	{
 		private readonly ComposableLutMemento _composableLutMemento;
 		private readonly bool _invert;

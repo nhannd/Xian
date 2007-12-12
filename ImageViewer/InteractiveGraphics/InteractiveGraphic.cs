@@ -112,13 +112,13 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// Captures the state of the <see cref="InteractiveGraphic"/>.
 		/// </summary>
 		/// <returns></returns>
-		public abstract IMemento CreateMemento();
+		public abstract object CreateMemento();
 
 		/// <summary>
 		/// Restores the state of the <see cref="InteractiveGraphic"/>.
 		/// </summary>
 		/// <param name="memento"></param>
-		public abstract void SetMemento(IMemento memento);
+		public abstract void SetMemento(object memento);
 
 		#endregion
 

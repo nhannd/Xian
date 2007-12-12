@@ -171,7 +171,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Returns null.
 		/// </summary>
-		public sealed override IMemento CreateMemento()
+		public sealed override object CreateMemento()
 		{
 			return base.CreateMemento();
 		}
@@ -179,7 +179,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Not applicable; does nothing.
 		/// </summary>
-		public sealed override void SetMemento(IMemento memento)
+		public sealed override void SetMemento(object memento)
 		{
 			base.SetMemento(memento);
 		}
