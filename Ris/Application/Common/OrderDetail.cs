@@ -86,5 +86,7 @@ namespace ClearCanvas.Ris.Application.Common
         [DataMember]
         public List<RequestedProcedureDetail> RequestedProcedures;
 
+        [DataMember]
+        public List<OrderNoteDetail> Notes;
     }
 }

@@ -43,14 +43,14 @@ namespace ClearCanvas.Ris.Application.Common
         public PatientNoteDetail(string comment, 
             PatientNoteCategorySummary category, 
             StaffSummary createdBy, 
-            DateTime? timeStamp,
+            DateTime? creationTime,
             DateTime? validRangeFrom,
             DateTime? validRangeUntil)
         {
             this.Comment = comment;
             this.Category = category;
             this.Author = createdBy;
-            this.CreationTime = timeStamp;
+            this.CreationTime = creationTime;
             this.ValidRangeFrom = validRangeFrom;
             this.ValidRangeUntil = validRangeUntil;
         }

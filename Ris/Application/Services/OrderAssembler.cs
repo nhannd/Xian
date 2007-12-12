@@ -1,6 +1,7 @@
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Application.Services
 {
@@ -8,12 +9,13 @@ namespace ClearCanvas.Ris.Application.Services
     {
         public OrderDetail CreateOrderDetail(Order order, IPersistenceContext context)
         {
-            return CreateOrderDetail(order, context, true, true);
+            return CreateOrderDetail(order, context, true, true, true);
         }
 
         public OrderDetail CreateOrderDetail(Order order, IPersistenceContext context,
             bool includeVisit,
-            bool includeRequestedProcedures)
+            bool includeRequestedProcedures,
+            bool includeNotes)
         {
             OrderDetail detail = new OrderDetail();
 
@@ -44,10 +46,21 @@ namespace ClearCanvas.Ris.Application.Services
 
             if (includeRequestedProcedures)
             {
-                foreach (RequestedProcedure rp in order.RequestedProcedures)
-                {
-                    detail.RequestedProcedures.Add(rpAssembler.CreateRequestedProcedureDetail(rp, context));
-                }
+                detail.RequestedProcedures = CollectionUtils.Map<RequestedProcedure, RequestedProcedureDetail>(order.RequestedProcedures,
+                    delegate(RequestedProcedure rp)
+                    {
+                        return rpAssembler.CreateRequestedProcedureDetail(rp, context);
+                    });
+            }
+
+            if(includeNotes)
+            {
+                OrderNoteAssembler orderNoteAssembler = new OrderNoteAssembler();
+                detail.Notes = CollectionUtils.Map<OrderNote, OrderNoteDetail>(order.Notes,
+                    delegate(OrderNote note)
+                    {
+                        return orderNoteAssembler.CreateOrderNoteDetail(note, context);
+                    });
             }
 
             return detail;

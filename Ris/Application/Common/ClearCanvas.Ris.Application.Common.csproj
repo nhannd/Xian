@@ -80,6 +80,7 @@
     <Compile Include="Admin\ExternalPractitionerAdmin\UpdateExternalPractitionerRequest.cs" />
     <Compile Include="Admin\ExternalPractitionerAdmin\UpdateExternalPractitionerResponse.cs" />
     <Compile Include="AuthenticationAttribute.cs" />
+    <Compile Include="OrderNoteDetail.cs" />
     <Compile Include="ReportingWorkflow\CompleteInterpretationRequestBase.cs" />
     <Compile Include="ProtocollingWorkflow\DiscardOrderProtocolRequest.cs" />
     <Compile Include="ProtocollingWorkflow\DiscardOrderProtocolResponse.cs" />

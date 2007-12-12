@@ -264,7 +264,8 @@ namespace ClearCanvas.Ris.Application.Services.BrowsePatientData
             return new GetOrderDetailResponse(
                 assembler.CreateOrderDetail(order, this.PersistenceContext,
                 request.IncludeVisit,
-                request.IncludeRequestedProcedures));
+                request.IncludeRequestedProcedures,
+                false));
         }
 
         private GetAlertsResponse GetAlerts(GetAlertsRequest request, EntityRef profileRef, EntityRef orderRef)
