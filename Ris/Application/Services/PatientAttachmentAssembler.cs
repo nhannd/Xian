@@ -47,6 +47,9 @@ namespace ClearCanvas.Ris.Application.Services
             {
                 _assembler = assembler;
                 _context = context;
+
+                _allowUpdate = true;
+                _allowRemove = true;
             }
 
             protected override bool CompareItems(PatientAttachment domainItem, PatientAttachmentSummary sourceItem)

@@ -28,14 +28,14 @@
       </collection-id>
       <key column="PatientOID_"/>
       <composite-element class="PatientNote">
-        <property name="Comment" column="Comment_" type="String" length ="1024"/>
+        <property name="Comment" column="Comment_" type="String" not-null="true" length ="1024"/>
         <property name="CreationTime" column="CreationTime_" type="DateTime" not-null="true"/>
         <property name="ValidRange" type="ClearCanvas.Healthcare.Hibernate.DateTimeRangeHbm, ClearCanvas.Healthcare.Hibernate">
           <column name="ValidFrom_"/>
           <column name="ValidUntil_"/>
         </property>
         <many-to-one name="Author" class="Staff" column="Author_" not-null="true" fetch="join"/>
-        <many-to-one name="Category" class="PatientNoteCategory" column="CategoryOID_" fetch="join"/>
+        <many-to-one name="Category" class="PatientNoteCategory" column="CategoryOID_" not-null="true" fetch="join"/>
       </composite-element>
     </idbag>
 

@@ -33,7 +33,6 @@ using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
-using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Application.Services
@@ -42,13 +41,18 @@ namespace ClearCanvas.Ris.Application.Services
     {
         class PatientNoteSynchronizeHelper : SynchronizeHelper<PatientNote, PatientNoteDetail>
         {
-            private PatientNoteAssembler _assembler;
-            private IPersistenceContext _context;
+            private readonly PatientNoteAssembler _assembler;
+            private readonly Staff _currentUserStaff;
+            private readonly IPersistenceContext _context;
 
-            public PatientNoteSynchronizeHelper(PatientNoteAssembler assembler, IPersistenceContext context)
+            public PatientNoteSynchronizeHelper(PatientNoteAssembler assembler, Staff currentUserStaff, IPersistenceContext context)
             {
                 _assembler = assembler;
+                _currentUserStaff = currentUserStaff;
                 _context = context;
+
+                _allowUpdate = false;
+                _allowRemove = false;
             }
 
             protected override bool CompareItems(PatientNote domainItem, PatientNoteDetail sourceItem)
@@ -59,18 +63,13 @@ namespace ClearCanvas.Ris.Application.Services
 
             protected override PatientNote CreateDomainItem(PatientNoteDetail sourceItem)
             {
-                return _assembler.CreateNote(sourceItem, _context);
-            }
-
-            protected override void UpdateDomainItem(PatientNote domainItem, PatientNoteDetail sourceItem)
-            {
-                _assembler.UpdateNote(domainItem, sourceItem, _context);
+                return _assembler.CreateNote(sourceItem, _currentUserStaff, _context);
             }
         }
 
-        public void Synchronize(IList<PatientNote> domainList, IList<PatientNoteDetail> sourceList, IPersistenceContext context)
+        public void Synchronize(IList<PatientNote> domainList, IList<PatientNoteDetail> sourceList, Staff currentUserStaff, IPersistenceContext context)
         {
-            PatientNoteSynchronizeHelper synchronizer = new PatientNoteSynchronizeHelper(this, context);
+            PatientNoteSynchronizeHelper synchronizer = new PatientNoteSynchronizeHelper(this, currentUserStaff, context);
             synchronizer.Synchronize(domainList, sourceList);
         }
 
@@ -95,7 +94,7 @@ namespace ClearCanvas.Ris.Application.Services
             return detail;
         }
 
-        public PatientNote CreateNote(PatientNoteDetail detail, IPersistenceContext context)
+        public PatientNote CreateNote(PatientNoteDetail detail, Staff currentStaff, IPersistenceContext context)
         {
             PatientNote newNote = new PatientNote();
 
@@ -114,22 +113,9 @@ namespace ClearCanvas.Ris.Application.Services
             if (detail.Author != null)
                 newNote.Author = context.Load<Staff>(detail.Author.StaffRef, EntityLoadFlags.Proxy);
             else
-            {
-                //TODO: Services should know which staff is invoking the operation, use that staff instead
-                newNote.Author = context.GetBroker<IStaffBroker>().FindOne(new StaffSearchCriteria());
-            }
+                newNote.Author = currentStaff;
 
             return newNote;
-        }
-
-        public void UpdateNote(PatientNote note, PatientNoteDetail detail, IPersistenceContext context)
-        {
-            // The creation time and author should never be changed
-            note.Comment = detail.Comment;
-            note.ValidRange.From = detail.ValidRangeFrom;
-            note.ValidRange.Until = detail.ValidRangeUntil;
-            if (detail.Category != null)
-                note.Category = context.Load<PatientNoteCategory>(detail.Category.NoteCategoryRef, EntityLoadFlags.Proxy);
         }
     }
 }

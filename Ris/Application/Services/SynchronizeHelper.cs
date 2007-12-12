@@ -18,6 +18,9 @@ namespace ClearCanvas.Ris.Application.Services
         private readonly CreateDomainItemDelegate _createDomainItemCallback;
         private readonly UpdateDomainItemDelegate _updateDomainItemCallback;
 
+        protected bool _allowUpdate = false;
+        protected bool _allowRemove = false;
+
         /// <summary>
         /// Protected constructor for subclasses.
         /// </summary>
@@ -32,14 +35,19 @@ namespace ClearCanvas.Ris.Application.Services
         /// <param name="compareItemsCallback"></param>
         /// <param name="createDomainItemCallback"></param>
         /// <param name="updateDomainItemCallback"></param>
+        /// <param name="allowRemove"></param>
         public SynchronizeHelper(
             CompareItemsDelegate compareItemsCallback,
             CreateDomainItemDelegate createDomainItemCallback,
-            UpdateDomainItemDelegate updateDomainItemCallback)
+            UpdateDomainItemDelegate updateDomainItemCallback,
+            bool allowRemove)
         {
             _compareItemsCallback = compareItemsCallback;
             _createDomainItemCallback = createDomainItemCallback;
             _updateDomainItemCallback = updateDomainItemCallback;
+
+            _allowUpdate = _updateDomainItemCallback != null;
+            _allowRemove = allowRemove;
         }
 
         /// <summary>
@@ -66,7 +74,8 @@ namespace ClearCanvas.Ris.Application.Services
                     else
                     {
                         // Update the existing attachment
-                        UpdateDomainItem(foundDomainItem, sourceItem);
+                        if (_allowUpdate)
+                            UpdateDomainItem(foundDomainItem, sourceItem);
 
                         // and remove from un-processed list
                         unProcessed.Remove(foundDomainItem);
@@ -74,7 +83,7 @@ namespace ClearCanvas.Ris.Application.Services
                 });
 
             // Remove any unprocessed items from the domain list
-            if (unProcessed.Count > 0)
+            if (_allowRemove && unProcessed.Count > 0)
             {
                 CollectionUtils.ForEach(unProcessed,
                     delegate(TDomainItem domainItem)

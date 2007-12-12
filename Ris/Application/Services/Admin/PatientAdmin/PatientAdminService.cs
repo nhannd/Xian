@@ -119,7 +119,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.PatientAdmin
             PatientProfile profile = PersistenceContext.Load<PatientProfile>(request.PatientProfileRef, EntityLoadFlags.CheckVersion);
 
             PatientProfileAssembler assembler = new PatientProfileAssembler();
-            assembler.UpdatePatientProfile(profile, request.PatientDetail, PersistenceContext);
+            assembler.UpdatePatientProfile(profile, request.PatientDetail, this.CurrentUserStaff, PersistenceContext);
 
             return new SaveAdminEditsForPatientProfileResponse(profile.Patient.GetRef(), profile.GetRef());
         }
@@ -133,7 +133,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.PatientAdmin
             patient.AddProfile(profile);
 
             PatientProfileAssembler assembler = new PatientProfileAssembler();
-            assembler.UpdatePatientProfile(profile, request.PatientDetail, PersistenceContext);
+            assembler.UpdatePatientProfile(profile, request.PatientDetail, this.CurrentUserStaff, PersistenceContext);
 
             PersistenceContext.Lock(patient, DirtyState.New);
 

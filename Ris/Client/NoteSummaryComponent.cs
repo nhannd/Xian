@@ -175,7 +175,7 @@ namespace ClearCanvas.Ris.Client
         private void NoteSelectionChanged()
         {
             _noteActionHandler.Edit.Enabled =
-                _noteActionHandler.Delete.Enabled = (_currentNoteSelection != null);
+                _noteActionHandler.Delete.Enabled = (_currentNoteSelection != null && _currentNoteSelection.CreationTime == null);
         }
     }
 }

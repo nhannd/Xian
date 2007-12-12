@@ -56,7 +56,7 @@ namespace ClearCanvas.Ris.Client
                 delegate(PatientNoteDetail n) { return n.Comment; },
                 0.45f));
             this.Columns.Add(new TableColumn<PatientNoteDetail, string>("Created",
-                delegate(PatientNoteDetail n) { return Format.Date(n.CreationTime); },
+                delegate(PatientNoteDetail n) { return n.CreationTime == null ? "New" : Format.Date(n.CreationTime); },
                 0.2f));
             //this.Columns.Add(new TableColumn<NoteDetail, string>("Description",
             //    delegate(NoteDetail n) { return (n.Category == null ? "" : n.Category.Description); },
