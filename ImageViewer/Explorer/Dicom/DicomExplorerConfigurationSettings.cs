@@ -35,9 +35,7 @@ using ClearCanvas.Common.Configuration;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
-
-	// TODO (Norman): add a description of the purpose of the settings group here
-	[SettingsGroupDescription("")]
+	[SettingsGroupDescription("Allows users to configure certain characteristics of the Dicom Explorer.")]
 	[SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
 	internal sealed partial class DicomExplorerConfigurationSettings
 	{

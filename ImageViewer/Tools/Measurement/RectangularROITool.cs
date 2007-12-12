@@ -32,6 +32,7 @@
 using System;
 using System.Drawing;
 using ClearCanvas.Common;
+using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.ImageViewer.InteractiveGraphics;
 using ClearCanvas.Desktop.Tools;
@@ -167,16 +168,12 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			double heightInPixels = (rectangleGraphic.BottomRight.Y - rectangleGraphic.TopLeft.Y);
 			rectangleGraphic.ResetCoordinateSystem();
 
-			double pixelSpacingX;
-			double pixelSpacingY;
+			PixelSpacing pixelSpacing = image.ImageSop.GetModalityPixelSpacing();
 
-			ImageSopHelper.GetModalityPixelSpacing(image.ImageSop, out pixelSpacingX, out pixelSpacingY);
-
-			bool pixelSpacingInvalid =  pixelSpacingX <= float.Epsilon ||
-										pixelSpacingY <= float.Epsilon ||
-										double.IsNaN(pixelSpacingX) ||
-										double.IsNaN(pixelSpacingY);
-
+			bool pixelSpacingInvalid = pixelSpacing.Row <= float.Epsilon ||
+										pixelSpacing.Column <= float.Epsilon ||
+										double.IsNaN(pixelSpacing.Row) ||
+										double.IsNaN(pixelSpacing.Column);
 			string text;
 
 			if (pixelSpacingInvalid)
@@ -186,8 +183,9 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			}
 			else
 			{
-				double widthInCm = widthInPixels * pixelSpacingX / 10;
-				double heightInCm = heightInPixels * pixelSpacingY / 10;
+				double widthInCm = widthInPixels * pixelSpacing.Column / 10;
+				double heightInCm = heightInPixels * pixelSpacing.Row / 10;
+
 				double area = Math.Abs(widthInCm * heightInCm);
 				text = String.Format(SR.ToolsMeasurementFormatAreaSquareCm, area);
 			}

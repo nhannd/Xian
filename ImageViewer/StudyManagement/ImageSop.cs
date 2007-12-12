@@ -31,7 +31,10 @@
 
 using System;
 using System.Collections.Generic;
+using ClearCanvas.Codecs;
+using ClearCanvas.Common;
 using ClearCanvas.Dicom;
+using ClearCanvas.ImageViewer.Imaging;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
@@ -40,6 +43,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	/// </summary>
 	public abstract class ImageSop : Sop
 	{
+		private static readonly ImageCodecMap _imageCodecMap = new ImageCodecMap();
+
 		#region General Image Module
 
 		/// <summary>
@@ -47,7 +52,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </summary>
 		protected ImageSop()
 		{
+		}
 
+		private static ImageCodecMap ImageCodecMap
+		{
+			get { return _imageCodecMap; }
 		}
 
 		/// <summary>
@@ -611,7 +620,122 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// to worry about the the multitude of DICOM photometric interpretations
 		/// and transfer syntaxes.
 		/// </remarks>
+		/// <seealso cref="NormalizePixelData"/>
+		/// <seealso cref="DecompressPixelData"/>
 		public abstract byte[] GetNormalizedPixelData();
+
+		#region Helper Methods
+
+		/// <summary>
+		/// Converts the input (possibly compressed) pixel data to a standard,
+		/// 'normalized' format.
+		///  </summary>
+		/// <remarks>
+		/// <para>
+		/// Normally, this helper method would be called from (subclass) implementations of
+		/// <see cref="GetNormalizedPixelData"/> the first time it is accessed.
+		/// </para>
+		/// <para>
+		/// For grayscale images, this method will simply decompress the input pixel
+		/// data and return the 'normalized' data.  For colour images, the input pixel data will be
+		/// decompressed (if necessary) and converted to ARGB format before returning
+		/// the 'normalized' data.
+		/// </para>
+		/// </remarks>
+		/// <seealso cref="DecompressPixelData"/>
+		/// <seealso cref="GetNormalizedPixelData"/>
+		protected byte[] NormalizePixelData(byte[] compressedPixelData)
+		{
+			byte[] normalizedPixelData = DecompressPixelData(compressedPixelData);
+
+			// If it's a colour image, we want to change the colour space to ARGB
+			// so that it's easily consumed downstream
+			if (this.PhotometricInterpretation != PhotometricInterpretation.Monochrome1 &&
+			    this.PhotometricInterpretation != PhotometricInterpretation.Monochrome2)
+			{
+				int sizeInBytes = this.Rows * this.Columns * 4;
+				byte[] newPixelData = new byte[sizeInBytes];
+
+				ColorSpaceConverter.ToArgb(
+					this.PhotometricInterpretation,
+					this.PlanarConfiguration,
+					normalizedPixelData,
+					newPixelData);
+
+				normalizedPixelData = newPixelData;
+			}
+
+			return normalizedPixelData;
+		}
+
+		/// <summary>
+		/// Decompresses/Decodes pixel data, if necessary.
+		/// </summary>
+		/// <param name="compressedPixelData">The pixel data to decompress.</param>
+		/// <remarks>
+		/// <para>
+		/// Normally, this method would not be called by subclasses; usually
+		/// <see cref="NormalizePixelData"/> would be called from within
+		/// <see cref="GetNormalizedPixelData"/> to convert the raw pixel
+		/// data to a standard format for rendering/processing.
+		/// </para>
+		/// <para>
+		/// Internally, this method uses <see cref="IImageCodec"/> extensions
+		/// (<see cref="ImageCodecMap"/>) to perform the decompression.
+		/// </para>
+		/// </remarks>
+		/// <seealso cref="NormalizePixelData"/>
+		/// <seealso cref="GetNormalizedPixelData"/>
+		protected byte[] DecompressPixelData(byte[] compressedPixelData)
+		{
+			return ImageCodecMap.DecompressPixelData(
+				compressedPixelData,
+				TransferSyntaxUID,
+				Rows,
+				Columns,
+				BitsAllocated,
+				BitsStored,
+				PixelRepresentation,
+				PhotometricInterpretationHelper.GetString(PhotometricInterpretation),
+				SamplesPerPixel,
+				PlanarConfiguration);
+		}
+
+		#endregion
+
+		/// <summary>
+		/// Gets the pixel spacing appropriate to the modality.
+		/// </summary>
+		/// <remarks>
+		/// For projection based modalities (i.e. CR, DX and MG), Imager Pixel Spacing is
+		/// returned as the pixel spacing.  For all other modalities, the standard
+		/// Pixel Spacing is returned.
+		/// </remarks>
+		public PixelSpacing GetModalityPixelSpacing()
+		{
+			if (String.Compare(Modality, "CR", true) == 0 ||
+				String.Compare(Modality, "DX", true) == 0 ||
+				String.Compare(Modality, "MG", true) == 0)
+			{
+				double pixelSpacingRow = 0, pixelSpacingColumn = 0;
+
+				bool tagExists;
+				GetTag(DicomTags.ImagerPixelSpacing, out pixelSpacingRow, 0, out tagExists);
+				if (tagExists)
+					GetTag(DicomTags.ImagerPixelSpacing, out pixelSpacingColumn, 1, out tagExists);
+
+				if (!tagExists)
+				{
+					pixelSpacingRow = pixelSpacingColumn = 0;
+				}
+
+				return new PixelSpacing(pixelSpacingRow, pixelSpacingColumn);
+			}
+			else
+			{
+				return this.PixelSpacing;
+			}
+		}
 
 		/// <summary>
 		/// Validates the <see cref="ImageSop"/> object.

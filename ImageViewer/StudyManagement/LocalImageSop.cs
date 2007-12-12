@@ -88,31 +88,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			
 			if (_pixelData == null)
 			{
-				// Decompress the pixel data (if pixel data is already uncompressed,
-				// this is a pass-through, a no-op.)
-				//
 				byte[] pixelData = (byte[])_dicomFile.DataSet[DicomTags.PixelData].Values;
-				_pixelData = ImageSopHelper.DecompressPixelData(this, pixelData);
-
-				//To save on memory, we remove this reference.
-				_dicomFile.DataSet[DicomTags.PixelData] = null;
-
-				// If it's a colour image, we want to change the colour space ARGB
-				// so that it's easily consumed downstream
-				if (this.PhotometricInterpretation != PhotometricInterpretation.Monochrome1 &&
-					this.PhotometricInterpretation != PhotometricInterpretation.Monochrome2)
-				{
-					int sizeInBytes = this.Rows * this.Columns * 4;
-					byte[] newPixelData = new byte[sizeInBytes];
-					
-					ColorSpaceConverter.ToArgb(
-						this.PhotometricInterpretation,
-						this.PlanarConfiguration,
-						_pixelData,
-						newPixelData);
-
-					_pixelData = newPixelData;
-				}
+				_pixelData = NormalizePixelData(pixelData);
 			}
 
 			return _pixelData;
