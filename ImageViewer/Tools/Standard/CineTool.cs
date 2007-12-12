@@ -30,7 +30,6 @@
 #endregion
 
 using System.Collections.Generic;
-using System.Diagnostics;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
@@ -48,53 +47,51 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class CineTool : ImageViewerTool
 	{
-		private static readonly Dictionary<IDesktopWindow, IShelf> _shelves;
-
-		static CineTool()
-		{
-			_shelves = new Dictionary<IDesktopWindow, IShelf>();
-		}
+		private static readonly Dictionary<IDesktopWindow, IShelf> _shelves = new Dictionary<IDesktopWindow, IShelf>();
+		private IDesktopWindow _desktopWindow;
 
 		public CineTool()
 		{
+			_desktopWindow = null;
 		}
 
 		public void Activate()
 		{
-			IDesktopWindow desktopWindow = this.Context.DesktopWindow;
-
 			// check if a layout component is already displayed
-			if (_shelves.ContainsKey(desktopWindow))
+			if (_shelves.ContainsKey(this.Context.DesktopWindow))
 			{
-				_shelves[desktopWindow].Activate();
+				_shelves[this.Context.DesktopWindow].Activate();
 			}
 			else
 			{
-				CineApplicationComponent component = new CineApplicationComponent(desktopWindow);
+				_desktopWindow = this.Context.DesktopWindow;
+
+				CineApplicationComponent component = new CineApplicationComponent(_desktopWindow);
 				IShelf shelf = ApplicationComponent.LaunchAsShelf(
-					desktopWindow,
-					component, SR.TitleCine,
+					_desktopWindow,
+					component, 
+					SR.TitleCine,
 					"Cine",
 					ShelfDisplayHint.DockFloat);
 
-				_shelves[desktopWindow] = shelf;
-				_shelves[desktopWindow].Closed += OnShelfClosed;
+				_shelves[_desktopWindow] = shelf;
+				_shelves[_desktopWindow].Closed += OnShelfClosed;
 			}
 		}
 
-		void OnShelfClosed(object sender, ClosedEventArgs e)
+		private void OnShelfClosed(object sender, ClosedEventArgs e)
 		{
-			_shelves.Remove(this.Context.DesktopWindow);
-		}
+			// We need to cache the owner DesktopWindow (_desktopWindow) because this tool is an 
+			// ImageViewer tool, disposed when the viewer component is disposed.  Shelves, however,
+			// exist at the DesktopWindow level and there can only be one of each type of shelf
+			// open at the same time per DesktopWindow (otherwise things look funny).  Because of 
+			// this, we need to allow this event handling method to be called after this tool has
+			// already been disposed (e.g. viewer workspace closed), which is why we store the 
+			// _desktopWindow variable.
 
-		protected override void Dispose(bool disposing)
-		{
-			IDesktopWindow desktopWindow = this.Context.DesktopWindow;
-
-			if (_shelves.ContainsKey(desktopWindow))
-				_shelves[desktopWindow].Closed -= OnShelfClosed;
-
-			base.Dispose(disposing);
+			_shelves[_desktopWindow].Closed -= OnShelfClosed;
+			_shelves.Remove(_desktopWindow);
+			_desktopWindow = null;
 		}
 	}
 }
