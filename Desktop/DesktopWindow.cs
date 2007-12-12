@@ -232,6 +232,7 @@ namespace ClearCanvas.Desktop
             _workspaces.ItemActivationChanged += delegate(object sender, ItemEventArgs<Workspace> e)
             {
                 UpdateView();
+                UpdateTitleChangedEventSubscription(e.Item);
             };
 
             base.OnOpened(args);
@@ -414,6 +415,30 @@ namespace ClearCanvas.Desktop
                 this.DesktopWindowView.SetMenuModel(_menuModel);
                 this.DesktopWindowView.SetToolbarModel(_toolbarModel);
             }
+        }
+
+        /// <summary>
+        /// Subscribes to or unsubscribes from TitleChanged event for the specified <see cref="Workspace"/> depending on whether it is active or not
+        /// </summary>
+        /// <param name="workspace"></param>
+        private void UpdateTitleChangedEventSubscription(Workspace workspace)
+        {
+            if (workspace.Active)
+            {
+                workspace.TitleChanged += UpdateTitle;
+            }
+            else
+            {
+                workspace.TitleChanged -= UpdateTitle;
+            }
+        }
+
+        /// <summary>
+        /// Updates the view's title
+        /// </summary>
+        private void UpdateTitle(object sender, EventArgs e)
+        {
+            this.Title = MakeTitle(_baseTitle, _workspaces.ActiveWorkspace);
         }
 
         /// <summary>

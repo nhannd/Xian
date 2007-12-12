@@ -96,10 +96,8 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         #region Private Fields
 
-        private readonly ReportingWorklistItem _worklistItem;
+        private ReportingWorklistItem _worklistItem;
         private EntityRef _orderRef;
-
-        private ClaimProtocolResult _claimResult;
 
         private readonly ProtocolEditorProcedurePlanSummaryTable _procedurePlanSummaryTable;
         private ProtocolEditorProcedurePlanSummaryTableItem _selectedProcodurePlanSummaryTableItem;
@@ -119,14 +117,8 @@ namespace ClearCanvas.Ris.Client.Reporting
         private List<ProtocolGroupSummary> _protocolGroupChoices;
         private ProtocolGroupSummary _protocolGroup;
 
-        private bool _protocolNextItem = false;
-        private bool _protocolNextItemEnabled = false;
-
-        private event EventHandler _protocolAccepted;
-        private event EventHandler _protocolRejected;
-        private event EventHandler _protocolSuspended;
-        private event EventHandler _protocolSaved;
-        private event EventHandler _protocolCancelled;
+        private bool _isNew;
+        private bool _protocolNextItem = true;
 
         #endregion
 
@@ -136,6 +128,7 @@ namespace ClearCanvas.Ris.Client.Reporting
         public ProtocolEditorComponent(ReportingWorklistItem worklistItem)
         {
             _worklistItem = worklistItem;
+            _isNew = true;
 
             _availableProtocolCodes = new ProtocolCodeTable();
             _selectedProtocolCodes = new ProtocolCodeTable();
@@ -148,16 +141,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         public override void Start()
         {
-            Platform.GetService<IProtocollingWorkflowService>(
-                delegate(IProtocollingWorkflowService service)
-                {
-                    ClaimProtocol(service);
-                    if (_claimResult != Reporting.ClaimProtocolResult.Failed)
-                    {
-                        InitializeProcedurePlanSummary(service);
-                        InitializeActionEnablement(service);
-                    }
-                });
+            StartWorklistItem();
 
             _orderSummaryComponentHost = new ChildComponentHost(this.Host, new OrderSummaryComponent(this));
             _orderSummaryComponentHost.StartComponent();
@@ -168,30 +152,41 @@ namespace ClearCanvas.Ris.Client.Reporting
             base.Start();
         }
 
-        private void ClaimProtocol(IProtocollingWorkflowService service)
+        private void StartWorklistItem()
+        {
+            Platform.GetService<IProtocollingWorkflowService>(
+                delegate(IProtocollingWorkflowService service)
+                    {
+                        // No need to claim if editing a draft protocol
+                        if (_isNew)
+                        {
+                            while (ClaimOrderProtocol(_worklistItem.OrderRef, service) == ClaimProtocolResult.Failed)
+                            {
+                                _worklistItem = GetNextWorklistItem();
+                            }
+                        }
+
+                        if (_worklistItem != null)
+                        {
+                            this.Host.Title = ProtocolEditorComponentDocument.GetTitle(_worklistItem);
+                            InitializeProcedurePlanSummary(service);
+                            InitializeActionEnablement(service);
+                        }
+                    });
+        }
+
+
+        private ClaimProtocolResult ClaimOrderProtocol(EntityRef orderRef, IProtocollingWorkflowService service)
         {
             try
             {
-                StartOrderProtocolResponse response = service.StartOrderProtocol(new StartOrderProtocolRequest(_worklistItem.OrderRef));
-                _claimResult = response.ProtocolClaimed ? ClaimProtocolResult.Claimed : ClaimProtocolResult.AlreadyClaimed;
-
-                // Default behaviour is to protocol next item if creating new protocol
-                _protocolNextItem = response.ProtocolClaimed;
-                _protocolNextItemEnabled = response.ProtocolClaimed;
+                StartOrderProtocolResponse response = service.StartOrderProtocol(new StartOrderProtocolRequest(orderRef));
+                return response.ProtocolClaimed ? ClaimProtocolResult.Claimed : ClaimProtocolResult.AlreadyClaimed;
             }
             catch(Exception)
             {
-                // Already claimed, so just move on to the next one
-                _claimResult = ClaimProtocolResult.Failed;
-                _protocolNextItem = true;
+                return ClaimProtocolResult.Failed;
             }
-        }
-
-        public override void Stop()
-        {
-            // TODO prepare the component to exit the live phase
-            // This is a good place to do any clean up
-            base.Stop();
         }
 
         #endregion
@@ -275,7 +270,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         public bool ProtocolNextItemEnabled
         {
-            get { return _protocolNextItemEnabled; }
+            get { return _isNew; }
         }
 
         #region Accept
@@ -291,7 +286,17 @@ namespace ClearCanvas.Ris.Client.Reporting
                             service.AcceptOrderProtocol(new AcceptOrderProtocolRequest(_orderRef));
                         });
 
-                EventsHelper.Fire(_protocolAccepted, this, EventArgs.Empty);
+                DocumentManager.InvalidateFolder(typeof(Folders.ToBeProtocolledFolder));
+                DocumentManager.InvalidateFolder(typeof(Folders.CompletedProtocolFolder));
+
+                if (_protocolNextItem)
+                {
+                    NextProtocol();
+                }
+                else
+                {
+                    this.Exit(ApplicationComponentExitCode.Accepted);
+                }
             }
             catch(Exception e)
             {
@@ -302,12 +307,6 @@ namespace ClearCanvas.Ris.Client.Reporting
         public bool AcceptEnabled
         {
             get { return _acceptEnabled; }
-        }
-
-        public event EventHandler ProtocolAccepted
-        {
-            add { _protocolAccepted += value; }
-            remove { _protocolAccepted += value; }
         }
 
         #endregion
@@ -330,7 +329,17 @@ namespace ClearCanvas.Ris.Client.Reporting
                             service.RejectOrderProtocol(new RejectOrderProtocolRequest(_orderRef, reason));
                         });
 
-                EventsHelper.Fire(_protocolRejected, this, EventArgs.Empty);
+                DocumentManager.InvalidateFolder(typeof(Folders.ToBeProtocolledFolder));
+                DocumentManager.InvalidateFolder(typeof(Folders.CompletedProtocolFolder));
+
+                if (_protocolNextItem)
+                {
+                    NextProtocol();
+                }
+                else
+                {
+                    this.Exit(ApplicationComponentExitCode.Accepted);
+                }
             }
             catch (Exception e)
             {
@@ -341,12 +350,6 @@ namespace ClearCanvas.Ris.Client.Reporting
         public bool RejectEnabled
         {
             get { return _rejectEnabled; }
-        }
-
-        public event EventHandler ProtocolRejected
-        {
-            add { _protocolRejected += value; }
-            remove { _protocolRejected += value; }
         }
 
         #endregion
@@ -369,7 +372,17 @@ namespace ClearCanvas.Ris.Client.Reporting
                             service.SuspendOrderProtocol(new SuspendOrderProtocolRequest(_orderRef, reason));
                         });
 
-                EventsHelper.Fire(_protocolSuspended, this, EventArgs.Empty);
+                DocumentManager.InvalidateFolder(typeof(Folders.ToBeProtocolledFolder));
+                DocumentManager.InvalidateFolder(typeof(Folders.CompletedProtocolFolder));
+
+                if (_protocolNextItem)
+                {
+                    NextProtocol();
+                }
+                else
+                {
+                    this.Exit(ApplicationComponentExitCode.Accepted);
+                }
             }
             catch (Exception e)
             {
@@ -380,12 +393,6 @@ namespace ClearCanvas.Ris.Client.Reporting
         public bool SuspendEnabled
         {
             get { return _suspendEnabled;  }
-        }
-
-        public event EventHandler ProtocolSuspended
-        {
-            add { _protocolSuspended += value; }
-            remove { _protocolSuspended += value; }
         }
 
         #endregion
@@ -402,7 +409,17 @@ namespace ClearCanvas.Ris.Client.Reporting
                             SaveProtocols(service);
                         });
 
-                EventsHelper.Fire(_protocolSaved, this, EventArgs.Empty);
+                DocumentManager.InvalidateFolder(typeof(Folders.ToBeProtocolledFolder));
+                DocumentManager.InvalidateFolder(typeof(Folders.DraftProtocolFolder));
+
+                if (_protocolNextItem)
+                {
+                    NextProtocol();
+                }
+                else
+                {
+                    this.Exit(ApplicationComponentExitCode.Accepted);
+                }
             }
             catch (Exception e)
             {
@@ -415,10 +432,41 @@ namespace ClearCanvas.Ris.Client.Reporting
             get { return _saveEnabled; }
         }
 
-        public event EventHandler ProtocolSaved
+        #endregion
+
+        #region Skip
+
+        public void Skip()
         {
-            add { _protocolSaved += value; }
-            remove { _protocolSaved += value; }
+            try
+            {
+                // Unclaim any newly started protocols
+                if (_isNew)
+                {
+                    Platform.GetService<IProtocollingWorkflowService>(
+                        delegate(IProtocollingWorkflowService service)
+                        {
+                            service.DiscardOrderProtocol(new DiscardOrderProtocolRequest(_orderRef));
+                        });
+                }
+
+                // To be protocolled folder will be invalid if it is the source of the worklist item;  the original item will have been
+                // discontinued with a new scheduled one replacing it
+                DocumentManager.InvalidateFolder(typeof(Folders.ToBeProtocolledFolder));
+
+                if(_protocolNextItem)
+                {
+                    NextProtocol();
+                }
+                else
+                {
+                    this.Exit(ApplicationComponentExitCode.None);
+                }
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
+            }
         }
 
         #endregion
@@ -430,7 +478,7 @@ namespace ClearCanvas.Ris.Client.Reporting
             try
             {
                 // Unclaim any newly started protocols
-                if (_claimResult == ClaimProtocolResult.Claimed)
+                if (_isNew)
                 {
                     Platform.GetService<IProtocollingWorkflowService>(
                         delegate(IProtocollingWorkflowService service)
@@ -439,7 +487,18 @@ namespace ClearCanvas.Ris.Client.Reporting
                             });
                 }
 
-                EventsHelper.Fire(_protocolCancelled, this, EventArgs.Empty);
+                // To be protocolled folder will be invalid if it is the source of the worklist item;  the original item will have been
+                // discontinued with a new scheduled one replacing it
+                DocumentManager.InvalidateFolder(typeof(Folders.ToBeProtocolledFolder));
+
+                if (_protocolNextItem)
+                {
+                    NextProtocol();
+                }
+                else
+                {
+                    this.Exit(ApplicationComponentExitCode.None);
+                }
             }
             catch(Exception e)
             {
@@ -447,18 +506,7 @@ namespace ClearCanvas.Ris.Client.Reporting
             }
         }
 
-        public event EventHandler ProtocolCancelled
-        {
-            add { _protocolCancelled += value; }
-            remove { _protocolCancelled += value; }
-        }
-
         #endregion
-
-        public ClaimProtocolResult ClaimProtocolResult
-        {
-            get { return _claimResult; }
-        }
 
         public void AddNote()
         {
@@ -550,22 +598,29 @@ namespace ClearCanvas.Ris.Client.Reporting
             if (item != null)
             {
                 //Refresh protocol
-                Platform.GetService<IProtocollingWorkflowService>(
-                    delegate(IProtocollingWorkflowService service)
-                        {
-                            // Load available protocol groups
-                            ListProtocolGroupsForProcedureRequest request = new ListProtocolGroupsForProcedureRequest(item.RequestedProcedureDetail.RequestedProcedureRef);
-                            ListProtocolGroupsForProcedureResponse response = service.ListProtocolGroupsForProcedure(request);
+                try
+                {
+                    Platform.GetService<IProtocollingWorkflowService>(
+                        delegate(IProtocollingWorkflowService service)
+                            {
+                                // Load available protocol groups
+                                ListProtocolGroupsForProcedureRequest request = new ListProtocolGroupsForProcedureRequest(item.RequestedProcedureDetail.RequestedProcedureRef);
+                                ListProtocolGroupsForProcedureResponse response = service.ListProtocolGroupsForProcedure(request);
 
-                            _protocolGroupChoices = response.ProtocolGroups;
-                            _protocolGroup = response.InitialProtocolGroup;
+                                _protocolGroupChoices = response.ProtocolGroups;
+                                _protocolGroup = response.InitialProtocolGroup;
 
-                            RefreshAvailableProtocolCodes(item.ProtocolDetail.Codes, service);
+                                RefreshAvailableProtocolCodes(item.ProtocolDetail.Codes, service);
 
-                            // fill out selected item codes
-                            _selectedProtocolCodes.Items.Clear();
-                            _selectedProtocolCodes.Items.AddRange(item.ProtocolDetail.Codes);
-                        });
+                                // fill out selected item codes
+                                _selectedProtocolCodes.Items.Clear();
+                                _selectedProtocolCodes.Items.AddRange(item.ProtocolDetail.Codes);
+                            });
+                }
+                catch (Exception e)
+                {
+                    ExceptionHandler.Report(e, this.Host.DesktopWindow);
+                }
             }
 
             _selectedProcodurePlanSummaryTableItem = item;
@@ -576,11 +631,18 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         private void ProtocolGroupSelectionChanged()
         {
-            Platform.GetService<IProtocollingWorkflowService>(
-                delegate(IProtocollingWorkflowService service)
-                    {
-                        RefreshAvailableProtocolCodes(_selectedProcodurePlanSummaryTableItem.ProtocolDetail.Codes, service);
-                    });
+            try
+            {
+                Platform.GetService<IProtocollingWorkflowService>(
+                    delegate(IProtocollingWorkflowService service)
+                        {
+                            RefreshAvailableProtocolCodes(_selectedProcodurePlanSummaryTableItem.ProtocolDetail.Codes, service);
+                        });
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
+            }
         }
 
         // Refresh the list of available protocol codes when the list of protocol groups is initially loaded 
@@ -619,6 +681,61 @@ namespace ClearCanvas.Ris.Client.Reporting
                 service.SaveProtocol(new SaveProtocolRequest(item.ProtocolRef, item.ProtocolDetail));
             }
             this.Modified = false;
+        }
+
+        private void NextProtocol()
+        {
+            try
+            {
+                _worklistItem = GetNextWorklistItem();
+                if (_worklistItem != null)
+                {
+                    StartWorklistItem();
+
+                    // Force refresh of DHTML components
+                    _orderSummaryComponentHost.StopComponent();
+                    _orderSummaryComponentHost.StartComponent();
+
+                    _protocolNoteSummaryComponentHost.StopComponent();
+                    _protocolNoteSummaryComponentHost.StartComponent();
+
+                    // Update title
+                    this.Host.Title = ProtocolEditorComponentDocument.GetTitle(_worklistItem);
+                }
+                else
+                {
+                    this.Exit(ApplicationComponentExitCode.None);
+                }
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
+            }
+
+        }
+
+
+        private ReportingWorklistItem GetNextWorklistItem()
+        {
+            ReportingWorklistItem worklistItem = null;
+
+            try
+            {
+                Platform.GetService<IReportingWorkflowService>(
+                    delegate(IReportingWorkflowService service)
+                    {
+                        GetWorklistRequest request = new GetWorklistRequest(WorklistTokens.ReportingToBeProtocolledWorklist);
+                        GetWorklistResponse response = service.GetWorklist(request);
+
+                        worklistItem = CollectionUtils.FirstElement(response.WorklistItems);
+                    });
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
+            }
+
+            return worklistItem;
         }
 
         #endregion
