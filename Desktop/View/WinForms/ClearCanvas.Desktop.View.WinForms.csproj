@@ -219,13 +219,13 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <AutoGen>True</AutoGen>
     </Compile>
-    <Compile Include="DialogComponentContainerControl.cs">
+    <Compile Include="SimpleComponentContainerControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="DialogComponentContainerControl.Designer.cs">
-      <DependentUpon>DialogComponentContainerControl.cs</DependentUpon>
+    <Compile Include="SimpleComponentContainerControl.Designer.cs">
+      <DependentUpon>SimpleComponentContainerControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="DialogComponentContainerView.cs" />
+    <Compile Include="SimpleComponentContainerView.cs" />
     <Compile Include="CustomUserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -339,9 +339,9 @@
       <SubType>Designer</SubType>
       <DependentUpon>DialogBoxForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="DialogComponentContainerControl.resx">
+    <EmbeddedResource Include="SimpleComponentContainerControl.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>DialogComponentContainerControl.cs</DependentUpon>
+      <DependentUpon>SimpleComponentContainerControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FileBrowser\Browser.resx">
       <DependentUpon>Browser.cs</DependentUpon>

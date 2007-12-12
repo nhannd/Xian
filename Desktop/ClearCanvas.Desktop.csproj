@@ -123,8 +123,7 @@
     <Compile Include="ApplicationComponentHost.cs" />
     <Compile Include="DialogBox.cs" />
     <Compile Include="ClosingEventArgs.cs" />
-    <Compile Include="DialogContent.cs" />
-    <Compile Include="DialogComponentContainer.cs" />
+    <Compile Include="SimpleComponentContainer.cs" />
     <Compile Include="DragDropKind.cs" />
     <Compile Include="Enumerations.cs" />
     <Compile Include="ExceptionHandler.cs" />

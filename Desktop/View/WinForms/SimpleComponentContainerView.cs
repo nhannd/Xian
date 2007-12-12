@@ -29,31 +29,35 @@
 
 #endregion
 
-namespace ClearCanvas.Desktop
+using ClearCanvas.Common;
+
+namespace ClearCanvas.Desktop.View.WinForms
 {
-	//TODO (Stewart): Try to get rid of this.
-
-	/// <summary>
-	/// For use with the <see cref="DialogComponentContainer"/> class.
-	/// </summary>
-	public class DialogContent
+	[ExtensionOf(typeof(SimpleComponentContainerViewExtensionPoint))]
+	public class SimpleComponentContainerView : WinFormsView, IApplicationComponentView
 	{
-        private IApplicationComponent _component;
+		private SimpleComponentContainer _component;
+		private SimpleComponentContainerControl _control;
 
-        /// <summary>
-        /// Constructor.
-        /// </summary>
-		public DialogContent(IApplicationComponent component)
-        {
-            _component = component;
-        }
+		#region IApplicationComponentView Members
 
-		/// <summary>
-        /// Gets the hosted component.
-        /// </summary>
-        public IApplicationComponent Component
-        {
-            get { return _component; }
-        }
+		public void SetComponent(IApplicationComponent component)
+		{
+			_component = (SimpleComponentContainer)component;
+		}
+
+		#endregion
+
+		public override object GuiElement
+		{
+			get
+			{
+				if (_control == null)
+				{
+					_control = new SimpleComponentContainerControl(_component);
+				}
+				return _control;
+			}
+		}
 	}
 }

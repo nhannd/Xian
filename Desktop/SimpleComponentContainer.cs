@@ -36,66 +36,40 @@ using ClearCanvas.Common;
 namespace ClearCanvas.Desktop
 {
     /// <summary>
-	/// Defines an extension point for views onto the <see cref="DialogComponentContainer"/>.
+	/// Defines an extension point for views onto the <see cref="SimpleComponentContainer"/>.
     /// </summary>
-	public sealed class DialogComponentContainerViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+	public sealed class SimpleComponentContainerViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
     {
     }
 
-	//TODO (Stewart): Try to get rid of this altogether.
-
 	/// <summary>
-	/// A container class for hosting <see cref="IApplicationComponent"/>s in a dialog
-	/// box that can be dismissed with Ok or Cancel.
+	/// A simple container class for hosting <see cref="IApplicationComponent"/>s
+	/// that provides Ok and Cancel buttons.
 	/// </summary>
-    [AssociateView(typeof(DialogComponentContainerViewExtensionPoint))]
-    public class DialogComponentContainer : ApplicationComponentContainer
+    [AssociateView(typeof(SimpleComponentContainerViewExtensionPoint))]
+    public class SimpleComponentContainer : ApplicationComponentContainer
     {
-		/// <summary>
-		/// Host object for <see cref="DialogContent"/>.
-		/// </summary>
-		public class DialogContentHost : ApplicationComponentHost
+		private class ContainedComponentHost : ApplicationComponentHost
         {
-            private DialogComponentContainer _owner;
-			private DialogContent _content;
+            private SimpleComponentContainer _owner;
 
-			internal DialogContentHost(
-				DialogComponentContainer owner,
-				DialogContent content)
-                :base(content.Component)
+			internal ContainedComponentHost(
+				SimpleComponentContainer owner,
+				IApplicationComponent component)
+				: base(component)
             {
 				Platform.CheckForNullReference(owner, "owner");
-				Platform.CheckForNullReference(content, "content");
-
                 _owner = owner;
-				_content = content;
-            }
-
-			/// <summary>
-			/// Gets the owner <see cref="DialogComponentContainer" />.
-			/// </summary>
-            public DialogComponentContainer Owner
-            {
-                get { return _owner; }
             }
 
             #region ApplicationComponentHost overrides
-
-			/// <summary>
-			/// Gets the associated command history object.
-			/// </summary>
-			/// <exception cref="NotSupportedException">The host does not support command history.</exception>
-			public override CommandHistory CommandHistory
-            {
-                get { return _owner.Host.CommandHistory; }
-            }
 
 			/// <summary>
 			/// Gets the associated desktop window.
 			/// </summary>
 			public override DesktopWindow DesktopWindow
             {
-                get { return _owner.Host.DesktopWindow; }
+				get { return _owner.Host.DesktopWindow; }
             }
 
 			/// <summary>
@@ -104,46 +78,38 @@ namespace ClearCanvas.Desktop
 			/// <exception cref="NotSupportedException">The host does not support titles.</exception>
 			public override string Title
             {
-                get { return _owner.Host.Title; }
-                set { _owner.Host.Title = value; }
+				get { return _owner.Host.Title; }
+				set { _owner.Host.Title = value; }
             }
 
             #endregion
         }
 
 
-		private DialogContent _content;
-        private DialogContentHost _contentHost;
+		private IApplicationComponent _component;
+        private ContainedComponentHost _componentHost;
 
         /// <summary>
         /// Constructor.
         /// </summary>
-        public DialogComponentContainer(DialogContent content)
+        public SimpleComponentContainer(IApplicationComponent component)
 		{
-			_content = content;
-            _contentHost = new DialogContentHost(this, _content);
+			_component = component;
+            _componentHost = new ContainedComponentHost(this, _component);
 		}
 
 		/// <summary>
-		/// The <see cref="DialogContent"/> to be hosted in the <see cref="DialogComponentContainer"/>.
+		/// The host object for the contained <see cref="IApplicationComponent"/>.
 		/// </summary>
-		public DialogContent Content
-		{
-			get { return _content; }
-		}
-
-		/// <summary>
-		/// The host object for the <see cref="DialogContent"/>.
-		/// </summary>
-        public DialogContentHost ContentHost
+		public ApplicationComponentHost ComponentHost
         {
-            get { return _contentHost; }
+            get { return _componentHost; }
         }
 
         #region ApplicationComponent overrides
 
 		/// <summary>
-		/// Starts this component and the <see cref="ContentHost"/>.
+		/// Starts this component and the <see cref="ComponentHost"/>.
 		/// </summary>
 		///  <remarks>
 		/// Override this method to implement custom initialization logic.  Overrides must be sure to call the base implementation.
@@ -152,18 +118,18 @@ namespace ClearCanvas.Desktop
         {
 			base.Start();
 
-			_contentHost.StartComponent();
+			_componentHost.StartComponent();
         }
 
 		/// <summary>
-		/// Stops this component and the <see cref="ContentHost"/>.
+		/// Stops this component and the <see cref="ComponentHost"/>.
 		/// </summary>
 		/// <remarks>
 		/// Override this method to implement custom termination logic.  Overrides must be sure to call the base implementation.
 		/// </remarks>
 		public override void Stop()
         {
-            _contentHost.StopComponent();
+            _componentHost.StopComponent();
 
             base.Stop();
         }
@@ -177,7 +143,7 @@ namespace ClearCanvas.Desktop
 		/// </summary>
 		public override IEnumerable<IApplicationComponent> ContainedComponents
         {
-            get { return new IApplicationComponent[] { _contentHost.Component }; }
+            get { return new IApplicationComponent[] { _componentHost.Component }; }
         }
 
 		/// <summary>
@@ -220,8 +186,8 @@ namespace ClearCanvas.Desktop
 		/// </summary>
         public void OK()
 		{
-			this.ExitCode = ApplicationComponentExitCode.Accepted;
-			this.Host.Exit();
+			base.ExitCode = ApplicationComponentExitCode.Accepted;
+			base.Host.Exit();
 		}
 
 		/// <summary>
@@ -230,8 +196,8 @@ namespace ClearCanvas.Desktop
 		/// </summary>
 		public void Cancel()
 		{
-			this.ExitCode = ApplicationComponentExitCode.None;
-            this.Host.Exit();
+			base.ExitCode = ApplicationComponentExitCode.None;
+            base.Host.Exit();
         }
 
         #endregion

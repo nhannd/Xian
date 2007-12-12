@@ -70,8 +70,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 				return;
 
 			AENavigatorComponent aeNavigator = new AENavigatorComponent(false, false, false, true);
-			DialogContent content = new DialogContent(aeNavigator);
-			DialogComponentContainer dialogContainer = new DialogComponentContainer(content);
+			SimpleComponentContainer dialogContainer = new SimpleComponentContainer(aeNavigator);
 
 			ApplicationComponentExitCode code =
 				ApplicationComponent.LaunchAsDialog(

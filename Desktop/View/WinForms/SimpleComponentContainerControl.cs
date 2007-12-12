@@ -35,11 +35,11 @@ using System.Windows.Forms;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
-	public partial class DialogComponentContainerControl : CustomUserControl
+	public partial class SimpleComponentContainerControl : CustomUserControl
 	{
-		private DialogComponentContainer _component;
+		private SimpleComponentContainer _component;
 
-		public DialogComponentContainerControl(DialogComponentContainer component)
+		public SimpleComponentContainerControl(SimpleComponentContainer component)
 		{
 			_component = component;
 
@@ -48,8 +48,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this.AcceptButton = _okButton;
 			this.CancelButton = _cancelButton;
 
-			DialogContent content = _component.Content;
-			Control contentControl = _component.ContentHost.ComponentView.GuiElement as Control;
+			Control contentControl = _component.ComponentHost.ComponentView.GuiElement as Control;
 
 			// Make the dialog conform to the size of the content
 			Size sizeDiff = contentControl.Size - _contentPanel.Size;
