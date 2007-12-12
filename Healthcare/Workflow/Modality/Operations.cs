@@ -146,11 +146,10 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
             {
                 foreach (ModalityProcedureStep mps in rp.ModalityProcedureSteps)
                 {
-                    bool mpsNotCompleted = mps.State == ActivityStatus.SC || mps.State == ActivityStatus.IP || mps.State == ActivityStatus.SU;
                     bool allPerformedStepsDone = CollectionUtils.TrueForAll<PerformedProcedureStep>(mps.PerformedSteps,
                             delegate(PerformedProcedureStep pps) { return pps.IsTerminated; });
 
-                    if (mpsNotCompleted && allPerformedStepsDone)
+                    if (!mps.IsTerminated && allPerformedStepsDone)
                         mps.Complete();
 
                     UpdateCheckInStep(mps.RequestedProcedure, false, workflow);
