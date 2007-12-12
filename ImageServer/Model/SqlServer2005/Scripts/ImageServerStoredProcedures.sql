@@ -1656,7 +1656,7 @@ BEGIN
 EXEC dbo.sp_executesql @statement = N'-- =============================================
 -- Author:		Steve Wranovsky
 -- Create date: August 17, 2007
--- Modified:    November 12, 2007
+-- Modified:    December 12, 2007
 -- Description:	
 -- =============================================
 CREATE PROCEDURE [dbo].[InsertInstance] 
@@ -1737,13 +1737,12 @@ BEGIN
 
 			INSERT into Patient (GUID, ServerPartitionGUID, PatientName, PatientId, IssuerOfPatientId, NumberOfPatientRelatedStudies, NumberOfPatientRelatedSeries, NumberOfPatientRelatedInstances)
 			VALUES
-				(@PatientGUID, @ServerPartitionGUID, @PatientName, @PatientId, @IssuerOfPatientId, 1,0,1)
+				(@PatientGUID, @ServerPartitionGUID, @PatientName, @PatientId, @IssuerOfPatientId, 0,0,1)
 		END
 		ELSE
 		BEGIN
 			UPDATE Patient 
-			SET NumberOfPatientRelatedInstances = NumberOfPatientRelatedInstances + 1,
-			    NumberOfPatientRelatedStudies = NumberOfPatientRelatedStudies + 1
+			SET NumberOfPatientRelatedInstances = NumberOfPatientRelatedInstances + 1
 			WHERE GUID = @PatientGUID
 		END
 
@@ -1761,19 +1760,22 @@ BEGIN
 				@PatientsSex, @StudyDate, @StudyTime, @AccessionNumber, @StudyId,
 				@StudyDescription, @ReferringPhysiciansName, 0, 1, @StudyStatusEnum)
 
+		UPDATE Patient 
+		SET NumberOfPatientRelatedStudies = NumberOfPatientRelatedStudies + 1
+		WHERE GUID = @PatientGUID
 
 	END
 	ELSE
 	BEGIN
+		UPDATE Patient 
+			SET NumberOfPatientRelatedInstances = NumberOfPatientRelatedInstances + 1
+			WHERE GUID = @PatientGUID
+
 		-- Update Study, Patient TablesNext, the Study Table
 		UPDATE Study 
 		SET NumberOfStudyRelatedInstances = NumberOfStudyRelatedInstances + 1
 		WHERE GUID = @StudyGUID
 
-		UPDATE Patient 
-		SET NumberOfPatientRelatedInstances = NumberOfPatientRelatedInstances + 1,
-		    NumberOfPatientRelatedStudies = NumberOfPatientRelatedStudies + 1
-		WHERE GUID = @PatientGUID
 	END
 
 	-- Finally, the Series Table
