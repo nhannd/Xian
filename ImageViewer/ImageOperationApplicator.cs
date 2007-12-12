@@ -106,7 +106,7 @@ namespace ClearCanvas.ImageViewer
 		/// <see cref="IImageOperation.GetOriginator"/> returns a non-null value will have their states 
 		/// captured.
 		/// </remarks>
-		public IMemento CreateMemento()
+		public virtual IMemento CreateMemento()
 		{
 			List<ImageOriginatorMemento> imageOriginatorMementos = new List<ImageOriginatorMemento>();
 			foreach (IPresentationImage image in GetAllImages())
@@ -125,7 +125,7 @@ namespace ClearCanvas.ImageViewer
 		/// <summary>
 		/// Restores the state of all image originators that were affected by the <see cref="IImageOperation"/>.
 		/// </summary>
-		public void SetMemento(IMemento memento)
+		public virtual void SetMemento(IMemento memento)
 		{
 			Platform.CheckForNullReference(memento, "memento");
 			ImageOperationApplicatorMemento applicatorMemento = memento as ImageOperationApplicatorMemento;

@@ -128,7 +128,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			}
 
 			ActionPath path = new ActionPath(pathString, null);
-			MenuAction action = new MenuAction(string.Format("{0}:display{1}", this.GetType().FullName, index), path, ClickActionFlags.None, null);
+			MenuAction action = new MenuAction(string.Format("{0}:display{1}", this.GetType().FullName, index), path, ClickActionFlags.CheckParents, null);
 			action.GroupHint = new GroupHint("DisplaySets");
 			action.Label = displaySet.Name;
 			action.SetClickHandler(
@@ -141,7 +141,6 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			action.Checked = this.ImageViewer.SelectedImageBox != null &&
 				this.ImageViewer.SelectedImageBox.DisplaySet != null && 
 				this.ImageViewer.SelectedImageBox.DisplaySet.Uid == displaySet.Uid;
-			action.CheckParents = action.Checked;
 
 			return action;
 		}

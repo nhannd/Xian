@@ -367,7 +367,7 @@ namespace ClearCanvas.ImageViewer
 		/// <see cref="SetMemento"/> at a later time restores 
 		/// those instances.
 		/// </remarks>
-		public IMemento CreateMemento()
+		public virtual IMemento CreateMemento()
 		{
 			MementoList imageBoxMementos = new MementoList();
 
@@ -391,7 +391,7 @@ namespace ClearCanvas.ImageViewer
 		/// This method restores the state of a <see cref="PhysicalWorkspace"/> with
 		/// a memento previously created by <see cref="CreateMemento"/>.
 		/// </remarks>
-		public void SetMemento(IMemento memento)
+		public virtual void SetMemento(IMemento memento)
 		{
 			Platform.CheckForNullReference(memento, "memento");
 
