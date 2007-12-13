@@ -11,15 +11,17 @@ namespace ClearCanvas.Ris.Client.Reporting
         #region Private Members
 
         private readonly ReportingWorklistItem _item;
+        private readonly ProtocolEditorMode _mode;
 
         #endregion
 
         #region Constructor
 
-        public ProtocolEditorComponentDocument(ReportingWorklistItem item, IReportingWorkflowItemToolContext context)
-            : base(item.OrderRef, context.DesktopWindow)
+        public ProtocolEditorComponentDocument(ReportingWorklistItem item, ProtocolEditorMode mode, IReportingWorkflowItemToolContext context)
+            : base(null, context.DesktopWindow)
         {
             _item = item;
+            _mode = mode;
         }
 
         #endregion
@@ -33,7 +35,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         public override IApplicationComponent GetComponent()
         {
-            return new ProtocolEditorComponent(_item);
+            return new ProtocolEditorComponent(_item, _mode);
         }
 
         #endregion

@@ -48,6 +48,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             btnReject.DataBindings.Add("Enabled", _component, "RejectEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
             btnSuspend.DataBindings.Add("Enabled", _component, "SuspendEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
             btnSave.DataBindings.Add("Enabled", _component, "SaveEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
+            btnSkip.DataBindings.Add("Enabled", _component, "SkipEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
         }
 
         void _component_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -109,6 +110,14 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             using (new CursorManager(this, Cursors.WaitCursor))
             {
                 _component.AddNote();
+            }
+        }
+
+        private void btnSkip_Click(object sender, EventArgs e)
+        {
+            using (new CursorManager(this, Cursors.WaitCursor))
+            {
+                _component.Skip();
             }
         }
     }

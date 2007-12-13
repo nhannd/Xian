@@ -89,7 +89,9 @@ namespace ClearCanvas.Ris.Client
 
         private static string GenerateDocumentKey(Type documentType, EntityRef subject)
         {
-            return string.Format("{0}+{1}", documentType, subject.ToString(true));
+            return subject == null
+                ? string.Format("{0}", documentType)
+                : string.Format("{0}+{1}", documentType, subject.ToString(true));
         }
 
         #endregion

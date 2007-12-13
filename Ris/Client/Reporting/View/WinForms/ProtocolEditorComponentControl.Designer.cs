@@ -54,9 +54,10 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this.btnReject = new System.Windows.Forms.Button();
             this.btnSuspend = new System.Windows.Forms.Button();
             this.btnSave = new System.Windows.Forms.Button();
+            this.btnSkip = new System.Windows.Forms.Button();
+            this._protocolNextItem = new System.Windows.Forms.CheckBox();
             this.flowLayoutPanel3 = new System.Windows.Forms.FlowLayoutPanel();
             this.btnClose = new System.Windows.Forms.Button();
-            this._protocolNextItem = new System.Windows.Forms.CheckBox();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
@@ -380,6 +381,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this.flowLayoutPanel2.Controls.Add(this.btnReject);
             this.flowLayoutPanel2.Controls.Add(this.btnSuspend);
             this.flowLayoutPanel2.Controls.Add(this.btnSave);
+            this.flowLayoutPanel2.Controls.Add(this.btnSkip);
             this.flowLayoutPanel2.Controls.Add(this._protocolNextItem);
             this.flowLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanel2.Location = new System.Drawing.Point(3, 784);
@@ -427,6 +429,27 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
+            // btnSkip
+            // 
+            this.btnSkip.Location = new System.Drawing.Point(327, 3);
+            this.btnSkip.Name = "btnSkip";
+            this.btnSkip.Size = new System.Drawing.Size(75, 23);
+            this.btnSkip.TabIndex = 5;
+            this.btnSkip.Text = "Skip";
+            this.btnSkip.UseVisualStyleBackColor = true;
+            this.btnSkip.Click += new System.EventHandler(this.btnSkip_Click);
+            // 
+            // _protocolNextItem
+            // 
+            this._protocolNextItem.AutoSize = true;
+            this._protocolNextItem.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._protocolNextItem.Location = new System.Drawing.Point(408, 3);
+            this._protocolNextItem.Name = "_protocolNextItem";
+            this._protocolNextItem.Size = new System.Drawing.Size(119, 23);
+            this._protocolNextItem.TabIndex = 4;
+            this._protocolNextItem.Text = "Protocol Next Order";
+            this._protocolNextItem.UseVisualStyleBackColor = true;
+            // 
             // flowLayoutPanel3
             // 
             this.flowLayoutPanel3.AutoSize = true;
@@ -447,17 +470,6 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
             this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
-            // 
-            // _protocolNextItem
-            // 
-            this._protocolNextItem.AutoSize = true;
-            this._protocolNextItem.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._protocolNextItem.Location = new System.Drawing.Point(327, 3);
-            this._protocolNextItem.Name = "_protocolNextItem";
-            this._protocolNextItem.Size = new System.Drawing.Size(119, 23);
-            this._protocolNextItem.TabIndex = 4;
-            this._protocolNextItem.Text = "Protocol Next Order";
-            this._protocolNextItem.UseVisualStyleBackColor = true;
             // 
             // ProtocolEditorComponentControl
             // 
@@ -536,5 +548,6 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
         private System.Windows.Forms.Button btnClose;
         private System.Windows.Forms.Button btnSave;
         private System.Windows.Forms.CheckBox _protocolNextItem;
+        private System.Windows.Forms.Button btnSkip;
     }
 }

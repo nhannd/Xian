@@ -117,24 +117,30 @@ namespace ClearCanvas.Ris.Client.Reporting
         private List<ProtocolGroupSummary> _protocolGroupChoices;
         private ProtocolGroupSummary _protocolGroup;
 
-        private bool _isNew;
         private bool _protocolNextItem = true;
+        private readonly ProtocolEditorMode _editorMode;
+
+        private List<ReportingWorklistItem> _skippedItems;
+        private Stack<ReportingWorklistItem> _worklistCache;
 
         #endregion
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public ProtocolEditorComponent(ReportingWorklistItem worklistItem)
+        public ProtocolEditorComponent(ReportingWorklistItem worklistItem, ProtocolEditorMode mode)
         {
             _worklistItem = worklistItem;
-            _isNew = true;
+            _editorMode = mode;
 
             _availableProtocolCodes = new ProtocolCodeTable();
             _selectedProtocolCodes = new ProtocolCodeTable();
             _selectedProtocolCodes.Items.ItemsChanged += SelectedProtocolCodesChanged;
             _protocolGroupChoices = new List<ProtocolGroupSummary>();
             _procedurePlanSummaryTable = new ProtocolEditorProcedurePlanSummaryTable();
+
+            _skippedItems = new List<ReportingWorklistItem>();
+            _worklistCache = new Stack<ReportingWorklistItem>();
         }
 
         #region ApplicationComponent overrides
@@ -157,8 +163,8 @@ namespace ClearCanvas.Ris.Client.Reporting
             Platform.GetService<IProtocollingWorkflowService>(
                 delegate(IProtocollingWorkflowService service)
                     {
-                        // No need to claim if editing a draft protocol
-                        if (_isNew)
+                        // Only claim unassigned protocols
+                        if (_editorMode == ProtocolEditorMode.Assign)
                         {
                             while (ClaimOrderProtocol(_worklistItem.OrderRef, service) == ClaimProtocolResult.Failed)
                             {
@@ -270,7 +276,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         public bool ProtocolNextItemEnabled
         {
-            get { return _isNew; }
+            get { return _editorMode == ProtocolEditorMode.Assign; }
         }
 
         #region Accept
@@ -286,7 +292,14 @@ namespace ClearCanvas.Ris.Client.Reporting
                             service.AcceptOrderProtocol(new AcceptOrderProtocolRequest(_orderRef));
                         });
 
-                DocumentManager.InvalidateFolder(typeof(Folders.ToBeProtocolledFolder));
+                if(_editorMode == ProtocolEditorMode.Assign)
+                {
+                    DocumentManager.InvalidateFolder(typeof(Folders.ToBeProtocolledFolder));
+                }
+                else if(_editorMode == ProtocolEditorMode.Edit)
+                {
+                    DocumentManager.InvalidateFolder(typeof (Folders.DraftFolder));
+                }
                 DocumentManager.InvalidateFolder(typeof(Folders.CompletedProtocolFolder));
 
                 if (_protocolNextItem)
@@ -329,8 +342,15 @@ namespace ClearCanvas.Ris.Client.Reporting
                             service.RejectOrderProtocol(new RejectOrderProtocolRequest(_orderRef, reason));
                         });
 
-                DocumentManager.InvalidateFolder(typeof(Folders.ToBeProtocolledFolder));
-                DocumentManager.InvalidateFolder(typeof(Folders.CompletedProtocolFolder));
+                if (_editorMode == ProtocolEditorMode.Assign)
+                {
+                    DocumentManager.InvalidateFolder(typeof(Folders.ToBeProtocolledFolder));
+                }
+                else if (_editorMode == ProtocolEditorMode.Edit)
+                {
+                    DocumentManager.InvalidateFolder(typeof(Folders.DraftFolder));
+                }
+                DocumentManager.InvalidateFolder(typeof(Folders.RejectedProtocolFolder));
 
                 if (_protocolNextItem)
                 {
@@ -372,8 +392,15 @@ namespace ClearCanvas.Ris.Client.Reporting
                             service.SuspendOrderProtocol(new SuspendOrderProtocolRequest(_orderRef, reason));
                         });
 
-                DocumentManager.InvalidateFolder(typeof(Folders.ToBeProtocolledFolder));
-                DocumentManager.InvalidateFolder(typeof(Folders.CompletedProtocolFolder));
+                if (_editorMode == ProtocolEditorMode.Assign)
+                {
+                    DocumentManager.InvalidateFolder(typeof(Folders.ToBeProtocolledFolder));
+                }
+                else if (_editorMode == ProtocolEditorMode.Edit)
+                {
+                    DocumentManager.InvalidateFolder(typeof(Folders.DraftFolder));
+                }
+                DocumentManager.InvalidateFolder(typeof(Folders.SuspendedProtocolFolder));
 
                 if (_protocolNextItem)
                 {
@@ -441,7 +468,7 @@ namespace ClearCanvas.Ris.Client.Reporting
             try
             {
                 // Unclaim any newly started protocols
-                if (_isNew)
+                if (_editorMode == ProtocolEditorMode.Assign)
                 {
                     Platform.GetService<IProtocollingWorkflowService>(
                         delegate(IProtocollingWorkflowService service)
@@ -454,19 +481,18 @@ namespace ClearCanvas.Ris.Client.Reporting
                 // discontinued with a new scheduled one replacing it
                 DocumentManager.InvalidateFolder(typeof(Folders.ToBeProtocolledFolder));
 
-                if(_protocolNextItem)
-                {
-                    NextProtocol();
-                }
-                else
-                {
-                    this.Exit(ApplicationComponentExitCode.None);
-                }
+                _skippedItems.Add(_worklistItem);
+                NextProtocol();
             }
             catch (Exception e)
             {
                 ExceptionHandler.Report(e, this.Host.DesktopWindow);
             }
+        }
+
+        public bool SkipEnabled
+        {
+            get { return _protocolNextItem && this.ProtocolNextItemEnabled; }
         }
 
         #endregion
@@ -478,7 +504,7 @@ namespace ClearCanvas.Ris.Client.Reporting
             try
             {
                 // Unclaim any newly started protocols
-                if (_isNew)
+                if (_editorMode == ProtocolEditorMode.Assign)
                 {
                     Platform.GetService<IProtocollingWorkflowService>(
                         delegate(IProtocollingWorkflowService service)
@@ -491,14 +517,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                 // discontinued with a new scheduled one replacing it
                 DocumentManager.InvalidateFolder(typeof(Folders.ToBeProtocolledFolder));
 
-                if (_protocolNextItem)
-                {
-                    NextProtocol();
-                }
-                else
-                {
-                    this.Exit(ApplicationComponentExitCode.None);
-                }
+                this.Exit(ApplicationComponentExitCode.None);
             }
             catch(Exception e)
             {
@@ -717,22 +736,39 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         private ReportingWorklistItem GetNextWorklistItem()
         {
-            ReportingWorklistItem worklistItem = null;
+            // Use next item from cached worklist if one exists
+            ReportingWorklistItem worklistItem = _worklistCache.Count > 0 ? _worklistCache.Pop() : null;
 
-            try
+            // Otherwise, re-populate the cached worklist
+            if (worklistItem == null)
             {
-                Platform.GetService<IReportingWorkflowService>(
-                    delegate(IReportingWorkflowService service)
-                    {
-                        GetWorklistRequest request = new GetWorklistRequest(WorklistTokens.ReportingToBeProtocolledWorklist);
-                        GetWorklistResponse response = service.GetWorklist(request);
+                try
+                {
+                    Platform.GetService<IReportingWorkflowService>(
+                        delegate(IReportingWorkflowService service)
+                        {
+                            GetWorklistRequest request = new GetWorklistRequest(WorklistTokens.ReportingToBeProtocolledWorklist);
+                            GetWorklistResponse response = service.GetWorklist(request);
 
-                        worklistItem = CollectionUtils.FirstElement(response.WorklistItems);
-                    });
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
+                            foreach (ReportingWorklistItem item in response.WorklistItems)
+                            {
+                                // Remove any items that were previously skipped
+                                bool itemSkipped = CollectionUtils.Contains<ReportingWorklistItem>(_skippedItems, 
+                                    delegate(ReportingWorklistItem skippedItem) { return skippedItem.AccessionNumber == item.AccessionNumber; });
+
+                                if(itemSkipped == false)
+                                {
+                                    _worklistCache.Push(item);
+                                }
+                            }
+
+                            worklistItem = _worklistCache.Count > 0 ? _worklistCache.Pop() : null;
+                        });
+                }
+                catch (Exception e)
+                {
+                    ExceptionHandler.Report(e, this.Host.DesktopWindow);
+                }
             }
 
             return worklistItem;
