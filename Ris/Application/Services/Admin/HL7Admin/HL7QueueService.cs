@@ -141,12 +141,14 @@ namespace ClearCanvas.Ris.Application.Services.Admin.HL7Admin
             IPatientProfileBroker profileBroker = PersistenceContext.GetBroker<IPatientProfileBroker>();
             IList<PatientProfile> profiles = profileBroker.Find(criteria);
 
-            if (profiles.Count == 0)
+            PatientProfile profile = CollectionUtils.FirstElement(profiles);
+
+            if (profile == null)
             {
                 throw new RequestValidationException(string.Format(SR.ExceptionPatientNotFound, identifiers[0], assigningAuthority));
             }
 
-            return new GetReferencedPatientResponse(profiles[0].GetRef());            
+            return new GetReferencedPatientResponse(profile.Patient.GetRef(), profile.GetRef());            
         }
 
         [UpdateOperation]

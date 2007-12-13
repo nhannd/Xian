@@ -58,6 +58,7 @@ namespace ClearCanvas.Ris.Client
     public class BiographyDemographicComponent : ApplicationComponent
     {
         private readonly EntityRef _profileRef;
+        private readonly EntityRef _patientRef;
         private PatientProfileDetail _patientProfile;
 
         private PatientProfileSummary _selectedProfile;
@@ -73,16 +74,12 @@ namespace ClearCanvas.Ris.Client
         private readonly EmailAddressTable _emailTable;
         private readonly ContactPersonTable _contactTable;
 
-        private List<EnumValueInfo> _addressTypeChoices;
-        private List<EnumValueInfo> _phoneTypeChoices;
-        private List<EnumValueInfo> _contactPersonTypeChoices;
-        private List<EnumValueInfo> _contactPersonRelationshipChoices;
-
         /// <summary>
         /// Constructor
         /// </summary>
-        public BiographyDemographicComponent(EntityRef profileRef, PatientProfileDetail patientProfile)
+        public BiographyDemographicComponent(EntityRef patientRef, EntityRef profileRef, PatientProfileDetail patientProfile)
         {
+            _patientRef = patientRef;
             _profileRef = profileRef;
             _patientProfile = patientProfile;
 
@@ -92,11 +89,6 @@ namespace ClearCanvas.Ris.Client
             _phoneTable = new TelephoneNumberTable();
             _emailTable = new EmailAddressTable();
             _contactTable = new ContactPersonTable();
-
-            _addressTypeChoices = new List<EnumValueInfo>();
-            _phoneTypeChoices = new List<EnumValueInfo>();
-            _contactPersonTypeChoices = new List<EnumValueInfo>();
-            _contactPersonRelationshipChoices = new List<EnumValueInfo>();
         }
 
         public override void Start()
@@ -105,16 +97,11 @@ namespace ClearCanvas.Ris.Client
                 delegate(IBrowsePatientDataService service)
                 {
                     GetDataRequest request = new GetDataRequest();
-                    request.PatientProfileRef = _profileRef;
-                    request.ListProfilesRequest = new ListProfilesRequest();
-                    request.LoadPatientProfileFormDataRequest = new LoadPatientProfileFormDataRequest();
+                    request.PatientRef = _patientRef;
+                    request.ListPatientProfilesRequest = new ListPatientProfilesRequest();
                     GetDataResponse response = service.GetData(request);
 
-                    _profileChoices = response.ListProfilesResponse.Profiles;
-                    _addressTypeChoices = response.LoadPatientProfileFormDataResponse.AddressTypeChoices;
-                    _phoneTypeChoices = response.LoadPatientProfileFormDataResponse.PhoneTypeChoices;
-                    _contactPersonTypeChoices = response.LoadPatientProfileFormDataResponse.ContactPersonTypeChoices;
-                    _contactPersonRelationshipChoices = response.LoadPatientProfileFormDataResponse.ContactPersonRelationshipChoices;
+                    _profileChoices = response.ListPatientProfilesResponse.Profiles;
                 });
 
             UpdateTables();
@@ -155,10 +142,10 @@ namespace ClearCanvas.Ris.Client
                     {
                         GetDataRequest request = new GetDataRequest();
                         request.PatientProfileRef = _profileRef;
-                        request.GetProfileDetailRequest = new GetProfileDetailRequest(true, true, true, true, true, true);
+                        request.GetPatientProfileDetailRequest = new GetPatientProfileDetailRequest(true, true, true, true, true, true, false);
                         GetDataResponse response = service.GetData(request);
 
-                        _patientProfile = response.GetProfileDetailResponse.PatientProfileDetail;
+                        _patientProfile = response.GetPatientProfileDetailResponse.PatientProfile;
                     });
 
                 UpdateTables();
@@ -326,7 +313,7 @@ namespace ClearCanvas.Ris.Client
             if (_selectedAddress == null)
                 return;
 
-            AddressEditorComponent editor = new AddressEditorComponent(_selectedAddress, _addressTypeChoices);
+            AddressEditorComponent editor = new AddressEditorComponent(_selectedAddress, new List<EnumValueInfo>());
             LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleAddresses);
         }
 
@@ -335,7 +322,7 @@ namespace ClearCanvas.Ris.Client
             if (_selectedPhone == null)
                 return;
 
-            PhoneNumberEditorComponent editor = new PhoneNumberEditorComponent(_selectedPhone, _phoneTypeChoices);
+            PhoneNumberEditorComponent editor = new PhoneNumberEditorComponent(_selectedPhone, new List<EnumValueInfo>());
             LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitlePhoneNumbers);
         }
 
@@ -353,7 +340,7 @@ namespace ClearCanvas.Ris.Client
             if (_selectedContact == null)
                 return;
 
-            ContactPersonEditorComponent editor = new ContactPersonEditorComponent(_selectedContact, _contactPersonTypeChoices, _contactPersonRelationshipChoices);
+            ContactPersonEditorComponent editor = new ContactPersonEditorComponent(_selectedContact, new List<EnumValueInfo>(), new List<EnumValueInfo>());
             LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleContactPersons);
         }
 

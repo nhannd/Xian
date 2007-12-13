@@ -29,24 +29,17 @@
 
 #endregion
 
-using ClearCanvas.Enterprise.Common;
+using System;
 using System.Runtime.Serialization;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
 {
     [DataContract]
-    public class GetProfileDetailResponse : DataContractBase
+    public class ListReportsRequest : DataContractBase
     {
-        public GetProfileDetailResponse(PatientProfileDetail detail)
-        {
-            this.PatientProfileDetail = detail;
-        }
-
-        public GetProfileDetailResponse()
+        public ListReportsRequest()
         {
         }
-
-        [DataMember]
-        public PatientProfileDetail PatientProfileDetail;
     }
 }

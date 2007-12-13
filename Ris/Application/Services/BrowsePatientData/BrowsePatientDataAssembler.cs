@@ -43,13 +43,6 @@ namespace ClearCanvas.Ris.Application.Services.BrowsePatientData
         {
             PatientOrderData data = new PatientOrderData();
 
-            PatientProfile profile = CollectionUtils.SelectFirst(order.Patient.Profiles,
-                delegate(PatientProfile thisProfile)
-                {
-                    return thisProfile.Mrn.AssigningAuthority == order.Visit.VisitNumber.AssigningAuthority;
-                });
-
-            UpdatePatientOrderData(data, profile, context);
             UpdatePatientOrderData(data, order, context);
             UpdatePatientOrderData(data, order.Visit, context);
 
@@ -60,16 +53,6 @@ namespace ClearCanvas.Ris.Application.Services.BrowsePatientData
         {
             PatientOrderData data = new PatientOrderData();
 
-            //TODO: choose the profile based on some location instead of visit assigning authority
-            PatientProfile profile = rp.Order.Patient.Profiles.Count == 1 ?
-                CollectionUtils.FirstElement(rp.Order.Patient.Profiles) :                
-                CollectionUtils.SelectFirst(rp.Order.Patient.Profiles,
-                delegate(PatientProfile thisProfile)
-                {
-                    return thisProfile.Mrn.AssigningAuthority == rp.Order.Visit.VisitNumber.AssigningAuthority;
-                });
-
-            UpdatePatientOrderData(data, profile, context);
             UpdatePatientOrderData(data, rp.Order, context);
             UpdatePatientOrderData(data, rp.Order.Visit, context);
             UpdatePatientOrderData(data, rp, context);
@@ -77,66 +60,19 @@ namespace ClearCanvas.Ris.Application.Services.BrowsePatientData
             return data;
         }
 
-        public PatientOrderData CreatePatientOrderData(ProcedureStep ps, IPersistenceContext context)
-        {
-            PatientOrderData data = new PatientOrderData();
-
-            //TODO: choose the profile based on some location instead of visit assigning authority
-            PatientProfile profile = ps.RequestedProcedure.Order.Patient.Profiles.Count == 1 ?
-                CollectionUtils.FirstElement(ps.RequestedProcedure.Order.Patient.Profiles) :                
-                CollectionUtils.SelectFirst(ps.RequestedProcedure.Order.Patient.Profiles,
-                delegate(PatientProfile thisProfile)
-                {
-                    return thisProfile.Mrn.AssigningAuthority == ps.RequestedProcedure.Order.Visit.VisitNumber.AssigningAuthority;
-                });
-
-            UpdatePatientOrderData(data, profile, context);
-            UpdatePatientOrderData(data, ps.RequestedProcedure.Order, context);
-            UpdatePatientOrderData(data, ps.RequestedProcedure.Order.Visit, context);
-            UpdatePatientOrderData(data, ps.RequestedProcedure, context);
-            UpdatePatientOrderData(data, ps, context);
-
-            return data;
-        }
-
         #region Private Helpers
-
-        private void UpdatePatientOrderData(PatientOrderData data, PatientProfile profile, IPersistenceContext context)
-        {
-            PersonNameAssembler nameAssembler = new PersonNameAssembler();
-
-            data.MrnId = profile.Mrn.Id;
-            data.MrnAssigningAuthority = profile.Mrn.AssigningAuthority.Code;
-
-            data.HealthcardId = profile.Healthcard.Id;
-            data.HealthcardAssigningAuthority = profile.Healthcard.AssigningAuthority.Code;
-            data.HealthcardVersionCode = profile.Healthcard.VersionCode;
-            data.HealthcardExpiryDate = profile.Healthcard.ExpiryDate;
-
-            data.PatientName = nameAssembler.CreatePersonNameDetail(profile.Name);
-            data.DateOfBirth = profile.DateOfBirth;
-            data.Sex = EnumUtils.GetValue(profile.Sex, context);
-            data.PrimaryLanguage = EnumUtils.GetDisplayValue(profile.PrimaryLanguage);
-            data.Religion = EnumUtils.GetDisplayValue(profile.Religion);
-            data.DeathIndicator = profile.DeathIndicator;
-            data.TimeOfDeath = profile.TimeOfDeath;
-        }
 
         private void UpdatePatientOrderData(PatientOrderData data, Visit visit, IPersistenceContext context)
         {
-            // Visit locations and practitioners collections not implemented
-
-            data.VisitNumberId = visit.VisitNumber.Id;
+            data.VisitNumber = visit.VisitNumber.Id;
             data.VisitNumberAssigningAuthority = visit.VisitNumber.AssigningAuthority.Code;
             data.PatientClass = EnumUtils.GetDisplayValue(visit.PatientClass);
             data.PatientType = EnumUtils.GetDisplayValue(visit.PatientType);
             data.AdmissionType = EnumUtils.GetDisplayValue(visit.AdmissionType);
             data.VisitStatus = EnumUtils.GetEnumValueInfo(visit.VisitStatus, context);
-            data.AdmitDateTime = visit.AdmitTime;
-            data.DischargeDateTime = visit.DischargeTime;
-            data.VisitFacilityName = visit.Facility.Name;
-            data.DischargeDisposition = visit.DischargeDisposition;
-            data.VipIndicator = visit.VipIndicator;
+            data.AdmitTime = visit.AdmitTime;
+            data.DischargeTime = visit.DischargeTime;
+            data.VisitFacility = visit.Facility.Name;
             data.PreadmitNumber = visit.PreadmitNumber;
         }
 
@@ -147,10 +83,11 @@ namespace ClearCanvas.Ris.Application.Services.BrowsePatientData
             data.PlacerNumber = order.PlacerNumber;
             data.AccessionNumber = order.AccessionNumber;
             data.DiagnosticServiceName = order.DiagnosticService.Name;
-            data.EnteredDateTime = order.EnteredTime;
-            data.SchedulingRequestDateTime = order.SchedulingRequestTime;
-            data.OrderingPractitionerName = nameAssembler.CreatePersonNameDetail(order.OrderingPractitioner.Name);
-            data.OrderingFacilityName = order.OrderingFacility.Name;
+            data.DiagnosticServiceCode = order.DiagnosticService.Id;
+            data.EnteredTime = order.EnteredTime;
+            data.SchedulingRequestTime = order.SchedulingRequestTime;
+            data.OrderingPractitioner = nameAssembler.CreatePersonNameDetail(order.OrderingPractitioner.Name);
+            data.OrderingFacility = order.OrderingFacility.Name;
             data.ReasonForStudy = order.ReasonForStudy;
             data.OrderPriority = EnumUtils.GetValue(order.Priority, context);
             data.CancelReason = EnumUtils.GetDisplayValue(order.CancelReason);
@@ -160,52 +97,12 @@ namespace ClearCanvas.Ris.Application.Services.BrowsePatientData
 
         private void UpdatePatientOrderData(PatientOrderData data, RequestedProcedure rp, IPersistenceContext context)
         {
-            data.RequestedProcedureName = rp.Type.Name;
-            data.RequestedProcedureScheduledStartTime = rp.ScheduledStartTime;
-            data.RequestedProcedureCheckInTime = rp.ProcedureCheckIn.CheckInTime;
-            data.RequestedProcedureCheckOutTime = rp.ProcedureCheckIn.CheckOutTime;
-            data.RequestedProcedureStatus = EnumUtils.GetEnumValueInfo(rp.Status, context);
-        }
-
-        private void UpdatePatientOrderData(PatientOrderData data, ProcedureStep ps, IPersistenceContext context)
-        {
-            PersonNameAssembler nameAssembler = new PersonNameAssembler();
-
-            data.ProcedureStepStatus = EnumUtils.GetEnumValueInfo(ps.State, context);
-            if (ps.Scheduling != null)
-            {
-                //TODO ScheduledPerformerStaff for ModalityProcedureStepSummary
-                //summary.ScheduledPerformerStaff = staffAssembler.CreateStaffSummary(mps.Scheduling.Performer);
-                data.ScheduledStartTime = ps.Scheduling.StartTime;
-                data.ScheduledEndTime = ps.Scheduling.EndTime;
-            }
-
-            if (ps.AssignedStaff != null)
-                data.AssignedStaffName = nameAssembler.CreatePersonNameDetail(ps.AssignedStaff.Name);
-
-            if (ps.PerformingStaff != null)
-                data.PerformerStaffName = nameAssembler.CreatePersonNameDetail(ps.PerformingStaff.Name);
-
-            data.StartTime = ps.StartTime;
-            data.EndTime = ps.EndTime;
-
-            data.DiscontinueReason = "";
-
-            if (ps.Is<ModalityProcedureStep>())
-            {
-                ModalityProcedureStep mps = ps.As<ModalityProcedureStep>();
-                data.ModalityProcedureStepTypeName = mps.Type.Name;
-                data.Modality = mps.Modality.Name;
-            }
-            else if (ps.Is<ReportingProcedureStep>())
-            {
-                ReportingProcedureStep rps = ps.As<ReportingProcedureStep>();
-                if (rps.ReportPart != null)
-                {
-                    ReportingWorkflowAssembler reportingAssembler = new ReportingWorkflowAssembler();
-                    data.Report = reportingAssembler.CreateReportSummary(rps.RequestedProcedure, rps.ReportPart.Report, context);
-                }
-            }
+            data.ProcedureName = rp.Type.Name;
+            data.ProcedureCode = rp.Type.Id;
+            data.ProcedureScheduledStartTime = rp.ScheduledStartTime;
+            data.ProcedureCheckInTime = rp.ProcedureCheckIn.CheckInTime;
+            data.ProcedureCheckOutTime = rp.ProcedureCheckIn.CheckOutTime;
+            data.ProcedureStatus = EnumUtils.GetEnumValueInfo(rp.Status, context);
         }
 
         #endregion

@@ -38,39 +38,21 @@ namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
     public class GetDataResponse : DataContractBase
     {
         [DataMember]
-        public EntityRef ProcedureStepRef;
+        public ListPatientProfilesResponse ListPatientProfilesResponse;
 
         [DataMember]
-        public EntityRef PatientRef;
-
-        [DataMember]
-        public EntityRef PatientProfileRef;
-
-        [DataMember]
-        public EntityRef OrderRef;
-
-        [DataMember]
-        public GetModalityProcedureStepResponse GetModalityProcedureStepResponse;
-
-        [DataMember]
-        public GetReportingProcedureStepResponse GetReportingProcedureStepResponse;
-
-        [DataMember]
-        public GetProfileDetailResponse GetProfileDetailResponse;
-
-        [DataMember]
-        public ListProfilesResponse ListProfilesResponse;
-
-        [DataMember]
-        public GetOrderDetailResponse GetOrderDetailResponse;
+        public GetPatientProfileDetailResponse GetPatientProfileDetailResponse;
 
         [DataMember]
         public ListOrdersResponse ListOrdersResponse;
 
         [DataMember]
-        public GetAlertsResponse GetAlertsResponse;
+        public GetOrderDetailResponse GetOrderDetailResponse;
 
         [DataMember]
-        public LoadPatientProfileFormDataResponse LoadPatientProfileFormDataResponse;
+        public ListReportsResponse ListReportsResponse;
+
+        [DataMember]
+        public GetReportDetailResponse GetReportDetailResponse;
     }
 }

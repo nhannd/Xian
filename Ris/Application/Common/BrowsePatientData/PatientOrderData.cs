@@ -38,57 +38,13 @@ using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 
 namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
 {
-    [ComVisible(true)]
     [DataContract]
     public class PatientOrderData : DataContractBase
     {
-        #region Patient Profile
-
-        [DataMember]
-        public string MrnId;
-
-        [DataMember]
-        public string MrnAssigningAuthority;
-
-        [DataMember]
-        public string HealthcardId;
-
-        [DataMember]
-        public string HealthcardAssigningAuthority;
-
-        [DataMember]
-        public string HealthcardVersionCode;
-
-        [DataMember]
-        public DateTime? HealthcardExpiryDate;
-
-        [DataMember]
-        public PersonNameDetail PatientName;
-
-        [DataMember]
-        public DateTime? DateOfBirth;
-
-        [DataMember]
-        public string Sex;
-
-        [DataMember]
-        public string PrimaryLanguage;
-
-        [DataMember]
-        public string Religion;
-
-        [DataMember]
-        public bool DeathIndicator;
-
-        [DataMember]
-        public DateTime? TimeOfDeath;
-
-        #endregion
-
         #region Visit
 
         [DataMember]
-        public string VisitNumberId;
+        public string VisitNumber;
 
         [DataMember]
         public string VisitNumberAssigningAuthority;
@@ -106,25 +62,16 @@ namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
         public EnumValueInfo VisitStatus;
 
         [DataMember]
-        public DateTime? AdmitDateTime;
+        public DateTime? AdmitTime;
 
         [DataMember]
-        public DateTime? DischargeDateTime;
+        public DateTime? DischargeTime;
 
         [DataMember]
-        public string VisitFacilityName;
-
-        [DataMember]
-        public string DischargeDisposition;
-
-        [DataMember]
-        public bool VipIndicator;
+        public string VisitFacility;
 
         [DataMember]
         public string PreadmitNumber;
-
-        [DataMember]
-        public List<string> AmbulatoryStatuses;
 
         #endregion
 
@@ -140,16 +87,22 @@ namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
         public string DiagnosticServiceName;
 
         [DataMember]
-        public DateTime? EnteredDateTime;
+        public string DiagnosticServiceCode;
+        
+        [DataMember]
+        public DateTime? EnteredTime;
 
         [DataMember]
-        public DateTime? SchedulingRequestDateTime;
+        public DateTime? SchedulingRequestTime;
 
         [DataMember]
-        public PersonNameDetail OrderingPractitionerName;
+        public DateTime? OrderScheduledStartTime;
 
         [DataMember]
-        public string OrderingFacilityName;
+        public PersonNameDetail OrderingPractitioner;
+
+        [DataMember]
+        public string OrderingFacility;
 
         [DataMember]
         public string ReasonForStudy;
@@ -158,80 +111,32 @@ namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
         public string OrderPriority;
 
         [DataMember]
-        public string CancelReason;
-
-        [DataMember]
         public EnumValueInfo OrderStatus;
 
         [DataMember]
-        public DateTime? OrderScheduledStartTime;
+        public string CancelReason;
 
         #endregion
 
-        #region Requested Procedure
+        #region Procedure
 
         [DataMember]
-        public string RequestedProcedureName;
+        public string ProcedureName;
 
         [DataMember]
-        public DateTime? RequestedProcedureScheduledStartTime;
+        public string ProcedureCode;
 
         [DataMember]
-        public DateTime? RequestedProcedureCheckInTime;
+        public DateTime? ProcedureScheduledStartTime;
 
         [DataMember]
-        public DateTime? RequestedProcedureCheckOutTime;
+        public DateTime? ProcedureCheckInTime;
 
         [DataMember]
-        public EnumValueInfo RequestedProcedureStatus;
-
-        #endregion
-
-        #region Procedure Step
+        public DateTime? ProcedureCheckOutTime;
 
         [DataMember]
-        public EnumValueInfo ProcedureStepStatus;
-
-        [DataMember]
-        public PersonNameDetail ScheduledPerformerStaffName;
-
-        [DataMember]
-        public DateTime? ScheduledStartTime;
-
-        [DataMember]
-        public DateTime? ScheduledEndTime;
-
-        [DataMember]
-        public PersonNameDetail AssignedStaffName;
-
-        [DataMember]
-        public PersonNameDetail PerformerStaffName;
-
-        [DataMember]
-        public DateTime? StartTime;
-
-        [DataMember]
-        public DateTime? EndTime;
-
-        [DataMember]
-        public string DiscontinueReason;
-
-        #endregion
-
-        #region Modality Procedure Step
-
-        [DataMember]
-        public string ModalityProcedureStepTypeName;
-
-        [DataMember]
-        public string Modality;
-
-        #endregion
-
-        #region Reporting Procedure Step
-
-        [DataMember]
-        public ReportSummary Report;
+        public EnumValueInfo ProcedureStatus;
 
         #endregion
 

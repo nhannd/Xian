@@ -38,7 +38,7 @@ namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
     public class GetDataRequest : DataContractBase
     {
         [DataMember]
-        public EntityRef ProcedureStepRef;
+        public EntityRef PatientRef;
 
         [DataMember]
         public EntityRef PatientProfileRef;
@@ -47,27 +47,24 @@ namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
         public EntityRef OrderRef;
 
         [DataMember]
-        public GetModalityProcedureStepRequest GetModalityProcedureStepRequest;
+        public EntityRef ReportRef;
 
         [DataMember]
-        public GetReportingProcedureStepRequest GetReportingProcedureStepRequest;
-        
-        [DataMember]
-        public GetProfileDetailRequest GetProfileDetailRequest;
+        public ListPatientProfilesRequest ListPatientProfilesRequest;
 
         [DataMember]
-        public ListProfilesRequest ListProfilesRequest;
-
-        [DataMember]
-        public GetOrderDetailRequest GetOrderDetailRequest;
+        public GetPatientProfileDetailRequest GetPatientProfileDetailRequest;
 
         [DataMember]
         public ListOrdersRequest ListOrdersRequest;
 
         [DataMember]
-        public GetAlertsRequest GetAlertsRequest;
+        public GetOrderDetailRequest GetOrderDetailRequest;
 
         [DataMember]
-        public LoadPatientProfileFormDataRequest LoadPatientProfileFormDataRequest;
+        public ListReportsRequest ListReportsRequest;
+
+        [DataMember]
+        public GetReportDetailRequest GetReportDetailRequest;
     }
 }

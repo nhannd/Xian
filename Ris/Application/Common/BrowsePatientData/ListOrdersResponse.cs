@@ -40,7 +40,7 @@ namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
     {
         public ListOrdersResponse(List<PatientOrderData> listData)
         {
-            this.PatientOrderData = listData;
+            this.Orders = listData;
         }
 
         public ListOrdersResponse()
@@ -48,6 +48,6 @@ namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
         }
 
         [DataMember]
-        public List<PatientOrderData> PatientOrderData;
+        public List<PatientOrderData> Orders;
     }
 }

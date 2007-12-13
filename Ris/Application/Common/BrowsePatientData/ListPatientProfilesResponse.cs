@@ -29,57 +29,21 @@
 
 #endregion
 
-using ClearCanvas.Enterprise.Common;
 using System.Runtime.Serialization;
+using System.Collections.Generic;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
 {
     [DataContract]
-    public class GetProfileDetailRequest : DataContractBase
+    public class ListPatientProfilesResponse : DataContractBase
     {
-        public GetProfileDetailRequest(
-            bool includeAddresses,
-            bool includeContactPersons,
-            bool includeEmailAddresses,
-            bool includeTelephoneNumbers,
-            bool includeNotes,
-            bool includeAttachments)
+        public ListPatientProfilesResponse(List<PatientProfileSummary> profiles)
         {
-            this.IncludeAddresses = includeAddresses;
-            this.IncludeContactPersons = includeContactPersons;
-            this.IncludeEmailAddresses = includeEmailAddresses;
-            this.IncludeTelephoneNumbers = includeTelephoneNumbers;
-            this.IncludeNotes = includeNotes;
-            this.IncludeAttachments = includeAttachments;
-        }
-
-        public GetProfileDetailRequest()
-        {
-            this.IncludeAddresses = false;
-            this.IncludeContactPersons = false;
-            this.IncludeEmailAddresses = false;
-            this.IncludeTelephoneNumbers = false;
-            this.IncludeNotes = false;
-            this.IncludeAttachments = false;
+            this.Profiles = profiles;
         }
 
         [DataMember]
-        public bool IncludeAddresses;
-
-        [DataMember]
-        public bool IncludeContactPersons;
-
-        [DataMember]
-        public bool IncludeEmailAddresses;
-
-        [DataMember]
-        public bool IncludeTelephoneNumbers;
-
-        [DataMember]
-        public bool IncludeNotes;
-
-        [DataMember]
-        public bool IncludeAttachments;
-
+        public List<PatientProfileSummary> Profiles;
     }
 }

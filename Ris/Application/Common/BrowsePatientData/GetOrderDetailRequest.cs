@@ -39,22 +39,34 @@ namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
     {
         public GetOrderDetailRequest(
             bool includeVisit,
-            bool includeRequestedProcedures)
+            bool includeProcedures,
+            bool includeAlerts)
         {
             this.IncludeVisit = includeVisit;
-            this.IncludeRequestedProcedures = includeRequestedProcedures;
+            this.IncludeProcedures = includeProcedures;
+            this.IncludeAlerts = includeAlerts;
         }
 
         public GetOrderDetailRequest()
         {
-            this.IncludeVisit = false;
-            this.IncludeRequestedProcedures = false;
         }
 
+        /// <summary>
+        /// Include order alerts.
+        /// </summary>
+        [DataMember]
+        public bool IncludeAlerts;
+
+        /// <summary>
+        /// Include visit information.
+        /// </summary>
         [DataMember]
         public bool IncludeVisit;
 
+        /// <summary>
+        /// Include detailed requested procedure information.
+        /// </summary>
         [DataMember]
-        public bool IncludeRequestedProcedures;
+        public bool IncludeProcedures;
     }
 }

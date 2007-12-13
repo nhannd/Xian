@@ -77,7 +77,7 @@ namespace ClearCanvas.Ris.Application.Services
             summary.DiagnosticServiceName = order.DiagnosticService.Name;
             summary.EnteredDateTime = order.EnteredTime;
             summary.SchedulingRequestDateTime = order.SchedulingRequestTime;
-            summary.OrderingPractitioner = pracAssembler.CreateExternalPractitionerDetail(order.OrderingPractitioner, context);
+            summary.OrderingPractitioner = pracAssembler.CreateExternalPractitionerSummary(order.OrderingPractitioner, context);
             summary.OrderingFacility = order.OrderingFacility.Name;
             summary.ReasonForStudy = order.ReasonForStudy;
             summary.OrderPriority = EnumUtils.GetEnumValueInfo(order.Priority, context);

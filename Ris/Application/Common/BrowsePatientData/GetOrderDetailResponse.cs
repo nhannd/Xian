@@ -29,6 +29,7 @@
 
 #endregion
 
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
 
@@ -39,10 +40,17 @@ namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
     {
         public GetOrderDetailResponse(OrderDetail orderDetail)
         {
-            this.OrderDetail = orderDetail;
+            this.Order = orderDetail;
+        }
+
+        public GetOrderDetailResponse()
+        {
         }
 
         [DataMember]
-        public OrderDetail OrderDetail;
+        public OrderDetail Order;
+
+        [DataMember]
+        public List<AlertNotificationDetail> OrderAlerts;
     }
 }

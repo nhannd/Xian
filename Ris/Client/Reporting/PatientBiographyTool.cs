@@ -107,18 +107,18 @@ namespace ClearCanvas.Ris.Client.Reporting
             {
                 IReportingWorkflowItemToolContext context = (IReportingWorkflowItemToolContext)this.ContextBase;
                 ReportingWorklistItem item = CollectionUtils.FirstElement(context.SelectedItems);
-                OpenPatient(item.PatientProfileRef, context.DesktopWindow);
+                OpenPatient(item.PatientRef, item.PatientProfileRef, context.DesktopWindow);
             }
         }
 
-        protected static void OpenPatient(EntityRef profileRef, IDesktopWindow window)
+        protected static void OpenPatient(EntityRef patientRef, EntityRef profileRef, IDesktopWindow window)
         {
             try
             {
                 Workspace workspace = DocumentManager.Get<PatientBiographyDocument>(profileRef);
                 if (workspace == null)
                 {
-                    Document doc = new PatientBiographyDocument(profileRef, window);
+                    Document doc = new PatientBiographyDocument(patientRef, profileRef, window);
                     doc.Open();
                 }
                 else

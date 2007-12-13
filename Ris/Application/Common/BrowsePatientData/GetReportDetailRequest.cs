@@ -35,9 +35,7 @@ using System.Runtime.Serialization;
 namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
 {
     [DataContract]
-    public class GetModalityProcedureStepRequest : DataContractBase
+    public class GetReportDetailRequest : DataContractBase
     {
-        [DataMember]
-        public bool GetDiagnosticServiceBreakdown;
     }
 }

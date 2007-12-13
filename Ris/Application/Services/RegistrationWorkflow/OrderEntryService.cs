@@ -74,17 +74,14 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         }
 
         [ReadOperation]
-        public ListOrdersForPatientResponse ListOrdersForPatient(ListOrdersForPatientRequest request)
+        public ListOrdersForPatientResponse ListActiveOrdersForPatient(ListOrdersForPatientRequest request)
         {
             OrderSearchCriteria criteria = new OrderSearchCriteria();
 
             PatientProfile profile = PersistenceContext.Load<PatientProfile>(request.PatientProfileRef);
             criteria.Patient.EqualTo(profile.Patient);
-            if (request.ActiveOnly)
-            {
-                criteria.Status.EqualTo(OrderStatus.SC);
-                criteria.Status.EqualTo(OrderStatus.IP);
-            }
+            criteria.Status.EqualTo(OrderStatus.SC);
+            criteria.Status.EqualTo(OrderStatus.IP);
 
             OrderAssembler assembler = new OrderAssembler();
             return new ListOrdersForPatientResponse(

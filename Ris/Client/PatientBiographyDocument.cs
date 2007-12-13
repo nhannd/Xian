@@ -46,10 +46,14 @@ namespace ClearCanvas.Ris.Client
         private EntityRef _patientRef;
         private PatientProfileDetail _patientProfile;
 
-        public PatientBiographyDocument(EntityRef profileRef, IDesktopWindow window)
-            :base(profileRef, window)
+        public PatientBiographyDocument(EntityRef patientRef, EntityRef profileRef, IDesktopWindow window)
+            : base(patientRef, window)
         {
+            Platform.CheckForNullReference(patientRef, "patientRef");
+            Platform.CheckForNullReference(profileRef, "profileRef");
+
             _profileRef = profileRef;
+            _patientRef = patientRef;
         }
 
         public override string GetTitle()
@@ -73,21 +77,18 @@ namespace ClearCanvas.Ris.Client
                 {
                     GetDataRequest request = new GetDataRequest();
                     request.PatientProfileRef = _profileRef;
-                    request.GetProfileDetailRequest = new GetProfileDetailRequest(true, true, true, true, true, true);
-                    request.GetAlertsRequest = new GetAlertsRequest();
+                    request.GetPatientProfileDetailRequest = new GetPatientProfileDetailRequest(true, true, true, true, true, true, true);
                     GetDataResponse response = service.GetData(request);
 
-                    _patientRef = response.PatientRef;
-                    _profileRef = response.PatientProfileRef;
-                    _patientProfile = response.GetProfileDetailResponse.PatientProfileDetail;
-                    alertNotifications = response.GetAlertsResponse.AlertNotifications;
+                    _patientProfile = response.GetPatientProfileDetailResponse.PatientProfile;
+                    alertNotifications = response.GetPatientProfileDetailResponse.PatientAlerts;
                 });
             
             // Create component for each tab
             BiographyOrderHistoryComponent orderHistoryComponent = new BiographyOrderHistoryComponent(_profileRef);
             BiographyNoteComponent noteComponent = new BiographyNoteComponent(_patientProfile.Notes);
             BiographyFeedbackComponent feedbackComponent = new BiographyFeedbackComponent();
-            BiographyDemographicComponent demographicComponent = new BiographyDemographicComponent(_profileRef, _patientProfile);
+            BiographyDemographicComponent demographicComponent = new BiographyDemographicComponent(_patientRef, _profileRef, _patientProfile);
             MimeDocumentPreviewComponent documentComponent = new MimeDocumentPreviewComponent();
             documentComponent.PatientAttachments = _patientProfile.Attachments;
 

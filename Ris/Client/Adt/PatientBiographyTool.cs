@@ -36,6 +36,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
 
@@ -148,34 +149,35 @@ namespace ClearCanvas.Ris.Client.Adt
             {
                 ITechnologistWorkflowItemToolContext context = (ITechnologistWorkflowItemToolContext)this.ContextBase;
                 ModalityWorklistItem item = CollectionUtils.FirstElement(context.SelectedItems);
-                OpenPatient(item.PatientProfileRef, context.DesktopWindow);
+                OpenPatient(item.PatientRef, item.PatientProfileRef, context.DesktopWindow);
             }
             if (this.ContextBase is IRegistrationWorkflowItemToolContext)
             {
                 IRegistrationWorkflowItemToolContext context = (IRegistrationWorkflowItemToolContext)this.ContextBase;
                 RegistrationWorklistItem item = CollectionUtils.FirstElement(context.SelectedItems);
-                OpenPatient(item.PatientProfileRef, context.DesktopWindow);
+                OpenPatient(item.PatientRef, item.PatientProfileRef, context.DesktopWindow);
             }
             else if (this.ContextBase is IPreviewToolContext)
             {
                 IPreviewToolContext context = (IPreviewToolContext)this.ContextBase;
-                OpenPatient(context.WorklistItem.PatientProfileRef, context.DesktopWindow);
+                OpenPatient(context.WorklistItem.PatientRef, context.WorklistItem.PatientProfileRef, context.DesktopWindow);
             }
             else if (this.ContextBase is IPatientSearchToolContext)
             {
                 IPatientSearchToolContext context = (IPatientSearchToolContext)this.ContextBase;
-                OpenPatient(context.SelectedProfile.ProfileRef, context.DesktopWindow);
+                PatientProfileSummary profile = context.SelectedProfile;
+                OpenPatient(profile.PatientRef, profile.ProfileRef, context.DesktopWindow);
             }
         }
 
-        protected static void OpenPatient(EntityRef profileRef, IDesktopWindow window)
+        protected static void OpenPatient(EntityRef patientRef, EntityRef profileRef, IDesktopWindow window)
         {
             try
             {
                 Workspace workspace = DocumentManager.Get<PatientBiographyDocument>(profileRef);
                 if (workspace == null)
                 {
-                    Document doc = new PatientBiographyDocument(profileRef, window);
+                    Document doc = new PatientBiographyDocument(patientRef, profileRef, window);
                     doc.Open();
                 }
                 else

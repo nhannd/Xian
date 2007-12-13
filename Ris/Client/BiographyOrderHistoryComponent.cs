@@ -82,12 +82,13 @@ namespace ClearCanvas.Ris.Client
         {
             base.Start();
 
-            Platform.GetService<IOrderEntryService>(
-                delegate(IOrderEntryService service)
-                {
-                    ListOrdersForPatientResponse response = service.ListOrdersForPatient(new ListOrdersForPatientRequest(_patientProfileRef));
-                    _orderList.Items.AddRange(response.Orders);
-                });
+            //TODO: temporarily commented out because it should not be using the order-entry service, should use the new IBrowsePatientData service
+            //Platform.GetService<IOrderEntryService>(
+            //    delegate(IOrderEntryService service)
+            //    {
+            //        ListOrdersForPatientResponse response = service.ListOrdersForPatient(new ListOrdersForPatientRequest(_patientProfileRef));
+            //        _orderList.Items.AddRange(response.Orders);
+            //    });
         }
 
         #region Presentation Model - Order
@@ -297,10 +298,10 @@ namespace ClearCanvas.Ris.Client
                         {
                             GetDataRequest request = new GetDataRequest();
                             request.OrderRef = _selectedOrder.OrderRef;
-                            request.GetOrderDetailRequest = new GetOrderDetailRequest(true, true);
+                            request.GetOrderDetailRequest = new GetOrderDetailRequest(true, true, false);
                             GetDataResponse response = service.GetData(request);
 
-                            _orderDetail = response.GetOrderDetailResponse.OrderDetail;
+                            _orderDetail = response.GetOrderDetailResponse.Order;
                         });
 
                     _diagnosticServiceBreakdown = new Tree<RequestedProcedureDetail>(

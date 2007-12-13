@@ -39,17 +39,16 @@ namespace ClearCanvas.Ris.Application.Common.Admin.HL7Admin
     [DataContract]
     public class GetReferencedPatientResponse : DataContractBase
     {
-        public GetReferencedPatientResponse(EntityRef patientProfileRef)
+        public GetReferencedPatientResponse(EntityRef patientRef, EntityRef patientProfileRef)
         {
-            PatientProfileRef = patientProfileRef;
-        }
-
-        public GetReferencedPatientResponse()
-            : this(null)
-        {
+            this.PatientRef = patientRef;
+            this.PatientProfileRef = patientProfileRef;
         }
 
         [DataMember]
         public EntityRef PatientProfileRef;
+
+        [DataMember]
+        public EntityRef PatientRef;
     }
 }

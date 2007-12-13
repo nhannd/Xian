@@ -29,20 +29,55 @@
 
 #endregion
 
-using System.Collections.Generic;
 using ClearCanvas.Enterprise.Common;
 using System.Runtime.Serialization;
-using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
 
 namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
 {
     [DataContract]
-    public class GetModalityProcedureStepResponse : DataContractBase
+    public class GetPatientProfileDetailRequest : DataContractBase
     {
-        [DataMember]
-        public PatientOrderData PatientOrderData;
+        public GetPatientProfileDetailRequest(
+            bool includeAddresses,
+            bool includeContactPersons,
+            bool includeEmailAddresses,
+            bool includeTelephoneNumbers,
+            bool includeNotes,
+            bool includeAttachments,
+            bool includeAlerts)
+        {
+            this.IncludeAddresses = includeAddresses;
+            this.IncludeContactPersons = includeContactPersons;
+            this.IncludeEmailAddresses = includeEmailAddresses;
+            this.IncludeTelephoneNumbers = includeTelephoneNumbers;
+            this.IncludeNotes = includeNotes;
+            this.IncludeAttachments = includeAttachments;
+            this.IncludeAlerts = includeAlerts;
+        }
+
+        public GetPatientProfileDetailRequest()
+        {
+        }
 
         [DataMember]
-        public List<DiagnosticServiceBreakdownSummary> DiagnosticServiceBreakdown;
+        public bool IncludeAddresses;
+
+        [DataMember]
+        public bool IncludeContactPersons;
+
+        [DataMember]
+        public bool IncludeEmailAddresses;
+
+        [DataMember]
+        public bool IncludeTelephoneNumbers;
+
+        [DataMember]
+        public bool IncludeNotes;
+
+        [DataMember]
+        public bool IncludeAttachments;
+
+        [DataMember]
+        public bool IncludeAlerts;
     }
 }
