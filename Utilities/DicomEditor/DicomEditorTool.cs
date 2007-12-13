@@ -57,9 +57,10 @@ namespace ClearCanvas.Utilities.DicomEditor
     [ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
     [ExtensionOf(typeof(LocalImageExplorerToolExtensionPoint))]
     public class DicomEditorTool : ToolBase
-    {
-		private IShelf _shelf;
-		private DicomEditorComponent _component;
+    {		
+        private static readonly Dictionary<IDesktopWindow, IShelf> _shelves = new Dictionary<IDesktopWindow, IShelf>();
+        private static DicomEditorComponent _component;
+        private IDesktopWindow _desktopWindow;	
         private bool _enabled;
         private event EventHandler _enabledChanged;
 
@@ -67,6 +68,7 @@ namespace ClearCanvas.Utilities.DicomEditor
         {
             _enabled = true;
             _component = null;
+            _desktopWindow = null;
         }
 
         /// <summary>
@@ -107,10 +109,11 @@ namespace ClearCanvas.Utilities.DicomEditor
             if (this.ContextBase is IImageViewerToolContext)
             {
                 IImageViewerToolContext context = this.ContextBase as IImageViewerToolContext;
+                _desktopWindow = context.DesktopWindow;
                 IImageSopProvider image = context.Viewer.SelectedPresentationImage as IImageSopProvider;
                 if (image == null)
                 {                    
-                    context.DesktopWindow.ShowMessageBox(SR.MessagePleaseSelectAnImage, MessageBoxActions.Ok);
+                    _desktopWindow.ShowMessageBox(SR.MessagePleaseSelectAnImage, MessageBoxActions.Ok);
                     return;
                 }
                 DicomFile file = image.ImageSop.NativeDicomObject as DicomFile;
@@ -122,38 +125,22 @@ namespace ClearCanvas.Utilities.DicomEditor
                 //the workaround is still needed.
                 file = new DicomFile(file.Filename);
 
-				if (_shelf != null)
-				{
-					_shelf.Activate();
-				}
-				else
+                if (_component == null)
                 {
                     _component = new DicomEditorComponent();
-
-                    _shelf = ApplicationComponent.LaunchAsShelf(
-                        context.DesktopWindow,
-                        _component,
-                        SR.TitleDicomEditor,
-                        "Dicom Editor",
-                        ShelfDisplayHint.DockRight | ShelfDisplayHint.DockAutoHide);
-                    _shelf.Closed +=
-                        delegate
-                        {
-                            _shelf = null;
-                            _component = null;
-                        };
+                }
+                else
+                {
+                    _component.Clear();
                 }
 
-                _component.Clear();
                 _component.Load(file.Filename);
-                _component.UpdateComponent();
-
             }
             else if (this.ContextBase is ILocalImageExplorerToolContext)
             {
                 ILocalImageExplorerToolContext context = this.ContextBase as ILocalImageExplorerToolContext;
+                _desktopWindow = context.DesktopWindow;
                 List<string> files = new List<string>();
-                bool newComponent = false;
 
                 foreach (string rawPath in context.SelectedPaths)
                 {
@@ -164,7 +151,6 @@ namespace ClearCanvas.Utilities.DicomEditor
                 if (_component == null)
                 {
                     _component = new DicomEditorComponent();
-                    newComponent = true;
                 }
                 else
                 {
@@ -213,26 +199,43 @@ namespace ClearCanvas.Utilities.DicomEditor
 
                 if (userCancelled == true)
                     return;
-
-
-                if (newComponent == true)
-                {
-                    _shelf = ApplicationComponent.LaunchAsShelf(
-                        context.DesktopWindow,
-                        _component,
-                        SR.TitleDicomEditor,
-                        "Dicom Editor",
-                        ShelfDisplayHint.DockRight | ShelfDisplayHint.DockAutoHide);
-                    _shelf.Closed +=
-                        delegate
-                        {
-                            _shelf = null;
-                            _component = null;
-                        };
-				}
-
-                _component.UpdateComponent();
             }
+
+            //common to both contexts
+            if (_shelves.ContainsKey(_desktopWindow))
+            {
+                _shelves[_desktopWindow].Activate();
+            }
+            else
+            {
+                IShelf shelf = ApplicationComponent.LaunchAsShelf(
+                    _desktopWindow,
+                    _component,
+                    SR.TitleDicomEditor,
+                    "Dicom Editor",
+                    ShelfDisplayHint.DockRight | ShelfDisplayHint.DockAutoHide);
+                _shelves[_desktopWindow] = shelf;
+                _shelves[_desktopWindow].Closed += OnShelfClosed;
+            }
+  
+            _component.UpdateComponent();
+
+        }
+
+        private void OnShelfClosed(object sender, ClosedEventArgs e)
+        {
+            // We need to cache the owner DesktopWindow (_desktopWindow) because this tool is an 
+            // ImageViewer tool, disposed when the viewer component is disposed.  Shelves, however,
+            // exist at the DesktopWindow level and there can only be one of each type of shelf
+            // open at the same time per DesktopWindow (otherwise things look funny).  Because of 
+            // this, we need to allow this event handling method to be called after this tool has
+            // already been disposed (e.g. viewer workspace closed), which is why we store the 
+            // _desktopWindow variable.
+
+            _shelves[_desktopWindow].Closed -= OnShelfClosed;
+            _shelves.Remove(_desktopWindow);
+            _desktopWindow = null;
+            _component = null;
         }
     }
 }
