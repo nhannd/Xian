@@ -233,23 +233,15 @@
     background-color: white;
 	font-size: 12px;
     cursor: pointer;
+    padding: 5px;
+    border-bottom: solid 1px #e7e7e8;
 }
 .accordionHeaderSelected
 {
     background-color: #3D98D1;
 	font-size: 12px;
     cursor: pointer;
-}
-.accordionHeader2
-{
-    border: 1px solid #2F4F4F;
-    color: white;
-    background-color: #3D98D1;
-	font-size: 12px;
-	font-weight: bold;
-    padding: 3px;
-    margin-top: 3px;
-    cursor: pointer;
+    padding: 5px;
 }
 
 .accordionContent
@@ -265,4 +257,12 @@
 {
  background-color: #D3DEEF;
    cursor: pointer;
+}
+
+.AccordianCell
+{
+	word-wrap: break-word;
+	vertical-align: middle;
+	font-weight:normal;
+	font-size: 12px;    
 }

@@ -3,26 +3,17 @@
 <%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="ajaxToolkit" %>
 <asp:Table Width="100%">
     <asp:TableHeaderRow>
-        <asp:Panel ID="HeaderPanel" runat="server" Width="100%" BorderWidth="0px">
-            <table cellpadding="2" cellspacing="1" class="GridHeader" border="0" width="100%">
-                <tr>
-                    <td align="left" valign="bottom" style="width: 170px">
-                        <asp:Label ID="PatientName" runat="server" Text="Patient Name" EnableViewState="False" />
-                    </td>
-                    <td align="left" valign="bottom" style="width: 100px">
-                        <asp:Label ID="PatientId" runat="server" Text="Patient ID" EnableViewState="False" />
-                    </td>
-                    <td align="left" valign="bottom" style="width: 90px">
-                        <asp:Label ID="StudyDate" runat="server" Text="Study Date" EnableViewState="False" />
-                    </td>
-                    <td align="left" valign="bottom" style="width: 150px">
-                        <asp:Label ID="AccessionNumber" runat="server" Text="Accession Number" EnableViewState="False" />
-                    </td>
-                    <td align="left" valign="bottom">
-                        <asp:Label ID="StudyDescription" runat="server" Text="Description" EnableViewState="False" />
-                    </td>
-                </tr>
-            </table>
+        <asp:Panel ID="HeaderPanel" runat="server" Width="100%" BorderWidth="0px" CssClass="GridHeader">
+            <asp:Label ID="PatientName" runat="server" Text="Patient Name" EnableViewState="False"
+                Width="24%"  />
+            <asp:Label ID="PatientId" runat="server" Text="Patient Id" EnableViewState="False" 
+                Width="12%"  />
+            <asp:Label ID="StudyDate" runat="server" Text="Study Date" EnableViewState="False"
+                Width="11%" />
+            <asp:Label ID="AccessionNumber" runat="server" Text="Accession Number" EnableViewState="False"
+                Width="19%"  />
+            <asp:Label ID="StudyDescription" runat="server" Text="Description" EnableViewState="False"
+                Width="24%"  />
         </asp:Panel>
     </asp:TableHeaderRow>
     <asp:TableRow>
@@ -30,7 +21,7 @@
             Width="100%">
             <ajaxToolkit:Accordion ID="MainAccordian" runat="Server" HeaderSelectedCssClass="accordionHeaderSelected"
                 AutoSize="None" FadeTransitions="true" TransitionDuration="250" FramesPerSecond="40"
-                RequireOpenedPane="false" SuppressHeaderPostbacks="true">
+                RequireOpenedPane="false" SuppressHeaderPostbacks="true" HeaderCssClass="accordionHeader">
                 <Panes>
                 </Panes>
                 <HeaderTemplate>
@@ -54,7 +45,8 @@
                         <asp:ImageButton ID="PrevPageButton" runat="server" CommandArgument="Prev" CommandName="Page"
                             OnCommand="PageButtonClick" />
                         <asp:ImageButton ID="NextPageButton" runat="server" CommandArgument="Next" CommandName="Page"
-                            OnCommand="PageButtonClick" /></td>
+                            OnCommand="PageButtonClick" />
+                    </td>
                 </tr>
             </table>
         </asp:Panel>

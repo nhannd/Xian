@@ -403,6 +403,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Admin\Configuration\Rules\" />
     <Folder Include="App_Code\" />
     <Folder Include="plugins\" />
   </ItemGroup>
