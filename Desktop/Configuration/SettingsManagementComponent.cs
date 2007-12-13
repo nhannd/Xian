@@ -510,7 +510,7 @@ namespace ClearCanvas.Desktop.Configuration
                     UpdateActionEnablement();
 
                     // update any loaded instances
-                    ApplicationSettingsRegistry.Instance.Synchronize(_selectedSettingsGroup);
+                    ApplicationSettingsRegistry.Instance.Reload(_selectedSettingsGroup);
 
                 }
 				catch (Exception e)

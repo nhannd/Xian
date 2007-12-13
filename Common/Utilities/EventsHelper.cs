@@ -33,6 +33,8 @@ using System;
 
 namespace ClearCanvas.Common.Utilities
 {
+	/// TODO (Jon): talk to Norman and get rid of params.
+	
 	/// <summary>
 	/// Helper class for safely raising events.
 	/// </summary>

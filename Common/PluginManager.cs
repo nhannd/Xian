@@ -113,8 +113,20 @@ namespace ClearCanvas.Common
 		/// </summary>
 		public event EventHandler<PluginLoadedEventArgs> PluginLoaded
 		{
-			add { _pluginProgressEvent += value; }
-			remove { _pluginProgressEvent -= value; }
+			add
+			{
+				lock(_syncLock)
+				{
+					_pluginProgressEvent += value;
+				}
+			}
+			remove
+			{
+				lock(_syncLock)
+				{
+					_pluginProgressEvent -= value;
+				}
+			}
 		}
 
 		/// <summary>

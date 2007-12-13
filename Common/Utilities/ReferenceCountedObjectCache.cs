@@ -34,6 +34,8 @@ using System.Collections.Generic;
 
 namespace ClearCanvas.Common.Utilities
 {
+	// TODO (Stewart): get rid of this too.
+
 	/// <summary>
 	/// A cache of <see cref="IReferenceCountable"/> objects.
 	/// </summary>

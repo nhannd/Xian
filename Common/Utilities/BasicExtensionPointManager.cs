@@ -34,6 +34,8 @@ using System.Collections.Generic;
 
 namespace ClearCanvas.Common.Utilities
 {
+	//TODO (Stewart): remove this.
+
 	/// <summary>
 	/// This class serves as a basic container for a collection of unknown extensions.
 	/// </summary>

@@ -33,7 +33,9 @@ using System;
 
 namespace ClearCanvas.Common.Utilities
 {
-    /// <summary>
+	//TODO (Jon): move to desktop.
+
+	/// <summary>
     /// Couples two instances of <see cref="IObservablePropertyBinding{T}"/> such that a change to the primary property
     /// will be propagated to the secondary property.  
     /// </summary>
@@ -92,7 +94,7 @@ namespace ClearCanvas.Common.Utilities
         /// <param name="primary">The primary property, which serves as the subject.</param>
         /// <param name="secondary">The secondary property, which observes the subject and tracks its value.</param>
         /// <param name="bidirectional">If true, the primary property will also track the value of the secondary property.</param>
-        protected ObservablePropertyCoupler(IObservablePropertyBinding<T> primary, IObservablePropertyBinding<T> secondary, bool bidirectional)
+        private ObservablePropertyCoupler(IObservablePropertyBinding<T> primary, IObservablePropertyBinding<T> secondary, bool bidirectional)
         {
             Platform.CheckForNullReference(primary, "primary");
             Platform.CheckForNullReference(secondary, "secondary");
@@ -112,21 +114,6 @@ namespace ClearCanvas.Common.Utilities
             _secondary.PropertyValue = _primary.PropertyValue;
         }
 
-		/// <summary>
-		/// Supports the implementation of the <see cref="IDisposable"/> pattern.
-		/// </summary>
-		protected virtual void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                _primary.PropertyChanged -= PrimaryChangedEventHandler;
-                if (_bidirectional)
-                {
-                    _secondary.PropertyChanged -= SecondaryChangedEventHandler;
-                }
-            }
-        }
-
 		#region IDisposable Members
 
 		/// <summary>
@@ -134,7 +121,12 @@ namespace ClearCanvas.Common.Utilities
 		/// </summary>
 		public void Dispose()
 		{
-			Dispose(true);
+			_primary.PropertyChanged -= PrimaryChangedEventHandler;
+			if (_bidirectional)
+			{
+				_secondary.PropertyChanged -= SecondaryChangedEventHandler;
+			}
+
 			GC.SuppressFinalize(this);
 		}
 

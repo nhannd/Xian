@@ -34,6 +34,8 @@ using System.Reflection;
 
 namespace ClearCanvas.Common.Utilities
 {
+	// TODO (Jon): move to desktop and make internal.
+
     /// <summary>
     /// Delegate used to get a property of type <typeparamref name="T"/>.
     /// </summary>

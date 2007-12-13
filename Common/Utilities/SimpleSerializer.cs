@@ -36,6 +36,8 @@ using System.Reflection;
 
 namespace ClearCanvas.Common.Utilities
 {
+	// TODO (Stewart): think about using DataMember or specifying attribute type using generics.
+
 	/// <summary>
 	/// This attribute class is used to decorate properties of other classes for use with the <see cref="SimpleSerializer"/>.
 	/// </summary>

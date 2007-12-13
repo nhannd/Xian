@@ -35,7 +35,9 @@ using System.Threading;
 
 namespace ClearCanvas.Common.Utilities
 {
-    /// <summary>
+	// TODO (Stewart): get rid of this.
+
+	/// <summary>
     /// Delegate used to queue events for marshaling.
     /// </summary>
     public delegate void InvokeDelegate();

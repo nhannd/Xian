@@ -61,10 +61,6 @@ namespace ClearCanvas.Common
 			{
 				return _message;
 			}
-			set
-			{
-				_message = value;
-			}
 		}
 	}
 }

@@ -33,6 +33,8 @@ using System;
 
 namespace ClearCanvas.Common
 {
+	// TODO (Jon): try IExtensionPoint as an explicit impl.
+
     /// <summary>
     /// Abstract base class for extension points.
     /// </summary>

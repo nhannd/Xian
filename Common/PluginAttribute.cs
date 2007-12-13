@@ -42,7 +42,14 @@ namespace ClearCanvas.Common
         private string _name;
         private string _description;
 
-        /// <summary>
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		public PluginAttribute()
+		{
+		}
+		
+    	/// <summary>
         /// A friendly name for the plugin.  
         /// </summary>
         /// <remarks>

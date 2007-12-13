@@ -119,7 +119,7 @@ namespace ClearCanvas.Common.Utilities
         /// <summary>
         /// Constructor.
         /// </summary>
-        public BackgroundTaskProgress()
+        protected BackgroundTaskProgress()
         {
         }
 
@@ -170,7 +170,7 @@ namespace ClearCanvas.Common.Utilities
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-        public BackgroundTaskProgressEventArgs(object userState, BackgroundTaskProgress progress)
+        internal BackgroundTaskProgressEventArgs(object userState, BackgroundTaskProgress progress)
         {
             _userState = userState;
             _progress = progress;
@@ -221,7 +221,7 @@ namespace ClearCanvas.Common.Utilities
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-        public BackgroundTaskTerminatedEventArgs(object userState, BackgroundTaskTerminatedReason reason, object[] results, Exception ex)
+        internal BackgroundTaskTerminatedEventArgs(object userState, BackgroundTaskTerminatedReason reason, object[] results, Exception ex)
         {
             _userState = userState;
             _reason = reason;
@@ -254,7 +254,7 @@ namespace ClearCanvas.Common.Utilities
     /// Encapsulates a background task, allowing the task to run asynchronously on a background thread
     /// and report progress and completion events to the foreground thread.
     /// </summary>
-    public class BackgroundTask : IDisposable
+    public sealed class BackgroundTask : IDisposable
     {
         #region Helper implementation of IBackgroundTaskContext
 

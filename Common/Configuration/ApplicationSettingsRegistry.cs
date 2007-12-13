@@ -90,9 +90,10 @@ namespace ClearCanvas.Common.Configuration
 		}
 
         /// <summary>
-        /// Synchronizes all registered settings instances that match the specified group.
+        /// Calls <see cref="ApplicationSettingsBase.Reload"/> on all registered 
+        /// settings instances that match the specified group.
         /// </summary>
-        public void Synchronize(SettingsGroupDescriptor group)
+        public void Reload(SettingsGroupDescriptor group)
         {
             Type settingsClass = Type.GetType(group.AssemblyQualifiedTypeName, false);
             if (settingsClass != null)

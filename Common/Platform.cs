@@ -971,6 +971,8 @@ namespace ClearCanvas.Common
 				throw new InvalidOperationException(String.Format(SR.ExceptionMemberNotSetVerbose, variableName, detailedMessage));
 		}
 
+		//TODO (Stewart): move this to application code.
+
         /// <summary>
         /// Launches a file browser opened to the parent folder of a path to a single file or folder and highlights the file/folder.
         /// </summary>

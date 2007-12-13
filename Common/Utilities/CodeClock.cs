@@ -33,6 +33,77 @@ using System;
 
 namespace ClearCanvas.Common.Utilities
 {
+	#region IPerformanceCounter
+
+	//this used to be public to support other performance counter types, but has been made internal for now.
+	internal interface IPerformanceCounter
+	{
+		long Count
+		{
+			get;
+		}
+
+		long Frequency
+		{
+			get;
+		}
+	}
+
+	#endregion
+
+	#region Performance Counters
+
+	internal class Win32PerformanceCounter : IPerformanceCounter
+	{
+		[System.Runtime.InteropServices.DllImport("KERNEL32")]
+		private static extern bool QueryPerformanceCounter(ref long lpPerformanceCount);
+
+		[System.Runtime.InteropServices.DllImport("KERNEL32")]
+		private static extern bool QueryPerformanceFrequency(ref long lpFrequency);
+
+		public long Count
+		{
+			get
+			{
+				long count = 0;
+				QueryPerformanceCounter(ref count);
+				return count;
+			}
+		}
+
+		public long Frequency
+		{
+			get
+			{
+				long freq = 0;
+				QueryPerformanceFrequency(ref freq);
+				return freq;
+			}
+		}
+	}
+
+	internal class DefaultPerformanceCounter : IPerformanceCounter
+	{
+
+		public long Count
+		{
+			get
+			{
+				return System.DateTime.UtcNow.Ticks;
+			}
+		}
+
+		public long Frequency
+		{
+			get
+			{
+				return 10000000;	// 10 million
+			}
+		}
+	}
+
+	#endregion 
+
 	/// <summary>
 	/// A simple stopwatch class that can be used to profile code.  
 	/// </summary>

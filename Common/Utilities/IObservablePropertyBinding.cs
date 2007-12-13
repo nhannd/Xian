@@ -33,6 +33,8 @@ using System;
 
 namespace ClearCanvas.Common.Utilities
 {
+	// TODO (Jon): move to desktop actions.
+
     /// <summary>
     /// Defines a generic mechanism for binding to an arbitrary observable property of an object.
     /// </summary>

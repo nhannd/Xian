@@ -56,7 +56,6 @@ namespace ClearCanvas.Common.Utilities
 		public TItem Item
 		{
 			get { return _item; }
-			protected set { _item = value; }
 		}
 	}
 }

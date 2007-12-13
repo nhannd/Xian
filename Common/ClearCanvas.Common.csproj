@@ -120,9 +120,6 @@
     <Compile Include="Configuration\SettingsPropertyDescriptor.cs" />
     <Compile Include="DefaultExtensionFactory.cs" />
     <Compile Include="ExtensionPoint.cs" />
-    <Compile Include="ExtensionSettings.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="IExtensionFactory.cs" />
     <Compile Include="IExtensionPoint.cs" />
     <Compile Include="IMessageBox.cs" />
@@ -244,7 +241,6 @@
     <Compile Include="Utilities\ThreadPoolBase.cs" />
     <Compile Include="Utilities\Timer.cs" />
     <Compile Include="Utilities\TypeSafeComparerWrapper.cs" />
-    <Compile Include="Utilities\DefaultPerformanceCounter.cs" />
     <Compile Include="Utilities\DynamicObservablePropertyBinding.cs" />
     <Compile Include="Utilities\TypeSafeEnumerableWrapper.cs" />
     <Compile Include="Utilities\TypeSafeEnumeratorWrapper.cs" />
@@ -252,7 +248,6 @@
     <Compile Include="Utilities\FileProcessor.cs" />
     <Compile Include="Utilities\InterthreadMarshaler.cs" />
     <Compile Include="Utilities\IObservablePropertyBinding.cs" />
-    <Compile Include="Utilities\IPerformanceCounter.cs" />
     <Compile Include="Utilities\IResourceResolver.cs" />
     <Compile Include="LocalTimeProvider.cs" />
     <Compile Include="Utilities\TypeSafeListWrapper.cs" />
@@ -261,7 +256,6 @@
     <Compile Include="Utilities\ResourceResolver.cs" />
     <Compile Include="Utilities\AttributeUtils.cs" />
     <Compile Include="Utilities\NullExtensionFactory.cs" />
-    <Compile Include="Utilities\Win32PerformanceCounter.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SR.resx">

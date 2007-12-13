@@ -17,13 +17,6 @@ namespace ClearCanvas.Common.Utilities
 		private TItem _item;
 
 		/// <summary>
-		/// Default constructor.
-		/// </summary>
-		internal protected DictionaryEventArgs()
-		{
-		}
-
-		/// <summary>
 		/// Constructor.
 		/// </summary>
 		/// <param name="key">The key for the <paramref name="item"/> that has changed.</param>
@@ -41,7 +34,6 @@ namespace ClearCanvas.Common.Utilities
 		public TKey Key
 		{
 			get { return _key; }
-			internal protected set { _key = value; }
 		}
 
 		/// <summary>
@@ -50,7 +42,6 @@ namespace ClearCanvas.Common.Utilities
 		public TItem Item
 		{
 			get { return _item; }
-			internal protected set { _item = value; }
 		}
 	}
 }

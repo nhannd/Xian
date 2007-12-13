@@ -46,8 +46,13 @@ namespace ClearCanvas.Common.Configuration
         /// that exists in the installed plugin base.
         /// </summary>
         /// <remarks>
+        /// <para>
         /// If <param name="excludeLocalSettingsGroups"/> is true, this method only returns settings classes 
         /// that use the <see cref="StandardSettingsProvider"/> for persistence.
+		/// </para>
+		/// <para>
+		/// This method is thread-safe.
+		/// </para>
         /// </remarks>
         public static List<SettingsGroupDescriptor> ListInstalledSettingsGroups(bool excludeLocalSettingsGroups)
         {

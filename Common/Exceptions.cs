@@ -44,15 +44,15 @@ namespace ClearCanvas.Common
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public PluginException(SerializationInfo info, StreamingContext context) : base(info, context) {}
+		internal PluginException(SerializationInfo info, StreamingContext context) : base(info, context) {}
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public PluginException(string message) : base(message) { }
+		internal PluginException(string message) : base(message) { }
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public PluginException(string message, Exception inner) : base(message, inner) { }
+		internal PluginException(string message, Exception inner) : base(message, inner) { }
 	}
 
 	/// <summary>
@@ -64,11 +64,11 @@ namespace ClearCanvas.Common
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public ExtensionPointException(string message) : base(message) { }
+		internal ExtensionPointException(string message) : base(message) { }
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public ExtensionPointException(string message, Exception inner) : base(message, inner) { }
+		internal ExtensionPointException(string message, Exception inner) : base(message, inner) { }
     }
 
 	/// <summary>
@@ -79,10 +79,10 @@ namespace ClearCanvas.Common
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public ExtensionException(string message) : base(message) { }
+		internal ExtensionException(string message) : base(message) { }
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public ExtensionException(string message, Exception inner) : base(message, inner) { }
+		internal ExtensionException(string message, Exception inner) : base(message, inner) { }
     }
 }

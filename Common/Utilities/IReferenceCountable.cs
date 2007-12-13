@@ -31,6 +31,8 @@
 
 namespace ClearCanvas.Common.Utilities
 {
+	// TODO (Stewart): get rid of this and replace with wrapper.
+
 	/// <summary>
 	/// An interface for a reference countable object.
 	/// </summary>

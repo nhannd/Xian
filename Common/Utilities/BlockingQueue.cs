@@ -56,6 +56,8 @@ namespace ClearCanvas.Common.Utilities
 			_continueBlocking = true;
 		}
 
+		//TODO (Stewart): Remove this method.
+
         /// <summary>
         /// Removes the item at the head of the queue.
         /// </summary>

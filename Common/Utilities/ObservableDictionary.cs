@@ -190,7 +190,7 @@ namespace ClearCanvas.Common.Utilities
 
 					_dictionary[key] = value;
 
-					args.Item = value;
+					args = new DictionaryEventArgs<TKey, TItem>(key, value);
 					OnItemChanged(args);
 				}
 				else

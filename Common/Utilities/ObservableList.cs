@@ -35,6 +35,8 @@ using System.Collections.Generic;
 
 namespace ClearCanvas.Common.Utilities
 {
+	// TODO (Stewart): remove all the virtuals that don't make sense.
+
 	/// <summary>
 	/// A list class, changes to which can be observed via events.
 	/// </summary>
@@ -176,7 +178,7 @@ namespace ClearCanvas.Common.Utilities
 				
 				_list[index] = value;
 
-				args.Item = value;
+				args = new CollectionEventArgs<TItem>(value, index);
 				OnItemChanged(args);
 			}
 		}

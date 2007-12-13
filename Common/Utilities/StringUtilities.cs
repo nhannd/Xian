@@ -36,6 +36,8 @@ using System.Text;
 
 namespace ClearCanvas.Common.Utilities
 {
+	//TODO (Stewart): remove type specific implementations (use IFormattable?).
+
 	/// <summary>
 	/// A static string helper class.
 	/// </summary>
