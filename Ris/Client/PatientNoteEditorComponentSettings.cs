@@ -8,9 +8,9 @@ namespace ClearCanvas.Ris.Client
     // TODO add a description of the purpose of the settings group here
     [SettingsGroupDescription("")]
     [SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
-    internal sealed partial class NoteEditorComponentSettings
+    internal sealed partial class PatientNoteEditorComponentSettings
     {
-        private NoteEditorComponentSettings()
+        private PatientNoteEditorComponentSettings()
         {
             ApplicationSettingsRegistry.Instance.RegisterInstance(this);
         }

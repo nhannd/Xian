@@ -67,7 +67,8 @@ namespace ClearCanvas.Healthcare {
             DateTime? scheduledStartTime,
             ExternalPractitioner orderingPractitioner,
             IList<ExternalPractitioner> copiesToPractitioners,
-            IList<OrderAttachment> attachments)
+            IList<OrderAttachment> attachments,
+            IList<OrderNote> notes)
         {
             // create requested procedures according to the diagnostic service breakdown
             IList<RequestedProcedure> procedures = CollectionUtils.Map<RequestedProcedureType, RequestedProcedure>(diagnosticService.RequestedProcedureTypes,
@@ -81,7 +82,7 @@ namespace ClearCanvas.Healthcare {
 
             return NewOrder(accessionNumber, patient, visit, diagnosticService, reasonForStudy,
                 priority, orderingFacility, schedulingRequestTime, orderingPractitioner, copiesToPractitioners,
-                procedures, attachments);
+                procedures, attachments, notes);
         }
 
 
@@ -100,7 +101,8 @@ namespace ClearCanvas.Healthcare {
             ExternalPractitioner orderingPractitioner,
             IList<ExternalPractitioner> copiesToPractitioners,
             IList<RequestedProcedure> procedures,
-            IList<OrderAttachment> attachments)
+            IList<OrderAttachment> attachments,
+            IList<OrderNote> notes)
         {
             // create the basic order
             Order order = new Order();
@@ -126,6 +128,11 @@ namespace ClearCanvas.Healthcare {
             foreach (OrderAttachment attachment in attachments)
             {
                 order.Attachments.Add(attachment);
+            }
+
+            foreach (OrderNote note in notes)
+            {
+                order.Notes.Add(note);
             }
 
             return order;

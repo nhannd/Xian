@@ -57,7 +57,7 @@ namespace ClearCanvas.Ris.Client.Adt
         private EmailAddressesSummaryComponent _emailAddressesSummary;
         private ContactPersonsSummaryComponent _contactPersonsSummary;
         private PatientProfileAdditionalInfoEditorComponent _additionalPatientInfoSummary;
-        private NoteSummaryComponent _notesSummary;
+        private PatientNoteSummaryComponent _notesSummary;
         private MimeDocumentPreviewComponent _documentSummary;
 
         /// <summary>
@@ -117,7 +117,7 @@ namespace ClearCanvas.Ris.Client.Adt
                     this.Pages.Add(new NavigatorPage("Patient/Email Addresses", _emailAddressesSummary = new EmailAddressesSummaryComponent()));
                     this.Pages.Add(new NavigatorPage("Patient/Contact Persons", _contactPersonsSummary = new ContactPersonsSummaryComponent(formData.ContactPersonTypeChoices, formData.ContactPersonRelationshipChoices)));
                     this.Pages.Add(new NavigatorPage("Patient/Additional Info", _additionalPatientInfoSummary = new PatientProfileAdditionalInfoEditorComponent(formData.ReligionChoices, formData.PrimaryLanguageChoices)));
-                    this.Pages.Add(new NavigatorPage("Patient/Notes", _notesSummary = new NoteSummaryComponent(formData.NoteCategoryChoices)));
+                    this.Pages.Add(new NavigatorPage("Patient/Notes", _notesSummary = new PatientNoteSummaryComponent(formData.NoteCategoryChoices)));
                     this.Pages.Add(new NavigatorPage("Patient/Documents", _documentSummary = new MimeDocumentPreviewComponent(true, true)));
                     this.ValidationStrategy = new AllComponentsValidationStrategy();
 

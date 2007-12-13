@@ -135,6 +135,15 @@
   <data name="ColumnAmbulatoryStatus" xml:space="preserve">
     <value>Ambulatory Status</value>
   </data>
+  <data name="ColumnAuthor" xml:space="preserve">
+    <value>Author</value>
+  </data>
+  <data name="ColumnCategory" xml:space="preserve">
+    <value>Category</value>
+  </data>
+  <data name="ColumnComments" xml:space="preserve">
+    <value>Comments</value>
+  </data>
   <data name="ColumnContactType" xml:space="preserve">
     <value>Contact Type</value>
   </data>
@@ -234,6 +243,9 @@
   <data name="ColumnScore" xml:space="preserve">
     <value>Score</value>
   </data>
+  <data name="ColumnSeverity" xml:space="preserve">
+    <value>Severity</value>
+  </data>
   <data name="ColumnSex" xml:space="preserve">
     <value>Sex</value>
   </data>
@@ -299,6 +311,12 @@
   </data>
   <data name="FormatNoteCategory" xml:space="preserve">
     <value>{0} - Severity {1}</value>
+  </data>
+  <data name="LabelMe" xml:space="preserve">
+    <value>Me</value>
+  </data>
+  <data name="LabelNew" xml:space="preserve">
+    <value>New</value>
   </data>
   <data name="MessageAccessDenied" xml:space="preserve">
     <value>You do not have the authority to complete this request.</value>

@@ -229,7 +229,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             ValidateOrderModifiable(order);
             
             OrderEntryAssembler assembler = new OrderEntryAssembler();
-            assembler.UpdateOrderFromRequisition(order, request.Requisition, PersistenceContext);
+            assembler.UpdateOrderFromRequisition(order, request.Requisition, this.CurrentUserStaff, PersistenceContext);
 
             UpdateProceduresHelper(order, request.Requisition.RequestedProcedures);
 
@@ -302,15 +302,13 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                         return rp;
                     });
 
-            List<OrderAttachment> attachments = CollectionUtils.Map<OrderAttachmentSummary, OrderAttachment>(
-                requisition.Attachments,
-                delegate(OrderAttachmentSummary summary)
-                    {
-                        MimeDocument doc = PersistenceContext.Load<MimeDocument>(summary.Document.DocumentRef).As<MimeDocument>();
-                        return new OrderAttachment(
-                            EnumUtils.GetEnumValue<OrderAttachmentCategoryEnum>(summary.Category, this.PersistenceContext),
-                            doc);
-                    });
+            OrderAttachmentAssembler attachmentAssembler = new OrderAttachmentAssembler();
+            List<OrderAttachment> attachments = new List<OrderAttachment>();
+            attachmentAssembler.Synchronize(attachments, requisition.Attachments, this.PersistenceContext);
+
+            OrderNoteAssembler noteAssembler = new OrderNoteAssembler();
+            List<OrderNote> notes = new List<OrderNote>();
+            noteAssembler.Synchronize(notes, requisition.Notes, this.CurrentUserStaff, this.PersistenceContext);
 
             // obtain a new acc number
             IAccessionNumberBroker broker = PersistenceContext.GetBroker<IAccessionNumberBroker>();
@@ -329,7 +327,8 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                     orderingPhysician,
                     consultingPractitioners,
                     procedures,
-                    attachments);
+                    attachments,
+                    notes);
 
             return order;
         }

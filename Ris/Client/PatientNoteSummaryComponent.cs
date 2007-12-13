@@ -29,11 +29,7 @@
 
 #endregion
 
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
@@ -43,32 +39,32 @@ using ClearCanvas.Ris.Application.Common;
 namespace ClearCanvas.Ris.Client
 {
     /// <summary>
-    /// Extension point for views onto <see cref="NoteSummaryComponent"/>
+    /// Extension point for views onto <see cref="PatientNoteSummaryComponent"/>
     /// </summary>
     [ExtensionPoint]
-    public class NoteSummaryComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+    public class PatientNoteSummaryComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
     {
     }
 
     /// <summary>
-    /// NoteSummaryComponent class
+    /// PatientNoteSummaryComponent class
     /// </summary>
-    [AssociateView(typeof(NoteSummaryComponentViewExtensionPoint))]
-    public class NoteSummaryComponent : ApplicationComponent
+    [AssociateView(typeof(PatientNoteSummaryComponentViewExtensionPoint))]
+    public class PatientNoteSummaryComponent : ApplicationComponent
     {
+        private readonly List<PatientNoteCategorySummary> _noteCategoryChoices;
+        private readonly CrudActionModel _noteActionHandler;
+        private readonly PatientNoteTable _noteTable;
         private List<PatientNoteDetail> _noteList;
-        private NoteTable _noteTable;
         private PatientNoteDetail _currentNoteSelection;
-        private CrudActionModel _noteActionHandler;
-        private List<PatientNoteCategorySummary> _noteCategoryChoices;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public NoteSummaryComponent(List<PatientNoteCategorySummary> categoryChoices)
+        public PatientNoteSummaryComponent(List<PatientNoteCategorySummary> categoryChoices)
         {
             _noteCategoryChoices = categoryChoices;
-            _noteTable = new NoteTable();
+            _noteTable = new PatientNoteTable();
 
             _noteActionHandler = new CrudActionModel();
             _noteActionHandler.Add.SetClickHandler(AddNote);
@@ -91,11 +87,6 @@ namespace ClearCanvas.Ris.Client
             _noteTable.Items.AddRange(_noteList);
 
             base.Start();
-        }
-
-        public override void Stop()
-        {
-            base.Stop();
         }
 
         #region Presentation Model
@@ -124,8 +115,8 @@ namespace ClearCanvas.Ris.Client
         {
             PatientNoteDetail note = new PatientNoteDetail();
 
-            NoteEditorComponent editor = new NoteEditorComponent(note, _noteCategoryChoices);
-            ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleAddNote);
+            PatientNoteEditorComponent editor = new PatientNoteEditorComponent(note, _noteCategoryChoices);
+            ApplicationComponentExitCode exitCode = LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleAddNote);
             if (exitCode == ApplicationComponentExitCode.Accepted)
             {
                 _noteTable.Items.Add(note);
@@ -141,8 +132,8 @@ namespace ClearCanvas.Ris.Client
 
             PatientNoteDetail note = (PatientNoteDetail)_currentNoteSelection.Clone();
 
-            NoteEditorComponent editor = new NoteEditorComponent(note, _noteCategoryChoices);
-            ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleUpdateNote);
+            PatientNoteEditorComponent editor = new PatientNoteEditorComponent(note, _noteCategoryChoices);
+            ApplicationComponentExitCode exitCode = LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleUpdateNote);
             if (exitCode == ApplicationComponentExitCode.Accepted)
             {
                 // delete and re-insert to ensure that TableView updates correctly

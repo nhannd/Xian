@@ -30,11 +30,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Text;
 using System.Windows.Forms;
 
 using ClearCanvas.Desktop.View.WinForms;
@@ -42,16 +37,16 @@ using ClearCanvas.Desktop.View.WinForms;
 namespace ClearCanvas.Ris.Client.View.WinForms
 {
     /// <summary>
-    /// Provides a Windows Forms user-interface for <see cref="NoteSummaryComponent"/>
+    /// Provides a Windows Forms user-interface for <see cref="PatientNoteSummaryComponent"/>
     /// </summary>
-    public partial class NoteSummaryComponentControl : ApplicationComponentUserControl
+    public partial class PatientNoteSummaryComponentControl : ApplicationComponentUserControl
     {
-        private NoteSummaryComponent _component;
+        private readonly PatientNoteSummaryComponent _component;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public NoteSummaryComponentControl(NoteSummaryComponent component)
+        public PatientNoteSummaryComponentControl(PatientNoteSummaryComponent component)
             : base(component)
         {
             InitializeComponent();

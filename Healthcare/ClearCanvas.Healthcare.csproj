@@ -83,6 +83,7 @@
     <Compile Include="ProtocolAssignmentStep.cs" />
     <Compile Include="ProtocolProcedureStepSearchCriteria.cs" />
     <Compile Include="ProtocolResolutionStep.cs" />
+    <Compile Include="Tests\TestOrderNoteFactory.cs" />
     <Compile Include="WorklistItemBase.cs" />
     <Compile Include="WorklistItemSearchCriteria.cs" />
     <Compile Include="ReportingWorklistItemSearchCriteria.cs" />

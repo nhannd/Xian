@@ -164,7 +164,7 @@ namespace ClearCanvas.Ris.Client
             CollectionUtils.ForEach(_folderExplorerComponents.Keys,
                 delegate(IFolderSystem folderSystem)
                     {
-                        DocumentManager.UnregisterFolderSystem(folderSystem);
+                        DocumentManager.RegisterFolderSystem(folderSystem);
                     });
         }
 

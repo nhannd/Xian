@@ -85,5 +85,11 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
         /// </summary>
         [DataMember]
         public List<OrderAttachmentSummary> Attachments;
+
+        /// <summary>
+        /// A list of notes for this order.  Optional.
+        /// </summary>
+        [DataMember]
+        public List<OrderNoteDetail> Notes;
     }
 }

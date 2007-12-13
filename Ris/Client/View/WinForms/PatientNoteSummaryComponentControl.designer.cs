@@ -31,7 +31,7 @@
 
 namespace ClearCanvas.Ris.Client.View.WinForms
 {
-    partial class NoteSummaryComponentControl
+    partial class PatientNoteSummaryComponentControl
     {
         /// <summary> 
         /// Required designer variable.
@@ -82,13 +82,13 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this._noteList.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this._noteList.ItemDoubleClicked += new System.EventHandler(this._noteList_ItemDoubleClicked);
             // 
-            // NoteSummaryComponentControl
+            // PatientNoteSummaryComponentControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
             this.Controls.Add(this._noteList);
-            this.Name = "NoteSummaryComponentControl";
+            this.Name = "PatientNoteSummaryComponentControl";
             this.Size = new System.Drawing.Size(150, 158);
             this.ResumeLayout(false);
             this.PerformLayout();

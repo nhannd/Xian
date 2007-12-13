@@ -1,13 +1,11 @@
 using System;
-using System.Collections.Generic;
 using System.Runtime.Serialization;
-using System.Text;
 using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common
 {
     [DataContract]
-    public class OrderNoteDetail : DataContractBase
+    public class OrderNoteDetail : DataContractBase, ICloneable
     {
         /// <summary>
         /// Constructor for use by client in creating a <see cref="OrderNoteDetail"/> for a new (never saved) note.
@@ -40,5 +38,17 @@ namespace ClearCanvas.Ris.Application.Common
 
         [DataMember]
         public string Comment;
+
+        #region ICloneable Members
+
+        public object Clone()
+        {
+            return new OrderNoteDetail(
+                this.CreationTime,
+                this.Author == null ? null : (StaffSummary)this.Author.Clone(),
+                this.Comment);
+        }
+
+        #endregion
     }
 }

@@ -40,20 +40,20 @@ using ClearCanvas.Desktop.View.WinForms;
 namespace ClearCanvas.Ris.Client.View.WinForms
 {
     /// <summary>
-    /// Provides a Windows Forms view onto <see cref="NoteSummaryComponent"/>
+    /// Provides a Windows Forms view onto <see cref="PatientNoteEditorComponent"/>
     /// </summary>
-    [ExtensionOf(typeof(NoteSummaryComponentViewExtensionPoint))]
-    public class NoteSummaryComponentView : WinFormsView, IApplicationComponentView
+    [ExtensionOf(typeof(PatientNoteEditorComponentViewExtensionPoint))]
+    public class PatientNoteEditorComponentView : WinFormsView, IApplicationComponentView
     {
-        private NoteSummaryComponent _component;
-        private NoteSummaryComponentControl _control;
+        private PatientNoteEditorComponent _component;
+        private PatientNoteEditorComponentControl _control;
 
 
         #region IApplicationComponentView Members
 
         public void SetComponent(IApplicationComponent component)
         {
-            _component = (NoteSummaryComponent)component;
+            _component = (PatientNoteEditorComponent)component;
         }
 
         #endregion
@@ -64,7 +64,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             {
                 if (_control == null)
                 {
-                    _control = new NoteSummaryComponentControl(_component);
+                    _control = new PatientNoteEditorComponentControl(_component);
                 }
                 return _control;
             }

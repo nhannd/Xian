@@ -164,6 +164,9 @@ namespace ClearCanvas.Ris.Client.Adt
 
         private ToolSet _attachmentToolSet;
 
+        private OrderNoteSummaryComponent _noteSummaryComponent;
+        private ChildComponentHost _orderNoteSummaryComponentHost;
+
         /// <summary>
         /// Constructor for creating a new order.
         /// </summary>
@@ -248,6 +251,8 @@ namespace ClearCanvas.Ris.Client.Adt
                     return new ValidationResult(_mode != Mode.ReplaceOrder || _selectedCancelReason != null,
                         SR.MessageMissingCancellationReason);
                 }));
+
+            _noteSummaryComponent = new OrderNoteSummaryComponent();
         }
 
         public override void Start()
@@ -295,6 +300,8 @@ namespace ClearCanvas.Ris.Client.Adt
 
             _attachmentToolSet = new ToolSet(new OrderEntryAttachmentToolExtensionPoint(), new OrderEntryAttachmentToolContext(this));
 
+            InitializeTabPages();
+
             base.Start();
         }
 
@@ -305,6 +312,11 @@ namespace ClearCanvas.Ris.Client.Adt
         }
 
         #region Presentation Model
+
+        public ApplicationComponentHost OrderNoteSummaryHost
+        {
+            get { return _orderNoteSummaryComponentHost; }
+        }
 
         public EntityRef OrderRef
         {
@@ -729,7 +741,7 @@ namespace ClearCanvas.Ris.Client.Adt
             requisition.RequestedProcedures = new List<ProcedureRequisition>(_proceduresTable.Items);
             requisition.CopiesToPractitioners = new List<ExternalPractitionerSummary>(_consultantsTable.Items);
             requisition.Attachments = new List<OrderAttachmentSummary>(_attachmentTable.Items);
-
+            requisition.Notes = new List<OrderNoteDetail>(_noteSummaryComponent.Notes);
             return requisition;
         }
 
@@ -750,7 +762,10 @@ namespace ClearCanvas.Ris.Client.Adt
             _consultantsTable.Items.Clear();
             _consultantsTable.Items.AddRange(existingOrder.CopiesToPractitioners);
 
+            _attachmentTable.Items.Clear();
             _attachmentTable.Items.AddRange(existingOrder.Attachments);
+
+            _noteSummaryComponent.Notes = existingOrder.Notes;
         }
         
         private bool SubmitOrder()
@@ -911,5 +926,12 @@ namespace ClearCanvas.Ris.Client.Adt
         }
 
         #endregion
+
+        private void InitializeTabPages()
+        {
+            _orderNoteSummaryComponentHost = new ChildComponentHost(this.Host, _noteSummaryComponent);
+            _orderNoteSummaryComponentHost.StartComponent();
+        }
+    
     }
 }

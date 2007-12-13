@@ -29,43 +29,25 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.Healthcare.Tests
 {
-    internal static class TestOrderFactory
+    internal static class TestOrderNoteFactory
     {
-        internal static Order CreateOrder(int numRequestedProcedures, int numMpsPerRequestedProcedure, bool scheduleOrder)
+        internal static IList<OrderNote> CreateOrderNotes()
         {
-            DateTime? scheduleTime = DateTime.Now;
+            IList<OrderNote> notes = new List<OrderNote>();
 
-            Patient patient = TestPatientFactory.CreatePatient();
-            Visit visit = TestVisitFactory.CreateVisit(patient);
-            DiagnosticService ds = TestDiagnosticServiceFactory.CreateDiagnosticService(numRequestedProcedures, numMpsPerRequestedProcedure);
-            string accession = "10000001";
-            string reasonForStudy = "Test";
-            ExternalPractitioner orderingPrac = TestExternalPractitionerFactory.CreatePractitioner();
-            Facility facility = TestFacilityFactory.CreateFacility();
-            IList<OrderAttachment> attachments = TestOrderAttachmentFactory.CreateOrderAttachments();
-            IList<OrderNote> notes = TestOrderNoteFactory.CreateOrderNotes();
+            notes.Add(CreateOrderNote("Test note"));
 
-            return Order.NewOrder(
-                accession,
-                patient,
-                visit,
-                ds,
-                reasonForStudy,
-                OrderPriority.R,
-                facility,
-                facility,
-                scheduleTime,
-                scheduleOrder ? scheduleTime : null,
-                orderingPrac,
-                new List<ExternalPractitioner>(),
-                attachments,
-                notes);
+            return notes;
+        }
+
+        internal static OrderNote CreateOrderNote(string comment)
+        {
+            return new OrderNote(Platform.Time, TestStaffFactory.CreateStaff(StaffType.STEC), comment);
         }
     }
 }

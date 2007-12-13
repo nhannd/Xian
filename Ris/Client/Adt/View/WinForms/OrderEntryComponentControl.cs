@@ -30,11 +30,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Text;
 using System.Windows.Forms;
 
 using ClearCanvas.Desktop.View.WinForms;
@@ -46,7 +41,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
     /// </summary>
     public partial class OrderEntryComponentControl : ApplicationComponentUserControl
     {
-        private OrderEntryComponent _component;
+        private readonly OrderEntryComponent _component;
 
         /// <summary>
         /// Constructor
@@ -55,8 +50,11 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             :base(component)
         {
             InitializeComponent();
-
             _component = component;
+
+            Control orderNoteSummary = (Control)_component.OrderNoteSummaryHost.ComponentView.GuiElement;
+            orderNoteSummary.Dock = DockStyle.Fill;
+            _orderNotePanel.Controls.Add(orderNoteSummary);
 
             // force toolbars to be displayed (VS designer seems to have a bug with this)
             _proceduresTableView.ShowToolbar = true;

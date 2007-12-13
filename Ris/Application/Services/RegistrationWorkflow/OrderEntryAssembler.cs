@@ -48,6 +48,8 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             ExternalPractitionerAssembler pracAssembler = new ExternalPractitionerAssembler();
             FacilityAssembler facilityAssembler = new FacilityAssembler();
             DiagnosticServiceAssembler dsAssembler = new DiagnosticServiceAssembler();
+            OrderAttachmentAssembler attachmentAssembler = new OrderAttachmentAssembler();
+            OrderNoteAssembler noteAssembler = new OrderNoteAssembler();
 
             OrderRequisition requisition = new OrderRequisition();
             requisition.Patient = order.Patient.GetRef();
@@ -72,20 +74,24 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                     return CreateProcedureRequisition(rp, context);
                 });
 
-            MimeDocumentAssembler mimeDocumentAssembler = new MimeDocumentAssembler();
             requisition.Attachments = CollectionUtils.Map<OrderAttachment, OrderAttachmentSummary>(
                 order.Attachments,
                 delegate(OrderAttachment attachment)
                     {
-                        return new OrderAttachmentSummary(
-                            EnumUtils.GetEnumValueInfo(attachment.Category),
-                            mimeDocumentAssembler.CreateMimeDocumentSummary(attachment.Document));
+                        return attachmentAssembler.CreateOrderAttachmentSummary(attachment);
+                    });
+
+            requisition.Notes = CollectionUtils.Map<OrderNote, OrderNoteDetail>(
+                order.Notes,
+                delegate(OrderNote note)
+                    {
+                        return noteAssembler.CreateOrderNoteDetail(note, context);
                     });
 
             return requisition;
         }
 
-        public void UpdateOrderFromRequisition(Order order, OrderRequisition requisition, IPersistenceContext context)
+        public void UpdateOrderFromRequisition(Order order, OrderRequisition requisition, Staff currentStaff, IPersistenceContext context)
         {
             // only certain properties of an order may be updated from a requisition
             // Patient cannot not be updated
@@ -110,15 +116,13 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                     return context.Load<ExternalPractitioner>(s.PractitionerRef, EntityLoadFlags.Proxy);
                 }));
 
-            // wipe out and reset the attachments
-            order.Attachments.Clear();
-            foreach (OrderAttachmentSummary summary in requisition.Attachments)
-            {
-                order.Attachments.Add(new OrderAttachment(
-                    EnumUtils.GetEnumValue<OrderAttachmentCategoryEnum>(summary.Category, context),
-                    context.Load<MimeDocument>(summary.Document.DocumentRef)));
+            // synchronize Order.Attachments from order requisition
+            OrderAttachmentAssembler attachmentAssembler = new OrderAttachmentAssembler();
+            attachmentAssembler.Synchronize(order.Attachments, requisition.Attachments, context);
 
-            }
+            // synchronize Order.Notes from order requisition
+            OrderNoteAssembler noteAssembler = new OrderNoteAssembler();
+            noteAssembler.Synchronize(order.Notes, requisition.Notes, currentStaff, context);
         }
 
         public ProcedureRequisition CreateProcedureRequisition(RequestedProcedure rp, IPersistenceContext context)

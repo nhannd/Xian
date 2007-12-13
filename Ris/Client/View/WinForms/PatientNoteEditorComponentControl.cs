@@ -30,42 +30,45 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Windows.Forms;
 
-namespace ClearCanvas.Healthcare.Tests
+using ClearCanvas.Desktop.View.WinForms;
+
+namespace ClearCanvas.Ris.Client.View.WinForms
 {
-    internal static class TestOrderFactory
+    /// <summary>
+    /// Provides a Windows Forms user-interface for <see cref="PatientNoteEditorComponent"/>
+    /// </summary>
+    public partial class PatientNoteEditorComponentControl : CustomUserControl
     {
-        internal static Order CreateOrder(int numRequestedProcedures, int numMpsPerRequestedProcedure, bool scheduleOrder)
+        private readonly PatientNoteEditorComponent _component;
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public PatientNoteEditorComponentControl(PatientNoteEditorComponent component)
         {
-            DateTime? scheduleTime = DateTime.Now;
+            InitializeComponent();
+            _component = component;
 
-            Patient patient = TestPatientFactory.CreatePatient();
-            Visit visit = TestVisitFactory.CreateVisit(patient);
-            DiagnosticService ds = TestDiagnosticServiceFactory.CreateDiagnosticService(numRequestedProcedures, numMpsPerRequestedProcedure);
-            string accession = "10000001";
-            string reasonForStudy = "Test";
-            ExternalPractitioner orderingPrac = TestExternalPractitionerFactory.CreatePractitioner();
-            Facility facility = TestFacilityFactory.CreateFacility();
-            IList<OrderAttachment> attachments = TestOrderAttachmentFactory.CreateOrderAttachments();
-            IList<OrderNote> notes = TestOrderNoteFactory.CreateOrderNotes();
+            _category.DataSource = _component.CategoryChoices;
+            _category.DataBindings.Add("Value", _component, "Category", true, DataSourceUpdateMode.OnPropertyChanged);
+            _description.DataBindings.Add("Value", _component, "CategoryDescription", true, DataSourceUpdateMode.OnPropertyChanged);
+            _comment.DataBindings.Add("Value", _component, "Comment", true, DataSourceUpdateMode.OnPropertyChanged);
+            _acceptButton.DataBindings.Add("Enabled", _component, "AcceptEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 
-            return Order.NewOrder(
-                accession,
-                patient,
-                visit,
-                ds,
-                reasonForStudy,
-                OrderPriority.R,
-                facility,
-                facility,
-                scheduleTime,
-                scheduleOrder ? scheduleTime : null,
-                orderingPrac,
-                new List<ExternalPractitioner>(),
-                attachments,
-                notes);
+            _category.Enabled = _component.IsNewItem;
+            _comment.ReadOnly = !_component.IsNewItem;
+        }
+
+        private void _acceptButton_Click(object sender, EventArgs e)
+        {
+            _component.Accept();
+        }
+
+        private void _cancelButton_Click(object sender, EventArgs e)
+        {
+            _component.Cancel();
         }
     }
 }

@@ -52,12 +52,15 @@
       <DependentUpon>AddressesSummaryComponentSettings.settings</DependentUpon>
     </Compile>
     <Compile Include="BiographyDemographicComponent.cs" />
+    <Compile Include="OrderNoteEditorComponent.cs" />
+    <Compile Include="OrderNoteSummaryComponent.cs" />
+    <Compile Include="OrderNoteTable.cs" />
     <Compile Include="HtmlActionModelRenderer.cs" />
-    <Compile Include="NoteEditorComponentSettings.cs" />
-    <Compile Include="NoteEditorComponentSettings.Designer.cs">
+    <Compile Include="PatientNoteEditorComponentSettings.cs" />
+    <Compile Include="PatientNoteEditorComponentSettings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>NoteEditorComponentSettings.settings</DependentUpon>
+      <DependentUpon>PatientNoteEditorComponentSettings.settings</DependentUpon>
     </Compile>
     <Compile Include="WorklistPreviewComponent.cs" />
     <Compile Include="FolderContentsComponent.cs" />
@@ -164,9 +167,9 @@
     <Compile Include="IPagingController.cs" />
     <Compile Include="JsmlServiceProxy.cs" />
     <Compile Include="LoginSession.cs" />
-    <Compile Include="NoteEditorComponent.cs" />
-    <Compile Include="NoteSummaryComponent.cs" />
-    <Compile Include="NoteTable.cs" />
+    <Compile Include="PatientNoteEditorComponent.cs" />
+    <Compile Include="PatientNoteSummaryComponent.cs" />
+    <Compile Include="PatientNoteTable.cs" />
     <Compile Include="PagingActionModel.cs" />
     <Compile Include="PagingController.cs" />
     <Compile Include="Formatting\PersonNameFormat.cs" />
@@ -266,9 +269,9 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>FormatSettings.Designer.cs</LastGenOutput>
     </None>
-    <None Include="NoteEditorComponentSettings.settings">
+    <None Include="PatientNoteEditorComponentSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>NoteEditorComponentSettings.Designer.cs</LastGenOutput>
+      <LastGenOutput>PatientNoteEditorComponentSettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="RandomUtilsSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -370,7 +373,7 @@
     <EmbeddedResource Include="FolderExplorerComponentSettings.xml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="NoteEditorComponent.val.xml" />
+    <EmbeddedResource Include="PatientNoteEditorComponent.val.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

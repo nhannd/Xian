@@ -29,34 +29,31 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Ris.Application.Common.Admin;
-using ClearCanvas.Common.Utilities;
-using System.Drawing;
+using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client
 {
-    public class NoteTable : Table<PatientNoteDetail>
+    public class PatientNoteTable : Table<PatientNoteDetail>
     {
-        public NoteTable()
+        public PatientNoteTable()
         {
-            this.Columns.Add(new TableColumn<PatientNoteDetail, string>("Severity",
+            this.Columns.Add(new TableColumn<PatientNoteDetail, string>(SR.ColumnSeverity,
                 delegate(PatientNoteDetail n) { return (n.Category == null ? "" : n.Category.Severity.Code); },
                 0.1f));
-            this.Columns.Add(new TableColumn<PatientNoteDetail, string>("Category",
+            this.Columns.Add(new TableColumn<PatientNoteDetail, string>(SR.ColumnCategory,
                 delegate(PatientNoteDetail n) { return (n.Category == null ? "" : n.Category.Name); },
                 0.2f));
-            this.Columns.Add(new TableColumn<PatientNoteDetail, string>("Comment",
+            this.Columns.Add(new TableColumn<PatientNoteDetail, string>(SR.ColumnComments,
                 delegate(PatientNoteDetail n) { return n.Comment; },
                 0.45f));
-            this.Columns.Add(new TableColumn<PatientNoteDetail, string>("Created",
-                delegate(PatientNoteDetail n) { return n.CreationTime == null ? "New" : Format.Date(n.CreationTime); },
+            this.Columns.Add(new TableColumn<PatientNoteDetail, string>(SR.ColumnCreatedOn,
+                delegate(PatientNoteDetail n) { return n.CreationTime == null ? SR.LabelNew : Format.Date(n.CreationTime); },
+                0.2f));
+            this.Columns.Add(new TableColumn<PatientNoteDetail, string>(SR.ColumnAuthor,
+                delegate(PatientNoteDetail n) { return n.Author == null ? SR.LabelMe : PersonNameFormat.Format(n.Author.Name); },
                 0.2f));
             //this.Columns.Add(new TableColumn<NoteDetail, string>("Description",
             //    delegate(NoteDetail n) { return (n.Category == null ? "" : n.Category.Description); },

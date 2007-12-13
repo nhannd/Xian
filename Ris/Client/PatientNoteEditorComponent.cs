@@ -31,27 +31,25 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client
 {
     [ExtensionPoint]
-    public class NoteEditorComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+    public class PatientNoteEditorComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
     {
     }
 
-    [AssociateView(typeof(NoteEditorComponentViewExtensionPoint))]
-    public class NoteEditorComponent : ApplicationComponent
+    [AssociateView(typeof(PatientNoteEditorComponentViewExtensionPoint))]
+    public class PatientNoteEditorComponent : ApplicationComponent
     {
         private readonly PatientNoteDetail _note;
         private readonly IList<PatientNoteCategorySummary> _noteCategoryChoices;
 
-        public NoteEditorComponent(PatientNoteDetail noteDetail, List<PatientNoteCategorySummary> noteCategoryChoices)
+        public PatientNoteEditorComponent(PatientNoteDetail noteDetail, IList<PatientNoteCategorySummary> noteCategoryChoices)
         {
             _note = noteDetail;
             _noteCategoryChoices = noteCategoryChoices;
@@ -59,14 +57,9 @@ namespace ClearCanvas.Ris.Client
 
         public override void Start()
         {
-            this.Validation.Add(NoteEditorComponentSettings.Default.ValidationRules);
+            this.Validation.Add(PatientNoteEditorComponentSettings.Default.ValidationRules);
 
             base.Start();
-        }
-
-        public override void Stop()
-        {
-            base.Stop();
         }
 
         #region Presentation Model
@@ -103,7 +96,7 @@ namespace ClearCanvas.Ris.Client
             set
             {
                 _note.Category = (value == "") ? null :
-                    CollectionUtils.SelectFirst<PatientNoteCategorySummary>(_noteCategoryChoices,
+                    CollectionUtils.SelectFirst(_noteCategoryChoices,
                         delegate(PatientNoteCategorySummary category) 
                         {
                             return (String.Format(SR.FormatNoteCategory, category.Name, category.Severity.Value) == value); 

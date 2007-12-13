@@ -115,6 +115,33 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Author.
+        /// </summary>
+        internal static string ColumnAuthor {
+            get {
+                return ResourceManager.GetString("ColumnAuthor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Category.
+        /// </summary>
+        internal static string ColumnCategory {
+            get {
+                return ResourceManager.GetString("ColumnCategory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Comments.
+        /// </summary>
+        internal static string ColumnComments {
+            get {
+                return ResourceManager.GetString("ColumnComments", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Contact Type.
         /// </summary>
         internal static string ColumnContactType {
@@ -412,6 +439,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Severity.
+        /// </summary>
+        internal static string ColumnSeverity {
+            get {
+                return ResourceManager.GetString("ColumnSeverity", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Sex.
         /// </summary>
         internal static string ColumnSex {
@@ -606,6 +642,24 @@ namespace ClearCanvas.Ris.Client {
         internal static string FormatNoteCategory {
             get {
                 return ResourceManager.GetString("FormatNoteCategory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Me.
+        /// </summary>
+        internal static string LabelMe {
+            get {
+                return ResourceManager.GetString("LabelMe", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to New.
+        /// </summary>
+        internal static string LabelNew {
+            get {
+                return ResourceManager.GetString("LabelNew", resourceCulture);
             }
         }
         

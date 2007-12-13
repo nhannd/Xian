@@ -31,7 +31,7 @@
 
 namespace ClearCanvas.Ris.Client.View.WinForms
 {
-    partial class NoteEditorComponentControl
+    partial class PatientNoteEditorComponentControl
     {
         /// <summary> 
         /// Required designer variable.
@@ -182,14 +182,14 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this._acceptButton.UseVisualStyleBackColor = true;
             this._acceptButton.Click += new System.EventHandler(this._acceptButton_Click);
             // 
-            // NoteEditorComponentControl
+            // PatientNoteEditorComponentControl
             // 
             this.AcceptButton = this._acceptButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this._cancelButton;
             this.Controls.Add(this.tableLayoutPanel1);
-            this.Name = "NoteEditorComponentControl";
+            this.Name = "PatientNoteEditorComponentControl";
             this.Size = new System.Drawing.Size(341, 318);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();

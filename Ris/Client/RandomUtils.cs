@@ -330,6 +330,7 @@ namespace ClearCanvas.Ris.Client
                    
                     requisition.CopiesToPractitioners = new List<ExternalPractitionerSummary>();
                     requisition.Attachments = new List<OrderAttachmentSummary>();
+                    requisition.Notes = new List<OrderNoteDetail>();
 
                     PlaceOrderResponse response = service.PlaceOrder(new PlaceOrderRequest(requisition));
 
