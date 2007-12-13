@@ -253,6 +253,7 @@ namespace ClearCanvas.Utilities.DicomEditor
             for (int i = 0; i < _loadedFiles.Count; i++)
             {
                 _loadedFiles[i].Save(DicomWriteOptions.Default);
+                _dirtyFlags[i] = false;
             }
         }
 
