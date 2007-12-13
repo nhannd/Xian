@@ -52,6 +52,10 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             InitializeComponent();
             _component = component;
 
+            Control orderAttachmentSummary = (Control)_component.OrderAttachmentSummaryHost.ComponentView.GuiElement;
+            orderAttachmentSummary.Dock = DockStyle.Fill;
+            _orderDocumentPanel.Controls.Add(orderAttachmentSummary);
+
             Control orderNoteSummary = (Control)_component.OrderNoteSummaryHost.ComponentView.GuiElement;
             orderNoteSummary.Dock = DockStyle.Fill;
             _orderNotePanel.Controls.Add(orderNoteSummary);
@@ -101,14 +105,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             _reorderReason.DataSource = _component.CancelReasonChoices;
             _reorderReason.DataBindings.Add("Value", _component, "SelectedCancelReason", true, DataSourceUpdateMode.OnPropertyChanged);
             _reorderReason.DataBindings.Add("Visible", _component, "IsCancelReasonVisible");
-
-            _documentTableView.Table = _component.Attachments;
-            _documentTableView.MenuModel = _component.AttachmentActionModel;
-            _documentTableView.ToolbarModel = _component.AttachmentActionModel;
-            _documentTableView.DataBindings.Add("Selection", _component, "SelectedAttachment", true, DataSourceUpdateMode.OnPropertyChanged);
-            RefreshAttachmentPreview();
-            _component.SelectedAttachmentChanged += _component_AttachmentSelectionChanged;
- 
         }
 
         void _component_ActiveVisitsChanged(object sender, EventArgs e)
@@ -119,22 +115,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         void RefreshActiveVisit()
         {
             _visit.DataSource = _component.ActiveVisits;
-        }
-
-        void _component_AttachmentSelectionChanged(object sender, EventArgs e)
-        {
-            RefreshAttachmentPreview();
-        }
-
-        void RefreshAttachmentPreview()
-        {
-            if (String.IsNullOrEmpty(_component.TempFileName))
-            {
-                _documentBrowser.Url = new Uri("about:blank");
-                return;
-            }
-
-            _documentBrowser.Url = new Uri(_component.TempFileName);
         }
 
         private void _placeOrderButton_Click(object sender, EventArgs e)

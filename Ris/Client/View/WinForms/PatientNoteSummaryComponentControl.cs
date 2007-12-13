@@ -54,7 +54,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 
             _noteList.ToolbarModel = _component.NoteActionModel;
             _noteList.MenuModel = _component.NoteActionModel;
-            _noteList.Table = _component.Notes;
+            _noteList.Table = _component.NoteTable;
             _noteList.DataBindings.Add("Selection", _component, "SelectedNote", true, DataSourceUpdateMode.OnPropertyChanged);
         }
 

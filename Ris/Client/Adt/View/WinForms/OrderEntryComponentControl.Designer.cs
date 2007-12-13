@@ -85,13 +85,11 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._addConsultantButton = new System.Windows.Forms.Button();
             this.tabControl2 = new System.Windows.Forms.TabControl();
             this._documentsTab = new System.Windows.Forms.TabPage();
-            this._documentSplitContainer = new System.Windows.Forms.SplitContainer();
-            this._documentTableView = new ClearCanvas.Desktop.View.WinForms.TableView();
-            this._documentBrowser = new System.Windows.Forms.WebBrowser();
             this._orderNotesTab = new System.Windows.Forms.TabPage();
+            this._orderNotePanel = new System.Windows.Forms.Panel();
             this._cancelButton = new System.Windows.Forms.Button();
             this._acceptButton = new System.Windows.Forms.Button();
-            this._orderNotePanel = new System.Windows.Forms.Panel();
+            this._orderDocumentPanel = new System.Windows.Forms.Panel();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
@@ -103,9 +101,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.panel2.SuspendLayout();
             this.tabControl2.SuspendLayout();
             this._documentsTab.SuspendLayout();
-            this._documentSplitContainer.Panel1.SuspendLayout();
-            this._documentSplitContainer.Panel2.SuspendLayout();
-            this._documentSplitContainer.SuspendLayout();
             this._orderNotesTab.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -421,7 +416,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // 
             // _documentsTab
             // 
-            this._documentsTab.Controls.Add(this._documentSplitContainer);
+            this._documentsTab.Controls.Add(this._orderDocumentPanel);
             this._documentsTab.Location = new System.Drawing.Point(4, 22);
             this._documentsTab.Margin = new System.Windows.Forms.Padding(2);
             this._documentsTab.Name = "_documentsTab";
@@ -430,48 +425,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._documentsTab.TabIndex = 0;
             this._documentsTab.Text = "Documents";
             this._documentsTab.UseVisualStyleBackColor = true;
-            // 
-            // _documentSplitContainer
-            // 
-            this._documentSplitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._documentSplitContainer.Location = new System.Drawing.Point(2, 2);
-            this._documentSplitContainer.Name = "_documentSplitContainer";
-            this._documentSplitContainer.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            // 
-            // _documentSplitContainer.Panel1
-            // 
-            this._documentSplitContainer.Panel1.Controls.Add(this._documentTableView);
-            // 
-            // _documentSplitContainer.Panel2
-            // 
-            this._documentSplitContainer.Panel2.Controls.Add(this._documentBrowser);
-            this._documentSplitContainer.Size = new System.Drawing.Size(480, 567);
-            this._documentSplitContainer.SplitterDistance = 162;
-            this._documentSplitContainer.TabIndex = 38;
-            // 
-            // _documentTableView
-            // 
-            this._documentTableView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._documentTableView.FilterTextBoxWidth = 132;
-            this._documentTableView.Location = new System.Drawing.Point(0, 0);
-            this._documentTableView.Margin = new System.Windows.Forms.Padding(4);
-            this._documentTableView.MultiSelect = false;
-            this._documentTableView.Name = "_documentTableView";
-            this._documentTableView.ReadOnly = false;
-            this._documentTableView.ShowToolbar = false;
-            this._documentTableView.Size = new System.Drawing.Size(480, 162);
-            this._documentTableView.TabIndex = 37;
-            this._documentTableView.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.ImageAndText;
-            // 
-            // _documentBrowser
-            // 
-            this._documentBrowser.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._documentBrowser.Location = new System.Drawing.Point(0, 0);
-            this._documentBrowser.Margin = new System.Windows.Forms.Padding(2);
-            this._documentBrowser.MinimumSize = new System.Drawing.Size(15, 16);
-            this._documentBrowser.Name = "_documentBrowser";
-            this._documentBrowser.Size = new System.Drawing.Size(480, 401);
-            this._documentBrowser.TabIndex = 0;
             // 
             // _orderNotesTab
             // 
@@ -484,6 +437,14 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._orderNotesTab.TabIndex = 1;
             this._orderNotesTab.Text = "Notes";
             this._orderNotesTab.UseVisualStyleBackColor = true;
+            // 
+            // _orderNotePanel
+            // 
+            this._orderNotePanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._orderNotePanel.Location = new System.Drawing.Point(2, 2);
+            this._orderNotePanel.Name = "_orderNotePanel";
+            this._orderNotePanel.Size = new System.Drawing.Size(480, 567);
+            this._orderNotePanel.TabIndex = 0;
             // 
             // _cancelButton
             // 
@@ -507,13 +468,13 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._acceptButton.UseVisualStyleBackColor = true;
             this._acceptButton.Click += new System.EventHandler(this._placeOrderButton_Click);
             // 
-            // _orderNotePanel
+            // _orderDocumentPanel
             // 
-            this._orderNotePanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._orderNotePanel.Location = new System.Drawing.Point(2, 2);
-            this._orderNotePanel.Name = "_orderNotePanel";
-            this._orderNotePanel.Size = new System.Drawing.Size(480, 567);
-            this._orderNotePanel.TabIndex = 0;
+            this._orderDocumentPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._orderDocumentPanel.Location = new System.Drawing.Point(2, 2);
+            this._orderDocumentPanel.Name = "_orderDocumentPanel";
+            this._orderDocumentPanel.Size = new System.Drawing.Size(480, 567);
+            this._orderDocumentPanel.TabIndex = 0;
             // 
             // OrderEntryComponentControl
             // 
@@ -536,9 +497,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.panel2.ResumeLayout(false);
             this.tabControl2.ResumeLayout(false);
             this._documentsTab.ResumeLayout(false);
-            this._documentSplitContainer.Panel1.ResumeLayout(false);
-            this._documentSplitContainer.Panel2.ResumeLayout(false);
-            this._documentSplitContainer.ResumeLayout(false);
             this._orderNotesTab.ResumeLayout(false);
             this.ResumeLayout(false);
 
@@ -558,8 +516,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         private System.Windows.Forms.Button _acceptButton;
         private System.Windows.Forms.TabControl tabControl2;
         private System.Windows.Forms.TabPage _documentsTab;
-        private ClearCanvas.Desktop.View.WinForms.TableView _documentTableView;
-        private System.Windows.Forms.WebBrowser _documentBrowser;
         private ClearCanvas.Ris.Client.View.WinForms.LookupField _diagnosticService;
         private System.Windows.Forms.Button _addConsultantButton;
         private ClearCanvas.Ris.Client.View.WinForms.LookupField _consultantLookup;
@@ -573,11 +529,11 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Button _applySchedulingButton;
-        private System.Windows.Forms.SplitContainer _documentSplitContainer;
         private System.Windows.Forms.Button _visitSummaryButton;
         private ClearCanvas.Desktop.View.WinForms.TextField _orderingFacility;
         private System.Windows.Forms.TabPage _orderNotesTab;
         private System.Windows.Forms.Panel _orderNotePanel;
+        private System.Windows.Forms.Panel _orderDocumentPanel;
 
     }
 }

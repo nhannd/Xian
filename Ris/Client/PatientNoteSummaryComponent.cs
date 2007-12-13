@@ -55,7 +55,7 @@ namespace ClearCanvas.Ris.Client
         private readonly List<PatientNoteCategorySummary> _noteCategoryChoices;
         private readonly CrudActionModel _noteActionHandler;
         private readonly PatientNoteTable _noteTable;
-        private List<PatientNoteDetail> _noteList;
+        private List<PatientNoteDetail> _notes;
         private PatientNoteDetail _currentNoteSelection;
 
         /// <summary>
@@ -78,20 +78,18 @@ namespace ClearCanvas.Ris.Client
 
         public List<PatientNoteDetail> Subject
         {
-            get { return _noteList; }
-            set { _noteList = value; }
-        }
-
-        public override void Start()
-        {
-            _noteTable.Items.AddRange(_noteList);
-
-            base.Start();
+            get { return _notes; }
+            set
+            {
+                _notes = value;
+                _noteTable.Items.Clear();
+                _noteTable.Items.AddRange(_notes);
+            }
         }
 
         #region Presentation Model
 
-        public ITable Notes
+        public ITable NoteTable
         {
             get { return _noteTable; }
         }
@@ -120,7 +118,7 @@ namespace ClearCanvas.Ris.Client
             if (exitCode == ApplicationComponentExitCode.Accepted)
             {
                 _noteTable.Items.Add(note);
-                _noteList.Add(note);
+                _notes.Add(note);
                 this.Modified = true;
             }
         }
@@ -139,10 +137,10 @@ namespace ClearCanvas.Ris.Client
                 // delete and re-insert to ensure that TableView updates correctly
                 PatientNoteDetail toBeRemoved = _currentNoteSelection;
                 _noteTable.Items.Remove(toBeRemoved);
-                _noteList.Remove(toBeRemoved);
+                _notes.Remove(toBeRemoved);
 
                 _noteTable.Items.Add(note);
-                _noteList.Add(note);
+                _notes.Add(note);
 
                 this.Modified = true;
             }
@@ -156,7 +154,7 @@ namespace ClearCanvas.Ris.Client
                 //  resulting in the wrong note being removed from the Patient
                 PatientNoteDetail toBeRemoved = _currentNoteSelection;
                 _noteTable.Items.Remove(toBeRemoved);
-                _noteList.Remove(toBeRemoved);
+                _notes.Remove(toBeRemoved);
                 this.Modified = true;
             }
         }

@@ -38,11 +38,9 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tables;
-using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Validation;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Ris.Application.Common.MimeDocumentService;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 using ClearCanvas.Ris.Client.Formatting;
@@ -57,11 +55,6 @@ namespace ClearCanvas.Ris.Client.Adt
     {
     }
 
-    [ExtensionPoint]
-    public class OrderEntryAttachmentToolExtensionPoint : ExtensionPoint<ITool>
-    {
-    }
-
     /// <summary>
     /// OrderEntryComponent class
     /// </summary>
@@ -73,47 +66,6 @@ namespace ClearCanvas.Ris.Client.Adt
             NewOrder,
             ModifyOrder,
             ReplaceOrder
-        }
-
-        class OrderEntryAttachmentToolContext : ToolContext, IMimeDocumentToolContext
-        {
-            private readonly OrderEntryComponent _component;
-
-            internal OrderEntryAttachmentToolContext(OrderEntryComponent component)
-            {
-                _component = component;
-            }
-
-            #region IMimeDocumentToolContext Members
-
-            public event EventHandler SelectedDocumentChanged
-            {
-                add { _component.SelectedAttachmentChanged += value; }
-                remove { _component.SelectedAttachmentChanged -= value; }
-            }
-
-            public EntityRef SelectedDocumentRef
-            {
-                get { return ((OrderAttachmentSummary) _component.SelectedAttachment.Item).Document.DocumentRef; }
-            }
-
-            public void RemoveSelectedDocument()
-            {
-                _component.RemoveSelectedAttachment();
-            }
-
-            public event EventHandler ChangeCommitted
-            {
-                add { _component.ChangeCommitted += value; }
-                remove { _component.ChangeCommitted -= value; }
-            }
-
-            public IDesktopWindow DesktopWindow
-            {
-                get { return _component.Host.DesktopWindow; }
-            }
-
-            #endregion
         }
 
         private readonly Mode _mode;
@@ -155,14 +107,10 @@ namespace ClearCanvas.Ris.Client.Adt
         private string _indication;
         private List<EnumValueInfo> _lateralityChoices;
 
-        private readonly OrderAttachmentTable _attachmentTable = new OrderAttachmentTable();
-        private OrderAttachmentSummary _selectedAttachment;
-        private event EventHandler _selectedAttachmentChanged;
-        private string _tempAttachmentFileName;
-
         private event EventHandler _changeCommitted;
 
-        private ToolSet _attachmentToolSet;
+        private MimeDocumentPreviewComponent _attachmentSummaryComponent;
+        private ChildComponentHost _orderAttachmentSummaryComponentHost;
 
         private OrderNoteSummaryComponent _noteSummaryComponent;
         private ChildComponentHost _orderNoteSummaryComponentHost;
@@ -178,10 +126,10 @@ namespace ClearCanvas.Ris.Client.Adt
         /// <summary>
         /// Constructor for creating a new order with attachments.
         /// </summary>
-        public OrderEntryComponent(EntityRef patientRef, IEnumerable<OrderAttachmentSummary> attachments)
+        public OrderEntryComponent(EntityRef patientRef, List<OrderAttachmentSummary> attachments)
             : this(patientRef, null, Mode.NewOrder)
         {
-            _attachmentTable.Items.AddRange(attachments);
+            _attachmentSummaryComponent.OrderAttachments = attachments;
         }
 
         /// <summary>
@@ -253,6 +201,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 }));
 
             _noteSummaryComponent = new OrderNoteSummaryComponent();
+            _attachmentSummaryComponent = new MimeDocumentPreviewComponent(true, true);
         }
 
         public override void Start()
@@ -298,20 +247,17 @@ namespace ClearCanvas.Ris.Client.Adt
                     });
             }
 
-            _attachmentToolSet = new ToolSet(new OrderEntryAttachmentToolExtensionPoint(), new OrderEntryAttachmentToolContext(this));
-
             InitializeTabPages();
 
             base.Start();
         }
 
-        public override void Stop()
-        {
-            _attachmentToolSet.Dispose();
-            base.Stop();
-        }
-
         #region Presentation Model
+
+        public ApplicationComponentHost OrderAttachmentSummaryHost
+        {
+            get { return _orderAttachmentSummaryComponentHost; }
+        }
 
         public ApplicationComponentHost OrderNoteSummaryHost
         {
@@ -677,7 +623,13 @@ namespace ClearCanvas.Ris.Client.Adt
             _consultantsActionModel.Add.Enabled = (_consultantToAdd != null);
             _consultantsActionModel.Delete.Enabled = (_selectedConsultant != null);
         }
-        
+
+        public event EventHandler ChangeCommitted
+        {
+            add { _changeCommitted += value; }
+            remove { _changeCommitted -= value; }
+        }
+
         public void Accept()
         {
             if (this.HasValidationErrors)
@@ -740,7 +692,7 @@ namespace ClearCanvas.Ris.Client.Adt
             requisition.OrderingPractitioner = _selectedOrderingPractitioner;
             requisition.RequestedProcedures = new List<ProcedureRequisition>(_proceduresTable.Items);
             requisition.CopiesToPractitioners = new List<ExternalPractitionerSummary>(_consultantsTable.Items);
-            requisition.Attachments = new List<OrderAttachmentSummary>(_attachmentTable.Items);
+            requisition.Attachments = new List<OrderAttachmentSummary>(_attachmentSummaryComponent.OrderAttachments);
             requisition.Notes = new List<OrderNoteDetail>(_noteSummaryComponent.Notes);
             return requisition;
         }
@@ -762,9 +714,7 @@ namespace ClearCanvas.Ris.Client.Adt
             _consultantsTable.Items.Clear();
             _consultantsTable.Items.AddRange(existingOrder.CopiesToPractitioners);
 
-            _attachmentTable.Items.Clear();
-            _attachmentTable.Items.AddRange(existingOrder.Attachments);
-
+            _attachmentSummaryComponent.OrderAttachments = existingOrder.Attachments;
             _noteSummaryComponent.Notes = existingOrder.Notes;
         }
         
@@ -810,125 +760,12 @@ namespace ClearCanvas.Ris.Client.Adt
             }
         }
 
-        #region Attachment Methods
-
-        public ITable Attachments
-        {
-            get { return _attachmentTable; }
-        }
-
-        public ActionModelRoot AttachmentActionModel
-        {
-            get { return ActionModelRoot.CreateModel(this.GetType().FullName, "orderentry-items-tools", _attachmentToolSet.Actions); }
-        }
-
-        public override IActionSet ExportedActions
-        {
-            get { return _attachmentToolSet.Actions; }
-        }
-
-        public ISelection SelectedAttachment
-        {
-            get { return new Selection(_selectedAttachment); }
-            set
-            {
-                if (value.Item != _selectedAttachment)
-                {
-                    _selectedAttachment = (OrderAttachmentSummary)value.Item;
-
-                    if (_selectedAttachment == null)
-                        ClearPreviewData();
-                    else 
-                        SetPreviewData(
-                            _selectedAttachment.Document.MimeType,
-                            _selectedAttachment.Document.FileExtension,
-                            _selectedAttachment.Document.BinaryDataRef);                    
-                }
-            }
-        }
-
-        public event EventHandler SelectedAttachmentChanged
-        {
-            add { _selectedAttachmentChanged += value; }
-            remove { _selectedAttachmentChanged -= value; }
-        }
-
-        public event EventHandler ChangeCommitted
-        {
-            add { _changeCommitted += value; }
-            remove { _changeCommitted -= value; }
-        }
-
-        public void RemoveSelectedAttachment()
-        {
-            if (_selectedAttachment == null)
-                return;
-
-            _attachmentTable.Items.Remove(_selectedAttachment);
-        }
-
-        public string TempFileName
-        {
-            get { return _tempAttachmentFileName; }
-        }
-
-        private void ClearPreviewData()
-        {
-            SetPreviewData(null, null, null);    
-        }
-
-        private void SetPreviewData(string mimeType, string fileExtension, EntityRef dataRef)
-        {
-            if (dataRef == null)
-            {
-                _tempAttachmentFileName = null;                    
-            }
-            else
-            {
-                string tempFile = TempFileManager.Instance.GetTempFile(dataRef);
-                if (String.IsNullOrEmpty(tempFile))
-                {
-                    try
-                    {
-                        Byte[] data = RetrieveAttachmentData(dataRef);
-                        _tempAttachmentFileName = TempFileManager.Instance.CreateTemporaryFile(dataRef, fileExtension, data);
-                    }
-                    catch (Exception e)
-                    {
-                        _tempAttachmentFileName = null;
-                        ExceptionHandler.Report(e, SR.ExceptionFailedToDisplayDocument, this.Host.DesktopWindow);
-                    }
-                }
-                else
-                {
-                    if (Equals(_tempAttachmentFileName, tempFile))
-                        return;  // nothing has changed
-
-                    _tempAttachmentFileName = tempFile;
-                }
-            }
-
-            EventsHelper.Fire(_selectedAttachmentChanged, this, EventArgs.Empty);
-        }
-
-        private static byte[] RetrieveAttachmentData(EntityRef dataRef)
-        {
-            byte[] data = null;
-
-            Platform.GetService<IMimeDocumentService>(
-                delegate(IMimeDocumentService service)
-                    {
-                        GetDocumentDataResponse response = service.GetDocumentData(new GetDocumentDataRequest(dataRef));
-                        data = response.BinaryData;
-                    });
-
-            return data;
-        }
-
-        #endregion
-
         private void InitializeTabPages()
         {
+            _orderAttachmentSummaryComponentHost = new ChildComponentHost(this.Host, _attachmentSummaryComponent);
+            _orderAttachmentSummaryComponentHost.StartComponent();
+            this.ChangeCommitted += delegate { _attachmentSummaryComponent.SaveChanges(); };
+
             _orderNoteSummaryComponentHost = new ChildComponentHost(this.Host, _noteSummaryComponent);
             _orderNoteSummaryComponentHost.StartComponent();
         }
