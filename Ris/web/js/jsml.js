@@ -151,18 +151,18 @@ var JSML = {
         function toObj(xmlNode)
         {
             var subElements = getChildNodes(xmlNode).select(function(n) { return n.nodeType == 1; });   // select element nodes
-            if(subElements.length > 0)  // node contains elements
+            var arrayAttr = xmlNode.attributes.getNamedItem("array");
+            
+            if(arrayAttr && arrayAttr.text == "true")
             {
-                // check if its an array
-                var arrayAttr = xmlNode.attributes.getNamedItem("array");
-                if(arrayAttr && arrayAttr.text == "true")
+                // collect sub-elements in an array
+                return subElements.reduce([], function(a, node) { a.push(toObj(node)); return a; });
+            }
+            else
+            {
+                if(subElements.length > 0)  // node contains elements
                 {
-                    // yes - then acollect them in an array
-                    return subElements.reduce([], function(a, node) { a.push(toObj(node)); return a; });
-                }
-                else
-                {
-                    // no - treat them as independent properties
+                    // treat sub-elements as independent properties
                     return subElements.reduce({},
                         function(o, n)
                         {
@@ -170,13 +170,13 @@ var JSML = {
                             return o;
                         });
                 }
-            }
-            else    // node contains text
-            {
-                // find the first non-empty text node
-                var textNodes = getChildNodes(xmlNode).select(function(n) { return n.nodeType==3 && n.nodeValue.match(/[^ \f\n\r\t\v]/); });
-                var value = textNodes.length > 0 ? textNodes[0].nodeValue : null;
-                return value ? parseValue(value) : null;
+                else    // node contains text
+                {
+                    // find the first non-empty text node
+                    var textNodes = getChildNodes(xmlNode).select(function(n) { return n.nodeType==3 && n.nodeValue.match(/[^ \f\n\r\t\v]/); });
+                    var value = textNodes.length > 0 ? textNodes[0].nodeValue : null;
+                    return value ? parseValue(value) : null;
+                }
             }
         }
         
