@@ -156,7 +156,6 @@
     <Compile Include="IApplicationRoot.cs" />
     <Compile Include="IBrowsable.cs" />
     <Compile Include="AttributeExtensionFilter.cs" />
-    <Compile Include="Auditing\Tests\AuditingTests.cs" />
     <Compile Include="Scripting\IExecutableScript.cs" />
     <Compile Include="Scripting\IScriptEngine.cs" />
     <Compile Include="Scripting\ScriptEngineFactory.cs" />
@@ -233,7 +232,6 @@
     </Compile>
     <Compile Include="UnknownServiceException.cs" />
     <Compile Include="Utilities\BackgroundTask.cs" />
-    <Compile Include="Utilities\BasicExtensionPointManager.cs" />
     <Compile Include="Utilities\BlockingQueue.cs" />
     <Compile Include="Utilities\CodeClock.cs" />
     <Compile Include="Utilities\CollectionEventArgs.cs" />

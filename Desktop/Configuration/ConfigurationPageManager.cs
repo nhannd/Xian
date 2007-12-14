@@ -29,12 +29,9 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Common;
-using System.Collections;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop.Configuration
 {
@@ -46,18 +43,12 @@ namespace ClearCanvas.Desktop.Configuration
 	{
 	}
 
-	internal class ConfigurationPageManager : BasicExtensionPointManager<IConfigurationPageProvider>
+	internal class ConfigurationPageManager
 	{
-		private List<IConfigurationPage> _pageList;
+		private IList<IConfigurationPage> _pageList;
 
 		public ConfigurationPageManager()
 		{
-			base.LoadExtensions();
-		}
-
-		public IEnumerable<IConfigurationPageProvider> Providers
-		{
-			get{ return base.Extensions; }
 		}
 
 		public IEnumerable<IConfigurationPage> Pages
@@ -66,18 +57,14 @@ namespace ClearCanvas.Desktop.Configuration
 			{
 				if (_pageList == null)
 				{
-					_pageList = new List<IConfigurationPage>();
-					foreach (IConfigurationPageProvider provider in Providers)
-						_pageList.AddRange(provider.GetPages());
+					List<IConfigurationPage> list = new List<IConfigurationPage>();
+					CollectionUtils.ForEach<IConfigurationPage>(new ConfigurationPageProviderExtensionPoint().CreateExtensions(),
+						delegate(IConfigurationPage page) { list.Add(page); });
+					_pageList = list.AsReadOnly();
 				}
 
-				return _pageList.AsReadOnly();
+				return _pageList;
 			}
-		}
-
-		protected override IExtensionPoint GetExtensionPoint()
-		{
-			return new ConfigurationPageProviderExtensionPoint();
 		}
 	}
 }

@@ -30,23 +30,27 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Common.Auditing
 {
-	internal class AuditManager : BasicExtensionPointManager<IAuditor>, IAuditor
+	internal class AuditManager : IAuditor
 	{
+		private readonly List<IAuditor> _auditors;
+
 		public AuditManager()
-			: base()
 		{
-			LoadExtensions();
+			_auditors = new List<IAuditor>();
+			CollectionUtils.ForEach<IAuditor>(new AuditorExtensionPoint().CreateExtensions(),
+				delegate(IAuditor auditor){ _auditors.Add(auditor);});
 		}
 
 		#region IAuditor members
 
 		public void Audit(IAuditMessage auditMessage)
 		{
-			foreach (IAuditor auditor in base.Extensions)
+			foreach (IAuditor auditor in _auditors)
 			{
 				try
 				{
@@ -60,10 +64,5 @@ namespace ClearCanvas.Common.Auditing
 		}
 
 		#endregion
-
-		protected override IExtensionPoint GetExtensionPoint()
-		{
-			return new AuditorExtensionPoint();
-		}
 	}
 }
