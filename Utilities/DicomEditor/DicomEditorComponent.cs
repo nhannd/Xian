@@ -314,6 +314,7 @@ namespace ClearCanvas.Utilities.DicomEditor
                 {
                     _loadedFiles[_position].DataSet[tag] = null;
                 }
+                _dirtyFlags[_position] = true;
             }
             else
             {
@@ -327,6 +328,7 @@ namespace ClearCanvas.Utilities.DicomEditor
                     {
                         _loadedFiles[i].DataSet[tag] = null;
                     }
+                    _dirtyFlags[i] = true;
                 }
             }
         }    
