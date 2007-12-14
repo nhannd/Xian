@@ -54,9 +54,10 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
     {
         private readonly ActivityStatus _activityStatus;
         private readonly DateTime _creationTime;
+        private readonly EntityRef _reportRef;
 
         /// <summary>
-        /// Constructor
+        /// Constructor for protocol item (no report)
         /// </summary>
         public WorklistItem(
             ProcedureStep procedureStep,
@@ -93,7 +94,52 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
             _creationTime = procedureStep.CreationTime;
         }
 
+        /// <summary>
+        /// Constructor for reporting item (with report)
+        /// </summary>
+        public WorklistItem(
+            ProcedureStep procedureStep,
+            RequestedProcedure requestedProcedure,
+            Order order,
+            Patient patient,
+            PatientProfile profile,
+            Report report,
+            PatientIdentifier mrn,
+            PersonName patientName,
+            string accessionNumber,
+            OrderPriority orderPriority,
+            PatientClassEnum patientClass,
+            string diagnosticServiceName,
+            string requestedProcedureName,
+            DateTime? scheduledStartTime,
+            ActivityStatus activityStatus)
+            : base(
+                procedureStep,
+                requestedProcedure,
+                order,
+                patient,
+                profile,
+                mrn,
+                patientName,
+                accessionNumber,
+                orderPriority,
+                patientClass,
+                diagnosticServiceName,
+                requestedProcedureName,
+                scheduledStartTime
+            )
+        {
+            _reportRef = report == null ? null : report.GetRef();
+            _activityStatus = activityStatus;
+            _creationTime = procedureStep.CreationTime;
+        }
+
         #region Public Properties
+
+        public EntityRef ReportRef
+        {
+            get { return _reportRef; }
+        }
 
         public ActivityStatus ActivityStatus
         {

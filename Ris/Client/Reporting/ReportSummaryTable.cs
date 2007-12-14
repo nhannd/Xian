@@ -56,9 +56,9 @@ namespace ClearCanvas.Ris.Client.Reporting
                         delegate(RequestedProcedureSummary summary) { return summary.Type.Name; });
                 }));
             this.Columns.Add(new TableColumn<ReportSummary, string>("Performed Location",
-                delegate(ReportSummary report) { return report.PerformedLocation; }));
+                delegate(ReportSummary report) { return "WHAT?"; }));
             this.Columns.Add(new TableColumn<ReportSummary, string>("Performed Date",
-                delegate(ReportSummary report) { return "TODO"; }));
+                delegate(ReportSummary report) { return "WHAT?"; }));
             this.Columns.Add(new TableColumn<ReportSummary, string>("Status",
                 delegate(ReportSummary report) { return report.ReportStatus.Value; }));
         }

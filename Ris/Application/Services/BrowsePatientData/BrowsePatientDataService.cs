@@ -136,7 +136,7 @@ namespace ClearCanvas.Ris.Application.Services.BrowsePatientData
                         PersistenceContext.GetBroker<IPreviewBroker>().QueryOrderData(patient),
                         delegate(Order order)
                         {
-                            return assembler.CreatePatientOrderData(order, this.PersistenceContext);
+                            return assembler.CreateOrderListItem(order, this.PersistenceContext);
                         }));
             }
             else if (request.QueryDetailLevel == PatientOrdersQueryDetailLevel.RequestedProcedure)
@@ -146,7 +146,7 @@ namespace ClearCanvas.Ris.Application.Services.BrowsePatientData
                         PersistenceContext.GetBroker<IPreviewBroker>().QueryRequestedProcedureData(patient),
                         delegate(RequestedProcedure rp)
                         {
-                            return assembler.CreatePatientOrderData(rp, this.PersistenceContext);
+                            return assembler.CreateOrderListItem(rp, this.PersistenceContext);
                         }));
             }
 
@@ -180,14 +180,28 @@ namespace ClearCanvas.Ris.Application.Services.BrowsePatientData
             return response;
         }
 
-        private ListReportsResponse ListReports(ListReportsRequest listReportsRequest)
+        private ListReportsResponse ListReports(ListReportsRequest request)
         {
-            throw new System.Exception("The method or operation is not implemented.");
+            BrowsePatientDataAssembler assembler = new BrowsePatientDataAssembler();
+
+            // TODO: this implementation is inefficient - need custom broker methods to do this efficiently
+            Patient patient = PersistenceContext.Load<Patient>(request.PatientRef, EntityLoadFlags.Proxy);
+            IList<RequestedProcedure> procedures = PersistenceContext.GetBroker<IPreviewBroker>().QueryRequestedProcedureData(patient);
+            return new ListReportsResponse(
+                CollectionUtils.Map<RequestedProcedure, ReportListItem>(
+                    procedures,
+                    delegate(RequestedProcedure rp)
+                    {
+                        return assembler.CreateReportListItem(rp, this.PersistenceContext);
+                    }));
         }
 
         private GetReportDetailResponse GetReportDetail(GetReportDetailRequest request)
         {
-            throw new System.Exception("The method or operation is not implemented.");
+            Report report = PersistenceContext.Load<Report>(request.ReportRef);
+
+            ReportAssembler assembler = new ReportAssembler();
+            return new GetReportDetailResponse(assembler.CreateReportDetail(report, PersistenceContext));
         }
     }
 }

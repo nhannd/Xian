@@ -29,56 +29,36 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Ris.Application.Common.Admin;
 
-namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
+namespace ClearCanvas.Ris.Application.Common
 {
     [DataContract]
-    public class ReportSummary : DataContractBase
+    public class ReportPartDetail : DataContractBase
     {
         [DataMember]
-        public EntityRef ReportRef;
+        public EntityRef ReportPartRef;
 
         [DataMember]
-        public EnumValueInfo ReportStatus;
+        public int Index;
 
         [DataMember]
-        public List<ReportPartSummary> Parts;
+        public string Content;
 
         [DataMember]
-        public PersonNameDetail Name;
+        public EnumValueInfo Status;
 
         [DataMember]
-        public CompositeIdentifierDetail Mrn;
+        public StaffSummary Supervisor;
 
         [DataMember]
-        public DateTime? DateOfBirth;
+        public StaffSummary InterpretedBy;
 
         [DataMember]
-        public CompositeIdentifierDetail VisitNumber;
+        public StaffSummary TranscribedBy;
 
         [DataMember]
-        public string AccessionNumber;
-
-        [DataMember]
-        public string DiagnosticServiceName;
-
-        [DataMember]
-        public List<RequestedProcedureSummary> Procedures;
-
-        [DataMember]
-        public string PerformedLocation;
-
-        public ReportPartSummary GetPart(int index)
-        {
-            if (this.Parts == null || index < 0)
-                return null;
-
-            return this.Parts[index];
-        }
+        public StaffSummary VerifiedBy;
     }
 }

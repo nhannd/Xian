@@ -100,7 +100,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         private readonly EntityRef _reportingStepRef;
         private int _reportPartIndex;
-        private ReportSummary _report;
+        private ReportDetail _report;
 
         private bool _canCompleteInterpretationAndVerify;
         private bool _canCompleteVerification;
@@ -138,7 +138,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                     LoadReportForEditResponse response = service.LoadReportForEdit(new LoadReportForEditRequest(_reportingStepRef));
                     _reportPartIndex = response.ReportPartIndex;
                     _report = response.Report;
-                    ReportPartSummary part = _report.GetPart(_reportPartIndex);
+                    ReportPartDetail part = _report.GetPart(_reportPartIndex);
                     if (part != null)
                         _supervisor = part.Supervisor;
 
@@ -419,10 +419,10 @@ namespace ClearCanvas.Ris.Client.Reporting
             switch (tag)
             {
                 case "Report":
-                    ReportPartSummary reportPart = _report.GetPart(0);
+                    ReportPartDetail reportPart = _report.GetPart(0);
                     return reportPart == null ? "" : reportPart.Content;
                 case "Addendum":
-                    ReportPartSummary addendumPart = _report.GetPart(_reportPartIndex);
+                    ReportPartDetail addendumPart = _report.GetPart(_reportPartIndex);
                     return addendumPart == null ? "" : addendumPart.Content;
                 case "Preview":
                 default:

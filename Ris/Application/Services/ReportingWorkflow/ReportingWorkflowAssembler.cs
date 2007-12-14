@@ -50,6 +50,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
                 domainItem.OrderRef,
                 domainItem.PatientRef,
                 domainItem.PatientProfileRef,
+                domainItem.ReportRef,
                 new MrnAssembler().CreateMrnDetail(domainItem.Mrn),
                 assembler.CreatePersonNameDetail(domainItem.PatientName),
                 domainItem.AccessionNumber,
@@ -63,81 +64,5 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
                 );
         }
 
-        public ReportSummary CreateReportSummary(RequestedProcedure rp, Report report, IPersistenceContext context)
-        {
-            ReportSummary summary = new ReportSummary();
-
-            RequestedProcedureAssembler rpAssembler = new RequestedProcedureAssembler();
-            if (report != null)
-            {
-                summary.ReportRef = report.GetRef();
-                summary.ReportStatus = EnumUtils.GetEnumValueInfo(report.Status, context);
-                summary.Parts = CollectionUtils.Map<ReportPart, ReportPartSummary, List<ReportPartSummary>>(report.Parts,
-                    delegate(ReportPart part)
-                    {
-                        return CreateReportPartSummary(part, context);
-                    });
-
-                // use all procedures attached to report
-                summary.Procedures = CollectionUtils.Map<RequestedProcedure, RequestedProcedureSummary>(report.Procedures,
-                    delegate(RequestedProcedure p) { return rpAssembler.CreateRequestedProcedureSummary(p, context); });
-            }
-            else
-            {
-                // use supplied procedure
-                summary.Procedures = CollectionUtils.Map<RequestedProcedure, RequestedProcedureSummary>(new RequestedProcedure[]{rp},
-                    delegate(RequestedProcedure p) { return rpAssembler.CreateRequestedProcedureSummary(p, context); });
-            }
-
-            Order order = rp.Order;
-            //TODO: choose the profile based on some location instead of visit assigning authority
-            PatientProfile profile = order.Patient.Profiles.Count == 1 ?
-                CollectionUtils.FirstElement<PatientProfile>(order.Patient.Profiles) :                
-                CollectionUtils.SelectFirst<PatientProfile>(order.Patient.Profiles,
-                delegate(PatientProfile thisProfile)
-                {
-                    return thisProfile.Mrn.AssigningAuthority == order.Visit.VisitNumber.AssigningAuthority;
-                });
-
-            PersonNameAssembler nameAssembler = new PersonNameAssembler();
-            summary.Name = nameAssembler.CreatePersonNameDetail(profile.Name);
-            summary.Mrn = new MrnAssembler().CreateMrnDetail(profile.Mrn);
-            summary.DateOfBirth = profile.DateOfBirth;
-
-            summary.VisitNumber = new VisitAssembler().CreateVisitNumberDetail(order.Visit.VisitNumber);
-            summary.AccessionNumber = order.AccessionNumber;
-            summary.DiagnosticServiceName = order.DiagnosticService.Name;
-            summary.PerformedLocation = "Not implemented";
-            //summary.PerformedDate = ;
-
-            return summary;
-        }
-
-        public ReportPartSummary CreateReportPartSummary(ReportPart reportPart, IPersistenceContext context)
-        {
-            ReportPartSummary summary = new ReportPartSummary();
-
-            summary.ReportPartRef = reportPart.GetRef();
-            summary.Index = reportPart.Index;
-            summary.Content = reportPart.Content;
-            summary.Status = EnumUtils.GetEnumValueInfo(reportPart.Status, context);
-
-            StaffAssembler staffAssembler = new StaffAssembler();
-
-            if (reportPart.Supervisor != null)
-                summary.Supervisor = staffAssembler.CreateStaffSummary(reportPart.Supervisor, context);
-
-            if (reportPart.Interpreter != null)
-                summary.InterpretedBy = staffAssembler.CreateStaffSummary(reportPart.Interpreter, context);
-
-            if (reportPart.Transcriber != null)
-                summary.TranscribedBy = staffAssembler.CreateStaffSummary(reportPart.Transcriber, context);
-
-            if (reportPart.Verifier != null)
-                summary.VerifiedBy = staffAssembler.CreateStaffSummary(reportPart.Verifier, context);
-            
-            
-            return summary;
-        }
     }
 }

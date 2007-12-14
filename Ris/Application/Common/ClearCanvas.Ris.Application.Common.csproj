@@ -80,8 +80,10 @@
     <Compile Include="Admin\ExternalPractitionerAdmin\UpdateExternalPractitionerRequest.cs" />
     <Compile Include="Admin\ExternalPractitionerAdmin\UpdateExternalPractitionerResponse.cs" />
     <Compile Include="AuthenticationAttribute.cs" />
+    <Compile Include="BrowsePatientData\ReportListItem.cs" />
     <Compile Include="BrowsePatientData\ListReportsResponse.cs" />
     <Compile Include="BrowsePatientData\ListReportsRequest.cs" />
+    <Compile Include="ReportDetail.cs" />
     <Compile Include="OrderNoteDetail.cs" />
     <Compile Include="ReportingWorkflow\CompleteInterpretationRequestBase.cs" />
     <Compile Include="ProtocollingWorkflow\DiscardOrderProtocolRequest.cs" />
@@ -366,7 +368,6 @@
     <Compile Include="DiagnosticServiceSummary.cs" />
     <Compile Include="ModalityProcedureStepSummary.cs" />
     <Compile Include="ModalityProcedureStepTypeDetail.cs" />
-    <Compile Include="ModalityWorkflow\DiagnosticServiceBreakdownSummary.cs" />
     <Compile Include="ModalityWorkflow\ListWorklistsRequest.cs" />
     <Compile Include="ModalityWorkflow\ListWorklistsResponse.cs" />
     <Compile Include="ModalityWorkflow\ResumeProcedureRequest.cs" />
@@ -490,8 +491,8 @@
     <Compile Include="ReportingWorkflow\GetPriorReportsResponse.cs" />
     <Compile Include="ReportingWorkflow\LoadReportForEditRequest.cs" />
     <Compile Include="ReportingWorkflow\LoadReportForEditResponse.cs" />
-    <Compile Include="ReportingWorkflow\ReportPartSummary.cs" />
-    <Compile Include="ReportingWorkflow\ReportSummary.cs" />
+    <Compile Include="ReportPartDetail.cs" />
+    <Compile Include="ReportSummary.cs" />
     <Compile Include="ReportingWorkflow\ReviseResidentReportRequest.cs" />
     <Compile Include="ReportingWorkflow\ReviseResidentReportResponse.cs" />
     <Compile Include="ReportingWorkflow\SaveReportRequest.cs" />

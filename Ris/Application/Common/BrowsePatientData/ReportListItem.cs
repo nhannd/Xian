@@ -29,37 +29,20 @@
 
 #endregion
 
+using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
-using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Ris.Application.Common.Admin;
 
-namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
+namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
 {
     [DataContract]
-    public class ReportPartSummary : DataContractBase
+    public class ReportListItem : OrderListItem
     {
-        [DataMember]
-        public EntityRef ReportPartRef;
+        #region Report
 
         [DataMember]
-        public int Index;
+        public EnumValueInfo ReportStatus;
 
-        [DataMember]
-        public string Content;
-
-        [DataMember]
-        public EnumValueInfo Status;
-
-        [DataMember]
-        public StaffSummary Supervisor;
-
-        [DataMember]
-        public StaffSummary InterpretedBy;
-
-        [DataMember]
-        public StaffSummary TranscribedBy;
-
-        [DataMember]
-        public StaffSummary VerifiedBy;
+        #endregion
     }
 }

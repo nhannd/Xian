@@ -44,6 +44,6 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
         public int ReportPartIndex;
 
         [DataMember]
-        public ReportSummary Report;
+        public ReportDetail Report;
     }
 }

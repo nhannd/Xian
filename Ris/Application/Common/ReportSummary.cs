@@ -31,42 +31,39 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
 
-namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
+namespace ClearCanvas.Ris.Application.Common
 {
     [DataContract]
-    public class DiagnosticServiceBreakdownSummary : DataContractBase
+    public class ReportSummary : DataContractBase
     {
-        public DiagnosticServiceBreakdownSummary(
-            string diagnosticServiceName,
-            string requestedProcedureName,
-            string modalityProcedureStepName,
-            string modalityProcedureStepStatus,
-            bool active)
-        {
-            this.DiagnosticServiceName = diagnosticServiceName;
-            this.RequestedProcedureName = requestedProcedureName;
-            this.ModalityProcedureStepName = modalityProcedureStepName;
-            this.ModalityProcedureStepStatus = modalityProcedureStepStatus;
-            this.Active = active;
-        }
+        [DataMember]
+        public EntityRef ReportRef;
+
+        [DataMember]
+        public EnumValueInfo ReportStatus;
+
+        [DataMember]
+        public PersonNameDetail Name;
+
+        [DataMember]
+        public CompositeIdentifierDetail Mrn;
+
+        [DataMember]
+        public DateTime? DateOfBirth;
+
+        [DataMember]
+        public CompositeIdentifierDetail VisitNumber;
+
+        [DataMember]
+        public string AccessionNumber;
 
         [DataMember]
         public string DiagnosticServiceName;
 
         [DataMember]
-        public string RequestedProcedureName;
-
-        [DataMember]
-        public string ModalityProcedureStepName;
-
-        [DataMember]
-        public string ModalityProcedureStepStatus;
-
-        [DataMember]
-        public bool Active;
+        public List<RequestedProcedureSummary> Procedures;
     }
 }

@@ -40,30 +40,47 @@ namespace ClearCanvas.Ris.Application.Services.BrowsePatientData
 {
     public class BrowsePatientDataAssembler
     {
-        public OrderListItem CreatePatientOrderData(Order order, IPersistenceContext context)
+        public OrderListItem CreateOrderListItem(Order order, IPersistenceContext context)
         {
             OrderListItem data = new OrderListItem();
 
-            UpdatePatientOrderData(data, order, context);
-            UpdatePatientOrderData(data, order.Visit, context);
+            UpdateListItem(data, order, context);
+            UpdateListItem(data, order.Visit, context);
 
             return data;
         }
 
-        public OrderListItem CreatePatientOrderData(RequestedProcedure rp, IPersistenceContext context)
+        public OrderListItem CreateOrderListItem(RequestedProcedure rp, IPersistenceContext context)
         {
             OrderListItem data = new OrderListItem();
 
-            UpdatePatientOrderData(data, rp.Order, context);
-            UpdatePatientOrderData(data, rp.Order.Visit, context);
-            UpdatePatientOrderData(data, rp, context);
+            UpdateListItem(data, rp.Order, context);
+            UpdateListItem(data, rp.Order.Visit, context);
+            UpdateListItem(data, rp, context);
+
+            return data;
+        }
+
+        public ReportListItem CreateReportListItem(RequestedProcedure rp, IPersistenceContext context)
+        {
+            ReportListItem data = new ReportListItem();
+
+            UpdateListItem(data, rp.Order, context);
+            UpdateListItem(data, rp.Order.Visit, context);
+            UpdateListItem(data, rp, context);
+
+            // a given procedure should only ever have 1 non-X report
+            Report report = CollectionUtils.SelectFirst(rp.Reports,
+                delegate(Report r) { return r.Status != ReportStatus.X; });
+
+            UpdateListItem(data, report, context);
 
             return data;
         }
 
         #region Private Helpers
 
-        private void UpdatePatientOrderData(OrderListItem data, Visit visit, IPersistenceContext context)
+        private void UpdateListItem(OrderListItem data, Visit visit, IPersistenceContext context)
         {
             FacilityAssembler facilityAssembler = new FacilityAssembler();
 
@@ -79,7 +96,7 @@ namespace ClearCanvas.Ris.Application.Services.BrowsePatientData
             data.PreadmitNumber = visit.PreadmitNumber;
         }
 
-        private void UpdatePatientOrderData(OrderListItem data, Order order, IPersistenceContext context)
+        private void UpdateListItem(OrderListItem data, Order order, IPersistenceContext context)
         {
             ExternalPractitionerAssembler practitionerAssembler = new ExternalPractitionerAssembler();
             DiagnosticServiceAssembler dsAssembler = new DiagnosticServiceAssembler();
@@ -99,7 +116,7 @@ namespace ClearCanvas.Ris.Application.Services.BrowsePatientData
             data.OrderScheduledStartTime = order.ScheduledStartTime;
         }
 
-        private void UpdatePatientOrderData(OrderListItem data, RequestedProcedure rp, IPersistenceContext context)
+        private void UpdateListItem(OrderListItem data, RequestedProcedure rp, IPersistenceContext context)
         {
             RequestedProcedureTypeAssembler rptAssembler = new RequestedProcedureTypeAssembler();
 
@@ -110,6 +127,10 @@ namespace ClearCanvas.Ris.Application.Services.BrowsePatientData
             data.ProcedureStatus = EnumUtils.GetEnumValueInfo(rp.Status, context);
         }
 
+        private void UpdateListItem(ReportListItem data, Report report, IPersistenceContext context)
+        {
+            data.ReportStatus = EnumUtils.GetEnumValueInfo(report.Status, context);
+        }
         #endregion
     }
 }

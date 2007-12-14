@@ -46,6 +46,7 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
             EntityRef orderRef,
             EntityRef patientRef,
             EntityRef profileRef,
+            EntityRef reportRef,
             CompositeIdentifierDetail mrn,
             PersonNameDetail name,
             string accessionNumber,
@@ -73,10 +74,15 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
                 scheduledStartTime
             )
         {
+            this.ReportRef = reportRef;
             this.ActivityStatus = activityStatus;
         }
 
         [DataMember]
+        public EntityRef ReportRef;
+
+        [DataMember]
         public EnumValueInfo ActivityStatus;
+
     }
 }

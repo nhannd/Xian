@@ -85,16 +85,6 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             return GetList<RequestedProcedure>(hqlQuery, parameters);
         }
 
-        public IList<ModalityProcedureStep> QueryModalityProcedureStepData(Patient patient)
-        {
-            string hqlQuery = _hqlSelectMPS + _hqlJoinRP + _hqlJoinOrder + _hqlCommonJoin + _hqlBaseCondition;
-
-            List<QueryParameter> parameters = new List<QueryParameter>();
-            parameters.Add(new QueryParameter("patient", patient));
-
-            return GetList<ModalityProcedureStep>(hqlQuery, parameters);
-        }
-
         #region Query helpers
 
         private IList<TItem> GetList<TItem>(string hqlQuery, List<QueryParameter> parameters)

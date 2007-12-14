@@ -38,8 +38,16 @@ namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
     [DataContract]
     public class ListReportsResponse : DataContractBase
     {
+        public ListReportsResponse(List<ReportListItem> listData)
+        {
+            this.Reports = listData;
+        }
+
         public ListReportsResponse()
         {
         }
+
+        [DataMember]
+        public List<ReportListItem> Reports;
     }
 }

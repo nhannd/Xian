@@ -29,20 +29,34 @@
 
 #endregion
 
-using ClearCanvas.Enterprise.Common;
+using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
+using ClearCanvas.Enterprise.Common;
 
-namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
+namespace ClearCanvas.Ris.Application.Common
 {
     [DataContract]
-    public class GetReportDetailResponse : DataContractBase
+    public class ReportDetail : DataContractBase
     {
-        public GetReportDetailResponse(ReportDetail report)
-        {
-            this.Report = report;
-        }
+        [DataMember]
+        public EntityRef ReportRef;
 
         [DataMember]
-        public ReportDetail Report;
+        public EnumValueInfo ReportStatus;
+
+        [DataMember]
+        public List<ReportPartDetail> Parts;
+
+        [DataMember]
+        public List<RequestedProcedureDetail> Procedures;
+
+        public ReportPartDetail GetPart(int index)
+        {
+            if (this.Parts == null || index < 0)
+                return null;
+
+            return this.Parts[index];
+        }
     }
 }

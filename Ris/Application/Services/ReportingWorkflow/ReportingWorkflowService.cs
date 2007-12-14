@@ -331,19 +331,11 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         public LoadReportForEditResponse LoadReportForEdit(LoadReportForEditRequest request)
         {
             ReportingProcedureStep step = PersistenceContext.Load<ReportingProcedureStep>(request.ReportingStepRef, EntityLoadFlags.CheckVersion);
-            ReportingWorkflowAssembler assembler = new ReportingWorkflowAssembler();
+            ReportAssembler assembler = new ReportAssembler();
 
             LoadReportForEditResponse response = new LoadReportForEditResponse();
-            if (step.ReportPart == null)
-            {
-                response.Report = assembler.CreateReportSummary(step.RequestedProcedure, null, this.PersistenceContext);
-                response.ReportPartIndex = -1;
-            }
-            else
-            {
-                response.Report = assembler.CreateReportSummary(step.RequestedProcedure, step.ReportPart.Report, this.PersistenceContext);
-                response.ReportPartIndex = step.ReportPart.Index;
-            }
+            response.Report = assembler.CreateReportDetail(step.ReportPart.Report, this.PersistenceContext);
+            response.ReportPartIndex = step.ReportPart.Index;
 
             return response;
         }
@@ -390,7 +382,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             }
 
             // assemble results
-            ReportingWorkflowAssembler assembler = new ReportingWorkflowAssembler();
+            ReportAssembler assembler = new ReportAssembler();
             List<ReportSummary> listSummary = CollectionUtils.Map<Report, ReportSummary>(priorReports,
                 delegate(Report report)
                 {
