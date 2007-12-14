@@ -94,34 +94,34 @@ function createProceduresTable(htmlTable)
 {
 	var ordersTable = Table.createTable(htmlTable, { editInPlace: false, flow: false },
 		 [
-			{   label: "Requested Procedure",
+			{   label: "Procedure",
 				cellType: "text",
-				getValue: function(item) { return item.RequestedProcedureName; }
+				getValue: function(item) { return item.ProcedureType.Name; }
 			},
 			{   label: "Schedule",
 				cellType: "text",
 				getValue: function(item) 
 				{ 
-					return item.RequestedProcedureScheduledStartTime == null 
-					? "Requested for " + getDescriptiveTime(item.SchedulingRequestDateTime) 
-					: getDescriptiveTime(item.RequestedProcedureScheduledStartTime); 
+					return item.ProcedureScheduledStartTime == null 
+					? "Requested for " + getDescriptiveTime(item.SchedulingRequestTime) 
+					: getDescriptiveTime(item.ProcedureScheduledStartTime); 
 				}
 			},
 			{   label: "Status",
 				cellType: "text",
 				getValue: function(item) 
 				{ 
-					if (item.RequestedProcedureScheduledStartTime == null)
-						return "UnScheduled";
+					if (item.ProcedureScheduledStartTime == null)
+						return "Unscheduled";
 
-					if (item.RequestedProcedureStatus.Code == 'SC' && item.RequestedProcedureCheckInTime != null)
+					if (item.ProcedureStatus.Code == 'SC' && item.ProcedureCheckInTime != null)
 						return "Checked-In";
 					
-					if ((item.RequestedProcedureStatus.Code == 'IP' || item.RequestedProcedureStatus.Code == 'CM') 
-						&& item.RequestedProcedureCheckOutTime != null)
+					if ((item.ProcedureStatus.Code == 'IP' || item.ProcedureStatus.Code == 'CM') 
+						&& item.ProcedureCheckOutTime != null)
 						return "Completed";
 
-					return  item.RequestedProcedureStatus.Value; 
+					return  item.ProcedureStatus.Value; 
 				}
 			},
 			{   label: "Insurance",
@@ -130,15 +130,14 @@ function createProceduresTable(htmlTable)
 			},
 			{   label: "Ordering Facility",
 				cellType: "text",
-				getValue: function(item) { return item.OrderingFacilityName; }
+				getValue: function(item) { return item.OrderingFacility.Code; }
 			},
 			{   label: "Ordering Physician",
 				cellType: "text",
-				getValue: function(item) { return Ris.formatPersonName(item.OrderingPractitionerName); }
+				getValue: function(item) { return Ris.formatPersonName(item.OrderingPractitioner.Name); }
 			}
 		 ]);
 		 
-	ordersTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
 	ordersTable.rowCycleClassNames = ["row1", "row0"];
 	
 	return ordersTable;
@@ -150,19 +149,19 @@ function createDiagnosticServiceBreakdownTable(htmlTable)
 		 [
 			{   label: "Diagnostic Service",
 				cellType: "text",
-				getValue: function(item) { return item.DiagnosticServiceName; }
+				getValue: function(item) { return item.DiagnosticService; }
 			},
 			{   label: "Requested Procedure",
 				cellType: "text",
-				getValue: function(item) { return item.RequestedProcedureName; }
+				getValue: function(item) { return item.Procedure; }
 			},
 			{   label: "Step",
 				cellType: "text",
-				getValue: function(item) { return item.ModalityProcedureStepName; }
+				getValue: function(item) { return item.Step; }
 			},
 			{   label: "Status",
 				cellType: "text",
-				getValue: function(item) { return item.ModalityProcedureStepStatus.Value; }
+				getValue: function(item) { return item.State; }
 			},
 			{   label: "Active",
 				cellType: "text",
@@ -182,7 +181,7 @@ function orderRequestScheduledDateComparison(data1, data2)
 
 function procedureScheduledDateComparison(data1, data2)
 {
-	return Date.compareMoreRecent(data1.RequestedProcedureScheduledStartTime, data2.RequestedProcedureScheduledStartTime);
+	return Date.compareMoreRecent(data1.ProcedureScheduledStartTime, data2.ProcedureScheduledStartTime);
 }
 
 // group patientOrderData by AccessionNumber
@@ -212,15 +211,15 @@ function groupDataToOrders(listData)
 	    var thisOrder = orders[j];
 		var firstData = thisOrder.values[0];
 
-        var listRequestedProcedureName = thisOrder.values.map(function(item) { return item.RequestedProcedureName; });
+        var listRequestedProcedureName = thisOrder.values.map(function(item) { return item.ProcedureName; });
         
         thisOrder.AccessionNumber = firstData.AccessionNumber;
         thisOrder.CombineRequestedProcedureName = String.combine(listRequestedProcedureName, "/");
         thisOrder.OrderScheduledStartTime = firstData.OrderScheduledStartTime;
         thisOrder.OrderStatus = firstData.OrderStatus;
         thisOrder.Insurance = "";
-        thisOrder.OrderingFacilityName = firstData.OrderingFacilityName;
-        thisOrder.OrderingPractitionerName = firstData.OrderingPractitionerName;
+        thisOrder.OrderingFacility = firstData.OrderingFacility;
+        thisOrder.OrderingPractitioner = firstData.OrderingPractitioner;
 	}
 
     return orders;
