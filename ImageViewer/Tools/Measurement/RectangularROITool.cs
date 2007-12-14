@@ -56,7 +56,6 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
     [ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
     public class RectangularROITool : MouseImageViewerTool
 	{
-		private static readonly string[] _disallowedModalities = { "CR", "DX", "MG" };
 		private RoiGraphic _createGraphic;
 
 		public RectangularROITool()
@@ -118,7 +117,14 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			if (_createGraphic != null)
 			{
 				if (_createGraphic.Stop(mouseInformation))
+				{
+					IOverlayGraphicsProvider image = (IOverlayGraphicsProvider)mouseInformation.Tile.PresentationImage;
+
+					InsertRemoveGraphicUndoableCommand command = InsertRemoveGraphicUndoableCommand.GetRemoveCommand(image.OverlayGraphics, _createGraphic);
+					command.Name = "Create Rectangle";
+					_createGraphic.ImageViewer.CommandHistory.AddCommand(command);
 					return true;
+				}
 			}
 
 			_createGraphic = null;
@@ -143,17 +149,6 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 				return _createGraphic.GetCursorToken(point);
 
 			return null;
-		}
-
-		private bool PixelSpacingNotAllowed(ImageSop imageSop)
-		{
-			foreach (string modality in _disallowedModalities)
-			{
-				if (String.Compare(modality, imageSop.Modality, true) == 0)
-					return true;
-			}
-
-			return false;
 		}
 
 		private void OnRoiChanged(object sender, EventArgs e)

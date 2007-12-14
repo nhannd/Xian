@@ -30,7 +30,6 @@
 #endregion
 
 using System.Drawing;
-using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.InputManagement;
 using ClearCanvas.ImageViewer.Mathematics;
@@ -51,13 +50,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		{
 			base.LastPoint = this.StandardStatefulGraphic.SpatialTransform.ConvertToSource(mouseInformation.Location);
 			_startPoint = _currentPoint = base.LastPoint;
-
-			if (this.SupportUndo)
-			{
-				base.Command = new PositionGraphicCommand(base.StatefulGraphic);
-				base.Command.Name = SR.CommandMoveGraphic;
-				base.Command.BeginState = (base.StatefulGraphic as IMemorable).CreateMemento();
-			}
 
 			return true;
 		}
@@ -85,12 +77,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		public override void Cancel()
 		{
-			if (this.SupportUndo && _startPoint != _currentPoint)
-			{
-				base.Command.EndState = (base.StatefulGraphic as IMemorable).CreateMemento();
-				this.StandardStatefulGraphic.ImageViewer.CommandHistory.AddCommand(base.Command);
-			}
-
 			this.StandardStatefulGraphic.State = this.StandardStatefulGraphic.CreateFocussedSelectedState();
 		}
 

@@ -610,6 +610,15 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No renderer plugins exist; defaulting to GDI renderer..
+        /// </summary>
+        public static string MessageNoRendererPluginsExist {
+            get {
+                return ResourceManager.GetString("MessageNoRendererPluginsExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to -.
         /// </summary>
         public static string SeparatorPatientDescription {

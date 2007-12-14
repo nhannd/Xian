@@ -63,22 +63,11 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			base.LastPoint = this.InteractiveGraphic.SpatialTransform.ConvertToSource(mouseInformation.Location);
 			_startPoint = _currentPoint = base.LastPoint;
 
-			if (this.SupportUndo)
-			{
-				base.Command = new PositionGraphicCommand(this.InteractiveGraphic);
-				base.Command.Name = SR.CommandMoveControlPoint;
-				PositionGraphicCommand cmd = base.Command as PositionGraphicCommand;
-				cmd.BeginState = this.InteractiveGraphic.CreateMemento();
-			}
-
 			return true;
 		}
 
 		public override bool Track(IMouseInformation mouseInformation)
 		{
-			if (base.Command == null)
-				return false;
-
 			_currentPoint = this.InteractiveGraphic.SpatialTransform.ConvertToSource(mouseInformation.Location);
 			this.InteractiveGraphic.CoordinateSystem = CoordinateSystem.Source;
 			this.InteractiveGraphic.ControlPoints[_controlPointIndex] = _currentPoint;
@@ -98,14 +87,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		public override void Cancel()
 		{
-			//only save undo info if the point moved
-			if (this.SupportUndo && _startPoint != _currentPoint)
-			{
-				PositionGraphicCommand cmd = base.Command as PositionGraphicCommand;
-				cmd.EndState = this.InteractiveGraphic.CreateMemento();
-				this.InteractiveGraphic.ImageViewer.CommandHistory.AddCommand(base.Command);
-			}
-
 			this.StandardStatefulGraphic.State = this.StandardStatefulGraphic.CreateFocussedSelectedState();
 		}
 

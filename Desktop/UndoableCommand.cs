@@ -36,11 +36,34 @@ namespace ClearCanvas.Desktop
 	/// <summary>
 	/// A command that facilitates undo/redo using the <b>Memento</b> design pattern.
 	/// </summary>
+	/// <remarks>
+	/// <para>
+	/// It is common for the framework to check the equality of the 
+	/// <see cref="BeginState"/> and <see cref="EndState"/> mementos in order to decide whether or not an
+	/// <see cref="UndoableCommand"/> should be added to a <see cref="CommandHistory"/>
+	/// object.  Therefore, it is good practice to override and implement the
+	/// <see cref="object.Equals(object)"/> method on memento classes.
+	/// </para>
+	/// </remarks>
+	/// <seealso cref="CommandHistory"/>
+	/// <seealso cref="IMemorable"/>
 	public class UndoableCommand : Command
 	{
 		private IMemorable _originator;
 		private object _beginState;
 		private object _endState;
+
+		/// <summary>
+		/// Default constructor for subclasses.
+		/// </summary>
+		/// <remarks>
+		/// Subclasses that use this constructor <b>must</b> override
+		/// <see cref="Execute"/> and <see cref="Unexecute"/>, otherwise
+		/// the command will do nothing (because <see cref="Originator"/> will be null).
+		/// </remarks>
+		protected UndoableCommand()
+		{
+		}
 
 		/// <summary>
 		/// Constructor.

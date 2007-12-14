@@ -29,12 +29,11 @@
 
 #endregion
 
-using ClearCanvas.Common;
-using ClearCanvas.Desktop;
+using System;
 
 namespace ClearCanvas.ImageViewer.Graphics
 {
-	internal class SpatialTransformMemento
+	internal class SpatialTransformMemento : IEquatable<SpatialTransformMemento>
 	{
 		private float _scale;
 		private float _translationX;
@@ -83,20 +82,6 @@ namespace ClearCanvas.ImageViewer.Graphics
 			set { _rotationXY = value; }
 		}
 
-		public override bool Equals(object obj)
-		{
-			Platform.CheckForNullReference(obj, "obj");
-			SpatialTransformMemento memento = obj as SpatialTransformMemento;
-			Platform.CheckForInvalidCast(memento, "obj", "SpatialTransformMemento");
-
-			return (this.Scale == memento.Scale &&
-					this.TranslationX == memento.TranslationX &&
-					this.TranslationY == memento.TranslationY &&
-					this.FlipY == memento.FlipY &&
-					this.FlipX == memento.FlipX &&
-					this.RotationXY == memento.RotationXY);
-		}
-
 		public override int GetHashCode()
 		{
 			// Normally, you would calculate a hash code dependent on immutable
@@ -106,5 +91,30 @@ namespace ClearCanvas.ImageViewer.Graphics
 			// were ever put in a hashtable.  We are in fact interested in the instance.
 			return base.GetHashCode();
 		}
+
+		public override bool Equals(object obj)
+		{
+			if (obj == this)
+				return true;
+
+			return this.Equals(obj as SpatialTransformMemento);
+		}
+
+		#region IEquatable<SpatialTransformMemento> Members
+
+		public bool Equals(SpatialTransformMemento other)
+		{
+			if (other == null)
+				return false;
+
+			return (this.Scale == other.Scale &&
+					this.TranslationX == other.TranslationX &&
+					this.TranslationY == other.TranslationY &&
+					this.FlipY == other.FlipY &&
+					this.FlipX == other.FlipX &&
+					this.RotationXY == other.RotationXY);
+		}
+
+		#endregion
 	}
 }

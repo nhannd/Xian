@@ -34,7 +34,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer
 {
@@ -67,7 +66,7 @@ namespace ClearCanvas.ImageViewer
 		private ImageBox _selectedImageBox;
 		private int _rows;
 		private int _columns;
-
+		private bool _enabled = true;
 		private event EventHandler _drawingEvent;
 		private event EventHandler _layoutCompletedEvent;
 
@@ -182,6 +181,15 @@ namespace ClearCanvas.ImageViewer
 
 				_selectedImageBox = value as ImageBox;
 			}
+		}
+
+		/// <summary>
+		/// Gets or sets whether the workspace is currently enabled.
+		/// </summary>
+		public bool Enabled
+		{
+			get { return _enabled; }
+			set { _enabled = value; }
 		}
 
 		#endregion

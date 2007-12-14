@@ -32,7 +32,6 @@
 using System;
 using System.Drawing.Drawing2D;
 using ClearCanvas.Common;
-using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Graphics
 {
@@ -160,12 +159,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// <returns></returns>
 		public override object CreateMemento()
 		{
-			ImageSpatialTransformMemento memento = new ImageSpatialTransformMemento();
-
-			memento.ScaleToFit = this.ScaleToFit;
-			memento.SpatialTransformMemento = base.CreateMemento();
-
-			return memento;
+			return new ImageSpatialTransformMemento(ScaleToFit, base.CreateMemento());
 		}
 
 		/// <summary>

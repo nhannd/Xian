@@ -34,14 +34,9 @@ using System.Collections.Generic;
 using System.Text;
 
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
-using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.ImageViewer;
-using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.ImageViewer.Graphics;
-using ClearCanvas.ImageViewer.InteractiveGraphics;
 
 namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
@@ -50,7 +45,6 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 	[MenuAction("delete", "basicgraphic-menu/DeleteGraphicTool", "Delete")]
 	[Tooltip("delete", "DeleteGraphicTool")]
-	//[IconSet("delete", IconScheme.Colour, "Icons.DeleteGraphicSmall.png", "DeleteGraphicSmall.png", "DeleteGraphicSmall.png")]
 
 	[ExtensionOf(typeof(GraphicToolExtensionPoint))]
 
@@ -58,11 +52,6 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 	{
 		public DeleteGraphicTool()
 		{
-		}
-
-		public override void Initialize()
-		{
-			base.Initialize();
 		}
 
 		public void Delete()
@@ -74,11 +63,16 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			if (image == null)
 				return;
 
-			PositionGraphicCommand command = new PositionGraphicCommand(graphic, PositionGraphicCommand.CreateOperation.Delete);
+			int restoreIndex = image.OverlayGraphics.IndexOf(graphic);
+			if (restoreIndex < 0)
+				return;
+
+			image.OverlayGraphics.Remove(graphic);
+			graphic.ParentPresentationImage.Draw();
+
+			InsertRemoveGraphicUndoableCommand command = InsertRemoveGraphicUndoableCommand.GetInsertCommand(image.OverlayGraphics, graphic, restoreIndex);
 			command.Name = SR.NameDeleteGraphic;
 			this.Context.Graphic.ImageViewer.CommandHistory.AddCommand(command);
-			graphic.Visible = false;
-			graphic.Draw();
 		}
 	}
 }

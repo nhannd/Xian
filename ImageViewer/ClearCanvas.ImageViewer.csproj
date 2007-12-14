@@ -116,8 +116,6 @@
     <Compile Include="Annotations\IAnnotationResourceResolver.cs" />
     <Compile Include="Graphics\GraphicTool.cs" />
     <Compile Include="Imaging\VoiLutMemento.cs" />
-    <Compile Include="InputManagement\BeforeFindMouseButtonHandlerEventArgs.cs" />
-    <Compile Include="InputManagement\BeforeFindMouseWheelHandlerEventArgs.cs" />
     <Compile Include="Annotations\Dicom\Tests\DicomBasicFormatterTests.cs" />
     <Compile Include="Annotations\Dicom\Tests\DicomFilteredAnnotationLayoutStoreTests.cs" />
     <Compile Include="Annotations\IAnnotationLayoutProvider.cs" />
@@ -193,6 +191,9 @@
     <Compile Include="Imaging\VoiLutLinearBase.cs" />
     <Compile Include="Imaging\VoiLutManager.cs" />
     <Compile Include="InputManagement\KeyboardButtonDownPreview.cs" />
+    <Compile Include="InputManagement\MouseCaptureChangedEventArgs.cs" />
+    <Compile Include="InteractiveGraphics\PointMemento.cs" />
+    <Compile Include="InteractiveGraphics\PointsMemento.cs" />
     <Compile Include="PresentationImageChangedEventArgs.cs" />
     <Compile Include="PresentationImageFactory.cs" />
     <Compile Include="Rendering\GDIRenderer.cs" />
@@ -323,9 +324,7 @@
     <Compile Include="InteractiveGraphics\MoveControlPointGraphicState.cs" />
     <Compile Include="InteractiveGraphics\MoveGraphicState.cs" />
     <Compile Include="InteractiveGraphics\PolyLineGraphic.cs" />
-    <Compile Include="InteractiveGraphics\PointMemento.cs" />
-    <Compile Include="InteractiveGraphics\PointsMemento.cs" />
-    <Compile Include="InteractiveGraphics\PositionGraphicCommand.cs" />
+    <Compile Include="Graphics\InsertRemoveGraphicUndoableCommand.cs" />
     <Compile Include="InteractiveGraphics\RectangleMemento.cs" />
     <Compile Include="InteractiveGraphics\ROIGraphic.cs" />
     <Compile Include="InteractiveGraphics\StatefulCompositeGraphic.cs" />
@@ -413,6 +412,7 @@
     <Compile Include="InputManagement\TileController.cs" />
     <Compile Include="TileMemento.cs" />
     <Compile Include="TileSelectedEventArgs.cs" />
+    <Compile Include="DrawableUndoableCommand.cs" />
     <Compile Include="ViewerShortcutManager.cs" />
   </ItemGroup>
   <ItemGroup>

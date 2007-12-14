@@ -69,13 +69,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			// We're done creating
 			else
 			{
-				if (this.SupportUndo)
-				{
-					base.Command = new PositionGraphicCommand(this.InteractiveGraphic, PositionGraphicCommand.CreateOperation.Create);
-					base.Command.Name = SR.CommandCreateRectangleGraphic;
-					this.InteractiveGraphic.ImageViewer.CommandHistory.AddCommand(base.Command);
-				}
-
 				this.StandardStatefulGraphic.State = this.StandardStatefulGraphic.CreateFocussedSelectedState();
 			}
 

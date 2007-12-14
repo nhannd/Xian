@@ -155,36 +155,14 @@ namespace ClearCanvas.ImageViewer.InputManagement
 					_captureMouseWheelHandler.Stop();
 				}
 
-				IImageViewer previousViewer = null;
-				if (_ownerTile != null)
-					previousViewer = _ownerTile.ImageViewer;
-
 				_captureMouseWheelHandler = captureMouseWheelHandler;
-				_ownerTile = (_captureMouseWheelHandler != null) ? ownerTile : null;
-
-				IImageViewer currentViewer = null;
-				if (_ownerTile != null)
-					currentViewer = _ownerTile.ImageViewer;
-
-				if (previousViewer != null && previousViewer != currentViewer)
-				{
-					//Trace.WriteLine("Notifying subscribers active mouse wheel handler is null"); 
-					previousViewer.EventBroker.OnActiveMouseWheelHandlerChanged(null);
-				}
-				else if (currentViewer != null)
-				{
-					//Trace.WriteLine("Notifying subscribers active mouse wheel handler changed"); 
-					currentViewer.EventBroker.OnActiveMouseWheelHandlerChanged(_captureMouseWheelHandler);
-				}
 
 				if (_captureMouseWheelHandler == null)
 				{
-					//Trace.WriteLine("Stopping mouse wheel handler timer"); 
 					_stopTimer = true;
 					return;
 				}
 
-				//Trace.WriteLine("Starting mouse wheel handler (+timer)");
 				_captureMouseWheelHandler.Start();
 
 				_stopTimer = false;
@@ -221,6 +199,7 @@ namespace ClearCanvas.ImageViewer.InputManagement
 		private Point _currentMousePoint;
 		private Rectangle _tileClientRectangle;
 
+		private UndoableCommand _command;
 		private IMouseButtonHandler _captureHandler;
 		private CursorToken _cursorToken;
 		
@@ -260,13 +239,40 @@ namespace ClearCanvas.ImageViewer.InputManagement
 				if (_captureHandler == value)
 					return;
 
+				// Developer's note: make sure your memento classes override and implement
+				// object.Equals so that unnecessary commands don't get added to the command
+				// history.
+
+				// Also, note that the begin state will be captured after IMouseButtonHandler.Start
+				// has been called, so if your originator object is sensitive to a change 
+				// that occurs in the Start() method, store it as a variable and return it
+				// from CreateMemento.  The end state will be captured after the last call
+				// to IMouseButtonHandler.Stop (or Cancel), so always ensure the returned 
+				// end state is accurate.
+
+				if (_captureHandler != null && _captureHandler is IMemorable)
+				{
+					_command.EndState = ((IMemorable) _captureHandler).CreateMemento();
+					if (_command.BeginState != null && !_command.BeginState.Equals(_command.EndState))
+						_tile.ImageViewer.CommandHistory.AddCommand(_command);
+					
+					_command = null;
+				}
+
 				_captureHandler = value;
+
+				if (_captureHandler != null && _captureHandler is IMemorable)
+				{
+					IMemorable originator = (IMemorable) _captureHandler;
+					_command = new DrawableUndoableCommand(_tile, originator);
+					_command.BeginState = originator.CreateMemento();
+				}
+				
 				//fire our own event first, so the view can release 'real' capture 
 				// before other notifications go out through the event broker.
 				EventsHelper.Fire(_captureChangingEvent, this, new ItemEventArgs<IMouseButtonHandler>(_captureHandler));
 
-				if (_tile.ImageViewer != null)
-					_tile.ImageViewer.EventBroker.OnActiveMouseButtonHandlerChanged(_captureHandler);
+				_tile.ImageViewer.EventBroker.OnMouseCaptureChanged(new MouseCaptureChangedEventArgs(_tile, _captureHandler != null));
 			}
 		}
 
@@ -340,12 +346,10 @@ namespace ClearCanvas.ImageViewer.InputManagement
 
 		private bool ProcessMouseWheelMessage(MouseWheelMessage wheelMessage)
 		{
-			ReleaseCapture(true);
-
-			BeforeFindMouseWheelHandlerEventArgs args = new BeforeFindMouseWheelHandlerEventArgs(_tile);
-			_tile.ImageViewer.EventBroker.OnBeforeFindMouseWheelHandler(args);
-			if (args.Cancelled)
+			if (!_tile.Enabled)
 				return true;
+
+			ReleaseCapture(true);
 
 			IMouseWheelHandler handler = _shortcutManager.GetMouseWheelHandler(wheelMessage.Shortcut);
 			if (handler != null)
@@ -391,12 +395,7 @@ namespace ClearCanvas.ImageViewer.InputManagement
 
 			_startMousePoint = buttonMessage.Location;
 
-			if (_tile.PresentationImage == null)
-				return true;
-
-			BeforeFindMouseButtonHandlerEventArgs args = new BeforeFindMouseButtonHandlerEventArgs(_tile);
-			_tile.ImageViewer.EventBroker.OnBeforeFindMouseButtonHandler(args);
-			if (args.Cancelled)
+			if (_tile.PresentationImage == null || !_tile.Enabled)
 				return true;
 
 			//give unfocused graphics a chance to focus (in the case of going straight from context menu to a graphic).
@@ -499,9 +498,7 @@ namespace ClearCanvas.ImageViewer.InputManagement
 				}
 			}
 
-			BeforeFindMouseButtonHandlerEventArgs args = new BeforeFindMouseButtonHandlerEventArgs(_tile);
-			_tile.ImageViewer.EventBroker.OnBeforeFindMouseButtonHandler(args);
-			if (args.Cancelled)
+			if (!_tile.Enabled)
 				return true;
 
 			IMouseButtonHandler handler = FindHandlingGraphic(TrackHandler);

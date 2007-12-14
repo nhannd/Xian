@@ -77,7 +77,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 				this.ROIGraphic.Callout.Draw();
 
 				_childGraphic = this.ROIGraphic.Roi;
-				_childGraphic.State.SupportUndo = false;
 				_childGraphic.StateChanged += new EventHandler<GraphicStateChangedEventArgs>(OnRoiStateChanged);
 			}
 
@@ -106,18 +105,13 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		private void OnRoiStateChanged(object sender, GraphicStateChangedEventArgs e)
 		{
 			// When the child ROI graphic transitions to the focus selected state,
-			// it cause "this" to transition to selected state too.
+			// it causes "this" to transition to selected state too.
 			if (e.NewState is FocussedSelectedGraphicState)
 			{
 				_childGraphic.StateChanged -= new EventHandler<GraphicStateChangedEventArgs>(OnRoiStateChanged);
 				_childGraphic = null;
 
 				this.ROIGraphic.State = this.ROIGraphic.CreateFocussedSelectedState();
-
-				// We're done creating, so create a command
-				this.Command = new PositionGraphicCommand(this.ROIGraphic, PositionGraphicCommand.CreateOperation.Create);
-				this.Command.Name = SR.CommandCreateROIGraphic;
-				this.ROIGraphic.ImageViewer.CommandHistory.AddCommand(base.Command);
 			}
 		}
 

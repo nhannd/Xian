@@ -35,12 +35,24 @@ namespace ClearCanvas.Desktop
 	/// Allows object state to be captured and restored.
 	/// </summary>
 	/// <remarks>
+	/// <para>
 	/// <see cref="IMemorable"/> can be implemented by classes that require support
 	/// for the <i>Memento</i> design pattern--<see cref="IMemorable"/> acts as the
 	/// <i>Originator</i>.  Typically, the <see cref="IMemorable"/>
 	/// interface is used in conjunction with <see cref="UndoableCommand"/> 
 	/// to provide undo/redo support.
+	/// </para>
+	/// <para>
+	///	It is common in the framework to use a 'begin state' and 'end state' memento
+	/// that comprise an <see cref="UndoableCommand"/>.  It is also common to check
+	/// the equality of the two mementos in order to decide whether or not an
+	/// <see cref="UndoableCommand"/> should be added to a <see cref="CommandHistory"/>
+	/// object.  Therefore, it is good practice to override and implement the
+	/// <see cref="object.Equals(object)"/> method on memento classes.
+	/// </para>
 	/// </remarks>
+	/// <seealso cref="UndoableCommand"/>
+	/// <seealso cref="CommandHistory"/>
 	public interface IMemorable
 	{
 		/// <summary>

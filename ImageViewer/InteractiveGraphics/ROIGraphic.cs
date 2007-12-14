@@ -32,6 +32,7 @@
 using System;
 using System.Diagnostics;
 using System.Drawing;
+using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
@@ -62,6 +63,43 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		  IContextMenuProvider,
 		  IMemorable
 	{
+		private class RoiGraphicMemento : IEquatable<RoiGraphicMemento>
+		{
+			public readonly object RoiMemento;
+			public readonly object CalloutMemento;
+
+			public RoiGraphicMemento(object roiMemento, object calloutMemento)
+			{
+				RoiMemento = roiMemento;
+				CalloutMemento = calloutMemento;
+			}
+
+			public override int GetHashCode()
+			{
+				return base.GetHashCode();
+			}
+
+			public override bool Equals(object obj)
+			{
+				if (obj == this)
+					return true;
+
+				return this.Equals(obj as RoiGraphicMemento);
+			}
+
+			#region IEquatable<RoiGraphicMemento> Members
+
+			public bool Equals(RoiGraphicMemento other)
+			{
+				if (other == null)
+					return false;
+
+				return RoiMemento.Equals(other.RoiMemento) && CalloutMemento.Equals(other.CalloutMemento);
+			}
+
+			#endregion
+		}
+
 		#region Private fields
 
 		private InteractiveGraphic _roiGraphic;
@@ -304,29 +342,30 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		#region IMemorable Members
 
-		// TODO:  This is a total hack.  We've gotten away with these methods
-		// doing nothing because they're never actually called.  The problem is that
-		// if RoiGraphic is no longer IMemorable, CreateRoiGraphicstate.OnRoiStateChanged
-		// will throw an exception, because it tries to create a PositionGraphicCommand
-		// where the originator is null, which is not allowed.  The real problem
-		// is that we don't properly store a command that recreates an RoiGraphic.
-
 		/// <summary>
-		/// Not implemented.
+		/// Creates a memento that can be used to restore the current state.
 		/// </summary>
-		/// <returns></returns>
 		public virtual object CreateMemento()
 		{
-			throw new NotImplementedException();
+			return new RoiGraphicMemento(_roiGraphic.CreateMemento(), _calloutGraphic.CreateMemento());
 		}
 
 		/// <summary>
-		/// Not implemented.
+		/// Restores the state of an object.
 		/// </summary>
-		/// <param name="memento"></param>
+		/// <param name="memento">The object that was
+		/// originally created with <see cref="IMemorable.CreateMemento"/>.</param>
+		/// <remarks>
+		/// The implementation of <see cref="IMemorable.SetMemento"/> should return the 
+		/// object to the original state captured by <see cref="IMemorable.CreateMemento"/>.
+		/// </remarks>
 		public virtual void SetMemento(object memento)
 		{
-			throw new NotImplementedException();
+			RoiGraphicMemento roiMemento = memento as RoiGraphicMemento;
+			Platform.CheckForInvalidCast(roiMemento, "memento", "RoiGraphicMemento");
+			
+			_calloutGraphic.SetMemento(roiMemento.CalloutMemento);
+			_roiGraphic.SetMemento(roiMemento.RoiMemento);
 		}
 
 		#endregion

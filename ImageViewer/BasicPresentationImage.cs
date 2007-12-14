@@ -218,10 +218,13 @@ namespace ClearCanvas.ImageViewer
 								_rendererFactoryInitializationException = e;
 								Platform.Log(LogLevel.Warn, e);
 							}
+							catch(NotSupportedException)
+							{
+								Platform.Log(LogLevel.Info, SR.MessageNoRendererPluginsExist);
+							}
 							catch (Exception e)
 							{
-								//this isn't necessarily an error, just log it as information.
-								Platform.Log(LogLevel.Info, e);
+								Platform.Log(LogLevel.Warn, e);
 							}
 
 							if (_rendererFactory == null)

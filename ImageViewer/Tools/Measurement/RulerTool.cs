@@ -116,7 +116,14 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			if (_createGraphic != null)
 			{
 				if (_createGraphic.Stop(mouseInformation))
+				{
+					IOverlayGraphicsProvider image = (IOverlayGraphicsProvider)mouseInformation.Tile.PresentationImage;
+
+					InsertRemoveGraphicUndoableCommand command = InsertRemoveGraphicUndoableCommand.GetRemoveCommand(image.OverlayGraphics, _createGraphic);
+					command.Name = "Create Ruler";
+					_createGraphic.ImageViewer.CommandHistory.AddCommand(command);
 					return true;
+				}
 			}
 
 			_createGraphic = null;

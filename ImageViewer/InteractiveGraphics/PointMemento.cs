@@ -29,26 +29,43 @@
 
 #endregion
 
+using System;
 using System.Drawing;
-using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
-	/// <summary>
-	/// 
-	/// </summary>
-	internal class PointMemento
+	internal class PointMemento : IEquatable<PointMemento>
 	{
-		private PointF _point;
+		public readonly PointF Point;
 
 		public PointMemento(PointF point)
 		{
-			_point = point;
+			Point = point;
 		}
 
-		public PointF Point
+		public override int GetHashCode()
 		{
-			get { return _point; }
+			return base.GetHashCode();
 		}
+
+		public override bool Equals(object obj)
+		{
+			if (obj == this)
+				return true;
+
+			return this.Equals(obj as PointMemento);
+		}
+
+		#region IEquatable<PointMemento> Members
+
+		public bool Equals(PointMemento other)
+		{
+			if (other == null)
+				return false;
+
+			return this.Point == other.Point;
+		}
+
+		#endregion
 	}
 }

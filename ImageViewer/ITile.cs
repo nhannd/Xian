@@ -95,6 +95,11 @@ namespace ClearCanvas.ImageViewer
 		bool Selected { get; }
 
 		/// <summary>
+		/// Gets or sets whether the tile is currently enabled.
+		/// </summary>
+		bool Enabled { get; set; }
+
+		/// <summary>
 		/// Selects the <see cref="ITile"/>.
 		/// </summary>
 		/// <remarks>

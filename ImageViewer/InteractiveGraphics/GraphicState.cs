@@ -29,18 +29,12 @@
 
 #endregion
 
-using System;
 using System.Drawing;
 using ClearCanvas.Common;
-using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
-	// TODO (Stewart): Support for undo shouldn't be coupled with the state
-	// TODO (Stewart): Get rid of SupportUndo and Command properties
-	// TODO (Stewart): Move undo functionality into TileController
-
 	/// <summary>
 	/// A base class for graphic states.
 	/// </summary>
@@ -49,8 +43,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		#region Private fields
 
 		private IStatefulGraphic _statefulGraphic;
-		private bool _supportUndo;
-		private UndoableCommand _command;
 		private PointF _lastPoint;
 		private MouseButtonHandlerBehaviour _mousebuttonBehaviour;
 		#endregion
@@ -63,26 +55,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		{
 			Platform.CheckForNullReference(statefulGraphic, "statefulGraphic");
 			_statefulGraphic = statefulGraphic;
-
-			if (_statefulGraphic is IMemorable)
-				_supportUndo = true;
-			else
-				_supportUndo = false;
-		}
-
-		// Allow clients to turn off undo support if necessary
-		public bool SupportUndo
-		{
-			get { return _supportUndo; }
-			set 
-			{
-				// If we're going to support undo, StatefulGraphic
-				// must implement IMemorable
-				if (value && !(this.StatefulGraphic is IMemorable))
-					throw new InvalidOperationException(SR.ExceptionStatefulGraphicMustBeIMemorable);
-
-				_supportUndo = value; 
-			}
 		}
 
 		/// <summary>
@@ -92,16 +64,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		public IStatefulGraphic StatefulGraphic
 		{
 			get	{ return _statefulGraphic; }
-		}
-
-		protected UndoableCommand Command
-		{
-			get { return _command; }
-			set	
-			{
-				Platform.CheckForNullReference(value, "Command");
-				_command = value;
-			}
 		}
 
 		/// <summary>

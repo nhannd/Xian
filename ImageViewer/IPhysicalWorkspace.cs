@@ -93,6 +93,11 @@ namespace ClearCanvas.ImageViewer
 		IImageBox this[int row, int column] { get; }
 
 		/// <summary>
+		/// Gets or sets whether the workspace is currently enabled.
+		/// </summary>
+		bool Enabled { get; set; }
+
+		/// <summary>
 		/// Occurs when all changes to image box collection are complete.
 		/// </summary>
 		/// <remarks>

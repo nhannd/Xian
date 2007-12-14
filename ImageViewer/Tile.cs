@@ -60,6 +60,7 @@ namespace ClearCanvas.ImageViewer
 		private RectangleF _normalizedRectangle;
 		private Rectangle _clientRectangle; 
 		private bool _selected = false;
+		private bool _enabled = true;
 		private InformationBox _informationBox;
 		private static int _borderWidth = 1;
 		private static int _insetWidth = 5;
@@ -191,6 +192,15 @@ namespace ClearCanvas.ImageViewer
 
 				return displaySet.PresentationImages.IndexOf(this.PresentationImage);
 			}
+		}
+
+		/// <summary>
+		/// Gets or sets whether the tile is currently enabled.
+		/// </summary>
+		public bool Enabled
+		{
+			get { return _parentImageBox.Enabled ? _enabled : false; }
+			set { _enabled = value; }
 		}
 
 		/// <summary>

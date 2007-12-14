@@ -29,12 +29,12 @@
 
 #endregion
 
+using System;
 using System.Drawing;
-using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
-	internal class RectangleMemento
+	internal class RectangleMemento : IEquatable<RectangleMemento>
 	{
 		PointF _topLeft;
 		PointF _bottomRight;
@@ -54,5 +54,30 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			get { return _bottomRight; }
 			set { _bottomRight = value; }
 		}
+
+		public override int GetHashCode()
+		{
+			return base.GetHashCode();
+		}
+
+		public override bool Equals(object obj)
+		{
+			if (obj == this)
+				return true;
+
+			return this.Equals(obj as RectangleMemento);
+		}
+
+		#region IEquatable<RectangleMemento> Members
+
+		public bool Equals(RectangleMemento other)
+		{
+			if (other == null)
+				return false;
+
+			return TopLeft == other.TopLeft && BottomRight == other.BottomRight;
+		}
+
+		#endregion
 	}
 }

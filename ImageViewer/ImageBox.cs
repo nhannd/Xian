@@ -61,6 +61,7 @@ namespace ClearCanvas.ImageViewer
 		private Tile _selectedTile;
 		private RectangleF _normalizedRectangle;
 		private bool _selected = false;
+		private bool _enabled = true;
 		private int _rows;
 		private int _columns;
 		private static int _borderWidth = 2;
@@ -448,6 +449,15 @@ namespace ClearCanvas.ImageViewer
 				int index = row * this.Columns + column;
 				return this.Tiles[index];
 			}
+		}
+
+		/// <summary>
+		/// Gets or sets whether the image box is currently enabled.
+		/// </summary>
+		public bool Enabled
+		{
+			get { return _parentPhysicalWorkspace.Enabled ? _enabled : false; }
+			set { _enabled = value; }
 		}
 
 		#endregion

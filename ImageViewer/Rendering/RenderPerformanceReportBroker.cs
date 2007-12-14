@@ -29,8 +29,6 @@
 
 #endregion
 
-using ClearCanvas.Common.Utilities;
-
 namespace ClearCanvas.ImageViewer.Rendering
 {
 	/// <summary>
@@ -57,7 +55,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 			if (PerformanceReport == null)
 				return;
 
-			EventsHelper.Fire(PerformanceReport, methodName, totalTime);
+			PerformanceReport(methodName, totalTime);
 		}
 	}
 }

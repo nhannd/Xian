@@ -29,40 +29,48 @@
 
 #endregion
 
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
-using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
-	internal class PointsMemento : IEnumerable<PointF>
+	internal class PointsMemento : List<PointF>, IEquatable<PointsMemento>
 	{
-		List<PointF> _anchorPoints = new List<PointF>();
-
 		public PointsMemento()
 		{
 		}
 
-		public void Add(PointF point)
+		public override int GetHashCode()
 		{
-			_anchorPoints.Add(point);
+			return base.GetHashCode();
 		}
 
-		#region IEnumerable<PointF> Members
-
-		public IEnumerator<PointF> GetEnumerator()
+		public override bool Equals(object obj)
 		{
-			return _anchorPoints.GetEnumerator();
+			if (obj == this)
+				return true;
+
+			return this.Equals(obj as PointsMemento);
 		}
 
-		#endregion
+		#region IEquatable<PointsMemento> Members
 
-		#region IEnumerable Members
-
-		IEnumerator IEnumerable.GetEnumerator()
+		public bool Equals(PointsMemento other)
 		{
-			return _anchorPoints.GetEnumerator();
+			if (other == null)
+				return false;
+
+			if (Count != other.Count)
+				return false;
+
+			for(int i = 0; i < Count; ++i)
+			{
+				if (this[i] != other[i])
+					return false;
+			}
+
+			return true;
 		}
 
 		#endregion

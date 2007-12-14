@@ -55,11 +55,7 @@ namespace ClearCanvas.ImageViewer
 		private event EventHandler<ItemEventArgs<Study>> _studyLoadedEvent;
 		private event EventHandler<ItemEventArgs<Sop>> _imageLoadedEvent;
 
-		private event EventHandler<ItemEventArgs<IMouseButtonHandler>> _activeMouseButtonHandlerChanged;
-		private event EventHandler<ItemEventArgs<IMouseWheelHandler>> _activeMouseWheelHandlerChanged;
-
-		private event EventHandler<BeforeFindMouseButtonHandlerEventArgs> _beforeFindMouseButtonHandler;
-		private event EventHandler<BeforeFindMouseWheelHandlerEventArgs> _beforeFindMouseWheelHandler;
+		private event EventHandler<MouseCaptureChangedEventArgs> _mouseCaptureChanged;
 
 		#endregion
 
@@ -186,54 +182,17 @@ namespace ClearCanvas.ImageViewer
 		}
 
 		/// <summary>
-		/// Occurs when the active <see cref="IMouseButtonHandler"/> has changed.
+		/// Occurs when an object has gained or lost mouse capture.
 		/// </summary>
-		public event EventHandler<ItemEventArgs<IMouseButtonHandler>> ActiveMouseButtonHandlerChanged
+		public event EventHandler<MouseCaptureChangedEventArgs> MouseCaptureChanged
 		{
-			add { _activeMouseButtonHandlerChanged += value; }
-			remove { _activeMouseButtonHandlerChanged -= value; }
+			add { _mouseCaptureChanged += value; }
+			remove { _mouseCaptureChanged -= value; }
 		}
 
-		internal void OnActiveMouseButtonHandlerChanged(IMouseButtonHandler handler)
+		internal void OnMouseCaptureChanged(MouseCaptureChangedEventArgs args)
 		{
-			EventsHelper.Fire(_activeMouseButtonHandlerChanged, this, new ItemEventArgs<IMouseButtonHandler>(handler));
-		}
-
-		/// <summary>
-		/// Occurs when the active <see cref="IMouseWheelHandler"/> has changed.
-		/// </summary>
-		public event EventHandler<ItemEventArgs<IMouseWheelHandler>> ActiveMouseWheelHandlerChanged
-		{
-			add { _activeMouseWheelHandlerChanged += value; }
-			remove { _activeMouseWheelHandlerChanged -= value; }
-		}
-
-		internal void OnActiveMouseWheelHandlerChanged(IMouseWheelHandler handler)
-		{
-			EventsHelper.Fire(_activeMouseWheelHandlerChanged, this, new ItemEventArgs<IMouseWheelHandler>(handler));
-		}
-
-		//TODO (Stewart): Find a better name for these events, or a different solution.
-		public event EventHandler<BeforeFindMouseButtonHandlerEventArgs> BeforeFindMouseButtonHandler
-		{
-			add { _beforeFindMouseButtonHandler += value; }	
-			remove { _beforeFindMouseButtonHandler -= value; }	
-		}
-
-		internal void OnBeforeFindMouseButtonHandler(BeforeFindMouseButtonHandlerEventArgs args)
-		{
-			EventsHelper.Fire(_beforeFindMouseButtonHandler, this, args);
-		}
-
-		public event EventHandler<BeforeFindMouseWheelHandlerEventArgs> BeforeFindMouseWheelHandler
-		{
-			add { _beforeFindMouseWheelHandler += value; }
-			remove { _beforeFindMouseWheelHandler -= value; }
-		}
-
-		internal void OnBeforeFindMouseWheelHandler(BeforeFindMouseWheelHandlerEventArgs args)
-		{
-			EventsHelper.Fire(_beforeFindMouseWheelHandler, this, args);
+			EventsHelper.Fire(_mouseCaptureChanged, this, args);
 		}
 	}
 }

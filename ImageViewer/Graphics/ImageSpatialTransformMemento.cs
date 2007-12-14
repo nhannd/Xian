@@ -29,30 +29,54 @@
 
 #endregion
 
-using ClearCanvas.Desktop;
+using System;
 
 namespace ClearCanvas.ImageViewer.Graphics
 {
-	internal class ImageSpatialTransformMemento
+	internal class ImageSpatialTransformMemento : IEquatable<ImageSpatialTransformMemento>
 	{
 		private bool _scaleToFit;
 		private object _spatialTransformMemento;
 
-		public ImageSpatialTransformMemento()
+		public ImageSpatialTransformMemento(bool scaleToFit, object spatialTransformMemento)
 		{
-
+			_scaleToFit = scaleToFit;
+			_spatialTransformMemento = spatialTransformMemento;
 		}
 
 		public object SpatialTransformMemento
 		{
 			get { return _spatialTransformMemento; }
-			set { _spatialTransformMemento = value; }
 		}
 
 		public bool ScaleToFit
 		{
 			get { return _scaleToFit; }
-			set { _scaleToFit = value; }
 		}
+
+		public override int GetHashCode()
+		{
+			return base.GetHashCode();
+		}
+
+		public override bool Equals(object obj)
+		{
+			if (obj == this)
+				return true;
+
+			return this.Equals(obj as ImageSpatialTransformMemento);
+		}
+
+		#region IEquatable<ImageSpatialTransformMemento>
+
+		public bool Equals(ImageSpatialTransformMemento other)
+		{
+			if (other == null)
+				return false;
+
+			return other.ScaleToFit == ScaleToFit && this.SpatialTransformMemento.Equals(other.SpatialTransformMemento);
+		}
+
+		#endregion
 	}
 }

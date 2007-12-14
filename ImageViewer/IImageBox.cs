@@ -157,6 +157,11 @@ namespace ClearCanvas.ImageViewer
 		int TopLeftPresentationImageIndex { get; set; }
 
 		/// <summary>
+		/// Gets or sets whether the image box is currently enabled.
+		/// </summary>
+		bool Enabled { get; set; }
+
+		/// <summary>
 		/// Creates a rectangular grid of tiles.
 		/// </summary>
 		/// <remarks>
