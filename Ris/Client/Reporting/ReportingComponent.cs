@@ -52,8 +52,8 @@ namespace ClearCanvas.Ris.Client.Reporting
     {
         private readonly ReportingWorklistItem _worklistItem;
 
-        private readonly OrderSummaryViewComponent _orderSummaryComponent;
-        private ChildComponentHost _orderSummaryHost;
+        private readonly BannerComponent _bannerComponent;
+        private ChildComponentHost _bannerHost;
 
         private readonly ReportEditorComponent _reportEditorComponent;
         private ChildComponentHost _reportEditorHost;
@@ -71,7 +71,7 @@ namespace ClearCanvas.Ris.Client.Reporting
         {
             _worklistItem = worklistItem;
 
-            _orderSummaryComponent = new OrderSummaryViewComponent();
+            _bannerComponent = new BannerComponent();
             _reportEditorComponent = new ReportEditorComponent(_worklistItem.ProcedureStepRef);
             _priorReportComponent = new PriorReportComponent(_worklistItem);
             _orderDetailComponent = new OrderDetailViewComponent();
@@ -79,8 +79,8 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         public override void Start()
         {
-            _orderSummaryHost = new ChildComponentHost(this.Host, _orderSummaryComponent);
-            _orderSummaryHost.StartComponent();
+            _bannerHost = new ChildComponentHost(this.Host, _bannerComponent);
+            _bannerHost.StartComponent();
 
             _reportEditorHost = new ChildComponentHost(this.Host, _reportEditorComponent);
             _reportEditorHost.StartComponent();
@@ -103,9 +103,9 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         #region Presentation Model
 
-        public ApplicationComponentHost OrderSummaryHost
+        public ApplicationComponentHost BannerHost
         {
-            get { return _orderSummaryHost; }
+            get { return _bannerHost; }
         }
 
         public ApplicationComponentHost ReportEditorHost

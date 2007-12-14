@@ -8,9 +8,9 @@ namespace ClearCanvas.Ris.Client
     // TODO add a description of the purpose of the settings group here
     [SettingsGroupDescription("")]
     [SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
-    internal sealed partial class OrderSummaryViewComponentSettings
+    internal sealed partial class BannerComponentSettings
     {
-        private OrderSummaryViewComponentSettings()
+        private BannerComponentSettings()
         {
             ApplicationSettingsRegistry.Instance.RegisterInstance(this);
         }

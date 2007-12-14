@@ -50,9 +50,9 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             InitializeComponent();
             _component = component;
 
-            Control orderSummary = (Control)_component.OrderSummaryHost.ComponentView.GuiElement;
-            orderSummary.Dock = DockStyle.Fill;
-            _rootSplitContainer.Panel1.Controls.Add(orderSummary);
+            Control banner = (Control)_component.BannerHost.ComponentView.GuiElement;
+            banner.Dock = DockStyle.Fill;
+            _rootSplitContainer.Panel1.Controls.Add(banner);
 
             Control reportEditor = (Control)_component.ReportEditorHost.ComponentView.GuiElement;
             reportEditor.Dock = DockStyle.Fill;

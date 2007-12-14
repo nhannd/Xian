@@ -13,11 +13,11 @@ namespace ClearCanvas.Ris.Client {
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "8.0.0.0")]
-    internal sealed partial class OrderSummaryViewComponentSettings : global::System.Configuration.ApplicationSettingsBase {
+    internal sealed partial class BannerComponentSettings : global::System.Configuration.ApplicationSettingsBase {
         
-        private static OrderSummaryViewComponentSettings defaultInstance = ((OrderSummaryViewComponentSettings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new OrderSummaryViewComponentSettings())));
+        private static BannerComponentSettings defaultInstance = ((BannerComponentSettings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new BannerComponentSettings())));
         
-        public static OrderSummaryViewComponentSettings Default {
+        public static BannerComponentSettings Default {
             get {
                 return defaultInstance;
             }
@@ -25,10 +25,10 @@ namespace ClearCanvas.Ris.Client {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("http://localhost/RIS/ordersummary.htm")]
-        public string OrderSummaryPageUrl {
+        [global::System.Configuration.DefaultSettingValueAttribute("http://localhost/RIS/banner.htm")]
+        public string BannerPageUrl {
             get {
-                return ((string)(this["OrderSummaryPageUrl"]));
+                return ((string)(this["BannerPageUrl"]));
             }
         }
     }

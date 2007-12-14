@@ -4,15 +4,15 @@ using System.Text;
 
 namespace ClearCanvas.Ris.Client
 {
-    public class OrderSummaryViewComponent : DHtmlComponent
+    public class BannerComponent : DHtmlComponent
     {
-        public OrderSummaryViewComponent()
+        public BannerComponent()
         {
         }
 
         public override void Start()
         {
-            SetUrl(OrderSummaryViewComponentSettings.Default.OrderSummaryPageUrl);
+            SetUrl(BannerComponentSettings.Default.BannerPageUrl);
             base.Start();
         }
 
