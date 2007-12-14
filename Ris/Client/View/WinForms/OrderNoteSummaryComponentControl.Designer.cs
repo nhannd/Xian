@@ -33,16 +33,13 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             // 
             // _noteList
             // 
-            this._noteList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this._noteList.AutoSize = true;
-            this._noteList.Location = new System.Drawing.Point(-1, -4);
+            this._noteList.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._noteList.Location = new System.Drawing.Point(0, 0);
             this._noteList.Name = "_noteList";
             this._noteList.ReadOnly = false;
-            this._noteList.Size = new System.Drawing.Size(152, 158);
+            this._noteList.Size = new System.Drawing.Size(150, 150);
             this._noteList.TabIndex = 1;
-            this._noteList.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this._noteList.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.ImageAndText;
             this._noteList.ItemDoubleClicked += new System.EventHandler(this._noteList_ItemDoubleClicked);
             // 
             // OrderNoteSummaryComponentControl
@@ -52,7 +49,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this.Controls.Add(this._noteList);
             this.Name = "OrderNoteSummaryComponentControl";
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 

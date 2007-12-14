@@ -42,10 +42,10 @@ namespace ClearCanvas.Ris.Client
     [AssociateView(typeof(MimeDocumentPreviewComponentViewExtensionPoint))]
     public class MimeDocumentPreviewComponent : ApplicationComponent, IPreviewComponent
     {
-        public enum Mode
+        public enum AttachmentMode
         {
-            PatientAttachment,
-            OrderAttachment
+            Patient,
+            Order
         }
 
         class MimeDocumentToolContext : ToolContext, IMimeDocumentToolContext
@@ -92,7 +92,7 @@ namespace ClearCanvas.Ris.Client
         // Summary component members
         private readonly bool _showSummary;
         private readonly bool _showToolbar;
-        private Mode _mode;
+        private AttachmentMode _mode;
         private ITable _attachmentTable;
         private ISelection _selection;
         private event EventHandler _changeCommitted;
@@ -110,9 +110,8 @@ namespace ClearCanvas.Ris.Client
         /// Default Constructor to show summary but hide all tools
         /// </summary>
         public MimeDocumentPreviewComponent()
+            : this(true, false)
         {
-            _showSummary = true;
-            _showToolbar = false;
         }
 
         /// <summary>
@@ -120,9 +119,8 @@ namespace ClearCanvas.Ris.Client
         /// </summary>
         /// <param name="showSummary">True to show the summary section, false to hide it</param>
         public MimeDocumentPreviewComponent(bool showSummary)
+            : this(showSummary, false)
         {
-            _showSummary = showSummary;
-            _showToolbar = false;
         }
 
         /// <summary>
@@ -134,6 +132,9 @@ namespace ClearCanvas.Ris.Client
         {
             _showSummary = showSummary;
             _showToolbar = showToolbar;
+
+            _patientAttachments = new List<PatientAttachmentSummary>();
+            _orderAttachments = new List<OrderAttachmentSummary>();
         }
 
         public override void Start()
@@ -150,6 +151,12 @@ namespace ClearCanvas.Ris.Client
 
         #region Summary Methods
 
+        public AttachmentMode Mode
+        {
+            get { return _mode; }
+            set { _mode = value; }
+        }
+
         public bool ShowSummary
         {
             get { return _showSummary; }
@@ -162,11 +169,11 @@ namespace ClearCanvas.Ris.Client
 
         public List<PatientAttachmentSummary> PatientAttachments
         {
-            get { return _mode != Mode.PatientAttachment ? null : _patientAttachments; }
+            get { return _mode != AttachmentMode.Patient ? null : _patientAttachments; }
             set
             {
                 _patientAttachments = value;
-                _mode = Mode.PatientAttachment;
+                _mode = AttachmentMode.Patient;
                 PatientAttachmentTable table = new PatientAttachmentTable();
                 table.Items.AddRange(_patientAttachments);
                 _attachmentTable = table;
@@ -175,11 +182,11 @@ namespace ClearCanvas.Ris.Client
             
         public List<OrderAttachmentSummary> OrderAttachments
         {
-            get { return _mode != Mode.OrderAttachment ? null : _orderAttachments; }
+            get { return _mode != AttachmentMode.Order ? null : _orderAttachments; }
             set
             {
                 _orderAttachments = value;
-                _mode = Mode.OrderAttachment;
+                _mode = AttachmentMode.Order;
                 OrderAttachmentTable table = new OrderAttachmentTable();
                 table.Items.AddRange(_orderAttachments);
                 _attachmentTable = table;
@@ -214,7 +221,7 @@ namespace ClearCanvas.Ris.Client
                         this.ClearPreviewData();
                     else
                     {
-                        if (_mode == Mode.PatientAttachment)
+                        if (_mode == AttachmentMode.Patient)
                         {
                             PatientAttachmentSummary item = _selection.Item as PatientAttachmentSummary;
                             if (item == null)
@@ -242,7 +249,7 @@ namespace ClearCanvas.Ris.Client
                 if (_selection == null)
                     return null;
 
-                if (_mode == Mode.PatientAttachment)
+                if (_mode == AttachmentMode.Patient)
                 {
                     PatientAttachmentSummary item = _selection.Item as PatientAttachmentSummary;
                     return item == null ? null : item.Document.DocumentRef;
@@ -268,7 +275,7 @@ namespace ClearCanvas.Ris.Client
 
             _attachmentTable.Items.Remove(_selection.Item);
 
-            if (_mode == Mode.PatientAttachment)
+            if (_mode == AttachmentMode.Patient)
                 _patientAttachments.Remove((PatientAttachmentSummary)_selection.Item);
             else
                 _orderAttachments.Remove((OrderAttachmentSummary)_selection.Item);

@@ -63,12 +63,12 @@
     <Compile Include="OrderNoteSummaryComponent.cs" />
     <Compile Include="OrderNoteTable.cs" />
     <Compile Include="HtmlActionModelRenderer.cs" />
-    <Compile Include="OrderSummaryViewComponent.cs" />
-    <Compile Include="OrderSummaryViewComponentSettings.cs" />
-    <Compile Include="OrderSummaryViewComponentSettings.Designer.cs">
+    <Compile Include="BannerComponent.cs" />
+    <Compile Include="BannerComponentSettings.cs" />
+    <Compile Include="BannerComponentSettings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>OrderSummaryViewComponentSettings.settings</DependentUpon>
+      <DependentUpon>BannerComponentSettings.settings</DependentUpon>
     </Compile>
     <Compile Include="PatientNoteEditorComponentSettings.cs" />
     <Compile Include="PatientNoteEditorComponentSettings.Designer.cs">
@@ -287,9 +287,9 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>OrderDetailViewComponentSettings.Designer.cs</LastGenOutput>
     </None>
-    <None Include="OrderSummaryViewComponentSettings.settings">
+    <None Include="BannerComponentSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>OrderSummaryViewComponentSettings.Designer.cs</LastGenOutput>
+      <LastGenOutput>BannerComponentSettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="PatientNoteEditorComponentSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

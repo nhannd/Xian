@@ -63,7 +63,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // force toolbars to be displayed (VS designer seems to have a bug with this)
             _proceduresTableView.ShowToolbar = true;
             _consultantsTableView.ShowToolbar = true;
-            _notesTableView.ShowToolbar = true;
             
             _diagnosticService.LookupHandler = _component.DiagnosticServiceLookupHandler;
             _diagnosticService.DataBindings.Add("Value", _component, "SelectedDiagnosticService", true, DataSourceUpdateMode.OnPropertyChanged);
