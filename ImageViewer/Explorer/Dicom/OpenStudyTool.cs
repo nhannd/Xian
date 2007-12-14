@@ -90,13 +90,14 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			try
 			{
 				imageViewer.LoadStudy(studyInstanceUid, "DICOM_LOCAL");
-				Launch(imageViewer);
 			}
 			catch (OpenStudyException e)
 			{
 				if (e.SuccessfulImages == 0 || e.FailedImages > 0)
 					ExceptionHandler.Report(e, this.Context.DesktopWindow);
 			}
+
+			Launch(imageViewer);
 		}
 
 		private void OpenMultipleStudiesInSingleWorkspace()
@@ -143,13 +144,14 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				try
 				{
 					imageViewer.LoadStudy(studyInstanceUid, "DICOM_LOCAL");
-					Launch(imageViewer);
 				}
 				catch (OpenStudyException e)
 				{
 					if (e.SuccessfulImages == 0 || e.FailedImages > 0)
 						ExceptionHandler.Report(e, this.Context.DesktopWindow);
 				}
+
+				Launch(imageViewer);
 			}
 		}
 
