@@ -95,6 +95,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			{
 				if (e.SuccessfulImages == 0 || e.FailedImages > 0)
 					ExceptionHandler.Report(e, this.Context.DesktopWindow);
+
+				if (e.SuccessfulImages == 0)
+					return;
 			}
 
 			Launch(imageViewer);
@@ -149,6 +152,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				{
 					if (e.SuccessfulImages == 0 || e.FailedImages > 0)
 						ExceptionHandler.Report(e, this.Context.DesktopWindow);
+
+					if (e.SuccessfulImages == 0)
+						continue;
 				}
 
 				Launch(imageViewer);
