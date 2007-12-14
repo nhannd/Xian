@@ -56,37 +56,6 @@ namespace ClearCanvas.Common.Utilities
 			_continueBlocking = true;
 		}
 
-		//TODO (Stewart): Remove this method.
-
-        /// <summary>
-        /// Removes the item at the head of the queue.
-        /// </summary>
-		/// <remarks>
-		/// <para>
-		/// If no items are available, this call will block until an item becomes available, unless the <see cref="ContinueBlocking"/> member
-		/// has been set to false.
-		/// </para>
-		/// <para>
-		/// Note that if you use this method, you must be prepared to catch the exception on whatever thread(s) are currently blocked
-		/// in a call to Dequeue() because you will ultimately have to release the threads by setting the <see cref="ContinueBlocking"/> member to false.
-		/// That being said, it is preferable to use the alternate <see cref="Dequeue(out T)"/> method unless there is a compelling reason to
-		/// use this one.
-		/// </para>
-		/// </remarks>
-		/// <exception cref="InvalidOperationException">Thrown if the queue is empty and the <see cref="ContinueBlocking"/> member is false.</exception> 
-        /// <returns>The item removed from the queue.</returns>
-        public T Dequeue()
-        {
-			lock (_syncLock)
-            {
-				while (_continueBlocking && _queue.Count == 0)
-					Monitor.Wait(_syncLock);
-
-				//this will throw an InvalidOperationException if the queue is empty.
-                return _queue.Dequeue();
-            }
-        }
-
 		/// <summary>
 		/// Removes the item at the head of the queue.
 		/// </summary>

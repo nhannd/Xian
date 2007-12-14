@@ -53,31 +53,24 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
     [ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
     public class LocateOnDiskTool : ImageViewerTool
     {
-        /// <summary>
-        /// Default constructor.  A no-args constructor is required by the
-        /// framework.  Do not remove.
-        /// </summary>
         public LocateOnDiskTool()
         {
         }
 
-
-        /// <summary>
-        /// Called by the framework when the user clicks the "apply" menu item or toolbar button.
-        /// You may change the name of this method as desired, but be sure to change the
-        /// ClickHandler attribute accordingly.
-        /// </summary>
         public void Activate()
         {
             if (this.SelectedPresentationImage == null)
                 return;
 
             IImageSopProvider image = this.SelectedPresentationImage as IImageSopProvider;
+			if (image == null)
+				return;
+
 			DicomFile dicomFile = image.ImageSop.NativeDicomObject as DicomFile;
 			if (dicomFile == null)
 				return;
 
-			Platform.OpenFileBrowser(dicomFile.Filename);
+			System.Diagnostics.Process.Start("explorer.exe", "/n,/select," + dicomFile.Filename);
         }
     }
 }

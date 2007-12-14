@@ -170,16 +170,11 @@ namespace ClearCanvas.Common.Utilities.Tests
 			{
 				while (true)
 				{
-					try
-					{
-						queue.Dequeue();
-						this.IncrementDequeued(1);
-					}
-					catch
-					{
-						if (_stopThreads)
-							break; //queue is empty *and* we're supposed to quit.
-					}
+					int next;
+					if (!queue.Dequeue(out next) && _stopThreads)
+						break;
+					
+					this.IncrementDequeued(1);
 					
 					Thread.Sleep(0);
 				}

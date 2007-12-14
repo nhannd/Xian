@@ -40,6 +40,8 @@ namespace ClearCanvas.Desktop
 	/// Class that facilitates undo/redo by storing incremental changes
 	/// in the form of <see cref="UndoableCommand"/>s.
 	/// </summary>
+	/// <seealso cref="UndoableCommand"/>
+	/// <seealso cref="IMemorable"/>
 	public class CommandHistory 
 	{
 		// Private attributes
