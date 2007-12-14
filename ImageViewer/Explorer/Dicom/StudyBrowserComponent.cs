@@ -410,6 +410,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		{
 			Platform.CheckMemberIsSet(_searchPanelComponent, "SearchPanelComponent");
 
+			string firstName = _searchPanelComponent.AllowFirstName ? _searchPanelComponent.FirstName : "";
+
 			// create patient's name query key
 			// LastName   FirstName   Result
 			//    X           X        <Blank>
@@ -417,12 +419,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			//    V           V        LastName*FirstName*
 			//    X           V        *FirstName*
 			string patientsName = "";
-			if (_searchPanelComponent.LastName.Length > 0 && _searchPanelComponent.FirstName.Length == 0)
+			if (_searchPanelComponent.LastName.Length > 0 && firstName.Length == 0)
 				patientsName = _searchPanelComponent.LastName + "*";
-			if (_searchPanelComponent.LastName.Length > 0 && _searchPanelComponent.FirstName.Length > 0)
-				patientsName = _searchPanelComponent.LastName + "*" + _searchPanelComponent.FirstName + "*";
-			if (_searchPanelComponent.LastName.Length == 0 && _searchPanelComponent.FirstName.Length > 0)
-				patientsName = "*" + _searchPanelComponent.FirstName + "*";
+			if (_searchPanelComponent.LastName.Length > 0 && firstName.Length > 0)
+				patientsName = _searchPanelComponent.LastName + "*" + firstName + "*";
+			if (_searchPanelComponent.LastName.Length == 0 && firstName.Length > 0)
+				patientsName = "*" + firstName + "*";
 
 			string patientId = "";
 			if (_searchPanelComponent.PatientID.Length > 0)
