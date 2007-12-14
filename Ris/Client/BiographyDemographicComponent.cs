@@ -97,10 +97,9 @@ namespace ClearCanvas.Ris.Client
                 delegate(IBrowsePatientDataService service)
                 {
                     GetDataRequest request = new GetDataRequest();
-                    request.PatientRef = _patientRef;
-                    request.ListPatientProfilesRequest = new ListPatientProfilesRequest();
-                    GetDataResponse response = service.GetData(request);
+                    request.ListPatientProfilesRequest = new ListPatientProfilesRequest(_patientRef);
 
+                    GetDataResponse response = service.GetData(request);
                     _profileChoices = response.ListPatientProfilesResponse.Profiles;
                 });
 
@@ -141,8 +140,7 @@ namespace ClearCanvas.Ris.Client
                     delegate(IBrowsePatientDataService service)
                     {
                         GetDataRequest request = new GetDataRequest();
-                        request.PatientProfileRef = _profileRef;
-                        request.GetPatientProfileDetailRequest = new GetPatientProfileDetailRequest(true, true, true, true, true, true, false);
+                        request.GetPatientProfileDetailRequest = new GetPatientProfileDetailRequest(_profileRef, true, true, true, true, true, true, false);
                         GetDataResponse response = service.GetData(request);
 
                         _patientProfile = response.GetPatientProfileDetailResponse.PatientProfile;

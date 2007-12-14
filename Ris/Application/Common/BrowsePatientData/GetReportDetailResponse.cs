@@ -37,7 +37,5 @@ namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
     [DataContract]
     public class GetReportDetailResponse : DataContractBase
     {
-        [DataMember]
-        public PatientOrderData PatientOrderData;
     }
 }

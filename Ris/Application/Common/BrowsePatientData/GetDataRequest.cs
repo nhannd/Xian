@@ -38,18 +38,6 @@ namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
     public class GetDataRequest : DataContractBase
     {
         [DataMember]
-        public EntityRef PatientRef;
-
-        [DataMember]
-        public EntityRef PatientProfileRef;
-
-        [DataMember]
-        public EntityRef OrderRef;
-
-        [DataMember]
-        public EntityRef ReportRef;
-
-        [DataMember]
         public ListPatientProfilesRequest ListPatientProfilesRequest;
 
         [DataMember]

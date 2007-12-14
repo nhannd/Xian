@@ -55,22 +55,22 @@ namespace ClearCanvas.Ris.Application.Services.BrowsePatientData
             GetDataResponse response = new GetDataResponse();
 
             if (request.ListPatientProfilesRequest != null)
-                response.ListPatientProfilesResponse = ListPatientProfiles(request.PatientRef, request.ListPatientProfilesRequest);
+                response.ListPatientProfilesResponse = ListPatientProfiles(request.ListPatientProfilesRequest);
 
             if (request.GetPatientProfileDetailRequest != null)
-                response.GetPatientProfileDetailResponse = GetPatientProfileDetail(request.PatientProfileRef, request.GetPatientProfileDetailRequest);
+                response.GetPatientProfileDetailResponse = GetPatientProfileDetail(request.GetPatientProfileDetailRequest);
 
             if (request.ListOrdersRequest != null)
-                response.ListOrdersResponse = ListOrders(request.PatientRef, request.ListOrdersRequest);
+                response.ListOrdersResponse = ListOrders(request.ListOrdersRequest);
 
             if (request.GetOrderDetailRequest != null)
-                response.GetOrderDetailResponse = GetOrderDetail(request.OrderRef, request.GetOrderDetailRequest);
+                response.GetOrderDetailResponse = GetOrderDetail(request.GetOrderDetailRequest);
 
             if (request.ListReportsRequest != null)
-                response.ListReportsResponse = ListReports(request.PatientRef, request.ListReportsRequest);
+                response.ListReportsResponse = ListReports(request.ListReportsRequest);
 
             if (request.GetReportDetailRequest != null)
-                response.GetReportDetailResponse = GetReportDetail(request.ReportRef, request.GetReportDetailRequest);
+                response.GetReportDetailResponse = GetReportDetail(request.GetReportDetailRequest);
 
             return response;
         }
@@ -78,9 +78,9 @@ namespace ClearCanvas.Ris.Application.Services.BrowsePatientData
         #endregion
 
 
-        private ListPatientProfilesResponse ListPatientProfiles(EntityRef patientRef, ListPatientProfilesRequest request)
+        private ListPatientProfilesResponse ListPatientProfiles(ListPatientProfilesRequest request)
         {
-            Patient patient = PersistenceContext.Load<Patient>(patientRef);
+            Patient patient = PersistenceContext.Load<Patient>(request.PatientRef);
 
             PatientProfileAssembler assembler = new PatientProfileAssembler();
             return new ListPatientProfilesResponse(
@@ -92,9 +92,9 @@ namespace ClearCanvas.Ris.Application.Services.BrowsePatientData
                 }));
         }
 
-        private GetPatientProfileDetailResponse GetPatientProfileDetail(EntityRef profileRef, GetPatientProfileDetailRequest request)
+        private GetPatientProfileDetailResponse GetPatientProfileDetail(GetPatientProfileDetailRequest request)
         {
-            PatientProfile profile = PersistenceContext.Load<PatientProfile>(profileRef);
+            PatientProfile profile = PersistenceContext.Load<PatientProfile>(request.PatientProfileRef);
 
             PatientProfileAssembler assembler = new PatientProfileAssembler();
             GetPatientProfileDetailResponse response = new GetPatientProfileDetailResponse();
@@ -123,16 +123,16 @@ namespace ClearCanvas.Ris.Application.Services.BrowsePatientData
             return response;
         }
 
-        private ListOrdersResponse ListOrders(EntityRef patientRef, ListOrdersRequest request)
+        private ListOrdersResponse ListOrders(ListOrdersRequest request)
         {
             BrowsePatientDataAssembler assembler = new BrowsePatientDataAssembler();
 
-            Patient patient = PersistenceContext.Load<Patient>(patientRef, EntityLoadFlags.Proxy);
+            Patient patient = PersistenceContext.Load<Patient>(request.PatientRef, EntityLoadFlags.Proxy);
 
             if (request.QueryDetailLevel == PatientOrdersQueryDetailLevel.Order)
             {
                 return new ListOrdersResponse(
-                    CollectionUtils.Map<Order, PatientOrderData>(
+                    CollectionUtils.Map<Order, OrderListItem>(
                         PersistenceContext.GetBroker<IPreviewBroker>().QueryOrderData(patient),
                         delegate(Order order)
                         {
@@ -142,7 +142,7 @@ namespace ClearCanvas.Ris.Application.Services.BrowsePatientData
             else if (request.QueryDetailLevel == PatientOrdersQueryDetailLevel.RequestedProcedure)
             {
                 return new ListOrdersResponse(
-                    CollectionUtils.Map<RequestedProcedure, PatientOrderData>(
+                    CollectionUtils.Map<RequestedProcedure, OrderListItem>(
                         PersistenceContext.GetBroker<IPreviewBroker>().QueryRequestedProcedureData(patient),
                         delegate(RequestedProcedure rp)
                         {
@@ -150,12 +150,12 @@ namespace ClearCanvas.Ris.Application.Services.BrowsePatientData
                         }));
             }
 
-            return new ListOrdersResponse(new List<PatientOrderData>());
+            return new ListOrdersResponse(new List<OrderListItem>());
         }
 
-        private GetOrderDetailResponse GetOrderDetail(EntityRef orderRef, GetOrderDetailRequest request)
+        private GetOrderDetailResponse GetOrderDetail(GetOrderDetailRequest request)
         {
-            Order order = PersistenceContext.GetBroker<IOrderBroker>().Load(orderRef);
+            Order order = PersistenceContext.GetBroker<IOrderBroker>().Load(request.OrderRef);
 
             GetOrderDetailResponse response = new GetOrderDetailResponse();
             OrderAssembler assembler = new OrderAssembler();
@@ -163,12 +163,10 @@ namespace ClearCanvas.Ris.Application.Services.BrowsePatientData
                 this.PersistenceContext,
                 request.IncludeVisit,
                 request.IncludeProcedures,
-                true);
+                request.IncludeNotes);
 
             if (request.IncludeAlerts)
             {
-                List<IAlertNotification> alerts = new List<IAlertNotification>();
-
                 AlertAssembler alertAssembler = new AlertAssembler();
                 response.OrderAlerts =
                     CollectionUtils.Map<IAlertNotification, AlertNotificationDetail>(
@@ -182,12 +180,12 @@ namespace ClearCanvas.Ris.Application.Services.BrowsePatientData
             return response;
         }
 
-        private ListReportsResponse ListReports(EntityRef entityRef, ListReportsRequest listReportsRequest)
+        private ListReportsResponse ListReports(ListReportsRequest listReportsRequest)
         {
             throw new System.Exception("The method or operation is not implemented.");
         }
 
-        private GetReportDetailResponse GetReportDetail(EntityRef reportRef, GetReportDetailRequest request)
+        private GetReportDetailResponse GetReportDetail(GetReportDetailRequest request)
         {
             throw new System.Exception("The method or operation is not implemented.");
         }

@@ -70,7 +70,7 @@ namespace ClearCanvas.Ris.Client
             ITableColumn sortColumn = new TableColumn<Checkable<ProcedurePlanSummaryTableItem>, string>("Procedure Description",
                                 delegate(Checkable<ProcedurePlanSummaryTableItem> checkable)
                                     {
-                                        return string.Format("{0} - {1}", checkable.Item.rpDetail.Name, checkable.Item.mpsDetail.ProcedureStepName);
+                                        return string.Format("{0} - {1}", checkable.Item.rpDetail.Type.Name, checkable.Item.mpsDetail.ProcedureStepName);
                                     },
                                 0.5f,
                                 ProcedureDescriptionRow);

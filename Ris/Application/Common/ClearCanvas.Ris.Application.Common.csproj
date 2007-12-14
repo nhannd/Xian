@@ -431,7 +431,7 @@
     <Compile Include="PersonNameDetail.cs" />
     <Compile Include="BrowsePatientData\GetReportDetailRequest.cs" />
     <Compile Include="BrowsePatientData\GetReportDetailResponse.cs" />
-    <Compile Include="BrowsePatientData\PatientOrderData.cs" />
+    <Compile Include="BrowsePatientData\OrderListItem.cs" />
     <Compile Include="BrowsePatientData\GetDataRequest.cs" />
     <Compile Include="BrowsePatientData\GetDataResponse.cs" />
     <Compile Include="BrowsePatientData\IBrowsePatientDataService.cs" />

@@ -37,5 +37,7 @@ namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
     [DataContract]
     public class GetReportDetailRequest : DataContractBase
     {
+        [DataMember]
+        public EntityRef ReportRef;
     }
 }

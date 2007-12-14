@@ -37,7 +37,7 @@ namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
     [DataContract]
     public class GetPatientProfileDetailRequest : DataContractBase
     {
-        public GetPatientProfileDetailRequest(
+        public GetPatientProfileDetailRequest(EntityRef patientProfileRef,
             bool includeAddresses,
             bool includeContactPersons,
             bool includeEmailAddresses,
@@ -46,6 +46,7 @@ namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
             bool includeAttachments,
             bool includeAlerts)
         {
+            this.PatientProfileRef = patientProfileRef;
             this.IncludeAddresses = includeAddresses;
             this.IncludeContactPersons = includeContactPersons;
             this.IncludeEmailAddresses = includeEmailAddresses;
@@ -58,6 +59,9 @@ namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
         public GetPatientProfileDetailRequest()
         {
         }
+
+        [DataMember]
+        public EntityRef PatientProfileRef;
 
         [DataMember]
         public bool IncludeAddresses;

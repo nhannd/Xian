@@ -39,24 +39,21 @@ using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
 {
     [DataContract]
-    public class PatientOrderData : DataContractBase
+    public class OrderListItem : DataContractBase
     {
         #region Visit
 
         [DataMember]
-        public string VisitNumber;
+        public CompositeIdentifierDetail VisitNumber;
 
         [DataMember]
-        public string VisitNumberAssigningAuthority;
+        public EnumValueInfo PatientClass;
 
         [DataMember]
-        public string PatientClass;
+        public EnumValueInfo PatientType;
 
         [DataMember]
-        public string PatientType;
-
-        [DataMember]
-        public string AdmissionType;
+        public EnumValueInfo AdmissionType;
 
         [DataMember]
         public EnumValueInfo VisitStatus;
@@ -68,7 +65,7 @@ namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
         public DateTime? DischargeTime;
 
         [DataMember]
-        public string VisitFacility;
+        public FacilitySummary VisitFacility;
 
         [DataMember]
         public string PreadmitNumber;
@@ -84,11 +81,8 @@ namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
         public string AccessionNumber;
 
         [DataMember]
-        public string DiagnosticServiceName;
+        public DiagnosticServiceSummary DiagnosticService;
 
-        [DataMember]
-        public string DiagnosticServiceCode;
-        
         [DataMember]
         public DateTime? EnteredTime;
 
@@ -99,32 +93,29 @@ namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
         public DateTime? OrderScheduledStartTime;
 
         [DataMember]
-        public PersonNameDetail OrderingPractitioner;
+        public ExternalPractitionerSummary OrderingPractitioner;
 
         [DataMember]
-        public string OrderingFacility;
+        public FacilitySummary OrderingFacility;
 
         [DataMember]
         public string ReasonForStudy;
 
         [DataMember]
-        public string OrderPriority;
+        public EnumValueInfo OrderPriority;
 
         [DataMember]
         public EnumValueInfo OrderStatus;
 
         [DataMember]
-        public string CancelReason;
+        public EnumValueInfo CancelReason;
 
         #endregion
 
         #region Procedure
 
         [DataMember]
-        public string ProcedureName;
-
-        [DataMember]
-        public string ProcedureCode;
+        public RequestedProcedureTypeSummary ProcedureType;
 
         [DataMember]
         public DateTime? ProcedureScheduledStartTime;

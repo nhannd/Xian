@@ -37,19 +37,25 @@ namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
     [DataContract]
     public class GetOrderDetailRequest : DataContractBase
     {
-        public GetOrderDetailRequest(
+        public GetOrderDetailRequest(EntityRef orderRef,
             bool includeVisit,
             bool includeProcedures,
-            bool includeAlerts)
+            bool includeAlerts,
+            bool includeNotes)
         {
+            this.OrderRef = orderRef;
             this.IncludeVisit = includeVisit;
             this.IncludeProcedures = includeProcedures;
             this.IncludeAlerts = includeAlerts;
+            this.IncludeNotes = includeNotes;
         }
 
         public GetOrderDetailRequest()
         {
         }
+
+        [DataMember]
+        public EntityRef OrderRef;
 
         /// <summary>
         /// Include order alerts.
@@ -68,5 +74,11 @@ namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
         /// </summary>
         [DataMember]
         public bool IncludeProcedures;
+
+        /// <summary>
+        /// Include order notes.
+        /// </summary>
+        [DataMember]
+        public bool IncludeNotes;
     }
 }

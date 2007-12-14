@@ -38,7 +38,7 @@ namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
     [DataContract]
     public class ListOrdersResponse : DataContractBase
     {
-        public ListOrdersResponse(List<PatientOrderData> listData)
+        public ListOrdersResponse(List<OrderListItem> listData)
         {
             this.Orders = listData;
         }
@@ -48,6 +48,6 @@ namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
         }
 
         [DataMember]
-        public List<PatientOrderData> Orders;
+        public List<OrderListItem> Orders;
     }
 }

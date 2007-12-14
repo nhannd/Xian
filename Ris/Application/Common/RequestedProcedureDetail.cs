@@ -47,9 +47,6 @@ namespace ClearCanvas.Ris.Application.Common
         public EntityRef RequestedProcedureRef;
 
         [DataMember]
-        public string Name;
-
-        [DataMember]
         public EnumValueInfo Status;
 
         [DataMember]

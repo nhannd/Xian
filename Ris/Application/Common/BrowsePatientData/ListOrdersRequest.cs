@@ -45,14 +45,18 @@ namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
     [DataContract]
     public class ListOrdersRequest : DataContractBase
     {
-        public ListOrdersRequest(PatientOrdersQueryDetailLevel queryDetailLevel)
+        public ListOrdersRequest(EntityRef patientRef, PatientOrdersQueryDetailLevel queryDetailLevel)
         {
+            this.PatientRef = patientRef;
             this.QueryDetailLevel = queryDetailLevel;
         }
 
         public ListOrdersRequest()
         {
         }
+
+        [DataMember]
+        public EntityRef PatientRef;
 
         [DataMember]
         public PatientOrdersQueryDetailLevel QueryDetailLevel;

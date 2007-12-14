@@ -76,8 +76,7 @@ namespace ClearCanvas.Ris.Client
                 delegate(IBrowsePatientDataService service)
                 {
                     GetDataRequest request = new GetDataRequest();
-                    request.PatientProfileRef = _profileRef;
-                    request.GetPatientProfileDetailRequest = new GetPatientProfileDetailRequest(true, true, true, true, true, true, true);
+                    request.GetPatientProfileDetailRequest = new GetPatientProfileDetailRequest(_profileRef, true, true, true, true, true, true, true);
                     GetDataResponse response = service.GetData(request);
 
                     _patientProfile = response.GetPatientProfileDetailResponse.PatientProfile;

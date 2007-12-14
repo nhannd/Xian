@@ -41,5 +41,13 @@ namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
         public ListReportsRequest()
         {
         }
+
+        public ListReportsRequest(EntityRef patientRef)
+        {
+            this.PatientRef = patientRef;
+        }
+
+        [DataMember]
+        public EntityRef PatientRef;
     }
 }

@@ -297,8 +297,7 @@ namespace ClearCanvas.Ris.Client
                         delegate(IBrowsePatientDataService service)
                         {
                             GetDataRequest request = new GetDataRequest();
-                            request.OrderRef = _selectedOrder.OrderRef;
-                            request.GetOrderDetailRequest = new GetOrderDetailRequest(true, true, false);
+                            request.GetOrderDetailRequest = new GetOrderDetailRequest(_selectedOrder.OrderRef, true, true, false, false);
                             GetDataResponse response = service.GetData(request);
 
                             _orderDetail = response.GetOrderDetailResponse.Order;

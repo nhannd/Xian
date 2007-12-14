@@ -17,7 +17,6 @@ namespace ClearCanvas.Ris.Application.Services
             RequestedProcedureDetail detail = new RequestedProcedureDetail();
 
             detail.RequestedProcedureRef = rp.GetRef();
-            detail.Name = rp.Type.Name;
             detail.Status = EnumUtils.GetEnumValueInfo(rp.Status, context);
             detail.Type = new RequestedProcedureTypeAssembler().CreateRequestedProcedureTypeDetail(rp.Type);
 

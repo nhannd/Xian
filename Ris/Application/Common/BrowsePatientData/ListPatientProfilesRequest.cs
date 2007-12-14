@@ -37,5 +37,17 @@ namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
     [DataContract]
     public class ListPatientProfilesRequest : DataContractBase
     {
+        public ListPatientProfilesRequest()
+        {
+
+        }
+
+        public ListPatientProfilesRequest(EntityRef patientRef)
+        {
+            this.PatientRef = patientRef;
+        }
+
+        [DataMember]
+        public EntityRef PatientRef;
     }
 }

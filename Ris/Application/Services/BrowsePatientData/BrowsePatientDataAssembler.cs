@@ -32,6 +32,7 @@
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
+using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.BrowsePatientData;
 using ClearCanvas.Ris.Application.Services.ReportingWorkflow;
 
@@ -39,9 +40,9 @@ namespace ClearCanvas.Ris.Application.Services.BrowsePatientData
 {
     public class BrowsePatientDataAssembler
     {
-        public PatientOrderData CreatePatientOrderData(Order order, IPersistenceContext context)
+        public OrderListItem CreatePatientOrderData(Order order, IPersistenceContext context)
         {
-            PatientOrderData data = new PatientOrderData();
+            OrderListItem data = new OrderListItem();
 
             UpdatePatientOrderData(data, order, context);
             UpdatePatientOrderData(data, order.Visit, context);
@@ -49,9 +50,9 @@ namespace ClearCanvas.Ris.Application.Services.BrowsePatientData
             return data;
         }
 
-        public PatientOrderData CreatePatientOrderData(RequestedProcedure rp, IPersistenceContext context)
+        public OrderListItem CreatePatientOrderData(RequestedProcedure rp, IPersistenceContext context)
         {
-            PatientOrderData data = new PatientOrderData();
+            OrderListItem data = new OrderListItem();
 
             UpdatePatientOrderData(data, rp.Order, context);
             UpdatePatientOrderData(data, rp.Order.Visit, context);
@@ -62,43 +63,47 @@ namespace ClearCanvas.Ris.Application.Services.BrowsePatientData
 
         #region Private Helpers
 
-        private void UpdatePatientOrderData(PatientOrderData data, Visit visit, IPersistenceContext context)
+        private void UpdatePatientOrderData(OrderListItem data, Visit visit, IPersistenceContext context)
         {
-            data.VisitNumber = visit.VisitNumber.Id;
-            data.VisitNumberAssigningAuthority = visit.VisitNumber.AssigningAuthority.Code;
-            data.PatientClass = EnumUtils.GetDisplayValue(visit.PatientClass);
-            data.PatientType = EnumUtils.GetDisplayValue(visit.PatientType);
-            data.AdmissionType = EnumUtils.GetDisplayValue(visit.AdmissionType);
+            FacilityAssembler facilityAssembler = new FacilityAssembler();
+
+            data.VisitNumber = new CompositeIdentifierDetail(visit.VisitNumber.Id,
+                EnumUtils.GetEnumValueInfo(visit.VisitNumber.AssigningAuthority));
+            data.PatientClass = EnumUtils.GetEnumValueInfo(visit.PatientClass);
+            data.PatientType = EnumUtils.GetEnumValueInfo(visit.PatientType);
+            data.AdmissionType = EnumUtils.GetEnumValueInfo(visit.AdmissionType);
             data.VisitStatus = EnumUtils.GetEnumValueInfo(visit.VisitStatus, context);
             data.AdmitTime = visit.AdmitTime;
             data.DischargeTime = visit.DischargeTime;
-            data.VisitFacility = visit.Facility.Name;
+            data.VisitFacility = facilityAssembler.CreateFacilitySummary(visit.Facility);
             data.PreadmitNumber = visit.PreadmitNumber;
         }
 
-        private void UpdatePatientOrderData(PatientOrderData data, Order order, IPersistenceContext context)
+        private void UpdatePatientOrderData(OrderListItem data, Order order, IPersistenceContext context)
         {
-            PersonNameAssembler nameAssembler = new PersonNameAssembler();
+            ExternalPractitionerAssembler practitionerAssembler = new ExternalPractitionerAssembler();
+            DiagnosticServiceAssembler dsAssembler = new DiagnosticServiceAssembler();
+            FacilityAssembler facilityAssembler = new FacilityAssembler();
 
             data.PlacerNumber = order.PlacerNumber;
             data.AccessionNumber = order.AccessionNumber;
-            data.DiagnosticServiceName = order.DiagnosticService.Name;
-            data.DiagnosticServiceCode = order.DiagnosticService.Id;
+            data.DiagnosticService = dsAssembler.CreateDiagnosticServiceSummary(order.DiagnosticService);
             data.EnteredTime = order.EnteredTime;
             data.SchedulingRequestTime = order.SchedulingRequestTime;
-            data.OrderingPractitioner = nameAssembler.CreatePersonNameDetail(order.OrderingPractitioner.Name);
-            data.OrderingFacility = order.OrderingFacility.Name;
+            data.OrderingPractitioner = practitionerAssembler.CreateExternalPractitionerSummary(order.OrderingPractitioner, context);
+            data.OrderingFacility = facilityAssembler.CreateFacilitySummary(order.OrderingFacility);
             data.ReasonForStudy = order.ReasonForStudy;
-            data.OrderPriority = EnumUtils.GetValue(order.Priority, context);
-            data.CancelReason = EnumUtils.GetDisplayValue(order.CancelReason);
+            data.OrderPriority = EnumUtils.GetEnumValueInfo(order.Priority, context);
+            data.CancelReason = EnumUtils.GetEnumValueInfo(order.CancelReason);
             data.OrderStatus = EnumUtils.GetEnumValueInfo(order.Status, context);
             data.OrderScheduledStartTime = order.ScheduledStartTime;
         }
 
-        private void UpdatePatientOrderData(PatientOrderData data, RequestedProcedure rp, IPersistenceContext context)
+        private void UpdatePatientOrderData(OrderListItem data, RequestedProcedure rp, IPersistenceContext context)
         {
-            data.ProcedureName = rp.Type.Name;
-            data.ProcedureCode = rp.Type.Id;
+            RequestedProcedureTypeAssembler rptAssembler = new RequestedProcedureTypeAssembler();
+
+            data.ProcedureType = rptAssembler.CreateRequestedProcedureTypeSummary(rp.Type);
             data.ProcedureScheduledStartTime = rp.ScheduledStartTime;
             data.ProcedureCheckInTime = rp.ProcedureCheckIn.CheckInTime;
             data.ProcedureCheckOutTime = rp.ProcedureCheckIn.CheckOutTime;
