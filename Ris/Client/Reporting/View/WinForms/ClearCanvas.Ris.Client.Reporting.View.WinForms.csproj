@@ -56,6 +56,13 @@
       <DependentUpon>ProtocolEditorComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="ProtocolEditorComponentView.cs" />
+    <Compile Include="ProtocollingComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ProtocollingComponentControl.Designer.cs">
+      <DependentUpon>ProtocollingComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ProtocollingComponentView.cs" />
     <Compile Include="ProtocolReasonComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -118,6 +125,10 @@
     <EmbeddedResource Include="ProtocolEditorComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>ProtocolEditorComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ProtocollingComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>ProtocollingComponentControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ProtocolReasonComponentControl.resx">
       <SubType>Designer</SubType>

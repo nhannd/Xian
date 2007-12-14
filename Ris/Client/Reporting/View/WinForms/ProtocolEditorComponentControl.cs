@@ -21,13 +21,9 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 
             _component = component;
 
-            Control orderSummary = (Control)_component.OrderSummaryComponentHost.ComponentView.GuiElement;
-            orderSummary.Dock = DockStyle.Fill;
-            _orderSummaryPanel.Controls.Add(orderSummary);
-
-            Control protocolNotesSummary = (Control)_component.ProtocolNotesSummaryComponentHost.ComponentView.GuiElement;
-            protocolNotesSummary.Dock = DockStyle.Fill;
-            _protocolNotesSummaryPanel.Controls.Add(protocolNotesSummary);
+            Control orderNotes = (Control)_component.OrderNotesComponentHost.ComponentView.GuiElement;
+            orderNotes.Dock = DockStyle.Fill;
+            _orderNotesPanel.Controls.Add(orderNotes);
 
             _protocolGroup.DataSource = _component.ProtocolGroupChoices;
             _protocolGroup.DataBindings.Add("Value", _component, "ProtocolGroup", true, DataSourceUpdateMode.OnPropertyChanged);
@@ -102,14 +98,6 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             using (new CursorManager(this, Cursors.WaitCursor))
             {
                 _component.Close();
-            }
-        }
-
-        private void btnAddNote_Click(object sender, System.EventArgs e)
-        {
-            using (new CursorManager(this, Cursors.WaitCursor))
-            {
-                _component.AddNote();
             }
         }
 

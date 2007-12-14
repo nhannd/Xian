@@ -8,20 +8,13 @@ using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 
 namespace ClearCanvas.Ris.Client.Reporting
 {
-    public enum ProtocolEditorMode
-    {
-        Assign,
-        Edit,
-        Review
-    }
-
     [MenuAction("apply", "folderexplorer-items-contextmenu/Protocol", "Apply")]
     [ButtonAction("apply", "folderexplorer-items-toolbar/Protocol", "Apply")]
     [IconSet("apply", IconScheme.Colour, "Icons.AddToolSmall.png", "Icons.AddToolMedium.png", "Icons.AddToolLarge.png")]
     [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
     [LabelValueObserver("apply", "Label", "LabelChanged")]
     [ExtensionOf(typeof(ReportingProtocolWorkflowItemToolExtensionPoint))]
-    public class ReportingProtocolTool : Tool<IReportingWorkflowItemToolContext>
+    public class ProtocollingTool : Tool<IReportingWorkflowItemToolContext>
     {
         public void Apply()
         {
@@ -41,11 +34,11 @@ namespace ClearCanvas.Ris.Client.Reporting
             if (item == null)
                 return;
 
-            Workspace workspace = DocumentManager.Get<ProtocolEditorComponentDocument>(item.OrderRef);
+            Workspace workspace = DocumentManager.Get<ProtocollingComponentDocument>(item.OrderRef);
             if (workspace == null)
             {
-                ProtocolEditorComponentDocument protocolEditorComponentDocument = new ProtocolEditorComponentDocument(item, GetMode(item), this.Context);
-                protocolEditorComponentDocument.Open();
+                ProtocollingComponentDocument protocollingComponentDocument = new ProtocollingComponentDocument(item, GetMode(item), this.Context);
+                protocollingComponentDocument.Open();
             }
             else
             {
@@ -83,19 +76,19 @@ namespace ClearCanvas.Ris.Client.Reporting
             remove { this.Context.SelectionChanged -= value; }
         }
 
-        private ProtocolEditorMode GetMode(ReportingWorklistItem item)
+        private ProtocollingComponentMode GetMode(ReportingWorklistItem item)
         {
             if (item == null)
-                return ProtocolEditorMode.Review;
+                return ProtocollingComponentMode.Review;
 
             switch(item.ActivityStatus.Code)
             {
                 case "SC":
-                    return ProtocolEditorMode.Assign;
+                    return ProtocollingComponentMode.Assign;
                 case "IP":
-                    return ProtocolEditorMode.Edit;
+                    return ProtocollingComponentMode.Edit;
                 default:
-                    return ProtocolEditorMode.Review;
+                    return ProtocollingComponentMode.Review;
             }
         }
 

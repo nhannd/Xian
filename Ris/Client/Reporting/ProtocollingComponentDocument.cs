@@ -6,18 +6,18 @@ namespace ClearCanvas.Ris.Client.Reporting
     /// <summary>
     /// Document container for <see cref="ProtocolEditorComponent"/>
     /// </summary>
-    class ProtocolEditorComponentDocument : Document
+    class ProtocollingComponentDocument : Document
     {
         #region Private Members
 
         private readonly ReportingWorklistItem _item;
-        private readonly ProtocolEditorMode _mode;
+        private readonly ProtocollingComponentMode _mode;
 
         #endregion
 
         #region Constructor
 
-        public ProtocolEditorComponentDocument(ReportingWorklistItem item, ProtocolEditorMode mode, IReportingWorkflowItemToolContext context)
+        public ProtocollingComponentDocument(ReportingWorklistItem item, ProtocollingComponentMode mode, IReportingWorkflowItemToolContext context)
             : base(null, context.DesktopWindow)
         {
             _item = item;
@@ -30,12 +30,12 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         public override string GetTitle()
         {
-            return ProtocolEditorComponentDocument.GetTitle(_item);
+            return ProtocollingComponentDocument.GetTitle(_item);
         }
 
         public override IApplicationComponent GetComponent()
         {
-            return new ProtocolEditorComponent(_item, _mode);
+            return new ProtocollingComponent(_item, _mode);
         }
 
         #endregion

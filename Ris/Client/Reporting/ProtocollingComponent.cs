@@ -1,0 +1,281 @@
+using System;
+using System.Collections.Generic;
+using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop;
+using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
+
+namespace ClearCanvas.Ris.Client.Reporting
+{
+    /// <summary>
+    /// Extension point for views onto <see cref="ProtocollingComponent"/>
+    /// </summary>
+    [ExtensionPoint]
+    public class ProtocollingComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+    {
+    }
+
+    /// <summary>
+    /// ProtocollingComponent class
+    /// </summary>
+    [AssociateView(typeof(ProtocollingComponentViewExtensionPoint))]
+    public class ProtocollingComponent : ApplicationComponent
+    {
+        #region Private Fields
+
+        private readonly ProtocollingComponentMode _componentMode;
+
+        private ReportingWorklistItem _worklistItem;
+        private event EventHandler _worklistItemChanged;
+
+        private readonly List<ReportingWorklistItem> _skippedItems;
+        private readonly Stack<ReportingWorklistItem> _worklistCache;
+
+        private ChildComponentHost _banneryComponentHost;
+        private ChildComponentHost _protocolEditorComponentHost;
+        private ProtocolEditorComponent _protocolEditorComponent;
+        private ChildComponentHost _orderDetailsHost;
+        private TabComponentContainer _orderDetailsTabContainer;
+        private PriorReportComponent _priorReportsComponent;
+
+        #endregion
+
+        #region Constructor
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public ProtocollingComponent(ReportingWorklistItem worklistItem, ProtocollingComponentMode mode)
+        {
+            _worklistItem = worklistItem;
+            _componentMode = mode;
+
+            _skippedItems = new List<ReportingWorklistItem>();
+            _worklistCache = new Stack<ReportingWorklistItem>();
+        }
+
+        #endregion
+
+        #region ApplicationComponent overrides
+
+        public override void Start()
+        {
+            _banneryComponentHost = new ChildComponentHost(this.Host, new BannerComponent());
+            _banneryComponentHost.StartComponent();
+
+            _protocolEditorComponent = new ProtocolEditorComponent(this, _worklistItem, _componentMode);
+
+            _protocolEditorComponent.ProtocolAccepted += OnProtocolAccepted;
+            _protocolEditorComponent.ProtocolRejected += OnProtocolRejected;
+            _protocolEditorComponent.ProtocolSuspended += OnProtocolSuspended;
+            _protocolEditorComponent.ProtocolSaved += OnProtocolSaved;
+            _protocolEditorComponent.ProtocolSkipped += OnProtocolSkipped;
+            _protocolEditorComponent.ProtocolCancelled += OnProtocolCancelled;
+
+            _protocolEditorComponentHost = new ChildComponentHost(this.Host, _protocolEditorComponent);
+            _protocolEditorComponentHost.StartComponent();
+
+            _orderDetailsTabContainer = new TabComponentContainer();
+
+            _priorReportsComponent = new PriorReportComponent(_worklistItem);
+            _priorReportsComponent.RelevantPriorsOnly = false;
+            //_orderDetailsTabContainer.Pages.Add(new TabPage("Prior Reports", new BannerComponent()));
+            _orderDetailsTabContainer.Pages.Add(new TabPage("Prior Reports", _priorReportsComponent));
+
+            _orderDetailsHost = new ChildComponentHost(this.Host, _orderDetailsTabContainer);
+            _orderDetailsHost.StartComponent();
+
+            this.Host.Title = ProtocollingComponentDocument.GetTitle(_worklistItem);
+
+            base.Start();
+        }
+
+        public override void Stop()
+        {
+            // TODO prepare the component to exit the live phase
+            // This is a good place to do any clean up
+            base.Stop();
+        }
+
+        #endregion
+
+        #region Public members
+
+        public ApplicationComponentHost OrderSummaryComponentHost
+        {
+            get { return _banneryComponentHost; }
+        }
+
+        public ApplicationComponentHost ProtocolEditorComponentHost
+        {
+            get { return _protocolEditorComponentHost; }
+        }
+
+        public ApplicationComponentHost OrderDetailsHost
+        {
+            get { return _orderDetailsHost; }
+        }
+
+        public ReportingWorklistItem WorklistItem
+        {
+            get { return _worklistItem; }
+        }
+
+        public event EventHandler WorklistItemChanged
+        {
+            add { _worklistItemChanged += value; }
+            remove { _worklistItemChanged -= value; }
+        }
+
+        #endregion
+
+        #region ProtocolEditorComponent event handlers
+
+        private void OnProtocolAccepted(object sender, EventArgs e)
+        {
+            DocumentManager.InvalidateFolder(typeof(Folders.CompletedProtocolFolder));
+            OnProtocolEndedHelper();
+        }
+
+        private void OnProtocolRejected(object sender, EventArgs e)
+        {
+            DocumentManager.InvalidateFolder(typeof(Folders.RejectedProtocolFolder));
+            OnProtocolEndedHelper();
+        }
+
+        private void OnProtocolSuspended(object sender, EventArgs e)
+        {
+            DocumentManager.InvalidateFolder(typeof(Folders.SuspendedProtocolFolder));
+            OnProtocolEndedHelper();
+        }
+
+        private void OnProtocolEndedHelper()
+        {
+            if (_componentMode == ProtocollingComponentMode.Assign)
+            {
+                DocumentManager.InvalidateFolder(typeof(Folders.ToBeProtocolledFolder));
+            }
+            else if (_componentMode == ProtocollingComponentMode.Edit)
+            {
+                DocumentManager.InvalidateFolder(typeof(Folders.DraftFolder));
+            }
+
+            if (_protocolEditorComponent.ProtocolNextItem)
+            {
+                LoadNextProtocol();
+            }
+            else
+            {
+                this.Exit(ApplicationComponentExitCode.Accepted);
+            }
+        }
+
+        private void OnProtocolSaved(object sender, EventArgs e)
+        {
+            DocumentManager.InvalidateFolder(typeof(Folders.ToBeProtocolledFolder));
+            DocumentManager.InvalidateFolder(typeof(Folders.DraftProtocolFolder));
+
+            if (_protocolEditorComponent.ProtocolNextItem)
+            {
+                LoadNextProtocol();
+            }
+            else
+            {
+                this.Exit(ApplicationComponentExitCode.Accepted);
+            }
+        }
+
+        private void OnProtocolSkipped(object sender, EventArgs e)
+        {
+
+            // To be protocolled folder will be invalid if it is the source of the worklist item;  the original item will have been
+            // discontinued with a new scheduled one replacing it
+            DocumentManager.InvalidateFolder(typeof(Folders.ToBeProtocolledFolder));
+
+            _skippedItems.Add(_worklistItem);
+            LoadNextProtocol();
+        }
+
+        private void OnProtocolCancelled(object sender, EventArgs e)
+        {
+
+            // To be protocolled folder will be invalid if it is the source of the worklist item;  the original item will have been
+            // discontinued with a new scheduled one replacing it
+            DocumentManager.InvalidateFolder(typeof(Folders.ToBeProtocolledFolder));
+
+            this.Exit(ApplicationComponentExitCode.None);
+        }
+
+        #endregion
+
+        #region Private methods
+
+        private void LoadNextProtocol()
+        {
+            try
+            {
+                _worklistItem = GetNextWorklistItem();
+                if (_worklistItem != null)
+                {
+                    EventsHelper.Fire(_worklistItemChanged, this, EventArgs.Empty);
+
+                    // Update title
+                    this.Host.Title = ProtocollingComponentDocument.GetTitle(_worklistItem);
+                }
+                else
+                {
+                    // TODO : Dialog "No more"
+                    this.Exit(ApplicationComponentExitCode.None);
+                }
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
+            }
+
+        }
+
+        private ReportingWorklistItem GetNextWorklistItem()
+        {
+            // Use next item from cached worklist if one exists
+            ReportingWorklistItem worklistItem = _worklistCache.Count > 0 ? _worklistCache.Pop() : null;
+
+            // Otherwise, re-populate the cached worklist
+            if (worklistItem == null)
+            {
+                try
+                {
+                    Platform.GetService<IReportingWorkflowService>(
+                        delegate(IReportingWorkflowService service)
+                            {
+                                GetWorklistRequest request = new GetWorklistRequest(WorklistTokens.ReportingToBeProtocolledWorklist);
+                                GetWorklistResponse response = service.GetWorklist(request);
+
+                                foreach (ReportingWorklistItem item in response.WorklistItems)
+                                {
+                                    // Remove any items that were previously skipped
+                                    bool itemSkipped = CollectionUtils.Contains<ReportingWorklistItem>(_skippedItems,
+                                                                                                       delegate(ReportingWorklistItem skippedItem) { return skippedItem.AccessionNumber == item.AccessionNumber; });
+
+                                    if (itemSkipped == false)
+                                    {
+                                        _worklistCache.Push(item);
+                                    }
+                                }
+
+                                worklistItem = _worklistCache.Count > 0 ? _worklistCache.Pop() : null;
+                            });
+                }
+                catch (Exception e)
+                {
+                    ExceptionHandler.Report(e, this.Host.DesktopWindow);
+                }
+            }
+
+            return worklistItem;
+        }
+
+        #endregion
+    }
+}

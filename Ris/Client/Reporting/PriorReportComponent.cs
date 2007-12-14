@@ -95,7 +95,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         private readonly ReportSummaryTable _reportList;
         private ReportSummary _selectedReport;
-        private bool _relevantPriorsOnly;
+        private bool _relevantPriorsOnly = true;
 
         private List<ReportSummary> _relevantPriors;
         private List<ReportSummary> _allPriors;
@@ -117,7 +117,6 @@ namespace ClearCanvas.Ris.Client.Reporting
             _reportViewComponentHost = new ChildComponentHost(this.Host, new ReportViewComponent(this));
             _reportViewComponentHost.StartComponent();
 
-            _relevantPriorsOnly = true;
             UpdateReportList();
 
             base.Start();

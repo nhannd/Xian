@@ -40,6 +40,8 @@
   <ItemGroup>
     <Compile Include="EditReportTool.cs" />
     <Compile Include="LinkedInterpretationComponent.cs" />
+    <Compile Include="ProtocollingComponent.cs" />
+    <Compile Include="ProtocollingComponentMode.cs" />
     <Compile Include="ReportingProtocolWorkflowFolderSystem.cs" />
     <Compile Include="ReportingProtocolWorkflowFolderSystemTool.cs" />
     <Compile Include="ReportingMainWorkflowFolderSystem.cs" />
@@ -48,8 +50,8 @@
     <Compile Include="HomeTool.cs" />
     <Compile Include="PatientBiographyTool.cs" />
     <Compile Include="ProtocolEditorComponent.cs" />
-    <Compile Include="ProtocolEditorComponentDocument.cs" />
-    <Compile Include="AssignProtocolTool.cs" />
+    <Compile Include="ProtocollingComponentDocument.cs" />
+    <Compile Include="ProtocollingTool.cs" />
     <Compile Include="ProtocolEditorProcedurePlanSummaryTable.cs" />
     <Compile Include="ProtocolEditorProcedurePlanSummaryTableItem.cs" />
     <Compile Include="ProtocolReasonComponent.cs" />
