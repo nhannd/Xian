@@ -42,7 +42,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
     /// <summary>
     /// Provides a Windows Forms view onto <see cref="ReportingComponent"/>
     /// </summary>
-    //[ExtensionOf(typeof(ReportingComponentViewExtensionPoint))]
+    [ExtensionOf(typeof(ReportingComponentViewExtensionPoint))]
     public class ReportingComponentView : WinFormsView, IApplicationComponentView
     {
         private ReportingComponent _component;

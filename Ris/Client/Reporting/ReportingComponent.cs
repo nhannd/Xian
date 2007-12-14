@@ -30,112 +30,150 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
-using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
-using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client.Reporting
 {
-    ///// <summary>
-    ///// Extension point for views onto <see cref="ReportingComponent"/>
-    ///// </summary>
-    //[ExtensionPoint]
-    //public class ReportingComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
-    //{
-    //}
+    /// <summary>
+    /// Extension point for views onto <see cref="ReportingComponent"/>
+    /// </summary>
+    [ExtensionPoint]
+    public class ReportingComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+    {
+    }
 
     /// <summary>
     /// ReportingComponent class
     /// </summary>
-    //[AssociateView(typeof(ReportingComponentViewExtensionPoint))]
-    public class ReportingComponent : SplitComponentContainer
+    [AssociateView(typeof(ReportingComponentViewExtensionPoint))]
+    public class ReportingComponent : ApplicationComponent
     {
-        private ReportingWorklistItem _worklistItem;
+        private readonly ReportingWorklistItem _worklistItem;
+
+        private readonly OrderSummaryViewComponent _orderSummaryComponent;
+        private ChildComponentHost _orderSummaryHost;
+
+        private readonly ReportEditorComponent _reportEditorComponent;
+        private ChildComponentHost _reportEditorHost;
+
+        private readonly PriorReportComponent _priorReportComponent;
+        private ChildComponentHost _priorReportHost;
+
+        private readonly OrderDetailViewComponent _orderDetailComponent;
+        private ChildComponentHost _orderDetailHost;
 
         /// <summary>
         /// Constructor
         /// </summary>
         public ReportingComponent(ReportingWorklistItem worklistItem)
-            :base(Desktop.SplitOrientation.Vertical)
         {
             _worklistItem = worklistItem;
+
+            _orderSummaryComponent = new OrderSummaryViewComponent();
+            _reportEditorComponent = new ReportEditorComponent(_worklistItem.ProcedureStepRef);
+            _priorReportComponent = new PriorReportComponent(_worklistItem);
+            _orderDetailComponent = new OrderDetailViewComponent();
         }
 
         public override void Start()
         {
-            List<EntityRef> procedureRefs = new List<EntityRef>();
-            procedureRefs.Add(_worklistItem.RequestedProcedureRef);
-            PriorReportComponent priorComponent = new PriorReportComponent(_worklistItem);
+            _orderSummaryHost = new ChildComponentHost(this.Host, _orderSummaryComponent);
+            _orderSummaryHost.StartComponent();
 
-            // Create tab and tab groups
-            TabComponentContainer tabContainer1 = new TabComponentContainer();
-            tabContainer1.Pages.Add(new TabPage("Prior Reports", priorComponent));
+            _reportEditorHost = new ChildComponentHost(this.Host, _reportEditorComponent);
+            _reportEditorHost.StartComponent();
 
-            TabGroupComponentContainer tabGroupContainer = new TabGroupComponentContainer(LayoutDirection.Horizontal);
-            tabGroupContainer.AddTabGroup(new TabGroup(tabContainer1, 1.0f));
+            _priorReportHost = new ChildComponentHost(this.Host, _priorReportComponent);
+            _priorReportHost.StartComponent();
 
-            ReportEditorComponent reportEditor = new ReportEditorComponent(_worklistItem.ProcedureStepRef);
+            _orderDetailHost = new ChildComponentHost(this.Host, _orderDetailComponent);
+            _orderDetailHost.StartComponent();
 
             // Setup the various editor closed events.  Do not invalidate the ToBeReported folder type, since it's communual
-            reportEditor.VerifyEvent += delegate
-            {
-                // Source Folders
-                //DocumentManager.InvalidateFolder(typeof(Folders.ToBeReportedFolder));
-                DocumentManager.InvalidateFolder(typeof(Folders.DraftFolder));
-                DocumentManager.InvalidateFolder(typeof(Folders.ToBeVerifiedFolder));
-                // Destination Folders
-                DocumentManager.InvalidateFolder(typeof(Folders.VerifiedFolder));
-                this.Exit(ApplicationComponentExitCode.Accepted);
-            };
-            reportEditor.SendToVerifyEvent += delegate
-            {
-                // Source Folders
-                //DocumentManager.InvalidateFolder(typeof(Folders.ToBeReportedFolder));
-                DocumentManager.InvalidateFolder(typeof(Folders.DraftFolder));
-                // Destination Folders
-                DocumentManager.InvalidateFolder(typeof(Folders.ToBeVerifiedFolder));
-                this.Exit(ApplicationComponentExitCode.Accepted);
-            };
-            reportEditor.SendToTranscriptionEvent += delegate
-            {
-                // Source Folders
-                //DocumentManager.InvalidateFolder(typeof(Folders.ToBeReportedFolder));
-                DocumentManager.InvalidateFolder(typeof(Folders.DraftFolder));
-                // Destination Folders
-                DocumentManager.InvalidateFolder(typeof(Folders.InTranscriptionFolder));
-                this.Exit(ApplicationComponentExitCode.Accepted);
-            };
-            reportEditor.SaveEvent += delegate
-            {
-                // Source Folders
-                //DocumentManager.InvalidateFolder(typeof(Folders.ToBeReportedFolder));
-                DocumentManager.InvalidateFolder(typeof(Folders.VerifiedFolder));
-                // Destination Folders
-                DocumentManager.InvalidateFolder(typeof(Folders.DraftFolder));
-                DocumentManager.InvalidateFolder(typeof(Folders.ToBeVerifiedFolder));
-                this.Exit(ApplicationComponentExitCode.Accepted);
-            };
-            reportEditor.CloseComponentEvent += delegate
-            {
-                this.Exit(ApplicationComponentExitCode.None);
-            };
-
-            this.Pane1 = new SplitPane("", reportEditor, 0.5f);
-            this.Pane2 = new SplitPane("", tabGroupContainer, 0.5f);
+            _reportEditorComponent.VerifyEvent += _reportEditorComponent_VerifyEvent;
+            _reportEditorComponent.SendToVerifyEvent += _reportEditorComponent_SendToVerifyEvent;
+            _reportEditorComponent.SendToTranscriptionEvent += _reportEditorComponent_SendToTranscriptionEvent;
+            _reportEditorComponent.SaveEvent += _reportEditorComponent_SaveEvent;
+            _reportEditorComponent.CloseComponentEvent += _reportEditorComponent_CloseComponentEvent;
 
             base.Start();
         }
 
-        public override void Stop()
+        #region Presentation Model
+
+        public ApplicationComponentHost OrderSummaryHost
         {
-            // TODO prepare the component to exit the live phase
-            // This is a good place to do any clean up
-            base.Stop();
+            get { return _orderSummaryHost; }
         }
+
+        public ApplicationComponentHost ReportEditorHost
+        {
+            get { return _reportEditorHost; }
+        }
+
+        public ApplicationComponentHost PriorReportsHost
+        {
+            get { return _priorReportHost; }
+        }
+
+        public ApplicationComponentHost OrderDetailsHost
+        {
+            get { return _orderDetailHost; }
+        }
+
+        #endregion
+
+        #region Private Event Handlers
+
+        void _reportEditorComponent_VerifyEvent(object sender, EventArgs e)
+        {
+            // Source Folders
+            //DocumentManager.InvalidateFolder(typeof(Folders.ToBeReportedFolder));
+            DocumentManager.InvalidateFolder(typeof(Folders.DraftFolder));
+            DocumentManager.InvalidateFolder(typeof(Folders.ToBeVerifiedFolder));
+            // Destination Folders
+            DocumentManager.InvalidateFolder(typeof(Folders.VerifiedFolder));
+            this.Exit(ApplicationComponentExitCode.Accepted);
+        }
+
+        void _reportEditorComponent_SendToVerifyEvent(object sender, EventArgs e)
+        {
+            // Source Folders
+            //DocumentManager.InvalidateFolder(typeof(Folders.ToBeReportedFolder));
+            DocumentManager.InvalidateFolder(typeof(Folders.DraftFolder));
+            // Destination Folders
+            DocumentManager.InvalidateFolder(typeof(Folders.ToBeVerifiedFolder));
+            this.Exit(ApplicationComponentExitCode.Accepted);
+        }
+
+        void _reportEditorComponent_SendToTranscriptionEvent(object sender, EventArgs e)
+        {
+            // Source Folders
+            //DocumentManager.InvalidateFolder(typeof(Folders.ToBeReportedFolder));
+            DocumentManager.InvalidateFolder(typeof(Folders.DraftFolder));
+            // Destination Folders
+            DocumentManager.InvalidateFolder(typeof(Folders.InTranscriptionFolder));
+            this.Exit(ApplicationComponentExitCode.Accepted);
+        }
+
+        void _reportEditorComponent_SaveEvent(object sender, EventArgs e)
+        {
+            // Source Folders
+            //DocumentManager.InvalidateFolder(typeof(Folders.ToBeReportedFolder));
+            DocumentManager.InvalidateFolder(typeof(Folders.VerifiedFolder));
+            // Destination Folders
+            DocumentManager.InvalidateFolder(typeof(Folders.DraftFolder));
+            DocumentManager.InvalidateFolder(typeof(Folders.ToBeVerifiedFolder));
+            this.Exit(ApplicationComponentExitCode.Accepted);
+        }
+
+        void _reportEditorComponent_CloseComponentEvent(object sender, EventArgs e)
+        {
+            this.Exit(ApplicationComponentExitCode.None);
+        }
+
+        #endregion
     }
 }

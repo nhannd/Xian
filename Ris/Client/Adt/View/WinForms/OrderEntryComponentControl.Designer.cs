@@ -67,11 +67,9 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._schedulingRequestTime = new ClearCanvas.Desktop.View.WinForms.DateTimeField();
             this._schedulingRequestDate = new ClearCanvas.Desktop.View.WinForms.DateTimeField();
             this._visit = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
-            this._orderingPractitioner = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
             this._indication = new ClearCanvas.Desktop.View.WinForms.TextField();
             this._reorderReason = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
             this._priority = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
-            this._diagnosticService = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this._proceduresTableView = new ClearCanvas.Desktop.View.WinForms.TableView();
@@ -81,15 +79,15 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this._consultantsTableView = new ClearCanvas.Desktop.View.WinForms.TableView();
             this.panel2 = new System.Windows.Forms.Panel();
-            this._consultantLookup = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
             this._addConsultantButton = new System.Windows.Forms.Button();
             this.tabControl2 = new System.Windows.Forms.TabControl();
             this._documentsTab = new System.Windows.Forms.TabPage();
             this._orderNotesTab = new System.Windows.Forms.TabPage();
-            this._orderNotePanel = new System.Windows.Forms.Panel();
             this._cancelButton = new System.Windows.Forms.Button();
             this._acceptButton = new System.Windows.Forms.Button();
-            this._orderDocumentPanel = new System.Windows.Forms.Panel();
+            this._orderingPractitioner = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
+            this._diagnosticService = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
+            this._consultantLookup = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
@@ -100,8 +98,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.tableLayoutPanel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.tabControl2.SuspendLayout();
-            this._documentsTab.SuspendLayout();
-            this._orderNotesTab.SuspendLayout();
             this.SuspendLayout();
             // 
             // splitContainer1
@@ -207,16 +203,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._visit.TabIndex = 6;
             this._visit.Value = null;
             // 
-            // _orderingPractitioner
-            // 
-            this._orderingPractitioner.LabelText = "Ordering Practitioner";
-            this._orderingPractitioner.Location = new System.Drawing.Point(220, 178);
-            this._orderingPractitioner.Margin = new System.Windows.Forms.Padding(2);
-            this._orderingPractitioner.Name = "_orderingPractitioner";
-            this._orderingPractitioner.Size = new System.Drawing.Size(269, 48);
-            this._orderingPractitioner.TabIndex = 4;
-            this._orderingPractitioner.Value = null;
-            // 
             // _indication
             // 
             this._indication.LabelText = "Indication";
@@ -253,16 +239,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._priority.Size = new System.Drawing.Size(201, 41);
             this._priority.TabIndex = 3;
             this._priority.Value = null;
-            // 
-            // _diagnosticService
-            // 
-            this._diagnosticService.LabelText = "Diagnostic Service";
-            this._diagnosticService.Location = new System.Drawing.Point(4, 126);
-            this._diagnosticService.Margin = new System.Windows.Forms.Padding(2);
-            this._diagnosticService.Name = "_diagnosticService";
-            this._diagnosticService.Size = new System.Drawing.Size(485, 48);
-            this._diagnosticService.TabIndex = 2;
-            this._diagnosticService.Value = null;
             // 
             // tabControl1
             // 
@@ -381,16 +357,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.panel2.Size = new System.Drawing.Size(362, 58);
             this.panel2.TabIndex = 0;
             // 
-            // _consultantLookup
-            // 
-            this._consultantLookup.LabelText = "Find Practitioner";
-            this._consultantLookup.Location = new System.Drawing.Point(1, 5);
-            this._consultantLookup.Margin = new System.Windows.Forms.Padding(2);
-            this._consultantLookup.Name = "_consultantLookup";
-            this._consultantLookup.Size = new System.Drawing.Size(261, 48);
-            this._consultantLookup.TabIndex = 4;
-            this._consultantLookup.Value = null;
-            // 
             // _addConsultantButton
             // 
             this._addConsultantButton.Location = new System.Drawing.Point(276, 27);
@@ -416,7 +382,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // 
             // _documentsTab
             // 
-            this._documentsTab.Controls.Add(this._orderDocumentPanel);
             this._documentsTab.Location = new System.Drawing.Point(4, 22);
             this._documentsTab.Margin = new System.Windows.Forms.Padding(2);
             this._documentsTab.Name = "_documentsTab";
@@ -428,7 +393,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // 
             // _orderNotesTab
             // 
-            this._orderNotesTab.Controls.Add(this._orderNotePanel);
             this._orderNotesTab.Location = new System.Drawing.Point(4, 22);
             this._orderNotesTab.Margin = new System.Windows.Forms.Padding(2);
             this._orderNotesTab.Name = "_orderNotesTab";
@@ -437,14 +401,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._orderNotesTab.TabIndex = 1;
             this._orderNotesTab.Text = "Notes";
             this._orderNotesTab.UseVisualStyleBackColor = true;
-            // 
-            // _orderNotePanel
-            // 
-            this._orderNotePanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._orderNotePanel.Location = new System.Drawing.Point(2, 2);
-            this._orderNotePanel.Name = "_orderNotePanel";
-            this._orderNotePanel.Size = new System.Drawing.Size(480, 567);
-            this._orderNotePanel.TabIndex = 0;
             // 
             // _cancelButton
             // 
@@ -468,13 +424,35 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._acceptButton.UseVisualStyleBackColor = true;
             this._acceptButton.Click += new System.EventHandler(this._placeOrderButton_Click);
             // 
-            // _orderDocumentPanel
+            // _orderingPractitioner
             // 
-            this._orderDocumentPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._orderDocumentPanel.Location = new System.Drawing.Point(2, 2);
-            this._orderDocumentPanel.Name = "_orderDocumentPanel";
-            this._orderDocumentPanel.Size = new System.Drawing.Size(480, 567);
-            this._orderDocumentPanel.TabIndex = 0;
+            this._orderingPractitioner.LabelText = "Ordering Practitioner";
+            this._orderingPractitioner.Location = new System.Drawing.Point(220, 178);
+            this._orderingPractitioner.Margin = new System.Windows.Forms.Padding(2);
+            this._orderingPractitioner.Name = "_orderingPractitioner";
+            this._orderingPractitioner.Size = new System.Drawing.Size(269, 48);
+            this._orderingPractitioner.TabIndex = 4;
+            this._orderingPractitioner.Value = null;
+            // 
+            // _diagnosticService
+            // 
+            this._diagnosticService.LabelText = "Diagnostic Service";
+            this._diagnosticService.Location = new System.Drawing.Point(4, 126);
+            this._diagnosticService.Margin = new System.Windows.Forms.Padding(2);
+            this._diagnosticService.Name = "_diagnosticService";
+            this._diagnosticService.Size = new System.Drawing.Size(485, 48);
+            this._diagnosticService.TabIndex = 2;
+            this._diagnosticService.Value = null;
+            // 
+            // _consultantLookup
+            // 
+            this._consultantLookup.LabelText = "Find Practitioner";
+            this._consultantLookup.Location = new System.Drawing.Point(1, 5);
+            this._consultantLookup.Margin = new System.Windows.Forms.Padding(2);
+            this._consultantLookup.Name = "_consultantLookup";
+            this._consultantLookup.Size = new System.Drawing.Size(261, 48);
+            this._consultantLookup.TabIndex = 4;
+            this._consultantLookup.Value = null;
             // 
             // OrderEntryComponentControl
             // 
@@ -496,8 +474,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.tableLayoutPanel1.ResumeLayout(false);
             this.panel2.ResumeLayout(false);
             this.tabControl2.ResumeLayout(false);
-            this._documentsTab.ResumeLayout(false);
-            this._orderNotesTab.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -532,8 +508,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         private System.Windows.Forms.Button _visitSummaryButton;
         private ClearCanvas.Desktop.View.WinForms.TextField _orderingFacility;
         private System.Windows.Forms.TabPage _orderNotesTab;
-        private System.Windows.Forms.Panel _orderNotePanel;
-        private System.Windows.Forms.Panel _orderDocumentPanel;
 
     }
 }

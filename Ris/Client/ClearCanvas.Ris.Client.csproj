@@ -52,10 +52,24 @@
       <DependentUpon>AddressesSummaryComponentSettings.settings</DependentUpon>
     </Compile>
     <Compile Include="BiographyDemographicComponent.cs" />
+    <Compile Include="OrderDetailViewComponent.cs" />
+    <Compile Include="OrderDetailViewComponentSettings.cs" />
+    <Compile Include="OrderDetailViewComponentSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>OrderDetailViewComponentSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="OrderNoteEditorComponent.cs" />
     <Compile Include="OrderNoteSummaryComponent.cs" />
     <Compile Include="OrderNoteTable.cs" />
     <Compile Include="HtmlActionModelRenderer.cs" />
+    <Compile Include="OrderSummaryViewComponent.cs" />
+    <Compile Include="OrderSummaryViewComponentSettings.cs" />
+    <Compile Include="OrderSummaryViewComponentSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>OrderSummaryViewComponentSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="PatientNoteEditorComponentSettings.cs" />
     <Compile Include="PatientNoteEditorComponentSettings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -268,6 +282,14 @@
     <None Include="FormatSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>FormatSettings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="OrderDetailViewComponentSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>OrderDetailViewComponentSettings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="OrderSummaryViewComponentSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>OrderSummaryViewComponentSettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="PatientNoteEditorComponentSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

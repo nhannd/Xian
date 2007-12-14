@@ -54,11 +54,11 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 
             Control orderAttachmentSummary = (Control)_component.OrderAttachmentSummaryHost.ComponentView.GuiElement;
             orderAttachmentSummary.Dock = DockStyle.Fill;
-            _orderDocumentPanel.Controls.Add(orderAttachmentSummary);
+            _documentsTab.Controls.Add(orderAttachmentSummary);
 
             Control orderNoteSummary = (Control)_component.OrderNoteSummaryHost.ComponentView.GuiElement;
             orderNoteSummary.Dock = DockStyle.Fill;
-            _orderNotePanel.Controls.Add(orderNoteSummary);
+            _orderNotesTab.Controls.Add(orderNoteSummary);
 
             // force toolbars to be displayed (VS designer seems to have a bug with this)
             _proceduresTableView.ShowToolbar = true;

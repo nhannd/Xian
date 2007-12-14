@@ -29,14 +29,7 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Text;
 using System.Windows.Forms;
-
 using ClearCanvas.Desktop.View.WinForms;
 
 namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
@@ -46,7 +39,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
     /// </summary>
     public partial class ReportingComponentControl : ApplicationComponentUserControl
     {
-        private ReportingComponent _component;
+        private readonly ReportingComponent _component;
 
         /// <summary>
         /// Constructor
@@ -55,10 +48,23 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             :base(component)
         {
             InitializeComponent();
-
             _component = component;
 
-            // TODO add .NET databindings to _component
+            Control orderSummary = (Control)_component.OrderSummaryHost.ComponentView.GuiElement;
+            orderSummary.Dock = DockStyle.Fill;
+            _rootSplitContainer.Panel1.Controls.Add(orderSummary);
+
+            Control reportEditor = (Control)_component.ReportEditorHost.ComponentView.GuiElement;
+            reportEditor.Dock = DockStyle.Fill;
+            _reportEditorSplitContainer.Panel1.Controls.Add(reportEditor);
+
+            Control priorReports = (Control)_component.PriorReportsHost.ComponentView.GuiElement;
+            priorReports.Dock = DockStyle.Fill;
+            _priorReportsTab.Controls.Add(priorReports);
+
+            Control orderDetails = (Control)_component.OrderDetailsHost.ComponentView.GuiElement;
+            orderDetails.Dock = DockStyle.Fill;
+            _orderDetailsTab.Controls.Add(orderDetails);
         }
     }
 }

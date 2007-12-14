@@ -59,10 +59,100 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-            components = new System.ComponentModel.Container();
+            this._rootSplitContainer = new System.Windows.Forms.SplitContainer();
+            this._reportEditorSplitContainer = new System.Windows.Forms.SplitContainer();
+            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this._priorReportsTab = new System.Windows.Forms.TabPage();
+            this._orderDetailsTab = new System.Windows.Forms.TabPage();
+            this._rootSplitContainer.Panel2.SuspendLayout();
+            this._rootSplitContainer.SuspendLayout();
+            this._reportEditorSplitContainer.Panel2.SuspendLayout();
+            this._reportEditorSplitContainer.SuspendLayout();
+            this.tabControl1.SuspendLayout();
+            this.SuspendLayout();
+            // 
+            // _rootSplitContainer
+            // 
+            this._rootSplitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._rootSplitContainer.Location = new System.Drawing.Point(0, 0);
+            this._rootSplitContainer.Name = "_rootSplitContainer";
+            this._rootSplitContainer.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // _rootSplitContainer.Panel2
+            // 
+            this._rootSplitContainer.Panel2.Controls.Add(this._reportEditorSplitContainer);
+            this._rootSplitContainer.Size = new System.Drawing.Size(599, 535);
+            this._rootSplitContainer.SplitterDistance = 95;
+            this._rootSplitContainer.TabIndex = 0;
+            this._rootSplitContainer.TabStop = false;
+            // 
+            // _reportEditorSplitContainer
+            // 
+            this._reportEditorSplitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._reportEditorSplitContainer.Location = new System.Drawing.Point(0, 0);
+            this._reportEditorSplitContainer.Name = "_reportEditorSplitContainer";
+            // 
+            // _reportEditorSplitContainer.Panel2
+            // 
+            this._reportEditorSplitContainer.Panel2.Controls.Add(this.tabControl1);
+            this._reportEditorSplitContainer.Size = new System.Drawing.Size(599, 436);
+            this._reportEditorSplitContainer.SplitterDistance = 297;
+            this._reportEditorSplitContainer.TabIndex = 0;
+            this._reportEditorSplitContainer.TabStop = false;
+            // 
+            // tabControl1
+            // 
+            this.tabControl1.Controls.Add(this._priorReportsTab);
+            this.tabControl1.Controls.Add(this._orderDetailsTab);
+            this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tabControl1.Location = new System.Drawing.Point(0, 0);
+            this.tabControl1.Name = "tabControl1";
+            this.tabControl1.SelectedIndex = 0;
+            this.tabControl1.Size = new System.Drawing.Size(298, 436);
+            this.tabControl1.TabIndex = 0;
+            // 
+            // _priorReportsTab
+            // 
+            this._priorReportsTab.Location = new System.Drawing.Point(4, 22);
+            this._priorReportsTab.Name = "_priorReportsTab";
+            this._priorReportsTab.Padding = new System.Windows.Forms.Padding(3);
+            this._priorReportsTab.Size = new System.Drawing.Size(290, 410);
+            this._priorReportsTab.TabIndex = 0;
+            this._priorReportsTab.Text = "Prior Reports";
+            this._priorReportsTab.UseVisualStyleBackColor = true;
+            // 
+            // _orderDetailsTab
+            // 
+            this._orderDetailsTab.Location = new System.Drawing.Point(4, 22);
+            this._orderDetailsTab.Name = "_orderDetailsTab";
+            this._orderDetailsTab.Padding = new System.Windows.Forms.Padding(3);
+            this._orderDetailsTab.Size = new System.Drawing.Size(290, 410);
+            this._orderDetailsTab.TabIndex = 1;
+            this._orderDetailsTab.Text = "Order Details";
+            this._orderDetailsTab.UseVisualStyleBackColor = true;
+            // 
+            // ReportingComponentControl
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this._rootSplitContainer);
+            this.Name = "ReportingComponentControl";
+            this.Size = new System.Drawing.Size(599, 535);
+            this._rootSplitContainer.Panel2.ResumeLayout(false);
+            this._rootSplitContainer.ResumeLayout(false);
+            this._reportEditorSplitContainer.Panel2.ResumeLayout(false);
+            this._reportEditorSplitContainer.ResumeLayout(false);
+            this.tabControl1.ResumeLayout(false);
+            this.ResumeLayout(false);
+
         }
 
         #endregion
+
+        private System.Windows.Forms.SplitContainer _rootSplitContainer;
+        private System.Windows.Forms.SplitContainer _reportEditorSplitContainer;
+        private System.Windows.Forms.TabControl tabControl1;
+        private System.Windows.Forms.TabPage _priorReportsTab;
+        private System.Windows.Forms.TabPage _orderDetailsTab;
     }
 }

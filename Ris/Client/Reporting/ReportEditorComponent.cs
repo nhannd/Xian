@@ -40,7 +40,6 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Jsml;
-using ClearCanvas.Ris.Application.Common.Admin;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 using ClearCanvas.Ris.Client.Formatting;
 using AuthorityTokens=ClearCanvas.Ris.Application.Common.AuthorityTokens;
@@ -147,7 +146,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                     if (_supervisor == null && String.IsNullOrEmpty(SupervisorSettings.Default.SupervisorID) == false)
                     {
                         GetRadiologistListResponse getRadListresponse = service.GetRadiologistList(new GetRadiologistListRequest(SupervisorSettings.Default.SupervisorID));
-                        _supervisor = CollectionUtils.FirstElement<StaffSummary>(getRadListresponse.Radiologists);
+                        _supervisor = CollectionUtils.FirstElement(getRadListresponse.Radiologists);
                     }
                 });
 
@@ -217,51 +216,6 @@ namespace ClearCanvas.Ris.Client.Reporting
         #endregion
 
         #region Presentation Model
-
-        public string PatientName
-        {
-            get { return PersonNameFormat.Format(_report.Name); }
-        }
-
-        public string Mrn
-        {
-            get { return MrnFormat.Format(_report.Mrn); }
-        }
-
-        public string DateOfBirth
-        {
-            get { return Format.Date(_report.DateOfBirth); }
-        }
-
-        public string VisitNumber
-        {
-            get { return VisitNumberFormat.Format(_report.VisitNumber); }
-        }
-
-        public string AccessionNumber
-        {
-            get { return _report.AccessionNumber; }
-        }
-
-        public string DiagnosticService
-        {
-            get { return _report.DiagnosticServiceName; }
-        }
-
-        public string RequestedProcedure
-        {
-            get { return "TODO"; }
-        }
-
-        public string PerformedLocation
-        {
-            get { return _report.PerformedLocation; }
-        }
-
-        public string PerformedDate
-        {
-            get { return "TODO"; }
-        }
 
         public bool VerifyEnabled
         {
