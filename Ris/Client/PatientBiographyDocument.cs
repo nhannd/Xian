@@ -84,7 +84,7 @@ namespace ClearCanvas.Ris.Client
                 });
             
             // Create component for each tab
-            BiographyOrderHistoryComponent orderHistoryComponent = new BiographyOrderHistoryComponent(_profileRef);
+            BiographyOrderHistoryComponent orderHistoryComponent = new BiographyOrderHistoryComponent(_patientRef);
             BiographyNoteComponent noteComponent = new BiographyNoteComponent(_patientProfile.Notes);
             BiographyFeedbackComponent feedbackComponent = new BiographyFeedbackComponent();
             BiographyDemographicComponent demographicComponent = new BiographyDemographicComponent(_patientRef, _profileRef, _patientProfile);

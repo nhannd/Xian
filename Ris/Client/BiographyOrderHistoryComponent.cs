@@ -58,9 +58,9 @@ namespace ClearCanvas.Ris.Client
     [AssociateView(typeof(PatientOrderHistoryComponentViewExtensionPoint))]
     public class BiographyOrderHistoryComponent : ApplicationComponent
     {
-        private readonly EntityRef _patientProfileRef;
-        private readonly OrderSummaryTable _orderList;
-        private OrderSummary _selectedOrder;
+        private readonly EntityRef _patientRef;
+        private readonly Table<OrderListItem> _orderList;
+        private OrderListItem _selectedOrder;
         private OrderDetail _orderDetail;
         private ModalityProcedureStepDetail _selectedMPS;
 
@@ -72,23 +72,45 @@ namespace ClearCanvas.Ris.Client
         /// <summary>
         /// Constructor
         /// </summary>
-        public BiographyOrderHistoryComponent(EntityRef patientProfileRef)
+        public BiographyOrderHistoryComponent(EntityRef patientRef)
         {
-            _patientProfileRef = patientProfileRef;
-            _orderList = new OrderSummaryTable();
+            _patientRef = patientRef;
+            _orderList = new Table<OrderListItem>();
+            _orderList.Columns.Add(new TableColumn<OrderListItem, string>("Requested For",
+                delegate(OrderListItem order) { return Format.DateTime(order.SchedulingRequestTime); }));
+            _orderList.Columns.Add(new TableColumn<OrderListItem, string>(SR.ColumnAccessionNumber,
+                delegate(OrderListItem order) { return order.AccessionNumber; }));
+            _orderList.Columns.Add(new TableColumn<OrderListItem, string>(SR.ColumnDiagnosticService,
+                delegate(OrderListItem order) { return order.DiagnosticService.Name; }));
+            _orderList.Columns.Add(new TableColumn<OrderListItem, string>(SR.ColumnPriority,
+                delegate(OrderListItem order) { return order.OrderPriority.Value; }));
+            _orderList.Columns.Add(new TableColumn<OrderListItem, string>(SR.ColumnStatus,
+                delegate(OrderListItem order) { return order.OrderStatus.Value; }));
+            _orderList.Columns.Add(new TableColumn<OrderListItem, string>("Ordered by",
+                delegate(OrderListItem order) { return PersonNameFormat.Format(order.OrderingPractitioner.Name); }));
+            _orderList.Columns.Add(new TableColumn<OrderListItem, string>("Ordering Facility",
+                delegate(OrderListItem order) { return order.OrderingFacility.Name; }));
+            _orderList.Columns.Add(new TableColumn<OrderListItem, string>("Indication",
+                delegate(OrderListItem order) { return order.ReasonForStudy; }));
+            _orderList.Columns.Add(new TableColumn<OrderListItem, string>(SR.ColumnCreatedOn,
+                delegate(OrderListItem order) { return Format.DateTime(order.EnteredTime); }));
         }
 
         public override void Start()
         {
-            base.Start();
 
-            //TODO: temporarily commented out because it should not be using the order-entry service, should use the new IBrowsePatientData service
-            //Platform.GetService<IOrderEntryService>(
-            //    delegate(IOrderEntryService service)
-            //    {
-            //        ListOrdersForPatientResponse response = service.ListOrdersForPatient(new ListOrdersForPatientRequest(_patientProfileRef));
-            //        _orderList.Items.AddRange(response.Orders);
-            //    });
+
+            Platform.GetService<IBrowsePatientDataService>(
+                delegate(IBrowsePatientDataService service)
+                {
+                    GetDataRequest request = new GetDataRequest();
+                    request.ListOrdersRequest = new ListOrdersRequest(_patientRef, PatientOrdersQueryDetailLevel.Order);
+                    GetDataResponse response = service.GetData(request);
+
+                    _orderList.Items.AddRange(response.ListOrdersResponse.Orders);
+                });
+
+            base.Start();
         }
 
         #region Presentation Model - Order
@@ -100,10 +122,10 @@ namespace ClearCanvas.Ris.Client
 
         public ISelection SelectedOrder
         {
-            get { return _selectedOrder == null ? Selection.Empty : new Selection(_selectedOrder); }
+            get { return new Selection(_selectedOrder); }
             set
             {
-                OrderSummary newSelection = (OrderSummary)value.Item;
+                OrderListItem newSelection = (OrderListItem)value.Item;
                 if (_selectedOrder != newSelection)
                 {
                     _selectedOrder = newSelection;

@@ -84,6 +84,7 @@ namespace ClearCanvas.Ris.Application.Services.BrowsePatientData
         {
             FacilityAssembler facilityAssembler = new FacilityAssembler();
 
+            data.VisitRef = visit.GetRef();
             data.VisitNumber = new CompositeIdentifierDetail(visit.VisitNumber.Id,
                 EnumUtils.GetEnumValueInfo(visit.VisitNumber.AssigningAuthority));
             data.PatientClass = EnumUtils.GetEnumValueInfo(visit.PatientClass);
@@ -102,6 +103,7 @@ namespace ClearCanvas.Ris.Application.Services.BrowsePatientData
             DiagnosticServiceAssembler dsAssembler = new DiagnosticServiceAssembler();
             FacilityAssembler facilityAssembler = new FacilityAssembler();
 
+            data.OrderRef = order.GetRef();
             data.PlacerNumber = order.PlacerNumber;
             data.AccessionNumber = order.AccessionNumber;
             data.DiagnosticService = dsAssembler.CreateDiagnosticServiceSummary(order.DiagnosticService);
@@ -119,7 +121,7 @@ namespace ClearCanvas.Ris.Application.Services.BrowsePatientData
         private void UpdateListItem(OrderListItem data, RequestedProcedure rp, IPersistenceContext context)
         {
             RequestedProcedureTypeAssembler rptAssembler = new RequestedProcedureTypeAssembler();
-
+            data.ProcedureRef = rp.GetRef();
             data.ProcedureType = rptAssembler.CreateRequestedProcedureTypeSummary(rp.Type);
             data.ProcedureScheduledStartTime = rp.ScheduledStartTime;
             data.ProcedureCheckInTime = rp.ProcedureCheckIn.CheckInTime;

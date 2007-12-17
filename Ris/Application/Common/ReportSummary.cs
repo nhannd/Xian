@@ -46,15 +46,6 @@ namespace ClearCanvas.Ris.Application.Common
         public EnumValueInfo ReportStatus;
 
         [DataMember]
-        public PersonNameDetail Name;
-
-        [DataMember]
-        public CompositeIdentifierDetail Mrn;
-
-        [DataMember]
-        public DateTime? DateOfBirth;
-
-        [DataMember]
         public CompositeIdentifierDetail VisitNumber;
 
         [DataMember]

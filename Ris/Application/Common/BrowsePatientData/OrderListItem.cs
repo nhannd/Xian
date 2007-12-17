@@ -44,6 +44,9 @@ namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
         #region Visit
 
         [DataMember]
+        public EntityRef VisitRef;
+
+        [DataMember]
         public CompositeIdentifierDetail VisitNumber;
 
         [DataMember]
@@ -73,6 +76,9 @@ namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
         #endregion
 
         #region Order
+
+        [DataMember]
+        public EntityRef OrderRef;
 
         [DataMember]
         public string PlacerNumber;
@@ -113,6 +119,9 @@ namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
         #endregion
 
         #region Procedure
+
+        [DataMember]
+        public EntityRef ProcedureRef;
 
         [DataMember]
         public RequestedProcedureTypeSummary ProcedureType;

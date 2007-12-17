@@ -74,10 +74,6 @@ namespace ClearCanvas.Ris.Application.Services
                 });
 
             PersonNameAssembler nameAssembler = new PersonNameAssembler();
-            summary.Name = nameAssembler.CreatePersonNameDetail(profile.Name);
-            summary.Mrn = new MrnAssembler().CreateMrnDetail(profile.Mrn);
-            summary.DateOfBirth = profile.DateOfBirth;
-
             summary.VisitNumber = new VisitAssembler().CreateVisitNumberDetail(order.Visit.VisitNumber);
             summary.AccessionNumber = order.AccessionNumber;
             summary.DiagnosticServiceName = order.DiagnosticService.Name;
