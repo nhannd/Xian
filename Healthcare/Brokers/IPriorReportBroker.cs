@@ -46,6 +46,13 @@ namespace ClearCanvas.Healthcare.Brokers
         IList<Report> GetPriorReports(Report report);
 
         /// <summary>
+        /// Obtains a list of prior reports relevant to the specified order.
+        /// </summary>
+        /// <param name="patient"></param>
+        /// <returns></returns>
+        IList<Report> GetPriorReports(Order order);
+
+        /// <summary>
         /// Obtains a list of prior reports relevant to the specified procedures.
         /// </summary>
         /// <param name="procedures"></param>

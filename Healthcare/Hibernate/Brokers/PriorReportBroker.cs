@@ -59,6 +59,13 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             return q.List<Report>();
         }
 
+        public IList<Report> GetPriorReports(Order order)
+        {
+            NHibernate.IQuery q = this.Context.GetNamedHqlQuery("relevantPriorsByOrder");
+            q.SetParameter(0, order);
+            return q.List<Report>();
+        }
+
         /// <summary>
         /// Obtains a list of prior reports relevant to the specified procedures.
         /// </summary>

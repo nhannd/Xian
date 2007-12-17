@@ -27,10 +27,37 @@
     and priorReport.Status in ('P', 'F', 'C')
     and refReport = ?
   </query>
-  
-  
-  
-  
+
+  <!-- 
+    Obtains a list of prior reports that are relevant to the procedures in a given order.
+    Parameters: 1. the reference Order
+    
+    Note: this query had to be written entirely using theta joins because SQL-server does not allow
+    mixing ANSI joins and theta joins
+  -->
+  <query name="relevantPriorsByOrder">
+    select priorReport
+    from
+    Report priorReport, Order refOrder,
+    RequestedProcedure priorProcedure, RequestedProcedure refProcedure,
+    RequestedProcedureType priorProcedureType, RequestedProcedureType refProcedureType
+    where priorProcedureType = priorProcedure.Type
+    and priorProcedure in elements(priorReport.Procedures)
+    and refProcedureType = refProcedure.Type
+    and refProcedure in elements(refOrder.RequestedProcedures)
+    and priorProcedureType in (
+      select elements(relevanceGroup.RequestedProcedureTypes)
+      from RequestedProcedureTypeGroup relevanceGroup
+      where refProcedureType in elements(relevanceGroup.RequestedProcedureTypes)
+      and relevanceGroup.Category = 'RELEVANCE'
+    )
+    and priorProcedure.Order.Patient = refOrder.Patient
+    and priorReport.Status in ('P', 'F', 'C')
+    and refOrder = ?
+  </query>
+
+
+
   <!-- 
     Obtains a list of prior reports that are relevant to a given procedure.
     Parameters: 1. the reference Procedure

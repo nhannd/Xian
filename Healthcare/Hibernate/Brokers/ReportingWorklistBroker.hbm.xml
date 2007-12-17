@@ -20,8 +20,8 @@
     and refProcedure = refStep.RequestedProcedure
     and refStep = ?
 
-    <!-- otherProcedure must be for the same patient -->
-    and otherProcedure.Order.Patient = refProcedure.Order.Patient
+    <!-- otherProcedure must be for the same order -->
+    and otherProcedure.Order = refProcedure.Order
     
     <!-- otherStep must be SC -->
     and otherStep.State = 'SC'
