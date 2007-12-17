@@ -1,6 +1,6 @@
 #region License
 
-// Copyright (c) 2006-2008, ClearCanvas Inc.
+// Copyright (c) 2006-2007, ClearCanvas Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, 
@@ -31,27 +31,25 @@
 
 using System;
 
-namespace ClearCanvas.Common.Utilities
+namespace ClearCanvas.Desktop.Actions
 {
-	// TODO (Jon): move to desktop actions.
-
-    /// <summary>
-    /// Defines a generic mechanism for binding to an arbitrary observable property of an object.
-    /// </summary>
-    /// <remarks>
+	/// <summary>
+	/// Defines a generic mechanism for binding to an arbitrary observable property of an object.
+	/// </summary>
+	/// <remarks>
 	/// An observable property is any property which has a corresponding change notification event.
 	/// </remarks>
-    /// <typeparam name="T">The type of the property.</typeparam>
-    public interface IObservablePropertyBinding<T>
-    {
-        /// <summary>
-        /// The event that provides notification of when the <see cref="PropertyValue"/> has changed.
-        /// </summary>
-        event EventHandler PropertyChanged;
+	/// <typeparam name="T">The type of the property.</typeparam>
+	internal interface IObservablePropertyBinding<T>
+	{
+		/// <summary>
+		/// The event that provides notification of when the <see cref="PropertyValue"/> has changed.
+		/// </summary>
+		event EventHandler PropertyChanged;
 
-        /// <summary>
-        /// Gets or sets the underlying property value.
-        /// </summary>
-        T PropertyValue { get; set; }
-    }
+		/// <summary>
+		/// Gets or sets the underlying property value.
+		/// </summary>
+		T PropertyValue { get; set; }
+	}
 }

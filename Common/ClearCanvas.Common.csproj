@@ -233,7 +233,6 @@
     <Compile Include="Utilities\DictionaryEventArgs.cs" />
     <Compile Include="Utilities\IReferenceCountable.cs" />
     <Compile Include="Utilities\ItemEventArgs.cs" />
-    <Compile Include="Utilities\ObservablePropertyCoupler.cs" />
     <Compile Include="Utilities\ReferenceCountedObjectCache.cs" />
     <Compile Include="Utilities\SimpleSerializer.cs" />
     <Compile Include="Utilities\StringDiff.cs" />
@@ -245,12 +244,10 @@
     <Compile Include="Utilities\ThreadPoolBase.cs" />
     <Compile Include="Utilities\Timer.cs" />
     <Compile Include="Utilities\TypeSafeComparerWrapper.cs" />
-    <Compile Include="Utilities\DynamicObservablePropertyBinding.cs" />
     <Compile Include="Utilities\TypeSafeEnumerableWrapper.cs" />
     <Compile Include="Utilities\TypeSafeEnumeratorWrapper.cs" />
     <Compile Include="Utilities\EventsHelper.cs" />
     <Compile Include="Utilities\FileProcessor.cs" />
-    <Compile Include="Utilities\IObservablePropertyBinding.cs" />
     <Compile Include="Utilities\IResourceResolver.cs" />
     <Compile Include="LocalTimeProvider.cs" />
     <Compile Include="Utilities\TypeSafeListWrapper.cs" />

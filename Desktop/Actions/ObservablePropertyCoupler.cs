@@ -1,6 +1,6 @@
 #region License
 
-// Copyright (c) 2006-2008, ClearCanvas Inc.
+// Copyright (c) 2006-2007, ClearCanvas Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, 
@@ -30,11 +30,10 @@
 #endregion
 
 using System;
+using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.Common.Utilities
 {
-	//TODO (Jon): move to desktop.
-
 	/// <summary>
     /// Couples two instances of <see cref="IObservablePropertyBinding{T}"/> such that a change to the primary property
     /// will be propagated to the secondary property.  
@@ -46,7 +45,7 @@ namespace ClearCanvas.Common.Utilities
 	/// To remove the coupling, call <see cref="Dispose()"/> on this object.
 	/// </remarks>
     /// <typeparam name="T">The type of the bound property.</typeparam>
-    public class ObservablePropertyCoupler<T> : IDisposable
+	internal class ObservablePropertyCoupler<T> : IDisposable
     {
         private IObservablePropertyBinding<T> _primary;
         private IObservablePropertyBinding<T> _secondary;

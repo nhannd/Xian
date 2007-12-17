@@ -33,10 +33,8 @@ using System;
 
 namespace ClearCanvas.Common.Utilities
 {
-	/// TODO (Jon): talk to Norman and get rid of params.
-	
 	/// <summary>
-	/// Helper class for safely raising events.
+	/// Helper class for raising events.
 	/// </summary>
 	public class EventsHelper
 	{
@@ -44,7 +42,8 @@ namespace ClearCanvas.Common.Utilities
 		/// Helper method for raising events safely.
 		/// </summary>
 		/// <param name="del">Delegate to invoke.</param>
-		/// <param name="args">Parameters to be passed to the delegate.</param>
+		/// <param name="sender">The sender of the event.</param>
+		/// <param name="e">The <see cref="EventArgs"/>.</param>
 		/// <remarks>
 		/// Use this method to invoke user code via delegates.
 		/// This method will log any exceptions thrown in user code and immediately rethrow it.
@@ -64,7 +63,7 @@ namespace ClearCanvas.Common.Utilities
 		/// }
 		/// </code>
 		/// </example>
-		public static void Fire(Delegate del, params object[] args)
+		public static void Fire(Delegate del, object sender, EventArgs e)
 		{
 			if (del == null)
 				return;
@@ -75,11 +74,11 @@ namespace ClearCanvas.Common.Utilities
 			{
 				try
 				{
-					sink.DynamicInvoke(args);
+					sink.DynamicInvoke(sender, e);
 				}
-				catch (Exception e)
+				catch (Exception ex)
 				{
-                    Platform.Log(LogLevel.Error, e);
+                    Platform.Log(LogLevel.Error, ex);
 					throw;
 				}
 			}

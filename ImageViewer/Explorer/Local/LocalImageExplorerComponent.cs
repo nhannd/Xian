@@ -33,7 +33,6 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Explorer;
 using ClearCanvas.Desktop.Actions;
@@ -56,6 +55,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Local
 	public sealed class LocalImageExplorerComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
 	{
 	}
+
+	public delegate IEnumerable<string> GetSelectedPathsDelegate();
 
 	[AssociateView(typeof(LocalImageExplorerComponentViewExtensionPoint))]
 	public class LocalImageExplorerComponent : ApplicationComponent
@@ -103,7 +104,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Local
 
 		private ToolSet _toolSet;
 		private ClickHandlerDelegate _defaultActionHandler;
-		private PropertyGetDelegate<IEnumerable<string>> _getSelectedPathsDelegate;
+		private GetSelectedPathsDelegate _getSelectedPathsDelegate;
 
 		public LocalImageExplorerComponent()
 		{
@@ -121,7 +122,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Local
 			set { _defaultActionHandler = value; }
 		}
 
-		public PropertyGetDelegate<IEnumerable<string>> GetSelectedPathsDelegate
+		public GetSelectedPathsDelegate GetSelectedPathsDelegate
 		{
 			get { return _getSelectedPathsDelegate; }
 			set { _getSelectedPathsDelegate = value; }

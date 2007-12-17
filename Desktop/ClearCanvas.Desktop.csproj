@@ -62,12 +62,15 @@
     <Compile Include="Actions\ActionPath.cs" />
     <Compile Include="Actions\ActionPermissionAttribute.cs" />
     <Compile Include="Actions\ActionSet.cs" />
+    <Compile Include="Actions\DynamicObservablePropertyBinding.cs" />
     <Compile Include="Actions\GroupHint.cs" />
     <Compile Include="Actions\GroupHintAttribute.cs" />
     <Compile Include="Actions\IActionView.cs" />
+    <Compile Include="Actions\IObservablePropertyBinding.cs" />
     <Compile Include="Actions\KeyboardAction.cs" />
     <Compile Include="Actions\KeyboardActionAttribute.cs" />
     <Compile Include="Actions\LabelValueObserverAttribute.cs" />
+    <Compile Include="Actions\ObservablePropertyCoupler.cs" />
     <Compile Include="Checkable.cs" />
     <Compile Include="ChildComponentHost.cs" />
     <Compile Include="ClosedEventArgs.cs" />
