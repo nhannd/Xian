@@ -35,8 +35,6 @@ using System.Collections.Generic;
 
 namespace ClearCanvas.Common.Utilities
 {
-	// TODO (Stewart): remove all the virtuals that don't make sense.
-
 	/// <summary>
 	/// A list class, changes to which can be observed via events.
 	/// </summary>
@@ -86,7 +84,7 @@ namespace ClearCanvas.Common.Utilities
 		/// <summary>
 		/// Fired when an item is added to the list.
 		/// </summary>
-		public virtual event EventHandler<ListEventArgs<TItem>> ItemAdded
+		public event EventHandler<ListEventArgs<TItem>> ItemAdded
 		{
 			add { _itemAddedEvent += value; }
 			remove { _itemAddedEvent -= value;	}
@@ -95,7 +93,7 @@ namespace ClearCanvas.Common.Utilities
 		/// <summary>
 		/// Fired when an item is removed from the list.
 		/// </summary>
-		public virtual event EventHandler<ListEventArgs<TItem>> ItemRemoved
+		public event EventHandler<ListEventArgs<TItem>> ItemRemoved
 		{
 			add { _itemRemovedEvent += value; }
 			remove { _itemRemovedEvent -= value; }
@@ -104,7 +102,7 @@ namespace ClearCanvas.Common.Utilities
 		/// <summary>
 		/// Fired when an item in the list has changed.
 		/// </summary>
-		public virtual event EventHandler<ListEventArgs<TItem>> ItemChanged
+		public event EventHandler<ListEventArgs<TItem>> ItemChanged
 		{
 			add { _itemChangedEvent += value; }
 			remove { _itemChangedEvent -= value; }
@@ -113,7 +111,7 @@ namespace ClearCanvas.Common.Utilities
 		/// <summary>
 		/// Fires when an item in the list is about to change.
 		/// </summary>
-		public virtual event EventHandler<ListEventArgs<TItem>> ItemChanging
+		public event EventHandler<ListEventArgs<TItem>> ItemChanging
 		{
 			add { _itemChanging += value; }
 			remove { _itemChanging -= value; }
@@ -135,7 +133,7 @@ namespace ClearCanvas.Common.Utilities
 		/// <summary>
 		/// Inserts <paramref name="item"/> at the specified <paramref name="index"/>.
 		/// </summary>
-		public virtual void Insert(int index, TItem item)
+		public void Insert(int index, TItem item)
 		{
 			Platform.CheckArgumentRange(index, 0, this.Count, "index");
 
@@ -149,7 +147,7 @@ namespace ClearCanvas.Common.Utilities
 		/// <summary>
 		/// Removes the item at the specified <paramref name="index"/>.
 		/// </summary>
-		public virtual void RemoveAt(int index)
+		public void RemoveAt(int index)
 		{
 			Platform.CheckArgumentRange(index, 0, this.Count - 1, "index");
 
@@ -190,7 +188,7 @@ namespace ClearCanvas.Common.Utilities
 		/// <summary>
 		/// Adds the specified item to the list.
 		/// </summary>
-		public virtual void Add(TItem item)
+		public void Add(TItem item)
 		{
 			if (_list.Contains(item))
 				return;
@@ -202,7 +200,7 @@ namespace ClearCanvas.Common.Utilities
 		/// <summary>
 		/// Clears the list.
 		/// </summary>
-		public virtual void Clear()
+		public void Clear()
 		{
 			// If we don't have any subscribers to the ItemRemovedEvent, then
 			// make it faster and just call Clear().
@@ -261,7 +259,7 @@ namespace ClearCanvas.Common.Utilities
 		/// Removes the specified <paramref name="item"/> from the list.
 		/// </summary>
 		/// <returns>True if the item was in the list and was removed.</returns>
-		public virtual bool Remove(TItem item)
+		public bool Remove(TItem item)
 		{
 			Platform.CheckForNullReference(item, "item");
 
@@ -323,7 +321,7 @@ namespace ClearCanvas.Common.Utilities
 		/// <summary>
 		/// Called internally when an item is changing.
 		/// </summary>
-		protected void OnItemChanging(ListEventArgs<TItem> e)
+		protected virtual void OnItemChanging(ListEventArgs<TItem> e)
 		{
 			EventsHelper.Fire(_itemChanging, this, e);
 		}

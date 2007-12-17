@@ -203,7 +203,13 @@
     <Compile Include="Validation\IValidationRuleSet.cs" />
     <Compile Include="Validation\IValidationRule.cs" />
     <Compile Include="Validation\NoComponentsValidationStrategy.cs" />
-    <Compile Include="Validation\ValidationAttributes.cs" />
+    <Compile Include="Validation\ValidateCompareAttribute.cs" />
+    <Compile Include="Validation\ValidateGreaterThanAttribute.cs" />
+    <Compile Include="Validation\ValidateLengthAttribute.cs" />
+    <Compile Include="Validation\ValidateLessThanAttribute.cs" />
+    <Compile Include="Validation\ValidateNotNullAttribute.cs" />
+    <Compile Include="Validation\ValidateRegexAttribute.cs" />
+    <Compile Include="Validation\ValidationAttribute.cs" />
     <Compile Include="Validation\ValidationAttributeException.cs" />
     <Compile Include="Validation\ValidationResult.cs" />
     <Compile Include="Validation\ValidationRuleSet.cs" />
