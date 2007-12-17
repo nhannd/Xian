@@ -96,17 +96,6 @@ namespace ClearCanvas.Desktop
             remove { _itemsChanged -= value; }
         }
 
-    	/// <summary>
-    	/// Adds all items in the specified enumeration.
-    	/// </summary>
-    	public virtual void AddRange(IEnumerable enumerable)
-        {
-            if(enumerable is IEnumerable<TItem>)
-            {
-                AddRange((IEnumerable<TItem>)enumerable);
-            }
-        }
-
         #endregion
 
         #region IItemCollection<TItem> Members
