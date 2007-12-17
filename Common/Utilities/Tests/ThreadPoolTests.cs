@@ -314,32 +314,6 @@ namespace ClearCanvas.Common.Utilities.Tests
 			Assert.AreEqual(this.ExpectedDequeued, this.Dequeued, "expected dequeued != dequeued");
 		}
 
-		[Test]
-		public void InterthreadMarshallerTest()
-		{
-			int someNumber = 0;
-			int numberDelegatesAdded = 100000;
-
-			InterthreadMarshaler marshaller = new InterthreadMarshaler();
-			
-			for (int i = 0; i < numberDelegatesAdded; ++i)
-				marshaller.QueueInvoke(
-					delegate() 
-					{
-						lock (_syncLock)
-						{
-							++someNumber;
-						}
-					});
-
-			marshaller.Dispose();
-
-			Assert.AreNotEqual(someNumber, numberDelegatesAdded, "the marshaller *did* finish processing all messages before being Disposed(), where it should not have.");
-
-			marshaller = new InterthreadMarshaler();
-			marshaller.Dispose();//shouldn't hang.
-		}
-
 		private void TestChangeProperties(SimpleBlockingThreadPool pool)
 		{
 			string failMessage = "Not supposed to be able to change 'AllowInactiveAdd' when the thread pool is active.";

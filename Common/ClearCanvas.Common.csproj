@@ -250,7 +250,6 @@
     <Compile Include="Utilities\TypeSafeEnumeratorWrapper.cs" />
     <Compile Include="Utilities\EventsHelper.cs" />
     <Compile Include="Utilities\FileProcessor.cs" />
-    <Compile Include="Utilities\InterthreadMarshaler.cs" />
     <Compile Include="Utilities\IObservablePropertyBinding.cs" />
     <Compile Include="Utilities\IResourceResolver.cs" />
     <Compile Include="LocalTimeProvider.cs" />

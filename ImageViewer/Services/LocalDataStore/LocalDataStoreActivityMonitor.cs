@@ -54,7 +54,7 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 		[CallbackBehavior(UseSynchronizationContext = false)]
 		private class LocalDataStoreActivityMonitorServiceCallback : ILocalDataStoreActivityMonitorServiceCallback
 		{
-			private LocalDataStoreActivityMonitor _parent;
+			private readonly LocalDataStoreActivityMonitor _parent;
 
 			public LocalDataStoreActivityMonitorServiceCallback(LocalDataStoreActivityMonitor parent)
 			{
@@ -101,6 +101,8 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 			#endregion
 		}
 
+		// One per UI Thread (or threads with valid SynchronizationContext).
+		[ThreadStatic]
 		private static LocalDataStoreActivityMonitor _instance;
 
 		private event EventHandler<ItemEventArgs<ReceiveProgressItem>> _receiveProgressUpdate;
@@ -114,14 +116,14 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 		private event EventHandler _lostConnection;
 		private event EventHandler _connected;
 
-		private InterthreadMarshaler _marshaler;
+		private SynchronizationContext _synchronizationContext;
 
-		private object _connectionThreadLock = new object();
+		private readonly object _connectionThreadLock = new object();
 		private bool _active;
 		private bool _stopThread;
 		private volatile bool _isConnected;
 
-		private object _subscriptionLock = new object();
+		private readonly object _subscriptionLock = new object();
 		private bool _refreshRequired;
 				
 		private LocalDataStoreActivityMonitorServiceCallback _callback;
@@ -130,29 +132,24 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 
 		private LocalDataStoreActivityMonitor()
 		{
-		}
-
-		/// <summary>
-		/// Try to make sure things get cleaned up during Finalization just in case a component didn't unsubscribe.
-		/// </summary>
-		~LocalDataStoreActivityMonitor()
-		{
-			try
-			{
-				ShutDown();
-			}
-			catch (Exception e)
-			{
-				Platform.Log(LogLevel.Error, e);
-			}
+			_synchronizationContext = SynchronizationContext.Current;
+			Platform.CheckForNullReference(_synchronizationContext, "_synchronizationContext");
 		}
 
 		public static LocalDataStoreActivityMonitor Instance
 		{
 			get 
 			{
-				if (_instance == null)
-					_instance = new LocalDataStoreActivityMonitor();
+				try
+				{
+					if (_instance == null)
+						_instance = new LocalDataStoreActivityMonitor();
+				}
+				catch (Exception e)
+				{
+					Platform.Log(LogLevel.Error, e);
+					_instance = null;
+				}
 
 				return _instance; 
 			}	
@@ -160,10 +157,7 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 
 		public bool IsConnected
 		{
-			get 
-			{
-				return _isConnected;
-			}
+			get { return _isConnected; }
 		}
 		
 		public event EventHandler<ItemEventArgs<SendProgressItem>> SendProgressUpdate
@@ -389,7 +383,6 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 				{
 					_active = true;
 
-					_marshaler = new InterthreadMarshaler();
 					_callback = new LocalDataStoreActivityMonitorServiceCallback(this);
 
 					_isConnected = false;
@@ -428,12 +421,6 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 				_connectionThread.Join();
 				_connectionThread = null;
 
-				if (_marshaler != null)
-				{
-					_marshaler.Dispose();
-					_marshaler = null;
-				}
-
 				_callback = null;
 
 				_active = false;
@@ -442,79 +429,79 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 
 		private void OnReceiveProgressChanged(ReceiveProgressItem progressItem)
 		{
-			if (!this.AnySubscribers || _marshaler == null)
+			if (!this.AnySubscribers)
 				return;
 
-			_marshaler.QueueInvoke(delegate()
-			{
-					EventsHelper.Fire(_receiveProgressUpdate, this, new ItemEventArgs<ReceiveProgressItem>(progressItem));
-			});
+			_synchronizationContext.Post(delegate
+				{
+					EventsHelper.Fire(_receiveProgressUpdate, this, new ItemEventArgs<ReceiveProgressItem>(progressItem)); 
+				}, null);
 		}
 
 		private void OnSendProgressChanged(SendProgressItem progressItem)
 		{
-			if (!this.AnySubscribers || _marshaler == null)
+			if (!this.AnySubscribers)
 				return;
 
-			_marshaler.QueueInvoke(delegate()
-			{
-				EventsHelper.Fire(_sendProgressUpdate, this, new ItemEventArgs<SendProgressItem>(progressItem));
-			});
+			_synchronizationContext.Post(delegate
+				{
+					EventsHelper.Fire(_sendProgressUpdate, this, new ItemEventArgs<SendProgressItem>(progressItem));
+				}, null);
 		}
 
 		private void OnImportProgressChanged(ImportProgressItem progressItem)
 		{
-			if (!this.AnySubscribers || _marshaler == null)
+			if (!this.AnySubscribers)
 				return;
 
-			_marshaler.QueueInvoke(delegate()
-			{
-				EventsHelper.Fire(_importProgressUpdate, this, new ItemEventArgs<ImportProgressItem>(progressItem));
-			});
+			_synchronizationContext.Post(delegate
+				{
+					EventsHelper.Fire(_importProgressUpdate, this, new ItemEventArgs<ImportProgressItem>(progressItem));
+				}, null);
 		}
 
 		private void OnReindexProgressChanged(ReindexProgressItem progressItem)
 		{
-			if (!this.AnySubscribers || _marshaler == null)
+			if (!this.AnySubscribers)
 				return;
 
-			_marshaler.QueueInvoke(delegate()
-			{
-				EventsHelper.Fire(_reindexProgressUpdate, this, new ItemEventArgs<ReindexProgressItem>(progressItem));
-			});
+			_synchronizationContext.Post(delegate
+				{
+					EventsHelper.Fire(_reindexProgressUpdate, this, new ItemEventArgs<ReindexProgressItem>(progressItem));
+				}, null);
 		}
 
 		private void OnSopInstanceImported(ImportedSopInstanceInformation information)
 		{
-			if (!this.AnySubscribers || _marshaler == null)
+			if (!this.AnySubscribers)
 				return;
 
-			_marshaler.QueueInvoke(delegate()
-			{
-				EventsHelper.Fire(_sopInstanceImported, this, new ItemEventArgs<ImportedSopInstanceInformation>(information));
-			});
+			_synchronizationContext.Post(delegate
+				{
+					EventsHelper.Fire(_sopInstanceImported, this, new ItemEventArgs<ImportedSopInstanceInformation>(information));
+				}, null);
 		}
 
 		private void OnInstanceDeleted(DeletedInstanceInformation information)
 		{
-			if (!this.AnySubscribers || _marshaler == null)
+			if (!this.AnySubscribers)
 				return;
 
-			_marshaler.QueueInvoke(delegate()
-			{
-				EventsHelper.Fire(_instanceDeleted, this, new ItemEventArgs<DeletedInstanceInformation>(information));
-			});
+			_synchronizationContext.Post(delegate
+				{
+					EventsHelper.Fire(_instanceDeleted, this, new ItemEventArgs<DeletedInstanceInformation>(information));
+				}, null);
 		}
 
 		private void OnLocalDataStoreCleared()
 		{
-			if (!this.AnySubscribers || _marshaler == null)
+			if (!this.AnySubscribers)
 				return;
 
-			_marshaler.QueueInvoke(delegate()
-			{
-				EventsHelper.Fire(_localDataStoreCleared, this, EventArgs.Empty);
-			});
+			_synchronizationContext.Post(delegate
+				{
+					EventsHelper.Fire(_localDataStoreCleared, this, EventArgs.Empty);
+				}, null);
 		}
 
 		private void OnLostConnection()
@@ -534,7 +521,7 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 				Monitor.Wait(_connectionThreadLock);
 
 				if (!_isConnected)
-					_marshaler.QueueInvoke(delegate() { EventsHelper.Fire(_lostConnection, this, EventArgs.Empty); });
+					_synchronizationContext.Post(delegate { EventsHelper.Fire(_lostConnection, this, EventArgs.Empty); }, null);
 			}
 		}
 
@@ -556,7 +543,7 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 					_serviceClient.InnerChannel.Closed += new EventHandler(OnChannelClosed);
 
 					_isConnected = true;
-					_marshaler.QueueInvoke(delegate() { EventsHelper.Fire(_connected, this, EventArgs.Empty); });
+					_synchronizationContext.Post(delegate { EventsHelper.Fire(_connected, this, EventArgs.Empty); }, null);
 				}
 				catch (EndpointNotFoundException)
 				{ 
