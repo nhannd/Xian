@@ -29,16 +29,17 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client
 {
     public class OrderDetailViewComponent : DHtmlComponent
     {
-        public OrderDetailViewComponent()
+        private readonly WorklistItemSummaryBase _worklistItem;
+
+        public OrderDetailViewComponent(WorklistItemSummaryBase worklistItem)
         {
+            _worklistItem = worklistItem;
         }
 
         public override void Start()
@@ -51,5 +52,11 @@ namespace ClearCanvas.Ris.Client
         {
             NotifyAllPropertiesChanged();
         }
+
+        protected override object GetWorklistItem()
+        {
+            return _worklistItem;
+        }
+
     }
 }

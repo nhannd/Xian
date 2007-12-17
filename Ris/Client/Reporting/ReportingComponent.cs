@@ -74,7 +74,7 @@ namespace ClearCanvas.Ris.Client.Reporting
             _bannerComponent = new BannerComponent(worklistItem);
             _reportEditorComponent = new ReportEditorComponent(_worklistItem.ProcedureStepRef);
             _priorReportComponent = new PriorReportComponent(_worklistItem);
-            _orderDetailComponent = new OrderDetailViewComponent();
+            _orderDetailComponent = new OrderDetailViewComponent(_worklistItem);
         }
 
         public override void Start()

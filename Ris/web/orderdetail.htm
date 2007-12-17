@@ -1,34 +1,154 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
-        <title>Order Details</title>
-        <link href="css/default.css" rel="stylesheet" type="text/css" />
-        <script type="text/javascript" src="js/jsx.js"></script>
-	    <script type="text/javascript" src="js/jsml.js"></script>
-	    <script type="text/javascript" src="js/ui.js"></script>
-	    <script type="text/javascript" src="js/ris.js"></script>
-	    <script type="text/javascript" >
-		    function onBodyLoad()
-		    {		        
-		        if(!Ris)
-		            return;
+		<title>Order Details</title>
+		<link href="css/default.css" rel="stylesheet" type="text/css" />
+		<script type="text/javascript" src="js/jsx.js"></script>
+		<script type="text/javascript" src="js/jsml.js"></script>
+		<script type="text/javascript" src="js/ui.js"></script>
+		<script type="text/javascript" src="js/ris.js"></script>
+		<script type="text/javascript" src="js/preview.js"></script>
+		<script type="text/javascript" src="js/layout.js"></script>
+		<script type="text/javascript" >
+			var data = {};
 
-	            try
-	            {
-                    // data = Ris.getData("Report");
-	            }
-	            catch(e)
-	            {
-	                var message = "Failed to load editor page.  An exception occurred in the script. Error name: " + e.name + ". Error message: " + e.message;
-		            Field.setValue($("myForm"), message);
-	            }
-				
-		    }
+			function onBodyLoad()
+			{
+				scaleWidth();
+
+				if(!Ris)
+					return;
+				try
+				{
+					var worklistItem = Ris.getWorklistItem();
+					if (worklistItem == null)
+					{
+						Field.setValue($("myForm"), "");
+						return;
+					}
+
+					// construct request object
+					var request = {
+						GetOrderDetailRequest:
+							 { 
+								OrderRef: worklistItem.OrderRef,
+								IncludeNotes: true,
+								IncludeVisit: true,
+								IncludeProcedures: true,
+								IncludeNotes: true
+							 }
+					};
+
+					var service = Ris.getService("ClearCanvas.Ris.Application.Common.BrowsePatientData.IBrowsePatientDataService, ClearCanvas.Ris.Application.Common");
+					data = service.getData(request);
+
+					if (data == null || data.length == 0)
+					{
+						Field.setValue($("myForm"), "");
+						return;
+					}
+
+					var orderDetail = data.GetOrderDetailResponse.Order;
+
+					Field.setValue($("AccessionNumber"), orderDetail.AccessionNumber);
+					Field.setValue($("OrderPriority"), orderDetail.OrderPriority.Value);
+					Field.setValue($("OrderingPhysician"), Ris.formatPersonName(orderDetail.OrderingPractitioner.Name));
+					Field.setValue($("DiagnosticService"), orderDetail.DiagnosticService.Name);
+
+					if(orderDetail.Notes.length)
+						createOrderNotesTable($("orderNotesTable"), orderDetail.Notes);
+					else
+						Field.show($("orderNotesTable"), false);
+
+					if (orderDetail.RequestedProcedures.length)
+						createProceduresTable($("orderedProceduresTable"), orderDetail.RequestedProcedures);
+					else
+						Field.show($("orderedProceduresTable"), false);
+				}
+				catch(e)
+				{
+					var message = "Failed to load editor page.  An exception occurred in the script. Error name: " + e.name + ". Error message: " + e.message;
+					Field.setValue($("myForm"), message);
+				}
+			}
+
+			function createOrderNotesTable(htmlTable, notes)
+			{
+				htmlTable = Table.createTable(htmlTable, { editInPlace: false, flow: false },
+					 [
+						{   label: "Comment",
+							cellType: "text",
+							getValue: function(item) { return item.Comment; }
+						},
+						{   label: "Time",
+							cellType: "text",
+							getValue: function(item) { return Ris.formatDateTime(item.CreationTime); }
+						},
+						{   label: "Author",
+							cellType: "text",
+							getValue: function(item) { return Ris.formatPersonName(item.Author.Name); }
+						}
+					 ]);
+					 
+				htmlTable.rowCycleClassNames = ["row0", "row1"];
+				htmlTable.bindItems(notes);
+			}
+
+			function createProceduresTable(htmlTable, procedures)
+			{
+				htmlTable = Table.createTable(htmlTable, { editInPlace: false, flow: false },
+					 [
+						{   label: "Procedure",
+							cellType: "text",
+							getValue: function(item) { return item.Type.Name; }
+						}
+					 ]);
+					 
+				htmlTable.rowCycleClassNames = ["row0", "row1"];
+				htmlTable.bindItems(procedures);
+			}
 		</script>
 	</head>
 	<body onload="javascript: onBodyLoad()" style="padding-top:0">
 		<form id="myForm" style="padding-top:0">
-		    <p class="sectionheading">Order Details</p>
+			<p>&nbsp;</p>
+			<table width="100%" border="0">
+				<tr>
+					<td class="sectionheading" colspan="4">Imaging Consultation Overview</td>
+				</tr>
+				<tr>
+					<td width="120" class="propertyname">Accession Number</td>
+					<td width="200"><div id="AccessionNumber"/></td>
+					<td width="120" class="propertyname">Priority</td>
+					<td width="200"><div id="OrderPriority"/></td>
+				</tr>
+				<tr>
+					<td width="120" class="propertyname">Ordering Physician</td>
+					<td width="200"><div id="OrderingPhysician"/></td>
+					<td width="120" class="propertyname">Ordering Facility</td>
+					<td width="200"><div id="OrderingFacility"/></td>
+				</tr>
+				<tr>
+					<td width="120" class="propertyname">Diagnostic Service</td>
+					<td width="200"><div id="DiagnosticService"/></td>
+					<td width="120" class="propertyname"></td>
+					<td width="200"></td>
+				</tr>
+			</table>
+			<table border="0" id="orderedProceduresTable">
+				<tr><td class="sectionheading" colspan="6">Ordered Procedures</td></tr>
+				<tr class="tableheading">
+					<td>Procedure</td>
+				</tr>
+			</table>
+			<table border="0" id="orderNotesTable">
+				<tr><td class="sectionheading" colspan="6">Order Notes</td></tr>
+				<tr class="tableheading">
+					<td>Comment</td>
+					<td>Time</td>
+					<td>Author</td>
+				</tr>
+			</table>
 		</form>
 	</body>
 </html>

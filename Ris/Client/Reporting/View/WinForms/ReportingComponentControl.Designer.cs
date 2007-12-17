@@ -82,7 +82,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             // 
             this._rootSplitContainer.Panel2.Controls.Add(this._reportEditorSplitContainer);
             this._rootSplitContainer.Size = new System.Drawing.Size(599, 535);
-            this._rootSplitContainer.SplitterDistance = 95;
+            this._rootSplitContainer.SplitterDistance = 74;
             this._rootSplitContainer.TabIndex = 0;
             this._rootSplitContainer.TabStop = false;
             // 
@@ -95,7 +95,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             // _reportEditorSplitContainer.Panel2
             // 
             this._reportEditorSplitContainer.Panel2.Controls.Add(this.tabControl1);
-            this._reportEditorSplitContainer.Size = new System.Drawing.Size(599, 436);
+            this._reportEditorSplitContainer.Size = new System.Drawing.Size(599, 457);
             this._reportEditorSplitContainer.SplitterDistance = 297;
             this._reportEditorSplitContainer.TabIndex = 0;
             this._reportEditorSplitContainer.TabStop = false;
@@ -108,7 +108,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(298, 436);
+            this.tabControl1.Size = new System.Drawing.Size(298, 457);
             this.tabControl1.TabIndex = 0;
             // 
             // _priorReportsTab
@@ -116,7 +116,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this._priorReportsTab.Location = new System.Drawing.Point(4, 22);
             this._priorReportsTab.Name = "_priorReportsTab";
             this._priorReportsTab.Padding = new System.Windows.Forms.Padding(3);
-            this._priorReportsTab.Size = new System.Drawing.Size(290, 410);
+            this._priorReportsTab.Size = new System.Drawing.Size(290, 431);
             this._priorReportsTab.TabIndex = 0;
             this._priorReportsTab.Text = "Prior Reports";
             this._priorReportsTab.UseVisualStyleBackColor = true;
