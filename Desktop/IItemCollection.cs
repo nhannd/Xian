@@ -102,11 +102,16 @@ namespace ClearCanvas.Desktop
         }
     }
 
-	// TODO (Jon): try to get rid of these interfaces altogether.
+	// TODO: get rid of these interfaces.
 	
 	/// <summary>
     /// Defines the interface to the collection of items.
     /// </summary>
+    /// <remarks>
+    /// Do not implement this interface.  It is likely to be removed
+    /// in subsequent versions of the framework and is 
+    /// not considered part of the public API.
+    /// </remarks>
     public interface IItemCollection : IList
     {
         /// <summary>
@@ -118,7 +123,12 @@ namespace ClearCanvas.Desktop
     /// <summary>
     /// Defines the interface to the collection of items.
     /// </summary>
-    /// <typeparam name="TItem">The item type.</typeparam>
+	/// <remarks>
+	/// Do not implement this interface.  It is likely to be removed
+	/// in subsequent versions of the framework and is 
+	/// not considered part of the public API.
+	/// </remarks>
+	/// <typeparam name="TItem">The item type.</typeparam>
     public interface IItemCollection<TItem> : IItemCollection, IList<TItem>
     {
     }

@@ -36,9 +36,14 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop
 {
-    ///<summary>
+    /// <summary>
     /// Default implementation of <see cref="IItemCollection{TItem}"/>.
-    ///</summary>
+    /// </summary>
+	/// <remarks>
+	/// Do not subclass this class.  It is likely to be removed
+	/// in subsequent versions of the framework and is 
+	/// not considered part of the public API.
+	/// </remarks>
     ///<typeparam name="TItem">The type of item that the table holds.</typeparam>
     public class ItemCollection<TItem> : IItemCollection<TItem>
     {
