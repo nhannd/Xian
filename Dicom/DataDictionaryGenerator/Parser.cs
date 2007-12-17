@@ -1,6 +1,6 @@
 #region License
 
-// Copyright (c) 2006-2007, ClearCanvas Inc.
+// Copyright (c) 2006-2008, ClearCanvas Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, 
@@ -98,10 +98,10 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
         public static string CreateVariableName(string input)
         {
             // Now create the variable name
-            char[] charSeparators = new char[] {'(', ')', ',', ' ', '\'', '’', '–', '-', '/', '&', '[', ']', '@'};
+            char[] charSeparators = new char[] {'(', ')', ',', ' ', '\'', 'ï¿½', 'ï¿½', '-', '/', '&', '[', ']', '@'};
 
             // just remove apostrophes so casing is correct
-            string tempString = input.Replace("’", ""); 
+            string tempString = input.Replace("ï¿½", ""); 
             tempString = tempString.Replace("'", "");
             tempString = tempString.Replace("(", "");
             tempString = tempString.Replace(")", "");

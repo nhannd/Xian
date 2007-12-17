@@ -1,6 +1,6 @@
 #region License
 
-// Copyright (c) 2006-2007, ClearCanvas Inc.
+// Copyright (c) 2006-2008, ClearCanvas Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, 
@@ -59,7 +59,7 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
         {
             writer.WriteLine("#region License");
             writer.WriteLine("");
-            writer.WriteLine("// Copyright (c) 2006-2007, ClearCanvas Inc.");
+            writer.WriteLine("// Copyright (c) 2006-2008, ClearCanvas Inc.");
             writer.WriteLine("// All rights reserved.");
             writer.WriteLine("//");
             writer.WriteLine("// Redistribution and use in source and binary forms, with or without modification, ");
@@ -227,7 +227,7 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
                 Tag tag = iter.Current;
                 uint vmLow = 0;
                 uint vmHigh = 0;
-                char[] charSeparators = new char[] { '–', '-' };
+                char[] charSeparators = new char[] { 'ï¿½', '-' };
                 
                 String[] nodes = tag.vm.Split(charSeparators, StringSplitOptions.RemoveEmptyEntries);
                 if (nodes.Length == 1)
