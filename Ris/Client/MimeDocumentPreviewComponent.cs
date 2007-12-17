@@ -141,7 +141,7 @@ namespace ClearCanvas.Ris.Client
         /// Default Constructor to show summary but hide all tools
         /// </summary>
         public MimeDocumentPreviewComponent()
-            : this(true, false)
+            : this(true, false, AttachmentMode.Patient)
         {
         }
 
@@ -150,7 +150,7 @@ namespace ClearCanvas.Ris.Client
         /// </summary>
         /// <param name="showSummary">True to show the summary section, false to hide it</param>
         public MimeDocumentPreviewComponent(bool showSummary)
-            : this(showSummary, false)
+            : this(showSummary, false, AttachmentMode.Patient)
         {
         }
 
@@ -160,9 +160,26 @@ namespace ClearCanvas.Ris.Client
         /// <param name="showSummary">True to show the summary section, false to hide it</param>
         /// <param name="showToolbar">True to show the summary toolbar, false to hide it</param>
         public MimeDocumentPreviewComponent(bool showSummary, bool showToolbar)
+            : this(showSummary, showToolbar, AttachmentMode.Patient)
         {
             _showSummary = showSummary;
             _showToolbar = showToolbar;
+
+            _patientAttachments = new List<PatientAttachmentSummary>();
+            _orderAttachments = new List<OrderAttachmentSummary>();
+        }
+
+        /// <summary>
+        /// Constructor to show/hide the summary section
+        /// </summary>
+        /// <param name="showSummary">True to show the summary section, false to hide it</param>
+        /// <param name="showToolbar">True to show the summary toolbar, false to hide it</param>
+        /// <param name="mode">Set the component attachment mode</param>
+        public MimeDocumentPreviewComponent(bool showSummary, bool showToolbar, AttachmentMode mode)
+        {
+            _showSummary = showSummary;
+            _showToolbar = showToolbar;
+            _mode = mode;
 
             _patientAttachments = new List<PatientAttachmentSummary>();
             _orderAttachments = new List<OrderAttachmentSummary>();
@@ -181,12 +198,6 @@ namespace ClearCanvas.Ris.Client
         }
 
         #region Summary Methods
-
-        public AttachmentMode Mode
-        {
-            get { return _mode; }
-            set { _mode = value; }
-        }
 
         public bool ShowSummary
         {

@@ -92,7 +92,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         public override void Start()
         {
-            _banneryComponentHost = new ChildComponentHost(this.Host, new BannerComponent());
+            _banneryComponentHost = new ChildComponentHost(this.Host, new BannerComponent(_worklistItem));
             _banneryComponentHost.StartComponent();
 
             _protocolEditorComponent = new ProtocolEditorComponent(this, _worklistItem, _componentMode);

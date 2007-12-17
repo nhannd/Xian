@@ -201,8 +201,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 }));
 
             _noteSummaryComponent = new OrderNoteSummaryComponent();
-            _attachmentSummaryComponent = new MimeDocumentPreviewComponent(true, true);
-            _attachmentSummaryComponent.Mode = MimeDocumentPreviewComponent.AttachmentMode.Order;
+            _attachmentSummaryComponent = new MimeDocumentPreviewComponent(true, true, MimeDocumentPreviewComponent.AttachmentMode.Order);
         }
 
         public override void Start()

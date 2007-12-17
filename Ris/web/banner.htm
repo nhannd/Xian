@@ -1,36 +1,149 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
-        <title>Order Summary</title>
-        <link href="css/default.css" rel="stylesheet" type="text/css" />
-        <script type="text/javascript" src="js/jsx.js"></script>
-	    <script type="text/javascript" src="js/jsml.js"></script>
-	    <script type="text/javascript" src="js/ui.js"></script>
-	    <script type="text/javascript" src="js/ris.js"></script>
-	    <script type="text/javascript" >
-		    var data = {};
+		<title>Banner</title>
+		<link href="css/banner.css" rel="stylesheet" type="text/css" />
+		<script type="text/javascript" src="js/jsx.js"></script>
+		<script type="text/javascript" src="js/jsml.js"></script>
+		<script type="text/javascript" src="js/ui.js"></script>
+		<script type="text/javascript" src="js/ris.js"></script>
+		<script type="text/javascript" src="js/preview.js"></script>
+		<script type="text/javascript" src="js/layout.js"></script>
+		<script type="text/javascript" >
+			var data = {};
 
-		    function onBodyLoad()
-		    {		        
-		        if(!Ris)
-		            return;
+			function onBodyLoad()
+			{
+				scaleWidth();
 
-	            try
-	            {
-                    // data = Ris.getData("Report");
-	            }
-	            catch(e)
-	            {
-	                var message = "Failed to load editor page.  An exception occurred in the script. Error name: " + e.name + ". Error message: " + e.message;
-		            Field.setValue($("myForm"), message);
-	            }
+				if(!Ris)
+					return;
+
+				try
+				{
+					var worklistItem = Ris.getWorklistItem();
+					if (worklistItem == null)
+					{
+						Field.setValue($("myForm"), "");
+						return;
+					}
+
+					var request = {
+						GetPatientProfileDetailRequest: { PatientProfileRef: worklistItem.PatientProfileRef, IncludeAlerts: true },
+						GetOrderDetailRequest: { OrderRef: worklistItem.OrderRef, IncludeAlerts: true },
+						GetReportDetailRequest: { ReportRef: worklistItem.ReportRef }
+					};
+                    
+					var service = Ris.getService("ClearCanvas.Ris.Application.Common.BrowsePatientData.IBrowsePatientDataService, ClearCanvas.Ris.Application.Common");
+					data = service.getData(request);
+					if (data == null || data.length == 0)
+					{
+						Field.setValue($("myForm"), "");
+						return;
+					}
+					// update patient demography
+					var patientProfile = data.GetPatientProfileDetailResponse.PatientProfile;
+					var patientName = Ris.formatPersonName(patientProfile.Name);
+					if (patientProfile)
+					{
+						Field.setValue($("name"), patientName);
+						Field.setValue($("mrn"), Ris.formatMrn(patientProfile.Mrn));
+						Field.setValue($("dateOfBirth"), Ris.formatDate(patientProfile.DateOfBirth));
+						Field.setValue($("healthcard"), Ris.formatHealthcard(patientProfile.Healthcard));
+						Field.setValue($("agesex"), 
+							getPatientAge(patientProfile.DateOfBirth, patientProfile.DeathIndicator, patientProfile.TimeOfDeath) +
+							" (" + patientProfile.Sex.Value + ")"); 
+					}
+
+					var order = data.GetOrderDetailResponse.Order;
+					if (order)
+					{
+						Field.setValue($("accessionNumber"), order.AccessionNumber);
+						Field.setValue($("orderPriority"), order.OrderPriority.Value);
+						Field.setValue($("orderingPractitioner"), Ris.formatPersonName(order.OrderingPractitioner.Name));
+						Field.setValue($("diagnosticService"), order.DiagnosticService.Name);
+					}
+
+					var report = data.GetReportDetailResponse.Report;
+					if (report)
+					{
+						var procedureHtml = "";
+						report.Procedures.each(function(procedure) { procedureHtml += procedure.Type.Name; });
+						Field.setValue($("requestedProcedures"), procedureHtml);
+					}
+
+					// update alerts
+					var alertNotifications = data.GetPatientProfileDetailResponse.PatientAlerts;
+					alertNotifications = alertNotifications.concat(data.GetOrderDetailResponse.OrderAlerts);
+					if (alertNotifications)
+					{
+						var alertHtml = "";
+						alertNotifications.each(function(item) { alertHtml += getAlertHtml(item, patientName); });
+						$("alerts").innerHTML = alertHtml;
+					}
+				}
+				catch(e)
+				{
+					var message = "Failed to load editor page.  An exception occurred in the script. Error name: " + e.name + ". Error message: " + e.message;
+					Field.setValue($("myForm"), message);
+				}
 				
-		    }
+			}
 		</script>
 	</head>
-	<body onload="javascript: onBodyLoad()" style="padding-top:0">
-		<form id="myForm" style="padding-top:0">
-		    <p class="sectionheading">Order Summary</p>
+	<body onload="javascript: onBodyLoad()" onresize="javascript: scaleWidth()">
+		<form id="myForm">
+			<table border="0">
+				<tr><td colspan="2">
+					<table border="0">
+						<tr>
+							<td class="pageheading"><div id="name"/></td>
+							<td style="padding:0" rowspan="2" align="right"><div id="alerts"/></td>
+						</tr>
+						<tr>
+							<td class="pageheading2"><div id="mrn"/></td>
+						</tr>
+					</table>
+				</td></tr>
+				<tr>
+					<td>
+						<table border="0">
+							<tr>
+								<td class="propertyname">Healthcard #</td>
+								<td class="propertyvalue"><div id="healthcard"/></td>
+							</tr>
+							<tr>
+								<td class="propertyname">Date of Birth</td>
+								<td class="propertyvalue"><div id="dateOfBirth"/></td>
+							</tr>
+							<tr>
+								<td class="propertyname">Age / Sex</td>
+								<td class="propertyvalue"><div id="agesex"/></td>
+							</tr>
+						</table>
+					</td>
+					<td>
+						<table border="0">
+							<tr>
+								<td class="propertyname">Accession #</td>
+								<td class="propertyvalue"><div id="accessionNumber"/></td>
+								<td class="propertyname">Diagnostic Service</td>
+								<td class="propertyvalue"><div id="diagnosticService"/></td>
+							</tr>
+							<tr>
+								<td class="propertyname">Ordering Priority</td>
+								<td class="propertyvalue"><div id="orderPriority"/></td>
+								<td class="propertyname" rowspan="2">Requested Procedures</td>
+								<td class="propertyvalue" rowspan="2"><div id="requestedProcedures"/></td>
+							</tr>
+							<tr>
+								<td class="propertyname">Ordering Physician</td>
+								<td class="propertyvalue"><div id="orderingPractitioner"/></td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
 		</form>
 	</body>
 </html>
