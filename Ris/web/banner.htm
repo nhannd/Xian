@@ -31,7 +31,7 @@
 					var request = {
 						GetPatientProfileDetailRequest: { PatientProfileRef: worklistItem.PatientProfileRef, IncludeAlerts: true },
 						GetOrderDetailRequest: { OrderRef: worklistItem.OrderRef, IncludeAlerts: true },
-						GetReportDetailRequest: { ReportRef: worklistItem.ReportRef }
+						GetReportDetailRequest: worklistItem.ReportRef == null ? null : { ReportRef: worklistItem.ReportRef }
 					};
                     
 					var service = Ris.getService("ClearCanvas.Ris.Application.Common.BrowsePatientData.IBrowsePatientDataService, ClearCanvas.Ris.Application.Common");
@@ -64,7 +64,7 @@
 						Field.setValue($("diagnosticService"), order.DiagnosticService.Name);
 					}
 
-					var report = data.GetReportDetailResponse.Report;
+					var report = data.GetReportDetailResponse ? data.GetReportDetailResponse.Report : null;
 					if (report)
 					{
 						var procedureHtml = "";
