@@ -52,7 +52,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		#region Private fields
 
 		private int _numberOfPoints = 0;
-		private event EventHandler<CollectionEventArgs<PointF>> _anchorPointChangedEvent;
+		private event EventHandler<ListEventArgs<PointF>> _anchorPointChangedEvent;
 		private Color _color = Color.Yellow;
 
 		#endregion
@@ -90,7 +90,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// <summary>
 		/// Occurs when an anchor point has changed.
 		/// </summary>
-		public event EventHandler<CollectionEventArgs<PointF>> AnchorPointChangedEvent
+		public event EventHandler<ListEventArgs<PointF>> AnchorPointChangedEvent
 		{
 			add { _anchorPointChangedEvent += value; }
 			remove { _anchorPointChangedEvent -= value; }
@@ -269,7 +269,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		private void NotifyListeners(int anchorPointIndex, PointF anchorPoint)
 		{
-			EventsHelper.Fire(_anchorPointChangedEvent, this, new CollectionEventArgs<PointF>(anchorPoint, anchorPointIndex));
+			EventsHelper.Fire(_anchorPointChangedEvent, this, new ListEventArgs<PointF>(anchorPoint, anchorPointIndex));
 		}
 	}
 }

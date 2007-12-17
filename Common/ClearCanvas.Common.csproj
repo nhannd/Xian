@@ -227,7 +227,7 @@
     <Compile Include="Utilities\BackgroundTask.cs" />
     <Compile Include="Utilities\BlockingQueue.cs" />
     <Compile Include="Utilities\CodeClock.cs" />
-    <Compile Include="Utilities\CollectionEventArgs.cs" />
+    <Compile Include="Utilities\ListEventArgs.cs" />
     <Compile Include="Utilities\CollectionUtils.cs" />
     <Compile Include="Configuration\StandardSettingsProvider.cs" />
     <Compile Include="Utilities\DictionaryEventArgs.cs" />

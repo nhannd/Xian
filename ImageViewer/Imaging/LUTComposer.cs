@@ -59,9 +59,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// </summary>
 		public LutComposer()
 		{
-			this.LutCollection.ItemAdded += new EventHandler<CollectionEventArgs<IComposableLut>>(OnLutAdded);
-			this.LutCollection.ItemChanging += new EventHandler<CollectionEventArgs<IComposableLut>>(OnLutChanging);
-			this.LutCollection.ItemChanged += new EventHandler<CollectionEventArgs<IComposableLut>>(OnLutChanged);
+			this.LutCollection.ItemAdded += new EventHandler<ListEventArgs<IComposableLut>>(OnLutAdded);
+			this.LutCollection.ItemChanging += new EventHandler<ListEventArgs<IComposableLut>>(OnLutChanging);
+			this.LutCollection.ItemChanged += new EventHandler<ListEventArgs<IComposableLut>>(OnLutChanged);
 		}
 
 		#region Public Properties
@@ -173,19 +173,19 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		#region Event Handlers
 
-		private void OnLutChanging(object sender, CollectionEventArgs<IComposableLut> e)
+		private void OnLutChanging(object sender, ListEventArgs<IComposableLut> e)
 		{
 			e.Item.LutChanged -= new EventHandler(OnLutValuesChanged);
 		}
 
-		private void OnLutChanged(object sender, CollectionEventArgs<IComposableLut> e)
+		private void OnLutChanged(object sender, ListEventArgs<IComposableLut> e)
 		{
 			_recalculate = true;
 			SyncMinMaxValues();
 			OnLutAdded(sender, e);
 		}
 
-		private void OnLutAdded(object sender, CollectionEventArgs<IComposableLut> e)
+		private void OnLutAdded(object sender, ListEventArgs<IComposableLut> e)
 		{
 			e.Item.LutChanged += new EventHandler(OnLutValuesChanged);
 			SyncMinMaxValues();
@@ -352,9 +352,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 		{
 			try
 			{
-				this.LutCollection.ItemAdded -= new EventHandler<CollectionEventArgs<IComposableLut>>(OnLutAdded);
-				this.LutCollection.ItemChanging -= new EventHandler<CollectionEventArgs<IComposableLut>>(OnLutChanging);
-				this.LutCollection.ItemChanged -= new EventHandler<CollectionEventArgs<IComposableLut>>(OnLutChanged);
+				this.LutCollection.ItemAdded -= new EventHandler<ListEventArgs<IComposableLut>>(OnLutAdded);
+				this.LutCollection.ItemChanging -= new EventHandler<ListEventArgs<IComposableLut>>(OnLutChanging);
+				this.LutCollection.ItemChanged -= new EventHandler<ListEventArgs<IComposableLut>>(OnLutChanged);
 
 				Dispose(true);
 				GC.SuppressFinalize(this);

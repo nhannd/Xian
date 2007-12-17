@@ -83,7 +83,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		{
 			// Okay, the method name is deceptive--it doesn't actually
 			// open priors yet
-			DiagnosticImageViewerComponent imageViewer = new DiagnosticImageViewerComponent();
+			ImageViewerComponent imageViewer = new ImageViewerComponent(LayoutManagerCreationParameters.Extended);
 			StudyItem item = this.Context.SelectedStudy;
 			string studyInstanceUid = item.StudyInstanceUID;
 
@@ -105,7 +105,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		private void OpenMultipleStudiesInSingleWorkspace()
 		{
-			DiagnosticImageViewerComponent imageViewer = new DiagnosticImageViewerComponent();
+			ImageViewerComponent imageViewer = new ImageViewerComponent(LayoutManagerCreationParameters.Extended);
 			int completelySuccessfulStudies = 0;
 			int successfulImagesInLoadFailure = 0;
 
@@ -141,7 +141,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		{
 			foreach (StudyItem item in this.Context.SelectedStudies)
 			{
-				DiagnosticImageViewerComponent imageViewer = new DiagnosticImageViewerComponent();
+				ImageViewerComponent imageViewer = new ImageViewerComponent(LayoutManagerCreationParameters.Extended);
 				string studyInstanceUid = item.StudyInstanceUID;
 
 				try

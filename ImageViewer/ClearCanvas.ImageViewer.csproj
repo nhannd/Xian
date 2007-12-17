@@ -227,7 +227,6 @@
     <Compile Include="InteractiveGraphics\StandardGraphicState.cs" />
     <Compile Include="InteractiveGraphics\IStatefulGraphic.cs" />
     <Compile Include="ImageSet.cs" />
-    <Compile Include="DiagnosticImageViewerComponent.cs" />
     <Compile Include="InteractiveGraphics\FocussedSelectedGraphicState.cs" />
     <Compile Include="InteractiveGraphics\FocussedSelectedInteractiveGraphicState.cs" />
     <Compile Include="InteractiveGraphics\FocussedSelectedROIGraphicState.cs" />

@@ -101,7 +101,7 @@ namespace ClearCanvas.ImageViewer.Tests
 			IPresentationImage image2 = new TestPresentationImage();
 			displaySet2.PresentationImages.Add(image2);
 
-			IImageViewer viewer = new DiagnosticImageViewerComponent();
+			ImageViewerComponent viewer = new ImageViewerComponent(LayoutManagerCreationParameters.Extended);
 
 			IImageBox imageBox1 = new ImageBox();
 			viewer.PhysicalWorkspace.ImageBoxes.Add(imageBox1);

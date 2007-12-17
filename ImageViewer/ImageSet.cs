@@ -45,7 +45,6 @@ namespace ClearCanvas.ImageViewer
 		#region Private fields
 
 		private DisplaySetCollection _displaySets = new DisplaySetCollection();
-		private List<IDisplaySet> _linkedDisplaySets = new List<IDisplaySet>();
 		private LogicalWorkspace _parentLogicalWorkspace;
 		private IImageViewer _imageViewer;
 		private string _name;
@@ -61,7 +60,6 @@ namespace ClearCanvas.ImageViewer
 		public ImageSet()
 		{
 			_displaySets.ItemAdded += OnDisplaySetAdded;
-			_displaySets.ItemRemoved += OnDisplaySetRemoved;
 		}
 
 		#region IImageSet Members
@@ -108,14 +106,19 @@ namespace ClearCanvas.ImageViewer
 			get { return _displaySets; }
 		}
 
-		// TODO (Norman): Use IEnumerable and yield
-
 		/// <summary>
 		/// Gets a collection of linked <see cref="IDisplaySet"/> objects.
 		/// </summary>
 		public IEnumerable<IDisplaySet> LinkedDisplaySets
 		{
-			get { return _linkedDisplaySets.AsReadOnly(); }
+			get
+			{
+				foreach (IDisplaySet displaySet in DisplaySets)
+				{
+					if (displaySet.Linked)
+						yield return displaySet;
+				}
+			}
 		}
 
 		/// <summary>
@@ -218,37 +221,17 @@ namespace ClearCanvas.ImageViewer
 				displaySet.Dispose();
 
 			_displaySets.ItemAdded -= OnDisplaySetAdded;
-			_displaySets.ItemRemoved -= OnDisplaySetRemoved;
 			_displaySets = null;
 		}
 
 		#endregion
 
-		internal void LinkDisplaySet(DisplaySet displaySet)
-		{
-			_linkedDisplaySets.Add(displaySet);
-		}
-
-		internal void UnlinkDisplaySet(DisplaySet displaySet)
-		{
-			_linkedDisplaySets.Remove(displaySet);
-		}
-
-		private void OnDisplaySetAdded(object sender, CollectionEventArgs<IDisplaySet> e)
+		private void OnDisplaySetAdded(object sender, ListEventArgs<IDisplaySet> e)
 		{
 			DisplaySet displaySet = (DisplaySet)e.Item;
 
 			displaySet.ParentImageSet = this;
 			displaySet.ImageViewer = this.ImageViewer;
-
-			if (e.Item.Linked)
-				_linkedDisplaySets.Add(e.Item);
-		}
-
-		private void OnDisplaySetRemoved(object sender, CollectionEventArgs<IDisplaySet> e)
-		{
-			if (e.Item.Linked)
-				_linkedDisplaySets.Remove(e.Item);
 		}
 
 		private void OnDrawing()

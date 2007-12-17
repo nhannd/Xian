@@ -196,7 +196,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		protected abstract void OnControlPointChanged(object sender, CollectionEventArgs<PointF> e);
+		protected abstract void OnControlPointChanged(object sender, ListEventArgs<PointF> e);
 
 		/// <summary>
 		/// Releases all resources used by this <see cref="InteractiveGraphic"/>.
@@ -204,7 +204,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		protected override void Dispose(bool disposing)
 		{
 			if (disposing)
-				_controlPointGroup.ControlPointChangedEvent -= new EventHandler<CollectionEventArgs<PointF>>(OnControlPointChanged);
+				_controlPointGroup.ControlPointChangedEvent -= new EventHandler<ListEventArgs<PointF>>(OnControlPointChanged);
 
 			base.Dispose(disposing);
 		}
@@ -219,7 +219,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			base.Graphics.Add(this.ControlPoints);
 
 			// Make sure we know when the control points change
-			_controlPointGroup.ControlPointChangedEvent += new EventHandler<CollectionEventArgs<PointF>>(OnControlPointChanged);
+			_controlPointGroup.ControlPointChangedEvent += new EventHandler<ListEventArgs<PointF>>(OnControlPointChanged);
 
 			_stretchToken = new CursorToken(CursorToken.SystemCursors.Cross);
 			_stretchIndicatorProvider = new CompassStretchIndicatorCursorProvider(_controlPointGroup);

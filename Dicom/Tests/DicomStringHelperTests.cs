@@ -68,15 +68,16 @@ namespace ClearCanvas.Dicom.Tests
 		public void TestDoubleArrayConverter()
 		{
 			string input = null;
-			double[] output = DicomStringHelper.GetDoubleArray(input);
+			double[] output;
+			DicomStringHelper.TryGetDoubleArray(input, out output);
 			Assert.AreEqual(output.Length, 0);
 
 			input = "";
-			output = DicomStringHelper.GetDoubleArray(input);
+			DicomStringHelper.TryGetDoubleArray(input, out output);
 			Assert.AreEqual(output.Length, 0);
 
 			input = @"0\1.2\2.3";
-			output = DicomStringHelper.GetDoubleArray(input);
+			DicomStringHelper.TryGetDoubleArray(input, out output);
 			Assert.AreEqual(output[0], 0);
 			Assert.AreEqual(output[1], 1.2);
 			Assert.AreEqual(output[2], 2.3);
@@ -86,15 +87,16 @@ namespace ClearCanvas.Dicom.Tests
 		public void TestIntArrayConverter()
 		{
 			string input = null;
-			int[] output = DicomStringHelper.GetIntArray(input);
+			int[] output;
+			DicomStringHelper.TryGetIntArray(input, out output);
 			Assert.AreEqual(output.Length, 0);
 
 			input = "";
-			output = DicomStringHelper.GetIntArray(input);
+			DicomStringHelper.TryGetIntArray(input, out output);
 			Assert.AreEqual(output.Length, 0);
 
 			input = @"0\1\30";
-			output = DicomStringHelper.GetIntArray(input);
+			DicomStringHelper.TryGetIntArray(input, out output);
 			Assert.AreEqual(output[0], 0);
 			Assert.AreEqual(output[1], 1);
 			Assert.AreEqual(output[2], 30);

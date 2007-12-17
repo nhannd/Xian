@@ -164,15 +164,10 @@ namespace ClearCanvas.ImageViewer
 			get { return _linked; }
 			set
 			{
-				if (_linked != value)
-				{
-					_linked = value;
+				if (_linked == value)
+					return;
 
-					if (_linked)
-						_parentDisplaySet.LinkPresentationImage(this);
-					else
-						_parentDisplaySet.UnlinkPresentation(this);
-				}
+				_linked = value;
 			}
 		}
 

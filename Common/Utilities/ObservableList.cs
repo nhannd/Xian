@@ -49,10 +49,10 @@ namespace ClearCanvas.Common.Utilities
 	{
 		private readonly List<TItem> _list;
 		
-		private event EventHandler<CollectionEventArgs<TItem>> _itemAddedEvent;
-		private event EventHandler<CollectionEventArgs<TItem>> _itemRemovedEvent;
-		private event EventHandler<CollectionEventArgs<TItem>> _itemChanging; 
-		private event EventHandler<CollectionEventArgs<TItem>> _itemChangedEvent;
+		private event EventHandler<ListEventArgs<TItem>> _itemAddedEvent;
+		private event EventHandler<ListEventArgs<TItem>> _itemRemovedEvent;
+		private event EventHandler<ListEventArgs<TItem>> _itemChanging; 
+		private event EventHandler<ListEventArgs<TItem>> _itemChangedEvent;
 
 		/// <summary>
 		/// Default constructor.
@@ -86,7 +86,7 @@ namespace ClearCanvas.Common.Utilities
 		/// <summary>
 		/// Fired when an item is added to the list.
 		/// </summary>
-		public virtual event EventHandler<CollectionEventArgs<TItem>> ItemAdded
+		public virtual event EventHandler<ListEventArgs<TItem>> ItemAdded
 		{
 			add { _itemAddedEvent += value; }
 			remove { _itemAddedEvent -= value;	}
@@ -95,7 +95,7 @@ namespace ClearCanvas.Common.Utilities
 		/// <summary>
 		/// Fired when an item is removed from the list.
 		/// </summary>
-		public virtual event EventHandler<CollectionEventArgs<TItem>> ItemRemoved
+		public virtual event EventHandler<ListEventArgs<TItem>> ItemRemoved
 		{
 			add { _itemRemovedEvent += value; }
 			remove { _itemRemovedEvent -= value; }
@@ -104,7 +104,7 @@ namespace ClearCanvas.Common.Utilities
 		/// <summary>
 		/// Fired when an item in the list has changed.
 		/// </summary>
-		public virtual event EventHandler<CollectionEventArgs<TItem>> ItemChanged
+		public virtual event EventHandler<ListEventArgs<TItem>> ItemChanged
 		{
 			add { _itemChangedEvent += value; }
 			remove { _itemChangedEvent -= value; }
@@ -113,7 +113,7 @@ namespace ClearCanvas.Common.Utilities
 		/// <summary>
 		/// Fires when an item in the list is about to change.
 		/// </summary>
-		public virtual event EventHandler<CollectionEventArgs<TItem>> ItemChanging
+		public virtual event EventHandler<ListEventArgs<TItem>> ItemChanging
 		{
 			add { _itemChanging += value; }
 			remove { _itemChanging -= value; }
@@ -143,7 +143,7 @@ namespace ClearCanvas.Common.Utilities
 				return;
 
 			_list.Insert(index, item);
-			OnItemAdded(new CollectionEventArgs<TItem>(item, index));
+			OnItemAdded(new ListEventArgs<TItem>(item, index));
 		}
 
 		/// <summary>
@@ -156,7 +156,7 @@ namespace ClearCanvas.Common.Utilities
 			TItem itemToRemove = this[index];
 			_list.RemoveAt(index);
 
-			OnItemRemoved(new CollectionEventArgs<TItem>(itemToRemove, index));
+			OnItemRemoved(new ListEventArgs<TItem>(itemToRemove, index));
 		}
 
 		/// <summary>
@@ -173,12 +173,12 @@ namespace ClearCanvas.Common.Utilities
 			{
 				Platform.CheckIndexRange(index, 0, this.Count - 1, "index");
 
-				CollectionEventArgs<TItem> args = new CollectionEventArgs<TItem>(_list[index], index);
+				ListEventArgs<TItem> args = new ListEventArgs<TItem>(_list[index], index);
 				OnItemChanging(args);
 				
 				_list[index] = value;
 
-				args = new CollectionEventArgs<TItem>(value, index);
+				args = new ListEventArgs<TItem>(value, index);
 				OnItemChanged(args);
 			}
 		}
@@ -196,7 +196,7 @@ namespace ClearCanvas.Common.Utilities
 				return;
 
 			_list.Add(item);
-			OnItemAdded(new CollectionEventArgs<TItem>(item, this.Count - 1));
+			OnItemAdded(new ListEventArgs<TItem>(item, this.Count - 1));
 		}
 
 		/// <summary>
@@ -271,7 +271,7 @@ namespace ClearCanvas.Common.Utilities
 			{
 				_list.RemoveAt(index);
 				// Only raise event if the item was actually removed
-				OnItemRemoved(new CollectionEventArgs<TItem>(item, index));
+				OnItemRemoved(new ListEventArgs<TItem>(item, index));
 				return true;
 			}
 
@@ -307,7 +307,7 @@ namespace ClearCanvas.Common.Utilities
 		/// <summary>
 		/// Called internally when an item is added.
 		/// </summary>
-		protected virtual void OnItemAdded(CollectionEventArgs<TItem> e)
+		protected virtual void OnItemAdded(ListEventArgs<TItem> e)
 		{
 			EventsHelper.Fire(_itemAddedEvent, this, e);
 		}
@@ -315,7 +315,7 @@ namespace ClearCanvas.Common.Utilities
 		/// <summary>
 		/// Called internally when an item is removed.
 		/// </summary>
-		protected virtual void OnItemRemoved(CollectionEventArgs<TItem> e)
+		protected virtual void OnItemRemoved(ListEventArgs<TItem> e)
 		{
 			EventsHelper.Fire(_itemRemovedEvent, this, e);
 		}
@@ -323,7 +323,7 @@ namespace ClearCanvas.Common.Utilities
 		/// <summary>
 		/// Called internally when an item is changing.
 		/// </summary>
-		protected void OnItemChanging(CollectionEventArgs<TItem> e)
+		protected void OnItemChanging(ListEventArgs<TItem> e)
 		{
 			EventsHelper.Fire(_itemChanging, this, e);
 		}
@@ -331,7 +331,7 @@ namespace ClearCanvas.Common.Utilities
 		/// <summary>
 		/// Called internally when an item has changed.
 		/// </summary>
-		protected virtual void OnItemChanged(CollectionEventArgs<TItem> e)
+		protected virtual void OnItemChanged(ListEventArgs<TItem> e)
 		{
 			EventsHelper.Fire(_itemChangedEvent, this, e);
 		}

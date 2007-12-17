@@ -97,7 +97,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Local
 
 		public void Open()
 		{
-			DiagnosticImageViewerComponent viewer = new DiagnosticImageViewerComponent();
+			ImageViewerComponent viewer = new ImageViewerComponent(LayoutManagerCreationParameters.Extended);
 
 			string[] files = BuildFileList();
 

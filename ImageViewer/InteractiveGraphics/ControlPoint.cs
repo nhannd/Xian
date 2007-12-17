@@ -47,24 +47,17 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 	{
 		#region Private fields
 
-		private int _index;
 		private PointF _location;
 		private InvariantRectanglePrimitive _rectangle;
-		private event EventHandler<CollectionEventArgs<PointF>> _locationChangedEvent;
+		private event EventHandler _locationChangedEvent;
 
 		#endregion
 
 		/// <summary>
 		/// Initializes a new instance of <see cref="ControlPoint"/>.
 		/// </summary>
-		/// <param name="index">The index at which a <see cref="ControlPoint"/>
-		/// is inserted into a <see cref="ControlPointGroup"/>.
-		/// </param>
-		internal ControlPoint(int index)
+		internal ControlPoint()
 		{
-			Platform.CheckNonNegative(index, "index");
-
-			_index = index;
 			_rectangle = new InvariantRectanglePrimitive();
 			_rectangle.InvariantTopLeft = new PointF(-4, -4);
 			_rectangle.InvariantBottomRight = new PointF(4, 4);
@@ -97,7 +90,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 					Trace.Write(String.Format("Control Point: {0}\n", _location.ToString()));
 
 					_rectangle.AnchorPoint = this.Location;
-					EventsHelper.Fire(_locationChangedEvent, this, new CollectionEventArgs<PointF>(this.Location, _index));
+					EventsHelper.Fire(_locationChangedEvent, this, EventArgs.Empty);
 				}
 			}
 		}
@@ -114,7 +107,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// <summary>
 		/// Occurs when the location of the control point has changed.
 		/// </summary>
-		public event EventHandler<CollectionEventArgs<PointF>> LocationChanged
+		public event EventHandler LocationChanged
 		{
 			add { _locationChangedEvent += value; }
 			remove { _locationChangedEvent -= value; }

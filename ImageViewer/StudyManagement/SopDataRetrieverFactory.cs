@@ -93,7 +93,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 					bool tagExists;
 					string value;
 					imageSop.GetTagAsDicomStringArray(dicomTag, out value, out tagExists);
-					return DicomStringHelper.GetIntArray(value ?? "");
+					
+					int[] values;
+					if (!DicomStringHelper.TryGetIntArray(value ?? "", out values))
+						values = new int[]{};
+
+					return values;
 				};
 		}
 
@@ -132,7 +137,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 					bool tagExists;
 					string value;
 					imageSop.GetTagAsDicomStringArray(dicomTag, out value, out tagExists);
-					return DicomStringHelper.GetDoubleArray(value ?? "");
+					double[] values;
+					if (!DicomStringHelper.TryGetDoubleArray(value ?? "", out values))
+						values = new double[] { };
+
+					return values;
+
 				};
 		}
 	}

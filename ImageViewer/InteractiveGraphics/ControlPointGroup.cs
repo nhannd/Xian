@@ -41,7 +41,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 	/// </summary>
 	public class ControlPointGroup : CompositeGraphic
 	{
-		private event EventHandler<CollectionEventArgs<PointF>> _controlPointChangedEvent;
+		private event EventHandler<ListEventArgs<PointF>> _controlPointChangedEvent;
 		private Color _color = Color.Yellow;
 
 		/// <summary>
@@ -54,7 +54,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// <summary>
 		/// Occurs when the location of a <see cref="ControlPoint"/> has changed.
 		/// </summary>
-		public event EventHandler<CollectionEventArgs<PointF>> ControlPointChangedEvent
+		public event EventHandler<ListEventArgs<PointF>> ControlPointChangedEvent
 		{
 			add { _controlPointChangedEvent += value; }
 			remove { _controlPointChangedEvent -= value; }
@@ -111,12 +111,26 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// <param name="point"></param>
 		public void Add(PointF point)
 		{
-			int controlPointIndex = this.Count;
-			ControlPoint controlPoint = new ControlPoint(controlPointIndex);
+			ControlPoint controlPoint = new ControlPoint();
 			this.Graphics.Add(controlPoint);
 			controlPoint.Location = point;
 			controlPoint.Color = this.Color;
-			controlPoint.LocationChanged += new EventHandler<CollectionEventArgs<PointF>>(OnControlPointChanged);
+			controlPoint.LocationChanged += OnControlPointChanged;
+		}
+
+		/// <summary>
+		/// Removes a <see cref="ControlPoint"/> from the group.
+		/// </summary>
+		public void RemoveAt(int index)
+		{
+			if (index < Count)
+			{
+				ControlPoint point = base.Graphics[index] as ControlPoint;
+				if (point != null)
+					point.LocationChanged -= OnControlPointChanged;
+
+				base.Graphics.RemoveAt(index);
+			}
 		}
 
 		/// <summary>
@@ -124,7 +138,8 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// </summary>
 		public void Clear()
 		{
-			this.Graphics.Clear();
+			for (int i = this.Count - 1; i >= 0; --i)
+				RemoveAt(i);
 		}
 
 		/// <summary>
@@ -176,15 +191,16 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			if (disposing)
 			{
 				foreach (ControlPoint controlPoint in this.Graphics)
-					controlPoint.LocationChanged -= new EventHandler<CollectionEventArgs<PointF>>(OnControlPointChanged);
+					controlPoint.LocationChanged -= OnControlPointChanged;
 			}
 
 			base.Dispose(disposing);
 		}
 
-		private void OnControlPointChanged(object sender, CollectionEventArgs<PointF> e)
+		private void OnControlPointChanged(object sender, EventArgs e)
 		{
-			EventsHelper.Fire(_controlPointChangedEvent, this, e);
+			ControlPoint controlPoint = (ControlPoint) sender;
+			EventsHelper.Fire(_controlPointChangedEvent, this, new ListEventArgs<PointF>(controlPoint.Location, this.Graphics.IndexOf(controlPoint)));
 		}
 	}
 }

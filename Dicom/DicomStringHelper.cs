@@ -48,76 +48,31 @@ namespace ClearCanvas.Dicom
 		/// <summary>
 		/// Gets a Dicom String Array from the input values of an arbitrary type.
 		/// </summary>
-		/// <typeparam name="T">any arbitrary Type that may be used to encode a Dicom String Array.</typeparam>
-		/// <param name="values">the input values.</param>
+		/// <typeparam name="T">Any arbitrary Type that may be used to encode a Dicom String Array.</typeparam>
+		/// <param name="values">The input values.</param>
 		/// <returns>A Dicom String Array representation of <see cref="values"/>.</returns>
 		/// <remarks>
 		/// It is assumed that the <see cref="T.ToString"/> method returns the string that is to be encoded into the Dicom String Array.
 		/// </remarks>
 		static public string GetDicomStringArray<T>(IEnumerable<T> values)
 		{
-			return StringUtilities.Combine<T>(values, "\\");
-		}
-
-		/// <summary>
-		/// Gets a Dicom String Array from the input values of an arbitrary type.
-		/// </summary>
-		/// <typeparam name="T">any arbitrary Type that may be used to encode a Dicom String Array.</typeparam>
-		/// <param name="values">the input values.</param>
-		/// <param name="formatDelegate">A delegate that is used to format each value in <see cref="values"/> before encoding it into the Dicom String Array.</param>
-		/// <returns>A Dicom String Array representation of <see cref="values"/>.</returns>
-		/// <remarks>
-		/// It is assumed that the <see cref="T.ToString"/> method returns the string that is to be encoded into the Dicom String Array.
-		/// </remarks>
-		static public string GetDicomStringArray<T>(IEnumerable<T> values, StringUtilities.FormatDelegate<T> formatDelegate)
-		{
-			return StringUtilities.Combine<T>(values, "\\", formatDelegate);
-		}
-
-		/// <summary>
-		/// Gets a Dicom String array from the input <see cref="double"/> values.
-		/// </summary>
-		/// <param name="values">the input values.</param>
-		/// <param name="formatSpecifier">A format specifier that is used to format each value in <see cref="values"/> before encoding it into the Dicom String Array.</param>
-		/// <returns>A Dicom String Array representation of <see cref="values"/>.</returns>
-		/// <remarks>The value of <see cref="formatSpecifier"/> must be valid for Type <see cref="double"/> or an exception will be thrown.  Internally, <see cref="double.ToString"/> is used to format the value for the Dicom String Array.</remarks>
-		static public string GetDicomDoubleArray(IEnumerable<double> values, string formatSpecifier)
-		{
-			return StringUtilities.CombineDouble(values, "\\", formatSpecifier);
-		}
-
-		/// <summary>
-		/// Gets a Dicom String array from the input <see cref="float"/> values.
-		/// </summary>
-		/// <param name="values">the input values.</param>
-		/// <param name="formatSpecifier">A format specifier that is used to format each value in <see cref="values"/> before encoding it into the Dicom String Array.</param>
-		/// <returns>A Dicom String Array representation of <see cref="values"/>.</returns>
-		/// <remarks>The value of <see cref="formatSpecifier"/> must be valid for Type <see cref="float"/> or an exception will be thrown.  Internally, <see cref="float.ToString"/> is used to format the value for the Dicom String Array.</remarks>
-		static public string GetDicomFloatArray(IEnumerable<float> values, string formatSpecifier)
-		{
-			return StringUtilities.CombineFloat(values, "\\", formatSpecifier);
-		}
-
-		/// <summary>
-		/// Gets a Dicom String array from the input <see cref="int"/> values.
-		/// </summary>
-		/// <param name="values">the input values.</param>
-		/// <param name="formatSpecifier">A format specifier that is used to format each value in <see cref="values"/> before encoding it into the Dicom String Array.</param>
-		/// <returns>A Dicom String Array representation of <see cref="values"/>.</returns>
-		/// <remarks>The value of <see cref="formatSpecifier"/> must be valid for Type <see cref="int"/> or an exception will be thrown.  Internally, <see cref="int.ToString"/> is used to format the value for the Dicom String Array.</remarks>
-		static public string GetDicomIntArray(IEnumerable<int> values, string formatSpecifier)
-		{
-			return StringUtilities.CombineInt(values, "\\", formatSpecifier);
-		}
-
-		/// <summary>
-		/// Gets a Dicom String Array from the input <see cref="PersonName"/> values.
-		/// </summary>
-		/// <param name="values">the input values.</param>
-		/// <returns>A Dicom String Array representation of <see cref="values"/>.</returns>
-		static public string GetDicomPersonNameArray(IEnumerable<PersonName> values)
-		{
 			return StringUtilities.Combine(values, "\\");
+		}
+
+		/// <summary>
+		/// Gets a Dicom String Array from the input values of an arbitrary type, formatted using <paramref name="formatSpecifier"/>.
+		/// </summary>
+		/// <remarks>
+		/// <typeparamref name="T"/> must implement <see cref="IFormattable"/>.
+		/// </remarks>
+		/// <typeparam name="T">Any arbitrary Type that may be used to encode a Dicom String Array.</typeparam>
+		/// <param name="values">The input values.</param>
+		/// <param name="formatSpecifier">A format specifier appropriate for type <typeparamref name="T"/>.</param>
+		/// <returns>A Dicom String Array representation of <see cref="values"/>.</returns>
+		static public string GetDicomStringArray<T>(IEnumerable<T> values, string formatSpecifier)
+			where T : IFormattable
+		{
+			return StringUtilities.Combine(values, "\\", formatSpecifier, System.Globalization.CultureInfo.InvariantCulture);
 		}
 
 		/// <summary>
@@ -134,20 +89,19 @@ namespace ClearCanvas.Dicom
 		}
 
 		/// <summary>
-		/// Splits a Dicom String Array (<see cref="dicomStringArray"/>) into its component <see cref="double"/>s.
+		/// Splits a Dicom String Array (<see cref="dicomStringArray"/>) into its component <see cref="PersonName"/>s.
 		/// </summary>
 		/// <param name="dicomStringArray">The Dicom String Array to be split up.</param>
-		/// <returns>An array of <see cref="double"/>s.</returns>
-		/// <remarks>The input string must consist of valid <see cref="double"/> values or an exception will be thrown.  Internally, <see cref="double.Parse"/> is used to convert the individual values.</remarks>
-		static public double[] GetDoubleArray(string dicomStringArray)
+		/// <returns>An array of <see cref="PersonName"/>s.</returns>
+		static public PersonName[] GetPersonNameArray(string dicomStringArray)
 		{
 			string[] stringValues = GetStringArray(dicomStringArray);
 
-			List<double> doubleValues = new List<double>();
-			foreach(string value in stringValues)
-				doubleValues.Add(double.Parse(value, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture));
+			List<PersonName> personNames = new List<PersonName>();
+			foreach (string value in stringValues)
+				personNames.Add(new PersonName(value));
 
-			return doubleValues.ToArray();
+			return personNames.ToArray();
 		}
 
 		/// <summary>
@@ -179,23 +133,6 @@ namespace ClearCanvas.Dicom
 		}
 
 		/// <summary>
-		/// Splits a Dicom String Array (<see cref="dicomStringArray"/>) into its component <see cref="float"/>s.
-		/// </summary>
-		/// <param name="dicomStringArray">The Dicom String Array to be split up.</param>
-		/// <returns>An array of <see cref="float"/>s.</returns>
-		/// <remarks>The input string must consist of valid <see cref="float"/> values or an exception will be thrown.  Internally, <see cref="float.Parse"/> is used to convert the individual values.</remarks>
-		static public float[] GetFloatArray(string dicomStringArray)
-		{
-			string[] stringValues = GetStringArray(dicomStringArray);
-
-			List<float> floatValues = new List<float>();
-			foreach (string value in stringValues)
-				floatValues.Add(float.Parse(value, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture));
-
-			return floatValues.ToArray();
-		}
-
-		/// <summary>
 		/// Splits a Dicom String Array (<see cref="dicomStringArray"/>) into its component <see cref="float"/>s without throwing an exception.
 		/// </summary>
 		/// <param name="dicomStringArray">The Dicom String Array to be split up.</param>
@@ -224,23 +161,6 @@ namespace ClearCanvas.Dicom
 		}
 
 		/// <summary>
-		/// Splits a Dicom String Array (<see cref="dicomStringArray"/>) into its component <see cref="int"/>s.
-		/// </summary>
-		/// <param name="dicomStringArray">The Dicom String Array to be split up.</param>
-		/// <returns>An array of <see cref="int"/>s.</returns>
-		/// <remarks>The input string must consist of valid <see cref="int"/> values or an exception will be thrown.  Internally, <see cref="int.Parse"/> is used to convert the individual values.</remarks>
-		static public int[] GetIntArray(string dicomStringArray)
-		{
-			string[] stringValues = GetStringArray(dicomStringArray);
-
-			List<int> intValues = new List<int>();
-			foreach (string value in stringValues)
-				intValues.Add(int.Parse(value, System.Globalization.NumberStyles.Integer, System.Globalization.CultureInfo.InvariantCulture));
-
-			return intValues.ToArray();
-		}
-
-		/// <summary>
 		/// Splits a Dicom String Array (<see cref="dicomStringArray"/>) into its component <see cref="int"/>s without throwing an exception.
 		/// </summary>
 		/// <param name="dicomStringArray">The Dicom String Array to be split up.</param>
@@ -266,22 +186,6 @@ namespace ClearCanvas.Dicom
 
 			returnValues = intValues.ToArray();
 			return true;
-		}
-
-		/// <summary>
-		/// Splits a Dicom String Array (<see cref="dicomStringArray"/>) into its component <see cref="PersonName"/>s.
-		/// </summary>
-		/// <param name="dicomStringArray">The Dicom String Array to be split up.</param>
-		/// <returns>An array of <see cref="PersonName"/>s.</returns>
-		static public PersonName[] GetPersonNameArray(string dicomStringArray)
-		{
-			string[] stringValues = GetStringArray(dicomStringArray);
-
-			List<PersonName> personNames = new List<PersonName>();
-			foreach (string value in stringValues)
-				personNames.Add(new PersonName(value));
-
-			return personNames.ToArray();
 		}
 	}
 }

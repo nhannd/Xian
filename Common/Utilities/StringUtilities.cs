@@ -36,8 +36,6 @@ using System.Text;
 
 namespace ClearCanvas.Common.Utilities
 {
-	//TODO (Stewart): remove type specific implementations (use IFormattable?).
-
 	/// <summary>
 	/// A static string helper class.
 	/// </summary>
@@ -52,72 +50,44 @@ namespace ClearCanvas.Common.Utilities
 		/// Combines the input <paramref name="values"/> into a string, separated by <paramref name="separator"/>,
 		/// using the given <paramref name="formatSpecifier"/> to format each entry in the string.
 		/// </summary>
-		public static string CombineDouble(IEnumerable<double> values, string separator, string formatSpecifier)
+		/// <remarks>
+		/// <typeparam name="T">Must implement <see cref="IFormattable"/>.</typeparam>
+		/// </remarks>
+		public static string Combine<T>(IEnumerable<T> values, string separator, string formatSpecifier)
+			where T : IFormattable
 		{
-			return Combine<double>(values, separator,
-				delegate(double value)
-				{
-					if (String.IsNullOrEmpty(formatSpecifier))
-						return value.ToString();
-
-					return value.ToString(formatSpecifier);
-				});
+			return Combine(values, separator, formatSpecifier, null);
 		}
 
 		/// <summary>
 		/// Combines the input <paramref name="values"/> into a string, separated by <paramref name="separator"/>,
 		/// using the given <paramref name="formatSpecifier"/> to format each entry in the string.
 		/// </summary>
-		public static string CombineFloat(IEnumerable<float> values, string separator, string formatSpecifier)
+		/// <remarks>
+		/// <typeparam name="T">Must implement <see cref="IFormattable"/>.</typeparam>
+		/// </remarks>
+		public static string Combine<T>(IEnumerable<T> values, string separator, string formatSpecifier, IFormatProvider formatProvider)
+			where T : IFormattable
 		{
-			return Combine<float>(values, separator,
-				delegate(float value)
+			return Combine(values, separator,
+				delegate(T value)
 				{
 					if (String.IsNullOrEmpty(formatSpecifier))
 						return value.ToString();
 
-					return value.ToString(formatSpecifier);
-				});
-		}
-
-		/// <summary>
-		/// Combines the input <paramref name="values"/> into a string, separated by <paramref name="separator"/>,
-		/// using the given <paramref name="formatSpecifier"/> to format each entry in the string.
-		/// </summary>
-		public static string CombineInt(IEnumerable<int> values, string separator, string formatSpecifier)
-		{
-			return Combine<int>(values, separator,
-				delegate(int value)
-				{
-					if (String.IsNullOrEmpty(formatSpecifier))
-						return value.ToString();
-
-					return value.ToString(formatSpecifier);
-				});
-		}
-
-		/// <summary>
-		/// Combines the input <paramref name="values"/> into a string, separated by <paramref name="separator"/>,
-		/// using the given <paramref name="formatSpecifier"/> to format each entry in the string.
-		/// </summary>
-		public static string CombineDateTime(IEnumerable<DateTime> values, string separator, string formatSpecifier)
-		{
-			return Combine<DateTime>(values, separator,
-				delegate(DateTime value)
-				{
-					if (String.IsNullOrEmpty(formatSpecifier))
-						return value.ToString();
-
-					return value.ToString(formatSpecifier);
+					return value.ToString(formatSpecifier, formatProvider);
 				});
 		}
 
 		/// <summary>
 		/// Combines the input <paramref name="values"/> into a string separated by the <paramref name="separator"/>.
 		/// </summary>
+		/// <remarks>
+		/// Empty values are skipped.
+		/// </remarks>
 		public static string Combine<T>(IEnumerable<T> values, string separator)
 		{
-			return Combine<T>(values, separator, true);
+			return Combine(values, separator, true);
 		}
 
 		/// <summary>
@@ -126,7 +96,7 @@ namespace ClearCanvas.Common.Utilities
 		/// </summary>
 		public static string Combine<T>(IEnumerable<T> values, string separator, bool skipEmptyValues)
 		{
-			return Combine<T>(values, separator, null, skipEmptyValues);
+			return Combine(values, separator, null, skipEmptyValues);
 		}
 
 		/// <summary>
@@ -135,11 +105,11 @@ namespace ClearCanvas.Common.Utilities
 		/// </summary>
 		public static string Combine<T>(IEnumerable<T> values, string separator, FormatDelegate<T> formatDelegate)
 		{
-			return Combine<T>(values, separator, formatDelegate, true);
+			return Combine(values, separator, formatDelegate, true);
 		}
 
 		/// <summary>
-		/// Combines the input <paramref name="values"/> into a string separated by the <paramref name="separator"/> 
+		/// Combines the input <paramref name="values"/> into a string separated by <paramref name="separator"/> 
 		/// and formatted using <paramref name="formatDelegate"/>; empty values are skipped when <paramref name="skipEmptyValues"/> is true.
 		/// </summary>
 		public static string Combine<T>(IEnumerable<T> values, string separator, FormatDelegate<T> formatDelegate, bool skipEmptyValues)
@@ -154,11 +124,11 @@ namespace ClearCanvas.Common.Utilities
 			int count = 0;
 			foreach (T value in values)
 			{
-				string stringValue = null;
+				string stringValue;
 				if (formatDelegate == null)
-					stringValue = (value == null) ? null : value.ToString();
+					stringValue = (value == null) ? "" : value.ToString();
 				else
-					stringValue = formatDelegate(value);
+					stringValue = formatDelegate(value) ?? "";
 
 				if (String.IsNullOrEmpty(stringValue) && skipEmptyValues)
 					continue;

@@ -189,7 +189,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		protected void OnAnchorPointChanged(object sender, CollectionEventArgs<PointF> e)
+		protected void OnAnchorPointChanged(object sender, ListEventArgs<PointF> e)
 		{
 			// This acts as a mediator.  It listens for changes in the anchor points
 			// and make corresponding changes in the position of the control points.
@@ -202,7 +202,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		protected override void OnControlPointChanged(object sender, CollectionEventArgs<PointF> e)
+		protected override void OnControlPointChanged(object sender, ListEventArgs<PointF> e)
 		{
 			this.PolyLine[e.Index] = e.Item;
 			Trace.Write(String.Format("OnControlPointChanged: {0}, {1}\n", e.Index, e.Item.ToString()));
@@ -214,7 +214,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		protected override void Dispose(bool disposing)
 		{
 			if (disposing)
-				_anchorPointsGraphic.AnchorPointChangedEvent -= new EventHandler<CollectionEventArgs<PointF>>(OnAnchorPointChanged);
+				_anchorPointsGraphic.AnchorPointChangedEvent -= new EventHandler<ListEventArgs<PointF>>(OnAnchorPointChanged);
 
 			base.Dispose(disposing);
 		}
@@ -222,7 +222,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		private void BuildGraphic()
 		{
 			base.Graphics.Add(_anchorPointsGraphic);
-			_anchorPointsGraphic.AnchorPointChangedEvent += new EventHandler<CollectionEventArgs<PointF>>(OnAnchorPointChanged);
+			_anchorPointsGraphic.AnchorPointChangedEvent += new EventHandler<ListEventArgs<PointF>>(OnAnchorPointChanged);
 
 			// Add two points to begin with
 			this.PolyLine.Add(new PointF(0, 0));

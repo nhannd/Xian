@@ -311,7 +311,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		protected override void OnControlPointChanged(object sender, CollectionEventArgs<PointF> e)
+		protected override void OnControlPointChanged(object sender, ListEventArgs<PointF> e)
 		{
 			Platform.CheckForNullReference(sender, "sender");
 			Platform.CheckForNullReference(e, "e");

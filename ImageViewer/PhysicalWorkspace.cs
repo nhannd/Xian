@@ -432,14 +432,14 @@ namespace ClearCanvas.ImageViewer
 
 		#region Private methods
 
-		private void OnImageBoxAdded(object sender, CollectionEventArgs<IImageBox> e)
+		private void OnImageBoxAdded(object sender, ListEventArgs<IImageBox> e)
 		{
 			ImageBox imageBox = (ImageBox)e.Item;
 			imageBox.ImageViewer = this.ImageViewer;
 			imageBox.ParentPhysicalWorkspace = this;
 		}
 
-		private void OnImageBoxRemoved(object sender, CollectionEventArgs<IImageBox> e)
+		private void OnImageBoxRemoved(object sender, ListEventArgs<IImageBox> e)
 		{
 			if (e.Item.Selected)
 				this.SelectedImageBox = null;

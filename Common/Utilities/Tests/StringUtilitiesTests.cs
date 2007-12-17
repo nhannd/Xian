@@ -49,19 +49,19 @@ namespace ClearCanvas.Common.Utilities.Tests
 		public void TestDoubleCombine()
 		{
 			string expectedResult = "2.22, 2.33";
-			string result = StringUtilities.CombineDouble(new double[] { 2.2222, 2.333 }, ", ", "F2");
+			string result = StringUtilities.Combine<double>(new double[] { 2.2222, 2.333 }, ", ", "F2");
 			Assert.AreEqual(expectedResult, result);
 
 			expectedResult = "2.22, 2.33, NaN";
-			result = StringUtilities.CombineDouble(new double[] { 2.2222, 2.333, double.NaN }, ", ", "F2");
+			result = StringUtilities.Combine<double>(new double[] { 2.2222, 2.333, double.NaN }, ", ", "F2");
 			Assert.AreEqual(expectedResult, result);
 
 			expectedResult = "2.22, 2.33, Infinity";
-			result = StringUtilities.CombineDouble(new double[] { 2.2222, 2.333, double.PositiveInfinity}, ", ", "F2");
+			result = StringUtilities.Combine<double>(new double[] { 2.2222, 2.333, double.PositiveInfinity}, ", ", "F2");
 			Assert.AreEqual(expectedResult, result);
 
 			expectedResult = "2.22, 2.33, -Infinity";
-			result = StringUtilities.CombineDouble(new double[] { 2.2222, 2.333, double.NegativeInfinity}, ", ", "F2");
+			result = StringUtilities.Combine<double>(new double[] { 2.2222, 2.333, double.NegativeInfinity}, ", ", "F2");
 			Assert.AreEqual(expectedResult, result);
 		}
 

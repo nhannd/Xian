@@ -47,8 +47,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// </summary>
 		public CompositeGraphic()
 		{
-			this.Graphics.ItemAdded += new EventHandler<CollectionEventArgs<IGraphic>>(OnGraphicAdded);
-			this.Graphics.ItemRemoved += new EventHandler<CollectionEventArgs<IGraphic>>(OnGraphicRemoved);
+			this.Graphics.ItemAdded += new EventHandler<ListEventArgs<IGraphic>>(OnGraphicAdded);
+			this.Graphics.ItemRemoved += new EventHandler<ListEventArgs<IGraphic>>(OnGraphicRemoved);
 		}
 
 		/// <summary>
@@ -79,8 +79,6 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// visibility changed, the visibility of the child objects would no longer be correct.
 		/// Also, when a parent graphic's <see cref="Visible"/> property is false, it's children
 		/// are not rendered regardless of the value of their <see cref="Visible"/> property.
-		/// </item>
-		/// </list>
 		/// </remarks>
 		public override bool Visible
 		{
@@ -191,15 +189,15 @@ namespace ClearCanvas.ImageViewer.Graphics
 		{
 			if (disposing)
 			{
-				this.Graphics.ItemAdded -= new EventHandler<CollectionEventArgs<IGraphic>>(OnGraphicAdded);
-				this.Graphics.ItemRemoved -= new EventHandler<CollectionEventArgs<IGraphic>>(OnGraphicRemoved);
+				this.Graphics.ItemAdded -= new EventHandler<ListEventArgs<IGraphic>>(OnGraphicAdded);
+				this.Graphics.ItemRemoved -= new EventHandler<ListEventArgs<IGraphic>>(OnGraphicRemoved);
 
 				foreach (Graphic graphic in this.Graphics)
 					graphic.Dispose();
 			}
 		}
 
-		private void OnGraphicAdded(object sender, CollectionEventArgs<IGraphic> e)
+		private void OnGraphicAdded(object sender, ListEventArgs<IGraphic> e)
 		{
 			Graphic graphic = (Graphic)e.Item;
 
@@ -209,7 +207,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 			graphic.CoordinateSystem = this.CoordinateSystem;
 		}
 
-		private void OnGraphicRemoved(object sender, CollectionEventArgs<IGraphic> e)
+		private void OnGraphicRemoved(object sender, ListEventArgs<IGraphic> e)
 		{
 			Graphic graphic = (Graphic)e.Item;
 

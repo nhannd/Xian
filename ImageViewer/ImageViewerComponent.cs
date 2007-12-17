@@ -43,6 +43,14 @@ using ClearCanvas.ImageViewer.StudyManagement;
 namespace ClearCanvas.ImageViewer
 {
 	/// <summary>
+	/// Defines an extension point for image layout management.
+	/// </summary>
+	[ExtensionPoint()]
+	public sealed class LayoutManagerExtensionPoint : ExtensionPoint<ILayoutManager>
+	{
+	}
+
+	/// <summary>
 	/// An <see cref="ExtensionPoint"/> for views on to the 
 	/// <see cref="ImageViewerComponent"/>.
 	/// </summary>
@@ -61,6 +69,25 @@ namespace ClearCanvas.ImageViewer
 	[ExtensionPoint]
 	public sealed class ImageViewerToolExtensionPoint : ExtensionPoint<ITool>
 	{
+	}
+
+	/// <summary>
+	/// Specifies how the <see cref="ImageViewerComponent"/>'s <see cref="ILayoutManager"/>
+	/// should be created.
+	/// </summary>
+	public enum LayoutManagerCreationParameters
+	{
+		/// <summary>
+		/// Use a simple layout manager that initializes the layout strictly
+		/// based on the number of <see cref="IDisplaySet"/>s available.
+		/// </summary>
+		Simple,
+
+		/// <summary>
+		/// Use the <see cref="LayoutManagerExtensionPoint"/> to create
+		/// the <see cref="ImageViewerComponent"/>'s <see cref="ILayoutManager"/>.
+		/// </summary>
+		Extended
 	}
 
 	/// <summary>
@@ -127,7 +154,22 @@ namespace ClearCanvas.ImageViewer
 		/// how images are initially laid out.
 		/// If you do require control over the initial layout, use
 		/// <see cref="ImageViewerComponent(ILayoutManager)"/> instead.
-		public ImageViewerComponent() : this(new SimpleImageLayoutManager())
+		public ImageViewerComponent(): this(LayoutManagerCreationParameters.Simple)
+		{
+		}
+
+		/// <summary>
+		/// Instantiates a new instance of <see cref="ImageViewerComponent"/>
+		/// taking a <see cref="LayoutManagerCreationParameters"/> to determine
+		/// how the <see cref="LayoutManager"/> should be created.
+		/// </summary>
+		/// <remarks>
+		///	If <paramref name="creationParameters"/> is <see cref="LayoutManagerCreationParameters.Extended"/>,
+		/// then the <see cref="LayoutManagerExtensionPoint"/> is used to create the <see cref="LayoutManager"/>.  If
+		/// no extension exists, a simple layout manager is used.
+		/// </remarks>
+		public ImageViewerComponent(LayoutManagerCreationParameters creationParameters)
+			: this(CreateLayoutManager(creationParameters))
 		{
 		}
 
@@ -135,11 +177,29 @@ namespace ClearCanvas.ImageViewer
 		/// Initializes a new instance of <see cref="ImageViewerComponent"/>
 		/// with the specified <see cref="ILayoutManager"/>.
 		/// </summary>
-		/// <param name="layoutManager"></param>
 		public ImageViewerComponent(ILayoutManager layoutManager)
 		{
 			Platform.CheckForNullReference(layoutManager, "layoutManager");
 			_layoutManager = layoutManager;
+		}
+
+		private static ILayoutManager CreateLayoutManager(LayoutManagerCreationParameters creationParameters)
+		{
+			ILayoutManager layoutManager = null;
+			
+			if (creationParameters == LayoutManagerCreationParameters.Extended)
+			{
+				try
+				{
+					layoutManager = new LayoutManagerExtensionPoint().CreateExtension() as ILayoutManager;
+				}
+				catch(NotSupportedException e)
+				{
+					Platform.Log(LogLevel.Info, e);
+				}
+			}
+
+			return layoutManager ?? new SimpleImageLayoutManager();
 		}
 
 		/// <summary>
@@ -421,8 +481,6 @@ namespace ClearCanvas.ImageViewer
 		#endregion
 
 		#region Public methods
-
-		// TODO (Norman): Should this method even be here, or in a separate class?
 
 		/// <summary>
 		/// Queries for studies matching a specified set of query parameters.

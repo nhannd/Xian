@@ -33,8 +33,6 @@ using System;
 
 namespace ClearCanvas.Common.Utilities
 {
-	//TODO (Stewart): rename to ListEventArgs.
-
 	/// <summary>
 	/// Event used to notify observers of a change in a collection.
 	/// </summary>
@@ -43,7 +41,7 @@ namespace ClearCanvas.Common.Utilities
 	/// for any collection-related event.
 	/// </remarks>
 	/// <typeparam name="TItem">The type of item in the collection.</typeparam>
-	public class CollectionEventArgs<TItem> : EventArgs
+	public class ListEventArgs<TItem> : EventArgs
 	{
 		private TItem _item;
 		private int _index;
@@ -53,7 +51,7 @@ namespace ClearCanvas.Common.Utilities
 		/// </summary>
 		/// <param name="item">The item that has changed.</param>
 		/// <param name="index">The index of the item that has changed.</param>
-		public CollectionEventArgs(TItem item, int index)
+		public ListEventArgs(TItem item, int index)
 		{
 			_item = item;
 			_index = index;

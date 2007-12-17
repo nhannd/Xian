@@ -48,7 +48,6 @@ namespace ClearCanvas.ImageViewer
 		private IImageViewer _imageViewer;
 		private ImageSet _parentImageSet;
 		private ImageBox _imageBox;
-		private List<IPresentationImage> _linkedPresentationImages = new List<IPresentationImage>();
 
 		private bool _selected = false;
 		private bool _linked = false;
@@ -74,8 +73,7 @@ namespace ClearCanvas.ImageViewer
 		{
 			_name = name ?? "";
 			_uid = uid ?? "";
-			this.PresentationImages.ItemAdded += new EventHandler<CollectionEventArgs<IPresentationImage>>(OnPresentationImageAdded);
-			this.PresentationImages.ItemRemoved += new EventHandler<CollectionEventArgs<IPresentationImage>>(OnPresentationImageRemoved);
+			this.PresentationImages.ItemAdded += new EventHandler<ListEventArgs<IPresentationImage>>(OnPresentationImageAdded);
 		}
 
 		#region Properties
@@ -95,14 +93,19 @@ namespace ClearCanvas.ImageViewer
 			}
 		}
 
-		// TODO (Norman): Also consider how to use yield instead of a whole collection
-
 		/// <summary>
 		/// Gets a collection of linked <see cref="IPresentationImage"/> objects.
 		/// </summary>
 		public IEnumerable<IPresentationImage> LinkedPresentationImages
 		{
-			get { return _linkedPresentationImages.AsReadOnly(); }
+			get
+			{
+				foreach (IPresentationImage image in PresentationImages)
+				{
+					if (image.Linked)
+						yield return image;
+				}
+			}
 		}
 
 		/// <summary>
@@ -206,15 +209,10 @@ namespace ClearCanvas.ImageViewer
 			get { return _linked; }
 			set
 			{
-				if (_linked != value)
-				{
-					_linked = value;
+				if (_linked == value)
+					return;
 
-					if (_linked)
-						_parentImageSet.LinkDisplaySet(this);
-					else
-						_parentImageSet.UnlinkDisplaySet(this);
-				}
+				_linked = value;
 			}
 		}
 
@@ -269,8 +267,7 @@ namespace ClearCanvas.ImageViewer
 			foreach (PresentationImage image in this.PresentationImages)
 				image.Dispose();
 
-			_presentationImages.ItemAdded -= new EventHandler<CollectionEventArgs<IPresentationImage>>(OnPresentationImageAdded);
-			_presentationImages.ItemRemoved -= new EventHandler<CollectionEventArgs<IPresentationImage>>(OnPresentationImageAdded);
+			_presentationImages.ItemAdded -= new EventHandler<ListEventArgs<IPresentationImage>>(OnPresentationImageAdded);
 			_presentationImages = null;
 		}
 
@@ -325,30 +322,11 @@ namespace ClearCanvas.ImageViewer
 			}
 		}
 
-		internal void LinkPresentationImage(PresentationImage image)
-		{
-			_linkedPresentationImages.Add(image);
-		}
-
-		internal void UnlinkPresentation(PresentationImage image)
-		{
-			_linkedPresentationImages.Remove(image);
-		}
-
-		private void OnPresentationImageAdded(object sender, CollectionEventArgs<IPresentationImage> e)
+		private void OnPresentationImageAdded(object sender, ListEventArgs<IPresentationImage> e)
 		{
 			PresentationImage image = (PresentationImage) e.Item;
 			image.ParentDisplaySet = this;
 			image.ImageViewer = this.ImageViewer;
-
-			if (e.Item.Linked)
-				_linkedPresentationImages.Add(e.Item);
-		}
-
-		private void OnPresentationImageRemoved(object sender, CollectionEventArgs<IPresentationImage> e)
-		{
-			if (e.Item.Linked)
-				_linkedPresentationImages.Remove(e.Item);
 		}
 
 		/// <summary>

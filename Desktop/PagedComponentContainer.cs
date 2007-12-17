@@ -128,11 +128,11 @@ namespace ClearCanvas.Desktop
         {
             _mapPageToHost = new Dictionary<ContainerPage, PageHost>();
             _pages = new PageList();
-            _pages.ItemAdded += delegate(object sender, CollectionEventArgs<TPage> args)
+            _pages.ItemAdded += delegate(object sender, ListEventArgs<TPage> args)
                 {
                     _mapPageToHost.Add(args.Item, new PageHost(this, args.Item));
                 };
-            _pages.ItemRemoved += delegate(object sender, CollectionEventArgs<TPage> args)
+            _pages.ItemRemoved += delegate(object sender, ListEventArgs<TPage> args)
                 {
                     _mapPageToHost.Remove(args.Item);
                 };

@@ -820,7 +820,7 @@ namespace ClearCanvas.ImageViewer
 			}
 		}
 
-		private void OnTileAdded(object sender, CollectionEventArgs<ITile> e)
+		private void OnTileAdded(object sender, ListEventArgs<ITile> e)
 		{
 			Tile tile = (Tile)e.Item;
 			tile.ImageViewer = this.ImageViewer;
@@ -828,7 +828,7 @@ namespace ClearCanvas.ImageViewer
 			EventsHelper.Fire(_tileAddedEvent, this, e);
 		}
 
-		private void OnTileRemoved(object sender, CollectionEventArgs<ITile> e)
+		private void OnTileRemoved(object sender, ListEventArgs<ITile> e)
 		{
 			if (e.Item.Selected)
 				this.SelectedTile = null;
