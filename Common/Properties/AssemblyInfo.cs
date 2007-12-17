@@ -1,6 +1,6 @@
 #region License
 
-// Copyright (c) 2006-2007, ClearCanvas Inc.
+// Copyright (c) 2006-2008, ClearCanvas Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, 
@@ -42,7 +42,7 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("ClearCanvas Inc.")]
 [assembly: AssemblyProduct("ClearCanvas Workstation")]
-[assembly: AssemblyCopyright("Copyright �  2006")]
+[assembly: AssemblyCopyright("Copyright (c) 2006-2008")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]		
 
