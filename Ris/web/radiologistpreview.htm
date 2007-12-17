@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
-        <title>Technologist Preview</title>
+        <title>Radiologist Preview</title>
         <link href="css/default.css" rel="stylesheet" type="text/css" />
         <script type="text/javascript" src="js/jsx.js"></script>
 	    <script type="text/javascript" src="js/jsml.js"></script>
@@ -10,48 +10,56 @@
 	    <script type="text/javascript" src="js/preview.js"></script>
 	    <script type="text/javascript" src="js/layout.js"></script>
 	    <script type="text/javascript" >
-		    var data = {};
-		    var errorProvider = new ErrorProvider();
-
 		    function onBodyLoad()
 		    {		        
-               scaleWidth();
+                scaleWidth();
                
-		         if(!Ris)
+		        if(!Ris)
 		            return;
 		            
 	            try
 	            {
-                  var worklistItem = Ris.getWorklistItem();
-                  if (worklistItem == null)
-                  {
-                           Field.setValue($("myForm"), "");
-                           return;
-                  }
+                    var worklistItem = Ris.getWorklistItem();
+                    if (worklistItem == null)
+                    {
+                        Field.setValue($("myForm"), "");
+                        return;
+                    }
 					
+                    // construct request object
                     var request = {
-                        ProcedureStepRef: worklistItem.ProcedureStepRef,
-                        //GetReportingProcedureStepRequest: worklistItem.StepType != "Protocol" ? {} : null,
-                        GetReportingProcedureStepRequest: {},
-                        GetProfileDetailRequest:          {},
-                        GetAlertsRequest:                 {}
+                        GetPatientProfileDetailRequest:
+                             {
+                                PatientProfileRef: worklistItem.PatientProfileRef,
+                                IncludeAlerts: true
+                             },
+                        GetOrderDetailRequest:
+                             { 
+                                OrderRef: worklistItem.OrderRef,
+                                IncludeAlerts: true,
+                                IncludeNotes: true,
+                                
+                                // only include ordered procedures if report not yet created
+                                IncludeProcedures: (worklistItem.ReportRef == null)
+                             },
+                        // only request the report detail if there is a report     
+                        GetReportDetailRequest: worklistItem.ReportRef == null ? null : { ReportRef: worklistItem.ReportRef }
                     };
-
-					var service = Ris.getService("ClearCanvas.Ris.Application.Common.BrowsePatientData.IBrowsePatientDataService, ClearCanvas.Ris.Application.Common");
-                    data = service.getData(request);
+                   
+                    
+					var service = Ris.getPatientDataService();
+                    var data = service.getData(request);
                     
                     if (data == null || data.length == 0)
                     {
                         Field.setValue($("myForm"), "");
                         return;
                     }
-
 		            // update patient demography
-		            var patientName = "This patient";
-		            if (data.GetProfileDetailResponse && data.GetProfileDetailResponse.PatientProfileDetail)
+	                var patientProfile = data.GetPatientProfileDetailResponse.PatientProfile;
+	                var patientName = Ris.formatPersonName(patientProfile.Name);
+		            if (patientProfile)
 		            {
-		                var patientProfile = data.GetProfileDetailResponse.PatientProfileDetail;
-		                patientName = Ris.formatPersonName(patientProfile.Name);
 		                Field.setValue($("name"), patientName);
 			            Field.setValue($("mrn"), Ris.formatMrn(patientProfile.Mrn));
 			            Field.setValue($("age"), getPatientAge(patientProfile.DateOfBirth, patientProfile.DeathIndicator, patientProfile.TimeOfDeath));
@@ -60,34 +68,58 @@
 			            Field.setValue($("healthcard"), Ris.formatHealthcard(patientProfile.Healthcard));
 		            }
 
-                    // update patient alerts
-		            if (data.GetAlertsResponse && data.GetAlertsResponse.AlertNotifications && data.GetAlertsResponse.AlertNotifications.length > 0)
+                    // update alerts
+		            var alertNotifications = data.GetPatientProfileDetailResponse.PatientAlerts;
+		            alertNotifications = alertNotifications.concat(data.GetOrderDetailResponse.OrderAlerts);
+		            if (alertNotifications)
 		            {
-    	                var alertNotifications = data.GetAlertsResponse.AlertNotifications;
                         var alertHtml = "";
 	                    alertNotifications.each(function(item) { alertHtml += getAlertHtml(item, patientName); });
                         $("alerts").innerHTML = alertHtml;
 		            }
 		            
-		            if (data.GetReportingProcedureStepResponse)
-		            {
-		                var rpsData = data.GetReportingProcedureStepResponse.PatientOrderData;
+	                var orderDetail = data.GetOrderDetailResponse.Order;
+	                var reportDetail = data.GetReportDetailResponse ? data.GetReportDetailResponse.Report : null;
+	                
+	                // update Imaging Consultation Overview
+                    Field.setValue($("AccessionNumber"), orderDetail.AccessionNumber);
+                    Field.setValue($("OrderPriority"), orderDetail.OrderPriority.Value);
+                    Field.setValue($("OrderingPhysician"), Ris.formatPersonName(orderDetail.OrderingPractitioner.Name));
+                    Field.setValue($("OrderingFacility"), orderDetail.OrderingFacility.Name);
+                    Field.setValue($("DiagnosticService"), orderDetail.DiagnosticService.Name);
+                    
+                    var procedures = reportDetail ? reportDetail.Procedures : orderDetail.RequestedProcedures;
+                    
+                    var selectedProcedure = procedures.find(
+                                            function(rp) { return rp.RequestedProcedureRef == worklistItem.RequestedProcedureRef; });
+                    
+                                            
+                    Field.setValue($("procedure"), selectedProcedure.Type.Name);
+                    Field.setValue($("RequestedProcedureStartTime"), "TODO");
+                    Field.setValue($("RequestedProcedureEndTime"), "TODO");
+                    
+                    if(orderDetail.Notes.length)
+                        createOrderNotesTable($("orderNotesTable"), orderDetail.Notes);
+                    else
+                        Field.show($("orderNotesTable"), false);
 
-                        if (rpsData)
-                        {
-    		                // update Imaging Consultation Overview
-		                    Field.setValue($("AccessionNumber"), rpsData.AccessionNumber);
-		                    Field.setValue($("OrderPriority"), rpsData.OrderPriority);
-		                    Field.setValue($("OrderingPhysician"), Ris.formatPersonName(rpsData.OrderingPractitionerName));
-		                    Field.setValue($("OrderingFacility"), rpsData.OrderingFacilityName);
-		                    Field.setValue($("DiagnosticService"), rpsData.DiagnosticServiceName);
-		                    Field.setValue($("Requestedprocedure"), rpsData.RequestedProcedureName);
-		                    Field.setValue($("RequestedProcedureStartTime"), Ris.formatDateTime(rpsData.RequestedProcedureStartTime));
-		                    Field.setValue($("RequestedProcedureEndTime"), Ris.formatDateTime(rpsData.RequestedProcedureEndTime));
-
-       		                $("report").innerHTML = formatReport(rpsData.Report);
-		                }
-		            }
+                    if(reportDetail)
+                    {
+ 	                    // hide ordered procedures section
+	                    Field.show($("orderSection"), false);
+	                    
+                        var reportedProcedures = String.combine(reportDetail.Procedures.map(function(rp) { return rp.Type.Name; }), ", ");
+                        Field.setValue($("reportedProcedures"), reportedProcedures);
+	                    $("report").innerHTML = formatReport(reportDetail);
+	                }
+	                else
+	                {
+	                    // hide report section
+	                    Field.show($("reportSection"), false);
+	                    
+	                    // show ordered procedures
+                        createProceduresTable($("orderedProceduresTable"), orderDetail.RequestedProcedures);
+	                }
 	            }
 	            catch(e)
 	            {
@@ -96,6 +128,41 @@
 	            }
 		    }
 
+            function createOrderNotesTable(htmlTable, notes)
+            {
+	            htmlTable = Table.createTable(htmlTable, { editInPlace: false, flow: false },
+		             [
+			            {   label: "Comment",
+				            cellType: "text",
+				            getValue: function(item) { return item.Comment; }
+			            },
+			            {   label: "Time",
+				            cellType: "text",
+				            getValue: function(item) { return Ris.formatDateTime(item.CreationTime); }
+			            },
+			            {   label: "Author",
+				            cellType: "text",
+				            getValue: function(item) { return Ris.formatPersonName(item.Author.Name); }
+			            }
+		             ]);
+            		 
+	            htmlTable.rowCycleClassNames = ["row0", "row1"];
+	            htmlTable.bindItems(notes);
+            }
+            
+            function createProceduresTable(htmlTable, procedures)
+            {
+	            htmlTable = Table.createTable(htmlTable, { editInPlace: false, flow: false },
+		             [
+			            {   label: "Procedure",
+				            cellType: "text",
+				            getValue: function(item) { return item.Type.Name; }
+			            }
+		             ]);
+            		 
+	            htmlTable.rowCycleClassNames = ["row0", "row1"];
+	            htmlTable.bindItems(procedures);
+            }
 		</script>
 	</head>
 	<body onload="javascript: onBodyLoad()">
@@ -128,8 +195,8 @@
 		    
             <p>&nbsp;</p>
             <table width="100%" border="0">
-                <tr class="sectionheading">
-                    <td colspan="4">Imaging Consultation Overview</td>
+                <tr>
+                    <td class="sectionheading" colspan="4">Imaging Consultation Overview</td>
                 </tr>
                 <tr>
                     <td width="120" class="propertyname">Accession Number</td>
@@ -146,8 +213,8 @@
                 <tr>
                     <td width="120" class="propertyname">Diagnostic Service</td>
                     <td width="200"><div id="DiagnosticService"/></td>
-                    <td width="120" class="propertyname">Requested Procedure</td>
-                    <td width="200"><div id="RequestedProcedure"/></td>
+                    <td width="120" class="propertyname">Procedure</td>
+                    <td width="200"><div id="procedure"/></td>
                 </tr>
                 <tr>
                     <td width="120" class="propertyname">Procedure Start Time</td>
@@ -156,10 +223,33 @@
                     <td width="200"><div id="RequestedProcedureEndTime"/></td>
                 </tr>
             </table>
-
+	        <table border="0" id="orderNotesTable">
+	            <tr><td class="sectionheading" colspan="6">Order Notes</td></tr>
+	            <tr class="tableheading">
+		            <td>Comment</td>
+		            <td>Time</td>
+		            <td>Author</td>
+	            </tr>
+	        </table>
+	        <div id="orderSection">
+	        <table border="0" id="orderedProceduresTable">
+	            <tr><td class="sectionheading" colspan="6">Ordered Procedures</td></tr>
+	            <tr class="tableheading">
+		            <td>Procedure</td>
+	            </tr>
+	        </table>
+	        </div>
             <p>&nbsp;</p>
-    		<p class="sectionheading">Report</p>
-		    <div id="report"></div>
+            <div id="reportSection">
+    		    <p id="reportheading" class="sectionheading">Report</p>
+                <table width="100%" border="0">
+                    <tr>
+                        <td width="120" class="propertyname">Procedures Reported</td>
+                        <td width="200"><div id="reportedProcedures"/></td>
+                    </tr>
+                </table>
+		        <div id="report"></div>
+            </div>
 		</form>
 	</body>
 </html>

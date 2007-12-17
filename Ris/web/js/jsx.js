@@ -156,6 +156,24 @@ if(!String.prototype.escapeHTML)
     }
 }
 
+// utility to combine a list of strings with separator
+if (!String.combine)
+{
+	String.combine = function(values, separator)
+	{
+		separator = separator ? (separator + "").escapeHTML() : "";
+
+		if (values == null || values.length == 0)
+			return "";
+			
+		return values.reduce("", 
+			function(memo, item) 
+			{
+				return memo.length == 0 ? item : memo + separator + item;
+			});
+	};
+}
+
 // add some decent date serialization support
 if(!Date.prototype.toISOString)
 {
@@ -192,25 +210,6 @@ if(!Date.prototype.toISOString)
    };
 }
     
-
-// utility to combine a list of strings with separator
-if (!String.combine)
-{
-	String.combine = function(values, separator)
-	{
-		separator = separator ? (separator + "").escapeHTML() : "";
-
-		if (values == null || values.length == 0)
-			return "";
-			
-		return values.reduce("", 
-			function(memo, item) 
-			{
-				return memo.length == 0 ? item : memo + separator + item;
-			});
-	};
-}
-
 if (!Date.prototype.addYears)
 {
 	Date.prototype.addYears = function(offset)

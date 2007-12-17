@@ -133,6 +133,11 @@ if(window.external)
 		    return proxy;
 		},
 		
+		getPatientDataService: function()
+		{
+		    return this.getService("ClearCanvas.Ris.Application.Common.BrowsePatientData.IBrowsePatientDataService, ClearCanvas.Ris.Application.Common");
+		},
+		
 		// for a preview page, obtains the worklist item on which the preview is based
 		getWorklistItem: function()
 		{
