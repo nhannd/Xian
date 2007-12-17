@@ -36,41 +36,17 @@ using System.Reflection;
 
 namespace ClearCanvas.Common.Utilities
 {
-	// TODO (Stewart): think about using DataMember or specifying attribute type using generics.
-
 	/// <summary>
 	/// This attribute class is used to decorate properties of other classes for use with the <see cref="SimpleSerializer"/>.
 	/// </summary>
 	[AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
 	public class SimpleSerializedAttribute : Attribute
 	{
-		private readonly bool _useInvariantCulture;
-	
 		/// <summary>
-		/// Default Constructor.
+		/// Default constructor.
 		/// </summary>
 		public SimpleSerializedAttribute()
-			: this(false)
 		{
-		}
-
-		/// <summary>
-		/// Constructor.
-		/// </summary>
-		/// <param name="useInvariantCulture">Specifies whether or not to use the 
-		/// <see cref="System.Globalization.CultureInfo.InvariantCulture"/> when converting property values to/from strings.</param>
-		public SimpleSerializedAttribute(bool useInvariantCulture)
-		{
-			_useInvariantCulture = useInvariantCulture;
-		}
-
-		/// <summary>
-		/// Gets whether or not the <see cref="System.Globalization.CultureInfo.InvariantCulture"/> 
-		/// should be used when when converting property values to/from strings.
-		/// </summary>
-		public bool UseInvariantCulture
-		{
-			get { return _useInvariantCulture; }
 		}
 	}
 
@@ -99,7 +75,7 @@ namespace ClearCanvas.Common.Utilities
 		}
 
 		/// <summary>
-		/// Populates the <paramref name="destinationObject"/>'s properties that are marked with a <see cref="SimpleSerializedAttribute"/> 
+		/// Populates the <paramref name="destinationObject"/>'s properties that are decorated with a <see cref="SimpleSerializedAttribute"/> 
 		/// attribute using the Property/Value pairs from the input dictionary (<paramref name="sourceValues"/>).
 		/// </summary>
 		/// <param name="destinationObject">The object whose properties are to be initialized using the input dictionary's Property/Value pairs.</param>
@@ -107,6 +83,21 @@ namespace ClearCanvas.Common.Utilities
 		/// <exception cref="ArgumentNullException">Thrown when either of the input values are null.</exception>
 		/// <exception cref="SimpleSerializerException">Thrown when an error occurs during serialization.</exception>
 		public static void Serialize(object destinationObject, IDictionary<string, string> sourceValues)
+		{
+			Serialize<SimpleSerializedAttribute>(destinationObject, sourceValues);
+		}
+
+		/// <summary>
+		/// Populates the <paramref name="destinationObject"/>'s properties that are decorated with an attribute of type <typeparamref name="T"/>
+		/// using the Property/Value pairs from the input dictionary (<paramref name="sourceValues"/>).
+		/// </summary>
+		/// <typeparam name="T">Must be an attribute type.</typeparam>
+		/// <param name="destinationObject">The object whose properties are to be initialized using the input dictionary's Property/Value pairs.</param>
+		/// <param name="sourceValues">The input dictionary of Property/Value pairs.</param>
+		/// <exception cref="ArgumentNullException">Thrown when either of the input values are null.</exception>
+		/// <exception cref="SimpleSerializerException">Thrown when an error occurs during serialization.</exception>
+		public static void Serialize<T>(object destinationObject, IDictionary<string, string> sourceValues)
+			where T : Attribute
 		{
 			Platform.CheckForNullReference(destinationObject, "destinationObject");
 			Platform.CheckForNullReference(sourceValues, "sourceValues");
@@ -117,10 +108,10 @@ namespace ClearCanvas.Common.Utilities
 
 				foreach (PropertyInfo property in properties)
 				{
-					if (!property.IsDefined(typeof(SimpleSerializedAttribute), false))
+					if (!property.IsDefined(typeof(T), false))
 						continue;
 
-					SimpleSerializedAttribute attribute = (SimpleSerializedAttribute)(property.GetCustomAttributes(typeof (SimpleSerializedAttribute), false)[0]);
+					T attribute = (T)(property.GetCustomAttributes(typeof (T), false)[0]);
 
 					Type propertyType = property.PropertyType;
 					if (sourceValues.ContainsKey(property.Name))
@@ -130,10 +121,7 @@ namespace ClearCanvas.Common.Utilities
 						TypeConverter converter = TypeDescriptor.GetConverter(propertyType);
 						if (converter.CanConvertFrom(typeof(string)))
 						{
-							if (attribute.UseInvariantCulture)
-								property.SetValue(destinationObject, converter.ConvertFromString(null, System.Globalization.CultureInfo.InvariantCulture, value), null);
-							else 
-								property.SetValue(destinationObject, converter.ConvertFromString(value), null);
+							property.SetValue(destinationObject, converter.ConvertFromString(null, System.Globalization.CultureInfo.InvariantCulture, value), null);
 						}
 						else
 							throw new InvalidOperationException(String.Format(SR.ExceptionFormatCannotConvertFromStringToType, propertyType.FullName));
@@ -159,6 +147,24 @@ namespace ClearCanvas.Common.Utilities
 		/// <returns>A dictionary of Property/Value pairs.</returns>
 		public static IDictionary<string, string> Deserialize(object sourceObject)
 		{
+			return Deserialize<SimpleSerializedAttribute>(sourceObject);
+		}
+
+		/// <summary>
+		/// Constructs and returns a dictionary of Property/Value pairs from the input <paramref name="sourceObject"/>.
+		/// </summary>
+		/// <remarks>
+		/// Those properties decorated with an attribute of type <typeparamref name="T"/> will have their
+		/// values extracted and inserted into the resulting dictionary.
+		/// </remarks>
+		/// <typeparam name="T">Must be an attribute type.</typeparam>
+		/// <param name="sourceObject">The object whose properties are to be extracted.</param>
+		/// <exception cref="ArgumentNullException">Thrown when the input value is null.</exception>
+		/// <exception cref="SimpleSerializerException">Thrown when an error occurs during deserialization.</exception>
+		/// <returns>A dictionary of Property/Value pairs.</returns>
+		public static IDictionary<string, string> Deserialize<T>(object sourceObject)
+			where T : Attribute
+		{
 			Platform.CheckForNullReference(sourceObject, "sourceObject");
 
 			Dictionary<string, string> dictionary = new Dictionary<string, string>();
@@ -168,10 +174,10 @@ namespace ClearCanvas.Common.Utilities
 				PropertyInfo[] properties = sourceObject.GetType().GetProperties();
 				foreach (PropertyInfo property in properties)
 				{
-					if (!property.IsDefined(typeof(SimpleSerializedAttribute), false))
+					if (!property.IsDefined(typeof(T), false))
 						continue;
 
-					SimpleSerializedAttribute attribute = (SimpleSerializedAttribute)(property.GetCustomAttributes(typeof(SimpleSerializedAttribute), false)[0]);
+					T attribute = (T)(property.GetCustomAttributes(typeof(T), false)[0]);
 
 					Type propertyType = property.PropertyType;
 					object value = property.GetValue(sourceObject, null);
@@ -183,10 +189,7 @@ namespace ClearCanvas.Common.Utilities
 					if (converter.CanConvertTo((typeof(string))))
 					{
 						string stringValue = null;
-						if (attribute.UseInvariantCulture)
-							stringValue = converter.ConvertToString(null, System.Globalization.CultureInfo.InvariantCulture, value);
-						else
-							stringValue = converter.ConvertToString(value);
+						stringValue = converter.ConvertToString(null, System.Globalization.CultureInfo.InvariantCulture, value);
 
 						if (!String.IsNullOrEmpty(stringValue))
 							dictionary[property.Name] = stringValue;

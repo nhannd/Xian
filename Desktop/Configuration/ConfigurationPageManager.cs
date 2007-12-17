@@ -58,8 +58,8 @@ namespace ClearCanvas.Desktop.Configuration
 				if (_pageList == null)
 				{
 					List<IConfigurationPage> list = new List<IConfigurationPage>();
-					CollectionUtils.ForEach<IConfigurationPage>(new ConfigurationPageProviderExtensionPoint().CreateExtensions(),
-						delegate(IConfigurationPage page) { list.Add(page); });
+					CollectionUtils.ForEach<IConfigurationPageProvider>(new ConfigurationPageProviderExtensionPoint().CreateExtensions(),
+						delegate(IConfigurationPageProvider provider) { list.AddRange(provider.GetPages()); });
 					_pageList = list.AsReadOnly();
 				}
 

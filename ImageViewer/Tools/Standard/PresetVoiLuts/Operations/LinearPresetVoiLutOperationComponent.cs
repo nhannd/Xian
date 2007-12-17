@@ -83,7 +83,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 			}
 		}
 
-		[SimpleSerialized(true)]
+		[SimpleSerialized]
 		public double WindowWidth
 		{
 			get { return _windowWidth; }
@@ -97,7 +97,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 			}
 		}
 
-		[SimpleSerialized(true)]
+		[SimpleSerialized]
 		public double WindowCenter
 		{
 			get { return _windowCenter; }
