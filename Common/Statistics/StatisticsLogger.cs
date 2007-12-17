@@ -29,39 +29,43 @@
 
 #endregion
 
-#pragma warning disable 1591
-
 using System;
+using System.IO;
+using System.Text;
+using System.Xml;
 
-namespace ClearCanvas.Common.Performance
+namespace ClearCanvas.Common.Statistics
 {
     /// <summary>
-    /// Statistics to store the number of bytes
+    /// Provides statistics logging mechanism.
     /// </summary>
-    /// <remarks>
-    /// <see cref="IStatistics.FormattedValue"/> of the <see cref="ByteCountStatistics"/> has unit of "GB", 'MB" or "KB"
-    /// depending on the number of bytes being set.
-    /// </remarks>
-    public class ByteCountStatistics : Statistics<long>
+    public class StatisticsLogger
     {
-        private const double KILOBYTES = 1024;
-        private const double MEGABYTES = 1024*KILOBYTES;
-        private const double GIGABYTES = 1024*MEGABYTES;
+        #region private members
+        private readonly static XmlDocument doc = new XmlDocument();
+        #endregion private members
 
-        public ByteCountStatistics(string name)
-            : base(name)
+        /// <summary>
+        /// Logs a statistics.
+        /// </summary>
+        /// <param name="statistics"></param>
+        public static void Log(StatisticsSet statistics)
         {
-            ValueFormatter = delegate(long bytes)
-                                 {
-                                     if (bytes > GIGABYTES)
-                                         return String.Format("{0:0.00} GB", bytes/GIGABYTES);
-                                     if (bytes > MEGABYTES)
-                                         return String.Format("{0:0.00} MB", bytes/MEGABYTES);
-                                     if (bytes > KILOBYTES)
-                                         return String.Format("{0:0.00} KB", bytes/KILOBYTES);
+            XmlElement el = statistics.GetXmlElement(doc);
+            Encoding utf8encoder = new UTF8Encoding();
 
-                                     return String.Format("{0} B", bytes);
-                                 };
+            using (MemoryStream ms = new MemoryStream())
+            {
+                XmlTextWriter writer = new XmlTextWriter(ms, utf8encoder);
+                el.WriteTo(writer);
+                writer.Flush();
+
+                String xmlStat = utf8encoder.GetString(ms.GetBuffer(), 0, (int) ms.Length);
+
+                Platform.Log(LogLevel.Info, xmlStat);
+
+                writer.Close();
+            }
         }
     }
 }

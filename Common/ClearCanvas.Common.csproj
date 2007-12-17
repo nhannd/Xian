@@ -126,19 +126,16 @@
     <Compile Include="Auditing\AuditManager.cs" />
     <Compile Include="Auditing\IAuditor.cs" />
     <Compile Include="ITimeProvider.cs" />
-    <Compile Include="Performance\ByteCountStatistics.cs" />
-    <Compile Include="Performance\MsgCountStatistics.cs" />
-    <Compile Include="Performance\RateStatistics.cs" />
-    <Compile Include="Performance\StatisticsSet.cs" />
-    <Compile Include="Performance\CollectionAverageStatistics.cs" />
-    <Compile Include="Performance\StatisticsSetCollection.cs" />
-    <Compile Include="Performance\WorkQueue\InstanceProcessingStatistics.cs" />
-    <Compile Include="Performance\WorkQueue\WorkQueueAverageStatistics.cs" />
-    <Compile Include="Performance\Network\TransmissionStatistics.cs" />
-    <Compile Include="Performance\TimeSpanStatistics.cs" />
-    <Compile Include="Performance\Statistics.cs" />
-    <Compile Include="Performance\IStatistics.cs" />
-    <Compile Include="Performance\Samples\StatisticsTest.cs" />
+    <Compile Include="Statistics\ByteCountStatistics.cs" />
+    <Compile Include="Statistics\MsgCountStatistics.cs" />
+    <Compile Include="Statistics\RateStatistics.cs" />
+    <Compile Include="Statistics\StatisticsLogger.cs" />
+    <Compile Include="Statistics\StatisticsSet.cs" />
+    <Compile Include="Statistics\CollectionAverageStatistics.cs" />
+    <Compile Include="Statistics\StatisticsSetCollection.cs" />
+    <Compile Include="Statistics\TimeSpanStatistics.cs" />
+    <Compile Include="Statistics\Statistics.cs" />
+    <Compile Include="Statistics\IStatistics.cs" />
     <Compile Include="PluginLoadedEventArgs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
@@ -197,10 +194,6 @@
     <Compile Include="Specifications\UndefinedSpecificationException.cs" />
     <Compile Include="Specifications\XmlSpecificationCompiler.cs" />
     <Compile Include="Specifications\XmlSpecificationCompilerException.cs" />
-    <Compile Include="Statistics\BaseStatistics.cs" />
-    <Compile Include="Statistics\BaseStatisticsConverter.cs" />
-    <Compile Include="Statistics\TimeSpanStatistics.cs" />
-    <Compile Include="Statistics\TransmissionStatistics.cs" />
     <Compile Include="Tests\FileProcessorTest.cs" />
     <Compile Include="TypeExtensionFilter.cs" />
     <Compile Include="Platform.cs">
@@ -280,7 +273,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagrams\Platform.cd" />
-    <None Include="Performance\ClassDiagram1.cd" />
+    <None Include="Statistics\ClassDiagram1.cd" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="ClearCanvas.Strings.targets" />

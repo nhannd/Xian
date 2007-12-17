@@ -116,7 +116,7 @@ namespace ClearCanvas.ImageServer.Rules
         /// </summary>
         public void Load()
         {
-            long tickStart = Platform.Time.Ticks;
+            _stats.LoadTime.Start();
 
             // Clearout the current type list.
             _typeList.Clear();
@@ -158,7 +158,7 @@ namespace ClearCanvas.ImageServer.Rules
                 }
             }
 
-            _stats.LoadTimeInMs = (Platform.Time.Ticks - tickStart)/10000d;
+            _stats.LoadTime.End();
 
         }
 
@@ -168,14 +168,15 @@ namespace ClearCanvas.ImageServer.Rules
         /// <param name="context">A class containing the context for applying the rules.</param>
         public void Execute(ServerActionContext context)
         {
-            long tickStart = Platform.Time.Ticks;
+            _stats.ExecutionTime.Start();
 
             foreach (RuleTypeCollection typeCollection in _typeList.Values)
             {
                 typeCollection.Execute(context);
             }
 
-            _stats.ExecutionTimeInMs = (Platform.Time.Ticks - tickStart)/1000d;
+            _stats.ExecutionTime.End();
+
         }
 
         #endregion

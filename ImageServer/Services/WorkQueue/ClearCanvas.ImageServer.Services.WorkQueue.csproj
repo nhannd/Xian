@@ -38,6 +38,7 @@
     <Compile Include="BaseItemProcessor.cs" />
     <Compile Include="DeleteStudy\DeleteStudyFactoryExtension.cs" />
     <Compile Include="DeleteStudy\DeleteStudyItemProcessor.cs" />
+    <Compile Include="StudyProcess\InstanceStatistics.cs" />
     <Compile Include="StudyProcess\StudyProcessStatistics.cs" />
     <Compile Include="WorkQueueSettings.cs" />
     <Compile Include="WorkQueueSettings.Designer.cs">

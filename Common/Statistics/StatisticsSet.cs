@@ -32,41 +32,53 @@
 #pragma warning disable 1591
 
 using System.Collections.Generic;
-using System.Text;
 using System.Xml;
 using System;
-using ClearCanvas.Common.Performance;
 
-namespace ClearCanvas.Common.Performance
+namespace ClearCanvas.Common.Statistics
 {
-
     /// <summary>
-    /// Statistics to hold one of more statistics.
+    /// Statistics to hold one of more <see cref="IStatistics"/>.
     /// </summary>
     public abstract class StatisticsSet
     {
-
         #region Protected Members
+
         protected String _name;
 
         // list of sub-statistics
         protected Dictionary<object, IStatistics> _fields = new Dictionary<object, IStatistics>();
+
         #endregion
 
         #region Public Properties
 
+        /// <summary>
+        /// Gets or sets the name of the statistics set.
+        /// </summary>
         public String Name
         {
             get { return _name; }
             set { _name = value; }
         }
 
+        /// <summary>
+        /// Gets the statistics fields in the set.
+        /// </summary>
         public ICollection<IStatistics> Fields
         {
-            get
-            {
-                return _fields.Values;
-            }
+            get { return _fields.Values; }
+        }
+
+        /// <summary>
+        /// Gets or sets the statistics field in the set based on a key.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public IStatistics this[object key]
+        {
+            get { return _fields[key]; }
+            set { _fields[key] = value; }
         }
 
         #endregion
@@ -78,56 +90,26 @@ namespace ClearCanvas.Common.Performance
             _name = name;
         }
 
-        public IStatistics this[object key]
-        {
-            get
-            {
-                return _fields[key];
-            }
-            set
-            {
-                _fields[key] = value;
-            }
-        }
         #endregion
-
-
 
         #region Public Methods
 
-       
-
-
-        protected void AddField(IStatistics stat)
+        /// <summary>
+        /// Adds a specified statistics into the set using its name as the key.
+        /// </summary>
+        /// <param name="stat"></param>
+        public void AddField(IStatistics stat)
         {
             _fields[stat.Name] = stat;
         }
 
-        
-
-        #endregion
-
-
-
-        #region Protected Methods
-
-        #endregion
-
-
-
-        #region Abstract Methods
-
-        #endregion
-
-        #region Overrides
-
-        #endregion
-
+        /// <summary>
+        /// Gets the XML representation of the statistics set.
+        /// </summary>
+        /// <param name="doc"></param>
+        /// <returns></returns>
         public virtual XmlElement GetXmlElement(XmlDocument doc)
         {
-            //<Statistics name="xxxxx" >
-            //     
-            //</Statistics>
             XmlElement el = doc.CreateElement("Statistics");
             XmlAttribute attrType = doc.CreateAttribute("Type");
             attrType.Value = GetType().Name;
@@ -140,34 +122,11 @@ namespace ClearCanvas.Common.Performance
                 {
                     el.Attributes.Append(a);
                 }
-
             }
 
             return el;
         }
 
-        public override string ToString()
-        {
-            // spit out all properties as XML
-            
-            StringBuilder sb = new StringBuilder();
-            XmlWriterSettings settings = new XmlWriterSettings();
-            settings.Indent = true;
-            settings.IndentChars = ("\t");
-
-            XmlDocument doc = new XmlDocument();
-            XmlElement el = this.GetXmlElement(doc);
-
-            using (XmlWriter writer = XmlWriter.Create(sb, settings))
-            {
-                el.WriteTo(writer);
-                writer.Flush();
-            }
-            return sb.ToString();
-        }
-
-
+        #endregion
     }
-
-
 }

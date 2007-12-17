@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using ClearCanvas.Common.Statistics;
 
 namespace ClearCanvas.ImageServer.Rules
@@ -36,38 +37,36 @@ namespace ClearCanvas.ImageServer.Rules
     /// <summary>
     /// Stores the engine statistics of a rule engine.
     /// </summary>
-    public class RuleEngineStatistics:BaseStatistics
+    public class RuleEngineStatistics:StatisticsSet
     {
         #region Private members
-        private double _loadTime;
-        private double _executionTime;
         #endregion Private members
+
+        
 
         #region Public Properties
         /// <summary>
         /// Gets or sets the execution time of the rule engine in miliseconds.
         /// </summary>
-        public double ExecutionTimeInMs
+        public TimeSpanStatistics ExecutionTime
         {
-            get { return _executionTime; }
-            set
+            get
             {
-                _executionTime = value;
-                this["ExecutionTimeInMs"] = string.Format("{0:0.00}", value);
+                return (this["ExecutionTime"] as TimeSpanStatistics);
             }
+
         }
 
         /// <summary>
         /// Gets or sets the load time of the rule engine in miliseconds.
         /// </summary>
-        public double LoadTimeInMs
+        public TimeSpanStatistics LoadTime
         {
-            get { return _loadTime; }
-            set
+            get
             {
-                _loadTime = value;
-                this["LoadTimeInMs"] = string.Format("{0:0.00}", value);
+                return (this["LoadTime"] as TimeSpanStatistics);
             }
+
         }
 
         #endregion Public Properties
@@ -76,19 +75,12 @@ namespace ClearCanvas.ImageServer.Rules
         public RuleEngineStatistics(ServerRulesEngine engine)
             : base(engine.RuleApplyTime.Description)
         {
+            AddField(new TimeSpanStatistics("ExecutionTime"));
+            AddField(new TimeSpanStatistics("LoadTime"));
+        
         }
         #endregion
 
-        #region Overrides
-        protected override void OnBegin()
-        {
-            // NOOP
-        }
-
-        protected override void OnEnd()
-        {
-            // NOOP
-        }
-        #endregion
+        
     }
 }

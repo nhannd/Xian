@@ -618,23 +618,6 @@ namespace ClearCanvas.Common
 
 
         /// <summary>
-        /// Logs the statistics at the specified <see cref="LogLevel"/>.
-        /// </summary>
-        /// <remarks>This method is thread-safe.</remarks>
-        /// <param name="category">The log level.</param>
-        /// <param name="stats">The statistics to log.</param>
-        public static void LogStatistics(LogLevel category, IStatistics stats)
-        {
-            StringBuilder sb = new StringBuilder();
-
-            TypeConverter converter = TypeDescriptor.GetConverter(stats);
-
-            if (converter.CanConvertTo(typeof(string)))
-                Log(category, converter.ConvertTo(stats, typeof(string)));
-            
-        }
-
-        /// <summary>
         /// Logs the specified exception at the specified <see cref="LogLevel"/>.
         /// </summary>
         /// <remarks>This method is thread-safe.</remarks>

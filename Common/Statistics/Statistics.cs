@@ -36,29 +36,42 @@ using System.Collections.Generic;
 using System.Xml;
 
 
-namespace ClearCanvas.Common.Performance
+namespace ClearCanvas.Common.Statistics
 {
-
     /// <summary>
     /// Generic base statistics class that implements <see cref="IStatistics"/>
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public class Statistics<T> : IStatistics
     {
+        /// <summary>
+        /// Defines the delegate used for formatting the value of the statistics.
+        /// <seealso cref="FormattedValue"/>
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public delegate string ValueFormatterDelegate(T value);
+
+        #region Private members
+
         private readonly string _name;
         private T _value;
         private string _unit;
 
-        public delegate string ValueFormatterDelegate(T value);
-        
+        #endregion Private members
+
+        #region Delegates
+
         private ValueFormatterDelegate _formatter;
-        
+
+        #endregion Delegates
+
+        #region Constructors
+
         public Statistics(string name)
         {
             _name = name;
         }
-
-        
 
         public Statistics(string name, ValueFormatterDelegate formatter)
         {
@@ -72,12 +85,38 @@ namespace ClearCanvas.Common.Performance
             _value = value;
         }
 
+        #endregion Constructors
+
+        #region Protected methods
+
+        protected string FormatValue(object obj)
+        {
+            if (ValueFormatter != null && obj is T)
+                return ValueFormatter((T) obj);
+
+            if (_unit != null)
+                return String.Format("{0} {1}", obj, _unit);
+            else
+                return obj.ToString();
+        }
+
+        #endregion Protected methods
+
+        #region Casting operators
+
+        /// <summary>
+        /// Casts the statistics to the underlying type.
+        /// </summary>
+        /// <param name="stat"></param>
+        /// <returns></returns>
         public static explicit operator T(Statistics<T> stat)
         {
             return stat.Value;
         }
 
+        #endregion Casting operators
 
+        #region Public properties
 
         public string Name
         {
@@ -97,9 +136,10 @@ namespace ClearCanvas.Common.Performance
             set { _unit = value; }
         }
 
+        #endregion Public properties
+
         #region IStatistics Members
 
-        
         public XmlAttribute[] GetXmlAttributes(XmlDocument doc)
         {
             List<XmlAttribute> list = new List<XmlAttribute>();
@@ -112,39 +152,12 @@ namespace ClearCanvas.Common.Performance
             return list.ToArray();
         }
 
-        #endregion
-
-        #region IStatistics Members
-
-
-        public virtual bool SetValue(object value)
-        {
-            _value = (T) value;
-            return true;   
-        }
-
-        #endregion
-
-        #region IStatistics Members
 
         public virtual string FormattedValue
         {
-            get
-            {
-                return FormatValue(_value);
-            }
+            get { return FormatValue(_value); }
         }
 
-        protected string FormatValue(object obj)
-        {
-            if (ValueFormatter != null && obj is T)
-                return ValueFormatter((T)obj);
-
-            if (_unit != null)
-                return String.Format("{0} {1}", obj, _unit);
-            else
-                return obj.ToString();  
-        }
 
         public ValueFormatterDelegate ValueFormatter
         {
@@ -154,5 +167,4 @@ namespace ClearCanvas.Common.Performance
 
         #endregion
     }
-
 }

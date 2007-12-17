@@ -31,31 +31,29 @@
 
 #pragma warning disable 1591
 
-
-
-namespace ClearCanvas.Common.Performance.WorkQueue
+namespace ClearCanvas.Common.Statistics
 {
-
-    public class WorkQueueAverageStatistics : CollectionAverageStatistics<InstanceProcessingStatistics>
+    /// <summary>
+    /// Statistics to store the number of messages.
+    /// </summary>
+    /// <remarks>
+    /// </remarks>
+    public class MessageCountStatistics : Statistics<ulong>
     {
-        public WorkQueueAverageStatistics(string name)
+        #region Constructors
+        public MessageCountStatistics(string name)
             : base(name)
         {
-            AddField(new Statistics<string>("StudyInstanceUID"));
+            Unit = "msg";
         }
 
-        public Statistics<string> StudyInstanceUID
+        public MessageCountStatistics(string name, ulong value)
+            : this(name)
         {
-            get { return this["StudyInstanceUID"] as Statistics<string>; }
+            Value = value;
         }
+
+        #endregion Constructors
     }
 
-
-
-
-
-
-
-
-
-}
+   }

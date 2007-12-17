@@ -36,162 +36,40 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
     /// <summary>
     /// Store performance statistics of a study processor.
     /// </summary>
-    internal class StudyProcessStatistics : TimeSpanStatistics
+    internal class StudyProcessStatistics : CollectionAverageStatistics<InstanceStatistics>
     {
-        #region Private members
-        private string _modalityType;
-        private string _studyInstanceUid;
-        private int _numInstances = 0;
-        private double _engineLoadTime;
-        private double _engineTotalExecTime;
-        private double _insertStreamTotalTime;
-        private double _insertDBTotalTime;
-        private double _dicomFileLoadTime;
-        private double _totalFileSizeInMB;
-        #endregion Private members
-
         #region Public Properties
 
         public string StudyInstanceUid
         {
-            set
-            {
-                _studyInstanceUid = value;
-                this["StudyInstanceUid"] = value;
-            }
-            get { return _studyInstanceUid; }
+            set { this["StudyInstanceUid"] = new Statistics<string>("StudyInstanceUid", value); }
+            get { return (this["StudyInstanceUid"] as Statistics<string>).Value; }
         }
 
-        public string ModalityType
+        public string Modality
         {
-            set
-            {
-                _modalityType = value;
-                this["Modality"] = value;
-            }
-            get { return _modalityType; }
+            set { this["Modality"] = new Statistics<string>("Modality", value); }
+            get { return (this["Modality"] as Statistics<string>).Value; }
         }
+
 
         public int NumInstances
         {
-            set
-            {
-                _numInstances = value;
-                this["InstanceCount"] = value;
-            }
-            get { return _numInstances; }
-        }
-
-        public double EngineLoadTimeInMs
-        {
-            set
-            {
-                _engineLoadTime = value;
-                this["EnginesLoadInMs"] = string.Format("{0:0.00}", value);
-            }
-            get { return _engineLoadTime; }
-        }
-
-        public double EngineExecutionTimeInMs
-        {
-            set { _engineTotalExecTime = value; }
-            get { return _engineTotalExecTime; }
-        }
-
-        public double InsertStreamTotalTimeInMs
-        {
-            set
-            {
-                _insertStreamTotalTime = value;
-                //this["InsertStreamTimeInMs"] = string.Format("{0}", value / 10000.0d);
-            }
-            get { return _insertStreamTotalTime; }
-        }
-
-        public double InsertDBTotalTimeInMs
-        {
-            set
-            {
-                _insertDBTotalTime = value;
-                //this["DatabaseInsertTimeInMs"] = string.Format("{0}", value / 10000.0d);
-            }
-            get { return _insertDBTotalTime; }
-        }
-
-        public double DicomFileLoadTimeInMs
-        {
-            set
-            {
-                _dicomFileLoadTime = value;
-                //this["DicomFileLoadTime"] = string.Format("{0}", value / 10000.0d);
-            }
-            get { return _dicomFileLoadTime; }
-        }
-
-        public double AverageProcessTimePerInstance
-        {
-            set { this["AverageInstanceProcessTimeInMs"] = string.Format("{0:0.00}", value); }
-        }
-
-        public double AverageEngineExecutionTimePerInstance
-        {
-            set { this["AverageEngineExecTimeInMs"] = string.Format("{0:0.00}", value); }
-        }
-
-        public double AverageInsertStreamPerInstance
-        {
-            set { this["AverageStreamInsertTimeInMs"] = string.Format("{0:0.00}", value); }
-        }
-
-        public double AverageInsertDBPerInstance
-        {
-            set { this["AverageDBInsertTimeInMs"] = string.Format("{0:0.00}", value); }
-        }
-
-        public double AverageDicomFileLoadTime
-        {
-            set { this["AverageDicomFileLoadTime"] = string.Format("{0:0.00}", value); }
-        }
-
-        public double TotalFileSizeInMB
-        {
-            set
-            {
-                _totalFileSizeInMB = value;
-                //this["TotalFileSizeInMB"] = string.Format("{0:0.00}", value);
-            }
-            get { return _totalFileSizeInMB; }
-        }
-
-        public double AverageFileSizeInMB
-        {
-            set { this["AverageFileSizeInMB"] = string.Format("{0:0.00}", value); }
+            set { this["NumInstances"] = new Statistics<int>("NumInstances", value); }
+            get { return (this["NumInstances"] as Statistics<int>).Value; }
         }
 
         #endregion Public Properties
 
         #region Constructors
+
         public StudyProcessStatistics() : base("Study Process")
         {
+            AddField(new Statistics<string>("Modality"));
+            AddField(new Statistics<string>("StudyInstanceUid"));
+            AddField(new Statistics<int>("NumInstances"));
         }
+
         #endregion Constructors
-
-        #region Overrides
-        protected override void OnEnd()
-        {
-            base.OnEnd();
-
-            if (NumInstances > 0)
-            {
-                // derive the average process times
-                AverageProcessTimePerInstance = (double) base.ElapsedTimeInMs/NumInstances;
-                AverageDicomFileLoadTime = DicomFileLoadTimeInMs/NumInstances;
-                AverageFileSizeInMB = TotalFileSizeInMB/NumInstances;
-                AverageEngineExecutionTimePerInstance = EngineExecutionTimeInMs/NumInstances;
-                AverageInsertDBPerInstance = InsertDBTotalTimeInMs/NumInstances;
-                AverageInsertStreamPerInstance = InsertStreamTotalTimeInMs/NumInstances;
-            }
-        }
-        #endregion
     }
 }

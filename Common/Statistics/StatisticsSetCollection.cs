@@ -31,20 +31,70 @@
 
 #pragma warning disable 1591
 
-using System;
+using System.Collections.Generic;
+using System.Xml;
 
-namespace ClearCanvas.Common.Performance
+namespace ClearCanvas.Common.Statistics
 {
     /// <summary>
-    /// Statistics to store the number of messages with unit of "msg"
+    /// Base collection of <see cref="StatisticsSet"/>.
     /// </summary>
-    public class MessageCountStatistics : Statistics<long>
+    /// <typeparam name="T"></typeparam>
+    internal class StatisticsSetCollection<T>
+        where T : StatisticsSet, new()
     {
-        public MessageCountStatistics(string name)
-            : base(name)
-        {
-            Unit = "msg";
-        }
-    }
+        #region Private members
 
-   }
+        private List<T> _list = new List<T>();
+
+        #endregion Private members
+
+        #region public properties
+
+        public List<T> Items
+        {
+            get { return _list; }
+            set { _list = value; }
+        }
+
+        public int Count
+        {
+            get { return Items.Count; }
+        }
+
+        #endregion public properties
+
+        #region public methods
+
+        /// <summary>
+        /// Returns a new instance of the underlying statistics set.
+        /// </summary>
+        /// <returns></returns>
+        public T NewStatistics()
+        {
+            T newStat = new T();
+            _list.Add(newStat);
+            return newStat;
+        }
+
+        /// <summary>
+        /// Returns the statistics collection as a list of XML elements.
+        /// </summary>
+        /// <param name="doc"></param>
+        /// <returns></returns>
+        public virtual List<XmlElement> ToXmlElements(XmlDocument doc)
+        {
+            List<XmlElement> list = new List<XmlElement>();
+
+            foreach (StatisticsSet item in Items)
+            {
+                XmlElement xml = item.GetXmlElement(doc);
+                list.Add(xml);
+            }
+
+            return list;
+        }
+
+        #endregion public methods
+    }
+}

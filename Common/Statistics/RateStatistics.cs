@@ -33,7 +33,7 @@
 
 using System;
 
-namespace ClearCanvas.Common.Performance
+namespace ClearCanvas.Common.Statistics
 {
     /// <summary>
     /// The type of information used in <see cref="RateStatistics"/>.
@@ -45,7 +45,7 @@ namespace ClearCanvas.Common.Performance
     } ;
 
     /// <summary>
-    /// Statistics class to store the rate of changes of the specified information.
+    /// Statistics class to store the rate of changes of the underlying information.
     /// </summary>
     /// <remarks>
     /// The information being supported include: Byte rates or Message rate. The number of bytes or messages is set by calling <see cref="SetData"/>.
@@ -73,20 +73,29 @@ namespace ClearCanvas.Common.Performance
     /// </remarks>
     public class RateStatistics : Statistics<double>
     {
+        #region Constants
         private const double TICKSPERSECOND= 10*1000*1000;
-        
         private const double KILOBYTES = 1024;
         private const double MEGABYTES = 1024 * KILOBYTES;
         private const double GIGABYTES = 1024 * MEGABYTES;
-        
 
+        #endregion Constants
+
+        #region private members
         private long _begin;
         private long _end;
-        private double _prevdata = 0;
-        private double _delta = 0;
+        private double _data = 0;
 
         private RateType _type;
 
+        #endregion private members
+
+        #region Constructors
+        /// <summary>
+        /// Creates an instance of <see cref="RateStatistics"/> for the specified <see cref="RateType"/>
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="rateType"></param>
         public RateStatistics(string name, RateType rateType)
             : base(name)
         {
@@ -117,36 +126,38 @@ namespace ClearCanvas.Common.Performance
             }
         }
 
+        #endregion Constructors
+
+        #region Public methods
+
+        /// <summary>
+        /// Sets the value of the underlying data.
+        /// </summary>
+        /// <param name="value"></param>
         public void SetData(double value)
         {
-            _delta = value - _prevdata;
-            _prevdata = value;
+            _data = value;
         }
 
+        /// <summary>
+        /// Signals the begining of the measurement.
+        /// </summary>
         public void Start()
         {
             _begin = DateTime.Now.Ticks;
 
         }
+
+        /// <summary>
+        /// Signals the end of the measurement.
+        /// </summary>
         public void End()
         {
             _end = DateTime.Now.Ticks + 1;
-            Value = _delta / ((_end - _begin) / TICKSPERSECOND);
+            Value = _data / ((_end - _begin) / TICKSPERSECOND);
         }
+        #endregion Public methods
 
-        public override bool SetValue(object value)
-        {
-            if (value is double)
-            {
-                Value = (double) value;
-                return true;
-            }
-            else
-                return base.SetValue(value);
-
-        }
-
-       
     }
 
    }

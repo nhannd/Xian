@@ -31,81 +31,43 @@
 
 #pragma warning disable 1591
 
-
 using System;
 
-namespace ClearCanvas.Common.Performance.WorkQueue
+namespace ClearCanvas.Common.Statistics
 {
-
-    public class InstanceProcessingStatistics : StatisticsSet
+    /// <summary>
+    /// Statistics to store the number of bytes
+    /// </summary>
+    /// <remarks>
+    /// <see cref="IStatistics.FormattedValue"/> of the <see cref="ByteCountStatistics"/> has unit of "GB", 'MB" or "KB"
+    /// depending on the number of bytes being set.
+    /// </remarks>
+    public class ByteCountStatistics : Statistics<ulong>
     {
+        private const double KILOBYTES = 1024;
+        private const double MEGABYTES = 1024*KILOBYTES;
+        private const double GIGABYTES = 1024*MEGABYTES;
 
-        public InstanceProcessingStatistics()
-            : this("InstanceProcessingStatistics")
+        public ByteCountStatistics(string name)
+            : this(name, 0)
         {
             
         }
 
-        public InstanceProcessingStatistics(string name)
-            : base(name)
+        public ByteCountStatistics(string name, ulong value)
+            : base(name, value)
         {
-            AddField(new TimeSpanStatistics("DBAccessTime"));
-            AddField(new TimeSpanStatistics("FileAccessTime"));
-            AddField(new ByteCountStatistics("InstanceSize"));
-            AddField(new Statistics<string>("InstanceUid"));
-        }
+            ValueFormatter = delegate(ulong bytes)
+                                 {
+                                     if (bytes > GIGABYTES)
+                                         return String.Format("{0:0.00} GB", bytes / GIGABYTES);
+                                     if (bytes > MEGABYTES)
+                                         return String.Format("{0:0.00} MB", bytes / MEGABYTES);
+                                     if (bytes > KILOBYTES)
+                                         return String.Format("{0:0.00} KB", bytes / KILOBYTES);
 
-        public TimeSpanStatistics DBAccessTime
-        {
-            get
-            {
-                return (this["DBAccessTime"] as TimeSpanStatistics);
-            }
-            
-        }
-
-        public long InstanceSize
-        {
-            get
-            {
-                return (this["InstanceSize"] as ByteCountStatistics).Value;
-            }
-            set
-            {
-                this["InstanceSize"].SetValue(value);
-            }
-
-        }
-
-        public TimeSpanStatistics FileAccessTime
-        {
-            get
-            {
-                return (this["FileAccessTime"] as TimeSpanStatistics);
-            }
-            
-        }
-
-        public string InstanceUid
-        {
-            get
-            {
-                return (string)(this["InstanceUid"] as Statistics<string>);
-            }
-            set
-            {
-                this["InstanceUid"] = new Statistics<string>("InstanceUid", value);
-            }
+                                     return String.Format("{0} B", bytes);
+                                 };
         }
     }
-
-   
-
-
-
-
-
-
-
-
 }

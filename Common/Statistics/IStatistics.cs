@@ -31,31 +31,37 @@
 
 #pragma warning disable 1591
 
-
 using System.Xml;
 
-namespace ClearCanvas.Common.Performance
+namespace ClearCanvas.Common.Statistics
 {
-    
     /// <summary>
-    /// Defines the interface of statistics classes
+    /// Defines the interface of statistics classes.
     /// </summary>
     /// <remarks>
-    /// 
     /// </remarks>
     public interface IStatistics
     {
+        /// <summary>
+        /// Gets the name of the statistics
+        /// </summary>
         string Name { get; }
 
+        /// <summary>
+        /// Gets the unit of the statistics value.
+        /// </summary>
         string Unit { get; }
 
+        /// <summary>
+        /// Gets the XML attribute representation of the statistics.
+        /// </summary>
+        /// <param name="doc"></param>
+        /// <returns></returns>
         XmlAttribute[] GetXmlAttributes(XmlDocument doc);
 
-        string FormattedValue { get;}
-
-        bool SetValue(object value);
+        /// <summary>
+        /// Gets the formatted value of the statistics.
+        /// </summary>
+        string FormattedValue { get; }
     }
-
-
-
 }

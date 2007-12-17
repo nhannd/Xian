@@ -35,9 +35,8 @@ using System;
 using System.Collections.Generic;
 using System.Xml;
 
-namespace ClearCanvas.Common.Performance
+namespace ClearCanvas.Common.Statistics
 {
-   
     /// <summary>
     /// Base statistics class that automatically calculates averages 
     /// of the underlying <see cref="StatisticsSetCollection{T}"/>.
@@ -49,25 +48,19 @@ namespace ClearCanvas.Common.Performance
     public class CollectionAverageStatistics<T> : StatisticsSet
         where T : StatisticsSet, new()
     {
-        private readonly StatisticsSetCollection<T> _collection = new StatisticsSetCollection<T>();
+        #region Private members
 
+        private readonly StatisticsSetCollection<T> _collection = new StatisticsSetCollection<T>();
         private bool _logAll = false;
+
+        #endregion Private members
+
+        #region Public properties
+
         public bool LogAll
         {
             set { _logAll = value; }
             get { return _logAll; }
-        }
-
-
-        public CollectionAverageStatistics(string name)
-            : base(name)
-        {
-
-        }
-
-        public T NewStatistics()
-        {
-            return _collection.NewStatistics();
         }
 
         public int Count
@@ -75,60 +68,105 @@ namespace ClearCanvas.Common.Performance
             get { return _collection.Count; }
         }
 
-        protected void CalculateStatisticsFieldAverage(string fieldName)
+        #endregion Public properties
+
+        #region Constructors
+
+        public CollectionAverageStatistics(string name)
+            : base(name)
+        {
+        }
+
+        #endregion Constructors
+
+        #region Protected Methods
+
+        
+        protected void CalculateAverage()
+        {
+            if (Count == 0)
+                return;
+
+            StatisticsSet firstItem = _collection.Items[0];
+
+            foreach (IStatistics field in firstItem.Fields)
+            {
+                CalculateFieldAverage(field.Name);
+            }
+        }
+
+        protected void CalculateFieldAverage(string fieldName)
         {
             string name = "Average_" + fieldName;
             double sum = 0;
 
+            IStatistics field = _collection.Items[0][fieldName];
+
             IStatistics average = null;
 
-            IStatistics field = _collection.Items[0][fieldName];
             if (field is Statistics<int>)
             {
                 average = new Statistics<int>(name);
                 (average as Statistics<int>).Unit = (field as Statistics<int>).Unit;
                 (average as Statistics<int>).ValueFormatter = (field as Statistics<int>).ValueFormatter;
-
-                
+            }
+            else if (field is Statistics<uint>)
+            {
+                average = new Statistics<uint>(name);
+                (average as Statistics<uint>).Unit = (field as Statistics<uint>).Unit;
+                (average as Statistics<uint>).ValueFormatter = (field as Statistics<uint>).ValueFormatter;
             }
             else if (field is Statistics<long>)
             {
                 average = new Statistics<long>(name);
                 (average as Statistics<long>).Unit = (field as Statistics<long>).Unit;
                 (average as Statistics<long>).ValueFormatter = (field as Statistics<long>).ValueFormatter;
+            }
 
+            else if (field is Statistics<ulong>)
+            {
+                average = new Statistics<ulong>(name);
+                (average as Statistics<ulong>).Unit = (field as Statistics<ulong>).Unit;
+                (average as Statistics<ulong>).ValueFormatter = (field as Statistics<ulong>).ValueFormatter;
             }
             else if (field is Statistics<double>)
             {
                 average = new Statistics<double>(name);
                 (average as Statistics<double>).Unit = (field as Statistics<double>).Unit;
                 (average as Statistics<double>).ValueFormatter = (field as Statistics<double>).ValueFormatter;
-
             }
             else if (field is TimeSpanStatistics)
             {
                 average = new TimeSpanStatistics(name);
                 (average as TimeSpanStatistics).Unit = (field as TimeSpanStatistics).Unit;
                 (average as TimeSpanStatistics).ValueFormatter = (field as TimeSpanStatistics).ValueFormatter;
-
             }
             else
+            {
+                // Not supported
                 return;
-
+            }
 
 
             foreach (T item in _collection.Items)
             {
-
                 field = item[fieldName];
 
                 if (field is Statistics<int>)
                 {
                     sum += ((Statistics<int>)field).Value;
                 }
+                else if (field is Statistics<uint>)
+                {
+                    sum += ((Statistics<uint>)field).Value;
+                }
                 else if (field is Statistics<long>)
                 {
                     sum += ((Statistics<long>)field).Value;
+                }
+                else if (field is Statistics<ulong>)
+                {
+                    sum += ((Statistics<ulong>)field).Value;
                 }
                 else if (field is Statistics<double>)
                 {
@@ -142,51 +180,52 @@ namespace ClearCanvas.Common.Performance
 
             if (average is TimeSpanStatistics)
             {
-                average.SetValue(new TimeSpan((long)sum / _collection.Count));
+                (average as TimeSpanStatistics).Value = new TimeSpan((long)sum / _collection.Count);
             }
-            else
+            else if (average is Statistics<int>)
             {
-                if (average is Statistics<int>)
-                {
-                    average.SetValue((int)sum / _collection.Count);
-
-                }
-                else if (average is Statistics<long>)
-                {
-                    average.SetValue((long)sum / _collection.Count);
-                }
-                else if (average is Statistics<double>)
-                {
-                    average.SetValue((double)sum / _collection.Count);
-                }
-                else if (average is TimeSpanStatistics)
-                {
-                    average.SetValue(sum / _collection.Count);
-                }
-                
+                (average as Statistics<int>).Value = (int)sum / _collection.Count;
             }
+            else if (average is Statistics<uint>)
+            {
+                (average as Statistics<uint>).Value = (uint)(sum / _collection.Count);
+            }
+            else if (average is Statistics<long>)
+            {
+                (average as Statistics<long>).Value = (long)(sum / _collection.Count);
+            }
+            else if (average is Statistics<ulong>)
+            {
+                (average as Statistics<ulong>).Value = (ulong)(sum / _collection.Count);
+            }
+            else if (average is Statistics<double>)
+            {
+                (average as Statistics<double>).Value = (sum / _collection.Count);
+            }
+
 
             AddField(average);
-
-        
-
         }
 
-        protected void CalculateAverage()
+
+        #endregion Protected Methods
+
+        #region Public methods
+
+        /// <summary>
+        /// Returns an instance of the underlying statistics set.
+        /// </summary>
+        /// <returns></returns>
+        public T NewStatistics()
         {
-            if (Count == 0)
-                return;
-
-            StatisticsSet firstItem = _collection.Items[0];
-
-            foreach (IStatistics field in firstItem.Fields)
-            {
-                CalculateStatisticsFieldAverage(field.Name);
-            }
-
+            return _collection.NewStatistics();
         }
 
-
+        /// <summary>
+        /// Returns the XML element which contains the average attributes for the child collection.
+        /// </summary>
+        /// <param name="doc"></param>
+        /// <returns></returns>
         public override XmlElement GetXmlElement(XmlDocument doc)
         {
             CalculateAverage();
@@ -194,25 +233,14 @@ namespace ClearCanvas.Common.Performance
             if (LogAll)
             {
                 List<XmlElement> list = _collection.ToXmlElements(doc);
-                foreach(XmlElement el in list)
+                foreach (XmlElement el in list)
                 {
                     xml.AppendChild(el);
                 }
-            
             }
             return xml;
         }
 
+        #endregion Public methods
     }
-
-   
-
-
-
-
-
-
-
-
-
 }
