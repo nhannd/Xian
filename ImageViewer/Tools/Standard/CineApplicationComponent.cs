@@ -198,10 +198,13 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			base.Stop();
 		}
 
-		protected override void OnActiveImageViewerChanged(ActiveImageViewerChangedEventArgs e)
+		protected override void OnActiveImageViewerChanging(ActiveImageViewerChangedEventArgs e)
 		{
 			StopCine();
+		}
 
+		protected override void OnActiveImageViewerChanged(ActiveImageViewerChangedEventArgs e)
+		{
 			if (e.DeactivatedImageViewer != null)
 			{
 				e.DeactivatedImageViewer.EventBroker.TileSelected -= OnTileSelected;

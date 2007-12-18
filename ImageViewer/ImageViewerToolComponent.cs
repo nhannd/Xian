@@ -53,7 +53,6 @@ namespace ClearCanvas.ImageViewer
 	{
 		private IDesktopWindow _desktopWindow;
 		private IImageViewer _imageViewer;
-		private event EventHandler _subjectChangedEvent;
 
 		/// <summary>
 		/// Initializes a new instance of <see cref="ImageViewerToolComponent"/>.
@@ -89,35 +88,33 @@ namespace ClearCanvas.ImageViewer
 			{
 				if (value != _imageViewer)
 				{
-					IImageViewer oldImageViewer = _imageViewer;
-					_imageViewer = value;
+					ActiveImageViewerChangedEventArgs e = new ActiveImageViewerChangedEventArgs(value, _imageViewer);
 
-					OnActiveImageViewerChanged(
-						new ActiveImageViewerChangedEventArgs(
-						_imageViewer, 
-						oldImageViewer));
+					try
+					{
+						OnActiveImageViewerChanging(e);
+					}
+					finally
+					{
+						_imageViewer = value;
+						OnActiveImageViewerChanged(e);
+					}
 				}
 			}
 		}
 
 		/// <summary>
-		/// Called when the active image viewer has changed.
+		/// Called when the active image viewer is about to change.
 		/// </summary>
-		/// <param name="e"></param>
-		protected abstract void OnActiveImageViewerChanged(ActiveImageViewerChangedEventArgs e);
+		protected virtual void OnActiveImageViewerChanging(ActiveImageViewerChangedEventArgs e)
+		{
+		}
 
 		/// <summary>
-		/// Occurs when either the selected <see cref="ITile"/> or active
-		/// <see cref="ImageViewerComponent"/> has changed.
+		/// Called when the active image viewer has changed.
 		/// </summary>
-		/// <remarks>
-		/// The view should subscribe to this event.  When this event is raised,
-		/// the view should refresh itself entirely to reflect the state of the component.		
-		/// </remarks>
-		public event EventHandler SubjectChanged
+		protected virtual void OnActiveImageViewerChanged(ActiveImageViewerChangedEventArgs e)
 		{
-			add { _subjectChangedEvent += value; }
-			remove { _subjectChangedEvent -= value; }
 		}
 
 		#region ApplicationComponent overrides
@@ -133,8 +130,6 @@ namespace ClearCanvas.ImageViewer
 			base.Start();
 
 			_desktopWindow.Workspaces.ItemActivationChanged += OnWorkspaceActivated;
-
-			OnSubjectChanged();
 		}
 
 		/// <summary>
@@ -165,14 +160,6 @@ namespace ClearCanvas.ImageViewer
 				IImageViewer imageViewer = ImageViewerComponent.GetAsImageViewer(activeWorkspace);
 				this.ImageViewer = imageViewer;
 			}
-		}
-
-		/// <summary>
-		/// Raises the <see cref="SubjectChanged"/> event.
-		/// </summary>
-		protected virtual void OnSubjectChanged()
-		{
-			EventsHelper.Fire(_subjectChangedEvent, this, EventArgs.Empty);
 		}
 	}
 }

@@ -98,29 +98,13 @@ namespace ClearCanvas.ImageViewer.Layout.Basic.View.WinForms
             _imageBoxRows.DataBindings.Add("Value", _bindingSource, "ImageBoxRows", true, DataSourceUpdateMode.OnPropertyChanged);
 
             // bind control enablement
-            _imageBoxColumns.DataBindings.Add("Enabled", _bindingSource, "ImageBoxSectionEnabled");
-            _imageBoxRows.DataBindings.Add("Enabled", _bindingSource, "ImageBoxSectionEnabled");
-            _applyImageBoxes.DataBindings.Add("Enabled", _bindingSource, "ImageBoxSectionEnabled");
+			_imageBoxColumns.DataBindings.Add("Enabled", _bindingSource, "ImageBoxSectionEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
+			_imageBoxRows.DataBindings.Add("Enabled", _bindingSource, "ImageBoxSectionEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
+			_applyImageBoxes.DataBindings.Add("Enabled", _bindingSource, "ImageBoxSectionEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 
-            _tileColumns.DataBindings.Add("Enabled", _bindingSource, "TileSectionEnabled");
-            _tileRows.DataBindings.Add("Enabled", _bindingSource, "TileSectionEnabled");
-            _applyTiles.DataBindings.Add("Enabled", _bindingSource, "TileSectionEnabled");
-
-
-            // listen for changes to the layout subject
-            _layoutComponent.SubjectChanged += new EventHandler(LayoutSubjectChangedEventHandler);
-     
-        }
-
-        /// <summary>
-        /// Event handler for the <see cref="LayoutComponent.LayoutSubjectChanged"/> event
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void LayoutSubjectChangedEventHandler(object sender, EventArgs e)
-        {
-            // the subject changed, so all the data needs to be refreshed from the component
-            _bindingSource.ResetBindings(false);
+			_tileColumns.DataBindings.Add("Enabled", _bindingSource, "TileSectionEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
+			_tileRows.DataBindings.Add("Enabled", _bindingSource, "TileSectionEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
+			_applyTiles.DataBindings.Add("Enabled", _bindingSource, "TileSectionEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
         }
 
         /// <summary>

@@ -149,8 +149,13 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
             get { return _imageBoxRows; }
             set
 			{
-				_imageBoxRows = Math.Max(value, 1);
-				_imageBoxRows = Math.Min(_imageBoxRows, this.MaximumImageBoxRows);
+				int newValue = Math.Max(value, 1);
+				newValue = Math.Min(newValue, this.MaximumImageBoxRows);
+				if (newValue == _imageBoxRows)
+					return;
+
+				_imageBoxRows = newValue;
+				NotifyPropertyChanged("ImageBoxRows");
 			}
         }
 
@@ -162,8 +167,14 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
             get { return _imageBoxColumns; }
 			set
 			{
-				_imageBoxColumns = Math.Max(value, 1);
-				_imageBoxColumns = Math.Min(_imageBoxColumns, this.MaximumImageBoxColumns);
+				int newValue = Math.Max(value, 1);
+				newValue = Math.Min(newValue, this.MaximumImageBoxColumns);
+
+				if (newValue == _imageBoxColumns)
+					return;
+
+				_imageBoxColumns = newValue;
+				NotifyPropertyChanged("ImageBoxColumns");
 			}
         }
 
@@ -175,8 +186,13 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
             get { return _tileRows; }
 			set
 			{
-				_tileRows = Math.Max(value, 1);
-				_tileRows = Math.Min(_tileRows, this.MaximumTileRows);
+				int newValue = Math.Max(value, 1);
+				newValue = Math.Min(newValue, this.MaximumTileRows);
+				if (newValue == _tileRows)
+					return;
+
+				_tileRows = newValue;
+				NotifyPropertyChanged("TileRows");
 			}
         }
 
@@ -188,8 +204,13 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
             get { return _tileColumns; }
 			set
 			{
-				_tileColumns = Math.Max(value, 1);
-				_tileColumns = Math.Min(_tileColumns, this.MaximumTileColumns);
+				int newValue = Math.Max(value, 1);
+				newValue = Math.Min(newValue, this.MaximumTileColumns);
+				if (newValue == _tileColumns)
+					return;
+
+				_tileColumns = newValue;
+				NotifyPropertyChanged("TileColumns");
 			}
         }
 
@@ -252,7 +273,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
 			this.ImageViewer.CommandHistory.AddCommand(command);
 
-            OnSubjectChanged();
+        	Update();
         }
 
         /// <summary>
@@ -279,7 +300,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
 			this.ImageViewer.CommandHistory.AddCommand(command);
 
-            OnSubjectChanged();
+			Update();
         }
 
         #endregion
@@ -294,29 +315,30 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			if (e.ActivatedImageViewer != null)
 				e.ActivatedImageViewer.EventBroker.DisplaySetSelected += OnDisplaySetSelected;
 
-			OnSubjectChanged();
+			Update();
+
+			NotifyPropertyChanged("ImageBoxSectionEnabled");
+			NotifyPropertyChanged("TileSectionEnabled");
 		}
 
 		private void OnDisplaySetSelected(object sender, DisplaySetSelectedEventArgs e)
 		{
-			OnSubjectChanged();
+			Update();
 		}
 
-		protected override void OnSubjectChanged()
+		private void Update()
 		{
 			if (this.ImageViewer != null)
 			{
-				_imageBoxRows = this.ImageViewer.PhysicalWorkspace.Rows;
-				_imageBoxColumns = this.ImageViewer.PhysicalWorkspace.Columns;
+				ImageBoxRows = this.ImageViewer.PhysicalWorkspace.Rows;
+				ImageBoxColumns = this.ImageViewer.PhysicalWorkspace.Columns;
 
 				if (this.ImageViewer.PhysicalWorkspace.SelectedImageBox != null)
 				{
-					_tileRows = this.ImageViewer.PhysicalWorkspace.SelectedImageBox.Rows;
-					_tileColumns = this.ImageViewer.PhysicalWorkspace.SelectedImageBox.Columns;
+					TileRows = this.ImageViewer.PhysicalWorkspace.SelectedImageBox.Rows;
+					TileColumns = this.ImageViewer.PhysicalWorkspace.SelectedImageBox.Columns;
 				}
 			}
-
-			base.OnSubjectChanged();
 		}
     }
 }
