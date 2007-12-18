@@ -58,8 +58,8 @@ namespace ClearCanvas.Utilities.DicomEditor
     [ExtensionOf(typeof(LocalImageExplorerToolExtensionPoint))]
     public class DicomEditorTool : ToolBase
     {		
-        private static readonly Dictionary<IDesktopWindow, IShelf> _shelves = new Dictionary<IDesktopWindow, IShelf>();
-        private static DicomEditorComponent _component;
+        private static IShelf _shelf;
+        private static DicomEditorComponent _component = null;
         private IDesktopWindow _desktopWindow;	
         private bool _enabled;
         private event EventHandler _enabledChanged;
@@ -67,7 +67,6 @@ namespace ClearCanvas.Utilities.DicomEditor
         public DicomEditorTool()
         {
             _enabled = true;
-            _component = null;
             _desktopWindow = null;
         }
 
@@ -189,11 +188,11 @@ namespace ClearCanvas.Utilities.DicomEditor
 
                 try
                 {
-                    ProgressDialog.Show(task, context.DesktopWindow, true);
+                    ProgressDialog.Show(task, _desktopWindow, true);
                 }
                 catch (Exception e)
                 {
-                    ExceptionHandler.Report(e, SR.MessageFailedDump, context.DesktopWindow);
+                    ExceptionHandler.Report(e, SR.MessageFailedDump, _desktopWindow);
                     return;
                 }
 
@@ -202,20 +201,19 @@ namespace ClearCanvas.Utilities.DicomEditor
             }
 
             //common to both contexts
-            if (_shelves.ContainsKey(_desktopWindow))
+            if (_shelf != null)
             {
-                _shelves[_desktopWindow].Activate();
+                _shelf.Activate();
             }
             else
             {
-                IShelf shelf = ApplicationComponent.LaunchAsShelf(
+                _shelf = ApplicationComponent.LaunchAsShelf(
                     _desktopWindow,
                     _component,
                     SR.TitleDicomEditor,
                     "Dicom Editor",
                     ShelfDisplayHint.DockRight | ShelfDisplayHint.DockAutoHide);
-                _shelves[_desktopWindow] = shelf;
-                _shelves[_desktopWindow].Closed += OnShelfClosed;
+                _shelf.Closed += OnShelfClosed;
             }
   
             _component.UpdateComponent();
@@ -232,10 +230,8 @@ namespace ClearCanvas.Utilities.DicomEditor
             // already been disposed (e.g. viewer workspace closed), which is why we store the 
             // _desktopWindow variable.
 
-            _shelves[_desktopWindow].Closed -= OnShelfClosed;
-            _shelves.Remove(_desktopWindow);
-            _desktopWindow = null;
-            _component = null;
+            _shelf.Closed -= OnShelfClosed;
+            _shelf = null;
         }
     }
 }
