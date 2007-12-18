@@ -20,7 +20,7 @@
 				if (report.Finding || report.Impression)
 					reportJsml = JSML.create(report, "Report");
 
-                Ris.setData("Report", reportJsml);
+                Ris.setTag("Report", reportJsml);
             }
             
 		    function onBodyLoad()
@@ -30,7 +30,7 @@
 
 	            try
 	            {
-                    data = Ris.getData("Report");
+                    data = Ris.getTag("Report");
                     var report = JSML.parse(data);
                     
                     if (report != null)

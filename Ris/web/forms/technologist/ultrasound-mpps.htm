@@ -34,11 +34,11 @@
             
                if(Ris)
                {
-                  data = JSML.parse(Ris.getData("Documentation")) || {};
+                  data = JSML.parse(Ris.getTag("Documentation")) || {};
 
-                  startTime = Ris.getData("StartTime");
+                  startTime = Ris.getTag("StartTime");
                   startTime = (startTime && startTime.length > 0) ? DateInput.parse(startTime) : null;
-                  stopTime = Ris.getData("StopTime")
+                  stopTime = Ris.getTag("StopTime")
                   stopTime = (stopTime && stopTime.length > 0) ? DateInput.parse(stopTime) : null;
                }
 
@@ -242,7 +242,7 @@
 
          function saveData()
          {
-            return Ris.setData("Documentation", JSML.create(data, "data"));
+            return Ris.setTag("Documentation", JSML.create(data, "data"));
          }
          //////////////////////////////////////////////////////////////////////////
       </script>

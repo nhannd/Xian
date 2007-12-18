@@ -10,9 +10,6 @@
 	    <script type="text/javascript" src="js/preview.js"></script>
 	    <script type="text/javascript" src="js/layout.js"></script>
 	    <script type="text/javascript" >
-		    var data = {};
-		    var errorProvider = new ErrorProvider();
-
 		    function onBodyLoad()
 		    {		        
 			    scaleWidth();
@@ -21,7 +18,7 @@
 		        
 	            try
 	            {
-					var worklistItem = Ris.getWorklistItem();
+					var worklistItem = Ris.getHealthcareContext();
 					if (worklistItem == null)
 					{
                         Field.setValue($("myForm"), "");
@@ -52,7 +49,7 @@
                     };
                     
 					var service = Ris.getService("ClearCanvas.Ris.Application.Common.BrowsePatientData.IBrowsePatientDataService, ClearCanvas.Ris.Application.Common");
-                    data = service.getData(request);
+                    var data = service.getData(request);
 
                     if (data == null || data.length == 0)
                     {
@@ -173,7 +170,7 @@
 			            pastProcedures = pastProcedures.concat(notScheduledPastProceduress);
 
 						// add a renderRow handler to highlight the correct row
-						var currentAccession = Ris.getWorklistItem().AccessionNumber;
+						var currentAccession = worklistItem.AccessionNumber;
 						
                         if (activeProcedures.length == 0)
                         {
@@ -189,7 +186,6 @@
                                     args.htmlRow.className = "highlight";
                             };
 							
-							activeProceduresTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form                            
                             activeProceduresTable.bindItems(activeProcedures);
     	                }
     	                
@@ -207,7 +203,6 @@
                                     args.htmlRow.className = "highlight";
                             };
 
-	                        pastProceduresTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
                             pastProceduresTable.bindItems(pastProcedures);
     	                }
 		            }

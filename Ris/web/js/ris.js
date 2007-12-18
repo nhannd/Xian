@@ -60,14 +60,14 @@ if(window.external)
             return window.external.DateTimeFormat;
         },
         
-        getData: function(tag)
+        getTag: function(tag)
         {
-            return window.external.GetData(tag);
+            return window.external.GetTag(tag);
         },
         
-        setData: function(tag, data)
+        setTag: function(tag, data)
         {
-            window.external.SetData(tag, data);
+            window.external.SetTag(tag, data);
         },
 		
 		formatDate: function(date)
@@ -138,10 +138,12 @@ if(window.external)
 		    return this.getService("ClearCanvas.Ris.Application.Common.BrowsePatientData.IBrowsePatientDataService, ClearCanvas.Ris.Application.Common");
 		},
 		
-		// for a preview page, obtains the worklist item on which the preview is based
-		getWorklistItem: function()
+		// gets the healthcare context in which the page is running
+		// the healthcare context is an object that contains all entity-refs, etc., that the page
+		// can use as keys to load data
+		getHealthcareContext: function()
 		{
-		    return JSML.parse(window.external.GetWorklistItem());
+		    return JSML.parse(window.external.GetHealthcareContext());
 		}
     };
     

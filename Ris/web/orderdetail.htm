@@ -10,8 +10,6 @@
 		<script type="text/javascript" src="js/preview.js"></script>
 		<script type="text/javascript" src="js/layout.js"></script>
 		<script type="text/javascript" >
-			var data = {};
-
 			function onBodyLoad()
 			{
 				scaleWidth();
@@ -20,7 +18,7 @@
 					return;
 				try
 				{
-					var worklistItem = Ris.getWorklistItem();
+					var worklistItem = Ris.getHealthcareContext();
 					if (worklistItem == null)
 					{
 						Field.setValue($("myForm"), "");
@@ -39,8 +37,8 @@
 							 }
 					};
 
-					var service = Ris.getService("ClearCanvas.Ris.Application.Common.BrowsePatientData.IBrowsePatientDataService, ClearCanvas.Ris.Application.Common");
-					data = service.getData(request);
+					var service = Ris.getPatientDataService();
+					var data = service.getData(request);
 
 					if (data == null || data.length == 0)
 					{

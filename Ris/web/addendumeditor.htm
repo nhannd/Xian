@@ -13,7 +13,7 @@
             // this no-arg method must be implemented for the component to save report
             function saveData()
             {
-                Ris.setData("Addendum", Field.getValue($("addendum")));
+                Ris.setTag("Addendum", Field.getValue($("addendum")));
             }
             
 		    function onBodyLoad()
@@ -23,7 +23,7 @@
 
 	            try
 	            {
-                    data = Ris.getData("Addendum");
+                    data = Ris.setTag("Addendum");
                     Field.setValue($("addendum"), data);
 	            }
 	            catch(e)

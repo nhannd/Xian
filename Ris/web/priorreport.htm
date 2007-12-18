@@ -10,21 +10,32 @@
 	    <script type="text/javascript" src="js/preview.js"></script>
 	    <script type="text/javascript" src="js/layout.js"></script>
 	    <script type="text/javascript" >
-		    var data = {};
-		    
 		    function onBodyLoad()
-		    {		        
+		    {
 		        scaleWidth();
+		        		        
 		        if(!Ris)
 		            return;
 		        
 	            try
 	            {
-	                data = Ris.getTag("Preview");
-	                if (data)
+	                var context = Ris.getHealthcareContext();
+	                if (context)
 	                {
-    	                var report = JSML.parse(data);
-                        $("preview").innerHTML = formatReport(report);
+                        // construct request object
+                        var request = {
+                            GetOrderDetailRequest:
+                                 { 
+                                    OrderRef: context.OrderRef,
+                                    IncludeProcedures: true
+                                 },
+                            GetReportDetailRequest: { ReportRef: context.ReportRef }
+                        };
+                        
+                        var service = Ris.getPatientDataService();
+                        var data = service.getData(request);
+
+                        $("preview").innerHTML = formatReport(data.GetReportDetailResponse.Report);
                     }
 	            }
 	            catch(e)
@@ -37,7 +48,7 @@
 	</head>
 	<body onload="javascript: onBodyLoad()">
 		<form id="myForm">
-		    <p class="sectionheading">Report Preview</p>
+		    <p class="sectionheading">Report</p>
 		    <div id="preview"/>
 		</form>
 	</body>

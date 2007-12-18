@@ -24,7 +24,7 @@
 
                if(Ris)
                {
-                  data = JSML.parse(Ris.getData("PostExamDetails")) || {};
+                  data = JSML.parse(Ris.getTag("PostExamDetails")) || {};
                }
 
                data.staff = data.staff || [];
@@ -261,7 +261,7 @@
 		    
 		    function saveData()
 		    {
-				Ris.setData("PostExamDetails", JSML.create(data, "data"));
+				Ris.setTag("PostExamDetails", JSML.create(data, "data"));
 		    }
 		    //////////////////////////////////////////////////////////////////////////
 			

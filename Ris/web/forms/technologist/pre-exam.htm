@@ -24,7 +24,7 @@
 
                if(Ris)
    		      {
-   			      data = JSML.parse(Ris.getData("PreExamDetails")) || {};
+   			      data = JSML.parse(Ris.getTag("PreExamDetails")) || {};
    			   }
    			    
    			   data.vitals = data.vitals || {};
@@ -536,7 +536,7 @@
 		    
 		    function saveData()
 		    {
-				Ris.setData("PreExamDetails", JSML.create(data, "data"));
+				Ris.setTag("PreExamDetails", JSML.create(data, "data"));
 		    }
 		    //////////////////////////////////////////////////////////////////////////
 			
