@@ -45,7 +45,7 @@
 						GetReportDetailRequest: worklistItem.ReportRef == null ? null : { ReportRef: worklistItem.ReportRef }
 					};
                     
-					var service = Ris.getService("ClearCanvas.Ris.Application.Common.BrowsePatientData.IBrowsePatientDataService, ClearCanvas.Ris.Application.Common");
+					var service = Ris.getPatientDataService();
 					var data = service.getData(request);
 					if (data == null || data.length == 0)
 					{
