@@ -93,7 +93,7 @@ namespace ClearCanvas.Ris.Client
 
             protected override DataContractBase GetHealthcareContext()
             {
-                return (_owner._selectedProfile == null) ? null : new Context(_owner._patientRef, _owner._selectedProfile.ProfileRef);
+                return (_owner._selectedProfile == null) ? null : new Context(_owner._patientRef, _owner._selectedProfile.PatientProfileRef);
             }
 
         }

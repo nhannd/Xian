@@ -81,7 +81,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 ((IPatientSearchToolContext)this.ContextBase).SelectedProfileChanged += delegate
                 {
                     IPatientSearchToolContext context = (IPatientSearchToolContext)this.ContextBase;
-                    this.Enabled = (context.SelectedProfile != null && context.SelectedProfile.ProfileRef != null);
+                    this.Enabled = (context.SelectedProfile != null && context.SelectedProfile.PatientProfileRef != null);
                 };
             }
             else if (this.ContextBase is IPatientBiographyToolContext)
@@ -123,7 +123,7 @@ namespace ClearCanvas.Ris.Client.Adt
             else if (this.ContextBase is IPatientSearchToolContext)
             {
                 IPatientSearchToolContext context = (IPatientSearchToolContext)this.ContextBase;
-                Edit(context.SelectedProfile.ProfileRef, context.DesktopWindow);
+                Edit(context.SelectedProfile.PatientProfileRef, context.DesktopWindow);
             }
             else if (this.ContextBase is IPatientBiographyToolContext)
             {

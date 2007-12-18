@@ -94,7 +94,7 @@ namespace ClearCanvas.Ris.Client.Adt
             _candidates = candidates;
 
             _selectedTargetProfile = CollectionUtils.SelectFirst <PatientProfileSummary>(reconciledProfiles,
-                delegate(PatientProfileSummary p) { return p.ProfileRef == targetProfileRef; });
+                delegate(PatientProfileSummary p) { return p.PatientProfileRef == targetProfileRef; });
         }
 
         public override void Start()
@@ -108,7 +108,7 @@ namespace ClearCanvas.Ris.Client.Adt
             _targetProfileTable.Items.Add(_selectedTargetProfile);
             foreach (PatientProfileSummary profile in _targetProfiles)
             {
-                if (!profile.ProfileRef.Equals(_selectedTargetProfile.ProfileRef))
+                if (!profile.PatientProfileRef.Equals(_selectedTargetProfile.PatientProfileRef))
                 {
                     _targetProfileTable.Items.Add(profile);
                 }
@@ -209,8 +209,8 @@ namespace ClearCanvas.Ris.Client.Adt
             else
             {
                 _diffComponent.ProfilesToCompare = new EntityRef[] {
-                    _selectedTargetProfile.ProfileRef,
-                    _selectedReconciliationProfile.ProfileRef };
+                    _selectedTargetProfile.PatientProfileRef,
+                    _selectedReconciliationProfile.PatientProfileRef };
             }
         }
 

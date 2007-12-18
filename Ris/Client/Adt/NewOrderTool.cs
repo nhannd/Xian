@@ -77,7 +77,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 ((IPatientSearchToolContext)this.ContextBase).SelectedProfileChanged += delegate
                 {
                     IPatientSearchToolContext context = (IPatientSearchToolContext)this.ContextBase;
-                    this.Enabled = (context.SelectedProfile != null && context.SelectedProfile.ProfileRef != null);
+                    this.Enabled = (context.SelectedProfile != null && context.SelectedProfile.PatientProfileRef != null);
                 };
             }
             else if (this.Context is IPatientBiographyToolContext)

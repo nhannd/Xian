@@ -91,7 +91,7 @@ namespace ClearCanvas.Ris.Client.Adt
                     if (profile == null)
                         profile = RandomUtils.RandomPatientProfile();
 
-                    randomVisit = RandomUtils.RandomVisit(profile.PatientRef, profile.ProfileRef, profile.Mrn.AssigningAuthority);
+                    randomVisit = RandomUtils.RandomVisit(profile.PatientRef, profile.PatientProfileRef, profile.Mrn.AssigningAuthority);
                 }
                 else
                 {

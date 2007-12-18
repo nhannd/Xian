@@ -44,7 +44,7 @@ namespace ClearCanvas.Ris.Application.Common
         public EntityRef PatientRef;
 
         [DataMember]
-        public EntityRef ProfileRef;
+        public EntityRef PatientProfileRef;
 
         [DataMember]
         public CompositeIdentifierDetail Mrn;

@@ -226,10 +226,10 @@ namespace ClearCanvas.Ris.Client
         {
             try
             {
-                Workspace workspace = DocumentManager.Get<PatientBiographyDocument>(_selectedProfile.ProfileRef);
+                Workspace workspace = DocumentManager.Get<PatientBiographyDocument>(_selectedProfile.PatientProfileRef);
                 if (workspace == null)
                 {
-                    Document doc = new PatientBiographyDocument(_selectedProfile.PatientRef, _selectedProfile.ProfileRef, this.Host.DesktopWindow);
+                    Document doc = new PatientBiographyDocument(_selectedProfile.PatientRef, _selectedProfile.PatientProfileRef, this.Host.DesktopWindow);
                     doc.Open();
                 }
                 else

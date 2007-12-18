@@ -196,7 +196,7 @@ namespace ClearCanvas.Ris.Client
 
             PatientProfileSummary summary = new PatientProfileSummary();
             summary.PatientRef = addResponse.PatientRef;
-            summary.ProfileRef = addResponse.PatientProfileRef;
+            summary.PatientProfileRef = addResponse.PatientProfileRef;
             summary.Mrn = profile.Mrn;
             summary.Name = profile.Name;
             summary.Healthcard = profile.Healthcard;

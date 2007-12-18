@@ -35,6 +35,7 @@ using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -46,6 +47,33 @@ namespace ClearCanvas.Ris.Client.Adt
     [ExtensionOf(typeof(DesktopToolExtensionPoint))]
     public class PatientSearchTool : Tool<IDesktopToolContext>
     {
+        class PreviewComponent : DHtmlComponent
+        {
+            private PatientProfileSummary _patientProfile;
+
+            public PatientProfileSummary PatientProfile
+            {
+                get { return _patientProfile; }
+                set
+                {
+                     _patientProfile = value;
+                    this.SetUrl("http://localhost/RIS/registrationpreview.htm");
+                }
+            }
+
+            protected override ActionModelNode GetActionModel()
+            {
+                return new ActionModelRoot();
+            }
+
+            protected override DataContractBase GetHealthcareContext()
+            {
+                return _patientProfile;
+            }
+
+        }
+
+
         private IWorkspace _workspace;
 
         public void Launch()
@@ -67,28 +95,11 @@ namespace ClearCanvas.Ris.Client.Adt
         private static IApplicationComponent BuildComponent()
         {
             PatientSearchComponent searchComponent = new PatientSearchComponent();
-            WorklistPreviewComponent previewComponent = new WorklistPreviewComponent();
+            PreviewComponent previewComponent = new PreviewComponent();
 
             searchComponent.SelectedProfileChanged += delegate
             {
-                PatientProfileSummary summary = (PatientProfileSummary) searchComponent.SelectedProfile.Item;
-                if (summary == null)
-                    previewComponent.WorklistItem = null;
-                else
-                    previewComponent.WorklistItem = new RegistrationWorklistItem(
-                        null,
-                        summary.PatientRef,
-                        summary.ProfileRef,
-                        summary.Mrn,
-                        summary.Name,
-                        null,
-                        null,
-                        null,
-                        null,
-                        null,
-                        summary.Healthcard,
-                        summary.DateOfBirth,
-                        summary.Sex);
+                previewComponent.PatientProfile = (PatientProfileSummary)searchComponent.SelectedProfile.Item;
             };
 
             SplitComponentContainer splitComponent = new SplitComponentContainer(SplitOrientation.Vertical);

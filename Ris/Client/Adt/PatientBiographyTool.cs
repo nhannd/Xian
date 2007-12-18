@@ -114,7 +114,7 @@ namespace ClearCanvas.Ris.Client.Adt
             else if (this.ContextBase is IPatientSearchToolContext)
             {
                 IPatientSearchToolContext context = (IPatientSearchToolContext)this.ContextBase;
-                return (context.SelectedProfile != null && context.SelectedProfile.ProfileRef != null);
+                return (context.SelectedProfile != null && context.SelectedProfile.PatientProfileRef != null);
             }
 
             return false;
@@ -166,7 +166,7 @@ namespace ClearCanvas.Ris.Client.Adt
             {
                 IPatientSearchToolContext context = (IPatientSearchToolContext)this.ContextBase;
                 PatientProfileSummary profile = context.SelectedProfile;
-                OpenPatient(profile.PatientRef, profile.ProfileRef, context.DesktopWindow);
+                OpenPatient(profile.PatientRef, profile.PatientProfileRef, context.DesktopWindow);
             }
         }
 

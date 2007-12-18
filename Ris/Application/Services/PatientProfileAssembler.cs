@@ -52,7 +52,7 @@ namespace ClearCanvas.Ris.Application.Services
             summary.Healthcard = healthcardAssembler.CreateHealthcardDetail(profile.Healthcard);
             summary.Name = nameAssembler.CreatePersonNameDetail(profile.Name);
             summary.PatientRef = profile.Patient.GetRef();
-            summary.ProfileRef = profile.GetRef();
+            summary.PatientProfileRef = profile.GetRef();
             summary.Sex = EnumUtils.GetEnumValueInfo(profile.Sex, context);
 
             return summary;
