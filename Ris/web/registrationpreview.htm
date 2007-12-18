@@ -29,8 +29,8 @@
                         GetPatientProfileDetailRequest: { PatientProfileRef: worklistItem.PatientProfileRef, IncludeAlerts: true },
                         ListOrdersRequest: 	{ PatientRef: worklistItem.PatientRef, QueryDetailLevel: "RequestedProcedure" },
                         
-                        // need the order detail only for order alerts
-                        GetOrderDetailRequest: { OrderRef: worklistItem.OrderRef, IncludeAlerts: true }
+                        // need the order detail only for order alerts, and only if OrderRef is not null
+                        GetOrderDetailRequest: worklistItem.OrderRef ? { OrderRef: worklistItem.OrderRef, IncludeAlerts: true } : null
                     };
                     
                     var service = Ris.getPatientDataService();
@@ -56,10 +56,10 @@
 			            Field.setValue($("currentHomeAddress"), Ris.formatAddress(patientProfile.CurrentHomeAddress));
 		            }
 		            
-
                     // update alerts
 		            var alertNotifications = data.GetPatientProfileDetailResponse.PatientAlerts;
-		            alertNotifications = alertNotifications.concat(data.GetOrderDetailResponse.OrderAlerts);
+		            if(data.GetOrderDetailResponse)
+		                alertNotifications = alertNotifications.concat(data.GetOrderDetailResponse.OrderAlerts);
 		            if (alertNotifications)
 		            {
                         var alertHtml = "";
