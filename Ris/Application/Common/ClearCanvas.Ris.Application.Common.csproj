@@ -92,6 +92,7 @@
     <Compile Include="ReportingWorkflow\GetLinkableInterpretationsResponse.cs" />
     <Compile Include="ProtocollingWorkflow\StartOrderProtocolRequest.cs" />
     <Compile Include="ProtocollingWorkflow\StartOrderProtocolResponse.cs" />
+    <Compile Include="ReportingWorkflow\PriorProcedureSummary.cs" />
     <Compile Include="WorklistItemSummaryBase.cs" />
     <Compile Include="Login\GetWorkingFacilityChoicesRequest.cs" />
     <Compile Include="Login\GetWorkingFacilityChoicesResponse.cs" />
@@ -487,8 +488,8 @@
     <Compile Include="ReportingWorkflow\CompleteVerificationResponse.cs" />
     <Compile Include="ReportingWorkflow\CreateAddendumRequest.cs" />
     <Compile Include="ReportingWorkflow\CreateAddendumResponse.cs" />
-    <Compile Include="ReportingWorkflow\GetPriorReportsRequest.cs" />
-    <Compile Include="ReportingWorkflow\GetPriorReportsResponse.cs" />
+    <Compile Include="ReportingWorkflow\GetPriorsRequest.cs" />
+    <Compile Include="ReportingWorkflow\GetPriorsResponse.cs" />
     <Compile Include="ReportingWorkflow\LoadReportForEditRequest.cs" />
     <Compile Include="ReportingWorkflow\LoadReportForEditResponse.cs" />
     <Compile Include="ReportPartDetail.cs" />

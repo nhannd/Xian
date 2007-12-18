@@ -38,6 +38,7 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Jsml;
 using ClearCanvas.Ris.Client.Formatting;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -174,21 +175,6 @@ namespace ClearCanvas.Ris.Client
                 return _renderer.GetHTML(_component.GetActionModel(), labelSearch, actionLabel);
             }
 
-            public string GetWorklistItem()
-            {
-                return JsmlSerializer.Serialize(_component.GetWorklistItem(), "worklistItem");
-            }
-
-            public string GetData(string tag)
-            {
-                return _component.GetTagData(tag);
-            }
-
-            public void SetData(string tag, string data)
-            {
-                _component.SetTagData(tag, data);
-            }
-
             public string ResolveStaffName(string search)
             {
                 StaffSummary staff = null;
@@ -199,6 +185,21 @@ namespace ClearCanvas.Ris.Client
                     resolved = lookupHandler.ResolveNameInteractive(search, out staff);
                 }
                 return resolved ? JsmlSerializer.Serialize(staff, "staff") : null;
+            }
+
+            public string GetHealthcareContext()
+            {
+                return JsmlSerializer.Serialize(_component.GetHealthcareContext(), "context");
+            }
+
+            public string GetTag(string tag)
+            {
+                return _component.GetTag(tag);
+            }
+
+            public void SetTag(string tag, string data)
+            {
+                _component.SetTag(tag, data);
             }
         }
 
@@ -293,19 +294,19 @@ namespace ClearCanvas.Ris.Client
             throw new Exception("The method or operation is not implemented.");
         }
 
-        protected virtual object GetWorklistItem()
+        protected virtual DataContractBase GetHealthcareContext()
         {
-            throw new Exception("The method or operation is not implemented.");
+            throw new NotSupportedException("Healthcare context not supported by this component.");
         }
 
-        protected virtual string GetTagData(string tag)
+        protected virtual string GetTag(string tag)
         {
-            throw new Exception("The method or operation is not implemented.");
+            throw new NotSupportedException(string.Format("Tag {0} is not supported by this component.", tag));
         }
 
-        protected virtual void SetTagData(string tag, string data)
+        protected virtual void SetTag(string tag, string data)
         {
-            throw new Exception("The method or operation is not implemented.");
+            throw new NotSupportedException(string.Format("Tag {0} is not supported by this component.", tag));
         }
 
         /// <summary>
@@ -321,6 +322,7 @@ namespace ClearCanvas.Ris.Client
         {
             this.HtmlPageUrl = url == null ? null : new Uri(url);
         }
+
 
     }
 }

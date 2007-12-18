@@ -95,7 +95,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 base.Start();
             }
 
-            protected override object GetWorklistItem()
+            protected override DataContractBase GetHealthcareContext()
             {
                 return _owner._worklistItem;
             }

@@ -40,6 +40,12 @@
   <ItemGroup>
     <Compile Include="EditReportTool.cs" />
     <Compile Include="LinkedInterpretationComponent.cs" />
+    <Compile Include="PriorReportComponentSettings.cs" />
+    <Compile Include="PriorReportComponentSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>PriorReportComponentSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="ProtocollingComponent.cs" />
     <Compile Include="ProtocollingComponentMode.cs" />
     <Compile Include="ReportingProtocolWorkflowFolderSystem.cs" />
@@ -68,7 +74,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>ReportingPreviewComponentSettings.settings</DependentUpon>
     </Compile>
-    <Compile Include="ReportSummaryTable.cs" />
+    <Compile Include="PriorSummaryTable.cs" />
     <Compile Include="ReportDocument.cs" />
     <Compile Include="PriorReportComponent.cs" />
     <Compile Include="ReportEditorComponent.cs" />
@@ -173,6 +179,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="PriorReportComponentSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>PriorReportComponentSettings.Designer.cs</LastGenOutput>
+    </None>
     <None Include="ReportEditorComponentSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>ReportEditorComponentSettings.Designer.cs</LastGenOutput>

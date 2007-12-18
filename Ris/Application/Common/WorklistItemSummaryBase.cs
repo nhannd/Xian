@@ -34,6 +34,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
+using System.Reflection;
 
 namespace ClearCanvas.Ris.Application.Common
 {
@@ -113,6 +114,34 @@ namespace ClearCanvas.Ris.Application.Common
 
         [DataMember]
         public DateTime? ScheduledStartTime;
+
+        /// <summary>
+        /// Convenience method to support dynamic access to properties and fields of this class.
+        /// </summary>
+        /// <param name="property"></param>
+        /// <returns></returns>
+        public object GetProperty(string property)
+        {
+            FieldInfo field = this.GetType().GetField(property);
+            if (field != null)
+                return field.GetValue(this);
+
+            PropertyInfo prop = this.GetType().GetProperty(property);
+            if (prop != null)
+                return prop.GetValue(this, null);
+
+            throw new MissingMemberException(this.GetType().Name, property);
+        }
+
+        /// <summary>
+        /// Convenience method to support dynamic access to properties and fields of this class.
+        /// </summary>
+        /// <param name="property"></param>
+        /// <returns></returns>
+        public T GetProperty<T>(string property)
+        {
+            return (T)GetProperty(property);
+        }
 
         public override bool Equals(object obj)
         {

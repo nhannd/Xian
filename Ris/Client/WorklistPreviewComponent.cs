@@ -39,6 +39,7 @@ using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Jsml;
 using ClearCanvas.Ris.Client.Formatting;
 using ClearCanvas.Desktop.Tools;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -113,7 +114,7 @@ namespace ClearCanvas.Ris.Client
             return ActionModelRoot.CreateModel(this.GetType().FullName, "WorklistPreview-menu", _toolSet.Actions);
         }
 
-        protected override object GetWorklistItem()
+        protected override DataContractBase GetHealthcareContext()
         {
             return _worklistItem;
         }

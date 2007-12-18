@@ -79,14 +79,14 @@ namespace ClearCanvas.Ris.Client.Reporting
                 _component.Host.ShowMessageBox(message, MessageBoxActions.Ok);
             }
 
-            public string GetData(string tag)
+            public string GetTag(string tag)
             {
-                return _component.GetData(tag);
+                return _component.GetTag(tag);
             }
 
-            public void SetData(string tag, string data)
+            public void SetTag(string tag, string data)
             {
-                _component.SetData(tag, data);
+                _component.SetTag(tag, data);
             }
 
             public string FormatPersonName(string jsml)
@@ -414,7 +414,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         #endregion
 
-        public string GetData(string tag)
+        public string GetTag(string tag)
         {
             switch (tag)
             {
@@ -430,7 +430,7 @@ namespace ClearCanvas.Ris.Client.Reporting
             }
         }
 
-        public void SetData(string tag, string data)
+        public void SetTag(string tag, string data)
         {
             switch (tag)
             {

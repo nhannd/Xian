@@ -40,6 +40,7 @@ using ClearCanvas.Ris.Application.Common.Jsml;
 using ClearCanvas.Ris.Client.Formatting;
 using System.Collections.Generic;
 using System;
+using System.Runtime.Serialization;
 
 namespace ClearCanvas.Ris.Client.Reporting
 {
@@ -68,8 +69,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 
             public override void Start()
             {
-                // TODO need a separate DHtML page for prior preview
-                SetUrl(ReportEditorComponentSettings.Default.ReportPreviewPageUrl);
+                SetUrl(PriorReportComponentSettings.Default.ReportViewPageUrl);
                 base.Start();
             }
 
@@ -78,27 +78,20 @@ namespace ClearCanvas.Ris.Client.Reporting
                 NotifyAllPropertiesChanged();
             }
 
-            protected override object GetWorklistItem()
+            protected override DataContractBase GetHealthcareContext()
             {
-                throw new NotImplementedException();
-            }
-
-            protected override string GetTagData(string tag)
-            {
-                if(tag == "Preview")
-                    return JsmlSerializer.Serialize(_owner._selectedReport, "report"); 
-                return base.GetTagData(tag);
+                return _owner._selectedPrior;
             }
         }
 
         private readonly ReportingWorklistItem _worklistItem;
 
-        private readonly ReportSummaryTable _reportList;
-        private ReportSummary _selectedReport;
+        private readonly PriorSummaryTable _reportList;
+        private PriorProcedureSummary _selectedPrior;
         private bool _relevantPriorsOnly = true;
 
-        private List<ReportSummary> _relevantPriors;
-        private List<ReportSummary> _allPriors;
+        private List<PriorProcedureSummary> _relevantPriors;
+        private List<PriorProcedureSummary> _allPriors;
 
         private ChildComponentHost _reportViewComponentHost;
 
@@ -109,7 +102,7 @@ namespace ClearCanvas.Ris.Client.Reporting
         {
             _worklistItem = worklistItem;
 
-            _reportList = new ReportSummaryTable();
+            _reportList = new PriorSummaryTable();
         }
 
         public override void Start()
@@ -166,13 +159,13 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         public ISelection SelectedReport
         {
-            get { return new Selection(_selectedReport); }
+            get { return new Selection(_selectedPrior); }
             set
             {
-                ReportSummary newSelection = (ReportSummary)value.Item;
-                if (_selectedReport != newSelection)
+                PriorProcedureSummary newSelection = (PriorProcedureSummary)value.Item;
+                if (_selectedPrior != newSelection)
                 {
-                    _selectedReport = newSelection;
+                    _selectedPrior = newSelection;
                     ((ReportViewComponent)_reportViewComponentHost.Component).Refresh();
                 }
             }
@@ -185,23 +178,23 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         public string GetData(string tag)
         {
-            return JsmlSerializer.Serialize(_selectedReport, "report");
+            return JsmlSerializer.Serialize(_selectedPrior, "report");
         }
 
         #endregion
 
-        private List<ReportSummary> LoadPriors(bool relevantOnly)
+        private List<PriorProcedureSummary> LoadPriors(bool relevantOnly)
         {
-            GetPriorReportsResponse response = null;
+            GetPriorsResponse response = null;
             Platform.GetService<IReportingWorkflowService>(
                 delegate(IReportingWorkflowService service)
                 {
-                    GetPriorReportsRequest request = new GetPriorReportsRequest();
+                    GetPriorsRequest request = new GetPriorsRequest();
                     if (relevantOnly)
                         request.ReportingProcedureStepRef = _worklistItem.ProcedureStepRef;
                     else
                         request.PatientRef = _worklistItem.PatientRef;
-                    response = service.GetPriorReports(request);
+                    response = service.GetPriors(request);
                 });
             return response.Reports;
         }

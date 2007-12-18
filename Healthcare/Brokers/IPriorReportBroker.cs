@@ -39,31 +39,31 @@ namespace ClearCanvas.Healthcare.Brokers
     public interface IPriorReportBroker : IPersistenceBroker
     {
         /// <summary>
-        /// Obtains a list of prior reports relevant to the specified report.
+        /// Obtains a list of prior procedures relevant to the specified report.
         /// </summary>
         /// <param name="report"></param>
         /// <returns></returns>
-        IList<Report> GetPriorReports(Report report);
+        IList<Report> GetPriors(Report report);
 
         /// <summary>
-        /// Obtains a list of prior reports relevant to the specified order.
+        /// Obtains a list of prior procedures relevant to the specified order.
         /// </summary>
         /// <param name="patient"></param>
         /// <returns></returns>
-        IList<Report> GetPriorReports(Order order);
+        IList<Report> GetPriors(Order order);
 
         /// <summary>
-        /// Obtains a list of prior reports relevant to the specified procedures.
+        /// Obtains a list of prior procedures relevant to the specified procedures.
         /// </summary>
         /// <param name="procedures"></param>
         /// <returns></returns>
-        IList<Report> GetPriorReports(IEnumerable<RequestedProcedure> procedures);
+        IList<Report> GetPriors(IEnumerable<RequestedProcedure> procedures);
 
         /// <summary>
-        /// Obtains a list of all prior reports for the specified patient.
+        /// Obtains a list of all prior procedures for the specified patient.
         /// </summary>
         /// <param name="patient"></param>
         /// <returns></returns>
-        IList<Report> GetPriorReports(Patient patient);
+        IList<Report> GetPriors(Patient patient);
     }
 }

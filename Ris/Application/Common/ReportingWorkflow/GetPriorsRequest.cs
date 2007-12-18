@@ -29,48 +29,36 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
+using System.Text;
+using ClearCanvas.Enterprise.Common;
+using System.Runtime.Serialization;
 
-namespace ClearCanvas.Ris.Client.Adt
+namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
 {
-    public class ExamDetailsComponent : DHtmlComponent, IDocumentationPage
+    /// <summary>
+    /// Request object for <see cref="IReportingWorkflowService.GetPriorReports"/>.
+    /// </summary>
+    /// <remarks>
+    /// If <see cref="PatientRef"/> is supplied, all priors for the patient will be returned.
+    /// The <see cref="ReportingProcedureStepRef"/> value will be ignored.
+    /// If <see cref="PatientRef"/> is null, only priors relevant to the report for <see cref="ReportingProcedureStepRef"/>
+    /// will be returned.
+    /// </remarks>
+    [DataContract]
+    public class GetPriorsRequest : DataContractBase
     {
-        private readonly string _title;
-        private readonly Dictionary<string, string> _orderExtendedProperties;
+        /// <summary>
+        /// A reporting step that has an associated report for which relevant priors are obtained.
+        /// </summary>
+        [DataMember]
+        public EntityRef ReportingProcedureStepRef;
 
-        public ExamDetailsComponent(string title, string url, Dictionary<string, string> orderExtendedProperties)
-        {
-            _title = title;
-            _orderExtendedProperties = orderExtendedProperties;
-
-            SetUrl(url);
-        }
-
-        protected override string GetTag(string tag)
-        {
-            string value;
-            _orderExtendedProperties.TryGetValue(tag, out value);
-
-            return value;
-        }
-
-        protected override void SetTag(string tag, string data)
-        {
-            _orderExtendedProperties[tag] = data;
-        }
-
-        #region IDocumentationPage Members
-
-        string IDocumentationPage.Title
-        {
-            get { return _title; }
-        }
-
-        ClearCanvas.Desktop.IApplicationComponent IDocumentationPage.Component
-        {
-            get { return this; }
-        }
-
-        #endregion
+        /// <summary>
+        /// A patient for which all priors are obtained.
+        /// </summary>
+        [DataMember]
+        public EntityRef PatientRef;
     }
 }

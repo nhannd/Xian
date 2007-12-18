@@ -30,6 +30,7 @@
 #endregion
 
 using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -53,7 +54,7 @@ namespace ClearCanvas.Ris.Client
             NotifyAllPropertiesChanged();
         }
 
-        protected override object GetWorklistItem()
+        protected override DataContractBase GetHealthcareContext()
         {
             return _worklistItem;
         }

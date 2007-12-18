@@ -52,14 +52,14 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         /// </summary>
         /// <param name="report"></param>
         /// <returns></returns>
-        public IList<Report> GetPriorReports(Report report)
+        public IList<Report> GetPriors(Report report)
         {
             NHibernate.IQuery q = this.Context.GetNamedHqlQuery("relevantPriorsByReport");
             q.SetParameter(0, report);
             return q.List<Report>();
         }
 
-        public IList<Report> GetPriorReports(Order order)
+        public IList<Report> GetPriors(Order order)
         {
             NHibernate.IQuery q = this.Context.GetNamedHqlQuery("relevantPriorsByOrder");
             q.SetParameter(0, order);
@@ -71,7 +71,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         /// </summary>
         /// <param name="procedures"></param>
         /// <returns></returns>
-        public IList<Report> GetPriorReports(IEnumerable<RequestedProcedure> procedures)
+        public IList<Report> GetPriors(IEnumerable<RequestedProcedure> procedures)
         {
             // because we are using a fixed-form query defined in an external file, 
             // there is no way to query based on all procedures at once, therefore we need one query per procedure
@@ -93,7 +93,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         /// </summary>
         /// <param name="patient"></param>
         /// <returns></returns>
-        public IList<Report> GetPriorReports(Patient patient)
+        public IList<Report> GetPriors(Patient patient)
         {
             NHibernate.IQuery q = this.Context.GetNamedHqlQuery("allPriorsByPatient");
             q.SetParameter(0, patient);

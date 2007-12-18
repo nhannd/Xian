@@ -32,33 +32,29 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using ClearCanvas.Enterprise.Common;
-using System.Runtime.Serialization;
+using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.Tables;
+using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
+using ClearCanvas.Ris.Client.Formatting;
+using ClearCanvas.Common.Utilities;
 
-namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
+namespace ClearCanvas.Ris.Client.Reporting
 {
-    /// <summary>
-    /// Request object for <see cref="IReportingWorkflowService.GetPriorReports"/>.
-    /// </summary>
-    /// <remarks>
-    /// If <see cref="PatientRef"/> is supplied, all priors for the patient will be returned.
-    /// The <see cref="ReportingProcedureStepRef"/> value will be ignored.
-    /// If <see cref="PatientRef"/> is null, only priors relevant to the report for <see cref="ReportingProcedureStepRef"/>
-    /// will be returned.
-    /// </remarks>
-    [DataContract]
-    public class GetPriorReportsRequest : DataContractBase
+    public class PriorSummaryTable : Table<PriorProcedureSummary>
     {
-        /// <summary>
-        /// A reporting step that has an associated report for which relevant priors are obtained.
-        /// </summary>
-        [DataMember]
-        public EntityRef ReportingProcedureStepRef;
-
-        /// <summary>
-        /// A patient for which all priors are obtained.
-        /// </summary>
-        [DataMember]
-        public EntityRef PatientRef;
+        public PriorSummaryTable()
+        {
+            this.Columns.Add(new TableColumn<PriorProcedureSummary, string>("Accession Number",
+                delegate(PriorProcedureSummary item) { return item.AccessionNumber; }));
+            this.Columns.Add(new TableColumn<PriorProcedureSummary, string>("Requested Procedure",
+                delegate(PriorProcedureSummary item) { return item.ProcedureType.Name; }));
+            this.Columns.Add(new TableColumn<PriorProcedureSummary, string>("Performed Location",
+                delegate(PriorProcedureSummary item) { return "WHAT?"; }));
+            this.Columns.Add(new TableColumn<PriorProcedureSummary, string>("Performed Date",
+                delegate(PriorProcedureSummary item) { return "WHAT?"; }));
+            this.Columns.Add(new TableColumn<PriorProcedureSummary, string>("Report Status",
+                delegate(PriorProcedureSummary item) { return item.ReportStatus.Value; }));
+        }
     }
 }

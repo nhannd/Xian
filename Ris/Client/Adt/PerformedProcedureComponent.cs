@@ -70,7 +70,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 _owner = owner;
             }
 
-            protected override string GetTagData(string tag)
+            protected override string GetTag(string tag)
             {
                 string value;
                 if(string.Equals(tag, "StartTime"))
@@ -88,7 +88,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 return value;
             }
 
-            protected override void SetTagData(string tag, string data)
+            protected override void SetTag(string tag, string data)
             {
                 _owner._selectedMpps.ExtendedProperties[tag] = data;
             }

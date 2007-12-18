@@ -354,7 +354,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         }
 
         [ReadOperation]
-        public GetPriorReportsResponse GetPriorReports(GetPriorReportsRequest request)
+        public GetPriorsResponse GetPriors(GetPriorsRequest request)
         {
             Platform.CheckForNullReference(request, "request");
             if(request.PatientRef == null && request.ReportingProcedureStepRef == null)
@@ -362,13 +362,14 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
             HashedSet<Report> priorReports = new HashedSet<Report>();
 
+            //TODO: ensure IPriorReportBroker uses fetch joins to get report, procedures, order, etc in one go
             IPriorReportBroker broker = PersistenceContext.GetBroker<IPriorReportBroker>();
 
             // if a patient was supplied, find all reports for the patient
             if(request.PatientRef != null)
             {
                 Patient patient = PersistenceContext.Load<Patient>(request.PatientRef, EntityLoadFlags.Proxy);
-                priorReports.AddAll(broker.GetPriorReports(patient));
+                priorReports.AddAll(broker.GetPriors(patient));
             }
             // if a reporting step was supplied, find priors based on the attached report
             else if (request.ReportingProcedureStepRef != null)
@@ -377,19 +378,31 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
                     request.ReportingProcedureStepRef, EntityLoadFlags.Proxy);
                 if (ps.ReportPart != null)
                 {
-                    priorReports.AddAll(broker.GetPriorReports(ps.ReportPart.Report));
+                    priorReports.AddAll(broker.GetPriors(ps.ReportPart.Report));
                 }
             }
 
             // assemble results
-            ReportAssembler assembler = new ReportAssembler();
-            List<ReportSummary> listSummary = CollectionUtils.Map<Report, ReportSummary>(priorReports,
-                delegate(Report report)
+            RequestedProcedureTypeAssembler rptAssembler = new RequestedProcedureTypeAssembler();
+            DiagnosticServiceAssembler dsAssembler = new DiagnosticServiceAssembler();
+            List<PriorProcedureSummary> priorSummaries = new List<PriorProcedureSummary>();
+            foreach (Report priorReport in priorReports)
+            {
+                foreach (RequestedProcedure procedure in priorReport.Procedures)
                 {
-                    return assembler.CreateReportSummary(CollectionUtils.FirstElement(report.Procedures), report, this.PersistenceContext);
-                });
+                    PriorProcedureSummary summary = new PriorProcedureSummary(
+                        procedure.Order.GetRef(),
+                        procedure.GetRef(),
+                        priorReport.GetRef(),
+                        procedure.Order.AccessionNumber,
+                        dsAssembler.CreateDiagnosticServiceSummary(procedure.Order.DiagnosticService),
+                        rptAssembler.CreateRequestedProcedureTypeSummary(procedure.Type),
+                        EnumUtils.GetEnumValueInfo(priorReport.Status, PersistenceContext));
 
-            return new GetPriorReportsResponse(listSummary);
+                    priorSummaries.Add(summary);
+                }
+            }
+            return new GetPriorsResponse(priorSummaries);
         }
 
         [ReadOperation]

@@ -211,7 +211,7 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
         /// <param name="request"><see cref="GetPriorReportsRequest"/></param>
         /// <returns><see cref="GetPriorReportsResponse"/></returns>
         [OperationContract]
-        GetPriorReportsResponse GetPriorReports(GetPriorReportsRequest request);
+        GetPriorsResponse GetPriors(GetPriorsRequest request);
 
         /// <summary>
         /// Get a list of staff who are Radiologists

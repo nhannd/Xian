@@ -40,6 +40,8 @@ using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.BrowsePatientData;
 using ClearCanvas.Ris.Client;
 using ClearCanvas.Ris.Client.Formatting;
+using ClearCanvas.Ris.Application.Common.Jsml;
+using System.Runtime.Serialization;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -57,22 +59,54 @@ namespace ClearCanvas.Ris.Client
     [AssociateView(typeof(BiographyDemographicComponentViewExtensionPoint))]
     public class BiographyDemographicComponent : ApplicationComponent
     {
+        class ProfileViewComponent : DHtmlComponent
+        {
+            [DataContract]
+            class Context : DataContractBase
+            {
+                public Context(EntityRef patientRef, EntityRef profileRef)
+                {
+                    this.PatientRef = patientRef;
+                    this.PatientProfileRef = profileRef;
+                }
+
+                [DataMember]
+                public EntityRef PatientRef;
+
+                [DataMember]
+                public EntityRef PatientProfileRef;
+
+            }
+
+            private BiographyDemographicComponent _owner;
+
+            public ProfileViewComponent(BiographyDemographicComponent owner)
+            {
+                _owner = owner;
+            }
+
+            public override void Start()
+            {
+                this.SetUrl("http://localhost/RIS/patientprofile.htm");
+                base.Start();
+            }
+
+            protected override DataContractBase GetHealthcareContext()
+            {
+                return (_owner._selectedProfile == null) ? null : new Context(_owner._patientRef, _owner._selectedProfile.ProfileRef);
+            }
+
+        }
+
+
         private readonly EntityRef _profileRef;
         private readonly EntityRef _patientRef;
-        private PatientProfileDetail _patientProfile;
+        private PatientProfileDetail _patientProfileDetail;
 
         private PatientProfileSummary _selectedProfile;
         private List<PatientProfileSummary> _profileChoices;
 
-        private AddressDetail _selectedAddress;
-        private TelephoneDetail _selectedPhone;
-        private EmailAddressDetail _selectedEmail;
-        private ContactPersonDetail _selectedContact;
-
-        private readonly AddressTable _addressTable;
-        private readonly TelephoneNumberTable _phoneTable;
-        private readonly EmailAddressTable _emailTable;
-        private readonly ContactPersonTable _contactTable;
+        private ChildComponentHost _profileViewComponentHost;
 
         /// <summary>
         /// Constructor
@@ -81,14 +115,9 @@ namespace ClearCanvas.Ris.Client
         {
             _patientRef = patientRef;
             _profileRef = profileRef;
-            _patientProfile = patientProfile;
+            _patientProfileDetail = patientProfile;
 
             _profileChoices = new List<PatientProfileSummary>();
-
-            _addressTable = new AddressTable();
-            _phoneTable = new TelephoneNumberTable();
-            _emailTable = new EmailAddressTable();
-            _contactTable = new ContactPersonTable();
         }
 
         public override void Start()
@@ -103,26 +132,14 @@ namespace ClearCanvas.Ris.Client
                     _profileChoices = response.ListPatientProfilesResponse.Profiles;
                 });
 
-            UpdateTables();
+            _selectedProfile = CollectionUtils.FirstElement(_profileChoices);
+
+            _profileViewComponentHost = new ChildComponentHost(this.Host, new ProfileViewComponent(this));
+            _profileViewComponentHost.StartComponent();
 
             base.Start();
         }
 
-        private void UpdateTables()
-        {
-            if (_patientProfile == null)
-                return;
-
-            _addressTable.Items.Clear();
-            _phoneTable.Items.Clear();
-            _emailTable.Items.Clear();
-            _contactTable.Items.Clear();
-
-            _addressTable.Items.AddRange(_patientProfile.Addresses);
-            _phoneTable.Items.AddRange(_patientProfile.TelephoneNumbers);
-            _emailTable.Items.AddRange(_patientProfile.EmailAddresses);
-            _contactTable.Items.AddRange(_patientProfile.ContactPersons);
-        }
 
         private static string ProfileStringConverter(PersonNameDetail name, CompositeIdentifierDetail mrn)
         {
@@ -143,10 +160,8 @@ namespace ClearCanvas.Ris.Client
                         request.GetPatientProfileDetailRequest = new GetPatientProfileDetailRequest(_profileRef, true, true, true, true, true, true, false);
                         GetDataResponse response = service.GetData(request);
 
-                        _patientProfile = response.GetPatientProfileDetailResponse.PatientProfile;
+                        _patientProfileDetail = response.GetPatientProfileDetailResponse.PatientProfile;
                     });
-
-                UpdateTables();
 
                 NotifyAllPropertiesChanged();       
             }
@@ -156,8 +171,15 @@ namespace ClearCanvas.Ris.Client
             }
         }
 
+        
+
         #region Presentation Model
 
+        public ApplicationComponentHost ProfileViewComponentHost
+        {
+            get { return _profileViewComponentHost; }
+        }
+        
         public List<string> ProfileChoices
         {
             get
@@ -185,161 +207,6 @@ namespace ClearCanvas.Ris.Client
 
                 OnSelectedProfileChanged();
             }
-        }
-
-        public ITable Addresses
-        {
-            get { return _addressTable; }
-        }
-
-        public ISelection SelectedAddress
-        {
-            get { return new Selection(_selectedAddress); }
-            set { _selectedAddress = (AddressDetail)value.Item; }
-        }
-
-        public ITable PhoneNumbers
-        {
-            get { return _phoneTable; }
-        }
-
-        public ISelection SelectedPhone
-        {
-            get { return new Selection(_selectedPhone); }
-            set { _selectedPhone = (TelephoneDetail)value.Item; }
-        }
-
-        public ITable EmailAddresses
-        {
-            get { return _emailTable; }
-        }
-
-        public ISelection SelectedEmail
-        {
-            get { return new Selection(_selectedEmail); }
-            set { _selectedEmail = (EmailAddressDetail)value.Item; }
-        }
-
-        public ITable ContactPersons
-        {
-            get { return _contactTable; }
-        }
-
-        public ISelection SelectedContact
-        {
-            get { return new Selection(_selectedContact); }
-            set { _selectedContact = (ContactPersonDetail)value.Item; }
-        }
-
-        public string FamilyName
-        {
-            get { return _patientProfile.Name.FamilyName; }
-        }
-
-        public string GivenName
-        {
-            get { return _patientProfile.Name.GivenName; }
-        }
-
-        public string MiddleName
-        {
-            get { return _patientProfile.Name.MiddleName; }
-        }
-
-        public string Prefix
-        {
-            get { return _patientProfile.Name.Prefix; }
-        }
-
-        public string Suffix
-        {
-            get { return _patientProfile.Name.Suffix; }
-        }
-
-        public string Degree
-        {
-            get { return _patientProfile.Name.Degree; }
-        }
-
-        public string Sex
-        {
-            get { return _patientProfile.Sex.Value; }
-        }
-
-        public string DateOfBirth
-        {
-            get { return Format.Date(_patientProfile.DateOfBirth); }
-        }
-
-        public string TimeOfDeath
-        {
-            get { return Format.DateTime(_patientProfile.TimeOfDeath); }
-        }
-
-        public string Religion
-        {
-            get { return _patientProfile.Religion.Value; }
-        }
-
-        public string PrimaryLanguage
-        {
-            get { return _patientProfile.PrimaryLanguage.Value; }
-        }
-
-        public string Mrn
-        {
-            get { return MrnFormat.Format(_patientProfile.Mrn); }
-        }
-
-        public string Healthcard
-        {
-            get { return HealthcardFormat.Format(_patientProfile.Healthcard); }
-        }
-
-        public string HealthcardVersionCode
-        {
-            get { return _patientProfile.Healthcard.VersionCode; }
-        }
-
-        public string HealthcardExpiry
-        {
-            get { return Format.Date(_patientProfile.Healthcard.ExpiryDate); }
-        }
-
-        public void ShowSelectedAddress()
-        {
-            if (_selectedAddress == null)
-                return;
-
-            AddressEditorComponent editor = new AddressEditorComponent(_selectedAddress, new List<EnumValueInfo>());
-            LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleAddresses);
-        }
-
-        public void ShowSelectedPhone()
-        {
-            if (_selectedPhone == null)
-                return;
-
-            PhoneNumberEditorComponent editor = new PhoneNumberEditorComponent(_selectedPhone, new List<EnumValueInfo>());
-            LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitlePhoneNumbers);
-        }
-
-        public void ShowSelectedEmail()
-        {
-            if (_selectedEmail == null)
-                return;
-
-            EmailAddressEditorComponent editor = new EmailAddressEditorComponent(_selectedEmail);
-            LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleEmailAddresses);
-        }
-
-        public void ShowSelectedContact()
-        {
-            if (_selectedContact == null)
-                return;
-
-            ContactPersonEditorComponent editor = new ContactPersonEditorComponent(_selectedContact, new List<EnumValueInfo>(), new List<EnumValueInfo>());
-            LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleContactPersons);
         }
 
         #endregion
