@@ -130,6 +130,9 @@ namespace ClearCanvas.ImageViewer
 			set { _name = value; }
 		}
 
+		/// <summary>
+		/// Gets or sets the patient information associated with the image set.
+		/// </summary>
 		public string PatientInfo
 		{
 			get { return _patientInfo; }

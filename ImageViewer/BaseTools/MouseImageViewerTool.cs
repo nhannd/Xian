@@ -78,8 +78,8 @@ namespace ClearCanvas.ImageViewer.BaseTools
 	/// One further piece of functionality that subclasses of <see cref="MouseImageViewerTool"/> can choose to implement
 	/// is handling of the mouse wheel.  When decorated with a <see cref="MouseWheelHandlerAttribute"/>, the tool's
 	/// <see cref="MouseWheelShortcut"/> will be set upon construction.  The subclass must override the mouse wheel-related
-	/// methods in order for the tool to have any effect (see <see cref="StartWheel"/>, <see cref="StopWheel"/>, <see cref="WheelUp"/>,
-	/// <see cref="WheelDown"/>).
+	/// methods in order for the tool to have any effect (see <see cref="StartWheel"/>, <see cref="StopWheel"/>, <see cref="WheelForward"/>,
+	/// <see cref="WheelBack"/>).
 	/// </para>
 	/// </remarks>
 	/// <seealso cref="MouseToolButtonAttribute"/>
@@ -474,7 +474,7 @@ namespace ClearCanvas.ImageViewer.BaseTools
 		/// Called by the framework each time the mouse wheel is moved.
 		/// </summary>
 		/// <remarks>
-		/// Unless overridden, this method simply calls <see cref="WheelUp"/> and <see cref="WheelDown"/>.
+		/// Unless overridden, this method simply calls <see cref="WheelForward"/> and <see cref="WheelBack"/>.
 		/// </remarks>
 		public virtual void Wheel(int wheelDelta)
 		{
