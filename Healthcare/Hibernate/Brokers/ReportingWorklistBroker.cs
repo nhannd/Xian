@@ -80,8 +80,8 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         public IList<WorklistItem> GetWorklist(Type stepClass, ReportingWorklistItemSearchCriteria[] where, Worklist worklist)
         {
             string hqlFrom = string.Format(_hqlFrom, stepClass.Name);
-            string hqlJoin = string.Concat(_hqlJoin, stepClass == typeof(ProtocolProcedureStep) ? _hqlJoinProtocol : _hqlJoinReport);
-            string hqlSelect = stepClass == typeof(ProtocolProcedureStep) ? _hqlSelectProtocollingWorklist : _hqlSelectReportingWorklist;
+            string hqlJoin = string.Concat(_hqlJoin, stepClass == typeof(ProtocolAssignmentStep) ? _hqlJoinProtocol : _hqlJoinReport);
+            string hqlSelect = stepClass == typeof(ProtocolAssignmentStep) ? _hqlSelectProtocollingWorklist : _hqlSelectReportingWorklist;
 
             HqlQuery query = new HqlQuery(string.Concat(hqlSelect, hqlFrom, hqlJoin));
             ConstructWorklistCondition(query, where, worklist);

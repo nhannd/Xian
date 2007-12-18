@@ -191,7 +191,12 @@ namespace ClearCanvas.Ris.Client.Reporting
                 {
                     GetPriorsRequest request = new GetPriorsRequest();
                     if (relevantOnly)
-                        request.ReportingProcedureStepRef = _worklistItem.ProcedureStepRef;
+                    {
+                        if(_worklistItem.ReportRef != null)
+                            request.ReportRef = _worklistItem.ReportRef;
+                        else
+                            request.OrderRef = _worklistItem.OrderRef;
+                    }
                     else
                         request.PatientRef = _worklistItem.PatientRef;
                     response = service.GetPriors(request);

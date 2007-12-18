@@ -63,12 +63,10 @@ namespace ClearCanvas.Ris.Client.Reporting
         private readonly List<ReportingWorklistItem> _skippedItems;
         private readonly Stack<ReportingWorklistItem> _worklistCache;
 
-        private ChildComponentHost _banneryComponentHost;
+        private ChildComponentHost _bannerComponentHost;
         private ChildComponentHost _protocolEditorComponentHost;
         private ProtocolEditorComponent _protocolEditorComponent;
-        private ChildComponentHost _orderDetailsHost;
-        private TabComponentContainer _orderDetailsTabContainer;
-        private PriorReportComponent _priorReportsComponent;
+        private ChildComponentHost _priorReportsComponentHost;
 
         #endregion
 
@@ -92,8 +90,8 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         public override void Start()
         {
-            _banneryComponentHost = new ChildComponentHost(this.Host, new BannerComponent(_worklistItem));
-            _banneryComponentHost.StartComponent();
+            _bannerComponentHost = new ChildComponentHost(this.Host, new BannerComponent(_worklistItem));
+            _bannerComponentHost.StartComponent();
 
             _protocolEditorComponent = new ProtocolEditorComponent(this, _worklistItem, _componentMode);
 
@@ -107,15 +105,8 @@ namespace ClearCanvas.Ris.Client.Reporting
             _protocolEditorComponentHost = new ChildComponentHost(this.Host, _protocolEditorComponent);
             _protocolEditorComponentHost.StartComponent();
 
-            _orderDetailsTabContainer = new TabComponentContainer();
-
-            _priorReportsComponent = new PriorReportComponent(_worklistItem);
-            _priorReportsComponent.RelevantPriorsOnly = false;
-            //_orderDetailsTabContainer.Pages.Add(new TabPage("Prior Reports", new BannerComponent()));
-            _orderDetailsTabContainer.Pages.Add(new TabPage("Prior Reports", _priorReportsComponent));
-
-            _orderDetailsHost = new ChildComponentHost(this.Host, _orderDetailsTabContainer);
-            _orderDetailsHost.StartComponent();
+            _priorReportsComponentHost = new ChildComponentHost(this.Host, new PriorReportComponent(_worklistItem));
+            _priorReportsComponentHost.StartComponent();
 
             this.Host.Title = ProtocollingComponentDocument.GetTitle(_worklistItem);
 
@@ -133,9 +124,9 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         #region Public members
 
-        public ApplicationComponentHost OrderSummaryComponentHost
+        public ApplicationComponentHost BannerComponentHost
         {
-            get { return _banneryComponentHost; }
+            get { return _bannerComponentHost; }
         }
 
         public ApplicationComponentHost ProtocolEditorComponentHost
@@ -143,9 +134,9 @@ namespace ClearCanvas.Ris.Client.Reporting
             get { return _protocolEditorComponentHost; }
         }
 
-        public ApplicationComponentHost OrderDetailsHost
+        public ApplicationComponentHost PriorReportsComponentHost
         {
-            get { return _orderDetailsHost; }
+            get { return _priorReportsComponentHost; }
         }
 
         public ReportingWorklistItem WorklistItem

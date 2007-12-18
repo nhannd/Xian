@@ -29,12 +29,6 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
         private void InitializeComponent()
         {
             this._tableLayouOuter = new System.Windows.Forms.TableLayoutPanel();
-            this._grpProcedures = new System.Windows.Forms.GroupBox();
-            this._procedurePlanSummary = new ClearCanvas.Desktop.View.WinForms.TableView();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
-            this.protocolCodesSelector = new ClearCanvas.Desktop.View.WinForms.ListItemSelector();
-            this._protocolGroup = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
             this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
             this.btnAccept = new System.Windows.Forms.Button();
             this.btnReject = new System.Windows.Forms.Button();
@@ -45,14 +39,22 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this.flowLayoutPanel3 = new System.Windows.Forms.FlowLayoutPanel();
             this.btnClose = new System.Windows.Forms.Button();
             this._tableLayoutInner = new System.Windows.Forms.TableLayoutPanel();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
+            this.protocolCodesSelector = new ClearCanvas.Desktop.View.WinForms.ListItemSelector();
+            this._protocolGroup = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
+            this._grpProcedures = new System.Windows.Forms.GroupBox();
+            this._procedurePlanSummary = new ClearCanvas.Desktop.View.WinForms.TableView();
             this._orderNotesPanel = new System.Windows.Forms.Panel();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
             this._tableLayouOuter.SuspendLayout();
-            this._grpProcedures.SuspendLayout();
-            this.groupBox1.SuspendLayout();
-            this.tableLayoutPanel3.SuspendLayout();
             this.flowLayoutPanel2.SuspendLayout();
             this.flowLayoutPanel3.SuspendLayout();
             this._tableLayoutInner.SuspendLayout();
+            this.groupBox1.SuspendLayout();
+            this.tableLayoutPanel3.SuspendLayout();
+            this._grpProcedures.SuspendLayout();
+            this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
             // _tableLayouOuter
@@ -73,93 +75,6 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this._tableLayouOuter.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this._tableLayouOuter.Size = new System.Drawing.Size(512, 600);
             this._tableLayouOuter.TabIndex = 0;
-            // 
-            // _grpProcedures
-            // 
-            this._grpProcedures.AutoSize = true;
-            this._grpProcedures.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this._grpProcedures.Controls.Add(this._procedurePlanSummary);
-            this._grpProcedures.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._grpProcedures.Location = new System.Drawing.Point(3, 3);
-            this._grpProcedures.Name = "_grpProcedures";
-            this._grpProcedures.Size = new System.Drawing.Size(500, 94);
-            this._grpProcedures.TabIndex = 0;
-            this._grpProcedures.TabStop = false;
-            this._grpProcedures.Text = "Procedures";
-            // 
-            // _procedurePlanSummary
-            // 
-            this._procedurePlanSummary.AutoSize = true;
-            this._procedurePlanSummary.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this._procedurePlanSummary.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._procedurePlanSummary.Location = new System.Drawing.Point(3, 16);
-            this._procedurePlanSummary.MultiSelect = false;
-            this._procedurePlanSummary.Name = "_procedurePlanSummary";
-            this._procedurePlanSummary.ReadOnly = false;
-            this._procedurePlanSummary.ShowToolbar = false;
-            this._procedurePlanSummary.Size = new System.Drawing.Size(494, 75);
-            this._procedurePlanSummary.TabIndex = 0;
-            this._procedurePlanSummary.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            // 
-            // groupBox1
-            // 
-            this.groupBox1.AutoSize = true;
-            this.groupBox1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.groupBox1.Controls.Add(this.tableLayoutPanel3);
-            this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.groupBox1.Location = new System.Drawing.Point(3, 103);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(500, 255);
-            this.groupBox1.TabIndex = 0;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Protocol";
-            // 
-            // tableLayoutPanel3
-            // 
-            this.tableLayoutPanel3.AutoSize = true;
-            this.tableLayoutPanel3.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.tableLayoutPanel3.ColumnCount = 2;
-            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel3.Controls.Add(this.protocolCodesSelector, 0, 1);
-            this.tableLayoutPanel3.Controls.Add(this._protocolGroup, 0, 0);
-            this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel3.Location = new System.Drawing.Point(3, 16);
-            this.tableLayoutPanel3.Name = "tableLayoutPanel3";
-            this.tableLayoutPanel3.RowCount = 2;
-            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel3.Size = new System.Drawing.Size(494, 236);
-            this.tableLayoutPanel3.TabIndex = 0;
-            // 
-            // protocolCodesSelector
-            // 
-            this.protocolCodesSelector.AutoSize = true;
-            this.protocolCodesSelector.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.protocolCodesSelector.AvailableItemsTable = null;
-            this.tableLayoutPanel3.SetColumnSpan(this.protocolCodesSelector, 2);
-            this.protocolCodesSelector.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.protocolCodesSelector.Location = new System.Drawing.Point(3, 48);
-            this.protocolCodesSelector.Name = "protocolCodesSelector";
-            this.protocolCodesSelector.SelectedItemsTable = null;
-            this.protocolCodesSelector.Size = new System.Drawing.Size(488, 185);
-            this.protocolCodesSelector.TabIndex = 0;
-            // 
-            // _protocolGroup
-            // 
-            this._protocolGroup.AutoSize = true;
-            this._protocolGroup.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this._protocolGroup.DataSource = null;
-            this._protocolGroup.DisplayMember = "";
-            this._protocolGroup.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._protocolGroup.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this._protocolGroup.LabelText = "Protocol Group";
-            this._protocolGroup.Location = new System.Drawing.Point(2, 2);
-            this._protocolGroup.Margin = new System.Windows.Forms.Padding(2);
-            this._protocolGroup.Name = "_protocolGroup";
-            this._protocolGroup.Size = new System.Drawing.Size(243, 41);
-            this._protocolGroup.TabIndex = 0;
-            this._protocolGroup.Value = null;
             // 
             // flowLayoutPanel2
             // 
@@ -266,7 +181,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this._tableLayoutInner.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this._tableLayoutInner.Controls.Add(this.groupBox1, 0, 1);
             this._tableLayoutInner.Controls.Add(this._grpProcedures, 0, 0);
-            this._tableLayoutInner.Controls.Add(this._orderNotesPanel, 0, 2);
+            this._tableLayoutInner.Controls.Add(this.groupBox2, 0, 2);
             this._tableLayoutInner.Dock = System.Windows.Forms.DockStyle.Fill;
             this._tableLayoutInner.Location = new System.Drawing.Point(3, 3);
             this._tableLayoutInner.Name = "_tableLayoutInner";
@@ -277,15 +192,115 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this._tableLayoutInner.Size = new System.Drawing.Size(506, 536);
             this._tableLayoutInner.TabIndex = 3;
             // 
+            // groupBox1
+            // 
+            this.groupBox1.AutoSize = true;
+            this.groupBox1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.groupBox1.Controls.Add(this.tableLayoutPanel3);
+            this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.groupBox1.Location = new System.Drawing.Point(3, 103);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(500, 255);
+            this.groupBox1.TabIndex = 0;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Codes";
+            // 
+            // tableLayoutPanel3
+            // 
+            this.tableLayoutPanel3.AutoSize = true;
+            this.tableLayoutPanel3.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.tableLayoutPanel3.ColumnCount = 2;
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel3.Controls.Add(this.protocolCodesSelector, 0, 1);
+            this.tableLayoutPanel3.Controls.Add(this._protocolGroup, 0, 0);
+            this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel3.Location = new System.Drawing.Point(3, 16);
+            this.tableLayoutPanel3.Name = "tableLayoutPanel3";
+            this.tableLayoutPanel3.RowCount = 2;
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel3.Size = new System.Drawing.Size(494, 236);
+            this.tableLayoutPanel3.TabIndex = 0;
+            // 
+            // protocolCodesSelector
+            // 
+            this.protocolCodesSelector.AutoSize = true;
+            this.protocolCodesSelector.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.protocolCodesSelector.AvailableItemsTable = null;
+            this.tableLayoutPanel3.SetColumnSpan(this.protocolCodesSelector, 2);
+            this.protocolCodesSelector.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.protocolCodesSelector.Location = new System.Drawing.Point(3, 48);
+            this.protocolCodesSelector.Name = "protocolCodesSelector";
+            this.protocolCodesSelector.SelectedItemsTable = null;
+            this.protocolCodesSelector.Size = new System.Drawing.Size(488, 185);
+            this.protocolCodesSelector.TabIndex = 0;
+            // 
+            // _protocolGroup
+            // 
+            this._protocolGroup.AutoSize = true;
+            this._protocolGroup.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this._protocolGroup.DataSource = null;
+            this._protocolGroup.DisplayMember = "";
+            this._protocolGroup.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._protocolGroup.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this._protocolGroup.LabelText = "Protocol Group";
+            this._protocolGroup.Location = new System.Drawing.Point(2, 2);
+            this._protocolGroup.Margin = new System.Windows.Forms.Padding(2);
+            this._protocolGroup.Name = "_protocolGroup";
+            this._protocolGroup.Size = new System.Drawing.Size(243, 41);
+            this._protocolGroup.TabIndex = 0;
+            this._protocolGroup.Value = null;
+            // 
+            // _grpProcedures
+            // 
+            this._grpProcedures.AutoSize = true;
+            this._grpProcedures.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this._grpProcedures.Controls.Add(this._procedurePlanSummary);
+            this._grpProcedures.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._grpProcedures.Location = new System.Drawing.Point(3, 3);
+            this._grpProcedures.Name = "_grpProcedures";
+            this._grpProcedures.Size = new System.Drawing.Size(500, 94);
+            this._grpProcedures.TabIndex = 0;
+            this._grpProcedures.TabStop = false;
+            this._grpProcedures.Text = "Procedures";
+            // 
+            // _procedurePlanSummary
+            // 
+            this._procedurePlanSummary.AutoSize = true;
+            this._procedurePlanSummary.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this._procedurePlanSummary.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._procedurePlanSummary.Location = new System.Drawing.Point(3, 16);
+            this._procedurePlanSummary.MultiSelect = false;
+            this._procedurePlanSummary.Name = "_procedurePlanSummary";
+            this._procedurePlanSummary.ReadOnly = false;
+            this._procedurePlanSummary.ShowToolbar = false;
+            this._procedurePlanSummary.Size = new System.Drawing.Size(494, 75);
+            this._procedurePlanSummary.TabIndex = 0;
+            this._procedurePlanSummary.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            // 
             // _orderNotesPanel
             // 
             this._orderNotesPanel.AutoSize = true;
             this._orderNotesPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this._orderNotesPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._orderNotesPanel.Location = new System.Drawing.Point(3, 364);
+            this._orderNotesPanel.Location = new System.Drawing.Point(3, 16);
             this._orderNotesPanel.Name = "_orderNotesPanel";
-            this._orderNotesPanel.Size = new System.Drawing.Size(500, 169);
+            this._orderNotesPanel.Size = new System.Drawing.Size(494, 150);
             this._orderNotesPanel.TabIndex = 1;
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.AutoSize = true;
+            this.groupBox2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.groupBox2.Controls.Add(this._orderNotesPanel);
+            this.groupBox2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.groupBox2.Location = new System.Drawing.Point(3, 364);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(500, 169);
+            this.groupBox2.TabIndex = 1;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Order Notes";
             // 
             // ProtocolEditorComponentControl
             // 
@@ -296,17 +311,19 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this.Size = new System.Drawing.Size(512, 600);
             this._tableLayouOuter.ResumeLayout(false);
             this._tableLayouOuter.PerformLayout();
-            this._grpProcedures.ResumeLayout(false);
-            this._grpProcedures.PerformLayout();
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
-            this.tableLayoutPanel3.ResumeLayout(false);
-            this.tableLayoutPanel3.PerformLayout();
             this.flowLayoutPanel2.ResumeLayout(false);
             this.flowLayoutPanel2.PerformLayout();
             this.flowLayoutPanel3.ResumeLayout(false);
             this._tableLayoutInner.ResumeLayout(false);
             this._tableLayoutInner.PerformLayout();
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
+            this.tableLayoutPanel3.ResumeLayout(false);
+            this.tableLayoutPanel3.PerformLayout();
+            this._grpProcedures.ResumeLayout(false);
+            this._grpProcedures.PerformLayout();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -332,5 +349,6 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
         private ClearCanvas.Desktop.View.WinForms.TableView _procedurePlanSummary;
         private System.Windows.Forms.TableLayoutPanel _tableLayoutInner;
         private System.Windows.Forms.Panel _orderNotesPanel;
+        private System.Windows.Forms.GroupBox groupBox2;
     }
 }

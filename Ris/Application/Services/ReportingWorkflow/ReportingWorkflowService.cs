@@ -357,7 +357,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         public GetPriorsResponse GetPriors(GetPriorsRequest request)
         {
             Platform.CheckForNullReference(request, "request");
-            if(request.PatientRef == null && request.ReportingProcedureStepRef == null)
+            if(request.PatientRef == null && request.OrderRef == null && request.ReportRef == null)
                 throw new ArgumentException("Either PatientRef or ReportingProcedureStepRef must be non-null");
 
             HashedSet<Report> priorReports = new HashedSet<Report>();
@@ -371,15 +371,17 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
                 Patient patient = PersistenceContext.Load<Patient>(request.PatientRef, EntityLoadFlags.Proxy);
                 priorReports.AddAll(broker.GetPriors(patient));
             }
-            // if a reporting step was supplied, find priors based on the attached report
-            else if (request.ReportingProcedureStepRef != null)
+            // if an order was supplied, find relevant priors for the order
+            else if (request.OrderRef != null)
             {
-                ReportingProcedureStep ps = PersistenceContext.Load<ReportingProcedureStep>(
-                    request.ReportingProcedureStepRef, EntityLoadFlags.Proxy);
-                if (ps.ReportPart != null)
-                {
-                    priorReports.AddAll(broker.GetPriors(ps.ReportPart.Report));
-                }
+                Order order = this.PersistenceContext.Load<Order>(request.OrderRef, EntityLoadFlags.Proxy);
+                priorReports.AddAll(broker.GetPriors(order));
+            }
+            // if a report was supplied, find relevent priors
+            else if (request.ReportRef != null)
+            {
+                Report report = this.PersistenceContext.Load<Report>(request.ReportRef, EntityLoadFlags.Proxy);
+                priorReports.AddAll(broker.GetPriors(report));
             }
 
             // assemble results

@@ -51,7 +51,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 
             _component = component;
 
-            Control orderSummary = (Control)_component.OrderSummaryComponentHost.ComponentView.GuiElement;
+            Control orderSummary = (Control)_component.BannerComponentHost.ComponentView.GuiElement;
             orderSummary.Dock = DockStyle.Fill;
             _orderSummaryPanel.Controls.Add(orderSummary);
 
@@ -59,10 +59,9 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             protocolEditor.Dock = DockStyle.Fill;
             _protocolEditorPanel.Controls.Add(protocolEditor);
 
-            Control orderDetails = (Control)_component.OrderDetailsHost.ComponentView.GuiElement;
-            orderDetails.Dock = DockStyle.Fill;
-            _orderDetailsPanel.Controls.Add(orderDetails);
-
+            Control priorReports = (Control)_component.PriorReportsComponentHost.ComponentView.GuiElement;
+            priorReports.Dock = DockStyle.Fill;
+            _priorReportsTabPage.Controls.Add(priorReports);
         }
     }
 }
