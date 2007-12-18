@@ -6,7 +6,7 @@
       <Value Profile="(Default)">http://localhost/RIS/radiologistpreview.htm</Value>
     </Setting>
     <Setting Name="ProtocollingFolderSystemUrl" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">http://localhost/RIS/radiologistpreview.htm</Value>
+      <Value Profile="(Default)">http://localhost/RIS/protocollingpreview.htm</Value>
     </Setting>
   </Settings>
 </SettingsFile>

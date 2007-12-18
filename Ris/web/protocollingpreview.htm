@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
-        <title>Radiologist Preview</title>
+        <title>Protocolling Preview</title>
         <link href="css/default.css" rel="stylesheet" type="text/css" />
         <script type="text/javascript" src="js/jsx.js"></script>
 	    <script type="text/javascript" src="js/jsml.js"></script>
@@ -38,12 +38,8 @@
                                 OrderRef: worklistItem.OrderRef,
                                 IncludeAlerts: true,
                                 IncludeNotes: true,
-                                
-                                // only include ordered procedures if report not yet created
-                                IncludeProcedures: (worklistItem.ReportRef == null)
-                             },
-                        // only request the report detail if there is a report     
-                        GetReportDetailRequest: worklistItem.ReportRef == null ? null : { ReportRef: worklistItem.ReportRef }
+                                IncludeProcedures: true
+                             }
                     };
                    
                     
@@ -79,7 +75,6 @@
 		            }
 		            
 	                var orderDetail = data.GetOrderDetailResponse.Order;
-	                var reportDetail = data.GetReportDetailResponse ? data.GetReportDetailResponse.Report : null;
 	                
 	                // update Imaging Consultation Overview
                     Field.setValue($("AccessionNumber"), orderDetail.AccessionNumber);
@@ -88,8 +83,7 @@
                     Field.setValue($("OrderingFacility"), orderDetail.OrderingFacility.Name);
                     Field.setValue($("DiagnosticService"), orderDetail.DiagnosticService.Name);
                     
-                    var procedures = reportDetail ? reportDetail.Procedures : orderDetail.RequestedProcedures;
-                    
+                    var procedures = orderDetail.RequestedProcedures;
                     var selectedProcedure = procedures.find(
                                             function(rp) { return rp.RequestedProcedureRef == worklistItem.RequestedProcedureRef; });
 					if (selectedProcedure)
@@ -104,19 +98,11 @@
                     else
                         Field.show($("orderNotesTable"), false);
 
-					var reportDetail = data.GetReportDetailResponse ? data.GetReportDetailResponse.Report : null;
-					if (reportDetail)
-					{
-						var procedures = reportDetail.Procedures;
-						createRequestedProceduresTable($("proceduresTable"), procedures);
-	                    $("report").innerHTML = formatReport(reportDetail);
-					}
+					if (orderDetail.RequestedProcedures.length)
+						createRequestedProceduresTable($("proceduresTable"), orderDetail.RequestedProcedures);
 					else
-					{
-	                    // hide report section
 						Field.show($("proceduresTable"), false);
-					}
-	            }
+				}
 	            catch(e)
 	            {
 	                var message = "Failed to load preview page.  An exception occurred in the script. Error name: " + e.name + ". Error message: " + e.message;
@@ -191,18 +177,14 @@
 		            <td>Author</td>
 	            </tr>
 	        </table>
-            <p>&nbsp;</p>
-            <div id="reportSection">
-    		    <p id="reportheading" class="sectionheading">Report</p>
-		        <table border="0" id="proceduresTable">
-		            <tr class="tableheading">
-			            <td>Reported Procedure</td>
-			            <td>Status</td>
-			            <td>Protocol</td>
-		            </tr>
-		        </table>
-		        <div id="report"></div>
-            </div>
+	        <table border="0" id="proceduresTable">
+	            <tr><td class="sectionheading" colspan="6">Ordered Procedures</td></tr>
+	            <tr class="tableheading">
+		            <td>Procedure</td>
+		            <td>Status</td>
+		            <td>Protocol</td>
+	            </tr>
+	        </table>
 		</form>
 	</body>
 </html>

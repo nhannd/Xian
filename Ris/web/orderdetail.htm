@@ -73,7 +73,7 @@
 					if (procedures.length)
 					{
 						Field.setValue($("procedureTableHeading"), reportDetail ? "Reported Procedures" : "Ordered Procedures");
-						createProceduresTable($("proceduresTable"), procedures);
+						createRequestedProceduresTable($("proceduresTable"), procedures);
 					}
 					else
 						Field.show($("proceduresTable"), false);
@@ -83,50 +83,6 @@
 					var message = "Failed to load editor page.  An exception occurred in the script. Error name: " + e.name + ". Error message: " + e.message;
 					Field.setValue($("myForm"), message);
 				}
-			}
-
-			function createOrderNotesTable(htmlTable, notes)
-			{
-				htmlTable = Table.createTable(htmlTable, { editInPlace: false, flow: false },
-					 [
-						{   label: "Comment",
-							cellType: "text",
-							getValue: function(item) { return item.Comment; }
-						},
-						{   label: "Time",
-							cellType: "text",
-							getValue: function(item) { return Ris.formatDateTime(item.CreationTime); }
-						},
-						{   label: "Author",
-							cellType: "text",
-							getValue: function(item) { return Ris.formatPersonName(item.Author.Name); }
-						}
-					 ]);
-					 
-				htmlTable.rowCycleClassNames = ["row0", "row1"];
-				htmlTable.bindItems(notes);
-			}
-
-			function createProceduresTable(htmlTable, procedures)
-			{
-				htmlTable = Table.createTable(htmlTable, { editInPlace: false, flow: false },
-					 [
-						{   label: "Procedure",
-							cellType: "text",
-							getValue: function(item) { return item.Type.Name; }
-						},
-						{   label: "Status",
-							cellType: "text",
-							getValue: function(item) { return item.Status.Value; }
-						},
-						{   label: "Protocol",
-							cellType: "html",
-							getValue: function(item) { return item.Protocol ? String.combine(item.Protocol.Codes.map(function(code) { return code.Name; }), "<br>") : null; }
-						}
-					 ]);
-					 
-				htmlTable.rowCycleClassNames = ["row0", "row1"];
-				htmlTable.bindItems(procedures);
 			}
 		</script>
 	</head>

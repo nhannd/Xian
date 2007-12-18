@@ -174,6 +174,51 @@ function createDiagnosticServiceBreakdownTable(htmlTable)
 	return dsTable;
 }
 
+function createRequestedProceduresTable(htmlTable, procedures)
+{
+	htmlTable = Table.createTable(htmlTable, { editInPlace: false, flow: false },
+		 [
+			{   label: "Procedure",
+				cellType: "text",
+				getValue: function(item) { return item.Type.Name; }
+			},
+			{   label: "Status",
+				cellType: "text",
+				getValue: function(item) { return item.Status.Value; }
+			},
+			{   label: "Protocol",
+				cellType: "html",
+				getValue: function(item) { return item.Protocol ? String.combine(item.Protocol.Codes.map(function(code) { return code.Name; }), "<br>") : null; }
+			}
+		 ]);
+		 
+	htmlTable.rowCycleClassNames = ["row0", "row1"];
+	htmlTable.bindItems(procedures);
+}
+
+function createOrderNotesTable(htmlTable, notes)
+{
+	htmlTable = Table.createTable(htmlTable, { editInPlace: false, flow: false },
+		 [
+			{   label: "Comment",
+				cellType: "text",
+				getValue: function(item) { return item.Comment; }
+			},
+			{   label: "Time",
+				cellType: "text",
+				getValue: function(item) { return Ris.formatDateTime(item.CreationTime); }
+			},
+			{   label: "Author",
+				cellType: "text",
+				getValue: function(item) { return Ris.formatPersonName(item.Author.Name); }
+			}
+		 ]);
+		 
+	htmlTable.rowCycleClassNames = ["row0", "row1"];
+	htmlTable.bindItems(notes);
+}
+
+
 function orderRequestScheduledDateComparison(data1, data2)
 {
 	return Date.compareMoreRecent(data1.SchedulingRequestDateTime, data2.SchedulingRequestDateTime);

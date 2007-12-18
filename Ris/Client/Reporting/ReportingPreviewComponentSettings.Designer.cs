@@ -34,7 +34,7 @@ namespace ClearCanvas.Ris.Client.Reporting {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("http://localhost/RIS/radiologistpreview.htm")]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://localhost/RIS/protocollingpreview.htm")]
         public string ProtocollingFolderSystemUrl {
             get {
                 return ((string)(this["ProtocollingFolderSystemUrl"]));

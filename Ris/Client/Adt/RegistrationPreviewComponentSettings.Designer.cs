@@ -34,7 +34,7 @@ namespace ClearCanvas.Ris.Client.Adt {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("http://localhost/RIS/registrationpreview.htm")]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://localhost/RIS/bookingpreview.htm")]
         public string BookingFolderSystemUrl {
             get {
                 return ((string)(this["BookingFolderSystemUrl"]));

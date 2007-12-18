@@ -45,6 +45,7 @@ namespace ClearCanvas.Ris.Client.Adt
     [IconSet("apply", IconScheme.Colour, "EditToolSmall.png", "EditToolMedium.png", "EditToolLarge.png")]
     [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
     [ExtensionOf(typeof(RegistrationMainWorkflowItemToolExtensionPoint))]
+    [ExtensionOf(typeof(RegistrationBookingWorkflowItemToolExtensionPoint))]
     public class ModifyOrderTool : Tool<IRegistrationWorkflowItemToolContext>
     {
         private bool _enabled;
