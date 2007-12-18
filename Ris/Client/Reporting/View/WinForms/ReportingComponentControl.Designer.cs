@@ -59,44 +59,29 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-            this._rootSplitContainer = new System.Windows.Forms.SplitContainer();
             this._reportEditorSplitContainer = new System.Windows.Forms.SplitContainer();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this._priorReportsTab = new System.Windows.Forms.TabPage();
             this._orderDetailsTab = new System.Windows.Forms.TabPage();
-            this._rootSplitContainer.Panel2.SuspendLayout();
-            this._rootSplitContainer.SuspendLayout();
+            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this._bannerPanel = new System.Windows.Forms.Panel();
             this._reportEditorSplitContainer.Panel2.SuspendLayout();
             this._reportEditorSplitContainer.SuspendLayout();
             this.tabControl1.SuspendLayout();
+            this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // _rootSplitContainer
-            // 
-            this._rootSplitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._rootSplitContainer.Location = new System.Drawing.Point(0, 0);
-            this._rootSplitContainer.Name = "_rootSplitContainer";
-            this._rootSplitContainer.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            // 
-            // _rootSplitContainer.Panel2
-            // 
-            this._rootSplitContainer.Panel2.Controls.Add(this._reportEditorSplitContainer);
-            this._rootSplitContainer.Size = new System.Drawing.Size(599, 535);
-            this._rootSplitContainer.SplitterDistance = 74;
-            this._rootSplitContainer.TabIndex = 0;
-            this._rootSplitContainer.TabStop = false;
             // 
             // _reportEditorSplitContainer
             // 
             this._reportEditorSplitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._reportEditorSplitContainer.Location = new System.Drawing.Point(0, 0);
+            this._reportEditorSplitContainer.Location = new System.Drawing.Point(3, 86);
             this._reportEditorSplitContainer.Name = "_reportEditorSplitContainer";
             // 
             // _reportEditorSplitContainer.Panel2
             // 
             this._reportEditorSplitContainer.Panel2.Controls.Add(this.tabControl1);
-            this._reportEditorSplitContainer.Size = new System.Drawing.Size(599, 457);
-            this._reportEditorSplitContainer.SplitterDistance = 297;
+            this._reportEditorSplitContainer.Size = new System.Drawing.Size(593, 446);
+            this._reportEditorSplitContainer.SplitterDistance = 294;
             this._reportEditorSplitContainer.TabIndex = 0;
             this._reportEditorSplitContainer.TabStop = false;
             // 
@@ -108,7 +93,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(298, 457);
+            this.tabControl1.Size = new System.Drawing.Size(295, 446);
             this.tabControl1.TabIndex = 0;
             // 
             // _priorReportsTab
@@ -116,7 +101,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this._priorReportsTab.Location = new System.Drawing.Point(4, 22);
             this._priorReportsTab.Name = "_priorReportsTab";
             this._priorReportsTab.Padding = new System.Windows.Forms.Padding(3);
-            this._priorReportsTab.Size = new System.Drawing.Size(290, 431);
+            this._priorReportsTab.Size = new System.Drawing.Size(287, 420);
             this._priorReportsTab.TabIndex = 0;
             this._priorReportsTab.Text = "Prior Reports";
             this._priorReportsTab.UseVisualStyleBackColor = true;
@@ -126,33 +111,56 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this._orderDetailsTab.Location = new System.Drawing.Point(4, 22);
             this._orderDetailsTab.Name = "_orderDetailsTab";
             this._orderDetailsTab.Padding = new System.Windows.Forms.Padding(3);
-            this._orderDetailsTab.Size = new System.Drawing.Size(290, 410);
+            this._orderDetailsTab.Size = new System.Drawing.Size(290, 431);
             this._orderDetailsTab.TabIndex = 1;
             this._orderDetailsTab.Text = "Order Details";
             this._orderDetailsTab.UseVisualStyleBackColor = true;
+            // 
+            // tableLayoutPanel1
+            // 
+            this.tableLayoutPanel1.ColumnCount = 1;
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel1.Controls.Add(this._reportEditorSplitContainer, 0, 1);
+            this.tableLayoutPanel1.Controls.Add(this._bannerPanel, 0, 0);
+            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
+            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+            this.tableLayoutPanel1.RowCount = 2;
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 15.51402F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 84.48598F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(599, 535);
+            this.tableLayoutPanel1.TabIndex = 1;
+            // 
+            // _bannerPanel
+            // 
+            this._bannerPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._bannerPanel.Location = new System.Drawing.Point(3, 3);
+            this._bannerPanel.Name = "_bannerPanel";
+            this._bannerPanel.Size = new System.Drawing.Size(593, 77);
+            this._bannerPanel.TabIndex = 0;
             // 
             // ReportingComponentControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this._rootSplitContainer);
+            this.Controls.Add(this.tableLayoutPanel1);
             this.Name = "ReportingComponentControl";
             this.Size = new System.Drawing.Size(599, 535);
-            this._rootSplitContainer.Panel2.ResumeLayout(false);
-            this._rootSplitContainer.ResumeLayout(false);
             this._reportEditorSplitContainer.Panel2.ResumeLayout(false);
             this._reportEditorSplitContainer.ResumeLayout(false);
             this.tabControl1.ResumeLayout(false);
+            this.tableLayoutPanel1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private System.Windows.Forms.SplitContainer _rootSplitContainer;
         private System.Windows.Forms.SplitContainer _reportEditorSplitContainer;
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage _priorReportsTab;
         private System.Windows.Forms.TabPage _orderDetailsTab;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+        private System.Windows.Forms.Panel _bannerPanel;
     }
 }

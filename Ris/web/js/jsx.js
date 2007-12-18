@@ -161,7 +161,7 @@ if (!String.combine)
 {
 	String.combine = function(values, separator)
 	{
-		separator = separator ? (separator + "").escapeHTML() : "";
+		separator = separator ? (separator + "") : "";
 
 		if (values == null || values.length == 0)
 			return "";

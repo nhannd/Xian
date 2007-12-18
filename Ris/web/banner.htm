@@ -80,14 +80,22 @@
 						var selectedProcedure = procedures.find(
 												function(rp) { return rp.RequestedProcedureRef == worklistItem.RequestedProcedureRef; });
 
-						if (reportDetail == null && selectedProcedure)
+						if (reportDetail)
 						{
+							var reportedProcedures = String.combine(procedures.map(function(rp) { return rp.Type.Name; }), ", ");
+							Field.setValue($("RequestedProceduresLabel"), "Reported Procedures");
+							Field.setValue($("RequestedProcedures"), reportedProcedures);
+						}
+						else if (selectedProcedure)
+						{
+							Field.setValue($("RequestedProceduresLabel"), "Requested Procedure");
 							Field.setValue($("RequestedProcedures"), selectedProcedure.Type.Name);
 						}
 						else
 						{
-							var combineProcedures = String.combine(procedures.map(function(rp) { return rp.Type.Name; }), ", ");
-							Field.setValue($("RequestedProcedures"), combineProcedures);
+							var orderedProcedures = String.combine(procedures.map(function(rp) { return rp.Type.Name; }), ", ");
+							Field.setValue($("RequestedProceduresLabel"), "Ordered Procedure");
+							Field.setValue($("RequestedProcedures"), orderedProcedures);
 						}
 					}
 					else
@@ -157,7 +165,7 @@
 							<tr>
 								<td class="propertyname">Ordering Priority</td>
 								<td class="propertyvalue"><div id="OrderPriority"/></td>
-								<td class="propertyname" rowspan="2">Requested Procedures</td>
+								<td class="propertyname" rowspan="2"><div id="RequestedProceduresLabel"/></td>
 								<td class="propertyvalue" rowspan="2"><div id="RequestedProcedures"/></td>
 							</tr>
 							<tr>

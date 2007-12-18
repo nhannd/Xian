@@ -52,7 +52,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 
             Control banner = (Control)_component.BannerHost.ComponentView.GuiElement;
             banner.Dock = DockStyle.Fill;
-            _rootSplitContainer.Panel1.Controls.Add(banner);
+            _bannerPanel.Controls.Add(banner);
 
             Control reportEditor = (Control)_component.ReportEditorHost.ComponentView.GuiElement;
             reportEditor.Dock = DockStyle.Fill;

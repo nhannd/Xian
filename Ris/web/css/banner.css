@@ -40,26 +40,26 @@ table td {
 }
 
 .pageheading {
-	font-size: 18px;
+	font-size: 1.5em;
 	font-weight: bold;
 }
 
 .pageheading2 {
 
-	font-size: 15px;
+	font-size: 1em;
 	font-weight: bold;
 }
 
 .propertyname {
-	font-size: 12px;
+	font-size: 0.65em;
 	font-weight: bold;
 }
 
 .propertyvalue {
-	font-size: 12px;
+	font-size: 0.65em;
 }
 
 img.alert{
-   width: 40px;
+   width: 3em;
 }
 

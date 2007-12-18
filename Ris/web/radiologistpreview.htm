@@ -92,11 +92,12 @@
                     
                     var selectedProcedure = procedures.find(
                                             function(rp) { return rp.RequestedProcedureRef == worklistItem.RequestedProcedureRef; });
-                    
-                                            
-                    Field.setValue($("procedure"), selectedProcedure.Type.Name);
-                    Field.setValue($("RequestedProcedureStartTime"), "TODO");
-                    Field.setValue($("RequestedProcedureEndTime"), "TODO");
+					if (selectedProcedure)
+					{
+	                    Field.setValue($("procedure"), selectedProcedure.Type.Name);
+	                    Field.setValue($("RequestedProcedureStartTime"), "TODO");
+	                    Field.setValue($("RequestedProcedureEndTime"), "TODO");
+					}
                     
                     if(orderDetail.Notes.length)
                         createOrderNotesTable($("orderNotesTable"), orderDetail.Notes);
@@ -150,19 +151,27 @@
 	            htmlTable.bindItems(notes);
             }
             
-            function createProceduresTable(htmlTable, procedures)
-            {
-	            htmlTable = Table.createTable(htmlTable, { editInPlace: false, flow: false },
-		             [
-			            {   label: "Procedure",
-				            cellType: "text",
-				            getValue: function(item) { return item.Type.Name; }
-			            }
-		             ]);
-            		 
-	            htmlTable.rowCycleClassNames = ["row0", "row1"];
-	            htmlTable.bindItems(procedures);
-            }
+			function createProceduresTable(htmlTable, procedures)
+			{
+				htmlTable = Table.createTable(htmlTable, { editInPlace: false, flow: false },
+					 [
+						{   label: "Procedure",
+							cellType: "text",
+							getValue: function(item) { return item.Type.Name; }
+						},
+						{   label: "Status",
+							cellType: "text",
+							getValue: function(item) { return item.Status.Value; }
+						},
+						{   label: "Protocol",
+							cellType: "html",
+							getValue: function(item) { return item.Protocol ? String.combine(item.Protocol.Codes.map(function(code) { return code.Name; }), "<br>") : null; }
+						}
+					 ]);
+					 
+				htmlTable.rowCycleClassNames = ["row0", "row1"];
+				htmlTable.bindItems(procedures);
+			}
 		</script>
 	</head>
 	<body onload="javascript: onBodyLoad()">
@@ -236,6 +245,8 @@
 	            <tr><td class="sectionheading" colspan="6">Ordered Procedures</td></tr>
 	            <tr class="tableheading">
 		            <td>Procedure</td>
+		            <td>Status</td>
+		            <td>Protocol</td>
 	            </tr>
 	        </table>
 	        </div>

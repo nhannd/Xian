@@ -266,8 +266,8 @@ var Table = {
 		    // by default, set cell content to the value of the specified property of the object
             var column = this._columns[col];
             var value = this._getColumnValue(column, obj);
-		    td.innerHTML = ((value || "")+"").escapeHTML();
-    		
+			td.innerHTML = column.cellType == "html" ? value : ((value || "")+"").escapeHTML();
+
 		    // fire custom formatting event, which may itself set the innerHTML property to override default cell content
 		    if(this.renderCell)
 		        this.renderCell(this, { htmlCell: td, column: this._columns[col], item: obj, itemIndex: row-1, colIndex: col });
@@ -497,6 +497,11 @@ var Table = {
 		        // JR: actually this doesn't work because it blanks the text box when focus moves to the find button
 		        //input.onblur = function() { table._onEditComplete(row, col); }
 		    }
+			else
+			if (column.cellType == "html")
+			{
+			}
+			
 		    
 		    // initialize the cell value
 		    td._setCellDisplayValue(value);
