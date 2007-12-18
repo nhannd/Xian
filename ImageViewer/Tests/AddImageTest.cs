@@ -33,7 +33,6 @@
 
 #pragma warning disable 1591,0419,1574,1587
 
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.StudyManagement;
 using NUnit.Framework;
 
@@ -149,7 +148,7 @@ namespace ClearCanvas.ImageViewer.Tests
 			TestImageSop image2 = new TestImageSop("patient1", "study1", "series1", "image1");
 
 			studyTree1.AddImage(image1);
-			IReferenceCountable sop = studyTree1.SopCache[image1.SopInstanceUID];
+			ReferenceCountedObjectWrapper sop = studyTree1.SopCache[image1.SopInstanceUID];
 
 			Assert.IsTrue(sop.ReferenceCount == 1);
 			

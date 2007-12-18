@@ -32,12 +32,10 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
-using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
-	internal sealed class LutFactory : IReferenceCountable, IDisposable
+	internal sealed class LutFactory : IDisposable
 	{
 		#region ColorMap Proxy Class
 
@@ -230,7 +228,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 				if (_instance == null)
 					_instance = new LutFactory();
 
-				_instance.IncrementReferenceCount();
+				++_instance._referenceCount;
 				return _instance;
 			}
 		}
@@ -355,31 +353,6 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		#endregion
 
-		#region IReferenceCountable Members
-
-		public void IncrementReferenceCount()
-		{
-			_referenceCount++;
-		}
-
-		public void DecrementReferenceCount()
-		{
-			if (_referenceCount > 0)
-				_referenceCount--;
-		}
-
-		public bool IsReferenceCountZero
-		{
-			get { return _referenceCount == 0; }
-		}
-
-		public int ReferenceCount
-		{
-			get { return _referenceCount; }
-		}
-
-		#endregion
-		
 		#region Disposal
 
 		#region IDisposable Members
@@ -404,9 +377,10 @@ namespace ClearCanvas.ImageViewer.Imaging
 		{
 			if (disposing)
 			{
-				this.DecrementReferenceCount();
+				if (_referenceCount > 0)
+					--_referenceCount;
 
-				if (this.IsReferenceCountZero)
+				if (_referenceCount <= 0)
 				{
 					if (_modalityLUTs != null)
 					{

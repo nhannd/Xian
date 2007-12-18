@@ -181,7 +181,6 @@
     <Compile Include="Graphics\PointPrimitive.cs" />
     <Compile Include="Graphics\IndexedImageGraphic.cs" />
     <Compile Include="GrayscalePresentationImage.cs" />
-    <Compile Include="Imaging\ComposedLut.cs" />
     <Compile Include="Imaging\ComposedLutPool.cs" />
     <Compile Include="Imaging\StandardColorMaps.cs" />
     <Compile Include="Imaging\ColorMapManager.cs" />
@@ -194,6 +193,7 @@
     <Compile Include="InputManagement\MouseCaptureChangedEventArgs.cs" />
     <Compile Include="InteractiveGraphics\PointMemento.cs" />
     <Compile Include="InteractiveGraphics\PointsMemento.cs" />
+    <Compile Include="ReferenceCountedObjectWrapper.cs" />
     <Compile Include="PresentationImageChangedEventArgs.cs" />
     <Compile Include="PresentationImageFactory.cs" />
     <Compile Include="Rendering\GDIRenderer.cs" />
@@ -270,7 +270,6 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>StandardModalitySettings.settings</DependentUpon>
     </Compile>
-    <Compile Include="StudyManagement\ICacheableSop.cs" />
     <Compile Include="StudyManagement\ImageSopProxy.cs" />
     <Compile Include="StudyManagement\LocalImageLoader.cs">
       <SubType>Code</SubType>

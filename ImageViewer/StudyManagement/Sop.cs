@@ -31,7 +31,6 @@
 
 using System;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
@@ -105,9 +104,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	/// </list>
 	/// </para>
 	/// </remarks>
-	public abstract class Sop : ICacheableSop
+	public abstract class Sop
 	{
-		private int _referenceCount;
 		private Series _parentSeries;
 
 		/// <summary>
@@ -847,49 +845,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		}
 
 		#endregion
-
-		#endregion
-
-		#region ICacheableSop Members
-
-		string ICacheableSop.SopInstanceUID
-		{
-			get { return this.SopInstanceUID; }
-		}
-
-		bool IReferenceCountable.IsReferenceCountZero
-		{
-			get { return (_referenceCount == 0); }
-		}
-
-		void ICacheableSop.Load()
-		{
-			throw new Exception("The method or operation is not implemented.");
-		}
-
-		void ICacheableSop.Unload()
-		{
-			throw new Exception("The method or operation is not implemented.");
-		}
-
-		void IReferenceCountable.IncrementReferenceCount()
-		{
-			_referenceCount++;
-		}
-
-		void IReferenceCountable.DecrementReferenceCount()
-		{
-			if (_referenceCount > 0)
-				_referenceCount--;
-		}
-
-#if UNIT_TESTS
-		int IReferenceCountable.ReferenceCount
-		{
-			get { return _referenceCount; }
-		}
-
-#endif
 
 		#endregion
 

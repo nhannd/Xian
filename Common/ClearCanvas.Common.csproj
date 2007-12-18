@@ -231,9 +231,7 @@
     <Compile Include="Utilities\CollectionUtils.cs" />
     <Compile Include="Configuration\StandardSettingsProvider.cs" />
     <Compile Include="Utilities\DictionaryEventArgs.cs" />
-    <Compile Include="Utilities\IReferenceCountable.cs" />
     <Compile Include="Utilities\ItemEventArgs.cs" />
-    <Compile Include="Utilities\ReferenceCountedObjectCache.cs" />
     <Compile Include="Utilities\SimpleSerializer.cs" />
     <Compile Include="Utilities\StringDiff.cs" />
     <Compile Include="Utilities\BlockingThreadPool.cs" />

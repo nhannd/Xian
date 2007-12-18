@@ -45,7 +45,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		#region Private Fields
 
 		private LutCollection _lutCollection;
-		private ComposedLut _composedLut;
+		private int[] _composedLut;
 		private bool _recalculate = true;
 		private bool _validated = false;
 
@@ -92,7 +92,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 			CodeClock counter = new CodeClock();
 			counter.Start();
 #endif
-			fixed (int* composedLutData = _composedLut.Data)
+			fixed (int* composedLutData = _composedLut)
 			{
 				int* pLutData = composedLutData;
 				int min = MinInputValue;
@@ -217,7 +217,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// The output LUT of the pipeline.
 		/// </summary>
-		private ComposedLut ComposedLut
+		private int[] ComposedLut
 		{
 			get 
 			{
@@ -285,7 +285,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		{
 			get
 			{
-				return ComposedLut.Data;
+				return ComposedLut;
 			}
 		}
 
@@ -333,11 +333,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 			get
 			{
 				if (index <= MinInputValue)
-					return this.ComposedLut.Data[0];
+					return this.ComposedLut[0];
 				else if (index >= MaxInputValue)
-					return this.ComposedLut.Data[Length - 1];
+					return this.ComposedLut[Length - 1];
 
-				return this.ComposedLut.Data[index - MinInputValue];
+				return this.ComposedLut[index - MinInputValue];
 			}
 		}
 

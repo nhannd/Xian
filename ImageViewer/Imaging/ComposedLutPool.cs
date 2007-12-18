@@ -32,27 +32,27 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
-	internal sealed class ComposedLutPool : IReferenceCountable, IDisposable
+	internal sealed class ComposedLutPool : IDisposable
 	{
 		#region Private Fields
 
+		private static readonly object _syncRoot = new object();
 		private static volatile ComposedLutPool _instance;
-		private static object _syncRoot = new Object();
+		
+		private int _referenceCount;
 
-		private ReferenceCountedObjectCache _lutCache;
-		private List<ComposedLut> _pool;
-		private int _lutPoolSize = 4;
-		private int _referenceCount = 0;
+		private Dictionary<string, ReferenceCountedObjectWrapper<int[]>> _lutCache;
+		private List<int[]> _pool;
+		private readonly int _lutPoolSize = 4;
 
 		#endregion
 
 		private ComposedLutPool()
 		{
-
+			_referenceCount = 0;
 		}
 
 		#region Public Members
@@ -70,112 +70,78 @@ namespace ClearCanvas.ImageViewer.Imaging
 					}
 				}
 
-				_instance.IncrementReferenceCount();
-
+				++_instance._referenceCount;
 				return _instance;
 			}
 		}
 
-		public ComposedLut Retrieve(string key, int lutSize, out bool composeRequired)
+		public int[] Retrieve(string key, int lutSize, out bool composeRequired)
 		{
 			composeRequired = false;
 
-			// See if we can find the desired LUT in the cache
-			ComposedLut lut = this.LutCache[key] as ComposedLut;
-
-			// If not, we'll have to get one from the pool and
-			// add it to the cache
-			if (lut == null)
+			if (!LutCache.ContainsKey(key))
 			{
-				lut = RetrieveFromPool(lutSize);
 				composeRequired = true;
+				LutCache[key] = new ReferenceCountedObjectWrapper<int[]>(RetrieveFromPool(lutSize));
 			}
 
-			this.LutCache.Add(key, lut);
-			
-			return lut;
+			LutCache[key].IncrementReferenceCount();
+			return LutCache[key].Item;
 		}
 
 		public void Return(string key)
 		{
-			if (key == String.Empty)
+			if (String.IsNullOrEmpty(key))
 				return;
 
-			ComposedLut lut = this.LutCache[key] as ComposedLut;
-
-			if (lut == null)
+			if (!LutCache.ContainsKey(key))
 				return;
 
-			// If a LUT is being "returned", remove it from the cache first...
-			this.LutCache.Remove(key);
-
-			// ...then if no one else is reference the LUT, add it back
-			// into the pool so that it can be recycled.
-			if (lut.ReferenceCount == 0)
+			ReferenceCountedObjectWrapper<int[]> wrapper = LutCache[key];
+			wrapper.DecrementReferenceCount();
+			if (!wrapper.IsReferenceCountAboveZero())
 			{
+				LutCache.Remove(key);
+
 				if (this.Pool.Count <= _lutPoolSize)
-					this.Pool.Add(lut);
+					this.Pool.Add(wrapper.Item);
 			}
 		}
 
-		#region IReferenceCountable Members
-
-		public void IncrementReferenceCount()
-		{
-			_referenceCount++;
-		}
-
-		public void DecrementReferenceCount()
-		{
-			if (_referenceCount > 0)
-				_referenceCount--;
-		}
-
-		public bool IsReferenceCountZero
-		{
-			get { return _referenceCount == 0; }
-		}
-
-		public int ReferenceCount
-		{
-			get { return _referenceCount; }
-		}
-
-		#endregion
 		#endregion
 
 		#region Private Members
 
-		private ReferenceCountedObjectCache LutCache
+		private Dictionary<string, ReferenceCountedObjectWrapper<int[]>> LutCache
 		{
 			get
 			{
 				if (_lutCache == null)
-					_lutCache = new ReferenceCountedObjectCache();
+					_lutCache = new Dictionary<string, ReferenceCountedObjectWrapper<int[]>>();
 
 				return _lutCache;
 			}
 		}
 
-		private List<ComposedLut> Pool
+		private List<int[]> Pool
 		{
 			get
 			{
 				if (_pool == null)
-					_pool = new List<ComposedLut>();
+					_pool = new List<int[]>();
 
 				return _pool;
 			}
 		}
 
-		private ComposedLut RetrieveFromPool(int lutSize)
+		private int[] RetrieveFromPool(int lutSize)
 		{
 			// Find a LUT in the pool that's the same size as what's
 			// being requested
-			foreach (ComposedLut lut in this.Pool)
+			foreach (int[] lut in this.Pool)
 			{
 				// If we've found one, take it out of the pool and return it
-				if (lut.Data.Length == lutSize)
+				if (lut.Length == lutSize)
 				{
 					this.Pool.Remove(lut);
 					return lut;
@@ -184,7 +150,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 			// If we couldn't find one, create a new one and return it.  It'll
 			// be returned to the pool later when Return is called.
-			return new ComposedLut(lutSize);
+			return new int[lutSize];
 		}
 
 		#endregion
@@ -217,9 +183,10 @@ namespace ClearCanvas.ImageViewer.Imaging
 		{
 			if (disposing)
 			{
-				this.DecrementReferenceCount();
+				if (_referenceCount > 0)
+					--_referenceCount;
 
-				if (this.IsReferenceCountZero)
+				if (_referenceCount <= 0)
 				{
 					if (_lutCache != null)
 					{

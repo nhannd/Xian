@@ -31,7 +31,6 @@
 
 using System;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Rendering
 {
@@ -53,70 +52,33 @@ namespace ClearCanvas.ImageViewer.Rendering
 	{
 		#region RendererProxy Class
 
-		private class RendererProxy : IRenderer, IReferenceCountable
+		private class RendererProxy : IRenderer
 		{
-			private RendererBase _realRenderer;
-			private int _referenceCount;
+			private ReferenceCountedObjectWrapper<RendererBase> _wrapper;
 
 			public RendererProxy(RendererBase realRenderer)
 			{
-				_realRenderer = realRenderer;
-				_referenceCount = 0;
+				_wrapper = new ReferenceCountedObjectWrapper<RendererBase>(realRenderer);
 			}
 
-			~RendererProxy()
+			public ReferenceCountedObjectWrapper<RendererBase> Wrapper
 			{
-				Dispose(false);
+				get { return _wrapper; }	
 			}
-
-			#region IReferenceCountable Members
-
-			public void IncrementReferenceCount()
-			{
-				++_referenceCount;
-			}
-
-			public void DecrementReferenceCount()
-			{
-				--_referenceCount;
-			}
-
-			public bool IsReferenceCountZero
-			{
-				get { return 0 == _referenceCount; }	
-			}
-
-			public int ReferenceCount
-			{
-				get { return _referenceCount; }
-			}
-
-			#endregion
 
 			#region IRenderer Members
 
 			public void Draw(DrawArgs drawArgs)
 			{
-				_realRenderer.Draw(drawArgs);
+				Wrapper.Item.Draw(drawArgs);
 			}
 
 			public IRenderingSurface GetRenderingSurface(IntPtr windowID, int width, int height)
 			{
-				return _realRenderer.GetRenderingSurface(windowID, width, height);
+				return Wrapper.Item.GetRenderingSurface(windowID, width, height);
 			}
 
 			#endregion
-
-			#region Disposal
-
-			private void Dispose(bool disposing)
-			{
-				if (_realRenderer != null)
-				{
-					_realRenderer.Dispose();
-					_realRenderer = null;
-				}
-			}
 
 			#region IDisposable Members
 
@@ -124,13 +86,18 @@ namespace ClearCanvas.ImageViewer.Rendering
 			{
 				try
 				{
-					DecrementReferenceCount();
-					if (ReferenceCount > 0)
+					if (_wrapper == null)
+						return;
+					
+					_wrapper.DecrementReferenceCount();
+					if (_wrapper.IsReferenceCountAboveZero())
 						return;
 
 					_proxy = null;
-					
-					Dispose(true);
+
+					_wrapper.Item.Dispose();
+					_wrapper = null;
+
 					GC.SuppressFinalize(this);
 				}
 				catch(Exception e)
@@ -139,7 +106,6 @@ namespace ClearCanvas.ImageViewer.Rendering
 				}
 			}
 
-			#endregion
 			#endregion
 		}
 
@@ -183,7 +149,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 			if (_proxy == null)
 				_proxy = new RendererProxy(GetNewRenderer());
 
-			_proxy.IncrementReferenceCount();
+			_proxy.Wrapper.IncrementReferenceCount();
 			return _proxy;
 		}
 

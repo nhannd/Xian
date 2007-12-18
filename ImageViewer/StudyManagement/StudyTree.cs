@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 
@@ -49,7 +50,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		private SeriesCollection _series;
 		private SopCollection _sops;
 
-		private static ReferenceCountedObjectCache _sopCache = new ReferenceCountedObjectCache();
+		private static readonly Dictionary<string,ReferenceCountedObjectWrapper<Sop>> _sopCache = new Dictionary<string, ReferenceCountedObjectWrapper<Sop>>();
 
 		internal StudyTree()
 		{
@@ -57,7 +58,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 #if UNIT_TESTS
 
-		internal ReferenceCountedObjectCache SopCache
+		internal Dictionary<string, ReferenceCountedObjectWrapper<Sop>> SopCache
 		{
 			get { return _sopCache; }
 		}
@@ -269,15 +270,15 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 				// Try and add the image to the cache.  If it already exists
 				// it won't be added
-				_sopCache.Add(image.SopInstanceUID, image);
-
-				// Get the image from the cache
-				ImageSop cachedSop = _sopCache[image.SopInstanceUID] as ImageSop;
-
+				if (!_sopCache.ContainsKey(image.SopInstanceUID))
+					_sopCache[image.SopInstanceUID] = new ReferenceCountedObjectWrapper<Sop>(image);
+				
+				_sopCache[image.SopInstanceUID].IncrementReferenceCount();
+				
 				// Create a proxy for actual image in the cache.  This allows
 				// for the sharing of images so we never have to keep copies
 				// of the image.  Clients use the proxy instead of the real image.
-				ImageSopProxy imageSopProxy = new ImageSopProxy(cachedSop);
+				ImageSopProxy imageSopProxy = new ImageSopProxy((ImageSop)_sopCache[image.SopInstanceUID].Item);
 				imageSopProxy.ParentSeries = series;
 
 				// Propagate the image proxy up the tree so the parent nodes
@@ -326,7 +327,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				foreach (Sop sop in _sops.Values)
 				{
 					sop.ParentSeries.SetSop(null);
-					_sopCache.Remove(sop.SopInstanceUID);
+
+					if (_sopCache.ContainsKey(sop.SopInstanceUID))
+					{
+						_sopCache[sop.SopInstanceUID].DecrementReferenceCount();
+						if (!_sopCache[sop.SopInstanceUID].IsReferenceCountAboveZero())
+							_sopCache.Remove(sop.SopInstanceUID);
+					}
 				}
 
 				if (_patients != null)

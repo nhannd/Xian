@@ -35,7 +35,7 @@ using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Tests
 {
-	class TestImageSop : ImageSop
+	internal class TestImageSop : ImageSop
 	{
 		private string _patientID;
 		private string _studyInstanceUID;
