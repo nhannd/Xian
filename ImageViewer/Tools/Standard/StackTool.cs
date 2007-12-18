@@ -224,23 +224,23 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			this.CaptureEndState();
 		}
 
-		protected override void StartWheel()
+		public override void StartWheel()
 		{
 			IImageBox imageBox = this.Context.Viewer.SelectedTile.ParentImageBox;
 			CaptureBeginState(imageBox);
 		}
 
-		protected override void WheelDown()
+		protected override void WheelBack()
 		{
 			AdvanceImage(1, this.Context.Viewer.SelectedTile.ParentImageBox);
 		}
 
-		protected override void WheelUp()
+		protected override void WheelForward()
 		{
 			AdvanceImage(-1, this.Context.Viewer.SelectedTile.ParentImageBox);
 		}
 
-		protected override void StopWheel()
+		public override void StopWheel()
 		{
 			CaptureEndState();
 		}

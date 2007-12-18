@@ -50,7 +50,7 @@ namespace ClearCanvas.ImageViewer.InputManagement
 		/// <summary>
 		/// Called by the framework when mouse wheel input has started.
 		/// </summary>
-		void Start();
+		void StartWheel();
 
 		/// <summary>
 		/// Called by the framework each time the mouse wheel is moved.
@@ -61,6 +61,6 @@ namespace ClearCanvas.ImageViewer.InputManagement
 		/// Called by the framework to indicate that mouse wheel activity has stopped 
 		/// (a short period of time has elapsed without any activity).
 		/// </summary>
-		void Stop();
+		void StopWheel();
 	}
 }

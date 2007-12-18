@@ -152,7 +152,7 @@ namespace ClearCanvas.ImageViewer.InputManagement
 				if (_captureMouseWheelHandler != null)
 				{
 					//Trace.WriteLine("Stopping current mouse wheel handler"); 
-					_captureMouseWheelHandler.Stop();
+					_captureMouseWheelHandler.StopWheel();
 				}
 
 				_captureMouseWheelHandler = captureMouseWheelHandler;
@@ -163,7 +163,7 @@ namespace ClearCanvas.ImageViewer.InputManagement
 					return;
 				}
 
-				_captureMouseWheelHandler.Start();
+				_captureMouseWheelHandler.StartWheel();
 
 				_stopTimer = false;
 				SynchronizationContext context = SynchronizationContext.Current;

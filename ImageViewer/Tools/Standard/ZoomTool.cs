@@ -169,23 +169,23 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			this.CaptureEndState();
 		}
 
-		protected override void StartWheel()
+		public override void StartWheel()
 		{
 			CaptureBeginState();
 		}
 
-		protected override void StopWheel()
+		public override void StopWheel()
 		{
 			CaptureEndState();
 		}
 
-		protected override void WheelDown()
+		protected override void WheelBack()
 		{
 			float increment = 0.1F * this.SelectedSpatialTransformProvider.SpatialTransform.Scale;
 			IncrementZoom(increment);
 		}
 
-		protected override void WheelUp()
+		protected override void WheelForward()
 		{
 			float increment = -0.1F * this.SelectedSpatialTransformProvider.SpatialTransform.Scale;
 			IncrementZoom(increment);

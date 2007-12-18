@@ -458,25 +458,7 @@ namespace ClearCanvas.ImageViewer.BaseTools
 		#endregion
 
 		#region Mouse Wheel
-
-    	#region IMouseWheelHandler Members
-
-		void IMouseWheelHandler.Start()
-		{
-			this.StartWheel();
-		}
-
-		void IMouseWheelHandler.Wheel(int wheelDelta)
-		{
-			this.Wheel(wheelDelta);
-		}
-
-		void IMouseWheelHandler.Stop()
-		{
-			this.StopWheel();
-		}
-
-		#endregion
+		#region IMouseWheelHandler Members
 
 		/// <summary>
 		/// Called by the framework when mouse wheel activity starts.
@@ -484,7 +466,7 @@ namespace ClearCanvas.ImageViewer.BaseTools
 		/// <remarks>
 		/// This method does nothing unless overridden.
 		/// </remarks>
-		protected virtual void StartWheel()
+		public virtual void StartWheel()
 		{
 		}
 
@@ -494,32 +476,12 @@ namespace ClearCanvas.ImageViewer.BaseTools
 		/// <remarks>
 		/// Unless overridden, this method simply calls <see cref="WheelUp"/> and <see cref="WheelDown"/>.
 		/// </remarks>
-		protected virtual void Wheel(int wheelDelta)
+		public virtual void Wheel(int wheelDelta)
 		{
 			if (wheelDelta > 0)
-				WheelUp();
+				WheelForward();
 			else if (wheelDelta < 0)
-				WheelDown();
-		}
-
-		/// <summary>
-		/// Called when the mouse wheel has moved up.
-		/// </summary>
-		/// <remarks>
-		/// This method does nothing unless overridden.
-		/// </remarks>
-		protected virtual void WheelUp()
-		{
-		}
-
-		/// <summary>
-		/// Called when the mouse wheel has moved down.
-		/// </summary>
-		/// <remarks>
-		/// This method does nothing unless overridden.
-		/// </remarks>
-		protected virtual void WheelDown()
-		{
+				WheelBack();
 		}
 
 		/// <summary>
@@ -529,7 +491,29 @@ namespace ClearCanvas.ImageViewer.BaseTools
 		/// <remarks>
 		/// This method does nothing unless overridden.
 		/// </remarks>
-		protected virtual void StopWheel()
+		public virtual void StopWheel()
+		{
+		}
+
+		#endregion
+
+		/// <summary>
+		/// Called when the mouse wheel has moved forward.
+		/// </summary>
+		/// <remarks>
+		/// This method does nothing unless overridden.
+		/// </remarks>
+		protected virtual void WheelForward()
+		{
+		}
+
+		/// <summary>
+		/// Called when the mouse wheel has moved back.
+		/// </summary>
+		/// <remarks>
+		/// This method does nothing unless overridden.
+		/// </remarks>
+		protected virtual void WheelBack()
 		{
 		}
 
