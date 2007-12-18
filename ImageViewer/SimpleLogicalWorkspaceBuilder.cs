@@ -165,7 +165,7 @@ namespace ClearCanvas.ImageViewer
 
 		private static IImageSet AddImageSet(ILogicalWorkspace logicalWorkspace, Study study)
 		{
-			IImageSet imageSet = new ImageSet();
+			ImageSet imageSet = new ImageSet();
 
 			DateTime studyDate;
 			DateParser.Parse(study.StudyDate, out studyDate);

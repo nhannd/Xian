@@ -130,7 +130,6 @@ namespace ClearCanvas.ImageViewer
 			set { _name = value; }
 		}
 
-		// TODO (Norman): This generic string may not be a good idea
 		public string PatientInfo
 		{
 			get { return _patientInfo; }

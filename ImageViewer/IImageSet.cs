@@ -68,18 +68,18 @@ namespace ClearCanvas.ImageViewer
 		IEnumerable<IDisplaySet> LinkedDisplaySets { get; }
 
 		/// <summary>
-		/// Gets or sets the name of the image set.
+		/// Gets the name of the image set.
 		/// </summary>
-		string Name { get; set; }
+		string Name { get; }
 
 		/// <summary>
-		/// Gets or sets the patient information associated with the image set.
+		/// Gets the patient information associated with the image set.
 		/// </summary>
-		string PatientInfo { get; set; }
+		string PatientInfo { get; }
 
 		/// <summary>
-		/// Gets or sets unique identifier for this <see cref="IImageSet"/>.
+		/// Gets the unique identifier for this <see cref="IImageSet"/>.
 		/// </summary>
-		string Uid { get; set; }
+		string Uid { get; }
 	}
 }
