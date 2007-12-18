@@ -42,6 +42,7 @@ using ClearCanvas.Ris.Client;
 using ClearCanvas.Ris.Client.Formatting;
 using ClearCanvas.Ris.Application.Common.Jsml;
 using System.Runtime.Serialization;
+using System.Collections;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -61,47 +62,27 @@ namespace ClearCanvas.Ris.Client
     {
         class ProfileViewComponent : DHtmlComponent
         {
-            [DataContract]
-            class Context : DataContractBase
+            private PatientProfileSummary _patientProfile;
+
+            public PatientProfileSummary PatientProfile
             {
-                public Context(EntityRef patientRef, EntityRef profileRef)
+                get { return _patientProfile; }
+                set
                 {
-                    this.PatientRef = patientRef;
-                    this.PatientProfileRef = profileRef;
-                }
-
-                [DataMember]
-                public EntityRef PatientRef;
-
-                [DataMember]
-                public EntityRef PatientProfileRef;
-
-            }
-
-            private BiographyDemographicComponent _owner;
-
-            public ProfileViewComponent(BiographyDemographicComponent owner)
-            {
-                _owner = owner;
-            }
-
-            public override void Start()
-            {
-                this.SetUrl("http://localhost/RIS/patientprofile.htm");
-                base.Start();
+                     _patientProfile = value;
+                     this.SetUrl("http://localhost/RIS/patientprofile.htm");
+                 }
             }
 
             protected override DataContractBase GetHealthcareContext()
             {
-                return (_owner._selectedProfile == null) ? null : new Context(_owner._patientRef, _owner._selectedProfile.PatientProfileRef);
+                return PatientProfile;
             }
-
         }
 
 
-        private readonly EntityRef _profileRef;
+        private readonly EntityRef _defaultProfileRef;
         private readonly EntityRef _patientRef;
-        private PatientProfileDetail _patientProfileDetail;
 
         private PatientProfileSummary _selectedProfile;
         private List<PatientProfileSummary> _profileChoices;
@@ -111,11 +92,13 @@ namespace ClearCanvas.Ris.Client
         /// <summary>
         /// Constructor
         /// </summary>
-        public BiographyDemographicComponent(EntityRef patientRef, EntityRef profileRef, PatientProfileDetail patientProfile)
+        public BiographyDemographicComponent(EntityRef patientRef, EntityRef defaultProfileRef)
         {
+            Platform.CheckForNullReference(patientRef, "patientRef");
             _patientRef = patientRef;
-            _profileRef = profileRef;
-            _patientProfileDetail = patientProfile;
+
+            // default profile ref may be null
+            _defaultProfileRef = defaultProfileRef;
 
             _profileChoices = new List<PatientProfileSummary>();
         }
@@ -132,46 +115,31 @@ namespace ClearCanvas.Ris.Client
                     _profileChoices = response.ListPatientProfilesResponse.Profiles;
                 });
 
-            _selectedProfile = CollectionUtils.FirstElement(_profileChoices);
+            if (_defaultProfileRef != null)
+            {
+                _selectedProfile = CollectionUtils.SelectFirst(_profileChoices,
+                    delegate(PatientProfileSummary pp) { return pp.PatientProfileRef == _defaultProfileRef; });
+            }
+            else
+            {
+                _selectedProfile = CollectionUtils.FirstElement(_profileChoices);
+            }
 
-            _profileViewComponentHost = new ChildComponentHost(this.Host, new ProfileViewComponent(this));
+            ProfileViewComponent profileViewComponent = new ProfileViewComponent();
+            profileViewComponent.PatientProfile = _selectedProfile;
+
+            _profileViewComponentHost = new ChildComponentHost(this.Host, profileViewComponent);
             _profileViewComponentHost.StartComponent();
 
             base.Start();
         }
 
 
-        private static string ProfileStringConverter(PersonNameDetail name, CompositeIdentifierDetail mrn)
+        public string FormatPatientProfile(object item)
         {
-            return String.Format("{0} - {1}", MrnFormat.Format(mrn), PersonNameFormat.Format(name));
+            PatientProfileSummary summary = (PatientProfileSummary) item;
+            return String.Format("{0} - {1}", MrnFormat.Format(summary.Mrn), PersonNameFormat.Format(summary.Name));
         }
-
-        private void OnSelectedProfileChanged()
-        {
-            if (_selectedProfile == null)
-                return;
-
-            try
-            {
-                Platform.GetService<IBrowsePatientDataService>(
-                    delegate(IBrowsePatientDataService service)
-                    {
-                        GetDataRequest request = new GetDataRequest();
-                        request.GetPatientProfileDetailRequest = new GetPatientProfileDetailRequest(_profileRef, true, true, true, true, true, true, false);
-                        GetDataResponse response = service.GetData(request);
-
-                        _patientProfileDetail = response.GetPatientProfileDetailResponse.PatientProfile;
-                    });
-
-                NotifyAllPropertiesChanged();       
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
-        }
-
-        
 
         #region Presentation Model
 
@@ -180,32 +148,21 @@ namespace ClearCanvas.Ris.Client
             get { return _profileViewComponentHost; }
         }
         
-        public List<string> ProfileChoices
+        public IList ProfileChoices
         {
-            get
-            {
-                List<string> profileStrings = new List<string>();
-                if (_profileChoices.Count > 0)
-                {
-                    profileStrings.AddRange(
-                        CollectionUtils.Map<PatientProfileSummary, string>(
-                            _profileChoices, delegate(PatientProfileSummary pp) { return ProfileStringConverter(pp.Name, pp.Mrn); }));
-                }
-
-                return profileStrings;
-            }
+            get { return _profileChoices; }
         }
 
-        public string SelectedProfile
+        public PatientProfileSummary SelectedProfile
         {
-            get { return _selectedProfile == null ? "" : ProfileStringConverter(_selectedProfile.Name, _selectedProfile.Mrn); }
+            get { return _selectedProfile; }
             set
             {
-                _selectedProfile = (value == "") ? null :
-                    CollectionUtils.SelectFirst<PatientProfileSummary>(_profileChoices,
-                        delegate(PatientProfileSummary pp) { return ProfileStringConverter(pp.Name, pp.Mrn) == value; });
-
-                OnSelectedProfileChanged();
+                if(!Equals(value, _selectedProfile))
+                {
+                    _selectedProfile = value;
+                    ((ProfileViewComponent) _profileViewComponentHost.Component).PatientProfile = _selectedProfile;
+                }
             }
         }
 

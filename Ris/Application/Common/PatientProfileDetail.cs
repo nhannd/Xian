@@ -54,6 +54,12 @@ namespace ClearCanvas.Ris.Application.Common
         }
 
         [DataMember]
+        public EntityRef PatientRef;
+
+        [DataMember]
+        public EntityRef PatientProfileRef;
+
+        [DataMember]
         public CompositeIdentifierDetail Mrn;
 
         [DataMember]
@@ -91,9 +97,6 @@ namespace ClearCanvas.Ris.Application.Common
 
         [DataMember]
         public TelephoneDetail CurrentWorkPhone;
-
-        //[DataMember]
-        //public List<EnumValueInfo> AmbulatoryStatuses;
 
         [DataMember]
         public List<AddressDetail> Addresses;

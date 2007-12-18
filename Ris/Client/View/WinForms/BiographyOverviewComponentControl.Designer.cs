@@ -62,42 +62,12 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(BiographyOverviewComponentControl));
-            this._alertList = new System.Windows.Forms.ListView();
             this._alertIcons = new System.Windows.Forms.ImageList(this.components);
-            this._picture = new System.Windows.Forms.PictureBox();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
-            this._mrn = new System.Windows.Forms.Label();
-            this._healthCard = new System.Windows.Forms.Label();
-            this._dateOfBirth = new System.Windows.Forms.Label();
-            this._ageSex = new System.Windows.Forms.Label();
-            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
-            this._name = new System.Windows.Forms.Label();
-            ((System.ComponentModel.ISupportInitialize)(this._picture)).BeginInit();
+            this._bannerPanel = new System.Windows.Forms.Panel();
+            this._contentPanel = new System.Windows.Forms.Panel();
             this.tableLayoutPanel1.SuspendLayout();
-            this.tableLayoutPanel2.SuspendLayout();
-            this.flowLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // _alertList
-            // 
-            this._alertList.BackColor = System.Drawing.SystemColors.Control;
-            this._alertList.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this._alertList.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._alertList.HoverSelection = true;
-            this._alertList.LargeImageList = this._alertIcons;
-            this._alertList.Location = new System.Drawing.Point(500, 0);
-            this._alertList.Margin = new System.Windows.Forms.Padding(0);
-            this._alertList.MultiSelect = false;
-            this._alertList.Name = "_alertList";
-            this._alertList.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this._alertList.RightToLeftLayout = true;
-            this._alertList.Scrollable = false;
-            this._alertList.ShowItemToolTips = true;
-            this._alertList.Size = new System.Drawing.Size(500, 76);
-            this._alertList.SmallImageList = this._alertIcons;
-            this._alertList.TabIndex = 6;
-            this._alertList.UseCompatibleStateImageBehavior = false;
             // 
             // _alertIcons
             // 
@@ -110,121 +80,36 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this._alertIcons.Images.SetKeyName(4, "");
             this._alertIcons.Images.SetKeyName(5, "");
             // 
-            // _picture
-            // 
-            this._picture.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._picture.Location = new System.Drawing.Point(2, 2);
-            this._picture.Margin = new System.Windows.Forms.Padding(2);
-            this._picture.Name = "_picture";
-            this._picture.Size = new System.Drawing.Size(71, 72);
-            this._picture.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this._picture.TabIndex = 0;
-            this._picture.TabStop = false;
-            // 
             // tableLayoutPanel1
             // 
-            this.tableLayoutPanel1.ColumnCount = 3;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 75F));
+            this.tableLayoutPanel1.ColumnCount = 1;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 500F));
-            this.tableLayoutPanel1.Controls.Add(this.tableLayoutPanel2, 0, 0);
-            this.tableLayoutPanel1.Controls.Add(this._picture, 0, 0);
-            this.tableLayoutPanel1.Controls.Add(this._alertList, 2, 0);
+            this.tableLayoutPanel1.Controls.Add(this._bannerPanel, 0, 0);
+            this.tableLayoutPanel1.Controls.Add(this._contentPanel, 0, 1);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
-            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 1;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(1000, 76);
-            this.tableLayoutPanel1.TabIndex = 8;
+            this.tableLayoutPanel1.RowCount = 2;
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 100F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(720, 467);
+            this.tableLayoutPanel1.TabIndex = 0;
             // 
-            // tableLayoutPanel2
+            // _bannerPanel
             // 
-            this.tableLayoutPanel2.ColumnCount = 2;
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel2.Controls.Add(this._mrn, 0, 1);
-            this.tableLayoutPanel2.Controls.Add(this._healthCard, 0, 2);
-            this.tableLayoutPanel2.Controls.Add(this._dateOfBirth, 1, 2);
-            this.tableLayoutPanel2.Controls.Add(this._ageSex, 1, 1);
-            this.tableLayoutPanel2.Controls.Add(this.flowLayoutPanel1, 0, 0);
-            this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel2.Location = new System.Drawing.Point(75, 0);
-            this.tableLayoutPanel2.Margin = new System.Windows.Forms.Padding(0);
-            this.tableLayoutPanel2.Name = "tableLayoutPanel2";
-            this.tableLayoutPanel2.RowCount = 3;
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(425, 76);
-            this.tableLayoutPanel2.TabIndex = 10;
+            this._bannerPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._bannerPanel.Location = new System.Drawing.Point(3, 3);
+            this._bannerPanel.Name = "_bannerPanel";
+            this._bannerPanel.Size = new System.Drawing.Size(714, 94);
+            this._bannerPanel.TabIndex = 0;
             // 
-            // _mrn
+            // _contentPanel
             // 
-            this._mrn.AutoSize = true;
-            this._mrn.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this._mrn.Location = new System.Drawing.Point(2, 38);
-            this._mrn.Margin = new System.Windows.Forms.Padding(2);
-            this._mrn.Name = "_mrn";
-            this._mrn.Size = new System.Drawing.Size(32, 16);
-            this._mrn.TabIndex = 7;
-            this._mrn.Text = "Mrn";
-            // 
-            // _healthCard
-            // 
-            this._healthCard.AutoSize = true;
-            this._healthCard.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this._healthCard.Location = new System.Drawing.Point(2, 58);
-            this._healthCard.Margin = new System.Windows.Forms.Padding(2);
-            this._healthCard.Name = "_healthCard";
-            this._healthCard.Size = new System.Drawing.Size(79, 16);
-            this._healthCard.TabIndex = 9;
-            this._healthCard.Text = "Healthcard";
-            // 
-            // _dateOfBirth
-            // 
-            this._dateOfBirth.AutoSize = true;
-            this._dateOfBirth.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this._dateOfBirth.Location = new System.Drawing.Point(85, 58);
-            this._dateOfBirth.Margin = new System.Windows.Forms.Padding(2);
-            this._dateOfBirth.Name = "_dateOfBirth";
-            this._dateOfBirth.Size = new System.Drawing.Size(35, 16);
-            this._dateOfBirth.TabIndex = 10;
-            this._dateOfBirth.Text = "DOB";
-            // 
-            // _ageSex
-            // 
-            this._ageSex.AutoSize = true;
-            this._ageSex.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this._ageSex.Location = new System.Drawing.Point(85, 38);
-            this._ageSex.Margin = new System.Windows.Forms.Padding(2);
-            this._ageSex.Name = "_ageSex";
-            this._ageSex.Size = new System.Drawing.Size(63, 16);
-            this._ageSex.TabIndex = 8;
-            this._ageSex.Text = "Age/Sex";
-            // 
-            // flowLayoutPanel1
-            // 
-            this.tableLayoutPanel2.SetColumnSpan(this.flowLayoutPanel1, 2);
-            this.flowLayoutPanel1.Controls.Add(this._name);
-            this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 0);
-            this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
-            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(425, 36);
-            this.flowLayoutPanel1.TabIndex = 11;
-            // 
-            // _name
-            // 
-            this._name.AutoSize = true;
-            this._name.Font = new System.Drawing.Font("Verdana", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this._name.Location = new System.Drawing.Point(2, 2);
-            this._name.Margin = new System.Windows.Forms.Padding(2);
-            this._name.Name = "_name";
-            this._name.Size = new System.Drawing.Size(134, 23);
-            this._name.TabIndex = 1;
-            this._name.Text = "Patient name";
+            this._contentPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._contentPanel.Location = new System.Drawing.Point(3, 103);
+            this._contentPanel.Name = "_contentPanel";
+            this._contentPanel.Size = new System.Drawing.Size(714, 361);
+            this._contentPanel.TabIndex = 1;
             // 
             // BiographyOverviewComponentControl
             // 
@@ -232,33 +117,19 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.tableLayoutPanel1);
             this.Margin = new System.Windows.Forms.Padding(0);
-            this.MaximumSize = new System.Drawing.Size(0, 76);
-            this.MinimumSize = new System.Drawing.Size(1000, 76);
             this.Name = "BiographyOverviewComponentControl";
-            this.Size = new System.Drawing.Size(1000, 76);
-            ((System.ComponentModel.ISupportInitialize)(this._picture)).EndInit();
+            this.Size = new System.Drawing.Size(720, 467);
             this.tableLayoutPanel1.ResumeLayout(false);
-            this.tableLayoutPanel2.ResumeLayout(false);
-            this.tableLayoutPanel2.PerformLayout();
-            this.flowLayoutPanel1.ResumeLayout(false);
-            this.flowLayoutPanel1.PerformLayout();
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private ListView _alertList;
         private ImageList _alertIcons;
-        private PictureBox _picture;
         private TableLayoutPanel tableLayoutPanel1;
-        private TableLayoutPanel tableLayoutPanel2;
-        private Label _mrn;
-        private Label _ageSex;
-        private Label _healthCard;
-        private Label _dateOfBirth;
-        private FlowLayoutPanel flowLayoutPanel1;
-        private Label _name;
+        private Panel _bannerPanel;
+        private Panel _contentPanel;
 
 
     }

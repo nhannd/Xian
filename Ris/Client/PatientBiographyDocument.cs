@@ -42,9 +42,8 @@ namespace ClearCanvas.Ris.Client
 {
     public class PatientBiographyDocument : Document
     {
-        private EntityRef _profileRef;
-        private EntityRef _patientRef;
-        private PatientProfileDetail _patientProfile;
+        private readonly EntityRef _profileRef;
+        private readonly EntityRef _patientRef;
 
         public PatientBiographyDocument(EntityRef patientRef, EntityRef profileRef, IDesktopWindow window)
             : base(patientRef, window)
@@ -56,57 +55,21 @@ namespace ClearCanvas.Ris.Client
             _patientRef = patientRef;
         }
 
+        public PatientBiographyDocument(PatientProfileSummary patientProfile, DesktopWindow window)
+            :base(patientProfile.PatientRef, window)
+        {
+            _patientRef = patientProfile.PatientRef;
+            _profileRef = patientProfile.PatientProfileRef;
+        }
+
         public override string GetTitle()
         {
-            if (_patientProfile != null)
-            {
-                return String.Format(SR.TitlePatientComponent,
-                    PersonNameFormat.Format(_patientProfile.Name),
-                    MrnFormat.Format(_patientProfile.Mrn));
-            }
-
-            return SR.TitlePatientProfile;   // doesn't matter, cause the component will set the title when it starts
+            return "";  // not relevant - component will set title
         }
 
         public override IApplicationComponent GetComponent()
         {
-            List<AlertNotificationDetail> alertNotifications = null;
-
-            Platform.GetService<IBrowsePatientDataService>(
-                delegate(IBrowsePatientDataService service)
-                {
-                    GetDataRequest request = new GetDataRequest();
-                    request.GetPatientProfileDetailRequest = new GetPatientProfileDetailRequest(_profileRef, true, true, true, true, true, true, true);
-                    GetDataResponse response = service.GetData(request);
-
-                    _patientProfile = response.GetPatientProfileDetailResponse.PatientProfile;
-                    alertNotifications = response.GetPatientProfileDetailResponse.PatientAlerts;
-                });
-            
-            // Create component for each tab
-            BiographyOrderHistoryComponent orderHistoryComponent = new BiographyOrderHistoryComponent(_patientRef);
-            BiographyNoteComponent noteComponent = new BiographyNoteComponent(_patientProfile.Notes);
-            BiographyFeedbackComponent feedbackComponent = new BiographyFeedbackComponent();
-            BiographyDemographicComponent demographicComponent = new BiographyDemographicComponent(_patientRef, _profileRef, _patientProfile);
-            MimeDocumentPreviewComponent documentComponent = new MimeDocumentPreviewComponent();
-            documentComponent.PatientAttachments = _patientProfile.Attachments;
-
-            // Create tab and tab groups
-            TabComponentContainer tabContainer = new TabComponentContainer();
-            tabContainer.Pages.Add(new TabPage(SR.TitleOrders, orderHistoryComponent));
-            tabContainer.Pages.Add(new TabPage(SR.TitleDemographic, demographicComponent));
-            tabContainer.Pages.Add(new TabPage(SR.TitleDocuments, documentComponent));
-            tabContainer.Pages.Add(new TabPage(SR.TitleNotes, noteComponent));
-            tabContainer.Pages.Add(new TabPage(SR.TitlePatientFeedbacks, feedbackComponent));
-
-            TabGroupComponentContainer tabGroupContainer = new TabGroupComponentContainer(LayoutDirection.Horizontal);
-            tabGroupContainer.AddTabGroup(new TabGroup(tabContainer, 1.0f));
-
-            // Construct the Patient Biography page
-            return new SplitComponentContainer(
-                new SplitPane("", new BiographyOverviewComponent(_patientRef, _profileRef, _patientProfile, alertNotifications), true),
-                new SplitPane("", tabGroupContainer, 0.8f),
-                SplitOrientation.Horizontal);
+            return new BiographyOverviewComponent(_patientRef, _profileRef);
         }
     }    
 }

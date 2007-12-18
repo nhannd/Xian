@@ -221,7 +221,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                 _worklistItem = GetNextWorklistItem();
                 if (_worklistItem != null)
                 {
-                    ((BannerComponent) _bannerComponentHost.Component).WorklistItem = _worklistItem;
+                    ((BannerComponent) _bannerComponentHost.Component).HealthcareContext = _worklistItem;
                     ((PriorReportComponent) _priorReportsComponentHost.Component).WorklistItem = _worklistItem;
                     ((ProtocolEditorComponent) _protocolEditorComponentHost.Component).WorklistItem = _worklistItem;
 

@@ -53,6 +53,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 
             _selectedProfile.DataSource = _component.ProfileChoices;
             _selectedProfile.DataBindings.Add("Value", _component, "SelectedProfile", true, DataSourceUpdateMode.OnPropertyChanged);
+            _selectedProfile.Format += delegate(object sender, ListControlConvertEventArgs e) { e.Value = _component.FormatPatientProfile(e.ListItem); };
 
             Control profileViewer = (Control)_component.ProfileViewComponentHost.ComponentView.GuiElement;
             profileViewer.Dock = DockStyle.Fill;

@@ -62,7 +62,7 @@ namespace ClearCanvas.Ris.Client
             _feedbackTable = new BiographyFeedbackTable();
             _feedbackList = new List<FeedbackDetail>();
 
-            AddDummyFeedbacks();
+            //AddDummyFeedbacks();
         }
 
         public override void Start()

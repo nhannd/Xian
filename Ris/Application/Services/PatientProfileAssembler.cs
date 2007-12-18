@@ -73,6 +73,8 @@ namespace ClearCanvas.Ris.Application.Services
             bool includeAttachments)
         {
             PatientProfileDetail detail = new PatientProfileDetail();
+            detail.PatientRef = profile.Patient.GetRef();
+            detail.PatientProfileRef = profile.GetRef();
 
             detail.Mrn = new MrnAssembler().CreateMrnDetail(profile.Mrn);
 

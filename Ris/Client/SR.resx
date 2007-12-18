@@ -433,7 +433,7 @@
     <value>Patient - {0} {1}</value>
   </data>
   <data name="TitlePatientFeedbacks" xml:space="preserve">
-    <value>Patient Feedbacks</value>
+    <value>Patient Feedback</value>
   </data>
   <data name="TitlePatientProfile" xml:space="preserve">
     <value>Patient Profile</value>

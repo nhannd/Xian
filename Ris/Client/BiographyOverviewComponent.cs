@@ -38,6 +38,7 @@ using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Ris.Application.Common.BrowsePatientData;
 using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client
@@ -61,20 +62,6 @@ namespace ClearCanvas.Ris.Client
         EntityRef PatientProfileRef { get; }
         PatientProfileDetail PatientProfile { get; }
         IDesktopWindow DesktopWindow { get; }
-    }
-
-    public class AlertListItem
-    {
-        public AlertListItem(string name, string message, string icon)
-        {
-            this.Name = name;
-            this.Message = message;
-            this.Icon = icon;
-        }
-
-        public string Name;
-        public string Message;
-        public string Icon;
     }
 
     /// <summary>
@@ -115,31 +102,76 @@ namespace ClearCanvas.Ris.Client
 
         private readonly EntityRef _patientRef;
         private readonly EntityRef _profileRef;
-        private readonly PatientProfileDetail _patientProfile;
-        private readonly List<AlertNotificationDetail> _alertNotifications;
+        private PatientProfileDetail _patientProfile;
 
         private ToolSet _toolSet;
         private readonly ResourceResolver _resourceResolver;
+
+        private ChildComponentHost _bannerComponentHost;
+        private ChildComponentHost _contentComponentHost;
 
         /// <summary>
         /// Constructor
         /// </summary>
         public BiographyOverviewComponent(
             EntityRef patientRef,
-            EntityRef profileRef, 
-            PatientProfileDetail patientProfile, 
-            List<AlertNotificationDetail> alertNotifications)
+            EntityRef profileRef)
         {
             _patientRef = patientRef;
             _profileRef = profileRef;
-            _patientProfile = patientProfile;
-            _alertNotifications = alertNotifications;
 
             _resourceResolver = new ResourceResolver(this.GetType().Assembly);
         }
 
         public override void Start()
         {
+            // query for the minimum possible amount of patient profile detail, just enough to populate the title
+            Platform.GetService<IBrowsePatientDataService>(
+                delegate(IBrowsePatientDataService service)
+                {
+                    GetDataRequest request = new GetDataRequest();
+                    request.GetPatientProfileDetailRequest = new GetPatientProfileDetailRequest();
+                    request.GetPatientProfileDetailRequest.PatientProfileRef = _profileRef;
+
+                    // include notes for the notes component
+                    request.GetPatientProfileDetailRequest.IncludeNotes = true;
+
+                    // include attachments for the docs component
+                    request.GetPatientProfileDetailRequest.IncludeAttachments = true;
+                    GetDataResponse response = service.GetData(request);
+
+                    _patientProfile = response.GetPatientProfileDetailResponse.PatientProfile;
+                });
+
+            this.Host.Title = string.Format(SR.TitlePatientComponent,
+                    PersonNameFormat.Format(_patientProfile.Name),
+                    MrnFormat.Format(_patientProfile.Mrn));
+
+            // Create component for each tab
+            BiographyOrderHistoryComponent orderHistoryComponent = new BiographyOrderHistoryComponent(_patientRef);
+            BiographyNoteComponent noteComponent = new BiographyNoteComponent(_patientProfile.Notes);
+            BiographyFeedbackComponent feedbackComponent = new BiographyFeedbackComponent();
+            BiographyDemographicComponent demographicComponent = new BiographyDemographicComponent(_patientRef, _profileRef);
+            MimeDocumentPreviewComponent documentComponent = new MimeDocumentPreviewComponent();
+            documentComponent.PatientAttachments = _patientProfile.Attachments;
+
+            // Create tab and tab groups
+            TabComponentContainer tabContainer = new TabComponentContainer();
+            tabContainer.Pages.Add(new TabPage(SR.TitleOrders, orderHistoryComponent));
+            tabContainer.Pages.Add(new TabPage(SR.TitleDemographic, demographicComponent));
+            tabContainer.Pages.Add(new TabPage(SR.TitleDocuments, documentComponent));
+            tabContainer.Pages.Add(new TabPage(SR.TitleNotes, noteComponent));
+            tabContainer.Pages.Add(new TabPage(SR.TitlePatientFeedbacks, feedbackComponent));
+
+            TabGroupComponentContainer tabGroupContainer = new TabGroupComponentContainer(LayoutDirection.Horizontal);
+            tabGroupContainer.AddTabGroup(new TabGroup(tabContainer, 1.0f));
+
+            _contentComponentHost = new ChildComponentHost(this.Host, tabGroupContainer);
+            _contentComponentHost.StartComponent();
+
+            _bannerComponentHost = new ChildComponentHost(this.Host, new BannerComponent(_patientProfile));
+            _bannerComponentHost.StartComponent();
+
             _toolSet = new ToolSet(new PatientBiographyToolExtensionPoint(), new PatientBiographyToolContext(this));
 
             base.Start();
@@ -158,135 +190,16 @@ namespace ClearCanvas.Ris.Client
 
         #region Presentation Model
 
-        public string Name
+        public ApplicationComponentHost BannerComponentHost
         {
-            get { return PersonNameFormat.Format(_patientProfile.Name); }
+            get { return _bannerComponentHost; }
         }
 
-        public string Mrn
+        public ApplicationComponentHost ContentComponentHost
         {
-            get { return String.Format("Mrn: {0}", MrnFormat.Format(_patientProfile.Mrn)); }
-        }
-
-        public string HealthCard
-        {
-            get { return _patientProfile == null ? "" : 
-                String.Format("Healthcard: {0}", HealthcardFormat.Format(_patientProfile.Healthcard)); }
-        }
-
-        public string AgeSex
-        {
-            get 
-            {
-                if (_patientProfile.DeathIndicator)
-                {
-                    TimeSpan age = _patientProfile.TimeOfDeath.Value.Subtract(_patientProfile.DateOfBirth.Value);
-                    return String.Format("Age/Sex: {0} ({1}) Deceased", age.Days / 365, _patientProfile.Sex.Value);
-                }
-                else
-                {
-                    TimeSpan age = Platform.Time.Date.Subtract(_patientProfile.DateOfBirth.Value);
-                    return String.Format("Age/Sex: {0} ({1})", age.Days / 365, _patientProfile.Sex.Value);
-                }
-            }
-        }
-
-        public string DateOfBirth
-        {
-            get { return String.Format("DOB: {0}", Format.Date(_patientProfile.DateOfBirth)); }
-        }
-
-        public ResourceResolver ResourceResolver
-        {
-            get { return _resourceResolver; }
-        }
-
-        public string PatientImage
-        {
-            get { return "AlertMessenger.png"; }
-        }
-
-        public List<AlertListItem> AlertList
-        {
-            get 
-            {
-                List<AlertListItem> alertListItems = new List<AlertListItem>();
-
-                foreach (AlertNotificationDetail detail in _alertNotifications)
-                {
-                    alertListItems.Add(new AlertListItem(detail.Type, GetAlertTooltip(detail), GetAlertIcon(detail)));
-                }
-
-                return alertListItems;
-            }
+            get { return _contentComponentHost; }
         }
 
         #endregion
-
-        private static string GetAlertIcon(AlertNotificationDetail detail)
-        {
-            string icon;
-
-            switch (detail.Type)
-            {
-                case "Note Alert":
-                    icon = "AlertPen.png";
-                    break;
-                case "Language Alert":
-                    icon = "AlertWorld.png";
-                    break;
-                case "Reconciliation Alert":
-                    icon = "AlertMessenger.png";
-                    break;
-                case "Incomplete Demographic Data Alert":
-                    icon = "AlertIncompleteData.png";
-                    break;
-                case "Visit Alert":
-                    icon = "AlertClock.png";
-                    break;
-                default:
-                    icon = "AlertGeneral.png";
-                    break;
-            }
-
-            return icon;
-        }
-
-        private string GetAlertTooltip(AlertNotificationDetail detail)
-        {
-            string alertTooltip;
-            string patientName = PersonNameFormat.Format(_patientProfile.Name, "%g. %F");
-
-            switch (detail.Type)
-            {
-                case "Note Alert":
-                    alertTooltip = String.Format(SR.MessageAlertHighSeverityNote
-                        , patientName
-                        , StringUtilities.Combine(detail.Reasons, ", "));
-                    break;
-                case "Language Alert":
-                    alertTooltip = String.Format(SR.MessageAlertLanguageNotEnglish
-                        , patientName
-                        , StringUtilities.Combine(detail.Reasons, ", "));
-                    break;
-                case "Reconciliation Alert":
-                    alertTooltip = String.Format(SR.MessageAlertUnreconciledRecords, patientName);
-                    break;
-                case "Incomplete Demographic Data Alert":
-                    alertTooltip = String.Format(SR.MessageAlertIncompleteDemographicData
-                        , patientName,
-                        StringUtilities.Combine(detail.Reasons, ", "));
-                    break;
-                case "Visit Alert":
-                    alertTooltip = String.Format(SR.MessageAlertInvalidVisit
-                        , StringUtilities.Combine(detail.Reasons, ", "));
-                    break;
-                default:
-                    alertTooltip = StringUtilities.Combine(detail.Reasons, ", ");
-                    break;
-            }
-
-            return alertTooltip;
-        }
     }
 }
