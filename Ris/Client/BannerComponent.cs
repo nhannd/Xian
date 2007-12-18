@@ -36,7 +36,7 @@ namespace ClearCanvas.Ris.Client
 {
     public class BannerComponent : DHtmlComponent
     {
-        private readonly WorklistItemSummaryBase _worklistItem;
+        private WorklistItemSummaryBase _worklistItem;
 
         public BannerComponent(WorklistItemSummaryBase worklistItem)
         {
@@ -57,6 +57,16 @@ namespace ClearCanvas.Ris.Client
         protected override DataContractBase GetHealthcareContext()
         {
             return _worklistItem;
+        }
+
+        public WorklistItemSummaryBase WorklistItem
+        {
+            get { return _worklistItem; }
+            set
+            {
+                _worklistItem = value;
+                Refresh();
+            }
         }
     }
 }

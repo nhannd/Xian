@@ -58,7 +58,6 @@ namespace ClearCanvas.Ris.Client.Reporting
         private readonly ProtocollingComponentMode _componentMode;
 
         private ReportingWorklistItem _worklistItem;
-        private event EventHandler _worklistItemChanged;
 
         private readonly List<ReportingWorklistItem> _skippedItems;
         private readonly Stack<ReportingWorklistItem> _worklistCache;
@@ -93,7 +92,7 @@ namespace ClearCanvas.Ris.Client.Reporting
             _bannerComponentHost = new ChildComponentHost(this.Host, new BannerComponent(_worklistItem));
             _bannerComponentHost.StartComponent();
 
-            _protocolEditorComponent = new ProtocolEditorComponent(this, _worklistItem, _componentMode);
+            _protocolEditorComponent = new ProtocolEditorComponent(_worklistItem, _componentMode);
 
             _protocolEditorComponent.ProtocolAccepted += OnProtocolAccepted;
             _protocolEditorComponent.ProtocolRejected += OnProtocolRejected;
@@ -113,13 +112,6 @@ namespace ClearCanvas.Ris.Client.Reporting
             base.Start();
         }
 
-        public override void Stop()
-        {
-            // TODO prepare the component to exit the live phase
-            // This is a good place to do any clean up
-            base.Stop();
-        }
-
         #endregion
 
         #region Public members
@@ -137,17 +129,6 @@ namespace ClearCanvas.Ris.Client.Reporting
         public ApplicationComponentHost PriorReportsComponentHost
         {
             get { return _priorReportsComponentHost; }
-        }
-
-        public ReportingWorklistItem WorklistItem
-        {
-            get { return _worklistItem; }
-        }
-
-        public event EventHandler WorklistItemChanged
-        {
-            add { _worklistItemChanged += value; }
-            remove { _worklistItemChanged -= value; }
         }
 
         #endregion
@@ -240,7 +221,9 @@ namespace ClearCanvas.Ris.Client.Reporting
                 _worklistItem = GetNextWorklistItem();
                 if (_worklistItem != null)
                 {
-                    EventsHelper.Fire(_worklistItemChanged, this, EventArgs.Empty);
+                    ((BannerComponent) _bannerComponentHost.Component).WorklistItem = _worklistItem;
+                    ((PriorReportComponent) _priorReportsComponentHost.Component).WorklistItem = _worklistItem;
+                    ((ProtocolEditorComponent) _protocolEditorComponentHost.Component).WorklistItem = _worklistItem;
 
                     // Update title
                     this.Host.Title = ProtocollingComponentDocument.GetTitle(_worklistItem);

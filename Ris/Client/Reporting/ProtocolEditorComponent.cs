@@ -85,7 +85,6 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         private bool _protocolNextItem = true;
         private readonly ProtocollingComponentMode _componentMode;
-        private ProtocollingComponent _owner;
         private ApplicationComponentHost _orderNotesComponentHost;
 
         private event EventHandler _protocolAccepted;
@@ -100,10 +99,8 @@ namespace ClearCanvas.Ris.Client.Reporting
         /// <summary>
         /// Constructor
         /// </summary>
-        public ProtocolEditorComponent(ProtocollingComponent owner, ReportingWorklistItem worklistItem, ProtocollingComponentMode mode)
+        public ProtocolEditorComponent(ReportingWorklistItem worklistItem, ProtocollingComponentMode mode)
         {
-            _owner = owner;
-            _owner.WorklistItemChanged += OnWorklistItemChanged;
             _worklistItem = worklistItem;
             _componentMode = mode;
 
@@ -114,16 +111,19 @@ namespace ClearCanvas.Ris.Client.Reporting
             _procedurePlanSummaryTable = new ProtocolEditorProcedurePlanSummaryTable();
         }
 
-        ~ProtocolEditorComponent()
-        {
-            _owner.WorklistItemChanged -= OnWorklistItemChanged;
-        }
 
-        private void OnWorklistItemChanged(object sender, EventArgs e)
+        public ReportingWorklistItem WorklistItem
         {
-            _worklistItem = _owner.WorklistItem;
-            // TODO: Refresh order notes
-            StartWorklistItem();
+            get { return _worklistItem; }
+            set
+            {
+                _worklistItem = value;
+
+                _orderNotesComponentHost.StopComponent();
+                _orderNotesComponentHost.StartComponent();
+
+                StartWorklistItem();
+            }
         }
 
         #region ApplicationComponent overrides

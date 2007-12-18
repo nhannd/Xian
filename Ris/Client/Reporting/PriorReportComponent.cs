@@ -29,18 +29,13 @@
 
 #endregion
 
-using System.Runtime.InteropServices;
+using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 using ClearCanvas.Ris.Application.Common.Jsml;
-using ClearCanvas.Ris.Client.Formatting;
-using System.Collections.Generic;
-using System;
-using System.Runtime.Serialization;
+using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 
 namespace ClearCanvas.Ris.Client.Reporting
 {
@@ -84,7 +79,7 @@ namespace ClearCanvas.Ris.Client.Reporting
             }
         }
 
-        private readonly ReportingWorklistItem _worklistItem;
+        private ReportingWorklistItem _worklistItem;
 
         private readonly PriorSummaryTable _reportList;
         private PriorProcedureSummary _selectedPrior;
@@ -204,5 +199,18 @@ namespace ClearCanvas.Ris.Client.Reporting
             return response.Reports;
         }
 
+        public ReportingWorklistItem WorklistItem
+        {
+            get { return _worklistItem; }
+            set
+            {
+                _worklistItem = value;
+
+                _relevantPriors = null;
+                _allPriors = null;
+                UpdateReportList();
+                ((ReportViewComponent)_reportViewComponentHost.Component).Refresh();
+            }
+        }
     }
 }
