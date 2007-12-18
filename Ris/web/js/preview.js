@@ -162,14 +162,15 @@ function createDiagnosticServiceBreakdownTable(htmlTable)
 			{   label: "Status",
 				cellType: "text",
 				getValue: function(item) { return item.State; }
-			},
-			{   label: "Active",
-				cellType: "text",
-				getValue: function(item) { return item.Active ? "*" : ""; }
 			}
 		 ]);
 		 
 	dsTable.rowCycleClassNames = ["row0", "row1"];
+	dsTable.renderRow = function(sender, args)
+	{
+		if(args.item.Active)
+			args.htmlRow.className = "highlight";
+	};
 	
 	return dsTable;
 }

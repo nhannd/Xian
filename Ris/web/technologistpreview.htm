@@ -99,15 +99,9 @@
                     if(selectedMps)
                     {    
 	                    // update Selected MPS Detail
-                        Field.setValue($("MPSName"), selectedMps.ProcedureStepName);
                         Field.setValue($("Modality"), selectedMps.ModalityName);
-                        Field.setValue($("ProcedureStepStatus"), selectedMps.State.Value);
-                        Field.setValue($("DiscontinueReason"), "REMOVE ME");
-
-                        Field.setValue($("AssignedStaff"), "REMOVE ME");
                         Field.setValue($("PerformingStaff"), selectedMps.Performer ? Ris.formatPersonName(selectedMps.Performer.Name) : null);
                         Field.setValue($("ScheduledStartTime"), Ris.formatDateTime(selectedMps.ScheduledStartTime));
-                        Field.setValue($("ScheduledEndTime"), "REMOVE ME");
                         Field.setValue($("StartTime"), Ris.formatDateTime(selectedMps.StartTime));
                         Field.setValue($("EndTime"), Ris.formatDateTime(selectedMps.EndTime));
                     }
@@ -134,7 +128,18 @@
                     var dsTable = createDiagnosticServiceBreakdownTable($("dsBreakdownTable"));
                     dsTable.bindItems(breakdownItems);
 		            
-                    // update active and past RIC tables
+					var orderDetail = data.GetOrderDetailResponse.Order;
+					if(orderDetail.Notes.length)
+						createOrderNotesTable($("orderNotesTable"), orderDetail.Notes);
+					else
+						Field.show($("orderNotesTable"), false);
+
+					if (orderDetail.RequestedProcedures.length)
+						createRequestedProceduresTable($("proceduresTable"), orderDetail.RequestedProcedures);
+					else
+						Field.show($("proceduresTable"), false);
+
+					// update active and past RIC tables
    		            var patientOrderData = data.ListOrdersResponse.Orders;
 		            if (patientOrderData)
 		            {
@@ -283,7 +288,6 @@
 		            <td>Procedure</td>
 		            <td>Procedure Step</td>
 		            <td>Status</td>
-		            <td>Selected Worklist Item?</td>
 	            </tr>
                 <!--<tr>
                     <td colspan="6" class="tableheading"></td>
@@ -295,38 +299,42 @@
                     <td class="sectionheading" colspan="4">Selected MPS Details</td>
                 </tr>
                 <tr>
-                    <td width="120" class="propertyname">Name</td>
-                    <td width="200"><div id="MPSName"/></td>
+                    <td width="120"  class="propertyname">Scheduled Start Time</td>
+                    <td width="200"><div id="ScheduledStartTime"/></td>
                     <td width="120" class="propertyname">Modality</td>
                     <td width="200"><div id="Modality"/></td>
                 </tr>
                 <tr>
-                    <td width="120"  class="propertyname">Status</td>
-                    <td width="200"><div id="ProcedureStepStatus"/></td>
-                </tr>
-                <tr id="DiscontinueReasonRow">
-                    <td width="120" class="propertyname">Discontinue Reason</td>
-                    <td colspan="3"><div id="DiscontinueReason"/></td>
-                </tr>
-                <tr>
-                    <td width="120"  class="propertyname">Assigned Staff</td>
-                    <td width="200"><div id="AssignedStaff"/></td>
+                    <td width="120"  class="propertyname">Start Time</td>
+                    <td width="200"><div id="StartTime"/></td>
                     <td width="120" class="propertyname">Performing Staff</td>
                     <td width="200"><div id="PerformingStaff"/></td>
                 </tr>
                 <tr>
-                    <td width="120"  class="propertyname">Scheduled Start Time</td>
-                    <td width="200"><div id="ScheduledStartTime"/></td>
-                    <td width="120" class="propertyname">Scheduled End Time</td>
-                    <td width="200"><div id="ScheduledEndTime"/></td>
-                </tr>
-                <tr>
-                    <td width="120"  class="propertyname">Start Time</td>
-                    <td width="200"><div id="StartTime"/></td>
                     <td width="120" class="propertyname">End Time</td>
                     <td width="200"><div id="EndTime"/></td>
+                    <td width="120" class="propertyname"></td>
+                    <td width="200"></td>
                 </tr>
             </table>
+
+			<table border="0" id="orderNotesTable">
+				<tr><td class="sectionheading" colspan="6">Order Notes</td></tr>
+				<tr class="tableheading">
+					<td>Comment</td>
+					<td>Time</td>
+					<td>Author</td>
+				</tr>
+			</table>
+
+			<table border="0" id="proceduresTable">
+				<tr><td class="sectionheading" colspan="6">Ordered Procedures</td></tr>
+				<tr class="tableheading">
+					<td>Procedure</td>
+					<td>Status</td>
+					<td>Protocol</td>
+				</tr>
+			</table>
 
 	        <table width="100%" border="0" id="activeProceduresTable">
 	            <tr><td class="sectionheading" colspan="6">Active Requests for Imaging Consultation</td></tr>
