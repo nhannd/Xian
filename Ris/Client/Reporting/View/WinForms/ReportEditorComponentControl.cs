@@ -51,11 +51,13 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             InitializeComponent();
             _component = component;
 
-            _editorBrowser.Url = new Uri(_component.EditorUrl);
-            _editorBrowser.ObjectForScripting = _component.ScriptObject;
+            Control reportEditor = (Control)_component.ReportEditorHost.ComponentView.GuiElement;
+            reportEditor.Dock = DockStyle.Fill;
+            _browserSplitContainer.Panel1.Controls.Add(reportEditor);
 
-            _previewBrowser.Url = new Uri(_component.PreviewUrl);
-            _previewBrowser.ObjectForScripting = _component.ScriptObject;
+            Control reportPreview = (Control)_component.ReportPreviewHost.ComponentView.GuiElement;
+            reportPreview.Dock = DockStyle.Fill;
+            _browserSplitContainer.Panel2.Controls.Add(reportPreview);
 
             _supervisor.LookupHandler = _component.SupervisorLookupHandler;
             _supervisor.DataBindings.Add("Value", _component, "Supervisor", true, DataSourceUpdateMode.OnPropertyChanged);
@@ -85,25 +87,21 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 
         private void _verifyButton_Click(object sender, EventArgs e)
         {
-            _editorBrowser.Document.InvokeScript("saveData", null);
             _component.Verify();
         }
 
         private void _sendToVerifyButton_Click(object sender, EventArgs e)
         {
-            _editorBrowser.Document.InvokeScript("saveData", null);
             _component.SendToVerify();
         }
 
         private void _sendToTranscriptionButton_Click(object sender, EventArgs e)
         {
-            _editorBrowser.Document.InvokeScript("saveData", null);
             _component.SendToTranscription();
         }
 
         private void _saveButton_Click(object sender, EventArgs e)
         {
-            _editorBrowser.Document.InvokeScript("saveData", null);
             _component.Save();
         }
 

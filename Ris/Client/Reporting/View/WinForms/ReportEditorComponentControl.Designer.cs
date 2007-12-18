@@ -60,10 +60,6 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
         private void InitializeComponent()
         {
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this._browserPanel = new System.Windows.Forms.Panel();
-            this._browserSplitContainer = new System.Windows.Forms.SplitContainer();
-            this._editorBrowser = new System.Windows.Forms.WebBrowser();
-            this._previewBrowser = new System.Windows.Forms.WebBrowser();
             this._residentPanel = new System.Windows.Forms.Panel();
             this._supervisor = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
             this._cancelButton = new System.Windows.Forms.Button();
@@ -72,13 +68,11 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this._sendToVerifyButton = new System.Windows.Forms.Button();
             this._sendToTranscriptionButton = new System.Windows.Forms.Button();
             this._saveButton = new System.Windows.Forms.Button();
+            this._browserSplitContainer = new System.Windows.Forms.SplitContainer();
             this.tableLayoutPanel1.SuspendLayout();
-            this._browserPanel.SuspendLayout();
-            this._browserSplitContainer.Panel1.SuspendLayout();
-            this._browserSplitContainer.Panel2.SuspendLayout();
-            this._browserSplitContainer.SuspendLayout();
             this._residentPanel.SuspendLayout();
             this._buttonPanel.SuspendLayout();
+            this._browserSplitContainer.SuspendLayout();
             this.SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -86,7 +80,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this.tableLayoutPanel1.ColumnCount = 2;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel1.Controls.Add(this._browserPanel, 0, 0);
+            this.tableLayoutPanel1.Controls.Add(this._browserSplitContainer, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this._residentPanel, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this._cancelButton, 1, 2);
             this.tableLayoutPanel1.Controls.Add(this._buttonPanel, 0, 2);
@@ -97,54 +91,9 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 50F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(661, 606);
             this.tableLayoutPanel1.TabIndex = 0;
-            // 
-            // _browserPanel
-            // 
-            this.tableLayoutPanel1.SetColumnSpan(this._browserPanel, 2);
-            this._browserPanel.Controls.Add(this._browserSplitContainer);
-            this._browserPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._browserPanel.Location = new System.Drawing.Point(3, 3);
-            this._browserPanel.Name = "_browserPanel";
-            this._browserPanel.Size = new System.Drawing.Size(655, 490);
-            this._browserPanel.TabIndex = 1;
-            // 
-            // _browserSplitContainer
-            // 
-            this._browserSplitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._browserSplitContainer.Location = new System.Drawing.Point(0, 0);
-            this._browserSplitContainer.Name = "_browserSplitContainer";
-            this._browserSplitContainer.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            // 
-            // _browserSplitContainer.Panel1
-            // 
-            this._browserSplitContainer.Panel1.Controls.Add(this._editorBrowser);
-            // 
-            // _browserSplitContainer.Panel2
-            // 
-            this._browserSplitContainer.Panel2.Controls.Add(this._previewBrowser);
-            this._browserSplitContainer.Size = new System.Drawing.Size(655, 490);
-            this._browserSplitContainer.SplitterDistance = 120;
-            this._browserSplitContainer.TabIndex = 0;
-            // 
-            // _editorBrowser
-            // 
-            this._editorBrowser.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._editorBrowser.Location = new System.Drawing.Point(0, 0);
-            this._editorBrowser.MinimumSize = new System.Drawing.Size(20, 20);
-            this._editorBrowser.Name = "_editorBrowser";
-            this._editorBrowser.Size = new System.Drawing.Size(655, 120);
-            this._editorBrowser.TabIndex = 0;
-            // 
-            // _previewBrowser
-            // 
-            this._previewBrowser.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._previewBrowser.Location = new System.Drawing.Point(0, 0);
-            this._previewBrowser.MinimumSize = new System.Drawing.Size(20, 20);
-            this._previewBrowser.Name = "_previewBrowser";
-            this._previewBrowser.Size = new System.Drawing.Size(655, 366);
-            this._previewBrowser.TabIndex = 0;
             // 
             // _residentPanel
             // 
@@ -229,6 +178,17 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this._saveButton.UseVisualStyleBackColor = true;
             this._saveButton.Click += new System.EventHandler(this._saveButton_Click);
             // 
+            // _browserSplitContainer
+            // 
+            this.tableLayoutPanel1.SetColumnSpan(this._browserSplitContainer, 2);
+            this._browserSplitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._browserSplitContainer.Location = new System.Drawing.Point(3, 3);
+            this._browserSplitContainer.Name = "_browserSplitContainer";
+            this._browserSplitContainer.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            this._browserSplitContainer.Size = new System.Drawing.Size(655, 490);
+            this._browserSplitContainer.SplitterDistance = 120;
+            this._browserSplitContainer.TabIndex = 6;
+            // 
             // ReportEditorComponentControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -238,12 +198,9 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this.Name = "ReportEditorComponentControl";
             this.Size = new System.Drawing.Size(661, 606);
             this.tableLayoutPanel1.ResumeLayout(false);
-            this._browserPanel.ResumeLayout(false);
-            this._browserSplitContainer.Panel1.ResumeLayout(false);
-            this._browserSplitContainer.Panel2.ResumeLayout(false);
-            this._browserSplitContainer.ResumeLayout(false);
             this._residentPanel.ResumeLayout(false);
             this._buttonPanel.ResumeLayout(false);
+            this._browserSplitContainer.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -251,11 +208,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
         #endregion
 
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
-        private System.Windows.Forms.Panel _browserPanel;
         private System.Windows.Forms.Button _cancelButton;
-        private System.Windows.Forms.SplitContainer _browserSplitContainer;
-        private System.Windows.Forms.WebBrowser _editorBrowser;
-        private System.Windows.Forms.WebBrowser _previewBrowser;
         private System.Windows.Forms.Panel _residentPanel;
         private ClearCanvas.Ris.Client.View.WinForms.LookupField _supervisor;
         private System.Windows.Forms.FlowLayoutPanel _buttonPanel;
@@ -263,6 +216,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
         private System.Windows.Forms.Button _sendToVerifyButton;
         private System.Windows.Forms.Button _sendToTranscriptionButton;
         private System.Windows.Forms.Button _saveButton;
+        private System.Windows.Forms.SplitContainer _browserSplitContainer;
 
     }
 }

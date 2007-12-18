@@ -31,7 +31,6 @@
 
 using System;
 using System.Collections;
-using System.Runtime.InteropServices;
 using System.Threading;
 
 using ClearCanvas.Common;
@@ -41,7 +40,6 @@ using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Jsml;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
-using ClearCanvas.Ris.Client.Formatting;
 using AuthorityTokens=ClearCanvas.Ris.Application.Common.AuthorityTokens;
 
 namespace ClearCanvas.Ris.Client.Reporting
@@ -60,45 +58,62 @@ namespace ClearCanvas.Ris.Client.Reporting
     [AssociateView(typeof(ReportEditorComponentViewExtensionPoint))]
     public class ReportEditorComponent : ApplicationComponent
     {
-        /// <summary>
-        /// The script callback is an object that is made available to the web browser so that
-        /// the javascript code can invoke methods on the host.  It must be COM-visible.
-        /// </summary>
-        [ComVisible(true)]
-        public class ScriptCallback
+        public class DHtmlReportEditorComponent : DHtmlComponent
         {
-            private readonly ReportEditorComponent _component;
+            private readonly ReportEditorComponent _owner;
 
-            public ScriptCallback(ReportEditorComponent component)
+            public DHtmlReportEditorComponent(ReportEditorComponent owner)
             {
-                _component = component;
+                _owner = owner;
             }
 
-            public void Alert(string message)
+            public void Refresh()
             {
-                _component.Host.ShowMessageBox(message, MessageBoxActions.Ok);
+                NotifyAllPropertiesChanged();
             }
 
-            public string GetTag(string tag)
+            protected override string GetTag(string tag)
             {
-                return _component.GetTag(tag);
+                switch (tag)
+                {
+                    case "Report":
+                        ReportPartDetail reportPart = _owner._report.GetPart(0);
+                        return reportPart == null ? "" : reportPart.Content;
+                    case "Addendum":
+                        ReportPartDetail addendumPart = _owner._report.GetPart(_owner._reportPartIndex);
+                        return addendumPart == null ? "" : addendumPart.Content;
+                    case "Preview":
+                    default:
+                        return JsmlSerializer.Serialize(_owner._report, "report");
+                }
             }
 
-            public void SetTag(string tag, string data)
+            protected override void SetTag(string tag, string data)
             {
-                _component.SetTag(tag, data);
+                switch (tag)
+                {
+                    case "Report":
+                    case "Addendum":
+                        _owner.ReportContent = data;
+                        break;
+                    default:
+                        break;
+                }
             }
 
-            public string FormatPersonName(string jsml)
+            protected override DataContractBase GetHealthcareContext()
             {
-                PersonNameDetail detail = JsmlSerializer.Deserialize<PersonNameDetail>(jsml);
-                return detail == null ? "" : PersonNameFormat.Format(detail);
+                return _owner._worklistItem;
             }
         }
 
-        private readonly ScriptCallback _scriptCallback;
+        private readonly DHtmlReportEditorComponent _reportEditorComponent;
+        private ChildComponentHost _reportEditorHost;
 
-        private readonly EntityRef _reportingStepRef;
+        private readonly DHtmlReportEditorComponent _reportPreviewComponent;
+        private ChildComponentHost _reportPreviewHost;
+
+        private readonly ReportingWorklistItem _worklistItem;
         private int _reportPartIndex;
         private ReportDetail _report;
 
@@ -118,10 +133,11 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         private ILookupHandler _supervisorLookupHandler;
 
-        public ReportEditorComponent(EntityRef reportingStepRef)
+        public ReportEditorComponent(ReportingWorklistItem worklistItem)
         {
-            _scriptCallback = new ScriptCallback(this);
-            _reportingStepRef = reportingStepRef;
+            _worklistItem = worklistItem;
+            _reportEditorComponent = new DHtmlReportEditorComponent(this);
+            _reportPreviewComponent = new DHtmlReportEditorComponent(this);
         }
 
         public override void Start()
@@ -129,13 +145,13 @@ namespace ClearCanvas.Ris.Client.Reporting
             Platform.GetService<IReportingWorkflowService>(
                 delegate(IReportingWorkflowService service)
                 {
-                    GetOperationEnablementResponse enablementResponse = service.GetOperationEnablement(new GetOperationEnablementRequest(_reportingStepRef));
+                    GetOperationEnablementResponse enablementResponse = service.GetOperationEnablement(new GetOperationEnablementRequest(_worklistItem.ProcedureStepRef));
                     _canCompleteInterpretationAndVerify = enablementResponse.OperationEnablementDictionary["CompleteInterpretationAndVerify"];
                     _canCompleteVerification = enablementResponse.OperationEnablementDictionary["CompleteVerification"];
                     _canCompleteInterpretationForVerification = enablementResponse.OperationEnablementDictionary["CompleteInterpretationForVerification"];
                     _canCompleteInterpretationForTranscription = enablementResponse.OperationEnablementDictionary["CompleteInterpretationForTranscription"];
 
-                    LoadReportForEditResponse response = service.LoadReportForEdit(new LoadReportForEditRequest(_reportingStepRef));
+                    LoadReportForEditResponse response = service.LoadReportForEdit(new LoadReportForEditRequest(_worklistItem.ProcedureStepRef));
                     _reportPartIndex = response.ReportPartIndex;
                     _report = response.Report;
                     ReportPartDetail part = _report.GetPart(_reportPartIndex);
@@ -152,33 +168,25 @@ namespace ClearCanvas.Ris.Client.Reporting
 
             _supervisorLookupHandler = new StaffLookupHandler(this.Host.DesktopWindow, new string[] { "PRAD" });
 
+            _reportEditorComponent.SetUrl(this.EditorUrl);
+            _reportEditorHost = new ChildComponentHost(this.Host, _reportEditorComponent);
+            _reportEditorHost.StartComponent();
+
+            _reportPreviewComponent.SetUrl(this.PreviewUrl);
+            _reportPreviewHost = new ChildComponentHost(this.Host, _reportPreviewComponent);
+            _reportPreviewHost.StartComponent();
+
             base.Start();
         }
 
-        public string EditorUrl
+        private string EditorUrl
         {
             get { return this.IsEditingAddendum ? ReportEditorComponentSettings.Default.AddendumEditorPageUrl : ReportEditorComponentSettings.Default.ReportEditorPageUrl; }
         }
 
-        public string PreviewUrl
+        private string PreviewUrl
         {
             get { return this.IsEditingAddendum ? ReportEditorComponentSettings.Default.ReportPreviewPageUrl : "about:blank"; }
-        }
-
-        public ScriptCallback ScriptObject
-        {
-            get { return _scriptCallback; }
-        }
-
-        public string ReportContent
-        {
-            get { return _reportContent; }
-            set { _reportContent = value; }
-        }
-
-        public bool IsEditingAddendum
-        {
-            get { return _reportPartIndex > 0; }
         }
 
         #region Event Handlers
@@ -216,6 +224,27 @@ namespace ClearCanvas.Ris.Client.Reporting
         #endregion
 
         #region Presentation Model
+
+        public ApplicationComponentHost ReportEditorHost
+        {
+            get { return _reportEditorHost; }
+        }
+
+        public ApplicationComponentHost ReportPreviewHost
+        {
+            get { return _reportPreviewHost; }
+        }
+
+        public string ReportContent
+        {
+            get { return _reportContent; }
+            set { _reportContent = value; }
+        }
+
+        public bool IsEditingAddendum
+        {
+            get { return _reportPartIndex > 0; }
+        }
 
         public bool VerifyEnabled
         {
@@ -259,6 +288,8 @@ namespace ClearCanvas.Ris.Client.Reporting
         {
             try
             {
+                _reportEditorComponent.SaveData();
+
                 if (_canCompleteInterpretationAndVerify)
                 {
                     Platform.GetService<IReportingWorkflowService>(
@@ -266,7 +297,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                         {
                             service.CompleteInterpretationAndVerify(
                                 new CompleteInterpretationAndVerifyRequest(
-                                _reportingStepRef, 
+                                _worklistItem.ProcedureStepRef, 
                                 this.ReportContent,
                                 _supervisor == null ? null : _supervisor.StaffRef));
                         });
@@ -276,7 +307,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                     Platform.GetService<IReportingWorkflowService>(
                         delegate(IReportingWorkflowService service)
                         {
-                            service.CompleteVerification(new CompleteVerificationRequest(_reportingStepRef, this.ReportContent));
+                            service.CompleteVerification(new CompleteVerificationRequest(_worklistItem.ProcedureStepRef, this.ReportContent));
                         });
                 }
 
@@ -297,6 +328,8 @@ namespace ClearCanvas.Ris.Client.Reporting
         {
             try
             {
+                _reportEditorComponent.SaveData();
+
                 if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.VerifyReport) == false && _supervisor == null)
                 {
                     this.Host.DesktopWindow.ShowMessageBox(SR.MessageChooseRadiologist, MessageBoxActions.Ok);
@@ -308,7 +341,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                     {
                         service.CompleteInterpretationForVerification(
                             new CompleteInterpretationForVerificationRequest(
-                            _reportingStepRef, 
+                            _worklistItem.ProcedureStepRef, 
                             this.ReportContent,
                             _supervisor == null ? null : _supervisor.StaffRef));
                     });
@@ -330,12 +363,14 @@ namespace ClearCanvas.Ris.Client.Reporting
         {
             try
             {
+                _reportEditorComponent.SaveData();
+
                 Platform.GetService<IReportingWorkflowService>(
                     delegate(IReportingWorkflowService service)
                     {
                         service.CompleteInterpretationForTranscription(
                             new CompleteInterpretationForTranscriptionRequest(
-                            _reportingStepRef, 
+                            _worklistItem.ProcedureStepRef, 
                             this.ReportContent,
                             _supervisor == null ? null : _supervisor.StaffRef));
                     });
@@ -357,12 +392,14 @@ namespace ClearCanvas.Ris.Client.Reporting
         {
             try
             {
+                _reportEditorComponent.SaveData();
+
                 Platform.GetService<IReportingWorkflowService>(
                     delegate(IReportingWorkflowService service)
                     {
                         service.SaveReport(
                             new SaveReportRequest(
-                            _reportingStepRef, 
+                            _worklistItem.ProcedureStepRef, 
                             this.ReportContent,
                             _supervisor == null ? null : _supervisor.StaffRef));
                     });
@@ -413,35 +450,6 @@ namespace ClearCanvas.Ris.Client.Reporting
         }
 
         #endregion
-
-        public string GetTag(string tag)
-        {
-            switch (tag)
-            {
-                case "Report":
-                    ReportPartDetail reportPart = _report.GetPart(0);
-                    return reportPart == null ? "" : reportPart.Content;
-                case "Addendum":
-                    ReportPartDetail addendumPart = _report.GetPart(_reportPartIndex);
-                    return addendumPart == null ? "" : addendumPart.Content;
-                case "Preview":
-                default:
-                    return JsmlSerializer.Serialize(_report, "report");
-            }
-        }
-
-        public void SetTag(string tag, string data)
-        {
-            switch (tag)
-            {
-                case "Report":
-                case "Addendum":
-                    this.ReportContent = data;
-                    break;
-                default:
-                    break;
-            }
-        }
 
         private void SaveSupervisor()
         {
