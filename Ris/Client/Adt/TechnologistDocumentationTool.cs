@@ -50,7 +50,7 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             get
             {
-                return this.Context.SelectedItems.Count > 0;
+                return this.Context.SelectedItems.Count == 1;
             }
         }
 
