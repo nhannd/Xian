@@ -225,6 +225,8 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
             Order order = PlaceOrderHelper(request.Requisition);
 
+            ValidatePatientProfilesExist(order);
+
             PersistenceContext.Lock(order, DirtyState.New);
 
             // ensure the new order is assigned an OID before using it in the return value
@@ -247,6 +249,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             assembler.UpdateOrderFromRequisition(order, request.Requisition, this.CurrentUserStaff, PersistenceContext);
 
             UpdateProceduresHelper(order, request.Requisition.RequestedProcedures);
+            ValidatePatientProfilesExist(order);
 
             PersistenceContext.SynchState();
 
@@ -272,6 +275,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
             // place new order
             Order newOrder = PlaceOrderHelper(request.Requisition);
+            ValidatePatientProfilesExist(newOrder);
             PersistenceContext.Lock(newOrder, DirtyState.New);
 
             PersistenceContext.SynchState();
@@ -286,6 +290,22 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             if(order.Status != OrderStatus.SC && order.Status != OrderStatus.IP)
                 throw new RequestValidationException(string.Format("Orders with a status of '{0}' cannot be modified or replaced.",
                     EnumUtils.GetEnumValueInfo(order.Status, PersistenceContext)));
+        }
+
+        // TODO: ideally this should be done in the model layer
+        private void ValidatePatientProfilesExist(Order order)
+        {
+            foreach (RequestedProcedure procedure in order.RequestedProcedures)
+            {
+                bool hasProfile = CollectionUtils.Contains(order.Patient.Profiles,
+                    delegate(PatientProfile profile)
+                    {
+                        return profile.Mrn.AssigningAuthority.Equals(procedure.PerformingFacility.InformationAuthority);
+                    });
+                if(!hasProfile)
+                    throw new RequestValidationException(string.Format("{0} is not a valid performing facility for this patient because the patient does not have a demographics profile for this facility.",
+                        procedure.PerformingFacility.Name));
+            }
         }
 
         private Order PlaceOrderHelper(OrderRequisition requisition)
