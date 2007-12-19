@@ -78,31 +78,6 @@ namespace ClearCanvas.Ris.Client.Adt
     [AssociateView(typeof(TechnologistDocumentationComponentViewExtensionPoint))]
     public class TechnologistDocumentationComponent : ApplicationComponent
     {
-        #region Order Summary Component class
-
-        class OrderSummaryComponent : DHtmlComponent
-        {
-            private readonly TechnologistDocumentationComponent _owner;
-
-            public OrderSummaryComponent(TechnologistDocumentationComponent owner)
-            {
-                _owner = owner;
-            }
-
-            public override void Start()
-            {
-                SetUrl(TechnologistDocumentationComponentSettings.Default.OrderSummaryUrl);
-                base.Start();
-            }
-
-            protected override DataContractBase GetHealthcareContext()
-            {
-                return _owner._worklistItem;
-            }
-        }
-
-        #endregion
-
         #region TechnologistDocumentationContext class
 
         class TechnologistDocumentationContext : ToolContext, ITechnologistDocumentationContext
@@ -161,7 +136,7 @@ namespace ClearCanvas.Ris.Client.Adt
         private ClickAction _startAction;
         private ClickAction _discontinueAction;
 
-        private ChildComponentHost _orderSummaryComponentHost;
+        private ChildComponentHost _bannerComponentHost;
         private ChildComponentHost _documentationHost;
         private TabComponentContainer _documentationTabContainer;
 
@@ -170,6 +145,7 @@ namespace ClearCanvas.Ris.Client.Adt
         private ExamDetailsComponent _preExamComponent;
         private ExamDetailsComponent _postExamComponent;
         private PerformedProcedureComponent _ppsComponent;
+        private TechnologistDocumentationOrderDetailsComponent _orderDetailsComponent;
 
         private bool _completeEnabled;
         private bool _saveEnabled = true;
@@ -205,9 +181,9 @@ namespace ClearCanvas.Ris.Client.Adt
 
         #region Presentation Model Methods
 
-        public ApplicationComponentHost OrderSummaryComponentHost
+        public ApplicationComponentHost BannerHost
         {
-            get { return _orderSummaryComponentHost; }
+            get { return _bannerComponentHost; }
         }
 
         public ApplicationComponentHost DocumentationHost
@@ -415,19 +391,22 @@ namespace ClearCanvas.Ris.Client.Adt
 
         private void InitializeDocumentationTabPages()
         {
-            _orderSummaryComponentHost = new ChildComponentHost(this.Host, new OrderSummaryComponent(this));
-            _orderSummaryComponentHost.StartComponent();
+            _bannerComponentHost = new ChildComponentHost(this.Host, new BannerComponent(_worklistItem));
+            _bannerComponentHost.StartComponent();
 
             _documentationTabContainer = new TabComponentContainer();
+
+            _orderDetailsComponent = new TechnologistDocumentationOrderDetailsComponent(_worklistItem);
+            InsertDocumentationPage(_orderDetailsComponent, 0);
 
             _preExamComponent = new ExamDetailsComponent("Pre-exam",
                                                          TechnologistDocumentationComponentSettings.Default.PreExamDetailsPageUrl,
                                                          _orderExtendedProperties);
-            InsertDocumentationPage(_preExamComponent, 0);
+            InsertDocumentationPage(_preExamComponent, 1);
 
-            _ppsComponent = new PerformedProcedureComponent("Exam", _procedurePlan.OrderRef);
+            _ppsComponent = new PerformedProcedureComponent("Exam", _procedurePlan.OrderRef, this);
             _ppsComponent.ProcedurePlanChanged += delegate(object sender, ProcedurePlanChangedEventArgs e) { RefreshProcedurePlanSummary(e.ProcedurePlanSummary); };
-            InsertDocumentationPage(_ppsComponent, 1);
+            InsertDocumentationPage(_ppsComponent, 2);
 
             // create extension modules, which may add documentation pages to the tab container
             TechnologistDocumentationContext context = new TechnologistDocumentationContext(this);

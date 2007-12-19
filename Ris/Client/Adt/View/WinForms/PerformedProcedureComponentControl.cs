@@ -52,6 +52,10 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             _component = component;
             _component = component;
 
+            _procedurePlanSummary.Table = _component.ProcedurePlanSummaryTable;
+            _procedurePlanSummary.MenuModel = _component.ProcedurePlanTreeActionModel;
+            _procedurePlanSummary.ToolbarModel = _component.ProcedurePlanTreeActionModel;
+
             _mppsTableView.Table = _component.MppsTable;
             _mppsTableView.DataBindings.Add("Selection", _component, "SelectedMpps", true, DataSourceUpdateMode.OnPropertyChanged);
             _mppsTableView.MenuModel = _component.MppsTableActionModel;
@@ -60,7 +64,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             Control detailsPage = (Control)_component.DetailsComponentHost.ComponentView.GuiElement;
             detailsPage.Dock = DockStyle.Fill;
             _mppsDetailsPanel.Controls.Add(detailsPage);
-
         }
     }
 }

@@ -11,5 +11,8 @@
     <Setting Name="PostExamDetailsPageUrl" Type="System.String" Scope="Application">
       <Value Profile="(Default)">http://localhost/RIS/forms/technologist/post-exam.htm</Value>
     </Setting>
+    <Setting Name="ProtocolSummaryUrl" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">http://localhost/RIS/protocolsummary.htm</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

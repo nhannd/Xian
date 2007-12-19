@@ -38,7 +38,6 @@ using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
-using ClearCanvas.Ris.Application.Common.ModalityWorkflow.TechnologistDocumentation;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -119,16 +118,18 @@ namespace ClearCanvas.Ris.Client.Adt
         private ChildComponentHost _mppsDetailsComponentHost;
         private MppsDetailsComponent _detailsComponent;
         private readonly string _title;
+        private TechnologistDocumentationComponent _owner;
 
         private event EventHandler<ProcedurePlanChangedEventArgs> _procedurePlanChanged;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public PerformedProcedureComponent(string title, EntityRef orderRef)
+        public PerformedProcedureComponent(string title, EntityRef orderRef, TechnologistDocumentationComponent owner)
         {
             _title = title;
             _orderRef = orderRef;
+            _owner = owner;
         }
 
         internal void AddPerformedProcedureStep(ModalityPerformedProcedureStepSummary mpps)
@@ -201,6 +202,16 @@ namespace ClearCanvas.Ris.Client.Adt
         #endregion
 
         #region Presentation Model
+
+        public ITable ProcedurePlanSummaryTable
+        {
+            get { return _owner.ProcedurePlanSummaryTable; }
+        }
+
+        public ActionModelNode ProcedurePlanTreeActionModel
+        {
+            get { return _owner.ProcedurePlanTreeActionModel; }
+        }
 
         public ITable MppsTable
         {

@@ -49,5 +49,14 @@ namespace ClearCanvas.Ris.Client.Adt {
                 return ((string)(this["PostExamDetailsPageUrl"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://localhost/RIS/protocolsummary.htm")]
+        public string ProtocolSummaryUrl {
+            get {
+                return ((string)(this["ProtocolSummaryUrl"]));
+            }
+        }
     }
 }

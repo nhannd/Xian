@@ -52,32 +52,16 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 
             _component = component;
 
-            Control orderSummary = (Control)_component.OrderSummaryComponentHost.ComponentView.GuiElement;
-            orderSummary.Dock = DockStyle.Fill;
-            _orderSummaryPanel.Controls.Add(orderSummary);
+            Control banner = (Control) _component.BannerHost.ComponentView.GuiElement;
+            banner.Dock = DockStyle.Fill;
+            _bannerPanel.Controls.Add(banner);
 
             Control documentationTabs = (Control)_component.DocumentationHost.ComponentView.GuiElement;
             documentationTabs.Dock = DockStyle.Fill;
-            _splitContainerRoot.Panel2.Controls.Add(documentationTabs);
-
-            _procedurePlanSummary.Table = _component.ProcedurePlanSummaryTable;
-            _procedurePlanSummary.MenuModel = _component.ProcedurePlanTreeActionModel;
-            _procedurePlanSummary.ToolbarModel = _component.ProcedurePlanTreeActionModel;
-
-            _component.ProcedurePlanChanged += OnProcedurePlanChanged;
+            _orderDocumentationPanel.Controls.Add(documentationTabs);
 
             _btnComplete.DataBindings.Add("Enabled", _component, "CompleteEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
             _btnSave.DataBindings.Add("Enabled", _component, "SaveEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
-        }
-
-        ~TechnologistDocumentationComponentControl()
-        {
-            _component.ProcedurePlanChanged -= OnProcedurePlanChanged;
-        }
-
-        private void OnProcedurePlanChanged(object sender, EventArgs e)
-        {
-            _procedurePlanSummary.Table = _component.ProcedurePlanSummaryTable;
         }
 
         private void _btnSave_Click(object sender, EventArgs e)

@@ -137,6 +137,13 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
+    <Compile Include="TechnologistDocumentationOrderDetailsComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="TechnologistDocumentationOrderDetailsComponentControl.Designer.cs">
+      <DependentUpon>TechnologistDocumentationOrderDetailsComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TechnologistDocumentationOrderDetailsComponentView.cs" />
     <Compile Include="VisitDetailsEditorComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -276,6 +283,10 @@
     <EmbeddedResource Include="TechnologistDocumentationComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>TechnologistDocumentationComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TechnologistDocumentationOrderDetailsComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>TechnologistDocumentationOrderDetailsComponentControl.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
