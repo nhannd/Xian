@@ -45,8 +45,8 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this._protocolGroup = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
             this._grpProcedures = new System.Windows.Forms.GroupBox();
             this._procedurePlanSummary = new ClearCanvas.Desktop.View.WinForms.TableView();
-            this._orderNotesPanel = new System.Windows.Forms.Panel();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this._orderNotesPanel = new System.Windows.Forms.Panel();
             this._tableLayouOuter.SuspendLayout();
             this.flowLayoutPanel2.SuspendLayout();
             this.flowLayoutPanel3.SuspendLayout();
@@ -69,6 +69,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this._tableLayouOuter.Controls.Add(this._tableLayoutInner, 0, 0);
             this._tableLayouOuter.Dock = System.Windows.Forms.DockStyle.Fill;
             this._tableLayouOuter.Location = new System.Drawing.Point(0, 0);
+            this._tableLayouOuter.Margin = new System.Windows.Forms.Padding(0);
             this._tableLayouOuter.Name = "_tableLayouOuter";
             this._tableLayouOuter.RowCount = 2;
             this._tableLayouOuter.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
@@ -279,16 +280,6 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this._procedurePlanSummary.TabIndex = 0;
             this._procedurePlanSummary.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             // 
-            // _orderNotesPanel
-            // 
-            this._orderNotesPanel.AutoSize = true;
-            this._orderNotesPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this._orderNotesPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._orderNotesPanel.Location = new System.Drawing.Point(3, 16);
-            this._orderNotesPanel.Name = "_orderNotesPanel";
-            this._orderNotesPanel.Size = new System.Drawing.Size(494, 150);
-            this._orderNotesPanel.TabIndex = 1;
-            // 
             // groupBox2
             // 
             this.groupBox2.AutoSize = true;
@@ -301,6 +292,16 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Order Notes";
+            // 
+            // _orderNotesPanel
+            // 
+            this._orderNotesPanel.AutoSize = true;
+            this._orderNotesPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this._orderNotesPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._orderNotesPanel.Location = new System.Drawing.Point(3, 16);
+            this._orderNotesPanel.Name = "_orderNotesPanel";
+            this._orderNotesPanel.Size = new System.Drawing.Size(494, 150);
+            this._orderNotesPanel.TabIndex = 1;
             // 
             // ProtocolEditorComponentControl
             // 

@@ -55,7 +55,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 2;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 150F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 100F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(1128, 729);
             this.tableLayoutPanel1.TabIndex = 0;
@@ -63,7 +63,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             // splitContainer1
             // 
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer1.Location = new System.Drawing.Point(3, 153);
+            this.splitContainer1.Location = new System.Drawing.Point(3, 103);
             this.splitContainer1.Name = "splitContainer1";
             // 
             // splitContainer1.Panel1
@@ -73,7 +73,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this._additionalDetailsPanel);
-            this.splitContainer1.Size = new System.Drawing.Size(1122, 573);
+            this.splitContainer1.Size = new System.Drawing.Size(1122, 623);
             this.splitContainer1.SplitterDistance = 562;
             this.splitContainer1.TabIndex = 0;
             // 
@@ -84,7 +84,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this._protocolEditorPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this._protocolEditorPanel.Location = new System.Drawing.Point(0, 0);
             this._protocolEditorPanel.Name = "_protocolEditorPanel";
-            this._protocolEditorPanel.Size = new System.Drawing.Size(562, 573);
+            this._protocolEditorPanel.Size = new System.Drawing.Size(562, 623);
             this._protocolEditorPanel.TabIndex = 0;
             // 
             // _additionalDetailsPanel
@@ -95,7 +95,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this._additionalDetailsPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this._additionalDetailsPanel.Location = new System.Drawing.Point(0, 0);
             this._additionalDetailsPanel.Name = "_additionalDetailsPanel";
-            this._additionalDetailsPanel.Size = new System.Drawing.Size(556, 573);
+            this._additionalDetailsPanel.Size = new System.Drawing.Size(556, 623);
             this._additionalDetailsPanel.TabIndex = 0;
             // 
             // _additionalDetailsTabControl
@@ -105,7 +105,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this._additionalDetailsTabControl.Location = new System.Drawing.Point(0, 0);
             this._additionalDetailsTabControl.Name = "_additionalDetailsTabControl";
             this._additionalDetailsTabControl.SelectedIndex = 0;
-            this._additionalDetailsTabControl.Size = new System.Drawing.Size(556, 573);
+            this._additionalDetailsTabControl.Size = new System.Drawing.Size(556, 623);
             this._additionalDetailsTabControl.TabIndex = 0;
             // 
             // _priorReportsTabPage
@@ -113,7 +113,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this._priorReportsTabPage.Location = new System.Drawing.Point(4, 22);
             this._priorReportsTabPage.Name = "_priorReportsTabPage";
             this._priorReportsTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this._priorReportsTabPage.Size = new System.Drawing.Size(548, 547);
+            this._priorReportsTabPage.Size = new System.Drawing.Size(548, 597);
             this._priorReportsTabPage.TabIndex = 0;
             this._priorReportsTabPage.Text = "Prior Reports";
             this._priorReportsTabPage.UseVisualStyleBackColor = true;
@@ -122,11 +122,10 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             // 
             this._orderSummaryPanel.AutoSize = true;
             this._orderSummaryPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this._orderSummaryPanel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this._orderSummaryPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this._orderSummaryPanel.Location = new System.Drawing.Point(3, 3);
             this._orderSummaryPanel.Name = "_orderSummaryPanel";
-            this._orderSummaryPanel.Size = new System.Drawing.Size(1122, 144);
+            this._orderSummaryPanel.Size = new System.Drawing.Size(1122, 94);
             this._orderSummaryPanel.TabIndex = 1;
             // 
             // ProtocollingComponentControl
