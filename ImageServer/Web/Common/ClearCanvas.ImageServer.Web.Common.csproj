@@ -41,6 +41,7 @@
   <ItemGroup>
     <Compile Include="Data\BaseAdaptor.cs" />
     <Compile Include="Data\BaseController.cs" />
+    <Compile Include="Data\BaseUpdateAdaptor.cs" />
     <Compile Include="Data\WorkQueueUidAdaptor.cs" />
     <Compile Include="Data\StudyStorageAdaptor.cs" />
     <Compile Include="Data\WorkQueueController.cs" />

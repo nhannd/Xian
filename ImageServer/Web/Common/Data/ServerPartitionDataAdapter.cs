@@ -43,7 +43,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
     /// <summary>
     /// Used to create/update/delete server partition entries in the database.
     /// </summary>
-    public class ServerPartitionDataAdapter : BaseAdaptor<ServerPartition, ServerPartitionSelectCriteria, ISelectServerPartition, IUpdateServerPartitionBroker, UpdateServerPartitionParameters>
+    public class ServerPartitionDataAdapter : BaseUpdateAdaptor<ServerPartition, ServerPartitionSelectCriteria, ISelectServerPartition, IUpdateServerPartitionBroker, UpdateServerPartitionParameters>
     {
         #region Public methods
 
@@ -67,8 +67,8 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         /// <param name="partition"></param>
         public bool AddServerPartition(ServerPartition partition)
         {
-            bool ok = false;
-            IList<ServerPartition> list = null;
+            bool ok;
+            IList<ServerPartition> list;
 
             using (IUpdateContext ctx = PersistentStore.OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
@@ -95,29 +95,17 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
         public bool Update(ServerPartition partition)
         {
-            bool ok = false;
+            UpdateServerPartitionParameters parms = new UpdateServerPartitionParameters();
+            parms.AeTitle = partition.AeTitle;
+            parms.Description = partition.Description;
+            parms.Enabled = partition.Enabled;
+            parms.PartitionFolder = partition.PartitionFolder;
+            parms.Port = partition.Port;
+            parms.AcceptAnyDevice = partition.AcceptAnyDevice;
+            parms.AutoInsertDevice = partition.AutoInsertDevice;
+            parms.DefaultRemotePort = partition.DefaultRemotePort;
 
-            using (IUpdateContext ctx = PersistentStore.OpenUpdateContext(UpdateContextSyncMode.Flush))
-            {
-                IUpdateServerPartition update = ctx.GetBroker<IUpdateServerPartition>();
-                ServerPartitionUpdateParameters parms = new ServerPartitionUpdateParameters();
-                parms.ServerPartitionGUID = partition.GetKey();
-                parms.AeTitle = partition.AeTitle;
-                parms.Description = partition.Description;
-                parms.Enabled = partition.Enabled;
-                parms.PartitionFolder = partition.PartitionFolder;
-                parms.Port = partition.Port;
-                parms.AcceptAnyDevice = partition.AcceptAnyDevice;
-                parms.AutoInsertDevice = partition.AutoInsertDevice;
-                parms.DefaultRemotePort = partition.DefaultRemotePort;
-
-                ok = update.Execute(parms);
-
-                if (ok)
-                    ctx.Commit();
-            }
-
-            return ok;
+            return base.Update(partition.GetKey(), parms);
         }
 
         #endregion Public methods

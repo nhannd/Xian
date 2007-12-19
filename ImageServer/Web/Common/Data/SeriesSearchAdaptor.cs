@@ -29,9 +29,6 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Criteria;
 using ClearCanvas.ImageServer.Model.Parameters;
@@ -40,7 +37,7 @@ using ClearCanvas.ImageServer.Model.UpdateBrokers;
 
 namespace ClearCanvas.ImageServer.Web.Common.Data
 {
-    public class SeriesSearchAdaptor : BaseAdaptor<Series,SeriesSelectCriteria,ISelectSeries,IUpdateSeriesBroker,UpdateSeriesParameters>
+    public class SeriesSearchAdaptor : BaseUpdateAdaptor<Series,SeriesSelectCriteria,ISelectSeries,IUpdateSeriesBroker,UpdateSeriesParameters>
     {
     }
 }

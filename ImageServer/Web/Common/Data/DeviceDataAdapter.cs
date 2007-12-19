@@ -30,10 +30,8 @@
 #endregion
 
 using System.Collections.Generic;
-using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.Criteria;
 using ClearCanvas.ImageServer.Model.Parameters;
 using ClearCanvas.ImageServer.Model.SelectBrokers;
@@ -45,7 +43,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
     /// Used to create/update/delete device entries in the database.
     /// </summary>
     /// 
-    public class DeviceDataAdapter : BaseAdaptor<Device, DeviceSelectCriteria, ISelectDevice,IUpdateDeviceBroker,UpdateDeviceParameters>
+    public class DeviceDataAdapter : BaseUpdateAdaptor<Device, DeviceSelectCriteria, ISelectDevice,IUpdateDeviceBroker,UpdateDeviceParameters>
     {
         /// <summary>
         /// Retrieve list of devices.
@@ -63,19 +61,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         /// <returns></returns>
         public bool DeleteDevice(Device dev)
         {
-            bool ok;
-            using (IUpdateContext ctx = PersistentStore.OpenUpdateContext(UpdateContextSyncMode.Flush))
-            {
-                IDeleteDevice delete = ctx.GetBroker<IDeleteDevice>();
-                DeviceDeleteParameters param = new DeviceDeleteParameters();
-                param.DeviceGUID = dev.GetKey();
-
-                ok = delete.Execute(param);
-                if (ok)
-                    ctx.Commit();
-            }
-
-            return ok;
+            return base.Delete(dev.GetKey());
         }
 
         /// <summary>
@@ -88,12 +74,12 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             bool ok = true;
 
             UpdateDeviceParameters param = new UpdateDeviceParameters();
-            param.ServerParititionKey = dev.ServerPartitionKey;
+            param.ServerPartitionKey = dev.ServerPartitionKey;
             param.Enabled = dev.Enabled;
-            param.AETitle = dev.AeTitle;
+            param.AeTitle = dev.AeTitle;
             param.Description = dev.Description;
-            param.DHCP = dev.Dhcp;
-            param.IPAddress = dev.IpAddress;
+            param.Dhcp = dev.Dhcp;
+            param.IpAddress = dev.IpAddress;
             param.Port = dev.Port;
             param.AllowQuery = dev.AllowQuery;
             param.AllowRetrieve = dev.AllowRetrieve;
@@ -136,29 +122,19 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         /// <returns></returns>
         public bool AddDevice(Device newDev)
         {
-            bool ok = false;
-            using (IUpdateContext ctx = PersistentStore.OpenUpdateContext(UpdateContextSyncMode.Flush))
-            {
-                IInsertDevice insert = ctx.GetBroker<IInsertDevice>();
-                DeviceInsertParameters param = new DeviceInsertParameters();
-                param.ServerPartitionKey = newDev.ServerPartitionKey;
-                param.AeTitle = newDev.AeTitle;
-                param.Description = newDev.Description;
-                param.IpAddress = newDev.IpAddress;
-                param.Port = newDev.Port;
-                param.Enabled = newDev.Enabled;
-                param.Dhcp = newDev.Dhcp;
-                param.AllowQuery = newDev.AllowQuery;
-                param.AllowRetrieve = newDev.AllowRetrieve;
-                param.AllowStorage = newDev.AllowStorage;
+            UpdateDeviceParameters param = new UpdateDeviceParameters();
+            param.ServerPartitionKey = newDev.ServerPartitionKey;
+            param.AeTitle = newDev.AeTitle;
+            param.Description = newDev.Description;
+            param.IpAddress = newDev.IpAddress;
+            param.Port = newDev.Port;
+            param.Enabled = newDev.Enabled;
+            param.Dhcp = newDev.Dhcp;
+            param.AllowQuery = newDev.AllowQuery;
+            param.AllowRetrieve = newDev.AllowRetrieve;
+            param.AllowStorage = newDev.AllowStorage;
 
-                ok = insert.Execute(param);
-
-                if (ok)
-                    ctx.Commit();
-            }
-
-            return ok;
+            return base.Add(param);
         }
     }
 }

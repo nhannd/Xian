@@ -34,7 +34,6 @@ using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.Criteria;
-using ClearCanvas.ImageServer.Model.EnumBrokers;
 using ClearCanvas.ImageServer.Model.Parameters;
 using ClearCanvas.ImageServer.Model.SelectBrokers;
 using ClearCanvas.ImageServer.Model.UpdateBrokers;
@@ -45,7 +44,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
     /// Used to create/update/delete file system entries in the database.
     /// </summary>
     ///
-    public class FileSystemDataAdapter : BaseAdaptor<Filesystem, FilesystemSelectCriteria, ISelectFilesystem,IUpdateFilesystemBroker,UpdateFilesystemParameters>
+    public class FileSystemDataAdapter : BaseUpdateAdaptor<Filesystem, FilesystemSelectCriteria, ISelectFilesystem,IUpdateFilesystemBroker,UpdateFilesystemParameters>
     {
         #region Public methods
 
@@ -69,8 +68,10 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         /// <param name="filesystem"></param>
         public bool AddFileSystem(Filesystem filesystem)
         {
-            bool ok = false;
+            bool ok;
 
+            // This filesystem update must be used, because the stored procedure does some 
+            // additional work on insert.
             using (IUpdateContext ctx = PersistentStore.OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
                 IInsertFilesystem insert = ctx.GetBroker<IInsertFilesystem>();
@@ -98,7 +99,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
         public bool Update(Filesystem filesystem)
         {
-            bool ok = false;
+            bool ok;
 
             using (IUpdateContext ctx = PersistentStore.OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
@@ -124,14 +125,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
         public IList<FilesystemTierEnum> GetFileSystemTiers()
         {
-            IList<FilesystemTierEnum> result = null;
-            using (IReadContext ctx = PersistentStore.OpenReadContext())
-            {
-                IFilesystemTierEnum select = ctx.GetBroker<IFilesystemTierEnum>();
-                result = select.Execute();
-            }
-
-            return result;
+            return FilesystemTierEnum.GetAll();
         }
 
         #endregion Public methods

@@ -43,18 +43,18 @@ namespace ClearCanvas.ImageServer.Model.Parameters
         {
         }
 
-        public String  AETitle
+        public String  AeTitle
         {
-            set { SubParameters["AETitle"] = new UpdateBrokerParameter<String>("AETitle", value); }
+            set { SubParameters["AeTitle"] = new UpdateBrokerParameter<String>("AeTitle", value); }
         }
 
         public String Description
         {
             set { SubParameters["Description"] = new UpdateBrokerParameter<String>("Description", value); }
         }
-        public String IPAddress
+        public String IpAddress
         {
-            set { SubParameters["IPAddress"] = new UpdateBrokerParameter<String>("IPAddress", value); }
+            set { SubParameters["IpAddress"] = new UpdateBrokerParameter<String>("IpAddress", value); }
         }
         public int Port
         {
@@ -66,9 +66,9 @@ namespace ClearCanvas.ImageServer.Model.Parameters
             set { SubParameters["Enabled"] = new UpdateBrokerParameter<bool>("Enabled", value); }
         }
 
-        public bool DHCP
+        public bool Dhcp
         {
-            set { SubParameters["DHCP"] = new UpdateBrokerParameter<bool>("DHCP", value); }
+            set { SubParameters["Dhcp"] = new UpdateBrokerParameter<bool>("Dhcp", value); }
         }
 
         public bool AllowStorage
@@ -84,9 +84,9 @@ namespace ClearCanvas.ImageServer.Model.Parameters
             set { SubParameters["AllowRetrieve"] = new UpdateBrokerParameter<bool>("AllowRetrieve", value); }
         }
 
-        public ServerEntityKey ServerParititionKey
+        public ServerEntityKey ServerPartitionKey
         {
-            set { SubParameters["ServerParitition"] = new UpdateBrokerParameter<ServerEntityKey>("ServerPartition", value); }
+            set { SubParameters["ServerPartitionKey"] = new UpdateBrokerParameter<ServerEntityKey>("ServerPartitionKey", value); }
         }
         
     }
