@@ -112,29 +112,29 @@ namespace ClearCanvas.Ris.Client.Adt
                 IRegistrationWorkflowItemToolContext context = (IRegistrationWorkflowItemToolContext)this.ContextBase;
                 RegistrationWorklistItem item = CollectionUtils.FirstElement(context.SelectedItems);
                 string title = string.Format(SR.TitleNewOrder, PersonNameFormat.Format(item.PatientName), MrnFormat.Format(item.Mrn));
-                NewOrder(item.PatientRef, title, context.DesktopWindow);
+                NewOrder(item.PatientRef, item.PatientProfileRef, title, context.DesktopWindow);
             }
             else if (this.Context is IPatientSearchToolContext)
             {
                 IPatientSearchToolContext context = (IPatientSearchToolContext)this.ContextBase;
                 string title = string.Format(SR.TitleNewOrder, PersonNameFormat.Format(context.SelectedProfile.Name), MrnFormat.Format(context.SelectedProfile.Mrn));
-                NewOrder(context.SelectedProfile.PatientRef, title, context.DesktopWindow);
+                NewOrder(context.SelectedProfile.PatientRef, context.SelectedProfile.PatientProfileRef, title, context.DesktopWindow);
             }
             else if (this.Context is IPatientBiographyToolContext)
             {
                 IPatientBiographyToolContext context = (IPatientBiographyToolContext)this.ContextBase;
                 string title = string.Format(SR.TitleNewOrder, PersonNameFormat.Format(context.PatientProfile.Name), MrnFormat.Format(context.PatientProfile.Mrn));
-                NewOrder(context.PatientRef, title, context.DesktopWindow);
+                NewOrder(context.PatientRef, context.PatientProfileRef, title, context.DesktopWindow);
             }
         }
 
-        private void NewOrder(EntityRef patientRef, string title, IDesktopWindow desktopWindow)
+        private void NewOrder(EntityRef patientRef, EntityRef profileRef, string title, IDesktopWindow desktopWindow)
         {
             try
             {
                 ApplicationComponent.LaunchAsWorkspace(
                     desktopWindow,
-                    new OrderEntryComponent(patientRef),
+                    new OrderEntryComponent(patientRef, profileRef),
                     title);
             }
             catch (Exception e)

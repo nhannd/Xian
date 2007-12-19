@@ -52,6 +52,10 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             InitializeComponent();
             _component = component;
 
+            Control banner = (Control)_component.BannerComponentHost.ComponentView.GuiElement;
+            banner.Dock = DockStyle.Fill;
+            _bannerPanel.Controls.Add(banner);
+
             Control orderAttachmentSummary = (Control)_component.OrderAttachmentSummaryHost.ComponentView.GuiElement;
             orderAttachmentSummary.Dock = DockStyle.Fill;
             _documentsTab.Controls.Add(orderAttachmentSummary);

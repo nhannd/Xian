@@ -280,7 +280,7 @@ namespace ClearCanvas.Ris.Client
             Platform.GetService<IOrderEntryService>(
                 delegate(IOrderEntryService service)
                 {
-                    GetOrderEntryFormDataResponse formChoicesResponse = service.GetOrderEntryFormData(new GetOrderEntryFormDataRequest());
+                    GetOrderEntryFormDataResponse formChoicesResponse = service.GetOrderEntryFormData(new GetOrderEntryFormDataRequest(visit.PatientRef));
 
                     DiagnosticServiceSummary diagnosticService;
                     if (String.IsNullOrEmpty(diagnosticServiceName))

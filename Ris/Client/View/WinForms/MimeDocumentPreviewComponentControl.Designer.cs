@@ -42,7 +42,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this._browser.Location = new System.Drawing.Point(0, 0);
             this._browser.MinimumSize = new System.Drawing.Size(20, 20);
             this._browser.Name = "_browser";
-            this._browser.Size = new System.Drawing.Size(415, 286);
+            this._browser.Size = new System.Drawing.Size(415, 360);
             this._browser.TabIndex = 0;
             // 
             // _splitContainer
@@ -60,7 +60,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             // 
             this._splitContainer.Panel2.Controls.Add(this._browser);
             this._splitContainer.Size = new System.Drawing.Size(415, 440);
-            this._splitContainer.SplitterDistance = 150;
+            this._splitContainer.SplitterDistance = 76;
             this._splitContainer.TabIndex = 1;
             // 
             // _attachments
@@ -69,7 +69,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this._attachments.Location = new System.Drawing.Point(0, 0);
             this._attachments.Name = "_attachments";
             this._attachments.ReadOnly = false;
-            this._attachments.Size = new System.Drawing.Size(415, 150);
+            this._attachments.Size = new System.Drawing.Size(415, 76);
             this._attachments.TabIndex = 0;
             this._attachments.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.ImageAndText;
             // 

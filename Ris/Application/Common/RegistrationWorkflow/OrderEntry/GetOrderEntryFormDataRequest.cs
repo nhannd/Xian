@@ -39,5 +39,12 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
     [DataContract]
     public class GetOrderEntryFormDataRequest : DataContractBase
     {
+        public GetOrderEntryFormDataRequest(EntityRef patientRef)
+        {
+            this.PatientRef = patientRef;
+        }
+
+        [DataMember]
+        public EntityRef PatientRef;
     }
 }

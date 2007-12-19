@@ -44,6 +44,7 @@ using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 using ClearCanvas.Ris.Client.Formatting;
+using System.Runtime.Serialization;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -68,8 +69,32 @@ namespace ClearCanvas.Ris.Client.Adt
             ReplaceOrder
         }
 
+        /// <summary>
+        /// Define a helper class to for the banner component
+        /// </summary>
+        [DataContract]
+        class HealthcareContext : DataContractBase
+        {
+            public HealthcareContext(EntityRef patientRef, EntityRef profileRef, EntityRef orderRef)
+            {
+                this.PatientRef = patientRef;
+                this.PatientProfileRef = profileRef;
+                this.OrderRef = orderRef;
+            }
+
+            [DataMember]
+            public EntityRef PatientRef;
+
+            [DataMember]
+            public EntityRef PatientProfileRef;
+
+            [DataMember]
+            public EntityRef OrderRef;
+        }
+
         private readonly Mode _mode;
         private EntityRef _patientRef;
+        private EntityRef _profileRef;
         private EntityRef _orderRef;
 
         private List<VisitSummary> _activeVisits;
@@ -115,19 +140,21 @@ namespace ClearCanvas.Ris.Client.Adt
         private OrderNoteSummaryComponent _noteSummaryComponent;
         private ChildComponentHost _orderNoteSummaryComponentHost;
 
+        private ChildComponentHost _bannerComponentHost;
+
         /// <summary>
         /// Constructor for creating a new order.
         /// </summary>
-        public OrderEntryComponent(EntityRef patientRef)
-            : this(patientRef, null, Mode.NewOrder)
+        public OrderEntryComponent(EntityRef patientRef, EntityRef profileRef)
+            : this(patientRef, profileRef, null, Mode.NewOrder)
         {
         }
 
         /// <summary>
         /// Constructor for creating a new order with attachments.
         /// </summary>
-        public OrderEntryComponent(EntityRef patientRef, List<OrderAttachmentSummary> attachments)
-            : this(patientRef, null, Mode.NewOrder)
+        public OrderEntryComponent(EntityRef patientRef, EntityRef profileRef, List<OrderAttachmentSummary> attachments)
+            : this(patientRef, profileRef, null, Mode.NewOrder)
         {
             _attachmentSummaryComponent.OrderAttachments = attachments;
         }
@@ -136,9 +163,10 @@ namespace ClearCanvas.Ris.Client.Adt
         /// Constructor for modifying or replacing an order.
         /// </summary>
         /// <param name="patientRef"></param>
+        /// <param name="profileRef"></param>
         /// <param name="orderRef"></param>
         /// <param name="mode"></param>
-        public OrderEntryComponent(EntityRef patientRef, EntityRef orderRef, Mode mode)
+        public OrderEntryComponent(EntityRef patientRef, EntityRef profileRef, EntityRef orderRef, Mode mode)
         {
             Platform.CheckForNullReference(patientRef, "patientRef");
 
@@ -147,6 +175,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 Platform.CheckForNullReference(orderRef, "orderRef");
 
             _patientRef = patientRef;
+            _profileRef = profileRef;
             _orderRef = orderRef;
 
             _proceduresTable = new Table<ProcedureRequisition>();
@@ -206,6 +235,9 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public override void Start()
         {
+            _bannerComponentHost = new ChildComponentHost(this.Host, new BannerComponent(new HealthcareContext(_patientRef, _profileRef, _orderRef)));
+            _bannerComponentHost.StartComponent();
+
             _consultantLookupHandler = new ExternalPractitionerLookupHandler(this.Host.DesktopWindow);
             _diagnosticServiceLookupHandler = new DiagnosticServiceLookupHandler(this.Host.DesktopWindow);
             _orderingPractitionerLookupHandler = new ExternalPractitionerLookupHandler(this.Host.DesktopWindow);
@@ -213,10 +245,8 @@ namespace ClearCanvas.Ris.Client.Adt
             Platform.GetService<IOrderEntryService>(
                 delegate(IOrderEntryService service)
                 {
-                    ListActiveVisitsForPatientResponse response = service.ListActiveVisitsForPatient(new ListActiveVisitsForPatientRequest(_patientRef));
-                    _activeVisits = response.Visits;
- 
-                    GetOrderEntryFormDataResponse formChoicesResponse = service.GetOrderEntryFormData(new GetOrderEntryFormDataRequest());
+                    GetOrderEntryFormDataResponse formChoicesResponse = service.GetOrderEntryFormData(new GetOrderEntryFormDataRequest(_patientRef));
+                    _activeVisits = formChoicesResponse.VisitChoices;
                     _facilityChoices = formChoicesResponse.FacilityChoices;
                     _priorityChoices = formChoicesResponse.OrderPriorityChoices;
                     _cancelReasonChoices = formChoicesResponse.CancelReasonChoices;
@@ -262,6 +292,11 @@ namespace ClearCanvas.Ris.Client.Adt
         public ApplicationComponentHost OrderNoteSummaryHost
         {
             get { return _orderNoteSummaryComponentHost; }
+        }
+
+        public ApplicationComponentHost BannerComponentHost
+        {
+            get { return _bannerComponentHost; }
         }
 
         public EntityRef OrderRef

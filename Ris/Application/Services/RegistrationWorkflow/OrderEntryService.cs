@@ -96,8 +96,26 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         [ReadOperation]
         public GetOrderEntryFormDataResponse GetOrderEntryFormData(GetOrderEntryFormDataRequest request)
         {
+            Platform.CheckForNullReference(request, "request");
+            Platform.CheckMemberIsSet(request.PatientRef, "PatientRef");
+
+            Patient patient = PersistenceContext.GetBroker<IPatientBroker>().Load(request.PatientRef, EntityLoadFlags.Proxy);
+
+            VisitSearchCriteria criteria = new VisitSearchCriteria();
+            criteria.VisitStatus.NotEqualTo(VisitStatus.DC);
+            criteria.Patient.EqualTo(patient);
+
+            VisitAssembler assembler = new VisitAssembler();
+            List<VisitSummary> activeVisits = CollectionUtils.Map<Visit, VisitSummary>(
+                    PersistenceContext.GetBroker<IVisitBroker>().Find(criteria),
+                    delegate(Visit v)
+                    {
+                        return assembler.CreateVisitSummary(v, this.PersistenceContext);
+                    });
+
             FacilityAssembler facilityAssembler = new FacilityAssembler();
             return new GetOrderEntryFormDataResponse(
+                activeVisits,
                 CollectionUtils.Map<Facility, FacilitySummary, List<FacilitySummary>>(
                     PersistenceContext.GetBroker<IFacilityBroker>().FindAll(),
                     delegate(Facility f)
