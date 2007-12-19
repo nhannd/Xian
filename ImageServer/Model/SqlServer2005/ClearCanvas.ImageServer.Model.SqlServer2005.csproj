@@ -33,6 +33,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Brokers\WebQueryWorkQueue.cs" />
     <Compile Include="Brokers\DeleteDevice.cs" />
     <Compile Include="Brokers\DeleteFilesystemQueue.cs" />
     <Compile Include="Brokers\DeleteStudyStorage.cs" />
@@ -67,6 +68,8 @@
     <Compile Include="EnumBrokers\ServerRuleApplyTimeEnumBroker.cs" />
     <Compile Include="EnumBrokers\ServerRuleTypeEnumBroker.cs" />
     <Compile Include="EnumBrokers\ServiceLockTypeEnumBroker.cs" />
+    <Compile Include="SelectBrokers\SelectWorkQueueUid.cs" />
+    <Compile Include="SelectBrokers\SelectStudyStorage.cs" />
     <Compile Include="SelectBrokers\SelectDevice.cs" />
     <Compile Include="SelectBrokers\SelectFilesystem.cs" />
     <Compile Include="SelectBrokers\SelectPatient.cs" />

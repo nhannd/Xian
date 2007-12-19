@@ -8,16 +8,16 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.ImageServer.Web.Application.Search {
+namespace ClearCanvas.ImageServer.Web.Application.WorkQueue {
     
     
     /// <summary>
-    /// SearchAccordian class.
+    /// SearchResultAccordian class.
     /// </summary>
     /// <remarks>
     /// Auto-generated class.
     /// </remarks>
-    public partial class SearchAccordian {
+    public partial class SearchResultAccordian {
         
         /// <summary>
         /// HeaderPanel control.
@@ -29,49 +29,49 @@ namespace ClearCanvas.ImageServer.Web.Application.Search {
         protected global::System.Web.UI.WebControls.Panel HeaderPanel;
         
         /// <summary>
-        /// PatientName control.
+        /// PatientID control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label PatientName;
+        protected global::System.Web.UI.WebControls.Label PatientID;
         
         /// <summary>
-        /// PatientId control.
+        /// PatientsName control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label PatientId;
+        protected global::System.Web.UI.WebControls.Label PatientsName;
         
         /// <summary>
-        /// StudyDate control.
+        /// WorkQueueType control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label StudyDate;
+        protected global::System.Web.UI.WebControls.Label WorkQueueType;
         
         /// <summary>
-        /// AccessionNumber control.
+        /// WorkQueueStatus control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label AccessionNumber;
+        protected global::System.Web.UI.WebControls.Label WorkQueueStatus;
         
         /// <summary>
-        /// StudyDescription control.
+        /// ScheduledTime control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label StudyDescription;
+        protected global::System.Web.UI.WebControls.Label ScheduledTime;
         
         /// <summary>
         /// MainAccordian control.

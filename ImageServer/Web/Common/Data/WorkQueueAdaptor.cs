@@ -35,7 +35,7 @@ using ClearCanvas.ImageServer.Model.SelectBrokers;
 
 namespace ClearCanvas.ImageServer.Web.Common.Data
 {
-    public class SearchAdaptor : BaseAdaptor<Study,StudySelectCriteria,ISelectStudy>
+    public class WorkQueueAdaptor : BaseAdaptor<WorkQueue, WorkQueueSelectCriteria, ISelectWorkQueue>
     {
     }
 }

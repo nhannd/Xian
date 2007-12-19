@@ -49,7 +49,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Search
     {
         private Study _study;
         private IList<Series> _seriesList;
-        private readonly SearchController _searchController = new SearchController();
+        private readonly StudyController _searchController = new StudyController();
 
         public Study Study
         {

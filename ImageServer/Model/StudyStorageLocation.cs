@@ -49,10 +49,12 @@ namespace ClearCanvas.ImageServer.Model
         private ServerEntityKey _filesystemKey;
         private string _studyInstanceUid;
         private DateTime _lastAccessed;
+        private DateTime _insertTime;
         private StudyStatusEnum _statusEnum;
         private String _filesystemPath;
         private String _serverPartitionFolder;
         private String _storageFilesystemFolder;
+        private bool _lock; 
         private bool _enabled;
         private bool _readOnly;
         private bool _writeOnly;
@@ -79,6 +81,16 @@ namespace ClearCanvas.ImageServer.Model
         {
             get { return _lastAccessed; }
             set { _lastAccessed = value; }
+        }
+        public DateTime InsertTime
+        {
+            get { return _insertTime; }
+            set { _insertTime = value; }
+        }
+        public bool Lock
+        {
+            get { return _lock; }
+            set { _lock = value; }
         }
         public StudyStatusEnum StudyStatusEnum
         {

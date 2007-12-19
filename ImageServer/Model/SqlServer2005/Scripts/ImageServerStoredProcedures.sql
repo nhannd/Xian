@@ -140,6 +140,12 @@ GO
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[QueryStudyStorageLocation]') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[QueryStudyStorageLocation]
 GO
+/****** Object:  StoredProcedure [dbo].[WebQueryWorkQueue]    Script Date: 12/19/2007 12:44:47 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[WebQueryWorkQueue]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [dbo].[WebQueryWorkQueue]
+GO
+
+
 /****** Object:  StoredProcedure [dbo].[QueryFilesystemQueue]    Script Date: 11/21/2007 15:26:35 ******/
 SET ANSI_NULLS ON
 GO
@@ -2029,6 +2035,100 @@ BEGIN
 		@StudyStorageGUID
 		,@ServerPartitionGUID
 		,@StudyInstanceUid
+END
+' 
+END
+GO
+
+
+/****** Object:  StoredProcedure [dbo].[WebQueryWorkQueue]    Script Date: 11/21/2007 15:26:32 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[WebQueryWorkQueue]') AND type in (N'P', N'PC'))
+BEGIN
+EXEC dbo.sp_executesql @statement = N'-- =============================================
+-- Author:		Thanh Huynh
+-- Create date: December 16, 2007
+-- Description:	Query WorkQueue entries based on criteria for the Web WorkQueue configration UI
+--				
+-- =============================================
+CREATE PROCEDURE [dbo].[WebQueryWorkQueue] 
+	@PatientID nvarchar(64) = null,
+	@Accession nvarchar(16) = null,
+	@StudyDescription nvarchar(64) = null,
+	@ScheduledTime datetime = null,
+	@Type smallint = null,
+	@Status smallint = null
+AS
+BEGIN
+	Declare @stmt nvarchar(1024);
+	Declare @where nvarchar(1024);
+
+	-- Build SELECT statement based on the paramters
+	
+	SET @stmt =			'SELECT WorkQueue.* FROM WorkQueue '
+	SET @stmt = @stmt + 'JOIN StudyStorage on StudyStorage.GUID = WorkQueue.StudyStorageGUID '
+	SET @stmt = @stmt + 'JOIN Study on Study.ServerPartitionGUID=StudyStorage.ServerPartitionGUID and Study.StudyInstanceUid=StudyStorage.StudyInstanceUid '
+	
+	SET @where = ''
+
+	IF (@Type IS NOT NULL)
+	BEGIN
+		SET @where = @where + 'WorkQueue.WorkQueueTypeEnum = ' + CONVERT(varchar(10), @Type)
+	END
+	
+	IF (@Status IS NOT NULL)
+	BEGIN
+		IF (@where<>'')
+			SET @where = @where + ' AND '
+
+		SET @where = @where + 'WorkQueue.WorkQueueStatusEnum = ' +  CONVERT(varchar(10),@Status)
+	END
+
+	IF (@ScheduledTime IS NOT NULL)
+	BEGIN
+		IF (@where<>'')
+			SET @where = @where + ' AND '
+
+		SET @where = @where + 'WorkQueue.ScheduledTime between ''' +  CONVERT(varchar(30), @ScheduledTime, 101 ) +''' and ''' + CONVERT(varchar(30), DATEADD(DAY, 1, @ScheduledTime), 101 ) + ''''
+	END
+
+
+	IF (@PatientID IS NOT NULL)
+	BEGIN
+		IF (@where<>'')
+			SET @where = @where + ' AND '
+
+		SET @where = @where + 'Study.PatientID Like ''' + @PatientID + '%'' '
+	END
+
+	IF (@Accession IS NOT NULL)
+	BEGIN
+		IF (@where<>'')
+			SET @where = @where + ' AND '
+
+		SET @where = @where + 'Study.AccessionNumber Like ''' + @Accession + '%'' '
+	END
+
+	IF (@StudyDescription IS NOT NULL)
+	BEGIN
+		IF (@where<>'')
+			SET @where = @where + ' AND '
+
+		SET @where = @where + 'Study.StudyDescription Like ''' + @StudyDescription + '%'' '
+	END
+
+
+	if (@where<>'')
+		SET @stmt = @stmt + ' WHERE ' + @where
+
+	SET @stmt = @stmt + ' ORDER BY Study.PatientID DESC'
+
+
+	EXEC(@stmt)
+
 END
 ' 
 END

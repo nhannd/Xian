@@ -2,7 +2,8 @@
 <siteMap xmlns="http://schemas.microsoft.com/AspNet/SiteMap-File-1.0" >
 	<siteMapNode url="" title="Root"  description="">
 		<siteMapNode url="" title="General"  description="General">
-			<siteMapNode url="~/Search/SearchPage.aspx" title="Search"  description="Search"/> 
+			<siteMapNode url="~/Search/SearchPage.aspx" title="Search"  description="Search"/>
+			<siteMapNode url="~/WorkQueue/SearchPage.aspx" title="WorkQueue"  description="WorkQueue"/>
 		</siteMapNode>
 			<siteMapNode url="" title="Configuration"  description="System Configuration">
 				<siteMapNode url="~/Admin/Configuration/Devices/DevicePage.aspx" title="Devices"  description="Device Configuration"/>

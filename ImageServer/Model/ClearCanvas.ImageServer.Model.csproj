@@ -39,6 +39,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Brokers\IWebQueryWorkQueue.cs" />
     <Compile Include="Brokers\IDeleteDevice.cs" />
     <Compile Include="Brokers\IDeleteFilesystemQueue.cs" />
     <Compile Include="Brokers\IDeleteStudyStorage.cs" />
@@ -55,7 +56,10 @@
     <Compile Include="Brokers\IUpdateServerPartition.cs" />
     <Compile Include="Brokers\IUpdateServiceLock.cs" />
     <Compile Include="Criteria\StorageFilesystemSelectCriteria.cs" />
+    <Compile Include="Criteria\StudyStorageSelectCriteria.cs" />
+    <Compile Include="Criteria\WorkQueueUidSelectCriteria.cs" />
     <Compile Include="EnumBrokers\IStudyStatusEnum.cs" />
+    <Compile Include="Parameters\WebWorkQueueQueryParameters.cs" />
     <Compile Include="Parameters\UpdateWorkQueueUidParameters.cs" />
     <Compile Include="Parameters\UpdateWorkQueueParameters.cs" />
     <Compile Include="Parameters\UpdateStudyStorageParameters.cs" />
@@ -73,6 +77,8 @@
     <Compile Include="Parameters\UpdateFilesystemQueueParameters.cs" />
     <Compile Include="Parameters\UpdateFilesystemParameters.cs" />
     <Compile Include="Parameters\UpdateDeviceParameters.cs" />
+    <Compile Include="SelectBrokers\ISelectWorkQueueUid.cs" />
+    <Compile Include="SelectBrokers\ISelectStudyStorage.cs" />
     <Compile Include="SelectBrokers\ISelectStorageFilesystem.cs" />
     <Compile Include="StorageFilesystem.cs" />
     <Compile Include="StudyStatusEnum.cs" />

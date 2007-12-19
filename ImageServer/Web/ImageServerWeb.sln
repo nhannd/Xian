@@ -73,6 +73,12 @@ Project("{2CFEAB61-6A3B-4EB8-B523-560B4BEEF521}") = "WebApplicationDeployment", 
 		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Enterprise.Common", "..\..\Enterprise\Common\ClearCanvas.Enterprise.Common.csproj", "{B5EBFFD7-6641-4932-91C9-4C4322B41868}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|.NET = Debug|.NET
@@ -193,6 +199,16 @@ Global
 		{77F5EB8A-9BC7-495C-B555-1DE6AF5AC83C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{77F5EB8A-9BC7-495C-B555-1DE6AF5AC83C}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{77F5EB8A-9BC7-495C-B555-1DE6AF5AC83C}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{B5EBFFD7-6641-4932-91C9-4C4322B41868}.Debug|.NET.ActiveCfg = Debug|Any CPU
+		{B5EBFFD7-6641-4932-91C9-4C4322B41868}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B5EBFFD7-6641-4932-91C9-4C4322B41868}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B5EBFFD7-6641-4932-91C9-4C4322B41868}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{B5EBFFD7-6641-4932-91C9-4C4322B41868}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{B5EBFFD7-6641-4932-91C9-4C4322B41868}.Release|.NET.ActiveCfg = Release|Any CPU
+		{B5EBFFD7-6641-4932-91C9-4C4322B41868}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B5EBFFD7-6641-4932-91C9-4C4322B41868}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B5EBFFD7-6641-4932-91C9-4C4322B41868}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{B5EBFFD7-6641-4932-91C9-4C4322B41868}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -39,7 +39,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Search
     public partial class SearchPanel : System.Web.UI.UserControl
     {
         private ServerPartition _serverPartition;
-        private SearchController _searchController;
+        private StudyController _searchController;
 
         public ServerPartition Partition
         {
@@ -109,7 +109,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Search
             base.OnInit(e);
 
             // initialize the controller
-            _searchController = new SearchController();
+            _searchController = new StudyController();
 
             // setup event handler for child controls
             SetUpEventHandlers();

@@ -1,19 +1,19 @@
-<%@ Control Language="C#" AutoEventWireup="true" Codebehind="SearchAccordian.ascx.cs"
-    Inherits="ClearCanvas.ImageServer.Web.Application.Search.SearchAccordian" %>
+<%@ Control Language="C#" AutoEventWireup="true" Codebehind="SearchResultAccordian.ascx.cs"
+    Inherits="ClearCanvas.ImageServer.Web.Application.WorkQueue.SearchResultAccordian" %>
 <%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="ajaxToolkit" %>
 <asp:Table Width="100%">
     <asp:TableHeaderRow>
         <asp:Panel ID="HeaderPanel" runat="server" Width="100%" BorderWidth="0px" CssClass="GridHeader">
-            <asp:Label ID="PatientName" runat="server" Text="Patient Name" EnableViewState="False" CssClass="GridHeaderText"
-                Width="24%"  />
-            <asp:Label ID="PatientId" runat="server" Text="Patient Id" EnableViewState="False"  CssClass="GridHeaderText"
-                Width="12%"  />
-            <asp:Label ID="StudyDate" runat="server" Text="Study Date" EnableViewState="False" CssClass="GridHeaderText"
-                Width="11%" />
-            <asp:Label ID="AccessionNumber" runat="server" Text="Accession Number" EnableViewState="False" CssClass="GridHeaderText"
-                Width="19%"  />
-            <asp:Label ID="StudyDescription" runat="server" Text="Description" EnableViewState="False" CssClass="GridHeaderText"
-                Width="24%"  />
+            <asp:Label ID="PatientID" runat="server" Text="Patient ID" EnableViewState="False"
+                CssClass="GridHeaderText" Width="100px" />
+            <asp:Label ID="PatientsName" runat="server" Text="Patient's Name" EnableViewState="False"
+                CssClass="GridHeaderText" Width="230px" />
+            <asp:Label ID="WorkQueueType" runat="server" Text="Type" EnableViewState="False"
+                CssClass="GridHeaderText" Width="100px" />
+            <asp:Label ID="WorkQueueStatus" runat="server" Text="Status" EnableViewState="False"
+                CssClass="GridHeaderText" Width="80px" />
+            <asp:Label ID="ScheduledTime" runat="server" Text="Schedule" EnableViewState="False"
+                CssClass="GridHeaderText" Width="150px" />
         </asp:Panel>
     </asp:TableHeaderRow>
     <asp:TableRow>
