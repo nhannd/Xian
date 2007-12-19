@@ -52,7 +52,7 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
             private string _patientId;
             private string _accessionNumber;
             private string _studyDescription;
-            private DateTime _scheduledTime;
+            private DateTime? _scheduledTime;
             private WorkQueueTypeEnum _type;
             private WorkQueueStatusEnum _status;
 
@@ -84,7 +84,7 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
                 set { _studyDescription = value; }
             }
 
-            public DateTime ScheduledTime
+            public DateTime? ScheduledTime
             {
                 get { return _scheduledTime; }
                 set { _scheduledTime = value; }
@@ -136,9 +136,10 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
                 settings.PatientId = PatientId.Text;
                 settings.AccessionNumber = AccessionNumber.Text;
                 settings.StudyDescription = StudyDescription.Text;
-                settings.ScheduledTime = (ScheduleDate.Text == "")
-                                             ? DateTime.MinValue
-                                             : DateTime.Parse(ScheduleDate.Text);
+                if (ScheduleDate.Text == "")
+                    settings.ScheduledTime = null;
+                else
+                    settings.ScheduledTime = DateTime.Parse(ScheduleDate.Text);
 
                 settings.Type = (TypeDropDownList.SelectedValue == "")
                                     ? null
@@ -174,7 +175,6 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
 
             prevSelectedIndex = StatusDropDownList.SelectedIndex;
             StatusDropDownList.Items.Clear();
-            IList<WorkQueueStatusEnum> statuses = WorkQueueStatusEnum.GetAll();
             StatusDropDownList.Items.Add(new ListItem("-- Any --", ""));
             foreach (WorkQueueStatusEnum s in WorkQueueStatuses)
                 StatusDropDownList.Items.Add(new ListItem(s.Description, s.Lookup));

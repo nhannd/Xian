@@ -361,7 +361,6 @@
     <Content Include="Search\SeriesDetails.ascx" />
     <Content Include="Search\StudyDetails.ascx" />
     <Content Include="Search\StudySummary.ascx" />
-    <Content Include="Styles\Calendar.css" />
     <Content Include="Styles\images\icon_warning.gif" />
     <Content Include="Common\BarChart.aspx" />
     <Content Include="Common\ConfirmDialog.ascx" />

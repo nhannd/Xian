@@ -2041,17 +2041,15 @@ END
 GO
 
 
-/****** Object:  StoredProcedure [dbo].[WebQueryWorkQueue]    Script Date: 11/21/2007 15:26:32 ******/
+/****** Object:  StoredProcedure [dbo].[WebQueryWorkQueue]    Script Date: 12/19/2007 13:33:29 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[WebQueryWorkQueue]') AND type in (N'P', N'PC'))
-BEGIN
-EXEC dbo.sp_executesql @statement = N'-- =============================================
+-- =============================================
 -- Author:		Thanh Huynh
 -- Create date: December 16, 2007
--- Description:	Query WorkQueue entries based on criteria for the Web WorkQueue configration UI
+-- Description:	Query WorkQueue entries based on criteria
 --				
 -- =============================================
 CREATE PROCEDURE [dbo].[WebQueryWorkQueue] 
@@ -2101,7 +2099,7 @@ BEGIN
 		IF (@where<>'')
 			SET @where = @where + ' AND '
 
-		SET @where = @where + 'Study.PatientID Like ''' + @PatientID + '%'' '
+		SET @where = @where + 'Study.PatientID Like ''%' + @PatientID + '%'' '
 	END
 
 	IF (@Accession IS NOT NULL)
@@ -2109,7 +2107,7 @@ BEGIN
 		IF (@where<>'')
 			SET @where = @where + ' AND '
 
-		SET @where = @where + 'Study.AccessionNumber Like ''' + @Accession + '%'' '
+		SET @where = @where + 'Study.AccessionNumber Like ''%' + @Accession + '%'' '
 	END
 
 	IF (@StudyDescription IS NOT NULL)
@@ -2117,19 +2115,21 @@ BEGIN
 		IF (@where<>'')
 			SET @where = @where + ' AND '
 
-		SET @where = @where + 'Study.StudyDescription Like ''' + @StudyDescription + '%'' '
+		SET @where = @where + 'Study.StudyDescription Like ''%' + @StudyDescription + '%'' '
 	END
 
 
 	if (@where<>'')
 		SET @stmt = @stmt + ' WHERE ' + @where
 
-	SET @stmt = @stmt + ' ORDER BY Study.PatientID DESC'
+	SET @stmt = @stmt + ' ORDER BY Study.PatientID ASC'
 
 
 	EXEC(@stmt)
 
 END
-' 
-END
-GO
+
+
+
+
+

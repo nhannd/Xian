@@ -56,9 +56,9 @@ namespace ClearCanvas.ImageServer.Model.Parameters
             set { SubCriteria["StudyDescription"] = new ProcedureParameter<string>("StudyDescription", value); }
         }
 
-        public DateTime ScheduledTime
+        public DateTime? ScheduledTime
         {
-            set { SubCriteria["ScheduledTime"] = new ProcedureParameter<DateTime>("ScheduledTime", value); }
+            set { SubCriteria["ScheduledTime"] = new ProcedureParameter<DateTime?>("ScheduledTime", value); }
         }
 
         public WorkQueueTypeEnum Type

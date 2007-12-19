@@ -62,13 +62,15 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
             {
                 String sqlParmName = "@" + parm.GetKey();
 
-                if (parm is ProcedureParameter<DateTime>)
+                if (parm is ProcedureParameter<DateTime?>)
+                {
+                    ProcedureParameter<DateTime?> parm2 = (ProcedureParameter<DateTime?>)parm;
+                    command.Parameters.AddWithValue(sqlParmName, parm2.Value);
+                }
+                else if (parm is ProcedureParameter<DateTime>)
                 {
                     ProcedureParameter<DateTime> parm2 = (ProcedureParameter<DateTime>)parm;
-                    if (parm2.Value.Equals(DateTime.MinValue))
-                        command.Parameters.AddWithValue(sqlParmName, null);
-                    else
-                        command.Parameters.AddWithValue(sqlParmName, parm2.Value);
+                    command.Parameters.AddWithValue(sqlParmName, parm2.Value);
                 }
                 else if (parm is ProcedureParameter<int>)
                 {
@@ -97,7 +99,7 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                 else if (parm is ProcedureParameter<ServerEnum>)
                 {
                     ProcedureParameter<ServerEnum> parm2 = (ProcedureParameter<ServerEnum>)parm;
-                    if (parm2.Value==null)
+                    if (parm2.Value == null)
                         command.Parameters.AddWithValue(sqlParmName, null);
                     else
                         command.Parameters.AddWithValue(sqlParmName, parm2.Value.Enum);
