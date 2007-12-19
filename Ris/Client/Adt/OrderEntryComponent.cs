@@ -75,11 +75,10 @@ namespace ClearCanvas.Ris.Client.Adt
         [DataContract]
         class HealthcareContext : DataContractBase
         {
-            public HealthcareContext(EntityRef patientRef, EntityRef profileRef, EntityRef orderRef)
+            public HealthcareContext(EntityRef patientRef, EntityRef profileRef)
             {
                 this.PatientRef = patientRef;
                 this.PatientProfileRef = profileRef;
-                this.OrderRef = orderRef;
             }
 
             [DataMember]
@@ -87,9 +86,6 @@ namespace ClearCanvas.Ris.Client.Adt
 
             [DataMember]
             public EntityRef PatientProfileRef;
-
-            [DataMember]
-            public EntityRef OrderRef;
         }
 
         private readonly Mode _mode;
@@ -235,7 +231,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public override void Start()
         {
-            _bannerComponentHost = new ChildComponentHost(this.Host, new BannerComponent(new HealthcareContext(_patientRef, _profileRef, _orderRef)));
+            _bannerComponentHost = new ChildComponentHost(this.Host, new BannerComponent(new HealthcareContext(_patientRef, _profileRef)));
             _bannerComponentHost.StartComponent();
 
             _consultantLookupHandler = new ExternalPractitionerLookupHandler(this.Host.DesktopWindow);
