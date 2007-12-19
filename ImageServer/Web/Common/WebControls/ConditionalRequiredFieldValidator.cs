@@ -199,7 +199,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
                     ";
             }
 
-            Page.RegisterClientScriptBlock(ClientID, script);
+            Page.ClientScript.RegisterClientScriptBlock(GetType(), ClientID, script);
 
             base.OnInit(e);
         }

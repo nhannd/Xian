@@ -36,13 +36,14 @@ using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.Criteria;
 using ClearCanvas.ImageServer.Model.Parameters;
 using ClearCanvas.ImageServer.Model.SelectBrokers;
+using ClearCanvas.ImageServer.Model.UpdateBrokers;
 
 namespace ClearCanvas.ImageServer.Web.Common.Data
 {
     /// <summary>
     /// Used to create/update/delete server partition entries in the database.
     /// </summary>
-    public class ServerPartitionDataAdapter : BaseAdaptor<ServerPartition,ServerPartitionSelectCriteria,ISelectServerPartition>
+    public class ServerPartitionDataAdapter : BaseAdaptor<ServerPartition, ServerPartitionSelectCriteria, ISelectServerPartition, IUpdateServerPartitionBroker, UpdateServerPartitionParameters>
     {
         #region Public methods
 

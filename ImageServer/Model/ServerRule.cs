@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using System.Xml;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Enterprise;
@@ -36,6 +37,7 @@ using ClearCanvas.ImageServer.Model.SelectBrokers;
 
 namespace ClearCanvas.ImageServer.Model
 {
+    [Serializable]
     public class ServerRule : ServerEntity
     {
         #region Constructors

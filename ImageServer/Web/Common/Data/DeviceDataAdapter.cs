@@ -37,6 +37,7 @@ using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.Criteria;
 using ClearCanvas.ImageServer.Model.Parameters;
 using ClearCanvas.ImageServer.Model.SelectBrokers;
+using ClearCanvas.ImageServer.Model.UpdateBrokers;
 
 namespace ClearCanvas.ImageServer.Web.Common.Data
 {
@@ -44,7 +45,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
     /// Used to create/update/delete device entries in the database.
     /// </summary>
     /// 
-    public class DeviceDataAdapter : BaseAdaptor<Device, DeviceSelectCriteria, ISelectDevice>
+    public class DeviceDataAdapter : BaseAdaptor<Device, DeviceSelectCriteria, ISelectDevice,IUpdateDeviceBroker,UpdateDeviceParameters>
     {
         /// <summary>
         /// Retrieve list of devices.
@@ -84,29 +85,21 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         /// <returns></returns>
         public bool Update(Device dev)
         {
-            bool ok = false;
+            bool ok = true;
 
-            using (IUpdateContext ctx = PersistentStore.OpenUpdateContext(UpdateContextSyncMode.Flush))
-            {
-                IUpdateDevice update = ctx.GetBroker<IUpdateDevice>();
-                DeviceUpdateParameters param = new DeviceUpdateParameters();
-                param.DeviceKey = dev.GetKey();
-                param.ServerPartitionKey = dev.ServerPartitionKey;
-                param.Enabled = dev.Enabled;
-                param.AETitle = dev.AeTitle;
-                param.Description = dev.Description;
-                param.DHCP = dev.Dhcp;
-                param.IPAddress = dev.IpAddress;
-                param.Port = dev.Port;
-                param.AllowQuery = dev.AllowQuery;
-                param.AllowRetrieve = dev.AllowRetrieve;
-                param.AllowStorage = dev.AllowStorage;
+            UpdateDeviceParameters param = new UpdateDeviceParameters();
+            param.ServerParititionKey = dev.ServerPartitionKey;
+            param.Enabled = dev.Enabled;
+            param.AETitle = dev.AeTitle;
+            param.Description = dev.Description;
+            param.DHCP = dev.Dhcp;
+            param.IPAddress = dev.IpAddress;
+            param.Port = dev.Port;
+            param.AllowQuery = dev.AllowQuery;
+            param.AllowRetrieve = dev.AllowRetrieve;
+            param.AllowStorage = dev.AllowStorage;
 
-                ok = update.Execute(param);
-
-                if (ok)
-                    ctx.Commit();
-            }
+            base.Update(dev.GetKey(), param);
 
             return ok;
         }

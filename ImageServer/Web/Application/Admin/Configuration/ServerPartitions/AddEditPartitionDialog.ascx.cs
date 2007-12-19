@@ -104,13 +104,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
             ModalPopupExtender1.BehaviorID = ModalPopupExtender1.UniqueID;
 
             ModalPopupExtender1.DropShadow = true;
-            ModalPopupExtender1.Drag = true;
             ModalPopupExtender1.PopupDragHandleControlID = TitleBarPanel.UniqueID;
 
 
             // Register a javascript that can be called to popup this dialog on the client
             // 
-            Page.RegisterClientScriptBlock("popupThisWindow",
+            Page.ClientScript.RegisterClientScriptBlock(GetType(), "popupThisWindow",
                       @"<script language='javascript'>
                         function ShowAddPartitionDialog()
                         {  
@@ -122,7 +121,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
 
             OKButton.OnClientClick = ClientID + "_clearFields()";
 
-            Page.ClientScript.RegisterClientScriptBlock(this.GetType(), this.ClientID,
+            Page.ClientScript.RegisterClientScriptBlock(GetType(), this.ClientID,
                         @"<script language='javascript'>
 
                             function AddEditPartitionDialog_ClearField(fieldID)

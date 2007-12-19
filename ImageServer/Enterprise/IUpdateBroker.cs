@@ -29,9 +29,6 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.ImageServer.Enterprise
@@ -43,13 +40,13 @@ namespace ClearCanvas.ImageServer.Enterprise
     /// <typeparam name="TUpdateBrokerParameters">The parameter type derived from <see cref="UpdateBrokerParameters"/></typeparam>
     /// <remarks>
     /// <para>
-    /// Unlike <see cref="IProcedureUpdateBroker"/> brokers which take a fixed number of parameters, a broker 
-    /// implementing <see cref="IUpdateBroker"/> provides database update functionality with variable number of parameters.
+    /// Unlike <see cref="IProcedureUpdateBroker{A}"/> brokers which take a fixed number of parameters, a broker 
+    /// implementing <see cref="IUpdateBroker{TEntity,TUpdateBrokerParameters}"/> provides database update functionality with variable number of parameters.
     /// Only the fields whose values are specified will be updated. This is useful if only certain fields in the record need to be updated.
     /// The broker generates a dynamic UPDATE SQL statement based on the specified parameters.
     /// </para>
     /// <para>
-    /// <see cref="IUpdateBroker"/> brokers also provides a method to insert a new record into the database.
+    /// <see cref="IUpdateBroker{TEntity,TUpdateBrokerParameters}"/> brokers also provides a method to insert a new record into the database.
     /// </para>
     /// </remarks>
     public interface IUpdateBroker<TEntity, TUpdateBrokerParameters> : IPersistenceBroker
@@ -59,7 +56,7 @@ namespace ClearCanvas.ImageServer.Enterprise
         /// <summary>
         /// Updates the entity specified by the <paramref name="entityKey"/> with values specified in <paramref="parameters"/>.
         /// </summary>
-        /// <param name="entityKey">The <see cref="ServerEntitykey"/> object whose <see cref="ServerEntityKey.Key"/> references to the object to be updated.</param>
+        /// <param name="entityKey">The <see cref="ServerEntityKey"/> object whose <see cref="ServerEntityKey.Key"/> references to the object to be updated.</param>
         /// <param name="parameters">The <see cref="UpdateBrokerParameters"/> specifying the columns to be updated.</param>
         /// <returns></returns>
         bool Update(ServerEntityKey entityKey, TUpdateBrokerParameters parameters);
@@ -67,9 +64,16 @@ namespace ClearCanvas.ImageServer.Enterprise
         /// <summary>
         /// Inserts a new entity with field values indicated in <paramref name="parameters"/>.
         /// </summary>
-        /// <param name="paramters">The <see cref="UpdateBrokerParameters"/> object which specifies the values for the columns in the new entity.</param>
+        /// <param name="parameters">The <see cref="UpdateBrokerParameters"/> object which specifies the values for the columns in the new entity.</param>
         /// <returns>References to the newly inserted entity.</returns>
         TEntity Insert(TUpdateBrokerParameters parameters);
+
+        /// <summary>
+        /// Delete an entity.
+        /// </summary>
+        /// <param name="entityKey">The key for the entity to delete.</param>
+        /// <returns>true on success, false on failure</returns>
+        bool Delete(ServerEntityKey entityKey);
      
     }
 }

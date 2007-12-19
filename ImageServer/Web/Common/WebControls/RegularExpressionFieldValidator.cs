@@ -139,7 +139,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
 
                     </script>";
 
-            Page.RegisterClientScriptBlock(ClientID, script);
+            Page.ClientScript.RegisterClientScriptBlock(GetType(), ClientID, script);
 
             base.OnInit(e);
         }

@@ -171,6 +171,38 @@
     <Compile Include="Admin\Configuration\ServerPartitions\ServerPartitionToolBarPanel.ascx.designer.cs">
       <DependentUpon>ServerPartitionToolBarPanel.ascx</DependentUpon>
     </Compile>
+    <Compile Include="Admin\Configuration\ServerRules\AddEditServerRuleDialog.ascx.cs">
+      <DependentUpon>AddEditServerRuleDialog.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\Configuration\ServerRules\AddEditServerRuleDialog.ascx.designer.cs">
+      <DependentUpon>AddEditServerRuleDialog.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\Configuration\ServerRules\ServerRuleGridView.ascx.cs">
+      <DependentUpon>ServerRuleGridView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\Configuration\ServerRules\ServerRuleGridView.ascx.designer.cs">
+      <DependentUpon>ServerRuleGridView.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\Configuration\ServerRules\ServerRulePage.aspx.cs">
+      <SubType>ASPXCodeBehind</SubType>
+      <DependentUpon>ServerRulePage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\Configuration\ServerRules\ServerRulePage.aspx.designer.cs">
+      <DependentUpon>ServerRulePage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\Configuration\ServerRules\ServerRulePanel.ascx.cs">
+      <DependentUpon>ServerRulePanel.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\Configuration\ServerRules\ServerRulePanel.ascx.designer.cs">
+      <DependentUpon>ServerRulePanel.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\Configuration\ServerRules\ServerRuleSamples.asmx.cs">
+      <DependentUpon>ServerRuleSamples.asmx</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Common\BarChart.aspx.cs">
       <DependentUpon>BarChart.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -219,6 +251,13 @@
     </Compile>
     <Compile Include="Admin\Default.aspx.designer.cs">
       <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Common\ServerPartitionTabs.ascx.cs">
+      <DependentUpon>ServerPartitionTabs.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Common\ServerPartitionTabs.ascx.designer.cs">
+      <DependentUpon>ServerPartitionTabs.ascx</DependentUpon>
     </Compile>
     <Compile Include="MasterPage.master.cs">
       <DependentUpon>MasterPage.master</DependentUpon>
@@ -357,6 +396,12 @@
     <Content Include="Admin\Configuration\ServerPartitions\ServerPartitionPage.aspx" />
     <Content Include="Admin\Configuration\ServerPartitions\ServerPartitionPanel.ascx" />
     <Content Include="Admin\Configuration\ServerPartitions\ServerPartitionToolBarPanel.ascx" />
+    <Content Include="Admin\Configuration\ServerRules\AddEditServerRuleDialog.ascx" />
+    <Content Include="Admin\Configuration\ServerRules\ServerRuleGridView.ascx" />
+    <Content Include="Admin\Configuration\ServerRules\ServerRulePage.aspx" />
+    <Content Include="Admin\Configuration\ServerRules\ServerRulePanel.ascx" />
+    <Content Include="Admin\Configuration\ServerRules\ServerRuleSamples.asmx" />
+    <Content Include="Common\ServerPartitionTabs.ascx" />
     <Content Include="Search\SearchAccordian.ascx" />
     <Content Include="Search\SeriesDetails.ascx" />
     <Content Include="Search\StudyDetails.ascx" />
@@ -457,7 +502,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Admin\Configuration\Rules\" />
     <Folder Include="App_Code\" />
     <Folder Include="plugins\" />
   </ItemGroup>

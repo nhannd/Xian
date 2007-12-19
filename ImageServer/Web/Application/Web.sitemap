@@ -5,18 +5,11 @@
 			<siteMapNode url="~/Search/SearchPage.aspx" title="Search"  description="Search"/>
 			<siteMapNode url="~/WorkQueue/SearchPage.aspx" title="WorkQueue"  description="WorkQueue"/>
 		</siteMapNode>
-			<siteMapNode url="" title="Configuration"  description="System Configuration">
+		<siteMapNode url="" title="Configuration"  description="System Configuration">
 				<siteMapNode url="~/Admin/Configuration/Devices/DevicePage.aspx" title="Devices"  description="Device Configuration"/>
 				<siteMapNode url="~/Admin/Configuration/ServerPartitions/ServerPartitionPage.aspx" title="Server Partitions"  description="Server Partition Configuration"/>
-				<siteMapNode url="~/Admin/Configuration/FileSystems/FileSystemsPage.aspx" title="FileSystems"  description="FileSystems Configuration"/>
-
-			</siteMapNode>
-			<!--<siteMapNode url="" title="Rules"  description="System Configuration">
-			<siteMapNode url="~/Admin/Rules/AutoRouting.aspx" title="Auto-Routing"  description="Configure auto-routing rules"/>
-			<siteMapNode url="~/Admin/Rules/Retention.aspx" title="Retention"  description="Configure retention rules"/>
-		</siteMapNode>-->
-
+				<siteMapNode url="~/Admin/Configuration/FileSystems/FileSystemsPage.aspx" title="Filesystems"  description="FileSystems Configuration"/>
+				<siteMapNode url="~/Admin/Configuration/ServerRules/ServerRulePage.aspx" title="Server Rules" description="Server Rule Configuration"/>
+		</siteMapNode>
 	</siteMapNode>
-
-
 </siteMap>

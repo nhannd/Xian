@@ -8,16 +8,34 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices {
+namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRules {
     
     
     /// <summary>
-    /// DevicePage class.
+    /// ServerRulePage class.
     /// </summary>
     /// <remarks>
     /// Auto-generated class.
     /// </remarks>
-    public partial class DevicePage {
+    public partial class ServerRulePage {
+        
+        /// <summary>
+        /// ServerRulePagePanel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel ServerRulePagePanel;
+        
+        /// <summary>
+        /// MainTable control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Table MainTable;
         
         /// <summary>
         /// PageContent control.
@@ -29,57 +47,39 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices {
         protected global::System.Web.UI.WebControls.Panel PageContent;
         
         /// <summary>
-        /// DevicePageUpdatePanel control.
+        /// UpdatePanel1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.UpdatePanel DevicePageUpdatePanel;
+        protected global::System.Web.UI.UpdatePanel UpdatePanel1;
         
         /// <summary>
-        /// TabContainer1 control.
+        /// ServerPartitionTabs control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::AjaxControlToolkit.TabContainer TabContainer1;
+        protected global::ClearCanvas.ImageServer.Web.Application.Common.ServerPartitionTabs ServerPartitionTabs;
         
         /// <summary>
-        /// TabPanel1 control.
+        /// ConfirmDialog control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::AjaxControlToolkit.TabPanel TabPanel1;
+        protected global::ClearCanvas.ImageServer.Web.Application.Common.ConfirmDialog ConfirmDialog;
         
         /// <summary>
-        /// AddEditDeviceControl1 control.
+        /// AddEditServerRuleControl control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices.AddEditDeviceDialog AddEditDeviceControl1;
-        
-        /// <summary>
-        /// ConfirmDialog1 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Common.ConfirmDialog ConfirmDialog1;
-        
-        /// <summary>
-        /// Label1 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label Label1;
+        protected global::ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRules.AddEditServerRuleDialog AddEditServerRuleControl;
     }
 }

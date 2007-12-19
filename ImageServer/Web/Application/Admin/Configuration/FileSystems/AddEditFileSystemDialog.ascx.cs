@@ -132,7 +132,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
             ModalPopupExtender1.BehaviorID = ModalPopupExtender1.UniqueID;
 
             ModalPopupExtender1.DropShadow = true;
-            ModalPopupExtender1.Drag = true;
             ModalPopupExtender1.PopupDragHandleControlID = TitleBarPanel.UniqueID;
 
             OKButton.OnClientClick = ClientID + "_clearFields()";

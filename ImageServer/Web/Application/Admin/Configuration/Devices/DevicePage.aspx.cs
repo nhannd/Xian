@@ -51,6 +51,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
         // the controller used for database interaction
         private DeviceConfigurationController _controller = new DeviceConfigurationController();
 
+
         #endregion Private members
 
         #region Protected methods

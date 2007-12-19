@@ -50,6 +50,7 @@
     <Compile Include="Data\StudyAdaptor.cs" />
     <Compile Include="Data\StudyController.cs" />
     <Compile Include="Data\SeriesSearchAdaptor.cs" />
+    <Compile Include="Data\ServerRuleController.cs" />
     <Compile Include="Modules\ErrorModule.cs" />
     <Compile Include="Data\FileSystemDataAdapter.cs" />
     <Compile Include="Data\FileSystemsConfigurationController.cs" />

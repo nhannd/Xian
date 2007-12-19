@@ -30,13 +30,13 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.IO;
 using System.Text;
+using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
-using System.Xml;
 
 namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
 {
@@ -55,8 +55,8 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
     /// the values of for the fields in the new record. When successful, it returns the newly inserted entity derived from <see cref="ServerEntity"/>.
     /// </para>
     /// </remarks>
-    /// <typeparam name="TInput"></typeparam>
-    /// <typeparam name="TOutput"></typeparam>
+    /// <typeparam name="TEntity"></typeparam>
+    /// <typeparam name="TParameters"></typeparam>
     public abstract class UpdateBroker<TEntity, TParameters> : Broker, IUpdateBroker<TEntity, TParameters>
         where TParameters : UpdateBrokerParameters
         where TEntity : ServerEntity, new()
@@ -81,7 +81,7 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
         /// <returns></returns>
         protected static String GetDBColumnName(UpdateBrokerParameterBase parm)
         {
-            String sqlColumnName = parm.FieldName;
+            String sqlColumnName;
 
             if (parm is UpdateBrokerParameter<ServerEntity>)
             {
@@ -126,7 +126,7 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
         protected static String BuildWhereClause(ServerEntityKey key, UpdateBrokerParameters parm)
         {
 
-            return String.Format("[GUID]='{0}'", key.Key.ToString());
+            return String.Format("[GUID]='{0}'", key.Key);
 
         }
         protected static String BuildSetClause(UpdateBrokerParameters parameters)
@@ -135,37 +135,47 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
             bool first = true;
             foreach (UpdateBrokerParameterBase parm in parameters.SubParameters.Values)
             {
-                String text = "";
+                String text;
 
                 if (parm is UpdateBrokerParameter<XmlDocument>)
                 {
                     UpdateBrokerParameter<XmlDocument> p = parm as UpdateBrokerParameter<XmlDocument>;
 
-                    XmlDocument xml = (XmlDocument)p.Value;
-                    StringBuilder sb = new StringBuilder();
-                    XmlWriter writer = XmlWriter.Create(sb);
-                    xml.WriteTo(writer);
-                    text = String.Format("{0}='{1}'", GetDBColumnName(parm), sb.ToString());
+                    XmlDocument xml = p.Value;
+                    StringWriter sw = new StringWriter();
+                    XmlWriterSettings xmlSettings = new XmlWriterSettings();
+                    xmlSettings.Encoding = Encoding.UTF8;
+                    xmlSettings.ConformanceLevel = ConformanceLevel.Fragment;
+                    xmlSettings.Indent = false;
+                    xmlSettings.NewLineOnAttributes = false;
+                    xmlSettings.CheckCharacters = true;
+                    xmlSettings.IndentChars = "";
+
+                    XmlWriter xmlWriter = XmlWriter.Create(sw, xmlSettings);
+                    xml.WriteTo(xmlWriter);
+                    xmlWriter.Close();
+
+                    text = String.Format("{0}='{1}'", GetDBColumnName(parm), sw);
                 }
                 else if (parm is UpdateBrokerParameter<ServerEnum>)
                 {
                     UpdateBrokerParameter<ServerEnum> p = parm as UpdateBrokerParameter<ServerEnum>;
-                    ServerEnum v = (ServerEnum)p.Value;
+                    ServerEnum v = p.Value;
                     text = String.Format("{0}='{1}'", GetDBColumnName(parm), v.Enum);
 
                 }
                 else if (parm is UpdateBrokerParameter<ServerEntity>)
                 {
                     UpdateBrokerParameter<ServerEntity> p = parm as UpdateBrokerParameter<ServerEntity>;
-                    ServerEntity v = (ServerEntity)p.Value;
-                    text = String.Format("{0}='{1}'", GetDBColumnName(parm), v.GetKey().Key.ToString());
+                    ServerEntity v = p.Value;
+                    text = String.Format("{0}='{1}'", GetDBColumnName(parm), v.GetKey().Key);
                 }
                 else if (parm is UpdateBrokerParameter<ServerEntityKey>)
                 {
 
                     UpdateBrokerParameter<ServerEntityKey> p = parm as UpdateBrokerParameter<ServerEntityKey>;
-                    ServerEntityKey key = (ServerEntityKey)p.Value;
-                    text = String.Format("{0}='{1}'", GetDBColumnName(parm), key.Key.ToString());
+                    ServerEntityKey key = p.Value;
+                    text = String.Format("{0}='{1}'", GetDBColumnName(parm), key.Key);
                 }
                 else
                 {
@@ -188,8 +198,8 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
         /// </summary>
         /// <param name="entityName">The entity that is being selected from.</param>
         /// <param name="command">The SqlCommand to use.</param>
-        /// <param name="criteria">The criteria for the select</param>
-        /// <param name="subWhere">If this is being used to generate the SQL for a sub-select, additional where clauses are included here for the select.  Otherwise the parameter is null.</param>
+        /// <param name="key">The GUID of the table row to update</param>
+        /// <param name="parameters">The columns to update.</param>
         /// <returns>The SQL string.</returns>
         protected static string BuildUpdateSql(string entityName, SqlCommand command, ServerEntityKey key, UpdateBrokerParameters parameters)
         {
@@ -200,16 +210,14 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
             // WHERE caluse
             String whereClause = BuildWhereClause(key, parameters);
             
-            return String.Format("UPDATE [{0}] SET {1} WHERE {2}", entityName, setClause.ToString(), whereClause.ToString());
+            return String.Format("UPDATE [{0}] SET {1} WHERE {2}", entityName, setClause, whereClause);
         }
 
         /// <summary>
         /// Generates a SQL statement based on the input.
         /// </summary>
         /// <param name="entityName">The entity that is being selected from.</param>
-        /// <param name="command">The SqlCommand to use.</param>
-        /// <param name="criteria">The criteria for the select</param>
-        /// <param name="subWhere">If this is being used to generate the SQL for a sub-select, additional where clauses are included here for the select.  Otherwise the parameter is null.</param>
+        /// <param name="parameters">The columns to insert.</param>
         /// <returns>The SQL string.</returns>
         protected static string BuildInsertSql(string entityName, UpdateBrokerParameters parameters)
         {
@@ -229,7 +237,7 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
             // Build the text after the VALUES clause
             StringBuilder valuesText = new StringBuilder();
             valuesText.Append("(");
-            valuesText.AppendFormat("'{0}'", guid.ToString());
+            valuesText.AppendFormat("'{0}'", guid);
             foreach (UpdateBrokerParameterBase parm in parameters.SubParameters.Values)
             {
 
@@ -241,12 +249,12 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                 else if (parm is UpdateBrokerParameter<ServerEntity>)
                 {
                     ServerEntity v = (ServerEntity)parm.Value;
-                    valuesText.AppendFormat(", '{0}'", v.GetKey().Key.ToString());
+                    valuesText.AppendFormat(", '{0}'", v.GetKey().Key);
                 }
                 else if (parm is UpdateBrokerParameter<ServerEntityKey>)
                 {
                     ServerEntityKey key = (ServerEntityKey)parm.Value;
-                    valuesText.AppendFormat(", '{0}'", key.Key.ToString());
+                    valuesText.AppendFormat(", '{0}'", key.Key);
                 }
                 else if (parm is UpdateBrokerParameter<XmlDocument>)
                 {
@@ -261,7 +269,7 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                         writer.Flush();
                     }
 
-                    valuesText.AppendFormat(", N'{0}'", sb.ToString()); // NOTE: SQL Server 2005 stores data in Unicode (UTF-16) by default. XML string must be prefixed with an N to define it as a Unicode string
+                    valuesText.AppendFormat(", N'{0}'", sb); // NOTE: SQL Server 2005 stores data in Unicode (UTF-16) by default. XML string must be prefixed with an N to define it as a Unicode string
                 }
                 else
                 {
@@ -277,7 +285,7 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
 
             // Add the SELECT statement. This allows us to popuplate the entity with the inserted values 
             // and return to the caller
-            sql.AppendFormat("SELECT * FROM [{0}] WHERE [GUID]='{1}'", entityName, guid.ToString());
+            sql.AppendFormat("SELECT * FROM [{0}] WHERE [GUID]='{1}'", entityName, guid);
 
             return sql.ToString();
 
@@ -285,6 +293,45 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
         #endregion Protected Static methods
 
         #region IUpdateBroker<TInput,TOutput> Members
+
+        public bool Delete (ServerEntityKey key)
+        {
+            Platform.CheckForNullReference(key, "key");
+
+            SqlCommand command = null;
+            try
+            {
+                command = new SqlCommand();
+                command.Connection = Context.Connection;
+                command.CommandType = CommandType.Text;
+                UpdateContext update = Context as UpdateContext;
+
+                if (update != null)
+                    command.Transaction = update.Transaction;
+
+                command.CommandText = String.Format("delete from {0} where GUID = '{1}'", _entityName, key.Key);
+
+                int rows = command.ExecuteNonQuery();
+
+                return rows > 0;
+            }
+            catch (Exception e)
+            {
+                Platform.Log(LogLevel.Error, e, "Unexpected exception with update: {0}",
+                    command != null ? command.CommandText : "");
+
+                throw new PersistenceException(String.Format("Unexpected problem with update statment on table {0}: {1}", _entityName, e.Message), e);
+            }
+            finally
+            {
+                // Cleanup the reader/command, or else we won't be able to do anything with the
+                // connection the next time here.
+
+                if (command != null)
+                    command.Dispose();
+
+            }
+        }
 
         public bool Update(ServerEntityKey key, TParameters parameters)
         {
@@ -310,7 +357,8 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
             }
             catch (Exception e)
             {
-                Platform.Log(LogLevel.Error, e, "Unexpected exception with update: {0}", command.CommandText);
+                    Platform.Log(LogLevel.Error, e, "Unexpected exception with update: {0}", 
+                        command != null ? command.CommandText : "");
 
                 throw new PersistenceException(String.Format("Unexpected problem with update statment on table {0}: {1}", _entityName, e.Message), e);
             }
@@ -366,7 +414,8 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
             }
             catch (Exception e)
             {
-                Platform.Log(LogLevel.Error, e, "Unexpected exception with update: {0}", command.CommandText);
+                Platform.Log(LogLevel.Error, e, "Unexpected exception with update: {0}", 
+                    command != null ? command.CommandText : "");
 
                 throw new PersistenceException(String.Format("Unexpected problem with update statment on table {0}: {1}", _entityName, e.Message), e);
             }

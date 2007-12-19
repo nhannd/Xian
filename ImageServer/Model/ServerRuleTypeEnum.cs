@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Enterprise;
@@ -36,6 +37,7 @@ using ClearCanvas.ImageServer.Model.EnumBrokers;
 
 namespace ClearCanvas.ImageServer.Model
 {
+    [Serializable]
     public class ServerRuleTypeEnum : ServerEnum
     {
 
@@ -58,6 +60,10 @@ namespace ClearCanvas.ImageServer.Model
             return ServerEnumHelper<ServerRuleTypeEnum, IServerRuleTypeEnum>.GetAll();
         }
 
+        static public ServerRuleTypeEnum GetEnum(string lookup)
+        {
+            return ServerEnumHelper<ServerRuleTypeEnum, IServerRuleTypeEnum>.GetEnum(lookup);
+        }
 
     }
 }

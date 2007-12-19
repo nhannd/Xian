@@ -57,8 +57,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
         private Dictionary<string, ServerPartition> _DictionaryPartitions = new Dictionary<string, ServerPartition>();
         // list of devices to display
         private IList<Device> _devices;
-        // list of server partitions
-        private IList<ServerPartition> _partitions;
         
         #endregion Private members
 

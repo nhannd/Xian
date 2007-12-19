@@ -37,6 +37,7 @@ using ClearCanvas.ImageServer.Model.Criteria;
 using ClearCanvas.ImageServer.Model.EnumBrokers;
 using ClearCanvas.ImageServer.Model.Parameters;
 using ClearCanvas.ImageServer.Model.SelectBrokers;
+using ClearCanvas.ImageServer.Model.UpdateBrokers;
 
 namespace ClearCanvas.ImageServer.Web.Common.Data
 {
@@ -44,7 +45,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
     /// Used to create/update/delete file system entries in the database.
     /// </summary>
     ///
-    public class FileSystemDataAdapter : BaseAdaptor<Filesystem, FilesystemSelectCriteria, ISelectFilesystem>
+    public class FileSystemDataAdapter : BaseAdaptor<Filesystem, FilesystemSelectCriteria, ISelectFilesystem,IUpdateFilesystemBroker,UpdateFilesystemParameters>
     {
         #region Public methods
 

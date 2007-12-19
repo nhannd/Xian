@@ -91,13 +91,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
         /// </remarks>
         public event AddPartitionButtonClick OnAddPartitionButtonClick;
         /// <summary>
-        /// Occurs when user clicks on "Delete" button.
-        /// </summary>
-        /// <remarks>
-        /// This event is fired on the server side.
-        /// </remarks>
-        public event DeletePartitionButtonClick OnDeletePartitionButtonClick;
-        /// <summary>
         /// Occurs when user clicks on "Edit" button.
         /// </summary>
         /// <remarks>

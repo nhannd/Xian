@@ -29,21 +29,20 @@
 
 #endregion
 
-using ClearCanvas.Enterprise.Core;
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
 
 namespace ClearCanvas.ImageServer.Enterprise
 {
     /// <summary>
-    /// Abstract base class for all update parameter classes used in a non-procedural update broker implementing the <see cref="IUpdateBroker"/> interface
+    /// Abstract base class for all update parameter classes used in a non-procedural update broker implementing the <see cref="IUpdateBroker{A,B}"/> interface
     /// </summary>
     public abstract class UpdateBrokerParameterBase 
     {
         #region Protected Members
         protected string _fieldName;
         protected object _value;
-        private Dictionary<string, UpdateBrokerParameterBase> _subParameters = new Dictionary<string, UpdateBrokerParameterBase>();
+        private readonly Dictionary<string, UpdateBrokerParameterBase> _subParameters = new Dictionary<string, UpdateBrokerParameterBase>();
 
         #endregion  Protected Members
 
@@ -76,11 +75,9 @@ namespace ClearCanvas.ImageServer.Enterprise
         {
             get
             {
-                foreach (UpdateBrokerParameterBase subParams in _subParameters.Values)
-                {
-                    if (!subParams.IsEmpty)
-                        return false;
-                }
+                if (_subParameters.Values.Count > 0)
+                    return false;
+
                 return true;
             }
         }
