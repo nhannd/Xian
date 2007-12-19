@@ -48,8 +48,9 @@ namespace ClearCanvas.Common.Statistics
         /// <summary>
         /// Logs a statistics.
         /// </summary>
+        /// <param name="logLevel"></param>
         /// <param name="statistics"></param>
-        public static void Log(StatisticsSet statistics)
+        public static void Log(LogLevel logLevel, StatisticsSet statistics)
         {
             XmlElement el = statistics.GetXmlElement(doc);
             Encoding utf8encoder = new UTF8Encoding();
@@ -62,7 +63,7 @@ namespace ClearCanvas.Common.Statistics
 
                 String xmlStat = utf8encoder.GetString(ms.GetBuffer(), 0, (int) ms.Length);
 
-                Platform.Log(LogLevel.Info, xmlStat);
+                Platform.Log(logLevel, xmlStat);
 
                 writer.Close();
             }
