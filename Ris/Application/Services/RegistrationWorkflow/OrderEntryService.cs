@@ -377,7 +377,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             {
                 RequestedProcedureType requestedType = PersistenceContext.Load<RequestedProcedureType>(req.ProcedureType.EntityRef);
 
-                RequestedProcedure rp = CollectionUtils.SelectFirst<RequestedProcedure>(order.RequestedProcedures,
+                RequestedProcedure rp = CollectionUtils.SelectFirst(order.RequestedProcedures,
                     delegate(RequestedProcedure x) { return req.ProcedureIndex == x.Index; });
 
                 if(rp == null)

@@ -37,6 +37,7 @@ using ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 using ClearCanvas.Workflow;
 using ClearCanvas.Ris.Application.Services.MimeDocumentService;
+using System.Collections.Generic;
 
 namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 {
@@ -151,13 +152,18 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
         public void UpdateProcedureFromRequisition(RequestedProcedure rp, ProcedureRequisition requisition, IPersistenceContext context)
         {
-            foreach (ProcedureStep step in rp.ProcedureSteps)
+            // modify scheduling time/portability of procedure steps that are still scheduled
+            // bug #1356 fix: don't modify scheduling time of reporting procedure steps
+            // only pre-procedure steps and modality procedure steps are re-scheduled
+            List<ProcedureStep> modifiableSteps = CollectionUtils.Select(rp.ProcedureSteps,
+                delegate(ProcedureStep ps) { return ps.IsPreStep || ps.Is<ModalityProcedureStep>(); });
+
+            foreach (ProcedureStep step in modifiableSteps)
             {
-                // only procedure steps that are still scheduled are modifiable
                 if (step.State == ActivityStatus.SC)
                 {
                     step.Schedule(requisition.ScheduledTime);
-                    if (step.Is<ModalityProcedureStep>())
+                    if(step.Is<ModalityProcedureStep>())
                         step.As<ModalityProcedureStep>().Portable = requisition.PortableModality;
                 }
             }

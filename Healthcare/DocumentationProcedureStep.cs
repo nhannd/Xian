@@ -50,6 +50,11 @@ namespace ClearCanvas.Healthcare
             get { return "Documentation"; }
         }
 
+        public override bool IsPreStep
+        {
+            get { return false; }
+        }
+
         #region Object overrides
 
         public bool Equals(DocumentationProcedureStep documentationProcedureStep)

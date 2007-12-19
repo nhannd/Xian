@@ -77,6 +77,11 @@ namespace ClearCanvas.Healthcare {
             get { return _type.Name; }
         }
 
+        public override bool IsPreStep
+        {
+            get { return false; }
+        }
+
         public virtual ModalityProcedureStepType Type
         {
             get { return _type; }

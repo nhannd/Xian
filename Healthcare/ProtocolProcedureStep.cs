@@ -66,6 +66,15 @@ namespace ClearCanvas.Healthcare
             get { return "Protocol"; }
         }
 
+        public override bool IsPreStep
+        {
+            get
+            {
+                // occurs prior to the actual procedure
+                return true;
+            }
+        }
+
         #endregion
 
         public override void Suspend()

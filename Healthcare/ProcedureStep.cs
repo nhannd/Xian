@@ -132,6 +132,12 @@ namespace ClearCanvas.Healthcare
         }
 
         /// <summary>
+        /// Indicates if the procedure is a "Pre" procedure step.  If true, the procedure step's requested
+        /// procedure is not started with the procedure.
+        /// </summary>
+        public abstract bool IsPreStep { get; }
+
+        /// <summary>
         /// Called when the scheduling information for this procedure step has changed.
         /// </summary>
         protected override void OnSchedulingChanged()
@@ -139,15 +145,6 @@ namespace ClearCanvas.Healthcare
             _requestedProcedure.UpdateScheduling();
 
             base.OnSchedulingChanged();
-        }
-
-        /// <summary>
-        /// Indicates if the procedure is a "Pre" procedure step.  If true, the procedure step's requested
-        /// procedure is not started with the procedure.
-        /// </summary>
-        protected virtual bool IsPreStep
-        {
-            get { return false; }
         }
 
         /// <summary>

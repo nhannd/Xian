@@ -75,16 +75,6 @@ namespace ClearCanvas.Healthcare {
             return this.State == ActivityStatus.IP && this.PerformingStaff == staff;
         }
 
-        #region ProcedureStep overrides
-
-        protected override bool IsPreStep
-        {
-            // Do not start requested procedure
-            get { return true; }
-        }
-
-        #endregion
-
         #region Object overrides
 
         public override bool Equals(object that)

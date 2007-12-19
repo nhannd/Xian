@@ -56,6 +56,11 @@ namespace ClearCanvas.Healthcare
         {
         }
 
+        public override bool IsPreStep
+        {
+            get { return false; }
+        }
+
         public virtual ReportPart ReportPart
         {
             get { return _reportPart; }
