@@ -49,6 +49,25 @@ namespace ClearCanvas.ImageViewer.BaseTools
 		private event EventHandler _enabledChanged;
 
 		/// <summary>
+		/// Protected constructor.
+		/// </summary>
+		protected ImageViewerTool()
+		{
+		}
+
+		/// <summary>
+		/// Disposes of this object; override this method to do any necessary cleanup.
+		/// </summary>
+		/// <param name="disposing">True if this object is being disposed, false if it is being finalized.</param>
+		protected override void Dispose(bool disposing)
+		{
+			base.Dispose(disposing);
+
+			this.Context.Viewer.EventBroker.TileSelected -= new EventHandler<TileSelectedEventArgs>(OnTileSelected);
+			this.Context.Viewer.EventBroker.PresentationImageSelected -= new EventHandler<PresentationImageSelectedEventArgs>(OnPresentationImageSelected);
+		}
+
+		/// <summary>
 		/// Initializes the <see cref="ImageViewerTool"/>.
 		/// </summary>
 		public override void Initialize()
