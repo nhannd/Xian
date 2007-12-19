@@ -183,9 +183,9 @@ var JSML = {
         // deserialize value to an object
         function parseValue(str)
         {
-            if(str.match(/^[+-]?\d+$/))
+            if(str.match(/^[+-]?[1-9]\d*$/))
                 return parseInt(str);
-            if(str.match(/^[+-]?\d*\.?\d+$/))
+            if(str.match(/^[+-]?\d*\.\d+$/))
                 return parseFloat(str);
             if(str.match(/^(true|false)$/i))
                 return str.toLowerCase() == "true";
