@@ -187,9 +187,13 @@ function createRequestedProceduresTable(htmlTable, procedures)
 				cellType: "text",
 				getValue: function(item) { return item.Status.Value; }
 			},
-			{   label: "Protocol",
+			{   label: "Protocol Status",
 				cellType: "html",
-				getValue: function(item) { return item.Protocol ? String.combine(item.Protocol.Codes.map(function(code) { return code.Name; }), "<br>") : null; }
+				getValue: function(item) { return item.Protocol ? item.Protocol.Status.Value : "Not Protocolled"; }
+			},
+			{   label: "Protocol Codes",
+				cellType: "html",
+				getValue: function(item) { return item.Protocol ? String.combine(item.Protocol.Codes.map(function(code) { return code.Name; }), "<br>") : ""; }
 			}
 		 ]);
 		 

@@ -42,9 +42,24 @@ namespace ClearCanvas.Ris.Client.Adt
     [MenuAction("apply", "folderexplorer-items-contextmenu/Document", "Apply")]
     [ButtonAction("apply", "folderexplorer-items-toolbar/Document", "Apply")]
     [IconSet("apply", IconScheme.Colour, "StartToolSmall.png", "StartToolMedium.png", "StartToolLarge.png")]
+    [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
     [ExtensionOf(typeof(TechnologistMainWorkflowItemToolExtensionPoint))]
     public class TechnologistDocumentationTool : Tool<ITechnologistWorkflowItemToolContext>
     {
+        public bool Enabled
+        {
+            get
+            {
+                return this.Context.SelectedItems.Count > 0;
+            }
+        }
+
+        public event EventHandler EnabledChanged
+        {
+            add { this.Context.SelectionChanged += value; }
+            remove { this.Context.SelectionChanged -= value; }
+        }
+
         public void Apply()
         {
             try

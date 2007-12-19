@@ -215,5 +215,16 @@ namespace ClearCanvas.Ris.Client.Adt
 
             base.SelectedItemsChangedEventHandler(sender, e);
         }
+
+        public override void SelectedItemDoubleClickedEventHandler(object sender, EventArgs e)
+        {
+            base.SelectedItemDoubleClickedEventHandler(sender, e);
+
+            TechnologistDocumentationTool documentationTool = (TechnologistDocumentationTool)CollectionUtils.SelectFirst(this.ItemTools.Tools,
+                delegate(ITool tool) { return tool is TechnologistDocumentationTool; });
+
+            if (documentationTool.Enabled)
+                documentationTool.Apply();
+        }
     }
 }

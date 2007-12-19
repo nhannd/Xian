@@ -111,7 +111,7 @@
 		    }
 		</script>
 	</head>
-	<body onload="javascript: onBodyLoad()">
+	<body onload="javascript: onBodyLoad()" onresize="javascript: scaleWidth()">
 		<form id="myForm">
 		    <table width="100%" border="0">
 			    <tr>
@@ -124,22 +124,27 @@
 		    </table>
     		
 		    <p>&nbsp;</p>
-		    <table width="100%" border="0">
-			    <tr>
-				    <td width="120" class="propertyname">Date of Birth</td>
-				    <td width="200"><div id="dateOfBirth"/></td>
-				    <td width="63" class="propertyname">Age</td>
-				    <td width="229"><div id="age"/></td>
-			    </tr>
-			    <tr>
-				    <td class="propertyname">Healthcard # </td>
-				    <td><div id="healthcard"/></td>
-				    <td width="63" class="propertyname">Sex</td>
-				    <td width="229"><div id="sex"/></td>
-			    </tr>
-		    </table>
+			<table width="100%" border="0">
+				<tr>
+					<td width="120" class="propertyname">Date of Birth</td>
+					<td width="200"><div id="dateOfBirth"/></td>
+					<td width="63" class="propertyname">Age</td>
+					<td width="229"><div id="age"/></td>
+					<td></td>
+				</tr>
+				<tr>
+					<td class="propertyname">Healthcard # </td>
+					<td><div id="healthcard"/></td>
+					<td width="63" class="propertyname">Sex</td>
+					<td width="229"><div id="sex"/></td>
+					<td class="additionalentriescount">
+						<script language="javascript" type="text/javascript">
+							document.write(Ris.getActionHtml("Details", "more..."));
+						</script>
+					</td>
+				</tr>
+			</table>
 		    
-            <p>&nbsp;</p>
             <table width="100%" border="0">
                 <tr>
                     <td class="sectionheading" colspan="4">Imaging Consultation Overview</td>
@@ -182,7 +187,7 @@
 	            <tr class="tableheading">
 		            <td>Procedure</td>
 		            <td>Status</td>
-		            <td>Protocol</td>
+					<td colspan="2">Protocol Status & Codes</td>
 	            </tr>
 	        </table>
 		</form>
