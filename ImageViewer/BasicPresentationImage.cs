@@ -184,7 +184,7 @@ namespace ClearCanvas.ImageViewer
 		/// <summary>
 		/// Gets the associated <see cref="IAnnotationLayoutProvider"/> for this image.
 		/// </summary>
-		protected virtual IAnnotationLayoutProvider AnnotationLayoutProvider
+		protected IAnnotationLayoutProvider AnnotationLayoutProvider
 		{
 			get { return _annotationLayoutProvider; }			
 			set { _annotationLayoutProvider = value; }

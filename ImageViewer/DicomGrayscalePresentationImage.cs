@@ -71,25 +71,9 @@ namespace ClearCanvas.ImageViewer
 		{
 			Platform.CheckForNullReference(imageSop, "imageSop");
 			_imageSop = imageSop;
+			base.AnnotationLayoutProvider = new DicomFilteredAnnotationLayoutProvider(this);
 		}
 
-		/// <summary>
-		/// Gets or sets the <see cref="IAnnotationLayoutProvider"/> associated with this image.
-		/// </summary>
-		protected override IAnnotationLayoutProvider AnnotationLayoutProvider
-		{
-			get
-			{
-				if (base.AnnotationLayoutProvider == null)
-					base.AnnotationLayoutProvider = new DicomFilteredAnnotationLayoutProvider(this);
-				
-				return base.AnnotationLayoutProvider;
-			}
-			set
-			{
-				base.AnnotationLayoutProvider = value;
-			}
-		}
 		/// <summary>
 		/// Creates a fresh copy of the <see cref="DicomGrayscalePresentationImage"/>.
 		/// </summary>
