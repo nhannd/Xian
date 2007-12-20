@@ -42,9 +42,9 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.DynamicTe
 {
 	static class DynamicTeSeriesCreator
 	{
-		public static void Create(IImageViewerToolContext viewerContext)
+		public static void Create(IDesktopWindow desktopWindow, IImageViewer viewer)
 		{
-			IDisplaySet selectedDisplaySet = viewerContext.Viewer.SelectedImageBox.DisplaySet;
+			IDisplaySet selectedDisplaySet = viewer.SelectedImageBox.DisplaySet;
 			string name = String.Format("{0} - Dynamic TE", selectedDisplaySet.Name);
 			IDisplaySet t2DisplaySet = new DisplaySet(name, "");
 
@@ -80,9 +80,9 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.DynamicTe
 					}
 				}, false);
 
-			ProgressDialog.Show(task, viewerContext.DesktopWindow, true, ProgressBarStyle.Blocks);
+			ProgressDialog.Show(task, desktopWindow, true, ProgressBarStyle.Blocks);
 
-			viewerContext.Viewer.LogicalWorkspace.ImageSets[0].DisplaySets.Add(t2DisplaySet);
+			viewer.LogicalWorkspace.ImageSets[0].DisplaySets.Add(t2DisplaySet);
 		}
 
 		private static DynamicTePresentationImage CreateT2Image(ImageSop imageSop)

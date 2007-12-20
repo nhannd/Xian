@@ -78,7 +78,7 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiAnalysis
 			{ 
 				_minBin = value;
 				this.NotifyPropertyChanged("MinBin");
-				OnSubjectChanged();
+				OnAllPropertiesChanged();
 			}
 		}
 
@@ -89,7 +89,7 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiAnalysis
 			{ 
 				_maxBin = value;
 				this.NotifyPropertyChanged("MaxBin");
-				OnSubjectChanged();
+				OnAllPropertiesChanged();
 			}
 		}
 
@@ -100,7 +100,7 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiAnalysis
 			{ 
 				_numBins = value;
 				this.NotifyPropertyChanged("NumBins");
-				OnSubjectChanged();
+				OnAllPropertiesChanged();
 			}
 		}
 
@@ -111,7 +111,7 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiAnalysis
 			{ 
 				_autoscale = value;
 				this.NotifyPropertyChanged("AutoScale");
-				OnSubjectChanged();
+				OnAllPropertiesChanged();
 			}
 		}
 

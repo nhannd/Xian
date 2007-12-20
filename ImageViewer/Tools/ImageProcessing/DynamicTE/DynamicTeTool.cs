@@ -55,10 +55,10 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.DynamicTe
 	[CheckedStateObserver("activate", "Active", "ActivationChanged")]
 	[EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
-	public class DynamicTeTool : MouseImageViewerTool
+	public class DynamicTeTool : MouseImageViewerTool, IImageOperation
 	{
 		private UndoableCommand _command;
-		private DynamicTeApplicator _applicator;
+		private ImageOperationApplicator _applicator;
 
 		/// <summary>
 		/// Default constructor.  A no-args constructor is required by the
@@ -66,9 +66,6 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.DynamicTe
 		/// </summary>
 		public DynamicTeTool()
 		{
-			// TODO: to change the mouse button that this tool is assigned to,
-			// change the value passed to the base constructor
-
 		}
 
 		private IDynamicTeProvider SelectedDynamicTeProvider
@@ -99,7 +96,7 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.DynamicTe
 			if (!(this.SelectedPresentationImage is IDynamicTeProvider))
 				return;
 
-			_applicator = new DynamicTeApplicator(this.SelectedPresentationImage);
+			_applicator = new ImageOperationApplicator(this.SelectedPresentationImage, this);
 			_command = new UndoableCommand(_applicator);
 			_command.Name = "Dynamic Te";
 			_command.BeginState = _applicator.CreateMemento();
@@ -116,16 +113,7 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.DynamicTe
 			if (_command == null)
 				return;
 
-			_applicator.ApplyToLinkedImages(
-				delegate(IPresentationImage presentationImage)
-				{
-					IDynamicTeProvider provider = presentationImage as IDynamicTeProvider;
-
-					if (provider == null)
-						return;
-
-					provider.DynamicTe.Te = this.SelectedDynamicTeProvider.DynamicTe.Te;
-				});
+			_applicator.ApplyToLinkedImages();
 
 			_command.EndState = _applicator.CreateMemento();
 
@@ -187,5 +175,31 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.DynamicTe
 
 			return false;
 		}
+
+		#region IImageOperation Members
+
+		IMemorable IImageOperation.GetOriginator(IPresentationImage image)
+		{
+			IDynamicTeProvider provider = image as IDynamicTeProvider;
+			if (provider == null)
+				return null;
+
+			return provider as IMemorable;
+		}
+
+		bool IImageOperation.AppliesTo(IPresentationImage image)
+		{
+			return image is IDynamicTeProvider;
+		}
+
+		void IImageOperation.Apply(IPresentationImage image)
+		{
+			IDynamicTeProvider provider = image as IDynamicTeProvider;
+
+			if (provider != null)
+				provider.DynamicTe.Te = this.SelectedDynamicTeProvider.DynamicTe.Te;
+		}
+
+		#endregion
 	}
 }

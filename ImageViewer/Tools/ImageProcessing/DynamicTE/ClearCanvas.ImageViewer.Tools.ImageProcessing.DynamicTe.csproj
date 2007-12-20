@@ -48,7 +48,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
-    <Compile Include="DynamicTeApplicator.cs" />
     <Compile Include="DynamicTeTool.cs" />
     <Compile Include="DynamicTeAnnotationItem.cs" />
     <Compile Include="DynamicTePresentationImage.cs" />

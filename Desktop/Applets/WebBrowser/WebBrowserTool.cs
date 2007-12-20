@@ -41,11 +41,10 @@ using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.Desktop.Applets.WebBrowser
 {
-	[MenuAction("apply", "global-menus/MenuTools/MenuStandard/MenuWebBrowser")]
-	[ButtonAction("apply", "global-toolbars/ToolbarStandard/ToolbarWebBrowser")]
+	[MenuAction("apply", "global-menus/MenuTools/MenuStandard/MenuWebBrowser", "Apply")]
+	[ButtonAction("apply", "global-toolbars/ToolbarStandard/ToolbarWebBrowser", "Apply")]
 	[Tooltip("apply", "TooltipWebBrowser")]
 	[IconSet("apply", IconScheme.Colour, "Icons.WebBrowserToolSmall.png", "Icons.WebBrowserToolMedium.png", "Icons.WebBrowserToolLarge.png")]
-	[ClickHandler("apply", "Apply")]
 	[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
 
 	[ExtensionOf(typeof(ClearCanvas.Desktop.DesktopToolExtensionPoint))]
@@ -110,11 +109,7 @@ namespace ClearCanvas.Desktop.Applets.WebBrowser
 
 			WebBrowserComponent component = new WebBrowserComponent();
 
-			ApplicationComponent.LaunchAsWorkspace(
-				this.Context.DesktopWindow,
-				component,
-				SR.WorkspaceName,
-				null);
+			ApplicationComponent.LaunchAsWorkspace(this.Context.DesktopWindow, component, SR.WorkspaceName);
 		}
 	}
 }

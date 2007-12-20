@@ -123,7 +123,6 @@ namespace ClearCanvas.ImageViewer.Tools.Volume.VTK
 		public override void Start()
 		{
 			base.Start();
-
 		}
 
 		public override void Stop()
@@ -134,7 +133,6 @@ namespace ClearCanvas.ImageViewer.Tools.Volume.VTK
 		}
 
 		#endregion
-
 
 		public void CreateVolume()
 		{
@@ -158,12 +156,26 @@ namespace ClearCanvas.ImageViewer.Tools.Volume.VTK
 			imageBox.Draw();
 			imageBox[0, 0].Select();
 
-			OnSubjectChanged();
+			NotifyAllPropertiesChanged();
 		}
 
 		protected override void OnActiveImageViewerChanged(ActiveImageViewerChangedEventArgs e)
 		{
-			OnSubjectChanged();
+			if (e.DeactivatedImageViewer != null)
+				e.DeactivatedImageViewer.EventBroker.DisplaySetSelected -= OnDisplaySetSelected;
+			
+			if (e.ActivatedImageViewer != null)
+				e.ActivatedImageViewer.EventBroker.DisplaySetSelected += OnDisplaySetSelected;
+
+			NotifyAllPropertiesChanged();
+		}
+
+		private void OnDisplaySetSelected(object sender, DisplaySetSelectedEventArgs e)
+		{
+			NotifyPropertyChanged("CreateVolumeEnabled");
+			NotifyPropertyChanged("VolumeSettingsEnabled");
+
+			NotifyAllPropertiesChanged();
 		}
 
 		private void AddTissueLayers(VolumePresentationImage image)

@@ -41,7 +41,7 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.DynamicTe
 {
 	public class DynamicTe : IMemorable
 	{
-		public class DynamicTeMemento : IMemento
+		public class DynamicTeMemento : IEquatable<DynamicTeMemento>
 		{
 			private double _te;
 			private int _threshold;
@@ -68,6 +68,31 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.DynamicTe
 			{
 				get { return _opacity; }
 			}
+
+			public override int GetHashCode()
+			{
+				return base.GetHashCode();
+			}
+
+			public override bool Equals(object obj)
+			{
+				if (obj == this)
+					return true;
+
+				return this.Equals(obj as DynamicTeMemento);
+			}
+
+			#region IEquatable<DynamicTeMemento> Members
+
+			public bool Equals(DynamicTeMemento other)
+			{
+				if (other == null)
+					return false;
+
+				return Te == other.Te && Threshold == other.Threshold && Opacity == other.Opacity;
+			}
+
+			#endregion
 		}
 
 		private GrayscaleImageGraphic _imageGraphic;
@@ -201,14 +226,14 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.DynamicTe
 
 		#region IMemorable Members
 
-		public IMemento CreateMemento()
+		public object CreateMemento()
 		{
 			return new DynamicTeMemento(this.Te, _threshold, _opacity);
 		}
 
-		public void SetMemento(IMemento memento)
+		public void SetMemento(object memento)
 		{
-			DynamicTeMemento teMemento = memento as DynamicTeMemento;
+			DynamicTeMemento teMemento = (DynamicTeMemento) memento;
 
 			this.Te = teMemento.Te;
 			ApplyProbabilityThreshold(teMemento.Threshold, teMemento.Opacity);

@@ -70,7 +70,7 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.DynamicTe
 			if (_cadComponent == null)
 			{
 				// create and initialize the layout component
-				_cadComponent = new DynamicTeComponent(this.Context);
+				_cadComponent = new DynamicTeComponent(this.Context.DesktopWindow);
 
 				// launch the layout component in a shelf
 				// note that the component is thrown away when the shelf is closed by the user

@@ -92,7 +92,7 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.DynamicTe.View.WinForms
 											_component.CreateDynamicTeSeries();
 										};
 
-			_component.SubjectChanged += delegate(object sender, EventArgs e)
+			_component.AllPropertiesChanged += delegate(object sender, EventArgs e)
 			                             	{
 			                             		_bindingSource.ResetBindings(false);
 			                             	};

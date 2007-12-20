@@ -85,11 +85,11 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiAnalysis.View.WinForm
 			_numBinsUpDown.DataBindings.Add("Value", _bindingSource, "NumBins", true, DataSourceUpdateMode.OnPropertyChanged);
 			_numBinsUpDown.DataBindings.Add("Enabled", _bindingSource, "Enabled", true, DataSourceUpdateMode.OnPropertyChanged);
 
-			OnSubjectChanged(null, EventArgs.Empty);
-			_component.SubjectChanged += new EventHandler(OnSubjectChanged);
+			Refresh(null, EventArgs.Empty);
+			_component.AllPropertiesChanged += new EventHandler(Refresh);
         }
 
-		void OnSubjectChanged(object sender, EventArgs e)
+		void Refresh(object sender, EventArgs e)
 		{
 			_plotSurface.Clear();
 			_plotSurface.BackColor = Color.Black;

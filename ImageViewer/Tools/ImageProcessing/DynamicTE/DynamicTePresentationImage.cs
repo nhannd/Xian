@@ -67,7 +67,10 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.DynamicTe
 			Platform.CheckForNullReference(imageSop, "imageSop");
 
 			_imageSop = imageSop;
-			this.AnnotationLayoutProvider = new DicomFilteredAnnotationLayoutProvider(this);
+
+			// TODO (Norman): DicomFilteredAnnotationLayoutProvider was made internal.  Either need to derive
+			// this class from DicomGrayscalePresentationImage or create a layout provider.
+			//this.AnnotationLayoutProvider = new DicomFilteredAnnotationLayoutProvider(this);
 
 			AddProbabilityOverlay();
 			_dynamicTe = new DynamicTe(
@@ -98,7 +101,7 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.DynamicTe
 
 		#endregion
 
-		public override IPresentationImage  Clone()
+		public override IPresentationImage  CreateFreshCopy()
 		{
  			 return new DynamicTePresentationImage(
 				 this.ImageSop, 

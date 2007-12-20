@@ -65,7 +65,7 @@ namespace ClearCanvas.ImageViewer.Tools.Volume.VTK.View.WinForms
 			_bindingSource = new BindingSource();
 			_bindingSource.DataSource = _component;
 
-			_component.SubjectChanged += new EventHandler(OnSubjectChanged);
+			_component.AllPropertiesChanged += new EventHandler(Refresh);
 			_createVolumeButton.DataBindings.Add("Enabled", _bindingSource, "CreateVolumeEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 			_tabControl.DataBindings.Add("Enabled", _bindingSource, "VolumeSettingsEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 		}
@@ -87,7 +87,7 @@ namespace ClearCanvas.ImageViewer.Tools.Volume.VTK.View.WinForms
 			_component.CreateVolume();
 		}
 
-		void OnSubjectChanged(object sender, EventArgs e)
+		void Refresh(object sender, EventArgs e)
 		{
 			_bindingSource.ResetBindings(false);
 

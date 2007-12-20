@@ -1,19 +1,11 @@
-<Project DefaultTargets="Copy Base Files;Copy x64 Files" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-	<!-- ImageViewer specific postbuild step -->
-	<PropertyGroup>
-		<DatabaseDirectory>C:\dicom_datastore</DatabaseDirectory>
-		<DistributionDirectory>$(ProjectDir)\$(PlatformFolderPrefix)\$(OutDir)</DistributionDirectory>
-		<CommonDirectory>$(DistributionDirectory)\common</CommonDirectory>
-		<PluginsDirectory>$(DistributionDirectory)\plugins</PluginsDirectory>
-		<LogsDirectory>$(DistributionDirectory)\logs</LogsDirectory>
-	</PropertyGroup>
+<Project DefaultTargets="Copy Files" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-	<Target Name="Copy Base Files">
-		<MSBuild Projects="$(SolutionDir)\ImageViewer_dist.proj" Properties="SolutionDir=$(SolutionDir);SolutionName=$(SolutionName);Configuration=$(Configuration);TargetDir=$(TargetDir);PlatformFolderPrefix=$(PlatformFolderPrefix)"  />
-	</Target>
+  <!-- ImageViewer x64 specific postbuild step -->
+  
+	<Target Name="Copy Files">
 
-	<Target Name="Copy x64 Files">
-
+    <MSBuild Projects="$(SolutionDir)\ImageViewer_dist.proj" Properties="SolutionDir=$(SolutionDir);SolutionName=$(SolutionName);Configuration=$(Configuration);ProjectName=$(ProjectName);ProjectOutDir=$(ProjectOutDir);DistributionDirectory=$(DistributionDirectory);CommonDirectory=$(CommonDirectory);PluginsDirectory=$(PluginsDirectory);LogDirectory=$(LogDirectory)"  />
+    
 		<Delete Files="$(CommonDirectory)\OffisDcm.dll" />
 		<Copy SourceFiles="$(SolutionDir)\..\Dicom\OffisWrapper\cppwrapper\x64\$(Configuration)\OffisDcm.dll" DestinationFolder="$(CommonDirectory)" />
 

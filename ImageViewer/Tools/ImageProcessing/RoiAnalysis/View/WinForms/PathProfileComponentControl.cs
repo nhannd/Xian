@@ -59,11 +59,11 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiAnalysis.View.WinForm
 
             _component = component;
 
-			OnSubjectChanged(null, EventArgs.Empty);
-			_component.SubjectChanged += new EventHandler(OnSubjectChanged);
+			Refresh(null, EventArgs.Empty);
+			_component.AllPropertiesChanged += new EventHandler(Refresh);
 		}
 
-		void OnSubjectChanged(object sender, EventArgs e)
+		void Refresh(object sender, EventArgs e)
 		{
 			_plotSurface.Clear();
 			_plotSurface.BackColor = Color.Black;

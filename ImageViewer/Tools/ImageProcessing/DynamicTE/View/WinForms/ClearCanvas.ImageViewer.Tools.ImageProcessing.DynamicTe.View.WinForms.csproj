@@ -54,10 +54,6 @@
     <Service Include="{94E38DFF-614B-4cbd-B67C-F211BB35CE8B}" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\..\Controls\WinForms\ClearCanvas.Controls.WinForms.csproj">
-      <Project>{CA91515F-D706-4D15-882B-811F3BDC4956}</Project>
-      <Name>ClearCanvas.Controls.WinForms</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\..\..\..\..\Desktop\View\WinForms\ClearCanvas.Desktop.View.WinForms.csproj">
       <Project>{BB434EC3-A580-4744-A635-A2B4029C66DE}</Project>
       <Name>ClearCanvas.Desktop.View.WinForms</Name>

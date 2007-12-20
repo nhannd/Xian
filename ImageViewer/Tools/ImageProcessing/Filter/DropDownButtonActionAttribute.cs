@@ -101,7 +101,7 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.Filter
 
 			if (info == null)
 			{
-				throw new ActionBuilderException(
+				throw new Exception(
 					string.Format(SR.ExceptionActionBuilderMethodDoesNotExist, methodName, target.GetType().FullName));
 			}
 		}

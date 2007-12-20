@@ -35,6 +35,7 @@ using System.Text;
 using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.ImageViewer.InteractiveGraphics;
 using ClearCanvas.ImageViewer.Graphics;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiAnalysis
 {
@@ -98,7 +99,7 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiAnalysis
 
 		protected abstract bool CanAnalyzeSelectedRoi();
 
-		protected override void OnSubjectChanged()
+		protected void OnAllPropertiesChanged()
 		{
 			if (CanAnalyzeSelectedRoi())
 			{
@@ -106,12 +107,12 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiAnalysis
 					this.Container.SelectedComponent = this;
 			}
 
-			base.OnSubjectChanged();
+			base.NotifyAllPropertiesChanged();
 		}
 
 		internal void Initialize()
 		{
-			OnSubjectChanged();
+			OnAllPropertiesChanged();
 		}
 
 		protected override void OnActiveImageViewerChanged(ActiveImageViewerChangedEventArgs e)
@@ -122,10 +123,10 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiAnalysis
 			if (e.ActivatedImageViewer != null)
 				e.ActivatedImageViewer.EventBroker.GraphicSelectionChanged += new EventHandler<GraphicSelectionChangedEventArgs>(OnGraphicSelectionChanged);
 
-			OnSubjectChanged();
+			OnAllPropertiesChanged();
 		}
 
-		void OnGraphicSelectionChanged(object sender, GraphicSelectionChangedEventArgs e)
+		private void OnGraphicSelectionChanged(object sender, GraphicSelectionChangedEventArgs e)
 		{
 			RoiGraphic deselectedGraphic = e.DeselectedGraphic as RoiGraphic;
 			RoiGraphic selectedGraphic = e.SelectedGraphic as RoiGraphic;
@@ -133,7 +134,7 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiAnalysis
 			UnwatchRoiGraphic(deselectedGraphic);
 			WatchRoiGraphic(selectedGraphic);
 
-			OnSubjectChanged();
+			OnAllPropertiesChanged();
 		}
 
 		private void UnwatchRoiGraphic(RoiGraphic roiGraphic)
@@ -150,7 +151,7 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiAnalysis
 
 		private void OnRoiChanged(object sender, EventArgs e)
 		{
-			OnSubjectChanged();
+			OnAllPropertiesChanged();
 		}
 	}
 }

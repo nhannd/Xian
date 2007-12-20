@@ -48,7 +48,7 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.DynamicTe
 	/// DynamicTeComponent class
 	/// </summary>
 	[AssociateView(typeof(DynamicTeComponentViewExtensionPoint))]
-	public class DynamicTeComponent : ImageViewerToolComponent
+	public class DynamicTeComponent : ImageViewerToolComponent, IImageOperation
 	{
 		private bool _probabilityMapVisible = true;
 		private decimal _thresholdMinimum = 0;
@@ -62,14 +62,13 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.DynamicTe
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		public DynamicTeComponent(IImageViewerToolContext imageViewerToolContext)
-			: base(imageViewerToolContext)
+		public DynamicTeComponent(IDesktopWindow desktopWindow)
+			: base(desktopWindow)
 		{
 		}
 
 		public override void Start()
 		{
-			// TODO prepare the component for its live phase
 			base.Start();
 		}
 
@@ -100,7 +99,7 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.DynamicTe
 				{
 					_probabilityMapVisible = value;
 					NotifyPropertyChanged("ProbabilityMapVisible");
-					OnSubjectChanged();
+					Update();
 				}
 			}
 		}
@@ -216,13 +215,7 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.DynamicTe
 
 		public void CreateDynamicTeSeries()
 		{
-			DynamicTeSeriesCreator.Create(this.ImageViewerToolContext);
-		}
-
-		protected override void OnSubjectChanged()
-		{
-			Update();
-			base.OnSubjectChanged();
+			DynamicTeSeriesCreator.Create(DesktopWindow, ImageViewer);
 		}
 
 		private void Update()
@@ -235,7 +228,7 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.DynamicTe
 			if (provider == null)
 				return;
 
-			DynamicTeApplicator applicator = new DynamicTeApplicator(this.ImageViewer.SelectedPresentationImage);
+			ImageOperationApplicator applicator = new ImageOperationApplicator(this.ImageViewer.SelectedPresentationImage, this);
 			UndoableCommand command = new UndoableCommand(applicator);
 			command.Name = "Dynamic Te";
 			command.BeginState = applicator.CreateMemento();
@@ -250,6 +243,8 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.DynamicTe
 			command.EndState = applicator.CreateMemento();
 
 			this.ImageViewer.CommandHistory.AddCommand(command);
+
+			base.NotifyAllPropertiesChanged();
 		}
 
 		protected override void OnActiveImageViewerChanged(ActiveImageViewerChangedEventArgs e)
@@ -262,13 +257,34 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.DynamicTe
 			if (e.ActivatedImageViewer != null)
 				e.ActivatedImageViewer.EventBroker.PresentationImageSelected += EventBroker_PresentationImageSelected;
 
-			OnSubjectChanged();
+			Update();
 		}
 
-		void EventBroker_PresentationImageSelected(object sender, PresentationImageSelectedEventArgs e)
+		private void EventBroker_PresentationImageSelected(object sender, PresentationImageSelectedEventArgs e)
 		{
-			OnSubjectChanged();
+			Update();
 		}
 
+		#region IImageOperation Members
+
+		IMemorable IImageOperation.GetOriginator(IPresentationImage image)
+		{
+			IDynamicTeProvider provider = image as IDynamicTeProvider;
+			if (provider == null)
+				return null;
+
+			return provider as IMemorable;
+		}
+
+		bool IImageOperation.AppliesTo(IPresentationImage image)
+		{
+			return image is IDynamicTeProvider;
+		}
+
+		void IImageOperation.Apply(IPresentationImage image)
+		{
+		}
+
+		#endregion
 	}
 }
