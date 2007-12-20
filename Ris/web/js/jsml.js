@@ -183,12 +183,23 @@ var JSML = {
         // deserialize value to an object
         function parseValue(str)
         {
+            // since the JSML does not contain any type information,
+            // we try to guess the most appropriate javascript type from the format of the string
+        
+            // does the string look like an integer?
+            // (note that we purposely exclude strings beginning with 0 from this test,
+            // because a string beginning with 0 was probably meant to be a string)
             if(str.match(/^[+-]?[1-9]\d*$/))
                 return parseInt(str);
+            
+            // does the string look like a floating point number?    
             if(str.match(/^[+-]?\d*\.\d+$/))
                 return parseFloat(str);
+                
+            // does the string consist only of the word "true" or "false" (case insensitive)?    
             if(str.match(/^(true|false)$/i))
                 return str.toLowerCase() == "true";
+                
             if(str.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$/))
                 return Date.parseISOString(str);
             
