@@ -199,7 +199,8 @@ var JSML = {
             // does the string consist only of the word "true" or "false" (case insensitive)?    
             if(str.match(/^(true|false)$/i))
                 return str.toLowerCase() == "true";
-                
+            
+            // is the string an ISO formatted date?    
             if(str.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$/))
                 return Date.parseISOString(str);
             
