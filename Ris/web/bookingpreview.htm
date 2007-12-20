@@ -57,7 +57,6 @@
 
 		            // update patient demography
 	                var patientProfile = data.GetPatientProfileDetailResponse.PatientProfile;
-					alert(patientProfile.Healthcard.Id);
 	                var patientName = Ris.formatPersonName(patientProfile.Name);
 		            if (patientProfile)
 		            {
@@ -66,7 +65,6 @@
 			            Field.setValue($("age"), getPatientAge(patientProfile.DateOfBirth, patientProfile.DeathIndicator, patientProfile.TimeOfDeath));
 			            Field.setValue($("sex"), patientProfile.Sex.Value);
 			            Field.setValue($("dateOfBirth"), Ris.formatDate(patientProfile.DateOfBirth));
-						alert(patientProfile.Healthcard.Id);
 			            Field.setValue($("healthcard"), Ris.formatHealthcard(patientProfile.Healthcard));
 						if (patientProfile.CurrentHomePhone)
 							Field.setValue($("currentHomePhone"), Ris.formatTelephone(patientProfile.CurrentHomePhone));
