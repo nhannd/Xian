@@ -1,4 +1,7 @@
 using System;
+using System.Drawing;
+using System.Web.UI;
+using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
 {
@@ -7,12 +10,13 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
     /// </summary>
     public partial class WorkQueueSummaryPanel : System.Web.UI.UserControl
     {
+        
         #region Private members
         private WorkQueueSummary _workqueueSummary;
         #endregion Private members
 
-        #region Public Properties
-        
+		#region Public Properties
+
         public WorkQueueSummary WorkQueueSummary
         {
             get { return _workqueueSummary; }
@@ -25,13 +29,14 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            WorkQueueType.Text = _workqueueSummary.Type.Description;
+            
+            WorkQueueStatus.Text = _workqueueSummary.Status.Description;
 
-            this.WorkQueueType.Text = _workqueueSummary.Type.Description;
-            this.WorkQueueStatus.Text = _workqueueSummary.Status.Description;
-            this.ScheduledTime.Text = _workqueueSummary.ScheduledDateTime.ToString();
+            ScheduledTime.Text = _workqueueSummary.ScheduledDateTime.ToString();
 
-            this.PatientID.Text = _workqueueSummary.PatientID;
-            this.PatientsName.Text = _workqueueSummary.PatientName;
+            PatientID.Text = _workqueueSummary.PatientID;
+            PatientsName.Text = _workqueueSummary.PatientName;
 
         }
 

@@ -22,7 +22,7 @@
             <td align="left" valign="bottom">
                 <asp:Label ID="Label1" runat="server" Text="Schedule" Width="68px" Style="padding-right: 5px"
                     EnableViewState="False" /><br />
-                <asp:TextBox ID="ScheduleDate" runat="server" Width="100px" ToolTip="Filter the list by Study Description" />
+                <asp:TextBox ID="ScheduleDate" runat="server" Width="100px" ToolTip="Filter the list by Scheduled Date" />
             </td>
             <td align="left" valign="bottom">
                 <asp:Label ID="Label5" runat="server" Text="Type" Width="68px" Style="padding-right: 5px"
@@ -41,5 +41,5 @@
         </tr>
     </table>
 </asp:Panel>
-<ccAjax:CalendarExtender ID="CalendarExtender1" runat="server" Animated="False" TargetControlID="ScheduleDate">
+<ccAjax:CalendarExtender ID="CalendarExtender1" runat="server" TargetControlID="ScheduleDate" CssClass="Calendar">
 </ccAjax:CalendarExtender>

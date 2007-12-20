@@ -41,6 +41,11 @@ namespace ClearCanvas.ImageServer.Model.Parameters
         {
         }
 
+        public ServerEntityKey ServerPartitionKey
+        {
+            set { SubCriteria["ServerPartitionKey"] = new ProcedureParameter<ServerEntityKey>("ServerPartitionKey", value); }
+        }
+
         public string PatientID
         {
             set { SubCriteria["PatientID"] = new ProcedureParameter<string>("PatientID", value); }

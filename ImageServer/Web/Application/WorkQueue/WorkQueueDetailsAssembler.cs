@@ -87,7 +87,7 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
             IList<Model.Study> studyList = studyAdaptor.Get(studycriteria);
 
             // Study may not be available until the images are processed.
-            if (studyList != null && studyList[0]!=null)
+            if (studyList != null && studyList.Count>0)
             {
                 StudyDetailsAssembler studyAssembler = new StudyDetailsAssembler();
                 detail.Study = studyAssembler.CreateStudyDetail(studyList[0]);

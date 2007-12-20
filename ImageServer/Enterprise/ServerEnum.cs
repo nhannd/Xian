@@ -105,7 +105,7 @@ namespace ClearCanvas.ImageServer.Enterprise
                 return true;
             if ((object)t1 == null || (object)t2 == null)
                 return false;
-            return t1.Equals(t1);
+            return t1.Equals(t2);
         }
 
         /// <summary>

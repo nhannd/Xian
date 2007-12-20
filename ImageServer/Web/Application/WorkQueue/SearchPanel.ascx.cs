@@ -67,6 +67,7 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
         {
             SearchFilterPanel.SearchFilterSettings filters = SearchFilterPanel.Filters;
             WebWorkQueueQueryParameters parameters = new WebWorkQueueQueryParameters();
+            parameters.ServerPartitionKey = Partition.GetKey();
             parameters.Accession = filters.AccessionNumber;
             parameters.PatientID = filters.PatientId;
             parameters.ScheduledTime = filters.ScheduledTime;
