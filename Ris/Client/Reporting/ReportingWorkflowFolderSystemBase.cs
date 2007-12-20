@@ -223,16 +223,5 @@ namespace ClearCanvas.Ris.Client.Reporting
 
             base.SelectedItemsChangedEventHandler(sender, e);
         }
-
-        public override void SelectedItemDoubleClickedEventHandler(object sender, EventArgs e)
-        {
-            base.SelectedItemDoubleClickedEventHandler(sender, e);
-
-            EditReportTool editTool = (EditReportTool)CollectionUtils.SelectFirst(this.ItemTools.Tools,
-                delegate(ITool tool) { return tool is EditReportTool; });
-
-            if (editTool.Enabled)
-                editTool.Apply();
-        }
     }
 }

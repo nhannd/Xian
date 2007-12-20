@@ -30,6 +30,7 @@
 #endregion
 
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Tools;
 
 namespace ClearCanvas.Ris.Client.Adt
@@ -72,6 +73,17 @@ namespace ClearCanvas.Ris.Client.Adt
         public override string PreviewUrl
         {
             get { return RegistrationPreviewComponentSettings.Default.BookingFolderSystemUrl; }
+        }
+
+        public override void SelectedItemDoubleClickedEventHandler(object sender, System.EventArgs e)
+        {
+            base.SelectedItemDoubleClickedEventHandler(sender, e);
+
+            PatientBiographyTool biographyTool = (PatientBiographyTool)CollectionUtils.SelectFirst(this.ItemTools.Tools,
+               delegate(ITool tool) { return tool is PatientBiographyTool; });
+
+            if (biographyTool != null && biographyTool.Enabled)
+                biographyTool.View();
         }
     }
 }

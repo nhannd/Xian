@@ -215,15 +215,5 @@ namespace ClearCanvas.Ris.Client.Adt
 
             base.SelectedItemsChangedEventHandler(sender, e);
         }
-
-        public override void SelectedItemDoubleClickedEventHandler(object sender, EventArgs e)
-        {
-            base.SelectedItemDoubleClickedEventHandler(sender, e);
-
-            PatientBiographyTool tool = new PatientBiographyTool();
-            tool.SetContext(new RegistrationWorkflowItemToolContext(this));
-            if (tool.Enabled)
-                tool.View();
-        }
     }
 }

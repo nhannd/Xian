@@ -30,6 +30,7 @@
 #endregion
 
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Tools;
 
 namespace ClearCanvas.Ris.Client.Reporting
@@ -73,6 +74,17 @@ namespace ClearCanvas.Ris.Client.Reporting
         public override string PreviewUrl
         {
             get { return ReportingPreviewComponentSettings.Default.ProtocollingFolderSystemUrl; }
+        }
+
+        public override void SelectedItemDoubleClickedEventHandler(object sender, System.EventArgs e)
+        {
+            base.SelectedItemDoubleClickedEventHandler(sender, e);
+
+            ProtocollingTool protocollingTool = (ProtocollingTool)CollectionUtils.SelectFirst(this.ItemTools.Tools,
+                delegate(ITool tool) { return tool is ProtocollingTool; });
+
+            if (protocollingTool != null && protocollingTool.Enabled)
+                protocollingTool.Apply();
         }
     }
 }

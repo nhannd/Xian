@@ -30,9 +30,10 @@
 #endregion
 
 using System.Threading;
-using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Tools;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client.Reporting
 {
@@ -95,6 +96,17 @@ namespace ClearCanvas.Ris.Client.Reporting
                 _searchFolder.SearchData = value;
                 SelectedFolder = _searchFolder;
             }
+        }
+
+        public override void SelectedItemDoubleClickedEventHandler(object sender, System.EventArgs e)
+        {
+            base.SelectedItemDoubleClickedEventHandler(sender, e);
+
+            EditReportTool editTool = (EditReportTool)CollectionUtils.SelectFirst(this.ItemTools.Tools,
+                delegate(ITool tool) { return tool is EditReportTool; });
+
+            if (editTool != null && editTool.Enabled)
+                editTool.Apply();
         }
     }
 }
