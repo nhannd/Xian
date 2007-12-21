@@ -87,8 +87,8 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             // 
             // tabControl1
             // 
-            this.tabControl1.Controls.Add(this._priorReportsTab);
             this.tabControl1.Controls.Add(this._orderDetailsTab);
+            this.tabControl1.Controls.Add(this._priorReportsTab);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
@@ -111,7 +111,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this._orderDetailsTab.Location = new System.Drawing.Point(4, 22);
             this._orderDetailsTab.Name = "_orderDetailsTab";
             this._orderDetailsTab.Padding = new System.Windows.Forms.Padding(3);
-            this._orderDetailsTab.Size = new System.Drawing.Size(290, 431);
+            this._orderDetailsTab.Size = new System.Drawing.Size(287, 420);
             this._orderDetailsTab.TabIndex = 1;
             this._orderDetailsTab.Text = "Order Details";
             this._orderDetailsTab.UseVisualStyleBackColor = true;

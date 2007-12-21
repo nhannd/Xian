@@ -63,7 +63,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this._orderingFacility = new ClearCanvas.Desktop.View.WinForms.TextField();
             this._visitSummaryButton = new System.Windows.Forms.Button();
-            this._applySchedulingButton = new System.Windows.Forms.Button();
             this._schedulingRequestTime = new ClearCanvas.Desktop.View.WinForms.DateTimeField();
             this._schedulingRequestDate = new ClearCanvas.Desktop.View.WinForms.DateTimeField();
             this._visit = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
@@ -111,7 +110,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // 
             this.splitContainer1.Panel1.Controls.Add(this._orderingFacility);
             this.splitContainer1.Panel1.Controls.Add(this._visitSummaryButton);
-            this.splitContainer1.Panel1.Controls.Add(this._applySchedulingButton);
             this.splitContainer1.Panel1.Controls.Add(this._schedulingRequestTime);
             this.splitContainer1.Panel1.Controls.Add(this._schedulingRequestDate);
             this.splitContainer1.Panel1.Controls.Add(this._visit);
@@ -151,17 +149,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._visitSummaryButton.TabIndex = 11;
             this._visitSummaryButton.UseVisualStyleBackColor = true;
             this._visitSummaryButton.Click += new System.EventHandler(this._visitSummaryButton_Click);
-            // 
-            // _applySchedulingButton
-            // 
-            this._applySchedulingButton.Location = new System.Drawing.Point(327, 255);
-            this._applySchedulingButton.Margin = new System.Windows.Forms.Padding(2);
-            this._applySchedulingButton.Name = "_applySchedulingButton";
-            this._applySchedulingButton.Size = new System.Drawing.Size(68, 23);
-            this._applySchedulingButton.TabIndex = 9;
-            this._applySchedulingButton.Text = "Schedule";
-            this._applySchedulingButton.UseVisualStyleBackColor = true;
-            this._applySchedulingButton.Click += new System.EventHandler(this._applySchedulingButton_Click);
             // 
             // _schedulingRequestTime
             // 
@@ -498,7 +485,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         private ClearCanvas.Desktop.View.WinForms.DateTimeField _schedulingRequestDate;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.Panel panel2;
-        private System.Windows.Forms.Button _applySchedulingButton;
         private System.Windows.Forms.Button _visitSummaryButton;
         private ClearCanvas.Desktop.View.WinForms.TextField _orderingFacility;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;

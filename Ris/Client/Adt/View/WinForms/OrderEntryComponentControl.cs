@@ -143,11 +143,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             _component.EditSelectedProcedure();
         }
 
-        private void _applySchedulingButton_Click(object sender, EventArgs e)
-        {
-            _component.ApplySchedulingToProcedures();
-        }
-
         private void _visitSummaryButton_Click(object sender, EventArgs e)
         {
             _component.ShowVisitSummary();

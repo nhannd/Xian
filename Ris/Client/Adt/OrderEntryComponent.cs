@@ -554,18 +554,6 @@ namespace ClearCanvas.Ris.Client.Adt
             set { _schedulingRequestTime = value; }
         }
 
-        public void ApplySchedulingToProcedures()
-        {
-            foreach (ProcedureRequisition item in _proceduresTable.Items)
-            {
-                if (item.CanModify)
-                {
-                    item.ScheduledTime = _schedulingRequestTime;
-                    _proceduresTable.Items.NotifyItemUpdated(item);
-                }
-            }
-        }
-
         public void AddProcedure()
         {
             try
