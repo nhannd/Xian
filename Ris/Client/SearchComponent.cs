@@ -33,7 +33,6 @@ using System;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
-using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -92,14 +91,15 @@ namespace ClearCanvas.Ris.Client
 
                     _searchComponentShelf = LaunchAsShelf(
                         desktopWindow,
-                        SearchComponent.Instance,
+                        Instance,
                         SR.TitleSearch,
-                        ShelfDisplayHint.DockFloat,
-                        delegate
+                        ShelfDisplayHint.DockFloat);
+
+                    _searchComponentShelf.Closed += delegate
                             {
                                 desktopWindow.Workspaces.ItemActivationChanged -= Workspaces_ItemActivationChanged;
                                 _searchComponentShelf = null;
-                            });
+                            };
 
                     UpdateDisplay();
                 }

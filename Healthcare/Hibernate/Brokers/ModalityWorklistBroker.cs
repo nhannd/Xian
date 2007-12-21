@@ -52,6 +52,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             "select count(*)";
 
         private const string _hqlFrom = " from {0} ps";
+        private const string _hqlFromModalityProcedureStep = " from ModalityProcedureStep ps";
 
         private const string _hqlJoin =
             " join ps.RequestedProcedure rp" +
@@ -92,7 +93,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         public IList<WorklistItem> Search(WorklistItemSearchCriteria[] where, SearchResultPage page, bool showActiveOnly)
         {
-            HqlQuery query = new HqlQuery(string.Concat(_hqlSelectWorklist, _hqlJoin));
+            HqlQuery query = new HqlQuery(string.Concat(_hqlSelectWorklist, _hqlFromModalityProcedureStep, _hqlJoin));
             query.Page = page;
             ConstructSearchCondition(query, where, showActiveOnly);
             return DoQuery(query);
@@ -100,7 +101,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         public int SearchCount(WorklistItemSearchCriteria[] where, bool showActiveOnly)
         {
-            HqlQuery query = new HqlQuery(string.Concat(_hqlSelectCount, _hqlJoin));
+            HqlQuery query = new HqlQuery(string.Concat(_hqlSelectCount, _hqlFromModalityProcedureStep, _hqlJoin));
             ConstructSearchCondition(query, where, showActiveOnly);
             return DoQueryCount(query);
         }
@@ -149,7 +150,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             }
 
             HqlOr or = new HqlOr();
-            foreach (ModalityWorklistItemSearchCriteria c in where)
+            foreach (WorklistItemSearchCriteria c in where)
             {
                 HqlAnd and = new HqlAnd();
 

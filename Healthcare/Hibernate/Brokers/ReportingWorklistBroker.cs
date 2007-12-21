@@ -38,8 +38,6 @@ using ClearCanvas.Enterprise.Hibernate.Hql;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Healthcare.Workflow.Reporting;
 using ClearCanvas.Workflow;
-using ClearCanvas.Common.Utilities;
-using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.Healthcare.Hibernate.Brokers
 {
@@ -101,7 +99,8 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         public IList<WorklistItem> Search(WorklistItemSearchCriteria[] where, SearchResultPage page, bool showActiveOnly)
         {
-            HqlQuery query = new HqlQuery(string.Concat(_hqlSelectReportingWorklist, _hqlFromReportingStep, _hqlJoin));
+            string hqlJoin = string.Concat(_hqlJoin, _hqlJoinReport);
+            HqlQuery query = new HqlQuery(string.Concat(_hqlSelectReportingWorklist, _hqlFromReportingStep, hqlJoin));
             query.Page = page;
             ConstructSearchCondition(query, where, showActiveOnly);
             return DoQuery(query);
