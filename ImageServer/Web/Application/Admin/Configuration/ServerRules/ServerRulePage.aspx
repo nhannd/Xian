@@ -8,15 +8,12 @@
 <%@ Register Src="AddEditServerRuleDialog.ascx" TagName="AddEditServerRuleDialog"
     TagPrefix="addedit" %>
 
-
+<asp:Content ID="ContentTitle" ContentPlaceHolderID="ContentPlaceHolderTitle" runat="server">
+                Rules Engine Management
+</asp:Content>
 <asp:Content ID="Content1" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
     <asp:Panel ID="ServerRulePagePanel" runat="server">
         <asp:Table ID="MainTable" runat="server" CellPadding="0" CellSpacing="0" Width="100%">
-            <asp:TableHeaderRow>
-                <asp:TableHeaderCell CssClass="WindowTitleBar">
-                Rules Engine Management
-            </asp:TableHeaderCell>
-            </asp:TableHeaderRow>
             <asp:TableRow>
                 <asp:TableCell>
                     <asp:Panel ID="PageContent" runat="server" CssClass="ContentWindow">

@@ -67,6 +67,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Search
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            this.SeriesLabel.Text = String.Format("Series: {0}", _series.SeriesDescription);
             AddRow("Modality", _series.Modality);
             AddRow("Series Description", _series.SeriesDescription);
             AddRow("Series Instance Uid", _series.SeriesInstanceUid);

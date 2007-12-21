@@ -29,6 +29,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Search {
         protected global::System.Web.UI.WebControls.Panel DetailsPanel;
         
         /// <summary>
+        /// SeriesLabel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label SeriesLabel;
+        
+        /// <summary>
         /// DetailsTable control.
         /// </summary>
         /// <remarks>

@@ -84,6 +84,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Search
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            this.StudyLabel.Text = String.Format("Study: {0}", _study.StudyDescription);
+            
             AddRow("Patient Name", _study.PatientName);
             AddRow("Patient ID", _study.PatientId);
             AddRow("Patient's Birth Date", _study.PatientsBirthDate);

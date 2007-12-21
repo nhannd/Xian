@@ -5,6 +5,31 @@
 	/*font-size:11px; */
 }
 
+.MasterTitleBar
+{
+	font-size:larger;
+	border-right: 1px outset;
+	border-top: 1px outset;
+	border-left: 1px outset;
+	border-bottom: 1px outset;
+	vertical-align: middle;
+	text-transform: capitalize;
+	font-weight:bold;
+	width: 100%;
+	color: white;
+	background-color: #3D98D1;
+	text-align: left;
+	text-indent: 10pt;
+}
+
+.MasterMainPanel
+{
+	padding-right: 5px;
+	padding-left: 5px;
+	padding-bottom: 5px;
+	padding-top: 5px;
+}
+
 .PopupWindow
 {
 	background-color: white;
@@ -136,9 +161,10 @@
 	/*position: relative;*/
 	height: 24px;
 	background-image: url(../../images/gridheaderbackground.png);
-	background-repeat: repeat-x;
+	/*background-repeat: repeat-x;*/
 	padding-right: 3px;
 	padding-left: 3px;	
+    font-weight: bold;
 }
 
 .HeaderColumn
@@ -180,16 +206,14 @@
 	border-top: #cccccc 1px solid;
 	border-left: #cccccc 1px solid;
 	border-bottom: #cccccc 1px solid;
-	height:630px;
-	width: 780px;
 	font-size:smaller;
 }
 .ChildPanel
 {
-	padding-right: 10px;
-	padding-left: 10px;
-	padding-bottom: 10px;
-	padding-top: 10px;
+	padding-right: 5px;
+	padding-left: 5px;
+	padding-bottom: 5px;
+	padding-top: 5px;
 }
 
 .GridRowStyle
@@ -358,6 +382,7 @@
 .Calendar  .ajax__calendar_dayname {border-bottom:1px solid #f5f5f5;}
 
 .Calendar  .ajax__calendar_month {border:1px solid #ffffff;}
+.sectionLabel
 .Calendar  .ajax__calendar_year {border:1px solid #ffffff;}
 
 .Calendar .ajax__calendar_active .ajax__calendar_day

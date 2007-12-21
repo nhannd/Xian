@@ -6,13 +6,11 @@
 <%@ Register Src="FileSystemsPanel.ascx" TagName="FileSystemsPanel" TagPrefix="uc2" %>
 <%@ Register Src="~/Common/ConfirmDialog.ascx" TagName="ConfirmDialog" TagPrefix="uc1" %>
 
+<asp:Content ID="ContentTitle" ContentPlaceHolderID="ContentPlaceHolderTitle" runat="server">
+                File System Management
+</asp:Content>
 <asp:Content ID="Content1" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
     <table cellpadding="0" cellspacing="0" width="100%">
-        <tr>
-            <td class="WindowTitleBar">
-                File System Management
-            </td>
-        </tr>
         <tr>
             <td>
                 <asp:Panel ID="Panel1" runat="server" CssClass="ChildPanel">

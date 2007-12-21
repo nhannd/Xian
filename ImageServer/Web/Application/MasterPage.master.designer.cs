@@ -37,15 +37,6 @@ public partial class Admin_MasterPage {
     protected global::System.Web.UI.ScriptManager ScriptManager1;
     
     /// <summary>
-    /// UpdatePanel2 control.
-    /// </summary>
-    /// <remarks>
-    /// Auto-generated field.
-    /// To modify move field declaration from designer file to code-behind file.
-    /// </remarks>
-    protected global::System.Web.UI.UpdatePanel UpdatePanel2;
-    
-    /// <summary>
     /// Image1 control.
     /// </summary>
     /// <remarks>
@@ -64,22 +55,22 @@ public partial class Admin_MasterPage {
     protected global::System.Web.UI.WebControls.Label VersionLabel;
     
     /// <summary>
-    /// Panel5 control.
+    /// UpdatePanel2 control.
     /// </summary>
     /// <remarks>
     /// Auto-generated field.
     /// To modify move field declaration from designer file to code-behind file.
     /// </remarks>
-    protected global::System.Web.UI.WebControls.Panel Panel5;
+    protected global::System.Web.UI.UpdatePanel UpdatePanel2;
     
     /// <summary>
-    /// TreeView1 control.
+    /// TestPanel control.
     /// </summary>
     /// <remarks>
     /// Auto-generated field.
     /// To modify move field declaration from designer file to code-behind file.
     /// </remarks>
-    protected global::System.Web.UI.WebControls.TreeView TreeView1;
+    protected global::System.Web.UI.WebControls.Panel TestPanel;
     
     /// <summary>
     /// SiteMapDataSource1 control.
@@ -89,6 +80,24 @@ public partial class Admin_MasterPage {
     /// To modify move field declaration from designer file to code-behind file.
     /// </remarks>
     protected global::System.Web.UI.WebControls.SiteMapDataSource SiteMapDataSource1;
+    
+    /// <summary>
+    /// Menu1 control.
+    /// </summary>
+    /// <remarks>
+    /// Auto-generated field.
+    /// To modify move field declaration from designer file to code-behind file.
+    /// </remarks>
+    protected global::System.Web.UI.WebControls.Menu Menu1;
+    
+    /// <summary>
+    /// ContentPlaceHolderTitle control.
+    /// </summary>
+    /// <remarks>
+    /// Auto-generated field.
+    /// To modify move field declaration from designer file to code-behind file.
+    /// </remarks>
+    protected global::System.Web.UI.WebControls.ContentPlaceHolder ContentPlaceHolderTitle;
     
     /// <summary>
     /// Panel1 control.

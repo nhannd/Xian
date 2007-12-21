@@ -5,13 +5,11 @@
 <%@ Register Src="~/Common/ConfirmDialog.ascx" TagName="ConfirmDialog" TagPrefix="uc1" %>
 <%@ Register Src="AddEditDeviceDialog.ascx" TagName="AddEditDeviceDialog" TagPrefix="uc2" %>
 <%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="ajaxToolkit" %>
+<asp:Content ID="ContentTitle" ContentPlaceHolderID="ContentPlaceHolderTitle" runat="server">
+                Device Management
+</asp:Content>
 <asp:Content ID="Content1" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
     <table cellpadding="0" cellspacing="0" width="100%">
-        <tr>
-            <td class="WindowTitleBar">
-                Device Management
-            </td>
-        </tr>
         <tr>
             <td>
                 <asp:Panel runat="server" ID="PageContent" CssClass="ContentWindow">

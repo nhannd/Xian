@@ -8,15 +8,13 @@
 
 
 <%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="cc1" %>
+<asp:Content ID="ContentTitle" ContentPlaceHolderID="ContentPlaceHolderTitle" runat="server">
+                Server Partition Management
+</asp:Content>
 <asp:Content ID="Content1" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
     <asp:UpdatePanel ID="UpdatePanel" runat="server" UpdateMode="Conditional">
         <ContentTemplate>
     <table cellpadding="0" cellspacing="0" width="100%">
-        <tr>
-            <td class="WindowTitleBar">
-            Server Partition Management
-            </td>
-         </tr>
          <tr>
             <td>
                 <asp:Panel ID="Panel1" runat="server" CssClass="ChildPanel">
