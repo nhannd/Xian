@@ -53,7 +53,6 @@
     <Compile Include="ExamDetailsComponent.cs" />
     <Compile Include="Folders\RefreshTool.cs" />
     <Compile Include="Folders\TechnologistWorkflowFolders.cs" />
-    <Compile Include="HtmlFormSelector.cs" />
     <Compile Include="IDocumentationPage.cs" />
     <Compile Include="OrderEntryComponentSettings.cs" />
     <Compile Include="OrderEntryComponentSettings.Designer.cs">
@@ -189,9 +188,6 @@
     <Content Include="actionmodels.xml" />
     <EmbeddedResource Include="Icons\EditToolLarge.png" />
     <EmbeddedResource Include="Icons\EditToolMedium.png" />
-    <EmbeddedResource Include="PreExamDetailsPageUrlSelectorScript.js" />
-    <EmbeddedResource Include="PostExamDetailsPageUrlSelectorScript.js" />
-    <EmbeddedResource Include="PerformedProcedureStepDetailsPageUrlSelectorScript.js" />
     <EmbeddedResource Include="Icons\SearchToolLarge.png" />
     <EmbeddedResource Include="Icons\SearchToolMedium.png" />
     <EmbeddedResource Include="Icons\SearchToolSmall.png" />

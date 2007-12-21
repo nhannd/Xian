@@ -59,14 +59,16 @@ namespace ClearCanvas.Ris.Client.Adt
 
         class MppsDetailsComponent : DHtmlComponent
         {
-            private static readonly HtmlFormSelector _detailsFormSelector =
-                new HtmlFormSelector(PerformedProcedureComponentSettings.Default.DetailsPageUrlSelectorScript, new string[] { "performedProcedureStep" });
-
             private readonly PerformedProcedureComponent _owner;
 
             public MppsDetailsComponent(PerformedProcedureComponent owner)
             {
                 _owner = owner;
+            }
+
+            protected override DataContractBase GetHealthcareContext()
+            {
+                return _owner._selectedMpps;
             }
 
             protected override string GetTag(string tag)
@@ -94,14 +96,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
             public void SelectedMppsChanged()
             {
-                if (_owner._selectedMpps == null)
-                {
-                    SetUrl(null);
-                }
-                else
-                {
-                    SetUrl(_detailsFormSelector.SelectForm(_owner._selectedMpps));
-                }
+                SetUrl(PerformedProcedureComponentSettings.Default.DetailsPageUrl);
             }
         }
 

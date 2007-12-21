@@ -2,8 +2,8 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ClearCanvas.Ris.Client.Adt" GeneratedClassName="PerformedProcedureComponentSettings">
   <Profiles />
   <Settings>
-    <Setting Name="DetailsPageUrlSelectorScript" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">PerformedProcedureStepDetailsPageUrlSelectorScript.js</Value>
+    <Setting Name="DetailsPageUrl" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">http://localhost/RIS/forms/technologist/mpps.htm</Value>
     </Setting>
   </Settings>
 </SettingsFile>
