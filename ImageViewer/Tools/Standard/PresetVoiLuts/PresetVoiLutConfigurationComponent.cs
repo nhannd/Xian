@@ -441,14 +441,14 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 			ResourceResolver resolver = new ResourceResolver(this.GetType().Assembly);
 
 			_toolbarModel = new SimpleActionModel(resolver);
-			_toolbarModel.AddAction("add", "Add", "AddToolSmall.png", OnAdd);
-			_toolbarModel.AddAction("edit", "Edit", "EditToolSmall.png", OnEditSelected);
-			_toolbarModel.AddAction("delete", "Delete", "DeleteToolSmall.png", OnDeleteSelected);
+			_toolbarModel.AddAction("add", "LabelAdd", "AddToolSmall.png", OnAdd);
+			_toolbarModel.AddAction("edit", "LabelEdit", "EditToolSmall.png", OnEditSelected);
+			_toolbarModel.AddAction("delete", "LabelDelete", "DeleteToolSmall.png", OnDeleteSelected);
 
 			_contextMenuModel = new SimpleActionModel(resolver);
-			_contextMenuModel.AddAction("add", "Add", "AddToolSmall.png", OnAdd);
-			_contextMenuModel.AddAction("edit", "Edit", "EditToolSmall.png", OnEditSelected);
-			_contextMenuModel.AddAction("delete", "Delete", "DeleteToolSmall.png", OnDeleteSelected);
+			_contextMenuModel.AddAction("add", "LabelAdd", "AddToolSmall.png", OnAdd);
+			_contextMenuModel.AddAction("edit", "LabelEdit", "EditToolSmall.png", OnEditSelected);
+			_contextMenuModel.AddAction("delete", "LabelDelete", "DeleteToolSmall.png", OnDeleteSelected);
 
 			_toolbarModel["add"].Visible = !HasMultipleFactories;
 			_contextMenuModel["add"].Visible = !HasMultipleFactories;
@@ -460,13 +460,13 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 		{
 			TableColumn<PresetVoiLut, string> column;
 
-			column = new TableColumn<PresetVoiLut, string>("Key", delegate(PresetVoiLut item) { return item.KeyStrokeDescriptor.ToString(); }, 0.2f);
+			column = new TableColumn<PresetVoiLut, string>(SR.TitleKey, delegate(PresetVoiLut item) { return item.KeyStrokeDescriptor.ToString(); }, 0.2f);
 			_voiLutPresets.Columns.Add(column);
 	
-			column = new TableColumn<PresetVoiLut, string>("Name", delegate(PresetVoiLut item) { return item.Operation.Name; }, 0.2f);
+			column = new TableColumn<PresetVoiLut, string>(SR.TitleName, delegate(PresetVoiLut item) { return item.Operation.Name; }, 0.2f);
 			_voiLutPresets.Columns.Add(column);
 
-			column = new TableColumn<PresetVoiLut, string>("Description", delegate(PresetVoiLut item) { return item.Operation.Description; }, 0.6f);
+			column = new TableColumn<PresetVoiLut, string>(SR.TitleDescription, delegate(PresetVoiLut item) { return item.Operation.Description; }, 0.6f);
 			_voiLutPresets.Columns.Add(column);
 		}
 

@@ -172,7 +172,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 					showVoiValue = false;
 
 					Color color = ((ColorImageGraphic)_selectedImageGraphic).PixelData.GetPixelAsColor(sourcePointRounded.X, sourcePointRounded.Y);
-					string rgbFormatted = String.Format("R={0}, G={1}, B={2})", color.R, color.G, color.B);
+					string rgbFormatted = String.Format(SR.FormatRGB, color.R, color.G, color.B);
 					pixelValueString = String.Format("{0}: {1}", SR.LabelPixelValue, rgbFormatted);
 				}
 			}

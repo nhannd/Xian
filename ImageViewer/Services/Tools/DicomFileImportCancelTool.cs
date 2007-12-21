@@ -43,12 +43,12 @@ using ClearCanvas.ImageViewer.Services.LocalDataStore;
 namespace ClearCanvas.ImageViewer.Services.Tools
 {
 
-	[MenuAction("cancel", "dicom-file-import-contextmenu/Cancel", "Cancel")]
-	[Tooltip("cancel", "Cancel")]
+	[MenuAction("cancel", "dicom-file-import-contextmenu/MenuCancel", "Cancel")]
+	[Tooltip("cancel", "TooltipCancel")]
 	[EnabledStateObserver("cancel", "CancelEnabled", "CancelEnabledChanged")]
 
-	[MenuAction("clear", "dicom-file-import-contextmenu/Clear", "Clear")]
-	[Tooltip("clear", "Clear")]
+	[MenuAction("clear", "dicom-file-import-contextmenu/MenuClear", "Clear")]
+	[Tooltip("clear", "TooltipClear")]
 	[EnabledStateObserver("clear", "ClearEnabled", "ClearEnabledChanged")]
 
 	[ButtonAction("clearInactive", "dicom-file-import-toolbar/ClearInactive", "ClearInactive")]

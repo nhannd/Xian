@@ -67,7 +67,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 							resolver,
 							delegate(ImageSop imageSop)
 							{
-								return String.Format("{0:F1} mm", imageSop.SliceThickness);
+								return String.Format(SR.Formatmm1, imageSop.SliceThickness);
 							},
 							DicomDataFormatHelper.RawStringFormat
 						)
@@ -81,7 +81,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 							resolver,
 							delegate(ImageSop imageSop)
 							{
-								return String.Format("{0:F1} mm", imageSop.SliceLocation);
+								return String.Format(SR.Formatmm1, imageSop.SliceLocation);
 							},
 							DicomDataFormatHelper.RawStringFormat
 						)

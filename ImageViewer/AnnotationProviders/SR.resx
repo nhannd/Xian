@@ -552,6 +552,24 @@
   <data name="ExceptionTransformedEdgeDoesNotMatch" xml:space="preserve">
     <value>The transformed edge does not have a corresponding value.</value>
   </data>
+  <data name="FormatDegrees" xml:space="preserve">
+    <value>{0}°</value>
+  </data>
+  <data name="FormatkV" xml:space="preserve">
+    <value>{0} kV</value>
+  </data>
+  <data name="FormatmA" xml:space="preserve">
+    <value>{0} mA</value>
+  </data>
+  <data name="Formatmm1" xml:space="preserve">
+    <value>{0:F1} mm</value>
+  </data>
+  <data name="Formatms" xml:space="preserve">
+    <value>{0:F2} ms</value>
+  </data>
+  <data name="FormatTeslas" xml:space="preserve">
+    <value>{0:F1}T</value>
+  </data>
   <data name="Label_kilograms" xml:space="preserve">
     <value>kg</value>
   </data>

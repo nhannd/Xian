@@ -61,6 +61,15 @@ namespace ClearCanvas.Desktop.ExtensionBrowser {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Extension Points ({0}).
+        /// </summary>
+        public static string FormatExtensionPointsDisplayName {
+            get {
+                return ResourceManager.GetString("FormatExtensionPointsDisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Extension Browser.
         /// </summary>
         public static string MenuExtensionBrowser {

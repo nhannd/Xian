@@ -251,7 +251,7 @@ namespace ClearCanvas.Desktop
 		/// </summary>
         public string ButtonText
         {
-            get { return (_task != null && _task.IsRunning ? "Cancel" : "Close"); }
+            get { return (_task != null && _task.IsRunning ? SR.TitleCancel : SR.TitleClose); }
         }
 
         #endregion

@@ -156,13 +156,52 @@
   <data name="MessageNoConfigurationPagesExist" xml:space="preserve">
     <value>No configuration pages exist.</value>
   </data>
+  <data name="MessageReset" xml:space="preserve">
+    <value>Reset this setting back to its default value?</value>
+  </data>
+  <data name="MessageResetAll" xml:space="preserve">
+    <value>Reset all settings back to default values?</value>
+  </data>
+  <data name="MessageSaveModified" xml:space="preserve">
+    <value>Settings have been modified.  Save changes?</value>
+  </data>
   <data name="MessageSaveSettingFailed" xml:space="preserve">
     <value>Failed to save the selected settings values.  Please ensure the values entered are properly formatted for the data type.</value>
   </data>
   <data name="TitleDateFormat" xml:space="preserve">
     <value>Date Format</value>
   </data>
+  <data name="TitleDefaultValue" xml:space="preserve">
+    <value>Default Value</value>
+  </data>
+  <data name="TitleDescription" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="TitleEditValue" xml:space="preserve">
+    <value>Edit Value</value>
+  </data>
+  <data name="TitleGroup" xml:space="preserve">
+    <value>Group</value>
+  </data>
   <data name="TitleMenuOptions" xml:space="preserve">
     <value>Options</value>
+  </data>
+  <data name="TitleProperty" xml:space="preserve">
+    <value>Property</value>
+  </data>
+  <data name="TitleScope" xml:space="preserve">
+    <value>Scope</value>
+  </data>
+  <data name="TitleSettingsManagement" xml:space="preserve">
+    <value>Settings Management</value>
+  </data>
+  <data name="TitleType" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="TitleValue" xml:space="preserve">
+    <value>Value</value>
+  </data>
+  <data name="TitleVersion" xml:space="preserve">
+    <value>Version</value>
   </data>
 </root>

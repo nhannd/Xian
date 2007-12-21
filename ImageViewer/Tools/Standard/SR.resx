@@ -479,4 +479,28 @@ Please ensure that the name/keystroke combination is unique.</value>
   <data name="TooltipUndo" xml:space="preserve">
     <value>Undo</value>
   </data>
+  <data name="FormatRGB" xml:space="preserve">
+    <value>R={0}, G={1}, B={2}</value>
+  </data>
+  <data name="LabelAdd" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="LabelDelete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="LabelEdit" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="TitleDescription" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="TitleKey" xml:space="preserve">
+    <value>Key</value>
+  </data>
+  <data name="TitleName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="TooltipLocateOnDisk" xml:space="preserve">
+    <value>Locates the selected image(s) on disk</value>
+  </data>
 </root>

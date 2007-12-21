@@ -1366,6 +1366,60 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0}°.
+        /// </summary>
+        internal static string FormatDegrees {
+            get {
+                return ResourceManager.GetString("FormatDegrees", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} kV.
+        /// </summary>
+        internal static string FormatkV {
+            get {
+                return ResourceManager.GetString("FormatkV", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} mA.
+        /// </summary>
+        internal static string FormatmA {
+            get {
+                return ResourceManager.GetString("FormatmA", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0:F1} mm.
+        /// </summary>
+        internal static string Formatmm1 {
+            get {
+                return ResourceManager.GetString("Formatmm1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0:F2} ms.
+        /// </summary>
+        internal static string Formatms {
+            get {
+                return ResourceManager.GetString("Formatms", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0:F1}T.
+        /// </summary>
+        internal static string FormatTeslas {
+            get {
+                return ResourceManager.GetString("FormatTeslas", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to kg.
         /// </summary>
         internal static string Label_kilograms {

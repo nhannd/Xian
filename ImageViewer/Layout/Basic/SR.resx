@@ -150,4 +150,7 @@
   <data name="ToolbarLayoutManager" xml:space="preserve">
     <value>LayoutManager</value>
   </data>
+  <data name="TooltipLayoutManager" xml:space="preserve">
+    <value>Layout Manager</value>
+  </data>
 </root>

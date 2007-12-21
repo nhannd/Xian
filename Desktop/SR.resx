@@ -120,6 +120,12 @@
   <data name="ApplicationName" xml:space="preserve">
     <value>ClearCanvas Workstation</value>
   </data>
+  <data name="DescriptionExceptionHandlerSettings" xml:space="preserve">
+    <value>Configures global exception handling behaviour.</value>
+  </data>
+  <data name="DescriptionFormatSettings" xml:space="preserve">
+    <value>Allows configuration of display format of common items such as dates, times, etc.</value>
+  </data>
   <data name="ExceptionActionBuilderEventDoesNotExist" xml:space="preserve">
     <value>The event {0} does not exist for class {1}.</value>
   </data>
@@ -260,6 +266,12 @@
   </data>
   <data name="MessageValueRequired" xml:space="preserve">
     <value>Value required</value>
+  </data>
+  <data name="TitleCancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="TitleClose" xml:space="preserve">
+    <value>Close</value>
   </data>
   <data name="TitleCloseAssistant" xml:space="preserve">
     <value>Close Assistant</value>

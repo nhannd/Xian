@@ -141,6 +141,12 @@
   <data name="ImportDicomFiles" xml:space="preserve">
     <value>Import</value>
   </data>
+  <data name="MenuCancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="MenuClear" xml:space="preserve">
+    <value>Clear</value>
+  </data>
   <data name="MenuDeleteStudy" xml:space="preserve">
     <value>Delete</value>
   </data>
@@ -320,6 +326,12 @@ Please ensure the ClearCanvas server is running or contact your system administr
   </data>
   <data name="ToolbarSendStudy" xml:space="preserve">
     <value>Send</value>
+  </data>
+  <data name="TooltipCancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="TooltipClear" xml:space="preserve">
+    <value>Clear</value>
   </data>
   <data name="TooltipClearAll" xml:space="preserve">
     <value>Clear All Items</value>

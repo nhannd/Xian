@@ -91,7 +91,8 @@ namespace ClearCanvas.Desktop.Configuration
             	_workspace = ApplicationComponent.LaunchAsWorkspace(
             		this.Context.DesktopWindow,
             		new SettingsManagementComponent(store),
-            		"Settings Management");
+					SR.TitleSettingsManagement,
+					"Settings Management");
 
 				_workspace.Closed += OnWorkspaceClosed;
 			}
@@ -265,27 +266,27 @@ namespace ClearCanvas.Desktop.Configuration
 
             // define the structure of the settings group table
             _settingsGroupTable = new Table<SettingsGroupDescriptor>();
-            _settingsGroupTable.Columns.Add(new TableColumn<SettingsGroupDescriptor, string>("Group",
+            _settingsGroupTable.Columns.Add(new TableColumn<SettingsGroupDescriptor, string>(SR.TitleGroup,
                 delegate(SettingsGroupDescriptor t) { return t.Name; }));
-            _settingsGroupTable.Columns.Add(new TableColumn<SettingsGroupDescriptor, string>("Version",
+            _settingsGroupTable.Columns.Add(new TableColumn<SettingsGroupDescriptor, string>(SR.TitleVersion,
                 delegate(SettingsGroupDescriptor t) { return t.Version.ToString(); }));
-            _settingsGroupTable.Columns.Add(new TableColumn<SettingsGroupDescriptor, string>("Description",
+            _settingsGroupTable.Columns.Add(new TableColumn<SettingsGroupDescriptor, string>(SR.TitleDescription,
                 delegate(SettingsGroupDescriptor t) { return t.Description; }));
 
 
             // define the settings properties table
             _settingsPropertiesTable = new Table<SettingsProperty>();
-            _settingsPropertiesTable.Columns.Add(new TableColumn<SettingsProperty, string>("Property",
+			_settingsPropertiesTable.Columns.Add(new TableColumn<SettingsProperty, string>(SR.TitleProperty,
                 delegate(SettingsProperty p) { return p.Name; }));
-            _settingsPropertiesTable.Columns.Add(new TableColumn<SettingsProperty, string>("Description",
+            _settingsPropertiesTable.Columns.Add(new TableColumn<SettingsProperty, string>(SR.TitleDescription,
                delegate(SettingsProperty p) { return p.Description; }));
-            _settingsPropertiesTable.Columns.Add(new TableColumn<SettingsProperty, string>("Scope",
+            _settingsPropertiesTable.Columns.Add(new TableColumn<SettingsProperty, string>(SR.TitleScope,
                 delegate(SettingsProperty p) { return p.Scope.ToString(); }));
-            _settingsPropertiesTable.Columns.Add(new TableColumn<SettingsProperty, string>("Type",
+            _settingsPropertiesTable.Columns.Add(new TableColumn<SettingsProperty, string>(SR.TitleType,
                 delegate(SettingsProperty p) { return p.TypeName; }));
-            _settingsPropertiesTable.Columns.Add(new TableColumn<SettingsProperty, string>("Default Value",
+			_settingsPropertiesTable.Columns.Add(new TableColumn<SettingsProperty, string>(SR.TitleDefaultValue,
                 delegate(SettingsProperty p) { return p.DefaultValue; }));
-            _settingsPropertiesTable.Columns.Add(new TableColumn<SettingsProperty, string>("Value",
+			_settingsPropertiesTable.Columns.Add(new TableColumn<SettingsProperty, string>(SR.TitleValue,
                delegate(SettingsProperty p) { return p.Value; },
                delegate(SettingsProperty p, string text) { p.Value = text; }));
 
@@ -522,7 +523,7 @@ namespace ClearCanvas.Desktop.Configuration
 
         private void ResetAllPropertyValues()
         {
-            DialogBoxAction action = this.Host.ShowMessageBox("Reset all settings back to default values?", MessageBoxActions.YesNo);
+			DialogBoxAction action = this.Host.ShowMessageBox(SR.MessageResetAll, MessageBoxActions.YesNo);
             if (action == DialogBoxAction.Yes)
             {
                 foreach (SettingsProperty property in _settingsPropertiesTable.Items)
@@ -535,7 +536,7 @@ namespace ClearCanvas.Desktop.Configuration
 
         private void ResetPropertyValue(SettingsProperty property)
         {
-            DialogBoxAction action = this.Host.ShowMessageBox("Reset this setting back to its default value?", MessageBoxActions.YesNo);
+			DialogBoxAction action = this.Host.ShowMessageBox(SR.MessageReset, MessageBoxActions.YesNo);
             if (action == DialogBoxAction.Yes)
             {
                 property.Value = property.DefaultValue;
@@ -548,7 +549,7 @@ namespace ClearCanvas.Desktop.Configuration
             if (property != null)
             {
                 SettingEditorComponent editor = new SettingEditorComponent(property.DefaultValue, property.Value);
-                ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, "Edit Value");
+                ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleEditValue);
                 if (exitCode == ApplicationComponentExitCode.Accepted)
                 {
                     property.Value = editor.CurrentValue;
@@ -593,7 +594,7 @@ namespace ClearCanvas.Desktop.Configuration
 
         private bool ConfirmSave()
         {
-            DialogBoxAction action = this.Host.ShowMessageBox("Settings have been modified.  Save changes?", MessageBoxActions.YesNo);
+			DialogBoxAction action = this.Host.ShowMessageBox(SR.MessageSaveModified, MessageBoxActions.YesNo);
             return action == DialogBoxAction.Yes;
         }
 

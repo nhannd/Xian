@@ -158,5 +158,14 @@ namespace ClearCanvas.ImageViewer.Layout.Basic {
                 return ResourceManager.GetString("ToolbarLayoutManager", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Layout Manager.
+        /// </summary>
+        public static string TooltipLayoutManager {
+            get {
+                return ResourceManager.GetString("TooltipLayoutManager", resourceCulture);
+            }
+        }
     }
 }

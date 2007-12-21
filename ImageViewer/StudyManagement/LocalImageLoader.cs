@@ -77,7 +77,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 							LoadImage(files[i]);
 
 							int percentComplete = (int)(((float)(i + 1) / files.Length) * 100);
-							string message = String.Format("Opening {0} of {1} images", i, files.Length);
+							string message = String.Format(SR.MessageFormatOpeningImages, i, files.Length);
 
 							BackgroundTaskProgress progress = new BackgroundTaskProgress(percentComplete, message);
 							context.ReportProgress(progress);

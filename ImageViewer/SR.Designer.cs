@@ -610,6 +610,15 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Opening {0} of {1} images.
+        /// </summary>
+        public static string MessageFormatOpeningImages {
+            get {
+                return ResourceManager.GetString("MessageFormatOpeningImages", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No renderer plugins exist; defaulting to GDI renderer..
         /// </summary>
         public static string MessageNoRendererPluginsExist {

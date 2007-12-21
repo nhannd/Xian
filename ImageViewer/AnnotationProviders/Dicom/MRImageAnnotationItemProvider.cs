@@ -70,7 +70,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 								double val = double.NaN;
 								bool tagExists;
 								imageSop.GetTag(DicomTags.EchoTime, out val, out tagExists);
-								string str = String.Format("{0:F2} ms", val);
+								string str = String.Format(SR.Formatms, val);
 								return str;
 							},
 							DicomDataFormatHelper.RawStringFormat
@@ -90,7 +90,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 								imageSop.GetTag(DicomTags.MagneticFieldStrength, out val, out tagExists);
 
 								double strengthInTeslas = val / 10000;
-								string str = String.Format("{0:F1}T", strengthInTeslas);
+								string str = String.Format(SR.FormatTeslas, strengthInTeslas);
 								return str;
 							},
 							DicomDataFormatHelper.RawStringFormat
@@ -148,7 +148,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 								double val = double.NaN;
 								bool tagExists;
 								imageSop.GetTag(DicomTags.RepetitionTime, out val, out tagExists);
-								string str = String.Format("{0:F2} ms", val);
+								string str = String.Format(SR.Formatms, val);
 								return str;
 							},
 							DicomDataFormatHelper.RawStringFormat

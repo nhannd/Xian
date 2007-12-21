@@ -70,6 +70,24 @@ namespace ClearCanvas.Desktop {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Configures global exception handling behaviour..
+        /// </summary>
+        public static string DescriptionExceptionHandlerSettings {
+            get {
+                return ResourceManager.GetString("DescriptionExceptionHandlerSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Allows configuration of display format of common items such as dates, times, etc..
+        /// </summary>
+        public static string DescriptionFormatSettings {
+            get {
+                return ResourceManager.GetString("DescriptionFormatSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The event {0} does not exist for class {1}..
         /// </summary>
         public static string ExceptionActionBuilderEventDoesNotExist {
@@ -489,6 +507,24 @@ namespace ClearCanvas.Desktop {
         public static string MessageValueRequired {
             get {
                 return ResourceManager.GetString("MessageValueRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cancel.
+        /// </summary>
+        public static string TitleCancel {
+            get {
+                return ResourceManager.GetString("TitleCancel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Close.
+        /// </summary>
+        public static string TitleClose {
+            get {
+                return ResourceManager.GetString("TitleClose", resourceCulture);
             }
         }
         

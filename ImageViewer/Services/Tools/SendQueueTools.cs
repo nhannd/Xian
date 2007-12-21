@@ -43,7 +43,7 @@ using ClearCanvas.ImageViewer.Services.LocalDataStore;
 namespace ClearCanvas.ImageViewer.Services.Tools
 {
 	[ButtonAction("clearSelected", "send-queue-toolbar/ClearSelected", "ClearSelected")]
-	[MenuAction("clearSelected", "send-queue-contextmenu/Clear", "ClearSelected")]
+	[MenuAction("clearSelected", "send-queue-contextmenu/MenuClear", "ClearSelected")]
 	[Tooltip("clearSelected", "TooltipClearSelected")]
 	[IconSet("clearSelected", IconScheme.Colour, "Icons.DeleteToolSmall.png", "Icons.DeleteToolSmall.png", "Icons.DeleteToolSmall.png")]
 	[EnabledStateObserver("clearSelected", "ClearSelectedEnabled", "ClearSelectedEnabledChanged")]
