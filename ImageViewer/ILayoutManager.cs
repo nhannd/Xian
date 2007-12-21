@@ -36,16 +36,27 @@ namespace ClearCanvas.ImageViewer
 	/// <summary>
 	/// Defines an interface for image layout management.
 	/// </summary>
-	/// <remarks>If you want to implement your own hanging protocol engine,
+	/// <remarks>
+	/// If you want to implement your own hanging protocol engine,
 	/// you need to 1) implement this interface and 2) mark your class
 	/// with the <code>[ExtensionOf(typeof(LayoutManagerExtensionPoint))]</code>
-	/// attribute.</remarks>
+	/// attribute.
+	/// </remarks>
 	public interface ILayoutManager : IDisposable
 	{
 		/// <summary>
-		/// Lays out images on the specified image viewer.
+		/// Sets the owning <see cref="IImageViewer"/>.
 		/// </summary>
 		/// <param name="imageViewer"></param>
-		void Layout(IImageViewer imageViewer);
+		void SetImageViewer(IImageViewer imageViewer);
+
+		/// <summary>
+		/// Lays out the images on the image viewer specified by <see cref="SetImageViewer"/>.
+		/// </summary>
+		/// <remarks>
+		/// This is invoked by the <see cref="ImageViewerComponent"/> when images are
+		/// first displayed, or when anytime when <see cref="IImageViewer.Layout"/> is called.
+		/// </remarks>
+		void Layout();
 	}
 }

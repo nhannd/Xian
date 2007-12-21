@@ -39,6 +39,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 	public class LayoutManager : ILayoutManager
 	{
 		private bool _physicalWorkspaceLayoutSet = false;
+    	private IImageViewer _imageViewer;
 
 		// Constructor
 		public LayoutManager()
@@ -47,15 +48,21 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
 		#region ILayoutManager Members
 
-		public void Layout(IImageViewer imageViewer)
+		public void SetImageViewer(IImageViewer imageViewer)
 		{
-			SimpleLogicalWorkspaceBuilder.Build(imageViewer);
-			LayoutPhysicalWorkspace(imageViewer.PhysicalWorkspace);
-			SimplePhysicalWorkspaceFiller.Fill(imageViewer);
-			imageViewer.PhysicalWorkspace.Draw();
+			_imageViewer = imageViewer;
+		}
+
+		public void Layout()
+		{
+			SimpleLogicalWorkspaceBuilder.Build(_imageViewer);
+			LayoutPhysicalWorkspace(_imageViewer.PhysicalWorkspace);
+			SimplePhysicalWorkspaceFiller.Fill(_imageViewer);
+			_imageViewer.PhysicalWorkspace.Draw();
 		}
 
 		#endregion
+
 
 		#region Disposal
 
@@ -126,5 +133,6 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			for (int i = 0; i < physicalWorkspace.ImageBoxes.Count; ++i)
 				physicalWorkspace.ImageBoxes[i].SetTileGrid(configuration.TileRows, configuration.TileColumns);
 		}
+
 	}
 }

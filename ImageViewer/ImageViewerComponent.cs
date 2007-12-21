@@ -181,6 +181,7 @@ namespace ClearCanvas.ImageViewer
 		{
 			Platform.CheckForNullReference(layoutManager, "layoutManager");
 			_layoutManager = layoutManager;
+			_layoutManager.SetImageViewer(this);
 		}
 
 		private static ILayoutManager CreateLayoutManager(LayoutManagerCreationParameters creationParameters)
@@ -514,7 +515,7 @@ namespace ClearCanvas.ImageViewer
 		/// and <see cref="ImageSop"/> objects.
 		/// 
 		/// By default, the Framework provides an implementation of 
-		/// <see cref="IStudyLoader"/> called <b>LocalDataStoreStudyLoader"</b> which loads
+		/// <see cref="IStudyLoader"/> called <b>LocalDataStoreStudyLoader</b> which loads
 		/// studies from the local database.  If you have implemented your own 
 		/// <see cref="IStudyLoader"/> and want to load a study using that implementation,
 		/// just pass in the name provided by <see cref="IStudyLoader.Name"/> as the source.
@@ -574,7 +575,7 @@ namespace ClearCanvas.ImageViewer
 		}
 
 		/// <summary>
-		/// Loads images with the specified file paths.
+		/// Loads images from the specified file paths.
 		/// </summary>
 		/// <param name="files">An array of file paths.</param>
 		/// <exception cref="OpenStudyException">One or more images could not be opened.</exception>
@@ -587,7 +588,7 @@ namespace ClearCanvas.ImageViewer
 		}
 
 		/// <summary>
-		/// Loads images with the specified file paths and displays a progress bar.
+		/// Loads images from the specified file paths and displays a progress bar.
 		/// </summary>
 		/// <param name="files">A list of file paths.</param>
 		/// <param name="desktop">The desktop window.  This is necessary for
@@ -613,7 +614,7 @@ namespace ClearCanvas.ImageViewer
 		/// </summary>
 		public void Layout()
 		{
-			this.LayoutManager.Layout(this);
+			this.LayoutManager.Layout();
 		}
 
 		/// <summary>
