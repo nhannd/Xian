@@ -30,11 +30,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Text;
 using System.Windows.Forms;
 
 using ClearCanvas.Desktop.View.WinForms;
@@ -59,6 +54,8 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 
             _name.DataBindings.Add("Value", _component, "Name", true, DataSourceUpdateMode.OnPropertyChanged);
             _code.DataBindings.Add("Value", _component, "Code", true, DataSourceUpdateMode.OnPropertyChanged);
+            _informationAuthority.DataSource = _component.InformationAuthorityChoices;
+            _informationAuthority.DataBindings.Add("Value", _component, "InformationAuthority", true, DataSourceUpdateMode.OnPropertyChanged);
             _acceptButton.DataBindings.Add("Enabled", _component, "AcceptEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
         }
 

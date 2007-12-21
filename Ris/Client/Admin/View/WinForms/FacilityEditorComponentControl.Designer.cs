@@ -64,8 +64,9 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this._cancelButton = new System.Windows.Forms.Button();
             this._acceptButton = new System.Windows.Forms.Button();
             this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
-            this._name = new ClearCanvas.Desktop.View.WinForms.TextField();
             this._code = new ClearCanvas.Desktop.View.WinForms.TextField();
+            this._name = new ClearCanvas.Desktop.View.WinForms.TextField();
+            this._informationAuthority = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
             this.tableLayoutPanel1.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
             this.flowLayoutPanel2.SuspendLayout();
@@ -81,9 +82,9 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 2;
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(245, 134);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(245, 181);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
             // flowLayoutPanel1
@@ -93,10 +94,10 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this.flowLayoutPanel1.Controls.Add(this._cancelButton);
             this.flowLayoutPanel1.Controls.Add(this._acceptButton);
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(3, 99);
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(3, 149);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
             this.flowLayoutPanel1.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(239, 32);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(239, 29);
             this.flowLayoutPanel1.TabIndex = 1;
             // 
             // _cancelButton
@@ -125,22 +126,12 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this.flowLayoutPanel2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.flowLayoutPanel2.Controls.Add(this._code);
             this.flowLayoutPanel2.Controls.Add(this._name);
+            this.flowLayoutPanel2.Controls.Add(this._informationAuthority);
             this.flowLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanel2.Location = new System.Drawing.Point(3, 3);
             this.flowLayoutPanel2.Name = "flowLayoutPanel2";
-            this.flowLayoutPanel2.Size = new System.Drawing.Size(239, 90);
+            this.flowLayoutPanel2.Size = new System.Drawing.Size(239, 140);
             this.flowLayoutPanel2.TabIndex = 0;
-            // 
-            // _name
-            // 
-            this._name.LabelText = "Name";
-            this._name.Location = new System.Drawing.Point(2, 47);
-            this._name.Margin = new System.Windows.Forms.Padding(2);
-            this._name.Mask = "";
-            this._name.Name = "_name";
-            this._name.Size = new System.Drawing.Size(220, 41);
-            this._name.TabIndex = 0;
-            this._name.Value = null;
             // 
             // _code
             // 
@@ -153,6 +144,30 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this._code.TabIndex = 1;
             this._code.Value = null;
             // 
+            // _name
+            // 
+            this._name.LabelText = "Name";
+            this._name.Location = new System.Drawing.Point(2, 47);
+            this._name.Margin = new System.Windows.Forms.Padding(2);
+            this._name.Mask = "";
+            this._name.Name = "_name";
+            this._name.Size = new System.Drawing.Size(220, 41);
+            this._name.TabIndex = 0;
+            this._name.Value = null;
+            // 
+            // _informationAuthority
+            // 
+            this._informationAuthority.DataSource = null;
+            this._informationAuthority.DisplayMember = "";
+            this._informationAuthority.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this._informationAuthority.LabelText = "Information Authority";
+            this._informationAuthority.Location = new System.Drawing.Point(2, 92);
+            this._informationAuthority.Margin = new System.Windows.Forms.Padding(2);
+            this._informationAuthority.Name = "_informationAuthority";
+            this._informationAuthority.Size = new System.Drawing.Size(220, 41);
+            this._informationAuthority.TabIndex = 2;
+            this._informationAuthority.Value = null;
+            // 
             // FacilityEditorComponentControl
             // 
             this.AcceptButton = this._acceptButton;
@@ -161,7 +176,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this.CancelButton = this._cancelButton;
             this.Controls.Add(this.tableLayoutPanel1);
             this.Name = "FacilityEditorComponentControl";
-            this.Size = new System.Drawing.Size(245, 134);
+            this.Size = new System.Drawing.Size(245, 181);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             this.flowLayoutPanel1.ResumeLayout(false);
@@ -179,5 +194,6 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
         private System.Windows.Forms.Button _acceptButton;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel2;
         private ClearCanvas.Desktop.View.WinForms.TextField _code;
+        private ClearCanvas.Desktop.View.WinForms.ComboBoxField _informationAuthority;
     }
 }

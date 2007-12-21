@@ -241,6 +241,15 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Information Authority.
+        /// </summary>
+        internal static string ColumnInformationAuthority {
+            get {
+                return ResourceManager.GetString("ColumnInformationAuthority", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to License #.
         /// </summary>
         internal static string ColumnLicenseNumber {

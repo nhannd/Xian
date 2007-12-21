@@ -40,7 +40,7 @@ namespace ClearCanvas.Ris.Client.Admin
         public LocationTable()
         {
             this.Columns.Add(new TableColumn<LocationSummary, string>(SR.ColumnFacility,
-                delegate(LocationSummary loc) { return loc.FacilityName; },
+                delegate(LocationSummary loc) { return loc.Facility.Name; },
                 0.5f));
 
             this.Columns.Add(new TableColumn<LocationSummary, string>(SR.ColumnBuilding,

@@ -177,6 +177,9 @@
   <data name="ColumnInactiveDate" xml:space="preserve">
     <value>Inactive Date</value>
   </data>
+  <data name="ColumnInformationAuthority" xml:space="preserve">
+    <value>Information Authority</value>
+  </data>
   <data name="ColumnLicenseNumber" xml:space="preserve">
     <value>License #</value>
   </data>

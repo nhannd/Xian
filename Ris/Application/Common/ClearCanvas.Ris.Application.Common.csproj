@@ -79,6 +79,8 @@
     <Compile Include="Admin\ExternalPractitionerAdmin\LoadExternalPractitionerForEditResponse.cs" />
     <Compile Include="Admin\ExternalPractitionerAdmin\UpdateExternalPractitionerRequest.cs" />
     <Compile Include="Admin\ExternalPractitionerAdmin\UpdateExternalPractitionerResponse.cs" />
+    <Compile Include="Admin\FacilityAdmin\GetFacilityEditFormDataRequest.cs" />
+    <Compile Include="Admin\FacilityAdmin\GetFacilityEditFormDataResponse.cs" />
     <Compile Include="AuthenticationAttribute.cs" />
     <Compile Include="BrowsePatientData\ReportListItem.cs" />
     <Compile Include="BrowsePatientData\ListReportsResponse.cs" />

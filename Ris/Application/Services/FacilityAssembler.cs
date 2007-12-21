@@ -34,6 +34,7 @@ using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Healthcare;
+using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.Ris.Application.Services
 {
@@ -44,20 +45,23 @@ namespace ClearCanvas.Ris.Application.Services
             return new FacilitySummary(
                 facility.GetRef(),
                 facility.Code,
-                facility.Name);
+                facility.Name,
+                EnumUtils.GetEnumValueInfo(facility.InformationAuthority));
         }
 
         public FacilityDetail CreateFacilityDetail(Facility facility)
         {
             return new FacilityDetail(
                 facility.Code,
-                facility.Name);
+                facility.Name,
+                EnumUtils.GetEnumValueInfo(facility.InformationAuthority));
         }
 
-        public void UpdateFacility(FacilityDetail detail, Facility facility)
+        public void UpdateFacility(FacilityDetail detail, Facility facility, IPersistenceContext context)
         {
             facility.Code = detail.Code;
             facility.Name = detail.Name;
+            facility.InformationAuthority = EnumUtils.GetEnumValue<InformationAuthorityEnum>(detail.InformationAuthority, context);
         }
     }
 }

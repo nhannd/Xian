@@ -30,8 +30,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
 
@@ -41,8 +39,7 @@ namespace ClearCanvas.Ris.Application.Common
     public class LocationSummary : DataContractBase
     {
         public LocationSummary(EntityRef locationRef,
-            string facilityName,
-            string facilityCode,
+            FacilitySummary facility,
             string building,
             string floor,
             string pointOfCare,
@@ -52,8 +49,7 @@ namespace ClearCanvas.Ris.Application.Common
             DateTime? inactiveDate)
         {
             this.LocationRef = locationRef;
-            this.FacilityName = facilityName;
-            this.FacilityCode = facilityCode;
+            this.Facility = facility;
             this.Building = building;
             this.Floor = floor;
             this.PointOfCare = pointOfCare;
@@ -71,10 +67,7 @@ namespace ClearCanvas.Ris.Application.Common
         public EntityRef LocationRef;
 
         [DataMember]
-        public string FacilityName;
-
-        [DataMember]
-        public string FacilityCode;
+        public FacilitySummary Facility;
 
         [DataMember]
         public string Building;

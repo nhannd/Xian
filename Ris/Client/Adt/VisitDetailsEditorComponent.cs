@@ -102,7 +102,10 @@ namespace ClearCanvas.Ris.Client.Adt
 
                     if (listResponse.Facilities.Count == 0)
                     {
-                        AddFacilityResponse addResponse = service.AddFacility(new AddFacilityRequest(new FacilityDetail("", "Test Facility")));
+                        GetFacilityEditFormDataResponse formResponse = service.GetFacilityEditFormData(new GetFacilityEditFormDataRequest());
+                        EnumValueInfo randomInformationAuthority = RandomUtils.ChooseRandom(formResponse.InformationAuthorityChoices);
+
+                        AddFacilityResponse addResponse = service.AddFacility(new AddFacilityRequest(new FacilityDetail("", "Test Facility", randomInformationAuthority)));
                         _visit.Facility = addResponse.Facility;
                         _facilityChoices.Add(addResponse.Facility);
                     }

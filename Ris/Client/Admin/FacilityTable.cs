@@ -45,6 +45,10 @@ namespace ClearCanvas.Ris.Client.Admin
             this.Columns.Add(new TableColumn<FacilitySummary, string>(SR.ColumnName,
                 delegate(FacilitySummary f) { return f.Name; },
                 1.0f));
+
+            this.Columns.Add(new TableColumn<FacilitySummary, string>(SR.ColumnInformationAuthority,
+                delegate(FacilitySummary f) { return f.InformationAuthority.Value; },
+                1.0f));
         }
     }
 }

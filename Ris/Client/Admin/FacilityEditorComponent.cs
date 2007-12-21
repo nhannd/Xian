@@ -30,9 +30,7 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-
+using System.Collections;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Enterprise.Common;
@@ -55,9 +53,11 @@ namespace ClearCanvas.Ris.Client.Admin
     [AssociateView(typeof(FacilityEditorComponentViewExtensionPoint))]
     public class FacilityEditorComponent : ApplicationComponent
     {
+        private IList _informationAuthorityChoices; 
+        
         private FacilityDetail _facilityDetail;
         private EntityRef _facilityRef;
-        private bool _isNew;
+        private readonly bool _isNew;
 
         private FacilitySummary _facilitySummary;
 
@@ -75,11 +75,6 @@ namespace ClearCanvas.Ris.Client.Admin
             _facilityRef = facilityRef;
         }
 
-        public FacilitySummary FacilitySummary
-        {
-            get { return _facilitySummary; }
-        }
-
         public override void Start()
         {
             if (_isNew)
@@ -91,6 +86,9 @@ namespace ClearCanvas.Ris.Client.Admin
                 Platform.GetService<IFacilityAdminService>(
                     delegate(IFacilityAdminService service)
                     {
+                        GetFacilityEditFormDataResponse formResponse = service.GetFacilityEditFormData(new GetFacilityEditFormDataRequest());
+                        _informationAuthorityChoices = formResponse.InformationAuthorityChoices;
+
                         LoadFacilityForEditResponse response = service.LoadFacilityForEdit(new LoadFacilityForEditRequest(_facilityRef));
                         _facilityRef = response.FacilityRef;
                         _facilityDetail = response.FacilityDetail;
@@ -100,9 +98,9 @@ namespace ClearCanvas.Ris.Client.Admin
             base.Start();
         }
 
-        public override void Stop()
+        public FacilitySummary FacilitySummary
         {
-            base.Stop();
+            get { return _facilitySummary; }
         }
 
         public FacilityDetail FacilityDetail
@@ -112,6 +110,11 @@ namespace ClearCanvas.Ris.Client.Admin
         }
 
         #region Presentation Model
+
+        public IList InformationAuthorityChoices
+        {
+            get { return _informationAuthorityChoices; }    
+        }
 
         public string Name
         {
@@ -129,6 +132,16 @@ namespace ClearCanvas.Ris.Client.Admin
             set
             {
                 _facilityDetail.Code = value;
+                this.Modified = true;
+            }
+        }
+
+        public EnumValueInfo InformationAuthority
+        {
+            get { return _facilityDetail.InformationAuthority; }
+            set
+            {
+                _facilityDetail.InformationAuthority = value;
                 this.Modified = true;
             }
         }
@@ -165,7 +178,7 @@ namespace ClearCanvas.Ris.Client.Admin
                 catch (Exception e)
                 {
                     ExceptionHandler.Report(e, SR.ExceptionSaveFacility, this.Host.DesktopWindow,
-                        delegate()
+                        delegate
                         {
                             this.ExitCode = ApplicationComponentExitCode.Error;
                             this.Host.Exit();

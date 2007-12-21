@@ -29,9 +29,6 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
 
@@ -40,10 +37,11 @@ namespace ClearCanvas.Ris.Application.Common
     [DataContract]
     public class FacilityDetail : DataContractBase
     {
-        public FacilityDetail(string code, string name)
+        public FacilityDetail(string code, string name, EnumValueInfo informationAuthority)
         {
             this.Code = code;
             this.Name = name;
+            this.InformationAuthority = informationAuthority;
         }
 
         public FacilityDetail()
@@ -55,5 +53,8 @@ namespace ClearCanvas.Ris.Application.Common
 
         [DataMember]
         public string Name;
+
+        [DataMember]
+        public EnumValueInfo InformationAuthority;
     }
 }

@@ -30,8 +30,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
 
@@ -40,11 +38,12 @@ namespace ClearCanvas.Ris.Application.Common
     [DataContract]
     public class FacilitySummary : DataContractBase, IEquatable<FacilitySummary>
     {
-        public FacilitySummary(EntityRef facilityRef, string code, string name)
+        public FacilitySummary(EntityRef facilityRef, string code, string name, EnumValueInfo informationAuthority)
         {
             this.FacilityRef = facilityRef;
             this.Code = code;
             this.Name = name;
+            this.InformationAuthority = informationAuthority;
         }
 
         public FacilitySummary()
@@ -59,6 +58,9 @@ namespace ClearCanvas.Ris.Application.Common
 
         [DataMember]
         public string Name;
+
+        [DataMember]
+        public EnumValueInfo InformationAuthority;
 
         public bool Equals(FacilitySummary facilitySummary)
         {

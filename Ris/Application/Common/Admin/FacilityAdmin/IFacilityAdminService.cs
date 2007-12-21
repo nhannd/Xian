@@ -29,7 +29,6 @@
 
 #endregion
 
-using System;
 using System.ServiceModel;
 
 namespace ClearCanvas.Ris.Application.Common.Admin.FacilityAdmin
@@ -70,9 +69,17 @@ namespace ClearCanvas.Ris.Application.Common.Admin.FacilityAdmin
         /// <summary>
         /// Load details for a specified facility
         /// </summary>
-        /// <param name="request"><see cref="GetDataForCancelOrderTableRequest"/></param>
-        /// <returns><see cref="GetDataForCancelOrderTableResponse"/></returns>
+        /// <param name="request"><see cref="LoadFacilityForEditRequest"/></param>
+        /// <returns><see cref="LoadFacilityForEditResponse"/></returns>
         [OperationContract]
         LoadFacilityForEditResponse LoadFacilityForEdit(LoadFacilityForEditRequest request);
+
+        /// <summary>
+        /// Loads all form data needed to edit a location
+        /// </summary>
+        /// <param name="request"><see cref="GetFacilityEditFormDataRequest"/></param>
+        /// <returns><see cref="GetFacilityEditFormDataResponse"/></returns>
+        [OperationContract]
+        GetFacilityEditFormDataResponse GetFacilityEditFormData(GetFacilityEditFormDataRequest request);
     }
 }

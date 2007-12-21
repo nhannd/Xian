@@ -39,7 +39,6 @@ using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.VisitAdmin;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry;
-using ClearCanvas.Ris.Application.Common.Admin;
 using ClearCanvas.Ris.Application.Common.Admin.DiagnosticServiceAdmin;
 using ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
@@ -123,7 +122,7 @@ namespace ClearCanvas.Ris.Client
                 }
             }
 
-            return RandomUtils.ChooseRandom(nameList);
+            return ChooseRandom(nameList);
         }
 
         #endregion
@@ -158,18 +157,18 @@ namespace ClearCanvas.Ris.Client
                     profile = new PatientProfileDetail();
 
                     profile.Mrn = new CompositeIdentifierDetail(
-                        RandomUtils.FormatDateTime(now, null),
-                        RandomUtils.ChooseRandom(fromResponse.MrnAssigningAuthorityChoices));
+                        FormatDateTime(now, null),
+                        ChooseRandom(fromResponse.MrnAssigningAuthorityChoices));
 
                     profile.Healthcard = new HealthcardDetail(
-                        RandomUtils.GenerateRandomIntegerString(10),
-                        RandomUtils.ChooseRandom(fromResponse.HealthcardAssigningAuthorityChoices),
+                        GenerateRandomIntegerString(10),
+                        ChooseRandom(fromResponse.HealthcardAssigningAuthorityChoices),
                         "", null);
 
                     profile.DateOfBirth = now;
-                    profile.Sex = RandomUtils.ChooseRandom(fromResponse.SexChoices);
-                    profile.PrimaryLanguage = RandomUtils.ChooseRandom(fromResponse.PrimaryLanguageChoices);
-                    profile.Religion = RandomUtils.ChooseRandom(fromResponse.ReligionChoices);
+                    profile.Sex = ChooseRandom(fromResponse.SexChoices);
+                    profile.PrimaryLanguage = ChooseRandom(fromResponse.PrimaryLanguageChoices);
+                    profile.Religion = ChooseRandom(fromResponse.ReligionChoices);
                     profile.DeathIndicator = false;
                     profile.TimeOfDeath = null;
 
@@ -217,7 +216,11 @@ namespace ClearCanvas.Ris.Client
                         ListActiveVisitsForPatientRequest request = new ListActiveVisitsForPatientRequest(patientRef);
 
                         ListActiveVisitsForPatientResponse visitResponse = service.ListActiveVisitsForPatient(request);
-                        visit = ChooseRandom(visitResponse.Visits);
+                        visit = ChooseRandom(CollectionUtils.Select(visitResponse.Visits, 
+                            delegate(VisitSummary summary)
+                                {
+                                    return Equals(summary.VisitNumber.AssigningAuthority, assigningAuthority);
+                                }));
                     });
 
             if (visit != null)
@@ -237,7 +240,7 @@ namespace ClearCanvas.Ris.Client
                     visitDetail.PatientClass = ChooseRandom(visitFormResponse.PatientClassChoices);
                     visitDetail.PatientType = ChooseRandom(visitFormResponse.PatientTypeChoices);
                     visitDetail.AdmissionType = ChooseRandom(visitFormResponse.AdmissionTypeChoices);
-                    visitDetail.Status = CollectionUtils.SelectFirst<EnumValueInfo>(visitFormResponse.VisitStatusChoices,
+                    visitDetail.Status = CollectionUtils.SelectFirst(visitFormResponse.VisitStatusChoices,
                         delegate(EnumValueInfo enumValue)
                         {
                             return enumValue.Code == "AA";
@@ -252,7 +255,7 @@ namespace ClearCanvas.Ris.Client
             return visit;
         }
 
-        public static EntityRef RandomOrder(VisitSummary visit, string diagnosticServiceName)
+        public static EntityRef RandomOrder(VisitSummary visit, EnumValueInfo informationAuthority, string diagnosticServiceName)
         {
             List<DiagnosticServiceSummary> diagnosticServiceChoices = null;
             Platform.GetService<IDiagnosticServiceAdminService>(
@@ -289,7 +292,7 @@ namespace ClearCanvas.Ris.Client
                     }
                     else
                     {
-                        diagnosticService = CollectionUtils.SelectFirst<DiagnosticServiceSummary>(
+                        diagnosticService = CollectionUtils.SelectFirst(
                             diagnosticServiceChoices,
                             delegate(DiagnosticServiceSummary ds)
                             {
@@ -300,7 +303,11 @@ namespace ClearCanvas.Ris.Client
                             throw new Exception(String.Format("Cannot find diagnostic service with name {0}", diagnosticServiceName));
                     }
 
-                    FacilitySummary randomFacility = ChooseRandom(formChoicesResponse.FacilityChoices);
+                    FacilitySummary performingFacility = CollectionUtils.SelectFirst(formChoicesResponse.FacilityChoices,
+                        delegate(FacilitySummary facility)
+                            {
+                                return facility.InformationAuthority.Code == informationAuthority.Code;
+                            });
                     ExternalPractitionerSummary randomPhysician = ChooseRandom(practitionerChoices);
                     EnumValueInfo randomPriority = ChooseRandom(formChoicesResponse.OrderPriorityChoices);
 
@@ -309,7 +316,7 @@ namespace ClearCanvas.Ris.Client
                     requisition.Visit = visit;
                     requisition.DiagnosticService = diagnosticService;
                     requisition.OrderingPractitioner = randomPhysician;
-                    requisition.OrderingFacility = randomFacility;
+                    requisition.OrderingFacility = performingFacility;
                     requisition.Priority = randomPriority;
                     requisition.ReasonForStudy = "Randomly generated test order";
                     requisition.SchedulingRequestTime = Platform.Time;
@@ -323,7 +330,7 @@ namespace ClearCanvas.Ris.Client
                            dsResponse.DiagnosticServiceDetail.RequestedProcedureTypes,
                            delegate(RequestedProcedureTypeDetail rpt)
                            {
-                               ProcedureRequisition req = new ProcedureRequisition(rpt.GetSummary(), randomFacility);
+                               ProcedureRequisition req = new ProcedureRequisition(rpt.GetSummary(), performingFacility);
                                req.ScheduledTime = Platform.Time;
                                return req;
                            }));

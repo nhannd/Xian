@@ -29,12 +29,9 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Healthcare;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Healthcare;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Application.Services
 {
@@ -42,10 +39,10 @@ namespace ClearCanvas.Ris.Application.Services
     {
         public LocationSummary CreateLocationSummary(Location location)
         {
+            FacilitySummary facility = new FacilityAssembler().CreateFacilitySummary(location.Facility);
             return new LocationSummary(
                 location.GetRef(),
-                location.Facility.Name,
-                location.Facility.Code,
+                facility,
                 location.Building,
                 location.Floor,
                 location.PointOfCare,
@@ -57,10 +54,9 @@ namespace ClearCanvas.Ris.Application.Services
 
         public LocationDetail CreateLocationDetail(Location location)
         {
+            FacilitySummary facility = new FacilityAssembler().CreateFacilitySummary(location.Facility);
             return new LocationDetail(
-                location.Facility.GetRef(),
-                location.Facility.Name,
-                location.Facility.Code,
+                facility,
                 location.Building,
                 location.Floor,
                 location.PointOfCare,

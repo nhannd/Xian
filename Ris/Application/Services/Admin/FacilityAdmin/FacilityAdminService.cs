@@ -29,19 +29,15 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Healthcare;
-using ClearCanvas.Common;
-using ClearCanvas.Healthcare.Brokers;
-using ClearCanvas.Enterprise.Core;
-using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Common.Utilities;
-using ClearCanvas.Ris.Application.Common.Admin;
-using ClearCanvas.Ris.Application.Common.Admin.FacilityAdmin;
 using System.Security.Permissions;
+using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
+using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Healthcare;
+using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Ris.Application.Common.Admin.FacilityAdmin;
 
 namespace ClearCanvas.Ris.Application.Services.Admin.FacilityAdmin
 {
@@ -68,6 +64,12 @@ namespace ClearCanvas.Ris.Application.Services.Admin.FacilityAdmin
         }
 
         [ReadOperation]
+        public GetFacilityEditFormDataResponse GetFacilityEditFormData(GetFacilityEditFormDataRequest request)
+        {
+            return new GetFacilityEditFormDataResponse(EnumUtils.GetEnumValueList<InformationAuthorityEnum>(PersistenceContext));
+        }
+
+        [ReadOperation]
         [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.FacilityAdmin)]
         public LoadFacilityForEditResponse LoadFacilityForEdit(LoadFacilityForEditRequest request)
         {
@@ -84,7 +86,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.FacilityAdmin
         {
             Facility facility = new Facility();
             FacilityAssembler assembler = new FacilityAssembler();
-            assembler.UpdateFacility(request.FacilityDetail, facility);
+            assembler.UpdateFacility(request.FacilityDetail, facility, this.PersistenceContext);
 
             PersistenceContext.Lock(facility, DirtyState.New);
 
@@ -101,7 +103,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.FacilityAdmin
             Facility facility = PersistenceContext.Load<Facility>(request.FacilityRef, EntityLoadFlags.CheckVersion);
 
             FacilityAssembler assembler = new FacilityAssembler();
-            assembler.UpdateFacility(request.FacilityDetail, facility);
+            assembler.UpdateFacility(request.FacilityDetail, facility, this.PersistenceContext);
 
             return new UpdateFacilityResponse(assembler.CreateFacilitySummary(facility));
         }

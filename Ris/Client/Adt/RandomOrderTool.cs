@@ -83,6 +83,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
             try
             {
+                EnumValueInfo informationAuthority;
                 VisitSummary randomVisit;
                 RegistrationWorklistItem item = CollectionUtils.FirstElement(context.SelectedItems);
                 if (item == null)
@@ -91,14 +92,16 @@ namespace ClearCanvas.Ris.Client.Adt
                     if (profile == null)
                         profile = RandomUtils.RandomPatientProfile();
 
-                    randomVisit = RandomUtils.RandomVisit(profile.PatientRef, profile.PatientProfileRef, profile.Mrn.AssigningAuthority);
+                    informationAuthority = profile.Mrn.AssigningAuthority;
+                    randomVisit = RandomUtils.RandomVisit(profile.PatientRef, profile.PatientProfileRef, informationAuthority);
                 }
                 else
                 {
-                    randomVisit = RandomUtils.RandomVisit(item.PatientRef, item.PatientRef, item.Mrn.AssigningAuthority);
+                    informationAuthority = item.Mrn.AssigningAuthority;
+                    randomVisit = RandomUtils.RandomVisit(item.PatientRef, item.PatientRef, informationAuthority);
                 }
 
-                RandomUtils.RandomOrder(randomVisit, null);
+                RandomUtils.RandomOrder(randomVisit, informationAuthority, null);
 
                 context.FolderSystem.InvalidateFolder(typeof(Folders.ScheduledFolder));
             }

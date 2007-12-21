@@ -172,26 +172,32 @@ namespace ClearCanvas.Ris.Client.Adt
 
         #region Dummy Code
 
+        // TODO: remove dummy codes
         private void DummyAddVisitLocation()
         {
             try
             {
                 FacilitySummary facility = new FacilitySummary();
                 LocationSummary location = new LocationSummary();
+                EnumValueInfo randomInformationAuthority = null;
 
                 Platform.GetService<IFacilityAdminService>(
                     delegate(IFacilityAdminService service)
                     {
+                        GetFacilityEditFormDataResponse formResponse = service.GetFacilityEditFormData(new GetFacilityEditFormDataRequest());
+                        randomInformationAuthority = RandomUtils.ChooseRandom(formResponse.InformationAuthorityChoices);
+
                         ListAllFacilitiesResponse listResponse = service.ListAllFacilities(new ListAllFacilitiesRequest());
                         if (listResponse.Facilities.Count == 0)
                         {
-                            AddFacilityResponse addResponse = service.AddFacility(new AddFacilityRequest(new FacilityDetail("", "Test Facility")));
+                            AddFacilityResponse addResponse = service.AddFacility(new AddFacilityRequest(new FacilityDetail("", "Test Facility", randomInformationAuthority)));
                             facility = addResponse.Facility;
                         }
                         else
                         {
                             facility = listResponse.Facilities[0];
                         }
+
                     });
 
                 Platform.GetService<ILocationAdminService>(
@@ -201,9 +207,7 @@ namespace ClearCanvas.Ris.Client.Adt
                         if (listResponse.Locations.Count == 0)
                         {
                             LocationDetail locationDetail = new LocationDetail(
-                                    facility.FacilityRef,
-                                    facility.Name,
-                                    facility.Code,
+                                    facility,
                                     "Building",
                                     "Floor",
                                     "Point of Care",
