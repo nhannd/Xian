@@ -15,11 +15,25 @@
             {
                 if(!Ris)
                     return;
-                    
-                var mpps = Ris.getHealthcareContext();
                 
-                // redirect to appropriate page
-                window.location = mpps ? selectPage(mpps) : "about:blank";
+                // first check if the documentation was captured before, and if the "capturePageUrl" was recorded
+                // if the capturePageUrl is known, just redirect immediately there 
+				// (this provides a form of versioning, whereby data is always displayed by the same page that captured it in the first place)
+                var data = JSML.parse(Ris.getTag("Documentation")) || {};
+                if(data.capturePageUrl)
+                {
+                    window.location = capturePageUrl;
+                }
+                else
+                {
+                    // this is new documentation, so determine the appropriate capture page
+                    // from information provided by the healthcare context
+                    // (it is entirely up to the site to determine this algorithm)
+                    var mpps = Ris.getHealthcareContext();
+                    
+                    // redirect to appropriate page
+                    window.location = mpps ? selectPage(mpps) : "about:blank";
+                }
             }
             catch(e)
             {

@@ -22,10 +22,15 @@
             {
                scaleWidth();
 
-               if(Ris)
-   		      {
-   			      data = JSML.parse(Ris.getTag("PreExamDetails")) || {};
-   			   }
+				if(Ris)
+				{
+					data = JSML.parse(Ris.getTag("PreExamDetails")) || {};
+				}
+			   
+				// redirect if this data was captured by a page other than this page
+				// (data should be presented by the same version of the page that captured it)
+				if(data.capturePageUrl && data.capturePageUrl != window.location)
+					window.location = data.capturePageUrl;
    			    
    			   data.vitals = data.vitals || {};
    			   data.allergies = data.allergies || {};
@@ -536,6 +541,7 @@
 		    
 		    function saveData()
 		    {
+				data.capturePageUrl = window.location;
 				Ris.setTag("PreExamDetails", JSML.create(data, "data"));
 		    }
 		    //////////////////////////////////////////////////////////////////////////

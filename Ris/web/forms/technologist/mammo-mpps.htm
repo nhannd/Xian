@@ -98,6 +98,7 @@
 
          function saveData()
          {
+			data.capturePageUrl = window.location;
             return Ris.setTag("Documentation", JSML.create(data, "data"));
          }
          //////////////////////////////////////////////////////////////////////////
