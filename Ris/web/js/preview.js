@@ -222,7 +222,7 @@ function createOrderNotesTable(htmlTable, notes)
 
 function orderRequestScheduledDateComparison(data1, data2)
 {
-	return Date.compareMoreRecent(data1.SchedulingRequestDateTime, data2.SchedulingRequestDateTime);
+	return Date.compareMoreRecent(data1.SchedulingRequestTime, data2.SchedulingRequestTime);
 }
 
 function procedureScheduledDateComparison(data1, data2)

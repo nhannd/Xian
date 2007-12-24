@@ -52,8 +52,8 @@
 					Field.setValue($("OrderingPhysician"), Ris.formatPersonName(orderDetail.OrderingPractitioner.Name));
 					Field.setValue($("OrderingFacility"), orderDetail.OrderingFacility.Name);
 					Field.setValue($("DiagnosticService"), orderDetail.DiagnosticService.Name);
-					Field.setValue($("SchedulingRequestDateTime"), Ris.formatDateTime(orderDetail.SchedulingRequestDateTime));
-					Field.setValue($("EnteredDateTime"), Ris.formatDateTime(orderDetail.EnteredDateTime));
+					Field.setValue($("SchedulingRequestDateTime"), Ris.formatDateTime(orderDetail.SchedulingRequestTime));
+					Field.setValue($("EnteredDateTime"), Ris.formatDateTime(orderDetail.EnteredTime));
 					Field.setValue($("ReasonForStudy"), orderDetail.ReasonForStudy);
 					if (orderDetail.CancelReason)
 						Field.setValue($("CancelReason"), orderDetail.CancelReason);
