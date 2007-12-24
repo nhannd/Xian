@@ -30,10 +30,10 @@
 #endregion
 
 using System;
-using ClearCanvas.Common.Utilities;
-using ClearCanvas.Desktop;
-using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
 using System.Collections;
+using ClearCanvas.Desktop;
+using ClearCanvas.Ris.Client.Formatting;
+using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -56,7 +56,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public override string GetTitle()
         {
-            return string.Format("A# {0} - {1}, {2}", _item.AccessionNumber, _item.PatientName.FamilyName, _item.PatientName.GivenName);
+            return string.Format("Documentation - {0}", PersonNameFormat.Format(_item.PatientName));
         }
 
         public override IApplicationComponent GetComponent()

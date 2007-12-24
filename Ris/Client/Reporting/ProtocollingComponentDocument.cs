@@ -30,6 +30,7 @@
 #endregion
 
 using ClearCanvas.Desktop;
+using ClearCanvas.Ris.Client.Formatting;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 
 namespace ClearCanvas.Ris.Client.Reporting
@@ -73,7 +74,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         public static string GetTitle(ReportingWorklistItem item)
         {
-            return string.Format("A# {0} - {1}, {2}", item.AccessionNumber, item.PatientName.FamilyName, item.PatientName.GivenName);
+            return string.Format("Protocol - {0}", PersonNameFormat.Format(item.PatientName));
         }
     }
 }
