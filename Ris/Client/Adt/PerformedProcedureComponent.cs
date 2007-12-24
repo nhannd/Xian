@@ -59,44 +59,60 @@ namespace ClearCanvas.Ris.Client.Adt
 
         class MppsDetailsComponent : DHtmlComponent
         {
-            private readonly PerformedProcedureComponent _owner;
+            private ModalityPerformedProcedureStepSummary _performedProcedureStep;
 
-            public MppsDetailsComponent(PerformedProcedureComponent owner)
+            public MppsDetailsComponent()
             {
-                _owner = owner;
             }
 
             protected override DataContractBase GetHealthcareContext()
             {
-                return _owner._selectedMpps;
+                return _performedProcedureStep;
             }
 
             protected override string GetTag(string tag)
             {
+                if(_performedProcedureStep == null)
+                    return null;
+
                 string value;
                 if(string.Equals(tag, "StartTime"))
                 {
-                    value = Format.DateTime(_owner._selectedMpps.StartTime);
+                    value = Format.DateTime(_performedProcedureStep.StartTime);
                 }
                 else if(string.Equals(tag, "StopTime"))
                 {
-                    value = Format.DateTime(_owner._selectedMpps.EndTime);
+                    value = Format.DateTime(_performedProcedureStep.EndTime);
                 }
                 else
                 {
-                    _owner._selectedMpps.ExtendedProperties.TryGetValue(tag, out value);
+                    _performedProcedureStep.ExtendedProperties.TryGetValue(tag, out value);
                 }
                 return value;
             }
 
             protected override void SetTag(string tag, string data)
             {
-                _owner._selectedMpps.ExtendedProperties[tag] = data;
+                _performedProcedureStep.ExtendedProperties[tag] = data;
             }
 
-            public void SelectedMppsChanged()
+            public ModalityPerformedProcedureStepSummary PerformedProcedureStep
             {
-                SetUrl(PerformedProcedureComponentSettings.Default.DetailsPageUrl);
+                get { return _performedProcedureStep; }
+                set
+                {
+                    if(!Equals(value, _performedProcedureStep))
+                    {
+                        if (_performedProcedureStep != null)
+                        {
+                            // store data for current step
+                            SaveData();
+                        }
+                        _performedProcedureStep = value;
+
+                        SetUrl(PerformedProcedureComponentSettings.Default.DetailsPageUrl);
+                    }
+                }
             }
         }
 
@@ -148,7 +164,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public override void Start()
         {
-            _mppsDetailsComponentHost = new ChildComponentHost(this.Host, _detailsComponent = new MppsDetailsComponent(this));
+            _mppsDetailsComponentHost = new ChildComponentHost(this.Host, _detailsComponent = new MppsDetailsComponent());
             //_mppsDetailsComponentHost.Title = SR.TitlePerformedProcedureComponent;
             _mppsDetailsComponentHost.StartComponent();
 
@@ -223,7 +239,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 {
                     _selectedMpps = selectedMpps;
                     UpdateActionEnablement();
-                    _detailsComponent.SelectedMppsChanged();
+                    _detailsComponent.PerformedProcedureStep = _selectedMpps;
                 }
             }
         }
