@@ -72,9 +72,11 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
         /// <summary>
         /// Modality procedure steps that were performed with this performed procedure step.
         /// </summary>
+        //TODO: this does not belong on a summary class
         [DataMember]
         public List<ModalityProcedureStepSummary> ModalityProcedureSteps;
 
+        //TODO: this does not belong on a summary class
         [DataMember]
         public Dictionary<string, string> ExtendedProperties;
     }

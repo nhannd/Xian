@@ -327,6 +327,8 @@ namespace ClearCanvas.Ris.Client.Adt
             _preExamComponent.SaveData();
             _postExamComponent.SaveData();
 
+            _ppsComponent.SaveData();
+
             foreach(ITechnologistDocumentationModule module in _documentationModules)
             {
                 module.SaveData();
@@ -337,8 +339,17 @@ namespace ClearCanvas.Ris.Client.Adt
                 Platform.GetService<ITechnologistDocumentationService>(
                     delegate(ITechnologistDocumentationService service)
                         {
+                            // TODO clean this up - this is a bit ugly, not sure if there's a cleaner way
+                            Dictionary<EntityRef, Dictionary<string, string>> ppsExtendedProperties
+                                                 = new Dictionary<EntityRef, Dictionary<string, string>>();
+                            foreach (ModalityPerformedProcedureStepSummary step in _ppsComponent.PerformedProcedureSteps)
+                            {
+                                ppsExtendedProperties[step.ModalityPerformendProcedureStepRef] = step.ExtendedProperties;
+                            }
+
+
                             SaveDataRequest saveRequest =
-                                new SaveDataRequest(_procedurePlan.OrderRef, _orderExtendedProperties);
+                                new SaveDataRequest(_procedurePlan.OrderRef, _orderExtendedProperties, ppsExtendedProperties);
                             SaveDataResponse saveResponse = service.SaveData(saveRequest);
 
                             if (completeDocumentation)

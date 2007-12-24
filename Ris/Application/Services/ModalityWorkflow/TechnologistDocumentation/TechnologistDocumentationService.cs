@@ -62,9 +62,15 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
         {
             Order order = PersistenceContext.Load<Order>(request.OrderRef);
 
-            foreach (KeyValuePair<string, string> pair in request.OrderExtendedProperties)
+            CopyProperties(order.ExtendedProperties, request.OrderExtendedProperties);
+
+            foreach (KeyValuePair<EntityRef, Dictionary<string, string>> pair in request.PerformedProcedureStepExtendedProperties)
             {
-                order.ExtendedProperties[pair.Key] = pair.Value;
+                EntityRef ppsRef = pair.Key;
+                Dictionary<string, string> extendedProperties = pair.Value;
+
+                PerformedProcedureStep pps = PersistenceContext.Load<PerformedProcedureStep>(ppsRef);
+                CopyProperties(pps.ExtendedProperties, extendedProperties);
             }
 
             this.PersistenceContext.SynchState();
@@ -99,5 +105,14 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
         }
 
         #endregion
+
+
+        private void CopyProperties(IDictionary<string, string> dest, IDictionary<string, string> source)
+        {
+            foreach (KeyValuePair<string, string> kvp in source)
+            {
+                dest[kvp.Key] = kvp.Value;
+            }
+        }
     }
 }

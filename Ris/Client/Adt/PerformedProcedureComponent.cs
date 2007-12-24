@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
@@ -158,6 +159,11 @@ namespace ClearCanvas.Ris.Client.Adt
         internal void SaveData()
         {
             _detailsComponent.SaveData();
+        }
+
+        internal IList<ModalityPerformedProcedureStepSummary> PerformedProcedureSteps
+        {
+            get { return _mppsTable.Items; }   
         }
 
         #region ApplicationComponent overrides

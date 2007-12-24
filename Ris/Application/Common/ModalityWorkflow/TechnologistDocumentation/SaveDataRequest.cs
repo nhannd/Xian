@@ -40,10 +40,11 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow.TechnologistDocume
     [DataContract]
     public class SaveDataRequest : DataContractBase
     {
-        public SaveDataRequest(EntityRef orderRef, Dictionary<string, string> orderExtendedProperties)
+        public SaveDataRequest(EntityRef orderRef, Dictionary<string, string> orderExtendedProperties, Dictionary<EntityRef, Dictionary<string, string>> performedProcedureStepExtendedProperties)
         {
             this.OrderRef = orderRef;
             this.OrderExtendedProperties = orderExtendedProperties;
+            this.PerformedProcedureStepExtendedProperties = performedProcedureStepExtendedProperties;
         }
 
         [DataMember]
@@ -51,5 +52,8 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow.TechnologistDocume
 
         [DataMember]
         public Dictionary<string, string> OrderExtendedProperties;
+
+        [DataMember]
+        public Dictionary<EntityRef, Dictionary<string, string>> PerformedProcedureStepExtendedProperties;
     }
 }
