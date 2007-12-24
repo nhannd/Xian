@@ -22,7 +22,7 @@
                 var data = JSML.parse(Ris.getTag("Documentation")) || {};
                 if(data.capturePageUrl)
                 {
-                    window.location = capturePageUrl;
+                    window.location = data.capturePageUrl;
                 }
                 else
                 {

@@ -221,6 +221,13 @@ var JSML = {
     
     create: function(obj, tagName)
     {
-        return '<'+tagName+(obj.isArray?' array="true"':'')+'>'+obj.toJsml()+'</'+tagName+'>';
+        // get the JSML representation of obj, using its implementation of toJsml
+        // if it does not have an implementation of toJsml defined, then convert it to a string first
+        // (this is a bit of hack to deal with window.location and other such DOM objects that essentially 
+        // act as strings but are not technically Javascript string objects)
+        var objJsml = obj.toJsml ? obj.toJsml() : obj.toString().toJsml();
+        
+        // embed in tag
+        return '<'+tagName+(obj.isArray?' array="true"':'')+'>' + objJsml + '</'+tagName+'>';
     }    
 };
