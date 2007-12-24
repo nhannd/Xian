@@ -211,7 +211,7 @@ namespace ClearCanvas.Ris.Client.Admin
                 if (exitCode == ApplicationComponentExitCode.Accepted)
                 {
                     _noteCategoryTable.Items.Replace(
-                        delegate(PatientNoteCategorySummary s) { return s.NoteCategoryRef.Equals(editor.NoteCategorySummary.NoteCategoryRef); },
+                        delegate(PatientNoteCategorySummary s) { return s.NoteCategoryRef.Equals(editor.NoteCategorySummary.NoteCategoryRef, true); },
                         editor.NoteCategorySummary);
                 }
 

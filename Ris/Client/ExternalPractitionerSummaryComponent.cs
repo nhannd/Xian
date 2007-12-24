@@ -268,7 +268,7 @@ namespace ClearCanvas.Ris.Client
                 if (exitCode == ApplicationComponentExitCode.Accepted)
                 {
                     _practitioners.Items.Replace(
-                        delegate(ExternalPractitionerSummary s) { return s.PractitionerRef.Equals(editor.ExternalPractitionerSummary.PractitionerRef); },
+                        delegate(ExternalPractitionerSummary s) { return s.PractitionerRef.Equals(editor.ExternalPractitionerSummary.PractitionerRef, true); },
                         editor.ExternalPractitionerSummary);
                 }
             }

@@ -282,7 +282,7 @@ namespace ClearCanvas.Ris.Client.Adt
                         _mppsTable.Items.Replace(
                             delegate(ModalityPerformedProcedureStepSummary mppsSummary)
                             {
-                                return mppsSummary.ModalityPerformendProcedureStepRef == _selectedMpps.ModalityPerformendProcedureStepRef;
+                                return mppsSummary.ModalityPerformendProcedureStepRef.Equals(_selectedMpps.ModalityPerformendProcedureStepRef, true);
                             },
                             response.StoppedMpps);
 
@@ -318,7 +318,7 @@ namespace ClearCanvas.Ris.Client.Adt
                             _mppsTable.Items.Replace(
                                 delegate(ModalityPerformedProcedureStepSummary mppsSummary)
                                 {
-                                    return mppsSummary.ModalityPerformendProcedureStepRef == selectedMpps.ModalityPerformendProcedureStepRef;
+                                    return mppsSummary.ModalityPerformendProcedureStepRef.Equals(_selectedMpps.ModalityPerformendProcedureStepRef, true);
                                 },
                                 response.DiscontinuedMpps);
 

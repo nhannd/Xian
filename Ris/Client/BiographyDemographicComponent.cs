@@ -118,7 +118,7 @@ namespace ClearCanvas.Ris.Client
             if (_defaultProfileRef != null)
             {
                 _selectedProfile = CollectionUtils.SelectFirst(_profileChoices,
-                    delegate(PatientProfileSummary pp) { return pp.PatientProfileRef == _defaultProfileRef; });
+                    delegate(PatientProfileSummary pp) { return pp.PatientProfileRef.Equals(_defaultProfileRef, true); });
             }
             else
             {

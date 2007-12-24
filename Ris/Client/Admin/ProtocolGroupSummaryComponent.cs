@@ -171,7 +171,7 @@ namespace ClearCanvas.Ris.Client.Admin
                 if (exitCode == ApplicationComponentExitCode.Accepted)
                 {
                     _protocolGroupTable.Items.Replace(
-                        delegate(ProtocolGroupSummary s) { return s.EntityRef.Equals(editor.ProtocolGroupSummary.EntityRef); },
+                        delegate(ProtocolGroupSummary s) { return s.EntityRef.Equals(editor.ProtocolGroupSummary.EntityRef, true); },
                         editor.ProtocolGroupSummary);
                     _selectedProtocolGroup = editor.ProtocolGroupSummary;
                 }

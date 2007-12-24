@@ -215,7 +215,8 @@ namespace ClearCanvas.Ris.Client.Admin
 
                 if (exitCode == ApplicationComponentExitCode.Accepted)
                 {
-                    _userTable.Items.Replace(delegate(UserSummary u) { return u.EntityRef.Equals(editor.UserSummary.EntityRef); }, editor.UserSummary);
+                    _userTable.Items.Replace(delegate(UserSummary u) { return u.EntityRef.Equals(editor.UserSummary.EntityRef, true); },
+                        editor.UserSummary);
                 }
             }
             catch (Exception e)

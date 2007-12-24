@@ -107,32 +107,15 @@ namespace ClearCanvas.Enterprise.Common
             get { return _version; }
             private set { _version = value; }
         }
-/*
-        /// <summary>
-        /// Checks whether this reference refers to the specified entity.  The type of the entity is not considered
-        /// in the comparison, but this should not pose a problem assuming OIDs are unique across all entities.
-        /// Note as well that the version is not considered in the comparison.
-        /// </summary>
-        /// <param name="entity"></param>
-        /// <returns>True if this reference refers to the specified entity</returns>
-        public bool RefersTo(Entity entity)
-        {
-            // cannot include the Type in this comparison, because the entity in question may just be a proxy
-            // rather than the real entity, however that shouldn't matter because the parameter is strongly typed
 
-            // also cannot check version here, because if the entity is a proxy, the Version property will not
-            // be initialized
-            return entity != null && entity.OID.Equals(this.EntityOID);
-        }
-*/        
         /// <summary>
-        /// Compares two instances of this class for value-based equality.  If versionStrict is true, the
-        /// version will be considered in the comparison, otherwise it will be ignored.
+        /// Compares two instances of this class for value-based equality.  If <paramref name="ignoreVersion"/>
+        /// is true, the version will not be considered in the comparison.
         /// </summary>
         /// <param name="obj"></param>
-        /// <param name="versionStrict"></param>
+        /// <param name="ignoreVersion"></param>
         /// <returns></returns>
-        public bool Equals(object obj, bool versionStrict)
+        public bool Equals(object obj, bool ignoreVersion)
         {
             // if null then they can't be equal
             EntityRef that = obj as EntityRef;
@@ -142,12 +125,12 @@ namespace ClearCanvas.Enterprise.Common
             // compare fields
             return this._entityOid.Equals(that._entityOid)
                 && this._entityClass.Equals(that._entityClass)
-                && (!versionStrict || this._version.Equals(that._version));
+                && (ignoreVersion || this._version.Equals(that._version));
         }
 
         /// <summary>
-        /// Compares two instances of this class for value-based equality.  Note that by default,
-        /// the version is not considered in the comparison.  To include version in the comparison,
+        /// Compares two instances of this class for value-based equality, including
+        /// the version in the comparison.  To exclude version in the comparison,
         /// call the <see cref="Equals"/> overload that accepts a flag indicating whether to include
         /// version in the comparison.
         /// </summary>
@@ -159,13 +142,12 @@ namespace ClearCanvas.Enterprise.Common
         }
 
         /// <summary>
-        /// Overridden comply with <see cref="Equals"/>.  Note that the version is not considered
-        /// in the hash-code computation.
+        /// Overridden to comply with <see cref="Equals"/>.  Version is included in the hashcode.
         /// </summary>
         /// <returns></returns>
         public override int GetHashCode()
         {
-            return _entityOid.GetHashCode() ^ _entityClass.GetHashCode();
+            return _entityOid.GetHashCode() ^ _entityClass.GetHashCode() ^ _version.GetHashCode();
         }
 
 
@@ -192,8 +174,7 @@ namespace ClearCanvas.Enterprise.Common
         }
 
         /// <summary>
-        /// Compares instances of this class based on value. Entity type and OID are considered,
-        /// but version is ignored.
+        /// Compares instances of this class based on value.
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
@@ -201,7 +182,7 @@ namespace ClearCanvas.Enterprise.Common
         public static bool operator ==(EntityRef x, EntityRef y)
         {
             // check if they are the same instance, or both null
-            if (Object.ReferenceEquals(x, y))
+            if (ReferenceEquals(x, y))
                 return true;
 
             // if either one is null then they can't be equal
@@ -213,8 +194,7 @@ namespace ClearCanvas.Enterprise.Common
         }
 
         /// <summary>
-        /// Compares instances of this class based on value. Entity type and OID are considered,
-        /// but version is ignored.
+        /// Compares instances of this class based on value.
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>

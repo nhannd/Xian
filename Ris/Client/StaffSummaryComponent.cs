@@ -271,7 +271,7 @@ namespace ClearCanvas.Ris.Client
                 if (exitCode == ApplicationComponentExitCode.Accepted)
                 {
                     _staffTable.Items.Replace(
-                        delegate(StaffSummary s) { return s.StaffRef.Equals(editor.StaffSummary.StaffRef); },
+                        delegate(StaffSummary s) { return s.StaffRef.Equals(editor.StaffSummary.StaffRef, true); },
                         editor.StaffSummary);
                 }
             }

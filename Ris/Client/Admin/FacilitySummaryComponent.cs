@@ -209,7 +209,8 @@ namespace ClearCanvas.Ris.Client.Admin
                     this.Host.DesktopWindow, editor, SR.TitleUpdateFacility);
                 if (exitCode == ApplicationComponentExitCode.Accepted)
                 {
-                    _facilityTable.Items.Replace(delegate(FacilitySummary f) { return f.FacilityRef.Equals(editor.FacilitySummary.FacilityRef); }, editor.FacilitySummary);
+                    _facilityTable.Items.Replace(delegate(FacilitySummary f) { return f.FacilityRef.Equals(editor.FacilitySummary.FacilityRef, true); },
+                        editor.FacilitySummary);
                 }
             }
             catch (Exception e)

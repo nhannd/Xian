@@ -94,7 +94,7 @@ namespace ClearCanvas.Ris.Client.Adt
             _candidates = candidates;
 
             _selectedTargetProfile = CollectionUtils.SelectFirst <PatientProfileSummary>(reconciledProfiles,
-                delegate(PatientProfileSummary p) { return p.PatientProfileRef == targetProfileRef; });
+                delegate(PatientProfileSummary p) { return p.PatientProfileRef.Equals(targetProfileRef, true); });
         }
 
         public override void Start()
@@ -108,7 +108,7 @@ namespace ClearCanvas.Ris.Client.Adt
             _targetProfileTable.Items.Add(_selectedTargetProfile);
             foreach (PatientProfileSummary profile in _targetProfiles)
             {
-                if (!profile.PatientProfileRef.Equals(_selectedTargetProfile.PatientProfileRef))
+                if (!profile.PatientProfileRef.Equals(_selectedTargetProfile.PatientProfileRef, true))
                 {
                     _targetProfileTable.Items.Add(profile);
                 }
@@ -255,7 +255,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
             foreach (ReconciliationCandidateTableEntry entry in _reconciliationProfileTable.Items)
             {
-                if (entry != changedEntry && entry.ReconciliationCandidate.PatientProfile.PatientRef.Equals(changedEntry.ReconciliationCandidate.PatientProfile.PatientRef))
+                if (entry != changedEntry && entry.ReconciliationCandidate.PatientProfile.PatientRef.Equals(changedEntry.ReconciliationCandidate.PatientProfile.PatientRef, true))
                 {
                     entry.Checked = changedEntry.Checked;
                     _reconciliationProfileTable.Items.NotifyItemUpdated(entry);

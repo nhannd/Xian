@@ -212,7 +212,8 @@ namespace ClearCanvas.Ris.Client.Admin
                     this.Host.DesktopWindow, editor, SR.TitleUpdateLocation);
                 if (exitCode == ApplicationComponentExitCode.Accepted)
                 {
-                    _locationTable.Items.Replace(delegate(LocationSummary l) { return l.LocationRef.Equals(editor.LocationSummary.LocationRef); }, editor.LocationSummary);
+                    _locationTable.Items.Replace(delegate(LocationSummary l) { return l.LocationRef.Equals(editor.LocationSummary.LocationRef, true); },
+                        editor.LocationSummary);
                 }
             }
             catch (Exception e)

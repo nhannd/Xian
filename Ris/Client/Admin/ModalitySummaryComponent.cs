@@ -208,7 +208,8 @@ namespace ClearCanvas.Ris.Client.Admin
                     this.Host.DesktopWindow, editor, SR.TitleUpdateModality);
                 if (exitCode == ApplicationComponentExitCode.Accepted)
                 {
-                    _modalityTable.Items.Replace(delegate(ModalitySummary m) { return m.ModalityRef.Equals(editor.ModalitySummary.ModalityRef); }, editor.ModalitySummary);
+                    _modalityTable.Items.Replace(delegate(ModalitySummary m) { return m.ModalityRef.Equals(editor.ModalitySummary.ModalityRef, true); },
+                        editor.ModalitySummary);
                 }
 
             }
