@@ -157,20 +157,20 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public DateTime? AdmitDateTime
         {
-            get { return _visit.AdmitDateTime; }
+            get { return _visit.AdmitTime; }
             set
             {
-                _visit.AdmitDateTime = value;
+                _visit.AdmitTime = value;
                 this.Modified = true;
             }
         }
 
         public DateTime? DischargeDateTime
         {
-            get { return _visit.DischargeDateTime; }
+            get { return _visit.DischargeTime; }
             set
             {
-                _visit.DischargeDateTime = value;
+                _visit.DischargeTime = value;
                 this.Modified = true;
             }
         }

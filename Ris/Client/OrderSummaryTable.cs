@@ -41,7 +41,7 @@ namespace ClearCanvas.Ris.Client
         public OrderSummaryTable()
         {
             this.Columns.Add(new TableColumn<OrderSummary, string>("Scheduled Requested For",
-                delegate(OrderSummary order) { return Format.DateTime(order.SchedulingRequestDateTime); }));
+                delegate(OrderSummary order) { return Format.DateTime(order.SchedulingRequestTime); }));
             this.Columns.Add(new TableColumn<OrderSummary, string>(SR.ColumnAccessionNumber,
                 delegate(OrderSummary order) { return order.AccessionNumber; }));
             this.Columns.Add(new TableColumn<OrderSummary, string>(SR.ColumnDiagnosticService,
@@ -60,7 +60,7 @@ namespace ClearCanvas.Ris.Client
             this.Columns.Add(new TableColumn<OrderSummary, string>("Reason for Study",
                 delegate(OrderSummary order) { return order.ReasonForStudy; }));
             this.Columns.Add(new TableColumn<OrderSummary, string>(SR.ColumnCreatedOn,
-                delegate(OrderSummary order) { return Format.Date(order.EnteredDateTime); }));
+                delegate(OrderSummary order) { return Format.Date(order.EnteredTime); }));
 
         }
     }

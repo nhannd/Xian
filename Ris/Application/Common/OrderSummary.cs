@@ -52,10 +52,10 @@ namespace ClearCanvas.Ris.Application.Common
         public string DiagnosticServiceName;
 
         [DataMember]
-        public DateTime? EnteredDateTime;
+        public DateTime? EnteredTime;
 
         [DataMember]
-        public DateTime? SchedulingRequestDateTime;
+        public DateTime? SchedulingRequestTime;
 
         [DataMember]
         public ExternalPractitionerSummary OrderingPractitioner;

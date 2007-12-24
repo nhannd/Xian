@@ -467,11 +467,11 @@ namespace ClearCanvas.Ris.Client.Adt
             request.MessageType = _typeChecked ? _type : null;
             request.StatusCode = _statusChecked ? _status : null;
 
-            request.StartingCreationDateTime = _createdOnStart;
-            request.EndingCreationDateTime = _createdOnEnd;
+            request.StartingCreationTime = _createdOnStart;
+            request.EndingCreationTime = _createdOnEnd;
 
-            request.StartingUpdateDateTime = _updatedOnStart;
-            request.EndingUpdateDateTime = _updatedOnEnd;
+            request.StartingUpdateTime = _updatedOnStart;
+            request.EndingUpdateTime = _updatedOnEnd;
 
             UpdateTableData(request);
 

@@ -238,10 +238,10 @@ namespace ClearCanvas.Ris.Client.Adt
             get { return _mppsDetailsComponentHost; }
         }
 
-        private void RefreshProcedurePlanTree(ProcedurePlanSummary procedurePlanSummary)
+        private void RefreshProcedurePlanTree(ProcedurePlanDetail procedurePlanDetail)
         {
-            _orderRef = procedurePlanSummary.OrderRef;
-            EventsHelper.Fire(_procedurePlanChanged, this, new ProcedurePlanChangedEventArgs(procedurePlanSummary));
+            _orderRef = procedurePlanDetail.OrderRef;
+            EventsHelper.Fire(_procedurePlanChanged, this, new ProcedurePlanChangedEventArgs(procedurePlanDetail));
         }
         
         #endregion
@@ -277,7 +277,7 @@ namespace ClearCanvas.Ris.Client.Adt
                                 _selectedMpps.ExtendedProperties);
                         CompleteModalityPerformedProcedureStepResponse response = service.CompleteModalityPerformedProcedureStep(request);
 
-                        RefreshProcedurePlanTree(response.ProcedurePlanSummary);
+                        RefreshProcedurePlanTree(response.ProcedurePlan);
 
                         _mppsTable.Items.Replace(
                             delegate(ModalityPerformedProcedureStepSummary mppsSummary)
@@ -313,7 +313,7 @@ namespace ClearCanvas.Ris.Client.Adt
                             DiscontinueModalityPerformedProcedureStepRequest request = new DiscontinueModalityPerformedProcedureStepRequest(selectedMpps.ModalityPerformendProcedureStepRef);
                             DiscontinueModalityPerformedProcedureStepResponse response = service.DiscontinueModalityPerformedProcedureStep(request);
 
-                            RefreshProcedurePlanTree(response.ProcedurePlanSummary);
+                            RefreshProcedurePlanTree(response.ProcedurePlan);
 
                             _mppsTable.Items.Replace(
                                 delegate(ModalityPerformedProcedureStepSummary mppsSummary)

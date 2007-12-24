@@ -38,20 +38,20 @@ namespace ClearCanvas.Ris.Application.Services
 {
     public class ProcedurePlanAssembler
     {
-        public ProcedurePlanSummary CreateProcedurePlanSummary(Order order, IPersistenceContext context)
+        public ProcedurePlanDetail CreateProcedurePlanSummary(Order order, IPersistenceContext context)
         {
-            ProcedurePlanSummary summary = new ProcedurePlanSummary();
+            ProcedurePlanDetail detail = new ProcedurePlanDetail();
 
             RequestedProcedureAssembler assembler = new RequestedProcedureAssembler();
 
-            summary.OrderRef = order.GetRef();
-            summary.RequestedProcedures = CollectionUtils.Map<RequestedProcedure, RequestedProcedureDetail>(
+            detail.OrderRef = order.GetRef();
+            detail.RequestedProcedures = CollectionUtils.Map<RequestedProcedure, RequestedProcedureDetail>(
                 order.RequestedProcedures,
                 delegate(RequestedProcedure rp) { return assembler.CreateRequestedProcedureDetail(rp, context); });
-            summary.DiagnosticServiceSummary =
+            detail.DiagnosticServiceSummary =
                 new DiagnosticServiceSummary(order.DiagnosticService.GetRef(), order.DiagnosticService.Id, order.DiagnosticService.Name);
 
-            return summary;
+            return detail;
         }
     }
 }

@@ -37,12 +37,12 @@ namespace ClearCanvas.Ris.Application.Common.ProtocollingWorkflow
     [DataContract]
     public class GetProcedurePlanForProtocollingWorklistItemResponse : DataContractBase
     {
-        public GetProcedurePlanForProtocollingWorklistItemResponse(ProcedurePlanSummary procedurePlanSummary)
+        public GetProcedurePlanForProtocollingWorklistItemResponse(ProcedurePlanDetail procedurePlanDetail)
         {
-            ProcedurePlanSummary = procedurePlanSummary;
+            this.ProcedurePlan = procedurePlanDetail;
         }
 
         [DataMember]
-        public ProcedurePlanSummary ProcedurePlanSummary;
+        public ProcedurePlanDetail ProcedurePlan;
     }
 }

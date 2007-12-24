@@ -50,16 +50,16 @@ namespace ClearCanvas.Ris.Application.Common.Admin.HL7Admin
         public EnumValueInfo StatusCode;
 
         [DataMember]
-        public DateTime? StartingCreationDateTime;
+        public DateTime? StartingCreationTime;
 
         [DataMember]
-        public DateTime? EndingCreationDateTime;
+        public DateTime? EndingCreationTime;
 
         [DataMember]
-        public DateTime? StartingUpdateDateTime;
+        public DateTime? StartingUpdateTime;
 
         [DataMember]
-        public DateTime? EndingUpdateDateTime;
+        public DateTime? EndingUpdateTime;
 
         [DataMember]
         public EnumValueInfo Peer;

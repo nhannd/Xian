@@ -37,16 +37,16 @@ namespace ClearCanvas.Ris.Client.Adt
 {
     public class ProcedurePlanChangedEventArgs : EventArgs
     {
-        private readonly ProcedurePlanSummary _procedurePlanSummary;
+        private readonly ProcedurePlanDetail _procedurePlanDetail;
 
-        public ProcedurePlanChangedEventArgs(ProcedurePlanSummary procedurePlanSummary)
+        public ProcedurePlanChangedEventArgs(ProcedurePlanDetail procedurePlanDetail)
         {
-            _procedurePlanSummary = procedurePlanSummary;
+            _procedurePlanDetail = procedurePlanDetail;
         }
 
-        public ProcedurePlanSummary ProcedurePlanSummary
+        public ProcedurePlanDetail procedurePlanDetail
         {
-            get { return _procedurePlanSummary; }
+            get { return _procedurePlanDetail; }
         }
     }
 

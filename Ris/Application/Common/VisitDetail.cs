@@ -70,10 +70,10 @@ namespace ClearCanvas.Ris.Application.Common
         public EnumValueInfo Status;
 
         [DataMember]
-        public DateTime? AdmitDateTime;
+        public DateTime? AdmitTime;
 
         [DataMember]
-        public DateTime? DischargeDateTime;
+        public DateTime? DischargeTime;
 
         [DataMember]
         public FacilitySummary Facility;
@@ -100,7 +100,7 @@ namespace ClearCanvas.Ris.Application.Common
         {
             return new VisitSummary(this.VisitRef, this.PatientRef, this.VisitNumber,
                 this.PatientClass.Value, this.PatientType.Value, this.AdmissionType.Value,
-                this.Status.Value, this.AdmitDateTime, this.DischargeDateTime);
+                this.Status.Value, this.AdmitTime, this.DischargeTime);
         }
     }
 }

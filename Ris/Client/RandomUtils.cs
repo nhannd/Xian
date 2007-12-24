@@ -245,7 +245,7 @@ namespace ClearCanvas.Ris.Client
                         {
                             return enumValue.Code == "AA";
                         });
-                    visitDetail.AdmitDateTime = now;
+                    visitDetail.AdmitTime = now;
                     visitDetail.Facility = ChooseRandom(visitFormResponse.FacilityChoices);
 
                     AdminAddVisitResponse addVisitResponse = service.AdminAddVisit(new AdminAddVisitRequest(visitDetail));

@@ -358,7 +358,7 @@ namespace ClearCanvas.Ris.Client.Adt
             return string.Format("{0} {1} {2}",
                 VisitNumberFormat.Format(v.VisitNumber),
                 visitType,
-                Format.DateTime(v.AdmitDateTime)
+                Format.DateTime(v.AdmitTime)
                 );
         }
 

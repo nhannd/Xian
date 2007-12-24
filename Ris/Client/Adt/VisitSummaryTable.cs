@@ -85,7 +85,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
             //admit date/time
             this.Columns.Add(new TableColumn<VisitSummary, string>(SR.ColumnAdmitDateTime,
-                delegate(VisitSummary v) { return Format.Date(v.AdmitDateTime); },
+                delegate(VisitSummary v) { return Format.Date(v.AdmitTime); },
                 1.0f));
 
             ////Patient class
@@ -110,7 +110,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
             //discharge datetime
             this.Columns.Add(new TableColumn<VisitSummary, string>(SR.ColumnDischargeDateTime,
-                delegate(VisitSummary v) { return Format.Date(v.DischargeDateTime); },
+                delegate(VisitSummary v) { return Format.Date(v.DischargeTime); },
                 1.0f));
 
             ////discharge disposition

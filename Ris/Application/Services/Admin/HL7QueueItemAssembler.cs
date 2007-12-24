@@ -52,8 +52,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin
             summary.Direction = EnumUtils.GetValue(queueItem.Direction, context);
             summary.StatusCode = EnumUtils.GetValue(queueItem.Status.Code, context);
             summary.StatusDescription = queueItem.Status.Description;
-            summary.CreationDateTime = queueItem.Status.CreationDateTime;
-            summary.UpdateDateTime = queueItem.Status.UpdateDateTime;
+            summary.CreationTime = queueItem.Status.CreationTime;
+            summary.UpdateTime = queueItem.Status.UpdateTime;
 
             summary.Peer = EnumUtils.GetValue(queueItem.Message.Peer, context);
             summary.MessageType = queueItem.Message.MessageType;
@@ -73,8 +73,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin
             detail.Direction = EnumUtils.GetEnumValueInfo(queueItem.Direction, context);
             detail.StatusCode = EnumUtils.GetEnumValueInfo(queueItem.Status.Code, context);
             detail.StatusDescription = queueItem.Status.Description;
-            detail.CreationDateTime = queueItem.Status.CreationDateTime;
-            detail.UpdateDateTime = queueItem.Status.UpdateDateTime;
+            detail.CreationTime = queueItem.Status.CreationTime;
+            detail.UpdateTime = queueItem.Status.UpdateTime;
 
             detail.Peer = EnumUtils.GetEnumValueInfo(queueItem.Message.Peer, context);
 
@@ -97,19 +97,19 @@ namespace ClearCanvas.Ris.Application.Services.Admin
             if (request.StatusCode != null)
                 criteria.Status.Code.EqualTo(EnumUtils.GetEnumValue<HL7MessageStatusCode>(request.StatusCode));
 
-            if (request.StartingCreationDateTime.HasValue && request.EndingCreationDateTime.HasValue)
-                criteria.Status.CreationDateTime.Between(request.StartingCreationDateTime.Value, request.EndingCreationDateTime.Value);
-            else if (request.StartingCreationDateTime.HasValue)
-                criteria.Status.CreationDateTime.MoreThanOrEqualTo(request.StartingCreationDateTime.Value);
-            else if (request.EndingCreationDateTime.HasValue)
-                criteria.Status.CreationDateTime.LessThanOrEqualTo(request.StartingCreationDateTime.Value);
+            if (request.StartingCreationTime.HasValue && request.EndingCreationTime.HasValue)
+                criteria.Status.CreationTime.Between(request.StartingCreationTime.Value, request.EndingCreationTime.Value);
+            else if (request.StartingCreationTime.HasValue)
+                criteria.Status.CreationTime.MoreThanOrEqualTo(request.StartingCreationTime.Value);
+            else if (request.EndingCreationTime.HasValue)
+                criteria.Status.CreationTime.LessThanOrEqualTo(request.StartingCreationTime.Value);
 
-            if (request.StartingUpdateDateTime.HasValue && request.EndingUpdateDateTime.HasValue)
-                criteria.Status.UpdateDateTime.Between(request.StartingUpdateDateTime.Value, request.EndingUpdateDateTime);
-            else if (request.StartingUpdateDateTime.HasValue)
-                criteria.Status.UpdateDateTime.MoreThanOrEqualTo(request.StartingUpdateDateTime.Value);
-            else if (request.EndingUpdateDateTime.HasValue)
-                criteria.Status.UpdateDateTime.LessThanOrEqualTo(request.StartingUpdateDateTime.Value);
+            if (request.StartingUpdateTime.HasValue && request.EndingUpdateTime.HasValue)
+                criteria.Status.UpdateTime.Between(request.StartingUpdateTime.Value, request.EndingUpdateTime);
+            else if (request.StartingUpdateTime.HasValue)
+                criteria.Status.UpdateTime.MoreThanOrEqualTo(request.StartingUpdateTime.Value);
+            else if (request.EndingUpdateTime.HasValue)
+                criteria.Status.UpdateTime.LessThanOrEqualTo(request.StartingUpdateTime.Value);
 
             if (request.MessageType != null)
                 criteria.Message.MessageType.EqualTo(request.MessageType);

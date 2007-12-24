@@ -52,10 +52,10 @@ namespace ClearCanvas.Ris.Application.Common.Admin
         public string StatusDescription;
 
         [DataMember]
-        public DateTime CreationDateTime;
+        public DateTime CreationTime;
 
         [DataMember]
-        public DateTime? UpdateDateTime;
+        public DateTime? UpdateTime;
 
         [DataMember]
         public string Peer;

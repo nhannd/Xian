@@ -39,7 +39,7 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
     public class GetProcedurePlanForWorklistItemResponse : DataContractBase
     {
         [DataMember] 
-        public ProcedurePlanSummary ProcedurePlanSummary;
+        public ProcedurePlanDetail ProcedurePlan;
 
         [DataMember]
         public Dictionary<string, string> OrderExtendedProperties;

@@ -103,7 +103,7 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
             Order order = mps.RequestedProcedure.Order;
 
             ProcedurePlanAssembler assembler = new ProcedurePlanAssembler();
-            ProcedurePlanSummary procedurePlanSummary =
+            ProcedurePlanDetail procedurePlanSummary =
                 assembler.CreateProcedurePlanSummary(order, this.PersistenceContext);
 
             return new GetProcedurePlanForProtocollingWorklistItemResponse(procedurePlanSummary);

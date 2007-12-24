@@ -161,7 +161,7 @@ namespace ClearCanvas.Ris.Client
 
         public string SchedulingRequestDateTime
         {
-            get { return _orderDetail == null ? null : Format.DateTime(_orderDetail.SchedulingRequestDateTime); }
+            get { return _orderDetail == null ? null : Format.DateTime(_orderDetail.SchedulingRequestTime); }
         }
 
         public string OrderingPhysician
@@ -210,12 +210,12 @@ namespace ClearCanvas.Ris.Client
 
         public string AdmitDateTime
         {
-            get { return _orderDetail == null ? null : Format.DateTime(_orderDetail.Visit.AdmitDateTime); }
+            get { return _orderDetail == null ? null : Format.DateTime(_orderDetail.Visit.AdmitTime); }
         }
 
         public string DischargeDateTime
         {
-            get { return _orderDetail == null ? null : Format.DateTime(_orderDetail.Visit.DischargeDateTime); }
+            get { return _orderDetail == null ? null : Format.DateTime(_orderDetail.Visit.DischargeTime); }
         }
 
         public string AmbulatoryStatus

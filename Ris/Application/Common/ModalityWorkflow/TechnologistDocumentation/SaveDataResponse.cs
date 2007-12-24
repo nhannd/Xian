@@ -38,6 +38,6 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow.TechnologistDocume
     public class SaveDataResponse : DataContractBase
     {
         [DataMember]
-        public ProcedurePlanSummary ProcedurePlanSummary;
+        public ProcedurePlanDetail ProcedurePlan;
     }
 }

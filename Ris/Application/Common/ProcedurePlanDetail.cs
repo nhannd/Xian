@@ -36,7 +36,7 @@ using ClearCanvas.Enterprise.Common;
 namespace ClearCanvas.Ris.Application.Common
 {
     [DataContract]
-    public class ProcedurePlanSummary : DataContractBase
+    public class ProcedurePlanDetail : DataContractBase
     {
         [DataMember] 
         public EntityRef OrderRef;

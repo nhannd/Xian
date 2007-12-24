@@ -38,6 +38,6 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
     public class DiscontinueModalityProcedureStepsResponse : DataContractBase
     {
         [DataMember]
-        public ProcedurePlanSummary ProcedurePlanSummary;
+        public ProcedurePlanDetail ProcedurePlan;
     }
 }

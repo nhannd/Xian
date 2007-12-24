@@ -71,7 +71,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
 
             SaveDataResponse response = new SaveDataResponse();
             ProcedurePlanAssembler assembler = new ProcedurePlanAssembler();
-            response.ProcedurePlanSummary = assembler.CreateProcedurePlanSummary(order, this.PersistenceContext);
+            response.ProcedurePlan = assembler.CreateProcedurePlanSummary(order, this.PersistenceContext);
 
             return response;
         }
@@ -93,7 +93,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
 
             CompleteOrderDocumentationResponse response = new CompleteOrderDocumentationResponse();
             ProcedurePlanAssembler assembler = new ProcedurePlanAssembler();
-            response.ProcedurePlanSummary = assembler.CreateProcedurePlanSummary(order, this.PersistenceContext);
+            response.ProcedurePlan = assembler.CreateProcedurePlanSummary(order, this.PersistenceContext);
 
             return response;
         }

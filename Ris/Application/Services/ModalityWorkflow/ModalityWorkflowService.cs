@@ -159,7 +159,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
             ProcedurePlanAssembler assembler = new ProcedurePlanAssembler();
 
             GetProcedurePlanForWorklistItemResponse response = new GetProcedurePlanForWorklistItemResponse();
-            response.ProcedurePlanSummary = assembler.CreateProcedurePlanSummary(order, this.PersistenceContext);
+            response.ProcedurePlan = assembler.CreateProcedurePlanSummary(order, this.PersistenceContext);
 
             response.OrderExtendedProperties = new Dictionary<string, string>();
             foreach (string key in order.ExtendedProperties.Keys)
@@ -224,7 +224,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
             ProcedurePlanAssembler procedurePlanAssembler = new ProcedurePlanAssembler();
             ModalityPerformedProcedureStepAssembler modalityPerformedProcedureStepAssembler = new ModalityPerformedProcedureStepAssembler();
 
-            response.ProcedurePlanSummary = procedurePlanAssembler.CreateProcedurePlanSummary(modalitySteps[0].RequestedProcedure.Order, this.PersistenceContext);
+            response.ProcedurePlan = procedurePlanAssembler.CreateProcedurePlanSummary(modalitySteps[0].RequestedProcedure.Order, this.PersistenceContext);
             response.StartedMpps = modalityPerformedProcedureStepAssembler.CreateModalityPerformedProcedureStepSummary(mpps, this.PersistenceContext);
 
             return response;
@@ -257,7 +257,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
             DiscontinueModalityProcedureStepsResponse response = new DiscontinueModalityProcedureStepsResponse();
             ProcedurePlanAssembler assembler = new ProcedurePlanAssembler();
 
-            response.ProcedurePlanSummary = assembler.CreateProcedurePlanSummary(modalitySteps[0].RequestedProcedure.Order, this.PersistenceContext);
+            response.ProcedurePlan = assembler.CreateProcedurePlanSummary(modalitySteps[0].RequestedProcedure.Order, this.PersistenceContext);
 
             return response;
         }
@@ -289,7 +289,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
             ProcedurePlanAssembler assembler = new ProcedurePlanAssembler();
             ModalityPerformedProcedureStepAssembler stepAssembler = new ModalityPerformedProcedureStepAssembler();
 
-            response.ProcedurePlanSummary = assembler.CreateProcedurePlanSummary(onePs.RequestedProcedure.Order, this.PersistenceContext);
+            response.ProcedurePlan = assembler.CreateProcedurePlanSummary(onePs.RequestedProcedure.Order, this.PersistenceContext);
             response.StoppedMpps = stepAssembler.CreateModalityPerformedProcedureStepSummary(mpps, this.PersistenceContext);
 
             return response;
@@ -317,7 +317,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
             ModalityPerformedProcedureStepAssembler stepAssembler = new ModalityPerformedProcedureStepAssembler();
 
             DiscontinueModalityPerformedProcedureStepResponse response = new DiscontinueModalityPerformedProcedureStepResponse();
-            response.ProcedurePlanSummary = planAssembler.CreateProcedurePlanSummary(oneMps.RequestedProcedure.Order, this.PersistenceContext);
+            response.ProcedurePlan = planAssembler.CreateProcedurePlanSummary(oneMps.RequestedProcedure.Order, this.PersistenceContext);
             response.DiscontinuedMpps = stepAssembler.CreateModalityPerformedProcedureStepSummary(mpps, this.PersistenceContext);
 
             return response;

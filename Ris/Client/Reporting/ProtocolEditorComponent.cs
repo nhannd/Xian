@@ -492,13 +492,13 @@ namespace ClearCanvas.Ris.Client.Reporting
             GetProcedurePlanForProtocollingWorklistItemRequest procedurePlanRequest = new GetProcedurePlanForProtocollingWorklistItemRequest(_worklistItem.ProcedureStepRef);
             GetProcedurePlanForProtocollingWorklistItemResponse procedurePlanResponse = service.GetProcedurePlanForProtocollingWorklistItem(procedurePlanRequest);
 
-            if (procedurePlanResponse.ProcedurePlanSummary != null)
+            if (procedurePlanResponse.ProcedurePlan != null)
             {
-                _orderRef = procedurePlanResponse.ProcedurePlanSummary.OrderRef;
+                _orderRef = procedurePlanResponse.ProcedurePlan.OrderRef;
 
                 _procedurePlanSummaryTable.Items.Clear();
 
-                foreach (RequestedProcedureDetail rp in procedurePlanResponse.ProcedurePlanSummary.RequestedProcedures)
+                foreach (RequestedProcedureDetail rp in procedurePlanResponse.ProcedurePlan.RequestedProcedures)
                 {
                     GetProcedureProtocolRequest protocolRequest = new GetProcedureProtocolRequest(rp.RequestedProcedureRef);
                     GetProcedureProtocolResponse protocolResponse = service.GetProcedureProtocol(protocolRequest);

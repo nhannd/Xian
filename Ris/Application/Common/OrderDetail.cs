@@ -63,10 +63,10 @@ namespace ClearCanvas.Ris.Application.Common
         public DiagnosticServiceDetail DiagnosticService;
 
         [DataMember]
-        public DateTime? EnteredDateTime;
+        public DateTime? EnteredTime;
 
         [DataMember]
-        public DateTime? SchedulingRequestDateTime;
+        public DateTime? SchedulingRequestTime;
 
         [DataMember]
         public ExternalPractitionerDetail OrderingPractitioner;

@@ -38,7 +38,7 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
     public class StartModalityProcedureStepsResponse : DataContractBase
     {
         [DataMember]
-        public ProcedurePlanSummary ProcedurePlanSummary;
+        public ProcedurePlanDetail ProcedurePlan;
 
         [DataMember]
         public ModalityPerformedProcedureStepSummary StartedMpps;

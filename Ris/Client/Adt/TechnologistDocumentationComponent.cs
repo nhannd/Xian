@@ -60,7 +60,7 @@ namespace ClearCanvas.Ris.Client.Adt
         DesktopWindow DesktopWindow { get; }
         void AddPage(IDocumentationPage page);
         void InsertPage(IDocumentationPage page, int position);
-        ProcedurePlanSummary ProcedurePlan { get; }
+        ProcedurePlanDetail ProcedurePlan { get; }
         event EventHandler ProcedurePlanChanged;
     }
     
@@ -106,7 +106,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 _owner.InsertDocumentationPage(page, position);
             }
 
-            public ProcedurePlanSummary ProcedurePlan
+            public ProcedurePlanDetail ProcedurePlan
             {
                 get { return _owner._procedurePlan; }
             }
@@ -128,7 +128,7 @@ namespace ClearCanvas.Ris.Client.Adt
         private readonly ModalityWorklistItem _worklistItem;
         private Dictionary<string, string> _orderExtendedProperties;
 
-        private ProcedurePlanSummary _procedurePlan;
+        private ProcedurePlanDetail _procedurePlan;
         private ProcedurePlanSummaryTable _procedurePlanSummaryTable;
         private event EventHandler _procedurePlanChanged;
 
@@ -278,7 +278,7 @@ namespace ClearCanvas.Ris.Client.Adt
                             StartModalityProcedureStepsRequest request = new StartModalityProcedureStepsRequest(checkedMpsRefs);
                             StartModalityProcedureStepsResponse response = service.StartModalityProcedureSteps(request);
 
-                            RefreshProcedurePlanSummary(response.ProcedurePlanSummary);
+                            RefreshProcedurePlanSummary(response.ProcedurePlan);
                             UpdateActionEnablement();
 
                             _ppsComponent.AddPerformedProcedureStep(response.StartedMpps);
@@ -307,7 +307,7 @@ namespace ClearCanvas.Ris.Client.Adt
                             DiscontinueModalityProcedureStepsRequest request = new DiscontinueModalityProcedureStepsRequest(checkedMpsRefs);
                             DiscontinueModalityProcedureStepsResponse response = service.DiscontinueModalityProcedureSteps(request);
 
-                            RefreshProcedurePlanSummary(response.ProcedurePlanSummary);
+                            RefreshProcedurePlanSummary(response.ProcedurePlan);
                             UpdateActionEnablement();
                         });
                 }
@@ -344,15 +344,15 @@ namespace ClearCanvas.Ris.Client.Adt
                             if (completeDocumentation)
                             {
                                 CompleteOrderDocumentationRequest completeRequest =
-                                    new CompleteOrderDocumentationRequest(saveResponse.ProcedurePlanSummary.OrderRef);
+                                    new CompleteOrderDocumentationRequest(saveResponse.ProcedurePlan.OrderRef);
                                 CompleteOrderDocumentationResponse completeResponse =
                                     service.CompleteOrderDocumentation(completeRequest);
 
-                                RefreshProcedurePlanSummary(completeResponse.ProcedurePlanSummary);
+                                RefreshProcedurePlanSummary(completeResponse.ProcedurePlan);
                             }
                             else
                             {
-                                RefreshProcedurePlanSummary(saveResponse.ProcedurePlanSummary);
+                                RefreshProcedurePlanSummary(saveResponse.ProcedurePlan);
                             }
                         });
             }
@@ -372,7 +372,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 {
                     GetProcedurePlanForWorklistItemRequest procedurePlanRequest = new GetProcedurePlanForWorklistItemRequest(_worklistItem.ProcedureStepRef);
                     GetProcedurePlanForWorklistItemResponse procedurePlanResponse = service.GetProcedurePlanForWorklistItem(procedurePlanRequest);
-                    _procedurePlan = procedurePlanResponse.ProcedurePlanSummary;
+                    _procedurePlan = procedurePlanResponse.ProcedurePlan;
                     _orderExtendedProperties = procedurePlanResponse.OrderExtendedProperties;
                 });
 
@@ -405,7 +405,7 @@ namespace ClearCanvas.Ris.Client.Adt
             InsertDocumentationPage(_preExamComponent, 1);
 
             _ppsComponent = new PerformedProcedureComponent("Exam", _procedurePlan.OrderRef, this);
-            _ppsComponent.ProcedurePlanChanged += delegate(object sender, ProcedurePlanChangedEventArgs e) { RefreshProcedurePlanSummary(e.ProcedurePlanSummary); };
+            _ppsComponent.ProcedurePlanChanged += delegate(object sender, ProcedurePlanChangedEventArgs e) { RefreshProcedurePlanSummary(e.procedurePlanDetail); };
             InsertDocumentationPage(_ppsComponent, 2);
 
             // create extension modules, which may add documentation pages to the tab container
@@ -472,9 +472,9 @@ namespace ClearCanvas.Ris.Client.Adt
             }
         }
 
-        private void RefreshProcedurePlanSummary(ProcedurePlanSummary procedurePlanSummary)
+        private void RefreshProcedurePlanSummary(ProcedurePlanDetail procedurePlanDetail)
         {
-            _procedurePlan = procedurePlanSummary;
+            _procedurePlan = procedurePlanDetail;
 
             try
             {
@@ -494,7 +494,7 @@ namespace ClearCanvas.Ris.Client.Adt
             }
 
             _procedurePlanSummaryTable.Items.Clear();
-            foreach(RequestedProcedureDetail rp in procedurePlanSummary.RequestedProcedures)
+            foreach(RequestedProcedureDetail rp in procedurePlanDetail.RequestedProcedures)
             {
                 foreach(ModalityProcedureStepDetail mps in rp.ModalityProcedureSteps)
                 {
