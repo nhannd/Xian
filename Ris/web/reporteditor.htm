@@ -7,6 +7,7 @@
 	    <script type="text/javascript" src="js/jsml.js"></script>
 	    <script type="text/javascript" src="js/ui.js"></script>
 	    <script type="text/javascript" src="js/ris.js"></script>
+		<script type="text/javascript" src="js/preview.js"></script>
 	    <script type="text/javascript" >
 		    var data = {};
 
@@ -23,33 +24,77 @@
                 Ris.setTag("Report", reportJsml);
             }
             
-		    function onBodyLoad()
-		    {		        
-		        if(!Ris)
-		            return;
-
-	            try
-	            {
-                    data = Ris.getTag("Report");
-                    var report = JSML.parse(data);
-                    
-                    if (report != null)
-                    {
-                        Field.setValue($("finding"), report.Finding);
-                        Field.setValue($("impression"), report.Impression);
-                    }
-	            }
-	            catch(e)
-	            {
-	                var message = "Failed to load editor page.  An exception occurred in the script. Error name: " + e.name + ". Error message: " + e.message;
-		            Field.setValue($("myForm"), message);
-	            }
+			function loadData()
+			{
+				data = Ris.getTag("Report");
+				var report = JSML.parse(data);
 				
-		    }
+				if (report != null)
+				{
+					Field.setValue($("finding"), report.Finding);
+					Field.setValue($("impression"), report.Impression);
+				}
+			}
+			
+			function loadReportedProceduresTable()
+			{
+				var worklistItem = Ris.getHealthcareContext();
+
+				if (worklistItem == null || worklistItem.ReportRef == null)
+					return false;
+
+				// construct request object
+				var request = {
+					// only request the report detail if there is a report     
+					GetReportDetailRequest: { ReportRef: worklistItem.ReportRef }
+				};
+
+				var service = Ris.getPatientDataService();
+				var data = service.getData(request);
+				if (data == null || data.GetReportDetailResponse == null)
+					return false;
+
+				var reportDetail = data.GetReportDetailResponse.Report;
+
+				if (reportDetail == null ||  reportDetail.Procedures == null || reportDetail.Procedures.length == 0)
+					return false;
+
+				createRequestedProceduresTable($("proceduresTable"), reportDetail.Procedures);
+
+				return true;
+			}
+			
+			function onBodyLoad()
+			{
+				if(!Ris)
+					return;
+
+				try
+				{
+					loadData();
+					if (loadReportedProceduresTable() == false)
+						Field.show($("proceduresTable"), false);
+				}
+				catch(e)
+				{
+					var message = "Failed to load editor page.  An exception occurred in the script. Error name: " + e.name + ". Error message: " + e.message;
+					Field.setValue($("myForm"), message);
+				}
+			}
 		</script>
 	</head>
 	<body onload="javascript: onBodyLoad()" style="padding-top:0">
 		<form id="myForm" style="padding-top:0">
+		    <p class="sectionheading">Reported Procedures</p>
+			<table border="0" id="proceduresTable">
+				<tr class="tableheading">
+					<td>Procedure</td>
+					<td>Protocol</td>
+					<td>Code</td>
+				</tr>
+					<!-- this empty row is here so the color of the first data row is consistent with other previews -->
+		            <tr colspan="3"></tr>
+			</table>
 		    <p class="sectionheading">Impression</p>
 			<textarea style="width:99%" rows="15" border="0" id="impression"></textarea>
 		    <p class="sectionheading">Finding</p>

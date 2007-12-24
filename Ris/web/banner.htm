@@ -37,12 +37,8 @@
 							{
 								OrderRef: worklistItem.OrderRef,
 								IncludeAlerts: true,
-
-								// only include ordered procedures if report not yet created
-								IncludeProcedures: (worklistItem.ReportRef == null)
-							},
-						// only request the report detail if there is a report     
-						GetReportDetailRequest: worklistItem.ReportRef == null ? null : { ReportRef: worklistItem.ReportRef }
+								IncludeProcedures: true
+							}
 					};
                     
 					var service = Ris.getPatientDataService();
@@ -74,29 +70,8 @@
 						Field.setValue($("OrderingPhysician"), Ris.formatPersonName(orderDetail.OrderingPractitioner.Name));
 						Field.setValue($("DiagnosticService"), orderDetail.DiagnosticService.Name);
 
-						var reportDetail = data.GetReportDetailResponse ? data.GetReportDetailResponse.Report : null;
-						var procedures = reportDetail ? reportDetail.Procedures : orderDetail.RequestedProcedures;
-
-						var selectedProcedure = procedures.find(
-												function(rp) { return rp.RequestedProcedureRef == worklistItem.RequestedProcedureRef; });
-
-						if (reportDetail)
-						{
-							var reportedProcedures = String.combine(procedures.map(function(rp) { return rp.Type.Name; }), ", ");
-							Field.setValue($("RequestedProceduresLabel"), "Reported Procedures");
-							Field.setValue($("RequestedProcedures"), reportedProcedures);
-						}
-						else if (selectedProcedure)
-						{
-							Field.setValue($("RequestedProceduresLabel"), "Requested Procedure");
-							Field.setValue($("RequestedProcedures"), selectedProcedure.Type.Name);
-						}
-						else
-						{
-							var orderedProcedures = String.combine(procedures.map(function(rp) { return rp.Type.Name; }), ", ");
-							Field.setValue($("RequestedProceduresLabel"), "Ordered Procedure");
-							Field.setValue($("RequestedProcedures"), orderedProcedures);
-						}
+						var orderedProcedures = String.combine(orderDetail.RequestedProcedures.map(function(rp) { return rp.Type.Name; }), ", ");
+						Field.setValue($("RequestedProcedures"), orderedProcedures);
 					}
 					else
 					{
@@ -165,7 +140,7 @@
 							<tr>
 								<td class="propertyname">Ordering Priority</td>
 								<td class="propertyvalue"><div id="OrderPriority"/></td>
-								<td class="propertyname" rowspan="2"><div id="RequestedProceduresLabel"/></td>
+								<td class="propertyname" rowspan="2">Ordered Procedures</td>
 								<td class="propertyvalue" rowspan="2"><div id="RequestedProcedures"/></td>
 							</tr>
 							<tr>

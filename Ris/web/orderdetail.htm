@@ -31,11 +31,8 @@
 							 { 
 								OrderRef: worklistItem.OrderRef,
 								IncludeNotes: true,
-								// only include ordered procedures if report not yet created
-								IncludeProcedures: (worklistItem.ReportRef == null)
-							},
-						// only request the report detail if there is a report     
-						GetReportDetailRequest: worklistItem.ReportRef == null ? null : { ReportRef: worklistItem.ReportRef }
+								IncludeProcedures: true
+							}
 					};
 
 					var service = Ris.getPatientDataService();
@@ -68,13 +65,8 @@
 					else
 						Field.show($("orderNotesTable"), false);
 
-					var reportDetail = data.GetReportDetailResponse ? data.GetReportDetailResponse.Report : null;
-					var procedures = reportDetail ? reportDetail.Procedures : orderDetail.RequestedProcedures;
-					if (procedures.length)
-					{
-						Field.setValue($("procedureTableHeading"), reportDetail ? "Reported Procedures" : "Ordered Procedures");
-						createRequestedProceduresTable($("proceduresTable"), procedures);
-					}
+					if (orderDetail.RequestedProcedures.length)
+						createRequestedProceduresTable($("proceduresTable"), orderDetail.RequestedProcedures);
 					else
 						Field.show($("proceduresTable"), false);
 				}
@@ -127,11 +119,11 @@
 			</table>
 
 			<table border="0" id="proceduresTable">
-				<tr><td class="sectionheading" colspan="6"><div id="procedureTableHeading"/></td></tr>
+				<tr><td class="sectionheading" colspan="6">Ordered Procedures</td></tr>
 				<tr class="tableheading">
 					<td>Procedure</td>
-					<td>Status</td>
 					<td>Protocol</td>
+					<td>Code</td>
 				</tr>
 			</table>
 

@@ -183,10 +183,6 @@ function createRequestedProceduresTable(htmlTable, procedures)
 				cellType: "text",
 				getValue: function(item) { return item.Type.Name; }
 			},
-			{   label: "Status",
-				cellType: "text",
-				getValue: function(item) { return item.Status.Value; }
-			},
 			{   label: "Protocol Status",
 				cellType: "html",
 				getValue: function(item) { return item.Protocol ? item.Protocol.Status.Value : "Not Protocolled"; }
