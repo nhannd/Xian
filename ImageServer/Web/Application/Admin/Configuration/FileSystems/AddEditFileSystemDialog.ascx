@@ -17,11 +17,11 @@
                 </table>
             </asp:Panel>
             <div class="PopupWindowBody" style="vertical-align: top;">
-                <asp:Panel ID="Panel2" runat="server" Height="200px" CssClass="Panel">
+                <asp:Panel ID="Panel2" runat="server" Height="200px" CssClass="PopupPanel">
                     <cc1:TabContainer ID="TabContainer1" runat="server" ActiveTabIndex="0" Height="160px">
                         <cc1:TabPanel ID="TabPanel1" runat="server" HeaderText="TabPanel1">
                             <ContentTemplate>
-                                <asp:Panel ID="Panel1" runat="server" CssClass="Panel">
+                                <asp:Panel ID="Panel1" runat="server" CssClass="PopupPanel">
                                     <table id="TABLE1" runat="server" cellspacing="4" style="text-align: left" width="90%">
                                         <tr runat="server">
                                             <td runat="server" valign="bottom">
@@ -86,7 +86,7 @@
                         </cc1:TabPanel>
                         <cc1:TabPanel ID="TabPanel2" runat="server" HeaderText="TabPanel2">
                             <ContentTemplate>
-                                <asp:Panel ID="Panel3" runat="server" CssClass="Panel">
+                                <asp:Panel ID="Panel3" runat="server" CssClass="PopupPanel">
                                     <table id="TABLE2" runat="server" cellspacing="4" style="text-align: left" width="90%">
                                         <tr id="Tr1" runat="server">
                                             <td id="Td1" style="height: 29px" runat="server" valign="bottom">

@@ -43,7 +43,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
     public partial class FileSystemsPage : System.Web.UI.Page
     {
         #region Private members
-        
+
         // the controller used for database interaction
         private FileSystemsConfigurationController _controller = new FileSystemsConfigurationController();
 
@@ -56,43 +56,27 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
         /// </summary>
         protected void SetupEventHandlers()
         {
-            FileSystemsPanel1.AddFileSystemDelegate = delegate
-                                                          {
-                                                              AddEditFileSystemDialog1.EditMode = false;
-                                                              AddEditFileSystemDialog1.Show();
-                                                          };
-
-            FileSystemsPanel1.EditFileSystemDelegate = delegate(FileSystemsConfigurationController controller, Filesystem fs)
-                                                          {
-                                                              AddEditFileSystemDialog1.EditMode = true;
-                                                              AddEditFileSystemDialog1.FileSystem = fs;
-                                                              AddEditFileSystemDialog1.Show();
-                                                          };
             AddEditFileSystemDialog1.OKClicked += delegate(Filesystem fs)
-                                               {
-                                                   if (AddEditFileSystemDialog1.EditMode)
-                                                   {
-                                                       // Commit the new FileSystems into database
-                                                       if (_controller.UpdateFileSystem(fs))
-                                                       {
-                                                           FileSystemsPanel1.UpdateUI();
-                                                       }  
-                                                   }
-                                                   else
-                                                   {
-                                                       // Commit the new FileSystems into database
-                                                       if (_controller.AddFileSystem(fs))
-                                                       {
-                                                           FileSystemsPanel1.UpdateUI();
-                                                       }  
-                                                   }
-                                                   
-                                               };
-
-            
+                                                      {
+                                                          if (AddEditFileSystemDialog1.EditMode)
+                                                          {
+                                                              // Commit the new FileSystems into database
+                                                              if (_controller.UpdateFileSystem(fs))
+                                                              {
+                                                                  FileSystemsPanel1.UpdateUI();
+                                                              }
+                                                          }
+                                                          else
+                                                          {
+                                                              // Commit the new FileSystems into database
+                                                              if (_controller.AddFileSystem(fs))
+                                                              {
+                                                                  FileSystemsPanel1.UpdateUI();
+                                                              }
+                                                          }
+                                                      };
         }
 
-        
 
         /// <summary>
         /// Retrieves the Filesystems to be rendered in the page.
@@ -108,7 +92,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
 
         protected override void OnInit(EventArgs e)
         {
+            this.FileSystemsPanel1.EnclosingPage = this;
+
             base.OnInit(e);
+
             _controller = new FileSystemsConfigurationController();
 
             SetupControls();
@@ -119,16 +106,29 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
         {
             FileSystemsPanel1.FileSystems = GetFilesystems();
             AddEditFileSystemDialog1.FilesystemTiers = _controller.GetFileSystemTiers();
-                                                              
         }
-        
+
         protected void Page_Load(object sender, EventArgs e)
         {
-
-
         }
 
         #endregion  Protected methods
-        
+
+        #region Public Methods
+
+        public void OnAddFileSystem()
+        {
+            AddEditFileSystemDialog1.EditMode = false;
+            AddEditFileSystemDialog1.Show();
+        }
+
+        public void OnEditFileSystem(FileSystemsConfigurationController controller, Filesystem fs)
+        {
+            AddEditFileSystemDialog1.EditMode = true;
+            AddEditFileSystemDialog1.FileSystem = fs;
+            AddEditFileSystemDialog1.Show();
+        }
+
+        #endregion
     }
 }

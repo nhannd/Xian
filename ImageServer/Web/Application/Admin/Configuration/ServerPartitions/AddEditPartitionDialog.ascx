@@ -24,7 +24,7 @@
                 <ccAjax:TabContainer ID="ServerPartitionTabContainer" runat="server" ActiveTabIndex="0" Height="150px">
                     <ccAjax:TabPanel ID="GeneralTabPanel" runat="server" HeaderText="GeneralTabPanel">
                         <ContentTemplate>
-                            <asp:Panel ID="Panel1" runat="server" CssClass="Panel">
+                            <asp:Panel ID="Panel1" runat="server" CssClass="PopupPanel">
                                 <table id="GeneralTabTable" runat="server" cellspacing="3" style="text-align: left" width="100%">
                                     <tr runat="server">
                                         <td runat="server" valign="top">
@@ -91,7 +91,7 @@
                     </ccAjax:TabPanel>
                     <ccAjax:TabPanel ID="TabPanel2" runat="server" HeaderText="TabPanel2">
                         <ContentTemplate>
-                            <asp:Panel ID="Panel2" runat="server" CssClass="Panel">
+                            <asp:Panel ID="Panel2" runat="server" CssClass="PopupPanel">
                                 <table width="100%">
                                     <tr>
                                         <td align="left" style="height: 29px">

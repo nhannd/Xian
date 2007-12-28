@@ -30,19 +30,10 @@
 #endregion
 
 using System;
-using System.Data;
-using System.Configuration;
-using System.Collections;
-using System.Web;
-using System.Web.Security;
-using System.Web.UI;
-using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
-using System.Web.UI.HtmlControls;
-using ClearCanvas.ImageServer.Model;
 using System.Collections.Generic;
+using System.Web.UI;
+using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Criteria;
-using ClearCanvas.ImageServer.Web.Common;
 using ClearCanvas.ImageServer.Web.Common.Data;
 
 namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPartitions
@@ -52,23 +43,29 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
     /// </summary>
     public partial class ServerPartitionPanel : System.Web.UI.UserControl
     {
-        #region private Members
+        #region Private Members
+
         // list of partitions displayed in the list
         private IList<ServerPartition> _partitions = new List<ServerPartition>();
         // used for database interaction
-        private IServerPartitionConfigurationController _theController; 
-        #endregion private Members
+        private IServerPartitionConfigurationController _theController;
+        private ServerPartitionPage _enclosingPage;
+
+        #endregion Private Members
 
         #region Public Properties
+
         // Sets/Gets the list of partitions displayed in the panel
         public IList<ServerPartition> Partitions
         {
             get { return _partitions; }
-            set { 
+            set
+            {
                 _partitions = value;
                 ServerPartitionGridPanel.Partitions = _partitions;
             }
         }
+
         // Sets/Gets the controller used to retrieve load partitions.
         public IServerPartitionConfigurationController Controller
         {
@@ -76,37 +73,46 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
             set { _theController = value; }
         }
 
+        public ServerPartitionPage EnclosingPage
+        {
+            get { return _enclosingPage; }
+            set { _enclosingPage = value; }
+        }
+
         #endregion Public Properties
 
-        #region Public delegates
-
-        /// <summary>
-        /// Defines the delegate called by the panel to add new partition.
-        /// </summary>
-        public delegate void AddPartitionDelegate();
-
-        /// <summary>
-        /// Sets/Gets the delegate to add a new partition
-        /// </summary>
-        public AddPartitionDelegate AddPartitionMethod;
-
-        /// <summary>
-        /// Defines the delegate called by the panel to update an existing partition.
-        /// </summary>
-        /// <param name="partition"></param>
-        public delegate void EditPartitionDelegate(ServerPartition partition);
-
-        /// <summary>
-        /// Sets/Gets the delegate to update an eisting partition.
-        /// </summary>
-        public EditPartitionDelegate EditPartitionMethod;
-
-        #endregion Public delegates
-
         #region Protected Methods
+
         protected void Page_Load(object sender, EventArgs e)
         {
+        }
 
+        /// <summary>
+        /// Determines if filters are being specified.
+        /// </summary>
+        /// <returns></returns>
+        protected bool HasFilters()
+        {
+            if (AETitleFilter.Text.Length > 0 || DescriptionFilter.Text.Length > 0 || EnabledOnlyFilter.Checked)
+                return true;
+            else
+                return false;
+        }
+
+        protected override void OnPreRender(EventArgs e)
+        {
+            base.OnPreRender(e);
+
+            UpdateUI();
+
+            if (Page.IsPostBack)
+            {
+                // Change the image of the "Apply Filter" button based on the filter settings
+                if (HasFilters())
+                    FilterButton.ImageUrl = "~/images/icons/QueryEnabled.png";
+                else
+                    FilterButton.ImageUrl = "~/images/icons/QueryEnabled.png";
+            }
         }
 
         protected override void OnInit(EventArgs e)
@@ -115,86 +121,46 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
             GridPager.Grid = ServerPartitionGridPanel.TheGrid;
             GridPager.ItemName = "Partition";
             GridPager.PuralItemName = "Partitions";
-            
+
             SetupEventHandlers();
         }
 
         protected void SetupEventHandlers()
         {
-            GridPager.GetRecordCountMethod = delegate
-                                                 {
-                                                     return Partitions.Count;
-                                                 };
-
-
-            ServerPartitionToolBarPanel.OnAddPartitionButtonClick += delegate(object sender, ImageClickEventArgs ev)
-                                                                         {
-                                                                             if (AddPartitionMethod!=null)
-                                                                                 AddPartitionMethod();
-                                                                         };
-
-
-
-            ServerPartitionToolBarPanel.OnEditPartitionButtonClick += delegate(object sender, ImageClickEventArgs ev)
-                                                                          {
-                                                                              ServerPartition selectedPartition =
-                                                                                  ServerPartitionGridPanel.SelectedPartition;
-
-                                                                              if (selectedPartition!=null)
-                                                                              {
-                                                                                  if (EditPartitionMethod != null)
-                                                                                      EditPartitionMethod(selectedPartition);
-                                                                              }
-                                              
-                                                                          };
-
-            ServerPartitionToolBarPanel.OnRefreshButtonClick += delegate(object sender, ImageClickEventArgs ev)
-                                                                    {
-                                                                        // refresh the list
-                                                                        ServerPartitionFilterPanel.Clear();
-                                                                        LoadData();
-                                                                        UpdateUI();
-                                                                    };
-
-            ServerPartitionToolBarPanel.GetSelectedPartition = delegate()
-                                                                   {
-                                                                       return ServerPartitionGridPanel.SelectedPartition;
-                                                                   };
-
-            ServerPartitionFilterPanel.ApplyFilterClicked += delegate(ServerPartitionFilterPanel.FilterSettings filters)
-                                                                 {
-                                                                     // refresh the list
-                                                                     LoadData();
-                                                                     UpdateUI();
-                                                                 };
+            GridPager.GetRecordCountMethod = delegate { return Partitions.Count; };
         }
 
+        protected void Clear()
+        {
+            AETitleFilter.Text = "";
+            DescriptionFilter.Text = "";
+            EnabledOnlyFilter.Checked = false;
+            FolderFilter.Text = "";
+        }
 
         protected void LoadData()
         {
-            ServerPartitionFilterPanel.FilterSettings filters = ServerPartitionFilterPanel.Filters;
-
             ServerPartitionSelectCriteria criteria = new ServerPartitionSelectCriteria();
 
-            if (String.IsNullOrEmpty(filters.AETitle) == false)
+            if (String.IsNullOrEmpty(AETitleFilter.Text) == false)
             {
-                string key = filters.AETitle.Replace("*", "%");
+                string key = AETitleFilter.Text.Replace("*", "%");
                 criteria.AETitle.Like(key + "%");
             }
 
-            if (String.IsNullOrEmpty(filters.Description) == false)
+            if (String.IsNullOrEmpty(DescriptionFilter.Text) == false)
             {
-                string key = filters.Description.Replace("*", "%");
+                string key = DescriptionFilter.Text.Replace("*", "%");
                 criteria.Description.Like(key + "%");
             }
 
-            if (String.IsNullOrEmpty(filters.Folder) == false)
+            if (String.IsNullOrEmpty(FolderFilter.Text) == false)
             {
-                string key = filters.Folder.Replace("*", "%");
+                string key = FolderFilter.Text.Replace("*", "%");
                 criteria.PartitionFolder.Like(key + "%");
             }
 
-            if (filters.EnabledOnly)
+            if (EnabledOnlyFilter.Checked)
             {
                 criteria.Enabled.EqualTo(true);
             }
@@ -203,7 +169,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
             Partitions =
                 _theController.GetPartitions(criteria);
         }
-
 
         #endregion Protected Methods
 
@@ -214,10 +179,53 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
             LoadData();
             ServerPartitionGridPanel.UpdateUI();
 
+            ServerPartition parition = ServerPartitionGridPanel.SelectedPartition;
+            if (parition == null)
+            {
+                // no Partition being selected
+
+                EditButton.Enabled = false;
+                EditButton.ImageUrl = "~/images/icons/EditDisabled.png";
+            }
+            else
+            {
+                EditButton.Enabled = true;
+                EditButton.ImageUrl = "~/images/icons/EditEnabled.png";
+            }
+
             UpdatePanel1.Update();
         }
 
         #endregion Public methods
 
+        protected void FilterButton_Click(object sender, ImageClickEventArgs e)
+        {
+            LoadData();
+            UpdateUI();
+        }
+
+        protected void AddButton_Click(object sender, ImageClickEventArgs e)
+        {
+            EnclosingPage.OnAddPartition();
+        }
+
+        protected void EditButton_Click(object sender, ImageClickEventArgs e)
+        {
+            ServerPartition selectedPartition =
+                ServerPartitionGridPanel.SelectedPartition;
+
+            if (selectedPartition != null)
+            {
+                EnclosingPage.OnEditPartition(selectedPartition);
+            }
+        }
+
+        protected void RefreshButton_Click(object sender, ImageClickEventArgs e)
+        {
+            // refresh the list
+            Clear();
+            LoadData();
+            UpdateUI();
+        }
     }
 }

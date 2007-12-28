@@ -1,5 +1,5 @@
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="GridPager.ascx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Common.GridPager" %>
-<asp:Panel ID="Panel1" runat="server" Height="24px" Width="100%" BackColor="Gainsboro" BorderColor="Silver" BorderStyle="Solid" BorderWidth="1px">
+<asp:Panel ID="Panel1" runat="server" CssClass="GridPagerStyle">
     <table width="100%">
         <tr>
             <td align="center" valign="middle">

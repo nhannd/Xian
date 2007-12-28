@@ -38,22 +38,13 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue {
         protected global::System.Web.UI.UpdatePanel UpdatePanel1;
         
         /// <summary>
-        /// WorkQueuePartitionTabContainer control.
+        /// ServerPartitionTabs control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::AjaxControlToolkit.TabContainer WorkQueuePartitionTabContainer;
-        
-        /// <summary>
-        /// WorkQueuePartitionTabPanel control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::AjaxControlToolkit.TabPanel WorkQueuePartitionTabPanel;
+        protected global::ClearCanvas.ImageServer.Web.Application.Common.ServerPartitionTabs ServerPartitionTabs;
         
         /// <summary>
         /// Label1 control.

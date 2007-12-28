@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Web.UI;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Criteria;
 using ClearCanvas.ImageServer.Web.Common.Data;
@@ -40,47 +41,63 @@ namespace ClearCanvas.ImageServer.Web.Application.Search
     {
         private ServerPartition _serverPartition;
         private StudyController _searchController;
+        private SearchPage _enclosingPage;
 
-        public ServerPartition Partition
+        public ServerPartition ServerPartition
         {
             get { return _serverPartition; }
             set { _serverPartition = value; }
         }
 
+        public SearchPage EnclosingPage
+        {
+            get { return _enclosingPage; }
+            set { _enclosingPage = value; }
+        }
+
+        /// <summary>
+        /// Remove all filter settings.
+        /// </summary>
+        public void Clear()
+        {
+            PatientId.Text = "";
+            PatientName.Text = "";
+            AccessionNumber.Text = "";
+            StudyDescription.Text = "";
+        }
 
         public void LoadStudies()
         {
-            SearchFilterPanel.SearchFilterSettings filters = SearchFilterPanel.Filters;
             StudySelectCriteria criteria = new StudySelectCriteria();
 
             // only query for device in this partition
-            criteria.ServerPartitionKey.EqualTo(Partition.GetKey());
+            criteria.ServerPartitionKey.EqualTo(ServerPartition.GetKey());
 
-            if (!String.IsNullOrEmpty(filters.PatientId))
+            if (!String.IsNullOrEmpty(PatientId.Text))
             {
-                string key = filters.PatientId + "%";
+                string key = PatientId.Text + "%";
                 key = key.Replace("*", "%");
                 criteria.PatientId.Like(key);
             }
-            if (!String.IsNullOrEmpty(filters.PatientName))
+            if (!String.IsNullOrEmpty(PatientName.Text))
             {
-                string key = filters.PatientName + "%";
+                string key = PatientName.Text + "%";
                 key = key.Replace("*", "%");
                 key = key.Replace("?", "_");
                 criteria.PatientName.Like(key);
             }
             criteria.PatientName.SortAsc(0);
 
-            if (!String.IsNullOrEmpty(filters.AccessionNumber))
+            if (!String.IsNullOrEmpty(AccessionNumber.Text))
             {
-                string key = filters.AccessionNumber + "%";
+                string key = AccessionNumber.Text + "%";
                 key = key.Replace("*", "%");
                 key = key.Replace("?", "_");
                 criteria.AccessionNumber.Like(key);
             }
-            if (!String.IsNullOrEmpty(filters.StudyDescription))
+            if (!String.IsNullOrEmpty(StudyDescription.Text))
             {
-                string key = filters.StudyDescription + "%";
+                string key = StudyDescription.Text + "%";
                 key = key.Replace("*", "%");
                 key = key.Replace("?", "_");
                 criteria.StudyDescription.Like(key);
@@ -90,35 +107,25 @@ namespace ClearCanvas.ImageServer.Web.Application.Search
             SearchAccordianControl.DataBind();
         }
 
-        /// <summary>
-        /// Set up event handlers for the child controls.
-        /// </summary>
-        protected void SetUpEventHandlers()
-        {
-            SearchFilterPanel.ApplyFiltersClicked += delegate
-                                                         {
-                                                             // reload the data
-                                                             LoadStudies();
-                                                             SearchAccordianControl.PageIndex = 0;
-                                                         };
-        }
-
-
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
 
             // initialize the controller
             _searchController = new StudyController();
-
-            // setup event handler for child controls
-            SetUpEventHandlers();
         }
 
         protected void Page_Load(object sender, EventArgs e)
         {
             if (SearchAccordianControl.IsPostBack)
                 LoadStudies();
+        }
+
+        protected void FilterButton_Click(object sender, ImageClickEventArgs e)
+        {
+            // reload the data
+            LoadStudies();
+            SearchAccordianControl.PageIndex = 0;
         }
     }
 }

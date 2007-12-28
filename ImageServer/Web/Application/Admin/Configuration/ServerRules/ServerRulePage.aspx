@@ -3,10 +3,10 @@
     Title="ImageServer Rules Engine" validateRequest="false"%>
 
 <%@ Register Src="~/Common/ServerPartitionTabs.ascx" TagName="ServerPartitionTabs"
-    TagPrefix="partitionTabs" %>
-<%@ Register Src="~/Common/ConfirmDialog.ascx" TagName="ConfirmDialog" TagPrefix="confirm" %>
+    TagPrefix="ccPartitionTabs" %>
+<%@ Register Src="~/Common/ConfirmDialog.ascx" TagName="ConfirmDialog" TagPrefix="ccConfirm" %>
 <%@ Register Src="AddEditServerRuleDialog.ascx" TagName="AddEditServerRuleDialog"
-    TagPrefix="addedit" %>
+    TagPrefix="ccAddEdit" %>
 
 <asp:Content ID="ContentTitle" ContentPlaceHolderID="ContentPlaceHolderTitle" runat="server">
                 Rules Engine Management
@@ -19,9 +19,9 @@
                     <asp:Panel ID="PageContent" runat="server" CssClass="ContentWindow">
                     <asp:UpdatePanel ID="UpdatePanel1" runat="server" UpdateMode="Conditional">
                         <ContentTemplate>
-                            <partitionTabs:ServerPartitionTabs ID="ServerPartitionTabs" runat="server" />
-                            <confirm:ConfirmDialog ID="ConfirmDialog" runat="server" />
-                            <addedit:AddEditServerRuleDialog ID="AddEditServerRuleControl" runat="server" />
+                            <ccPartitionTabs:ServerPartitionTabs ID="ServerPartitionTabs" runat="server" />
+                            <ccConfirm:ConfirmDialog ID="ConfirmDialog" runat="server" />
+                            <ccAddEdit:AddEditServerRuleDialog ID="AddEditServerRuleControl" runat="server" />
                         </ContentTemplate>
                     </asp:UpdatePanel>
                     </asp:Panel>

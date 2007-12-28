@@ -3,7 +3,7 @@
 <%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="ajaxToolkit" %>
 <asp:Panel ID="Panel1" runat="server" BorderWidth="0">
     <ajaxToolkit:TabContainer ID="PartitionTabContainer" runat="server" ActiveTabIndex="0" CssClass="visoft__tab_xpie7">
-        <ajaxToolkit:TabPanel ID="TabPanel1" runat="server" HeaderText="TabPanel1">
+        <ajaxToolkit:TabPanel ID="TabPanel1" runat="server" HeaderText="Partition Tab">
             <HeaderTemplate>
             </HeaderTemplate>
             <ContentTemplate>

@@ -4,6 +4,9 @@
 
 <%@ Register Src="../Common/ConfirmDialog.ascx" TagName="ConfirmDialog" TagPrefix="uc1" %>
 <%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="ajaxToolkit" %>
+<%@ Register Src="~/Common/ServerPartitionTabs.ascx" TagName="ServerPartitionTabs"
+    TagPrefix="ccPartitionTabs" %>
+
 <asp:Content ID="ContentTitle" ContentPlaceHolderID="ContentPlaceHolderTitle" runat="server">
                 Work Queue
 </asp:Content>
@@ -14,15 +17,8 @@
                 <asp:Panel runat="server" ID="PageContent" CssClass="ContentWindow">
                     <asp:UpdatePanel ID="UpdatePanel1" runat="server" UpdateMode="Conditional">
                         <ContentTemplate>
-                            <ajaxToolkit:TabContainer ID="WorkQueuePartitionTabContainer" runat="server" ActiveTabIndex="0"
-                                CssClass="visoft__tab_xpie7">
-                                <ajaxToolkit:TabPanel ID="WorkQueuePartitionTabPanel" runat="server" HeaderText="TabPanel1">
-                                    <HeaderTemplate>
-                                    </HeaderTemplate>
-                                    <ContentTemplate>
-                                    </ContentTemplate>
-                                </ajaxToolkit:TabPanel>
-                            </ajaxToolkit:TabContainer>
+                              <ccPartitionTabs:ServerPartitionTabs ID="ServerPartitionTabs" runat="server" />
+                        
                             <asp:Label ID="Label1" runat="server" Style="left: 70px; position: relative;" Text="Label"
                                 Visible="False" Width="305px"></asp:Label>
                         </ContentTemplate>

@@ -158,7 +158,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
         {
             DataBind();
 
-            UpdatePanel1.Update(); // force refresh
+          //  UpdatePanel1.Update(); // force refresh
         }
         #endregion Public methods
     }

@@ -22,7 +22,7 @@
                 <cc1:TabContainer ID="TabContainer1" runat="server" ActiveTabIndex="0" Height="150px">
                     <cc1:TabPanel ID="TabPanel1" runat="server" HeaderText="TabPanel1">
                         <ContentTemplate>
-                            <asp:Panel ID="Panel1" runat="server" CssClass="Panel" Width="100%">
+                            <asp:Panel ID="Panel1" runat="server" CssClass="PopupPanel" Width="100%">
                                 <table id="Table2" runat="server" cellspacing="2" style="text-align: left" width="100%">
                                     <tr id="Tr1" runat="server">
                                         <td id="Td1" runat="server" valign="bottom">
@@ -110,7 +110,7 @@
                     </cc1:TabPanel>
                     <cc1:TabPanel ID="TabPanel2" runat="server" HeaderText="TabPanel2">
                         <ContentTemplate>
-                            <asp:Panel ID="Panel2" runat="server" CssClass="Panel">
+                            <asp:Panel ID="Panel2" runat="server" CssClass="PopupPanel">
                                 <table width="100%">
                                     <tr>
                                         <td>

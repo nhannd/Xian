@@ -28,51 +28,20 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
         {
         }
 
-        protected void SetupLoadPartitionTabs()
-        {
-            int n = 0;
-
-
-            WorkQueuePartitionTabContainer.Tabs.Clear();
-            IList<ServerPartition> partitions = _partitionController.GetAllPartitions();
-            foreach (ServerPartition part in partitions)
-            {
-                n++;
-
-                // create a tab
-                TabPanel tabPannel = new TabPanel();
-                tabPannel.HeaderText = part.AeTitle;
-                tabPannel.ID = "Tab_" + n;
-
-                // create a device panel
-                SearchPanel SearchPanel = LoadControl("SearchPanel.ascx") as SearchPanel;
-                SearchPanel.Partition = part;
-                SearchPanel.ID = "SearchPanel_" + n;
-
-                // put the panel into a lookup table to be used later
-                _mapSearchPanel[part.GetKey()] = SearchPanel;
-
-                // Add the device panel into the tab
-                tabPannel.Controls.Add(SearchPanel);
-
-                // Add the tab into the tabstrip
-                WorkQueuePartitionTabContainer.Tabs.Add(tabPannel);
-            }
-
-            if (partitions.Count > 0)
-                WorkQueuePartitionTabContainer.ActiveTabIndex = 0;
-            else
-            {
-                WorkQueuePartitionTabContainer.ActiveTabIndex = -1;
-                Label1.Text = "Please add a server partition first";
-                Label1.Visible = true;
-            }
-        }
-
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
-            this.SetupLoadPartitionTabs();
+            ServerPartitionTabs.SetupLoadPartitionTabs(delegate(ServerPartition partition)
+                                           {
+                                               SearchPanel panel =
+                                                   LoadControl("SearchPanel.ascx") as SearchPanel;
+                                               panel.ServerPartition = partition;
+                                               panel.ID = "SearchPanel_" + partition.AeTitle;
+
+                                               panel.EnclosingPage = this;
+
+                                               return panel;
+                                           });
         }
 
         #endregion Protected Methods

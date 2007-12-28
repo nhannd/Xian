@@ -70,7 +70,6 @@
   <ItemGroup>
     <Content Include="Admin\Configuration\Devices\AddEditDeviceDialog.ascx" />
     <Content Include="Admin\Configuration\Devices\DeviceGridView.ascx" />
-    <Content Include="Admin\Configuration\Devices\DeviceToolBar.ascx" />
     <Content Include="Admin\Default.aspx" />
     <Content Include="Styles\StyleSheet.css" />
     <Compile Include="Admin\Configuration\Devices\AddEditDeviceDialog.ascx.cs">
@@ -93,20 +92,6 @@
     </Compile>
     <Compile Include="Admin\Configuration\FileSystems\AddEditFileSystemDialog.ascx.designer.cs">
       <DependentUpon>AddEditFileSystemDialog.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="Admin\Configuration\FileSystems\FileSystemsFilterPanel.ascx.cs">
-      <DependentUpon>FileSystemsFilterPanel.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Admin\Configuration\FileSystems\FileSystemsFilterPanel.ascx.designer.cs">
-      <DependentUpon>FileSystemsFilterPanel.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="Admin\Configuration\FileSystems\FileSystemsToolBar.ascx.cs">
-      <DependentUpon>FileSystemsToolBar.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Admin\Configuration\FileSystems\FileSystemsToolBar.ascx.designer.cs">
-      <DependentUpon>FileSystemsToolBar.ascx</DependentUpon>
     </Compile>
     <Compile Include="Admin\Configuration\FileSystems\FileSystemsGridView.ascx.cs">
       <DependentUpon>FileSystemsGridView.ascx</DependentUpon>
@@ -136,13 +121,6 @@
     <Compile Include="Admin\Configuration\ServerPartitions\AddEditPartitionDialog.ascx.designer.cs">
       <DependentUpon>AddEditPartitionDialog.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Admin\Configuration\ServerPartitions\ServerPartitionFilterPanel.ascx.cs">
-      <DependentUpon>ServerPartitionFilterPanel.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Admin\Configuration\ServerPartitions\ServerPartitionFilterPanel.ascx.designer.cs">
-      <DependentUpon>ServerPartitionFilterPanel.ascx</DependentUpon>
-    </Compile>
     <Compile Include="Admin\Configuration\ServerPartitions\ServerPartitionGridPanel.ascx.cs">
       <DependentUpon>ServerPartitionGridPanel.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -163,13 +141,6 @@
     </Compile>
     <Compile Include="Admin\Configuration\ServerPartitions\ServerPartitionPanel.ascx.designer.cs">
       <DependentUpon>ServerPartitionPanel.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="Admin\Configuration\ServerPartitions\ServerPartitionToolBarPanel.ascx.cs">
-      <DependentUpon>ServerPartitionToolBarPanel.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Admin\Configuration\ServerPartitions\ServerPartitionToolBarPanel.ascx.designer.cs">
-      <DependentUpon>ServerPartitionToolBarPanel.ascx</DependentUpon>
     </Compile>
     <Compile Include="Admin\Configuration\ServerRules\AddEditServerRuleDialog.ascx.cs">
       <DependentUpon>AddEditServerRuleDialog.ascx</DependentUpon>
@@ -217,13 +188,6 @@
     <Compile Include="Common\ConfirmDialog.ascx.designer.cs">
       <DependentUpon>ConfirmDialog.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Admin\Configuration\Devices\DeviceFilterPanel.ascx.cs">
-      <DependentUpon>DeviceFilterPanel.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Admin\Configuration\Devices\DeviceFilterPanel.ascx.designer.cs">
-      <DependentUpon>DeviceFilterPanel.ascx</DependentUpon>
-    </Compile>
     <Compile Include="Admin\Configuration\Devices\DeviceGridView.ascx.cs">
       <DependentUpon>DeviceGridView.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -237,13 +201,6 @@
     </Compile>
     <Compile Include="Admin\Configuration\Devices\DevicePanel.ascx.designer.cs">
       <DependentUpon>DevicePanel.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="Admin\Configuration\Devices\DeviceToolBar.ascx.cs">
-      <DependentUpon>DeviceToolBar.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Admin\Configuration\Devices\DeviceToolBar.ascx.designer.cs">
-      <DependentUpon>DeviceToolBar.ascx</DependentUpon>
     </Compile>
     <Compile Include="Admin\Default.aspx.cs">
       <DependentUpon>Default.aspx</DependentUpon>
@@ -291,13 +248,6 @@
     <Compile Include="Search\SearchAccordian.ascx.designer.cs">
       <DependentUpon>SearchAccordian.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Search\SearchFilterPanel.ascx.cs">
-      <DependentUpon>SearchFilterPanel.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Search\SearchFilterPanel.ascx.designer.cs">
-      <DependentUpon>SearchFilterPanel.ascx</DependentUpon>
-    </Compile>
     <Compile Include="Search\SearchPage.aspx.cs">
       <SubType>ASPXCodeBehind</SubType>
       <DependentUpon>SearchPage.aspx</DependentUpon>
@@ -340,13 +290,6 @@
     <Compile Include="WorkQueue\SearchResultAccordian.ascx.designer.cs">
       <DependentUpon>SearchResultAccordian.ascx</DependentUpon>
     </Compile>
-    <Compile Include="WorkQueue\SearchFilterPanel.ascx.cs">
-      <DependentUpon>SearchFilterPanel.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="WorkQueue\SearchFilterPanel.ascx.designer.cs">
-      <DependentUpon>SearchFilterPanel.ascx</DependentUpon>
-    </Compile>
     <Compile Include="WorkQueue\SearchPage.aspx.cs">
       <DependentUpon>SearchPage.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -385,17 +328,13 @@
   <ItemGroup>
     <Content Include="Admin\Configuration\Devices\DevicePage.aspx" />
     <Content Include="Admin\Configuration\FileSystems\AddEditFileSystemDialog.ascx" />
-    <Content Include="Admin\Configuration\FileSystems\FileSystemsFilterPanel.ascx" />
-    <Content Include="Admin\Configuration\FileSystems\FileSystemsToolBar.ascx" />
     <Content Include="Admin\Configuration\FileSystems\FileSystemsGridView.ascx" />
     <Content Include="Admin\Configuration\FileSystems\FileSystemsPanel.ascx" />
     <Content Include="Admin\Configuration\FileSystems\FileSystemsPage.aspx" />
     <Content Include="Admin\Configuration\ServerPartitions\AddEditPartitionDialog.ascx" />
-    <Content Include="Admin\Configuration\ServerPartitions\ServerPartitionFilterPanel.ascx" />
     <Content Include="Admin\Configuration\ServerPartitions\ServerPartitionGridPanel.ascx" />
     <Content Include="Admin\Configuration\ServerPartitions\ServerPartitionPage.aspx" />
     <Content Include="Admin\Configuration\ServerPartitions\ServerPartitionPanel.ascx" />
-    <Content Include="Admin\Configuration\ServerPartitions\ServerPartitionToolBarPanel.ascx" />
     <Content Include="Admin\Configuration\ServerRules\AddEditServerRuleDialog.ascx" />
     <Content Include="Admin\Configuration\ServerRules\ServerRuleGridView.ascx" />
     <Content Include="Admin\Configuration\ServerRules\ServerRulePage.aspx" />
@@ -409,7 +348,6 @@
     <Content Include="Styles\images\icon_warning.gif" />
     <Content Include="Common\BarChart.aspx" />
     <Content Include="Common\ConfirmDialog.ascx" />
-    <Content Include="Admin\Configuration\Devices\DeviceFilterPanel.ascx" />
     <Content Include="Admin\Configuration\Devices\DevicePanel.ascx" />
     <Content Include="MasterPage.master" />
     <None Include="images\Thumbs.db" />
@@ -467,13 +405,11 @@
     <Content Include="Styles\visoft__tab_xpie7.css" />
     <Content Include="images\Plus.ico" />
     <Content Include="images\usage.png" />
-    <Content Include="Search\SearchFilterPanel.ascx" />
     <Content Include="Search\SearchPage.aspx" />
     <Content Include="Search\SearchPanel.ascx" />
     <Content Include="Web.sitemap" />
     <Content Include="Logging.config" />
     <Content Include="WorkQueue\SearchResultAccordian.ascx" />
-    <Content Include="WorkQueue\SearchFilterPanel.ascx" />
     <Content Include="WorkQueue\SearchPage.aspx" />
     <Content Include="WorkQueue\SearchPanel.ascx" />
     <Content Include="WorkQueue\WorkQueueDetailsPanel.ascx" />

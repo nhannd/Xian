@@ -4,11 +4,11 @@
 <%@ Register Src="ServerRuleGridView.ascx" TagName="ServerRuleGridView" TagPrefix="grid" %>
 <asp:UpdatePanel ID="ServerRuleUpdatePanel" runat="server" UpdateMode="Conditional">
     <ContentTemplate>
-        <asp:Panel ID="Panel1" runat="server" Style="padding-right: 5px; padding-left: 5px; padding-bottom: 5px; padding-top: 5px">
+        <asp:Panel ID="Panel1" runat="server" CssClass="PagePanel">
             <asp:Table ID="Table" runat="server" Width="100%">
-                <asp:TableHeaderRow CssClass="toolBarPanel">
-                    <asp:TableHeaderCell ColumnSpan="1" Width="250px" VerticalAlign="Bottom">
-                        <asp:Panel ID="ToolbarPanel" runat="server" Style="display: block; overflow: visible;"
+                <asp:TableHeaderRow>
+                    <asp:TableHeaderCell ColumnSpan="1" Width="100%"  HorizontalAlign="Left" VerticalAlign="Bottom">
+                        <asp:Panel ID="ToolbarPanel" runat="server" CssClass="PageToolbarPanel"
                             Wrap="False">
                             <asp:ImageButton ID="AddButton" runat="server" ImageUrl="~/images/icons/AddEnabled.png"
                                 AlternateText="Add" OnClick="AddButton_Click" />
@@ -21,7 +21,7 @@
                         </asp:Panel>
                     </asp:TableHeaderCell>
                     <asp:TableHeaderCell HorizontalAlign="right" VerticalAlign="Bottom">
-                        <asp:Panel ID="FilterPanel" runat="server" CssClass="toolBarPanel">
+                        <asp:Panel ID="FilterPanel" runat="server" CssClass="PageFilterPanel">
                             <table cellpadding="3" cellspacing="0">
                                 <tr>
                                     <td align="left" valign="bottom">

@@ -2,26 +2,26 @@
     EnableEventValidation="false" Codebehind="FileSystemsPage.aspx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystems.FileSystemsPage"
     Title="ClearCanvas ImageServer" %>
 
-<%@ Register Src="AddEditFileSystemDialog.ascx" TagName="AddEditFileSystemDialog" TagPrefix="uc3" %>
+<%@ Register Src="AddEditFileSystemDialog.ascx" TagName="AddEditFileSystemDialog"
+    TagPrefix="uc3" %>
 <%@ Register Src="FileSystemsPanel.ascx" TagName="FileSystemsPanel" TagPrefix="uc2" %>
 <%@ Register Src="~/Common/ConfirmDialog.ascx" TagName="ConfirmDialog" TagPrefix="uc1" %>
-
 <asp:Content ID="ContentTitle" ContentPlaceHolderID="ContentPlaceHolderTitle" runat="server">
-                File System Management
+    File System Management
 </asp:Content>
 <asp:Content ID="Content1" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
-    <table cellpadding="0" cellspacing="0" width="100%">
-        <tr>
-            <td>
-                <asp:Panel ID="Panel1" runat="server" CssClass="ChildPanel">
-                    <asp:UpdatePanel ID="UpdatePanel1" runat="server" UpdateMode="Conditional">
-                        <ContentTemplate>
+    <asp:UpdatePanel ID="UpdatePanel1" runat="server" UpdateMode="Conditional">
+        <ContentTemplate>
+            <table cellpadding="0" cellspacing="0" width="100%">
+                <tr>
+                    <td>
+                        <asp:Panel ID="Panel1" runat="server" CssClass="ContentWindow">
                             <uc2:FileSystemsPanel ID="FileSystemsPanel1" runat="server"></uc2:FileSystemsPanel>
                             <uc3:AddEditFileSystemDialog ID="AddEditFileSystemDialog1" runat="server" />
-                        </ContentTemplate>
-                    </asp:UpdatePanel>
-                </asp:Panel>
-            </td>
-        </tr>
-    </table>
+                        </asp:Panel>
+                    </td>
+                </tr>
+            </table>
+        </ContentTemplate>
+    </asp:UpdatePanel>
 </asp:Content>

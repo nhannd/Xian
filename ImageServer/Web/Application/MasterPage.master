@@ -19,75 +19,69 @@
 </head>
 <body>
     <form id="form1" runat="server">
-        <asp:ScriptManager ID="ScriptManager1" runat="server">
-        </asp:ScriptManager>
-        <asp:Table Width="1020px" runat="server" Style="">
+        <asp:ScriptManager ID="ScriptManager1" runat="server" />
+        <asp:Table runat="server" CssClass="MasterPageSize">
             <asp:TableHeaderRow>
                 <asp:TableHeaderCell HorizontalAlign="Left">
                     <asp:Image ID="Image1" runat="server" ImageUrl="~/images/logos/ImageServerLogo.png"
                         Visible="true" />
                 </asp:TableHeaderCell>
                 <asp:TableHeaderCell runat="server" VerticalAlign="Top" HorizontalAlign="Right">
-                    <asp:Label ID="VersionLabel" runat="server" Font-Size="8pt" ForeColor="Silver" Text="Version 1.0.0.0.0.0.0"></asp:Label>
+                    <asp:Label ID="VersionLabel" runat="server" Font-Size="8pt" ForeColor="Silver" Text="Version 1.0.0.0"></asp:Label>
                 </asp:TableHeaderCell>
             </asp:TableHeaderRow>
-        </asp:Table>
-        <asp:UpdatePanel ID="UpdatePanel2" runat="server" UpdateMode="Conditional">
-            <ContentTemplate>
-                <asp:Table runat="server" Width="100%" BorderWidth="0px">
-                    <asp:TableRow>
-                        <asp:TableCell>
-                            <asp:Panel runat="server" ID="TestPanel" CssClass="MasterTitleBar">
-                                <table width="100%">
-                                    <tr>
-                                        <td align="left">
-                                            <asp:SiteMapDataSource ID="SiteMapDataSource1" runat="server" ShowStartingNode="False" />
-                                            <asp:Menu ID="Menu1" runat="server" Orientation="Horizontal" DynamicVerticalOffset="6"
-                                                StaticEnableDefaultPopOutImage="false" 
-                                                StaticItemFormatString="&amp;nbsp &amp;nbsp {0} &amp;nbsp &amp;nbsp"
-                                                DataSourceID="SiteMapDataSource1">
-                                                <StaticMenuStyle BorderStyle="None" BackColor="#3D98D1" />
-                                                <StaticMenuItemStyle Font-Names="Tahoma" ForeColor="#BAD2EC" Font-Bold="true" BorderColor="#D9D9E6"
-                                                    BorderStyle="Solid" BorderWidth="0px" Font-Size="12pt" />
-                                                <DynamicMenuStyle BorderStyle="Groove" BorderWidth="0px" BorderColor="#BAD2EC" BackColor="white" />
-                                                <DynamicMenuItemStyle Font-Names="Tahoma" Font-Size="11pt" BorderStyle="Solid" BorderWidth="1px"
-                                                    BorderColor="#BAD2EC" />
-                                                <StaticHoverStyle BackColor="#BAD2EC" BorderStyle="Solid" BorderColor="#D9D9FF" ForeColor="Black" />
-                                                <DynamicHoverStyle BackColor="#BAD2EC" BorderStyle="Solid" BorderColor="#D9D9FF"
-                                                    ForeColor="Black" />
-                                                <DynamicItemTemplate>
-                                                    &nbsp;&nbsp;
-                                                    <asp:Label ID="Label2" runat="server" Font-Names="Tahoma" ForeColor="Black" Text='<%# Eval( "Text" ) %>'>
-                                                    </asp:Label>
-                                                    &nbsp;&nbsp;&nbsp;&nbsp;
-                                                </DynamicItemTemplate>
-                                            </asp:Menu>
-                                        </td>
-                                        <td></td>
-                                        <td style="text-align:right;">
-                                            <asp:ContentPlaceHolder ID="ContentPlaceHolderTitle" runat="server">
-                                            </asp:ContentPlaceHolder>
-                                            &nbsp; &nbsp;
-                                        </td>
-                                    </tr>
-                                </table>
-                            </asp:Panel>
-                        </asp:TableCell>
-                    </asp:TableRow>
-                    <asp:TableRow>
-                        <asp:TableCell>
-                            <asp:Panel ID="Panel1" runat="server" CssClass="PageMainPanel" Width="100%">
-                                <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
-                                </asp:ContentPlaceHolder>
+            <asp:TableRow>
+                <asp:TableCell ColumnSpan="2">
+                    <asp:Panel runat="server" ID="TestPanel" CssClass="MasterTitleBar">
+                        <table width="100%">
+                            <tr>
+                                <td align="left">
+                                    <asp:SiteMapDataSource ID="SiteMapDataSource1" runat="server" ShowStartingNode="False" />
+                                    <asp:Menu ID="Menu1" runat="server" Orientation="Horizontal" DynamicVerticalOffset="8"
+                                        StaticEnableDefaultPopOutImage="false" StaticItemFormatString="&amp;nbsp &amp;nbsp {0} &amp;nbsp &amp;nbsp"
+                                        DataSourceID="SiteMapDataSource1">
+                                        <StaticMenuStyle BackColor="#3D98D1" BorderStyle="None" />
+                                        <StaticMenuItemStyle Font-Names="Tahoma" ForeColor="white" Font-Bold="true" BorderWidth="0px"
+                                            Font-Size="12pt" />
+                                        <DynamicMenuStyle BackColor="#3D98D1" BorderWidth="3px" BorderColor="#3D98D1" />
+                                        <DynamicMenuItemStyle Font-Names="Tahoma" Font-Size="11pt" BorderWidth="0px" />
+                                        <StaticHoverStyle BackColor="#7CB1DD" BorderStyle="Solid" BorderColor="#D9D9FF" ForeColor="white" />
+                                        <DynamicHoverStyle BackColor="#7CB1DD" BorderStyle="Solid" BorderColor="#D9D9FF"
+                                            ForeColor="white" />
+                                        <DynamicItemTemplate>
+                                            &nbsp;&nbsp;&nbsp;
+                                            <asp:Label ID="Label2" runat="server" Font-Names="Tahoma" ForeColor="white" Text='<%# Eval( "Text" ) %>' />
+                                            &nbsp;&nbsp;&nbsp;
+                                        </DynamicItemTemplate>
+                                    </asp:Menu>
+                                </td>
+                                <td>
+                                </td>
+                                <td style="text-align: right;">
+                                    <asp:ContentPlaceHolder ID="ContentPlaceHolderTitle" runat="server">
+                                    </asp:ContentPlaceHolder>
+                                    &nbsp; &nbsp;
+                                </td>
+                            </tr>
+                        </table>
+                    </asp:Panel>
+                </asp:TableCell>
+            </asp:TableRow>
+            <asp:TableRow >
+                <asp:TableCell ColumnSpan="2" CssClass="MasterMainPanel">
+                    <asp:UpdatePanel ID="UpdatePanel2" runat="server" UpdateMode="Conditional">
+                        <ContentTemplate>
+                            <asp:Panel ID="ContentPanel" runat="server"  >
+                                <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server"/>
                             </asp:Panel>
                             <asp:Panel ID="Panel2" runat="server" Height="50px" Style="z-index: 100; left: 864px;
                                 position: absolute; top: 473px" Width="125px">
                             </asp:Panel>
-                        </asp:TableCell>
-                    </asp:TableRow>
-                </asp:Table>
-            </ContentTemplate>
-        </asp:UpdatePanel>
+                        </ContentTemplate>
+                    </asp:UpdatePanel>
+                </asp:TableCell>
+            </asp:TableRow>
+        </asp:Table>
     </form>
 </body>
 </html>
