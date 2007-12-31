@@ -147,15 +147,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		}
 
 		/// <summary>
-		/// Creates a creation <see cref="GraphicState"/>.
-		/// </summary>
-		/// <returns></returns>
-		public override GraphicState CreateCreateState()
-		{
-			return new CreatePolyLineGraphicState(this);
-		}
-
-		/// <summary>
 		/// Performs a hit test on the <see cref="PolyLineInteractiveGraphic"/>.
 		/// </summary>
 		/// <param name="point"></param>
@@ -217,6 +208,15 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 				_anchorPointsGraphic.AnchorPointChangedEvent -= new EventHandler<ListEventArgs<PointF>>(OnAnchorPointChanged);
 
 			base.Dispose(disposing);
+		}
+
+		/// <summary>
+		/// Creates a creation <see cref="GraphicState"/>.
+		/// </summary>
+		/// <returns></returns>
+		protected override GraphicState CreateCreateState()
+		{
+			return new CreatePolyLineGraphicState(this);
 		}
 
 		private void BuildGraphic()

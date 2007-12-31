@@ -55,7 +55,7 @@ namespace ClearCanvas.ImageViewer
 		/// </summary>
 		/// <remarks>
 		/// This is invoked by the <see cref="ImageViewerComponent"/> when images are
-		/// first displayed, or when anytime when <see cref="IImageViewer.Layout"/> is called.
+		/// first displayed, or anytime when <see cref="IImageViewer.Layout"/> is called.
 		/// </remarks>
 		void Layout();
 	}

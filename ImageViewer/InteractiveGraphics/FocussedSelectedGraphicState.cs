@@ -33,24 +33,33 @@ using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
-	internal class FocussedSelectedGraphicState : StandardGraphicState
+	/// <summary>
+	/// Represents the 'focussed-selected' graphic state.
+	/// </summary>
+	/// <remarks>
+	/// This state is different from <see cref="SelectedGraphicState"/> in 
+	/// that it is entered when the
+	/// <see cref="IStandardStatefulGraphic"/> is selected (i.e. clicked on)
+	/// <i>and</i> focussed (i.e. hovered over), whereas <see cref="SelectedGraphicState"/>
+	/// is entered only when a graphic is selected, but not focussed.
+	/// </remarks>
+	public class FocussedSelectedGraphicState : StandardGraphicState
 	{
+		/// <summary>
+		/// Initializes a new instance of <see cref="FocussedSelectedGraphicState"/>.
+		/// </summary>
+		/// <param name="standardStatefulGraphic"></param>
 		public FocussedSelectedGraphicState(IStandardStatefulGraphic standardStatefulGraphic)
 			: base(standardStatefulGraphic)
 		{
 		}
 
-		public override bool Track(IMouseInformation mouseInformation)
-		{
-			if (!this.StandardStatefulGraphic.HitTest(mouseInformation.Location))
-			{
-				this.StandardStatefulGraphic.State = this.StandardStatefulGraphic.CreateSelectedState();
-				return false;
-			}
-
-			return true;
-		}
-
+		/// <summary>
+		/// Called by the framework when the associated <see cref="IStandardStatefulGraphic"/>
+		/// is clicked on and results in a transition to the <see cref="MoveGraphicState"/>.
+		/// </summary>
+		/// <param name="mouseInformation"></param>
+		/// <returns></returns>
 		public override bool Start(IMouseInformation mouseInformation)
 		{
 			// User has clicked the graphic body
@@ -66,6 +75,27 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			return false;
 		}
 
+		/// <summary>
+		/// Called by the framework when the mouse is moving and results in a transition 
+		/// to the <see cref="SelectedGraphicState"/> when
+		/// the mouse is no longer hovering over the associated 
+		/// <see cref="IStandardStatefulGraphic"/>.
+		/// </summary>
+		public override bool Track(IMouseInformation mouseInformation)
+		{
+			if (!this.StandardStatefulGraphic.HitTest(mouseInformation.Location))
+			{
+				this.StandardStatefulGraphic.State = this.StandardStatefulGraphic.CreateSelectedState();
+				return false;
+			}
+
+			return true;
+		}
+
+		/// <summary>
+		/// Returns a string describing this graphic state.
+		/// </summary>
+		/// <returns></returns>
 		public override string ToString()
 		{
 			return "FocusSelectedGraphicState\n";

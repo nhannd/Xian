@@ -209,15 +209,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		}
 
 		/// <summary>
-		/// Creates a creation <see cref="GraphicState"/>.
-		/// </summary>
-		/// <returns></returns>
-		public override GraphicState CreateCreateState()
-		{
-			return new CreateRectangleGraphicState(this);
-		}
-
-		/// <summary>
 		/// Peforms a hit test on the <see cref="RectangleInteractiveGraphic"/>
 		/// </summary>
 		/// <param name="point"></param>
@@ -266,6 +257,15 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		{
 			for (int i = 0; i < 4; i++)
 				base.ControlPoints.Add(new PointF(0, 0));
+		}
+
+		/// <summary>
+		/// Creates a creation <see cref="GraphicState"/>.
+		/// </summary>
+		/// <returns></returns>
+		protected override GraphicState CreateCreateState()
+		{
+			return new CreateRectangleGraphicState(this);
 		}
 
 		/// <summary>

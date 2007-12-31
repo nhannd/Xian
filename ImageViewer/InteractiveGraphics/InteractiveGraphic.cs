@@ -43,7 +43,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 	/// that can be manipulated by the user.
 	/// </summary>
 	public abstract class InteractiveGraphic
-		: StatefulCompositeGraphic, IStandardStatefulGraphic, IMemorable
+		: StandardStatefulCompositeGraphic, IMemorable
 	{
 		private ControlPointGroup _controlPointGroup;
 		private CursorToken _stretchToken;
@@ -147,49 +147,24 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		}
 
 		/// <summary>
-		/// Invalid operation for <see cref="InteractiveGraphic"/>.
-		/// </summary>
-		/// <returns></returns>
-		public virtual GraphicState CreateCreateState()
-		{
-			throw new InvalidOperationException();
-		}
-
-		/// <summary>
-		/// Creates an inactive <see cref="GraphicState"/>.
-		/// </summary>
-		/// <returns></returns>
-		public virtual GraphicState CreateInactiveState()
-		{
-			return new InactiveGraphicState(this);
-		}
-
-		/// <summary>
-		/// Creates a focussed <see cref="GraphicState"/>.
-		/// </summary>
-		/// <returns></returns>
-		public virtual GraphicState CreateFocussedState()
-		{
-			return new FocussedGraphicState(this);
-		}
-
-		/// <summary>
 		/// Creates a focussed and selected <see cref="GraphicState"/>.
 		/// </summary>
 		/// <returns></returns>
-		public virtual GraphicState CreateFocussedSelectedState()
+		public override GraphicState CreateFocussedSelectedState()
 		{
 			return new FocussedSelectedInteractiveGraphicState(this);
 		}
 
 		/// <summary>
-		/// Creates a selected <see cref="GraphicState"/>.
+		/// Creates a 'create state' object.
 		/// </summary>
+		/// <remarks>
+		/// This state is entered when a user first creates the
+		/// <see cref="InteractiveGraphic"/>. This factory method must be
+		/// overridden by a derived class.  
+		/// </remarks>
 		/// <returns></returns>
-		public virtual GraphicState CreateSelectedState()
-		{
-			return new SelectedGraphicState(this);
-		}
+		protected abstract GraphicState CreateCreateState();
 
 		/// <summary>
 		/// Executed when a the position of a control point has changed.

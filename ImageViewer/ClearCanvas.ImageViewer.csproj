@@ -193,6 +193,7 @@
     <Compile Include="InputManagement\MouseCaptureChangedEventArgs.cs" />
     <Compile Include="InteractiveGraphics\PointMemento.cs" />
     <Compile Include="InteractiveGraphics\PointsMemento.cs" />
+    <Compile Include="InteractiveGraphics\StandardStatefulCompositeGraphic.cs" />
     <Compile Include="ReferenceCountedObjectWrapper.cs" />
     <Compile Include="PresentationImageChangedEventArgs.cs" />
     <Compile Include="PresentationImageFactory.cs" />

@@ -33,13 +33,30 @@ using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
-	internal class FocussedGraphicState : StandardGraphicState
+	/// <summary>
+	/// Represents the 'focussed' graphic state.
+	/// </summary>
+	/// <remarks>
+	/// This state is entered when the mouse hovers over a 
+	/// <see cref="IStandardStatefulGraphic"/>.
+	/// </remarks>
+	public class FocussedGraphicState : StandardGraphicState
 	{
+		/// <summary>
+		/// Initializes a new instance of <see cref="FocussedGraphicState"/>.
+		/// </summary>
+		/// <param name="standardStatefulGraphic"></param>
 		public FocussedGraphicState(IStandardStatefulGraphic standardStatefulGraphic)
 			: base(standardStatefulGraphic)
 		{
 		}
 
+		/// <summary>
+		/// Called by the framework when the associated <see cref="IStandardStatefulGraphic"/>
+		/// is clicked on and results in a transition to the <see cref="FocussedSelectedGraphicState"/>.
+		/// </summary>
+		/// <param name="mouseInformation"></param>
+		/// <returns></returns>
 		public override bool Start(IMouseInformation mouseInformation)
 		{
 			if (this.StandardStatefulGraphic.HitTest(mouseInformation.Location))
@@ -55,6 +72,14 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			return false;
 		}
 
+		/// <summary>
+		/// Called by the framework when the mouse is moving and results in a transition 
+		/// to the <see cref="InactiveGraphicState"/> when
+		/// the mouse is no longer hovering over the associated 
+		/// <see cref="IStandardStatefulGraphic"/>.
+		/// </summary>
+		/// <param name="mouseInformation"></param>
+		/// <returns></returns>
 		public override bool Track(IMouseInformation mouseInformation)
 		{
 			if (!this.StandardStatefulGraphic.HitTest(mouseInformation.Location))
@@ -66,6 +91,10 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			return true;
 		}
 
+		/// <summary>
+		/// Returns a string describing this graphic state.
+		/// </summary>
+		/// <returns></returns>
 		public override string ToString()
 		{
 			return "FocusGraphicState\n";

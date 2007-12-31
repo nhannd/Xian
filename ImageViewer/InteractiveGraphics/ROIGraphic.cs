@@ -56,8 +56,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 	/// nearest <see cref="ControlPoint"/> on the <see cref="InteractiveGraphic"/>.
 	/// </remarks>
 	public class RoiGraphic
-		: StatefulCompositeGraphic, 
-		  IStandardStatefulGraphic, 
+		: StandardStatefulCompositeGraphic, 
 		  ISelectableGraphic, 
 		  IFocussableGraphic, 
 		  IContextMenuProvider,
@@ -211,55 +210,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		#endregion
 
-		#region IStandardStatefulGraphic Members
-
-		/// <summary>
-		/// Creates a creation <see cref="GraphicState"/>.
-		/// </summary>
-		/// <returns></returns>
-		public GraphicState CreateCreateState()
-		{
-			return new CreateRoiGraphicState(this);
-		}
-
-		/// <summary>
-		/// Creates a focussed and selected <see cref="GraphicState"/>.
-		/// </summary>
-		/// <returns></returns>
-		public GraphicState CreateFocussedSelectedState()
-		{
-			return new FocussedSelectedRoiGraphicState(this);
-		}
-
-		/// <summary>
-		/// Creates a focussed <see cref="GraphicState"/>.
-		/// </summary>
-		/// <returns></returns>
-		public GraphicState CreateFocussedState()
-		{
-			return new FocussedGraphicState(this);
-		}
-
-		/// <summary>
-		/// Creates an inactive <see cref="GraphicState"/>.
-		/// </summary>
-		/// <returns></returns>
-		public GraphicState CreateInactiveState()
-		{
-			return new InactiveGraphicState(this);
-		}
-
-		/// <summary>
-		/// Creates a selected <see cref="GraphicState"/>.
-		/// </summary>
-		/// <returns></returns>
-		public GraphicState CreateSelectedState()
-		{
-			return new SelectedGraphicState(this);
-		}
-
-		#endregion
-
 		#region ISelectable Members
 
 		/// <summary>
@@ -366,6 +316,28 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			
 			_calloutGraphic.SetMemento(roiMemento.CalloutMemento);
 			_roiGraphic.SetMemento(roiMemento.RoiMemento);
+		}
+
+		#endregion
+
+		#region Overrides 
+
+		/// <summary>
+		/// Creates a creation <see cref="GraphicState"/>.
+		/// </summary>
+		/// <returns></returns>
+		public GraphicState CreateCreateState()
+		{
+			return new CreateRoiGraphicState(this);
+		}
+
+		/// <summary>
+		/// Creates a focussed and selected <see cref="GraphicState"/>.
+		/// </summary>
+		/// <returns></returns>
+		public override GraphicState CreateFocussedSelectedState()
+		{
+			return new FocussedSelectedRoiGraphicState(this);
 		}
 
 		#endregion

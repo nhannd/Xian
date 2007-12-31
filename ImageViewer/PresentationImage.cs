@@ -41,7 +41,7 @@ namespace ClearCanvas.ImageViewer
 	/// The final image that is presented to the user in a <see cref="Tile"/>.
 	/// </summary>
 	/// <remarks>
-	/// An <see cref="IPresentationImage"/> can be thought of as a �scene� 
+	/// An <see cref="IPresentationImage"/> can be thought of as a <i>scene</i> 
 	/// composed of many parts, be they images, lines, text, etc.  It is the
 	/// image that is presented to the user in a <see cref="Tile"/>.
 	/// </remarks>

@@ -36,13 +36,24 @@ using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
-	internal class MoveControlPointGraphicState : StandardGraphicState
+	/// <summary>
+	/// Represents the 'move control point' graphic state.
+	/// </summary>
+	/// <remarks>
+	/// This state is entered when the user clicks on <see cref="ControlPoint"/>
+	/// on an <see cref="InteractiveGraphic"/>.
+	/// </remarks>
+	public class MoveControlPointGraphicState : StandardGraphicState
 	{
 		private PointF _currentPoint;
 		private PointF _startPoint;
 		private int _controlPointIndex;
 
-		// Edit an overlay object control point
+		/// <summary>
+		/// Initializes a new instance of <see cref="MoveControlPointGraphicState"/>.
+		/// </summary>
+		/// <param name="interactiveGraphic"></param>
+		/// <param name="controlPointIndex"></param>
 		public MoveControlPointGraphicState(
 			InteractiveGraphic interactiveGraphic, 
 			int controlPointIndex) : base(interactiveGraphic)
@@ -53,11 +64,19 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			_controlPointIndex = controlPointIndex;
 		}
 
+		/// <summary>
+		/// Gets the associated <see cref="InteractiveGraphic"/>.
+		/// </summary>
 		protected InteractiveGraphic InteractiveGraphic
 		{
 			get { return this.StandardStatefulGraphic as InteractiveGraphic; }
 		}
 
+		/// <summary>
+		/// Called by the framework when a <see cref="ControlPoint"/> is clicked.
+		/// </summary>
+		/// <param name="mouseInformation"></param>
+		/// <returns></returns>
 		public override bool Start(IMouseInformation mouseInformation)
 		{
 			base.LastPoint = this.InteractiveGraphic.SpatialTransform.ConvertToSource(mouseInformation.Location);
@@ -66,6 +85,13 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			return true;
 		}
 
+		/// <summary>
+		/// Called by the framework when the mouse is moving while
+		/// a mouse button is pressed and results in the moving
+		/// of the selected <see cref="ControlPoint"/>.
+		/// </summary>
+		/// <param name="mouseInformation"></param>
+		/// <returns></returns>
 		public override bool Track(IMouseInformation mouseInformation)
 		{
 			_currentPoint = this.InteractiveGraphic.SpatialTransform.ConvertToSource(mouseInformation.Location);
@@ -79,17 +105,31 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			return true;
 		}
 
+		/// <summary>
+		/// Called by the framework when the mouse button is released
+		/// and results in a transition back to the <see cref="FocussedSelectedGraphicState"/>.
+		/// </summary>
+		/// <param name="mouseInformation"></param>
+		/// <returns></returns>
 		public override bool Stop(IMouseInformation mouseInformation)
 		{
 			Cancel();
 			return false;
 		}
 
+		/// <summary>
+		/// Cancels the move operation and results in a transition back
+		/// to the <see cref="FocussedSelectedGraphicState"/>.
+		/// </summary>
 		public override void Cancel()
 		{
 			this.StandardStatefulGraphic.State = this.StandardStatefulGraphic.CreateFocussedSelectedState();
 		}
 
+		/// <summary>
+		/// Returns a string describing this graphic state.
+		/// </summary>
+		/// <returns></returns>
 		public override string ToString()
 		{
 			return "Move Control Point State\n";

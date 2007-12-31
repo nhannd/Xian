@@ -37,16 +37,10 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 	public interface IStandardStatefulGraphic : IStatefulGraphic
 	{
 		/// <summary>
-		/// Creates a creation <see cref="GraphicState"/>.
+		/// Creates an inactive <see cref="GraphicState"/>.
 		/// </summary>
 		/// <returns></returns>
-		GraphicState CreateCreateState();
-
-		/// <summary>
-		/// Creates a focussed and selected <see cref="GraphicState"/>.
-		/// </summary>
-		/// <returns></returns>
-		GraphicState CreateFocussedSelectedState();
+		GraphicState CreateInactiveState();
 
 		/// <summary>
 		/// Creates a focussed <see cref="GraphicState"/>.
@@ -55,15 +49,15 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		GraphicState CreateFocussedState();
 
 		/// <summary>
-		/// Creates an inactive <see cref="GraphicState"/>.
-		/// </summary>
-		/// <returns></returns>
-		GraphicState CreateInactiveState();
-
-		/// <summary>
 		/// Creates a selected <see cref="GraphicState"/>.
 		/// </summary>
 		/// <returns></returns>
 		GraphicState CreateSelectedState();
+
+		/// <summary>
+		/// Creates a focussed and selected <see cref="GraphicState"/>.
+		/// </summary>
+		/// <returns></returns>
+		GraphicState CreateFocussedSelectedState();
 	}
 }

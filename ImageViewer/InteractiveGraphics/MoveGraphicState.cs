@@ -36,16 +36,33 @@ using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
-	internal class MoveGraphicState : StandardGraphicState
+	/// <summary>
+	/// Represents the 'move' graphic state.
+	/// </summary>
+	/// <remarks>
+	/// This state is entered when an <see cref="IStandardStatefulGraphic"/>
+	/// is clicked on.
+	/// </remarks>
+	public class MoveGraphicState : StandardGraphicState
 	{
 		private PointF _currentPoint = new Point(0,0);
 		private PointF _startPoint;
 
+		/// <summary>
+		/// Initializes a new instance of <see cref="MoveGraphicState"/>.
+		/// </summary>
+		/// <param name="standardStatefulGraphic"></param>
 		public MoveGraphicState(IStandardStatefulGraphic standardStatefulGraphic)
 			: base(standardStatefulGraphic)
 		{
 		}
 
+		/// <summary>
+		/// Called by the framework when the associated <see cref="IStandardStatefulGraphic"/>
+		/// is clicked on.
+		/// </summary>
+		/// <param name="mouseInformation"></param>
+		/// <returns></returns>
 		public override bool Start(IMouseInformation mouseInformation)
 		{
 			base.LastPoint = this.StandardStatefulGraphic.SpatialTransform.ConvertToSource(mouseInformation.Location);
@@ -54,6 +71,13 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			return true;
 		}
 
+		/// <summary>
+		/// Called by the framework when the mouse is moving while a mouse
+		/// button is pressed and results in the moving of the associated
+		/// <see cref="IStandardStatefulGraphic"/>.
+		/// </summary>
+		/// <param name="mouseInformation"></param>
+		/// <returns></returns>
 		public override bool Track(IMouseInformation mouseInformation)
 		{
 			_currentPoint = this.StandardStatefulGraphic.SpatialTransform.ConvertToSource(mouseInformation.Location);
@@ -69,17 +93,31 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			return true;
 		}
 
+		/// <summary>
+		/// Called by the framework when the mouse button is released
+		/// and results in a transition back to the <see cref="FocussedSelectedGraphicState"/>.
+		/// </summary>
+		/// <param name="mouseInformation"></param>
+		/// <returns></returns>
 		public override bool Stop(IMouseInformation mouseInformation)
 		{
 			Cancel();
 			return false;
 		}
 
+		/// <summary>
+		/// Cancels the move operation and results in a transition back
+		/// to the <see cref="FocussedSelectedGraphicState"/>.
+		/// </summary>
 		public override void Cancel()
 		{
 			this.StandardStatefulGraphic.State = this.StandardStatefulGraphic.CreateFocussedSelectedState();
 		}
 
+		/// <summary>
+		/// Returns a string describing this graphic state.
+		/// </summary>
+		/// <returns></returns>
 		public override string ToString()
 		{
 			return "Move State\n";

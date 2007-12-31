@@ -48,7 +48,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 	/// to some user defined point in the scene.
 	/// </remarks>
 	public class CalloutGraphic 
-		: StatefulCompositeGraphic, IStandardStatefulGraphic, ICursorTokenProvider, IMemorable
+		: StandardStatefulCompositeGraphic, IMemorable
 	{
 		#region Private fields
 
@@ -148,67 +148,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		{
 			add { _textGraphic.AnchorPointChanged += value; }
 			remove { _textGraphic.AnchorPointChanged -= value; }
-		}
-
-		/// <summary>
-		/// Not applicable.
-		/// </summary>
-		/// <returns></returns>
-		public GraphicState CreateCreateState()
-		{
-			throw new Exception("The method or operation is not implemented.");
-		}
-
-		/// <summary>
-		/// Creates the inactive graphic state.
-		/// </summary>
-		/// <returns></returns>
-		/// <remarks>
-		/// Unless you are creating your own interactive graphic that uses
-		/// a <see cref="CalloutGraphic"/>, you should not have to use this method.
-		/// </remarks>
-		public virtual GraphicState CreateInactiveState()
-		{
-			return new InactiveGraphicState(this);
-		}
-
-		/// <summary>
-		/// Creates the focussed graphic state.
-		/// </summary>
-		/// <returns></returns>
-		/// <remarks>
-		/// Unless you are creating your own interactive graphic that uses
-		/// a <see cref="CalloutGraphic"/>, you should not have to use this method.
-		/// </remarks>
-		public virtual GraphicState CreateFocussedState()
-		{
-			return new FocussedGraphicState(this);
-		}
-
-		/// <summary>
-		/// Creates the focussed selected graphic state.
-		/// </summary>
-		/// <returns></returns>
-		/// <remarks>
-		/// Unless you are creating your own interactive graphic that uses
-		/// a <see cref="CalloutGraphic"/>, you should not have to use this method.
-		/// </remarks>
-		public virtual GraphicState CreateFocussedSelectedState()
-		{
-			return new FocussedSelectedGraphicState(this);
-		}
-
-		/// <summary>
-		/// Creates the selected graphic state.
-		/// </summary>
-		/// <returns></returns>
-		/// <remarks>
-		/// Unless you are creating your own interactive graphic that uses
-		/// a <see cref="CalloutGraphic"/>, you should not have to use this method.
-		/// </remarks>
-		public virtual GraphicState CreateSelectedState()
-		{
-			return new SelectedGraphicState(this);
 		}
 
 		/// <summary>
