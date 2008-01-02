@@ -66,8 +66,9 @@ namespace ClearCanvas.ImageViewer.Tests
 
 			IDisplaySet displaySet2 = new DisplaySet();
 			displaySet2.PresentationImages.Add(new TestPresentationImage());
+			displaySet2.PresentationImages.Add(new TestPresentationImage());
 
-			IImageViewer viewer = new MockImageViewerComponent();
+			IImageViewer viewer = new ImageViewerComponent();
 			IImageBox imageBox = new ImageBox();
 			viewer.PhysicalWorkspace.ImageBoxes.Add(imageBox);
 
@@ -83,11 +84,8 @@ namespace ClearCanvas.ImageViewer.Tests
 			Assert.IsTrue(imageBox[0, 1].Selected);
 
 			imageBox.DisplaySet = displaySet2;
-			Assert.IsTrue(imageBox[0, 0].Selected);
-			Assert.IsFalse(imageBox[0, 1].Selected);
-
-			//Tile tile = imageBox[0, 0] as Tile;
-			//Assert.IsTrue(tile.ContextMenuEnabled);
+			Assert.IsFalse(imageBox[0, 0].Selected);
+			Assert.IsTrue(imageBox[0, 1].Selected);
 		}
 
 		[Test]
@@ -101,7 +99,7 @@ namespace ClearCanvas.ImageViewer.Tests
 			IPresentationImage image2 = new TestPresentationImage();
 			displaySet2.PresentationImages.Add(image2);
 
-			ImageViewerComponent viewer = new ImageViewerComponent(LayoutManagerCreationParameters.Extended);
+			ImageViewerComponent viewer = new ImageViewerComponent();
 
 			IImageBox imageBox1 = new ImageBox();
 			viewer.PhysicalWorkspace.ImageBoxes.Add(imageBox1);

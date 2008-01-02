@@ -51,7 +51,7 @@ namespace ClearCanvas.ImageViewer.Tests
 	
 		private void CreateObjects()
 		{
-			_viewer = new MockImageViewerComponent();
+			_viewer = new ImageViewerComponent();
 			_imageBox = new ImageBox();
 			_tile1 = new Tile();
 			_tile2 = new Tile();

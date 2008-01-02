@@ -241,7 +241,6 @@
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
     <Compile Include="Tests\CommandHistoryTest.cs" />
-    <Compile Include="Tests\WorkspaceTest.cs" />
     <Compile Include="Tools\ITool.cs" />
     <Compile Include="Tools\IToolContext.cs" />
     <Compile Include="Tools\IToolSet.cs" />

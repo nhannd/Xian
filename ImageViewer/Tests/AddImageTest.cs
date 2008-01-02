@@ -59,7 +59,7 @@ namespace ClearCanvas.ImageViewer.Tests
 		[Test]
 		public void BuildStudyTree()
 		{
-			IImageViewer viewer = new MockImageViewerComponent();
+			IImageViewer viewer = new ImageViewerComponent();
 			StudyTree studyTree = viewer.StudyTree;
 
 			TestImageSop image1 = new TestImageSop("patient1", "study1", "series1", "image1");
@@ -122,7 +122,7 @@ namespace ClearCanvas.ImageViewer.Tests
 		[Test]
 		public void AddDuplicateImage()
 		{
-			IImageViewer viewer = new MockImageViewerComponent();
+			IImageViewer viewer = new ImageViewerComponent();
 			StudyTree studyTree = viewer.StudyTree;
 
 			TestImageSop image1 = new TestImageSop("patient1", "study1", "series1", "image1");
@@ -137,8 +137,8 @@ namespace ClearCanvas.ImageViewer.Tests
 		[Test]
 		public void AddSameImageFromDifferentViewers()
 		{
-			IImageViewer viewer1 = new MockImageViewerComponent();
-			IImageViewer viewer2 = new MockImageViewerComponent();
+			IImageViewer viewer1 = new ImageViewerComponent();
+			IImageViewer viewer2 = new ImageViewerComponent();
 
 			StudyTree studyTree1 = viewer1.StudyTree;
 			StudyTree studyTree2 = viewer2.StudyTree;

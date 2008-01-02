@@ -291,7 +291,6 @@
     <Compile Include="Tests\AddImageTest.cs" />
     <Compile Include="Tests\DisplaySetSelectionTest.cs" />
     <Compile Include="Tests\TestImageSop.cs" />
-    <Compile Include="Tests\MockImageViewerComponent.cs" />
     <Compile Include="Tests\MockPresentationImage.cs" />
     <Compile Include="Tests\SelectionTest.cs" />
     <Compile Include="Tests\ImageBoxAndDisplaySetInteractionTest.cs" />
@@ -368,8 +367,6 @@
     <Compile Include="Graphics\PointChangedEventArgs.cs" />
     <Compile Include="Graphics\RectanglePrimitive.cs" />
     <Compile Include="Graphics\Tests\PixelDataWrapperTest.cs" />
-    <Compile Include="Graphics\Tests\ImageLayerTest.cs" />
-    <Compile Include="Graphics\Tests\LayerGroupTest.cs" />
     <Compile Include="LinkageChangedEventArgs.cs" />
     <Compile Include="LogicalWorkspace.cs" />
     <Compile Include="BaseTools\MouseImageViewerTool.cs" />

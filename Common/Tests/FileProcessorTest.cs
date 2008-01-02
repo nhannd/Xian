@@ -168,6 +168,7 @@ namespace ClearCanvas.Common.Tests
 		}
 
 		[Test]
+		[Ignore]
 		public void Process_BadDelegate()
 		{
 			Assert.Fail("Test not written yet");
@@ -181,12 +182,14 @@ namespace ClearCanvas.Common.Tests
 		}
 
 		[Test]
+		[Ignore]
 		public void Process_InsufficientPermissions()
 		{
 			Assert.Fail("Test not written yet");
 		}
 
 		[Test]
+		[Ignore]
 		public void Process_PathTooLong()
 		{
 			Assert.Fail("Test not written yet");

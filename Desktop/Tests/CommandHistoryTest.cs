@@ -44,9 +44,6 @@ namespace ClearCanvas.Desktop.Tests.CommandHistoryTest
 	public class CommandHistoryTest
 	{
 		public static string _message;
-		//public string _commandAddedEventMessage;
-		//public string _reachedCommandHistoryBeginningEventMessage;
-		//public string _reachedCommandHistoryEndEventMessage;
 
 		public CommandHistoryTest()
 		{
@@ -147,28 +144,6 @@ namespace ClearCanvas.Desktop.Tests.CommandHistoryTest
 			Assert.AreEqual("Unexecuted TestCommand2", _message);
 		}
 
-		[Test]
-		public void EmptyHistory()
-		{
-			int maxSize = 0;
-			CommandHistory history = new CommandHistory(maxSize);
-
-			// Add 2 commands
-			TestCommand1 cmd1 = new TestCommand1();
-			TestCommand2 cmd2 = new TestCommand2();
-
-			history.AddCommand(cmd1);
-			Assert.AreEqual(0, history.NumCommands);
-			history.AddCommand(cmd2);
-			Assert.AreEqual(0, history.NumCommands);
-
-			// Try to undo/redo on an empty history
-			_message = String.Empty;
-			history.Undo();
-			Assert.AreEqual(String.Empty, _message);
-			history.Redo();
-			Assert.AreEqual(String.Empty, _message);
-		}
 
 		[Test]
 		public void ForceFIFO()
@@ -205,71 +180,11 @@ namespace ClearCanvas.Desktop.Tests.CommandHistoryTest
 			history.AddCommand(cmd5);
 			Assert.AreEqual(1, history.NumCommands);
 		}
-
-		[Test]
-		public void SubscribeToEvents()
-		{
-			//_commandAddedEventMessage = String.Empty;
-			//_reachedCommandHistoryBeginningEventMessage = String.Empty;
-			//_reachedCommandHistoryEndEventMessage = String.Empty;
-
-			int maxSize = 3;
-			CommandHistory history = new CommandHistory(maxSize);
-			//history.CommandAdded += new EventHandler(OnCommandAdded);
-			//history.ReachedCommandHistoryBeginning += new EventHandler(OnReachedCommandHistoryBeginning);
-			//history.ReachedCommandHistoryEnd += new EventHandler(OnReachedCommandHistoryEnd);
-
-			// Add 3 commands
-			TestCommand1 cmd1 = new TestCommand1();
-			TestCommand2 cmd2 = new TestCommand2();
-			TestCommand3 cmd3 = new TestCommand3();
-
-			history.AddCommand(cmd1);
-			//Assert.AreEqual("TestCommand1", _commandAddedEventMessage);
-			history.AddCommand(cmd2);
-			//Assert.AreEqual("TestCommand2", _commandAddedEventMessage);
-			history.AddCommand(cmd3);
-			//Assert.AreEqual("TestCommand3", _commandAddedEventMessage);
-
-			// Undo them all
-			history.Undo();
-			//Assert.AreEqual(String.Empty, _reachedCommandHistoryBeginningEventMessage);
-			history.Undo();
-			//Assert.AreEqual(String.Empty, _reachedCommandHistoryBeginningEventMessage);
-			history.Undo();
-			//Assert.AreEqual("ReachedBeginning", _reachedCommandHistoryBeginningEventMessage);
-
-			// Redo them all
-			history.Redo();
-			//Assert.AreEqual(String.Empty, _reachedCommandHistoryEndEventMessage);
-			history.Redo();
-			//Assert.AreEqual(String.Empty, _reachedCommandHistoryEndEventMessage);
-			history.Redo();
-			//Assert.AreEqual("ReachedEnd", _reachedCommandHistoryEndEventMessage);
-
-		}
-
-		/*
-		private void OnCommandAdded(object sender, EventArgs e)
-		{
-			CommandAddedEventArgs args = (CommandAddedEventArgs) e;
-			//_commandAddedEventMessage = args.Command.Name;
-		}*/
-
-/*		private void OnReachedCommandHistoryBeginning(object sender, EventArgs e)
-		{
-			_reachedCommandHistoryBeginningEventMessage = "ReachedBeginning";
-		}
-
-		private void OnReachedCommandHistoryEnd(object sender, EventArgs e)
-		{
-			_reachedCommandHistoryEndEventMessage = "ReachedEnd";
-		}
-*/	}
+	}
 
 	public class TestCommand1 : UndoableCommand
 	{
-		public TestCommand1() : base(null)
+		public TestCommand1()
 		{
 			base.Name = "TestCommand1";
 		}
@@ -289,7 +204,7 @@ namespace ClearCanvas.Desktop.Tests.CommandHistoryTest
 
 	public class TestCommand2 : UndoableCommand
 	{
-		public TestCommand2() : base(null)
+		public TestCommand2()
 		{
 			base.Name = "TestCommand2";
 		}
@@ -309,7 +224,7 @@ namespace ClearCanvas.Desktop.Tests.CommandHistoryTest
 
 	public class TestCommand3 : UndoableCommand
 	{
-		public TestCommand3() : base(null)
+		public TestCommand3()
 		{
 			base.Name = "TestCommand3";
 		}
@@ -329,7 +244,7 @@ namespace ClearCanvas.Desktop.Tests.CommandHistoryTest
 
 	public class TestCommand4 : UndoableCommand
 	{
-		public TestCommand4() : base(null)
+		public TestCommand4()
 		{
 			base.Name = "TestCommand4";
 		}
@@ -349,7 +264,7 @@ namespace ClearCanvas.Desktop.Tests.CommandHistoryTest
 
 	public class TestCommand5 : UndoableCommand
 	{
-		public TestCommand5() : base(null)
+		public TestCommand5()
 		{
 			base.Name = "TestCommand5";
 		}
@@ -369,7 +284,7 @@ namespace ClearCanvas.Desktop.Tests.CommandHistoryTest
 
 	public class TestCommand6 : UndoableCommand
 	{
-		public TestCommand6() : base(null)
+		public TestCommand6()
 		{
 			base.Name = "TestCommand6";
 		}

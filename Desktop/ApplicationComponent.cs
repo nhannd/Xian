@@ -461,14 +461,14 @@ namespace ClearCanvas.Desktop
 
         /// <summary>
         /// Convenience method to fire the <see cref="ModifiedChanged"/> event.
-        /// <remarks>
+		/// </summary>
+		/// <remarks>
         /// Note that it is not necessary to explicitly call this method if the 
         /// default implementation of the <see cref="Modified"/> property is used,
         /// since the event is fired automatically when the property is set.
         /// This method is provided for situations where the subclass has chosen
         /// to override the <see cref="Modified"/> property.
         /// </remarks>
-        /// </summary>
         protected void NotifyModifiedChanged()
         {
             EventsHelper.Fire(_modifiedChanged, this, EventArgs.Empty);

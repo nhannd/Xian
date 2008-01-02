@@ -67,7 +67,7 @@ namespace ClearCanvas.ImageViewer.Tests
 
 		public TestTree()
 		{
-			_viewer = new MockImageViewerComponent();
+			_viewer = new ImageViewerComponent();
 			
 			_imageBox1 = new ImageBox();
 			_imageBox2 = new ImageBox();
