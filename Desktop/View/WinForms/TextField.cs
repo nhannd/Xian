@@ -37,6 +37,8 @@ namespace ClearCanvas.Desktop.View.WinForms
 {
     public partial class TextField : UserControl
     {
+        private string _toolTip;
+
         public TextField()
         {
             InitializeComponent();
@@ -78,6 +80,19 @@ namespace ClearCanvas.Desktop.View.WinForms
             }
         }
 
+        [DefaultValue("")]
+        public string ToolTip
+        {
+            get
+            {
+                return _toolTip;
+            }
+            set
+            {
+                _toolTip = value;
+            }
+        }
+
         public event EventHandler ValueChanged
         {
             add { _textBox.TextChanged += value; }
@@ -100,6 +115,30 @@ namespace ClearCanvas.Desktop.View.WinForms
         {
             get { return _textBox.EditMask; }
             set { _textBox.EditMask = value; }
+        }
+
+        private void _textBox_MouseHover(object sender, EventArgs e)
+        {
+            ShowToolTip(true);
+        }
+
+        private void _textBox_MouseLeave(object sender, EventArgs e)
+        {
+            ShowToolTip(false);
+        }
+
+        // Hide the tooltip if the user starts typing again before the five-second display limit on the tooltip expires.
+        private void _textBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            ShowToolTip(false);
+        }
+
+        private void ShowToolTip(bool show)
+        {
+            if (show)
+                _textFieldToolTip.Show(_toolTip, _textBox, _textBox.Location.X, _textBox.Location.Y, 5000);
+            else
+                _textFieldToolTip.Hide(_textBox);       
         }
 
         // private static string NullIfEmpty(string value)

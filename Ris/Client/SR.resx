@@ -357,6 +357,9 @@
   <data name="MessageLoginTimeout" xml:space="preserve">
     <value>Timed-out while attempting to login</value>
   </data>
+  <data name="MessageResultsNotFound" xml:space="preserve">
+    <value>No results were found using the specified criteria.</value>
+  </data>
   <data name="MessageTimeout" xml:space="preserve">
     <value>The request timed out. See log for details.</value>
   </data>

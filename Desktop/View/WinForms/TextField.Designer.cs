@@ -59,7 +59,9 @@ namespace ClearCanvas.Desktop.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this._label = new System.Windows.Forms.Label();
+            this._textFieldToolTip = new System.Windows.Forms.ToolTip(this.components);
             this._textBox = new Clifton.Windows.Forms.NullableMaskedEdit();
             this.SuspendLayout();
             // 
@@ -77,22 +79,25 @@ namespace ClearCanvas.Desktop.View.WinForms
             // 
             this._textBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this._textBox.Location = new System.Drawing.Point(3, 18);
-            this._textBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this._textBox.Name = "_textBox";
-            this._textBox.Size = new System.Drawing.Size(145, 20);
-            this._textBox.TabIndex = 1;
             this._textBox.AutoAdvance = true;
             this._textBox.EditMask = "";
             this._textBox.InsertKeyMode = System.Windows.Forms.InsertKeyMode.Overwrite;
+            this._textBox.Location = new System.Drawing.Point(3, 18);
+            this._textBox.Margin = new System.Windows.Forms.Padding(2);
+            this._textBox.Name = "_textBox";
             this._textBox.NullTextDisplayValue = null;
             this._textBox.NullTextReturnValue = null;
             this._textBox.NullValue = null;
             this._textBox.SelectGroup = true;
+            this._textBox.Size = new System.Drawing.Size(145, 20);
             this._textBox.SkipLiterals = false;
+            this._textBox.TabIndex = 1;
             this._textBox.Text = null;
             this._textBox.TextMaskFormat = System.Windows.Forms.MaskFormat.ExcludePromptAndLiterals;
             this._textBox.Value = null;
+            this._textBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this._textBox_KeyDown);
+            this._textBox.MouseLeave += new System.EventHandler(this._textBox_MouseLeave);
+            this._textBox.MouseHover += new System.EventHandler(this._textBox_MouseHover);
             // 
             // TextField
             // 
@@ -100,7 +105,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this._textBox);
             this.Controls.Add(this._label);
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "TextField";
             this.Size = new System.Drawing.Size(150, 41);
             this.ResumeLayout(false);
@@ -112,5 +117,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         private System.Windows.Forms.Label _label;
         private Clifton.Windows.Forms.NullableMaskedEdit _textBox;
+        private System.Windows.Forms.ToolTip _textFieldToolTip;
+        private System.ComponentModel.IContainer components;
     }
 }

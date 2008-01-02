@@ -57,7 +57,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 set
                 {
                      _patientProfile = value;
-                    this.SetUrl("http://localhost/RIS/registrationpreview.htm");
+                    this.SetUrl(RegistrationPreviewComponentSettings.Default.RegistrationFolderSystemUrl);
                 }
             }
 

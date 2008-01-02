@@ -781,6 +781,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No results were found using the specified criteria..
+        /// </summary>
+        internal static string MessageResultsNotFound {
+            get {
+                return ResourceManager.GetString("MessageResultsNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The request timed out. See log for details..
         /// </summary>
         internal static string MessageTimeout {

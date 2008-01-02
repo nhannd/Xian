@@ -215,6 +215,9 @@ namespace ClearCanvas.Ris.Client
                 _profileTable.Items.Clear();
                 _profileTable.Items.AddRange(_pagingController.GetFirst());
                 this.SelectedProfile = new Selection(_profileTable.Items.Count > 0 ? _profileTable.Items[0] : null);
+
+                if (_profileTable.Items.Count == 0)
+                    this.Host.DesktopWindow.ShowMessageBox(SR.MessageResultsNotFound, MessageBoxActions.Ok);
             }
             catch (Exception e)
             {

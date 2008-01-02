@@ -101,6 +101,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this._searchField.Name = "_searchField";
             this._searchField.Size = new System.Drawing.Size(185, 41);
             this._searchField.TabIndex = 0;
+            this._searchField.ToolTip = "Enter name, mrn, healthcard or accession # as criteria";
             this._searchField.Value = null;
             // 
             // flowLayoutPanel1
