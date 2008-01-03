@@ -170,11 +170,11 @@ namespace ClearCanvas.ImageViewer
 			DateTime studyDate;
 			DateParser.Parse(study.StudyDate, out studyDate);
 
-			imageSet.Name = String.Format("{0} � {1}",
+			imageSet.Name = String.Format("{0} · {1}",
 				studyDate.ToString(Format.DateFormat),
 				study.StudyDescription);
 
-			imageSet.PatientInfo = String.Format("{0} � {1}",
+			imageSet.PatientInfo = String.Format("{0} · {1}",
 				study.ParentPatient.PatientsName.FormattedName,
 				study.ParentPatient.PatientId);
 
