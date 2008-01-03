@@ -95,7 +95,7 @@
     <Compile Include="PatientProfileEditorComponent.cs" />
     <Compile Include="ReconciliationComponent.cs" />
     <Compile Include="PatientReconcileTool.cs" />
-    <Compile Include="HomeTool.cs" />
+    <Compile Include="RegistrationHomeTool.cs" />
     <Compile Include="RegistrationBookingWorkflowFolderSystem.cs" />
     <Compile Include="RegistrationBookingWorkflowFolderSystemTool.cs" />
     <Compile Include="RegistrationMainWorkflowFolderSystem.cs" />

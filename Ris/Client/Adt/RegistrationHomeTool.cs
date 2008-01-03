@@ -42,14 +42,13 @@ namespace ClearCanvas.Ris.Client.Adt
     public class RegistrationHomeFolderSystemToolExtensionPoint : ExtensionPoint<ITool>
     {
     }
-    
-    [MenuAction("launch", "global-menus/Go/Registration Home")]
-    //[ButtonAction("launch", "global-toolbars/Go/Registration Home")]
+
+    [MenuAction("launch", "global-menus/Go/Registration Home", "Launch")]
+    //[ButtonAction("launch", "global-toolbars/Go/Registration Home", "Launch")]
     [Tooltip("launch", "Registration Home")]
 	[IconSet("launch", IconScheme.Colour, "Icons.RegistrationHomeToolSmall.png", "Icons.RegistrationHomeToolMedium.png", "Icons.RegistrationHomeToolLarge.png")]
-    [ClickHandler("launch", "Launch")]
     [ExtensionOf(typeof(DesktopToolExtensionPoint))]
-    public class HomeTool : Tool<IDesktopToolContext>
+    public class RegistrationHomeTool : Tool<IDesktopToolContext>
     {
         private IWorkspace _workspace;
 

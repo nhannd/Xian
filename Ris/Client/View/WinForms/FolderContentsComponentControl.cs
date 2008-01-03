@@ -31,7 +31,6 @@
 
 using System;
 using System.Windows.Forms;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.View.WinForms;
 
 namespace ClearCanvas.Ris.Client.View.WinForms
@@ -58,11 +57,9 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             _folderContentsTableView.ToolbarModel = _component.ItemsToolbarModel;
 
             _component.TableChanged += _component_TableChanged;
-            _component.FolderSystemChanged += new EventHandler(_component_FolderSystemChanged);
+            _component.FolderSystemChanged += _component_FolderSystemChanged;
             
-            //_folderContentsTableView.DataBindings.Add("Table", _component, "FolderContentsTable", true, DataSourceUpdateMode.Never);
             _folderContentsTableView.DataBindings.Add("Selection", _component, "SelectedItems", true, DataSourceUpdateMode.OnPropertyChanged);
-
         }
 
         void _component_TableChanged(object sender, EventArgs e)
@@ -72,6 +69,10 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 
         void _component_FolderSystemChanged(object sender, EventArgs e)
         {
+            // Must set selection to null before setting tool models
+            // This is because the type of item may be different between the old and new folder systems
+            _folderContentsTableView.Selection = null;
+
             _folderContentsTableView.MenuModel = _component.ItemsContextMenuModel;
             _folderContentsTableView.ToolbarModel = _component.ItemsToolbarModel;
         }

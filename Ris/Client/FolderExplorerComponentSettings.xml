@@ -1,5 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <folder-systems>
+  <folder-system id="ClearCanvas.Ris.Client.Adt.TechnologistMainWorkflowFolderSystem">
+    <folder id="ScheduledTechnologistWorkflowFolder" path="Scheduled" />
+    <folder id="CheckedInTechnologistWorkflowFolder" path="Checked In" />
+    <folder id="InProgressTechnologistWorkflowFolder" path="In Progress" />
+    <folder id="UndocumentedTechnologistWorkflowFolder" path="Undocumented" />
+    <folder id="CancelledTechnologistWorkflowFolder" path="Cancelled" />
+    <folder id="CompletedTechnologistWorkflowFolder" path="Completed" />
+    <folder id="TechnologistSearchFolder" path="Search" />
+  </folder-system>
   <folder-system id="ClearCanvas.Ris.Client.Adt.RegistrationMainWorkflowFolderSystem">
     <folder id="ScheduledFolder" path="Scheduled" />
     <folder id="CheckedInFolder" path="Checked In" />
@@ -14,15 +23,6 @@
     <folder id="RejectedProtocolFolder" path="Rejected Protocol" />
     <folder id="PendingProtocolFolder" path="Pending Protocol" />
     <folder id="ToBeScheduledFolder" path="To Be Scheduled" />
-  </folder-system>
-  <folder-system id="ClearCanvas.Ris.Client.Adt.TechnologistMainWorkflowFolderSystem">
-    <folder id="ScheduledTechnologistWorkflowFolder" path="Scheduled" />
-    <folder id="CheckedInTechnologistWorkflowFolder" path="Checked In" />
-    <folder id="InProgressTechnologistWorkflowFolder" path="In Progress" />
-    <folder id="UndocumentedTechnologistWorkflowFolder" path="Undocumented" />
-    <folder id="CancelledTechnologistWorkflowFolder" path="Cancelled" />
-    <folder id="CompletedTechnologistWorkflowFolder" path="Completed" />
-    <folder id="TechnologistSearchFolder" path="Search" />
   </folder-system>
   <folder-system id="ClearCanvas.Ris.Client.Reporting.ReportingMainWorkflowFolderSystem">
     <folder id="ToBeReportedFolder" path="To be Reported" />

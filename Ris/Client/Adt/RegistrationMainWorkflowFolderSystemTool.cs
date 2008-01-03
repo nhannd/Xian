@@ -34,6 +34,7 @@ using ClearCanvas.Common;
 namespace ClearCanvas.Ris.Client.Adt
 {
     [ExtensionOf(typeof(RegistrationHomeFolderSystemToolExtensionPoint))]
+    [ExtensionOf(typeof(TechnologistHomeFolderSystemToolExtensionPoint))]
     public class RegistrationMainWorkflowFolderSystemTool : FolderExplorerToolBase
     {
         public override void Initialize()
