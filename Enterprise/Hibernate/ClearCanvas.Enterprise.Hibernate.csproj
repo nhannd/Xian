@@ -49,6 +49,7 @@
   <ItemGroup>
     <Compile Include="AssembliesHbmOrderer.cs" />
     <Compile Include="Broker.cs" />
+    <Compile Include="ChangeTracker.cs" />
     <Compile Include="CustomSqlDialect.cs" />
     <Compile Include="Ddl\DdlScriptGenerator.cs" />
     <Compile Include="Ddl\EnumForeignKeyConstraintGenerator.cs" />

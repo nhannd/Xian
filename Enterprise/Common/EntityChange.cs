@@ -48,7 +48,7 @@ namespace ClearCanvas.Enterprise.Common
     }
     
     /// <summary>
-    /// Acts as a memento of a change made to an entity.
+    /// Represents a change made to an entity.
     /// </summary>
     [DataContract]
     public class EntityChange
@@ -81,25 +81,6 @@ namespace ClearCanvas.Enterprise.Common
         public EntityRef EntityRef
         {
             get { return _entityRef; }
-        }
-
-        /// <summary>
-        /// Checks whether this change supercedes the specified other change.  This change supercedes other iff
-        /// the version of this change is greater than the version of the other change, the version of this change
-        /// is the same as the version of the other change and the <see cref="ChangeType"/>
-        /// of this change supercedes the <see cref="ChangeType"/> of the other.  Note that
-        /// <see cref="EntityChangeType.Create"/> supercedes <see cref="EntityChangeType.Update"/>, and 
-        /// <see cref="EntityChangeType.Delete"/> supercedes both (e.g. a Create followed by an update is fundamentally a Create, and
-        /// a Create or Update followed by a Delete is fundamentally a Delete).
-        /// </summary>
-        /// <param name="other"></param>
-        /// <returns></returns>
-        public bool Supercedes(EntityChange other)
-        {
-            if (!_entityRef.ClassName.Equals(other._entityRef.ClassName) || !_entityRef.OID.Equals(other._entityRef.OID))
-                throw new ArgumentException("Argument must represent a change to the same entity");
-
-            return _entityRef.Version > other._entityRef.Version || (_entityRef.Version == other._entityRef.Version && _changeType > other._changeType);
         }
     }
 }

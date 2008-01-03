@@ -49,15 +49,16 @@ namespace ClearCanvas.Enterprise.Hibernate
     /// </summary>
     internal class UpdateContextInterceptor : EmptyInterceptor
     {
-        private Dictionary<object, EntityChange> _changeSet = new Dictionary<object, EntityChange>();
-        private Queue<DomainObject> _pendingValidations = new Queue<DomainObject>();
+
+        private readonly ChangeTracker _changeTracker = new ChangeTracker();
+        private readonly Queue<DomainObject> _transientEntities = new Queue<DomainObject>();
 
         /// <summary>
-        /// Returns the set of <see cref="EntityChange"/> capturing the changes made.
+        /// Gets the set of <see cref="EntityChange"/> objects representing the changes made in this update context.
         /// </summary>
         public EntityChange[] EntityChangeSet
         {
-            get { return new List<EntityChange>(_changeSet.Values).ToArray(); }
+            get { return _changeTracker.EntityChangeSet; }
         }
 
         #region IInterceptor Members
@@ -76,7 +77,7 @@ namespace ClearCanvas.Enterprise.Hibernate
         }
 
         /// <summary>
-        /// Called when a dirty entity is flushed, which implies an update
+        /// Called when a dirty entity is flushed, which implies an update to the DB.
         /// </summary>
         /// <param name="entity"></param>
         /// <param name="id"></param>
@@ -87,8 +88,14 @@ namespace ClearCanvas.Enterprise.Hibernate
         /// <returns></returns>
         public override bool OnFlushDirty(object entity, object id, object[] currentState, object[] previousState, string[] propertyNames, NHibernate.Type.IType[] types)
         {
-            List<string> dirtyProperties = new List<string>();
+            // This method may be called more 
+            // than once for a given entity during the lifetime of the update context, and the difference between the 
+            // currentState and previousState parameters will reflect only the changes
+            // to the entity that have occured since the last time this method was called.
 
+            // As a matter of optimization, build a list of dirty properties so that rather than testing every
+            // validation rule we can selectively test only those rules that may be affected by the modified state
+            List<string> dirtyProperties = new List<string>();
             int propertyCount = propertyNames.Length;
             for (int i = 0; i < propertyCount; i++)
             {
@@ -102,13 +109,17 @@ namespace ClearCanvas.Enterprise.Hibernate
                 }
             }
 
+            // validate the entity prior to flush, passing the list of dirty properties 
+            // in order to optimize which rules are tested
             Validate(entity, dirtyProperties);
+
             RecordChange(entity, EntityChangeType.Update);
             return false;
         }
 
         /// <summary>
-        /// Called when a new entity is saved for the first time
+        /// Called when a new entity is added to the persistence context via <see cref="PersistenceContext.Lock"/> with
+        /// <see cref="DirtyState.New"/>.
         /// </summary>
         /// <param name="entity"></param>
         /// <param name="id"></param>
@@ -122,20 +133,32 @@ namespace ClearCanvas.Enterprise.Hibernate
             if (NHibernateUtil.GetClass(entity).Equals(typeof(TransactionRecord)))
                 return false;
 
-            // don't validate the entity here, because further changes to it may be made before the flush
-            // instead, put it in a queue to be validated at flush time
-            _pendingValidations.Enqueue((DomainObject)entity);
+            // we could validate the entity here, but it seems rather counter-productive, given
+            // that the entity is not actually being written to the DB yet and further changes
+            // may be made to it by the application before it is written.  Therefore, we choose
+            // not to validate the entity here, but instead put it in a queue to be validated at flush time
+            _transientEntities.Enqueue((DomainObject)entity);
 
             RecordChange(entity, EntityChangeType.Create);
             return false;
 
         }
 
+        /// <summary>
+        /// Called prior to every flush.
+        /// </summary>
+        /// <param name="entities"></param>
         public override void PreFlush(ICollection entities)
         {
-            while (_pendingValidations.Count > 0)
+            // validate any transient entities that have not yet been validated
+            // note that there is a possibility that NHibernate may do its own validation of new entities
+            // prior to arriving here, in which case it will have already thrown an exception
+            // this is unfortunate, because the exceptions that we generate are *much* more informative
+            // and user-friendly, but there is no obvious solution to this as of NH1.0
+            // TODO: NH1.2 added new methods to the Interceptor API - see if any of these will get around this problem
+            while (_transientEntities.Count > 0)
             {
-                DomainObject obj = _pendingValidations.Dequeue();
+                DomainObject obj = _transientEntities.Dequeue();
                 Validate(obj);
             }
 
@@ -149,46 +172,33 @@ namespace ClearCanvas.Enterprise.Hibernate
 
         #endregion
 
-        private void RecordChange(object obj, EntityChangeType changeType)
+        private void RecordChange(object domainObject, EntityChangeType changeType)
         {
             // ignore changes to enum values for now
-            // TODO: we should really not ignore these
-            if (obj is EnumValue)
+            // TODO: should probably record changes to enum values as well
+            if (domainObject is EnumValue)
                 return;
 
-            Entity entity = (Entity)obj;
-
-            EntityChange change = new EntityChange(new EntityRef(entity.GetClass(), entity.OID, entity.Version), changeType);
-            if (_changeSet.ContainsKey(entity.OID))
-            {
-                // if this entity was already marked as changed, but the new change supercedes the previous
-                // change, then overwrite with the new change
-                if (change.Supercedes(_changeSet[entity.OID]))
-                    _changeSet[entity.OID] = change;
-            }
-            else
-            {
-                // record this change in the change set
-                _changeSet[entity.OID] = change;
-            }
+            Entity entity = (Entity)domainObject;
+            _changeTracker.RecordChange(entity, changeType);
         }
 
-        private void Validate(object obj, List<string> dirtyProperties)
+        private void Validate(object domainObject, List<string> dirtyProperties)
         {
-            Validation.Validate((DomainObject)obj,
+            Validation.Validate((DomainObject)domainObject,
                 delegate(ISpecification rule)
                 {
-                    // see if the rule needs to be check (i.e if relevant properties are dirty)
-                    return ShouldCheckRule(rule, (DomainObject)obj, dirtyProperties);
+                    // see if the rule needs to be checked (i.e if relevant properties are dirty)
+                    return ShouldCheckRule(rule, (DomainObject)domainObject, dirtyProperties);
                 });
         }
 
-        private void Validate(object obj)
+        private void Validate(object domainObject)
         {
-            Validation.Validate((DomainObject)obj);
+            Validation.Validate((DomainObject)domainObject);
         }
 
-        private bool ShouldCheckRule(ISpecification rule, DomainObject obj, List<string> dirtyProperties)
+        private bool ShouldCheckRule(ISpecification rule, DomainObject domainObject, List<string> dirtyProperties)
         {
             // if the rule is not bound to specific properties, then it should be checked
             if (!(rule is IPropertyBoundRule))
@@ -196,8 +206,9 @@ namespace ClearCanvas.Enterprise.Hibernate
 
             IPropertyBoundRule pbRule = rule as IPropertyBoundRule;
 
-            // if the rule is bound to a property of an embedded value rather than the entity itself, then it should be checked
-            if(CollectionUtils.Contains<PropertyInfo>(pbRule.Properties,
+            // if the rule is bound to a property of an embedded value rather than the entity itself, then return true
+            // (the rule won't actually be tested unless the property containing the embedded value is dirty)
+            if(CollectionUtils.Contains(pbRule.Properties,
                 delegate(PropertyInfo p) { return typeof(ValueObject).IsAssignableFrom(p.DeclaringType); }))
                 return true;
 
@@ -207,8 +218,8 @@ namespace ClearCanvas.Enterprise.Hibernate
             if (dirtyProperties.Count == 0)
                 return false;
 
-            // check the rule if it is bound to any properties that are dirty
-            return CollectionUtils.Contains<PropertyInfo>((rule as IPropertyBoundRule).Properties,
+            // if the rule is bound to any properties that are dirty, return true
+            return CollectionUtils.Contains((rule as IPropertyBoundRule).Properties,
                         delegate(PropertyInfo prop) { return dirtyProperties.Contains(prop.Name); });
         }
     }
