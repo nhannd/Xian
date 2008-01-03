@@ -36,6 +36,7 @@ using System.Drawing;
 using System.IO;
 using ClearCanvas.Common.Utilities;
 using NUnit.Framework;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Annotations.Tests
 {
@@ -48,8 +49,13 @@ namespace ClearCanvas.ImageViewer.Annotations.Tests
 		{
 		}
 
+		[TestFixtureSetUp]
+		public void Setup()
+		{
+			Platform.SetExtensionFactory(new NullExtensionFactory());
+		}
+
 		[Test]
-		[Ignore("This test won't work unless the settings class is forced to use the LocalSettingsProvider (e.g. by commenting out the SettingsProvider attribute)")]
 		public void Test()
 		{
 			List<IAnnotationItem> annotationItems = new List<IAnnotationItem>();

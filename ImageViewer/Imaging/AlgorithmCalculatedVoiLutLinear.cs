@@ -101,7 +101,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 			_windowWidth = (windowEnd - windowStart) + 1;
 			_windowWidth = Math.Max(_windowWidth, 1);
-			_windowCenter = _windowWidth / 2;
+			_windowCenter = windowStart + _windowWidth / 2;
 		}
 		
 		#endregion

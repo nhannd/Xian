@@ -29,7 +29,7 @@
 
 #endregion
 
-namespace ClearCanvas.ImageViewer
+namespace ClearCanvas.ImageViewer.Comparers
 {
 	/// <summary>
 	/// Base class for comparers that are used for sorting of collections.
@@ -59,7 +59,10 @@ namespace ClearCanvas.ImageViewer
 		/// Gets or sets a value indicating whether or not the collection will be
 		/// sorted in ascending or descending order.
 		/// </summary>
-		public bool Reverse
+		/// <remarks>
+		/// The default is false, or descending.
+		/// </remarks>
+		protected bool Reverse
 		{
 			get
 			{ 
@@ -75,15 +78,19 @@ namespace ClearCanvas.ImageViewer
 		}
 
 		/// <summary>
-		/// Gets or sets a value indicating whether or not the collection will be
+		/// Gets a value indicating whether or not the collection will be
 		/// sorted in ascending or descending order.
 		/// </summary>
+		/// <remarks>
+		/// Inheritors should return this value appropriately in order for
+		/// the reversible sorting mechanism to work properly.
+		/// </remarks>
 		/// <value>1 if <see cref="Reverse"/> is <b>true</b></value>
 		/// <value>-1 if <see cref="Reverse"/> is <b>false</b></value>
 		protected int ReturnValue
 		{
 			get { return _returnValue; }
-			set { _returnValue = value; }
+			private set { _returnValue = value; }
 		}
 	}
 }

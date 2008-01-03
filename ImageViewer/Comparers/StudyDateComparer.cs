@@ -43,9 +43,22 @@ namespace ClearCanvas.ImageViewer.Comparers
 		/// <summary>
 		/// Initializes a new instance of <see cref="StudyDateComparer"/>.
 		/// </summary>
+		/// <remarks>
+		/// By default, the <see cref="ComparerBase.Reverse"/> property is set
+		/// to true because, normally, we want the image sets sorted with the
+		/// most recent studies at the beginning.
+		/// </remarks>
 		public StudyDateComparer()
+			: this(true)
 		{
+		}
 
+		/// <summary>
+		/// Initializes a new instance of <see cref="StudyDateComparer"/>.
+		/// </summary>
+		public StudyDateComparer(bool reverse)
+			: base(reverse)
+		{
 		}
 
 		#region IComparer<IDisplaySet> Members
@@ -58,16 +71,26 @@ namespace ClearCanvas.ImageViewer.Comparers
 		/// <returns></returns>
 		protected override int Compare(ImageSop x, ImageSop y)
 		{
-			DateTime studyDate1;
-			DateParser.Parse(x.StudyDate, out studyDate1);
+			DateTime? studyDate1 = DateParser.Parse(x.StudyDate);
+			DateTime? studyDate2 = DateParser.Parse(y.StudyDate);
 
-			DateTime studyDate2;
-			DateParser.Parse(y.StudyDate, out studyDate2);
+			if (studyDate1 == null)
+			{
+				if (studyDate2 == null)
+					return 0;
+				else
+					return ReturnValue; // x < y, we want null dates at the beginning for non-reverse sorting.
+			}
+			else
+			{
+				if (studyDate2 == null)
+					return -ReturnValue; // x > y, we want null dates at the beginning for non-reverse sorting.
+			}
 
-			if (studyDate1 > studyDate2)
-				return 1;
-			else if (studyDate1 < studyDate2)
-				return -1;
+			if ((DateTime)studyDate1 < (DateTime)studyDate2)
+				return this.ReturnValue;
+			else if ((DateTime)studyDate1 > (DateTime)studyDate2)
+				return -this.ReturnValue;
 			else
 				return 0;
 		}

@@ -161,17 +161,10 @@ namespace ClearCanvas.Common.Tests
 		}
 		
 		[Test]
-		[ExpectedException(typeof(DirectoryNotFoundException))]
+		[ExpectedException(typeof(FileNotFoundException))]
 		public void Process_PathDoesNotExist()
 		{
 			FileProcessor.Process("c:\\NoSuchPath", "", _del, true);
-		}
-
-		[Test]
-		[Ignore]
-		public void Process_BadDelegate()
-		{
-			Assert.Fail("Test not written yet");
 		}
 
 		[Test]
@@ -179,20 +172,6 @@ namespace ClearCanvas.Common.Tests
 		public void Process_PathEmpty()
 		{
 			FileProcessor.Process("", "", _del, true);
-		}
-
-		[Test]
-		[Ignore]
-		public void Process_InsufficientPermissions()
-		{
-			Assert.Fail("Test not written yet");
-		}
-
-		[Test]
-		[Ignore]
-		public void Process_PathTooLong()
-		{
-			Assert.Fail("Test not written yet");
 		}
 	}
 }

@@ -76,12 +76,12 @@ namespace ClearCanvas.ImageViewer.Comparers
 				if (provider2 == null)
 					return 0; // x == y
 				else
-					return -1; // x > y (because we want it at the end for non-reverse sorting)
+					return -ReturnValue; // x > y (because we want it at the end for non-reverse sorting)
 			}
 			else
 			{
 				if (provider2 == null)
-					return 1; // x < y (because we want it at the end for non-reverse sorting)
+					return ReturnValue; // x < y (because we want it at the end for non-reverse sorting)
 			}
 
 			return Compare(provider1.ImageSop, provider2.ImageSop);

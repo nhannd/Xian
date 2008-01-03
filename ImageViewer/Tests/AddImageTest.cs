@@ -34,6 +34,7 @@
 #pragma warning disable 1591,0419,1574,1587
 
 using ClearCanvas.ImageViewer.StudyManagement;
+using ClearCanvas.ImageViewer.StudyManagement.Tests;
 using NUnit.Framework;
 
 namespace ClearCanvas.ImageViewer.Tests
@@ -62,15 +63,15 @@ namespace ClearCanvas.ImageViewer.Tests
 			IImageViewer viewer = new ImageViewerComponent();
 			StudyTree studyTree = viewer.StudyTree;
 
-			TestImageSop image1 = new TestImageSop("patient1", "study1", "series1", "image1");
-			TestImageSop image2 = new TestImageSop("patient1", "study1", "series1", "image2");
-			TestImageSop image3 = new TestImageSop("patient1", "study1", "series2", "image3");
-			TestImageSop image4 = new TestImageSop("patient1", "study1", "series2", "image4");
-			TestImageSop image5 = new TestImageSop("patient1", "study2", "series3", "image5");
-			TestImageSop image6 = new TestImageSop("patient1", "study2", "series3", "image6");
-			TestImageSop image7 = new TestImageSop("patient2", "study3", "series4", "image7");
-			TestImageSop image8 = new TestImageSop("patient2", "study3", "series4", "image8");
-			TestImageSop image9 = new TestImageSop("patient2", "study3", "series5", "image9");
+			MockImageSop image1 = new MockImageSop("patient1", "study1", "series1", "image1");
+			MockImageSop image2 = new MockImageSop("patient1", "study1", "series1", "image2");
+			MockImageSop image3 = new MockImageSop("patient1", "study1", "series2", "image3");
+			MockImageSop image4 = new MockImageSop("patient1", "study1", "series2", "image4");
+			MockImageSop image5 = new MockImageSop("patient1", "study2", "series3", "image5");
+			MockImageSop image6 = new MockImageSop("patient1", "study2", "series3", "image6");
+			MockImageSop image7 = new MockImageSop("patient2", "study3", "series4", "image7");
+			MockImageSop image8 = new MockImageSop("patient2", "study3", "series4", "image8");
+			MockImageSop image9 = new MockImageSop("patient2", "study3", "series5", "image9");
 
 			// This is an internal method.  We would never do this from real
 			// client code, but we do it here because we just want to test that
@@ -117,6 +118,8 @@ namespace ClearCanvas.ImageViewer.Tests
 			Assert.IsTrue(studyTree.GetSop("image7").SopInstanceUID == image7.SopInstanceUID);
 			Assert.IsTrue(studyTree.GetSop("image8").SopInstanceUID == image8.SopInstanceUID);
 			Assert.IsTrue(studyTree.GetSop("image9").SopInstanceUID == image9.SopInstanceUID);
+
+			viewer.Dispose();
 		}
 
 		[Test]
@@ -125,13 +128,15 @@ namespace ClearCanvas.ImageViewer.Tests
 			IImageViewer viewer = new ImageViewerComponent();
 			StudyTree studyTree = viewer.StudyTree;
 
-			TestImageSop image1 = new TestImageSop("patient1", "study1", "series1", "image1");
-			TestImageSop image2 = new TestImageSop("patient1", "study1", "series1", "image1");
+			MockImageSop image1 = new MockImageSop("patient1", "study1", "series1", "image1");
+			MockImageSop image2 = new MockImageSop("patient1", "study1", "series1", "image1");
 
 			studyTree.AddImage(image1);
 			studyTree.AddImage(image2);
 
 			Assert.IsTrue(studyTree.Patients["patient1"].Studies["study1"].Series["series1"].Sops.Count == 1);
+
+			viewer.Dispose();
 		}
 
 		[Test]
@@ -144,8 +149,8 @@ namespace ClearCanvas.ImageViewer.Tests
 			StudyTree studyTree2 = viewer2.StudyTree;
 
 			// Create 2 TestImageSops that have the same SOP UID
-			TestImageSop image1 = new TestImageSop("patient1", "study1", "series1", "image1");
-			TestImageSop image2 = new TestImageSop("patient1", "study1", "series1", "image1");
+			MockImageSop image1 = new MockImageSop("patient1", "study1", "series1", "image1");
+			MockImageSop image2 = new MockImageSop("patient1", "study1", "series1", "image1");
 
 			studyTree1.AddImage(image1);
 			ReferenceCountedObjectWrapper sop = studyTree1.SopCache[image1.SopInstanceUID];

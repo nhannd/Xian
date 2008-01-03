@@ -30,7 +30,6 @@
 #endregion
 
 #if	UNIT_TESTS
-
 #pragma warning disable 1591,0419,1574,1587
 
 using System;
@@ -135,42 +134,6 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 		}
 
 		[Test]
-		[ExpectedException(typeof(IndexOutOfRangeException))]
-		public void IndexOutOfRangeTooLow()
-		{
-			int bitsStored = 12;
-			bool isSigned = false;
-			double rescaleSlope = 0.5;
-			double rescaleIntercept = 100;
-
-			ModalityLutLinear lut = new ModalityLutLinear(
-				bitsStored, 
-				isSigned, 
-				rescaleSlope, 
-				rescaleIntercept);
-
-			int val = lut[-1];
-		}
-
-		[Test]
-		[ExpectedException(typeof(IndexOutOfRangeException))]
-		public void IndexOutOfRangeTooHigh()
-		{
-			int bitsStored = 12;
-			bool isSigned = false;
-			double rescaleSlope = 0.5;
-			double rescaleIntercept = 100;
-
-			ModalityLutLinear lut = new ModalityLutLinear(
-				bitsStored, 
-				isSigned, 
-				rescaleSlope, 
-				rescaleIntercept);
-
-			int val = lut[4096];
-		}
-
-		[Test]
 		[ExpectedException(typeof(DicomValidationException))]
 		public void BitsStoredInvalid()
 		{
@@ -185,7 +148,6 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 				rescaleSlope, 
 				rescaleIntercept);
 		}
-
 	}
 }
 

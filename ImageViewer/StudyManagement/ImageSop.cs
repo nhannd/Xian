@@ -43,7 +43,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	/// </summary>
 	public abstract class ImageSop : Sop
 	{
-		private static readonly ImageCodecMap _imageCodecMap = new ImageCodecMap();
+		private static readonly object _syncLock = new object();
+		private static volatile ImageCodecMap _imageCodecMap;
 
 		#region General Image Module
 
@@ -56,7 +57,19 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		private static ImageCodecMap ImageCodecMap
 		{
-			get { return _imageCodecMap; }
+			get
+			{
+				if (_imageCodecMap == null)
+				{
+					lock(_syncLock)
+					{
+						if (_imageCodecMap == null)
+							_imageCodecMap = new ImageCodecMap();
+					}
+				}
+
+				return _imageCodecMap;
+			}
 		}
 
 		/// <summary>

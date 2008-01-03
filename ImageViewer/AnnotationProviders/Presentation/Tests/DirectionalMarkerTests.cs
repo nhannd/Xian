@@ -40,6 +40,7 @@ using ClearCanvas.ImageViewer.Annotations;
 using System.Drawing;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.Graphics;
+using ClearCanvas.ImageViewer.InteractiveGraphics;
 
 namespace ClearCanvas.ImageViewer.AnnotationProviders.Presentation.Tests
 {
@@ -97,8 +98,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Presentation.Tests
 
 		private void NewTransform()
 		{
-			_transform = new ImageSpatialTransform(null, 10,10,0,0,0,0);
-//			_transform.SourceRectangle = new Rectangle(0, 0, 10, 10);
+			_transform = new ImageSpatialTransform(new CalloutGraphic(), 10,10,0,0,0,0);
 			_transform.ClientRectangle = new Rectangle(0, 0, 15, 25);
 		}
 

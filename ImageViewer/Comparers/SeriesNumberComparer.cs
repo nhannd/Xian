@@ -43,7 +43,14 @@ namespace ClearCanvas.ImageViewer.Comparers
 		/// </summary>
 		public SeriesNumberComparer()
 		{
+		}
 
+		/// <summary>
+		/// Initializes a new instance of <see cref="SeriesNumberComparer"/>.
+		/// </summary>
+		public SeriesNumberComparer(bool reverse)
+			: base(reverse)
+		{
 		}
 
 		#region IComparer<IDisplaySet> Members
@@ -59,10 +66,10 @@ namespace ClearCanvas.ImageViewer.Comparers
 			int seriesNumber1 = x.SeriesNumber;
 			int seriesNumber2 = y.SeriesNumber;
 
-			if (seriesNumber1 > seriesNumber2)
-				return 1;
-			else if (seriesNumber1 < seriesNumber2)
-				return -1;
+			if (seriesNumber1 < seriesNumber2)
+				return this.ReturnValue;
+			else if (seriesNumber1 > seriesNumber2)
+				return -this.ReturnValue;
 			else
 				return 0;
 		}

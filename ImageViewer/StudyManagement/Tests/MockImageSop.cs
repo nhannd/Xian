@@ -40,13 +40,20 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 {
 	internal interface IMockImageSopSetters
 	{
+		string PatientId { set; }
 		string StudyInstanceUid { set; }
 		string SeriesInstanceUid { set; }
+		string SopInstanceUid { set; }
 		
+		string StudyDate { set; }
+
 		int InstanceNumber { set; }
+		int SeriesNumber { set; }
 
 		int PixelRepresentation { set; }
 		int BitsStored { set; }
+		int BitsAllocated { set; }
+		int HighBit { set; }
 		Window[] WindowCenterAndWidth { set; }
 	}
 
@@ -54,7 +61,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 	// in order to perform unit tests.
 	internal class MockImageSop : ImageSop, IMockImageSopSetters
 	{
+		private int _bitsAllocated = 16;
 		private int _bitsStored = 16;
+		private int _highBit = 15;
 		private int _pixelRepresentation = 0;
 		private Window[] _windowCentersAndWidths;
 
@@ -63,24 +72,52 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 		private int _rows = 256;
 		private int _columns = 256;
 		private PixelSpacing _pixelSpacing = new PixelSpacing(1.0, 1.0);
+		private PixelAspectRatio _pixelAspectRatio = new PixelAspectRatio(1, 1);
 		private PhotometricInterpretation _photometricInterpretation = PhotometricInterpretation.Monochrome1;
 
+		private string _patientID;
 		private string _studyInstanceUID;
 		private string _seriesInstanceUID;
+		private string _sopInstanceUID;
+
+		private int _seriesNumber;
 		private int _instanceNumber;
+		private string _studyDate;
 
 		public MockImageSop()
 		{
 		}
 
-        public override DicomMessageBase NativeDicomObject
+		public MockImageSop(string patientId, string studyInstanceUid, string seriesInstanceUid, string sopInstanceUid)
+		{
+			_patientID = patientId;
+			_studyInstanceUID = studyInstanceUid;
+			_seriesInstanceUID = seriesInstanceUid;
+			_sopInstanceUID = sopInstanceUid;
+		}
+
+		protected override void ValidateInternal()
+		{
+		}
+
+		public override DicomMessageBase NativeDicomObject
         {
             get { throw new Exception("The method or operation is not implemented."); }
         }
 
+		public override int BitsAllocated
+		{
+			get { return _bitsAllocated; }
+		}
+
 		public override int BitsStored
 		{
 			get { return _bitsStored; }
+		}
+
+		public override int HighBit
+		{
+			get { return _highBit; }	
 		}
 
 		public override int PixelRepresentation
@@ -123,6 +160,16 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 			get { return _pixelSpacing; }
 		}
 
+		public override PixelAspectRatio PixelAspectRatio
+		{
+			get { return _pixelAspectRatio; }
+		}
+
+		public override string PatientId
+		{
+			get { return _patientID; }
+		}
+
 		public override string StudyInstanceUID
 		{
 			get { return _studyInstanceUID; }
@@ -133,12 +180,32 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 			get { return _seriesInstanceUID; }
 		}
 
+		public override string SopInstanceUID
+		{
+			get { return _sopInstanceUID; }
+		}
+
 		public override int InstanceNumber
 		{
 			get { return _instanceNumber; }
 		}
 
+		public override int SeriesNumber
+		{
+			get { return _seriesNumber; }
+		}
+
+		public override string StudyDate
+		{
+			get { return _studyDate; }
+		}
+
 		#region IMockImageSopSetters Members
+
+		string IMockImageSopSetters.PatientId
+		{
+			set { _patientID = value; }
+		}
 
 		string IMockImageSopSetters.StudyInstanceUid
 		{
@@ -150,9 +217,19 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 			set { _seriesInstanceUID = value; }
 		}
 
+		string IMockImageSopSetters.SopInstanceUid
+		{
+			set { _sopInstanceUID = value; }
+		}
+
 		int IMockImageSopSetters.InstanceNumber
 		{
 			set { _instanceNumber = value; }
+		}
+
+		int IMockImageSopSetters.SeriesNumber
+		{
+			set { _seriesNumber = value; }	
 		}
 
 		int IMockImageSopSetters.PixelRepresentation
@@ -165,9 +242,24 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 			set { _bitsStored = value; }
 		}
 
+		int IMockImageSopSetters.HighBit
+		{
+			set { _highBit = value; }	
+		}
+
+		int IMockImageSopSetters.BitsAllocated
+		{
+			set { _bitsAllocated = value; }	
+		}
+
 		Window[] IMockImageSopSetters.WindowCenterAndWidth
 		{
 			set { _windowCentersAndWidths = value; }
+		}
+
+		string IMockImageSopSetters.StudyDate
+		{
+			set { _studyDate = value; }
 		}
 
 		#endregion
@@ -175,14 +267,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 		#region Not Implemented
 
 		public override PersonName PatientsName
-		{
-			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-		}
-
-		public override string PatientId
 		{
 			get
 			{
@@ -199,14 +283,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 		}
 
 		public override string PatientsSex
-		{
-			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-		}
-
-		public override string StudyDate
 		{
 			get
 			{
@@ -279,14 +355,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 		}
 
 		public override string Modality
-		{
-			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-		}
-
-		public override int SeriesNumber
 		{
 			get
 			{
@@ -518,23 +586,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 			}
 		}
 
-		public override PixelAspectRatio PixelAspectRatio
-		{
-			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-		}
-
 		public override int SamplesPerPixel
-		{
-			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-		}
-
-		public override int BitsAllocated
 		{
 			get
 			{
@@ -616,23 +668,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 			throw new Exception("The method or operation is not implemented.");
 		}
 
-		public override string SopInstanceUID
-		{
-			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-		}
-
 		public override string TransferSyntaxUID
-		{
-			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-		}
-
-		public override int HighBit
 		{
 			get
 			{

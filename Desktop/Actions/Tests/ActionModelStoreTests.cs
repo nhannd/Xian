@@ -38,6 +38,8 @@ using System.Text;
 using NUnit.Framework;
 using System.IO;
 using System.Xml;
+using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop.Actions.Tests
 {
@@ -116,6 +118,7 @@ namespace ClearCanvas.Desktop.Actions.Tests
 		[TestFixtureSetUp]
 		public void Initialize()
 		{
+			Platform.SetExtensionFactory(new NullExtensionFactory());
 		}
 
 		[TestFixtureTearDown]
@@ -181,7 +184,6 @@ namespace ClearCanvas.Desktop.Actions.Tests
 		}
 
 		[Test]
-		[Ignore("This test won't work unless the settings class is forced to use the LocalSettingsProvider (e.g. by commenting out the SettingsProvider attribute)")]
 		public void TestActionModelStore()
 		{
 			_actionSetup = new string[,]

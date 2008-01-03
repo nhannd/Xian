@@ -37,8 +37,7 @@ using NUnit.Framework;
 //using MbUnit.Core.Framework;
 //using MbUnit.Framework;
 
-
-namespace ClearCanvas.ImageViewer.Imaging.Tests
+namespace ClearCanvas.ImageViewer.Graphics.Tests
 {
 	[TestFixture]
 	public class SpatialTransformTest

@@ -33,12 +33,21 @@
 
 #pragma warning disable 1591,0419,1574,1587
 
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics;
+using ClearCanvas.ImageViewer.Comparers;
+using ClearCanvas.ImageViewer.StudyManagement;
+using ClearCanvas.ImageViewer.StudyManagement.Tests;
+using ClearCanvas.ImageViewer.Tests;
 using NUnit.Framework;
+using ClearCanvas.Common.Utilities;
 
-namespace ClearCanvas.ImageViewer.Imaging.Tests
+namespace ClearCanvas.ImageViewer.Comparers.Tests
 {
 	[TestFixture]
-	public class DicomPresentationImageSortTests
+	public class SortTests
 	{
 		[TestFixtureSetUp]
 		public void Init()
@@ -50,7 +59,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 		{ 
 		}
 
-/*		[Test]
+		[Test]
 		public void TestSortingDicomImagesByInstanceNumber()
 		{
 			TestSortingDicomImagesByInstanceNumber(false);
@@ -62,13 +71,122 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			TestSortingDicomImagesByInstanceNumber(true);
 		}
 
-		public void TestSortingDicomImagesByInstanceNumber(bool reverse)
+		[Test]
+		public void TestSortingDisplaySetsBySeriesNumber()
+		{
+			TestSortingDisplaySetsBySeriesNumber(false);
+		}
+
+		[Test]
+		public void TestSortingDisplaySetsBySeriesNumberReverse()
+		{
+			TestSortingDisplaySetsBySeriesNumber(true);
+		}
+
+		[Test]
+		public void TestSortingImageSetsByStudyDate()
+		{
+			TestSortingImageSetsByStudyDate(false);
+		}
+
+		[Test]
+		public void TestSortingImageSetsByStudyDateReverse()
+		{
+			TestSortingImageSetsByStudyDate(true);
+		}
+
+		void TestSortingImageSetsByStudyDate(bool reverse)
+		{
+			ImageSetCollection orderedCollection = new ImageSetCollection();
+			ImageSetCollection nonOrderedCollection = new ImageSetCollection();
+
+			for (int i = 0; i <= 20; ++i)
+			{
+				string id = i.ToString();
+				ImageSet imageSet = new ImageSet();
+				imageSet.Name = id;
+
+				DisplaySet displaySet = new DisplaySet(id, id);
+				IPresentationImage image = new DicomGrayscalePresentationImage(NewMockImageSop(id, id, i));
+				IImageSopProvider sopProvider = (IImageSopProvider)image;
+				((IMockImageSopSetters)sopProvider.ImageSop).StudyDate = i == 0 ? "" : String.Format("200801{0}", i.ToString("00"));
+
+				imageSet.DisplaySets.Add(displaySet);
+				displaySet.PresentationImages.Add(image);
+				orderedCollection.Add(imageSet);
+			}
+
+			Randomize(orderedCollection, nonOrderedCollection);
+
+			Debug.WriteLine("Before Sort\n------------------------\n");
+			CollectionUtils.ForEach(nonOrderedCollection, delegate(IImageSet imageSet)
+			                                              	{
+																Debug.WriteLine(String.Format("name: {0}, date: {1}", imageSet.Name, 
+																	((IImageSopProvider)(imageSet.DisplaySets[0].PresentationImages[0])).ImageSop.StudyDate));
+			                                              	});
+
+			nonOrderedCollection.Sort(new StudyDateComparer(reverse));
+
+			Debug.WriteLine("\nAfter Sort\n------------------------\n");
+			CollectionUtils.ForEach(nonOrderedCollection, delegate(IImageSet imageSet)
+															{
+																Debug.WriteLine(String.Format("name: {0}, date: {1}", imageSet.Name,
+																	((IImageSopProvider)(imageSet.DisplaySets[0].PresentationImages[0])).ImageSop.StudyDate));
+															});
+
+			if (reverse)nonOrderedCollection.RemoveAt(20);
+			else nonOrderedCollection.RemoveAt(0);
+
+			int j = reverse ? 20 : 1;
+			foreach (IImageSet set in nonOrderedCollection)
+			{
+				Assert.AreEqual(j.ToString(), set.Name);
+				j += reverse ? -1 : 1;
+			}
+		}
+
+		void TestSortingDisplaySetsBySeriesNumber(bool reverse)
+		{
+			DisplaySetCollection orderedCollection = new DisplaySetCollection();
+			DisplaySetCollection nonOrderedCollection = new DisplaySetCollection();
+
+			for (int i = 1; i <= 20; ++i)
+			{
+				string id = i.ToString();
+				DisplaySet displaySet = new DisplaySet(id, id);
+				IPresentationImage image = new DicomGrayscalePresentationImage(NewMockImageSop(id, id, i));
+				IImageSopProvider sopProvider = (IImageSopProvider)image;
+				((IMockImageSopSetters)sopProvider.ImageSop).SeriesNumber = i;
+
+				displaySet.PresentationImages.Add(image);
+				orderedCollection.Add(displaySet);
+			}
+
+			Randomize(orderedCollection, nonOrderedCollection);
+
+			Debug.WriteLine("Before Sort\n------------------------\n");
+			CollectionUtils.ForEach(nonOrderedCollection, delegate(IDisplaySet displaySet) { Debug.WriteLine(String.Format("name: {0}", displaySet.Name)); });
+
+			nonOrderedCollection.Sort(new SeriesNumberComparer(reverse));
+
+			Debug.WriteLine("\nAfter Sort\n------------------------\n");
+			CollectionUtils.ForEach(nonOrderedCollection, delegate(IDisplaySet displaySet) { Debug.WriteLine(String.Format("name: {0}", displaySet.Name)); });
+
+			int j = reverse ? 20 : 1;
+			foreach (IDisplaySet set in nonOrderedCollection)
+			{
+				Assert.AreEqual(j.ToString(), set.Name);
+				j += reverse ? -1 : 1;
+			}
+		}
+
+		void TestSortingDicomImagesByInstanceNumber(bool reverse)
 		{ 
 			PresentationImageCollection orderedCollection = new PresentationImageCollection();
 			PresentationImageCollection nonOrderedCollection = new PresentationImageCollection();
 
 			MockImageSop junkImageSop = NewMockImageSop("123", "1", 0);
-			orderedCollection.Add(new BasicPresentationImage(junkImageSop));
+			orderedCollection.Add(new DicomGrayscalePresentationImage(junkImageSop));
 
 			AppendCollection(NewDicomSeries("123", "1", 1, 25), orderedCollection);
 			
@@ -122,13 +240,13 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			Assert.IsTrue(VerifyOrdered(orderedCollection, nonOrderedCollection));
 		}
 
-		void Trace(PresentationImageCollection collection)
-		{ 
-			foreach (PresentationImage image in collection)
+		void Trace(IEnumerable<IPresentationImage> collection)
+		{
+			foreach (IPresentationImage image in collection)
 			{
-				if (image is BasicPresentationImage)
+				if (image is DicomGrayscalePresentationImage)
 				{
-					BasicPresentationImage dicomImage = (BasicPresentationImage)image;
+					DicomGrayscalePresentationImage dicomImage = (DicomGrayscalePresentationImage)image;
 					string line = string.Format("StudyUID: {0}, Series: {1}, Instance: {2}", dicomImage.ImageSop.StudyInstanceUID,
 																			dicomImage.ImageSop.SeriesInstanceUID,
 																			dicomImage.ImageSop.InstanceNumber);
@@ -141,23 +259,23 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			}
 		}
 
-		void Randomize(PresentationImageCollection orderedCollection, PresentationImageCollection nonOrderedCollection)
+		void Randomize<T>(ICollection<T> orderedCollection, ICollection<T> nonOrderedCollection)
 		{ 
-			PresentationImageCollection tempCollection = new PresentationImageCollection();
-			foreach (PresentationImage image in orderedCollection)
-				tempCollection.Add(image);
+			ArrayList tempCollection = new ArrayList();
+			foreach (T obj in orderedCollection)
+				tempCollection.Add(obj);
 
 			Random random = new Random();
 			while (tempCollection.Count > 0)
 			{
 				int index = random.Next(tempCollection.Count);
-				IPresentationImage randomImage = tempCollection[index];
-				nonOrderedCollection.Add(randomImage);
-				tempCollection.Remove(randomImage);
+				T obj = (T)tempCollection[index];
+				nonOrderedCollection.Add(obj);
+				tempCollection.Remove(obj);
 			}
 		}
 
-		public bool VerifyOrdered(
+		bool VerifyOrdered(
 			PresentationImageCollection orderedCollection,
 			PresentationImageCollection nonOrderedCollection)
 		{
@@ -168,20 +286,20 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			{
 				IPresentationImage nonOrderedImage = nonOrderedCollection[index];
 
-				if (!(orderedImage is BasicPresentationImage) && !(nonOrderedImage is BasicPresentationImage))
+				if (!(orderedImage is DicomGrayscalePresentationImage) && !(nonOrderedImage is DicomGrayscalePresentationImage))
 				{
 					++index;
 					continue;
 				}
 
-				if (!(orderedImage is BasicPresentationImage) && (nonOrderedImage is BasicPresentationImage))
+				if (!(orderedImage is DicomGrayscalePresentationImage) && (nonOrderedImage is DicomGrayscalePresentationImage))
 					return false;
 
-				if ((orderedImage is BasicPresentationImage) && !(nonOrderedImage is BasicPresentationImage))
+				if ((orderedImage is DicomGrayscalePresentationImage) && !(nonOrderedImage is DicomGrayscalePresentationImage))
 					return false;
 
-				BasicPresentationImage dicomOrdered = orderedImage as BasicPresentationImage;
-				BasicPresentationImage dicomNonOrdered = nonOrderedImage as BasicPresentationImage;
+				DicomGrayscalePresentationImage dicomOrdered = orderedImage as DicomGrayscalePresentationImage;
+				DicomGrayscalePresentationImage dicomNonOrdered = nonOrderedImage as DicomGrayscalePresentationImage;
 
 				if (dicomOrdered.ImageSop.StudyInstanceUID != dicomNonOrdered.ImageSop.StudyInstanceUID ||
 					dicomOrdered.ImageSop.SeriesInstanceUID != dicomNonOrdered.ImageSop.SeriesInstanceUID ||
@@ -194,13 +312,13 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			return true;
 		}
 
-		public void AppendCollection(List<PresentationImage> listImages, PresentationImageCollection collection)
+		void AppendCollection(List<PresentationImage> listImages, PresentationImageCollection collection)
 		{
 			foreach (PresentationImage image in listImages)
 				collection.Add(image);
 		}
 
-		public List<PresentationImage> NewDicomSeries(string studyUID, string seriesUID, int startInstanceNumber, uint numberInstances)
+		List<PresentationImage> NewDicomSeries(string studyUID, string seriesUID, int startInstanceNumber, uint numberInstances)
 		{
 			List<PresentationImage> listImages = new List<PresentationImage>();
 			int instanceNumber = (int)startInstanceNumber;
@@ -213,12 +331,12 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			return listImages;
 		}
 
-		public BasicPresentationImage NewDicomImage(string studyUID, string seriesUID, int instanceNumber)
+		DicomGrayscalePresentationImage NewDicomImage(string studyUID, string seriesUID, int instanceNumber)
 		{
-			return new BasicPresentationImage(NewMockImageSop(studyUID, seriesUID, instanceNumber));
+			return new DicomGrayscalePresentationImage(NewMockImageSop(studyUID, seriesUID, instanceNumber));
 		}
 
-		internal MockImageSop NewMockImageSop(string studyUID, string seriesUID, int instanceNumber)
+		MockImageSop NewMockImageSop(string studyUID, string seriesUID, int instanceNumber)
 		{
 			MockImageSop newImageSop = new MockImageSop();
 			IMockImageSopSetters setters = (IMockImageSopSetters)newImageSop;
@@ -229,7 +347,6 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 
 			return newImageSop;
 		}
- */
 	}
 }
 

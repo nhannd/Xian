@@ -30,9 +30,9 @@
 #endregion
 
 #if	UNIT_TESTS
-
 #pragma warning disable 1591,0419,1574,1587
 
+using System;
 using NUnit.Framework;
 
 namespace ClearCanvas.ImageViewer.Imaging.Tests
@@ -53,7 +53,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 		public void Cleanup()
 		{
 		}
-/*
+
 		[Test]
 		public void ComposeUnsigned8()
 		{
@@ -64,7 +64,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			double rescaleSlope = 0.5;
 			double rescaleIntercept = 10;
 
-			ModalityLUTLinear modalityLUT = new ModalityLUTLinear(
+			ModalityLutLinear modalityLUT = new ModalityLutLinear(
 				bitsStored, 
 				isSigned, 
 				rescaleSlope, 
@@ -77,27 +77,30 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			Assert.AreEqual(10, modalityLUT[0]);
 			Assert.AreEqual(137, modalityLUT[255]);
 
-			StatefulVoiLutLinear voiLUT = new StatefulVoiLutLinear(
-				modalityLUT.MinOutputValue,
-				modalityLUT.MaxOutputValue);
-
+			BasicVoiLutLinear voiLUT = new BasicVoiLutLinear();
 			voiLUT.WindowWidth = windowWidth;
 			voiLUT.WindowCenter = windowLevel;
 
+			LutComposer lutComposer = new LutComposer();
+			lutComposer.LutCollection.Add(modalityLUT);
+			lutComposer.LutCollection.Add(voiLUT);
+
 			Assert.AreEqual(10, voiLUT.MinInputValue);
 			Assert.AreEqual(137, voiLUT.MaxInputValue);
-			Assert.AreEqual(0, voiLUT.MinOutputValue);
-			Assert.AreEqual(255, voiLUT.MaxOutputValue);
-			Assert.AreEqual(0, voiLUT[10]);
-			Assert.AreEqual(255, voiLUT[137]);
-			Assert.AreEqual(128, voiLUT[74]);
+			Assert.AreEqual(10, voiLUT.MinOutputValue);
+			Assert.AreEqual(137, voiLUT.MaxOutputValue);
+			Assert.AreEqual(10, voiLUT[10]);
+			Assert.AreEqual(137, voiLUT[137]);
+			Assert.AreEqual(73, voiLUT[73]);
 
-			LUTComposer lutComposer = new LUTComposer();
-			lutComposer.LUTCollection.Add(modalityLUT);
-			lutComposer.LUTCollection.Add(voiLUT);
+			Assert.AreEqual(0, lutComposer.MinInputValue);
+			Assert.AreEqual(255, lutComposer.MaxInputValue);
+			Assert.AreEqual(10, lutComposer.MinOutputValue);
+			Assert.AreEqual(137, lutComposer.MaxOutputValue);
 
-			Assert.AreEqual(0, lutComposer.OutputLUT[0]);
-			Assert.AreEqual(255, lutComposer.OutputLUT[255]);
+			Assert.AreEqual(10, lutComposer[0]);
+			Assert.AreEqual(137, lutComposer[255]);
+			Assert.AreEqual(73, lutComposer[127]);
 		}
 
 		[Test]
@@ -110,7 +113,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			double rescaleSlope = 0.683760684;
 			double rescaleIntercept = 200;
 
-			ModalityLUTLinear modalityLUT = new ModalityLUTLinear(
+			ModalityLutLinear modalityLUT = new ModalityLutLinear(
 				bitsStored, 
 				isSigned, 
 				rescaleSlope, 
@@ -123,26 +126,25 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			Assert.AreEqual(200, modalityLUT[0]);
 			Assert.AreEqual(3000, modalityLUT[4095]);
 
-			StatefulVoiLutLinear voiLUT = new StatefulVoiLutLinear(
-				modalityLUT.MinOutputValue,
-				modalityLUT.MaxOutputValue);
-
+			BasicVoiLutLinear voiLUT = new BasicVoiLutLinear();
 			voiLUT.WindowWidth = windowWidth;
 			voiLUT.WindowCenter = windowLevel;
 
+			LutComposer lutComposer = new LutComposer();
+			lutComposer.LutCollection.Add(modalityLUT);
+			lutComposer.LutCollection.Add(voiLUT);
+
 			Assert.AreEqual(200, voiLUT.MinInputValue);
 			Assert.AreEqual(3000, voiLUT.MaxInputValue);
-			Assert.AreEqual(0, voiLUT.MinOutputValue);
-			Assert.AreEqual(255, voiLUT.MaxOutputValue);
-			Assert.AreEqual(0, voiLUT[200]);
-			Assert.AreEqual(255, voiLUT[3000]);
+			Assert.AreEqual(200, voiLUT.MinOutputValue);
+			Assert.AreEqual(3000, voiLUT.MaxOutputValue);
+			Assert.AreEqual(200, voiLUT[200]);
+			Assert.AreEqual(3000, voiLUT[3000]);
+			Assert.AreEqual(1600, voiLUT[1600]);
 
-			LUTComposer lutComposer = new LUTComposer();
-			lutComposer.LUTCollection.Add(modalityLUT);
-			lutComposer.LUTCollection.Add(voiLUT);
-
-			Assert.AreEqual(0, lutComposer.OutputLUT[0]);
-			Assert.AreEqual(255, lutComposer.OutputLUT[4095]);
+			Assert.AreEqual(200, lutComposer.Data[0]);
+			Assert.AreEqual(3000, lutComposer.Data[4095]);
+			Assert.AreEqual(1600, lutComposer.Data[2048]);
 		}
 
 		[Test]
@@ -155,7 +157,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			double rescaleSlope = 1;
 			double rescaleIntercept = -1024;
 
-			ModalityLUTLinear modalityLUT = new ModalityLUTLinear(
+			ModalityLutLinear modalityLUT = new ModalityLutLinear(
 				bitsStored, 
 				isSigned, 
 				rescaleSlope, 
@@ -168,34 +170,34 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			Assert.AreEqual(-1024, modalityLUT[0]);
 			Assert.AreEqual(64511, modalityLUT[65535]);
 
-			StatefulVoiLutLinear voiLUT = new StatefulVoiLutLinear(
+			BasicVoiLutLinear voiLUT = new BasicVoiLutLinear(
 				modalityLUT.MinOutputValue,
 				modalityLUT.MaxOutputValue);
 
 			voiLUT.WindowWidth = windowWidth;
 			voiLUT.WindowCenter = windowLevel;
 
+			LutComposer lutComposer = new LutComposer();
+			lutComposer.LutCollection.Add(modalityLUT);
+			lutComposer.LutCollection.Add(voiLUT);
+
 			Assert.AreEqual(-1024, voiLUT.MinInputValue);
 			Assert.AreEqual(64511, voiLUT.MaxInputValue);
-			Assert.AreEqual(0, voiLUT.MinOutputValue);
-			Assert.AreEqual(255, voiLUT.MaxOutputValue);
-			Assert.AreEqual(0, voiLUT[-1024]);
-			Assert.AreEqual(255, voiLUT[64511]);
+			Assert.AreEqual(-1024, voiLUT.MinOutputValue);
+			Assert.AreEqual(64511, voiLUT.MaxOutputValue);
 
 			// Left Window
-			Assert.AreEqual(0, voiLUT[-135]);
+			Assert.AreEqual(-1024, voiLUT[-135]);
 			// Right Window
-			Assert.AreEqual(255, voiLUT[215]);
+			Assert.AreEqual(64511, voiLUT[215]);
 			// Window center
-			Assert.AreEqual(127, voiLUT[40]);
+			// 31837 is correct according to Dicom: See PS3.5 C.11.2.1.2 for the calculation.
+			// Although you might think it should be 31744 (65535/2 - 1024), it is not.
+			Assert.AreEqual(31837, voiLUT[40]);
 			
-			LUTComposer lutComposer = new LUTComposer();
-			lutComposer.LUTCollection.Add(modalityLUT);
-			lutComposer.LUTCollection.Add(voiLUT);
-
-			Assert.AreEqual(0, lutComposer.OutputLUT[890]);
-			Assert.AreEqual(127, lutComposer.OutputLUT[1064]);
-			Assert.AreEqual(255, lutComposer.OutputLUT[1239]);
+			Assert.AreEqual(-1024, lutComposer.Data[0]);
+			Assert.AreEqual(64511, lutComposer.Data[65535]);
+			Assert.AreEqual(31837, lutComposer.Data[1064]);
 		}
 
 		[Test]
@@ -209,7 +211,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			double rescaleSlope = 0.5;
 			double rescaleIntercept = 10;
 
-			ModalityLUTLinear modalityLUT = new ModalityLUTLinear(
+			ModalityLutLinear modalityLUT = new ModalityLutLinear(
 				bitsStored, 
 				isSigned, 
 				rescaleSlope, 
@@ -222,29 +224,24 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			Assert.AreEqual(-54, modalityLUT[-128]);
 			Assert.AreEqual(73, modalityLUT[127]);
 
-			StatefulVoiLutLinear voiLUT = new StatefulVoiLutLinear(
-				modalityLUT.MinOutputValue,
-				modalityLUT.MaxOutputValue);
-
+			BasicVoiLutLinear voiLUT = new BasicVoiLutLinear();
 			voiLUT.WindowWidth = windowWidth;
 			voiLUT.WindowCenter = windowLevel;
 
+			LutComposer lutComposer = new LutComposer();
+			lutComposer.LutCollection.Add(modalityLUT);
+			lutComposer.LutCollection.Add(voiLUT);
+
 			Assert.AreEqual(-54, voiLUT.MinInputValue);
 			Assert.AreEqual(73, voiLUT.MaxInputValue);
-			Assert.AreEqual(0, voiLUT.MinOutputValue);
-			Assert.AreEqual(255, voiLUT.MaxOutputValue);
-			Assert.AreEqual(0, voiLUT[-1]);
-			Assert.AreEqual(255, voiLUT[0]);
+			Assert.AreEqual(-54, voiLUT.MinOutputValue);
+			Assert.AreEqual(73, voiLUT.MaxOutputValue);
+			Assert.AreEqual(-54, voiLUT[-1]);
+			Assert.AreEqual(73, voiLUT[0]);
 
-			LUTComposer lutComposer = new LUTComposer();
-			lutComposer.LUTCollection.Add(modalityLUT);
-			lutComposer.LUTCollection.Add(voiLUT);
-
-			Assert.AreEqual(255, lutComposer.OutputLUT[0]);
-			Assert.AreEqual(255, lutComposer.OutputLUT[127]);
-			Assert.AreEqual(0, lutComposer.OutputLUT[128]); // 128 = -128
-			Assert.AreEqual(0, lutComposer.OutputLUT[234]); // 234 = -21
-			Assert.AreEqual(255, lutComposer.OutputLUT[235]); // 235 = -20
+			Assert.AreEqual(-54, lutComposer.Data[0]);
+			Assert.AreEqual(-54, lutComposer.Data[106]);
+			Assert.AreEqual(73, lutComposer.Data[107]);
 		}
 
 		[Test]
@@ -257,7 +254,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			double rescaleSlope = 1.0;
 			double rescaleIntercept = 0;
 
-			ModalityLUTLinear modalityLUT = new ModalityLUTLinear(
+			ModalityLutLinear modalityLUT = new ModalityLutLinear(
 				bitsStored, 
 				isSigned, 
 				rescaleSlope, 
@@ -270,29 +267,27 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			Assert.AreEqual(-2048, modalityLUT[-2048]);
 			Assert.AreEqual(2047, modalityLUT[2047]);
 
-			StatefulVoiLutLinear voiLUT = new StatefulVoiLutLinear(
-				modalityLUT.MinOutputValue,
-				modalityLUT.MaxOutputValue);
-
+			BasicVoiLutLinear voiLUT = new BasicVoiLutLinear();
 			voiLUT.WindowWidth = windowWidth;
 			voiLUT.WindowCenter = windowLevel;
 
+			LutComposer lutComposer = new LutComposer();
+			lutComposer.LutCollection.Add(modalityLUT);
+			lutComposer.LutCollection.Add(voiLUT);
+			lutComposer.LutCollection.Add(new GrayscaleColorMap());
+
 			Assert.AreEqual(-2048, voiLUT.MinInputValue);
 			Assert.AreEqual(2047, voiLUT.MaxInputValue);
-			Assert.AreEqual(0, voiLUT.MinOutputValue);
-			Assert.AreEqual(255, voiLUT.MaxOutputValue);
-			Assert.AreEqual(31, voiLUT[-2047]);
-			Assert.AreEqual(63, voiLUT[0]);
-			Assert.AreEqual(95, voiLUT[2047]);
+			Assert.AreEqual(-2048, voiLUT.MinOutputValue);
+			Assert.AreEqual(2047, voiLUT.MaxOutputValue);
+			Assert.AreEqual(-1535, voiLUT[-2047]);
+			Assert.AreEqual(-1024, voiLUT[0]);
+			Assert.AreEqual(-512, voiLUT[2047]);
 
-			LUTComposer lutComposer = new LUTComposer();
-			lutComposer.LUTCollection.Add(modalityLUT);
-			lutComposer.LUTCollection.Add(voiLUT);
-
-			Assert.AreEqual(63, lutComposer.OutputLUT[0]);
-			Assert.AreEqual(95, lutComposer.OutputLUT[2047]);
-			Assert.AreEqual(31, lutComposer.OutputLUT[2048]);
-			Assert.AreEqual(63, lutComposer.OutputLUT[4095]);
+			//This test is a little different from the others, it tests the output using a grayscale color map.
+			Assert.AreEqual(31, 0x000000ff & lutComposer.Data[0]);
+			Assert.AreEqual(63, 0x000000ff & lutComposer.Data[2048]);
+			Assert.AreEqual(95, 0x000000ff & lutComposer.Data[4095]);
 		}
 
 		[Test]
@@ -305,7 +300,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			double rescaleSlope = 1;
 			double rescaleIntercept = -1024;
 
-			ModalityLUTLinear modalityLUT = new ModalityLUTLinear(
+			ModalityLutLinear modalityLUT = new ModalityLutLinear(
 				bitsStored, 
 				isSigned, 
 				rescaleSlope, 
@@ -318,34 +313,25 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			Assert.AreEqual(-33792, modalityLUT[-32768]);
 			Assert.AreEqual(31743, modalityLUT[32767]);
 
-			StatefulVoiLutLinear voiLUT = new StatefulVoiLutLinear(
-				modalityLUT.MinOutputValue,
-				modalityLUT.MaxOutputValue);
-
+			BasicVoiLutLinear voiLUT = new BasicVoiLutLinear();
 			voiLUT.WindowWidth = windowWidth;
 			voiLUT.WindowCenter = windowLevel;
 
+			LutComposer lutComposer = new LutComposer();
+			lutComposer.LutCollection.Add(modalityLUT);
+			lutComposer.LutCollection.Add(voiLUT);
+
 			Assert.AreEqual(-33792, voiLUT.MinInputValue);
 			Assert.AreEqual(31743, voiLUT.MaxInputValue);
-			Assert.AreEqual(0, voiLUT.MinOutputValue);
-			Assert.AreEqual(255, voiLUT.MaxOutputValue);
-			Assert.AreEqual(0, voiLUT[-33792]);
-			Assert.AreEqual(255, voiLUT[31743]);
+			Assert.AreEqual(-33792, voiLUT.MinOutputValue);
+			Assert.AreEqual(31743, voiLUT.MaxOutputValue);
 
 			// Left Window
-			Assert.AreEqual(0, voiLUT[-135]);
+			Assert.AreEqual(-33792, voiLUT[-135]);
 			// Right Window
-			Assert.AreEqual(255, voiLUT[215]);
+			Assert.AreEqual(31743, voiLUT[215]);
 			// Window center
-			Assert.AreEqual(127, voiLUT[40]);
-			
-			LUTComposer lutComposer = new LUTComposer();
-			lutComposer.LUTCollection.Add(modalityLUT);
-			lutComposer.LUTCollection.Add(voiLUT);
-
-			Assert.AreEqual(0, lutComposer.OutputLUT[890]);
-			Assert.AreEqual(127, lutComposer.OutputLUT[1064]);
-			Assert.AreEqual(255, lutComposer.OutputLUT[1239]);
+			Assert.AreEqual(-930, voiLUT[40]);
 		}
 
 		[Test]
@@ -354,131 +340,25 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			double windowWidth = 350;
 			double windowLevel = 40;
 
-			StatefulVoiLutLinear voiLUT = new StatefulVoiLutLinear(0, 4095);
+			BasicVoiLutLinear voiLUT = new BasicVoiLutLinear();
+			voiLUT.MinInputValue = 0;
+			voiLUT.MaxInputValue = 4095;
 
 			voiLUT.WindowWidth = windowWidth;
 			voiLUT.WindowCenter = windowLevel;
 
-			LUTComposer lutComposer = new LUTComposer();
-			lutComposer.LUTCollection.Add(voiLUT);
-			//lutComposer.Compose();
+			LutComposer lutComposer = new LutComposer();
+			lutComposer.LutCollection.Add(voiLUT);
+			int[] data = lutComposer.Data;
 		}
 
 		[Test]
-		[ExpectedException(typeof(IndexOutOfRangeException))]
-		public void IndexOutOfRangeTooHigh()
-		{
-			int bitsStored = 16;
-			bool isSigned = true;
-			double windowWidth = 350;
-			double windowLevel = 40;
-			double rescaleSlope = 1;
-			double rescaleIntercept = -1024;
-
-			ModalityLUTLinear modalityLUT = new ModalityLUTLinear(
-				bitsStored, 
-				isSigned, 
-				rescaleSlope, 
-				rescaleIntercept);
-
-			StatefulVoiLutLinear voiLUT = new StatefulVoiLutLinear(
-				modalityLUT.MinOutputValue,
-				modalityLUT.MaxOutputValue);
-
-			voiLUT.WindowWidth = windowWidth;
-			voiLUT.WindowCenter = windowLevel;
-
-			LUTComposer lutComposer = new LUTComposer();
-			lutComposer.LUTCollection.Add(modalityLUT);
-			lutComposer.LUTCollection.Add(voiLUT);
-			//lutComposer.Compose();
-		}
-
-		[Test]
-		[ExpectedException(typeof(IndexOutOfRangeException))]
-		public void IndexOutOfRangeTooLow()
-		{
-			int bitsStored = 16;
-			bool isSigned = true;
-			double windowWidth = 350;
-			double windowLevel = 40;
-			double rescaleSlope = 1;
-			double rescaleIntercept = -1024;
-
-			ModalityLUTLinear modalityLUT = new ModalityLUTLinear(
-				bitsStored, 
-				isSigned, 
-				rescaleSlope, 
-				rescaleIntercept);
-
-			StatefulVoiLutLinear voiLUT = new StatefulVoiLutLinear(
-				modalityLUT.MinOutputValue,
-				modalityLUT.MaxOutputValue);
-
-			voiLUT.WindowWidth = windowWidth;
-			voiLUT.WindowCenter = windowLevel;
-
-			LUTComposer lutComposer = new LUTComposer();
-			lutComposer.LUTCollection.Add(modalityLUT);
-			lutComposer.LUTCollection.Add(voiLUT);
-			//lutComposer.Compose();
-		}
-
-		[Test]
-		[ExpectedException(typeof(ApplicationException))]
+		[ExpectedException(typeof(InvalidOperationException))]
 		public void NoLUTsAdded()
 		{
-			LUTComposer lutComposer = new LUTComposer();
-			//lutComposer.Compose();
+			LutComposer lutComposer = new LutComposer();
+			int[] data = lutComposer.Data;
 		}
-
-		[Test]
-		[ExpectedException(typeof(ApplicationException))]
-		public void InputOutputRangeDoNotMatch()
-		{
-			int bitsStored = 16;
-			bool isSigned = true;
-			double windowWidth = 350;
-			double windowLevel = 40;
-			double rescaleSlope = 1;
-			double rescaleIntercept = -1024;
-
-			ModalityLUTLinear modalityLUT = new ModalityLUTLinear(
-				bitsStored, 
-				isSigned, 
-				rescaleSlope, 
-				rescaleIntercept);
-
-			StatefulVoiLutLinear voiLUT = new StatefulVoiLutLinear(0, 65535);
-
-			voiLUT.WindowWidth = windowWidth;
-			voiLUT.WindowCenter = windowLevel;
-
-			LUTComposer lutComposer = new LUTComposer();
-			lutComposer.LUTCollection.Add(modalityLUT);
-			lutComposer.LUTCollection.Add(voiLUT);
-			//lutComposer.Compose();
-		}
-
-		[Test]
-		[ExpectedException(typeof(ApplicationException))]
-		public void LastOutputRangeNot8Bit()
-		{
-			int bitsStored = 16;
-			bool isSigned = true;
-			double rescaleSlope = 1;
-			double rescaleIntercept = -1024;
-
-			ModalityLUTLinear modalityLUT = new ModalityLUTLinear(
-				bitsStored, 
-				isSigned, 
-				rescaleSlope, 
-				rescaleIntercept);
-
-			LUTComposer lutComposer = new LUTComposer();
-			lutComposer.LUTCollection.Add(modalityLUT);
-			//lutComposer.Compose();
-		}*/
 	}
 }
 

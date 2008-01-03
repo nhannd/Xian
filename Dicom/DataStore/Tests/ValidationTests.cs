@@ -31,7 +31,10 @@
 
 #if UNIT_TESTS
 
+using System.Reflection;
+using NHibernate.Cfg;
 using NUnit.Framework;
+using System.IO;
 
 namespace ClearCanvas.Dicom.DataStore.Tests
 {
@@ -47,7 +50,12 @@ namespace ClearCanvas.Dicom.DataStore.Tests
 		[TestFixtureSetUp]
 		public void Initialize()
 		{
-			_validator = new PersistenObjectValidator(DataAccessLayer.HibernateConfiguration);
+			Configuration configuration = new Configuration();
+			string assemblyName = MethodBase.GetCurrentMethod().DeclaringType.Assembly.GetName().Name;
+			configuration.Configure(@"..\" + assemblyName + ".cfg.xml");
+			configuration.AddAssembly(assemblyName);
+
+			_validator = new PersistenObjectValidator(configuration);
 		}
 
 		private Study NewStudy()

@@ -33,6 +33,7 @@
 
 using System.Collections.Generic;
 using System.IO;
+using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using NUnit.Framework;
 
@@ -47,8 +48,13 @@ namespace ClearCanvas.ImageViewer.Annotations.Dicom.Tests
 		{ 
 		}
 
+		[TestFixtureSetUp]
+		public void Setup()
+		{
+			Platform.SetExtensionFactory(new NullExtensionFactory());
+		}
+
 		[Test]
-		[Ignore("This test won't work unless the settings class is forced to use the LocalSettingsProvider (e.g. by commenting out the SettingsProvider attribute)")]
 		public void Test()
 		{
 			DicomFilteredAnnotationLayoutStore.Instance.Clear();
@@ -148,7 +154,6 @@ namespace ClearCanvas.ImageViewer.Annotations.Dicom.Tests
 			
 			return newLayout;
 		}
-
 	}
 }
 
