@@ -51,7 +51,7 @@ namespace ClearCanvas.Enterprise.Hibernate
     {
 
         private readonly ChangeTracker _changeTracker = new ChangeTracker();
-        private readonly Queue<DomainObject> _transientEntities = new Queue<DomainObject>();
+        private readonly Queue<DomainObject> _pendingValidations = new Queue<DomainObject>();
 
         /// <summary>
         /// Gets the set of <see cref="EntityChange"/> objects representing the changes made in this update context.
@@ -137,7 +137,7 @@ namespace ClearCanvas.Enterprise.Hibernate
             // that the entity is not actually being written to the DB yet and further changes
             // may be made to it by the application before it is written.  Therefore, we choose
             // not to validate the entity here, but instead put it in a queue to be validated at flush time
-            _transientEntities.Enqueue((DomainObject)entity);
+            _pendingValidations.Enqueue((DomainObject)entity);
 
             RecordChange(entity, EntityChangeType.Create);
             return false;
@@ -156,9 +156,9 @@ namespace ClearCanvas.Enterprise.Hibernate
             // this is unfortunate, because the exceptions that we generate are *much* more informative
             // and user-friendly, but there is no obvious solution to this as of NH1.0
             // TODO: NH1.2 added new methods to the Interceptor API - see if any of these will get around this problem
-            while (_transientEntities.Count > 0)
+            while (_pendingValidations.Count > 0)
             {
-                DomainObject obj = _transientEntities.Dequeue();
+                DomainObject obj = _pendingValidations.Dequeue();
                 Validate(obj);
             }
 
