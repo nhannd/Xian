@@ -1,6 +1,6 @@
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="ServerPartitionPanel.ascx.cs"
     Inherits="ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPartitions.ServerPartitionPanel" %>
-<%@ Register Src="../../../Common/GridPager.ascx" TagName="GridPager" TagPrefix="uc1" %>
+<%@ Register Src="~/Common/GridPager.ascx" TagName="GridPager" TagPrefix="uc1" %>
 <%@ Register Src="ServerPartitionGridPanel.ascx" TagName="ServerPartitionGridPanel"
     TagPrefix="uc2" %>
 <asp:UpdatePanel ID="UpdatePanel1" runat="server" UpdateMode="Conditional">

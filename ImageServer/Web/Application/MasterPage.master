@@ -5,6 +5,9 @@
 <head runat="server">
     <title>Untitled Page</title>
     <link href="./Styles/StyleSheet.css" rel="stylesheet" type="text/css" />
+    <link href="./Styles/Common.css" rel="stylesheet" type="text/css" />
+    <link href="./Styles/Menu.css" rel="stylesheet" type="text/css" />
+    <link href="./Styles/Page.css" rel="stylesheet" type="text/css" />
     <link href="./Styles/visoft__tab_xpie7.css" rel="stylesheet" type="text/css" />
 
     <script type="text/javascript" src="../../DHTMLSuite/js/ajax.js"></script>
@@ -13,14 +16,11 @@
 
     <script type="text/javascript" src="../../DHTMLSuite/Misc/RoundedCorners/js/rounded-corners.js"></script>
 
-    <style type="text/css">
-	    A:visited { text-decoration:none;color: black;} 
-	</style>
 </head>
 <body>
     <form id="form1" runat="server">
         <asp:ScriptManager ID="ScriptManager1" runat="server" />
-        <asp:Table runat="server" CssClass="MasterPageSize">
+        <asp:Table runat="server">
             <asp:TableHeaderRow>
                 <asp:TableHeaderCell HorizontalAlign="Left">
                     <asp:Image ID="Image1" runat="server" ImageUrl="~/images/logos/ImageServerLogo.png"
@@ -32,46 +32,40 @@
             </asp:TableHeaderRow>
             <asp:TableRow>
                 <asp:TableCell ColumnSpan="2">
-                    <asp:Panel runat="server" ID="TestPanel" CssClass="MasterTitleBar">
-                        <table width="100%">
-                            <tr>
-                                <td align="left">
+                <asp:table ID="menutitlebar" runat="server" width="100%" CssClass="MasterTitleBar">                        
+                            <asp:TableRow>    
+                                <asp:TableCell>
                                     <asp:SiteMapDataSource ID="SiteMapDataSource1" runat="server" ShowStartingNode="False" />
-                                    <asp:Menu ID="Menu1" runat="server" Orientation="Horizontal" DynamicVerticalOffset="8"
-                                        StaticEnableDefaultPopOutImage="false" StaticItemFormatString="&amp;nbsp &amp;nbsp {0} &amp;nbsp &amp;nbsp"
+                                    <asp:Menu ID="Menu1" runat="server" CssClass="MainMenuBar" 
+                                        Orientation="Horizontal" DynamicVerticalOffset="7"
+                                        StaticEnableDefaultPopOutImage="false" 
                                         DataSourceID="SiteMapDataSource1">
-                                        <StaticMenuStyle BackColor="#3D98D1" BorderStyle="None" />
-                                        <StaticMenuItemStyle Font-Names="Tahoma" ForeColor="white" Font-Bold="true" BorderWidth="0px"
-                                            Font-Size="12pt" />
-                                        <DynamicMenuStyle BackColor="#3D98D1" BorderWidth="3px" BorderColor="#3D98D1" />
-                                        <DynamicMenuItemStyle Font-Names="Tahoma" Font-Size="11pt" BorderWidth="0px" />
-                                        <StaticHoverStyle BackColor="#7CB1DD" BorderStyle="Solid" BorderColor="#D9D9FF" ForeColor="white" />
-                                        <DynamicHoverStyle BackColor="#7CB1DD" BorderStyle="Solid" BorderColor="#D9D9FF"
-                                            ForeColor="white" />
+                                        <StaticMenuStyle CssClass="MainMenu_TopLevel"/>
+                                        <StaticMenuItemStyle CssClass="MainMenu_TopLevel"/>
+                                        <StaticHoverStyle CssClass="MainMenu_Hover_TopLevel" />
+                                        <DynamicMenuStyle CssClass="MainMenu_SubMenu"/>
+                                        <DynamicMenuItemStyle CssClass="MainMenu_SubMenuItem"/>
+                                        <DynamicHoverStyle CssClass="MainMenu_Hover_SubMenuItem" />
                                         <DynamicItemTemplate>
-                                            &nbsp;&nbsp;&nbsp;
-                                            <asp:Label ID="Label2" runat="server" Font-Names="Tahoma" ForeColor="white" Text='<%# Eval( "Text" ) %>' />
-                                            &nbsp;&nbsp;&nbsp;
+                                            <asp:Label ID="Label2" runat="server" Text='<%# Eval( "Text" ) %>' />
                                         </DynamicItemTemplate>
                                     </asp:Menu>
-                                </td>
-                                <td>
-                                </td>
-                                <td style="text-align: right;">
+                                </asp:TableCell>
+                                <asp:TableCell HorizontalAlign="right" CssClass="PageTitle">
                                     <asp:ContentPlaceHolder ID="ContentPlaceHolderTitle" runat="server">
                                     </asp:ContentPlaceHolder>
-                                    &nbsp; &nbsp;
-                                </td>
-                            </tr>
-                        </table>
-                    </asp:Panel>
+                                </asp:TableCell>
+                            </asp:TableRow>
+                        </asp:table>
+                        
+                    
                 </asp:TableCell>
             </asp:TableRow>
             <asp:TableRow >
-                <asp:TableCell ColumnSpan="2" CssClass="MasterMainPanel">
+                <asp:TableCell ColumnSpan="2">
                     <asp:UpdatePanel ID="UpdatePanel2" runat="server" UpdateMode="Conditional">
                         <ContentTemplate>
-                            <asp:Panel ID="ContentPanel" runat="server"  >
+                            <asp:Panel ID="ContentPanel" CssClass="PageContentPanel" runat="server"  >
                                 <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server"/>
                             </asp:Panel>
                             <asp:Panel ID="Panel2" runat="server" Height="50px" Style="z-index: 100; left: 864px;

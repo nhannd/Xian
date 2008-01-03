@@ -22,12 +22,13 @@
                             <table cellpadding="3" cellspacing="0">
                                 <tr>
                                     <td align="left">
-                                        <asp:Label ID="Label1" runat="server" Text="Description" Width="68px" Style="padding-right: 5px"
+                                        <asp:Label ID="Label1" runat="server" Text="Description" 
+                                            Width="68px" Style="padding-right: 5px"
                                             EnableViewState="False"></asp:Label><br />
-                                        <asp:TextBox ID="DescriptionFilter" runat="server" Width="100px" ToolTip="Filter the list by AE Title"></asp:TextBox></td>
+                                        <asp:TextBox ID="DescriptionFilter" runat="server" CssClass="FilterTextBox_Filesystems" ToolTip="Filter the list by AE Title"></asp:TextBox></td>
                                     <td align="left">
                                         Tiers<br />
-                                        <asp:DropDownList ID="TiersDropDownList" runat="server" Width="100px">
+                                        <asp:DropDownList ID="TiersDropDownList" runat="server" CssClass="FilterTextBox_Filesystems">
                                         </asp:DropDownList></td>
                                     <td align="right" valign="bottom" style="width: 57px">
                                         <asp:ImageButton ID="FilterButton" runat="server" ImageUrl="~/images/icons/QueryEnabled.png"

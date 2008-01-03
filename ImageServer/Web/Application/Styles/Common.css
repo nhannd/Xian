@@ -1,0 +1,41 @@
+body
+{
+	font-family:verdana,tahoma,helvetica;
+	font-size:12pt;
+}
+
+a:link    { color: white }
+a:visited { color: white}
+a:hover   { color: white }
+a:active  { color: white }
+
+
+.MasterPageSize
+{
+	width: 1000px;
+	height: 650px;
+}
+
+.MasterTitleBar
+{
+	border-right: 1px outset;
+	border-top: 1px outset;
+	border-left: 1px outset;
+	border-bottom: 1px outset;
+	vertical-align: middle;
+	background-color: #3D98D1;
+	width: 100%;
+	color: White;
+	
+}
+
+
+.FilterTextBox
+{
+	width:100px;
+}
+
+.FilterTextBox_Filesystems
+{
+	width:120px;
+}

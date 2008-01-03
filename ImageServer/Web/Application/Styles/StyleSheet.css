@@ -1,72 +1,4 @@
-﻿body
-{
-	/*font-family: 'Arial Unicode MS' , 'Arial Rounded MT Bold';*/
-	font-family:verdana,tahoma,helvetica;
-	/*font-size:11px; */
-}
-
-.MasterPageSize
-{
-	width: 1000px;
-	height: 650px;
-}
-
-.MasterTitleBar
-{
-	padding-left: 1px;
-	border-right: 1px outset;
-	border-top: 1px outset;
-	border-left: 1px outset;
-	border-bottom: 1px outset;
-	vertical-align: middle;
-	background-color: #3D98D1;
-	width: 100%;
-	font-size:larger;
-	text-transform: capitalize;
-	font-weight:bold;
-	text-align: left;
-	text-indent: 10pt;
-	color: white;
-}
-
-.MasterMainPanel
-{
-	border-style: solid;
-	border-width: 1px;
-	border-color: #cccccc;
-	height: 100%;
-}
-
-.PagePanel
-{
-	padding-right: 5px; 
-	padding-left: 5px; 
-	padding-bottom: 5px; 
-	padding-top: 5px;
-	font-size: small;
-}
-
-.PageFilterPanel
-{
-	padding-bottom: 5px;
-	padding-top: 5px;
-	padding-right: 10px;
-	padding-left: 10px;
-	border-right: #e7e7e8 1px solid;
-	border-top: #e7e7e8 1px solid;
-	border-left: #e7e7e8 1px solid;
-	border-bottom: #e7e7e8 1px solid;
-	font-style: normal;
-	font-weight: normal;
-	font-size: small;
-}
-
-.PageToolbarPanel
-{
-	display: block; 
-	overflow: visible;	
-}
-
+﻿
 .DetailsPanel
 {
 	padding-bottom: 5px;
@@ -128,15 +60,6 @@
 	
 }
 
-.ContentWindow
-{
-	Height:100%;
-	
-	padding-left: 5px;
-	padding-top: 5px;
-	padding-bottom: 5px;
-	padding-right: 5px;	
-}
 
 .GridPanel
 {
@@ -161,7 +84,7 @@
 	/*background-repeat: repeat-x;*/
 	padding-right: 3px;
 	padding-left: 3px;	
-    font-weight: bold;
+    
 }
 
 .HeaderColumn
@@ -218,7 +141,7 @@
 .accordionHeader
 {
     background-color: white;
-	font-size: 12px;
+	
     cursor: pointer;
     padding: 5px;
     border-bottom: solid 1px #e7e7e8;
@@ -226,8 +149,7 @@
 .accordionHeaderSelected
 {
     background-color: #3D98D1;
-	font-size: 12px;
-    cursor: pointer;
+	cursor: pointer;
     padding: 5px;
 }
 

@@ -345,6 +345,7 @@
     <Content Include="Search\SeriesDetails.ascx" />
     <Content Include="Search\StudyDetails.ascx" />
     <Content Include="Search\StudySummary.ascx" />
+    <Content Include="Styles\Common.css" />
     <Content Include="Styles\images\icon_warning.gif" />
     <Content Include="Common\BarChart.aspx" />
     <Content Include="Common\ConfirmDialog.ascx" />
@@ -402,6 +403,8 @@
     <Content Include="Styles\images\tab-line.gif" />
     <Content Include="Styles\images\tab-right.gif" />
     <Content Include="Styles\images\tab.gif" />
+    <Content Include="Styles\Menu.css" />
+    <Content Include="Styles\Page.css" />
     <Content Include="Styles\visoft__tab_xpie7.css" />
     <Content Include="images\Plus.ico" />
     <Content Include="images\usage.png" />

@@ -4,6 +4,7 @@
 <asp:Panel runat="server">
     <asp:Table runat="server" Width="100%">
         <asp:TableHeaderRow>
+            <asp:TableHeaderCell>
             <asp:Panel ID="HeaderPanel" runat="server" Width="100%" BorderWidth="0px" CssClass="GridHeader">
                 <asp:Label ID="PatientID" runat="server" Text="Patient ID" EnableViewState="False"
                     CssClass="GridHeaderText" Width="100px" />
@@ -16,9 +17,12 @@
                 <asp:Label ID="ScheduledTime" runat="server" Text="Schedule" EnableViewState="False"
                     CssClass="GridHeaderText" Width="150px" />
             </asp:Panel>
+            </asp:TableHeaderCell>
+            
         </asp:TableHeaderRow>
         <asp:TableRow>
-            <asp:Panel runat="server" CssClass="GridPanel" ScrollBars="Vertical">
+            <asp:TableCell>
+            <asp:Panel ID="Panel2" runat="server" CssClass="GridPanel" ScrollBars="Vertical">
                 <ajaxToolkit:Accordion ID="MainAccordian" runat="Server" HeaderSelectedCssClass="accordionHeaderSelected"
                     AutoSize="None" FadeTransitions="true" TransitionDuration="250" FramesPerSecond="40"
                     RequireOpenedPane="false" SuppressHeaderPostbacks="true" HeaderCssClass="accordionHeader">
@@ -30,9 +34,13 @@
                     </ContentTemplate>
                 </ajaxToolkit:Accordion>
             </asp:Panel>
+            
+            </asp:TableCell>
+            
         </asp:TableRow>
         <asp:TableFooterRow Width="100%" BackColor="Gainsboro" BorderColor="Silver" BorderStyle="Solid"
             BorderWidth="1px">
+            <asp:TableCell>
             <asp:Panel ID="Panel1" runat="server" CssClass="GridPagerStyle">
                 <table width="100%">
                     <tr>
@@ -49,6 +57,8 @@
                     </tr>
                 </table>
             </asp:Panel>
-        </asp:TableFooterRow>
+
+</asp:TableCell>
+                    </asp:TableFooterRow>
     </asp:Table>
 </asp:Panel>

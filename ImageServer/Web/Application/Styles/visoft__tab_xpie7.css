@@ -15,7 +15,6 @@
 .visoft__tab_xpie7 .ajax__tab_inner
 {
 	background: url(../Styles/images/tab-left.gif) no-repeat;
-	font-size: larger;
 }
 .visoft__tab_xpie7 .ajax__tab_tab						{ background: url(../Styles/images/tab.gif) repeat-x; }
 .visoft__tab_xpie7 .ajax__tab_hover .ajax__tab_outer	{ background: url(../Styles/images/tab-hover-right.gif) no-repeat right; }
@@ -26,10 +25,19 @@
 .visoft__tab_xpie7 .ajax__tab_active .ajax__tab_tab		{ background: url(../Styles/images/tab-active.gif) repeat-x; }
 
 /* XP IE7 theme - Other Styles */
-.visoft__tab_xpie7 .ajax__tab_header 					{ font-family:verdana,tahoma,helvetica;font-size:11px; }
-.visoft__tab_xpie7 .ajax__tab_outer						{ height:29px; }
+.visoft__tab_xpie7 .ajax__tab_header 					
+{
+	}
+	
+.visoft__tab_xpie7 .ajax__tab_outer						{ height:29px;}
 .visoft__tab_xpie7 .ajax__tab_inner						{ padding-left:3px; }
-.visoft__tab_xpie7 .ajax__tab_tab						{ padding:8px 40px;margin:0; }
-.visoft__tab_xpie7 .ajax__tab_body						{ font-family:verdana,tahoma,helvetica;font-size:10pt;border:1px solid #999999;border-top:0;padding:8px;background-color:#ffffff; }
+.visoft__tab_xpie7 .ajax__tab_tab						{ padding:8px 40px;margin:0;}
+.visoft__tab_xpie7 .ajax__tab_body
+{
+	border: 1px solid #999999;
+	border-top: 0;
+	padding: 8px;
+	background-color: #ffffff;
+}
 
 
