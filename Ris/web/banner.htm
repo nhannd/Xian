@@ -100,22 +100,12 @@
 	</head>
 	<body onload="javascript: onBodyLoad()" onresize="javascript: scaleWidth()">
 		<form id="myForm">
-			<table border="0">
-				<tr><td colspan="2">
-					<table border="0">
-						<tr>
-							<td class="pageheading"><div id="name"/></td>
-							<td style="padding:0" rowspan="2" align="right"><div id="alerts"/></td>
-						</tr>
-						<tr>
-							<td class="pageheading2"><div id="mrn"/></td>
-						</tr>
-					</table>
-				</td></tr>
+			<table border="0" width="100%">
 				<tr>
-					<td width="30%">
-						<table border="0">
+					<td>
+						<table border="0" id="profileTable">
 							<tr>
+								<td class="pageheading" rowspan="2"><div id="name"/></td>
 								<td class="propertyname">Healthcard #</td>
 								<td class="propertyvalue"><div id="healthcard"/></td>
 							</tr>
@@ -124,6 +114,7 @@
 								<td class="propertyvalue"><div id="dateOfBirth"/></td>
 							</tr>
 							<tr>
+								<td class="pageheading2"><div id="mrn"/></td>
 								<td class="propertyname">Age / Sex</td>
 								<td class="propertyvalue"><div id="agesex"/></td>
 							</tr>
@@ -134,21 +125,22 @@
 							<tr>
 								<td class="propertyname">Accession #</td>
 								<td class="propertyvalue"><div id="AccessionNumber"/></td>
-								<td class="propertyname">Diagnostic Service</td>
-								<td class="propertyvalue"><div id="DiagnosticService"/></td>
-							</tr>
-							<tr>
-								<td class="propertyname">Ordering Priority</td>
+								<td class="propertyname">Priority</td>
 								<td class="propertyvalue"><div id="OrderPriority"/></td>
-								<td class="propertyname" rowspan="2">Ordered Procedures</td>
-								<td class="propertyvalue" rowspan="2"><div id="RequestedProcedures"/></td>
 							</tr>
 							<tr>
 								<td class="propertyname">Ordering Physician</td>
 								<td class="propertyvalue"><div id="OrderingPhysician"/></td>
+								<td class="propertyname" rowspan="2">Procedures</td>
+								<td class="propertyvalue" rowspan="2"><div id="RequestedProcedures"/></td>
+							</tr>
+							<tr>
+								<td class="propertyname">Diagnostic Service</td>
+								<td class="propertyvalue"><div id="DiagnosticService"/></td>
 							</tr>
 						</table>
 					</td>
+					<td align="right" class="alerticons"><div id="alerts"/></td>
 				</tr>
 			</table>
 		</form>

@@ -29,7 +29,6 @@
 
 #endregion
 
-using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Client
@@ -47,6 +46,11 @@ namespace ClearCanvas.Ris.Client
         {
             SetUrl(BannerComponentSettings.Default.BannerPageUrl);
             base.Start();
+        }
+
+        public override bool ScrollBarsEnabled
+        {
+            get { return false; }
         }
 
         public void Refresh()

@@ -90,7 +90,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 2;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 100F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 85F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(720, 467);
             this.tableLayoutPanel1.TabIndex = 0;
@@ -100,15 +100,15 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this._bannerPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this._bannerPanel.Location = new System.Drawing.Point(3, 3);
             this._bannerPanel.Name = "_bannerPanel";
-            this._bannerPanel.Size = new System.Drawing.Size(714, 94);
+            this._bannerPanel.Size = new System.Drawing.Size(714, 79);
             this._bannerPanel.TabIndex = 0;
             // 
             // _contentPanel
             // 
             this._contentPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._contentPanel.Location = new System.Drawing.Point(3, 103);
+            this._contentPanel.Location = new System.Drawing.Point(3, 88);
             this._contentPanel.Name = "_contentPanel";
-            this._contentPanel.Size = new System.Drawing.Size(714, 361);
+            this._contentPanel.Size = new System.Drawing.Size(714, 376);
             this._contentPanel.TabIndex = 1;
             // 
             // BiographyOverviewComponentControl

@@ -102,7 +102,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // splitContainer1
             // 
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer1.Location = new System.Drawing.Point(2, 102);
+            this.splitContainer1.Location = new System.Drawing.Point(2, 87);
             this.splitContainer1.Margin = new System.Windows.Forms.Padding(2);
             this.splitContainer1.Name = "splitContainer1";
             // 
@@ -123,7 +123,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.tabControl2);
-            this.splitContainer1.Size = new System.Drawing.Size(987, 510);
+            this.splitContainer1.Size = new System.Drawing.Size(987, 525);
             this.splitContainer1.SplitterDistance = 496;
             this.splitContainer1.SplitterWidth = 3;
             this.splitContainer1.TabIndex = 26;
@@ -138,6 +138,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._orderingFacility.ReadOnly = true;
             this._orderingFacility.Size = new System.Drawing.Size(150, 41);
             this._orderingFacility.TabIndex = 12;
+            this._orderingFacility.ToolTip = null;
             this._orderingFacility.Value = null;
             // 
             // _visitSummaryButton
@@ -210,6 +211,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._indication.Name = "_indication";
             this._indication.Size = new System.Drawing.Size(485, 41);
             this._indication.TabIndex = 5;
+            this._indication.ToolTip = null;
             this._indication.Value = null;
             // 
             // _reorderReason
@@ -378,7 +380,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.tabControl2.Margin = new System.Windows.Forms.Padding(2);
             this.tabControl2.Name = "tabControl2";
             this.tabControl2.SelectedIndex = 0;
-            this.tabControl2.Size = new System.Drawing.Size(488, 510);
+            this.tabControl2.Size = new System.Drawing.Size(488, 525);
             this.tabControl2.TabIndex = 0;
             // 
             // _documentsTab
@@ -387,7 +389,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._documentsTab.Margin = new System.Windows.Forms.Padding(2);
             this._documentsTab.Name = "_documentsTab";
             this._documentsTab.Padding = new System.Windows.Forms.Padding(2);
-            this._documentsTab.Size = new System.Drawing.Size(480, 484);
+            this._documentsTab.Size = new System.Drawing.Size(480, 499);
             this._documentsTab.TabIndex = 0;
             this._documentsTab.Text = "Documents";
             this._documentsTab.UseVisualStyleBackColor = true;
@@ -423,7 +425,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.tableLayoutPanel2.Location = new System.Drawing.Point(3, 3);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
             this.tableLayoutPanel2.RowCount = 2;
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 100F));
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 85F));
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel2.Size = new System.Drawing.Size(991, 614);
             this.tableLayoutPanel2.TabIndex = 30;
@@ -433,7 +435,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._bannerPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this._bannerPanel.Location = new System.Drawing.Point(3, 3);
             this._bannerPanel.Name = "_bannerPanel";
-            this._bannerPanel.Size = new System.Drawing.Size(985, 94);
+            this._bannerPanel.Size = new System.Drawing.Size(985, 79);
             this._bannerPanel.TabIndex = 27;
             // 
             // OrderEntryComponentControl

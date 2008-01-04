@@ -287,6 +287,11 @@ namespace ClearCanvas.Ris.Client
             remove { _dataSaving -= value; }
         }
 
+        public virtual bool ScrollBarsEnabled
+        {
+            get { return true; }
+        }
+
         #endregion
 
         protected virtual ActionModelNode GetActionModel()

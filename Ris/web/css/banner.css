@@ -2,21 +2,24 @@ body {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-size: 12px;
 	margin: 0px;
-}
-
-p  {
-	margin-top: 2px;
-	margin-bottom: 2px;
+	height: 100%;
+	filter: progid:DXImageTransform.Microsoft.Gradient(startColorstr='#BAD2EC', endColorstr='#7CB1DD', gradientType='0');
 }
 
 table {
-	width: 100%;
+	height: 100%;
 	border-collapse:collapse;
 	margin-top: 0px;
 	margin-bottom: 0px;
 	margin-left: 0px;
 	margin-right: 0px;
+	padding-top: 0px;
+	padding-bottom: 0px;
+	padding-left: 0px;
+	padding-right: 0px;
+	display:inline;
 }
+
 table td {
 	vertical-align: top;
 	padding-top: 0px;
@@ -40,26 +43,46 @@ table td {
 }
 
 .pageheading {
-	font-size: 1.5em;
+	font-size: 1.0em;
 	font-weight: bold;
+	padding-top: 0.2em;
+	padding-right: 0.2em;
+	padding-bottom: 0em;
+	padding-left: 0.2em;
+	white-space: nowrap;
 }
 
 .pageheading2 {
-
-	font-size: 1em;
+	font-size: 0.9em;
 	font-weight: bold;
+	padding-top: 0em;
+	padding-right: 0.2em;
+	padding-bottom: 0em;
+	padding-left: 0.2em;
+	white-space: nowrap;
 }
 
 .propertyname {
-	font-size: 0.65em;
+	font-size: 0.7em;
 	font-weight: bold;
+	padding-top: 0.2em;
+	padding-right: 0.75em;
+	padding-bottom: 0em;
+	padding-left: 0.75em;
+	white-space: nowrap;
 }
 
 .propertyvalue {
-	font-size: 0.65em;
+	font-size: 0.7em;
+	padding-top: 0.2em;
+}
+
+.alerticons {
+	padding-top: 0.2em;
+	padding-right: 0.25em;
+	display: inline;
 }
 
 img.alert{
-   width: 3em;
+   width: 2.2em;
 }
-

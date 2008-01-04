@@ -60,7 +60,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this._comment.Margin = new System.Windows.Forms.Padding(2);
             this._comment.Name = "_comment";
             this._comment.Size = new System.Drawing.Size(320, 150);
-            this._comment.TabIndex = 4;
+            this._comment.TabIndex = 0;
             this._comment.Value = null;
             // 
             // flowLayoutPanel3
@@ -74,7 +74,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this.flowLayoutPanel3.Name = "flowLayoutPanel3";
             this.flowLayoutPanel3.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.flowLayoutPanel3.Size = new System.Drawing.Size(318, 29);
-            this.flowLayoutPanel3.TabIndex = 2;
+            this.flowLayoutPanel3.TabIndex = 0;
             // 
             // _cancelButton
             // 

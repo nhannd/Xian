@@ -81,7 +81,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._tableLayoutPanelRoot.Location = new System.Drawing.Point(0, 0);
             this._tableLayoutPanelRoot.Name = "_tableLayoutPanelRoot";
             this._tableLayoutPanelRoot.RowCount = 3;
-            this._tableLayoutPanelRoot.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 100F));
+            this._tableLayoutPanelRoot.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 85F));
             this._tableLayoutPanelRoot.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this._tableLayoutPanelRoot.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this._tableLayoutPanelRoot.Size = new System.Drawing.Size(1033, 650);
@@ -122,12 +122,10 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // 
             // _bannerPanel
             // 
-            this._bannerPanel.AutoSize = true;
-            this._bannerPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this._bannerPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this._bannerPanel.Location = new System.Drawing.Point(3, 3);
             this._bannerPanel.Name = "_bannerPanel";
-            this._bannerPanel.Size = new System.Drawing.Size(1027, 94);
+            this._bannerPanel.Size = new System.Drawing.Size(1027, 79);
             this._bannerPanel.TabIndex = 1;
             // 
             // _orderDocumentationPanel
@@ -135,9 +133,9 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._orderDocumentationPanel.AutoSize = true;
             this._orderDocumentationPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this._orderDocumentationPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._orderDocumentationPanel.Location = new System.Drawing.Point(3, 103);
+            this._orderDocumentationPanel.Location = new System.Drawing.Point(3, 88);
             this._orderDocumentationPanel.Name = "_orderDocumentationPanel";
-            this._orderDocumentationPanel.Size = new System.Drawing.Size(1027, 509);
+            this._orderDocumentationPanel.Size = new System.Drawing.Size(1027, 524);
             this._orderDocumentationPanel.TabIndex = 2;
             // 
             // TechnologistDocumentationComponentControl
