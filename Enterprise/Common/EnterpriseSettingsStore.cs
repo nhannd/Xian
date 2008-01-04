@@ -43,39 +43,49 @@ using ClearCanvas.Common.Utilities;
 namespace ClearCanvas.Enterprise.Common
 {
     /// <summary>
-    /// Implementation of <see cref="IConfigurationStore"/>, extends <see cref="ConfigurationStoreExtensionPoint"/>.
+    /// Implementation of <see cref="ISettingsStore"/>, extends <see cref="SettingsStoreExtensionPoint"/>.
     /// Acts as a client-side proxy to <see cref="IConfigurationService"/>
     /// </summary>
-    [ExtensionOf(typeof(ConfigurationStoreExtensionPoint))]
-    public class EnterpriseConfigurationStore : IConfigurationStore
+    [ExtensionOf(typeof(SettingsStoreExtensionPoint))]
+    public class EnterpriseSettingsStore : ISettingsStore
     {
         private IList<SettingsGroupDescriptor> _remoteGroups;
 
-        public EnterpriseConfigurationStore()
+        public EnterpriseSettingsStore()
         {
         }
 
-        #region IConfigurationStore Members
+        #region ISettingsStore Members
 
-        public Dictionary<string, string> LoadSettingsValues(SettingsGroupDescriptor group, string user, string instanceKey)
+        public Dictionary<string, string> GetSettingsValues(SettingsGroupDescriptor group, string user, string instanceKey)
         {
             Dictionary<string, string> values = new Dictionary<string,string>();
 
             Platform.GetService<IConfigurationService>(
                 delegate(IConfigurationService service)
                 {
-                    values = service.LoadSettingsValues(group.Name, group.Version, user, instanceKey);
+                    values = service.LoadSettingsValues(group.Name, group.Version, null, instanceKey);
+                    Dictionary<string, string> userValues = service.LoadSettingsValues(group.Name, group.Version, user, instanceKey);
+                    foreach (KeyValuePair<string, string> kvp in userValues)
+                    {
+                        values[kvp.Key] = kvp.Value;
+                    }
                 });
 
             return values;
         }
 
-        public void SaveSettingsValues(SettingsGroupDescriptor group, string user, string instanceKey, Dictionary<string, string> values)
+        public void PutSettingsValues(SettingsGroupDescriptor group, string user, string instanceKey, Dictionary<string, string> dirtyValues)
         {
             Platform.GetService<IConfigurationService>(
                 delegate(IConfigurationService service)
                 {
-                    service.SaveSettingsValues(group.Name, group.Version, user, instanceKey, values);
+                    Dictionary<string, string> allValues = service.LoadSettingsValues(group.Name, group.Version, user, instanceKey);
+                    foreach (KeyValuePair<string, string> kvp in dirtyValues)
+                    {
+                        allValues[kvp.Key] = kvp.Value;
+                    }
+                    service.SaveSettingsValues(group.Name, group.Version, user, instanceKey, allValues);
                 });
         }
 
@@ -110,7 +120,7 @@ namespace ClearCanvas.Enterprise.Common
             List<SettingsGroupDescriptor> groups = new List<SettingsGroupDescriptor>(_remoteGroups);
 
             // add local groups
-            // note that local settings groups are excluded (ListInstalledSettingsGroups(true)) because they
+            // note that locally stored settings groups are excluded (ListInstalledSettingsGroups(true)) because they
             // are not stored in the enterprise configuration store
             IList<SettingsGroupDescriptor> localGroups = SettingsGroupDescriptor.ListInstalledSettingsGroups(true);
             foreach (SettingsGroupDescriptor group in localGroups)

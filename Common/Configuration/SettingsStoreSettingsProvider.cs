@@ -38,19 +38,19 @@ using ClearCanvas.Common.Utilities;
 namespace ClearCanvas.Common.Configuration
 {
     /// <summary>
-    /// Communicates with an <see cref="IConfigurationStore"/> to manage loading and saving of
+    /// Communicates with an <see cref="ISettingsStore"/> to manage loading and saving of
     /// settings from the store.
     /// </summary>
     /// <remarks>
 	/// Supports the framework and is not intended for use by application code.  Use 
 	/// <see cref="StandardSettingsProvider"/> instead.
 	/// </remarks>
-    internal class ConfigurationStoreSettingsProvider : SettingsProvider, IApplicationSettingsProvider
+    internal class SettingsStoreSettingsProvider : SettingsProvider, IApplicationSettingsProvider
     {
         private string _appName;
-        private IConfigurationStore _store;
+        private readonly ISettingsStore _store;
 
-        internal ConfigurationStoreSettingsProvider(IConfigurationStore store)
+        internal SettingsStoreSettingsProvider(ISettingsStore store)
         {
             _store = store;
         }
@@ -79,19 +79,9 @@ namespace ClearCanvas.Common.Configuration
             string settingsKey = (string)context["SettingsKey"];
             string user = Thread.CurrentPrincipal.Identity.Name;
 
-            // load shared values
-            Dictionary<string, string> storedValues = _store.LoadSettingsValues(
-                new SettingsGroupDescriptor(settingsClass), null, settingsKey);
-
-            // load user values
-            Dictionary<string, string> userValues = _store.LoadSettingsValues(
+            // load settings from store
+            Dictionary<string, string> storedValues = _store.GetSettingsValues(
                 new SettingsGroupDescriptor(settingsClass), user, settingsKey);
-
-            // overwrite shared values with user values, if they exist
-            foreach (KeyValuePair<string, string> kvp in userValues)
-            {
-                storedValues[kvp.Key] = kvp.Value;
-            }
 
             // Create new collection of values
             SettingsPropertyValueCollection values = new SettingsPropertyValueCollection();
@@ -115,30 +105,33 @@ namespace ClearCanvas.Common.Configuration
     	///</summary>
     	public override void SetPropertyValues(SettingsContext context, SettingsPropertyValueCollection settings)
         {
+            // locate dirty values that should be saved
             Dictionary<string, string> valuesToStore = new Dictionary<string, string>();
-
             foreach (SettingsPropertyValue value in settings)
             {
                 // only user scoped settings should be saved (changes to app settings are made directly
-                // via the IEnterpriseConfigurationStore and not through this class)
-
-                // only values that are different than the default should be persisted to the store
-                // the reason is that, when a new version of the settings class is deployed,
-                // the defaults of the new version should take precedence over the defaults of the old version
-                // but should not take precedence over the stored values
-                // the only way to make this distinction is to not store any values that are same as default
-                if(IsUserScoped(value.Property) && !value.UsingDefaultValue)
+                // via the ISettingsStore and not through this class)
+                if(IsUserScoped(value.Property) && value.IsDirty)
                 {
                     valuesToStore[value.Name] = (string)value.SerializedValue;
                 }
             }
 
-            Type settingsClass = (Type)context["SettingsClassType"];
-            string settingsKey = (string)context["SettingsKey"];
-            string user = Thread.CurrentPrincipal.Identity.Name;
+            if(valuesToStore.Count > 0)
+            {
+                Type settingsClass = (Type)context["SettingsClassType"];
+                string settingsKey = (string)context["SettingsKey"];
+                string user = Thread.CurrentPrincipal.Identity.Name;
 
-            // must call this method even if valuesToStore is empty (in which case the stored values are cleared)
-            _store.SaveSettingsValues(new SettingsGroupDescriptor(settingsClass), user, settingsKey, valuesToStore);
+                _store.PutSettingsValues(new SettingsGroupDescriptor(settingsClass), user, settingsKey, valuesToStore);
+            }
+
+            // mark all user-settings as no longer dirty, since they were successfully saved
+    	    foreach (SettingsPropertyValue value in settings)
+    	    {
+                if (IsUserScoped(value.Property))
+    	            value.IsDirty = false;
+    	    }
         }
 
         private bool IsUserScoped(SettingsProperty settingsProperty)
@@ -155,7 +148,7 @@ namespace ClearCanvas.Common.Configuration
         public SettingsPropertyValue GetPreviousVersion(SettingsContext context, SettingsProperty property)
         {
             // seems like implementing this method would be quite inefficient, unless we could be sure that
-            // the IConfigurationStore implementation had sufficient optimizations in place
+            // the ISettingsStore implementation had sufficient optimizations in place
             // let's leave this to be implemented "as needed"
             throw new Exception("The method or operation is not implemented.");
         }
@@ -164,7 +157,7 @@ namespace ClearCanvas.Common.Configuration
         /// Resets all settings back to the defaults.
         /// </summary>
         /// <remarks>
-		/// Note that this implementation resets the user-scoped settings only.  It does not touch application-scoped settings.
+		/// Note that this implementation resets the user-scoped settings only.  It does not modify application-scoped settings.
 		/// </remarks>
         public void Reset(SettingsContext context)
         {
@@ -180,7 +173,7 @@ namespace ClearCanvas.Common.Configuration
         /// </summary>
 		/// <remarks>
 		/// Note that this implementation upgrades user-scoped settings only, and it upgrades all settings in the group,
-        /// regardless of the contents of the specified properties collection.  It does not touch application-scoped settings.
+        /// regardless of the contents of the specified properties collection.  It does not modify application-scoped settings.
 		/// </remarks>
         public void Upgrade(SettingsContext context, SettingsPropertyCollection properties)
         {

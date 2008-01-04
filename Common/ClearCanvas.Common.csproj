@@ -113,8 +113,8 @@
     <Compile Include="Configuration\ApplicationSettingsRegistry.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Configuration\ConfigurationStoreSettingsProvider.cs" />
-    <Compile Include="Configuration\IConfigurationStore.cs" />
+    <Compile Include="Configuration\SettingsStoreSettingsProvider.cs" />
+    <Compile Include="Configuration\ISettingsStore.cs" />
     <Compile Include="Configuration\SettingsClassMetaDataReader.cs" />
     <Compile Include="Configuration\SettingsGroupDescriptor.cs" />
     <Compile Include="Configuration\SettingsPropertyDescriptor.cs" />

@@ -37,7 +37,7 @@ namespace ClearCanvas.Common.Configuration
     /// <summary>
     /// Defines the interface to a mechanism for the storage of configuration data.
     /// </summary>
-    public interface IConfigurationStore
+    public interface ISettingsStore
     {
         /// <summary>
         /// Lists all settings groups for which this configuration store maintains settings values.
@@ -55,23 +55,23 @@ namespace ClearCanvas.Common.Configuration
 
 
         /// <summary>
-        /// Obtains the settings values for the specified settings class, user and instance key.
+        /// Obtains the settings values for the specified settings group, user and instance key.  If user is null,
+        /// the shared settings are obtained.
         /// </summary>
         /// <remarks>
-		/// Only returns values for settings that differ from the default value as specified by the settings class.
+		/// The returned dictionary may contain values for all settings in the group, or it may
+		/// contain only those values that differ from the default values defined by the settings group.
         /// </remarks>
-        Dictionary<string, string> LoadSettingsValues(SettingsGroupDescriptor group, string user, string instanceKey);
+        Dictionary<string, string> GetSettingsValues(SettingsGroupDescriptor group, string user, string instanceKey);
 
         /// <summary>
-        /// Store the settings values for the specified settings class, for the current user and
-        /// specified instance key.
+        /// Store the settings values for the specified settings group, for the current user and
+        /// specified instance key.  If user is null, the values are stored as shared settings.
         /// </summary>
         /// <remarks>
-		/// The dictionary should contain only values that differ from the default
-		/// values as specified by the settings class, as only these values should be stored.  Any previously
-		/// stored settings values that are not contained in the dictionary will be removed from the store.
+        /// The <paramref name="dirtyValues"/> dictionary should contain values for any settings that are dirty.
 		/// </remarks>
-        void SaveSettingsValues(SettingsGroupDescriptor group, string user, string instanceKey, Dictionary<string, string> values);
+        void PutSettingsValues(SettingsGroupDescriptor group, string user, string instanceKey, Dictionary<string, string> dirtyValues);
 
         /// <summary>
         /// Removes user settings from this group, effectively causing them to be reset to their shared default

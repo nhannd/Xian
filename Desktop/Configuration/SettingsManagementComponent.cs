@@ -66,26 +66,26 @@ namespace ClearCanvas.Desktop.Configuration
 		/// Launches the <see cref="SettingsManagementComponent"/> or activates it if it's already open.
 		/// </summary>
 		/// <remarks>
-		/// This method first looks for a valid extension of <see cref="ConfigurationStoreExtensionPoint"/> and
+		/// This method first looks for a valid extension of <see cref="SettingsStoreExtensionPoint"/> and
 		/// with which to initialize the <see cref="SettingsManagementComponent"/>.  If one is not found,
-		/// an instance of <see cref="LocalConfigurationStore"/> is instantiated and passed to the
-		/// <see cref="SettingsManagementComponent"/>.  The <see cref="LocalConfigurationStore"/> allows
+		/// an instance of <see cref="LocalSettingsStore"/> is instantiated and passed to the
+		/// <see cref="SettingsManagementComponent"/>.  The <see cref="LocalSettingsStore"/> allows
 		/// the local application settings to be modified, where by default they cannot be.
 		/// </remarks>
 		public void Activate()
         {
             if (_workspace == null)
             {
-				IConfigurationStore store = null;
+				ISettingsStore store = null;
 				try
                 {
                     // if this throws an exception, only the default LocalFileSettingsProvider can be used.
-                    store = (IConfigurationStore)(new ConfigurationStoreExtensionPoint()).CreateExtension();
+                    store = (ISettingsStore)(new SettingsStoreExtensionPoint()).CreateExtension();
                 }
                 catch (NotSupportedException)
                 {
-					//allow editing of the app.config file via the LocalConfigurationStore.
-					store = new LocalConfigurationStore();
+					//allow editing of the app.config file via the LocalSettingsStore.
+					store = new LocalSettingsStore();
                 }
 
             	_workspace = ApplicationComponent.LaunchAsWorkspace(
@@ -239,7 +239,7 @@ namespace ClearCanvas.Desktop.Configuration
 
         #endregion
 
-        private IConfigurationStore _configStore;
+        private ISettingsStore _configStore;
 
         private Table<SettingsGroupDescriptor> _settingsGroupTable;
         private SettingsGroupDescriptor _selectedSettingsGroup;
@@ -259,8 +259,8 @@ namespace ClearCanvas.Desktop.Configuration
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <param name="configStore">The <see cref="IConfigurationStore"/> for which the default values will be modified.</param>
-        public SettingsManagementComponent(IConfigurationStore configStore)
+        /// <param name="configStore">The <see cref="ISettingsStore"/> for which the default values will be modified.</param>
+        public SettingsManagementComponent(ISettingsStore configStore)
         {
             _configStore = configStore;
 
@@ -467,7 +467,7 @@ namespace ClearCanvas.Desktop.Configuration
             {
                 try
                 {
-                    Dictionary<string, string> values = _configStore.LoadSettingsValues(
+                    Dictionary<string, string> values = _configStore.GetSettingsValues(
                             _selectedSettingsGroup,
                             null, null // load the default profile
                             );
@@ -489,11 +489,11 @@ namespace ClearCanvas.Desktop.Configuration
                 if (confirmationRequired && !ConfirmSave())
                     return;
 
-                // fill a dictionary with all values that differ from the defaults
+                // fill a dictionary with all dirty values
                 Dictionary<string, string> values = new Dictionary<string, string>();
                 foreach (SettingsProperty p in _settingsPropertiesTable.Items)
                 {
-                    if (!p.UsingDefaultValue)
+                    if (p.Dirty)
                     {
                         values[p.Name] = p.Value;
                     }
@@ -501,7 +501,7 @@ namespace ClearCanvas.Desktop.Configuration
 
 				try
 				{
-					_configStore.SaveSettingsValues(
+					_configStore.PutSettingsValues(
                         _selectedSettingsGroup,
 						null, null,    // save to the default profile
 						values);

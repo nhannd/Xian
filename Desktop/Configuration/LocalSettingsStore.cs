@@ -45,15 +45,15 @@ using ClearCanvas.Common.Utilities;
 namespace ClearCanvas.Desktop.Configuration
 {
 	/// <summary>
-	/// The LocalConfigurationStore, although it implements <see cref="IConfigurationStore "/> does not serve 
+	/// The LocalSettingsStore, although it implements <see cref="ISettingsStore "/> does not serve 
 	/// as a proper configuration store for the <see cref="StandardSettingsProvider"/> (notice that it is not
-	/// an extension of <see cref="ConfigurationStoreExtensionPoint"/>.  Instead, this class is instantiated
+	/// an extension of <see cref="SettingsStoreExtensionPoint"/>.  Instead, this class is instantiated
 	/// directly by the <see cref="SettingsManagementComponent"/> when there are no such extensions available,
 	/// and the application is using the <see cref="LocalFileSettingsProvider"/> (or app/user .config) to 
 	/// store settings locally.  This 'configuration store' is used solely to edit the default profile
 	/// throught the settings management UI.
 	/// </summary>
-	internal class LocalConfigurationStore : IConfigurationStore
+	internal class LocalSettingsStore : ISettingsStore
 	{
 		private static string _applicationSettingsGroup = "applicationSettings";
 		private static string _userSettingsGroup = "userSettings";
@@ -61,7 +61,7 @@ namespace ClearCanvas.Desktop.Configuration
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public LocalConfigurationStore()
+		public LocalSettingsStore()
 		{
         }
 
@@ -284,7 +284,7 @@ namespace ClearCanvas.Desktop.Configuration
 			}
 		}
 
-		#region IConfigurationStore Members
+		#region ISettingsStore Members
 		
 		/// <summary>
 		/// Loads the settings values (both application and user scoped) for a given settings class.  Only the default profile
@@ -295,7 +295,7 @@ namespace ClearCanvas.Desktop.Configuration
 		/// <param name="instanceKey">ignored</param>
 		/// <param name="values">returns only those values that are different from the property defaults</param>
 		/// <exception cref="NotSupportedException">will be thrown if the user is specified</exception>
-        public Dictionary<string, string> LoadSettingsValues(SettingsGroupDescriptor group, string user, string instanceKey)
+        public Dictionary<string, string> GetSettingsValues(SettingsGroupDescriptor group, string user, string instanceKey)
 		{
 			if (!String.IsNullOrEmpty(user))
 				throw new NotSupportedException(SR.ExceptionOnlyDefaultProfileSupported);
@@ -325,9 +325,9 @@ namespace ClearCanvas.Desktop.Configuration
 		/// <param name="settingsClass">the settings class for which to store the values</param>
 		/// <param name="user">must be null or ""</param>
 		/// <param name="instanceKey">ignored</param>
-		/// <param name="values">contains the values to be stored</param>
+		/// <param name="dirtyValues">contains the values to be stored</param>
 		/// <exception cref="NotSupportedException">will be thrown if the user is specified</exception>
-        public void SaveSettingsValues(SettingsGroupDescriptor group, string user, string instanceKey, Dictionary<string, string> values)
+        public void PutSettingsValues(SettingsGroupDescriptor group, string user, string instanceKey, Dictionary<string, string> dirtyValues)
 		{
 			if (!String.IsNullOrEmpty(user))
 				throw new NotSupportedException(SR.ExceptionOnlyDefaultProfileSupported);
@@ -345,9 +345,9 @@ namespace ClearCanvas.Desktop.Configuration
 
 			bool modified = false;
 			if (applicationScopedProperties.Count > 0)
-                modified = StoreSettings(this.GetApplicationSettingsGroup(configuration, true), group.Name, applicationScopedProperties, values, changedValues);
+                modified = StoreSettings(this.GetApplicationSettingsGroup(configuration, true), group.Name, applicationScopedProperties, dirtyValues, changedValues);
 			if (userScopedProperties.Count > 0)
-                modified |= StoreSettings(this.GetUserSettingsGroup(configuration, true), group.Name, userScopedProperties, values, changedValues);
+                modified |= StoreSettings(this.GetUserSettingsGroup(configuration, true), group.Name, userScopedProperties, dirtyValues, changedValues);
 
 			if (modified)
 			{

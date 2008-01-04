@@ -35,10 +35,10 @@ using System.Configuration;
 namespace ClearCanvas.Common.Configuration
 {
     /// <summary>
-    /// An extension point for <see cref="IConfigurationStore"/>s.
+    /// An extension point for <see cref="ISettingsStore"/>s.
     /// </summary>
 	[ExtensionPoint]
-    public sealed class ConfigurationStoreExtensionPoint : ExtensionPoint<IConfigurationStore>
+    public sealed class SettingsStoreExtensionPoint : ExtensionPoint<ISettingsStore>
     {
     }
 
@@ -48,14 +48,14 @@ namespace ClearCanvas.Common.Configuration
     /// </summary>
     /// <remarks>
 	/// Internally, this class will delegate the storage of settings between
-	/// the local file system and an implemetation of <see cref="ConfigurationStoreExtensionPoint"/>,
+	/// the local file system and an implemetation of <see cref="SettingsStoreExtensionPoint"/>,
 	/// if an extension is found.  All methods on this class are thread-safe, as per MSDN guidelines.
 	/// </remarks>
     public class StandardSettingsProvider : SettingsProvider, IApplicationSettingsProvider
     {
         private string _appName;
         private SettingsProvider _sourceProvider;
-        private object _syncLock = new object();
+        private readonly object _syncLock = new object();
 
 		/// <summary>
 		/// Constructor.
@@ -96,8 +96,8 @@ namespace ClearCanvas.Common.Configuration
                 // obtain a source provider
                 try
                 {
-                    IConfigurationStore ecs = (IConfigurationStore)(new ConfigurationStoreExtensionPoint()).CreateExtension();
-                    _sourceProvider = new ConfigurationStoreSettingsProvider(ecs);
+                    ISettingsStore ecs = (ISettingsStore)(new SettingsStoreExtensionPoint()).CreateExtension();
+                    _sourceProvider = new SettingsStoreSettingsProvider(ecs);
                 }
                 catch (NotSupportedException)
                 {
