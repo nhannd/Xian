@@ -78,10 +78,10 @@ namespace ClearCanvas.Desktop.View.WinForms
             this._comboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
             this._comboBox.FormattingEnabled = true;
-            this._comboBox.Location = new System.Drawing.Point(0, 18);
-            this._comboBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this._comboBox.Location = new System.Drawing.Point(3, 18);
+            this._comboBox.Margin = new System.Windows.Forms.Padding(2);
             this._comboBox.Name = "_comboBox";
-            this._comboBox.Size = new System.Drawing.Size(158, 21);
+            this._comboBox.Size = new System.Drawing.Size(145, 21);
             this._comboBox.SuggestionProvider = null;
             this._comboBox.TabIndex = 0;
             this._comboBox.Value = null;
@@ -92,9 +92,9 @@ namespace ClearCanvas.Desktop.View.WinForms
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this._label);
             this.Controls.Add(this._comboBox);
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "SuggestComboField";
-            this.Size = new System.Drawing.Size(157, 41);
+            this.Size = new System.Drawing.Size(150, 41);
             this.ResumeLayout(false);
             this.PerformLayout();
 
