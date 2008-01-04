@@ -110,9 +110,6 @@
     <Compile Include="ClassNameExtensionFilter.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Configuration\ApplicationSettingsRegistry.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Configuration\SettingsStoreSettingsProvider.cs" />
     <Compile Include="Configuration\ISettingsStore.cs" />
     <Compile Include="Configuration\SettingsClassMetaDataReader.cs" />

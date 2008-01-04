@@ -31,12 +31,12 @@
 
 using System;
 using System.Configuration;
+using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.Graphics;
 using System.Xml;
 using System.Collections.Generic;
 using System.IO;
 using ClearCanvas.ImageViewer.StudyManagement;
-using ClearCanvas.Common.Configuration;
 
 namespace ClearCanvas.ImageViewer.Layout.Basic
 {

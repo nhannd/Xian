@@ -32,8 +32,9 @@
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using ClearCanvas.Common.Configuration;
 
-namespace ClearCanvas.Common.Configuration
+namespace ClearCanvas.Desktop
 {
 	/// <summary>
 	/// A Singleton class that provides a way for <see cref="ApplicationSettingsBase"/>-derived objects
@@ -89,22 +90,22 @@ namespace ClearCanvas.Common.Configuration
 			}
 		}
 
-        /// <summary>
-        /// Calls <see cref="ApplicationSettingsBase.Reload"/> on all registered 
-        /// settings instances that match the specified group.
-        /// </summary>
-        public void Reload(SettingsGroupDescriptor group)
-        {
-            Type settingsClass = Type.GetType(group.AssemblyQualifiedTypeName, false);
-            if (settingsClass != null)
-            {
+		/// <summary>
+		/// Calls <see cref="ApplicationSettingsBase.Reload"/> on all registered 
+		/// settings instances that match the specified group.
+		/// </summary>
+		public void Reload(SettingsGroupDescriptor group)
+		{
+			Type settingsClass = Type.GetType(group.AssemblyQualifiedTypeName, false);
+			if (settingsClass != null)
+			{
 				lock (_syncLock)
 				{
 					_registeredSettingsInstances
 						.FindAll(delegate(ApplicationSettingsBase instance) { return instance.GetType().Equals(settingsClass); })
 						.ForEach(delegate(ApplicationSettingsBase instance) { instance.Reload(); });
 				}
-            }
-        }
-    }
+			}
+		}
+	}
 }

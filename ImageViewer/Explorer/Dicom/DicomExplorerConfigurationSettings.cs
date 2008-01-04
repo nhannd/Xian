@@ -31,7 +31,7 @@
 
 using System;
 using System.Configuration;
-using ClearCanvas.Common.Configuration;
+using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {

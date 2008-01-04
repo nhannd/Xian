@@ -35,7 +35,6 @@ using System.Collections.Generic;
 using System.Xml;
 using System.ComponentModel;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Configuration;
 using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations;
 

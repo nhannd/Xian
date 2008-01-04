@@ -33,6 +33,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using ClearCanvas.Common.Configuration;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer
 {

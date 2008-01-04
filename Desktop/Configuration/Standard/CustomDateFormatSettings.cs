@@ -34,7 +34,6 @@ using System.Configuration;
 using System.Xml;
 using System.Xml.Serialization;
 using System.IO;
-using ClearCanvas.Common.Configuration;
 
 namespace ClearCanvas.Desktop.Configuration.Standard
 {
