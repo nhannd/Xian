@@ -35,12 +35,12 @@ using System.Configuration;
 namespace ClearCanvas.Common.Configuration
 {
     /// <summary>
-    /// Defines the interface to a mechanism for the storage of configuration data.
+    /// Defines the interface to a mechanism for the storage of application and user settings.
     /// </summary>
     public interface ISettingsStore
     {
         /// <summary>
-        /// Lists all settings groups for which this configuration store maintains settings values.
+        /// Lists all settings groups for which this store maintains settings values.
         /// </summary>
         /// <remarks>
         /// Generally this corresponds to the the list of all types derived from <see cref="ApplicationSettingsBase"/> found

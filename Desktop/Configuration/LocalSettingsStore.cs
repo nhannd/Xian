@@ -46,17 +46,17 @@ namespace ClearCanvas.Desktop.Configuration
 {
 	/// <summary>
 	/// The LocalSettingsStore, although it implements <see cref="ISettingsStore "/> does not serve 
-	/// as a proper configuration store for the <see cref="StandardSettingsProvider"/> (notice that it is not
+	/// as a proper settings store for the <see cref="StandardSettingsProvider"/> (notice that it is not
 	/// an extension of <see cref="SettingsStoreExtensionPoint"/>.  Instead, this class is instantiated
 	/// directly by the <see cref="SettingsManagementComponent"/> when there are no such extensions available,
 	/// and the application is using the <see cref="LocalFileSettingsProvider"/> (or app/user .config) to 
-	/// store settings locally.  This 'configuration store' is used solely to edit the default profile
+	/// store settings locally.  This 'settings store' is used solely to edit the default profile
 	/// throught the settings management UI.
 	/// </summary>
 	internal class LocalSettingsStore : ISettingsStore
 	{
-		private static string _applicationSettingsGroup = "applicationSettings";
-		private static string _userSettingsGroup = "userSettings";
+		private static readonly string _applicationSettingsGroup = "applicationSettings";
+		private static readonly string _userSettingsGroup = "userSettings";
 
 		/// <summary>
 		/// Constructor.
@@ -127,9 +127,7 @@ namespace ClearCanvas.Desktop.Configuration
 		/// <param name="sectionName">the name of the <see cref="ClientSettingsSection"/> to change/store</param>
 		/// <param name="scopeProperties">the settings properties that correspond to the same scope as the 
 		/// sectionGroup (e.g. applicationSettings or userSettings)</param>
-		/// <param name="newValues">the 'new' values to store.  Only the values that are different from 
-		/// the propery defaults are contained in this dictionary.  The implication being that existing values whose
-		/// value is not in this dictionary must *be* the same as the default.</param>
+		/// <param name="newValues">the 'new' values to store.  Only dirty values are contained in this dictionary.</param>
 		/// <param name="oldValues">for any values that get changed by this method, the previous values will be returned</param>
 		/// <returns>whether or not any modifications were made, which will normally be true unless the values in the store
 		/// are already the same.</returns>
@@ -287,13 +285,13 @@ namespace ClearCanvas.Desktop.Configuration
 		#region ISettingsStore Members
 		
 		/// <summary>
-		/// Loads the settings values (both application and user scoped) for a given settings class.  Only the default profile
+		/// Loads the settings values (both application and user scoped) for a given settings class.  Only the shared profile
 		/// is supported (application settings + default user settings).
 		/// </summary>
-		/// <param name="settingsClass">the settings class for which to retrieve the defaults</param>
+        /// <param name="group">the settings class for which to retrieve the defaults</param>
 		/// <param name="user">must be null or ""</param>
 		/// <param name="instanceKey">ignored</param>
-		/// <param name="values">returns only those values that are different from the property defaults</param>
+        /// <returns>returns only those values that are different from the property defaults</returns>
 		/// <exception cref="NotSupportedException">will be thrown if the user is specified</exception>
         public Dictionary<string, string> GetSettingsValues(SettingsGroupDescriptor group, string user, string instanceKey)
 		{
@@ -319,10 +317,10 @@ namespace ClearCanvas.Desktop.Configuration
 		}
 
 		/// <summary>
-		/// Stores the settings values (both application and user scoped) for a given settings class.  Only the default profile
+		/// Stores the settings values (both application and user scoped) for a given settings class.  Only the shared profile
 		/// is supported (application settings + default user settings).
 		/// </summary>
-		/// <param name="settingsClass">the settings class for which to store the values</param>
+        /// <param name="group">the settings class for which to store the values</param>
 		/// <param name="user">must be null or ""</param>
 		/// <param name="instanceKey">ignored</param>
 		/// <param name="dirtyValues">contains the values to be stored</param>
@@ -358,7 +356,7 @@ namespace ClearCanvas.Desktop.Configuration
 		/// <summary>
 		/// Unsupported.  An exception will always be thrown.
 		/// </summary>
-		/// <param name="settingsClass"></param>
+        /// <param name="group"></param>
 		/// <param name="user"></param>
 		/// <param name="instanceKey"></param>
 		/// <exception cref="NotSupportedException">always thrown</exception>
@@ -370,7 +368,7 @@ namespace ClearCanvas.Desktop.Configuration
 		/// <summary>
 		/// Unsupported.  An exception will always be thrown.
 		/// </summary>
-		/// <param name="settingsClass"></param>
+        /// <param name="group"></param>
 		/// <param name="user"></param>
 		/// <param name="instanceKey"></param>
 		/// <exception cref="NotSupportedException">always thrown</exception>
