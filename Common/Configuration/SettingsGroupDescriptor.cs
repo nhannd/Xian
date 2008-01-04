@@ -76,14 +76,7 @@ namespace ClearCanvas.Common.Configuration
                             if (!isStandard)
                                 continue;
                         }
-
-                        SettingsGroupDescriptor group = new SettingsGroupDescriptor(
-                            SettingsClassMetaDataReader.GetGroupName(t),
-                            SettingsClassMetaDataReader.GetVersion(t),
-                            SettingsClassMetaDataReader.GetGroupDescription(t),
-                            t.AssemblyQualifiedName);
-
-                        groups.Add(group);
+                        groups.Add(new SettingsGroupDescriptor(t));
                     }
                 }
             }
@@ -91,20 +84,23 @@ namespace ClearCanvas.Common.Configuration
             return groups;
         }
 
-        private string _name;
-        private Version _version;
-        private string _description;
-        private string _assemblyQualifiedTypeName;
+        private readonly string _name;
+        private readonly Version _version;
+        private readonly string _description;
+        private readonly string _assemblyQualifiedTypeName;
+        private readonly bool _hasUserScopedSettings;
 
         /// <summary>
         /// Constructor.
         /// </summary>
-        public SettingsGroupDescriptor(string name, Version version, string description, string assemblyQualifiedTypeName)
+        public SettingsGroupDescriptor(string name, Version version, string description, string assemblyQualifiedTypeName,
+            bool hasUserScopedSettings)
         {
             _name = name;
             _version = version;
             _description = description;
             _assemblyQualifiedTypeName = assemblyQualifiedTypeName;
+            _hasUserScopedSettings = hasUserScopedSettings;
         }
 
 		/// <summary>
@@ -115,6 +111,7 @@ namespace ClearCanvas.Common.Configuration
             _name = SettingsClassMetaDataReader.GetGroupName(settingsClass);
             _version = SettingsClassMetaDataReader.GetVersion(settingsClass);
             _description = SettingsClassMetaDataReader.GetGroupDescription(settingsClass);
+		    _hasUserScopedSettings = SettingsClassMetaDataReader.HasUserScopedSettings(settingsClass);
             _assemblyQualifiedTypeName = settingsClass.AssemblyQualifiedName;
         }
 
@@ -140,6 +137,14 @@ namespace ClearCanvas.Common.Configuration
         public string Description
         {
             get { return _description; }
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether this settings class has user-scoped settings.
+        /// </summary>
+        public bool HasUserScopedSettings
+        {
+            get { return _hasUserScopedSettings; }
         }
 
         /// <summary>

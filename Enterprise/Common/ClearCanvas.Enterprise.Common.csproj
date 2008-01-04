@@ -55,6 +55,7 @@
     <Compile Include="ITimeService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SearchResultPage.cs" />
+    <Compile Include="SettingsParser.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

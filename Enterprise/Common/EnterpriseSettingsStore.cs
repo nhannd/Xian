@@ -42,14 +42,21 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Enterprise.Common
 {
+    //NOTE: 
+    //There are a number of oddities in the implementation of this class due to the fact that it doesn't inherently
+    //know whether it is executing on the desktop (client) or server, and the server does not have any knowledge of
+    //settings classes that reside in client-side plugins.  This entire design of this could be revisited, however
+    //at the moment it isn't clear what a better design would be
+
     /// <summary>
-    /// Implementation of <see cref="ISettingsStore"/>, extends <see cref="SettingsStoreExtensionPoint"/>.
-    /// Acts as a client-side proxy to <see cref="IConfigurationService"/>
+    /// This class is an implementation of <see cref="ISettingsStore"/> that uses a <see cref="IConfigurationService"/>
+    /// as a back-end storage.
     /// </summary>
     [ExtensionOf(typeof(SettingsStoreExtensionPoint))]
     public class EnterpriseSettingsStore : ISettingsStore
     {
-        private IList<SettingsGroupDescriptor> _remoteGroups;
+        private IList<SettingsGroupDescriptor> _groups;
+        private IList<SettingsGroupDescriptor> _localGroups;
 
         public EnterpriseSettingsStore()
         {
@@ -64,11 +71,17 @@ namespace ClearCanvas.Enterprise.Common
             Platform.GetService<IConfigurationService>(
                 delegate(IConfigurationService service)
                 {
-                    values = service.LoadSettingsValues(group.Name, group.Version, null, instanceKey);
-                    Dictionary<string, string> userValues = service.LoadSettingsValues(group.Name, group.Version, user, instanceKey);
-                    foreach (KeyValuePair<string, string> kvp in userValues)
+                    SettingsParser parser = new SettingsParser();
+
+                    string sharedDocument = service.GetConfigurationDocument(group.Name, group.Version, null, instanceKey);
+                    parser.FromXml(sharedDocument, values);
+
+                    // if the group contains user-scoped settings, get the user document
+                    // and overwrite any values with the user's values
+                    if(group.HasUserScopedSettings)
                     {
-                        values[kvp.Key] = kvp.Value;
+                        string userDocument = service.GetConfigurationDocument(group.Name, group.Version, user, instanceKey);
+                        parser.FromXml(userDocument, values);
                     }
                 });
 
@@ -77,24 +90,63 @@ namespace ClearCanvas.Enterprise.Common
 
         public void PutSettingsValues(SettingsGroupDescriptor group, string user, string instanceKey, Dictionary<string, string> dirtyValues)
         {
+            // note: if user == null, we are saving shared settings, if user is valued, we are saving user settings
+            // but both are never edited as a single operation
+
+            // the approach taken here is to create an XML document that represents a diff between
+            // the default settings (as specified by the settings group meta-data) and the modified settings,
+            // and store that document in the configuration store
+
+            // the reason for storing only the diff is that, when a new version of the plugin(s) is deployed,
+            // the defaults of the new version should take precedence over the defaults of the old version
+            // but should not take precedence over the stored values
+            // the only way to make this distinction is to not store any values that are same as default
+
+
+            // first obtain the meta-data for the settings group properties
+            IList<SettingsPropertyDescriptor> properties = this.ListSettingsProperties(group);
+
             Platform.GetService<IConfigurationService>(
                 delegate(IConfigurationService service)
                 {
-                    Dictionary<string, string> allValues = service.LoadSettingsValues(group.Name, group.Version, user, instanceKey);
+                    SettingsParser parser = new SettingsParser();
+                    Dictionary<string, string> values = new Dictionary<string, string>();
+
+                    // next we obtain any previously stored configuration document for this settings group
+                    string document = service.GetConfigurationDocument(group.Name, group.Version, user, instanceKey);
+                    parser.FromXml(document, values);
+
+                    // update the values that have changed
                     foreach (KeyValuePair<string, string> kvp in dirtyValues)
                     {
-                        allValues[kvp.Key] = kvp.Value;
+                        values[kvp.Key] = kvp.Value;
                     }
-                    service.SaveSettingsValues(group.Name, group.Version, user, instanceKey, allValues);
+
+                    // now remove any values that are identical to the default values
+                    foreach (SettingsPropertyDescriptor property in properties)
+                    {
+                        string value;
+                        if(values.TryGetValue(property.Name, out value))
+                        {
+                            if (value.Equals(property.DefaultValue))
+                                values.Remove(property.Name);
+                        }
+                    }
+
+                    // generate the document and save it
+                    document = parser.ToXml(values);
+                    service.SetConfigurationDocument(group.Name, group.Version, user, instanceKey, document);
                 });
         }
 
         public void RemoveUserSettings(SettingsGroupDescriptor group, string user, string instanceKey)
         {
+            Platform.CheckForNullReference(user, "user");
+
             Platform.GetService<IConfigurationService>(
                 delegate(IConfigurationService service)
                 {
-                    service.RemoveSettingsValues(
+                    service.RemoveConfigurationDocument(
                         group.Name,
                         group.Version,
                         user,
@@ -110,84 +162,69 @@ namespace ClearCanvas.Enterprise.Common
 
         public IList<SettingsGroupDescriptor> ListSettingsGroups()
         {
-            // init remote groups if not initialized
-            if (_remoteGroups == null)
+            // init groups if not initialized
+            if (_groups == null)
             {
-                _remoteGroups = ListSettingsGroupsRemote();
+                // obtain the list of settings groups from the configuration service
+                Platform.GetService<IConfigurationService>(
+                    delegate(IConfigurationService service)
+                    {
+                        _groups = CollectionUtils.Map<SettingsGroupInfo, SettingsGroupDescriptor, List<SettingsGroupDescriptor>>(
+                           service.ListSettingsGroups(),
+                           delegate(SettingsGroupInfo info)
+                           {
+                               return info.ToDescriptor();
+                           });
+                    });
+
+                // HACK:
+                // this is really ugly, but we don't know if we're executing on the server or the client
+                // if executing on the client, need to add local groups (settings classes from client-side plugins)
+                // because the configuration service will not know about these groups
+                // note however that local settings classes that use the local file provider are excluded (ListInstalledSettingsGroups(true))
+                // because they are not stored in the enterprise settings store
+                _localGroups = SettingsGroupDescriptor.ListInstalledSettingsGroups(true);
+                foreach (SettingsGroupDescriptor group in _localGroups)
+                {
+                    if (!_groups.Contains(group))
+                        _groups.Add(group);
+                }
             }
 
-            // add remote groups
-            List<SettingsGroupDescriptor> groups = new List<SettingsGroupDescriptor>(_remoteGroups);
-
-            // add local groups
-            // note that locally stored settings groups are excluded (ListInstalledSettingsGroups(true)) because they
-            // are not stored in the enterprise configuration store
-            IList<SettingsGroupDescriptor> localGroups = SettingsGroupDescriptor.ListInstalledSettingsGroups(true);
-            foreach (SettingsGroupDescriptor group in localGroups)
-            {
-                if (!groups.Contains(group))
-                    groups.Add(group);
-            }
-
-            return groups;
+            return _groups;
         }
 
         public IList<SettingsPropertyDescriptor> ListSettingsProperties(SettingsGroupDescriptor group)
         {
-            // init remote groups if not initialized
-            if (_remoteGroups == null)
+            // init groups if not initialized
+            if (_groups == null)
             {
-                _remoteGroups = ListSettingsGroupsRemote();
+                ListSettingsGroups();
             }
 
-            // if the group is remote, get properties from remote
-            if (_remoteGroups.Contains(group))
+            // if the group is in the local plugin base, get properties directly
+            if (_localGroups.Contains(group))
             {
-                return ListSettingsPropertiesRemote(group);
+                return SettingsPropertyDescriptor.ListSettingsProperties(group);
             }
             else
             {
-                // group is local
-                return SettingsPropertyDescriptor.ListSettingsProperties(group);
+                // use the configuration service to obtain the properties
+                IList<SettingsPropertyDescriptor> properties = null;
+                Platform.GetService<IConfigurationService>(
+                    delegate(IConfigurationService service)
+                    {
+                        properties = CollectionUtils.Map<SettingsPropertyInfo, SettingsPropertyDescriptor, List<SettingsPropertyDescriptor>>(
+                            service.ListSettingsProperties(new SettingsGroupInfo(group)),
+                            delegate(SettingsPropertyInfo info)
+                            {
+                                return info.ToDescriptor();
+                            });
+                    });
+                return properties;
             }
         }
 
         #endregion
-
-        private IList<SettingsGroupDescriptor> ListSettingsGroupsRemote()
-        {
-            List<SettingsGroupInfo> groups = null;
-
-            Platform.GetService<IConfigurationService>(
-                delegate(IConfigurationService service)
-                {
-                    groups = service.ListSettingsGroups();
-                });
-
-            return CollectionUtils.Map<SettingsGroupInfo, SettingsGroupDescriptor, List<SettingsGroupDescriptor>>(
-                groups,
-                delegate(SettingsGroupInfo info)
-                {
-                    return info.ToDescriptor();
-                });
-        }
-
-        private IList<SettingsPropertyDescriptor> ListSettingsPropertiesRemote(SettingsGroupDescriptor group)
-        {
-            List<SettingsPropertyInfo> properties = null;
-
-            Platform.GetService<IConfigurationService>(
-                delegate(IConfigurationService service)
-                {
-                    properties = service.ListSettingsProperties(new SettingsGroupInfo(group));
-                });
-
-            return CollectionUtils.Map<SettingsPropertyInfo, SettingsPropertyDescriptor, List<SettingsPropertyDescriptor>>(
-                properties,
-                delegate(SettingsPropertyInfo info)
-                {
-                    return info.ToDescriptor();
-                });
-        }
     }
 }

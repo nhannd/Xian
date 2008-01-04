@@ -96,8 +96,30 @@ namespace ClearCanvas.Common.Configuration
         /// </summary>
         public static ICollection<PropertyInfo> GetSettingsProperties(Type settingsClass)
         {
-            return CollectionUtils.Select<PropertyInfo>(settingsClass.GetProperties(),
+            return CollectionUtils.Select(settingsClass.GetProperties(),
                 delegate(PropertyInfo property) { return IsUserScoped(property) || IsAppScoped(property); });
+        }
+
+        /// <summary>
+        /// Returns true if the specified settings class has any settings that are user-scoped.
+        /// </summary>
+        /// <param name="settingsClass"></param>
+        /// <returns></returns>
+        public static bool HasUserScopedSettings(Type settingsClass)
+        {
+            return CollectionUtils.Contains(GetSettingsProperties(settingsClass),
+                delegate(PropertyInfo p) { return IsUserScoped(p); });
+        }
+
+        /// <summary>
+        /// Returns true if the specified settings class has any settings that are application-scoped.
+        /// </summary>
+        /// <param name="settingsClass"></param>
+        /// <returns></returns>
+        public static bool HasAppScopedSettings(Type settingsClass)
+        {
+            return CollectionUtils.Contains(GetSettingsProperties(settingsClass),
+                delegate(PropertyInfo p) { return IsAppScoped(p); });
         }
 
 		/// <summary>

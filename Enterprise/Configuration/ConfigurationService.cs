@@ -78,27 +78,16 @@ namespace ClearCanvas.Enterprise.Configuration
         // because this service is invoked by the framework, rather than by the application,
         // it is safest to use a new persistence scope
         [ReadOperation(PersistenceScopeOption = PersistenceScopeOption.RequiresNew)]
-        public Dictionary<string, string> LoadSettingsValues(string name, Version version, string user, string instanceKey)
+        public string GetConfigurationDocument(string name, Version version, string user, string instanceKey)
         {
             CheckReadAccess(user);
 
-            try
-            {
-                IConfigurationDocumentBroker broker = PersistenceContext.GetBroker<IConfigurationDocumentBroker>();
-                ConfigurationDocumentSearchCriteria criteria = BuildCurrentVersionCriteria(name, version, user, instanceKey);
-                ConfigurationDocument document = broker.FindOne(criteria);
+            IConfigurationDocumentBroker broker = PersistenceContext.GetBroker<IConfigurationDocumentBroker>();
+            ConfigurationDocumentSearchCriteria criteria = BuildCurrentVersionCriteria(name, version, user, instanceKey);
+            IList<ConfigurationDocument> documents = broker.Find(criteria, new SearchResultPage(0, 1));
 
-                SettingsParser parser = new SettingsParser();
-                Dictionary<string, string> values = new Dictionary<string,string>();
-                parser.FromXml(document.DocumentText, values);
-
-                return values;
-            }
-            catch (EntityNotFoundException)
-            {
-                // no stored values
-                return new Dictionary<string, string>();
-            }
+            ConfigurationDocument document = CollectionUtils.FirstElement(documents);
+            return document == null ? null : document.DocumentText;
         }
 
 
@@ -106,7 +95,7 @@ namespace ClearCanvas.Enterprise.Configuration
         // because this service is invoked by the framework, rather than by the application,
         // it is safest to use a new persistence scope
         [UpdateOperation(PersistenceScopeOption = PersistenceScopeOption.RequiresNew)]
-        public void SaveSettingsValues(string name, Version version, string user, string instanceKey, Dictionary<string, string> values)
+        public void SetConfigurationDocument(string name, Version version, string user, string instanceKey, string content)
         {
             CheckWriteAccess(user);
 
@@ -126,53 +115,13 @@ namespace ClearCanvas.Enterprise.Configuration
             }
 
             // save the text
-            SettingsParser parser = new SettingsParser();
-            document.DocumentText = parser.ToXml(values);
+            document.DocumentText = content;
         }
-/*
+
         // because this service is invoked by the framework, rather than by the application,
         // it is safest to use a new persistence scope
         [UpdateOperation(PersistenceScopeOption = PersistenceScopeOption.RequiresNew)]
-        public void UpgradeFromPreviousVersion(string group, Version version, string user, string instanceKey, IDictionary<string, string> values)
-        {
-            IConfigurationDocumentBroker broker = CurrentContext.GetBroker<IConfigurationDocumentBroker>();
-            ConfigurationDocumentSearchCriteria criteria = BuildCurrentAndPerviousVersionsCriteria(group, version, user, instanceKey);
-
-            // query for up to 2 instances, the current version and the immediately previous version
-            // need to sort by version, descending, to ensure that we in fact get the current and immediately previous version
-            criteria.DocumentVersionString.SortDesc(0);    
-            IList<ConfigurationDocument> instances = broker.Find(criteria, new SearchResultPage(0, 2));
-
-            ConfigurationDocument previousVersion = CollectionUtils.SelectFirst<ConfigurationDocument>(instances,
-                delegate(ConfigurationDocument i) { return VersionUtils.FromPaddedVersionString(i.DocumentVersionString) < version; });
-
-            // if there is no previous version, then there is nothing to upgrade
-            if (previousVersion != null)
-            {
-                ConfigurationDocument currentVersion = CollectionUtils.SelectFirst<ConfigurationDocument>(instances,
-                    delegate(ConfigurationDocument i) { return VersionUtils.FromPaddedVersionString(i.DocumentVersionString) == version; });
-
-                // if the current version does not exist, create it
-                if (currentVersion == null)
-                {
-                    currentVersion = NewDocument(group, version, user, instanceKey);
-                    CurrentContext.Lock(currentVersion, DirtyState.New);
-                }
-
-                SettingsParser parser = new SettingsParser();
-
-                // upgrade the current version from the previous
-                parser.UpgradeFromPrevious(currentVersion, previousVersion);
-
-                // place the latest values into the dictionary
-                parser.FromXml(currentVersion.DocumentText, values);
-            }
-        }
-*/
-        // because this service is invoked by the framework, rather than by the application,
-        // it is safest to use a new persistence scope
-        [UpdateOperation(PersistenceScopeOption = PersistenceScopeOption.RequiresNew)]
-        public void RemoveSettingsValues(string name, Version version, string user, string instanceKey)
+        public void RemoveConfigurationDocument(string name, Version version, string user, string instanceKey)
         {
             CheckWriteAccess(user);
    
@@ -227,7 +176,11 @@ namespace ClearCanvas.Enterprise.Configuration
             if (instanceKey != null && instanceKey.Length == 0)
                 instanceKey = null;
 
-            return new ConfigurationDocument(name, VersionUtils.ToPaddedVersionString(version), user, instanceKey, null);
+            return new ConfigurationDocument(name,
+                VersionUtils.ToPaddedVersionString(version),
+                StringUtilities.NullIfEmpty(user),
+                StringUtilities.NullIfEmpty(instanceKey),
+                null);
         }
 
         private ConfigurationDocumentSearchCriteria BuildCurrentVersionCriteria(string name, Version version, string user, string instanceKey)
@@ -249,7 +202,7 @@ namespace ClearCanvas.Enterprise.Configuration
             ConfigurationDocumentSearchCriteria criteria = new ConfigurationDocumentSearchCriteria();
             criteria.DocumentName.EqualTo(name);
 
-            if (instanceKey != null && instanceKey.Length > 0)
+            if (!string.IsNullOrEmpty(instanceKey))
             {
                 criteria.InstanceKey.EqualTo(instanceKey);
             }
@@ -258,7 +211,7 @@ namespace ClearCanvas.Enterprise.Configuration
                 criteria.InstanceKey.IsNull();
             }
 
-            if (user != null && user.Length > 0)
+            if (!string.IsNullOrEmpty(user))
             {
                 criteria.User.EqualTo(user);
             }

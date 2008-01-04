@@ -35,7 +35,7 @@ using System.Text;
 using System.Xml;
 using System.IO;
 
-namespace ClearCanvas.Enterprise.Configuration
+namespace ClearCanvas.Enterprise.Common
 {
     class SettingsParser
     {

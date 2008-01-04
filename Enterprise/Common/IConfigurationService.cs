@@ -50,11 +50,13 @@ namespace ClearCanvas.Enterprise.Common
             this.Description = desc.Description;
             this.Version = desc.Version;
             this.AssemblyQualifiedTypeName = desc.AssemblyQualifiedTypeName;
+            this.HasUserScopedSettings = desc.HasUserScopedSettings;
         }
 
         public SettingsGroupDescriptor ToDescriptor()
         {
-            return new SettingsGroupDescriptor(this.Name, this.Version, this.Description, this.AssemblyQualifiedTypeName);
+            return new SettingsGroupDescriptor(this.Name, this.Version, this.Description, this.AssemblyQualifiedTypeName,
+                this.HasUserScopedSettings);
         }
 
         /// <summary>
@@ -80,6 +82,12 @@ namespace ClearCanvas.Enterprise.Common
         /// </summary>
         [DataMember]
         public string AssemblyQualifiedTypeName;
+
+        /// <summary>
+        /// Indicates whether this group has user-scoped settings.
+        /// </summary>
+        [DataMember]
+        public bool HasUserScopedSettings;
     }
 
     /// <summary>
@@ -140,7 +148,7 @@ namespace ClearCanvas.Enterprise.Common
     public interface IConfigurationService : ICoreServiceLayer
     {
         /// <summary>
-        /// Lists all available settings groups.
+        /// Lists settings groups installed in the local plugin base.
         /// </summary>
         /// <returns></returns>
         [OperationContract]
@@ -155,24 +163,25 @@ namespace ClearCanvas.Enterprise.Common
         List<SettingsPropertyInfo> ListSettingsProperties(SettingsGroupInfo group);
 
         /// <summary>
-        /// Loads the values for the settings group specified by the name, version, user and instance key,
-        /// returning the serialized values in a dictionary. The user and instance key may be null.
-        /// </summary>
-        [OperationContract]
-        Dictionary<string, string> LoadSettingsValues(string group, Version version, string user, string instanceKey);
-
-        /// <summary>
-        /// Stores the settings values for the specified group, version, user and instance key.
+        /// Gets the document specified by the name, version, user and instance key.
         /// The user and instance key may be null.
         /// </summary>
         [OperationContract]
-        void SaveSettingsValues(string group, Version version, string user, string instanceKey, Dictionary<string, string> values);
+        string GetConfigurationDocument(string documentName, Version version, string user, string instanceKey);
+
+        /// <summary>
+        /// Sets the content for the specified document, version, user and instance key.
+        /// The user and instance key may be null.
+        /// </summary>
+        [OperationContract]
+        void SetConfigurationDocument(string documentName, Version version, string user, string instanceKey, string documentContent);
 
         /// <summary>
         /// Removes any stored settings values for the specified group, version, user and instance key.
+        /// The user and instance key may be null.
         /// </summary>
         [OperationContract]
-        void RemoveSettingsValues(string name, Version version, string user, string instanceKey);
+        void RemoveConfigurationDocument(string documentName, Version version, string user, string instanceKey);
 
     }
 }
