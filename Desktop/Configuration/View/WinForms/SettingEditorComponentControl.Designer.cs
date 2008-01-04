@@ -61,20 +61,20 @@ namespace ClearCanvas.Desktop.Configuration.View.WinForms
         {
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
-            this._cancelButton = new System.Windows.Forms.Button();
-            this._okButton = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this._defaultValue = new System.Windows.Forms.RichTextBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this._currentValue = new System.Windows.Forms.RichTextBox();
+            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+            this._cancelButton = new System.Windows.Forms.Button();
+            this._okButton = new System.Windows.Forms.Button();
             this.tableLayoutPanel1.SuspendLayout();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
-            this.flowLayoutPanel1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
+            this.flowLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -113,6 +113,52 @@ namespace ClearCanvas.Desktop.Configuration.View.WinForms
             this.splitContainer1.SplitterWidth = 3;
             this.splitContainer1.TabIndex = 0;
             // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this._defaultValue);
+            this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.groupBox1.Location = new System.Drawing.Point(0, 0);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(634, 252);
+            this.groupBox1.TabIndex = 0;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Default Value";
+            // 
+            // _defaultValue
+            // 
+            this._defaultValue.AcceptsTab = true;
+            this._defaultValue.AutoWordSelection = true;
+            this._defaultValue.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._defaultValue.Location = new System.Drawing.Point(3, 16);
+            this._defaultValue.Name = "_defaultValue";
+            this._defaultValue.ReadOnly = true;
+            this._defaultValue.Size = new System.Drawing.Size(628, 233);
+            this._defaultValue.TabIndex = 0;
+            this._defaultValue.Text = "";
+            this._defaultValue.WordWrap = false;
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this._currentValue);
+            this.groupBox2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.groupBox2.Location = new System.Drawing.Point(0, 0);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(634, 262);
+            this.groupBox2.TabIndex = 1;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Current Value";
+            // 
+            // _currentValue
+            // 
+            this._currentValue.AcceptsTab = true;
+            this._currentValue.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._currentValue.Location = new System.Drawing.Point(3, 16);
+            this._currentValue.Name = "_currentValue";
+            this._currentValue.Size = new System.Drawing.Size(628, 243);
+            this._currentValue.TabIndex = 0;
+            this._currentValue.Text = "";
+            this._currentValue.WordWrap = false;
+            // 
             // flowLayoutPanel1
             // 
             this.flowLayoutPanel1.Controls.Add(this._cancelButton);
@@ -147,47 +193,6 @@ namespace ClearCanvas.Desktop.Configuration.View.WinForms
             this._okButton.UseVisualStyleBackColor = true;
             this._okButton.Click += new System.EventHandler(this._okButton_Click);
             // 
-            // groupBox1
-            // 
-            this.groupBox1.Controls.Add(this._defaultValue);
-            this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.groupBox1.Location = new System.Drawing.Point(0, 0);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(634, 252);
-            this.groupBox1.TabIndex = 0;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Default Value";
-            // 
-            // _defaultValue
-            // 
-            this._defaultValue.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._defaultValue.Location = new System.Drawing.Point(3, 16);
-            this._defaultValue.Name = "_defaultValue";
-            this._defaultValue.ReadOnly = true;
-            this._defaultValue.Size = new System.Drawing.Size(628, 233);
-            this._defaultValue.TabIndex = 0;
-            this._defaultValue.Text = "";
-            // 
-            // groupBox2
-            // 
-            this.groupBox2.Controls.Add(this._currentValue);
-            this.groupBox2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.groupBox2.Location = new System.Drawing.Point(0, 0);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(634, 262);
-            this.groupBox2.TabIndex = 1;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Current Value";
-            // 
-            // _currentValue
-            // 
-            this._currentValue.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._currentValue.Location = new System.Drawing.Point(3, 16);
-            this._currentValue.Name = "_currentValue";
-            this._currentValue.Size = new System.Drawing.Size(628, 243);
-            this._currentValue.TabIndex = 0;
-            this._currentValue.Text = "";
-            // 
             // SettingEditorComponentControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -200,9 +205,9 @@ namespace ClearCanvas.Desktop.Configuration.View.WinForms
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             this.splitContainer1.ResumeLayout(false);
-            this.flowLayoutPanel1.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
+            this.flowLayoutPanel1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
