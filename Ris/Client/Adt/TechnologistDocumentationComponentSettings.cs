@@ -30,7 +30,7 @@
 #endregion
 
 using System.Configuration;
-using ClearCanvas.Common.Configuration;
+using ClearCanvas.Desktop;
 
 namespace ClearCanvas.Ris.Client.Adt
 {

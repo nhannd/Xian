@@ -33,7 +33,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Configuration;
-using ClearCanvas.Common.Configuration;
+using ClearCanvas.Desktop;
 
 namespace ClearCanvas.Ris.Client
 {
