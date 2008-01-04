@@ -82,7 +82,13 @@ namespace CopyrightTool
 			if (lowerCaseFile.Contains(".designer.cs") )
 				return;
 
-			string cscode = File.ReadAllText(file);
+			Encoding encoding;
+			string cscode;
+			using (StreamReader reader = new StreamReader(file, true))
+			{
+				encoding = reader.CurrentEncoding;
+				cscode = reader.ReadToEnd();
+			}
 
 			// Insert the license if the license isn't already there
 			if (!cscode.Contains(Copyright.LicenseRegion))
@@ -104,7 +110,10 @@ namespace CopyrightTool
 
 			if (licensedChanged || assemblyCopyrightChanged)
 			{
-				File.WriteAllText(file, cscode);
+				using (StreamWriter writer = new StreamWriter(file, false, encoding))
+				{
+					writer.Write(cscode);
+				}
 				Console.Write("UPDATED: {0}\n", file);
 			}
 			else 
