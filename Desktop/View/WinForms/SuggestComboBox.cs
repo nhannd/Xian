@@ -45,7 +45,6 @@ namespace ClearCanvas.Desktop.View.WinForms
     public class SuggestComboBox : ComboBox
     {
         private ISuggestionProvider _suggestionProvider;
-        private bool _textDeleted;
 
         private event EventHandler _valueChanged;
 
@@ -150,20 +149,23 @@ namespace ClearCanvas.Desktop.View.WinForms
             base.OnLeave(e);
         }
 
-        protected override void OnKeyDown(KeyEventArgs e)
-        {
-            switch (e.KeyCode)
-            {
-                case Keys.Delete:
-                case Keys.Back:
-                    _textDeleted = true;
-                    break;
-                default:
-                    _textDeleted = false;
-                    break;
-            }
-            base.OnKeyDown(e);
-        }
+        // When an user deletes some text, the suggestions may no longer be valid.  
+        // We may want to handle the suggestions differently in the future
+
+        //protected override void OnKeyDown(KeyEventArgs e)
+        //{
+        //    switch (e.KeyCode)
+        //    {
+        //        case Keys.Delete:
+        //        case Keys.Back:
+        //            _textDeleted = true;
+        //            break;
+        //        default:
+        //            _textDeleted = false;
+        //            break;
+        //    }
+        //    base.OnKeyDown(e);
+        //}
 
         protected override void OnTextUpdate(EventArgs e)
         {
@@ -192,6 +194,10 @@ namespace ClearCanvas.Desktop.View.WinForms
                 this.SelectionStart = cursorPosition;
                 this.SelectionLength = 0;
             }
+
+            // Auto-complete the textbox when matching only one item
+            // It is commented out to make this control simpler.
+
             //else if (this.Items.Count == 1)
             //{
             //    // Close the dropdown
