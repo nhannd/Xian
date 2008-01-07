@@ -154,6 +154,13 @@ namespace ClearCanvas.Desktop.View.WinForms
             set { _toolStrip.Visible = value; }
         }
 
+	    [DefaultValue(true)]
+	    public bool ShowColumnHeading
+	    {
+            get { return _dataGridView.ColumnHeadersVisible; }
+            set { _dataGridView.ColumnHeadersVisible = value; }
+	    }
+
         public event EventHandler SelectionChanged
         {
             add { _selectionChanged += value; }

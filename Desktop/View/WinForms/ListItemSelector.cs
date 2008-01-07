@@ -62,6 +62,40 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         #region Public Properties
 
+        /// <summary>
+        /// Indicates if toolbars should be displayed
+        /// </summary>
+        /// <remarks>
+        /// Value is applied to both the Available list and the selected List
+        /// </remarks>
+        [DefaultValue(true)]
+        public bool ShowToolbars
+        {
+            get { return _availableItems.ShowToolbar; }
+            set
+            {
+                _availableItems.ShowToolbar = value;
+                _selectedItems.ShowToolbar = value;
+            }
+        }
+
+        /// <summary>
+        /// Indicates if column headings should be displayed
+        /// </summary>
+        /// <remarks>
+        /// Value is applied to both the Available list and the selected List
+        /// </remarks>
+        [DefaultValue(true)]
+        public bool ShowColumnHeading
+        {
+            get { return _availableItems.ShowColumnHeading; }
+            set
+            {
+                _availableItems.ShowColumnHeading = value;
+                _selectedItems.ShowColumnHeading = value;
+            }
+        }
+
         public ITable AvailableItemsTable
         {
             get { return _availableItemsTable; }

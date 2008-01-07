@@ -67,6 +67,8 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             _protocolNextItem.DataBindings.Add("Checked", _component, "ProtocolNextItem", true, DataSourceUpdateMode.OnPropertyChanged);
             _protocolNextItem.DataBindings.Add("Enabled", _component, "ProtocolNextItemEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 
+            protocolCodesSelector.ShowToolbars = false;
+            protocolCodesSelector.ShowColumnHeading = false;
             protocolCodesSelector.AvailableItemsTable = _component.AvailableProtocolCodesTable;
             protocolCodesSelector.SelectedItemsTable = _component.SelectedProtocolCodesTable;
             protocolCodesSelector.DataBindings.Add("Enabled", _component, "SaveEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
