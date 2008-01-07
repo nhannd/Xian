@@ -87,7 +87,7 @@ namespace ClearCanvas.Enterprise.Configuration
             IList<ConfigurationDocument> documents = broker.Find(criteria, new SearchResultPage(0, 1));
 
             ConfigurationDocument document = CollectionUtils.FirstElement(documents);
-            return document == null ? null : document.DocumentText;
+            return document == null ? null : document.Body.DocumentText;
         }
 
 
@@ -105,17 +105,16 @@ namespace ClearCanvas.Enterprise.Configuration
                 IConfigurationDocumentBroker broker = PersistenceContext.GetBroker<IConfigurationDocumentBroker>();
                 ConfigurationDocumentSearchCriteria criteria = BuildCurrentVersionCriteria(name, version, user, instanceKey);
                 document = broker.FindOne(criteria);
+                document.Body.DocumentText = content;
             }
             catch (EntityNotFoundException)
             {
                 // no saved settings, create new
                 document = NewDocument(name, version, user, instanceKey);
-
+                document.Body.DocumentText = content;
                 PersistenceContext.Lock(document, DirtyState.New);
             }
 
-            // save the text
-            document.DocumentText = content;
         }
 
         // because this service is invoked by the framework, rather than by the application,
@@ -179,8 +178,7 @@ namespace ClearCanvas.Enterprise.Configuration
             return new ConfigurationDocument(name,
                 VersionUtils.ToPaddedVersionString(version),
                 StringUtilities.NullIfEmpty(user),
-                StringUtilities.NullIfEmpty(instanceKey),
-                null);
+                StringUtilities.NullIfEmpty(instanceKey));
         }
 
         private ConfigurationDocumentSearchCriteria BuildCurrentVersionCriteria(string name, Version version, string user, string instanceKey)

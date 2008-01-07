@@ -47,6 +47,16 @@ namespace ClearCanvas.Enterprise.Configuration {
     /// </summary>
 	public partial class ConfigurationDocument : Entity
 	{
+        public ConfigurationDocument(string name, string versionString, string user, string instanceKey)
+        {
+            _documentName = name;
+            _documentVersionString = versionString;
+            _user = user;
+            _instanceKey = instanceKey;
+            _body = new ConfigurationDocumentBody(this, null);
+        }
+
+
 		/// <summary>
 		/// This method is called from the constructor.  Use this method to implement any custom
 		/// object initialization.

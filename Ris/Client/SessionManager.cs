@@ -87,6 +87,11 @@ namespace ClearCanvas.Ris.Client
 
                 string selectedFacilityCode = LoginDialogSettings.Default.SelectedFacility;
 
+                // if no saved facility, just choose the first one
+                if (string.IsNullOrEmpty(selectedFacilityCode) && facilityCodes.Length > 0)
+                    selectedFacilityCode = facilityCodes[0];
+
+
                 loginDialog.SetFacilityChoices(facilityCodes, selectedFacilityCode);
 
                 while (true)

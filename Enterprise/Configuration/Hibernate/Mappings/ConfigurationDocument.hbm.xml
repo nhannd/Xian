@@ -1,6 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="ClearCanvas.Enterprise.Configuration" namespace="ClearCanvas.Enterprise.Configuration">
-  <class name="ConfigurationDocument" proxy="ConfigurationDocument" table="ConfigurationDocument_">
+  <class name="ConfigurationDocument" table="ConfigurationDocument_">
+    <!-- Instances of this class are essentially immutable once created, therefore can be cached as read-only -->
+    <!--<cache usage="read-only"/>-->
     <id name="OID" column="OID_" type="Guid">
       <generator class="guid.comb"/>
     </id>
@@ -9,6 +11,6 @@
     <property name="DocumentVersionString" column="DocumentVersionString_" type="String" length="30" not-null="true"/>
     <property name="User" column="User_" type="String" length="200" not-null="false"/>
     <property name="InstanceKey" column="InstanceKey_" type="String" length="1000" not-null="false"/>
-    <property name="DocumentText" column="DocumentText_" type="StringClob" length="65000" not-null="false"/>
+    <one-to-one name="Body" class="ConfigurationDocumentBody" cascade="all"/>
   </class>
 </hibernate-mapping>

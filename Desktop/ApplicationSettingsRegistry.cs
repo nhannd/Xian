@@ -38,14 +38,13 @@ namespace ClearCanvas.Desktop
 {
 	/// <summary>
 	/// A Singleton class that provides a way for <see cref="ApplicationSettingsBase"/>-derived objects
-	/// to be updated when a value in the default profile has changed.
+	/// to be updated when a setting value was modified externally.
 	/// </summary>
-	/// This class provides a way to update existing instances of settings objects derived from
-	/// <see cref="ApplicationSettingsBase"/>.  The individual instances must register themselves
-	/// with this class in order to receive updates.  When a setting value is changed in the default
-	/// profile, the individual settings in memory are inspected to see if their values corresponded
-	/// to the values that were just changed.  If they do, then those values are changed to correspond
-	/// to the new values.
+	/// <remarks>
+    /// This class provides a way to update existing instances of settings objects derived from
+    /// <see cref="ApplicationSettingsBase"/>.  The individual instances must register themselves
+    /// with this class in order to receive updates.
+    /// </remarks>
 	public class ApplicationSettingsRegistry
 	{
 		private static readonly ApplicationSettingsRegistry _instance = new ApplicationSettingsRegistry();
