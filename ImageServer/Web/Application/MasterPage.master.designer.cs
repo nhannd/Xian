@@ -55,6 +55,15 @@ public partial class Admin_MasterPage {
     protected global::System.Web.UI.WebControls.Label VersionLabel;
     
     /// <summary>
+    /// Panel1 control.
+    /// </summary>
+    /// <remarks>
+    /// Auto-generated field.
+    /// To modify move field declaration from designer file to code-behind file.
+    /// </remarks>
+    protected global::System.Web.UI.WebControls.Panel Panel1;
+    
+    /// <summary>
     /// menutitlebar control.
     /// </summary>
     /// <remarks>
@@ -100,13 +109,13 @@ public partial class Admin_MasterPage {
     protected global::System.Web.UI.UpdatePanel UpdatePanel2;
     
     /// <summary>
-    /// ContentPanel control.
+    /// PageContentPanel control.
     /// </summary>
     /// <remarks>
     /// Auto-generated field.
     /// To modify move field declaration from designer file to code-behind file.
     /// </remarks>
-    protected global::System.Web.UI.WebControls.Panel ContentPanel;
+    protected global::System.Web.UI.WebControls.Panel PageContentPanel;
     
     /// <summary>
     /// ContentPlaceHolder1 control.
@@ -116,13 +125,4 @@ public partial class Admin_MasterPage {
     /// To modify move field declaration from designer file to code-behind file.
     /// </remarks>
     protected global::System.Web.UI.WebControls.ContentPlaceHolder ContentPlaceHolder1;
-    
-    /// <summary>
-    /// Panel2 control.
-    /// </summary>
-    /// <remarks>
-    /// Auto-generated field.
-    /// To modify move field declaration from designer file to code-behind file.
-    /// </remarks>
-    protected global::System.Web.UI.WebControls.Panel Panel2;
 }

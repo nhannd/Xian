@@ -43,13 +43,19 @@ using System.Reflection;
 
 public partial class Admin_MasterPage : System.Web.UI.MasterPage
 {
+
     protected void Page_Load(object sender, EventArgs e)
     {
-
+        if (IsPostBack)
+            return;
+        
         Assembly asm = Assembly.GetExecutingAssembly();
         VersionLabel.Text =
             string.Format("Ver: {0}",
-                        asm.GetName().Version.ToString());
-
+                          asm.GetName().Version.ToString()
+                );
+       
     }
+
+   
 }

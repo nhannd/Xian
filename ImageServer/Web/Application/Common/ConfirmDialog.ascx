@@ -2,8 +2,8 @@
 <%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="cc1" %>
 <asp:UpdatePanel ID="UpdatePanel" runat="server" UpdateMode="Conditional">
     <ContentTemplate>
-<asp:Panel ID="DialogPanel" runat="server" CssClass="PopupWindow" Style="display: none;" Width="350px">
-    <asp:Panel ID="TitleBarPanel" runat="server" CssClass="PopupWindowTitleBar">
+<asp:Panel ID="DialogPanel" runat="server" CssClass="CSSPopupWindow" Style="display: none;" Width="350px">
+    <asp:Panel ID="TitleBarPanel" runat="server" CssClass="CSSPopupWindowTitleBar">
         <table style="width: 100%">
             <tr>
                 <td valign="middle">
@@ -13,7 +13,7 @@
             </tr>
         </table>
     </asp:Panel>
-    <div class="PopupWindowBody">
+    <div class="CSSPopupWindowBody">
         <table id="TABLE1" align="center" runat="server" cellspacing="0" cellpadding="0" width="100%">
             <tr>
                 <td colspan="1" style="height: 24px">
@@ -45,7 +45,7 @@
 </asp:Panel>
         
 <cc1:ModalPopupExtender ID="ModalPopupExtender1" runat="server" TargetControlID="DummyPanel" PopupControlID="DialogPanel" 
-        Drag="true" DropShadow="true"  PopupDragHandleControlID="TitleLabel" BackgroundCssClass ="modalBackground"
+        Drag="true" DropShadow="true"  PopupDragHandleControlID="TitleLabel" BackgroundCssClass ="CSSModalBackground"
         >
 </cc1:ModalPopupExtender>
     </ContentTemplate>

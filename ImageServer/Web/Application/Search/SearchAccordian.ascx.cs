@@ -124,9 +124,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Search
                 pane.ContentContainer.Controls.Add(studyDetails);
                 pane.HeaderContainer.Controls.Add(studySummary);
 
-                pane.HeaderCssClass = "accordionHeader";
+                pane.HeaderCssClass = "CSSAccordianStudyHeader";
 
-                pane.ContentCssClass = "accordionContent";
+                pane.ContentCssClass = "CSSAccordianStudyDetailsContainer";
                 pane.BorderWidth = new Unit(0d);
                 pane.Visible = true;
 

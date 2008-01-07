@@ -104,7 +104,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Search
             TableCell cell = new TableCell();
             cell.ColumnSpan = 2;
 
-
+            
             foreach (Series series in SeriesList)
             {
                 SeriesDetails seriesDetails = LoadControl("SeriesDetails.ascx") as SeriesDetails;
@@ -113,6 +113,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Search
             }
 
             row.Cells.Add(cell);
+            
             this.DetailsTable.Rows.Add(row);
         }
     }

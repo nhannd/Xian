@@ -5,13 +5,13 @@
 <%@ Register Src="SearchResultAccordian.ascx" TagName="SearchResultAccordian" TagPrefix="accordian" %>
 <asp:UpdatePanel ID="UpdatePanel" runat="server" UpdateMode="Conditional">
     <ContentTemplate>
-        <asp:Panel ID="PagePanel" runat="server" CssClass="PagePanel">
-            <asp:Table ID="Table" runat="server" Width="100%">
+        <asp:Panel ID="PagePanel" runat="server">
+            <asp:Table ID="Table" runat="server" Width="100%" CellPadding="0" BorderWidth="0px">
                 <asp:TableHeaderRow>
                     <asp:TableHeaderCell HorizontalAlign="left" Width="100%" />
                     <asp:TableHeaderCell HorizontalAlign="right" VerticalAlign="Bottom">
-                        <asp:Panel ID="FilterPanel" runat="server" CssClass="PageFilterPanel">
-                            <table cellpadding="2" cellspacing="0">
+                        <asp:Panel ID="FilterPanel" runat="server" CssClass="CSSFilterPanelContainer">
+                            <table cellpadding="3" cellspacing="0">
                                 <tr>
                                     <td align="left" valign="bottom">
                                         <asp:Label ID="Label2" runat="server" Text="Patient ID" Width="100px" Style="padding-right: 5px"

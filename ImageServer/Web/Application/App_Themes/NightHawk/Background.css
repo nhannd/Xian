@@ -1,0 +1,264 @@
+body
+{
+	background-color: black;
+}
+
+
+
+/* Panel that holds the contents of the page - below the menubar*/
+.CSSPageContentMainWindow
+{
+	background-color: black;
+}
+
+/* Title of the page */
+.CSSPageTitle
+{
+
+}
+
+
+/* toolbar panel container */
+.CSSToolbarPanelContainer
+{
+}
+
+/* Toolbar panel */
+.CSSToolbarPanelBorder
+{	
+
+}
+
+/* The content panel in the toolbar panel */
+.CSSToolbarContent
+{
+	
+}
+
+/* filter panel container */
+.CSSFilterPanelContainer
+{
+	
+}
+
+/* filter panel content border */
+.CSSFilterPanelBorder
+{
+}
+
+/* filter panel content*/
+.CSSFilterPanelContent
+{
+
+}
+
+/* Menubar panel container */
+.CSSMainMenuBarContainer
+{
+}
+
+/* Menubar */
+.CSSMenuBar
+{
+	background-color: #3D98D1;
+	
+}
+
+/* main menu */
+.CSSMenu_TopLevel
+{
+
+}
+
+/* main menu (when hover over)*/
+.CSSMenu_TopLevel_Hover
+{
+	background-color:#7CB1DD;
+}
+
+
+/* submenu container styles */
+.CSSMenu_SubMenu
+{
+	background-color: #7CB1DD;
+
+}
+
+/* submenu item */
+.CSSMenu_SubMenuItem
+{
+
+	background-color: #3D98D1;
+
+}
+
+/* submenu item when hover*/
+.CSSMenu_SubMenu_Hover
+{
+	background-color:#7CB1DD;
+	
+}
+
+
+/* Container for the gridview */
+.CSSGridViewPanelContainer
+{
+}
+
+/* border of the gridview */
+.CSSGridViewPanelBorder
+{
+}
+
+/* gridview content panel */
+.CSSGridViewPanelContent
+{
+}
+
+
+
+/* gridview control styling */
+.CSSGridView
+{
+}
+
+/* gridview control header row */
+.CSSGridHeader th
+{	
+	background-image: url(images/gridheaderbackground.png);
+	background-repeat: repeat-x;
+}
+
+/* gridview control row */
+.CSSGridRowStyle
+{
+	
+}
+
+/* gridview control cell */
+.CSSGridRowStyle td
+{
+	
+}
+
+/* gridview control selected row */
+.CSSGridSelectedRowStyle
+{
+	background-color: #990000;
+	
+}
+
+/* gridview cell of the selected row */
+.CSSGridSelectedRowStyle td
+{
+	
+}
+
+/* Grid pager control panel container */
+.CSSGridPagerPanelContainer
+{
+}
+
+/* grid pager panel border */
+.CSSGridPagerPanelBorder
+{
+
+}
+
+/*grid pager panel content */
+.CSSGridPagerPanelContent
+{
+background-image: url(images/gridheaderbackground.png);
+	background-repeat: repeat-x;
+}
+
+.CSSAccordianResultPanelContainer
+{
+	
+}
+
+.CSSAccordianResultPanelBorder
+{
+
+}
+
+.CSSAccordianResultPanelContent
+{
+	
+}
+
+.CSSAccordianResultListContainer
+{
+
+}
+
+.CSSDetailsPanel
+{
+
+}
+
+.CSSSectionLabel
+{
+
+}
+
+
+.CSSPopupWindow
+{
+	background-color: black;
+	
+}
+
+
+.CSSPopupWindowBody 
+{ 
+}
+
+.CSSDialogTabPanelContent
+{
+	
+}
+        
+.CSSPopupWindowTitleBar
+{
+	background-color: #3D98D1;
+	
+	
+}
+
+
+
+.CSSAccordianHeaderPanelContent
+{
+    background-image: url(images/gridheaderbackground.png);
+	background-repeat: repeat-x;
+	
+}
+
+.CSSAccordianHeaderText
+{
+	
+}
+
+.CSSAccordianStudyHeader
+{
+    
+}
+
+.CSSAccordianStudyHeaderSelected
+{
+	background-color: #990000;
+	
+}
+
+.CSSAccordianStudyDetailsContainer
+{
+   
+}
+
+
+
+.CSSAccordianCell
+{
+	
+}

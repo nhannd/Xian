@@ -1,0 +1,78 @@
+﻿body
+{
+
+}
+
+.CSSDetailsPanel
+{
+	padding-bottom: 5px;
+	padding-top: 5px;
+	padding-right: 10px;
+	padding-left: 10px;
+	border-right: #e7e7e8 1px solid;
+	border-top: #e7e7e8 1px solid;
+	border-left: #e7e7e8 1px solid;
+	border-bottom: #e7e7e8 1px solid;
+}
+
+
+.CSSSectionLabel
+{
+	
+}
+
+
+.InvalidInputHilight
+{
+	background-color:Yellow;
+}
+
+
+
+a:link    { color: white }
+a:visited { color: white}
+a:hover   { color: white }
+a:active  { color: white }
+
+
+
+
+.CSSTextBoxLabel
+{
+	width: 100px;
+	margin-left: 3px;
+	margin-right: 3px;
+}
+
+ 
+.CSSFilterTextBox
+{
+	width: 100px;
+	margin-left: 3px;
+	margin-right: 3px;
+}
+
+.CSSCheckBox
+{
+	padding-left: 5px;
+	padding-right: 20px;
+}
+
+
+
+.CSSModalBackground 
+{
+   background-color:#000;
+   /*filter:alpha(opacity=60);*/
+  /* opacity:0.6;*/
+}
+
+
+
+.Panel
+{
+	margin:0px;
+}
+
+
+

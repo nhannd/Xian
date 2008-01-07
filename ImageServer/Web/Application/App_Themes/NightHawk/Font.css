@@ -1,0 +1,212 @@
+body
+{
+	font-family: verdana,tahoma,helvetica;
+	font-size: 10pt;
+	color:White;
+}
+
+
+
+
+/* Panel that holds the contents of the page - below the menubar*/
+.CSSPageContentMainWindow
+{
+	font-size: 100%;
+}
+
+/* Title of the page */
+.CSSPageTitle
+{
+	
+	font-size:110%;
+	font-weight:bold;
+	
+}
+
+
+
+/* toolbar panel container */
+.CSSToolbarPanelContainer
+{
+}
+
+/* Toolbar panel */
+.CSSToolbarPanelBorder
+{	
+
+}
+
+/* The content panel in the toolbar panel */
+.CSSToolbarContent
+{
+
+}
+
+/* filter panel container */
+.CSSFilterPanelContainer
+{
+	font-style: normal;
+	font-weight: normal;
+	
+}
+
+/* filter panel content border */
+.CSSFilterPanelBorder
+{
+	
+}
+
+/* filter panel content*/
+.CSSFilterPanelContent
+{
+
+}
+
+/* Menubar panel container */
+.CSSMainMenuBarContainer
+{
+	font-size:110%;
+}
+
+/* Menubar */
+.CSSMenuBar
+{
+	color: White;
+	
+}
+
+/* main menu */
+.CSSMenu_TopLevel
+{
+	font-size:120%;
+}
+
+/* main menu (when hover over)*/
+.CSSMenu_TopLevel_Hover
+{
+
+}
+
+
+/* submenu container styles */
+.CSSMenu_SubMenu
+{
+
+}
+
+/* submenu item */
+.CSSMenu_SubMenuItem
+{
+	font-size:100%;	
+}
+
+/* submenu item when hover*/
+.CSSMenu_SubMenu_Hover
+{
+
+	
+}
+
+
+/* Container for the gridview */
+.CSSGridViewPanelContainer
+{
+}
+
+/* border of the gridview */
+.CSSGridViewPanelBorder
+{
+}
+
+/* gridview content panel */
+.CSSGridViewPanelContent
+{
+}
+
+
+
+/* gridview control styling */
+.CSSGridView
+{
+	
+}
+
+/* gridview control header row */
+.CSSGridHeader th
+{	
+	font-weight: bold;
+	color: darkgray;
+}
+
+/* gridview control row */
+.CSSGridRowStyle
+{
+	
+}
+
+/* gridview control cell */
+.CSSGridRowStyle td
+{
+	
+}
+
+/* gridview control selected row */
+.CSSGridSelectedRowStyle
+{
+	
+}
+
+/* gridview cell of the selected row */
+.CSSGridSelectedRowStyle td
+{
+	
+}
+
+
+
+/* Grid pager control panel container */
+.CSSGridPagerPanelContainer
+{
+}
+
+/* grid pager panel border */
+.CSSGridPagerPanelBorder
+{
+	font-style: normal;
+	font-weight: normal;
+	color: darkgray;
+	
+}
+
+/*grid pager panel content */
+.CSSGridPagerPanelContent
+{
+	
+}
+
+
+.CSSPopupWindow
+{
+	
+}
+
+
+.CSSPopupWindowBody 
+{ 
+	
+}
+
+.CSSDialogTabPanelContent
+{
+	
+}
+        
+.CSSPopupWindowTitleBar
+{
+	color: white;
+	font-weight: bold;
+	font-size: larger;
+	text-transform: capitalize;
+	
+}
+

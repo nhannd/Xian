@@ -1,0 +1,221 @@
+/* Entire Window Size */
+.CSSPageWindow
+{
+	width:80%;
+}
+
+
+
+/* Panel that holds the contents of the page - below the menubar*/
+.CSSPageContentMainWindow
+{
+	margin-top: 10px;
+	text-align:left;
+}
+
+/* Title of the page */
+.CSSPageTitle
+{
+	padding-right:30px;
+}
+
+
+/* toolbar panel container */
+.CSSToolbarPanelContainer
+{
+	margin: 5px 0px;
+}
+
+/* Toolbar panel */
+.CSSToolbarPanelBorder
+{
+	margin:5px;
+}
+
+/* The content panel in the toolbar panel */
+.CSSToolbarContent
+{
+}
+
+/* filter panel container */
+.CSSFilterPanelContainer
+{
+	margin: 5px 0px 5px 5px;
+}
+
+
+
+/* filter panel content border*/
+.CSSFilterPanelBorder
+{
+	
+}
+
+/* filter panel content*/
+.CSSFilterPanelContent
+{
+	margin:5px;	
+}
+
+/* Menubar panel container */
+.CSSMainMenuBarContainer
+{
+	text-align:left;
+}
+
+/* Menubar */
+.CSSMenuBar
+{
+	vertical-align: middle;
+	
+}
+
+/* main menu */
+.CSSMenu_TopLevel
+{
+	padding-right: 55px;
+	padding-left: 5px;
+	padding-bottom: 1px;
+	padding-top: 1px;
+}
+
+/* main menu (when hover over)*/
+.CSSMenu_TopLevel_Hover
+{
+	background-color:#7CB1DD;
+}
+
+
+/* submenu container styles */
+.CSSMenu_SubMenu
+{
+
+}
+
+/* submenu item */
+.CSSMenu_SubMenuItem
+{	
+	padding-right: 20px;
+	padding-left: 0px;
+	padding-bottom: 3px;
+	padding-top: 3px;
+}
+
+/* submenu item when hover*/
+.CSSMenu_SubMenu_Hover
+{
+	
+}
+
+
+/* Container for the gridview */
+.CSSGridViewPanelContainer
+{
+	margin-top:3px;
+}
+
+/* border of the gridview */
+.CSSGridViewPanelBorder
+{
+}
+
+/* gridview content panel */
+.CSSGridViewPanelContent
+{
+	height:600px;
+	padding:1px;
+}
+
+
+
+/* gridview control styling */
+.CSSGridView
+{
+	
+}
+
+/* gridview control header row */
+.CSSGridHeader th
+{	
+	height: 24px;
+	padding-right: 5px;
+	padding-left: 5px;
+	
+}
+
+/* gridview control row */
+.CSSGridRowStyle
+{
+	
+	height: 24px; 
+}
+
+/* gridview control cell */
+.CSSGridRowStyle td
+{
+	
+	padding-right: 5px;
+	padding-left: 5px;
+}
+
+/* gridview control selected row */
+.CSSGridSelectedRowStyle
+{
+	height: 24px;
+}
+
+/* gridview cell of the selected row */
+.CSSGridSelectedRowStyle td
+{
+	padding-right: 5px;
+	padding-left: 5px;
+}
+
+
+
+/* Grid pager control panel container */
+.CSSGridPagerPanelContainer
+{
+}
+
+/* grid pager panel border */
+.CSSGridPagerPanelBorder
+{
+
+}
+
+/*grid pager panel content */
+.CSSGridPagerPanelContent
+{
+	margin: 2px;
+
+}
+
+
+.CSSPopupWindow
+{
+	
+}
+
+
+.CSSPopupWindowBody 
+{ 
+	vertical-align: top;
+	margin:15px;
+}
+
+.CSSDialogTabPanelContent
+{
+	
+}
+        
+.CSSPopupWindowTitleBar
+{
+	cursor: move;
+	width: 100%;
+	height: 30px; /*background-color: #0099ff;*/
+	vertical-align: middle;
+	text-align: center;
+	
+}
+

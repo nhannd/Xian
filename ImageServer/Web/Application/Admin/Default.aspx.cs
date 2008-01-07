@@ -39,8 +39,9 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
+using ClearCanvas.ImageServer.Web.Application.Common;
 
-public partial class Admin : System.Web.UI.Page
+public partial class Admin : BasePage
 {
     protected void Page_Load(object sender, EventArgs e)
     {

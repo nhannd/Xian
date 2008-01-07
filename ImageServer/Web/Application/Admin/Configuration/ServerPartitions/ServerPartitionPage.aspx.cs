@@ -31,6 +31,7 @@
 
 using System;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Web.Application.Common;
 using ClearCanvas.ImageServer.Web.Common.Data;
 
 namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPartitions
@@ -38,7 +39,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
     /// <summary>
     /// Server Partition configuration page.
     /// </summary>
-    public partial class ServerPartitionPage : System.Web.UI.Page
+    public partial class ServerPartitionPage : BasePage
     {
         #region Private Members
 

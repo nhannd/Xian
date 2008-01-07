@@ -1,0 +1,114 @@
+.CSSAccordianResultPanelContainer
+{
+	
+}
+
+.CSSAccordianResultPanelBorder
+{
+	border-right: darkgray 1px solid;
+	border-top: darkgray 1px solid;
+	border-left: darkgray 1px solid;
+	border-bottom: darkgray 1px solid;
+}
+
+.CSSAccordianResultPanelContent
+{
+	margin:1px;
+}
+
+
+.CSSAccordianHeaderPanelContainer
+{
+}
+
+.CSSAccordianHeaderPanelBorder
+{
+}
+
+.CSSAccordianHeaderPanelContent
+{
+	height: 24px;
+	padding-right: 5px;
+	padding-left: 8px;
+	background-image: url(images/gridheaderbackground.png);
+	background-repeat: repeat-x;
+	font-weight: normal;
+	border-right: #a9a9a9 1px solid;
+	border-top: #a9a9a9 1px solid;
+	border-left: #a9a9a9 1px solid;
+	border-bottom: #a9a9a9 1px solid;
+}
+
+.CSSAccordianHeaderText
+{
+	margin:2px;
+}
+
+
+
+.CSSAccordianResultListContainer
+{
+	height:580px;
+}
+
+
+.CSSAccordianStudyHeader
+{
+    cursor: pointer;
+    padding: 5px;
+    border-bottom: solid 1px darkgray;
+    
+}
+
+
+.CSSAccordianStudyHeaderSelected
+{
+    background-color:#316AC5;
+	cursor: pointer;
+    padding: 5px;
+    
+}
+
+
+.CSSAccordianStudyDetailsContainer
+{
+	background-color: #EFF3FB;
+    border: 1px dashed #2F4F4F;
+    border-top: none;
+    padding: 5px;
+    padding-top: 10px;
+    
+}
+
+.CSSDetailsPanel
+{
+	padding-bottom: 5px;
+	padding-top: 5px;
+	padding-right: 10px;
+	padding-left: 10px;
+	
+	border-right: dimgray 1px solid;
+	border-top: dimgray 1px solid;
+	border-left: dimgray 1px solid;
+	border-bottom: dimgray 1px solid;
+	
+}
+
+
+
+.CSSAccordianCell
+{
+	word-wrap: break-word;
+	vertical-align: middle;
+	font-weight:normal;
+	margin-left: 3px;
+	
+}
+
+
+.CSSSectionLabel
+{
+
+}
+
+

@@ -32,6 +32,7 @@
 using System;
 using ClearCanvas.ImageServer.Model;
 using System.Collections.Generic;
+using ClearCanvas.ImageServer.Web.Application.Common;
 using ClearCanvas.ImageServer.Web.Common.Data;
 
 
@@ -40,7 +41,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
     /// <summary>
     /// FileSystems Configuration Web Page.
     /// </summary>
-    public partial class FileSystemsPage : System.Web.UI.Page
+    public partial class FileSystemsPage : BasePage
     {
         #region Private members
 

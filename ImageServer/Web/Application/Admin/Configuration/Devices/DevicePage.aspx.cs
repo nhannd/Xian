@@ -41,7 +41,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
     /// <summary>
     /// Device Configuration Web Page.
     /// </summary>
-    public partial class DevicePage : System.Web.UI.Page
+    public partial class DevicePage : BasePage
     {
         #region Private members
 
@@ -127,7 +127,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
                                                                panel.ID = "DevicePanel_" + partition.AeTitle;
 
                                                                panel.EnclosingPage = this;
-
+                                                               _mapDevicePanel[partition.GetKey()] = panel; // this map is used to reload the list when the devices are updated.
                                                                return panel;
                                                            });
         }

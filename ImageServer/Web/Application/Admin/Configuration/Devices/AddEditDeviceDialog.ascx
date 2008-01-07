@@ -6,8 +6,9 @@
     TagPrefix="clearcanvas" %>
 <asp:UpdatePanel ID="UpdatePanel" runat="server" UpdateMode="Conditional">
     <ContentTemplate>
-        <asp:Panel ID="DialogPanel" runat="server" CssClass="PopupWindow" Width="442px" Style="display: none">
-            <asp:Panel ID="TitleBarPanel" runat="server" CssClass="PopupWindowTitleBar" Width="100%">
+        <asp:Panel ID="DialogPanel" runat="server" CssClass="CSSPopupWindow" Width="442px"
+            Style="display: none">
+            <asp:Panel ID="TitleBarPanel" runat="server" CssClass="CSSPopupWindowTitleBar" Width="100%">
                 <table style="width: 100%">
                     <tr>
                         <td valign="middle">
@@ -18,15 +19,15 @@
             <cc2:ValidationSummary ID="ValidationSummary1" runat="server" Style="left: 603px;
                 position: absolute; top: 333px" BackColor="#FFFFC0" Height="81px" ValidationGroup="vg1"
                 Width="159px" ShowMessageBox="false" ShowSummary="False" />
-            <div class="PopupWindowBody" style="vertical-align: top;">
-                <cc1:TabContainer ID="TabContainer1" runat="server" ActiveTabIndex="0" Height="150px">
-                    <cc1:TabPanel ID="TabPanel1" runat="server" HeaderText="TabPanel1">
+            <div class="CSSPopupWindowBody">
+                <cc1:TabContainer ID="TabContainer1" runat="server" ActiveTabIndex="0" CssClass="CSSDialogTabControl">
+                    <cc1:TabPanel ID="TabPanel1" runat="server" HeaderText="TabPanel1" CssClass="CSSTabPanel">
                         <ContentTemplate>
-                            <asp:Panel ID="Panel1" runat="server" CssClass="PopupPanel" Width="100%">
-                                <table id="Table2" runat="server" cellspacing="2" style="text-align: left" width="100%">
-                                    <tr id="Tr1" runat="server">
-                                        <td id="Td1" runat="server" valign="bottom">
-                                            AE Title<br />
+                            <asp:Panel ID="Panel1" runat="server" CssClass="CSSDialogTabPanelContent" Width="100%">
+                                <table id="Table2" runat="server" cellspacing="2">
+                                    <tr id="Tr1" runat="server" align="left">
+                                        <td id="Td1" runat="server">
+                                            <asp:Label ID="Label1" runat="server" Text="AE Title" CssClass="CSSTextLabel" /><br />
                                             <asp:TextBox ID="AETitleTextBox" runat="server" ValidationGroup="vg1" MaxLength="16"
                                                 Width="150px"></asp:TextBox><asp:Image ID="AETitleHelpImage" runat="server" ImageAlign="Top"
                                                     ImageUrl="~/images/icons/HelpSmall.png" Style="visibility: hidden" /><clearcanvas:ConditionalRequiredFieldValidator
@@ -38,15 +39,15 @@
                                                             ValidationExpression="^([^\\]){1,16}$" ErrorMessage="Acceptable characters: any characters except backslash"
                                                             Display="None"></clearcanvas:RegularExpressionFieldValidator>
                                         </td>
-                                        <td id="Td2" runat="server" colspan="1" valign="bottom" align="left">
+                                        <td id="Td2" runat="server">
                                         </td>
-                                        <td id="Td3" runat="server" colspan="1" style="color: #000000" valign="bottom">
-                                            Description<br />
-                                            <asp:TextBox ID="DescriptionTextBox" runat="server" Width="150px"></asp:TextBox>&nbsp;
+                                        <td id="Td3" runat="server">
+                                            <asp:Label ID="Label2" runat="server" Text="Description" CssClass="CSSTextLabel" /><br />
+                                            <asp:TextBox ID="DescriptionTextBox" runat="server" Width="150px"></asp:TextBox>
                                         </td>
                                     </tr>
-                                    <tr id="Tr2" runat="server">
-                                        <td id="Td4" runat="server" valign="bottom">
+                                    <tr id="Tr2" runat="server" align="left">
+                                        <td id="Td4" runat="server">
                                             <table cellpadding="0" cellspacing="0" width="100%">
                                                 <tr>
                                                     <td>
@@ -58,8 +59,9 @@
                                                 <tr>
                                                     <td colspan="2">
                                                         <asp:TextBox ID="IPAddressTextBox" runat="server" CausesValidation="True" ValidationGroup="vg1"
-                                                            Width="150px"></asp:TextBox><asp:Image ID="IPAddressHelpImage" runat="server" ImageAlign="Top"
-                                                                ImageUrl="~/images/icons/HelpSmall.png" Style="visibility: hidden" />
+                                                            Width="150px">
+                                                        </asp:TextBox><asp:Image ID="IPAddressHelpImage" runat="server" ImageAlign="Top"
+                                                            ImageUrl="~/images/icons/HelpSmall.png" Style="visibility: hidden" />
                                                     </td>
                                                 </tr>
                                             </table>
@@ -81,7 +83,7 @@
                                             <asp:DropDownList ID="ServerPartitionDropDownList" runat="server" Width="150px">
                                             </asp:DropDownList></td>
                                     </tr>
-                                    <tr id="Tr3" runat="server">
+                                    <tr id="Tr3" runat="server" align="left">
                                         <td id="Td7" runat="server">
                                             Port<br />
                                             <asp:TextBox ID="PortTextBox" runat="server"></asp:TextBox><asp:Image ID="PortHelpImage"
@@ -90,11 +92,11 @@
                                                 InvalidInputBackColor="#FAFFB5" ValidationGroup="vg1" MinValue="1" MaxValue="65535"
                                                 ErrorMessage="Device Port must be between 1 and 65535" PopupHelpControlID="PortHelpImage"
                                                 Display="None"></clearcanvas:RangeValidator>
-                            <cc1:NumericUpDownExtender ID="PortTextBoxNumericUpDownExtender" runat="server" Maximum="65536"
-                                Minimum="1" TargetControlID="PortTextBox" Width="100" Enabled="True" RefValues=""
-                                ServiceDownMethod="" ServiceDownPath="" ServiceUpMethod="" Tag="" TargetButtonDownID=""
-                                TargetButtonUpID="">
-                            </cc1:NumericUpDownExtender>
+                                            <cc1:NumericUpDownExtender ID="PortTextBoxNumericUpDownExtender" runat="server" Maximum="65536"
+                                                Minimum="1" TargetControlID="PortTextBox" Width="100" Enabled="True" RefValues=""
+                                                ServiceDownMethod="" ServiceDownPath="" ServiceUpMethod="" Tag="" TargetButtonDownID=""
+                                                TargetButtonUpID="">
+                                            </cc1:NumericUpDownExtender>
                                         </td>
                                         <td id="Td8" runat="server">
                                         </td>
@@ -103,7 +105,6 @@
                                     </tr>
                                 </table>
                             </asp:Panel>
-                            &nbsp;
                         </ContentTemplate>
                         <HeaderTemplate>
                             General
@@ -111,7 +112,7 @@
                     </cc1:TabPanel>
                     <cc1:TabPanel ID="TabPanel2" runat="server" HeaderText="TabPanel2">
                         <ContentTemplate>
-                            <asp:Panel ID="Panel2" runat="server" CssClass="PopupPanel">
+                            <asp:Panel ID="Panel2" runat="server" CssClass="CSSDialogTabPanelContent">
                                 <table width="100%">
                                     <tr>
                                         <td>
@@ -162,7 +163,7 @@
             </div>
         </asp:Panel>
         <cc1:ModalPopupExtender ID="ModalPopupExtender1" BehaviorID="MyStupidExtender" runat="server"
-            Enabled="true" TargetControlID="DummyPanel" PopupControlID="DialogPanel" BackgroundCssClass="modalBackground">
+            Enabled="true" TargetControlID="DummyPanel" PopupControlID="DialogPanel" BackgroundCssClass="CSSModalBackground">
         </cc1:ModalPopupExtender>
         &nbsp;
     </ContentTemplate>

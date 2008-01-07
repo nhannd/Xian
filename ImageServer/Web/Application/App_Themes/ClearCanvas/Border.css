@@ -1,0 +1,250 @@
+body
+{
+	
+}
+
+
+
+
+/* Panel that holds the contents of the page - below the menubar*/
+.CSSPageContentMainWindow
+{
+}
+
+/* Title of the page */
+.CSSPageTitle
+{
+	
+}
+
+/* toolbar panel container */
+.CSSToolbarPanelContainer
+{
+}
+
+/* Toolbar panel border */
+.CSSToolbarPanelBorder
+{
+
+}
+
+/* The content panel in the toolbar panel */
+.CSSToolbarContent
+{
+	
+}
+
+
+/* filter panel */
+.CSSFilterPanelContainer
+{
+	
+}
+
+/* filter panel content border */
+.CSSFilterPanelBorder
+{
+	border-right: #e7e7e8 1px solid;
+	border-top: #e7e7e8 1px solid;
+	border-left: #e7e7e8 1px solid;
+	border-bottom: #e7e7e8 1px solid;
+}
+
+/* filter panel content*/
+.CSSFilterPanelContent
+{
+
+}
+
+
+
+/* Menubar panel container */
+.CSSMainMenuBarContainer
+{
+	font-size:120%;
+	text-align:left;
+}
+
+/* Menubar */
+.CSSMenuBar
+{
+	border-right: 1px outset;
+	border-top: 1px outset;
+	border-left: 1px outset;
+	border-bottom: 1px outset;
+	
+}
+
+/* main menu */
+.CSSMenu_TopLevel
+{
+
+}
+
+/* main menu (when hover over)*/
+.CSSMenu_TopLevel_Hover
+{
+
+}
+
+
+/* submenu container styles */
+.CSSMenu_SubMenu
+{
+	border-right: lightgrey 2px outset;
+	border-top: lightgrey 2px outset;
+	border-left: lightgrey 2px outset;
+	border-bottom: lightgrey 2px outset;
+}
+
+/* submenu item */
+.CSSMenu_SubMenuItem
+{
+
+}
+
+/* submenu item when hover*/
+.CSSMenu_SubMenu_Hover
+{
+	
+	
+}
+
+/* Container for the gridview */
+.CSSGridViewPanelContainer
+{
+	
+}
+
+/* border of the gridview */
+.CSSGridViewPanelBorder
+{
+	border-right: darkgray 1px solid;
+	border-top: darkgray 1px solid;
+	border-left: darkgray 1px solid;
+	border-bottom:darkgray 1px solid;
+}
+
+/* gridview content panel */
+.CSSGridViewPanelContent
+{
+	
+}
+
+
+
+/* gridview control styling */
+.CSSGridView
+{
+	border-left-color: #e7e7e8;
+	border-bottom-color: #e7e7e8;
+	border-top-style: solid;
+	border-top-color: #e7e7e8;
+	border-right-style: solid;
+	border-left-style: solid;
+	border-right-color: #e7e7e8;
+	border-bottom-style: solid;
+}
+
+/* gridview control header row */
+.CSSGridHeader th
+{	
+	border-left-color: #E0E0E0;
+	border-bottom-color: #E0E0E0;
+	border-top-style: solid;
+	border-top-color: #E0E0E0;
+	border-right-style: solid;
+	border-left-style: solid;
+	border-right-color: #E0E0E0;
+	border-bottom-style: solid;
+}
+
+/* gridview control row */
+.CSSGridRowStyle
+{
+	border-style: solid;
+	border-width: 1px;
+}
+
+/* gridview control cell */
+.CSSGridRowStyle td
+{
+	border-left-color: #E0E0E0;
+	border-bottom-color: #E0E0E0;
+	border-top-style: solid;
+	border-top-color: #E0E0E0;
+	border-right-style: solid;
+	border-left-style: solid;
+	border-right-color: #E0E0E0;
+	border-bottom-style: solid;
+}
+
+/* gridview control selected row */
+.CSSGridSelectedRowStyle
+{
+	
+}
+
+/* gridview cell of the selected row */
+.CSSGridSelectedRowStyle td
+{
+	border-left-color: green;
+	border-bottom-color: darkgray;
+	border-top-style: solid;
+	border-top-color: darkgray;
+	border-right-style: solid;
+	border-left-style: solid;
+	border-right-color: darkgray;
+	border-bottom-style: solid;
+}
+
+/* Grid pager control panel container */
+.CSSGridPagerPanelContainer
+{
+}
+
+/* grid pager panel border */
+.CSSGridPagerPanelBorder
+{
+	border-right: darkgray  1px solid;
+	border-top: darkgray  1px solid;
+	border-left:darkgray  1px solid;
+	border-bottom: darkgray  1px solid;
+}
+
+/*grid pager panel content */
+.CSSGridPagerPanelContent
+{
+
+}
+
+
+.CSSPopupWindow
+{
+	border-right: 1px outset;
+	border-top: 1px outset;
+	border-left: 1px outset;
+	border-bottom: 1px outset;
+}
+
+
+.CSSPopupWindowBody 
+{ 
+	
+}
+
+.CSSDialogTabPanelContent
+{
+	
+}
+
+
+
+
+        
+.CSSPopupWindowTitleBar
+{
+	border-bottom: gray 1px ridge;
+	
+}
+

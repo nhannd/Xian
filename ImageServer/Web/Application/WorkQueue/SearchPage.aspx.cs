@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using AjaxControlToolkit;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Web.Application.Common;
 using ClearCanvas.ImageServer.Web.Common.Data;
 
 namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
@@ -10,7 +11,7 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
     /// <summary>
     /// WorkQueue Search Page
     /// </summary>
-    public partial class SearchPage : System.Web.UI.Page
+    public partial class SearchPage : BasePage
     {
         #region Private members
 

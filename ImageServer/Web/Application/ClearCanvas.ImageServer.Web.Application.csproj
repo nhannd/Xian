@@ -71,7 +71,7 @@
     <Content Include="Admin\Configuration\Devices\AddEditDeviceDialog.ascx" />
     <Content Include="Admin\Configuration\Devices\DeviceGridView.ascx" />
     <Content Include="Admin\Default.aspx" />
-    <Content Include="Styles\StyleSheet.css" />
+    <Content Include="App_Themes\ClearCanvas_old\StyleSheet.css" />
     <Compile Include="Admin\Configuration\Devices\AddEditDeviceDialog.ascx.cs">
       <DependentUpon>AddEditDeviceDialog.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -113,6 +113,13 @@
     </Compile>
     <Compile Include="Admin\Configuration\FileSystems\FileSystemsPage.aspx.designer.cs">
       <DependentUpon>FileSystemsPage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\Configuration\Preferences\Default.aspx.cs">
+      <SubType>ASPXCodeBehind</SubType>
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\Configuration\Preferences\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
     <Compile Include="Admin\Configuration\ServerPartitions\AddEditPartitionDialog.ascx.cs">
       <DependentUpon>AddEditPartitionDialog.ascx</DependentUpon>
@@ -181,6 +188,13 @@
     <Compile Include="Common\BarChart.aspx.designer.cs">
       <DependentUpon>BarChart.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Common\BasePage.aspx.cs">
+      <SubType>ASPXCodeBehind</SubType>
+      <DependentUpon>BasePage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Common\BasePage.aspx.designer.cs">
+      <DependentUpon>BasePage.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Common\ConfirmDialog.ascx.cs">
       <DependentUpon>ConfirmDialog.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -216,6 +230,7 @@
     <Compile Include="Common\ServerPartitionTabs.ascx.designer.cs">
       <DependentUpon>ServerPartitionTabs.ascx</DependentUpon>
     </Compile>
+    <Compile Include="Common\Themes.cs" />
     <Compile Include="MasterPage.master.cs">
       <DependentUpon>MasterPage.master</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -249,8 +264,8 @@
       <DependentUpon>SearchAccordian.ascx</DependentUpon>
     </Compile>
     <Compile Include="Search\SearchPage.aspx.cs">
-      <SubType>ASPXCodeBehind</SubType>
       <DependentUpon>SearchPage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Search\SearchPage.aspx.designer.cs">
       <DependentUpon>SearchPage.aspx</DependentUpon>
@@ -282,6 +297,13 @@
     </Compile>
     <Compile Include="Search\StudySummary.ascx.designer.cs">
       <DependentUpon>StudySummary.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\Configuration\Preferences\Theme.aspx.cs">
+      <DependentUpon>Theme.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\Configuration\Preferences\Theme.aspx.designer.cs">
+      <DependentUpon>Theme.aspx</DependentUpon>
     </Compile>
     <Compile Include="WorkQueue\SearchResultAccordian.ascx.cs">
       <DependentUpon>SearchResultAccordian.ascx</DependentUpon>
@@ -331,6 +353,7 @@
     <Content Include="Admin\Configuration\FileSystems\FileSystemsGridView.ascx" />
     <Content Include="Admin\Configuration\FileSystems\FileSystemsPanel.ascx" />
     <Content Include="Admin\Configuration\FileSystems\FileSystemsPage.aspx" />
+    <Content Include="Admin\Configuration\Preferences\Default.aspx" />
     <Content Include="Admin\Configuration\ServerPartitions\AddEditPartitionDialog.ascx" />
     <Content Include="Admin\Configuration\ServerPartitions\ServerPartitionGridPanel.ascx" />
     <Content Include="Admin\Configuration\ServerPartitions\ServerPartitionPage.aspx" />
@@ -340,13 +363,42 @@
     <Content Include="Admin\Configuration\ServerRules\ServerRulePage.aspx" />
     <Content Include="Admin\Configuration\ServerRules\ServerRulePanel.ascx" />
     <Content Include="Admin\Configuration\ServerRules\ServerRuleSamples.asmx" />
+    <Content Include="App_Themes\ClearCanvas\Accordian.css" />
+    <Content Include="App_Themes\ClearCanvas\Background.css" />
+    <Content Include="App_Themes\ClearCanvas\Border.css" />
+    <Content Include="App_Themes\ClearCanvas\Calendar.css" />
+    <Content Include="App_Themes\ClearCanvas\Font.css" />
+    <Content Include="App_Themes\ClearCanvas\images\gridheaderbackground.png" />
+    <Content Include="App_Themes\ClearCanvas\images\icon_warning.gif" />
+    <Content Include="App_Themes\ClearCanvas\images\tab-active-left.gif" />
+    <Content Include="App_Themes\ClearCanvas\images\tab-active-right.gif" />
+    <Content Include="App_Themes\ClearCanvas\images\tab-active.gif" />
+    <Content Include="App_Themes\ClearCanvas\images\tab-hover-left.gif" />
+    <Content Include="App_Themes\ClearCanvas\images\tab-hover-right.gif" />
+    <Content Include="App_Themes\ClearCanvas\images\tab-hover.gif" />
+    <Content Include="App_Themes\ClearCanvas\images\tab-left.gif" />
+    <Content Include="App_Themes\ClearCanvas\images\tab-line.gif" />
+    <Content Include="App_Themes\ClearCanvas\images\tab-right.gif" />
+    <Content Include="App_Themes\ClearCanvas\images\tab.gif" />
+    <Content Include="App_Themes\ClearCanvas\Layout.css" />
+    <Content Include="App_Themes\ClearCanvas\StyleSheet.css" />
+    <Content Include="App_Themes\ClearCanvas\Tabs.css" />
+    <Content Include="App_Themes\NightHawk\Accordian.css" />
+    <Content Include="App_Themes\NightHawk\Background.css" />
+    <Content Include="App_Themes\NightHawk\Border.css" />
+    <Content Include="App_Themes\NightHawk\Calendar.css" />
+    <Content Include="App_Themes\NightHawk\Font.css" />
+    <Content Include="App_Themes\NightHawk\Layout.css" />
+    <Content Include="App_Themes\NightHawk\Tabs.css" />
+    <Content Include="Common\BasePage.aspx" />
     <Content Include="Common\ServerPartitionTabs.ascx" />
     <Content Include="Search\SearchAccordian.ascx" />
     <Content Include="Search\SeriesDetails.ascx" />
     <Content Include="Search\StudyDetails.ascx" />
     <Content Include="Search\StudySummary.ascx" />
-    <Content Include="Styles\Common.css" />
-    <Content Include="Styles\images\icon_warning.gif" />
+    <Content Include="App_Themes\ClearCanvas_old\Calendar.css" />
+    <Content Include="App_Themes\ClearCanvas_old\Common.css" />
+    <Content Include="App_Themes\ClearCanvas_old\images\icon_warning.gif" />
     <Content Include="Common\BarChart.aspx" />
     <Content Include="Common\ConfirmDialog.ascx" />
     <Content Include="Admin\Configuration\Devices\DevicePanel.ascx" />
@@ -364,7 +416,7 @@
     <Content Include="images\filter.gif" />
     <Content Include="images\filter_disabled.gif" />
     <Content Include="images\filter_on.gif" />
-    <Content Include="images\gridheaderbackground.png" />
+    <Content Include="App_Themes\ClearCanvas_old\images\gridheaderbackground.png" />
     <Content Include="images\icons\HelpSmall.png" />
     <Content Include="images\icons\AddDisabled.png" />
     <Content Include="images\icons\AddEnabled.png" />
@@ -393,23 +445,36 @@
     <Content Include="images\search.gif" />
     <Content Include="images\storage.gif" />
     <Content Include="images\unchecked_tall.gif" />
-    <Content Include="Styles\images\tab-active-left.gif" />
-    <Content Include="Styles\images\tab-active-right.gif" />
-    <Content Include="Styles\images\tab-active.gif" />
-    <Content Include="Styles\images\tab-hover-left.gif" />
-    <Content Include="Styles\images\tab-hover-right.gif" />
-    <Content Include="Styles\images\tab-hover.gif" />
-    <Content Include="Styles\images\tab-left.gif" />
-    <Content Include="Styles\images\tab-line.gif" />
-    <Content Include="Styles\images\tab-right.gif" />
-    <Content Include="Styles\images\tab.gif" />
-    <Content Include="Styles\Menu.css" />
-    <Content Include="Styles\Page.css" />
-    <Content Include="Styles\visoft__tab_xpie7.css" />
+    <Content Include="App_Themes\ClearCanvas_old\images\tab-active-left.gif" />
+    <Content Include="App_Themes\ClearCanvas_old\images\tab-active-right.gif" />
+    <Content Include="App_Themes\ClearCanvas_old\images\tab-active.gif" />
+    <Content Include="App_Themes\ClearCanvas_old\images\tab-hover-left.gif" />
+    <Content Include="App_Themes\ClearCanvas_old\images\tab-hover-right.gif" />
+    <Content Include="App_Themes\ClearCanvas_old\images\tab-hover.gif" />
+    <Content Include="App_Themes\ClearCanvas_old\images\tab-left.gif" />
+    <Content Include="App_Themes\ClearCanvas_old\images\tab-line.gif" />
+    <Content Include="App_Themes\ClearCanvas_old\images\tab-right.gif" />
+    <Content Include="App_Themes\ClearCanvas_old\images\tab.gif" />
+    <Content Include="App_Themes\ClearCanvas_old\Menu.css" />
+    <Content Include="App_Themes\ClearCanvas_old\Page.css" />
     <Content Include="images\Plus.ico" />
     <Content Include="images\usage.png" />
     <Content Include="Search\SearchPage.aspx" />
     <Content Include="Search\SearchPanel.ascx" />
+    <Content Include="App_Themes\NightHawk\images\gridheaderbackground.png" />
+    <Content Include="App_Themes\NightHawk\images\icon_warning.gif" />
+    <Content Include="App_Themes\NightHawk\images\tab-active-left.gif" />
+    <Content Include="App_Themes\NightHawk\images\tab-active-right.gif" />
+    <Content Include="App_Themes\NightHawk\images\tab-active.gif" />
+    <Content Include="App_Themes\NightHawk\images\tab-hover-left.gif" />
+    <Content Include="App_Themes\NightHawk\images\tab-hover-right.gif" />
+    <Content Include="App_Themes\NightHawk\images\tab-hover.gif" />
+    <Content Include="App_Themes\NightHawk\images\tab-left.gif" />
+    <Content Include="App_Themes\NightHawk\images\tab-line.gif" />
+    <Content Include="App_Themes\NightHawk\images\tab-right.gif" />
+    <Content Include="App_Themes\NightHawk\images\tab.gif" />
+    <Content Include="App_Themes\NightHawk\StyleSheet.css" />
+    <Content Include="Admin\Configuration\Preferences\Theme.aspx" />
     <Content Include="Web.sitemap" />
     <Content Include="Logging.config" />
     <Content Include="WorkQueue\SearchResultAccordian.ascx" />
@@ -442,6 +507,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Code\" />
+    <Folder Include="App_Themes\ClearCanvas_old\Styles\" />
     <Folder Include="plugins\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
@@ -459,7 +525,7 @@
         <WebProjectProperties>
           <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>1988</DevelopmentServerPort>
+          <DevelopmentServerPort>3325</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>
           </IISUrl>

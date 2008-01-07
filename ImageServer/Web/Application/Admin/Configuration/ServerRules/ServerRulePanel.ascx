@@ -4,48 +4,60 @@
 <%@ Register Src="ServerRuleGridView.ascx" TagName="ServerRuleGridView" TagPrefix="grid" %>
 <asp:UpdatePanel ID="ServerRuleUpdatePanel" runat="server" UpdateMode="Conditional">
     <ContentTemplate>
-        <asp:Panel ID="Panel1" runat="server" CssClass="PagePanel">
-            <asp:Table ID="Table" runat="server" Width="100%">
+        <asp:Panel ID="Panel1" runat="server">
+            <asp:Table ID="Table" runat="server" Width="100%" CellPadding="0" CellSpacing="0"
+                BorderWidth="0px">
                 <asp:TableHeaderRow>
-                    <asp:TableHeaderCell ColumnSpan="1" Width="100%"  HorizontalAlign="Left" VerticalAlign="Bottom">
-                        <asp:Panel ID="ToolbarPanel" runat="server" CssClass="PageToolbarPanel"
-                            Wrap="False">
-                            <asp:ImageButton ID="AddButton" runat="server" ImageUrl="~/images/icons/AddEnabled.png"
-                                AlternateText="Add" OnClick="AddButton_Click" />
-                            <asp:ImageButton ID="EditButton" runat="server" ImageUrl="~/images/icons/EditEnabled.png"
-                                OnClick="EditButton_Click" AlternateText="Edit" />
-                            <asp:ImageButton ID="DeleteButton" runat="server" ImageUrl="~/images/icons/DeleteEnabled.png"
-                                OnClick="DeleteButton_Click" AlternateText="Delete" />
-                            <asp:ImageButton ID="RefreshButton" runat="server" ImageUrl="~/images/icons/RefreshEnabled.png"
-                                OnClick="RefreshButton_Click" AlternateText="Refresh" />
+                    <asp:TableHeaderCell ColumnSpan="1" Width="100%" HorizontalAlign="Left" VerticalAlign="Bottom">
+                        <asp:Panel ID="Panel2" runat="server" CssClass="CSSToolbarPanelContainer">
+                            <asp:Panel ID="Panel3" runat="server" CssClass="CSSToolbarPanelBorder" Wrap="False">
+                                <asp:Panel ID="Panel4" runat="server" CssClass="CSSToolbarContent">
+                                    <asp:ImageButton ID="AddButton" runat="server" ImageUrl="~/images/icons/AddEnabled.png"
+                                        AlternateText="Add" OnClick="AddButton_Click" />
+                                    <asp:ImageButton ID="EditButton" runat="server" ImageUrl="~/images/icons/EditEnabled.png"
+                                        OnClick="EditButton_Click" AlternateText="Edit" />
+                                    <asp:ImageButton ID="DeleteButton" runat="server" ImageUrl="~/images/icons/DeleteEnabled.png"
+                                        OnClick="DeleteButton_Click" AlternateText="Delete" />
+                                    <asp:ImageButton ID="RefreshButton" runat="server" ImageUrl="~/images/icons/RefreshEnabled.png"
+                                        OnClick="RefreshButton_Click" AlternateText="Refresh" />
+                                </asp:Panel>
+                            </asp:Panel>
                         </asp:Panel>
                     </asp:TableHeaderCell>
                     <asp:TableHeaderCell HorizontalAlign="right" VerticalAlign="Bottom">
-                        <asp:Panel ID="FilterPanel" runat="server" CssClass="PageFilterPanel">
-                            <table cellpadding="3" cellspacing="0">
-                                <tr>
-                                    <td align="left" valign="bottom">
-                                        <asp:Label ID="Label1" runat="server" Text="Rule Type" Width="100px" EnableViewState="False" /><br />
-                                        <asp:DropDownList ID="RuleTypeDropDownList" runat="server" Width="100px" />
-                                    </td>
-                                    <td align="left" valign="bottom">
-                                        <asp:Label ID="Label2" runat="server" Text="Rule Apply Time" Width="100px" EnableViewState="False"></asp:Label><br />
-                                        <asp:DropDownList ID="RuleApplyTimeDropDownList" runat="server" Width="100px" />
-                                    </td>
-                                    <td align="left" valign="bottom">
-                                        <br />
-                                        <asp:CheckBox ID="EnabledOnlyFilter" runat="server" Text="Enabled" ToolTip="Show Enabled Rules only" />
-                                    </td>
-                                    <td align="left" valign="bottom">
-                                        <br />
-                                        <asp:CheckBox ID="DefaultOnlyFilter" runat="server" Text="Default" ToolTip="Show only default rules" />
-                                    </td>
-                                    <td style="width: 50px" align="right" valign="bottom">
-                                        <asp:ImageButton ID="FilterButton" runat="server" ImageUrl="~/images/icons/QueryEnabled.png"
-                                            OnClick="FilterButton_Click" ToolTip="Filter" />
-                                    </td>
-                                </tr>
-                            </table>
+                        <asp:Panel ID="FilterPanel" runat="server" CssClass="CSSFilterPanelContainer">
+                            <asp:Panel ID="Panel5" runat="server" CssClass="CSSFilterPanelBorder">
+                                <asp:Panel ID="Panel6" runat="server" CssClass="CSSFilterPanelContent">
+                                    <table cellpadding="0" cellspacing="0">
+                                        <tr>
+                                            <td align="left" valign="bottom">
+                                                <asp:Label ID="Label1" runat="server" Text="Rule Type" CssClass="CSSTextBoxLabel"
+                                                    EnableViewState="False" /><br />
+                                                <asp:DropDownList ID="RuleTypeDropDownList" runat="server" CssClass="CSSFilterTextBox" />
+                                            </td>
+                                            <td align="left" valign="bottom">
+                                                <asp:Label ID="Label2" runat="server" Text="Apply Time" CssClass="CSSTextBoxLabel"
+                                                    EnableViewState="False"></asp:Label><br />
+                                                <asp:DropDownList ID="RuleApplyTimeDropDownList" runat="server" CssClass="CSSFilterTextBox" />
+                                            </td>
+                                            <td align="left" valign="bottom">
+                                                <br />
+                                                <asp:CheckBox ID="EnabledOnlyFilter" runat="server" Text="Enabled" ToolTip="Show Enabled Rules only"
+                                                    CssClass="CSSCheckBox" />
+                                            </td>
+                                            <td align="left" valign="bottom">
+                                                <br />
+                                                <asp:CheckBox ID="DefaultOnlyFilter" runat="server" Text="Default" ToolTip="Show only default rules"
+                                                    CssClass="CSSCheckBox" />
+                                            </td>
+                                            <td align="right" valign="bottom">
+                                                <asp:ImageButton ID="FilterButton" runat="server" ImageUrl="~/images/icons/QueryEnabled.png"
+                                                    OnClick="FilterButton_Click" ToolTip="Filter" />
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </asp:Panel>
+                            </asp:Panel>
                         </asp:Panel>
                     </asp:TableHeaderCell>
                 </asp:TableHeaderRow>
@@ -54,11 +66,11 @@
                         <grid:ServerRuleGridView ID="ServerRuleGridViewControl" runat="server" />
                     </asp:TableCell>
                 </asp:TableRow>
-                <asp:TableFooterRow>
+                <asp:TableRow>
                     <asp:TableCell ColumnSpan="2">
                         <gridPager:GridPager ID="GridPager" runat="server" />
                     </asp:TableCell>
-                </asp:TableFooterRow>
+                </asp:TableRow>
             </asp:Table>
         </asp:Panel>
     </ContentTemplate>

@@ -188,9 +188,9 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
                 pane.HeaderContainer.Controls.Add(workQueueSummaryPanel);
                 pane.ContentContainer.Controls.Add(workQueueDetailsPanel);
 
-                pane.HeaderCssClass = "accordionHeader";
+                pane.HeaderCssClass = "CSSAccordianStudyHeader";
 
-                pane.ContentCssClass = "accordionContent";
+                pane.ContentCssClass = "CSSAccordionStudyDetails";
                 pane.BorderWidth = new Unit(0d);
                 pane.Visible = true;
 

@@ -16,7 +16,7 @@ using ClearCanvas.ImageServer.Web.Common.Data;
 
 namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRules
 {
-    public partial class ServerRulePage : System.Web.UI.Page
+    public partial class ServerRulePage : BasePage
     {
         private ServerRuleController _controller = new ServerRuleController();
 

@@ -65,12 +65,17 @@ namespace ClearCanvas.ImageServer.Web.Application.Search
             this.DetailsTable.Rows.Add(row);           
         }
 
+
         protected void Page_Load(object sender, EventArgs e)
         {
             this.SeriesLabel.Text = String.Format("Series: {0}", _series.SeriesDescription);
             AddRow("Modality", _series.Modality);
             AddRow("Series Description", _series.SeriesDescription);
             AddRow("Series Instance Uid", _series.SeriesInstanceUid);
+
+            //AddRow("Series Instance Uid", "2222222222222222222222222222222222222222222222");
+            //AddRow("Series Instance Uid", "123456789012345678901234567890123456789012345");
+
             AddRow("Series Number", _series.SeriesNumber);
             AddRow("Performed Procedure Step Start Date", _series.PerformedProcedureStepStartDate);
             AddRow("Performed Procedure Step Start Time", _series.PerformedProcedureStepStartTime);

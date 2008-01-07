@@ -12,16 +12,10 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
     <asp:UpdatePanel ID="UpdatePanel1" runat="server" UpdateMode="Conditional">
         <ContentTemplate>
-            <table cellpadding="0" cellspacing="0" width="100%">
-                <tr>
-                    <td>
-                        <asp:Panel ID="Panel1" runat="server" CssClass="ContentWindow">
-                            <uc2:FileSystemsPanel ID="FileSystemsPanel1" runat="server"></uc2:FileSystemsPanel>
-                            <uc3:AddEditFileSystemDialog ID="AddEditFileSystemDialog1" runat="server" />
-                        </asp:Panel>
-                    </td>
-                </tr>
-            </table>
+            <asp:Panel ID="Panel1" runat="server">
+                <uc2:FileSystemsPanel ID="FileSystemsPanel1" runat="server"></uc2:FileSystemsPanel>
+                <uc3:AddEditFileSystemDialog ID="AddEditFileSystemDialog1" runat="server" />
+            </asp:Panel>
         </ContentTemplate>
     </asp:UpdatePanel>
 </asp:Content>

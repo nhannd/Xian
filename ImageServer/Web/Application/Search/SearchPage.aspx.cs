@@ -31,10 +31,11 @@
 
 using System;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Web.Application.Common;
 
 namespace ClearCanvas.ImageServer.Web.Application.Search
 {
-    public partial class SearchPage : System.Web.UI.Page
+    public partial class SearchPage : BasePage
     {
         protected void Page_Load(object sender, EventArgs e)
         {

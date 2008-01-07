@@ -113,6 +113,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Search
 
             // initialize the controller
             _searchController = new StudyController();
+            
         }
 
         protected void Page_Load(object sender, EventArgs e)
