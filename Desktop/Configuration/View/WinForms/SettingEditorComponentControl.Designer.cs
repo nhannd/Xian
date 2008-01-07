@@ -128,6 +128,7 @@ namespace ClearCanvas.Desktop.Configuration.View.WinForms
             // 
             this._defaultValue.AcceptsTab = true;
             this._defaultValue.AutoWordSelection = true;
+            this._defaultValue.DetectUrls = false;
             this._defaultValue.Dock = System.Windows.Forms.DockStyle.Fill;
             this._defaultValue.Location = new System.Drawing.Point(3, 16);
             this._defaultValue.Name = "_defaultValue";
@@ -151,6 +152,7 @@ namespace ClearCanvas.Desktop.Configuration.View.WinForms
             // _currentValue
             // 
             this._currentValue.AcceptsTab = true;
+            this._currentValue.DetectUrls = false;
             this._currentValue.Dock = System.Windows.Forms.DockStyle.Fill;
             this._currentValue.Location = new System.Drawing.Point(3, 16);
             this._currentValue.Name = "_currentValue";
