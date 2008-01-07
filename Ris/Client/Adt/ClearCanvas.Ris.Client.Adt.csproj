@@ -54,18 +54,6 @@
     <Compile Include="Folders\RefreshTool.cs" />
     <Compile Include="Folders\TechnologistWorkflowFolders.cs" />
     <Compile Include="IDocumentationPage.cs" />
-    <Compile Include="OrderEntryComponentSettings.cs" />
-    <Compile Include="OrderEntryComponentSettings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>OrderEntryComponentSettings.settings</DependentUpon>
-    </Compile>
-    <Compile Include="PatientProfileDetailsEditorComponentSettings.cs" />
-    <Compile Include="PatientProfileDetailsEditorComponentSettings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>PatientProfileDetailsEditorComponentSettings.settings</DependentUpon>
-    </Compile>
     <Compile Include="PerformedProcedureComponent.cs" />
     <Compile Include="PerformedProcedureComponentSettings.cs" />
     <Compile Include="PerformedProcedureComponentSettings.Designer.cs">
@@ -243,9 +231,6 @@
     <EmbeddedResource Include="Icons\NoteTestToolLarge.png" />
     <EmbeddedResource Include="Icons\NoteTestToolMedium.png" />
     <EmbeddedResource Include="Icons\NoteTestToolSmall.png" />
-    <EmbeddedResource Include="PatientProfileAdditionalInfoEditorComponent.val.xml" />
-    <EmbeddedResource Include="OrderEntryComponent.val.xml" />
-    <EmbeddedResource Include="PatientProfileDetailsEditorComponent.val.xml" />
     <EmbeddedResource Include="PatientProfileDiff.html" />
     <EmbeddedResource Include="Icons\VisitSummaryToolLarge.png" />
     <EmbeddedResource Include="Icons\VisitSummaryToolMedium.png" />
@@ -253,14 +238,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="OrderEntryComponentSettings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>OrderEntryComponentSettings.Designer.cs</LastGenOutput>
-    </None>
-    <None Include="PatientProfileDetailsEditorComponentSettings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>PatientProfileDetailsEditorComponentSettings.Designer.cs</LastGenOutput>
-    </None>
     <None Include="PerformedProcedureComponentSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>PerformedProcedureComponentSettings.Designer.cs</LastGenOutput>

@@ -216,7 +216,6 @@ namespace ClearCanvas.Ris.Client.Adt
             _consultantsActionModel.Delete.SetClickHandler(RemoveSelectedConsultant);
             UpdateConsultantActionModel();
 
-            this.Validation.Add(OrderEntryComponentSettings.Default.ValidationRules);
             this.Validation.Add(new ValidationRule("SelectedCancelReason",
                 delegate
                 {

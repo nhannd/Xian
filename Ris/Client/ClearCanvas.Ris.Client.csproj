@@ -45,12 +45,6 @@
   <ItemGroup>
     <Compile Include="AddressEditorComponent.cs" />
     <Compile Include="AddressesSummaryComponent.cs" />
-    <Compile Include="AddressesSummaryComponentSettings.cs" />
-    <Compile Include="AddressesSummaryComponentSettings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>AddressesSummaryComponentSettings.settings</DependentUpon>
-    </Compile>
     <Compile Include="BiographyDemographicComponent.cs" />
     <Compile Include="OrderDetailViewComponent.cs" />
     <Compile Include="OrderDetailViewComponentSettings.cs" />
@@ -69,12 +63,6 @@
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>BannerComponentSettings.settings</DependentUpon>
-    </Compile>
-    <Compile Include="PatientNoteEditorComponentSettings.cs" />
-    <Compile Include="PatientNoteEditorComponentSettings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>PatientNoteEditorComponentSettings.settings</DependentUpon>
     </Compile>
     <Compile Include="WorklistPreviewComponent.cs" />
     <Compile Include="FolderContentsComponent.cs" />
@@ -99,12 +87,6 @@
     <Compile Include="BiographyNoteTable.cs" />
     <Compile Include="BiographyOrderHistoryComponent.cs" />
     <Compile Include="BiographyOverviewComponent.cs" />
-    <Compile Include="ContactPersonEditorComponentSettings.cs" />
-    <Compile Include="ContactPersonEditorComponentSettings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>ContactPersonEditorComponentSettings.settings</DependentUpon>
-    </Compile>
     <Compile Include="ContainerFolder.cs" />
     <Compile Include="DiagnosticServiceLookupHandler.cs" />
     <Compile Include="DiagnosticServiceTreeComponent.cs" />
@@ -117,12 +99,6 @@
     <Compile Include="IViewerIntegration.cs" />
     <Compile Include="Document.cs" />
     <Compile Include="DocumentManager.cs" />
-    <Compile Include="EmailAddressEditorComponentSettings.cs" />
-    <Compile Include="EmailAddressEditorComponentSettings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>EmailAddressEditorComponentSettings.settings</DependentUpon>
-    </Compile>
     <Compile Include="ExceptionPolicies.cs" />
     <Compile Include="LookupHandler.cs" />
     <Compile Include="OrderSummaryTable.cs" />
@@ -252,29 +228,11 @@
     <EmbeddedResource Include="AcquisitionWorkflowPreview.html" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="AddressesSummaryComponent.val.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="EmailAddressEditorComponent.val.xml" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="AddressEditorComponentSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>AddressEditorComponentSettings.Designer.cs</LastGenOutput>
     </None>
-    <None Include="AddressesSummaryComponentSettings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>AddressesSummaryComponentSettings.Designer.cs</LastGenOutput>
-    </None>
     <None Include="app.config" />
-    <None Include="ContactPersonEditorComponentSettings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>ContactPersonEditorComponentSettings.Designer.cs</LastGenOutput>
-    </None>
-    <None Include="EmailAddressEditorComponentSettings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>EmailAddressEditorComponentSettings.Designer.cs</LastGenOutput>
-    </None>
     <None Include="FolderExplorerComponentSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>FolderExplorerComponentSettings.Designer.cs</LastGenOutput>
@@ -290,10 +248,6 @@
     <None Include="BannerComponentSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>BannerComponentSettings.Designer.cs</LastGenOutput>
-    </None>
-    <None Include="PatientNoteEditorComponentSettings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>PatientNoteEditorComponentSettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="RandomUtilsSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -311,9 +265,6 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>WebServicesSettings.Designer.cs</LastGenOutput>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="ContactPersonEditorComponent.val.xml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\AddToolSmall.png" />
@@ -393,9 +344,6 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="FolderExplorerComponentSettings.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="PatientNoteEditorComponent.val.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

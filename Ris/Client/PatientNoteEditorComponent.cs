@@ -35,6 +35,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Desktop.Validation;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -57,13 +58,12 @@ namespace ClearCanvas.Ris.Client
 
         public override void Start()
         {
-            this.Validation.Add(PatientNoteEditorComponentSettings.Default.ValidationRules);
-
             base.Start();
         }
 
         #region Presentation Model
 
+        [ValidateNotNull]
         public string Comment
         {
             get { return _note.Comment; }
@@ -86,6 +86,7 @@ namespace ClearCanvas.Ris.Client
             set { _note.ValidRangeUntil = value; }
         }
 
+        [ValidateNotNull]
         public string Category
         {
             get 

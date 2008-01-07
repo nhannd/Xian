@@ -36,6 +36,7 @@ using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Desktop.Validation;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -61,8 +62,6 @@ namespace ClearCanvas.Ris.Client
         public EmailAddressEditorComponent(EmailAddressDetail emailAddress)
         {
             _emailAddress = emailAddress;
-
-            this.Validation.Add(EmailAddressEditorComponentSettings.Default.ValidationRules);
         }
 
         public override void Start()
@@ -83,6 +82,8 @@ namespace ClearCanvas.Ris.Client
             set { _emailAddress = value; }
         }
 
+        [ValidateNotNull]
+        [ValidateRegex(@"\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*", AllowNull = true)]
         public string Address
         {
             get { return _emailAddress.Address; }

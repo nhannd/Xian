@@ -60,8 +60,6 @@ namespace ClearCanvas.Ris.Client
 
         public AddressesSummaryComponent(IList<EnumValueInfo> addressTypes)
         {
-            this.Validation.Add(AddressesSummaryComponentSettings.Default.ValidationRules);
-
             _addresses = new AddressTable();
 
             _addressActionHandler = new CrudActionModel();

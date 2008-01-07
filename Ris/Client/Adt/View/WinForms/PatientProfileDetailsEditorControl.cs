@@ -63,13 +63,13 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 
             _mrn.DataBindings.Add("Value", _component, "MrnID", true, DataSourceUpdateMode.OnPropertyChanged);
 
-            _mrnAuthority.DataSource = _component.MrnAssigningAuthorityChoices;
-            _mrnAuthority.DataBindings.Add("Value", _component, "MrnSite", true, DataSourceUpdateMode.OnPropertyChanged);
+            _mrnAuthority.DataSource = _component.MrnAuthorityChoices;
+            _mrnAuthority.DataBindings.Add("Value", _component, "MrnAuthority", true, DataSourceUpdateMode.OnPropertyChanged);
 
             _healthcard.DataBindings.Add("Value", _component, "HealthcardID", true, DataSourceUpdateMode.OnPropertyChanged);
 
-            _insurer.DataSource = _component.HealthcardAssigningAuthorityChoices;
-            _insurer.DataBindings.Add("Value", _component, "HealthcardProvince", true, DataSourceUpdateMode.OnPropertyChanged);
+            _insurer.DataSource = _component.HealthcardAuthorityChoices;
+            _insurer.DataBindings.Add("Value", _component, "HealthcardAuthority", true, DataSourceUpdateMode.OnPropertyChanged);
 
             _healthcardVersionCode.DataBindings.Add("Value", _component, "HealthcardVersionCode", true, DataSourceUpdateMode.OnPropertyChanged);
             _healthcardExpiry.DataBindings.Add("Value", _component, "HealthcardExpiryDate", true, DataSourceUpdateMode.OnPropertyChanged);

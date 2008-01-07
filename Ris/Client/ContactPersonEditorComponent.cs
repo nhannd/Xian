@@ -37,6 +37,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Enterprise;
+using ClearCanvas.Desktop.Validation;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -92,6 +93,7 @@ namespace ClearCanvas.Ris.Client
             set { _contactPerson = value; }
         }
 
+        [ValidateNotNull]
         public string Name
         {
             get { return _contactPerson.Name; }
@@ -137,6 +139,7 @@ namespace ClearCanvas.Ris.Client
             get { return TextFieldMasks.TelphoneNumberFullMask; }
         }
 
+        [ValidateNotNull]
         public string Type
         {
             get { return _contactPerson.Type.Value; }
@@ -152,6 +155,7 @@ namespace ClearCanvas.Ris.Client
             get { return EnumValueUtils.GetDisplayValues(_contactTypeChoices); }
         }
 
+        [ValidateNotNull]
         public string Relationship
         {
             get { return _contactPerson.Relationship.Value; }
