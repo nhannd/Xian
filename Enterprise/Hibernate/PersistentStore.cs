@@ -82,6 +82,8 @@ namespace ClearCanvas.Enterprise.Hibernate
             // if a second-level cache has been specified
             if (_cfg.Properties.Contains("hibernate.cache.provider_class"))
             {
+                Platform.Log(LogLevel.Info, "NHibernate 2nd-level cache: {0}", _cfg.Properties["hibernate.cache.provider_class"]);
+
                 // setup default caching strategies for all classes/collections that don't have one explicitly
                 // specified in the mapping files
                 CreateDefaultCacheStrategies();
@@ -140,19 +142,33 @@ namespace ClearCanvas.Enterprise.Hibernate
         {
             foreach (PersistentClass classMapping in _cfg.ClassMappings)
             {
+                // only look at root classes that do not have an explicity cache strategy specified
                 if (classMapping is RootClass && string.IsNullOrEmpty(classMapping.CacheConcurrencyStrategy))
                 {
-                    _cfg.SetCacheConcurrencyStrategy(classMapping.MappedClass, NHibernate.Cache.CacheFactory.ReadWrite);
+                    // cache EnumValue subclasses as nonstrict-read-write by default, since they are rarely modified
+                    // (we might even be ok with a read-only strategy, but we'd have to try it out)
+                    if (classMapping.MappedClass.IsSubclassOf(typeof(EnumValue)))
+                    {
+                        _cfg.SetCacheConcurrencyStrategy(classMapping.MappedClass, NHibernate.Cache.CacheFactory.NonstrictReadWrite);
+                    }
+                    else if(classMapping.MappedClass.IsSubclassOf(typeof(Entity)))
+                    {
+                        //JR: don't cache entities by default right now, because we don't have a distributed cache implementation
+                        //_cfg.SetCacheConcurrencyStrategy(classMapping.MappedClass, NHibernate.Cache.CacheFactory.ReadWrite);
+                    }
+
                 }
             }
 
-            foreach (NHibernate.Mapping.Collection collMapping in _cfg.CollectionMappings)
-            {
-                if (string.IsNullOrEmpty(collMapping.CacheConcurrencyStrategy))
-                {
-                    _cfg.SetCacheConcurrencyStrategy(collMapping.Role, NHibernate.Cache.CacheFactory.ReadWrite);
-                }
-            }
+
+            //JR: don't cache collections by default right now, because we don't have a distributed cache implementation
+            //foreach (NHibernate.Mapping.Collection collMapping in _cfg.CollectionMappings)
+            //{
+            //    if (string.IsNullOrEmpty(collMapping.CacheConcurrencyStrategy))
+            //    {
+            //        _cfg.SetCacheConcurrencyStrategy(collMapping.Role, NHibernate.Cache.CacheFactory.ReadWrite);
+            //    }
+            //}
         }
     }
 }

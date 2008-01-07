@@ -6,24 +6,16 @@
     <!-- common properties -->
     <property name="connection.provider">NHibernate.Connection.DriverConnectionProvider</property>
     <property name="hibernate.connection.isolation">ReadCommitted</property>
-    <!-- 2nd level cache - need a distributed cache implementation for this to work correctly
-    	<property name="hibernate.cache.provider_class">NHibernate.Caches.SysCache.SysCacheProvider, NHibernate.Caches.SysCache</property>
-    	<property name="relativeExpiration">10</property>
-    -->
+    <property name="hibernate.cache.provider_class">NHibernate.Caches.SysCache.SysCacheProvider, NHibernate.Caches.SysCache</property>
+    <property name="expiration">180</property>
 
     <!--MS SQL-->
     <property name="hibernate.dialect">NHibernate.Dialect.MsSql2000Dialect</property>
-	  <property name="connection.driver_class">NHibernate.Driver.SqlClientDriver</property>
-	  <property name="connection.connection_string">Data Source=172.16.10.167\SQLEXPRESS;Initial Catalog=Ris8;User Id=risuser;Password=rispass</property>
-	  <property name="hibernate.default_schema">Ris8.dbo</property>
-	<property name="hibernate.use_proxy_validator">false</property>
-	<property name="hibernate.connection.release_mode">on_close</property>
-
-    <!--SQLite-->
-    <!--<property name="hibernate.dialect">NHibernate.Dialect.SQLiteDialect</property>
-    <property name="hibernate.connection.driver_class">NHibernate.Driver.SQLiteDriver</property>
-    <property name="hibernate.connection.connection_string">Data Source=datastore\ris.sqb;Version=3</property>-->
-    
+    <property name="connection.driver_class">NHibernate.Driver.SqlClientDriver</property>
+    <property name="connection.connection_string">Data Source=172.16.10.167\SQLEXPRESS;Initial Catalog=Ris8;User Id=risuser;Password=rispass</property>
+    <property name="hibernate.default_schema">Ris8.dbo</property>
+    <property name="hibernate.use_proxy_validator">false</property>
+    <property name="hibernate.connection.release_mode">on_close</property>
   </session-factory>
 
 </hibernate-configuration>
