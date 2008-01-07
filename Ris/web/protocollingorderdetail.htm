@@ -1,0 +1,69 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title>Order Details</title>
+		<link href="css/default.css" rel="stylesheet" type="text/css" />
+		<script type="text/javascript" src="js/jsx.js"></script>
+		<script type="text/javascript" src="js/jsml.js"></script>
+		<script type="text/javascript" src="js/ui.js"></script>
+		<script type="text/javascript" src="js/ris.js"></script>
+		<script type="text/javascript" src="js/preview.js"></script>
+		<script type="text/javascript" src="js/layout.js"></script>
+		<script type="text/javascript" >
+			function onBodyLoad()
+			{
+				scaleWidth();
+
+				if(!Ris)
+					return;
+				try
+				{
+					var worklistItem = Ris.getHealthcareContext();
+					if (worklistItem == null)
+					{
+						Field.setValue($("myForm"), "");
+						return;
+					}
+
+					// construct request object
+					var request = {
+						GetOrderDetailRequest:
+							 { 
+								OrderRef: worklistItem.OrderRef
+							}
+					};
+
+					var service = Ris.getPatientDataService();
+					var data = service.getData(request);
+
+					if (data == null || data.length == 0)
+					{
+						Field.setValue($("myForm"), "");
+						return;
+					}
+
+					var orderDetail = data.GetOrderDetailResponse.Order;
+
+					Field.setValue($("Indications"), orderDetail.ReasonForStudy);
+				}
+				catch(e)
+				{
+					var message = "Failed to load editor page.  An exception occurred in the script. Error name: " + e.name + ". Error message: " + e.message;
+					Field.setValue($("myForm"), message);
+				}
+			}
+		</script>
+	</head>
+	<body onload="javascript: onBodyLoad()" onresize="javascript: scaleWidth()">
+		<form id="myForm">
+			<table width="95%" border="0">
+				<tr>
+					<td class="sectionheading">Indications</td>
+				</tr>
+				<tr>
+					<td><div id="Indications"/></td>
+				</tr>
+			</table>
+		</form>
+	</body>
+</html>
