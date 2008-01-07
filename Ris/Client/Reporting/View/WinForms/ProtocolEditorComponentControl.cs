@@ -52,10 +52,6 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 
             _component = component;
 
-            Control orderNotes = (Control)_component.OrderNotesComponentHost.ComponentView.GuiElement;
-            orderNotes.Dock = DockStyle.Fill;
-            _orderNotesPanel.Controls.Add(orderNotes);
-
             _protocolGroup.DataSource = _component.ProtocolGroupChoices;
             _protocolGroup.DataBindings.Add("Value", _component, "ProtocolGroup", true, DataSourceUpdateMode.OnPropertyChanged);
             _component.PropertyChanged += _component_PropertyChanged;
@@ -67,17 +63,17 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             _protocolNextItem.DataBindings.Add("Checked", _component, "ProtocolNextItem", true, DataSourceUpdateMode.OnPropertyChanged);
             _protocolNextItem.DataBindings.Add("Enabled", _component, "ProtocolNextItemEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 
-            protocolCodesSelector.ShowToolbars = false;
-            protocolCodesSelector.ShowColumnHeading = false;
-            protocolCodesSelector.AvailableItemsTable = _component.AvailableProtocolCodesTable;
-            protocolCodesSelector.SelectedItemsTable = _component.SelectedProtocolCodesTable;
-            protocolCodesSelector.DataBindings.Add("Enabled", _component, "SaveEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
+            _protocolCodesSelector.ShowToolbars = false;
+            _protocolCodesSelector.ShowColumnHeading = false;
+            _protocolCodesSelector.AvailableItemsTable = _component.AvailableProtocolCodesTable;
+            _protocolCodesSelector.SelectedItemsTable = _component.SelectedProtocolCodesTable;
+            _protocolCodesSelector.DataBindings.Add("Enabled", _component, "SaveEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 
-            btnAccept.DataBindings.Add("Enabled", _component, "AcceptEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
-            btnReject.DataBindings.Add("Enabled", _component, "RejectEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
-            btnSuspend.DataBindings.Add("Enabled", _component, "SuspendEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
-            btnSave.DataBindings.Add("Enabled", _component, "SaveEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
-            btnSkip.DataBindings.Add("Enabled", _component, "SkipEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
+            _btnAccept.DataBindings.Add("Enabled", _component, "AcceptEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
+            _btnReject.DataBindings.Add("Enabled", _component, "RejectEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
+            _btnSuspend.DataBindings.Add("Enabled", _component, "SuspendEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
+            _btnSave.DataBindings.Add("Enabled", _component, "SaveEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
+            _btnSkip.DataBindings.Add("Enabled", _component, "SkipEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
         }
 
         void _component_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -90,8 +86,8 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 
         private void RefreshTables(object sender, EventArgs e)
         {
-            protocolCodesSelector.AvailableItemsTable = _component.AvailableProtocolCodesTable;
-            protocolCodesSelector.SelectedItemsTable = _component.SelectedProtocolCodesTable;
+            _protocolCodesSelector.AvailableItemsTable = _component.AvailableProtocolCodesTable;
+            _protocolCodesSelector.SelectedItemsTable = _component.SelectedProtocolCodesTable;
         }
 
         private void btnAccept_Click(object sender, System.EventArgs e)

@@ -85,7 +85,6 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         private bool _protocolNextItem = true;
         private readonly ProtocollingComponentMode _componentMode;
-        private ApplicationComponentHost _orderNotesComponentHost;
 
         private event EventHandler _protocolAccepted;
         private event EventHandler _protocolRejected;
@@ -119,9 +118,6 @@ namespace ClearCanvas.Ris.Client.Reporting
             {
                 _worklistItem = value;
 
-                _orderNotesComponentHost.StopComponent();
-                _orderNotesComponentHost.StartComponent();
-
                 StartWorklistItem();
             }
         }
@@ -130,9 +126,6 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         public override void Start()
         {
-            _orderNotesComponentHost = new ChildComponentHost(this.Host, new OrderNoteSummaryComponent());
-            _orderNotesComponentHost.StartComponent();
-
             StartWorklistItem();
             base.Start();
         }
@@ -179,11 +172,6 @@ namespace ClearCanvas.Ris.Client.Reporting
         #endregion
 
         #region Presentation Model
-
-        public ApplicationComponentHost OrderNotesComponentHost
-        {
-            get { return _orderNotesComponentHost; }
-        }
 
         public IList<string> ProtocolGroupChoices
         {

@@ -59,6 +59,14 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             protocolEditor.Dock = DockStyle.Fill;
             _protocolEditorPanel.Controls.Add(protocolEditor);
 
+            Control orderNotes = (Control) _component.OrderNotesComponentHost.ComponentView.GuiElement;
+            orderNotes.Dock = DockStyle.Fill;
+            _orderNotesPanel.Controls.Add(orderNotes);
+
+            Control orderDetails = (Control) _component.OrderDetailViewComponentHost.ComponentView.GuiElement;
+            orderDetails.Dock = DockStyle.Fill;
+            _orderDetailsTabPage.Controls.Add(orderDetails);
+
             Control priorReports = (Control)_component.PriorReportsComponentHost.ComponentView.GuiElement;
             priorReports.Dock = DockStyle.Fill;
             _priorReportsTabPage.Controls.Add(priorReports);

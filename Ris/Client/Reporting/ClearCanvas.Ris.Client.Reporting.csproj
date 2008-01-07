@@ -48,6 +48,12 @@
     </Compile>
     <Compile Include="ProtocollingComponent.cs" />
     <Compile Include="ProtocollingComponentMode.cs" />
+    <Compile Include="ProtocollingComponentSettings.cs" />
+    <Compile Include="ProtocollingComponentSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>ProtocollingComponentSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="ReportingProtocolWorkflowFolderSystem.cs" />
     <Compile Include="ReportingProtocolWorkflowFolderSystemTool.cs" />
     <Compile Include="ReportingMainWorkflowFolderSystem.cs" />
@@ -182,6 +188,10 @@
     <None Include="PriorReportComponentSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>PriorReportComponentSettings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="ProtocollingComponentSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>ProtocollingComponentSettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="ReportEditorComponentSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

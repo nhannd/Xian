@@ -34,11 +34,48 @@ using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 
 namespace ClearCanvas.Ris.Client.Reporting
 {
+    public class ProtocollingOrderDetailViewComponent : DHtmlComponent
+    {
+        private WorklistItemSummaryBase _worklistItem;
+
+        public ProtocollingOrderDetailViewComponent(WorklistItemSummaryBase worklistItem)
+        {
+            _worklistItem = worklistItem;
+        }
+
+        public override void Start()
+        {
+            SetUrl(ProtocollingComponentSettings.Default.OrderDetailPageUrl);
+            base.Start();
+        }
+
+        public WorklistItemSummaryBase WorklistItem
+        {
+            get { return _worklistItem; }
+            set
+            {
+                _worklistItem = value;
+                Refresh();
+            }
+        }
+
+        public void Refresh()
+        {
+            NotifyAllPropertiesChanged();
+        }
+
+        protected override DataContractBase GetHealthcareContext()
+        {
+            return _worklistItem;
+        }
+    }
+
     /// <summary>
     /// Extension point for views onto <see cref="ProtocollingComponent"/>
     /// </summary>
@@ -65,7 +102,9 @@ namespace ClearCanvas.Ris.Client.Reporting
         private ChildComponentHost _bannerComponentHost;
         private ChildComponentHost _protocolEditorComponentHost;
         private ProtocolEditorComponent _protocolEditorComponent;
+        private ChildComponentHost _orderDetailViewComponentHost;
         private ChildComponentHost _priorReportsComponentHost;
+        private ApplicationComponentHost _orderNotesComponentHost;
 
         #endregion
 
@@ -92,6 +131,9 @@ namespace ClearCanvas.Ris.Client.Reporting
             _bannerComponentHost = new ChildComponentHost(this.Host, new BannerComponent(_worklistItem));
             _bannerComponentHost.StartComponent();
 
+            _orderNotesComponentHost = new ChildComponentHost(this.Host, new OrderNoteSummaryComponent());
+            _orderNotesComponentHost.StartComponent();
+
             _protocolEditorComponent = new ProtocolEditorComponent(_worklistItem, _componentMode);
 
             _protocolEditorComponent.ProtocolAccepted += OnProtocolAccepted;
@@ -106,6 +148,9 @@ namespace ClearCanvas.Ris.Client.Reporting
 
             _priorReportsComponentHost = new ChildComponentHost(this.Host, new PriorReportComponent(_worklistItem));
             _priorReportsComponentHost.StartComponent();
+
+            _orderDetailViewComponentHost = new ChildComponentHost(this.Host, new ProtocollingOrderDetailViewComponent(_worklistItem));
+            _orderDetailViewComponentHost.StartComponent();
 
             this.Host.Title = ProtocollingComponentDocument.GetTitle(_worklistItem);
 
@@ -124,6 +169,16 @@ namespace ClearCanvas.Ris.Client.Reporting
         public ApplicationComponentHost ProtocolEditorComponentHost
         {
             get { return _protocolEditorComponentHost; }
+        }
+
+        public ApplicationComponentHost OrderNotesComponentHost
+        {
+            get { return _orderNotesComponentHost; }
+        }
+
+        public ApplicationComponentHost OrderDetailViewComponentHost
+        {
+            get { return _orderDetailViewComponentHost; }
         }
 
         public ApplicationComponentHost PriorReportsComponentHost
@@ -224,6 +279,9 @@ namespace ClearCanvas.Ris.Client.Reporting
                     ((BannerComponent) _bannerComponentHost.Component).HealthcareContext = _worklistItem;
                     ((PriorReportComponent) _priorReportsComponentHost.Component).WorklistItem = _worklistItem;
                     ((ProtocolEditorComponent) _protocolEditorComponentHost.Component).WorklistItem = _worklistItem;
+                    ((ProtocollingOrderDetailViewComponent) _orderDetailViewComponentHost.Component).WorklistItem = _worklistItem;
+                    _orderNotesComponentHost.StopComponent();
+                    _orderNotesComponentHost.StartComponent();
 
                     // Update title
                     this.Host.Title = ProtocollingComponentDocument.GetTitle(_worklistItem);
