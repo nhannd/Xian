@@ -45,7 +45,7 @@ using ClearCanvas.Enterprise.Common;
 namespace ClearCanvas.Enterprise.Hibernate
 {
     /// <summary>
-    /// Abstract base class for NHibernate implemenations of <see cref="IEntityBroker"/>.
+    /// Abstract base class for NHibernate implemenations of <see cref="IEntityBroker{TEntity, TSearchCriteria}"/>.
     /// </summary>
     /// <typeparam name="TEntity">The entity class on which this broker operates</typeparam>
     /// <typeparam name="TSearchCriteria">The corresponding <see cref="SearchCriteria"/> class.</typeparam>
@@ -63,12 +63,17 @@ namespace ClearCanvas.Enterprise.Hibernate
             return Find(criteria, null);
         }
 
-        public virtual IList<TEntity> Find(TSearchCriteria criteria, SearchResultPage page)
+        public IList<TEntity> Find(TSearchCriteria criteria, SearchResultPage page)
         {
             return Find(new TSearchCriteria[] { criteria }, page);
         }
 
-        public virtual IList<TEntity> Find(TSearchCriteria[] criteria, SearchResultPage page)
+        public IList<TEntity> Find(TSearchCriteria[] criteria, SearchResultPage page)
+        {
+            return Find(criteria, page, false);
+        }
+
+        public IList<TEntity> Find(TSearchCriteria[] criteria, SearchResultPage page, bool cache)
         {
             HqlQuery query = new HqlQuery(string.Format("from {0} x", typeof(TEntity).Name));
             query.Page = page;
@@ -85,6 +90,8 @@ namespace ClearCanvas.Enterprise.Hibernate
 
             if (or.Conditions.Count > 0)
                 query.Conditions.Add(or);
+
+            query.Cacheable = cache;
 
             return ExecuteHql<TEntity>(query);
         }

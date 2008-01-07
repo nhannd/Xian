@@ -84,7 +84,8 @@ namespace ClearCanvas.Enterprise.Configuration
 
             IConfigurationDocumentBroker broker = PersistenceContext.GetBroker<IConfigurationDocumentBroker>();
             ConfigurationDocumentSearchCriteria criteria = BuildCurrentVersionCriteria(name, version, user, instanceKey);
-            IList<ConfigurationDocument> documents = broker.Find(criteria, new SearchResultPage(0, 1));
+            IList<ConfigurationDocument> documents = broker.Find(
+                new ConfigurationDocumentSearchCriteria[] { criteria }, new SearchResultPage(0, 1), true);
 
             ConfigurationDocument document = CollectionUtils.FirstElement(documents);
             return document == null ? null : document.Body.DocumentText;
@@ -99,22 +100,23 @@ namespace ClearCanvas.Enterprise.Configuration
         {
             CheckWriteAccess(user);
 
-            ConfigurationDocument document = null;
-            try
+            IConfigurationDocumentBroker broker = PersistenceContext.GetBroker<IConfigurationDocumentBroker>();
+            ConfigurationDocumentSearchCriteria criteria = BuildCurrentVersionCriteria(name, version, user, instanceKey);
+            IList<ConfigurationDocument> documents = broker.Find(
+                new ConfigurationDocumentSearchCriteria[] { criteria }, new SearchResultPage(0, 1), true);
+
+            ConfigurationDocument document = CollectionUtils.FirstElement(documents);
+            if(document != null)
             {
-                IConfigurationDocumentBroker broker = PersistenceContext.GetBroker<IConfigurationDocumentBroker>();
-                ConfigurationDocumentSearchCriteria criteria = BuildCurrentVersionCriteria(name, version, user, instanceKey);
-                document = broker.FindOne(criteria);
                 document.Body.DocumentText = content;
             }
-            catch (EntityNotFoundException)
+            else
             {
-                // no saved settings, create new
+                // no saved document, create new
                 document = NewDocument(name, version, user, instanceKey);
                 document.Body.DocumentText = content;
                 PersistenceContext.Lock(document, DirtyState.New);
             }
-
         }
 
         // because this service is invoked by the framework, rather than by the application,

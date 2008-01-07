@@ -45,9 +45,12 @@ namespace ClearCanvas.Enterprise.Hibernate.Hql
     public class HqlQuery : HqlElement
     {
         private string _baseQuery;
-        private HqlAnd _where;
-        private List<HqlSort> _sorts;
+        private readonly HqlAnd _where;
+        private readonly List<HqlSort> _sorts;
         private SearchResultPage _page;
+
+        private bool _cacheable;
+        private string _cacheRegion;
 
         /// <summary>
         /// Constructs an empty query
@@ -112,6 +115,29 @@ namespace ClearCanvas.Enterprise.Hibernate.Hql
         {
             get { return _page; }
             set { _page = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether NHibernate should attempt to cache the results of this query.
+        /// </summary>
+        /// <remarks>
+        /// Caching is useful only if the same query is re-run frequently with the same parameters, and the tables
+        /// involved in the query are updated infrequenctly.  In other words, most queries do not benefit from caching.
+        /// </remarks>
+        public bool Cacheable
+        {
+            get { return _cacheable; }
+            set { _cacheable = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets a custom cache region for this query.  See <see cref="Cacheable"/> for more information
+        /// about query caching.
+        /// </summary>
+        public string CacheRegion
+        {
+            get { return _cacheRegion; }
+            set { _cacheRegion = value; }
         }
 
         /// <summary>
@@ -193,6 +219,11 @@ namespace ClearCanvas.Enterprise.Hibernate.Hql
                 if(_page.MaxRows > -1)
                     q.SetMaxResults(_page.MaxRows);
             }
+
+            // configure caching
+            q.SetCacheable(_cacheable);
+            if (!string.IsNullOrEmpty(_cacheRegion))
+                q.SetCacheRegion(_cacheRegion);
 
             return q;
         }

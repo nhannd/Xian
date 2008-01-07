@@ -106,6 +106,9 @@ namespace ClearCanvas.Enterprise.Hibernate
             // load all values in asc order
             // bug : NHibernate does not properly convert "order by" property to column name, therefore we use the column name for now
             HqlQuery q = new HqlQuery(string.Format("from {0} order by DisplayOrder_ asc", enumValueClass.FullName));
+
+            // caching these queries will be very efficient, because the tables rarely change
+            q.Cacheable = true;
             return ExecuteHql<T>(q);
         }
 

@@ -110,6 +110,7 @@ namespace ClearCanvas.Enterprise.Core
         /// constrained by the specified page constraint.
         /// </summary>
         /// <param name="criteria"></param>
+        /// <param name="page"></param>
         /// <returns></returns>
         IList<TEntity> Find(TSearchCriteria criteria, SearchResultPage page);
 
@@ -118,9 +119,19 @@ namespace ClearCanvas.Enterprise.Core
         /// constrained by the specified page constraint.
         /// </summary>
         /// <param name="criteria"></param>
+        /// <param name="page"></param>
         /// <returns></returns>
         IList<TEntity> Find(TSearchCriteria[] criteria, SearchResultPage page);
 
+        /// <summary>
+        /// Retrieves all entities matching any of the specified criteria (the criteria are combined using OR),
+        /// constrained by the specified page constraint.
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <param name="page"></param>
+        /// <param name="cache"></param>
+        /// <returns></returns>
+        IList<TEntity> Find(TSearchCriteria[] criteria, SearchResultPage page, bool cache);
 
         /// <summary>
         /// Retrieves the entire set of entities of this class.  Caution: this method may return an arbitrarily large

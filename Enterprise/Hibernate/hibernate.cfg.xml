@@ -7,6 +7,7 @@
     <property name="connection.provider">NHibernate.Connection.DriverConnectionProvider</property>
     <property name="hibernate.connection.isolation">ReadCommitted</property>
     <property name="hibernate.cache.provider_class">NHibernate.Caches.SysCache.SysCacheProvider, NHibernate.Caches.SysCache</property>
+    <property name="hibernate.cache.use_query_cache">true</property>
     <property name="expiration">180</property>
 
     <!--MS SQL-->

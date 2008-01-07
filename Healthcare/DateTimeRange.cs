@@ -43,6 +43,7 @@ namespace ClearCanvas.Healthcare {
     /// Represents a date/time range.  Either the From or Until property may be null, in which
     /// case the range is open-ended.
     /// </summary>
+    [Serializable]
 	public class DateTimeRange : IEquatable<DateTimeRange>, ICloneable
 	{
         private DateTime? _from;
