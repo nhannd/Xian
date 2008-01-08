@@ -40,52 +40,15 @@ namespace ClearCanvas.Healthcare
     /// RegistrationInProgessWorklist entity
     /// </summary>
     [ExtensionOf(typeof(WorklistExtensionPoint), Name="RegistrationInProgressWorklist")]
-    public partial class RegistrationInProgressWorklist : ClearCanvas.Healthcare.Worklist
+    public class RegistrationInProgressWorklist : RegistrationWorklist
     {
-        /// <summary>
-        /// This method is called from the constructor.  Use this method to implement any custom
-        /// object initialization.
-        /// </summary>
-        private void CustomInitialize()
+        protected override RegistrationWorklistItemSearchCriteria[] GetQueryConditions(Staff staff)
         {
+            RegistrationWorklistItemSearchCriteria criteria = new RegistrationWorklistItemSearchCriteria();
+            criteria.Order.Status.EqualTo(OrderStatus.IP);
+            criteria.RequestedProcedure.ScheduledStartTime.Between(Platform.Time.Date, Platform.Time.Date.AddDays(1));
+            criteria.ProcedureCheckIn.CheckOutTime.IsNull();
+            return new RegistrationWorklistItemSearchCriteria[] { criteria };
         }
-
-        private RegistrationWorklistItemSearchCriteria[] QueryConditions
-        {
-            get
-            {
-                RegistrationWorklistItemSearchCriteria criteria = new RegistrationWorklistItemSearchCriteria();
-                criteria.Order.Status.EqualTo(OrderStatus.IP);
-                criteria.RequestedProcedure.ScheduledStartTime.Between(Platform.Time.Date, Platform.Time.Date.AddDays(1));
-                criteria.ProcedureCheckIn.CheckOutTime.IsNull();
-                return new RegistrationWorklistItemSearchCriteria[] { criteria };
-            }
-        }
-
-        public override IList GetWorklist(Staff currentUserStaff, IPersistenceContext context)
-        {
-            return (IList) GetBroker<IRegistrationWorklistBroker>(context).GetWorklist(QueryConditions, this);
-        }
-
-        public override int GetWorklistCount(Staff currentUserStaff, IPersistenceContext context)
-        {
-            return GetBroker<IRegistrationWorklistBroker>(context).GetWorklistCount(QueryConditions, this);
-        }
-
-        #region Object overrides
-
-        public override bool Equals(object that)
-        {
-            // TODO: implement a test for business-key equality
-            return base.Equals(that);
-        }
-
-        public override int GetHashCode()
-        {
-            // TODO: implement a hash-code based on the business-key used in the Equals() method
-            return base.GetHashCode();
-        }
-
-        #endregion
     }
 }

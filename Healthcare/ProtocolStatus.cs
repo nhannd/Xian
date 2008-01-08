@@ -52,13 +52,13 @@ namespace ClearCanvas.Healthcare {
         PR,
 
         /// <summary>
-        /// Protocolled
+        /// Rejected
         /// </summary>
         [EnumValue("Rejected", Description = "Protocol assigned and order rejected")]
         RJ,
 
         /// <summary>
-        /// Protocolled
+        /// Suspended
         /// </summary>
         [EnumValue("Suspended", Description = "Protocol suspended pending further order information")]
         SU,

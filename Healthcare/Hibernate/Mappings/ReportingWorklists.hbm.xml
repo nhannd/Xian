@@ -1,6 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<!-- @codegen: nobroker -->
+<!-- @codegen: ignore -->
 <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="ClearCanvas.Healthcare" namespace="ClearCanvas.Healthcare">
-  <subclass name="ReportingToBeReportedWorklist" proxy="ReportingToBeReportedWorklist" extends="Worklist" discriminator-value="RPT"/>
-  <subclass name="ReportingToBeProtocolledWorklist" proxy="ReportingToBeProtocolledWorklist" extends="Worklist" discriminator-value="PROTO"/>
+  <!-- abstract intermediate classes -->
+  <subclass name="ReportingWorklist" extends="Worklist" discriminator-value="R"/>
+
+  <!-- concrete classes -->
+  <subclass name="ReportingToBeReportedWorklist" extends="ReportingWorklist" discriminator-value="RPT"/>
+  <subclass name="ReportingToBeProtocolledWorklist" extends="ReportingWorklist" discriminator-value="PROTO"/>
 </hibernate-mapping>

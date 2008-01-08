@@ -164,6 +164,9 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             {
                 query.Conditions.Add(new HqlCondition(_hqlWorklistSubQuery, worklist));
             }
+
+            // constrain patient profiles so that don't get more than one in the join
+            query.Conditions.Add(new HqlCondition("pp.Mrn.AssigningAuthority = rp.PerformingFacility.InformationAuthority"));
         }
 
         private static void ConstructSearchCondition(HqlQuery query, IEnumerable<WorklistItemSearchCriteria> where, bool showActiveOnly)

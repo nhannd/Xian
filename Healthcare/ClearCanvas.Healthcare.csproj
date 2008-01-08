@@ -78,11 +78,15 @@
     <Compile Include="Alert\NoteAlert.cs" />
     <Compile Include="OrderNote.cs" />
     <Compile Include="ProcedureStepSchedulingSearchCriteria.cs" />
+    <Compile Include="RegistrationProtocolWorklist.cs" />
     <Compile Include="RegistrationRejectedProtocolWorklist.cs" />
     <Compile Include="RegistrationToBeScheduledWorklist.cs" />
     <Compile Include="ProtocolAssignmentStep.cs" />
     <Compile Include="ProtocolProcedureStepSearchCriteria.cs" />
     <Compile Include="ProtocolResolutionStep.cs" />
+    <Compile Include="RegistrationWorklist.cs" />
+    <Compile Include="ReportingWorklist.cs" />
+    <Compile Include="TechnologistWorklist.cs" />
     <Compile Include="Tests\TestOrderNoteFactory.cs" />
     <Compile Include="WorklistItemBase.cs" />
     <Compile Include="WorklistItemSearchCriteria.cs" />
@@ -149,7 +153,6 @@
     <Compile Include="TechnologistCompletedWorklist.cs" />
     <Compile Include="TechnologistInProgressWorklist.cs" />
     <Compile Include="TechnologistScheduledWorklist.cs" />
-    <Compile Include="TechnologistSuspendedWorklist.cs" />
     <Compile Include="TechnologistUndocumentedWorklist.cs" />
     <Compile Include="Tests\TestMimeDocumentFactory.cs" />
     <Compile Include="Tests\TestOrderAttachmentFactory.cs" />

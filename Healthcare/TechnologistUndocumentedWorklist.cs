@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using System.Collections;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare.Brokers;
@@ -42,55 +43,18 @@ namespace ClearCanvas.Healthcare
     /// TechnologistUndocumentedWorklist entity
     /// </summary>
     [ExtensionOf(typeof(WorklistExtensionPoint), Name = "TechnologistUndocumentedWorklist")]
-    public partial class TechnologistUndocumentedWorklist : Worklist
+    public class TechnologistUndocumentedWorklist : TechnologistWorklist
     {
-        /// <summary>
-        /// This method is called from the constructor.  Use this method to implement any custom
-        /// object initialization.
-        /// </summary>
-        private void CustomInitialize()
+        protected override ModalityWorklistItemSearchCriteria[] GetQueryConditions(Staff staff)
         {
+            ModalityWorklistItemSearchCriteria criteria = new ModalityWorklistItemSearchCriteria();
+            criteria.ProcedureStep.State.EqualTo(ActivityStatus.IP);
+            return new ModalityWorklistItemSearchCriteria[] { criteria };
         }
 
-        private ModalityWorklistItemSearchCriteria[] QueryConditions
+        protected override Type ProcedureStepType
         {
-            get
-            {
-                ModalityWorklistItemSearchCriteria criteria = new ModalityWorklistItemSearchCriteria();
-                criteria.ProcedureStep.State.EqualTo(ActivityStatus.IP);
-                return new ModalityWorklistItemSearchCriteria[] { criteria };
-            }
+            get { return typeof(DocumentationProcedureStep); }
         }
-
-        #region Worklist overrides
-
-        public override IList GetWorklist(Staff currentUserStaff, IPersistenceContext context)
-        {
-            return (IList)GetBroker<IModalityWorklistBroker>(context).GetWorklist(typeof(DocumentationProcedureStep), QueryConditions, this);
-        }
-
-        public override int GetWorklistCount(Staff currentUserStaff, IPersistenceContext context)
-        {
-            return GetBroker<IModalityWorklistBroker>(context).GetWorklistCount(typeof(DocumentationProcedureStep), QueryConditions, this);
-        }
-
-        #endregion
-
-        #region Object overrides
-
-        public override bool Equals(object that)
-        {
-            // TODO: implement a test for business-key equality
-            return base.Equals(that);
-        }
-
-        public override int GetHashCode()
-        {
-	        // TODO: implement a hash-code based on the business-key used in the Equals() method
-	        return base.GetHashCode();
-        }
-
-        #endregion
-
 	}
 }
