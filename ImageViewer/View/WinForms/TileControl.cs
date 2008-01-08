@@ -239,12 +239,6 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			// We're double buffering manually, so override this and do nothing
 		}
 
-		protected override void OnLayout(LayoutEventArgs e)
-		{
-			base.OnLayout(e);
-
-		}
-
 		protected override void OnSizeChanged(EventArgs e)
 		{
 			base.OnSizeChanged(e);
@@ -254,9 +248,6 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			if (_tileController != null)
 				_tileController.TileClientRectangle = this.ClientRectangle;
 
-			// Set the surface to null so when it's accessed, a new surface
-			// will be created.
-			DisposeSurface();
 			Draw();
 		}
 

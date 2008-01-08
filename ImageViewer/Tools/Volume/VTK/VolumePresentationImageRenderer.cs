@@ -37,6 +37,7 @@ using ClearCanvas.Common;
 using vtk;
 using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.ImageViewer.Graphics;
+using System.Drawing;
 
 namespace ClearCanvas.ImageViewer.Tools.Volume.VTK
 {
@@ -64,7 +65,7 @@ namespace ClearCanvas.ImageViewer.Tools.Volume.VTK
 			else
 				_surface.WindowID = windowID;
 
-			_surface.SetSize(width, height);
+			_surface.ClientRectangle = new Rectangle(0, 0, width, height);
 
 			return _surface;
 		}

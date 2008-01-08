@@ -51,15 +51,11 @@ namespace ClearCanvas.ImageViewer.Rendering
 			if (width == 0 || height == 0)
 				return;
 
-			_imageBuffer = new ImageBuffer(width, height);
-#if MONO
-			_finalBuffer = new ImageBuffer(width, height);
-#else
-			//_finalBuffer = new ImageBufferWin32(width, height);
-			_finalBuffer = new ImageBuffer(width, height);
-#endif
+			this.ClientRectangle = new Rectangle(0, 0, width, height);
+
 			_windowID = windowID;
 		}
+
 
 		#region IRenderingSurface Members
 
@@ -84,7 +80,14 @@ namespace ClearCanvas.ImageViewer.Rendering
 		public Rectangle ClientRectangle
 		{
 			get { return _clientRectangle; }
-			set { _clientRectangle = value; }
+			set
+			{
+				if (_clientRectangle != value)
+				{
+					_clientRectangle = value;
+					CreateBuffers(_clientRectangle.Width, _clientRectangle.Height);
+				}
+			}
 		}
 
 		/// <summary>
@@ -155,6 +158,14 @@ namespace ClearCanvas.ImageViewer.Rendering
 				_finalBuffer.Dispose();
 				_finalBuffer = null;
 			}
+		}
+
+		private void CreateBuffers(int width, int height)
+		{
+			DisposeOffscreenBuffers();
+
+			_imageBuffer = new ImageBuffer(width, height);
+			_finalBuffer = new ImageBuffer(width, height);
 		}
 	}
 }

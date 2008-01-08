@@ -86,7 +86,19 @@ namespace ClearCanvas.ImageViewer.Tools.Volume.VTK
 		public Rectangle ClientRectangle
 		{
 			get { return _clientRectangle; }
-			set { _clientRectangle = value; }
+			set
+			{
+				if (_clientRectangle != value)
+				{
+					_clientRectangle = value;
+
+					if (this.Interactor != null &&
+					    this.Interactor.GetInitialized() != 0)
+					{
+						this.Interactor.UpdateSize(_clientRectangle.Width, _clientRectangle.Height);
+					}
+				}
+			}
 		}
 
 		public Rectangle ClipRectangle
@@ -174,15 +186,6 @@ namespace ClearCanvas.ImageViewer.Tools.Volume.VTK
 		#endregion
 
 		#region Public methods
-
-		public void SetSize(int width, int height)
-		{
-			if (this.Interactor != null &&
-				this.Interactor.GetInitialized() != 0)
-			{
-				this.Interactor.UpdateSize(width, height);
-			}
-		}
 
 		public void Draw()
 		{
