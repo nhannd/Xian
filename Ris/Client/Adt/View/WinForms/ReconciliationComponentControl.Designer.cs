@@ -96,7 +96,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._reconciliationTableView.TabStop = false;
             this._reconciliationTableView.ToolbarModel = null;
             this._reconciliationTableView.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this._reconciliationTableView.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.No;
             this._reconciliationTableView.SelectionChanged += new System.EventHandler(this._reconciliationTableView_SelectionChanged);
             // 
             // label1
@@ -186,7 +185,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._targetTableView.TabStop = false;
             this._targetTableView.ToolbarModel = null;
             this._targetTableView.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this._targetTableView.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.No;
             this._targetTableView.SelectionChanged += new System.EventHandler(this._targetTableView_SelectionChanged);
             // 
             // label2

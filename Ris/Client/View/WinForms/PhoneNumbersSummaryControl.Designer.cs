@@ -79,7 +79,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this._phoneNumbers.Table = null;
             this._phoneNumbers.ToolbarModel = null;
             this._phoneNumbers.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this._phoneNumbers.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this._phoneNumbers.ItemDoubleClicked += new System.EventHandler(this._phoneNumbers_ItemDoubleClicked);
             // 
             // PhoneNumbersSummaryControl

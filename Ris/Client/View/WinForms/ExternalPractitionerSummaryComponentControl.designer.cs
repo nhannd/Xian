@@ -88,7 +88,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this._practitionerTableView.Table = null;
             this._practitionerTableView.ToolbarModel = null;
             this._practitionerTableView.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this._practitionerTableView.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.No;
             this._practitionerTableView.Load += new System.EventHandler(this._staffs_Load);
             this._practitionerTableView.ItemDoubleClicked += new System.EventHandler(this._staffs_ItemDoubleClicked);
             // 

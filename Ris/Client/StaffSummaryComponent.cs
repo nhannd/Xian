@@ -43,8 +43,7 @@ using ClearCanvas.Ris.Application.Common.Admin.StaffAdmin;
 
 namespace ClearCanvas.Ris.Client
 {
-    [MenuAction("launch", "global-menus/Admin/Staff")]
-    [ClickHandler("launch", "Launch")]
+    [MenuAction("launch", "global-menus/Admin/Staff", "Launch")]
     [ActionPermission("launch", ClearCanvas.Ris.Application.Common.AuthorityTokens.StaffAdmin)]
 
     [ExtensionOf(typeof(DesktopToolExtensionPoint))]

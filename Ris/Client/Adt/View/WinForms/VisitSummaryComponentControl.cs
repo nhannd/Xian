@@ -30,13 +30,7 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Text;
 using System.Windows.Forms;
-
 using ClearCanvas.Desktop.View.WinForms;
 
 namespace ClearCanvas.Ris.Client.Adt.View.WinForms
@@ -46,7 +40,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
     /// </summary>
     public partial class VisitSummaryComponentControl : CustomUserControl
     {
-        private VisitSummaryComponent _component;
+        private readonly VisitSummaryComponent _component;
 
         /// <summary>
         /// Constructor
@@ -54,22 +48,22 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         public VisitSummaryComponentControl(VisitSummaryComponent component)
         {
             InitializeComponent();
-
             _component = component;
 
-            _visits.Table = _component.Visits;
             _visits.ToolbarModel = _component.VisitListActionModel;
             _visits.MenuModel = _component.VisitListActionModel;
-        }
-
-        private void _visits_SelectionChanged(object sender, EventArgs e)
-        {
-            _component.SetSelectedVisit(_visits.Selection);
+            _visits.Table = _component.Visits;
+            _visits.DataBindings.Add("Selection", _component, "SelectedVisit", true, DataSourceUpdateMode.OnPropertyChanged);
         }
 
         private void _closeButton_Click(object sender, EventArgs e)
         {
             _component.Close();
+        }
+
+        private void _visits_ItemDoubleClicked(object sender, EventArgs e)
+        {
+            _component.UpdateSelectedVisit();
         }
     }
 }

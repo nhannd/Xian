@@ -76,7 +76,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this._noteTable.Table = null;
             this._noteTable.ToolbarModel = null;
             this._noteTable.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this._noteTable.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.No;
             // 
             // BiographyNoteComponentControl
             // 

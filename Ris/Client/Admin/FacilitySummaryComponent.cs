@@ -42,8 +42,7 @@ using ClearCanvas.Ris.Application.Common.Admin.FacilityAdmin;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
-    [MenuAction("launch", "global-menus/Admin/Facilities")]
-    [ClickHandler("launch", "Launch")]
+    [MenuAction("launch", "global-menus/Admin/Facilities", "Launch")]
     [ActionPermission("launch", ClearCanvas.Ris.Application.Common.AuthorityTokens.FacilityAdmin)]
 
     [ExtensionOf(typeof(DesktopToolExtensionPoint))]

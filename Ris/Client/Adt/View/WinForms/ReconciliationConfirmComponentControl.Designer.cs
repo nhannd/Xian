@@ -80,7 +80,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._sourceTable.Table = null;
             this._sourceTable.ToolbarModel = null;
             this._sourceTable.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this._sourceTable.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.No;
             // 
             // _targetTable
             // 
@@ -95,7 +94,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._targetTable.Table = null;
             this._targetTable.ToolbarModel = null;
             this._targetTable.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this._targetTable.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.No;
             // 
             // _cancelButton
             // 

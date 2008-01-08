@@ -98,7 +98,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
                 }
                 else
                 {
-                    Platform.ShowMessageBox("Enter 0 or a number greater than 5000");
+                    this.Host.DesktopWindow.ShowMessageBox("Enter 0 or a number greater than 5000", MessageBoxActions.Ok);
                 }
             }
         }

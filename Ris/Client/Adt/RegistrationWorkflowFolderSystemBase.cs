@@ -181,7 +181,16 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public bool GetOperationEnablement(string operationName)
         {
-            return _workflowEnablment == null ? false : _workflowEnablment[operationName];
+            try
+            {
+                return _workflowEnablment == null ? false : _workflowEnablment[operationName];
+            }
+            catch (KeyNotFoundException)
+            {
+                Platform.Log(LogLevel.Error, string.Format(SR.ExceptionOperationEnablementUnknown, operationName));
+                return false;
+            }
+
         }
 
         public override void SelectedItemsChangedEventHandler(object sender, EventArgs e)

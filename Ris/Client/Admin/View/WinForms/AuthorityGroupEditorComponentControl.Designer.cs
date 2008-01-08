@@ -134,7 +134,6 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this._authorityTokenTable.Table = null;
             this._authorityTokenTable.ToolbarModel = null;
             this._authorityTokenTable.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this._authorityTokenTable.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.No;
             // 
             // _cancelButton
             // 

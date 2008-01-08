@@ -92,7 +92,6 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this._noteCategories.Table = null;
             this._noteCategories.ToolbarModel = null;
             this._noteCategories.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this._noteCategories.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this._noteCategories.Load += new System.EventHandler(this._noteCategories_Load);
             this._noteCategories.ItemDoubleClicked += new System.EventHandler(this._noteCategories_ItemDoubleClicked);
             // 

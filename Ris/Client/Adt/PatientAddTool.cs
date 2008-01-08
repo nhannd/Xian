@@ -42,11 +42,10 @@ using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
-    [MenuAction("apply", "global-menus/Patient/New Patient...")]
-    //[ButtonAction("apply", "global-toolbars/Patient/PatientAddTool")]
+    [MenuAction("apply", "global-menus/Patient/New Patient...", "Apply")]
+    //[ButtonAction("apply", "global-toolbars/Patient/PatientAddTool", "Apply")]
     [Tooltip("apply", "New Patient")]
 	[IconSet("apply", IconScheme.Colour, "Icons.AddPatientToolSmall.png", "Icons.AddPatientToolMedium.png", "Icons.AddPatientToolLarge.png")]
-    [ClickHandler("apply", "Apply")]
     [ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.PatientProfileAdmin)]
 
     [ExtensionOf(typeof(ClearCanvas.Desktop.DesktopToolExtensionPoint))]

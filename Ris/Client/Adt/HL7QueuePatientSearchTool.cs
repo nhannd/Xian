@@ -41,16 +41,14 @@ using ClearCanvas.Ris.Application.Common.Admin.HL7Admin;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
-    [MenuAction("view1", "global-menus/Patient/View Details...")]
-    //[ButtonAction("view1", "global-toolbars/Patient/ViewPatient")]
-    [ClickHandler("view1", "View")]
+    [MenuAction("view1", "global-menus/Patient/View Details...", "View")]
+    //[ButtonAction("view1", "global-toolbars/Patient/ViewPatient", "View")]
     [EnabledStateObserver("view1", "Enabled", "EnabledChanged")]
     [Tooltip("view1", "Open patient details")]
 	[IconSet("view1", IconScheme.Colour, "PatientDetailsToolSmall.png", "PatientDetailsToolMedium.png", "PatientDetailsToolLarge.png")]
 
-    [MenuAction("view2", "hl7Queue-contextmenu/View Details")]
-    [ButtonAction("view2", "hl7Queue-toolbar/Details")]
-    [ClickHandler("view2", "View")]
+    [MenuAction("view2", "hl7Queue-contextmenu/View Details", "View")]
+    [ButtonAction("view2", "hl7Queue-toolbar/Details", "View")]
     [EnabledStateObserver("view2", "Enabled", "EnabledChanged")]
     [Tooltip("view2", "Open patient details")]
 	[IconSet("view2", IconScheme.Colour, "PatientDetailsToolSmall.png", "PatientDetailsToolSmall.png", "PatientDetailsToolSmall.png")]

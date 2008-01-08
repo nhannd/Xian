@@ -78,7 +78,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._orderTableView.Table = null;
             this._orderTableView.ToolbarModel = null;
             this._orderTableView.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this._orderTableView.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.No;
             // 
             // _okButton
             // 

@@ -39,11 +39,10 @@ using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
-    [MenuAction("launch", "global-menus/Patient/Search Patient")]
-    //[ButtonAction("launch", "global-toolbars/Patient/Search Patient")]
+    [MenuAction("launch", "global-menus/Patient/Search Patient", "Launch")]
+    //[ButtonAction("launch", "global-toolbars/Patient/Search Patient", "Launch")]
     [Tooltip("launch", "Search Patient")]
     [IconSet("launch", IconScheme.Colour, "Icons.SearchToolSmall.png", "Icons.SearchToolMedium.png", "Icons.SearchToolLarge.png")]
-    [ClickHandler("launch", "Launch")]
     [ExtensionOf(typeof(DesktopToolExtensionPoint))]
     public class PatientSearchTool : Tool<IDesktopToolContext>
     {

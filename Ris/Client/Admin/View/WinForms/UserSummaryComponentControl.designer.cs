@@ -79,7 +79,6 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this._users.Table = null;
             this._users.ToolbarModel = null;
             this._users.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this._users.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.No;
             this._users.Load += new System.EventHandler(this._users_Load);
             this._users.ItemDoubleClicked += new System.EventHandler(this._users_ItemDoubleClicked);
             // 

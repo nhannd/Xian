@@ -284,7 +284,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this._diagnosticServiceBreakdown.TabIndex = 10;
             this._diagnosticServiceBreakdown.ToolbarModel = null;
             this._diagnosticServiceBreakdown.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this._diagnosticServiceBreakdown.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.No;
             this._diagnosticServiceBreakdown.Tree = null;
             // 
             // imageList1

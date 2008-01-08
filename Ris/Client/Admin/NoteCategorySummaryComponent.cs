@@ -43,8 +43,7 @@ using ClearCanvas.Ris.Application.Common.Admin.NoteCategoryAdmin;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
-    [MenuAction("launch", "global-menus/Admin/Note Categories")]
-    [ClickHandler("launch", "Launch")]
+    [MenuAction("launch", "global-menus/Admin/Note Categories", "Launch")]
     [ActionPermission("launch", ClearCanvas.Ris.Application.Common.AuthorityTokens.NoteAdmin)]
 
     [ExtensionOf(typeof(DesktopToolExtensionPoint))]

@@ -63,8 +63,6 @@ namespace ClearCanvas.Ris.Client
         private DiagnosticServiceDetail _selectedDiagnosticServiceDetail;
 
         private Table<RequestedProcedureTypeDetail> _diagnosticServiceBreakdown;
-        private bool _acceptEnabled;
-        private event EventHandler _selectedDiagnosticServiceTreeItemChanged;
 
         /// <summary>
         /// Constructor

@@ -41,14 +41,13 @@ using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
-    [MenuAction("neworder", "folderexplorer-items-contextmenu/New Order")]
-    [ButtonAction("neworder", "folderexplorer-items-toolbar/New Order")]
-    [MenuAction("neworder", "global-menus/Orders/New")]
-    [ButtonAction("neworder", "patientsearch-items-toolbar/New Order")]
-    [MenuAction("neworder", "patientsearch-items-contextmenu/New Order")]
+    [MenuAction("neworder", "folderexplorer-items-contextmenu/New Order", "NewOrder")]
+    [ButtonAction("neworder", "folderexplorer-items-toolbar/New Order", "NewOrder")]
+    [MenuAction("neworder", "global-menus/Orders/New", "NewOrder")]
+    [ButtonAction("neworder", "patientsearch-items-toolbar/New Order", "NewOrder")]
+    [MenuAction("neworder", "patientsearch-items-contextmenu/New Order", "NewOrder")]
     [IconSet("neworder", IconScheme.Colour, "AddToolSmall.png", "AddToolMedium.png", "AddToolLarge.png")]
     [EnabledStateObserver("neworder", "Enabled", "EnabledChanged")]
-    [ClickHandler("neworder", "NewOrder")]
     [ExtensionOf(typeof(RegistrationMainWorkflowItemToolExtensionPoint))]
     [ExtensionOf(typeof(RegistrationBookingWorkflowItemToolExtensionPoint))]
     [ExtensionOf(typeof(PatientSearchToolExtensionPoint))]
@@ -56,8 +55,6 @@ namespace ClearCanvas.Ris.Client.Adt
     {
         private bool _enabled;
         private event EventHandler _enabledChanged;
-
-        private Workspace _orderEntryWorkspace;
 
         public override void Initialize()
         {

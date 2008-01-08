@@ -181,7 +181,7 @@ namespace ClearCanvas.Ris.Client.Adt
             {
                 return _workflowEnablement == null ? false : _workflowEnablement[operationName];
             }
-            catch (KeyNotFoundException e)
+            catch (KeyNotFoundException)
             {
                 Platform.Log(LogLevel.Error, string.Format(SR.ExceptionOperationEnablementUnknown, operationName));
                 return false;

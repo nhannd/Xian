@@ -165,7 +165,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._queue.Table = null;
             this._queue.ToolbarModel = null;
             this._queue.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this._queue.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.No;
             this._queue.SelectionChanged += new System.EventHandler(this._queue_SelectionChanged);
             // 
             // tableLayoutPanel3

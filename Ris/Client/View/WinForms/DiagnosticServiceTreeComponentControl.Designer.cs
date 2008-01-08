@@ -50,7 +50,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this._diagnosticServiceTree.TabIndex = 14;
             this._diagnosticServiceTree.ToolbarModel = null;
             this._diagnosticServiceTree.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this._diagnosticServiceTree.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.No;
             this._diagnosticServiceTree.Tree = null;
             // 
             // _okButton
@@ -87,7 +86,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this._procedures.Table = null;
             this._procedures.ToolbarModel = null;
             this._procedures.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this._procedures.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.No;
             // 
             // label1
             // 

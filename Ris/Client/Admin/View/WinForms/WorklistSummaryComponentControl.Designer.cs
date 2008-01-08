@@ -78,7 +78,6 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this._worklistTable.Table = null;
             this._worklistTable.ToolbarModel = null;
             this._worklistTable.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this._worklistTable.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.No;
             this._worklistTable.ItemDoubleClicked += new System.EventHandler(this._worklistTable_ItemDoubleClicked);
             // 
             // WorklistSummaryComponentControl

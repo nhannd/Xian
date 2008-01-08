@@ -45,8 +45,7 @@ using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
-    [MenuAction("apply", "global-menus/MenuTools/JScript")]
-    [ClickHandler("apply", "Apply")]
+    [MenuAction("apply", "global-menus/MenuTools/JScript", "Apply")]
 
     [ExtensionOf(typeof(ClearCanvas.Desktop.DesktopToolExtensionPoint))]
     public class JscriptTool : Tool<ClearCanvas.Desktop.IDesktopToolContext>
@@ -79,11 +78,13 @@ namespace ClearCanvas.Ris.Client.Adt
             if (_component == null)
             {
                 _component = new JscriptComponent();
-                ApplicationComponent.LaunchAsShelf(this.Context.DesktopWindow,
+
+                Shelf shelf = ApplicationComponent.LaunchAsShelf(this.Context.DesktopWindow,
                     _component,
                     SR.TitleJScriptWindow,
-                    ShelfDisplayHint.DockFloat,
-                    delegate(IApplicationComponent c) { _component = null; });
+                    ShelfDisplayHint.DockFloat);
+
+                shelf.Closed += delegate { _component = null; };
             }
         }
     }

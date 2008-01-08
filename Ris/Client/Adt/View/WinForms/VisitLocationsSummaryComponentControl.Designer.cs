@@ -80,7 +80,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._locations.Table = null;
             this._locations.ToolbarModel = null;
             this._locations.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this._locations.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.No;
             this._locations.SelectionChanged += new System.EventHandler(this._locations_SelectionChanged);
             // 
             // VisitLocationsSummaryComponentControl

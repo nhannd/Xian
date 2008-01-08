@@ -80,7 +80,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this._addressList.Table = null;
             this._addressList.ToolbarModel = null;
             this._addressList.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this._addressList.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this._addressList.ItemDoubleClicked += new System.EventHandler(this._addressList_ItemDoubleClicked);
             // 
             // AddressesSummaryControl

@@ -39,9 +39,8 @@ using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
-    [MenuAction("show", "global-menus/Admin/HL7/Queue")]
+    [MenuAction("show", "global-menus/Admin/HL7/Queue", "Show")]
     [Tooltip("show", "HL7 Queue")]
-    [ClickHandler("show", "Show")]
     [ActionPermission("show", AuthorityTokens.HL7Admin)]
 
     [ExtensionOf(typeof(ClearCanvas.Desktop.DesktopToolExtensionPoint))]

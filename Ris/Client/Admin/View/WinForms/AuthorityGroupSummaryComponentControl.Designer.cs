@@ -79,7 +79,6 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this._authorityGroups.Table = null;
             this._authorityGroups.ToolbarModel = null;
             this._authorityGroups.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this._authorityGroups.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.No;
             this._authorityGroups.Load += new System.EventHandler(this._authorityGroups_Load);
             this._authorityGroups.ItemDoubleClicked += new System.EventHandler(this._authorityGroups_ItemDoubleClicked);
             // 

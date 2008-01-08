@@ -125,7 +125,6 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this._authorityGroups.Table = null;
             this._authorityGroups.ToolbarModel = null;
             this._authorityGroups.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this._authorityGroups.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.No;
             // 
             // _userId
             // 

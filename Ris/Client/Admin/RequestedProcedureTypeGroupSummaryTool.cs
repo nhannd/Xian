@@ -37,8 +37,7 @@ using ClearCanvas.Desktop.Tools;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
-    [MenuAction("launch", "global-menus/Admin/Requested Procedure Type Groups")]
-    [ClickHandler("launch", "Launch")]
+    [MenuAction("launch", "global-menus/Admin/Requested Procedure Type Groups", "Launch")]
     [ActionPermission("launch", ClearCanvas.Ris.Application.Common.AuthorityTokens.RequestedProcedureTypeGroupAdmin)]
     [ExtensionOf(typeof(DesktopToolExtensionPoint))]
     public class RequestedProcedureTypeGroupSummaryTool : Tool<IDesktopToolContext>

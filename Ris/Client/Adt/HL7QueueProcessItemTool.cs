@@ -41,9 +41,8 @@ using ClearCanvas.Ris.Application.Common.Admin.HL7Admin;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
-    [MenuAction("process", "hl7Queue-contextmenu/Process Message")]
-    [ButtonAction("process", "hl7Queue-toolbar/Process Message")]
-    [ClickHandler("process", "Process")]
+    [MenuAction("process", "hl7Queue-contextmenu/Process Message", "Process")]
+    [ButtonAction("process", "hl7Queue-toolbar/Process Message", "Process")]
     [EnabledStateObserver("process", "Enabled", "EnabledChanged")]
     [Tooltip("process", "Process Message")]
 	[IconSet("process", IconScheme.Colour, "ProcessMessageToolSmall.png", "ProcessMessageToolMedium.png", "ProcessMessageToolLarge.png")]

@@ -80,7 +80,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._visitPractitioners.Table = null;
             this._visitPractitioners.ToolbarModel = null;
             this._visitPractitioners.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this._visitPractitioners.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.No;
             this._visitPractitioners.SelectionChanged += new System.EventHandler(this._visitPractitioners_SelectionChanged);
             // 
             // VisitPractitionersSummaryComponentControl

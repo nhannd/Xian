@@ -36,11 +36,10 @@ using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
-    [ButtonAction("search", "folderexplorer-folders-toolbar/Search")]
-    [ButtonAction("search", "folders-toolbar/Search")]
+    [ButtonAction("search", "folderexplorer-folders-toolbar/Search", "Search")]
+    [ButtonAction("search", "folders-toolbar/Search", "Search")]
     [Tooltip("search", "Search")]
 	[IconSet("search", IconScheme.Colour, "Icons.SearchToolSmall.png", "Icons.SearchToolMedium.png", "Icons.SearchToolLarge.png")]
-    [ClickHandler("search", "Search")]
 
     [ExtensionOf(typeof(RegistrationMainWorkflowFolderToolExtensionPoint))]
     [ExtensionOf(typeof(TechnologistMainWorkflowFolderToolExtensionPoint))]

@@ -44,8 +44,7 @@ using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client
 {
-    [MenuAction("launch", "global-menus/Admin/ExternalPractitioner")]
-    [ClickHandler("launch", "Launch")]
+    [MenuAction("launch", "global-menus/Admin/ExternalPractitioner", "Launch")]
     //[ActionPermission("launch", ClearCanvas.Ris.Application.Common.AuthorityTokens.ExternalPractitionerAdmin)]
 
     [ExtensionOf(typeof(DesktopToolExtensionPoint))]

@@ -47,8 +47,7 @@ using ClearCanvas.Desktop.Validation;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
-    [MenuAction("launch", "global-menus/Admin/Import Data")]
-    [ClickHandler("launch", "Launch")]
+    [MenuAction("launch", "global-menus/Admin/Import Data", "Launch")]
 
     [ExtensionOf(typeof(DesktopToolExtensionPoint))]
     public class DataImportTool : Tool<IDesktopToolContext>

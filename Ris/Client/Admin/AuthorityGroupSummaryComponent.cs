@@ -41,8 +41,7 @@ using ClearCanvas.Ris.Application.Common.Admin.AuthenticationAdmin;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
-    [MenuAction("launch", "global-menus/Admin/Authority Groups")]
-    [ClickHandler("launch", "Launch")]
+    [MenuAction("launch", "global-menus/Admin/Authority Groups", "Launch")]
     [ActionPermission("launch", ClearCanvas.Ris.Application.Common.AuthorityTokens.AuthorityGroupAdmin)]
 
     [ExtensionOf(typeof(DesktopToolExtensionPoint))]

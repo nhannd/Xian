@@ -78,7 +78,6 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this._requestedProcedureTypeGroupTable.Table = null;
             this._requestedProcedureTypeGroupTable.ToolbarModel = null;
             this._requestedProcedureTypeGroupTable.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this._requestedProcedureTypeGroupTable.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.No;
             this._requestedProcedureTypeGroupTable.ItemDoubleClicked += new System.EventHandler(this._requestedProcedureTypeGroupTable_ItemDoubleClicked);
             // 
             // RequestedProcedureTypeGroupSummaryComponentControl

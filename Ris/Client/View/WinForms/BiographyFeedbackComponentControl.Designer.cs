@@ -82,7 +82,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this._feedbackTable.Table = null;
             this._feedbackTable.ToolbarModel = null;
             this._feedbackTable.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this._feedbackTable.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.No;
             // 
             // splitContainer1
             // 
