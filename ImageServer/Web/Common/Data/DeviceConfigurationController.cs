@@ -31,7 +31,7 @@
 
 using System.Collections.Generic;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Model.Criteria;
+using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageServer.Web.Common.Data

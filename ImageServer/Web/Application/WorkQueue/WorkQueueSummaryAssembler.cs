@@ -31,7 +31,7 @@
 
 using System.Collections.Generic;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Model.Criteria;
+using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Web.Common.Data;
 
 namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
@@ -60,13 +60,11 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
 
             // Fetch the patient info:
             StudyStorageAdaptor ssAdaptor = new StudyStorageAdaptor();
-            StudyStorageSelectCriteria ssCriteria = new StudyStorageSelectCriteria();
-            ssCriteria.Key.EqualTo(workqueue.StudyStorageKey);
-            IList<StudyStorageLocation> storages = ssAdaptor.Get(ssCriteria);
+            StudyStorage storages = ssAdaptor.Get(workqueue.StudyStorageKey);
 
             StudyAdaptor studyAdaptor = new StudyAdaptor();
             StudySelectCriteria studycriteria = new StudySelectCriteria();
-            studycriteria.StudyInstanceUid.EqualTo(storages[0].StudyInstanceUid);
+            studycriteria.StudyInstanceUid.EqualTo(storages.StudyInstanceUid);
             IList<Study> studyList = studyAdaptor.Get(studycriteria);
 
             if (studyList==null || studyList.Count==0)
@@ -78,7 +76,7 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
             else
             {
                 summary.PatientID = studyList[0].PatientId;
-                summary.PatientName = studyList[0].PatientName;
+                summary.PatientName = studyList[0].PatientsName;
  
             }
             

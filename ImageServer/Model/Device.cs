@@ -29,91 +29,16 @@
 
 #endregion
 
-using System;
-using ClearCanvas.Enterprise.Core;
-using ClearCanvas.ImageServer.Enterprise;
-using ClearCanvas.ImageServer.Model.SelectBrokers;
 
 namespace ClearCanvas.ImageServer.Model
 {
-    [Serializable] // TH (Oct 5, 2007): All entity objects should be serializable to use in ASP.NET app
-    public class Device : ServerEntity
+    public partial class Device
     {
-        #region Constructors
-        public Device()
-            : base("Device")
-        {
-        }
-        #endregion
-
-        enum FEATURE
-
-        {
-           CSTORE           = 1,
-           QUERY            = 2,
-           RETRIEVE         = 4
-        }
-
-
         #region Private Members
-        private String _aeTitle;
-        private String _description;
-        private String _ipAddress;
-        private ServerEntityKey _serverPartitionKey;    
-        private bool _enabled;
-        private bool _dhcp;
-        private int _port;
-        private bool _allowStorage;
-        private bool _allowQuery;
-        private bool _allowRetrieve;
         private ServerPartition _serverPartition;
         #endregion
 
         #region Public Properties
-        public bool Enabled
-        {
-            get { return _enabled; }
-            set { _enabled = value; }
-        }
-
-        public bool Dhcp
-        {
-            get { return _dhcp; }
-            set { _dhcp = value; }
-        }
-
-        public ServerEntityKey ServerPartitionKey
-        {
-            get { return _serverPartitionKey; }
-            set { _serverPartitionKey = value; }
-        }
-
-        public String Description
-        {
-            get { return _description; }
-            set { _description = value; }
-        }
-
-        public String AeTitle
-        {
-            get { return _aeTitle; }
-            set { _aeTitle = value; }
-        }
-
-        public String IpAddress
-        {
-            get { return _ipAddress; }
-            set { _ipAddress = value; }
-        }
-
-        public int Port
-        {
-            get { return _port; }
-            set { _port = value; }
-        }
-
-        
-
         public ServerPartition ServerPartition
         {
             get
@@ -124,40 +49,6 @@ namespace ClearCanvas.ImageServer.Model
             }
         }
 
-        public bool AllowStorage
-        {
-            get { return _allowStorage; }
-            set { _allowStorage = value; }
-        }
-
-        public bool AllowQuery
-        {
-            get { return _allowQuery; }
-            set { _allowQuery = value; }
-        }
-
-        public bool AllowRetrieve
-        {
-            get { return _allowRetrieve; }
-            set { _allowRetrieve = value; }
-        }
-
-        #endregion
-
-        #region Static Methods
-        static public Device Load(ServerEntityKey key)
-        {
-            using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
-            {
-                return Load(read, key);
-            }
-        }
-        static public Device Load(IReadContext read, ServerEntityKey key)
-        {
-            ISelectDevice broker = read.GetBroker<ISelectDevice>();
-            Device theDevice = broker.Load(key);
-            return theDevice;
-        }
         #endregion
     }
 }

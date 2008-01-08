@@ -88,15 +88,11 @@ copy $(ProjectDir)..\..\ImageServer\Services\WorkQueue\$(OutDir)ClearCanvas.Imag
 copy $(ProjectDir)..\..\ImageServer\Services\Streaming\$(OutDir)ClearCanvas.ImageServer.Services.Streaming.dll $(TargetDir)plugins
 copy $(ProjectDir)..\..\ImageServer\Services\ServiceLock\$(OutDir)ClearCanvas.ImageServer.Services.ServiceLock.dll $(TargetDir)plugins
 copy $(ProjectDir)..\..\ImageServer\Rules\$(OutDir)ClearCanvas.ImageServer.Rules.dll $(TargetDir)plugins
-copy $(ProjectDir)..\..\ImageServer\Performance\$(OutDir)ClearCanvas.ImageServer.Performance.dll $(TargetDir)plugins
 
 rem copy referenced assemblies
 copy $(ProjectDir)..\..\ReferencedAssemblies\NHibernate1.2\Iesi.Collections.dll $(TargetDir)common
 copy $(ProjectDir)..\..\ReferencedAssemblies\log4net.dll $(TargetDir)common
-copy $(ProjectDir)..\..\ReferencedAssemblies\Spring1.1\Spring.Aop.dll $(TargetDir)common
-copy $(ProjectDir)..\..\ReferencedAssemblies\Spring1.1\Spring.Core.dll $(TargetDir)common
 copy $(ProjectDir)..\..\ReferencedAssemblies\NHibernate1.2\Castle.DynamicProxy.dll $(TargetDir)common
-copy $(ProjectDir)..\..\ReferencedAssemblies\Spring1.1\Common.Logging.dll $(TargetDir)common
 copy $(ProjectDir)..\..\ReferencedAssemblies\nunit.framework.dll $(TargetDir)common
 
 rem copy Offis dlls

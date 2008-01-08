@@ -107,7 +107,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             {
                 _seriesProcessedRulesEngine = new ServerRulesEngine(ServerRuleApplyTimeEnum.GetEnum("SeriesProcessed"), item.ServerPartitionKey);
                 _seriesProcessedRulesEngine.Load();
-                _instanceStats.EngineLoadTime.Add(_studyProcessedRulesEngine.Statistics.LoadTime);
+                _instanceStats.EngineLoadTime.Add(_seriesProcessedRulesEngine.Statistics.LoadTime);
             }
             ServerActionContext context = new ServerActionContext(file, StorageLocation.FilesystemKey, item.ServerPartitionKey, item.StudyStorageKey);
 
@@ -181,7 +181,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                 if (!processor.Execute())
                 {
                     Platform.Log(LogLevel.Error, "Failure processing command {0} for SOP: {1}", processor.Description, file.MediaStorageSopInstanceUid);
-                    throw new ApplicationException("Unexpected failure executing command for SOP: " + file.MediaStorageSopInstanceUid);
+                    throw new ApplicationException("Unexpected failure (" + processor.FailureReason + ") executing command for SOP: " + file.MediaStorageSopInstanceUid);
                 }
                 else
                 {

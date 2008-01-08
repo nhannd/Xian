@@ -32,10 +32,7 @@
 using System.Collections.Generic;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Model.Criteria;
-using ClearCanvas.ImageServer.Model.Parameters;
-using ClearCanvas.ImageServer.Model.SelectBrokers;
-using ClearCanvas.ImageServer.Model.UpdateBrokers;
+using ClearCanvas.ImageServer.Model.EntityBrokers;
 
 namespace ClearCanvas.ImageServer.Web.Common.Data
 {
@@ -43,7 +40,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
     /// Used to create/update/delete device entries in the database.
     /// </summary>
     /// 
-    public class DeviceDataAdapter : BaseUpdateAdaptor<Device, DeviceSelectCriteria, ISelectDevice,IUpdateDeviceBroker,UpdateDeviceParameters>
+    public class DeviceDataAdapter : BaseAdaptor<Device, IDeviceEntityBroker, DeviceSelectCriteria, DeviceUpdateColumns>
     {
         /// <summary>
         /// Retrieve list of devices.
@@ -73,7 +70,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         {
             bool ok = true;
 
-            UpdateDeviceParameters param = new UpdateDeviceParameters();
+            DeviceUpdateColumns param = new DeviceUpdateColumns();
             param.ServerPartitionKey = dev.ServerPartitionKey;
             param.Enabled = dev.Enabled;
             param.AeTitle = dev.AeTitle;
@@ -122,7 +119,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         /// <returns></returns>
         public bool AddDevice(Device newDev)
         {
-            UpdateDeviceParameters param = new UpdateDeviceParameters();
+            DeviceUpdateColumns param = new DeviceUpdateColumns();
             param.ServerPartitionKey = newDev.ServerPartitionKey;
             param.AeTitle = newDev.AeTitle;
             param.Description = newDev.Description;

@@ -32,7 +32,7 @@
 using System;
 using System.Web.UI;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Model.Criteria;
+using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Web.Common.Data;
 
 namespace ClearCanvas.ImageServer.Web.Application.Search
@@ -84,9 +84,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Search
                 string key = PatientName.Text + "%";
                 key = key.Replace("*", "%");
                 key = key.Replace("?", "_");
-                criteria.PatientName.Like(key);
+                criteria.PatientsName.Like(key);
             }
-            criteria.PatientName.SortAsc(0);
+            criteria.PatientsName.SortAsc(0);
 
             if (!String.IsNullOrEmpty(AccessionNumber.Text))
             {

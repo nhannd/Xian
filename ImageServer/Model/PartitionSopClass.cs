@@ -34,34 +34,14 @@ using ClearCanvas.ImageServer.Enterprise;
 
 namespace ClearCanvas.ImageServer.Model
 {
-    public class PartitionSopClass : ServerEntity
+    public partial class PartitionSopClass : ServerEntity
     {
-        #region Constructors
-        public PartitionSopClass()
-            : base("PartitionSopClass")
-        {
-        }
-        #endregion
-
         #region Private Members
-        private ServerEntityKey _serverPartitionKey;
-        private ServerEntityKey _serverSopClassKey;
         private String _sopClassUid;
         private String _description;
         private bool _nonImage;
-        private bool _enabled;
         #endregion
 
-        public ServerEntityKey ServerPartitionKey
-        {
-            get { return _serverPartitionKey; }
-            set { _serverPartitionKey = value; }
-        }
-        public ServerEntityKey ServerSopClassKey
-        {
-            get { return _serverSopClassKey; }
-            set { _serverSopClassKey = value; }
-        }
         public String SopClassUid
         {
             get { return _sopClassUid; }
@@ -77,11 +57,5 @@ namespace ClearCanvas.ImageServer.Model
             get { return _nonImage; }
             set { _nonImage = value; }
         }
-        public bool Enabled
-        {
-            get { return _enabled; }
-            set { _enabled = value; }
-        }
-
     }
 }

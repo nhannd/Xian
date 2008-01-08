@@ -36,9 +36,8 @@ using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
-using ClearCanvas.ImageServer.Model.Criteria;
 using ClearCanvas.ImageServer.Model.Parameters;
-using ClearCanvas.ImageServer.Model.SelectBrokers;
+using ClearCanvas.ImageServer.Model.EntityBrokers;
 
 namespace ClearCanvas.ImageServer.Rules.AutoRouteAction
 {
@@ -75,7 +74,7 @@ namespace ClearCanvas.ImageServer.Rules.AutoRouteAction
             deviceSelectCriteria.AeTitle.EqualTo(_deviceAe);
             deviceSelectCriteria.ServerPartitionKey.EqualTo(_context.ServerPartitionKey);
 
-            ISelectDevice selectDevice = updateContext.GetBroker<ISelectDevice>();
+            IDeviceEntityBroker selectDevice = updateContext.GetBroker<IDeviceEntityBroker>();
 
             Device dev = CollectionUtils.FirstElement<Device>(selectDevice.Find(deviceSelectCriteria));
 

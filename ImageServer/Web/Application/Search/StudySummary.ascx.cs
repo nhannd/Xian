@@ -55,7 +55,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Search
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            this.PatientName.Text = _study.PatientName;
+            this.PatientName.Text = _study.PatientsName;
             this.PatientId.Text = _study.PatientId;
             this.AccessionNumber.Text = _study.AccessionNumber;
             this.StudyDescription.Text = _study.StudyDescription;

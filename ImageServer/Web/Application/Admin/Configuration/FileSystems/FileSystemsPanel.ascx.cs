@@ -33,7 +33,7 @@ using System;
 using System.Collections.Generic;
 using System.Web.UI;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Model.Criteria;
+using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Web.Common.Data;
 
 namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystems
@@ -154,7 +154,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
             }
 
             if (TiersDropDownList.SelectedIndex >= 1)
-                criteria.Tier.EqualTo(Tiers[TiersDropDownList.SelectedIndex - 1]);
+                criteria.FilesystemTierEnum.EqualTo(Tiers[TiersDropDownList.SelectedIndex - 1]);
 
             FileSystemsGridView1.FileSystems = _theController.GetFileSystems(criteria);
             FileSystemsGridView1.DataBind();

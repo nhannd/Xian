@@ -36,8 +36,7 @@ using ClearCanvas.Common.Specifications;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Model.Criteria;
-using ClearCanvas.ImageServer.Model.SelectBrokers;
+using ClearCanvas.ImageServer.Model.EntityBrokers;
 
 namespace ClearCanvas.ImageServer.Rules
 {
@@ -123,7 +122,7 @@ namespace ClearCanvas.ImageServer.Rules
 
             using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
             {
-                ISelectServerRule broker = read.GetBroker<ISelectServerRule>();
+                IServerRuleEntityBroker broker = read.GetBroker<IServerRuleEntityBroker>();
 
                 ServerRuleSelectCriteria criteria = new ServerRuleSelectCriteria();
                 criteria.Enabled.EqualTo(true);

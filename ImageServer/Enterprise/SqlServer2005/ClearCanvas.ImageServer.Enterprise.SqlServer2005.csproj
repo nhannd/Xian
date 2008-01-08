@@ -35,7 +35,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Broker.cs" />
-    <Compile Include="UpdateBroker.cs" />
+    <Compile Include="EntityBroker.cs" />
     <Compile Include="EnumBroker.cs" />
     <Compile Include="PersistentStore.cs" />
     <Compile Include="ProcedureReadBroker.cs" />
@@ -44,7 +44,6 @@
     <Compile Include="ProcedureUpdateBroker.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReadContext.cs" />
-    <Compile Include="SelectBroker.cs" />
     <Compile Include="UpdateContext.cs" />
   </ItemGroup>
   <ItemGroup>

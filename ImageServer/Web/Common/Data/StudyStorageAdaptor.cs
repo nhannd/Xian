@@ -30,12 +30,11 @@
 #endregion
 
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Model.Criteria;
-using ClearCanvas.ImageServer.Model.SelectBrokers;
+using ClearCanvas.ImageServer.Model.EntityBrokers;
 
 namespace ClearCanvas.ImageServer.Web.Common.Data
 {
-    public class StudyStorageAdaptor : BaseAdaptor<StudyStorageLocation, StudyStorageSelectCriteria, ISelectStudyStorage>
+    public class StudyStorageAdaptor : BaseAdaptor<StudyStorage, IStudyStorageEntityBroker, StudyStorageSelectCriteria, StudyStorageUpdateColumns>
     {
     }
 }

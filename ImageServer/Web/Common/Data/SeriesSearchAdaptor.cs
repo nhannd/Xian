@@ -30,14 +30,11 @@
 #endregion
 
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Model.Criteria;
-using ClearCanvas.ImageServer.Model.Parameters;
-using ClearCanvas.ImageServer.Model.SelectBrokers;
-using ClearCanvas.ImageServer.Model.UpdateBrokers;
+using ClearCanvas.ImageServer.Model.EntityBrokers;
 
 namespace ClearCanvas.ImageServer.Web.Common.Data
 {
-    public class SeriesSearchAdaptor : BaseUpdateAdaptor<Series,SeriesSelectCriteria,ISelectSeries,IUpdateSeriesBroker,UpdateSeriesParameters>
+    public class SeriesSearchAdaptor : BaseAdaptor<Series,ISeriesEntityBroker,SeriesSelectCriteria,SeriesUpdateColumns>
     {
     }
 }

@@ -32,7 +32,7 @@
 using System;
 using System.Web.UI;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Model.Criteria;
+using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Web.Common.Data;
 
 namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
@@ -177,7 +177,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
                 string key = IPAddressFilter.Text + "%";
                 key = key.Replace("*", "%");
                 key = key.Replace("?", "_");
-                criteria.IPAddress.Like(key);
+                criteria.IpAddress.Like(key);
             }
 
             if (EnabledOnlyFilter.Checked)

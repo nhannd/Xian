@@ -101,10 +101,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
                 StudyXmlIo.Write(doc, fileStream);
             }
-            catch (Exception e)
-            {
-                throw;
-            }
             finally
             {
                 // We have to throw the exception here to cleanup 

@@ -33,17 +33,15 @@ using System.Collections.Generic;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
-using ClearCanvas.ImageServer.Model.Criteria;
+using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Model.Parameters;
-using ClearCanvas.ImageServer.Model.SelectBrokers;
-using ClearCanvas.ImageServer.Model.UpdateBrokers;
 
 namespace ClearCanvas.ImageServer.Web.Common.Data
 {
     /// <summary>
     /// Used to create/update/delete server partition entries in the database.
     /// </summary>
-    public class ServerPartitionDataAdapter : BaseUpdateAdaptor<ServerPartition, ServerPartitionSelectCriteria, ISelectServerPartition, IUpdateServerPartitionBroker, UpdateServerPartitionParameters>
+    public class ServerPartitionDataAdapter : BaseAdaptor<ServerPartition, IServerPartitionEntityBroker, ServerPartitionSelectCriteria, ServerPartitionUpdateColumns>
     {
         #region Public methods
 
@@ -95,7 +93,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
         public bool Update(ServerPartition partition)
         {
-            UpdateServerPartitionParameters parms = new UpdateServerPartitionParameters();
+            ServerPartitionUpdateColumns parms = new ServerPartitionUpdateColumns();
             parms.AeTitle = partition.AeTitle;
             parms.Description = partition.Description;
             parms.Enabled = partition.Enabled;

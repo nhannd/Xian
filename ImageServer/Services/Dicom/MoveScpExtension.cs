@@ -36,14 +36,10 @@ using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Network;
 using ClearCanvas.DicomServices;
+using ClearCanvas.DicomServices.Xml;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Model.Brokers;
-using ClearCanvas.ImageServer.Model.Criteria;
-using ClearCanvas.ImageServer.Model.Parameters;
-using ClearCanvas.ImageServer.Model.SelectBrokers;
-using ClearCanvas.DicomServices.Xml;
-using ClearCanvas.ImageServer.Services.Dicom;
+using ClearCanvas.ImageServer.Model.EntityBrokers;
 
 namespace ClearCanvas.ImageServer.Services.Dicom
 {
@@ -93,7 +89,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 
             string patientId = msg.DataSet[DicomTags.PatientId].GetString(0, "");
 
-            ISelectStudy select = read.GetBroker<ISelectStudy>();
+            IStudyEntityBroker select = read.GetBroker<IStudyEntityBroker>();
 
             StudySelectCriteria criteria = new StudySelectCriteria();
             criteria.PatientId.EqualTo(patientId);
@@ -205,14 +201,14 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// <returns></returns>
         private static Device LoadRemoteHost(IPersistenceContext read, ServerPartition partition, string remoteAe)
         {
-            IQueryDevice select = read.GetBroker<IQueryDevice>();
+            IDeviceEntityBroker select = read.GetBroker<IDeviceEntityBroker>();
 
             // Setup the select parameters.
-            DeviceQueryParameters selectParms = new DeviceQueryParameters();
-            selectParms.AeTitle = remoteAe;
-            selectParms.ServerPartitionKey = partition.GetKey();
+            DeviceSelectCriteria selectParms = new DeviceSelectCriteria();
+            selectParms.AeTitle.EqualTo(remoteAe);
+            selectParms.ServerPartitionKey.EqualTo(partition.GetKey());
 
-            IList<Device> list = select.Execute(selectParms);
+            IList<Device> list = select.Find(selectParms);
 
             if (list.Count == 0)
                 return null;

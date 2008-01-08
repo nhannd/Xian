@@ -60,7 +60,7 @@ namespace ClearCanvas.ImageServer.Enterprise
         /// <param name="criteria"></param>
         /// <param name="callback"></param>
         /// <returns></returns>
-        void Execute(TInput criteria, SelectCallback<TOutput> callback);
+        void Execute(TInput criteria, ProcedureQueryCallback<TOutput> callback);
 
     }
 }

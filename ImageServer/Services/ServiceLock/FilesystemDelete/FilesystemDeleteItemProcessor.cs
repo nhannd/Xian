@@ -36,9 +36,8 @@ using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
-using ClearCanvas.ImageServer.Model.Criteria;
 using ClearCanvas.ImageServer.Model.Parameters;
-using ClearCanvas.ImageServer.Model.SelectBrokers;
+using ClearCanvas.ImageServer.Model.EntityBrokers;
 
 namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
 {
@@ -162,7 +161,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
 
         private int CheckWorkQueueDeleteCount(Model.ServiceLock item)
         {
-            ISelectWorkQueue select = ReadContext.GetBroker<ISelectWorkQueue>();
+            IWorkQueueEntityBroker select = ReadContext.GetBroker<IWorkQueueEntityBroker>();
 
             WorkQueueSelectCriteria criteria = new WorkQueueSelectCriteria();
 

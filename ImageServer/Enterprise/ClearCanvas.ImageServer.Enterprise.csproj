@@ -33,13 +33,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IEntityBroker.cs" />
     <Compile Include="IEnumBroker.cs" />
     <Compile Include="IProcedureReadBroker.cs" />
     <Compile Include="IProcedureQueryBroker.cs" />
     <Compile Include="IProcedureUpdateBroker.cs" />
-    <Compile Include="ISelectBroker.cs" />
-    <Compile Include="IUpdateBroker.cs" />
-    <Compile Include="SelectCriteria.cs" />
+    <Compile Include="EntitySelectCriteria.cs" />
     <Compile Include="ServerEntity.cs" />
     <Compile Include="ServerEntityKey.cs" />
     <Compile Include="ProcedureParameter.cs" />
@@ -47,9 +46,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServerEnum.cs" />
     <Compile Include="ServerEnumHelper.cs" />
-    <Compile Include="UpdateBrokerParameter.cs" />
-    <Compile Include="UpdateBrokerParameterBase.cs" />
-    <Compile Include="UpdateBrokerParameters.cs" />
+    <Compile Include="EntityColumn.cs" />
+    <Compile Include="EntityColumnBase.cs" />
+    <Compile Include="EntityUpdateColumns.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Common\ClearCanvas.Common.csproj">

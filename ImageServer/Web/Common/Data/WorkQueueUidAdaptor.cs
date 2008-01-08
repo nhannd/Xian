@@ -30,12 +30,11 @@
 #endregion
 
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Model.Criteria;
-using ClearCanvas.ImageServer.Model.SelectBrokers;
+using ClearCanvas.ImageServer.Model.EntityBrokers;
 
 namespace ClearCanvas.ImageServer.Web.Common.Data
 {
-    public class WorkQueueUidAdaptor : BaseAdaptor<WorkQueueUid, WorkQueueUidSelectCriteria, ISelectWorkQueueUid>
+    public class WorkQueueUidAdaptor : BaseAdaptor<WorkQueueUid, IWorkQueueUidEntityBroker, WorkQueueUidSelectCriteria, WorkQueueUidUpdateColumns>
     {
     }
 }

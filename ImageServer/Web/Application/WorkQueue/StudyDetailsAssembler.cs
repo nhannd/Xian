@@ -48,7 +48,7 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
             StudyDetails details = new StudyDetails();
             details.StudyInstanceUID = study.StudyInstanceUid;
             details.Status = study.StudyStatusEnum.Description;
-            details.PatientName = study.PatientName;
+            details.PatientName = study.PatientsName;
             details.AccessionNumber = study.AccessionNumber;
             details.PatientID = study.PatientId;
 

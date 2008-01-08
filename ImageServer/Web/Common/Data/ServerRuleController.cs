@@ -31,17 +31,13 @@
 
 using System.Collections.Generic;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Model.Criteria;
-using ClearCanvas.ImageServer.Model.Parameters;
-using ClearCanvas.ImageServer.Model.SelectBrokers;
-using ClearCanvas.ImageServer.Model.UpdateBrokers;
+using ClearCanvas.ImageServer.Model.EntityBrokers;
 
 namespace ClearCanvas.ImageServer.Web.Common.Data
 {
     internal class ServerRuleAdaptor :
-        BaseUpdateAdaptor
-            <ServerRule, ServerRuleSelectCriteria, ISelectServerRule, IUpdateServerRuleBroker,
-            UpdateServerRuleParameters>
+        BaseAdaptor
+            <ServerRule, IServerRuleEntityBroker, ServerRuleSelectCriteria,ServerRuleUpdateColumns>
     {
     }
 
@@ -67,30 +63,30 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
         public bool AddServerRule(ServerRule rule)
         {
-            UpdateServerRuleParameters parms = new UpdateServerRuleParameters();
+            ServerRuleUpdateColumns parms = new ServerRuleUpdateColumns();
 
-            parms.Default = rule.DefaultRule;
+            parms.DefaultRule = rule.DefaultRule;
             parms.Enabled = rule.Enabled;
             parms.RuleName = rule.RuleName;
             parms.RuleXml = rule.RuleXml;
             parms.ServerPartitionKey = rule.ServerPartitionKey;
-            parms.ServerRuleApplyTime = rule.ServerRuleApplyTimeEnum;
-            parms.ServerRuleType = rule.ServerRuleTypeEnum;
+            parms.ServerRuleApplyTimeEnum = rule.ServerRuleApplyTimeEnum;
+            parms.ServerRuleTypeEnum = rule.ServerRuleTypeEnum;
 
             return _adaptor.Add(parms);
         }
 
         public bool UpdateServerRule(ServerRule rule)
         {
-            UpdateServerRuleParameters parms = new UpdateServerRuleParameters();
+            ServerRuleUpdateColumns parms = new ServerRuleUpdateColumns();
 
-            parms.Default = rule.DefaultRule;
+            parms.DefaultRule = rule.DefaultRule;
             parms.Enabled = rule.Enabled;
             parms.RuleName = rule.RuleName;
             parms.RuleXml = rule.RuleXml;
             parms.ServerPartitionKey = rule.ServerPartitionKey;
-            parms.ServerRuleApplyTime = rule.ServerRuleApplyTimeEnum;
-            parms.ServerRuleType = rule.ServerRuleTypeEnum;
+            parms.ServerRuleApplyTimeEnum = rule.ServerRuleApplyTimeEnum;
+            parms.ServerRuleTypeEnum = rule.ServerRuleTypeEnum;
 
             return _adaptor.Update(rule.GetKey(), parms);
         }

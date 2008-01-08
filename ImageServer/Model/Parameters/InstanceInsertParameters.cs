@@ -58,9 +58,9 @@ namespace ClearCanvas.ImageServer.Model.Parameters
         }
 
         [DicomField(DicomTags.PatientsName, DefaultValue = DicomFieldDefault.Null)]
-        public string PatientName
+        public string PatientsName
         {
-            set { this.SubCriteria["PatientName"] = new ProcedureParameter<string>("PatientName", value); }
+            set { this.SubCriteria["PatientsName"] = new ProcedureParameter<string>("PatientsName", value); }
         }
 
         [DicomField(DicomTags.IssuerOfPatientId, DefaultValue = DicomFieldDefault.Null)]
@@ -160,9 +160,9 @@ namespace ClearCanvas.ImageServer.Model.Parameters
         }
 
         [DicomField(DicomTags.SourceApplicationEntityTitle, DefaultValue = DicomFieldDefault.Null)]
-        public string SourceAeTitle
+        public string SourceApplicationEntityTitle
         {
-            set { this.SubCriteria["SourceAeTitle"] = new ProcedureParameter<string>("SourceAeTitle", value); }
+            set { this.SubCriteria["SourceApplicationEntityTitle"] = new ProcedureParameter<string>("SourceApplicationEntityTitle", value); }
         }
     }
 }

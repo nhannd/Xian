@@ -37,11 +37,11 @@ using ClearCanvas.ImageServer.Enterprise;
 
 namespace ClearCanvas.ImageServer.Web.Common.Data
 {
-    public class BaseAdaptor<TServerEntity, TCriteria, TISelect>
+    public class BaseAdaptor<TServerEntity, TIEntity, TCriteria, TColumns>
         where TServerEntity : ServerEntity, new()
-        where TCriteria : SelectCriteria, new()
-        where TISelect : ISelectBroker<TCriteria, TServerEntity>
-
+        where TCriteria : EntitySelectCriteria, new()
+        where TColumns : EntityUpdateColumns
+        where TIEntity : IEntityBroker<TServerEntity, TCriteria, TColumns>
     {
         #region Private Members
 
@@ -58,13 +58,13 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
         #endregion
 
-        #region Protected Methods
+        #region Public Methods
 
         public IList<TServerEntity> Get()
         {
             using (IReadContext ctx = PersistentStore.OpenReadContext())
             {
-                TISelect find = ctx.GetBroker<TISelect>();
+                TIEntity find = ctx.GetBroker<TIEntity>();
                 TCriteria criteria = new TCriteria();
                 IList<TServerEntity> list = find.Find(criteria);
 
@@ -72,15 +72,88 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             }
         }
 
+        public TServerEntity Get(ServerEntityKey key)
+        {
+            using (IReadContext ctx = PersistentStore.OpenReadContext())
+            {
+                TIEntity select = ctx.GetBroker<TIEntity>();
+                return select.Load(key);
+            }
+            
+        }
+
         public IList<TServerEntity> Get(TCriteria criteria)
         {
             using (IReadContext ctx = PersistentStore.OpenReadContext())
             {
-                TISelect select = ctx.GetBroker<TISelect>();
+                TIEntity select = ctx.GetBroker<TIEntity>();
                 return select.Find(criteria);
             }
-        }    
+        }
 
+        public bool Add(TColumns param)
+        {
+            try
+            {
+                using (IUpdateContext context = PersistentStore.OpenUpdateContext(UpdateContextSyncMode.Flush))
+                {
+                    TIEntity update = context.GetBroker<TIEntity>();
+
+                    update.Insert(param);
+
+                    context.Commit();
+                }
+                return true;
+            }
+            catch (Exception e)
+            {
+                Platform.Log(LogLevel.Error, e, "Unexpected exception adding {0}", typeof(TServerEntity));
+                return false;
+            }
+        }
+
+        public bool Update(ServerEntityKey key, TColumns param)
+        {
+            try
+            {
+                using (IUpdateContext context = PersistentStore.OpenUpdateContext(UpdateContextSyncMode.Flush))
+                {
+                    TIEntity update = context.GetBroker<TIEntity>();
+
+                    update.Update(key, param);
+
+                    context.Commit();
+                }
+                return true;
+            }
+            catch (Exception e)
+            {
+                Platform.Log(LogLevel.Error, e, "Unexpected exception updating {0}", typeof(TServerEntity));
+                return false;
+            }
+        }
+
+        public bool Delete(ServerEntityKey key)
+        {
+            try
+            {
+                using (IUpdateContext context = PersistentStore.OpenUpdateContext(UpdateContextSyncMode.Flush))
+                {
+                    TIEntity update = context.GetBroker<TIEntity>();
+
+                    if (!update.Delete(key))
+                        return false;
+
+                    context.Commit();
+                }
+                return true;
+            }
+            catch (Exception e)
+            {
+                Platform.Log(LogLevel.Error, e, "Unexpected exception updating {0}", typeof(TServerEntity));
+                return false;
+            }
+        }
         #endregion
     }
 }

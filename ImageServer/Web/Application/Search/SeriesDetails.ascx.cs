@@ -80,7 +80,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Search
             AddRow("Performed Procedure Step Start Date", _series.PerformedProcedureStepStartDate);
             AddRow("Performed Procedure Step Start Time", _series.PerformedProcedureStepStartTime);
             AddRow("Number of Series Related Instances", _series.NumberOfSeriesRelatedInstances.ToString());
-            AddRow("Source AE Title", _series.SourceAeTitle);
+            AddRow("Source AE Title", _series.SourceApplicationEntityTitle);
         }    
     }
 }

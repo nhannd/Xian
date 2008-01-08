@@ -6,7 +6,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.60403</ProductVersion>
+    <ProductVersion>8.0.51103</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{77F5EB8A-9BC7-495C-B555-1DE6AF5AC83C}</ProjectGuid>
     <SourceWebPhysicalPath>..\Application</SourceWebPhysicalPath>
@@ -19,6 +19,9 @@
     <EnableUpdateable>true</EnableUpdateable>
     <UseMerge>true</UseMerge>
     <SingleAssemblyName>ClearCanvas.ImageServer.Web.Application</SingleAssemblyName>
+    <VirtualDirectoryAlias>
+    </VirtualDirectoryAlias>
+    <ReplaceExistingVirtualDirectory>true</ReplaceExistingVirtualDirectory>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugSymbols>false</DebugSymbols>
@@ -30,35 +33,34 @@
   <ItemGroup>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\WebDeployment\v8.0\Microsoft.WebDeployment.targets" />
-
-	<ItemGroup>
-		<ExcludeFromBuild Include="$(SourceWebPhysicalPath)\.svn\**\*.*;$(SourceWebPhysicalPath)\**\.svn\**\*.*" />
-		<ExcludeFromBuild Include="$(SourceWebPhysicalPath)\**\*.pdb" />
-		<ExcludeFromBuild Include="$(SourceWebPhysicalPath)\**\*.bak" />
-		<ExcludeFromBuild Include="$(SourceWebPhysicalPath)\**\bin\*.xml" />
-		<ExcludeFromBuild Include="$(SourceWebPhysicalPath)\**\obj\" />
-		<ExcludeFromBuild Include="$(SourceWebPhysicalPath)\*.csproj.*" />
-		<ExcludeFromBuild Include="$(SourceWebPhysicalPath)\Old_App_Code" />
-		<ExcludeFromBuild Include="$(SourceWebPhysicalPath)\Builds\**\*.*" />
-		<ExcludeFromBuild Include="$(SourceWebPhysicalPath)\logs\**\*.*" />
-	</ItemGroup>
-	<ItemGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
-		<WebConfigReplacementFiles Include="ConnectionStrings.config">
-			<Section>connectionStrings</Section>
-		</WebConfigReplacementFiles>
-	</ItemGroup>
-	<Import Project="$(MSBuildExtensionsPath)\Microsoft\WebDeployment\v8.0\Microsoft.WebDeployment.targets" />
-	<!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+  <ItemGroup>
+    <ExcludeFromBuild Include="$(SourceWebPhysicalPath)\.svn\**\*.*;$(SourceWebPhysicalPath)\**\.svn\**\*.*" />
+    <ExcludeFromBuild Include="$(SourceWebPhysicalPath)\**\*.pdb" />
+    <ExcludeFromBuild Include="$(SourceWebPhysicalPath)\**\*.bak" />
+    <ExcludeFromBuild Include="$(SourceWebPhysicalPath)\**\bin\*.xml" />
+    <ExcludeFromBuild Include="$(SourceWebPhysicalPath)\**\obj\" />
+    <ExcludeFromBuild Include="$(SourceWebPhysicalPath)\*.csproj.*" />
+    <ExcludeFromBuild Include="$(SourceWebPhysicalPath)\Old_App_Code" />
+    <ExcludeFromBuild Include="$(SourceWebPhysicalPath)\Builds\**\*.*" />
+    <ExcludeFromBuild Include="$(SourceWebPhysicalPath)\logs\**\*.*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+    <WebConfigReplacementFiles Include="ConnectionStrings.config">
+      <Section>connectionStrings</Section>
+    </WebConfigReplacementFiles>
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath)\Microsoft\WebDeployment\v8.0\Microsoft.WebDeployment.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.WebDeployment.targets.
   -->
-	<Target Name="BeforeBuild">
-	</Target>
-	<Target Name="BeforeMerge">
-	</Target>
-	<Target Name="AfterMerge">
-	</Target>
-	<Target Name="AfterBuild">
-		<Message Text="Cleaning up deploy folder...." />
-		<RemoveDir Directories="$(OutputPath)\obj;$(OutputPath)\Builds;$(OutputPath)\Old_App_Code;$(OutputPath)\Properties" />
-	</Target>
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="BeforeMerge">
+  </Target>
+  <Target Name="AfterMerge">
+  </Target>
+  <Target Name="AfterBuild">
+    <Message Text="Cleaning up deploy folder...." />
+    <RemoveDir Directories="$(OutputPath)\obj;$(OutputPath)\Builds;$(OutputPath)\Old_App_Code;$(OutputPath)\Properties" />
+  </Target>
 </Project>

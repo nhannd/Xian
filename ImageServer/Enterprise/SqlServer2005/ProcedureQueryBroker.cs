@@ -69,7 +69,7 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
             return list;
         }
 
-        public void Execute(TInput criteria, SelectCallback<TOutput> callback)
+        public void Execute(TInput criteria, ProcedureQueryCallback<TOutput> callback)
         {
             SqlDataReader myReader = null;
             SqlCommand command = null;

@@ -33,7 +33,7 @@ using System;
 using System.Collections.Generic;
 using System.Web.UI;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Model.Criteria;
+using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Web.Common.Data;
 
 namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPartitions
@@ -145,7 +145,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
             if (String.IsNullOrEmpty(AETitleFilter.Text) == false)
             {
                 string key = AETitleFilter.Text.Replace("*", "%");
-                criteria.AETitle.Like(key + "%");
+                criteria.AeTitle.Like(key + "%");
             }
 
             if (String.IsNullOrEmpty(DescriptionFilter.Text) == false)

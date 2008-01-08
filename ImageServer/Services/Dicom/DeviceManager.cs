@@ -31,12 +31,10 @@
 
 using System;
 using System.Collections.Generic;
-using ClearCanvas.Common;
 using ClearCanvas.Dicom.Network;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Model.Brokers;
-using ClearCanvas.ImageServer.Model.Parameters;
+using ClearCanvas.ImageServer.Model.EntityBrokers;
 
 namespace ClearCanvas.ImageServer.Services.Dicom
 {
@@ -57,14 +55,14 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 
             using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
-                IQueryDevice queryDevice = updateContext.GetBroker<IQueryDevice>();
+                IDeviceEntityBroker queryDevice = updateContext.GetBroker<IDeviceEntityBroker>();
 
                 // Setup the select parameters.
-                DeviceQueryParameters queryParameters = new DeviceQueryParameters();
-                queryParameters.AeTitle = association.CallingAE;
-                queryParameters.ServerPartitionKey = partition.GetKey();
+                DeviceSelectCriteria queryParameters = new DeviceSelectCriteria();
+                queryParameters.AeTitle.EqualTo(association.CallingAE);
+                queryParameters.ServerPartitionKey.EqualTo(partition.GetKey());
 
-                IList<Device> list = queryDevice.Execute(queryParameters);
+                IList<Device> list = queryDevice.Find(queryParameters);
                 if (list.Count == 0)
                 {
                     if (!partition.AcceptAnyDevice)
@@ -75,40 +73,31 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                     if (partition.AutoInsertDevice)
                     {
                         // Auto-insert a new entry in the table.
-                        DeviceInsertParameters insertParms = new DeviceInsertParameters();
+                        DeviceUpdateColumns updateColumns = new DeviceUpdateColumns();
 
-                        insertParms.AeTitle = association.CallingAE;
-                        insertParms.Enabled = true;
-                        insertParms.Description = String.Format("AE: {0}", association.CallingAE);
-                        insertParms.Dhcp = false;
-                        insertParms.IpAddress = association.RemoteEndPoint.Address.ToString();
-                        insertParms.ServerPartitionKey = partition.GetKey();
-                        insertParms.Port = partition.DefaultRemotePort;
-                        insertParms.AllowQuery = true;
-                        insertParms.AllowRetrieve = true;
-                        insertParms.AllowStorage = true;
+                        updateColumns.AeTitle = association.CallingAE;
+                        updateColumns.Enabled = true;
+                        updateColumns.Description = String.Format("AE: {0}", association.CallingAE);
+                        updateColumns.Dhcp = false;
+                        updateColumns.IpAddress = association.RemoteEndPoint.Address.ToString();
+                        updateColumns.ServerPartitionKey = partition.GetKey();
+                        updateColumns.Port = partition.DefaultRemotePort;
+                        updateColumns.AllowQuery = true;
+                        updateColumns.AllowRetrieve = true;
+                        updateColumns.AllowStorage = true;
 
-                        IInsertDevice insert = updateContext.GetBroker<IInsertDevice>();
+                        IDeviceEntityBroker insert = updateContext.GetBroker<IDeviceEntityBroker>();
 
-                        if (false == insert.Execute(insertParms))
-                        {
-                            Platform.Log(LogLevel.Error,
-                                         "Unexpected failure inserting device into the database, rejecting association from {0} to {1}",
-                                         association.CallingAE, association.CalledAE);
-                            return null;
-                        }
+                        list.Add(insert.Insert(updateColumns));
+
                         updateContext.Commit();
-
-                        // now load the device from the database
-                        list = queryDevice.Execute(queryParameters);
 
                         isNew = true;
                     }
                 }
 
-                if (list != null && list.Count > 0)
+                if (list.Count > 0)
                     device = list[0];
-
             }
 
             return device;
