@@ -16,7 +16,7 @@
         <asp:DropDownList ID="Themes" runat="server" OnSelectedIndexChanged="ThemeSelectedIndexChanged"
             AutoPostBack="true">
             <asp:ListItem Text="Standard" Value="ClearCanvas" />
-            <asp:ListItem Text="NightHawk" Value="NightHawk" />
+            <asp:ListItem Text="Night Safari" Value="NightSafari" />
         </asp:DropDownList>
     </center>
 </asp:Content>

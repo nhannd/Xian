@@ -7,9 +7,10 @@
         <asp:ServiceReference Path="ServerRuleSamples.asmx" />
     </Services>
 </asp:ScriptManagerProxy>
-<asp:Panel ID="TestPanel" runat="server">
+
     <asp:UpdatePanel ID="AddEditUpdatePanel" runat="server" UpdateMode="Conditional">
         <ContentTemplate>
+       
             <asp:Panel ID="DialogPanel" runat="server" CssClass="CSSPopupWindow" Style="display: none"
                 Width="500px">
                 <asp:Panel ID="TitleBarPanel" runat="server" CssClass="CSSPopupWindowTitleBar" Width="100%">
@@ -108,8 +109,9 @@
                 </div>
             </asp:Panel>
             <ajaxToolkit:ModalPopupExtender ID="ModalPopupExtender1" runat="server" BackgroundCssClass="CSSModalBackground"
-                Enabled="true" PopupControlID="DialogPanel" TargetControlID="DummyPanel" BehaviorID="MyStupidExtender">
+                DropShadow="true" RepositionMode="RepositionOnWindowResize" Enabled="true" PopupControlID="DialogPanel" TargetControlID="DummyPanel" BehaviorID="MyStupidExtender">
             </ajaxToolkit:ModalPopupExtender>
+            
         </ContentTemplate>
     </asp:UpdatePanel>
-</asp:Panel>
+

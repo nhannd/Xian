@@ -50,12 +50,12 @@ public partial class Admin_MasterPage : System.Web.UI.MasterPage
             return;
         
         Assembly asm = Assembly.GetExecutingAssembly();
-        VersionLabel.Text =
-            string.Format("Ver: {0}",
-                          asm.GetName().Version.ToString()
-                );
+        VersionLabel.Text = string.Format("Ver: {0}", asm.GetName().Version.ToString());
        
     }
 
-   
+    protected void OnLogoButtonClick(object sender, EventArgs e)
+    {
+        Response.Redirect("~/");
+    }
 }

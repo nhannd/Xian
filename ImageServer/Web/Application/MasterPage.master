@@ -4,61 +4,56 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
     <title>Untitled Page</title>
-
-    <script type="text/javascript" src="../../DHTMLSuite/js/ajax.js"></script>
-
-    <script type="text/javascript" src="../../DHTMLSuite/js/dhtml-suite-for-applications-without-comments.js"></script>
-
-    <script type="text/javascript" src="../../DHTMLSuite/Misc/RoundedCorners/js/rounded-corners.js"></script>
-
 </head>
 <body>
     <center>
-        <div class="MasterPageContentWindow">
+        <div>
             <form id="form1" runat="server">
                 <asp:ScriptManager ID="ScriptManager1" runat="server" />
                 <asp:Panel runat="server" CssClass="CSSPageWindow">
-                    <asp:Table runat="server" Width="100%">
+                    <asp:Table runat="server" Width="100%" CellPadding="0" CellSpacing="0" BorderWidth="0px">
                         <asp:TableHeaderRow>
                             <asp:TableHeaderCell HorizontalAlign="Left">
-                                <asp:Image ID="Image1" runat="server" ImageUrl="~/images/logos/ImageServerLogo.png"
-                                    Visible="true" />
+                                <asp:Panel runat="server" CssClass="CSSLogoImagePanel">
+                                    <asp:ImageButton runat="server" ID="Image1" SkinID="logo" OnClick="OnLogoButtonClick" />
+                                </asp:Panel>
                             </asp:TableHeaderCell>
                             <asp:TableHeaderCell runat="server" VerticalAlign="Top" HorizontalAlign="Right">
-                                <asp:Label ID="VersionLabel" runat="server" Font-Size="8pt" ForeColor="Silver" Text="Version 1.0.0.0"></asp:Label>
-                                
+                                <asp:Label ID="VersionLabel" runat="server" CssClass="CSSVersionLabel" Text="Version 1.0.0.0"></asp:Label>
                             </asp:TableHeaderCell>
                         </asp:TableHeaderRow>
                         <asp:TableRow>
                             <asp:TableCell ColumnSpan="2">
                                 <asp:Panel runat="server" CssClass="CSSMainMenuBarContainer">
-                                 <asp:Panel ID="Panel1" runat="server" CssClass="CSSMenuBar">
-                                    <asp:Table ID="menutitlebar" runat="server" Width="100%">
-                                        <asp:TableRow>
-                                            <asp:TableCell>
-                                                <asp:SiteMapDataSource ID="SiteMapDataSource1" runat="server" ShowStartingNode="False" />
-                                                <asp:Menu ID="Menu1" runat="server" CssClass="MainMenuBar" Orientation="Horizontal"
-                                                    DynamicVerticalOffset="7" StaticEnableDefaultPopOutImage="false" DataSourceID="SiteMapDataSource1">
-                                                    <StaticMenuStyle CssClass="CSSMenu_TopLevel" />
-                                                    <StaticMenuItemStyle CssClass="CSSMenu_TopLevelItem" />
-                                                    <StaticHoverStyle CssClass="CSSMenu_TopLevel_Hover" />
-                                                    <DynamicMenuStyle CssClass="CSSMenu_SubMenu" />
-                                                    <DynamicMenuItemStyle CssClass="CSSMenu_SubMenuItem" />
-                                                    <DynamicHoverStyle CssClass="CSSMenu_SubMenu_Hover" />
-                                                    <DynamicItemTemplate>
-                                                        <asp:Label ID="Label2" runat="server" Text='<%# Eval( "Text" ) %>' />
-                                                    </DynamicItemTemplate>
-                                                </asp:Menu>
-                                            </asp:TableCell>
-                                            <asp:TableCell HorizontalAlign="right" CssClass="CSSPageTitle">
-                                                <asp:ContentPlaceHolder ID="ContentPlaceHolderTitle" runat="server">
-                                                </asp:ContentPlaceHolder>
-                                            </asp:TableCell>
-                                        </asp:TableRow>
-                                    </asp:Table>
+                                    <asp:Panel ID="Panel1" runat="server" CssClass="CSSMenuBarBorder">
+                                        <asp:Panel runat="server" CssClass="CSSMenuBarContent">
+                                            <asp:Table ID="menutitlebar" runat="server" Width="100%" CellPadding="0" CellSpacing="0"
+                                                BorderWidth="0px">
+                                                <asp:TableRow>
+                                                    <asp:TableCell>
+                                                        <asp:SiteMapDataSource ID="SiteMapDataSource1" runat="server" ShowStartingNode="False" />
+                                                        <asp:Menu ID="Menu1" runat="server" CssClass="CSSMainMenu" Orientation="Horizontal"
+                                                            DynamicVerticalOffset="7" StaticEnableDefaultPopOutImage="false" DataSourceID="SiteMapDataSource1">
+                                                            <StaticMenuStyle CssClass="CSSMenu_TopLevel" />
+                                                            <StaticMenuItemStyle CssClass="CSSMenu_TopLevelItem" />
+                                                            <StaticHoverStyle CssClass="CSSMenu_TopLevel_Hover" />
+                                                            <DynamicMenuStyle CssClass="CSSMenu_SubMenu" />
+                                                            <DynamicMenuItemStyle CssClass="CSSMenu_SubMenuItem" />
+                                                            <DynamicHoverStyle CssClass="CSSMenu_SubMenu_Hover" />
+                                                            <DynamicItemTemplate>
+                                                                <asp:Label ID="Label2" runat="server" Text='<%# Eval( "Text" ) %>' />
+                                                            </DynamicItemTemplate>
+                                                        </asp:Menu>
+                                                    </asp:TableCell>
+                                                    <asp:TableCell HorizontalAlign="right" CssClass="CSSPageTitle">
+                                                        <asp:ContentPlaceHolder ID="ContentPlaceHolderTitle" runat="server">
+                                                        </asp:ContentPlaceHolder>
+                                                    </asp:TableCell>
+                                                </asp:TableRow>
+                                            </asp:Table>
+                                        </asp:Panel>
+                                    </asp:Panel>
                                 </asp:Panel>
-                                </asp:Panel>
-                               
                             </asp:TableCell>
                         </asp:TableRow>
                         <asp:TableRow>

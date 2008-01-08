@@ -14,13 +14,14 @@
 /* .ajax__tab_active - This is applied to a tab when it is the currently selected tab. Child CSS classes:.ajax__tab_outer. */   
 
 
+
 /*************************************************************************************************
 	Background styles
 *************************************************************************************************/
 
 .TabControl .ajax__tab_header					
 {
-	background: url(./images/tab-line.gif) repeat-x bottom;
+	/*background: url(./images/tab-line.gif) repeat-x bottom; */
 	vertical-align:bottom;
 }
 .TabControl .ajax__tab_outer
@@ -45,7 +46,7 @@
 }
 .TabControl .ajax__tab_hover .ajax__tab_tab
 {
-	background: url(./images/tab-hover.gif) repeat-x;
+	background: url(./images/tab.gif) repeat-x;
 }
 .TabControl .ajax__tab_active .ajax__tab_outer
 {
@@ -60,14 +61,10 @@
 	background: url(./images/tab-active.gif) repeat-x;
 }
 
-/*************************************************************************************************
-	Other styles
-*************************************************************************************************/
-
+/* XP IE7 theme - Other Styles */
 .TabControl .ajax__tab_header
 {
-	margin:0px;
-	
+	border-bottom: #696969 1px solid;vertical-align:bottom;
 }
 	
 .TabControl .ajax__tab_outer
@@ -80,32 +77,33 @@
 }
 .TabControl .ajax__tab_tab
 {
+	color:darkgray;
 	padding: 8px 8px;
 	margin: 0;
-	font-size:100%;
+	font-size:70%;
+	
 	
 }
 .TabControl .ajax__tab_body
 {
-	margin: 0px;
-	padding: 5px;
-	border-right: darkgray 1px solid;
-	border-top: darkgray 1px solid;
-	border-left: darkgray 1px solid;
-	border-bottom: darkgray 1px solid;
+	
 }
 
 .TabControl .ajax__tab_active .ajax__tab_tab
 {
 	font-weight: bold;
+	color:Yellow;
 	font-size:100%;
 }
+
+	
 
 /* tab control content panel */
 .CSSTabPanel
 {
-
+	
 }
+
 
 
 
@@ -115,6 +113,7 @@
 
 *************************************************************************************************/
 
+
 /* .ajax__tab_header - A container element that wraps all of the tabs at the top of the TabContainer. Child CSS classes:.ajax__tab_outer. */
 /* .ajax__tab_outer - An outer element of a tab, often used to set the left-side background image of the tab.Child CSS classes: .ajax__tab_inner. */
 /* .ajax__tab_inner	 - An inner element of a tab, often used to set the right-side image of the tab. Child CSS classes:.ajax__tab_tab. */
@@ -123,14 +122,14 @@
 /* .ajax__tab_hover - This is applied to a tab when the mouse is hovering over. Child CSS classes:.ajax__tab_outer. */
 /* .ajax__tab_active - This is applied to a tab when it is the currently selected tab. Child CSS classes:.ajax__tab_outer. */   
 
-
 /*************************************************************************************************
 	Background styles
 *************************************************************************************************/
 
+
 .CSSDialogTabControl .ajax__tab_header					
 {
-	background: url(./images/tab-line.gif) repeat-x bottom; 
+	/*background: url(./images/tab-line.gif) repeat-x bottom; */
 	vertical-align:bottom;
 }
 .CSSDialogTabControl .ajax__tab_outer
@@ -168,13 +167,12 @@
 .CSSDialogTabControl .ajax__tab_active .ajax__tab_tab
 {
 	background: url(./images/tab-active.gif) repeat-x;
-	
 }
-
 
 /*************************************************************************************************
 	Other styles
 *************************************************************************************************/
+
 .CSSDialogTabControl .ajax__tab_header
 {
 	vertical-align:bottom;
@@ -190,22 +188,24 @@
 }
 .CSSDialogTabControl .ajax__tab_tab
 {
+	color:darkgray;
 	padding: 8px 8px;
 	margin: 0;
-	font-size:80%;	
+	font-size:70%;
 }
 
 .CSSDialogTabControl .ajax__tab_active .ajax__tab_tab
 {
-	font-size:80%;
+	font-weight: bold;
+	color:Yellow;
+	font-size:100%;
 }
 
+	
 .CSSDialogTabControl .ajax__tab_body
 {
-	margin: 0px;
-	padding: 5px;
-	border-right: darkgray 1px solid;
-	border-top: darkgray 1px solid;
-	border-left: darkgray 1px solid;
-	border-bottom: darkgray 1px solid;
+	border-right: #696969 1px solid;
+	border-top: #696969 1px solid;
+	border-left: #696969 1px solid;
+	border-bottom: #696969 1px solid;
 }

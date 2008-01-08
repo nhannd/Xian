@@ -9,11 +9,12 @@
 /*************************************************************************************************
 	Global font
 *************************************************************************************************/
+
 body
 {
 	font-family: verdana,tahoma,helvetica;
 	font-size: 10pt;
-	color:black;
+	color:White;
 }
 
 
@@ -31,16 +32,17 @@ body
 	
 	font-size:110%;
 	font-weight:bold;
-	color:White;
 	
 }
+
 
 .CSSVersionLabel
 {
 	font-size:70%;
-	color:Silver;
+	color:gray;
 	font-weight:normal;
 }
+
 
 
 /*************************************************************************************************
@@ -94,16 +96,14 @@ body
 
 
 
-
 /*************************************************************************************************
 	Menubar font
 *************************************************************************************************/
 
-
 /* Menubar panel container */
 .CSSMainMenuBarContainer
 {
-	font-size:110%;	
+	font-size:120%;
 }
 
 
@@ -117,7 +117,6 @@ body
 .CSSMainMenu a:link , .CSSMainMenu a:visited, .CSSMainMenu a:hover, .CSSMainMenu a:active
 {
 	color:white;
-	font-weight:bold;
 }
 
 
@@ -135,6 +134,7 @@ body
 
 
 
+
 /* main menu (when hover over)*/
 .CSSMenu_TopLevel_Hover
 {
@@ -148,19 +148,18 @@ body
 
 }
 
-
 /* submenu item */
 .CSSMenu_SubMenuItem
 {
 	font-size:100%;	
 }
 
+
 /* submenu item color */
 .CSSMenu_SubMenuItem a:link , .CSSMenu_SubMenuItem a:visited, .CSSMenu_SubMenuItem a:hover, .CSSMenu_SubMenuItem a:active
 {
 	color:white;
 }
-
 
 /* submenu item when hover*/
 .CSSMenu_SubMenu_Hover
@@ -203,7 +202,7 @@ body
 .CSSGridHeader th
 {	
 	font-weight: bold;
-	
+	color: darkgray;
 }
 
 /* gridview control row */
@@ -227,17 +226,14 @@ body
 /* gridview cell of the selected row */
 .CSSGridSelectedRowStyle td
 {
-	color: white;
 	
 }
-
-
-
 
 
 /*************************************************************************************************
 	Gridview pager panel font
 *************************************************************************************************/
+
 
 
 /* Grid pager control panel container */
@@ -250,6 +246,7 @@ body
 {
 	font-style: normal;
 	font-weight: normal;
+	color: darkgray;
 	
 }
 
@@ -260,11 +257,10 @@ body
 }
 
 
-
-
 /*************************************************************************************************
 	Popup dialog font
 *************************************************************************************************/
+
 
 .CSSPopupWindow
 {
@@ -284,9 +280,10 @@ body
         
 .CSSPopupWindowTitleBar
 {
+	color: white;
 	font-weight: bold;
 	font-size: larger;
 	text-transform: capitalize;
-	color:White;
+	
 }
 

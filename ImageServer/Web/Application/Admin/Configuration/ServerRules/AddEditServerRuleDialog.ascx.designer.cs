@@ -20,15 +20,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRule
     public partial class AddEditServerRuleDialog {
         
         /// <summary>
-        /// TestPanel control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel TestPanel;
-        
-        /// <summary>
         /// AddEditUpdatePanel control.
         /// </summary>
         /// <remarks>

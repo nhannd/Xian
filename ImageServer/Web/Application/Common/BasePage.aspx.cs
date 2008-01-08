@@ -18,14 +18,17 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
         {
             // Retrieve the theme name if present.
             if (Request.Cookies["Theme"] != null)
-                Page.Theme = Request.Cookies["Theme"].Value;
+            {
+                if (Common.Theme.Contains(Request.Cookies["Theme"].Value))
+                    Page.Theme = Request.Cookies["Theme"].Value;
+                else
+                    Page.Theme = "ClearCanvas";
+            }
+            else
+            {
+                Page.Theme = "ClearCanvas";
+            }
 
-            
-        }
-
-        protected override void  OnInit(EventArgs e)
-        {
- 	         base.OnInit(e);
             
         }
     }

@@ -1,89 +1,61 @@
 /**************************************************************************************************
-
-	This file contains the font CSS  (this includes font size and colors. Text alignment is specified
-	in	layout.css)
-
+	This file contains the border CSS 
 **************************************************************************************************/
-
-
-/*************************************************************************************************
-	Global font
-*************************************************************************************************/
-body
-{
-	font-family: verdana,tahoma,helvetica;
-	font-size: 10pt;
-	color:black;
-}
-
 
 
 
 /* Panel that holds the contents of the page - below the menubar*/
 .CSSPageContentMainWindow
 {
-	font-size: 100%;
 }
 
 /* Title of the page */
 .CSSPageTitle
 {
 	
-	font-size:110%;
-	font-weight:bold;
-	color:White;
-	
-}
-
-.CSSVersionLabel
-{
-	font-size:70%;
-	color:Silver;
-	font-weight:normal;
 }
 
 
 /*************************************************************************************************
-	Toolbar font
+	Toolbar styles 
 *************************************************************************************************/
-
 
 /* toolbar panel container */
 .CSSToolbarPanelContainer
 {
 }
 
-/* Toolbar panel */
+/* Toolbar panel border */
 .CSSToolbarPanelBorder
-{	
+{
 
 }
 
 /* The content panel in the toolbar panel */
 .CSSToolbarContent
 {
-
+	
 }
 
 
-
 /*************************************************************************************************
-	Filter panel font
+	Filter panel
 *************************************************************************************************/
 
 
-/* filter panel container */
+/* filter panel */
 .CSSFilterPanelContainer
 {
-	font-style: normal;
-	font-weight: normal;
 	
 }
 
 /* filter panel content border */
 .CSSFilterPanelBorder
 {
-	
+	border-right: #696969 1px solid;
+	border-top: #696969 1px solid;
+	border-left: #696969 1px solid;
+	border-bottom: #696969 1px solid;
 }
 
 /* filter panel content*/
@@ -93,47 +65,32 @@ body
 }
 
 
-
-
 /*************************************************************************************************
-	Menubar font
+	Menu bar background
 *************************************************************************************************/
 
 
 /* Menubar panel container */
 .CSSMainMenuBarContainer
 {
-	font-size:110%;	
+	text-align:left;
 }
-
 
 /* Menubar */
 .CSSMenuBarBorder
 {
+	border-right: 1px outset;
+	border-top: 1px outset;
+	border-left: 1px outset;
+	border-bottom: 1px outset;
 	
 }
-
-/* Menu item color */
-.CSSMainMenu a:link , .CSSMainMenu a:visited, .CSSMainMenu a:hover, .CSSMainMenu a:active
-{
-	color:white;
-	font-weight:bold;
-}
-
 
 /* main menu */
 .CSSMenu_TopLevel
 {
 
 }
-
-
-/* main menu */
-.CSSMenu_TopLevelItem
-{
-}
-
-
 
 /* main menu (when hover over)*/
 .CSSMenu_TopLevel_Hover
@@ -145,50 +102,53 @@ body
 /* submenu container styles */
 .CSSMenu_SubMenu
 {
-
+	border-right: lightgrey 2px outset;
+	border-top: lightgrey 2px outset;
+	border-left: lightgrey 2px outset;
+	border-bottom: lightgrey 2px outset;
 }
-
 
 /* submenu item */
 .CSSMenu_SubMenuItem
 {
-	font-size:100%;	
-}
 
-/* submenu item color */
-.CSSMenu_SubMenuItem a:link , .CSSMenu_SubMenuItem a:visited, .CSSMenu_SubMenuItem a:hover, .CSSMenu_SubMenuItem a:active
-{
-	color:white;
 }
-
 
 /* submenu item when hover*/
 .CSSMenu_SubMenu_Hover
 {
-
+	
 	
 }
 
 
 
+
+
 /*************************************************************************************************
-	Gridview control font
+	Gridview control 
 *************************************************************************************************/
 
 
 /* Container for the gridview */
 .CSSGridViewPanelContainer
 {
+	
 }
 
 /* border of the gridview */
 .CSSGridViewPanelBorder
 {
+	border-right: #696969 1px solid;
+	border-top: #696969 1px solid;
+	border-left: #696969 1px solid;
+	border-bottom: #696969 1px solid;
 }
 
 /* gridview content panel */
 .CSSGridViewPanelContent
 {
+	
 }
 
 
@@ -196,26 +156,47 @@ body
 /* gridview control styling */
 .CSSGridView
 {
-	
+	border-left-color: #696969;
+	border-bottom-color: #696969;
+	border-top-style: solid;
+	border-top-color: #696969;
+	border-right-style: solid;
+	border-left-style: solid;
+	border-right-color: #696969;
+	border-bottom-style: solid;
 }
 
 /* gridview control header row */
 .CSSGridHeader th
 {	
-	font-weight: bold;
-	
+	border-left-color: #4b4b4c;
+	border-bottom-color: #4b4b4c;
+	border-top-style: solid;
+	border-top-color: #4b4b4c;
+	border-right-style: solid;
+	border-left-style: solid;
+	border-right-color: #4b4b4c;
+	border-bottom-style: solid;
 }
 
 /* gridview control row */
 .CSSGridRowStyle
 {
-	
+	border-style: solid;
+	border-width: 1px;
 }
 
 /* gridview control cell */
 .CSSGridRowStyle td
 {
-	
+	border-left-color: #4b4b4c;
+	border-bottom-color: #4b4b4c;
+	border-top-style: solid;
+	border-top-color: #4b4b4c;
+	border-right-style: solid;
+	border-left-style: solid;
+	border-right-color: #4b4b4c;
+	border-bottom-style: solid;
 }
 
 /* gridview control selected row */
@@ -227,16 +208,21 @@ body
 /* gridview cell of the selected row */
 .CSSGridSelectedRowStyle td
 {
-	color: white;
-	
+	border-left-color: green;
+	border-bottom-color: darkgray;
+	border-top-style: solid;
+	border-top-color: darkgray;
+	border-right-style: solid;
+	border-left-style: solid;
+	border-right-color: darkgray;
+	border-bottom-style: solid;
 }
 
 
 
 
-
 /*************************************************************************************************
-	Gridview pager panel font
+	Gridview Pager panel background
 *************************************************************************************************/
 
 
@@ -248,27 +234,32 @@ body
 /* grid pager panel border */
 .CSSGridPagerPanelBorder
 {
-	font-style: normal;
-	font-weight: normal;
-	
+	border-right: #696969  1px solid;
+	border-top: #696969  1px solid;
+	border-left: #696969  1px solid;
+	border-bottom:  #696969  1px solid;
 }
 
 /*grid pager panel content */
 .CSSGridPagerPanelContent
 {
-	
+
 }
 
 
 
 
 /*************************************************************************************************
-	Popup dialog font
+	Popup Dialog
 *************************************************************************************************/
+
 
 .CSSPopupWindow
 {
-	
+	border-right: 1px outset;
+	border-top: 1px outset;
+	border-left: 1px outset;
+	border-bottom: 1px outset;
 }
 
 
@@ -284,9 +275,8 @@ body
         
 .CSSPopupWindowTitleBar
 {
-	font-weight: bold;
-	font-size: larger;
-	text-transform: capitalize;
-	color:White;
+	border-bottom: gray 1px ridge;
+	
 }
+
 

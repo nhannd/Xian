@@ -87,7 +87,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRule
             ModalPopupExtender1.TargetControlID = DummyPanel.UniqueID;
             ModalPopupExtender1.BehaviorID = ModalPopupExtender1.UniqueID;
 
-            ModalPopupExtender1.DropShadow = true;
             ModalPopupExtender1.PopupDragHandleControlID = TitleBarPanel.UniqueID;
 
             this.SampleRuleDropDownList.Attributes.Add("onchange", "webServiceScript(this, this.SelectedIndex);");

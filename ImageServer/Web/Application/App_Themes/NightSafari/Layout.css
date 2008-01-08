@@ -1,86 +1,82 @@
 /**************************************************************************************************
 
-	This file contains the font CSS  (this includes font size and colors. Text alignment is specified
-	in	layout.css)
+	This file contains the layout CSS. This includes margins, font alignment, panel sizes
 
 **************************************************************************************************/
 
 
 /*************************************************************************************************
-	Global font
+	Global settings
 *************************************************************************************************/
-body
+.CSSPageWindow
 {
-	font-family: verdana,tahoma,helvetica;
-	font-size: 10pt;
-	color:black;
+	width:90%;
 }
-
 
 
 
 /* Panel that holds the contents of the page - below the menubar*/
 .CSSPageContentMainWindow
 {
-	font-size: 100%;
+	margin-top: 15px;
+	text-align:left;
 }
 
 /* Title of the page */
 .CSSPageTitle
 {
-	
-	font-size:110%;
-	font-weight:bold;
-	color:White;
-	
+	padding-right:30px;
 }
 
-.CSSVersionLabel
+/*************************************************************************************************
+	Logo Panel
+*************************************************************************************************/
+
+.CSSLogoImagePanel
 {
-	font-size:70%;
-	color:Silver;
-	font-weight:normal;
+	margin-bottom:5px;
 }
 
 
 /*************************************************************************************************
-	Toolbar font
+	Toolbar
 *************************************************************************************************/
 
 
 /* toolbar panel container */
 .CSSToolbarPanelContainer
 {
+	margin: 5px 0px;
 }
+
 
 /* Toolbar panel */
 .CSSToolbarPanelBorder
-{	
-
+{
+	margin:5px;
 }
 
 /* The content panel in the toolbar panel */
 .CSSToolbarContent
 {
-
 }
 
 
 
 /*************************************************************************************************
-	Filter panel font
+	Filter panel 
 *************************************************************************************************/
 
 
 /* filter panel container */
 .CSSFilterPanelContainer
 {
-	font-style: normal;
-	font-weight: normal;
-	
+	margin: 10px 0px 10px 5px;
 }
 
-/* filter panel content border */
+
+
+/* filter panel content border*/
 .CSSFilterPanelBorder
 {
 	
@@ -89,96 +85,89 @@ body
 /* filter panel content*/
 .CSSFilterPanelContent
 {
-
+	margin:5px;	
 }
 
 
 
-
 /*************************************************************************************************
-	Menubar font
+	Menubar 
 *************************************************************************************************/
 
 
 /* Menubar panel container */
 .CSSMainMenuBarContainer
 {
-	font-size:110%;	
+	text-align:left;
 }
-
 
 /* Menubar */
 .CSSMenuBarBorder
 {
-	
+	padding:5px;
 }
 
-/* Menu item color */
-.CSSMainMenu a:link , .CSSMainMenu a:visited, .CSSMainMenu a:hover, .CSSMainMenu a:active
+/* menubar content */
+.CSSMenuBarContent
 {
-	color:white;
-	font-weight:bold;
+	margin-left:15px;
 }
 
 
-/* main menu */
+/* main menu panel */
 .CSSMenu_TopLevel
 {
-
+	/* spaces between menu */
+	padding-right: 15px; 
+	padding-left: 5px;
 }
 
-
-/* main menu */
 .CSSMenu_TopLevelItem
 {
+
 }
-
-
 
 /* main menu (when hover over)*/
 .CSSMenu_TopLevel_Hover
 {
-
+	
 }
 
 
 /* submenu container styles */
 .CSSMenu_SubMenu
 {
-
+	margin-top:4px;
 }
-
 
 /* submenu item */
 .CSSMenu_SubMenuItem
-{
-	font-size:100%;	
+{	
+	text-indent:30px;
+	
+	padding-right: 20px;
+	padding-left: 0px;
+	padding-bottom: 3px;
+	padding-top: 3px;
 }
-
-/* submenu item color */
-.CSSMenu_SubMenuItem a:link , .CSSMenu_SubMenuItem a:visited, .CSSMenu_SubMenuItem a:hover, .CSSMenu_SubMenuItem a:active
-{
-	color:white;
-}
-
 
 /* submenu item when hover*/
 .CSSMenu_SubMenu_Hover
 {
-
 	
 }
 
 
 
 /*************************************************************************************************
-	Gridview control font
+	Gridview control layout
 *************************************************************************************************/
 
 
 /* Container for the gridview */
 .CSSGridViewPanelContainer
 {
+	margin-top:3px;
 }
 
 /* border of the gridview */
@@ -189,11 +178,13 @@ body
 /* gridview content panel */
 .CSSGridViewPanelContent
 {
+	height:600px;
+	padding:1px;
 }
 
 
 
-/* gridview control styling */
+/* gridview control  */
 .CSSGridView
 {
 	
@@ -202,7 +193,9 @@ body
 /* gridview control header row */
 .CSSGridHeader th
 {	
-	font-weight: bold;
+	height: 24px;
+	padding-right: 5px;
+	padding-left: 5px;
 	
 }
 
@@ -210,25 +203,28 @@ body
 .CSSGridRowStyle
 {
 	
+	height: 24px; 
 }
 
 /* gridview control cell */
 .CSSGridRowStyle td
 {
 	
+	padding-right: 5px;
+	padding-left: 5px;
 }
 
 /* gridview control selected row */
 .CSSGridSelectedRowStyle
 {
-	
+	height: 24px;
 }
 
 /* gridview cell of the selected row */
 .CSSGridSelectedRowStyle td
 {
-	color: white;
-	
+	padding-right: 5px;
+	padding-left: 5px;
 }
 
 
@@ -236,8 +232,9 @@ body
 
 
 /*************************************************************************************************
-	Gridview pager panel font
+	Gridview pager panel layout
 *************************************************************************************************/
+
 
 
 /* Grid pager control panel container */
@@ -248,23 +245,23 @@ body
 /* grid pager panel border */
 .CSSGridPagerPanelBorder
 {
-	font-style: normal;
-	font-weight: normal;
-	
+
 }
 
 /*grid pager panel content */
 .CSSGridPagerPanelContent
 {
-	
+	margin: 1px;
+
 }
 
 
 
 
 /*************************************************************************************************
-	Popup dialog font
+	Popup dialog
 *************************************************************************************************/
+
 
 .CSSPopupWindow
 {
@@ -274,19 +271,26 @@ body
 
 .CSSPopupWindowBody 
 { 
-	
+	vertical-align: top;
+	padding-right: 15px; 
+	padding-left: 15px; 
+	padding-bottom: 15px; 
+	padding-top: 15px; 
 }
 
 .CSSDialogTabPanelContent
 {
-	
+	margin:10px;
 }
         
 .CSSPopupWindowTitleBar
 {
-	font-weight: bold;
-	font-size: larger;
-	text-transform: capitalize;
-	color:White;
+	cursor: hand;
+	width: 100%;
+	height: 30px; 
+	vertical-align: middle;
+	text-align: center;
+		
 }
+
 

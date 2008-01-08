@@ -1,52 +1,30 @@
 /**************************************************************************************************
-
-	This file contains the font CSS  (this includes font size and colors. Text alignment is specified
-	in	layout.css)
-
+	This file contains the background CSS 
 **************************************************************************************************/
 
-
-/*************************************************************************************************
-	Global font
-*************************************************************************************************/
+/* background color for entire page */
 body
 {
-	font-family: verdana,tahoma,helvetica;
-	font-size: 10pt;
-	color:black;
+	background-color: black;
 }
-
 
 
 
 /* Panel that holds the contents of the page - below the menubar*/
 .CSSPageContentMainWindow
 {
-	font-size: 100%;
+	
 }
 
 /* Title of the page */
 .CSSPageTitle
 {
-	
-	font-size:110%;
-	font-weight:bold;
-	color:White;
-	
-}
 
-.CSSVersionLabel
-{
-	font-size:70%;
-	color:Silver;
-	font-weight:normal;
 }
-
 
 /*************************************************************************************************
-	Toolbar font
+	Toolbar background styles 
 *************************************************************************************************/
-
 
 /* toolbar panel container */
 .CSSToolbarPanelContainer
@@ -62,28 +40,23 @@ body
 /* The content panel in the toolbar panel */
 .CSSToolbarContent
 {
-
+	
 }
 
 
-
 /*************************************************************************************************
-	Filter panel font
+	Filter panel background
 *************************************************************************************************/
-
 
 /* filter panel container */
 .CSSFilterPanelContainer
 {
-	font-style: normal;
-	font-weight: normal;
 	
 }
 
 /* filter panel content border */
 .CSSFilterPanelBorder
 {
-	
 }
 
 /* filter panel content*/
@@ -93,19 +66,17 @@ body
 }
 
 
-
-
 /*************************************************************************************************
-	Menubar font
+	Menu bar background
 *************************************************************************************************/
+
 
 
 /* Menubar panel container */
 .CSSMainMenuBarContainer
 {
-	font-size:110%;	
+	background-color: #3D98D1;
 }
-
 
 /* Menubar */
 .CSSMenuBarBorder
@@ -113,13 +84,9 @@ body
 	
 }
 
-/* Menu item color */
-.CSSMainMenu a:link , .CSSMainMenu a:visited, .CSSMainMenu a:hover, .CSSMainMenu a:active
+.CSSMenuBarContent
 {
-	color:white;
-	font-weight:bold;
 }
-
 
 /* main menu */
 .CSSMenu_TopLevel
@@ -127,54 +94,39 @@ body
 
 }
 
-
-/* main menu */
-.CSSMenu_TopLevelItem
-{
-}
-
-
-
 /* main menu (when hover over)*/
 .CSSMenu_TopLevel_Hover
 {
-
+	background-color:#7CB1DD;
 }
 
 
 /* submenu container styles */
 .CSSMenu_SubMenu
 {
+	background-color: #7CB1DD;
 
 }
-
 
 /* submenu item */
 .CSSMenu_SubMenuItem
 {
-	font-size:100%;	
-}
 
-/* submenu item color */
-.CSSMenu_SubMenuItem a:link , .CSSMenu_SubMenuItem a:visited, .CSSMenu_SubMenuItem a:hover, .CSSMenu_SubMenuItem a:active
-{
-	color:white;
-}
+	background-color: #3D98D1;
 
+}
 
 /* submenu item when hover*/
 .CSSMenu_SubMenu_Hover
 {
-
+	background-color:#7CB1DD;
 	
 }
 
 
-
 /*************************************************************************************************
-	Gridview control font
+	Gridview control background 
 *************************************************************************************************/
-
 
 /* Container for the gridview */
 .CSSGridViewPanelContainer
@@ -196,14 +148,13 @@ body
 /* gridview control styling */
 .CSSGridView
 {
-	
 }
 
 /* gridview control header row */
 .CSSGridHeader th
 {	
-	font-weight: bold;
-	
+	background-image: url(images/gridheaderbackground.png);
+	background-repeat: repeat-x;
 }
 
 /* gridview control row */
@@ -221,24 +172,21 @@ body
 /* gridview control selected row */
 .CSSGridSelectedRowStyle
 {
+	background-color: #990000;
 	
 }
 
 /* gridview cell of the selected row */
 .CSSGridSelectedRowStyle td
 {
-	color: white;
 	
 }
 
 
 
-
-
 /*************************************************************************************************
-	Gridview pager panel font
+	Gridview Pager panel background
 *************************************************************************************************/
-
 
 /* Grid pager control panel container */
 .CSSGridPagerPanelContainer
@@ -248,33 +196,34 @@ body
 /* grid pager panel border */
 .CSSGridPagerPanelBorder
 {
-	font-style: normal;
-	font-weight: normal;
-	
+
 }
 
 /*grid pager panel content */
 .CSSGridPagerPanelContent
 {
-	
+background-image: url(images/gridheaderbackground.png);
+	background-repeat: repeat-x;
 }
-
 
 
 
 /*************************************************************************************************
-	Popup dialog font
+	Popup Dialog
 *************************************************************************************************/
-
 .CSSPopupWindow
 {
+	background-color: #3f3f3f;
+}
+
+.CSSPopupWindowTitleBar
+{
+	background-color: #3D98D1;
 	
 }
 
-
 .CSSPopupWindowBody 
 { 
-	
 }
 
 .CSSDialogTabPanelContent
@@ -282,11 +231,6 @@ body
 	
 }
         
-.CSSPopupWindowTitleBar
-{
-	font-weight: bold;
-	font-size: larger;
-	text-transform: capitalize;
-	color:White;
-}
+
+
 

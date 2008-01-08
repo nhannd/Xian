@@ -10,7 +10,7 @@
 				<siteMapNode url="~/Admin/Configuration/ServerPartitions/ServerPartitionPage.aspx" title="Server Partitions"  description="Server Partition Configuration"/>
 				<siteMapNode url="~/Admin/Configuration/FileSystems/FileSystemsPage.aspx" title="Filesystems"  description="FileSystems Configuration"/>
 				<siteMapNode url="~/Admin/Configuration/ServerRules/ServerRulePage.aspx" title="Server Rules" description="Server Rule Configuration"/>
-				<siteMapNode url="~/Admin/Configuration/Preferences/Default.aspx" title="Preferences" description="Preferences"/>
+				<siteMapNode url="~/Admin/Configuration/Preferences/Theme.aspx" title="Themes (FOR DEMO ONLY)" description="Preferences"/>
 		</siteMapNode>
 	</siteMapNode>
 </siteMap>

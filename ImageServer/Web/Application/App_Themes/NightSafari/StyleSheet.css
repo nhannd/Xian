@@ -6,7 +6,13 @@
 
 body
 {
-
+	scrollbar-face-color:#3f3f3f;
+	scrollbar-highlight-color:#696969;
+	scrollbar-3dlight-color:#3f3f3f;
+	scrollbar-darkshadow-color:#696969;
+	scrollbar-shadow-color:gray;
+	scrollbar-arrow-color:white;
+	scrollbar-track-color:#1b1b1b;
 }
 
 
@@ -14,8 +20,6 @@ body
 {
 	background-color:Yellow;
 }
-
-
 
 
 .CSSTextBoxLabel
@@ -41,9 +45,9 @@ body
 
 
 
-.CSSModalBackground 
+.CSSModalBackground
 {
-   background-color:#000;
+	background-color: black;
 }
 
 

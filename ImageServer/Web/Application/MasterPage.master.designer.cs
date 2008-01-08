@@ -43,7 +43,7 @@ public partial class Admin_MasterPage {
     /// Auto-generated field.
     /// To modify move field declaration from designer file to code-behind file.
     /// </remarks>
-    protected global::System.Web.UI.WebControls.Image Image1;
+    protected global::System.Web.UI.WebControls.ImageButton Image1;
     
     /// <summary>
     /// VersionLabel control.
