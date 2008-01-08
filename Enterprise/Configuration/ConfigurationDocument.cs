@@ -37,6 +37,7 @@ using System.Text;
 
 using Iesi.Collections;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Enterprise.Core.Modelling;
 
 
 namespace ClearCanvas.Enterprise.Configuration {
@@ -45,8 +46,16 @@ namespace ClearCanvas.Enterprise.Configuration {
     /// <summary>
     /// Stores a set of settings keys and values for a given settings group.  Used internally by the framework.
     /// </summary>
+    [UniqueKey("DocumentKey", new string[]{"DocumentName", "DocumentVersionString", "User", "InstanceKey"})]
 	public partial class ConfigurationDocument : Entity
 	{
+        /// <summary>
+        /// Constructs a new configuration document with an empty body.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="versionString"></param>
+        /// <param name="user"></param>
+        /// <param name="instanceKey"></param>
         public ConfigurationDocument(string name, string versionString, string user, string instanceKey)
         {
             _documentName = name;
