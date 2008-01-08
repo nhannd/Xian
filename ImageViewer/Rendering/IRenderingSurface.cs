@@ -78,10 +78,14 @@ namespace ClearCanvas.ImageViewer.Rendering
 		}
 
 		/// <summary>
-		/// Gets or sets the rectangle to which the image will be rendered.
+		/// Gets or sets the rectangle of the surface.
 		/// </summary>
 		/// <remarks>
-		/// This is typically the rectangle of the view onto the <see cref="ITile"/>.
+		/// This is the rectangle of the view onto the <see cref="ITile"/>.
+		/// The top-left corner is always (0,0).  This rectangle changes as the
+		/// view (i.e., the hosting window) changes size. Implementor should be
+		/// aware that the rectangle can have a width or height of 0, and handle
+		/// that boundary case appropriately.
 		/// </remarks>
 		Rectangle ClientRectangle
 		{
@@ -95,6 +99,8 @@ namespace ClearCanvas.ImageViewer.Rendering
 		/// <remarks>
 		/// The implementer of <see cref="IRenderer"/> should use this rectangle
 		/// to intelligently perform the <see cref="DrawMode.Refresh"/> operation.
+		/// This property is set by the Framework; you should never have to
+		/// set this property yourself.
 		/// </remarks>
 		Rectangle ClipRectangle
 		{ 

@@ -72,16 +72,21 @@ namespace ClearCanvas.ImageViewer.Rendering
 		}
 
 		/// <summary>
-		/// Gets or sets the rectangle to which the image will be rendered.
+		/// Gets or sets the rectangle of the surface.
 		/// </summary>
 		/// <remarks>
-		/// This is typically the rectangle of the view onto the <see cref="ITile"/>.
+		/// This is the rectangle of the view onto the <see cref="ITile"/>.
+		/// The top-left corner is always (0,0).  This rectangle changes as the
+		/// view (i.e., the hosting window) changes size.
 		/// </remarks>
 		public Rectangle ClientRectangle
 		{
 			get { return _clientRectangle; }
 			set
 			{
+				if (value.Width == 0 || value.Height == 0)
+					return;
+
 				if (_clientRectangle != value)
 				{
 					_clientRectangle = value;

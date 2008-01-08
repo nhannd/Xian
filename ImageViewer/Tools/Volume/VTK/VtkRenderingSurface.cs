@@ -88,6 +88,9 @@ namespace ClearCanvas.ImageViewer.Tools.Volume.VTK
 			get { return _clientRectangle; }
 			set
 			{
+				if (value.Width == 0 || value.Height == 0)
+					return;
+
 				if (_clientRectangle != value)
 				{
 					_clientRectangle = value;
