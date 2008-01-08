@@ -47,7 +47,7 @@ namespace ClearCanvas.Ris.Client.Adt
     public interface ITechnologistDocumentationModule
     {
         void Initialize(ITechnologistDocumentationContext context);
-        void SaveData();
+        void SaveData(bool completeDocumentation);
     }
 
     [ExtensionPoint]
@@ -331,7 +331,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
             foreach(ITechnologistDocumentationModule module in _documentationModules)
             {
-                module.SaveData();
+                module.SaveData(completeDocumentation);
             }
 
             try
