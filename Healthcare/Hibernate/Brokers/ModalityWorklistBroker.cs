@@ -140,6 +140,9 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             {
                 query.Conditions.Add(new HqlCondition(_hqlWorklistSubQuery, worklist));
             }
+
+            // constrain patient profile to performing facility
+            query.Conditions.Add(new HqlCondition("pp.Mrn.AssigningAuthority = rp.PerformingFacility.InformationAuthority"));
         }
 
         private static void ConstructSearchCondition(HqlQuery query, IEnumerable<WorklistItemSearchCriteria> where, bool showActiveOnly)
@@ -166,6 +169,9 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
             if (or.Conditions.Count > 0)
                 query.Conditions.Add(or);
+
+            // constrain patient profile to performing facility
+            query.Conditions.Add(new HqlCondition("pp.Mrn.AssigningAuthority = rp.PerformingFacility.InformationAuthority"));
         }
 
         #endregion

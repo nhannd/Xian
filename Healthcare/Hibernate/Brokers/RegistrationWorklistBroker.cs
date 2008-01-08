@@ -165,7 +165,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
                 query.Conditions.Add(new HqlCondition(_hqlWorklistSubQuery, worklist));
             }
 
-            // constrain patient profiles so that don't get more than one in the join
+            // constrain patient profile to performing facility
             query.Conditions.Add(new HqlCondition("pp.Mrn.AssigningAuthority = rp.PerformingFacility.InformationAuthority"));
         }
 
@@ -193,6 +193,9 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
             if (or.Conditions.Count > 0)
                 query.Conditions.Add(or);
+
+            // constrain patient profile to performing facility
+            query.Conditions.Add(new HqlCondition("pp.Mrn.AssigningAuthority = rp.PerformingFacility.InformationAuthority"));
         }
 
         #endregion
