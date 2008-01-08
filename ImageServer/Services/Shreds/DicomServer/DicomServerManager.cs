@@ -37,6 +37,7 @@ using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
+using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Services.Dicom;
 
 namespace ClearCanvas.ImageServer.Services.Shreds.DicomServer
@@ -98,8 +99,9 @@ namespace ClearCanvas.ImageServer.Services.Shreds.DicomServer
             IList<ServerPartition> partitions;
             using (IReadContext read = store.OpenReadContext())
             {
-                IGetServerPartitions broker = read.GetBroker<IGetServerPartitions>();
-                partitions = broker.Execute();
+                IServerPartitionEntityBroker broker = read.GetBroker<IServerPartitionEntityBroker>();
+                ServerPartitionSelectCriteria criteria = new ServerPartitionSelectCriteria();
+                partitions = broker.Find(criteria);
             }
 
             FilesystemMonitor monitor = new FilesystemMonitor();

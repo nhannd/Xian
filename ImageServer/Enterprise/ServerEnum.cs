@@ -33,50 +33,87 @@ using System;
 
 namespace ClearCanvas.ImageServer.Enterprise
 {
+    /// <summary>
+    /// A specialized <see cref="ServerEntity"/> that represents an enumerated value.
+    /// </summary>
     [Serializable]
     public abstract class ServerEnum : ServerEntity
     {
         #region Constructors
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="name">The name of the <see cref="ServerEntity"/>.</param>
         public ServerEnum(String name)
             : base(name)
         {
         }
+
         #endregion
 
         #region Private Members
-        private short   _enumValue;
+
+        private short _enumValue;
         private string _lookup;
         private string _description;
         private string _longDescription;
+
         #endregion
 
         #region Public Properties
+
+        /// <summary>
+        /// The enumerated value itself.
+        /// </summary>
         public short Enum
         {
             get { return _enumValue; }
             set { _enumValue = value; }
         }
+
+        /// <summary>
+        /// A lookup string.
+        /// </summary>
         public string Lookup
         {
             get { return _lookup; }
             set { _lookup = value; }
         }
+
+        /// <summary>
+        /// A short description of the enumerated value.
+        /// </summary>
         public string Description
         {
             get { return _description; }
             set { _description = value; }
         }
+
+        /// <summary>
+        /// A long description of the enumerated value.
+        /// </summary>
         public string LongDescription
         {
             get { return _longDescription; }
             set { _longDescription = value; }
         }
+
         #endregion
+
+        #region Public Abstract Methods
+
+        public abstract void SetEnum(short val);
+
+        #endregion
+
+        #region Public Overrides
 
         public override int GetHashCode()
         {
             return Enum;
         }
+
         public override bool Equals(object obj)
         {
             ServerEnum e = obj as ServerEnum;
@@ -86,7 +123,7 @@ namespace ClearCanvas.ImageServer.Enterprise
             // Must be in the inheritance hierarchy of each other to be equal
             // eg, Status enum can't be equal to Type enum.
             if (this.GetType().IsAssignableFrom(obj.GetType()) ||
-                 obj.GetType().IsAssignableFrom(this.GetType()))
+                obj.GetType().IsAssignableFrom(this.GetType()))
             {
                 return e.Enum == Enum;
             }
@@ -94,16 +131,18 @@ namespace ClearCanvas.ImageServer.Enterprise
                 return false;
         }
 
-        public abstract void SetEnum(short val);
+        #endregion
+
+        #region Operators
 
         /// <summary>
         /// Equality operator.
         /// </summary>
         public static bool operator ==(ServerEnum t1, ServerEnum t2)
         {
-            if ((object)t1 == null && (object)t2 == null)
+            if ((object) t1 == null && (object) t2 == null)
                 return true;
-            if ((object)t1 == null || (object)t2 == null)
+            if ((object) t1 == null || (object) t2 == null)
                 return false;
             return t1.Equals(t2);
         }
@@ -113,12 +152,13 @@ namespace ClearCanvas.ImageServer.Enterprise
         /// </summary>
         public static bool operator !=(ServerEnum t1, ServerEnum t2)
         {
-            if ((object)t1 == null && (object)t2 == null)
+            if ((object) t1 == null && (object) t2 == null)
                 return false;
-            if ((object)t1 == null || (object)t2 == null)
+            if ((object) t1 == null || (object) t2 == null)
                 return true;
             return !t1.Equals(t2);
         }
 
+        #endregion
     }
 }

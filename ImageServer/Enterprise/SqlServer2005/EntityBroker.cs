@@ -15,42 +15,54 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
     }
 
     /// <summary>
-    /// Provides base implementation of <see cref="ISelectBroker{TInput,TOutput}"/>.
+    /// Provides base implementation of <see cref="IEntityBroker{TServerEntity,TSearchCriteria,TUpdateColumns}"/>.
     /// </summary>
     /// <remarks>
     /// <para>
-    /// This class provides a base implementation for doing dynamic SQL queries.  It takes as input 
-    /// query criteria as defined in a <see cref="SelectCriteria"/> derived class.  It outputs
-    /// data into a <see cref="ServerEntity"/> defined class.
+    /// This class provides a base implementation for doing a number of SQL related operations against
+    /// a <see cref="ServerEntity"/> derived class.  The class implements the interface using
+    /// SQL Server 2005 and ADO.NET.  
     /// </para>
     /// <para>
-    /// The class generates a SQL Server compatible SELECT statement, executes the statement, 
-    /// and returns results.
+    /// It can generate dynamic SQL queries, updates, and inserts.
+    /// It also allows for querying against a <see cref="ServerEntity"/> using a 
+    /// <see cref="EntitySelectCriteria"/> derived class.
     /// </para>
     /// </remarks>
-    /// <typeparam name="TSelectCriteria"></typeparam>
-    /// <typeparam name="TOutput"></typeparam>
-    /// <typeparam name="TUpdateFields"></typeparam>
-    public abstract class EntityBroker<TOutput, TSelectCriteria, TUpdateFields> : Broker,
-                                                                                  IEntityBroker
-                                                                                      <TOutput, TSelectCriteria, TUpdateFields>
+    /// <typeparam name="TServerEntity">The ServerEntity derived class to work against.</typeparam>
+    /// <typeparam name="TSelectCriteria">The appropriate criteria for selecting against the entity.</typeparam>
+    /// <typeparam name="TUpdateColumns">The columns for doing insert or updates.</typeparam>
+    public abstract class EntityBroker<TServerEntity, TSelectCriteria, TUpdateColumns> : Broker,
+                                                                                         IEntityBroker
+                                                                                             <TServerEntity,
+                                                                                             TSelectCriteria,
+                                                                                             TUpdateColumns>
+        where TServerEntity : ServerEntity, new()
         where TSelectCriteria : EntitySelectCriteria
-        where TOutput : ServerEntity, new()
-        where TUpdateFields : EntityUpdateColumns
-
+        where TUpdateColumns : EntityUpdateColumns
     {
+        #region Private Members
+
         private readonly String _entityName;
+
+        #endregion
+
+        #region Constructors
 
         protected EntityBroker(String entityName)
         {
             _entityName = entityName;
         }
 
+        #endregion
+
+        #region Private Static Members
+
         /// <summary>
-        /// Gets WHERE clauses based on the input search condition.
+        /// Gets ORDER BY clauses based on the input search condition.
         /// </summary>
-        /// <returns></returns>
-        private static string GetOrderBy(String entity, EntitySelectCriteria criteria)
+        /// <returns>A string containing the ORDER BY clause.</returns>
+        private static string GetSelectOrderBy(String entity, EntitySelectCriteria criteria)
         {
             StringBuilder sb = new StringBuilder();
 
@@ -84,13 +96,13 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
         }
 
         /// <summary>
-        /// Gets WHERE clauses based on the input search condition.
+        /// Gets WHERE clauses based on the input search condition for a specific column.
         /// </summary>
         /// <param name="variable"></param>
         /// <param name="sc"></param>
-        /// <param name="command"></param>
-        /// <returns></returns>
-        private static string GetWhereText(string variable, SearchConditionBase sc, SqlCommand command)
+        /// <param name="command">The SQL Command.</param>
+        /// <returns>A string containing the WHERE clause for the column.</returns>
+        private static string GetSelectWhereText(string variable, SearchConditionBase sc, SqlCommand command)
         {
             StringBuilder sb = new StringBuilder();
             String sqlColumnName;
@@ -195,12 +207,13 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                     EntitySelectCriteria notExistsSubCriteria = (EntitySelectCriteria) values[0];
 
                     string sql;
-                    sql = GetSql(notExistsSubCriteria.GetKey(), command, notExistsSubCriteria,
-                                 String.Format("{0}.GUID = {1}.{0}GUID", variable, notExistsSubCriteria.GetKey()));
+                    sql = GetSelectSql(notExistsSubCriteria.GetKey(), command, notExistsSubCriteria,
+                                       String.Format("{0}.GUID = {1}.{0}GUID", variable, notExistsSubCriteria.GetKey()));
                     sb.AppendFormat("NOT EXISTS ({0})", sql);
                     break;
                 case SearchConditionTest.Exists:
-                    RelatedEntityCondition<EntitySelectCriteria> rec = sc as RelatedEntityCondition<EntitySelectCriteria>;
+                    RelatedEntityCondition<EntitySelectCriteria> rec =
+                        sc as RelatedEntityCondition<EntitySelectCriteria>;
                     if (rec == null) throw new PersistenceException("Casting error with RelatedEntityCondition", null);
                     EntitySelectCriteria existsSubCriteria = (EntitySelectCriteria) values[0];
 
@@ -213,9 +226,9 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
 
                     string existsSql;
 
-                    existsSql = GetSql(existsSubCriteria.GetKey(), command, existsSubCriteria,
-                                       String.Format("{0}.{2} = {1}.{3}", variable, existsSubCriteria.GetKey(),
-                                                     baseTableColumn, relatedTableColumn));
+                    existsSql = GetSelectSql(existsSubCriteria.GetKey(), command, existsSubCriteria,
+                                             String.Format("{0}.{2} = {1}.{3}", variable, existsSubCriteria.GetKey(),
+                                                           baseTableColumn, relatedTableColumn));
                     sb.AppendFormat("EXISTS ({0})", existsSql);
                     break;
                 case SearchConditionTest.None:
@@ -230,11 +243,11 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
         /// <summary>
         /// Get an array of WHERE clauses for all of the search criteria specified.
         /// </summary>
-        /// <param name="qualifier"></param>
-        /// <param name="criteria"></param>
-        /// <param name="command"></param>
-        /// <returns></returns>
-        public static String[] WhereSearchCriteria(string qualifier, SearchCriteria criteria, SqlCommand command)
+        /// <param name="qualifier">The table name to use for each of where clauses.</param>
+        /// <param name="criteria">The actual Search Criteria specified.</param>
+        /// <param name="command">The SQL command.</param>
+        /// <returns>An array of WHERE clauses.</returns>
+        private static String[] GetWhereSearchCriteria(string qualifier, SearchCriteria criteria, SqlCommand command)
         {
             List<string> list = new List<string>();
 
@@ -243,7 +256,7 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                 SearchConditionBase sc = (SearchConditionBase) criteria;
                 if (sc.Test != SearchConditionTest.None)
                 {
-                    String text = GetWhereText(qualifier, sc, command);
+                    String text = GetSelectWhereText(qualifier, sc, command);
                     list.Add(text);
                 }
             }
@@ -262,7 +275,7 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                         subQualifier = qualifier;
                     else
                         subQualifier = string.Format("{0}.{1}", qualifier, subCriteria.GetKey());
-                    list.AddRange(WhereSearchCriteria(subQualifier, subCriteria, command));
+                    list.AddRange(GetWhereSearchCriteria(subQualifier, subCriteria, command));
                 }
             }
 
@@ -277,13 +290,14 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
         /// <param name="criteria">The criteria for the select</param>
         /// <param name="subWhere">If this is being used to generate the SQL for a sub-select, additional where clauses are included here for the select.  Otherwise the parameter is null.</param>
         /// <returns>The SQL string.</returns>
-        public static string GetSql(string entityName, SqlCommand command, EntitySelectCriteria criteria, String subWhere)
+        private static string GetSelectSql(string entityName, SqlCommand command, EntitySelectCriteria criteria,
+                                           String subWhere)
         {
             StringBuilder sb = new StringBuilder();
             sb.AppendFormat("SELECT * FROM {0}", entityName);
 
             // Generate an array of the WHERE clauses to be used.
-            String[] where = WhereSearchCriteria(entityName, criteria, command);
+            String[] where = GetWhereSearchCriteria(entityName, criteria, command);
 
             // Add the where clauses on.
             bool first = true;
@@ -304,7 +318,7 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                     sb.AppendFormat(" AND {0}", clause);
             }
 
-            string orderBy = GetOrderBy(entityName, criteria);
+            string orderBy = GetSelectOrderBy(entityName, criteria);
             if (orderBy.Length > 0)
                 sb.AppendFormat(" {0}", orderBy);
 
@@ -319,14 +333,14 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
         /// <param name="criteria">The criteria for the select count</param>
         /// <param name="subWhere">If this is being used to generate the SQL for a sub-select, additional where clauses are included here for the select.  Otherwise the parameter is null.</param>
         /// <returns>The SQL string.</returns>
-        public static string GetSelectCountSql(string entityName, SqlCommand command, EntitySelectCriteria criteria,
-                                               String subWhere)
+        private static string GetSelectCountSql(string entityName, SqlCommand command, EntitySelectCriteria criteria,
+                                                String subWhere)
         {
             StringBuilder sb = new StringBuilder();
             sb.AppendFormat("SELECT COUNT(*) FROM {0}", entityName);
 
             // Generate an array of the WHERE clauses to be used.
-            String[] where = WhereSearchCriteria(entityName, criteria, command);
+            String[] where = GetWhereSearchCriteria(entityName, criteria, command);
 
             // Add the where clauses on.
             bool first = true;
@@ -349,16 +363,243 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
             return sb.ToString();
         }
 
-        #region ISelectBroker<TInput,TOutput> Members
+        /// <summary>
+        /// Resolves the Database column name for a field name
+        /// </summary>
+        /// <param name="parm"></param>
+        /// <returns></returns>
+        private static String GetDbColumnName(EntityColumnBase parm)
+        {
+            String sqlColumnName;
+
+            if (parm is EntityUpdateColumn<ServerEntity>)
+            {
+                if (parm.FieldName.EndsWith("Key"))
+                    sqlColumnName = String.Format("{0}", parm.FieldName.Replace("Key", "GUID"));
+
+                else if (parm.FieldName.EndsWith("GUID"))
+                    sqlColumnName = String.Format("{0}", parm.FieldName);
+
+                else
+                    sqlColumnName = String.Format("{0}GUID", parm.FieldName);
+            }
+            else if (parm is EntityUpdateColumn<ServerEntityKey>)
+            {
+                if (parm.FieldName.EndsWith("Key"))
+                    sqlColumnName = String.Format("{0}", parm.FieldName.Replace("Key", "GUID"));
+
+                else if (parm.FieldName.EndsWith("GUID"))
+                    sqlColumnName = String.Format("{0}", parm.FieldName);
+
+                else
+                    sqlColumnName = String.Format("{0}GUID", parm.FieldName);
+            }
+            else if (parm is EntityUpdateColumn<ServerEnum>)
+            {
+                if (parm.FieldName.EndsWith("Enum"))
+                    sqlColumnName = String.Format("{0}", parm.FieldName);
+
+                else
+                    sqlColumnName = String.Format("{0}Enum", parm.FieldName);
+            }
+            else
+            {
+                sqlColumnName = String.Format("{0}", parm.FieldName);
+            }
+
+            return sqlColumnName;
+        }
+
+        private static string GetUpdateWhereClause(SqlCommand command, ServerEntityKey key)
+        {
+            command.Parameters.AddWithValue("@PrimaryKey", key.Key);
+            return String.Format("[GUID]=@PrimaryKey");
+        }
+
+        private static String GetUpdateSetClause(SqlCommand command, EntityUpdateColumns parameters)
+        {
+            StringBuilder setClause = new StringBuilder();
+            bool first = true;
+            foreach (EntityColumnBase parm in parameters.SubParameters.Values)
+            {
+                String text;
+                String sqlParmName = GetDbColumnName(parm);
+                if (parm is EntityUpdateColumn<XmlDocument>)
+                {
+                    EntityUpdateColumn<XmlDocument> p = parm as EntityUpdateColumn<XmlDocument>;
+
+                    XmlDocument xml = p.Value;
+                    StringWriter sw = new StringWriter();
+                    XmlWriterSettings xmlSettings = new XmlWriterSettings();
+                    xmlSettings.Encoding = Encoding.UTF8;
+                    xmlSettings.ConformanceLevel = ConformanceLevel.Fragment;
+                    xmlSettings.Indent = false;
+                    xmlSettings.NewLineOnAttributes = false;
+                    xmlSettings.CheckCharacters = true;
+                    xmlSettings.IndentChars = "";
+
+                    XmlWriter xmlWriter = XmlWriter.Create(sw, xmlSettings);
+                    xml.WriteTo(xmlWriter);
+                    xmlWriter.Close();
+
+                    command.Parameters.AddWithValue("@" + sqlParmName, sw.ToString());
+                }
+                else if (parm is EntityUpdateColumn<ServerEnum>)
+                {
+                    EntityUpdateColumn<ServerEnum> p = parm as EntityUpdateColumn<ServerEnum>;
+                    ServerEnum v = p.Value;
+                    command.Parameters.AddWithValue("@" + sqlParmName, v.Enum);
+                }
+                else if (parm is EntityUpdateColumn<ServerEntity>)
+                {
+                    EntityUpdateColumn<ServerEntity> p = parm as EntityUpdateColumn<ServerEntity>;
+                    ServerEntity v = p.Value;
+                    command.Parameters.AddWithValue("@" + sqlParmName, v.GetKey().Key);
+                }
+                else if (parm is EntityUpdateColumn<ServerEntityKey>)
+                {
+                    EntityUpdateColumn<ServerEntityKey> p = parm as EntityUpdateColumn<ServerEntityKey>;
+                    ServerEntityKey key = p.Value;
+                    command.Parameters.AddWithValue("@" + sqlParmName, key.Key);
+                }
+                else
+                {
+                    if (parm.Value is ServerEnum)
+                    {
+                        ServerEnum v = (ServerEnum)parm.Value;
+                        command.Parameters.AddWithValue("@" + sqlParmName, v.Enum);
+                    }
+                    else
+                        command.Parameters.AddWithValue("@" + sqlParmName, parm.Value);
+                }
+
+                text = String.Format("[{0}]=@{0}", sqlParmName);
+
+                if (first)
+                {
+                    first = false;
+                    setClause.AppendFormat(text);
+                }
+                else
+                    setClause.AppendFormat(", {0}", text);
+            }
+
+            return setClause.ToString();
+        }
+
+        /// <summary>
+        /// Proves a SQL statement based on the supplied input criteria.
+        /// </summary>
+        /// <param name="entityName">The entity that is being selected from.</param>
+        /// <param name="command">The SqlCommand to use.</param>
+        /// <param name="key">The GUID of the table row to update</param>
+        /// <param name="parameters">The columns to update.</param>
+        /// <returns>The SQL string.</returns>
+        private static string GetUpdateSql(string entityName, SqlCommand command, ServerEntityKey key,
+                                           EntityUpdateColumns parameters)
+        {
+            // SET clause
+            String setClause = GetUpdateSetClause(command, parameters);
+
+            // WHERE clause
+            String whereClause = GetUpdateWhereClause(command, key);
+
+            return String.Format("UPDATE [{0}] SET {1} WHERE {2}", entityName, setClause, whereClause);
+        }
+
+        /// <summary>
+        /// Generates a SQL statement based on the input.
+        /// </summary>
+        /// <param name="entityName">The entity that is being selected from.</param>
+        /// <param name="parameters">The columns to insert.</param>
+        /// <param name="command">The SQL Command for which the Insert SQL is being created.</param>
+        /// <returns>The SQL string.</returns>
+        private static string GetInsertSql(SqlCommand command, string entityName, EntityUpdateColumns parameters)
+        {
+            Guid guid = Guid.NewGuid();
+
+            // Build the text after the INSERT INTO clause
+            StringBuilder intoText = new StringBuilder();
+            intoText.Append("(");
+            intoText.Append("[GUID]");
+
+            // Build the text after the VALUES clause
+            StringBuilder valuesText = new StringBuilder();
+            valuesText.Append("(");
+            valuesText.AppendFormat("@PrimaryKey");
+            command.Parameters.AddWithValue("@PrimaryKey", guid);
+
+            foreach (EntityColumnBase parm in parameters.SubParameters.Values)
+            {
+                String sqlParmName = GetDbColumnName(parm);
+                intoText.AppendFormat(", {0}", sqlParmName);
+
+                if (parm.Value is ServerEnum)
+                {
+                    ServerEnum v = (ServerEnum) parm.Value;
+                    valuesText.AppendFormat(", @{0}", sqlParmName);
+                    command.Parameters.AddWithValue("@" + sqlParmName, v.Enum);
+                }
+                else if (parm is EntityUpdateColumn<ServerEntity>)
+                {
+                    ServerEntity v = (ServerEntity) parm.Value;
+                    valuesText.AppendFormat(", @{0}", sqlParmName);
+                    command.Parameters.AddWithValue("@" + sqlParmName, v.GetKey().Key);
+                }
+                else if (parm is EntityUpdateColumn<ServerEntityKey>)
+                {
+                    ServerEntityKey key = (ServerEntityKey) parm.Value;
+                    valuesText.AppendFormat(", @{0}", sqlParmName);
+                    command.Parameters.AddWithValue("@" + sqlParmName, key.Key);
+                }
+                else if (parm is EntityUpdateColumn<XmlDocument>)
+                {
+                    XmlDocument xml = (XmlDocument) parm.Value;
+                    StringBuilder sb = new StringBuilder();
+                    XmlWriterSettings settings = new XmlWriterSettings();
+                    settings.Indent = false;
+
+                    using (XmlWriter writer = XmlWriter.Create(sb, settings))
+                    {
+                        xml.WriteTo(writer);
+                        writer.Flush();
+                    }
+
+                    valuesText.AppendFormat(", @{0}", sqlParmName);
+                    command.Parameters.AddWithValue("@" + sqlParmName, sb.ToString());
+                }
+                else
+                {
+                    valuesText.AppendFormat(", @{0}", sqlParmName);
+                    command.Parameters.AddWithValue("@" + sqlParmName, parm.Value);
+                }
+            }
+            intoText.Append(")");
+            valuesText.Append(")");
+
+            // Generate the INSERT statement
+            StringBuilder sql = new StringBuilder();
+            sql.AppendFormat("INSERT INTO [{0}] {1} VALUES {2}\n", entityName, intoText, valuesText);
+
+            // Add the SELECT statement. This allows us to popuplate the entity with the inserted values 
+            // and return to the caller
+            sql.AppendFormat("SELECT * FROM [{0}] WHERE [GUID]=@PrimaryKey", entityName);
+
+            return sql.ToString();
+        }
+
+        #endregion
+
+        #region IEntityBroker<TServerEntity,TSelectCriteria,TUpdateColumns> Members
 
         /// <summary>
         /// Load an entity based on the primary key.
         /// </summary>
         /// <param name="entityRef"></param>
         /// <returns></returns>
-        public TOutput Load(ServerEntityKey entityRef)
+        public TServerEntity Load(ServerEntityKey entityRef)
         {
-            TOutput row = new TOutput();
+            TServerEntity row = new TServerEntity();
 
             SqlDataReader myReader = null;
             SqlCommand command = null;
@@ -387,7 +628,7 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                     {
                         myReader.Read();
 
-                        PopulateEntity(myReader, row, typeof (TOutput));
+                        PopulateEntity(myReader, row, typeof (TServerEntity));
 
                         return row;
                     }
@@ -418,16 +659,16 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
             return row;
         }
 
-        public IList<TOutput> Find(TSelectCriteria criteria)
+        public IList<TServerEntity> Find(TSelectCriteria criteria)
         {
-            IList<TOutput> list = new List<TOutput>();
+            IList<TServerEntity> list = new List<TServerEntity>();
 
-            Find(criteria, delegate(TOutput row) { list.Add(row); });
+            Find(criteria, delegate(TServerEntity row) { list.Add(row); });
 
             return list;
         }
 
-        public void Find(TSelectCriteria criteria, SelectCallback<TOutput> callback)
+        public void Find(TSelectCriteria criteria, SelectCallback<TServerEntity> callback)
         {
             SqlDataReader myReader = null;
             SqlCommand command = null;
@@ -442,7 +683,7 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                 if (update != null)
                     command.Transaction = update.Transaction;
 
-                command.CommandText = sql = GetSql(_entityName, command, criteria, null);
+                command.CommandText = sql = GetSelectSql(_entityName, command, criteria, null);
 
                 myReader = command.ExecuteReader();
                 if (myReader == null)
@@ -459,9 +700,9 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                     {
                         while (myReader.Read())
                         {
-                            TOutput row = new TOutput();
+                            TServerEntity row = new TServerEntity();
 
-                            PopulateEntity(myReader, row, typeof (TOutput));
+                            PopulateEntity(myReader, row, typeof (TServerEntity));
 
                             callback(row);
                         }
@@ -525,223 +766,6 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
             }
         }
 
-        #endregion
-
-        #region Protected Static methods
-
-        /// <summary>
-        /// Resolves the DB column name for a field name
-        /// </summary>
-        /// <param name="parm"></param>
-        /// <returns></returns>
-        protected static String GetDBColumnName(EntityColumnBase parm)
-        {
-            String sqlColumnName;
-
-            if (parm is EntityUpdateColumn<ServerEntity>)
-            {
-                if (parm.FieldName.EndsWith("Key"))
-                    sqlColumnName = String.Format("[{0}]", parm.FieldName.Replace("Key", "GUID"));
-
-                else if (parm.FieldName.EndsWith("GUID"))
-                    sqlColumnName = String.Format("[{0}]", parm.FieldName);
-
-                else
-                    sqlColumnName = String.Format("[{0}GUID]", parm.FieldName);
-            }
-            else if (parm is EntityUpdateColumn<ServerEntityKey>)
-            {
-                if (parm.FieldName.EndsWith("Key"))
-                    sqlColumnName = String.Format("[{0}]", parm.FieldName.Replace("Key", "GUID"));
-
-                else if (parm.FieldName.EndsWith("GUID"))
-                    sqlColumnName = String.Format("[{0}]", parm.FieldName);
-
-                else
-                    sqlColumnName = String.Format("[{0}GUID]", parm.FieldName);
-            }
-            else if (parm is EntityUpdateColumn<ServerEnum>)
-            {
-                if (parm.FieldName.EndsWith("Enum"))
-                    sqlColumnName = String.Format("[{0}]", parm.FieldName);
-
-                else
-                    sqlColumnName = String.Format("[{0}Enum]", parm.FieldName);
-            }
-            else
-            {
-                sqlColumnName = String.Format("[{0}]", parm.FieldName);
-            }
-
-            return sqlColumnName;
-        }
-
-        protected static String BuildWhereClause(ServerEntityKey key, EntityUpdateColumns parm)
-        {
-            return String.Format("[GUID]='{0}'", key.Key);
-        }
-
-        protected static String BuildSetClause(EntityUpdateColumns parameters)
-        {
-            StringBuilder setClause = new StringBuilder();
-            bool first = true;
-            foreach (EntityColumnBase parm in parameters.SubParameters.Values)
-            {
-                String text;
-
-                if (parm is EntityUpdateColumn<XmlDocument>)
-                {
-                    EntityUpdateColumn<XmlDocument> p = parm as EntityUpdateColumn<XmlDocument>;
-
-                    XmlDocument xml = p.Value;
-                    StringWriter sw = new StringWriter();
-                    XmlWriterSettings xmlSettings = new XmlWriterSettings();
-                    xmlSettings.Encoding = Encoding.UTF8;
-                    xmlSettings.ConformanceLevel = ConformanceLevel.Fragment;
-                    xmlSettings.Indent = false;
-                    xmlSettings.NewLineOnAttributes = false;
-                    xmlSettings.CheckCharacters = true;
-                    xmlSettings.IndentChars = "";
-
-                    XmlWriter xmlWriter = XmlWriter.Create(sw, xmlSettings);
-                    xml.WriteTo(xmlWriter);
-                    xmlWriter.Close();
-
-                    text = String.Format("{0}='{1}'", GetDBColumnName(parm), sw);
-                }
-                else if (parm is EntityUpdateColumn<ServerEnum>)
-                {
-                    EntityUpdateColumn<ServerEnum> p = parm as EntityUpdateColumn<ServerEnum>;
-                    ServerEnum v = p.Value;
-                    text = String.Format("{0}='{1}'", GetDBColumnName(parm), v.Enum);
-                }
-                else if (parm is EntityUpdateColumn<ServerEntity>)
-                {
-                    EntityUpdateColumn<ServerEntity> p = parm as EntityUpdateColumn<ServerEntity>;
-                    ServerEntity v = p.Value;
-                    text = String.Format("{0}='{1}'", GetDBColumnName(parm), v.GetKey().Key);
-                }
-                else if (parm is EntityUpdateColumn<ServerEntityKey>)
-                {
-                    EntityUpdateColumn<ServerEntityKey> p = parm as EntityUpdateColumn<ServerEntityKey>;
-                    ServerEntityKey key = p.Value;
-                    text = String.Format("{0}='{1}'", GetDBColumnName(parm), key.Key);
-                }
-                else
-                {
-                    text = String.Format("{0}='{1}'", GetDBColumnName(parm), parm.Value);
-                }
-
-                if (first)
-                {
-                    first = false;
-                    setClause.AppendFormat(text);
-                }
-                else
-                    setClause.AppendFormat(", {0}", text);
-            }
-
-            return setClause.ToString();
-        }
-
-        /// <summary>
-        /// Proves a SQL statement based on the supplied input criteria.
-        /// </summary>
-        /// <param name="entityName">The entity that is being selected from.</param>
-        /// <param name="command">The SqlCommand to use.</param>
-        /// <param name="key">The GUID of the table row to update</param>
-        /// <param name="parameters">The columns to update.</param>
-        /// <returns>The SQL string.</returns>
-        protected static string BuildUpdateSql(string entityName, SqlCommand command, ServerEntityKey key,
-                                               EntityUpdateColumns parameters)
-        {
-            // SET clause
-            String setClause = BuildSetClause(parameters);
-
-            // WHERE caluse
-            String whereClause = BuildWhereClause(key, parameters);
-
-            return String.Format("UPDATE [{0}] SET {1} WHERE {2}", entityName, setClause, whereClause);
-        }
-
-        /// <summary>
-        /// Generates a SQL statement based on the input.
-        /// </summary>
-        /// <param name="entityName">The entity that is being selected from.</param>
-        /// <param name="parameters">The columns to insert.</param>
-        /// <returns>The SQL string.</returns>
-        protected static string BuildInsertSql(string entityName, EntityUpdateColumns parameters)
-        {
-            Guid guid = Guid.NewGuid();
-
-            // Build the text after the INSERT INTO clause
-            StringBuilder intoText = new StringBuilder();
-            intoText.Append("(");
-            intoText.Append("[GUID]");
-            foreach (EntityColumnBase parm in parameters.SubParameters.Values)
-            {
-                intoText.AppendFormat(", {0}", GetDBColumnName(parm));
-            }
-            intoText.Append(")");
-
-            // Build the text after the VALUES clause
-            StringBuilder valuesText = new StringBuilder();
-            valuesText.Append("(");
-            valuesText.AppendFormat("'{0}'", guid);
-            foreach (EntityColumnBase parm in parameters.SubParameters.Values)
-            {
-                if (parm is EntityUpdateColumn<ServerEnum>)
-                {
-                    ServerEnum v = (ServerEnum) parm.Value;
-                    valuesText.AppendFormat(", '{0}'", v.Enum);
-                }
-                else if (parm is EntityUpdateColumn<ServerEntity>)
-                {
-                    ServerEntity v = (ServerEntity) parm.Value;
-                    valuesText.AppendFormat(", '{0}'", v.GetKey().Key);
-                }
-                else if (parm is EntityUpdateColumn<ServerEntityKey>)
-                {
-                    ServerEntityKey key = (ServerEntityKey) parm.Value;
-                    valuesText.AppendFormat(", '{0}'", key.Key);
-                }
-                else if (parm is EntityUpdateColumn<XmlDocument>)
-                {
-                    XmlDocument xml = (XmlDocument) parm.Value;
-                    StringBuilder sb = new StringBuilder();
-                    XmlWriterSettings settings = new XmlWriterSettings();
-                    settings.Indent = false;
-
-                    using (XmlWriter writer = XmlWriter.Create(sb, settings))
-                    {
-                        xml.WriteTo(writer);
-                        writer.Flush();
-                    }
-
-                    valuesText.AppendFormat(", N'{0}'", sb);
-                        // NOTE: SQL Server 2005 stores data in Unicode (UTF-16) by default. XML string must be prefixed with an N to define it as a Unicode string
-                }
-                else
-                {
-                    valuesText.AppendFormat(", '{0}'", parm.Value);
-                }
-            }
-            valuesText.Append(")");
-
-            // Generate the INSERT statement
-            StringBuilder sql = new StringBuilder();
-            sql.AppendFormat("INSERT INTO [{0}] {1} VALUES {2}\n", entityName, intoText, valuesText);
-
-            // Add the SELECT statement. This allows us to popuplate the entity with the inserted values 
-            // and return to the caller
-            sql.AppendFormat("SELECT * FROM [{0}] WHERE [GUID]='{1}'", entityName, guid);
-
-            return sql.ToString();
-        }
-
-        #endregion Protected Static methods
-
-        #region IUpdateBroker<TInput,TOutput> Members
 
         public bool Delete(ServerEntityKey key)
         {
@@ -783,7 +807,7 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
             }
         }
 
-        public bool Update(ServerEntityKey key, TUpdateFields parameters)
+        public bool Update(ServerEntityKey key, TUpdateColumns parameters)
         {
             Platform.CheckForNullReference(key, "key");
             Platform.CheckForNullReference(parameters, "parameters");
@@ -799,7 +823,7 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                 if (update != null)
                     command.Transaction = update.Transaction;
 
-                command.CommandText = BuildUpdateSql(_entityName, command, key, parameters);
+                command.CommandText = GetUpdateSql(_entityName, command, key, parameters);
 
                 int rows = command.ExecuteNonQuery();
 
@@ -824,7 +848,7 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
             }
         }
 
-        public TOutput Insert(TUpdateFields parameters)
+        public TServerEntity Insert(TUpdateColumns parameters)
         {
             Platform.CheckForNullReference(parameters, "parameters");
             Platform.CheckFalse(parameters.IsEmpty, "parameters must not be empty");
@@ -841,9 +865,9 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                 if (update != null)
                     command.Transaction = update.Transaction;
 
-                command.CommandText = BuildInsertSql(_entityName, parameters);
+                command.CommandText = GetInsertSql(command, _entityName, parameters);
 
-                TOutput entity = null;
+                TServerEntity entity = null;
 
                 using (SqlDataReader reader = command.ExecuteReader())
                 {
@@ -851,8 +875,8 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                     {
                         while (reader.Read())
                         {
-                            entity = new TOutput();
-                            PopulateEntity(reader, entity, typeof (TOutput));
+                            entity = new TServerEntity();
+                            PopulateEntity(reader, entity, typeof (TServerEntity));
                             break;
                         }
                     }

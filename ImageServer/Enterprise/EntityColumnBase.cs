@@ -30,13 +30,12 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 
 namespace ClearCanvas.ImageServer.Enterprise
 {
     /// <summary>
     /// Abstract base class for doing inserts and updates with the
-    /// <see cref="IEntityBroker{a,b,c}"/> interface.
+    /// <see cref="IEntityBroker{TServerEntity,TSelectCriteria,TUpdateColumns}"/> interface.
     /// </summary>
     public abstract class EntityColumnBase
     {
@@ -69,6 +68,10 @@ namespace ClearCanvas.ImageServer.Enterprise
 
         #region Constructors
 
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="fieldName">The column name.</param>
         protected EntityColumnBase(String fieldName)
         {
             _fieldName = fieldName;

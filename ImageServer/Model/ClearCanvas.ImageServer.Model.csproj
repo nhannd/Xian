@@ -40,7 +40,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Brokers\IWebQueryWorkQueue.cs" />
-    <Compile Include="Brokers\IDeleteFilesystemQueue.cs" />
     <Compile Include="Brokers\IDeleteStudyStorage.cs" />
     <Compile Include="Brokers\IInsertFilesystemQueue.cs" />
     <Compile Include="Brokers\IInsertWorkQueueAutoRoute.cs" />
@@ -51,8 +50,6 @@
     <Compile Include="Brokers\IResetWorkQueueItems.cs" />
     <Compile Include="Brokers\IDeleteWorkQueueUid.cs" />
     <Compile Include="Brokers\IInsertFilesystem.cs" />
-    <Compile Include="Brokers\IUpdateFileSystem.cs" />
-    <Compile Include="Brokers\IUpdateServerPartition.cs" />
     <Compile Include="Brokers\IUpdateServiceLock.cs" />
     <Compile Include="Device.gen.cs" />
     <Compile Include="DevicePreferredTransferSyntax.gen.cs" />
@@ -124,6 +121,7 @@
     <Compile Include="FilesystemQueue.gen.cs" />
     <Compile Include="FilesystemQueueTypeEnum.gen.cs" />
     <Compile Include="FilesystemTierEnum.gen.cs" />
+    <Compile Include="Parameters\FilesystemInsertParameters.cs" />
     <Compile Include="Parameters\WebWorkQueueQueryParameters.cs" />
     <Compile Include="PartitionSopClass.cs" />
     <Compile Include="PartitionSopClass.gen.cs" />
@@ -140,29 +138,20 @@
     <Compile Include="ServiceLockTypeEnum.gen.cs" />
     <Compile Include="StorageFilesystem.gen.cs" />
     <Compile Include="Study.gen.cs" />
-    <Compile Include="Brokers\IGetFilesystems.cs" />
-    <Compile Include="Brokers\IGetServerPartitions.cs" />
-    <Compile Include="Brokers\IGetServerTransferSyntaxes.cs" />
     <Compile Include="Brokers\IInsertInstance.cs" />
     <Compile Include="Brokers\IInsertRequestAttributes.cs" />
     <Compile Include="Brokers\IInsertServerPartition.cs" />
     <Compile Include="Brokers\IInsertStudyStorage.cs" />
-    <Compile Include="Brokers\IGetServerSopClasses.cs" />
     <Compile Include="Brokers\IInsertWorkQueueStudyProcess.cs" />
-    <Compile Include="Brokers\IQueryDevicePreferredTransferSyntax.cs" />
     <Compile Include="Brokers\IQueryModalitiesInStudy.cs" />
-    <Compile Include="Parameters\FilesystemQueueDeleteParameters.cs" />
     <Compile Include="Parameters\FilesystemQueueInsertParameters.cs" />
     <Compile Include="Parameters\FilesystemQueueQueryParameters.cs" />
-    <Compile Include="Parameters\FilesystemUpdateParameters.cs" />
-    <Compile Include="Parameters\ServerPartitionUpdateParameters.cs" />
     <Compile Include="Parameters\ServiceLockQueryParameters.cs" />
     <Compile Include="Parameters\ServiceLockResetParameters.cs" />
     <Compile Include="Parameters\ServiceLockUpdateParameters.cs" />
     <Compile Include="Parameters\StudyStorageDeleteParameters.cs" />
     <Compile Include="Parameters\WorkQueueAutoRouteInsertParameters.cs" />
     <Compile Include="Parameters\WorkQueueResetParameters.cs" />
-    <Compile Include="Parameters\FilesystemInsertParameters.cs" />
     <Compile Include="Parameters\WorkQueueDeleteStudyInsertParameters.cs" />
     <Compile Include="Brokers\IQueryRequestAttributes.cs" />
     <Compile Include="Brokers\IQueryServerPartitionSopClasses.cs" />
@@ -173,7 +162,6 @@
     <Compile Include="DevicePreferredTransferSyntax.cs" />
     <Compile Include="Brokers\IQueryWorkQueue.cs" />
     <Compile Include="InstanceKeys.cs" />
-    <Compile Include="Parameters\DevicePreferredTransferSyntaxQueryParameters.cs" />
     <Compile Include="Parameters\InstanceInsertParameters.cs" />
     <Compile Include="Parameters\ModalitiesInStudyQueryParameters.cs" />
     <Compile Include="Parameters\RequestAttributesInsertParameters.cs" />

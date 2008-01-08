@@ -29,23 +29,23 @@
 
 #endregion
 
-using ClearCanvas.Enterprise.Core;
-using System.Collections.Generic;
 using System;
 
 namespace ClearCanvas.ImageServer.Enterprise
 {
-    
     /// <summary>
     /// Generic base class for update parameter classes used in a non-procedural update broker implementing the <see cref="IUpdateBroker"/> interface.
     /// </summary>
     /// <typeparam name="T">The type of the field to be updated</typeparam>
     public class EntityUpdateColumn<T> : EntityColumnBase
-    {
-        #region Private Members
-        #endregion
-
+    {      
         #region Constructors
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="fieldName">The update column name.</param>
+        /// <param name="value">The value to update.</param>
         public EntityUpdateColumn(String fieldName, T value)
             : base(fieldName)
         {
@@ -55,16 +55,15 @@ namespace ClearCanvas.ImageServer.Enterprise
         #endregion Constructors
 
         #region Public Properties
-        
+
+        /// <summary>
+        /// The value of the column to update.
+        /// </summary>
         public new T Value
         {
             get { return (T) _value; }
         }
 
         #endregion Public properties
-
-
     }
-
-    
 }

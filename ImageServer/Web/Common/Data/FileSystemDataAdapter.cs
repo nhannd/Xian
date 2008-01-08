@@ -97,28 +97,17 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
         public bool Update(Filesystem filesystem)
         {
-            bool ok;
+            FilesystemUpdateColumns parms = new FilesystemUpdateColumns();
+            parms.Description = filesystem.Description;
+            parms.Enabled = filesystem.Enabled;
+            parms.FilesystemPath = filesystem.FilesystemPath;
+            parms.ReadOnly = filesystem.ReadOnly;
+            parms.FilesystemTierEnum = filesystem.FilesystemTierEnum;
+            parms.WriteOnly = filesystem.WriteOnly;
+            parms.HighWatermark = filesystem.HighWatermark;
+            parms.LowWatermark = filesystem.LowWatermark;
 
-            using (IUpdateContext ctx = PersistentStore.OpenUpdateContext(UpdateContextSyncMode.Flush))
-            {
-                IUpdateFilesystem update = ctx.GetBroker<IUpdateFilesystem>();
-                FilesystemUpdateParameters parms = new FilesystemUpdateParameters();
-                parms.FileSystemKey = filesystem.GetKey();
-                parms.Description = filesystem.Description;
-                parms.Enabled = filesystem.Enabled;
-                parms.FilesystemPath = filesystem.FilesystemPath;
-                parms.ReadOnly = filesystem.ReadOnly;
-                parms.FilesystemTierEnum = filesystem.FilesystemTierEnum;
-                parms.WriteOnly = filesystem.WriteOnly;
-                parms.HighWatermark = filesystem.HighWatermark;
-                parms.LowWatermark = filesystem.LowWatermark;
-
-                ok = update.Execute(parms);
-                if (ok)
-                    ctx.Commit();
-            }
-
-            return ok;
+            return Update(filesystem.GetKey(), parms);
         }
 
         public IList<FilesystemTierEnum> GetFileSystemTiers()

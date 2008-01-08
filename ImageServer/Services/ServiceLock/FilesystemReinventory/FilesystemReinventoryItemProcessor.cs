@@ -37,6 +37,7 @@ using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
+using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
@@ -169,10 +170,11 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
         {
             _monitor = new FilesystemMonitor();
             _monitor.Load();
-            _store = PersistentStoreRegistry.GetDefaultStore();            
-            
-            IGetServerPartitions broker = ReadContext.GetBroker<IGetServerPartitions>();
-            _partitions = broker.Execute();
+            _store = PersistentStoreRegistry.GetDefaultStore();
+
+            IServerPartitionEntityBroker broker = ReadContext.GetBroker<IServerPartitionEntityBroker>();
+            ServerPartitionSelectCriteria criteria = new ServerPartitionSelectCriteria();
+            _partitions = broker.Find(criteria);
 
             ServerFilesystemInfo info;
             _monitor.Filesystems.TryGetValue(item.FilesystemKey, out info);

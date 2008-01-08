@@ -35,32 +35,52 @@ using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.ImageServer.Enterprise
 {
-
     [Serializable] // TH (Oct 5, 2007): All entity objects should be serializable to use in ASP.NET app
     public abstract class ServerEntity : Entity
     {
+        #region Private Members
+
         private ServerEntityKey _key;
-        private String _name;
+        private readonly String _name;
+
+        #endregion
+
+        #region Constructors
 
         public ServerEntity(String name)
-            : base()
         {
             _name = name;
         }
 
+        #endregion
 
+        #region Public Properties
+
+        /// <summary>
+        /// The name of the ServerEntity object.
+        /// </summary>
         public String Name
         {
             get { return _name; }
         }
 
+        #endregion
 
+        #region Public Methods
 
+        /// <summary>
+        /// Set the primary key of the ServerEntity object.
+        /// </summary>
+        /// <param name="key"></param>
         public void SetKey(ServerEntityKey key)
         {
             _key = key;
         }
 
+        /// <summary>
+        /// Get the primary key of the ServerEntity object.
+        /// </summary>
+        /// <returns>A <see cref="ServerEntityKey"/> object representating the primary key.</returns>
         public ServerEntityKey GetKey()
         {
             if (_key == null)
@@ -77,5 +97,7 @@ namespace ClearCanvas.ImageServer.Enterprise
         {
             throw new InvalidOperationException("Not supported by ServerEntity");
         }
+
+        #endregion
     }
 }

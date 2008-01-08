@@ -34,7 +34,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Brokers\WebQueryWorkQueue.cs" />
-    <Compile Include="Brokers\DeleteFilesystemQueue.cs" />
     <Compile Include="Brokers\DeleteStudyStorage.cs" />
     <Compile Include="Brokers\InsertFilesystem.cs" />
     <Compile Include="Brokers\InsertFilesystemQueue.cs" />
@@ -45,18 +44,11 @@
     <Compile Include="Brokers\ResetServiceLock.cs" />
     <Compile Include="Brokers\ResetWorkQueue.cs" />
     <Compile Include="Brokers\DeleteWorkQueueUid.cs" />
-    <Compile Include="Brokers\QueryDevicePreferredTransferSyntaxes.cs" />
-    <Compile Include="Brokers\GetFilesystems.cs" />
-    <Compile Include="Brokers\GetServerPartitions.cs" />
-    <Compile Include="Brokers\GetServerSopClasses.cs" />
-    <Compile Include="Brokers\GetServerTransferSyntaxes.cs" />
     <Compile Include="Brokers\InsertInstance.cs" />
     <Compile Include="Brokers\InsertRequestAttributes.cs" />
     <Compile Include="Brokers\InsertServerPartition.cs" />
     <Compile Include="Brokers\InsertStudyStorage.cs" />
     <Compile Include="Brokers\InsertWorkQueueStudyProcess.cs" />
-    <Compile Include="Brokers\UpdateFilesystem.cs" />
-    <Compile Include="Brokers\UpdateServerPartition.cs" />
     <Compile Include="Brokers\UpdateServiceLock.cs" />
     <Compile Include="EntityBrokers\DeviceEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\DevicePreferredTransferSyntaxEntityBroker.gen.cs" />

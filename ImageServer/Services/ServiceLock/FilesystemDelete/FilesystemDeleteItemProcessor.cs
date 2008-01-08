@@ -62,23 +62,14 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
                 IUpdateContext update =
                     PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
-                IUpdateFilesystem filesystemUpdate = update.GetBroker<IUpdateFilesystem>();
+                IFilesystemEntityBroker filesystemUpdate = update.GetBroker<IFilesystemEntityBroker>();
 
-                FilesystemUpdateParameters updateParms = new FilesystemUpdateParameters();
+                FilesystemUpdateColumns updateParms = new FilesystemUpdateColumns();
 
                 ServerFilesystemInfo fs = _monitor.Filesystems[item.FilesystemKey];
-                updateParms.Description = fs.Filesystem.Description;
-                updateParms.Enabled = fs.Filesystem.Enabled;
-                updateParms.ReadOnly = fs.Filesystem.ReadOnly;
-                updateParms.WriteOnly = fs.Filesystem.WriteOnly;
-                updateParms.FileSystemKey = fs.Filesystem.GetKey();
-                updateParms.FilesystemPath = fs.Filesystem.FilesystemPath;
-                updateParms.FilesystemTierEnum = fs.Filesystem.FilesystemTierEnum;
-                updateParms.HighWatermark = fs.Filesystem.HighWatermark;
-                updateParms.LowWatermark = fs.Filesystem.LowWatermark;
                 updateParms.PercentFull = (Decimal) fs.UsedSpacePercentage;
 
-                if (false == filesystemUpdate.Execute(updateParms))
+                if (false == filesystemUpdate.Update(fs.Filesystem.GetKey(), updateParms))
                 {
                     Platform.Log(LogLevel.Error, "Unexpected problem updating Filesystem table with the Percent Full of the Filesystem");
                 }

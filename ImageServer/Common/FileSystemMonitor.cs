@@ -37,6 +37,7 @@ using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
+using ClearCanvas.ImageServer.Model.EntityBrokers;
 
 
 namespace ClearCanvas.ImageServer.Common
@@ -148,13 +149,13 @@ namespace ClearCanvas.ImageServer.Common
         {
             using (IReadContext read = _store.OpenReadContext())
             {
-                IGetServerPartitions partitionsQuery = read.GetBroker<IGetServerPartitions>();
+                IServerPartitionEntityBroker broker = read.GetBroker<IServerPartitionEntityBroker>();
+                ServerPartitionSelectCriteria partitionCriteria = new ServerPartitionSelectCriteria();
+                _partitionList = broker.Find(partitionCriteria);
 
-                _partitionList = partitionsQuery.Execute();
-
-                IGetFilesystems filesystemQuery = read.GetBroker<IGetFilesystems>();
-
-                IList<Filesystem> filesystemList = filesystemQuery.Execute();
+                IFilesystemEntityBroker filesystemSelect = read.GetBroker<IFilesystemEntityBroker>();
+                FilesystemSelectCriteria criteria = new FilesystemSelectCriteria();
+                IList<Filesystem> filesystemList = filesystemSelect.Find(criteria);
 
                 foreach (Filesystem filesystem in filesystemList)
                 {

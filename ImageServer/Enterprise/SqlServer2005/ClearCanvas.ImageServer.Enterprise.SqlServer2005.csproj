@@ -38,7 +38,6 @@
     <Compile Include="EntityBroker.cs" />
     <Compile Include="EnumBroker.cs" />
     <Compile Include="PersistentStore.cs" />
-    <Compile Include="ProcedureReadBroker.cs" />
     <Compile Include="PersistenceContext.cs" />
     <Compile Include="ProcedureQueryBroker.cs" />
     <Compile Include="ProcedureUpdateBroker.cs" />

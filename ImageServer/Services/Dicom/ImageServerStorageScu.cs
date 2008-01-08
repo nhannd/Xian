@@ -37,6 +37,7 @@ using ClearCanvas.DicomServices.Xml;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
+using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Services.Dicom
@@ -83,13 +84,14 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// <param name="read">A read context to read from the database.</param>
         public void LoadPreferredSyntaxes(IReadContext read)
         {
-            IQueryDevicePreferredTransferSyntax select = read.GetBroker<IQueryDevicePreferredTransferSyntax>();
+            IDevicePreferredTransferSyntaxEntityBroker select =
+                read.GetBroker<IDevicePreferredTransferSyntaxEntityBroker>();
 
             // Setup the select parameters.
-            DevicePreferredTransferSyntaxQueryParameters selectParms = new DevicePreferredTransferSyntaxQueryParameters();
-            selectParms.DeviceKey = _remoteDevice.GetKey();
+            DevicePreferredTransferSyntaxSelectCriteria criteria = new DevicePreferredTransferSyntaxSelectCriteria();
+            criteria.DeviceKey.EqualTo(_remoteDevice.GetKey());
 
-            IList<DevicePreferredTransferSyntax> list = select.Execute(selectParms);
+            IList<DevicePreferredTransferSyntax> list = select.Find(criteria);
 
             // Translate the list returned into the database into a list that is supported by the Storage SCU Component
             List<SupportedSop> sopList = new List<SupportedSop>();

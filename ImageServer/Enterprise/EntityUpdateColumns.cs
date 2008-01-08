@@ -31,31 +31,35 @@
 
 using System;
 using System.Collections.Generic;
-using ClearCanvas.Common;
-using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.ImageServer.Enterprise
 {
     /// <summary>
-    /// Abstract base class to store a collection of update parameters to be used in in a non-procedural update broker implementing the <see cref="IUpdateBroker"/> interface.
+    /// Abstract base class to store a collection of update columns to be used in in a 
+    /// non-procedural broker implementing the 
+    /// <see cref="IEntityBroker{TServerEntity,TSelectCriteria,TUpdateColumns}"/> interface.
     /// </summary>
     /// <remark>
-    /// Each updatable field in the parameter collection is an element of the <see cref="SubParameters"/>.
+    /// Each updatable field in the parameter collection is an element of <see cref="SubParameters"/>.
     /// </remark>
     abstract public class EntityUpdateColumns
     {
         #region Private Members
 
-        protected string _fieldName;       
+        private readonly string _entityName;       
         private readonly Dictionary<string, EntityColumnBase> _subParameters = new Dictionary<string, EntityColumnBase>();
 
         #endregion
 
         #region Constructors
 
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="entityName">The name of the <see cref="ServerEntity"/>.</param>
         public EntityUpdateColumns(string entityName)
         {
-            _fieldName = entityName;
+            _entityName = entityName;
         }
 
         #endregion Constructors
@@ -86,7 +90,7 @@ namespace ClearCanvas.ImageServer.Enterprise
         /// </summary>
         public String FieldName
         {
-            get { return _fieldName; }
+            get { return _entityName; }
         }
 
         #endregion

@@ -33,13 +33,24 @@ using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.ImageServer.Enterprise
 {
+    /// <summary>
+    /// Abstract base class to store select criteria for a broker implementing
+    /// the <see cref="IEntityBroker{TServerEntity,TSelectCriteria,TUpdateColumns}"/> interface.
+    /// </summary>
     public abstract class EntitySelectCriteria : SearchCriteria
     {
-        public EntitySelectCriteria(string key)
-            :base(key)
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="entityName">The name of the <see cref="ServerEntity"/> the criteria selects against.</param>
+        public EntitySelectCriteria(string entityName)
+            : base(entityName)
         {
         }
 
+        /// <summary>
+        /// Constructor.
+        /// </summary>
         public EntitySelectCriteria()
         {
         }

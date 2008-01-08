@@ -35,7 +35,6 @@
   <ItemGroup>
     <Compile Include="IEntityBroker.cs" />
     <Compile Include="IEnumBroker.cs" />
-    <Compile Include="IProcedureReadBroker.cs" />
     <Compile Include="IProcedureQueryBroker.cs" />
     <Compile Include="IProcedureUpdateBroker.cs" />
     <Compile Include="EntitySelectCriteria.cs" />
