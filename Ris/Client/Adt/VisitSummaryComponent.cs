@@ -59,7 +59,7 @@ namespace ClearCanvas.Ris.Client.Adt
         private readonly EntityRef _patientRef;
 
         private VisitSummaryTable _visitTable;
-        private VisitSummary _currentVisitSelection;
+        private VisitSummary _selectedVisit;
 
         private CrudActionModel _visitActionHandler;
 
@@ -78,7 +78,14 @@ namespace ClearCanvas.Ris.Client.Adt
             _visitActionHandler.Delete.SetClickHandler(DeleteSelectedVisit);
             _visitActionHandler.Add.Enabled = true;
 
-            LoadVisitsTable();
+            _visitTable.Items.Clear();
+
+            Platform.GetService<IVisitAdminService>(
+                delegate(IVisitAdminService service)
+                {
+                    ListVisitsForPatientResponse response = service.ListVisitsForPatient(new ListVisitsForPatientRequest(_patientRef));
+                    _visitTable.Items.AddRange(response.Visits);
+                });
 
             base.Start();
         }
@@ -88,24 +95,19 @@ namespace ClearCanvas.Ris.Client.Adt
             get { return _visitTable; }
         }
 
-        public VisitSummary CurrentVisitSelection
+        public ISelection SelectedVisit
         {
-            get { return _currentVisitSelection; }
+            get { return new Selection(_selectedVisit); }
             set
             {
-                _currentVisitSelection = value;
+                _selectedVisit = (VisitSummary) value.Item;
                 VisitSelectionChanged();
             }
         }
 
-        public void SetSelectedVisit(ISelection selection)
-        {
-            this.CurrentVisitSelection = (VisitSummary)selection.Item;
-        }
-
         private void VisitSelectionChanged()
         {
-            if (_currentVisitSelection != null)
+            if (_selectedVisit != null)
             {
                 _visitActionHandler.Edit.Enabled = true;
                 _visitActionHandler.Delete.Enabled = true;
@@ -115,8 +117,9 @@ namespace ClearCanvas.Ris.Client.Adt
                 _visitActionHandler.Edit.Enabled = false;
                 _visitActionHandler.Delete.Enabled = false;
             }
-        }
 
+            NotifyPropertyChanged("SelectedVisit");
+        }
 
         public ActionModelNode VisitListActionModel
         {
@@ -131,7 +134,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 ApplicationComponentExitCode exitCode = LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleAddVisit);
                 if (exitCode == ApplicationComponentExitCode.Accepted)
                 {
-                    LoadVisitsTable();
+                    _visitTable.Items.Add(editor.AddedVisit);
                     this.Modified = true;
                 }
             }
@@ -144,15 +147,18 @@ namespace ClearCanvas.Ris.Client.Adt
         public void UpdateSelectedVisit()
         {             
             // can occur if user double clicks while holding control
-            if (_currentVisitSelection == null) return;
+            if (_selectedVisit == null) return;
 
             try
             {
-                VisitEditorComponent editor = new VisitEditorComponent(_patientRef, _currentVisitSelection.VisitRef);
+                VisitEditorComponent editor = new VisitEditorComponent(_selectedVisit);
                 ApplicationComponentExitCode exitCode = LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleUpdateVisit);
                 if (exitCode == ApplicationComponentExitCode.Accepted)
                 {
-                    LoadVisitsTable();
+                    // delete and re-insert to ensure that TableView updates correctly
+                    VisitSummary toBeRemoved = _selectedVisit;
+                    _visitTable.Items.Remove(toBeRemoved);
+                    _visitTable.Items.Add(editor.AddedVisit);
                     this.Modified = true;
                 }
             }
@@ -166,21 +172,8 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             if (this.Host.ShowMessageBox(SR.MessageDeleteSelectedVisit, MessageBoxActions.YesNo) == DialogBoxAction.Yes)
             {
-                //delete the visit
-                LoadVisitsTable();
+                //TODO: delete or de-activate the visit
             }
-        }
-
-        public void LoadVisitsTable()
-        {
-            _visitTable.Items.Clear();
-
-            Platform.GetService<IVisitAdminService>(
-                delegate(IVisitAdminService service)
-                {
-                    ListVisitsForPatientResponse response = service.ListVisitsForPatient(new ListVisitsForPatientRequest(_patientRef));
-                    _visitTable.Items.AddRange(response.Visits);
-                });
         }
 
         public void Close()

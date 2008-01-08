@@ -44,6 +44,7 @@ namespace ClearCanvas.Ris.Client.Adt
         private EntityRef _patientRef;
         private EntityRef _visitRef;
         private VisitDetail _visit;
+        private VisitSummary _addedVisit;
 
         private VisitDetailsEditorComponent _visitEditor;
         private VisitPractitionersSummaryComponent _visitPractionersSummary;
@@ -54,17 +55,17 @@ namespace ClearCanvas.Ris.Client.Adt
         /// <summary>
         /// Constructor
         /// </summary>
-        public VisitEditorComponent(EntityRef patientRef, EntityRef visitRef)
-        {
-            _isNew = false;
-            _patientRef = patientRef;
-            _visitRef = visitRef;
-        }
-
         public VisitEditorComponent(EntityRef patientRef)
         {
             _isNew = true;
             _patientRef = patientRef;
+        }
+
+        public VisitEditorComponent(VisitSummary editVisit)
+        {
+            _isNew = false;
+            _patientRef = editVisit.PatientRef;
+            _visitRef = editVisit.VisitRef;
         }
 
         public override void Start()
@@ -126,6 +127,11 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             base.Stop();
         }
+        
+        public VisitSummary AddedVisit
+        {
+            get { return _addedVisit; }
+        }
 
         public override void Accept()
         {
@@ -137,12 +143,14 @@ namespace ClearCanvas.Ris.Client.Adt
                         if (_isNew)
                         {
                             AdminAddVisitResponse response = service.AdminAddVisit(new AdminAddVisitRequest(_visit));
+                            _addedVisit = response.AddedVisit;
                             _patientRef = response.AddedVisit.PatientRef;
                             _visitRef = response.AddedVisit.VisitRef;
                         }
                         else
                         {
                             SaveAdminEditsForVisitResponse response = service.SaveAdminEditsForVisit(new SaveAdminEditsForVisitRequest(_visitRef, _visit));
+                            _addedVisit = response.AddedVisit;
                             _patientRef = response.AddedVisit.PatientRef;
                             _visitRef = response.AddedVisit.VisitRef;
                         }
