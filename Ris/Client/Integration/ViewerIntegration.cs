@@ -63,7 +63,7 @@ namespace ClearCanvas.Ris.Client.Integration
                 string windowName = "ImageViewer";
 
                 DesktopWindow viewerWindow =
-                    CollectionUtils.SelectFirst<DesktopWindow>(ClearCanvas.Desktop.Application.DesktopWindows,
+                    CollectionUtils.SelectFirst(ClearCanvas.Desktop.Application.DesktopWindows,
                     delegate(DesktopWindow window)
                     {
                         return window.Name == windowName;
@@ -104,14 +104,14 @@ namespace ClearCanvas.Ris.Client.Integration
 
         private static void OpenStudy(StudyItem study, IDesktopWindow window)
         {
-            DiagnosticImageViewerComponent imageViewer = new DiagnosticImageViewerComponent();
+            ImageViewerComponent imageViewer = new ImageViewerComponent();
 
             imageViewer.LoadStudy(study.StudyInstanceUID, "DICOM_LOCAL");
 
             string workspaceName = imageViewer.PatientsLoadedLabel;
 
             Workspace workspace =
-                CollectionUtils.SelectFirst<Workspace>(window.Workspaces,
+                CollectionUtils.SelectFirst(window.Workspaces,
                 delegate(Workspace ws)
                 {
                     return ws.Name == workspaceName;

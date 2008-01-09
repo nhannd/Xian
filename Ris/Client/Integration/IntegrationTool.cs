@@ -47,17 +47,14 @@ using ClearCanvas.ImageViewer.Services.LocalDataStore;
 using ClearCanvas.ImageViewer.StudyFinders.LocalDataStore;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
-using ClearCanvas.Ris.Application.Common.ModalityWorkflow.TechnologistDocumentation;
-using GetWorklistRequest = ClearCanvas.Ris.Application.Common.ModalityWorkflow.GetWorklistRequest;
-using GetWorklistResponse = ClearCanvas.Ris.Application.Common.ModalityWorkflow.GetWorklistResponse;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
-using SearchRequest=ClearCanvas.Ris.Application.Common.RegistrationWorkflow.SearchRequest;
+using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
+using ClearCanvas.Ris.Application.Common.Admin.DiagnosticServiceAdmin;
 
 namespace ClearCanvas.Ris.Client.Integration
 {
     [MenuAction("apply", "global-menus/Tools/Integration", "Apply")]
-    [ButtonAction("apply", "global-toolbars/Tools/Integration", "Apply")]
+    // [ButtonAction("apply", "global-toolbars/Tools/Integration", "Apply")]
     [Tooltip("apply", "Integration")]
     [IconSet("apply", IconScheme.Colour, "AddToolSmall.png", "AddToolMedium.png", "AddToolLarge.png")]
     [ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.DemoAdmin)]
@@ -103,7 +100,7 @@ namespace ClearCanvas.Ris.Client.Integration
                     PatientProfileSummary profile = RandomUtils.RandomPatientProfile();
 
                     context.ReportProgress(new BackgroundTaskProgress(CalculatePercentage(step++, totalStep), commonMessage + "Generate a visit..."));
-                    VisitSummary visit = RandomUtils.RandomVisit(profile.PatientRef, profile.ProfileRef, profile.Mrn.AssigningAuthority);
+                    VisitSummary visit = RandomUtils.RandomVisit(profile.PatientRef, profile.PatientProfileRef, profile.Mrn.AssigningAuthority);
 
                     context.ReportProgress(new BackgroundTaskProgress(CalculatePercentage(step++, totalStep), commonMessage + "Generate an order..."));
                     string newOrderAccessionNumber = GenerateRandomOrder(profile, diagnosticServiceName, visit);
@@ -175,50 +172,48 @@ namespace ClearCanvas.Ris.Client.Integration
             if (String.IsNullOrEmpty(diagnosticServiceName))
                 throw new Exception(String.Format(SR.MessageFailedToFindDiagnosticServiceName, studyDescription));
 
+            List<DiagnosticServiceSummary> diagnosticServiceChoices = null;
+            Platform.GetService<IDiagnosticServiceAdminService>(
+                delegate(IDiagnosticServiceAdminService service)
+                {
+                    // get the diagnostic service by name, or if name is null, just load the first 100
+                    // so that we can choose a random one
+                    ListDiagnosticServicesRequest request = new ListDiagnosticServicesRequest(diagnosticServiceName, null);
+                    request.Page.FirstRow = 0;
+                    request.Page.MaxRows = 100;
+                    diagnosticServiceChoices = service.ListDiagnosticServices(request).DiagnosticServices;
+                });
+
+            if (diagnosticServiceChoices == null || diagnosticServiceChoices.Count == 0)
+                throw new Exception(String.Format("Cannot find diagnostic service with name {0}", diagnosticServiceName));
+
             return diagnosticServiceName;
         }
 
         private static string GenerateRandomOrder(PatientProfileSummary profile, string diagnosticServiceName, VisitSummary visit)
         {
-            EntityRef orderRef = RandomUtils.RandomOrder(visit, diagnosticServiceName);
-            string accessionNumber = null;
-
-            Platform.GetService<IRegistrationWorkflowService>(
-                delegate(IRegistrationWorkflowService service)
-                    {
-                        SearchRequest request = new SearchRequest();
-                        request.TextQuery = string.Join(" ", new string[] { profile.Name.FamilyName, profile.Name.GivenName, profile.Mrn.Id });
-                        TextQueryResponse<RegistrationWorklistItem> response = service.Search(request);
-
-                        RegistrationWorklistItem selectedItem = CollectionUtils.SelectFirst(
-                            response.Matches,
-                            delegate(RegistrationWorklistItem item)
-                                {
-                                    return item.OrderRef == orderRef;
-                                });
-
-                        accessionNumber = selectedItem.AccessionNumber;
-                    });
-
+            // Generate a random order for this profile
+            EntityRef orderRef = RandomUtils.RandomOrder(visit, profile.Mrn.AssigningAuthority, diagnosticServiceName);
 
             // Look for the modality procedure steps of the new order
             List<ModalityWorklistItem> listItem = null;
             Platform.GetService<IModalityWorkflowService>(
                 delegate(IModalityWorkflowService service)
                     {
-                        GetWorklistResponse workflowResponse = service.GetWorklist(new GetWorklistRequest("ClearCanvas.Healthcare.Workflow.Modality.Worklists+Scheduled"));
+                        Application.Common.ModalityWorkflow.GetWorklistItemsResponse workflowResponse = service.GetWorklistItems(
+                            new Application.Common.ModalityWorkflow.GetWorklistItemsRequest(WorklistTokens.TechnologistScheduledWorklist));
 
                         listItem = CollectionUtils.Select<ModalityWorklistItem, List<ModalityWorklistItem>>(
                             workflowResponse.WorklistItems,
                             delegate(ModalityWorklistItem item)
                             {
-                                return item.AccessionNumber == accessionNumber;
+                                return item.OrderRef == orderRef;
                             });
                     });
 
             // Completing the modality procedure step of the new order
-            Platform.GetService<ITechnologistDocumentationService>(
-                delegate(ITechnologistDocumentationService service)
+            Platform.GetService<IModalityWorkflowService>(
+                delegate(IModalityWorkflowService service)
                 {
                     CollectionUtils.ForEach(listItem,
                         delegate(ModalityWorklistItem item)
@@ -228,15 +223,16 @@ namespace ClearCanvas.Ris.Client.Integration
                             StartModalityProcedureStepsResponse startMpsResponse = service.StartModalityProcedureSteps(
                                 new StartModalityProcedureStepsRequest(mpsRefs));
 
-                            service.StopModalityPerformedProcedureStep(
-                                new StopModalityPerformedProcedureStepRequest(
+                            // CompleteModalityPerformedProcedureStepResponse completePPSResponse = 
+                            service.CompleteModalityPerformedProcedureStep(
+                                new CompleteModalityPerformedProcedureStepRequest(
                                     startMpsResponse.StartedMpps.ModalityPerformendProcedureStepRef,
                                     startMpsResponse.StartedMpps.ExtendedProperties));
                         });
 
                 });
 
-            return accessionNumber;
+            return listItem[0].AccessionNumber;
         }
 
         #endregion

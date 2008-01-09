@@ -1,50 +1,67 @@
-<Project DefaultTargets="Create App Config;CopyClientFiles;CopyDatabaseFiles;CopyImageViewerFiles" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Copy Files" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 	<PropertyGroup>
 		<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
 	</PropertyGroup>
-	
-	<PropertyGroup>
-		<DistributionDirectory>$(ProjectDir)\$(OutDir)</DistributionDirectory>		
-		<TrunkDirectory>$(SolutionDir)\..\..\..</TrunkDirectory>
-		<PluginsDirectory>$(DistributionDirectory)\plugins</PluginsDirectory>
-		<JscriptDirectory>$(ProjectDir)\..\..\Jscript\bin\$(Configuration)</JscriptDirectory>
-    <DatabaseDirectory>C:\dicom_datastore</DatabaseDirectory>
-    <SourceEmptyDatabaseFile>$(TrunkDirectory)\Dicom\DataStore\AuxiliaryFiles\empty_viewer.sdf</SourceEmptyDatabaseFile>
-    <RisClientDirectory>$(SolutionDir)\..\..\Client</RisClientDirectory>
-    <AppConfigCreatorSourceFiles>$(SolutionDir)..\..\..\Desktop\Executable\app.config $(SolutionDir)\RisViewerIntegration_dist.config</AppConfigCreatorSourceFiles>
+
+  <PropertyGroup>
+    <TrunkDirectory>$(SolutionDir)..\..\..</TrunkDirectory>
+    <PluginsDirectory>$(DistributionDirectory)\plugins</PluginsDirectory>
+
+    <ImageViewerDirectory>$(TrunkDirectory)\ImageViewer</ImageViewerDirectory>
+    <JscriptDirectory>$(TrunkDirectory)\Jscript\bin\$(Configuration)</JscriptDirectory>
+    <RisClientDirectory>$(TrunkDirectory)\Ris\Client</RisClientDirectory>
   </PropertyGroup>
 
+  <Choose>
+    <When Condition=" '$(ProjectOutDir)' != '$(DistributionDirectory)' ">
+      <PropertyGroup>
+        <DatabaseDirectory>$(DistributionDirectory)\dicom_datastore</DatabaseDirectory>
+        <FileStoreDirectory>.\filestore</FileStoreDirectory>
+        <DatabaseFile>$(DatabaseDirectory)\viewer.sdf</DatabaseFile>
+        <HibernateConfigurationFileDataSource>dicom_datastore\viewer.sdf</HibernateConfigurationFileDataSource>
+      </PropertyGroup>
+    </When>
+    <Otherwise>
+      <PropertyGroup>
+        <DatabaseDirectory>$(SolutionDir)\..\dicom_datastore</DatabaseDirectory>
+        <FileStoreDirectory>$(SolutionDir)\..\dicom_datastore\filestore</FileStoreDirectory>
+        <DatabaseFile>$(DatabaseDirectory)\viewer.sdf</DatabaseFile>
+        <HibernateConfigurationFileDataSource>$(DatabaseFile)</HibernateConfigurationFileDataSource>
+      </PropertyGroup>
+    </Otherwise>
+  </Choose>
+
+  <PropertyGroup>
+
+    <!--Database-->
+    <DatabaseFileEmptySource>$(TrunkDirectory)\Dicom\DataStore\AuxiliaryFiles\empty_viewer.sdf</DatabaseFileEmptySource>
+
+    <!--Hibernate Configuration-->
+    <HibernateConfigurationFileName>ClearCanvas.Dicom.DataStore.cfg.xml</HibernateConfigurationFileName>
+    <HibernateConfigurationFileSource>$(TrunkDirectory)\Dicom\DataStore\AuxiliaryFiles\$(HibernateConfigurationFileName)</HibernateConfigurationFileSource>
+
+  </PropertyGroup>
+
+  <!--What files get copied depends on which project we are building.  The only other
+  way to do this would be to have ImageViewerDesktop_dist.config and ImageViewerShredHost_dist.config, but they would be
+  pretty much identical except for the plugins.  Also, this way, you only have to do the upkeep on one file.-->
+
+  <PropertyGroup Condition ="'$(ProjectName)' == 'ClearCanvas.Desktop.Executable'">
+    <DesktopBuild>true</DesktopBuild>
+    <ShredHostBuild>false</ShredHostBuild>
+  </PropertyGroup>
+
+  <PropertyGroup Condition ="'$(ProjectName)' == 'ClearCanvas.Server.ShredHostService'">
+    <DesktopBuild>false</DesktopBuild>
+    <ShredHostBuild>true</ShredHostBuild>
+  </PropertyGroup>
+  
+<!-- ImageViewer ItemGroups -->
   <ItemGroup>
-    <ConfigFiles Include="$(SolutionDir)\actionmodels.xml" />
     <DatabaseFiles Include="$(SourceEmptyDatabaseFile)" />
   </ItemGroup>
 
   <ItemGroup>
-    <SharedLibraryFiles Include="$(TrunkDirectory)\Enterprise\Common\bin\$(Configuration)\ClearCanvas.Enterprise.Common.dll" />
-    <SharedLibraryFiles Include="$(TrunkDirectory)\Ris\Application\Common\bin\$(Configuration)\ClearCanvas.Ris.Application.Common.dll" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ClientModuleFiles Include="$(RisClientDirectory)\bin\$(Configuration)\ClearCanvas.Ris.Client.dll" />
-    <ClientModuleFiles Include="$(RisClientDirectory)\View\WinForms\bin\$(Configuration)\ClearCanvas.Ris.Client.View.WinForms.dll" />
-
-    <ClientModuleFiles Include="$(RisClientDirectory)\Admin\bin\$(Configuration)\ClearCanvas.Ris.Client.Admin.dll" />
-    <ClientModuleFiles Include="$(RisClientDirectory)\Admin\View\WinForms\bin\$(Configuration)\ClearCanvas.Ris.Client.Admin.View.WinForms.dll" />
-    <ClientModuleFiles Include="$(RisClientDirectory)\Adt\bin\$(Configuration)\ClearCanvas.Ris.Client.Adt.dll" />
-    <ClientModuleFiles Include="$(RisClientDirectory)\Adt\View\WinForms\bin\$(Configuration)\ClearCanvas.Ris.Client.Adt.View.WinForms.dll" />
-
-    <ClientModuleFiles Include="$(RisClientDirectory)\Reporting\bin\$(Configuration)\ClearCanvas.Ris.Client.Reporting.dll" />
-    <ClientModuleFiles Include="$(RisClientDirectory)\Reporting\View\WinForms\bin\$(Configuration)\ClearCanvas.Ris.Client.Reporting.View.WinForms.dll" />
-    <ClientModuleFiles Include="$(RisClientDirectory)\Integration\bin\$(Configuration)\ClearCanvas.Ris.Client.Integration.dll" />
-    <ClientModuleFiles Include="$(RisClientDirectory)\Integration\View\WinForms\bin\$(Configuration)\ClearCanvas.Ris.Client.Integration.View.WinForms.dll" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <JscriptFiles Include="$(JscriptDirectory)\ClearCanvas.Jscript.dll" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <SqlCEFiles Include="$(TrunkDirectory)\Dicom\DataStore\NHibernateDriver\bin\$(Configuration)\ClearCanvas.Dicom.DataStore.NHibernateDriver.dll" />
     <SqlCEFiles Include="$(TrunkDirectory)\Dicom\DataStore\AuxiliaryFiles\sqlceca30.dll" />
     <SqlCEFiles Include="$(TrunkDirectory)\Dicom\DataStore\AuxiliaryFiles\sqlcecompact30.dll" />
     <SqlCEFiles Include="$(TrunkDirectory)\Dicom\DataStore\AuxiliaryFiles\sqlceer30EN.dll" />
@@ -56,7 +73,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <HibernateConfigurationFiles Include="$(TrunkDirectory)\Dicom\DataStore\AuxiliaryFiles\ClearCanvas.Dicom.DataStore.cfg.xml" />
+    <HibernateFiles Include="$(TrunkDirectory)\ReferencedAssemblies\NHibernate1.2\Iesi.Collections.dll" />
+    <HibernateFiles Include="$(TrunkDirectory)\ReferencedAssemblies\NHibernate1.2\Nhibernate.dll" />
   </ItemGroup>
 
   <ItemGroup>
@@ -67,73 +85,131 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ImageViewerPluginFiles Include="$(TrunkDirectory)\ImageViewer\bin\$(Configuration)\ClearCanvas.ImageViewer.dll" />
-    <ImageViewerPluginFiles Include="$(TrunkDirectory)\ImageViewer\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.View.WinForms.dll" />
-    <ImageViewerPluginFiles Include="$(TrunkDirectory)\Codecs\bin\$(Configuration)\ClearCanvas.Codecs.dll" />
-    <ImageViewerPluginFiles Include="$(TrunkDirectory)\ImageViewer\Explorer\Dicom\bin\$(Configuration)\ClearCanvas.ImageViewer.Explorer.Dicom.dll" />
-    <ImageViewerPluginFiles Include="$(TrunkDirectory)\ImageViewer\Explorer\Dicom\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms.dll" />
-    <ImageViewerPluginFiles Include="$(TrunkDirectory)\ImageViewer\StudyFinders\LocalDataStore\bin\$(Configuration)\ClearCanvas.ImageViewer.StudyFinders.LocalDataStore.dll" />
-    <ImageViewerPluginFiles Include="$(TrunkDirectory)\ImageViewer\StudyLoaders\LocalDataStore\bin\$(Configuration)\ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore.dll" />
-    <ImageViewerPluginFiles Include="$(TrunkDirectory)\ImageViewer\Configuration\bin\$(Configuration)\ClearCanvas.ImageViewer.Configuration.dll" />
-    <ImageViewerPluginFiles Include="$(TrunkDirectory)\ImageViewer\Configuration\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Configuration.View.WinForms.dll" />
-    <ImageViewerPluginFiles Include="$(TrunkDirectory)\ImageViewer\Layout\Basic\bin\$(Configuration)\ClearCanvas.ImageViewer.Layout.Basic.dll" />
-    <ImageViewerPluginFiles Include="$(TrunkDirectory)\ImageViewer\Layout\Basic\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Layout.Basic.View.WinForms.dll" />
-    <ImageViewerPluginFiles Include="$(TrunkDirectory)\ImageViewer\Rendering\BilinearInterpolation\bin\$(Configuration)\ClearCanvas.ImageViewer.Rendering.BilinearInterpolation.dll" />
-    <ImageViewerPluginFiles Include="$(TrunkDirectory)\ImageViewer\Tools\Standard\bin\$(Configuration)\ClearCanvas.ImageViewer.Tools.Standard.dll" />
-    <ImageViewerPluginFiles Include="$(TrunkDirectory)\ImageViewer\Tools\Standard\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Tools.Standard.View.WinForms.dll" />
-    <ImageViewerPluginFiles Include="$(TrunkDirectory)\ImageViewer\AnnotationProviders\bin\$(Configuration)\ClearCanvas.ImageViewer.AnnotationProviders.dll" />
-    <ImageViewerPluginFiles Include="$(TrunkDirectory)\ImageViewer\Services\bin\$(Configuration)\ClearCanvas.ImageViewer.Services.dll" />
+    <ImageViewerAppConfigCreatorSourceFiles Include="$(TrunkDirectory)\Desktop\Executable\app.config" />
+    <ImageViewerAppConfigCreatorSourceFiles Include="$(ImageViewerDirectory)\ImageViewer_dist.config" />
+  </ItemGroup>
 
-    <ImageViewerPluginFiles Include="$(TrunkDirectory)\ImageViewer\Explorer\Local\bin\$(Configuration)\ClearCanvas.ImageViewer.Explorer.Local.dll" />
-    <ImageViewerPluginFiles Include="$(TrunkDirectory)\ImageViewer\Explorer\Local\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Explorer.Local.View.WinForms.dll" />
-    <ImageViewerPluginFiles Include="$(TrunkDirectory)\Desktop\Explorer\bin\$(Configuration)\ClearCanvas.Desktop.Explorer.dll" />
-    <ImageViewerPluginFiles Include="$(TrunkDirectory)\ImageViewer\Services\Tools\bin\$(Configuration)\ClearCanvas.ImageViewer.Services.Tools.dll" />
-    <ImageViewerPluginFiles Include="$(TrunkDirectory)\ImageViewer\Services\Tools\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Services.Tools.View.WinForms.dll" />
+  <ItemGroup>
+    <ShredHostAppConfigCreatorSourceFiles Include="$(TrunkDirectory)\Server\ShredHostService\app.config" />
+    <ShredHostAppConfigCreatorSourceFiles Include="$(ImageViewerDirectory)\ImageViewer_Shreds_dist.config" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ImageViewerServicesFiles Include="$(ImageViewerDirectory)\Services\bin\$(Configuration)\ClearCanvas.ImageViewer.Services.dll" />
+  </ItemGroup>
+
+  <ItemGroup Condition="$(DesktopBuild)">
+    <PluginFiles Include="$(TrunkDirectory)\Codecs\bin\$(Configuration)\ClearCanvas.Codecs.dll" />
+    <PluginFiles Include="$(ImageViewerDirectory)\bin\$(Configuration)\ClearCanvas.ImageViewer.dll" />
+    <PluginFiles Include="$(ImageViewerDirectory)\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.View.WinForms.dll" />
+    <PluginFiles Include="$(ImageViewerDirectory)\Explorer\Dicom\bin\$(Configuration)\ClearCanvas.ImageViewer.Explorer.Dicom.dll" />
+    <PluginFiles Include="$(ImageViewerDirectory)\Explorer\Dicom\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms.dll" />
+    <PluginFiles Include="$(ImageViewerDirectory)\StudyFinders\LocalDataStore\bin\$(Configuration)\ClearCanvas.ImageViewer.StudyFinders.LocalDataStore.dll" />
+    <PluginFiles Include="$(ImageViewerDirectory)\StudyLoaders\LocalDataStore\bin\$(Configuration)\ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore.dll" />
+    <PluginFiles Include="$(ImageViewerDirectory)\Configuration\bin\$(Configuration)\ClearCanvas.ImageViewer.Configuration.dll" />
+    <PluginFiles Include="$(ImageViewerDirectory)\Configuration\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Configuration.View.WinForms.dll" />
+    <PluginFiles Include="$(ImageViewerDirectory)\Layout\Basic\bin\$(Configuration)\ClearCanvas.ImageViewer.Layout.Basic.dll" />
+    <PluginFiles Include="$(ImageViewerDirectory)\Layout\Basic\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Layout.Basic.View.WinForms.dll" />
+    <PluginFiles Include="$(ImageViewerDirectory)\Rendering\BilinearInterpolation\bin\$(Configuration)\ClearCanvas.ImageViewer.Rendering.BilinearInterpolation.dll" />
+    <PluginFiles Include="$(ImageViewerDirectory)\Tools\Standard\bin\$(Configuration)\ClearCanvas.ImageViewer.Tools.Standard.dll" />
+    <PluginFiles Include="$(ImageViewerDirectory)\Tools\Standard\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Tools.Standard.View.WinForms.dll" />
+    <PluginFiles Include="$(ImageViewerDirectory)\AnnotationProviders\bin\$(Configuration)\ClearCanvas.ImageViewer.AnnotationProviders.dll" />
+
+    <PluginFiles Include="$(TrunkDirectory)\Desktop\Explorer\bin\$(Configuration)\ClearCanvas.Desktop.Explorer.dll" />
+    <PluginFiles Include="$(ImageViewerDirectory)\Explorer\Local\bin\$(Configuration)\ClearCanvas.ImageViewer.Explorer.Local.dll" />
+    <PluginFiles Include="$(ImageViewerDirectory)\Explorer\Local\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Explorer.Local.View.WinForms.dll" />
+    <PluginFiles Include="$(ImageViewerDirectory)\Services\Tools\bin\$(Configuration)\ClearCanvas.ImageViewer.Services.Tools.dll" />
+    <PluginFiles Include="$(ImageViewerDirectory)\Services\Tools\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Services.Tools.View.WinForms.dll" />
     <!--
-    <ImageViewerPluginFiles Include="$(TrunkDirectory)\ImageViewer\Services\Tools\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Services.Tools.View.WinForms.dll" />
-    <ImageViewerPluginFiles Include="$(TrunkDirectory)\ImageViewer\Tools\Measurement\bin\$(Configuration)\ClearCanvas.ImageViewer.Tools.Measurement.dll" />
-    <ImageViewerPluginFiles Include="$(TrunkDirectory)\Desktop\Edit\bin\$(Configuration)\ClearCanvas.Desktop.Edit.dll" />
-    <ImageViewerPluginFiles Include="$(TrunkDirectory)\ImageViewer\StudyFinders\Remote\bin\$(Configuration)\ClearCanvas.ImageViewer.StudyFinders.Remote.dll" />
-    <ImageViewerPluginFiles Include="$(TrunkDirectory)\Utilities\DicomEditor\bin\$(Configuration)\ClearCanvas.Utilities.DicomEditor.dll" />
-    <ImageViewerPluginFiles Include="$(TrunkDirectory)\Utilities\DicomEditor\View\WinForms\bin\$(Configuration)\ClearCanvas.Utilities.DicomEditor.View.WinForms.dll" />
+    <PluginFiles Include="$(TrunkDirectory)\Desktop\Edit\bin\$(Configuration)\ClearCanvas.Desktop.Edit.dll" />
+    <PluginFiles Include="$(ImageViewerDirectory)\ImageViewer\Services\Tools\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Services.Tools.View.WinForms.dll" />
+    <PluginFiles Include="$(ImageViewerDirectory)\ImageViewer\Tools\Measurement\bin\$(Configuration)\ClearCanvas.ImageViewer.Tools.Measurement.dll" />
+    <PluginFiles Include="$(ImageViewerDirectory)\ImageViewer\StudyFinders\Remote\bin\$(Configuration)\ClearCanvas.ImageViewer.StudyFinders.Remote.dll" />
+    <PluginFiles Include="$(TrunkDirectory)\Utilities\DicomEditor\bin\$(Configuration)\ClearCanvas.Utilities.DicomEditor.dll" />
+    <PluginFiles Include="$(TrunkDirectory)\Utilities\DicomEditor\View\WinForms\bin\$(Configuration)\ClearCanvas.Utilities.DicomEditor.View.WinForms.dll" />
     -->
   </ItemGroup>
 
-  <Target Name="CopyClientFiles">
-		<!-- Copy Client files -->
-		<Copy SourceFiles="@(ConfigFiles)" DestinationFolder="$(DistributionDirectory)" ContinueOnError="true" />
-		
-		<MakeDir Condition="!Exists('$(PluginsDirectory)')" Directories="$(PluginsDirectory)" ContinueOnError="true" />
-		<Copy SourceFiles="@(SharedLibraryFiles)" DestinationFolder="$(PluginsDirectory)" ContinueOnError="true" />
-		<Copy SourceFiles="@(ClientModuleFiles)" DestinationFolder="$(PluginsDirectory)" ContinueOnError="true" />
-		<Copy SourceFiles="@(JscriptFiles)" DestinationFolder="$(PluginsDirectory)" ContinueOnError="true" />
+<!-- End of ImageViewer ItemGroups -->
+
+<!-- Ris Client ItemGroups -->
+
+  <ItemGroup>
+    <RisPluginFiles Include="$(TrunkDirectory)\Enterprise\Common\bin\$(Configuration)\ClearCanvas.Enterprise.Common.dll" />
+    <RisPluginFiles Include="$(TrunkDirectory)\Ris\Application\Common\bin\$(Configuration)\ClearCanvas.Ris.Application.Common.dll" />
+    <RisPluginFiles Include="$(JscriptDirectory)\ClearCanvas.Jscript.dll" />
+
+    <RisPluginFiles Include="$(RisClientDirectory)\bin\$(Configuration)\ClearCanvas.Ris.Client.dll" />
+    <RisPluginFiles Include="$(RisClientDirectory)\View\WinForms\bin\$(Configuration)\ClearCanvas.Ris.Client.View.WinForms.dll" />
+
+    <RisPluginFiles Include="$(RisClientDirectory)\Admin\bin\$(Configuration)\ClearCanvas.Ris.Client.Admin.dll" />
+    <RisPluginFiles Include="$(RisClientDirectory)\Admin\View\WinForms\bin\$(Configuration)\ClearCanvas.Ris.Client.Admin.View.WinForms.dll" />
+    <RisPluginFiles Include="$(RisClientDirectory)\Adt\bin\$(Configuration)\ClearCanvas.Ris.Client.Adt.dll" />
+    <RisPluginFiles Include="$(RisClientDirectory)\Adt\View\WinForms\bin\$(Configuration)\ClearCanvas.Ris.Client.Adt.View.WinForms.dll" />
+
+    <RisPluginFiles Include="$(RisClientDirectory)\Reporting\bin\$(Configuration)\ClearCanvas.Ris.Client.Reporting.dll" />
+    <RisPluginFiles Include="$(RisClientDirectory)\Reporting\View\WinForms\bin\$(Configuration)\ClearCanvas.Ris.Client.Reporting.View.WinForms.dll" />
+    <RisPluginFiles Include="$(RisClientDirectory)\Integration\bin\$(Configuration)\ClearCanvas.Ris.Client.Integration.dll" />
+    <RisPluginFiles Include="$(RisClientDirectory)\Integration\View\WinForms\bin\$(Configuration)\ClearCanvas.Ris.Client.Integration.View.WinForms.dll" />
+  </ItemGroup>
+
+<!-- End of Ris Client ItemGroups -->
+
+  <ItemGroup Condition="$(ShredHostBuild)">
+    <PluginFiles Include="$(ImageViewerDirectory)\Shreds\bin\$(Configuration)\ClearCanvas.ImageViewer.Shreds.dll" />
+  </ItemGroup>
+
+  <Target Name="Build BuildTasks">
+    <MSBuild Projects="$(TrunkDirectory)\Utilities\BuildTasks\ClearCanvas.Utilities.BuildTasks.csproj" Properties="Configuration=$(Configuration);Platform=Any CPU;OutputPath=$(SolutionDir)\..\Utilities\BuildTasks\bin\$(Configuration)"/>
+  </Target>
+  <UsingTask TaskName="ClearCanvas.Utilities.BuildTasks.FileReplaceText" AssemblyFile="$(TrunkDirectory)\Utilities\BuildTasks\bin\$(Configuration)\ClearCanvas.Utilities.BuildTasks.dll"/>
+  <UsingTask TaskName="ClearCanvas.Utilities.BuildTasks.CombineAppConfigs" AssemblyFile="$(TrunkDirectory)\Utilities\BuildTasks\bin\$(Configuration)\ClearCanvas.Utilities.BuildTasks.dll"/>
+
+  <Target Name="Copy ImageViewer App Config">
+    <CombineAppConfigs SourceFiles="@(ImageViewerAppConfigCreatorSourceFiles)" OutputFile="$(DistributionDirectory)\ClearCanvas.Desktop.Executable.exe.config" />
   </Target>
 
-  <Target Name="CopyDatabaseFiles">
+  <Target Name="Copy ShredHost App Config">
+    <CombineAppConfigs SourceFiles="@(ShredHostAppConfigCreatorSourceFiles)" OutputFile="$(DistributionDirectory)\ClearCanvas.Server.ShredHostService.exe.config" />
+    <FileReplaceText FilePath="$(DistributionDirectory)\ClearCanvas.Server.ShredHostService.exe.config" TextToReplace="!filestore!" ReplacementText="$(FileStoreDirectory)"/>
+  </Target>
+
+  <Target Name="Copy Database Files">
     <!-- Copy database file -->
     <MakeDir Condition="!Exists('$(DatabaseDirectory)')" Directories="$(DatabaseDirectory)" />
-    <Copy SourceFiles="@(DatabaseFiles)" DestinationFolder="$(DatabaseDirectory)" />
-    <Copy Condition="!Exists('$(DatabaseDirectory)\viewer.sdf')" SourceFiles="$(SourceEmptyDatabaseFile)" DestinationFiles="$(DatabaseDirectory)\viewer.sdf" />
+    <Copy SkipUnchangedFiles="true" SourceFiles="@(DatabaseFiles)" DestinationFolder="$(DatabaseDirectory)" />
+    <Copy Condition="!Exists('$(DatabaseFile)')" SourceFiles="$(DatabaseFileEmptySource)" DestinationFiles="$(DatabaseFile)" />
   </Target>
 
-  <Target Name="CopyImageViewerFiles">
+  <Target Name="Copy Project Files" DependsOnTargets="Copy Database Files">
 
-    <!-- Copy Sql CE files -->
-    <Copy SourceFiles="@(SqlCEFiles)" DestinationFolder="$(CommonDirectory)" />
+    <!-- Copy Common files -->
+    <CreateItem Include="@(HibernateFiles);@(SqlCEFiles);@(DicomAssemblyFiles);@(ImageViewerServicesFiles)">
+      <Output ItemName="AllCommonFiles" TaskParameter="Include" />
+    </CreateItem>
+    <Copy SourceFiles="@(AllCommonFiles)" DestinationFolder="$(CommonDirectory)" />
+
+    <!-- Copy plugins -->
+    <Copy SourceFiles="@(PluginFiles)" DestinationFolder="$(PluginsDirectory)" />
 
     <!-- Copy Hibernate configuration file -->
-    <Copy SourceFiles="@(HibernateConfigurationFiles)" DestinationFolder="$(DistributionDirectory)" />
+    <Copy SourceFiles="$(HibernateConfigurationFileSource)" DestinationFolder="$(DistributionDirectory)" />
 
-    <!-- Copy Dicom assemblies	 -->
-    <Copy SourceFiles="@(DicomAssemblyFiles)" DestinationFolder="$(CommonDirectory)" />
+    <!-- Run the replace text task-->
+    <FileReplaceText FilePath="$(DistributionDirectory)\$(HibernateConfigurationFileName)" TextToReplace="!datasource!" ReplacementText="$(HibernateConfigurationFileDataSource)"/>
 
-    <!-- Copy ImageViewer plugins -->
-    <Copy SourceFiles="@(ImageViewerPluginFiles)" DestinationFolder="$(PluginsDirectory)" />
   </Target>
 
-  <Target Name="Create App Config">
-    <MSBuild Projects="$(SolutionDir)\..\..\..\Utilities\AppConfigCreator\AppConfigCreator.csproj" Properties="Configuration=$(Configuration);Platform=Any CPU;OutputPath=$(SolutionDir)\..\..\..\Utilities\AppConfigCreator\bin\$(Configuration)"/>
-    <Exec Command="$(SolutionDir)\..\..\..\Utilities\AppConfigCreator\bin\$(Configuration)\AppConfigCreator.exe $(AppConfigCreatorSourceFiles)" WorkingDirectory="$(SolutionDir)\..\..\..\Utilities\AppConfigCreator\bin\$(Configuration)"  />
-    <Copy SourceFiles="$(SolutionDir)\..\..\..\Utilities\AppConfigCreator\bin\$(Configuration)\app.config" DestinationFiles="$(DistributionDirectory)\ClearCanvas.Desktop.Executable.exe.config" />
+  <Target Name="Copy Client Files">
+    <MakeDir Condition="!Exists('$(PluginsDirectory)')" Directories="$(PluginsDirectory)" ContinueOnError="true" />
+    <Copy SourceFiles="@(RisPluginFiles)" DestinationFolder="$(PluginsDirectory)" ContinueOnError="true" />
   </Target>
+
+  <Target Name ="Copy Files" DependsOnTargets="Build BuildTasks">
+
+    <CallTarget Condition="$(DesktopBuild)" Targets="Copy Project Files;Copy ImageViewer App Config;Copy Client Files;" />
+    <CallTarget Condition="$(ShredHostBuild)" Targets="Copy Project Files;Copy ShredHost App Config" />
+
+  </Target>
+
 </Project>
