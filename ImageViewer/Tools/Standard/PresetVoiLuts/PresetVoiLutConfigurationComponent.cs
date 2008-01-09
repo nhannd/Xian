@@ -441,14 +441,14 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 			ResourceResolver resolver = new ResourceResolver(this.GetType().Assembly);
 
 			_toolbarModel = new SimpleActionModel(resolver);
-			_toolbarModel.AddAction("add", "LabelAdd", "AddToolSmall.png", OnAdd);
-			_toolbarModel.AddAction("edit", "LabelEdit", "EditToolSmall.png", OnEditSelected);
-			_toolbarModel.AddAction("delete", "LabelDelete", "DeleteToolSmall.png", OnDeleteSelected);
+			_toolbarModel.AddAction("add", SR.LabelAdd, "AddToolSmall.png", OnAdd);
+			_toolbarModel.AddAction("edit", SR.LabelEdit, "EditToolSmall.png", OnEditSelected);
+			_toolbarModel.AddAction("delete", SR.LabelDelete, "DeleteToolSmall.png", OnDeleteSelected);
 
 			_contextMenuModel = new SimpleActionModel(resolver);
-			_contextMenuModel.AddAction("add", "LabelAdd", "AddToolSmall.png", OnAdd);
-			_contextMenuModel.AddAction("edit", "LabelEdit", "EditToolSmall.png", OnEditSelected);
-			_contextMenuModel.AddAction("delete", "LabelDelete", "DeleteToolSmall.png", OnDeleteSelected);
+			_contextMenuModel.AddAction("add", SR.LabelAdd, "AddToolSmall.png", OnAdd);
+			_contextMenuModel.AddAction("edit", SR.LabelEdit, "EditToolSmall.png", OnEditSelected);
+			_contextMenuModel.AddAction("delete", SR.LabelDelete, "DeleteToolSmall.png", OnDeleteSelected);
 
 			_toolbarModel["add"].Visible = !HasMultipleFactories;
 			_contextMenuModel["add"].Visible = !HasMultipleFactories;
