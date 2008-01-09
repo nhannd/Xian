@@ -51,7 +51,7 @@ namespace ClearCanvas.ImageViewer.Rendering
             int srcHeight,
             int srcBytesPerPixel,
 			int srcBitsStored,
-            RectangleF dstRegionRectangle,
+            Rectangle dstRegionRectangle,
             byte* pDstPixelData,
             int dstWidth,
             int dstBytesPerPixel,
@@ -111,10 +111,10 @@ namespace ClearCanvas.ImageViewer.Rendering
 			int dstWidth,
 			int dstBytesPerPixel,
 
-			float dstRegionRectLeft,
-			float dstRegionRectTop,
-			float dstRegionRectRight,
-			float dstRegionRectBottom,
+			int dstRegionRectLeft,
+			int dstRegionRectTop,
+			int dstRegionRectRight,
+			int dstRegionRectBottom,
 
 			bool swapXY,
 			LUTDATA* lutData

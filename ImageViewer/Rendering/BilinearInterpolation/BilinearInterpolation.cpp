@@ -704,16 +704,16 @@ BOOL InterpolateBilinear
 	unsigned int dstWidth,
 	unsigned int dstBytesPerPixel,
 
-	float dstRegionRectLeft,
-	float dstRegionRectTop,
-	float dstRegionRectRight,
-	float dstRegionRectBottom,
+	int dstRegionRectLeft,
+	int dstRegionRectTop,
+	int dstRegionRectRight,
+	int dstRegionRectBottom,
 
 	BOOL swapXY,
 	LUTDATA* pLutData
 )
 {
-	float dstRegionHeight, dstRegionWidth;
+	int dstRegionHeight, dstRegionWidth;
 	unsigned int xDstStride, yDstStride, xDstIncrement, yDstIncrement;
 
     if (swapXY)
@@ -762,21 +762,20 @@ BOOL InterpolateBilinear
 
     float srcSlightlyLessThanWidthMinusOne = (float)srcWidth - SLIGHTLYGREATERTHANONE;
 
-    float xRatio = (float)srcRegionWidth / dstRegionWidth;
-    float yRatio = (float)srcRegionHeight / dstRegionHeight;
+    float xRatio = srcRegionWidth / (float)dstRegionWidth;
+    float yRatio = srcRegionHeight / (float)dstRegionHeight;
 
-	std::auto_ptr<int> spxSrcPixels(new int[((int)dstRegionWidth)+1]);
+	std::auto_ptr<int> spxSrcPixels(new int[dstRegionWidth]);
 	int* pxPixel = spxSrcPixels.get();
 
-	std::auto_ptr<int> spdxFixedAtSrcPixelCoordinates(new int[((int)dstRegionWidth)+1]);
+	std::auto_ptr<int> spdxFixedAtSrcPixelCoordinates(new int[dstRegionWidth]);
 	int * pdxFixed = spdxFixedAtSrcPixelCoordinates.get();
 
 	float floatDstRegionWidth = (float)dstRegionWidth;
-	float floatSrcRegionOriginX = (float)srcRegionRectLeft;
 
 	for (float x = 0; x < floatDstRegionWidth; ++x)
 	{
-		float xCoord = floatSrcRegionOriginX + (x + 0.5F) * xRatio;
+		float xCoord = srcRegionRectLeft + (x + 0.5F) * xRatio;
 
 		//a necessary evil, I'm afraid.
 		if (xCoord < 0)
@@ -813,8 +812,8 @@ BOOL InterpolateBilinear
 
 		InterpolateBilinearRGB(
 				pDstPixelData,
-				dstRegionWidth,
-				dstRegionHeight,
+				floatDstRegionWidth,
+				(float)dstRegionHeight,
 				xDstIncrement,
 				yDstIncrement,
 				pSrcPixelData,
@@ -838,8 +837,8 @@ BOOL InterpolateBilinear
 				InterpolateBilinearUnsigned16
 				(
 					pDstPixelData,
-					dstRegionWidth,
-					dstRegionHeight,
+					floatDstRegionWidth,
+					(float)dstRegionHeight,
 					xDstIncrement,
 					yDstIncrement,
 					(unsigned short*)pSrcPixelData,
@@ -859,8 +858,8 @@ BOOL InterpolateBilinear
 					InterpolateBilinearSigned16
 					(
 						pDstPixelData,
-						dstRegionWidth,
-						dstRegionHeight,
+						floatDstRegionWidth,
+						(float)dstRegionHeight,
 						xDstIncrement,
 						yDstIncrement,
 						(short*)pSrcPixelData,
@@ -878,8 +877,8 @@ BOOL InterpolateBilinear
 					InterpolateBilinearSignedSub16
 					(
 						pDstPixelData,
-						dstRegionWidth,
-						dstRegionHeight,
+						floatDstRegionWidth,
+						(float)dstRegionHeight,
 						xDstIncrement,
 						yDstIncrement,
 						(short*)pSrcPixelData,
@@ -902,8 +901,8 @@ BOOL InterpolateBilinear
 				InterpolateBilinearUnsigned8
 				(
 					pDstPixelData,
-					dstRegionWidth,
-					dstRegionHeight,
+					floatDstRegionWidth,
+					(float)dstRegionHeight,
 					xDstIncrement,
 					yDstIncrement,
 					pSrcPixelData,
@@ -921,8 +920,8 @@ BOOL InterpolateBilinear
 				InterpolateBilinearSigned8
 				(
 					pDstPixelData,
-					dstRegionWidth,
-					dstRegionHeight,
+					floatDstRegionWidth,
+					(float)dstRegionHeight,
 					xDstIncrement,
 					yDstIncrement,
 					(char*)pSrcPixelData,

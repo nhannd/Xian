@@ -104,6 +104,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// <param name="bitsStored"></param>
 		/// <param name="highBit"></param>
 		/// <param name="isSigned"></param>
+		/// <param name="inverted"></param>
 		/// <param name="rescaleSlope"></param>
 		/// <param name="rescaleIntercept"></param>
 		/// <param name="pixelData"></param>
@@ -117,6 +118,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 			int bitsStored,
 			int highBit,
 			bool isSigned,
+			bool inverted,
 			double rescaleSlope,
 			double rescaleIntercept,
 			byte[] pixelData)
@@ -127,7 +129,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 				bitsStored,
 				highBit,
 				isSigned,
-				false,
+				inverted,
 				pixelData)
 		{
 			Initialize(rescaleSlope, rescaleIntercept);

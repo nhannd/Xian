@@ -44,7 +44,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 	{
 		[ThreadStatic] private static int[] _finalLutBuffer;
 
-		public static int[] ConstructFinalLut(IComposedLut outputLut, IColorMap colorMap, bool invert)
+		private static int[] ConstructFinalLut(IComposedLut outputLut, IColorMap colorMap, bool invert)
 		{
 			CodeClock clock = new CodeClock();
 			clock.Start();
@@ -95,7 +95,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 			IntPtr pDstPixelData,
 			int dstWidth,
 			int dstBytesPerPixel,
-			RectangleF clientRectangle)
+			Rectangle clientRectangle)
 		{
 			if (clientRectangle.Width <= 0 || clientRectangle.Height <= 0)
 				return;
@@ -104,7 +104,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 			clock.Start();
 
 			RectangleF srcViewableRectangle;
-			RectangleF dstViewableRectangle;
+			Rectangle dstViewableRectangle;
 
 			CalculateVisibleRectangles(imageGraphic, clientRectangle, out dstViewableRectangle, out srcViewableRectangle);
 
@@ -154,8 +154,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 								grayscaleImage.IsSigned);
 						}
 					}
-
-					if (colorImage != null)
+					else if (colorImage != null)
 					{
 						int srcBytesPerPixel = 4;
 
@@ -194,10 +193,11 @@ namespace ClearCanvas.ImageViewer.Rendering
 			return !FloatComparer.AreEqual(m12, 0.0f, 0.001f);
 		}
 
-		private static void CalculateVisibleRectangles(
+		//internal for unit testing only.
+		internal static void CalculateVisibleRectangles(
 			ImageGraphic imageGraphic,
-			RectangleF clientRectangle,
-			out RectangleF dstVisibleRectangle,
+			Rectangle clientRectangle,
+			out Rectangle dstVisibleRectangle,
 			out RectangleF srcVisibleRectangle)
 		{
 			Rectangle srcRectangle = new Rectangle(0, 0, imageGraphic.Columns, imageGraphic.Rows);
@@ -205,24 +205,20 @@ namespace ClearCanvas.ImageViewer.Rendering
 
 			// Find the intersection between the drawable client rectangle and
 			// the transformed destination rectangle
-			dstVisibleRectangle = RectangleUtilities.Intersect(clientRectangle, dstRectangle);
+			dstRectangle = RectangleUtilities.RoundInflate(dstRectangle);
+			dstRectangle = RectangleUtilities.Intersect(clientRectangle, dstRectangle);
 
-			if (dstVisibleRectangle.IsEmpty)
+			if (dstRectangle.IsEmpty)
 			{
-				dstVisibleRectangle = RectangleF.Empty;
+				dstVisibleRectangle = Rectangle.Empty;
 				srcVisibleRectangle = RectangleF.Empty;
 				return;
 			}
 
-			// From that intersection, figure out what portion of the image
-			// is Visible in source coordinates
-			srcVisibleRectangle = imageGraphic.SpatialTransform.ConvertToSource(dstVisibleRectangle);
-
-			// Converting back and forth between source and destination can result in 
-			// floating point errors, so make sure that the visible rectangles are within
-			// the allowed bounds of the source and destination rectangles.
-			dstVisibleRectangle = RectangleUtilities.Intersect(dstVisibleRectangle, clientRectangle);
-			srcVisibleRectangle = RectangleUtilities.Intersect(srcVisibleRectangle, srcRectangle);
+			// Figure out what portion of the image is visible in source coordinates
+			srcVisibleRectangle = imageGraphic.SpatialTransform.ConvertToSource(dstRectangle);
+			//dstRectangle is already rounded, this is just a conversion to Rectangle.
+			dstVisibleRectangle = Rectangle.Round(dstRectangle);
 		}
 	}
 }

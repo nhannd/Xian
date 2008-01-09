@@ -42,10 +42,10 @@ extern "C"
             unsigned int dstWidth,
             unsigned int dstBytesPerPixel,
 
-			float dstRegionRectLeft,
-            float dstRegionRectTop,
-            float dstRegionRectRight,
-            float dstRegionRectBottom,
+			int dstRegionRectLeft,
+            int dstRegionRectTop,
+            int dstRegionRectRight,
+            int dstRegionRectBottom,
 
 			BOOL swapXY,
 			LUTDATA* pLutData
