@@ -38,7 +38,7 @@ using ClearCanvas.Enterprise.Common;
 namespace ClearCanvas.Enterprise.Core
 {
     /// <summary>
-    /// Used by <see cref="IEntityBroker.Load"/> to provide fine control over the loading of entities.
+    /// Used by <see cref="IEntityBroker{TEntity, TSearchCriteria}.Load"/> to provide fine control over the loading of entities.
     /// </summary>
     [Flags]
     public enum EntityLoadFlags
@@ -91,16 +91,20 @@ namespace ClearCanvas.Enterprise.Core
 
         /// <summary>
         /// Retrieves all entities matching the specified criteria.
-        /// Caution: this method may return an arbitrarily large result set.
         /// </summary>
+        /// <remarks>
+        /// Caution: this method may return an arbitrarily large result set.
+        /// </remarks>
         /// <param name="criteria"></param>
         /// <returns></returns>
         IList<TEntity> Find(TSearchCriteria criteria);
 
         /// <summary>
         /// Retrieves all entities matching any of the specified criteria (the criteria are combined using OR).
-        /// Caution: this method may return an arbitrarily large result set.
         /// </summary>
+        /// <remarks>
+        /// Caution: this method may return an arbitrarily large result set.
+        /// </remarks>
         /// <param name="criteria"></param>
         /// <returns></returns>
         IList<TEntity> Find(TSearchCriteria[] criteria);
@@ -134,9 +138,11 @@ namespace ClearCanvas.Enterprise.Core
         IList<TEntity> Find(TSearchCriteria[] criteria, SearchResultPage page, bool cache);
 
         /// <summary>
-        /// Retrieves the entire set of entities of this class.  Caution: this method may return an arbitrarily large
-        /// result set.
+        /// Retrieves the entire set of entities of this class.
         /// </summary>
+        /// <remarks>
+        /// Caution: this method may return an arbitrarily large result set.
+        /// </remarks>
         /// <returns></returns>
         IList<TEntity> FindAll();
 
@@ -150,8 +156,7 @@ namespace ClearCanvas.Enterprise.Core
 
         /// <summary>
         /// Retrieves the first entity matching any of the specified criteria (the criteria are combined using OR),
-        /// or throws a <see cref="EntityNotFoundException"/>
-        /// if no matching entity is found.
+        /// or throws a <see cref="EntityNotFoundException"/> if no matching entity is found.
         /// </summary>
         /// <param name="criteria"></param>
         /// <returns></returns>

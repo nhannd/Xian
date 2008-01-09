@@ -27,11 +27,14 @@ class FieldDef < ElementDef
     @accessorName = fieldNode.attributes['name']
     @fieldName = "_" + @accessorName[0..0].downcase + @accessorName[1..-1]
     
+    # check for a "column" sub-element
+    columnNode = fieldNode.elements['column']
+
     #if 'not-null' attribute is omitted, the default value is false (eg. the column is nullable)
-    @nullable = (fieldNode.attributes['not-null'] == nil || fieldNode.attributes['not-null'] == 'false')
+    @nullable = columnNode ? columnNode.attributes['not-null'] != 'true' : fieldNode.attributes['not-null'] != 'true'
     
     # length of the field if specified, or nil otherwise
-    @length = fieldNode.attributes['length']
+    @length = columnNode ? columnNode.attributes['length'] : fieldNode.attributes['length']
     
     # true if the field has a unique constraint, false otherwise
     @unique = (fieldNode.attributes['unique'] == 'true')
