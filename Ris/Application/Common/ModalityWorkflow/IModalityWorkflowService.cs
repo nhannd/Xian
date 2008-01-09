@@ -59,7 +59,7 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
         /// <returns></returns>
         [OperationContract]
         [FaultContract(typeof(RequestValidationException))]
-        GetWorklistResponse GetWorklist(GetWorklistRequest request);
+        GetWorklistItemsResponse GetWorklistItems(GetWorklistItemsRequest request);
 
         /// <summary>
         /// Get the item count for the specified worklist.
@@ -67,7 +67,7 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
         /// <param name="request"></param>
         /// <returns></returns>
         [OperationContract]
-        GetWorklistCountResponse GetWorklistCount(GetWorklistCountRequest request);
+        GetWorklistItemCountResponse GetWorklistItemCount(GetWorklistItemCountRequest request);
 
         /// <summary>
         /// Get the enablement of all workflow operations.

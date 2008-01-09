@@ -35,6 +35,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 using ClearCanvas.Ris.Client.Formatting;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -54,10 +55,10 @@ namespace ClearCanvas.Ris.Client.Adt
             // Visible Columns
             TableColumn<RegistrationWorklistItem, IconSet> priorityColumn =
                 new TableColumn<RegistrationWorklistItem, IconSet>(SR.ColumnPriority,
-                delegate(RegistrationWorklistItem item) { return GetOrderPriorityIcon(item.OrderPriority.Code); }, 0.5f);
+                delegate(RegistrationWorklistItem item) { return GetOrderPriorityIcon(item.OrderPriority); }, 0.5f);
             priorityColumn.Comparison = delegate(RegistrationWorklistItem item1, RegistrationWorklistItem item2)
                                             {
-                                                return GetOrderPriorityIndex(item1.OrderPriority.Code) - GetOrderPriorityIndex(item2.OrderPriority.Code);
+                                                return GetOrderPriorityIndex(item1.OrderPriority) - GetOrderPriorityIndex(item2.OrderPriority);
                                             };
             priorityColumn.ResourceResolver = new ResourceResolver(this.GetType().Assembly);
 
@@ -71,14 +72,16 @@ namespace ClearCanvas.Ris.Client.Adt
 
             TableColumn<RegistrationWorklistItem, string> patientClassColumn = 
                 new TableColumn<RegistrationWorklistItem, string>(SR.ColumnPatientClass,
-                delegate(RegistrationWorklistItem item) { return item.PatientClass.Value; }, 0.5f);
+                delegate(RegistrationWorklistItem item) { return item.PatientClass == null ? null : item.PatientClass.Value; }, 0.5f);
 
             TableColumn<RegistrationWorklistItem, string> descriptionRow = 
                 new TableColumn<RegistrationWorklistItem, string>(SR.ColumnDescription,
-                delegate(RegistrationWorklistItem item) { return string.Format("{0} {1} - {2}", 
-                    item.AccessionNumber, 
-                    item.DiagnosticServiceName, 
-                    item.ScheduledStartTime); },
+                delegate(RegistrationWorklistItem item)
+                {
+                    // if there is no accession number, this item represents a patient only, not an order
+                    return item.AccessionNumber == null ? null : 
+                        string.Format("{0} {1} - {2}", item.AccessionNumber, item.DiagnosticServiceName, item.ScheduledStartTime);
+                },
                 1.0f, DescriptionRow);
             descriptionRow.Comparison = null;
 
@@ -109,18 +112,15 @@ namespace ClearCanvas.Ris.Client.Adt
             this.Columns.Add(descriptionRow);
 
             // Sort the table by Scheduled Time initially
-            int sortColumnIndex = this.Columns.FindIndex(delegate(TableColumnBase<RegistrationWorklistItem> column)
-                { return column.Name.Equals(SR.ColumnScheduledFor); });
-
-            this.Sort(new TableSortParams(this.Columns[sortColumnIndex], true));
+            this.Sort(new TableSortParams(scheduledForColumn, true));
         }
 
-        private static int GetOrderPriorityIndex(string orderPriorityCode)
+        private static int GetOrderPriorityIndex(EnumValueInfo orderPriority)
         {
-            if (String.IsNullOrEmpty(orderPriorityCode))
+            if (orderPriority == null)
                 return 0;
 
-            switch (orderPriorityCode)
+            switch (orderPriority.Code)
             {
                 case "S": // Stats
                     return 2;
@@ -131,9 +131,12 @@ namespace ClearCanvas.Ris.Client.Adt
             }
         }
 
-        private static IconSet GetOrderPriorityIcon(string orderPriorityCode)
+        private static IconSet GetOrderPriorityIcon(EnumValueInfo orderPriority)
         {
-            switch (orderPriorityCode)
+            if (orderPriority == null)
+                return null;
+
+            switch (orderPriority.Code)
             {
                 case "S": // Stats
                     return new IconSet("DoubleExclamation.png");

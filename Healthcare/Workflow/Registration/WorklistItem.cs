@@ -31,15 +31,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 
-using Iesi.Collections;
-using ClearCanvas.Common;
 using ClearCanvas.Healthcare;
-using ClearCanvas.Enterprise.Core;
-using ClearCanvas.Workflow;
 using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Healthcare.Workflow.Registration
 {
@@ -72,7 +66,7 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
         private readonly Sex _sex;
 
         /// <summary>
-        /// Constructor
+        /// Constructor for a worklist item with patient and order information.
         /// </summary>
         public WorklistItem(
             Order order,
@@ -109,6 +103,38 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
             _sex = sex;
         }
 
+        /// <summary>
+        /// Constructor for a worklist item with patient information only.
+        /// </summary>
+        public WorklistItem(
+            Patient patient,
+            PatientProfile profile,
+            PatientIdentifier mrn,
+            PersonName patientName,
+            HealthcardNumber healthcardNumber,
+            DateTime? dateOfBirth,
+            Sex sex)
+            : base(
+                null,
+                null,
+                null,
+                patient,
+                profile,
+                mrn,
+                patientName,
+                null,
+                OrderPriority.R,    // technically this should be null, but we don't have that option because its a value type
+                null,
+                null,
+                null,
+                null
+            )
+        {
+            _healthcardNumber = healthcardNumber;
+            _dateOfBirth = dateOfBirth;
+            _sex = sex;
+        }
+
         #region Public Properties
 
         public HealthcardNumber HealthcardNumber
@@ -136,7 +162,9 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
         public bool Equals(WorklistItem worklistItem)
         {
             if (worklistItem == null) return false;
-            return Equals(this.OrderRef, worklistItem.OrderRef);
+
+            // include PatientRef in the comparison in case OrderRef is null
+            return Equals(this.PatientRef, worklistItem.PatientRef) && Equals(this.OrderRef, worklistItem.OrderRef);
         }
 
         public override bool Equals(object obj)
@@ -146,12 +174,16 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
         }
 
         /// <summary>
-        /// Overridden to be based on order rather than procedure step.
+        /// Overridden to be based on Order or Patient, rather than procedure step.
         /// </summary>
         /// <returns></returns>
         public override int GetHashCode()
         {
-            return this.OrderRef != null ? this.OrderRef.GetHashCode() : 0;
+            if (this.OrderRef != null)
+                return this.OrderRef.GetHashCode();
+            if (this.PatientRef != null)
+                return this.PatientRef.GetHashCode();
+            return 0;
         }
     }
 }

@@ -103,15 +103,15 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
         /// <param name="request"></param>
         /// <returns></returns>
         [ReadOperation]
-        public GetWorklistResponse GetWorklist(GetWorklistRequest request)
+        public GetWorklistItemsResponse GetWorklistItems(GetWorklistItemsRequest request)
         {
             ModalityWorkflowAssembler assembler = new ModalityWorkflowAssembler();
 
             IList items = request.WorklistRef == null
-                  ? GetWorklist(request.WorklistType)
-                  : GetWorklist(request.WorklistRef);
+                  ? GetWorklistItems(request.WorklistType)
+                  : GetWorklistItems(request.WorklistRef);
 
-            return new GetWorklistResponse(
+            return new GetWorklistItemsResponse(
                 CollectionUtils.Map<WorklistItem, ModalityWorklistItem, List<ModalityWorklistItem>>(
                     items,
                     delegate(WorklistItem queryResult)
@@ -126,13 +126,13 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
         /// <param name="request"></param>
         /// <returns></returns>
         [ReadOperation]
-        public GetWorklistCountResponse GetWorklistCount(GetWorklistCountRequest request)
+        public GetWorklistItemCountResponse GetWorklistItemCount(GetWorklistItemCountRequest request)
         {
             int count = request.WorklistRef == null
-                            ? GetWorklistCount(request.WorklistType)
-                            : GetWorklistCount(request.WorklistRef);
+                            ? GetWorklistItemCount(request.WorklistType)
+                            : GetWorklistItemCount(request.WorklistRef);
 
-            return new GetWorklistCountResponse(count);
+            return new GetWorklistItemCountResponse(count);
         }
 
         /// <summary>

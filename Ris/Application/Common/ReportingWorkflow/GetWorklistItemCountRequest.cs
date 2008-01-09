@@ -29,24 +29,28 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-
+using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Enterprise.Core;
-using ClearCanvas.Healthcare.Workflow.Registration;
 
-namespace ClearCanvas.Healthcare.Brokers
+namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
 {
-    public interface IRegistrationWorklistBroker : IPersistenceBroker
+    [DataContract]
+    public class GetWorklistItemCountRequest : DataContractBase
     {
-        IList<WorklistItem> GetWorklistItems(RegistrationWorklistItemSearchCriteria[] where, Worklist worklist);
-        int GetWorklistItemCount(RegistrationWorklistItemSearchCriteria[] where, Worklist worklist);
+        public GetWorklistItemCountRequest(string worklistType)
+        {
+            this.WorklistType = worklistType;
+        }
 
-        IList<WorklistItem> GetProtocolWorklistItems(Type stepClass, RegistrationWorklistItemSearchCriteria[] where, Worklist worklist);
-        int GetProtocolWorklistItemCount(Type stepClass, RegistrationWorklistItemSearchCriteria[] where, Worklist worklist);
+        public GetWorklistItemCountRequest(EntityRef worklistRef)
+        {
+            WorklistRef = worklistRef;
+        }
 
-        IList<WorklistItem> Search(WorklistItemSearchCriteria[] where, bool activeOrdersOnly, InformationAuthorityEnum workingInformationAuthority);
-        int SearchCountApprox(WorklistItemSearchCriteria[] where, bool activeOrdersOnly, InformationAuthorityEnum workingInformationAuthority);
+        [DataMember]
+        public EntityRef WorklistRef;
+
+        [DataMember]
+        public string WorklistType;
     }
 }

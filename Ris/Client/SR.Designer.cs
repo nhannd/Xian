@@ -637,6 +637,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Search criteria would return too many results.  Try repeating the search with different criteria..
+        /// </summary>
+        internal static string ExceptionWeakSearchCriteria {
+            get {
+                return ResourceManager.GetString("ExceptionWeakSearchCriteria", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0} - Severity {1}.
         /// </summary>
         internal static string FormatNoteCategory {

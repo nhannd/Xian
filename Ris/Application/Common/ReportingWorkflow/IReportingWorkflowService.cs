@@ -55,18 +55,18 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
         /// <summary>
         /// Get items for a worklist
         /// </summary>
-        /// <param name="request"><see cref="GetWorklistRequest"/></param>
-        /// <returns><see cref="GetWorklistResponse"/></returns>
+        /// <param name="request"><see cref="GetWorklistItemsRequest"/></param>
+        /// <returns><see cref="GetWorklistItemsResponse"/></returns>
         [OperationContract]
-        GetWorklistResponse GetWorklist(GetWorklistRequest request);
+        GetWorklistItemsResponse GetWorklistItems(GetWorklistItemsRequest request);
 
         /// <summary>
         /// Get item count for a worklist
         /// </summary>
-        /// <param name="request"><see cref="GetWorklistCountRequest"/></param>
-        /// <returns><see cref="GetWorklistCountResponse"/></returns>
+        /// <param name="request"><see cref="GetWorklistItemCountRequest"/></param>
+        /// <returns><see cref="GetWorklistItemCountResponse"/></returns>
         [OperationContract]
-        GetWorklistCountResponse GetWorklistCount(GetWorklistCountRequest request);
+        GetWorklistItemCountResponse GetWorklistItemCount(GetWorklistItemCountRequest request);
 
         /// <summary>
         /// Get enablements for operations that can be applied to a worklist item

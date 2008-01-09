@@ -299,7 +299,10 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
                     SearchRequest request = new SearchRequest();
                     request.TextQuery = this.SearchData.TextSearch;
                     request.ShowActiveOnly = this.SearchData.ShowActiveOnly;
+                    request.SpecificityThreshold = this.SearchCriteriaSpecificityThreshold;
                     TextQueryResponse<RegistrationWorklistItem> response = service.Search(request);
+                    if(response.TooManyMatches)
+                        throw new WeakSearchCriteriaException();
                     worklistItems = response.Matches;
                 });
 

@@ -75,7 +75,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         #region IModalityWorklistBroker Members
 
-        public IList<WorklistItem> GetWorklist(Type stepClass, ModalityWorklistItemSearchCriteria[] where, Worklist worklist)
+        public IList<WorklistItem> GetWorklistItems(Type stepClass, ModalityWorklistItemSearchCriteria[] where, Worklist worklist)
         {
             string hqlFrom = string.Format(_hqlFrom, stepClass.Name);
             HqlQuery query = new HqlQuery(string.Concat(_hqlSelectWorklist, hqlFrom, _hqlJoin));
@@ -83,7 +83,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             return DoQuery(query);
         }
 
-        public int GetWorklistCount(Type stepClass, ModalityWorklistItemSearchCriteria[] where, Worklist worklist)
+        public int GetWorklistItemCount(Type stepClass, ModalityWorklistItemSearchCriteria[] where, Worklist worklist)
         {
             string hqlFrom = string.Format(_hqlFrom, stepClass.Name);
             HqlQuery query = new HqlQuery(string.Concat(_hqlSelectCount, hqlFrom, _hqlJoin));

@@ -93,28 +93,28 @@ namespace ClearCanvas.Ris.Application.Services
             _worklistExtPoint = new WorklistExtensionPoint();
         }
 
-        protected IList GetWorklist(string worklistType)
+        protected IList GetWorklistItems(string worklistType)
         {
             IWorklist worklist = WorklistFactory.Instance.GetWorklist(worklistType);
-            return worklist.GetWorklist(this.CurrentUserStaff, this.PersistenceContext);
+            return worklist.GetWorklistItems(this.CurrentUserStaff, this.PersistenceContext);
         }
 
-        protected IList GetWorklist(EntityRef worklistRef)
+        protected IList GetWorklistItems(EntityRef worklistRef)
         {
             IWorklist  worklist = this.PersistenceContext.Load<Worklist>(worklistRef);
-            return worklist.GetWorklist(this.CurrentUserStaff, this.PersistenceContext);
+            return worklist.GetWorklistItems(this.CurrentUserStaff, this.PersistenceContext);
         }
 
-        protected int GetWorklistCount(string worklistType)
+        protected int GetWorklistItemCount(string worklistType)
         {
             IWorklist worklist = WorklistFactory.Instance.GetWorklist(worklistType);
-            return worklist.GetWorklistCount(this.CurrentUserStaff, this.PersistenceContext);
+            return worklist.GetWorklistItemCount(this.CurrentUserStaff, this.PersistenceContext);
         }
 
-        protected int GetWorklistCount(EntityRef worklistRef)
+        protected int GetWorklistItemCount(EntityRef worklistRef)
         {
             IWorklist worklist = this.PersistenceContext.Load<Worklist>(worklistRef);
-            return worklist.GetWorklistCount(this.CurrentUserStaff, this.PersistenceContext);
+            return worklist.GetWorklistItemCount(this.CurrentUserStaff, this.PersistenceContext);
         }
 
         protected Dictionary<string, bool> GetOperationEnablement(object itemKey)

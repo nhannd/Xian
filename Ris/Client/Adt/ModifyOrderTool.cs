@@ -58,9 +58,11 @@ namespace ClearCanvas.Ris.Client.Adt
 
             this.Context.SelectionChanged += delegate
             {
-                // optimistically enable this tool for any selected order, regardless of statuss
+                // optimistically enable this tool for any selected item that has an associated order,
+                // regardless of status of the item
                 this.Enabled = this.Context.SelectedItems != null
-                    && this.Context.SelectedItems.Count == 1;
+                               && this.Context.SelectedItems.Count == 1
+                               && CollectionUtils.FirstElement(this.Context.SelectedItems).OrderRef != null;
             };
         }
 
@@ -86,6 +88,7 @@ namespace ClearCanvas.Ris.Client.Adt
         public void Apply()
         {
             RegistrationWorklistItem item = CollectionUtils.FirstElement(Context.SelectedItems);
+            
             string title = string.Format("Modify Order - {0} {1}", PersonNameFormat.Format(item.PatientName), MrnFormat.Format(item.Mrn));
             try
             {

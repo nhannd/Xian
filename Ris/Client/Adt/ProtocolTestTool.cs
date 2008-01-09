@@ -35,16 +35,36 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
+using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ProtocollingWorkflow;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
     [MenuAction("apply", "folderexplorer-items-contextmenu/Add Protocol (Testing only)", "AddProtocol")]
+    [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
     [IconSet("apply", IconScheme.Colour, "AddToolSmall.png", "AddToolMedium.png", "AddToolLarge.png")]
     [ExtensionOf(typeof(RegistrationMainWorkflowItemToolExtensionPoint))]
     public class ProtocolTestTool : Tool<IRegistrationWorkflowItemToolContext>
     {
+        public event EventHandler EnabledChanged
+        {
+            add { this.Context.SelectionChanged += value; }
+            remove { this.Context.SelectionChanged -= value; }
+        }
+
+        public bool Enabled
+        {
+            get
+            {
+                if (this.Context.Selection.Items.Length != 1)
+                    return false;
+                WorklistItemSummaryBase item =
+                    (WorklistItemSummaryBase)CollectionUtils.FirstElement(this.Context.Selection.Items);
+                return item.OrderRef != null;
+            }
+        }
+
         public void AddProtocol()
         {
             RegistrationWorklistItem item = CollectionUtils.FirstElement(this.Context.SelectedItems);

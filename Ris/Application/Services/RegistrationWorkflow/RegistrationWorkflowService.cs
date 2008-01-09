@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using ClearCanvas.Common;
@@ -53,6 +54,11 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         [ReadOperation]
         public TextQueryResponse<RegistrationWorklistItem> Search(SearchRequest request)
         {
+            WorkingFacilitySettings workingFacilitySettings = new WorkingFacilitySettings();
+            InformationAuthorityEnum workingInformationAuthority =
+                PersistenceContext.GetBroker<IEnumBroker>().Find<InformationAuthorityEnum>(
+                    workingFacilitySettings.WorkingInformationAuthority);
+
             RegistrationWorkflowAssembler assembler = new RegistrationWorkflowAssembler();
             IRegistrationWorklistBroker broker = PersistenceContext.GetBroker<IRegistrationWorklistBroker>();
 
@@ -64,11 +70,12 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                     },
                     delegate (WorklistItemSearchCriteria[] criteria)
                     {
-                        return broker.SearchCount(criteria, request.ShowActiveOnly);
+                        return broker.SearchCountApprox(criteria,request.ShowActiveOnly, workingInformationAuthority);
                     },
                     delegate(WorklistItemSearchCriteria[] criteria, SearchResultPage page)
                     {
-                        return broker.Search(criteria, page, request.ShowActiveOnly);
+                        // paging is ignored because the broker does not support it
+                        return broker.Search(criteria, request.ShowActiveOnly, workingInformationAuthority);
                     });
 
             return helper.Query(request);
@@ -102,15 +109,15 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         }
 
         [ReadOperation]
-        public GetWorklistResponse GetWorklist(GetWorklistRequest request)
+        public GetWorklistItemsResponse GetWorklistItems(GetWorklistItemsRequest request)
         {
             RegistrationWorkflowAssembler assembler = new RegistrationWorkflowAssembler();
 
             IList items = request.WorklistRef == null
-                              ? GetWorklist(request.WorklistType)
-                              : GetWorklist(request.WorklistRef);
+                              ? GetWorklistItems(request.WorklistType)
+                              : GetWorklistItems(request.WorklistRef);
 
-            return new GetWorklistResponse(
+            return new GetWorklistItemsResponse(
                 CollectionUtils.Map<WorklistItem, RegistrationWorklistItem, List<RegistrationWorklistItem>>(
                     items,
                     delegate(WorklistItem item)
@@ -120,13 +127,13 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         }
 
         [ReadOperation]
-        public GetWorklistCountResponse GetWorklistCount(GetWorklistCountRequest request)
+        public GetWorklistItemCountResponse GetWorklistItemCount(GetWorklistItemCountRequest request)
         {
             int count = request.WorklistRef == null
-                            ? GetWorklistCount(request.WorklistType)
-                            : GetWorklistCount(request.WorklistRef);
+                            ? GetWorklistItemCount(request.WorklistType)
+                            : GetWorklistItemCount(request.WorklistRef);
 
-            return new GetWorklistCountResponse(count);
+            return new GetWorklistItemCountResponse(count);
         }
 
         [ReadOperation]
@@ -199,6 +206,11 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
         public bool CanCheckInProcedure(WorklistItemKey itemKey)
         {
+            // the worklist item may represent a patient without an order,
+            // in which case there is no order to check-in
+            if(itemKey.OrderRef == null)
+                return false;
+
             IOrderBroker orderBroker = PersistenceContext.GetBroker<IOrderBroker>();
             Order order = orderBroker.Load(itemKey.OrderRef, EntityLoadFlags.Proxy);
 
@@ -217,6 +229,11 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
         public bool CanCancelOrder(WorklistItemKey itemKey)
         {
+            // the worklist item may represent a patient without an order,
+            // in which case there is no order to cancel
+            if (itemKey.OrderRef == null)
+                return false;
+
             Order order = PersistenceContext.GetBroker<IOrderBroker>().Load(itemKey.OrderRef);
             return order.Status == OrderStatus.SC;
         }

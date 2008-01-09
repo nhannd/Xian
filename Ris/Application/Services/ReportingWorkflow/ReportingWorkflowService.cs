@@ -93,15 +93,15 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
 
         [ReadOperation]
-        public GetWorklistResponse GetWorklist(GetWorklistRequest request)
+        public GetWorklistItemsResponse GetWorklistItems(GetWorklistItemsRequest request)
         {
             ReportingWorkflowAssembler assembler = new ReportingWorkflowAssembler();
 
             IList items = request.WorklistRef == null
-                  ? GetWorklist(request.WorklistType)
-                  : GetWorklist(request.WorklistRef);
+                  ? GetWorklistItems(request.WorklistType)
+                  : GetWorklistItems(request.WorklistRef);
 
-            return new GetWorklistResponse(
+            return new GetWorklistItemsResponse(
                 CollectionUtils.Map<WorklistItem, ReportingWorklistItem, List<ReportingWorklistItem>>(
                     items,
                     delegate(WorklistItem item)
@@ -111,13 +111,13 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         }
 
         [ReadOperation]
-        public GetWorklistCountResponse GetWorklistCount(GetWorklistCountRequest request)
+        public GetWorklistItemCountResponse GetWorklistItemCount(GetWorklistItemCountRequest request)
         {
             int count = request.WorklistRef == null
-                            ? GetWorklistCount(request.WorklistType)
-                            : GetWorklistCount(request.WorklistRef);
+                            ? GetWorklistItemCount(request.WorklistType)
+                            : GetWorklistItemCount(request.WorklistRef);
 
-            return new GetWorklistCountResponse(count);
+            return new GetWorklistItemCountResponse(count);
         }
 
         [ReadOperation]
@@ -452,7 +452,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
                         return criteria;
                     }).ToArray();
 
-                worklistItems = broker.GetWorklist(typeof(InterpretationStep), worklistItemCriteria, null);
+                worklistItems = broker.GetWorklistItems(typeof(InterpretationStep), worklistItemCriteria, null);
             }
             else
             {

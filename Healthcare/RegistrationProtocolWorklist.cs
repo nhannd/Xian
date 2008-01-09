@@ -11,14 +11,14 @@ namespace ClearCanvas.Healthcare
         protected abstract RegistrationWorklistItemSearchCriteria[] GetQueryConditions(Staff staff);
         protected abstract Type ProtocolStepType { get; }
 
-        public override IList GetWorklist(Staff currentUserStaff, IPersistenceContext context)
+        public override IList GetWorklistItems(Staff currentUserStaff, IPersistenceContext context)
         {
-            return (IList)GetBroker<IRegistrationWorklistBroker>(context).GetProtocolWorklist(ProtocolStepType, GetQueryConditions(currentUserStaff), this);
+            return (IList)GetBroker<IRegistrationWorklistBroker>(context).GetProtocolWorklistItems(ProtocolStepType, GetQueryConditions(currentUserStaff), this);
         }
 
-        public override int GetWorklistCount(Staff currentUserStaff, IPersistenceContext context)
+        public override int GetWorklistItemCount(Staff currentUserStaff, IPersistenceContext context)
         {
-            return GetBroker<IRegistrationWorklistBroker>(context).GetProtocolWorklistCount(ProtocolStepType, GetQueryConditions(currentUserStaff), this);
+            return GetBroker<IRegistrationWorklistBroker>(context).GetProtocolWorklistItemCount(ProtocolStepType, GetQueryConditions(currentUserStaff), this);
         }
     }
 }

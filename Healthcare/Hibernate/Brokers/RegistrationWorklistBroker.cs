@@ -37,6 +37,7 @@ using ClearCanvas.Enterprise.Hibernate;
 using ClearCanvas.Enterprise.Hibernate.Hql;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Healthcare.Workflow.Registration;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Healthcare.Hibernate.Brokers
 {
@@ -70,12 +71,13 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             " join o.Patient p" +
             " join p.Profiles pp";
 
-        private const string _hqlSearchFrom = 
-            " from Order o";
-        private const string _hqlSearchJoin =
-            " join o.DiagnosticService ds" +
-            " join o.Visit v" +
-            " join o.Patient p" +
+        private const string _hqlPatientSearchSelect =
+           "select p, pp, pp.Mrn, pp.Name, pp.Healthcard, pp.DateOfBirth, pp.Sex";
+        private const string _hqlPatientSearchSelectCount =
+           "select count(p)";
+        private const string _hqlPatientSearchFrom = 
+            " from Patient p";
+        private const string _hqlPatientSearchJoin =
             " join p.Profiles pp";
 
         // Share constants
@@ -84,21 +86,21 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         #region IRegistrationWorklistBroker members
 
-        public IList<WorklistItem> GetWorklist(RegistrationWorklistItemSearchCriteria[] where, Worklist worklist)
+        public IList<WorklistItem> GetWorklistItems(RegistrationWorklistItemSearchCriteria[] where, Worklist worklist)
         {
             HqlQuery query = new HqlQuery(string.Concat(_hqlSelectWorklist, _hqlFrom, _hqlJoin));
             ConstructWorklistCondition(query, where, worklist);
             return DoQuery(query);
         }
 
-        public int GetWorklistCount(RegistrationWorklistItemSearchCriteria[] where, Worklist worklist)
+        public int GetWorklistItemCount(RegistrationWorklistItemSearchCriteria[] where, Worklist worklist)
         {
             HqlQuery query = new HqlQuery(string.Concat(_hqlSelectCount, _hqlFrom,  _hqlJoin));
             ConstructWorklistCondition(query, where, worklist);
             return DoQueryCount(query);
         }
 
-        public IList<WorklistItem> GetProtocolWorklist(Type stepClass, RegistrationWorklistItemSearchCriteria[] where, Worklist worklist)
+        public IList<WorklistItem> GetProtocolWorklistItems(Type stepClass, RegistrationWorklistItemSearchCriteria[] where, Worklist worklist)
         {
             string hqlFrom = String.Format(_hqlProtocolFrom, stepClass.Name);
             HqlQuery query = new HqlQuery(string.Concat(_hqlSelectWorklist, hqlFrom, _hqlProtocolJoin));
@@ -106,7 +108,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             return DoQuery(query);
         }
 
-        public int GetProtocolWorklistCount(Type stepClass, RegistrationWorklistItemSearchCriteria[] where, Worklist worklist)
+        public int GetProtocolWorklistItemCount(Type stepClass, RegistrationWorklistItemSearchCriteria[] where, Worklist worklist)
         {
             string hqlFrom = String.Format(_hqlProtocolFrom, stepClass.Name);
             HqlQuery query = new HqlQuery(string.Concat(_hqlSelectCount, hqlFrom, _hqlProtocolJoin));
@@ -114,19 +116,43 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             return DoQueryCount(query);
         }
 
-        public IList<WorklistItem> Search(WorklistItemSearchCriteria[] where, SearchResultPage page, bool showActiveOnly)
+        public IList<WorklistItem> Search(WorklistItemSearchCriteria[] where, bool activeOrdersOnly, InformationAuthorityEnum workingInformationAuthority)
         {
-            HqlQuery query = new HqlQuery(string.Concat(_hqlSelectWorklist, _hqlSearchFrom, _hqlSearchJoin));
-            query.Page = page;
-            ConstructSearchCondition(query, where, showActiveOnly);
-            return DoQuery(query);
+            HqlQuery orderQuery = new HqlQuery(string.Concat(_hqlSelectWorklist, _hqlFrom, _hqlJoin));
+            ConstructOrderSearchCondition(orderQuery, where, activeOrdersOnly);
+            List<WorklistItem> orders = DoQuery(orderQuery);
+
+            HqlQuery patientQuery = new HqlQuery(string.Concat(_hqlPatientSearchSelect, _hqlPatientSearchFrom, _hqlPatientSearchJoin));
+            ConstructPatientSearchCondition(patientQuery, where, workingInformationAuthority);
+            List<WorklistItem> patients = DoQuery(patientQuery);
+
+            List<WorklistItem> results = new List<WorklistItem>(orders);
+            foreach (WorklistItem patient in patients)
+            {
+                if(!CollectionUtils.Contains(orders, delegate (WorklistItem item) { return item.PatientRef.Equals(patient.PatientRef, true); }))
+                    results.Add(patient);
+            }
+            return results;
         }
 
-        public int SearchCount(WorklistItemSearchCriteria[] where, bool showActiveOnly)
+        public int SearchCountApprox(WorklistItemSearchCriteria[] where, bool activeOrdersOnly, InformationAuthorityEnum workingInformationAuthority)
         {
-            HqlQuery query = new HqlQuery(string.Concat(_hqlSelectCount, _hqlSearchFrom, _hqlSearchJoin));
-            ConstructSearchCondition(query, where, showActiveOnly);
-            return DoQueryCount(query);
+            HqlQuery orderQuery = new HqlQuery(string.Concat(_hqlSelectCount, _hqlFrom, _hqlJoin));
+            ConstructOrderSearchCondition(orderQuery, where, activeOrdersOnly);
+            int orderCount = DoQueryCount(orderQuery);
+
+            HqlQuery patientQuery = new HqlQuery(string.Concat(_hqlPatientSearchSelectCount, _hqlPatientSearchFrom, _hqlPatientSearchJoin));
+            ConstructPatientSearchCondition(patientQuery, where, workingInformationAuthority);
+            int patientCount = DoQueryCount(patientQuery);
+
+            // there is no clear way to combine these numbers, since the order count may include
+            // patients that are subsequently counted in the patientCount, and conversely, a single
+            // patient may have many orders
+
+            // however, the exact number doesn't matter that much, since this method is really just
+            // used to decide whether a given set of criteria is specific enough
+            // returning the larger number is probably adequate for this purpose
+            return Math.Max(orderCount, patientCount);
         }
 
         #endregion
@@ -169,7 +195,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             query.Conditions.Add(new HqlCondition("pp.Mrn.AssigningAuthority = rp.PerformingFacility.InformationAuthority"));
         }
 
-        private static void ConstructSearchCondition(HqlQuery query, IEnumerable<WorklistItemSearchCriteria> where, bool showActiveOnly)
+        private static void ConstructOrderSearchCondition(HqlQuery query, IEnumerable<WorklistItemSearchCriteria> where, bool showActiveOnly)
         {
             if (showActiveOnly)
             {
@@ -196,6 +222,27 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
             // constrain patient profile to performing facility
             query.Conditions.Add(new HqlCondition("pp.Mrn.AssigningAuthority = rp.PerformingFacility.InformationAuthority"));
+        }
+
+        private static void ConstructPatientSearchCondition(HqlQuery query, IEnumerable<WorklistItemSearchCriteria> where, InformationAuthorityEnum mrnAuthority)
+        {
+            HqlOr or = new HqlOr();
+            foreach (WorklistItemSearchCriteria c in where)
+            {
+                HqlAnd and = new HqlAnd();
+                and.Conditions.AddRange(HqlCondition.FromSearchCriteria("pp", c.PatientProfile));
+
+                if (and.Conditions.Count > 0)
+                    or.Conditions.Add(and);
+
+                query.Sorts.AddRange(HqlSort.FromSearchCriteria("pp", c.PatientProfile));
+            }
+
+            if (or.Conditions.Count > 0)
+                query.Conditions.Add(or);
+
+            // constrain patient profile to specified information authority
+            query.Conditions.Add(new HqlCondition("pp.Mrn.AssigningAuthority = ?", mrnAuthority));
         }
 
         #endregion

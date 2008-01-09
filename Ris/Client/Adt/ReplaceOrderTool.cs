@@ -38,6 +38,7 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Client.Formatting;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -58,7 +59,14 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public bool Enabled
         {
-            get { return this.Context.Selection.Items.Length > 0; }
+            get
+            {
+                if (this.Context.Selection.Items.Length != 1)
+                    return false;
+                WorklistItemSummaryBase item =
+                    (WorklistItemSummaryBase) CollectionUtils.FirstElement(this.Context.Selection.Items);
+                return item.OrderRef != null;
+            }
         }
 
         public void Apply()

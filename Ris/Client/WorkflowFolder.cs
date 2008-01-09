@@ -246,7 +246,17 @@ namespace ClearCanvas.Ris.Client
             }
             else
             {
-                Platform.Log(LogLevel.Error, args.Exception);
+                // special case: if this is a search folder, the query may have returned to many results
+                // this message must be reported to the user
+                if (args.Exception is WeakSearchCriteriaException)
+                {
+                    ExceptionHandler.Report(args.Exception, _folderSystem.DesktopWindow);
+                }
+                else
+                {
+                    // otherwise just log the exception
+                    Platform.Log(LogLevel.Error, args.Exception);
+                }
             }
 
             // dispose of the task
@@ -383,6 +393,11 @@ namespace ClearCanvas.Ris.Client
         {
             _dropHandlerExtensionPoint = dropHandlerExtensionPoint;
             _dropContext = dropContext;
+        }
+
+        protected int SearchCriteriaSpecificityThreshold
+        {
+            get { return HomePageSettings.Default.SearchCriteriaSpecificityThreshold; }
         }
 
         protected abstract bool CanQuery();

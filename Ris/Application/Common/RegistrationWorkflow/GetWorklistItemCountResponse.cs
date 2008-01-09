@@ -29,28 +29,23 @@
 
 #endregion
 
+using System;
+using System.Collections.Generic;
+using System.Text;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
 
-namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
+namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
 {
     [DataContract]
-    public class GetWorklistCountRequest : DataContractBase
+    public class GetWorklistItemCountResponse : DataContractBase
     {
-        public GetWorklistCountRequest(string worklistType)
+        public GetWorklistItemCountResponse(int itemCount)
         {
-            this.WorklistType = worklistType;
-        }
-
-        public GetWorklistCountRequest(EntityRef worklistRef)
-        {
-            WorklistRef = worklistRef;
+            this.ItemCount = itemCount;
         }
 
         [DataMember]
-        public EntityRef WorklistRef;
-
-        [DataMember]
-        public string WorklistType;
+        public int ItemCount;
     }
 }

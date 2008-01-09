@@ -1,6 +1,6 @@
 #region License
 
-// Copyright (c) 2006-2008, ClearCanvas Inc.
+// Copyright (c) 2006-2007, ClearCanvas Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, 
@@ -29,28 +29,20 @@
 
 #endregion
 
-using System.Runtime.Serialization;
-using ClearCanvas.Enterprise.Common;
+using System;
+using System.Configuration;
+using ClearCanvas.Desktop;
 
-namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
+namespace ClearCanvas.Ris.Client
 {
-    [DataContract]
-    public class GetWorklistCountRequest : DataContractBase
+
+    [SettingsGroupDescription("Settings that affect the behaviour of home-pages")]
+    [SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
+    internal sealed partial class HomePageSettings
     {
-        public GetWorklistCountRequest(string worklistType)
+        private HomePageSettings()
         {
-            this.WorklistType = worklistType;
+            ApplicationSettingsRegistry.Instance.RegisterInstance(this);
         }
-
-        public GetWorklistCountRequest(EntityRef worklistRef)
-        {
-            this.WorklistRef = worklistRef;
-        }
-
-        [DataMember]
-        public EntityRef WorklistRef;
-
-        [DataMember]
-        public string WorklistType;
     }
 }

@@ -10,14 +10,14 @@ namespace ClearCanvas.Healthcare
     {
         protected abstract RegistrationWorklistItemSearchCriteria[] GetQueryConditions(Staff staff);
 
-        public override IList GetWorklist(Staff currentUserStaff, IPersistenceContext context)
+        public override IList GetWorklistItems(Staff currentUserStaff, IPersistenceContext context)
         {
-            return (IList)GetBroker<IRegistrationWorklistBroker>(context).GetWorklist(GetQueryConditions(currentUserStaff), this);
+            return (IList)GetBroker<IRegistrationWorklistBroker>(context).GetWorklistItems(GetQueryConditions(currentUserStaff), this);
         }
 
-        public override int GetWorklistCount(Staff currentUserStaff, IPersistenceContext context)
+        public override int GetWorklistItemCount(Staff currentUserStaff, IPersistenceContext context)
         {
-            return GetBroker<IRegistrationWorklistBroker>(context).GetWorklistCount(GetQueryConditions(currentUserStaff), this);
+            return GetBroker<IRegistrationWorklistBroker>(context).GetWorklistItemCount(GetQueryConditions(currentUserStaff), this);
         }
     }
 }

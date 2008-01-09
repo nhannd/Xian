@@ -85,7 +85,7 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
         public EnumValueInfo Sex;
 
         /// <summary>
-        /// Overridden to use OrderRef.
+        /// Overridden to use OrderRef or PatientRef.
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
@@ -93,14 +93,25 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
         {
             RegistrationWorklistItem that = obj as RegistrationWorklistItem;
             if (that != null)
-                return Equals(this.OrderRef, that.OrderRef);
+            {
+                // include PatientRef in the comparison for the case where OrderRef is null
+                return Equals(this.PatientRef, that.PatientRef) && Equals(this.OrderRef, that.OrderRef);
+            }
 
             return false;
         }
 
+        /// <summary>
+        /// Overridden to use OrderRef or PatientRef.
+        /// </summary>
+        /// <returns></returns>
         public override int GetHashCode()
         {
-            return this.OrderRef.GetHashCode();
+            if (this.OrderRef != null)
+                return this.OrderRef.GetHashCode();
+            if (this.PatientRef != null)
+                return this.PatientRef.GetHashCode();
+            return 0;
         }
     }
 }

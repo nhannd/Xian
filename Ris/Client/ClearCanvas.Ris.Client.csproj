@@ -46,6 +46,12 @@
     <Compile Include="AddressEditorComponent.cs" />
     <Compile Include="AddressesSummaryComponent.cs" />
     <Compile Include="BiographyDemographicComponent.cs" />
+    <Compile Include="HomePageSettings.cs" />
+    <Compile Include="HomePageSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>HomePageSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="OrderDetailViewComponent.cs" />
     <Compile Include="OrderDetailViewComponentSettings.cs" />
     <Compile Include="OrderDetailViewComponentSettings.Designer.cs">
@@ -64,6 +70,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>BannerComponentSettings.settings</DependentUpon>
     </Compile>
+    <Compile Include="WeakSearchCriteriaException.cs" />
     <Compile Include="WorklistPreviewComponent.cs" />
     <Compile Include="FolderContentsComponent.cs" />
     <Compile Include="FolderExplorerToolBase.cs" />
@@ -240,6 +247,10 @@
     <None Include="FormatSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>FormatSettings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="HomePageSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>HomePageSettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="OrderDetailViewComponentSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

@@ -50,9 +50,9 @@ namespace ClearCanvas.Healthcare
             _users = new HashedSet<User>();
         }
 
-        public abstract IList GetWorklist(Staff currentUserStaff, IPersistenceContext context);
+        public abstract IList GetWorklistItems(Staff currentUserStaff, IPersistenceContext context);
 
-        public abstract int GetWorklistCount(Staff currentUserStaff, IPersistenceContext context);
+        public abstract int GetWorklistItemCount(Staff currentUserStaff, IPersistenceContext context);
 
         public virtual string Name
         {

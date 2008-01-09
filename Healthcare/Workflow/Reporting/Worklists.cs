@@ -125,9 +125,9 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
                 return new ReportingWorklistItemSearchCriteria[] { criteria };
             }
 
-            public override IList GetWorklist(Staff currentUserStaff, IPersistenceContext context)
+            public override IList GetWorklistItems(Staff currentUserStaff, IPersistenceContext context)
             {
-                IList results = base.GetWorklist(currentUserStaff, context);
+                IList results = base.GetWorklistItems(currentUserStaff, context);
 
                 // Addendum appears as a separate item - should only be one item
                 // It was decided to filter the result collection instead of rewriting the query

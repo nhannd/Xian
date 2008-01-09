@@ -75,7 +75,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         #region IReportingWorklistBroker Members
 
-        public IList<WorklistItem> GetWorklist(Type stepClass, ReportingWorklistItemSearchCriteria[] where, Worklist worklist)
+        public IList<WorklistItem> GetWorklistItems(Type stepClass, ReportingWorklistItemSearchCriteria[] where, Worklist worklist)
         {
             string hqlFrom = string.Format(_hqlFrom, stepClass.Name);
             string hqlJoin = string.Concat(_hqlJoin, stepClass == typeof(ProtocolAssignmentStep) ? _hqlJoinProtocol : _hqlJoinReport);
@@ -87,7 +87,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             return DoQuery(query);
         }
 
-        public int GetWorklistCount(Type stepClass, ReportingWorklistItemSearchCriteria[] where, Worklist worklist)
+        public int GetWorklistItemCount(Type stepClass, ReportingWorklistItemSearchCriteria[] where, Worklist worklist)
         {
             string hqlFrom = string.Format(_hqlFrom, stepClass.Name);
             string hqlJoin = string.Concat(_hqlJoin, stepClass == typeof(ProtocolAssignmentStep) ? _hqlJoinProtocol : _hqlJoinReport);

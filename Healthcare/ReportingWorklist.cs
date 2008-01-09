@@ -11,14 +11,14 @@ namespace ClearCanvas.Healthcare
         protected abstract ReportingWorklistItemSearchCriteria[] GetQueryConditions(Staff staff);
         protected abstract Type ProcedureStepType { get;}
 
-        public override IList GetWorklist(Staff currentUserStaff, IPersistenceContext context)
+        public override IList GetWorklistItems(Staff currentUserStaff, IPersistenceContext context)
         {
-            return (IList)GetBroker<IReportingWorklistBroker>(context).GetWorklist(ProcedureStepType, GetQueryConditions(currentUserStaff), this);
+            return (IList)GetBroker<IReportingWorklistBroker>(context).GetWorklistItems(ProcedureStepType, GetQueryConditions(currentUserStaff), this);
         }
 
-        public override int GetWorklistCount(Staff currentUserStaff, IPersistenceContext context)
+        public override int GetWorklistItemCount(Staff currentUserStaff, IPersistenceContext context)
         {
-            return GetBroker<IReportingWorklistBroker>(context).GetWorklistCount(ProcedureStepType, GetQueryConditions(currentUserStaff), this);
+            return GetBroker<IReportingWorklistBroker>(context).GetWorklistItemCount(ProcedureStepType, GetQueryConditions(currentUserStaff), this);
         }
     }
 

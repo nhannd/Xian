@@ -30,17 +30,16 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Runtime.Serialization;
+
 using ClearCanvas.Enterprise.Common;
 
-namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
+namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
 {
     [DataContract]
-    public class GetWorklistCountResponse : DataContractBase
+    public class GetWorklistItemCountResponse : DataContractBase
     {
-        public GetWorklistCountResponse(int itemCount)
+        public GetWorklistItemCountResponse(int itemCount)
         {
             this.ItemCount = itemCount;
         }
