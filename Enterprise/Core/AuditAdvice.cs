@@ -53,11 +53,11 @@ namespace ClearCanvas.Enterprise.Core
             {
                 IUpdateContext uctx = PersistenceScope.Current as IUpdateContext;
 
-                // only install a TransactionRecorder if the current context is an update context, and does not already have one
-                if (uctx != null && uctx.TransactionRecorder == null)
+                // only install a TransactionLogger if the current context is an update context, and does not already have one
+                if (uctx != null && uctx.TransactionLogger == null)
                 {
                     string transactionName = string.Format("{0}.{1}", invocation.InvocationTarget.GetType().FullName, invocation.Method.Name);
-                    uctx.TransactionRecorder = new DefaultTransactionRecorder(transactionName);
+                    uctx.TransactionLogger = new DefaultTransactionLogger(transactionName);
                 }
             }
             return invocation.Proceed(args);

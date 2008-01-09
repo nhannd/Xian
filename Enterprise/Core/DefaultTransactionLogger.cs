@@ -38,20 +38,20 @@ using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Enterprise.Core
 {
-    public class DefaultTransactionRecorder : ITransactionRecorder
+    public class DefaultTransactionLogger : ITransactionLogger
     {
         private string _transactionName;
 
-        public DefaultTransactionRecorder(string transactionName)
+        public DefaultTransactionLogger(string transactionName)
         {
             _transactionName = transactionName;
         }
 
-        #region ITransactionRecorder Members
+        #region ITransactionLogger Members
 
-        public TransactionRecord CreateTransactionRecord(ICollection<EntityChange> changeSet)
+        public TransactionLogEntry CreateTransactionLogEntry(ICollection<EntityChange> changeSet)
         {
-            return new TransactionRecord(_transactionName, WriteXml(changeSet));
+            return new TransactionLogEntry(_transactionName, WriteXml(changeSet));
         }
 
         #endregion

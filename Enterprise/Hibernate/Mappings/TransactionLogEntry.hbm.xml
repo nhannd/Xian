@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="ClearCanvas.Enterprise.Core" namespace="ClearCanvas.Enterprise.Core">
+  <class name="TransactionLogEntry" lazy="false" table="TransactionLog_">
+    <id name="OID" column="OID_" type="Guid">
+      <generator class="guid.comb"/>
+    </id>
+    <version name="Version" column="Version_"/>
+    <property name="TimeStamp" column="TimeStamp_" type="DateTime" not-null="true"/>
+    <property name="User" column="User_" type="String" length="200" not-null="true"/>
+    <property name="Transaction" column="Transaction_" type="String" length="1000" not-null="true"/>
+    <property name="Details" column="Details_" type="StringClob" length="65000" not-null="false"/>
+  </class>
+</hibernate-mapping>

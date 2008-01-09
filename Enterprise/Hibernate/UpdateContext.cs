@@ -46,7 +46,7 @@ namespace ClearCanvas.Enterprise.Hibernate
     public class UpdateContext : PersistenceContext, IUpdateContext
     {
         private UpdateContextInterceptor _interceptor;
-        private ITransactionRecorder _transactionRecorder;
+        private ITransactionLogger _transactionLogger;
 
         /// <summary>
         /// Constructor
@@ -66,10 +66,10 @@ namespace ClearCanvas.Enterprise.Hibernate
         /// <summary>
         /// Gets or sets the transaction recorder for auditing.
         /// </summary>
-        public ITransactionRecorder TransactionRecorder
+        public ITransactionLogger TransactionLogger
         {
-            get { return _transactionRecorder; }
-            set { _transactionRecorder = value; }
+            get { return _transactionLogger; }
+            set { _transactionLogger = value; }
         }
 
         public void Commit()
@@ -183,15 +183,15 @@ namespace ClearCanvas.Enterprise.Hibernate
         #region Helpers
 
         /// <summary>
-        /// Creates and saves a <see cref="TransactionRecord"/> for the current transaction, assuming the
-        /// <see cref="TransactionRecorder"/> property is set.
+        /// Creates and saves a <see cref="TransactionLogEntry"/> for the current transaction, assuming the
+        /// <see cref="TransactionLogger"/> property is set.
         /// </summary>
         private void AuditTransaction()
         {
-            if (_transactionRecorder != null)
+            if (_transactionLogger != null)
             {
 
-                TransactionRecord txRecord = _transactionRecorder.CreateTransactionRecord(_interceptor.EntityChangeSet);
+                TransactionLogEntry txLogEntry = _transactionLogger.CreateTransactionLogEntry(_interceptor.EntityChangeSet);
 
                 /* NB. Does not work with NHibernate 1.0.3
                 // obtain an audit session, based on the same ADO connection and same DB transaction
@@ -203,7 +203,7 @@ namespace ClearCanvas.Enterprise.Hibernate
                 */
 
                 // for now, use the same session
-                this.Session.Save(txRecord);
+                this.Session.Save(txLogEntry);
             }
         }
 

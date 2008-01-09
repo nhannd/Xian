@@ -170,8 +170,11 @@ namespace ClearCanvas.Ris.Server
 
         private void ServiceCreationEventHandler(object sender, ServiceCreationEventArgs e)
         {
-            // insert the error handler advice at the beginning of the interception chain
-            e.ServiceOperationInterceptors.Insert(0, new ErrorHandlerAdvice());
+            // insert the exception promotion advice at the beginning of the interception chain (outside of the service transaction)
+            e.ServiceOperationInterceptors.Insert(0, new ExceptionPromotionAdvice());
+
+            // insert the error log advice outside of the exception promotion advice
+            e.ServiceOperationInterceptors.Insert(0, new ExceptionLoggingAdvice());
         }
     }
 }

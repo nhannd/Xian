@@ -57,10 +57,11 @@
     <Compile Include="AuditAdvice.cs" />
     <Compile Include="CoreServiceExtensionPoint.cs" />
     <Compile Include="DefaultEntityValidator.cs" />
+    <Compile Include="DefaultExceptionLogger.cs" />
     <Compile Include="EntityValidationException.cs" />
     <Compile Include="EntityVersionException.cs" />
     <Compile Include="CoreServiceLayer.cs" />
-    <Compile Include="DefaultTransactionRecorder.cs" />
+    <Compile Include="DefaultTransactionLogger.cs" />
     <Compile Include="DirtyState.cs" />
     <Compile Include="DomainObject.cs" />
     <Compile Include="Entity.cs" />
@@ -72,8 +73,10 @@
     <Compile Include="EnumValueAttribute.cs" />
     <Compile Include="EnumValueClassAttribute.cs" />
     <Compile Include="EnumValueNotFoundException.cs" />
+    <Compile Include="ExceptionLogEntry.cs" />
     <Compile Include="IAuthenticationService.cs" />
     <Compile Include="IEntityBroker.cs" />
+    <Compile Include="IExceptionLogger.cs" />
     <Compile Include="IValidator.cs" />
     <Compile Include="IEnumBroker.cs" />
     <Compile Include="IMetadataBroker.cs" />
@@ -87,7 +90,7 @@
     <Compile Include="IRelatedEntityCondition.cs" />
     <Compile Include="ITimeBroker.cs" />
     <Compile Include="ITransactionNotifier.cs" />
-    <Compile Include="ITransactionRecorder.cs" />
+    <Compile Include="ITransactionLogger.cs" />
     <Compile Include="IUpdateContext.cs" />
     <Compile Include="Modelling\EmbeddedValueAttribute.cs" />
     <Compile Include="Modelling\EmbeddeValueRuleSet.cs" />
@@ -139,7 +142,7 @@
     <Compile Include="TransactionNotifier.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="TransactionRecord.cs" />
+    <Compile Include="TransactionLogEntry.cs" />
     <Compile Include="UpdateContextSyncMode.cs" />
     <Compile Include="UpdateOperationAttribute.cs" />
     <Compile Include="ValueObject.cs" />

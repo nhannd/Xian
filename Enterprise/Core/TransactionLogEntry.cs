@@ -37,7 +37,10 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.Enterprise.Core
 {
-    public class TransactionRecord : Entity
+    /// <summary>
+    /// Records information about a transaction.
+    /// </summary>
+    public class TransactionLogEntry : Entity
     {
         private DateTime _timestamp;
         private string _user;
@@ -47,12 +50,12 @@ namespace ClearCanvas.Enterprise.Core
         /// <summary>
         /// Private no-args constructor to support NHibernate
         /// </summary>
-        private TransactionRecord()
+        private TransactionLogEntry()
         {
 
         }
 
-        public TransactionRecord(string transaction, string details)
+        public TransactionLogEntry(string transaction, string details)
         {
             _user = Thread.CurrentPrincipal.Identity.Name;
             _timestamp = Platform.Time;

@@ -41,7 +41,7 @@ using Castle.DynamicProxy;
 
 namespace ClearCanvas.Ris.Server
 {
-    class ErrorHandlerAdvice : IInterceptor
+    class ExceptionPromotionAdvice : IInterceptor
     {
         #region IMethodInterceptor Members
 

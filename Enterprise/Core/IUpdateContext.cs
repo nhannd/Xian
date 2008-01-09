@@ -47,7 +47,7 @@ namespace ClearCanvas.Enterprise.Core
         //IValidator Validator { get; set; }
 
 
-        ITransactionRecorder TransactionRecorder { get; set; }
+        ITransactionLogger TransactionLogger { get; set; }
 
         /// <summary>
         /// Attempts to flush and commit all changes made within this update context to the persistent store.

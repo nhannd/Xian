@@ -36,8 +36,8 @@ using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Enterprise.Core
 {
-    public interface ITransactionRecorder
+    public interface ITransactionLogger
     {
-        TransactionRecord CreateTransactionRecord(ICollection<EntityChange> changeSet);
+        TransactionLogEntry CreateTransactionLogEntry(ICollection<EntityChange> changeSet);
     }
 }
