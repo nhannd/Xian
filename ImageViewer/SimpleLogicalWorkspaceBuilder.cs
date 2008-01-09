@@ -90,9 +90,9 @@ namespace ClearCanvas.ImageViewer
 				return;
 
 			imageSet = AddImageSet(imageViewer.LogicalWorkspace, study);
-			imageViewer.LogicalWorkspace.ImageSets.Sort(new StudyDateComparer());
-
 			AddDisplaySets(imageSet, study);
+
+			imageViewer.LogicalWorkspace.ImageSets.Sort(new StudyDateComparer());
 		}
 
 		private static void BuildFromSeries(IImageViewer imageViewer, string seriesInstanceUID)

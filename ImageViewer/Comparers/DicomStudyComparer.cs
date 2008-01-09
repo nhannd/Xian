@@ -29,6 +29,7 @@
 
 #endregion
 
+using System.Diagnostics;
 using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Comparers
@@ -64,16 +65,20 @@ namespace ClearCanvas.ImageViewer.Comparers
 		/// <returns></returns>
 		public override int Compare(IImageSet x, IImageSet y)
 		{
-			if (x.DisplaySets.Count == 0 ||
-				y.DisplaySets.Count == 0)
+			if (x.DisplaySets.Count == 0 || y.DisplaySets.Count == 0)
+			{
+				Debug.Assert(false, "All image sets being sorted must have at least one display set with at least one image in order for them to be sorted properly.");
 				return 0;
+			}
 
 			IDisplaySet displaySet1 = x.DisplaySets[0];
 			IDisplaySet displaySet2 = y.DisplaySets[0];
 
-			if (displaySet1.PresentationImages.Count == 0 ||
-				displaySet2.PresentationImages.Count == 0)
+			if (displaySet1.PresentationImages.Count == 0 || displaySet2.PresentationImages.Count == 0)
+			{
+				Debug.Assert(false, "All image sets being sorted must have at least one display set with at least one image in order for them to be sorted properly.");
 				return 0;
+			}
 
 			IImageSopProvider provider1 = displaySet1.PresentationImages[0] as IImageSopProvider;
 			IImageSopProvider provider2 = displaySet2.PresentationImages[0] as IImageSopProvider;
