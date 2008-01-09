@@ -204,14 +204,27 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// </remarks>
 		protected override void CalculateScale()
 		{
+			if (!this.RecalculationRequired)
+				return;
+
+			this.RecalculationRequired = false;
+
 			if (this.ScaleToFit)
 			{
 				CalculateScaleToFit();
 			}
 			else
 			{
-				this.ScaleX = this.Scale;
-				this.ScaleY = this.Scale * this.PixelAspectRatio;
+				if (this.PixelAspectRatio >= 1)
+				{
+					this.ScaleX = this.Scale;
+					this.ScaleY = this.Scale * this.PixelAspectRatio;
+				}
+				else
+				{
+					this.ScaleX = this.Scale / this.PixelAspectRatio;
+					this.ScaleY = this.Scale;
+				}
 			}
 		}
 

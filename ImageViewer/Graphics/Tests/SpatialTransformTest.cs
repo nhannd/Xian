@@ -34,8 +34,9 @@
 #pragma warning disable 1591,0419,1574,1587
 
 using NUnit.Framework;
-//using MbUnit.Core.Framework;
-//using MbUnit.Framework;
+using System.Drawing;
+using System;
+using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.Graphics.Tests
 {
@@ -56,224 +57,294 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 		{
 		}
 
-		//[Test]
-		//public void DefaultTransform()
-		//{
-		//    SpatialTransform transform = new SpatialTransform();
-		//    transform.SourceRectangle = new Rectangle(0, 0, 512, 384);
-		//    transform.DestinationRectangle = new Rectangle(0, 0, 512, 384);
-		//    transform.Calculate();
+		[Test]
+		public void DefaultTransform()
+		{
+			ImageSpatialTransform transform = CreateTransform();
+			transform.ScaleToFit = false;
 
-		//    Assert.AreEqual(1.0f, transform.InputMatrix.Elements[0]);
-		//    Assert.AreEqual(0.0f, transform.InputMatrix.Elements[1]);
-		//    Assert.AreEqual(0.0f, transform.InputMatrix.Elements[2]);
-		//    Assert.AreEqual(1.0f, transform.InputMatrix.Elements[3]);
-		//}
+			Assert.AreEqual(1.0f, transform.Transform.Elements[0]);
+			Assert.AreEqual(0.0f, transform.Transform.Elements[1]);
+			Assert.AreEqual(0.0f, transform.Transform.Elements[2]);
+			Assert.AreEqual(1.0f, transform.Transform.Elements[3]);
+		}
 
-		//[Test]
-		//public void ScaleIsotropicPixel()
-		//{
-		//    SpatialTransform transform = new SpatialTransform();
-		//    transform.SourceRectangle = new Rectangle(0, 0, 512, 384);
-		//    transform.DestinationRectangle = new Rectangle(0, 0, 512, 384);
-		//    transform.Scale = 2.0f;
-		//    transform.Calculate();
+		[Test]
+		public void Scale()
+		{
+			ImageSpatialTransform transform = CreateTransform();
+			transform.ScaleToFit = false;
+			transform.Scale = 2.0f;
 
-		//    Assert.AreEqual(2.0f, transform.InputMatrix.Elements[0]);
-		//    Assert.AreEqual(0.0f, transform.InputMatrix.Elements[1]);
-		//    Assert.AreEqual(0.0f, transform.InputMatrix.Elements[2]);
-		//    Assert.AreEqual(2.0f, transform.InputMatrix.Elements[3]);
-		//}
+			Assert.AreEqual(transform.ScaleX, 2.0f);
+			Assert.AreEqual(transform.ScaleY, 2.0f);
+		}
 
-		//[Test]
-		//public void ScaleAnisotropicPixel()
-		//{
-		//    SpatialTransform transform = new SpatialTransform();
-		//    transform.SourceRectangle = new Rectangle(0, 0, 512, 384);
-		//    transform.DestinationRectangle = new Rectangle(0, 0, 512, 384);
+		[Test]
+		public void ScaleIsotropicPixel()
+		{
+			ImageSpatialTransform transform = CreateTransform();
+			transform.ScaleToFit = false;
+			transform.Scale = 2.0f;
 
-		//    // Use pixel aspect ratio
-		//    transform.PixelAspectRatioX = 1;
-		//    transform.PixelAspectRatioY = 2;
-		//    transform.Scale = 2.0f;
-		//    transform.Calculate();
+			Assert.AreEqual(2.0f, transform.Transform.Elements[0]);
+			Assert.AreEqual(0.0f, transform.Transform.Elements[1]);
+			Assert.AreEqual(0.0f, transform.Transform.Elements[2]);
+			Assert.AreEqual(2.0f, transform.Transform.Elements[3]);
+		}
 
-		//    Assert.AreEqual(4.0f, transform.InputMatrix.Elements[0]);
-		//    Assert.AreEqual(0.0f, transform.InputMatrix.Elements[1]);
-		//    Assert.AreEqual(0.0f, transform.InputMatrix.Elements[2]);
-		//    Assert.AreEqual(2.0f, transform.InputMatrix.Elements[3]);
 
-		//    transform.Initialize();
-		//    transform.PixelAspectRatioX = 2;
-		//    transform.PixelAspectRatioY = 1;
-		//    transform.Scale = 2.0f;
-		//    transform.Calculate();
+		[Test]
+		public void ScaleAnisotropicPixelSpacing1()
+		{
+			CompositeImageGraphic graphic = new CompositeImageGraphic(512, 384, 1, 2, 0, 0);
+			ImageSpatialTransform transform = graphic.SpatialTransform as ImageSpatialTransform;
+			transform.ClientRectangle = new Rectangle(0, 0, 384, 512);
 
-		//    Assert.AreEqual(2.0f, transform.InputMatrix.Elements[0]);
-		//    Assert.AreEqual(0.0f, transform.InputMatrix.Elements[1]);
-		//    Assert.AreEqual(0.0f, transform.InputMatrix.Elements[2]);
-		//    Assert.AreEqual(4.0f, transform.InputMatrix.Elements[3]);
+			transform.ScaleToFit = false;
+			transform.Scale = 2.0f;
 
-		//    // Use pixel spacing
-		//    transform.Initialize();
-		//    transform.PixelSpacingX = 0.25f;
-		//    transform.PixelSpacingY = 0.50f;
-		//    transform.Scale = 2.0f;
-		//    transform.Calculate();
+			Assert.AreEqual(2.0f, transform.Transform.Elements[0]);
+			Assert.AreEqual(0.0f, transform.Transform.Elements[1]);
+			Assert.AreEqual(0.0f, transform.Transform.Elements[2]);
+			Assert.AreEqual(4.0f, transform.Transform.Elements[3]);
+		}
 
-		//    Assert.AreEqual(4.0f, transform.InputMatrix.Elements[0]);
-		//    Assert.AreEqual(0.0f, transform.InputMatrix.Elements[1]);
-		//    Assert.AreEqual(0.0f, transform.InputMatrix.Elements[2]);
-		//    Assert.AreEqual(2.0f, transform.InputMatrix.Elements[3]);
+		[Test]
+		public void ScaleAnisotropicPixelSpacing2()
+		{
+			CompositeImageGraphic graphic = new CompositeImageGraphic(512, 384, 2, 1, 0, 0);
+			ImageSpatialTransform transform = graphic.SpatialTransform as ImageSpatialTransform;
+			transform.ClientRectangle = new Rectangle(0, 0, 384, 512);
 
-		//    transform.Initialize();
-		//    transform.PixelSpacingX = 0.50f;
-		//    transform.PixelSpacingY = 0.25f;
-		//    transform.Scale = 2.0f;
-		//    transform.Calculate();
+			transform.ScaleToFit = false;
+			transform.Scale = 2.0f;
 
-		//    Assert.AreEqual(2.0f, transform.InputMatrix.Elements[0]);
-		//    Assert.AreEqual(0.0f, transform.InputMatrix.Elements[1]);
-		//    Assert.AreEqual(0.0f, transform.InputMatrix.Elements[2]);
-		//    Assert.AreEqual(4.0f, transform.InputMatrix.Elements[3]);
-		//}
+			Assert.AreEqual(4.0f, transform.Transform.Elements[0]);
+			Assert.AreEqual(0.0f, transform.Transform.Elements[1]);
+			Assert.AreEqual(0.0f, transform.Transform.Elements[2]);
+			Assert.AreEqual(2.0f, transform.Transform.Elements[3]);
+		}
 
-		//[Test]
-		//public void Flip()
-		//{
-		//    SpatialTransform transform = new SpatialTransform();
-		//    transform.SourceRectangle = new Rectangle(0, 0, 512, 384);
-		//    transform.DestinationRectangle = new Rectangle(0, 0, 512, 384);
+		[Test]
+		public void ScaleAnisotropicPixelAspectRatio1()
+		{
+			CompositeImageGraphic graphic = new CompositeImageGraphic(512, 384, 0, 0, 1, 2);
+			ImageSpatialTransform transform = graphic.SpatialTransform as ImageSpatialTransform;
+			transform.ClientRectangle = new Rectangle(0, 0, 384, 512);
 
-		//    transform.FlipHorizontal = true;
-		//    transform.Calculate();
+			transform.ScaleToFit = false;
+			transform.Scale = 2.0f;
 
-		//    Assert.AreEqual(-1.0f, transform.InputMatrix.Elements[0]);
-		//    Assert.AreEqual(0.0f, transform.InputMatrix.Elements[1]);
-		//    Assert.AreEqual(0.0f, transform.InputMatrix.Elements[2]);
-		//    Assert.AreEqual(1.0f, transform.InputMatrix.Elements[3]);
+			Assert.AreEqual(2.0f, transform.Transform.Elements[0]);
+			Assert.AreEqual(0.0f, transform.Transform.Elements[1]);
+			Assert.AreEqual(0.0f, transform.Transform.Elements[2]);
+			Assert.AreEqual(4.0f, transform.Transform.Elements[3]);
+		}
 
-		//    transform.Initialize();
-		//    transform.FlipVertical = true;
-		//    transform.Calculate();
+		[Test]
+		public void ScaleAnisotropicPixelAspectRatio2()
+		{
+			CompositeImageGraphic graphic = new CompositeImageGraphic(512, 384, 0, 0, 2, 1);
+			ImageSpatialTransform transform = graphic.SpatialTransform as ImageSpatialTransform;
+			transform.ClientRectangle = new Rectangle(0, 0, 384, 512);
 
-		//    Assert.AreEqual(1.0f, transform.InputMatrix.Elements[0]);
-		//    Assert.AreEqual(0.0f, transform.InputMatrix.Elements[1]);
-		//    Assert.AreEqual(0.0f, transform.InputMatrix.Elements[2]);
-		//    Assert.AreEqual(-1.0f, transform.InputMatrix.Elements[3]);
+			transform.ScaleToFit = false;
+			transform.Scale = 2.0f;
 
-		//    transform.Initialize();
-		//    transform.FlipHorizontal = true;
-		//    transform.FlipVertical = true;
-		//    transform.Calculate();
+			Assert.AreEqual(4.0f, transform.Transform.Elements[0]);
+			Assert.AreEqual(0.0f, transform.Transform.Elements[1]);
+			Assert.AreEqual(0.0f, transform.Transform.Elements[2]);
+			Assert.AreEqual(2.0f, transform.Transform.Elements[3]);
+		}
 
-		//    Assert.AreEqual(-1.0f, transform.InputMatrix.Elements[0]);
-		//    Assert.AreEqual(0.0f, transform.InputMatrix.Elements[1]);
-		//    Assert.AreEqual(0.0f, transform.InputMatrix.Elements[2]);
-		//    Assert.AreEqual(-1.0f, transform.InputMatrix.Elements[3]);
-		//}
+		[Test]
+		public void FlipY()
+		{
+			ImageSpatialTransform transform = CreateTransform();
+			transform.FlipY = true;
 
-		//[Test]
-		//public void Rotate1()
-		//{
-		//    SpatialTransform transform = new SpatialTransform();
-		//    transform.SourceRectangle = new Rectangle(0, 0, 512, 384);
-		//    transform.DestinationRectangle = new Rectangle(0, 0, 512, 384);
+			Assert.AreEqual(-1.0f, transform.Transform.Elements[0]);
+			Assert.AreEqual(0.0f, transform.Transform.Elements[1]);
+			Assert.AreEqual(0.0f, transform.Transform.Elements[2]);
+			Assert.AreEqual(1.0f, transform.Transform.Elements[3]);
+			Assert.AreEqual(transform.Scale, 1.0f);
+			Assert.AreEqual(transform.ScaleX, 1.0f);
+			Assert.AreEqual(transform.ScaleY, 1.0f);
+		}
 
-		//    transform.Rotation = 90;
-		//    transform.Calculate();
+		[Test]
+		public void FlipX()
+		{
+			ImageSpatialTransform transform = CreateTransform();
+			transform.ScaleToFit = false;
+			transform.FlipX = true;
+
+			Assert.AreEqual(1.0f, transform.Transform.Elements[0]);
+			Assert.AreEqual(0.0f, transform.Transform.Elements[1]);
+			Assert.AreEqual(0.0f, transform.Transform.Elements[2]);
+			Assert.AreEqual(-1.0f, transform.Transform.Elements[3]);
+			Assert.AreEqual(transform.Scale, 1.0f);
+			Assert.AreEqual(transform.ScaleX, 1.0f);
+			Assert.AreEqual(transform.ScaleY, 1.0f);
+		}
+
+		[Test]
+		public void FlipXY()
+		{
+			ImageSpatialTransform transform = CreateTransform();
+			transform.FlipX = true;
+			transform.FlipY = true;
+
+			Assert.AreEqual(-1.0f, transform.Transform.Elements[0]);
+			Assert.AreEqual(0.0f, transform.Transform.Elements[1]);
+			Assert.AreEqual(0.0f, transform.Transform.Elements[2]);
+			Assert.AreEqual(-1.0f, transform.Transform.Elements[3]);
+			Assert.AreEqual(transform.Scale, 1.0f);
+			Assert.AreEqual(transform.ScaleX, 1.0f);
+			Assert.AreEqual(transform.ScaleY, 1.0f);
+		}
+
+		[Test]
+		public void Rotate1()
+		{
+			ImageSpatialTransform transform = CreateTransform();
+			transform.ScaleToFit = false;
+			transform.RotationXY = 90;
+
+			Assert.IsTrue(Math.Abs(0.0f - transform.Transform.Elements[0]) < 1.0E-05);
+			Assert.IsTrue(Math.Abs(1.0f - transform.Transform.Elements[1]) < 1.0E-05);
+			Assert.IsTrue(Math.Abs(-1.0f - transform.Transform.Elements[2]) < 1.0E-05);
+			Assert.IsTrue(Math.Abs(0.0f - transform.Transform.Elements[3]) < 1.0E-05);
+		}
+
+		[Test]
+		public void Rotate2()
+		{
+			ImageSpatialTransform transform = CreateTransform();
+			transform.ScaleToFit = false;
+
+			transform.RotationXY = 0;
+			Assert.AreEqual(0, transform.RotationXY);
+			transform.RotationXY = 90;
+			Assert.AreEqual(90, transform.RotationXY);
+			transform.RotationXY = 360;
+			Assert.AreEqual(0, transform.RotationXY);
+			transform.RotationXY = 450;
+			Assert.AreEqual(90, transform.RotationXY);
+			transform.RotationXY = -90;
+			Assert.AreEqual(270, transform.RotationXY);
+			transform.RotationXY = -270;
+			Assert.AreEqual(90, transform.RotationXY);
+			transform.RotationXY = -450;
+			Assert.AreEqual(270, transform.RotationXY);
+		}
+
+		[Test]
+		public void Translate()
+		{
+			ImageSpatialTransform transform = CreateTransform();
+			transform.TranslationX = 10;
+			transform.TranslationY = 20;
+
+			Assert.AreEqual(1.0f, transform.Transform.Elements[0]);
+			Assert.AreEqual(0.0f, transform.Transform.Elements[1]);
+			Assert.AreEqual(0.0f, transform.Transform.Elements[2]);
+			Assert.AreEqual(1.0f, transform.Transform.Elements[3]);
+			Assert.AreEqual(10.0f, transform.Transform.Elements[4]);
+			Assert.AreEqual(20.0f, transform.Transform.Elements[5]);
+		}
+
+		[Test]
+		public void ScaleToFit()
+		{
+			ImageSpatialTransform transform = CreateTransform();
+
+			transform.ScaleToFit = false;
+			transform.Scale = 2.0f;
+
+			Assert.AreEqual(2.0f, transform.Transform.Elements[0]);
+			Assert.AreEqual(0.0f, transform.Transform.Elements[1]);
+			Assert.AreEqual(0.0f, transform.Transform.Elements[2]);
+			Assert.AreEqual(2.0f, transform.Transform.Elements[3]);
+			Assert.AreEqual(2.0f, transform.Scale);
+			Assert.AreEqual(2.0f, transform.ScaleX);
+			Assert.AreEqual(2.0f, transform.ScaleY);
+
+			transform.ScaleToFit = true;
+
+			Assert.AreEqual(1.0f, transform.Transform.Elements[0]);
+			Assert.AreEqual(0.0f, transform.Transform.Elements[1]);
+			Assert.AreEqual(0.0f, transform.Transform.Elements[2]);
+			Assert.AreEqual(1.0f, transform.Transform.Elements[3]);
+			Assert.AreEqual(1.0f, transform.Scale);
+			Assert.AreEqual(1.0f, transform.ScaleX);
+			Assert.AreEqual(1.0f, transform.ScaleY);
+		}
+
+		[Test]
+		public void SourceToDestination()
+		{
+			// be sure to covert back and forth
+			CompositeImageGraphic graphic = new CompositeImageGraphic(3062, 3732);
+			ImageSpatialTransform transform = graphic.SpatialTransform as ImageSpatialTransform;
+			transform.ClientRectangle = new Rectangle(6, 6, 493, 626);
+
+			PointF srcPt1 = new Point(100, 200);
+			PointF dstPt = transform.ConvertToDestination(srcPt1);
+
+			PointF srcPt2 = transform.ConvertToSource(dstPt);
+			Assert.IsTrue(FloatComparer.AreEqual(srcPt1, srcPt2));
+		}
+
+		[Test]
+		public void CumulativeTransform()
+		{
+			SceneGraph sceneGraph = new SceneGraph();
+
+			CompositeGraphic graphic1 = new CompositeGraphic();
+			graphic1.SpatialTransform.Scale = 2.0f;
+			Assert.AreEqual(graphic1.SpatialTransform.CumulativeScale, 2.0f);
+			Assert.AreEqual(graphic1.SpatialTransform.CumulativeTransform.Elements[0], 2.0f);
+
+			CompositeGraphic graphic2 = new CompositeGraphic();
+			graphic2.SpatialTransform.Scale = 3.0f;
+			Assert.AreEqual(graphic2.SpatialTransform.CumulativeScale, 3.0f);
+			Assert.AreEqual(graphic2.SpatialTransform.CumulativeTransform.Elements[0], 3.0f);
 			
-		//    Assert.IsTrue(Math.Abs(0.0f - transform.InputMatrix.Elements[0]) < 1.0E-05);
-		//    Assert.IsTrue(Math.Abs(1.0f - transform.InputMatrix.Elements[1]) < 1.0E-05);
-		//    Assert.IsTrue(Math.Abs(-1.0f - transform.InputMatrix.Elements[2]) < 1.0E-05);
-		//    Assert.IsTrue(Math.Abs(0.0f - transform.InputMatrix.Elements[3]) < 1.0E-05);
-		//}
+			CompositeGraphic graphic3 = new CompositeGraphic();
+			graphic3.SpatialTransform.Scale = 4.0f;
+			Assert.AreEqual(graphic3.SpatialTransform.CumulativeScale, 4.0f);
+			Assert.AreEqual(graphic3.SpatialTransform.CumulativeTransform.Elements[0], 4.0f);
 
-		//[Test]
-		//public void Rotate2()
-		//{
-		//    SpatialTransform transform = new SpatialTransform();
+			graphic1.Graphics.Add(graphic2);
+			Assert.AreEqual(graphic1.SpatialTransform.CumulativeScale, 2.0f);
+			Assert.AreEqual(graphic1.SpatialTransform.CumulativeTransform.Elements[0], 2.0f);
+			Assert.AreEqual(graphic2.SpatialTransform.CumulativeScale, 6.0f);
+			Assert.AreEqual(graphic2.SpatialTransform.CumulativeTransform.Elements[0], 6.0f);
 
-		//    transform.Rotation = 0;
-		//    Assert.AreEqual(0, transform.Rotation);
-		//    transform.Rotation = 90;
-		//    Assert.AreEqual(90, transform.Rotation);
-		//    transform.Rotation = 360;
-		//    Assert.AreEqual(0, transform.Rotation);
-		//    transform.Rotation = 450;
-		//    Assert.AreEqual(90, transform.Rotation);
-		//    transform.Rotation = -90;
-		//    Assert.AreEqual(270, transform.Rotation);
-		//    transform.Rotation = -270;
-		//    Assert.AreEqual(90, transform.Rotation);
-		//    transform.Rotation = -450;
-		//    Assert.AreEqual(270, transform.Rotation);
-		//}
+			graphic2.Graphics.Add(graphic3);
+			Assert.AreEqual(graphic2.SpatialTransform.CumulativeScale, 6.0f);
+			Assert.AreEqual(graphic2.SpatialTransform.CumulativeTransform.Elements[0], 6.0f);
+			Assert.AreEqual(graphic3.SpatialTransform.CumulativeScale, 24.0f);
+			Assert.AreEqual(graphic3.SpatialTransform.CumulativeTransform.Elements[0], 24.0f);
 
-		//[Test]
-		//public void Translate()
-		//{
-		//    SpatialTransform transform = new SpatialTransform();
-		//    transform.SourceRectangle = new Rectangle(0, 0, 512, 384);
-		//    transform.DestinationRectangle = new Rectangle(0, 0, 512, 384);
-		//    transform.TranslationX = 10;
-		//    transform.TranslationY = 20;
-		//    transform.Calculate();
+			sceneGraph.Graphics.Add(graphic1);
+			Assert.AreEqual(graphic1.SpatialTransform.CumulativeScale, 2.0f);
+			Assert.AreEqual(graphic1.SpatialTransform.CumulativeTransform.Elements[0], 2.0f);
+			Assert.AreEqual(graphic2.SpatialTransform.CumulativeScale, 6.0f);
+			Assert.AreEqual(graphic2.SpatialTransform.CumulativeTransform.Elements[0], 6.0f);
+			Assert.AreEqual(graphic3.SpatialTransform.CumulativeScale, 24.0f);
+			Assert.AreEqual(graphic3.SpatialTransform.CumulativeTransform.Elements[0], 24.0f);
+		}
 
-		//    Assert.AreEqual(1.0f, transform.InputMatrix.Elements[0]);
-		//    Assert.AreEqual(0.0f, transform.InputMatrix.Elements[1]);
-		//    Assert.AreEqual(0.0f, transform.InputMatrix.Elements[2]);
-		//    Assert.AreEqual(1.0f, transform.InputMatrix.Elements[3]);
-		//    Assert.AreEqual(10.0f, transform.InputMatrix.Elements[4]);
-		//    Assert.AreEqual(20.0f, transform.InputMatrix.Elements[5]);
-		//}
-
-		//[Test]
-		//public void ZeroSizeSourceRectangle()
-		//{
-		//    Assert.Fail();
-		//}
-
-		//[Test]
-		//public void ZeroSizeDestinationRectangle()
-		//{
-		//    Assert.Fail();
-		//}
-
-		//[Test]
-		//public void ScaleToFit()
-		//{
-		//    Assert.Fail();
-		//}
-
-		//[Test]
-		//public void SourceToDestination()
-		//{
-		//    // be sure to covert back and forth
-		//    SpatialTransform transform = new SpatialTransform();
-		//    transform.SourceRectangle = new Rectangle(0, 0, 3732, 3062);
-		//    //transform.DestinationRectangle = new Rectangle(0, 0, 256, 192);
-		//    transform.DestinationRectangle = new Rectangle(6, 6, 493, 626);
-		//    transform.Calculate();
-
-		//    PointF srcPt1 = new Point(0, 0);
-		//    PointF dstPt = transform.ConvertToDestination(srcPt1);
-
-		//    PointF srcPt2 = transform.ConvertToSource(dstPt);
-		//    Assert.IsTrue(FloatComparer.AreEqual(srcPt1, srcPt2));
-		//}
-
-		//[Test]
-		//public void DestinationToSource()
-		//{
-		//    Assert.Fail();
-		//}
-
-		//[Test]
-		//public void OneToOne()
-		//{
-		//    Assert.Fail();
-		//}
+		private ImageSpatialTransform CreateTransform()
+		{
+			CompositeImageGraphic graphic = new CompositeImageGraphic(512, 384);
+			ImageSpatialTransform transform = graphic.SpatialTransform as ImageSpatialTransform;
+			transform.ClientRectangle = new Rectangle(0, 0, 384, 512);
+			return transform;
+		}
 
 		//[Test]
 		//public void QuadrantTransformSameImageSize()
@@ -329,16 +400,16 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 		//public void TransformVectorsTest()
 		//{
 		//    PointF[] originalVectors = new PointF[] { new PointF(1, 1), new PointF(1, -1), new PointF(-1, 1), new PointF(-1, -1) };
-			
+
 		//    SpatialTransform transform = new SpatialTransform();
 		//    transform.SourceRectangle = new Rectangle(0, 0, 10, 10);
-		//    transform.DestinationRectangle= new Rectangle(0, 0, 15, 25);
+		//    transform.DestinationRectangle = new Rectangle(0, 0, 15, 25);
 
 		//    PointF[] testVectors;
 		//    PointF[] resultVectors;
 
 		//    testVectors = (PointF[])originalVectors.Clone();
-		//    resultVectors = new PointF[] {new PointF(1.5F, 1.5F), new PointF(1.5F, -1.5F), new PointF(-1.5F, 1.5F), new PointF(-1.5F, -1.5F) };
+		//    resultVectors = new PointF[] { new PointF(1.5F, 1.5F), new PointF(1.5F, -1.5F), new PointF(-1.5F, 1.5F), new PointF(-1.5F, -1.5F) };
 		//    transform.ConvertVectorsToDestination(testVectors);
 		//    Assert.IsTrue(VerifyTestVectors(testVectors, resultVectors));
 
@@ -372,7 +443,7 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 		//    transform.Scale = 3F;
 		//    transform.ConvertVectorsToDestination(testVectors);
 		//    Assert.IsTrue(VerifyTestVectors(testVectors, resultVectors));
-			
+
 		//    resultVectors = (PointF[])originalVectors.Clone();
 		//    transform.ConvertVectorsToSource(testVectors);
 		//    Assert.IsTrue(VerifyTestVectors(testVectors, resultVectors));
@@ -401,6 +472,7 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 
 		//    return true;
 		//}
+
 	}
 }
 

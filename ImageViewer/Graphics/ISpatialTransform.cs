@@ -61,16 +61,6 @@ namespace ClearCanvas.ImageViewer.Graphics
 		float Scale { get; set; }
 		
 		/// <summary>
-		/// Gets the scale in the x-direction.
-		/// </summary>
-		float ScaleX { get; }
-
-		/// <summary>
-		/// Gets the scale in the y-direction.
-		/// </summary>
-		float ScaleY { get; }
-
-		/// <summary>
 		/// Gets or sets the translation in the x-direction.
 		/// </summary>
 		float TranslationX { get; set; }

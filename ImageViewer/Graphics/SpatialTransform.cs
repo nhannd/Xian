@@ -79,7 +79,11 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// </summary>
 		public float Scale
 		{
-			get { return _scale; }
+			get
+			{
+				CalculateScale();
+				return _scale;
+			}
 			set
 			{
 				if (value > _maximumScale)
@@ -90,6 +94,46 @@ namespace ClearCanvas.ImageViewer.Graphics
 					_scale = value;
 
 				this.RecalculationRequired = true;
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets the scale in the x-direction.
+		/// </summary>
+		/// <remarks>Usually, <see cref="Scale"/> = <see cref="ScaleX"/> = <see cref="ScaleY"/>.
+		/// However, when pixels are non-square, <see cref="ScaleX"/> and <see cref="ScaleY"/>
+		/// will differ.  Note that <see cref="ScaleX"/> does not account for flip and is
+		/// thus always positive.</remarks>
+		public float ScaleX
+		{
+			get
+			{
+				CalculateScale();
+				return _scaleX;
+			}
+			set 
+			{ 
+				_scaleX = value;
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets the scale in the y-direction.
+		/// </summary>
+		/// <remarks>Usually, <see cref="Scale"/> = <see cref="ScaleX"/> = <see cref="ScaleY"/>.
+		/// However, when pixels are non-square, <see cref="ScaleX"/> and <see cref="ScaleY"/>
+		/// will differ.  Note that <see cref="ScaleY"/> is does not account for flip and is
+		/// thus always positive.</remarks>
+		public float ScaleY
+		{
+			get
+			{
+				CalculateScale();
+				return _scaleY;
+			}
+			set 
+			{
+				_scaleY = value;
 			}
 		}
 
@@ -138,20 +182,6 @@ namespace ClearCanvas.ImageViewer.Graphics
 		}
 
 		/// <summary>
-		/// Gets or sets a value indicating whether images are flipped horizontally
-		/// (i.e., the y-axis as the axis of reflection)
-		/// </summary>
-		public bool FlipY
-		{
-			get { return _flipY; }
-			set 
-			{ 
-				_flipY = value;
-				this.RecalculationRequired = true;
-			}
-		}
-
-		/// <summary>
 		/// Gets or sets a value indicating whether images are flipped vertically
 		/// (i.e., the x-axis as the axis of reflection)
 		/// </summary>
@@ -161,6 +191,20 @@ namespace ClearCanvas.ImageViewer.Graphics
 			set 
 			{ 
 				_flipX = value;
+				this.RecalculationRequired = true;
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets a value indicating whether images are flipped horizontally
+		/// (i.e., the y-axis as the axis of reflection)
+		/// </summary>
+		public bool FlipY
+		{
+			get { return _flipY; }
+			set 
+			{ 
+				_flipY = value;
 				this.RecalculationRequired = true;
 			}
 		}
@@ -194,38 +238,6 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 
 		/// <summary>
-		/// Gets or sets the scale in the x-direction.
-		/// </summary>
-		/// <remarks>Usually, <see cref="Scale"/> = <see cref="ScaleX"/> = <see cref="ScaleY"/>.
-		/// However, when pixels are non-square, <see cref="ScaleX"/> and <see cref="ScaleY"/>
-		/// will differ.</remarks>
-		public float ScaleX
-		{
-			get { return _scaleX; }
-			protected set 
-			{ 
-				_scaleX = value;
-				this.RecalculationRequired = true;
-			}
-		}
-
-		/// <summary>
-		/// Gets or sets the scale in the y-direction.
-		/// </summary>
-		/// <remarks>Usually, <see cref="Scale"/> = <see cref="ScaleX"/> = <see cref="ScaleY"/>.
-		/// However, when pixels are non-square, <see cref="ScaleX"/> and <see cref="ScaleY"/>
-		/// will differ.</remarks>
-		public float ScaleY
-		{
-			get { return _scaleY; }
-			protected set 
-			{
-				this.RecalculationRequired = true;
-				_scaleY = value; 
-			}
-		}
-
-		/// <summary>
 		/// Gets the transform relative to the <see cref="IGraphic"/> object's
 		/// immediate parent <see cref="IGraphic"/>.
 		/// </summary>
@@ -238,7 +250,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 				_transform.Reset();
 				_transform.Rotate(this.RotationXY);
-				_transform.Scale(this.ScaleX, this.ScaleY);
+				_transform.Scale(this.ScaleX * (this.FlipY ? -1 : 1), this.ScaleY * (this.FlipX ? -1 : 1));
 				_transform.Translate(this.TranslationX, this.TranslationY);
 				 
 				return _transform;
@@ -253,8 +265,11 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// </remarks>
 		public float CumulativeScale
 		{
-			get { return _cumulativeScale; }
-			protected set { _cumulativeScale = value; }
+			get
+			{
+				Calculate();
+				return _cumulativeScale;
+			}
 		}
 
 		/// <summary>
@@ -271,13 +286,14 @@ namespace ClearCanvas.ImageViewer.Graphics
 			get 
 			{
 				Calculate();
-				return this.CumulativeTransformInternal; 
+				return _cumulativeTransform;
 			}
 		}
 
+
 #if UNIT_TESTS
 		/// <summary>
-		/// Gets the client rectangle for this <see cref="SpatialTransform"/>.
+		/// 
 		/// </summary>
 		public Rectangle ClientRectangle
 #else
@@ -296,21 +312,10 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// Gets or sets a value indicating whether the transformation
 		/// needs to be recalculated.
 		/// </summary>
-		protected bool RecalculationRequired
+		protected internal bool RecalculationRequired
 		{
 			get { return _recalculationRequired; }
 			set { _recalculationRequired = value; }
-		}
-
-		private Matrix CumulativeTransformInternal
-		{
-			get
-			{
-				if (_cumulativeTransform == null)
-					_cumulativeTransform = new Matrix();
-
-				return _cumulativeTransform;
-			}
 		}
 
 		internal IGraphic OwnerGraphic
@@ -424,8 +429,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// <returns></returns>
 		public SizeF ConvertToDestination(SizeF sourceDimensions)
 		{
-			float width = sourceDimensions.Width * this.ScaleX;
-			float height = sourceDimensions.Height * this.ScaleY;
+			float width = sourceDimensions.Width * this.ScaleX * (this.FlipY ? -1 : 1);
+			float height = sourceDimensions.Height * this.ScaleY * (this.FlipX ? -1 : 1);
 
 			return new SizeF(width, height);
 		}
@@ -437,8 +442,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// <returns></returns>
 		public SizeF ConvertToSource(SizeF destinationDimensions)
 		{
-			float width = destinationDimensions.Width / this.ScaleX;
-			float height = destinationDimensions.Height / this.ScaleY;
+			float width = destinationDimensions.Width / this.ScaleX * (this.FlipY ? -1 : 1);
+			float height = destinationDimensions.Height / this.ScaleY * (this.FlipX ? -1 : 1);
 
 			return new SizeF(width, height);
 		}
@@ -503,27 +508,27 @@ namespace ClearCanvas.ImageViewer.Graphics
 			if (!this.RecalculationRequired)
 				return;
 
-			CalculateScale();
-			CalculateFlip();
-
 			// The cumulative transform is the product of the transform of the
 			// parent graphic and the transform of this graphic (i.e. the current transform)
 			// If there is no parent graphic, then the cumulative transform = current transform
-			this.CumulativeTransformInternal.Reset();
+			if (_cumulativeTransform == null)
+				_cumulativeTransform = new Matrix();
+
+			_cumulativeTransform.Reset();
 
 			IGraphic parentGraphic = this.OwnerGraphic.ParentGraphic;
 
 			if (parentGraphic != null)
-				this.CumulativeTransformInternal.Multiply(parentGraphic.SpatialTransform.CumulativeTransform);
+				_cumulativeTransform.Multiply(parentGraphic.SpatialTransform.CumulativeTransform);
 
-			CalculatePreTransform(this.CumulativeTransformInternal);
-			this.CumulativeTransformInternal.Multiply(this.Transform);
-			CalculatePostTransform(this.CumulativeTransformInternal);
+			CalculatePreTransform(_cumulativeTransform);
+			_cumulativeTransform.Multiply(this.Transform);
+			CalculatePostTransform(_cumulativeTransform);
 
-			this.CumulativeScale = this.Scale;
+			_cumulativeScale = _scale;
 
 			if (parentGraphic != null)
-				this.CumulativeScale *= parentGraphic.SpatialTransform.CumulativeScale;
+				_cumulativeScale *= parentGraphic.SpatialTransform.CumulativeScale;
 
 			this.RecalculationRequired = false;
 		}
@@ -550,18 +555,6 @@ namespace ClearCanvas.ImageViewer.Graphics
 		{
 			this.ScaleX = _scale;
 			this.ScaleY = _scale;
-		}
-
-		/// <summary>
-		/// Gives subclasses an opportunity to override the flip calculation.
-		/// </summary>
-		protected virtual void CalculateFlip()
-		{
-			if (_flipX)
-				this.ScaleY *= -1;
-
-			if (_flipY)
-				this.ScaleX *= -1;
 		}
 
 		#endregion
