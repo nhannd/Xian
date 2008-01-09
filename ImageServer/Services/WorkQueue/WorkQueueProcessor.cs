@@ -325,8 +325,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                 }
                 else
                 {
-                    // Wait for only 1 second when the thread pool is all in use.
-                    _threadStop.WaitOne(1000, false);
+                    // Wait for only 1.5 seconds when the thread pool is all in use.
+                    _threadStop.WaitOne(1500, false);
                     _threadStop.Reset();
                 }
                 if (_stop)

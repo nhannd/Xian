@@ -60,7 +60,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Configuration.SettingsDescriptionAttribute("The number of seconds delay between attempting to process a queue entry.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("90")]
+        [global::System.Configuration.DefaultSettingValueAttribute("30")]
         public int WorkQueueProcessDelaySeconds {
             get {
                 return ((int)(this["WorkQueueProcessDelaySeconds"]));
@@ -74,7 +74,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue {
         [global::System.Configuration.SettingsDescriptionAttribute("The number of seconds to delay after processing until the queue entry is deleted." +
             "")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("180")]
+        [global::System.Configuration.DefaultSettingValueAttribute("90")]
         public int WorkQueueExpireDelaySeconds {
             get {
                 return ((int)(this["WorkQueueExpireDelaySeconds"]));

@@ -771,10 +771,11 @@ EXEC dbo.sp_executesql @statement = N'
 -- =============================================
 -- Author:		Steve Wranovsky
 -- Create date: August 16, 2007
+-- Update date: January 9, 2008
 -- Description:	Select WorkQueue entries
 -- History:
 --		Oct 29, 2007:	Add @ProcessorID
---				
+--		Jan 9, 2008:	Fixed clustering bug
 -- =============================================
 CREATE PROCEDURE [dbo].[QueryWorkQueue] 
 	-- Add the parameters for the stored procedure here
@@ -845,9 +846,17 @@ BEGIN
 				ProcessorID = @ProcessorID
 		WHERE 
 			GUID = @WorkQueueGUID
+			
+		COMMIT TRANSACTION
 	END
-
-	COMMIT TRANSACTION
+	ELSE
+	BEGIN
+		-- In case the lock failed, reset GUID
+		SET @WorkQueueGUID = newid()
+		
+		ROLLBACK TRANSACTION
+	END
+	
 
 	-- If the first update failed, this should select 0 records
 	SELECT * 
@@ -1191,6 +1200,7 @@ BEGIN
 EXEC dbo.sp_executesql @statement = N'-- =============================================
 -- Author:		Steve Wranovsky
 -- Create date: November 19, 2007
+-- Update date: January 9, 2008
 -- Description:	Completely delete a Study from the database
 -- =============================================
 CREATE PROCEDURE [dbo].[DeleteStudyStorage] 
@@ -1220,11 +1230,6 @@ BEGIN
 	FROM Study 
 	WHERE StudyInstanceUid = @StudyInstanceUid and ServerPartitionGUID = @ServerPartitionGUID
 
-	SELECT @NumberOfPatientRelatedStudies = NumberOfPatientRelatedStudies 
-	FROM Patient
-	WHERE GUID = @PatientGUID
-
-
 	-- Begin the transaction, keep all the deletes in a single transaction
 	BEGIN TRANSACTION
 
@@ -1238,19 +1243,11 @@ BEGIN
 	DELETE FROM Study
 	WHERE GUID = @StudyGUID
 
-	if @NumberOfPatientRelatedStudies > 1
-	BEGIN
-		UPDATE Patient
-		SET	NumberOfPatientRelatedStudies = NumberOfPatientRelatedStudies -1,
-			NumberOfPatientRelatedSeries = NumberOfPatientRelatedSeries - @NumberOfStudyRelatedSeries,
-			NumberOfPatientRelatedInstances = NumberOfPatientRelatedInstances - @NumberOfStudyRelatedInstances
-		WHERE GUID = @PatientGUID
-	END
-	ELSE
-	BEGIN
-		DELETE FROM Patient
-		WHERE GUID = @PatientGUID
-	END
+	UPDATE Patient
+	SET	NumberOfPatientRelatedStudies = NumberOfPatientRelatedStudies -1,
+		NumberOfPatientRelatedSeries = NumberOfPatientRelatedSeries - @NumberOfStudyRelatedSeries,
+		NumberOfPatientRelatedInstances = NumberOfPatientRelatedInstances - @NumberOfStudyRelatedInstances
+	WHERE GUID = @PatientGUID
 	
     -- Now cleanup the more management related tables.
 	DELETE FROM FilesystemQueue 
@@ -1270,6 +1267,16 @@ BEGIN
 
 	COMMIT TRANSACTION
 
+	-- Do afterwards, in case multiple studies for the same patient are being deleted at once.
+	SELECT @NumberOfPatientRelatedStudies = NumberOfPatientRelatedStudies 
+	FROM Patient
+	WHERE GUID = @PatientGUID
+
+	if @NumberOfPatientRelatedStudies = 0
+	BEGIN
+		DELETE FROM Patient
+		WHERE GUID = @PatientGUID
+	END
 END
 ' 
 END
