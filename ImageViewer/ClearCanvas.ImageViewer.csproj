@@ -260,10 +260,6 @@
     <Compile Include="Graphics\IGraphic.cs" />
     <Compile Include="Graphics\SceneGraph.cs" />
     <Compile Include="Rendering\Tests\ImageRendererBilinearInterpolationTests.cs" />
-    <Compile Include="Rendering\Tests\ImageRendererMiscTests.cs" />
-    <Compile Include="Rendering\Tests\ImageRendererMono16OrientationTests.cs" />
-    <Compile Include="Rendering\Tests\ImageRendererRGBPlanarOrientationTests.cs" />
-    <Compile Include="Rendering\Tests\ImageRendererRGBTripletOrientationTests.cs" />
     <Compile Include="Rendering\Tests\ImageRendererTestUtilities.cs" />
     <Compile Include="Mathematics\Tests\RectangleIntersectionTests.cs" />
     <Compile Include="BaseTools\ImageViewerTool.cs" />

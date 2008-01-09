@@ -48,43 +48,11 @@ namespace ClearCanvas.Dicom.OffisNetwork.Tests
         [TestFixtureSetUp]
         public void Init()
         {
-            // check to see if OFFIS storescp.exe exists
-            //string programToRun = "C:\\Windows\\storescp.exe";
-            //string arguments = " -v 104";
-
-            //if (!System.IO.File.Exists(programToRun))
-            //    throw new Exception("Could not find the DICOM server program to run tests against");
-            
-            ///* Note: I haven't figured out how to determine whether the dcmnet.dll 
-            // * dependency is somewhere that NUnit can access and properly load into
-            // * memory
-            // * 
-            //// check to see if the dependent C++ library file exists
-            //string dependentLibraryFile = "\\dcmnet.dll";
-            //if (!System.IO.File.Exists(dependentLibraryFile))
-            //    throw new Exception("Could not find the dependent C++ library");
-            // */
-
-            //try
-            //{
-            //    ProcessStartInfo startInfo = new ProcessStartInfo(programToRun);
-            //    startInfo.Arguments = arguments;
-
-            //    _dicomServer = Process.Start(startInfo);
-            //}
-            //catch (System.Exception e)
-            //{
-            //    throw new Exception("Could not start the DICOM server", e);
-            //}
         }
 
         [TestFixtureTearDown]
         public void Dispose()
         {
-            //if (null != _dicomServer)
-            //{
-            //    _dicomServer.Kill();
-            //}
         }
 
         [Test]
@@ -92,8 +60,8 @@ namespace ClearCanvas.Dicom.OffisNetwork.Tests
         {
             ApplicationEntity myOwnAEParameters = new ApplicationEntity(new HostName("localhost"),
                 new AETitle("CCNETTEST"), new ListeningPort(4000));
-            ApplicationEntity serverAE = new ApplicationEntity(new HostName("10.2.34.203"),
-                new AETitle("AE_TITLE"), new ListeningPort(4001));
+			ApplicationEntity serverAE = new ApplicationEntity(new HostName("172.16.10.167"),
+				new AETitle("CONQUESTSRV1"), new ListeningPort(5678));
 
             DicomClient dicomClient = new DicomClient(myOwnAEParameters);
 
@@ -282,7 +250,6 @@ namespace ClearCanvas.Dicom.OffisNetwork.Tests
             if (!dicomClient.Verify(serverAE))
                 throw new Exception("Target server is not running");
 
-            //ReadOnlyQueryResultCollection results = dicomClient.Query(serverAE, new Uid("1.3.46.670589.5.2.10.2156913941.892665384.993397"));
             ReadOnlyQueryResultCollection results = dicomClient.Query(serverAE, new Uid("1.2.804.114118.11.20060704.115022.339091099.19"));
             Assert.IsTrue(results.Count > 0);
 
@@ -294,104 +261,7 @@ namespace ClearCanvas.Dicom.OffisNetwork.Tests
 				}
 			}
         }
-
-        [Test]
-        public void QueryForSeries()
-        {
-            ApplicationEntity myOwnAEParameters = new ApplicationEntity(new HostName("localhost"),
-                new AETitle("CCNETTEST"), new ListeningPort(4000));
-            ApplicationEntity serverAE = new ApplicationEntity(new HostName("172.16.10.167"),
-                new AETitle("CONQUESTSRV1"), new ListeningPort(5678));
-
-            DicomClient dicomClient = new DicomClient(myOwnAEParameters);
-
-            if (!dicomClient.Verify(serverAE))
-                throw new Exception("Target server is not running");
-
-            //ReadOnlyQueryResultCollection results = dicomClient.Query(serverAE, new Uid("1.3.46.670589.5.2.10.2156913941.892665384.993397"));
-            ReadOnlyQueryResultCollection results = dicomClient.QuerySeries(serverAE, new Uid("1.2.804.114118.11.20060704.115022.339091099.19.1"));
-            Assert.IsTrue(results.Count > 0);
-
-            foreach (QueryResult qr in results)
-            {
-				foreach (DicomTagPath path in qr.DicomTagPathCollection)
-				{
-					Console.WriteLine("{0} - {1}", path.ToString(), qr[path]);
-				}
-			}
-        }
-
-        [Test]
-        public void QueryByMultipleKeys()
-        {
-        }
-
-        [Test]
-        public void Retrieve()
-        {
-			ApplicationEntity myOwnAEParameters = new ApplicationEntity(new HostName("localhost"),
-				new AETitle("CCNETTEST"), new ListeningPort(4000));
-			ApplicationEntity serverAE = new ApplicationEntity(new HostName("172.16.10.167"),
-				new AETitle("CONQUESTSRV1"), new ListeningPort(5678));
-
-			DicomClient dicomClient = new DicomClient(myOwnAEParameters);
-
-			if (!dicomClient.Verify(serverAE))
-				throw new Exception("Target server is not running");
-
-			dicomClient.RetrieveProgressUpdated += new EventHandler<RetrieveProgressUpdatedEventArgs>(RetrieveProgressUpdated);
-			dicomClient.Retrieve(serverAE, new Uid("1.2.804.114118.11.20060704.115022.339091099.19"), @"..\studies\");
-			dicomClient.RetrieveProgressUpdated += new EventHandler<RetrieveProgressUpdatedEventArgs>(RetrieveProgressUpdated);
-        }
-
-        [Test]
-        public void RetrieveSeries()
-        {
-			ApplicationEntity myOwnAEParameters = new ApplicationEntity(new HostName("localhost"),
-				new AETitle("CCNETTEST"), new ListeningPort(4000));
-			ApplicationEntity serverAE = new ApplicationEntity(new HostName("172.16.10.167"),
-				new AETitle("CONQUESTSRV1"), new ListeningPort(5678));
-
-			DicomClient dicomClient = new DicomClient(myOwnAEParameters);
-
-			if (!dicomClient.Verify(serverAE))
-				throw new Exception("Target server is not running");
-
-			dicomClient.RetrieveProgressUpdated += new EventHandler<RetrieveProgressUpdatedEventArgs>(RetrieveProgressUpdated);
-			dicomClient.RetrieveSeries(serverAE, new Uid("1.2.804.114118.11.20060704.115022.339091099.19.1"), @"..\studies\");
-			dicomClient.RetrieveProgressUpdated += new EventHandler<RetrieveProgressUpdatedEventArgs>(RetrieveProgressUpdated);
-        }
-
-        [Test]
-        public void ServerTest()
-        {
-            ApplicationEntity myOwnAEParameters = new ApplicationEntity(new HostName("localhost"),
-                new AETitle("CCNETTEST"), new ListeningPort(4000));
-
-            DicomServer dicomServer = new DicomServer(myOwnAEParameters, @"..\studies\");
-
-            dicomServer.Start();
-
-            Thread.Sleep(TimeSpan.FromMinutes(5));
-
-            dicomServer.Stop();
-        }
-
-        [Test]
-        public void SendTest()
-        {
-			ApplicationEntity myOwnAEParameters = new ApplicationEntity(new HostName("localhost"),
-				new AETitle("CCNETTEST"), new ListeningPort(4000));
-
-			ApplicationEntity serverAE = new ApplicationEntity(new HostName("localhost"),
-				new AETitle("STORESCP"), new ListeningPort(12000));
-
-			DicomClient dicomClient = new DicomClient(myOwnAEParameters);
-
-			string[] files = Directory.GetFiles(@"c:\temp\UnitTestFiles\ClearCanvas.Dicom.Tests.DcmNetTest.SendTest\");
-			dicomClient.Store(serverAE, files);
-        }
-
+		
         #region Non-test utility methods
 
 		public void RetrieveProgressUpdated(object sender, RetrieveProgressUpdatedEventArgs e)

@@ -114,27 +114,27 @@ namespace ClearCanvas.Common.Tests
 		}
 
 		[Test]
-		public void Process_EmptyDirectory()
+		public void ProcessEmptyDirectory()
 		{
 			FileProcessor.Process(_testDir, "", _del, true);
 		}
 
 		[Test]
-		public void Process_DirectoryWithFilesOnly()
+		public void ProcessDirectoryWithFilesOnly()
 		{
 			CreateFiles(_testDir, "", 10);
 			FileProcessor.Process(_testDir, "", _del, true);
 		}
 
 		[Test]
-		public void Process_DirectoryWithSubdirectoriesOnly()
+		public void ProcessDirectoryWithSubdirectoriesOnly()
 		{
 			CreateDirectories(_testDir, 3);
 			FileProcessor.Process(_testDir, "", _del, true);
 		}
 
 		[Test]
-		public void Process_DirectoryWithFileAndSubdirectories()
+		public void ProcessDirectoryWithFileAndSubdirectories()
 		{
 			string[] dirList = CreateDirectories(_testDir, 3);
 			CreateFiles(_testDir, "", 5);
@@ -144,7 +144,7 @@ namespace ClearCanvas.Common.Tests
 		}
 
 		[Test]
-		public void Process_FileOnly()
+		public void ProcessFileOnly()
 		{
 			string[] fileList = CreateFiles(_testDir, "", 1);
 
@@ -152,7 +152,7 @@ namespace ClearCanvas.Common.Tests
 		}
 
 		[Test]
-		public void Process_Wildcards()
+		public void ProcessWildcards()
 		{
 			CreateFiles(_testDir, ".txt", 5);
 			CreateFiles(_testDir, ".abc", 5);
@@ -162,14 +162,14 @@ namespace ClearCanvas.Common.Tests
 		
 		[Test]
 		[ExpectedException(typeof(FileNotFoundException))]
-		public void Process_PathDoesNotExist()
+		public void ProcessPathDoesNotExist()
 		{
 			FileProcessor.Process("c:\\NoSuchPath", "", _del, true);
 		}
 
 		[Test]
 		[ExpectedException(typeof(ArgumentException))]
-		public void Process_PathEmpty()
+		public void ProcessPathEmpty()
 		{
 			FileProcessor.Process("", "", _del, true);
 		}

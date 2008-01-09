@@ -214,12 +214,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
-    <Compile Include="Tests\PluginManagerTest.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Tests\PluginSetupTeardown.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="UnknownServiceException.cs" />
     <Compile Include="Utilities\BackgroundTask.cs" />
     <Compile Include="Utilities\BlockingQueue.cs" />

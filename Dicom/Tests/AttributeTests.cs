@@ -37,12 +37,14 @@ using System.Collections.Generic;
 using System.Text;
 using NUnit.Framework;
 using ClearCanvas.Dicom;
+using System.Globalization;
 
 namespace ClearCanvas.Dicom.Tests
 {
     [TestFixture]
     public class AttributeTests : AbstractTest
     {
+		public static readonly CultureInfo CultureInfo = new CultureInfo("en-US");
 
         #region DicomAttributeAE Test
         [Test]
@@ -1105,13 +1107,14 @@ namespace ClearCanvas.Dicom.Tests
                 #endregion
 
                 #region set from date time
+				
                 attrib = new DicomAttributeDA(DicomTagDictionary.GetDicomTag(DicomTags.ScheduledProcedureStepEndDate));
-                DateTime d1 = DateTime.Parse("2/16/1992");
+				DateTime d1 = DateTime.Parse("2/16/1992", CultureInfo);
                 attrib.SetDateTime(0, d1);
                 Assert.AreEqual(1, attrib.Count);
                 Assert.AreEqual(DateParser.DicomDateFormat.Length, attrib.StreamLength);
 
-                DateTime d2 = DateTime.Parse("12/02/2000");
+				DateTime d2 = DateTime.Parse("12/02/2000", CultureInfo); 
                 attrib.SetDateTime(1, d2);
                 Assert.AreEqual(2, attrib.Count);
                 Assert.AreEqual(DateParser.DicomDateFormat.Length * 2 + "\\".Length + 1, attrib.StreamLength);
@@ -1176,7 +1179,7 @@ namespace ClearCanvas.Dicom.Tests
                 #endregion
 
                 #region append date time
-                DateTime d2 = DateTime.Parse("12/02/2000");
+				DateTime d2 = DateTime.Parse("12/02/2000", CultureInfo);
                 attrib = CreateAttribute();
                 attrib.AppendDateTime(d2);
                 Assert.AreEqual(1, attrib.Count);
@@ -1188,7 +1191,7 @@ namespace ClearCanvas.Dicom.Tests
             public void TestGet()
             {
                 DicomAttributeDA attrib;
-                
+				
                 #region Get to string
                 string stringValue;
                 attrib = CreateAttribute();
@@ -1226,9 +1229,9 @@ namespace ClearCanvas.Dicom.Tests
                 Assert.AreEqual("20001012", attrib.GetDateTime(0, dt).ToString("yyyyMMdd"));
                 Assert.AreEqual("20190502", attrib.GetDateTime(1, dt).ToString("yyyyMMdd"));
 
-                attrib = CreateAttribute(); 
-                attrib.SetDateTime(0, DateTime.Parse("10/12/2000"));
-                attrib.SetDateTime(1, DateTime.Parse("05/02/2019"));
+                attrib = CreateAttribute();
+				attrib.SetDateTime(0, DateTime.Parse("10/12/2000", CultureInfo));
+				attrib.SetDateTime(1, DateTime.Parse("05/02/2019", CultureInfo));
                 Assert.AreEqual(2, attrib.Count);
                 Assert.AreEqual("20001012", attrib.GetDateTime(0, dt).ToString("yyyyMMdd"));
                 Assert.AreEqual("20190502", attrib.GetDateTime(1, dt).ToString("yyyyMMdd"));
@@ -1236,7 +1239,7 @@ namespace ClearCanvas.Dicom.Tests
 
                 // special case: invalid index
                 attrib = CreateAttribute();
-                attrib.SetDateTime(0, DateTime.Parse("10/12/2000"));
+				attrib.SetDateTime(0, DateTime.Parse("10/12/2000", CultureInfo));
                 Assert.AreEqual("", attrib.GetString(10, ""));
                 Assert.IsTrue(attrib.TryGetString(10, out stringValue) == false);
 
@@ -1365,20 +1368,21 @@ namespace ClearCanvas.Dicom.Tests
                 #endregion
 
                 #region Set datetime
+				
                 attrib = CreateAttribute();
-                DateTime d1 = DateTime.Parse("2/16/1992 12:15:12");
+				DateTime d1 = DateTime.Parse("2/16/1992 12:15:12", CultureInfo);
                 attrib.SetDateTime(0, d1);
                 Assert.AreEqual(1, attrib.Count);
                 Assert.Greater(attrib.StreamLength, 0); // we'll test the value in TestGet()
 
-                DateTime d2 = DateTime.Parse("12/02/2000 12:15:12");
+				DateTime d2 = DateTime.Parse("12/02/2000 12:15:12", CultureInfo);
                 attrib.SetDateTime(1, d2);
                 Assert.AreEqual(2, attrib.Count);
                 Assert.Greater(attrib.StreamLength, 0); // we'll test the value in TestGet()
 
                 // special case: invalid index
                 attrib = CreateAttribute();
-                d1 = DateTime.Parse("2/16/1992 12:15:12");
+				d1 = DateTime.Parse("2/16/1992 12:15:12", CultureInfo);
                 try
                 {
                     attrib.SetDateTime(10, d1);
@@ -1485,7 +1489,7 @@ namespace ClearCanvas.Dicom.Tests
 
                 
                 attrib = CreateAttribute();
-                attrib.SetDateTime(0, DateTime.Parse("08/20/2001 12:15:12"));
+				attrib.SetDateTime(0, DateTime.Parse("08/20/2001 12:15:12", CultureInfo));
                 // datetime are converted to string
                 Assert.IsTrue(attrib.TryGetString(0, out stringVal));
                 Assert.AreEqual("20010820121512.000000", stringVal);
@@ -1493,7 +1497,7 @@ namespace ClearCanvas.Dicom.Tests
 
                 //Special case: invalid index
                 attrib = CreateAttribute();
-                attrib.SetDateTime(0, DateTime.Parse("08/20/2001 12:15:12"));
+				attrib.SetDateTime(0, DateTime.Parse("08/20/2001 12:15:12", CultureInfo));
                 Assert.IsTrue(attrib.TryGetString(10, out stringVal) == false);
                 Assert.AreEqual("", attrib.GetString(10, ""));
 
@@ -5028,12 +5032,12 @@ namespace ClearCanvas.Dicom.Tests
 
                 #region Set datetime
                 attrib = CreateAttribute();
-                DateTime d1 = DateTime.Parse("2/16/1992 12:15:12");
+				DateTime d1 = DateTime.Parse("2/16/1992 12:15:12", CultureInfo);
                 attrib.SetDateTime(0, d1);
                 Assert.AreEqual(1, attrib.Count);
                 Assert.AreEqual("HHmmSS".Length, attrib.StreamLength);
 
-                DateTime d2 = DateTime.Parse("12/02/2000 12:15:12");
+                DateTime d2 = DateTime.Parse("12/02/2000 12:15:12", CultureInfo);
                 attrib.SetDateTime(1, d2);
                 Assert.AreEqual(2, attrib.Count);
                 Assert.AreEqual("HHmmSS\\HHmmSS".Length + 1, attrib.StreamLength);
@@ -5150,7 +5154,7 @@ namespace ClearCanvas.Dicom.Tests
 
 
                 attrib = CreateAttribute();
-                attrib.SetDateTime(0, DateTime.Parse("08/20/2001 12:15:12"));
+				attrib.SetDateTime(0, DateTime.Parse("08/20/2001 12:15:12", CultureInfo));
                 Assert.IsTrue(attrib.TryGetString(0, out stringVal));
                 Assert.AreEqual("121512", stringVal);
                 Assert.AreEqual("121512", attrib.GetString(0, ""));
