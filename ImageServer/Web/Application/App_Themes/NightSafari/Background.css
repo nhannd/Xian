@@ -5,7 +5,7 @@
 /* background color for entire page */
 body
 {
-	background-color: black;
+	background-color:Black;
 }
 
 
@@ -13,7 +13,7 @@ body
 /* Panel that holds the contents of the page - below the menubar*/
 .CSSPageContentMainWindow
 {
-	
+	background-image: url(images/background.gif);
 }
 
 /* Title of the page */

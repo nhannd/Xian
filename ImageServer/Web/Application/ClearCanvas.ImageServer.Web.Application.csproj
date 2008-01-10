@@ -393,6 +393,7 @@
     <Content Include="App_Themes\NightSafari\Border.css" />
     <Content Include="App_Themes\NightSafari\Calendar.css" />
     <Content Include="App_Themes\NightSafari\Font.css" />
+    <Content Include="App_Themes\NightSafari\images\background.gif" />
     <Content Include="App_Themes\NightSafari\images\logos\ImageServerLogo.png" />
     <Content Include="App_Themes\NightSafari\Layout.css" />
     <Content Include="App_Themes\NightSafari\Tabs.css" />
