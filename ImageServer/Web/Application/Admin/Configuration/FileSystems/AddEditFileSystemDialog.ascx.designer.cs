@@ -164,15 +164,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
         protected global::System.Web.UI.WebControls.TextBox PathTextBox;
         
         /// <summary>
-        /// PathValidator control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.WebServiceBasedValidator PathValidator;
-        
-        /// <summary>
         /// PathHelpImage control.
         /// </summary>
         /// <remarks>
@@ -180,6 +171,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Image PathHelpImage;
+        
+        /// <summary>
+        /// PathValidator control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.WebServiceValidator PathValidator;
         
         /// <summary>
         /// ConditionalRequiredFieldValidator2 control.

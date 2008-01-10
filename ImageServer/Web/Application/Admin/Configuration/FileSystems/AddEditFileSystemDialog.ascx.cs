@@ -141,32 +141,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
             Page.ClientScript.RegisterClientScriptBlock(this.GetType(), this.ClientID,
                         @"<script language='javascript'>
 
-                            function VerifyPath()
+                            function ValidationFilesystemPathParams()
                             {
-                                controlValue = document.getElementById('" + PathTextBox.ClientID + @"').value;
-                                ClearCanvas.ImageServer.Web.Application.Services.ValidationServices.ValidateFilesystemPath(controlValue, OnSucess, OnError);
-                            
-                            }
-                            
-                            function OnError(result)
-                            {
-                                
-                            }
+                                control = document.getElementById('" + PathTextBox.ClientID + @"');
+                                params = new Array();
+                                params.path=control.value;
 
-                            // This is the callback function that
-                            // processes the Web Service return value.
-                            function OnSucess(result)
-                            {
-                               control = document.getElementById('" + PathTextBox.ClientID + @"');
-                                
-                                if (!result)
-                                {
-                                    control.style.backgroundColor ='#ff0000';
-                                }
-                                else
-                                {
-                                    control.style.backgroundColor ='';
-                                }
+                                return params;
                             }
 
 

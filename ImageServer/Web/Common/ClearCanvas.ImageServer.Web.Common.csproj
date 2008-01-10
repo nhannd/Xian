@@ -60,7 +60,7 @@
     <Compile Include="WebControls\BaseValidator.cs" />
     <Compile Include="WebControls\ConditionalRequiredFieldValidator.cs" />
     <Compile Include="WebControls\ValidationResult.cs" />
-    <Compile Include="WebControls\WebServiceBasedValidator.cs" />
+    <Compile Include="WebControls\WebServiceValidator.cs" />
     <Compile Include="WebControls\RangeValidator.cs" />
     <Compile Include="WebControls\RegularExpressionFieldValidator.cs" />
   </ItemGroup>

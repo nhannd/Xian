@@ -29,47 +29,46 @@
 
 #endregion
 
-using System.Net;
-using System.Web.Script.Services;
-using System.Web.Services;
-using System.ComponentModel;
+using System;
+using System.IO;
+using System.Threading;
 
-namespace ClearCanvas.ImageServer.Web.Application.Services
+namespace ClearCanvas.Common.Utilities
 {
     /// <summary>
-    /// Provides data validation services
+    /// Helper class to deal with file systems.
     /// </summary>
-    [WebService(Namespace = "http://www.clearcanvas.ca/ImageServer/Services/ValidationServices.asmx")]
-    [WebServiceBinding(ConformsTo = WsiProfiles.BasicProfile1_1)]
-    [ToolboxItem(false)]
-    [GenerateScriptType(typeof (ValidationResult))]
-    [ScriptService]
-    public class ValidationServices : WebService
+    public class FileSystem
     {
+        #region Constants
+        
+        protected const int TIMEOUT = 1000;
+
+        #endregion Constants
+
+        #region Static Methods
+
+
         /// <summary>
-        /// Validate the existence of the specified path on the network.
+        /// Checks if a specified directory exists on the network and accessible from local machine.
         /// </summary>
-        /// <param name="path"></param>
+        /// <param name="dir"></param>
         /// <returns></returns>
-        [WebMethod]
-        public ValidationResult ValidateFilesystemPath(string path)
+        public static bool DirectoryExists(String dir)
         {
-            ValidationResult res = new ValidationResult();
+            bool exists = false;
+            Thread t = new Thread(delegate()
+                                      {
+                                          exists = Directory.Exists(dir);
+                                      });
+            t.Start();
+            t.Join(TIMEOUT);
+            t.Abort();
 
-
-            if (ClearCanvas.Common.Utilities.FileSystem.DirectoryExists(path))
-            {
-                res.Success = true;
-            }
-            else
-            {
-                IPHostEntry local = Dns.GetHostEntry("");
-                res.ErrorText = "Path " + path + " doesn't exist OR is not accessible from " + local.HostName;
-                res.Success = false;
-                res.ErrorCode = -1;
-            }
-
-            return res;
+            return exists;
         }
+
+
+        #endregion Static Methods
     }
 }

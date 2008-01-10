@@ -28,47 +28,55 @@
                             <ContentTemplate>
                                 <asp:Panel ID="Panel1" runat="server" CssClass="CSSDialogTabPanelContent">
                                     <table id="TABLE1" runat="server" cellspacing="4">
-                                        <tr align="left" runat="server">
+                                        <tr align="left" valign="bottom" runat="server">
                                             <td runat="server">
                                                 <asp:Label ID="Label1" runat="server" Text="Description" CssClass="CSSTextLabel" /><br />
                                                 <asp:TextBox ID="DescriptionTextBox" runat="server" Width="220px" BorderColor="LightSteelBlue"
-                                                    BorderWidth="1px" MaxLength="128" ValidationGroup="vg1"></asp:TextBox><asp:Image
-                                                        ID="DescriptionHelpImage" runat="server" ImageAlign="Top" ImageUrl="~/images/icons/HelpSmall.png"
+                                                    BorderWidth="1px" MaxLength="128" ValidationGroup="vg1"></asp:TextBox>
+                                                    
+                                                    <asp:Image
+                                                        ID="DescriptionHelpImage" runat="server" ImageAlign="bottom" 
+                                                        ImageUrl="~/images/icons/HelpSmall.png"
                                                         Style="visibility: hidden" />
-                                            </td>
-                                            <td runat="server">
-                                                <clearcanvas:ConditionalRequiredFieldValidator ID="ConditionalRequiredFieldValidator1"
+                                                        
+                                                        <clearcanvas:ConditionalRequiredFieldValidator ID="ConditionalRequiredFieldValidator1"
                                                     runat="server" ControlToValidate="DescriptionTextBox" InvalidInputBackColor="#FAFFB5"
                                                     ValidationGroup="vg1" ErrorMessage="Description is required!!"
-                                                    Display="None" PopupHelpControlID="DescriptionHelpImage" RequiredWhenChecked="False"></clearcanvas:ConditionalRequiredFieldValidator>
+                                                    Display="None" PopupHelpControlID="DescriptionHelpImage" RequiredWhenChecked="False">
+                                                    </clearcanvas:ConditionalRequiredFieldValidator>
+                                            
                                             </td>
                                             <td runat="server">
                                                 <asp:CheckBox ID="ReadCheckBox" runat="server" OnInit="ReadOnlyCheckBox_Init" Text="Read"
                                                     Checked="True" />
                                             </td>
                                         </tr>
-                                        <tr align="left" runat="server">
+                                        <tr align="left"  valign="bottom" runat="server">
                                             <td runat="server">
                                                 <asp:Label ID="Label2" runat="server" Text="Path" CssClass="CSSTextLabel" /><br />
                                                 <asp:TextBox ID="PathTextBox" runat="server" Width="220px" BorderColor="LightSteelBlue"
                                                     BorderWidth="1px" ValidationGroup="vg1" MaxLength="256"></asp:TextBox>
-                                                
-                                                <clearcanvas:WebServiceBasedValidator runat="server" ID="PathValidator" 
-                                                    ControlToValidate="PathTextBox" 
-                                                    InvalidInputBackColor="#ffff00" 
-                                                    PopupHelpControlID="PathHelpImage"
-                                                    ErrorMessage="The specified path is invalid, does not exist, or is not accessible."
-                                                    ServicePath="/Services/ValidationServices.asmx" ValidationGroup="vg1" />
-                                                
                                                 <asp:Image
-                                                        ID="PathHelpImage" runat="server" ImageAlign="Top" ImageUrl="~/images/icons/HelpSmall.png"
+                                                        ID="PathHelpImage" runat="server" ImageAlign="bottom" 
+                                                        ImageUrl="~/images/icons/HelpSmall.png"
                                                         Style="visibility: hidden" />
-                                            </td>
-                                            <td runat="server">
+                                                        
+                                               <clearcanvas:WebServiceValidator 
+                                                    runat="server" ID="PathValidator" 
+                                                    ControlToValidate="PathTextBox" 
+                                                    InvalidInputBackColor="#FAFFB5" 
+                                                    PopupHelpControlID="PathHelpImage"
+                                                    ServicePath="/Services/ValidationServices.asmx" 
+                                                    ServiceOperation="ValidateFilesystemPath" 
+                                                    ParamsFunction="ValidationFilesystemPathParams"
+                                                    Display="None" 
+                                                    ValidationGroup="vg1" />
+                                                    
                                                 <clearcanvas:ConditionalRequiredFieldValidator ID="ConditionalRequiredFieldValidator2"
                                                     runat="server" ControlToValidate="PathTextBox" InvalidInputBackColor="#FAFFB5"
                                                     ValidationGroup="vg1" ErrorMessage="Filesystem Path is required!!"
-                                                    Display="None" PopupHelpControlID="PathHelpImage" RequiredWhenChecked="False"></clearcanvas:ConditionalRequiredFieldValidator>
+                                                    Display="None" PopupHelpControlID="PathHelpImage" RequiredWhenChecked="False">
+                                                    </clearcanvas:ConditionalRequiredFieldValidator>    
                                             </td>
                                             <td runat="server">
                                                 <asp:CheckBox ID="WriteCheckBox" runat="server" Text="Write" Checked="True" />
@@ -79,8 +87,6 @@
                                                 <asp:Label ID="Label3" runat="server" Text="Filesystem" CssClass="CSSTextLabel" /><br />
                                                 <asp:DropDownList ID="TiersDropDownList" runat="server" Width="220px">
                                                 </asp:DropDownList>
-                                            </td>
-                                            <td runat="server">
                                             </td>
                                             <td runat="server">
                                             </td>
