@@ -167,12 +167,11 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			UndoableCommand command = new UndoableCommand(this.ImageViewer.SelectedImageBox);
 			command.BeginState = this.ImageViewer.SelectedImageBox.CreateMemento();
 
-			// If the display set is already visible, then we make a copy;
-			// otherwise, we use the original
-			if (displaySet.Visible)
-				this.ImageViewer.SelectedImageBox.DisplaySet = displaySet.CreateFreshCopy();
-			else
-				this.ImageViewer.SelectedImageBox.DisplaySet = displaySet;
+			// always create a 'fresh copy' to show in the image box.  We never want to show
+			// the 'originals' (e.g. the ones in IImageSet.DisplaySets) because we want them 
+			// to remain clean and unaltered - consider them to be templates for what actually
+			// gets shown.
+			this.ImageViewer.SelectedImageBox.DisplaySet = displaySet.CreateFreshCopy();
 
 			this.ImageViewer.SelectedImageBox.Draw();
 			//this.ImageViewer.SelectedImageBox[0, 0].Select();
