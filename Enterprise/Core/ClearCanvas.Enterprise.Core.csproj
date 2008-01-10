@@ -74,6 +74,7 @@
     <Compile Include="EnumValueClassAttribute.cs" />
     <Compile Include="EnumValueNotFoundException.cs" />
     <Compile Include="ExceptionLogEntry.cs" />
+    <Compile Include="ExceptionLoggingAdvice.cs" />
     <Compile Include="IAuthenticationService.cs" />
     <Compile Include="IEntityBroker.cs" />
     <Compile Include="IExceptionLogger.cs" />

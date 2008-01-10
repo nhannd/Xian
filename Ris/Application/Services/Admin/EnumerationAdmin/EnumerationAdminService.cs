@@ -64,6 +64,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.EnumerationAdmin
         [ReadOperation]
         public ListEnumerationValuesResponse ListEnumerationValues(ListEnumerationValuesRequest request)
         {
+            throw new ArgumentException("The argument sucks");
+
             IEnumBroker enumBroker = PersistenceContext.GetBroker<IEnumBroker>();
             IList<EnumValue> enumValues = enumBroker.Load(GetEnumClass(request.AssemblyQualifiedClassName));
             return new ListEnumerationValuesResponse(

@@ -6,6 +6,6 @@ namespace ClearCanvas.Enterprise.Core
 {
     public interface IExceptionLogger
     {
-        ExceptionLogEntry CreateExceptionLogEntry(Exception e);
+        ExceptionLogEntry CreateExceptionLogEntry(string operation, Exception e);
     }
 }

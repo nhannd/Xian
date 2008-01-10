@@ -6,6 +6,8 @@
     </id>
     <version name="Version" column="Version_"/>
     <property name="TimeStamp" column="TimeStamp_" type="DateTime" not-null="true"/>
+    <property name="User" column="User_" type="String" length="200" not-null="true"/>
+    <property name="Operation" column="Operation_" type="String" length="1000" not-null="true"/>
     <property name="ExceptionClass" column="ExceptionClass_" type="String" length="1000" not-null="true"/>
     <property name="Message" column="Message_" type="String" length="4000" not-null="false"/>
     <property name="Details" column="Details_" type="StringClob" length="65000" not-null="false"/>

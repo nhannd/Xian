@@ -5,7 +5,7 @@ using Castle.DynamicProxy;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 
-namespace ClearCanvas.Ris.Server
+namespace ClearCanvas.Enterprise.Core
 {
     class ExceptionLoggingAdvice : IInterceptor
     {
@@ -24,8 +24,10 @@ namespace ClearCanvas.Ris.Server
                     // log the error to the database
                     using (PersistenceScope scope = new PersistenceScope(PersistenceContextType.Update, PersistenceScopeOption.RequiresNew))
                     {
+                        string operationName = string.Format("{0}.{1}", invocation.InvocationTarget.GetType().FullName, invocation.Method.Name);
+
                         DefaultExceptionLogger logger = new DefaultExceptionLogger();
-                        ExceptionLogEntry logEntry = logger.CreateExceptionLogEntry(e);
+                        ExceptionLogEntry logEntry = logger.CreateExceptionLogEntry(operationName, e);
 
                         PersistenceScope.Current.Lock(logEntry, DirtyState.New);
 
