@@ -71,6 +71,13 @@
     <Content Include="Admin\Configuration\Devices\AddEditDeviceDialog.ascx" />
     <Content Include="Admin\Configuration\Devices\DeviceGridView.ascx" />
     <Content Include="Admin\Default.aspx" />
+    <Compile Include="About\About.aspx.cs">
+      <DependentUpon>About.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="About\About.aspx.designer.cs">
+      <DependentUpon>About.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Admin\Configuration\Devices\AddEditDeviceDialog.ascx.cs">
       <DependentUpon>AddEditDeviceDialog.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -352,6 +359,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="About\About.aspx" />
     <Content Include="Admin\Configuration\Devices\DevicePage.aspx" />
     <Content Include="Admin\Configuration\FileSystems\AddEditFileSystemDialog.ascx" />
     <Content Include="Admin\Configuration\FileSystems\FileSystemsGridView.ascx" />

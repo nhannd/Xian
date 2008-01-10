@@ -4,6 +4,7 @@
 		<siteMapNode url="" title="General"  description="General">
 			<siteMapNode url="~/Search/SearchPage.aspx" title="Search"  description="Search"/>
 			<siteMapNode url="~/WorkQueue/SearchPage.aspx" title="WorkQueue"  description="WorkQueue"/>
+			<siteMapNode url="~/About/About.aspx" title="About"  description="About ClearCanvas ImageServer"/>
 		</siteMapNode>
 		<siteMapNode url="" title="Configuration"  description="System Configuration">
 				<siteMapNode url="~/Admin/Configuration/Devices/DevicePage.aspx" title="Devices"  description="Device Configuration"/>

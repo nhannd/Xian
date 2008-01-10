@@ -125,7 +125,31 @@
 
 
 
+/*************************************************************************************************
+	About Page 
+*************************************************************************************************/
 
+
+/* Container for the gridview */
+.CSSAboutPanelContainer
+{
+	
+}
+
+/* border of the gridview */
+.CSSAboutPanelBorder
+{
+	border-right: darkgray 1px solid;
+	border-top: darkgray 1px solid;
+	border-left: darkgray 1px solid;
+	border-bottom:darkgray 1px solid;
+}
+
+/* gridview content panel */
+.CSSAboutPanelContent
+{
+	
+}
 
 /*************************************************************************************************
 	Gridview control 
