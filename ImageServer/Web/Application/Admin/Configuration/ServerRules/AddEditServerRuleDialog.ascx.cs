@@ -1,15 +1,8 @@
 using System;
-using System.Data;
-using System.Configuration;
-using System.Collections;
 using System.IO;
 using System.Text;
-using System.Web;
-using System.Web.Security;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
-using System.Web.UI.HtmlControls;
 using System.Xml;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
@@ -80,6 +73,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRule
 
             base.OnInit(e);
 
+            this.ServerPartitionTabContainer.ActiveTabIndex = 0;
+
             // Set up the popup extender
             // These settings could been done in the aspx page as well
             // but if we are to javascript to display, that won't work.
@@ -148,6 +143,28 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRule
                     myEle = document.createElement('option') ;
                     myEle.value = 'TagBasedDelete';
                     myEle.text = 'Tag Based Delete' ;
+                    sampleList.add(myEle) ;
+
+                    myEle = document.createElement('option') ;
+                    myEle.value = '" +
+                                                        ServerRuleApplyTimeEnum.GetEnum("StudyProcessed").Enum +
+                                                        @"';
+                    myEle.text = '" +
+                                                        ServerRuleApplyTimeEnum.GetEnum("StudyProcessed").Description +
+                                                        @"';
+                    applyTimeList.add(myEle) ;
+                }
+                else if (val == '" +
+                                                        ServerRuleTypeEnum.GetEnum("Tier1Retention").Enum +
+                                                        @"')
+                {
+                    myEle = document.createElement('option') ;
+                    myEle.value = '';
+                    myEle.text = '' ;
+                    sampleList.add(myEle) ;
+                    myEle = document.createElement('option') ;
+                    myEle.value = 'AgeBasedRetention';
+                    myEle.text = 'Age Based Retention' ;
                     sampleList.add(myEle) ;
 
                     myEle = document.createElement('option') ;
@@ -241,11 +258,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRule
 
             theRule.RuleName = this.RuleNameTextBox.Text;
 
-            theRule.ServerRuleApplyTimeEnum = new ServerRuleApplyTimeEnum();
             theRule.ServerRuleTypeEnum = new ServerRuleTypeEnum();
-
-            theRule.ServerRuleApplyTimeEnum.SetEnum(short.Parse(this.RuleApplyTimeDropDownList.SelectedItem.Value));
             theRule.ServerRuleTypeEnum.SetEnum(short.Parse(this.RuleTypeDropDownList.SelectedItem.Value));
+
+            if (theRule.ServerRuleTypeEnum == ServerRuleTypeEnum.GetEnum("AutoRoute"))
+                theRule.ServerRuleApplyTimeEnum = ServerRuleApplyTimeEnum.GetEnum("SopProcessed");
+            else
+                theRule.ServerRuleApplyTimeEnum = ServerRuleApplyTimeEnum.GetEnum("StudyProcessed");
 
             theRule.Enabled = this.EnabledCheckBox.Checked;
             theRule.DefaultRule = this.DefaultCheckBox.Checked;
@@ -269,6 +288,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRule
             // update the dropdown list
             this.RuleApplyTimeDropDownList.Items.Clear();
             this.RuleTypeDropDownList.Items.Clear();
+            this.RuleXmlTabPanel.TabIndex = 0;
+            this.ServerPartitionTabContainer.ActiveTabIndex = 0;
 
             if (EditMode)
             {
@@ -289,6 +310,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRule
                                    _rule.ServerRuleTypeEnum.Enum.ToString()));
 
                 if (_rule.ServerRuleTypeEnum.Enum == ServerRuleTypeEnum.GetEnum("StudyDelete").Enum)
+                {
+                    RuleApplyTimeDropDownList.Items.Add(new ListItem(
+                                                            ServerRuleApplyTimeEnum.GetEnum("StudyProcessed").
+                                                                Description,
+                                                            ServerRuleApplyTimeEnum.GetEnum("StudyProcessed").Enum.
+                                                                ToString()));
+                }
+                else if (_rule.ServerRuleTypeEnum.Enum == ServerRuleTypeEnum.GetEnum("Tier1Retention").Enum)
                 {
                     RuleApplyTimeDropDownList.Items.Add(new ListItem(
                                                             ServerRuleApplyTimeEnum.GetEnum("StudyProcessed").
@@ -336,6 +365,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRule
                 this.EnabledCheckBox.Checked = true;
 
                 this.RuleNameTextBox.Text = "";
+                this.RuleXmlTextBox.Text = "";
 
                 this.SampleRuleDropDownList.Visible = true;
                 this.SelectSampleRuleLabel.Visible = true;

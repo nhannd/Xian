@@ -26,7 +26,7 @@
                 <div class="CSSPopupWindowBody">
                     <ajaxToolkit:TabContainer ID="ServerPartitionTabContainer" runat="server" ActiveTabIndex="0"
                         CssClass="CSSDialogTabControl">
-                        <ajaxToolkit:TabPanel ID="GeneralTabPanel" runat="server" HeaderText="GeneralTabPanel"
+                        <ajaxToolkit:TabPanel ID="GeneralTabPanel" runat="server" HeaderText="GeneralTabPanel" TabIndex="0"
                             CssClass="CSSTabPanel">
                             <ContentTemplate>
                                 <asp:Panel ID="Panel1" runat="server" CssClass="CSSDialogTabPanelContent">
