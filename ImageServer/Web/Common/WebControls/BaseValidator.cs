@@ -35,7 +35,7 @@ using System.Text;
 
 namespace ClearCanvas.ImageServer.Web.Common.WebControls
 {
-    abstract public class BaseValidator: Sample.Web.UI.Compatibility.BaseValidator
+    abstract public class BaseValidator: System.Web.UI.WebControls.BaseValidator
     {
         // specify the control that will popup the help infomration
         private string _popupHelpControlID="";
@@ -67,9 +67,9 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
         {
             base.AddAttributesToRender(writer);
 
-            if (RenderUplevel)
+            if (this.DetermineRenderUplevel() && this.EnableClientScript)
             {
-                // Add the javascript for clien-side validation
+                Page.ClientScript.RegisterExpandoAttribute(this.ClientID, "evaluationfunction", EvalFunctionName);
                 writer.AddAttribute("evaluationfunction", EvalFunctionName);
             }
         }

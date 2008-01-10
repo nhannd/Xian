@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using ClearCanvas.ImageServer.Model;
@@ -134,10 +135,41 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
             ModalPopupExtender1.DropShadow = true;
             ModalPopupExtender1.PopupDragHandleControlID = TitleBarPanel.UniqueID;
 
+
             OKButton.OnClientClick = ClientID + "_clearFields()";
 
             Page.ClientScript.RegisterClientScriptBlock(this.GetType(), this.ClientID,
                         @"<script language='javascript'>
+
+                            function VerifyPath()
+                            {
+                                controlValue = document.getElementById('" + PathTextBox.ClientID + @"').value;
+                                ClearCanvas.ImageServer.Web.Application.Services.ValidationServices.ValidateFilesystemPath(controlValue, OnSucess, OnError);
+                            
+                            }
+                            
+                            function OnError(result)
+                            {
+                                
+                            }
+
+                            // This is the callback function that
+                            // processes the Web Service return value.
+                            function OnSucess(result)
+                            {
+                               control = document.getElementById('" + PathTextBox.ClientID + @"');
+                                
+                                if (!result)
+                                {
+                                    control.style.backgroundColor ='#ff0000';
+                                }
+                                else
+                                {
+                                    control.style.backgroundColor ='';
+                                }
+                            }
+
+
                             function AddEditFileSystemsDialog_HideHelpImage(helpImgID)
                             {
                                 img = document.getElementById(helpImgID);
@@ -213,11 +245,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
                 FileSystem.HighWatermark = highWatermark;
 
             FileSystem.FilesystemTierEnum = FilesystemTiers[TiersDropDownList.SelectedIndex];
-            
+
+        
             if (OKClicked != null)
                 OKClicked(FileSystem);
 
             Close();
+            
+            
         }
 
         
@@ -283,6 +318,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
             }
 
             TabContainer1.ActiveTabIndex = 0;
+
             UpdatePanel.Update();
             ModalPopupExtender1.Show();
         }

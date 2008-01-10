@@ -4,8 +4,11 @@
 <%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="cc1" %>
 <%@ Register Assembly="ClearCanvas.ImageServer.Web.Common" Namespace="ClearCanvas.ImageServer.Web.Common.WebControls"
     TagPrefix="clearcanvas" %>
+    
+
 <asp:UpdatePanel ID="UpdatePanel" runat="server" UpdateMode="Conditional">
     <ContentTemplate>
+    
         <asp:Panel ID="DialogPanel" runat="server" CssClass="CSSPopupWindow" Width="400px"
             Style="display: none">
             <asp:Panel ID="TitleBarPanel" runat="server" CssClass="CSSPopupWindowTitleBar" Width="100%">
@@ -25,58 +28,66 @@
                             <ContentTemplate>
                                 <asp:Panel ID="Panel1" runat="server" CssClass="CSSDialogTabPanelContent">
                                     <table id="TABLE1" runat="server" cellspacing="4">
-                                        <tr align="left">
-                                            <td>
+                                        <tr align="left" runat="server">
+                                            <td runat="server">
                                                 <asp:Label ID="Label1" runat="server" Text="Description" CssClass="CSSTextLabel" /><br />
                                                 <asp:TextBox ID="DescriptionTextBox" runat="server" Width="220px" BorderColor="LightSteelBlue"
                                                     BorderWidth="1px" MaxLength="128" ValidationGroup="vg1"></asp:TextBox><asp:Image
                                                         ID="DescriptionHelpImage" runat="server" ImageAlign="Top" ImageUrl="~/images/icons/HelpSmall.png"
                                                         Style="visibility: hidden" />
                                             </td>
-                                            <td>
+                                            <td runat="server">
                                                 <clearcanvas:ConditionalRequiredFieldValidator ID="ConditionalRequiredFieldValidator1"
                                                     runat="server" ControlToValidate="DescriptionTextBox" InvalidInputBackColor="#FAFFB5"
-                                                    ValidationGroup="vg1" EnableClientScript="true" ErrorMessage="Description is required!!"
-                                                    Display="None" PopupHelpControlID="DescriptionHelpImage"></clearcanvas:ConditionalRequiredFieldValidator>
+                                                    ValidationGroup="vg1" ErrorMessage="Description is required!!"
+                                                    Display="None" PopupHelpControlID="DescriptionHelpImage" RequiredWhenChecked="False"></clearcanvas:ConditionalRequiredFieldValidator>
                                             </td>
-                                            <td>
+                                            <td runat="server">
                                                 <asp:CheckBox ID="ReadCheckBox" runat="server" OnInit="ReadOnlyCheckBox_Init" Text="Read"
                                                     Checked="True" />
                                             </td>
                                         </tr>
-                                        <tr align="left">
-                                            <td>
+                                        <tr align="left" runat="server">
+                                            <td runat="server">
                                                 <asp:Label ID="Label2" runat="server" Text="Path" CssClass="CSSTextLabel" /><br />
                                                 <asp:TextBox ID="PathTextBox" runat="server" Width="220px" BorderColor="LightSteelBlue"
-                                                    BorderWidth="1px" ValidationGroup="vg1" MaxLength="256"></asp:TextBox><asp:Image
+                                                    BorderWidth="1px" ValidationGroup="vg1" MaxLength="256"></asp:TextBox>
+                                                
+                                                <clearcanvas:WebServiceBasedValidator runat="server" ID="PathValidator" 
+                                                    ControlToValidate="PathTextBox" 
+                                                    InvalidInputBackColor="#ffff00" 
+                                                    PopupHelpControlID="PathHelpImage"
+                                                    ErrorMessage="The specified path is invalid, does not exist, or is not accessible."
+                                                    ServicePath="/Services/ValidationServices.asmx" ValidationGroup="vg1" />
+                                                
+                                                <asp:Image
                                                         ID="PathHelpImage" runat="server" ImageAlign="Top" ImageUrl="~/images/icons/HelpSmall.png"
                                                         Style="visibility: hidden" />
                                             </td>
-                                            <td>
+                                            <td runat="server">
                                                 <clearcanvas:ConditionalRequiredFieldValidator ID="ConditionalRequiredFieldValidator2"
                                                     runat="server" ControlToValidate="PathTextBox" InvalidInputBackColor="#FAFFB5"
-                                                    ValidationGroup="vg1" EnableClientScript="true" ErrorMessage="Filesystem Path is required!!"
-                                                    Display="None" PopupHelpControlID="PathHelpImage">
-                                                </clearcanvas:ConditionalRequiredFieldValidator>
+                                                    ValidationGroup="vg1" ErrorMessage="Filesystem Path is required!!"
+                                                    Display="None" PopupHelpControlID="PathHelpImage" RequiredWhenChecked="False"></clearcanvas:ConditionalRequiredFieldValidator>
                                             </td>
-                                            <td>
+                                            <td runat="server">
                                                 <asp:CheckBox ID="WriteCheckBox" runat="server" Text="Write" Checked="True" />
                                             </td>
                                         </tr>
-                                        <tr align="left">
-                                            <td>
+                                        <tr align="left" runat="server">
+                                            <td runat="server">
                                                 <asp:Label ID="Label3" runat="server" Text="Filesystem" CssClass="CSSTextLabel" /><br />
                                                 <asp:DropDownList ID="TiersDropDownList" runat="server" Width="220px">
                                                 </asp:DropDownList>
                                             </td>
-                                            <td>
+                                            <td runat="server">
                                             </td>
-                                            <td>
+                                            <td runat="server">
                                             </td>
                                         </tr>
                                     </table>
                                 </asp:Panel>
-                                <cc2:ValidationSummary ID="ValidationSummary1" runat="server" ShowMessageBox="false"
+                                <cc2:ValidationSummary ID="ValidationSummary1" runat="server"
                                     ShowSummary="False" ValidationGroup="vg1" />
                             </ContentTemplate>
                             <HeaderTemplate>
@@ -122,7 +133,7 @@
                     <table cellpadding="0" cellspacing="0" width="60%">
                         <tr align="center">
                             <td>
-                                <asp:Button ID="OKButton" runat="server" Text="Add" Width="77px" OnClick="OKButton_Click"
+                                <asp:Button ID="OKButton" runat="server" Text="Add" Width="77px" OnClick="OKButton_Click" 
                                     ValidationGroup="vg1" />
                             </td>
                             <td>

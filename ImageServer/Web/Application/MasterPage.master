@@ -6,6 +6,10 @@
     <title>Untitled Page</title>
 </head>
 <body>
+    <!-- this is special code that web service validation needs -->
+    <div id="service" style="behavior:url(/webservice.htc);">
+    <!-- this is special code that web service validation needs -->
+    
     <center>
         <div>
             <form id="form1" runat="server">

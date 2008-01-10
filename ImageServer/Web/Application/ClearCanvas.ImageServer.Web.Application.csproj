@@ -304,6 +304,11 @@
     <Compile Include="Admin\Configuration\Preferences\Theme.aspx.designer.cs">
       <DependentUpon>Theme.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Services\ValidationResult.cs" />
+    <Compile Include="Services\ValidationServices.asmx.cs">
+      <DependentUpon>ValidationServices.asmx</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="WorkQueue\SearchResultAccordian.ascx.cs">
       <DependentUpon>SearchResultAccordian.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -467,8 +472,10 @@
     <Content Include="App_Themes\NightSafari\images\tab.gif" />
     <Content Include="App_Themes\NightSafari\StyleSheet.css" />
     <Content Include="Admin\Configuration\Preferences\Theme.aspx" />
+    <Content Include="Services\ValidationServices.asmx" />
     <Content Include="Web.sitemap" />
     <Content Include="Logging.config" />
+    <Content Include="webservice.htc" />
     <Content Include="WorkQueue\SearchResultAccordian.ascx" />
     <Content Include="WorkQueue\SearchPage.aspx" />
     <Content Include="WorkQueue\SearchPanel.ascx" />
@@ -520,7 +527,7 @@
         <WebProjectProperties>
           <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>3325</DevelopmentServerPort>
+          <DevelopmentServerPort>1646</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>
           </IISUrl>
