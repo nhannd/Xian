@@ -448,6 +448,15 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Unable to save validation rules.
+        /// </summary>
+        internal static string ExceptionSaveValidationRules {
+            get {
+                return ResourceManager.GetString("ExceptionSaveValidationRules", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unable to save Worklist.
         /// </summary>
         internal static string ExceptionSaveWorklist {

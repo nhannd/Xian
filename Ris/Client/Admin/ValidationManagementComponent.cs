@@ -61,7 +61,7 @@ namespace ClearCanvas.Ris.Client.Admin
     [AssociateView(typeof(ValidationManagementComponentViewExtensionPoint))]
     public class ValidationManagementComponent : ApplicationComponent
     {
-        private Table<Type> _applicationComponents;
+        private readonly Table<Type> _applicationComponents;
         private Type _selectedComponent;
 
 
@@ -85,6 +85,8 @@ namespace ClearCanvas.Ris.Client.Admin
                 {
                     try
                     {
+                        // exclude abstract types, since there is currently no concept of "inheritance" for validation rules
+                        // exclude types that are part of the framework (Desktop)
                         if (!t.IsAbstract && !t.Namespace.StartsWith("ClearCanvas.Desktop") &&
                             CollectionUtils.Contains(t.GetInterfaces(),
                                 delegate(Type i) { return i.Equals(typeof(IApplicationComponent)); }))
@@ -132,14 +134,16 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public void ApplicationComponentDoubleClicked()
         {
-            ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
-                this.Host.DesktopWindow,
-                new ValidationEditorComponent(_selectedComponent),
-                string.Format("{0} Rules Editor", _selectedComponent.Name));
-
-            if (exitCode == ApplicationComponentExitCode.Accepted)
+            try
             {
-
+                ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
+                    this.Host.DesktopWindow,
+                    new ValidationEditorComponent(_selectedComponent),
+                    string.Format("{0} Rules Editor", _selectedComponent.Name));
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
             }
         }
 

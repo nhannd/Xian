@@ -110,6 +110,9 @@
     <Compile Include="ClassNameExtensionFilter.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Configuration\ConfigurationDocumentNotFoundException.cs" />
+    <Compile Include="Configuration\ConfigurationStoreFactory.cs" />
+    <Compile Include="Configuration\IConfigurationStore.cs" />
     <Compile Include="Configuration\SettingsStoreSettingsProvider.cs" />
     <Compile Include="Configuration\ISettingsStore.cs" />
     <Compile Include="Configuration\SettingsClassMetaDataReader.cs" />

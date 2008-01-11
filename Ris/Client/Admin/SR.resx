@@ -246,6 +246,9 @@
   <data name="ExceptionSaveUser" xml:space="preserve">
     <value>Unable to save User</value>
   </data>
+  <data name="ExceptionSaveValidationRules" xml:space="preserve">
+    <value>Unable to save validation rules</value>
+  </data>
   <data name="ExceptionSaveWorklist" xml:space="preserve">
     <value>Unable to save Worklist</value>
   </data>

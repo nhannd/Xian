@@ -37,6 +37,11 @@ namespace ClearCanvas.Common.Configuration
     /// <summary>
     /// Defines the interface to a mechanism for the storage of application and user settings.
     /// </summary>
+    /// <remarks>
+    /// This interface is more specialized than <see cref="IConfigurationStore"/>, in that it is designed
+    /// specifically to support derivatives of the <see cref="SettingsProvider"/> class in order to support the .NET 
+    /// settings framework.
+    /// </remarks>
     public interface ISettingsStore
     {
         /// <summary>
