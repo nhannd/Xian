@@ -77,6 +77,8 @@
     <Compile Include="UserEditorComponent.cs" />
     <Compile Include="UserSummaryComponent.cs" />
     <Compile Include="UserTable.cs" />
+    <Compile Include="ValidationEditorComponent.cs" />
+    <Compile Include="ValidationManagementComponent.cs" />
     <Compile Include="WorklistEditorComponent.cs" />
     <Compile Include="WorklistSummaryComponent.cs" />
     <Compile Include="WorklistAdminSummaryTable.cs" />

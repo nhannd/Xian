@@ -181,6 +181,20 @@
       <DependentUpon>UserSummaryComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="UserSummaryComponentView.cs" />
+    <Compile Include="ValidationEditorComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ValidationEditorComponentControl.Designer.cs">
+      <DependentUpon>ValidationEditorComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ValidationEditorComponentView.cs" />
+    <Compile Include="ValidationManagementComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ValidationManagementComponentControl.Designer.cs">
+      <DependentUpon>ValidationManagementComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ValidationManagementComponentView.cs" />
     <Compile Include="WorklistEditorComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -302,6 +316,14 @@
     <EmbeddedResource Include="UserSummaryComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>UserSummaryComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ValidationEditorComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>ValidationEditorComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ValidationManagementComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>ValidationManagementComponentControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="WorklistEditorComponentControl.resx">
       <SubType>Designer</SubType>
