@@ -39,9 +39,9 @@ using System.Security.Cryptography.X509Certificates;
 
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Ris.Application.Services;
-using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Server
 {

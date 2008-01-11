@@ -33,7 +33,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ClearCanvas.Ris.Application.Common
+namespace ClearCanvas.Enterprise.Common
 {
     /// <summary>
     /// When applied to a service contract interface, specifies whether that service requires

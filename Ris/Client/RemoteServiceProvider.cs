@@ -34,6 +34,7 @@ using System.Reflection;
 using System.ServiceModel;
 
 using ClearCanvas.Common;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Common.Utilities;
 
