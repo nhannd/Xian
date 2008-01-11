@@ -39,7 +39,7 @@ namespace ClearCanvas.ImageServer.Services.Shreds.WorkQueueServer
     /// Plugin to handle WorkQueue processing for the ImageServer.
     /// </summary>
     [ExtensionOf(typeof(ShredExtensionPoint))]
-    public class WorkQueueServerExtension : ShredBase
+    public class WorkQueueServerExtension : Shred
     {
         #region Private Members
 

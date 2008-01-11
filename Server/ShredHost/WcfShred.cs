@@ -38,7 +38,7 @@ using System.ServiceModel.Description;
 
 namespace ClearCanvas.Server.ShredHost
 {
-    public abstract class WcfShred : ShredBase, IWcfShred
+    public abstract class WcfShred : Shred, IWcfShred
     {
 		public WcfShred()
         {

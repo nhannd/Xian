@@ -39,7 +39,7 @@ namespace ClearCanvas.ImageServer.Services.Shreds.DicomServer
     /// Plugin to handle the DICOM Server Shred for the ImageServer.
     /// </summary>
     [ExtensionOf(typeof(ShredExtensionPoint))]
-    public class DicomServerExtension : ShredBase
+    public class DicomServerExtension : Shred
     {
         private readonly string _className;
    

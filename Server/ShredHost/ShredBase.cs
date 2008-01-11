@@ -36,9 +36,9 @@ using System.Text;
 
 namespace ClearCanvas.Server.ShredHost
 {
-    public abstract class ShredBase : MarshalByRefObject, IShred
+    public abstract class Shred : MarshalByRefObject, IShred
     {
-        public ShredBase()
+        public Shred()
         {
 
         }
