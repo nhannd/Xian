@@ -28,12 +28,7 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
             get { return _pageSize; }
         }
 
-        public Study SelectedWorkQueue
-        {
-            get { return _selectedWorkQueue; }
-            set { _selectedWorkQueue = value; }
-        }
-
+       
         public IList<Model.WorkQueue> WorkQueues
         {
             get { return _workqueues; }
@@ -63,6 +58,28 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
         #endregion Public Properties
 
         #region Protected Methods
+
+        protected override void OnInit(EventArgs e)
+        {
+            base.OnInit(e);
+
+            RegisterSelectRowScript();
+        }
+
+        protected void RegisterSelectRowScript()
+        {
+            string script =
+                @"<script type='text/javascript'>
+                    function " + ClientID + @"_SelectWorkQueue(uid)
+                    {
+                        field = document.getElementById('" + SelectedWorkQueueGUID.ClientID + @"');            
+                        field.value = uid;
+                    }
+                    </script>
+                ";
+
+            Page.ClientScript.RegisterClientScriptBlock(this.GetType(), "SelectWorkQueue", script);
+        }
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -165,11 +182,13 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
             MainAccordian.Panes.Clear();
             MainAccordian.Visible = true;
             MainAccordian.SuppressHeaderPostbacks = true;
+            MainAccordian.SelectedIndex = -1;
+            
 
             for (int i = PageIndex*PageSize; (i < (PageIndex + 1)*PageSize) && i < WorkQueues.Count; i++)
             {
                 AccordionPane pane = new AccordionPane();
-
+                
                 WorkQueueSummaryPanel workQueueSummaryPanel =
                     LoadControl("WorkQueueSummaryPanel.ascx") as WorkQueueSummaryPanel;
                 WorkQueueDetailsPanel workQueueDetailsPanel =
@@ -185,6 +204,10 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
                 workQueueSummaryPanel.WorkQueueSummary = workqueueSummary;
 
 
+                // Add onclick event 
+                pane.HeaderContainer.Attributes.Add("onClick", ClientID + "_SelectWorkQueue('" + WorkQueues[i].GetKey().Key.ToString() + "');");
+
+
                 pane.HeaderContainer.Controls.Add(workQueueSummaryPanel);
                 pane.ContentContainer.Controls.Add(workQueueDetailsPanel);
 
@@ -194,12 +217,27 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
                 pane.BorderWidth = new Unit(0d);
                 pane.Visible = true;
 
+
+                if (WorkQueues[i].GetKey().Key.ToString() == SelectedWorkQueueGUID.Value)
+                {
+                    MainAccordian.SelectedIndex = i;
+                }
+
                 MainAccordian.Panes.Add(pane);
             }
 
+            if (MainAccordian.SelectedIndex<0)
+            {
+                SelectedWorkQueueGUID.Value = "";
+            }
+
             MainAccordian.RequireOpenedPane = false;
-            MainAccordian.SelectedIndex = -1;
+
+            
         }
+
+
+
 
         #endregion Public Methods
     }

@@ -68,6 +68,7 @@
                     </asp:TableCell>
                 </asp:TableFooterRow>
             </asp:Table>
+            <asp:HiddenField ID="SelectedWorkQueueGUID" runat="server" />
         </asp:Panel>
     </asp:Panel>
 </asp:Panel>
