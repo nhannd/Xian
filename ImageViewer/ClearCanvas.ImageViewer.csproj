@@ -118,6 +118,7 @@
     <Compile Include="Comparers\Tests\SortTests.cs" />
     <Compile Include="Imaging\Tests\ColorMapTests.cs" />
     <Compile Include="Imaging\Tests\MinMaxPixelCalculatedLutTests.cs" />
+    <Compile Include="Imaging\VoiLutImageOperation.cs" />
     <Compile Include="Imaging\VoiLutMemento.cs" />
     <Compile Include="Annotations\Dicom\Tests\DicomBasicFormatterTests.cs" />
     <Compile Include="Annotations\Dicom\Tests\DicomFilteredAnnotationLayoutStoreTests.cs" />

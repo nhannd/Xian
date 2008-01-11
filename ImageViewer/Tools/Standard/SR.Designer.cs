@@ -459,7 +459,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to R={0}, G={1}, B={2}).
+        ///   Looks up a localized string similar to R={0}, G={1}, B={2}.
         /// </summary>
         internal static string FormatRGB {
             get {
@@ -608,6 +608,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         internal static string MenuFlipVertical {
             get {
                 return ResourceManager.GetString("MenuFlipVertical", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invert.
+        /// </summary>
+        internal static string MenuInvert {
+            get {
+                return ResourceManager.GetString("MenuInvert", resourceCulture);
             }
         }
         
@@ -990,6 +999,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Invert.
+        /// </summary>
+        internal static string ToolbarInvert {
+            get {
+                return ResourceManager.GetString("ToolbarInvert", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Pan.
         /// </summary>
         internal static string ToolbarPan {
@@ -1112,6 +1130,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         internal static string TooltipFlipVertical {
             get {
                 return ResourceManager.GetString("TooltipFlipVertical", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invert.
+        /// </summary>
+        internal static string TooltipInvert {
+            get {
+                return ResourceManager.GetString("TooltipInvert", resourceCulture);
             }
         }
         

@@ -64,7 +64,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class WindowLevelTool : MouseImageViewerTool
 	{
-		private readonly BasicImageOperation _operation;
+		private readonly VoiLutImageOperation _operation;
 
 		private UndoableCommand _command;
 		private ImageOperationApplicator _applicator;
@@ -73,7 +73,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			: base(SR.TooltipWindowLevel)
 		{
 			this.CursorToken = new CursorToken("Icons.WindowLevelToolSmall.png", this.GetType().Assembly);
-			_operation = new BasicImageOperation(GetOriginator, Apply);
+			_operation = new VoiLutImageOperation(Apply);
         }
 
 		public override event EventHandler TooltipChanged
@@ -84,7 +84,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		private bool CanWindowLevel()
 		{
-			IVoiLutManager manager = GetOriginator(this.SelectedPresentationImage) as IVoiLutManager;
+			IVoiLutManager manager = _operation.GetOriginator(this.SelectedPresentationImage) as IVoiLutManager;
 			return manager != null && manager.GetLut() is IVoiLutLinear;
 		}
 
@@ -172,6 +172,22 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			this.CaptureEndState();
 		}
 
+		private void Apply(IPresentationImage image)
+		{
+			IVoiLutLinear selectedLut = (IVoiLutLinear)this.SelectedVoiLutProvider.VoiLutManager.GetLut();
+
+			IVoiLutProvider provider = ((IVoiLutProvider)image);
+			if (!(provider.VoiLutManager.GetLut() is IBasicVoiLutLinear))
+			{
+				BasicVoiLutLinear installLut = new BasicVoiLutLinear(selectedLut.WindowWidth, selectedLut.WindowCenter);
+				provider.VoiLutManager.InstallLut(installLut);
+			}
+
+			IBasicVoiLutLinear lut = (IBasicVoiLutLinear)provider.VoiLutManager.GetLut();
+			lut.WindowWidth = selectedLut.WindowWidth;
+			lut.WindowCenter = selectedLut.WindowCenter;
+		}
+
 		public override bool Start(IMouseInformation mouseInformation)
 		{
 			base.Start(mouseInformation);
@@ -202,32 +218,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		public override void Cancel()
 		{
 			this.CaptureEndState();
-		}
-
-		public IMemorable GetOriginator(IPresentationImage image)
-		{
-			if (image is IVoiLutProvider)
-				return ((IVoiLutProvider) image).VoiLutManager;
-
-			return null;
-		}
-
-		public void Apply(IPresentationImage image)
-		{
-			IVoiLutLinear selectedLut = (IVoiLutLinear)this.SelectedVoiLutProvider.VoiLutManager.GetLut();
-
-			IVoiLutProvider provider = ((IVoiLutProvider)image);
-			IVoiLutLinear linearLut = provider.VoiLutManager.GetLut() as IVoiLutLinear;
-			IBasicVoiLutLinear basicLut = linearLut as IBasicVoiLutLinear;
-			if (basicLut == null)
-			{
-				BasicVoiLutLinear installLut = new BasicVoiLutLinear(selectedLut.WindowWidth, selectedLut.WindowCenter);
-				provider.VoiLutManager.InstallLut(installLut);
-			}
-
-			IBasicVoiLutLinear lut = (IBasicVoiLutLinear)provider.VoiLutManager.GetLut();
-			lut.WindowWidth = selectedLut.WindowWidth;
-			lut.WindowCenter = selectedLut.WindowCenter;
 		}
 	}
 }
