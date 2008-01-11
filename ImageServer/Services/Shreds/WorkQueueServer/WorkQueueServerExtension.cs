@@ -39,16 +39,24 @@ namespace ClearCanvas.ImageServer.Services.Shreds.WorkQueueServer
     /// Plugin to handle WorkQueue processing for the ImageServer.
     /// </summary>
     [ExtensionOf(typeof(ShredExtensionPoint))]
-    public class WorkQueueServerExtension : WcfShred
+    public class WorkQueueServerExtension : ShredBase
     {
+        #region Private Members
+
         private readonly string _className;
-        private readonly string _workQueueServerEndpointName;
+
+        #endregion
+
+        #region Constructors
 
         public WorkQueueServerExtension()
         {
             _className = this.GetType().ToString();
-            _workQueueServerEndpointName = "WorkQueueServer";
         }
+
+        #endregion
+
+        #region IShred Implementation Shred Override
 
         public override void Start()
         {
@@ -58,9 +66,7 @@ namespace ClearCanvas.ImageServer.Services.Shreds.WorkQueueServer
         }
 
         public override void Stop()
-        {
-            StopHost(_workQueueServerEndpointName);
-
+        {        
             WorkQueueServerManager.Instance.Stop();
 
             Platform.Log(LogLevel.Info, "{0}[{1}]: Stop invoked", _className, AppDomain.CurrentDomain.FriendlyName);
@@ -75,5 +81,7 @@ namespace ClearCanvas.ImageServer.Services.Shreds.WorkQueueServer
         {
             return SR.WorkQueueServerDescription;
         }
+
+        #endregion
     }
 }

@@ -234,7 +234,15 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         private void Process()
         {
             // Reset any queue items related to this system that are in a "In Progress" state.
-            ResetFailedItems();
+            try
+            {
+                ResetFailedItems();
+            }
+            catch (Exception e)
+            {
+                Platform.Log(LogLevel.Fatal, e,
+                             "Unable to reset WorkQueue items on startup.  There may be WorkQueue items orphaned in the queue.");
+            }
 
             while (true)
             {
@@ -254,7 +262,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 
                             list = select.Execute(parms);
 
-                            updateContext.Commit();
+                            if (list.Count > 0)
+                                updateContext.Commit();
                         }
 
                         if (list.Count > 0)

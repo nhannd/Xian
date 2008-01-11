@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Data;
 using System.Data.SqlClient;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
@@ -43,7 +44,7 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
     /// This mechanism uses transaction wrappers in ADO.NET.  The transaction is started when the update
     /// context is created.
     /// </remarks>
-    public class UpdateContext : PersistenceContext,IUpdateContext,IDisposable
+    public class UpdateContext : PersistenceContext,IUpdateContext
     {
         #region Private Members
         private SqlTransaction _transaction;
@@ -54,7 +55,7 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
         internal UpdateContext(SqlConnection connection, ITransactionNotifier transactionNotifier, UpdateContextSyncMode mode)
             : base (connection, transactionNotifier)
         {
-            _transaction = connection.BeginTransaction();
+            _transaction = connection.BeginTransaction(IsolationLevel.ReadCommitted);
             _mode = mode;
         }
         #endregion
@@ -80,9 +81,14 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
 
         void IUpdateContext.Commit()
         {
-            _transaction.Commit();
-            _transaction.Dispose();
-            _transaction = null;
+            if (_transaction != null && _transaction.Connection != null)
+            {
+                _transaction.Commit();
+                _transaction.Dispose();
+                _transaction = null;
+            }
+            else
+                Platform.Log(LogLevel.Error, "Attempting to commit transaction that is invalid");
         }
 
         #endregion
@@ -101,11 +107,14 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                 {
                     try
                     {
-                        _transaction.Rollback();
+                        if (_transaction.Connection != null)
+                            _transaction.Rollback();
+                        _transaction = null;
                     }
                     catch (SqlException e)
                     {
                         Platform.Log(LogLevel.Error, e);
+                        _transaction = null;
                     }
                 }
                 // end the transaction

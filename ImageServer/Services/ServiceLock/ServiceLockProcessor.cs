@@ -193,7 +193,15 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
         private void Process()
         {
             // Reset any queue items related to this service that are have the Lock bit set.
-            ResetLocked();
+            try
+            {
+                ResetLocked();
+            }
+            catch (Exception e)
+            {
+                Platform.Log(LogLevel.Fatal, e,
+                             "Unable to reset ServiceLock items on startup.  There may be ServiceLock items orphaned in the queue.");
+            }
 
             while (true)
             {

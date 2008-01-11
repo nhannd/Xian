@@ -39,15 +39,13 @@ namespace ClearCanvas.ImageServer.Services.Shreds.DicomServer
     /// Plugin to handle the DICOM Server Shred for the ImageServer.
     /// </summary>
     [ExtensionOf(typeof(ShredExtensionPoint))]
-    public class DicomServerExtension : WcfShred
+    public class DicomServerExtension : ShredBase
     {
         private readonly string _className;
-        private readonly string _dicomServerEndpointName;
-
+   
         public DicomServerExtension()
         {
             _className = this.GetType().ToString();
-            _dicomServerEndpointName = "DicomServer";
         }
 
         public override void Start()
@@ -59,8 +57,6 @@ namespace ClearCanvas.ImageServer.Services.Shreds.DicomServer
 
         public override void Stop()
         {
-            StopHost(_dicomServerEndpointName);
-
             DicomServerManager.Instance.Stop();
 
             Platform.Log(LogLevel.Info, "{0}[{1}]: Stop invoked", _className, AppDomain.CurrentDomain.FriendlyName);

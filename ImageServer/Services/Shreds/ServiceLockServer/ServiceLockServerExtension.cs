@@ -39,15 +39,13 @@ namespace ClearCanvas.ImageServer.Services.Shreds.ServiceLockServer
     /// Plugin to handle ServiceLock processing for the ImageServer.
     /// </summary>
     [ExtensionOf(typeof(ShredExtensionPoint))]
-    public class ServiceLockServerExtension : WcfShred
+    public class ServiceLockServerExtension : ShredBase
     {
         private readonly string _className;
-        private readonly string _servicesServerEndpointName;
-
+      
         public ServiceLockServerExtension()
         {
             _className = this.GetType().ToString();
-            _servicesServerEndpointName = "ServicesServer";
         }
         public override void Start()
         {
@@ -58,8 +56,6 @@ namespace ClearCanvas.ImageServer.Services.Shreds.ServiceLockServer
 
         public override void Stop()
         {
-            StopHost(_servicesServerEndpointName);
-
             ServiceLockServerManager.Instance.Stop();
 
             Platform.Log(LogLevel.Info, "{0}[{1}]: Stop invoked", _className, AppDomain.CurrentDomain.FriendlyName);
