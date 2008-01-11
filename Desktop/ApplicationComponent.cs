@@ -426,7 +426,13 @@ namespace ClearCanvas.Desktop
             _validation = new ValidationRuleSet();
 
             // process validation rules that are defined as attributes on properties
+            // TODO: move this into the ValidationCache, so it is only done once per Type
             ProcessAttributeValidationRules();
+
+            // add custom XML defined rules
+            string rulesXml = ValidationCache.GetValidationRulesXml(this.GetType());
+            if(!string.IsNullOrEmpty(rulesXml))
+                _validation.Add(rulesXml);
         }
 
 

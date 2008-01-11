@@ -11,6 +11,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Common.Specifications;
 using System.IO;
 using ClearCanvas.Common.Configuration;
+using ClearCanvas.Desktop.Validation;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
@@ -269,6 +270,8 @@ namespace ClearCanvas.Ris.Client.Admin
             }
 
             SaveValidationDocument();
+
+            ValidationCache.Invalidate(_applicationComponent);
 
             return true;
         }

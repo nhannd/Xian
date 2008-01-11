@@ -215,6 +215,7 @@
     <Compile Include="Validation\ValidateRegexAttribute.cs" />
     <Compile Include="Validation\ValidationAttribute.cs" />
     <Compile Include="Validation\ValidationAttributeException.cs" />
+    <Compile Include="Validation\ValidationCache.cs" />
     <Compile Include="Validation\ValidationResult.cs" />
     <Compile Include="Validation\ValidationRuleSet.cs" />
     <Compile Include="Validation\ValidationRule.cs" />
