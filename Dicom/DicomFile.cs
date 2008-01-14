@@ -520,6 +520,13 @@ namespace ClearCanvas.Dicom
         /// <returns></returns>
         public bool Save(DicomWriteOptions options)
         {
+            string path = Path.GetDirectoryName(Filename);
+            if (path != null && path.Length > 0)
+            {
+                if (!Directory.Exists(path))
+                    Directory.CreateDirectory(path);
+            }
+
             using (FileStream fs = File.Create(Filename))
             {
                 return Save(fs, options);

@@ -605,82 +605,92 @@ namespace ClearCanvas.Dicom.IO
                             {
                                 if (_remain >= _len)
                                 {
-                                    ByteBuffer bb = new ByteBuffer();
-                                    // If the tag is impacted by specific character set, 
-                                    // set the encoding properly.
-                                    if (_tag.VR.SpecificCharacterSet)
+                                    if (Flags.IsSet(options, DicomReadOptions.DoNotStorePixelDataInDataSet) && _tag.TagValue == DicomTags.PixelData)
                                     {
-                                        if (_sqrs.Count > 0)
-                                        {
-                                            SequenceRecord rec = _sqrs.Peek();
-                                            bb.SpecificCharacterSet = rec._current.SpecificCharacterSet;
-                                        }
-                                        else
-                                        {
-                                            bb.SpecificCharacterSet = _dataset.SpecificCharacterSet;
-                                        }
-                                    }
-
-                                    bb.Endian = _endian;
-                                    bb.CopyFrom(_stream, (int)_len);
-
-                                    DicomAttribute elem = _tag.CreateDicomAttribute(bb);
-
-
-                                    _remain -= _len;
-                                    _read += _len;
-
-                                    if (elem.Tag.TagValue == DicomTags.Group2Length)
-                                    {
-                                        // Save the end of the group 2 elements, so that we can automatically 
-                                        // check and change our transfer syntax when needed.
-                                        _inGroup2 = true;
-                                        uint group2len;
-                                        elem.TryGetUInt32(0, out group2len);
-                                        _endGroup2 = _read + group2len;
-                                    }
-
-                                    if (_sqrs.Count > 0)
-                                    {
-                                        SequenceRecord rec = _sqrs.Peek();
-                                        DicomAttributeCollection ds = rec._current;
-
-                                        if (elem.Tag.TagValue == DicomTags.SpecificCharacterSet)
-                                        {
-                                            ds.SpecificCharacterSet = elem.ToString();
-                                        }
-
-                                        if (_tag.Element == 0x0000)
-                                        {
-                                            if (Flags.IsSet(options, DicomReadOptions.KeepGroupLengths))
-                                                ds[_tag] = elem;
-                                        }
-                                        else
-                                            ds[_tag] = elem;
-
-                                        if (rec._curlen != UndefinedLength)
-                                        {
-                                            long end = rec._curpos + rec._curlen;
-                                            if (_stream.Position >= end)
-                                            {
-                                                rec._current = null;
-                                            }
-                                        }
+                                        // Skip PixelData !!
+                                        _stream.Seek((int)_len, SeekOrigin.Current);
+                                        _remain -= _len;
+                                        _read += _len;
                                     }
                                     else
                                     {
-                                        if (elem.Tag.TagValue == DicomTags.SpecificCharacterSet)
+                                        ByteBuffer bb = new ByteBuffer();
+                                        // If the tag is impacted by specific character set, 
+                                        // set the encoding properly.
+                                        if (_tag.VR.SpecificCharacterSet)
                                         {
-                                            _dataset.SpecificCharacterSet = elem.ToString();
+                                            if (_sqrs.Count > 0)
+                                            {
+                                                SequenceRecord rec = _sqrs.Peek();
+                                                bb.SpecificCharacterSet = rec._current.SpecificCharacterSet;
+                                            }
+                                            else
+                                            {
+                                                bb.SpecificCharacterSet = _dataset.SpecificCharacterSet;
+                                            }
                                         }
 
-                                        if (_tag.Element == 0x0000)
+                                        bb.Endian = _endian;
+                                        bb.CopyFrom(_stream, (int)_len);
+
+                                        DicomAttribute elem = _tag.CreateDicomAttribute(bb);
+
+
+                                        _remain -= _len;
+                                        _read += _len;
+
+                                        if (elem.Tag.TagValue == DicomTags.Group2Length)
                                         {
-                                            if (Flags.IsSet(options, DicomReadOptions.KeepGroupLengths))
-                                                _dataset[_tag] = elem;
+                                            // Save the end of the group 2 elements, so that we can automatically 
+                                            // check and change our transfer syntax when needed.
+                                            _inGroup2 = true;
+                                            uint group2len;
+                                            elem.TryGetUInt32(0, out group2len);
+                                            _endGroup2 = _read + group2len;
+                                        }
+
+                                        if (_sqrs.Count > 0)
+                                        {
+                                            SequenceRecord rec = _sqrs.Peek();
+                                            DicomAttributeCollection ds = rec._current;
+
+                                            if (elem.Tag.TagValue == DicomTags.SpecificCharacterSet)
+                                            {
+                                                ds.SpecificCharacterSet = elem.ToString();
+                                            }
+
+                                            if (_tag.Element == 0x0000)
+                                            {
+                                                if (Flags.IsSet(options, DicomReadOptions.KeepGroupLengths))
+                                                    ds[_tag] = elem;
+                                            }
+                                            else
+                                                ds[_tag] = elem;
+
+                                            if (rec._curlen != UndefinedLength)
+                                            {
+                                                long end = rec._curpos + rec._curlen;
+                                                if (_stream.Position >= end)
+                                                {
+                                                    rec._current = null;
+                                                }
+                                            }
                                         }
                                         else
-                                            _dataset[_tag] = elem;
+                                        {
+                                            if (elem.Tag.TagValue == DicomTags.SpecificCharacterSet)
+                                            {
+                                                _dataset.SpecificCharacterSet = elem.ToString();
+                                            }
+
+                                            if (_tag.Element == 0x0000)
+                                            {
+                                                if (Flags.IsSet(options, DicomReadOptions.KeepGroupLengths))
+                                                    _dataset[_tag] = elem;
+                                            }
+                                            else
+                                                _dataset[_tag] = elem;
+                                        }
                                     }
                                 }
                                 else
