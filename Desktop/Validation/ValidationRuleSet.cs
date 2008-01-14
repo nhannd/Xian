@@ -52,19 +52,12 @@ namespace ClearCanvas.Desktop.Validation
         }
 
         /// <summary>
-        /// Add a specification (as xml) to the set.
+        /// Constructor
         /// </summary>
-		public void Add(string xmlSpecifications)
+        /// <param name="rules"></param>
+        public ValidationRuleSet(IList<IValidationRule> rules)
         {
-            using (TextReader xml = new StringReader(xmlSpecifications))
-            {
-                SpecificationFactory specFactory = new SpecificationFactory(xml);
-                IDictionary<string, ISpecification> specs = specFactory.GetAllSpecifications();
-                foreach (KeyValuePair<string, ISpecification> kvp in specs)
-                {
-                    this.Add(new ValidationRule(kvp.Key, kvp.Value));
-                }
-            }
+            _rules = new List<IValidationRule>(rules);
         }
 
 		/// <summary>

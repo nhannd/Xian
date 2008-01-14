@@ -422,17 +422,8 @@ namespace ClearCanvas.Desktop
             // default resource resolver
             _resourceResolver = new ResourceResolver(this.GetType().Assembly);
             
-            // default empty validation rule set
-            _validation = new ValidationRuleSet();
-
-            // process validation rules that are defined as attributes on properties
-            // TODO: move this into the ValidationCache, so it is only done once per Type
-            ProcessAttributeValidationRules();
-
-            // add custom XML defined rules
-            string rulesXml = ValidationCache.GetValidationRulesXml(this.GetType());
-            if(!string.IsNullOrEmpty(rulesXml))
-                _validation.Add(rulesXml);
+            // create default validation rule set containing rules for this type
+            _validation = new ValidationRuleSet(ValidationCache.GetRules(this.GetType()));
         }
 
 
@@ -775,17 +766,6 @@ namespace ClearCanvas.Desktop
         {
             if (_started)
                 throw new InvalidOperationException(SR.ExceptionComponentAlreadyStarted);
-        }
-
-        private void ProcessAttributeValidationRules()
-        {
-            foreach (PropertyInfo property in this.GetType().GetProperties())
-            {
-                foreach (ValidationAttribute a in property.GetCustomAttributes(typeof(ValidationAttribute), true))
-                {
-                    _validation.Add(a.CreateRule(property, _resourceResolver));
-                }
-            }
         }
 
         #endregion
