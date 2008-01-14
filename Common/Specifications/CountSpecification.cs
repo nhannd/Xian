@@ -33,40 +33,62 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Common.Specifications
 {
+    /// <summary>
+    /// Counts the number of items in a <see cref="IEnumerable"/> that satisfy the inner specification. If no
+    /// inner specification is supplied, all items are counted.
+    /// </summary>
     public class CountSpecification : PrimitiveSpecification
     {
-        private int _min = 0;
-        private int _max = Int32.MaxValue;
+        class NullSpecification : ISpecification
+        {
+            public TestResult Test(object obj)
+            {
+                return new TestResult(true);
+            }
+        }
 
-        public CountSpecification(int min, int max)
+        private static readonly ISpecification NullFilter = new NullSpecification();
+
+        private readonly int _min = 0;
+        private readonly int _max = Int32.MaxValue;
+        private readonly ISpecification _innerSpecification;
+
+        public CountSpecification(int min, int max, ISpecification innerSpecification)
         {
             _max = max;
             _min = min;
+            _innerSpecification = innerSpecification ?? NullFilter;
         }
 
         protected override TestResult InnerTest(object exp, object root)
         {
-            if (exp is Array)
+            // optimizations
+            // if _innerSpecification is NullFilter, and exp is an Array or ICollection, we can just use Length/Count
+            if (_innerSpecification == NullFilter)
             {
-                return DefaultTestResult(InRange((exp as Array).Length));
+                if (exp is Array)
+                {
+                    return DefaultTestResult(InRange((exp as Array).Length));
+                }
+
+                if (exp is ICollection)
+                {
+                    return DefaultTestResult(InRange((exp as ICollection).Count));
+                }
             }
 
-            if (exp is ICollection)
-            {
-                return DefaultTestResult(InRange((exp as ICollection).Count));
-            }
-
+            // otherwise, treat as IEnumerable and evaluate _innerSpecification
             if (exp is IEnumerable)
             {
-                // manually count the items
-                // this could be very bad in terms of performance, but let's assume this will rarely
-                // happen on a very large collection
-                int count = 0;
-                foreach (object element in (exp as IEnumerable)) count++;
-                return DefaultTestResult(InRange(count));
+                ICollection countableItems = CollectionUtils.Select(exp as IEnumerable,
+                    delegate(object item) { return _innerSpecification.Test(item).Success; });
+
+                return DefaultTestResult(InRange(countableItems.Count));
             }
 
 			throw new SpecificationException(SR.ExceptionCastExpressionArrayCollectionEnumerable);

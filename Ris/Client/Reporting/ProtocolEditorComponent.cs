@@ -74,6 +74,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         private readonly ProtocolCodeTable _availableProtocolCodes;
         private readonly ProtocolCodeTable _selectedProtocolCodes;
+        private ProtocolCodeDetail _selectedProtocolCodesSelection;
 
         private bool _acceptEnabled;
         private bool _rejectEnabled;
@@ -132,6 +133,9 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         private void StartWorklistItem()
         {
+            // begin with validation turned off
+            ShowValidation(false);
+
             Platform.GetService<IProtocollingWorkflowService>(
                 delegate(IProtocollingWorkflowService service)
                     {
@@ -208,6 +212,17 @@ namespace ClearCanvas.Ris.Client.Reporting
             get { return _selectedProtocolCodes; }
         }
 
+        // this isn't actually used by the component, but we need it for validation
+        // so that we can show an error icon next to the "selected items" table
+        public ISelection SelectedProtocolCodesSelection
+        {
+            get { return new Selection(_selectedProtocolCodesSelection); }
+            set
+            {
+                _selectedProtocolCodesSelection = (ProtocolCodeDetail) value.Item;
+            }
+        }
+
         public ITable ProcedurePlanSummaryTable
         {
             get { return _procedurePlanSummaryTable; }
@@ -247,6 +262,13 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         public void Accept()
         {
+            // don't allow accept if there are validation errors
+            if(HasValidationErrors)
+            {
+                ShowValidation(true);
+                return;
+            }
+
             try
             {
                 Platform.GetService<IProtocollingWorkflowService>(

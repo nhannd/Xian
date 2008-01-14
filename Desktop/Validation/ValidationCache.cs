@@ -32,6 +32,12 @@ namespace ClearCanvas.Desktop.Validation
             }
         }
 
+        /// <summary>
+        /// Gets the rules, including both attribute-based and custom XML-based rules, for the specified
+        /// class of application component.
+        /// </summary>
+        /// <param name="applicationComponentClass"></param>
+        /// <returns></returns>
         public static IList<IValidationRule> GetRules(Type applicationComponentClass)
         {
             lock (_syncLock)
@@ -53,6 +59,11 @@ namespace ClearCanvas.Desktop.Validation
             }
         }
 
+        /// <summary>
+        /// Invalidates the cache for the specified application component class, causing the rules
+        /// to be re-compiled the next time <see cref="GetRules"/> is called.
+        /// </summary>
+        /// <param name="applicationComponentClass"></param>
         public static void Invalidate(Type applicationComponentClass)
         {
             lock (_syncLock)

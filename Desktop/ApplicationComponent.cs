@@ -682,10 +682,11 @@ namespace ClearCanvas.Desktop
         /// </summary>
         public virtual void ShowValidation(bool show)
         {
-            AssertStarted();
-
             _showValidationErrors = show;
-            EventsHelper.Fire(_validationVisibleChanged, this, EventArgs.Empty);
+            if (_started)
+            {
+                EventsHelper.Fire(_validationVisibleChanged, this, EventArgs.Empty);
+            }
         }
 
         /// <summary>

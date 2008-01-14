@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Specifications;
 
@@ -111,8 +112,18 @@ namespace ClearCanvas.Desktop.Validation
 
             public ValidationResult Evaluate(IApplicationComponent component)
             {
-                TestResult result = _specification.Test(component);
-                return new ValidationResult(result.Success, result.Success ? null : GetTopLevelMessage(result.Reasons));
+                try
+                {
+                    TestResult result = _specification.Test(component);
+                    return new ValidationResult(result.Success, result.Success ? null : GetTopLevelMessage(result.Reasons));
+                }
+                catch (Exception e)
+                {
+                    // if the evaluation of the specification throws an exception, 
+                    // treat it as a failed validation and return the exception message
+                    // this will assist the administrator in correcting the specification XML
+                    return new ValidationResult(false, string.Format("Error evaluating validation rule: {0}", e.Message));
+                }
             }
 
             private static string GetTopLevelMessage(TestResultReason[] reasons)

@@ -122,14 +122,13 @@ namespace ClearCanvas.Ris.Client.Admin
             // if this fails, an exception will be thrown, preventing this component from starting
             LoadValidationDocument();
 
-            // select the settable properties excluding those defined by IApplicationComponent
+            // select the properties excluding those defined by IApplicationComponent
             _rules.Items.AddRange(
                 CollectionUtils.Map<PropertyInfo, Rule>(
                     CollectionUtils.Select(_applicationComponent.GetProperties(),
                         delegate(PropertyInfo p)
                         {
-                            return p.GetSetMethod() != null
-                                && !p.DeclaringType.Equals(typeof(IApplicationComponent))
+                            return !p.DeclaringType.Equals(typeof(IApplicationComponent))
                                 && !p.DeclaringType.Equals(typeof(ApplicationComponent));
                         }),
                     delegate(PropertyInfo p)

@@ -230,11 +230,12 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this.tableLayoutPanel3.SetColumnSpan(this._protocolCodesSelector, 2);
             this._protocolCodesSelector.Dock = System.Windows.Forms.DockStyle.Fill;
             this._protocolCodesSelector.Location = new System.Drawing.Point(3, 48);
+            this._protocolCodesSelector.Margin = new System.Windows.Forms.Padding(3, 3, 20, 3);
             this._protocolCodesSelector.Name = "_protocolCodesSelector";
             this._protocolCodesSelector.SelectedItemsTable = null;
             this._protocolCodesSelector.ShowColumnHeading = false;
             this._protocolCodesSelector.ShowToolbars = false;
-            this._protocolCodesSelector.Size = new System.Drawing.Size(500, 372);
+            this._protocolCodesSelector.Size = new System.Drawing.Size(483, 372);
             this._protocolCodesSelector.TabIndex = 0;
             // 
             // _protocolGroup

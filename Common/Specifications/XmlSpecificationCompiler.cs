@@ -259,7 +259,9 @@ namespace ClearCanvas.Common.Specifications
             int min = (minString == "") ? 0 : Int32.Parse(minString);
             int max = (maxString == "") ? Int32.MaxValue : Int32.Parse(maxString);
 
-            return new CountSpecification(min, max);
+            ICollection<XmlNode> childElements = GetChildElements(node);
+            Specification elementSpec = childElements.Count > 0 ? CreateImplicitAnd(childElements) : null;
+            return new CountSpecification(min, max, elementSpec);
         }
 
         private Specification CreateEach(XmlElement node)
