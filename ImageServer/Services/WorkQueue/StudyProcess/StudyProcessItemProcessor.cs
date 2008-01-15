@@ -276,14 +276,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
             if (successfulProcessCount == 0)
             {
-                SetWorkQueueItemPending(item, true); // set failure status, retries will be attempted if necessary
+                PostProcessing(item, WorkQueueUidList.Count, true); // set the status to Pending or Failed depending on whether or not the max retry has been reached
             }
             else
             {
-                SetWorkQueueItemPending(item, false); // set success status}
+                PostProcessing(item, WorkQueueUidList.Count, false); // set the status to Pending
 
-
-                if (_stats.NumInstances > 0)
+				if (_stats.NumInstances > 0)
                 {
                     _stats.LogAll = true;
                     StatisticsLogger.Log(LogLevel.Info, _stats);
@@ -319,8 +318,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
             if (WorkQueueUidList.Count == 0)
             {
-                // No UIDs associated with the WorkQueue item.  Set the status back to pending.
-                SetWorkQueueItemCompleteIfExpired(item);
+                // No UIDs associated with the WorkQueue item.  Set the status back to idle
+                PostProcessing(item, 0, false);
             }
             else
             {

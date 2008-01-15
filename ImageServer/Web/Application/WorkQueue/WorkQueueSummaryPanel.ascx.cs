@@ -30,12 +30,14 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
         protected void Page_Load(object sender, EventArgs e)
         {
             WorkQueueType.Text = _workqueueSummary.Type.Description;
-            
-            WorkQueueStatus.Text = _workqueueSummary.Status.Description;
 
+            WorkQueueStatus.Text = _workqueueSummary.Status.Description;
+            WorkQueueStatus.ToolTip = _workqueueSummary.Status.LongDescription;
+            
             ScheduledTime.Text = _workqueueSummary.ScheduledDateTime.ToString();
 
             PatientID.Text = _workqueueSummary.PatientID;
+
             PatientsName.Text = _workqueueSummary.PatientName;
 
         }

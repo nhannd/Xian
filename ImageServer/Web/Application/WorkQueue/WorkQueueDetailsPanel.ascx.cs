@@ -53,12 +53,23 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
             AddRow("Study Date", _workQueueDetails.Study == null ? "N/A" : _workQueueDetails.Study.AccessionNumber);
             AddRow("Study Instance UID",
                    _workQueueDetails.Study == null ? "N/A" : _workQueueDetails.Study.StudyInstanceUID);
-            AddRow("Study Status", _workQueueDetails.Study == null ? "N/A" : _workQueueDetails.Study.Status);
+
+            String status = _workQueueDetails.Study==null? "N/A":_workQueueDetails.Study.Status;
+                
+            if (_workQueueDetails.Study!=null && _workQueueDetails.Study.Lock != null)
+            {
+                if (_workQueueDetails.Study.Lock.Value == true)
+                    status = status + " / Locked";
+            }
+
+            AddRow("Study Status ", status);
+            
 
             AddRow("Series Pending", _workQueueDetails.NumSeriesPending.ToString());
             AddRow("Instances Pending", _workQueueDetails.NumInstancesPending.ToString());
             AddRow("Expiration Time", _workQueueDetails.ExpirationTime.ToString());
             AddRow("Retry Count", _workQueueDetails.FailureCount.ToString());
+            AddRow("Processor ID", _workQueueDetails.ProcessorID);
         }
 
         #endregion Protected Methods

@@ -53,6 +53,7 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
         private string _patientID;
         private string _patientName;
         private string _status;
+        private bool?   _lock;
         private string _accessionNumber;
         private string _studyDescription;
 
@@ -94,6 +95,12 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
         {
             get { return _studyDescription; }
             set { _studyDescription = value; }
+        }
+
+        public bool? Lock
+        {
+            get { return _lock; }
+            set { _lock = value; }
         }
 
         #endregion Public Properties

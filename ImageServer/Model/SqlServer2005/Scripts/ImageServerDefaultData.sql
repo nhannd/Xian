@@ -21,7 +21,7 @@ GO
 INSERT INTO [ImageServer].[dbo].[WorkQueueStatusEnum]
            ([GUID],[Enum],[Lookup],[Description],[LongDescription])
      VALUES
-           (newid(),100,'Online','Online','Online')
+           (newid(),100,'Idle','Idle','Waiting to expire or for more images')
 GO
 
 INSERT INTO [ImageServer].[dbo].[WorkQueueStatusEnum]

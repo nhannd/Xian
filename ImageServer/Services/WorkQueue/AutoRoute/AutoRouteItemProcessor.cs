@@ -77,7 +77,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
             // set them back to pending.
             if (WorkQueueUidList.Count == 0)
             {
-                SetWorkQueueItemCompleteIfExpired(item);
+                PostProcessing(item, 0, false);
                 return;
             }
 
@@ -88,7 +88,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
                 Platform.Log(LogLevel.Error,
                              "Unknown auto-route destination \"{0}\"", item.DeviceKey);
 
-                SetWorkQueueItemPending(item, true);
+                PostProcessing(item, WorkQueueUidList.Count, true);
                 return ;
             }
 
@@ -141,9 +141,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
 
             // Reset the WorkQueue entry status
             if (WorkQueueUidList.Count > 0)
-                SetWorkQueueItemPending(item, true); // failures occurred
+                PostProcessing(item,WorkQueueUidList.Count, true); // failures occurred
             else
-                SetWorkQueueItemPending(item, false); // no failures
+                PostProcessing(item, WorkQueueUidList.Count, false); // no failures
         }
         #endregion
     }

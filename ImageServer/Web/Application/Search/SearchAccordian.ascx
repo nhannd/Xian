@@ -18,7 +18,7 @@
                                     <asp:Label ID="StudyDate" runat="server" CssClass="CSSAccordianHeaderText" Text="Study Date"
                                         EnableViewState="False" Width="12%" />
                                     <asp:Label ID="AccessionNumber" runat="server" CssClass="CSSAccordianHeaderText"
-                                        Text="Accession Number" EnableViewState="False" Width="19%" />
+                                        Text="Accession #" EnableViewState="False" Width="19%" />
                                     <asp:Label ID="StudyDescription" runat="server" CssClass="CSSAccordianHeaderText"
                                         Text="Description" EnableViewState="False" Width="23%" />
                                 </asp:Panel>

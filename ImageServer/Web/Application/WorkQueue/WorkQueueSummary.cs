@@ -55,7 +55,9 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
         private string _patientName;
         private WorkQueueTypeEnum _type;
         private WorkQueueStatusEnum _status;
+        private int _numInstancesPending;
         private DateTime _scheduledDateTime;
+        
         #endregion Private members
 
         #region Public Properties
@@ -94,6 +96,13 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
         {
             get { return _patientName; }
             set { _patientName = value; }
+        }
+
+
+        public int NumInstancesPending
+        {
+            get { return _numInstancesPending; }
+            set { _numInstancesPending = value; }
         }
 
         #endregion Public Properties

@@ -126,8 +126,10 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
                                 : WorkQueueTypeEnum.GetEnum(TypeDropDownList.SelectedValue);
             parameters.Status = (StatusDropDownList.SelectedValue == "")
                                     ? null
+                          
                                     : WorkQueueStatusEnum.GetEnum(StatusDropDownList.SelectedValue);
 
+            
             searchResultAccordianControl.WorkQueues = _searchController.FindWorkQueue(parameters);
             searchResultAccordianControl.DataBind();
         }

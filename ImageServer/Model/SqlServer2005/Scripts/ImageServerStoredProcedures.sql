@@ -193,7 +193,7 @@ BEGIN
 	if (@where<>'''')
 		SET @stmt = @stmt + '' WHERE '' + @where
 
-	SET @stmt = @stmt + '' ORDER BY Study.PatientID ASC''
+	SET @stmt = @stmt + '' ORDER BY WorkQueue.ScheduledTime ASC''
 
 	--PRINT @stmt
 
@@ -395,10 +395,12 @@ BEGIN
 	declare @WorkQueueGUID as uniqueidentifier
 
 	declare @PendingStatusEnum as smallint
+	declare @IdleStatusEnum as smallint
 	declare @DeleteStudyTypeEnum as smallint
 	declare @DeleteStudyFilesystemQueueTypeEnum smallint
 
 	select @PendingStatusEnum = Enum from WorkQueueStatusEnum where Lookup = ''Pending''
+	select @IdleStatusEnum = Enum from WorkQueueStatusEnum where Lookup = ''Idle''
 	select @DeleteStudyTypeEnum = Enum from WorkQueueTypeEnum where Lookup = ''DeleteStudy''
 	select @DeleteStudyFilesystemQueueTypeEnum = Enum from FilesystemQueueTypeEnum where Lookup = ''DeleteStudy''
 
@@ -422,7 +424,8 @@ BEGIN
 	END
 	ELSE
 	BEGIN
-		UPDATE WorkQueue set ExpirationTime = @ExpirationTime
+		UPDATE WorkQueue 
+			set ExpirationTime = @ExpirationTime
 			where GUID = @WorkQueueGUID
 	END
 
@@ -471,11 +474,13 @@ BEGIN
 	declare @CompletedStatusEnum as int
 	declare @PendingStatusEnum as int
 	declare @FailedStatusEnum as int
+	declare @IdleStatusEnum as int
 
 	select @CompletedStatusEnum = Enum from WorkQueueStatusEnum where Lookup = ''Completed''
 	select @PendingStatusEnum = Enum from WorkQueueStatusEnum where Lookup = ''Pending''
 	select @FailedStatusEnum = Enum from WorkQueueStatusEnum where Lookup = ''Failed''
-
+	select @IdleStatusEnum = Enum from WorkQueueStatusEnum where Lookup = ''Idle''
+	
 	BEGIN TRANSACTION
 
 	if @WorkQueueStatusEnum = @CompletedStatusEnum 
@@ -498,10 +503,21 @@ BEGIN
 			ProcessorID = @ProcessorID
 		WHERE GUID = @WorkQueueGUID
 	END
-	ELSE
+	ELSE if @WorkQueueStatusEnum = @PendingStatusEnum
 	BEGIN
 		-- Pending
-		if @WorkQueueStatusEnum = @PendingStatusEnum
+		UPDATE StudyStorage set Lock = 0, LastAccessedTime = getdate() 
+		WHERE GUID = @StudyStorageGUID AND Lock = 1
+		
+		UPDATE WorkQueue
+		SET WorkQueueStatusEnum = @WorkQueueStatusEnum, ExpirationTime = @ExpirationTime, ScheduledTime = @ScheduledTime,
+			FailureCount = @FailureCount, ProcessorID = @ProcessorID
+		WHERE GUID = @WorkQueueGUID
+	END
+	ELSE
+	BEGIN
+		-- Idle
+		if @WorkQueueStatusEnum = @IdleStatusEnum
 		BEGIN
 			UPDATE StudyStorage set Lock = 0, LastAccessedTime = getdate() 
 			WHERE GUID = @StudyStorageGUID AND Lock = 1
@@ -549,9 +565,11 @@ BEGIN
 	declare @WorkQueueGUID as uniqueidentifier
 
 	declare @PendingStatusEnum as int
+	declare @IdleStatusEnum as int
 	declare @AutoRouteTypeEnum as int
 
 	select @PendingStatusEnum = Enum from WorkQueueStatusEnum where Lookup = ''Pending''
+	select @IdleStatusEnum = Enum from WorkQueueStatusEnum where Lookup = ''Idle''
 	select @AutoRouteTypeEnum = Enum from WorkQueueTypeEnum where Lookup = ''AutoRoute''
 
 	BEGIN TRANSACTION
@@ -569,7 +587,8 @@ BEGIN
 	END
 	ELSE
 	BEGIN
-		UPDATE WorkQueue set ExpirationTime = @ExpirationTime
+		UPDATE WorkQueue 
+			set ExpirationTime = @ExpirationTime
 			where GUID = @WorkQueueGUID
 	END
 
@@ -611,9 +630,11 @@ BEGIN
 	declare @WorkQueueGUID as uniqueidentifier
 
 	declare @PendingStatusEnum as int
+	declare @IdleStatusEnum as int
 	declare @StudyProcessTypeEnum as int
 
 	select @PendingStatusEnum = Enum from WorkQueueStatusEnum where Lookup = ''Pending''
+	select @IdleStatusEnum = Enum from WorkQueueStatusEnum where Lookup = ''Idle''
 	select @StudyProcessTypeEnum = Enum from WorkQueueTypeEnum where Lookup = ''StudyProcess''
 
 	BEGIN TRANSACTION
@@ -631,7 +652,8 @@ BEGIN
 	END
 	ELSE
 	BEGIN
-		UPDATE WorkQueue set ExpirationTime = @ExpirationTime
+		UPDATE WorkQueue 
+			set ExpirationTime = @ExpirationTime
 			where GUID = @WorkQueueGUID
 	END
 
@@ -799,9 +821,11 @@ BEGIN
 	declare @StudyStorageGUID uniqueidentifier
 	declare @WorkQueueGUID uniqueidentifier
 	declare @PendingStatusEnum as int
+	declare @IdleStatusEnum as int
 	declare @InProgressStatusEnum as int
 
 	select @PendingStatusEnum = Enum from WorkQueueStatusEnum where Lookup = ''Pending''
+	select @IdleStatusEnum = Enum from WorkQueueStatusEnum where Lookup = ''Idle''
 	select @InProgressStatusEnum = Enum from WorkQueueStatusEnum where Lookup = ''In Progress''
 	
     IF @WorkQueueTypeEnum = 0
@@ -813,7 +837,7 @@ BEGIN
 			StudyStorage ON StudyStorage.GUID = WorkQueue.StudyStorageGUID AND StudyStorage.Lock = 0
 		WHERE
 			ScheduledTime < getdate() 
-			AND (  WorkQueue.WorkQueueStatusEnum = @PendingStatusEnum )
+			AND (  WorkQueue.WorkQueueStatusEnum in (@PendingStatusEnum,@IdleStatusEnum)  )
 		ORDER BY WorkQueue.ScheduledTime
 	END
 	ELSE
@@ -825,7 +849,7 @@ BEGIN
 			StudyStorage ON StudyStorage.GUID = WorkQueue.StudyStorageGUID AND StudyStorage.Lock = 0
 		WHERE
 			ScheduledTime < getdate() 
-			AND WorkQueue.WorkQueueStatusEnum = @PendingStatusEnum
+			AND WorkQueue.WorkQueueStatusEnum in (@PendingStatusEnum,@IdleStatusEnum)
 			AND WorkQueue.WorkQueueTypeEnum = @WorkQueueTypeEnum
 		ORDER BY WorkQueue.ScheduledTime
 	END

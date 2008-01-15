@@ -60,6 +60,10 @@
 */	
 .CSSAccordianHeaderPanelContainer
 {
+	margin:0px;
+	padding:0px;
+	
+	
 }
 
 /*	The border of the header column panel 
@@ -67,6 +71,7 @@
 */
 .CSSAccordianHeaderPanelBorder
 {
+	
 }
 
 /*	The content in the header column panel 
@@ -75,23 +80,21 @@
 .CSSAccordianHeaderPanelContent
 {
 	height: 24px;
-	padding-right: 5px;
-	padding-left: 8px;
-	background-image: url(images/gridheaderbackground.png);
-	background-repeat: repeat-x;
+	padding-top:0px;
+	padding-left:10px;
 	font-weight: normal;
-	border-right: #696969 1px solid;
-	border-top: #696969 1px solid;
-	border-left: #696969 1px solid;
-	border-bottom: #696969 1px solid;
+	background-image: url(images/gridheaderbackground.png);
+	
 }
 
 /* The header text  */
 .CSSAccordianHeaderText
 {
+	text-wrap:none;
 	font-weight: bold;
+	padding-top:3px;
+	padding-left:0px;
 	color: darkgray;
-	margin:2px;
 }
 
 /*	The result list panel container 
@@ -108,17 +111,24 @@
 /*	The study header (summary) panel */
 .CSSAccordianStudyHeader
 {
-    cursor: pointer;
-    padding: 5px;
-    border-bottom: solid 1px darkgray;
-    
+	cursor: pointer;
+	border-bottom: solid 1px darkgray;
+	padding-right: 5px;
+	padding-left: 10px;
+	padding-bottom: 5px;
+	padding-top: 5px;
 }
 
 /*	The study header (summary) panel when selected */
 .CSSAccordianStudyHeaderSelected
 {
 	cursor: pointer;
-	padding: 5px;
+	
+	padding-right: 5px;
+	padding-left: 10px;
+	padding-bottom: 5px;
+	padding-top: 5px;
+	
 	background-color: #990000;
 	cursor: pointer;
 	color: white;
@@ -131,20 +141,19 @@
 */
 .CSSAccordianStudyDetailsContainer
 {
-
-    border-top: none;
-    padding: 5px;
-    padding-top: 10px;
-    
+	border-top: medium none;
+	border-bottom: #696969 thick solid;
+	padding-bottom: 30px;
 }
 
 /*	The study details content panel*/
 .CSSAccordianStudyDetailsPanelContent
 {
-	padding-bottom: 5px;
-	padding-top: 5px;
-	padding-right: 10px;
-	padding-left: 10px;
+
+	padding-right: 5px;
+	padding-left: 20px;
+	padding-bottom: 10px;
+	padding-top: 10px;
 	
 	border-right: dimgray 1px solid;
 	border-top: dimgray 1px solid;
@@ -157,9 +166,10 @@
 {
 	word-wrap: break-word;
 	vertical-align: middle;
-	font-weight:normal;
+	font-weight: normal;
 	margin-left: 3px;
-	
+	margin-right: 32px;
+	background-color: #33cc33;
 }
 
 

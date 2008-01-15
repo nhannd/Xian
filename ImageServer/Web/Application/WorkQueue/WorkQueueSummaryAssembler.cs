@@ -29,6 +29,7 @@
 
 #endregion
 
+using System.Collections;
 using System.Collections.Generic;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -79,7 +80,22 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
                 summary.PatientName = studyList[0].PatientsName;
  
             }
-            
+
+
+            // Fetch UIDs
+            WorkQueueUidAdaptor wqUidsAdaptor = new WorkQueueUidAdaptor();
+            WorkQueueUidSelectCriteria uidCriteria = new WorkQueueUidSelectCriteria();
+            uidCriteria.WorkQueueKey.EqualTo(workqueue.GetKey());
+            IList<Model.WorkQueueUid> uids = wqUidsAdaptor.Get(uidCriteria);
+
+            Hashtable mapSeries = new Hashtable();
+            foreach (Model.WorkQueueUid uid in uids)
+            {
+                if (mapSeries.ContainsKey(uid.SeriesInstanceUid) == false)
+                    mapSeries.Add(uid.SeriesInstanceUid, uid.SopInstanceUid);
+            }
+
+            summary.NumInstancesPending = uids.Count;
 
             return summary;
         }
@@ -100,6 +116,8 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
 
             summary.PatientID = (details.Study==null)? "N/A": details.Study.PatientID;
             summary.PatientName = (details.Study == null) ? "N/A" : details.Study.PatientName;
+
+            summary.NumInstancesPending = (details.NumInstancesPending);
 
             return summary;
         }

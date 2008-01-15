@@ -186,7 +186,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                 // reschedule to start again now
                 parms.RescheduleTime = Platform.Time;
                 // retry will expire X minutes from now (so other process MAY NOT remove them)
-                parms.RetryExpirationTime = Platform.Time.AddMinutes(settings.WorkQueueMaxFailureCount * settings.WorkQueueFailureDelayMinutes);
+                parms.RetryExpirationTime = Platform.Time.AddMinutes(settings.WorkQueueFailureDelayMinutes);
 
                 // if an entry has been retried more than WorkQueueMaxFailureCount, it should be failed
                 parms.MaxFailureCount = settings.WorkQueueMaxFailureCount;

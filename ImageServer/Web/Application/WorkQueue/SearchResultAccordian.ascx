@@ -12,15 +12,15 @@
                             <asp:Panel ID="Panel9" runat="server" CssClass="CSSAccordianHeaderPanelBorder">
                                 <asp:Panel ID="Panel10" runat="server" CssClass="CSSAccordianHeaderPanelContent">
                                     <asp:Label ID="PatientID" runat="server" CssClass="CSSAccordianHeaderText" Text="Patient ID"
-                                        EnableViewState="False" Width="100px" />
+                                        EnableViewState="False" Width="15%" />
                                     <asp:Label ID="PatientsName" runat="server" CssClass="CSSAccordianHeaderText" Text="Patient's Name"
-                                        EnableViewState="False" Width="230px" />
+                                        EnableViewState="False" Width="30%" />
                                     <asp:Label ID="WorkQueueType" runat="server" CssClass="CSSAccordianHeaderText" Text="Type"
-                                        EnableViewState="False" Width="100px" />
+                                        EnableViewState="False" Width="15%"  />
                                     <asp:Label ID="WorkQueueStatus" runat="server" CssClass="CSSAccordianHeaderText"
-                                        Text="Status" EnableViewState="False" Width="80px" />
+                                        Text="Status" EnableViewState="False" Width="15%" />
                                     <asp:Label ID="ScheduledTime" runat="server" CssClass="CSSAccordianHeaderText" Text="Schedule"
-                                        EnableViewState="False" Width="180px" />
+                                        EnableViewState="False"  />
                                 </asp:Panel>
                             </asp:Panel>
                         </asp:Panel>

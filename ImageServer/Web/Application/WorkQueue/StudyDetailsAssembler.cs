@@ -29,7 +29,11 @@
 
 #endregion
 
+using System.Collections.Generic;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Model.Brokers;
+using ClearCanvas.ImageServer.Model.EntityBrokers;
+using ClearCanvas.ImageServer.Web.Common.Data;
 
 namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
 {
@@ -54,6 +58,21 @@ namespace ClearCanvas.ImageServer.Web.Application.WorkQueue
 
             details.StudyDescription = study.StudyDescription;
 
+
+            if (study.StudyInstanceUid!=null)
+            {
+                StudyStorageAdaptor adaptor = new StudyStorageAdaptor();
+                StudyStorageSelectCriteria criteria = new StudyStorageSelectCriteria();
+                criteria.ServerPartitionKey.EqualTo(study.ServerPartitionKey);
+                criteria.StudyInstanceUid.EqualTo(study.StudyInstanceUid);
+
+                IList<StudyStorage> storages = adaptor.Get(criteria);
+                if (storages != null && storages.Count > 0)
+                    details.Lock = storages[0].Lock;
+
+            }
+
+            
             return details;
         }
     }
