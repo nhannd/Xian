@@ -127,7 +127,7 @@ namespace ClearCanvas.Dicom.Network
             _socket.SendBufferSize = parameters.SendBufferSize;
             _socket.ReceiveTimeout = parameters.ReadTimeout;
             _socket.SendTimeout = parameters.WriteTimeout;
-            _socket.LingerState = new LingerOption(false, 1);
+            _socket.LingerState = new LingerOption(false, 0);
             // Nagle option
             _socket.NoDelay = false;
         }

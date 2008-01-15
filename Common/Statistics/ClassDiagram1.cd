@@ -30,9 +30,6 @@
       <FileName>Statistics\StatisticsSetCollection.cs</FileName>
       <HashCode>AAAAAAAAAAIACAAAAAAAAAQAAAAAAAIAQAAAAAAAAAA=</HashCode>
     </TypeIdentifier>
-    <Members>
-      <Field Name="_list" Hidden="true" />
-    </Members>
   </Class>
   <Class Name="ClearCanvas.Common.Statistics.CollectionAverageStatistics&lt;T&gt;">
     <Position X="1.75" Y="6.25" Width="2.25" />
@@ -44,16 +41,6 @@
       <Field Name="_logAll" Hidden="true" />
       <Method Name="CalculateAverage" Hidden="true" />
       <Method Name="CollectionAverageStatistics" Hidden="true" />
-    </Members>
-  </Class>
-  <Class Name="ClearCanvas.Common.Statistics.WorkQueue.WorkQueueAverageStatistics">
-    <Position X="7.75" Y="10.75" Width="3.75" />
-    <TypeIdentifier>
-      <FileName>Statistics\WorkQueue\WorkQueueAverageStatistics.cs</FileName>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAA=</HashCode>
-    </TypeIdentifier>
-    <Members>
-      <Method Name="WorkQueueAverageStatistics" Hidden="true" />
     </Members>
   </Class>
   <Class Name="ClearCanvas.Common.Statistics.TimeSpanStatistics">

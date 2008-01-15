@@ -91,7 +91,7 @@ namespace ClearCanvas.Dicom.Network
             _socket.SendBufferSize = parameters.SendBufferSize;
             _socket.ReceiveTimeout = parameters.ReadTimeout;
             _socket.SendTimeout = parameters.WriteTimeout;
-            _socket.LingerState = new LingerOption(false, 1);
+            _socket.LingerState = new LingerOption(false, 0);
             // Nagle option
             _socket.NoDelay = false;
         }
@@ -112,6 +112,7 @@ namespace ClearCanvas.Dicom.Network
             _remoteEndPoint = ep;
 
             _assoc.RemoteEndPoint = ep;
+            _assoc.LocalEndPoint = _socket.LocalEndPoint as IPEndPoint;
 
             OnClientConnected();
         }

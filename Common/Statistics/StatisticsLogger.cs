@@ -29,7 +29,6 @@
 
 #endregion
 
-using System;
 using System.IO;
 using System.Text;
 using System.Xml;
@@ -46,24 +45,27 @@ namespace ClearCanvas.Common.Statistics
         #endregion private members
 
         /// <summary>
-        /// Logs a statistics.
+        /// Log Statistics.
         /// </summary>
         /// <param name="logLevel"></param>
         /// <param name="statistics"></param>
         public static void Log(LogLevel logLevel, StatisticsSet statistics)
         {
             XmlElement el = statistics.GetXmlElement(doc);
-            Encoding utf8encoder = new UTF8Encoding();
 
-            using (MemoryStream ms = new MemoryStream())
+            using (StringWriter sw = new StringWriter())
             {
-                XmlTextWriter writer = new XmlTextWriter(ms, utf8encoder);
+                XmlWriterSettings settings = new XmlWriterSettings();
+                settings.Indent = true;
+                settings.NewLineOnAttributes = false;
+                settings.OmitXmlDeclaration = true;
+                settings.Encoding = Encoding.UTF8;
+
+                XmlWriter writer = XmlWriter.Create(sw, settings);
                 el.WriteTo(writer);
                 writer.Flush();
 
-                String xmlStat = utf8encoder.GetString(ms.GetBuffer(), 0, (int) ms.Length);
-
-                Platform.Log(logLevel, xmlStat);
+                Platform.Log(logLevel, sw.ToString());
 
                 writer.Close();
             }

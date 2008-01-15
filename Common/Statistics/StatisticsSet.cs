@@ -114,6 +114,9 @@ namespace ClearCanvas.Common.Statistics
             XmlAttribute attrType = doc.CreateAttribute("Type");
             attrType.Value = GetType().Name;
             el.Attributes.Append(attrType);
+            XmlAttribute attrDescription = doc.CreateAttribute("Description");
+            attrDescription.Value = Name;
+            el.Attributes.Append(attrDescription);
 
             foreach (IStatistics field in Fields)
             {

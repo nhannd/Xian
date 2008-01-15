@@ -34,9 +34,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using ClearCanvas.Dicom.IO;
-using System.Collections;
-using System.Text;
-
 
 namespace ClearCanvas.Dicom.Network
 {
@@ -272,6 +269,7 @@ namespace ClearCanvas.Dicom.Network
         /// Callback called on a network error.
         /// </summary>
         /// <param name="e"></param>
+        /// <param name="closeConnection"></param>
         protected virtual void OnNetworkError(Exception e, bool closeConnection)
         {            
         }
@@ -511,7 +509,6 @@ namespace ClearCanvas.Dicom.Network
         /// Occurs when an association has been established between the called AE and calling AE.
         /// </summary>
         public event AssociationEstablishedEventHandler AssociationEstablished;
-
         /// <summary>
         /// Occurs when an association has been rejected.
         /// </summary>
@@ -520,8 +517,7 @@ namespace ClearCanvas.Dicom.Network
         /// Occurs when an association is being released.
         /// </summary>
         public event AssociationReleasingEventHandler AssociationReleasing;
-
-        /// <summary>
+         /// <summary>
         /// Occurs when an association has been released.
         /// </summary>
         public event AssociationReleasedEventHandler AssociationReleased;
@@ -533,7 +529,6 @@ namespace ClearCanvas.Dicom.Network
         /// Occurs when a dimse message is being sent.
         /// </summary>
         public event DimseMessageSendingEventHandler DimseMessageSending;
-
         /// <summary>
         /// Occurs when a dimse message is being received.
         /// </summary>
@@ -1084,14 +1079,12 @@ namespace ClearCanvas.Dicom.Network
                             AAssociateAC pdu = new AAssociateAC(_assoc);
                             pdu.Read(raw);
                             _state = DicomAssociationState.Sta6_AssociationEstablished;
+                             
+                            OnReceiveAssociateAccept(_assoc);
 
                             if (AssociationEstablished != null)
                                 AssociationEstablished(_assoc);
-                            
-                            
-                            OnReceiveAssociateAccept(_assoc);
-
-                            
+                                                    
                             return true;
                         }
                     case 0x03:
