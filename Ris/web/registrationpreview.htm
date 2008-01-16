@@ -15,7 +15,6 @@
 			    scaleWidth();
 		        if(!Ris)
 		            return;
-		            
 	            try
 	            {
 					var worklistItem = Ris.getHealthcareContext();
@@ -27,7 +26,7 @@
 
                     var request = {
                         GetPatientProfileDetailRequest: { PatientProfileRef: worklistItem.PatientProfileRef, IncludeAlerts: true },
-                        ListOrdersRequest: 	{ PatientRef: worklistItem.PatientRef, QueryDetailLevel: "RequestedProcedure" },
+                        ListOrdersRequest: 	{ PatientRef: worklistItem.PatientRef, QueryDetailLevel: "Procedure" },
                         
                         // need the order detail only for order alerts, and only if OrderRef is not null
                         GetOrderDetailRequest: worklistItem.OrderRef ? { OrderRef: worklistItem.OrderRef, IncludeAlerts: true } : null
@@ -62,7 +61,7 @@
 						else
 							Field.show($("HomeAddressRow"), false);
 		            }
-		            
+	            
                     // update alerts
 		            var alertNotifications = data.GetPatientProfileDetailResponse.PatientAlerts;
 		            if(data.GetOrderDetailResponse)
@@ -118,8 +117,7 @@
                         }
                         else
                         {
-                            var activeProceduresTable = createProceduresTable($("activeProceduresTable"));
-                            
+                            var activeProceduresTable = createImagingRequestsTable($("activeProceduresTable"));
                             activeProceduresTable.renderRow = function(sender, args)
                             {
                                 if(args.item.AccessionNumber == currentAccession)
@@ -128,7 +126,7 @@
 							
                             activeProceduresTable.bindItems(activeProcedures);
     	                }
-    	                
+	                
                         if (pastProcedures.length == 0)
                         {
                             Field.show($("pastProceduresTable"), false);
@@ -198,7 +196,7 @@
 			</table>
     		
 	        <table border="0" id="activeProceduresTable">
-		    <tr><td class="sectionheading" colspan="6">Active Requests for Imaging Consultation</td></tr>
+				<tr><td class="sectionheading" colspan="6">Active Requests for Imaging Consultation</td></tr>
 	            <tr class="tableheading">
 		            <td>Procedure</td>
 		            <td>Schedule</td>

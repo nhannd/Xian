@@ -65,8 +65,8 @@
 					else
 						Field.show($("orderNotesTable"), false);
 
-					if (orderDetail.RequestedProcedures.length)
-						createRequestedProceduresTable($("proceduresTable"), orderDetail.RequestedProcedures);
+					if (orderDetail.Procedures.length)
+						createProceduresTable($("proceduresTable"), orderDetail.Procedures);
 					else
 						Field.show($("proceduresTable"), false);
 				}

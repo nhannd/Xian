@@ -70,8 +70,8 @@
 						Field.setValue($("OrderingPhysician"), Ris.formatPersonName(orderDetail.OrderingPractitioner.Name));
 						Field.setValue($("DiagnosticService"), orderDetail.DiagnosticService.Name);
 
-						var orderedProcedures = String.combine(orderDetail.RequestedProcedures.map(function(rp) { return rp.Type.Name; }), ", ");
-						Field.setValue($("RequestedProcedures"), orderedProcedures);
+						var orderedProcedures = String.combine(orderDetail.Procedures.map(function(rp) { return rp.Type.Name; }), ", ");
+						Field.setValue($("Procedures"), orderedProcedures);
 					}
 					else
 					{
@@ -132,7 +132,7 @@
 								<td class="propertyname">Ordering Physician</td>
 								<td class="propertyvalue"><div id="OrderingPhysician"/></td>
 								<td class="propertyname" rowspan="2">Procedures</td>
-								<td class="propertyvalue" rowspan="2"><div id="RequestedProcedures"/></td>
+								<td class="propertyvalue" rowspan="2"><div id="Procedures"/></td>
 							</tr>
 							<tr>
 								<td class="propertyname">Diagnostic Service</td>

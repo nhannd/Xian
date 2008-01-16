@@ -90,7 +90,7 @@ function getDescriptiveTime(dateTime)
 	}
 }
 
-function createProceduresTable(htmlTable)
+function createImagingRequestsTable(htmlTable)
 {
 	var ordersTable = Table.createTable(htmlTable, { editInPlace: false, flow: false },
 		 [
@@ -175,7 +175,7 @@ function createDiagnosticServiceBreakdownTable(htmlTable)
 	return dsTable;
 }
 
-function createRequestedProceduresTable(htmlTable, procedures)
+function createProceduresTable(htmlTable, procedures)
 {
 	htmlTable = Table.createTable(htmlTable, { editInPlace: false, flow: false },
 		 [
@@ -257,10 +257,10 @@ function groupDataToOrders(listData)
 	    var thisOrder = orders[j];
 		var firstData = thisOrder.values[0];
 
-        var listRequestedProcedureName = thisOrder.values.map(function(item) { return item.ProcedureName; });
+        var listProcedureName = thisOrder.values.map(function(item) { return item.ProcedureName; });
         
         thisOrder.AccessionNumber = firstData.AccessionNumber;
-        thisOrder.CombineRequestedProcedureName = String.combine(listRequestedProcedureName, "/");
+        thisOrder.CombineProcedureName = String.combine(listProcedureName, "/");
         thisOrder.OrderScheduledStartTime = firstData.OrderScheduledStartTime;
         thisOrder.OrderStatus = firstData.OrderStatus;
         thisOrder.Insurance = "";

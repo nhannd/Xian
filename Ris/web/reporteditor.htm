@@ -59,7 +59,7 @@
 				if (reportDetail == null ||  reportDetail.Procedures == null || reportDetail.Procedures.length == 0)
 					return false;
 
-				createRequestedProceduresTable($("proceduresTable"), reportDetail.Procedures);
+				createProceduresTable($("proceduresTable"), reportDetail.Procedures);
 
 				return true;
 			}

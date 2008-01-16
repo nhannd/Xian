@@ -88,15 +88,15 @@
                     Field.setValue($("OrderingFacility"), orderDetail.OrderingFacility.Name);
                     Field.setValue($("DiagnosticService"), orderDetail.DiagnosticService.Name);
                     
-                    var procedures = reportDetail ? reportDetail.Procedures : orderDetail.RequestedProcedures;
+                    var procedures = reportDetail ? reportDetail.Procedures : orderDetail.Procedures;
                     
                     var selectedProcedure = procedures.find(
-                                            function(rp) { return rp.RequestedProcedureRef == worklistItem.RequestedProcedureRef; });
+                                            function(rp) { return rp.ProcedureRef == worklistItem.ProcedureRef; });
 					if (selectedProcedure)
 					{
 	                    Field.setValue($("procedure"), selectedProcedure.Type.Name);
-	                    Field.setValue($("RequestedProcedureStartTime"), "TODO");
-	                    Field.setValue($("RequestedProcedureEndTime"), "TODO");
+	                    Field.setValue($("ProcedureStartTime"), "TODO");
+	                    Field.setValue($("ProcedureEndTime"), "TODO");
 					}
                     
                     if(orderDetail.Notes.length)
@@ -108,7 +108,7 @@
 					if (reportDetail)
 					{
 						var procedures = reportDetail.Procedures;
-						createRequestedProceduresTable($("proceduresTable"), procedures);
+						createProceduresTable($("proceduresTable"), procedures);
 	                    $("report").innerHTML = formatReport(reportDetail);
 					}
 					else
@@ -183,9 +183,9 @@
                 </tr>
                 <tr>
                     <td width="120" class="propertyname">Procedure Start Time</td>
-                    <td width="200"><div id="RequestedProcedureStartTime"/></td>
+                    <td width="200"><div id="ProcedureStartTime"/></td>
                     <td width="120" class="propertyname">Procedure End Time</td>
-                    <td width="200"><div id="RequestedProcedureEndTime"/></td>
+                    <td width="200"><div id="ProcedureEndTime"/></td>
                 </tr>
             </table>
 	        <table border="0" id="orderNotesTable">
