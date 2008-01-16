@@ -95,6 +95,7 @@
     <PluginFiles Include="$(SolutionDir)\..\ImageViewer\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.View.WinForms.dll" />
     <PluginFiles Include="$(SolutionDir)\..\ImageViewer\Tools\Measurement\bin\$(Configuration)\ClearCanvas.ImageViewer.Tools.Measurement.dll" />
     <PluginFiles Include="$(SolutionDir)\..\ImageViewer\Tools\Standard\bin\$(Configuration)\ClearCanvas.ImageViewer.Tools.Standard.dll" />
+    <PluginFiles Include="$(SolutionDir)\..\ImageViewer\Tools\Synchronization\bin\$(Configuration)\ClearCanvas.ImageViewer.Tools.Synchronization.dll" />
     <PluginFiles Include="$(SolutionDir)\..\ImageViewer\Tools\Standard\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Tools.Standard.View.WinForms.dll" />
     <PluginFiles Include="$(SolutionDir)\..\ImageViewer\Explorer\Local\bin\$(Configuration)\ClearCanvas.ImageViewer.Explorer.Local.dll" />
     <PluginFiles Include="$(SolutionDir)\..\ImageViewer\Explorer\Local\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Explorer.Local.View.WinForms.dll" />

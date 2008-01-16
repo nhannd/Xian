@@ -49,6 +49,8 @@ namespace ClearCanvas.Dicom.DataStore
     	private int _columns;
     	private PixelSpacing _pixelSpacing;
     	private PixelAspectRatio _pixelAspectRatio;
+    	private ImagePositionPatient _imagePositionPatient;
+    	private ImageOrientationPatient _imageOrientationPatient;
     	private double _rescaleSlope;
     	private double _rescaleIntercept;
     	private readonly IList _windowValues;
@@ -128,7 +130,19 @@ namespace ClearCanvas.Dicom.DataStore
 			set { SetClassMember(ref _pixelAspectRatio, value); }
     	}
 
-    	public virtual double RescaleSlope
+		public virtual ImageOrientationPatient ImageOrientationPatient
+		{
+			get { return _imageOrientationPatient; }
+			set { SetClassMember(ref _imageOrientationPatient, value); }
+		}
+
+		public virtual ImagePositionPatient ImagePositionPatient
+		{
+			get { return _imagePositionPatient; }
+			set { SetClassMember(ref _imagePositionPatient, value); }
+		}
+
+		public virtual double RescaleSlope
         {
             get { return _rescaleSlope; }
 			set { SetValueTypeMember(ref _rescaleSlope, value); }
@@ -207,6 +221,36 @@ namespace ClearCanvas.Dicom.DataStore
 					pixelAspectRatioX = pixelAspectRatioY = 0;
 			}
 			PixelAspectRatio = new PixelAspectRatio(pixelAspectRatioX, pixelAspectRatioY);
+
+			double imagePositionPatientX = 0, imagePositionPatientY = 0, imagePositionPatientZ = 0;
+			attribute = sopInstanceDataset[DicomTags.ImagePositionPatient];
+			if (attribute.Count == 3)
+			{
+				if (!attribute.TryGetFloat64(0, out imagePositionPatientX) || !attribute.TryGetFloat64(1, out imagePositionPatientY) ||
+					!attribute.TryGetFloat64(2, out imagePositionPatientZ))
+					imagePositionPatientX = imagePositionPatientY = imagePositionPatientZ = 0;
+			}
+			ImagePositionPatient = new ImagePositionPatient(imagePositionPatientX, imagePositionPatientY, imagePositionPatientZ);
+
+			double imageOrientationPatientRowX = 0, imageOrientationPatientRowY = 0, imageOrientationPatientRowZ = 0;
+			double imageOrientationPatientColumnX = 0, imageOrientationPatientColumnY = 0, imageOrientationPatientColumnZ = 0;
+			attribute = sopInstanceDataset[DicomTags.ImageOrientationPatient];
+			if (attribute.Count == 6)
+			{
+				if (!attribute.TryGetFloat64(0, out imageOrientationPatientRowX) || !attribute.TryGetFloat64(1, out imageOrientationPatientRowY) ||
+					!attribute.TryGetFloat64(2, out imageOrientationPatientRowZ) || !attribute.TryGetFloat64(3, out imageOrientationPatientColumnX) ||
+					!attribute.TryGetFloat64(4, out imageOrientationPatientColumnY) || !attribute.TryGetFloat64(5, out imageOrientationPatientColumnZ))
+				{
+					imageOrientationPatientRowX = imageOrientationPatientRowY = imageOrientationPatientRowZ =
+					                                                            imageOrientationPatientColumnX =
+					                                                            imageOrientationPatientColumnY =
+					                                                            imageOrientationPatientColumnZ = 0;
+				}
+			}
+			ImageOrientationPatient =
+				new ImageOrientationPatient(imageOrientationPatientRowX, imageOrientationPatientRowY, imageOrientationPatientRowZ,
+				                            imageOrientationPatientColumnX, imageOrientationPatientColumnY,
+				                            imageOrientationPatientColumnZ);
 
 			double doubleValue;
 			attribute = sopInstanceDataset[DicomTags.RescaleSlope];

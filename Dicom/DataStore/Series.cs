@@ -43,6 +43,7 @@ namespace ClearCanvas.Dicom.DataStore
 
     	private Guid _seriesOid;
     	private string _seriesInstanceUid;
+		private string _frameOfReferenceUid;
     	private string _modality;
     	private string _laterality;
     	private int _seriesNumber;
@@ -73,6 +74,12 @@ namespace ClearCanvas.Dicom.DataStore
             get { return _seriesInstanceUid; }
 			set { SetClassMember(ref _seriesInstanceUid, value); }
         }
+
+		public virtual string FrameOfReferenceUid
+		{
+			get { return _frameOfReferenceUid; }
+			set { SetClassMember(ref _frameOfReferenceUid, value); }
+		}
 
         public virtual string Modality
         {
@@ -212,6 +219,9 @@ namespace ClearCanvas.Dicom.DataStore
 			}
 
 			Platform.CheckForEmptyString(SeriesInstanceUid, "SeriesInstanceUid");
+
+			attribute = sopInstanceDataset[DicomTags.FrameOfReferenceUid];
+			FrameOfReferenceUid = attribute.ToString();
 
 			attribute = sopInstanceDataset[DicomTags.Modality];
 			Modality = attribute.ToString();

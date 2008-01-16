@@ -73,5 +73,10 @@ namespace ClearCanvas.Dicom
 			get { return _z; }
 			set { _z = value; }
 		}
+
+		public override string ToString()
+		{
+			return String.Format(@"{0:F8}\{1:F8}\{2:F8}", _x, _y, _z);
+		}
 	}
 }

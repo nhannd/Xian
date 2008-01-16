@@ -610,6 +610,24 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		#endregion
 
+		#region Frame of Reference Module
+
+		/// <summary>
+		/// Gets the frame of reference uid for the image.
+		/// </summary>
+		public virtual string FrameOfReferenceUid
+		{
+			get
+			{
+				bool tagExists;
+				string frameOfReferenceUid;
+				GetTag(DicomTags.FrameOfReferenceUid, out frameOfReferenceUid, out tagExists);
+				return frameOfReferenceUid ?? "";
+			}
+		}
+
+		#endregion
+
 		/// <summary>
 		/// Gets pixel data in normalized form.
 		/// </summary>

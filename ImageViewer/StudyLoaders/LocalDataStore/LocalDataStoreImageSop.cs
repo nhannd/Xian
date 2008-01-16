@@ -157,6 +157,14 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
             }
 		}
 
+		public override string FrameOfReferenceUid
+		{
+			get
+			{
+				return this.DataStoreSeries.FrameOfReferenceUid ?? "";
+			}
+		}
+
 		public override string Modality
 		{
             get 
@@ -221,6 +229,22 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 				return this.DataStoreImageSopInstance.PixelAspectRatio ?? new PixelAspectRatio(1, 1);
             }
         }
+
+		public override ImageOrientationPatient ImageOrientationPatient
+		{
+			get
+			{
+				return this.DataStoreImageSopInstance.ImageOrientationPatient ?? new ImageOrientationPatient(0, 0, 0, 0, 0, 0);
+			}
+		}
+
+		public override ImagePositionPatient ImagePositionPatient
+		{
+			get
+			{
+				return this.DataStoreImageSopInstance.ImagePositionPatient ?? new ImagePositionPatient(0, 0, 0);
+			}
+		}
 
 		public override int SamplesPerPixel
 		{

@@ -11,7 +11,6 @@
 		<DependentAuxiliaryFiles Include="$(ProjectRoot)\Common\bin\$(Configuration)\ClearCanvas.Common.dll" />
 		<DependentAuxiliaryFiles Include="$(ProjectRoot)\Dicom\bin\$(Configuration)\ClearCanvas.Dicom.dll" />
 		<DependentAuxiliaryFiles Include="$(ProjectRoot)\Dicom\DataStore\bin\$(Configuration)\ClearCanvas.Dicom.DataStore.dll" />
-		<DependentAuxiliaryFiles Include="$(ProjectRoot)\Dicom\DataStore\NHibernateDriver\bin\$(Configuration)\ClearCanvas.Dicom.DataStore.NHibernateDriver.dll" />
 		<DependentAuxiliaryFiles Include="$(ProjectRoot)\Utilities\Hibernate2DdlGenerator\bin\$(Configuration)\hbm2ddl.exe" />
 		<InputFiles Include="ClearCanvas.Dicom.DataStore.dll" />
 		<CombineInputFiles Include="CreateTables.clearcanvas.dicom.datastore.ddl" />

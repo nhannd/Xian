@@ -6,6 +6,7 @@
       </generator>
     </id>
     <property name="SeriesInstanceUid" column="SeriesInstanceUid_" type="string" length="64" not-null="true" unique="true" />
+    <property name="FrameOfReferenceUid" column="FrameOfReferenceUid_" type="string" length="64" />
     <property name="Modality" column="Modality_" type="string" length="16" />
     <property name="SeriesNumber" column="SeriesNumber_" type="Int32" />
     <property name="Laterality" column="Laterality_" type="string" length="16" />

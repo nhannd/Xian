@@ -68,6 +68,22 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
+		public override string SopClassUID
+		{
+			get
+			{
+				return _realImageSop.SopClassUID;
+			}
+		}
+
+		public override string[] SpecificCharacterSet
+		{
+			get
+			{
+				return _realImageSop.SpecificCharacterSet;
+			}
+		}
+
 		public override PersonName PatientsName
 		{
 			get
@@ -177,6 +193,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			get
 			{
 				return _realImageSop.AdditionalPatientsHistory;
+			}
+		}
+
+		public override string  FrameOfReferenceUid
+		{
+			get 
+			{
+				return _realImageSop.FrameOfReferenceUid;
 			}
 		}
 

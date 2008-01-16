@@ -94,6 +94,11 @@ namespace ClearCanvas.Dicom
 			Recalculate();
 		}
 
+		public bool IsNull
+		{
+			get { return _rowX == 0 && _rowY == 0 && _rowZ == 0; }
+		}
+
 		public double RowX
 		{
 			get { return _rowX; }
@@ -170,6 +175,11 @@ namespace ClearCanvas.Dicom
 					Recalculate();
 				}
 			}
+		}
+
+		public override string ToString()
+		{
+			return String.Format(@"{0:F8}\{1:F8}\{2:F8}\{3:F8}\{4:F8}\{5:F8}", _rowX, _rowY, _rowZ, _columnX, _columnY, _columnZ);
 		}
 
 		/// <summary>

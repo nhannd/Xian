@@ -60,6 +60,11 @@ namespace ClearCanvas.Dicom
 			_column = column;
 		}
 
+		public bool IsNull
+		{
+			get { return _row == 0 && _column == 0; }
+		}
+
 		#region NHibernate Persistent Properties
 
 		public virtual double Row
@@ -75,6 +80,11 @@ namespace ClearCanvas.Dicom
 		}
 
 		#endregion
+
+		public override string ToString()
+		{
+			return String.Format(@"{0:F8}\{1:F8}", _row, _column);
+		}
 
 		public override bool Equals(object obj)
 		{
