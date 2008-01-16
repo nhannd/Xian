@@ -19,7 +19,7 @@
     and refProcedure in elements(refReport.Procedures)
     and priorProcedureType in (
       select elements(relevanceGroup.ProcedureTypes)
-      from RelevanceProcedureTypeGroup relevanceGroup
+      from RelevanceGroup relevanceGroup
       where refProcedureType in elements(relevanceGroup.ProcedureTypes)
     )
     and priorProcedure.Order.Patient = refProcedure.Order.Patient
@@ -46,7 +46,7 @@
     and refProcedure in elements(refOrder.Procedures)
     and priorProcedureType in (
       select elements(relevanceGroup.ProcedureTypes)
-      from RelevanceProcedureTypeGroup relevanceGroup
+      from RelevanceGroup relevanceGroup
       where refProcedureType in elements(relevanceGroup.ProcedureTypes)
     )
     and priorProcedure.Order.Patient = refOrder.Patient
@@ -74,7 +74,7 @@
     and refProcedure = ?
     and priorProcedureType in (
       select elements(relevanceGroup.ProcedureTypes)
-      from RelevanceProcedureTypeGroup relevanceGroup
+      from RelevanceGroup relevanceGroup
       where refProcedureType in elements(relevanceGroup.ProcedureTypes)
     )
     and priorProcedure.Order.Patient = refProcedure.Order.Patient

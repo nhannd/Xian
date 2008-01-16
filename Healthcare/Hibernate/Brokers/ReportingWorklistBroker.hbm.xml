@@ -29,7 +29,7 @@
     <!-- otherProcedureType must be in the same reading group -->
     and otherProcedureType in (
       select elements(readingGroup.ProcedureTypes)
-      from ReadingProcedureTypeGroup readingGroup
+      from ReadingGroup readingGroup
       where refProcedureType in elements(readingGroup.ProcedureTypes)
     )
     <!-- otherStep must be either unassigned or assigned to the same staff -->
