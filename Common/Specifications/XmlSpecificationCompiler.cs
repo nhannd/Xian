@@ -161,6 +161,7 @@ namespace ClearCanvas.Common.Specifications
             AddOperator(new BuiltInOperator("count", CreateCount));
             AddOperator(new BuiltInOperator("each", CreateEach));
             AddOperator(new BuiltInOperator("any", CreateAny));
+            AddOperator(new BuiltInOperator("case", CreateCase));
             AddOperator(new BuiltInOperator("defined", CreateDefined));
 
             // add extension operators
@@ -276,6 +277,38 @@ namespace ClearCanvas.Common.Specifications
             return new AnySpecification(elementSpec);
         }
 
+        private Specification CreateCase(XmlElement node)
+        {
+            IList<XmlNode> childNodes = GetChildElements(node);
+            List<WhenThenPair> whenThens = new List<WhenThenPair>();
+            Specification elseSpec = null;
+
+            int i = 0;
+            while(i < childNodes.Count)
+            {
+                if (childNodes[i].Name == "else")
+                {
+                    elseSpec = CreateImplicitAnd(GetChildElements((XmlElement)childNodes[i]));
+                    break;
+                }
+
+                if (childNodes[i].Name != "when")
+                    throw new XmlSpecificationCompilerException("Expected <when> element.");
+                Specification when = CreateImplicitAnd(GetChildElements((XmlElement)childNodes[i++]));
+
+                if (childNodes[i].Name != "then")
+                    throw new XmlSpecificationCompilerException("Expected <then> element.");
+                Specification then = CreateImplicitAnd(GetChildElements((XmlElement)childNodes[i++]));
+
+                whenThens.Add(new WhenThenPair(when, then));
+            }
+
+            if(elseSpec == null)
+                throw new XmlSpecificationCompilerException("Expected <else> element following <when> - <then> pairs.");
+
+            return new CaseSpecification(whenThens, elseSpec);
+        }
+
         private Specification CreateTrue(XmlElement node)
         {
             return new TrueSpecification();
@@ -365,7 +398,7 @@ namespace ClearCanvas.Common.Specifications
             }
         }
 
-        private ICollection<XmlNode> GetChildElements(XmlElement node)
+        private IList<XmlNode> GetChildElements(XmlElement node)
         {
             return CollectionUtils.Select<XmlNode>(node.ChildNodes, delegate(XmlNode child) { return child is XmlElement; });
         }

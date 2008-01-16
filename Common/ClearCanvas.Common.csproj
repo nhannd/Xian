@@ -126,6 +126,8 @@
     <Compile Include="Auditing\AuditManager.cs" />
     <Compile Include="Auditing\IAuditor.cs" />
     <Compile Include="ITimeProvider.cs" />
+    <Compile Include="Specifications\CaseSpecification.cs" />
+    <Compile Include="Specifications\WhenThenPair.cs" />
     <Compile Include="Statistics\ByteCountStatistics.cs" />
     <Compile Include="Statistics\MsgCountStatistics.cs" />
     <Compile Include="Statistics\RateStatistics.cs" />
