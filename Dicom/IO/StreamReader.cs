@@ -639,7 +639,7 @@ namespace ClearCanvas.Dicom.IO
                                         _remain -= _len;
                                         _read += _len;
 
-                                        if (elem.Tag.TagValue == DicomTags.Group2Length)
+                                        if (elem.Tag.TagValue == DicomTags.FileMetaInformationGroupLength)
                                         {
                                             // Save the end of the group 2 elements, so that we can automatically 
                                             // check and change our transfer syntax when needed.

@@ -243,6 +243,13 @@
 					encapsulated="false"
 					deflated="false"/>
 
+	<TransferSyntax uid="1.2.840.10008.1.2.6.2"
+					description="XML Encoding"
+					littleEndian="true"
+					explicitVR="true"
+					encapsulated="false"
+					deflated="false"/>
+
 	<TransferSyntax uid="1.2.840.10008.1.2.5"
 					description="RLE Lossless"
 					littleEndian="true"

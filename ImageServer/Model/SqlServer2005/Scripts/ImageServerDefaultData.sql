@@ -475,6 +475,22 @@ GO
 INSERT INTO [ImageServer].[dbo].[ServerSopClass] ([GUID],[SopClassUid],[Description],[NonImage])
 VALUES (newid(), '1.2.840.10008.5.1.4.1.1.12.2', 'X-Ray Radiofluoroscopic Image Storage', 0)
 GO
+     
+INSERT INTO [ImageServer].[dbo].[SopClass] ([GUID],[SopClassUid],[Description],[NonImage])
+VALUES (newid(), '1.2.840.10008.5.1.4.1.1.13.1.1', 'X-Ray 3D Angiographic Image Storage', 0);
+GO
+
+INSERT INTO [ImageServer].[dbo].[SopClass] ([GUID],[SopClassUid],[Description],[NonImage])
+VALUES (newid(), '1.2.840.10008.5.1.4.1.1.13.1.2', 'X-Ray 3D Craniofacial Image Storage', 0);
+GO
+
+INSERT INTO [ImageServer].[dbo].[SopClass] ([GUID],[SopClassUid],[Description],[NonImage])
+VALUES (newid(), '1.2.840.10008.5.1.4.1.1.77.1.5.4', 'Ophthalmic Tomography Image Storage', 0);
+GO
+
+INSERT INTO [ImageServer].[dbo].[SopClass] ([GUID],[SopClassUid],[Description],[NonImage])
+VALUES (newid(), '1.2.840.10008.5.1.4.1.1.104.2', 'Encapsulated CDA Storage', 1);
+GO
 
 
 -- ServerTransferSyntax inserts

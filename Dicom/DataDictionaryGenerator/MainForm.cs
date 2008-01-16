@@ -305,7 +305,7 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
             thisTag.retired = "";
             thisTag.nTag = 0x00020000;
             Parser.CreateNames(ref thisTag);
-            tags.Add(thisTag.nTag, thisTag);
+            //tags.Add(thisTag.nTag, thisTag);
             
         }
 

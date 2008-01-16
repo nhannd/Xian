@@ -30,14 +30,10 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Net;
 using System.IO;
-
-using ClearCanvas.Dicom;
+using System.Net;
+using System.Text;
 using ClearCanvas.Dicom.Network;
-
 
 namespace ClearCanvas.Dicom.Samples
 {
@@ -148,7 +144,7 @@ namespace ClearCanvas.Dicom.Samples
             assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVrLittleEndian);
             assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVrLittleEndian);
 
-            pcid = assoc.AddPresentationContext(SopClass.KeyObjectSelectionDocument);
+            pcid = assoc.AddPresentationContext(SopClass.KeyObjectSelectionDocumentStorage);
             assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVrLittleEndian);
             assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVrLittleEndian);
 
@@ -200,11 +196,27 @@ namespace ClearCanvas.Dicom.Samples
             assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVrLittleEndian);
             assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVrLittleEndian);
 
-            pcid = assoc.AddPresentationContext(SopClass.XRayRadiationDoseSr);
+            pcid = assoc.AddPresentationContext(SopClass.XRayRadiationDoseSrStorage);
             assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVrLittleEndian);
             assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVrLittleEndian);
 
-            pcid = assoc.AddPresentationContext(SopClass.ChestCadSr);
+            pcid = assoc.AddPresentationContext(SopClass.ChestCadSrStorage);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVrLittleEndian);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVrLittleEndian);
+
+            pcid = assoc.AddPresentationContext(SopClass.XRay3dAngiographicImageStorage);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVrLittleEndian);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVrLittleEndian);
+
+            pcid = assoc.AddPresentationContext(SopClass.XRay3dCraniofacialImageStorage);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVrLittleEndian);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVrLittleEndian);
+
+            pcid = assoc.AddPresentationContext(SopClass.EncapsulatedCdaStorage);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVrLittleEndian);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVrLittleEndian);
+
+            pcid = assoc.AddPresentationContext(SopClass.OphthalmicTomographyImageStorage);
             assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVrLittleEndian);
             assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVrLittleEndian);
         }
@@ -259,7 +271,7 @@ namespace ClearCanvas.Dicom.Samples
 
             String studyInstanceUid = null;
             String seriesInstanceUid = null;
-            DicomUid sopInstanceUid = null;
+            DicomUid sopInstanceUid;
             
             bool ok = message.DataSet[DicomTags.SopInstanceUid].TryGetUid(0, out sopInstanceUid);
             if (ok) ok = message.DataSet[DicomTags.SeriesInstanceUid].TryGetString(0, out seriesInstanceUid);

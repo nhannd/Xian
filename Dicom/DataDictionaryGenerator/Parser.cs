@@ -101,10 +101,11 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
             char[] charSeparators = new char[] {'(', ')', ',', ' ', '\'', '�', '�', '-', '/', '&', '[', ']', '@'};
 
             // just remove apostrophes so casing is correct
-            string tempString = input.Replace("�", ""); 
+            string tempString = input.Replace("’", ""); 
             tempString = tempString.Replace("'", "");
             tempString = tempString.Replace("(", "");
             tempString = tempString.Replace(")", "");
+            tempString = tempString.Replace("–", "");
 
             String[] nodes = tempString.Split(charSeparators, StringSplitOptions.RemoveEmptyEntries);
 
@@ -123,7 +124,9 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
             if (thisTag.varName.Length > 0 && char.IsDigit(thisTag.varName[0]))
                 thisTag.varName = "Tag" + thisTag.varName;
 
-            if (thisTag.retired != null && thisTag.retired.Equals("RET"))
+            if (thisTag.retired != null 
+             && thisTag.retired.Equals("RET") 
+             && !thisTag.varName.EndsWith("Retired"))
                 thisTag.varName += "Retired";
 
             thisTag.name = SecurityElement.Escape(thisTag.name);
@@ -197,8 +200,8 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
                                             {
                                                 thisTag.tag = columnArray[0];
                                                 thisTag.name = columnArray[1];
-                                                thisTag.vr = columnArray[2];
-                                                thisTag.vm = columnArray[3];
+                                                thisTag.vr = columnArray[2].Trim();
+                                                thisTag.vm = columnArray[3].Trim();
                                                 thisTag.retired = columnArray[4];
 
                                                 // Handle repeating groups
@@ -208,11 +211,13 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
                                                 char[] charSeparators = new char[] { '(', ')', ',', ' ' };
 
                                                 String[] nodes = thisTag.tag.Split(charSeparators, StringSplitOptions.RemoveEmptyEntries);
-                                                thisTag.nTag = UInt32.Parse(nodes[1], NumberStyles.HexNumber) | (UInt32.Parse(nodes[0], NumberStyles.HexNumber) << 16);
-
-
-                                                if (thisTag.name != null)
+                                                UInt32 group, element; 
+                                                if (UInt32.TryParse(nodes[0],NumberStyles.HexNumber,null, out group)
+                                                 && UInt32.TryParse(nodes[1], NumberStyles.HexNumber,null, out element)
+                                                    && thisTag.name != null)
                                                 {
+                                                    thisTag.nTag = element | group << 16;
+
                                                     CreateNames(ref thisTag);
 
                                                     if (!thisTag.varName.Equals("Item")
