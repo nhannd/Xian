@@ -117,14 +117,10 @@ namespace ClearCanvas.Dicom.Network
         public ChunkStream DatasetData;
         public DicomStreamReader CommandReader;
         public DicomStreamReader DatasetReader;
-        public TransferMonitor Stats;
         public bool IsNewDimse;
 
         public DcmDimseInfo()
-        {
-            Stats = new TransferMonitor();
-
-            
+        {      
             IsNewDimse = true;
         }
     }
@@ -311,11 +307,11 @@ namespace ClearCanvas.Dicom.Network
         }
 
 
-        protected virtual void OnReceiveDimseBegin(byte pcid, DicomAttributeCollection command, DicomAttributeCollection dataset, TransferMonitor stats)
+        protected virtual void OnReceiveDimseBegin(byte pcid, DicomAttributeCollection command, DicomAttributeCollection dataset)
         {
         }
 
-        protected virtual void OnReceiveDimseProgress(byte pcid, DicomAttributeCollection command, DicomAttributeCollection dataset, TransferMonitor stats)
+        protected virtual void OnReceiveDimseProgress(byte pcid, DicomAttributeCollection command, DicomAttributeCollection dataset)
         {
         }
 
@@ -382,11 +378,11 @@ namespace ClearCanvas.Dicom.Network
             return false;
         }
 
-        protected virtual void OnSendDimseBegin(byte pcid, DicomAttributeCollection command, DicomAttributeCollection dataset, TransferMonitor monitor)
+        protected virtual void OnSendDimseBegin(byte pcid, DicomAttributeCollection command, DicomAttributeCollection dataset)
         {
         }
 
-        protected virtual void OnSendDimseProgress(byte pcid, DicomAttributeCollection command, DicomAttributeCollection dataset, TransferMonitor monitor)
+        protected virtual void OnSendDimseProgress(byte pcid, DicomAttributeCollection command, DicomAttributeCollection dataset)
         {
         }
 
@@ -471,14 +467,14 @@ namespace ClearCanvas.Dicom.Network
         /// <param name="command>"</param>
         /// <param name="dataset>"</param>
         /// <param name="tranferStats>"</param>
-        public delegate void DimseMessageSendingEventHandler(AssociationParameters assoc, byte presentationContextID, DicomAttributeCollection command, DicomAttributeCollection dataset, TransferMonitor tranferStats);
+        public delegate void DimseMessageSendingEventHandler(AssociationParameters assoc, byte presentationContextID, DicomAttributeCollection command, DicomAttributeCollection dataset);
         /// <summary>
         /// Defines an event handler  when a Dimse message is being received.
         /// </summary>
         /// <param name="assoc>"</param>
         /// <param name="presentationContextID>"</param>
         /// <param name="tranferStats>"</param>
-        public delegate void DimseMessageReceivingEventHandler(AssociationParameters assoc, byte presentationContextID, TransferMonitor tranferStats);
+        public delegate void DimseMessageReceivingEventHandler(AssociationParameters assoc, byte presentationContextID);
         /// <summary>
         /// Defines an event handler  when a Dicom message has been sent.
         /// </summary>
@@ -1175,7 +1171,7 @@ namespace ClearCanvas.Dicom.Network
         {
             try
             {
-                int bytes = 0, total = 0;
+                int bytes = 0;
                 byte pcid = 0;
                 foreach (PDV pdv in pdu.PDVs)
                 {
@@ -1206,11 +1202,9 @@ namespace ClearCanvas.Dicom.Network
                             return false;
                         }
                         bytes += pdv.Value.Length;
-                        total = (int)_dimse.CommandReader.BytesEstimated;
                         _assoc.TotalBytesRead += (UInt64)pdv.Value.Length;
-                        _dimse.Stats.Tick(pdv.Value.Length, total);
                         if (DimseMessageReceiving != null)
-                            DimseMessageReceiving(_assoc, pcid, _dimse.Stats);
+                            DimseMessageReceiving(_assoc, pcid);
                         
                         if (pdv.IsLastFragment)
                         {
@@ -1232,9 +1226,9 @@ namespace ClearCanvas.Dicom.Network
                             {
 								if (_dimse.IsNewDimse)
                                 {
-                                     OnReceiveDimseBegin(pcid, _dimse.Command, _dimse.Dataset, _dimse.Stats);
+                                     OnReceiveDimseBegin(pcid, _dimse.Command, _dimse.Dataset);
                                 }
-                                OnReceiveDimseProgress(pcid, _dimse.Command, _dimse.Dataset, _dimse.Stats);
+                                OnReceiveDimseProgress(pcid, _dimse.Command, _dimse.Dataset);
                                 bool ret = OnReceiveDimse(pcid, _dimse.Command, _dimse.Dataset);
 
                                 //_assoc.TotalBytesRead += (UInt64)total;
@@ -1272,11 +1266,9 @@ namespace ClearCanvas.Dicom.Network
                         }
 
                         bytes += pdv.Value.Length;
-                        total = (int)_dimse.DatasetReader.BytesEstimated;
                         _assoc.TotalBytesRead += (UInt64)pdv.Value.Length;
-                        _dimse.Stats.Tick(pdv.Value.Length, total);
                         if (DimseMessageReceiving != null)
-                            DimseMessageReceiving(_assoc, pcid, _dimse.Stats);
+                            DimseMessageReceiving(_assoc, pcid);
                         
                         if (pdv.IsLastFragment)
                         {
@@ -1290,9 +1282,9 @@ namespace ClearCanvas.Dicom.Network
 
 							if (_dimse.IsNewDimse)
                             {
-                                OnReceiveDimseBegin(pcid, _dimse.Command, _dimse.Dataset, _dimse.Stats);
+                                OnReceiveDimseBegin(pcid, _dimse.Command, _dimse.Dataset);
                             }
-                            OnReceiveDimseProgress(pcid, _dimse.Command, _dimse.Dataset, _dimse.Stats);
+                            OnReceiveDimseProgress(pcid, _dimse.Command, _dimse.Dataset);
                             bool ret = OnReceiveDimse(pcid, _dimse.Command, _dimse.Dataset);
                          
                          
@@ -1305,12 +1297,12 @@ namespace ClearCanvas.Dicom.Network
                 
                 if (_dimse.IsNewDimse)
                 {
-                    OnReceiveDimseBegin(pcid, _dimse.Command, _dimse.Dataset, _dimse.Stats);
+                    OnReceiveDimseBegin(pcid, _dimse.Command, _dimse.Dataset);
                     _dimse.IsNewDimse = false;
                 }
                 else
                 {
-                    OnReceiveDimseProgress(pcid, _dimse.Command, _dimse.Dataset, _dimse.Stats);
+                    OnReceiveDimseProgress(pcid, _dimse.Command, _dimse.Dataset);
 
                 }
 
@@ -1354,21 +1346,25 @@ namespace ClearCanvas.Dicom.Network
             {
                 TransferSyntax ts = _assoc.GetAcceptedTransferSyntax(pcid);
 
-                int total = (int)command.CalculateWriteLength(TransferSyntax.ImplicitVrLittleEndian, DicomWriteOptions.Default | DicomWriteOptions.CalculateGroupLengths);
+                uint total = command.CalculateWriteLength(TransferSyntax.ImplicitVrLittleEndian, DicomWriteOptions.Default | DicomWriteOptions.CalculateGroupLengths);
 
                 if (dataset != null)
-                    total += (int)dataset.CalculateWriteLength(ts, DicomWriteOptions.Default);
+                    total += dataset.CalculateWriteLength(ts, DicomWriteOptions.Default);
 
-                PDataTFStream pdustream = new PDataTFStream(this, pcid, (int)_assoc.MaximumPduLength, total);
-                pdustream.OnTick += delegate(TransferMonitor stats)
-                {
-                    OnSendDimseProgress(pcid, command, dataset, stats);
+                PDataTFStream pdustream;
+                if (_assoc.RemoteMaximumPduLength == 0 || _assoc.RemoteMaximumPduLength > _assoc.LocalMaximumPduLength)
+                    pdustream = new PDataTFStream(this, pcid, _assoc.LocalMaximumPduLength, total);
+                else
+                    pdustream = new PDataTFStream(this, pcid, _assoc.RemoteMaximumPduLength, total);
+                pdustream.OnTick += delegate
+                                        {
+                                            OnSendDimseProgress(pcid, command, dataset);
 
-                    if (DimseMessageSending != null)
-                        DimseMessageSending(_assoc, pcid, command, dataset, stats);
-                };
+                                            if (DimseMessageSending != null)
+                                                DimseMessageSending(_assoc, pcid, command, dataset);
+                                        };
 
-                OnSendDimseBegin(pcid, command, dataset, pdustream.Stats);
+                OnSendDimseBegin(pcid, command, dataset);
 
 
                 DicomStreamWriter dsw = new DicomStreamWriter(pdustream);
@@ -1384,7 +1380,7 @@ namespace ClearCanvas.Dicom.Network
                 // flush last pdu
                 pdustream.Flush(true);
 
-                _assoc.TotalBytesSent += (ulong) total;
+                _assoc.TotalBytesSent += total;
                 
                 OnDimseSent(pcid, command, dataset);
                 

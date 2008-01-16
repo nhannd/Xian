@@ -190,7 +190,8 @@ namespace ClearCanvas.Dicom.Network
         // increase performance.  The PDU header is 6 bytes, and should 
         // be subtracted from the multiple of 1460 to get the PDU size.
         // For instance (1460 * 80) - 6 = 116,794 bytes
-        private uint _maxPduLength = 116794;
+        private uint _localMaxPduLength = 116794;
+        private uint _remoteMaxPduLength = 116794;
         private String _calledAE;
         private String _callingAE;
         private DicomUid _appCtxNm;
@@ -221,7 +222,6 @@ namespace ClearCanvas.Dicom.Network
 
 		#region Constructors
 		protected AssociationParameters(String callingAE, String calledAE, IPEndPoint localEndPoint, IPEndPoint remoteEndPoint) {
-            _maxPduLength = 128 * 1024;
 			_appCtxNm = DicomUids.DICOMApplicationContextName;
 			_implClass = DicomImplementation.ClassUID;
 			_implVersion = DicomImplementation.Version;
@@ -239,14 +239,14 @@ namespace ClearCanvas.Dicom.Network
 
         protected AssociationParameters(AssociationParameters parameters)
         {
-
             _appCtxNm = parameters._appCtxNm;
             _calledAE = parameters._calledAE;
             _callingAE = parameters._callingAE;
             _implClass = parameters._implClass;
             _implVersion = parameters._implVersion;
             _localEndPoint = parameters._localEndPoint;
-            _maxPduLength = parameters._maxPduLength;
+            _localMaxPduLength = parameters._localMaxPduLength;
+            _remoteMaxPduLength = parameters._remoteMaxPduLength;
             _readTimeout = parameters._readTimeout;
             _receiveBufferSize = parameters._receiveBufferSize;
             _remoteEndPoint = parameters._remoteEndPoint;
@@ -308,10 +308,18 @@ namespace ClearCanvas.Dicom.Network
         /// <summary>
         /// The Maximum PDU Length negotiated for the association
         /// </summary>
-        public uint MaximumPduLength
+        public uint LocalMaximumPduLength
         {
-            get { return _maxPduLength; }
-            set { _maxPduLength = value; }
+            get { return _localMaxPduLength; }
+            set { _localMaxPduLength = value; }
+        }
+        /// <summary>
+        /// The Remote Maximum PDU Length negotiated for the association
+        /// </summary>
+        public uint RemoteMaximumPduLength
+        {
+            get { return _remoteMaxPduLength; }
+            set { _remoteMaxPduLength = value; }
         }
         /// <summary>
         /// The network Send Buffer size utilized by this application.
@@ -669,19 +677,21 @@ namespace ClearCanvas.Dicom.Network
 
         public override string ToString() {
 			StringBuilder sb = new StringBuilder();
-			sb.AppendFormat("Application Context:		{0}", _appCtxNm);
+			sb.AppendFormat("Application Context:     {0}", _appCtxNm);
             sb.AppendLine();
-			sb.AppendFormat("Implementation Class:		{0}", _implClass);
+			sb.AppendFormat("Implementation Class:    {0}", _implClass);
             sb.AppendLine(); 
-            sb.AppendFormat("Implementation Version:	{0}", _implVersion);
+            sb.AppendFormat("Implementation Version:  {0}", _implVersion);
             sb.AppendLine(); 
-            sb.AppendFormat("Maximum PDU Size:			{0}", _maxPduLength);
+            sb.AppendFormat("Local Maximum PDU Size:  {0}", _localMaxPduLength);
+            sb.AppendLine();
+            sb.AppendFormat("Remote Maximum PDU Size: {0}", _remoteMaxPduLength);
+            sb.AppendLine();
+            sb.AppendFormat("Called AE Title:         {0}", _calledAE);
             sb.AppendLine(); 
-            sb.AppendFormat("Called AE Title:			{0}", _calledAE);
+            sb.AppendFormat("Calling AE Title:        {0}", _callingAE);
             sb.AppendLine(); 
-            sb.AppendFormat("Calling AE Title:			{0}", _callingAE);
-            sb.AppendLine(); 
-            sb.AppendFormat("Presentation Contexts:		{0}", _presContexts.Count);
+            sb.AppendFormat("Presentation Contexts:   {0}", _presContexts.Count);
             sb.AppendLine(); 
             foreach (DicomPresContext pctx in _presContexts.Values)
             {

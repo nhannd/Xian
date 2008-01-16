@@ -30,51 +30,38 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.IO;
-
-using ClearCanvas.Dicom.IO;
 
 namespace ClearCanvas.Dicom.Network
 {
     internal class PDataTFStream : Stream
     {
-        public delegate void TickDelegate(TransferMonitor stats);
+        public delegate void TickDelegate();
 
         #region Private Members
         private bool _command;
-        private int _max;
-        private byte _pcid;
-        private TransferMonitor _stats;
+        private readonly uint _max;
+        private readonly byte _pcid;
         private PDataTF _pdu;
         private byte[] _bytes;
-        private int _total;
         private MemoryStream _buffer;
-        private NetworkBase _networkBase;
+        private readonly NetworkBase _networkBase;
         #endregion
 
         #region Public Constructors
-        public PDataTFStream(NetworkBase networkBase, byte pcid, int max, int total)
+        public PDataTFStream(NetworkBase networkBase, byte pcid, uint max, uint total)
         {
             _command = true;
             _pcid = pcid;
             _max = max;
-            _stats = new TransferMonitor();
             _pdu = new PDataTF();
-            _buffer = new MemoryStream(total + 1024);
-            _total = total;
+            _buffer = new MemoryStream((int)total + 1024);
             _networkBase = networkBase;
         }
         #endregion
 
         #region Public Properties
         public TickDelegate OnTick;
-
-        public TransferMonitor Stats
-        {
-            get { return _stats; }
-        }
 
         public bool IsCommand
         {
@@ -97,21 +84,21 @@ namespace ClearCanvas.Dicom.Network
         #endregion
 
         #region Private Members
-        private int CurrentPduSize()
+        private uint CurrentPduSize()
         {
-            return (int)_pdu.GetLengthOfPDVs();
+            return _pdu.GetLengthOfPDVs();
         }
 
         private bool CreatePDV()
         {
-            int len = Math.Min(GetBufferLength(), _max - (CurrentPduSize() + 6));
+            uint len = Math.Min(GetBufferLength(), _max - (CurrentPduSize() + 6));
 
             //DicomLogger.LogInfo("Created PDV of length: {0}",len);
             if (_bytes == null || _bytes.Length != len || _pdu.PDVs.Count > 0)
             {
                 _bytes = new byte[len];
             }
-            _buffer.Read(_bytes, 0, len);
+            _buffer.Read(_bytes, 0, (int)len);
 
             PDV pdv = new PDV(_pcid, _bytes, _command, false);
             _pdu.PDVs.Add(pdv);
@@ -134,9 +121,8 @@ namespace ClearCanvas.Dicom.Network
                 RawPDU raw = _pdu.Write();
 
                 _networkBase.EnqueuePDU(raw);
-                Stats.Tick((int)_pdu.GetLengthOfPDVs() - (6 * _pdu.PDVs.Count), _total);
                 if (OnTick != null)
-                    OnTick(Stats);
+                    OnTick();
                 _pdu = new PDataTF();
             }
         }
@@ -149,9 +135,9 @@ namespace ClearCanvas.Dicom.Network
             _buffer.Position = pos;
         }
 
-        private int GetBufferLength()
+        private uint GetBufferLength()
         {
-            return (int)(_buffer.Length - _buffer.Position);
+            return (uint)(_buffer.Length - _buffer.Position);
         }
         #endregion
 

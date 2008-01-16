@@ -191,7 +191,6 @@
     <Compile Include="Network\NetworkBase.cs" />
     <Compile Include="Network\PDataTFStream.cs" />
     <Compile Include="Network\PDU.cs" />
-    <Compile Include="Network\TransferMonitor.cs" />
     <Compile Include="OffisNetwork\Dcm.cs" />
     <Compile Include="OffisNetwork\NetworkDicomException.cs" />
     <Compile Include="OffisNetwork\OffisConditionParser.cs" />

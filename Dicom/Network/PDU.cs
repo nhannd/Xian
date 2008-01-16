@@ -31,7 +31,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.IO;
 using ClearCanvas.Dicom.IO;
 
@@ -41,13 +40,13 @@ namespace ClearCanvas.Dicom.Network
     public class RawPDU
     {
         #region Private members
-        private byte _type;
-        private Stream _is;
+        private readonly byte _type;
+        private readonly Stream _is;
         private MemoryStream _ms;
         private BinaryReader _br;
-        private BinaryWriter _bw;
-        private Stack<long> _m16;
-        private Stack<long> _m32;
+        private readonly BinaryWriter _bw;
+        private readonly Stack<long> _m16;
+        private readonly Stack<long> _m32;
         #endregion
 
         #region Public Constructors
@@ -103,7 +102,7 @@ namespace ClearCanvas.Dicom.Network
         public void WritePDU(Stream s)
         {
             BinaryWriter bw = EndianBinaryWriter.Create(s, Endian.Big);
-            bw.Write((byte)_type);
+            bw.Write(_type);
             bw.Write((byte)0);
             bw.Write((uint)_ms.Length);
             _ms.WriteTo(s);
@@ -172,7 +171,7 @@ namespace ClearCanvas.Dicom.Network
             return _br.ReadUInt32();
         }
 
-        private char[] trimChars = { ' ', '\0' };
+        private readonly char[] trimChars = { ' ', '\0' };
         public String ReadString(String name, int count)
         {
             CheckOffset(count, name);
@@ -283,7 +282,7 @@ namespace ClearCanvas.Dicom.Network
     #region A-Associate-RQ
     public class AAssociateRQ : IPDU
     {
-        private AssociationParameters _assoc;
+        private readonly AssociationParameters _assoc;
 
         public AAssociateRQ(AssociationParameters assoc)
         {
@@ -344,15 +343,15 @@ namespace ClearCanvas.Dicom.Network
             }
 
             // User Data Fields
-            pdu.Write("Item-Type", (byte)0x50);
-            pdu.Write("Reserved", (byte)0x00);
+            pdu.Write("Item-Type", 0x50);
+            pdu.Write("Reserved", 0x00);
             pdu.MarkLength16("Item-Length");
 
             // Maximum PDU
-            pdu.Write("Item-Type", (byte)0x51);
-            pdu.Write("Reserved", (byte)0x00);
+            pdu.Write("Item-Type", 0x51);
+            pdu.Write("Reserved", 0x00);
             pdu.Write("Item-Length", (ushort)0x0004);
-            pdu.Write("Max PDU Length", (uint)_assoc.MaximumPduLength);
+            pdu.Write("Max PDU Length", _assoc.LocalMaximumPduLength);
 
             // Asychronous Window
             /*
@@ -450,7 +449,7 @@ namespace ClearCanvas.Dicom.Network
                                 il -= (ushort)(4 + ul);
                                 if (ut == 0x51)
                                 {
-                                    _assoc.MaximumPduLength = raw.ReadUInt32("Max PDU Length");
+                                    _assoc.RemoteMaximumPduLength = raw.ReadUInt32("Max PDU Length");
                                 }
                                 else if (ut == 0x52)
                                 {
@@ -494,7 +493,7 @@ namespace ClearCanvas.Dicom.Network
     #region A-Associate-AC
     public class AAssociateAC : IPDU
     {
-        private AssociationParameters _assoc;
+        private readonly AssociationParameters _assoc;
 
         public AAssociateAC(AssociationParameters assoc)
         {
@@ -550,7 +549,7 @@ namespace ClearCanvas.Dicom.Network
             pdu.Write("Item-Type", (byte)0x51);
             pdu.Write("Reserved", (byte)0x00);
             pdu.Write("Item-Length", (ushort)0x0004);
-            pdu.Write("Max PDU Length", (uint)_assoc.MaximumPduLength);
+            pdu.Write("Max PDU Length", (uint)_assoc.LocalMaximumPduLength);
 
             // Implementation Class UID
             pdu.Write("Item-Type", (byte)0x52);
@@ -576,7 +575,6 @@ namespace ClearCanvas.Dicom.Network
         public void Read(RawPDU raw)
         {
             uint l = raw.Length;
-            ushort c = 0;
 
             raw.ReadUInt16("Version");
             raw.SkipBytes("Reserved", 2);
@@ -594,7 +592,7 @@ namespace ClearCanvas.Dicom.Network
                 {
                     // Application Context
                     raw.SkipBytes("Reserved", 1);
-                    c = raw.ReadUInt16("Item-Length");
+                    ushort c = raw.ReadUInt16("Item-Length");
                     raw.SkipBytes("Value", (int)c);
                     l -= 3 + (uint)c;
                 }
@@ -642,7 +640,7 @@ namespace ClearCanvas.Dicom.Network
                                 il -= (ushort)(ul + 4);
                                 if (ut == 0x51)
                                 {
-                                    _assoc.MaximumPduLength = raw.ReadUInt32("Max PDU Length");
+                                    _assoc.RemoteMaximumPduLength = raw.ReadUInt32("Max PDU Length");
                                 }
                                 else if (ut == 0x52)
                                 {
@@ -864,7 +862,7 @@ namespace ClearCanvas.Dicom.Network
         {
         }
 
-        private List<PDV> _pdvs = new List<PDV>();
+        private readonly List<PDV> _pdvs = new List<PDV>();
         public List<PDV> PDVs
         {
             get { return _pdvs; }
@@ -883,7 +881,7 @@ namespace ClearCanvas.Dicom.Network
         #region Write
         public RawPDU Write()
         {
-            RawPDU pdu = new RawPDU((byte)0x04);
+            RawPDU pdu = new RawPDU(0x04);
             foreach (PDV pdv in _pdvs)
             {
                 pdv.Write(pdu);
@@ -961,8 +959,8 @@ namespace ClearCanvas.Dicom.Network
         {
             byte mch = (byte)((_last ? 2 : 0) + (_command ? 1 : 0));
             pdu.MarkLength32("PDV-Length");
-            pdu.Write("Presentation Context ID", (byte)_pcid);
-            pdu.Write("Message Control Header", (byte)mch);
+            pdu.Write("Presentation Context ID", _pcid);
+            pdu.Write("Message Control Header", mch);
             pdu.Write("PDV Value", _value);
             pdu.WriteLength32();
         }
