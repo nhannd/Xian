@@ -65,8 +65,8 @@ namespace ClearCanvas.Ris.Client.Admin
 
         private List<string> _typeChoices;
 
-        private RequestedProcedureTypeGroupSummaryTable _availableRequestedProcedureTypeGroups;
-        private RequestedProcedureTypeGroupSummaryTable _selectedRequestedProcedureTypeGroups;
+        private ProcedureTypeGroupSummaryTable _availableProcedureTypeGroups;
+        private ProcedureTypeGroupSummaryTable _selectedProcedureTypeGroups;
         private event EventHandler _availableItemsChanged;
 
         private UserTable _availableUsers;
@@ -88,8 +88,8 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public override void Start()
         {
-            _availableRequestedProcedureTypeGroups = new RequestedProcedureTypeGroupSummaryTable();
-            _selectedRequestedProcedureTypeGroups = new RequestedProcedureTypeGroupSummaryTable();
+            _availableProcedureTypeGroups = new ProcedureTypeGroupSummaryTable();
+            _selectedProcedureTypeGroups = new ProcedureTypeGroupSummaryTable();
 
             _availableUsers = new UserTable();
             _selectedUsers = new UserTable();
@@ -115,17 +115,17 @@ namespace ClearCanvas.Ris.Client.Admin
 
                         _editedItemDetail = response.Detail;
 
-                        _selectedRequestedProcedureTypeGroups.Items.AddRange(_editedItemDetail.RequestedProcedureTypeGroups);
+                        _selectedProcedureTypeGroups.Items.AddRange(_editedItemDetail.ProcedureTypeGroups);
                         _selectedUsers.Items.AddRange(_editedItemDetail.Users);
                     }
 
-                    ListRequestedProcedureTypeGroupsForWorklistCategoryRequest groupsRequest = new ListRequestedProcedureTypeGroupsForWorklistCategoryRequest(_editedItemDetail.WorklistType);
-                    ListRequestedProcedureTypeGroupsForWorklistCategoryResponse groupsResponse = service.ListRequestedProcedureTypeGroupsForWorklistCategory(groupsRequest);
-                    _availableRequestedProcedureTypeGroups.Items.AddRange(groupsResponse.RequestedProcedureTypeGroups);
+                    ListProcedureTypeGroupsForWorklistCategoryRequest groupsRequest = new ListProcedureTypeGroupsForWorklistCategoryRequest(_editedItemDetail.WorklistType);
+                    ListProcedureTypeGroupsForWorklistCategoryResponse groupsResponse = service.ListProcedureTypeGroupsForWorklistCategory(groupsRequest);
+                    _availableProcedureTypeGroups.Items.AddRange(groupsResponse.ProcedureTypeGroups);
 
-                    foreach (RequestedProcedureTypeGroupSummary selectedSummary in _selectedRequestedProcedureTypeGroups.Items)
+                    foreach (ProcedureTypeGroupSummary selectedSummary in _selectedProcedureTypeGroups.Items)
                     {
-                        _availableRequestedProcedureTypeGroups.Items.Remove(selectedSummary);
+                        _availableProcedureTypeGroups.Items.Remove(selectedSummary);
                     }
 
                     foreach (UserSummary selectedUserSummary in _selectedUsers.Items)
@@ -196,14 +196,14 @@ namespace ClearCanvas.Ris.Client.Admin
         }
         #endregion
 
-        public ITable AvailableRequestedProcedureTypeGroups
+        public ITable AvailableProcedureTypeGroups
         {
-            get { return _availableRequestedProcedureTypeGroups; }
+            get { return _availableProcedureTypeGroups; }
         }
 
-        public ITable SelectedRequestedProcedureTypeGroups
+        public ITable SelectedProcedureTypeGroups
         {
-            get { return _selectedRequestedProcedureTypeGroups; }
+            get { return _selectedProcedureTypeGroups; }
         }
 
         public event EventHandler AvailableItemsChanged
@@ -234,8 +234,8 @@ namespace ClearCanvas.Ris.Client.Admin
             {
                 try
                 {
-                    _editedItemDetail.RequestedProcedureTypeGroups.Clear();
-                    _editedItemDetail.RequestedProcedureTypeGroups.AddRange(_selectedRequestedProcedureTypeGroups.Items);
+                    _editedItemDetail.ProcedureTypeGroups.Clear();
+                    _editedItemDetail.ProcedureTypeGroups.AddRange(_selectedProcedureTypeGroups.Items);
 
                     _editedItemDetail.Users.Clear();
                     _editedItemDetail.Users.AddRange(_selectedUsers.Items);
@@ -288,20 +288,20 @@ namespace ClearCanvas.Ris.Client.Admin
         {
             try
             {
-                // Update AvailableRequestedProcedureTypeGroups
+                // Update AvailableProcedureTypeGroups
                 Platform.GetService<IWorklistAdminService>(
                     delegate(IWorklistAdminService service)
                         {
-                            ListRequestedProcedureTypeGroupsForWorklistCategoryRequest request = new ListRequestedProcedureTypeGroupsForWorklistCategoryRequest(_editedItemDetail.WorklistType);
-                            ListRequestedProcedureTypeGroupsForWorklistCategoryResponse response =
-                                service.ListRequestedProcedureTypeGroupsForWorklistCategory(request);
+                            ListProcedureTypeGroupsForWorklistCategoryRequest request = new ListProcedureTypeGroupsForWorklistCategoryRequest(_editedItemDetail.WorklistType);
+                            ListProcedureTypeGroupsForWorklistCategoryResponse response =
+                                service.ListProcedureTypeGroupsForWorklistCategory(request);
 
-                            _availableRequestedProcedureTypeGroups.Items.Clear();
-                            _availableRequestedProcedureTypeGroups.Items.AddRange(response.RequestedProcedureTypeGroups);
+                            _availableProcedureTypeGroups.Items.Clear();
+                            _availableProcedureTypeGroups.Items.AddRange(response.ProcedureTypeGroups);
 
-                            foreach(RequestedProcedureTypeGroupSummary selectedItem in _selectedRequestedProcedureTypeGroups.Items)
+                            foreach(ProcedureTypeGroupSummary selectedItem in _selectedProcedureTypeGroups.Items)
                             {
-                                _availableRequestedProcedureTypeGroups.Items.Remove(selectedItem);
+                                _availableProcedureTypeGroups.Items.Remove(selectedItem);
                             }
 
                             EventsHelper.Fire(_availableItemsChanged, this, EventArgs.Empty);

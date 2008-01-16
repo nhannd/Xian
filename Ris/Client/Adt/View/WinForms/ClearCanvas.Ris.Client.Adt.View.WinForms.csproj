@@ -118,13 +118,13 @@
       <DependentUpon>FolderOptionComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Folders\FolderOptionComponentView.cs" />
-    <Compile Include="RequestedProcedureEditorComponentControl.cs">
+    <Compile Include="ProcedureEditorComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="RequestedProcedureEditorComponentControl.Designer.cs">
-      <DependentUpon>RequestedProcedureEditorComponentControl.cs</DependentUpon>
+    <Compile Include="ProcedureEditorComponentControl.Designer.cs">
+      <DependentUpon>ProcedureEditorComponentControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="RequestedProcedureEditorComponentView.cs" />
+    <Compile Include="ProcedureEditorComponentView.cs" />
     <Compile Include="TechnologistDocumentationComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -275,9 +275,9 @@
       <DependentUpon>CheckInOrderComponentControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="RequestedProcedureEditorComponentControl.resx">
+    <EmbeddedResource Include="ProcedureEditorComponentControl.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>RequestedProcedureEditorComponentControl.cs</DependentUpon>
+      <DependentUpon>ProcedureEditorComponentControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\PreviousSmall.PNG" />
     <EmbeddedResource Include="TechnologistDocumentationComponentControl.resx">

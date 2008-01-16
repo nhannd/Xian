@@ -225,11 +225,53 @@
   <data name="PatientProfile" xml:space="preserve">
     <value>Patient Profile</value>
   </data>
+  <data name="PerformingGroup" xml:space="preserve">
+    <value>Performing Group</value>
+  </data>
   <data name="PersonName" xml:space="preserve">
     <value>Name</value>
   </data>
   <data name="PlacerNumber" xml:space="preserve">
     <value>Placer Number</value>
+  </data>
+  <data name="Procedure" xml:space="preserve">
+    <value>Procedure</value>
+  </data>
+  <data name="ReadingGroup" xml:space="preserve">
+    <value>Reading Group</value>
+  </data>
+  <data name="RegistrationCancelledWorklist" xml:space="preserve">
+    <value>Registration - Cancelled</value>
+  </data>
+  <data name="RegistrationCheckedInWorklist" xml:space="preserve">
+    <value>Registration - Checked In</value>
+  </data>
+  <data name="RegistrationCompletedProtocolWorklist" xml:space="preserve">
+    <value>Booking - Complete Protocol</value>
+  </data>
+  <data name="RegistrationCompletedWorklist" xml:space="preserve">
+    <value>Registration - Completed</value>
+  </data>
+  <data name="RegistrationInProgressWorklist" xml:space="preserve">
+    <value>Registration - In Progress</value>
+  </data>
+  <data name="RegistrationPendingProtocolWorklist" xml:space="preserve">
+    <value>Booking - Pending Protocol</value>
+  </data>
+  <data name="RegistrationRejectedProtocolWorklist" xml:space="preserve">
+    <value>Booking - Rejected Protocol</value>
+  </data>
+  <data name="RegistrationScheduledWorklist" xml:space="preserve">
+    <value>Registration - Scheduled</value>
+  </data>
+  <data name="RegistrationSuspendedProtocolWorklist" xml:space="preserve">
+    <value>Booking - Suspended Protocol</value>
+  </data>
+  <data name="RegistrationToBeScheduledWorklist" xml:space="preserve">
+    <value>Registration - To be Scheduled</value>
+  </data>
+  <data name="RelevanceGroup" xml:space="preserve">
+    <value>Relevance Group</value>
   </data>
   <data name="ReligionEnum" xml:space="preserve">
     <value>Religion</value>
@@ -237,8 +279,11 @@
   <data name="Report" xml:space="preserve">
     <value>Report</value>
   </data>
-  <data name="RequestedProcedure" xml:space="preserve">
-    <value>Procedure</value>
+  <data name="ReportingToBeProtocolledWorklist" xml:space="preserve">
+    <value>Reporting - To be Protocolled</value>
+  </data>
+  <data name="ReportingToBeReportedWorklist" xml:space="preserve">
+    <value>Reporting - To be Reported</value>
   </data>
   <data name="SexEnum" xml:space="preserve">
     <value>Sex</value>
@@ -248,6 +293,24 @@
   </data>
   <data name="Staff" xml:space="preserve">
     <value>Staff</value>
+  </data>
+  <data name="TechnologistCancelledWorklist" xml:space="preserve">
+    <value>Technologist - Cancelled</value>
+  </data>
+  <data name="TechnologistCheckedInWorklist" xml:space="preserve">
+    <value>Technologist - Checked In</value>
+  </data>
+  <data name="TechnologistCompletedWorklist" xml:space="preserve">
+    <value>Technologist - Completed</value>
+  </data>
+  <data name="TechnologistInProgressWorklist" xml:space="preserve">
+    <value>Technologist - In Progress</value>
+  </data>
+  <data name="TechnologistScheduledWorklist" xml:space="preserve">
+    <value>Technologist - Scheduled</value>
+  </data>
+  <data name="TechnologistUndocumentedWorklist" xml:space="preserve">
+    <value>Technologist - Undocumented</value>
   </data>
   <data name="TelephoneNumber" xml:space="preserve">
     <value>Telephone Number</value>

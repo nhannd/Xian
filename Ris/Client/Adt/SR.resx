@@ -240,8 +240,8 @@
   <data name="ColumnProcedure" xml:space="preserve">
     <value>Procedure</value>
   </data>
-  <data name="ColumnRequestedProcedures" xml:space="preserve">
-    <value>Requested Procedures</value>
+  <data name="ColumnProcedures" xml:space="preserve">
+    <value>Procedures</value>
   </data>
   <data name="ColumnRole" xml:space="preserve">
     <value>Role</value>

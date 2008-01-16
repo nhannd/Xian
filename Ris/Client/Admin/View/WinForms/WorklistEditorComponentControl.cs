@@ -59,11 +59,11 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             _type.DataBindings.Add("Value", _component, "Type", true, DataSourceUpdateMode.OnPropertyChanged);
             _type.DataBindings.Add("Enabled", _component, "TypeEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 
-            _requestedProcedureTypeGroupsSelector.AvailableItemsTable = _component.AvailableRequestedProcedureTypeGroups;
-            _requestedProcedureTypeGroupsSelector.SelectedItemsTable = _component.SelectedRequestedProcedureTypeGroups;
-            _requestedProcedureTypeGroupsSelector.ItemAdded += OnItemsAddedOrRemoved;
-            _requestedProcedureTypeGroupsSelector.ItemRemoved += OnItemsAddedOrRemoved;
-            _component.AvailableItemsChanged += _requestedProcedureTypeGroupsSelector.OnAvailableItemsChanged;
+            _procedureTypeGroupsSelector.AvailableItemsTable = _component.AvailableProcedureTypeGroups;
+            _procedureTypeGroupsSelector.SelectedItemsTable = _component.SelectedProcedureTypeGroups;
+            _procedureTypeGroupsSelector.ItemAdded += OnItemsAddedOrRemoved;
+            _procedureTypeGroupsSelector.ItemRemoved += OnItemsAddedOrRemoved;
+            _component.AvailableItemsChanged += _procedureTypeGroupsSelector.OnAvailableItemsChanged;
 
             _usersSelector.AvailableItemsTable = _component.AvailableUsers;
             _usersSelector.SelectedItemsTable = _component.SelectedUsers;

@@ -42,15 +42,15 @@ namespace ClearCanvas.Healthcare
         {
         }
 
-        public ClearCanvas.Healthcare.RequestedProcedureSearchCriteria RequestedProcedure
+        public ClearCanvas.Healthcare.ProcedureSearchCriteria Procedure
         {
             get
             {
-                if (!this.SubCriteria.ContainsKey("RequestedProcedure"))
+                if (!this.SubCriteria.ContainsKey("Procedure"))
                 {
-                    this.SubCriteria["RequestedProcedure"] = new ClearCanvas.Healthcare.RequestedProcedureSearchCriteria("RequestedProcedure");
+                    this.SubCriteria["Procedure"] = new ClearCanvas.Healthcare.ProcedureSearchCriteria("Procedure");
                 }
-                return (ClearCanvas.Healthcare.RequestedProcedureSearchCriteria)this.SubCriteria["RequestedProcedure"];
+                return (ClearCanvas.Healthcare.ProcedureSearchCriteria)this.SubCriteria["Procedure"];
             }
         }
 

@@ -78,7 +78,7 @@ namespace ClearCanvas.Ris.Client.Reporting
             _candidateTable.Columns.Add(new TableColumn<Checkable<ReportingWorklistItem>, string>(SR.ColumnDiagnosticService,
                 delegate(Checkable<ReportingWorklistItem> item) { return item.Item.DiagnosticServiceName; }, 1.0f));
             _candidateTable.Columns.Add(new TableColumn<Checkable<ReportingWorklistItem>, string>(SR.ColumnProcedure,
-                delegate(Checkable<ReportingWorklistItem> item) { return item.Item.RequestedProcedureName; }, 1.0f));
+                delegate(Checkable<ReportingWorklistItem> item) { return item.Item.ProcedureName; }, 1.0f));
             _candidateTable.Columns.Add(new TableColumn<Checkable<ReportingWorklistItem>, string>(SR.ColumnProcedureEndTime,
                 delegate(Checkable<ReportingWorklistItem> item) { return Format.Time(item.Item.ScheduledStartTime); }, 0.5f));
 

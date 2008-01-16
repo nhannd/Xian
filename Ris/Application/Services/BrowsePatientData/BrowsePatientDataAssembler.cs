@@ -50,7 +50,7 @@ namespace ClearCanvas.Ris.Application.Services.BrowsePatientData
             return data;
         }
 
-        public OrderListItem CreateOrderListItem(RequestedProcedure rp, IPersistenceContext context)
+        public OrderListItem CreateOrderListItem(Procedure rp, IPersistenceContext context)
         {
             OrderListItem data = new OrderListItem();
 
@@ -61,7 +61,7 @@ namespace ClearCanvas.Ris.Application.Services.BrowsePatientData
             return data;
         }
 
-        public ReportListItem CreateReportListItem(RequestedProcedure rp, IPersistenceContext context)
+        public ReportListItem CreateReportListItem(Procedure rp, IPersistenceContext context)
         {
             ReportListItem data = new ReportListItem();
 
@@ -118,11 +118,11 @@ namespace ClearCanvas.Ris.Application.Services.BrowsePatientData
             data.OrderScheduledStartTime = order.ScheduledStartTime;
         }
 
-        private void UpdateListItem(OrderListItem data, RequestedProcedure rp, IPersistenceContext context)
+        private void UpdateListItem(OrderListItem data, Procedure rp, IPersistenceContext context)
         {
-            RequestedProcedureTypeAssembler rptAssembler = new RequestedProcedureTypeAssembler();
+            ProcedureTypeAssembler rptAssembler = new ProcedureTypeAssembler();
             data.ProcedureRef = rp.GetRef();
-            data.ProcedureType = rptAssembler.CreateRequestedProcedureTypeSummary(rp.Type);
+            data.ProcedureType = rptAssembler.CreateProcedureTypeSummary(rp.Type);
             data.ProcedureScheduledStartTime = rp.ScheduledStartTime;
             data.ProcedureCheckInTime = rp.ProcedureCheckIn.CheckInTime;
             data.ProcedureCheckOutTime = rp.ProcedureCheckIn.CheckOutTime;

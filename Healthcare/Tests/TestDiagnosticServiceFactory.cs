@@ -48,7 +48,7 @@ namespace ClearCanvas.Healthcare.Tests
         {
             Modality m = new Modality("01", "CT");
 
-            HashedSet<RequestedProcedureType> procedures = new HashedSet<RequestedProcedureType>();
+            HashedSet<ProcedureType> procedures = new HashedSet<ProcedureType>();
             for (int p = 0; p < numReqProcs; p++)
             {
                 HashedSet<ModalityProcedureStepType> steps = new HashedSet<ModalityProcedureStepType>();
@@ -56,7 +56,7 @@ namespace ClearCanvas.Healthcare.Tests
                 {
                     steps.Add(new ModalityProcedureStepType("10" + (s + p * numMpsPerReqProc), "MPS 10" + (s + p * numMpsPerReqProc), m));
                 }
-                procedures.Add(new RequestedProcedureType("20" + p, "Procedure 20" + p, steps));
+                procedures.Add(new ProcedureType("20" + p, "Procedure 20" + p, steps));
             }
             return new DiagnosticService("301", "Diagnostic Service 301", procedures);
         }

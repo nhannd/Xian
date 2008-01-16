@@ -11,9 +11,9 @@
     <property name="Name" column="Name_" type="String" length="100" not-null="true"/>
     <property name="Description" column="Description_" type="String" length="1024"/>
 
-    <set name="RequestedProcedureTypeGroups" table="WorklistRequestedProcedureTypeGroup_" lazy="true" access="nosetter.camelcase-underscore">
+    <set name="ProcedureTypeGroups" table="WorklistProcedureTypeGroup_" lazy="true" access="nosetter.camelcase-underscore">
       <key column="WorklistOID_"/>
-      <many-to-many column="RequestedProcedureTypeGroupOID_" class="RequestedProcedureTypeGroup" fetch="join"/>
+      <many-to-many column="ProcedureTypeGroupOID_" class="ProcedureTypeGroup" fetch="join"/>
     </set>
 
     <set name="Users" table="WorklistUser_" lazy="true" access="nosetter.camelcase-underscore">

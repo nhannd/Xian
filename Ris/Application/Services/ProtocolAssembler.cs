@@ -82,11 +82,11 @@ namespace ClearCanvas.Ris.Application.Services
                 group.Codes,
                 delegate(ProtocolCode code) { return CreateProtocolCodeDetail(code); });
 
-            RequestedProcedureTypeGroupAssembler assembler = new RequestedProcedureTypeGroupAssembler();
-            List<RequestedProcedureTypeGroupSummary> groups =
-                CollectionUtils.Map<RequestedProcedureTypeGroup, RequestedProcedureTypeGroupSummary>(
+            ProcedureTypeGroupAssembler assembler = new ProcedureTypeGroupAssembler();
+            List<ProcedureTypeGroupSummary> groups =
+                CollectionUtils.Map<ProcedureTypeGroup, ProcedureTypeGroupSummary>(
                     group.ReadingGroups,
-                    delegate(RequestedProcedureTypeGroup readingGroup) { return assembler.GetRequestedProcedureTypeGroupSummary(readingGroup, context); });
+                    delegate(ProcedureTypeGroup readingGroup) { return assembler.GetProcedureTypeGroupSummary(readingGroup, context); });
 
             return new ProtocolGroupDetail(group.Name, group.Description, codes, groups);
         }

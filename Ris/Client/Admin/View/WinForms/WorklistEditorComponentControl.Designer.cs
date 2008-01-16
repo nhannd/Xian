@@ -69,7 +69,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
-            this._requestedProcedureTypeGroupsSelector = new ClearCanvas.Desktop.View.WinForms.ListItemSelector();
+            this._procedureTypeGroupsSelector = new ClearCanvas.Desktop.View.WinForms.ListItemSelector();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this._usersSelector = new ClearCanvas.Desktop.View.WinForms.ListItemSelector();
             this.tableLayoutPanel2.SuspendLayout();
@@ -208,7 +208,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             // 
             // tabPage1
             // 
-            this.tabPage1.Controls.Add(this._requestedProcedureTypeGroupsSelector);
+            this.tabPage1.Controls.Add(this._procedureTypeGroupsSelector);
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
@@ -217,16 +217,16 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this.tabPage1.Text = "Procedure Groups";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
-            // _requestedProcedureTypeGroupsSelector
+            // _procedureTypeGroupsSelector
             // 
-            this._requestedProcedureTypeGroupsSelector.AutoSize = true;
-            this._requestedProcedureTypeGroupsSelector.AvailableItemsTable = null;
-            this._requestedProcedureTypeGroupsSelector.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._requestedProcedureTypeGroupsSelector.Location = new System.Drawing.Point(3, 3);
-            this._requestedProcedureTypeGroupsSelector.Name = "_requestedProcedureTypeGroupsSelector";
-            this._requestedProcedureTypeGroupsSelector.SelectedItemsTable = null;
-            this._requestedProcedureTypeGroupsSelector.Size = new System.Drawing.Size(644, 372);
-            this._requestedProcedureTypeGroupsSelector.TabIndex = 0;
+            this._procedureTypeGroupsSelector.AutoSize = true;
+            this._procedureTypeGroupsSelector.AvailableItemsTable = null;
+            this._procedureTypeGroupsSelector.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._procedureTypeGroupsSelector.Location = new System.Drawing.Point(3, 3);
+            this._procedureTypeGroupsSelector.Name = "_procedureTypeGroupsSelector";
+            this._procedureTypeGroupsSelector.SelectedItemsTable = null;
+            this._procedureTypeGroupsSelector.Size = new System.Drawing.Size(644, 372);
+            this._procedureTypeGroupsSelector.TabIndex = 0;
             // 
             // tabPage2
             // 
@@ -286,7 +286,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.TabPage tabPage2;
-        private ClearCanvas.Desktop.View.WinForms.ListItemSelector _requestedProcedureTypeGroupsSelector;
+        private ClearCanvas.Desktop.View.WinForms.ListItemSelector _procedureTypeGroupsSelector;
         private ClearCanvas.Desktop.View.WinForms.ListItemSelector _usersSelector;
     }
 }

@@ -36,20 +36,12 @@ namespace ClearCanvas.Ris.Client.Reporting
 {
     public class ProtocolEditorProcedurePlanSummaryTableItem
     {
-        private readonly RequestedProcedureDetail _rpDetail;
-        //private readonly ProtocolProcedureStepDetail _protocolStepDetail;
+        private readonly ProcedureDetail _rpDetail;
         private readonly ProtocolDetail _protocolDetail;
         private readonly EntityRef _protocolRef;
 
-        //public ProtocolEditorProcedurePlanSummaryTableItem(RequestedProcedureDetail rpDetail, ProtocolProcedureStepDetail protocolStepDetail, ProtocolDetail protocolDetail)
-        //{
-        //    _rpDetail = rpDetail;
-        //    _protocolStepDetail = protocolStepDetail;
-        //    _protocolDetail = protocolDetail;
-        //}
 
-
-        public ProtocolEditorProcedurePlanSummaryTableItem(RequestedProcedureDetail _rpDetail, EntityRef _protocolRef, ProtocolDetail _protocolDetail)
+        public ProtocolEditorProcedurePlanSummaryTableItem(ProcedureDetail _rpDetail, EntityRef _protocolRef, ProtocolDetail _protocolDetail)
         {
             this._rpDetail = _rpDetail;
             this._protocolDetail = _protocolDetail;
@@ -58,7 +50,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         #region Public Properties
 
-        public RequestedProcedureDetail RequestedProcedureDetail
+        public ProcedureDetail ProcedureDetail
         {
             get { return _rpDetail; }
         }

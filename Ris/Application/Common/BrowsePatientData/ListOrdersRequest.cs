@@ -39,7 +39,7 @@ namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
     public enum PatientOrdersQueryDetailLevel
     {
         Order,
-        RequestedProcedure
+        Procedure
     }
 
     [DataContract]

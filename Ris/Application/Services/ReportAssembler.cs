@@ -42,25 +42,25 @@ namespace ClearCanvas.Ris.Application.Services
     public class ReportAssembler
     {
         // TODO: in order for this to be efficent, the Procedures collection should have been obtained in a join fetch
-        public ReportSummary CreateReportSummary(RequestedProcedure rp, Report report, IPersistenceContext context)
+        public ReportSummary CreateReportSummary(Procedure rp, Report report, IPersistenceContext context)
         {
             ReportSummary summary = new ReportSummary();
 
-            RequestedProcedureAssembler rpAssembler = new RequestedProcedureAssembler();
+            ProcedureAssembler rpAssembler = new ProcedureAssembler();
             if (report != null)
             {
                 summary.ReportRef = report.GetRef();
                 summary.ReportStatus = EnumUtils.GetEnumValueInfo(report.Status, context);
 
                 // use all procedures attached to report
-                summary.Procedures = CollectionUtils.Map<RequestedProcedure, RequestedProcedureSummary>(report.Procedures,
-                    delegate(RequestedProcedure p) { return rpAssembler.CreateRequestedProcedureSummary(p, context); });
+                summary.Procedures = CollectionUtils.Map<Procedure, ProcedureSummary>(report.Procedures,
+                    delegate(Procedure p) { return rpAssembler.CreateProcedureSummary(p, context); });
             }
             else
             {
                 // use supplied procedure
-                summary.Procedures = CollectionUtils.Map<RequestedProcedure, RequestedProcedureSummary>(new RequestedProcedure[] { rp },
-                    delegate(RequestedProcedure p) { return rpAssembler.CreateRequestedProcedureSummary(p, context); });
+                summary.Procedures = CollectionUtils.Map<Procedure, ProcedureSummary>(new Procedure[] { rp },
+                    delegate(Procedure p) { return rpAssembler.CreateProcedureSummary(p, context); });
             }
 
             Order order = rp.Order;
@@ -87,9 +87,9 @@ namespace ClearCanvas.Ris.Application.Services
             detail.ReportRef = report.GetRef();
             detail.ReportStatus = EnumUtils.GetEnumValueInfo(report.Status, context);
 
-            RequestedProcedureAssembler rpAssembler = new RequestedProcedureAssembler();
-            detail.Procedures = CollectionUtils.Map<RequestedProcedure, RequestedProcedureDetail>(report.Procedures,
-                delegate(RequestedProcedure p) { return rpAssembler.CreateRequestedProcedureDetail(p, context); });
+            ProcedureAssembler rpAssembler = new ProcedureAssembler();
+            detail.Procedures = CollectionUtils.Map<Procedure, ProcedureDetail>(report.Procedures,
+                delegate(Procedure p) { return rpAssembler.CreateProcedureDetail(p, context); });
 
             detail.Parts = CollectionUtils.Map<ReportPart, ReportPartDetail>(report.Parts,
                 delegate(ReportPart part) { return CreateReportPartDetail(part, context); });

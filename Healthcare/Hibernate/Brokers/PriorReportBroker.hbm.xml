@@ -11,17 +11,16 @@
     select priorReport
     from
     Report priorReport, Report refReport,
-    RequestedProcedure priorProcedure, RequestedProcedure refProcedure,
-    RequestedProcedureType priorProcedureType, RequestedProcedureType refProcedureType
+    Procedure priorProcedure, Procedure refProcedure,
+    ProcedureType priorProcedureType, ProcedureType refProcedureType
     where priorProcedureType = priorProcedure.Type
     and priorProcedure in elements(priorReport.Procedures)
     and refProcedureType = refProcedure.Type
     and refProcedure in elements(refReport.Procedures)
     and priorProcedureType in (
-      select elements(relevanceGroup.RequestedProcedureTypes)
-      from RequestedProcedureTypeGroup relevanceGroup
-      where refProcedureType in elements(relevanceGroup.RequestedProcedureTypes)
-      and relevanceGroup.Category = 'RELEVANCE'
+      select elements(relevanceGroup.ProcedureTypes)
+      from RelevanceProcedureTypeGroup relevanceGroup
+      where refProcedureType in elements(relevanceGroup.ProcedureTypes)
     )
     and priorProcedure.Order.Patient = refProcedure.Order.Patient
     and priorReport.Status in ('P', 'F', 'C')
@@ -39,17 +38,16 @@
     select priorReport
     from
     Report priorReport, Order refOrder,
-    RequestedProcedure priorProcedure, RequestedProcedure refProcedure,
-    RequestedProcedureType priorProcedureType, RequestedProcedureType refProcedureType
+    Procedure priorProcedure, Procedure refProcedure,
+    ProcedureType priorProcedureType, ProcedureType refProcedureType
     where priorProcedureType = priorProcedure.Type
     and priorProcedure in elements(priorReport.Procedures)
     and refProcedureType = refProcedure.Type
-    and refProcedure in elements(refOrder.RequestedProcedures)
+    and refProcedure in elements(refOrder.Procedures)
     and priorProcedureType in (
-      select elements(relevanceGroup.RequestedProcedureTypes)
-      from RequestedProcedureTypeGroup relevanceGroup
-      where refProcedureType in elements(relevanceGroup.RequestedProcedureTypes)
-      and relevanceGroup.Category = 'RELEVANCE'
+      select elements(relevanceGroup.ProcedureTypes)
+      from RelevanceProcedureTypeGroup relevanceGroup
+      where refProcedureType in elements(relevanceGroup.ProcedureTypes)
     )
     and priorProcedure.Order.Patient = refOrder.Patient
     and priorReport.Status in ('P', 'F', 'C')
@@ -68,17 +66,16 @@
   <query name="relevantPriorsByProcedure">
     select priorReport
     from Report priorReport,
-    RequestedProcedure priorProcedure, RequestedProcedure refProcedure,
-    RequestedProcedureType priorProcedureType, RequestedProcedureType refProcedureType
+    Procedure priorProcedure, Procedure refProcedure,
+    ProcedureType priorProcedureType, ProcedureType refProcedureType
     where priorProcedureType = priorProcedure.Type
     and priorProcedure in elements(priorReport.Procedures)
     and refProcedureType = refProcedure.Type
     and refProcedure = ?
     and priorProcedureType in (
-      select elements(relevanceGroup.RequestedProcedureTypes)
-      from RequestedProcedureTypeGroup relevanceGroup
-      where refProcedureType in elements(relevanceGroup.RequestedProcedureTypes)
-      and relevanceGroup.Category = 'RELEVANCE'
+      select elements(relevanceGroup.ProcedureTypes)
+      from RelevanceProcedureTypeGroup relevanceGroup
+      where refProcedureType in elements(relevanceGroup.ProcedureTypes)
     )
     and priorProcedure.Order.Patient = refProcedure.Order.Patient
     and priorReport.Status in ('P', 'F', 'C')
@@ -94,8 +91,8 @@
   <query name="allPriorsByPatient">
     select priorReport
     from Report priorReport,
-    RequestedProcedure priorProcedure,
-    RequestedProcedureType priorProcedureType,
+    Procedure priorProcedure,
+    ProcedureType priorProcedureType,
     where priorProcedureType = priorProcedure.Type
     and priorProcedure in elements(priorReport.Procedures)
     and priorProcedure.Order.Patient = ?

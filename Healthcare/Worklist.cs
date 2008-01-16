@@ -41,12 +41,12 @@ namespace ClearCanvas.Healthcare
     {
         private string _name;
         private string _description;
-        private ISet<RequestedProcedureTypeGroup> _requestedProcedureTypeGroups;
-        private ISet<User> _users;
+        private readonly ISet<ProcedureTypeGroup> _procedureTypeGroups;
+        private readonly ISet<User> _users;
 
         public Worklist()
         {
-            _requestedProcedureTypeGroups = new HashedSet<RequestedProcedureTypeGroup>();
+            _procedureTypeGroups = new HashedSet<ProcedureTypeGroup>();
             _users = new HashedSet<User>();
         }
 
@@ -71,9 +71,9 @@ namespace ClearCanvas.Healthcare
             set { _description = value; }
         }
 
-        public virtual ISet<RequestedProcedureTypeGroup> RequestedProcedureTypeGroups
+        public virtual ISet<ProcedureTypeGroup> ProcedureTypeGroups
         {
-            get { return _requestedProcedureTypeGroups; }
+            get { return _procedureTypeGroups; }
         }
 
         public virtual ISet<User> Users

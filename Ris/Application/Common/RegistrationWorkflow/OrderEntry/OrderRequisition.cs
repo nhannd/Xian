@@ -85,7 +85,7 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
         /// in the order that are not found in the list will be removed from the order.
         /// </summary>
         [DataMember]
-        public List<ProcedureRequisition> RequestedProcedures;
+        public List<ProcedureRequisition> Procedures;
 
         /// <summary>
         /// Facility that is placing the order. Required.

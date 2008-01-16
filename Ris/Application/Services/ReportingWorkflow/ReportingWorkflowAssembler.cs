@@ -46,7 +46,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             PersonNameAssembler assembler = new PersonNameAssembler();
             return new ReportingWorklistItem(
                 domainItem.ProcedureStepRef,
-                domainItem.RequestedProcedureRef,
+                domainItem.ProcedureRef,
                 domainItem.OrderRef,
                 domainItem.PatientRef,
                 domainItem.PatientProfileRef,
@@ -57,7 +57,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
                 EnumUtils.GetEnumValueInfo(domainItem.OrderPriority, context),
                 EnumUtils.GetEnumValueInfo(domainItem.PatientClass),
                 domainItem.DiagnosticServiceName,
-                domainItem.RequestedProcedureName,
+                domainItem.ProcedureName,
                 domainItem.ProcedureStepName,
                 domainItem.ScheduledStartTime,
                 EnumUtils.GetEnumValueInfo(domainItem.ActivityStatus, context)

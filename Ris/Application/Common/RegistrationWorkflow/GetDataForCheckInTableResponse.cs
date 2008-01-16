@@ -38,12 +38,12 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
     [DataContract]
     public class GetDataForCheckInTableResponse : DataContractBase
     {
-        public GetDataForCheckInTableResponse(List<RequestedProcedureSummary> items)
+        public GetDataForCheckInTableResponse(List<ProcedureSummary> items)
         {
-            this.RequestedProcedures = items;
+            this.Procedures = items;
         }
 
         [DataMember]
-        public List<RequestedProcedureSummary> RequestedProcedures;
+        public List<ProcedureSummary> Procedures;
     }
 }

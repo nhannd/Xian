@@ -7,7 +7,7 @@
     <version name="Version" column="Version_"/>
 
     <!-- one-to-one enforced by unique constraint -->
-    <many-to-one name="Procedure" class="RequestedProcedure" column="ProcedureOID_" not-null="true" unique="true"/>
+    <many-to-one name="Procedure" class="Procedure" column="ProcedureOID_" not-null="true" unique="true"/>
 
     <many-to-one name="Author" class="Staff" column="AuthorOID_"/>
     <property name="Status" column="Status_" type="ClearCanvas.Healthcare.Hibernate.ProtocolStatusEnumHbm, ClearCanvas.Healthcare.Hibernate" not-null="true"/>

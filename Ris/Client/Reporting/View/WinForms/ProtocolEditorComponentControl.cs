@@ -57,7 +57,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             _component.PropertyChanged += _component_PropertyChanged;
 
             _procedurePlanSummary.Table = _component.ProcedurePlanSummaryTable;
-            _procedurePlanSummary.DataBindings.Add("Selection", _component, "SelectedRequestedProcedure", true, DataSourceUpdateMode.OnPropertyChanged);
+            _procedurePlanSummary.DataBindings.Add("Selection", _component, "SelectedProcedure", true, DataSourceUpdateMode.OnPropertyChanged);
             _component.SelectionChanged += RefreshTables;
 
             _protocolNextItem.DataBindings.Add("Checked", _component, "ProtocolNextItem", true, DataSourceUpdateMode.OnPropertyChanged);

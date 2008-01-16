@@ -76,7 +76,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                 delegate(ReportingWorklistItem item) { return string.Format("{0} {1} - {2} {3}", 
                     item.AccessionNumber, 
                     item.DiagnosticServiceName,
-                    item.RequestedProcedureName, 
+                    item.ProcedureName, 
                     item.ScheduledStartTime); },
                 1.0f, DescriptionRow);
 
@@ -93,7 +93,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 
             TableColumn<ReportingWorklistItem, string> procedureNameColumn =
                 new TableColumn<ReportingWorklistItem, string>(SR.ColumnProcedure,
-                delegate(ReportingWorklistItem item) { return item.RequestedProcedureName; }, 1.0f);
+                delegate(ReportingWorklistItem item) { return item.ProcedureName; }, 1.0f);
             procedureNameColumn.Visible = false;
 
             // Currently the creation time of the interpretation step

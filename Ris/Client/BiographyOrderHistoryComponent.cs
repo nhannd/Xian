@@ -65,7 +65,7 @@ namespace ClearCanvas.Ris.Client
         private ModalityProcedureStepDetail _selectedMPS;
 
         private event EventHandler _diagnosticServiceChanged;
-        private Tree<RequestedProcedureDetail> _diagnosticServiceBreakdown;
+        private Tree<ProcedureDetail> _diagnosticServiceBreakdown;
         private object _selectedDiagnosticServiceBreakdownItem;
 
 
@@ -325,8 +325,8 @@ namespace ClearCanvas.Ris.Client
                             _orderDetail = response.GetOrderDetailResponse.Order;
                         });
 
-                    _diagnosticServiceBreakdown = new Tree<RequestedProcedureDetail>(
-                        GetRequestedProcedureBinding(), _orderDetail.RequestedProcedures);
+                    _diagnosticServiceBreakdown = new Tree<ProcedureDetail>(
+                        GetProcedureBinding(), _orderDetail.Procedures);
 
                     EventsHelper.Fire(_diagnosticServiceChanged, this, EventArgs.Empty);
 
@@ -343,21 +343,21 @@ namespace ClearCanvas.Ris.Client
 
         private void SelectFirstProcedureStep()
         {
-            if (_orderDetail.RequestedProcedures.Count > 0)
+            if (_orderDetail.Procedures.Count > 0)
             {
-                if (_orderDetail.RequestedProcedures[0].ModalityProcedureSteps.Count > 0)
+                if (_orderDetail.Procedures[0].ModalityProcedureSteps.Count > 0)
                 {
-                    this.SelectedDiagnosticServiceBreakdownItem = new Selection(_orderDetail.RequestedProcedures[0].ModalityProcedureSteps[0]);
+                    this.SelectedDiagnosticServiceBreakdownItem = new Selection(_orderDetail.Procedures[0].ModalityProcedureSteps[0]);
                 }
             }
         }
 
-        private TreeItemBinding<RequestedProcedureDetail> GetRequestedProcedureBinding()
+        private TreeItemBinding<ProcedureDetail> GetProcedureBinding()
         {
-            TreeItemBinding<RequestedProcedureDetail> binding =
-                new TreeItemBinding<RequestedProcedureDetail>(
-                delegate(RequestedProcedureDetail rp) { return rp.Type.Name; },
-                delegate(RequestedProcedureDetail rp)
+            TreeItemBinding<ProcedureDetail> binding =
+                new TreeItemBinding<ProcedureDetail>(
+                delegate(ProcedureDetail rp) { return rp.Type.Name; },
+                delegate(ProcedureDetail rp)
                 {
                     return new Tree<ModalityProcedureStepDetail>(
                         GetModalityProcedureStepBinding(), rp.ModalityProcedureSteps);

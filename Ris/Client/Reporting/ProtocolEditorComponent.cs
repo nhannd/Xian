@@ -228,7 +228,7 @@ namespace ClearCanvas.Ris.Client.Reporting
             get { return _procedurePlanSummaryTable; }
         }
 
-        public ISelection SelectedRequestedProcedure
+        public ISelection SelectedProcedure
         {
             get { return new Selection(_selectedProcodurePlanSummaryTableItem); }
             set
@@ -508,9 +508,9 @@ namespace ClearCanvas.Ris.Client.Reporting
 
                 _procedurePlanSummaryTable.Items.Clear();
 
-                foreach (RequestedProcedureDetail rp in procedurePlanResponse.ProcedurePlan.RequestedProcedures)
+                foreach (ProcedureDetail rp in procedurePlanResponse.ProcedurePlan.Procedures)
                 {
-                    GetProcedureProtocolRequest protocolRequest = new GetProcedureProtocolRequest(rp.RequestedProcedureRef);
+                    GetProcedureProtocolRequest protocolRequest = new GetProcedureProtocolRequest(rp.ProcedureRef);
                     GetProcedureProtocolResponse protocolResponse = service.GetProcedureProtocol(protocolRequest);
 
                     if (protocolResponse.ProtocolRef != null)
@@ -570,7 +570,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                         delegate(IProtocollingWorkflowService service)
                             {
                                 // Load available protocol groups
-                                ListProtocolGroupsForProcedureRequest request = new ListProtocolGroupsForProcedureRequest(item.RequestedProcedureDetail.RequestedProcedureRef);
+                                ListProtocolGroupsForProcedureRequest request = new ListProtocolGroupsForProcedureRequest(item.ProcedureDetail.ProcedureRef);
                                 ListProtocolGroupsForProcedureResponse response = service.ListProtocolGroupsForProcedure(request);
 
                                 _protocolGroupChoices = response.ProtocolGroups;

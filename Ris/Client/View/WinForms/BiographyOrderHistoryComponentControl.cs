@@ -85,7 +85,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             _mpsScheduledStartTime.DataBindings.Add("Value", _component, "ScheduledStartTime", true, DataSourceUpdateMode.OnPropertyChanged);
             _mpsScheduledEndTime.DataBindings.Add("Value", _component, "ScheduledEndTime", true, DataSourceUpdateMode.OnPropertyChanged);
 
-            // Requested Procedure breakdown
+            // Procedure breakdown
             _diagnosticServiceBreakdown.DataBindings.Add("Selection", _component, "SelectedDiagnosticServiceBreakdownItem", true, DataSourceUpdateMode.OnPropertyChanged);
             _component.DiagnosticServiceChanged += DiagnosticServiceChangedEventHandler;
         }

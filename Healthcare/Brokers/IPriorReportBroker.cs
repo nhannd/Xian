@@ -57,7 +57,7 @@ namespace ClearCanvas.Healthcare.Brokers
         /// </summary>
         /// <param name="procedures"></param>
         /// <returns></returns>
-        IList<Report> GetPriors(IEnumerable<RequestedProcedure> procedures);
+        IList<Report> GetPriors(IEnumerable<Procedure> procedures);
 
         /// <summary>
         /// Obtains a list of all prior procedures for the specified patient.

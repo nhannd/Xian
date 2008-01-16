@@ -15,7 +15,7 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
             EntityRef reportRef,
             string accessionNumber,
             DiagnosticServiceSummary diagnosticService,
-            RequestedProcedureTypeSummary procedureType,
+            ProcedureTypeSummary procedureType,
             EnumValueInfo reportStatus)
         {
             this.OrderRef = orderRef;
@@ -41,7 +41,7 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
         public DiagnosticServiceSummary DiagnosticService;
 
         [DataMember]
-        public RequestedProcedureTypeSummary ProcedureType;
+        public ProcedureTypeSummary ProcedureType;
 
         [DataMember]
         public EntityRef ReportRef;

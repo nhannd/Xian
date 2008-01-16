@@ -50,10 +50,10 @@ namespace ClearCanvas.Ris.Application.Services
                 group.Codes,
                 delegate(ProtocolCode code) { return new ProtocolCodeDetail(code.GetRef(), code.Name, code.Description);});
 
-            RequestedProcedureTypeGroupAssembler assembler = new RequestedProcedureTypeGroupAssembler();
-            List<RequestedProcedureTypeGroupSummary> readingGroups = CollectionUtils.Map<RequestedProcedureTypeGroup, RequestedProcedureTypeGroupSummary>(
+            ProcedureTypeGroupAssembler assembler = new ProcedureTypeGroupAssembler();
+            List<ProcedureTypeGroupSummary> readingGroups = CollectionUtils.Map<ProcedureTypeGroup, ProcedureTypeGroupSummary>(
                 group.ReadingGroups,
-                delegate(RequestedProcedureTypeGroup readingGroup) { return assembler.GetRequestedProcedureTypeGroupSummary(readingGroup, context); });
+                delegate(ProcedureTypeGroup readingGroup) { return assembler.GetProcedureTypeGroupSummary(readingGroup, context); });
             
             return new ProtocolGroupDetail(group.Name, group.Description, codes, readingGroups);
         }
@@ -70,9 +70,9 @@ namespace ClearCanvas.Ris.Application.Services
             });
 
             group.ReadingGroups.Clear();
-            detail.ReadingGroups.ForEach(delegate(RequestedProcedureTypeGroupSummary requestedProcedureTypeGroupSummary)
+            detail.ReadingGroups.ForEach(delegate(ProcedureTypeGroupSummary procedureTypeGroupSummary)
             {
-                group.ReadingGroups.Add(context.Load<RequestedProcedureTypeGroup>(requestedProcedureTypeGroupSummary.EntityRef));
+                group.ReadingGroups.Add(context.Load<ProcedureTypeGroup>(procedureTypeGroupSummary.EntityRef));
             });
         }
     }

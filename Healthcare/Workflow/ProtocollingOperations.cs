@@ -55,7 +55,7 @@ namespace ClearCanvas.Healthcare.Workflow
                 else
                 {
                     Protocol protocol = new Protocol();
-                    protocol.Procedure = step.RequestedProcedure;
+                    protocol.Procedure = step.Procedure;
                     //step.Protocol.Codes
                     //step.Protocol.Notes
                     //step.Protocol.ApprovalRequired

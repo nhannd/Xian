@@ -92,7 +92,7 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
         GetOperationEnablementResponse GetOperationEnablement(GetOperationEnablementRequest request);
 
         /// <summary>
-        /// Get requested procedures that can be checked-in for a patient
+        /// Get procedures that can be checked-in for a patient
         /// </summary>
         /// <param name="request"><see cref="GetDataForCheckInTableRequest"/></param>
         /// <returns><see cref="GetDataForCheckInTableResponse"/></returns>
@@ -100,7 +100,7 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
         GetDataForCheckInTableResponse GetDataForCheckInTable(GetDataForCheckInTableRequest request);
 
         /// <summary>
-        /// Check in requested procedures for a patient
+        /// Check in procedures for a patient
         /// </summary>
         /// <param name="request"><see cref="CheckInProcedureRequest"/></param>
         /// <returns><see cref="CheckInProcedureResponse"/></returns>

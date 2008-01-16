@@ -98,9 +98,8 @@
     <Compile Include="RegistrationWorkflowFolderSystemBase.cs" />
     <Compile Include="RegistrationWorkflowTool.cs" />
     <Compile Include="RegistrationWorklistTable.cs" />
-    <Compile Include="RequestedProcedureEditorComponent.cs" />
+    <Compile Include="ProcedureEditorComponent.cs" />
     <Compile Include="ResubmitProtocolTool.cs" />
-    <Compile Include="RICTable.cs" />
     <Compile Include="TechnologistDocumentationComponent.cs" />
     <Compile Include="TechnologistDocumentationComponentSettings.cs" />
     <Compile Include="TechnologistDocumentationComponentSettings.Designer.cs">

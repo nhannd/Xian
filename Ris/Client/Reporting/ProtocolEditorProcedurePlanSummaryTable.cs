@@ -39,7 +39,7 @@ namespace ClearCanvas.Ris.Client.Reporting
         {
             ITableColumn sortColumn = new TableColumn<ProtocolEditorProcedurePlanSummaryTableItem, string>(
                 "Procedure Description",
-                delegate(ProtocolEditorProcedurePlanSummaryTableItem item) { return item.RequestedProcedureDetail.Type.Name; },
+                delegate(ProtocolEditorProcedurePlanSummaryTableItem item) { return item.ProcedureDetail.Type.Name; },
                 0.5f);
 
             this.Columns.Add(sortColumn);

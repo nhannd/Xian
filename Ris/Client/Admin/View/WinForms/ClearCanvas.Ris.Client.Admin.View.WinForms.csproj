@@ -153,20 +153,20 @@
       <DependentUpon>ProtocolGroupSummaryComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="ProtocolGroupSummaryComponentView.cs" />
-    <Compile Include="RequestedProcedureTypeGroupEditorComponentControl.cs">
+    <Compile Include="ProcedureTypeGroupEditorComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="RequestedProcedureTypeGroupEditorComponentControl.Designer.cs">
-      <DependentUpon>RequestedProcedureTypeGroupEditorComponentControl.cs</DependentUpon>
+    <Compile Include="ProcedureTypeGroupEditorComponentControl.Designer.cs">
+      <DependentUpon>ProcedureTypeGroupEditorComponentControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="RequestedProcedureTypeGroupEditorComponentView.cs" />
-    <Compile Include="RequestedProcedureTypeGroupSummaryComponentControl.cs">
+    <Compile Include="ProcedureTypeGroupEditorComponentView.cs" />
+    <Compile Include="ProcedureTypeGroupSummaryComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="RequestedProcedureTypeGroupSummaryComponentControl.Designer.cs">
-      <DependentUpon>RequestedProcedureTypeGroupSummaryComponentControl.cs</DependentUpon>
+    <Compile Include="ProcedureTypeGroupSummaryComponentControl.Designer.cs">
+      <DependentUpon>ProcedureTypeGroupSummaryComponentControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="RequestedProcedureTypeGroupSummaryComponentView.cs" />
+    <Compile Include="ProcedureTypeGroupSummaryComponentView.cs" />
     <Compile Include="UserEditorComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -301,13 +301,13 @@
       <SubType>Designer</SubType>
       <DependentUpon>ProtocolGroupSummaryComponentControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="RequestedProcedureTypeGroupEditorComponentControl.resx">
+    <EmbeddedResource Include="ProcedureTypeGroupEditorComponentControl.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>RequestedProcedureTypeGroupEditorComponentControl.cs</DependentUpon>
+      <DependentUpon>ProcedureTypeGroupEditorComponentControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="RequestedProcedureTypeGroupSummaryComponentControl.resx">
+    <EmbeddedResource Include="ProcedureTypeGroupSummaryComponentControl.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>RequestedProcedureTypeGroupSummaryComponentControl.cs</DependentUpon>
+      <DependentUpon>ProcedureTypeGroupSummaryComponentControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UserEditorComponentControl.resx">
       <SubType>Designer</SubType>

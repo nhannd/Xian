@@ -45,14 +45,14 @@ namespace ClearCanvas.Healthcare
         {
         }
 
-        public ReportingProcedureStep(RequestedProcedure procedure, ReportPart reportPart)
+        public ReportingProcedureStep(Procedure procedure, ReportPart reportPart)
             :base(procedure)
         {
             _reportPart = reportPart;
         }
 
         public ReportingProcedureStep(ReportingProcedureStep previousStep)
-            : this(previousStep.RequestedProcedure, previousStep.ReportPart)
+            : this(previousStep.Procedure, previousStep.ReportPart)
         {
         }
 

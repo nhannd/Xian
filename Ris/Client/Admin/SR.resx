@@ -234,14 +234,14 @@
   <data name="ExceptionSaveNoteCategory" xml:space="preserve">
     <value>Unable to save Note Category</value>
   </data>
+  <data name="ExceptionSaveProcedureTypeGroup" xml:space="preserve">
+    <value>Unable to save Procedure Type Group</value>
+  </data>
   <data name="ExceptionSaveProtocolCode" xml:space="preserve">
     <value>Unable to save Protocol Code</value>
   </data>
   <data name="ExceptionSaveProtocolGroup" xml:space="preserve">
     <value>Unable to savev Protocol Group</value>
-  </data>
-  <data name="ExceptionSaveRequestedProcedureTypeGroup" xml:space="preserve">
-    <value>Unable to save Requested Procedure Type Group</value>
   </data>
   <data name="ExceptionSaveUser" xml:space="preserve">
     <value>Unable to save User</value>
@@ -309,14 +309,14 @@
   <data name="TitleAddNoteCategory" xml:space="preserve">
     <value>Add Note Category</value>
   </data>
+  <data name="TitleAddProcedureTypeGroup" xml:space="preserve">
+    <value>Add Procedure Type Group</value>
+  </data>
   <data name="TitleAddProtocolCode" xml:space="preserve">
     <value>Add Protocol Code</value>
   </data>
   <data name="TitleAddProtocolGroup" xml:space="preserve">
     <value>Add Protocol Group</value>
-  </data>
-  <data name="TitleAddRequestedProcedureTypeGroup" xml:space="preserve">
-    <value>Add Requested Procedure Type Group</value>
   </data>
   <data name="TitleAddUser" xml:space="preserve">
     <value>Add User</value>
@@ -381,11 +381,11 @@
   <data name="TitleNoteCategories" xml:space="preserve">
     <value>Note Categories</value>
   </data>
+  <data name="TitleProcedureTypeGroup" xml:space="preserve">
+    <value>Procedure Type Groups Admin</value>
+  </data>
   <data name="TitleProtocolGroups" xml:space="preserve">
     <value>Protocol Groups</value>
-  </data>
-  <data name="TitleRequestedProcedureTypeGroup" xml:space="preserve">
-    <value>Requested Procedure Type Groups Admin</value>
   </data>
   <data name="TitleUpdateAuthorityGroup" xml:space="preserve">
     <value>Update Authority Group</value>
@@ -405,8 +405,8 @@
   <data name="TitleUpdateNoteCategory" xml:space="preserve">
     <value>Update Note Category</value>
   </data>
-  <data name="TitleUpdateRequestedProcedureTypeGroup" xml:space="preserve">
-    <value>Update Requested Procedure Type Group</value>
+  <data name="TitleUpdateProcedureTypeGroup" xml:space="preserve">
+    <value>Update Procedure Type Group</value>
   </data>
   <data name="TitleUpdateUser" xml:space="preserve">
     <value>Update User</value>

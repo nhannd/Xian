@@ -61,7 +61,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
         /// </summary>
         public WorklistItem(
             ProcedureStep procedureStep,
-            RequestedProcedure requestedProcedure,
+            Procedure procedure,
             Order order,
             Patient patient,
             PatientProfile profile,
@@ -71,12 +71,12 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
             OrderPriority orderPriority,
             PatientClassEnum patientClass,
             string diagnosticServiceName,
-            string requestedProcedureName,
+            string procedureName,
             DateTime? scheduledStartTime,
             ActivityStatus activityStatus)
             : base(
                 procedureStep,
-                requestedProcedure,
+                procedure,
                 order,
                 patient,
                 profile,
@@ -86,7 +86,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
                 orderPriority,
                 patientClass,
                 diagnosticServiceName,
-                requestedProcedureName,
+                procedureName,
                 scheduledStartTime
             )
         {
@@ -99,7 +99,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
         /// </summary>
         public WorklistItem(
             ProcedureStep procedureStep,
-            RequestedProcedure requestedProcedure,
+            Procedure procedure,
             Order order,
             Patient patient,
             PatientProfile profile,
@@ -110,12 +110,12 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
             OrderPriority orderPriority,
             PatientClassEnum patientClass,
             string diagnosticServiceName,
-            string requestedProcedureName,
+            string procedureName,
             DateTime? scheduledStartTime,
             ActivityStatus activityStatus)
             : base(
                 procedureStep,
-                requestedProcedure,
+                procedure,
                 order,
                 patient,
                 profile,
@@ -125,7 +125,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
                 orderPriority,
                 patientClass,
                 diagnosticServiceName,
-                requestedProcedureName,
+                procedureName,
                 scheduledStartTime
             )
         {

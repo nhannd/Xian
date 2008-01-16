@@ -72,8 +72,8 @@ namespace ClearCanvas.Ris.Client.Admin
         private readonly string _moveCodeDownKey = "MoveCodeDown";
         private readonly string _newCodeKey = "NewCode";
 
-        private RequestedProcedureTypeGroupSummaryTable _availableReadingGroups;
-        private RequestedProcedureTypeGroupSummaryTable _selectedReadingGroups;
+        private ProcedureTypeGroupSummaryTable _availableReadingGroups;
+        private ProcedureTypeGroupSummaryTable _selectedReadingGroups;
 
         #endregion
 
@@ -110,8 +110,8 @@ namespace ClearCanvas.Ris.Client.Admin
             _selectedProtocolCodesActionHandler[_moveCodeDownKey].Enabled = false;
             _selectedProtocolCodesActionHandler[_newCodeKey].Enabled = true;
 
-            _availableReadingGroups = new RequestedProcedureTypeGroupSummaryTable();
-            _selectedReadingGroups = new RequestedProcedureTypeGroupSummaryTable();
+            _availableReadingGroups = new ProcedureTypeGroupSummaryTable();
+            _selectedReadingGroups = new ProcedureTypeGroupSummaryTable();
 
             Platform.GetService<IProtocolAdminService>(
                 delegate(IProtocolAdminService service)
@@ -142,7 +142,7 @@ namespace ClearCanvas.Ris.Client.Admin
                             _availableProtocolCodes.Items.Remove(item);
                         }
 
-                        foreach (RequestedProcedureTypeGroupSummary item in _selectedReadingGroups.Items)
+                        foreach (ProcedureTypeGroupSummary item in _selectedReadingGroups.Items)
                         {
                             _availableReadingGroups.Items.Remove(item);
                         }

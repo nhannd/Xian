@@ -42,7 +42,7 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
     {
         public ReportingWorklistItem(
             EntityRef procedureStepRef,
-            EntityRef requestedProcedureRef,
+            EntityRef procedureRef,
             EntityRef orderRef,
             EntityRef patientRef,
             EntityRef profileRef,
@@ -53,13 +53,13 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
             EnumValueInfo orderPriority,
             EnumValueInfo patientClass,
             string diagnosticServiceName,
-            string requestedProcedureName,
+            string procedureName,
             string procedureStepName,
             DateTime? scheduledStartTime,
             EnumValueInfo activityStatus)
             : base(
                 procedureStepRef,
-                requestedProcedureRef,
+                procedureRef,
                 orderRef,
                 patientRef,
                 profileRef,
@@ -69,7 +69,7 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
                 orderPriority,
                 patientClass,
                 diagnosticServiceName,
-                requestedProcedureName,
+                procedureName,
                 procedureStepName,
                 scheduledStartTime
             )

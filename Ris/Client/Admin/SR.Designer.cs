@@ -412,6 +412,15 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Unable to save Procedure Type Group.
+        /// </summary>
+        internal static string ExceptionSaveProcedureTypeGroup {
+            get {
+                return ResourceManager.GetString("ExceptionSaveProcedureTypeGroup", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unable to save Protocol Code.
         /// </summary>
         internal static string ExceptionSaveProtocolCode {
@@ -426,15 +435,6 @@ namespace ClearCanvas.Ris.Client.Admin {
         internal static string ExceptionSaveProtocolGroup {
             get {
                 return ResourceManager.GetString("ExceptionSaveProtocolGroup", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Unable to save Requested Procedure Type Group.
-        /// </summary>
-        internal static string ExceptionSaveRequestedProcedureTypeGroup {
-            get {
-                return ResourceManager.GetString("ExceptionSaveRequestedProcedureTypeGroup", resourceCulture);
             }
         }
         
@@ -637,6 +637,15 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Add Procedure Type Group.
+        /// </summary>
+        internal static string TitleAddProcedureTypeGroup {
+            get {
+                return ResourceManager.GetString("TitleAddProcedureTypeGroup", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Add Protocol Code.
         /// </summary>
         internal static string TitleAddProtocolCode {
@@ -651,15 +660,6 @@ namespace ClearCanvas.Ris.Client.Admin {
         internal static string TitleAddProtocolGroup {
             get {
                 return ResourceManager.GetString("TitleAddProtocolGroup", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Add Requested Procedure Type Group.
-        /// </summary>
-        internal static string TitleAddRequestedProcedureTypeGroup {
-            get {
-                return ResourceManager.GetString("TitleAddRequestedProcedureTypeGroup", resourceCulture);
             }
         }
         
@@ -853,20 +853,20 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Procedure Type Groups Admin.
+        /// </summary>
+        internal static string TitleProcedureTypeGroup {
+            get {
+                return ResourceManager.GetString("TitleProcedureTypeGroup", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Protocol Groups.
         /// </summary>
         internal static string TitleProtocolGroups {
             get {
                 return ResourceManager.GetString("TitleProtocolGroups", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Requested Procedure Type Groups Admin.
-        /// </summary>
-        internal static string TitleRequestedProcedureTypeGroup {
-            get {
-                return ResourceManager.GetString("TitleRequestedProcedureTypeGroup", resourceCulture);
             }
         }
         
@@ -925,11 +925,11 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Update Requested Procedure Type Group.
+        ///   Looks up a localized string similar to Update Procedure Type Group.
         /// </summary>
-        internal static string TitleUpdateRequestedProcedureTypeGroup {
+        internal static string TitleUpdateProcedureTypeGroup {
             get {
-                return ResourceManager.GetString("TitleUpdateRequestedProcedureTypeGroup", resourceCulture);
+                return ResourceManager.GetString("TitleUpdateProcedureTypeGroup", resourceCulture);
             }
         }
         

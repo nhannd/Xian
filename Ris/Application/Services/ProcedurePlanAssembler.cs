@@ -42,12 +42,12 @@ namespace ClearCanvas.Ris.Application.Services
         {
             ProcedurePlanDetail detail = new ProcedurePlanDetail();
 
-            RequestedProcedureAssembler assembler = new RequestedProcedureAssembler();
+            ProcedureAssembler assembler = new ProcedureAssembler();
 
             detail.OrderRef = order.GetRef();
-            detail.RequestedProcedures = CollectionUtils.Map<RequestedProcedure, RequestedProcedureDetail>(
-                order.RequestedProcedures,
-                delegate(RequestedProcedure rp) { return assembler.CreateRequestedProcedureDetail(rp, context); });
+            detail.Procedures = CollectionUtils.Map<Procedure, ProcedureDetail>(
+                order.Procedures,
+                delegate(Procedure rp) { return assembler.CreateProcedureDetail(rp, context); });
             detail.DiagnosticServiceSummary =
                 new DiagnosticServiceSummary(order.DiagnosticService.GetRef(), order.DiagnosticService.Id, order.DiagnosticService.Name);
 

@@ -184,7 +184,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this.groupBox2.Size = new System.Drawing.Size(564, 211);
             this.groupBox2.TabIndex = 36;
             this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Requested Procedures and Procedure Steps";
+            this.groupBox2.Text = "Procedures and Procedure Steps";
             // 
             // _mpsScheduledEndTime
             // 

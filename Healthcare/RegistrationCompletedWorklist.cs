@@ -46,7 +46,7 @@ namespace ClearCanvas.Healthcare
         {
             RegistrationWorklistItemSearchCriteria criteria = new RegistrationWorklistItemSearchCriteria();
             criteria.Order.Status.In( new OrderStatus[] {OrderStatus.IP, OrderStatus.CM} );
-            criteria.RequestedProcedure.ScheduledStartTime.Between(Platform.Time.Date, Platform.Time.Date.AddDays(1));
+            criteria.Procedure.ScheduledStartTime.Between(Platform.Time.Date, Platform.Time.Date.AddDays(1));
             criteria.ProcedureCheckIn.CheckOutTime.IsNotNull();
             return new RegistrationWorklistItemSearchCriteria[] { criteria };
         }

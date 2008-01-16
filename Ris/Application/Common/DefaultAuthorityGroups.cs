@@ -78,7 +78,7 @@ namespace ClearCanvas.Ris.Application.Common
                         AuthorityTokens.VisitAdmin,
                         AuthorityTokens.UserAdmin,
                         AuthorityTokens.AuthorityGroupAdmin,
-                        AuthorityTokens.RequestedProcedureTypeGroupAdmin,
+                        AuthorityTokens.ProcedureTypeGroupAdmin,
                         AuthorityTokens.WorklistAdmin
                     }),
 
@@ -98,7 +98,7 @@ namespace ClearCanvas.Ris.Application.Common
                         AuthorityTokens.VisitAdmin,
                         AuthorityTokens.UserAdmin,
                         AuthorityTokens.AuthorityGroupAdmin,
-                        AuthorityTokens.RequestedProcedureTypeGroupAdmin,
+                        AuthorityTokens.ProcedureTypeGroupAdmin,
                         AuthorityTokens.WorklistAdmin
                    }),
 

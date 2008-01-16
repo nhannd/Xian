@@ -124,7 +124,7 @@ namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
         public EntityRef ProcedureRef;
 
         [DataMember]
-        public RequestedProcedureTypeSummary ProcedureType;
+        public ProcedureTypeSummary ProcedureType;
 
         [DataMember]
         public DateTime? ProcedureScheduledStartTime;

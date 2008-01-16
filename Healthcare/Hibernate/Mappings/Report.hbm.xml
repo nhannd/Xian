@@ -8,9 +8,9 @@
 
     <property name="Status" column="Status_" type="ClearCanvas.Healthcare.Hibernate.ReportStatusEnumHbm, ClearCanvas.Healthcare.Hibernate" not-null="true" access="nosetter.camelcase-underscore"/>
     
-    <set name="Procedures" table="RequestedProcedureReport_" lazy="true">
+    <set name="Procedures" table="ProcedureReport_" lazy="true">
       <key column="ReportOID_"/>
-      <many-to-many column="ProcedureOID_" class="RequestedProcedure" fetch="join"/>
+      <many-to-many column="ProcedureOID_" class="Procedure" fetch="join"/>
     </set>
 
     <!-- Note: Parts is an ordered set (the order-by attribute tells nhibernate to use an ISet implementation that preserves order -->

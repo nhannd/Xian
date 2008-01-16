@@ -51,7 +51,7 @@ namespace ClearCanvas.Healthcare {
             criteria.ProtocolProcedureStep.State.EqualTo(ActivityStatus.CM);
             DateTime? lower = Platform.Time.AddMonths(-1);
             DateTime? upper = Platform.Time.AddDays(14);
-            criteria.RequestedProcedure.ScheduledStartTime.Between(lower, upper);
+            criteria.Procedure.ScheduledStartTime.Between(lower, upper);
             return new RegistrationWorklistItemSearchCriteria[] { criteria };
         }
 

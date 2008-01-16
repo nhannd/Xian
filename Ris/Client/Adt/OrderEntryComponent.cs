@@ -561,7 +561,7 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             try
             {
-                List<RequestedProcedureTypeSummary> orderableProcedureTypes = null;
+                List<ProcedureTypeSummary> orderableProcedureTypes = null;
                 Platform.GetService<IOrderEntryService>(
                     delegate(IOrderEntryService service)
                     {
@@ -574,7 +574,7 @@ namespace ClearCanvas.Ris.Client.Adt
                     });
 
                 ProcedureRequisition procReq = new ProcedureRequisition(null, _orderingFacility);
-                RequestedProcedureEditorComponent procedureEditor = new RequestedProcedureEditorComponent(procReq, _facilityChoices, _lateralityChoices, orderableProcedureTypes);
+                ProcedureEditorComponent procedureEditor = new ProcedureEditorComponent(procReq, _facilityChoices, _lateralityChoices, orderableProcedureTypes);
                 if(ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, procedureEditor, "Add Procedure")
                     == ApplicationComponentExitCode.Accepted)
                 {
@@ -595,7 +595,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
             try
             {
-                RequestedProcedureEditorComponent procedureEditor = new RequestedProcedureEditorComponent(_selectedProcedure, _facilityChoices, _lateralityChoices);
+                ProcedureEditorComponent procedureEditor = new ProcedureEditorComponent(_selectedProcedure, _facilityChoices, _lateralityChoices);
                 if (ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, procedureEditor, "Modify Procedure")
                     == ApplicationComponentExitCode.Accepted)
                 {
@@ -689,9 +689,9 @@ namespace ClearCanvas.Ris.Client.Adt
                         LoadDiagnosticServiceBreakdownResponse response = service.LoadDiagnosticServiceBreakdown(
                             new LoadDiagnosticServiceBreakdownRequest(summary.DiagnosticServiceRef));
                         _proceduresTable.Items.AddRange(
-                           CollectionUtils.Map<RequestedProcedureTypeDetail, ProcedureRequisition>(
-                               response.DiagnosticServiceDetail.RequestedProcedureTypes,
-                               delegate(RequestedProcedureTypeDetail rpt)
+                           CollectionUtils.Map<ProcedureTypeDetail, ProcedureRequisition>(
+                               response.DiagnosticServiceDetail.ProcedureTypes,
+                               delegate(ProcedureTypeDetail rpt)
                                {
                                    return new ProcedureRequisition(rpt.GetSummary(), _orderingFacility);
                                }));
@@ -712,7 +712,7 @@ namespace ClearCanvas.Ris.Client.Adt
             requisition.OrderingFacility = _orderingFacility;
             requisition.SchedulingRequestTime = _schedulingRequestTime;
             requisition.OrderingPractitioner = _selectedOrderingPractitioner;
-            requisition.RequestedProcedures = new List<ProcedureRequisition>(_proceduresTable.Items);
+            requisition.Procedures = new List<ProcedureRequisition>(_proceduresTable.Items);
             requisition.CopiesToPractitioners = new List<ExternalPractitionerSummary>(_consultantsTable.Items);
             requisition.Attachments = new List<OrderAttachmentSummary>(_attachmentSummaryComponent.OrderAttachments);
             requisition.Notes = new List<OrderNoteDetail>(_noteSummaryComponent.Notes);
@@ -731,7 +731,7 @@ namespace ClearCanvas.Ris.Client.Adt
             _selectedOrderingPractitioner = existingOrder.OrderingPractitioner;
 
             _proceduresTable.Items.Clear();
-            _proceduresTable.Items.AddRange(existingOrder.RequestedProcedures);
+            _proceduresTable.Items.AddRange(existingOrder.Procedures);
 
             _consultantsTable.Items.Clear();
             _consultantsTable.Items.AddRange(existingOrder.CopiesToPractitioners);

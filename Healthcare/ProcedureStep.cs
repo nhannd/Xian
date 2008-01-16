@@ -42,7 +42,7 @@ namespace ClearCanvas.Healthcare
     /// </summary>
     public abstract class ProcedureStep : Activity
     {
-        private RequestedProcedure _requestedProcedure;
+        private Procedure procedure;
 
         /// <summary>
         /// No-args constructor required by NHibernate.
@@ -55,9 +55,9 @@ namespace ClearCanvas.Healthcare
         /// Constructor that assigns this step to a parent procedure.
         /// </summary>
         /// <param name="procedure"></param>
-        public ProcedureStep(RequestedProcedure procedure)
+        public ProcedureStep(Procedure procedure)
         {
-            _requestedProcedure = procedure;
+            this.procedure = procedure;
             procedure.ProcedureSteps.Add(this);
         }
 
@@ -68,12 +68,12 @@ namespace ClearCanvas.Healthcare
 
 
         /// <summary>
-        /// Gets the associated requested procedure
+        /// Gets the associated procedure
         /// </summary>
-        public virtual RequestedProcedure RequestedProcedure
+        public virtual Procedure Procedure
         {
-            get { return _requestedProcedure; }
-            internal set { _requestedProcedure = value; }
+            get { return procedure; }
+            internal set { procedure = value; }
         }
 
         /// <summary>
@@ -132,7 +132,7 @@ namespace ClearCanvas.Healthcare
         }
 
         /// <summary>
-        /// Indicates if the procedure is a "Pre" procedure step.  If true, the procedure step's requested
+        /// Indicates if the procedure is a "Pre" procedure step.  If true, the procedure step's 
         /// procedure is not started with the procedure.
         /// </summary>
         public abstract bool IsPreStep { get; }
@@ -142,7 +142,7 @@ namespace ClearCanvas.Healthcare
         /// </summary>
         protected override void OnSchedulingChanged()
         {
-            _requestedProcedure.UpdateScheduling();
+            procedure.UpdateScheduling();
 
             base.OnSchedulingChanged();
         }
@@ -156,7 +156,7 @@ namespace ClearCanvas.Healthcare
         {
             if (this.IsPreStep == false)
             {
-                _requestedProcedure.UpdateStatus();
+                procedure.UpdateStatus();
             }
 
             base.OnStateChanged(previousState, newState);

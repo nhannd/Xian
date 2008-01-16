@@ -52,7 +52,7 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
         public ListProtocolGroupsForProcedureResponse ListProtocolGroupsForProcedure(ListProtocolGroupsForProcedureRequest request)
         {
             ProtocolAssembler assembler = new ProtocolAssembler();
-            RequestedProcedure rp = this.PersistenceContext.Load<RequestedProcedure>(request.ProcedureRef);
+            Procedure rp = this.PersistenceContext.Load<Procedure>(request.ProcedureRef);
 
             List<ProtocolGroupSummary> groups = CollectionUtils.Map<ProtocolGroup, ProtocolGroupSummary>(
                 this.PersistenceContext.GetBroker<IProtocolGroupBroker>().FindAll(rp.Type),
@@ -84,7 +84,7 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
         [ReadOperation]
         public GetProcedureProtocolResponse GetProcedureProtocol(GetProcedureProtocolRequest request)
         {
-            RequestedProcedure rp = this.PersistenceContext.Load<RequestedProcedure>(request.RequestedProcedureRef);
+            Procedure rp = this.PersistenceContext.Load<Procedure>(request.ProcedureRef);
             ProtocolAssembler assembler = new ProtocolAssembler();
 
             ProcedureStep uncastProtcolStep = CollectionUtils.SelectFirst<ProcedureStep>(
@@ -100,7 +100,7 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
         public GetProcedurePlanForProtocollingWorklistItemResponse GetProcedurePlanForProtocollingWorklistItem(GetProcedurePlanForProtocollingWorklistItemRequest request)
         {
             ProcedureStep mps = this.PersistenceContext.Load<ProcedureStep>(request.ProcedureStepRef);
-            Order order = mps.RequestedProcedure.Order;
+            Order order = mps.Procedure.Order;
 
             ProcedurePlanAssembler assembler = new ProcedurePlanAssembler();
             ProcedurePlanDetail procedurePlanSummary =
@@ -131,7 +131,7 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
         public GetClericalProtocolOperationEnablementResponse GetClericalProtocolOperationEnablement(GetClericalProtocolOperationEnablementRequest request)
         {
             Order order = this.PersistenceContext.Load<Order>(request.OrderRef);
-            RequestedProcedure rp = CollectionUtils.FirstElement<RequestedProcedure>(order.RequestedProcedures);
+            Procedure rp = CollectionUtils.FirstElement<Procedure>(order.Procedures);
             ProtocolResolutionStep resolutionStep = ScheduledProcedureStep<ProtocolResolutionStep>(rp);
 
             GetClericalProtocolOperationEnablementResponse response = new GetClericalProtocolOperationEnablementResponse();
@@ -160,12 +160,12 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
         [UpdateOperation]
         public AddOrderProtocolStepsResponse AddOrderProtocolSteps(AddOrderProtocolStepsRequest request)
         {
-            Order o = this.PersistenceContext.Load<Order>(request.RequestedProcedureRef);
+            Order o = this.PersistenceContext.Load<Order>(request.ProcedureRef);
 
-            foreach (RequestedProcedure rp in o.RequestedProcedures)
+            foreach (Procedure rp in o.Procedures)
             {
                 if(InprogressProcedureStep<ProtocolAssignmentStep>(rp) != null)
-                    throw new RequestValidationException("Protocol step already exists for one or more requested procedures.  Probably stale data.");
+                    throw new RequestValidationException("Protocol step already exists for one or more procedures.");
 
                 Protocol protocol = new Protocol(rp);
                 ProtocolAssignmentStep assignmentStep = new ProtocolAssignmentStep(protocol);
@@ -189,7 +189,7 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 
             bool protocolClaimed = false;
 
-            foreach (RequestedProcedure rp in order.RequestedProcedures)
+            foreach (Procedure rp in order.Procedures)
             {
                 ProtocolAssignmentStep assignmentStep = ScheduledProcedureStep<ProtocolAssignmentStep>(rp);
 
@@ -223,7 +223,7 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
         {
             Order order = this.PersistenceContext.Load<Order>(request.OrderRef);
 
-            foreach (RequestedProcedure rp in order.RequestedProcedures)
+            foreach (Procedure rp in order.Procedures)
             {
                 // Discontinue claimed/in-progress protocol step
                 ProtocolAssignmentStep existingAssignmentStep = InprogressProcedureStep<ProtocolAssignmentStep>(rp);
@@ -250,7 +250,7 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
         {
             Order order = this.PersistenceContext.Load<Order>(request.OrderRef);
 
-            foreach (RequestedProcedure rp in order.RequestedProcedures)
+            foreach (Procedure rp in order.Procedures)
             {
                 ProtocolAssignmentStep assignmentStep = InprogressProcedureStep<ProtocolAssignmentStep>(rp);
 
@@ -269,7 +269,7 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
         {
             Order order = this.PersistenceContext.Load<Order>(request.OrderRef);
 
-            foreach (RequestedProcedure rp in order.RequestedProcedures)
+            foreach (Procedure rp in order.Procedures)
             {
                 ProtocolAssignmentStep assignmentStep = InprogressProcedureStep<ProtocolAssignmentStep>(rp);
 
@@ -291,7 +291,7 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
         {
             Order order = this.PersistenceContext.Load<Order>(request.OrderRef);
 
-            foreach (RequestedProcedure rp in order.RequestedProcedures)
+            foreach (Procedure rp in order.Procedures)
             {
                 ProtocolAssignmentStep assignmentStep = InprogressProcedureStep<ProtocolAssignmentStep>(rp);
 
@@ -324,7 +324,7 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
         {
             Order order = this.PersistenceContext.Load<Order>(request.OrderRef);
 
-            foreach (RequestedProcedure rp in order.RequestedProcedures)
+            foreach (Procedure rp in order.Procedures)
             {
                 ProtocolResolutionStep resolutionStep = ScheduledProcedureStep<ProtocolResolutionStep>(rp);
 
@@ -345,7 +345,7 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
         {
             Order order = this.PersistenceContext.Load<Order>(request.OrderRef);
 
-            foreach (RequestedProcedure rp in order.RequestedProcedures)
+            foreach (Procedure rp in order.Procedures)
             {
                 ProtocolResolutionStep resolutionStep = ScheduledProcedureStep<ProtocolResolutionStep>(rp);
 
@@ -377,17 +377,17 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 
         #endregion
 
-        private T InprogressProcedureStep<T>(RequestedProcedure rp) where T : ProcedureStep
+        private T InprogressProcedureStep<T>(Procedure rp) where T : ProcedureStep
         {
             return CurrentProcedureStep<T>(rp, ActivityStatus.IP);
         }
 
-        private T ScheduledProcedureStep<T>(RequestedProcedure rp) where T : ProcedureStep
+        private T ScheduledProcedureStep<T>(Procedure rp) where T : ProcedureStep
         {
             return CurrentProcedureStep<T>(rp, ActivityStatus.SC);
         }
 
-        private T CurrentProcedureStep<T>(RequestedProcedure rp, ActivityStatus status) where T : ProcedureStep
+        private T CurrentProcedureStep<T>(Procedure rp, ActivityStatus status) where T : ProcedureStep
         {
             ProcedureStep uncastProcedureStep = CollectionUtils.SelectFirst<ProcedureStep>(
                 rp.ProcedureSteps,

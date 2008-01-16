@@ -56,7 +56,7 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
         /// </summary>
         public WorklistItem(
             ProcedureStep procedureStep,
-            RequestedProcedure requestedProcedure,
+            Procedure procedure,
             Order order,
             Patient patient,
             PatientProfile profile,
@@ -66,11 +66,11 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
             OrderPriority orderPriority,
             PatientClassEnum patientClass,
             string diagnosticServiceName,
-            string requestedProcedureName,
+            string procedureName,
             DateTime? scheduledStartTime)
             : base(
                 procedureStep,
-                requestedProcedure,
+                procedure,
                 order,
                 patient,
                 profile,
@@ -80,7 +80,7 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
                 orderPriority,
                 patientClass,
                 diagnosticServiceName,
-                requestedProcedureName,
+                procedureName,
                 scheduledStartTime
             )
         {

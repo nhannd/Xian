@@ -37,13 +37,13 @@ namespace ClearCanvas.Healthcare.Tests
 {
     internal static class TestOrderFactory
     {
-        internal static Order CreateOrder(int numRequestedProcedures, int numMpsPerRequestedProcedure, bool scheduleOrder)
+        internal static Order CreateOrder(int numProcedures, int numMpsPerProcedure, bool scheduleOrder)
         {
             DateTime? scheduleTime = DateTime.Now;
 
             Patient patient = TestPatientFactory.CreatePatient();
             Visit visit = TestVisitFactory.CreateVisit(patient);
-            DiagnosticService ds = TestDiagnosticServiceFactory.CreateDiagnosticService(numRequestedProcedures, numMpsPerRequestedProcedure);
+            DiagnosticService ds = TestDiagnosticServiceFactory.CreateDiagnosticService(numProcedures, numMpsPerProcedure);
             string accession = "10000001";
             string reasonForStudy = "Test";
             ExternalPractitioner orderingPrac = TestExternalPractitionerFactory.CreatePractitioner();

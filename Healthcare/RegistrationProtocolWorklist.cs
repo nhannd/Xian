@@ -6,6 +6,7 @@ using ClearCanvas.Healthcare.Brokers;
 
 namespace ClearCanvas.Healthcare
 {
+    [WorklistProcedureTypeGroupClass(typeof(PerformingGroup))]
     public abstract class RegistrationProtocolWorklist : Worklist
     {
         protected abstract RegistrationWorklistItemSearchCriteria[] GetQueryConditions(Staff staff);

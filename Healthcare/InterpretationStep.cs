@@ -46,7 +46,7 @@ namespace ClearCanvas.Healthcare {
     /// </summary>
 	public partial class InterpretationStep : ReportingProcedureStep
 	{
-        public InterpretationStep(RequestedProcedure procedure)
+        public InterpretationStep(Procedure procedure)
             :base(procedure, null)
         {
         }
@@ -74,7 +74,7 @@ namespace ClearCanvas.Healthcare {
                 throw new WorkflowException("Cannot link to existing report because this interpretation has already been started.");
 
             // link the associated procedure to the specified report
-            report.LinkProcedure(this.RequestedProcedure);
+            report.LinkProcedure(this.Procedure);
 
             // discontinue step so we don't show up in any worklists
             this.Discontinue();

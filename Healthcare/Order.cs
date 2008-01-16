@@ -51,7 +51,7 @@ namespace ClearCanvas.Healthcare {
         #region Static Factory methods
 
         /// <summary>
-        /// Factory method to create a fully initialized new order for the default set of requested procedures
+        /// Factory method to create a fully initialized new order for the default set of procedures
         /// for the specified diagnostic service.
         /// </summary>
         public static Order NewOrder(
@@ -70,12 +70,12 @@ namespace ClearCanvas.Healthcare {
             IList<OrderAttachment> attachments,
             IList<OrderNote> notes)
         {
-            // create requested procedures according to the diagnostic service breakdown
-            IList<RequestedProcedure> procedures = CollectionUtils.Map<RequestedProcedureType, RequestedProcedure>(diagnosticService.RequestedProcedureTypes,
-                delegate(RequestedProcedureType type)
+            // create procedures according to the diagnostic service breakdown
+            IList<Procedure> procedures = CollectionUtils.Map<ProcedureType, Procedure>(diagnosticService.ProcedureTypes,
+                delegate(ProcedureType type)
                 {
                     // each procedure is automatically added to order
-                    RequestedProcedure rp = type.CreateProcedure(scheduledStartTime);
+                    Procedure rp = type.CreateProcedure(scheduledStartTime);
                     rp.PerformingFacility = performingFacility;
                     return rp;
                 });
@@ -87,7 +87,7 @@ namespace ClearCanvas.Healthcare {
 
 
         /// <summary>
-        /// Factory method to create a fully initialized new order for the specified requested procedures.
+        /// Factory method to create a fully initialized new order for the specified procedures.
         /// </summary>
         public static Order NewOrder(
             string accessionNumber,
@@ -100,7 +100,7 @@ namespace ClearCanvas.Healthcare {
             DateTime? schedulingRequestTime,
             ExternalPractitioner orderingPractitioner,
             IList<ExternalPractitioner> copiesToPractitioners,
-            IList<RequestedProcedure> procedures,
+            IList<Procedure> procedures,
             IList<OrderAttachment> attachments,
             IList<OrderNote> notes)
         {
@@ -120,9 +120,9 @@ namespace ClearCanvas.Healthcare {
             order.ResultCopiesToPractitioners.AddAll(copiesToPractitioners);
 
             // associate all procedures with the order
-            foreach (RequestedProcedure rp in procedures)
+            foreach (Procedure rp in procedures)
             {
-                order.AddRequestedProcedure(rp);
+                order.AddProcedure(rp);
             }
 
             foreach (OrderAttachment attachment in attachments)
@@ -158,9 +158,9 @@ namespace ClearCanvas.Healthcare {
             get
             {
                 // All mps and mpps must be completed or discontinued
-                foreach (RequestedProcedure requestedProcedure in RequestedProcedures)
+                foreach (Procedure procedure in Procedures)
                 {
-                    foreach (ModalityProcedureStep modalityProcedureStep in requestedProcedure.ModalityProcedureSteps)
+                    foreach (ModalityProcedureStep modalityProcedureStep in procedure.ModalityProcedureSteps)
                     {
                         if(modalityProcedureStep.State != ActivityStatus.CM && modalityProcedureStep.State != ActivityStatus.DC)
                         {
@@ -191,10 +191,10 @@ namespace ClearCanvas.Healthcare {
         /// Adds the specified procedure to this order.
         /// </summary>
         /// <param name="rp"></param>
-        public virtual void AddRequestedProcedure(RequestedProcedure rp)
+        public virtual void AddProcedure(Procedure rp)
         {
-            if (rp.Order != null || rp.Status != RequestedProcedureStatus.SC)
-                throw new ArgumentException("Only new RequestedProcedure objects may be added to an order.");
+            if (rp.Order != null || rp.Status != ProcedureStatus.SC)
+                throw new ArgumentException("Only new Procedure objects may be added to an order.");
             if (this.IsTerminated)
                 throw new WorkflowException(string.Format("Cannot add procedure to order with status {0}.", _status));
 
@@ -202,12 +202,12 @@ namespace ClearCanvas.Healthcare {
 
             // generate an index for the procedure
             int highestIndex = CollectionUtils.Max<int>(
-                CollectionUtils.Map<RequestedProcedure, int>(_requestedProcedures,
-                delegate(RequestedProcedure p) { return int.Parse(p.Index); }), 0);
+                CollectionUtils.Map<Procedure, int>(_procedures,
+                delegate(Procedure p) { return int.Parse(p.Index); }), 0);
             rp.Index = (highestIndex + 1).ToString();
 
             // add to collection
-            _requestedProcedures.Add(rp);
+            _procedures.Add(rp);
 
             // update scheduling information
             UpdateScheduling();
@@ -217,14 +217,14 @@ namespace ClearCanvas.Healthcare {
         /// Removes the specified procedure from this order.
         /// </summary>
         /// <param name="rp"></param>
-        public virtual void RemoveRequestedProcedure(RequestedProcedure rp)
+        public virtual void RemoveProcedure(Procedure rp)
         {
-            if(!_requestedProcedures.Contains(rp))
-                throw new ArgumentException("Specified requested procedure does not exist for this order.");
-            if(rp.Status != RequestedProcedureStatus.SC)
+            if(!_procedures.Contains(rp))
+                throw new ArgumentException("Specified procedure does not exist for this order.");
+            if(rp.Status != ProcedureStatus.SC)
                 throw new WorkflowException("Only procedures in the SC status can be removed from an order.");
 
-            _requestedProcedures.Remove(rp);
+            _procedures.Remove(rp);
             rp.Order = null;
         }
 
@@ -244,7 +244,7 @@ namespace ClearCanvas.Healthcare {
             _status = OrderStatus.CA;
 
             // cancel all procedures
-            foreach (RequestedProcedure rp in _requestedProcedures)
+            foreach (Procedure rp in _procedures)
             {
                 rp.Cancel();
             }
@@ -266,9 +266,9 @@ namespace ClearCanvas.Healthcare {
             _status = OrderStatus.DC;
             
             // cancel any scheduled procedures
-            foreach (RequestedProcedure rp in _requestedProcedures)
+            foreach (Procedure rp in _procedures)
             {
-                if (rp.Status == RequestedProcedureStatus.SC)
+                if (rp.Status == ProcedureStatus.SC)
                     rp.Cancel();
             }
         }
@@ -293,20 +293,20 @@ namespace ClearCanvas.Healthcare {
         #region Helper methods
 
         /// <summary>
-        /// Called by a child requested procedure to tell the order to update its scheduling information.
+        /// Called by a child procedure to tell the order to update its scheduling information.
         /// </summary>
         protected internal virtual void UpdateScheduling()
         {
             // set the scheduled start time to the earliest non-null scheduled start time of any child procedure
             _scheduledStartTime = CollectionUtils.Min<DateTime?>(
                 CollectionUtils.Select<DateTime?>(
-                    CollectionUtils.Map<RequestedProcedure, DateTime?>(this.RequestedProcedures,
-                        delegate(RequestedProcedure rp) { return rp.ScheduledStartTime; }),
+                    CollectionUtils.Map<Procedure, DateTime?>(this.Procedures,
+                        delegate(Procedure rp) { return rp.ScheduledStartTime; }),
                             delegate(DateTime? startTime) { return startTime != null; }), null);
         }
 
         /// <summary>
-        /// Called by a child requested procedure to tell the order to update its status.  Only
+        /// Called by a child procedure to tell the order to update its status.  Only
         /// certain status updates can be inferred deterministically from child statuses.  If no
         /// status can be inferred, the status does not change.
         /// </summary>
@@ -316,22 +316,22 @@ namespace ClearCanvas.Healthcare {
             if (!IsTerminated)
             {
                 // if all rp are cancelled, the order is cancelled
-                if (CollectionUtils.TrueForAll<RequestedProcedure>(_requestedProcedures,
-                    delegate(RequestedProcedure rp) { return rp.Status == RequestedProcedureStatus.CA; }))
+                if (CollectionUtils.TrueForAll(_procedures,
+                    delegate(Procedure rp) { return rp.Status == ProcedureStatus.CA; }))
                 {
                     _status = OrderStatus.CA;
                 }
                 else
                 // if all rp are cancelled or discontinued, the order is discontinued
-                if (CollectionUtils.TrueForAll<RequestedProcedure>(_requestedProcedures,
-                   delegate(RequestedProcedure rp) { return rp.Status == RequestedProcedureStatus.CA || rp.Status == RequestedProcedureStatus.DC; }))
+                if (CollectionUtils.TrueForAll(_procedures,
+                   delegate(Procedure rp) { return rp.Status == ProcedureStatus.CA || rp.Status == ProcedureStatus.DC; }))
                 {
                     _status = OrderStatus.DC;
                 }
                 else
                 // if all rp are cancelled, discontinued or completed, then the order is completed
-                if (CollectionUtils.TrueForAll<RequestedProcedure>(_requestedProcedures,
-                   delegate(RequestedProcedure rp) { return rp.IsTerminated; }))
+                if (CollectionUtils.TrueForAll(_procedures,
+                   delegate(Procedure rp) { return rp.IsTerminated; }))
                 {
                     _status = OrderStatus.CM;
                 }
@@ -340,8 +340,8 @@ namespace ClearCanvas.Healthcare {
             // if the order is still scheduled, it may need to be auto-started
             if (_status == OrderStatus.SC)
             {
-                if (CollectionUtils.Contains<RequestedProcedure>(_requestedProcedures,
-                   delegate(RequestedProcedure rp) { return rp.Status == RequestedProcedureStatus.IP || rp.Status == RequestedProcedureStatus.CM; }))
+                if (CollectionUtils.Contains(_procedures,
+                   delegate(Procedure rp) { return rp.Status == ProcedureStatus.IP || rp.Status == ProcedureStatus.CM; }))
                 {
                     _status = OrderStatus.IP;
                 }

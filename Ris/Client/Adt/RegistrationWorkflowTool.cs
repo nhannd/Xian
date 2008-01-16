@@ -136,7 +136,7 @@ namespace ClearCanvas.Ris.Client.Adt
                         Platform.GetService<IRegistrationWorkflowService>(
                             delegate(IRegistrationWorkflowService service)
                             {
-                                service.CheckInProcedure(new CheckInProcedureRequest(checkInComponent.SelectedRequestedProcedures));
+                                service.CheckInProcedure(new CheckInProcedureRequest(checkInComponent.SelectedProcedures));
                             });
 
                         folderSystem.InvalidateFolder(typeof(Folders.CheckedInFolder));

@@ -57,9 +57,9 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         }
 
         private const string _hqlSelectOrder =  "select o from Order o";
-        private const string _hqlSelectRP =     "select rp from RequestedProcedure rp";
+        private const string _hqlSelectRP =     "select rp from Procedure rp";
         private const string _hqlSelectMPS =    "select mps from ModalityProcedureStep mps";
-        private const string _hqlJoinRP =       " join mps.RequestedProcedure rp";
+        private const string _hqlJoinRP =       " join mps.Procedure rp";
         private const string _hqlJoinOrder =    " join rp.Order o";
         private const string _hqlCommonJoin =   " join o.Patient p" +
                                                 " join o.Visit v";
@@ -75,14 +75,14 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             return GetList<Order>(hqlQuery, parameters);
         }
 
-        public IList<RequestedProcedure> QueryRequestedProcedureData(Patient patient)
+        public IList<Procedure> QueryProcedureData(Patient patient)
         {
             string hqlQuery = _hqlSelectRP + _hqlJoinOrder + _hqlCommonJoin + _hqlBaseCondition;
 
             List<QueryParameter> parameters = new List<QueryParameter>();
             parameters.Add(new QueryParameter("patient", patient));
 
-            return GetList<RequestedProcedure>(hqlQuery, parameters);
+            return GetList<Procedure>(hqlQuery, parameters);
         }
 
         #region Query helpers

@@ -12,12 +12,12 @@
   <query name="linkedInterpretationCandidates">
     select otherStep
     from InterpretationStep otherStep, InterpretationStep refStep,
-    RequestedProcedure otherProcedure, RequestedProcedure refProcedure,
-    RequestedProcedureType otherProcedureType, RequestedProcedureType refProcedureType
+    Procedure otherProcedure, Procedure refProcedure,
+    ProcedureType otherProcedureType, ProcedureType refProcedureType
     where otherProcedureType = otherProcedure.Type
-    and otherProcedure = otherStep.RequestedProcedure
+    and otherProcedure = otherStep.Procedure
     and refProcedureType = refProcedure.Type
-    and refProcedure = refStep.RequestedProcedure
+    and refProcedure = refStep.Procedure
     and refStep = ?
 
     <!-- otherProcedure must be for the same order -->
@@ -28,10 +28,9 @@
     
     <!-- otherProcedureType must be in the same reading group -->
     and otherProcedureType in (
-      select elements(readingGroup.RequestedProcedureTypes)
-      from RequestedProcedureTypeGroup readingGroup
-      where refProcedureType in elements(readingGroup.RequestedProcedureTypes)
-      and readingGroup.Category = 'READING'
+      select elements(readingGroup.ProcedureTypes)
+      from ReadingProcedureTypeGroup readingGroup
+      where refProcedureType in elements(readingGroup.ProcedureTypes)
     )
     <!-- otherStep must be either unassigned or assigned to the same staff -->
     and (

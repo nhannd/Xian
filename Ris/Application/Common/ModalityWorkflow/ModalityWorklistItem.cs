@@ -40,7 +40,7 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
     {
         public ModalityWorklistItem(
             EntityRef procedureStepRef,
-            EntityRef requestedProcedureRef,
+            EntityRef procedureRef,
             EntityRef orderRef,
             EntityRef patientRef,
             EntityRef profileRef,
@@ -50,12 +50,12 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
             EnumValueInfo orderPriority,
             EnumValueInfo patientClass,
             string diagnosticServiceName,
-            string requestedProcedureName,
+            string procedureName,
             string procedureStepName,
             DateTime? scheduledStartTime)
             :base(
                 procedureStepRef,
-                requestedProcedureRef,
+                procedureRef,
                 orderRef,
                 patientRef,
                 profileRef,
@@ -65,7 +65,7 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
                 orderPriority,
                 patientClass,
                 diagnosticServiceName,
-                requestedProcedureName,
+                procedureName,
                 procedureStepName,
                 scheduledStartTime
             )

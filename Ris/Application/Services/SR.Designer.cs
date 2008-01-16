@@ -178,29 +178,29 @@ namespace ClearCanvas.Ris.Application.Services {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A procedure type group with the name {0} already exists.
+        /// </summary>
+        internal static string ExceptionProcedureTypeGroupNameAlreadyExists {
+            get {
+                return ResourceManager.GetString("ExceptionProcedureTypeGroupNameAlreadyExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A procedure type group name is required.
+        /// </summary>
+        internal static string ExceptionProcedureTypeGroupNameRequired {
+            get {
+                return ResourceManager.GetString("ExceptionProcedureTypeGroupNameRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to At least 2 patients must be specified for reconciliation.
         /// </summary>
         internal static string ExceptionReconciliationRequiresAtLeast2Patients {
             get {
                 return ResourceManager.GetString("ExceptionReconciliationRequiresAtLeast2Patients", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to A requested procedure type group with the name {0} already exists.
-        /// </summary>
-        internal static string ExceptionRequestedProcedureTypeGroupNameAlreadyExists {
-            get {
-                return ResourceManager.GetString("ExceptionRequestedProcedureTypeGroupNameAlreadyExists", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to A requested procedure type group name is required.
-        /// </summary>
-        internal static string ExceptionRequestedProcedureTypeGroupNameRequired {
-            get {
-                return ResourceManager.GetString("ExceptionRequestedProcedureTypeGroupNameRequired", resourceCulture);
             }
         }
         

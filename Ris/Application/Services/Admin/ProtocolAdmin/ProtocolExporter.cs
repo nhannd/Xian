@@ -119,12 +119,12 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ProtocolAdmin
         private void WriteReadingGroupsXml(ProtocolGroup group, XmlWriter writer)
         {
             writer.WriteStartElement(tagReadingGroups);
-            CollectionUtils.ForEach<RequestedProcedureTypeGroup>(group.ReadingGroups,
-                delegate(RequestedProcedureTypeGroup procedureTypeGroup) { WriteReadingGroupXml(procedureTypeGroup, writer); });
+            CollectionUtils.ForEach<ProcedureTypeGroup>(group.ReadingGroups,
+                delegate(ProcedureTypeGroup procedureTypeGroup) { WriteReadingGroupXml(procedureTypeGroup, writer); });
             writer.WriteEndElement();
         }
 
-        private void WriteReadingGroupXml(RequestedProcedureTypeGroup procedureTypeGroup, XmlWriter writer)
+        private void WriteReadingGroupXml(ProcedureTypeGroup procedureTypeGroup, XmlWriter writer)
         {
             writer.WriteStartElement(tagReadingGroup);
             writer.WriteAttributeString(attrReadingGroupName, procedureTypeGroup.Name);

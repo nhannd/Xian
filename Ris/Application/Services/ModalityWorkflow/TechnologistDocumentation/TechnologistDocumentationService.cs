@@ -87,11 +87,11 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
         {
             Order order = this.PersistenceContext.Load<Order>(request.OrderRef);
 
-            foreach (RequestedProcedure requestedProcedure in order.RequestedProcedures)
+            foreach (Procedure procedure in order.Procedures)
             {
-                if(requestedProcedure.DocumentationProcedureStep != null && requestedProcedure.DocumentationProcedureStep.State != ActivityStatus.CM)
+                if(procedure.DocumentationProcedureStep != null && procedure.DocumentationProcedureStep.State != ActivityStatus.CM)
                 {
-                    requestedProcedure.DocumentationProcedureStep.Complete();
+                    procedure.DocumentationProcedureStep.Complete();
                 }
             }
 

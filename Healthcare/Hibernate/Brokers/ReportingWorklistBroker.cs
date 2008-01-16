@@ -57,7 +57,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         private const string _hqlFromReportingStep = " from ReportingProcedureStep ps";
 
         private const string _hqlJoin =
-            " join ps.RequestedProcedure rp" +
+            " join ps.Procedure rp" +
             " join rp.Type rpt" +
             " join rp.Order o" +
             " join o.DiagnosticService ds" +
@@ -71,7 +71,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         private const string _hqlWorklistSubQuery = 
             "rp.Type in" + 
             " (select distinct rpt from Worklist w" +
-            " join w.RequestedProcedureTypeGroups rptg join rptg.RequestedProcedureTypes rpt where w = ?)";
+            " join w.ProcedureTypeGroups rptg join rptg.ProcedureTypes rpt where w = ?)";
 
         #region IReportingWorklistBroker Members
 
@@ -149,7 +149,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             if (or.Conditions.Count > 0)
                 query.Conditions.Add(or);
 
-            if (worklist != null && !worklist.RequestedProcedureTypeGroups.IsEmpty)
+            if (worklist != null && !worklist.ProcedureTypeGroups.IsEmpty)
             {
                 query.Conditions.Add(new HqlCondition(_hqlWorklistSubQuery, worklist));
             }

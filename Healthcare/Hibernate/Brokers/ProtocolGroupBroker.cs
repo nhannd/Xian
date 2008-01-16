@@ -40,7 +40,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
     {
         #region IProtocolGroupBroker Members
 
-        public IList<ProtocolGroup> FindAll(RequestedProcedureType procedureType)
+        public IList<ProtocolGroup> FindAll(ProcedureType procedureType)
         {
             if (procedureType == null)
                 return new List<ProtocolGroup>();
@@ -48,7 +48,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             string hql =
                 "select p from ProtocolGroup p"
                 + " join p.ReadingGroups r "
-                + " join r.RequestedProcedureTypes t"
+                + " join r.ProcedureTypes t"
                 + " where t = :requesteProcedureType";
 
             IQuery query = this.Context.CreateHibernateQuery(hql);

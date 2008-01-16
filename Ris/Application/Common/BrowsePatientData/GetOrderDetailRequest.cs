@@ -70,7 +70,7 @@ namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
         public bool IncludeVisit;
 
         /// <summary>
-        /// Include detailed requested procedure information.
+        /// Include detailed procedure information.
         /// </summary>
         [DataMember]
         public bool IncludeProcedures;

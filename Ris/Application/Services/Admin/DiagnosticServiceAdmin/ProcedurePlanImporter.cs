@@ -49,12 +49,12 @@ namespace ClearCanvas.Ris.Application.Services.Admin.DiagnosticServiceAdmin
     {
         private IUpdateContext _updateContext;
         private IDiagnosticServiceBroker _dsBroker;
-        private IRequestedProcedureTypeBroker _rptBroker;
+        private IProcedureTypeBroker _rptBroker;
         private IModalityProcedureStepTypeBroker _sptBroker;
         private IModalityBroker _modalityBroker;
 
         private List<DiagnosticService> _diagnosticServices;
-        private List<RequestedProcedureType> _rpTypes;
+        private List<ProcedureType> _rpTypes;
         private List<ModalityProcedureStepType> _spTypes;
         private List<Modality> _modalities;
 
@@ -75,8 +75,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.DiagnosticServiceAdmin
         /// Each string in the list must contain 8 CSV fields, as follows:
         ///     0 - Diagnostic Service ID
         ///     1 - Diagnostic Service Name
-        ///     2 - Requested Procedure Type ID
-        ///     3 - Requested Procedure Type Name
+        ///     2 - Procedure Type ID
+        ///     3 - Procedure Type Name
         ///     4 - Modality Procedure Step Type ID
         ///     5 - Modality Procedure Step Type Name
         ///     6 - Default Modality ID
@@ -87,12 +87,12 @@ namespace ClearCanvas.Ris.Application.Services.Admin.DiagnosticServiceAdmin
         {
             _updateContext = context;
             _dsBroker = _updateContext.GetBroker<IDiagnosticServiceBroker>();
-            _rptBroker = _updateContext.GetBroker<IRequestedProcedureTypeBroker>();
+            _rptBroker = _updateContext.GetBroker<IProcedureTypeBroker>();
             _sptBroker = _updateContext.GetBroker<IModalityProcedureStepTypeBroker>();
             _modalityBroker = _updateContext.GetBroker<IModalityBroker>();
 
             _diagnosticServices = new List<DiagnosticService>();
-            _rpTypes = new List<RequestedProcedureType>();
+            _rpTypes = new List<ProcedureType>();
             _spTypes = new List<ModalityProcedureStepType>();
             _modalities = new List<Modality>();
 
@@ -113,12 +113,12 @@ namespace ClearCanvas.Ris.Application.Services.Admin.DiagnosticServiceAdmin
 
                 Modality modality = GetModality(modId, modName);
                 DiagnosticService ds = GetDiagnosticService(dsId, dsName);
-                RequestedProcedureType rpt = GetRequestedProcedureType(rptId, rptName);
+                ProcedureType rpt = GetProcedureType(rptId, rptName);
                 ModalityProcedureStepType spt = GetModalityProcedureStepType(sptId, sptName, modality);
 
-                if (!ds.RequestedProcedureTypes.Contains(rpt))
+                if (!ds.ProcedureTypes.Contains(rpt))
                 {
-                    ds.AddRequestedProcedureType(rpt);
+                    ds.AddProcedureType(rpt);
                 }
 
                 if (!rpt.ModalityProcedureStepTypes.Contains(spt))
@@ -159,24 +159,24 @@ namespace ClearCanvas.Ris.Application.Services.Admin.DiagnosticServiceAdmin
             return ds;
         }
 
-        private RequestedProcedureType GetRequestedProcedureType(string id, string name)
+        private ProcedureType GetProcedureType(string id, string name)
         {
             // first check if we have it in memory
-            RequestedProcedureType rpType = CollectionUtils.SelectFirst<RequestedProcedureType>(_rpTypes,
-                delegate(RequestedProcedureType rp) { return rp.Id == id; });
+            ProcedureType rpType = CollectionUtils.SelectFirst<ProcedureType>(_rpTypes,
+                delegate(ProcedureType rp) { return rp.Id == id; });
 
             // if not, check the database
             if (rpType == null)
             {
-                RequestedProcedureTypeSearchCriteria criteria = new RequestedProcedureTypeSearchCriteria();
+                ProcedureTypeSearchCriteria criteria = new ProcedureTypeSearchCriteria();
                 criteria.Id.EqualTo(id);
 
-                rpType = CollectionUtils.FirstElement<RequestedProcedureType>(_rptBroker.Find(criteria));
+                rpType = CollectionUtils.FirstElement<ProcedureType>(_rptBroker.Find(criteria));
 
                 // if not, create a transient instance
                 if (rpType == null)
                 {
-                    rpType = new RequestedProcedureType(id, name);
+                    rpType = new ProcedureType(id, name);
                     _updateContext.Lock(rpType, DirtyState.New);
                 }
 

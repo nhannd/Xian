@@ -159,11 +159,11 @@
   <data name="ExceptionPatientNotFound" xml:space="preserve">
     <value>Patient with MRN {0} {1} not found</value>
   </data>
-  <data name="ExceptionRequestedProcedureTypeGroupNameAlreadyExists" xml:space="preserve">
-    <value>A requested procedure type group with the name {0} already exists</value>
+  <data name="ExceptionProcedureTypeGroupNameAlreadyExists" xml:space="preserve">
+    <value>A procedure type group with the name {0} already exists</value>
   </data>
-  <data name="ExceptionRequestedProcedureTypeGroupNameRequired" xml:space="preserve">
-    <value>A requested procedure type group name is required</value>
+  <data name="ExceptionProcedureTypeGroupNameRequired" xml:space="preserve">
+    <value>A procedure type group name is required</value>
   </data>
   <data name="ExceptionWorklistNameAlreadyExists" xml:space="preserve">
     <value>A worklist with the name {0} already exists</value>

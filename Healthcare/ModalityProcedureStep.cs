@@ -58,7 +58,7 @@ namespace ClearCanvas.Healthcare {
         /// <param name="procedure"></param>
         /// <param name="type"></param>
         /// <param name="modality"></param>
-        public ModalityProcedureStep(RequestedProcedure procedure, ModalityProcedureStepType type, Modality modality)
+        public ModalityProcedureStep(Procedure procedure, ModalityProcedureStepType type, Modality modality)
             :base(procedure)
         {
             _type = type;

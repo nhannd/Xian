@@ -75,7 +75,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
                 // if a report has not yet been created for this step, create now
                 if (step.ReportPart == null)
                 {
-                    Report report = new Report(step.RequestedProcedure);
+                    Report report = new Report(step.Procedure);
                     ReportPart part = report.ActivePart;
 
                     context.Lock(report, DirtyState.New);
@@ -196,8 +196,8 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
                 List<InterpretationStep> interpretations = new List<InterpretationStep>();
                 if(!IsAddendumStep(step))
                 {
-                    HashedSet<RequestedProcedure> procedures = new HashedSet<RequestedProcedure>();
-                    procedures.Add(step.RequestedProcedure);
+                    HashedSet<Procedure> procedures = new HashedSet<Procedure>();
+                    procedures.Add(step.Procedure);
 
                     // if there are linked procedures, schedule a new interpretation for each procedure being reported
                     if (step.ReportPart != null)
@@ -206,7 +206,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
                     }
 
                     // schedule new interpretations
-                    foreach (RequestedProcedure procedure in procedures)
+                    foreach (Procedure procedure in procedures)
                     {
                         InterpretationStep interpretation = new InterpretationStep(procedure);
                         interpretations.Add(interpretation);
@@ -337,7 +337,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
         {
             public InterpretationStep Execute(PublicationStep step, Staff currentUserStaff, IWorkflow workflow)
             {
-                InterpretationStep interpretation = new InterpretationStep(step.RequestedProcedure);
+                InterpretationStep interpretation = new InterpretationStep(step.Procedure);
                 interpretation.Assign(currentUserStaff);
                 interpretation.Start(currentUserStaff);
                 interpretation.ReportPart = step.ReportPart.Report.AddAddendum();
@@ -348,7 +348,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
             public override bool CanExecute(ReportingProcedureStep step, Staff currentUserStaff)
             {
                 // can only create an addendum if all outstanding reporting steps for the procedure are complete
-                if(!CollectionUtils.TrueForAll(step.RequestedProcedure.ReportingProcedureSteps,
+                if(!CollectionUtils.TrueForAll(step.Procedure.ReportingProcedureSteps,
                     delegate (ReportingProcedureStep ps) { return ps.IsTerminated; }))
                     return false;
 

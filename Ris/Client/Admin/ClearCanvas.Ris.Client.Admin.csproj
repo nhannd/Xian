@@ -65,10 +65,10 @@
     <Compile Include="ProtocolGroupEditorComponent.cs" />
     <Compile Include="ProtocolGroupSummaryComponent.cs" />
     <Compile Include="ProtocolGroupTable.cs" />
-    <Compile Include="RequestedProcedureTypeGroupEditorComponent.cs" />
-    <Compile Include="RequestedProcedureTypeGroupSummaryComponent.cs" />
-    <Compile Include="RequestedProcedureTypeGroupSummaryTable.cs" />
-    <Compile Include="RequestedProcedureTypeGroupSummaryTool.cs" />
+    <Compile Include="ProcedureTypeGroupEditorComponent.cs" />
+    <Compile Include="ProcedureTypeGroupSummaryComponent.cs" />
+    <Compile Include="ProcedureTypeGroupSummaryTable.cs" />
+    <Compile Include="ProcedureTypeGroupSummaryTool.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

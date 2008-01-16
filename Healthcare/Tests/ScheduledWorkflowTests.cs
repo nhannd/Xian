@@ -92,13 +92,13 @@ namespace ClearCanvas.Healthcare.Tests
             CheckStatus(OrderStatus.SC, order);
 
             // check that diagnostic service plan was copied properly
-            Assert.AreEqual(ds.RequestedProcedureTypes.Count, order.RequestedProcedures.Count);
-            foreach (RequestedProcedure rp in order.RequestedProcedures)
+            Assert.AreEqual(ds.ProcedureTypes.Count, order.Procedures.Count);
+            foreach (Procedure rp in order.Procedures)
             {
-                CheckStatus(RequestedProcedureStatus.SC, rp);
+                CheckStatus(ProcedureStatus.SC, rp);
 
-                RequestedProcedureType rpType = CollectionUtils.SelectFirst(ds.RequestedProcedureTypes,
-                    delegate(RequestedProcedureType rpt) { return rpt.Equals(rp.Type); });
+                ProcedureType rpType = CollectionUtils.SelectFirst(ds.ProcedureTypes,
+                    delegate(ProcedureType rpt) { return rpt.Equals(rp.Type); });
 
                 Assert.IsNotNull(rpType, "diagnostic service plan not copied correctly");
                 foreach (ModalityProcedureStep mps in rp.ModalityProcedureSteps)
@@ -113,8 +113,8 @@ namespace ClearCanvas.Healthcare.Tests
             }
 
 
-            // check that scheduling time was propagated to all requested procedures and procedure steps
-            foreach (RequestedProcedure rp in order.RequestedProcedures)
+            // check that scheduling time was propagated to all procedures and procedure steps
+            foreach (Procedure rp in order.Procedures)
             {
                 Assert.AreEqual(scheduleTime, rp.ScheduledStartTime, "incorrect RP scheduled start time");
                 foreach (ProcedureStep ps in rp.ProcedureSteps)
@@ -137,7 +137,7 @@ namespace ClearCanvas.Healthcare.Tests
             DateTime scheduleTime = DateTime.Now;
 
             // scheduled the check-in step
-            RequestedProcedure rp = CollectionUtils.FirstElement<RequestedProcedure>(order.RequestedProcedures);
+            Procedure rp = CollectionUtils.FirstElement<Procedure>(order.Procedures);
             ProcedureStep step = CollectionUtils.FirstElement<ProcedureStep>(rp.ProcedureSteps);
             step.Schedule(scheduleTime);
 
@@ -159,7 +159,7 @@ namespace ClearCanvas.Healthcare.Tests
             Order order = TestOrderFactory.CreateOrder(2, 2, true);
 
             // unschedule all steps
-            foreach (RequestedProcedure rp in order.RequestedProcedures)
+            foreach (Procedure rp in order.Procedures)
             {
                 foreach (ProcedureStep step in rp.ProcedureSteps)
                 {
@@ -185,7 +185,7 @@ namespace ClearCanvas.Healthcare.Tests
             DateTime originalTime = (DateTime)order.ScheduledStartTime;
             DateTime newTime = originalTime - TimeSpan.FromDays(1);
 
-            RequestedProcedure rp = CollectionUtils.FirstElement<RequestedProcedure>(order.RequestedProcedures);
+            Procedure rp = CollectionUtils.FirstElement<Procedure>(order.Procedures);
             ProcedureStep step = CollectionUtils.FirstElement<ProcedureStep>(rp.ProcedureSteps);
             step.Schedule(newTime);
 
@@ -208,7 +208,7 @@ namespace ClearCanvas.Healthcare.Tests
             DateTime originalTime = (DateTime)order.ScheduledStartTime;
             DateTime newTime = originalTime + TimeSpan.FromDays(1);
 
-            RequestedProcedure rp = CollectionUtils.FirstElement<RequestedProcedure>(order.RequestedProcedures);
+            Procedure rp = CollectionUtils.FirstElement<Procedure>(order.Procedures);
             ProcedureStep step = CollectionUtils.FirstElement<ProcedureStep>(rp.ProcedureSteps);
             step.Schedule(newTime);
 
@@ -230,9 +230,9 @@ namespace ClearCanvas.Healthcare.Tests
             order.Cancel(_defaultCancelReason);
 
             CheckStatus(OrderStatus.CA, order);
-            foreach (RequestedProcedure rp in order.RequestedProcedures)
+            foreach (Procedure rp in order.Procedures)
             {
-                CheckStatus(RequestedProcedureStatus.CA, rp);
+                CheckStatus(ProcedureStatus.CA, rp);
                 foreach (ProcedureStep step in rp.ProcedureSteps)
                 {
                     CheckStatus(ActivityStatus.DC, step);
@@ -249,7 +249,7 @@ namespace ClearCanvas.Healthcare.Tests
             Order order = TestOrderFactory.CreateOrder(2, 2, true);
 
             // put the order in progress
-            RequestedProcedure rp = CollectionUtils.FirstElement<RequestedProcedure>(order.RequestedProcedures);
+            Procedure rp = CollectionUtils.FirstElement<Procedure>(order.Procedures);
             ProcedureStep step = CollectionUtils.FirstElement<ProcedureStep>(rp.ProcedureSteps);
             step.Start(TestStaffFactory.CreateStaff(StaffType.STEC));
 
@@ -275,10 +275,10 @@ namespace ClearCanvas.Healthcare.Tests
             Order order = TestOrderFactory.CreateOrder(2, 2, true);
 
             // copy req procs to a list so we can access them by index
-            List<RequestedProcedure> reqProcs = new List<RequestedProcedure>(
-                new TypeSafeEnumerableWrapper<RequestedProcedure>(order.RequestedProcedures));
-            RequestedProcedure rp1 = reqProcs[0];
-            RequestedProcedure rp2 = reqProcs[1];
+            List<Procedure> reqProcs = new List<Procedure>(
+                new TypeSafeEnumerableWrapper<Procedure>(order.Procedures));
+            Procedure rp1 = reqProcs[0];
+            Procedure rp2 = reqProcs[1];
 
             // start rp 1
             rp1.ModalityProcedureSteps[0].Start(TestStaffFactory.CreateStaff(StaffType.STEC));
@@ -289,10 +289,10 @@ namespace ClearCanvas.Healthcare.Tests
             CheckStatus(OrderStatus.DC, order);
 
             // rp 2 is canceled
-            CheckStatus(RequestedProcedureStatus.CA, rp2);
+            CheckStatus(ProcedureStatus.CA, rp2);
 
             // rp 1 is still in progress
-            CheckStatus(RequestedProcedureStatus.IP, rp1);
+            CheckStatus(ProcedureStatus.IP, rp1);
         }
 
         /// <summary>
@@ -304,10 +304,10 @@ namespace ClearCanvas.Healthcare.Tests
             Order order = TestOrderFactory.CreateOrder(2, 2, true);
 
             // copy req procs to a list so we can access them by index
-            List<RequestedProcedure> reqProcs = new List<RequestedProcedure>(
-                new TypeSafeEnumerableWrapper<RequestedProcedure>(order.RequestedProcedures));
-            RequestedProcedure rp1 = reqProcs[0];
-            RequestedProcedure rp2 = reqProcs[1];
+            List<Procedure> reqProcs = new List<Procedure>(
+                new TypeSafeEnumerableWrapper<Procedure>(order.Procedures));
+            Procedure rp1 = reqProcs[0];
+            Procedure rp2 = reqProcs[1];
 
             // start and discontinue rp1
             rp1.ModalityProcedureSteps[0].Start(TestStaffFactory.CreateStaff(StaffType.STEC));
@@ -328,7 +328,7 @@ namespace ClearCanvas.Healthcare.Tests
         {
             Order order = TestOrderFactory.CreateOrder(2, 2, true);
 
-            foreach (RequestedProcedure rp in order.RequestedProcedures)
+            foreach (Procedure rp in order.Procedures)
             {
                 rp.Cancel();
             }
@@ -346,12 +346,12 @@ namespace ClearCanvas.Healthcare.Tests
             Order order = TestOrderFactory.CreateOrder(2, 2, true);
 
             // put the order in progress
-            RequestedProcedure rp = CollectionUtils.FirstElement<RequestedProcedure>(order.RequestedProcedures);
+            Procedure rp = CollectionUtils.FirstElement<Procedure>(order.Procedures);
             ProcedureStep step = CollectionUtils.FirstElement<ProcedureStep>(rp.ProcedureSteps);
             step.Start(TestStaffFactory.CreateStaff(StaffType.STEC));
 
-            // requested procedure is in progress
-            CheckStatus(RequestedProcedureStatus.IP, rp);
+            // procedure is in progress
+            CheckStatus(ProcedureStatus.IP, rp);
 
             // order is in progress
             CheckStatus(OrderStatus.IP, order);
@@ -366,12 +366,12 @@ namespace ClearCanvas.Healthcare.Tests
             Order order = TestOrderFactory.CreateOrder(1, 2, true);
 
             // copy req procs to a list so we can access them by index
-            List<RequestedProcedure> reqProcs = new List<RequestedProcedure>(
-                new TypeSafeEnumerableWrapper<RequestedProcedure>(order.RequestedProcedures));
-            RequestedProcedure rp1 = reqProcs[0];
+            List<Procedure> reqProcs = new List<Procedure>(
+                new TypeSafeEnumerableWrapper<Procedure>(order.Procedures));
+            Procedure rp1 = reqProcs[0];
 
             rp1.Cancel();
-            CheckStatus(RequestedProcedureStatus.CA, rp1);
+            CheckStatus(ProcedureStatus.CA, rp1);
 
             foreach (ProcedureStep step in rp1.ProcedureSteps)
             {
@@ -390,10 +390,10 @@ namespace ClearCanvas.Healthcare.Tests
             {
                 Order order = TestOrderFactory.CreateOrder(1, 1, true);
 
-                RequestedProcedure rp = CollectionUtils.FirstElement<RequestedProcedure>(order.RequestedProcedures);
+                Procedure rp = CollectionUtils.FirstElement<Procedure>(order.Procedures);
                 rp.ModalityProcedureSteps[0].Start(TestStaffFactory.CreateStaff(StaffType.STEC));
 
-                CheckStatus(RequestedProcedureStatus.IP, rp);
+                CheckStatus(ProcedureStatus.IP, rp);
 
                 rp.Cancel();
 
@@ -417,9 +417,9 @@ namespace ClearCanvas.Healthcare.Tests
             Order order = TestOrderFactory.CreateOrder(1, 3, true);
 
             // copy req procs to a list so we can access them by index
-            List<RequestedProcedure> reqProcs = new List<RequestedProcedure>(
-                new TypeSafeEnumerableWrapper<RequestedProcedure>(order.RequestedProcedures));
-            RequestedProcedure rp1 = reqProcs[0];
+            List<Procedure> reqProcs = new List<Procedure>(
+                new TypeSafeEnumerableWrapper<Procedure>(order.Procedures));
+            Procedure rp1 = reqProcs[0];
 
             // put one mps in progress and the other completed, leaving the third scheduled
             rp1.ModalityProcedureSteps[0].Start(TestStaffFactory.CreateStaff(StaffType.STEC));
@@ -428,7 +428,7 @@ namespace ClearCanvas.Healthcare.Tests
             // discontinue rp1
             rp1.Discontinue();
 
-            CheckStatus(RequestedProcedureStatus.DC, rp1);
+            CheckStatus(ProcedureStatus.DC, rp1);
 
             // expect scheduled step was discontinued
             CheckStatus(ActivityStatus.DC, rp1.ModalityProcedureSteps[2]);
@@ -446,14 +446,14 @@ namespace ClearCanvas.Healthcare.Tests
         {
             Order order = TestOrderFactory.CreateOrder(1, 1, true);
 
-            RequestedProcedure rp1 = CollectionUtils.FirstElement<RequestedProcedure>(order.RequestedProcedures);
+            Procedure rp1 = CollectionUtils.FirstElement<Procedure>(order.Procedures);
             ModalityProcedureStep mps1 = rp1.ModalityProcedureSteps[0];
             CheckStatus(ActivityStatus.SC, mps1);
 
             mps1.Start(TestStaffFactory.CreateStaff(StaffType.STEC));
 
             CheckStatus(ActivityStatus.IP, mps1);
-            CheckStatus(RequestedProcedureStatus.IP, rp1);
+            CheckStatus(ProcedureStatus.IP, rp1);
             CheckStatus(OrderStatus.IP, order);
         }
 
@@ -466,14 +466,14 @@ namespace ClearCanvas.Healthcare.Tests
         {
             Order order = TestOrderFactory.CreateOrder(1, 1, true);
 
-            RequestedProcedure rp1 = CollectionUtils.FirstElement<RequestedProcedure>(order.RequestedProcedures);
+            Procedure rp1 = CollectionUtils.FirstElement<Procedure>(order.Procedures);
             ModalityProcedureStep mps1 = rp1.ModalityProcedureSteps[0];
             CheckStatus(ActivityStatus.SC, mps1);
 
             mps1.Complete(TestStaffFactory.CreateStaff(StaffType.STEC));
 
             CheckStatus(ActivityStatus.CM, mps1);
-            CheckStatus(RequestedProcedureStatus.IP, rp1);
+            CheckStatus(ProcedureStatus.IP, rp1);
             CheckStatus(OrderStatus.IP, order);
         }
 
@@ -485,7 +485,7 @@ namespace ClearCanvas.Healthcare.Tests
         public void CompleteProcedureStepFromInProgress()
         {
             Order order = TestOrderFactory.CreateOrder(1, 1, true);
-            RequestedProcedure rp1 = CollectionUtils.FirstElement<RequestedProcedure>(order.RequestedProcedures);
+            Procedure rp1 = CollectionUtils.FirstElement<Procedure>(order.Procedures);
             ModalityProcedureStep mps1 = rp1.ModalityProcedureSteps[0];
             CheckStatus(ActivityStatus.SC, mps1);
 
@@ -496,7 +496,7 @@ namespace ClearCanvas.Healthcare.Tests
             rp1.ModalityProcedureSteps[0].Complete();
 
             CheckStatus(ActivityStatus.CM, mps1);
-            CheckStatus(RequestedProcedureStatus.IP, rp1);
+            CheckStatus(ProcedureStatus.IP, rp1);
             CheckStatus(OrderStatus.IP, order);
         }
 
@@ -512,14 +512,14 @@ namespace ClearCanvas.Healthcare.Tests
 
             CheckStatus(OrderStatus.SC, order);
 
-            RequestedProcedure rp1 = CollectionUtils.FirstElement<RequestedProcedure>(order.RequestedProcedures);
-            CheckStatus(RequestedProcedureStatus.SC, rp1);
+            Procedure rp1 = CollectionUtils.FirstElement<Procedure>(order.Procedures);
+            CheckStatus(ProcedureStatus.SC, rp1);
 
             rp1.ModalityProcedureSteps[0].Discontinue();
             CheckStatus(ActivityStatus.DC, rp1.ModalityProcedureSteps[0]);
 
             // rp and order status unchanged
-            CheckStatus(RequestedProcedureStatus.SC, rp1);
+            CheckStatus(ProcedureStatus.SC, rp1);
             CheckStatus(OrderStatus.SC, order);
             Assert.IsNull(rp1.ProcedureCheckIn.CheckOutTime);
         }
@@ -535,14 +535,14 @@ namespace ClearCanvas.Healthcare.Tests
 
             CheckStatus(OrderStatus.SC, order);
 
-            foreach (RequestedProcedure rp in order.RequestedProcedures)
+            foreach (Procedure rp in order.Procedures)
             {
                 foreach (ProcedureStep step in rp.ProcedureSteps)
                 {
                     step.Discontinue();
                     CheckStatus(ActivityStatus.DC, step);
                 }
-                CheckStatus(RequestedProcedureStatus.DC, rp);
+                CheckStatus(ProcedureStatus.DC, rp);
             }
 
             CheckStatus(OrderStatus.DC, order);
@@ -554,7 +554,7 @@ namespace ClearCanvas.Healthcare.Tests
         {
             Assert.AreEqual(status, o.Status, string.Format("Exptected {0} status {1}", o.GetClass().Name, status.ToString()));
         }
-        private void CheckStatus(RequestedProcedureStatus status, RequestedProcedure o)
+        private void CheckStatus(ProcedureStatus status, Procedure o)
         {
             Assert.AreEqual(status, o.Status, string.Format("Exptected {0} status {1}", o.GetClass().Name, status.ToString()));
         }

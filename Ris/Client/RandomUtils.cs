@@ -324,11 +324,11 @@ namespace ClearCanvas.Ris.Client
                     LoadDiagnosticServiceBreakdownResponse dsResponse = service.LoadDiagnosticServiceBreakdown(
                         new LoadDiagnosticServiceBreakdownRequest(diagnosticService.DiagnosticServiceRef));
 
-                    requisition.RequestedProcedures = new List<ProcedureRequisition>();
-                    requisition.RequestedProcedures.AddRange(
-                       CollectionUtils.Map<RequestedProcedureTypeDetail, ProcedureRequisition>(
-                           dsResponse.DiagnosticServiceDetail.RequestedProcedureTypes,
-                           delegate(RequestedProcedureTypeDetail rpt)
+                    requisition.Procedures = new List<ProcedureRequisition>();
+                    requisition.Procedures.AddRange(
+                       CollectionUtils.Map<ProcedureTypeDetail, ProcedureRequisition>(
+                           dsResponse.DiagnosticServiceDetail.ProcedureTypes,
+                           delegate(ProcedureTypeDetail rpt)
                            {
                                ProcedureRequisition req = new ProcedureRequisition(rpt.GetSummary(), performingFacility);
                                req.ScheduledTime = Platform.Time;

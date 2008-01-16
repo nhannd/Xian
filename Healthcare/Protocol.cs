@@ -36,7 +36,7 @@ namespace ClearCanvas.Healthcare
     /// </summary>
     public partial class Protocol : ClearCanvas.Enterprise.Core.Entity
     {
-        public Protocol(RequestedProcedure procedure)
+        public Protocol(Procedure procedure)
         {
             _procedure = procedure;
         }

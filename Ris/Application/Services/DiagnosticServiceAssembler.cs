@@ -50,16 +50,16 @@ namespace ClearCanvas.Ris.Application.Services
 
         public DiagnosticServiceDetail CreateDiagnosticServiceDetail(DiagnosticService diagnosticService)
         {
-            RequestedProcedureTypeAssembler rptAssembler = new RequestedProcedureTypeAssembler();
+            ProcedureTypeAssembler rptAssembler = new ProcedureTypeAssembler();
             return new DiagnosticServiceDetail(
                 diagnosticService.GetRef(),
                 diagnosticService.Id,
                 diagnosticService.Name,
-                CollectionUtils.Map<RequestedProcedureType, RequestedProcedureTypeDetail, List<RequestedProcedureTypeDetail>>(
-                    diagnosticService.RequestedProcedureTypes,
-                    delegate(RequestedProcedureType rpType)
+                CollectionUtils.Map<ProcedureType, ProcedureTypeDetail, List<ProcedureTypeDetail>>(
+                    diagnosticService.ProcedureTypes,
+                    delegate(ProcedureType rpType)
                     {
-                        return rptAssembler.CreateRequestedProcedureTypeDetail(rpType);
+                        return rptAssembler.CreateProcedureTypeDetail(rpType);
                     }));
         }
     }

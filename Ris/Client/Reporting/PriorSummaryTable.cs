@@ -47,7 +47,7 @@ namespace ClearCanvas.Ris.Client.Reporting
         {
             this.Columns.Add(new TableColumn<PriorProcedureSummary, string>("Accession Number",
                 delegate(PriorProcedureSummary item) { return item.AccessionNumber; }));
-            this.Columns.Add(new TableColumn<PriorProcedureSummary, string>("Requested Procedure",
+            this.Columns.Add(new TableColumn<PriorProcedureSummary, string>("Procedure",
                 delegate(PriorProcedureSummary item) { return item.ProcedureType.Name; }));
             this.Columns.Add(new TableColumn<PriorProcedureSummary, string>("Performed Location",
                 delegate(PriorProcedureSummary item) { return "WHAT?"; }));

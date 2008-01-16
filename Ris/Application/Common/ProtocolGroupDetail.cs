@@ -41,10 +41,10 @@ namespace ClearCanvas.Ris.Application.Common
         public ProtocolGroupDetail()
         {
             Codes = new List<ProtocolCodeDetail>();
-            ReadingGroups = new List<RequestedProcedureTypeGroupSummary>();
+            ReadingGroups = new List<ProcedureTypeGroupSummary>();
         }
 
-        public ProtocolGroupDetail(string name, string description, List<ProtocolCodeDetail> codes, List<RequestedProcedureTypeGroupSummary> readingGroups)
+        public ProtocolGroupDetail(string name, string description, List<ProtocolCodeDetail> codes, List<ProcedureTypeGroupSummary> readingGroups)
         {
             Name = name;
             Description = description;
@@ -62,6 +62,6 @@ namespace ClearCanvas.Ris.Application.Common
         public List<ProtocolCodeDetail> Codes;
 
         [DataMember]
-        public List<RequestedProcedureTypeGroupSummary> ReadingGroups;
+        public List<ProcedureTypeGroupSummary> ReadingGroups;
     }
 }

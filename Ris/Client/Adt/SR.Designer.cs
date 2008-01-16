@@ -430,11 +430,11 @@ namespace ClearCanvas.Ris.Client.Adt {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Requested Procedures.
+        ///   Looks up a localized string similar to Procedures.
         /// </summary>
-        internal static string ColumnRequestedProcedures {
+        internal static string ColumnProcedures {
             get {
-                return ResourceManager.GetString("ColumnRequestedProcedures", resourceCulture);
+                return ResourceManager.GetString("ColumnProcedures", resourceCulture);
             }
         }
         

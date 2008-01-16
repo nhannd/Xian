@@ -47,12 +47,12 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
         {
             WorklistAdminDetail detail = new WorklistAdminDetail(worklist.GetRef(), worklist.Name, worklist.Description, WorklistFactory.Instance.GetWorklistType(worklist));
 
-            RequestedProcedureTypeGroupAssembler assembler = new RequestedProcedureTypeGroupAssembler();
-            detail.RequestedProcedureTypeGroups = CollectionUtils.Map<RequestedProcedureTypeGroup, RequestedProcedureTypeGroupSummary, List<RequestedProcedureTypeGroupSummary>>(
-                worklist.RequestedProcedureTypeGroups,
-                delegate(RequestedProcedureTypeGroup rptGroup)
+            ProcedureTypeGroupAssembler assembler = new ProcedureTypeGroupAssembler();
+            detail.ProcedureTypeGroups = CollectionUtils.Map<ProcedureTypeGroup, ProcedureTypeGroupSummary, List<ProcedureTypeGroupSummary>>(
+                worklist.ProcedureTypeGroups,
+                delegate(ProcedureTypeGroup rptGroup)
                     {
-                        return assembler.GetRequestedProcedureTypeGroupSummary(rptGroup, context);
+                        return assembler.GetProcedureTypeGroupSummary(rptGroup, context);
                     });
 
             UserAssembler userAssembler = new UserAssembler();
@@ -76,10 +76,10 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
             worklist.Name = detail.Name;
             worklist.Description = detail.Description;
             
-            worklist.RequestedProcedureTypeGroups.Clear();
-            detail.RequestedProcedureTypeGroups.ForEach(delegate(RequestedProcedureTypeGroupSummary summary)
+            worklist.ProcedureTypeGroups.Clear();
+            detail.ProcedureTypeGroups.ForEach(delegate(ProcedureTypeGroupSummary summary)
             {
-                worklist.RequestedProcedureTypeGroups.Add(context.Load<RequestedProcedureTypeGroup>(summary.EntityRef));
+                worklist.ProcedureTypeGroups.Add(context.Load<ProcedureTypeGroup>(summary.EntityRef));
             });
 
             worklist.Users.Clear();

@@ -40,7 +40,7 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
     [DataContract]
     public class ListOrderableProcedureTypesResponse : DataContractBase
     {
-        public ListOrderableProcedureTypesResponse(List<RequestedProcedureTypeSummary> orderableProcedureTypes)
+        public ListOrderableProcedureTypesResponse(List<ProcedureTypeSummary> orderableProcedureTypes)
         {
             this.OrderableProcedureTypes = orderableProcedureTypes;
         }
@@ -49,6 +49,6 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
         /// The set of procedure types that can be additionally ordered.
         /// </summary>
         [DataMember]
-        public List<RequestedProcedureTypeSummary> OrderableProcedureTypes;
+        public List<ProcedureTypeSummary> OrderableProcedureTypes;
     }
 }

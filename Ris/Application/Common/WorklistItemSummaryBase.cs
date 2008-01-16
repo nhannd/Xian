@@ -43,7 +43,7 @@ namespace ClearCanvas.Ris.Application.Common
     {
         public WorklistItemSummaryBase(
             EntityRef procedureStepRef,
-            EntityRef requestedProcedureRef,
+            EntityRef procedureRef,
             EntityRef orderRef,
             EntityRef patientRef,
             EntityRef profileRef,
@@ -53,12 +53,12 @@ namespace ClearCanvas.Ris.Application.Common
             EnumValueInfo orderPriority,
             EnumValueInfo patientClass,
             string diagnosticServiceName,
-            string requestedProcedureName,
+            string procedureName,
             string procedureStepName,
             DateTime? scheduledStartTime)
         {
             this.ProcedureStepRef = procedureStepRef;
-            this.RequestedProcedureRef = requestedProcedureRef;
+            this.ProcedureRef = procedureRef;
             this.OrderRef = orderRef;
             this.PatientRef = patientRef;
             this.PatientProfileRef = profileRef;
@@ -68,7 +68,7 @@ namespace ClearCanvas.Ris.Application.Common
             this.OrderPriority = orderPriority;
             this.PatientClass = patientClass;
             this.DiagnosticServiceName = diagnosticServiceName;
-            this.RequestedProcedureName = requestedProcedureName;
+            this.ProcedureName = procedureName;
             this.ProcedureStepName = procedureStepName;
             this.ScheduledStartTime = scheduledStartTime;
         }
@@ -77,7 +77,7 @@ namespace ClearCanvas.Ris.Application.Common
         public EntityRef ProcedureStepRef;
 
         [DataMember]
-        public EntityRef RequestedProcedureRef;
+        public EntityRef ProcedureRef;
 
         [DataMember]
         public EntityRef OrderRef;
@@ -107,7 +107,7 @@ namespace ClearCanvas.Ris.Application.Common
         public string DiagnosticServiceName;
 
         [DataMember]
-        public string RequestedProcedureName;
+        public string ProcedureName;
 
         [DataMember]
         public string ProcedureStepName;

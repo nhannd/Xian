@@ -385,12 +385,12 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             }
 
             // assemble results
-            RequestedProcedureTypeAssembler rptAssembler = new RequestedProcedureTypeAssembler();
+            ProcedureTypeAssembler rptAssembler = new ProcedureTypeAssembler();
             DiagnosticServiceAssembler dsAssembler = new DiagnosticServiceAssembler();
             List<PriorProcedureSummary> priorSummaries = new List<PriorProcedureSummary>();
             foreach (Report priorReport in priorReports)
             {
-                foreach (RequestedProcedure procedure in priorReport.Procedures)
+                foreach (Procedure procedure in priorReport.Procedures)
                 {
                     PriorProcedureSummary summary = new PriorProcedureSummary(
                         procedure.Order.GetRef(),
@@ -398,7 +398,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
                         priorReport.GetRef(),
                         procedure.Order.AccessionNumber,
                         dsAssembler.CreateDiagnosticServiceSummary(procedure.Order.DiagnosticService),
-                        rptAssembler.CreateRequestedProcedureTypeSummary(procedure.Type),
+                        rptAssembler.CreateProcedureTypeSummary(procedure.Type),
                         EnumUtils.GetEnumValueInfo(priorReport.Status, PersistenceContext));
 
                     priorSummaries.Add(summary);

@@ -38,7 +38,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.ProtocolAdmin
     [DataContract]
     public class GetProtocolGroupEditFormDataResponse : DataContractBase
     {
-        public GetProtocolGroupEditFormDataResponse(List<ProtocolCodeDetail> protocolCodes, List<RequestedProcedureTypeGroupSummary> readingGroups)
+        public GetProtocolGroupEditFormDataResponse(List<ProtocolCodeDetail> protocolCodes, List<ProcedureTypeGroupSummary> readingGroups)
         {
             ProtocolCodes = protocolCodes;
             ReadingGroups = readingGroups;
@@ -48,6 +48,6 @@ namespace ClearCanvas.Ris.Application.Common.Admin.ProtocolAdmin
         public List<ProtocolCodeDetail> ProtocolCodes;
 
         [DataMember]
-        public List<RequestedProcedureTypeGroupSummary> ReadingGroups;
+        public List<ProcedureTypeGroupSummary> ReadingGroups;
     }
 }

@@ -45,7 +45,7 @@ namespace ClearCanvas.Ris.Application.Services
 
         public OrderDetail CreateOrderDetail(Order order, IPersistenceContext context,
             bool includeVisit,
-            bool includeRequestedProcedures,
+            bool includeProcedures,
             bool includeNotes)
         {
             OrderDetail detail = new OrderDetail();
@@ -53,7 +53,7 @@ namespace ClearCanvas.Ris.Application.Services
             ExternalPractitionerAssembler pracAssembler = new ExternalPractitionerAssembler();
             FacilityAssembler facilityAssembler = new FacilityAssembler();
             DiagnosticServiceAssembler dsAssembler = new DiagnosticServiceAssembler();
-            RequestedProcedureAssembler rpAssembler = new RequestedProcedureAssembler();
+            ProcedureAssembler rpAssembler = new ProcedureAssembler();
 
             detail.OrderRef = order.GetRef();
             detail.PatientRef = order.Patient.GetRef();
@@ -75,12 +75,12 @@ namespace ClearCanvas.Ris.Application.Services
             detail.OrderPriority = EnumUtils.GetEnumValueInfo(order.Priority, context);
             detail.CancelReason = EnumUtils.GetEnumValueInfo(order.CancelReason);
 
-            if (includeRequestedProcedures)
+            if (includeProcedures)
             {
-                detail.RequestedProcedures = CollectionUtils.Map<RequestedProcedure, RequestedProcedureDetail>(order.RequestedProcedures,
-                    delegate(RequestedProcedure rp)
+                detail.Procedures = CollectionUtils.Map<Procedure, ProcedureDetail>(order.Procedures,
+                    delegate(Procedure rp)
                     {
-                        return rpAssembler.CreateRequestedProcedureDetail(rp, context);
+                        return rpAssembler.CreateProcedureDetail(rp, context);
                     });
             }
 

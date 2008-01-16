@@ -49,7 +49,7 @@ namespace ClearCanvas.Ris.Application.Common
         public List<ReportPartDetail> Parts;
 
         [DataMember]
-        public List<RequestedProcedureDetail> Procedures;
+        public List<ProcedureDetail> Procedures;
 
         public ReportPartDetail GetPart(int index)
         {

@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.Security.Permissions;
 using ClearCanvas.Common;
@@ -76,21 +77,20 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
 
         [ReadOperation]
         [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.WorklistAdmin)]
-        public ListRequestedProcedureTypeGroupsForWorklistCategoryResponse ListRequestedProcedureTypeGroupsForWorklistCategory(ListRequestedProcedureTypeGroupsForWorklistCategoryRequest request)
+        public ListProcedureTypeGroupsForWorklistCategoryResponse ListProcedureTypeGroupsForWorklistCategory(ListProcedureTypeGroupsForWorklistCategoryRequest request)
         {
-            ListRequestedProcedureTypeGroupsForWorklistCategoryResponse response = 
-                new ListRequestedProcedureTypeGroupsForWorklistCategoryResponse();
+            ListProcedureTypeGroupsForWorklistCategoryResponse response = 
+                new ListProcedureTypeGroupsForWorklistCategoryResponse();
 
-            RequestedProcedureTypeGroupAssembler assembler = new RequestedProcedureTypeGroupAssembler();
-            RequestedProcedureTypeGroupSearchCriteria criteria = new RequestedProcedureTypeGroupSearchCriteria();
-            criteria.Category.EqualTo(GetGroupCategoryFromWorklistType(request.WorklistType));
+            ProcedureTypeGroupAssembler assembler = new ProcedureTypeGroupAssembler();
+            Type procedureTypeGroupClass = GetGroupCategoryFromWorklistType(request.WorklistType);
 
-            response.RequestedProcedureTypeGroups =
-                CollectionUtils.Map<RequestedProcedureTypeGroup, RequestedProcedureTypeGroupSummary>(
-                    this.PersistenceContext.GetBroker<IRequestedProcedureTypeGroupBroker>().Find(criteria),
-                    delegate(RequestedProcedureTypeGroup group)
+            response.ProcedureTypeGroups =
+                CollectionUtils.Map<ProcedureTypeGroup, ProcedureTypeGroupSummary>(
+                    this.PersistenceContext.GetBroker<IProcedureTypeGroupBroker>().Find(new ProcedureTypeGroupSearchCriteria(), procedureTypeGroupClass),
+                    delegate(ProcedureTypeGroup group)
                     {
-                        return assembler.GetRequestedProcedureTypeGroupSummary(group, this.PersistenceContext);
+                        return assembler.GetProcedureTypeGroupSummary(group, this.PersistenceContext);
                     });
 
             return response;
@@ -168,17 +168,15 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
 
         #endregion
 
-        private RequestedProcedureTypeGroupCategory GetGroupCategoryFromWorklistType(string type)
+        private Type GetGroupCategoryFromWorklistType(string type)
         {
-            // TODO: Hard-coding needs to be removed. See bug #886
-            if(string.Compare(type, "ReportingToBeReportedWorklist") == 0)
-            {
-                return RequestedProcedureTypeGroupCategory.READING;
-            }
-            else
-            {
-                return RequestedProcedureTypeGroupCategory.MODALITY;
-            }
+            Type worklistClass = WorklistFactory.Instance.GetWorklistType(type);
+
+            WorklistProcedureTypeGroupClassAttribute a = AttributeUtils.GetAttribute<WorklistProcedureTypeGroupClassAttribute>(worklistClass, true);
+            if(a == null)
+                throw new InvalidOperationException(string.Format("{0} worklist class does not have the WorklistProcedureTypeGroupClassAttribute applied", type));
+
+            return a.ProcedureTypeGroupClass;
         }
 
         private bool WorklistExists(string name, string type)

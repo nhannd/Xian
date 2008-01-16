@@ -120,7 +120,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ProtocolAdmin
                 ICollection<ProtocolCode> protocolCodes = GetProtocolCodes(reader.ReadSubtree());
 
                 reader.ReadToFollowing(tagReadingGroups);
-                ICollection<RequestedProcedureTypeGroup> readingGroups = GetReadingGroups(reader.ReadSubtree());
+                ICollection<ProcedureTypeGroup> readingGroups = GetReadingGroups(reader.ReadSubtree());
 
                 protocolGroup.Description = description;
 
@@ -153,9 +153,9 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ProtocolAdmin
             return protocolGroup;
         }
 
-        private ICollection<RequestedProcedureTypeGroup> GetReadingGroups(XmlReader xmlReader)
+        private ICollection<ProcedureTypeGroup> GetReadingGroups(XmlReader xmlReader)
         {
-            List<RequestedProcedureTypeGroup> readingGroups = new List<RequestedProcedureTypeGroup>();
+            List<ProcedureTypeGroup> readingGroups = new List<ProcedureTypeGroup>();
 
             for (xmlReader.ReadToDescendant(tagReadingGroups);
                 !(xmlReader.Name == tagReadingGroups && xmlReader.NodeType == XmlNodeType.EndElement);
@@ -163,12 +163,11 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ProtocolAdmin
             {
                 if (xmlReader.IsStartElement(tagReadingGroup))
                 {
-                    RequestedProcedureTypeGroupSearchCriteria criteria = new RequestedProcedureTypeGroupSearchCriteria();
+                    ReadingGroupSearchCriteria criteria = new ReadingGroupSearchCriteria();
                     criteria.Name.EqualTo(xmlReader.GetAttribute(attrReadingGroupName));
-                    criteria.Category.EqualTo(RequestedProcedureTypeGroupCategory.READING);
 
-                    IRequestedProcedureTypeGroupBroker broker = _context.GetBroker<IRequestedProcedureTypeGroupBroker>();
-                    RequestedProcedureTypeGroup group = CollectionUtils.FirstElement<RequestedProcedureTypeGroup>(broker.Find(criteria));
+                    IReadingGroupBroker broker = _context.GetBroker<IReadingGroupBroker>();
+                    ReadingGroup group = CollectionUtils.FirstElement(broker.Find(criteria));
                     if (group != null) readingGroups.Add(group);
                 }
             }

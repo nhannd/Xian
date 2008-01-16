@@ -52,7 +52,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             "select count(distinct o)";
 
         private const string _hqlFrom =
-            " from RequestedProcedure rp";
+            " from Procedure rp";
 
         private const string _hqlJoin =
             " join rp.Order o" +
@@ -64,7 +64,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         private const string _hqlProtocolFrom = " from {0} ps";
         private const string _hqlProtocolJoin =
             " join ps.Protocol pr" +
-            " join ps.RequestedProcedure rp" +
+            " join ps.Procedure rp" +
             " join rp.Order o" +
             " join o.DiagnosticService ds" +
             " join o.Visit v" +
@@ -82,7 +82,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         // Share constants
         private const string _hqlWorklistSubQuery           = "rp.Type in (select distinct rpt from Worklist w" +
-                                                              " join w.RequestedProcedureTypeGroups rptg join rptg.RequestedProcedureTypes rpt where w = ?)";
+                                                              " join w.ProcedureTypeGroups rptg join rptg.ProcedureTypes rpt where w = ?)";
 
         #region IRegistrationWorklistBroker members
 
@@ -168,7 +168,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
                 and.Conditions.AddRange(HqlCondition.FromSearchCriteria("o", c.Order));
                 and.Conditions.AddRange(HqlCondition.FromSearchCriteria("pp", c.PatientProfile));
-                and.Conditions.AddRange(HqlCondition.FromSearchCriteria("rp", c.RequestedProcedure));
+                and.Conditions.AddRange(HqlCondition.FromSearchCriteria("rp", c.Procedure));
                 and.Conditions.AddRange(HqlCondition.FromSearchCriteria("rp.ProcedureCheckIn", c.ProcedureCheckIn));
                 and.Conditions.AddRange(HqlCondition.FromSearchCriteria("ps", c.ProtocolProcedureStep));
                 and.Conditions.AddRange(HqlCondition.FromSearchCriteria("pr", c.Protocol));
@@ -178,7 +178,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
                 query.Sorts.AddRange(HqlSort.FromSearchCriteria("o", c.Order));
                 query.Sorts.AddRange(HqlSort.FromSearchCriteria("pp", c.PatientProfile));
-                query.Sorts.AddRange(HqlSort.FromSearchCriteria("rp", c.RequestedProcedure));
+                query.Sorts.AddRange(HqlSort.FromSearchCriteria("rp", c.Procedure));
                 query.Sorts.AddRange(HqlSort.FromSearchCriteria("rp.ProcedureCheckIn", c.ProcedureCheckIn));
                 query.Sorts.AddRange(HqlSort.FromSearchCriteria("ps", c.ProtocolProcedureStep));
             }
@@ -186,7 +186,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             if (or.Conditions.Count > 0)
                 query.Conditions.Add(or);
 
-            if (worklist != null && !worklist.RequestedProcedureTypeGroups.IsEmpty)
+            if (worklist != null && !worklist.ProcedureTypeGroups.IsEmpty)
             {
                 query.Conditions.Add(new HqlCondition(_hqlWorklistSubQuery, worklist));
             }

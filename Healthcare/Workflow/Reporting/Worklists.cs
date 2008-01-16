@@ -131,19 +131,19 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 
                 // Addendum appears as a separate item - should only be one item
                 // It was decided to filter the result collection instead of rewriting the query
-                // Filter out duplicate WorklistItems that have the same requested procedure and keep the newest item
+                // Filter out duplicate WorklistItems that have the same procedure and keep the newest item
                 Dictionary<EntityRef, WorklistItem> filter = new Dictionary<EntityRef, WorklistItem>();
                 foreach (WorklistItem item in results)
                 {
-                    if (!filter.ContainsKey(item.RequestedProcedureRef))
+                    if (!filter.ContainsKey(item.ProcedureRef))
                     {
-                        filter.Add(item.RequestedProcedureRef, item);
+                        filter.Add(item.ProcedureRef, item);
                     }
                     else
                     {
-                        WorklistItem existingItem = filter[item.RequestedProcedureRef];
+                        WorklistItem existingItem = filter[item.ProcedureRef];
                         if (item.CreationTime > existingItem.CreationTime)
-                            filter[item.RequestedProcedureRef] = item;
+                            filter[item.ProcedureRef] = item;
                     }
                 }
 
@@ -151,7 +151,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
             }
         }
 
-        [ExtensionOf(typeof(WorklistExtensionPoint), Name = "ReportingReviewResidentReport")]
+        [ExtensionOf(typeof(WorklistExtensionPoint), Name = "ReportingReviewResidentReportWorklist")]
         public class ReviewResidentReport : ReportingWorklist
         {
             protected override ReportingWorklistItemSearchCriteria[] GetQueryConditions(Staff currentUserStaff)

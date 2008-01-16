@@ -139,12 +139,12 @@ namespace ClearCanvas.Ris.Application.Services.BrowsePatientData
                             return assembler.CreateOrderListItem(order, this.PersistenceContext);
                         }));
             }
-            else if (request.QueryDetailLevel == PatientOrdersQueryDetailLevel.RequestedProcedure)
+            else if (request.QueryDetailLevel == PatientOrdersQueryDetailLevel.Procedure)
             {
                 return new ListOrdersResponse(
-                    CollectionUtils.Map<RequestedProcedure, OrderListItem>(
-                        PersistenceContext.GetBroker<IPreviewBroker>().QueryRequestedProcedureData(patient),
-                        delegate(RequestedProcedure rp)
+                    CollectionUtils.Map<Procedure, OrderListItem>(
+                        PersistenceContext.GetBroker<IPreviewBroker>().QueryProcedureData(patient),
+                        delegate(Procedure rp)
                         {
                             return assembler.CreateOrderListItem(rp, this.PersistenceContext);
                         }));
@@ -186,11 +186,11 @@ namespace ClearCanvas.Ris.Application.Services.BrowsePatientData
 
             // TODO: this implementation is inefficient - need custom broker methods to do this efficiently
             Patient patient = PersistenceContext.Load<Patient>(request.PatientRef, EntityLoadFlags.Proxy);
-            IList<RequestedProcedure> procedures = PersistenceContext.GetBroker<IPreviewBroker>().QueryRequestedProcedureData(patient);
+            IList<Procedure> procedures = PersistenceContext.GetBroker<IPreviewBroker>().QueryProcedureData(patient);
             return new ListReportsResponse(
-                CollectionUtils.Map<RequestedProcedure, ReportListItem>(
+                CollectionUtils.Map<Procedure, ReportListItem>(
                     procedures,
-                    delegate(RequestedProcedure rp)
+                    delegate(Procedure rp)
                     {
                         return assembler.CreateReportListItem(rp, this.PersistenceContext);
                     }));

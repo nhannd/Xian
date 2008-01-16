@@ -37,12 +37,12 @@ namespace ClearCanvas.Ris.Application.Common.ProtocollingWorkflow
     [DataContract]
     public class GetProcedureProtocolRequest : DataContractBase
     {
-        public GetProcedureProtocolRequest(EntityRef requestedProcedureRef)
+        public GetProcedureProtocolRequest(EntityRef procedureRef)
         {
-            RequestedProcedureRef = requestedProcedureRef;
+            ProcedureRef = procedureRef;
         }
 
         [DataMember]
-        public EntityRef RequestedProcedureRef;
+        public EntityRef ProcedureRef;
     }
 }

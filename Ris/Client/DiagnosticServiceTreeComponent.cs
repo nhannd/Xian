@@ -62,17 +62,17 @@ namespace ClearCanvas.Ris.Client
         private DiagnosticServiceTreeItem _selectedDiagnosticServiceTreeItem;
         private DiagnosticServiceDetail _selectedDiagnosticServiceDetail;
 
-        private Table<RequestedProcedureTypeDetail> _diagnosticServiceBreakdown;
+        private Table<ProcedureTypeDetail> _diagnosticServiceBreakdown;
 
         /// <summary>
         /// Constructor
         /// </summary>
         public DiagnosticServiceTreeComponent()
         {
-            _diagnosticServiceBreakdown = new Table<RequestedProcedureTypeDetail>();
+            _diagnosticServiceBreakdown = new Table<ProcedureTypeDetail>();
             _diagnosticServiceBreakdown.Columns.Add(
-                new TableColumn<RequestedProcedureTypeDetail, string>("Procedure Name",
-                           delegate(RequestedProcedureTypeDetail rp) { return rp.Name; }));
+                new TableColumn<ProcedureTypeDetail, string>("Procedure Name",
+                           delegate(ProcedureTypeDetail rp) { return rp.Name; }));
         }
 
         public DiagnosticServiceDetail SelectedDiagnosticServiceDetail
@@ -187,7 +187,7 @@ namespace ClearCanvas.Ris.Client
                             LoadDiagnosticServiceBreakdownResponse response = service.LoadDiagnosticServiceBreakdown(new LoadDiagnosticServiceBreakdownRequest(_selectedDiagnosticServiceTreeItem.DiagnosticService.DiagnosticServiceRef));
                             _selectedDiagnosticServiceDetail = response.DiagnosticServiceDetail;
 
-                            _diagnosticServiceBreakdown.Items.AddRange(_selectedDiagnosticServiceDetail.RequestedProcedureTypes);
+                            _diagnosticServiceBreakdown.Items.AddRange(_selectedDiagnosticServiceDetail.ProcedureTypes);
                         });
                 }
                 catch (Exception e)

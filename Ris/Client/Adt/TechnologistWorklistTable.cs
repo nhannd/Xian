@@ -76,7 +76,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 delegate(ModalityWorklistItem item) { return string.Format("{0} {1} - {2} {3}", 
                     item.AccessionNumber, 
                     item.DiagnosticServiceName, 
-                    item.RequestedProcedureName, 
+                    item.ProcedureName, 
                     item.ScheduledStartTime); },
                 1.0f, DescriptionRow);
 
@@ -93,7 +93,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
             TableColumn<ModalityWorklistItem, string> procedureNameColumn =
                 new TableColumn<ModalityWorklistItem, string>(SR.ColumnProcedure,
-                delegate(ModalityWorklistItem item) { return item.RequestedProcedureName; }, 1.0f);
+                delegate(ModalityWorklistItem item) { return item.ProcedureName; }, 1.0f);
             procedureNameColumn.Visible = false;
 
             TableColumn<ModalityWorklistItem, string> scheduledForColumn = 

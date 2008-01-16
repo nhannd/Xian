@@ -56,10 +56,10 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
         private const string attrDiscriminator = "discriminator";
         private const string attrDescription = "description";
 
-        private const string tagRequestedProcedureTypeGroups = "requested-procedure-type-groups";
-        private const string tagRequestedProcedureTypeGroup = "requested-procedure-type-group";
+        private const string tagProcedureTypeGroups = "procedure-type-groups";
+        private const string tagProcedureTypeGroup = "procedure-type-group";
         private const string attrRptName = "name";
-        private const string attrRptCategory = "category";
+        private const string attrRptClass = "class";
 
         private const string tagSubscribers = "subscribers";
         private const string tagSubscriber = "subscriber";
@@ -99,7 +99,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
             writer.WriteAttributeString(attrDiscriminator, GetDiscriminator(worklist));
             writer.WriteAttributeString(attrDescription, worklist.Description);
 
-            WriteRequestedProcedureTypeGroupsXml(worklist, writer);
+            WriteProcedureTypeGroupsXml(worklist, writer);
             WriteSubscribersXml(worklist, writer);
 
             writer.WriteEndElement();
@@ -121,20 +121,20 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
             writer.WriteEndElement();
         }
 
-        private void WriteRequestedProcedureTypeGroupsXml(Worklist worklist, XmlWriter writer)
+        private void WriteProcedureTypeGroupsXml(Worklist worklist, XmlWriter writer)
         {
-            writer.WriteStartElement(tagRequestedProcedureTypeGroups);
-            CollectionUtils.ForEach<RequestedProcedureTypeGroup>(worklist.RequestedProcedureTypeGroups,
-                delegate(RequestedProcedureTypeGroup group) { WriteRequestedProcedureTypeGroupXml(group, writer); });
+            writer.WriteStartElement(tagProcedureTypeGroups);
+            CollectionUtils.ForEach<ProcedureTypeGroup>(worklist.ProcedureTypeGroups,
+                delegate(ProcedureTypeGroup group) { WriteProcedureTypeGroupXml(group, writer); });
             writer.WriteEndElement();
 
         }
 
-        private void WriteRequestedProcedureTypeGroupXml(RequestedProcedureTypeGroup group, XmlWriter writer)
+        private void WriteProcedureTypeGroupXml(ProcedureTypeGroup group, XmlWriter writer)
         {
-            writer.WriteStartElement(tagRequestedProcedureTypeGroup);
+            writer.WriteStartElement(tagProcedureTypeGroup);
             writer.WriteAttributeString(attrRptName, group.Name);
-            writer.WriteAttributeString(attrRptCategory, group.Category.ToString());
+            writer.WriteAttributeString(attrRptClass, group.GetType().FullName);
             writer.WriteEndElement();
         }
 

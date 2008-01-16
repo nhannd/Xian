@@ -96,12 +96,12 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ProtocolAdmin
                 this.PersistenceContext.GetBroker<IProtocolCodeBroker>().FindAll(),
                 delegate(ProtocolCode code) { return new ProtocolCodeDetail(code.GetRef(), code.Name, code.Description); });
 
-            RequestedProcedureTypeGroupAssembler assembler = new RequestedProcedureTypeGroupAssembler();
-            RequestedProcedureTypeGroupSearchCriteria criteria = new RequestedProcedureTypeGroupSearchCriteria();
-            criteria.Category.EqualTo(RequestedProcedureTypeGroupCategory.READING);
-            List<RequestedProcedureTypeGroupSummary> readingGroups = CollectionUtils.Map<RequestedProcedureTypeGroup, RequestedProcedureTypeGroupSummary>(
-                this.PersistenceContext.GetBroker<IRequestedProcedureTypeGroupBroker>().Find(criteria),
-                delegate(RequestedProcedureTypeGroup readingGroup) { return assembler.GetRequestedProcedureTypeGroupSummary(readingGroup, this.PersistenceContext); });
+            ProcedureTypeGroupAssembler assembler = new ProcedureTypeGroupAssembler();
+
+            ReadingGroupSearchCriteria criteria = new ReadingGroupSearchCriteria();
+            List<ProcedureTypeGroupSummary> readingGroups = CollectionUtils.Map<ProcedureTypeGroup, ProcedureTypeGroupSummary>(
+                this.PersistenceContext.GetBroker<IReadingGroupBroker>().Find(criteria),
+                delegate(ProcedureTypeGroup readingGroup) { return assembler.GetProcedureTypeGroupSummary(readingGroup, this.PersistenceContext); });
 
             return new GetProtocolGroupEditFormDataResponse(codes, readingGroups);
         }

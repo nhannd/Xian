@@ -40,12 +40,12 @@ namespace ClearCanvas.Ris.Client.Adt
     class CheckInOrderTableEntry
     {
         private bool _checked = true;
-        private readonly RequestedProcedureSummary _requestedProcedure;
+        private readonly ProcedureSummary _procedure;
         private event EventHandler _checkedChanged;
 
-        public CheckInOrderTableEntry(RequestedProcedureSummary item)
+        public CheckInOrderTableEntry(ProcedureSummary item)
         {
-            _requestedProcedure = item;
+            _procedure = item;
         }
 
         public bool Checked
@@ -61,9 +61,9 @@ namespace ClearCanvas.Ris.Client.Adt
             }
         }
 
-        public RequestedProcedureSummary RequestedProcedure
+        public ProcedureSummary Procedure
         {
-            get { return _requestedProcedure; }
+            get { return _procedure; }
         }
 
         public event EventHandler CheckedChanged
@@ -82,14 +82,14 @@ namespace ClearCanvas.Ris.Client.Adt
                    delegate(CheckInOrderTableEntry entry) { return entry.Checked; },
                    delegate(CheckInOrderTableEntry entry, bool value) { entry.Checked = value; }, 0.30f));
             this.Columns.Add(
-                new TableColumn<CheckInOrderTableEntry, string>(SR.ColumnRequestedProcedures,
-                    delegate(CheckInOrderTableEntry entry) { return entry.RequestedProcedure.Type.Name; }, 1.0f));
+                new TableColumn<CheckInOrderTableEntry, string>(SR.ColumnProcedures,
+                    delegate(CheckInOrderTableEntry entry) { return entry.Procedure.Type.Name; }, 1.0f));
             this.Columns.Add(
                 new TableColumn<CheckInOrderTableEntry, string>(SR.ColumnScheduledFor,
-                delegate(CheckInOrderTableEntry entry) { return Format.Date(entry.RequestedProcedure.ScheduledStartTime); }, 0.5f));
+                delegate(CheckInOrderTableEntry entry) { return Format.Date(entry.Procedure.ScheduledStartTime); }, 0.5f));
             this.Columns.Add(
                 new TableColumn<CheckInOrderTableEntry, string>(SR.ColumnPerformingFacility,
-                delegate(CheckInOrderTableEntry entry) { return entry.RequestedProcedure.PerformingFacility.Name; }, 0.5f));
+                delegate(CheckInOrderTableEntry entry) { return entry.Procedure.PerformingFacility.Name; }, 0.5f));
         }
     }
 }

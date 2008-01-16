@@ -68,9 +68,9 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                     return pracAssembler.CreateExternalPractitionerSummary(p, context);
                 });
 
-            requisition.RequestedProcedures = CollectionUtils.Map<RequestedProcedure, ProcedureRequisition>(
-                order.RequestedProcedures,
-                delegate(RequestedProcedure rp)
+            requisition.Procedures = CollectionUtils.Map<Procedure, ProcedureRequisition>(
+                order.Procedures,
+                delegate(Procedure rp)
                 {
                     return CreateProcedureRequisition(rp, context);
                 });
@@ -99,7 +99,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             // DiagnosticService cannot be updated
             // OrderingFacility cannot be updated
 
-            // do not update the individual requested procedures, as this is done separately - see UpdateProcedureFromRequisition
+            // do not update the individual procedures, as this is done separately - see UpdateProcedureFromRequisition
 
 
             order.Visit = context.Load<Visit>(requisition.Visit.VisitRef, EntityLoadFlags.Proxy);
@@ -126,9 +126,9 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             noteAssembler.Synchronize(order.Notes, requisition.Notes, currentStaff, context);
         }
 
-        public ProcedureRequisition CreateProcedureRequisition(RequestedProcedure rp, IPersistenceContext context)
+        public ProcedureRequisition CreateProcedureRequisition(Procedure rp, IPersistenceContext context)
         {
-            RequestedProcedureTypeAssembler rptAssembler = new RequestedProcedureTypeAssembler();
+            ProcedureTypeAssembler rptAssembler = new ProcedureTypeAssembler();
             FacilityAssembler facilityAssembler = new FacilityAssembler();
 
             // consider it portable if any MPS is portable
@@ -140,7 +140,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
             // create requisition
             return new ProcedureRequisition(
-                rptAssembler.CreateRequestedProcedureTypeSummary(rp.Type),
+                rptAssembler.CreateProcedureTypeSummary(rp.Type),
                 rp.Index,
                 rp.ScheduledStartTime,
                 rp.PerformingFacility == null ? null : facilityAssembler.CreateFacilitySummary(rp.PerformingFacility),
@@ -150,7 +150,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                 IsProcedureModifiable(rp));
         }
 
-        public void UpdateProcedureFromRequisition(RequestedProcedure rp, ProcedureRequisition requisition, IPersistenceContext context)
+        public void UpdateProcedureFromRequisition(Procedure rp, ProcedureRequisition requisition, IPersistenceContext context)
         {
             // modify scheduling time/portability of procedure steps that are still scheduled
             // bug #1356 fix: don't modify scheduling time of reporting procedure steps
@@ -185,9 +185,9 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         // better place to put it right now
         // note that the notion of "modifiable" here is specific to the idea of a "requisition"
         // The "requisition" is modifiable only as long as the procedure is in the SC status
-        private bool IsProcedureModifiable(RequestedProcedure rp)
+        private bool IsProcedureModifiable(Procedure rp)
         {
-            return rp.Status == RequestedProcedureStatus.SC;
+            return rp.Status == ProcedureStatus.SC;
         }
     }
 }

@@ -45,6 +45,6 @@ namespace ClearCanvas.Ris.Application.Common
         public DiagnosticServiceSummary DiagnosticServiceSummary;
 
         [DataMember]
-        public List<RequestedProcedureDetail> RequestedProcedures;
+        public List<ProcedureDetail> Procedures;
     }
 }

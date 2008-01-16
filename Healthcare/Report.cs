@@ -51,9 +51,9 @@ namespace ClearCanvas.Healthcare {
         /// Constructor for creating a new radiology report for the specified procedure.
         /// </summary>
         /// <param name="procedure">The procedure being reported.</param>
-        public Report(RequestedProcedure procedure)
+        public Report(Procedure procedure)
         {
-            _procedures = new HashedSet<ClearCanvas.Healthcare.RequestedProcedure>();
+            _procedures = new HashedSet<ClearCanvas.Healthcare.Procedure>();
             _parts = new List<ReportPart>();
 
             _procedures.Add(procedure);
@@ -128,11 +128,11 @@ namespace ClearCanvas.Healthcare {
         }
 
         /// <summary>
-        /// Links a <see cref="RequestedProcedure"/> to this report, meaning that the report covers
+        /// Links a <see cref="Procedure"/> to this report, meaning that the report covers
         /// this radiology procedure.
         /// </summary>
         /// <param name="procedure"></param>
-        protected internal virtual void LinkProcedure(RequestedProcedure procedure)
+        protected internal virtual void LinkProcedure(Procedure procedure)
         {
             if (_procedures.Contains(procedure))
                 throw new WorkflowException("The procedure is already associated with this report.");

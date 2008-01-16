@@ -57,7 +57,7 @@ namespace ClearCanvas.Ris.Client.Adt
     {
         private readonly RegistrationWorklistItem _worklistItem;
         private CheckInOrderTable _checkInOrderTable;
-        private List<EntityRef> _selectedRequestedProcedures;
+        private List<EntityRef> _selectedProcedures;
         private bool _acceptEnabled;
         private event EventHandler _acceptEnabledChanged;
 
@@ -71,7 +71,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public override void Start()
         {
-            _selectedRequestedProcedures = new List<EntityRef>();
+            _selectedProcedures = new List<EntityRef>();
             _checkInOrderTable = new CheckInOrderTable();
 
             Platform.GetService<IRegistrationWorkflowService>(
@@ -79,8 +79,8 @@ namespace ClearCanvas.Ris.Client.Adt
                 {
                     GetDataForCheckInTableResponse response = service.GetDataForCheckInTable(new GetDataForCheckInTableRequest(_worklistItem.OrderRef));
                     _checkInOrderTable.Items.AddRange(
-                        CollectionUtils.Map<RequestedProcedureSummary, CheckInOrderTableEntry>(response.RequestedProcedures,
-                                delegate(RequestedProcedureSummary item)
+                        CollectionUtils.Map<ProcedureSummary, CheckInOrderTableEntry>(response.Procedures,
+                                delegate(ProcedureSummary item)
                                 {
                                     CheckInOrderTableEntry entry = new CheckInOrderTableEntry(item);
                                     entry.CheckedChanged += OrderCheckedStateChangedEventHandler;
@@ -100,9 +100,9 @@ namespace ClearCanvas.Ris.Client.Adt
             get { return _checkInOrderTable; }
         }
 
-        public List<EntityRef> SelectedRequestedProcedures
+        public List<EntityRef> SelectedProcedures
         {
-            get { return _selectedRequestedProcedures; }
+            get { return _selectedProcedures; }
         }
 
         #endregion
@@ -113,7 +113,7 @@ namespace ClearCanvas.Ris.Client.Adt
             foreach (CheckInOrderTableEntry entry in _checkInOrderTable.Items)
             {
                 if (entry.Checked)
-                    _selectedRequestedProcedures.Add(entry.RequestedProcedure.RequestedProcedureRef);
+                    _selectedProcedures.Add(entry.Procedure.ProcedureRef);
             }      
 
             this.Exit(ApplicationComponentExitCode.Accepted);

@@ -54,10 +54,10 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
         private const string attrDescription = "description";
         private const string attrDiscriminator = "discriminator";
 
-        private const string tagRequestedProcedureTypeGroups = "requested-procedure-type-groups";
-        private const string tagRequestedProcedureTypeGroup = "requested-procedure-type-group";
+        private const string tagProcedureTypeGroups = "procedure-type-groups";
+        private const string tagProcedureTypeGroup = "procedure-type-group";
         private const string attrGroupName = "name";
-        private const string attrGroupCategory = "category";
+        private const string attrGroupClass = "class";
 
         private const string tagSubscribers = "subscribers";
         private const string tagSubscriber = "subscriber";
@@ -70,6 +70,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
 
 
         private IUpdateContext _context;
+        private IList<Type> _procedureTypeGroupClasses;
 
         #region DateImporterBase overrides
 
@@ -81,6 +82,10 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
         public override void ImportXml(XmlReader reader, IUpdateContext context)
         {
             _context = context;
+            if (_procedureTypeGroupClasses == null)
+            {
+                _procedureTypeGroupClasses = ProcedureTypeGroup.ListSubClasses(context);
+            }
 
             while (reader.Read())
             {
@@ -116,54 +121,48 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
             {
                 string description = reader.GetAttribute(attrDescription);
 
-                reader.ReadToFollowing(tagRequestedProcedureTypeGroups);
-                ICollection<RequestedProcedureTypeGroup> requestedProcedureTypeGroups = GetRequestedProcedureTypeGroups(reader.ReadSubtree());
+                reader.ReadToFollowing(tagProcedureTypeGroups);
+                ICollection<ProcedureTypeGroup> procedureTypeGroups = GetProcedureTypeGroups(reader.ReadSubtree());
 
                 reader.ReadToFollowing(tagSubscribers);
                 ICollection<User> users = GetUsers(reader.ReadSubtree());
 
                 worklist.Description = description;
-                worklist.RequestedProcedureTypeGroups.AddAll(requestedProcedureTypeGroups);
+                worklist.ProcedureTypeGroups.AddAll(procedureTypeGroups);
                 worklist.Users.AddAll(users);
 
                 reader.ReadToFollowing(tagWorklistCopies);
                 foreach (Worklist copy in GetWorklistCopies(reader.ReadSubtree(), name))
                 {
                     copy.Description = description;
-                    copy.RequestedProcedureTypeGroups.AddAll(requestedProcedureTypeGroups);
+                    copy.ProcedureTypeGroups.AddAll(procedureTypeGroups);
                     copy.Users.AddAll(users);
                 }
             }
         }
 
-        private ICollection<RequestedProcedureTypeGroup> GetRequestedProcedureTypeGroups(XmlReader reader)
+        private ICollection<ProcedureTypeGroup> GetProcedureTypeGroups(XmlReader reader)
         {
-            List<RequestedProcedureTypeGroup> groups = new List<RequestedProcedureTypeGroup>();
+            List<ProcedureTypeGroup> groups = new List<ProcedureTypeGroup>();
 
-            for (reader.ReadToDescendant(tagRequestedProcedureTypeGroups);
-                !(reader.Name == tagRequestedProcedureTypeGroups && reader.NodeType == XmlNodeType.EndElement);
+            for (reader.ReadToDescendant(tagProcedureTypeGroups);
+                !(reader.Name == tagProcedureTypeGroups && reader.NodeType == XmlNodeType.EndElement);
                 reader.Read())
             {
-                if (reader.IsStartElement(tagRequestedProcedureTypeGroup))
+                if (reader.IsStartElement(tagProcedureTypeGroup))
                 {
-                    RequestedProcedureTypeGroupSearchCriteria criteria = new RequestedProcedureTypeGroupSearchCriteria();
+                    ProcedureTypeGroupSearchCriteria criteria = new ProcedureTypeGroupSearchCriteria();
                     criteria.Name.EqualTo(reader.GetAttribute(attrGroupName));
-                    try
-                    {
-                        RequestedProcedureTypeGroupCategory category =
-                            (RequestedProcedureTypeGroupCategory)
-                            Enum.Parse(typeof (RequestedProcedureTypeGroupCategory),
-                                       reader.GetAttribute(attrGroupCategory));
 
-                        criteria.Category.EqualTo(category);
-                    }
-                    catch(Exception)
-                    {
-                        // Ignore category
-                    }
+                    string groupClassName = reader.GetAttribute(attrGroupClass);
+                    Type groupClass = CollectionUtils.SelectFirst(_procedureTypeGroupClasses,
+                       delegate(Type t)
+                       {
+                           return t.FullName.Equals(groupClassName, StringComparison.InvariantCultureIgnoreCase);
+                       });
 
-                    IRequestedProcedureTypeGroupBroker broker = _context.GetBroker<IRequestedProcedureTypeGroupBroker>();
-                    RequestedProcedureTypeGroup group = CollectionUtils.FirstElement<RequestedProcedureTypeGroup>(broker.Find(criteria));
+                    IProcedureTypeGroupBroker broker = _context.GetBroker<IProcedureTypeGroupBroker>();
+                    ProcedureTypeGroup group = CollectionUtils.FirstElement(broker.Find(criteria, groupClass));
                     if (group != null) groups.Add(group);
                 }
             }
@@ -222,6 +221,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
             return users;
         }
 
+        //TODO: this doesn't actually work correctly because it allows creating "copies"
+        //that are not valid (for example, a ReportingWorklist based on a PerformingGroup instead of a ReadingGroup)
         private IEnumerable<Worklist> GetWorklistCopies(XmlReader reader, string name)
         {
             List<Worklist> copies = new List<Worklist>();
@@ -233,7 +234,6 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
                 if (reader.IsStartElement(tagCopy))
                 {
                     string copyType = reader.GetAttribute(attrCopyDiscriminator);
-                    string copyName = name;
                     copies.Add(LoadOrCreateWorklist(name, copyType));
                 }
             }

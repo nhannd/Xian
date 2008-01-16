@@ -44,7 +44,7 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
 {
     public abstract class ModalityOperation
     {
-        protected void UpdateCheckInStep(RequestedProcedure rp, bool procedureAborted, IWorkflow workflow)
+        protected void UpdateCheckInStep(Procedure rp, bool procedureAborted, IWorkflow workflow)
         {
             bool allMpsScheduled = rp.ModalityProcedureSteps.TrueForAll(
                 delegate(ModalityProcedureStep mps) { return mps.State == ActivityStatus.SC; });
@@ -104,15 +104,15 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
                 mps.Start(technologist);
                 mps.AddPerformedStep(mpps);
 
-                UpdateCheckInStep(mps.RequestedProcedure, false, workflow);
+                UpdateCheckInStep(mps.Procedure, false, workflow);
             }
 
             // Create Documentation Step for each RP that has an MPS started by this service call
             foreach (ModalityProcedureStep step in modalitySteps)
             {
-                if (step.RequestedProcedure.DocumentationProcedureStep == null)
+                if (step.Procedure.DocumentationProcedureStep == null)
                 {
-                    ProcedureStep docStep = new DocumentationProcedureStep(step.RequestedProcedure);
+                    ProcedureStep docStep = new DocumentationProcedureStep(step.Procedure);
                     docStep.Start(technologist);
                     context.Lock(docStep, DirtyState.New);
                 }
@@ -127,7 +127,7 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
         public void Execute(ModalityProcedureStep mps, bool procedureAborted, IWorkflow workflow)
         {
             mps.Discontinue();
-            UpdateCheckInStep(mps.RequestedProcedure, procedureAborted, workflow);
+            UpdateCheckInStep(mps.Procedure, procedureAborted, workflow);
         }
     }
 
@@ -139,10 +139,10 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
             mpps.Complete();
 
             ModalityProcedureStep oneMps = CollectionUtils.FirstElement<ModalityProcedureStep>(mpps.Activities);
-            Order order = oneMps.RequestedProcedure.Order;
+            Order order = oneMps.Procedure.Order;
 
             // try to complete any mps that have all mpps completed
-            foreach (RequestedProcedure rp in order.RequestedProcedures)
+            foreach (Procedure rp in order.Procedures)
             {
                 foreach (ModalityProcedureStep mps in rp.ModalityProcedureSteps)
                 {
@@ -152,7 +152,7 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
                     if (!mps.IsTerminated && allPerformedStepsDone)
                         mps.Complete();
 
-                    UpdateCheckInStep(mps.RequestedProcedure, false, workflow);
+                    UpdateCheckInStep(mps.Procedure, false, workflow);
                 }
             }
         }

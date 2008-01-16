@@ -39,7 +39,7 @@ namespace ClearCanvas.Healthcare
     public class WorklistItemBase : IEquatable<WorklistItemBase>
     {
         private readonly EntityRef _procedureStepRef;
-        private readonly EntityRef _requestedProcedureRef;
+        private readonly EntityRef _procedureRef;
         private readonly EntityRef _orderRef;
         private readonly EntityRef _patientRef;
         private readonly EntityRef _profileRef;
@@ -51,7 +51,7 @@ namespace ClearCanvas.Healthcare
         private readonly OrderPriority _orderPriority;
         private readonly PatientClassEnum _patientClass;
         private readonly string _diagnosticServiceName;
-        private readonly string _requestedProcedureName;
+        private readonly string _procedureName;
         private readonly string _procedureStepName;
         private readonly DateTime? _scheduledStartTime;
 
@@ -63,7 +63,7 @@ namespace ClearCanvas.Healthcare
 
         public WorklistItemBase(
             ProcedureStep procedureStep,
-            RequestedProcedure requestedProcedure,
+            Procedure procedure,
             Order order,
             Patient patient,
             PatientProfile profile,
@@ -73,12 +73,12 @@ namespace ClearCanvas.Healthcare
             OrderPriority orderPriority,
             PatientClassEnum patientClass,
             string diagnosticServiceName,
-            string requestedProcedureName,
+            string procedureName,
             DateTime? scheduledStartTime
             )
         {
             _procedureStepRef = procedureStep == null ? null : procedureStep.GetRef();
-            _requestedProcedureRef = requestedProcedure == null ? null : requestedProcedure.GetRef();
+            _procedureRef = procedure == null ? null : procedure.GetRef();
             _orderRef = order == null ? null : order.GetRef();
             _patientRef = patient == null ? null : patient.GetRef();
             _profileRef = profile == null ? null : profile.GetRef();
@@ -88,7 +88,7 @@ namespace ClearCanvas.Healthcare
             _orderPriority = orderPriority;
             _patientClass = patientClass;
             _diagnosticServiceName = diagnosticServiceName;
-            _requestedProcedureName = requestedProcedureName;
+            _procedureName = procedureName;
             _procedureStepName = procedureStep == null ? null : procedureStep.Name;
             _scheduledStartTime = scheduledStartTime;
         }
@@ -99,9 +99,9 @@ namespace ClearCanvas.Healthcare
             get { return _procedureStepRef; }
         }
 
-        public EntityRef RequestedProcedureRef
+        public EntityRef ProcedureRef
         {
-            get { return _requestedProcedureRef; }
+            get { return _procedureRef; }
         }
 
         public EntityRef OrderRef
@@ -149,9 +149,9 @@ namespace ClearCanvas.Healthcare
             get { return _diagnosticServiceName; }
         }
 
-        public string RequestedProcedureName
+        public string ProcedureName
         {
-            get { return _requestedProcedureName; }
+            get { return _procedureName; }
         }
 
         public string ProcedureStepName

@@ -182,19 +182,19 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         {
             // TODO: we need to build a list of orderable procedure types, based on what has already been ordered
             // for now, just return everything
-            IRequestedProcedureTypeBroker broker = PersistenceContext.GetBroker<IRequestedProcedureTypeBroker>();
-            IList<RequestedProcedureType> rpTypes = broker.FindAll();
+            IProcedureTypeBroker broker = PersistenceContext.GetBroker<IProcedureTypeBroker>();
+            IList<ProcedureType> rpTypes = broker.FindAll();
 
-            RequestedProcedureTypeAssembler rptAssembler = new RequestedProcedureTypeAssembler();
-            List<RequestedProcedureTypeSummary> summaries = CollectionUtils.Map<RequestedProcedureType, RequestedProcedureTypeSummary>(rpTypes,
-                   delegate(RequestedProcedureType rpt)
+            ProcedureTypeAssembler rptAssembler = new ProcedureTypeAssembler();
+            List<ProcedureTypeSummary> summaries = CollectionUtils.Map<ProcedureType, ProcedureTypeSummary>(rpTypes,
+                   delegate(ProcedureType rpt)
                        {
-                           return rptAssembler.CreateRequestedProcedureTypeSummary(rpt);
+                           return rptAssembler.CreateProcedureTypeSummary(rpt);
                        });
             
             // remove types that have already been ordered
-            summaries = CollectionUtils.Reject<RequestedProcedureTypeSummary>(summaries,
-                      delegate(RequestedProcedureTypeSummary s)
+            summaries = CollectionUtils.Reject<ProcedureTypeSummary>(summaries,
+                      delegate(ProcedureTypeSummary s)
                           {
                               return request.OrderedProcedureTypes.Contains(s.EntityRef);
                           });
@@ -248,7 +248,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             OrderEntryAssembler assembler = new OrderEntryAssembler();
             assembler.UpdateOrderFromRequisition(order, request.Requisition, this.CurrentUserStaff, PersistenceContext);
 
-            UpdateProceduresHelper(order, request.Requisition.RequestedProcedures);
+            UpdateProceduresHelper(order, request.Requisition.Procedures);
             ValidatePatientProfilesExist(order);
 
             PersistenceContext.SynchState();
@@ -295,7 +295,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         // TODO: ideally this should be done in the model layer
         private void ValidatePatientProfilesExist(Order order)
         {
-            foreach (RequestedProcedure procedure in order.RequestedProcedures)
+            foreach (Procedure procedure in order.Procedures)
             {
                 bool hasProfile = CollectionUtils.Contains(order.Patient.Profiles,
                     delegate(PatientProfile profile)
@@ -327,12 +327,12 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
             // generate set of procedures
             OrderEntryAssembler orderAssembler = new OrderEntryAssembler();
-            List<RequestedProcedure> procedures = CollectionUtils.Map<ProcedureRequisition, RequestedProcedure>(
-                requisition.RequestedProcedures,
+            List<Procedure> procedures = CollectionUtils.Map<ProcedureRequisition, Procedure>(
+                requisition.Procedures,
                 delegate (ProcedureRequisition req)
                     {
-                        RequestedProcedureType rpt = PersistenceContext.Load<RequestedProcedureType>(req.ProcedureType.EntityRef);
-                        RequestedProcedure rp = rpt.CreateProcedure(req.ScheduledTime);
+                        ProcedureType rpt = PersistenceContext.Load<ProcedureType>(req.ProcedureType.EntityRef);
+                        Procedure rp = rpt.CreateProcedure(req.ScheduledTime);
                         orderAssembler.UpdateProcedureFromRequisition(rp, req, PersistenceContext);
                         return rp;
                     });
@@ -349,7 +349,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             IAccessionNumberBroker broker = PersistenceContext.GetBroker<IAccessionNumberBroker>();
             string accNum = broker.GetNextAccessionNumber();
 
-            // generate a new order with the default set of requested procedures
+            // generate a new order with the default set of procedures
             Order order = Order.NewOrder(
                     accNum,
                     patient,
@@ -373,18 +373,18 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             OrderEntryAssembler assembler = new OrderEntryAssembler();
 
             // deletions - remove any procedure not in the requisition
-            List<RequestedProcedure> proceduresCopy = new List<RequestedProcedure>(order.RequestedProcedures);
-            foreach (RequestedProcedure rp in proceduresCopy)
+            List<Procedure> proceduresCopy = new List<Procedure>(order.Procedures);
+            foreach (Procedure rp in proceduresCopy)
             {
                 bool shouldDelete = !procedureReqs.Exists(delegate(ProcedureRequisition req) { return req.ProcedureIndex == rp.Index; });
                 if (shouldDelete)
                 {
-                    if (rp.Status == RequestedProcedureStatus.SC)
+                    if (rp.Status == ProcedureStatus.SC)
                     {
                         // if RP is still scheduled, just remove it from the order
-                        order.RemoveRequestedProcedure(rp);
+                        order.RemoveProcedure(rp);
                     }
-                    else if(rp.Status == RequestedProcedureStatus.IP)
+                    else if(rp.Status == ProcedureStatus.IP)
                     {
                         // if RP in-progress, discontinue it
                         rp.Discontinue();
@@ -395,16 +395,16 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             // insertions and updates
             foreach (ProcedureRequisition req in procedureReqs)
             {
-                RequestedProcedureType requestedType = PersistenceContext.Load<RequestedProcedureType>(req.ProcedureType.EntityRef);
+                ProcedureType requestedType = PersistenceContext.Load<ProcedureType>(req.ProcedureType.EntityRef);
 
-                RequestedProcedure rp = CollectionUtils.SelectFirst(order.RequestedProcedures,
-                    delegate(RequestedProcedure x) { return req.ProcedureIndex == x.Index; });
+                Procedure rp = CollectionUtils.SelectFirst(order.Procedures,
+                    delegate(Procedure x) { return req.ProcedureIndex == x.Index; });
 
                 if(rp == null)
                 {
                     // create a new procedure for this requisition
                     rp = requestedType.CreateProcedure();
-                    order.AddRequestedProcedure(rp);
+                    order.AddProcedure(rp);
                 }
                 else
                 {

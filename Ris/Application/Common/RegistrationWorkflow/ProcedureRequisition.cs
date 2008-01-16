@@ -44,7 +44,7 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
         /// Constructor for use by service to return requisition back to client for editing.
         /// </summary>
         public ProcedureRequisition(
-            RequestedProcedureTypeSummary procedureType,
+            ProcedureTypeSummary procedureType,
             string procedureIndex,
             DateTime? scheduledTime,
             FacilitySummary performingFacility,
@@ -66,7 +66,7 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
         /// <summary>
         /// Constructor for use by client when initially creating a requisition.
         /// </summary>
-        public ProcedureRequisition(RequestedProcedureTypeSummary procedureType, FacilitySummary facility)
+        public ProcedureRequisition(ProcedureTypeSummary procedureType, FacilitySummary facility)
         {
             this.ProcedureType = procedureType;
             this.PerformingFacility = facility;
@@ -78,7 +78,7 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
         /// The procedure type. Required.
         /// </summary>
         [DataMember]
-        public RequestedProcedureTypeSummary ProcedureType;
+        public ProcedureTypeSummary ProcedureType;
 
         /// <summary>
         /// Procedure index.  Will be set by the server if this requisition represents an existing procedure.

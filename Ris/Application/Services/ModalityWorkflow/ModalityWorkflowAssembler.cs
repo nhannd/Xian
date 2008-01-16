@@ -45,7 +45,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
             PersonNameAssembler assembler = new PersonNameAssembler();
             return new ModalityWorklistItem(
                 domainItem.ProcedureStepRef,
-                domainItem.RequestedProcedureRef,
+                domainItem.ProcedureRef,
                 domainItem.OrderRef,
                 domainItem.PatientRef,
                 domainItem.PatientProfileRef,
@@ -55,7 +55,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
                 EnumUtils.GetEnumValueInfo(domainItem.OrderPriority, context),
                 EnumUtils.GetEnumValueInfo(domainItem.PatientClass),
                 domainItem.DiagnosticServiceName,
-                domainItem.RequestedProcedureName,
+                domainItem.ProcedureName,
                 domainItem.ProcedureStepName,
                 domainItem.ScheduledStartTime
                 );

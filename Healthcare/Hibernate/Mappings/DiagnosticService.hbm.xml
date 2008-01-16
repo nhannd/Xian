@@ -9,9 +9,9 @@
     <property name="Id" column="Id_" type="String" length="30" not-null="true" unique="true"/>
     <property name="Name" column="Name_" type="String" length="100" not-null="true" unique="true"/>
     
-    <set name="RequestedProcedureTypes" table="DiagnosticServiceRequestedProcedureType_" lazy="true" access="nosetter.camelcase-underscore">
+    <set name="ProcedureTypes" table="DiagnosticServiceProcedureType_" lazy="true" access="nosetter.camelcase-underscore">
       <key column="DiagnosticServiceOID_"/>
-      <many-to-many column="RequestedProcedureTypeOID_" class="RequestedProcedureType" fetch="join"/>
+      <many-to-many column="ProcedureTypeOID_" class="ProcedureType" fetch="join"/>
     </set>
   </class>
 </hibernate-mapping>

@@ -37,6 +37,6 @@ namespace ClearCanvas.Healthcare.Brokers
 {
     public partial interface IProtocolGroupBroker
     {
-        IList<ProtocolGroup> FindAll(RequestedProcedureType procedureType);
+        IList<ProtocolGroup> FindAll(ProcedureType procedureType);
     }
 }

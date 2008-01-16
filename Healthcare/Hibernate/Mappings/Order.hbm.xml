@@ -27,9 +27,9 @@
     <many-to-one name="OrderingPractitioner" class="ExternalPractitioner" column="OrderingPractitionerOID_" not-null="true"/>
     <many-to-one name="OrderingFacility" class="Facility" column="FacilityOID_" not-null="true"/>
 
-    <set name="RequestedProcedures" lazy="true" inverse="true" cascade="all-delete-orphan" access="nosetter.camelcase-underscore">
+    <set name="Procedures" lazy="true" inverse="true" cascade="all-delete-orphan" access="nosetter.camelcase-underscore">
       <key column="OrderOID_"/>
-      <one-to-many class="RequestedProcedure"/>
+      <one-to-many class="Procedure"/>
     </set>
 
     <set name="ResultCopiesToPractitioners" table="OrderResultCopiesToPractitioners_" lazy="true" access="nosetter.camelcase-underscore">

@@ -71,7 +71,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         /// </summary>
         /// <param name="procedures"></param>
         /// <returns></returns>
-        public IList<Report> GetPriors(IEnumerable<RequestedProcedure> procedures)
+        public IList<Report> GetPriors(IEnumerable<Procedure> procedures)
         {
             // because we are using a fixed-form query defined in an external file, 
             // there is no way to query based on all procedures at once, therefore we need one query per procedure
@@ -79,7 +79,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             // (if so, this method could always be refactored such that the HQL is created dynamically
             // based on the number of procedures)
             HashedSet<Report> reports = new HashedSet<Report>();
-            foreach (RequestedProcedure procedure in procedures)
+            foreach (Procedure procedure in procedures)
             {
                 NHibernate.IQuery q = this.Context.GetNamedHqlQuery("relevantPriorsByProcedure");
                 q.SetParameter(0, procedure);

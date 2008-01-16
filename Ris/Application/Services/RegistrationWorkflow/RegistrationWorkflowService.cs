@@ -148,23 +148,23 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             IOrderBroker orderBroker = PersistenceContext.GetBroker<IOrderBroker>();
             Order order = orderBroker.Load(request.OrderRef, EntityLoadFlags.Proxy);
 
-            IRequestedProcedureBroker rpBroker = PersistenceContext.GetBroker<IRequestedProcedureBroker>();
-            RequestedProcedureSearchCriteria criteria = new RequestedProcedureSearchCriteria();
+            IProcedureBroker rpBroker = PersistenceContext.GetBroker<IProcedureBroker>();
+            ProcedureSearchCriteria criteria = new ProcedureSearchCriteria();
             criteria.Order.EqualTo(order);
             criteria.ScheduledStartTime.Between(Platform.Time.Date, Platform.Time.Date.AddDays(1));
-            IList<RequestedProcedure> proceduresNotCheckedIn = CollectionUtils.Select(rpBroker.Find(criteria),
-                delegate(RequestedProcedure rp)
+            IList<Procedure> proceduresNotCheckedIn = CollectionUtils.Select(rpBroker.Find(criteria),
+                delegate(Procedure rp)
                 {
                     return rp.ProcedureCheckIn.IsNotCheckIn;
                 });
 
-            RequestedProcedureAssembler assembler = new RequestedProcedureAssembler();
+            ProcedureAssembler assembler = new ProcedureAssembler();
             return new GetDataForCheckInTableResponse(
-                CollectionUtils.Map<RequestedProcedure, RequestedProcedureSummary, List<RequestedProcedureSummary>>(
+                CollectionUtils.Map<Procedure, ProcedureSummary, List<ProcedureSummary>>(
                     proceduresNotCheckedIn,
-                    delegate(RequestedProcedure rp)
+                    delegate(Procedure rp)
                     {
-                        return assembler.CreateRequestedProcedureSummary(rp, this.PersistenceContext);
+                        return assembler.CreateProcedureSummary(rp, this.PersistenceContext);
                     }));
         }
 
@@ -178,11 +178,11 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         [OperationEnablement("CanCheckInProcedure")]
         public CheckInProcedureResponse CheckInProcedure(CheckInProcedureRequest request)
         {
-            IRequestedProcedureBroker broker = PersistenceContext.GetBroker<IRequestedProcedureBroker>();
+            IProcedureBroker broker = PersistenceContext.GetBroker<IProcedureBroker>();
             Operations.CheckIn op = new Operations.CheckIn();
-            foreach (EntityRef rpRef in request.RequestedProcedures)
+            foreach (EntityRef rpRef in request.Procedures)
             {
-                RequestedProcedure rp = broker.Load(rpRef, EntityLoadFlags.CheckVersion);
+                Procedure rp = broker.Load(rpRef, EntityLoadFlags.CheckVersion);
                 op.Execute(rp, this.CurrentUserStaff, new PersistentWorkflow(this.PersistenceContext));
             }
 
@@ -214,12 +214,12 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             IOrderBroker orderBroker = PersistenceContext.GetBroker<IOrderBroker>();
             Order order = orderBroker.Load(itemKey.OrderRef, EntityLoadFlags.Proxy);
 
-            IRequestedProcedureBroker rpBroker = PersistenceContext.GetBroker<IRequestedProcedureBroker>();
-            RequestedProcedureSearchCriteria criteria = new RequestedProcedureSearchCriteria();
+            IProcedureBroker rpBroker = PersistenceContext.GetBroker<IProcedureBroker>();
+            ProcedureSearchCriteria criteria = new ProcedureSearchCriteria();
             criteria.Order.EqualTo(order);
             criteria.ScheduledStartTime.Between(Platform.Time.Date, Platform.Time.Date.AddDays(1));
-            IList<RequestedProcedure> proceduresNotCheckedIn = CollectionUtils.Select(rpBroker.Find(criteria),
-                delegate(RequestedProcedure rp)
+            IList<Procedure> proceduresNotCheckedIn = CollectionUtils.Select(rpBroker.Find(criteria),
+                delegate(Procedure rp)
                 {
                     return rp.ProcedureCheckIn.IsNotCheckIn;
                 });

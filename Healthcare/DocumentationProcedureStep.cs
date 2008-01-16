@@ -33,7 +33,7 @@ namespace ClearCanvas.Healthcare
 {
     public partial class DocumentationProcedureStep : ProcedureStep
     {
-        public DocumentationProcedureStep(RequestedProcedure procedure)
+        public DocumentationProcedureStep(Procedure procedure)
             : base(procedure)
         {
         }

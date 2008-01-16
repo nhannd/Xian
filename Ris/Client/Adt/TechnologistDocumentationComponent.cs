@@ -505,7 +505,7 @@ namespace ClearCanvas.Ris.Client.Adt
             }
 
             _procedurePlanSummaryTable.Items.Clear();
-            foreach(RequestedProcedureDetail rp in procedurePlanDetail.RequestedProcedures)
+            foreach(ProcedureDetail rp in procedurePlanDetail.Procedures)
             {
                 foreach(ModalityProcedureStepDetail mps in rp.ModalityProcedureSteps)
                 {

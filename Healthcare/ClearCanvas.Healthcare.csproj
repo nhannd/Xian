@@ -70,6 +70,7 @@
     <Compile Include="Alert\IAlertNotification.cs" />
     <Compile Include="Brokers\IPreviewBroker.cs" />
     <Compile Include="Brokers\IPriorReportBroker.cs" />
+    <Compile Include="Brokers\IProcedureTypeGroupBroker.cs" />
     <Compile Include="Brokers\IProtocolGroupBroker.cs" />
     <Compile Include="Brokers\IStaffBroker.cs" />
     <Compile Include="Brokers\IWorklistBroker.cs" />
@@ -77,7 +78,9 @@
     <Compile Include="Alert\LanguageAlert.cs" />
     <Compile Include="Alert\NoteAlert.cs" />
     <Compile Include="OrderNote.cs" />
+    <Compile Include="PerformingGroup.cs" />
     <Compile Include="ProcedureStepSchedulingSearchCriteria.cs" />
+    <Compile Include="ReadingGroup.cs" />
     <Compile Include="RegistrationProtocolWorklist.cs" />
     <Compile Include="RegistrationRejectedProtocolWorklist.cs" />
     <Compile Include="RegistrationToBeScheduledWorklist.cs" />
@@ -85,6 +88,7 @@
     <Compile Include="ProtocolProcedureStepSearchCriteria.cs" />
     <Compile Include="ProtocolResolutionStep.cs" />
     <Compile Include="RegistrationWorklist.cs" />
+    <Compile Include="RelevanceGroup.cs" />
     <Compile Include="ReportingWorklist.cs" />
     <Compile Include="TechnologistWorklist.cs" />
     <Compile Include="Tests\TestOrderNoteFactory.cs" />
@@ -139,9 +143,8 @@
     <Compile Include="Report.cs" />
     <Compile Include="ReportPart.cs" />
     <Compile Include="ReportingToBeReportedWorklist.cs" />
-    <Compile Include="RequestedProcedureStatus.cs" />
-    <Compile Include="RequestedProcedureTypeGroup.cs" />
-    <Compile Include="RequestedProcedureTypeGroupCategory.cs" />
+    <Compile Include="ProcedureStatus.cs" />
+    <Compile Include="ProcedureTypeGroup.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -211,8 +214,8 @@
     <Compile Include="ReportingPerformedProcedureStep.cs" />
     <Compile Include="ReportingProcedureStep.cs" />
     <Compile Include="ReportingProcedureStepSearchCriteria.cs" />
-    <Compile Include="RequestedProcedure.cs" />
-    <Compile Include="RequestedProcedureType.cs" />
+    <Compile Include="Procedure.cs" />
+    <Compile Include="ProcedureType.cs" />
     <Compile Include="ModalityProcedureStepType.cs" />
     <Compile Include="Sex.cs" />
     <Compile Include="Staff.cs" />
@@ -237,6 +240,7 @@
     <Compile Include="Workflow\Reporting\WorklistItem.cs" />
     <Compile Include="Workflow\Reporting\Worklists.cs" />
     <Compile Include="Worklist.cs" />
+    <Compile Include="WorklistProcedureTypeGroupClassAttribute.cs" />
     <Compile Include="WorklistSearchCriteria.cs" />
   </ItemGroup>
   <ItemGroup>
