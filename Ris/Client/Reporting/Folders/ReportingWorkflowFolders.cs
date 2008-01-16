@@ -104,7 +104,7 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
         }
     }
 
-    [FolderForWorklistType(WorklistTokens.ReportingReviewResidentReport)]
+    [FolderForWorklistType(WorklistTokens.ReportingReviewResidentReportWorklist)]
     [FolderPath("Review Resident Report")]
     public class ReviewResidentReportFolder : ReportingWorkflowFolder
     {
