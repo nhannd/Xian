@@ -121,7 +121,7 @@ namespace ClearCanvas.Ris.Application.Common
         public const string ReportingVerifiedWorklist = "ReportingVerifiedWorklist";
 
         [WorklistToken(Description = "Reporting - Review Resident Report")]
-        public const string ReportingReviewResidentReport = "ReportingReviewResidentReport";
+        public const string ReportingReviewResidentReportWorklist = "ReportingReviewResidentReportWorklist";
 
         [WorklistToken(Description = "Reporting - To Be Approved")]
         public const string ReportingToBeApprovedWorklist = "ReportingToBeApprovedWorklist";
