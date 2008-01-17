@@ -36,6 +36,8 @@ using System.Text;
 using Iesi.Collections;
 using ClearCanvas.Enterprise;
 using ClearCanvas.Enterprise.Core;
+using Iesi.Collections.Generic;
+using ClearCanvas.Common;
 
 
 namespace ClearCanvas.Enterprise.Authentication {
@@ -46,6 +48,51 @@ namespace ClearCanvas.Enterprise.Authentication {
     /// </summary>
 	public partial class User : Entity
 	{
+        /// <summary>
+        /// Creates a new user with the specified initial password.
+        /// </summary>
+        /// <param name="userInfo"></param>
+        /// <param name="initialPassword"></param>
+        /// <param name="authorityGroups"></param>
+        /// <returns></returns>
+        public static User CreateNewUser(UserInfo userInfo, string initialPassword, ISet<AuthorityGroup> authorityGroups)
+        {
+            // make the password expire upon initial login
+            DateTime passwordExpiry = Platform.Time;
+
+            return new User(
+                userInfo.UserName,
+                Password.CreatePassword(initialPassword, passwordExpiry),
+                userInfo.DisplayName,
+                userInfo.ValidFrom,
+                userInfo.ValidUntil,
+                null,
+                authorityGroups);
+        }
+
+        /// <summary>
+        /// Creates a new user, assigning the value in <see cref="GlobalSettings.InitialPassword"/> as the initial password.
+        /// </summary>
+        /// <param name="userInfo"></param>
+        /// <returns></returns>
+        public static User CreateNewUser(UserInfo userInfo)
+        {
+            GlobalSettings settings = new GlobalSettings();
+            return CreateNewUser(userInfo, settings.InitialPassword, new HashedSet<AuthorityGroup>());
+        }
+
+        /// <summary>
+        /// Changes the user's password, setting a new expiry date according to the
+        /// value defined in <see cref="GlobalSettings.PasswordExpiryDays"/>.
+        /// </summary>
+        /// <param name="newPassword"></param>
+        public void ChangePassword(string newPassword)
+        {
+            GlobalSettings settings = new GlobalSettings();
+            DateTime passwordExpiry = Platform.Time.AddDays(settings.PasswordExpiryDays);
+
+            _password = Authentication.Password.CreatePassword(newPassword, passwordExpiry);
+        }
 	
 		/// <summary>
 		/// This method is called from the constructor.  Use this method to implement any custom

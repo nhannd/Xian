@@ -37,9 +37,10 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Ris.Application.Common.Admin.AuthenticationAdmin;
-using ClearCanvas.Ris.Application.Common.Admin;
 using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Ris.Application.Common.Admin.UserAdmin;
+using ClearCanvas.Ris.Client.Formatting;
+using ClearCanvas.Desktop.Validation;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
@@ -109,6 +110,8 @@ namespace ClearCanvas.Ris.Client.Admin
         private UserDetail _userDetail;
         private List<AuthorityGroupTableEntry> _authorityGroups;
         private SelectableAuthorityGroupTable _table;
+        private string _password;
+        private string _confirmPassword;
 
         private UserSummary _userSummary;
 
@@ -141,8 +144,8 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public override void Start()
         {
-            Platform.GetService<IAuthenticationAdminService>(
-                delegate(IAuthenticationAdminService service)
+            Platform.GetService<IUserAdminService>(
+                delegate(IUserAdminService service)
                 {
                     ListAuthorityGroupsResponse authorityGroupsResponse = service.ListAuthorityGroups(new ListAuthorityGroupsRequest());
 
@@ -177,12 +180,13 @@ namespace ClearCanvas.Ris.Client.Admin
 
         #region Presentation Model
 
+        [ValidateNotNull]
         public string UserId
         {
-            get { return _userDetail.UserId; }
+            get { return _userDetail.UserName; }
             set
             {
-                _userDetail.UserId = value;
+                _userDetail.UserName = value;
                 this.Modified = true;
             }
         }
@@ -194,7 +198,47 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public string StaffName
         {
-            get { return _userDetail.StaffRef == null ? "" : string.Format("{0}, {1}", _userDetail.Name.FamilyName, _userDetail.Name.GivenName); }
+            get { return _userDetail.StaffRef == null ? "" : PersonNameFormat.Format(_userDetail.StaffName); }
+        }
+
+        public string Password
+        {
+            get { return _password; }
+            set
+            {
+                 _password = value;
+                 this.Modified = true;
+             }
+        }
+
+        public string ConfirmPassword
+        {
+            get { return _confirmPassword; }
+            set
+            {
+                 _confirmPassword = value;
+                 this.Modified = true;
+             }
+        }
+
+        public DateTime? ValidFrom
+        {
+            get { return _userDetail.ValidFrom; }
+            set
+            {
+                 _userDetail.ValidFrom = value;
+                this.Modified = true;
+            }
+        }
+
+        public DateTime? ValidUntil
+        {
+            get { return _userDetail.ValidUntil; }
+            set
+            {
+                 _userDetail.ValidUntil = value;
+                 this.Modified = true;
+             }
         }
 
         public ITable Groups
@@ -210,7 +254,9 @@ namespace ClearCanvas.Ris.Client.Admin
             {
                 StaffSummary staffSummary = (StaffSummary)staffComponent.SelectedStaff.Item;
                 _userDetail.StaffRef = staffSummary.StaffRef;
-                _userDetail.Name = staffSummary.Name;
+                _userDetail.StaffName = staffSummary.Name;
+                _userDetail.DisplayName =
+                    string.Format("{0} {1}", _userDetail.StaffName.FamilyName, _userDetail.StaffName.GivenName);
 
                 this.NotifyPropertyChanged("StaffName");
                 this.NotifyPropertyChanged("ClearStaffEnabled");
@@ -226,7 +272,8 @@ namespace ClearCanvas.Ris.Client.Admin
         public void ClearStaff()
         {
             _userDetail.StaffRef = null;
-            _userDetail.Name = new PersonNameDetail();
+            _userDetail.StaffName = new PersonNameDetail();
+            _userDetail.DisplayName = null;
 
             this.NotifyPropertyChanged("StaffName");
             this.NotifyPropertyChanged("ClearStaffEnabled");
@@ -243,8 +290,8 @@ namespace ClearCanvas.Ris.Client.Admin
 
             try
             {
-                Platform.GetService<IAuthenticationAdminService>(
-                    delegate(IAuthenticationAdminService service)
+                Platform.GetService<IUserAdminService>(
+                    delegate(IUserAdminService service)
                     {
                         if (_isNew)
                         {
@@ -298,7 +345,7 @@ namespace ClearCanvas.Ris.Client.Admin
             if (changedEntry.Selected == false)
             {
                 // Remove the 
-                CollectionUtils.Remove<AuthorityGroupSummary>(_userDetail.AuthorityGroups,
+                CollectionUtils.Remove(_userDetail.AuthorityGroups,
                     delegate(AuthorityGroupSummary summary)
                     {
                         return summary.EntityRef == changedEntry.AuthorityGroupSummary.EntityRef;
@@ -307,7 +354,7 @@ namespace ClearCanvas.Ris.Client.Admin
             }
             else
             {
-                bool alreadyAdded = CollectionUtils.Contains<AuthorityGroupSummary>(_userDetail.AuthorityGroups,
+                bool alreadyAdded = CollectionUtils.Contains(_userDetail.AuthorityGroups,
                     delegate(AuthorityGroupSummary summary)
                     {
                         return summary.EntityRef == changedEntry.AuthorityGroupSummary.EntityRef;
@@ -331,7 +378,7 @@ namespace ClearCanvas.Ris.Client.Admin
 
             foreach (AuthorityGroupSummary selectedSummary in _userDetail.AuthorityGroups)
             {
-                AuthorityGroupTableEntry foundEntry = CollectionUtils.SelectFirst<AuthorityGroupTableEntry>(_authorityGroups,
+                AuthorityGroupTableEntry foundEntry = CollectionUtils.SelectFirst(_authorityGroups,
                     delegate(AuthorityGroupTableEntry entry)
                     {
                         return selectedSummary.EntityRef == entry.AuthorityGroupSummary.EntityRef;

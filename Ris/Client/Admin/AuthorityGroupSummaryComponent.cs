@@ -37,7 +37,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Desktop.Tools;
-using ClearCanvas.Ris.Application.Common.Admin.AuthenticationAdmin;
+using ClearCanvas.Ris.Application.Common.Admin.UserAdmin;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
@@ -120,8 +120,8 @@ namespace ClearCanvas.Ris.Client.Admin
                 {
                     ListAuthorityGroupsResponse listResponse = null;
 
-                    Platform.GetService<IAuthenticationAdminService>(
-                        delegate(IAuthenticationAdminService service)
+                    Platform.GetService<IUserAdminService>(
+                        delegate(IUserAdminService service)
                         {
                             ListAuthorityGroupsRequest listRequest = new ListAuthorityGroupsRequest();
                             listRequest.Page.FirstRow = firstRow;

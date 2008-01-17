@@ -772,15 +772,6 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Invalid user name or password.
-        /// </summary>
-        internal static string MessageInvalidUserNamePassword {
-            get {
-                return ResourceManager.GetString("MessageInvalidUserNamePassword", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Timed-out while attempting to login.
         /// </summary>
         internal static string MessageLoginTimeout {
@@ -804,6 +795,15 @@ namespace ClearCanvas.Ris.Client {
         internal static string MessageTimeout {
             get {
                 return ResourceManager.GetString("MessageTimeout", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An unknown error occured while attempting to communicate with the server.  See log for details..
+        /// </summary>
+        internal static string MessageUnknownErrorCommunicatingWithServer {
+            get {
+                return ResourceManager.GetString("MessageUnknownErrorCommunicatingWithServer", resourceCulture);
             }
         }
         

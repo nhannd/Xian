@@ -100,9 +100,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
 
                 if (user == null)
                 {
-                    user = new User();
-                    user.UserName = userName;
-
+                    user = User.CreateNewUser(new UserInfo(userName, string.Format("{0} {1}", staffFamilyName, staffGivenName), null, null));
                     _context.Lock(user, DirtyState.New);
 
                     importedUsers.Add(user);
@@ -135,7 +133,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
         {
             User user = null;
 
-            user = CollectionUtils.SelectFirst<User>(importedUsers,
+            user = CollectionUtils.SelectFirst(importedUsers,
                 delegate(User u) { return u.UserName == userName; });
 
             if (user == null)
@@ -144,7 +142,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
                 criteria.UserName.EqualTo(userName);
 
                 IUserBroker broker = _context.GetBroker<IUserBroker>();
-                user = CollectionUtils.FirstElement<User>(broker.Find(criteria));
+                user = CollectionUtils.FirstElement(broker.Find(criteria));
             }
 
             return user;

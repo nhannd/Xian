@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens;
 using System.Text;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Enterprise.Authentication.Brokers;
@@ -46,16 +47,90 @@ namespace ClearCanvas.Enterprise.Authentication
     {
         #region IAuthenticationService Members
 
-        [ReadOperation]
-        public bool ValidateUser(string userName)
+        [UpdateOperation(PersistenceScopeOption = PersistenceScopeOption.RequiresNew, Auditable = false)]
+        public SessionToken InitiateUserSession(string userName, string password)
         {
-            // TODO expand this to include the concept of a password
+            Platform.CheckForNullReference(userName, "userName");
+            Platform.CheckForNullReference(password, "password");
 
-            UserSearchCriteria where = new UserSearchCriteria();
-            where.UserName.EqualTo(userName);
+            DateTime currentTime = Platform.Time;
 
-            long count = PersistenceContext.GetBroker<IUserBroker>().Count(where);
-            return count == 1;
+            User user;
+            try
+            {
+                UserSearchCriteria criteria = new UserSearchCriteria();
+                criteria.UserName.EqualTo(userName);
+                user = PersistenceContext.GetBroker<IUserBroker>().FindOne(criteria);
+            }
+            catch (EntityNotFoundException)
+            {
+                // non-existant username
+                throw new SecurityTokenValidationException(SR.ExceptionInvalidUserOrPassword);
+            }
+
+            if(!user.Password.Verify(password))
+            {
+                // invalid password
+                throw new SecurityTokenValidationException(SR.ExceptionInvalidUserOrPassword);
+            }
+            // update last login time
+            user.LastLoginTime = currentTime;
+
+            UserSession session;
+            bool newSession = false;
+            try
+            {
+                // try to find an existing session object for this user
+                UserSessionSearchCriteria criteria = new UserSessionSearchCriteria();
+                criteria.UserName.EqualTo(userName);
+                session = PersistenceContext.GetBroker<IUserSessionBroker>().FindOne(criteria);
+            }
+            catch (EntityNotFoundException)
+            {
+                // no existing session - create a new one
+                session = new UserSession(userName);
+                newSession = true;
+            }
+
+            // generate a new session id
+            session.SessionId = Guid.NewGuid().ToString("N");
+
+            // set the expiration time
+            GlobalSettings settings = new GlobalSettings();
+            session.ExpiryTime = currentTime.AddMinutes(settings.UserSessionTimeoutMinutes);
+
+            if(newSession)
+                PersistenceContext.Lock(session, DirtyState.New);
+
+            return session.GetToken();
+        }
+
+        [UpdateOperation(PersistenceScopeOption = PersistenceScopeOption.RequiresNew, Auditable = false)]
+        public SessionToken ValidateUserSession(string userName, SessionToken sessionToken)
+        {
+            DateTime currentTime = Platform.Time;
+
+            UserSession session;
+            try
+            {
+                // find a session object for this user and session token that has not yet expired
+                UserSessionSearchCriteria criteria = new UserSessionSearchCriteria();
+                criteria.UserName.EqualTo(userName);
+                criteria.SessionId.EqualTo(sessionToken.Id);
+                criteria.ExpiryTime.MoreThan(currentTime);
+                session = PersistenceContext.GetBroker<IUserSessionBroker>().FindOne(criteria);
+            }
+            catch (EntityNotFoundException)
+            {
+                // no session, or session has expired
+                throw new SecurityTokenValidationException(SR.ExceptionInvalidSession);
+            }
+
+            // renew the expiration time
+            GlobalSettings settings = new GlobalSettings();
+            session.ExpiryTime = currentTime.AddMinutes(settings.UserSessionTimeoutMinutes);
+
+            return session.GetToken();
         }
 
         [ReadOperation]
@@ -69,7 +144,6 @@ namespace ClearCanvas.Enterprise.Authentication
         {
             return PersistenceContext.GetBroker<IAuthorityTokenBroker>().AssertUserHasToken(userName, token);
         }
-
 
         #endregion
     }

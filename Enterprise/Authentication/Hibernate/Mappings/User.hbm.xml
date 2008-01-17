@@ -5,7 +5,16 @@
       <generator class="guid.comb"/>
     </id>
     <version name="Version" column="Version_"/>
-    <property name="UserName" column="UserName_" type="String" length="30" not-null="true" unique="true"/>
+    <property name="UserName" column="UserName_" type="String" not-null="true" unique="true" access="nosetter.camelcase-underscore"/>
+    <component name="Password" class="Password" access="nosetter.camelcase-underscore">
+      <property name="Salt" column="PasswordSalt_" type="String" not-null="true" access="nosetter.camelcase-underscore"/>
+      <property name="SaltedHash" column="PasswordSaltedHash_" type="String" not-null="true" access="nosetter.camelcase-underscore"/>
+      <property name="ExpiryTime" column="PasswordExpiryDate_" type="DateTime"/>
+    </component>
+    <property name="DisplayName" column="DisplayName_" type="String"/>
+    <property name="ValidFrom" column="ValidFrom_" type="DateTime"/>
+    <property name="ValidUntil" column="ValidUntil_" type="DateTime"/>
+    <property name="LastLoginTime" column="LastLoginTime_" type="DateTime"/>
     <set name="AuthorityGroups" table="AuthorityGroupUser_" lazy="true" cascade="all" access="nosetter.camelcase-underscore">
       <key column="UserOID_"/>
       <many-to-many column="AuthorityGroupOID_" class="AuthorityGroup" fetch="join"/>

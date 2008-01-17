@@ -38,6 +38,7 @@ using ClearCanvas.Enterprise.Authentication.Brokers;
 using System.IO;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Common.Authorization;
+using Iesi.Collections.Generic;
 
 namespace ClearCanvas.Enterprise.Authentication.Setup
 {
@@ -45,6 +46,8 @@ namespace ClearCanvas.Enterprise.Authentication.Setup
     public class SetupApplication : IApplicationRoot
     {
         private const string SysAdminUserName = "sa";
+        private const string SysAdminDisplayName = "sysadmin";
+        private const string SysAdminInitialPassword = "clearcanvas";
         private const string SysAdminGroup = "Administrators";
 
         #region IApplicationRoot Members
@@ -69,7 +72,7 @@ namespace ClearCanvas.Enterprise.Authentication.Setup
                 IList<AuthorityGroup> allGroups = groupImporter.ImportFromPlugins((IUpdateContext)PersistenceScope.Current, Console.Out);
 
                 // find the admin group that was just created
-                AuthorityGroup adminGroup = CollectionUtils.SelectFirst<AuthorityGroup>(allGroups,
+                AuthorityGroup adminGroup = CollectionUtils.SelectFirst(allGroups,
                     delegate(AuthorityGroup g) { return g.Name == SysAdminGroup; });
 
                 // create the "sa" user
@@ -93,10 +96,10 @@ namespace ClearCanvas.Enterprise.Authentication.Setup
             }
             catch (EntityNotFoundException)
             {
-                User saUser = new User();
-                saUser.UserName = SysAdminUserName;
-                saUser.AuthorityGroups.Add(adminGroup);
+                HashedSet<AuthorityGroup> groups = new HashedSet<AuthorityGroup>();
+                groups.Add(adminGroup);
 
+                User saUser = User.CreateNewUser(new UserInfo(SysAdminUserName, SysAdminDisplayName, null, null), SysAdminInitialPassword, groups);
                 context.Lock(saUser, DirtyState.New);
             }
         }

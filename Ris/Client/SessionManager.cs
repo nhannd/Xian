@@ -116,17 +116,24 @@ namespace ClearCanvas.Ris.Client
 
                             return true;
                         }
-                        catch (CommunicationException)
+                        catch(FaultException<RequestValidationException> e)
                         {
+                            ClearCanvas.Desktop.Application.ShowMessageBox(e.Message, MessageBoxActions.Ok);
+                        }
+                        catch (CommunicationException e)
+                        {
+                            Platform.Log(LogLevel.Error, e);
                             ClearCanvas.Desktop.Application.ShowMessageBox(SR.MessageCommunicationError, MessageBoxActions.Ok);
                         }
-                        catch (TimeoutException)
+                        catch (TimeoutException e)
                         {
+                            Platform.Log(LogLevel.Error, e);
                             ClearCanvas.Desktop.Application.ShowMessageBox(SR.MessageLoginTimeout, MessageBoxActions.Ok);
                         }
-                        catch (Exception)
+                        catch (Exception e)
                         {
-                            ClearCanvas.Desktop.Application.ShowMessageBox(SR.MessageInvalidUserNamePassword, MessageBoxActions.Ok);
+                            Platform.Log(LogLevel.Error, e);
+                            ClearCanvas.Desktop.Application.ShowMessageBox(SR.MessageUnknownErrorCommunicatingWithServer, MessageBoxActions.Ok);
                         }
                     }
                     else

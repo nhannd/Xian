@@ -57,15 +57,15 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             if (form.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 userName = form.UserName;
+                password = form.Password;
                 facility = form.SelectedFacility;
-                password = null;
                 return true;
             }
             else
             {
                 userName = null;
-                facility = null;
                 password = null;
+                facility = null;
                 return false;
             }
         }

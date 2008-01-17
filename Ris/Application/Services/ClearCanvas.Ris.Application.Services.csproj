@@ -55,10 +55,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AddressAssembler.cs" />
-    <Compile Include="Admin\AuthenticationAdmin\AuthenticationAdminService.cs" />
-    <Compile Include="Admin\AuthenticationAdmin\AuthorityGroupAssembler.cs" />
-    <Compile Include="Admin\AuthenticationAdmin\AuthorityTokenAssembler.cs" />
-    <Compile Include="Admin\AuthenticationAdmin\UserAssembler.cs" />
+    <Compile Include="Admin\UserAdmin\UserAdminService.cs" />
+    <Compile Include="Admin\UserAdmin\AuthorityGroupAssembler.cs" />
+    <Compile Include="Admin\UserAdmin\AuthorityTokenAssembler.cs" />
+    <Compile Include="Admin\UserAdmin\UserAssembler.cs" />
     <Compile Include="Admin\ExternalPractitionerAdmin\ExternalPractitionerAdminService.cs" />
     <Compile Include="Admin\ProtocolAdmin\ProtocolAdminService.cs" />
     <Compile Include="Admin\ProtocolAdmin\ProtocolExporter.cs" />

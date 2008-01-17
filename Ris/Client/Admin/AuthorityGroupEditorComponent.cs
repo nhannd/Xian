@@ -38,7 +38,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Ris.Application.Common.Admin.AuthenticationAdmin;
+using ClearCanvas.Ris.Application.Common.Admin.UserAdmin;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
@@ -134,8 +134,8 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public override void Start()
         {
-            Platform.GetService<IAuthenticationAdminService>(
-                delegate(IAuthenticationAdminService service)
+            Platform.GetService<IUserAdminService>(
+                delegate(IUserAdminService service)
                 {
                     ListAuthorityTokensResponse authorityTokenResponse = service.ListAuthorityTokens(new ListAuthorityTokensRequest());
 
@@ -195,8 +195,8 @@ namespace ClearCanvas.Ris.Client.Admin
 
             try
             {
-                Platform.GetService<IAuthenticationAdminService>(
-                    delegate(IAuthenticationAdminService service)
+                Platform.GetService<IUserAdminService>(
+                    delegate(IUserAdminService service)
                     {
                         if (_isNew)
                         {

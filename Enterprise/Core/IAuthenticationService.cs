@@ -31,8 +31,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens;
 using System.Text;
 using System.ServiceModel;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Enterprise.Core
 {
@@ -46,9 +48,42 @@ namespace ClearCanvas.Enterprise.Core
     [ServiceContract]
     public interface IAuthenticationService
     {
+        /// <summary>
+        /// Initiates a new session for the specified user, first verifying the password,
+        /// and returns a new session token if successful.
+        /// </summary>
+        /// <remarks>
+        /// Implementors should throw a <see cref="SecurityTokenException"/> if the username
+        /// or password is invalid.
+        /// </remarks>
+        /// <param name="userName"></param>
+        /// <param name="password"></param>
+        /// <returns></returns>
+        /// <exception cref="SecurityTokenException">Invalid username or password.</exception>
         [OperationContract]
-        bool ValidateUser(string userName);
+        SessionToken InitiateUserSession(string userName, string password);
 
+        /// <summary>
+        /// Validates an existing user session, returning a new session token
+        /// that has the same identifier but an updated expiry time.
+        /// </summary>
+        /// <remarks>
+        /// Implementors should throw a <see cref="SecurityTokenException"> if the session
+        /// token has expired or is otherwise invalid.
+        /// </remarks>
+        /// <param name="userName"></param>
+        /// <param name="sessionToken"></param>
+        /// <returns></returns>
+        /// <exception cref="SecurityTokenException">Session token expired or otherwise invalid.</exception>
+        [OperationContract]
+        SessionToken ValidateUserSession(string userName, SessionToken sessionToken);
+
+        /// <summary>
+        /// Obtains the set of authority tokens that have been granted to the 
+        /// specified user.
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <returns></returns>
         [OperationContract]
         string[] ListAuthorityTokensForUser(string userName);
 

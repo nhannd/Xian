@@ -51,6 +51,7 @@ namespace ClearCanvas.Ris.Application.Common.Login
         /// <param name="request"></param>
         /// <returns></returns>
         [OperationContract]
+        [FaultContract(typeof(RequestValidationException))]
         LoginResponse Login(LoginRequest request);
 
         /// <summary>

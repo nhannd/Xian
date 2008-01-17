@@ -35,6 +35,7 @@ using System.Text;
 using System.IdentityModel.Selectors;
 using System.IdentityModel.Tokens;
 using ClearCanvas.Common;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
 using System.ServiceModel;
 
@@ -44,16 +45,15 @@ namespace ClearCanvas.Ris.Server
     {
         public override void Validate(string userName, string password)
         {
-            Platform.Log(LogLevel.Info, "Validating user ", userName);
+            Platform.Log(LogLevel.Debug, "Validating session for user ", userName);
 
             // Note: password is actually the session token
 
             Platform.GetService<IAuthenticationService>(
                 delegate(IAuthenticationService service)
                 {
-                    // TODO validate the session token
-                    if (!service.ValidateUser(userName))
-                        throw new SecurityTokenException("Invalid session token.");
+                    // this call will throw an exception if the session is invalid or has expired
+                    service.ValidateUserSession(userName, new SessionToken(password));
                 });
         }
     }

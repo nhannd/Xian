@@ -56,6 +56,11 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             get { return _userName.Value; }
         }
 
+        public string Password
+        {
+            get { return _password.Value; }
+        }
+
         public string SelectedFacility
         {
             get { return (string)_facility.Value; }

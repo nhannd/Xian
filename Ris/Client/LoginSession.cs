@@ -78,7 +78,7 @@ namespace ClearCanvas.Ris.Client
                         new GenericIdentity(userName), response.UserAuthorityTokens);
 
                     // set the current session before attempting to access other services, as these will require authentication
-                    _current = new LoginSession(userName, password, response.FullName, facility);
+                    _current = new LoginSession(userName, response.SessionToken, response.FullName, facility);
                 });
         }
 

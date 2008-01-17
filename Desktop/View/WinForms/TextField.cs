@@ -80,6 +80,12 @@ namespace ClearCanvas.Desktop.View.WinForms
             }
         }
 
+        public char PasswordChar
+        {
+            get { return _textBox.PasswordChar; }
+            set { _textBox.PasswordChar = value; }
+        }
+
         [DefaultValue("")]
         public string ToolTip
         {

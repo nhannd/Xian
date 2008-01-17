@@ -43,7 +43,7 @@ using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Enterprise;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common.Admin;
-using ClearCanvas.Ris.Application.Common.Admin.AuthenticationAdmin;
+using ClearCanvas.Ris.Application.Common.Admin.UserAdmin;
 using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client.Admin
@@ -136,8 +136,8 @@ namespace ClearCanvas.Ris.Client.Admin
                 {
                     ListUsersResponse listResponse = null;
 
-                    Platform.GetService<IAuthenticationAdminService>(
-                        delegate(IAuthenticationAdminService service)
+                    Platform.GetService<IUserAdminService>(
+                        delegate(IUserAdminService service)
                         {
                             ListUsersRequest listRequest = new ListUsersRequest();
                             listRequest.Page.FirstRow = firstRow;
@@ -208,13 +208,13 @@ namespace ClearCanvas.Ris.Client.Admin
             {
                 if (_selectedUser == null) return;
 
-                UserEditorComponent editor = new UserEditorComponent(_selectedUser.EntityRef);
+                UserEditorComponent editor = new UserEditorComponent(_selectedUser.UserRef);
                 ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
                     this.Host.DesktopWindow, editor, SR.TitleUpdateUser);
 
                 if (exitCode == ApplicationComponentExitCode.Accepted)
                 {
-                    _userTable.Items.Replace(delegate(UserSummary u) { return u.EntityRef.Equals(editor.UserSummary.EntityRef, true); },
+                    _userTable.Items.Replace(delegate(UserSummary u) { return u.UserRef.Equals(editor.UserSummary.UserRef, true); },
                         editor.UserSummary);
                 }
             }

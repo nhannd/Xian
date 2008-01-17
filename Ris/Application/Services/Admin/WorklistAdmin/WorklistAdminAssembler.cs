@@ -35,9 +35,9 @@ using ClearCanvas.Enterprise.Authentication;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Ris.Application.Common.Admin.AuthenticationAdmin;
+using ClearCanvas.Ris.Application.Common.Admin.UserAdmin;
 using ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin;
-using ClearCanvas.Ris.Application.Services.Admin.AuthenticationAdmin;
+using ClearCanvas.Ris.Application.Services.Admin.UserAdmin;
 
 namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
 {
@@ -85,7 +85,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
             worklist.Users.Clear();
             detail.Users.ForEach(delegate (UserSummary summary)
             {
-                worklist.Users.Add(context.Load<User>(summary.EntityRef));
+                worklist.Users.Add(context.Load<User>(summary.UserRef));
             });
         }
     }

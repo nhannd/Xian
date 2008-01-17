@@ -58,27 +58,36 @@ namespace ClearCanvas.Ris.Application.Services.Login
         {
             Platform.CheckForNullReference(request, "request");
             Platform.CheckMemberIsSet(request.UserName, "UserName");
-            //Platform.CheckMemberIsSet(request.Password, "Password");
 
             string user = request.UserName;
+            string password = StringUtilities.EmptyIfNull(request.Password);
 
             // obtain the set of authority tokens for the user
             // note that we don't need to be authenticated to access IAuthenticationService
             // because it will accessed in-process
             string[] authorityTokens = null;
-            Platform.GetService<IAuthenticationService>(
-                delegate(IAuthenticationService service)
-                {
-                    // TODO validate the password
-                    if (!service.ValidateUser(user))
-                        throw new SecurityTokenException("Invalid user name or password.");
+            SessionToken token = null;
+            try
+            {
+                Platform.GetService<IAuthenticationService>(
+                    delegate(IAuthenticationService service)
+                    {
+                        // this call will throw if user/password not valid
+                        token = service.InitiateUserSession(user, password);
 
-                    authorityTokens = service.ListAuthorityTokensForUser(user);
+                        authorityTokens = service.ListAuthorityTokensForUser(user);
 
-                    // setup a generic principal on this thread for the duration of this request
-                    Thread.CurrentPrincipal = new GenericPrincipal(
-                        new GenericIdentity(user), authorityTokens);
-                });
+                        // setup a generic principal on this thread for the duration of this request
+                        Thread.CurrentPrincipal = new GenericPrincipal(
+                            new GenericIdentity(user), authorityTokens);
+                    });
+
+            }
+            catch (SecurityTokenException e)
+            {
+                // login failed
+                throw new RequestValidationException(e.Message);
+            }
 
             if (request.WorkingFacility != null)
             {
@@ -108,8 +117,7 @@ namespace ClearCanvas.Ris.Application.Services.Login
                 // no staff associated to user - can't return full name details to client
 	        }
 
-            //TODO: provide session token
-            return new LoginResponse("none", authorityTokens, fullName);
+            return new LoginResponse(token.Id, authorityTokens, fullName);
         }
 
         [ReadOperation]

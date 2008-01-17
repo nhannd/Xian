@@ -42,9 +42,9 @@ using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin;
-using ClearCanvas.Ris.Application.Common.Admin.AuthenticationAdmin;
+using ClearCanvas.Ris.Application.Common.Admin.UserAdmin;
 using ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin;
-using ClearCanvas.Ris.Application.Services.Admin.AuthenticationAdmin;
+using ClearCanvas.Ris.Application.Services.Admin.UserAdmin;
 
 namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
 {

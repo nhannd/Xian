@@ -32,7 +32,8 @@
 using System;
 
 using ClearCanvas.Desktop.Tables;
-using ClearCanvas.Ris.Application.Common.Admin.AuthenticationAdmin;
+using ClearCanvas.Ris.Application.Common.Admin.UserAdmin;
+using ClearCanvas.Desktop;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
@@ -43,11 +44,18 @@ namespace ClearCanvas.Ris.Client.Admin
             this.Columns.Add(new TableColumn<UserSummary, string>(SR.ColumnUserId,
                 delegate(UserSummary user) { return user.UserId; },
                 1.0f));
-            /*
+
             this.Columns.Add(new TableColumn<UserSummary, string>(SR.ColumnUserName,
-                delegate(UserSummary user) { return string.Format("{0}, {1}", user.UserName.FamilyName, user.UserName.GivenName); },
+                delegate(UserSummary user) { return user.DisplayName; },
                 1.0f));
-             */
+
+            this.Columns.Add(new TableColumn<UserSummary, string>("Valid From",
+                delegate(UserSummary user) { return Format.DateTime(user.ValidFrom); },
+                1.0f));
+
+            this.Columns.Add(new TableColumn<UserSummary, string>("Valid Until",
+               delegate(UserSummary user) { return Format.DateTime(user.ValidUntil); },
+               1.0f));
         }
     }
 }

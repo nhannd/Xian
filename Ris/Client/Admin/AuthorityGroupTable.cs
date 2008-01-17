@@ -32,7 +32,7 @@
 using System;
 
 using ClearCanvas.Desktop.Tables;
-using ClearCanvas.Ris.Application.Common.Admin.AuthenticationAdmin;
+using ClearCanvas.Ris.Application.Common.Admin.UserAdmin;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
