@@ -51,7 +51,23 @@ public partial class Admin_MasterPage : System.Web.UI.MasterPage
         
         Assembly asm = Assembly.GetExecutingAssembly();
         VersionLabel.Text = string.Format("Ver: {0}", asm.GetName().Version.ToString());
+
+        AddIE6PngBugFixCSS();
        
+    }
+
+    private void AddIE6PngBugFixCSS()
+    {
+        IE6PNGBugFixCSS.InnerHtml = @"
+            input, img
+            {
+                background-image: expression(
+                    this.runtimeStyle.backgroundImage = ""none"",
+                    this.runtimeStyle.filter = ""progid:DXImageTransform.Microsoft.AlphaImageLoader(src='"" + this.src + ""', sizingMethod='image')"",
+                    this.src = """ + Page.ResolveClientUrl("~/images/blank.gif") + @"""
+                );
+            }
+        ";
     }
 
     protected void OnLogoButtonClick(object sender, EventArgs e)

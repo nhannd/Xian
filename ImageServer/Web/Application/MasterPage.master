@@ -4,6 +4,9 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
     <title>Untitled Page</title>
+    
+    <style runat="server" id="IE6PNGBugFixCSS"/>
+    
 </head>
 <body>
     <!-- this is special code that web service validation needs -->

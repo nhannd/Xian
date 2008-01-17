@@ -407,6 +407,7 @@
     <Content Include="App_Themes\NightSafari\Tabs.css" />
     <Content Include="Common\BasePage.aspx" />
     <Content Include="Common\ServerPartitionTabs.ascx" />
+    <Content Include="images\blank.gif" />
     <Content Include="Search\SearchAccordian.ascx" />
     <Content Include="Search\SeriesDetails.ascx" />
     <Content Include="Search\StudyDetails.ascx" />
@@ -421,9 +422,7 @@
     <None Include="App_Themes\ClearCanvas\images\logos\.svn\format" />
     <None Include="App_Themes\ClearCanvas\images\logos\.svn\prop-base\ImageServerLogo.png.svn-base" />
     <None Include="App_Themes\ClearCanvas\images\logos\.svn\text-base\ImageServerLogo.png.svn-base" />
-    <None Include="App_Themes\ClearCanvas\images\logos\Thumbs.db" />
     <Content Include="App_Themes\NightSafari\logo.skin" />
-    <None Include="images\Thumbs.db" />
     <Content Include="Common\GridPager.ascx" />
     <Content Include="Global.asax" />
     <Content Include="images\add_disabled.gif" />
