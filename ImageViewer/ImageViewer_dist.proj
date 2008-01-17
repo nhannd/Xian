@@ -86,6 +86,10 @@
     <ImageViewerServicesFiles Include="$(SolutionDir)\..\ImageViewer\Services\bin\$(Configuration)\ClearCanvas.ImageViewer.Services.dll" />
   </ItemGroup>
 
+  <ItemGroup>
+    <LicenseFiles Include="$(ProjectDir)\..\..\Docs\ImageViewer\EULA.rtf" />
+  </ItemGroup>
+
   <ItemGroup Condition="$(DesktopBuild)">
     <PluginFiles Include="$(SolutionDir)\..\Codecs\bin\$(Configuration)\ClearCanvas.Codecs.dll" />
     <PluginFiles Include="$(SolutionDir)\..\Desktop\Explorer\bin\$(Configuration)\ClearCanvas.Desktop.Explorer.dll" />
@@ -159,10 +163,14 @@
     
   </Target>
 
+  <Target Name="Copy License Files">
+    <Copy SkipUnchangedFiles="true" SourceFiles="@(LicenseFiles)" DestinationFolder="$(DistributionDirectory)" ContinueOnError="true"/>
+  </Target>
+
   <Target Name ="Copy Files" DependsOnTargets="Build BuildTasks">
     
-    <CallTarget Condition="$(DesktopBuild)" Targets="Copy Project Files;Copy ImageViewer App Config" />
-    <CallTarget Condition="$(ShredHostBuild)" Targets="Copy Project Files;Copy ShredHost App Config" />
+    <CallTarget Condition="$(DesktopBuild)" Targets="Copy Project Files;Copy ImageViewer App Config;Copy License Files" />
+    <CallTarget Condition="$(ShredHostBuild)" Targets="Copy Project Files;Copy ShredHost App Config;Copy License Files" />
 
   </Target>
 

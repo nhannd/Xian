@@ -136,21 +136,26 @@ namespace ClearCanvas.Common.Utilities.Tests
 			}
 		}
 
-
-		[TestFixtureSetUp]
-		public void Initialize()
+		private void Initialize()
 		{
 			_stopThreads = false;
-			_threadCount = 10;
 
-			_enqueued = 0;
-			_dequeued = 0;
-			_expectedDequeued = 0;
+			Enqueued = 0;
+			Dequeued = 0;
+			ExpectedDequeued = 0;
+		}
+
+		[TestFixtureSetUp]
+		public void Setup()
+		{
+			_threadCount = 10;
 		}
 		
 		[Test]
 		public void TestBlockingQueue()
 		{
+			Initialize();
+
 			BlockingQueue<int> queue = new BlockingQueue<int>();
 
 			ItemDelegate<int> addToQueue = delegate(int numberToAdd)
@@ -171,10 +176,17 @@ namespace ClearCanvas.Common.Utilities.Tests
 				while (true)
 				{
 					int next;
-					if (!queue.Dequeue(out next) && _stopThreads)
-						break;
-					
-					this.IncrementDequeued(1);
+					bool queueEmpty = !queue.Dequeue(out next);
+
+					if (queueEmpty)
+					{
+						if (_stopThreads)
+							break;
+					}
+					else
+					{
+						this.IncrementDequeued(1);
+					}
 					
 					Thread.Sleep(0);
 				}
@@ -230,6 +242,8 @@ namespace ClearCanvas.Common.Utilities.Tests
 		[Test]
 		public void TestSimpleThreadPool()
 		{
+			Initialize();
+
 			SimpleBlockingThreadPool pool = new SimpleBlockingThreadPool(_threadCount);
 			pool.ThreadPriority = ThreadPriority.Normal;
 
@@ -246,6 +260,8 @@ namespace ClearCanvas.Common.Utilities.Tests
 			if (failMessage != null)
 				Assert.Fail(failMessage);
 			
+			Assert.AreEqual(pool.QueueCount, 0, "the pool should be empty.");
+
 			ItemDelegate<int> addToPool = delegate(int numberToAdd) 
 			{
 				for (int i = 0; i < numberToAdd; ++i)
@@ -295,7 +311,7 @@ namespace ClearCanvas.Common.Utilities.Tests
 				if (pool.QueueCount == 0)
 				{
 					addToPool(100000);
-					if (++numberTimesAdded <= _threadCount)
+					if (++numberTimesAdded == _threadCount)
 						break;
 				}
 

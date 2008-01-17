@@ -17,23 +17,28 @@
     <Position X="1" Y="3.25" Width="1.5" />
     <TypeIdentifier>
       <FileName>CommandHistory.cs</FileName>
-      <HashCode>AAAAAgAAAABABAACEAAAAAAhAAAgIAxAAgAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAgAAAABABAACEAAAAAAhAAAgIAxAAgAAAAAAAkA=</HashCode>
     </TypeIdentifier>
     <ShowAsCollectionAssociation>
       <Field Name="_history" />
     </ShowAsCollectionAssociation>
     <Members>
       <Event Name="_currentCommandChangedEvent" Hidden="true" />
+      <Event Name="_currentCommandChangingEvent" Hidden="true" />
       <Field Name="_currentCommandIndex" Hidden="true" />
       <Field Name="_lastCommandIndex" Hidden="true" />
       <Field Name="_maxSize" Hidden="true" />
       <Method Name="CommandHistory" Hidden="true" />
       <Event Name="CurrentCommandChanged" Hidden="true" />
+      <Event Name="CurrentCommandChanging" Hidden="true" />
       <Property Name="CurrentCommandIndex" Hidden="true" />
       <Property Name="LastCommandIndex" Hidden="true" />
       <Property Name="MaxSize" Hidden="true" />
       <Property Name="NumCommands" Hidden="true" />
     </Members>
+    <Compartments>
+      <Compartment Name="Events" Collapsed="true" />
+    </Compartments>
   </Class>
   <Class Name="ClearCanvas.Desktop.UndoableCommand">
     <Position X="3.5" Y="3.25" Width="1.75" />
@@ -42,8 +47,6 @@
       <HashCode>AAAAgAAAAEAAAAQAAAEAAAAAIAAAAAAAAABBAAACAAA=</HashCode>
     </TypeIdentifier>
     <ShowAsAssociation>
-      <Property Name="BeginState" />
-      <Property Name="EndState" />
       <Property Name="Originator" />
     </ShowAsAssociation>
     <Members>
@@ -52,51 +55,15 @@
       <Field Name="_originator" Hidden="true" />
       <Method Name="UndoableCommand" Hidden="true" />
     </Members>
-    <InheritanceLine Type="ClearCanvas.Desktop.Command" FixedFromPoint="true">
-      <Path>
-        <Point X="4.375" Y="2.731" />
-        <Point X="4.375" Y="3.25" />
-      </Path>
-    </InheritanceLine>
-    <AssociationLine Name="BeginState" Type="ClearCanvas.Desktop.IMemento" FixedFromPoint="true" FixedToPoint="true">
-      <Path>
-        <Point X="5.25" Y="3.437" />
-        <Point X="5.625" Y="3.437" />
-        <Point X="5.625" Y="3.562" />
-        <Point X="7" Y="3.562" />
-      </Path>
-      <MemberNameLabel ManuallyPlaced="true">
-        <Position X="0.173" Y="0.081" />
-      </MemberNameLabel>
-    </AssociationLine>
-    <AssociationLine Name="EndState" Type="ClearCanvas.Desktop.IMemento" FixedFromPoint="true" FixedToPoint="true">
+    <AssociationLine Name="Originator" Type="ClearCanvas.Desktop.IMemorable" FixedFromPoint="true">
       <Path>
         <Point X="5.25" Y="4.25" />
-        <Point X="5.625" Y="4.25" />
-        <Point X="5.625" Y="3.938" />
-        <Point X="7" Y="3.938" />
-      </Path>
-      <MemberNameLabel ManuallyPlaced="true">
-        <Position X="0.225" Y="-0.263" />
-      </MemberNameLabel>
-    </AssociationLine>
-    <AssociationLine Name="Originator" Type="ClearCanvas.Desktop.IMemorable" FixedFromPoint="true" FixedToPoint="true">
-      <Path>
-        <Point X="5.156" Y="3.25" />
-        <Point X="5.156" Y="2.5" />
-        <Point X="7" Y="2.5" />
+        <Point X="6.5" Y="4.25" />
       </Path>
     </AssociationLine>
   </Class>
-  <Interface Name="ClearCanvas.Desktop.IMemento" Collapsed="true">
-    <Position X="7" Y="3.5" Width="1.5" />
-    <TypeIdentifier>
-      <FileName>IMemento.cs</FileName>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-    </TypeIdentifier>
-  </Interface>
   <Interface Name="ClearCanvas.Desktop.IMemorable">
-    <Position X="7" Y="1.75" Width="1.5" />
+    <Position X="6.5" Y="3.5" Width="1.5" />
     <TypeIdentifier>
       <FileName>IMemorable.cs</FileName>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAQAAAAAAAAABAAAAAAAAAAA=</HashCode>

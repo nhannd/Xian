@@ -111,7 +111,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 				CalculateScale();
 				return _scaleX;
 			}
-			set 
+			protected set 
 			{ 
 				_scaleX = value;
 			}
@@ -131,7 +131,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 				CalculateScale();
 				return _scaleY;
 			}
-			set 
+			protected set 
 			{
 				_scaleY = value;
 			}

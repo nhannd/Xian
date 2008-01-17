@@ -94,7 +94,7 @@ namespace ClearCanvas.Desktop.Help
 				"{0}{1}{2}",
 				Platform.InstallDirectory,
 				System.IO.Path.DirectorySeparatorChar,
-				"License.rtf");
+				"EULA.rtf");
 
 			try
 			{

@@ -1,6 +1,6 @@
 #region License
 
-// Copyright (c) 2006-2007, ClearCanvas Inc.
+// Copyright (c) 2006-2008, ClearCanvas Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, 
@@ -103,7 +103,7 @@ namespace ClearCanvas.Desktop.Help
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(287, 23);
 			this.label1.TabIndex = 3;
-			this.label1.Text = "Copyright 2007 ClearCanvas Inc. All rights reserved.";
+			this.label1.Text = "Copyright 2008 ClearCanvas Inc. All rights reserved.";
 			// 
 			// AboutForm
 			// 
