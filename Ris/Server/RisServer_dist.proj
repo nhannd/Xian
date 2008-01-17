@@ -19,6 +19,8 @@
     <UhnApplicationDirectory>$(SolutionDir)..\Application\Uhn</UhnApplicationDirectory>
     <FaxModelDirectory>$(SolutionDir)..\..\Healthcare\Fax</FaxModelDirectory>
     <FaxApplicationDirectory>$(SolutionDir)..\Application\Fax</FaxApplicationDirectory>
+    <ShredHostDirectory>$(SolutionDir)..\..\Server\ShredHost</ShredHostDirectory>
+    <PublicationShredDirectory>$(SolutionDir)..\Shreds\Publication</PublicationShredDirectory>
     <TrunkDirectory>$(SolutionDir)..\..</TrunkDirectory>
   </PropertyGroup>
 	
@@ -75,6 +77,9 @@
     <RisFiles Include="$(UhnApplicationDirectory)\Services\bin\$(Configuration)\ClearCanvas.Ris.Application.Uhn.Services.dll" />
     <RisFiles Include="$(FaxApplicationDirectory)\Common\bin\$(Configuration)\ClearCanvas.Ris.Application.Fax.Common.dll" />
     <RisFiles Include="$(FaxApplicationDirectory)\Services\bin\$(Configuration)\ClearCanvas.Ris.Application.Fax.Services.dll" />
+    <RisFiles Include="$(ShredHostDirectory)\bin\$(Configuration)\ClearCanvas.Server.ShredHost.dll" />
+    <RisFiles Include="$(PublicationShredDirectory)\bin\$(Configuration)\ClearCanvas.Ris.Shreds.Publication.dll" />
+    
   </ItemGroup>
 
   <ItemGroup>
