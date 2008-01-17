@@ -7,7 +7,7 @@
 </head>
 <body>
     <!-- this is special code that web service validation needs -->
-    <div id="service" style="behavior:url(/webservice.htc);">
+    <div id="service" style="behavior:url(<%= ResolveClientUrl("~/webservice.htc") %>);" />
     <!-- this is special code that web service validation needs -->
     
     <center>
