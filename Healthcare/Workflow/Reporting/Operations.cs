@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using ClearCanvas.Common;
 using ClearCanvas.Workflow;
 using ClearCanvas.Enterprise.Core;
 using System.Collections.Generic;
@@ -177,6 +178,8 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
                 workflow.AddActivity(verification);
 
                 PublicationStep publication = new PublicationStep(verification);
+                publication.Assign(currentUserStaff);
+                publication.Schedule(Platform.Time.AddMinutes(10));
                 workflow.AddActivity(publication);
 
                 return publication;
@@ -316,7 +319,10 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
                 step.Complete(currentUserStaff);
 
                 PublicationStep publication = new PublicationStep(step);
+                publication.Assign(currentUserStaff);
+                publication.Schedule(Platform.Time.AddMinutes(10));
                 workflow.AddActivity(publication);
+
                 return publication;
             }
 
@@ -405,7 +411,10 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
         {
             public void Execute(PublicationStep step, Staff currentUserStaff, IWorkflow workflow)
             {
-                step.Complete(currentUserStaff);
+                if (step.AssignedStaff != null) 
+                    step.Complete(currentUserStaff);
+                else 
+                    step.Complete();
             }
 
             public override bool CanExecute(ReportingProcedureStep step, Staff currentUserStaff)

@@ -280,6 +280,21 @@ namespace ClearCanvas.Healthcare {
                     SetStatus(ProcedureStatus.IP);
                 }
             }
+
+            // check if the procedure should auto-completed
+            if(_status == ProcedureStatus.IP)
+            {
+                bool anyPublicationStepsCompleted = CollectionUtils.Contains<ProcedureStep>(_procedureSteps,
+                    delegate(ProcedureStep step)
+                    {
+                        return step.Is<PublicationStep>() && step.State == ActivityStatus.CM;
+                    });
+
+                if(anyPublicationStepsCompleted)
+                {
+                    SetStatus(ProcedureStatus.CM);
+                }
+            }
         }
 
         /// <summary>

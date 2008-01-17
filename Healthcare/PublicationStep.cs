@@ -62,6 +62,12 @@ namespace ClearCanvas.Healthcare {
             get { return "Publication"; }
         }
 
+        public override void Complete()
+        {
+            Start(this.AssignedStaff);
+            base.Complete();
+        }
+
         #region Object overrides
 		
 		public override bool Equals(object that)
