@@ -65,17 +65,20 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this._cancelButton = new System.Windows.Forms.Button();
             this._acceptButton = new System.Windows.Forms.Button();
-            this._password = new ClearCanvas.Desktop.View.WinForms.TextField();
-            this._confirmPassword = new ClearCanvas.Desktop.View.WinForms.TextField();
             this._validFrom = new ClearCanvas.Desktop.View.WinForms.DateTimeField();
             this._validUntil = new ClearCanvas.Desktop.View.WinForms.DateTimeField();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this._staffName = new ClearCanvas.Desktop.View.WinForms.TextField();
             this._clearStaffButton = new System.Windows.Forms.Button();
             this._setStaffButton = new System.Windows.Forms.Button();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this._changePasswordCheckBox = new System.Windows.Forms.CheckBox();
+            this._password = new ClearCanvas.Desktop.View.WinForms.TextField();
+            this._confirmPassword = new ClearCanvas.Desktop.View.WinForms.TextField();
             this.tableLayoutPanel1.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
             this.groupBox1.SuspendLayout();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -90,11 +93,10 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this.tableLayoutPanel1.Controls.Add(this._authorityGroups, 0, 3);
             this.tableLayoutPanel1.Controls.Add(this._userId, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.flowLayoutPanel1, 0, 4);
-            this.tableLayoutPanel1.Controls.Add(this._password, 0, 1);
-            this.tableLayoutPanel1.Controls.Add(this._confirmPassword, 0, 2);
             this.tableLayoutPanel1.Controls.Add(this._validFrom, 1, 2);
             this.tableLayoutPanel1.Controls.Add(this._validUntil, 2, 2);
             this.tableLayoutPanel1.Controls.Add(this.groupBox1, 1, 0);
+            this.tableLayoutPanel1.Controls.Add(this.panel1, 0, 1);
             this.tableLayoutPanel1.Location = new System.Drawing.Point(3, 3);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 5;
@@ -103,7 +105,8 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(525, 418);
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(525, 476);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
             // _authorityGroups
@@ -112,11 +115,11 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
                         | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.tableLayoutPanel1.SetColumnSpan(this._authorityGroups, 3);
-            this._authorityGroups.Location = new System.Drawing.Point(4, 139);
+            this._authorityGroups.Location = new System.Drawing.Point(4, 155);
             this._authorityGroups.Margin = new System.Windows.Forms.Padding(4);
             this._authorityGroups.Name = "_authorityGroups";
             this._authorityGroups.ReadOnly = false;
-            this._authorityGroups.Size = new System.Drawing.Size(517, 240);
+            this._authorityGroups.Size = new System.Drawing.Size(517, 282);
             this._authorityGroups.TabIndex = 0;
             this._authorityGroups.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             // 
@@ -127,7 +130,8 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this._userId.Margin = new System.Windows.Forms.Padding(2);
             this._userId.Mask = "";
             this._userId.Name = "_userId";
-            this._userId.Size = new System.Drawing.Size(154, 41);
+            this._userId.PasswordChar = '\0';
+            this._userId.Size = new System.Drawing.Size(137, 41);
             this._userId.TabIndex = 1;
             this._userId.ToolTip = null;
             this._userId.Value = null;
@@ -141,7 +145,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this.tableLayoutPanel1.SetColumnSpan(this.flowLayoutPanel1, 3);
             this.flowLayoutPanel1.Controls.Add(this._cancelButton);
             this.flowLayoutPanel1.Controls.Add(this._acceptButton);
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(3, 386);
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(3, 444);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
             this.flowLayoutPanel1.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.flowLayoutPanel1.Size = new System.Drawing.Size(519, 29);
@@ -167,34 +171,10 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this._acceptButton.UseVisualStyleBackColor = true;
             this._acceptButton.Click += new System.EventHandler(this._acceptButton_Click);
             // 
-            // _password
-            // 
-            this._password.LabelText = "Password";
-            this._password.Location = new System.Drawing.Point(2, 47);
-            this._password.Margin = new System.Windows.Forms.Padding(2);
-            this._password.Mask = "";
-            this._password.Name = "_password";
-            this._password.Size = new System.Drawing.Size(154, 41);
-            this._password.TabIndex = 10;
-            this._password.ToolTip = null;
-            this._password.Value = null;
-            // 
-            // _confirmPassword
-            // 
-            this._confirmPassword.LabelText = "Confirm Password";
-            this._confirmPassword.Location = new System.Drawing.Point(2, 92);
-            this._confirmPassword.Margin = new System.Windows.Forms.Padding(2);
-            this._confirmPassword.Mask = "";
-            this._confirmPassword.Name = "_confirmPassword";
-            this._confirmPassword.Size = new System.Drawing.Size(154, 41);
-            this._confirmPassword.TabIndex = 11;
-            this._confirmPassword.ToolTip = null;
-            this._confirmPassword.Value = null;
-            // 
             // _validFrom
             // 
             this._validFrom.LabelText = "Valid From";
-            this._validFrom.Location = new System.Drawing.Point(176, 92);
+            this._validFrom.Location = new System.Drawing.Point(176, 108);
             this._validFrom.Margin = new System.Windows.Forms.Padding(2);
             this._validFrom.Maximum = new System.DateTime(9998, 12, 31, 0, 0, 0, 0);
             this._validFrom.Minimum = new System.DateTime(1753, 1, 1, 0, 0, 0, 0);
@@ -207,7 +187,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             // _validUntil
             // 
             this._validUntil.LabelText = "Valid Until";
-            this._validUntil.Location = new System.Drawing.Point(351, 92);
+            this._validUntil.Location = new System.Drawing.Point(351, 108);
             this._validUntil.Margin = new System.Windows.Forms.Padding(2);
             this._validUntil.Maximum = new System.DateTime(9998, 12, 31, 0, 0, 0, 0);
             this._validUntil.Minimum = new System.DateTime(1753, 1, 1, 0, 0, 0, 0);
@@ -242,6 +222,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this._staffName.Margin = new System.Windows.Forms.Padding(2);
             this._staffName.Mask = "";
             this._staffName.Name = "_staffName";
+            this._staffName.PasswordChar = '\0';
             this._staffName.ReadOnly = true;
             this._staffName.Size = new System.Drawing.Size(231, 41);
             this._staffName.TabIndex = 18;
@@ -270,17 +251,66 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this._setStaffButton.UseVisualStyleBackColor = true;
             this._setStaffButton.Click += new System.EventHandler(this._staffButton_Click);
             // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this._confirmPassword);
+            this.panel1.Controls.Add(this._password);
+            this.panel1.Controls.Add(this._changePasswordCheckBox);
+            this.panel1.Location = new System.Drawing.Point(3, 48);
+            this.panel1.Name = "panel1";
+            this.tableLayoutPanel1.SetRowSpan(this.panel1, 2);
+            this.panel1.Size = new System.Drawing.Size(168, 100);
+            this.panel1.TabIndex = 18;
+            // 
+            // _changePasswordCheckBox
+            // 
+            this._changePasswordCheckBox.AutoSize = true;
+            this._changePasswordCheckBox.Location = new System.Drawing.Point(4, 4);
+            this._changePasswordCheckBox.Name = "_changePasswordCheckBox";
+            this._changePasswordCheckBox.Size = new System.Drawing.Size(112, 17);
+            this._changePasswordCheckBox.TabIndex = 0;
+            this._changePasswordCheckBox.Text = "Change Password";
+            this._changePasswordCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // _password
+            // 
+            this._password.LabelText = "Password";
+            this._password.Location = new System.Drawing.Point(0, 19);
+            this._password.Margin = new System.Windows.Forms.Padding(2);
+            this._password.Mask = "";
+            this._password.Name = "_password";
+            this._password.PasswordChar = '*';
+            this._password.Size = new System.Drawing.Size(136, 41);
+            this._password.TabIndex = 2;
+            this._password.ToolTip = null;
+            this._password.Value = null;
+            // 
+            // _confirmPassword
+            // 
+            this._confirmPassword.LabelText = "Confirm Password";
+            this._confirmPassword.Location = new System.Drawing.Point(-1, 60);
+            this._confirmPassword.Margin = new System.Windows.Forms.Padding(2);
+            this._confirmPassword.Mask = "";
+            this._confirmPassword.Name = "_confirmPassword";
+            this._confirmPassword.PasswordChar = '*';
+            this._confirmPassword.Size = new System.Drawing.Size(137, 41);
+            this._confirmPassword.TabIndex = 3;
+            this._confirmPassword.ToolTip = null;
+            this._confirmPassword.Value = null;
+            // 
             // UserEditorComponentControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.tableLayoutPanel1);
             this.Name = "UserEditorComponentControl";
-            this.Size = new System.Drawing.Size(531, 424);
+            this.Size = new System.Drawing.Size(531, 482);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             this.flowLayoutPanel1.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -299,8 +329,10 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Button _clearStaffButton;
         private ClearCanvas.Desktop.View.WinForms.TextField _staffName;
-        private ClearCanvas.Desktop.View.WinForms.TextField _password;
+        private System.Windows.Forms.Panel panel1;
         private ClearCanvas.Desktop.View.WinForms.TextField _confirmPassword;
+        private ClearCanvas.Desktop.View.WinForms.TextField _password;
+        private System.Windows.Forms.CheckBox _changePasswordCheckBox;
 
     }
 }

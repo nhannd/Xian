@@ -105,13 +105,17 @@ namespace ClearCanvas.Ris.Client.Admin
     [AssociateView(typeof(UserEditorComponentViewExtensionPoint))]
     public class UserEditorComponent : ApplicationComponent
     {
+        private const string dummyPassword = "************";
+
         private bool _isNew;
         private EntityRef _userRef;
         private UserDetail _userDetail;
         private List<AuthorityGroupTableEntry> _authorityGroups;
         private SelectableAuthorityGroupTable _table;
-        private string _password;
-        private string _confirmPassword;
+
+        private bool _changePassword;
+        private string _password = dummyPassword;
+        private string _confirmPassword = dummyPassword;
 
         private UserSummary _userSummary;
 
@@ -123,6 +127,8 @@ namespace ClearCanvas.Ris.Client.Admin
             _isNew = true;
             _userRef = null;
             _table = new SelectableAuthorityGroupTable();
+
+            AddCustomValidationRules();
         }
 
         public UserEditorComponent(EntityRef userRef)
@@ -132,6 +138,8 @@ namespace ClearCanvas.Ris.Client.Admin
             _isNew = false;
             _userRef = userRef;
             _table = new SelectableAuthorityGroupTable();
+
+            AddCustomValidationRules();
         }
 
         /// <summary>
@@ -199,6 +207,16 @@ namespace ClearCanvas.Ris.Client.Admin
         public string StaffName
         {
             get { return _userDetail.StaffRef == null ? "" : PersonNameFormat.Format(_userDetail.StaffName); }
+        }
+
+        public bool ChangePassword
+        {
+            get { return _changePassword; }
+            set
+            {
+                 _changePassword = value;
+                 NotifyPropertyChanged("ChangePassword");
+            }
         }
 
         public string Password
@@ -284,9 +302,13 @@ namespace ClearCanvas.Ris.Client.Admin
         {
             if (this.HasValidationErrors)
             {
+                this.Host.ShowMessageBox(this.Validation.GetErrorsString(this), MessageBoxActions.Ok);
                 this.ShowValidation(true);
                 return;
             }
+
+            _userDetail.ChangePassword = _changePassword;
+            _userDetail.NewPassword = _password;
 
             try
             {
@@ -386,6 +408,28 @@ namespace ClearCanvas.Ris.Client.Admin
 
                 if (foundEntry != null) foundEntry.Selected = true;
             }
+        }
+
+        private void AddCustomValidationRules()
+        {
+            this.Validation.Add(new ValidationRule("Password",
+                                       delegate
+                                       {
+                                           return new ValidationResult(_changePassword == false || !string.IsNullOrEmpty(_password),
+                                                                       "Password required");
+                                       }));
+            this.Validation.Add(new ValidationRule("ConfirmPassword",
+                                       delegate
+                                       {
+                                           return new ValidationResult(_changePassword == false || !string.IsNullOrEmpty(_confirmPassword),
+                                                                       "Password confirmation required");
+                                       }));
+            this.Validation.Add(new ValidationRule("ConfirmPassword",
+                                       delegate
+                                       {
+                                           return new ValidationResult(_changePassword == false || (_password == _confirmPassword),
+                                                                       "Passwords do not match");
+                                       }));
         }
 
     }

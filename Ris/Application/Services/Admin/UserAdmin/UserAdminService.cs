@@ -144,6 +144,9 @@ namespace ClearCanvas.Ris.Application.Services.Admin.UserAdmin
             UserAssembler assembler = new UserAssembler();
             assembler.UpdateUser(user, request.UserDetail, PersistenceContext);
 
+            if(userDetail.ChangePassword)
+                user.ChangePassword(userDetail.NewPassword);
+
             PersistenceContext.Lock(user, DirtyState.New);
 
             // create staff association
@@ -167,6 +170,9 @@ namespace ClearCanvas.Ris.Application.Services.Admin.UserAdmin
 
             UserAssembler assembler = new UserAssembler();
             assembler.UpdateUser(user, request.UserDetail, PersistenceContext);
+
+            if (request.UserDetail.ChangePassword)
+                user.ChangePassword(request.UserDetail.NewPassword);
 
             IStaffBroker staffBroker = PersistenceContext.GetBroker<IStaffBroker>();
             try

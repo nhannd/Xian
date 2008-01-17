@@ -51,8 +51,6 @@ namespace ClearCanvas.Enterprise.Configuration
     {
         #region IConfigurationService Members
 
-        // this method is only available for administration
-        [PrincipalPermission(SecurityAction.Demand, Role=AuthorityTokens.ConfigurationAdmin)]
         public List<SettingsGroupInfo> ListSettingsGroups()
         {
             return CollectionUtils.Map<SettingsGroupDescriptor, SettingsGroupInfo, List<SettingsGroupInfo>>(
@@ -63,8 +61,6 @@ namespace ClearCanvas.Enterprise.Configuration
                 });
         }
 
-        // this method is only available for administration
-        [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.ConfigurationAdmin)]
         public List<SettingsPropertyInfo> ListSettingsProperties(SettingsGroupInfo group)
         {
             return CollectionUtils.Map<SettingsPropertyDescriptor, SettingsPropertyInfo, List<SettingsPropertyInfo>>(

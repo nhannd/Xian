@@ -76,5 +76,17 @@ namespace ClearCanvas.Ris.Application.Common.Admin.UserAdmin
         [DataMember]
         public PersonNameDetail StaffName;
 
+        /// <summary>
+        /// Used by client to request password change.
+        /// </summary>
+        [DataMember]
+        public bool ChangePassword;
+
+        /// <summary>
+        /// Used by client to indicate new password requested.
+        /// </summary>
+        [DataMember]
+        public string NewPassword;
+
     }
 }
