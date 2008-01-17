@@ -302,7 +302,6 @@ namespace ClearCanvas.Ris.Client.Admin
         {
             if (this.HasValidationErrors)
             {
-                this.Host.ShowMessageBox(this.Validation.GetErrorsString(this), MessageBoxActions.Ok);
                 this.ShowValidation(true);
                 return;
             }

@@ -52,6 +52,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
         /// Constructor
         /// </summary>
         public UserEditorComponentControl(UserEditorComponent component)
+            : base(component)
         {
             InitializeComponent();
 
