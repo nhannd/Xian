@@ -62,11 +62,13 @@ namespace ClearCanvas.Desktop.View.WinForms
             this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
             this._addItemButton = new System.Windows.Forms.Button();
             this._removeItemButton = new System.Windows.Forms.Button();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
             this._availableItems = new ClearCanvas.Desktop.View.WinForms.TableView();
             this._selectedItems = new ClearCanvas.Desktop.View.WinForms.TableView();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.tableLayoutPanel3.SuspendLayout();
+            this.groupBox1.SuspendLayout();
+            this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
             // tableLayoutPanel3
@@ -75,17 +77,14 @@ namespace ClearCanvas.Desktop.View.WinForms
             this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel3.Controls.Add(this._addItemButton, 1, 1);
-            this.tableLayoutPanel3.Controls.Add(this._removeItemButton, 1, 2);
-            this.tableLayoutPanel3.Controls.Add(this.label1, 0, 0);
-            this.tableLayoutPanel3.Controls.Add(this.label2, 2, 0);
-            this.tableLayoutPanel3.Controls.Add(this._availableItems, 0, 1);
-            this.tableLayoutPanel3.Controls.Add(this._selectedItems, 2, 1);
+            this.tableLayoutPanel3.Controls.Add(this._addItemButton, 1, 0);
+            this.tableLayoutPanel3.Controls.Add(this._removeItemButton, 1, 1);
+            this.tableLayoutPanel3.Controls.Add(this.groupBox1, 0, 0);
+            this.tableLayoutPanel3.Controls.Add(this.groupBox2, 2, 0);
             this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel3.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel3.Name = "tableLayoutPanel3";
-            this.tableLayoutPanel3.RowCount = 3;
-            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel3.RowCount = 2;
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
@@ -97,7 +96,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             this._addItemButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this._addItemButton.AutoSize = true;
             this._addItemButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this._addItemButton.Location = new System.Drawing.Point(263, 190);
+            this._addItemButton.Location = new System.Drawing.Point(263, 184);
             this._addItemButton.Name = "_addItemButton";
             this._addItemButton.Size = new System.Drawing.Size(29, 23);
             this._addItemButton.TabIndex = 4;
@@ -109,31 +108,13 @@ namespace ClearCanvas.Desktop.View.WinForms
             // 
             this._removeItemButton.AutoSize = true;
             this._removeItemButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this._removeItemButton.Location = new System.Drawing.Point(263, 219);
+            this._removeItemButton.Location = new System.Drawing.Point(263, 213);
             this._removeItemButton.Name = "_removeItemButton";
             this._removeItemButton.Size = new System.Drawing.Size(29, 23);
             this._removeItemButton.TabIndex = 5;
             this._removeItemButton.Text = "<<";
             this._removeItemButton.UseVisualStyleBackColor = true;
             this._removeItemButton.Click += new System.EventHandler(this.RemoveSelection);
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(3, 0);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(50, 13);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Available";
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(298, 0);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(49, 13);
-            this.label2.TabIndex = 1;
-            this.label2.Text = "Selected";
             // 
             // _availableItems
             // 
@@ -144,8 +125,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             this._availableItems.Location = new System.Drawing.Point(3, 16);
             this._availableItems.Name = "_availableItems";
             this._availableItems.ReadOnly = false;
-            this.tableLayoutPanel3.SetRowSpan(this._availableItems, 2);
-            this._availableItems.Size = new System.Drawing.Size(254, 401);
+            this._availableItems.Size = new System.Drawing.Size(248, 395);
             this._availableItems.TabIndex = 2;
             this._availableItems.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this._availableItems.ItemDoubleClicked += new System.EventHandler(this.AddSelection);
@@ -156,14 +136,41 @@ namespace ClearCanvas.Desktop.View.WinForms
             this._selectedItems.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this._selectedItems.Dock = System.Windows.Forms.DockStyle.Fill;
             this._selectedItems.FilterTextBoxVisible = true;
-            this._selectedItems.Location = new System.Drawing.Point(298, 16);
+            this._selectedItems.Location = new System.Drawing.Point(3, 16);
             this._selectedItems.Name = "_selectedItems";
             this._selectedItems.ReadOnly = false;
-            this.tableLayoutPanel3.SetRowSpan(this._selectedItems, 2);
-            this._selectedItems.Size = new System.Drawing.Size(254, 401);
+            this._selectedItems.Size = new System.Drawing.Size(248, 395);
             this._selectedItems.TabIndex = 3;
             this._selectedItems.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this._selectedItems.ItemDoubleClicked += new System.EventHandler(this.RemoveSelection);
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.AutoSize = true;
+            this.groupBox1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.groupBox1.Controls.Add(this._availableItems);
+            this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.groupBox1.Location = new System.Drawing.Point(3, 3);
+            this.groupBox1.Name = "groupBox1";
+            this.tableLayoutPanel3.SetRowSpan(this.groupBox1, 2);
+            this.groupBox1.Size = new System.Drawing.Size(254, 414);
+            this.groupBox1.TabIndex = 6;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Available";
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.AutoSize = true;
+            this.groupBox2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.groupBox2.Controls.Add(this._selectedItems);
+            this.groupBox2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.groupBox2.Location = new System.Drawing.Point(298, 3);
+            this.groupBox2.Name = "groupBox2";
+            this.tableLayoutPanel3.SetRowSpan(this.groupBox2, 2);
+            this.groupBox2.Size = new System.Drawing.Size(254, 414);
+            this.groupBox2.TabIndex = 7;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Selected";
             // 
             // ListItemSelector
             // 
@@ -174,6 +181,10 @@ namespace ClearCanvas.Desktop.View.WinForms
             this.Size = new System.Drawing.Size(555, 420);
             this.tableLayoutPanel3.ResumeLayout(false);
             this.tableLayoutPanel3.PerformLayout();
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -185,7 +196,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         private System.Windows.Forms.Button _removeItemButton;
         private ClearCanvas.Desktop.View.WinForms.TableView _availableItems;
         private ClearCanvas.Desktop.View.WinForms.TableView _selectedItems;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.GroupBox groupBox2;
     }
 }
