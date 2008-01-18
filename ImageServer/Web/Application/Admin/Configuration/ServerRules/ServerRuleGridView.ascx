@@ -6,7 +6,7 @@
             <asp:GridView ID="GridView" runat="server" AutoGenerateColumns="False" CssClass="CSSGridView"
                 Width="100%" OnRowDataBound="GridView_RowDataBound" OnDataBound="GridView_DataBound"
                 OnSelectedIndexChanged="GridView_SelectedIndexChanged" OnSelectedIndexChanging="GridView_SelectedIndexChanging"
-                OnPageIndexChanging="GridView1_PageIndexChanging" PageSize="15" AllowSorting="True"
+                OnPageIndexChanging="GridView1_PageIndexChanging" PageSize="20" AllowSorting="True"
                 CellPadding="0" CellSpacing="0" AllowPaging="True" CaptionAlign="Top" BorderWidth="1px">
                 <Columns>
                     <asp:BoundField DataField="RuleName" HeaderText="Rule Name"></asp:BoundField>

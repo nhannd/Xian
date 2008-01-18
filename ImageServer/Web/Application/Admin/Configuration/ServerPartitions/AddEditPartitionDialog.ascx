@@ -89,9 +89,6 @@
                                     </tr>
                                 </table>
                             </asp:Panel>
-                            <ccAjax:NumericUpDownExtender ID="PortTextBoxNumericUpDownExtender" runat="server"
-                                Maximum="65535" Minimum="1" TargetControlID="PortTextBox" Width="100">
-                            </ccAjax:NumericUpDownExtender>
                         </ContentTemplate>
                         <HeaderTemplate>
                             General
@@ -123,14 +120,11 @@
                                             <clearcanvas:RangeValidator ID="DefaultRemotePortRangeValidator" runat="server" ControlToValidate="DefaultRemotePortTextBox"
                                                 InvalidInputBackColor="#FAFFB5" ValidationGroup="vg1" MinValue="1" MaxValue="65535"
                                                 ErrorMessage="Parition Default Remote Port must be between 1 and 65535" Display="None"
-                                                PopupHelpControlID="PortHelpImage"></clearcanvas:RangeValidator>
+                                                PopupHelpControlID="PortHelpImage"/>
                                         </td>
                                     </tr>
                                 </table>
                             </asp:Panel>
-                            <ccAjax:NumericUpDownExtender ID="DefaultRemotePortNumericUpDownExtender" runat="server"
-                                Maximum="65535" Minimum="1" TargetControlID="DefaultRemotePortTextBox" Width="100">
-                            </ccAjax:NumericUpDownExtender>
                         </ContentTemplate>
                         <HeaderTemplate>
                             Remote Devices

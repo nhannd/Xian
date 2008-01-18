@@ -244,12 +244,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
                     // e.Row.Attributes["ondblclick"] = Page.ClientScript.GetPostBackEventReference(GridView1, "Edit$" + e.Row.RowIndex);
 
                     CustomizeActiveColumn(e);
+                    CustomizeIpAddressColumn(e);
                     CustomizeDHCPColumn(e);
-
                     CustomizeServerPartitionColumn(e);
-
                     CustomizeFeaturesColumn(e);
-
                 }
 
             }
@@ -368,6 +366,17 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
             lbl.Text = dev.ServerPartition.AeTitle;
         }
 
+        // Display the Partition Description in Server Partition column
+        protected void CustomizeIpAddressColumn(GridViewRowEventArgs e)
+        {
+
+            Device dev = e.Row.DataItem as Device;
+            Label lbl = e.Row.FindControl("IpAddressLabel") as Label; // The label is added in the template
+            if (dev.Dhcp)
+                lbl.Text = "";
+            else
+                lbl.Text = dev.IpAddress;
+        }
         
         protected void GridView1_SelectedIndexChanged(object sender, EventArgs e)
         {

@@ -8,11 +8,15 @@
                 Width="100%" OnRowDataBound="GridView1_RowDataBound" OnDataBound="GridView1_DataBound"
                 OnSelectedIndexChanged="GridView1_SelectedIndexChanged" OnSelectedIndexChanging="GridView1_SelectedIndexChanging"
                 EmptyDataText="" OnPageIndexChanging="GridView1_PageIndexChanging" CellPadding="0"
-                CellSpacing="0" AllowPaging="True" CaptionAlign="Top" BorderWidth="1px">
+                PageSize="20" CellSpacing="0" AllowPaging="True" CaptionAlign="Top" BorderWidth="1px">
                 <Columns>
                     <asp:BoundField DataField="AETitle" HeaderText="AE Title"></asp:BoundField>
                     <asp:BoundField DataField="Description" HeaderText="Description"></asp:BoundField>
-                    <asp:BoundField DataField="IPAddress" HeaderText="IP Address"></asp:BoundField>
+                    <asp:TemplateField HeaderText="IPAddress">
+                        <ItemTemplate>
+                            <asp:Label ID="IpAddressLabel" runat="server" Text="Label"></asp:Label>
+                        </ItemTemplate>
+                    </asp:TemplateField>
                     <asp:BoundField DataField="Port" HeaderText="Port"></asp:BoundField>
                     <asp:TemplateField HeaderText="Enabled">
                         <EditItemTemplate>

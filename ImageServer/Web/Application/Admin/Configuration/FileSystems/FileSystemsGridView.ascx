@@ -8,7 +8,7 @@
                 Width="100%" OnRowDataBound="GridView1_RowDataBound" OnDataBound="GridView1_DataBound"
                 OnSelectedIndexChanged="GridView1_SelectedIndexChanged" OnSelectedIndexChanging="GridView1_SelectedIndexChanging"
                 OnPageIndexChanging="GridView1_PageIndexChanging" EmptyDataText="No filesystems found (Please check the filters!)"
-                PageSize="15" CellPadding="0" CellSpacing="0" AllowPaging="True" CaptionAlign="Top"
+                PageSize="20" CellPadding="0" CellSpacing="0" AllowPaging="True" CaptionAlign="Top"
                 BorderWidth="1px">
                 <FooterStyle BackColor="#507CD1" Font-Bold="True" ForeColor="White" />
                 <Columns>

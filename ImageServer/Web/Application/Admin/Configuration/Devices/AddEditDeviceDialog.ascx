@@ -92,11 +92,6 @@
                                                 InvalidInputBackColor="#FAFFB5" ValidationGroup="vg1" MinValue="1" MaxValue="65535"
                                                 ErrorMessage="Device Port must be between 1 and 65535" PopupHelpControlID="PortHelpImage"
                                                 Display="None"></clearcanvas:RangeValidator>
-                                            <cc1:NumericUpDownExtender ID="PortTextBoxNumericUpDownExtender" runat="server" Maximum="65536"
-                                                Minimum="1" TargetControlID="PortTextBox" Width="100" Enabled="True" RefValues=""
-                                                ServiceDownMethod="" ServiceDownPath="" ServiceUpMethod="" Tag="" TargetButtonDownID=""
-                                                TargetButtonUpID="">
-                                            </cc1:NumericUpDownExtender>
                                         </td>
                                         <td id="Td8" runat="server">
                                         </td>

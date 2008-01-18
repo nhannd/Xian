@@ -124,6 +124,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
         {
             base.OnInit(e);
 
+            this.TabContainer1.ActiveTabIndex = 0;
             
             // Set up the popup extender
             // These settings could been done in the aspx page as well
@@ -137,8 +138,20 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
 
             OKButton.OnClientClick = ClientID + "_clearFields()";
 
+            DHCPCheckBox.InputAttributes.Add("onClick", "EnableDisableIp();");
+
             Page.ClientScript.RegisterClientScriptBlock(this.GetType(), this.ClientID,
                         @"<script language='javascript'>
+                            function EnableDisableIp()
+                            {
+                                var checkBox = document.getElementById('" +
+                                                        this.DHCPCheckBox.ClientID +
+                                                        @"');
+                                var ipBox = document.getElementById('" +
+                                                        this.IPAddressTextBox.ClientID +
+                                                        @"');
+                                ipBox.disabled=checkBox.checked;         
+                            }
                             function AddEditDialog_HideHelpImage(helpImgID)
                             {
                                 img = document.getElementById(helpImgID);
@@ -149,17 +162,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
                                 txtbox = document.getElementById(fieldID);
                                 txtbox.style.backgroundColor = '';
                             }
-
                             function " + ClientID+ @"_clearFields()
                             {
-                                
                                 AddEditDialog_ClearField('" + AETitleTextBox.ClientID + @"');
                                 AddEditDialog_HideHelpImage('" + AETitleHelpImage.ClientID + @"');
                                 AddEditDialog_ClearField('" + IPAddressTextBox.ClientID + @"');
                                 AddEditDialog_HideHelpImage('" + IPAddressHelpImage.ClientID + @"');
                                 AddEditDialog_ClearField('" + PortTextBox.ClientID + @"');
                                 AddEditDialog_HideHelpImage('" + PortHelpImage.ClientID + @"');
-                                
                             }
                         </script>");
         }
@@ -253,14 +263,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
             {
                 AETitleTextBox.Text = "";
                 IPAddressTextBox.Text = "";
-                ActiveCheckBox.Checked = false;
+                ActiveCheckBox.Checked = true;
                 DHCPCheckBox.Checked = false;
                 DescriptionTextBox.Text = "";
-                PortTextBox.Text = "1";
-
-                AllowStorageCheckBox.Checked = false;
-                AllowQueryCheckBox.Checked = false;
-                AllowRetrieveCheckBox.Checked = false;
+                PortTextBox.Text = "104";
+                AllowStorageCheckBox.Checked = true;
+                AllowQueryCheckBox.Checked = true;
+                AllowRetrieveCheckBox.Checked = true;
 
                 ServerPartitionDropDownList.SelectedIndex = 0;
             }
@@ -268,6 +277,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
             {
                 AETitleTextBox.Text = Device.AeTitle;
                 IPAddressTextBox.Text = Device.IpAddress;
+                if (Device.Dhcp)
+                    IPAddressTextBox.Enabled = false;
+                else
+                    IPAddressTextBox.Enabled = true;
                 ActiveCheckBox.Checked = Device.Enabled;
                 DHCPCheckBox.Checked = Device.Dhcp;
                 DescriptionTextBox.Text = Device.Description;

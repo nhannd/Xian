@@ -77,6 +77,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
             }
 
         }
+
         #endregion // public members
 
         #region Events
@@ -96,6 +97,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
         {
             base.OnInit(e);
 
+            ServerPartitionTabContainer.ActiveTabIndex = 0;
+
             // Set up the popup extender
             // These settings could been done in the aspx page as well
             // but if we are to javascript to display, that won't work.
@@ -106,60 +109,28 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
             ModalPopupExtender1.DropShadow = true;
             ModalPopupExtender1.PopupDragHandleControlID = TitleBarPanel.UniqueID;
 
-
-            // Register a javascript that can be called to popup this dialog on the client
-            // 
-            Page.ClientScript.RegisterClientScriptBlock(GetType(), "popupThisWindow",
-                      @"<script language='javascript'>
-                        function ShowAddPartitionDialog()
-                        {  
-                            var ctrl = $find('" + ModalPopupExtender1.UniqueID + @"'); 
-                            ctrl.show();
-                        }
-                    </script>");
-
-
-            OKButton.OnClientClick = ClientID + "_clearFields()";
-
+            AutoInsertDeviceCheckBox.InputAttributes.Add("onclick", "EnableDisable();");
+            
             Page.ClientScript.RegisterClientScriptBlock(GetType(), this.ClientID,
-                        @"<script language='javascript'>
-
-                            function AddEditPartitionDialog_ClearField(fieldID)
-                            {
-                                txtbox = document.getElementById(fieldID);
-                                txtbox.style.backgroundColor = '';
-                            }
-
-                            function AddEditPartitionDialog_HideHelpImage(helpImgID)
-                            {
-                                img = document.getElementById(helpImgID);
-                                img.style.visibility = 'hidden';
-                            }
-
-                            function " + ClientID + @"_clearFields()
-                            {
-                                
-                                AddEditPartitionDialog_ClearField('" + AETitleTextBox.ClientID + @"');
-                                AddEditPartitionDialog_ClearField('" + PortTextBox.ClientID + @"');
-                                AddEditPartitionDialog_ClearField('" + PartitionFolderTextBox.ClientID + @"');
-                                AddEditPartitionDialog_ClearField('" + DefaultRemotePortTextBox.ClientID + @"');
-                                
-                                AddEditPartitionDialog_HideHelpImage('" + AETitleHelpImage.ClientID + @"');
-                                AddEditPartitionDialog_HideHelpImage('" + PortHelpImage.ClientID + @"');
-                                AddEditPartitionDialog_HideHelpImage('" + FolderHelpImage.ClientID + @"');
-                                
-                            }
-                        </script>");
+                @"<script language='javascript'>
+                    function EnableDisable()
+                    {  
+                         var autoInsertCheck = document.getElementById('" +
+                                                    AutoInsertDeviceCheckBox.ClientID +
+                                                    @"');
+                         var defaultPortInput = document.getElementById('" +
+                                                    DefaultRemotePortTextBox.ClientID +
+                                                    @"');
+                         defaultPortInput.disabled = !autoInsertCheck.checked;
+                    }
+                </script>");
 
         }
 
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (Page.IsPostBack == false)
-            {
-            }
-            else
+            if (Page.IsPostBack)
             {
                 if (ViewState[ClientID + "_EditMode"] != null)
                     _editMode = (bool)ViewState[ClientID + "_EditMode"];
@@ -198,7 +169,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
 
             Close();
         }
-
         #endregion Protected methods
 
         #region Public Methods
@@ -207,6 +177,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
         /// </summary>
         public void Show()
         {
+            ServerPartitionTabContainer.ActiveTabIndex = 0;
+
             if (EditMode)
             {
                 TitleLabel.Text = "Edit Partition";
@@ -220,14 +192,17 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
 
             if (Partition== null)
             {
-                AETitleTextBox.Text = "";
+                AETitleTextBox.Text = "SERVERAE";
                 DescriptionTextBox.Text = "";
-                PortTextBox.Text = "1";
+                PortTextBox.Text = "104";
                 PartitionFolderTextBox.Text = "";
-                EnabledCheckBox.Checked = false;
+                EnabledCheckBox.Checked = true;
                 AutoInsertDeviceCheckBox.Checked = true;
                 AcceptAnyDeviceCheckBox.Checked = true;
                 DefaultRemotePortTextBox.Text = "104";
+
+                AutoInsertDeviceCheckBox.Enabled = true;
+                DefaultRemotePortTextBox.Enabled = true;
             }
             else
             {
@@ -239,6 +214,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
                 AutoInsertDeviceCheckBox.Checked = Partition.AutoInsertDevice;
                 AcceptAnyDeviceCheckBox.Checked = Partition.AcceptAnyDevice;
                 DefaultRemotePortTextBox.Text = Partition.DefaultRemotePort.ToString();
+
+                DefaultRemotePortTextBox.Enabled = Partition.AutoInsertDevice;
             }
 
             UpdatePanel.Update();
@@ -250,23 +227,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
         /// </summary>
         public void Close()
         {
-            // 
-            // Clear all boxes
-            //
-            // STRANGE AJAX BUG?: 
-            //      This block of code will cause 
-            //      WebForms.PageRequestManagerServerErrorException: Status code 500 
-            //      when other buttons are pressed AFTER the add device dialog box is dismissed.
-            //
-            //  Move the entire block into Show()
-            //
-            //  AETitleTextBox.Text = "<Enter AE Title>";
-            //  ActiveCheckBox.Checked = false;
-            //  DHCPCheckBox.Checked = false;
-            //  DescriptionTextBox.Text = "<Enter Description>";
-            //  PortTextBox.Text = "<Port #>";
-
-
             ModalPopupExtender1.Hide();
         }
 

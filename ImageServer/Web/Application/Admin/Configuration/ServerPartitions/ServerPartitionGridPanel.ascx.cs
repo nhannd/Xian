@@ -127,14 +127,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
                     // e.Row.Attributes["ondblclick"] = Page.ClientScript.GetPostBackEventReference(GridView1, "Edit$" + e.Row.RowIndex);
 
                     CustomizeActiveColumn(e);
-
+                    CustomizeAcceptAnyDeviceColumn(e);
                 }
 
             }
 
         
         }
-
         protected void CustomizeActiveColumn(GridViewRowEventArgs e)
         {
             Image img = ((Image)e.Row.FindControl("ActiveImage"));
@@ -143,6 +142,21 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
             {
                 bool active = Convert.ToBoolean(DataBinder.Eval(e.Row.DataItem, "Enabled"));
                 if (active)
+                    img.ImageUrl = "~/images/checked_small.gif";
+                else
+                {
+                    img.ImageUrl = "~/images/unchecked_small.gif";
+                }
+            }
+        }
+        protected void CustomizeAcceptAnyDeviceColumn(GridViewRowEventArgs e)
+        {
+            Image img = ((Image)e.Row.FindControl("AcceptAnyDeviceImage"));
+
+            if (img != null)
+            {
+                bool acceptAnyDevice = Convert.ToBoolean(DataBinder.Eval(e.Row.DataItem, "AcceptAnyDevice"));
+                if (acceptAnyDevice)
                     img.ImageUrl = "~/images/checked_small.gif";
                 else
                 {

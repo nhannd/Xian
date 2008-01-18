@@ -30,15 +30,9 @@
 #endregion
 
 using System;
-using System.Configuration;
 using System.Drawing;
-using System.Text.RegularExpressions;
-using System.Web;
-using System.Web.Security;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
-using System.Web.UI.HtmlControls;
 
 namespace ClearCanvas.ImageServer.Web.Common.WebControls
 {
@@ -104,57 +98,51 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
              
             string script =
                 "<script language='javascript'>" + @"
-                    
-                        function " + EvalFunctionName + @"()
+                    function " + EvalFunctionName + @"()
+                    {
+                        extenderCtrl =  document.getElementById('" + this.ClientID + @"');                            
+                        textbox = document.getElementById('" + GetControlRenderID(ControlToValidate) + @"');
+                        helpCtrl = document.getElementById('" + GetControlRenderID(PopupHelpControlID) + @"');
+ 
+                        result = true;
+                        if (textbox.value!=null && textbox.value!='')
                         {
-                            extenderCtrl =  document.getElementById('" + this.ClientID + @"');                            
-                            textbox = document.getElementById('" + GetControlRenderID(ControlToValidate) + @"');
-                            helpCtrl = document.getElementById('" + GetControlRenderID(PopupHelpControlID) + @"');
-     
-                            result = true;
-                            if (textbox.value!=null && textbox.value!='')
-                            {
-                                portValue = parseInt(textbox.value);
-                                result = portValue >= " + _min + @" && portValue<= " + _max + @";
-                            }   
-                            else
-                            {
-                                result = false;
-                            }
-
-                            
-                            if (!result)
-                            {
-                                extenderCtrl.style.visibility='visible';
-                                if (helpCtrl!=null){
-                                    helpCtrl.style.visibility='visible';
-                                    helpCtrl.alt='" + ErrorMessage + @"';
-                                }
-                                    
-                                textbox.style.backgroundColor ='" + InvalidInputBackColor + @"';
-                            }
-                            else
-                            {
-                                //if (helpCtrl!=null)
-                                //    helpCtrl.style.visibility='hidden';
-                                //extenderCtrl.style.visibility='hidden';
-                                //textbox.style.backgroundColor='" + System.Drawing.ColorTranslator.ToHtml(BackColor) + @"';
-                            }
-
-                            //alert('javascript test=' + result);
-
-                            return result;
-
+                            portValue = parseInt(textbox.value);
+                            result = portValue >= " + _min + @" && portValue<= " + _max + @";
+                        }   
+                        else
+                        {
+                            result = false;
                         }
+                        
+                        if (!result)
+                        {
+                            extenderCtrl.style.visibility='visible';
+                            if (helpCtrl!=null){
+                                helpCtrl.style.visibility='visible';
+                                helpCtrl.alt='" + ErrorMessage + @"';
+                            }
+                            textbox.style.backgroundColor ='" + InvalidInputBackColor + @"';
+                        }
+                        else
+                        {
+                            //if (helpCtrl!=null)
+                            //    helpCtrl.style.visibility='hidden';
+                            //extenderCtrl.style.visibility='hidden';
+                            //textbox.style.backgroundColor='" + ColorTranslator.ToHtml(BackColor) + @"';
+                        }
+                        //alert('javascript test=' + result);
+                        return result;
+                    }
 
-                    </script>";
+                </script>";
 
             Page.ClientScript.RegisterClientScriptBlock(GetType(), ClientID, script);
 
             base.OnInit(e);
         }
 
-        protected override void AddAttributesToRender(System.Web.UI.HtmlTextWriter writer)
+        protected override void AddAttributesToRender(HtmlTextWriter writer)
         {
             base.AddAttributesToRender(writer);
 
@@ -173,11 +161,12 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
         {
             bool result = false;
             TextBox input = FindControl(ControlToValidate) as TextBox;
-            if (String.IsNullOrEmpty(input.Text) == false)
-            {
-                Int32 value;
-                result = Int32.TryParse(input.Text, out value);
-            }
+            if (input != null)
+                if (String.IsNullOrEmpty(input.Text) == false)
+                {
+                    Int32 value;
+                    result = Int32.TryParse(input.Text, out value);
+                }
             return result;
         }
 
