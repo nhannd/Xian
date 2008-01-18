@@ -30,14 +30,13 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Xml;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
-using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Application.Services.Admin.ProcedureTypeGroupAdmin
 {
@@ -61,11 +60,6 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ProcedureTypeGroupAdmin
         private IUpdateContext _context;
         private IList<Type> _procedureTypeGroupClasses;
 
-        public ProcedureTypeGroupImporter ()
-        {
-
-        }
-        
         public override bool SupportsXml
         {
             get
@@ -94,21 +88,18 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ProcedureTypeGroupAdmin
 
         private void ImportProcedureTypeGroups(XmlReader reader)
         {
-            if (reader.ReadToDescendant(tagProcedureTypeGroup) == false)
+            for (bool elementExists = reader.ReadToDescendant(tagProcedureTypeGroup);
+                elementExists;
+                elementExists = reader.ReadToNextSibling(tagProcedureTypeGroup))
             {
-                return;
-            }
-            else
-            {
-                do 
-                {
-                    ProcessProcedureTypeGroupNode(reader);
-                } while (reader.ReadToNextSibling(tagProcedureTypeGroup));
+                ProcessProcedureTypeGroupNode(reader.ReadSubtree());
             }
         }
 
         private void ProcessProcedureTypeGroupNode(XmlReader reader)
         {
+            reader.Read();
+
             string name = reader.GetAttribute(attrName);
             string category = reader.GetAttribute(attrClass);
 
@@ -118,15 +109,20 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ProcedureTypeGroupAdmin
                 group.Description = reader.GetAttribute(attrDescription);;
                 group.ProcedureTypes.AddAll(GetProcedureTypes(reader.ReadSubtree()));
             }
+
+            while (reader.Read()) ;
+            reader.Close();
         }
 
         private ICollection<ProcedureType> GetProcedureTypes(XmlReader reader)
         {
+            reader.Read();
+
             List<ProcedureType> types = new List<ProcedureType>();
 
-            for (reader.ReadStartElement(tagProcedureTypeGroup);
-                !(reader.Name == tagProcedureTypeGroup && reader.NodeType == XmlNodeType.EndElement);
-                reader.Read())
+            for (bool elementExists = reader.ReadToDescendant(tagProcedureTypeGroup);
+                elementExists;
+                elementExists = reader.ReadToNextSibling(tagProcedureTypeGroup))
             {
                 ProcedureTypeSearchCriteria criteria = new ProcedureTypeSearchCriteria();
 
@@ -147,6 +143,9 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ProcedureTypeGroupAdmin
 
                 types.AddRange(_context.GetBroker<IProcedureTypeBroker>().Find(criteria));
             }
+
+            while (reader.Read()) ;
+            reader.Close();
 
             return types;
         }

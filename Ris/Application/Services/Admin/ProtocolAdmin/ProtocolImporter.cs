@@ -29,10 +29,7 @@
 
 #endregion
 
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -96,19 +93,18 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ProtocolAdmin
 
         private void ImportProtocolGroups(XmlReader xmlReader)
         {
-            for (xmlReader.ReadToDescendant(tagProtocolGroup);
-                !(xmlReader.Name == tagProtocolGroups && xmlReader.NodeType == XmlNodeType.EndElement);
-                xmlReader.ReadToNextSibling(tagProtocolGroup))
+            for (bool elementExists = xmlReader.ReadToDescendant(tagProtocolGroup);
+                elementExists;
+                elementExists = xmlReader.ReadToNextSibling(tagProtocolGroup))
             {
-                if (xmlReader.IsStartElement(tagProtocolGroup))
-                {
-                    ProcessProtocolGroupNode(xmlReader);
-                }
+                ProcessProtocolGroupNode(xmlReader.ReadSubtree());
             }
         }
 
         private void ProcessProtocolGroupNode(XmlReader reader)
         {
+            reader.Read();
+
             string name = reader.GetAttribute(attrName);
 
             ProtocolGroup protocolGroup = LoadOrCreateProtocolGroup(name);
@@ -116,10 +112,10 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ProtocolAdmin
             {
                 string description = reader.GetAttribute(attrDescription);
 
-                reader.ReadToFollowing(tagProtocolCodes);
+                reader.ReadToDescendant(tagProtocolCodes);
                 ICollection<ProtocolCode> protocolCodes = GetProtocolCodes(reader.ReadSubtree());
 
-                reader.ReadToFollowing(tagReadingGroups);
+                reader.ReadToNextSibling(tagReadingGroups);
                 ICollection<ProcedureTypeGroup> readingGroups = GetReadingGroups(reader.ReadSubtree());
 
                 protocolGroup.Description = description;
@@ -132,6 +128,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ProtocolAdmin
                 protocolGroup.ReadingGroups.AddAll(readingGroups);
             }
 
+            while (reader.Read()) ;
+            reader.Close();
         }
 
         private ProtocolGroup LoadOrCreateProtocolGroup(string name)
@@ -155,54 +153,58 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ProtocolAdmin
 
         private ICollection<ProcedureTypeGroup> GetReadingGroups(XmlReader xmlReader)
         {
+            xmlReader.Read();
+
             List<ProcedureTypeGroup> readingGroups = new List<ProcedureTypeGroup>();
 
-            for (xmlReader.ReadToDescendant(tagReadingGroups);
-                !(xmlReader.Name == tagReadingGroups && xmlReader.NodeType == XmlNodeType.EndElement);
-                xmlReader.Read())
+            for (bool elementExists = xmlReader.ReadToDescendant(tagReadingGroup);
+                elementExists;
+                elementExists = xmlReader.ReadToNextSibling(tagReadingGroup))
             {
-                if (xmlReader.IsStartElement(tagReadingGroup))
-                {
-                    ReadingGroupSearchCriteria criteria = new ReadingGroupSearchCriteria();
-                    criteria.Name.EqualTo(xmlReader.GetAttribute(attrReadingGroupName));
+                ReadingGroupSearchCriteria criteria = new ReadingGroupSearchCriteria();
+                criteria.Name.EqualTo(xmlReader.GetAttribute(attrReadingGroupName));
 
-                    IReadingGroupBroker broker = _context.GetBroker<IReadingGroupBroker>();
-                    ReadingGroup group = CollectionUtils.FirstElement(broker.Find(criteria));
-                    if (group != null) readingGroups.Add(group);
-                }
+                IReadingGroupBroker broker = _context.GetBroker<IReadingGroupBroker>();
+                ReadingGroup group = CollectionUtils.FirstElement(broker.Find(criteria));
+                if (group != null) readingGroups.Add(group);
             }
+
+            while (xmlReader.Read()) ;
+            xmlReader.Close();
 
             return readingGroups;
         }
 
         private ICollection<ProtocolCode> GetProtocolCodes(XmlReader xmlReader)
         {
+            xmlReader.Read();
+
             List<ProtocolCode> protocolCodes = new List<ProtocolCode>();
 
-            for (xmlReader.ReadToDescendant(tagProtocolCodes);
-                !(xmlReader.Name == tagProtocolCodes && xmlReader.NodeType == XmlNodeType.EndElement);
-                xmlReader.Read())
+            for (bool elementExists = xmlReader.ReadToDescendant(tagProtocolCode);
+                elementExists;
+                elementExists = xmlReader.ReadToNextSibling(tagProtocolCode))
             {
-                if (xmlReader.IsStartElement(tagProtocolCode))
+                string codeName = xmlReader.GetAttribute(attrProtocolCodeName);
+                string codeDescription = xmlReader.GetAttribute(attrProtocolCodeDescription);
+
+                ProtocolCodeSearchCriteria criteria = new ProtocolCodeSearchCriteria();
+                criteria.Name.EqualTo(codeName);
+
+                IProtocolCodeBroker broker = _context.GetBroker<IProtocolCodeBroker>();
+                ProtocolCode code = CollectionUtils.FirstElement<ProtocolCode>(broker.Find(criteria));
+
+                if (code == null)
                 {
-                    string codeName = xmlReader.GetAttribute(attrProtocolCodeName);
-                    string codeDescription = xmlReader.GetAttribute(attrProtocolCodeDescription);
-
-                    ProtocolCodeSearchCriteria criteria = new ProtocolCodeSearchCriteria();
-                    criteria.Name.EqualTo(codeName);
-
-                    IProtocolCodeBroker broker = _context.GetBroker<IProtocolCodeBroker>();
-                    ProtocolCode code = CollectionUtils.FirstElement<ProtocolCode>(broker.Find(criteria));
-
-                    if (code == null)
-                    {
-                        code = new ProtocolCode(codeName, codeDescription);
-                        _context.Lock(code, DirtyState.New);
-                    }
-                        
-                    protocolCodes.Add(code);
+                    code = new ProtocolCode(codeName, codeDescription);
+                    _context.Lock(code, DirtyState.New);
                 }
+                    
+                protocolCodes.Add(code);
             }
+
+            while (xmlReader.Read()) ;
+            xmlReader.Close();
 
             return protocolCodes;
         }

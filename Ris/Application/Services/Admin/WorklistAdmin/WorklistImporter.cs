@@ -30,16 +30,15 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Xml;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
+using ClearCanvas.Enterprise.Authentication;
+using ClearCanvas.Enterprise.Authentication.Brokers;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
-using ClearCanvas.Enterprise.Authentication;
-using ClearCanvas.Enterprise.Authentication.Brokers;
-using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
 {
@@ -100,19 +99,18 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
 
         private void ImportWorklists(XmlReader xmlReader)
         {
-            for (xmlReader.ReadToDescendant(tagWorklist);
-                !(xmlReader.Name == tagRoot && xmlReader.NodeType == XmlNodeType.EndElement);
-                xmlReader.ReadToNextSibling(tagWorklist))
+            for (bool elementExists = xmlReader.ReadToDescendant(tagWorklist);
+                elementExists;
+                elementExists = xmlReader.ReadToNextSibling(tagWorklist))
             {
-                if (xmlReader.IsStartElement(tagWorklist))
-                {
-                    ProcessWorklistNode(xmlReader);
-                }
+                ProcessWorklistNode(xmlReader.ReadSubtree());
             }
         }
 
         private void ProcessWorklistNode(XmlReader reader)
         {
+            reader.Read();
+
             string name = reader.GetAttribute(attrName);
             string discriminator = reader.GetAttribute(attrDiscriminator);
 
@@ -124,99 +122,108 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
                 reader.ReadToFollowing(tagProcedureTypeGroups);
                 ICollection<ProcedureTypeGroup> procedureTypeGroups = GetProcedureTypeGroups(reader.ReadSubtree());
 
-                reader.ReadToFollowing(tagSubscribers);
+                reader.ReadToNextSibling(tagSubscribers);
                 ICollection<User> users = GetUsers(reader.ReadSubtree());
 
                 worklist.Description = description;
                 worklist.ProcedureTypeGroups.AddAll(procedureTypeGroups);
                 worklist.Users.AddAll(users);
 
-                reader.ReadToFollowing(tagWorklistCopies);
-                foreach (Worklist copy in GetWorklistCopies(reader.ReadSubtree(), name))
+                if (reader.ReadToNextSibling(tagWorklistCopies))
                 {
-                    copy.Description = description;
-                    copy.ProcedureTypeGroups.AddAll(procedureTypeGroups);
-                    copy.Users.AddAll(users);
+                    foreach (Worklist copy in GetWorklistCopies(reader.ReadSubtree(), name))
+                    {
+                        copy.Description = description;
+                        copy.ProcedureTypeGroups.AddAll(procedureTypeGroups);
+                        copy.Users.AddAll(users);
+                    }
                 }
             }
+
+            while (reader.Read()) ;
+            reader.Close();
         }
 
         private ICollection<ProcedureTypeGroup> GetProcedureTypeGroups(XmlReader reader)
         {
+            reader.Read();
+
             List<ProcedureTypeGroup> groups = new List<ProcedureTypeGroup>();
 
-            for (reader.ReadToDescendant(tagProcedureTypeGroups);
-                !(reader.Name == tagProcedureTypeGroups && reader.NodeType == XmlNodeType.EndElement);
-                reader.Read())
+            for (bool elementExists = reader.ReadToDescendant(tagProcedureTypeGroup);
+                elementExists;
+                elementExists = reader.ReadToNextSibling(tagProcedureTypeGroup))
             {
-                if (reader.IsStartElement(tagProcedureTypeGroup))
-                {
-                    ProcedureTypeGroupSearchCriteria criteria = new ProcedureTypeGroupSearchCriteria();
-                    criteria.Name.EqualTo(reader.GetAttribute(attrGroupName));
+                ProcedureTypeGroupSearchCriteria criteria = new ProcedureTypeGroupSearchCriteria();
+                criteria.Name.EqualTo(reader.GetAttribute(attrGroupName));
 
-                    string groupClassName = reader.GetAttribute(attrGroupClass);
-                    Type groupClass = CollectionUtils.SelectFirst(_procedureTypeGroupClasses,
-                       delegate(Type t)
-                       {
-                           return t.FullName.Equals(groupClassName, StringComparison.InvariantCultureIgnoreCase);
-                       });
+                string groupClassName = reader.GetAttribute(attrGroupClass);
+                Type groupClass = CollectionUtils.SelectFirst(_procedureTypeGroupClasses,
+                   delegate(Type t)
+                   {
+                       return t.FullName.Equals(groupClassName, StringComparison.InvariantCultureIgnoreCase);
+                   });
 
-                    IProcedureTypeGroupBroker broker = _context.GetBroker<IProcedureTypeGroupBroker>();
-                    ProcedureTypeGroup group = CollectionUtils.FirstElement(broker.Find(criteria, groupClass));
-                    if (group != null) groups.Add(group);
-                }
+                IProcedureTypeGroupBroker broker = _context.GetBroker<IProcedureTypeGroupBroker>();
+                ProcedureTypeGroup group = CollectionUtils.FirstElement(broker.Find(criteria, groupClass));
+                if (group != null) groups.Add(group);
             }
+
+            while (reader.Read()) ;
+            reader.Close();
 
             return groups;
         }
 
         private ICollection<User> GetUsers(XmlReader reader)
         {
+            reader.Read();
+
             List<User> users = new List<User>();
 
-            for (reader.ReadToDescendant(tagSubscribers);
-                !(reader.Name == tagSubscribers && reader.NodeType == XmlNodeType.EndElement);
-                reader.Read())
+            for (bool elementExists = reader.ReadToDescendant(tagSubscriber);
+                elementExists;
+                elementExists = reader.ReadToNextSibling(tagSubscriber))
             {
-                if(reader.IsStartElement(tagSubscriber))
+                string subscriberType = reader.GetAttribute(attrSubscriberType);
+                string userName = reader.GetAttribute(attrSubscriberName);
+
+                switch (subscriberType)
                 {
-                    string subscriberType = reader.GetAttribute(attrSubscriberType);
-                    string userName = reader.GetAttribute(attrSubscriberName);
+                    case "user":
 
-                    switch (subscriberType)
-                    {
-                        case "user":
+                        UserSearchCriteria criteria = new UserSearchCriteria();
+                        criteria.UserName.EqualTo(userName);
 
-                            UserSearchCriteria criteria = new UserSearchCriteria();
-                            criteria.UserName.EqualTo(userName);
+                        IUserBroker broker = _context.GetBroker<IUserBroker>();
+                        User user = CollectionUtils.FirstElement<User>(broker.Find(criteria));
+                        if (user != null) users.Add(user);
 
-                            IUserBroker broker = _context.GetBroker<IUserBroker>();
-                            User user = CollectionUtils.FirstElement<User>(broker.Find(criteria));
-                            if (user != null) users.Add(user);
+                        break;
+                    case "user-group":
 
-                            break;
-                        case "user-group":
+                        AuthorityGroupSearchCriteria groupCriteria = new AuthorityGroupSearchCriteria();
+                        groupCriteria.Name.EqualTo(userName);
 
-                            AuthorityGroupSearchCriteria groupCriteria = new AuthorityGroupSearchCriteria();
-                            groupCriteria.Name.EqualTo(userName);
+                        IAuthorityGroupBroker groupBroker = _context.GetBroker<IAuthorityGroupBroker>();
+                        AuthorityGroup group = CollectionUtils.FirstElement<AuthorityGroup>(groupBroker.Find(groupCriteria));
 
-                            IAuthorityGroupBroker groupBroker = _context.GetBroker<IAuthorityGroupBroker>();
-                            AuthorityGroup group = CollectionUtils.FirstElement<AuthorityGroup>(groupBroker.Find(groupCriteria));
-
-                            if (group != null)
+                        if (group != null)
+                        {
+                            foreach(User authorityGroupUser in group.Users)
                             {
-                                foreach(User authorityGroupUser in group.Users)
-                                {
-                                    users.Add(authorityGroupUser);
-                                }
+                                users.Add(authorityGroupUser);
                             }
+                        }
 
-                            break;
-                        default:
-                            break;
-                    }
+                        break;
+                    default:
+                        break;
                 }
             }
+
+            while (reader.Read()) ;
+            reader.Close();
 
             return users;
         }
@@ -227,15 +234,12 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
         {
             List<Worklist> copies = new List<Worklist>();
 
-            for (reader.ReadToDescendant(tagWorklistCopies);
-                !(reader.Name == tagWorklistCopies && reader.NodeType == XmlNodeType.EndElement);
-                reader.Read())
+            for (bool elementExists = reader.ReadToDescendant(tagCopy);
+                elementExists;
+                elementExists = reader.ReadToNextSibling(tagCopy))
             {
-                if (reader.IsStartElement(tagCopy))
-                {
-                    string copyType = reader.GetAttribute(attrCopyDiscriminator);
-                    copies.Add(LoadOrCreateWorklist(name, copyType));
-                }
+                string copyType = reader.GetAttribute(attrCopyDiscriminator);
+                copies.Add(LoadOrCreateWorklist(name, copyType));
             }
 
             return copies;
