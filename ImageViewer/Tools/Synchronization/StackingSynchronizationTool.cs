@@ -42,11 +42,11 @@ using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Tools.Synchronization
 {
-	[MenuAction("activate", "global-menus/MenuTools/MenuStandard/MenuSynchronizeStacking", "Toggle", Flags = ClickActionFlags.CheckAction)]
-	[ButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarSynchronizeStacking", "Toggle", Flags = ClickActionFlags.CheckAction)]
+	[MenuAction("activate", "global-menus/MenuTools/MenuStandard/MenuAutoStackSynchronization", "Toggle", Flags = ClickActionFlags.CheckAction)]
+	[ButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarAutoStackSynchronization", "Toggle", Flags = ClickActionFlags.CheckAction)]
 	[CheckedStateObserver("activate", "Active", "ActiveChanged")]
-	[Tooltip("activate", "TooltipSynchronizeStacking")]
-	[IconSet("activate", IconScheme.Colour, "Icons.StackingSynchronizationToolSmall.png", "Icons.StackingSynchronizationToolMedium.png", "Icons.StackingSynchronizationToolLarge.png")]
+	[Tooltip("activate", "TooltipAutoStackSynchronization")]
+	[IconSet("activate", IconScheme.Colour, "Icons.AutoStackSynchronizationToolSmall.png", "Icons.AutoStackSynchronizationToolMedium.png", "Icons.AutoStackSynchronizationToolLarge.png")]
 	[GroupHint("activate", "Tools.Image.Manipulation.Stacking.Synchronize")]
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class StackingSynchronizationTool : ImageViewerTool
