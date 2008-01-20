@@ -402,5 +402,49 @@ namespace ClearCanvas.ImageViewer.Mathematics
 
 			return new SizeF(deltaX, deltaY);
 		}
+
+		/// <summary>
+		/// Calculates the angle subtended by two line segments.
+		/// </summary>
+		/// <param name="start"></param>
+		/// <param name="vertex"></param>
+		/// <param name="end"></param>
+		/// <returns></returns>
+		/// <remarks>
+		/// Line segment 1 is defined by points <paramref name="start"/> and <paramref name="vertex"/>.
+		/// Line segment 2 is defined by points <paramref name="end"/> and <paramref name="vertex"/>.
+		/// </remarks>
+		public static double SubtendedAngle(PointF start, PointF vertex, PointF end)
+		{
+			Vector3D a = new Vector3D(start.X, start.Y, 0);
+			a.Subtract(new Vector3D(vertex.X, vertex.Y, 0));
+
+			Vector3D b = new Vector3D(end.X, end.Y, 0);
+			b.Subtract(new Vector3D(vertex.X, vertex.Y, 0));
+
+			float dotProduct = Vector3D.Dot(a, b);
+
+			float magA = a.Magnitude;
+			float magB = b.Magnitude;
+
+			if (magA == 0 || magB == 0)
+				return 0;
+
+			double cosTheta = dotProduct / magA / magB;
+
+			// Make sure cosTheta is within bounds so we don't
+			// get any errors when we take the acos.
+			if (cosTheta > 1.0f)
+				cosTheta = 1.0f;
+
+			if (cosTheta < -1.0f)
+				cosTheta = -1.0f;
+
+			double theta = Math.Acos(cosTheta);
+
+			double thetaInDegrees = theta / Math.PI * 180;
+
+			return thetaInDegrees;
+		}
 	}
 }

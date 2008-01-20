@@ -165,4 +165,13 @@
   <data name="ToolbarRuler" xml:space="preserve">
     <value>Ruler</value>
   </data>
+  <data name="MenuProtractor" xml:space="preserve">
+    <value>Protractor</value>
+  </data>
+  <data name="ToolbarProtractor" xml:space="preserve">
+    <value>Protractor</value>
+  </data>
+  <data name="TooltipProtractor" xml:space="preserve">
+    <value>Protractor</value>
+  </data>
 </root>

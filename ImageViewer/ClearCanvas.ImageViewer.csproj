@@ -199,6 +199,7 @@
     <Compile Include="InteractiveGraphics\PointsMemento.cs" />
     <Compile Include="InteractiveGraphics\StandardStatefulCompositeGraphic.cs" />
     <Compile Include="Mathematics\Matrix.cs" />
+    <Compile Include="Mathematics\Tests\VectorTest.cs" />
     <Compile Include="Mathematics\Vector3D.cs" />
     <Compile Include="ReferenceCountedObjectWrapper.cs" />
     <Compile Include="PresentationImageChangedEventArgs.cs" />
