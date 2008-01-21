@@ -9,13 +9,13 @@
                 OnPageIndexChanging="GridView1_PageIndexChanging" PageSize="20" AllowSorting="True"
                 CellPadding="0" CellSpacing="0" AllowPaging="True" CaptionAlign="Top" BorderWidth="1px">
                 <Columns>
-                    <asp:BoundField DataField="RuleName" HeaderText="Rule Name"></asp:BoundField>
-                    <asp:TemplateField HeaderText="Rule Type">
+                    <asp:BoundField DataField="RuleName" HeaderText="Name"></asp:BoundField>
+                    <asp:TemplateField HeaderText="Type">
                         <ItemTemplate>
                             <asp:Label ID="ServerRuleTypeEnum" runat="server" />
                         </ItemTemplate>
                     </asp:TemplateField>
-                    <asp:TemplateField HeaderText="Rule Apply Time">
+                    <asp:TemplateField HeaderText="Apply Time">
                         <ItemTemplate>
                             <asp:Label ID="ServerRuleApplyTimeEnum" runat="server"></asp:Label>
                         </ItemTemplate>
