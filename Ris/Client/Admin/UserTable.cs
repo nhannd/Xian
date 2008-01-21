@@ -49,12 +49,20 @@ namespace ClearCanvas.Ris.Client.Admin
                 delegate(UserSummary user) { return user.DisplayName; },
                 1.0f));
 
+            this.Columns.Add(new TableColumn<UserSummary, bool>("Enabled",
+               delegate(UserSummary user) { return user.Enabled; },
+               1.0f));
+
             this.Columns.Add(new TableColumn<UserSummary, string>("Valid From",
                 delegate(UserSummary user) { return Format.DateTime(user.ValidFrom); },
                 1.0f));
 
             this.Columns.Add(new TableColumn<UserSummary, string>("Valid Until",
                delegate(UserSummary user) { return Format.DateTime(user.ValidUntil); },
+               1.0f));
+
+            this.Columns.Add(new TableColumn<UserSummary, string>("Last Login Time",
+               delegate(UserSummary user) { return Format.DateTime(user.LastLoginTime); },
                1.0f));
         }
     }

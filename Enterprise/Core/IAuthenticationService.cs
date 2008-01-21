@@ -61,6 +61,7 @@ namespace ClearCanvas.Enterprise.Core
         /// <returns></returns>
         /// <exception cref="SecurityTokenException">Invalid username or password.</exception>
         [OperationContract]
+        [FaultContract(typeof(PasswordExpiredException))]
         SessionToken InitiateUserSession(string userName, string password);
 
         /// <summary>
@@ -77,6 +78,15 @@ namespace ClearCanvas.Enterprise.Core
         /// <exception cref="SecurityTokenException">Session token expired or otherwise invalid.</exception>
         [OperationContract]
         SessionToken ValidateUserSession(string userName, SessionToken sessionToken);
+
+        /// <summary>
+        /// Allows user to change his own password.
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <param name="currentPassword"></param>
+        /// <param name="newPassword"></param>
+        [OperationContract]
+        void ChangePassword(string userName, string currentPassword, string newPassword);
 
         /// <summary>
         /// Obtains the set of authority tokens that have been granted to the 

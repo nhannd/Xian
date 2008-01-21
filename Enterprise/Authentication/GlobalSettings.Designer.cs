@@ -35,9 +35,9 @@ namespace ClearCanvas.Enterprise.Authentication {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("clearcanvas")]
-        public string InitialPassword {
+        public string DefaultTemporaryPassword {
             get {
-                return ((string)(this["InitialPassword"]));
+                return ((string)(this["DefaultTemporaryPassword"]));
             }
         }
         

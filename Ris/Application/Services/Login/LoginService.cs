@@ -53,6 +53,20 @@ namespace ClearCanvas.Ris.Application.Services.Login
     {
         #region ILoginService Members
 
+        [ReadOperation]
+        public GetWorkingFacilityChoicesResponse GetWorkingFacilityChoices(GetWorkingFacilityChoicesRequest request)
+        {
+            // facility choices - for now, just return all facilities
+            // conceivably this list could be filtered for various reasons
+            // (ie inactive facilities, etc) 
+            FacilityAssembler facilityAssembler = new FacilityAssembler();
+            List<FacilitySummary> facilities = CollectionUtils.Map<Facility, FacilitySummary>(
+                PersistenceContext.GetBroker<IFacilityBroker>().FindAll(),
+                delegate(Facility f) { return facilityAssembler.CreateFacilitySummary(f); });
+
+            return new GetWorkingFacilityChoicesResponse(facilities);
+        }
+
         [UpdateOperation]
         public LoginResponse Login(LoginRequest request)
         {
@@ -72,7 +86,11 @@ namespace ClearCanvas.Ris.Application.Services.Login
                 Platform.GetService<IAuthenticationService>(
                     delegate(IAuthenticationService service)
                     {
-                        // this call will throw if user/password not valid
+                        // this call will throw SecurityTokenException if user/password not valid
+                        // it will throw a PasswordExpiredException if the password has expired
+                        // note that PasswordExpiredException is part of the fault contract of this method,
+                        // so we don't catch it
+
                         token = service.InitiateUserSession(user, password);
 
                         authorityTokens = service.ListAuthorityTokensForUser(user);
@@ -120,18 +138,33 @@ namespace ClearCanvas.Ris.Application.Services.Login
             return new LoginResponse(token.Id, authorityTokens, fullName);
         }
 
-        [ReadOperation]
-        public GetWorkingFacilityChoicesResponse GetWorkingFacilityChoices(GetWorkingFacilityChoicesRequest request)
+        [UpdateOperation]
+        public ChangePasswordResponse ChangePassword(ChangePasswordRequest request)
         {
-            // facility choices - for now, just return all facilities
-            // conceivably this list could be filtered for various reasons
-            // (ie inactive facilities, etc) 
-            FacilityAssembler facilityAssembler = new FacilityAssembler();
-            List<FacilitySummary> facilities = CollectionUtils.Map<Facility, FacilitySummary>(
-                PersistenceContext.GetBroker<IFacilityBroker>().FindAll(),
-                delegate(Facility f) { return facilityAssembler.CreateFacilitySummary(f); });
+            Platform.CheckForNullReference(request, "request");
+            Platform.CheckMemberIsSet(request.UserName, "UserName");
 
-            return new GetWorkingFacilityChoicesResponse(facilities);
+            string user = request.UserName;
+            string password = StringUtilities.EmptyIfNull(request.Password);
+            string newPassword = StringUtilities.EmptyIfNull(request.NewPassword);
+
+            try
+            {
+                Platform.GetService<IAuthenticationService>(
+                    delegate(IAuthenticationService service)
+                    {
+                        // this call will throw SecurityTokenException if user/password not valid
+                        service.ChangePassword(user, password, newPassword);
+                    });
+
+            }
+            catch (SecurityTokenException e)
+            {
+                // login failed
+                throw new RequestValidationException(e.Message);
+            }
+
+            return new ChangePasswordResponse();
         }
 
         #endregion

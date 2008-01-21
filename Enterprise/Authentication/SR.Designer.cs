@@ -70,11 +70,11 @@ namespace ClearCanvas.Enterprise.Authentication {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Invalid username or password..
+        ///   Looks up a localized string similar to Invalid user name and/or password..
         /// </summary>
-        internal static string ExceptionInvalidUserOrPassword {
+        internal static string ExceptionInvalidUserAccount {
             get {
-                return ResourceManager.GetString("ExceptionInvalidUserOrPassword", resourceCulture);
+                return ResourceManager.GetString("ExceptionInvalidUserAccount", resourceCulture);
             }
         }
     }

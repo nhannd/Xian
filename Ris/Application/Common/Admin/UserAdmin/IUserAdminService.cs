@@ -69,6 +69,16 @@ namespace ClearCanvas.Ris.Application.Common.Admin.UserAdmin
         UpdateUserResponse UpdateUser(UpdateUserRequest request);
 
         /// <summary>
+        /// Resets a user's password to the temporary password.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [OperationContract]
+        [FaultContract(typeof(ConcurrentModificationException))]
+        [FaultContract(typeof(RequestValidationException))]
+        ResetUserPasswordResponse ResetUserPassword(ResetUserPasswordRequest request);
+
+        /// <summary>
         /// Load details for a specified user account
         /// </summary>
         /// <param name="request"><see cref="LoadUserForEditRequest"/></param>
@@ -79,8 +89,8 @@ namespace ClearCanvas.Ris.Application.Common.Admin.UserAdmin
         /// <summary>
         /// Summary list of all authority groups
         /// </summary>
-        /// <param name="request"><see cref="ListAuthorityGroupRequest"/></param>
-        /// <returns><see cref="ListAuthorityGroupResponse"/></returns>
+        /// <param name="request"><see cref="ListAuthorityGroupsRequest"/></param>
+        /// <returns><see cref="ListAuthorityGroupsResponse"/></returns>
         [OperationContract]
         ListAuthorityGroupsResponse ListAuthorityGroups(ListAuthorityGroupsRequest request);
 

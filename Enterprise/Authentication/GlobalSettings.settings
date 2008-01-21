@@ -5,7 +5,7 @@
     <Setting Name="PasswordExpiryDays" Type="System.Int32" Scope="Application">
       <Value Profile="(Default)">60</Value>
     </Setting>
-    <Setting Name="InitialPassword" Type="System.String" Scope="Application">
+    <Setting Name="DefaultTemporaryPassword" Type="System.String" Scope="Application">
       <Value Profile="(Default)">clearcanvas</Value>
     </Setting>
     <Setting Name="UserSessionTimeoutMinutes" Type="System.Int32" Scope="Application">

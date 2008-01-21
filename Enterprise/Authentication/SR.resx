@@ -120,7 +120,7 @@
   <data name="ExceptionInvalidSession" xml:space="preserve">
     <value>Invalid or expired user session.</value>
   </data>
-  <data name="ExceptionInvalidUserOrPassword" xml:space="preserve">
-    <value>Invalid username or password.</value>
+  <data name="ExceptionInvalidUserAccount" xml:space="preserve">
+    <value>Invalid user name and/or password.</value>
   </data>
 </root>

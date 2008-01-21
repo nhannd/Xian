@@ -39,35 +39,50 @@ namespace ClearCanvas.Ris.Client.View.WinForms
     [ExtensionOf(typeof(LoginDialogExtensionPoint))]
     public class LoginDialog : ILoginDialog
     {
-        private string[] _facilities;
-        private string _selectedFacility;
+        private LoginForm _form;
+
+        public LoginDialog()
+        {
+            _form = new LoginForm();
+        }
 
         #region ILoginDialog Members
 
-        public void SetFacilityChoices(string[] facilities, string selectedFacility)
-        {
-            _facilities = facilities;
-            _selectedFacility = selectedFacility;
-        }
-
-        public bool Show(out string userName, out string password, out string facility)
+        public bool Show()
         {
             System.Windows.Forms.Application.EnableVisualStyles();
-            LoginForm form = new LoginForm(_facilities, _selectedFacility);
-            if (form.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+
+            if (_form.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                userName = form.UserName;
-                password = form.Password;
-                facility = form.SelectedFacility;
                 return true;
             }
             else
             {
-                userName = null;
-                password = null;
-                facility = null;
                 return false;
             }
+        }
+
+        public string UserName
+        {
+            get { return _form.UserName; }
+            set { _form.UserName = value; }
+        }
+
+        public string Password
+        {
+            get { return _form.Password; }
+        }
+
+        public string Facility
+        {
+            get { return _form.SelectedFacility; }
+            set { _form.SelectedFacility = value; }
+        }
+
+        public string[] FacilityChoices
+        {
+            get { return _form.FacilityChoices; }
+            set { _form.FacilityChoices = value; }
         }
 
         #endregion

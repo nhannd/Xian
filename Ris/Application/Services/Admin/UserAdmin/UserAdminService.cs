@@ -141,11 +141,9 @@ namespace ClearCanvas.Ris.Application.Services.Admin.UserAdmin
             User user = User.CreateNewUser(
                 new UserInfo(userDetail.UserName, userDetail.DisplayName, userDetail.ValidFrom, userDetail.ValidUntil));
 
+            // copy other info such as authority groups
             UserAssembler assembler = new UserAssembler();
             assembler.UpdateUser(user, request.UserDetail, PersistenceContext);
-
-            if(userDetail.ChangePassword)
-                user.ChangePassword(userDetail.NewPassword);
 
             PersistenceContext.Lock(user, DirtyState.New);
 
@@ -168,11 +166,13 @@ namespace ClearCanvas.Ris.Application.Services.Admin.UserAdmin
         {
             User user = PersistenceContext.Load<User>(request.UserRef);
 
+            // update user account info
             UserAssembler assembler = new UserAssembler();
             assembler.UpdateUser(user, request.UserDetail, PersistenceContext);
 
-            if (request.UserDetail.ChangePassword)
-                user.ChangePassword(request.UserDetail.NewPassword);
+            // reset password if requested
+            if (request.UserDetail.ResetPassword)
+                user.ResetPassword();
 
             IStaffBroker staffBroker = PersistenceContext.GetBroker<IStaffBroker>();
             try
@@ -193,6 +193,19 @@ namespace ClearCanvas.Ris.Application.Services.Admin.UserAdmin
             }
 
             return new UpdateUserResponse(assembler.GetUserSummary(user));
+        }
+
+        [UpdateOperation]
+        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.UserAdmin)]
+        public ResetUserPasswordResponse ResetUserPassword(ResetUserPasswordRequest request)
+        {
+            Platform.CheckForNullReference(request, "request");
+            Platform.CheckMemberIsSet(request.UserRef, "UserRef");
+
+            User user = PersistenceContext.Load<User>(request.UserRef);
+            user.ResetPassword();
+
+            return new ResetUserPasswordResponse();
         }
 
         [UpdateOperation]
@@ -223,5 +236,6 @@ namespace ClearCanvas.Ris.Application.Services.Admin.UserAdmin
         }
 
         #endregion
+
     }
 }

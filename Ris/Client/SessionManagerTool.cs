@@ -1,6 +1,6 @@
 #region License
 
-// Copyright (c) 2006-2008, ClearCanvas Inc.
+// Copyright (c) 2006-2007, ClearCanvas Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, 
@@ -33,16 +33,29 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
+using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.Tools;
+using ClearCanvas.Desktop.Actions;
+
 namespace ClearCanvas.Ris.Client
 {
-    public interface ILoginDialog : IDisposable
+    [MenuAction("apply", "global-menus/MenuTools/Change Password", "ChangePassword")]
+    [ExtensionOf(typeof(ClearCanvas.Desktop.DesktopToolExtensionPoint))]
+    public class SessionManagerTool : Tool<ClearCanvas.Desktop.IDesktopToolContext>
     {
-        bool Show();
+        public SessionManagerTool()
+        {
+        }
 
-        string[] FacilityChoices { get; set; }
-        string Facility { get; set; }
-
-        string UserName { get; set; }
-        string Password { get; }
+        public void ChangePassword()
+        {
+            string newPassword;
+            if(SessionManager.DoChangePassword(LoginSession.Current.UserName, null, out newPassword))
+            {
+                this.Context.DesktopWindow.ShowMessageBox("Password changed.", MessageBoxActions.Ok);
+            }
+        }
     }
 }

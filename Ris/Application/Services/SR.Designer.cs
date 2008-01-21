@@ -160,6 +160,15 @@ namespace ClearCanvas.Ris.Application.Services {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Password has expired..
+        /// </summary>
+        internal static string ExceptionPasswordExpired {
+            get {
+                return ResourceManager.GetString("ExceptionPasswordExpired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Patient with MRN {0} {1} not found.
         /// </summary>
         internal static string ExceptionPatientNotFound {

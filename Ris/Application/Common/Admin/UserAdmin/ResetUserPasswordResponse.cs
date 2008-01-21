@@ -30,19 +30,14 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Runtime.Serialization;
 
-namespace ClearCanvas.Ris.Client
+using ClearCanvas.Enterprise.Common;
+
+namespace ClearCanvas.Ris.Application.Common.Admin.UserAdmin
 {
-    public interface ILoginDialog : IDisposable
+    [DataContract]
+    public class ResetUserPasswordResponse : DataContractBase
     {
-        bool Show();
-
-        string[] FacilityChoices { get; set; }
-        string Facility { get; set; }
-
-        string UserName { get; set; }
-        string Password { get; }
     }
 }

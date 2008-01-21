@@ -14,6 +14,7 @@
     <property name="DisplayName" column="DisplayName_" type="String"/>
     <property name="ValidFrom" column="ValidFrom_" type="DateTime"/>
     <property name="ValidUntil" column="ValidUntil_" type="DateTime"/>
+    <property name="Enabled" column="Enabled_" type="Boolean" not-null="true"/>
     <property name="LastLoginTime" column="LastLoginTime_" type="DateTime"/>
     <set name="AuthorityGroups" table="AuthorityGroupUser_" lazy="true" cascade="all" access="nosetter.camelcase-underscore">
       <key column="UserOID_"/>

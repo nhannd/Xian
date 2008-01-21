@@ -48,6 +48,8 @@ namespace ClearCanvas.Enterprise.Authentication {
     /// </summary>
 	public partial class User : Entity
 	{
+        #region Public methods
+
         /// <summary>
         /// Creates a new user with the specified initial password.
         /// </summary>
@@ -66,19 +68,20 @@ namespace ClearCanvas.Enterprise.Authentication {
                 userInfo.DisplayName,
                 userInfo.ValidFrom,
                 userInfo.ValidUntil,
-                null,
+                true, // initially enabled
+                null, // last login time
                 authorityGroups);
         }
 
         /// <summary>
-        /// Creates a new user, assigning the value in <see cref="GlobalSettings.InitialPassword"/> as the initial password.
+        /// Creates a new user, assigning the default temporary password.
         /// </summary>
         /// <param name="userInfo"></param>
         /// <returns></returns>
         public static User CreateNewUser(UserInfo userInfo)
         {
             GlobalSettings settings = new GlobalSettings();
-            return CreateNewUser(userInfo, settings.InitialPassword, new HashedSet<AuthorityGroup>());
+            return CreateNewUser(userInfo, settings.DefaultTemporaryPassword, new HashedSet<AuthorityGroup>());
         }
 
         /// <summary>
@@ -86,12 +89,43 @@ namespace ClearCanvas.Enterprise.Authentication {
         /// value defined in <see cref="GlobalSettings.PasswordExpiryDays"/>.
         /// </summary>
         /// <param name="newPassword"></param>
-        public void ChangePassword(string newPassword)
+        public virtual void ChangePassword(string newPassword)
         {
             GlobalSettings settings = new GlobalSettings();
-            DateTime passwordExpiry = Platform.Time.AddDays(settings.PasswordExpiryDays);
+            ChangePassword(newPassword, settings.PasswordExpiryDays);
+        }
 
-            _password = Authentication.Password.CreatePassword(newPassword, passwordExpiry);
+        /// <summary>
+        /// Resets the user's password to the default temporary password,
+        /// set to expire immediately.
+        /// </summary>
+        public virtual void ResetPassword()
+        {
+            GlobalSettings settings = new GlobalSettings();
+            ChangePassword(settings.DefaultTemporaryPassword, 0);
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether this account is currently active.
+        /// </summary>
+        public virtual bool IsActive
+        {
+            get
+            {
+                DateTime currentTime = Platform.Time;
+                return _enabled
+                       && (_validFrom == null || _validFrom < currentTime)
+                       && (_validUntil == null || _validUntil > currentTime);
+            }
+        }
+
+        #endregion
+
+
+        private void ChangePassword(string newPassword, int daysToExpiration)
+        {
+            DateTime? expiryTime = Platform.Time.AddDays(daysToExpiration);
+            _password = Authentication.Password.CreatePassword(newPassword, expiryTime);
         }
 	
 		/// <summary>

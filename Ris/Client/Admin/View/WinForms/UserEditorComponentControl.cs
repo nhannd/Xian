@@ -61,26 +61,17 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             _userId.DataBindings.Add("Value", _component, "UserId", true, DataSourceUpdateMode.OnPropertyChanged);
             _userId.DataBindings.Add("ReadOnly", _component, "IsUserIdReadOnly", true, DataSourceUpdateMode.OnPropertyChanged);
 
-            _changePasswordCheckBox.DataBindings.Add("Checked", _component, "ChangePassword", true, DataSourceUpdateMode.OnPropertyChanged);
-
-            _password.DataBindings.Add("Value", _component, "Password", true, DataSourceUpdateMode.OnPropertyChanged);
-            _password.DataBindings.Add("Enabled", _component, "ChangePassword", true, DataSourceUpdateMode.OnPropertyChanged);
-            _confirmPassword.DataBindings.Add("Value", _component, "ConfirmPassword", true, DataSourceUpdateMode.OnPropertyChanged);
-            _confirmPassword.DataBindings.Add("Enabled", _component, "ChangePassword", true, DataSourceUpdateMode.OnPropertyChanged);
-
             _staffName.DataBindings.Add("Value", _component, "StaffName", true, DataSourceUpdateMode.OnPropertyChanged);
 
             _validFrom.DataBindings.Add("Value", _component, "ValidFrom", true, DataSourceUpdateMode.OnPropertyChanged);
             _validUntil.DataBindings.Add("Value", _component, "ValidUntil", true, DataSourceUpdateMode.OnPropertyChanged);
+            _accountEnabledCheckBox.DataBindings.Add("Checked", _component, "AccountEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
+
 
             _authorityGroups.Table = _component.Groups;
 
             _acceptButton.DataBindings.Add("Enabled", _component, "AcceptEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
             _clearStaffButton.DataBindings.Add("Enabled", _component, "ClearStaffEnabled");
-
-            // TODO: enable these when functionality implemented on server
-            _password.Enabled = false;
-            _confirmPassword.Enabled = false;
         }
 
         private void _acceptButton_Click(object sender, EventArgs e)

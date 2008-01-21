@@ -41,11 +41,17 @@ using System.ServiceModel;
 using ClearCanvas.Desktop;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Client
 {
     [ExtensionPoint]
     public class LoginDialogExtensionPoint : ExtensionPoint<ILoginDialog>
+    {
+    }
+
+    [ExtensionPoint]
+    public class ChangePasswordDialogExtensionPoint : ExtensionPoint<IChangePasswordDialog>
     {
     }
 
@@ -78,70 +84,145 @@ namespace ClearCanvas.Ris.Client
 
         private bool DoLogin()
         {
-            using (ILoginDialog loginDialog = (ILoginDialog)(new LoginDialogExtensionPoint()).CreateExtension())
+            bool needLoginDialog = true;
+            string userName = null;
+            string password = null;
+            string facility = null;
+
+            List<FacilitySummary> facilities = GetFacilityChoices();
+            while (true)
             {
-                List<FacilitySummary> facilities = GetFacilityChoices();
-                string[] facilityCodes = CollectionUtils.Map<FacilitySummary, string>(
-                    facilities,
-                    delegate(FacilitySummary fs) { return fs.Code; }).ToArray();
-
-                string selectedFacilityCode = LoginDialogSettings.Default.SelectedFacility;
-
-                // if no saved facility, just choose the first one
-                if (string.IsNullOrEmpty(selectedFacilityCode) && facilityCodes.Length > 0)
-                    selectedFacilityCode = facilityCodes[0];
-
-
-                loginDialog.SetFacilityChoices(facilityCodes, selectedFacilityCode);
-
-                while (true)
+                if (needLoginDialog)
                 {
-                    string userName;
-                    string password;
-
-                    if (loginDialog.Show(out userName, out password, out selectedFacilityCode))
-                    {
-                        FacilitySummary selectedFacility = CollectionUtils.SelectFirst(facilities,
-                            delegate(FacilitySummary fs) { return fs.Code == selectedFacilityCode; });
-
-                        try
-                        {
-                            LoginSession.Create(userName, password, selectedFacility);
-
-                            // successfully logged in
-
-                            // save selected facility
-                            LoginDialogSettings.Default.SelectedFacility = selectedFacilityCode;
-                            LoginDialogSettings.Default.Save();
-
-                            return true;
-                        }
-                        catch(FaultException<RequestValidationException> e)
-                        {
-                            ClearCanvas.Desktop.Application.ShowMessageBox(e.Message, MessageBoxActions.Ok);
-                        }
-                        catch (CommunicationException e)
-                        {
-                            Platform.Log(LogLevel.Error, e);
-                            ClearCanvas.Desktop.Application.ShowMessageBox(SR.MessageCommunicationError, MessageBoxActions.Ok);
-                        }
-                        catch (TimeoutException e)
-                        {
-                            Platform.Log(LogLevel.Error, e);
-                            ClearCanvas.Desktop.Application.ShowMessageBox(SR.MessageLoginTimeout, MessageBoxActions.Ok);
-                        }
-                        catch (Exception e)
-                        {
-                            Platform.Log(LogLevel.Error, e);
-                            ClearCanvas.Desktop.Application.ShowMessageBox(SR.MessageUnknownErrorCommunicatingWithServer, MessageBoxActions.Ok);
-                        }
-                    }
-                    else
+                    if (!ShowLoginDialog(facilities, out userName, out password, out facility))
                     {
                         // user cancelled
                         return false;
                     }
                 }
+
+                try
+                {
+                    FacilitySummary selectedFacility = CollectionUtils.SelectFirst(facilities,
+                        delegate(FacilitySummary fs) { return fs.Code == facility; });
+
+                    // try to create the session
+                    LoginSession.Create(userName, password, selectedFacility);
+
+                    // successfully logged in
+                    return true;
+                }
+                catch (PasswordExpiredException e)
+                {
+                    string newPassword;
+                    if(!DoChangePassword(userName, password, out newPassword))
+                    {
+                        // user cancelled password change, so just abort everything
+                        return false;
+                    }
+
+                    // loop again, but this time using the new password, and don't show the login dialog
+                    // since we already have the credentials
+                    password = newPassword;
+                    needLoginDialog = false;
+                }
+                catch (Exception e)
+                {
+                    ReportException(e);
+                }
+            }
+        }
+
+        private static bool ShowLoginDialog(List<FacilitySummary> facilities, out string userName, out string password, out string facility)
+        {
+            using (ILoginDialog loginDialog = (ILoginDialog)(new LoginDialogExtensionPoint()).CreateExtension())
+            {
+                string[] facilityCodes = CollectionUtils.Map<FacilitySummary, string>(
+                    facilities,
+                    delegate(FacilitySummary fs) { return fs.Code; }).ToArray();
+
+                string initialFacilityCode = LoginDialogSettings.Default.SelectedFacility;
+
+                // if no saved facility, just choose the first one
+                if (string.IsNullOrEmpty(initialFacilityCode) && facilityCodes.Length > 0)
+                    initialFacilityCode = facilityCodes[0];
+
+                loginDialog.FacilityChoices = facilityCodes;
+                loginDialog.Facility = initialFacilityCode;
+
+                if (loginDialog.Show())
+                {
+                    // save selected facility
+                    LoginDialogSettings.Default.SelectedFacility = loginDialog.Facility;
+                    LoginDialogSettings.Default.Save();
+
+                    userName = loginDialog.UserName;
+                    password = loginDialog.Password;
+                    facility = loginDialog.Facility;
+
+                    return true;
+                }
+            }
+            userName = null;
+            password = null;
+            facility = null;
+
+            return false;
+        }
+
+        internal static bool DoChangePassword(string userName, string oldPassword, out string newPassword)
+        {
+            using (IChangePasswordDialog changePasswordDialog = (IChangePasswordDialog)(new ChangePasswordDialogExtensionPoint()).CreateExtension())
+            {
+                changePasswordDialog.UserName = userName;
+                changePasswordDialog.Password = oldPassword;
+                while (true)
+                {
+                    if (changePasswordDialog.Show())
+                    {
+                        try
+                        {
+                            LoginSession.ChangePassword(userName, changePasswordDialog.Password,
+                                                changePasswordDialog.NewPassword);
+
+                            newPassword = changePasswordDialog.NewPassword;
+                            return true;
+                        }
+                        catch (Exception e)
+                        {
+                            ReportException(e);
+                        }
+                    }
+                    else
+                    {
+                        // user cancelled
+                        newPassword = null;
+                        return false;
+                    }
+                }
+            }
+        }
+
+        private static void ReportException(Exception e)
+        {
+            if(e is RequestValidationException)
+            {
+                ClearCanvas.Desktop.Application.ShowMessageBox(e.Message, MessageBoxActions.Ok);
+            }
+            else if (e is CommunicationException)
+            {
+                Platform.Log(LogLevel.Error, e);
+                ClearCanvas.Desktop.Application.ShowMessageBox(SR.MessageCommunicationError, MessageBoxActions.Ok);
+            }
+            else if (e is TimeoutException)
+            {
+                Platform.Log(LogLevel.Error, e);
+                ClearCanvas.Desktop.Application.ShowMessageBox(SR.MessageLoginTimeout, MessageBoxActions.Ok);
+            }
+            else
+            {
+                Platform.Log(LogLevel.Error, e);
+                ClearCanvas.Desktop.Application.ShowMessageBox(SR.MessageUnknownErrorCommunicatingWithServer, MessageBoxActions.Ok);
             }
         }
 

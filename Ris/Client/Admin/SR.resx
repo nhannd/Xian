@@ -387,6 +387,9 @@
   <data name="TitleProtocolGroups" xml:space="preserve">
     <value>Protocol Groups</value>
   </data>
+  <data name="TitleResetPassword" xml:space="preserve">
+    <value>Reset Password</value>
+  </data>
   <data name="TitleUpdateAuthorityGroup" xml:space="preserve">
     <value>Update Authority Group</value>
   </data>

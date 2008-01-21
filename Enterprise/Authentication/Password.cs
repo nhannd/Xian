@@ -36,6 +36,7 @@ namespace ClearCanvas.Enterprise.Authentication {
 
         /// <summary>
         /// Verifies whether the specified password string matches this <see cref="Password"/> object.
+        /// Does not consider the <see cref="ExpiryTime"/>.
         /// </summary>
         /// <param name="clearTextPassword"></param>
         /// <returns></returns>
@@ -45,6 +46,14 @@ namespace ClearCanvas.Enterprise.Authentication {
 
             string h = CalculateHash(_salt, clearTextPassword);
             return _saltedHash.Equals(h);
+        }
+
+        /// <summary>
+        /// Gets a value indicating if the <see cref="ExpiryTime"/> has been exceeded.
+        /// </summary>
+        public bool IsExpired
+        {
+            get { return _expiryTime.HasValue && _expiryTime < Platform.Time; }
         }
 
         #region Utilities

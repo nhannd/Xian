@@ -39,25 +39,17 @@ using System.Windows.Forms;
 
 namespace ClearCanvas.Ris.Client.View.WinForms
 {
-    public partial class LoginForm : Form
+    public partial class ChangePasswordForm : Form
     {
-        private string _selectedFacility;
-        private string[] _facilityChoices;
-
-        public LoginForm()
+        public ChangePasswordForm()
         {
             InitializeComponent();
-        }
 
-        public string[] FacilityChoices
-        {
-            get { return _facilityChoices; }
-            set
-            {
-                _facilityChoices = value;
-                _facility.Items.Clear();
-                _facility.Items.AddRange(_facilityChoices);
-            }
+            // depending on use-case, the old password may already be filled in
+            if(string.IsNullOrEmpty(_password.Text))
+                _password.Select();
+            else 
+                _newPassword.Select();
         }
 
         public string UserName
@@ -69,18 +61,15 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         public string Password
         {
             get { return _password.Text; }
+            set { _password.Text = value; }
         }
 
-        public string SelectedFacility
+        public string NewPassword
         {
-            get { return (string)_facility.SelectedItem; }
-            set
-            {
-                _facility.SelectedItem = value;
-            }
+            get { return _newPassword.Text; }
         }
 
-        private void _loginButton_Click(object sender, EventArgs e)
+        private void _okButton_Click(object sender, EventArgs e)
         {
             this.DialogResult = DialogResult.OK;
         }
@@ -90,31 +79,36 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this.DialogResult = DialogResult.Cancel;
         }
 
-        private void LoginForm_Load(object sender, EventArgs e)
-        {
-        }
-
-        private void _userName_TextChanged(object sender, EventArgs e)
-        {
-            UpdateButtonStates();
-        }
-
         private void _password_TextChanged(object sender, EventArgs e)
         {
             UpdateButtonStates();
         }
 
-        private void _facility_SelectedValueChanged(object sender, EventArgs e)
+        private void _newPassword_TextChanged(object sender, EventArgs e)
+        {
+            UpdateButtonStates();
+        }
+
+        private void _newPasswordConfirm_TextChanged(object sender, EventArgs e)
         {
             UpdateButtonStates();
         }
 
         private void UpdateButtonStates()
         {
+            _errorProvider.SetError(_newPassword, 
+                _newPassword.Text == _password.Text ? 
+                    "New password must be different from previous" : null);
+
+            _errorProvider.SetError(_newPasswordConfirm,
+                _newPassword.Text != _newPasswordConfirm.Text ?
+                    "New passwords do not match" : null);
+
             bool ok = !string.IsNullOrEmpty(_userName.Text) && !string.IsNullOrEmpty(_password.Text) &&
-                         _facility.SelectedItem != null;
-            _loginButton.Enabled = ok;
-            this.AcceptButton = ok ? _loginButton : _cancelButton;
+                      !string.IsNullOrEmpty(_newPassword.Text) && !string.IsNullOrEmpty(_newPasswordConfirm.Text);
+
+            _okButton.Enabled = ok;
+            this.AcceptButton = ok ? _okButton : _cancelButton;
         }
     }
 }

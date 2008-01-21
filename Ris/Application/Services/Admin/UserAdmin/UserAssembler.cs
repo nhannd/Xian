@@ -46,7 +46,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.UserAdmin
     {
         internal UserSummary GetUserSummary(User user)
         {
-            return new UserSummary(user.GetRef(), user.UserName, user.DisplayName, user.ValidFrom, user.ValidUntil);
+            return new UserSummary(user.GetRef(), user.UserName, user.DisplayName, user.ValidFrom, user.ValidUntil,
+                user.LastLoginTime, user.Enabled);
         }
 
         internal UserDetail GetUserDetail(User user, Staff staff)
@@ -58,7 +59,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.UserAdmin
                 groups.Add(assembler.GetAuthorityGroupSummary(authorityGroup));
             }
 
-            UserDetail userDetail = new UserDetail(user.UserName, user.DisplayName, user.ValidFrom, user.ValidUntil, groups);
+            UserDetail userDetail = new UserDetail(user.UserName, user.DisplayName, user.ValidFrom, user.ValidUntil,
+                user.LastLoginTime, user.Enabled, groups);
 
             if(staff != null)
             {
@@ -77,6 +79,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.UserAdmin
             user.DisplayName = detail.DisplayName;
             user.ValidFrom = detail.ValidFrom;
             user.ValidUntil = detail.ValidUntil;
+            user.Enabled = detail.Enabled;
             user.AuthorityGroups.Clear();
             user.AuthorityGroups.AddAll(CollectionUtils.Map<AuthorityGroupSummary, AuthorityGroup>(detail.AuthorityGroups,
                 delegate(AuthorityGroupSummary group)

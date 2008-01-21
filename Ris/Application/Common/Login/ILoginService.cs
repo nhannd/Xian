@@ -52,7 +52,17 @@ namespace ClearCanvas.Ris.Application.Common.Login
         /// <returns></returns>
         [OperationContract]
         [FaultContract(typeof(RequestValidationException))]
+        [FaultContract(typeof(PasswordExpiredException))]
         LoginResponse Login(LoginRequest request);
+
+        /// <summary>
+        /// Allows the user of a client application to change his password.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [OperationContract]
+        [FaultContract(typeof(RequestValidationException))]
+        ChangePasswordResponse ChangePassword(ChangePasswordRequest request);
 
         /// <summary>
         /// Gets the list of facilities so that the user can choose their current working facility.

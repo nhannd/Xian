@@ -47,7 +47,7 @@ namespace ClearCanvas.Enterprise.Authentication
     {
         #region IAuthenticationService Members
 
-        [UpdateOperation(PersistenceScopeOption = PersistenceScopeOption.RequiresNew, Auditable = false)]
+        [UpdateOperation(Auditable = false)]
         public SessionToken InitiateUserSession(string userName, string password)
         {
             Platform.CheckForNullReference(userName, "userName");
@@ -55,24 +55,13 @@ namespace ClearCanvas.Enterprise.Authentication
 
             DateTime currentTime = Platform.Time;
 
-            User user;
-            try
-            {
-                UserSearchCriteria criteria = new UserSearchCriteria();
-                criteria.UserName.EqualTo(userName);
-                user = PersistenceContext.GetBroker<IUserBroker>().FindOne(criteria);
-            }
-            catch (EntityNotFoundException)
-            {
-                // non-existant username
-                throw new SecurityTokenValidationException(SR.ExceptionInvalidUserOrPassword);
-            }
+            // check user account is valid and password is correct
+            User user = GetVerifiedUser(userName, password);
 
-            if(!user.Password.Verify(password))
-            {
-                // invalid password
-                throw new SecurityTokenValidationException(SR.ExceptionInvalidUserOrPassword);
-            }
+            // check if password expired
+            if(user.Password.IsExpired)
+                throw new PasswordExpiredException();
+
             // update last login time
             user.LastLoginTime = currentTime;
 
@@ -105,7 +94,21 @@ namespace ClearCanvas.Enterprise.Authentication
             return session.GetToken();
         }
 
-        [UpdateOperation(PersistenceScopeOption = PersistenceScopeOption.RequiresNew, Auditable = false)]
+        [UpdateOperation(Auditable = false)]
+        public void ChangePassword(string userName, string currentPassword, string newPassword)
+        {
+            Platform.CheckForNullReference(userName, "userName");
+            Platform.CheckForNullReference(currentPassword, "currentPassword");
+            Platform.CheckForNullReference(newPassword, "newPassword");
+
+            // this will fail if the currentPassword is not valid, the account is not active or whatever
+            User user = GetVerifiedUser(userName, currentPassword);
+
+            // change the password
+            user.ChangePassword(newPassword);
+        }
+
+        [UpdateOperation(Auditable = false)]
         public SessionToken ValidateUserSession(string userName, SessionToken sessionToken)
         {
             DateTime currentTime = Platform.Time;
@@ -133,6 +136,7 @@ namespace ClearCanvas.Enterprise.Authentication
             return session.GetToken();
         }
 
+
         [ReadOperation]
         public string[] ListAuthorityTokensForUser(string userName)
         {
@@ -146,5 +150,38 @@ namespace ClearCanvas.Enterprise.Authentication
         }
 
         #endregion
+
+        /// <summary>
+        /// Obtains user object for specified username and password.  Verifies that the user account
+        /// is active and that the password is correct.  Does NOT check if the password has expired.
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <param name="password"></param>
+        /// <returns></returns>
+        private User GetVerifiedUser(string userName, string password)
+        {
+            User user;
+            try
+            {
+                UserSearchCriteria criteria = new UserSearchCriteria();
+                criteria.UserName.EqualTo(userName);
+                user = PersistenceContext.GetBroker<IUserBroker>().FindOne(criteria);
+            }
+            catch (EntityNotFoundException)
+            {
+                // non-existant username
+                // the error message is deliberately vague
+                throw new SecurityTokenValidationException(SR.ExceptionInvalidUserAccount);
+            }
+
+            if (!user.IsActive || !user.Password.Verify(password))
+            {
+                // account not active, or invalid password
+                // the error message is deliberately vague
+                throw new SecurityTokenValidationException(SR.ExceptionInvalidUserAccount);
+            }
+            return user;
+        }
+
     }
 }

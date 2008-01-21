@@ -32,17 +32,37 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using ClearCanvas.Enterprise.Common;
+using System.Runtime.Serialization;
 
-namespace ClearCanvas.Ris.Client
+namespace ClearCanvas.Ris.Application.Common.Login
 {
-    public interface ILoginDialog : IDisposable
+    [DataContract]
+    public class ChangePasswordRequest : DataContractBase
     {
-        bool Show();
+        public ChangePasswordRequest(string user, string password, string newPassword)
+        {
+            this.UserName = user;
+            this.Password = password;
+            this.NewPassword = newPassword;
+        }
 
-        string[] FacilityChoices { get; set; }
-        string Facility { get; set; }
+        /// <summary>
+        /// UserName. Required.
+        /// </summary>
+        [DataMember]
+        public string UserName;
 
-        string UserName { get; set; }
-        string Password { get; }
+        /// <summary>
+        /// Password. Required.
+        /// </summary>
+        [DataMember]
+        public string Password;
+
+        /// <summary>
+        /// New Password. Required.
+        /// </summary>
+        [DataMember]
+        public string NewPassword;
     }
 }

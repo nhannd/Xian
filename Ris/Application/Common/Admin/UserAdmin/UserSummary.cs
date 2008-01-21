@@ -38,13 +38,16 @@ namespace ClearCanvas.Ris.Application.Common.Admin.UserAdmin
     [DataContract]
     public class UserSummary : DataContractBase
     {
-        public UserSummary(EntityRef entityRef, string userId, string displayName, DateTime? validFrom, DateTime? validUntil)
+        public UserSummary(EntityRef entityRef, string userId, string displayName, DateTime? validFrom, DateTime? validUntil,
+            DateTime? lastLoginTime, bool enabled)
         {
             this.UserRef = entityRef;
             this.UserId = userId;
             this.DisplayName = displayName;
             this.ValidFrom = validFrom;
             this.ValidUntil = validUntil;
+            this.LastLoginTime = lastLoginTime;
+            this.Enabled = enabled;
         }
 
         [DataMember]
@@ -61,6 +64,12 @@ namespace ClearCanvas.Ris.Application.Common.Admin.UserAdmin
 
         [DataMember]
         public DateTime? ValidUntil;
+
+        [DataMember]
+        public DateTime? LastLoginTime;
+
+        [DataMember]
+        public bool Enabled;
 
         protected bool Equals(UserSummary userSummary)
         {

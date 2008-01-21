@@ -52,6 +52,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>HomePageSettings.settings</DependentUpon>
     </Compile>
+    <Compile Include="IChangePasswordDialog.cs" />
     <Compile Include="OrderDetailViewComponent.cs" />
     <Compile Include="OrderDetailViewComponentSettings.cs" />
     <Compile Include="OrderDetailViewComponentSettings.Designer.cs">
@@ -70,6 +71,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>BannerComponentSettings.settings</DependentUpon>
     </Compile>
+    <Compile Include="SessionManagerTool.cs" />
     <Compile Include="WeakSearchCriteriaException.cs" />
     <Compile Include="WorklistPreviewComponent.cs" />
     <Compile Include="FolderContentsComponent.cs" />

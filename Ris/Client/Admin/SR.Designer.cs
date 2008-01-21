@@ -871,6 +871,15 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Reset Password.
+        /// </summary>
+        internal static string TitleResetPassword {
+            get {
+                return ResourceManager.GetString("TitleResetPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Update Authority Group.
         /// </summary>
         internal static string TitleUpdateAuthorityGroup {

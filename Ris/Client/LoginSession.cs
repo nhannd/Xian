@@ -31,12 +31,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.ServiceModel;
 using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Ris.Application.Common.Login;
 using System.Threading;
 using System.Security.Principal;
 using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -67,19 +69,48 @@ namespace ClearCanvas.Ris.Client
         /// <param name="facility"></param>
         internal static void Create(string userName, string password, FacilitySummary facility)
         {
-            Platform.GetService<ILoginService>(
-                delegate(ILoginService service)
-                {
-                    LoginResponse response = service.Login(new LoginRequest(userName, password, facility.FacilityRef));
+            try
+            {
+                Platform.GetService<ILoginService>(
+                    delegate(ILoginService service)
+                    {
+                        LoginResponse response = service.Login(new LoginRequest(userName, password, facility.FacilityRef));
 
-                    // if the call succeeded, construct a generic principal object on this thread, containing
-                    // the set of authority tokens for this user
-                    Thread.CurrentPrincipal = new GenericPrincipal(
-                        new GenericIdentity(userName), response.UserAuthorityTokens);
+                        // if the call succeeded, construct a generic principal object on this thread, containing
+                        // the set of authority tokens for this user
+                        Thread.CurrentPrincipal = new GenericPrincipal(
+                            new GenericIdentity(userName), response.UserAuthorityTokens);
 
-                    // set the current session before attempting to access other services, as these will require authentication
-                    _current = new LoginSession(userName, response.SessionToken, response.FullName, facility);
-                });
+                        // set the current session before attempting to access other services, as these will require authentication
+                        _current = new LoginSession(userName, response.SessionToken, response.FullName, facility);
+                    });
+
+            }
+            catch (FaultException<RequestValidationException> e)
+            {
+                throw e.Detail;
+            }
+            catch (FaultException<PasswordExpiredException> e)
+            {
+                throw e.Detail;
+            }
+        }
+
+        internal static void ChangePassword(string userName, string oldPassword, string newPassword)
+        {
+            try
+            {
+                Platform.GetService<ILoginService>(
+                    delegate(ILoginService service)
+                    {
+                        ChangePasswordResponse response = service.ChangePassword(new ChangePasswordRequest(userName, oldPassword, newPassword));
+                    });
+
+            }
+            catch (FaultException<RequestValidationException> e)
+            {
+                throw e.Detail;
+            }
         }
 
         private readonly string _userName;

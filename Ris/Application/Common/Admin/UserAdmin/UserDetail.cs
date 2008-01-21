@@ -40,13 +40,16 @@ namespace ClearCanvas.Ris.Application.Common.Admin.UserAdmin
     [DataContract]
     public class UserDetail : DataContractBase
     {
-        public UserDetail(string userId, string displayName, DateTime? validFrom, DateTime? validUntil, List<AuthorityGroupSummary> authorityGroups)
+        public UserDetail(string userId, string displayName, DateTime? validFrom, DateTime? validUntil, 
+            DateTime? lastLoginTime, bool enabled, List<AuthorityGroupSummary> authorityGroups)
         {
             this.UserName = userId;
             this.DisplayName = displayName;
             this.AuthorityGroups = authorityGroups;
             this.ValidFrom = validFrom;
             this.ValidUntil = validUntil;
+            this.LastLoginTime = lastLoginTime;
+            this.Enabled = enabled;
         }
 
         public UserDetail()
@@ -68,6 +71,12 @@ namespace ClearCanvas.Ris.Application.Common.Admin.UserAdmin
         public DateTime? ValidUntil;
 
         [DataMember]
+        public DateTime? LastLoginTime;
+
+        [DataMember]
+        public bool Enabled;
+
+        [DataMember]
         public List<AuthorityGroupSummary> AuthorityGroups;
 
         [DataMember]
@@ -77,16 +86,9 @@ namespace ClearCanvas.Ris.Application.Common.Admin.UserAdmin
         public PersonNameDetail StaffName;
 
         /// <summary>
-        /// Used by client to request password change.
+        /// Used by client to request password reset.
         /// </summary>
         [DataMember]
-        public bool ChangePassword;
-
-        /// <summary>
-        /// Used by client to indicate new password requested.
-        /// </summary>
-        [DataMember]
-        public string NewPassword;
-
+        public bool ResetPassword;
     }
 }

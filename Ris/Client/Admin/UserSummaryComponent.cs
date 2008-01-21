@@ -102,8 +102,9 @@ namespace ClearCanvas.Ris.Client.Admin
         private UserTable _userTable;
 
         private SimpleActionModel _userActionHandler;
-        private readonly string _addUserKey = "AddUser";
-        private readonly string _updateUserKey = "UpdateUser";
+        private Action _addUserAction;
+        private Action _updateUserAction;
+        private Action _resetPasswordAction;
 
         private IPagingController<UserSummary> _pagingController;
 
@@ -119,8 +120,9 @@ namespace ClearCanvas.Ris.Client.Admin
             _userTable = new UserTable();
 
             _userActionHandler = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));
-			_userActionHandler.AddAction(_addUserKey, SR.TitleAddUser, "Icons.AddToolSmall.png", SR.TitleAddUser, AddUser);
-			_userActionHandler.AddAction(_updateUserKey, SR.TitleUpdateUser, "Icons.EditToolSmall.png", SR.TitleUpdateUser, UpdateSelectedUser);
+            _addUserAction = _userActionHandler.AddAction("add", SR.TitleAddUser, "Icons.AddToolSmall.png", SR.TitleAddUser, AddUser);
+            _updateUserAction = _userActionHandler.AddAction("update", SR.TitleUpdateUser, "Icons.EditToolSmall.png", SR.TitleUpdateUser, UpdateSelectedUser);
+            _resetPasswordAction = _userActionHandler.AddAction("resetPassword", SR.TitleResetPassword, "Icons.EditToolSmall.png", SR.TitleResetPassword, ResetUserPassword);
 
             InitialisePaging(_userActionHandler);
 
@@ -224,6 +226,29 @@ namespace ClearCanvas.Ris.Client.Admin
                 ExceptionHandler.Report(e, this.Host.DesktopWindow);
             }
         }
+        
+        public void ResetUserPassword()
+        {
+            try
+            {
+                if (_selectedUser == null) return;
+
+                // confirm this action
+                if(this.Host.ShowMessageBox(string.Format("Reset password for user {0}?", _selectedUser.UserId), MessageBoxActions.OkCancel) == DialogBoxAction.Cancel)
+                    return;
+
+                Platform.GetService<IUserAdminService>(
+                    delegate(IUserAdminService service)
+                    {
+                        service.ResetUserPassword(new ResetUserPasswordRequest(_selectedUser.UserRef));
+                    });
+            }
+            catch (Exception e)
+            {
+                // failed
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
+            }
+        }
 
         #endregion
 
@@ -235,10 +260,8 @@ namespace ClearCanvas.Ris.Client.Admin
 
         private void UserSelectionChanged()
         {
-            if (_selectedUser != null)
-                _userActionHandler[_updateUserKey].Enabled = true;
-            else
-                _userActionHandler[_updateUserKey].Enabled = false;
+            _updateUserAction.Enabled = (_selectedUser != null);
+            _resetPasswordAction.Enabled = (_selectedUser != null);
         }
     }
 }

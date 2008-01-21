@@ -42,6 +42,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AddressDetail.cs" />
+    <Compile Include="Admin\UserAdmin\ResetUserPasswordRequest.cs" />
+    <Compile Include="Admin\UserAdmin\ResetUserPasswordResponse.cs" />
     <Compile Include="Admin\UserAdmin\IUserAdminService.cs" />
     <Compile Include="Admin\UserAdmin\ListUsersRequest.cs" />
     <Compile Include="Admin\UserAdmin\ListUsersResponse.cs" />
@@ -84,6 +86,8 @@
     <Compile Include="BrowsePatientData\ReportListItem.cs" />
     <Compile Include="BrowsePatientData\ListReportsResponse.cs" />
     <Compile Include="BrowsePatientData\ListReportsRequest.cs" />
+    <Compile Include="Login\ChangePasswordRequest.cs" />
+    <Compile Include="Login\ChangePasswordResponse.cs" />
     <Compile Include="ReportDetail.cs" />
     <Compile Include="OrderNoteDetail.cs" />
     <Compile Include="ReportingWorkflow\CompleteInterpretationRequestBase.cs" />
