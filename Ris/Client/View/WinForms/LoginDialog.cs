@@ -40,6 +40,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
     public class LoginDialog : ILoginDialog
     {
         private LoginForm _form;
+        private LoginDialogMode _mode;
 
         public LoginDialog()
         {
@@ -59,6 +60,16 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             else
             {
                 return false;
+            }
+        }
+
+        public LoginDialogMode Mode
+        {
+            get { return _mode; }
+            set
+            {
+                 _mode = value;
+                _form.SetMode(_mode);
             }
         }
 

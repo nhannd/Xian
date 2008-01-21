@@ -41,12 +41,17 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 {
     public partial class LoginForm : Form
     {
-        private string _selectedFacility;
         private string[] _facilityChoices;
 
         public LoginForm()
         {
             InitializeComponent();
+        }
+
+        public void SetMode(LoginDialogMode mode)
+        {
+            _userName.Enabled = mode == LoginDialogMode.InitialLogin;
+            _facility.Enabled = mode == LoginDialogMode.InitialLogin;
         }
 
         public string[] FacilityChoices

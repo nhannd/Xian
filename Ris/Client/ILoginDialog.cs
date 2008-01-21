@@ -35,10 +35,17 @@ using System.Text;
 
 namespace ClearCanvas.Ris.Client
 {
+    public enum LoginDialogMode
+    {
+        InitialLogin,
+        RenewLogin
+    }
+
     public interface ILoginDialog : IDisposable
     {
         bool Show();
 
+        LoginDialogMode Mode { get; set; }
         string[] FacilityChoices { get; set; }
         string Facility { get; set; }
 

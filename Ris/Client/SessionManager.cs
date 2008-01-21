@@ -61,11 +61,11 @@ namespace ClearCanvas.Ris.Client
     {
         #region ISessionManager Members
 
-        public bool InitiateSession()
+        bool ISessionManager.InitiateSession()
         {
             try
             {
-                return DoLogin();
+                return Login();
             }
             catch(Exception e)
             {
@@ -75,7 +75,7 @@ namespace ClearCanvas.Ris.Client
             }
         }
 
-        public void TerminateSession()
+        void ISessionManager.TerminateSession()
         {
             try
             {
@@ -94,20 +94,45 @@ namespace ClearCanvas.Ris.Client
 
         #endregion
 
+        #region Internal methods
 
-        private bool DoLogin()
+        internal static bool RenewLogin()
+        {
+            LoginSession current = LoginSession.Current;
+            if (current == null)
+                return false;
+
+            return Login(LoginDialogMode.RenewLogin, current.UserName, current.WorkingFacility.Code);
+        }
+
+        internal static bool ChangePassword()
+        {
+            LoginSession current = LoginSession.Current;
+            if(current == null)
+                return false;
+
+            string newPassword;
+            return ChangePassword(current.UserName, null, out newPassword);
+        }
+
+        #endregion
+
+        private static bool Login()
+        {
+            return Login(LoginDialogMode.InitialLogin, null, null);
+        }
+
+        private static bool Login(LoginDialogMode mode, string userName, string facility)
         {
             bool needLoginDialog = true;
-            string userName = null;
             string password = null;
-            string facility = null;
 
             List<FacilitySummary> facilities = GetFacilityChoices();
             while (true)
             {
                 if (needLoginDialog)
                 {
-                    if (!ShowLoginDialog(facilities, out userName, out password, out facility))
+                    if (!ShowLoginDialog(mode, facilities, ref userName, ref facility, out password))
                     {
                         // user cancelled
                         return false;
@@ -128,7 +153,7 @@ namespace ClearCanvas.Ris.Client
                 catch (PasswordExpiredException e)
                 {
                     string newPassword;
-                    if(!DoChangePassword(userName, password, out newPassword))
+                    if(!ChangePassword(userName, password, out newPassword))
                     {
                         // user cancelled password change, so just abort everything
                         return false;
@@ -146,7 +171,7 @@ namespace ClearCanvas.Ris.Client
             }
         }
 
-        private static bool ShowLoginDialog(List<FacilitySummary> facilities, out string userName, out string password, out string facility)
+        private static bool ShowLoginDialog(LoginDialogMode mode, List<FacilitySummary> facilities, ref string userName, ref string facility, out string password)
         {
             using (ILoginDialog loginDialog = (ILoginDialog)(new LoginDialogExtensionPoint()).CreateExtension())
             {
@@ -160,8 +185,10 @@ namespace ClearCanvas.Ris.Client
                 if (string.IsNullOrEmpty(initialFacilityCode) && facilityCodes.Length > 0)
                     initialFacilityCode = facilityCodes[0];
 
+                loginDialog.Mode = mode;
                 loginDialog.FacilityChoices = facilityCodes;
                 loginDialog.Facility = initialFacilityCode;
+                loginDialog.UserName = userName;
 
                 if (loginDialog.Show())
                 {
@@ -183,7 +210,7 @@ namespace ClearCanvas.Ris.Client
             return false;
         }
 
-        internal static bool DoChangePassword(string userName, string oldPassword, out string newPassword)
+        private static bool ChangePassword(string userName, string oldPassword, out string newPassword)
         {
             using (IChangePasswordDialog changePasswordDialog = (IChangePasswordDialog)(new ChangePasswordDialogExtensionPoint()).CreateExtension())
             {
@@ -239,7 +266,7 @@ namespace ClearCanvas.Ris.Client
             }
         }
 
-        private List<FacilitySummary> GetFacilityChoices()
+        private static List<FacilitySummary> GetFacilityChoices()
         {
             List<FacilitySummary> choices = null;
             Platform.GetService<ILoginService>(

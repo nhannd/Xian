@@ -52,7 +52,7 @@ namespace ClearCanvas.Ris.Client
         public void ChangePassword()
         {
             string newPassword;
-            if(SessionManager.DoChangePassword(LoginSession.Current.UserName, null, out newPassword))
+            if(SessionManager.ChangePassword())
             {
                 this.Context.DesktopWindow.ShowMessageBox("Password changed.", MessageBoxActions.Ok);
             }

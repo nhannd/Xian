@@ -74,7 +74,8 @@ namespace ClearCanvas.Desktop
 
         public void ShowMessageBox(string message)
         {
-            bool showStackTraceInDialog = true;
+            // by default we choose the more secure option and don't show the stack trace
+            bool showStackTraceInDialog = false;
 
             try
             {
@@ -82,8 +83,9 @@ namespace ClearCanvas.Desktop
             }
             catch (Exception e)
             {
+                // if we can't retrieve the setting for whatever reason, just log it
+                // and move on
                 Platform.Log(LogLevel.Error, e);
-                ShowExceptionDialog(e, SR.ExceptionCannotLoadExceptionDialogSetting);
             }
 
             if(showStackTraceInDialog)
