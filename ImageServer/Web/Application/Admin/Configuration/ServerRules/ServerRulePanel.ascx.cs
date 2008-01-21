@@ -1,13 +1,6 @@
 using System;
-using System.Data;
-using System.Configuration;
-using System.Collections;
-using System.Web;
-using System.Web.Security;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
-using System.Web.UI.HtmlControls;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Web.Common.Data;
@@ -89,11 +82,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRule
             this.ServerRuleUpdatePanel.Update();
         }
 
-        protected override void OnInit(EventArgs e)
-        {
-            base.OnInit(e);
-        }
-
         protected void Page_Load(object sender, EventArgs e)
         {
             ServerRuleGridViewControl.ServerRulePanel = this;
@@ -103,8 +91,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRule
             GridPager.PuralItemName = "Rules";
             GridPager.Grid = ServerRuleGridViewControl.TheGrid;
 
-            GridPager.GetRecordCountMethod = delegate()
-                                                {
+            GridPager.GetRecordCountMethod = delegate {
                                                     return ServerRuleGridViewControl.ServerRules.Count;
                                                 };
 
@@ -135,7 +122,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRule
         protected override void OnPreRender(EventArgs e)
         {
             ServerRule dev = ServerRuleGridViewControl.SelectedRule;
-            if (dev == null)
+            if (dev == null || dev.DefaultRule)
             {
                 // no rule being selected
 
