@@ -29,10 +29,12 @@
 
 #endregion
 
+using System.IO;
 using System.Net;
 using System.Web.Script.Services;
 using System.Web.Services;
 using System.ComponentModel;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageServer.Web.Application.Services
 {
@@ -56,8 +58,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Services
         {
             ValidationResult res = new ValidationResult();
 
-
-            if (ClearCanvas.Common.Utilities.FileSystem.DirectoryExists(path))
+            // note: this call requires ASP.NET process to be run under a user account with 
+            // the right access permission to the specified path. The account should be set in the web.config
+            // <impersonate> section
+            if (Directory.Exists(path))
             {
                 res.Success = true;
             }
