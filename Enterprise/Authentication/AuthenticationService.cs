@@ -111,6 +111,8 @@ namespace ClearCanvas.Enterprise.Authentication
         [UpdateOperation(Auditable = false)]
         public SessionToken ValidateUserSession(string userName, SessionToken sessionToken)
         {
+            //TODO: this method could be implemented using a direct SQL UPDATE...WHERE... statement for improved performance
+
             DateTime currentTime = Platform.Time;
 
             UserSession session;
@@ -134,6 +136,28 @@ namespace ClearCanvas.Enterprise.Authentication
             session.ExpiryTime = currentTime.AddMinutes(settings.UserSessionTimeoutMinutes);
 
             return session.GetToken();
+        }
+
+        [UpdateOperation(Auditable = false)]
+        public void TerminateUserSession(string userName, SessionToken sessionToken)
+        {
+            try
+            {
+                // find a session object for this user and session token
+                UserSessionSearchCriteria criteria = new UserSessionSearchCriteria();
+                criteria.UserName.EqualTo(userName);
+                criteria.SessionId.EqualTo(sessionToken.Id);
+                IUserSessionBroker broker = PersistenceContext.GetBroker<IUserSessionBroker>();
+                UserSession session = broker.FindOne(criteria);
+
+                // delete the session record
+                broker.Delete(session);
+            }
+            catch (EntityNotFoundException)
+            {
+                // no such session
+                throw new SecurityTokenValidationException(SR.ExceptionInvalidSession);
+            }
         }
 
 

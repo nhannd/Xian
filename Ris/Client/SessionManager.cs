@@ -77,6 +77,19 @@ namespace ClearCanvas.Ris.Client
 
         public void TerminateSession()
         {
+            try
+            {
+                LoginSession currentSession = LoginSession.Current;
+                if (currentSession != null)
+                {
+                    currentSession.Terminate();
+                }
+            }
+            catch (Exception e)
+            {
+                // since we're logging out, just log the exception and move on
+                Platform.Log(LogLevel.Error, e);
+            }
         }
 
         #endregion

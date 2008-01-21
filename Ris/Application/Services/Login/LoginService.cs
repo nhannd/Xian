@@ -96,6 +96,7 @@ namespace ClearCanvas.Ris.Application.Services.Login
                         authorityTokens = service.ListAuthorityTokensForUser(user);
 
                         // setup a generic principal on this thread for the duration of this request
+                        // (this is necessary in order to load the WorkingFacilitySettings below)
                         Thread.CurrentPrincipal = new GenericPrincipal(
                             new GenericIdentity(user), authorityTokens);
                     });
@@ -136,6 +137,24 @@ namespace ClearCanvas.Ris.Application.Services.Login
 	        }
 
             return new LoginResponse(token.Id, authorityTokens, fullName);
+        }
+
+        [UpdateOperation]
+        public LogoutResponse Logout(LogoutRequest request)
+        {
+            Platform.CheckForNullReference(request, "request");
+            Platform.CheckMemberIsSet(request.UserName, "UserName");
+            Platform.CheckMemberIsSet(request.SessionToken, "SessionToken");
+
+            Platform.GetService<IAuthenticationService>(
+                delegate(IAuthenticationService service)
+                {
+                    // this call will throw SecurityTokenException if user/session token not valid
+                    // we intentionally don't catch this, allowing it to cause a fault
+                    service.TerminateUserSession(request.UserName, new SessionToken(request.SessionToken));
+                });
+
+            return new LogoutResponse();
         }
 
         [UpdateOperation]

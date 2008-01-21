@@ -160,5 +160,24 @@ namespace ClearCanvas.Ris.Client
             get { return _sessionToken; }
         }
 
+        /// <summary>
+        /// Terminates the current login session, setting the <see cref="Current"/> property to null.
+        /// </summary>
+        internal void Terminate()
+        {
+            try
+            {
+                Platform.GetService<ILoginService>(
+                    delegate(ILoginService service)
+                    {
+                        service.Logout(new LogoutRequest(_userName, _sessionToken));
+                    });
+            }
+            finally
+            {
+                _current = null;
+            }
+        }
+
     }
 }

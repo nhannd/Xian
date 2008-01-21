@@ -88,6 +88,8 @@
     <Compile Include="BrowsePatientData\ListReportsRequest.cs" />
     <Compile Include="Login\ChangePasswordRequest.cs" />
     <Compile Include="Login\ChangePasswordResponse.cs" />
+    <Compile Include="Login\LogoutRequest.cs" />
+    <Compile Include="Login\LogoutResponse.cs" />
     <Compile Include="ReportDetail.cs" />
     <Compile Include="OrderNoteDetail.cs" />
     <Compile Include="ReportingWorkflow\CompleteInterpretationRequestBase.cs" />

@@ -80,7 +80,20 @@ namespace ClearCanvas.Enterprise.Core
         SessionToken ValidateUserSession(string userName, SessionToken sessionToken);
 
         /// <summary>
-        /// Allows user to change his own password.
+        /// Terminates an existing user session.
+        /// </summary>
+        /// <remarks>
+        /// Implementors should throw a <see cref="SecurityTokenException"> if the session
+        /// token has expired or is otherwise invalid.
+        /// </remarks>
+        /// <param name="userName"></param>
+        /// <param name="sessionToken"></param>
+        /// <returns></returns>
+        [OperationContract]
+        void TerminateUserSession(string userName, SessionToken sessionToken);
+
+        /// <summary>
+        /// Changes the password for the specified user account.
         /// </summary>
         /// <param name="userName"></param>
         /// <param name="currentPassword"></param>
