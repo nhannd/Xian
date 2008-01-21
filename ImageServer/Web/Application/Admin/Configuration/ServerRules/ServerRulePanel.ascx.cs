@@ -122,7 +122,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRule
         protected override void OnPreRender(EventArgs e)
         {
             ServerRule dev = ServerRuleGridViewControl.SelectedRule;
-            if (dev == null || dev.DefaultRule)
+            if (dev == null)
             {
                 // no rule being selected
 
@@ -133,12 +133,20 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRule
                 DeleteButton.ImageUrl = "~/images/icons/DeleteDisabled.png";
             }
             else
-            {
+            {                
                 EditButton.Enabled = true;
                 EditButton.ImageUrl = "~/images/icons/EditEnabled.png";
 
-                DeleteButton.Enabled = true;
-                DeleteButton.ImageUrl = "~/images/icons/DeleteEnabled.png";
+                if (dev.DefaultRule)
+                {
+                    DeleteButton.Enabled = false;
+                    DeleteButton.ImageUrl = "~/images/icons/DeleteDisabled.png";
+                }
+                else
+                {
+                    DeleteButton.Enabled = true;
+                    DeleteButton.ImageUrl = "~/images/icons/DeleteEnabled.png";
+                }                
             }
 
             base.OnPreRender(e);
