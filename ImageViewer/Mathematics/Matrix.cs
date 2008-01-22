@@ -6,6 +6,7 @@ using ClearCanvas.Common;
 namespace ClearCanvas.ImageViewer.Mathematics
 {
 	// TODO: this class should be unit tested.
+	// TODO: Determinant, Inverse, etc are still missing.
 
 	/// <summary>
 	/// A simple matrix class.
@@ -29,6 +30,13 @@ namespace ClearCanvas.ImageViewer.Mathematics
 			_columns = columns;
 
 			_matrix = new float[rows, columns];
+		}
+
+		private Matrix(int rows, int columns, float[,] matrix)
+		{
+			_matrix = matrix;
+			_rows = rows;
+			_columns = columns;
 		}
 
 		/// <summary>
@@ -99,14 +107,58 @@ namespace ClearCanvas.ImageViewer.Mathematics
 			}
 		}
 		
-		/// <summary>
-		/// Multiplies two matrices together and returns the result as another matrix.
-		/// </summary>
-		public Matrix Multiply(Matrix right)
+		private void Scale(float scale)
 		{
-			Matrix result = new Matrix(_rows, right.Columns);
-			Multiply(this, right, result);
-			return result;
+			for (int row = 0; row < _rows; ++row)
+			{
+				for (int column = 0; column < _columns; ++column)
+					this[row, column] = this[row, column] * scale;
+			}
+		}
+
+		/// <summary>
+		/// Sets all the values in a particular row.
+		/// </summary>
+		/// <remarks>
+		/// This is more efficient than setting each value separately.
+		/// </remarks>
+		public void SetRow(int row, params float[] values)
+		{
+			Platform.CheckArgumentRange(row, 0, _rows - 1, "row");
+			Platform.CheckTrue(values.Length == _columns, "number of parameters == _columns");
+
+			for (int column = 0; column < _columns; ++column)
+				_matrix[row, column] = values[column];
+		}
+
+		/// <summary>
+		/// Sets all the values in a particular column.
+		/// </summary>
+		/// <remarks>
+		/// This is more efficient than setting each value separately.
+		/// </remarks>
+		public void SetColumn(int column, params float[] values)
+		{
+			Platform.CheckArgumentRange(column, 0, _columns - 1, "column");
+			Platform.CheckTrue(values.Length == _rows, "number of parameters == _rows");
+
+			for (int row = 0; row < _rows; ++row)
+				_matrix[row, column] = values[row];
+		}
+		
+		/// <summary>
+		/// Clones this matrix and its values.
+		/// </summary>
+		public Matrix Clone()
+		{
+			float[,] matrix = (float[,])_matrix.Clone();
+			for (int row = 0; row < _rows; ++row)
+			{
+				for (int column = 0; column < _columns; ++column)
+					matrix[row, column] = _matrix[row, column];
+			}
+			
+			return new Matrix(_rows, _columns, matrix);
 		}
 
 		/// <summary>
@@ -115,10 +167,41 @@ namespace ClearCanvas.ImageViewer.Mathematics
 		public Matrix Transpose()
 		{
 			Matrix transpose = new Matrix(_columns, _rows);
-			Transpose(this, transpose);
+
+			for (int row = 0; row < Rows; ++row)
+			{
+				for (int column = 0; column < Columns; ++column)
+					transpose[column, row] = this[row, column];
+			}
+
 			return transpose;
 		}
-		
+
+		/// <summary>
+		/// Gets a string describing the matrix.
+		/// </summary>
+		public override string ToString()
+		{
+			StringBuilder builder = new StringBuilder();
+
+			for(int row = 0; row < _rows; ++row)
+			{
+				builder.Append("( ");
+				for(int column = 0; column < _columns; ++column)
+				{
+					builder.Append(_matrix[row, column].ToString("F4"));
+					if (column < (_columns - 1))
+						builder.Append("  ");
+				}
+
+				builder.Append(")");
+				if (row < (_rows - 1))
+					builder.Append(", ");
+			}
+
+			return builder.ToString();
+		}
+
 		/// <summary>
 		/// Gets an identity matrix with the input dimensions.
 		/// </summary>
@@ -132,30 +215,14 @@ namespace ClearCanvas.ImageViewer.Mathematics
 		}
 
 		/// <summary>
-		/// Transposes the input <paramref name="original"/> matrix, filling the <paramref name="result"/>.
+		/// Multiplies <paramref name="left"/> and <paramref name="right"/> together.
 		/// </summary>
-		protected static void Transpose(Matrix original, Matrix result)
+		public static Matrix operator *(Matrix left, Matrix right)
 		{
-			if (original.Rows != result.Columns || original.Columns != result.Rows)
-				throw new ArgumentException("Transpose failed; the dimensions are invalid.");
-
-			for (int row = 0; row < original.Rows; ++row)
-			{
-				for (int column = 0; column < original.Columns; ++column)
-				{
-					result[column, row] = original[row, column];
-				}
-			}
-		}
-
-		/// <summary>
-		/// Multiplies <paramref name="left"/> and <paramref name="right"/>, putting the results in <paramref name="result"/>
-		/// </summary>
-		protected static void Multiply(Matrix left, Matrix right, Matrix result)
-		{
-			if (left.Columns != right.Rows || left.Rows != result.Rows || right.Columns != result.Columns)
+			if (left.Columns != right.Rows)
 				throw new ArgumentException("Cannot multiply the two matrices together; their sizes are incompatible.");
 
+			Matrix result = new Matrix(left.Rows, right.Columns);
 			int mutualDimension = right.Rows;
 
 			for (int row = 0; row < result.Rows; ++row)
@@ -170,6 +237,81 @@ namespace ClearCanvas.ImageViewer.Mathematics
 					result[row, column] = value;
 				}
 			}
+
+			return result;
+
+		}
+
+		/// <summary>
+		/// Multiplies <paramref name="matrix"/> by <paramref name="scale"/>.
+		/// </summary>
+		public static Matrix operator *(float scale, Matrix matrix)
+		{
+			return matrix*scale;
+		}
+
+		/// <summary>
+		/// Multiplies <paramref name="matrix"/> by <paramref name="scale"/>.
+		/// </summary>
+		public static Matrix operator *(Matrix matrix, float scale)
+		{
+			Matrix clone = matrix.Clone();
+			clone.Scale(scale);
+			return clone;
+		}
+
+		/// <summary>
+		/// Multiplies <paramref name="matrix"/> by 1/<paramref name="scale"/>.
+		/// </summary>
+		public static Matrix operator /(float scale, Matrix matrix)
+		{
+			return matrix/scale;
+		}
+
+		/// <summary>
+		/// Multiplies <paramref name="matrix"/> by 1/<paramref name="scale"/>.
+		/// </summary>
+		public static Matrix operator /(Matrix matrix, float scale)
+		{
+			Matrix clone = matrix.Clone();
+			clone.Scale(1/scale);
+			return clone;
+		}
+
+		/// <summary>
+		/// Adds <paramref name="left"/> and <paramref name="right"/>.
+		/// </summary>
+		public static Matrix operator +(Matrix left, Matrix right)
+		{
+			Platform.CheckTrue(left.Columns == right.Columns && left.Rows == right.Rows, "Matrix Same Dimensions");
+
+			Matrix clone = left.Clone();
+
+			for (int row = 0; row < left.Rows; ++row)
+			{
+				for (int column = 0; column < left.Columns; ++column)
+					clone[row, column] += right[row, column];
+			}
+
+			return clone;
+		}
+
+		/// <summary>
+		/// Subtracts <paramref name="right"/> from <paramref name="left"/>.
+		/// </summary>
+		public static Matrix operator -(Matrix left, Matrix right)
+		{
+			Platform.CheckTrue(left.Columns == right.Columns && left.Rows == right.Rows, "Matrix Same Dimensions");
+
+			Matrix clone = left.Clone();
+
+			for (int row = 0; row < left.Rows; ++row)
+			{
+				for (int column = 0; column < left.Columns; ++column)
+					clone[row, column] -= right[row, column];
+			}
+
+			return clone;
 		}
 	}
 }

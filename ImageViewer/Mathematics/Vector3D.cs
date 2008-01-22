@@ -82,55 +82,31 @@ namespace ClearCanvas.ImageViewer.Mathematics
 		/// <summary>
 		/// Normalizes the vector, or makes it a unit vector.
 		/// </summary>
-		/// <remarks>
-		/// This method modifies the internal components of the object.
-		/// </remarks>
-		public void Normalize()
+		public Vector3D Normalize()
 		{
-			float magnitude = Magnitude;
-
-			_x /= magnitude;
-			_y /= magnitude;
-			_z /= magnitude;
+			return this / Magnitude;
 		}
 
 		/// <summary>
-		/// Multiplies this vector by a scale factor.
+		/// Gets the dot-product of of this vector and <paramref name="right"/>.
 		/// </summary>
-		/// <remarks>
-		/// This method modifies the internal components of the object.
-		/// </remarks>
-		public void Multiply(float scale)
+		public float Dot(Vector3D right)
 		{
-			_x *= scale;
-			_y *= scale;
-			_z *= scale;
+			return _x * right.X + _y * right.Y + _z * right.Z;
 		}
 
 		/// <summary>
-		/// Adds another vector to this one.
+		/// Returns the cross-product of this vector and <paramref name="right"/>.
 		/// </summary>
-		/// <remarks>
-		/// This method modifies the internal components of the class.
-		/// </remarks>
-		public void Add(Vector3D right)
+		public Vector3D Cross(Vector3D right)
 		{
-			_x += right.X;
-			_y += right.Y;
-			_z += right.Z;
-		}
+			Vector3D cross = new Vector3D(0, 0, 0);
 
-		/// <summary>
-		/// Subtracts another vector from this one.
-		/// </summary>
-		/// <remarks>
-		/// This method modifies the internal components of the class.
-		/// </remarks>
-		public void Subtract(Vector3D right)
-		{
-			_x -= right.X;
-			_y -= right.Y;
-			_z -= right.Z;
+			cross.X = _y * right.Z - _z * right.Y;
+			cross.Y = -_x * right.Z + _z * right.X;
+			cross.Z = _x * right.Y + _y * right.X;
+
+			return cross;
 		}
 
 		/// <summary>
@@ -142,33 +118,59 @@ namespace ClearCanvas.ImageViewer.Mathematics
 		}
 
 		/// <summary>
-		/// Gets the dot product of two vectors.
-		/// </summary>
-		public static float Dot(Vector3D left, Vector3D right)
-		{
-			return left.X * right.X + left.Y * right.Y + left.Z * right.Z;
-		}
-
-		/// <summary>
-		/// Computes and returns a vector that is the cross product of the input vectors.
-		/// </summary>
-		public static Vector3D Cross(Vector3D left, Vector3D right)
-		{
-			Vector3D cross = new Vector3D(0, 0, 0);
-
-			cross.X = left.Y * right.Z - left.Z * right.Y;
-			cross.Y = -left.X * right.Z + left.Z * right.X;
-			cross.Z = left.X * right.Y + left.Y * right.X;
-			
-			return cross;
-		}
-
-		/// <summary>
 		/// Gets a null vector, where all components are zero.
 		/// </summary>
 		public static Vector3D GetNullVector()
 		{
 			return new Vector3D(0F, 0F, 0F);
+		}
+
+		/// <summary>
+		/// Scales <paramref name="vector"/> by a factor of <paramref name="scale"/>.
+		/// </summary>
+		public static Vector3D operator *(float scale, Vector3D vector)
+		{
+			return vector*scale;
+		}
+
+		/// <summary>
+		/// Scales <paramref name="vector"/> by a factor of <paramref name="scale"/>.
+		/// </summary>
+		public static Vector3D operator *(Vector3D vector, float scale)
+		{
+			return new Vector3D(vector.X * scale, vector.Y * scale, vector.Z * scale);
+		}
+
+		/// <summary>
+		/// Scales <paramref name="vector"/> by a factor of 1/<paramref name="scale"/>.
+		/// </summary>
+		public static Vector3D operator /(float scale, Vector3D vector)
+		{
+			return vector/scale;
+		}
+
+		/// <summary>
+		/// Scales <paramref name="vector"/> by a factor of 1/<paramref name="scale"/>.
+		/// </summary>
+		public static Vector3D operator /(Vector3D vector, float scale)
+		{
+			return new Vector3D(vector.X / scale, vector.Y / scale, vector.Z / scale);
+		}
+
+		/// <summary>
+		/// Adds <paramref name="left"/> and <paramref name="right"/> together.
+		/// </summary>
+		public static Vector3D operator +(Vector3D left, Vector3D right)
+		{
+			return new Vector3D(left.X + right.X, left.Y + right.Y, left.Z + right.Z);
+		}
+
+		/// <summary>
+		/// Subtracts <paramref name="right"/> from <paramref name="left"/>.
+		/// </summary>
+		public static Vector3D operator -(Vector3D left, Vector3D right)
+		{
+			return new Vector3D(left.X - right.X, left.Y - right.Y, left.Z - right.Z);
 		}
 	}
 }

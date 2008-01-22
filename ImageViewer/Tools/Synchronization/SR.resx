@@ -120,13 +120,22 @@
   <data name="MenuAutoStackSynchronization" xml:space="preserve">
     <value>Auto Stack Synchronization</value>
   </data>
+  <data name="MenuReferenceLines" xml:space="preserve">
+    <value>Reference Lines</value>
+  </data>
   <data name="MenuStandard" xml:space="preserve">
     <value>Standard</value>
   </data>
   <data name="ToolbarAutoStackSynchronization" xml:space="preserve">
     <value>Auto Stack Synchronization</value>
   </data>
+  <data name="ToolbarReferenceLines" xml:space="preserve">
+    <value>Reference Lines</value>
+  </data>
   <data name="TooltipAutoStackSynchronization" xml:space="preserve">
     <value>Auto Stack Synchronization</value>
+  </data>
+  <data name="TooltipReferenceLines" xml:space="preserve">
+    <value>Reference Lines</value>
   </data>
 </root>

@@ -416,13 +416,11 @@ namespace ClearCanvas.ImageViewer.Mathematics
 		/// </remarks>
 		public static double SubtendedAngle(PointF start, PointF vertex, PointF end)
 		{
-			Vector3D a = new Vector3D(start.X, start.Y, 0);
-			a.Subtract(new Vector3D(vertex.X, vertex.Y, 0));
+			Vector3D vertexPositionVector = new Vector3D(vertex.X, vertex.Y, 0);
+			Vector3D a = new Vector3D(start.X, start.Y, 0) - vertexPositionVector;
+			Vector3D b = new Vector3D(end.X, end.Y, 0) - vertexPositionVector;
 
-			Vector3D b = new Vector3D(end.X, end.Y, 0);
-			b.Subtract(new Vector3D(vertex.X, vertex.Y, 0));
-
-			float dotProduct = Vector3D.Dot(a, b);
+			float dotProduct = a.Dot(b);
 
 			float magA = a.Magnitude;
 			float magB = b.Magnitude;

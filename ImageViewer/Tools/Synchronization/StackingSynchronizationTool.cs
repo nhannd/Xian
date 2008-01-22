@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
@@ -47,13 +48,14 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 	[CheckedStateObserver("activate", "Active", "ActiveChanged")]
 	[Tooltip("activate", "TooltipAutoStackSynchronization")]
 	[IconSet("activate", IconScheme.Colour, "Icons.AutoStackSynchronizationToolSmall.png", "Icons.AutoStackSynchronizationToolMedium.png", "Icons.AutoStackSynchronizationToolLarge.png")]
-	[GroupHint("activate", "Tools.Image.Manipulation.Stacking.Synchronize")]
+	[GroupHint("activate", "Tools.Image.Manipulation.Stacking.SynchronizeAuto")]
+
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class StackingSynchronizationTool : ImageViewerTool
 	{
 		#region ImageInfo struct 
 
-		private struct ImageInfo
+		private class ImageInfo
 		{
 			public Vector3D Normal;
 			public Vector3D Position;
@@ -63,6 +65,8 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 
 		private bool _active;
 		private event EventHandler _activeChanged;
+
+		private SynchronizationToolCoordinator _coordinator;
 
 		private readonly Dictionary<string, ImageInfo> _sopInfoDictionary;
 
@@ -93,6 +97,27 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 			remove { _activeChanged -= value; }
 		}
 
+		public override void Initialize()
+		{
+			base.Initialize();
+
+			_coordinator = SynchronizationToolCoordinator.Get(base.ImageViewer);
+			_coordinator.StackingSynchronizationTool = this;
+		}
+
+		protected override void Dispose(bool disposing)
+		{
+			_coordinator.Release();
+
+			base.Dispose(disposing);
+		}
+
+		private void Toggle()
+		{
+			Active = !Active;
+			_coordinator.OnSynchronizedImages(Synchronize());
+		}
+
 		private IEnumerable<IImageBox> GetImageBoxesToSynchronize(IImageBox referenceImageBox)
 		{
 			IImageSopProvider provider = referenceImageBox.TopLeftPresentationImage as IImageSopProvider;
@@ -101,61 +126,27 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 
 			foreach (IImageBox imageBox in this.Context.Viewer.PhysicalWorkspace.ImageBoxes)
 			{
-				if (referenceImageBox != imageBox && imageBox.DisplaySet != null && imageBox.DisplaySet.PresentationImages.Count > 1)
+				if (referenceImageBox != imageBox && imageBox != null && imageBox.DisplaySet != null && imageBox.DisplaySet.PresentationImages.Count > 1)
 					yield return imageBox;
 			}
 		}
 
-		private void CalculateNormalAndPosition(ImageSop sop, out Vector3D normal, out Vector3D positionVector)
+		private ImageInfo GetImageInformation(ImageSop sop)
 		{
-			ImageOrientationPatient orientation = sop.ImageOrientationPatient;
-			PixelSpacing spacing = sop.PixelSpacing;
-
-			normal = null;
-			positionVector = null;
-
-			if (orientation.IsNull || spacing.IsNull)
-				return;
-			
 			ImageInfo info;
 
 			//Caching as much of the floating point arithmetic as we can for each image
 			//improves the efficiency of finding the closest slice by about 4x.
-
 			if (!_sopInfoDictionary.ContainsKey(sop.SopInstanceUID))
 			{
 				// Calculation of position of the center of the image in patient coordinates 
 				// using the matrix method described in Dicom PS 3.3 C.7.6.2.1.1.
-
-				ImagePositionPatient position = sop.ImagePositionPatient;
-
-				Matrix mReference = new Matrix(4, 4);
-
-				mReference[0, 0] = (float) (orientation.RowX*spacing.Column);
-				mReference[1, 0] = (float) (orientation.RowY*spacing.Column);
-				mReference[2, 0] = (float) (orientation.RowZ*spacing.Column);
-
-				mReference[0, 1] = (float) (orientation.ColumnX*spacing.Row);
-				mReference[1, 1] = (float) (orientation.ColumnY*spacing.Row);
-				mReference[2, 1] = (float) (orientation.ColumnZ*spacing.Row);
-
-				mReference[0, 3] = (float) (position.X);
-				mReference[1, 3] = (float) (position.Y);
-				mReference[2, 3] = (float) (position.Z);
-				mReference[3, 3] = 1F;
-
-				Matrix columnMatrix = new Matrix(4, 1);
-				columnMatrix[0, 0] = (sop.Columns - 1)/2F;
-				columnMatrix[1, 0] = (sop.Rows - 1)/2F;
-				columnMatrix[3, 0] = 1F;
-
-				Matrix result = mReference.Multiply(columnMatrix);
-
 				info = new ImageInfo();
-				info.Position = new Vector3D(result[0, 0], result[1, 0], result[2, 0]);
-				info.Normal = Vector3D.Cross(new Vector3D((float) orientation.RowX, (float) orientation.RowY, (float) orientation.RowZ),
-				                        new Vector3D((float) orientation.ColumnX, (float) orientation.ColumnY,
-				                                     (float) orientation.ColumnZ));
+				info.Position = ImagePositionHelper.SourceToPatientCenterOfImage(sop);
+				info.Normal = ImagePositionHelper.CalculateNormalVector(sop);
+
+				if (info.Position == null || info.Normal == null)
+					return null;
 
 				_sopInfoDictionary[sop.SopInstanceUID] = info;
 			}
@@ -164,20 +155,15 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 				info = _sopInfoDictionary[sop.SopInstanceUID];
 			}
 
-
-			positionVector = info.Position.Clone();
-			normal = info.Normal.Clone();
+			return info;
 		}
 
 		private int CalculateClosestSlice(IImageBox referenceImageBox, IImageBox imageBox)
 		{
 			ImageSop referenceSop = ((IImageSopProvider) referenceImageBox.TopLeftPresentationImage).ImageSop;
 
-			Vector3D referencePosition;
-			Vector3D referenceNormal;
-			CalculateNormalAndPosition(referenceSop, out referenceNormal, out referencePosition);
-
-			if (referencePosition == null || referenceNormal == null)
+			ImageInfo referenceImageInfo = GetImageInformation(referenceSop);
+			if (referenceImageInfo == null)
 				return -1;
 
 			float closestDistance = float.MaxValue;
@@ -193,19 +179,16 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 
 					if (sop.FrameOfReferenceUid == referenceSop.FrameOfReferenceUid && sop.StudyInstanceUID == referenceSop.StudyInstanceUID)
 					{
-						Vector3D normal;
-						Vector3D position;
-						CalculateNormalAndPosition(sop, out normal, out position);
-						
-						if (normal != null && position != null)
+						ImageInfo info = GetImageInformation(sop);
+						if (info != null)
 						{
-							float angle = (float) Math.Acos(Vector3D.Dot(normal, referenceNormal));
-							if (Math.Abs(angle) <= _fiveDegreesInRadians)
+							float angle = Math.Abs((float)Math.Acos(info.Normal.Dot(referenceImageInfo.Normal)));
+							if (angle <= _fiveDegreesInRadians || (Math.PI - angle) <= _fiveDegreesInRadians)
 							{
-								position.Subtract(referencePosition);
+								Vector3D position = info.Position - referenceImageInfo.Position;
 								float distance = position.Magnitude;
 
-								if (Math.Abs(distance) < closestDistance)
+								if (Math.Abs(distance) <= closestDistance)
 								{
 									closestDistance = distance;
 									closestIndex = index;
@@ -219,34 +202,27 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 			return closestIndex;
 		}
 
-		private void SynchronizeWithImage(IImageBox referenceImageBox)
+		private IEnumerable<IImageBox> SynchronizeWithImage(IImageBox referenceImageBox)
 		{
 			foreach (IImageBox imageBox in GetImageBoxesToSynchronize(referenceImageBox))
 			{
 				int index = CalculateClosestSlice(referenceImageBox, imageBox);
-				if (index >= 0)
+				if (index >= 0 && index != imageBox.TopLeftPresentationImageIndex)
 				{
 					imageBox.TopLeftPresentationImageIndex = index;
-					imageBox.Draw();
+					yield return imageBox;
 				}
 			}
 		}
 
-		private void Synchronize()
+		public IEnumerable<IImageBox> Synchronize()
 		{
-			if (Active)
-				SynchronizeWithImage(this.Context.Viewer.SelectedImageBox);
-		}
-
-		private void Toggle()
-		{
-			Active = !Active;
-			Synchronize();
-		}
-
-		protected override void OnPresentationImageSelected(object sender, PresentationImageSelectedEventArgs e)
-		{
-			Synchronize();
+			IImageBox referenceImageBox = this.Context.Viewer.SelectedImageBox;
+			if (Active && referenceImageBox != null)
+			{
+				foreach (IImageBox imageBox in SynchronizeWithImage(referenceImageBox))
+					yield return imageBox;
+			}
 		}
 	}
 }

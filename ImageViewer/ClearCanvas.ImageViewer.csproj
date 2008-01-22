@@ -114,6 +114,12 @@
     <Compile Include="Annotations\Dicom\DicomFilteredAnnotationLayoutStore.cs" />
     <Compile Include="Annotations\Dicom\DicomFixedAnnotationLayoutProvider.cs" />
     <Compile Include="Annotations\IAnnotationResourceResolver.cs" />
+    <Compile Include="NamedCompositeGraphicSettings.cs" />
+    <Compile Include="NamedCompositeGraphicSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>NamedCompositeGraphicSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="Graphics\GraphicTool.cs" />
     <Compile Include="Comparers\Tests\SortTests.cs" />
     <Compile Include="Imaging\Tests\ColorMapTests.cs" />
@@ -193,6 +199,7 @@
     <Compile Include="Imaging\BasicVoiLutLinear.cs" />
     <Compile Include="Imaging\VoiLutLinearBase.cs" />
     <Compile Include="Imaging\VoiLutManager.cs" />
+    <Compile Include="INamedCompositeGraphicProvider.cs" />
     <Compile Include="InputManagement\KeyboardButtonDownPreview.cs" />
     <Compile Include="InputManagement\MouseCaptureChangedEventArgs.cs" />
     <Compile Include="InteractiveGraphics\PointMemento.cs" />
@@ -457,6 +464,10 @@
     <None Include="app.config" />
     <None Include="ClassDiagrams\StudyFindersLoaders.cd" />
     <None Include="ClassDiagrams\VectorGraphics.cd" />
+    <None Include="NamedCompositeGraphicSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>NamedCompositeGraphicSettings.Designer.cs</LastGenOutput>
+    </None>
     <None Include="StandardModalitySettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>StandardModalitySettings.Designer.cs</LastGenOutput>
