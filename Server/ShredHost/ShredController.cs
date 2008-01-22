@@ -73,6 +73,7 @@ namespace ClearCanvas.Server.ShredHost
             
             // create the thread and start it
             _thread = new Thread(new ParameterizedThreadStart(StartupShred));
+            _thread.Name = String.Format("Shred {0}", _thread.ManagedThreadId);
             _thread.Start(this);
 
             lock (_lockRunningState)
