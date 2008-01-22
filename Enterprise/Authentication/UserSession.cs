@@ -11,16 +11,7 @@ namespace ClearCanvas.Enterprise.Authentication {
     /// </summary>
 	public partial class UserSession : ClearCanvas.Enterprise.Core.Entity
 	{
-        /// <summary>
-        /// Constructs a new session for the specified user.
-        /// </summary>
-        /// <param name="userName"></param>
-        public UserSession(string userName)
-        {
-            _userName = userName;
-        }
-
-        public SessionToken GetToken()
+        public virtual SessionToken GetToken()
         {
             return new SessionToken(_sessionId, _expiryTime);
         }

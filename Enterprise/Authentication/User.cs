@@ -70,7 +70,9 @@ namespace ClearCanvas.Enterprise.Authentication {
                 userInfo.ValidUntil,
                 true, // initially enabled
                 null, // last login time
-                authorityGroups);
+                authorityGroups,
+                null  // current session
+                );
         }
 
         /// <summary>
@@ -120,7 +122,6 @@ namespace ClearCanvas.Enterprise.Authentication {
         }
 
         #endregion
-
 
         private void ChangePassword(string newPassword, int daysToExpiration)
         {

@@ -65,20 +65,11 @@ namespace ClearCanvas.Enterprise.Authentication
             // update last login time
             user.LastLoginTime = currentTime;
 
-            UserSession session;
-            bool newSession = false;
-            try
+            UserSession session = user.CurrentSession;
+            if (session == null)
             {
-                // try to find an existing session object for this user
-                UserSessionSearchCriteria criteria = new UserSessionSearchCriteria();
-                criteria.UserName.EqualTo(userName);
-                session = PersistenceContext.GetBroker<IUserSessionBroker>().FindOne(criteria);
-            }
-            catch (EntityNotFoundException)
-            {
-                // no existing session - create a new one
-                session = new UserSession(userName);
-                newSession = true;
+                session = new UserSession();
+                user.CurrentSession = session;
             }
 
             // generate a new session id
@@ -87,9 +78,6 @@ namespace ClearCanvas.Enterprise.Authentication
             // set the expiration time
             AuthenticationSettings settings = new AuthenticationSettings();
             session.ExpiryTime = currentTime.AddMinutes(settings.UserSessionTimeoutMinutes);
-
-            if(newSession)
-                PersistenceContext.Lock(session, DirtyState.New);
 
             return session.GetToken();
         }
@@ -111,30 +99,21 @@ namespace ClearCanvas.Enterprise.Authentication
         [UpdateOperation(Auditable = false)]
         public SessionToken ValidateUserSession(string userName, SessionToken sessionToken)
         {
-            //TODO: this method could be implemented using a direct SQL UPDATE...WHERE... statement for improved performance
+            Platform.CheckForNullReference(userName, "userName");
+            Platform.CheckForNullReference(sessionToken, "sessionToken");
+            Platform.CheckMemberIsSet(sessionToken.Id, "sessionToken.Id");
 
             AuthenticationSettings settings = new AuthenticationSettings();
             DateTime currentTime = Platform.Time;
 
-            UserSession session;
-            try
-            {
-                // find a session object for this user and session token that has not yet expired
-                UserSessionSearchCriteria criteria = new UserSessionSearchCriteria();
-                criteria.UserName.EqualTo(userName);
-                criteria.SessionId.EqualTo(sessionToken.Id);
+            User user = GetVerifiedUser(userName, sessionToken);
+            UserSession session = user.CurrentSession;
 
-                // if session timeouts are enabled, check expiry time
-                if (settings.UserSessionTimeoutEnabled)
-                {
-                    criteria.ExpiryTime.MoreThan(currentTime);
-                }
-
-                session = PersistenceContext.GetBroker<IUserSessionBroker>().FindOne(criteria);
-            }
-            catch (EntityNotFoundException)
+            // if session timeouts are enabled, check expiry time
+            if (settings.UserSessionTimeoutEnabled && session.ExpiryTime < currentTime)
             {
-                // no session, or session has expired
+                // session has expired
+                // the error message is deliberately vague
                 throw new SecurityTokenValidationException(SR.ExceptionInvalidSession);
             }
 
@@ -147,23 +126,15 @@ namespace ClearCanvas.Enterprise.Authentication
         [UpdateOperation(Auditable = false)]
         public void TerminateUserSession(string userName, SessionToken sessionToken)
         {
-            try
-            {
-                // find a session object for this user and session token
-                UserSessionSearchCriteria criteria = new UserSessionSearchCriteria();
-                criteria.UserName.EqualTo(userName);
-                criteria.SessionId.EqualTo(sessionToken.Id);
-                IUserSessionBroker broker = PersistenceContext.GetBroker<IUserSessionBroker>();
-                UserSession session = broker.FindOne(criteria);
+            User user = GetVerifiedUser(userName, sessionToken);
 
-                // delete the session record
-                broker.Delete(session);
-            }
-            catch (EntityNotFoundException)
-            {
-                // no such session
-                throw new SecurityTokenValidationException(SR.ExceptionInvalidSession);
-            }
+            // set the current session to null
+            UserSession session = user.CurrentSession;
+            user.CurrentSession = null;
+
+            // delete the session object
+            IUserSessionBroker broker = PersistenceContext.GetBroker<IUserSessionBroker>();
+            broker.Delete(session);
         }
 
 
@@ -190,23 +161,61 @@ namespace ClearCanvas.Enterprise.Authentication
         /// <returns></returns>
         private User GetVerifiedUser(string userName, string password)
         {
-            User user;
-            try
-            {
-                UserSearchCriteria criteria = new UserSearchCriteria();
-                criteria.UserName.EqualTo(userName);
-                user = PersistenceContext.GetBroker<IUserBroker>().FindOne(criteria);
-            }
-            catch (EntityNotFoundException)
-            {
-                // non-existant username
-                // the error message is deliberately vague
-                throw new SecurityTokenValidationException(SR.ExceptionInvalidUserAccount);
-            }
+            User user = GetUserByUserName(userName);
 
             if (!user.IsActive || !user.Password.Verify(password))
             {
                 // account not active, or invalid password
+                // the error message is deliberately vague
+                throw new SecurityTokenValidationException(SR.ExceptionInvalidUserAccount);
+            }
+            return user;
+        }
+
+        /// <summary>
+        /// Gets the user specified by the user name, verifying that the supplied session token
+        /// matches the user.  If the session token does not match the user, and exception is thrown.
+        /// </summary>
+        /// <remarks>
+        /// This method does not check if the session has expired.
+        /// </remarks>
+        /// <param name="userName"></param>
+        /// <param name="sessionToken"></param>
+        /// <returns></returns>
+        private User GetVerifiedUser(string userName, SessionToken sessionToken)
+        {
+            User user = GetUserByUserName(userName);
+
+            if (!user.IsActive || user.CurrentSession == null || user.CurrentSession.SessionId != sessionToken.Id)
+            {
+                // account not active, or invalid session token
+                // the error message is deliberately vague
+                throw new SecurityTokenValidationException(SR.ExceptionInvalidUserAccount);
+            }
+            return user;
+        }
+
+        /// <summary>
+        /// Gets the user specified by the user name, or throws an exception if no such user exists.
+        /// </summary>
+        /// <remarks>
+        /// This method does not check the validity of the user account.
+        /// </remarks>
+        /// <param name="userName"></param>
+        /// <returns></returns>
+        private User GetUserByUserName(string userName)
+        {
+            UserSearchCriteria criteria = new UserSearchCriteria();
+            criteria.UserName.EqualTo(userName);
+
+            // use query caching here to make this fast (assuming the user table is not often updated)
+            IList<User> users = PersistenceContext.GetBroker<IUserBroker>().Find(
+                new UserSearchCriteria[]{criteria}, new SearchResultPage(0, 1), true);
+
+            User user = CollectionUtils.FirstElement(users);
+            if(user == null)
+            {
+                // non-existant username
                 // the error message is deliberately vague
                 throw new SecurityTokenValidationException(SR.ExceptionInvalidUserAccount);
             }

@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="ClearCanvas.Enterprise.Authentication" namespace="ClearCanvas.Enterprise.Authentication">
   <class name="User" table="User_">
+    <cache usage="read-write"/>
     <id name="OID" column="OID_" type="Guid">
       <generator class="guid.comb"/>
     </id>
@@ -20,5 +21,10 @@
       <key column="UserOID_"/>
       <many-to-many column="AuthorityGroupOID_" class="AuthorityGroup" fetch="join"/>
     </set>
+    
+    <!-- In reality one user will ever be associated with a given session, but the many-to-one mapping provides
+          better performance when the 2nd-level cache is enabled, because the UserSession object can simply be
+          retrieved from the cache -->
+    <many-to-one name="CurrentSession" class="UserSession" column="CurrentSessionOID_" not-null="false" cascade="all"/>
   </class>
 </hibernate-mapping>
