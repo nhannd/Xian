@@ -31,13 +31,13 @@ namespace ClearCanvas.Ris.Client.SpeechMagic.View.WinForms
             this.components = new System.ComponentModel.Container();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this._logGroupBox = new System.Windows.Forms.GroupBox();
+            this._logs = new System.Windows.Forms.ListView();
             this._logContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this._clearLogs = new System.Windows.Forms.ToolStripMenuItem();
             this._commandGroupBox = new System.Windows.Forms.GroupBox();
+            this._commandLogs = new System.Windows.Forms.ListView();
             this._commandContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this._clearCommands = new System.Windows.Forms.ToolStripMenuItem();
-            this._commandLogs = new System.Windows.Forms.ListView();
-            this._logs = new System.Windows.Forms.ListView();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
@@ -76,6 +76,18 @@ namespace ClearCanvas.Ris.Client.SpeechMagic.View.WinForms
             this._logGroupBox.TabStop = false;
             this._logGroupBox.Text = "Log";
             // 
+            // _logs
+            // 
+            this._logs.ContextMenuStrip = this._logContextMenu;
+            this._logs.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._logs.Location = new System.Drawing.Point(3, 16);
+            this._logs.Name = "_logs";
+            this._logs.ShowItemToolTips = true;
+            this._logs.Size = new System.Drawing.Size(447, 198);
+            this._logs.TabIndex = 0;
+            this._logs.UseCompatibleStateImageBehavior = false;
+            this._logs.View = System.Windows.Forms.View.Details;
+            // 
             // _logContextMenu
             // 
             this._logContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -101,6 +113,18 @@ namespace ClearCanvas.Ris.Client.SpeechMagic.View.WinForms
             this._commandGroupBox.TabStop = false;
             this._commandGroupBox.Text = "Commands Recognized";
             // 
+            // _commandLogs
+            // 
+            this._commandLogs.ContextMenuStrip = this._commandContextMenu;
+            this._commandLogs.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._commandLogs.Location = new System.Drawing.Point(3, 16);
+            this._commandLogs.Name = "_commandLogs";
+            this._commandLogs.ShowItemToolTips = true;
+            this._commandLogs.Size = new System.Drawing.Size(447, 276);
+            this._commandLogs.TabIndex = 0;
+            this._commandLogs.UseCompatibleStateImageBehavior = false;
+            this._commandLogs.View = System.Windows.Forms.View.Details;
+            // 
             // _commandContextMenu
             // 
             this._commandContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -114,28 +138,6 @@ namespace ClearCanvas.Ris.Client.SpeechMagic.View.WinForms
             this._clearCommands.Size = new System.Drawing.Size(99, 22);
             this._clearCommands.Text = "Clear";
             this._clearCommands.Click += new System.EventHandler(this._clearCommands_Click);
-            // 
-            // _commandLogs
-            // 
-            this._commandLogs.ContextMenuStrip = this._commandContextMenu;
-            this._commandLogs.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._commandLogs.Location = new System.Drawing.Point(3, 16);
-            this._commandLogs.Name = "_commandLogs";
-            this._commandLogs.Size = new System.Drawing.Size(447, 276);
-            this._commandLogs.TabIndex = 0;
-            this._commandLogs.UseCompatibleStateImageBehavior = false;
-            this._commandLogs.View = System.Windows.Forms.View.Details;
-            // 
-            // _logs
-            // 
-            this._logs.ContextMenuStrip = this._logContextMenu;
-            this._logs.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._logs.Location = new System.Drawing.Point(3, 16);
-            this._logs.Name = "_logs";
-            this._logs.Size = new System.Drawing.Size(447, 198);
-            this._logs.TabIndex = 0;
-            this._logs.UseCompatibleStateImageBehavior = false;
-            this._logs.View = System.Windows.Forms.View.Details;
             // 
             // LogComponentControl
             // 

@@ -46,6 +46,7 @@
     <Reference Include="SmIaEditor, Version=4.6.0.0, Culture=neutral, PublicKeyToken=7ab515a4ec68052d" />
     <Reference Include="SmIaTextInterface, Version=4.6.0.0, Culture=neutral, PublicKeyToken=7ab515a4ec68052d" />
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
@@ -62,12 +63,6 @@
     </Compile>
     <Compile Include="LogComponentView.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RecorderControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="RecorderControl.Designer.cs">
-      <DependentUpon>RecorderControl.cs</DependentUpon>
-    </Compile>
     <Compile Include="ReportEditorComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -93,10 +88,6 @@
     <EmbeddedResource Include="LogComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>LogComponentControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="RecorderControl.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>RecorderControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ReportEditorComponentControl.resx">
       <SubType>Designer</SubType>

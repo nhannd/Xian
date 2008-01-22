@@ -19,23 +19,16 @@ namespace ClearCanvas.Ris.Client.SpeechMagic.View.WinForms
 {
     public class SmIaManager : IErrorConsole
     {
-        public delegate void LogUpdatedCallback(string message, SmIaErrorLevel severity);
-        public delegate void RecognizerModeChangedCallback(RecognizerType type);
-        public delegate void StateChangedCallback(State state);
-        public delegate void CommandRecognizedCallback(string grammar, string symbol, string commandText, double confidence, ref SmIa.SSemanticAttribute[] semanticAttributes, ref string[] textNonterminalTexts, SmIa.ICommandManipulation commandManipulator);
-        public delegate void SessionWarningCallback(int errorCode);
-        public delegate void SessionErrorCallback(int errorCode);
-        public delegate void ProtectDocumentCallback(bool protect);
-        public delegate void AudioStateChangedCallback(SmIa.AudioState state);
-
-        public event LogUpdatedCallback OnLogUpdated;
-        public event StateChangedCallback OnStateChanged;
-        public event SessionWarningCallback OnSessionWarning;
-        public event SessionErrorCallback OnSessionError;
-        public event CommandRecognizedCallback OnCommandRecognized;
-        public event RecognizerModeChangedCallback OnRecognizerModeChanged;
-        public event ProtectDocumentCallback OnProtectDocument;
-        public event AudioStateChangedCallback OnAudioStateChanged;
+        public event LogUpdatedCallback LogUpdated;
+        public event StateChangedCallback StateChanged;
+        public event SessionWarningCallback SessionWarning;
+        public event SessionErrorCallback SessionError;
+        public event CommandRecognizedCallback CommandRecognized;
+        public event RecognizerModeChangedCallback RecognizerModeChanged;
+        public event AudioStateChangedCallback AudioStateChanged;
+        public event SpeechMikeButtonPressedCallback SpeechMikeButtonPressed;
+        public event ProtectDocumentRequestedCallback ProtectDocumentRequested;
+        public event PreviewReceivedCallback PreviewReceived;
 
         //user settings
         private readonly SmIaProfile _profile;
@@ -104,6 +97,12 @@ namespace ClearCanvas.Ris.Client.SpeechMagic.View.WinForms
             _alternativeGenerators = new ArrayList();
 
             _editor = new SmIaEditor.Editor();
+
+            _settingAlternativeGenerators = false;
+            _settingAcousticAdaptation = false;
+            _settingAutoPunctuation = false;
+            _settingAcousticFeedback = false;
+            _settingSynchronousPlayback = true;
         }
 
         public State SessionState
@@ -118,13 +117,24 @@ namespace ClearCanvas.Ris.Client.SpeechMagic.View.WinForms
 
         public int AudioSignalLevel
         {
-            get { return _coreSessionAudio == null ? 0 : _coreSessionAudio.SignalLevel; }
+            get { return _coreSessionAudio != null && _currentAppState != State.Uninitialized ? _coreSessionAudio.SignalLevel : 0; }
+        }
+
+        public int AudioFileLength
+        {
+            get { return _coreSession != null && _coreSession.ActiveDocument != null ? _coreSession.ActiveDocument.AudioFileLength : 0; }
+        }
+
+        public int AudioPosition
+        {
+            get { return _coreSession != null && _coreSession.ActiveDocument != null ? _coreSession.ActiveDocument.AudioPosition : 0; }
             set
             {
-                if (_coreSession.ActiveDocument != null)
+                if (_coreSession != null && _coreSession.ActiveDocument != null)
+                {
                     _coreSession.ActiveDocument.MoveTextCursorTo(value);
-
-                _coreSession.ActiveDocument.GetAudioPositionOfTextCursor();
+                    _coreSession.ActiveDocument.AudioPosition = value;
+                }
             }
         }
 
@@ -139,18 +149,24 @@ namespace ClearCanvas.Ris.Client.SpeechMagic.View.WinForms
             StartSpeechMike();
             OpenSession(false, false);
         }
-        public void SetDocumentEditor(object editorHandle)
+        public void SetActiveDocument(object editorHandle)
         {
             LinkDocument(editorHandle);
         }
         public void Close()
         {
+            if (_currentAppState == State.Uninitialized)
+                return;
+
             CloseSession();
             StopSpeechMike();
         }
 
         public void Record()
         {
+            if (_currentAppState == State.Recording)
+                return;
+
             if (_currentRecognizerMode == RecognizerType.Dictation)
             {
                 try
@@ -180,12 +196,11 @@ namespace ClearCanvas.Ris.Client.SpeechMagic.View.WinForms
             }
 
             SetState(State.Recording);
-            // SetSpeechMikeLedState();
+            SetSpeechMikeLedState();
             PrintInfo("Recording");
         }
         public void Play()
         {
-            //lag 05.10.2006 - prevent playback for the following states
             if (_currentAppState == State.Stopping || _currentAppState == State.Winding ||
                 _currentAppState == State.Playing || _currentAppState == State.Recording)
                 return;
@@ -193,38 +208,19 @@ namespace ClearCanvas.Ris.Client.SpeechMagic.View.WinForms
             try
             {
                 _coreSessionAudio.SynchronousPlayback = _settingSynchronousPlayback;
-                //if (!_coreSessionAudio.SynchronousPlayback)
-                //{
-                //    _coreSession.ActiveDocument.AudioPosition = barSFPosition.Value;
-                //}
-            }
-            catch (Exception e)
-            {
-                PrintSmIaError("Play", e);
-            }
-
-            //if (!_settingSynchronousPlayback)
-            //    timerPosLength.Start();
-
-            try
-            {
                 _coreSessionAudio.Play();
             }
             catch (Exception e)
             {
-                //if (!_settingSynchronousPlayback)
-                //    timerPosLength.Stop();
                 PrintSmIaError("Play", e);
-                return;
             }
 
             SetState(State.Playing);
-            // SetSpeechMikeLedState();
+            SetSpeechMikeLedState();
             PrintInfo("Playback started");
         }
         public void Forward()
         {
-            //lag 05.10.2006
             if (_currentAppState == State.Stopping || _currentAppState == State.Winding ||
                 _currentAppState == State.Playing || _currentAppState == State.Recording)
                 return;
@@ -232,39 +228,19 @@ namespace ClearCanvas.Ris.Client.SpeechMagic.View.WinForms
             try
             {
                 _coreSessionAudio.SynchronousPlayback = _settingSynchronousPlayback;
-                //if (!_coreSessionAudio.SynchronousPlayback)
-                //{
-                //    _coreSession.ActiveDocument.AudioPosition = barSFPosition.Value;
-                //}
-            }
-            catch (Exception e)
-            {
-
-                PrintSmIaError("FastForward", e);
-            }
-
-            //if (!_settingSynchronousPlayback)
-            //    timerPosLength.Start();
-
-            try
-            {
                 _coreSessionAudio.FastForward();
             }
             catch (Exception e)
             {
-                //if (!_settingSynchronousPlayback)
-                //    timerPosLength.Stop();
                 PrintSmIaError("FastForward", e);
-                return;
             }
 
             SetState(State.Winding);
-            // SetSpeechMikeLedState();
+            SetSpeechMikeLedState();
             PrintInfo("FastForward started");
         }
         public void Rewind()
         {
-            //lag 05.10.2006
             if (_currentAppState == State.Stopping || _currentAppState == State.Winding ||
                 _currentAppState == State.Playing || _currentAppState == State.Recording)
                 return;
@@ -272,33 +248,16 @@ namespace ClearCanvas.Ris.Client.SpeechMagic.View.WinForms
             try
             {
                 _coreSessionAudio.SynchronousPlayback = _settingSynchronousPlayback;
-                //if (!_coreSessionAudio.SynchronousPlayback)
-                //{
-                //    _coreSession.ActiveDocument.AudioPosition = barSFPosition.Value;
-                //}
-            }
-            catch (Exception e)
-            {
-                PrintSmIaError("FastRewind", e);
-            }
-
-            //if (!_settingSynchronousPlayback)
-            //    timerPosLength.Start();
-
-            try
-            {
                 _coreSessionAudio.FastRewind();
             }
             catch (Exception e)
             {
-                //if (!_settingSynchronousPlayback)
-                //    timerPosLength.Stop();
                 PrintSmIaError("FastRewind", e);
                 return;
             }
 
             SetState(State.Winding);
-            // SetSpeechMikeLedState();
+            SetSpeechMikeLedState();
             PrintInfo("FastRewind started");
         }
         public void Stop()
@@ -311,18 +270,7 @@ namespace ClearCanvas.Ris.Client.SpeechMagic.View.WinForms
                 return;
 
             if (!fromEvent && _coreSession.State == Philips.PSP.SmIaCore.SessionState.sstIdle)
-            {
-                PrintInfo("State already changed to Idle");
                 return;
-            }
-
-            //timerPosLength.Stop();
-            //if (barSFPosition.Visible)
-            //{
-            //    UpdateSliderPosition();
-            //    if (_coreSession.SynchronousPlayback) // visible due to record from file
-            //        ShowPositionSlider(false);
-            //}
 
             if (!fromEvent)
             {
@@ -337,7 +285,7 @@ namespace ClearCanvas.Ris.Client.SpeechMagic.View.WinForms
                 }
 
                 SetState(State.Stopping);
-                // SetSpeechMikeLedState();
+                SetSpeechMikeLedState();
                 PrintInfo("Stopping");
             }
         }
@@ -444,7 +392,7 @@ namespace ClearCanvas.Ris.Client.SpeechMagic.View.WinForms
         {
             try
             {
-                _settingAcousticFeedback = enable; 
+                _settingAcousticFeedback = enable;
 
                 if (_coreSessionAudio != null)
                     _coreSessionAudio.AcousticFeedback = enable;
@@ -456,16 +404,17 @@ namespace ClearCanvas.Ris.Client.SpeechMagic.View.WinForms
                 PrintSmIaError("EnableAcousticFeedback", e);
             }
         }
-        private bool EnableSynchronousPlayback(bool enable)
+        private void EnableSynchronousPlayback(bool enable)
         {
             try
             {
                 _settingSynchronousPlayback = enable;
-                _coreSessionAudio.SynchronousPlayback = enable;
 
-                //TODO: Synchronous Playback
-                //if (_currentAppState != State.Idle && _currentAppState != State.Initialized)
-                //    return false;
+                if (_currentAppState != State.Idle && _currentAppState != State.Initialized)
+                    return;
+
+                if (_coreSessionAudio != null)
+                    _coreSessionAudio.SynchronousPlayback = enable;
 
                 //if (_coreSessionAudio.SynchronousPlayback)
                 //{
@@ -482,10 +431,7 @@ namespace ClearCanvas.Ris.Client.SpeechMagic.View.WinForms
             catch (Exception e)
             {
                 PrintSmIaError("EnableSyncPlayback", e);
-                return false;
             }
-
-            return true;
         }
         private void SetVorLevel(int level)
         {
@@ -648,45 +594,52 @@ namespace ClearCanvas.Ris.Client.SpeechMagic.View.WinForms
         }
         private void CloseSession()
         {
-            if (_coreSession == null)
-                return;
-
-            DeactivateRecognizer();
-
-            // deactivate all documents
-            UnLinkDocument();
-
-            // delete all the recognizers we had initialized. and yes, there is a reason we do not use an 
-            // enumerator here: when using an enumerator, like foreach does, we will modify the list the 
-            // enumerator is based on and since this is not allowed for .net enumerators, we will fail 
-            // without deleting anything. 
-            while (_recognizers.Count > 0)
-                DeleteRecognizer((Recognizer)_recognizers[0]);
-
-            // delete all alternative generators we had initialized 
-            while (_alternativeGenerators.Count > 0)
+            try
             {
-                AlternativesGenerator alternativesGenerator = (AlternativesGenerator)_alternativeGenerators[0];
+                if (_coreSession == null)
+                    return;
 
-                alternativesGenerator.IAltGenerator.Close();
+                DeactivateRecognizer();
 
-                Marshal.ReleaseComObject(alternativesGenerator.IAltGenerator);
-                alternativesGenerator.IAltGenerator = null;
+                // deactivate all documents
+                UnLinkDocument();
 
-                _alternativeGenerators.RemoveAt(0);
+                // delete all the recognizers we had initialized. and yes, there is a reason we do not use an 
+                // enumerator here: when using an enumerator, like foreach does, we will modify the list the 
+                // enumerator is based on and since this is not allowed for .net enumerators, we will fail 
+                // without deleting anything. 
+                while (_recognizers.Count > 0)
+                    DeleteRecognizer((Recognizer) _recognizers[0]);
+
+                // delete all alternative generators we had initialized 
+                while (_alternativeGenerators.Count > 0)
+                {
+                    AlternativesGenerator alternativesGenerator = (AlternativesGenerator) _alternativeGenerators[0];
+
+                    alternativesGenerator.IAltGenerator.Close();
+
+                    Marshal.ReleaseComObject(alternativesGenerator.IAltGenerator);
+                    alternativesGenerator.IAltGenerator = null;
+
+                    _alternativeGenerators.RemoveAt(0);
+                }
+
+                SynchAudioSettings(true);
+
+                // close session
+                _coreSession.Close();
+
+                // delete the session
+                Marshal.ReleaseComObject(_coreSession);
+                _coreSession = null;
+
+                SetState(State.Uninitialized);
+                PrintInfo("Close Session");
             }
-
-            SynchAudioSettings(true);
-            
-            // close session
-            _coreSession.Close();
-
-            // delete the session
-            Marshal.ReleaseComObject(_coreSession);
-            _coreSession = null;
-
-            SetState(State.Uninitialized);
-            PrintInfo("Close Session");
+            catch (Exception ex)
+            {
+                PrintSmIaError("Failed to close a session", ex);
+            }
         }
         private void LinkDocument(object documentHandle)
         {
@@ -697,13 +650,12 @@ namespace ClearCanvas.Ris.Client.SpeechMagic.View.WinForms
                 _documentHandle = documentHandle;
                 if (_coreSession != null && _currentAppState != State.Uninitialized)
                 {
-                    _activeTextDocument = _editor.NewDocument("doc", documentHandle, "");
+                    _activeTextDocument = _editor.NewDocument("doc", _documentHandle, "");
 
                     Guid guid = typeof(SmIa.IStandardDocument).GUID;
                     SmIa.IDocument tempDocument = (SmIa.IDocument)_coreSession.CreateComponent(ref guid);
                     tempDocument.Open(_activeTextDocument, Path.GetTempPath());
                     _coreSession.ActiveDocument = tempDocument;
-                    _documentHandle = documentHandle;
 
                     PrintInfo("Linking document");
                 }
@@ -726,6 +678,7 @@ namespace ClearCanvas.Ris.Client.SpeechMagic.View.WinForms
                         tempDoc.Close();
                         Marshal.ReleaseComObject(tempDoc);
                         tempDoc = null;
+                        PrintInfo("Unlink Active document");
                     }
 
                     if (_activeTextDocument != null)
@@ -733,9 +686,14 @@ namespace ClearCanvas.Ris.Client.SpeechMagic.View.WinForms
                         _editor.RemoveDocument(_activeTextDocument.Id);
                         Marshal.ReleaseComObject(_activeTextDocument);
                         _activeTextDocument = null;
+                        PrintInfo("Unlinking active text document");
                     }
 
                     _documentHandle = null;
+                }
+                else
+                {
+                    PrintInfo(string.Format("Skipping unlinking: State={0}", _currentAppState));
                 }
             }
             catch (Exception ex)
@@ -745,8 +703,11 @@ namespace ClearCanvas.Ris.Client.SpeechMagic.View.WinForms
         }
         private void ProtectDocument(bool protect)
         {
-            if (OnProtectDocument != null)
-                OnProtectDocument(protect);
+            if (ProtectDocumentRequested != null)
+            {
+                PrintInfo(string.Format("ProtectDocument requested {0}", protect));
+                ProtectDocumentRequested(protect);
+            }
         }
         private void SetState(State newState)
         {
@@ -754,11 +715,8 @@ namespace ClearCanvas.Ris.Client.SpeechMagic.View.WinForms
             {
                 _currentAppState = newState;
 
-                if (_currentAppState == State.Uninitialized)
-                    DeInitializeAudio();
-
-                if (OnStateChanged != null)
-                    OnStateChanged(newState);
+                if (StateChanged != null)
+                    StateChanged(newState);
 
                 PrintInfo(string.Format("State change to {0}", newState));
             }
@@ -774,25 +732,27 @@ namespace ClearCanvas.Ris.Client.SpeechMagic.View.WinForms
             {
                 SetState(_coreSession.ActiveRecognizer != null ? State.Idle : State.Initialized);
                 Stop(true);
+                ProtectDocument(false);
             }
         }
         private void coreSession_OnError(object sender, int errorCode)
         {
-            if (OnSessionError != null)
-                OnSessionError(errorCode);
+            if (SessionError != null)
+                SessionError(errorCode);
 
             PrintSmIaError(string.Format("SmIa Core sends error code: {0}", errorCode), null);
         }
         private void coreSession_OnWarning(int errorCode)
         {
-            if (OnSessionWarning != null)
-                OnSessionWarning(errorCode);
+            if (SessionWarning != null)
+                SessionWarning(errorCode);
 
             PrintWarning(string.Format("Core sends warning: {0}", errorCode), null);
         }
         private void coreSession_OnPreview(string text)
         {
-            PrintWarning(string.Format("Core sends Preview: {0}", text), null);
+            if (PreviewReceived != null)
+                PreviewReceived(text);
         }
         private void coreSession_OnAudioStateChanged(SmIa.AudioState state)
         {
@@ -802,8 +762,8 @@ namespace ClearCanvas.Ris.Client.SpeechMagic.View.WinForms
 
                 SetSpeechMikeLedState();
 
-                if (OnAudioStateChanged != null)
-                    OnAudioStateChanged(state);
+                if (AudioStateChanged != null)
+                    AudioStateChanged(state);
 
                 PrintInfo(string.Format("Audio State change to {0}", state));
             }
@@ -846,8 +806,8 @@ namespace ClearCanvas.Ris.Client.SpeechMagic.View.WinForms
         }
         private void coreSession_OnCommand(string grammar, string symbol, string commandText, double confidence, ref SmIa.SSemanticAttribute[] semanticAttributes, ref string[] textNonterminalTexts, SmIa.ICommandManipulation commandManipulator)
         {
-            if (OnCommandRecognized != null)
-                OnCommandRecognized(grammar, symbol, commandText, confidence, ref semanticAttributes, ref textNonterminalTexts, commandManipulator);
+            if (CommandRecognized != null)
+                CommandRecognized(grammar, symbol, commandText, confidence, ref semanticAttributes, ref textNonterminalTexts, commandManipulator);
 
             PrintInfo(String.Format("OnCommand - Grammar:{0}; Symbol:{1}; Command:{2}; Confidence:{3}", grammar, symbol, commandText, confidence));
 
@@ -873,13 +833,13 @@ namespace ClearCanvas.Ris.Client.SpeechMagic.View.WinForms
         }
         private void coreSession_OnCommandFiller(string text)
         {
-            //TODO: OnCommandFiller - not implemented
-            PrintInfo(String.Format("coreSession_OnCommandFiller - Text:{0}", text));
+            //Not implemented
+            //PrintInfo(String.Format("coreSession_OnCommandFiller - Text:{0}", text));
         }
         private void coreSession_OnNonSpeech()
         {
-            //TODO: OnNonSpeech - not implemented
-            PrintInfo("coreSession_OnNonSpeech");
+            //Not implemented
+            //PrintInfo("coreSession_OnNonSpeech");
         }
         #endregion SmIaCore events
 
@@ -941,8 +901,8 @@ namespace ClearCanvas.Ris.Client.SpeechMagic.View.WinForms
             {
                 _currentRecognizerMode = type;
 
-                if (OnRecognizerModeChanged != null)
-                    OnRecognizerModeChanged(type);
+                if (RecognizerModeChanged != null)
+                    RecognizerModeChanged(type);
 
                 PrintInfo(string.Format("Recognizer Mode change to {0}", type));
             }
@@ -1112,11 +1072,11 @@ namespace ClearCanvas.Ris.Client.SpeechMagic.View.WinForms
                 }
             }
 
-            // SetSpeechMikeLedState();
+            SetSpeechMikeLedState();
         }
         private void SetActiveRecognizer(Recognizer recognizer)
         {
-            PrintInfo("Switching recognizer BEGIN");
+            PrintInfo(string.Format("Set Active Recognizer: id={0}", recognizer.Id));
             try
             {
                 _coreSession.ActiveRecognizer = recognizer.IRecognizer;
@@ -1126,7 +1086,6 @@ namespace ClearCanvas.Ris.Client.SpeechMagic.View.WinForms
                 PrintSmIaError("Switching recognizer FAILED", ex);
                 return;
             }
-            PrintInfo("Switching recognizer END");
 
             bool recording = _currentAppState == State.Recording;
 
@@ -1186,7 +1145,7 @@ namespace ClearCanvas.Ris.Client.SpeechMagic.View.WinForms
                 if (Platform.ShowMessageBox("Would you like to run the AudioWizard to calibrate the speech mike?", MessageBoxActions.YesNo) == DialogBoxAction.Yes)
                     StartAudioWizard();
                 else
-                    _settingVORLevel = 30;
+                    _settingVORLevel = 0;
             }
         }
         private void StopSpeechMike()
@@ -1251,13 +1210,16 @@ namespace ClearCanvas.Ris.Client.SpeechMagic.View.WinForms
         {
             try
             {
+                if (_smXAudio == null)
+                    return;
+
                 if (_currentAppState == State.Recording)
                 {
                     if (_currentRecognizerMode == RecognizerType.Dictation)
                         _smXAudio.LEDState = SmXAudioLib.SmXAudioLEDState.smxaudRecordOverwrite;
                     else if (_currentRecognizerMode == RecognizerType.Command)
                         _smXAudio.LEDState = SmXAudioLib.SmXAudioLEDState.smxaudCmd;
-                    else //Spelling
+                    else if (_currentRecognizerMode == RecognizerType.Spelling)
                         _smXAudio.LEDState = SmXAudioLib.SmXAudioLEDState.smxaudRecordOverwrite;
                 }
                 //else if (sessionState == State.Playing)
@@ -1335,12 +1297,8 @@ namespace ClearCanvas.Ris.Client.SpeechMagic.View.WinForms
                         break;
                     }
                 case SmXAudioLib.SmXAudioControlDeviceEvent.smxaudFastForwardReleased:
-                    {
-                        PrintInfo("AudioControlEvent smxaudFastForwardReleased");
-                        //if (_currentAppState == State.Winding)
-                        //    Stop(false);
-                        break;
-                    }
+                    PrintInfo("AudioControlEvent smxaudFastForwardReleased");
+                    break;
                 case SmXAudioLib.SmXAudioControlDeviceEvent.smxaudFastRewindPressed:
                     {
                         PrintInfo("AudioControlEvent smxaudFastRewindPressed");
@@ -1354,68 +1312,30 @@ namespace ClearCanvas.Ris.Client.SpeechMagic.View.WinForms
                         break;
                     }
                 case SmXAudioLib.SmXAudioControlDeviceEvent.smxaudFastRewindReleased:
-                    {
-                        PrintInfo("AudioControlEvent smxaudFastRewindReleased");
-                        //if (_currentAppState == State.Winding)
-                        //    Stop(false);
-                        break;
-                    }
-                // foot control & slider SpMike
+                    PrintInfo("AudioControlEvent smxaudFastRewindReleased");
+                    break;
                 case SmXAudioLib.SmXAudioControlDeviceEvent.smxaudPlayPressed:
                     PrintInfo("AudioControlEvent smxaudPlayPressed");
-                    //Play(); 
                     break;
                 case SmXAudioLib.SmXAudioControlDeviceEvent.smxaudStopPressed:
                     PrintInfo("AudioControlEvent smxaudPlayPressed");
-                    //Stop(false); 
                     break;
                 case SmXAudioLib.SmXAudioControlDeviceEvent.smxaudPlayStopTogglePressed:
                     PrintInfo("AudioControlEvent smxaudPlayStopTogglePressed");
-                    //Play(); 
                     break;
                 case SmXAudioLib.SmXAudioControlDeviceEvent.smxaudPlayStopToggleReleased:
                     PrintInfo("AudioControlEvent smxaudPlayStopToggleReleased");
-                    //Stop(false); 
                     break;
                 case SmXAudioLib.SmXAudioControlDeviceEvent.smxaudRecordPressed:
                     PrintInfo("AudioControlEvent smxaudRecordPressed");
-                    //if (!btRecord.Enabled)
-                    //    Stop(false);
-                    //else
-                    //    Record();
                     break;
                 case SmXAudioLib.SmXAudioControlDeviceEvent.smxaudEOLReleased:
-                    {
-                        PrintInfo("AudioControlEvent smxaudEOLReleased");
-                        //if (!modeDemo)
-                        //    break;
-
-                        //if (ActiveMdiChild != null)
-                        //{
-                        //    string sPath = ConfigurationSettings.AppSettings.Get(defaultSavePath);
-                        //    if (sPath == null || (sPath != null && sPath.Length == 0))
-                        //    {
-                        //        PrintError("Default SavePath not set in .config file", SmIaErrorLevel.Warning);
-                        //        break;
-                        //    }
-                        //    DocumentForm form = GetActiveDocumentForm();
-                        //    if (form != null)
-                        //        form.SaveDocument(System.IO.Path.Combine(sPath, String.Format("{0}_{1}", System.DateTime.Now.Ticks.ToString(), form.Text)));
-
-                        //    CloseDocument();
-                        //}
-                        //try
-                        //{
-                        //    DocumentType type = (DocumentType)Enum.Parse(typeof(DocumentType), ConfigurationSettings.AppSettings.Get(defaultDocType));
-                        //    NewDocument("", type);
-                        //}
-                        //catch (Exception e)
-                        //{
-                        //    PrintAppError("EOLReleased", e);
-                        //}
-                    }
+                    PrintInfo("AudioControlEvent smxaudEOLReleased");
                     break;
             }
+
+            if (SpeechMikeButtonPressed != null)
+                SpeechMikeButtonPressed(controlDeviceEvent);
         }
 
         private void OnAudioWizardComplete(SmXAudWizLib.SmXAudioWizardError error)
@@ -1589,8 +1509,8 @@ namespace ClearCanvas.Ris.Client.SpeechMagic.View.WinForms
         private void UpdateLog(string text, SmIaErrorLevel severity, Exception ex)
         {
             string message = ex == null ? text : string.Format("{0}\r\n{1}", text, ex);
-            if (OnLogUpdated != null)
-                OnLogUpdated(message, severity);
+            if (LogUpdated != null)
+                LogUpdated(message, severity);
         }
         #endregion IErrorConsole Members
 

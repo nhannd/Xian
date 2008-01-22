@@ -1,5 +1,6 @@
 using System;
 using Philips.PSP.SmIa;
+using Philips.PSP.SpeechMagic.SmXAudioLib;
 
 namespace ClearCanvas.Ris.Client.SpeechMagic.View.WinForms
 {
@@ -28,21 +29,17 @@ namespace ClearCanvas.Ris.Client.SpeechMagic.View.WinForms
 	public enum RecognizerType { None, Command, Dictation, Spelling };
 
 	#region Delegates
-	public delegate void ShowWCISCallback(bool show);
-	public delegate IRecognizer CreateComponentCallback(Guid guid);
-	public delegate void SafeProtectDocumentCallback(bool bProtect);
-	public delegate void UpdateGrammarFormCallback(string rcgName);
-	public delegate void ShowAlternativesCallback(bool show,bool move);
-	public delegate void SelectAlternativeCallback(int index);
-	public delegate bool NewDocumentCallback(string filename, DocumentType type);
-	public delegate void RecordCallback();
-	public delegate void CheckActiveDocumentCallback(bool restart);
-	public delegate void SessionWarningCallback(int errorCode);
-	public delegate void AudioStateCallback(AudioState state);
-	public delegate void ImportSoundfileCallback(string soundfile, bool newDocument);
-	public delegate void StartTimerTNTCallback();
-	public delegate void SafeUpdateGrammarFormCallback();
-	#endregion
+    public delegate void LogUpdatedCallback(string message, SmIaErrorLevel severity);
+    public delegate void RecognizerModeChangedCallback(RecognizerType type);
+    public delegate void StateChangedCallback(State state);
+    public delegate void CommandRecognizedCallback(string grammar, string symbol, string commandText, double confidence, ref SSemanticAttribute[] semanticAttributes, ref string[] textNonterminalTexts, ICommandManipulation commandManipulator);
+    public delegate void SessionWarningCallback(int errorCode);
+    public delegate void SessionErrorCallback(int errorCode);
+    public delegate void ProtectDocumentRequestedCallback(bool protect);
+    public delegate void AudioStateChangedCallback(AudioState state);
+    public delegate void SpeechMikeButtonPressedCallback(SmXAudioControlDeviceEvent controlDeviceEvent);
+    public delegate void PreviewReceivedCallback(string preview);
+    #endregion
 
 	public class NonVocalCommandData
 	{
@@ -104,8 +101,8 @@ namespace ClearCanvas.Ris.Client.SpeechMagic.View.WinForms
         public bool SpellingRecognizer;
         public int ChannelVolume;
         public int MasterVolume;
-        public int VORLevel;
-        public int WindingSpeed;
+        public int VORLevel = 0;
+        public int WindingSpeed = 5;
 
         public SmIaProfile()
         {

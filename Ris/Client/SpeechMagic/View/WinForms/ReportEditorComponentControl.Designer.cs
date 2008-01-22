@@ -30,7 +30,7 @@ namespace ClearCanvas.Ris.Client.SpeechMagic.View.WinForms
         {
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this._browserSplitContainer = new System.Windows.Forms.SplitContainer();
-            this.speechMagicControl1 = new ClearCanvas.Ris.Client.SpeechMagic.View.WinForms.DictationEditorControl();
+            this._reportEditor = new ClearCanvas.Ris.Client.SpeechMagic.View.WinForms.DictationEditorControl();
             this._residentPanel = new System.Windows.Forms.Panel();
             this._supervisor = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
             this._cancelButton = new System.Windows.Forms.Button();
@@ -76,18 +76,18 @@ namespace ClearCanvas.Ris.Client.SpeechMagic.View.WinForms
             // 
             // _browserSplitContainer.Panel1
             // 
-            this._browserSplitContainer.Panel1.Controls.Add(this.speechMagicControl1);
+            this._browserSplitContainer.Panel1.Controls.Add(this._reportEditor);
             this._browserSplitContainer.Size = new System.Drawing.Size(655, 490);
             this._browserSplitContainer.SplitterDistance = 180;
             this._browserSplitContainer.TabIndex = 6;
             // 
-            // speechMagicControl1
+            // _reportEditor
             // 
-            this.speechMagicControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.speechMagicControl1.Location = new System.Drawing.Point(0, 0);
-            this.speechMagicControl1.Name = "speechMagicControl1";
-            this.speechMagicControl1.Size = new System.Drawing.Size(655, 180);
-            this.speechMagicControl1.TabIndex = 0;
+            this._reportEditor.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._reportEditor.Location = new System.Drawing.Point(0, 0);
+            this._reportEditor.Name = "_reportEditor";
+            this._reportEditor.Size = new System.Drawing.Size(655, 180);
+            this._reportEditor.TabIndex = 0;
             // 
             // _residentPanel
             // 
@@ -201,6 +201,6 @@ namespace ClearCanvas.Ris.Client.SpeechMagic.View.WinForms
         private System.Windows.Forms.Button _sendToTranscriptionButton;
         private System.Windows.Forms.Button _saveButton;
         private ClearCanvas.Ris.Client.View.WinForms.LookupField _supervisor;
-        private DictationEditorControl speechMagicControl1;
+        private DictationEditorControl _reportEditor;
     }
 }

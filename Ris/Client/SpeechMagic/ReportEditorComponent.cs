@@ -85,11 +85,11 @@ namespace ClearCanvas.Ris.Client.SpeechMagic
         private bool _sendToVerifyEnabled;
         private bool _sendToTranscriptionEnabled;
 
-        private event EventHandler _verifyEvent;
-        private event EventHandler _sendToVerifyEvent;
-        private event EventHandler _sendToTranscriptionEvent;
-        private event EventHandler _saveEvent;
-        private event EventHandler _closeComponentEvent;
+        private event EventHandler _verifyRequested;
+        private event EventHandler _sendToVerifyRequested;
+        private event EventHandler _sendToTranscriptionRequested;
+        private event EventHandler _saveRequested;
+        private event EventHandler _closeRequested;
 
         private ILookupHandler _supervisorLookupHandler;
 
@@ -140,34 +140,34 @@ namespace ClearCanvas.Ris.Client.SpeechMagic
             set { _reportPart = value; }
         }
 
-        public event EventHandler VerifyEvent
+        public event EventHandler VerifyRequested
         {
-            add { _verifyEvent += value; }
-            remove { _verifyEvent -= value; }
+            add { _verifyRequested += value; }
+            remove { _verifyRequested -= value; }
         }
 
-        public event EventHandler SendToVerifyEvent
+        public event EventHandler SendToVerifyRequested
         {
-            add { _sendToVerifyEvent += value; }
-            remove { _sendToVerifyEvent -= value; }
+            add { _sendToVerifyRequested += value; }
+            remove { _sendToVerifyRequested -= value; }
         }
 
-        public event EventHandler SendToTranscriptionEvent
+        public event EventHandler SendToTranscriptionRequested
         {
-            add { _sendToTranscriptionEvent += value; }
-            remove { _sendToTranscriptionEvent -= value; }
+            add { _sendToTranscriptionRequested += value; }
+            remove { _sendToTranscriptionRequested -= value; }
         }
 
-        public event EventHandler SaveEvent
+        public event EventHandler SaveRequested
         {
-            add { _saveEvent += value; }
-            remove { _saveEvent -= value; }
+            add { _saveRequested += value; }
+            remove { _saveRequested -= value; }
         }
 
-        public event EventHandler CloseComponentEvent
+        public event EventHandler CancelRequested
         {
-            add { _closeComponentEvent += value; }
-            remove { _closeComponentEvent -= value; }
+            add { _closeRequested += value; }
+            remove { _closeRequested -= value; }
         }
 
         public bool IsEditingAddendum
@@ -221,27 +221,27 @@ namespace ClearCanvas.Ris.Client.SpeechMagic
 
         public void Verify()
         {
-            EventsHelper.Fire(_verifyEvent, this, EventArgs.Empty);
+            EventsHelper.Fire(_verifyRequested, this, EventArgs.Empty);
         }
 
         public void SendToVerify()
         {
-            EventsHelper.Fire(_sendToVerifyEvent, this, EventArgs.Empty);
+            EventsHelper.Fire(_sendToVerifyRequested, this, EventArgs.Empty);
         }
 
         public void SendToTranscription()
         {
-            EventsHelper.Fire(_sendToTranscriptionEvent, this, EventArgs.Empty);
+            EventsHelper.Fire(_sendToTranscriptionRequested, this, EventArgs.Empty);
         }
 
         public void Save()
         {
-            EventsHelper.Fire(_saveEvent, this, EventArgs.Empty);
+            EventsHelper.Fire(_saveRequested, this, EventArgs.Empty);
         }
 
         public void Cancel()
         {
-            EventsHelper.Fire(_closeComponentEvent, this, EventArgs.Empty);
+            EventsHelper.Fire(_closeRequested, this, EventArgs.Empty);
         }
 
         public ILookupHandler SupervisorLookupHandler
