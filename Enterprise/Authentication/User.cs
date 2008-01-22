@@ -80,18 +80,18 @@ namespace ClearCanvas.Enterprise.Authentication {
         /// <returns></returns>
         public static User CreateNewUser(UserInfo userInfo)
         {
-            GlobalSettings settings = new GlobalSettings();
+            AuthenticationSettings settings = new AuthenticationSettings();
             return CreateNewUser(userInfo, settings.DefaultTemporaryPassword, new HashedSet<AuthorityGroup>());
         }
 
         /// <summary>
         /// Changes the user's password, setting a new expiry date according to the
-        /// value defined in <see cref="GlobalSettings.PasswordExpiryDays"/>.
+        /// value defined in <see cref="AuthenticationSettings.PasswordExpiryDays"/>.
         /// </summary>
         /// <param name="newPassword"></param>
         public virtual void ChangePassword(string newPassword)
         {
-            GlobalSettings settings = new GlobalSettings();
+            AuthenticationSettings settings = new AuthenticationSettings();
             ChangePassword(newPassword, settings.PasswordExpiryDays);
         }
 
@@ -101,7 +101,7 @@ namespace ClearCanvas.Enterprise.Authentication {
         /// </summary>
         public virtual void ResetPassword()
         {
-            GlobalSettings settings = new GlobalSettings();
+            AuthenticationSettings settings = new AuthenticationSettings();
             ChangePassword(settings.DefaultTemporaryPassword, 0);
         }
 

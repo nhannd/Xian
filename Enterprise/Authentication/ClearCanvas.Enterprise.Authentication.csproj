@@ -50,11 +50,11 @@
     <Compile Include="AuthorityTokenImporter.cs" />
     <Compile Include="Brokers\*.gen.cs" />
     <Compile Include="Brokers\IAuthorityTokenBroker.cs" />
-    <Compile Include="GlobalSettings.cs" />
-    <Compile Include="GlobalSettings.Designer.cs">
+    <Compile Include="AuthenticationSettings.cs" />
+    <Compile Include="AuthenticationSettings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>GlobalSettings.settings</DependentUpon>
+      <DependentUpon>AuthenticationSettings.settings</DependentUpon>
     </Compile>
     <Compile Include="Password.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -92,9 +92,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="GlobalSettings.settings">
+    <None Include="AuthenticationSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>GlobalSettings.Designer.cs</LastGenOutput>
+      <LastGenOutput>AuthenticationSettings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

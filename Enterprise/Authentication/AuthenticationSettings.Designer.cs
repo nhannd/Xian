@@ -13,17 +13,21 @@ namespace ClearCanvas.Enterprise.Authentication {
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "8.0.0.0")]
-    internal sealed partial class GlobalSettings : global::System.Configuration.ApplicationSettingsBase {
+    internal sealed partial class AuthenticationSettings : global::System.Configuration.ApplicationSettingsBase {
         
-        private static GlobalSettings defaultInstance = ((GlobalSettings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new GlobalSettings())));
+        private static AuthenticationSettings defaultInstance = ((AuthenticationSettings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new AuthenticationSettings())));
         
-        public static GlobalSettings Default {
+        public static AuthenticationSettings Default {
             get {
                 return defaultInstance;
             }
         }
         
+        /// <summary>
+        /// Number of days until a password expires
+        /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Number of days until a password expires")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("60")]
         public int PasswordExpiryDays {
@@ -32,7 +36,11 @@ namespace ClearCanvas.Enterprise.Authentication {
             }
         }
         
+        /// <summary>
+        /// Temporary password assigned to new users
+        /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Temporary password assigned to new users")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("clearcanvas")]
         public string DefaultTemporaryPassword {
@@ -41,12 +49,30 @@ namespace ClearCanvas.Enterprise.Authentication {
             }
         }
         
+        /// <summary>
+        /// User session inactivity timeout in minutes
+        /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("User session inactivity timeout in minutes")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("15")]
         public int UserSessionTimeoutMinutes {
             get {
                 return ((int)(this["UserSessionTimeoutMinutes"]));
+            }
+        }
+        
+        /// <summary>
+        /// Specify true to enable user session inactivity timeout, otherwise user sessions never time out
+        /// </summary>
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Specify true to enable user session inactivity timeout, otherwise user sessions n" +
+            "ever time out")]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool UserSessionTimeoutEnabled {
+            get {
+                return ((bool)(this["UserSessionTimeoutEnabled"]));
             }
         }
     }

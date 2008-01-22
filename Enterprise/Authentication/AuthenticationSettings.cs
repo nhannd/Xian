@@ -36,11 +36,11 @@ using ClearCanvas.Common.Configuration;
 namespace ClearCanvas.Enterprise.Authentication
 {
 
-    [SettingsGroupDescription("Settings that control global behaviour of the Authentication Plugin")]
+    [SettingsGroupDescription("Settings that control behaviour of the Authentication Plugin")]
     [SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
-    internal sealed partial class GlobalSettings
+    internal sealed partial class AuthenticationSettings
     {
-        public GlobalSettings()
+        public AuthenticationSettings()
         {
         }
     }

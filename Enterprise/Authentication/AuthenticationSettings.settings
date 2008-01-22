@@ -1,0 +1,18 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ClearCanvas.Enterprise.Authentication" GeneratedClassName="AuthenticationSettings">
+  <Profiles />
+  <Settings>
+    <Setting Name="PasswordExpiryDays" Description="Number of days until a password expires" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">60</Value>
+    </Setting>
+    <Setting Name="DefaultTemporaryPassword" Description="Temporary password assigned to new users" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">clearcanvas</Value>
+    </Setting>
+    <Setting Name="UserSessionTimeoutMinutes" Description="User session inactivity timeout in minutes" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">15</Value>
+    </Setting>
+    <Setting Name="UserSessionTimeoutEnabled" Description="Specify true to enable user session inactivity timeout, otherwise user sessions never time out" Type="System.Boolean" Scope="Application">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

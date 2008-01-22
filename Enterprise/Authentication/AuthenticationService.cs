@@ -85,7 +85,7 @@ namespace ClearCanvas.Enterprise.Authentication
             session.SessionId = Guid.NewGuid().ToString("N");
 
             // set the expiration time
-            GlobalSettings settings = new GlobalSettings();
+            AuthenticationSettings settings = new AuthenticationSettings();
             session.ExpiryTime = currentTime.AddMinutes(settings.UserSessionTimeoutMinutes);
 
             if(newSession)
@@ -113,6 +113,7 @@ namespace ClearCanvas.Enterprise.Authentication
         {
             //TODO: this method could be implemented using a direct SQL UPDATE...WHERE... statement for improved performance
 
+            AuthenticationSettings settings = new AuthenticationSettings();
             DateTime currentTime = Platform.Time;
 
             UserSession session;
@@ -122,7 +123,13 @@ namespace ClearCanvas.Enterprise.Authentication
                 UserSessionSearchCriteria criteria = new UserSessionSearchCriteria();
                 criteria.UserName.EqualTo(userName);
                 criteria.SessionId.EqualTo(sessionToken.Id);
-                criteria.ExpiryTime.MoreThan(currentTime);
+
+                // if session timeouts are enabled, check expiry time
+                if (settings.UserSessionTimeoutEnabled)
+                {
+                    criteria.ExpiryTime.MoreThan(currentTime);
+                }
+
                 session = PersistenceContext.GetBroker<IUserSessionBroker>().FindOne(criteria);
             }
             catch (EntityNotFoundException)
@@ -132,7 +139,6 @@ namespace ClearCanvas.Enterprise.Authentication
             }
 
             // renew the expiration time
-            GlobalSettings settings = new GlobalSettings();
             session.ExpiryTime = currentTime.AddMinutes(settings.UserSessionTimeoutMinutes);
 
             return session.GetToken();
