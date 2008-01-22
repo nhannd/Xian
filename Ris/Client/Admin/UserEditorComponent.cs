@@ -236,19 +236,28 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public void SetStaff()
         {
-            StaffSummaryComponent staffComponent = new StaffSummaryComponent(true);
-            ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, staffComponent, "Select Staff");
-            if (exitCode == ApplicationComponentExitCode.Accepted)
+            try
             {
-                StaffSummary staffSummary = (StaffSummary)staffComponent.SelectedStaff.Item;
-                _userDetail.StaffRef = staffSummary.StaffRef;
-                _userDetail.StaffName = staffSummary.Name;
-                _userDetail.DisplayName =
-                    string.Format("{0} {1}", _userDetail.StaffName.FamilyName, _userDetail.StaffName.GivenName);
+                StaffSummaryComponent staffComponent = new StaffSummaryComponent(true);
+                ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, staffComponent, "Select Staff");
+                if (exitCode == ApplicationComponentExitCode.Accepted)
+                {
+                    StaffSummary staffSummary = (StaffSummary)staffComponent.SelectedStaff.Item;
+                    _userDetail.StaffRef = staffSummary.StaffRef;
+                    _userDetail.StaffName = staffSummary.Name;
+                    _userDetail.DisplayName =
+                        string.Format("{0} {1}", _userDetail.StaffName.FamilyName, _userDetail.StaffName.GivenName);
 
-                this.NotifyPropertyChanged("StaffName");
-                this.NotifyPropertyChanged("ClearStaffEnabled");
-                this.Modified = true;
+                    this.NotifyPropertyChanged("StaffName");
+                    this.NotifyPropertyChanged("ClearStaffEnabled");
+                    this.Modified = true;
+                }
+
+            }
+            catch (Exception e)
+            {
+                // failed to launch StaffSummaryComponent
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
             }
         }
 

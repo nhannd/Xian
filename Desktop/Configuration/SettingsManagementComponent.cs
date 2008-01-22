@@ -546,17 +546,25 @@ namespace ClearCanvas.Desktop.Configuration
 
         private void EditProperty(SettingsProperty property)
         {
-            if (property != null)
+            try
             {
-                SettingEditorComponent editor = new SettingEditorComponent(property.DefaultValue, property.Value);
-                ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleEditValue);
-                if (exitCode == ApplicationComponentExitCode.Accepted)
+                if (property != null)
                 {
-                    property.Value = editor.CurrentValue;
+                    SettingEditorComponent editor = new SettingEditorComponent(property.DefaultValue, property.Value);
+                    ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleEditValue);
+                    if (exitCode == ApplicationComponentExitCode.Accepted)
+                    {
+                        property.Value = editor.CurrentValue;
 
-                    // update the table to reflect the changed value
-                    _settingsPropertiesTable.Items.NotifyItemUpdated(property);
+                        // update the table to reflect the changed value
+                        _settingsPropertiesTable.Items.NotifyItemUpdated(property);
+                    }
                 }
+            }
+            catch (Exception e)
+            {
+                // failed to launch editor
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
             }
         }
 

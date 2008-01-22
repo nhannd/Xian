@@ -133,12 +133,21 @@ namespace ClearCanvas.Ris.Client.Adt
 
         private bool Edit(EntityRef profileRef, IDesktopWindow desktopWindow)
         {
-            ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
-                desktopWindow,
-                new PatientProfileEditorComponent(profileRef),
-                SR.TitleEditPatient);
+            try
+            {
+                ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
+                    desktopWindow,
+                    new PatientProfileEditorComponent(profileRef),
+                    SR.TitleEditPatient);
 
-            return exitCode == ApplicationComponentExitCode.Accepted;
+                return exitCode == ApplicationComponentExitCode.Accepted;
+
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Report(e, desktopWindow);
+                return false;
+            }
         }
     }
 }

@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
@@ -113,13 +114,22 @@ namespace ClearCanvas.Ris.Client
         {
             PatientNoteDetail note = new PatientNoteDetail();
 
-            PatientNoteEditorComponent editor = new PatientNoteEditorComponent(note, _noteCategoryChoices);
-            ApplicationComponentExitCode exitCode = LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleAddNote);
-            if (exitCode == ApplicationComponentExitCode.Accepted)
+            try
             {
-                _noteTable.Items.Add(note);
-                _notes.Add(note);
-                this.Modified = true;
+                PatientNoteEditorComponent editor = new PatientNoteEditorComponent(note, _noteCategoryChoices);
+                ApplicationComponentExitCode exitCode = LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleAddNote);
+                if (exitCode == ApplicationComponentExitCode.Accepted)
+                {
+                    _noteTable.Items.Add(note);
+                    _notes.Add(note);
+                    this.Modified = true;
+                }
+
+            }
+            catch (Exception e)
+            {
+                // failed to launch editor
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
             }
         }
 
@@ -130,19 +140,28 @@ namespace ClearCanvas.Ris.Client
 
             PatientNoteDetail note = (PatientNoteDetail)_currentNoteSelection.Clone();
 
-            PatientNoteEditorComponent editor = new PatientNoteEditorComponent(note, _noteCategoryChoices);
-            ApplicationComponentExitCode exitCode = LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleUpdateNote);
-            if (exitCode == ApplicationComponentExitCode.Accepted)
+            try
             {
-                // delete and re-insert to ensure that TableView updates correctly
-                PatientNoteDetail toBeRemoved = _currentNoteSelection;
-                _noteTable.Items.Remove(toBeRemoved);
-                _notes.Remove(toBeRemoved);
+                PatientNoteEditorComponent editor = new PatientNoteEditorComponent(note, _noteCategoryChoices);
+                ApplicationComponentExitCode exitCode = LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleUpdateNote);
+                if (exitCode == ApplicationComponentExitCode.Accepted)
+                {
+                    // delete and re-insert to ensure that TableView updates correctly
+                    PatientNoteDetail toBeRemoved = _currentNoteSelection;
+                    _noteTable.Items.Remove(toBeRemoved);
+                    _notes.Remove(toBeRemoved);
 
-                _noteTable.Items.Add(note);
-                _notes.Add(note);
+                    _noteTable.Items.Add(note);
+                    _notes.Add(note);
 
-                this.Modified = true;
+                    this.Modified = true;
+                }
+
+            }
+            catch (Exception e)
+            {
+                // failed to launch editor
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
             }
         }
 

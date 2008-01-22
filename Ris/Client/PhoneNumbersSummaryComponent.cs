@@ -118,13 +118,22 @@ namespace ClearCanvas.Ris.Client
             TelephoneDetail phoneNumber = new TelephoneDetail();
             phoneNumber.Type = _phoneTypeChoices[0];
 
-            PhoneNumberEditorComponent editor = new PhoneNumberEditorComponent(phoneNumber, _phoneTypeChoices);
-            ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleAddPhoneNumber);
-            if (exitCode == ApplicationComponentExitCode.Accepted)
+            try
             {
-                _phoneNumbers.Items.Add(phoneNumber);
-                _phoneNumberList.Add(phoneNumber);
-                this.Modified = true;
+                PhoneNumberEditorComponent editor = new PhoneNumberEditorComponent(phoneNumber, _phoneTypeChoices);
+                ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleAddPhoneNumber);
+                if (exitCode == ApplicationComponentExitCode.Accepted)
+                {
+                    _phoneNumbers.Items.Add(phoneNumber);
+                    _phoneNumberList.Add(phoneNumber);
+                    this.Modified = true;
+                }
+
+            }
+            catch (Exception e)
+            {
+                // failed to launch editor
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
             }
         }
 
@@ -135,19 +144,28 @@ namespace ClearCanvas.Ris.Client
 
             TelephoneDetail phoneNumber = (TelephoneDetail)_currentPhoneNumberSelection.Clone();
 
-            PhoneNumberEditorComponent editor = new PhoneNumberEditorComponent(phoneNumber, _phoneTypeChoices);
-            ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleUpdatePhoneNumber);
-            if (exitCode == ApplicationComponentExitCode.Accepted)
+            try
             {
-                // delete and re-insert to ensure that TableView updates correctly
-                TelephoneDetail toBeRemoved = _currentPhoneNumberSelection;
-                _phoneNumbers.Items.Remove(toBeRemoved);
-                _phoneNumberList.Remove(toBeRemoved);
+                PhoneNumberEditorComponent editor = new PhoneNumberEditorComponent(phoneNumber, _phoneTypeChoices);
+                ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleUpdatePhoneNumber);
+                if (exitCode == ApplicationComponentExitCode.Accepted)
+                {
+                    // delete and re-insert to ensure that TableView updates correctly
+                    TelephoneDetail toBeRemoved = _currentPhoneNumberSelection;
+                    _phoneNumbers.Items.Remove(toBeRemoved);
+                    _phoneNumberList.Remove(toBeRemoved);
 
-                _phoneNumbers.Items.Add(phoneNumber);
-                _phoneNumberList.Add(phoneNumber);
+                    _phoneNumbers.Items.Add(phoneNumber);
+                    _phoneNumberList.Add(phoneNumber);
 
-                this.Modified = true;
+                    this.Modified = true;
+                }
+
+            }
+            catch (Exception e)
+            {
+                // failed to launch editor
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
             }
         }
 

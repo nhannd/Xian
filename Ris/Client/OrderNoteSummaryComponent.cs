@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
@@ -112,13 +113,21 @@ namespace ClearCanvas.Ris.Client
         {
             OrderNoteDetail note = new OrderNoteDetail("");
 
-            OrderNoteEditorComponent editor = new OrderNoteEditorComponent(note);
-            ApplicationComponentExitCode exitCode = LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleAddNote);
-            if (exitCode == ApplicationComponentExitCode.Accepted)
+            try
             {
-                _noteTable.Items.Add(note);
-                _notes.Add(note);
-                this.Modified = true;
+                OrderNoteEditorComponent editor = new OrderNoteEditorComponent(note);
+                ApplicationComponentExitCode exitCode = LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleAddNote);
+                if (exitCode == ApplicationComponentExitCode.Accepted)
+                {
+                    _noteTable.Items.Add(note);
+                    _notes.Add(note);
+                    this.Modified = true;
+                }
+            }
+            catch (Exception e)
+            {
+                // failed to launch editor
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
             }
         }
 
@@ -129,19 +138,28 @@ namespace ClearCanvas.Ris.Client
 
             OrderNoteDetail note = (OrderNoteDetail)_currentNoteSelection.Clone();
 
-            OrderNoteEditorComponent editor = new OrderNoteEditorComponent(note);
-            ApplicationComponentExitCode exitCode = LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleUpdateNote);
-            if (exitCode == ApplicationComponentExitCode.Accepted)
+            try
             {
-                // delete and re-insert to ensure that TableView updates correctly
-                OrderNoteDetail toBeRemoved = _currentNoteSelection;
-                _noteTable.Items.Remove(toBeRemoved);
-                _notes.Remove(toBeRemoved);
+                OrderNoteEditorComponent editor = new OrderNoteEditorComponent(note);
+                ApplicationComponentExitCode exitCode = LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleUpdateNote);
+                if (exitCode == ApplicationComponentExitCode.Accepted)
+                {
+                    // delete and re-insert to ensure that TableView updates correctly
+                    OrderNoteDetail toBeRemoved = _currentNoteSelection;
+                    _noteTable.Items.Remove(toBeRemoved);
+                    _notes.Remove(toBeRemoved);
 
-                _noteTable.Items.Add(note);
-                _notes.Add(note);
+                    _noteTable.Items.Add(note);
+                    _notes.Add(note);
 
-                this.Modified = true;
+                    this.Modified = true;
+                }
+
+            }
+            catch (Exception e)
+            {
+                // failed to launch editor
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
             }
         }
 

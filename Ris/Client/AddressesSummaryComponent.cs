@@ -116,40 +116,56 @@ namespace ClearCanvas.Ris.Client
 
         public void AddAddress()
         {
-            AddressDetail address = new AddressDetail();
-            address.Province = CollectionUtils.FirstElement<string>(AddressEditorComponentSettings.Default.ProvinceChoices);
-            address.Country = CollectionUtils.FirstElement<string>(AddressEditorComponentSettings.Default.CountryChoices);
-            address.Type = _addressTypes[0];
-
-            AddressEditorComponent editor = new AddressEditorComponent(address, _addressTypes);
-            ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleAddAddress);
-            if (exitCode == ApplicationComponentExitCode.Accepted)
+            try
             {
-                _addresses.Items.Add(address);
-                _addressList.Add(address);
-                this.Modified = true;
+                AddressDetail address = new AddressDetail();
+                address.Province = CollectionUtils.FirstElement<string>(AddressEditorComponentSettings.Default.ProvinceChoices);
+                address.Country = CollectionUtils.FirstElement<string>(AddressEditorComponentSettings.Default.CountryChoices);
+                address.Type = _addressTypes[0];
+
+                AddressEditorComponent editor = new AddressEditorComponent(address, _addressTypes);
+                ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleAddAddress);
+                if (exitCode == ApplicationComponentExitCode.Accepted)
+                {
+                    _addresses.Items.Add(address);
+                    _addressList.Add(address);
+                    this.Modified = true;
+                }
+            }
+            catch (Exception e)
+            {
+                // failed to obtain country/province choices, or failed to launch editor
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
             }
         }
 
         public void UpdateSelectedAddress()
         {
-            // can occur if user double clicks while holding control
-            if (_currentAddressSelection == null) return;
-
-            AddressDetail address = (AddressDetail) _currentAddressSelection.Clone();
-            AddressEditorComponent editor = new AddressEditorComponent(address, _addressTypes);
-            ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleUpdateAddress);
-            if (exitCode == ApplicationComponentExitCode.Accepted)
+            try
             {
-                // delete and re-insert to ensure that TableView updates correctly
-                AddressDetail toBeRemoved = _currentAddressSelection;
-                _addresses.Items.Remove(toBeRemoved);
-                _addressList.Remove(toBeRemoved);
+                // can occur if user double clicks while holding control
+                if (_currentAddressSelection == null) return;
 
-                _addresses.Items.Add(address);
-                _addressList.Add(address);
+                AddressDetail address = (AddressDetail)_currentAddressSelection.Clone();
+                AddressEditorComponent editor = new AddressEditorComponent(address, _addressTypes);
+                ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleUpdateAddress);
+                if (exitCode == ApplicationComponentExitCode.Accepted)
+                {
+                    // delete and re-insert to ensure that TableView updates correctly
+                    AddressDetail toBeRemoved = _currentAddressSelection;
+                    _addresses.Items.Remove(toBeRemoved);
+                    _addressList.Remove(toBeRemoved);
 
-                this.Modified = true;
+                    _addresses.Items.Add(address);
+                    _addressList.Add(address);
+
+                    this.Modified = true;
+                }
+            }
+            catch (Exception e)
+            {
+                // failed to launch editor
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
             }
         }
 

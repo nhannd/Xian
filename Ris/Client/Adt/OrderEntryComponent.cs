@@ -367,35 +367,42 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public void ShowVisitSummary()
         {
-            VisitSummaryComponent component = new VisitSummaryComponent(_patientRef);
-            if (ApplicationComponentExitCode.Accepted == 
-                LaunchAsDialog(
-                    this.Host.DesktopWindow,
-                    component,
-                    SR.TitlePatientVisits))
+            try
             {
-                EntityRef existingSelectedVisitRef = _selectedVisit == null ? null : _selectedVisit.VisitRef;
+                VisitSummaryComponent component = new VisitSummaryComponent(_patientRef);
+                if (ApplicationComponentExitCode.Accepted ==
+                    LaunchAsDialog(
+                        this.Host.DesktopWindow,
+                        component,
+                        SR.TitlePatientVisits))
+                {
+                    EntityRef existingSelectedVisitRef = _selectedVisit == null ? null : _selectedVisit.VisitRef;
 
-                Platform.GetService<IOrderEntryService>(
-                    delegate(IOrderEntryService service)
+                    Platform.GetService<IOrderEntryService>(
+                        delegate(IOrderEntryService service)
                         {
                             ListActiveVisitsForPatientResponse response =
                                 service.ListActiveVisitsForPatient(new ListActiveVisitsForPatientRequest(_patientRef));
                             _activeVisits = response.Visits;
                         });
 
-                EventsHelper.Fire(_activeVisitsChanged, this, EventArgs.Empty);
+                    EventsHelper.Fire(_activeVisitsChanged, this, EventArgs.Empty);
 
-                if (existingSelectedVisitRef != null)
-                {
-                    this.SelectedVisit = CollectionUtils.SelectFirst(_activeVisits,
-                        delegate(VisitSummary visit)
-                        {
-                            return visit.VisitRef.Equals(existingSelectedVisitRef, true);
-                        });
+                    if (existingSelectedVisitRef != null)
+                    {
+                        this.SelectedVisit = CollectionUtils.SelectFirst(_activeVisits,
+                            delegate(VisitSummary visit)
+                            {
+                                return visit.VisitRef.Equals(existingSelectedVisitRef, true);
+                            });
+                    }
                 }
+
             }
-           
+            catch (Exception e)
+            {
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
+            }           
         }
 
         public ILookupHandler DiagnosticServiceLookupHandler

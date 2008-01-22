@@ -110,10 +110,22 @@ namespace ClearCanvas.Desktop
 
         private void ShowExceptionDialog(Exception e, string message)
         {
-            ApplicationComponent.LaunchAsDialog(
-                _desktopWindow,
-                new ExceptionHandlerComponent(e, message),
-                Application.Name);
+            try
+            {
+                ApplicationComponent.LaunchAsDialog(
+                    _desktopWindow,
+                    new ExceptionHandlerComponent(e, message),
+                    Application.Name);
+
+            }
+            catch (Exception dialogException)
+            {
+                // failed to launch ExceptionHandlerComponent - just log this
+                Platform.Log(LogLevel.Error, dialogException);
+
+                // fallback to displaying the message in a message box
+                _desktopWindow.ShowMessageBox(message, MessageBoxActions.Ok);
+            }
         }
     }
 }

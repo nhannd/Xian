@@ -39,6 +39,7 @@ using System.Windows.Forms;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.View.WinForms;
 using ClearCanvas.Ris.Client;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.Ris.Client.View.WinForms
 {
@@ -111,17 +112,33 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 
         private void _findButton_Click(object sender, EventArgs e)
         {
-            object result;
-            bool resolved = _lookupHandler.Resolve(_inputField.QueryText, true, out result);
-            if(resolved)
+            try
             {
-                this.Value = result;
+                object result;
+                bool resolved = _lookupHandler.Resolve(_inputField.QueryText, true, out result);
+                if (resolved)
+                {
+                    this.Value = result;
+                }
+            }
+            catch (Exception ex)
+            {
+                // TODO: not much we can do here if Resolve throws an exception
+                Platform.Log(LogLevel.Error, ex);
             }
         }
 
         private void _inputField_Format(object sender, ListControlConvertEventArgs e)
         {
-            e.Value = _lookupHandler.FormatItem(e.ListItem);
+            try
+            {
+                e.Value = _lookupHandler.FormatItem(e.ListItem);
+            }
+            catch (Exception ex)
+            {
+                // TODO: not much we can do here if FormatItem throws an exception
+                Platform.Log(LogLevel.Error, ex);
+            }
         }
     }
 }

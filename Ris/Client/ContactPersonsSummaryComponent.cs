@@ -133,38 +133,55 @@ namespace ClearCanvas.Ris.Client
 
         public void AddContactPerson()
         {
-            ContactPersonDetail contactPerson = new ContactPersonDetail();
-
-            ContactPersonEditorComponent editor = new ContactPersonEditorComponent(contactPerson, _contactTypeChoices, _contactRelationshipChoices);
-            ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleAddContactPerson);
-            if (exitCode == ApplicationComponentExitCode.Accepted)
+            try
             {
-                _contactPersons.Items.Add(contactPerson);
-                _contactPersonList.Add(contactPerson);
-                this.Modified = true;
+                ContactPersonDetail contactPerson = new ContactPersonDetail();
+
+                ContactPersonEditorComponent editor = new ContactPersonEditorComponent(contactPerson, _contactTypeChoices, _contactRelationshipChoices);
+                ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleAddContactPerson);
+                if (exitCode == ApplicationComponentExitCode.Accepted)
+                {
+                    _contactPersons.Items.Add(contactPerson);
+                    _contactPersonList.Add(contactPerson);
+                    this.Modified = true;
+                }
+
+            }
+            catch (Exception e)
+            {
+                // failed to launch editor
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
             }
         }
 
         public void UpdateSelectedContactPerson()
         {
-            // can occur if user double clicks while holding control
-            if (_currentContactPersonSelection == null) return;
-
-            ContactPersonDetail contactPerson = (ContactPersonDetail)_currentContactPersonSelection.Clone();
-
-            ContactPersonEditorComponent editor = new ContactPersonEditorComponent(contactPerson, _contactTypeChoices, _contactRelationshipChoices);
-            ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleUpdateContactPerson);
-            if (exitCode == ApplicationComponentExitCode.Accepted)
+            try
             {
-                // delete and re-insert to ensure that TableView updates correctly
-                ContactPersonDetail toBeRemoved = _currentContactPersonSelection;
-                _contactPersons.Items.Remove(toBeRemoved);
-                _contactPersonList.Remove(toBeRemoved);
+                // can occur if user double clicks while holding control
+                if (_currentContactPersonSelection == null) return;
 
-                _contactPersons.Items.Add(contactPerson);
-                _contactPersonList.Add(contactPerson);
+                ContactPersonDetail contactPerson = (ContactPersonDetail)_currentContactPersonSelection.Clone();
 
-                this.Modified = true;
+                ContactPersonEditorComponent editor = new ContactPersonEditorComponent(contactPerson, _contactTypeChoices, _contactRelationshipChoices);
+                ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleUpdateContactPerson);
+                if (exitCode == ApplicationComponentExitCode.Accepted)
+                {
+                    // delete and re-insert to ensure that TableView updates correctly
+                    ContactPersonDetail toBeRemoved = _currentContactPersonSelection;
+                    _contactPersons.Items.Remove(toBeRemoved);
+                    _contactPersonList.Remove(toBeRemoved);
+
+                    _contactPersons.Items.Add(contactPerson);
+                    _contactPersonList.Add(contactPerson);
+
+                    this.Modified = true;
+                }
+            }
+            catch (Exception e)
+            {
+                // failed to launch editor
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
             }
         }
 

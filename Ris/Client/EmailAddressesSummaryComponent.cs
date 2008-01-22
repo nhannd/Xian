@@ -125,15 +125,24 @@ namespace ClearCanvas.Ris.Client
 
         public void AddEmailAddress()
         {
-            EmailAddressDetail emailAddress = new EmailAddressDetail();
-
-            EmailAddressEditorComponent editor = new EmailAddressEditorComponent(emailAddress);
-            ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleAddEmailAddress);
-            if (exitCode == ApplicationComponentExitCode.Accepted)
+            try
             {
-                _emailAddresses.Items.Add(emailAddress);
-                _emailAddressList.Add(emailAddress);
-                this.Modified = true;
+                EmailAddressDetail emailAddress = new EmailAddressDetail();
+
+                EmailAddressEditorComponent editor = new EmailAddressEditorComponent(emailAddress);
+                ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleAddEmailAddress);
+                if (exitCode == ApplicationComponentExitCode.Accepted)
+                {
+                    _emailAddresses.Items.Add(emailAddress);
+                    _emailAddressList.Add(emailAddress);
+                    this.Modified = true;
+                }
+
+            }
+            catch (Exception e)
+            {
+                // failed to launch editor
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
             }
         }
 
@@ -144,19 +153,27 @@ namespace ClearCanvas.Ris.Client
 
             EmailAddressDetail emailAddress = (EmailAddressDetail)_currentEmailAddressSelection.Clone();
 
-            EmailAddressEditorComponent editor = new EmailAddressEditorComponent(emailAddress);
-            ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleUpdateEmailAddress);
-            if (exitCode == ApplicationComponentExitCode.Accepted)
+            try
             {
-                // delete and re-insert to ensure that TableView updates correctly
-                EmailAddressDetail toBeRemoved = _currentEmailAddressSelection;
-                _emailAddresses.Items.Remove(toBeRemoved);
-                _emailAddressList.Remove(toBeRemoved);
+                EmailAddressEditorComponent editor = new EmailAddressEditorComponent(emailAddress);
+                ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleUpdateEmailAddress);
+                if (exitCode == ApplicationComponentExitCode.Accepted)
+                {
+                    // delete and re-insert to ensure that TableView updates correctly
+                    EmailAddressDetail toBeRemoved = _currentEmailAddressSelection;
+                    _emailAddresses.Items.Remove(toBeRemoved);
+                    _emailAddressList.Remove(toBeRemoved);
 
-                _emailAddresses.Items.Add(emailAddress);
-                _emailAddressList.Add(emailAddress);
+                    _emailAddresses.Items.Add(emailAddress);
+                    _emailAddressList.Add(emailAddress);
 
-                this.Modified = true;
+                    this.Modified = true;
+                }
+            }
+            catch (Exception e)
+            {
+                // failed to launch editor
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
             }
         }
 
