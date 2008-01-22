@@ -48,6 +48,9 @@ namespace ClearCanvas.Enterprise.Authentication.Hibernate.Brokers
             HqlQuery query = new HqlQuery("select distinct t.Name from User u join u.AuthorityGroups g join g.AuthorityTokens t");
             query.Conditions.AddRange(HqlCondition.FromSearchCriteria("u", where));
 
+            // take advantage of query caching if possible
+            query.Cacheable = true;
+
             IList<string> tokens = this.ExecuteHql<string>(query);
             string[] result = new string[tokens.Count];
             tokens.CopyTo(result, 0);

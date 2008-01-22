@@ -35,12 +35,14 @@ using System.Text;
 using System.Security.Principal;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Server
 {
     class CustomPrincipal : IPrincipal
     {
-        private IIdentity _identity;
+        private readonly IIdentity _identity;
+        private string[] _authorityTokens;
 
         public CustomPrincipal(IIdentity identity)
         {
@@ -56,13 +58,18 @@ namespace ClearCanvas.Ris.Server
 
         public bool IsInRole(string role)
         {
-            bool b = false;
-            Platform.GetService<IAuthenticationService>(
-                delegate(IAuthenticationService service)
-                {
-                    b = service.AssertTokenForUser(_identity.Name, role);
-                });
-            return b;
+            // initialize auth tokens if this is the first call
+            if (_authorityTokens == null)
+            {
+                Platform.GetService<IAuthenticationService>(
+                    delegate(IAuthenticationService service)
+                    {
+                        _authorityTokens = service.ListAuthorityTokensForUser(_identity.Name);
+                    });
+            }
+
+            // check that the user was granted this token
+            return CollectionUtils.Contains(_authorityTokens, delegate(string token) { return token == role; });
         }
 
         #endregion
