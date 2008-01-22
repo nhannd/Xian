@@ -44,12 +44,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         public ChangePasswordForm()
         {
             InitializeComponent();
-
-            // depending on use-case, the old password may already be filled in
-            if(string.IsNullOrEmpty(_password.Text))
-                _password.Select();
-            else 
-                _newPassword.Select();
         }
 
         public string UserName
@@ -109,6 +103,15 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 
             _okButton.Enabled = ok;
             this.AcceptButton = ok ? _okButton : _cancelButton;
+        }
+
+        private void ChangePasswordForm_Load(object sender, EventArgs e)
+        {
+            // depending on use-case, the old password may already be filled in
+            if (string.IsNullOrEmpty(_password.Text))
+                _password.Select();
+            else
+                _newPassword.Select();
         }
     }
 }

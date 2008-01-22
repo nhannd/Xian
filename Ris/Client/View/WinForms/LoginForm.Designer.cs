@@ -161,6 +161,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this.Controls.Add(this._userName);
             this.Controls.Add(this._loginButton);
             this.Controls.Add(this._cancelButton);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "LoginForm";

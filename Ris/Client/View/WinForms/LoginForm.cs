@@ -97,6 +97,11 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 
         private void LoginForm_Load(object sender, EventArgs e)
         {
+            // depending on use-case, the username may already be filled in
+            if (string.IsNullOrEmpty(_userName.Text))
+                _userName.Select();
+            else
+                _password.Select();
         }
 
         private void _userName_TextChanged(object sender, EventArgs e)
