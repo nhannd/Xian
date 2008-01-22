@@ -113,21 +113,20 @@ namespace ClearCanvas.Ris.Client
 
         private XmlDocument GetXmlDocument()
         {
-            try
+            if (_xmlDoc == null)
             {
-                if (_xmlDoc == null)
+                try
                 {
                     _xmlDoc = new XmlDocument();
                     _xmlDoc.LoadXml(this.FolderPathXml);
                 }
-            }
-            catch (Exception e)
-            {
-                Platform.Log(LogLevel.Warn, e);
-                this.Reset();
-
-                _xmlDoc = new XmlDocument();
-                _xmlDoc.Load(this.FolderPathXml);
+                catch(Exception)
+                {
+                    // any exception loading the XML document should reset the reference to null
+                    // so that we don't try to work with an invalid document in the future
+                    _xmlDoc = null;
+                    throw;
+                }
             }
 
             return _xmlDoc;
@@ -135,16 +134,7 @@ namespace ClearCanvas.Ris.Client
 
         private XmlElement GetFolderSystemsNode()
         {
-            try
-            {
-                return (XmlElement)this.GetXmlDocument().GetElementsByTagName("folder-systems")[0];
-            }
-            catch (Exception e)
-            {
-                Platform.Log(LogLevel.Warn, e);
-                this.Reset();
-                return (XmlElement)this.GetXmlDocument().GetElementsByTagName("folder-systems")[0];
-            }
+            return (XmlElement)this.GetXmlDocument().GetElementsByTagName("folder-systems")[0];
         }
 
 

@@ -53,12 +53,20 @@ namespace ClearCanvas.Desktop
         {
             if (_workspace == null)
             {
-                DesktopMonitorComponent component = new DesktopMonitorComponent();
-                _workspace = ApplicationComponent.LaunchAsWorkspace(
-                    this.Context.DesktopWindow,
-                    component,
-                    "Desktop Monitor");
-                _workspace.Closed += delegate { _workspace = null; };
+                try
+                {
+                    DesktopMonitorComponent component = new DesktopMonitorComponent();
+                    _workspace = ApplicationComponent.LaunchAsWorkspace(
+                        this.Context.DesktopWindow,
+                        component,
+                        "Desktop Monitor");
+                    _workspace.Closed += delegate { _workspace = null; };
+
+                }
+                catch (Exception e)
+                {
+                    ExceptionHandler.Report(e, this.Context.DesktopWindow);
+                }
             }
             else
             {

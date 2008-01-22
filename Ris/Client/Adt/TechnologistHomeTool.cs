@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
@@ -54,17 +55,24 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public void Launch()
         {
-            if (_workspace == null)
+            try
             {
-                _workspace = ApplicationComponent.LaunchAsWorkspace(
-                    this.Context.DesktopWindow,
-                    BuildComponent(),
-                    SR.TitleTechnologistHome);
-                    _workspace.Closed += delegate { _workspace = null; };
+                if (_workspace == null)
+                {
+                    _workspace = ApplicationComponent.LaunchAsWorkspace(
+                        this.Context.DesktopWindow,
+                        BuildComponent(),
+                        SR.TitleTechnologistHome);
+                        _workspace.Closed += delegate { _workspace = null; };
+                }
+                else
+                {
+                    _workspace.Activate();
+                }
             }
-            else
+            catch (Exception e)
             {
-                _workspace.Activate();
+                ExceptionHandler.Report(e, this.Context.DesktopWindow);
             }
         }
 

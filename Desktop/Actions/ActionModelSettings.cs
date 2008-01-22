@@ -109,7 +109,7 @@ namespace ClearCanvas.Desktop.Actions
 		/// <returns>An "action-model" element</returns>
 		private XmlElement CreateXmlActionModel(string id)
 		{
-			XmlElement xmlActionModel = this.GetXmlDocument().CreateElement("action-model");
+			XmlElement xmlActionModel = this.ActionModelsXml.CreateElement("action-model");
 			xmlActionModel.SetAttribute("id", id);
 			return xmlActionModel;
 		}
@@ -121,7 +121,7 @@ namespace ClearCanvas.Desktop.Actions
 		/// <returns>an "action" element</returns>
 		private XmlElement CreateXmlAction(IAction action)
 		{
-			XmlElement xmlAction = this.GetXmlDocument().CreateElement("action");
+            XmlElement xmlAction = this.ActionModelsXml.CreateElement("action");
 
 			xmlAction.SetAttribute("id", action.ActionID);
 			xmlAction.SetAttribute("path", action.Path.ToString());
@@ -317,32 +317,9 @@ namespace ClearCanvas.Desktop.Actions
 			return true;
 		}
 
-		private XmlDocument GetXmlDocument()
-		{
-			try
-			{
-				return this.ActionModelsXml;
-			}
-			catch (Exception e)
-			{
-				Platform.Log(LogLevel.Warn, e);
-				this.Reset();
-				return this.ActionModelsXml;
-			}
-		}
-
 		private XmlElement GetActionModelsNode()
 		{
-			try
-			{
-				return (XmlElement)this.GetXmlDocument().GetElementsByTagName("action-models")[0];
-			}
-			catch (Exception e)
-			{
-				Platform.Log(LogLevel.Warn, e);
-				this.Reset();
-				return (XmlElement)this.GetXmlDocument().GetElementsByTagName("action-models")[0];
-			}
+            return (XmlElement)this.ActionModelsXml.GetElementsByTagName("action-models")[0];
 		}
 
 		#endregion
