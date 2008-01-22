@@ -47,6 +47,11 @@ namespace ClearCanvas.Enterprise.Core
             _reasons = reasons;
         }
 
+        public EntityValidationException(string message)
+            :this(message, new TestResultReason[]{})
+        {
+        }
+
         public TestResultReason[] Reasons
         {
             get { return _reasons; }

@@ -2,8 +2,10 @@ using System;
 using System.Collections;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Common;
+using ClearCanvas.Enterprise.Core;
 
 
 namespace ClearCanvas.Enterprise.Authentication {
@@ -28,6 +30,11 @@ namespace ClearCanvas.Enterprise.Authentication {
         public static Password CreatePassword(string clearTextPassword, DateTime? expiryTime)
         {
             Platform.CheckForNullReference(clearTextPassword, "clearTextPassword");
+
+            //TODO: if we get XML specifications working on server-side (solve jscript threading issues), use XML spec instead
+            AuthenticationSettings settings = new AuthenticationSettings();
+            if(!Regex.Match(clearTextPassword, settings.ValidPasswordRegex).Success)
+                throw new EntityValidationException(settings.ValidPasswordMessage);
 
             string salt = CreateSalt();
             string hash = CalculateHash(salt, clearTextPassword);

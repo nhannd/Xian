@@ -75,5 +75,31 @@ namespace ClearCanvas.Enterprise.Authentication {
                 return ((bool)(this["UserSessionTimeoutEnabled"]));
             }
         }
+        
+        /// <summary>
+        /// Regular expression used to validate new password candidates
+        /// </summary>
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Regular expression used to validate new password candidates")]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("^\\w{8,16}$")]
+        public string ValidPasswordRegex {
+            get {
+                return ((string)(this["ValidPasswordRegex"]));
+            }
+        }
+        
+        /// <summary>
+        /// User friendly description of a valid password
+        /// </summary>
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("User friendly description of a valid password")]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Password must contain only letters and numbers, and be 8-16 characters long")]
+        public string ValidPasswordMessage {
+            get {
+                return ((string)(this["ValidPasswordMessage"]));
+            }
+        }
     }
 }
