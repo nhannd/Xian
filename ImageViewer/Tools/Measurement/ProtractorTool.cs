@@ -50,7 +50,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
     [CheckedStateObserver("activate", "Active", "ActivationChanged")]
 	[TooltipValueObserver("activate", "Tooltip", "TooltipChanged")]
 	[IconSet("activate", IconScheme.Colour, "Icons.ProtractorToolSmall.png", "Icons.ProtractorToolMedium.png", "Icons.ProtractorToolLarge.png")]
-	//[GroupHint("activate", "Tools.Image.Measurement.ROI.Linear")]
+	[GroupHint("activate", "Tools.Image.Measurement.Angle")]
 
 	[MouseToolButton(XMouseButtons.Left, false)]
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
