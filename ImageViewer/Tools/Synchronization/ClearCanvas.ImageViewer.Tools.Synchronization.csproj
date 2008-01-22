@@ -81,13 +81,13 @@
     <EmbeddedResource Include="Icons\AutoStackSynchronizationToolSmall.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Icons\ReferenceLineToolLarge.png" />
+    <EmbeddedResource Include="Icons\CurrentReferenceLineToolLarge.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Icons\ReferenceLineToolMedium.png" />
+    <EmbeddedResource Include="Icons\CurrentReferenceLineToolMedium.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Icons\ReferenceLineToolSmall.png" />
+    <EmbeddedResource Include="Icons\CurrentReferenceLineToolSmall.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

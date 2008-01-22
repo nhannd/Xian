@@ -49,7 +49,7 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 	[ButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarReferenceLines", "Toggle", Flags = ClickActionFlags.CheckAction)]
 	[CheckedStateObserver("activate", "Active", "ActiveChanged")]
 	[Tooltip("activate", "TooltipReferenceLines")]
-	[IconSet("activate", IconScheme.Colour, "Icons.ReferenceLineToolSmall.png", "Icons.ReferenceLineToolMedium.png", "Icons.ReferenceLineToolLarge.png")]
+	[IconSet("activate", IconScheme.Colour, "Icons.CurrentReferenceLineToolSmall.png", "Icons.CurrentReferenceLineToolMedium.png", "Icons.CurrentReferenceLineToolLarge.png")]
 	[GroupHint("activate", "Tools.Image.Synchronization.ReferenceLines")]
 
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
