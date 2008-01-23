@@ -97,7 +97,19 @@ namespace ClearCanvas.Desktop.Validation
             }
             catch (ConfigurationDocumentNotFoundException e)
             {
+                // no validation document exists for this application component class
+                // this is not an error, but might be useful to know this for debugging
                 Platform.Log(LogLevel.Debug, e);
+            }
+            catch(Exception e)
+            {
+                // some error occured in accessing or reading the validation document
+                // the question is, to swallow the exception or not to swallow it??
+                // most authors of application components do not expect exceptions from the constructor,
+                // which is where the rules are built - therefore, it seems reasonable
+                // to swallow and log the exception, although this means than an app component may
+                // execute without having the custom validation rules in place
+                Platform.Log(LogLevel.Error, e);
             }
 
             return customRules;

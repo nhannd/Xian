@@ -644,8 +644,17 @@ namespace ClearCanvas.Desktop.View.WinForms
 				_form.DockingManager.ContentAutoHideClosed -= new DockingManager.ContentHandler(DockingManagerContentAutoHideClosedEventHandler);
 				_form.DockingManager.WindowActivated -= new DockingManager.WindowHandler(DockingManagerWindowActivatedEventHandler);
 				_form.DockingManager.WindowDeactivated -= new DockingManager.WindowHandler(FormDockingManagerWindowDeactivatedEventHandler);
-				
-				SaveWindowSettings();
+
+                try
+                {
+                    SaveWindowSettings();
+                }
+                catch (Exception e)
+                {
+                    // if the window settings can't be saved for any reason,
+                    // just log it and move on
+                    Platform.Log(LogLevel.Error, e);
+                }
 
                 // bug #1171: if this window is the active window and there are other windows,
                 // select the previously active one before destroying this one
