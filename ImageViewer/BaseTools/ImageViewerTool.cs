@@ -61,10 +61,10 @@ namespace ClearCanvas.ImageViewer.BaseTools
 		/// <param name="disposing">True if this object is being disposed, false if it is being finalized.</param>
 		protected override void Dispose(bool disposing)
 		{
-			base.Dispose(disposing);
-
 			this.Context.Viewer.EventBroker.TileSelected -= new EventHandler<TileSelectedEventArgs>(OnTileSelected);
 			this.Context.Viewer.EventBroker.PresentationImageSelected -= new EventHandler<PresentationImageSelectedEventArgs>(OnPresentationImageSelected);
+
+			base.Dispose(disposing);
 		}
 
 		/// <summary>
