@@ -94,6 +94,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin
                         xmlReader.WhitespaceHandling = WhitespaceHandling.None;
                         using (PersistenceScope scope = new PersistenceScope(PersistenceContextType.Update))
                         {
+                            ((IUpdateContext)PersistenceScope.Current).ChangeSetRecorder.OperationName = this.GetType().FullName; 
                             ImportXml(xmlReader, (IUpdateContext)PersistenceScope.Current);
                             scope.Complete();
                         }
@@ -107,6 +108,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin
                         {
                             using (PersistenceScope scope = new PersistenceScope(PersistenceContextType.Update))
                             {
+                                ((IUpdateContext)PersistenceScope.Current).ChangeSetRecorder.OperationName = this.GetType().FullName;
                                 ImportCsv(lines, (IUpdateContext)PersistenceScope.Current);
                                 scope.Complete();
                             }

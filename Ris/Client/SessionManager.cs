@@ -150,7 +150,7 @@ namespace ClearCanvas.Ris.Client
                     // successfully logged in
                     return true;
                 }
-                catch (PasswordExpiredException e)
+                catch (PasswordExpiredException)
                 {
                     string newPassword;
                     if(!ChangePassword(userName, password, out newPassword))

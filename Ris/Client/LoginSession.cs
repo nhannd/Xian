@@ -39,6 +39,7 @@ using System.Threading;
 using System.Security.Principal;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Enterprise.Common;
+using System.Net;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -74,7 +75,7 @@ namespace ClearCanvas.Ris.Client
                 Platform.GetService<ILoginService>(
                     delegate(ILoginService service)
                     {
-                        LoginResponse response = service.Login(new LoginRequest(userName, password, facility.FacilityRef));
+                        LoginResponse response = service.Login(new LoginRequest(userName, password, facility.FacilityRef, GetIPAddress()));
 
                         // if the call succeeded, construct a generic principal object on this thread, containing
                         // the set of authority tokens for this user
@@ -103,7 +104,8 @@ namespace ClearCanvas.Ris.Client
                 Platform.GetService<ILoginService>(
                     delegate(ILoginService service)
                     {
-                        ChangePasswordResponse response = service.ChangePassword(new ChangePasswordRequest(userName, oldPassword, newPassword));
+                        ChangePasswordResponse response = service.ChangePassword(
+                            new ChangePasswordRequest(userName, oldPassword, newPassword, GetIPAddress()));
                     });
 
             }
@@ -124,7 +126,6 @@ namespace ClearCanvas.Ris.Client
             _sessionToken = sessionToken;
             _fullName = fullName;
             _workingFacility = workingFacility;
-            
         }
 
         /// <summary>
@@ -170,13 +171,28 @@ namespace ClearCanvas.Ris.Client
                 Platform.GetService<ILoginService>(
                     delegate(ILoginService service)
                     {
-                        service.Logout(new LogoutRequest(_userName, _sessionToken));
+                        service.Logout(new LogoutRequest(_userName, _sessionToken, GetIPAddress()));
                     });
             }
             finally
             {
                 _current = null;
             }
+        }
+
+        /// <summary>
+        /// Utility method to get the local IP address to report to the server.
+        /// </summary>
+        /// <returns></returns>
+        private static string GetIPAddress()
+        {
+            string hostName = Dns.GetHostName();
+            IPAddress[] addresses = Dns.GetHostAddresses(hostName);
+
+            // just use the first address
+            // we don't care very much because this is just for auditing purposes, 
+            // it serves no technical purpose
+            return addresses.Length > 0 ? addresses[0].ToString() : null;
         }
 
     }

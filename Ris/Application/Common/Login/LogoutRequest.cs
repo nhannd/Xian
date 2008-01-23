@@ -38,19 +38,13 @@ using System.Runtime.Serialization;
 namespace ClearCanvas.Ris.Application.Common.Login
 {
     [DataContract]
-    public class LogoutRequest : DataContractBase
+    public class LogoutRequest : LoginServiceRequestBase
     {
-        public LogoutRequest(string user, string sessionToken)
+        public LogoutRequest(string user, string sessionToken, string clientIP)
+            :base(user, clientIP)
         {
-            this.UserName = user;
             this.SessionToken = sessionToken;
         }
-
-        /// <summary>
-        /// UserName. Required.
-        /// </summary>
-        [DataMember]
-        public string UserName;
 
         /// <summary>
         /// SessionToken. Required.

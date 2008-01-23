@@ -63,6 +63,7 @@
     <Compile Include="Admin\ProtocolAdmin\ProtocolAdminService.cs" />
     <Compile Include="Admin\ProtocolAdmin\ProtocolExporter.cs" />
     <Compile Include="Admin\ProtocolAdmin\ProtocolImporter.cs" />
+    <Compile Include="Login\LoginServiceRecorder.cs" />
     <Compile Include="OrderAttachmentAssembler.cs" />
     <Compile Include="OrderNoteAssembler.cs" />
     <Compile Include="PatientAttachmentAssembler.cs" />

@@ -38,20 +38,14 @@ using System.Runtime.Serialization;
 namespace ClearCanvas.Ris.Application.Common.Login
 {
     [DataContract]
-    public class ChangePasswordRequest : DataContractBase
+    public class ChangePasswordRequest : LoginServiceRequestBase
     {
-        public ChangePasswordRequest(string user, string password, string newPassword)
+        public ChangePasswordRequest(string user, string password, string newPassword, string clientIP)
+            :base(user, clientIP)
         {
-            this.UserName = user;
             this.Password = password;
             this.NewPassword = newPassword;
         }
-
-        /// <summary>
-        /// UserName. Required.
-        /// </summary>
-        [DataMember]
-        public string UserName;
 
         /// <summary>
         /// Password. Required.

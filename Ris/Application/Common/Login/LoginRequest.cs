@@ -38,20 +38,14 @@ using System.Runtime.Serialization;
 namespace ClearCanvas.Ris.Application.Common.Login
 {
     [DataContract]
-    public class LoginRequest : DataContractBase
+    public class LoginRequest : LoginServiceRequestBase
     {
-        public LoginRequest(string user, string password, EntityRef workingFacility)
+        public LoginRequest(string user, string password, EntityRef workingFacility, string clientIP)
+            :base(user, clientIP)
         {
-            this.UserName = user;
             this.Password = password;
             this.WorkingFacility = workingFacility;
         }
-
-        /// <summary>
-        /// UserName. Required.
-        /// </summary>
-        [DataMember]
-        public string UserName;
 
         /// <summary>
         /// Password. Required.

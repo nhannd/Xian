@@ -68,6 +68,7 @@ namespace ClearCanvas.Ris.Application.Services.Login
         }
 
         [UpdateOperation]
+        [Audit(typeof(LoginServiceRecorder))]
         public LoginResponse Login(LoginRequest request)
         {
             Platform.CheckForNullReference(request, "request");
@@ -140,6 +141,7 @@ namespace ClearCanvas.Ris.Application.Services.Login
         }
 
         [UpdateOperation]
+        [Audit(typeof(LoginServiceRecorder))]
         public LogoutResponse Logout(LogoutRequest request)
         {
             Platform.CheckForNullReference(request, "request");
@@ -158,6 +160,7 @@ namespace ClearCanvas.Ris.Application.Services.Login
         }
 
         [UpdateOperation]
+        [Audit(typeof(LoginServiceRecorder))]
         public ChangePasswordResponse ChangePassword(ChangePasswordRequest request)
         {
             Platform.CheckForNullReference(request, "request");
