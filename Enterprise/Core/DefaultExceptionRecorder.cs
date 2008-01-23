@@ -6,16 +6,28 @@ using System.IO;
 
 namespace ClearCanvas.Enterprise.Core
 {
-    public class DefaultExceptionLogger : IExceptionLogger
+    /// <summary>
+    /// Default implementation of <see cref="IExceptionRecorder"/>.
+    /// </summary>
+    public class DefaultExceptionRecorder : IExceptionRecorder
     {
-        public DefaultExceptionLogger()
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        public DefaultExceptionRecorder()
         {
 
         }
 
-        #region IExceptionLogger Members
+        #region IExceptionRecorder Members
 
-        public ExceptionLogEntry CreateExceptionLogEntry(string operation, Exception e)
+        /// <summary>
+        /// Creates a <see cref="ExceptionLogEntry"/> for the specified operation and exception.
+        /// </summary>
+        /// <param name="operation">The name of the operation.</param>
+        /// <param name="e">The exception that was thrown.</param>
+        /// <returns></returns>
+        public ExceptionLogEntry CreateLogEntry(string operation, Exception e)
         {
             return new ExceptionLogEntry(operation, e, WriteXml(e));
         }

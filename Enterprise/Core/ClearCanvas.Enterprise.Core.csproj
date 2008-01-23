@@ -62,7 +62,7 @@
     <Compile Include="AuditAttribute.cs" />
     <Compile Include="CoreServiceExtensionPoint.cs" />
     <Compile Include="DefaultEntityValidator.cs" />
-    <Compile Include="DefaultExceptionLogger.cs" />
+    <Compile Include="DefaultExceptionRecorder.cs" />
     <Compile Include="EntityValidationException.cs" />
     <Compile Include="EntityVersionException.cs" />
     <Compile Include="CoreServiceLayer.cs" />
@@ -83,7 +83,7 @@
     <Compile Include="IEntityChangeSetRecorder.cs" />
     <Compile Include="IAuthenticationService.cs" />
     <Compile Include="IEntityBroker.cs" />
-    <Compile Include="IExceptionLogger.cs" />
+    <Compile Include="IExceptionRecorder.cs" />
     <Compile Include="IServiceOperationRecorder.cs" />
     <Compile Include="IValidator.cs" />
     <Compile Include="IEnumBroker.cs" />

@@ -32,8 +32,8 @@ namespace ClearCanvas.Enterprise.Core
 
                         string operationName = string.Format("{0}.{1}", invocation.InvocationTarget.GetType().FullName, invocation.Method.Name);
 
-                        DefaultExceptionLogger logger = new DefaultExceptionLogger();
-                        ExceptionLogEntry logEntry = logger.CreateExceptionLogEntry(operationName, e);
+                        DefaultExceptionRecorder recorder = new DefaultExceptionRecorder();
+                        ExceptionLogEntry logEntry = recorder.CreateLogEntry(operationName, e);
 
                         PersistenceScope.Current.Lock(logEntry, DirtyState.New);
 
