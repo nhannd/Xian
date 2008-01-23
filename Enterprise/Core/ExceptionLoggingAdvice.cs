@@ -7,6 +7,9 @@ using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.Enterprise.Core
 {
+    /// <summary>
+    /// Advice class responsbile for logging unhandled exceptions thrown from service operation methods.
+    /// </summary>
     class ExceptionLoggingAdvice : IInterceptor
     {
         #region IInterceptor Members
@@ -24,6 +27,9 @@ namespace ClearCanvas.Enterprise.Core
                     // log the error to the database
                     using (PersistenceScope scope = new PersistenceScope(PersistenceContextType.Update, PersistenceScopeOption.RequiresNew))
                     {
+                        // disable change-set auditing for this context
+                        ((IUpdateContext) PersistenceScope.Current).ChangeSetRecorder = null;
+
                         string operationName = string.Format("{0}.{1}", invocation.InvocationTarget.GetType().FullName, invocation.Method.Name);
 
                         DefaultExceptionLogger logger = new DefaultExceptionLogger();

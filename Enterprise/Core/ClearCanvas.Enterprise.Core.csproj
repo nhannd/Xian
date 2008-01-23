@@ -59,13 +59,14 @@
   <ItemGroup>
     <Compile Include="AopInterceptorChain.cs" />
     <Compile Include="AuditAdvice.cs" />
+    <Compile Include="AuditAttribute.cs" />
     <Compile Include="CoreServiceExtensionPoint.cs" />
     <Compile Include="DefaultEntityValidator.cs" />
     <Compile Include="DefaultExceptionLogger.cs" />
     <Compile Include="EntityValidationException.cs" />
     <Compile Include="EntityVersionException.cs" />
     <Compile Include="CoreServiceLayer.cs" />
-    <Compile Include="DefaultTransactionLogger.cs" />
+    <Compile Include="DefaultEntityChangeSetRecorder.cs" />
     <Compile Include="DirtyState.cs" />
     <Compile Include="DomainObject.cs" />
     <Compile Include="Entity.cs" />
@@ -79,9 +80,11 @@
     <Compile Include="EnumValueNotFoundException.cs" />
     <Compile Include="ExceptionLogEntry.cs" />
     <Compile Include="ExceptionLoggingAdvice.cs" />
+    <Compile Include="IEntityChangeSetRecorder.cs" />
     <Compile Include="IAuthenticationService.cs" />
     <Compile Include="IEntityBroker.cs" />
     <Compile Include="IExceptionLogger.cs" />
+    <Compile Include="IServiceOperationRecorder.cs" />
     <Compile Include="IValidator.cs" />
     <Compile Include="IEnumBroker.cs" />
     <Compile Include="IMetadataBroker.cs" />
@@ -95,8 +98,8 @@
     <Compile Include="IRelatedEntityCondition.cs" />
     <Compile Include="ITimeBroker.cs" />
     <Compile Include="ITransactionNotifier.cs" />
-    <Compile Include="ITransactionLogger.cs" />
     <Compile Include="IUpdateContext.cs" />
+    <Compile Include="LogEntry.cs" />
     <Compile Include="Modelling\EmbeddedValueAttribute.cs" />
     <Compile Include="Modelling\EmbeddeValueRuleSet.cs" />
     <Compile Include="Modelling\IPropertyBoundRule.cs" />
@@ -136,6 +139,7 @@
     <Compile Include="ServiceOperationAttribute.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ServiceOperationRecorderBase.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -147,7 +151,7 @@
     <Compile Include="TransactionNotifier.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="TransactionLogEntry.cs" />
+    <Compile Include="AuditLogEntry.cs" />
     <Compile Include="UpdateContextSyncMode.cs" />
     <Compile Include="UpdateOperationAttribute.cs" />
     <Compile Include="ValueObject.cs" />

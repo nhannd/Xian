@@ -39,7 +39,10 @@ using Castle.DynamicProxy;
 
 namespace ClearCanvas.Enterprise.Core
 {
-    public class PersistenceContextAdvice : ServiceOperationAdvice, IInterceptor
+    /// <summary>
+    /// Advice class responsible for honouring <see cref="ReadOperationAttribute"/> and <see cref="UpdateOperationAttribute"/>.
+    /// </summary>
+    class PersistenceContextAdvice : ServiceOperationAdvice, IInterceptor
     {
         internal PersistenceContextAdvice()
         {
@@ -47,31 +50,54 @@ namespace ClearCanvas.Enterprise.Core
 
         public object Intercept(IInvocation invocation, params object[] args)
         {
-            try
+            object retval;
+            ServiceOperationAttribute a = GetServiceOperationAttribute(invocation);
+            if (a != null)
             {
-                object retval;
-                ServiceOperationAttribute a = GetServiceOperationAttribute(invocation);
-                if (a != null)
+                // persistence context required
+                using (PersistenceScope scope = a.CreatePersistenceScope())
                 {
-                    // persistence context required
-                    using (PersistenceScope scope = a.CreatePersistenceScope())
-                    {
-                        retval = invocation.Proceed(args);
+                    // configure change-set auditing
+                    ConfigureAuditing(PersistenceScope.Current, a, invocation);
 
-                        // auto-commit transaction
-                        scope.Complete();
-                    }
-                }
-                else
-                {
-                    // no persistence context required
+                    // proceed with invocation
                     retval = invocation.Proceed(args);
-                }
 
-                return retval;
+                    // auto-commit transaction
+                    scope.Complete();
+                }
             }
-            finally
+            else
             {
+                // no persistence context required
+                retval = invocation.Proceed(args);
+            }
+
+            return retval;
+        }
+
+        private void ConfigureAuditing(IPersistenceContext context, ServiceOperationAttribute attribute, IInvocation invocation)
+        {
+            // if this is a read-context, there is no change set to audit
+            IUpdateContext uctx = context as IUpdateContext;
+            if (uctx == null)
+                return;
+
+            // if this operation is marked as not auditable, then explicitly
+            // disable the change set recorder
+            if (attribute.Auditable == false)
+            {
+                uctx.ChangeSetRecorder = null;
+                return;
+            }
+
+            // if the current context has a change-set recorder installed
+            // ensure that the ChangeSetRecorder.OperationName property is set appropriately
+            // if the name is already set (by an outer service layer), don't change it
+            if (uctx.ChangeSetRecorder != null && string.IsNullOrEmpty(uctx.ChangeSetRecorder.OperationName))
+            {
+                uctx.ChangeSetRecorder.OperationName = string.Format("{0}.{1}",
+                    invocation.InvocationTarget.GetType().FullName, invocation.Method.Name);
             }
         }
     }

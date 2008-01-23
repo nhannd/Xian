@@ -38,25 +38,54 @@ using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Enterprise.Core
 {
-    public class DefaultTransactionLogger : ITransactionLogger
+    /// <summary>
+    /// Default implementation of <see cref="IEntityChangeSetRecorder"/>.
+    /// </summary>
+    public class DefaultEntityChangeSetRecorder : IEntityChangeSetRecorder
     {
-        private string _transactionName;
+        private string _operationName;
 
-        public DefaultTransactionLogger(string transactionName)
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        public DefaultEntityChangeSetRecorder()
         {
-            _transactionName = transactionName;
         }
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="operationName"></param>
+        public DefaultEntityChangeSetRecorder(string operationName)
+        {
+            _operationName = operationName;
+        }
+
+        /// <summary>
+        /// Gets or sets a logical operation name for the operation that produced the change set.
+        /// </summary>
+        public string OperationName
+        {
+            get { return _operationName; }
+            set { _operationName = value; }
+        }
+
 
         #region ITransactionLogger Members
 
-        public TransactionLogEntry CreateTransactionLogEntry(ICollection<EntityChange> changeSet)
+        /// <summary>
+        /// Creates a <see cref="AuditLogEntry"/> for the specified change set.
+        /// </summary>
+        /// <param name="changeSet"></param>
+        /// <returns></returns>
+        public AuditLogEntry CreateLogEntry(IEnumerable<EntityChange> changeSet)
         {
-            return new TransactionLogEntry(_transactionName, WriteXml(changeSet));
+            return new AuditLogEntry("ChangeSet", _operationName, WriteXml(changeSet));
         }
 
         #endregion
 
-        private string WriteXml(ICollection<EntityChange> changeSet)
+        private string WriteXml(IEnumerable<EntityChange> changeSet)
         {
             StringWriter sw = new StringWriter();
             using (XmlTextWriter writer = new XmlTextWriter(sw))
@@ -67,10 +96,10 @@ namespace ClearCanvas.Enterprise.Core
             }
         }
 
-        private void WriteXml(XmlWriter writer, ICollection<EntityChange> changeSet)
+        private void WriteXml(XmlWriter writer, IEnumerable<EntityChange> changeSet)
         {
             writer.WriteStartDocument();
-            writer.WriteStartElement("transaction-record");
+            writer.WriteStartElement("change-set");
             foreach (EntityChange entityChange in changeSet)
             {
                 writer.WriteStartElement("action");

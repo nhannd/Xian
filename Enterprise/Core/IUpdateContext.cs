@@ -46,8 +46,14 @@ namespace ClearCanvas.Enterprise.Core
         /// </summary>
         //IValidator Validator { get; set; }
 
-
-        ITransactionLogger TransactionLogger { get; set; }
+        /// <summary>
+        /// Gets or sets the change-set recorder that the context will use to create
+        /// a record of the changes that were made.
+        /// </summary>
+        /// <remarks>
+        /// Setting this property to null will effectively disable this auditing.
+        /// </remarks>
+        IEntityChangeSetRecorder ChangeSetRecorder { get; set; }
 
         /// <summary>
         /// Attempts to flush and commit all changes made within this update context to the persistent store.

@@ -115,7 +115,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <EmbeddedResource Include="Mappings\ExceptionLogEntry.hbm.xml" />
-    <EmbeddedResource Include="Mappings\TransactionLogEntry.hbm.xml" />
+    <EmbeddedResource Include="Mappings\AuditLogEntry.hbm.xml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SR.resx">

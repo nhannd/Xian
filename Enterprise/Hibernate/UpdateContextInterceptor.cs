@@ -129,8 +129,8 @@ namespace ClearCanvas.Enterprise.Hibernate
         /// <returns></returns>
         public override bool OnSave(object entity, object id, object[] state, string[] propertyNames, NHibernate.Type.IType[] types)
         {
-            // ignore the addition of auditing records
-            if (NHibernateUtil.GetClass(entity).Equals(typeof(TransactionLogEntry)))
+            // ignore the addition of log entries (any subclass of LogEntry)
+            if (typeof(LogEntry).IsAssignableFrom(NHibernateUtil.GetClass(entity)))
                 return false;
 
             // we could validate the entity here, but it seems rather counter-productive, given

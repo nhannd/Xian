@@ -46,30 +46,34 @@ namespace ClearCanvas.Enterprise.Hibernate
     public class UpdateContext : PersistenceContext, IUpdateContext
     {
         private UpdateContextInterceptor _interceptor;
-        private ITransactionLogger _transactionLogger;
+        private IEntityChangeSetRecorder _changeSetRecorder;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="sessionFactory"></param>
-        /// <param name="transactionNotifier"></param>
         /// <param name="mode"></param>
         internal UpdateContext(PersistentStore pstore, UpdateContextSyncMode mode)
             : base(pstore)
         {
             if (mode == UpdateContextSyncMode.Hold)
                 throw new NotSupportedException("UpdateContextSyncMode.Hold is not supported");
+
+            // create a default change-set logger
+            _changeSetRecorder = new DefaultEntityChangeSetRecorder();
         }
 
         #region IUpdateContext members
 
         /// <summary>
-        /// Gets or sets the transaction recorder for auditing.
+        /// Gets or sets the change-set logger for auditing.
         /// </summary>
-        public ITransactionLogger TransactionLogger
+        /// <remarks>
+        /// Setting this property to null will disable change-set auditing for this update context.
+        /// </remarks>
+        public IEntityChangeSetRecorder ChangeSetRecorder
         {
-            get { return _transactionLogger; }
-            set { _transactionLogger = value; }
+            get { return _changeSetRecorder; }
+            set { _changeSetRecorder = value; }
         }
 
         public void Commit()
@@ -183,15 +187,15 @@ namespace ClearCanvas.Enterprise.Hibernate
         #region Helpers
 
         /// <summary>
-        /// Creates and saves a <see cref="TransactionLogEntry"/> for the current transaction, assuming the
-        /// <see cref="TransactionLogger"/> property is set.
+        /// Creates and saves an <see cref="AuditLogEntry"/> for the current change-set, assuming the
+        /// <see cref="ChangeSetRecorder"/> property is set.
         /// </summary>
         private void AuditTransaction()
         {
-            if (_transactionLogger != null)
+            if (_changeSetRecorder != null)
             {
 
-                TransactionLogEntry txLogEntry = _transactionLogger.CreateTransactionLogEntry(_interceptor.EntityChangeSet);
+                AuditLogEntry changeSetLogEntry = _changeSetRecorder.CreateLogEntry(_interceptor.EntityChangeSet);
 
                 /* NB. Does not work with NHibernate 1.0.3
                 // obtain an audit session, based on the same ADO connection and same DB transaction
@@ -203,7 +207,7 @@ namespace ClearCanvas.Enterprise.Hibernate
                 */
 
                 // for now, use the same session
-                this.Session.Save(txLogEntry);
+                this.Session.Save(changeSetLogEntry);
             }
         }
 

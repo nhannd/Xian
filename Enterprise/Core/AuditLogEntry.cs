@@ -38,53 +38,39 @@ using ClearCanvas.Common;
 namespace ClearCanvas.Enterprise.Core
 {
     /// <summary>
-    /// Records information about a transaction.
+    /// Represents an entry in an audit log.
     /// </summary>
-    public class TransactionLogEntry : Entity
+    public class AuditLogEntry : LogEntry
     {
-        private DateTime _timestamp;
-        private string _user;
-        private string _transaction;
-        private string _details;
+        private string _category;
 
         /// <summary>
-        /// Private no-args constructor to support NHibernate
+        /// Private no-args constructor (required to support NHibernate).
         /// </summary>
-        private TransactionLogEntry()
+        protected AuditLogEntry()
         {
 
         }
 
-        public TransactionLogEntry(string transaction, string details)
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="category"></param>
+        /// <param name="operation"></param>
+        /// <param name="details"></param>
+        public AuditLogEntry(string category, string operation, string details)
+            :base(operation, details)
         {
-            _user = Thread.CurrentPrincipal.Identity.Name;
-            _timestamp = Platform.Time;
-            _transaction = transaction;
-            _details = details;
+            _category = category;
         }
 
-        public DateTime TimeStamp
+        /// <summary>
+        /// Gets or sets the category of this audit log entry.
+        /// </summary>
+        public string Category
         {
-            get { return _timestamp; }
-            private set { _timestamp = value; }
-        }
-
-        public string User
-        {
-            get { return _user; }
-            private set { _user = value; }
-        }
-
-        public string Transaction
-        {
-            get { return _transaction; }
-            private set { _transaction = value; }
-        }
-
-        public string Details
-        {
-            get { return _details; }
-            private set { _details = value; }
+            get { return _category; }
+            set { _category = value; }
         }
     }
 }

@@ -33,12 +33,16 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Castle.DynamicProxy;
-
+using ClearCanvas.Common.Utilities;
+using ClearCanvas.Common;
 
 
 namespace ClearCanvas.Enterprise.Core
 {
-    public class AuditAdvice : ServiceOperationAdvice, IInterceptor
+    /// <summary>
+    /// Advice class responsible for honouring <see cref="AuditAttribute"/>s applied to service operation methods.
+    /// </summary>
+    class AuditAdvice : ServiceOperationAdvice, IInterceptor
     {
         internal AuditAdvice()
         {
@@ -48,19 +52,49 @@ namespace ClearCanvas.Enterprise.Core
 
         public object Intercept(IInvocation invocation, params object[] args)
         {
-            ServiceOperationAttribute a = GetServiceOperationAttribute(invocation);
-            if (a != null && a.Auditable)
-            {
-                IUpdateContext uctx = PersistenceScope.Current as IUpdateContext;
+            object retval = invocation.Proceed(args);
 
-                // only install a TransactionLogger if the current context is an update context, and does not already have one
-                if (uctx != null && uctx.TransactionLogger == null)
+            List<AuditAttribute> auditAttrs = AttributeUtils.GetAttributes<AuditAttribute>(invocation.MethodInvocationTarget, true);
+            if (auditAttrs.Count > 0)
+            {
+                // inherit the current persistence scope, which should still be valid, or optionally create a new one
+                using (PersistenceScope scope = new PersistenceScope(PersistenceContextType.Update, PersistenceScopeOption.Required))
                 {
-                    string transactionName = string.Format("{0}.{1}", invocation.InvocationTarget.GetType().FullName, invocation.Method.Name);
-                    uctx.TransactionLogger = new DefaultTransactionLogger(transactionName);
+                    string operationName =
+                        string.Format("{0}.{1}", invocation.InvocationTarget.GetType().FullName, invocation.Method.Name);
+
+                    // multiple audit recorders may be specified for a given service operation
+                    foreach (AuditAttribute attr in auditAttrs)
+                    {
+                        try
+                        {
+                            Audit(operationName, attr, invocation, args);
+                        }
+                        catch (Exception e)
+                        {
+                            // audit operation failed
+                            Platform.Log(LogLevel.Error, e);
+                        }
+                    }
+
+                    scope.Complete();
                 }
             }
-            return invocation.Proceed(args);
+
+            return retval;
+        }
+
+        private void Audit(string operationName, AuditAttribute attr, IInvocation invocation, object[] args)
+        {
+            // create an instance of the specified recorder class
+            IServiceOperationRecorder recorder = (IServiceOperationRecorder) Activator.CreateInstance(attr.RecorderClass);
+
+            // create a log entry
+            AuditLogEntry logEntry = recorder.CreateLogEntry(operationName, invocation.InvocationTarget.GetType(),
+                                    invocation.MethodInvocationTarget, args);
+
+            // save the log entry
+            PersistenceScope.Current.Lock(logEntry, DirtyState.New);
         }
 
         #endregion

@@ -122,7 +122,7 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
             throw new Exception("The method or operation is not implemented.");
         }
 
-        public ITransactionLogger TransactionLogger
+        public IEntityChangeSetRecorder ChangeSetRecorder
         {
             get
             {
