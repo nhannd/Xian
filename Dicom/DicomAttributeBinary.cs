@@ -379,8 +379,20 @@ namespace ClearCanvas.Dicom
         }
 
         internal DicomAttributeAT(DicomTag tag, ByteBuffer item)
-            : base(tag, item)
+            : base(tag)
         {
+            if (ByteBuffer.LocalMachineEndian != item.Endian)
+                item.Swap(tag.VR.UnitSize/2);
+
+         
+            _values = new uint[item.Length / tag.VR.UnitSize];
+            for (int i = 0; i < _values.Length; i++)
+            {
+                Buffer.BlockCopy(item.ToBytes(), i * tag.VR.UnitSize, _values, i * tag.VR.UnitSize+2, 2);
+                Buffer.BlockCopy(item.ToBytes(), i * tag.VR.UnitSize + 2, _values, i * tag.VR.UnitSize, 2);
+            }
+
+            SetStreamLength();
         }
 
         internal DicomAttributeAT(DicomAttributeAT attrib)
@@ -444,6 +456,25 @@ namespace ClearCanvas.Dicom
             return parseVal;
         }
 
+        public override string ToString()
+        {
+            if (_values == null)
+                return "";
+
+            StringBuilder val = null;
+            foreach (uint index in _values)
+            {
+                if (val == null)
+                    val = new StringBuilder(String.Format("0x{0:X}", index));
+                else
+                    val.AppendFormat("\\0x{0:X}", index);
+            }
+
+            if (val == null)
+                return "";
+
+            return val.ToString();
+        }
 
         /// <summary>
         /// Retrieves an Int16 value from an AT attribute.
