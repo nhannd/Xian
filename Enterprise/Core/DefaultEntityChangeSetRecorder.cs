@@ -100,6 +100,7 @@ namespace ClearCanvas.Enterprise.Core
         {
             writer.WriteStartDocument();
             writer.WriteStartElement("change-set");
+            writer.WriteAttributeString("operation", _operationName);
             foreach (EntityChange entityChange in changeSet)
             {
                 writer.WriteStartElement("action");

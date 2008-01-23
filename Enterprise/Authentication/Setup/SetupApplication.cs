@@ -56,6 +56,8 @@ namespace ClearCanvas.Enterprise.Authentication.Setup
         {
             using (PersistenceScope scope = new PersistenceScope(PersistenceContextType.Update))
             {
+                ((IUpdateContext)PersistenceScope.Current).ChangeSetRecorder.OperationName = this.GetType().FullName;
+
                 // import authority tokens
                 AuthorityTokenImporter tokenImporter = new AuthorityTokenImporter();
                 IList<AuthorityToken> allTokens = tokenImporter.ImportFromPlugins((IUpdateContext)PersistenceScope.Current, Console.Out);

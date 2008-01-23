@@ -107,6 +107,7 @@ namespace ClearCanvas.Ris.Shreds.Publication
         {
             using (PersistenceScope processScope = new PersistenceScope(PersistenceContextType.Update))
             {
+                ((IUpdateContext)PersistenceScope.Current).ChangeSetRecorder.OperationName = this.GetType().FullName;
                 try
                 {
                     PersistenceScope.Current.Lock(publicationStep);

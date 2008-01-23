@@ -118,6 +118,7 @@ namespace ClearCanvas.Enterprise.Authentication
         {
             using (PersistenceScope scope = new PersistenceScope(PersistenceContextType.Update))
             {
+                ((IUpdateContext)PersistenceScope.Current).ChangeSetRecorder.OperationName = this.GetType().FullName;
                 ImportFromPlugins((IUpdateContext)PersistenceScope.Current, Console.Out);
 
                 scope.Complete();

@@ -164,6 +164,7 @@ namespace ClearCanvas.Enterprise.Authentication
         {
             using (PersistenceScope scope = new PersistenceScope(PersistenceContextType.Update))
             {
+                ((IUpdateContext) PersistenceScope.Current).ChangeSetRecorder.OperationName = this.GetType().FullName;
                 if (args.Length > 0)
                 {
                     // assume the first arg is the name of an xml file
