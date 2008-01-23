@@ -24,6 +24,8 @@ namespace ClearCanvas.Ris.Client.SpeechMagic.View.WinForms
             reportPreview.Dock = DockStyle.Fill;
             _browserSplitContainer.Panel2.Controls.Add(reportPreview);
 
+            _reportEditor.DataBindings.Add("Value", _component, "ReportContent", true, DataSourceUpdateMode.OnPropertyChanged);
+
             _supervisor.LookupHandler = _component.SupervisorLookupHandler;
             _supervisor.DataBindings.Add("Value", _component, "Supervisor", true, DataSourceUpdateMode.OnPropertyChanged);
 

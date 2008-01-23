@@ -76,11 +76,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
-    <Compile Include="DictationEditorControl.cs">
+    <Compile Include="DictationTextBox.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="DictationEditorControl.Designer.cs">
-      <DependentUpon>DictationEditorControl.cs</DependentUpon>
+    <Compile Include="DictationTextBox.Designer.cs">
+      <DependentUpon>DictationTextBox.cs</DependentUpon>
     </Compile>
     <Service Include="{94E38DFF-614B-4cbd-B67C-F211BB35CE8B}" />
   </ItemGroup>
@@ -98,9 +98,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>SR.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="DictationEditorControl.resx">
+    <EmbeddedResource Include="DictationTextBox.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>DictationEditorControl.cs</DependentUpon>
+      <DependentUpon>DictationTextBox.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
@@ -128,6 +128,17 @@
       <Project>{BAF93550-EDCF-40E9-9082-6BF1E9C4B935}</Project>
       <Name>ClearCanvas.Ris.Client.SpeechMagic</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Author.ico" />
+    <None Include="Icons\Forwarding.ICO" />
+    <None Include="Icons\Invalid.ICO" />
+    <None Include="Icons\Paused.ICO" />
+    <None Include="Icons\Playing.ICO" />
+    <None Include="Icons\Recording.ICO" />
+    <None Include="Icons\Rewinding.ICO" />
+    <None Include="Icons\Stopped.ICO" />
+    <None Include="Icons\Typist.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

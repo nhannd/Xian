@@ -13,6 +13,12 @@ namespace ClearCanvas.Ris.Client.SpeechMagic
     {
         private IShelf _shelf;
 
+        public override void Initialize()
+        {
+            base.Initialize();
+            Launch();
+        }
+
         public void Launch()
         {
             if (_shelf == null)
@@ -24,7 +30,7 @@ namespace ClearCanvas.Ris.Client.SpeechMagic
                     _shelf = ApplicationComponent.LaunchAsShelf(
                         this.Context.DesktopWindow,
                         component,
-                        "Speech Magic Log", ShelfDisplayHint.DockFloat);
+                        "Speech Magic Log", ShelfDisplayHint.DockLeft);
 
                     _shelf.Closed += delegate { _shelf = null; };
 

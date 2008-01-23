@@ -53,6 +53,7 @@
       <DependentUpon>HomePageSettings.settings</DependentUpon>
     </Compile>
     <Compile Include="IChangePasswordDialog.cs" />
+    <Compile Include="IReportEditor.cs" />
     <Compile Include="OrderDetailViewComponent.cs" />
     <Compile Include="OrderDetailViewComponentSettings.cs" />
     <Compile Include="OrderDetailViewComponentSettings.Designer.cs">

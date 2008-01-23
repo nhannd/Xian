@@ -3,8 +3,6 @@ using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-
-using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 
 using SmIa = Philips.PSP.SmIa;
@@ -36,7 +34,7 @@ namespace ClearCanvas.Ris.Client.SpeechMagic.View.WinForms
         // session object
         private CoreStateHandler _coreStateHandler;
         private SmIaCore.SessionClass _coreSession;
-        private SmIaCore.InterActiveCoreClass _interactiveCore; //TODO: interactiveCore
+        //private SmIaCore.InterActiveCoreClass _interactiveCore; //TODO: interactiveCore
         private SmIa.IAudio _coreSessionAudio;
         private SmXAudioLib.SmAudioClass _smXAudio;
         private SmXAudWizLib.SmAudioWizardClass _smXAudioWizard;
@@ -85,7 +83,7 @@ namespace ClearCanvas.Ris.Client.SpeechMagic.View.WinForms
 
             _coreStateHandler = null;
             _coreSession = null;
-            _interactiveCore = null;
+            //_interactiveCore = null;
             _coreSessionAudio = null;
             _smXAudio = null;
             _smXAudioWizard = null;
@@ -142,12 +140,12 @@ namespace ClearCanvas.Ris.Client.SpeechMagic.View.WinForms
         public void OpenAsAuthor()
         {
             StartSpeechMike();
-            OpenSession(true, false);
+            OpenSession(true, true);
         }
         public void OpenAsCorrectionist()
         {
             StartSpeechMike();
-            OpenSession(false, false);
+            OpenSession(false, true);
         }
         public void SetActiveDocument(object editorHandle)
         {
@@ -340,7 +338,7 @@ namespace ClearCanvas.Ris.Client.SpeechMagic.View.WinForms
         /// </summary>
         public bool SettingSynchronousPlayback
         {
-            // TODO: SynchronousPlayback are not implemented
+            // TODO: synchronize playback is on by default... we may remove this setting in the future
             get { return _settingSynchronousPlayback; }
             set { EnableSynchronousPlayback(value); }
         }
@@ -1142,9 +1140,10 @@ namespace ClearCanvas.Ris.Client.SpeechMagic.View.WinForms
 
             if (_settingVORLevel < 0)
             {
-                if (Platform.ShowMessageBox("Would you like to run the AudioWizard to calibrate the speech mike?", MessageBoxActions.YesNo) == DialogBoxAction.Yes)
-                    StartAudioWizard();
-                else
+                // TODO: show AudioWizard when necessary
+                //if (Platform.ShowMessageBox("Would you like to run the AudioWizard to calibrate the speech mike?", MessageBoxActions.YesNo) == DialogBoxAction.Yes)
+                //    StartAudioWizard();
+                //else
                     _settingVORLevel = 0;
             }
         }
@@ -1533,7 +1532,8 @@ namespace ClearCanvas.Ris.Client.SpeechMagic.View.WinForms
         #endregion
 
 
-        //TODO: for debug only.  DiskCacheManager should be removed for production
+        // TODO: for debug only.  DiskCacheManager should be removed for production
+        // Still have to figure out where to get the profile from, as well as the grammar files
         // the user, language and input channel should be pre-loaded somewhere else and pass in
         private SmIaProfile CreateTestProfile()
         {

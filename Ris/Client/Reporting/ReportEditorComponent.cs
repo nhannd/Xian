@@ -56,7 +56,7 @@ namespace ClearCanvas.Ris.Client.Reporting
     /// ReportEditorComponent class
     /// </summary>
     [AssociateView(typeof(ReportEditorComponentViewExtensionPoint))]
-    public class ReportEditorComponent : ApplicationComponent
+    public class ReportEditorComponent : ApplicationComponent, IReportEditor
     {
         public class DHtmlReportEditorComponent : DHtmlComponent
         {
@@ -80,7 +80,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                         ReportPartDetail reportPart = _owner._report.GetPart(0);
                         return reportPart == null ? "" : reportPart.Content;
                     case "Addendum":
-                        ReportPartDetail addendumPart = _owner._report.GetPart(_owner._reportPartIndex);
+                        ReportPartDetail addendumPart = _owner._reportPart.Index > 0 ? _owner._reportPart : null;
                         return addendumPart == null ? "" : addendumPart.Content;
                     case "Preview":
                     default:
@@ -113,59 +113,33 @@ namespace ClearCanvas.Ris.Client.Reporting
         private readonly DHtmlReportEditorComponent _reportPreviewComponent;
         private ChildComponentHost _reportPreviewHost;
 
-        private readonly ReportingWorklistItem _worklistItem;
-        private int _reportPartIndex;
-        private ReportDetail _report;
-
-        private bool _canCompleteInterpretationAndVerify;
-        private bool _canCompleteVerification;
-        private bool _canCompleteInterpretationForVerification;
-        private bool _canCompleteInterpretationForTranscription;
-
-        private event EventHandler _verifyEvent;
-        private event EventHandler _sendToVerifyEvent;
-        private event EventHandler _sendToTranscriptionEvent;
-        private event EventHandler _saveEvent;
-        private event EventHandler _closeComponentEvent;
-
-        private string _reportContent;
+        private ReportingWorklistItem _worklistItem;
         private StaffSummary _supervisor;
+        private ReportDetail _report;
+        private ReportPartDetail _reportPart;
+        private string _reportContent;
+
+        private bool _isEditingAddendum;
+        private bool _verifyEnabled;
+        private bool _sendToVerifyEnabled;
+        private bool _sendToTranscriptionEnabled;
+
+        private event EventHandler _verifyRequested;
+        private event EventHandler _sendToVerifyRequested;
+        private event EventHandler _sendToTranscriptionRequested;
+        private event EventHandler _saveRequested;
+        private event EventHandler _cancelRequested;
 
         private ILookupHandler _supervisorLookupHandler;
 
-        public ReportEditorComponent(ReportingWorklistItem worklistItem)
+        public ReportEditorComponent()
         {
-            _worklistItem = worklistItem;
             _reportEditorComponent = new DHtmlReportEditorComponent(this);
             _reportPreviewComponent = new DHtmlReportEditorComponent(this);
         }
 
         public override void Start()
         {
-            Platform.GetService<IReportingWorkflowService>(
-                delegate(IReportingWorkflowService service)
-                {
-                    GetOperationEnablementResponse enablementResponse = service.GetOperationEnablement(new GetOperationEnablementRequest(_worklistItem.ProcedureStepRef));
-                    _canCompleteInterpretationAndVerify = enablementResponse.OperationEnablementDictionary["CompleteInterpretationAndVerify"];
-                    _canCompleteVerification = enablementResponse.OperationEnablementDictionary["CompleteVerification"];
-                    _canCompleteInterpretationForVerification = enablementResponse.OperationEnablementDictionary["CompleteInterpretationForVerification"];
-                    _canCompleteInterpretationForTranscription = enablementResponse.OperationEnablementDictionary["CompleteInterpretationForTranscription"];
-
-                    LoadReportForEditResponse response = service.LoadReportForEdit(new LoadReportForEditRequest(_worklistItem.ProcedureStepRef));
-                    _reportPartIndex = response.ReportPartIndex;
-                    _report = response.Report;
-                    ReportPartDetail part = _report.GetPart(_reportPartIndex);
-                    if (part != null)
-                        _supervisor = part.Supervisor;
-
-                    // For resident, look for the default supervisor if it does not already exist
-                    if (_supervisor == null && String.IsNullOrEmpty(SupervisorSettings.Default.SupervisorID) == false)
-                    {
-                        GetRadiologistListResponse getRadListresponse = service.GetRadiologistList(new GetRadiologistListRequest(SupervisorSettings.Default.SupervisorID));
-                        _supervisor = CollectionUtils.FirstElement(getRadListresponse.Radiologists);
-                    }
-                });
-
             _supervisorLookupHandler = new StaffLookupHandler(this.Host.DesktopWindow, new string[] { "PRAD" });
 
             _reportEditorComponent.SetUrl(this.EditorUrl);
@@ -189,36 +163,90 @@ namespace ClearCanvas.Ris.Client.Reporting
             get { return this.IsEditingAddendum ? ReportEditorComponentSettings.Default.ReportPreviewPageUrl : "about:blank"; }
         }
 
-        #region Event Handlers
+        #region IReportEditor Members
 
-        public event EventHandler VerifyEvent
+        public string ReportContent
         {
-            add { _verifyEvent += value; }
-            remove { _verifyEvent -= value; }
+            get { return _reportContent; }
+            set { _reportContent = value; }
         }
 
-        public event EventHandler SendToVerifyEvent
+        public ReportingWorklistItem WorklistItem
         {
-            add { _sendToVerifyEvent += value; }
-            remove { _sendToVerifyEvent -= value; }
+            get { return _worklistItem; }
+            set { _worklistItem = value; }
         }
 
-        public event EventHandler SendToTranscriptionEvent
+        public ReportDetail Report
         {
-            add { _sendToTranscriptionEvent += value; }
-            remove { _sendToTranscriptionEvent -= value; }
+            get { return _report; }
+            set { _report = value; }
         }
 
-        public event EventHandler SaveEvent
+        public ReportPartDetail ReportPart
         {
-            add { _saveEvent += value; }
-            remove { _saveEvent -= value; }
+            get { return _reportPart; }
+            set { _reportPart = value; }
         }
 
-        public event EventHandler CloseComponentEvent
+        public event EventHandler VerifyRequested
         {
-            add { _closeComponentEvent += value; }
-            remove { _closeComponentEvent -= value; }
+            add { _verifyRequested += value; }
+            remove { _verifyRequested -= value; }
+        }
+
+        public event EventHandler SendToVerifyRequested
+        {
+            add { _sendToVerifyRequested += value; }
+            remove { _sendToVerifyRequested -= value; }
+        }
+
+        public event EventHandler SendToTranscriptionRequested
+        {
+            add { _sendToTranscriptionRequested += value; }
+            remove { _sendToTranscriptionRequested -= value; }
+        }
+
+        public event EventHandler SaveRequested
+        {
+            add { _saveRequested += value; }
+            remove { _saveRequested -= value; }
+        }
+
+        public event EventHandler CancelRequested
+        {
+            add { _cancelRequested += value; }
+            remove { _cancelRequested -= value; }
+        }
+
+        public bool IsEditingAddendum
+        {
+            get { return _isEditingAddendum; }
+            set { _isEditingAddendum = value; }
+        }
+
+        public bool VerifyEnabled
+        {
+            get { return _verifyEnabled; }
+            set { _verifyEnabled = value; }
+        }
+
+        public bool SendToVerifyEnabled
+        {
+            get { return _sendToVerifyEnabled; }
+            set { _sendToVerifyEnabled = value; }
+        }
+
+        public bool SendToTranscriptionEnabled
+        {
+            get { return _sendToTranscriptionEnabled; }
+            set { _sendToTranscriptionEnabled = value; }
+        }
+
+        public StaffSummary Supervisor
+        {
+            get { return _supervisor; }
+            set { _supervisor = value; }
         }
 
         #endregion
@@ -235,32 +263,6 @@ namespace ClearCanvas.Ris.Client.Reporting
             get { return _reportPreviewHost; }
         }
 
-        public string ReportContent
-        {
-            get { return _reportContent; }
-            set { _reportContent = value; }
-        }
-
-        public bool IsEditingAddendum
-        {
-            get { return _reportPartIndex > 0; }
-        }
-
-        public bool VerifyEnabled
-        {
-            get { return (_canCompleteInterpretationAndVerify || _canCompleteVerification); }
-        }
-
-        public bool SendToVerifyEnabled
-        {
-            get { return _canCompleteInterpretationForVerification; }
-        }
-
-        public bool SendToTranscriptionEnabled
-        {
-            get { return _canCompleteInterpretationForTranscription; }
-        }
-
         public bool CanSendToTranscription
         {
             get { return Thread.CurrentPrincipal.IsInRole(AuthorityTokens.UseTranscriptionWorkflow); }
@@ -271,156 +273,33 @@ namespace ClearCanvas.Ris.Client.Reporting
             get { return Thread.CurrentPrincipal.IsInRole(AuthorityTokens.VerifyReport); }
         }
 
-        public StaffSummary Supervisor
-        {
-            get { return _supervisor; }
-            set
-            {
-                if (!Equals(value, _supervisor))
-                {
-                    _supervisor = value;
-                    SaveSupervisor();
-                }
-            }
-        }
-
         public void Verify()
         {
-            try
-            {
-                _reportEditorComponent.SaveData();
-
-                if (_canCompleteInterpretationAndVerify)
-                {
-                    Platform.GetService<IReportingWorkflowService>(
-                        delegate(IReportingWorkflowService service)
-                        {
-                            service.CompleteInterpretationAndVerify(
-                                new CompleteInterpretationAndVerifyRequest(
-                                _worklistItem.ProcedureStepRef, 
-                                this.ReportContent,
-                                _supervisor == null ? null : _supervisor.StaffRef));
-                        });
-                }
-                else if (_canCompleteVerification)
-                {
-                    Platform.GetService<IReportingWorkflowService>(
-                        delegate(IReportingWorkflowService service)
-                        {
-                            service.CompleteVerification(new CompleteVerificationRequest(_worklistItem.ProcedureStepRef, this.ReportContent));
-                        });
-                }
-
-                EventsHelper.Fire(_verifyEvent, this, EventArgs.Empty);
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, SR.ExceptionFailedToPerformOperation, this.Host.DesktopWindow,
-                    delegate
-                        {
-                        this.ExitCode = ApplicationComponentExitCode.Error;
-                        EventsHelper.Fire(_closeComponentEvent, this, EventArgs.Empty);
-                    });
-            }
+            _reportEditorComponent.SaveData();
+            EventsHelper.Fire(_verifyRequested, this, EventArgs.Empty);
         }
 
         public void SendToVerify()
         {
-            try
-            {
-                _reportEditorComponent.SaveData();
-
-                if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.VerifyReport) == false && _supervisor == null)
-                {
-                    this.Host.DesktopWindow.ShowMessageBox(SR.MessageChooseRadiologist, MessageBoxActions.Ok);
-                    return;
-                }
-
-                Platform.GetService<IReportingWorkflowService>(
-                    delegate(IReportingWorkflowService service)
-                    {
-                        service.CompleteInterpretationForVerification(
-                            new CompleteInterpretationForVerificationRequest(
-                            _worklistItem.ProcedureStepRef, 
-                            this.ReportContent,
-                            _supervisor == null ? null : _supervisor.StaffRef));
-                    });
-
-                EventsHelper.Fire(_sendToVerifyEvent, this, EventArgs.Empty);
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, SR.ExceptionFailedToPerformOperation, this.Host.DesktopWindow,
-                    delegate
-                    {
-                        this.ExitCode = ApplicationComponentExitCode.Error;
-                        EventsHelper.Fire(_closeComponentEvent, this, EventArgs.Empty);
-                    });
-            }
+            _reportEditorComponent.SaveData();
+            EventsHelper.Fire(_sendToVerifyRequested, this, EventArgs.Empty);
         }
 
         public void SendToTranscription()
         {
-            try
-            {
-                _reportEditorComponent.SaveData();
-
-                Platform.GetService<IReportingWorkflowService>(
-                    delegate(IReportingWorkflowService service)
-                    {
-                        service.CompleteInterpretationForTranscription(
-                            new CompleteInterpretationForTranscriptionRequest(
-                            _worklistItem.ProcedureStepRef, 
-                            this.ReportContent,
-                            _supervisor == null ? null : _supervisor.StaffRef));
-                    });
-
-                EventsHelper.Fire(_sendToTranscriptionEvent, this, EventArgs.Empty);
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, SR.ExceptionFailedToPerformOperation, this.Host.DesktopWindow,
-                    delegate
-                    {
-                        this.ExitCode = ApplicationComponentExitCode.Error;
-                        EventsHelper.Fire(_closeComponentEvent, this, EventArgs.Empty);
-                    });
-            }
+            _reportEditorComponent.SaveData();
+            EventsHelper.Fire(_sendToTranscriptionRequested, this, EventArgs.Empty);
         }
 
         public void Save()
         {
-            try
-            {
-                _reportEditorComponent.SaveData();
-
-                Platform.GetService<IReportingWorkflowService>(
-                    delegate(IReportingWorkflowService service)
-                    {
-                        service.SaveReport(
-                            new SaveReportRequest(
-                            _worklistItem.ProcedureStepRef, 
-                            this.ReportContent,
-                            _supervisor == null ? null : _supervisor.StaffRef));
-                    });
-
-                EventsHelper.Fire(_saveEvent, this, EventArgs.Empty);
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, SR.ExceptionFailedToSaveReport, this.Host.DesktopWindow,
-                    delegate
-                    {
-                        this.ExitCode = ApplicationComponentExitCode.Error;
-                        EventsHelper.Fire(_closeComponentEvent, this, EventArgs.Empty);
-                    });
-            }
+            _reportEditorComponent.SaveData();
+            EventsHelper.Fire(_saveRequested, this, EventArgs.Empty);
         }
 
         public void Cancel()
         {
-            this.ExitCode = ApplicationComponentExitCode.None;
-            EventsHelper.Fire(_closeComponentEvent, this, EventArgs.Empty);
+            EventsHelper.Fire(_cancelRequested, this, EventArgs.Empty);
         }
 
         public ILookupHandler SupervisorLookupHandler
@@ -450,14 +329,5 @@ namespace ClearCanvas.Ris.Client.Reporting
         }
 
         #endregion
-
-        private void SaveSupervisor()
-        {
-            if (_supervisor != null)
-            {
-                SupervisorSettings.Default.SupervisorID = _supervisor.StaffId;
-                SupervisorSettings.Default.Save();
-            }
-        }
     }
 }

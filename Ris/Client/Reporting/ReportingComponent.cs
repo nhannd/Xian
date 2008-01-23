@@ -30,8 +30,11 @@
 #endregion
 
 using System;
+using System.Threading;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
+using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 
 namespace ClearCanvas.Ris.Client.Reporting
@@ -50,12 +53,11 @@ namespace ClearCanvas.Ris.Client.Reporting
     [AssociateView(typeof(ReportingComponentViewExtensionPoint))]
     public class ReportingComponent : ApplicationComponent
     {
-        private readonly ReportingWorklistItem _worklistItem;
 
         private readonly BannerComponent _bannerComponent;
         private ChildComponentHost _bannerHost;
 
-        private readonly ReportEditorComponent _reportEditorComponent;
+        private readonly IReportEditor _reportEditor;
         private ChildComponentHost _reportEditorHost;
 
         private readonly PriorReportComponent _priorReportComponent;
@@ -63,6 +65,17 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         private readonly OrderDetailViewComponent _orderDetailComponent;
         private ChildComponentHost _orderDetailHost;
+
+        private readonly ReportingWorklistItem _worklistItem;
+        private StaffSummary _supervisor;
+
+        private bool _canCompleteInterpretationAndVerify;
+        private bool _canCompleteVerification;
+        private bool _canCompleteInterpretationForVerification;
+        private bool _canCompleteInterpretationForTranscription;
+
+        private ReportDetail _report;
+        private ReportPartDetail _reportPart;
 
         /// <summary>
         /// Constructor
@@ -72,7 +85,12 @@ namespace ClearCanvas.Ris.Client.Reporting
             _worklistItem = worklistItem;
 
             _bannerComponent = new BannerComponent(_worklistItem);
-            _reportEditorComponent = new ReportEditorComponent(_worklistItem);
+
+            ReportEditorExtensionPoint reportEditorExtensionPoint = new ReportEditorExtensionPoint();
+            _reportEditor = CollectionUtils.FirstElement<IReportEditor>(reportEditorExtensionPoint.CreateExtensions());
+            if (_reportEditor == null)
+                _reportEditor = new ReportEditorComponent();
+
             _priorReportComponent = new PriorReportComponent(_worklistItem);
             _orderDetailComponent = new OrderDetailViewComponent(_worklistItem);
         }
@@ -82,7 +100,7 @@ namespace ClearCanvas.Ris.Client.Reporting
             _bannerHost = new ChildComponentHost(this.Host, _bannerComponent);
             _bannerHost.StartComponent();
 
-            _reportEditorHost = new ChildComponentHost(this.Host, _reportEditorComponent);
+            _reportEditorHost = new ChildComponentHost(this.Host, _reportEditor);
             _reportEditorHost.StartComponent();
 
             _priorReportHost = new ChildComponentHost(this.Host, _priorReportComponent);
@@ -91,14 +109,38 @@ namespace ClearCanvas.Ris.Client.Reporting
             _orderDetailHost = new ChildComponentHost(this.Host, _orderDetailComponent);
             _orderDetailHost.StartComponent();
 
-            // Setup the various editor closed events.  Do not invalidate the ToBeReported folder type, since it's communual
-            _reportEditorComponent.VerifyEvent += _reportEditorComponent_VerifyEvent;
-            _reportEditorComponent.SendToVerifyEvent += _reportEditorComponent_SendToVerifyEvent;
-            _reportEditorComponent.SendToTranscriptionEvent += _reportEditorComponent_SendToTranscriptionEvent;
-            _reportEditorComponent.SaveEvent += _reportEditorComponent_SaveEvent;
-            _reportEditorComponent.CloseComponentEvent += _reportEditorComponent_CloseComponentEvent;
+            Platform.GetService<IReportingWorkflowService>(
+                delegate(IReportingWorkflowService service)
+                {
+                    GetOperationEnablementResponse enablementResponse = service.GetOperationEnablement(new GetOperationEnablementRequest(_worklistItem.ProcedureStepRef));
+                    _canCompleteInterpretationAndVerify = enablementResponse.OperationEnablementDictionary["CompleteInterpretationAndVerify"];
+                    _canCompleteVerification = enablementResponse.OperationEnablementDictionary["CompleteVerification"];
+                    _canCompleteInterpretationForVerification = enablementResponse.OperationEnablementDictionary["CompleteInterpretationForVerification"];
+                    _canCompleteInterpretationForTranscription = enablementResponse.OperationEnablementDictionary["CompleteInterpretationForTranscription"];
+
+                    LoadReportForEditResponse response = service.LoadReportForEdit(new LoadReportForEditRequest(_worklistItem.ProcedureStepRef));
+                    _report = response.Report;
+                    _reportPart = _report.GetPart(response.ReportPartIndex);
+                    _supervisor = _reportPart == null ? null : _reportPart.Supervisor;
+
+                    // For resident, look for the default supervisor if it does not already exist
+                    if (_supervisor == null && String.IsNullOrEmpty(SupervisorSettings.Default.SupervisorID) == false)
+                    {
+                        GetRadiologistListResponse getRadListresponse = service.GetRadiologistList(new GetRadiologistListRequest(SupervisorSettings.Default.SupervisorID));
+                        _supervisor = CollectionUtils.FirstElement(getRadListresponse.Radiologists);
+                    }
+                });
+
+            SyncReportEditorData(true);
 
             base.Start();
+        }
+
+        public override void Stop()
+        {
+            SyncReportEditorData(false);
+            
+            base.Stop();
         }
 
         #region Presentation Model
@@ -127,53 +169,198 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         #region Private Event Handlers
 
-        void _reportEditorComponent_VerifyEvent(object sender, EventArgs e)
+        void _reportEditorComponent_OnVerifyRequested(object sender, EventArgs e)
         {
-            // Source Folders
-            //DocumentManager.InvalidateFolder(typeof(Folders.ToBeReportedFolder));
-            DocumentManager.InvalidateFolder(typeof(Folders.DraftFolder));
-            DocumentManager.InvalidateFolder(typeof(Folders.ToBeVerifiedFolder));
-            // Destination Folders
-            DocumentManager.InvalidateFolder(typeof(Folders.VerifiedFolder));
-            this.Exit(ApplicationComponentExitCode.Accepted);
+            try
+            {
+                if (_canCompleteInterpretationAndVerify)
+                {
+                    Platform.GetService<IReportingWorkflowService>(
+                        delegate(IReportingWorkflowService service)
+                        {
+                            service.CompleteInterpretationAndVerify(
+                                new CompleteInterpretationAndVerifyRequest(
+                                _worklistItem.ProcedureStepRef,
+                                _reportEditor.ReportContent,
+                                _supervisor == null ? null : _supervisor.StaffRef));
+                        });
+                }
+                else if (_canCompleteVerification)
+                {
+                    Platform.GetService<IReportingWorkflowService>(
+                        delegate(IReportingWorkflowService service)
+                        {
+                            service.CompleteVerification(new CompleteVerificationRequest(_worklistItem.ProcedureStepRef, _reportEditor.ReportContent));
+                        });
+                }
+
+                // Source Folders
+                //DocumentManager.InvalidateFolder(typeof(Folders.ToBeReportedFolder));
+                DocumentManager.InvalidateFolder(typeof(Folders.DraftFolder));
+                DocumentManager.InvalidateFolder(typeof(Folders.ToBeVerifiedFolder));
+                // Destination Folders
+                DocumentManager.InvalidateFolder(typeof(Folders.VerifiedFolder));
+                this.Exit(ApplicationComponentExitCode.Accepted);
+            }
+            catch (Exception ex)
+            {
+                ExceptionHandler.Report(ex, SR.ExceptionFailedToPerformOperation, this.Host.DesktopWindow,
+                    delegate
+                    {
+                        this.Exit(ApplicationComponentExitCode.Error);
+                    });
+            }
         }
 
-        void _reportEditorComponent_SendToVerifyEvent(object sender, EventArgs e)
+        void _reportEditorComponent_OnSendToVerifyRequested(object sender, EventArgs e)
         {
-            // Source Folders
-            //DocumentManager.InvalidateFolder(typeof(Folders.ToBeReportedFolder));
-            DocumentManager.InvalidateFolder(typeof(Folders.DraftFolder));
-            // Destination Folders
-            DocumentManager.InvalidateFolder(typeof(Folders.ToBeVerifiedFolder));
-            this.Exit(ApplicationComponentExitCode.Accepted);
+            try
+            {
+                if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.VerifyReport) == false && _supervisor == null)
+                {
+                    this.Host.DesktopWindow.ShowMessageBox(SR.MessageChooseRadiologist, MessageBoxActions.Ok);
+                    return;
+                }
+
+                Platform.GetService<IReportingWorkflowService>(
+                    delegate(IReportingWorkflowService service)
+                    {
+                        service.CompleteInterpretationForVerification(
+                            new CompleteInterpretationForVerificationRequest(
+                            _worklistItem.ProcedureStepRef,
+                            _reportEditor.ReportContent,
+                            _supervisor == null ? null : _supervisor.StaffRef));
+                    });
+
+                // Source Folders
+                //DocumentManager.InvalidateFolder(typeof(Folders.ToBeReportedFolder));
+                DocumentManager.InvalidateFolder(typeof(Folders.DraftFolder));
+                // Destination Folders
+                DocumentManager.InvalidateFolder(typeof(Folders.ToBeVerifiedFolder));
+                this.Exit(ApplicationComponentExitCode.Accepted);
+            }
+            catch (Exception ex)
+            {
+                ExceptionHandler.Report(ex, SR.ExceptionFailedToPerformOperation, this.Host.DesktopWindow,
+                    delegate
+                    {
+                        this.Exit(ApplicationComponentExitCode.Error);
+                    });
+            }
         }
 
-        void _reportEditorComponent_SendToTranscriptionEvent(object sender, EventArgs e)
+        void _reportEditorComponent_OnSendToTranscriptionRequested(object sender, EventArgs e)
         {
-            // Source Folders
-            //DocumentManager.InvalidateFolder(typeof(Folders.ToBeReportedFolder));
-            DocumentManager.InvalidateFolder(typeof(Folders.DraftFolder));
-            // Destination Folders
-            DocumentManager.InvalidateFolder(typeof(Folders.InTranscriptionFolder));
-            this.Exit(ApplicationComponentExitCode.Accepted);
+            try
+            {
+                Platform.GetService<IReportingWorkflowService>(
+                    delegate(IReportingWorkflowService service)
+                    {
+                        service.CompleteInterpretationForTranscription(
+                            new CompleteInterpretationForTranscriptionRequest(
+                            _worklistItem.ProcedureStepRef,
+                            _reportEditor.ReportContent,
+                            _supervisor == null ? null : _supervisor.StaffRef));
+                    });
+
+                // Source Folders
+                //DocumentManager.InvalidateFolder(typeof(Folders.ToBeReportedFolder));
+                DocumentManager.InvalidateFolder(typeof(Folders.DraftFolder));
+                // Destination Folders
+                DocumentManager.InvalidateFolder(typeof(Folders.InTranscriptionFolder));
+                this.Exit(ApplicationComponentExitCode.Accepted);
+            }
+            catch (Exception ex)
+            {
+                ExceptionHandler.Report(ex, SR.ExceptionFailedToPerformOperation, this.Host.DesktopWindow,
+                    delegate
+                    {
+                        this.Exit(ApplicationComponentExitCode.Error);
+                    });
+            }
         }
 
-        void _reportEditorComponent_SaveEvent(object sender, EventArgs e)
+        void _reportEditorComponent_OnSaveRequested(object sender, EventArgs e)
         {
-            // Source Folders
-            //DocumentManager.InvalidateFolder(typeof(Folders.ToBeReportedFolder));
-            DocumentManager.InvalidateFolder(typeof(Folders.VerifiedFolder));
-            // Destination Folders
-            DocumentManager.InvalidateFolder(typeof(Folders.DraftFolder));
-            DocumentManager.InvalidateFolder(typeof(Folders.ToBeVerifiedFolder));
-            this.Exit(ApplicationComponentExitCode.Accepted);
+            try
+            {
+                Platform.GetService<IReportingWorkflowService>(
+                    delegate(IReportingWorkflowService service)
+                    {
+                        service.SaveReport(
+                            new SaveReportRequest(
+                            _worklistItem.ProcedureStepRef,
+                            _reportEditor.ReportContent,
+                            _supervisor == null ? null : _supervisor.StaffRef));
+                    });
+
+                // Source Folders
+                //DocumentManager.InvalidateFolder(typeof(Folders.ToBeReportedFolder));
+                DocumentManager.InvalidateFolder(typeof(Folders.VerifiedFolder));
+                // Destination Folders
+                DocumentManager.InvalidateFolder(typeof(Folders.DraftFolder));
+                DocumentManager.InvalidateFolder(typeof(Folders.ToBeVerifiedFolder));
+                this.Exit(ApplicationComponentExitCode.Accepted);
+            }
+            catch (Exception ex)
+            {
+                ExceptionHandler.Report(ex, SR.ExceptionFailedToSaveReport, this.Host.DesktopWindow,
+                    delegate
+                    {
+                        this.Exit(ApplicationComponentExitCode.Error);
+                    });
+            }
         }
 
-        void _reportEditorComponent_CloseComponentEvent(object sender, EventArgs e)
+        void _reportEditorComponent_OnCancelRequested(object sender, EventArgs e)
         {
             this.Exit(ApplicationComponentExitCode.None);
         }
 
         #endregion
+
+        private void SyncReportEditorData(bool set)
+        {
+            if (set)
+            {
+                _reportEditor.Report = _report;
+                _reportEditor.ReportPart = _reportPart;
+                _reportEditor.WorklistItem = _worklistItem;
+                _reportEditor.Supervisor = _supervisor;
+
+                _reportEditor.IsEditingAddendum = _reportPart.Index > 0;
+                _reportEditor.VerifyEnabled = _canCompleteInterpretationAndVerify || _canCompleteVerification;
+                _reportEditor.SendToVerifyEnabled = _canCompleteInterpretationForVerification;
+                _reportEditor.SendToTranscriptionEnabled = _canCompleteInterpretationForTranscription;
+
+                // Setup the various editor closed events.  Do not invalidate the ToBeReported folder type, since it's communual
+                _reportEditor.VerifyRequested += _reportEditorComponent_OnVerifyRequested;
+                _reportEditor.SendToVerifyRequested += _reportEditorComponent_OnSendToVerifyRequested;
+                _reportEditor.SendToTranscriptionRequested += _reportEditorComponent_OnSendToTranscriptionRequested;
+                _reportEditor.SaveRequested += _reportEditorComponent_OnSaveRequested;
+                _reportEditor.CancelRequested += _reportEditorComponent_OnCancelRequested;
+            }
+            else // get
+            {
+                _reportPart.Content = _reportEditor.ReportContent;
+                _supervisor = _reportEditor.Supervisor = _supervisor;
+                SaveSupervisor(_supervisor);
+
+                _reportEditor.VerifyRequested -= _reportEditorComponent_OnVerifyRequested;
+                _reportEditor.SendToVerifyRequested -= _reportEditorComponent_OnSendToVerifyRequested;
+                _reportEditor.SendToTranscriptionRequested -= _reportEditorComponent_OnSendToTranscriptionRequested;
+                _reportEditor.SaveRequested -= _reportEditorComponent_OnSaveRequested;
+                _reportEditor.CancelRequested -= _reportEditorComponent_OnCancelRequested;
+            }
+        }
+
+        private void SaveSupervisor(StaffSummary supervisor)
+        {
+            if (_supervisor != null)
+            {
+                SupervisorSettings.Default.SupervisorID = supervisor.StaffId;
+                SupervisorSettings.Default.Save();
+            }
+        }
     }
 }

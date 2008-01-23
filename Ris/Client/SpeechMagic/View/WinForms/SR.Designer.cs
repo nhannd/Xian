@@ -60,6 +60,13 @@ namespace ClearCanvas.Ris.Client.SpeechMagic.View.WinForms {
             }
         }
         
+        internal static System.Drawing.Icon Author {
+            get {
+                object obj = ResourceManager.GetObject("Author", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
         /// <summary>
         ///   Looks up a localized string similar to Failed to perform operation.
         /// </summary>
@@ -84,6 +91,20 @@ namespace ClearCanvas.Ris.Client.SpeechMagic.View.WinForms {
         internal static string ExceptionOperationEnablementUnknown {
             get {
                 return ResourceManager.GetString("ExceptionOperationEnablementUnknown", resourceCulture);
+            }
+        }
+        
+        internal static System.Drawing.Icon Forwarding {
+            get {
+                object obj = ResourceManager.GetObject("Forwarding", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Icon Invalid {
+            get {
+                object obj = ResourceManager.GetObject("Invalid", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
             }
         }
         
@@ -138,6 +159,48 @@ namespace ClearCanvas.Ris.Client.SpeechMagic.View.WinForms {
         internal static string MessageUserSettingsMissing {
             get {
                 return ResourceManager.GetString("MessageUserSettingsMissing", resourceCulture);
+            }
+        }
+        
+        internal static System.Drawing.Icon Paused {
+            get {
+                object obj = ResourceManager.GetObject("Paused", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Icon Playing {
+            get {
+                object obj = ResourceManager.GetObject("Playing", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Icon Recording {
+            get {
+                object obj = ResourceManager.GetObject("Recording", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Icon Rewinding {
+            get {
+                object obj = ResourceManager.GetObject("Rewinding", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Icon Stopped {
+            get {
+                object obj = ResourceManager.GetObject("Stopped", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Icon Typist {
+            get {
+                object obj = ResourceManager.GetObject("Typist", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
             }
         }
     }

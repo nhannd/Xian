@@ -137,7 +137,12 @@ namespace ClearCanvas.Ris.Client.SpeechMagic
         public ReportPartDetail ReportPart
         {
             get { return _reportPart; }
-            set { _reportPart = value; }
+            set
+            {
+                _reportPart = value;
+                if (_reportPart != null)
+                    _reportContent = _reportPart.Content;
+            }
         }
 
         public event EventHandler VerifyRequested

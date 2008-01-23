@@ -30,7 +30,7 @@ namespace ClearCanvas.Ris.Client.SpeechMagic.View.WinForms
         {
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this._browserSplitContainer = new System.Windows.Forms.SplitContainer();
-            this._reportEditor = new ClearCanvas.Ris.Client.SpeechMagic.View.WinForms.DictationEditorControl();
+            this._reportEditor = new ClearCanvas.Ris.Client.SpeechMagic.View.WinForms.DictationTextBox();
             this._residentPanel = new System.Windows.Forms.Panel();
             this._supervisor = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
             this._cancelButton = new System.Windows.Forms.Button();
@@ -201,6 +201,6 @@ namespace ClearCanvas.Ris.Client.SpeechMagic.View.WinForms
         private System.Windows.Forms.Button _sendToTranscriptionButton;
         private System.Windows.Forms.Button _saveButton;
         private ClearCanvas.Ris.Client.View.WinForms.LookupField _supervisor;
-        private DictationEditorControl _reportEditor;
+        private DictationTextBox _reportEditor;
     }
 }

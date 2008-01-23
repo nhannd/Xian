@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Windows.Forms;
 
 using ClearCanvas.Common;
+using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.View.WinForms;
 
 using SmIa = Philips.PSP.SmIa;
@@ -20,7 +21,7 @@ namespace ClearCanvas.Ris.Client.SpeechMagic.View.WinForms
         /// <summary>
         /// Constructor
         /// </summary>
-        public LogComponentControl(LogComponent component)
+        public LogComponentControl(IApplicationComponent component)
             :base(component)
         {
             InitializeComponent();
