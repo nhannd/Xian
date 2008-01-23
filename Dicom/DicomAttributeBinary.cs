@@ -413,6 +413,26 @@ namespace ClearCanvas.Dicom
 
         #region Abstract Method Implementation
 
+        internal override ByteBuffer GetByteBuffer(TransferSyntax syntax, String specificCharacterSet)
+        {
+            int len = _values.Length * Tag.VR.UnitSize;
+            byte[] byteVal = new byte[len];
+
+            for (int i = 0; i < _values.Length; i++)
+            {
+                Buffer.BlockCopy(_values, i * Tag.VR.UnitSize + 2, byteVal, i * Tag.VR.UnitSize, 2);
+                Buffer.BlockCopy(_values, i * Tag.VR.UnitSize, byteVal, i * Tag.VR.UnitSize + 2, 2);
+            }
+
+            ByteBuffer bb = new ByteBuffer(byteVal, syntax.Endian);
+            if (syntax.Endian != ByteBuffer.LocalMachineEndian)
+            {
+                bb.Swap(Tag.VR.UnitSize);
+            }
+
+            return bb;
+        }
+
         public override Object Values
         {
             get { return _values; }
@@ -465,9 +485,9 @@ namespace ClearCanvas.Dicom
             foreach (uint index in _values)
             {
                 if (val == null)
-                    val = new StringBuilder(String.Format("0x{0:X}", index));
+                    val = new StringBuilder(String.Format("{0:X}", index));
                 else
-                    val.AppendFormat("\\0x{0:X}", index);
+                    val.AppendFormat("\\{0:X}", index);
             }
 
             if (val == null)
