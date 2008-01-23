@@ -120,7 +120,7 @@ namespace ClearCanvas.Common.Statistics
         /// <param name="ts"></param>
         public void Add(TimeSpanStatistics ts)
         {
-            Value.Add(ts.Value);
+            Value = Value.Add(ts.Value);
         }
 
         /// <summary>
@@ -131,7 +131,7 @@ namespace ClearCanvas.Common.Statistics
         /// </remarks>
         public void Add(long ts)
         {
-            Value.Add(new TimeSpan(ts));
+            Value = Value.Add(new TimeSpan(ts));
         }
 
 
@@ -141,7 +141,7 @@ namespace ClearCanvas.Common.Statistics
         /// <param name="ts"></param>
         public void Subtract(long ts)
         {
-            Value.Subtract(new TimeSpan(ts));
+            Value = Value.Subtract(new TimeSpan(ts));
         }
 
         /// <summary>
@@ -150,7 +150,7 @@ namespace ClearCanvas.Common.Statistics
         /// <param name="ts"></param>
         public void Subtract(TimeSpanStatistics ts)
         {
-            Value.Subtract(ts.Value);
+            Value = Value.Subtract(ts.Value);
         }
 
         /// <summary>

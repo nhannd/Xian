@@ -197,6 +197,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                 Platform.Log(LogLevel.Error, e, "Unexpected exception when {0}.  Rolling back operation.",
                              processor.Description);
                 processor.Rollback();
+                _instanceStats.ProcessTime.End();  
                 throw new ApplicationException("Unexpected exception when processing file.", e);
             }
             finally
@@ -224,19 +225,20 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                 if (keys.InsertStudy)
                 {
                     ProcessStudyRules(item, file);
+                    _instanceStats.EngineLoadTime.Add(_studyProcessedRulesEngine.Statistics.LoadTime);
+                    _instanceStats.EngineExecutionTime.Add(_studyProcessedRulesEngine.Statistics.ExecutionTime);
                 }
 
                 // We've inserted a new Series, process Series Rules
                 if (keys.InsertSeries)
                 {
                     ProcessSeriesRules(item, file);
+                    _instanceStats.EngineLoadTime.Add(_seriesProcessedRulesEngine.Statistics.LoadTime);
+                    _instanceStats.EngineExecutionTime.Add(_seriesProcessedRulesEngine.Statistics.ExecutionTime);
                 }
             }
 
-            _instanceStats.ProcessTime.End();
-
-
-            
+            _instanceStats.ProcessTime.End();            
         }
 
 
