@@ -39,7 +39,7 @@ namespace ClearCanvas.Enterprise.Core
     public abstract class ServiceOperationAttribute : Attribute
     {
         private PersistenceScopeOption _scopeOption;
-        private bool _auditable;
+        private bool _auditable = true;
         
         public ServiceOperationAttribute()
         {
