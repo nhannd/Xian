@@ -75,10 +75,8 @@ namespace ClearCanvas.Ris.Client.SpeechMagic
         private ChildComponentHost _reportPreviewHost;
 
         private ReportingWorklistItem _worklistItem;
-        private StaffSummary _supervisor;
         private ReportDetail _report;
         private ReportPartDetail _reportPart;
-        private string _reportContent;
 
         private bool _isEditingAddendum;
         private bool _verifyEnabled;
@@ -118,8 +116,8 @@ namespace ClearCanvas.Ris.Client.SpeechMagic
 
         public string ReportContent
         {
-            get { return _reportContent; }
-            set { _reportContent = value; }
+            get { return _reportPart.Content; }
+            set { _reportPart.Content = value; }
         }
 
         public ReportingWorklistItem WorklistItem
@@ -137,12 +135,7 @@ namespace ClearCanvas.Ris.Client.SpeechMagic
         public ReportPartDetail ReportPart
         {
             get { return _reportPart; }
-            set
-            {
-                _reportPart = value;
-                if (_reportPart != null)
-                    _reportContent = _reportPart.Content;
-            }
+            set { _reportPart = value; }
         }
 
         public event EventHandler VerifyRequested
@@ -201,8 +194,8 @@ namespace ClearCanvas.Ris.Client.SpeechMagic
 
         public StaffSummary Supervisor
         {
-            get { return _supervisor; }
-            set { _supervisor = value; }
+            get { return _reportPart.Supervisor; }
+            set { _reportPart.Supervisor = value; }
         }
 
         #endregion
@@ -268,7 +261,6 @@ namespace ClearCanvas.Ris.Client.SpeechMagic
             }
             catch (Exception e)
             {
-                // could not launch editor
                 ExceptionHandler.Report(e, this.Host.DesktopWindow);
             }
 

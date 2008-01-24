@@ -1,33 +1,79 @@
 using System;
 using ClearCanvas.Desktop;
 using ClearCanvas.Common;
-using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 
 namespace ClearCanvas.Ris.Client
 {
-    public interface IReportEditor : IApplicationComponent
-    {
-        ReportingWorklistItem WorklistItem { set; }
-        ReportDetail Report { set; }
-        ReportPartDetail ReportPart { set; }
-        StaffSummary Supervisor { get; set; }
-        string ReportContent { get; }
-
-        bool IsEditingAddendum { set; }
-        bool VerifyEnabled { set; }
-        bool SendToVerifyEnabled { set; }
-        bool SendToTranscriptionEnabled { set; }
-
-        event EventHandler VerifyRequested;
-        event EventHandler SendToVerifyRequested;
-        event EventHandler SendToTranscriptionRequested;
-        event EventHandler SaveRequested;
-        event EventHandler CancelRequested;
-    }
-
     [ExtensionPoint]
     public class ReportEditorExtensionPoint : ExtensionPoint<IReportEditor>
     {
+    }
+
+    /// <summary>
+    /// Defines the interface of a report editor.
+    /// </summary>
+    public interface IReportEditor : IApplicationComponent
+    {
+        /// <summary>
+        /// Sets the reporting worklist item
+        /// </summary>
+        ReportingWorklistItem WorklistItem { set; }
+
+        /// <summary>
+        /// Set the report associated with the worklist item
+        /// </summary>
+        ReportDetail Report { set; }
+
+        /// <summary>
+        /// Gets and sets the report part being edited
+        /// </summary>
+        ReportPartDetail ReportPart { get; set; }
+
+        /// <summary>
+        /// Sets the editor mode
+        /// </summary>
+        bool IsEditingAddendum { set; }
+
+        /// <summary>
+        /// Sets the enablement of the Verify operation
+        /// </summary>
+        bool VerifyEnabled { set; }
+
+        /// <summary>
+        /// Sets the enablement of the Send To Verify operation
+        /// </summary>
+        bool SendToVerifyEnabled { set; }
+
+        /// <summary>
+        /// Sets the enablement of the Send To Transcription operation
+        /// </summary>
+        bool SendToTranscriptionEnabled { set; }
+
+        /// <summary>
+        /// Notifies that the editor requests to verify the report
+        /// </summary>
+        event EventHandler VerifyRequested;
+
+        /// <summary>
+        /// Notifies that the editor requests to send the report to be verified
+        /// </summary>
+        event EventHandler SendToVerifyRequested;
+
+        /// <summary>
+        /// Notifies that the editor requests to send the report to transcription
+        /// </summary>
+        event EventHandler SendToTranscriptionRequested;
+
+        /// <summary>
+        /// Notifies that the editor requests to save the report
+        /// </summary>
+        event EventHandler SaveRequested;
+
+        /// <summary>
+        /// Notifies that the editor requests to cancel
+        /// </summary>
+        event EventHandler CancelRequested;
     }
 }

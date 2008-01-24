@@ -24,7 +24,8 @@ namespace ClearCanvas.Ris.Client.SpeechMagic.View.WinForms
 
     public enum SmIaErrorLevel { None = -1, Information = 0, Warning = 1, Error = 2, Fatal = 3, Lethal = 4 };
     public enum State { Uninitialized, Initialized, Idle, Stopping, Recording, Playing, Winding };
-    
+
+    public enum DocumentEditMode { Author, Revision };
     public enum DocumentType { None, Word, Rtf, Pseudo, TOC, TX, Simple, TX12, TOC13, TX13 };
 	public enum RecognizerType { None, Command, Dictation, Spelling };
 

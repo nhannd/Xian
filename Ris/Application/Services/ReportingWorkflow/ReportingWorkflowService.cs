@@ -580,11 +580,8 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
         private void SaveReportHelper(SaveReportRequest request, ReportingProcedureStep step, Staff supervisor)
         {
-            if (String.IsNullOrEmpty(request.ReportContent) == false)
-            {
-                Operations.SaveReport saveReportOp = new Operations.SaveReport();
-                saveReportOp.Execute(step, request.ReportContent, supervisor, this.PersistenceContext);
-            }
+            Operations.SaveReport saveReportOp = new Operations.SaveReport();
+            saveReportOp.Execute(step, request.ReportContent, supervisor, this.PersistenceContext);
         }
 
     }

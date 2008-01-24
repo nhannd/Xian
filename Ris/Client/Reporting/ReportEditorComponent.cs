@@ -114,10 +114,8 @@ namespace ClearCanvas.Ris.Client.Reporting
         private ChildComponentHost _reportPreviewHost;
 
         private ReportingWorklistItem _worklistItem;
-        private StaffSummary _supervisor;
         private ReportDetail _report;
         private ReportPartDetail _reportPart;
-        private string _reportContent;
 
         private bool _isEditingAddendum;
         private bool _verifyEnabled;
@@ -167,8 +165,8 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         public string ReportContent
         {
-            get { return _reportContent; }
-            set { _reportContent = value; }
+            get { return _reportPart.Content; }
+            set { _reportPart.Content = value; }
         }
 
         public ReportingWorklistItem WorklistItem
@@ -245,8 +243,8 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         public StaffSummary Supervisor
         {
-            get { return _supervisor; }
-            set { _supervisor = value; }
+            get { return _reportPart.Supervisor; }
+            set { _reportPart.Supervisor = value; }
         }
 
         #endregion

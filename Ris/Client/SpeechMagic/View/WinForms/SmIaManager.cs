@@ -137,15 +137,10 @@ namespace ClearCanvas.Ris.Client.SpeechMagic.View.WinForms
         }
 
         #region Public Methods
-        public void OpenAsAuthor()
+        public void Open(DocumentEditMode mode)
         {
             StartSpeechMike();
-            OpenSession(true, true);
-        }
-        public void OpenAsCorrectionist()
-        {
-            StartSpeechMike();
-            OpenSession(false, true);
+            OpenSession(mode == DocumentEditMode.Author, true);
         }
         public void SetActiveDocument(object editorHandle)
         {

@@ -67,7 +67,6 @@ namespace ClearCanvas.Ris.Client.Reporting
         private ChildComponentHost _orderDetailHost;
 
         private readonly ReportingWorklistItem _worklistItem;
-        private StaffSummary _supervisor;
 
         private bool _canCompleteInterpretationAndVerify;
         private bool _canCompleteVerification;
@@ -86,6 +85,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 
             _bannerComponent = new BannerComponent(_worklistItem);
 
+            // Look for any report editor extensions.  If not found, use the default one
             ReportEditorExtensionPoint reportEditorExtensionPoint = new ReportEditorExtensionPoint();
             _reportEditor = CollectionUtils.FirstElement<IReportEditor>(reportEditorExtensionPoint.CreateExtensions());
             if (_reportEditor == null)
@@ -121,13 +121,12 @@ namespace ClearCanvas.Ris.Client.Reporting
                     LoadReportForEditResponse response = service.LoadReportForEdit(new LoadReportForEditRequest(_worklistItem.ProcedureStepRef));
                     _report = response.Report;
                     _reportPart = _report.GetPart(response.ReportPartIndex);
-                    _supervisor = _reportPart == null ? null : _reportPart.Supervisor;
 
                     // For resident, look for the default supervisor if it does not already exist
-                    if (_supervisor == null && String.IsNullOrEmpty(SupervisorSettings.Default.SupervisorID) == false)
+                    if (_reportPart != null && _reportPart.Supervisor == null && String.IsNullOrEmpty(SupervisorSettings.Default.SupervisorID) == false)
                     {
                         GetRadiologistListResponse getRadListresponse = service.GetRadiologistList(new GetRadiologistListRequest(SupervisorSettings.Default.SupervisorID));
-                        _supervisor = CollectionUtils.FirstElement(getRadListresponse.Radiologists);
+                        _reportPart.Supervisor = CollectionUtils.FirstElement(getRadListresponse.Radiologists);
                     }
                 });
 
@@ -181,8 +180,8 @@ namespace ClearCanvas.Ris.Client.Reporting
                             service.CompleteInterpretationAndVerify(
                                 new CompleteInterpretationAndVerifyRequest(
                                 _worklistItem.ProcedureStepRef,
-                                _reportEditor.ReportContent,
-                                _supervisor == null ? null : _supervisor.StaffRef));
+                                _reportEditor.ReportPart.Content,
+                                _reportEditor.ReportPart.Supervisor == null ? null : _reportEditor.ReportPart.Supervisor.StaffRef));
                         });
                 }
                 else if (_canCompleteVerification)
@@ -190,7 +189,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                     Platform.GetService<IReportingWorkflowService>(
                         delegate(IReportingWorkflowService service)
                         {
-                            service.CompleteVerification(new CompleteVerificationRequest(_worklistItem.ProcedureStepRef, _reportEditor.ReportContent));
+                            service.CompleteVerification(new CompleteVerificationRequest(_worklistItem.ProcedureStepRef, _reportEditor.ReportPart.Content));
                         });
                 }
 
@@ -216,7 +215,7 @@ namespace ClearCanvas.Ris.Client.Reporting
         {
             try
             {
-                if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.VerifyReport) == false && _supervisor == null)
+                if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.VerifyReport) == false && _reportEditor.ReportPart.Supervisor == null)
                 {
                     this.Host.DesktopWindow.ShowMessageBox(SR.MessageChooseRadiologist, MessageBoxActions.Ok);
                     return;
@@ -228,8 +227,8 @@ namespace ClearCanvas.Ris.Client.Reporting
                         service.CompleteInterpretationForVerification(
                             new CompleteInterpretationForVerificationRequest(
                             _worklistItem.ProcedureStepRef,
-                            _reportEditor.ReportContent,
-                            _supervisor == null ? null : _supervisor.StaffRef));
+                            _reportEditor.ReportPart.Content,
+                            _reportEditor.ReportPart.Supervisor == null ? null : _reportEditor.ReportPart.Supervisor.StaffRef));
                     });
 
                 // Source Folders
@@ -259,8 +258,8 @@ namespace ClearCanvas.Ris.Client.Reporting
                         service.CompleteInterpretationForTranscription(
                             new CompleteInterpretationForTranscriptionRequest(
                             _worklistItem.ProcedureStepRef,
-                            _reportEditor.ReportContent,
-                            _supervisor == null ? null : _supervisor.StaffRef));
+                            _reportEditor.ReportPart.Content,
+                            _reportEditor.ReportPart.Supervisor == null ? null : _reportEditor.ReportPart.Supervisor.StaffRef));
                     });
 
                 // Source Folders
@@ -290,8 +289,8 @@ namespace ClearCanvas.Ris.Client.Reporting
                         service.SaveReport(
                             new SaveReportRequest(
                             _worklistItem.ProcedureStepRef,
-                            _reportEditor.ReportContent,
-                            _supervisor == null ? null : _supervisor.StaffRef));
+                            _reportEditor.ReportPart.Content,
+                            _reportEditor.ReportPart.Supervisor == null ? null : _reportEditor.ReportPart.Supervisor.StaffRef));
                     });
 
                 // Source Folders
@@ -326,7 +325,6 @@ namespace ClearCanvas.Ris.Client.Reporting
                 _reportEditor.Report = _report;
                 _reportEditor.ReportPart = _reportPart;
                 _reportEditor.WorklistItem = _worklistItem;
-                _reportEditor.Supervisor = _supervisor;
 
                 _reportEditor.IsEditingAddendum = _reportPart.Index > 0;
                 _reportEditor.VerifyEnabled = _canCompleteInterpretationAndVerify || _canCompleteVerification;
@@ -342,9 +340,8 @@ namespace ClearCanvas.Ris.Client.Reporting
             }
             else // get
             {
-                _reportPart.Content = _reportEditor.ReportContent;
-                _supervisor = _reportEditor.Supervisor = _supervisor;
-                SaveSupervisor(_supervisor);
+                _reportPart = _reportEditor.ReportPart;
+                SaveSupervisor(_reportEditor.ReportPart.Supervisor);
 
                 _reportEditor.VerifyRequested -= _reportEditorComponent_OnVerifyRequested;
                 _reportEditor.SendToVerifyRequested -= _reportEditorComponent_OnSendToVerifyRequested;
@@ -356,11 +353,8 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         private void SaveSupervisor(StaffSummary supervisor)
         {
-            if (_supervisor != null)
-            {
-                SupervisorSettings.Default.SupervisorID = supervisor.StaffId;
-                SupervisorSettings.Default.Save();
-            }
+            SupervisorSettings.Default.SupervisorID = supervisor == null ? "" : supervisor.StaffId;
+            SupervisorSettings.Default.Save();
         }
     }
 }

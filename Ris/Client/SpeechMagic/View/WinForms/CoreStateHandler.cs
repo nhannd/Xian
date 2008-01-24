@@ -5,7 +5,8 @@ using SmIaCore = Philips.PSP.SmIaCore;
 namespace ClearCanvas.Ris.Client.SpeechMagic.View.WinForms
 {
     /// <summary>
-	/// Summary description for CoreEventHandler.
+	/// This class is reused from the Philips sample application.  The idleCounter and stoppingCounter are 
+	/// somehow used to control timing of the StateChanged event.
 	/// </summary>
 	public class CoreStateHandler
 	{

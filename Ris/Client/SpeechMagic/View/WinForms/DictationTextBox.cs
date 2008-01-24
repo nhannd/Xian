@@ -9,6 +9,7 @@ namespace ClearCanvas.Ris.Client.SpeechMagic.View.WinForms
 {
     public partial class DictationTextBox : UserControl
     {
+        private DocumentEditMode _editMode;
         private bool _sessionStarted;
         private bool _controlDisposed;
 
@@ -22,12 +23,15 @@ namespace ClearCanvas.Ris.Client.SpeechMagic.View.WinForms
             if (this.DesignMode)
                 return;
 
+            // Set the control initial state
             UpdateApplicationState(State.Uninitialized);
             UpdateAudioState(SmIa.AudioState.astStop);
             UpdateRecognizerMode(RecognizerType.None);
             UpdateRecordedTime(0, 0);
             UpdatePreview("");
 
+            // Set the SM active document to point to editor handle 
+            // Once set, if the particular window is not in focus, the recognized speech should continue to update the editor
             SmIaManager.Instance.SetActiveDocument(_richTextBox.Handle);
 
             SmIaManager.Instance.SessionWarning += OnSessionWarning;
@@ -40,6 +44,7 @@ namespace ClearCanvas.Ris.Client.SpeechMagic.View.WinForms
             SmIaManager.Instance.ProtectDocumentRequested += OnProtectDocumentRequested;
             SmIaManager.Instance.CommandRecognized += OnCommandRecognized;
 
+            // Since there is no 'unload' method, we resort to using this
             this.Disposed += DictationTextBox_Disposed;
 
             // Start the session asynchronously
@@ -48,10 +53,11 @@ namespace ClearCanvas.Ris.Client.SpeechMagic.View.WinForms
                 {
                     try
                     {
-                        OpenSpeechMagicSession(true);
+                        OpenSpeechMagicSession();
                         _sessionStarted = true;
 
-                        // User closes the control while the session is being started
+                        // If user closes the control while the session is being started
+                        // close the session now
                         if (_controlDisposed)
                             CloseSpeechMagicSession();
                         
@@ -84,6 +90,7 @@ namespace ClearCanvas.Ris.Client.SpeechMagic.View.WinForms
             if (_sessionStarted)
                 CloseSpeechMagicSession();
 
+            // Detach events.  Make sure this is matched up with the load event
             SmIaManager.Instance.SessionWarning -= OnSessionWarning;
             SmIaManager.Instance.SessionError -= OnSessionError;
             SmIaManager.Instance.StateChanged -= OnStateChanged;
@@ -95,17 +102,23 @@ namespace ClearCanvas.Ris.Client.SpeechMagic.View.WinForms
             SmIaManager.Instance.CommandRecognized -= OnCommandRecognized;
         }
 
+        #region Public Properties
+        public DocumentEditMode EditMode
+        {
+            get { return _editMode; }
+            set { _editMode = value; }
+        }
         public string Value
         {
             get { return _richTextBox.Text; }
             set { _richTextBox.Text = value; }
         }
-
         public event EventHandler ValueChanged
         {
             add { _richTextBox.TextChanged += value; }
             remove { _richTextBox.TextChanged -= value; }
         }
+        #endregion Design Properties
 
         #region SmIaManager Events
         private void OnSessionWarning(int errorCode)
@@ -191,6 +204,7 @@ namespace ClearCanvas.Ris.Client.SpeechMagic.View.WinForms
 
             // TODO: Protect Document
             // Whenever Protect document is requested, the component should not be closed
+            // User should not be allow to edit the text either
         }
         private void OnCommandRecognized(
             string grammar,
@@ -256,14 +270,10 @@ namespace ClearCanvas.Ris.Client.SpeechMagic.View.WinForms
         }
         #endregion Control & Button Events
 
-        private void OpenSpeechMagicSession(bool openAsAuthor)
+        private void OpenSpeechMagicSession()
         {
-            if (openAsAuthor)
-                SmIaManager.Instance.OpenAsAuthor();
-            else
-                SmIaManager.Instance.OpenAsCorrectionist();
-
-            UpdateDocumentEditMode(openAsAuthor);
+            SmIaManager.Instance.Open(_editMode);
+            UpdateDocumentEditMode(_editMode);
         }
         private void CloseSpeechMagicSession()
         {
@@ -289,11 +299,13 @@ namespace ClearCanvas.Ris.Client.SpeechMagic.View.WinForms
         }
         private void Rewind()
         {
+            _volumeTimer.Start();
             _trackBarTimer.Start();
             SmIaManager.Instance.Rewind();
         }
         private void Forward()
         {
+            _volumeTimer.Start();
             _trackBarTimer.Start();
             SmIaManager.Instance.Forward();
         }
@@ -303,57 +315,20 @@ namespace ClearCanvas.Ris.Client.SpeechMagic.View.WinForms
             _appState.Text = state.ToString();
             _appState.ToolTipText = "Application State";
 
-            _recorderPanel.Enabled = state != State.Uninitialized;
-            _trackBar.Enabled = state == State.Idle || state == State.Initialized;
+            _trackBar.Enabled = state != State.Uninitialized && (state == State.Idle || state == State.Initialized);
 
-            switch (state)
-            {
-                case State.Uninitialized:
-                    break;
-                case State.Idle:
-                case State.Initialized:
-                    _recordButton.Enabled = true;
-                    _playButton.Enabled = true;
-                    _stopButton.Enabled = false;
-                    _rewindButton.Enabled = true;
-                    _forwardButton.Enabled = true;
-                    break;
-                case State.Recording:
-                    _recordButton.Enabled = false;
-                    _playButton.Enabled = false;
-                    _stopButton.Enabled = true;
-                    _rewindButton.Enabled = false;
-                    _forwardButton.Enabled = false;
-                    break;
-                case State.Playing:
-                    _recordButton.Enabled = false;
-                    _playButton.Enabled = false;
-                    _stopButton.Enabled = true;
-                    _rewindButton.Enabled = false;
-                    _forwardButton.Enabled = false;
-                    break;
-                case State.Stopping:
-                    _recordButton.Enabled = false;
-                    _playButton.Enabled = false;
-                    _stopButton.Enabled = false;
-                    _rewindButton.Enabled = false;
-                    _forwardButton.Enabled = false;
-                    break;
-                case State.Winding:
-                    _recordButton.Enabled = false;
-                    _playButton.Enabled = false;
-                    _stopButton.Enabled = true;
-                    _rewindButton.Enabled = false;
-                    _forwardButton.Enabled = false;
-                    break;
-                default:
-                    break;
-            }
+            // Recorder button status
+            _recorderPanel.Enabled = state != State.Uninitialized;
+
+            _recordButton.Enabled = _playButton.Enabled = _rewindButton.Enabled = _forwardButton.Enabled
+                = (state == State.Idle || state == State.Initialized);
+
+            _stopButton.Enabled = (state == State.Recording || state == State.Playing);
         }
         private void UpdateTrackBar(int value, int maximum)
         {
-            _trackBar.Maximum = maximum;
             _trackBar.Value = value;
+            _trackBar.Maximum = maximum;
             UpdateRecordedTime(value, maximum);
         }
         private void UpdateRecordedTime(int value, int maximum)
@@ -368,9 +343,9 @@ namespace ClearCanvas.Ris.Client.SpeechMagic.View.WinForms
 
             _volumeMeter.Value = vol;
         }
-        private void UpdateDocumentEditMode(bool openAsAuthor)
+        private void UpdateDocumentEditMode(DocumentEditMode mode)
         {
-            if (openAsAuthor)
+            if (mode == DocumentEditMode.Author)
             {
                 _documentEditMode.Image = SR.Author.ToBitmap();
                 _documentEditMode.Text = "";
