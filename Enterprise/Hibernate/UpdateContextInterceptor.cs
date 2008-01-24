@@ -41,6 +41,7 @@ using ClearCanvas.Common.Specifications;
 using System.Collections;
 using ClearCanvas.Common.Utilities;
 using System.Reflection;
+using NHibernate.Type;
 
 namespace ClearCanvas.Enterprise.Hibernate
 {
@@ -73,7 +74,10 @@ namespace ClearCanvas.Enterprise.Hibernate
         /// <param name="types"></param>
         public override void OnDelete(object entity, object id, object[] state, string[] propertyNames, NHibernate.Type.IType[] types)
         {
-            RecordChange(entity, EntityChangeType.Delete);
+            // build a list of property diffs
+            // the current state is "null" since the entity was deleted
+            PropertyDiff[] propertyDiffs = GetPropertyDiffs(propertyNames, types, null, state);
+            RecordChange(entity, EntityChangeType.Delete, propertyDiffs);
         }
 
         /// <summary>
@@ -93,27 +97,23 @@ namespace ClearCanvas.Enterprise.Hibernate
             // currentState and previousState parameters will reflect only the changes
             // to the entity that have occured since the last time this method was called.
 
-            // As a matter of optimization, build a list of dirty properties so that rather than testing every
-            // validation rule we can selectively test only those rules that may be affected by the modified state
-            List<string> dirtyProperties = new List<string>();
-            int propertyCount = propertyNames.Length;
-            for (int i = 0; i < propertyCount; i++)
-            {
-                // check if the property is dirty
-                // note: if the property is a collection, don't bother checking, just assume it may be dirty
-                // the reason is that the cost of checking if the collection is dirty may be equal to or even greater than
-                // the cost of re-validating it
-                if (types[i] is NHibernate.Collection.IPersistentCollection || !object.Equals(currentState[i], previousState[i]))
-                {
-                    dirtyProperties.Add(propertyNames[i]);
-                }
-            }
+            // build a list of property diffs
+            PropertyDiff[] propertyDiffs = GetPropertyDiffs(propertyNames, types, currentState, previousState);
+
+
+            // Build a list of dirty properties for validation
+            // include collection properties even if not dirty, because we can't rely on the Equals for collections
+            List<PropertyDiff> dirtyProperties = CollectionUtils.Select(propertyDiffs,
+                delegate(PropertyDiff diff) { return diff.IsCollectionProperty || diff.IsChanged; });
 
             // validate the entity prior to flush, passing the list of dirty properties 
             // in order to optimize which rules are tested
-            Validate(entity, dirtyProperties);
+            // rather than testing every validation rule we can selectively test only those rules
+            // that may be affected by the modified state
+            Validate(entity, CollectionUtils.Map<PropertyDiff, string>(dirtyProperties,
+                delegate(PropertyDiff pc) { return pc.PropertyName; }));
 
-            RecordChange(entity, EntityChangeType.Update);
+            RecordChange(entity, EntityChangeType.Update, propertyDiffs);
             return false;
         }
 
@@ -139,7 +139,10 @@ namespace ClearCanvas.Enterprise.Hibernate
             // not to validate the entity here, but instead put it in a queue to be validated at flush time
             _pendingValidations.Enqueue((DomainObject)entity);
 
-            RecordChange(entity, EntityChangeType.Create);
+            // build a list of property diffs
+            // the previous state is "null" since the entity was just created
+            PropertyDiff[] propertyDiffs = GetPropertyDiffs(propertyNames, types, state, null);
+            RecordChange(entity, EntityChangeType.Create, propertyDiffs);
             return false;
 
         }
@@ -172,7 +175,7 @@ namespace ClearCanvas.Enterprise.Hibernate
 
         #endregion
 
-        private void RecordChange(object domainObject, EntityChangeType changeType)
+        private void RecordChange(object domainObject, EntityChangeType changeType, PropertyDiff[] propertyDiffs)
         {
             // ignore changes to enum values for now
             // TODO: should probably record changes to enum values as well
@@ -180,7 +183,7 @@ namespace ClearCanvas.Enterprise.Hibernate
                 return;
 
             Entity entity = (Entity)domainObject;
-            _changeTracker.RecordChange(entity, changeType);
+            _changeTracker.RecordChange(entity, changeType, propertyDiffs);
         }
 
         private void Validate(object domainObject, List<string> dirtyProperties)
@@ -221,6 +224,18 @@ namespace ClearCanvas.Enterprise.Hibernate
             // if the rule is bound to any properties that are dirty, return true
             return CollectionUtils.Contains((rule as IPropertyBoundRule).Properties,
                         delegate(PropertyInfo prop) { return dirtyProperties.Contains(prop.Name); });
+        }
+
+        private PropertyDiff[] GetPropertyDiffs(string[] propertyNames, IType[] types, object[] currentState, object[] previousState)
+        {
+            PropertyDiff[] diffs = new PropertyDiff[propertyNames.Length];
+            for(int i = 0; i < diffs.Length; i++)
+            {
+                object oldValue = previousState == null ? null : previousState[i];
+                object newValue = currentState == null ? null : currentState[i];
+                diffs[i] = new PropertyDiff(propertyNames[i], types[i], oldValue, newValue);
+            }
+            return diffs;
         }
     }
 }

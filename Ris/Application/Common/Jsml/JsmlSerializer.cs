@@ -99,33 +99,6 @@ namespace ClearCanvas.Ris.Application.Common.Jsml
             return (object)DeserializeHelper(dataContract, xmlDoc.DocumentElement);
         }
 
-        public static DateTime? ParseIsoDateTime(string isoDateString)
-        {
-            if (String.IsNullOrEmpty(isoDateString))
-                return null;
-
-            int y = int.Parse(isoDateString.Substring(0, 4));
-            int m = int.Parse(isoDateString.Substring(5, 2));
-            int d = int.Parse(isoDateString.Substring(8, 2));
-            int h = int.Parse(isoDateString.Substring(11, 2));
-            int n = int.Parse(isoDateString.Substring(14, 2));
-            int s = int.Parse(isoDateString.Substring(17, 2));
-
-            return new DateTime(y, m, d, h, n, s);
-        }
-
-        public static string GetIsoDateTime(DateTime dt)
-        {
-            string isoDateTime = String.Format("{0}-{1}-{2}T{3}:{4}:{5}",
-                dt.Year,
-                PrefixWithZero(dt.Month),
-                PrefixWithZero(dt.Day),
-                PrefixWithZero(dt.Hour),
-                PrefixWithZero(dt.Minute),
-                PrefixWithZero(dt.Second));
-
-            return isoDateTime;
-        }
 
         #region Private Helpers
 
@@ -170,11 +143,11 @@ namespace ClearCanvas.Ris.Application.Common.Jsml
             }
             else if (dataObject is DateTime)
             {
-                writer.WriteElementString(objectName, GetIsoDateTime((DateTime)dataObject));
+                writer.WriteElementString(objectName, DateTimeUtils.FormatISO((DateTime)dataObject));
             }
             else if (dataObject is DateTime?)
             {
-                writer.WriteElementString(objectName, GetIsoDateTime(((DateTime?)dataObject).Value));
+                writer.WriteElementString(objectName, DateTimeUtils.FormatISO(((DateTime?)dataObject).Value));
             }
             else if (dataObject is bool)
             {
@@ -237,7 +210,7 @@ namespace ClearCanvas.Ris.Application.Common.Jsml
             }
             else if (dataType == typeof(DateTime) || dataType == typeof(DateTime?))
             {
-                dataObject = ParseIsoDateTime(xmlElement.InnerText);
+                dataObject = DateTimeUtils.ParseISO(xmlElement.InnerText);
             }
             else if (dataType == typeof(bool))
             {

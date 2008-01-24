@@ -29,69 +29,37 @@
 
 #endregion
 
+#if UNIT_TESTS
+
+#pragma warning disable 1591
+
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Runtime.Serialization;
+using NUnit.Framework;
 
-namespace ClearCanvas.Enterprise.Common
+namespace ClearCanvas.Common.Utilities.Tests
 {
-    /// <summary>
-    /// Used by class <see cref="EntityChange"/> to record the type of change made to an entity.
-    /// </summary>
-    [Serializable]
-    public enum EntityChangeType
+    [TestFixture]
+    public class DateTimeUtilsTests
     {
-        Update = 0,
-        Create = 1,
-        Delete = 2
-    }
-    
-    /// <summary>
-    /// Represents a change made to an entity.
-    /// </summary>
-    [DataContract]
-    public class EntityChange
-    {
-        private readonly EntityRef _entityRef;
-        private readonly EntityChangeType _changeType;
-        private readonly PropertyChange[] _propertyChanges;
-
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        public EntityChange(EntityRef entityRef, EntityChangeType changeType, PropertyChange[] propertyChanges)
+        public DateTimeUtilsTests()
         {
-            _entityRef = entityRef;
-            _changeType = changeType;
-            _propertyChanges = propertyChanges;
         }
 
-        /// <summary>
-        /// Reference to the entity that changed
-        /// </summary>
-        [DataMember]
-        public EntityRef EntityRef
+        [Test]
+        public void TestFormatISO()
         {
-            get { return _entityRef; }
+            DateTime date1 = new DateTime(2008, 4, 10, 6, 30, 0);
+            Assert.AreEqual("2008-04-10T06:30:00", DateTimeUtils.FormatISO(date1));
         }
 
-        /// <summary>
-        /// The type of change
-        /// </summary>
-        [DataMember]
-        public EntityChangeType ChangeType
+        [Test]
+        public void TestParseISO()
         {
-            get { return _changeType; }
-        }
-
-        /// <summary>
-        /// Gets an array of <see cref="PropertyChange"/> objects describing the changes
-        /// made to the entity's property values.
-        /// </summary>
-        public PropertyChange[] PropertyChanges
-        {
-            get { return _propertyChanges; }
+            string s = "2008-04-10T06:30:00";
+            DateTime date1 = new DateTime(2008, 4, 10, 6, 30, 0);
+            Assert.AreEqual(date1, DateTimeUtils.ParseISO(s));
         }
     }
 }
+
+#endif

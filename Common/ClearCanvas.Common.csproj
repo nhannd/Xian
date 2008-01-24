@@ -223,6 +223,7 @@
     <Compile Include="Utilities\BackgroundTask.cs" />
     <Compile Include="Utilities\BlockingQueue.cs" />
     <Compile Include="Utilities\CodeClock.cs" />
+    <Compile Include="Utilities\DateTimeUtils.cs" />
     <Compile Include="Utilities\FileSystem.cs" />
     <Compile Include="Utilities\ListEventArgs.cs" />
     <Compile Include="Utilities\CollectionUtils.cs" />
@@ -234,6 +235,7 @@
     <Compile Include="Utilities\BlockingThreadPool.cs" />
     <Compile Include="Utilities\StringUtilities.cs" />
     <Compile Include="Utilities\Tests\CollectionUtilsTests.cs" />
+    <Compile Include="Utilities\Tests\DateTimeUtilsTests.cs" />
     <Compile Include="Utilities\Tests\StringUtilitiesTests.cs" />
     <Compile Include="Utilities\Tests\ThreadPoolTests.cs" />
     <Compile Include="Utilities\ThreadPoolBase.cs" />

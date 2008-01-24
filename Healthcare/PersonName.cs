@@ -53,7 +53,23 @@ namespace ClearCanvas.Healthcare {
 
         public string ToString(string format, IFormatProvider formatProvider)
         {
-            return string.Format("{0}, {1} {2}", _familyName, _givenName, _middleName).Trim();
+            //TODO: honour format string
+
+            StringBuilder sb = new StringBuilder();
+            sb.Append(_familyName).Append(",");
+
+            if (!string.IsNullOrEmpty(_prefix))
+                sb.Append(" ").Append(_prefix);
+
+            sb.Append(" ").Append(_givenName);
+
+            if (!string.IsNullOrEmpty(_middleName))
+                sb.Append(" ").Append(_middleName);
+
+            if (!string.IsNullOrEmpty(_suffix))
+                sb.Append(" ").Append(_suffix);
+
+            return sb.ToString();
         }
 
         #endregion
