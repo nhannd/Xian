@@ -119,19 +119,19 @@ namespace ClearCanvas.Ris.Client
 
             public string FormatDate(string isoDateString)
             {
-                DateTime? dt = JsmlSerializer.ParseIsoDateTime(isoDateString);
+                DateTime? dt = DateTimeUtils.ParseISO(isoDateString);
                 return dt == null ? "" : Format.Date(dt);
             }
 
             public string FormatTime(string isoDateString)
             {
-                DateTime? dt = JsmlSerializer.ParseIsoDateTime(isoDateString);
+                DateTime? dt = DateTimeUtils.ParseISO(isoDateString);
                 return dt == null ? "" : Format.Time(dt);
             }
 
             public string FormatDateTime(string isoDateString)
             {
-                DateTime? dt = JsmlSerializer.ParseIsoDateTime(isoDateString);
+                DateTime? dt = DateTimeUtils.ParseISO(isoDateString);
                 return dt == null ? "" : Format.DateTime(dt);
             }
 
