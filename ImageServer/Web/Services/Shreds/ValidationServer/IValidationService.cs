@@ -29,53 +29,22 @@
 
 #endregion
 
-using System;
-using System.IO;
-using System.Threading;
+using System.ServiceModel;
 
-namespace ClearCanvas.Common.Utilities
+namespace ClearCanvas.ImageServer.Web.Services.Shreds.ValidationServer
 {
     /// <summary>
-    /// Helper class to deal with file systems.
+    /// Validation Service interface.
     /// </summary>
-    public class FileSystem
+    [ServiceContract(ConfigurationName="ValidationService")]
+    public interface IValidationService
     {
-       
-        #region Static Methods
-
-
         /// <summary>
-        /// Checks if a specified directory exists on the network and accessible from local machine.
+        /// Allows clients to check for existence of a specified path.
         /// </summary>
-        /// <param name="dir"></param>
-        /// <param name="timeout"></param>
+        /// <param name="path"></param>
         /// <returns></returns>
-        public static bool DirectoryExists(String dir, int timeout)
-        {
-            bool exists = false;
-
-            
-            if (timeout > 0)
-            {
-                Thread t = new Thread(delegate()
-                                      {
-                                          exists = Directory.Exists(dir);
-                                      });
-
-                t.Start();
-                t.Join(timeout);
-                t.Abort();
-            }
-            else
-            {
-                exists = Directory.Exists(dir);
-            }
-            
-
-            return exists;
-        }
-
-
-        #endregion Static Methods
+        [OperationContract]
+        ValidationResult CheckPath(string path);
     }
 }

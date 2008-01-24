@@ -29,12 +29,14 @@
 
 #endregion
 
+using System;
 using System.IO;
 using System.Net;
 using System.Web.Script.Services;
 using System.Web.Services;
 using System.ComponentModel;
 using ClearCanvas.Common;
+using ClearCanvas.ImageServer.Web.Application.ValidationServerProxy;
 
 namespace ClearCanvas.ImageServer.Web.Application.Services
 {
@@ -53,26 +55,32 @@ namespace ClearCanvas.ImageServer.Web.Application.Services
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
+        /// <remarks>
+        /// </remarks>
         [WebMethod]
         public ValidationResult ValidateFilesystemPath(string path)
         {
-            ValidationResult res = new ValidationResult();
+            // This web service in turns call a WCF service which resides on the same or different systems.
 
-            // note: this call requires ASP.NET process to be run under a user account with 
-            // the right access permission to the specified path. The account should be set in the web.config
-            // <impersonate> section
-            if (Directory.Exists(path))
+            ValidationResult res = new  ValidationResult();
+
+            try
             {
-                res.Success = true;
+                ValidationServiceClient service = new ValidationServiceClient();
+                service.Open();
+                res = service.CheckPath(path);
+                service.Close();
             }
-            else
+            catch(Exception ex)
             {
-                IPHostEntry local = Dns.GetHostEntry("");
-                res.ErrorText = "Path " + path + " doesn't exist OR is not accessible from " + local.HostName;
+                Platform.Log(LogLevel.Error, "ValidationService ValidateFilesystemPath failed: {0}", ex.StackTrace);
+
                 res.Success = false;
-                res.ErrorCode = -1;
+                res.ErrorCode = -5000;
+                res.ErrorText = "Validation Service is not available at this time.";
+                
             }
-
+            
             return res;
         }
     }

@@ -4,6 +4,7 @@ using System.Text;
 using System.Web.UI;
 using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageServer.Web.Common.WebControls
 {
@@ -33,6 +34,8 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
             get { return _servicePath; }
             set { _servicePath = value; }
         }
+
+        
 
         /// <summary>
         /// Name of the service operation
@@ -117,8 +120,8 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
         #region Protected Methods
         protected override void OnInit(EventArgs e)
         {
+
             base.OnInit(e);
-           
             
             RegisterWebServiceScripts();
 
@@ -198,6 +201,17 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
 
                                 if (!result.Success)
                                 {
+
+                                    if (result.ErrorCode == -5000)
+                                    {
+                                        var ans = window.confirm('Unable to validate " + InputName + @" : ' + result.ErrorText + '\nDo you want to ignore it? You can re-validate it in the future');
+                                        if (ans)
+                                        {
+                                            return true;
+                                        }
+                                    }
+
+                                    
                                     control.style.backgroundColor = '" + InvalidInputBackColor + @"';
                                     helpCtrl = document.getElementById('" + GetControlRenderID(PopupHelpControlID) + @"');
 

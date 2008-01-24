@@ -30,52 +30,48 @@
 #endregion
 
 using System;
-using System.IO;
-using System.Threading;
+using ClearCanvas.Common;
+using ClearCanvas.Server.ShredHost;
 
-namespace ClearCanvas.Common.Utilities
+namespace ClearCanvas.ImageServer.Web.Services.Shreds.ValidationServer
 {
     /// <summary>
-    /// Helper class to deal with file systems.
+    /// Plugin to handle data validation on the Web UI or any other applications.
     /// </summary>
-    public class FileSystem
+    /// 
+    [ExtensionOf(typeof(ShredExtensionPoint))]
+    public class ValidationServerExtension : WcfShred
     {
-       
-        #region Static Methods
-
-
-        /// <summary>
-        /// Checks if a specified directory exists on the network and accessible from local machine.
-        /// </summary>
-        /// <param name="dir"></param>
-        /// <param name="timeout"></param>
-        /// <returns></returns>
-        public static bool DirectoryExists(String dir, int timeout)
+        #region IShred Implementation Shred Override
+        public override void Start()
         {
-            bool exists = false;
-
-            
-            if (timeout > 0)
+            try
             {
-                Thread t = new Thread(delegate()
-                                      {
-                                          exists = Directory.Exists(dir);
-                                      });
-
-                t.Start();
-                t.Join(timeout);
-                t.Abort();
+                ServiceEndpointDescription sed = StartHttpHost<ValidationService, IValidationService>(SR.ValidationServerName, SR.ValidationServerDescription);
+                
             }
-            else
+            catch (Exception e)
             {
-                exists = Directory.Exists(dir);
+                Platform.Log(LogLevel.Error, "Failed to start Validation Server: {0}", e.StackTrace);
+                
             }
-            
-
-            return exists;
         }
 
+        public override void Stop()
+        {
+            StopHost(SR.ValidationServerName);
+        }
 
-        #endregion Static Methods
+        public override string GetDisplayName()
+        {
+            return SR.ValidationServerName;
+        }
+
+        public override string GetDescription()
+        {
+            return SR.ValidationServerDescription;
+        }
+
+        #endregion
     }
 }

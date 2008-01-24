@@ -29,53 +29,47 @@
 
 #endregion
 
-using System;
-using System.IO;
-using System.Threading;
 
-namespace ClearCanvas.Common.Utilities
+using System.Net;
+using System.ServiceModel;
+using ClearCanvas.Common;
+
+namespace ClearCanvas.ImageServer.Web.Services.Shreds.ValidationServer
 {
     /// <summary>
-    /// Helper class to deal with file systems.
+    /// WCF service for data validation.
     /// </summary>
-    public class FileSystem
+    [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerCall)]
+    public class ValidationService : IValidationService
     {
-       
-        #region Static Methods
 
+        #region IValidationServerService Members
 
-        /// <summary>
-        /// Checks if a specified directory exists on the network and accessible from local machine.
-        /// </summary>
-        /// <param name="dir"></param>
-        /// <param name="timeout"></param>
-        /// <returns></returns>
-        public static bool DirectoryExists(String dir, int timeout)
+        public ValidationResult CheckPath(string path)
         {
-            bool exists = false;
 
+            Platform.Log(LogLevel.Debug, "ValidationService: validating {0}" , path); 
             
-            if (timeout > 0)
+            ValidationResult res = new ValidationResult();
+            if (ClearCanvas.Common.Utilities.FileSystem.DirectoryExists(path, 1000))
             {
-                Thread t = new Thread(delegate()
-                                      {
-                                          exists = Directory.Exists(dir);
-                                      });
-
-                t.Start();
-                t.Join(timeout);
-                t.Abort();
+                Platform.Log(LogLevel.Debug, "ValidationService: {0} exists " , path); 
+                res.Success = true;
             }
             else
             {
-                exists = Directory.Exists(dir);
+                Platform.Log(LogLevel.Debug, "ValidationService: {0} doesn't exist or is not accessible", path); 
+                
+                IPHostEntry local = Dns.GetHostEntry("");
+                res.ErrorText = "The specified path: " + path + " doesn't exist OR is not accessible from " + local.HostName;
+                res.Success = false;
+                res.ErrorCode = -1;
+                
             }
-            
 
-            return exists;
+            return res;
         }
 
-
-        #endregion Static Methods
+        #endregion
     }
 }

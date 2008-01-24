@@ -29,16 +29,12 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
-using System.ServiceModel.Description;
 
 namespace ClearCanvas.Server.ShredHost
 {
-    internal class ServiceEndpointDescription
+    public class ServiceEndpointDescription
     {
         public ServiceEndpointDescription(string name, string description)
         {

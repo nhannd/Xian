@@ -42,7 +42,8 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
         // the background color of the input when the validation fails.
         private string _invalidInputBackColor;
 
-        
+        private string _inputName;
+
         protected string EvalFunctionName
         {
             get { return ClientID + "_Evaluation"; }
@@ -52,6 +53,18 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
         {
             get { return _popupHelpControlID; }
             set { _popupHelpControlID = value; }
+        }
+
+        public string InputName
+        {
+            get
+            {
+                if (String.IsNullOrEmpty(_inputName))
+                    return ControlToValidate;
+
+                return _inputName;
+            }
+            set { _inputName = value; }
         }
 
         /// <summary>

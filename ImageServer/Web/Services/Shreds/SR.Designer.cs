@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.ImageServer.Services.Shreds {
+namespace ClearCanvas.ImageServer.Web.Services.Shreds {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace ClearCanvas.ImageServer.Services.Shreds {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ClearCanvas.ImageServer.Services.Shreds.SR", typeof(SR).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ClearCanvas.ImageServer.Web.Services.Shreds.SR", typeof(SR).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,56 +61,20 @@ namespace ClearCanvas.ImageServer.Services.Shreds {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Dicom Server.
+        ///   Looks up a localized string similar to Provide validation services.
         /// </summary>
-        internal static string DicomServer {
+        internal static string ValidationServerDescription {
             get {
-                return ResourceManager.GetString("DicomServer", resourceCulture);
+                return ResourceManager.GetString("ValidationServerDescription", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Dicom Server.
+        ///   Looks up a localized string similar to ValidationServer.
         /// </summary>
-        internal static string DicomServerDescription {
+        internal static string ValidationServerName {
             get {
-                return ResourceManager.GetString("DicomServerDescription", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to ServiceLock Server.
-        /// </summary>
-        internal static string ServiceLockServer {
-            get {
-                return ResourceManager.GetString("ServiceLockServer", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to ServiceLock Server.
-        /// </summary>
-        internal static string ServiceLockServerDescription {
-            get {
-                return ResourceManager.GetString("ServiceLockServerDescription", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Work Queue Server.
-        /// </summary>
-        internal static string WorkQueueServer {
-            get {
-                return ResourceManager.GetString("WorkQueueServer", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Work Queue Server.
-        /// </summary>
-        internal static string WorkQueueServerDescription {
-            get {
-                return ResourceManager.GetString("WorkQueueServerDescription", resourceCulture);
+                return ResourceManager.GetString("ValidationServerName", resourceCulture);
             }
         }
     }

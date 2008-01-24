@@ -79,6 +79,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Enterprise.Comm
 		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageServer.Web.Services.Shreds", "Services\Shreds\ClearCanvas.ImageServer.Web.Services.Shreds.csproj", "{5BDFEC40-D19E-41BC-B10A-C7D2D5E0C09A}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|.NET = Debug|.NET
@@ -209,6 +215,16 @@ Global
 		{B5EBFFD7-6641-4932-91C9-4C4322B41868}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B5EBFFD7-6641-4932-91C9-4C4322B41868}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{B5EBFFD7-6641-4932-91C9-4C4322B41868}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{5BDFEC40-D19E-41BC-B10A-C7D2D5E0C09A}.Debug|.NET.ActiveCfg = Debug|Any CPU
+		{5BDFEC40-D19E-41BC-B10A-C7D2D5E0C09A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5BDFEC40-D19E-41BC-B10A-C7D2D5E0C09A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5BDFEC40-D19E-41BC-B10A-C7D2D5E0C09A}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{5BDFEC40-D19E-41BC-B10A-C7D2D5E0C09A}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{5BDFEC40-D19E-41BC-B10A-C7D2D5E0C09A}.Release|.NET.ActiveCfg = Release|Any CPU
+		{5BDFEC40-D19E-41BC-B10A-C7D2D5E0C09A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5BDFEC40-D19E-41BC-B10A-C7D2D5E0C09A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5BDFEC40-D19E-41BC-B10A-C7D2D5E0C09A}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{5BDFEC40-D19E-41BC-B10A-C7D2D5E0C09A}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

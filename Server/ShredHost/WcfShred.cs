@@ -31,19 +31,17 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.ServiceModel;
-using System.ServiceModel.Channels;
-using System.ServiceModel.Description;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.Server.ShredHost
 {
     public abstract class WcfShred : Shred, IWcfShred
     {
-		public WcfShred()
+        public WcfShred()
         {
-            _serviceEndpointDescriptions = new Dictionary<string,ServiceEndpointDescription>();
+            _serviceEndpointDescriptions = new Dictionary<string, ServiceEndpointDescription>();
         }
+
 
         public override object InitializeLifetimeService()
         {
@@ -53,77 +51,118 @@ namespace ClearCanvas.Server.ShredHost
             return null;
         }
 
-		public void StartHttpHost<TServiceType, TServiceInterfaceType>(string name, string description)
-		{
-			if (_serviceEndpointDescriptions.ContainsKey(name))
-				throw new Exception(String.Format("The service endpoint '{0}' already exists.", name));
 
-			ServiceEndpointDescription sed = WcfHelper.StartHttpHost<TServiceType, TServiceInterfaceType>(name, description, this.SharedHttpPort);
-			_serviceEndpointDescriptions[name] = sed;
-		}
-
-		public void StartHttpDualHost<TServiceType, TServiceInterfaceType>(string name, string description)
-		{
-			if (_serviceEndpointDescriptions.ContainsKey(name))
-				throw new Exception(String.Format("The service endpoint '{0}' already exists.", name));
-
-			ServiceEndpointDescription sed = WcfHelper.StartHttpDualHost<TServiceType, TServiceInterfaceType>(name, description, this.SharedHttpPort);
-			_serviceEndpointDescriptions[name] = sed;
-		}
-
-		public void StartNetTcpHost<TServiceType, TServiceInterfaceType>(string name, string description)
-		{
-			if (_serviceEndpointDescriptions.ContainsKey(name))
-				throw new Exception(String.Format("The service endpoint '{0}' already exists.", name));
-
-			ServiceEndpointDescription sed = WcfHelper.StartNetTcpHost<TServiceType, TServiceInterfaceType>(name, description, this.SharedTcpPort, this.SharedHttpPort);
-			_serviceEndpointDescriptions[name] = sed;
-		}
-
-		public void StartNetPipeHost<TServiceType, TServiceInterfaceType>(string name, string description)
-		{
-			if (_serviceEndpointDescriptions.ContainsKey(name))
-				throw new Exception(String.Format("The service endpoint '{0}' already exists.", name));
-
-			ServiceEndpointDescription sed = WcfHelper.StartNetPipeHost<TServiceType, TServiceInterfaceType>(name, description, this.SharedHttpPort);
-			_serviceEndpointDescriptions[name] = sed;
-		}
-		
-		protected void StopHost(string name)
+        public ServiceEndpointDescription StartHttpHost<TServiceType, TServiceInterfaceType>(string name, string description)
         {
+            Platform.Log(LogLevel.Info, "Starting WCF Shred {0}...", name);
+
+            if (_serviceEndpointDescriptions.ContainsKey(name))
+                throw new Exception(String.Format("The service endpoint '{0}' already exists.", name));
+
+            ServiceEndpointDescription sed =
+                WcfHelper.StartHttpHost<TServiceType, TServiceInterfaceType>(name, description, SharedHttpPort);
+            _serviceEndpointDescriptions[name] = sed;
+
+            Platform.Log(LogLevel.Info, "WCF Shred {0} is listening at {1}.", name, sed.ServiceHost.BaseAddresses[0]);
+
+            return sed;
+        }
+
+        public ServiceEndpointDescription StartHttpDualHost<TServiceType, TServiceInterfaceType>(string name,
+                                                                                                 string description)
+        {
+            Platform.Log(LogLevel.Info, "Starting WCF Shred {0}...", name);
+
+            if (_serviceEndpointDescriptions.ContainsKey(name))
+                throw new Exception(String.Format("The service endpoint '{0}' already exists.", name));
+
+            ServiceEndpointDescription sed =
+                WcfHelper.StartHttpDualHost<TServiceType, TServiceInterfaceType>(name, description, SharedHttpPort);
+            _serviceEndpointDescriptions[name] = sed;
+
+            Platform.Log(LogLevel.Info, "WCF Shred {0} is listening at {1}.", name, sed.ServiceHost.BaseAddresses[0]);
+
+            return sed;
+        }
+
+        public ServiceEndpointDescription StartNetTcpHost<TServiceType, TServiceInterfaceType>(string name,
+                                                                                               string description)
+        {
+            Platform.Log(LogLevel.Info, "Starting WCF Shred {0}...", name);
+
+            if (_serviceEndpointDescriptions.ContainsKey(name))
+                throw new Exception(String.Format("The service endpoint '{0}' already exists.", name));
+
+            ServiceEndpointDescription sed =
+                WcfHelper.StartNetTcpHost<TServiceType, TServiceInterfaceType>(name, description, SharedTcpPort, SharedHttpPort);
+            _serviceEndpointDescriptions[name] = sed;
+
+            Platform.Log(LogLevel.Info, "WCF Shred {0}is listening at {1}.", name, sed.ServiceHost.BaseAddresses[0]);
+
+
+            return sed;
+        }
+
+        public ServiceEndpointDescription StartNetPipeHost<TServiceType, TServiceInterfaceType>(string name,
+                                                                                                string description)
+        {
+            Platform.Log(LogLevel.Info, "Starting WCF Shred {0}...", name);
+
+            if (_serviceEndpointDescriptions.ContainsKey(name))
+                throw new Exception(String.Format("The service endpoint '{0}' already exists.", name));
+
+            ServiceEndpointDescription sed =
+                WcfHelper.StartNetPipeHost<TServiceType, TServiceInterfaceType>(name, description, SharedHttpPort);
+            _serviceEndpointDescriptions[name] = sed;
+
+
+            Platform.Log(LogLevel.Info, "WCF Shred {0} is listening at {1}.", name, sed.ServiceHost.BaseAddresses[0]);
+
+            return sed;
+        }
+
+        protected void StopHost(string name)
+        {
+            Platform.Log(LogLevel.Info, "Stopping WCF Shred {0}...", name);
+
             if (_serviceEndpointDescriptions.ContainsKey(name))
             {
                 _serviceEndpointDescriptions[name].ServiceHost.Close();
                 _serviceEndpointDescriptions.Remove(name);
+
+                Platform.Log(LogLevel.Info, "WCF Shred {0} Stopped", name);
             }
             else
             {
                 // TODO: throw an exception, since a name of a service endpoint that is
                 // passed in here that doesn't exist should be considered a programming error
+                Platform.Log(LogLevel.Debug, "Attempt to stop WCF Shred {0} failed: shred doesn't exist.", name);
             }
         }
 
-		#region Private Members
+        #region Private Members
+
         private Dictionary<string, ServiceEndpointDescription> _serviceEndpointDescriptions;
+
         #endregion
 
-		#region IWcfShred Members
-		
-		private int _httpPort;
-		private int _tcpPort;
+        #region IWcfShred Members
 
-		public int SharedHttpPort
-		{
-			get { return _httpPort; }
-			set	{ _httpPort = value; }
-		}
+        private int _httpPort;
+        private int _tcpPort;
 
-		public int SharedTcpPort
-		{
-			get { return _tcpPort; }
-			set	{ _tcpPort = value; }
-		}
+        public int SharedHttpPort
+        {
+            get { return _httpPort; }
+            set { _httpPort = value; }
+        }
 
-		#endregion
-	}
+        public int SharedTcpPort
+        {
+            get { return _tcpPort; }
+            set { _tcpPort = value; }
+        }
+
+        #endregion
+    }
 }

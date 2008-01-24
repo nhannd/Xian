@@ -30,14 +30,18 @@
 #endregion
 
 using System;
+using System.Runtime.Serialization;
 
-namespace ClearCanvas.ImageServer.Web.Application.Services
+namespace ClearCanvas.ImageServer.Web.Services.Shreds.ValidationServer
 {
     /// <summary>
     /// Contains result of a validation.
     /// </summary>
+    [DataContract]
     public class ValidationResult
     {
+        public const int ERRORCODE_SERVICENOTAVAILABLE = -5000;
+
         #region Private Members
 
         private bool _success;
@@ -51,6 +55,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Services
         /// <summary>
         /// Indicate the validation passes or fails.
         /// </summary>
+        [DataMember(Name="Success")]
         public bool Success
         {
             get { return _success; }
@@ -60,6 +65,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Services
         /// <summary>
         /// Validation failure code.
         /// </summary>
+        [DataMember]
         public int ErrorCode
         {
             get { return _errorCode; }
@@ -69,6 +75,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Services
         /// <summary>
         /// Validation failture message (reason)
         /// </summary>
+        [DataMember]
         public string ErrorText
         {
             get { return _errorText; }

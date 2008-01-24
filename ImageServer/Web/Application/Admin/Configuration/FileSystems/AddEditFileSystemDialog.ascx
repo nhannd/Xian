@@ -50,7 +50,7 @@
                                                     BorderWidth="1px" ValidationGroup="vg1" MaxLength="256"></asp:TextBox>
                                                 <asp:Image ID="PathHelpImage" runat="server" ImageAlign="bottom" ImageUrl="~/images/icons/HelpSmall.png"
                                                     Style="visibility: hidden" />
-                                                <clearcanvas:WebServiceValidator runat="server" ID="PathValidator" ControlToValidate="PathTextBox"
+                                                <clearcanvas:WebServiceValidator runat="server" ID="PathValidator" ControlToValidate="PathTextBox" InputName="Filesystem Path"
                                                     InvalidInputBackColor="#FAFFB5" PopupHelpControlID="PathHelpImage" ServicePath="/Services/ValidationServices.asmx"
                                                     ServiceOperation="ValidateFilesystemPath" ParamsFunction="ValidationFilesystemPathParams"
                                                     Display="None" ValidationGroup="vg1" />
