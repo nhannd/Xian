@@ -1,8 +1,0 @@
-<Project DefaultTargets="BuildSolution" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-  </PropertyGroup>
-  <Target Name="BuildSolution" >
-    <MSBuild Projects=".\RisClientSpeechMagic.sln" Properties="Configuration=$(Configuration)" />
-  </Target>
-</Project>

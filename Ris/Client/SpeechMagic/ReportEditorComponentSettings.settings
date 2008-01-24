@@ -1,9 +1,0 @@
-﻿<?xml version='1.0' encoding='utf-8'?>
-<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ClearCanvas.Ris.Client.SpeechMagic" GeneratedClassName="ReportEditorComponentSettings">
-  <Profiles />
-  <Settings>
-    <Setting Name="ReportPreviewPageUrl" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">http://localhost/RIS/reportpreview.htm</Value>
-    </Setting>
-  </Settings>
-</SettingsFile>
