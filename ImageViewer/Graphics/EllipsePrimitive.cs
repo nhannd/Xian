@@ -29,32 +29,69 @@
 
 #endregion
 
-using System;
 using System.Drawing;
-using ClearCanvas.Desktop;
-using ClearCanvas.ImageViewer.Graphics;
+using System.Drawing.Drawing2D;
 
-namespace ClearCanvas.ImageViewer.InteractiveGraphics
+namespace ClearCanvas.ImageViewer.Graphics
 {
 	/// <summary>
-	/// A interactive rectangular graphic.
+	/// A primitive ellipse graphic.
 	/// </summary>
-	public class RectangleInteractiveGraphic : BoundableInteractiveGraphic
+	public class EllipsePrimitive : BoundableGraphic
 	{
 		/// <summary>
-		/// Initializes a new instance of <see cref="RectangleInteractiveGraphic"/>.
+		/// Initializes a new instance of <see cref="EllipsePrimitive"/>.
 		/// </summary>
-		/// <param name="userCreated">Indicates whether the graphic was created
-		/// through user interaction.</param>
-		public RectangleInteractiveGraphic(bool userCreated)
-			: base(userCreated)
+		public EllipsePrimitive()
 		{
+				
 		}
 
-		protected override BoundableGraphic CreateBoundableGraphic()
+		/// <summary>
+		/// Performs a hit test on the <see cref="EllipsePrimitive"/> at a given point.
+		/// </summary>
+		/// <param name="point">The mouse position in destination coordinates.</param>
+		/// <returns>
+		/// <b>True</b> if <paramref name="point"/> "hits" the <see cref="RectanglePrimitive"/>,
+		/// <b>false</b> otherwise.
+		/// </returns>
+		/// <remarks>
+		/// A "hit" is defined as when the mouse position is <see cref="VectorGraphic.HitTestDistance"/>
+		/// screen pixels away from any point on the ellipse.
+		/// </remarks>
+		public override bool HitTest(Point point)
 		{
-			return new RectanglePrimitive();
+			GraphicsPath path = new GraphicsPath();
+			this.CoordinateSystem = CoordinateSystem.Destination;
+			path.AddEllipse(this.Rectangle);
+
+			Pen pen = new Pen(Brushes.White, HitTestDistance);
+			bool result = path.IsOutlineVisible(point, pen);
+
+			path.Dispose();
+			pen.Dispose();
+			this.ResetCoordinateSystem();
+
+			return result;
 		}
 
+		/// <summary>
+		/// Returns a value indicating whether the specified point is contained
+		/// in the ellipse.
+		/// </summary>
+		/// <param name="point"></param>
+		/// <returns></returns>
+		public override bool Contains(PointF point)
+		{
+			GraphicsPath path = new GraphicsPath();
+			bool result;
+
+			path.AddEllipse(this.Rectangle);
+			result = path.IsVisible(point);
+
+			path.Dispose();
+
+			return result;
+		}
 	}
 }

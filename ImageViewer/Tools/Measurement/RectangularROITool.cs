@@ -45,28 +45,23 @@ using ClearCanvas.ImageViewer.BaseTools;
 
 namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
-	[MenuAction("activate", "global-menus/MenuTools/MenuMeasurement/MenuRectangularROI", "Select", Flags = ClickActionFlags.CheckAction)]
-	[ButtonAction("activate", "global-toolbars/ToolbarMeasurement/ToolbarRectangularROI", "Select", Flags = ClickActionFlags.CheckAction)]
+	[MenuAction("activate", "global-menus/MenuTools/MenuMeasurement/MenuRectangularRoi", "Select", Flags = ClickActionFlags.CheckAction)]
+	[ButtonAction("activate", "global-toolbars/ToolbarMeasurement/ToolbarRectangularRoi", "Select", Flags = ClickActionFlags.CheckAction)]
     [CheckedStateObserver("activate", "Active", "ActivationChanged")]
 	[TooltipValueObserver("activate", "Tooltip", "TooltipChanged")]
-	[IconSet("activate", IconScheme.Colour, "Icons.RectangularROIToolSmall.png", "Icons.RectangularROIToolMedium.png", "Icons.RectangularROIToolLarge.png")]
-	[GroupHint("activate", "Tools.Image.Measurement.ROI.Rectangular")]
+	[IconSet("activate", IconScheme.Colour, "Icons.RectangularRoiToolSmall.png", "Icons.RectangularRoiToolMedium.png", "Icons.RectangularRoiToolLarge.png")]
+	[GroupHint("activate", "Tools.Image.Measurement.Roi.Rectangular")]
 
 	[MouseToolButton(XMouseButtons.Left, false)]
     [ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
-    public class RectangularROITool : MouseImageViewerTool
+    public class RectangularRoiTool : MouseImageViewerTool
 	{
 		private RoiGraphic _createGraphic;
 
-		public RectangularROITool()
-			: base(SR.TooltipRectangularROI)
+		public RectangularRoiTool()
+			: base(SR.TooltipRectangularRoi)
 		{
 			this.Behaviour = MouseButtonHandlerBehaviour.SuppressContextMenu | MouseButtonHandlerBehaviour.SuppressOnTileActivate;
-		}
-
-		public override string Tooltip
-		{
-			get { return base.Tooltip; }
 		}
 
 		public override event EventHandler TooltipChanged
@@ -95,7 +90,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 			_createGraphic.Callout.Text = SR.ToolsMeasurementArea;
 			image.OverlayGraphics.Add(_createGraphic);
-			_createGraphic.RoiChanged += new EventHandler(OnRoiChanged);
+			//_createGraphic.RoiChanged += new EventHandler(OnRoiChanged);
 
 			if (_createGraphic.Start(mouseInformation))
 				return true;

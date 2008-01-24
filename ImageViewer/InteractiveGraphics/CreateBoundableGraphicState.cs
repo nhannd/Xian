@@ -35,13 +35,13 @@ using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
-	internal class CreateRectangleGraphicState : CreateGraphicState
+	internal class CreateBoundableGraphicState : CreateGraphicState
 	{
 		private int _controlPointIndex;
 		private int _numberOfPointsAnchored = 1;
 
 		// Create a graphic object
-		public CreateRectangleGraphicState(RectangleInteractiveGraphic interactiveGraphic) 
+		public CreateBoundableGraphicState(BoundableInteractiveGraphic interactiveGraphic) 
 			: base(interactiveGraphic)
 		{
 			// This control point index corresponds to the bottom right control point

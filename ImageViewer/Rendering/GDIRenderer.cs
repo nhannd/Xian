@@ -320,6 +320,52 @@ namespace ClearCanvas.ImageViewer.Rendering
 		}
 
 		/// <summary>
+		/// Draws a <see cref="RectanglePrimitive"/>.
+		/// </summary>
+		protected override void DrawEllipsePrimitive(EllipsePrimitive ellipse)
+		{
+			Surface.FinalBuffer.Graphics.Transform = ellipse.SpatialTransform.CumulativeTransform;
+			ellipse.CoordinateSystem = CoordinateSystem.Source;
+
+			Surface.FinalBuffer.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+
+			float offsetX = 0;
+			float offsetY = 0;
+
+			if (ellipse.Width < 0)
+				offsetX = ellipse.Width;
+
+			if (ellipse.Height < 0)
+				offsetY = ellipse.Height;
+
+			// Draw drop shadow
+			_pen.Color = Color.Black;
+			_pen.Width = CalculateScaledPenWidth(ellipse, 1);
+
+			SetDashStyle(ellipse);
+
+			Surface.FinalBuffer.Graphics.DrawEllipse(
+				_pen,
+				ellipse.TopLeft.X + offsetX + GetDropShadowOffset(ellipse).Width,
+				ellipse.TopLeft.Y + offsetY + GetDropShadowOffset(ellipse).Height,
+				Math.Abs(ellipse.Width),
+				Math.Abs(ellipse.Height));
+
+			// Draw rectangle
+			_pen.Color = ellipse.Color;
+
+			Surface.FinalBuffer.Graphics.DrawEllipse(
+				_pen,
+				ellipse.TopLeft.X + offsetX,
+				ellipse.TopLeft.Y + offsetY,
+				Math.Abs(ellipse.Width),
+				Math.Abs(ellipse.Height));
+
+			ellipse.ResetCoordinateSystem();
+			Surface.FinalBuffer.Graphics.ResetTransform();
+		}
+
+		/// <summary>
 		/// Draws a <see cref="PointPrimitive"/>.
 		/// </summary>
 		protected override void DrawPointPrimitive(PointPrimitive pointPrimitive)

@@ -96,6 +96,7 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="EllipticalRoiTool.cs" />
     <Compile Include="ProtractorTool.cs" />
     <Compile Include="DeleteGraphicTool.cs" />
     <Compile Include="RectangularROITool.cs" />
@@ -112,8 +113,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Icons\RectangularROIToolLarge.png" />
-    <EmbeddedResource Include="Icons\RectangularROIToolMedium.png" />
     <EmbeddedResource Include="Icons\RulerToolLarge.png" />
     <EmbeddedResource Include="Icons\RulerToolMedium.png" />
   </ItemGroup>
@@ -121,13 +120,22 @@
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Icons\RectangularROIToolSmall.png" />
     <EmbeddedResource Include="Icons\RulerToolSmall.png" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\ProtractorToolLarge.png" />
     <EmbeddedResource Include="Icons\ProtractorToolMedium.png" />
     <EmbeddedResource Include="Icons\ProtractorToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\EllipticalRoiToolLarge.png" />
+    <EmbeddedResource Include="Icons\EllipticalRoiToolMedium.png" />
+    <EmbeddedResource Include="Icons\EllipticalRoiToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\RectangularRoiToolLarge.png" />
+    <EmbeddedResource Include="Icons\RectangularRoiToolMedium.png" />
+    <EmbeddedResource Include="Icons\RectangularRoiToolSmall.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Tests\" />

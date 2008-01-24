@@ -114,6 +114,10 @@
     <Compile Include="Annotations\Dicom\DicomFilteredAnnotationLayoutStore.cs" />
     <Compile Include="Annotations\Dicom\DicomFixedAnnotationLayoutProvider.cs" />
     <Compile Include="Annotations\IAnnotationResourceResolver.cs" />
+    <Compile Include="Graphics\BoundableGraphic.cs" />
+    <Compile Include="Graphics\EllipsePrimitive.cs" />
+    <Compile Include="InteractiveGraphics\BoundableInteractiveGraphic.cs" />
+    <Compile Include="InteractiveGraphics\EllipseInteractiveGraphic.cs" />
     <Compile Include="NamedCompositeGraphicSettings.cs" />
     <Compile Include="NamedCompositeGraphicSettings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -317,7 +321,7 @@
     <Compile Include="InteractiveGraphics\ControlPoint.cs" />
     <Compile Include="InteractiveGraphics\ControlPointGroup.cs" />
     <Compile Include="InteractiveGraphics\CreatePolyLineGraphicState.cs" />
-    <Compile Include="InteractiveGraphics\CreateRectangleGraphicState.cs" />
+    <Compile Include="InteractiveGraphics\CreateBoundableGraphicState.cs" />
     <Compile Include="InteractiveGraphics\CreateROIGraphicState.cs" />
     <Compile Include="InteractiveGraphics\FocussedGraphicState.cs" />
     <Compile Include="InteractiveGraphics\GraphicState.cs" />

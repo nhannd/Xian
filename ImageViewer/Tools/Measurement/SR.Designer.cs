@@ -79,6 +79,15 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Elliptical ROI.
+        /// </summary>
+        public static string MenuEllipticalRoi {
+            get {
+                return ResourceManager.GetString("MenuEllipticalRoi", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Measurement.
         /// </summary>
         public static string MenuMeasurement {
@@ -99,9 +108,9 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement {
         /// <summary>
         ///   Looks up a localized string similar to Rectangular ROI.
         /// </summary>
-        public static string MenuRectangularROI {
+        public static string MenuRectangularRoi {
             get {
-                return ResourceManager.GetString("MenuRectangularROI", resourceCulture);
+                return ResourceManager.GetString("MenuRectangularRoi", resourceCulture);
             }
         }
         
@@ -133,6 +142,15 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Elliptical ROI.
+        /// </summary>
+        public static string ToolbarEllipticalRoi {
+            get {
+                return ResourceManager.GetString("ToolbarEllipticalRoi", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Protractor.
         /// </summary>
         public static string ToolbarProtractor {
@@ -144,9 +162,9 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement {
         /// <summary>
         ///   Looks up a localized string similar to Rectangular ROI.
         /// </summary>
-        public static string ToolbarRectangularROI {
+        public static string ToolbarRectangularRoi {
             get {
-                return ResourceManager.GetString("ToolbarRectangularROI", resourceCulture);
+                return ResourceManager.GetString("ToolbarRectangularRoi", resourceCulture);
             }
         }
         
@@ -205,6 +223,15 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Elliptical ROI.
+        /// </summary>
+        public static string TooltipEllipticalRoi {
+            get {
+                return ResourceManager.GetString("TooltipEllipticalRoi", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Protractor.
         /// </summary>
         public static string TooltipProtractor {
@@ -216,9 +243,9 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement {
         /// <summary>
         ///   Looks up a localized string similar to Rectangular ROI.
         /// </summary>
-        public static string TooltipRectangularROI {
+        public static string TooltipRectangularRoi {
             get {
-                return ResourceManager.GetString("TooltipRectangularROI", resourceCulture);
+                return ResourceManager.GetString("TooltipRectangularRoi", resourceCulture);
             }
         }
         

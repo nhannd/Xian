@@ -117,7 +117,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="TooltipRectangularROI" xml:space="preserve">
+  <data name="TooltipRectangularRoi" xml:space="preserve">
     <value>Rectangular ROI</value>
   </data>
   <data name="TooltipRuler" xml:space="preserve">
@@ -153,13 +153,13 @@
   <data name="MenuMeasurement" xml:space="preserve">
     <value>Measurement</value>
   </data>
-  <data name="MenuRectangularROI" xml:space="preserve">
+  <data name="MenuRectangularRoi" xml:space="preserve">
     <value>Rectangular ROI</value>
   </data>
   <data name="MenuRuler" xml:space="preserve">
     <value>Ruler</value>
   </data>
-  <data name="ToolbarRectangularROI" xml:space="preserve">
+  <data name="ToolbarRectangularRoi" xml:space="preserve">
     <value>Rectangular ROI</value>
   </data>
   <data name="ToolbarRuler" xml:space="preserve">
@@ -173,5 +173,14 @@
   </data>
   <data name="TooltipProtractor" xml:space="preserve">
     <value>Protractor</value>
+  </data>
+  <data name="MenuEllipticalRoi" xml:space="preserve">
+    <value>Elliptical ROI</value>
+  </data>
+  <data name="ToolbarEllipticalRoi" xml:space="preserve">
+    <value>Elliptical ROI</value>
+  </data>
+  <data name="TooltipEllipticalRoi" xml:space="preserve">
+    <value>Elliptical ROI</value>
   </data>
 </root>

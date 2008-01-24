@@ -43,22 +43,21 @@ using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
-	[MenuAction("activate", "imageviewer-contextmenu/MenuRuler", "Select", Flags = ClickActionFlags.CheckAction)]
-	[MenuAction("activate", "global-menus/MenuTools/MenuMeasurement/MenuRuler", "Select", Flags = ClickActionFlags.CheckAction)]
-	[ButtonAction("activate", "global-toolbars/ToolbarMeasurement/ToolbarRuler", "Select", Flags = ClickActionFlags.CheckAction)]
+	[MenuAction("activate", "global-menus/MenuTools/MenuMeasurement/MenuEllipticalRoi", "Select", Flags = ClickActionFlags.CheckAction)]
+	[ButtonAction("activate", "global-toolbars/ToolbarMeasurement/ToolbarEllipticalRoi", "Select", Flags = ClickActionFlags.CheckAction)]
     [CheckedStateObserver("activate", "Active", "ActivationChanged")]
 	[TooltipValueObserver("activate", "Tooltip", "TooltipChanged")]
-	[IconSet("activate", IconScheme.Colour, "Icons.RulerToolSmall.png", "Icons.RulerToolMedium.png", "Icons.RulerToolLarge.png")]
-	[GroupHint("activate", "Tools.Image.Measurement.Roi.Linear")]
+	[IconSet("activate", IconScheme.Colour, "Icons.EllipticalRoiToolSmall.png", "Icons.EllipticalRoiToolMedium.png", "Icons.EllipticalRoiToolLarge.png")]
+	[GroupHint("activate", "Tools.Image.Measurement.Roi.Elliptical")]
 
 	[MouseToolButton(XMouseButtons.Left, false)]
-	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
-    public class RulerTool : MouseImageViewerTool
+    [ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
+    public class EllipticalRoiTool : MouseImageViewerTool
 	{
 		private RoiGraphic _createGraphic;
 
-		public RulerTool()
-			: base(SR.TooltipRuler)
+		public EllipticalRoiTool()
+			: base(SR.TooltipEllipticalRoi)
 		{
 			this.Behaviour = MouseButtonHandlerBehaviour.SuppressContextMenu | MouseButtonHandlerBehaviour.SuppressOnTileActivate;
 		}
@@ -81,9 +80,14 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			if (_createGraphic != null)
 				return _createGraphic.Start(mouseInformation);
 
-			PolyLineInteractiveGraphic polyLineGraphic = new PolyLineInteractiveGraphic(true, 2);
-			_createGraphic = new RoiGraphic(polyLineGraphic, true);
+			//When you create a graphic from within a tool (particularly one that needs capture, like a multi-click graphic),
+			//see it through to the end of creation.  It's just cleaner, not to mention that if this tool knows how to create it,
+			//it should also know how to (and be responsible for) cancelling it and/or deleting it appropriately.
+			EllipseInteractiveGraphic ellipseGraphic = new EllipseInteractiveGraphic(true);
+			_createGraphic = new RoiGraphic(ellipseGraphic, true);
 
+			_createGraphic.Roi.ControlPoints.Visible = false;
+			_createGraphic.Callout.Text = SR.ToolsMeasurementArea;
 			image.OverlayGraphics.Add(_createGraphic);
 			_createGraphic.RoiChanged += new EventHandler(OnRoiChanged);
 
@@ -111,7 +115,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 					IOverlayGraphicsProvider image = (IOverlayGraphicsProvider)mouseInformation.Tile.PresentationImage;
 
 					InsertRemoveGraphicUndoableCommand command = InsertRemoveGraphicUndoableCommand.GetRemoveCommand(image.OverlayGraphics, _createGraphic);
-					command.Name = "Create Ruler";
+					command.Name = "Create Ellipse";
 					_createGraphic.ImageViewer.CommandHistory.AddCommand(command);
 					return true;
 				}
@@ -141,19 +145,17 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			return null;
 		}
 
-		// This is temporary code.  Right now, the api is difficult to use.  
-		// Ideally, we should have domain objects that make this easier.  
 		private void OnRoiChanged(object sender, EventArgs e)
 		{
 			RoiGraphic roiGraphic = sender as RoiGraphic;
-			
-			PolyLineInteractiveGraphic interactiveGraphic = roiGraphic.Roi as PolyLineInteractiveGraphic;
+
+			EllipseInteractiveGraphic ellipseGraphic = roiGraphic.Roi as EllipseInteractiveGraphic;
 			IImageSopProvider image = roiGraphic.ParentPresentationImage as IImageSopProvider;
 
-			interactiveGraphic.CoordinateSystem = CoordinateSystem.Source;
-			double widthInPixels = (interactiveGraphic.PolyLine[1].X - interactiveGraphic.PolyLine[0].X);
-			double heightInPixels = (interactiveGraphic.PolyLine[1].Y - interactiveGraphic.PolyLine[0].Y);
-			interactiveGraphic.ResetCoordinateSystem();
+			ellipseGraphic.CoordinateSystem = CoordinateSystem.Source;
+			double widthInPixels = (ellipseGraphic.BottomRight.X - ellipseGraphic.TopLeft.X);
+			double heightInPixels = (ellipseGraphic.BottomRight.Y - ellipseGraphic.TopLeft.Y);
+			ellipseGraphic.ResetCoordinateSystem();
 
 			PixelSpacing pixelSpacing = image.ImageSop.GetModalityPixelSpacing();
 
@@ -161,21 +163,20 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 										pixelSpacing.Column <= float.Epsilon ||
 										double.IsNaN(pixelSpacing.Row) ||
 										double.IsNaN(pixelSpacing.Column);
-
 			string text;
 
 			if (pixelSpacingInvalid)
 			{
-				double length = Math.Sqrt(widthInPixels * widthInPixels + heightInPixels * heightInPixels);
-				text = String.Format(SR.ToolsMeasurementFormatLengthPixels, length);
+				double area = Math.Abs(widthInPixels * heightInPixels);
+				text = String.Format(SR.ToolsMeasurementFormatAreaPixels, area);
 			}
 			else
 			{
 				double widthInCm = widthInPixels * pixelSpacing.Column / 10;
 				double heightInCm = heightInPixels * pixelSpacing.Row / 10;
 
-				double length = Math.Sqrt(widthInCm * widthInCm + heightInCm * heightInCm);
-				text = String.Format(SR.ToolsMeasurementFormatLengthCm, length);
+				double area = Math.Abs(widthInCm * heightInCm);
+				text = String.Format(SR.ToolsMeasurementFormatAreaSquareCm, area);
 			}
 
 			roiGraphic.Callout.Text = text;

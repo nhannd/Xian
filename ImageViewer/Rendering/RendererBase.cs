@@ -135,6 +135,8 @@ namespace ClearCanvas.ImageViewer.Rendering
 						DrawLinePrimitive((LinePrimitive)graphic);
 					else if (graphic is RectanglePrimitive)
 						DrawRectanglePrimitive((RectanglePrimitive)graphic);
+					else if (graphic is EllipsePrimitive)
+						DrawEllipsePrimitive((EllipsePrimitive)graphic);
 					else if (graphic is PointPrimitive)
 						DrawPointPrimitive((PointPrimitive)graphic);
 					else if (graphic is InvariantRectanglePrimitive)
@@ -185,6 +187,11 @@ namespace ClearCanvas.ImageViewer.Rendering
 		/// Draws a <see cref="RectanglePrimitive"/>.  Must be overridden and implemented.
 		/// </summary>
 		protected abstract void DrawRectanglePrimitive(RectanglePrimitive rect);
+
+		/// <summary>
+		/// Draws a <see cref="RectanglePrimitive"/>.  Must be overridden and implemented.
+		/// </summary>
+		protected abstract void DrawEllipsePrimitive(EllipsePrimitive rect);
 
 		/// <summary>
 		/// Draws a <see cref="PointPrimitive"/>.  Must be overridden and implemented.
