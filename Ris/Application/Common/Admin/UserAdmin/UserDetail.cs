@@ -40,12 +40,13 @@ namespace ClearCanvas.Ris.Application.Common.Admin.UserAdmin
     [DataContract]
     public class UserDetail : DataContractBase
     {
-        public UserDetail(string userId, string displayName, DateTime? validFrom, DateTime? validUntil, 
+        public UserDetail(string userId, string displayName, DateTime creationTime, DateTime? validFrom, DateTime? validUntil, 
             DateTime? lastLoginTime, bool enabled, List<AuthorityGroupSummary> authorityGroups)
         {
             this.UserName = userId;
             this.DisplayName = displayName;
             this.AuthorityGroups = authorityGroups;
+            this.CreationTime = creationTime;
             this.ValidFrom = validFrom;
             this.ValidUntil = validUntil;
             this.LastLoginTime = lastLoginTime;
@@ -63,6 +64,9 @@ namespace ClearCanvas.Ris.Application.Common.Admin.UserAdmin
 
         [DataMember]
         public string DisplayName;
+
+        [DataMember]
+        public DateTime CreationTime;
 
         [DataMember]
         public DateTime? ValidFrom;

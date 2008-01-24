@@ -205,7 +205,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.UserAdmin
             User user = PersistenceContext.Load<User>(request.UserRef);
             user.ResetPassword();
 
-            return new ResetUserPasswordResponse();
+            UserAssembler assembler = new UserAssembler();
+            return new ResetUserPasswordResponse(assembler.GetUserSummary(user));
         }
 
         [UpdateOperation]

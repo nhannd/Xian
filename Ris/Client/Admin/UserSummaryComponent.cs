@@ -240,7 +240,9 @@ namespace ClearCanvas.Ris.Client.Admin
                 Platform.GetService<IUserAdminService>(
                     delegate(IUserAdminService service)
                     {
-                        service.ResetUserPassword(new ResetUserPasswordRequest(_selectedUser.UserRef));
+                        ResetUserPasswordResponse response = service.ResetUserPassword(new ResetUserPasswordRequest(_selectedUser.UserRef));
+                        _userTable.Items.Replace(delegate(UserSummary u) { return u.UserRef.Equals(response.UserSummary.UserRef, true); },
+                           response.UserSummary);
                     });
             }
             catch (Exception e)

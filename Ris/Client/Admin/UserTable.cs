@@ -49,6 +49,10 @@ namespace ClearCanvas.Ris.Client.Admin
                 delegate(UserSummary user) { return user.DisplayName; },
                 1.0f));
 
+            this.Columns.Add(new TableColumn<UserSummary, string>("Created On",
+                delegate(UserSummary user) { return Format.DateTime(user.CreationTime); },
+                1.0f));
+
             this.Columns.Add(new TableColumn<UserSummary, bool>("Enabled",
                delegate(UserSummary user) { return user.Enabled; },
                1.0f));

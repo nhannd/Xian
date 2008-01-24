@@ -39,5 +39,12 @@ namespace ClearCanvas.Ris.Application.Common.Admin.UserAdmin
     [DataContract]
     public class ResetUserPasswordResponse : DataContractBase
     {
+        public ResetUserPasswordResponse(UserSummary userSummary)
+        {
+            this.UserSummary = userSummary;
+        }
+
+        [DataMember]
+        public UserSummary UserSummary;
     }
 }

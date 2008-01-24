@@ -69,6 +69,7 @@ namespace ClearCanvas.Enterprise.Authentication {
                 userInfo.ValidFrom,
                 userInfo.ValidUntil,
                 true, // initially enabled
+                Platform.Time, // creation time
                 null, // last login time
                 authorityGroups,
                 null  // current session
