@@ -30,11 +30,11 @@
 #endregion
 
 using System;
-using System.ComponentModel;
 using System.Text;
 using ClearCanvas.Common.Auditing;
-using ClearCanvas.Common.Statistics;
+using ClearCanvas.log4net;
 using log4net;
+
 //using log4net.spi;
 
 // Configure log4net using the .log4net file
@@ -138,6 +138,10 @@ namespace ClearCanvas.Common
 
 		private static object _syncRoot = new Object();
 
+        // This is a dummy variable to force the ClearCanvas.log4net assembly
+        // to be loaded before the log4net log manager is initialized.  This 
+        // allows us to configure our custom log manager in the Logging.config file.
+        private static readonly FileAppender _appender = new FileAppender();
 		private static readonly ILog _log = LogManager.GetLogger(typeof(Platform));
 
 		private static string _pluginSubFolder = "plugins";

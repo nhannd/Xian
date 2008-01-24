@@ -266,6 +266,12 @@
     <None Include="ClassDiagrams\Platform.cd" />
     <None Include="Statistics\ClassDiagram1.cd" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\log4net\ClearCanvas.log4net.csproj">
+      <Project>{9AE3DFFA-C38C-475D-9423-983FA947B243}</Project>
+      <Name>ClearCanvas.log4net</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="ClearCanvas.Strings.targets" />
   <PropertyGroup>
