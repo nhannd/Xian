@@ -24,32 +24,37 @@ namespace ClearCanvas.Ris.Application.Services.Login
             get { return "Authentication"; }
         }
 
-        protected override void OnCreateLogEntry(AuditLogEntry logEntry, Type serviceClass, MethodInfo operation, object[] args)
+        public override AuditLogEntry CreateLogEntry(ServiceOperationInvocationInfo invocationInfo)
         {
             // because the login service is not authenticated, the thread that handles the request 
             // does not have a principal, and the logEntry will not be associated with a user
             // therefore, we modify the user to indicate the userName that submitted the request
 
-            LoginServiceRequestBase request = args[0] as LoginServiceRequestBase;
-            if(request != null)
+            AuditLogEntry logEntry = base.CreateLogEntry(invocationInfo);
+            if(logEntry != null)
             {
+                LoginServiceRequestBase request = (LoginServiceRequestBase) invocationInfo.Arguments[0];
                 logEntry.User = request.UserName;
             }
+            return logEntry;
         }
 
-        protected override void WriteXml(XmlWriter writer, Type serviceClass, MethodInfo operation, object[] args)
+        protected override bool WriteXml(XmlWriter writer, ServiceOperationInvocationInfo info)
         {
-            LoginServiceRequestBase request = args[0] as LoginServiceRequestBase;
-            if (request != null)
-            {
-                writer.WriteStartDocument();
-                writer.WriteStartElement("action");
-                writer.WriteAttributeString("type", operation.Name);
-                writer.WriteAttributeString("user", request.UserName);
-                writer.WriteAttributeString("clientIP", StringUtilities.EmptyIfNull(request.ClientIP));
-                writer.WriteEndElement();
-                writer.WriteEndDocument();
-            }
+            // don't bother logging failed attempts
+            if (info.Exception != null)
+                return false;
+
+            LoginServiceRequestBase request = (LoginServiceRequestBase) info.Arguments[0];
+            writer.WriteStartDocument();
+            writer.WriteStartElement("action");
+            writer.WriteAttributeString("type", info.OperationMethodInfo.Name);
+            writer.WriteAttributeString("user", request.UserName);
+            writer.WriteAttributeString("clientIP", StringUtilities.EmptyIfNull(request.ClientIP));
+            writer.WriteEndElement();
+            writer.WriteEndDocument();
+
+            return true;
         }
     }
 }

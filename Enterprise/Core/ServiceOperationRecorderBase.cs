@@ -15,45 +15,38 @@ namespace ClearCanvas.Enterprise.Core
         #region IServiceOperationRecorder Members
 
         /// <summary>
-        /// Creates a <see cref="AuditLogEntry"/> for the specified service operation invocation.
+        /// Creates a <see cref="AuditLogEntry"/> for the specified service operation invocation,
+        /// or returns null if no log entry is created.
         /// </summary>
-        /// <param name="operationName">The name of the operation.</param>
-        /// <param name="serviceClass">The service class that provides the operation.</param>
-        /// <param name="operation">The <see cref="MethodInfo"> object that describes the operation.</see></param>
-        /// <param name="args">The list of arguments that were provided to the operation.</param>
-        /// <returns></returns>
-        public AuditLogEntry CreateLogEntry(string operationName, Type serviceClass, MethodInfo operation, object[] args)
+        /// <remarks>
+        /// Override this method to perform custom creation of the <see cref="AuditLogEntry"/>.
+        /// In most cases this method does not need to be overridden - instead just override
+        /// <see cref="WriteXml(XmlWriter,ServiceOperationInvocationInfo)"/>.
+        /// </remarks>
+        /// <returns>A log entry, or null to indicate that no log entry should be created.</returns>
+        public virtual AuditLogEntry CreateLogEntry(ServiceOperationInvocationInfo invocationInfo)
         {
-            AuditLogEntry logEntry =
-                new AuditLogEntry(this.Category, operationName, WriteXml(serviceClass, operation, args));
-            OnCreateLogEntry(logEntry, serviceClass, operation, args);
-            return logEntry;
+            string xml;
+            bool messageGenerated = WriteXml(invocationInfo, out xml);
+            if(messageGenerated)
+            {
+                return new AuditLogEntry(this.Category, invocationInfo.OperationName, xml);
+            }
+            return null;
         }
 
         #endregion
 
-        private string WriteXml(Type serviceClass, MethodInfo operation, object[] args)
+        private bool WriteXml(ServiceOperationInvocationInfo invocationInfo, out string xml)
         {
             StringWriter sw = new StringWriter();
             using (XmlTextWriter writer = new XmlTextWriter(sw))
             {
                 writer.Formatting = Formatting.Indented;
-                WriteXml(writer, serviceClass, operation, args);
-                return sw.ToString();
+                bool success = WriteXml(writer, invocationInfo);
+                xml = success ? sw.ToString() : null;
+                return success;
             }
-        }
-
-        /// <summary>
-        /// Allows subclasses to adjust the properties of the <see cref="AuditLogEntry"/> that was created.
-        /// </summary>
-        /// <param name="logEntry"></param>
-        /// <param name="serviceClass"></param>
-        /// <param name="operation"></param>
-        /// <param name="args"></param>
-        /// <returns></returns>
-        protected virtual void OnCreateLogEntry(AuditLogEntry logEntry, Type serviceClass, MethodInfo operation, object[] args)
-        {
-            // do nothing
         }
 
         /// <summary>
@@ -62,12 +55,16 @@ namespace ClearCanvas.Enterprise.Core
         protected abstract string Category { get; }
 
         /// <summary>
-        /// Writes the detailed message to the specified XML writer.  This message will set the <see cref="AuditLogEntry.Details"/> property.
+        /// Writes the detailed message to the specified XML writer.
         /// </summary>
         /// <param name="writer"></param>
-        /// <param name="serviceClass"></param>
-        /// <param name="operation"></param>
-        /// <param name="args"></param>
-        protected abstract void WriteXml(XmlWriter writer, Type serviceClass, MethodInfo operation, object[] args);
+        /// <param name="invocationInfo"></param>
+        /// <returns>True if a log message was written, or false to indicate that no log message was written.</returns>
+        /// <remarks>
+        /// The resulting XML will be used to populate the <see cref="AuditLogEntry.Details"/> property.
+        /// Return false to opt out of auditing the specified invocation (for example, if the invocation
+        /// inidcates that an exception was thrown by the service, you may not need to audit it).
+        /// </remarks>
+        protected abstract bool WriteXml(XmlWriter writer, ServiceOperationInvocationInfo invocationInfo);
     }
 }

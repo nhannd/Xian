@@ -15,23 +15,28 @@ namespace ClearCanvas.Enterprise.Configuration
             get { return "Configuration"; }
         }
 
-        protected override void WriteXml(XmlWriter writer, Type serviceClass, MethodInfo operation, object[] args)
+        protected override bool WriteXml(XmlWriter writer, ServiceOperationInvocationInfo info)
         {
-            string name = (string) args[0];
-            Version version = (Version) args[1];
-            string user = (string) args[2];
-            string instanceKey = (string) args[3];
-            string content = (string) args[4];
+            // don't bother logging failed attempts
+            if(info.Exception != null)
+                return false;
+
+            string name = (string) info.Arguments[0];
+            Version version = (Version)info.Arguments[1];
+            string user = (string)info.Arguments[2];
+            string instanceKey = (string)info.Arguments[3];
 
             writer.WriteStartDocument();
             writer.WriteStartElement("action");
-            writer.WriteAttributeString("type", operation.Name);
+            writer.WriteAttributeString("type", info.OperationMethodInfo.Name);
             writer.WriteAttributeString("documentName", name);
             writer.WriteAttributeString("documentVersion", version.ToString());
             writer.WriteAttributeString("documentUser", user ?? "{application}");
             writer.WriteAttributeString("instanceKey", instanceKey ?? "{default}");
             writer.WriteEndElement();
             writer.WriteEndDocument();
+
+            return true;
         }
     }
 }

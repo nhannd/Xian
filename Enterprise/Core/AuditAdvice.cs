@@ -52,49 +52,69 @@ namespace ClearCanvas.Enterprise.Core
 
         public object Intercept(IInvocation invocation, params object[] args)
         {
-            object retval = invocation.Proceed(args);
-
-            List<AuditAttribute> auditAttrs = AttributeUtils.GetAttributes<AuditAttribute>(invocation.MethodInvocationTarget, true);
-            if (auditAttrs.Count > 0)
+            object retval = null;
+            Exception exception = null;
+            try
             {
-                // inherit the current persistence scope, which should still be valid, or optionally create a new one
-                using (PersistenceScope scope = new PersistenceScope(PersistenceContextType.Update, PersistenceScopeOption.Required))
+                retval = invocation.Proceed(args);
+                return retval;
+            }
+            catch (Exception e)
+            {
+                exception = e;
+                throw;
+            }
+            finally
+            {
+                List<AuditAttribute> auditAttrs = AttributeUtils.GetAttributes<AuditAttribute>(invocation.MethodInvocationTarget, true);
+                if (auditAttrs.Count > 0)
                 {
-                    string operationName =
-                        string.Format("{0}.{1}", invocation.InvocationTarget.GetType().FullName, invocation.Method.Name);
-
-                    // multiple audit recorders may be specified for a given service operation
-                    foreach (AuditAttribute attr in auditAttrs)
+                    // inherit the current persistence scope, which should still be valid, or optionally create a new one
+                    using (PersistenceScope scope = new PersistenceScope(PersistenceContextType.Update, PersistenceScopeOption.Required))
                     {
-                        try
-                        {
-                            Audit(operationName, attr, invocation, args);
-                        }
-                        catch (Exception e)
-                        {
-                            // audit operation failed
-                            Platform.Log(LogLevel.Error, e);
-                        }
-                    }
+                        string operationName =
+                            string.Format("{0}.{1}", invocation.InvocationTarget.GetType().FullName, invocation.Method.Name);
 
-                    scope.Complete();
+                        ServiceOperationInvocationInfo info = new ServiceOperationInvocationInfo(
+                            operationName,
+                            invocation.InvocationTarget.GetType(),
+                            invocation.MethodInvocationTarget,
+                            args,
+                            retval,
+                            exception);
+
+                        // multiple audit recorders may be specified for a given service operation
+                        foreach (AuditAttribute attr in auditAttrs)
+                        {
+                            try
+                            {
+                                Audit(attr, info);
+                            }
+                            catch (Exception e)
+                            {
+                                // audit operation failed
+                                Platform.Log(LogLevel.Error, e);
+                            }
+                        }
+
+                        scope.Complete();
+                    }
                 }
             }
-
-            return retval;
         }
 
-        private void Audit(string operationName, AuditAttribute attr, IInvocation invocation, object[] args)
+        private void Audit(AuditAttribute attr, ServiceOperationInvocationInfo info)
         {
             // create an instance of the specified recorder class
             IServiceOperationRecorder recorder = (IServiceOperationRecorder) Activator.CreateInstance(attr.RecorderClass);
 
             // create a log entry
-            AuditLogEntry logEntry = recorder.CreateLogEntry(operationName, invocation.InvocationTarget.GetType(),
-                                    invocation.MethodInvocationTarget, args);
-
-            // save the log entry
-            PersistenceScope.Current.Lock(logEntry, DirtyState.New);
+            AuditLogEntry logEntry = recorder.CreateLogEntry(info);
+            if(logEntry != null)
+            {
+                // save the log entry
+                PersistenceScope.Current.Lock(logEntry, DirtyState.New);
+            }
         }
 
         #endregion
