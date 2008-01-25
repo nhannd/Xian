@@ -44,6 +44,7 @@
   <ItemGroup>
     <SharedLibraryFiles Include="$(ProjectDir)\..\..\Common\bin\$(Configuration)\ClearCanvas.Common.dll" />
     <SharedLibraryFiles Include="$(ProjectDir)\..\..\ReferencedAssemblies\log4net.dll" />
+    <SharedLibraryFiles Include="$(ProjectDir)\..\..\ReferencedAssemblies\ClearCanvas.log4net.dll" />
     <SharedLibraryFiles Include="$(ProjectDir)\..\..\Server\ShredHost\bin\$(Configuration)\ClearCanvas.Server.ShredHost.dll" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Configuration)' == 'Debug' ">
