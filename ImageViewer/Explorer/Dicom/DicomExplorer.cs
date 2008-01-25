@@ -88,6 +88,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 			_studyBrowser.SelectServerGroup(_aeNavigator.SelectedServers);
 
+			_studyBrowser.Search();
+
 			SplitPane leftPane = new SplitPane(SR.TitleNavigatorPane, _aeNavigator, 0.25f);
 			SplitPane rightPane = new SplitPane(SR.TitleStudyBrowserPane, _studyBrowser, 0.75f);
 
