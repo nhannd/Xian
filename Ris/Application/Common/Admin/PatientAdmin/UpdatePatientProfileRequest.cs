@@ -31,24 +31,24 @@
 
 using System;
 using System.Runtime.Serialization;
+
 using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 
 namespace ClearCanvas.Ris.Application.Common.Admin.PatientAdmin
 {
     [DataContract]
-    public class SaveAdminEditsForPatientProfileResponse : DataContractBase
+    public class UpdatePatientProfileRequest : DataContractBase
     {
-        public SaveAdminEditsForPatientProfileResponse(EntityRef patientRef, EntityRef profileRef)
+        public UpdatePatientProfileRequest(EntityRef patientProfileRef, PatientProfileDetail patientDetail)
         {
-            this.PatientRef = patientRef;
-            this.ProfileRef = profileRef;
+            this.PatientProfileRef = patientProfileRef;
+            this.PatientDetail = patientDetail;
         }
 
         [DataMember]
-        public EntityRef PatientRef;
+        public EntityRef PatientProfileRef;
 
         [DataMember]
-        public EntityRef ProfileRef;
+        public PatientProfileDetail PatientDetail;       
     }
 }

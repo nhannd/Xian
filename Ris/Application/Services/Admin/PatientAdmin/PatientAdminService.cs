@@ -103,30 +103,30 @@ namespace ClearCanvas.Ris.Application.Services.Admin.PatientAdmin
 
 
         [ReadOperation]
-        public LoadPatientProfileForAdminEditResponse LoadPatientProfileForAdminEdit(LoadPatientProfileForAdminEditRequest request)
+        public LoadPatientProfileForEditResponse LoadPatientProfileForEdit(LoadPatientProfileForEditRequest request)
         {
             IPatientProfileBroker broker = PersistenceContext.GetBroker<IPatientProfileBroker>();
 
             PatientProfile profile = broker.Load(request.PatientProfileRef);
             PatientProfileAssembler assembler = new PatientProfileAssembler();
-            return new LoadPatientProfileForAdminEditResponse(profile.Patient.GetRef(), profile.GetRef(), assembler.CreatePatientProfileDetail(profile, PersistenceContext));
+            return new LoadPatientProfileForEditResponse(profile.Patient.GetRef(), profile.GetRef(), assembler.CreatePatientProfileDetail(profile, PersistenceContext));
         }
 
         [UpdateOperation]
         [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.PatientProfileAdmin)]
-        public SaveAdminEditsForPatientProfileResponse SaveAdminEditsForPatientProfile(SaveAdminEditsForPatientProfileRequest request)
+        public UpdatePatientProfileResponse UpdatePatientProfile(UpdatePatientProfileRequest request)
         {
             PatientProfile profile = PersistenceContext.Load<PatientProfile>(request.PatientProfileRef, EntityLoadFlags.CheckVersion);
 
             PatientProfileAssembler assembler = new PatientProfileAssembler();
             assembler.UpdatePatientProfile(profile, request.PatientDetail, this.CurrentUserStaff, PersistenceContext);
 
-            return new SaveAdminEditsForPatientProfileResponse(profile.Patient.GetRef(), profile.GetRef());
+            return new UpdatePatientProfileResponse(profile.Patient.GetRef(), profile.GetRef());
         }
 
         [UpdateOperation]
         [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.PatientProfileAdmin)]
-        public AdminAddPatientProfileResponse AdminAddPatientProfile(AdminAddPatientProfileRequest request)
+        public AddPatientResponse AddPatient(AddPatientRequest request)
         {
             PatientProfile profile = new PatientProfile();
             Patient patient = new Patient();
@@ -139,7 +139,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.PatientAdmin
 
             PersistenceContext.SynchState();
 
-            return new AdminAddPatientProfileResponse(patient.GetRef(), profile.GetRef());
+            return new AddPatientResponse(patient.GetRef(), profile.GetRef());
         }
 
         #endregion

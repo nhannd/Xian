@@ -33,18 +33,29 @@ using System;
 using System.Runtime.Serialization;
 
 using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 
-namespace ClearCanvas.Ris.Application.Common.Admin.VisitAdmin
+namespace ClearCanvas.Ris.Application.Common.Admin.PatientAdmin
 {
     [DataContract]
-    public class SaveAdminEditsForVisitResponse : DataContractBase
+    public class AddPatientResponse : DataContractBase
     {
-        public SaveAdminEditsForVisitResponse(VisitSummary addedVisit)
+        public AddPatientResponse(EntityRef patientRef, EntityRef profileRef)
         {
-            this.AddedVisit = addedVisit;
+            this.PatientRef = patientRef;
+            this.PatientProfileRef = profileRef;
         }
 
+        /// <summary>
+        /// Ref to the newly created patient profile
+        /// </summary>
         [DataMember]
-        public VisitSummary AddedVisit;
+        public EntityRef PatientProfileRef;
+
+        /// <summary>
+        /// Ref to the newly created patient
+        /// </summary>
+        [DataMember]
+        public EntityRef PatientRef;
     }
 }

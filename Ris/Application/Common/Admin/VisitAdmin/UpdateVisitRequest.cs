@@ -34,17 +34,21 @@ using System.Runtime.Serialization;
 
 using ClearCanvas.Enterprise.Common;
 
-namespace ClearCanvas.Ris.Application.Common.Admin.PatientAdmin
+namespace ClearCanvas.Ris.Application.Common.Admin.VisitAdmin
 {
     [DataContract]
-    public class LoadPatientProfileForAdminEditRequest : DataContractBase
+    public class UpdateVisitRequest : DataContractBase
     {
-        public LoadPatientProfileForAdminEditRequest(EntityRef patientProfileRef)
+        public UpdateVisitRequest(EntityRef visitRef, VisitDetail detail)
         {
-            this.PatientProfileRef = patientProfileRef;
+            this.VisitRef = visitRef;
+            this.VisitDetail = detail;
         }
 
         [DataMember]
-        public EntityRef PatientProfileRef;
+        public EntityRef VisitRef;
+
+        [DataMember]
+        public VisitDetail VisitDetail;
     }
 }

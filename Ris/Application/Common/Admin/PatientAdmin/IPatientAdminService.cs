@@ -36,45 +36,32 @@ using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common.Admin.PatientAdmin
 {
-    /// <summary>
-    /// Provides data loading/saving for the <see cref="PatientProfileEditorComponent"/>
-    /// </summary>
     [ServiceContract]
     public interface IPatientAdminService
     {
-        /// <summary>
-        /// Loads all form data for the <see cref="PatientProfileEditorComponent"/>
-        /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
         [OperationContract]
         LoadPatientProfileEditorFormDataResponse LoadPatientProfileEditorFormData(LoadPatientProfileEditorFormDataRequest request);
 
-        /// <summary>
-        /// Loads all patient profile data for the <see cref="PatientProfileEditorComponent"/>
-        /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
         [OperationContract]
-        LoadPatientProfileForAdminEditResponse LoadPatientProfileForAdminEdit(LoadPatientProfileForAdminEditRequest request);
+        LoadPatientProfileForEditResponse LoadPatientProfileForEdit(LoadPatientProfileForEditRequest request);
 
         /// <summary>
-        /// Saves changes to a patient profile made via the <see cref="PatientProfileEditorComponent"/>
+        /// Updates a patient profile.
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
         [OperationContract]
         [FaultContract(typeof(ConcurrentModificationException))]
         [FaultContract(typeof(RequestValidationException))]
-        SaveAdminEditsForPatientProfileResponse SaveAdminEditsForPatientProfile(SaveAdminEditsForPatientProfileRequest request);
+        UpdatePatientProfileResponse UpdatePatientProfile(UpdatePatientProfileRequest request);
 
         /// <summary>
-        /// Add a new patient profile via the <see cref="PatientProfileEditorComponent"/>
+        /// Adds a new patient to the system.
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
         [OperationContract]
         [FaultContract(typeof(RequestValidationException))]
-        AdminAddPatientProfileResponse AdminAddPatientProfile(AdminAddPatientProfileRequest request);
+        AddPatientResponse AddPatient(AddPatientRequest request);
     }
 }

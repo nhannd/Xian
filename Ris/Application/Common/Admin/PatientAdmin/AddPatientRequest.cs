@@ -37,16 +37,12 @@ using ClearCanvas.Enterprise.Common;
 namespace ClearCanvas.Ris.Application.Common.Admin.PatientAdmin
 {
     [DataContract]
-    public class SaveAdminEditsForPatientProfileRequest : DataContractBase
+    public class AddPatientRequest : DataContractBase
     {
-        public SaveAdminEditsForPatientProfileRequest(EntityRef patientProfileRef, PatientProfileDetail patientDetail)
+        public AddPatientRequest(PatientProfileDetail patientDetail)
         {
-            this.PatientProfileRef = patientProfileRef;
             this.PatientDetail = patientDetail;
         }
-
-        [DataMember]
-        public EntityRef PatientProfileRef;
 
         [DataMember]
         public PatientProfileDetail PatientDetail;       

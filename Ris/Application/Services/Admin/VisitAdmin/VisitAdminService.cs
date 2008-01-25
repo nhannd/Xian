@@ -101,30 +101,30 @@ namespace ClearCanvas.Ris.Application.Services.Admin.VisitAdmin
         }
 
         [ReadOperation]
-        public LoadVisitForAdminEditResponse LoadVisitForAdminEdit(LoadVisitForAdminEditRequest request)
+        public LoadVisitForEditResponse LoadVisitForEdit(LoadVisitForEditRequest request)
         {
             IVisitBroker broker = PersistenceContext.GetBroker<IVisitBroker>();
 
             Visit visit = broker.Load(request.VisitRef);
             VisitAssembler assembler = new VisitAssembler();
-            return new LoadVisitForAdminEditResponse(visit.GetRef(), assembler.CreateVisitDetail(visit, PersistenceContext));
+            return new LoadVisitForEditResponse(visit.GetRef(), assembler.CreateVisitDetail(visit, PersistenceContext));
         }
 
         [UpdateOperation]
         [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.VisitAdmin)]
-        public SaveAdminEditsForVisitResponse SaveAdminEditsForVisit(SaveAdminEditsForVisitRequest request)
+        public UpdateVisitResponse UpdateVisit(UpdateVisitRequest request)
         {
             Visit visit = PersistenceContext.Load<Visit>(request.VisitRef);
 
             VisitAssembler assembler = new VisitAssembler();
             assembler.UpdateVisit(visit, request.VisitDetail, PersistenceContext);
 
-            return new SaveAdminEditsForVisitResponse(assembler.CreateVisitSummary(visit, PersistenceContext));
+            return new UpdateVisitResponse(assembler.CreateVisitSummary(visit, PersistenceContext));
         }
 
         [UpdateOperation]
         [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.VisitAdmin)]
-        public AdminAddVisitResponse AdminAddVisit(AdminAddVisitRequest request)
+        public AddVisitResponse AddVisit(AddVisitRequest request)
         {
             Visit visit = new Visit();
 
@@ -134,7 +134,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.VisitAdmin
             PersistenceContext.Lock(visit, DirtyState.New);
             PersistenceContext.SynchState();
 
-            return new AdminAddVisitResponse(assembler.CreateVisitSummary(visit, PersistenceContext));
+            return new AddVisitResponse(assembler.CreateVisitSummary(visit, PersistenceContext));
         }
 
         #endregion

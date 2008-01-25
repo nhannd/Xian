@@ -37,18 +37,14 @@ using ClearCanvas.Enterprise.Common;
 namespace ClearCanvas.Ris.Application.Common.Admin.VisitAdmin
 {
     [DataContract]
-    public class SaveAdminEditsForVisitRequest : DataContractBase
+    public class AddVisitResponse : DataContractBase
     {
-        public SaveAdminEditsForVisitRequest(EntityRef visitRef, VisitDetail detail)
+        public AddVisitResponse(VisitSummary addedVisit)
         {
-            this.VisitRef = visitRef;
-            this.VisitDetail = detail;
+            this.AddedVisit = addedVisit;
         }
 
         [DataMember]
-        public EntityRef VisitRef;
-
-        [DataMember]
-        public VisitDetail VisitDetail;
+        public VisitSummary AddedVisit;
     }
 }

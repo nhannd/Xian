@@ -34,53 +34,40 @@ using System.ServiceModel;
 
 namespace ClearCanvas.Ris.Application.Common.Admin.VisitAdmin
 {
-    /// <summary>
-    /// Provides data loading/saving for the <see cref="VisitEditorComponent"/>
-    /// </summary>
     [ServiceContract]
     public interface IVisitAdminService
     {
-        /// <summary>
-        /// Loads all form data for the <see cref="VisitEditorComponent"/>
-        /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
         [OperationContract]
         LoadVisitEditorFormDataResponse LoadVisitEditorFormData(LoadVisitEditorFormDataRequest request);
 
         /// <summary>
-        /// Loads a list of visit summaries for a specified patient
+        /// Lists visits for a specified patient.
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
         [OperationContract]
         ListVisitsForPatientResponse ListVisitsForPatient(ListVisitsForPatientRequest request);
 
-        /// <summary>
-        /// Loads all visit data for the <see cref="VisitEditorComponent"/>
-        /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
         [OperationContract]
-        LoadVisitForAdminEditResponse LoadVisitForAdminEdit(LoadVisitForAdminEditRequest request);
+        LoadVisitForEditResponse LoadVisitForEdit(LoadVisitForEditRequest request);
 
         /// <summary>
-        /// Saves changes to a visit made via the <see cref="VisitEditorComponent"/>
+        /// Updates an existing visit.
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
         [OperationContract]
         [FaultContract(typeof(RequestValidationException))]
         [FaultContract(typeof(ConcurrentModificationException))]
-        SaveAdminEditsForVisitResponse SaveAdminEditsForVisit(SaveAdminEditsForVisitRequest request);
+        UpdateVisitResponse UpdateVisit(UpdateVisitRequest request);
 
         /// <summary>
-        /// Add a visit via the <see cref="VisitEditorComponent"/>
+        /// Adds a new visit to the system.
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
         [OperationContract]
         [FaultContract(typeof(RequestValidationException))]
-        AdminAddVisitResponse AdminAddVisit(AdminAddVisitRequest request);
+        AddVisitResponse AddVisit(AddVisitRequest request);
     }
 }
