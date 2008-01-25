@@ -288,6 +288,15 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Deleting studies ....
+        /// </summary>
+        internal static string MessageDeletingStudies {
+            get {
+                return ResourceManager.GetString("MessageDeletingStudies", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed to initiate an import of the selected items..
         /// </summary>
         internal static string MessageFailedToImportSelection {

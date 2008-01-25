@@ -62,11 +62,6 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 		private void DeleteStudy()
 		{
-			BlockingOperation.Run(this.DeleteStudyInternal);
-		}
-
-		private void DeleteStudyInternal()
-		{
 			if (this.Context.SelectedStudy == null)
 				return;
 
@@ -76,9 +71,11 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			if (!ConfirmDeletion())
 				return;
 
-			List<string> deleteStudies = new List<string>();
-			foreach(StudyItem item in this.Context.SelectedStudies)
-				deleteStudies.Add(item.StudyInstanceUID);
+			List<string> deleteStudies = CollectionUtils.Map<StudyItem, string>(this.Context.SelectedStudies,
+                                                    delegate(StudyItem study)
+                                                    	{
+                                                    		return study.StudyInstanceUID;
+                                                    	});
 
 			DeleteInstancesRequest request = new DeleteInstancesRequest();
 			request.DeletePriority = DeletePriority.High;
@@ -87,12 +84,8 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 			try
 			{
-				LocalDataStoreDeletionHelper.DeleteInstancesAndWait(request, 1000,
-					delegate(LocalDataStoreDeletionHelper.DeletionProgressInformation progressInformation)
-					{
-						//wait as long as it takes.
-						return true;
-					});
+				BackgroundTask task = new BackgroundTask(TaskMethod, false, deleteStudies);
+				ProgressDialog.Show(task, Application.DesktopWindows.ActiveWindow, true);
 			}
 			catch (EndpointNotFoundException)
 			{
@@ -105,6 +98,34 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			catch (Exception e)
 			{
 				ExceptionHandler.Report(e, SR.MessageFailedToStartDelete, this.Context.DesktopWindow);
+			}
+		}
+
+		private void TaskMethod(IBackgroundTaskContext context)
+		{
+			DeleteInstancesRequest request = new DeleteInstancesRequest();
+			request.DeletePriority = DeletePriority.High;
+			request.InstanceLevel = InstanceLevel.Study;
+			request.InstanceUids = (List<string>) context.UserState;
+
+			context.ReportProgress(new BackgroundTaskProgress(0, SR.MessageDeletingStudies));
+
+			try
+			{
+				LocalDataStoreDeletionHelper.DeleteInstancesAndWait(request, 500,
+							delegate(LocalDataStoreDeletionHelper.DeletionProgressInformation progress)
+							{
+								int total = progress.NumberDeleted + progress.NumberRemaining;
+								int percent = (int)(progress.NumberDeleted / (float)total * 100F);
+								context.ReportProgress(new BackgroundTaskProgress(percent, SR.MessageDeletingStudies));
+								return true;
+							});
+
+				context.Complete(null);
+			}
+			catch(Exception e)
+			{
+				context.Error(e);
 			}
 		}
 
