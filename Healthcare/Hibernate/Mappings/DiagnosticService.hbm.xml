@@ -10,6 +10,7 @@
     <property name="Name" column="Name_" type="String" length="100" not-null="true" unique="true"/>
     
     <set name="ProcedureTypes" table="DiagnosticServiceProcedureType_" lazy="true" access="nosetter.camelcase-underscore">
+      <cache usage="nonstrict-read-write"/>
       <key column="DiagnosticServiceOID_"/>
       <many-to-many column="ProcedureTypeOID_" class="ProcedureType" fetch="join"/>
     </set>

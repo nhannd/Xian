@@ -12,6 +12,7 @@
 
     <many-to-one name="Parent" class="DiagnosticServiceTreeNode" column="ParentOID_" not-null="false" fetch="join"/>
     <list name="Children" lazy="true" cascade="all-delete-orphan" access="nosetter.camelcase-underscore">
+      <cache usage="nonstrict-read-write"/>
       <key column="ParentOID_"/>
       <index column="DisplayOrder_"/>
       <one-to-many class="DiagnosticServiceTreeNode"/>
