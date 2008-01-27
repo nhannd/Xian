@@ -30,14 +30,12 @@
 #endregion
 
 using System;
-using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.ImageViewer.Graphics;
-using ClearCanvas.ImageViewer.InputManagement;
 using ClearCanvas.ImageViewer.InteractiveGraphics;
 using ClearCanvas.ImageViewer.StudyManagement;
 
@@ -53,132 +51,37 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 	[MouseToolButton(XMouseButtons.Left, false)]
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
-    public class RulerTool : MouseImageViewerTool
+    public class RulerTool : MeasurementTool
 	{
-		private RoiGraphic _createGraphic;
-
 		public RulerTool()
 			: base(SR.TooltipRuler)
 		{
-			this.Behaviour = MouseButtonHandlerBehaviour.SuppressContextMenu | MouseButtonHandlerBehaviour.SuppressOnTileActivate;
 		}
 
-		public override event EventHandler TooltipChanged
+		protected override InteractiveGraphic CreateInteractiveGraphic()
 		{
-			add { base.TooltipChanged += value; }
-			remove { base.TooltipChanged -= value; }
+			return new PolyLineInteractiveGraphic(true, 2);
 		}
 
-		public override bool Start(IMouseInformation mouseInformation)
+		protected override string CreationCommandName
 		{
-			base.Start(mouseInformation);
-
-			IOverlayGraphicsProvider image = mouseInformation.Tile.PresentationImage as IOverlayGraphicsProvider;
-
-			if (image == null)
-				return false;
-
-			if (_createGraphic != null)
-				return _createGraphic.Start(mouseInformation);
-
-			PolyLineInteractiveGraphic polyLineGraphic = new PolyLineInteractiveGraphic(true, 2);
-			_createGraphic = new RoiGraphic(polyLineGraphic, true);
-
-			image.OverlayGraphics.Add(_createGraphic);
-			_createGraphic.RoiChanged += new EventHandler(OnRoiChanged);
-
-			if (_createGraphic.Start(mouseInformation))
-				return true;
-
-			this.Cancel();
-			return false;
+			get { return SR.CommandCreateRuler; }
 		}
 
-		public override bool Track(IMouseInformation mouseInformation)
+		protected override object[] CreateAnalyzers()
 		{
-			if (_createGraphic != null)
-				return _createGraphic.Track(mouseInformation);
-
-			return false;
+			RulerAnalyzerExtensionPoint extensionPoint = new RulerAnalyzerExtensionPoint();
+			return extensionPoint.CreateExtensions();
 		}
+	}
 
-		public override bool Stop(IMouseInformation mouseInformation)
-		{
-			if (_createGraphic != null)
-			{
-				if (_createGraphic.Stop(mouseInformation))
-				{
-					IOverlayGraphicsProvider image = (IOverlayGraphicsProvider)mouseInformation.Tile.PresentationImage;
+	public interface IRulerAnalyzer : IRoiAnalyzer
+	{
+		string Analyze(ImageSop sop, PolyLineInteractiveGraphic rectangle);
+	}
 
-					InsertRemoveGraphicUndoableCommand command = InsertRemoveGraphicUndoableCommand.GetRemoveCommand(image.OverlayGraphics, _createGraphic);
-					command.Name = "Create Ruler";
-					_createGraphic.ImageViewer.CommandHistory.AddCommand(command);
-					return true;
-				}
-			}
-
-			_createGraphic = null;
-			return false;
-		}
-
-		public override void Cancel()
-		{
-			if (_createGraphic != null)
-				_createGraphic.Cancel();
-
-			IOverlayGraphicsProvider image = _createGraphic.ParentPresentationImage as IOverlayGraphicsProvider;
-			image.OverlayGraphics.Remove(_createGraphic);
-
-			_createGraphic.ParentPresentationImage.Draw();
-			_createGraphic = null;
-		}
-
-		public override CursorToken GetCursorToken(Point point)
-		{
-			if (_createGraphic != null)
-				return _createGraphic.GetCursorToken(point);
-
-			return null;
-		}
-
-		// This is temporary code.  Right now, the api is difficult to use.  
-		// Ideally, we should have domain objects that make this easier.  
-		private void OnRoiChanged(object sender, EventArgs e)
-		{
-			RoiGraphic roiGraphic = sender as RoiGraphic;
-			
-			PolyLineInteractiveGraphic interactiveGraphic = roiGraphic.Roi as PolyLineInteractiveGraphic;
-			IImageSopProvider image = roiGraphic.ParentPresentationImage as IImageSopProvider;
-
-			interactiveGraphic.CoordinateSystem = CoordinateSystem.Source;
-			double widthInPixels = (interactiveGraphic.PolyLine[1].X - interactiveGraphic.PolyLine[0].X);
-			double heightInPixels = (interactiveGraphic.PolyLine[1].Y - interactiveGraphic.PolyLine[0].Y);
-			interactiveGraphic.ResetCoordinateSystem();
-
-			PixelSpacing pixelSpacing = image.ImageSop.GetModalityPixelSpacing();
-
-			bool pixelSpacingInvalid = pixelSpacing.Row <= float.Epsilon ||
-										pixelSpacing.Column <= float.Epsilon ||
-										double.IsNaN(pixelSpacing.Row) ||
-										double.IsNaN(pixelSpacing.Column);
-
-			string text;
-
-			if (pixelSpacingInvalid)
-			{
-				double length = Math.Sqrt(widthInPixels * widthInPixels + heightInPixels * heightInPixels);
-				text = String.Format(SR.ToolsMeasurementFormatLengthPixels, length);
-			}
-			else
-			{
-				double widthInCm = widthInPixels * pixelSpacing.Column / 10;
-				double heightInCm = heightInPixels * pixelSpacing.Row / 10;
-
-				double length = Math.Sqrt(widthInCm * widthInCm + heightInCm * heightInCm);
-				text = String.Format(SR.ToolsMeasurementFormatLengthCm, length);
-			}
-
-			roiGraphic.Callout.Text = text;
-		}
+	[ExtensionPoint]
+	public sealed class RulerAnalyzerExtensionPoint : ExtensionPoint<IRulerAnalyzer>
+	{
 	}
 }

@@ -29,19 +29,12 @@
 
 #endregion
 
-using System;
-using System.Drawing;
 using ClearCanvas.Common;
-using ClearCanvas.Dicom;
-using ClearCanvas.ImageViewer.Imaging;
-using ClearCanvas.ImageViewer.InteractiveGraphics;
-using ClearCanvas.Desktop.Tools;
-using ClearCanvas.Desktop.Actions;
-using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Desktop;
-using ClearCanvas.ImageViewer.InputManagement;
-using ClearCanvas.ImageViewer.Graphics;
+using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.BaseTools;
+using ClearCanvas.ImageViewer.InteractiveGraphics;
+using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
@@ -54,133 +47,38 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 	[MouseToolButton(XMouseButtons.Left, false)]
     [ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
-    public class RectangularRoiTool : MouseImageViewerTool
+    public class RectangularRoiTool : MeasurementTool
 	{
-		private RoiGraphic _createGraphic;
-
 		public RectangularRoiTool()
 			: base(SR.TooltipRectangularRoi)
 		{
-			this.Behaviour = MouseButtonHandlerBehaviour.SuppressContextMenu | MouseButtonHandlerBehaviour.SuppressOnTileActivate;
 		}
 
-		public override event EventHandler TooltipChanged
+		protected override string CreationCommandName
 		{
-			add { base.TooltipChanged += value; }
-			remove { base.TooltipChanged -= value; }
+			get { return SR.CommandCreateRectangleRoi; }
 		}
 
-		public override bool Start(IMouseInformation mouseInformation)
+		protected override InteractiveGraphic CreateInteractiveGraphic()
 		{
-			base.Start(mouseInformation);
-
-			IOverlayGraphicsProvider image = mouseInformation.Tile.PresentationImage as IOverlayGraphicsProvider;
-
-			if (image == null)
-				return false;
-
-			if (_createGraphic != null)
-				return _createGraphic.Start(mouseInformation);
-
-			//When you create a graphic from within a tool (particularly one that needs capture, like a multi-click graphic),
-			//see it through to the end of creation.  It's just cleaner, not to mention that if this tool knows how to create it,
-			//it should also know how to (and be responsible for) cancelling it and/or deleting it appropriately.
-			RectangleInteractiveGraphic rectangleGraphic = new RectangleInteractiveGraphic(true);
-			_createGraphic = new RoiGraphic(rectangleGraphic, true);
-
-			_createGraphic.Callout.Text = SR.ToolsMeasurementArea;
-			image.OverlayGraphics.Add(_createGraphic);
-			//_createGraphic.RoiChanged += new EventHandler(OnRoiChanged);
-
-			if (_createGraphic.Start(mouseInformation))
-				return true;
-
-			this.Cancel();
-			return false;
+			return new RectangleInteractiveGraphic(true);
 		}
 
-		public override bool Track(IMouseInformation mouseInformation)
+		protected override object[] CreateAnalyzers()
 		{
-			if (_createGraphic != null)
-				return _createGraphic.Track(mouseInformation);
-
-			return false;
-		}
-
-		public override bool Stop(IMouseInformation mouseInformation)
-		{
-			if (_createGraphic != null)
-			{
-				if (_createGraphic.Stop(mouseInformation))
-				{
-					IOverlayGraphicsProvider image = (IOverlayGraphicsProvider)mouseInformation.Tile.PresentationImage;
-
-					InsertRemoveGraphicUndoableCommand command = InsertRemoveGraphicUndoableCommand.GetRemoveCommand(image.OverlayGraphics, _createGraphic);
-					command.Name = "Create Rectangle";
-					_createGraphic.ImageViewer.CommandHistory.AddCommand(command);
-					return true;
-				}
-			}
-
-			_createGraphic = null;
-			return false;
-		}
-
-		public override void Cancel()
-		{
-			if (_createGraphic != null)
-				_createGraphic.Cancel();
-
-			IOverlayGraphicsProvider image = _createGraphic.ParentPresentationImage as IOverlayGraphicsProvider;
-			image.OverlayGraphics.Remove(_createGraphic);
-
-			_createGraphic.ParentPresentationImage.Draw();
-			_createGraphic = null;
-		}
-
-		public override CursorToken GetCursorToken(Point point)
-		{
-			if (_createGraphic != null)
-				return _createGraphic.GetCursorToken(point);
-
-			return null;
-		}
-
-		private void OnRoiChanged(object sender, EventArgs e)
-		{
-			RoiGraphic roiGraphic = sender as RoiGraphic;
-
-			RectangleInteractiveGraphic rectangleGraphic = roiGraphic.Roi as RectangleInteractiveGraphic;
-			IImageSopProvider image = roiGraphic.ParentPresentationImage as IImageSopProvider;
-
-			rectangleGraphic.CoordinateSystem = CoordinateSystem.Source;
-			double widthInPixels = (rectangleGraphic.BottomRight.X - rectangleGraphic.TopLeft.X);
-			double heightInPixels = (rectangleGraphic.BottomRight.Y - rectangleGraphic.TopLeft.Y);
-			rectangleGraphic.ResetCoordinateSystem();
-
-			PixelSpacing pixelSpacing = image.ImageSop.GetModalityPixelSpacing();
-
-			bool pixelSpacingInvalid = pixelSpacing.Row <= float.Epsilon ||
-										pixelSpacing.Column <= float.Epsilon ||
-										double.IsNaN(pixelSpacing.Row) ||
-										double.IsNaN(pixelSpacing.Column);
-			string text;
-
-			if (pixelSpacingInvalid)
-			{
-				double area = Math.Abs(widthInPixels * heightInPixels);
-				text = String.Format(SR.ToolsMeasurementFormatAreaPixels, area);
-			}
-			else
-			{
-				double widthInCm = widthInPixels * pixelSpacing.Column / 10;
-				double heightInCm = heightInPixels * pixelSpacing.Row / 10;
-
-				double area = Math.Abs(widthInCm * heightInCm);
-				text = String.Format(SR.ToolsMeasurementFormatAreaSquareCm, area);
-			}
-
-			roiGraphic.Callout.Text = text;
+			RectangleAnalyzerExtensionPoint extensionPoint = new RectangleAnalyzerExtensionPoint();
+			return extensionPoint.CreateExtensions();
 		}
 	}
+
+	public interface IRectangleAnalyzer : IRoiAnalyzer
+	{
+		string Analyze(ImageSop sop, RectangleInteractiveGraphic rectangle);
+	}
+
+	[ExtensionPoint]
+	public sealed class RectangleAnalyzerExtensionPoint : ExtensionPoint<IRectangleAnalyzer>
+	{
+	}
+
 }

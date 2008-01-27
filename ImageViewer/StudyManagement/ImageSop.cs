@@ -744,6 +744,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </remarks>
 		public PixelSpacing GetModalityPixelSpacing()
 		{
+			PixelSpacing pixelSpacing;
+
 			if (String.Compare(Modality, "CR", true) == 0 ||
 				String.Compare(Modality, "DX", true) == 0 ||
 				String.Compare(Modality, "MG", true) == 0)
@@ -760,12 +762,25 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 					pixelSpacingRow = pixelSpacingColumn = 0;
 				}
 
-				return new PixelSpacing(pixelSpacingRow, pixelSpacingColumn);
+				pixelSpacing = new PixelSpacing(pixelSpacingRow, pixelSpacingColumn);
 			}
 			else
 			{
-				return this.PixelSpacing;
+				pixelSpacing = this.PixelSpacing;
 			}
+
+			if (IsPixelSpacingInvalid(pixelSpacing))
+				return new PixelSpacing(0, 0);
+			else
+				return pixelSpacing;
+		}
+
+		private bool IsPixelSpacingInvalid(PixelSpacing pixelSpacing)
+		{
+			return pixelSpacing.Row <= float.Epsilon ||
+			       pixelSpacing.Column <= float.Epsilon ||
+			       double.IsNaN(pixelSpacing.Row) ||
+			       double.IsNaN(pixelSpacing.Column);
 		}
 
 		/// <summary>

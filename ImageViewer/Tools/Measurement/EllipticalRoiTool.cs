@@ -30,14 +30,12 @@
 #endregion
 
 using System;
-using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.ImageViewer.Graphics;
-using ClearCanvas.ImageViewer.InputManagement;
 using ClearCanvas.ImageViewer.InteractiveGraphics;
 using ClearCanvas.ImageViewer.StudyManagement;
 
@@ -52,134 +50,42 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 	[MouseToolButton(XMouseButtons.Left, false)]
     [ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
-    public class EllipticalRoiTool : MouseImageViewerTool
+    public class EllipticalRoiTool : MeasurementTool
 	{
-		private RoiGraphic _createGraphic;
-
 		public EllipticalRoiTool()
 			: base(SR.TooltipEllipticalRoi)
 		{
-			this.Behaviour = MouseButtonHandlerBehaviour.SuppressContextMenu | MouseButtonHandlerBehaviour.SuppressOnTileActivate;
 		}
 
-		public override event EventHandler TooltipChanged
+		protected override InteractiveGraphic  CreateInteractiveGraphic()
 		{
-			add { base.TooltipChanged += value; }
-			remove { base.TooltipChanged -= value; }
+			return new EllipseInteractiveGraphic(true);
 		}
 
-		public override bool Start(IMouseInformation mouseInformation)
+		protected override string CreationCommandName
 		{
-			base.Start(mouseInformation);
-
-			IOverlayGraphicsProvider image = mouseInformation.Tile.PresentationImage as IOverlayGraphicsProvider;
-
-			if (image == null)
-				return false;
-
-			if (_createGraphic != null)
-				return _createGraphic.Start(mouseInformation);
-
-			//When you create a graphic from within a tool (particularly one that needs capture, like a multi-click graphic),
-			//see it through to the end of creation.  It's just cleaner, not to mention that if this tool knows how to create it,
-			//it should also know how to (and be responsible for) cancelling it and/or deleting it appropriately.
-			EllipseInteractiveGraphic ellipseGraphic = new EllipseInteractiveGraphic(true);
-			_createGraphic = new RoiGraphic(ellipseGraphic, true);
-
-			_createGraphic.Roi.ControlPoints.Visible = false;
-			_createGraphic.Callout.Text = SR.ToolsMeasurementArea;
-			image.OverlayGraphics.Add(_createGraphic);
-			_createGraphic.RoiChanged += new EventHandler(OnRoiChanged);
-
-			if (_createGraphic.Start(mouseInformation))
-				return true;
-
-			this.Cancel();
-			return false;
+			get { return SR.CommandCreateEllipiticalRoi; }
 		}
 
-		public override bool Track(IMouseInformation mouseInformation)
+		protected override void OnRoiCreation(RoiGraphic roiGraphic)
 		{
-			if (_createGraphic != null)
-				return _createGraphic.Track(mouseInformation);
-
-			return false;
+			roiGraphic.Roi.ControlPoints.Visible = false;
 		}
 
-		public override bool Stop(IMouseInformation mouseInformation)
+		protected override object[] CreateAnalyzers()
 		{
-			if (_createGraphic != null)
-			{
-				if (_createGraphic.Stop(mouseInformation))
-				{
-					IOverlayGraphicsProvider image = (IOverlayGraphicsProvider)mouseInformation.Tile.PresentationImage;
-
-					InsertRemoveGraphicUndoableCommand command = InsertRemoveGraphicUndoableCommand.GetRemoveCommand(image.OverlayGraphics, _createGraphic);
-					command.Name = "Create Ellipse";
-					_createGraphic.ImageViewer.CommandHistory.AddCommand(command);
-					return true;
-				}
-			}
-
-			_createGraphic = null;
-			return false;
+			EllipseAnalyzerExtensionPoint extensionPoint = new EllipseAnalyzerExtensionPoint();
+			return extensionPoint.CreateExtensions();
 		}
+	}
 
-		public override void Cancel()
-		{
-			if (_createGraphic != null)
-				_createGraphic.Cancel();
+	public interface IEllipseAnalyzer : IRoiAnalyzer
+	{
+		string Analyze(ImageSop sop, EllipseInteractiveGraphic rectangle);
+	}
 
-			IOverlayGraphicsProvider image = _createGraphic.ParentPresentationImage as IOverlayGraphicsProvider;
-			image.OverlayGraphics.Remove(_createGraphic);
-
-			_createGraphic.ParentPresentationImage.Draw();
-			_createGraphic = null;
-		}
-
-		public override CursorToken GetCursorToken(Point point)
-		{
-			if (_createGraphic != null)
-				return _createGraphic.GetCursorToken(point);
-
-			return null;
-		}
-
-		private void OnRoiChanged(object sender, EventArgs e)
-		{
-			RoiGraphic roiGraphic = sender as RoiGraphic;
-
-			EllipseInteractiveGraphic ellipseGraphic = roiGraphic.Roi as EllipseInteractiveGraphic;
-			IImageSopProvider image = roiGraphic.ParentPresentationImage as IImageSopProvider;
-
-			ellipseGraphic.CoordinateSystem = CoordinateSystem.Source;
-			double widthInPixels = (ellipseGraphic.BottomRight.X - ellipseGraphic.TopLeft.X);
-			double heightInPixels = (ellipseGraphic.BottomRight.Y - ellipseGraphic.TopLeft.Y);
-			ellipseGraphic.ResetCoordinateSystem();
-
-			PixelSpacing pixelSpacing = image.ImageSop.GetModalityPixelSpacing();
-
-			bool pixelSpacingInvalid = pixelSpacing.Row <= float.Epsilon ||
-										pixelSpacing.Column <= float.Epsilon ||
-										double.IsNaN(pixelSpacing.Row) ||
-										double.IsNaN(pixelSpacing.Column);
-			string text;
-
-			if (pixelSpacingInvalid)
-			{
-				double area = Math.Abs(widthInPixels * heightInPixels);
-				text = String.Format(SR.ToolsMeasurementFormatAreaPixels, area);
-			}
-			else
-			{
-				double widthInCm = widthInPixels * pixelSpacing.Column / 10;
-				double heightInCm = heightInPixels * pixelSpacing.Row / 10;
-
-				double area = Math.Abs(widthInCm * heightInCm);
-				text = String.Format(SR.ToolsMeasurementFormatAreaSquareCm, area);
-			}
-
-			roiGraphic.Callout.Text = text;
-		}
+	[ExtensionPoint]
+	public sealed class EllipseAnalyzerExtensionPoint : ExtensionPoint<IEllipseAnalyzer>
+	{
 	}
 }

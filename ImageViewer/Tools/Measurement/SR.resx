@@ -136,7 +136,7 @@
     <value>Area:</value>
   </data>
   <data name="ToolsMeasurementFormatAreaPixels" xml:space="preserve">
-    <value>Area: {0:F2} pixels</value>
+    <value>Area: {0:F0} pixels</value>
   </data>
   <data name="ToolsMeasurementFormatAreaSquareCm" xml:space="preserve">
     <value>Area: {0:F2} sq cm</value>
@@ -182,5 +182,23 @@
   </data>
   <data name="TooltipEllipticalRoi" xml:space="preserve">
     <value>Elliptical ROI</value>
+  </data>
+  <data name="ToolsMeasurementFormatAreaSquareMm" xml:space="preserve">
+    <value>Area: {0:F2} sq mm</value>
+  </data>
+  <data name="CommandCreateEllipiticalRoi" xml:space="preserve">
+    <value>Create Elliptical ROI</value>
+  </data>
+  <data name="CommandCreateProtractor" xml:space="preserve">
+    <value>Create Protractor</value>
+  </data>
+  <data name="CommandCreateRectangleRoi" xml:space="preserve">
+    <value>Create Rectangle ROI</value>
+  </data>
+  <data name="CommandCreateRuler" xml:space="preserve">
+    <value>Create Ruler</value>
+  </data>
+  <data name="ToolsMeasurementFormatLengthMm" xml:space="preserve">
+    <value>Length: {0:F2} mm</value>
   </data>
 </root>

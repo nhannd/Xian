@@ -96,16 +96,24 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="EllipseAnalyzers.cs" />
     <Compile Include="EllipticalRoiTool.cs" />
+    <Compile Include="Formula.cs" />
+    <Compile Include="IRoiAnalyzer.cs" />
+    <Compile Include="MeasurementTool.cs" />
+    <Compile Include="ProtractorAnalyzers.cs" />
     <Compile Include="ProtractorTool.cs" />
     <Compile Include="DeleteGraphicTool.cs" />
+    <Compile Include="RectangleAnalyzers.cs" />
     <Compile Include="RectangularROITool.cs" />
+    <Compile Include="RulerAnalyzers.cs" />
     <Compile Include="RulerTool.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
+    <Compile Include="Units.cs" />
     <EmbeddedResource Include="SR.resx">
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>
