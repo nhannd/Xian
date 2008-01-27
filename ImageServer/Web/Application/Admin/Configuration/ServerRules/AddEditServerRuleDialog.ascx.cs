@@ -270,12 +270,20 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRule
             theRule.DefaultRule = this.DefaultCheckBox.Checked;
             theRule.ServerPartitionKey = this.Partition.GetKey();
 
-            if (OKClicked != null)
+            if (Page.IsValid)
             {
-                OKClicked(theRule);
-            }
+                if (OKClicked != null)
+                {
+                    OKClicked(theRule);
+                }
 
-            Close();
+                Close();
+            }
+            else
+            {
+                Show();
+            }
+            
         }
 
         #region Public methods

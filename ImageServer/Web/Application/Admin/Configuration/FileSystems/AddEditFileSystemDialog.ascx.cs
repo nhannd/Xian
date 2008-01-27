@@ -168,8 +168,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
                                 AddEditFileSystemsDialog_ClearField('" + DescriptionTextBox.ClientID + @"');
                                 AddEditFileSystemsDialog_ClearField('" + PathTextBox.ClientID + @"');
 
-                                AddEditFileSystemsDialog_HideHelpImage('" + DescriptionHelpImage.ClientID + @"');
-                                AddEditFileSystemsDialog_HideHelpImage('" + PathHelpImage.ClientID + @"');
                                 
                             }
                         </script>");
@@ -226,12 +224,21 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
                 FileSystem.HighWatermark = highWatermark;
 
             FileSystem.FilesystemTierEnum = FilesystemTiers[TiersDropDownList.SelectedIndex];
+            
 
+            if (Page.IsValid)
+            {
+                if (OKClicked != null)
+                    OKClicked(FileSystem);
+                Close();
+            }
+            else
+            {
+                // TODO: Add mechanism to select the first tab where the error occurs
+                Show();
+            }
         
-            if (OKClicked != null)
-                OKClicked(FileSystem);
-
-            Close();
+           
             
             
         }

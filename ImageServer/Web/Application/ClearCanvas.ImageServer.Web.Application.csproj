@@ -231,6 +231,13 @@
     <Compile Include="Admin\Default.aspx.designer.cs">
       <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Common\InvalidInputIndicator.ascx.cs">
+      <DependentUpon>InvalidInputIndicator.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Common\InvalidInputIndicator.ascx.designer.cs">
+      <DependentUpon>InvalidInputIndicator.ascx</DependentUpon>
+    </Compile>
     <Compile Include="Common\ServerPartitionTabs.ascx.cs">
       <DependentUpon>ServerPartitionTabs.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -415,6 +422,7 @@
     <Content Include="App_Themes\NightSafari\Layout.css" />
     <Content Include="App_Themes\NightSafari\Tabs.css" />
     <Content Include="Common\BasePage.aspx" />
+    <Content Include="Common\InvalidInputIndicator.ascx" />
     <Content Include="Common\ServerPartitionTabs.ascx" />
     <Content Include="images\blank.gif" />
     <Content Include="Search\SearchAccordian.ascx" />
@@ -552,7 +560,7 @@
         <WebProjectProperties>
           <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>3298</DevelopmentServerPort>
+          <DevelopmentServerPort>3345</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>
           </IISUrl>

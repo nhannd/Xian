@@ -93,6 +93,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
                 this._device = value;
                 // put into viewstate to retrieve later
                 ViewState[ClientID + "_EdittedDevice"] = _device;
+
+                UpdateUI();
             }
             get
             {
@@ -136,7 +138,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
             ModalPopupExtender1.DropShadow = true;
             ModalPopupExtender1.PopupDragHandleControlID = TitleBarPanel.UniqueID;
 
-            OKButton.OnClientClick = ClientID + "_clearFields()";
+            //OKButton.OnClientClick = ClientID + "_clearFields()";
 
             DHCPCheckBox.InputAttributes.Add("onClick", "EnableDisableIp();");
 
@@ -151,25 +153,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
                                                         this.IPAddressTextBox.ClientID +
                                                         @"');
                                 ipBox.disabled=checkBox.checked;         
-                            }
-                            function AddEditDialog_HideHelpImage(helpImgID)
-                            {
-                                img = document.getElementById(helpImgID);
-                                img.style.visibility = 'hidden';
-                            }
-                            function AddEditDialog_ClearField(fieldID)
-                            {
-                                txtbox = document.getElementById(fieldID);
-                                txtbox.style.backgroundColor = '';
-                            }
-                            function " + ClientID+ @"_clearFields()
-                            {
-                                AddEditDialog_ClearField('" + AETitleTextBox.ClientID + @"');
-                                AddEditDialog_HideHelpImage('" + AETitleHelpImage.ClientID + @"');
-                                AddEditDialog_ClearField('" + IPAddressTextBox.ClientID + @"');
-                                AddEditDialog_HideHelpImage('" + IPAddressHelpImage.ClientID + @"');
-                                AddEditDialog_ClearField('" + PortTextBox.ClientID + @"');
-                                AddEditDialog_HideHelpImage('" + PortHelpImage.ClientID + @"');
                             }
                         </script>");
         }
@@ -211,20 +194,27 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
             Device.Description = DescriptionTextBox.Text;
             Device.Dhcp = DHCPCheckBox.Checked;
             Device.IpAddress = IPAddressTextBox.Text;
-            Device.Port = Int32.Parse(PortTextBox.Text);
+            int port;
+            if (Int32.TryParse(PortTextBox.Text, out port))
+                Device.Port = port;
             Device.ServerPartitionKey = new ServerEntityKey("Device", ServerPartitionDropDownList.SelectedItem.Value);
             Device.AllowStorage = AllowStorageCheckBox.Checked;
             Device.AllowQuery = AllowQueryCheckBox.Checked;
             Device.AllowRetrieve = AllowRetrieveCheckBox.Checked;
 
 
-            // TODO: Add additional server-side validation here
+            if (Page.IsValid)
+            {
+                if (OKClicked != null)
+                    OKClicked(Device);
 
-            if (OKClicked != null)
-                OKClicked(Device);
-
-            Close();
-           
+                Close();
+            }
+            else
+            {
+                Show();
+            }
+            
 
         }
 
@@ -232,10 +222,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
 
 
         #region Public methods
-        /// <summary>
-        /// Displays the add/edit device dialog box.
-        /// </summary>
-        public void Show()
+
+        public void UpdateUI()
         {
             // update the dropdown list
             ServerPartitionDropDownList.Items.Clear();
@@ -259,7 +247,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
             }
 
             // Update the rest of the fields
-            if (Device==null)
+            if (Device == null)
             {
                 AETitleTextBox.Text = "";
                 IPAddressTextBox.Text = "";
@@ -292,7 +280,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
 
                 ServerPartitionDropDownList.SelectedValue = Device.ServerPartitionKey.Key.ToString();
             }
+        }
 
+        /// <summary>
+        /// Displays the add/edit device dialog box.
+        /// </summary>
+        public void Show()
+        {
+            
             TabContainer1.ActiveTabIndex = 0;
 
             UpdatePanel.Update();

@@ -30,9 +30,6 @@
 #endregion
 
 using System;
-using System.Drawing;
-using System.Web.UI;
-using System.Web.UI.WebControls;
 
 namespace ClearCanvas.ImageServer.Web.Common.WebControls
 {
@@ -91,83 +88,37 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
         #endregion Public Properties
 
         #region Protected Methods
-        protected override void OnInit(EventArgs e)
-        {
-            // Register Javascript for client-side validation
-
-             
-            string script =
-                "<script language='javascript'>" + @"
-                    function " + EvalFunctionName + @"()
-                    {
-                        extenderCtrl =  document.getElementById('" + this.ClientID + @"');                            
-                        textbox = document.getElementById('" + GetControlRenderID(ControlToValidate) + @"');
-                        helpCtrl = document.getElementById('" + GetControlRenderID(PopupHelpControlID) + @"');
- 
-                        result = true;
-                        if (textbox.value!=null && textbox.value!='')
-                        {
-                            portValue = parseInt(textbox.value);
-                            result = portValue >= " + _min + @" && portValue<= " + _max + @";
-                        }   
-                        else
-                        {
-                            result = false;
-                        }
-                        
-                        if (!result)
-                        {
-                            extenderCtrl.style.visibility='visible';
-                            if (helpCtrl!=null){
-                                helpCtrl.style.visibility='visible';
-                                helpCtrl.alt='" + ErrorMessage + @"';
-                            }
-                            textbox.style.backgroundColor ='" + InvalidInputBackColor + @"';
-                        }
-                        else
-                        {
-                            //if (helpCtrl!=null)
-                            //    helpCtrl.style.visibility='hidden';
-                            //extenderCtrl.style.visibility='hidden';
-                            //textbox.style.backgroundColor='" + ColorTranslator.ToHtml(BackColor) + @"';
-                        }
-                        //alert('javascript test=' + result);
-                        return result;
-                    }
-
-                </script>";
-
-            Page.ClientScript.RegisterClientScriptBlock(GetType(), ClientID, script);
-
-            base.OnInit(e);
-        }
-
-        protected override void AddAttributesToRender(HtmlTextWriter writer)
-        {
-            base.AddAttributesToRender(writer);
-
-            if (RenderUplevel)
-            {
-                // Add client-side validation function
-                writer.AddAttribute("evaluationfunction", EvalFunctionName);
-            }
-        }
+        
 
         /// <summary>
         /// Called during server-side validation
         /// </summary>
         /// <returns></returns>
-        protected override bool EvaluateIsValid()
+        protected override bool OnServerSideEvaluate()
         {
-            bool result = false;
-            TextBox input = FindControl(ControlToValidate) as TextBox;
-            if (input != null)
-                if (String.IsNullOrEmpty(input.Text) == false)
-                {
-                    Int32 value;
-                    result = Int32.TryParse(input.Text, out value);
-                }
-            return result;
+
+            Decimal value;
+            if (Decimal.TryParse(GetControlValidationValue(ControlToValidate), out value))
+            {
+                return value >= MinValue && value <= MaxValue;
+            }
+
+            return false;
+        }
+
+        
+
+        protected override void RegisterClientSideValidationFunction()
+        {
+            ScriptTemplate template = new ScriptTemplate(GetType().Assembly, "ClearCanvas.ImageServer.Web.Common.WebControls.RangeValidator.js");
+            template.Replace("@@FUNCTION_NAME@@", ClientEvalFunctionName);
+            template.Replace("@@INPUT_CLIENTID@@", InputControl.ClientID);
+            template.Replace("@@MIN_VALUE@@", MinValue.ToString());
+            template.Replace("@@MAX_VALUE@@", MaxValue.ToString());
+            
+            Page.ClientScript.RegisterClientScriptBlock(GetType(), ClientEvalFunctionName, template.Script, true);
+
+
         }
 
         #endregion Protected Methods

@@ -1,7 +1,35 @@
+#region License
+
+// Copyright (c) 2006-2008, ClearCanvas Inc.
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without modification, 
+// are permitted provided that the following conditions are met:
+//
+//    * Redistributions of source code must retain the above copyright notice, 
+//      this list of conditions and the following disclaimer.
+//    * Redistributions in binary form must reproduce the above copyright notice, 
+//      this list of conditions and the following disclaimer in the documentation 
+//      and/or other materials provided with the distribution.
+//    * Neither the name of ClearCanvas Inc. nor the names of its contributors 
+//      may be used to endorse or promote products derived from this software without 
+//      specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
+// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR 
+// PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR 
+// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, 
+// OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE 
+// GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) 
+// HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
+// STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN 
+// ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+// OF SUCH DAMAGE.
+
+#endregion
+
 using System;
-using System.Drawing;
-using System.Web.UI;
-using System.Web.UI.WebControls;
 
 namespace ClearCanvas.ImageServer.Web.Common.WebControls
 {
@@ -76,85 +104,65 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
         #endregion Public Properties
 
         #region Protected Methods
-        protected override void OnInit(EventArgs e)
-        {
-            // Register Javascript for client-side validation
-
-            string comparison = GreaterThan ? ">=" : "<=";
-            string script =
-                "<script language='javascript'>" + @"
-                    function " + EvalFunctionName + @"()
-                    {
-                        extenderCtrl =  document.getElementById('" + this.ClientID + @"');                            
-                        textbox = document.getElementById('" + GetControlRenderID(ControlToValidate) + @"');
-                        compareCtrl = document.getElementById('" + GetControlRenderID(ControlToCompare) + @"');
-                        helpCtrl = document.getElementById('" + GetControlRenderID(PopupHelpControlID) + @"');
- 
-                        result = true;
-                        if (textbox.value!=null && textbox.value!='' && compareCtrl!=null && compareCtrl.value!='')
-                        {
-                            compareValue = parseInt(compareCtrl.value);
-                            controlValue = parseInt(textbox.value);
-                            result = controlValue >= " + MinValue + @" && controlValue<= " + MaxValue + @" && controlValue " + comparison + @" compareValue;
-                        }   
-                        else
-                        {
-                            result = false;
-                        }
-                        
-                        if (!result)
-                        {
-                            extenderCtrl.style.visibility='visible';
-                            if (helpCtrl!=null){
-                                helpCtrl.style.visibility='visible';
-                                helpCtrl.alt='" + ErrorMessage + @"';
-                            }
-                            textbox.style.backgroundColor ='" + InvalidInputBackColor + @"';
-                        }
-                        else
-                        {
-                            //if (helpCtrl!=null)
-                            //    helpCtrl.style.visibility='hidden';
-                            //extenderCtrl.style.visibility='hidden';
-                            //textbox.style.backgroundColor='" + ColorTranslator.ToHtml(BackColor) + @"';
-                        }
-                        //alert('javascript test=' + result);
-                        return result;
-                    }
-
-                </script>";
-
-            Page.ClientScript.RegisterClientScriptBlock(GetType(), ClientID, script);
-
-            base.OnInit(e);
-        }
-
-        protected override void AddAttributesToRender(HtmlTextWriter writer)
-        {
-            base.AddAttributesToRender(writer);
-
-            if (RenderUplevel)
-            {
-                // Add client-side validation function
-                writer.AddAttribute("evaluationfunction", EvalFunctionName);
-            }
-        }
+        
 
         /// <summary>
         /// Called during server-side validation
         /// </summary>
         /// <returns></returns>
-        protected override bool EvaluateIsValid()
+        protected override bool OnServerSideEvaluate()
         {
-            bool result = false;
-            TextBox input = FindControl(ControlToValidate) as TextBox;
-            if (input != null)
-                if (String.IsNullOrEmpty(input.Text) == false)
+
+            Decimal value1;
+            if (Decimal.TryParse(GetControlValidationValue(ControlToValidate), out value1))
+            {
+                if (value1 < MinValue || value1 > MaxValue)
                 {
-                    Int32 value;
-                    result = Int32.TryParse(input.Text, out value);
+                    return false;
                 }
-            return result;
+
+                Decimal value2 ;
+                if (Decimal.TryParse(GetControlValidationValue(ControlToCompare), out value2))
+                {
+                    if (GreaterThan)
+                    {
+                        return value1 >= value2;
+                        
+                    }
+                    else
+                    {
+                        return value1 <= value2;
+                    }
+
+                }
+                else
+                {
+                    // can't parse value2... assume value1 is OK
+                    return true;
+                }
+            }
+            
+            
+            return false;
+        }
+
+       
+
+        protected override void RegisterClientSideValidationFunction()
+        {
+            // Register Javascript for client-side validation
+            string comparison = GreaterThan ? ">=" : "<=";
+            
+            ScriptTemplate template = new ScriptTemplate(GetType().Assembly, "ClearCanvas.ImageServer.Web.Common.WebControls.RangeComparisonValidator.js");
+            template.Replace("@@FUNCTION_NAME@@", ClientEvalFunctionName);
+            template.Replace("@@INPUT_CLIENTID@@", InputControl.ClientID);
+            template.Replace("@@COMPARE_INPUT_CLIENTID@@", GetControlRenderID(ControlToCompare));
+            template.Replace("@@MIN_VALUE@@", MinValue.ToString());
+            template.Replace("@@MAX_VALUE@@", MaxValue.ToString());
+            template.Replace("@@COMPARISON_OP@@", comparison);
+
+            Page.ClientScript.RegisterClientScriptBlock(GetType(), ClientEvalFunctionName, template.Script, true);
+
         }
 
         #endregion Protected Methods

@@ -30,31 +30,53 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Drawing;
+using System.Web.UI.WebControls;
 
 namespace ClearCanvas.ImageServer.Web.Common.WebControls
 {
+    /// <summary>
+    /// Base validator class for all custom validators.
+    /// </summary>
+    /// <remarks>
+    /// All derived classes must override <see cref="OnServerSideEvaluate"/> and <see cref="RegisterClientSideValidationFunction"/>
+    /// to provide the result of the validation. Other validation aspects such as showing/hidding the error indication, highlighting
+    /// the input will be taken cared of by the base class.
+    /// </remarks>
     abstract public class BaseValidator: System.Web.UI.WebControls.BaseValidator
     {
-        // specify the control that will popup the help infomration
-        private string _popupHelpControlID="";
-        // the background color of the input when the validation fails.
-        private string _invalidInputBackColor;
+        #region Private members
+        private string  _invalidInputIndicatorID="";
+        private Color   _invalidInputColor;
+        private bool    _validateWhenDisabled = false;
+        private string  _inputName;
+        #endregion Private members
 
-        private string _inputName;
 
-        protected string EvalFunctionName
+        #region Public Properties
+
+        /// <summary>
+        /// Gets the reference to the control that contains the input to be validated
+        /// </summary>
+        public WebControl InputControl
         {
-            get { return ClientID + "_Evaluation"; }
+            get { return FindControl(ControlToValidate) as WebControl; }
         }
 
-        public string PopupHelpControlID
+        /// <summary>
+        /// Gets or sets the id of the control that will be displayed when the input is invalid.
+        /// </summary>
+        /// <remarks>
+        /// The popup control must be have <see cref="IInvalidInputIndicator"/> interface.</remarks>
+        public string InvalidInputIndicatorID
         {
-            get { return _popupHelpControlID; }
-            set { _popupHelpControlID = value; }
+            get { return _invalidInputIndicatorID; }
+            set { _invalidInputIndicatorID = value; }
         }
 
+        /// <summary>
+        /// Name of the input to be validated.
+        /// </summary>
         public string InputName
         {
             get
@@ -67,25 +89,293 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
             set { _inputName = value; }
         }
 
+
         /// <summary>
         /// Sets or retrieve the specified background color of the input control when the validation fails.
         /// </summary>
-        public string InvalidInputBackColor
+        public Color InvalidInputColor
         {
-            get { return _invalidInputBackColor; }
-            set { _invalidInputBackColor = value; }
+            get { return _invalidInputColor; }
+            set { _invalidInputColor = value; }
         }
+
+
+        public bool ValidateWhenDisabled
+        {
+            get { return _validateWhenDisabled; }
+            set { _validateWhenDisabled = value; }
+        }
+
+        #endregion Public Properties
+
+
+        #region Protected Properties
+
+        /// <summary>
+        /// Name of client side script evaluation function to be called during the validation.
+        /// </summary>
+        protected string ClientEvalFunctionName
+        {
+            get { return ClientID + "_Evaluation"; }
+        }
+
+
+        /// <summary>
+        /// Gets the control used to indicate the input is invalid
+        /// </summary>
+ 		protected IInvalidInputIndicator InvalidInputIndicator
+        {
+            get
+            {
+                return FindControl(InvalidInputIndicatorID) as IInvalidInputIndicator;
+            }
+        }
+        
+        
+        /// <summary>
+        /// Gets or sets the background color value for the input control when validation passes.
+        /// </summary>
+        protected Color InputNormalColor
+        {
+            get
+            {
+                if (ViewState[ClientID + "_ValidateCtrlBackColor"] == null)
+                    return Color.Empty;
+                else
+                    return (Color) ViewState[ClientID + "_ValidateCtrlBackColor"];
+            }
+            set
+            {
+                ViewState[ClientID + "_ValidateCtrlBackColor"] = value;
+            }
+        }
+
+        protected string ClientSideOnValidateFunctionName
+        {
+            get
+            {
+                return ClientID + "_OnValidate";
+            }
+        }
+
+
+        protected string OnInvalidInputFunctionName
+        {
+            get
+            {
+                return ClientID + "_OnInvalidInput";
+            }
+        }
+
+        protected string OnValidInputFunctionName
+        {
+            get
+            {
+                return ClientID + "_OnValidInput";
+            }
+        }
+
+        #endregion Protected Properties
+
+        #region Protected methods
 
         protected override void AddAttributesToRender(System.Web.UI.HtmlTextWriter writer)
         {
             base.AddAttributesToRender(writer);
 
-            if (this.DetermineRenderUplevel() && this.EnableClientScript)
+            if (DetermineRenderUplevel() && EnableClientScript)
             {
-                Page.ClientScript.RegisterExpandoAttribute(this.ClientID, "evaluationfunction", EvalFunctionName);
-                writer.AddAttribute("evaluationfunction", EvalFunctionName);
+                Page.ClientScript.RegisterExpandoAttribute(ClientID, "evaluationfunction", ClientSideOnValidateFunctionName);
+                writer.AddAttribute("evaluationfunction", ClientSideOnValidateFunctionName);
             }
         }
+
+
+        protected override void OnInit(EventArgs e)
+        {
+            base.OnInit(e);
+
+            if (InvalidInputIndicator != null)
+                InvalidInputIndicator.AttachValidator(this);
+
+            // This are special attributes used during the validation. Basically we want to "attach" this validator
+            // to the input control so that we are "aware of" other validators.
+            //
+            // "validatorscounter"  =  number of validator controls attached to a specific input
+            // "calledvalidatorcounter" = number of validator controls which have been called during the validation.
+            // 
+            // During the validation, "calledvalidatorcounter" will change. We can use that to determine 
+            // if we are the first validator called by the browser to evaluate the input. 
+            // If so, we can safely hide any error indicator that's shown previously if the current input is valid. 
+            //
+            
+            // Increment "validatorscounter" value to include this validator
+            int counter = 0;
+            if (InputControl.Attributes["validatorscounter"]!=null)
+            {
+                 counter = Int32.Parse(InputControl.Attributes["validatorscounter"]);
+            }
+            InputControl.Attributes.Add("validatorscounter", String.Format("{0}", counter + 1));
+
+            // set calledvalidatorcounter=0
+            if (InputControl.Attributes["calledvalidatorcounter"] == null)
+            {
+                InputControl.Attributes.Add("calledvalidatorcounter", "0");
+            }
+        }
+        
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+
+            if (EnableClientScript)
+            {
+                RegisterScriptOnValidateFunction();
+                RegisterScriptOnInvalidInputFunction();
+                RegisterScriptOnValidInputFunction();
+                RegisterClientSideValidationFunction();
+            }
+
+            
+            if (!Page.IsPostBack)
+            {
+                // save current background color
+                InputNormalColor = InputControl.BackColor;      
+            }
+            else
+            {
+                // Restore the input background color
+                InputControl.BackColor = InputNormalColor;
+              
+            }
+        }
+
+        protected void RegisterScriptOnInvalidInputFunction()
+        {
+            ScriptTemplate template = new ScriptTemplate(GetType().Assembly, "ClearCanvas.ImageServer.Web.Common.WebControls.BaseValidator_OnInValid.js");
+            template.Replace("@@ERROR_FUNCTION_NAME@@", OnInvalidInputFunctionName);
+            template.Replace("@@INPUT_CLIENTID@@", GetControlRenderID(ControlToValidate));
+            template.Replace("@@INPUT_NORMAL_BKCOLOR@@", ColorTranslator.ToHtml(InvalidInputColor));
+            template.Replace("@@INVALID_INPUT_POPUP_CONTROL@@", 
+                                InvalidInputIndicator == null
+                                              ? "null"
+                                              : "document.getElementById('" + InvalidInputIndicator.Container.ClientID + "')"
+                            );
+
+            template.Replace("@@INVALID_INPUT_POPUP_TOOLTIP@@", 
+                                InvalidInputIndicator == null
+                                              ? "null"
+                                              : "document.getElementById('" + InvalidInputIndicator.TooltipLabel.ClientID +"')"
+                
+                            );
+
+
+            Page.ClientScript.RegisterClientScriptBlock(GetType(), OnInvalidInputFunctionName, template.Script, true);
+        }
+
+
+        protected void RegisterScriptOnValidateFunction()
+        {
+            ScriptTemplate template = new ScriptTemplate(GetType().Assembly, "ClearCanvas.ImageServer.Web.Common.WebControls.BaseValidator_OnValidate.js");
+            template.Replace("@@FUNCTION_NAME@@", ClientSideOnValidateFunctionName);
+            template.Replace("@@CLIENT_SIDE_EVALUATION_FUNCTION@@", ClientEvalFunctionName);
+            template.Replace("@@CLIENT_SIDE_ON_VALID_FUNCTION@@", OnValidInputFunctionName);
+            template.Replace("@@CLIENT_SIDE_ON_INVALID_FUNCTION@@", OnInvalidInputFunctionName);
+            template.Replace("@@INVALID_INPUT_MESSAGE@@", ErrorMessage);
+
+
+            Page.ClientScript.RegisterClientScriptBlock(GetType(), ClientSideOnValidateFunctionName, template.Script, true);
+
+        }
+
+        
+
+        protected void RegisterScriptOnValidInputFunction()
+        {
+
+            ScriptTemplate template = new ScriptTemplate(GetType().Assembly, "ClearCanvas.ImageServer.Web.Common.WebControls.BaseValidator_OnValid.js");
+            template.Replace("@@FUNCTION_NAME@@", OnValidInputFunctionName);
+            template.Replace("@@INPUT_CLIENTID@@", GetControlRenderID(ControlToValidate));
+            template.Replace("@@INPUT_NORMAL_BKCOLOR@@", ColorTranslator.ToHtml(InputNormalColor));
+            template.Replace("@@INVALID_INPUT_POPUP_CONTROL@@", 
+                InvalidInputIndicator == null
+                                              ? "null"
+                                              : "document.getElementById('" + InvalidInputIndicator.Container.ClientID + "')"
+
+                );
+
+
+            Page.ClientScript.RegisterClientScriptBlock(GetType(), OnValidInputFunctionName, template.Script, true);
+
+        }
+
+
+		protected override bool EvaluateIsValid()
+        {
+            
+            if (Enabled || ValidateWhenDisabled)
+            {
+                if (OnServerSideEvaluate())
+                {
+                    if (InvalidInputIndicator != null)
+                    {
+                        InvalidInputIndicator.Hide();
+                    }
+
+                    return true;
+                }
+                else
+                {
+                    if (InputControl.BackColor == InputNormalColor)
+                        InputControl.BackColor = InvalidInputColor;
+
+                    if (InvalidInputIndicator != null)
+                    {
+                        InvalidInputIndicator.TooltipLabel.Text= ErrorMessage;
+                        InvalidInputIndicator.Show();
+
+                    }
+
+                    return false;
+                }
+            }
+
+		    return true;
+
+        }
+        #endregion Protected methods
+
+        #region Abstract methods
+        /// <summary>
+        /// Method called while server-side validation is taking place.
+        /// </summary>
+        /// <returns></returns>
+        /// <remarks>
+        /// <para>Derived classes must provide its own server-side validation which must return a boolean
+        /// indicating the validation passes or fails. The base class will take care of other artifacts
+        /// such as turning on/off <see cref="InvalidInputIndicator"/> or highlighting the input. 
+        /// </para>
+        /// <para>
+        /// Client-side validation is specified in <see cref="RegisterClientSideValidationFunction"/>.
+        /// </para>
+        /// </remarks>
+        protected abstract bool OnServerSideEvaluate();
+
+        /// <summary>
+        /// Method called during initialization to register client-side validation script.
+        /// </summary>
+        /// <remarks>
+        /// <para>Derived classes must provide its own client-side validation script which must return a boolean
+        /// indicating the validation passes or fails. The base class will take care of other artifacts
+        /// such as turning on/off <see cref="InvalidInputIndicator"/> or highlighting the input. 
+        /// </para>
+        /// <para>
+        /// Server-side validation is specified in <see cref="OnServerSideEvaluate"/>.
+        /// </para>
+        /// </remarks>
+        protected abstract void RegisterClientSideValidationFunction();
+
+        #endregion Abstract methods
 
     }
 }

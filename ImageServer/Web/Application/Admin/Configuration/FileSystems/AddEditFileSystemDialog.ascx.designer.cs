@@ -119,13 +119,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
         protected global::System.Web.UI.WebControls.TextBox DescriptionTextBox;
         
         /// <summary>
-        /// DescriptionHelpImage control.
+        /// InvalidDescriptionHint control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Image DescriptionHelpImage;
+        protected global::ClearCanvas.ImageServer.Web.Application.Common.InvalidInputIndicator InvalidDescriptionHint;
         
         /// <summary>
         /// ConditionalRequiredFieldValidator1 control.
@@ -164,13 +164,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
         protected global::System.Web.UI.WebControls.TextBox PathTextBox;
         
         /// <summary>
-        /// PathHelpImage control.
+        /// InvalidPathHint control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Image PathHelpImage;
+        protected global::ClearCanvas.ImageServer.Web.Application.Common.InvalidInputIndicator InvalidPathHint;
         
         /// <summary>
         /// PathValidator control.
@@ -179,16 +179,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.WebServiceValidator PathValidator;
-        
-        /// <summary>
-        /// ConditionalRequiredFieldValidator2 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.ConditionalRequiredFieldValidator ConditionalRequiredFieldValidator2;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.FilesystemPathValidator PathValidator;
         
         /// <summary>
         /// WriteCheckBox control.
@@ -281,13 +272,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
         protected global::System.Web.UI.WebControls.TextBox HighWatermarkTextBox;
         
         /// <summary>
-        /// HighWatermarkHelpImage control.
+        /// HighWatermarkHelp control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Image HighWatermarkHelpImage;
+        protected global::ClearCanvas.ImageServer.Web.Application.Common.InvalidInputIndicator HighWatermarkHelp;
         
         /// <summary>
         /// HighWatermarkValidator control.
@@ -335,13 +326,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
         protected global::System.Web.UI.WebControls.TextBox LowWatermarkTextBox;
         
         /// <summary>
-        /// LowWatermarkHelpImage control.
+        /// LowWatermarkHelp control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Image LowWatermarkHelpImage;
+        protected global::ClearCanvas.ImageServer.Web.Application.Common.InvalidInputIndicator LowWatermarkHelp;
         
         /// <summary>
         /// LowWatermarkValidator control.

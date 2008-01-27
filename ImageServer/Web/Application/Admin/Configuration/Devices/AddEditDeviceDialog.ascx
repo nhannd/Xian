@@ -1,5 +1,7 @@
 <%@ Control Language="C#" AutoEventWireup="true" Inherits="ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices.AddEditDeviceDialog"
     Codebehind="AddEditDeviceDialog.ascx.cs" %>
+<%@ Register Src="~/Common/InvalidInputIndicator.ascx" TagName="InvalidInputIndicator"
+    TagPrefix="uc1" %>
 <%@ Register Assembly="Validators" Namespace="Sample.Web.UI.Compatibility" TagPrefix="cc2" %>
 <%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="cc1" %>
 <%@ Register Assembly="ClearCanvas.ImageServer.Web.Common" Namespace="ClearCanvas.ImageServer.Web.Common.WebControls"
@@ -23,80 +25,117 @@
                 <cc1:TabContainer ID="TabContainer1" runat="server" ActiveTabIndex="0" CssClass="CSSDialogTabControl">
                     <cc1:TabPanel ID="TabPanel1" runat="server" HeaderText="TabPanel1" CssClass="CSSTabPanel">
                         <ContentTemplate>
-                            <asp:Panel ID="Panel1" runat="server" CssClass="CSSDialogTabPanelContent" Width="100%">
-                                <table id="Table2" runat="server" cellspacing="2">
-                                    <tr id="Tr1" runat="server" align="left">
-                                        <td id="Td1" runat="server">
-                                            <asp:Label ID="Label1" runat="server" Text="AE Title" CssClass="CSSTextLabel" /><br />
-                                            <asp:TextBox ID="AETitleTextBox" runat="server" ValidationGroup="vg1" MaxLength="16"
-                                                Width="150px"></asp:TextBox><asp:Image ID="AETitleHelpImage" runat="server" ImageAlign="Top"
-                                                    ImageUrl="~/images/icons/HelpSmall.png" Style="visibility: hidden" /><clearcanvas:ConditionalRequiredFieldValidator
-                                                        ID="RequiredFieldValidator2" runat="server" ControlToValidate="AETitleTextBox"
-                                                        InvalidInputBackColor="#FAFFB5" ValidationGroup="vg1" PopupHelpControlID="AETitleHelpImage"
-                                                        ErrorMessage="AE Title is required" Display="None" RequiredWhenChecked="False"></clearcanvas:ConditionalRequiredFieldValidator><clearcanvas:RegularExpressionFieldValidator
-                                                            ID="RegularExpressionFieldValidator2" runat="server" ControlToValidate="AETitleTextBox"
-                                                            InvalidInputBackColor="#FAFFB5" ValidationGroup="vg1" PopupHelpControlID="AETitleHelpImage"
-                                                            ValidationExpression="^([^\\]){1,16}$" ErrorMessage="Acceptable characters: any characters except backslash"
-                                                            Display="None"></clearcanvas:RegularExpressionFieldValidator>
-                                        </td>
-                                        <td id="Td2" runat="server">
-                                        </td>
-                                        <td id="Td3" runat="server">
-                                            <asp:Label ID="Label2" runat="server" Text="Description" CssClass="CSSTextLabel" /><br />
-                                            <asp:TextBox ID="DescriptionTextBox" runat="server" Width="150px"></asp:TextBox>
-                                        </td>
-                                    </tr>
-                                    <tr id="Tr2" runat="server" align="left">
-                                        <td id="Td4" runat="server">
-                                            <table cellpadding="0" cellspacing="0" width="100%">
-                                                <tr>
-                                                    <td>
-                                                        IP Address
+                            <asp:Panel ID="Panel1" runat="server" CssClass="CSSDialogTabPanelContent">
+                                <table id="Table2" runat="server" >
+                                    <tr id="Tr1" runat="server" align="left" >
+                                        <td id="Td1" runat="server" valign="bottom">
+                                            <table width="100%">
+                                                <tr align="left">
+                                                    <td  width="100%">
+                                                        <asp:Label ID="Label1" runat="server" Text="AE Title" CssClass="CSSTextLabel" /><br />
+                                                        <asp:TextBox ID="AETitleTextBox" runat="server" ValidationGroup="vg1" MaxLength="16"></asp:TextBox>
                                                     </td>
-                                                    <td align="left">
-                                                        <asp:CheckBox ID="DHCPCheckBox" runat="server" Text="DHCP" Width="68px" /></td>
-                                                </tr>
-                                                <tr>
-                                                    <td colspan="2">
-                                                        <asp:TextBox ID="IPAddressTextBox" runat="server" CausesValidation="True" ValidationGroup="vg1"
-                                                            Width="150px">
-                                                        </asp:TextBox><asp:Image ID="IPAddressHelpImage" runat="server" ImageAlign="Top"
-                                                            ImageUrl="~/images/icons/HelpSmall.png" Style="visibility: hidden" />
+                                                    <td >
+                                                        <uc1:InvalidInputIndicator ID="AETitleHelp" runat="server" ImageUrl="~/images/icons/HelpSmall.png"
+                                                            Visible="true"></uc1:InvalidInputIndicator>
+                                                        
+                                                        <clearcanvas:ConditionalRequiredFieldValidator ID="RequiredFieldValidator2" runat="server"
+                                                            ControlToValidate="AETitleTextBox" InvalidInputColor="#FAFFB5" ValidationGroup="vg1"
+                                                            InvalidInputIndicatorID="AETitleHelp" ErrorMessage="AE Title is required" Display="None"
+                                                            RequiredWhenChecked="False">
+                                                        </clearcanvas:ConditionalRequiredFieldValidator><clearcanvas:RegularExpressionFieldValidator
+                                                            ID="RegularExpressionFieldValidator2" runat="server" ControlToValidate="AETitleTextBox"
+                                                            InvalidInputColor="#FAFFB5" ValidationGroup="vg1" InvalidInputIndicatorID="AETitleHelp"
+                                                            ValidationExpression="^([^\\]){1,16}$" ErrorMessage="Invalid AE Title" Display="None"></clearcanvas:RegularExpressionFieldValidator>
                                                     </td>
                                                 </tr>
                                             </table>
-                                            <clearcanvas:ConditionalRequiredFieldValidator ID="ConditionalRequiredFieldValidator1"
-                                                runat="server" ControlToValidate="IPAddressTextBox" InvalidInputBackColor="#FAFFB5"
-                                                ConditionalCheckBoxID="DHCPCheckBox" RequiredWhenChecked="False" ValidationGroup="vg1"
-                                                ErrorMessage="Device IP address is required if it uses static IP" PopupHelpControlID="IPAddressHelpImage"
-                                                Display="None"></clearcanvas:ConditionalRequiredFieldValidator>
-                                            <clearcanvas:RegularExpressionFieldValidator ID="RegularExpressionFieldValidator1"
-                                                runat="server" ControlToValidate="IPAddressTextBox" InvalidInputBackColor="#FAFFB5"
-                                                ValidationGroup="vg1" ValidationExpression="^([1-9]?\d|1\d\d|2[0-4]\d|25[0-5])\.([1-9]?\d|1\d\d|2[0-4]\d|25[0-5])\.([1-9]?\d|1\d\d|2[0-4]\d|25[0-5])\.([1-9]?\d|1\d\d|2[0-4]\d|25[0-5])$"
-                                                ErrorMessage="The IP address must be of form AAA.BBB.CCC.DDD\nAll components must be in the range from 0 to 255"
-                                                Display="None" PopupHelpControlID="IPAddressHelpImage"></clearcanvas:RegularExpressionFieldValidator>
                                         </td>
-                                        <td id="Td5" runat="server" align="left" colspan="1" valign="bottom">
+                                        <td id="Td2" runat="server" align="left"  valign="bottom">
+                                            <table width="100%">
+                                                <tr align="left">
+                                                    <td  width="100%">
+                                                        <asp:Label ID="Label2" runat="server" Text="Description" CssClass="CSSTextLabel" /><br />
+                                                        <asp:TextBox ID="DescriptionTextBox" runat="server" ></asp:TextBox>
+                                                    </td>
+                                                    <td>
+                                                    </td>
+                                                </tr>
+                                            </table>
                                         </td>
-                                        <td id="Td6" runat="server" align="left" colspan="1" valign="bottom">
-                                            Partition<br />
-                                            <asp:DropDownList ID="ServerPartitionDropDownList" runat="server" Width="150px">
-                                            </asp:DropDownList></td>
                                     </tr>
-                                    <tr id="Tr3" runat="server" align="left">
-                                        <td id="Td7" runat="server">
-                                            Port<br />
-                                            <asp:TextBox ID="PortTextBox" runat="server"></asp:TextBox><asp:Image ID="PortHelpImage"
-                                                runat="server" ImageAlign="Top" ImageUrl="~/images/icons/HelpSmall.png" Style="visibility: hidden" />
-                                            <clearcanvas:RangeValidator ID="PortValidator1" runat="server" ControlToValidate="PortTextBox"
-                                                InvalidInputBackColor="#FAFFB5" ValidationGroup="vg1" MinValue="1" MaxValue="65535"
-                                                ErrorMessage="Device Port must be between 1 and 65535" PopupHelpControlID="PortHelpImage"
-                                                Display="None"></clearcanvas:RangeValidator>
+                                    <tr id="Tr2" runat="server" align="left">
+                                        <td id="Td4"  valign="bottom" >
+                                            <table width="100%">
+                                                <tr align="left">
+                                                    <td  width="100%" >
+                                                        <asp:Label ID="Label3" runat="server" Text="IP Address" CssClass="CSSTextLabel" />
+                                                        <asp:CheckBox ID="DHCPCheckBox" runat="server" Text="DHCP"/><br />
+                                                        
+                                                        <asp:TextBox ID="IPAddressTextBox" runat="server"  ValidationGroup="vg1">
+                                                        </asp:TextBox>
+                                                    </td>
+                                                    <td align="left" >
+                                                        <uc1:InvalidInputIndicator ID="IPAddressHelp" runat="server" ImageUrl="~/images/icons/HelpSmall.png">
+                                                            </uc1:InvalidInputIndicator>
+                                                        <clearcanvas:ConditionalRequiredFieldValidator ID="ConditionalRequiredFieldValidator1"
+                                                            runat="server" ControlToValidate="IPAddressTextBox" InvalidInputColor="#FAFFB5"
+                                                            ConditionalCheckBoxID="DHCPCheckBox" RequiredWhenChecked="False" ValidationGroup="vg1"
+                                                            ErrorMessage="Device IP address is required if it uses static IP" InvalidInputIndicatorID="IPAddressHelp"
+                                                            Display="None"></clearcanvas:ConditionalRequiredFieldValidator>
+                                                        <clearcanvas:RegularExpressionFieldValidator ID="RegularExpressionFieldValidator1"
+                                                            runat="server" ControlToValidate="IPAddressTextBox" InvalidInputColor="#FAFFB5"
+                                                            ValidationGroup="vg1" ValidationExpression="^([1-9]?\d|1\d\d|2[0-4]\d|25[0-5])\.([1-9]?\d|1\d\d|2[0-4]\d|25[0-5])\.([1-9]?\d|1\d\d|2[0-4]\d|25[0-5])\.([1-9]?\d|1\d\d|2[0-4]\d|25[0-5])$"
+                                                            ErrorMessage="IP address is malformed" Display="None" InvalidInputIndicatorID="IPAddressHelp"></clearcanvas:RegularExpressionFieldValidator>
+                                                    </td>
+                                                </tr>
+                                                
+                                            </table>
                                         </td>
-                                        <td id="Td8" runat="server">
+                                        <td id="Td6" runat="server" align="left"  valign="bottom">
+                                            <table width="100%" >
+                                                <tr align="left" >
+                                                    <td  width="100%">
+                                                        <asp:Label ID="Label4" runat="server" Text="Partition" CssClass="CSSTextLabel" /><br />
+                                                        <asp:DropDownList ID="ServerPartitionDropDownList" runat="server" Width="100%" >
+                                                        </asp:DropDownList>
+                                                    </td>
+                                                    <td >
+                                                    </td>
+                                                </tr>
+                                            </table>
                                         </td>
-                                        <td id="Td9" runat="server" valign="bottom">
-                                            <asp:CheckBox ID="ActiveCheckBox" runat="server" Checked="True" Text="Enabled" /></td>
+                                    </tr>
+                                    <tr id="Tr3" runat="server" align="left" >
+                                        <td id="Td7" runat="server" valign="bottom">
+                                            <table width="100%">
+                                                <tr align="left">
+                                                    <td  width="100%">
+                                                        <asp:Label ID="Label5" runat="server" Text="Port" CssClass="CSSTextLabel" /><br />
+                                                        <asp:TextBox ID="PortTextBox" runat="server" />
+                                                    </td>
+                                                    <td >
+                                                        <uc1:InvalidInputIndicator ID="PortHelp" runat="server" ImageUrl="~/images/icons/HelpSmall.png"
+                                                            Visible="true"></uc1:InvalidInputIndicator>
+                                                        <clearcanvas:RangeValidator ID="PortValidator1" runat="server" ControlToValidate="PortTextBox"
+                                                            InvalidInputColor="#FAFFB5" ValidationGroup="vg1" MinValue="1" MaxValue="65535"
+                                                            ErrorMessage="Device Port must be between 1 and 65535" InvalidInputIndicatorID="PortHelp"
+                                                            Display="None"></clearcanvas:RangeValidator>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                        <td id="Td9" runat="server"  valign="bottom">
+                                            <table width="100%">
+                                                <tr align="left">
+                                                    <td  width="100%" >
+                                                        <asp:CheckBox ID="ActiveCheckBox" runat="server" Checked="True" Text="Enabled" />
+                                                    </td>
+                                                    <td >
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                            </td>
                                     </tr>
                                 </table>
                             </asp:Panel>

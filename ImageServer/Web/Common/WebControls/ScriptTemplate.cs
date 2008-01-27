@@ -29,47 +29,65 @@
 
 #endregion
 
+using System;
+using System.IO;
+using System.Reflection;
 
-using System.Net;
-using System.ServiceModel;
-using ClearCanvas.Common;
-
-namespace ClearCanvas.ImageServer.Web.Services.Shreds.ValidationServer
+namespace ClearCanvas.ImageServer.Web.Common.WebControls
 {
     /// <summary>
-    /// WCF service for data validation.
+    /// Provides convenience mean to load a javascript template from embedded resource.
     /// </summary>
-    [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerCall)]
-    public class ValidationService : IValidationService
+    internal class ScriptTemplate
     {
+        #region Private Members
+        private String _script;
 
-        #region IValidationServerService Members
+        #endregion Private Members
 
-        public ValidationResult CheckPath(string path)
+        #region Constructors
+        /// <summary>
+        /// Creates an instance of <see cref="ScriptTemplate"/>
+        /// </summary>
+        /// <param name="assembly">The assembly which contains the embedded javascript template</param>
+        /// <param name="name">Fully-qualified name of the javascript template (including the namespace)</param>
+        /// <remarks>
+        /// </remarks>
+        public ScriptTemplate(Assembly assembly, string name)
         {
-
-            Platform.Log(LogLevel.Debug, "ValidationService: validating {0}" , path); 
-            
-            ValidationResult res = new ValidationResult();
-            if (ClearCanvas.Common.Utilities.FileSystem.DirectoryExists(path, 1000))
-            {
-                Platform.Log(LogLevel.Debug, "ValidationService: {0} exists " , path); 
-                res.Success = true;
-            }
-            else
-            {
-                Platform.Log(LogLevel.Debug, "ValidationService: {0} doesn't exist or is not accessible", path); 
-                
-                IPHostEntry local = Dns.GetHostEntry("");
-                res.ErrorText = "The specified path is invalid OR not accessible from " + local.HostName;
-                res.Success = false;
-                res.ErrorCode = -1;
-                
-            }
-
-            return res;
+            Stream stream = assembly.GetManifestResourceStream(name);
+            StreamReader reader = new StreamReader(stream);
+            _script = reader.ReadToEnd();
+            stream.Close();
+            reader.Dispose();
         }
 
-        #endregion
+        #endregion Constructors
+
+        #region Public properties
+
+        /// <summary>
+        /// Gets or sets the script
+        /// </summary>
+        public string Script
+        {
+            get { return _script; }
+        }
+
+        #endregion Public properties
+
+        #region Public Methods
+
+        /// <summary>
+        /// Replaces a token in the script with the specified value.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        public void Replace(string key, string value)
+        {
+            _script = _script.Replace(key, value);
+        }
+
+        #endregion Public Methods
     }
 }

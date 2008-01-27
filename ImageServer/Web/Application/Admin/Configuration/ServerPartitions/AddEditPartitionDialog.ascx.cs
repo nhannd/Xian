@@ -70,6 +70,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
                 this._partition = value;
                 // put into viewstate to retrieve later
                 ViewState[ClientID + "_EdittedPartition"] = _partition;
+                UpdateUI();
             }
             get
             {
@@ -157,28 +158,33 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
             Partition.AeTitle = AETitleTextBox.Text;
             Partition.Description = DescriptionTextBox.Text;
             Partition.PartitionFolder = PartitionFolderTextBox.Text;
-            Partition.Port = Int32.Parse(PortTextBox.Text);
+
+            int port;
+            if (Int32.TryParse(PortTextBox.Text, out port))
+                Partition.Port = port;
+
             Partition.AcceptAnyDevice = AcceptAnyDeviceCheckBox.Checked;
             Partition.AutoInsertDevice = AutoInsertDeviceCheckBox.Checked;
-            Partition.DefaultRemotePort = Int32.Parse(DefaultRemotePortTextBox.Text);
+            if (Int32.TryParse(DefaultRemotePortTextBox.Text, out port))
+                Partition.DefaultRemotePort = port;
 
-            // TODO: Add input validation here
-
-            if (OKClicked != null)
-                OKClicked(Partition);
-
-            Close();
+            if (Page.IsValid)
+            {
+                if (OKClicked != null)
+                    OKClicked(Partition); 
+                
+                Close();
+            }
+            else
+            {
+                Show();
+            }
+            
+           
         }
-        #endregion Protected methods
 
-        #region Public Methods
-        /// <summary>
-        /// Displays the add device dialog box.
-        /// </summary>
-        public void Show()
+        protected void UpdateUI()
         {
-            ServerPartitionTabContainer.ActiveTabIndex = 0;
-
             if (EditMode)
             {
                 TitleLabel.Text = "Edit Partition";
@@ -190,7 +196,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
                 OKButton.Text = "Add";
             }
 
-            if (Partition== null)
+            if (Partition == null)
             {
                 AETitleTextBox.Text = "SERVERAE";
                 DescriptionTextBox.Text = "";
@@ -217,6 +223,20 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
 
                 DefaultRemotePortTextBox.Enabled = Partition.AutoInsertDevice;
             }
+        }
+        #endregion Protected methods
+
+        #region Public Methods
+        /// <summary>
+        /// Displays the add device dialog box.
+        /// </summary>
+        public void Show()
+        {
+            if (Page.IsValid)
+            {
+                ServerPartitionTabContainer.ActiveTabIndex = 0;
+            }
+            
 
             UpdatePanel.Update();
             ModalPopupExtender1.Show();

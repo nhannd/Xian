@@ -4,6 +4,8 @@
 <%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="ccAjax" %>
 <%@ Register Assembly="ClearCanvas.ImageServer.Web.Common" Namespace="ClearCanvas.ImageServer.Web.Common.WebControls"
     TagPrefix="clearcanvas" %>
+<%@ Register Src="~/Common/InvalidInputIndicator.ascx" TagName="InvalidInputIndicator"
+    TagPrefix="uc1" %>
 <asp:UpdatePanel ID="UpdatePanel" runat="server" UpdateMode="Conditional">
     <ContentTemplate>
         <asp:Panel ID="DialogPanel" runat="server" CssClass="CSSPopupWindow" Style="display: none"
@@ -27,62 +29,94 @@
                         CssClass="CSSTabPanel">
                         <ContentTemplate>
                             <asp:Panel ID="Panel1" runat="server" CssClass="CSSDialogTabPanelContent">
-                                <table id="GeneralTabTable" runat="server" width="100%" cellspacing="2">
+                                <table id="GeneralTabTable" runat="server" width="100%">
                                     <tr runat="server" align="left">
                                         <td runat="server">
-                                            <asp:Label runat="server" Text="AE Title" CssClass="CSSTextLabel" /><br />
-                                            <asp:TextBox ID="AETitleTextBox" runat="server" MaxLength="16" ValidationGroup="vg1"
-                                                ToolTip="The DICOM Application Entity Title for the partition."></asp:TextBox>
-                                            <clearcanvas:ConditionalRequiredFieldValidator ID="RequiredFieldValidator2" runat="server"
-                                                ControlToValidate="AETitleTextBox" Display="None" EnableClientScript="true" ErrorMessage="AE Title is required"
-                                                InvalidInputBackColor="#FAFFB5" ValidationGroup="vg1" PopupHelpControlID="AETitleHelpImage"></clearcanvas:ConditionalRequiredFieldValidator>
-                                            <clearcanvas:RegularExpressionFieldValidator ID="RegularExpressionFieldValidator2"
-                                                runat="server" ControlToValidate="AETitleTextBox" Display="None" ErrorMessage="The AE Title is not valid."
-                                                InvalidInputBackColor="#FAFFB5" ValidationExpression="^([^\\]){1,16}$" ValidationGroup="vg1"
-                                                PopupHelpControlID="AETitleHelpImage"></clearcanvas:RegularExpressionFieldValidator>
+                                            <table>
+                                                <tr>
+                                                    <td>
+                                                        <asp:Label ID="Label4" runat="server" Text="AE Title" CssClass="CSSTextLabel" /><br />
+                                                        <asp:TextBox ID="AETitleTextBox" runat="server" MaxLength="16" ValidationGroup="vg1"
+                                                            ToolTip="The DICOM Application Entity Title for the partition."></asp:TextBox>
+                                                    </td>
+                                                    <td>
+                                                        <uc1:InvalidInputIndicator ID="AETitleHelp" runat="server" ImageUrl="~/images/icons/HelpSmall.png">
+                                                        </uc1:InvalidInputIndicator>
+                                                        <clearcanvas:ConditionalRequiredFieldValidator ID="RequiredFieldValidator2" runat="server"
+                                                            ControlToValidate="AETitleTextBox" Display="None" EnableClientScript="true" ErrorMessage="AE Title is required"
+                                                            InvalidInputColor="#FAFFB5" ValidationGroup="vg1" InvalidInputIndicatorID="AETitleHelp"></clearcanvas:ConditionalRequiredFieldValidator>
+                                                        <clearcanvas:RegularExpressionFieldValidator ID="RegularExpressionFieldValidator2"
+                                                            runat="server" ControlToValidate="AETitleTextBox" Display="None" ErrorMessage="The AE Title is not valid."
+                                                            InvalidInputColor="#FAFFB5" ValidationExpression="^([^\\]){1,16}$" ValidationGroup="vg1"
+                                                            InvalidInputIndicatorID="AETitleHelp"></clearcanvas:RegularExpressionFieldValidator>
+                                                    </td>
+                                                </tr>
+                                            </table>
                                         </td>
-                                        <td>
-                                            <asp:Image ID="AETitleHelpImage" runat="server" ImageAlign="Top" ImageUrl="~/images/icons/HelpSmall.png"
-                                                Style="visibility: hidden;" />
-                                        </td>
-                                        <td runat="server" align="left" valign="top">
-                                            <asp:Label ID="Label1" runat="server" Text="Description" CssClass="CSSTextLabel" /><br />
-                                            <asp:TextBox ID="DescriptionTextBox" runat="server" ToolTip="A textual description of the partition."></asp:TextBox>
+                                        <td runat="server" align="left">
+                                            <table>
+                                                <tr>
+                                                    <td>
+                                                        <asp:Label ID="Label1" runat="server" Text="Description" CssClass="CSSTextLabel" /><br />
+                                                        <asp:TextBox ID="DescriptionTextBox" runat="server" ToolTip="A textual description of the partition."></asp:TextBox>
+                                                    </td>
+                                                    <td>
+                                                    </td>
+                                                </tr>
+                                            </table>
                                         </td>
                                         <td>
                                         </td>
                                     </tr>
                                     <tr runat="server" align="left">
                                         <td runat="server">
-                                            <asp:Label ID="Label2" runat="server" Text="Port" CssClass="CSSTextLabel" /><br />
-                                            <asp:TextBox ID="PortTextBox" runat="server"></asp:TextBox>
-                                            <asp:Image ID="PortHelpImage" runat="server" ImageAlign="Top" ImageUrl="~/images/icons/HelpSmall.png"
-                                                Style="visibility: hidden" />
-                                            <clearcanvas:RangeValidator ID="PortValidator1" runat="server" ControlToValidate="PortTextBox"
-                                                InvalidInputBackColor="#FAFFB5" ValidationGroup="vg1" MinValue="1" MaxValue="65535"
-                                                ErrorMessage="Parition Port must be between 1 and 65535" Display="None" PopupHelpControlID="PortHelpImage"></clearcanvas:RangeValidator>
+                                            <table>
+                                                <tr>
+                                                    <td>
+                                                        <asp:Label ID="Label2" runat="server" Text="Port" CssClass="CSSTextLabel" /><br />
+                                                        <asp:TextBox ID="PortTextBox" runat="server"></asp:TextBox>
+                                                        <clearcanvas:RangeValidator ID="PortValidator1" runat="server" ControlToValidate="PortTextBox"
+                                                            InvalidInputColor="#FAFFB5" ValidationGroup="vg1" MinValue="1" MaxValue="65535"
+                                                            ErrorMessage="Partition Port must be between 1 and 65535" Display="None" InvalidInputIndicatorID="PortHelp"></clearcanvas:RangeValidator>
+                                                    </td>
+                                                    <td>
+                                                        <uc1:InvalidInputIndicator ID="PortHelp" runat="server" ImageUrl="~/images/icons/HelpSmall.png">
+                                                        </uc1:InvalidInputIndicator>
+                                                    </td>
+                                                </tr>
+                                            </table>
                                         </td>
                                         <td runat="server">
-                                        </td>
-                                        <td runat="server">
-                                            <asp:Label ID="Label3" runat="server" Text="Folder Name" CssClass="CSSTextLabel" /><br />
-                                            <asp:TextBox ID="PartitionFolderTextBox" runat="server" CausesValidation="true" ValidationGroup="vg1"
-                                                ToolTip="A unique folder name to store images within for the partition."></asp:TextBox>
-                                            <clearcanvas:ConditionalRequiredFieldValidator ID="Conditionalrequiredfieldvalidator1"
-                                                runat="server" ControlToValidate="PartitionFolderTextBox" Display="None" EnableClientScript="true"
-                                                ErrorMessage="Folder Name is required" InvalidInputBackColor="#FAFFB5" ValidationGroup="vg1"
-                                                PopupHelpControlID="FolderHelpImage"></clearcanvas:ConditionalRequiredFieldValidator>
-                                        </td>
-                                        <td>
-                                            <asp:Image ID="FolderHelpImage" runat="server" ImageAlign="Top" ImageUrl="~/images/icons/HelpSmall.png"
-                                                Style="visibility: hidden" />
+                                            <table>
+                                                <tr>
+                                                    <td>
+                                                        <asp:Label ID="Label3" runat="server" Text="Folder Name" CssClass="CSSTextLabel" /><br />
+                                                        <asp:TextBox ID="PartitionFolderTextBox" runat="server" CausesValidation="true" ValidationGroup="vg1"
+                                                            ToolTip="A unique folder name to store images within for the partition."></asp:TextBox>
+                                                        <clearcanvas:ConditionalRequiredFieldValidator ID="Conditionalrequiredfieldvalidator1"
+                                                            runat="server" ControlToValidate="PartitionFolderTextBox" Display="None" EnableClientScript="true"
+                                                            ErrorMessage="Folder Name is required" InvalidInputColor="#FAFFB5" ValidationGroup="vg1"
+                                                            InvalidInputIndicatorID="FolderHelp"></clearcanvas:ConditionalRequiredFieldValidator>
+                                                    </td>
+                                                    <td>
+                                                        <uc1:InvalidInputIndicator ID="FolderHelp" runat="server" ImageUrl="~/images/icons/HelpSmall.png">
+                                                        </uc1:InvalidInputIndicator>
+                                                    </td>
+                                                </tr>
+                                            </table>
                                         </td>
                                     </tr>
                                     <tr runat="server" align="left">
                                         <td runat="server">
-                                            <asp:CheckBox ID="EnabledCheckBox" runat="server" Checked="True" Text="Enabled" ToolTip="Enable or Disable DICOM connections to the partition." />
-                                        </td>
-                                        <td runat="server" valign="top">
+                                            <table>
+                                                <tr>
+                                                    <td>
+                                                        <asp:CheckBox ID="EnabledCheckBox" runat="server" Checked="True" Text="Enabled" ToolTip="Enable or Disable DICOM connections to the partition." />
+                                                    </td>
+                                                    <td>
+                                                    </td>
+                                                </tr>
+                                            </table>
                                         </td>
                                         <td runat="server" valign="top">
                                         </td>
@@ -99,28 +133,50 @@
                             <asp:Panel ID="Panel2" runat="server" CssClass="CSSDialogTabPanelContent">
                                 <table width="100%">
                                     <tr>
-                                        <td align="left" style="height: 29px">
-                                            <asp:CheckBox ID="AcceptAnyDeviceCheckBox" runat="server" Text="Accept Any Device"
-                                                ToolTip="Accept DICOM Associations from any device to this partition." />
+                                        <td align="left">
+                                            <table>
+                                                <tr>
+                                                    <td>
+                                                        <asp:CheckBox ID="AcceptAnyDeviceCheckBox" runat="server" Text="Accept Any Device"
+                                                            ToolTip="Accept DICOM Associations from any device to this partition." />
+                                                    </td>
+                                                    <td>
+                                                    </td>
+                                                </tr>
+                                            </table>
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td align="left" style="height: 29px">
-                                            <asp:CheckBox ID="AutoInsertDeviceCheckBox" runat="server" Text="Auto Insert Devices"
-                                                ToolTip="Automatically add devices when they connect to this partition." />
-                                            <br />
+                                        <td align="left">
+                                            <table>
+                                                <tr>
+                                                    <td>
+                                                        <asp:CheckBox ID="AutoInsertDeviceCheckBox" runat="server" Text="Auto Insert Devices"
+                                                            ToolTip="Automatically add devices when they connect to this partition." />
+                                                    </td>
+                                                    <td>
+                                                    </td>
+                                                </tr>
+                                            </table>
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td align="left" runat="server" style="height: 43px" valign="bottom">
-                                            Default Remote Port<br />
-                                            <asp:TextBox ID="DefaultRemotePortTextBox" runat="server"></asp:TextBox>
-                                            <asp:Image ID="Image1" runat="server" ImageAlign="Top" ImageUrl="~/images/icons/HelpSmall.png"
-                                                Style="visibility: hidden" />
-                                            <clearcanvas:RangeValidator ID="DefaultRemotePortRangeValidator" runat="server" ControlToValidate="DefaultRemotePortTextBox"
-                                                InvalidInputBackColor="#FAFFB5" ValidationGroup="vg1" MinValue="1" MaxValue="65535"
-                                                ErrorMessage="Parition Default Remote Port must be between 1 and 65535" Display="None"
-                                                PopupHelpControlID="PortHelpImage"/>
+                                        <td align="left">
+                                            <table>
+                                                <tr>
+                                                    <td>
+                                                        <asp:Label ID="Label5" runat="server" Text="Default Remote Port" CssClass="CSSTextLabel" /><br />
+                                                        <asp:TextBox ID="DefaultRemotePortTextBox" runat="server"></asp:TextBox>
+                                                        <td>
+                                                            <uc1:InvalidInputIndicator ID="DefaultPortHelp" runat="server" ImageUrl="~/images/icons/HelpSmall.png">
+                                                            </uc1:InvalidInputIndicator>
+                                                            <clearcanvas:RangeValidator ID="DefaultRemotePortRangeValidator" runat="server" ControlToValidate="DefaultRemotePortTextBox"
+                                                                InvalidInputColor="#FAFFB5" ValidationGroup="vg1" MinValue="1" MaxValue="65535"
+                                                                ErrorMessage="Remote device default port must be between 1 and 65535" Display="None"
+                                                                InvalidInputIndicatorID="DefaultPortHelp" />
+                                                        </td>
+                                                </tr>
+                                            </table>
                                         </td>
                                     </tr>
                                 </table>
