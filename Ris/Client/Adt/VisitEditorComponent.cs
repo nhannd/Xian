@@ -108,7 +108,7 @@ namespace ClearCanvas.Ris.Client.Adt
                     }
                     else
                     {
-                        LoadVisitForAdminEditResponse loadVisitResponse = service.LoadVisitForAdminEdit(new LoadVisitForAdminEditRequest(_visitRef));
+                        LoadVisitForEditResponse loadVisitResponse = service.LoadVisitForEdit(new LoadVisitForEditRequest(_visitRef));
                         _patientRef = loadVisitResponse.Patient;
                         _visitRef = loadVisitResponse.VisitRef;
                         _visit = loadVisitResponse.VisitDetail;
@@ -142,14 +142,14 @@ namespace ClearCanvas.Ris.Client.Adt
                     {
                         if (_isNew)
                         {
-                            AdminAddVisitResponse response = service.AdminAddVisit(new AdminAddVisitRequest(_visit));
+                            AddVisitResponse response = service.AddVisit(new AddVisitRequest(_visit));
                             _addedVisit = response.AddedVisit;
                             _patientRef = response.AddedVisit.PatientRef;
                             _visitRef = response.AddedVisit.VisitRef;
                         }
                         else
                         {
-                            SaveAdminEditsForVisitResponse response = service.SaveAdminEditsForVisit(new SaveAdminEditsForVisitRequest(_visitRef, _visit));
+                            UpdateVisitResponse response = service.UpdateVisit(new UpdateVisitRequest(_visitRef, _visit));
                             _addedVisit = response.AddedVisit;
                             _patientRef = response.AddedVisit.PatientRef;
                             _visitRef = response.AddedVisit.VisitRef;

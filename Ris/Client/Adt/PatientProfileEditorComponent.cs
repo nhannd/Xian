@@ -134,8 +134,8 @@ namespace ClearCanvas.Ris.Client.Adt
                     }
                     else
                     {
-                        LoadPatientProfileForAdminEditResponse response = service.LoadPatientProfileForAdminEdit(
-                            new LoadPatientProfileForAdminEditRequest(_profileRef));
+                        LoadPatientProfileForEditResponse response = service.LoadPatientProfileForEdit(
+                            new LoadPatientProfileForEditRequest(_profileRef));
 
                         _profileRef = response.PatientProfileRef;
                         _profile = response.PatientDetail;
@@ -189,16 +189,16 @@ namespace ClearCanvas.Ris.Client.Adt
                 {
                     if (_isNew)
                     {
-                        AdminAddPatientProfileResponse response = service.AdminAddPatientProfile(
-                            new AdminAddPatientProfileRequest(_profile));
+                        AddPatientResponse response = service.AddPatient(
+                            new AddPatientRequest(_profile));
 
                         _patientRef = response.PatientRef;
                         _profileRef = response.PatientProfileRef;
                     }
                     else
                     {
-                        SaveAdminEditsForPatientProfileResponse response = service.SaveAdminEditsForPatientProfile(
-                            new SaveAdminEditsForPatientProfileRequest(_profileRef, _profile));
+                        UpdatePatientProfileResponse response = service.UpdatePatientProfile(
+                            new UpdatePatientProfileRequest(_profileRef, _profile));
 
                         _patientRef = response.PatientRef;
                         _profileRef = response.ProfileRef;

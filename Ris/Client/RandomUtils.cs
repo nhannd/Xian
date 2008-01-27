@@ -185,12 +185,12 @@ namespace ClearCanvas.Ris.Client
                     profile.Name.GivenName = givenName;
                 });
 
-            AdminAddPatientProfileResponse addResponse = null;
+            AddPatientResponse addResponse = null;
 
             Platform.GetService<IPatientAdminService>(
                 delegate(IPatientAdminService service)
                 {
-                    addResponse = service.AdminAddPatientProfile(new AdminAddPatientProfileRequest(profile));
+                    addResponse = service.AddPatient(new AddPatientRequest(profile));
                 });
 
             PatientProfileSummary summary = new PatientProfileSummary();
@@ -248,7 +248,7 @@ namespace ClearCanvas.Ris.Client
                     visitDetail.AdmitTime = now;
                     visitDetail.Facility = ChooseRandom(visitFormResponse.FacilityChoices);
 
-                    AdminAddVisitResponse addVisitResponse = service.AdminAddVisit(new AdminAddVisitRequest(visitDetail));
+                    AddVisitResponse addVisitResponse = service.AddVisit(new AddVisitRequest(visitDetail));
                     visit = addVisitResponse.AddedVisit;
                 });
 
