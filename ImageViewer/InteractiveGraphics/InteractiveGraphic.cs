@@ -147,6 +147,13 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		}
 
 		/// <summary>
+		/// Gets the point on the graphic that is closest to the specified point.
+		/// </summary>
+		/// <param name="point"></param>
+		/// <returns></returns>
+		public abstract PointF GetClosestPoint(PointF point);
+
+		/// <summary>
 		/// Creates a focussed and selected <see cref="GraphicState"/>.
 		/// </summary>
 		/// <returns></returns>

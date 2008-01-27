@@ -59,10 +59,9 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			// We just started creating
 			if (_numberOfPointsAnchored == 1)
 			{
-				PointF mousePoint = new PointF(mouseInformation.Location.X, mouseInformation.Location.Y);
 				this.InteractiveGraphic.CoordinateSystem = CoordinateSystem.Destination;
-				this.InteractiveGraphic.ControlPoints[0] = mousePoint;
-				this.InteractiveGraphic.ControlPoints[1] = mousePoint;
+				this.InteractiveGraphic.ControlPoints[0] = mouseInformation.Location;
+				this.InteractiveGraphic.ControlPoints[1] = mouseInformation.Location;
 				this.InteractiveGraphic.ResetCoordinateSystem();
 			}
 			// We're done creating
@@ -73,11 +72,9 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			// We're in the middle of creating
 			else if (_numberOfPointsAnchored >= 2 && this.InteractiveGraphic.MaximumAnchorPoints > 2)
 			{
-				PointF mousePoint = new PointF(mouseInformation.Location.X, mouseInformation.Location.Y);
-
 				this.InteractiveGraphic.CoordinateSystem = CoordinateSystem.Destination;
-				this.InteractiveGraphic.PolyLine.Add(mousePoint);
-				this.InteractiveGraphic.ControlPoints.Add(mousePoint);
+				this.InteractiveGraphic.PolyLine.Add(mouseInformation.Location);
+				this.InteractiveGraphic.ControlPoints.Add(mouseInformation.Location);
 				this.InteractiveGraphic.ResetCoordinateSystem();
 
 				_controlPointIndex = this.InteractiveGraphic.ControlPoints.Count - 1;
@@ -88,10 +85,8 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		public override bool Track(IMouseInformation mouseInformation)
 		{
-			PointF pt = new PointF(mouseInformation.Location.X, mouseInformation.Location.Y);
-
 			this.InteractiveGraphic.CoordinateSystem = CoordinateSystem.Destination;
-			this.InteractiveGraphic.ControlPoints[_controlPointIndex] = pt;
+			this.InteractiveGraphic.ControlPoints[_controlPointIndex] = mouseInformation.Location;
 			this.InteractiveGraphic.ResetCoordinateSystem();
 			this.InteractiveGraphic.Draw();
 

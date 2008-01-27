@@ -55,26 +55,20 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			if (_childGraphic == null)
 			{
 				PointF mousePoint = new PointF(mouseInformation.Location.X, mouseInformation.Location.Y);
-#if MONO
-				Size offset = new Size(0, 30);
-#else
+
+				this.ROIGraphic.Roi.CoordinateSystem = CoordinateSystem.Destination;
+
 				SizeF offset = new SizeF(0, 30);
-#endif
 
 				PointF calloutLocation = mousePoint - offset;
 				this.ROIGraphic.Callout.CoordinateSystem = CoordinateSystem.Destination;
 				this.ROIGraphic.Callout.Location = calloutLocation;
-				this.ROIGraphic.Callout.EndPoint = mousePoint;
 				this.ROIGraphic.Callout.ResetCoordinateSystem();
 
-				this.ROIGraphic.Roi.CoordinateSystem = CoordinateSystem.Destination;
-
-				for (int i = 0; i < this.ROIGraphic.Roi.ControlPoints.Count; i++ )
+				for (int i = 0; i < this.ROIGraphic.Roi.ControlPoints.Count; i++)
 					this.ROIGraphic.Roi.ControlPoints[i] = mousePoint;
 
 				this.ROIGraphic.Roi.ResetCoordinateSystem();
-
-				this.ROIGraphic.Callout.Draw();
 
 				_childGraphic = this.ROIGraphic.Roi;
 				_childGraphic.StateChanged += new EventHandler<GraphicStateChangedEventArgs>(OnRoiStateChanged);

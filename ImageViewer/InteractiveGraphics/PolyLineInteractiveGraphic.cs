@@ -34,6 +34,7 @@ using System.Diagnostics;
 using System.Drawing;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
+using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
@@ -154,6 +155,32 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		public override bool HitTest(Point point)
 		{
 			return this.PolyLine.HitTest(point);
+		}
+
+		public override PointF GetClosestPoint(PointF point)
+		{
+			double shortestDistance = double.MaxValue;
+			PointF closestPoint = new PointF(0,0);
+
+			for (int i = 0; i < this.PolyLine.Count - 1; i++)
+			{
+				PointF pt1 = this.PolyLine[i];
+				PointF pt2 = this.PolyLine[i + 1];
+				PointF currentPoint = new PointF(0,0);
+				double distance = Vector.DistanceFromPointToLine(
+					point, 
+					pt1, 
+					pt2, 
+					ref currentPoint);
+				
+				if (distance < shortestDistance)
+				{
+					shortestDistance = distance;
+					closestPoint = currentPoint;
+				}
+			}
+
+			return closestPoint;
 		}
 
 		/// <summary>

@@ -33,6 +33,7 @@ using System;
 using System.Drawing;
 using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.Graphics;
+using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
@@ -56,5 +57,50 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			return new RectanglePrimitive();
 		}
 
+		public override PointF GetClosestPoint(PointF point)
+		{
+			double currentDistance;
+			double shortestDistance = double.MaxValue;
+			PointF currentPoint = new PointF(0, 0);
+			PointF closestPoint = new PointF(0, 0);
+
+			PointF ptTopLeft = this.TopLeft;
+			PointF ptBottomRight = this.BottomRight;
+			PointF ptTopRight = new PointF(ptBottomRight.X, ptTopLeft.Y);
+			PointF ptBottomLeft = new PointF(ptTopLeft.X, ptBottomRight.Y);
+
+			currentDistance = Vector.DistanceFromPointToLine(point, ptTopLeft, ptTopRight, ref currentPoint);
+
+			if (currentDistance < shortestDistance)
+			{
+				shortestDistance = currentDistance;
+				closestPoint = currentPoint;
+			}
+
+			currentDistance = Vector.DistanceFromPointToLine(point, ptTopRight, ptBottomRight, ref currentPoint);
+
+			if (currentDistance < shortestDistance)
+			{
+				shortestDistance = currentDistance;
+				closestPoint = currentPoint;
+			}
+
+			currentDistance = Vector.DistanceFromPointToLine(point, ptBottomRight, ptBottomLeft, ref currentPoint);
+
+			if (currentDistance < shortestDistance)
+			{
+				shortestDistance = currentDistance;
+				closestPoint = currentPoint;
+			}
+
+			currentDistance = Vector.DistanceFromPointToLine(point, ptBottomLeft, ptTopLeft, ref currentPoint);
+
+			if (currentDistance < shortestDistance)
+			{
+				closestPoint = currentPoint;
+			}
+
+			return closestPoint;
+		}
 	}
 }

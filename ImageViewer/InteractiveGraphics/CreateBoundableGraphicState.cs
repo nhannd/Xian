@@ -58,10 +58,9 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			// We just started creating
 			if (_numberOfPointsAnchored == 1)
 			{
-				PointF mousePoint = this.InteractiveGraphic.SpatialTransform.ConvertToSource(mouseInformation.Location);
-				this.InteractiveGraphic.CoordinateSystem = CoordinateSystem.Source;
-				this.InteractiveGraphic.ControlPoints[0] = mousePoint;
-				this.InteractiveGraphic.ControlPoints[3] = mousePoint;
+				this.InteractiveGraphic.CoordinateSystem = CoordinateSystem.Destination;
+				this.InteractiveGraphic.ControlPoints[0] = mouseInformation.Location;
+				this.InteractiveGraphic.ControlPoints[3] = mouseInformation.Location;
 				this.InteractiveGraphic.ResetCoordinateSystem();
 
 				_numberOfPointsAnchored++;
@@ -77,9 +76,8 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		public override bool Track(IMouseInformation mouseInformation)
 		{
-			PointF mousePoint = this.InteractiveGraphic.SpatialTransform.ConvertToSource(mouseInformation.Location);
-			this.InteractiveGraphic.CoordinateSystem = CoordinateSystem.Source;
-			this.InteractiveGraphic.ControlPoints[_controlPointIndex] = mousePoint;
+			this.InteractiveGraphic.CoordinateSystem = CoordinateSystem.Destination;
+			this.InteractiveGraphic.ControlPoints[_controlPointIndex] = mouseInformation.Location;
 			this.InteractiveGraphic.ResetCoordinateSystem();
 			this.InteractiveGraphic.Draw();
 

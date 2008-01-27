@@ -38,16 +38,45 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			Pen pen = new Pen(Brushes.White, VectorGraphic.HitTestDistance);
 			bool result = path.IsOutlineVisible(point, pen);
 
-			int g;
-
-			if (result)
-				g = 4;
-
 			path.Dispose();
 			pen.Dispose();
 			this.ResetCoordinateSystem();
 
 			return result || base.HitTest(point);
+		}
+
+		public override PointF GetClosestPoint(PointF point)
+		{
+			float a = this.Width/2;
+			float b = this.Height/2;
+
+			float centerX = this.Left + a;
+			float centerY = this.Top + b;
+
+			float rise = point.Y - centerY;
+			float run = point.X - centerX;
+			double theta;
+
+			if (run != 0)
+			{
+				theta = Math.Atan(rise/run);
+
+				if (run < 0)
+					theta += Math.PI;
+
+			}
+			else
+			{
+				if (rise >= 0)
+					theta = Math.PI / 2;
+				else
+					theta = -Math.PI / 2;
+			}
+
+			float x = centerX + a*(float)Math.Cos(theta);
+			float y = centerY + b*(float)Math.Sin(theta);
+
+			return new PointF(x,y);
 		}
 	}
 }

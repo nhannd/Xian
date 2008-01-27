@@ -118,10 +118,8 @@ namespace ClearCanvas.ImageViewer.Mathematics
 			// It's a point, not a line
 			if (dx == 0 && dy == 0)
 			{
-				distanceX = ptTest.X - pt1.X;
-				distanceY = ptTest.Y - pt1.Y;
 				ptNearest.X = pt1.X;
-				ptNearest.X = pt1.Y;
+				ptNearest.Y = pt1.Y;
 			}
 			else
 			{

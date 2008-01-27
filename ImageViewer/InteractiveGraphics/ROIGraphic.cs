@@ -445,7 +445,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			// We're attaching the callout to the ROI, so make sure the two
 			// graphics are in the same coordinate system before we do that.
 			_calloutGraphic.CoordinateSystem = _roiGraphic.CoordinateSystem;
-			_calloutGraphic.EndPoint = FindClosestControlPoint();
+			_calloutGraphic.EndPoint = _roiGraphic.GetClosestPoint(_calloutGraphic.StartPoint);
 			_calloutGraphic.ResetCoordinateSystem();
 			EventsHelper.Fire(_roiChangedEvent, this, EventArgs.Empty);
 		}
@@ -453,33 +453,8 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		private void OnCalloutTopLeftChanged(object sender, PointChangedEventArgs e)
 		{
 			_calloutGraphic.CoordinateSystem = _roiGraphic.CoordinateSystem;
-			_calloutGraphic.EndPoint = FindClosestControlPoint();
+			_calloutGraphic.EndPoint = _roiGraphic.GetClosestPoint(_calloutGraphic.StartPoint);
 			_calloutGraphic.ResetCoordinateSystem();
-		}
-
-		private PointF FindClosestControlPoint()
-		{
-			double distance;
-			double shortest;
-			PointF closestPoint;
-			PointF calloutStart = _calloutGraphic.StartPoint;
-
-			shortest = double.MaxValue;
-			closestPoint = new PointF(float.MaxValue, float.MaxValue);
-
-			for (int i = 0; i < _roiGraphic.ControlPoints.Count; i++)
-			{
-				PointF controlPoint = _roiGraphic.ControlPoints[i];
-				distance = Vector.Distance(controlPoint, calloutStart);
-
-				if (distance < shortest)
-				{
-					shortest = distance;
-					closestPoint = controlPoint;
-				}
-			}
-
-			return closestPoint;
 		}
 	}
 }
