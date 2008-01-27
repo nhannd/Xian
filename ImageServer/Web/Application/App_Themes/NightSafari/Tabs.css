@@ -21,7 +21,7 @@
 
 .TabControl .ajax__tab_header					
 {
-	/*background: url(./images/tab-line.gif) repeat-x bottom; */
+	background: url(./images/tab-line.gif) repeat-x bottom;
 	vertical-align:bottom;
 }
 .TabControl .ajax__tab_outer
@@ -36,6 +36,9 @@
 {
 	background: url(./images/tab.gif) repeat-x;
 }
+
+
+
 .TabControl .ajax__tab_hover .ajax__tab_outer
 {
 	background: url(./images/tab-right.gif) no-repeat right;
@@ -48,6 +51,7 @@
 {
 	background: url(./images/tab.gif) repeat-x;
 }
+
 .TabControl .ajax__tab_active .ajax__tab_outer
 {
 	background: url(./images/tab-active-right.gif) no-repeat right;
@@ -64,7 +68,8 @@
 /* XP IE7 theme - Other Styles */
 .TabControl .ajax__tab_header
 {
-	border-bottom: #696969 1px solid;vertical-align:bottom;
+	/*border-bottom: #696969 1px solid;*/
+	vertical-align:bottom;
 }
 	
 .TabControl .ajax__tab_outer
@@ -79,14 +84,11 @@
 {
 	color:darkgray;
 	padding: 8px 8px;
-	margin: 0;
-	font-size:70%;
-	
-	
+	font-size:80%;
 }
 .TabControl .ajax__tab_body
 {
-	
+
 }
 
 .TabControl .ajax__tab_active .ajax__tab_tab
