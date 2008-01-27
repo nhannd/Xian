@@ -34,7 +34,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 			protractor.CoordinateSystem = CoordinateSystem.Destination;
 
-			double angle = Vector.SubtendedAngle(
+			double angle = Formula.SubtendedAngle(
 				protractor.PolyLine[0],
 				protractor.PolyLine[1],
 				protractor.PolyLine[2]);

@@ -36,12 +36,12 @@
 using System.Drawing;
 using NUnit.Framework;
 
-namespace ClearCanvas.ImageViewer.Mathematics.Tests
+namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
 	[TestFixture]
-	public class VectorTest
+	public class FormulaTest
 	{
-		public VectorTest()
+		public FormulaTest()
 		{
 		}
 
@@ -53,6 +53,19 @@ namespace ClearCanvas.ImageViewer.Mathematics.Tests
 		[TestFixtureTearDown]
 		public void Cleanup()
 		{
+		}
+
+		[Test]
+		public void SubtendedAngle()
+		{
+			double angle = Formula.SubtendedAngle(new PointF(1, 0), new PointF(0, 0), new PointF(1, 0));
+			Assert.AreEqual(0, angle);
+
+			angle = Formula.SubtendedAngle(new PointF(0, 1), new PointF(0, 0), new PointF(1, 0));
+			Assert.AreEqual(90, angle);
+
+			angle = Formula.SubtendedAngle(new PointF(1, 0), new PointF(0, 0), new PointF(-1, 0));
+			Assert.AreEqual(180, angle);
 		}
 	}
 }
