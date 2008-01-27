@@ -182,66 +182,52 @@
 /* gridview control styling */
 .CSSGridView
 {
-	border-left-color: #e7e7e8;
-	border-bottom-color: #e7e7e8;
-	border-top-style: solid;
-	border-top-color: #e7e7e8;
-	border-right-style: solid;
-	border-left-style: solid;
-	border-right-color: #e7e7e8;
-	border-bottom-style: solid;
+
 }
 
 /* gridview control header row */
 .CSSGridHeader th
-{	
-	border-left-color: #E0E0E0;
-	border-bottom-color: #E0E0E0;
-	border-top-style: solid;
-	border-top-color: #E0E0E0;
-	border-right-style: solid;
-	border-left-style: solid;
-	border-right-color: #E0E0E0;
-	border-bottom-style: solid;
+{
+	border-right: #d2d2d2 1px solid;
+	border-top: #d2d2d2 1px solid;
+	border-left: #d2d2d2 1px solid;
+	border-bottom: #d2d2d2 1px solid;
 }
 
 /* gridview control row */
 .CSSGridRowStyle
 {
-	border-style: solid;
-	border-width: 1px;
+	border-right: #d2d2d2 1px solid;
+	border-top: #d2d2d2 1px solid;
+	border-left: #d2d2d2 1px solid;
+	border-bottom: #d2d2d2 1px solid;
 }
 
 /* gridview control cell */
 .CSSGridRowStyle td
 {
-	border-left-color: #E0E0E0;
-	border-bottom-color: #E0E0E0;
-	border-top-style: solid;
-	border-top-color: #E0E0E0;
-	border-right-style: solid;
-	border-left-style: solid;
-	border-right-color: #E0E0E0;
-	border-bottom-style: solid;
+	border-right: #d2d2d2 1px solid;
+	border-top: #d2d2d2 1px solid;
+	border-left: #d2d2d2 1px solid;
+	border-bottom: #d2d2d2 1px solid;
 }
 
 /* gridview control selected row */
 .CSSGridSelectedRowStyle
 {
-	
+	border-right: #d2d2d2 1px solid;
+	border-top: #d2d2d2 1px solid;
+	border-left: #d2d2d2 1px solid;
+	border-bottom: #d2d2d2 1px solid;
 }
 
 /* gridview cell of the selected row */
 .CSSGridSelectedRowStyle td
 {
-	border-left-color: green;
-	border-bottom-color: darkgray;
-	border-top-style: solid;
-	border-top-color: darkgray;
-	border-right-style: solid;
-	border-left-style: solid;
-	border-right-color: darkgray;
-	border-bottom-style: solid;
+	border-right: #d2d2d2 1px solid;
+	border-top: #d2d2d2 1px solid;
+	border-left: #d2d2d2 1px solid;
+	border-bottom: #d2d2d2 1px solid;
 }
 
 

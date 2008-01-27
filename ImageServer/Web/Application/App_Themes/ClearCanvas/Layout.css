@@ -121,14 +121,14 @@
 /* main menu panel */
 .CSSMenu_TopLevel
 {
-	/* spaces between menu */
-	padding-right: 15px; 
-	padding-left: 5px;
+
 }
 
 .CSSMenu_TopLevelItem
 {
-
+	/* spaces between menu */
+	padding-right: 15px; 
+	padding-left: 5px;
 }
 
 /* main menu (when hover over)*/

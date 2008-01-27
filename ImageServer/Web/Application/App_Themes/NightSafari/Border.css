@@ -102,10 +102,10 @@
 /* submenu container styles */
 .CSSMenu_SubMenu
 {
-	border-right: lightgrey 2px outset;
-	border-top: lightgrey 2px outset;
-	border-left: lightgrey 2px outset;
-	border-bottom: lightgrey 2px outset;
+	border-right: lightgrey 1px outset;
+	border-top: lightgrey 1px outset;
+	border-left: lightgrey 1px outset;
+	border-bottom: lightgrey 0px outset;
 }
 
 /* submenu item */
@@ -182,66 +182,52 @@
 /* gridview control styling */
 .CSSGridView
 {
-	border-left-color: #696969;
-	border-bottom-color: #696969;
-	border-top-style: solid;
-	border-top-color: #696969;
-	border-right-style: solid;
-	border-left-style: solid;
-	border-right-color: #696969;
-	border-bottom-style: solid;
+
 }
 
 /* gridview control header row */
 .CSSGridHeader th
-{	
-	border-left-color: #4b4b4c;
-	border-bottom-color: #4b4b4c;
-	border-top-style: solid;
-	border-top-color: #4b4b4c;
-	border-right-style: solid;
-	border-left-style: solid;
-	border-right-color: #4b4b4c;
-	border-bottom-style: solid;
+{
+	border-right: #696969 1px solid;
+	border-top: #696969 1px solid;
+	border-left: #696969 1px solid;
+	border-bottom: #696969 1px solid;
 }
 
 /* gridview control row */
 .CSSGridRowStyle
 {
-	border-style: solid;
-	border-width: 1px;
+	border-right: #696969 1px solid;
+	border-top: #696969 1px solid;
+	border-left: #696969 1px solid;
+	border-bottom: #696969 1px solid;
 }
 
 /* gridview control cell */
 .CSSGridRowStyle td
 {
-	border-left-color: #4b4b4c;
-	border-bottom-color: #4b4b4c;
-	border-top-style: solid;
-	border-top-color: #4b4b4c;
-	border-right-style: solid;
-	border-left-style: solid;
-	border-right-color: #4b4b4c;
-	border-bottom-style: solid;
+	border-right: #696969 1px solid;
+	border-top: #696969 1px solid;
+	border-left: #696969 1px solid;
+	border-bottom: #696969 1px solid;
 }
 
 /* gridview control selected row */
 .CSSGridSelectedRowStyle
 {
-	
+	border-right: #696969 1px solid;
+	border-top: #696969 1px solid;
+	border-left: #696969 1px solid;
+	border-bottom: #696969 1px solid;
 }
 
 /* gridview cell of the selected row */
 .CSSGridSelectedRowStyle td
 {
-	border-left-color: green;
-	border-bottom-color: darkgray;
-	border-top-style: solid;
-	border-top-color: darkgray;
-	border-right-style: solid;
-	border-left-style: solid;
-	border-right-color: darkgray;
-	border-bottom-style: solid;
+	border-right: #696969 1px solid;
+	border-top: #696969 1px solid;
+	border-left: #696969 1px solid;
+	border-bottom: #696969 1px solid;
 }
 
 

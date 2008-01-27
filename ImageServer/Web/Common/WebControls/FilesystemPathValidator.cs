@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.ServiceModel;
 using ClearCanvas.ImageServer.Web.Common.ValidationServer;
 
 namespace ClearCanvas.ImageServer.Web.Common.WebControls
@@ -92,10 +93,13 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
                 ErrorMessage = "Path must be specified";
                 return false;
             }
+
+            ValidationServiceClient client = null;
             try
             {
-                ValidationServiceClient client = new ValidationServiceClient();
+                client = new ValidationServiceClient();
                 ValidationResult result = client.CheckPath(path);
+                
                 client.Close();
 
                 if (!String.IsNullOrEmpty(result.ErrorText))
@@ -103,10 +107,21 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
 
                 return result.Success;
             }
+            catch(EndpointNotFoundException e)
+            {
+                
+                ErrorMessage = e.Message;
+                return true;
+            }
             catch(Exception e)
             {
                 ErrorMessage = e.Message;
                 return false;
+            }
+            finally
+            {
+                if (client != null && client.State==CommunicationState.Opened)
+                    client.Close();
             }
 
         }

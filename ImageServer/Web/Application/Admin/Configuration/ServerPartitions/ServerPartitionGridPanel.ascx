@@ -5,7 +5,8 @@
         <asp:Panel runat="server" CssClass="CSSGridViewPanelContent">
             <asp:GridView ID="PartitionGridView" runat="server" AutoGenerateColumns="False" CssClass="CSSGridView"
                 Width="100%" OnRowDataBound="PartitionGridView_RowDataBound" AllowSorting="True"
-                PageSize="20" CellPadding="0" CellSpacing="0" AllowPaging="True" CaptionAlign="Top" BorderWidth="1px">
+                PageSize="20" CellPadding="0" CellSpacing="0" AllowPaging="True" 
+                CaptionAlign="Top" BorderWidth="0px">
                 <Columns>
                     <asp:BoundField DataField="AeTitle" HeaderText="AE Title" />
                     <asp:BoundField DataField="Description" HeaderText="Description" />

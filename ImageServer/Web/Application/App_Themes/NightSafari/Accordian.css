@@ -87,7 +87,7 @@
 	
 }
 
-/* The header text  */
+/* The column header text  */
 .CSSAccordianHeaderText
 {
 	text-wrap:none;
@@ -112,25 +112,25 @@
 .CSSAccordianStudyHeader
 {
 	cursor: pointer;
-	border-bottom: solid 1px darkgray;
 	padding-right: 5px;
 	padding-left: 10px;
 	padding-bottom: 5px;
 	padding-top: 5px;
+	border-bottom: solid 1px darkgray;
 }
 
 /*	The study header (summary) panel when selected */
 .CSSAccordianStudyHeaderSelected
 {
 	cursor: pointer;
-	
 	padding-right: 5px;
 	padding-left: 10px;
 	padding-bottom: 5px;
 	padding-top: 5px;
+	border-bottom: solid 1px darkgray;
+	
 	
 	background-color: #990000;
-	cursor: pointer;
 	color: white;
 }
 

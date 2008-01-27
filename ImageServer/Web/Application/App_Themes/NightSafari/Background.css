@@ -154,7 +154,7 @@ body
 .CSSGridHeader th
 {	
 	background-image: url(images/gridheaderbackground.png);
-	background-repeat: repeat-x;
+	background-repeat: repeat-x;	
 }
 
 /* gridview control row */
@@ -166,7 +166,7 @@ body
 /* gridview control cell */
 .CSSGridRowStyle td
 {
-	
+
 }
 
 /* gridview control selected row */

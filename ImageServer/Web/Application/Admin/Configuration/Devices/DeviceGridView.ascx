@@ -8,7 +8,7 @@
                 Width="100%" OnRowDataBound="GridView1_RowDataBound" OnDataBound="GridView1_DataBound"
                 OnSelectedIndexChanged="GridView1_SelectedIndexChanged" OnSelectedIndexChanging="GridView1_SelectedIndexChanging"
                 EmptyDataText="" OnPageIndexChanging="GridView1_PageIndexChanging" CellPadding="0"
-                PageSize="20" CellSpacing="0" AllowPaging="True" CaptionAlign="Top" BorderWidth="1px">
+                PageSize="20" CellSpacing="0" AllowPaging="True" CaptionAlign="Top" BorderWidth="0px">
                 <Columns>
                     <asp:BoundField DataField="AETitle" HeaderText="AE Title"></asp:BoundField>
                     <asp:BoundField DataField="Description" HeaderText="Description"></asp:BoundField>

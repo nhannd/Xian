@@ -7,7 +7,7 @@
                 Width="100%" OnRowDataBound="GridView_RowDataBound" OnDataBound="GridView_DataBound"
                 OnSelectedIndexChanged="GridView_SelectedIndexChanged" OnSelectedIndexChanging="GridView_SelectedIndexChanging"
                 OnPageIndexChanging="GridView1_PageIndexChanging" PageSize="20" AllowSorting="True"
-                CellPadding="0" CellSpacing="0" AllowPaging="True" CaptionAlign="Top" BorderWidth="1px">
+                CellPadding="0" CellSpacing="0" AllowPaging="True" CaptionAlign="Top" BorderWidth="0px">
                 <Columns>
                     <asp:BoundField DataField="RuleName" HeaderText="Name"></asp:BoundField>
                     <asp:TemplateField HeaderText="Type">
