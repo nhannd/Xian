@@ -64,12 +64,6 @@
     <Compile Include="ComboBoxField.Designer.cs">
       <DependentUpon>ComboBoxField.cs</DependentUpon>
     </Compile>
-    <Compile Include="EditRulesForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="EditRulesForm.Designer.cs">
-      <DependentUpon>EditRulesForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="SuggestComboField.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -435,10 +429,6 @@
     <Content Include="FileBrowser\Images\BrowserForward.png" />
     <Content Include="FileBrowser\Images\BrowserUp.png" />
     <None Include="Resources\ClearFilterSmall.png" />
-    <EmbeddedResource Include="EditRulesForm.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>EditRulesForm.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="SuggestComboField.resx">
       <DependentUpon>SuggestComboField.cs</DependentUpon>
       <SubType>Designer</SubType>

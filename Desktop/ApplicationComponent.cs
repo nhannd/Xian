@@ -40,14 +40,27 @@ using ClearCanvas.Desktop.Tools;
 
 namespace ClearCanvas.Desktop
 {
+    /// <summary>
+    /// Defines an extension point for tools that operate on application components.
+    /// </summary>
     [ExtensionPoint]
     public class ApplicationComponentMetaToolExtensionPoint : ExtensionPoint<ITool>
     {
     }
 
+    /// <summary>
+    /// Defines the interface for a tool context for tools that extend <see cref="ApplicationComponentMetaToolExtensionPoint"/>.
+    /// </summary>
     public interface IApplicationComponentMetaToolContext : IToolContext
     {
+        /// <summary>
+        /// Gets the desktop window in which the application component is running.
+        /// </summary>
         DesktopWindow DesktopWindow { get; }
+
+        /// <summary>
+        /// Gets the running application component.
+        /// </summary>
         ApplicationComponent Component { get; }
     }
 
@@ -408,10 +421,12 @@ namespace ClearCanvas.Desktop
 
         #endregion
 
+        #region ApplicationComponentMetaToolContext
+
         class ApplicationComponentMetaToolContext : IApplicationComponentMetaToolContext
         {
-            private ApplicationComponent _component;
-            private DesktopWindow _window;
+            private readonly ApplicationComponent _component;
+            private readonly DesktopWindow _window;
 
             internal ApplicationComponentMetaToolContext(ApplicationComponent component, DesktopWindow window)
             {
@@ -429,6 +444,8 @@ namespace ClearCanvas.Desktop
                 get { return _component; }
             }
         }
+
+        #endregion
 
 
         private IApplicationComponentHost _host;
@@ -474,6 +491,9 @@ namespace ClearCanvas.Desktop
             set { _validation = value; }
         }
 
+        /// <summary>
+        /// Gets the context-menu model. The menu is displayed when clicking on the background of an application component.
+        /// </summary>
         public virtual ActionModelNode ContextMenuModel
         {
             get
