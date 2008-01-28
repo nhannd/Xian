@@ -59,12 +59,17 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 			_receiveTable.MenuModel = _component.ContextMenuModel;
 
 			_receiveTable.SelectionChanged += new EventHandler(OnSelectionChanged);
-
+			_receiveTable.ItemDoubleClicked += new EventHandler(OnItemDoubleClicked);
 			BindingSource bindingSource = new BindingSource();
 			bindingSource.DataSource = _component;
 
 			_titleBar.DataBindings.Add("Text", _component, "Title", true, DataSourceUpdateMode.OnPropertyChanged);
         }
+
+		void OnItemDoubleClicked(object sender, EventArgs e)
+		{
+			_component.ItemDoubleClick();
+		}
 
 		void OnSelectionChanged(object sender, EventArgs e)
 		{

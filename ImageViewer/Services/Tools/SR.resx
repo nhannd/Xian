@@ -159,6 +159,9 @@
   <data name="MenuLocalDataStoreReindex" xml:space="preserve">
     <value>Reindex Local Data Store</value>
   </data>
+  <data name="MenuOpenStudies" xml:space="preserve">
+    <value>Open</value>
+  </data>
   <data name="MenuRetrieveStudy" xml:space="preserve">
     <value>Retrieve</value>
   </data>
@@ -324,6 +327,9 @@ Please ensure the ClearCanvas server is running or contact your system administr
   <data name="ToolbarDeleteStudy" xml:space="preserve">
     <value>Delete</value>
   </data>
+  <data name="ToolbarOpenStudies" xml:space="preserve">
+    <value>Open</value>
+  </data>
   <data name="ToolbarRetrieveStudy" xml:space="preserve">
     <value>Retrieve</value>
   </data>
@@ -350,6 +356,9 @@ Please ensure the ClearCanvas server is running or contact your system administr
   </data>
   <data name="TooltipImportDicomFiles" xml:space="preserve">
     <value>Import dicom files from the local file system</value>
+  </data>
+  <data name="TooltipOpenStudies" xml:space="preserve">
+    <value>Open</value>
   </data>
   <data name="TooltipRetrieveStudy" xml:space="preserve">
     <value>Retrieve Study</value>

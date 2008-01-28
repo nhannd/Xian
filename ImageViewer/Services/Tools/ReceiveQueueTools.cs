@@ -31,14 +31,14 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.ImageViewer.Services.LocalDataStore;
+using ClearCanvas.ImageViewer.Configuration;
+using ClearCanvas.ImageViewer.Explorer.Dicom;
+using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Services.Tools
 {
@@ -53,32 +53,47 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 	[IconSet("clearAll", IconScheme.Colour, "Icons.DeleteAllToolSmall.png", "Icons.DeleteAllToolSmall.png", "Icons.DeleteAllToolSmall.png")]
 	[EnabledStateObserver("clearAll", "ClearAllEnabled", "ClearAllEnabledChanged")]
 
+	[ButtonAction("openStudies", "receive-queue-toolbar/ToolbarOpenStudies", "OpenStudies")]
+	[MenuAction("openStudies", "receive-queue-contextmenu/MenuOpenStudies", "OpenStudies")]
+	[Tooltip("openStudies", "TooltipOpenStudies")]
+	[IconSet("openStudies", IconScheme.Colour, "Icons.OpenStudiesToolSmall.png", "Icons.OpenStudiesToolSmall.png", "Icons.OpenStudiesToolSmall.png")]
+	[EnabledStateObserver("openStudies", "OpenStudiesEnabled", "OpenStudiesEnabledChanged")]
+
 	[ExtensionOf(typeof(ReceiveQueueApplicationComponentToolExtensionPoint))]
 	public class ReceiveQueueTools : Tool<IReceiveQueueApplicationComponentToolContext>
 	{
 		private bool _clearSelectedEnabled;
 		private bool _clearAllEnabled;
+		private bool _openStudiesEnabled;
 
 		private event EventHandler _clearSelectedEnabledChanged;
 		private event EventHandler _clearAllEnabledChanged;
+		private event EventHandler _openStudiesEnabledChanged;
 
 		public ReceiveQueueTools()
 		{
 			_clearSelectedEnabled = false;
 			_clearAllEnabled = false;
+			_openStudiesEnabled = false;
 		}
 
-		private void OnSelectionUpdated(object sender, EventArgs e)
+		private void OnUpdated(object sender, EventArgs e)
 		{
-			this.ClearAllEnabled = this.Context.AnyItems;
-			this.ClearSelectedEnabled = this.Context.ItemsSelected;
+			this.ClearAllEnabled = this.Context.NumberOfItems > 0;
+			this.ClearSelectedEnabled = this.Context.NumberSelected > 0;
+			this.OpenStudiesEnabled = this.Context.NumberSelected > 0 && CollectionUtils.TrueForAll(this.Context.SelectedItems,
+	                                                     delegate(ReceiveQueueItem item)
+	                                                     	{
+																return item.NumberOfFilesCommittedToDataStore > 0;
+	                                                     	});
 		}
 
 		public override void Initialize()
 		{
 			base.Initialize();
 
-			this.Context.Updated += new EventHandler(OnSelectionUpdated);
+			this.Context.Updated += OnUpdated;
+			this.Context.DefaultActionHandler = OpenStudies;
 		}
 
 		public bool ClearSelectedEnabled
@@ -107,6 +122,19 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			}
 		}
 
+		public bool OpenStudiesEnabled
+		{
+			get { return _openStudiesEnabled; }
+			protected set
+			{
+				if (_openStudiesEnabled != value)
+				{
+					_openStudiesEnabled = value;
+					EventsHelper.Fire(_openStudiesEnabledChanged, this, EventArgs.Empty);
+				}
+			}
+		}
+
 		public event EventHandler ClearSelectedEnabledChanged
 		{
 			add { _clearSelectedEnabledChanged += value; }
@@ -117,6 +145,12 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 		{
 			add { _clearAllEnabledChanged += value; }
 			remove { _clearAllEnabledChanged -= value; }
+		}
+
+		public event EventHandler OpenStudiesEnabledChanged
+		{
+			add { _openStudiesEnabledChanged += value; }
+			remove { _openStudiesEnabledChanged -= value; }
 		}
 
 		private void ClearSelected()
@@ -142,6 +176,101 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			catch (Exception e)
 			{
 				ExceptionHandler.Report(e, SR.MessageCancelFailed, this.Context.DesktopWindow);
+			}
+		}
+
+		private void OpenStudies()
+		{
+			BlockingOperation.Run(this.OpenStudiesInternal);
+		}
+
+		private void OpenStudiesInternal()
+		{
+			if (!OpenStudiesEnabled)
+				return;
+
+			if (this.Context.NumberSelected == 1)
+			{
+				OpenSingleStudyWithPriors();
+			}
+			else
+			{
+				OpenMultipleStudiesInSingleWorkspace();
+			}
+		}
+
+		private void OpenSingleStudyWithPriors()
+		{
+			// Okay, the method name is deceptive--it doesn't actually
+			// open priors yet
+			ImageViewerComponent imageViewer = new ImageViewerComponent(LayoutManagerCreationParameters.Extended);
+			string studyInstanceUid = CollectionUtils.FirstElement(GetSelectedStudyInstanceUids());
+
+			try
+			{
+				imageViewer.LoadStudy(studyInstanceUid, "DICOM_LOCAL");
+			}
+			catch (OpenStudyException e)
+			{
+				if (e.SuccessfulImages == 0 || e.FailedImages > 0)
+					ExceptionHandler.Report(e, this.Context.DesktopWindow);
+
+				if (e.SuccessfulImages == 0)
+					return;
+			}
+
+			Launch(imageViewer);
+		}
+
+		private void OpenMultipleStudiesInSingleWorkspace()
+		{
+			ImageViewerComponent imageViewer = new ImageViewerComponent(LayoutManagerCreationParameters.Extended);
+			int completelySuccessfulStudies = 0;
+			int successfulImagesInLoadFailure = 0;
+
+			foreach (string studyInstanceUid in GetSelectedStudyInstanceUids())
+			{
+				try
+				{
+					imageViewer.LoadStudy(studyInstanceUid, "DICOM_LOCAL");
+					completelySuccessfulStudies++;
+				}
+				catch (OpenStudyException e)
+				{
+					// Study failed to load completely; keep track of how many
+					// images in the study actually did load
+					successfulImagesInLoadFailure += e.SuccessfulImages;
+
+					if (e.SuccessfulImages == 0 || e.FailedImages > 0)
+						ExceptionHandler.Report(e, this.Context.DesktopWindow);
+				}
+			}
+
+			// If nothing at all was able to load, then don't bother trying to
+			// even open a workspace; just return
+			if (completelySuccessfulStudies == 0 && successfulImagesInLoadFailure == 0)
+				return;
+
+			Launch(imageViewer);
+		}
+
+		private void Launch(ImageViewerComponent imageViewer)
+		{
+			WindowBehaviour windowBehaviour = (WindowBehaviour)MonitorConfigurationSettings.Default.WindowBehaviour;
+
+			// Open the images in a separate window
+			if (windowBehaviour == WindowBehaviour.Separate)
+				ImageViewerComponent.LaunchInSeparateWindow(imageViewer);
+			// Open the images in the same window
+			else
+				ImageViewerComponent.LaunchInActiveWindow(imageViewer);
+		}
+
+		private IEnumerable<string> GetSelectedStudyInstanceUids()
+		{
+			foreach (ReceiveQueueItem item in this.Context.SelectedItems)
+			{
+				yield return item.StudyInformation.StudyInstanceUid;
 			}
 		}
 	}

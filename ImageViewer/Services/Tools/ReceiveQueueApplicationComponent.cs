@@ -54,12 +54,17 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 		IDesktopWindow DesktopWindow { get; }
 
 		event EventHandler Updated;
-
-		bool ItemsSelected { get; }
-		bool AnyItems { get; }
 		
+		IEnumerable<ReceiveQueueItem> SelectedItems { get; }
+		IEnumerable<ReceiveQueueItem> Items { get; }
+		
+		int NumberOfItems { get; }
+		int NumberSelected { get; }
+
 		void ClearSelected();
 		void ClearAll();
+
+		ClickHandlerDelegate DefaultActionHandler { get; set; }
 	}
 
 	[ExtensionPoint]
@@ -116,27 +121,52 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 			#region IReceiveQueueApplicationComponentToolContext Members
 
+			public event EventHandler Updated
+			{
+				add { _component.Updated += value; }
+				remove { _component.Updated -= value; }
+			}
+
 			public IDesktopWindow DesktopWindow
 			{
 				get { return _component.Host.DesktopWindow; }
 			}
 
-			public bool ItemsSelected
+			public IEnumerable<ReceiveQueueItem> SelectedItems
 			{
-				get { return _component._selection != null && _component._selection.Item != null; }
+				get
+				{
+					foreach (ReceiveQueueItem item in _component._selection.Items)
+					{
+						yield return item;
+					}
+				}
 			}
 
-			public bool AnyItems
+			public IEnumerable<ReceiveQueueItem> Items
 			{
-				get { return _component._receiveTable.Items.Count > 0; }
+				get { return _component._receiveTable.Items; }
 			}
 
-			public event EventHandler Updated
+			public int NumberOfItems 
 			{
-				add { _component.SelectionUpdated += value; }
-				remove { _component.SelectionUpdated -= value; }
+				get
+				{
+					return _component._receiveTable.Items.Count;
+				}
 			}
-			
+
+			public int NumberSelected
+			{
+				get 
+				{
+					if (_component._selection == null || _component._selection.Item == null)
+						return 0;
+
+					return _component._selection.Items.Length;
+				}
+			}
+
 			public void ClearSelected()
 			{
 				_component.ClearSelected();
@@ -147,15 +177,21 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 				_component.ClearAll();
 			}
 
-			#endregion
+			public ClickHandlerDelegate DefaultActionHandler
+			{
+				get { return _component._defaultActionHandler; }
+				set { _component._defaultActionHandler = value; }
+			}
+				#endregion
 		}
 
 		private ToolSet _toolSet;
 		private Table<ReceiveQueueItem> _receiveTable;
 		private ISelection _selection;
-		private event EventHandler _selectionUpdated;
+		private event EventHandler _updated;
 		private string _title;
 		private Timer _timer;
+		private ClickHandlerDelegate _defaultActionHandler;
 
 		/// <summary>
 		/// Constructor
@@ -164,10 +200,10 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 		{
 		}
 
-		public event EventHandler SelectionUpdated
+		public event EventHandler Updated
 		{
-			add { _selectionUpdated += value; }
-			remove { _selectionUpdated -= value; }
+			add { _updated += value; }
+			remove { _updated -= value; }
 		}
 		
 		public override void Start()
@@ -257,6 +293,8 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 					_receiveTable.Items.Add(new ReceiveQueueItem(e.Item));
 				}
 			}
+			
+			OnUpdated();
 		}
 
 		private string FormatString(string input)
@@ -378,6 +416,11 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			LocalDataStoreActivityMonitor.Instance.Cancel(cancelInformation);
 		}
 
+		private void OnUpdated()
+		{
+			EventsHelper.Fire(_updated, this, EventArgs.Empty);
+		}
+
 		public ActionModelNode ToolbarModel
 		{
 			get { return ActionModelRoot.CreateModel(this.GetType().FullName, "receive-queue-toolbar", _toolSet.Actions); }
@@ -412,7 +455,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 		public void SetSelection(ISelection selection)
 		{
 			_selection = selection;
-			EventsHelper.Fire(_selectionUpdated, this, EventArgs.Empty);
+			OnUpdated();
 		}
 
 		public void ClearSelected()
@@ -438,6 +481,12 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			}
 
 			ClearItems(progressIdentifiers);
+		}
+
+		public void ItemDoubleClick()
+		{
+			if (_defaultActionHandler != null)
+				_defaultActionHandler();
 		}
 	}
 }

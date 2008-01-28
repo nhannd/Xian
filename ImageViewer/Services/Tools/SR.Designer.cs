@@ -187,6 +187,15 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Open.
+        /// </summary>
+        internal static string MenuOpenStudies {
+            get {
+                return ResourceManager.GetString("MenuOpenStudies", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Retrieve.
         /// </summary>
         internal static string MenuRetrieveStudy {
@@ -670,6 +679,15 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Open.
+        /// </summary>
+        internal static string ToolbarOpenStudies {
+            get {
+                return ResourceManager.GetString("ToolbarOpenStudies", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Retrieve.
         /// </summary>
         internal static string ToolbarRetrieveStudy {
@@ -747,6 +765,15 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         internal static string TooltipImportDicomFiles {
             get {
                 return ResourceManager.GetString("TooltipImportDicomFiles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Open.
+        /// </summary>
+        internal static string TooltipOpenStudies {
+            get {
+                return ResourceManager.GetString("TooltipOpenStudies", resourceCulture);
             }
         }
         
