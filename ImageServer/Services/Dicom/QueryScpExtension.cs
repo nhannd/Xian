@@ -187,33 +187,42 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 
             foreach (uint tag in tagList)
             {
-                switch (tag)
+                try
                 {
-                    case DicomTags.PatientsName:
-                        dataSet[DicomTags.PatientsName].SetStringValue(row.PatientsName);
-                        break;
-                    case DicomTags.PatientId:
-                        dataSet[DicomTags.PatientId].SetStringValue(row.PatientId);
-                        break;
-                    case DicomTags.IssuerOfPatientId:
-                        dataSet[DicomTags.IssuerOfPatientId].SetStringValue(row.IssuerOfPatientId);
-                        break;
-                    case DicomTags.NumberOfPatientRelatedStudies:
-                        dataSet[DicomTags.NumberOfPatientRelatedStudies].AppendInt32(row.NumberOfPatientRelatedStudies);
-                        break;
-                    case DicomTags.NumberOfPatientRelatedSeries:
-                        dataSet[DicomTags.NumberOfPatientRelatedSeries].AppendInt32(row.NumberOfPatientRelatedSeries);
-                        break;
-                    case DicomTags.NumberOfPatientRelatedInstances:
-                        dataSet[DicomTags.NumberOfPatientRelatedInstances].AppendInt32(
-                            row.NumberOfPatientRelatedInstances);
-                        break;
-                    case DicomTags.QueryRetrieveLevel:
-                        dataSet[DicomTags.QueryRetrieveLevel].SetStringValue("PATIENT");
-                        break;
-                    default:
-                        dataSet[tag].SetNullValue();
-                        break;
+                    switch (tag)
+                    {
+                        case DicomTags.PatientsName:
+                            dataSet[DicomTags.PatientsName].SetStringValue(row.PatientsName);
+                            break;
+                        case DicomTags.PatientId:
+                            dataSet[DicomTags.PatientId].SetStringValue(row.PatientId);
+                            break;
+                        case DicomTags.IssuerOfPatientId:
+                            dataSet[DicomTags.IssuerOfPatientId].SetStringValue(row.IssuerOfPatientId);
+                            break;
+                        case DicomTags.NumberOfPatientRelatedStudies:
+                            dataSet[DicomTags.NumberOfPatientRelatedStudies].AppendInt32(row.NumberOfPatientRelatedStudies);
+                            break;
+                        case DicomTags.NumberOfPatientRelatedSeries:
+                            dataSet[DicomTags.NumberOfPatientRelatedSeries].AppendInt32(row.NumberOfPatientRelatedSeries);
+                            break;
+                        case DicomTags.NumberOfPatientRelatedInstances:
+                            dataSet[DicomTags.NumberOfPatientRelatedInstances].AppendInt32(
+                                row.NumberOfPatientRelatedInstances);
+                            break;
+                        case DicomTags.QueryRetrieveLevel:
+                            dataSet[DicomTags.QueryRetrieveLevel].SetStringValue("PATIENT");
+                            break;
+                        default:
+                            dataSet[tag].SetNullValue();
+                            break;
+                    }
+                }
+                catch (Exception e)
+                {
+                    Platform.Log(LogLevel.Warn, e, "Unexpected error setting tag {0} in C-FIND-RSP",
+                                 dataSet[tag].Tag.ToString());
+                    dataSet[tag].SetNullValue();
                 }
             }
         }
@@ -234,56 +243,66 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 
             foreach (uint tag in tagList)
             {
-                switch (tag)
+                try
                 {
-                    case DicomTags.StudyInstanceUid:
-                        dataSet[DicomTags.StudyInstanceUid].SetStringValue(row.StudyInstanceUid);
-                        break;
-                    case DicomTags.PatientsName:
-                        dataSet[DicomTags.PatientsName].SetStringValue(row.PatientsName);
-                        break;
-                    case DicomTags.PatientId:
-                        dataSet[DicomTags.PatientId].SetStringValue(row.PatientId);
-                        break;
-                    case DicomTags.PatientsBirthDate:
-                        dataSet[DicomTags.PatientsBirthDate].SetStringValue(row.PatientsBirthDate);
-                        break;
-                    case DicomTags.PatientsSex:
-                        dataSet[DicomTags.PatientsSex].SetStringValue(row.PatientsSex);
-                        break;
-                    case DicomTags.StudyDate:
-                        dataSet[DicomTags.StudyDate].SetStringValue(row.StudyDate);
-                        break;
-                    case DicomTags.StudyTime:
-                        dataSet[DicomTags.StudyTime].SetStringValue(row.StudyTime);
-                        break;
-                    case DicomTags.AccessionNumber:
-                        dataSet[DicomTags.AccessionNumber].SetStringValue(row.AccessionNumber);
-                        break;
-                    case DicomTags.StudyId:
-                        dataSet[DicomTags.StudyId].SetStringValue(row.StudyId);
-                        break;
-                    case DicomTags.StudyDescription:
-                        dataSet[DicomTags.StudyDescription].SetStringValue(row.StudyDescription);
-                        break;
-                    case DicomTags.ReferringPhysiciansName:
-                        dataSet[DicomTags.ReferringPhysiciansName].SetStringValue(row.ReferringPhysiciansName);
-                        break;
-                    case DicomTags.NumberOfStudyRelatedSeries:
-                        dataSet[DicomTags.NumberOfStudyRelatedSeries].AppendInt32(row.NumberOfStudyRelatedSeries);
-                        break;
-                    case DicomTags.NumberOfStudyRelatedInstances:
-                        dataSet[DicomTags.NumberOfStudyRelatedInstances].AppendInt32(row.NumberOfStudyRelatedInstances);
-                        break;
-                    case DicomTags.ModalitiesInStudy:
-                        LoadModalitiesInStudy(read, response, row);
-                        break;
-                    case DicomTags.QueryRetrieveLevel:
-                        dataSet[DicomTags.QueryRetrieveLevel].SetStringValue("STUDY");
-                        break;
-                    default:
-                        dataSet[tag].SetNullValue();
-                        break;
+                    switch (tag)
+                    {
+                        case DicomTags.StudyInstanceUid:
+                            dataSet[DicomTags.StudyInstanceUid].SetStringValue(row.StudyInstanceUid);
+                            break;
+                        case DicomTags.PatientsName:
+                            dataSet[DicomTags.PatientsName].SetStringValue(row.PatientsName);
+                            break;
+                        case DicomTags.PatientId:
+                            dataSet[DicomTags.PatientId].SetStringValue(row.PatientId);
+                            break;
+                        case DicomTags.PatientsBirthDate:
+                            dataSet[DicomTags.PatientsBirthDate].SetStringValue(row.PatientsBirthDate);
+                            break;
+                        case DicomTags.PatientsSex:
+                            dataSet[DicomTags.PatientsSex].SetStringValue(row.PatientsSex);
+                            break;
+                        case DicomTags.StudyDate:
+                            dataSet[DicomTags.StudyDate].SetStringValue(row.StudyDate);
+                            break;
+                        case DicomTags.StudyTime:
+                            dataSet[DicomTags.StudyTime].SetStringValue(row.StudyTime);
+                            break;
+                        case DicomTags.AccessionNumber:
+                            dataSet[DicomTags.AccessionNumber].SetStringValue(row.AccessionNumber);
+                            break;
+                        case DicomTags.StudyId:
+                            dataSet[DicomTags.StudyId].SetStringValue(row.StudyId);
+                            break;
+                        case DicomTags.StudyDescription:
+                            dataSet[DicomTags.StudyDescription].SetStringValue(row.StudyDescription);
+                            break;
+                        case DicomTags.ReferringPhysiciansName:
+                            dataSet[DicomTags.ReferringPhysiciansName].SetStringValue(row.ReferringPhysiciansName);
+                            break;
+                        case DicomTags.NumberOfStudyRelatedSeries:
+                            dataSet[DicomTags.NumberOfStudyRelatedSeries].AppendInt32(row.NumberOfStudyRelatedSeries);
+                            break;
+                        case DicomTags.NumberOfStudyRelatedInstances:
+                            dataSet[DicomTags.NumberOfStudyRelatedInstances].AppendInt32(
+                                row.NumberOfStudyRelatedInstances);
+                            break;
+                        case DicomTags.ModalitiesInStudy:
+                            LoadModalitiesInStudy(read, response, row);
+                            break;
+                        case DicomTags.QueryRetrieveLevel:
+                            dataSet[DicomTags.QueryRetrieveLevel].SetStringValue("STUDY");
+                            break;
+                        default:
+                            dataSet[tag].SetNullValue();
+                            break;
+                    }
+                }
+                catch (Exception e)
+                {
+                    Platform.Log(LogLevel.Warn, e, "Unexpected error setting tag {0} in C-FIND-RSP",
+                                 dataSet[tag].Tag.ToString());
+                    dataSet[tag].SetNullValue();
                 }
             }
         }
@@ -306,47 +325,56 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 
             foreach (uint tag in tagList)
             {
-                switch (tag)
+                try
                 {
-                    case DicomTags.PatientId:
-                        dataSet[DicomTags.PatientId].SetStringValue(request.DataSet[DicomTags.PatientId].ToString());
-                        break;
-                    case DicomTags.StudyInstanceUid:
-                        dataSet[DicomTags.StudyInstanceUid].SetStringValue(
-                            request.DataSet[DicomTags.StudyInstanceUid].ToString());
-                        break;
-                    case DicomTags.SeriesInstanceUid:
-                        dataSet[DicomTags.SeriesInstanceUid].SetStringValue(row.SeriesInstanceUid);
-                        break;
-                    case DicomTags.Modality:
-                        dataSet[DicomTags.Modality].SetStringValue(row.Modality);
-                        break;
-                    case DicomTags.SeriesNumber:
-                        dataSet[DicomTags.SeriesNumber].SetStringValue(row.SeriesNumber);
-                        break;
-                    case DicomTags.SeriesDescription:
-                        dataSet[DicomTags.SeriesDescription].SetStringValue(row.SeriesDescription);
-                        break;
-                    case DicomTags.PerformedProcedureStepStartDate:
-                        dataSet[DicomTags.PerformedProcedureStepStartDate].SetStringValue(
-                            row.PerformedProcedureStepStartDate);
-                        break;
-                    case DicomTags.PerformedProcedureStepStartTime:
-                        dataSet[DicomTags.PerformedProcedureStepStartTime].SetStringValue(
-                            row.PerformedProcedureStepStartTime);
-                        break;
-                    case DicomTags.NumberOfSeriesRelatedInstances:
-                        dataSet[DicomTags.NumberOfSeriesRelatedInstances].AppendInt32(row.NumberOfSeriesRelatedInstances);
-                        break;
-                    case DicomTags.RequestAttributesSequence:
-                        LoadRequestAttributes(read, response, row);
-                        break;
-                    case DicomTags.QueryRetrieveLevel:
-                        dataSet[DicomTags.QueryRetrieveLevel].SetStringValue("SERIES");
-                        break;
-                    default:
-                        dataSet[tag].SetNullValue();
-                        break;
+                    switch (tag)
+                    {
+                        case DicomTags.PatientId:
+                            dataSet[DicomTags.PatientId].SetStringValue(request.DataSet[DicomTags.PatientId].ToString());
+                            break;
+                        case DicomTags.StudyInstanceUid:
+                            dataSet[DicomTags.StudyInstanceUid].SetStringValue(
+                                request.DataSet[DicomTags.StudyInstanceUid].ToString());
+                            break;
+                        case DicomTags.SeriesInstanceUid:
+                            dataSet[DicomTags.SeriesInstanceUid].SetStringValue(row.SeriesInstanceUid);
+                            break;
+                        case DicomTags.Modality:
+                            dataSet[DicomTags.Modality].SetStringValue(row.Modality);
+                            break;
+                        case DicomTags.SeriesNumber:
+                            dataSet[DicomTags.SeriesNumber].SetStringValue(row.SeriesNumber);
+                            break;
+                        case DicomTags.SeriesDescription:
+                            dataSet[DicomTags.SeriesDescription].SetStringValue(row.SeriesDescription);
+                            break;
+                        case DicomTags.PerformedProcedureStepStartDate:
+                            dataSet[DicomTags.PerformedProcedureStepStartDate].SetStringValue(
+                                row.PerformedProcedureStepStartDate);
+                            break;
+                        case DicomTags.PerformedProcedureStepStartTime:
+                            dataSet[DicomTags.PerformedProcedureStepStartTime].SetStringValue(
+                                row.PerformedProcedureStepStartTime);
+                            break;
+                        case DicomTags.NumberOfSeriesRelatedInstances:
+                            dataSet[DicomTags.NumberOfSeriesRelatedInstances].AppendInt32(row.NumberOfSeriesRelatedInstances);
+                            break;
+                        case DicomTags.RequestAttributesSequence:
+                            LoadRequestAttributes(read, response, row);
+                            break;
+                        case DicomTags.QueryRetrieveLevel:
+                            dataSet[DicomTags.QueryRetrieveLevel].SetStringValue("SERIES");
+                            break;
+                        default:
+                            dataSet[tag].SetNullValue();
+                            break;
+                    }
+                }
+                catch (Exception e)
+                {
+                    Platform.Log(LogLevel.Warn, e, "Unexpected error setting tag {0} in C-FIND-RSP",
+                                 dataSet[tag].Tag.ToString());
+                    dataSet[tag].SetNullValue();
                 }
             }
         }
@@ -370,28 +398,37 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 
             foreach (uint tag in tagList)
             {
-                switch (tag)
+                try
                 {
-                    case DicomTags.PatientId:
-                        dataSet[DicomTags.PatientId].SetStringValue(request.DataSet[DicomTags.PatientId].ToString());
-                        break;
-                    case DicomTags.StudyInstanceUid:
-                        dataSet[DicomTags.StudyInstanceUid].SetStringValue(
-                            request.DataSet[DicomTags.StudyInstanceUid].ToString());
-                        break;
-                    case DicomTags.SeriesInstanceUid:
-                        dataSet[DicomTags.SeriesInstanceUid].SetStringValue(
-                            request.DataSet[DicomTags.SeriesInstanceUid].ToString());
-                        break;
-                    case DicomTags.QueryRetrieveLevel:
-                        dataSet[DicomTags.QueryRetrieveLevel].SetStringValue("IMAGE");
-                        break;
-                    default:
-                        if (sourceDataSet.Contains(tag))
-                            dataSet[tag] = sourceDataSet[tag].Copy();
-                        else
-                            dataSet[tag].SetNullValue();
-                        break;
+                    switch (tag)
+                    {
+                        case DicomTags.PatientId:
+                            dataSet[DicomTags.PatientId].SetStringValue(request.DataSet[DicomTags.PatientId].ToString());
+                            break;
+                        case DicomTags.StudyInstanceUid:
+                            dataSet[DicomTags.StudyInstanceUid].SetStringValue(
+                                request.DataSet[DicomTags.StudyInstanceUid].ToString());
+                            break;
+                        case DicomTags.SeriesInstanceUid:
+                            dataSet[DicomTags.SeriesInstanceUid].SetStringValue(
+                                request.DataSet[DicomTags.SeriesInstanceUid].ToString());
+                            break;
+                        case DicomTags.QueryRetrieveLevel:
+                            dataSet[DicomTags.QueryRetrieveLevel].SetStringValue("IMAGE");
+                            break;
+                        default:
+                            if (sourceDataSet.Contains(tag))
+                                dataSet[tag] = sourceDataSet[tag].Copy();
+                            else
+                                dataSet[tag].SetNullValue();
+                            break;
+                    }
+                }
+                catch (Exception e)
+                {
+                    Platform.Log(LogLevel.Warn, e, "Unexpected error setting tag {0} in C-FIND-RSP",
+                                 dataSet[tag].Tag.ToString());
+                    dataSet[tag].SetNullValue();
                 }
             }
         }

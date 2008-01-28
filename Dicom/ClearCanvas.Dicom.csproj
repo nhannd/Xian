@@ -175,6 +175,11 @@
     <Compile Include="DicomImplementation.cs" />
     <Compile Include="DicomLogger.cs" />
     <Compile Include="DicomMessage.cs" />
+    <Compile Include="DicomSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>DicomSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="DicomStringHelper.cs" />
     <Compile Include="DicomTagPath.cs" />
     <Compile Include="DicomValidationException.cs" />
@@ -202,6 +207,13 @@
     <Compile Include="Tests\DicomStringHelperTests.cs" />
     <Compile Include="Tests\FileTest.cs" />
     <Compile Include="Validation\StringValueValidation.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="DicomSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>DicomSettings.Designer.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="..\Common\ClearCanvas.Strings.targets" />

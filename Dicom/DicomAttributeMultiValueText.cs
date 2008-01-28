@@ -141,10 +141,22 @@ namespace ClearCanvas.Dicom
         /// <param name="value"></param>
         internal virtual void ValidateString(string value)
         {
-            if (Validator != null)
-                   Validator.ValidateString(Tag, value);
-            
-            
+            if (DicomSettings.Default.ValidateVrLengths)
+            {
+                if (Tag.VR.MaximumLength != 0)
+                {
+                    string[] valueArray = value.Trim().Split('\\');
+                    foreach (string subVal in valueArray)
+                        if (subVal.Length > Tag.VR.MaximumLength)
+                            throw new DicomDataException(
+                                String.Format("Invalid value length ({0}) for tag {1} of VR {2} of max size {3}", subVal, Tag, Tag.VR, Tag.VR.UnitSize));
+                }
+            }
+
+            if (DicomSettings.Default.ValidateVrValues && Validator != null)
+            {
+                Validator.ValidateString(Tag, value);
+            }
         }
 
         public override void SetNullValue()
