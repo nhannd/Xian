@@ -124,6 +124,24 @@ namespace ClearCanvas.ImageViewer.Layout.Basic {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Next Display Set.
+        /// </summary>
+        public static string MenuNextDisplaySet {
+            get {
+                return ResourceManager.GetString("MenuNextDisplaySet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Previous Display Set.
+        /// </summary>
+        public static string MenuPreviousDisplaySet {
+            get {
+                return ResourceManager.GetString("MenuPreviousDisplaySet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Standard.
         /// </summary>
         public static string MenuStandard {
@@ -160,11 +178,47 @@ namespace ClearCanvas.ImageViewer.Layout.Basic {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Next Display Set.
+        /// </summary>
+        public static string ToolbarNextDisplaySet {
+            get {
+                return ResourceManager.GetString("ToolbarNextDisplaySet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Previous Display Set.
+        /// </summary>
+        public static string ToolbarPreviousDisplaySet {
+            get {
+                return ResourceManager.GetString("ToolbarPreviousDisplaySet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Layout Manager.
         /// </summary>
         public static string TooltipLayoutManager {
             get {
                 return ResourceManager.GetString("TooltipLayoutManager", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Next Display Set.
+        /// </summary>
+        public static string TooltipNextDisplaySet {
+            get {
+                return ResourceManager.GetString("TooltipNextDisplaySet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Previous Display Set.
+        /// </summary>
+        public static string TooltipPreviousDisplaySet {
+            get {
+                return ResourceManager.GetString("TooltipPreviousDisplaySet", resourceCulture);
             }
         }
     }

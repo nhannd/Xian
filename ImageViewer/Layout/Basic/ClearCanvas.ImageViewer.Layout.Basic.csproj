@@ -122,6 +122,7 @@
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
     <Compile Include="StoredLayoutConfiguration.cs" />
+    <Compile Include="DisplaySetNavigationTool.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\LayoutToolLarge.png" />
@@ -142,6 +143,24 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\LayoutToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\NextDisplaySetToolLarge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\NextDisplaySetToolMedium.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\NextDisplaySetToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\PreviousDisplaySetToolLarge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\PreviousDisplaySetToolMedium.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\PreviousDisplaySetToolSmall.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Tests\" />

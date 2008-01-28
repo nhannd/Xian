@@ -138,6 +138,12 @@
   <data name="MenuLayoutManager" xml:space="preserve">
     <value>Layout Manager</value>
   </data>
+  <data name="MenuNextDisplaySet" xml:space="preserve">
+    <value>Next Display Set</value>
+  </data>
+  <data name="MenuPreviousDisplaySet" xml:space="preserve">
+    <value>Previous Display Set</value>
+  </data>
   <data name="MenuStandard" xml:space="preserve">
     <value>Standard</value>
   </data>
@@ -150,7 +156,19 @@
   <data name="ToolbarLayoutManager" xml:space="preserve">
     <value>LayoutManager</value>
   </data>
+  <data name="ToolbarNextDisplaySet" xml:space="preserve">
+    <value>Next Display Set</value>
+  </data>
+  <data name="ToolbarPreviousDisplaySet" xml:space="preserve">
+    <value>Previous Display Set</value>
+  </data>
   <data name="TooltipLayoutManager" xml:space="preserve">
     <value>Layout Manager</value>
+  </data>
+  <data name="TooltipNextDisplaySet" xml:space="preserve">
+    <value>Next Display Set</value>
+  </data>
+  <data name="TooltipPreviousDisplaySet" xml:space="preserve">
+    <value>Previous Display Set</value>
   </data>
 </root>
