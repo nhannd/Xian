@@ -32,12 +32,15 @@ namespace ClearCanvas.Ris.Client.Admin
         class Rule
         {
             private readonly PropertyInfo _property;
+            private readonly ApplicationComponent _liveComponent;
             private string _ruleXml;
-            private string _parseError;
+            private string _status;
 
-            public Rule(PropertyInfo property, string ruleXml)
+
+            public Rule(PropertyInfo property, string ruleXml, ApplicationComponent liveComponent)
             {
                 _property = property;
+                _liveComponent = liveComponent;
                 _ruleXml = ruleXml;
             }
 
@@ -49,41 +52,45 @@ namespace ClearCanvas.Ris.Client.Admin
             public string RuleXml
             {
                 get { return _ruleXml; }
-                set
+                set { _ruleXml = value; }
+            }
+
+            public string Status
+            {
+                get
                 {
-                    if (_ruleXml != value)
+                    try
                     {
-                        _ruleXml = value;
-                        Validate();
+                        ISpecification spec = Compile();
+                        ValidationRule rule = new ValidationRule("test", spec);
+                        if (_liveComponent == null)
+                            return null;
+
+                        ValidationResult result = rule.GetResult(_liveComponent);
+                        if (result.Success)
+                            return null;
+                        else
+                            return result.GetMessageString(", ");
+                    }
+                    catch (Exception e)
+                    {
+                        return e.Message;
                     }
                 }
             }
 
-            public string ParseError
+            private ISpecification Compile()
             {
-                get { return _parseError; }
-            }
-
-            private void Validate()
-            {
-                try
-                {
-                    string xml = string.Format("<specifications>{0}</specifications>", _ruleXml);
-                    SpecificationFactory factory = new SpecificationFactory(new StringReader(xml));
-                    factory.GetSpecification(_property.Name);
-                    _parseError = null;
-                }
-                catch (Exception e)
-                {
-                    _parseError = e.Message;
-                }
+                string xml = string.Format("<specifications>{0}</specifications>", _ruleXml);
+                SpecificationFactory factory = new SpecificationFactory(new StringReader(xml));
+                return factory.GetSpecification(_property.Name);
             }
         }
 
 
         private const string _specTagName = "spec";
 
-        private readonly Type _applicationComponent;
+        private readonly Type _applicationComponentClass;
         private readonly XmlDocument _xmlDoc;
 
         private readonly Table<Rule> _rules;
@@ -93,13 +100,15 @@ namespace ClearCanvas.Ris.Client.Admin
 
         private IConfigurationStore _configStore;
 
+        private readonly ApplicationComponent _liveComponent;
+
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public ValidationEditorComponent(Type applicationComponent)
+        public ValidationEditorComponent(Type applicationComponentClass)
         {
-            _applicationComponent = applicationComponent;
+            _applicationComponentClass = applicationComponentClass;
             _xmlDoc = new XmlDocument();
             _xmlDoc.PreserveWhitespace = true;
 
@@ -107,9 +116,15 @@ namespace ClearCanvas.Ris.Client.Admin
             _rules.Columns.Add(new TableColumn<Rule, string>("Property",
                 delegate(Rule p) { return p.Property.Name; }));
             _rules.Columns.Add(new TableColumn<Rule, string>("Type",
-                delegate(Rule p) { return p.Property.PropertyType.FullName; }));
-            _rules.Columns.Add(new TableColumn<Rule, string>("Parse Error",
-                delegate(Rule p) { return p.ParseError; }));
+                delegate(Rule p) { return p.Property.PropertyType.Name; }));
+            _rules.Columns.Add(new TableColumn<Rule, string>("Test Result",
+                delegate(Rule p) { return p.Status; }));
+        }
+
+        public ValidationEditorComponent(ApplicationComponent component)
+            :this(component.GetType())
+        {
+            _liveComponent = component;
         }
 
         public override void Start()
@@ -125,7 +140,7 @@ namespace ClearCanvas.Ris.Client.Admin
             // select the properties excluding those defined by IApplicationComponent
             _rules.Items.AddRange(
                 CollectionUtils.Map<PropertyInfo, Rule>(
-                    CollectionUtils.Select(_applicationComponent.GetProperties(),
+                    CollectionUtils.Select(_applicationComponentClass.GetProperties(),
                         delegate(PropertyInfo p)
                         {
                             return !p.DeclaringType.Equals(typeof(IApplicationComponent))
@@ -136,7 +151,7 @@ namespace ClearCanvas.Ris.Client.Admin
                         XmlElement specNode = GetSpecification(p.Name);
                         string ruleXml = specNode != null ? 
                             specNode.OuterXml : string.Format("<{0} id=\"{1}\">\n</{2}>", _specTagName, p.Name, _specTagName);
-                        return new Rule(p, ruleXml);
+                        return new Rule(p, ruleXml, _liveComponent);
                     }));
 
 
@@ -183,10 +198,14 @@ namespace ClearCanvas.Ris.Client.Admin
 
             try
             {
-                if (SaveChanges())
-                {
-                    this.Exit(ApplicationComponentExitCode.Accepted);
-                }
+                if (!UpdateLocalDocument())
+                    return;
+
+                SaveValidationDocument();
+
+                ValidationCache.Invalidate(_applicationComponentClass);
+
+                this.Exit(ApplicationComponentExitCode.Accepted);
             }
             catch (Exception e)
             {
@@ -195,6 +214,22 @@ namespace ClearCanvas.Ris.Client.Admin
                     {
                         this.Exit(ApplicationComponentExitCode.Error);
                     });
+            }
+        }
+
+        public bool CanTestRules
+        {
+            get { return _liveComponent != null; }
+        }
+
+        public void TestRules()
+        {
+            // commit final changes (hack - just re-select the already selected property)
+            ChangeSelectedProperty(_selectedRule);
+
+            foreach (Rule rule in _rules.Items)
+            {
+                _rules.Items.NotifyItemUpdated(rule);
             }
         }
 
@@ -231,13 +266,13 @@ namespace ClearCanvas.Ris.Client.Admin
                 delegate(object node) { return ((XmlElement)node).GetAttribute("id") == id; });
         }
 
-        private bool SaveChanges()
+        private bool UpdateLocalDocument()
         {
             foreach (Rule rule in _rules.Items)
             {
-                if (rule.ParseError != null)
+                if (rule.Status != null)
                 {
-                    this.Host.ShowMessageBox("One or more rules have errors.  Correct the errors before saving.", MessageBoxActions.Ok);
+                    this.Host.ShowMessageBox("One or more rules have syntax errors which must be corrected first.", MessageBoxActions.Ok);
                     return false;
                 }
 
@@ -268,10 +303,6 @@ namespace ClearCanvas.Ris.Client.Admin
                 }
             }
 
-            SaveValidationDocument();
-
-            ValidationCache.Invalidate(_applicationComponent);
-
             return true;
         }
 
@@ -280,8 +311,8 @@ namespace ClearCanvas.Ris.Client.Admin
             try
             {
                 TextReader reader = _configStore.GetDocument(
-                    GetDocumentName(_applicationComponent),
-                    _applicationComponent.Assembly.GetName().Version,
+                    GetDocumentName(_applicationComponentClass),
+                    _applicationComponentClass.Assembly.GetName().Version,
                     null,
                     null);
                 _xmlDoc.Load(reader);
@@ -300,8 +331,8 @@ namespace ClearCanvas.Ris.Client.Admin
             writer.Formatting = System.Xml.Formatting.Indented;
             _xmlDoc.Save(writer);
             _configStore.PutDocument(
-                GetDocumentName(_applicationComponent),
-                _applicationComponent.Assembly.GetName().Version,
+                GetDocumentName(_applicationComponentClass),
+                _applicationComponentClass.Assembly.GetName().Version,
                 null,
                 null,
                 new StringReader(sb.ToString())

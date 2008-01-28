@@ -78,6 +78,7 @@
     <Compile Include="UserSummaryComponent.cs" />
     <Compile Include="UserTable.cs" />
     <Compile Include="ValidationEditorComponent.cs" />
+    <Compile Include="ValidationLiveEditTool.cs" />
     <Compile Include="ValidationManagementComponent.cs" />
     <Compile Include="WorklistEditorComponent.cs" />
     <Compile Include="WorklistSummaryComponent.cs" />

@@ -30,6 +30,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             _propertiesTableView.Table = _component.Rules;
             _propertiesTableView.DataBindings.Add("Selection", _component, "SelectedRule", true, DataSourceUpdateMode.OnPropertyChanged);
             _validationXml.DataBindings.Add("Text", _component, "RuleXml", true, DataSourceUpdateMode.OnPropertyChanged);
+            _testButton.DataBindings.Add("Enabled", _component, "CanTestRules");
         }
 
         private void _okButton_Click(object sender, EventArgs e)
@@ -40,6 +41,11 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
         private void _cancelButton_Click(object sender, EventArgs e)
         {
             _component.Cancel();
+        }
+
+        private void _testButton_Click(object sender, EventArgs e)
+        {
+            _component.TestRules();
         }
     }
 }
