@@ -64,7 +64,7 @@
                                             </table>
                                         </td>
                                     </tr>
-                                    <tr id="Tr2" runat="server" align="left">
+                                    <tr id="Tr2" runat="server" align="left" valign="bottom" >
                                         <td id="Td4"  valign="bottom" >
                                             <table width="100%">
                                                 <tr align="left">
@@ -106,7 +106,7 @@
                                             </table>
                                         </td>
                                     </tr>
-                                    <tr id="Tr3" runat="server" align="left" >
+                                    <tr id="Tr3" runat="server" align="left"  valign="bottom" >
                                         <td id="Td7" runat="server" valign="bottom">
                                             <table width="100%">
                                                 <tr align="left">

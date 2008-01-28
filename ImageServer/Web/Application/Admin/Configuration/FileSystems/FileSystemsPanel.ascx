@@ -21,7 +21,7 @@
                         </asp:Panel>
                     </asp:Panel>
                 </asp:TableHeaderCell>
-                <asp:TableHeaderCell HorizontalAlign="right" VerticalAlign="Bottom">
+                <asp:TableHeaderCell HorizontalAlign="right" VerticalAlign="Bottom" Wrap="false">
                     <asp:Panel ID="FilterPanel" runat="server" CssClass="CSSFilterPanelContainer">
                         <asp:Panel ID="Panel5" runat="server" CssClass="CSSFilterPanelBorder">
                             <asp:Panel ID="Panel6" runat="server" CssClass="CSSFilterPanelContent">
@@ -33,11 +33,13 @@
                                             <asp:TextBox ID="DescriptionFilter" runat="server" CssClass="CSSFilterTextBox" ToolTip="Filter the list by AE Title"></asp:TextBox></td>
                                         <td align="left">
                                             <asp:Label ID="Label2" runat="server" Text="Tiers" CssClass="CSSTextBoxLabel" EnableViewState="False"></asp:Label><br />
-                                            <asp:DropDownList ID="TiersDropDownList" runat="server" CssClass="CSSFilterTextBox">
+                                            <asp:DropDownList ID="TiersDropDownList" runat="server" CssClass="CSSFilterDropDownList">
                                             </asp:DropDownList></td>
                                         <td align="right" valign="bottom">
-                                            <asp:ImageButton ID="FilterButton" runat="server" ImageUrl="~/images/icons/QueryEnabled.png"
-                                                OnClick="FilterButton_Click" ToolTip="Filter" /></td>
+                                            <asp:Panel ID="FilterButtonContainer" runat="server"  CssClass="FilterButtonContainer">
+                                                <asp:ImageButton ID="FilterButton" runat="server" ImageUrl="~/images/icons/QueryEnabled.png"
+                                                    OnClick="FilterButton_Click" ToolTip="Filter" /></td>
+                                            </asp:Panel>
                                     </tr>
                                 </table>
                             </asp:Panel>

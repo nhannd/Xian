@@ -191,6 +191,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRule
         protected global::System.Web.UI.WebControls.CheckBox DefaultOnlyFilter;
         
         /// <summary>
+        /// FilterButtonContainer control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel FilterButtonContainer;
+        
+        /// <summary>
         /// FilterButton control.
         /// </summary>
         /// <remarks>

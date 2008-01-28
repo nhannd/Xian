@@ -16,7 +16,11 @@ body
 }
 
 
-
+.FilterButtonContainer
+{
+	margin-left:10px;
+	margin-right:5px;
+}
 
 .CSSTextBoxLabel
 {
@@ -33,10 +37,17 @@ body
 	margin-right: 3px;
 }
 
+.CSSFilterDropDownList
+{
+	width: 120px;
+	margin-left: 3px;
+	margin-right: 3px;
+}
+
 .CSSCheckBox
 {
-	padding-left: 5px;
-	padding-right: 20px;
+	margin-left:10px;
+	margin-right:10px;
 }
 
 

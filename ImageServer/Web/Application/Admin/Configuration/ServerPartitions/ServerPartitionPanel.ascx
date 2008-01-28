@@ -23,7 +23,7 @@
                             </asp:Panel>
                         </asp:Panel>
                     </asp:TableHeaderCell>
-                    <asp:TableHeaderCell HorizontalAlign="right" Width="100%">
+                    <asp:TableHeaderCell HorizontalAlign="right" Width="100%" Wrap="false">
                         <asp:Panel ID="FilterPanel" runat="server" CssClass="CSSFilterPanelContainer">
                             <asp:Panel ID="Panel3" runat="server" CssClass="CSSFilterPanelBorder">
                                 <asp:Panel ID="Panel6" runat="server" CssClass="CSSFilterPanelContent">
@@ -44,9 +44,11 @@
                                             <td align="left" valign="bottom">
                                                 <asp:CheckBox ID="EnabledOnlyFilter" runat="server" Text="Enabled" CssClass="CSSCheckBox" />
                                             </td>
-                                            <td style="width: 50px" align="right" valign="bottom">
-                                                <asp:ImageButton ID="FilterButton" runat="server" ImageUrl="~/images/icons/QueryEnabled.png"
-                                                    OnClick="FilterButton_Click" />
+                                            <td align="right" valign="bottom">
+                                                <asp:Panel ID="FilterButtonContainer" runat="server"  CssClass="FilterButtonContainer">
+                                                    <asp:ImageButton ID="FilterButton" runat="server" ImageUrl="~/images/icons/QueryEnabled.png"
+                                                        OnClick="FilterButton_Click" />
+                                                 </asp:Panel>
                                             </td>
                                         </tr>
                                     </table>
