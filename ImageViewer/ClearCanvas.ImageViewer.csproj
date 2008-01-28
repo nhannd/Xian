@@ -277,7 +277,7 @@
     <Compile Include="Graphics\SceneGraph.cs" />
     <Compile Include="Rendering\Tests\ImageRendererBilinearInterpolationTests.cs" />
     <Compile Include="Rendering\Tests\ImageRendererTestUtilities.cs" />
-    <Compile Include="Mathematics\Tests\RectangleIntersectionTests.cs" />
+    <Compile Include="Mathematics\Tests\RectangleUtilitiesTests.cs" />
     <Compile Include="BaseTools\ImageViewerTool.cs" />
     <Compile Include="StandardModalities.cs" />
     <Compile Include="StandardModalitySettings.cs" />

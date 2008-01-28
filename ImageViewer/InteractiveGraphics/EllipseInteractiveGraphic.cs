@@ -34,7 +34,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			RectangleF boundingBox = new RectangleF(this.Left, this.Top, this.Width, this.Height);
 
 			GraphicsPath path = new GraphicsPath();
-			path.AddRectangle(boundingBox);
+			path.AddRectangle(RectangleUtilities.ConvertToPositiveRectangle(boundingBox));
 
 			Pen pen = new Pen(Brushes.White, VectorGraphic.HitTestDistance);
 			bool result = path.IsOutlineVisible(point, pen);

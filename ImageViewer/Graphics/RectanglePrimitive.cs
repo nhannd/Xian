@@ -29,9 +29,11 @@
 
 #endregion
 
+using System.Diagnostics;
 using System.Drawing;
 using ClearCanvas.Common;
 using System.Drawing.Drawing2D;
+using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.Graphics
 {
@@ -63,7 +65,10 @@ namespace ClearCanvas.ImageViewer.Graphics
 		{
 			GraphicsPath path = new GraphicsPath();
 			this.CoordinateSystem = CoordinateSystem.Destination;
-			path.AddRectangle(this.Rectangle);
+			path.AddRectangle(RectangleUtilities.ConvertToPositiveRectangle(this.Rectangle));
+
+			string str = string.Format("Hit test: {0}\n", this.Rectangle.ToString());
+			Trace.Write(str);
 
 			Pen pen = new Pen(Brushes.White, HitTestDistance);
 			bool result = path.IsOutlineVisible(point, pen);

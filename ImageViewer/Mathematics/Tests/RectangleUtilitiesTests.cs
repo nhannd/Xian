@@ -40,9 +40,9 @@ namespace ClearCanvas.ImageViewer.Mathematics.Tests
 {
 
 	[TestFixture]
-	public class RectangleIntersectionTests
+	public class RectangleUtilitiesTests
 	{
-		public RectangleIntersectionTests()
+		public RectangleUtilitiesTests()
 		{
 		}
 
@@ -230,6 +230,27 @@ namespace ClearCanvas.ImageViewer.Mathematics.Tests
 			Assert.AreEqual(testRectangle.Top, 6);
 			Assert.AreEqual(testRectangle.Right, -2);
 			Assert.AreEqual(testRectangle.Bottom, -2);
+		}
+
+		[Test]
+		public void ConvertToPositiveRectangleTest()
+		{
+			RectangleF rect = new RectangleF(1,2,5,6);
+			RectangleF posRect = RectangleUtilities.ConvertToPositiveRectangle(rect);
+
+			Assert.AreEqual(rect, posRect);
+
+			rect = new RectangleF(1, 2, -5, 6);
+			posRect = RectangleUtilities.ConvertToPositiveRectangle(rect);
+			Assert.AreEqual(new RectangleF(-4,2,5,6), posRect);
+
+			rect = new RectangleF(1, 2, 5, -6);
+			posRect = RectangleUtilities.ConvertToPositiveRectangle(rect);
+			Assert.AreEqual(new RectangleF(1,-4,5,6), posRect);
+
+			rect = new RectangleF(1, 2, -5, -6);
+			posRect = RectangleUtilities.ConvertToPositiveRectangle(rect);
+			Assert.AreEqual(new RectangleF(-4, -4, 5, 6), posRect);
 		}
 	}
 }

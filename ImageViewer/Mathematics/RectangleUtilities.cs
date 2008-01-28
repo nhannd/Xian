@@ -360,5 +360,37 @@ namespace ClearCanvas.ImageViewer.Mathematics
 
 			return new Rectangle(left, top, right - left, bottom - top);
 		}
+
+		/// <summary>
+		/// Converts a rectangle whose width and/or heigh and converts it to
+		/// an equivalent rectangle whose width and height are guaranteed to be positive
+		/// </summary>
+		/// <param name="rectangle"></param>
+		/// <returns></returns>
+		/// <remarks>
+		/// GDI methods always require rectangles with non-negative widths and heights. Use
+		/// this method when making such calls.
+		/// </remarks>
+		public static RectangleF ConvertToPositiveRectangle(RectangleF rectangle)
+		{
+			float left = rectangle.Left;
+			float top = rectangle.Top;
+			float width = rectangle.Width;
+			float height = rectangle.Height;
+
+			if (rectangle.Width < 0)
+			{
+				left = rectangle.Left + rectangle.Width;
+				width = -rectangle.Width;
+			}
+
+			if (rectangle.Height < 0)
+			{
+				top = rectangle.Top + rectangle.Height;
+				height = -rectangle.Height;
+			}
+
+			return new RectangleF(left, top, width, height);
+		}
 	}
 }

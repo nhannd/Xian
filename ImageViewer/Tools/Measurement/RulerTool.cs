@@ -68,6 +68,11 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			get { return SR.CommandCreateRuler; }
 		}
 
+		protected override void OnRoiCreation(RoiGraphic roiGraphic)
+		{
+			roiGraphic.Roi.ControlPoints.Visible = false;
+		}
+
 		protected override object[] CreateAnalyzers()
 		{
 			RulerAnalyzerExtensionPoint extensionPoint = new RulerAnalyzerExtensionPoint();

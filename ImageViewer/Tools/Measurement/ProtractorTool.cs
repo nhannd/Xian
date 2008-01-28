@@ -65,6 +65,11 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			get { return SR.CommandCreateProtractor; }
 		}
 
+		protected override void OnRoiCreation(RoiGraphic roiGraphic)
+		{
+			roiGraphic.Roi.ControlPoints.Visible = false;
+		}
+		
 		protected override object[] CreateAnalyzers()
 		{
 			ProtractorAnalyzerExtensionPoint extensionPoint = new ProtractorAnalyzerExtensionPoint();
