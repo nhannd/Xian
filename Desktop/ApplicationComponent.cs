@@ -36,9 +36,22 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Validation;
+using ClearCanvas.Desktop.Tools;
 
 namespace ClearCanvas.Desktop
 {
+    [ExtensionPoint]
+    public class ApplicationComponentMetaToolExtensionPoint : ExtensionPoint<ITool>
+    {
+    }
+
+    public interface IApplicationComponentMetaToolContext : IToolContext
+    {
+        DesktopWindow DesktopWindow { get; }
+        ApplicationComponent Component { get; }
+    }
+
+
     /// <summary>
     /// Provides a callback when an application component exits.
     /// </summary>
@@ -54,6 +67,7 @@ namespace ClearCanvas.Desktop
     /// </remarks>
     public abstract class ApplicationComponent : IApplicationComponent, INotifyPropertyChanged, IDataErrorInfo
     {
+
         #region LaunchAsWorkspace overloads
 
         /// <summary>
@@ -394,6 +408,28 @@ namespace ClearCanvas.Desktop
 
         #endregion
 
+        class ApplicationComponentMetaToolContext : IApplicationComponentMetaToolContext
+        {
+            private ApplicationComponent _component;
+            private DesktopWindow _window;
+
+            internal ApplicationComponentMetaToolContext(ApplicationComponent component, DesktopWindow window)
+            {
+                _component = component;
+                _window = window;
+            }
+
+            public DesktopWindow DesktopWindow
+            {
+                get { return _window; }
+            }
+
+            public ApplicationComponent Component
+            {
+                get { return _component; }
+            }
+        }
+
 
         private IApplicationComponentHost _host;
         private ApplicationComponentExitCode _exitCode;
@@ -410,6 +446,8 @@ namespace ClearCanvas.Desktop
         private event EventHandler _validationVisibleChanged;
 
         private IResourceResolver _resourceResolver;
+
+        private ToolSet _toolSet;
 
 
         /// <summary>
@@ -434,6 +472,14 @@ namespace ClearCanvas.Desktop
         {
             get { return _validation; }
             set { _validation = value; }
+        }
+
+        public virtual ActionModelNode ContextMenuModel
+        {
+            get
+            {
+                return ActionModelRoot.CreateModel(typeof(ApplicationComponent).FullName, "applicationcomponent-contextmenu", _toolSet.Actions);
+            }
         }
 
         #region Protected members
@@ -515,7 +561,10 @@ namespace ClearCanvas.Desktop
         /// </remarks>
         public virtual IActionSet ExportedActions
         {
-            get { return new ActionSet(); }
+            get
+            {
+                return new ActionSet();
+            }
         }
 
         /// <summary>
@@ -527,6 +576,9 @@ namespace ClearCanvas.Desktop
         public virtual void Start()
         {
             AssertNotStarted();
+
+            _toolSet = new ToolSet(new ApplicationComponentMetaToolExtensionPoint(),
+                new ApplicationComponentMetaToolContext(this, _host.DesktopWindow));
 
             _started = true;
         }
@@ -540,6 +592,12 @@ namespace ClearCanvas.Desktop
         public virtual void Stop()
         {
             AssertStarted();
+
+            if (_toolSet != null)
+            {
+                _toolSet.Dispose();
+                _toolSet = null;
+            }
 
             _started = false;
         }

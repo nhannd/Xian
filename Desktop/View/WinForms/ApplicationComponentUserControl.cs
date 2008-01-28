@@ -31,6 +31,7 @@
 
 using System;
 using System.Windows.Forms;
+using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
@@ -56,6 +57,15 @@ namespace ClearCanvas.Desktop.View.WinForms
 
             _errorProvider.DataSource = component;
             component.ValidationVisibleChanged += ValidationVisibleChangedEventHandler;
+
+            if (component is ApplicationComponent)
+            {
+                ActionModelNode menuModel = ((ApplicationComponent)component).ContextMenuModel;
+                if (menuModel != null)
+                {
+                    ToolStripBuilder.BuildMenu(_contextMenu.Items, menuModel.ChildNodes);
+                }
+            }
         }
 
         /// <summary>

@@ -61,7 +61,9 @@ namespace ClearCanvas.Desktop.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-            this._errorProvider = new System.Windows.Forms.ErrorProvider();
+            this.components = new System.ComponentModel.Container();
+            this._errorProvider = new System.Windows.Forms.ErrorProvider(this.components);
+            this._contextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             ((System.ComponentModel.ISupportInitialize)(this._errorProvider)).BeginInit();
             this.SuspendLayout();
             // 
@@ -70,10 +72,16 @@ namespace ClearCanvas.Desktop.View.WinForms
             this._errorProvider.BlinkStyle = System.Windows.Forms.ErrorBlinkStyle.NeverBlink;
             this._errorProvider.ContainerControl = this;
             // 
+            // _contextMenu
+            // 
+            this._contextMenu.Name = "_contextMenu";
+            this._contextMenu.Size = new System.Drawing.Size(153, 26);
+            // 
             // ApplicationComponentUserControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.ContextMenuStrip = this._contextMenu;
             this.Name = "ApplicationComponentUserControl";
             ((System.ComponentModel.ISupportInitialize)(this._errorProvider)).EndInit();
             this.ResumeLayout(false);
@@ -83,5 +91,6 @@ namespace ClearCanvas.Desktop.View.WinForms
         #endregion
 
         private ErrorProvider _errorProvider;
+        private ContextMenuStrip _contextMenu;
     }
 }
