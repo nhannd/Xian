@@ -311,24 +311,35 @@ function formatReport(report)
         if (formattedReport)
             formattedReport = "<h3>Addendum:</h3>" + formattedReport;
     }
-        
-    var mainReport = JSML.parse(report.Parts[0].Content);
+
+	try
+	{
+		var mainReport = JSML.parse(report.Parts[0].Content);
+		mainReport = "<B>Impression:</B> " + mainReport.Impression + "<br>" + "<B>Finding:</B> " + mainReport.Finding + "<br>";
+	}
+	catch(e)
+	{
+		var mainReport = report.Parts[0].Content;
+		if (mainReport == null)
+			mainReport = "None";
+	}
+
 	if (mainReport)
 	{
-	    var isDraft = new Boolean(report.Parts[0].Status.Code == 'P');
-	   
-	    formattedReport += isDraft == true ? "<font color='red'>" : ""; 
-	    formattedReport += "<h3>";
-	    formattedReport += "Main Report";
-	    formattedReport += isDraft == true ? " (Draft)" : "";
-	    formattedReport += "</h3>";
-	    formattedReport += "<B>Impression:</B> " + mainReport.Impression + "<br>";    
-	    formattedReport += "<B>Finding:</B> " + mainReport.Finding + "<br>";
+		var isDraft = new Boolean(report.Parts[0].Status.Code == 'P');
+
+		formattedReport += isDraft == true ? "<font color='red'>" : ""; 
+		formattedReport += "<h3>";
+		formattedReport += "Main Report";
+		formattedReport += isDraft == true ? " (Draft)" : "";
+		formattedReport += "</h3>";
+		formattedReport += mainReport;
 
 		formattedReport += formatReportPerformer(report.Parts[0]);
 
-	    formattedReport += isDraft == true ? "</font>" : ""; 
+		formattedReport += isDraft == true ? "</font>" : ""; 
 	}
+
 	
     return formattedReport;
 }
