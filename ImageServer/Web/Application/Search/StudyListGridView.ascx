@@ -4,7 +4,8 @@
 <asp:Panel ID="Panel1" runat="server" CssClass="CSSGridViewPanelContainer">
     <asp:Panel ID="Panel3" runat="server" CssClass="CSSGridViewPanelBorder">
         <asp:Panel ID="Panel4" runat="server" CssClass="CSSGridViewPanelContent">
-            <asp:GridView ID="GridView1" runat="server" AutoGenerateColumns="False" CssClass="CSSGridView"
+            <asp:GridView ID="GridView1" runat="server" AutoGenerateColumns="False" 
+                CssClass="CSSGridView"
                 Width="100%" OnRowDataBound="GridView1_RowDataBound" 
                 OnDataBound="GridView1_DataBound"                
                 EmptyDataText="" 

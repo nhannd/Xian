@@ -7,21 +7,27 @@
 <asp:UpdatePanel ID="UpdatePanel" runat="server" UpdateMode="Conditional">
     <ContentTemplate>
         <asp:Panel ID="PagePanel" runat="server">
-            <asp:Table ID="Table" runat="server" Width="100%" CellPadding="0" CellSpacing="0"
-                BorderWidth="0px">
-                <asp:TableHeaderRow>
-                    <asp:TableHeaderCell HorizontalAlign="left" Width="100%">
-                        <asp:Panel ID="Panel1" runat="server" CssClass="CSSToolbarPanelContainer">
+            <asp:Table ID="Table" runat="server"  
+                CellPadding="0" CellSpacing="0"
+                BorderWidth="0px" Width="100%">
+                <asp:TableHeaderRow HorizontalAlign="right">
+                    <asp:TableHeaderCell >
+                        <asp:Panel ID="Panel1"  runat="server" CssClass="CSSToolbarPanelContainer">
                             <asp:Panel ID="Panel3" runat="server" CssClass="CSSToolbarPanelBorder" Wrap="False">
                                 <asp:Panel ID="Panel4" runat="server" CssClass="CSSToolbarContent">
+                                
                                 </asp:Panel>
                             </asp:Panel>
                         </asp:Panel>
                     </asp:TableHeaderCell>
-                    <asp:TableHeaderCell HorizontalAlign="right" VerticalAlign="Bottom">
-                        <asp:Panel ID="FilterPanel" runat="server" CssClass="CSSFilterPanelContainer">
+                    <asp:TableHeaderCell HorizontalAlign="right" VerticalAlign="Bottom" >
+                        <table cellpadding="0" cellspacing="0">
+                            <!-- need this table so that the filter panel container is fit to the content -->
+                            <tr>
+                                <td>
+                                <asp:Panel ID="FilterPanel" runat="server" CssClass="CSSFilterPanelContainer">
                             <asp:Panel ID="Panel5" runat="server" CssClass="CSSFilterPanelBorder">
-                                <asp:Panel ID="Panel6" runat="server" CssClass="CSSFilterPanelContent">
+                                <asp:Panel ID="Panel6" runat="server"  CssClass="CSSFilterPanelContent">
                                     <table cellpadding="0" cellspacing="0">
                                         <tr>
                                             <td align="left" valign="bottom">
@@ -53,6 +59,12 @@
                                 </asp:Panel>
                             </asp:Panel>
                         </asp:Panel>
+                                </td>
+                            </tr>
+                        </table>
+                        
+                        
+                        
                     </asp:TableHeaderCell>
                 </asp:TableHeaderRow>
                 <asp:TableRow>

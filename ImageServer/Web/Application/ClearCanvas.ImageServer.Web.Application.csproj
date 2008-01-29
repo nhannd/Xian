@@ -246,6 +246,13 @@
       <DependentUpon>ServerPartitionTabs.ascx</DependentUpon>
     </Compile>
     <Compile Include="Common\Themes.cs" />
+    <Compile Include="Common\Tooltip.ascx.cs">
+      <DependentUpon>Tooltip.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Common\Tooltip.ascx.designer.cs">
+      <DependentUpon>Tooltip.ascx</DependentUpon>
+    </Compile>
     <Compile Include="MasterPage.master.cs">
       <DependentUpon>MasterPage.master</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -406,6 +413,7 @@
     <Content Include="Common\BasePage.aspx" />
     <Content Include="Common\InvalidInputIndicator.ascx" />
     <Content Include="Common\ServerPartitionTabs.ascx" />
+    <Content Include="Common\Tooltip.ascx" />
     <Content Include="images\blank.gif" />
     <Content Include="Search\StudyListGridView.ascx" />
     <Content Include="Common\BarChart.aspx" />
