@@ -51,8 +51,8 @@ namespace ClearCanvas.Healthcare.Tests
         {
             _defaultCancelReason = new OrderCancelReasonEnum("x", "x", "x");
 
-            // set the extension factory to null so we don't try to instantiate extensions from plugins
-            Platform.SetExtensionFactory(new NullExtensionFactory());
+            // set the extension factory to special test factory
+            Platform.SetExtensionFactory(new TestExtensionFactory());
         }
 
         /// <summary>
@@ -76,7 +76,7 @@ namespace ClearCanvas.Healthcare.Tests
 
             Order order = Order.NewOrder(
                 accession, patient, visit, ds, reasonForStudy, OrderPriority.R, facility, facility,
-                scheduleTime, scheduleTime, orderingPrac, new List<ExternalPractitioner>(), attachments, notes);
+                scheduleTime, orderingPrac, new List<ExternalPractitioner>(), attachments, notes);
 
             // check basics
             Assert.AreEqual(accession, order.AccessionNumber);
@@ -104,11 +104,6 @@ namespace ClearCanvas.Healthcare.Tests
                 foreach (ModalityProcedureStep mps in rp.ModalityProcedureSteps)
                 {
                     CheckStatus(ActivityStatus.SC, mps);
-
-                    ModalityProcedureStepType mpsType = CollectionUtils.SelectFirst(rpType.ModalityProcedureStepTypes,
-                        delegate(ModalityProcedureStepType mpst) { return mpst.Equals(mps.Type); });
-
-                    Assert.IsNotNull(mpsType, "diagnostic service plan not copied correctly");
                 }
             }
 

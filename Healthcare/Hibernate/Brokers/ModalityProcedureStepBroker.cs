@@ -41,13 +41,5 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
     [ExtensionOf(typeof(BrokerExtensionPoint))]
     public class ModalityProcedureStepBroker : EntityBroker<ModalityProcedureStep, ModalityProcedureStepSearchCriteria>, IModalityProcedureStepBroker
     {
-        #region IModalityProcedureStepBroker Members
-
-        public void LoadTypeForModalityProcedureStep(ModalityProcedureStep mps)
-        {
-            this.LoadAssociation(mps, mps.Type);
-        }
-
-        #endregion
     }
 }

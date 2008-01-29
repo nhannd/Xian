@@ -48,13 +48,7 @@ namespace ClearCanvas.Ris.Application.Services
             return new ProcedureTypeDetail(
                 procedureType.GetRef(),
                 procedureType.Id,
-                procedureType.Name,
-                CollectionUtils.Map<ModalityProcedureStepType, ModalityProcedureStepTypeDetail>(
-                    procedureType.ModalityProcedureStepTypes,
-                    delegate(ModalityProcedureStepType mpsType)
-                    {
-                        return CreateModalityProcedureStepTypeDetail(mpsType);
-                    }));
+                procedureType.Name);
         }
 
         //TODO: should there be a separate assembler for this?

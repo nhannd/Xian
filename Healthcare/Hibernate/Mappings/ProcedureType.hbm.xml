@@ -9,10 +9,7 @@
 
     <property name="Id" column="Id_" type="String" length="30" not-null="true" unique="true"/>
     <property name="Name" column="Name_" type="String" length="100" not-null="true" unique="true"/>
-    
-    <set name="ModalityProcedureStepTypes" table="ProcedureTypeModalityProcedureStepType_" lazy="true" access="nosetter.camelcase-underscore">
-      <key column="ProcedureTypeOID_"/>
-      <many-to-many column="ModalityProcedureStepTypeOID_" class="ModalityProcedureStepType" fetch="join"/>
-    </set>
+    <many-to-one name="BaseType" class="ProcedureType" column="BaseTypeOID_" not-null="false"/>
+    <property name="PlanXml" column="PlanXml_" type="StringClob" length="65000" access="field.camelcase-underscore"/>
   </class>
 </hibernate-mapping>

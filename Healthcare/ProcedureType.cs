@@ -36,6 +36,7 @@ using System.Text;
 using Iesi.Collections;
 using ClearCanvas.Enterprise.Core;
 using Iesi.Collections.Generic;
+using System.Xml;
 
 
 namespace ClearCanvas.Healthcare {
@@ -46,38 +47,24 @@ namespace ClearCanvas.Healthcare {
     /// </summary>
 	public partial class ProcedureType
 	{
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="name"></param>
         public ProcedureType(string id, string name)
-            :this(id, name, new HashedSet<ModalityProcedureStepType>())
+            :this(id, name, null, null)
         {
         }
 
         /// <summary>
-        /// Creates a new <see cref="Procedure"/> of this type, scheduled for the specified time.
+        /// Sets the plan for this procedure type from the specified prototype procedure.
         /// </summary>
-        /// <returns></returns>
-        public virtual Procedure CreateProcedure(DateTime? scheduledStartTime)
+        /// <param name="prototype"></param>
+        public virtual void SetPlanFromPrototype(Procedure prototype)
         {
-            Procedure rp = new Procedure(this);
-
-            // add modality procedure steps
-            foreach (ModalityProcedureStepType spt in this.ModalityProcedureStepTypes)
-            {
-                // sps is automatically added to rp.ProcedureSteps collection
-                ModalityProcedureStep mps = new ModalityProcedureStep(rp, spt, spt.DefaultModality);
-            }
-
-            rp.Schedule(scheduledStartTime);
-
-            return rp;
-        }
-
-        /// <summary>
-        /// Creates a new <see cref="Procedure"/> of this type, does not schedule.
-        /// </summary>
-        /// <returns></returns>
-        public virtual Procedure CreateProcedure()
-        {
-            return CreateProcedure(null);
+            ProcedureBuilder builder = new ProcedureBuilder();
+            builder.SetPlanFromPrototype(this, prototype);
         }
 
 		/// <summary>
@@ -88,17 +75,14 @@ namespace ClearCanvas.Healthcare {
 		{
 		}
 
-        public virtual void AddModalityProcedureStepType(ModalityProcedureStepType spt)
-        {
-            if (this.ModalityProcedureStepTypes.Contains(spt))
-            {
-                throw new HealthcareWorkflowException(
-                    string.Format("Procedure Type {0} already contains Scheduled Procedure Step Type {1}",
-                    this.Id, spt.Id));
-            }
-
-            this.ModalityProcedureStepTypes.Add(spt);
-        }
+        /// <summary>
+        /// Gets or sets the XML representation of the procedure plan for this procedure type.
+        /// </summary>
+        protected internal virtual string PlanXml
+	    {
+            get { return _planXml; }
+            set { _planXml = value; }
+	    }
 	
 		#region Object overrides
 		

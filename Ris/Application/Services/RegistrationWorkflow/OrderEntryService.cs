@@ -227,8 +227,6 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
             ValidatePatientProfilesExist(order);
 
-            PersistenceContext.Lock(order, DirtyState.New);
-
             // ensure the new order is assigned an OID before using it in the return value
             PersistenceContext.SynchState();
 
@@ -276,7 +274,6 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             // place new order
             Order newOrder = PlaceOrderHelper(request.Requisition);
             ValidatePatientProfilesExist(newOrder);
-            PersistenceContext.Lock(newOrder, DirtyState.New);
 
             PersistenceContext.SynchState();
 
@@ -326,14 +323,16 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                     });
 
             // generate set of procedures
+            // create a temp map from procedure back to its requisition, this will be needed later
             OrderEntryAssembler orderAssembler = new OrderEntryAssembler();
+            Dictionary<Procedure, ProcedureRequisition> mapProcToReq = new Dictionary<Procedure, ProcedureRequisition>();
             List<Procedure> procedures = CollectionUtils.Map<ProcedureRequisition, Procedure>(
                 requisition.Procedures,
                 delegate (ProcedureRequisition req)
                     {
                         ProcedureType rpt = PersistenceContext.Load<ProcedureType>(req.ProcedureType.EntityRef);
-                        Procedure rp = rpt.CreateProcedure(req.ScheduledTime);
-                        orderAssembler.UpdateProcedureFromRequisition(rp, req, PersistenceContext);
+                        Procedure rp = new Procedure(rpt);
+                        mapProcToReq.Add(rp, req);
                         return rp;
                     });
 
@@ -364,6 +363,17 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                     procedures,
                     attachments,
                     notes);
+
+            // note: need to lock the new order now, prior to creating the procedure steps
+            // otherwise may get exceptions saying the Procedure is a transient object
+            PersistenceContext.Lock(order, DirtyState.New);
+
+            // create procedure steps and update from requisition
+            foreach (Procedure procedure in order.Procedures)
+            {
+                procedure.CreateProcedureSteps();
+                orderAssembler.UpdateProcedureFromRequisition(procedure, mapProcToReq[procedure], PersistenceContext);
+            }
 
             return order;
         }
@@ -403,8 +413,15 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                 if(rp == null)
                 {
                     // create a new procedure for this requisition
-                    rp = requestedType.CreateProcedure();
+                    rp = new Procedure(requestedType);
                     order.AddProcedure(rp);
+
+                    // note: need to lock the new procedure now, prior to creating the procedure steps
+                    // otherwise may get exceptions saying the Procedure is a transient object
+                    PersistenceContext.Lock(rp, DirtyState.New);
+
+                    // create the procedure steps
+                    rp.CreateProcedureSteps();
                 }
                 else
                 {

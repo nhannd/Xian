@@ -48,17 +48,23 @@ namespace ClearCanvas.Healthcare.Tests
         {
             Modality m = new Modality("01", "CT");
 
-            HashedSet<ProcedureType> procedures = new HashedSet<ProcedureType>();
+            HashedSet<ProcedureType> procedureTypes = new HashedSet<ProcedureType>();
             for (int p = 0; p < numReqProcs; p++)
             {
-                HashedSet<ModalityProcedureStepType> steps = new HashedSet<ModalityProcedureStepType>();
+                Procedure prototype = new Procedure();
                 for(int s = 0; s < numMpsPerReqProc; s++)
                 {
-                    steps.Add(new ModalityProcedureStepType("10" + (s + p * numMpsPerReqProc), "MPS 10" + (s + p * numMpsPerReqProc), m));
+                    ModalityProcedureStep step = new ModalityProcedureStep();
+                    step.Description = "MPS 10" + (s + p*numMpsPerReqProc);
+                    step.Modality = m;
+                    prototype.AddProcedureStep(step);
                 }
-                procedures.Add(new ProcedureType("20" + p, "Procedure 20" + p, steps));
+                ProcedureType pt = new ProcedureType("20" + p, "Procedure 20" + p);
+                pt.SetPlanFromPrototype(prototype);
+
+                procedureTypes.Add(pt);
             }
-            return new DiagnosticService("301", "Diagnostic Service 301", procedures);
+            return new DiagnosticService("301", "Diagnostic Service 301", procedureTypes);
         }
     }
 }

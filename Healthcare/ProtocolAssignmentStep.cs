@@ -29,9 +29,39 @@
 
 #endregion
 
+using System;
+using System.Xml;
+using ClearCanvas.Common;
+using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Workflow;
 
 namespace ClearCanvas.Healthcare {
+
+    [ExtensionOf(typeof(ProcedureStepBuilderExtensionPoint))]
+    public class ProtocolAssignmentStepBuilder : ProcedureStepBuilderBase
+    {
+
+        public override Type ProcedureStepClass
+        {
+            get { return typeof(ProtocolAssignmentStep); }
+        }
+
+        public override ProcedureStep CreateInstance(XmlElement xmlNode, Procedure procedure)
+        {
+            Protocol protocol = new Protocol(procedure);
+            ProtocolAssignmentStep step = new ProtocolAssignmentStep(protocol);
+
+            //note: this is not ideal but there is no other way to save the protocol object
+            PersistenceScope.Current.Lock(protocol, DirtyState.New);
+
+            return step;
+        }
+
+        public override void SavePrototype(ProcedureStep prototype, XmlElement xmlNode)
+        {
+            // nothing to do
+        }
+    }
 
     /// <summary>
     /// ProtocolAssignmentStep entity

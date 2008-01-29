@@ -79,6 +79,7 @@
     <Compile Include="Alert\NoteAlert.cs" />
     <Compile Include="OrderNote.cs" />
     <Compile Include="PerformingGroup.cs" />
+    <Compile Include="ProcedureBuilder.cs" />
     <Compile Include="ProcedureStepSchedulingSearchCriteria.cs" />
     <Compile Include="ReadingGroup.cs" />
     <Compile Include="RegistrationProtocolWorklist.cs" />
@@ -91,6 +92,7 @@
     <Compile Include="RelevanceGroup.cs" />
     <Compile Include="ReportingWorklist.cs" />
     <Compile Include="TechnologistWorklist.cs" />
+    <Compile Include="Tests\TestExtensionFactory.cs" />
     <Compile Include="Tests\TestOrderNoteFactory.cs" />
     <Compile Include="WorklistItemBase.cs" />
     <Compile Include="WorklistItemSearchCriteria.cs" />

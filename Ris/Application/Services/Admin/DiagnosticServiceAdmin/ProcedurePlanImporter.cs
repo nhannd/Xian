@@ -114,16 +114,25 @@ namespace ClearCanvas.Ris.Application.Services.Admin.DiagnosticServiceAdmin
                 Modality modality = GetModality(modId, modName);
                 DiagnosticService ds = GetDiagnosticService(dsId, dsName);
                 ProcedureType rpt = GetProcedureType(rptId, rptName);
-                ModalityProcedureStepType spt = GetModalityProcedureStepType(sptId, sptName, modality);
+
+                Procedure prototypeInstance = new Procedure(rpt);
+                prototypeInstance.CreateProcedureSteps();
+                bool mpsAlreadyExists = CollectionUtils.Contains(prototypeInstance.ModalityProcedureSteps,
+                    delegate(ModalityProcedureStep step) { return step.Description == sptName; });
+
+                if(!mpsAlreadyExists)
+                {
+                    ModalityProcedureStep mps = new ModalityProcedureStep();
+                    mps.Description = sptName;
+                    mps.Modality = modality;
+                    prototypeInstance.AddProcedureStep(mps);
+
+                    rpt.SetPlanFromPrototype(prototypeInstance);
+                }
 
                 if (!ds.ProcedureTypes.Contains(rpt))
                 {
                     ds.AddProcedureType(rpt);
-                }
-
-                if (!rpt.ModalityProcedureStepTypes.Contains(spt))
-                {
-                    rpt.AddModalityProcedureStepType(spt);
                 }
             }
         }

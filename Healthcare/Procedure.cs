@@ -100,7 +100,7 @@ namespace ClearCanvas.Healthcare {
         {
             get
             {
-                ProcedureStep step = CollectionUtils.SelectFirst<ProcedureStep>(this.ProcedureSteps,
+                ProcedureStep step = CollectionUtils.SelectFirst(this.ProcedureSteps,
                     delegate(ProcedureStep ps)
                     {
                         return ps.Is<DocumentationProcedureStep>();
@@ -127,6 +127,20 @@ namespace ClearCanvas.Healthcare {
         #region Public Operations
 
         /// <summary>
+        /// Creates the procedure steps specified in the procedure plan of the associated
+        /// <see cref="ProcedureType"/>.
+        /// </summary>
+        public virtual void CreateProcedureSteps()
+        {
+            // TODO: is this the right way to check this condition?  do we need a dedicated flag?
+            if(_procedureSteps.Count > 0)
+                throw new WorkflowException("Procedure steps have already been created for this Procedure.");
+
+            ProcedureBuilder builder = new ProcedureBuilder();
+            builder.BuildProcedure(this);
+        }
+
+        /// <summary>
         /// Adds a procedure step.  Use this method rather than adding directly to the <see cref="ProcedureSteps"/>
         /// collection.
         /// </summary>
@@ -149,6 +163,12 @@ namespace ClearCanvas.Healthcare {
         {
             if(_status != ProcedureStatus.SC)
                 throw new WorkflowException("Only procedures in the SC status may be scheduled or re-scheduled.");
+
+            // if the procedure steps have not been created, create them now
+            if(_procedureSteps.Count == 0)
+            {
+                this.CreateProcedureSteps();
+            }
 
             // if we had more detailed scheduling information available in the procedure plan,
             // then we could schedule each step in a more fine-grained manner

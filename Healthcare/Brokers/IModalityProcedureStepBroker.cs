@@ -39,6 +39,5 @@ namespace ClearCanvas.Healthcare.Brokers
 {
     public interface IModalityProcedureStepBroker : IEntityBroker<ModalityProcedureStep, ModalityProcedureStepSearchCriteria>
     {
-        void LoadTypeForModalityProcedureStep(ModalityProcedureStep mps);
     }
 }

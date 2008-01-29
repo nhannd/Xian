@@ -41,12 +41,11 @@ namespace ClearCanvas.Ris.Application.Common
     [DataContract]
     public class ProcedureTypeDetail : DataContractBase
     {
-        public ProcedureTypeDetail(EntityRef entityRef, string id, string name, List<ModalityProcedureStepTypeDetail> mpsTypes)
+        public ProcedureTypeDetail(EntityRef entityRef, string id, string name)
         {
             this.ProcedureTypeRef = entityRef;
             this.Id = id;
             this.Name = name;
-            this.ModalityProcedureStepTypes = mpsTypes;
         }
 
         [DataMember]
@@ -57,9 +56,6 @@ namespace ClearCanvas.Ris.Application.Common
 
         [DataMember]
         public string Name;
-
-        [DataMember]
-        public List<ModalityProcedureStepTypeDetail> ModalityProcedureStepTypes;
 
         public ProcedureTypeSummary GetSummary()
         {

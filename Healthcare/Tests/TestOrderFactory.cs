@@ -61,7 +61,6 @@ namespace ClearCanvas.Healthcare.Tests
                 facility,
                 facility,
                 scheduleTime,
-                scheduleOrder ? scheduleTime : null,
                 orderingPrac,
                 new List<ExternalPractitioner>(),
                 attachments,

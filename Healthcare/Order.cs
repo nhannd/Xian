@@ -64,18 +64,16 @@ namespace ClearCanvas.Healthcare {
             Facility orderingFacility,
             Facility performingFacility,
             DateTime? schedulingRequestTime,
-            DateTime? scheduledStartTime,
             ExternalPractitioner orderingPractitioner,
             IList<ExternalPractitioner> copiesToPractitioners,
             IList<OrderAttachment> attachments,
             IList<OrderNote> notes)
         {
-            // create procedures according to the diagnostic service breakdown
+            // create procedures according to the diagnostic service plan
             IList<Procedure> procedures = CollectionUtils.Map<ProcedureType, Procedure>(diagnosticService.ProcedureTypes,
                 delegate(ProcedureType type)
                 {
-                    // each procedure is automatically added to order
-                    Procedure rp = type.CreateProcedure(scheduledStartTime);
+                    Procedure rp = new Procedure(type);
                     rp.PerformingFacility = performingFacility;
                     return rp;
                 });
@@ -226,6 +224,18 @@ namespace ClearCanvas.Healthcare {
 
             _procedures.Remove(rp);
             rp.Order = null;
+        }
+
+        /// <summary>
+        /// Schedules all procedures in this order for the specified start time.
+        /// </summary>
+        /// <param name="startTime"></param>
+        public virtual void Schedule(DateTime? startTime)
+        {
+            foreach (Procedure procedure in _procedures)
+            {
+                procedure.Schedule(startTime);
+            }
         }
 
         /// <summary>
