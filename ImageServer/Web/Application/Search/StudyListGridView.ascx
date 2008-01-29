@@ -9,7 +9,7 @@
                 OnDataBound="GridView1_DataBound"                
                 EmptyDataText="" 
                 CellPadding="0"
-                PageSize="2" CellSpacing="0" AllowPaging="True" CaptionAlign="Top" BorderWidth="0px">
+                PageSize="20" CellSpacing="0" AllowPaging="True" CaptionAlign="Top" BorderWidth="0px">
                 <Columns>
                     <asp:BoundField DataField="PatientsName" HeaderText="Patient's Name"></asp:BoundField>
                     <asp:BoundField DataField="PatientID" HeaderText="Patient ID"></asp:BoundField>
