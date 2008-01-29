@@ -58,7 +58,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRule
             {
 
                 GridView.SelectedIndex = ServerRules.IndexOf(value);
-              //  if (OnDeviceSelectionChanged != null)
+              //  if (OnStudySelectionChanged != null)
                //     OnDeviceSelectionChanged(this, value);
             }
         }

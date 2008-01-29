@@ -120,14 +120,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
         public void OnAddFileSystem()
         {
             AddEditFileSystemDialog1.EditMode = false;
-            AddEditFileSystemDialog1.Show();
+            AddEditFileSystemDialog1.FileSystem = null;
+            AddEditFileSystemDialog1.Show(true);
         }
 
         public void OnEditFileSystem(FileSystemsConfigurationController controller, Filesystem fs)
         {
             AddEditFileSystemDialog1.EditMode = true;
             AddEditFileSystemDialog1.FileSystem = fs;
-            AddEditFileSystemDialog1.Show();
+            AddEditFileSystemDialog1.Show(true);
         }
 
         #endregion

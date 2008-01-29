@@ -93,8 +93,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
                 this._device = value;
                 // put into viewstate to retrieve later
                 ViewState[ClientID + "_EdittedDevice"] = _device;
-
-                UpdateUI();
             }
             get
             {
@@ -153,6 +151,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
                                                         this.IPAddressTextBox.ClientID +
                                                         @"');
                                 ipBox.disabled=checkBox.checked;         
+                                ipBox.value = '';
                             }
                         </script>");
         }
@@ -184,6 +183,24 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
         /// <param name="e"></param>
         protected void OKButton_Click(object sender, EventArgs e)
         {
+
+            if (Page.IsValid)
+            {
+                SaveData();
+                
+                if (OKClicked != null)
+                    OKClicked(Device);
+
+                Close();
+            }
+            else
+            {
+                Show(false);
+            }
+        }
+
+        private void SaveData()
+        {
             if (Device==null)
             {
                 Device = new Device();
@@ -201,21 +218,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
             Device.AllowStorage = AllowStorageCheckBox.Checked;
             Device.AllowQuery = AllowQueryCheckBox.Checked;
             Device.AllowRetrieve = AllowRetrieveCheckBox.Checked;
-
-
-            if (Page.IsValid)
-            {
-                if (OKClicked != null)
-                    OKClicked(Device);
-
-                Close();
-            }
-            else
-            {
-                Show();
-            }
-            
-
         }
 
         #endregion Protected methods
@@ -249,7 +251,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
             // Update the rest of the fields
             if (Device == null)
             {
-                AETitleTextBox.Text = "";
+                AETitleTextBox.Text = "DEVICEAE";
                 IPAddressTextBox.Text = "";
                 ActiveCheckBox.Checked = true;
                 DHCPCheckBox.Checked = false;
@@ -259,16 +261,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
                 AllowQueryCheckBox.Checked = true;
                 AllowRetrieveCheckBox.Checked = true;
 
+
                 ServerPartitionDropDownList.SelectedIndex = 0;
             }
-            else
+            else if (Page.IsValid)
             {
                 AETitleTextBox.Text = Device.AeTitle;
                 IPAddressTextBox.Text = Device.IpAddress;
-                if (Device.Dhcp)
-                    IPAddressTextBox.Enabled = false;
-                else
-                    IPAddressTextBox.Enabled = true;
                 ActiveCheckBox.Checked = Device.Enabled;
                 DHCPCheckBox.Checked = Device.Dhcp;
                 DescriptionTextBox.Text = Device.Description;
@@ -280,14 +279,22 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
 
                 ServerPartitionDropDownList.SelectedValue = Device.ServerPartitionKey.Key.ToString();
             }
+
+            
+            
         }
 
         /// <summary>
         /// Displays the add/edit device dialog box.
         /// </summary>
-        public void Show()
+        public void Show(bool updateUI)
         {
-            
+            if (updateUI)
+                UpdateUI();
+
+
+            IPAddressTextBox.Enabled = !DHCPCheckBox.Checked;
+
             TabContainer1.ActiveTabIndex = 0;
 
             UpdatePanel.Update();

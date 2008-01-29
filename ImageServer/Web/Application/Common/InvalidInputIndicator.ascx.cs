@@ -26,7 +26,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Common
         {
             ContainerPanel.Attributes.Add("shared", _referenceCounter>1? "true":"false");  
  
-            ContainerPanel.Style.Add("display", "inline");
+            ContainerPanel.Style.Add("display", "block");
             ContainerPanel.Style.Add("visibility", "hidden");   
 
         }

@@ -6,9 +6,9 @@ function @@FUNCTION_NAME@@()
         input = document.getElementById('@@INPUT_CLIENTID@@');
         
         
-        if (condition!=null && condition.checked == '@@REQUIRED_WHEN_CHECKED@@')
+        if (condition!=null && condition.checked == @@REQUIRED_WHEN_CHECKED@@)
         {
-            if (input.value==null || input.value=='')
+            if ( (input.value==null || input.value=='') && (!@@IGNORE_EMPTY_VALUE@@) )
             {
                 result = false;
             }

@@ -49,6 +49,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
         private string  _invalidInputIndicatorID="";
         private Color   _invalidInputColor;
         private bool    _validateWhenDisabled = false;
+        private bool _ignoreEmptyValue = false;
         private string  _inputName;
         #endregion Private members
 
@@ -87,6 +88,18 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
                 return _inputName;
             }
             set { _inputName = value; }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public bool IgnoreEmptyValue
+        {
+            get
+            {
+                return _ignoreEmptyValue;
+            }
+            set { _ignoreEmptyValue = value; }
         }
 
 
@@ -315,6 +328,13 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
             
             if (Enabled || ValidateWhenDisabled)
             {
+                string value = GetControlValidationValue(ControlToValidate);
+
+                if (String.IsNullOrEmpty(value) && IgnoreEmptyValue)
+                {
+                    return true;
+                }
+
                 if (OnServerSideEvaluate())
                 {
                     if (InvalidInputIndicator != null)

@@ -30,36 +30,48 @@
 #endregion
 
 using System;
-using System.Data;
-using System.Configuration;
 using System.Collections;
-using System.Web;
-using System.Web.Security;
-using System.Web.UI;
-using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
-using System.Web.UI.HtmlControls;
+using System.Collections.Generic;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Model.EntityBrokers;
+using ClearCanvas.ImageServer.Web.Common.Data;
 
 namespace ClearCanvas.ImageServer.Web.Application.Search
 {
-    public partial class StudySummary : System.Web.UI.UserControl
+    /// <summary>
+    /// Assembles an instance of  <see cref="StudySummary"/> based on a or a <see cref="Study"/> object.
+    /// </summary>
+    /// <remarks>
+    /// 
+    /// </remarks>
+    public class StudySummaryAssembler
     {
-        private Study _study;
-
-        public Study Study
+        /// <summary>
+        /// Returns an instance of <see cref="StudySummary"/> based on a <see cref="Study"/> object.
+        /// </summary>
+        /// <param name="study"></param>
+        /// <returns></returns>
+        /// <remark>
+        /// 
+        /// </remark>
+        static public StudySummary CreateStudySummary(Model.Study study)
         {
-            get { return _study; }
-            set { _study = value; }
+            StudySummary summary = new StudySummary();
+
+            summary.GUID = study.GetKey();
+            summary.AccessionNumber = study.AccessionNumber;
+            summary.NumberOfRelatedInstances = study.NumberOfStudyRelatedInstances;
+            summary.NumberOfRelatedSeries = study.NumberOfStudyRelatedSeries;
+            summary.PatientID = study.PatientId;
+            summary.PatientsName = study.PatientsName;
+
+            summary.StudyDate = study.StudyDate;
+
+            summary.StudyDescription = study.StudyDescription;
+
+
+            return summary;
         }
 
-        protected void Page_Load(object sender, EventArgs e)
-        {
-            this.PatientName.Text = _study.PatientsName;
-            this.PatientId.Text = _study.PatientId;
-            this.AccessionNumber.Text = _study.AccessionNumber;
-            this.StudyDescription.Text = _study.StudyDescription;
-            this.StudyDate.Text = _study.StudyDate;
-        }
     }
 }

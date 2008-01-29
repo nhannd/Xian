@@ -276,12 +276,12 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="Search\SearchAccordian.ascx.cs">
-      <DependentUpon>SearchAccordian.ascx</DependentUpon>
+    <Compile Include="Search\StudyListGridView.ascx.cs">
+      <DependentUpon>StudyListGridView.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Search\SearchAccordian.ascx.designer.cs">
-      <DependentUpon>SearchAccordian.ascx</DependentUpon>
+    <Compile Include="Search\StudyListGridView.ascx.designer.cs">
+      <DependentUpon>StudyListGridView.ascx</DependentUpon>
     </Compile>
     <Compile Include="Search\SearchPage.aspx.cs">
       <DependentUpon>SearchPage.aspx</DependentUpon>
@@ -297,27 +297,6 @@
     <Compile Include="Search\SearchPanel.ascx.designer.cs">
       <DependentUpon>SearchPanel.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Search\SeriesDetails.ascx.cs">
-      <DependentUpon>SeriesDetails.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Search\SeriesDetails.ascx.designer.cs">
-      <DependentUpon>SeriesDetails.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="Search\StudyDetails.ascx.cs">
-      <DependentUpon>StudyDetails.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Search\StudyDetails.ascx.designer.cs">
-      <DependentUpon>StudyDetails.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="Search\StudySummary.ascx.cs">
-      <DependentUpon>StudySummary.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Search\StudySummary.ascx.designer.cs">
-      <DependentUpon>StudySummary.ascx</DependentUpon>
-    </Compile>
     <Compile Include="Admin\Configuration\Preferences\Theme.aspx.cs">
       <DependentUpon>Theme.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -325,6 +304,9 @@
     <Compile Include="Admin\Configuration\Preferences\Theme.aspx.designer.cs">
       <DependentUpon>Theme.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Search\StudySummary.cs">
+    </Compile>
+    <Compile Include="Search\StudySummaryAssembler.cs" />
     <Compile Include="Service References\ValidationServerProxy.cs">
       <DependentUpon>ValidationServerProxy.map</DependentUpon>
     </Compile>
@@ -425,10 +407,7 @@
     <Content Include="Common\InvalidInputIndicator.ascx" />
     <Content Include="Common\ServerPartitionTabs.ascx" />
     <Content Include="images\blank.gif" />
-    <Content Include="Search\SearchAccordian.ascx" />
-    <Content Include="Search\SeriesDetails.ascx" />
-    <Content Include="Search\StudyDetails.ascx" />
-    <Content Include="Search\StudySummary.ascx" />
+    <Content Include="Search\StudyListGridView.ascx" />
     <Content Include="Common\BarChart.aspx" />
     <Content Include="Common\ConfirmDialog.ascx" />
     <Content Include="Admin\Configuration\Devices\DevicePanel.ascx" />

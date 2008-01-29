@@ -112,7 +112,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
             // display the add dialog
             AddEditPartitionDialog1.Partition = null;
             AddEditPartitionDialog1.EditMode = false;
-            AddEditPartitionDialog1.Show();
+            AddEditPartitionDialog1.Show(true);
         }
 
         public void OnEditPartition(ServerPartition selectedPartition)
@@ -120,7 +120,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerPart
             // display the add dialog
             AddEditPartitionDialog1.Partition = selectedPartition;
             AddEditPartitionDialog1.EditMode = true;
-            AddEditPartitionDialog1.Show();
+            AddEditPartitionDialog1.Show(true);
         }
 
         #endregion

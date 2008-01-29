@@ -149,7 +149,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
             IList<ServerPartition> list = new List<ServerPartition>();
             list.Add(serverPartition);
             AddEditDeviceControl1.Partitions = list;
-            AddEditDeviceControl1.Show();
+            AddEditDeviceControl1.Show(true);
         }
 
         public void OnEditDevice(DeviceConfigurationController controller, ServerPartition serverPartition, Device dev)
@@ -158,7 +158,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.Devices
             AddEditDeviceControl1.EditMode = true;
             AddEditDeviceControl1.Device = dev;
             AddEditDeviceControl1.Partitions = controller.GetServerPartitions();
-            AddEditDeviceControl1.Show();
+            AddEditDeviceControl1.Show(true);
         }
 
         public void OnDeleteDevice(DeviceConfigurationController controller, ServerPartition serverPartition, Device dev)

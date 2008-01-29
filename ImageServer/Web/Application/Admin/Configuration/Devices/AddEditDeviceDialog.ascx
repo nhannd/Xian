@@ -66,7 +66,7 @@
                                     </tr>
                                     <tr id="Tr2" runat="server" align="left" valign="bottom" >
                                         <td id="Td4"  valign="bottom" >
-                                            <table width="100%">
+                                            <table width="100%" >
                                                 <tr align="left">
                                                     <td  width="100%" >
                                                         <asp:Label ID="Label3" runat="server" Text="IP Address" CssClass="CSSTextLabel" />
@@ -85,6 +85,7 @@
                                                             Display="None"></clearcanvas:ConditionalRequiredFieldValidator>
                                                         <clearcanvas:RegularExpressionFieldValidator ID="RegularExpressionFieldValidator1"
                                                             runat="server" ControlToValidate="IPAddressTextBox" InvalidInputColor="#FAFFB5"
+                                                            IgnoreEmptyValue="true"
                                                             ValidationGroup="vg1" ValidationExpression="^([1-9]?\d|1\d\d|2[0-4]\d|25[0-5])\.([1-9]?\d|1\d\d|2[0-4]\d|25[0-5])\.([1-9]?\d|1\d\d|2[0-4]\d|25[0-5])\.([1-9]?\d|1\d\d|2[0-4]\d|25[0-5])$"
                                                             ErrorMessage="IP address is malformed" Display="None" InvalidInputIndicatorID="IPAddressHelp"></clearcanvas:RegularExpressionFieldValidator>
                                                     </td>
@@ -186,7 +187,6 @@
                             <br />
                             <asp:Button ID="OKButton" runat="server" Text="Add" Width="77px" OnClick="OKButton_Click"
                                 ValidationGroup="vg1" />
-                            &nbsp; &nbsp;&nbsp;
                             <asp:Button ID="CancelButton" runat="server" Text="Cancel" /></td>
                     </tr>
                 </table>

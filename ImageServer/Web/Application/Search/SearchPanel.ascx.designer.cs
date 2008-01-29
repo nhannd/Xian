@@ -182,12 +182,21 @@ namespace ClearCanvas.ImageServer.Web.Application.Search {
         protected global::System.Web.UI.WebControls.ImageButton FilterButton;
         
         /// <summary>
-        /// SearchAccordianControl control.
+        /// StudyListGridView1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Search.SearchAccordian SearchAccordianControl;
+        protected global::ClearCanvas.ImageServer.Web.Application.Search.StudyListGridView StudyListGridView1;
+        
+        /// <summary>
+        /// GridPager1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClearCanvas.ImageServer.Web.Application.Common.GridPager GridPager1;
     }
 }

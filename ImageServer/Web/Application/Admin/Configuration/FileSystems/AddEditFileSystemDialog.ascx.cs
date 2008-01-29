@@ -201,6 +201,24 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
         /// <param name="e"></param>
         protected void OKButton_Click(object sender, EventArgs e)
         {
+            
+            if (Page.IsValid)
+            {
+                SaveData();
+
+                if (OKClicked != null)
+                    OKClicked(FileSystem);
+                Close();
+            }
+            else
+            {
+                // TODO: Add mechanism to select the first tab where the error occurs
+                Show(false);
+            }
+        }
+
+        private void SaveData()
+        {
             if (FileSystem == null)
             {
                 // create a filesystem 
@@ -224,26 +242,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
                 FileSystem.HighWatermark = highWatermark;
 
             FileSystem.FilesystemTierEnum = FilesystemTiers[TiersDropDownList.SelectedIndex];
-            
-
-            if (Page.IsValid)
-            {
-                if (OKClicked != null)
-                    OKClicked(FileSystem);
-                Close();
-            }
-            else
-            {
-                // TODO: Add mechanism to select the first tab where the error occurs
-                Show();
-            }
-        
-           
-            
-            
         }
 
-        
+
         protected void ReadOnlyCheckBox_Init(object sender, EventArgs e)
         {
 
@@ -261,8 +262,34 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
         /// <summary>
         /// Displays the add device dialog box.
         /// </summary>
-        public void Show()
+        public void Show(bool updateUI)
         {
+            if (updateUI)
+                UpdateUI();
+
+            if (Page.IsValid)
+            {
+                TabContainer1.ActiveTabIndex = 0;
+            }
+
+            UpdatePanel.Update();
+            ModalPopupExtender1.Show();
+        }
+
+        private void UpdateUI()
+        {
+            if (EditMode)
+            {
+                // set the dialog box title and OK button text
+                TitleLabel.Text = "Edit Filesystem";
+                OKButton.Text = "Update";
+            }
+            else
+            {
+                // set the dialog box title and OK button text
+                TitleLabel.Text = "Add Filesystem";
+                OKButton.Text = "Add";
+            }
 
             // update the dropdown list
             TiersDropDownList.Items.Clear();
@@ -270,29 +297,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
             {
                 TiersDropDownList.Items.Add(new ListItem(tier.Description, tier.Enum.ToString()));
             }
-            
-            if (EditMode)
-            {
-                // set the dialog box title and OK button text
-                TitleLabel.Text = "Edit Filesystem";
-                OKButton.Text = "Update";
 
-                // set the data using the info in the filesystem to be editted
-                DescriptionTextBox.Text = FileSystem.Description;
-                PathTextBox.Text = FileSystem.FilesystemPath;
-                ReadCheckBox.Checked = FileSystem.Enabled && (FileSystem.ReadOnly || (FileSystem.WriteOnly == false));
-                WriteCheckBox.Checked = FileSystem.Enabled && (FileSystem.WriteOnly || (FileSystem.ReadOnly == false));
-                LowWatermarkTextBox.Text = FileSystem.LowWatermark.ToString();
-                HighWatermarkTextBox.Text = FileSystem.HighWatermark.ToString();
-                TiersDropDownList.SelectedValue = FileSystem.FilesystemTierEnum.Enum.ToString();
-                PercentFullLabel.Text = FileSystem.PercentFull.ToString();
-            }
-            else
+            if (FileSystem == null)
             {
-                // set the dialog box title and OK button text
-                TitleLabel.Text = "Add Filesystem";
-                OKButton.Text = "Add";
-
                 // Clear input
                 DescriptionTextBox.Text = "";
                 PathTextBox.Text = "";
@@ -304,11 +311,21 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.FileSystem
 
                 TiersDropDownList.SelectedIndex = 0;
             }
+            else if (Page.IsValid) 
+            {
+                
+                // set the data using the info in the filesystem to be editted
+                DescriptionTextBox.Text = FileSystem.Description;
+                PathTextBox.Text = FileSystem.FilesystemPath;
+                ReadCheckBox.Checked = FileSystem.Enabled && (FileSystem.ReadOnly || (FileSystem.WriteOnly == false));
+                WriteCheckBox.Checked = FileSystem.Enabled && (FileSystem.WriteOnly || (FileSystem.ReadOnly == false));
+                LowWatermarkTextBox.Text = FileSystem.LowWatermark.ToString();
+                HighWatermarkTextBox.Text = FileSystem.HighWatermark.ToString();
+                TiersDropDownList.SelectedValue = FileSystem.FilesystemTierEnum.Enum.ToString();
+                PercentFullLabel.Text = FileSystem.PercentFull.ToString();
 
-            TabContainer1.ActiveTabIndex = 0;
-
-            UpdatePanel.Update();
-            ModalPopupExtender1.Show();
+                
+            }
         }
 
         /// <summary>

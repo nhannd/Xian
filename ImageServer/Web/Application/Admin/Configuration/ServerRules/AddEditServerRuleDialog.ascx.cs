@@ -68,6 +68,23 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRule
 
         #endregion // public members
 
+        
+        #region Events
+
+        /// <summary>
+        /// Defines the event handler for <seealso cref="OKClicked"/>.
+        /// </summary>
+        /// <param name="rule">The device being added.</param>
+        public delegate void OnOKClickedEventHandler(ServerRule rule);
+
+        /// <summary>
+        /// Occurs when users click on "OK".
+        /// </summary>
+        public event OnOKClickedEventHandler OKClicked;
+
+        #endregion Events
+
+        #region Protected Methods
         protected override void OnInit(EventArgs e)
         {
 
@@ -209,21 +226,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRule
             </script>");
         }
 
-        #region Events
-
-        /// <summary>
-        /// Defines the event handler for <seealso cref="OKClicked"/>.
-        /// </summary>
-        /// <param name="rule">The device being added.</param>
-        public delegate void OnOKClickedEventHandler(ServerRule rule);
-
-        /// <summary>
-        /// Occurs when users click on "OK".
-        /// </summary>
-        public event OnOKClickedEventHandler OKClicked;
-
-        #endregion Events
-
         protected void Page_Load(object sender, EventArgs e)
         {
             if (Page.IsPostBack)
@@ -244,37 +246,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRule
 
         protected void OKButton_Click(object sender, EventArgs e)
         {
-            ServerRule theRule;
-            if (_rule == null)
-                theRule = new ServerRule();
-            else
-                theRule = _rule;
-
-            if (RuleXmlTextBox.Text.Length > 0)
-            {
-                theRule.RuleXml = new XmlDocument();
-                theRule.RuleXml.Load(new StringReader(RuleXmlTextBox.Text));
-            }
-
-            theRule.RuleName = this.RuleNameTextBox.Text;
-
-            theRule.ServerRuleTypeEnum = new ServerRuleTypeEnum();
-            theRule.ServerRuleTypeEnum.SetEnum(short.Parse(this.RuleTypeDropDownList.SelectedItem.Value));
-
-            if (theRule.ServerRuleTypeEnum == ServerRuleTypeEnum.GetEnum("AutoRoute"))
-                theRule.ServerRuleApplyTimeEnum = ServerRuleApplyTimeEnum.GetEnum("SopProcessed");
-            else
-                theRule.ServerRuleApplyTimeEnum = ServerRuleApplyTimeEnum.GetEnum("StudyProcessed");
-
-            theRule.Enabled = this.EnabledCheckBox.Checked;
-            theRule.DefaultRule = this.DefaultCheckBox.Checked;
-            theRule.ServerPartitionKey = this.Partition.GetKey();
-
+            
             if (Page.IsValid)
             {
+                SaveData();
                 if (OKClicked != null)
                 {
-                    OKClicked(theRule);
+                    OKClicked(ServerRule);
                 }
 
                 Close();
@@ -283,8 +261,38 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRule
             {
                 Show();
             }
-            
         }
+
+        private void SaveData()
+        {
+            if (_rule == null)
+            {
+                _rule = new ServerRule();
+            }
+
+
+            if (RuleXmlTextBox.Text.Length > 0)
+            {
+                _rule.RuleXml = new XmlDocument();
+                _rule.RuleXml.Load(new StringReader(RuleXmlTextBox.Text));
+            }
+
+            _rule.RuleName = RuleNameTextBox.Text;
+
+            _rule.ServerRuleTypeEnum = new ServerRuleTypeEnum();
+            _rule.ServerRuleTypeEnum.SetEnum(short.Parse(this.RuleTypeDropDownList.SelectedItem.Value));
+
+            if (_rule.ServerRuleTypeEnum == ServerRuleTypeEnum.GetEnum("AutoRoute"))
+                _rule.ServerRuleApplyTimeEnum = ServerRuleApplyTimeEnum.GetEnum("SopProcessed");
+            else
+                _rule.ServerRuleApplyTimeEnum = ServerRuleApplyTimeEnum.GetEnum("StudyProcessed");
+
+            _rule.Enabled = EnabledCheckBox.Checked;
+            _rule.DefaultRule = DefaultCheckBox.Checked;
+            _rule.ServerPartitionKey = Partition.GetKey();
+        }
+
+        #endregion Protected Methods
 
         #region Public methods
 

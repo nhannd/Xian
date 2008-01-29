@@ -9,7 +9,7 @@
 <asp:UpdatePanel ID="UpdatePanel" runat="server" UpdateMode="Conditional">
     <ContentTemplate>
         <asp:Panel ID="DialogPanel" runat="server" CssClass="CSSPopupWindow" Style="display: none"
-            Width="400px">
+            Width="420px">
             <asp:Panel ID="TitleBarPanel" runat="server" CssClass="CSSPopupWindowTitleBar" Width="100%">
                 <table style="width: 100%">
                     <tr>
@@ -29,12 +29,12 @@
                         CssClass="CSSTabPanel">
                         <ContentTemplate>
                             <asp:Panel ID="Panel1" runat="server" CssClass="CSSDialogTabPanelContent">
-                                <table id="GeneralTabTable" runat="server" width="100%">
+                                <table id="GeneralTabTable" runat="server">
                                     <tr runat="server" align="left">
                                         <td runat="server">
-                                            <table>
-                                                <tr>
-                                                    <td>
+                                            <table width="100%">
+                                                <tr align="left">
+                                                    <td width="100%">
                                                         <asp:Label ID="Label4" runat="server" Text="AE Title" CssClass="CSSTextLabel" /><br />
                                                         <asp:TextBox ID="AETitleTextBox" runat="server" MaxLength="16" ValidationGroup="vg1"
                                                             ToolTip="The DICOM Application Entity Title for the partition."></asp:TextBox>
@@ -54,9 +54,9 @@
                                             </table>
                                         </td>
                                         <td runat="server" align="left">
-                                            <table>
-                                                <tr>
-                                                    <td>
+                                            <table width="100%">
+                                                <tr align="left">
+                                                    <td width="100%">
                                                         <asp:Label ID="Label1" runat="server" Text="Description" CssClass="CSSTextLabel" /><br />
                                                         <asp:TextBox ID="DescriptionTextBox" runat="server" ToolTip="A textual description of the partition."></asp:TextBox>
                                                     </td>
@@ -70,9 +70,9 @@
                                     </tr>
                                     <tr runat="server" align="left">
                                         <td runat="server">
-                                            <table>
-                                                <tr>
-                                                    <td>
+                                            <table width="100%">
+                                                <tr align="left">
+                                                    <td width="100%">
                                                         <asp:Label ID="Label2" runat="server" Text="Port" CssClass="CSSTextLabel" /><br />
                                                         <asp:TextBox ID="PortTextBox" runat="server"></asp:TextBox>
                                                         <clearcanvas:RangeValidator ID="PortValidator1" runat="server" ControlToValidate="PortTextBox"
@@ -87,8 +87,8 @@
                                             </table>
                                         </td>
                                         <td runat="server">
-                                            <table>
-                                                <tr>
+                                            <table width="100%">
+                                                <tr align="left">
                                                     <td>
                                                         <asp:Label ID="Label3" runat="server" Text="Folder Name" CssClass="CSSTextLabel" /><br />
                                                         <asp:TextBox ID="PartitionFolderTextBox" runat="server" CausesValidation="true" ValidationGroup="vg1"
@@ -108,9 +108,9 @@
                                     </tr>
                                     <tr runat="server" align="left">
                                         <td runat="server">
-                                            <table>
+                                            <table width="100%">
                                                 <tr>
-                                                    <td>
+                                                    <td width="100%">
                                                         <asp:CheckBox ID="EnabledCheckBox" runat="server" Checked="True" Text="Enabled" ToolTip="Enable or Disable DICOM connections to the partition." />
                                                     </td>
                                                     <td>

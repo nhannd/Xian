@@ -103,8 +103,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Search
                 criteria.StudyDescription.Like(key);
             }
 
-            SearchAccordianControl.Studies = _searchController.GetStudies(criteria);
-            SearchAccordianControl.DataBind();
+            StudyListGridView1.Studies = _searchController.GetStudies(criteria);
+            StudyListGridView1.DataBind();
         }
 
         protected override void OnInit(EventArgs e)
@@ -113,20 +113,35 @@ namespace ClearCanvas.ImageServer.Web.Application.Search
 
             // initialize the controller
             _searchController = new StudyController();
+
+
+            // setup child controls
+            GridPager1.ItemName = "Study";
+            GridPager1.PuralItemName = "Studies";
+            GridPager1.Grid = StudyListGridView1.TheGrid;
+            GridPager1.GetRecordCountMethod = delegate
+                                                  {
+                                                      return StudyListGridView1.Studies== null ? 0:StudyListGridView1.Studies.Count;
+                                                  };
             
         }
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (SearchAccordianControl.IsPostBack)
+            if (StudyListGridView1.IsPostBack)
                 LoadStudies();
+        }
+
+        public void UpdateUI()
+        {
+            UpdatePanel.Update();
         }
 
         protected void FilterButton_Click(object sender, ImageClickEventArgs e)
         {
             // reload the data
             LoadStudies();
-            SearchAccordianControl.PageIndex = 0;
+            //    SearchAccordianControl.PageIndex = 0;
         }
     }
 }

@@ -114,8 +114,8 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
                 template.Replace("@@FUNCTION_NAME@@", ClientEvalFunctionName);
                 template.Replace("@@INPUT_CLIENTID@@", InputControl.ClientID);
                 template.Replace("@@CONDITIONAL_CONTROL_CLIENTID@@", GetControlRenderID(ConditionalCheckBoxID));
-                template.Replace("@@REQUIRED_WHEN_CHECKED@@", RequiredWhenChecked.ToString());
-
+                template.Replace("@@REQUIRED_WHEN_CHECKED@@", RequiredWhenChecked.ToString().ToLower());
+                template.Replace("@@IGNORE_EMPTY_VALUE@@", IgnoreEmptyValue.ToString().ToLower());
                 Page.ClientScript.RegisterClientScriptBlock(GetType(), ClientEvalFunctionName, template.Script, true);
             }
             else
@@ -136,29 +136,33 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
                                   ? null
                                   : FindControl(ConditionalCheckBoxID) as CheckBox;
 
+            string value = GetControlValidationValue(ControlToValidate);
+            
             if (chkbox != null)
             {
-                if (chkbox.Checked && RequiredWhenChecked)
+                if (RequiredWhenChecked)
                 {
-                    string value = GetControlValidationValue(ControlToValidate);
-                    if (String.IsNullOrEmpty(value))
+                    if (chkbox.Checked)
                     {
-                        return false;
+                        return !String.IsNullOrEmpty(value);
                     }
                 }
-                else
+                else // Required when unchecked
                 {
-                    return true;
+                    if (chkbox.Checked==false)
+                    {
+                       return !String.IsNullOrEmpty(value);
+                    }
                 }
             }
-            else
+            else // always required
             {
-                string value = GetControlValidationValue(ControlToValidate);
                 if (String.IsNullOrEmpty(value))
                 {
                     return false;
                 }
             }
+
             return true;
         }
 

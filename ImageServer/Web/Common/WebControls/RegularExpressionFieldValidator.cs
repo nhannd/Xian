@@ -117,10 +117,10 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
         {
             string value = GetControlValidationValue(ControlToValidate);
             Regex regex = new Regex(ValidationExpression);
-            if (String.IsNullOrEmpty(value) == false)
+            if (value!=null)
                 return regex.IsMatch(value);
-
-            return false;
+            else
+                return false;
         }
 
        
@@ -130,7 +130,8 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
             template.Replace("@@FUNCTION_NAME@@", ClientEvalFunctionName);
             template.Replace("@@INPUT_CLIENTID@@", InputControl.ClientID);
             template.Replace("@@REGULAR_EXPRESSION@@", ValidationExpression.Replace("\\", "\\\\").Replace("'", "\\'"));
-            
+            template.Replace("@@IGNORE_EMPTY_VALUE@@", IgnoreEmptyValue.ToString().ToLower());
+           
             Page.ClientScript.RegisterClientScriptBlock(GetType(), ClientEvalFunctionName, template.Script, true);
  
         }

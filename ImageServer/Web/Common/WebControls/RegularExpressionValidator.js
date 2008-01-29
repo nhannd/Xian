@@ -5,7 +5,7 @@ function @@FUNCTION_NAME@@()
    
     var re = new RegExp('@@REGULAR_EXPRESSION@@');
     
-    if (input.value=='')
+    if (input.value=='' && @@IGNORE_EMPTY_VALUE@@)
     {
         result = true;
     }
