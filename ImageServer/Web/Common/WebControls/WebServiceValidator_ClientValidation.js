@@ -1,6 +1,5 @@
 function @@FUNCTION_NAME@@()
 {              
-
     control = document.getElementById('@@INPUT_CLIENTID@@');
 
     //alert('sending web service request');             
@@ -8,7 +7,7 @@ function @@FUNCTION_NAME@@()
     callObj = service.createCallOptions();
     callObj.funcName = '@@WEBSERVICE_OPERATION@@';
     callObj.async = false;
-    callObj.timeOut=1000;
+    callObj.timeOut = 1000;
     callObj.params = @@PARAMETER_FUNCTION@@();
 
     //callObj.params = 'path=' + control.value;
@@ -21,7 +20,6 @@ function @@FUNCTION_NAME@@()
 
         if (!result.Success)
         {
-
             if (result.ErrorCode == -5000)
             {
                 var ans = window.confirm('Unable to validate @@INPUT_NAME@@ : ' + result.ErrorText + '\nDo you want to ignore it? You can re-validate it in the future');
@@ -30,19 +28,14 @@ function @@FUNCTION_NAME@@()
                     return true;
                 }
             }
-
         }
         else
         {
-
         }
-
-
         return result.Success;
     }
     else
     {
-        alert('Error occurs while calling @@WEBSERVICE_OPERATION@@ at @@WEBSERVICE_URL@@ : ' + resObj.errorDetail.string);
+        alert('Error occured while calling @@WEBSERVICE_OPERATION@@ at @@WEBSERVICE_URL@@ : ' + resObj.errorDetail.string);
     }
 }
-

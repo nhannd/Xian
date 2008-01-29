@@ -69,6 +69,7 @@
     <Compile Include="WebControls\LengthValidator.cs" />
     <Compile Include="WebControls\RangeComparisonValidator.cs" />
     <Compile Include="WebControls\ScriptTemplate.cs" />
+    <Compile Include="WebControls\ServerRuleValidator.cs" />
     <Compile Include="WebControls\WebServiceValidator.cs" />
     <Compile Include="WebControls\RangeValidator.cs" />
     <Compile Include="WebControls\RegularExpressionFieldValidator.cs" />
@@ -89,6 +90,10 @@
     <ProjectReference Include="..\..\Model\ClearCanvas.ImageServer.Model.csproj">
       <Project>{2C9126D3-5B73-4539-BBC9-D56E6097D335}</Project>
       <Name>ClearCanvas.ImageServer.Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Rules\ClearCanvas.ImageServer.Rules.csproj">
+      <Project>{523EDDC1-7C6E-404D-A8ED-5F043F5E6BE3}</Project>
+      <Name>ClearCanvas.ImageServer.Rules</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

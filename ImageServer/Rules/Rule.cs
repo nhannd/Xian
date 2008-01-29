@@ -29,13 +29,12 @@
 
 #endregion
 
-using System.IO;
+using System;
 using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Actions;
 using ClearCanvas.Common.Specifications;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Dicom;
 using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Rules
@@ -111,6 +110,36 @@ namespace ClearCanvas.ImageServer.Rules
                     ruleSuccess = false;
                 }
             }
+        }
+
+        #endregion
+
+        #region Static Public Methods
+
+        /// <summary>
+        /// Method for validating proper format of a ServerRule.
+        /// </summary>
+        /// <param name="rule">The rule to validate</param>
+        /// <returns>true on successful validation, otherwise false.</returns>
+        public static bool ValidateRule(XmlDocument rule)
+        {
+            XmlSpecificationCompiler specCompiler = new XmlSpecificationCompiler("dicom");
+            XmlActionCompiler<ServerActionContext> actionCompiler = new XmlActionCompiler<ServerActionContext>();
+
+            ServerRule theServerRule = new ServerRule();
+            theServerRule.RuleXml = rule;
+
+            Rule theRule = new Rule(theServerRule);
+            try
+            {
+                theRule.Compile(specCompiler, actionCompiler);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+            return true;
         }
 
         #endregion

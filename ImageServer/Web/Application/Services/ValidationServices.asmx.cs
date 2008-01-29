@@ -30,11 +30,11 @@
 #endregion
 
 using System;
+using System.ComponentModel;
 using System.IO;
-using System.Net;
 using System.Web.Script.Services;
 using System.Web.Services;
-using System.ComponentModel;
+using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Web.Application.ValidationServerProxy;
 
@@ -82,6 +82,40 @@ namespace ClearCanvas.ImageServer.Web.Application.Services
             }
             
             return res;
+        }
+
+        /// <summary>
+        /// Validate a ServerRule for proper formatting.
+        /// </summary>
+        /// <param name="serverRule">A string representing the rule.</param>
+        /// <returns>The result of the validation.</returns>
+        [WebMethod]
+        public ValidationResult ValidateServerRule(string serverRule)
+        {
+            ValidationResult result = new ValidationResult();
+
+            if (String.IsNullOrEmpty(serverRule))
+            {
+                result.ErrorText = "Server Rule XML must be specified";
+                result.Success = false;
+                result.ErrorCode = -5000;
+                return result;
+            }
+
+            XmlDocument theDoc = new XmlDocument();
+
+            theDoc.Load(new StringReader(serverRule));
+
+            if (false == ClearCanvas.ImageServer.Rules.Rule.ValidateRule(theDoc))
+            {
+                result.ErrorText = "Unable to compile Server Rule.";
+                result.Success = false;
+                result.ErrorCode = -5000;
+            }
+            else
+                result.Success = true;
+
+            return result;
         }
     }
 }

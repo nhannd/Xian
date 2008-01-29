@@ -35,9 +35,9 @@
                                 <table runat="server" width="100%">
                                     <tr>
                                         <td colspan="2">
-                                            <table width="100%" >
+                                            <table width="100%">
                                                 <tr>
-                                                    <td Width="100%" >
+                                                    <td width="100%">
                                                         <asp:Label ID="Label1" runat="server" Text="Name" CssClass="CSSTextLabel"></asp:Label><br />
                                                         <asp:TextBox ID="RuleNameTextBox" runat="server" Width="100%" ValidationGroup="vg1"></asp:TextBox>
                                                     </td>
@@ -54,11 +54,11 @@
                                     </tr>
                                     <tr>
                                         <td>
-                                            <table width="100%" >
+                                            <table width="100%">
                                                 <tr>
                                                     <td>
                                                         <asp:Label ID="RuleTypeLabel" runat="server" Text="Type" CssClass="CSSTextLabel"></asp:Label><br />
-                                                        <asp:DropDownList ID="RuleTypeDropDownList" runat="server"  Width="90%">
+                                                        <asp:DropDownList ID="RuleTypeDropDownList" runat="server" Width="90%">
                                                         </asp:DropDownList>
                                                     </td>
                                                     <td>
@@ -67,11 +67,11 @@
                                             </table>
                                         </td>
                                         <td>
-                                            <table width="100%" >
+                                            <table width="100%">
                                                 <tr>
                                                     <td>
                                                         <asp:Label ID="RuleApplyTimeLabel" runat="server" Text="Apply Time"></asp:Label><br />
-                                                        <asp:DropDownList ID="RuleApplyTimeDropDownList" runat="server" Width="90%"  >
+                                                        <asp:DropDownList ID="RuleApplyTimeDropDownList" runat="server" Width="90%">
                                                         </asp:DropDownList>
                                                     </td>
                                                     <td>
@@ -88,11 +88,10 @@
                                                         <asp:CheckBox ID="EnabledCheckBox" runat="server" Text="Enabled" Checked="true" />
                                                     </td>
                                                 </tr>
-                                             </table>
+                                            </table>
                                         </td>
-                                    
                                         <td>
-                                            <table width="100%" >
+                                            <table width="100%">
                                                 <tr>
                                                     <td>
                                                         <asp:CheckBox ID="DefaultCheckBox" runat="server" Text="Default" Checked="false" />
@@ -100,8 +99,8 @@
                                                 </tr>
                                             </table>
                                         </td>
-                                    </tr> 
-                                 </table>
+                                    </tr>
+                                </table>
                             </asp:Panel>
                         </ContentTemplate>
                         <HeaderTemplate>
@@ -123,6 +122,14 @@
                                         <td>
                                             <asp:TextBox ID="RuleXmlTextBox" runat="server" EnableViewState="true" Width="100%"
                                                 Rows="12" TextMode="MultiLine"></asp:TextBox>
+                                        </td>
+                                        <td>
+                                            <uc1:InvalidInputIndicator ID="InvalidRuleHint" runat="server" ImageUrl="~/images/icons/HelpSmall.png" />
+                                            <clearcanvas:ServerRuleValidator runat="server" ID="ServerRuleValidator" ControlToValidate="RuleXmlTextBox"
+                                                InputName="Server Rule XML" InvalidInputColor="#FAFFB5" InvalidInputIndicatorID="InvalidRuleHint"
+                                                ServicePath="/Services/ValidationServices.asmx" ServiceOperation="ValidateServerRule"
+                                                ParamsFunction="ValidationServerRuleParams" ErrorMessage="Invalid Server Rule"
+                                                Display="None" ValidationGroup="vg1" />
                                         </td>
                                     </tr>
                                 </table>

@@ -106,7 +106,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Admin.Configuration.ServerRule
 
             Page.ClientScript.RegisterClientScriptBlock(this.GetType(), this.ClientID,
                                                         @"<script type='text/javascript'>
-  
+            function ValidationServerRuleParams()
+            {
+                control = document.getElementById('" + RuleXmlTextBox.ClientID + @"');
+                params = new Array();
+                params.serverRule=control.value;
+                return params;
+            }
+
             function selectRuleType(oList, selectedIndex)
             {         
                 var val = oList.value; 
