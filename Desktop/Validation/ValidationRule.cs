@@ -32,6 +32,7 @@
 using System;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Specifications;
+using System.Xml;
 
 namespace ClearCanvas.Desktop.Validation
 {

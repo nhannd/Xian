@@ -7,6 +7,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Specifications;
 using System.Reflection;
 using ClearCanvas.Common.Utilities;
+using System.Xml;
 
 namespace ClearCanvas.Desktop.Validation
 {
@@ -87,12 +88,8 @@ namespace ClearCanvas.Desktop.Validation
                 using (TextReader reader = _configStore.GetDocument(
                     documentName, applicationComponentClass.Assembly.GetName().Version, null, null))
                 {
-                    SpecificationFactory specFactory = new SpecificationFactory(reader);
-                    IDictionary<string, ISpecification> specs = specFactory.GetAllSpecifications();
-                    foreach (KeyValuePair<string, ISpecification> kvp in specs)
-                    {
-                        customRules.Add(new ValidationRule(kvp.Key, kvp.Value));
-                    }
+                    XmlValidationCompiler compiler = new XmlValidationCompiler();
+                    customRules = compiler.CompileRules(reader);
                 }
             }
             catch (ConfigurationDocumentNotFoundException e)

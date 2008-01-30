@@ -12,6 +12,8 @@ using ClearCanvas.Common.Specifications;
 using System.IO;
 using ClearCanvas.Common.Configuration;
 using ClearCanvas.Desktop.Validation;
+using System.Collections;
+using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
@@ -31,22 +33,31 @@ namespace ClearCanvas.Ris.Client.Admin
     {
         class Rule
         {
-            private readonly PropertyInfo _property;
-            private readonly ApplicationComponent _liveComponent;
+            private string _name;
+            private string _boundProperty;
             private string _ruleXml;
+            private IValidationRule _compiledRule;
             private string _status;
+            private bool _parseError;
+            private readonly ApplicationComponent _liveComponent;
 
 
-            public Rule(PropertyInfo property, string ruleXml, ApplicationComponent liveComponent)
+            public Rule(string ruleXml, ApplicationComponent liveComponent)
             {
-                _property = property;
                 _liveComponent = liveComponent;
                 _ruleXml = ruleXml;
+
+                Update();
             }
 
-            public PropertyInfo Property
+            public string Name
             {
-                get { return _property; }
+                get { return _name; }
+            }
+
+            public string BoundProperty
+            {
+                get { return _boundProperty; }
             }
 
             public string RuleXml
@@ -57,41 +68,60 @@ namespace ClearCanvas.Ris.Client.Admin
 
             public string Status
             {
-                get
-                {
-                    try
-                    {
-                        ISpecification spec = Compile();
-                        ValidationRule rule = new ValidationRule("test", spec);
-                        if (_liveComponent == null)
-                            return null;
+                get { return _status; }
+            }
 
-                        ValidationResult result = rule.GetResult(_liveComponent);
-                        if (result.Success)
-                            return null;
-                        else
-                            return result.GetMessageString(", ");
-                    }
-                    catch (Exception e)
+            public bool ParseError
+            {
+                get { return _parseError; }
+            }
+
+            public void Update()
+            {
+                try
+                {
+                    Compile();
+                    _parseError = false;
+                    if (_liveComponent != null)
                     {
-                        return e.Message;
+                        ValidationResult result = _compiledRule.GetResult(_liveComponent);
+                        if (result.Success)
+                            _status = "Pass";
+                        else
+                            _status = string.Format("Fail: {0}", result.GetMessageString(", "));
                     }
+                    else
+                    {
+                        _status = null;
+                    }
+
+                }
+                catch (Exception e)
+                {
+                    _status = e.Message;
+                    _parseError = true;
                 }
             }
 
-            private ISpecification Compile()
+            private void Compile()
             {
-                string xml = string.Format("<specifications>{0}</specifications>", _ruleXml);
-                SpecificationFactory factory = new SpecificationFactory(new StringReader(xml));
-                return factory.GetSpecification(_property.Name);
+                XmlDocument xmlDoc = new XmlDocument();
+                xmlDoc.LoadXml(_ruleXml);
+
+                _name = xmlDoc.DocumentElement.GetAttribute("id");
+                _boundProperty = xmlDoc.DocumentElement.GetAttribute("boundProperty");
+
+                XmlValidationCompiler compiler = new XmlValidationCompiler();
+                _compiledRule = compiler.CompileRule(xmlDoc.DocumentElement);
             }
         }
 
 
-        private const string _specTagName = "spec";
+        private const string tagValidationRule = "validation-rule";
+        private const string tagValidationRules = "validation-rules";
 
         private readonly Type _applicationComponentClass;
-        private readonly XmlDocument _xmlDoc;
+        private XmlDocument _xmlDoc;
 
         private readonly Table<Rule> _rules;
         private Rule _selectedRule;
@@ -101,6 +131,10 @@ namespace ClearCanvas.Ris.Client.Admin
         private IConfigurationStore _configStore;
 
         private readonly ApplicationComponent _liveComponent;
+
+        private CrudActionModel _rulesActionModel;
+        private int _newRuleCounter = 0;
+        private List<PropertyInfo> _componentProperties;
 
 
         /// <summary>
@@ -113,10 +147,10 @@ namespace ClearCanvas.Ris.Client.Admin
             _xmlDoc.PreserveWhitespace = true;
 
             _rules = new Table<Rule>();
-            _rules.Columns.Add(new TableColumn<Rule, string>("Property",
-                delegate(Rule p) { return p.Property.Name; }));
-            _rules.Columns.Add(new TableColumn<Rule, string>("Type",
-                delegate(Rule p) { return p.Property.PropertyType.Name; }));
+            _rules.Columns.Add(new TableColumn<Rule, string>("Name",
+                delegate(Rule p) { return p.Name; }));
+            _rules.Columns.Add(new TableColumn<Rule, string>("Bound Property",
+                delegate(Rule p) { return p.BoundProperty; }));
             _rules.Columns.Add(new TableColumn<Rule, string>("Test Result",
                 delegate(Rule p) { return p.Status; }));
         }
@@ -137,23 +171,24 @@ namespace ClearCanvas.Ris.Client.Admin
             // if this fails, an exception will be thrown, preventing this component from starting
             LoadValidationDocument();
 
-            // select the properties excluding those defined by IApplicationComponent
-            _rules.Items.AddRange(
-                CollectionUtils.Map<PropertyInfo, Rule>(
-                    CollectionUtils.Select(_applicationComponentClass.GetProperties(),
-                        delegate(PropertyInfo p)
-                        {
-                            return !p.DeclaringType.Equals(typeof(IApplicationComponent))
-                                && !p.DeclaringType.Equals(typeof(ApplicationComponent));
-                        }),
-                    delegate(PropertyInfo p)
-                    {
-                        XmlElement specNode = GetSpecification(p.Name);
-                        string ruleXml = specNode != null ? 
-                            specNode.OuterXml : string.Format("<{0} id=\"{1}\">\n</{2}>", _specTagName, p.Name, _specTagName);
-                        return new Rule(p, ruleXml, _liveComponent);
-                    }));
+            XmlNodeList ruleNodes = _xmlDoc.SelectNodes("validation-rules/validation-rule");
+            foreach (XmlElement node in ruleNodes)
+            {
+                _rules.Items.Add(new Rule(node.OuterXml, _liveComponent));
+            }
 
+            _componentProperties = CollectionUtils.Select(_applicationComponentClass.GetProperties(),
+                              delegate(PropertyInfo p)
+                              {
+                                  return !p.DeclaringType.Equals(typeof(IApplicationComponent))
+                                         && !p.DeclaringType.Equals(typeof(ApplicationComponent));
+                              });
+
+
+            _rulesActionModel = new CrudActionModel(true, false, true);
+            _rulesActionModel.Add.SetClickHandler(AddNewRule);
+            _rulesActionModel.Delete.SetClickHandler(DeleteSelectedRule);
+            _rulesActionModel.Delete.Enabled = false;
 
             base.Start();
         }
@@ -166,10 +201,22 @@ namespace ClearCanvas.Ris.Client.Admin
 
         #region Presentation Model
 
+        public IList<PropertyInfo> ComponentPropertyChoices
+        {
+            get
+            {
+                return _componentProperties;
+            }
+        }
 
         public ITable Rules
         {
             get { return _rules; }
+        }
+
+        public ActionModelNode RulesActionModel
+        {
+            get { return _rulesActionModel; }
         }
 
         public ISelection SelectedRule
@@ -180,7 +227,7 @@ namespace ClearCanvas.Ris.Client.Admin
                 Rule selected = (Rule)value.Item;
                 if (!Equals(_selectedRule, selected))
                 {
-                    ChangeSelectedProperty(selected);
+                    ChangeSelectedRule(selected);
                 }
             }
         }
@@ -191,10 +238,35 @@ namespace ClearCanvas.Ris.Client.Admin
             set { _ruleXml = value; }
         }
 
+        public void AddNewRule()
+        {
+            // get unique rule name
+            string ruleName = "rule" + (++_newRuleCounter);
+            while (CollectionUtils.Contains(_rules.Items, delegate(Rule r) { return r.Name == ruleName; }))
+                ruleName = "rule" + (++_newRuleCounter);
+
+            string blankRuleXml = string.Format("<{0} id=\"{1}\" boundProperty=\"\">\n</{2}>", tagValidationRule, ruleName, tagValidationRule);
+
+            _rules.Items.Add(new Rule(blankRuleXml, _liveComponent));
+        }
+
+        public void DeleteSelectedRule()
+        {
+            if(_selectedRule != null)
+            {
+                Rule ruleToDelete = _selectedRule;
+
+                // de-select before deleting - otherwise it causes an exception
+                ChangeSelectedRule(null);
+
+                _rules.Items.Remove(ruleToDelete);
+            }
+        }
+
         public void Accept()
         {
             // commit final changes (hack - just re-select the already selected property)
-            ChangeSelectedProperty(_selectedRule);
+            ChangeSelectedRule(_selectedRule);
 
             try
             {
@@ -225,7 +297,7 @@ namespace ClearCanvas.Ris.Client.Admin
         public void TestRules()
         {
             // commit final changes (hack - just re-select the already selected property)
-            ChangeSelectedProperty(_selectedRule);
+            ChangeSelectedRule(_selectedRule);
 
             foreach (Rule rule in _rules.Items)
             {
@@ -240,13 +312,14 @@ namespace ClearCanvas.Ris.Client.Admin
 
         #endregion
 
-        private void ChangeSelectedProperty(Rule selected)
+        private void ChangeSelectedRule(Rule selected)
         {
             if (_selectedRule != null)
             {
                 _selectedRule.RuleXml = _ruleXml;
+                _selectedRule.Update();
 
-                // notify updated in case error state changed
+                // notify updated
                 _rules.Items.NotifyItemUpdated(_selectedRule);
             }
 
@@ -258,19 +331,31 @@ namespace ClearCanvas.Ris.Client.Admin
                 _ruleXml = _selectedRule.RuleXml;
                 this.NotifyPropertyChanged("ValidationXml");
             }
+
+            _rulesActionModel.Delete.Enabled = (_selectedRule != null);
         }
 
-        private XmlElement GetSpecification(string id)
+        private XmlElement GetRuleXml(string id)
         {
-            return (XmlElement)CollectionUtils.SelectFirst(_xmlDoc.GetElementsByTagName(_specTagName),
+            return (XmlElement)CollectionUtils.SelectFirst(_xmlDoc.GetElementsByTagName(tagValidationRule),
                 delegate(object node) { return ((XmlElement)node).GetAttribute("id") == id; });
         }
 
         private bool UpdateLocalDocument()
         {
+            _xmlDoc = new XmlDocument();
+            XmlElement rulesNode = _xmlDoc.CreateElement(tagValidationRules);
+            _xmlDoc.AppendChild(rulesNode);
+
             foreach (Rule rule in _rules.Items)
             {
-                if (rule.Status != null)
+                if(!CollectionUtils.Contains(_componentProperties, delegate (PropertyInfo p) { return p.Name == rule.BoundProperty; }))
+                {
+                    this.Host.ShowMessageBox(string.Format("Rule {0} is not bound to a valid property.", rule.Name), MessageBoxActions.Ok);
+                    return false;
+                }
+
+                if (rule.ParseError)
                 {
                     this.Host.ShowMessageBox("One or more rules have syntax errors which must be corrected first.", MessageBoxActions.Ok);
                     return false;
@@ -283,24 +368,16 @@ namespace ClearCanvas.Ris.Client.Admin
                 }
                 catch (Exception e)
                 {
-                    ExceptionHandler.Report(e, string.Format("Error parsing rule {0}", rule.Property.Name), this.Host.DesktopWindow);
+                    ExceptionHandler.Report(e, string.Format("Error parsing rule {0}", rule.Name), this.Host.DesktopWindow);
                     _selectedRule = rule;
-                    NotifyPropertyChanged("SelectedProperty");
+                    NotifyPropertyChanged("SelectedRule");
 
                     // abort
                     return false;
                 }
 
                 // update the xml document
-                XmlElement specNode = GetSpecification(rule.Property.Name);
-                if (specNode == null)
-                {
-                    _xmlDoc.DocumentElement.AppendChild(fragment);
-                }
-                else
-                {
-                    _xmlDoc.DocumentElement.ReplaceChild(fragment, specNode);
-                }
+                rulesNode.AppendChild(fragment);
             }
 
             return true;
@@ -320,7 +397,7 @@ namespace ClearCanvas.Ris.Client.Admin
             catch (ConfigurationDocumentNotFoundException e)
             {
                 // create blank document
-                _xmlDoc.LoadXml("<specifications/>");
+                _xmlDoc.LoadXml(string.Format("<{0}/>", tagValidationRules));
             }
         }
 

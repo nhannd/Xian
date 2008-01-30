@@ -7,6 +7,7 @@ using System.Text;
 using System.Windows.Forms;
 
 using ClearCanvas.Desktop.View.WinForms;
+using System.Reflection;
 
 namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 {
@@ -16,6 +17,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
     public partial class ValidationEditorComponentControl : ApplicationComponentUserControl
     {
         private ValidationEditorComponent _component;
+        private ListBox _propertyPicker;
 
         /// <summary>
         /// Constructor
@@ -28,9 +30,16 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             _component = component;
 
             _propertiesTableView.Table = _component.Rules;
+            _propertiesTableView.ToolbarModel = _component.RulesActionModel;
+            _propertiesTableView.MenuModel = _component.RulesActionModel;
             _propertiesTableView.DataBindings.Add("Selection", _component, "SelectedRule", true, DataSourceUpdateMode.OnPropertyChanged);
             _validationXml.DataBindings.Add("Text", _component, "RuleXml", true, DataSourceUpdateMode.OnPropertyChanged);
             _testButton.DataBindings.Add("Enabled", _component, "CanTestRules");
+
+            foreach (PropertyInfo item in _component.ComponentPropertyChoices)
+            {
+                _propertiesMenu.Items.Add(item.Name);
+            }
         }
 
         private void _okButton_Click(object sender, EventArgs e)
@@ -46,6 +55,16 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
         private void _testButton_Click(object sender, EventArgs e)
         {
             _component.TestRules();
+        }
+
+        private void _macroButton_Click(object sender, EventArgs e)
+        {
+            _propertiesMenu.Show(_macroButton, new Point(0, _macroButton.Height), ToolStripDropDownDirection.BelowRight);
+        }
+
+        private void _propertiesMenu_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+            _validationXml.SelectedText = e.ClickedItem.Text;
         }
     }
 }

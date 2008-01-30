@@ -250,6 +250,7 @@
     <Compile Include="Tools\ToolContext.cs" />
     <Compile Include="Tools\ToolSet.cs" />
     <Compile Include="UndoableCommand.cs" />
+    <Compile Include="Validation\XmlValidationCompiler.cs" />
     <Compile Include="ViewFactory.cs" />
     <Compile Include="Workspace.cs" />
     <Compile Include="WorkspaceCollection.cs" />

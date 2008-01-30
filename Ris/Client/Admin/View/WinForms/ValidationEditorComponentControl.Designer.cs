@@ -28,11 +28,14 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this._validationXml = new System.Windows.Forms.RichTextBox();
             this._okButton = new System.Windows.Forms.Button();
             this._cancelButton = new System.Windows.Forms.Button();
             this._propertiesTableView = new ClearCanvas.Desktop.View.WinForms.TableView();
             this._testButton = new System.Windows.Forms.Button();
+            this._macroButton = new System.Windows.Forms.Button();
+            this._propertiesMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.SuspendLayout();
             // 
             // _validationXml
@@ -42,7 +45,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this._validationXml.DetectUrls = false;
             this._validationXml.Location = new System.Drawing.Point(16, 195);
             this._validationXml.Name = "_validationXml";
-            this._validationXml.Size = new System.Drawing.Size(521, 210);
+            this._validationXml.Size = new System.Drawing.Size(479, 210);
             this._validationXml.TabIndex = 0;
             this._validationXml.Text = "";
             this._validationXml.WordWrap = false;
@@ -72,7 +75,6 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this._propertiesTableView.Location = new System.Drawing.Point(16, 12);
             this._propertiesTableView.Name = "_propertiesTableView";
             this._propertiesTableView.ReadOnly = false;
-            this._propertiesTableView.ShowToolbar = false;
             this._propertiesTableView.Size = new System.Drawing.Size(521, 159);
             this._propertiesTableView.TabIndex = 3;
             this._propertiesTableView.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
@@ -87,10 +89,27 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this._testButton.UseVisualStyleBackColor = true;
             this._testButton.Click += new System.EventHandler(this._testButton_Click);
             // 
+            // _macroButton
+            // 
+            this._macroButton.Location = new System.Drawing.Point(501, 195);
+            this._macroButton.Name = "_macroButton";
+            this._macroButton.Size = new System.Drawing.Size(36, 23);
+            this._macroButton.TabIndex = 5;
+            this._macroButton.Text = "<<";
+            this._macroButton.UseVisualStyleBackColor = true;
+            this._macroButton.Click += new System.EventHandler(this._macroButton_Click);
+            // 
+            // _propertiesMenu
+            // 
+            this._propertiesMenu.Name = "_propertiesMenu";
+            this._propertiesMenu.Size = new System.Drawing.Size(61, 4);
+            this._propertiesMenu.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this._propertiesMenu_ItemClicked);
+            // 
             // ValidationEditorComponentControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this._macroButton);
             this.Controls.Add(this._testButton);
             this.Controls.Add(this._propertiesTableView);
             this.Controls.Add(this._cancelButton);
@@ -109,5 +128,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
         private System.Windows.Forms.Button _cancelButton;
         private ClearCanvas.Desktop.View.WinForms.TableView _propertiesTableView;
         private System.Windows.Forms.Button _testButton;
+        private System.Windows.Forms.Button _macroButton;
+        private System.Windows.Forms.ContextMenuStrip _propertiesMenu;
     }
 }
